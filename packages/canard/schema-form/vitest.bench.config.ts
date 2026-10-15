@@ -14,6 +14,10 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   resolve: {
     alias: {
+      '@/schema-form/__tests__/fixtures/nodeFromJSONSchema': resolve(
+        __dirname,
+        './bench/distEngine/nodeFromJSONSchema.ts',
+      ),
       '@/schema-form': resolve(__dirname, './src'),
     },
   },

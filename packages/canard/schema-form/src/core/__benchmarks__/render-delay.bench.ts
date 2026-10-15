@@ -2,9 +2,12 @@ import { bench, describe } from 'vitest';
 
 import { clone } from '@winglet/common-utils/object';
 
-import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
-import { ValidationMode } from '@/schema-form/core/engine';
 import type { JSONSchema } from '@/schema-form/types';
+
+import {
+  ValidationMode,
+  nodeFromJSONSchema,
+} from '../../../bench/distEngine/nodeFromJSONSchema';
 
 /**
  * Initial render-delay regression guard.

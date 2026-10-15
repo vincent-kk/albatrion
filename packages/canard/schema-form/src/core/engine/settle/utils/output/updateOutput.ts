@@ -1,7 +1,8 @@
-import { captureFieldNodeChange } from '../../../record';
+import { FieldNodeEventType, captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
+import { keepsChildEmissions } from './utils/keepsChildEmissions';
 
 /**
  * Assemble and project a node once from its current child order.
@@ -16,12 +17,10 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   recalculated?: readonly Self[],
 ): boolean => {
   context.pendingOutputs?.delete(node);
-  const hint =
-    recalculated &&
+  const host =
     (node.behavior.type === 'array' || node.behavior.type === 'object') &&
-    node.behavior.strategy === 'branch'
-      ? { incremental: false }
-      : undefined;
+    node.behavior.strategy === 'branch';
+  const hint = recalculated && host ? { incremental: false } : undefined;
   const assembled = node.behavior.assemble(
     node,
     node.children ?? [],
@@ -42,7 +41,22 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
         ),
       )
     : sameValue(node.local, assembled);
-  const local = same ? node.local : assembled;
+  let local = same ? node.local : assembled;
+  const revisit =
+    (node.deliveryChanges & FieldNodeEventType.UpdateValue) !== 0 &&
+    local !== node.deliveryPreviousLocal;
+  if (
+    revisit &&
+    (!host ||
+      ((!recalculated ||
+        keepsChildEmissions(node.deliveryPreviousLocal, recalculated)) &&
+        keepsChildEmissions(
+          node.deliveryPreviousLocal,
+          node.children ?? [],
+        ))) &&
+    sameValue(node.deliveryPreviousLocal, local)
+  )
+    local = node.deliveryPreviousLocal;
   let projected = node.behavior.project(node, local);
   if (
     node.parent === null &&
@@ -50,12 +64,23 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     (node.behavior.type === 'object' || node.behavior.type === 'array')
   )
     projected = local;
-  const emit =
+  let emit =
     node.emit === node.local && projected === local
       ? local
       : sameValue(node.emit, projected)
         ? node.emit
         : projected;
+  if (
+    node.deliveryChanges & FieldNodeEventType.UpdateValue &&
+    emit !== node.deliveryPreviousEmit &&
+    !(
+      revisit &&
+      emit === local &&
+      node.deliveryPreviousEmit === node.deliveryPreviousLocal
+    ) &&
+    sameValue(node.deliveryPreviousEmit, emit)
+  )
+    emit = node.deliveryPreviousEmit;
   const changed = local !== node.local || emit !== node.emit;
   node.local = captureFieldNodeChange(node, 'local', local);
   node.emit = captureFieldNodeChange(node, 'emit', emit);

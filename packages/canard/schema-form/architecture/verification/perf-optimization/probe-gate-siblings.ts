@@ -6,17 +6,21 @@
  */
 import { performance } from 'node:perf_hooks';
 
-import { SetValueOption, blueprint, fieldNodeFactory } from '../../../src/core';
-import {
-  type TestFieldNode,
-  isTestFieldNode,
-} from '../../../src/core/__tests__/fixtures/testFieldNode';
-import {
-  type BlueprintSchema,
+import { isRuntimeFieldNode as isTestFieldNode } from '../../../bench/distEngine/isRuntimeFieldNode';
+import { loadDistEngine } from '../../../bench/distEngine/loadDistEngine';
+import type { TestFieldNode } from '../../../src/core/__tests__/fixtures/testFieldNode';
+import type { BlueprintSchema } from '../../../src/core/engine';
+
+const {
+  SetValueOption,
+  blueprint,
+  fieldNodeFactory,
   PathKeyedMap,
   PathKeyedSet,
   loadFieldNodeAtMount,
-} from '../../../src/core/engine';
+  distSha256,
+} = await loadDistEngine();
+const engine = { source: 'dist', distSha256 };
 
 const smoke = process.argv.includes('--smoke');
 const warmups = smoke ? 2 : 30;
@@ -78,6 +82,7 @@ const sizes = (smoke ? [1000] : [1000, 2000, 4000, 8000]).map((n) => {
 console.log(
   JSON.stringify({
     probe: 'gate-siblings',
+    engine,
     ledgerRow: 'P-03 (R-17)',
     runtime: Reflect.get(globalThis, 'Bun') ? 'bun' : 'node',
     version: Reflect.get(globalThis, 'Bun')

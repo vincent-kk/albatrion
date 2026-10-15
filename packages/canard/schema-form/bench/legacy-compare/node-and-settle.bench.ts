@@ -1,21 +1,29 @@
-import { PathKeyedMap } from '../../src/core/engine';
-import { PathKeyedSet } from '../../src/core/engine';
 /**
  * Standalone U9 measurements. Run once under Node/V8 and once under Bun/JSC.
  * Each timed sample receives the same schema and input in both runtimes.
  */
-import { performance } from 'node:perf_hooks';
 import { spawnSync } from 'node:child_process';
+import { performance } from 'node:perf_hooks';
 
-import { blueprint } from '../../src/core';
-import type { BlueprintSchema } from '../../src/core/engine';
-import { BEHAVIORS } from '../../src/core/engine';
-import { fieldNodeFactory, SetValueOption } from '../../src/core';
-import { type TestFieldNode, isTestFieldNode } from '../../src/core/__tests__/fixtures/testFieldNode';
-import { loadFieldNodeAtMount } from '../../src/core/engine';
-import { getGateRegistry } from '../../src/core/engine/settle/utils/gates/getGateRegistry';
-import { nodeFromJSONSchema } from '../../src/__legacy__/core/nodeFromJSONSchema';
 import type { JSONSchema } from '../../src/__legacy__/types';
+import type { TestFieldNode } from '../../src/core/__tests__/fixtures/testFieldNode';
+import type { BlueprintSchema } from '../../src/core/engine';
+import { isRuntimeFieldNode as isTestFieldNode } from '../distEngine/isRuntimeFieldNode';
+import { loadDistEngine, loadLegacyEngine } from '../distEngine/loadDistEngine';
+
+const {
+  blueprint,
+  fieldNodeFactory,
+  loadFieldNodeAtMount,
+  BEHAVIORS,
+  PathKeyedMap,
+  PathKeyedSet,
+  getGateRegistry,
+  SetValueOption,
+  distSha256,
+} = await loadDistEngine();
+const { create: nodeFromJSONSchema, legacySha256 } = await loadLegacyEngine();
+const engine = { source: 'dist', distSha256, legacy: '0.16.0', legacySha256 };
 
 const noop = () => {};
 const sampleCount = 100;
@@ -32,7 +40,8 @@ function measure(run: (index: number) => void, warmups = 20): Sample {
     run(index + warmups);
     samplesMs.push(performance.now() - start);
   }
-  const meanMs = samplesMs.reduce((sum, value) => sum + value, 0) / samplesMs.length;
+  const meanMs =
+    samplesMs.reduce((sum, value) => sum + value, 0) / samplesMs.length;
   return { meanMs, hz: 1000 / meanMs, samplesMs };
 }
 
@@ -42,26 +51,41 @@ function makeNew(schema: BlueprintSchema, value?: unknown) {
     loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'),
     misfitPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+    inactiveValuesMemo: new PathKeyedMap<
+      readonly { path: string; value: unknown }[]
+    >('path'),
   });
   if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
   const rootRecord: TestFieldNode = root;
-  if (value !== undefined) loadFieldNodeAtMount(rootRecord, value, SetValueOption.Overwrite);
+  if (value !== undefined)
+    loadFieldNodeAtMount(rootRecord, value, SetValueOption.Overwrite);
   return root;
 }
 
 function makeLegacy(schema: JSONSchema, value?: Record<string, unknown>) {
-  return nodeFromJSONSchema({ jsonSchema: schema, defaultValue: value, onChange: noop });
+  return nodeFromJSONSchema({
+    jsonSchema: schema,
+    defaultValue: value,
+    onChange: noop,
+  });
 }
 
 function flat(count: number, mixed = false) {
-  const properties: Record<string, { type: 'number' | 'string' | 'boolean' }> = {};
+  const properties: Record<string, { type: 'number' | 'string' | 'boolean' }> =
+    {};
   const value: Record<string, number | string | boolean> = {};
   for (let index = 0; index < count; index++) {
-    const type = mixed ? (['number', 'string', 'boolean'] as const)[index % 3] : 'number';
+    const type = mixed
+      ? (['number', 'string', 'boolean'] as const)[index % 3]
+      : 'number';
     const name = `field_${index}`;
     properties[name] = { type };
-    value[name] = type === 'number' ? index : type === 'string' ? String(index) : index % 2 === 0;
+    value[name] =
+      type === 'number'
+        ? index
+        : type === 'string'
+          ? String(index)
+          : index % 2 === 0;
   }
   return { schema: { type: 'object' as const, properties }, value };
 }
@@ -81,27 +105,39 @@ function fragmentSchema(count: number): BlueprintSchema {
     controls: { active: './enabled' },
     properties: { [`part_${index}`]: { type: 'string' } },
   }));
-  return { type: 'object', properties: {
-    enabled: { type: 'boolean' }, key: { type: 'number' },
-  }, allOf };
+  return {
+    type: 'object',
+    properties: {
+      enabled: { type: 'boolean' },
+      key: { type: 'number' },
+    },
+    allOf,
+  };
 }
 
 function relocatedGateSchema(count: number): BlueprintSchema {
   const properties: Record<string, unknown> = {
-    trigger: { type: 'boolean' }, key: { type: 'number' },
+    trigger: { type: 'boolean' },
+    key: { type: 'number' },
   };
   for (let index = 0; index < count; index++)
-    properties[`host_${index}`] = { type: 'object', properties: {
-      gated: { type: 'string', controls: { active: '#/trigger' } },
-    } };
+    properties[`host_${index}`] = {
+      type: 'object',
+      properties: {
+        gated: { type: 'string', controls: { active: '#/trigger' } },
+      },
+    };
   return { type: 'object', properties };
 }
 
 function latentSchema(depth: number): BlueprintSchema {
-  let nested: BlueprintSchema = { type: 'object', properties: {
-    flag: { type: 'boolean' },
-    hidden: { type: 'string', controls: { active: '../flag' } },
-  } };
+  let nested: BlueprintSchema = {
+    type: 'object',
+    properties: {
+      flag: { type: 'boolean' },
+      hidden: { type: 'string', controls: { active: '../flag' } },
+    },
+  };
   for (let index = 0; index < depth; index++)
     nested = { type: 'object', properties: { branch: nested } };
   return nested;
@@ -113,14 +149,20 @@ function latentValue(depth: number, index: number): Record<string, unknown> {
   return value;
 }
 
-function heapUsed() { return process.memoryUsage().heapUsed; }
+function heapUsed() {
+  return process.memoryUsage().heapUsed;
+}
 
 function collect() {
-  const bun = Reflect.get(globalThis, 'Bun') as { gc?: (force: boolean) => void } | undefined;
+  const bun = Reflect.get(globalThis, 'Bun') as
+    | { gc?: (force: boolean) => void }
+    | undefined;
   const nodeGc = Reflect.get(globalThis, 'gc') as (() => void) | undefined;
   if (bun?.gc) bun.gc(true);
-  else if (nodeGc) { nodeGc(); nodeGc(); }
-  else throw new Error('B2 needs a GC-enabled child process');
+  else if (nodeGc) {
+    nodeGc();
+    nodeGc();
+  } else throw new Error('B2 needs a GC-enabled child process');
 }
 
 function heapSample(create: () => unknown, nodes: number) {
@@ -136,7 +178,10 @@ function heapSample(create: () => unknown, nodes: number) {
     collect();
   }
   const sorted = [...bytes].sort((left, right) => left - right);
-  return { bytesPerNode: sorted[Math.floor(sorted.length / 2)], samples: bytes };
+  return {
+    bytesPerNode: sorted[Math.floor(sorted.length / 2)],
+    samples: bytes,
+  };
 }
 
 function b2() {
@@ -144,10 +189,16 @@ function b2() {
     const run = (kind: 'new' | 'legacy') => {
       const samples: number[] = [];
       for (let index = 0; index < 7; index++) {
-        const child = spawnSync(process.execPath,
-          ['bench/legacy-compare/node-and-settle.bench.ts', `--heap-one=${kind}`],
-          { encoding: 'utf8', cwd: process.cwd() });
-        if (child.status !== 0) throw new Error(`B2 ${kind} child failed: ${child.stderr}`);
+        const child = spawnSync(
+          process.execPath,
+          [
+            'bench/legacy-compare/node-and-settle.bench.ts',
+            `--heap-one=${kind}`,
+          ],
+          { encoding: 'utf8', cwd: process.cwd() },
+        );
+        if (child.status !== 0)
+          throw new Error(`B2 ${kind} child failed: ${child.stderr}`);
         samples.push(Number(child.stdout.trim()));
       }
       const sorted = [...samples].sort((left, right) => left - right);
@@ -161,14 +212,21 @@ function b2() {
     const root = fieldNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'), misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+      latentRaw: new PathKeyedMap('pair'),
+      misfitPaths: new PathKeyedSet(),
+      inactiveValuesMemo: new PathKeyedMap<
+        readonly { path: string; value: unknown }[]
+      >('path'),
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const rootRecord: TestFieldNode = root;
     loadFieldNodeAtMount(rootRecord, value, SetValueOption.Overwrite);
     return root;
   };
-  return { new: heapSample(makeTree, 5001), legacy: heapSample(() => makeLegacy(schema, value), 5001) };
+  return {
+    new: heapSample(makeTree, 5001),
+    legacy: heapSample(() => makeLegacy(schema, value), 5001),
+  };
 }
 
 function heapOne(kind: 'new' | 'legacy') {
@@ -180,7 +238,11 @@ function heapOne(kind: 'new' | 'legacy') {
     const root = fieldNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'), misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+      latentRaw: new PathKeyedMap('pair'),
+      misfitPaths: new PathKeyedSet(),
+      inactiveValuesMemo: new PathKeyedMap<
+        readonly { path: string; value: unknown }[]
+      >('path'),
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const rootRecord: TestFieldNode = root;
@@ -195,57 +257,91 @@ function heapOne(kind: 'new' | 'legacy') {
 
 function b3() {
   const schemas: BlueprintSchema[] = [
-    { type: 'string' }, { type: 'number' }, { type: 'boolean' },
-    { type: 'null' }, { type: ['string', 'number'] },
+    { type: 'string' },
+    { type: 'number' },
+    { type: 'boolean' },
+    { type: 'null' },
+    { type: ['string', 'number'] },
     { type: 'object', properties: { child: { type: 'string' } } },
     { type: 'object', options: { terminal: true } },
   ];
   const nodes = schemas.map((schema) => makeNew(schema));
-  const virtualRoot = makeNew({ type: 'object',
-    properties: { source: { type: 'string' } },
-    options: { virtual: { pair: { fields: ['source'] } } },
-  }, { source: 'value' });
+  const virtualRoot = makeNew(
+    {
+      type: 'object',
+      properties: { source: { type: 'string' } },
+      options: { virtual: { pair: { fields: ['source'] } } },
+    },
+    { source: 'value' },
+  );
   const virtual = virtualRoot.find('/pair');
-  if (!virtual || !isTestFieldNode(virtual)) throw new Error('B3 virtual fixture is missing');
+  if (!virtual || !isTestFieldNode(virtual))
+    throw new Error('B3 virtual fixture is missing');
   nodes.push(virtual);
   const first = nodes[0];
   const ownKeys = Object.getOwnPropertyNames(first).join(',');
-  const sameLayout = nodes.filter((node) => Object.getPrototypeOf(node) ===
-    Object.getPrototypeOf(first) && Object.getOwnPropertyNames(node).join(',') === ownKeys).length;
+  const sameLayout = nodes.filter(
+    (node) =>
+      Object.getPrototypeOf(node) === Object.getPrototypeOf(first) &&
+      Object.getOwnPropertyNames(node).join(',') === ownKeys,
+  ).length;
   const rows = Object.values(BEHAVIORS).flatMap((entry) =>
-    [entry?.branch, entry?.terminal].filter((row) => row !== undefined));
+    [entry?.branch, entry?.terminal].filter((row) => row !== undefined),
+  );
   const firstRow = rows[0];
   const rowKeys = Object.getOwnPropertyNames(firstRow).join(',');
-  const sameRowLayout = rows.filter((row) => Object.getPrototypeOf(row) ===
-    Object.getPrototypeOf(firstRow) && Object.getOwnPropertyNames(row).join(',') === rowKeys).length;
+  const sameRowLayout = rows.filter(
+    (row) =>
+      Object.getPrototypeOf(row) === Object.getPrototypeOf(firstRow) &&
+      Object.getOwnPropertyNames(row).join(',') === rowKeys,
+  ).length;
   const haveSameMap = process.argv.includes('--map-child')
-    ? new Function('left', 'right', 'return %HaveSameMap(left, right)') as
-      (left: object, right: object) => boolean : undefined;
-  return { checkedKinds: nodes.map((node) => `${node.type}/${node.strategy}`),
-    sameLayout, count: nodes.length,
-    sameRowLayout, rowCount: rows.length,
-    hiddenMap: haveSameMap ? nodes.filter((node) => haveSameMap(first, node)).length :
-      'unavailable without engine diagnostics',
-    hiddenRowMap: haveSameMap ? rows.filter((row) => haveSameMap(firstRow, row)).length :
-      'unavailable without engine diagnostics' };
+    ? (new Function('left', 'right', 'return %HaveSameMap(left, right)') as (
+        left: object,
+        right: object,
+      ) => boolean)
+    : undefined;
+  return {
+    checkedKinds: nodes.map((node) => `${node.type}/${node.strategy}`),
+    sameLayout,
+    count: nodes.length,
+    sameRowLayout,
+    rowCount: rows.length,
+    hiddenMap: haveSameMap
+      ? nodes.filter((node) => haveSameMap(first, node)).length
+      : 'unavailable without engine diagnostics',
+    hiddenRowMap: haveSameMap
+      ? rows.filter((row) => haveSameMap(firstRow, row)).length
+      : 'unavailable without engine diagnostics',
+  };
 }
 
 function b4() {
   const result = b3();
-  return { receiverLayouts: result.count === result.sameLayout ? 1 : result.count - result.sameLayout + 1,
-    checkedKinds: result.count, note: 'receiver layout proxy; IC slot count is not exposed' };
+  return {
+    receiverLayouts:
+      result.count === result.sameLayout
+        ? 1
+        : result.count - result.sameLayout + 1,
+    checkedKinds: result.count,
+    note: 'receiver layout proxy; IC slot count is not exposed',
+  };
 }
 
 function latentCosts() {
   const latent = (depth: number) => {
-    const inputs = Array.from({ length: 120 }, (_, index) => latentValue(depth, index));
+    const inputs = Array.from({ length: 120 }, (_, index) =>
+      latentValue(depth, index),
+    );
     const root = makeNew(latentSchema(depth), latentValue(depth, -1));
     let previousMemo = root.inactiveValues;
     return measure((index) => {
       root.setValue(inputs[index]);
       const memo = root.inactiveValues;
       if (memo === previousMemo || memo[0]?.value !== String(index))
-        throw new Error(`18C-67 ancestor memo was not updated at depth ${depth}`);
+        throw new Error(
+          `18C-67 ancestor memo was not updated at depth ${depth}`,
+        );
       previousMemo = memo;
       sink += memo.length;
     });
@@ -258,17 +354,29 @@ function verifyFixtures() {
   const relocated = makeNew(relocatedGateSchema(64), { trigger: true, key: 0 });
   const latent = makeNew(latentSchema(8), latentValue(8, 0));
   const gated = Array.from({ length: 64 }, (_, index) =>
-    relocated.find(`/host_${index}/gated`)).filter(Boolean).length;
+    relocated.find(`/host_${index}/gated`),
+  ).filter(Boolean).length;
   const rootGates = getGateRegistry(relocated.runtime).relocated('');
-  const relocatedAtRoot = Array.from({ length: 64 }, (_, index) =>
-    `/host_${index}/gated`).filter((path) => rootGates.some((entry) =>
-    entry.hostPath === path && entry.evaluationHostPath === '')).length;
-  const counts = { activeFragments: (fragments.children?.length ?? 0) - 2,
-    relocatedGates: gated, relocatedAtRoot,
-    inactiveValues: latent.inactiveValues.length };
-  if (counts.activeFragments !== 64 || counts.relocatedGates !== 64 ||
+  const relocatedAtRoot = Array.from(
+    { length: 64 },
+    (_, index) => `/host_${index}/gated`,
+  ).filter((path) =>
+    rootGates.some(
+      (entry) => entry.hostPath === path && entry.evaluationHostPath === '',
+    ),
+  ).length;
+  const counts = {
+    activeFragments: (fragments.children?.length ?? 0) - 2,
+    relocatedGates: gated,
+    relocatedAtRoot,
+    inactiveValues: latent.inactiveValues.length,
+  };
+  if (
+    counts.activeFragments !== 64 ||
+    counts.relocatedGates !== 64 ||
     counts.relocatedAtRoot !== 64 ||
-    counts.inactiveValues !== 1)
+    counts.inactiveValues !== 1
+  )
     throw new Error(`U9 fixture mismatch: ${JSON.stringify(counts)}`);
   return counts;
 }
@@ -285,23 +393,28 @@ function b5() {
   const newSample = measure((index) => {
     newKey.setValue(index);
     const observed = Number(Reflect.get(newRoot.value as object, 'field_0'));
-    if (observed !== index) throw new Error('B5 new root has not committed the input');
+    if (observed !== index)
+      throw new Error('B5 new root has not committed the input');
     sink += observed;
   });
   const oldSample = measure((index) => {
     oldKey.setValue(index);
     const observed = Number(Reflect.get(oldRoot.value as object, 'field_0'));
-    if (observed !== index) throw new Error('B5 legacy root has not committed the input');
+    if (observed !== index)
+      throw new Error('B5 legacy root has not committed the input');
     sink += observed;
   });
   return { new: newSample, legacy: oldSample };
 }
 
 function main() {
-  const one = process.argv.find((argument) => argument.startsWith('--heap-one='));
+  const one = process.argv.find((argument) =>
+    argument.startsWith('--heap-one='),
+  );
   if (one) {
     const kind = one.slice('--heap-one='.length);
-    if (kind !== 'new' && kind !== 'legacy') throw new Error(`Unknown heap kind: ${kind}`);
+    if (kind !== 'new' && kind !== 'legacy')
+      throw new Error(`Unknown heap kind: ${kind}`);
     heapOne(kind);
     return;
   }
@@ -309,7 +422,10 @@ function main() {
     console.log(JSON.stringify(b2()));
     return;
   }
-  if (process.argv.includes('--map-child') || process.argv.includes('--b3-only')) {
+  if (
+    process.argv.includes('--map-child') ||
+    process.argv.includes('--b3-only')
+  ) {
     console.log(JSON.stringify(b3()));
     return;
   }
@@ -333,7 +449,11 @@ function main() {
     const root = fieldNodeFactory(largeAnalysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'), misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+      latentRaw: new PathKeyedMap('pair'),
+      misfitPaths: new PathKeyedSet(),
+      inactiveValuesMemo: new PathKeyedMap<
+        readonly { path: string; value: unknown }[]
+      >('path'),
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const rootRecord: TestFieldNode = root;
@@ -345,32 +465,50 @@ function main() {
   const newNodes = newLarge.children;
   const oldNodes = oldLarge.children?.map((entry) => entry.node);
   if (newNodes?.length !== 10000 || oldNodes?.length !== 10000)
-    throw new Error(`B1 fixture mismatch: new ${newNodes?.length}, legacy ${oldNodes?.length}`);
-  const read = (nodes: readonly { type: string; value: unknown }[]) => measure(() => {
-    let count = 0;
-    for (const node of nodes) {
-      count += node.type.length;
-      if (node.value !== undefined) count++;
-    }
-    sink += count;
-  });
+    throw new Error(
+      `B1 fixture mismatch: new ${newNodes?.length}, legacy ${oldNodes?.length}`,
+    );
+  const read = (nodes: readonly { type: string; value: unknown }[]) =>
+    measure(() => {
+      let count = 0;
+      for (const node of nodes) {
+        count += node.type.length;
+        if (node.value !== undefined) count++;
+      }
+      sink += count;
+    });
   const B1 = { new: read(newNodes), legacy: read(oldNodes) };
 
   let B2: ReturnType<typeof b2>;
   if (Reflect.get(globalThis, 'Bun')) B2 = b2();
   else {
-    const child = spawnSync(process.execPath,
-      ['--expose-gc', '--import', 'tsx', 'bench/legacy-compare/node-and-settle.bench.ts', '--heap-child'],
-      { encoding: 'utf8', cwd: process.cwd(), maxBuffer: 1024 * 1024 * 4 });
+    const child = spawnSync(
+      process.execPath,
+      [
+        '--expose-gc',
+        '--import',
+        'tsx',
+        'bench/legacy-compare/node-and-settle.bench.ts',
+        '--heap-child',
+      ],
+      { encoding: 'utf8', cwd: process.cwd(), maxBuffer: 1024 * 1024 * 4 },
+    );
     if (child.status !== 0) throw new Error(`B2 child failed: ${child.stderr}`);
     B2 = JSON.parse(child.stdout) as ReturnType<typeof b2>;
   }
   let B3 = b3();
   if (!Reflect.get(globalThis, 'Bun')) {
-    const child = spawnSync(process.execPath,
-      ['--allow-natives-syntax', '--import', 'tsx',
-        'bench/legacy-compare/node-and-settle.bench.ts', '--map-child'],
-      { encoding: 'utf8', cwd: process.cwd() });
+    const child = spawnSync(
+      process.execPath,
+      [
+        '--allow-natives-syntax',
+        '--import',
+        'tsx',
+        'bench/legacy-compare/node-and-settle.bench.ts',
+        '--map-child',
+      ],
+      { encoding: 'utf8', cwd: process.cwd() },
+    );
     if (child.status !== 0) throw new Error(`B3 child failed: ${child.stderr}`);
     B3 = JSON.parse(child.stdout) as ReturnType<typeof b3>;
   }
@@ -378,8 +516,12 @@ function main() {
 
   const B5 = b5();
   const B6 = {
-    new: measure(() => { sink += Number(Boolean(freshLarge())); }, 5),
-    legacy: measure(() => { sink += Number(Boolean(makeLegacy(large.schema, large.value))); }, 5),
+    new: measure(() => {
+      sink += Number(Boolean(freshLarge()));
+    }, 5),
+    legacy: measure(() => {
+      sink += Number(Boolean(makeLegacy(large.schema, large.value)));
+    }, 5),
   };
 
   const fragments = {
@@ -393,10 +535,29 @@ function main() {
     n16: keyInput(relocatedGateSchema(16), { trigger: true, key: 0 }),
     n64: keyInput(relocatedGateSchema(64), { trigger: true, key: 0 }),
   };
-  console.log(JSON.stringify({ runtime: Reflect.get(globalThis, 'Bun') ? 'bun' : 'node',
-    version: Reflect.get(globalThis, 'Bun') ? process.versions.bun : process.version,
-    samples: sampleCount, fixtures, rows: { B1, B2, B3, B4, B5, B6,
-      '18C-15': fragments, '18C-67': latent, '18C-81': gates }, sink }));
+  console.log(
+    JSON.stringify({
+      runtime: Reflect.get(globalThis, 'Bun') ? 'bun' : 'node',
+      engine,
+      version: Reflect.get(globalThis, 'Bun')
+        ? process.versions.bun
+        : process.version,
+      samples: sampleCount,
+      fixtures,
+      rows: {
+        B1,
+        B2,
+        B3,
+        B4,
+        B5,
+        B6,
+        '18C-15': fragments,
+        '18C-67': latent,
+        '18C-81': gates,
+      },
+      sink,
+    }),
+  );
 }
 
 main();
