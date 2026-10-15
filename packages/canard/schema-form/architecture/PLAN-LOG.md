@@ -288,6 +288,8 @@
 | 2026-10-14 | 326라운드 소유자: Field fractal을 FieldProxy로(본체 이름), 부품 둘은 그 아래; 병합 전 약식 전체 게이트. 보충 2줄 | `reviews/round-326-owner-answers.md` |
 | 2026-10-14 | 327라운드 닫기: 구조-5 PR #385 병합(c2d5f737e; Field → FieldProxy fractal, 약식 전체 게이트 통과). 보충 1줄 | `reviews/round-327-closing.md` |
 | 2026-10-14 | 328라운드 소유자: INTENT·DETAIL 문서 전부 한국어로(humanizer, sonnet·agy 병렬), fairy08 문서 PR. 보충 1줄 | `reviews/round-328-owner-answers.md` |
+| 2026-10-15 | 376라운드(닫기): 나감 정리 결함 PR #402 검증·squash-merge(ba0b36c88); NODE-044 결함 둘의 기록, CONTROLS-077 보충(배열 아이템은 조각의 직계 자식)과 대기열 60 닫음. 보충 2줄 | `reviews/round-376-closing.md` |
+| 2026-10-15 | 377라운드(닫기): items 조각 층 결함 PR #403 검증·squash-merge(3f02269ab); 조각 소유 판정 도우미 한 벌, 아이템의 조각 층, 기존 기대 변경 0건. 보충 2줄 | `reviews/round-377-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -603,3 +605,8 @@
 - **370라운드(2026-10-15, 소유자).** 옛 판은 비교치, 목표는 비효율 제거(reviews/round-370-owner-answers.md).
 - **371라운드(2026-10-15, 닫기).** L1b PR #400 병합(f441a9159); 편집자 결정 넷(reviews/round-371-closing.md).
 - **372라운드(2026-10-15, 닫기).** L2 첫 묶음 PR #401 병합(b9e2f63dc); 편집자 결정 셋(reviews/round-372-closing.md).
+- **373라운드(2026-10-15, 소유자).** items 조각 층 누락은 결함, 수정(reviews/round-373-owner-answers.md).
+- **374라운드(2026-10-15, 소유자).** agy·codex를 더 활발히(reviews/round-374-owner-answers.md).
+- **375라운드(2026-10-15, 소유자).** 가결정 55·56 확정(reviews/round-375-owner-answers.md).
+- **376라운드(2026-10-15, 닫기).** 나감 정리 결함 PR #402 병합(ba0b36c88); NODE-044 결함 둘, CONTROLS-077 보충, 대기열 60 닫음(reviews/round-376-closing.md).
+- **377라운드(2026-10-15, 닫기).** items 조각 층 결함 PR #403 병합(3f02269ab); 조각 소유 판정 한 벌(reviews/round-377-closing.md).

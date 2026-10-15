@@ -58,7 +58,7 @@
 | 07 | 전환 | 리뷰 | [#354](https://github.com/vincent-kk/albatrion/pull/354) | 브랜치 `feat/schema-form-switch`(2026-10-02 착수, 2026-10-11 `1.0.0-beta` `351ece24e` 위에 다시 세움). 원샷. 착수 물음은 68라운드로 닫힘. G23·G26·G27이 소유자 답([질의 목록](reviews/owner-queue-07.md))으로 닫힐 때까지 머지하지 않음. 측정 원자료는 `archive/stage-07-verification-raw`(140라운드). 실행 계획은 [execution-plan](plan/07-switch/execution-plan.md), 기록은 [log](plan/07-switch/log.md) |
 | 08 | 플러그인 | 완료 | — | 별도 PR 없음. `presentation.*` 이주와 이름 대응은 07b(#365)·07d(입력 설정 이주, 플러그인 0.17.0)에서 끝났고 PR마다 플러그인 일곱 빌드가 게이트로 돌았다(331라운드 소유자 답). 계획서가 인용한 옛 경로(`plan/07-switch/log.md` "08 목록")는 역사 기록. 미확인 셋은 대기열 54 |
 | 정돈 | 코드 정돈 | 진행 | — | 07 뒤·08 앞(287라운드), 최적화 앞. 계획 [request](plan/tidy-structure/request.md), 결정 D1–D6 확정(289라운드). 정돈-1부터 PR 넷. 정돈-1 #374 병합 ae502f7bd(297라운드), 정돈-2 진행. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
-| 최적화 | 성능 최적화 | 진행 | — | 브랜치 `feat/schema-form-08-review-and-perf`(330라운드; 원장 커밋도 이 위에, 끝나면 `1.0.0-beta`에 squash). 소유자 리뷰 항목을 먼저 받는다(331라운드). 정돈 뒤 착수(76라운드 소유자 답), 09 전에 끝냄. 가설마다 커밋 하나, 수용 가설 3~4개마다 PR 하나(결정 대기열 56, 344라운드 편집자 가결정). 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
+| 최적화 | 성능 최적화 | 진행 | — | 브랜치 `feat/schema-form-08-review-and-perf`(330라운드; 원장 커밋도 이 위에, 끝나면 `1.0.0-beta`에 squash). 소유자 리뷰 항목을 먼저 받는다(331라운드). 정돈 뒤 착수(76라운드 소유자 답), 09 전에 끝냄. 가설마다 커밋 하나, 수용 가설 4~5개마다 PR 하나(결정 대기열 56, 344라운드 편집자 가결정을 375라운드 소유자가 확정). 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
 | 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
 | 별도 | 릴리스 전환 | 대기 | — | 시점은 소유자가 정한다(LANDING-204) |
 
@@ -126,6 +126,11 @@
 | 2026-10-15 | 370라운드 소유자: 옛 판은 목표치가 아니라 비교치, 목표는 비효율 제거와 설계 개선점. 보충 1줄 | `reviews/round-370-owner-answers.md` |
 | 2026-10-15 | 371라운드(닫기): L1b PR #400 검증·squash-merge(f441a9159); 배열 동사 계약 해석, SURFACE-005 insert, 수용 복사 셋, L2 이월·대기열 58. 보충 4줄 | `reviews/round-371-closing.md` |
 | 2026-10-15 | 372라운드(닫기): L2 첫 묶음 PR #401 검증·squash-merge(b9e2f63dc); 같은 값 통째 쓰기, 감시 색인, 불일치 메모, 간선 스키마, 기록만 항목. 보충 3줄 | `reviews/round-372-closing.md` |
+| 2026-10-15 | 373라운드 소유자: items 조각 층 누락은 결함, 별도 fix PR. 보충 2줄 | `reviews/round-373-owner-answers.md` |
+| 2026-10-15 | 374라운드 소유자: 앞으로 agy·codex를 더 활발히, codex 기본·agy 검증. 보충 1줄 | `reviews/round-374-owner-answers.md` |
+| 2026-10-15 | 375라운드 소유자: 가결정 55·56 그대로 확정(닫힘). 보충 1줄 | `reviews/round-375-owner-answers.md` |
+| 2026-10-15 | 376라운드(닫기): 나감 정리 결함 PR #402 검증·squash-merge(ba0b36c88); NODE-044 결함 둘의 기록, CONTROLS-077 보충(배열 아이템은 조각의 직계 자식)과 대기열 60 닫음. 보충 2줄 | `reviews/round-376-closing.md` |
+| 2026-10-15 | 377라운드(닫기): items 조각 층 결함 PR #403 검증·squash-merge(3f02269ab); 조각 소유 판정 도우미 한 벌, 아이템의 조각 층, 기존 기대 변경 0건. 보충 2줄 | `reviews/round-377-closing.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |

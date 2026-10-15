@@ -5,6 +5,7 @@ import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { ControlKey } from '../../../types/controls';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
+import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import type { DeriveRule, DeriveRuleTable } from '../../types/rules';
 import { getWatchPaths } from './getWatchPaths';
@@ -68,15 +69,10 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         Reflect.get(controls, CONTROL_KEY.injectTo) !== undefined;
       if (hasOwnRules && declaration.scope === 'fragment') {
         for (const entry of node.childEntries) {
-          const selected = entry.declarations.filter(
-            (child) =>
-              child.schemaPath.startsWith(
-                declaration.schemaPath + '/properties/',
-              ) ||
-              child.schemaPath.startsWith(declaration.schemaPath + '/items/') ||
-              child.schemaPath.startsWith(
-                declaration.schemaPath + '/prefixItems/',
-              ),
+          const selected = entry.declarations.filter((child) =>
+            getFragmentOwnerPaths(child.schemaPath).includes(
+              declaration.schemaPath,
+            ),
           );
           if (selected.length)
             groups.push({
