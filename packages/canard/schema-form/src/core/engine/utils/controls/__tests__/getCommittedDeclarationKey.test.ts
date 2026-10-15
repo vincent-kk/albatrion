@@ -18,15 +18,27 @@ describe('getCommittedDeclarationKey identity', () => {
     ];
     for (const path of ['', '/a~1b/~0', '/"quoted"/\n', '/한글/0'])
       for (const kind of kinds) {
-        const node = { path, blueprintNode: { kind } };
-        expect(getCommittedDeclarationKey(node)).toBe(
-          JSON.stringify([path, kind]),
-        );
+        const blueprintNode =
+          kind === 'union'
+            ? { kind, schemaType: ['number', 'string'] as const }
+            : { kind };
+        const node = { path, blueprintNode };
+        if (kind === 'union')
+          expect(getCommittedDeclarationKey(node)).toBe(
+            JSON.stringify([path, 'union:3']),
+          );
+        else
+          expect(getCommittedDeclarationKey(node)).toBe(
+            JSON.stringify([path, kind]),
+          );
         expect(getCommittedDeclarationKey(node)).toBe(
           getCommittedDeclarationKey(node),
         );
         expect(
-          getCommittedDeclarationKey({ path, blueprintNode: { kind } }),
+          getCommittedDeclarationKey({
+            path,
+            blueprintNode: { ...blueprintNode },
+          }),
         ).toBe(getCommittedDeclarationKey(node));
       }
   });

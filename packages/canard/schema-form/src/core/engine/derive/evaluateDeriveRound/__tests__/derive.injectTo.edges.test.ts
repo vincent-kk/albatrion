@@ -353,7 +353,8 @@ describe('injectTo edge boundaries', () => {
     );
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some(
-        (key) => key.includes('/derived') && key.includes('"/target","union"'),
+        (key) =>
+          key.includes('/derived') && key.includes('"/target","union:3"'),
       ),
     ).toBe(true);
   });
