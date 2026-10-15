@@ -58,14 +58,18 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]
       : undefined;
-    const key = JSON.stringify([
-      node.path + '/' + escapeSegment(entry.name),
-      entry.node.kind,
-    ]);
-    const pending = context.pendingExits.get(key);
+    const key =
+      context.pendingExits.size === 0
+        ? undefined
+        : JSON.stringify([
+            node.path + '/' + escapeSegment(entry.name),
+            entry.node.kind,
+          ]);
+    const pending =
+      key === undefined ? undefined : context.pendingExits.get(key);
     const child = priorChild ?? pending ?? createChildNode(node, entry);
     context.perished.delete(child);
-    context.pendingExits.delete(key);
+    if (key !== undefined) context.pendingExits.delete(key);
     if (pending && child === pending) {
       context.revived.add(child);
       indexEnteredLatentKey(context, child);
