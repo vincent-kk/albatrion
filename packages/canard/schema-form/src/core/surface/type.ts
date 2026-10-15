@@ -138,7 +138,7 @@ export interface NodeSurface<
   request(kind: FieldNodeRequestType): void;
   /**
    * Group synchronous writes in one outer delivery boundary.
-   * Array verbs (`push`, `pop`, `update`, `remove`, `clear`) also compute their
+   * Array verbs (`push`, `pop`, `update`, `remove`, `insert`, `clear`) also compute their
    * array at the call site on top of prior marks, return the synchronous result
    * and mark the resulting array. Settlement at the end of the batch is a whole
    * write, so item keys carry over by position.
@@ -199,6 +199,17 @@ interface ArrayNodeMethods<Item> {
   update(index: number, value: Item): Item | undefined;
   /** Remove one position and return its last committed value. */
   remove(index: number): Item | undefined;
+  /**
+   * Insert one caller value at a position in [0, length] and return the new length synchronously.
+   * Items at and after `index` keep their nodes and keys and move one position back; `index` equal
+   * to the length appends exactly like `push`. A negative, fractional or larger index changes
+   * nothing and returns the current length. A host holding a non-array value becomes `[value]` at
+   * index 0, like `push`, and ignores any other index. `minItems` and `maxItems` are not enforced.
+   * @param index - Integer position in [0, length]
+   * @param value - Value of the new item; omitted or undefined lets the new item fill its defaults
+   * @returns Array length after the call
+   */
+  insert(index: number, value?: Item): number;
   /** Remove every position without returning an item. */
   clear(): void;
 }

@@ -41,7 +41,7 @@ const resultOf = <Self extends FieldNodeRecord<Self>>(
 
 /**
  * Apply an array behavior's pure proposal and commit one synchronous write.
- * An admitted static push skips the row's slot plan and the prefix proofs; see prepareArrayAppend.
+ * An admitted static push, or an insert at the current length, skips the row's slot plan and the prefix proofs; see prepareArrayAppend.
  * @param node - Array host, or any node whose behavior rejects this verb
  * @param operation - The requested public structural operation
  * @returns Length, removed or updated value, or void as declared by the plan
@@ -53,7 +53,9 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   const append = prepareArrayAppend(node, operation);
   const plan = append ? append.plan : node.behavior.arrange(node, operation);
   if (plan.kind === 'noop')
-    return operation.kind === 'push' ? readArrayLength(node) : undefined;
+    return operation.kind === 'push' || operation.kind === 'insert'
+      ? readArrayLength(node)
+      : undefined;
   if (plan.kind === 'raw') {
     const previous =
       isArray(node.raw) && plan.result.source === 'removed'

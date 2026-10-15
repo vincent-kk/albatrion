@@ -26,7 +26,9 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
   });
   const plan = node.behavior.arrange(view, operation);
   if (plan.kind === 'noop')
-    return operation.kind === 'push' ? readArrayLength(view) : undefined;
+    return operation.kind === 'push' || operation.kind === 'insert'
+      ? readArrayLength(view)
+      : undefined;
   let raw: readonly unknown[];
   if (plan.kind === 'update') {
     const copy = source.slice();

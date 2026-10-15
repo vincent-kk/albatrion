@@ -13,11 +13,11 @@ import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 /** Ungated effective schemas select their immutable static contributions. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 
-/** Shared result reporting the array length after a push. */
+/** Shared result reporting the array length after a push or an insert. */
 const LENGTH_RESULT = { source: 'length' } as const;
 
 /**
- * Admit a lone push on a static array to the bounded append path without visiting its items.
+ * Admit a lone push, or an insert at the current length, on a static array to the bounded append path without visiting its items.
  * Writes nothing; every condition is a fixed number of reads, so a declined call costs O(1).
  * @param node - Write target of a public array verb, outside batch marking
  * @param operation - Requested structural operation
@@ -27,10 +27,14 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
 ): ArrayAppendProof<Self> | undefined => {
-  if (operation.kind !== 'push') return undefined;
+  const count = node.itemCount;
+  if (
+    operation.kind !== 'push' &&
+    (operation.kind !== 'insert' || operation.index !== count)
+  )
+    return undefined;
   const runtime = node.runtime;
   const template = node.blueprintNode;
-  const count = node.itemCount;
   const local = node.local;
   if (
     node.behavior.arrange !== BEHAVIORS.array?.branch?.arrange ||

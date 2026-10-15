@@ -1,11 +1,12 @@
 import type { ArrayArrangePlan, Behavior } from '../../../../record';
 import { copyArraySlots } from './copyArraySlots';
 import { isValidArrayIndex } from './isValidArrayIndex';
+import { isValidInsertIndex } from './isValidInsertIndex';
 
 /** Shared plan for an array verb that changes nothing. */
 const NOOP_PLAN: ArrayArrangePlan = { kind: 'noop' };
 
-/** Shared result reporting the array length after a push. */
+/** Shared result reporting the array length after a push or an insert. */
 const LENGTH_RESULT = { source: 'length' } as const;
 
 /** Shared plan that drops every slot of a non-empty array. */
@@ -22,7 +23,12 @@ const CLEAR_SLOTS_PLAN: ArrayArrangePlan = {
  * @returns Pure slot proposal, direct update, or no-op
  */
 export const arrangeBranchArray: Behavior['arrange'] = (node, operation) => {
-  if (node.raw === null && operation.kind !== 'push') return NOOP_PLAN;
+  if (
+    node.raw === null &&
+    operation.kind !== 'push' &&
+    operation.kind !== 'insert'
+  )
+    return NOOP_PLAN;
   const count = node.itemCount;
   switch (operation.kind) {
     case 'push':
@@ -47,6 +53,13 @@ export const arrangeBranchArray: Behavior['arrange'] = (node, operation) => {
             result: { source: 'removed', index: operation.index },
           }
         : NOOP_PLAN;
+    case 'insert': {
+      if (!isValidInsertIndex(operation.index, count)) return NOOP_PLAN;
+      const slots: ({ from: number } | { value: unknown })[] =
+        copyArraySlots(count);
+      slots.splice(operation.index, 0, { value: operation.value });
+      return { kind: 'slots', slots, result: LENGTH_RESULT };
+    }
     case 'update':
       return isValidArrayIndex(operation.index, count)
         ? {

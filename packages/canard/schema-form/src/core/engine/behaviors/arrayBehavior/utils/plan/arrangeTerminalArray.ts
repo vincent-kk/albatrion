@@ -2,11 +2,12 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { ArrayArrangePlan, Behavior } from '../../../../record';
 import { isValidArrayIndex } from './isValidArrayIndex';
+import { isValidInsertIndex } from './isValidInsertIndex';
 
 /** Shared plan for an array verb that changes nothing. */
 const NOOP_PLAN: ArrayArrangePlan = { kind: 'noop' };
 
-/** Shared result reporting the array length after a push. */
+/** Shared result reporting the array length after a push or an insert. */
 const LENGTH_RESULT = { source: 'length' } as const;
 
 /**
@@ -17,7 +18,12 @@ const LENGTH_RESULT = { source: 'length' } as const;
  */
 export const arrangeTerminalArray: Behavior['arrange'] = (node, operation) => {
   const raw = node.raw;
-  if (!isArray(raw) && raw !== undefined && operation.kind !== 'push')
+  if (
+    !isArray(raw) &&
+    raw !== undefined &&
+    operation.kind !== 'push' &&
+    operation.kind !== 'insert'
+  )
     return NOOP_PLAN;
   const source = isArray(raw) ? raw : [];
   const length = source.length;
@@ -43,6 +49,12 @@ export const arrangeTerminalArray: Behavior['arrange'] = (node, operation) => {
           raw: source.slice(0, -1),
           result: { source: 'removed', index: length - 1 },
         };
+  if (operation.kind === 'insert') {
+    if (!isValidInsertIndex(operation.index, length)) return NOOP_PLAN;
+    const inserted = source.slice();
+    inserted.splice(operation.index, 0, operation.value);
+    return { kind: 'raw', raw: inserted, result: LENGTH_RESULT };
+  }
   if (!isValidArrayIndex(operation.index, length)) return NOOP_PLAN;
   const copy = source.slice();
   if (operation.kind === 'remove') {

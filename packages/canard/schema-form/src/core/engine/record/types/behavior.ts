@@ -26,6 +26,7 @@ export type ArrayOperation =
   | { kind: 'pop' }
   | { kind: 'update'; index: number; value: unknown }
   | { kind: 'remove'; index: number }
+  | { kind: 'insert'; index: number; value: unknown }
   | { kind: 'clear' };
 
 /** Where settlement obtains the synchronous result of an array verb. */
