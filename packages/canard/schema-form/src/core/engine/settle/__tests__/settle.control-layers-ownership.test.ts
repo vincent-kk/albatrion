@@ -11,28 +11,43 @@ import { fragmentOwnershipSchemas } from './fixtures/fragmentOwnershipSchemas';
 
 // filid:contract settle-control-layers-ownership
 describe('P-08 fragment ownership matches the pre-P-08 rescan', () => {
-  it.each(fragmentOwnershipSchemas)(
-    'gives the reference layers for $label',
-    ({ label, schema, values }) => {
-      const { root } = createDispatchTree(schema);
-      let fragments = 0;
-      let comparisons = 0;
-      let nodes = 0;
-      for (const value of values) {
-        dispatchMount(root, value, WriteOption.Overwrite);
-        const compared = compareTree(root, label);
-        expect(compared.mismatches).toEqual([]);
-        fragments += compared.fragments;
-        comparisons += compared.comparisons;
-        nodes += compared.nodes;
-      }
-      expect(fragments).toBeGreaterThan(0);
-      console.log(
-        'P-08 differential:',
-        JSON.stringify({ label, nodes, comparisons, fragments }),
-      );
-    },
-  );
+  it('covers every fixture scene in the literal case table', () => {
+    expect(fragmentOwnershipSchemas).toHaveLength(8);
+  });
+
+  it.each([
+    'property named properties',
+    'nested fragments',
+    'sibling prefixes',
+    'items fragment',
+    'prefixItems fragment',
+    'additionalItems fragment',
+    'unselected child declaration and ordered field groups',
+    'gated fragment',
+  ])('gives the reference layers for %s', (label) => {
+    const scene = fragmentOwnershipSchemas.find(
+      (candidate) => candidate.label === label,
+    );
+    if (!scene) throw new Error(`Missing fixture scene: ${label}`);
+    const { schema, values } = scene;
+    const { root } = createDispatchTree(schema);
+    let fragments = 0;
+    let comparisons = 0;
+    let nodes = 0;
+    for (const value of values) {
+      dispatchMount(root, value, WriteOption.Overwrite);
+      const compared = compareTree(root, label);
+      expect(compared.mismatches).toEqual([]);
+      fragments += compared.fragments;
+      comparisons += compared.comparisons;
+      nodes += compared.nodes;
+    }
+    expect(fragments).toBeGreaterThan(0);
+    console.log(
+      'P-08 differential:',
+      JSON.stringify({ label, nodes, comparisons, fragments }),
+    );
+  });
 
   it('gives the reference layers or recorded rejection for all 59 corpus schemas', () => {
     expect(headFixture.cases).toHaveLength(59);
