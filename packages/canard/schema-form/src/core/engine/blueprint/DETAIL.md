@@ -42,7 +42,7 @@
 
 - `__tests__/blueprint.derive-convergence-lazy.test.ts`는 수렴 증명 지연 수집을 검증하므로 blueprint가 소유한다. 정규화 재사용의 병합 수와 노드 관측은 `effectiveSchema/__tests__/schema-merge.mount.test.ts`가 검증하므로 해당 자식이 소유한다. 공유 owned-inline 기준 데이터는 engine의 공용 시험 fixture에서 읽는다.
 
-- 기능 정적 색인은 청사진 identity마다 한 번 만들어 재사용한다. 상태 키는 표준 `readOnly`와 노드 `controls.visible/readOnly/disabled`를 가진 템플릿, 그리고 조각·부모 `controls.fields`가 주소로 지정한 직접 자식 경계를 구별한다. 비활성 선언도 색인에 남겨 두어 마지막 상태 키를 기본값으로 되돌릴 수 있게 하고, 참조 템플릿과 배열 아이템은 실제 부모와 이름으로 자식 대상을 판정한다. 감시는 유효 스키마에 `controls.watch`를 기여할 수 있는 노드·참조 에지 선언을 색인한다. 리터럴과 식은 평가하지 않으며, 색인의 메모리는 O(기능 선언 템플릿 + 직접 자식 대상 수)다(SETTLE-017, CONTROLS-045, EVENT-064, 65C-02).
+- 기능 정적 색인은 청사진 identity마다 한 번 만들어 재사용한다. 상태 키는 표준 `readOnly`와 노드 `controls.visible/readOnly/disabled`를 가진 템플릿, 그리고 조각·부모 `controls.fields`가 주소로 지정한 직접 자식 경계를 구별한다. 비활성 선언도 색인에 남겨 두어 마지막 상태 키를 기본값으로 되돌릴 수 있게 하고, 참조 템플릿과 배열 아이템은 실제 부모와 이름으로 자식 대상을 판정한다. 조각이 어느 자식을 직접 선언했는지는 engine DETAIL의 조각 소유 판정 한 벌(`getFragmentOwnerPaths`)로 정하므로, 조각이 `items`·`additionalItems`로 선언한 아이템은 `*`, `prefixItems`나 옛 튜플 `items`로 선언한 자리는 그 색인 이름으로 색인된다(CONTROLS-077, 35C-08). 감시는 유효 스키마에 `controls.watch`를 기여할 수 있는 노드·참조 에지 선언을 색인한다. 리터럴과 식은 평가하지 않으며, 색인의 메모리는 O(기능 선언 템플릿 + 직접 자식 대상 수)다(SETTLE-017, CONTROLS-045, EVENT-064, 65C-02).
 
 - `blueprint(schema, options?)`는 작성 루트와 분석 옵션으로 청사진을 만든다. 옵션으로는 터미널 판정, 원자 판정, 진단 수집기를 주입한다. 청사진 결과는 작성 때 받은 `isAtomic`·`isTerminal`의 함수 identity를 보유하며, 덕분에 정적 분석과 런타임 병합이 같은 판정을 쓴다. 캐시를 사용하는 호출은 호출자가 소유한 캐시를 명시적으로 전달해야 하고, 같은 스키마와 같은 판정 조건이면 결과 참조를 재사용한다. 캐시 키는 작성 루트와 판정 함수 둘의 identity를 구분하는 규칙을 유지한다(REACT-003·004, 69C-04). 캐시는 진단 소비자가 나중에 붙더라도 루트당 경고를 한 번 수집할 수 있어야 한다.
 
@@ -131,6 +131,10 @@
 
 - 같은 템플릿과 색인의 자리 항목은 같은 참조이고, 선언 경로는 템플릿 경로를 유지하며, 청사진이 없는 자리에는 항목이 없다. 옛 표기에서 스키마 객체인 `additionalItems`는 꼬리 자리의 템플릿이 되고, `false`·`true`·없음은 청사진이 없는 꼬리다(NODE-009·052, WRITE-022, 35C-04·08, 36C-02).
 
+### feature-index-item-fragment — 아이템 조각의 상태 키 색인
+
+- 배열 호스트의 조각이 상태 키를 갖고 `items` 또는 `additionalItems`로 아이템을 선언하면 기능 색인은 그 호스트의 자식 대상에 `*`를 넣고, 같은 조각이 `prefixItems`나 옛 튜플 `items`로 선언한 자리는 색인 이름으로 넣는다(CONTROLS-077, 35C-08).
+
 ## Boundary Exemptions
 
 ### `utils/features/getFeatureNodeIndex.ts` — 기능 색인 보조 유지
@@ -164,4 +168,4 @@
 
 ## Last Updated
 
-2026-10-13. 계약 기준: 211C-01, REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline. 비용 기록: 105라운드 자식 열거, 106라운드 선언 수집, 참조·controls·hint 봉투 가드와 형 목록 predicate; 정돈-2(2026-10-14). 정돈-3 blueprint 재구성(2026-10-15).
+2026-10-13. 계약 기준: 211C-01, REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline. 비용 기록: 105라운드 자식 열거, 106라운드 선언 수집, 참조·controls·hint 봉투 가드와 형 목록 predicate; 정돈-2(2026-10-14). 정돈-3 blueprint 재구성(2026-10-15). 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077).

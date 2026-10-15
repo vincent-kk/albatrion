@@ -5,6 +5,7 @@ import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { DeclarationLayer } from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
 const DECLARATION_IDS = new WeakMap<BlueprintNode, readonly number[]>();
@@ -117,13 +118,9 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         const child = declarations[childIndex];
         if (
           nodeIds.includes(child.id) &&
-          (child.schemaPath.startsWith(
-            declaration.schemaPath + '/properties/',
-          ) ||
-            child.schemaPath.startsWith(declaration.schemaPath + '/items/') ||
-            child.schemaPath.startsWith(
-              declaration.schemaPath + '/prefixItems/',
-            ))
+          getFragmentOwnerPaths(child.schemaPath).includes(
+            declaration.schemaPath,
+          )
         ) {
           ownsFragment = true;
           break;

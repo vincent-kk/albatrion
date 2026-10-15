@@ -4,6 +4,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 import type {
   Blueprint,
   BlueprintFeatureNodeIndex,
@@ -68,17 +69,10 @@ export const buildFeatureNodeIndex = (
       if (declaration.scope === 'fragment' && hasStateKeys(controls))
         for (const child of children)
           if (
-            child.node.declarations.some(
-              (entry) =>
-                entry.schemaPath.startsWith(
-                  declaration.schemaPath + '/properties/',
-                ) ||
-                entry.schemaPath.startsWith(
-                  declaration.schemaPath + '/items/',
-                ) ||
-                entry.schemaPath.startsWith(
-                  declaration.schemaPath + '/prefixItems/',
-                ),
+            child.node.declarations.some((entry) =>
+              getFragmentOwnerPaths(entry.schemaPath).includes(
+                declaration.schemaPath,
+              ),
             )
           )
             targets.add(child.name);
