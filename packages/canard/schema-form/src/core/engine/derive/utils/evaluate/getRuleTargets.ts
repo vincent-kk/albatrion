@@ -13,7 +13,7 @@ const NO_TARGETS: readonly never[] = Object.freeze([]);
  * @param source - Live declaration host that owns the authored control
  * @param rule - Template and direct-child selection for the control
  * @param state - Active declaration IDs for the current complete tree
- * @returns Current target, or none when its scoped declaration is inactive
+ * @returns Every current matching item or named child whose declaration is selected
  */
 export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
   source: Self,
@@ -22,17 +22,20 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
 ): readonly Self[] => {
   if (!rule.targetName) return [source];
   const children = source.structure;
-  if (!children || !hasOwnProperty(children, rule.targetName))
-    return NO_TARGETS;
-  const target = children[rule.targetName];
-  if (target.detached) return NO_TARGETS;
-  if (
-    rule.layer === 'fragment' &&
-    rule.targetDeclarationIds &&
-    !rule.targetDeclarationIds.some((id) =>
-      getSelectedDeclarationIds(target, state).includes(id),
-    )
-  )
-    return NO_TARGETS;
-  return [target];
+  // A repeated array template addresses every live item; declaration selection filters below.
+  const targets =
+    rule.targetName === '*' && source.blueprintNode.kind === 'array'
+      ? (source.children ?? NO_TARGETS)
+      : children && hasOwnProperty(children, rule.targetName)
+        ? [children[rule.targetName]]
+        : NO_TARGETS;
+  return targets.filter(
+    (target) =>
+      !target.detached &&
+      (rule.layer !== 'fragment' ||
+        !rule.targetDeclarationIds ||
+        rule.targetDeclarationIds.some((id) =>
+          getSelectedDeclarationIds(target, state).includes(id),
+        )),
+  );
 };

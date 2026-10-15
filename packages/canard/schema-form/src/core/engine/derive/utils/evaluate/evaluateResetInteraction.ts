@@ -42,62 +42,62 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
     for (const id of selected)
       for (const rule of table.byDeclaration.get(id) ?? []) {
         if (rule.kind !== 'resetInteraction') continue;
-        const target = getRuleTargets(node, rule, state)[0];
-        if (!target) continue;
-        const key = getDeriveRuleKey(
-          node.path,
-          node.blueprintNode.kind,
-          rule,
-          target,
-        );
-        addActiveRuleKey(state, node.path, key);
-        const previous = state.committedRuleValues.get(key);
-        const previousExists = state.committedRuleValues.has(key);
-        let current: boolean;
-        try {
-          const evaluated = evaluateScopedExpression(
-            root,
-            node,
+        for (const target of getRuleTargets(node, rule, state)) {
+          const key = getDeriveRuleKey(
+            node.path,
+            node.blueprintNode.kind,
             rule,
-            evaluatedExpressions,
+            target,
           );
-          if (evaluated.threw) throw evaluated.cause;
-          current = Boolean(evaluated.value);
-        } catch (cause) {
-          (failures ??= []).push({
-            sourcePath: node.path,
-            schemaPath: rule.schemaPath,
-            cause,
-          });
-          state.consumedRuleValues.set(key, false);
-          continue;
-        }
-        state.consumedRuleValues.set(key, current);
-        const load =
-          state.loadScope &&
-          (node.path === state.loadScope.path ||
-            node.path.startsWith(state.loadScope.path + '/'));
-        if (
-          !current ||
-          !(
-            load ||
-            state.entered.has(target) ||
-            state.revived.has(target) ||
-            (previousExists && !previous)
+          addActiveRuleKey(state, node.path, key);
+          const previous = state.committedRuleValues.get(key);
+          const previousExists = state.committedRuleValues.has(key);
+          let current: boolean;
+          try {
+            const evaluated = evaluateScopedExpression(
+              root,
+              node,
+              rule,
+              evaluatedExpressions,
+            );
+            if (evaluated.threw) throw evaluated.cause;
+            current = Boolean(evaluated.value);
+          } catch (cause) {
+            (failures ??= []).push({
+              sourcePath: node.path,
+              schemaPath: rule.schemaPath,
+              cause,
+            });
+            state.consumedRuleValues.set(key, false);
+            continue;
+          }
+          state.consumedRuleValues.set(key, current);
+          const load =
+            state.loadScope &&
+            (node.path === state.loadScope.path ||
+              node.path.startsWith(state.loadScope.path + '/'));
+          if (
+            !current ||
+            !(
+              load ||
+              state.entered.has(target) ||
+              state.revived.has(target) ||
+              (previousExists && !previous)
+            )
           )
-        )
-          continue;
-        if (!nodes.includes(target)) nodes.push(target);
-        if (state.trace)
-          trace.push({
-            phase: 'commit',
-            kind: rule.kind,
-            sourcePath: node.path,
-            targetPath: target.path,
-            previousValue: previous,
-            nextValue: current,
-            result: 'applied',
-          });
+            continue;
+          if (!nodes.includes(target)) nodes.push(target);
+          if (state.trace)
+            trace.push({
+              phase: 'commit',
+              kind: rule.kind,
+              sourcePath: node.path,
+              targetPath: target.path,
+              previousValue: previous,
+              nextValue: current,
+              result: 'applied',
+            });
+        }
       }
     if (!state.sourcePaths)
       for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)

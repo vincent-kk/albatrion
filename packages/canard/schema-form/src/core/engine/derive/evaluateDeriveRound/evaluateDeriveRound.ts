@@ -71,90 +71,98 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
     for (const id of selected)
       for (const rule of table.byDeclaration.get(id) ?? []) {
         if (rule.kind === 'resetInteraction') continue;
-        const target =
-          rule.kind === 'injectTo'
-            ? node
-            : getRuleTargets(node, rule, state)[0];
-        if (!target) continue;
-        const key = getDeriveRuleKey(
-          node.path,
-          node.blueprintNode.kind,
-          rule,
-          target,
-        );
-        addActiveRuleKey(state, node.path, key);
-        const consumed = state.consumedRuleValues.has(key);
-        const priorExists = consumed || state.committedRuleValues.has(key);
-        const prior = consumed
-          ? state.consumedRuleValues.get(key)
-          : state.committedRuleValues.get(key);
-        const load =
-          !consumed &&
-          Boolean(
-            state.loadScope &&
-              (node.path === state.loadScope.path ||
-                node.path.startsWith(state.loadScope.path + '/')),
+        for (const target of rule.kind === 'injectTo'
+          ? [node]
+          : getRuleTargets(node, rule, state)) {
+          const key = getDeriveRuleKey(
+            node.path,
+            node.blueprintNode.kind,
+            rule,
+            target,
           );
-        const appeared =
-          !consumed &&
-          (load || state.entered.has(target) || state.revived.has(target));
-        if (rule.kind === 'injectTo') {
-          const current = node.emit;
-          state.consumedRuleValues.set(key, current);
-          if (
-            state.loadScope &&
-            node.path !== state.loadScope.path &&
-            !node.path.startsWith(state.loadScope.path + '/')
-          )
-            continue;
-          if (!appeared && (!priorExists || sameValue(prior, current)))
-            continue;
-          const evaluated = evaluateInjectTo(node, root, rule);
-          if (evaluated.failure) {
-            (failures ??= []).push(evaluated.failure);
+          addActiveRuleKey(state, node.path, key);
+          const consumed = state.consumedRuleValues.has(key);
+          const priorExists = consumed || state.committedRuleValues.has(key);
+          const prior = consumed
+            ? state.consumedRuleValues.get(key)
+            : state.committedRuleValues.get(key);
+          const load =
+            !consumed &&
+            Boolean(
+              state.loadScope &&
+                (node.path === state.loadScope.path ||
+                  node.path.startsWith(state.loadScope.path + '/')),
+            );
+          const appeared =
+            !consumed &&
+            (load || state.entered.has(target) || state.revived.has(target));
+          if (rule.kind === 'injectTo') {
+            const current = node.emit;
+            state.consumedRuleValues.set(key, current);
+            if (
+              state.loadScope &&
+              node.path !== state.loadScope.path &&
+              !node.path.startsWith(state.loadScope.path + '/')
+            )
+              continue;
+            if (!appeared && (!priorExists || sameValue(prior, current)))
+              continue;
+            const evaluated = evaluateInjectTo(node, root, rule);
+            if (evaluated.failure) {
+              (failures ??= []).push(evaluated.failure);
+              continue;
+            }
+            for (const candidate of evaluated.writes)
+              chooseDeriveWrite(
+                candidate,
+                node.path,
+                state,
+                winners,
+                trace,
+                traceWinners,
+              );
+            if (evaluated.writes.length === 0 && state.trace)
+              trace.push({
+                phase: 'derive',
+                kind: 'injectTo',
+                sourcePath: node.path,
+                targetPath: node.path,
+                previousValue: current,
+                nextValue: undefined,
+                result: 'undefined',
+              });
             continue;
           }
-          for (const candidate of evaluated.writes)
-            chooseDeriveWrite(
-              candidate,
-              node.path,
-              state,
-              winners,
-              trace,
-              traceWinners,
-            );
-          if (evaluated.writes.length === 0 && state.trace)
-            trace.push({
-              phase: 'derive',
-              kind: 'injectTo',
-              sourcePath: node.path,
-              targetPath: node.path,
-              previousValue: current,
-              nextValue: undefined,
-              result: 'undefined',
-            });
-          continue;
-        }
-        let current: unknown;
-        let value: unknown;
-        try {
-          if (rule.kind === 'derived') {
-            const watchDependencies = getWatchPaths(target.blueprintNode);
-            current = [
-              ...(rule.expression?.dependencies.map((dependency) =>
-                readDeriveDependency(root, node.path, dependency),
-              ) ?? []),
-              ...watchDependencies
-                .filter(
-                  (dependency) =>
-                    target !== node ||
-                    !rule.expression?.dependencies.includes(dependency),
-                )
-                .map((dependency) =>
-                  readDeriveDependency(root, target.path, dependency),
-                ),
-            ];
-            if (appeared || (priorExists && !sameValue(prior, current))) {
+          let current: unknown;
+          let value: unknown;
+          try {
+            if (rule.kind === 'derived') {
+              const watchDependencies = getWatchPaths(target.blueprintNode);
+              current = [
+                ...(rule.expression?.dependencies.map((dependency) =>
+                  readDeriveDependency(root, node.path, dependency),
+                ) ?? []),
+                ...watchDependencies
+                  .filter(
+                    (dependency) =>
+                      target !== node ||
+                      !rule.expression?.dependencies.includes(dependency),
+                  )
+                  .map((dependency) =>
+                    readDeriveDependency(root, target.path, dependency),
+                  ),
+              ];
+              if (appeared || (priorExists && !sameValue(prior, current))) {
+                const evaluated = evaluateScopedExpression(
+                  root,
+                  node,
+                  rule,
+                  evaluatedExpressions,
+                );
+                if (evaluated.threw) throw evaluated.cause;
+                value = evaluated.value;
+              }
+            } else {
               const evaluated = evaluateScopedExpression(
                 root,
                 node,
@@ -162,81 +170,73 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
                 evaluatedExpressions,
               );
               if (evaluated.threw) throw evaluated.cause;
-              value = evaluated.value;
+              current = Boolean(evaluated.value);
+              if (!(current && (appeared || (priorExists && !prior))))
+                value = undefined;
             }
-          } else {
-            const evaluated = evaluateScopedExpression(
-              root,
-              node,
-              rule,
-              evaluatedExpressions,
-            );
-            if (evaluated.threw) throw evaluated.cause;
-            current = Boolean(evaluated.value);
-            if (!(current && (appeared || (priorExists && !prior))))
-              value = undefined;
-          }
-        } catch (cause) {
-          (failures ??= []).push({
-            sourcePath: node.path,
-            schemaPath: rule.schemaPath,
-            cause,
-            kind: 'expression',
-          });
-          state.consumedRuleValues.set(key, current);
-          continue;
-        }
-        state.consumedRuleValues.set(key, current);
-        if (rule.kind === 'unsetValue' && current)
-          state.activeUnsetTargets.add(target);
-        const fired =
-          rule.kind === 'derived'
-            ? Boolean(appeared || (priorExists && !sameValue(prior, current)))
-            : current === true && Boolean(appeared || (priorExists && !prior));
-        if (!fired) continue;
-        if (rule.kind === 'derived' && value === undefined) {
-          if (state.trace)
-            trace.push({
-              phase: 'derive',
-              kind: rule.kind,
+          } catch (cause) {
+            (failures ??= []).push({
               sourcePath: node.path,
-              targetPath: target.path,
-              previousValue: target.emit,
-              nextValue: value,
-              result: 'undefined',
+              schemaPath: rule.schemaPath,
+              cause,
+              kind: 'expression',
             });
-          continue;
+            state.consumedRuleValues.set(key, current);
+            continue;
+          }
+          state.consumedRuleValues.set(key, current);
+          if (rule.kind === 'unsetValue' && current)
+            state.activeUnsetTargets.add(target);
+          const fired =
+            rule.kind === 'derived'
+              ? Boolean(appeared || (priorExists && !sameValue(prior, current)))
+              : current === true &&
+                Boolean(appeared || (priorExists && !prior));
+          if (!fired) continue;
+          if (rule.kind === 'derived' && value === undefined) {
+            if (state.trace)
+              trace.push({
+                phase: 'derive',
+                kind: rule.kind,
+                sourcePath: node.path,
+                targetPath: target.path,
+                previousValue: target.emit,
+                nextValue: value,
+                result: 'undefined',
+              });
+            continue;
+          }
+          const candidate: DeriveWrite<Self> = {
+            target,
+            targetPath: target.path,
+            value: rule.kind === 'unsetValue' ? undefined : value,
+            kind: rule.kind,
+            rank: KIND_RANK[rule.kind],
+            layer: LAYER_RANK[rule.layer],
+            sourceOrder: getDeriveSourceOrder(node),
+            ruleOrder: rule.order,
+            returnOrder: 0,
+          };
+          const invalid = getVirtualWriteFailure(
+            node.path,
+            rule.schemaPath,
+            target.path,
+            target.blueprintNode,
+            candidate.value,
+          );
+          if (invalid) {
+            (failures ??= []).push(invalid);
+            continue;
+          }
+          chooseDeriveWrite(
+            candidate,
+            node.path,
+            state,
+            winners,
+            trace,
+            traceWinners,
+          );
         }
-        const candidate: DeriveWrite<Self> = {
-          target,
-          targetPath: target.path,
-          value: rule.kind === 'unsetValue' ? undefined : value,
-          kind: rule.kind,
-          rank: KIND_RANK[rule.kind],
-          layer: LAYER_RANK[rule.layer],
-          sourceOrder: getDeriveSourceOrder(node),
-          ruleOrder: rule.order,
-          returnOrder: 0,
-        };
-        const invalid = getVirtualWriteFailure(
-          node.path,
-          rule.schemaPath,
-          target.path,
-          target.blueprintNode,
-          candidate.value,
-        );
-        if (invalid) {
-          (failures ??= []).push(invalid);
-          continue;
-        }
-        chooseDeriveWrite(
-          candidate,
-          node.path,
-          state,
-          winners,
-          trace,
-          traceWinners,
-        );
       }
     if (!state.sourcePaths)
       for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)
