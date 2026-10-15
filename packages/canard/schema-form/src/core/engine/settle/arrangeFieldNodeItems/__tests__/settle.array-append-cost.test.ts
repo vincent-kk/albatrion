@@ -9,6 +9,7 @@ import * as reuseProof from '../../utils/compute/childSelection/canReuseArrayChi
 import * as reuse from '../../utils/compute/childSelection/reuseArrayChildren';
 import * as ids from '../../utils/compute/childSelection/staticIds';
 import * as alignment from '../../utils/loadValues/alignArraySnapshotSlots';
+import * as emissions from '../../utils/output/utils/keepsChildEmissions';
 import * as tailProof from '../utils/arraySlots/canApplyArrayTail';
 import * as admission from '../utils/arraySlots/prepareArrayAppend';
 
@@ -103,5 +104,33 @@ describe('an admitted push does prefix work independent of the item count', () =
     expect(small.sized.slice).toBe(1);
     expect(small.sized.concat).toBe(1);
     expect(large.sized.push).toBe(small.sized.push);
+  });
+
+  it('skips the item-count-wide revival scan when a defaulted object item reassembles its host', () => {
+    const { root } = createDispatchTree({
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: { a: { type: 'number', default: 1 } },
+      },
+    });
+    dispatchMount(
+      root,
+      Array.from({ length: 2000 }, () => ({ a: 2 })),
+      WriteOption.Overwrite,
+      { deferValidation: true },
+    );
+    const admit = vi.spyOn(admission, 'prepareArrayAppend');
+    const scan = vi.spyOn(emissions, 'keepsChildEmissions');
+
+    expect(dispatchPush(root, {})).toBe(2001);
+
+    expect(admit.mock.results.some((call) => call.value !== undefined)).toBe(
+      true,
+    );
+    expect(root.children![2000].structure!.a.emit).toBe(1);
+    expect(
+      scan.mock.calls.filter(([, children]) => children.length >= 1000),
+    ).toHaveLength(0);
   });
 });

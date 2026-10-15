@@ -8,8 +8,9 @@ import { keepsChildEmissions } from './utils/keepsChildEmissions';
 
 /**
  * Assemble and project a node once from its current child order.
+ * For the host of a still-valid append proof it passes the appended position to the row and records the first appended assembly in `arrayAppend.assembled`.
  * @param node - Live node whose row owns assembly and projection
- * @param context - Current commit's changed-node set
+ * @param context - Current commit's changed-node set and the optional `arrayAppend` proof it reads
  * @param recalculated - Direct children recomputed with an unchanged host shape
  * @returns Whether either calculated value changed
  */

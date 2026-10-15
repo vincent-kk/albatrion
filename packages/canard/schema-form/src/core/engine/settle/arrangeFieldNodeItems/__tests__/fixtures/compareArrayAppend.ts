@@ -1,7 +1,5 @@
 import { expect, vi } from 'vitest';
 
-import { isArray } from '@winglet/common-utils/filter';
-
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import {
@@ -12,9 +10,10 @@ import {
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../../__tests__/fixtures/createDispatchTree';
 import { observeArraySelection } from '../../../__tests__/fixtures/observeArraySelection';
-import { readFieldNodeDefaultValue } from '../../../utils/loadValues/readFieldNodeDefaultValue';
 import * as general from '../../utils/arraySlots/applyArraySlots';
 import * as admission from '../../utils/arraySlots/prepareArrayAppend';
+import { defaultsOf } from './defaultsOf';
+import { slotsOf } from './slotsOf';
 
 /** One public write applied identically to the candidate and the oracle. */
 export interface AppendStep {
@@ -23,41 +22,6 @@ export interface AppendStep {
   /** Whether the candidate must admit this step to the append path. */
   append: boolean;
 }
-
-/**
- * Describe an array slot by slot so holes, undefined and NaN stay distinct.
- * @param value - Any committed value
- * @returns Per-slot markers for arrays, or the value itself
- */
-const slotsOf = (value: unknown): unknown =>
-  isArray(value)
-    ? Array.from({ length: value.length }, (_, index) =>
-        index in value
-          ? Number.isNaN(value[index])
-            ? 'NaN'
-            : value[index] === undefined
-              ? 'undefined'
-              : value[index]
-          : 'hole',
-      )
-    : value;
-
-/**
- * Walk a committed tree and read every node's public default source.
- * @param root - Committed tree
- * @returns Path and default-value source of each live node in document order
- */
-const defaultsOf = (root: DispatchTestNode): unknown[] => {
-  const reads: unknown[] = [];
-  const pending = [root];
-  while (pending.length) {
-    const node = pending.pop()!;
-    reads.push([node.path, slotsOf(readFieldNodeDefaultValue(node))]);
-    for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)
-      pending.push(node.children![index]);
-  }
-  return reads;
-};
 
 /**
  * Run identical public writes with the append admission enabled and declined.
