@@ -25,9 +25,10 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
  * Positions before `proof.index` keep their nodes, keys, raw, load-snapshot slots and structure entries, and are never read.
  * Mutates `host.structure` in place; the tail items shift by one position and are renamed in the general path's order.
  * Admission proved the blueprint ungated, so no gate is removed or registered here.
+ * Renamed tail descendants are re-published and marked changed but not scheduled for recalculation: no value or selection of a static blueprint reads a position.
  * @param host - Live static branch array admitted by prepareArraySplice
  * @param proof - Admitted splice: the edited position, and for an insert its entry and value slot
- * @param context - Settlement receiving the same lifecycle, path-change and dirty facts as the general path
+ * @param context - Settlement receiving the general path's lifecycle and path-change facts; only the host and an inserted item are dirty
  * @returns Committed value of the removed position; undefined for an insert
  */
 export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
@@ -120,9 +121,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
           previous: former,
           current: descendant.path,
         });
-        context.dirtyPaths.add(descendant.path);
-        if (descendant.behavior.strategy === 'branch')
-          context.shapeDirtyPaths.add(descendant.path);
+        // Not marked dirty: the static admission leaves no gate or expression that could read a position.
         context.changedNodes.add(descendant);
       },
       { owned: true },
