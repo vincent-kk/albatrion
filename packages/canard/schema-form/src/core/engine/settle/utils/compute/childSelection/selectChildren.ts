@@ -27,6 +27,7 @@ import {
   DIRECT_CHILD_SELECTION_PLANS,
   getDirectChildSelectionPlan,
 } from './getDirectChildSelectionPlan';
+import { readAdmittedEdgeSchema } from './readAdmittedEdgeSchema';
 import { reuseArrayChildren } from './reuseArrayChildren';
 import { staticIds } from './staticIds';
 import { staticShape } from './staticShape';
@@ -159,6 +160,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     let threw = false;
     let declarations: BlueprintChildEntry['declarations'];
     let activeIds: readonly number[] | undefined;
+    let fullyAdmitted = false;
     if (step) {
       const version = context.gateThrowVersion;
       const admitted = !step.gate || evaluateGate(step.gate, context, node);
@@ -166,8 +168,9 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       activeIds = admitted ? step.ids : NO_ACTIVE_IDS;
       threw = !admitted && context.gateThrowVersion !== version;
     } else if (context.hasGates) {
-      const active: (typeof entry.declarations)[number][] = [];
-      const ids: number[] = [];
+      // Allocated at the first rejected declaration; until then every one is admitted.
+      let active: (typeof entry.declarations)[number][] | undefined;
+      let ids: number[] | undefined;
       for (let index = 0; index < entry.declarations.length; index++) {
         const declaration = entry.declarations[index];
         const version = context.gateThrowVersion;
@@ -193,12 +196,17 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           }
         }
         if (admitted) {
-          active.push(declaration);
-          ids.push(declaration.id);
-        } else if (context.gateThrowVersion !== version) threw = true;
+          active?.push(declaration);
+          ids?.push(declaration.id);
+        } else {
+          active ??= entry.declarations.slice(0, index);
+          ids ??= active.map((kept) => kept.id);
+          if (context.gateThrowVersion !== version) threw = true;
+        }
       }
-      declarations = active;
-      activeIds = ids;
+      fullyAdmitted = active === undefined;
+      declarations = active ?? entry.declarations;
+      activeIds = ids ?? staticIds(entry);
     } else declarations = entry.declarations;
     if (declarations.length === 0) {
       const priorChild = hasOwnProperty(prior, entry.name)
@@ -339,11 +347,17 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const ids = activeIds ?? staticIds(entry);
     if (context.selectedDeclarationIds.get(child) !== ids)
       context.selectedDeclarationIds.set(child, ids);
-    const effective = mergeEffectiveSchema(
-      child.blueprintNode,
-      context.hasGates ? ids : NO_ACTIVE_IDS,
-      { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic },
-    );
+    const isAtomic = node.runtime.blueprint?.isAtomic;
+    const admittedEdge = fullyAdmitted
+      ? readAdmittedEdgeSchema(entry, child.blueprintNode, isAtomic)
+      : undefined;
+    const effective =
+      admittedEdge?.schema ??
+      mergeEffectiveSchema(
+        child.blueprintNode,
+        context.hasGates ? ids : NO_ACTIVE_IDS,
+        { mode: 'runtime', isAtomic },
+      );
     if (child.schema !== effective) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
@@ -355,7 +369,11 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       changed = true;
       entryChanged = true;
     }
-    if (effective.typeConflict || hasSharedConflict(entry, declarations)) {
+    if (
+      admittedEdge
+        ? admittedEdge.conflict
+        : effective.typeConflict || hasSharedConflict(entry, declarations)
+    ) {
       recordSettlementFailure(
         context,
         new SchemaFormError(
