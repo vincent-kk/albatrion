@@ -556,7 +556,8 @@
 
 - 결정:
   > 나감의 정책은 직전 커밋에서 그 노드에 걸려 있던 선언(그때 켜져 있던 조각의 `controls`, 부모의 `controls.children` 항목, 노드 자신의 키)으로 정한다(P3). 조각 층은 그 조각이 꺼지는 순간에도 적용된다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(377C-01): "【추론】 선언 경로가 어느 조각에 속하는지는 engine의 utils/controls에 둔 도우미 하나(getFragmentOwnerPaths)가 정하고, blueprint의 buildFeatureNodeIndex·settle의 getControlLayers·derive의 getDeriveRuleTable 세 호출부가 같은 판정을 쓴다. 세 사용자가 engine의 서로 다른 자식 fractal이라 가장 낮은 공통 fractal은 engine이고, 기관은 공통 조상이 될 수 없으며, 도우미는 문자열만 받아 자식의 형을 가져오지 않는다. 판정은 선언 경로가 조각 경로 뒤에 /properties/·/prefixItems/로 이어지거나 /items·/additionalItems로 이어지고 그 뒤가 끝이거나 /인 경우이며, 키워드와 같은 이름의 속성이 만드는 키워드 그릇 경로 후보는 선언 경로가 될 수 없어 호출부의 실제 자식 포함 판정에서 걸러지므로 옛 접두 판정과 동치다. 이로써 조각이 items·additionalItems로 선언한 아이템은 상태 키 색인에 별표 자리로, prefixItems와 옛 튜플 items 자리는 색인 이름으로 들고, 아이템마다 그 조각의 default·unsetOnInactive·상태 키를 조각 층으로 받으며, 조각이 꺼져 아이템이 나갈 때는 그 조각의 unsetOnInactive가 Form 정책보다 앞선다(WRITE-032). 조각 derive 규칙은 getDeriveRuleTable이 대상 후보를 객체 속성 항목에 한정하므로 아직 아이템에 닿지 않고 376C-02의 별도 PR이 고친다." (`reviews/round-377-closing.md:8`)
 - 상태: 현행
 - 출처: `03-mental-model.md:94#9-10`(정본), `08-design-a-to-z.md:302`
 - 닫은 사람: 원리(P3, `03-mental-model.md:94`)
