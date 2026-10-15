@@ -29,6 +29,10 @@ const itemsWith = (controls: Record<string, unknown>): BlueprintSchema => ({
   },
 });
 
+/** The array declared under the name `list` in the root object. */
+const listOf = (root: DispatchTestNode): DispatchTestNode =>
+  root.children!.find((child) => child.name === 'list')!;
+
 // filid:contract settle-array-append-fallback
 describe('append admission declines and the general path settles', () => {
   it.each<[string, BlueprintSchema, unknown, boolean]>([
@@ -80,6 +84,77 @@ describe('append admission declines and the general path settles', () => {
       { apply: (root) => dispatchPush(root), append: false },
     ]);
     expect(general.mock.calls.length > 0).toBe(slotted);
+  });
+
+  it.each<[string, BlueprintSchema, unknown]>([
+    [
+      'oneOf',
+      {
+        type: 'object',
+        properties: { branch: { type: 'string' } },
+        oneOf: [
+          {
+            properties: {
+              branch: { const: 'a' },
+              list: { type: 'array', items: { type: 'number', minimum: 0 } },
+            },
+          },
+          {
+            properties: {
+              branch: { const: 'b' },
+              list: { type: 'array', items: { type: 'number', maximum: 100 } },
+            },
+          },
+        ],
+      },
+      { branch: 'a', list: [1, 2, 3] },
+    ],
+    [
+      'anyOf',
+      {
+        type: 'object',
+        properties: { list: { type: 'array', items: { type: 'number' } } },
+        anyOf: [{ properties: { list: { minItems: 1 } } }],
+      },
+      { list: [10, 20] },
+    ],
+    [
+      'if then',
+      {
+        type: 'object',
+        properties: { list: { type: 'array', items: { type: 'number' } } },
+        if: { properties: { list: { minItems: 1 } } },
+        then: {},
+      },
+      { list: [100] },
+    ],
+  ])('an array inside a %s branch schema', (_, schema, input) => {
+    const general = vi.spyOn(tail, 'canApplyArrayTail');
+    compareArrayAppend(
+      schema,
+      input,
+      [
+        { apply: (root) => dispatchPush(listOf(root), 4), append: false },
+        { apply: (root) => dispatchPush(listOf(root)), append: false },
+      ],
+      listOf,
+    );
+    expect(general).toHaveBeenCalled();
+  });
+
+  it('a push at the tuple prefix length takes the append path and one beyond it stays on it', () => {
+    compareArrayAppend(
+      {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }],
+        items: { type: 'boolean' },
+      },
+      ['a', 1],
+      [
+        { apply: (root) => dispatchPush(root, true), append: true },
+        { apply: (root) => dispatchPush(root, false), append: true },
+      ],
+    );
   });
 
   it('batch and visit walks keep marking the push', () => {
