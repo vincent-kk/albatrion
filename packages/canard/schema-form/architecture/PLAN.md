@@ -124,6 +124,7 @@
 | 2026-10-15 | 368라운드 소유자: 전후 표는 옛 판·수정 전·수정 후 각각 비율과 절대값. 보충 1줄 | `reviews/round-368-owner-answers.md` |
 | 2026-10-15 | 369라운드 소유자: 비동기 옛 판도 적용 시점까지 측정. 보충 1줄 | `reviews/round-369-owner-answers.md` |
 | 2026-10-15 | 370라운드 소유자: 옛 판은 목표치가 아니라 비교치, 목표는 비효율 제거와 설계 개선점. 보충 1줄 | `reviews/round-370-owner-answers.md` |
+| 2026-10-15 | 371라운드(닫기): L1b PR #400 검증·squash-merge(f441a9159); 배열 동사 계약 해석, SURFACE-005 insert, 수용 복사 셋, L2 이월·대기열 58. 보충 4줄 | `reviews/round-371-closing.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |

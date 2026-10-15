@@ -151,6 +151,7 @@
   > 편집자 결정(18C-44): "【추론】 `node.resetSubtree()`는 진입 하나에서 `clearSubtreeState()`를 한 뒤 `node.defaultValue`를 그 하위 트리에 로드한다." (`reviews/round-18-closing.md:1227`)
   > 편집자 결정(35C-03): "【추론】 SURFACE-005가 배열 쓰기를 다섯(`push`·`pop`·`update`·`remove`·`clear`)으로 닫았고, 원장의 "삽입"은 모두 "`push(v)`·삽입"(WRITE-085, WRITE-099) 또는 "`push`·`remove`·`insert`류"(NODE-051)로 연산 부류를 이름한 것이라 공개 동사도 내부 연산도 아니다; 06은 삽입을 만들지 않고, WRITE-099의 스냅숏 게이트는 `push('x')`로 충족하며 삽입 쪽은 동사가 없어 해당 없음으로 적는다. 삽입 동사가 필요해지면 SURFACE 라운드다." (`reviews/round-35-closing.md:25`)
   > 편집자 결정(35C-06): "【추론】 `update(i, v)`는 i번째 아이템에 `v`를 통째로 쓰는 로드 아닌 쓰기이고(그 안의 위치 재조정은 NODE-051), WRITE-007대로 그 아이템만 바뀌며 WRITE-085대로 구조 연산이 아니라 키와 스냅숏 자리를 지킨다." (`reviews/round-35-closing.md:48`)
+  > 편집자 결정(371C-02): "【추론】 공개 배열 동사는 push·pop·update·remove·clear에 insert(index, value?)를 더해 여섯이며 새 길이를 돌려준다(365라운드 소유자 결정, 겉면 이름 수 94 그대로, 멤버 55). WRITE-099 결정은 이미 삽입을 push와 같은 구조 연산으로 적어 두었다. 규칙은 기존 동사의 규칙을 옮긴다: 유효 범위는 [0, N]이고 N은 push와 같은 결과·같은 지름길(WRITE-088·099), 범위 밖·음수·정수 아님은 오류 없는 무동작에 현재 길이(35C-06의 확장), 배열이 아닌 호스트는 insert(0)만 push처럼 [x]를 만들고 misfit 경고등을 끄며 그 밖은 무동작(47C-02의 추론: 있는 아이템을 전제하는 동사만 무효), batch 안은 62C-01대로 호출 자리에서 끼우고 끝에서 통째 쓰기, minItems·maxItems는 막지 않는다(SURFACE-005 보충·WRITE-022). 구현의 발견 넷: insert의 defaultValue는 통째 쓰기와 같을 수 없다(통째는 스냅숏 유지 WRITE-085, insert는 생성 값을 끼움 WRITE-099); 끼운 자리 뒤 아이템은 값 갱신 대신 경로 갱신 revision 하나를 받는다(NODE-051); 아이템 기본값이 있는 스키마는 차등에서 뺀다(새 아이템은 채움 WRITE-088, 통째의 기존 자리는 아님 WRITE-090); 겉면 DETAIL의 멤버 시험 수는 이미 54였던 것을 55로 바로잡았다. 06-conclusions.md:386의 "배열 다섯"은 이 결정과 충돌이다." (`reviews/round-371-closing.md:10`)
   > 편집자 결정(35C-06): "【추론】 범위 밖([0, 길이) 밖)·음수 인덱스의 `update`·`remove`, 빈 배열의 `pop()`, 값이 `null`인 터미널 배열의 `update`·`remove`·`pop`은 원장이 정한 바가 없으므로 레거시(`src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/BranchStrategy.ts:413-447`, `TerminalStrategy/TerminalStrategy.ts:195-224`)를 따라 오류도 경고도 없는 무효 호출이다; 새 코드는 없고 06의 시험이 무효 호출을 단언해 고정한다." (`reviews/round-35-closing.md:49`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:411`(정본), `02-target-overview.md:306`, `06-conclusions.md:338,386`, `07-conclusions.md:350`, `05-before-after.md:77` (같은 규칙: FRAGMENT-010, WRITE-015, EVENT-002; `resetSubtree`의 존폐는 열림 WRITE-050), `reviews/round-18-closing.md:1227`
@@ -159,6 +160,7 @@
 - 까닭: `06-conclusions.md:386`, `07-conclusions.md:142`, `reviews/round-18-closing.md:1240-1247`
 - 충돌:
   > `02-target-overview.md:306`의 "배열 `push`·`remove`·`update`"는 정본과 다르다(`pop`·`clear`가 없다). 정본이 이긴다(`08-design-a-to-z.md:411`; `02-target-overview.md:3`은 새 결정을 만들지 않는다고 적는다).
+  > `06-conclusions.md:386`의 "`remove(index)`, `clear()`"은 배열 동사를 다섯으로 닫은 줄이라 371C-02(insert 추가로 여섯)와 충돌이다. 371C-02가 이긴다(365라운드 소유자 결정, `reviews/round-365-owner-answers.md:7`).
 
 ### SURFACE-006 값 읽기 — `value`, `outputValue`, `getInactiveValues(path)`, `FormHandle.getValue()`
 
