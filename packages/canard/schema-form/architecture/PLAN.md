@@ -133,6 +133,7 @@
 | 2026-10-15 | 377라운드(닫기): items 조각 층 결함 PR #403 검증·squash-merge(3f02269ab); 조각 소유 판정 도우미 한 벌, 아이템의 조각 층, 기존 기대 변경 0건. 보충 2줄 | `reviews/round-377-closing.md` |
 | 2026-10-15 | 378라운드 소유자: 오류·경고 코드의 그룹 상수화와 그룹별 표(속도 루프 뒤 정돈 항목, 공개 여부는 대기열 61). 보충 1줄 | `reviews/round-378-owner-answers.md` |
 | 2026-10-15 | 379라운드 소유자: 코드 그룹 상수는 공개하지 않음(내부 관리용), 대기열 61 닫힘. 보충 1줄 | `reviews/round-379-owner-answers.md` |
+| 2026-10-16 | 380라운드 소유자: 코드 그룹 상수화를 지금 codex에게 /orchestration으로(범위 src/errors, 값·공개 이름·순서 불변). 보충 1줄 | `reviews/round-380-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |

@@ -292,6 +292,7 @@
 | 2026-10-15 | 377라운드(닫기): items 조각 층 결함 PR #403 검증·squash-merge(3f02269ab); 조각 소유 판정 도우미 한 벌, 아이템의 조각 층, 기존 기대 변경 0건. 보충 2줄 | `reviews/round-377-closing.md` |
 | 2026-10-15 | 378라운드 소유자: 오류·경고 코드의 그룹 상수화와 그룹별 표(속도 루프 뒤 정돈 항목, 공개 여부는 대기열 61). 보충 1줄 | `reviews/round-378-owner-answers.md` |
 | 2026-10-15 | 379라운드 소유자: 코드 그룹 상수는 공개하지 않음(내부 관리용), 대기열 61 닫힘. 보충 1줄 | `reviews/round-379-owner-answers.md` |
+| 2026-10-16 | 380라운드 소유자: 코드 그룹 상수화를 지금 codex에게 /orchestration으로(범위 src/errors, 값·공개 이름·순서 불변). 보충 1줄 | `reviews/round-380-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -614,3 +615,4 @@
 - **377라운드(2026-10-15, 닫기).** items 조각 층 결함 PR #403 병합(3f02269ab); 조각 소유 판정 한 벌(reviews/round-377-closing.md).
 - **378라운드(2026-10-15, 소유자).** 오류·경고 코드 그룹 상수화, 속도 루프 뒤(reviews/round-378-owner-answers.md).
 - **379라운드(2026-10-15, 소유자).** 코드 그룹 상수는 내부용, 대기열 61 닫힘(reviews/round-379-owner-answers.md).
+- **380라운드(2026-10-16, 소유자).** 코드 그룹 상수화를 지금 codex에게(reviews/round-380-owner-answers.md).
