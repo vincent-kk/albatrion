@@ -386,3 +386,52 @@ L2 설계의 W4입니다. 판정 기준은 370라운드("늘리는 코드가 지
 - 이 경로에서는 자격 판정과 키 확인이 한 번도 불리지 않습니다(`admitsSameValueWrite` 0회, `keepsHostKeys` 0회).
 - W1이 더한 것은 짧게 끊기는 검사 하나와 아이템마다의 거짓 삼항·센티널 비교·다섯째 인자뿐입니다.
 - 그래서 `markWrite` 본문과 서명이 커진 데 따른 엔진 수준 효과로 추정합니다. 절대값은 0.17 ms이고, 8천과 Node에서는 나타나지 않습니다.
+
+## H10 검토 결론 — JSON.stringify 없는 키 생성(356라운드 소유자 지시)
+
+**근거 문서**
+
+- 감사 B는 따로 된 문서가 없습니다. 요약만 남아 있습니다: `priority.md:18`, `priority.md:38`, `reviews/round-335-owner-answers.md:7`의 3번, `reviews/round-356-owner-answers.md:7`.
+- 335라운드 3번: 키 조립에는 `src/constants/control.ts`의 제어 문자를 구분자로 씁니다. 다시 parse하는 키는 예외로 `JSON.stringify`를 유지합니다.
+- 오늘 키를 만드는 `JSON.stringify` 호출은 `src/core/engine`에 42곳입니다. 그 밖에 `src/core/surface/utils/fieldNodeFactory.ts:153`과 `src/providers/FormErrorContext/utils/createFormErrorService.ts:27`의 2곳이 있습니다.
+- 측정 대상은 dist `c2dd0e2e…`(HEAD `b9e2f63dc`)입니다. 조용한 창이 아니었으므로 수치는 참고값입니다.
+
+**자리 분류**
+
+| 묶음 | 자리 | 다시 parse | 빈도(oneOf-20) |
+| --- | --- | --- | --- |
+| 이탈 대기(`pendingExits`) 키 | `selectChildren.ts:219`·`:320`·`:450`, `primeHost.ts:61`, `transitionSettlement.ts:76`·`:155` | 안 함. 이 여섯 자리 밖에서 키를 읽지 않음 | `:219` 갱신당 330회, 마운트당 288회. 나머지는 갱신당 6–20회 |
+| 지역 집합·캐시 | `transitionSettlement.ts:84`(채움 집합), `calculateStateKeys.ts:118`, `evaluateScopedExpression.ts:30`, `getControlExpression.ts:31`·`:42`, `commitExitPolicyValues.ts:38`·`:154` | 안 함 | 정착당 몇 회. P-08 F=128에서 `:118`과 `:42`가 각 128회 |
+| 청사진 시점 | `resolveNodeStrategy.ts:48`, `getTemplateKey.ts:15`·`:64` | 안 함. `getTemplateKey`는 일부러 JSON 모양을 바이트 그대로 맞춘 키 | 마운트당 20·123·60회 |
+| 쌍 키 `[경로, 종류]` | `latentRaw`·`committedDeclarationIds`에 들어가는 13곳(`getCommittedDeclarationKey`, `captureExitedRaw`, `finalizeExits`, `enterFieldNode`, `selectChildren.ts:287` 등) | 함(`getStoreKeyPaths`, `getLatentPathIndex`, `setLatentRaw`, `pruneLatentRaw` 등) | 갱신당 3–12회 |
+| 경고 키 | `dedupeWarningRecord`, `commitSettlement.ts:156`·`:173`, `selectNodeSchema`, `finishStaticFirstLoad`, `adoptFieldNodeChain.ts:93`, `rekeyArrayRuntimePaths`, `fieldNodeFactory` | 함(`clearWarningKeys`, `exitFieldNodeChain.ts:57`, `adoptFieldNodeChain.ts:66` 등) | 경고가 날 때만 |
+| 규칙 키 | `getDeriveRuleKey`, `getExitPolicyKey`, `rekeyCommittedRules`, `rekeyPairedPathStore` | 함(`updateCommittedRuleValue`, `pruneCommittedRuleKeys`) | 파생 폼에서만 |
+
+- 다시 parse하는 세 묶음(쌍 키, 경고 키, 규칙 키)은 335라운드 3번의 예외로 형식을 그대로 둡니다.
+- 함정 1: `exitFieldNodeChain.ts:57`은 `startsWith('[')`로 키 형식을 가립니다.
+- 함정 2: `adoptFieldNodeChain.ts:93`은 `JSON.stringify([code, ''])`를 만듭니다. 이 키는 parse하는 키와 같은 맵에 들어갑니다. 그래서 경고 키 하나만 바꾸면 그 키가 함정 1의 다른 갈래로 갑니다. 경고 키 묶음은 건드리지 않습니다.
+
+**비중(Node, 함수별 계측 dist 사본)**
+
+- oneOf-20 갱신(쓰기 두 번, 약 1,846 µs): `JSON.stringify` 약 437회, 약 55–70 µs. **3–4%**입니다.
+- oneOf-20 마운트(약 2,600 µs): 런타임 약 290회와 청사진 203회, 약 50 µs. **약 2%**입니다.
+- P-08 F=128(2,088 µs): 256회, **약 2%**입니다. 이차인 몫은 `getControlLayers`(1,696 µs)입니다.
+- 한 번당 비용: 쌍 키 만들기 116 → 30 ns(구분자 이어 붙이기). 맵 조회까지 171 → 108 ns. 빈 맵 검사만 하면 약 5 ns입니다.
+- A/B(dist 사본, oneOf-20 갱신): 첫 바퀴 기준 1.658, 빈 맵 건너뛰기 1.601, 구분자 1.581 ms. 둘째 바퀴 1.741, 1.769, 1.738 ms. Bun도 차이가 없습니다. **잡음 안입니다.**
+
+**제안**
+
+| 제안 | 내용 | 실행 줄 | 위험 |
+| --- | --- | --- | --- |
+| P1 | `selectChildren.ts:219`와 `primeHost.ts:61`에서 이탈 대기 맵이 비었으면 키를 만들지 않고 조회·삭제도 하지 않음. 형식은 그대로 | 4–6 | 없음. 빈 맵 조회는 늘 undefined |
+| P2 | 이탈 대기 키 여섯 자리를 `경로 + UNIT_SEPARATOR + 종류`로 | 약 6과 import | 경로에는 `\x1F`가 들어갈 수 있음(`escapeSegment`는 `~`·`/`만 이스케이프). 그러나 종류는 닫힌 어휘(`BlueprintNodeKind`)이고 맨 뒤라 키가 겹치지 않음. 여섯 자리를 함께 바꿔야 하며, 하나라도 빠지면 컴파일은 되지만 조회가 조용히 빗나감 |
+| P3 | `transitionSettlement.ts:84` 채움 집합을 같은 구분자로 | 1 | P2와 같은 논리. 다른 저장소라 P2에 포함되지 않음 |
+| P4 | 두 자유 문자열 키(`calculateStateKeys.ts:118`, `evaluateScopedExpression.ts:30`)는 중첩 Map, 선언 ID와 스키마 경로 키(`getControlExpression`, `commitExitPolicyValues`)는 구분자 | 각 2–6 | 호스트 경로와 스키마 경로 둘 다 구분자를 담을 수 있어 구분자만 쓰면 이론상 겹침. 그래서 중첩 Map이 필요함 |
+| P5 | parse하는 쌍 키 약 12곳을 노드별로 캐시된 `getCommittedDeclarationKey(node)` 호출로 | 자리당 1 | 형식은 그대로. 이름이 쓰임과 맞지 않아 이름 변경과 자리 이동이 필요함 |
+
+**판정**
+
+- P1은 이번 묶음(L2b)에서 반영합니다.
+- P2·P3은 기록만 합니다. 얻는 것이 잡음 안이기 때문입니다. 같은 키 묶음을 다음에 고칠 때 구분자로 바꿉니다.
+- P4·P5도 기록만 합니다. P4는 두 문자열 모두 구분자를 담을 수 있어 중첩 Map이 필요합니다. P5는 이름 변경과 자리 이동이 필요합니다.
+- oneOf의 옛 판 대비 차이는 H10에서 오지 않습니다. 갱신 시간의 대부분은 `evaluateGate` 480회(약 330 µs), 선택 패스, 전이·마감 단계(`transitionSettlement`·`finalizeExits`·`finishSettlement`)입니다.
