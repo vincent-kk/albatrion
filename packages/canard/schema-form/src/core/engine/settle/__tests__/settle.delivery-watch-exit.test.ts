@@ -288,54 +288,80 @@ describe('L2 (c) EVENT-064 exits look up the watch index', () => {
       expect(watchMarks(step).sort()).toEqual(['/w1', '/wh', '/wi']);
   });
 
-  it('delivers the exit of a gated field in an unmoved item while a later item of the object array is rekeyed', () => {
+  it('delivers the exit of a gated field in another outer item while an inner object array is rekeyed', () => {
+    const row: BlueprintSchema = {
+      type: 'object',
+      properties: {
+        on: { type: 'boolean' },
+        tags: { type: 'array', items: { type: 'string' } },
+        note: {
+          type: 'string',
+          controls: { active: '../../../../1/rows/0/on === true' },
+        },
+        alt: {
+          type: 'string',
+          controls: { active: '../../../../1/rows/0/on === false' },
+        },
+      },
+    };
+    // The entering sibling `alt` drops the row's own path from the affected set,
+    // so only the exit puts the unmoved note's path there.
     const [step] = compareWatchExitDeliveries(
       {
         type: 'object',
         properties: {
           anchor: { type: 'number' },
-          rows: {
+          groups: {
             type: 'array',
             items: {
               type: 'object',
-              properties: {
-                on: { type: 'boolean' },
-                tags: { type: 'array', items: { type: 'string' } },
-                note: {
-                  type: 'string',
-                  controls: { active: '../../1/on === false' },
-                },
-              },
+              properties: { rows: { type: 'array', items: row } },
             },
           },
-          wn: { type: 'string', controls: { watch: ['../rows/0/note'] } },
-          wt: { type: 'string', controls: { watch: ['../rows/1/tags/0'] } },
-          wrows: { type: 'string', controls: { watch: ['../rows'] } },
+          wn: {
+            type: 'string',
+            controls: { watch: ['../groups/0/rows/0/note'] },
+          },
+          wt: {
+            type: 'string',
+            controls: { watch: ['../groups/1/rows/1/tags/0'] },
+          },
+          wrows: { type: 'string', controls: { watch: ['../groups/1/rows'] } },
           wr: { type: 'string', controls: { watch: ['/'] } },
           ...unrelated(3),
         },
       },
       {
         anchor: 0,
-        rows: [
-          { on: true, tags: ['t0'], note: 'n0' },
-          { on: false, tags: ['t1'], note: 'n1' },
-          { on: true, tags: ['t2'], note: 'n2' },
+        groups: [
+          { rows: [{ on: true, tags: ['a0'], note: 'm0' }] },
+          {
+            rows: [
+              { on: true, tags: ['t0'], note: 'n0' },
+              { on: false, tags: ['t1'], note: 'n1' },
+              { on: true, tags: ['t2'], note: 'n2' },
+            ],
+          },
         ],
       },
-      [{ path: '/rows', apply: (rows) => dispatchRemove(rows, 1) }],
+      [{ path: '/groups/1/rows', apply: (rows) => dispatchRemove(rows, 0) }],
     );
     expect(step.emit).toEqual({
       anchor: 0,
-      rows: [
-        { on: true, tags: ['t0'] },
-        { on: true, tags: ['t2'] },
+      groups: [
+        { rows: [{ on: true, tags: ['a0'] }] },
+        {
+          rows: [
+            { on: false, tags: ['t1'] },
+            { on: true, tags: ['t2'] },
+          ],
+        },
       ],
     });
     expect(movedPaths(step)).toEqual(
-      expect.arrayContaining(['/rows/1', '/rows/1/tags/0']),
+      expect.arrayContaining(['/groups/1/rows/1', '/groups/1/rows/1/tags/0']),
     );
-    expect(movedPaths(step).some((path) => path.startsWith('/rows/0'))).toBe(
+    expect(movedPaths(step).some((path) => path.startsWith('/groups/0'))).toBe(
       false,
     );
     expect(watchMarks(step).sort()).toEqual(['/wn', '/wr', '/wrows', '/wt']);
