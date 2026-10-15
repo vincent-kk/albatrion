@@ -5,14 +5,13 @@ import type {
   BlueprintOptions,
   EffectiveSchema,
 } from '../../../../blueprint';
-import { hasSharedConflict } from '../hasSharedConflict';
 import { staticIds } from './staticIds';
 
 /** Runtime merge and conflict verdict of one edge whose declarations are all admitted. */
 interface AdmittedEdgeSchema {
   /** Effective schema merged from every declaration of the edge. */
   readonly schema: EffectiveSchema;
-  /** Whether the merge reported a type conflict or the edge's gated kinds conflict. */
+  /** Whether the merge reported an empty type intersection. */
   readonly conflict: boolean;
   /** Atomic-value predicate identity the merge received. */
   readonly isAtomic: BlueprintOptions['isAtomic'];
@@ -47,8 +46,7 @@ export const readAdmittedEdgeSchema = (
   });
   const admitted: AdmittedEdgeSchema = {
     schema,
-    conflict:
-      schema.typeConflict || hasSharedConflict(entry, entry.declarations),
+    conflict: schema.typeConflict,
     isAtomic,
   };
   ADMITTED_EDGE_SCHEMAS.set(entry, admitted);
