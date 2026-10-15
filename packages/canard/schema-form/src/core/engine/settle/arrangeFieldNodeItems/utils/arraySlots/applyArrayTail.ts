@@ -15,11 +15,13 @@ import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
 import type { ArrayPathMove } from '../../types/pathMoves';
+import { clearArrayRuntimePaths } from '../rekey/clearArrayRuntimePaths';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 
 /**
  * Apply a proven prefix-preserving proposal without composing retained raw trees.
  * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
+ * An empty result (clear, or a pop of the only item) removes the host's path-store entries by host prefix instead of per-position re-keying.
  * @param host - Live branch array with no whole raw override
  * @param plan - Proposal accepted by canApplyArrayTail, prepareArrayAppend or prepareArrayPop; appended slots carry values and retained prefix slots are never read
  * @param context - Settlement receiving the same lifecycle and dirty facts as a full plan
@@ -91,7 +93,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   let perishedPaths: Set<string> | undefined;
   for (let index = prefixCount; index < oldCount; index++) {
     const item = items[String(index)];
-    moves.push({ previous: host.path + '/' + index });
+    if (length) moves.push({ previous: host.path + '/' + index });
     if (!item) continue;
     context.perished.add(item);
     visitFieldNodes(
@@ -109,8 +111,17 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     (perishedPaths ??= new Set()).add(item.path);
     delete items[String(index)];
   }
-  if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
-  rekeyArrayRuntimePaths(host.runtime, host.path, moves, prefixCount);
+  if (!length)
+    clearArrayRuntimePaths(
+      host.runtime,
+      host.path,
+      oldCount,
+      perishedPaths ?? new Set(),
+    );
+  else {
+    if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
+    rekeyArrayRuntimePaths(host.runtime, host.path, moves, prefixCount);
+  }
   context.latentDescendantKeys = undefined;
   context.enteredLatentKeys = undefined;
 
