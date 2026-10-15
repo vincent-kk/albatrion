@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { getItemEntry } from '../../../blueprint';
+import { getItemEntries } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { isPlain } from '../input/isPlain';
@@ -26,9 +26,9 @@ export const readRawTree = <Self extends FieldNodeRecord<Self>>(
     const slots: unknown[] = [];
     let tailStart = 0;
     for (let index = 0; index < node.itemCount; index++) {
-      const entry = getItemEntry(node.blueprintNode, index);
+      const candidates = getItemEntries(node.blueprintNode, index);
       let value: unknown;
-      if (!entry)
+      if (candidates.length === 0)
         value = isArray(node.undeclaredValues)
           ? node.undeclaredValues[index - tailStart]
           : undefined;
@@ -37,7 +37,7 @@ export const readRawTree = <Self extends FieldNodeRecord<Self>>(
         const item = node.structure?.[String(index)];
         value = item
           ? readRawTree(item, context)
-          : readAbsentSlotSource(node, index, entry.node, context);
+          : readAbsentSlotSource(node, index, candidates, context);
       }
       slots.push(value);
     }

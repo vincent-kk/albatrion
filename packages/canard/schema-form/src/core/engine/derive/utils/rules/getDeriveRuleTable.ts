@@ -71,20 +71,20 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         // Tuple positions bind by index, apart from the repeated item template (`*`).
         const targets = [
           ...node.childEntries,
-          ...(node.prefixItems ?? []).map((item, index) => ({
-            name: String(index),
-            node: item,
-            declarations: item.declarations,
-          })),
-          ...(node.item
-            ? [
-                {
-                  name: '*',
-                  node: node.item,
-                  declarations: node.item.declarations,
-                },
-              ]
-            : []),
+          ...(node.prefixItems ?? []).flatMap((first, index) =>
+            (node.prefixItemCandidates?.[index] ?? [first]).map((item) => ({
+              name: String(index),
+              node: item,
+              declarations: item.declarations,
+            })),
+          ),
+          ...(node.itemCandidates ?? (node.item ? [node.item] : [])).map(
+            (item) => ({
+              name: '*',
+              node: item,
+              declarations: item.declarations,
+            }),
+          ),
         ];
         for (const entry of targets) {
           const selected = entry.declarations.filter((child) =>

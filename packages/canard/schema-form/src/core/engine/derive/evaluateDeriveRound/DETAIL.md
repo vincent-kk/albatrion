@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 배열 injectTo 경로는 살아 있는 아이템의 청사진을 우선하고, 부재 자리에는 작성 순서의 첫 후보와 전체 형제 후보를 사용한다. 잠복 쓰기 키는 기존 fold 정체 토큰을 유지한다(390C-01, 391C-01).
+
 - 한 파생 라운드에서 `unsetValue`, `derived`, `injectTo` 규칙의 에지를 판정하고, 대상마다 승자 하나만 남긴 쓰기 후보와 소비할 에지, 개발 모드 기록 항목을 `DeriveRoundDecision`으로 돌려준다. 원본은 바꾸지 않는다(SETTLE-004·028·048·049, ERROR-159).
 - 의존은 부모 derive의 `utils/rules/`·`utils/evaluate/`·`types/`와, `blueprint`·`record` 진입점, engine organ의 `sameValue`·경로 해석, `@/schema-form/helpers/jsonPointer`로만 향한다. 상호작용 초기화 판정은 가져오지 않는다(NODE-016).
 

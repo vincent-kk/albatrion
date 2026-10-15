@@ -26,6 +26,13 @@ export const restoreLatentState = <Self extends FieldNodeRecord<Self>>(
     value instanceof HostLatent ? value.undeclaredValues : undefined;
   if (node.behavior.type === 'array' && isArray(raw)) {
     markWrite(node, raw, context);
+    if (value instanceof HostLatent && value.retainedItemNames) {
+      const distribution = context.distributedInputs.get(node)!;
+      context.distributedInputs.set(node, {
+        ...distribution,
+        retainedItemNames: value.retainedItemNames,
+      });
+    }
     return;
   }
   if (!Object.is(node.raw, raw) || !Object.is(node.undeclaredValues, extras)) {

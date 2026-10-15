@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../../errors';
-import { mergeEffectiveSchema } from '../../../../blueprint';
+import { getItemEntries, mergeEffectiveSchema } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
@@ -12,8 +12,8 @@ import { recordSettlementFailure } from '../../errors/recordSettlementFailure';
 import { evaluateGate } from '../../gates/evaluateGate';
 import { flushPendingGateReads } from '../../gates/flushPendingGateReads';
 import { getGateRegistry } from '../../gates/getGateRegistry';
+import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
-import { isWithinReplacePaths } from '../../input/isWithinReplacePaths';
 import { distributeLatentValue } from '../../latent/distributeLatentValue';
 import { getLatentOrder } from '../../latentStore/getLatentOrder';
 import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
@@ -272,11 +272,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       next[entry.name]?.blueprintNode === entry.node
         ? next[entry.name]
         : undefined;
-    const distribution =
-      context.replacePaths === undefined ||
-      isWithinReplacePaths(context, node.path + '/' + escapeSegment(entry.name))
-        ? context.distributedInputs.get(node)
-        : undefined;
+    const distribution = getChildDistribution(node, entry.name, context);
     const ownsInput =
       distribution &&
       hasDistributedChildInput(
@@ -412,11 +408,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     )
       continue;
     seen.set(entry.name, entry.node);
-    const distribution =
-      context.replacePaths === undefined ||
-      isWithinReplacePaths(context, node.path + '/' + escapeSegment(entry.name))
-        ? context.distributedInputs.get(node)
-        : undefined;
+    const distribution = getChildDistribution(node, entry.name, context);
     if (
       !distribution ||
       !hasDistributedChildInput(
@@ -434,7 +426,9 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       Reflect.get(distribution.input, entry.name),
       getLatentOrder(node, entry.name, entry.node),
       distribution.whole,
-      node.blueprintNode.childEntries,
+      node.behavior.type === 'array'
+        ? getItemEntries(node.blueprintNode, Number(entry.name))
+        : node.blueprintNode.childEntries,
       distribution.automatic,
     );
   }

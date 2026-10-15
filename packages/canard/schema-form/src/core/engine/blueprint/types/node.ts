@@ -128,10 +128,20 @@ export interface BlueprintNode {
   readonly declarations: readonly PropertyDeclaration[];
   /** Canonical named edges; host bindings stay separate from reusable templates. */
   readonly childEntries: readonly BlueprintChildEntry[];
-  /** Homogeneous array template, expanded only by the future node engine. */
+  /**
+   * First repeated item candidate, retained for single-candidate consumers.
+   * First candidate; paths that distinguish folds use the candidate list (itemCandidates / prefixItemCandidates / getItemEntries).
+   */
   readonly item?: BlueprintNode;
-  /** Tuple item templates in positional order. */
+  /** Repeated candidates in authored fold order, present only for multiple folds. */
+  readonly itemCandidates?: readonly BlueprintNode[];
+  /**
+   * First tuple candidate at each position.
+   * First candidate; paths that distinguish folds use the candidate list (itemCandidates / prefixItemCandidates / getItemEntries).
+   */
   readonly prefixItems?: readonly BlueprintNode[];
+  /** Tuple candidates in authored fold order, present when any position has multiple folds. */
+  readonly prefixItemCandidates?: readonly (readonly BlueprintNode[])[];
   /** Ordered real-field names backing a virtual node. */
   readonly fields?: readonly string[];
 }

@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 배열의 반복 템플릿과 각 prefixItems 자리에는 build가 돌려준 fold별 후보 전부를 작성 순서로 연결한다. 기존 단일 후보 필드는 첫 후보를 가리키며, 후보별 작성 스키마 위치와 선언 소유를 보존한다(BLUEPRINT-044, 389C-03, 391C-01).
+
 - 선언 수집에서 packed gates/order를 복사할 때는 native slice를 사용한다. fragment와 declaration의 배열은 계속 각자 소유하고, 값, 순서, ID, DFS, 진단, capability는 같다. 속도 비용은 같은 원소 수에 비례하는 native 복사이며, 입력과 fragment를 iterator로 순회하던 일은 없어진다. 메모리 비용은 호출마다 기존의 네 배열과 원소 참조 수를 그대로 유지하고, 추가로 보유하는 자료는 없다(batch2 2-declaration-slice).
 
 - 자식 이름의 escapeSegment는 이름마다 한 번 만든 값을 schemaPath와 data path에 재사용한다. 무게이트 경로는 지역 문자열 하나를 사용하고, 일반 집계는 기존 properties Map의 값에 escapedName, path, inputs를 같은 필드 순서로 보관한다. 공개 두 경로, template key의 바이트, 자식·기여·게이트 순서는 같다. 속도 비용은 이름 길이에 비례하는 escape 한 번이며, 반복되는 기여와 뒤쪽 build 순회에서 다시 escape하던 일이 없어진다. 메모리 비용은 빠른 경로에서 지역 문자열 하나, 일반 경로에서 이름마다 일시 기록 하나와 문자열 참조다. 소속 배열의 소유와 동결은 유지하며, 새로 보유하는 색인, 캐시, 공개 필드는 없다(107라운드 3-path-strings).

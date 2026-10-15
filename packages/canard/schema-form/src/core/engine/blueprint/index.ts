@@ -5,6 +5,7 @@ export { getFeatureNodeIndex } from './utils/features/getFeatureNodeIndex';
 export { collectBlueprintWarnings } from './collectBlueprintWarnings';
 export { mergeEffectiveSchema } from './effectiveSchema';
 export { getItemEntry } from './utils/itemEntry/getItemEntry';
+export { getItemEntries } from './utils/itemEntry/getItemEntries';
 export type {
   Blueprint,
   BlueprintOptions,

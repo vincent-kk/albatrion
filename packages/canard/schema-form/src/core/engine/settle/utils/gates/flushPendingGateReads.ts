@@ -78,9 +78,10 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
         visit(entry.node, childSuffix);
       }
       for (const [index, item] of (node.prefixItems ?? []).entries())
-        visit(item, suffix + '/' + index);
-      if (node.item)
-        visit(node.item, suffix + '/' + (node.prefixItems?.length ?? 0));
+        for (const candidate of node.prefixItemCandidates?.[index] ?? [item])
+          visit(candidate, suffix + '/' + index);
+      for (const item of node.itemCandidates ?? (node.item ? [node.item] : []))
+        visit(item, suffix + '/' + (node.prefixItems?.length ?? 0));
       ancestors.delete(node);
     };
     visit(template, '');

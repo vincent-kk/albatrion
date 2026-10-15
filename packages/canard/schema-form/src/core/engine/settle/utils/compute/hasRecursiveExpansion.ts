@@ -29,10 +29,14 @@ const hasTemplateCycle = (
   for (let index = 0; index < node.childEntries.length; index++)
     if (hasTemplateCycle(node.childEntries[index].node, visiting, visited))
       return true;
-  if (node.item && hasTemplateCycle(node.item, visiting, visited)) return true;
+  for (const item of node.itemCandidates ?? (node.item ? [node.item] : []))
+    if (hasTemplateCycle(item, visiting, visited)) return true;
   const prefixItems = node.prefixItems;
   for (let index = 0; prefixItems && index < prefixItems.length; index++)
-    if (hasTemplateCycle(prefixItems[index], visiting, visited)) return true;
+    for (const item of node.prefixItemCandidates?.[index] ?? [
+      prefixItems[index],
+    ])
+      if (hasTemplateCycle(item, visiting, visited)) return true;
   visiting.delete(node);
   visited.add(node);
   return false;

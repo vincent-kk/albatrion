@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Behavior, FieldNodeRecord } from '../../../../record';
+import { getArrayItemTemplate } from './getArrayItemTemplate';
 import { holeValue } from './holeValue';
 
 /** The previous slot owners make unchanged shapes eligible for sparse patches. */
@@ -74,8 +75,7 @@ export const assembleArray: Behavior['assemble'] = (
     node.itemCount === append + 1 &&
     (previous.length === append || previous.length === append + 1)
   ) {
-    const template =
-      node.blueprintNode.prefixItems?.[append] ?? node.blueprintNode.item;
+    const template = getArrayItemTemplate(node, append);
     const child = node.structure?.[String(append)];
     if (template && child !== null && typeof child === 'object') {
       const emission = 'emit' in child ? child.emit : undefined;
@@ -126,8 +126,7 @@ export const assembleArray: Behavior['assemble'] = (
         valid = false;
         break;
       }
-      const template =
-        node.blueprintNode.prefixItems?.[index] ?? node.blueprintNode.item;
+      const template = getArrayItemTemplate(node, index);
       if (!template) {
         valid = false;
         break;
@@ -151,8 +150,7 @@ export const assembleArray: Behavior['assemble'] = (
   const result: unknown[] = [];
   let tailStart = 0;
   for (let index = 0; index < node.itemCount; index++) {
-    const template =
-      node.blueprintNode.prefixItems?.[index] ?? node.blueprintNode.item;
+    const template = getArrayItemTemplate(node, index);
     if (!template) {
       result.push(extras[index - tailStart]);
       continue;

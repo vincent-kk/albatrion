@@ -3,7 +3,7 @@ import { unescapeSegment } from '@winglet/json/pointer';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import { getItemEntry } from '../../../../blueprint';
+import { getItemEntries } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import { getDeriveChildEntry } from '../rank/getDeriveChildEntry';
 
@@ -27,13 +27,16 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
     const name = unescapeSegment(encoded);
     siblings = template.childEntries;
     const index = Number(name);
-    const item =
+    const items =
       template.kind === 'array' &&
       Number.isInteger(index) &&
       index >= 0 &&
       String(index) === name
-        ? getItemEntry(template, index)
+        ? getItemEntries(template, index)
         : undefined;
+    const selected = live?.structure?.[name]?.blueprintNode;
+    const item = items?.find((entry) => entry.node === selected) ?? items?.[0];
+    if (items) siblings = items;
     const found = item
       ? { entry: item, position: index }
       : getDeriveChildEntry(template, name);
