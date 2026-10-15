@@ -589,3 +589,4 @@
 - **356라운드(2026-10-15, 소유자).** 개선 즉시 진행, stringify 배제 가설, 측정은 dist 기준(reviews/round-356-owner-answers.md).
 - **357라운드(2026-10-15, 소유자).** 속도 측정은 빌드 결과물로(reviews/round-357-owner-answers.md).
 - **358라운드(2026-10-15, 소유자).** 내부 이름은 빌드 결과물 개입으로(임시), 이후 폼 e2e(reviews/round-358-owner-answers.md).
+- **359라운드(2026-10-15, 소유자).** codex 위임의 데이터 공유 허용 공유(reviews/round-359-owner-answers.md).

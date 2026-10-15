@@ -112,6 +112,7 @@
 | 2026-10-15 | 356라운드 소유자: 개선 즉시 진행, stringify 배제 가설, 측정은 dist 기준. 보충 1줄 | `reviews/round-356-owner-answers.md` |
 | 2026-10-15 | 357라운드 소유자: 속도 측정은 빌드 결과물로. 보충 1줄 | `reviews/round-357-owner-answers.md` |
 | 2026-10-15 | 358라운드 소유자: 내부 이름은 빌드 결과물 개입으로(임시), 이후 폼 e2e. 보충 1줄 | `reviews/round-358-owner-answers.md` |
+| 2026-10-15 | 359라운드 소유자: codex 위임의 데이터 공유 허용 공유. 보충 1줄 | `reviews/round-359-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |

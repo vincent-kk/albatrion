@@ -96,7 +96,8 @@
 - **355라운드(2026-10-15, 닫기/원장 관리자).** 속도 루프 M0·M1 PR #397 병합(ea4870067): 조용한 창 한 번의 기준선(baseline.md), 탐침 넷, priority.md, 대장 P-138. 편집자 결정 넷(355C-01 배열 push 길이 비례는 위반·호스트 재선택은 준수·상태 키 결합은 이차, 355C-02 소유자 수용 행은 다시 열지 않고 같은 꼴은 새 행, 355C-03 보유 경로 분류는 L3로·메모리 게이트 기준은 M0 값, 355C-04 M1 확정과 L1 구성 0·1·2·3·7)(reviews/round-355-closing.md).
 - **356라운드(2026-10-15, 소유자).** M0 표를 보고 개선 즉시 진행 승인; 키 생성에서 JSON.stringify를 쓰지 않는 방향을 새 가설(H10, L2 첫 가설)로; 시험은 대부분 src를 돌고 dist를 도는 것은 benchmark-form equivalent와 production-test뿐이므로 커밋마다의 측정에 dist 재빌드와 equivalent 행을 넣는다(reviews/round-356-owner-answers.md).
 - **357라운드(2026-10-15, 소유자).** 속도 측정은 소스가 아니라 빌드 결과물로. 옛 판 대비 표는 이미 dist이고, src를 돌던 독립 스크립트·vitest 벤치·탐침은 dist 진입점으로 바꿔 다시 재어 기준선을 dist 값으로 바꾼다. 동작 시험은 src 그대로(정확성 오라클)(reviews/round-357-owner-answers.md).
-- **358라운드(2026-10-15, 소유자).** dist가 내보내지 않는 내부 이름은 지금 단계에서 빌드 스크립트 수정이나 빌드 결과물 개입(dist 복사본에 export 추가)으로 재고 임시 조치로 적는다. 이후 속도 비교의 정본은 폼 전체 e2e이며 내부 심볼 벤치는 회귀 신호로만(reviews/round-358-owner-answers.md). 다음 라운드 번호는 359.
+- **358라운드(2026-10-15, 소유자).** dist가 내보내지 않는 내부 이름은 지금 단계에서 빌드 스크립트 수정이나 빌드 결과물 개입(dist 복사본에 export 추가)으로 재고 임시 조치로 적는다. 이후 속도 비교의 정본은 폼 전체 e2e이며 내부 심볼 벤치는 회귀 신호로만(reviews/round-358-owner-answers.md).
+- **359라운드(2026-10-15, 소유자).** 각 에이전트 세션의 권한 분류기에 codex 위임을 클로드 서브에이전트에 준하는 데이터 공유로 허용한다고 직접 지시했음을 공유. 허가 세탁 금지 규칙은 그대로(reviews/round-359-owner-answers.md). 다음 라운드 번호는 360.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -549,6 +550,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-356-owner-answers.md` | 356라운드 소유자: M0 표, 개선 즉시 진행, stringify 배제 검토, 시험 대상 물음 |
 | `reviews/round-357-owner-answers.md` | 357라운드 소유자: 속도 측정은 빌드 결과물로 |
 | `reviews/round-358-owner-answers.md` | 358라운드 소유자: 내부 이름은 빌드 결과물 개입으로(임시), 이후 폼 e2e |
+| `reviews/round-359-owner-answers.md` | 359라운드 소유자: codex 위임의 데이터 공유 허용(권한 분류기 지시) |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
