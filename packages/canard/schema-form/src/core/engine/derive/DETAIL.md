@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 배열 조각 규칙 표는 반복 템플릿과 prefixItems 자리의 후보마다 대상 행과 해당 `targetDeclarationIds`를 만든다. 조각 기능 색인도 전체 후보 소유를 이름별로 합치며, 실제 대상은 현재 선택된 선언으로 제한한다(377C-01, 389C-03, (391라운드 마감 결정)).
+- 배열 조각 규칙 표는 반복 템플릿과 prefixItems 자리의 후보마다 대상 행과 해당 `targetDeclarationIds`를 만든다. 조각 기능 색인도 전체 후보 소유를 이름별로 합치며, 실제 대상은 현재 선택된 선언으로 제한한다(377C-01, 389C-03, 391C-01).
 
 - `derive`는 완성된 형상에 걸린 규칙을 판정한다. 쓰기 적용, 재계산, 파생 라운드 셈, 원본 B 복원, 커밋은 settle이 맡는다(LANDING-063·083, SETTLE-004·011·017, NODE-016).
 - derive는 engine의 자식 fractal(`engine/derive`)로, settle과는 형제 관계다. 의존은 `blueprint`·`record`의 진입점과, engine organ의 순수 `sameValue`·경로 해석·선언 층 해석, `@/schema-form/helpers/jsonPointer`로만 향한다. settle의 어느 파일도(`settle/types/`, `settle/index.ts`, 쓰기·전이·커밋·파생 라운드 실행 organ) `import type`으로도 가져오지 않는다(NODE-016·045, SETTLE-043, CONTROLS-080).
