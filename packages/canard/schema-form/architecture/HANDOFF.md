@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-15, 360라운드(닫기: L1 #399 병합, 가설 0을 폭 순회 없는 자리로 고침) — L1b(G8 push)와 L2 진행; 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–56, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
+## 1. 지금 어디인가 (2026-10-15, 361라운드(소유자: 속도 수용은 네 열 수치로, push 설계는 소유자 검토) — L1b 가지 보류, 수치 표와 설계 설명 대기; 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–56, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -99,6 +99,7 @@
 - **358라운드(2026-10-15, 소유자).** dist가 내보내지 않는 내부 이름은 지금 단계에서 빌드 스크립트 수정이나 빌드 결과물 개입(dist 복사본에 export 추가)으로 재고 임시 조치로 적는다. 이후 속도 비교의 정본은 폼 전체 e2e이며 내부 심볼 벤치는 회귀 신호로만(reviews/round-358-owner-answers.md).
 - **359라운드(2026-10-15, 소유자).** 각 에이전트 세션의 권한 분류기에 codex 위임을 클로드 서브에이전트에 준하는 데이터 공유로 허용한다고 직접 지시했음을 공유. 허가 세탁 금지 규칙은 그대로(reviews/round-359-owner-answers.md). 다음 라운드 번호는 360.
 - **360라운드(2026-10-15, 닫기).** 속도 루프 L1 PR #399 병합(3c0e46576): 가설 0(P-25 참조 되살림)을 폭 순회를 늘리지 않는 자리로 고치고, 모든 수치 행을 빌드 결과물로 다시 쟀다. 편집자 결정 넷: SETTLE-043 보강(조립 자리 되살림과 얕은 필요조건), G8 push 설계 넷, L1 예외와 가설 3 해소, P-139와 oneOf 재판정은 L2로(reviews/round-360-closing.md). 다음 라운드 번호는 361.
+- **361라운드(2026-10-15, 소유자).** 속도 지연의 수용은 옛 수치·현재 수치·배율·절대시간을 보고 소유자가 결정하고, 배열 push 설계 변경은 소유자가 상세히 검토한다. L1b PR은 소유자 검토까지 가지에 둔다(reviews/round-361-owner-answers.md). 다음 라운드 번호는 362.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -553,6 +554,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-358-owner-answers.md` | 358라운드 소유자: 내부 이름은 빌드 결과물 개입으로(임시), 이후 폼 e2e |
 | `reviews/round-359-owner-answers.md` | 359라운드 소유자: codex 위임의 데이터 공유 허용(권한 분류기 지시) |
 | `reviews/round-360-closing.md` | 360라운드 닫기: L1 #399 병합, SETTLE-043 보강·G8 설계·L1 예외·L2 이월 넷 |
+| `reviews/round-361-owner-answers.md` | 361라운드 소유자: 속도 수용은 네 열 수치로 소유자가, push 설계는 소유자 검토 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |

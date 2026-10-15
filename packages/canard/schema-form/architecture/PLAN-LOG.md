@@ -591,3 +591,4 @@
 - **358라운드(2026-10-15, 소유자).** 내부 이름은 빌드 결과물 개입으로(임시), 이후 폼 e2e(reviews/round-358-owner-answers.md).
 - **359라운드(2026-10-15, 소유자).** codex 위임의 데이터 공유 허용 공유(reviews/round-359-owner-answers.md).
 - **360라운드(2026-10-15, 닫기).** L1 PR #399 병합(3c0e46576); 편집자 결정 넷(reviews/round-360-closing.md).
+- **361라운드(2026-10-15, 소유자).** 속도 수용은 네 열 수치로 소유자가, push 설계는 소유자 검토(reviews/round-361-owner-answers.md).
