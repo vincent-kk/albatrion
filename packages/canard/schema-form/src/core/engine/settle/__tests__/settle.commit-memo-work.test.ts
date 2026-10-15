@@ -8,7 +8,7 @@ import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 afterEach(() => vi.restoreAllMocks());
 
-it('updates a still-empty mismatch row without clearing or reinserting the memo', () => {
+it('keeps a still-empty mismatch row as built, without clearing or reinserting the memo', () => {
   const { root } = createTestTree({
     type: 'object',
     properties: {
@@ -30,7 +30,7 @@ it('updates a still-empty mismatch row without clearing or reinserting the memo'
       WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ value, sibling: 3 });
-    expect(memo.get('')).toEqual({ commit: index + 2, paths: [] });
+    expect(memo.get('')).toEqual({ commit: 1, paths: [] });
     expect(memo.get('')!.paths).toBe(paths);
     expect(root.runtime.misfitRecords).toEqual([]);
     expect(root.runtime.diagnostics.status).toBe('stable');
