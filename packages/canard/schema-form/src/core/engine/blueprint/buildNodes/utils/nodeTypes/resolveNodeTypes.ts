@@ -1,4 +1,5 @@
 import { FormErrorCode } from '../../../../../../errors';
+import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { PropertyDeclaration } from '../../../types/node';
 import type { SchemaTypeName } from '../../../types/schema';
@@ -6,7 +7,6 @@ import { intersectAllowedTypes } from '../../../utils/allowedTypes/intersectAllo
 import { readAllowedTypes } from '../../../utils/allowedTypes/readAllowedTypes';
 import { unionAllowedTypes } from '../../../utils/allowedTypes/unionAllowedTypes';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
-import { foldAllowedTypes } from './foldAllowedTypes';
 import { inferAllowedTypes } from './inferAllowedTypes';
 
 /**
