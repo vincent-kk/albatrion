@@ -604,3 +604,4 @@
 - **371라운드(2026-10-15, 닫기).** L1b PR #400 병합(f441a9159); 편집자 결정 넷(reviews/round-371-closing.md).
 - **372라운드(2026-10-15, 닫기).** L2 첫 묶음 PR #401 병합(b9e2f63dc); 편집자 결정 셋(reviews/round-372-closing.md).
 - **373라운드(2026-10-15, 소유자).** items 조각 층 누락은 결함, 수정(reviews/round-373-owner-answers.md).
+- **374라운드(2026-10-15, 소유자).** agy·codex를 더 활발히(reviews/round-374-owner-answers.md).

@@ -127,6 +127,7 @@
 | 2026-10-15 | 371라운드(닫기): L1b PR #400 검증·squash-merge(f441a9159); 배열 동사 계약 해석, SURFACE-005 insert, 수용 복사 셋, L2 이월·대기열 58. 보충 4줄 | `reviews/round-371-closing.md` |
 | 2026-10-15 | 372라운드(닫기): L2 첫 묶음 PR #401 검증·squash-merge(b9e2f63dc); 같은 값 통째 쓰기, 감시 색인, 불일치 메모, 간선 스키마, 기록만 항목. 보충 3줄 | `reviews/round-372-closing.md` |
 | 2026-10-15 | 373라운드 소유자: items 조각 층 누락은 결함, 별도 fix PR. 보충 2줄 | `reviews/round-373-owner-answers.md` |
+| 2026-10-15 | 374라운드 소유자: 앞으로 agy·codex를 더 활발히, codex 기본·agy 검증. 보충 1줄 | `reviews/round-374-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
