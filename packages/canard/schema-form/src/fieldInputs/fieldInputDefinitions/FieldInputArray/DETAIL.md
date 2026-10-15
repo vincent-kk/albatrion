@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 빈 자리 입력의 종류는 현재 활성 후보의 유효 아이템 스키마로 정한다. 반복 아이템과 prefixItems 자리 모두 활성 fold 전환에 따라 text·number·checkbox·fill을 고른다(389C-03, (391라운드 마감 결정)).
+
 - 부모 `fieldInputs`의 기본 입력 계약 중 배열 입력 몫을 구현합니다(86C-02 iv, 87라운드 원칙 3, F-D′, 304라운드 권고 2).
 
 ## API Contracts
