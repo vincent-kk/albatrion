@@ -117,6 +117,7 @@
 | 2026-10-15 | 361라운드 소유자: 속도 수용은 옛·현재·배율·절대시간으로 소유자가, push 설계는 소유자 검토. 보충 1줄 | `reviews/round-361-owner-answers.md` |
 | 2026-10-15 | 362라운드 소유자: push 지름길 승낙, 두 번째 값 복사는 가능하면 줄임, pop·remove 지름길 물음. 보충 1줄 | `reviews/round-362-owner-answers.md` |
 | 2026-10-15 | 363라운드 소유자: 배열 동사 전부와 자식 노드 배열·로드 스냅숏 복사의 검증 데이터 요구. 보충 1줄 | `reviews/round-363-owner-answers.md` |
+| 2026-10-15 | 364라운드 소유자: 지름길은 배열 동사 전부에, 원칙 변경이 필요하면 보고. 보충 1줄 | `reviews/round-364-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |

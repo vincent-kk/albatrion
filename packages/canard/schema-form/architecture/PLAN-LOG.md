@@ -594,3 +594,4 @@
 - **361라운드(2026-10-15, 소유자).** 속도 수용은 네 열 수치로 소유자가, push 설계는 소유자 검토(reviews/round-361-owner-answers.md).
 - **362라운드(2026-10-15, 소유자).** push 지름길 승낙, 두 번째 값 복사는 가능하면 줄임, pop·remove 물음(reviews/round-362-owner-answers.md).
 - **363라운드(2026-10-15, 소유자).** 배열 동사 전부와 복사 둘의 검증 데이터 요구(reviews/round-363-owner-answers.md).
+- **364라운드(2026-10-15, 소유자).** 지름길은 배열 동사 전부에, 원칙 변경은 보고(reviews/round-364-owner-answers.md).
