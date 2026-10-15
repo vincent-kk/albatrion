@@ -2,6 +2,10 @@
 
 루프 시작 커밋 `c59ba1363`(`feat/schema-form-08-review-and-perf`, 353라운드)의 "최적화 전" 판과, 같은 실행에서 잰 옛 판 v0.16.0(`660dde66f`, TEST-031)의 수치입니다. 계획은 [성능 최적화 개발요청서](../../plan/perf-optimization/request.md)의 "M0 측정판 고정" 절과 [검증 구성요건](../../plan/perf-optimization/verification.md)입니다. 원본은 저장소에 넣지 않고 아래 실행 디렉터리에만 둡니다.
 
+- **옛 판 열:** 이 기준선의 옛 판 열은 npm에 공개된 0.16.0입니다. 소유자가 비교 기준으로 지정한 0.16.1의 재측정은 M3 종합 재측정에서 합니다(368라운드).
+- **0.16.0과 0.16.1의 차이:** 소스 변경은 `660dde66f`("one null contract for nullable object and array nodes", #338) 하나로, nullable 객체·배열 노드의 null 계약만 바꿉니다. 이 기준선의 배열 장면은 nullable 스키마가 아니어서 그 변경이 닿지 않는다고 봅니다. 폼 수준 두 폼에서 둘을 같은 실행으로 잰 결과는 `array-verbs-measurement.md`에 적습니다.
+- **benchmark-form 옛 판 별칭:** `@canard/schema-form_0.16.0`과 `@canard/schema-form_0.16.1`이 함께 설치되어 있습니다. `--equivalent`는 기본으로 0.16.1과 짝지어 재고, 이 기준선을 재현할 때는 `--legacy=0.16.0`을 줍니다.
+
 - **판정에 쓰는 실행:** `20261015T0247-a3be21d-before-dist`(`/private/tmp/claude-501/perf-runs/20261015T0247-a3be21d-before-dist/`). 빌드 결과물(dist)로 다시 잰 행 전부: 독립 스크립트 둘×두 런타임(`B2` 포함), vitest 벤치, `--equivalent` core, 탐침 넷×두 런타임.
 - **그대로 쓰는 실행:** `20261015T0138-c59ba13-before`(`/private/tmp/claude-501/perf-runs/20261015T0138-c59ba13-before/`). `--equivalent` render와 heap 행은 그때도 dist였으므로 이 실행의 값을 씁니다. 나머지 행의 이 실행 값은 "소스 기준(참고)" 절에만 둡니다.
 - **재현:** 패키지 디렉터리에서 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<조용한 창 시작 ISO 시각>`을 실행합니다. 스크립트는 먼저 rolldown으로 JS 번들을 빌드하고, 아래 행을 같은 인자로 순서대로 돌리며, 행마다 명령·작업 디렉터리·`NODE_ENV`·시작과 끝 시각·사용한 dist 해시를 `env.json`에 적습니다. `--only=<행,행>`으로 일부 행만 다시 잴 수 있습니다. 러너의 rolldown 빌드는 `dist`를 비우고 JS 번들만 다시 만들어 타입 선언(`.d.ts`)이 사라지므로, 러너를 돌린 뒤 플러그인 빌드나 타입을 읽는 검사를 하려면 먼저 `yarn --cwd packages/canard/schema-form build`를 다시 돌립니다.
@@ -347,6 +351,8 @@ TEST-071 행입니다. 원소 10,000개, 깊은 노드 작은 쪽 4·큰 쪽 19(
 
 숫자 `0..N-1`을 담은 루트 배열을 기존 길이 N으로 로드한 뒤, 공개 `push(n)` 한 번과, 따로 `remove(1)` 한 번을 잽니다(`dispatchPush`·`dispatchRemove` 경로, 동기 정착과 전달 포함). `push`는 길이와 모든 값·자식 이름·경로를, `remove`는 지운 값과 꼬리의 이동한 값·이름·경로를 검사합니다. M1의 G8 계약 판정용입니다(`push`가 기존 길이에 비례하면 위반, `remove`는 꼬리 길이에만 비례해야 함).
 
+탐침은 이제 두 갈래(`lane`)를 냅니다. 아래 표는 저수준 `loadFieldNodeAtMount` 직후에 재는 `mounted` 갈래, 곧 마운트 직후(참고)이며 첫 동사가 대기 중인 마운트 배달을 함께 비웁니다. G8의 계약 갈래는 공개 `mountFieldNode` 경로로 마운트 배달을 비운 뒤 재는 `drained`(정착 뒤) 갈래입니다.
+
 | 동사 N | Node | Bun |
 | --- | --- | --- |
 | push 1000 | 0.254 (0.226–0.350) | 0.282 (0.250–0.362) |
@@ -556,6 +562,8 @@ TEST-071 행입니다. 원소 10,000개, 깊은 노드 작은 쪽 4·큰 쪽 19(
 ##### 배열 동사 — `probe-array-verbs.ts`
 
 숫자 `0..N-1`을 담은 루트 배열을 기존 길이 N으로 로드한 뒤, 공개 `push(n)` 한 번과, 따로 `remove(1)` 한 번을 잽니다(`dispatchPush`·`dispatchRemove` 경로, 동기 정착과 전달 포함). `push`는 길이와 모든 값·자식 이름·경로를, `remove`는 지운 값과 꼬리의 이동한 값·이름·경로를 검사합니다. M1의 G8 계약 판정용입니다(`push`가 기존 길이에 비례하면 위반, `remove`는 꼬리 길이에만 비례해야 함).
+
+탐침은 이제 두 갈래(`lane`)를 냅니다. 아래 표는 저수준 `loadFieldNodeAtMount` 직후에 재는 `mounted` 갈래, 곧 마운트 직후(참고)이며 첫 동사가 대기 중인 마운트 배달을 함께 비웁니다. G8의 계약 갈래는 공개 `mountFieldNode` 경로로 마운트 배달을 비운 뒤 재는 `drained`(정착 뒤) 갈래입니다.
 
 | 동사 N | Node | Bun |
 | --- | --- | --- |

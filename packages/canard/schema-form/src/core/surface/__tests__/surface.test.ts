@@ -38,7 +38,7 @@ describe('FieldNode PR-2 surface', () => {
         /^\| `([^`]+)` \| (getter|setter|getter\/setter|method) \|/gm,
       ),
     ].map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
-    expect(rows).toHaveLength(54);
+    expect(rows).toHaveLength(55);
     const prototype = RuntimeFieldNode.prototype;
     expect(
       Object.getOwnPropertyNames(prototype)
@@ -140,6 +140,25 @@ describe('FieldNode PR-2 surface', () => {
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
         details: { path: '', method: 'push' },
+      }),
+    );
+  });
+
+  it('SURFACE-005 delegates insert synchronously and ERROR-197 names insert on strings', () => {
+    const array = makeTree({ type: 'array', items: { type: 'string' } });
+    if (!isArrayNode(array)) throw new Error('Expected an array node');
+    expect(array.push('a')).toBe(1);
+    expect(array.insert(0, 'x')).toBe(2);
+    expect(array.insert(2, 'y')).toBe(3);
+    expect(array.insert(5, 'z')).toBe(3);
+    expect(array.value).toEqual(['x', 'a', 'y']);
+    const string = makeTree({ type: 'string' });
+    expect(() =>
+      Reflect.get(string, 'insert').call(string, 0, 'x'),
+    ).toThrowError(
+      expect.objectContaining({
+        code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
+        details: { path: '', method: 'insert' },
       }),
     );
   });

@@ -279,6 +279,62 @@ describe('array branch calculation', () => {
       );
     }
   });
+
+  it('NODE-051 plans branch insert at the front, the middle and the tail', () => {
+    const node = makeRecord(
+      arrayBehavior.branch,
+      blueprint({ type: 'array', items: { type: 'string' } }).root,
+    );
+    node.itemCount = 3;
+    const plans = [0, 1, 3].map((index) =>
+      arrayBehavior.branch.arrange(node, { kind: 'insert', index, value: 'x' }),
+    );
+    expect(plans).toEqual([
+      {
+        kind: 'slots',
+        slots: [{ value: 'x' }, { from: 0 }, { from: 1 }, { from: 2 }],
+        result: { source: 'length' },
+      },
+      {
+        kind: 'slots',
+        slots: [{ from: 0 }, { value: 'x' }, { from: 1 }, { from: 2 }],
+        result: { source: 'length' },
+      },
+      {
+        kind: 'slots',
+        slots: [{ from: 0 }, { from: 1 }, { from: 2 }, { value: 'x' }],
+        result: { source: 'length' },
+      },
+    ]);
+    expect(plans[2]).toEqual(
+      arrayBehavior.branch.arrange(node, { kind: 'push', value: 'x' }),
+    );
+  });
+
+  it('35C-06 47C-02 accepts insert only in [0, N] and only at 0 on a non-array host', () => {
+    for (const row of [arrayBehavior.branch, arrayBehavior.terminal]) {
+      const node = makeRecord(
+        row,
+        blueprint({ type: 'array', items: { type: 'string' } }).root,
+        row.strategy === 'terminal' ? ['a', 'b'] : undefined,
+      );
+      node.itemCount = row.strategy === 'branch' ? 2 : 0;
+      for (const index of [-1, 3, 1.5, Number.NaN, Infinity])
+        expect(
+          row.arrange(node, { kind: 'insert', index, value: 'x' }),
+        ).toEqual({ kind: 'noop' });
+      for (const raw of [null, 5, { a: 1 }]) {
+        node.raw = raw;
+        node.itemCount = 0;
+        expect(
+          row.arrange(node, { kind: 'insert', index: 1, value: 'x' }),
+        ).toEqual({ kind: 'noop' });
+        expect(
+          row.arrange(node, { kind: 'insert', index: 0, value: 'x' }),
+        ).toEqual(row.arrange(node, { kind: 'push', value: 'x' }));
+      }
+    }
+  });
 });
 
 // filid:contract array-terminal
@@ -340,6 +396,43 @@ describe('array terminal calculation', () => {
     ).toEqual({ kind: 'noop' });
   });
 
+  it('NODE-005 splices terminal insert into a copy and appends at the length like push', () => {
+    const raw = ['a', 'b', 'c'];
+    const node = makeRecord(
+      arrayBehavior.terminal,
+      blueprint({ type: 'array' }).root,
+      raw,
+    );
+    const expected = [
+      ['x', 'a', 'b', 'c'],
+      ['a', 'x', 'b', 'c'],
+      ['a', 'b', 'c', 'x'],
+    ];
+    [0, 1, 3].forEach((index, position) => {
+      const plan = arrayBehavior.terminal.arrange(node, {
+        kind: 'insert',
+        index,
+        value: 'x',
+      });
+      expect(plan).toEqual({
+        kind: 'raw',
+        raw: expected[position],
+        result: { source: 'length' },
+      });
+      if (plan.kind === 'raw') expect(plan.raw).not.toBe(raw);
+    });
+    expect(raw).toEqual(['a', 'b', 'c']);
+    expect(
+      arrayBehavior.terminal.arrange(node, {
+        kind: 'insert',
+        index: 3,
+        value: 'x',
+      }),
+    ).toEqual(
+      arrayBehavior.terminal.arrange(node, { kind: 'push', value: 'x' }),
+    );
+  });
+
   it('LANDING-085 projects trailing nullish values without changing raw', () => {
     const raw = ['kept', null, undefined];
     const node = makeRecord(
@@ -384,6 +477,21 @@ describe('non-array arrangement', () => {
           }),
         );
       }
+    }
+  });
+
+  it('NODE-014 ERROR-197 rejects insert on every non-array row with its method', () => {
+    for (const row of Object.values(BEHAVIORS).flatMap(Object.values)) {
+      if (row.type === 'array') continue;
+      const node = makeRecord(row, blueprint({ type: 'array' }).root);
+      expect(() =>
+        row.arrange(node, { kind: 'insert', index: 0, value: 1 }),
+      ).toThrowError(
+        expect.objectContaining({
+          code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
+          details: { path: '/list', method: 'insert' },
+        }),
+      );
     }
   });
 });

@@ -17,6 +17,11 @@ import { finishSettlement } from '../utils/settlement/finishSettlement';
 import { readArrayLength } from '../utils/structure/readArrayLength';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { applyArraySlots } from './utils/arraySlots/applyArraySlots';
+import { applyArraySplice } from './utils/arraySlots/applyArraySplice';
+import { applyArrayTail } from './utils/arraySlots/applyArrayTail';
+import { prepareArrayAppend } from './utils/arraySlots/prepareArrayAppend';
+import { prepareArrayPop } from './utils/arraySlots/prepareArrayPop';
+import { prepareArraySplice } from './utils/arraySlots/prepareArraySplice';
 
 /** Synchronous result of a plan whose slot source has already been captured. */
 const resultOf = <Self extends FieldNodeRecord<Self>>(
@@ -39,6 +44,9 @@ const resultOf = <Self extends FieldNodeRecord<Self>>(
 
 /**
  * Apply an array behavior's pure proposal and commit one synchronous write.
+ * An admitted static push, or an insert at the current length, skips the row's slot plan and the prefix proofs; see prepareArrayAppend.
+ * An admitted static pop, or a remove of the last position, does the same for the truncation; see prepareArrayPop.
+ * An admitted static middle remove or insert rebuilds only the tail from the edited position; see prepareArraySplice.
  * @param node - Array host, or any node whose behavior rejects this verb
  * @param operation - The requested public structural operation
  * @returns Length, removed or updated value, or void as declared by the plan
@@ -47,9 +55,21 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
 ): unknown => {
-  const plan = node.behavior.arrange(node, operation);
+  const append = prepareArrayAppend(node, operation);
+  const pop = append ? undefined : prepareArrayPop(node, operation);
+  const splice =
+    append || pop ? undefined : prepareArraySplice(node, operation);
+  const plan = append
+    ? append.plan
+    : pop
+      ? pop.plan
+      : splice
+        ? splice.plan
+        : node.behavior.arrange(node, operation);
   if (plan.kind === 'noop')
-    return operation.kind === 'push' ? readArrayLength(node) : undefined;
+    return operation.kind === 'push' || operation.kind === 'insert'
+      ? readArrayLength(node)
+      : undefined;
   if (plan.kind === 'raw') {
     const previous =
       isArray(node.raw) && plan.result.source === 'removed'
@@ -130,7 +150,23 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   try {
     if (context.hasGates)
       getGateRegistry(context.root.runtime).register(context.root);
-    const removed = applyArraySlots(node, plan, context);
+    let removed: unknown;
+    if (append) {
+      context.arrayAppend = append;
+      removed = applyArrayTail(node, append.plan, context, append.count);
+      append.children = node.children;
+      append.snapshot = node.runtime.loadSnapshot;
+    } else if (pop) {
+      context.arrayPop = pop;
+      removed = applyArrayTail(node, pop.plan, context, pop.count - 1);
+      pop.children = node.children;
+      pop.snapshot = node.runtime.loadSnapshot;
+    } else if (splice) {
+      context.arraySplice = splice;
+      removed = applyArraySplice(node, splice, context);
+      splice.children = node.children;
+      splice.pathChanges = context.pathChanges.length;
+    } else removed = applyArraySlots(node, plan, context);
     registerRecalculation(context);
     computeNode(context.root, context);
     finishSettlement(context, scratch);

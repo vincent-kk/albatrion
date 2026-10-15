@@ -112,17 +112,33 @@ export async function loadDistEngine(directory = defaultDirectory) {
   return { ...module, create, distSha256: digest };
 }
 
-/** Load the same published 0.16.0 ESM bundle used by the equivalent lane. */
-export async function loadLegacyEngine(directory = defaultDirectory): Promise<{
+/** Published legacy releases installed under benchmark-form's version aliases. */
+export type LegacyVersion = '0.16.0' | '0.16.1';
+
+/**
+ * Load a published legacy ESM bundle used by the equivalent lane.
+ * @param directory - Ignored directory receiving the copied bundle
+ * @param version - Installed legacy alias to load; the newest published 0.16.x by default
+ * @returns The legacy tree factory and the sha256 of the unchanged bundle bytes
+ * @throws When the bundle no longer declares `nodeFromJSONSchema`
+ */
+export async function loadLegacyEngine(
+  directory = defaultDirectory,
+  version: LegacyVersion = '0.16.1',
+): Promise<{
   create: typeof LegacyFactory;
   legacySha256: string;
 }> {
   const { module, digest } = await copyAndLoad<{
     benchmarkCore: typeof LegacyFactory;
   }>(
-    fileURLToPath(import.meta.resolve('@canard/schema-form_0.16.0')),
+    fileURLToPath(
+      version === '0.16.0'
+        ? import.meta.resolve('@canard/schema-form_0.16.0')
+        : import.meta.resolve('@canard/schema-form_0.16.1'),
+    ),
     directory,
-    '0.16.0',
+    version,
     ['nodeFromJSONSchema'],
     'export { nodeFromJSONSchema as benchmarkCore };',
   );

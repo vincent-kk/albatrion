@@ -10,7 +10,7 @@
 
 ## API Contracts
 
-- `BEHAVIORS`는 `Readonly<{ [type in BlueprintNodeKind]?: Readonly<{ branch?: Behavior; terminal?: Behavior }> }>`의 두 단계 표입니다. 진입점은 표와 정적 `omitEmpty` 빈 값 판정 함수 `isOmittedEmpty`를 이름으로 내보내고, 생성 함수가 청사진의 `kind`·`strategy`로 행을 한 번 고릅니다. 행의 `Self`는 `record`의 제네릭 계약으로 전달하고 종류 모듈이 겉면의 `AnyNode`를 가져오지 않습니다(NODE-002·016·046, VALUE-034, 26C-01).
+- `BEHAVIORS`는 `Readonly<{ [type in BlueprintNodeKind]?: Readonly<{ branch?: Behavior; terminal?: Behavior }> }>`의 두 단계 표입니다. 진입점은 표와 정적 `omitEmpty` 빈 값 판정 함수 `isOmittedEmpty`, 유효 스키마별 정적 선택 `getStaticChoices`(settle의 덧붙임 자격이 `omitTrailing`을 읽는다)를 이름으로 내보내고, 생성 함수가 청사진의 `kind`·`strategy`로 행을 한 번 고릅니다. 행의 `Self`는 `record`의 제네릭 계약으로 전달하고 종류 모듈이 겉면의 `AnyNode`를 가져오지 않습니다(NODE-002·016·046, VALUE-034, 26C-01).
 - 표에는 배열의 `branch`·`terminal`을 포함한 열 행이 있으며, 두 배열 행의 전략 선택도 청사진이 정합니다(NODE-002·047, BLUEPRINT-043, LANDING-065, 35C-12).
 - 행의 칸은 `interpret`, `assemble`, `project`, `finishInput`, `declareChildren`, `arrange`, `type`, `strategy` 순서입니다. 모든 행은 이 칸을 같은 순서로 가지며, 공유 기본 칸 위에 종류의 칸을 덮어 키 순서를 고정합니다. 같은 뜻의 칸은 같은 함수 참조를 씁니다. 여덟 줄을 넘는 칸과 종류 전용 보조는 그 종류의 utils organ에, 두 종류 이상이 쓰는 보조는 이 fractal의 utils organ에 둡니다(NODE-006·009·014, 26C-01, 36C-01, 실행 ADR D1).
 - 배열이 아닌 행의 `arrange`는 `utils/slots/`의 거부 칸 하나를 같은 함수 참조로 씁니다. 그 칸은 모든 환경에서 `path`·`details.method`를 담은 `SchemaFormError`를 `SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY` 코드로 즉시 던져 겉면과 dispatch가 종류를 묻지 않게 합니다. dispatch 진입 사슬이 오류를 포착하여 사슬 끝에서 `surface: 'thrown'`으로 `onError`에 보고한 뒤 던집니다(NODE-014, ERROR-197, 35C-01).

@@ -15,7 +15,9 @@ export async function mountEquivalentForm(
   const { Form } =
     version === 'latest'
       ? await import('@canard/schema-form')
-      : await import('@canard/schema-form_0.16.0');
+      : version === '0.16.0'
+        ? await import('@canard/schema-form_0.16.0')
+        : await import('@canard/schema-form_0.16.1');
   const ref = createRef<BenchHandle>();
   const container = document.createElement('div');
   document.body.appendChild(container);

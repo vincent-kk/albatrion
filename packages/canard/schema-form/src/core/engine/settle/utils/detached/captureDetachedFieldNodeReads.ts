@@ -9,6 +9,7 @@ import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
  * Retain the last committed reads before an exiting node's live path is cleared.
  * @param node - Departing occurrence whose reference remains externally readable
  * @param watchSnapshot - Previous emission and effective schema for watched reads
+ * @param load - The node's load source when the caller already read it, equal to `readFieldNodeDefaultValue(node)`; read here when absent
  * @returns Nothing; the tree runtime retains frozen reads by node identity
  */
 export const captureDetachedFieldNodeReads = <
@@ -16,6 +17,7 @@ export const captureDetachedFieldNodeReads = <
 >(
   node: Self,
   watchSnapshot: WatchValuesSnapshot,
+  load?: { readonly value: unknown },
 ): void => {
   const runtime = node.runtime;
   runtime.watchValuesMemo?.delete(node);
@@ -25,7 +27,7 @@ export const captureDetachedFieldNodeReads = <
     misfit: runtime.misfitPaths.has(node.path),
     misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
     inactiveValues: runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
-    defaultValue: readFieldNodeDefaultValue(node),
+    defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
     visible: node.visible,
     readOnly: node.readOnly,
     disabled: node.disabled,

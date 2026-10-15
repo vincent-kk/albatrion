@@ -22,7 +22,22 @@ import { applyArrayTail } from './applyArrayTail';
 import { canApplyArrayTail } from './canApplyArrayTail';
 
 /**
+ * Read the host's composed raw tree as slots.
+ * @param host - Live array occurrence before its plan is applied
+ * @param context - Settlement holding retained sources beneath the host
+ * @returns Raw slots, or none when the tree is not an array
+ */
+const readRawSlots = <Self extends FieldNodeRecord<Self>>(
+  host: Self,
+  context: SettlementContext<Self>,
+): readonly unknown[] => {
+  const raw = readRawTree(host, context);
+  return isArray(raw) ? raw : [];
+};
+
+/**
  * Apply a branch plan before calculation while paths are free to change.
+ * The host's raw tree is composed only when a slot reads it: extras, a whole raw, or a removed or retained slot without a live node.
  * @param host - Live array occurrence whose positions the plan replaces
  * @param plan - Pure source-position proposal from the array behavior
  * @param context - One settlement's entered, perished, and changed-path facts
@@ -36,8 +51,14 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
   const oldCount = host.itemCount;
   const oldItems = host.structure ?? {};
-  const oldRaw = readRawTree(host, context);
-  const rawSlots = isArray(oldRaw) ? oldRaw : [];
+  // With an item template and no tuple positions, extras or whole raw, only a slot without a live node reads raw.
+  let rawSlots =
+    host.raw === undefined &&
+    host.blueprintNode.item &&
+    !host.blueprintNode.prefixItems?.length &&
+    host.undeclaredValues === undefined
+      ? undefined
+      : readRawSlots(host, context);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const removedIndex =
@@ -48,7 +69,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       ? undefined
       : removedItem
         ? removedItem.local
-        : rawSlots[removedIndex];
+        : (rawSlots ??= readRawSlots(host, context))[removedIndex];
   const registry = getGateRegistry(host.runtime);
   if (context.hasGates)
     for (const item of host.children ?? []) registry.remove(item);
@@ -62,7 +83,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < plan.slots.length; index++) {
     const slot = plan.slots[index];
     const from = 'from' in slot ? slot.from : undefined;
-    const value = 'value' in slot ? slot.value : rawSlots[slot.from];
+    const value = 'value' in slot ? slot.value : rawSlots?.[slot.from];
     nextRaw.push(value);
     nextSnapshot.push('value' in slot ? slot.value : oldSnapshot[slot.from]);
     const entry = getItemEntry(host.blueprintNode, index);
@@ -74,9 +95,13 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       destinations.set(from!, index);
       continue;
     }
+    const source =
+      from === undefined || rawSlots
+        ? value
+        : (rawSlots = readRawSlots(host, context))[from];
     const node = createChildNode(host, entry);
     nextItems[String(index)] = node;
-    created.push({ node, value });
+    created.push({ node, value: source });
   }
 
   const moves: ArrayPathMove[] = [];

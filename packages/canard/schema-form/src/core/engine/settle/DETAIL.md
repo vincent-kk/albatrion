@@ -29,6 +29,10 @@
 - `__tests__/settle.branchless-feature-indexes.test.ts`는 분기 없는 청사진에서도 derive·watch·state 기능 색인과 역의존 색인이 만들어지는지, 그리고 빈 파생 규칙 표를 derive 부재가 capability로 증명된 경우에만 공유하는지를 검증한다. 두 사례는 일반 분석 강제(`vi.mock`)를 쓰지 않는다.
 - 한 진입은 동기적으로 표시 → 계산(호스트 바퀴) → 파생(쓰기가 나오면 표시로) → 전이(쓰기가 나오면 표시로) → 커밋한다. 전이가 재계산을 부른 뒤에도 파생을 다시 판정하며, 적용 쓰기가 있는 파생 라운드는 한 정착 전체에서 전이 뒤에도 이어 세고 상한은 25이다(SETTLE-002–006·017, EVENT-020, LANDING-063).
 - 출력 참조의 되살림은 한 정착에서 두 번 이상 바뀐 노드에 대해 직전 커밋의 배달 기준(`deliveryPreviousLocal`·`deliveryPreviousEmit`)과도 견준다. 정착 중간 값을 거쳐 직전 커밋과 내용이 같아지면 직전 커밋의 local·emit 참조를 되살려, 배달·revision·감시가 나가지 않는다(SETTLE-043 (나), GOAL-011, EVENT-006, P-25). 비교는 이 정착에서 이미 `UpdateValue` 비트가 선 노드의 출력 계산에만 더해진다. 객체·배열 branch 호스트는 깊은 `sameValue` 전에, 정의된 자식 방출마다 직전 커밋 값의 같은 이름 항목과 참조가 같은지를 재계산된 자식부터 본다. 자식이 부모보다 먼저 끝나 되살린 자식 참조가 이미 자리에 있으므로 이것은 되살림의 필요조건이고, 실제로 바뀐 자식이 있으면 깊은 비교 없이 재계산 자식 수만큼의 비용으로 끝난다(SETTLE-001·003). 그 밖의 노드는 `sameValue` 한 번이고, emit이 local과 같은 참조이며 두 배달 기준도 같으면 emit 비교는 local 비교의 답을 쓴다. 되살림 자리는 조립이며 커밋이 아니다: 커밋 자리에서 되살리면 형제가 실제로 바뀐 정착에서 부모 값이 자식의 새 참조를 든 채 자식만 옛 참조로 돌아간다. 알려진 차이 하나: 같은 정착에서 자식 노드 인스턴스가 바뀌어 내용은 같고 참조만 다른 방출이 생기면 부모는 되살아나지 않아 배달이 한 번 더 나가며, 값은 같다. 저장하는 필드나 단계 순서의 변경은 없고, 배달 자리는 여전히 참조로 비교한다(67C-01).
+- 정착 문맥의 선택 칸 `arrayAppend`는 `arrangeFieldNodeItems`가 자격을 준 정적 push 또는 `insert(N)` 한 번의 덧붙임 증명이다(G8). 정적 아이템 선택 재사용 증명(`canReuseArrayChildren`)은 그 호스트에서 먼저 새 자리 하나만 확인한다: 게이트 없음, 통째 raw 없음, 아이템 수 N+1, 공표된 구조·children 참조 그대로, 분배 입력·경로 이동·이탈 대기 없음, 호스트 아래 dirty 직계 자식이 새 자리뿐, 새 자식의 청사진·이름·부모·경로·정적 유효 스키마·활성 상태. 성립하면 재사용(`reuseArrayChildren`)은 새 자식의 정적 선언 ID만 공표하고 dirty이면 계산하며, 어긋나면 증명을 무효로 하고 같은 라운드에서 기존 전체 재사용 증명·일반 선택으로 이어 간다. 출력 갱신은 증명이 유효하고 호스트 children이 공표된 참조 그대로이며 `local`이 증명의 직전 `local` 또는 첫 합성 결과일 때만 행 합성에 `hint.append`(N)를 넘긴다. 참조 보존은 children 참조가 같으면 원소 비교 없이 넘어간다. 출력 갱신의 직전 커밋 되살림 확인은 배달 기준 `local`과 새 `local`이 길이가 다른 배열이면 자식 방출 확인 없이 건너뛴다(그때 `sameValue`가 거짓이므로 결과가 같다). 스냅숏 정렬은 루트 스냅숏 참조가 덧붙임 공표 뒤 그대로이고 아이템 수가 N+1인 증명 호스트만 뺀다(꼬리 적용이 이미 밀도 있는 N+1 자리를 공표했으므로 정렬 결과가 같다). 정착 단계 순서·게이트 평가·배달 집합은 바뀌지 않는다.
+- 정착 문맥의 선택 칸 `arrayPop`은 `arrangeFieldNodeItems`가 자격을 준 정적 `pop()` 또는 `remove(N−1)` 한 번의 끝 자르기 증명이다(G8 pop, 355C-01에서 옮긴 추론). 정적 아이템 선택 재사용 증명(`canReuseArrayChildren`)은 그 호스트에서 먼저 남은 자리를 방문하지 않고 고정 수의 사실만 확인한다: 게이트 없음, 통째 raw 없음, 아이템 수 N−1, 공표된 구조·children 참조 그대로, 분배 입력·경로 이동·이탈 대기 없음, 호스트 아래 dirty 직계 자식 없음. 성립하면 재사용(`reuseArrayChildren`)은 새 자리가 없으므로 아무것도 공표하거나 계산하지 않는다. 어긋나면 증명을 무효로 하고 같은 라운드에서 기존 전체 재사용 증명·일반 선택으로 이어 간다. 출력 갱신은 증명이 유효하고 재계산 목록이 없으며 호스트 children이 공표된 참조 그대로이고 `local`이 증명의 직전 `local` 또는 첫 합성 결과일 때만 행 합성에 `hint.truncate`(N−1)를 넘긴다. 스냅숏 정렬은 루트 스냅숏 참조가 꼬리 적용 공표 뒤 그대로이고 아이템 수가 N−1인 증명 호스트만 뺀다(꼬리 적용이 이미 밀도 있는 N−1 자리를 공표했으므로 정렬 결과가 같다). 정착 단계 순서·게이트 평가·배달 집합은 바뀌지 않는다.
+- 정착 문맥의 선택 칸 `arraySplice`는 `arrangeFieldNodeItems`가 자격을 준 정적 가운데 `remove(i)`(i < N−1) 또는 `insert(i)`(i < N) 한 번의 자르고 잇기 증명이다(G8 splice, 355C-01과 365라운드 소유자 답, `architecture/reviews/round-365-owner-answers.md`). 정적 아이템 선택 재사용 증명(`canReuseArrayChildren`)은 그 호스트에서 먼저 접두를 방문하지 않고 꼬리 자리만 확인한다: 게이트 없음, 통째 raw 없음, 아이템 수 N∓1, 공표된 구조·children 참조 그대로, 분배 입력·이탈 대기 없음, 경로 변경 기록이 적용이 남긴 수 그대로, 호스트 아래 dirty 직계 자식이 모두 자리 i 이상, 꼬리 자식마다 구조 항목·청사진·이름·부모·경로·정적 유효 스키마·활성 상태, 새로 들어온 자식은 insert의 자리 i뿐. 성립하면 재사용(`reuseArrayChildren`)은 꼬리 자리 i..(새 아이템 수−1)의 정적 선언 ID만 다시 공표하고 dirty인 꼬리 자식만 계산한다. 접두 0..i−1의 선택 항목은 이미 가진 참조 그대로이다. 어긋나면 증명을 무효로 하고 같은 라운드에서 기존 전체 재사용 증명·일반 선택으로 이어 간다. 출력 합성과 스냅숏 정렬은 이 증명을 읽지 않는다. 정착 단계 순서·게이트 평가·배달 집합은 바뀌지 않는다.
+- 호스트의 children 배열은 새로 고른 자식 목록이 직전 배열과 순서·참조가 모두 같으면 직전 배열을 그대로 둔다(`isSameChildList`, `primeHost`·`selectChildren`·`flushPendingOutput`). 같은 배열 참조는 객체 행 합성의 빠른 길(직전 형상의 children 참조와 같을 때 바뀐 자리만 패치)의 조건이고, 내용이 같은 children 재생성이 내던 변경 배달 하나가 빠진다(SETTLE-043 (나), GOAL-011). 형상이 바뀐 비루트 호스트 아래 형제 N개를 둔 쓰기(P-09)의 N 비례 시간은 형제 재계산이 아니라 부모가 자기 자식 목록을 쓰기마다 고정 횟수(호스트 준비 1회, 선택 2회, 합성 4회) 훑는 비용이며, 부모가 재계산 목록에 있으므로 SETTLE-017의 허용 범위 안이다.
 
 ## Structure
 
@@ -99,7 +103,7 @@
 
 - 진입점은 `writeFieldNode<Self>(node: FieldNodeRecord<Self>, input: unknown, kind: FieldNodeWriteKind, option: WriteOption): void`, `loadFieldNodeAtMount<Self>(root: FieldNodeRecord<Self>, value: unknown, option: WriteOption): void`, `resetFieldNodeForm<Self>(root: FieldNodeRecord<Self>, value: unknown, option: WriteOption): void`, `resetFieldNodeSubtree<Self>(node: FieldNodeRecord<Self>, option: WriteOption): void`, `arrangeFieldNodeItems(node, operation)`, `readFieldNodeDefaultValue<Self>(node: FieldNodeRecord<Self>): unknown`과 정착용 맥락 변경 함수를 이름으로 내보낸다. `readFieldNodeInactiveValues`·`readFieldNodeMisfit`·`readFieldNodeMisfits`·`readFieldNodeWatchValues`도 노드 겉면에 이름으로 제공하여 각 게터가 내부 organ 없이 한 문장으로 위임하게 한다. 각 읽기 함수는 살아 있는 참조에서는 런타임 값을, 떼어진 참조에서는 마지막 커밋의 동결 값을 읽는 해당 멤버의 계약을 따른다. `FieldNode.setValue`·`resetSubtree`·바인딩 전용 `setContext`의 조율은 `write` 진입을 경유하고, 그 진입이 이곳의 동기 정착 함수를 부른다(NODE-010·044, LANDING-064·084, WRITE-085, CONTROLS-032·080, SURFACE-055, 26C-01, 28C-03·07·08).
 - 배열 동사의 정착: 배치 안 동사는 정착을 호출하지 않고 표시된 원본 배열에 순수 계획을 적용하며, 배치 끝에 여러 표시를 루트 한 번 정착으로 합치되 통째 교체 범위(잠복 원본 정리, 객체 호스트의 whole 분배, 교체 나감 판정)는 표시된 경로의 합집합이고 얕은 Merge 표시는 받은 키의 자식 경로이며 덮어쓰기 가상 표시는 참조 형제 경로(`writeOrigins[].fields`, 단일 경로 `virtualReplacePaths`의 배치 대응)이다; 쓰인 배열 호스트 아래 아이템 키는 위치로 잇는다(191C-01, 26C-10, R2). 교체 범위 안의 값 결과는 합성 값의 통째 쓰기 하나와 같아 같은 쓰기들을 순차로 한 결과와 다를 수 있고(GOAL-010, 62C-01), 교체 범위 밖에서 형상에 들어오는 노드는 합성 값 대신 잠복 원본을 복원하므로 그 결과는 통째 쓰기와 다를 수 있다(R1). 커밋은 재인덱싱 경로 사실의 노드와 자손을 배달 후보에 넣어 `UpdatePath`의 `{ previous, current }`를 표시한다(NODE-010·014, SURFACE-005, 33C-01, 35C-02, 36C-01, 62C-01, 실행 ADR D1·D4).
-- 진입점은 `readArrayLength(node)`를 이름으로 내보낸다. 배열 노드의 현재 길이(branch는 `itemCount`, terminal은 `raw` 배열 길이, 그 밖은 0)이며 배치 밖 무동작 push와 write의 거부·실패 push가 같은 값을 돌려주게 한다.
+- 진입점은 `readArrayLength(node)`를 이름으로 내보낸다. 배열 노드의 현재 길이(branch는 `itemCount`, terminal은 `raw` 배열 길이, 그 밖은 0)이며 배치 밖 무동작 push·insert와 write의 거부·실패 push·insert가 같은 값을 돌려주게 한다.
 
 - `FieldNodeWriteKind`는 engine의 공유 형 compartment `types/value.ts`에 있으며 `'input' | 'callerPartial' | 'callerReplace' | 'load' | 'automatic'`이다. 마지막 종류는 채움·입력 마침 등 예약 층 쓰기이며, 기본 `setValue(V)`는 로드가 아닌 `callerReplace`이다(VALUE-032, WRITE-096). 표시 단계가 종류·옵션·원래 쓰인 값을 기록하고, 정적 `schemaType`·`nullable`로 먼저 한 번 해석하며 쓴 노드와 역의존 조상을 재계산 목록에 넣는다(WRITE-056·098, SETTLE-002·017).
 - `setValue(V, Merge)`는 `callerPartial`이며 받은 키마다 살아 있는 자식 또는 형상 밖 자손의 종류별 잠복 원본에 부분 쓰기를 한다. 형상 밖 호스트의 잘못된 종류 `raw`는 자손 잠복 잎에 방출 가능한 값을 쓴 호출자 부분 쓰기에서만 비우고, 살아 있는 호스트의 `raw`는 자식 방출이 실제 생길 때만 비운다. 빈 객체로 승격하거나 형제의 기본값을 채우지 않는다(WRITE-013·079·090, VALUE-002·034·036, 26C-10, 26C-14).
@@ -260,7 +264,8 @@
 ### settle-array-selection-reuse — 구조 정착 뒤 정적 아이템 선택 재사용
 
 - append·remove-last의 정적 선택 단축은 일반 선택과 값·방출·반환값·스냅숏·노드/키/경로·배달 순서·개정·진단·기록·소멸 관측이 같다. 실제 단축 경로가 실행되며 접두의 일반 선택 몸통 방문은 0회이다.
-- 새 아이템의 기존 계산은 유지한다. 게이트·식·파생 입력·통째 배열 교체·접두 이동·잘못된 종류의 호스트는 일반 경로를 유지하며 결과와 실패 기록을 비교한다. 스키마 불일치·종류 충돌·빈 선언·가상 아이템·dirty 접두 자식 조건은 증명을 국소적으로 유지하는 방어 조건이며 이 그룹의 테스트는 재현하지 않는다.
+- 경로가 옮겨진 정착은 선택을 재사용하지 않는다. 예외는 유효한 `arraySplice` 증명을 가진 정적 호스트(`admitsStaticArrayTail`: 게이트·식·파생·감시 없음)의 가운데 remove·insert이며, 선택을 재사용하고 꼬리 T 항목(자리 i..새 아이템 수−1)만 다시 공표한다. 정적 자격 아래 이름이 바뀐 꼬리 노드의 선택은 같은 템플릿 노드와 정적 선언 ID라는 경로와 무관한 구조 사실에만 기대기 때문이다. 접두 항목은 다시 공표하지 않으며, 결과는 일반 경로를 강제한 실행과 값·키·경로·배달·개정·선언 ID가 같다(355C-01, 365라운드 소유자 답 `architecture/reviews/round-365-owner-answers.md`).
+- 새 아이템의 기존 계산은 유지한다. 게이트·식·파생 입력·통째 배열 교체·정적 증명 없는 경로 이동·잘못된 종류의 호스트는 일반 경로를 유지하며 결과와 실패 기록을 비교한다. 스키마 불일치·종류 충돌·빈 선언·가상 아이템·dirty 접두 자식 조건은 증명을 국소적으로 유지하는 방어 조건이며 이 그룹의 테스트는 재현하지 않는다.
 
 ### settle-delivery — 변경 범위의 배달 표시
 
@@ -269,7 +274,7 @@
 - 배달의 변경 판단(값·방출·감시 값 튜플의 원소)은 참조 동일성에 `NaN`을 `NaN`과 같게 보는 SameValueZero이다(SETTLE-043, 66C-01). 그래서 `NaN`을 든 잎은 다시 계산되거나 계산 플래그 변경으로 후보가 되어도 `UpdateValue`를 받지 않고, `NaN`을 든 감시 튜플은 그대로이면 `UpdateControlledProperties`를 받지 않는다. 깊은 비교는 되살림에서 한 번, 배달은 참조: 내용 비교(`sameValue`)는 커밋의 참조 되살림(SETTLE-043 (나))과 원본·입력 비교에만 쓰고, 배달·`onChange`·검증 요청·감시 간선은 참조로 비교한다(67C-01).
 - `commitGlobalState`는 정적 범위를 줄이지 않는다. 모든 종류의 노드가 스키마 선언과 무관하게 `setState`·`setSubtreeState`로 임의 상호작용 상태 키를 받을 수 있고, 로드/초기화 및 형상 진입·이탈에서 참→거짓과 이전 참 노드의 제거도 셈해야 한다. 따라서 현재 참 플래그나 `controls.resetInteraction` 선언은 EVENT-062의 정적 상한이 아니며, 가능한 정적 범위는 전체 노드이다. 키별 증감 합산은 순서와 무관하나 전역 상태 확정→배달 표시 및 최외곽 진입당 `UpdateGlobalState` 한 번의 SETTLE-006·43C-01 순서는 유지한다(65C-02).
 
-- 소멸한 아이템과 자손의 직전 상호작용 상태를 전역 셈에서 빼고, 구조 연산의 새 아이템은 생김 집합으로 더한다. 소멸 노드의 레코드 배달 기준·감시 역색인·대기 사건·검증/외부 오류 및 대상 집합은 노드 identity로 지운다. 재인덱싱은 identity 저장소를 유지하고 경고 데이터 경로 키를 옮기며 소멸 경로의 경고는 버린다. 사슬에 이미 발생한 오류와 기록은 당시 경로를 유지하여 발생 순서를 보존한다. 정리는 소멸 하위 트리의 노드 수에 비례하고 일반 잎 쓰기에는 저장소 전체 순회를 더하지 않는다(35C-02·09, 43C-01, 58C-01).
+- 소멸한 아이템과 자손의 직전 상호작용 상태를 전역 셈에서 빼고, 구조 연산의 새 아이템은 생김 집합으로 더한다. 소멸 노드의 레코드 배달 기준·감시 역색인·대기 사건·검증/외부 오류 및 대상 집합은 노드 identity로 지운다. 재인덱싱은 identity 저장소를 유지하고 경고 데이터 경로 키를 옮기며 소멸 경로의 경고는 버린다. 사슬에 이미 발생한 오류와 기록은 당시 경로를 유지하여 발생 순서를 보존한다. 정리는 소멸 하위 트리의 노드 수에 비례하고 일반 잎 쓰기에는 저장소 전체 순회를 더하지 않는다(35C-02·09, 43C-01, 58C-01). 소멸 경로 정리는 항목이 없는 경로 저장소와 빈 경고 색인을 경로마다 조회하지 않고, 소멸 마감은 런타임의 게이트 등록부를 한 번 얻고 대기 나감이 없으면 노드마다 훑지 않는다. 결과와 순서는 같다(370라운드 편집자 결정, arrangeFieldNodeItems DETAIL의 `settle-array-clear`).
 
 - 관련 없는 한 잎 쓰기와 맥락 참조가 그대로인 커밋은 해당하지 않는 감시 노드의 감시 값을 다시 읽지 않는다. `@` 감시는 마지막 배달에서 본 맥락 참조와 현재 참조가 다른 커밋에서만 후보가 되며, 의존 경로·맥락·형상 변경은 해당 감시 값과 `UpdateControlledProperties` 비트를 유지한다(EVENT-064, CONTROLS-019, 28C-07, 44C-01).
 
@@ -368,6 +373,10 @@
 
 - 객체 호스트가 한 정착 안에서 중간 값을 거쳐 직전 커밋과 같은 내용으로 돌아오면, 커밋된 local·emit 참조가 직전 커밋의 것과 같고 호스트의 `UpdateValue`와 그 호스트를 감시하는 노드의 `UpdateControlledProperties` revision이 오르지 않는지 확인한다(P-25, SETTLE-043 (나)).
 - 같은 정착에서 형제가 `injectTo`로 실제로 바뀌는 동안 호스트가 되살아나면, 부모와 조부모의 local·emit이 그 이름 항목에 되살린 자식 emit 참조를 그대로 드는지 확인한다(P-25, SETTLE-043 (나)).
+
+### settle-children-retention — 같은 자식 목록의 배열 유지
+
+- 형상이 바뀐 비루트 `if` 호스트 아래에서 부모를 다시 고르는 쓰기 뒤에도 자식 목록의 순서·참조가 같으면 부모의 children 배열 참조가 쓰기 전과 같고, 자식이 실제로 들고 나면 새 배열이 공표되는지 확인한다(P-09, SETTLE-043 (나)).
 
 ### settle-write-traversal — 잎·통째 쓰기의 실제 방문 범위
 

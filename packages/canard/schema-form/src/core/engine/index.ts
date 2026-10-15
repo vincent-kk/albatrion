@@ -7,6 +7,7 @@ export {
   dispatchClearSubtreeState,
   dispatchContextChange,
   dispatchFinishInput,
+  dispatchInsert,
   dispatchMount,
   dispatchPop,
   dispatchPush,

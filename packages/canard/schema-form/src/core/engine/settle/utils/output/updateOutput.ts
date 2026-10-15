@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import { FieldNodeEventType, captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
@@ -6,8 +8,10 @@ import { keepsChildEmissions } from './utils/keepsChildEmissions';
 
 /**
  * Assemble and project a node once from its current child order.
+ * For the host of a still-valid append proof it passes the appended position to the row and records the first appended assembly in `arrayAppend.assembled`;
+ * for the host of a still-valid pop proof it passes the remaining item count and records the first truncated assembly in `arrayPop.assembled`.
  * @param node - Live node whose row owns assembly and projection
- * @param context - Current commit's changed-node set
+ * @param context - Current commit's changed-node set and the optional `arrayAppend` and `arrayPop` proofs it reads
  * @param recalculated - Direct children recomputed with an unchanged host shape
  * @returns Whether either calculated value changed
  */
@@ -20,13 +24,38 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   const host =
     (node.behavior.type === 'array' || node.behavior.type === 'object') &&
     node.behavior.strategy === 'branch';
-  const hint = recalculated && host ? { incremental: false } : undefined;
+  const append = context.arrayAppend;
+  const appending =
+    append !== undefined &&
+    append.host === node &&
+    append.valid &&
+    !recalculated &&
+    node.children === append.children &&
+    (node.local === append.local || node.local === append.assembled);
+  const pop = context.arrayPop;
+  const truncating =
+    pop !== undefined &&
+    pop.host === node &&
+    pop.valid &&
+    !recalculated &&
+    node.children === pop.children &&
+    (node.local === pop.local || node.local === pop.assembled);
+  const hint =
+    recalculated && host
+      ? { incremental: false }
+      : appending
+        ? { incremental: false, append: append.count }
+        : truncating
+          ? { incremental: false, truncate: pop.count - 1 }
+          : undefined;
   const assembled = node.behavior.assemble(
     node,
     node.children ?? [],
     recalculated,
     hint,
   );
+  if (appending && hint?.incremental) append.assembled = assembled;
+  if (truncating && hint?.incremental) pop.assembled = assembled;
   const previousLocal = node.local;
   const same = hint?.incremental
     ? node.behavior.type === 'object' &&
@@ -42,9 +71,11 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
       )
     : sameValue(node.local, assembled);
   let local = same ? node.local : assembled;
+  const baseline = node.deliveryPreviousLocal;
   const revisit =
     (node.deliveryChanges & FieldNodeEventType.UpdateValue) !== 0 &&
-    local !== node.deliveryPreviousLocal;
+    local !== baseline &&
+    !(isArray(baseline) && isArray(local) && baseline.length !== local.length);
   if (
     revisit &&
     (!host ||

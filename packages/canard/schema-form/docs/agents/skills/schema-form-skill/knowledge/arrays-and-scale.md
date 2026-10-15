@@ -4,11 +4,12 @@
 
 ## ArrayNode Mutations
 
-Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or receive it as `node` inside a `FieldInput`. Methods: `push`, `pop`, `update`, `remove`, `clear` (shapes in `dist/*.d.ts`). Behavior the signatures do not show:
+Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or receive it as `node` inside a `FieldInput`. Methods: `push`, `pop`, `update`, `remove`, `insert`, `clear` (shapes in `dist/*.d.ts`). Behavior the signatures do not show:
 
 - `push(value?)` returns the array **length after the push** (a number, synchronously), not the new item's index. It is never refused: `maxItems` and `items: false` do not stop it, and validation reports the violation.
 - `clear()` removes **every** item whatever `minItems` says, like `remove`/`pop`/`setValue([])`. `minItems` is a validation constraint only: the core never fills to it, at construction, on reset or on branch reactivation. To stop users going below the minimum, disable the remove control in the `FieldInput` (the built-in array input always shows it). The built-in array input also draws empty slots up to `minItems` in the UI only; a slot writes its position when the user types into it. On a nullable array that is `null`, `clear()` does nothing (`nullable-branch-nodes.md`).
 - `remove(index)` removes one item by index.
+- `insert(index, value?)` inserts one item at an integer index in [0, length] and returns the new length; items from `index` on keep their nodes and keys and move back one position, `index === length` is exactly `push`, and a negative, fractional or larger index does nothing and returns the current length. On a host holding a non-array value, `insert(0, x)` behaves like `push(x)` and any other index does nothing.
 
 ## Array Output Filters (omitTrailing / omitEmpty)
 

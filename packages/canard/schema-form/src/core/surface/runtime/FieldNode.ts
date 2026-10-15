@@ -8,6 +8,7 @@ import {
   dispatchClear,
   dispatchClearExternalErrors,
   dispatchClearSubtreeState,
+  dispatchInsert,
   dispatchPop,
   dispatchPush,
   dispatchRemove,
@@ -310,6 +311,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   /** Remove one position and return its last committed value. */
   remove(index: number) {
     return dispatchRemove<FieldNode>(this, index);
+  }
+  /** Insert one caller value at a position in [0, length] and return the new length synchronously. */
+  insert(index: number, value?: unknown) {
+    return dispatchInsert<FieldNode>(this, index, value);
   }
   /** Remove every position without returning an item. */
   clear() {

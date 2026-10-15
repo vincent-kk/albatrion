@@ -7,6 +7,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
+import { isSameChildList } from '../structure/isSameChildList';
 import {
   DIRECT_CHILD_SELECTION_PLANS,
   getDirectChildSelectionPlan,
@@ -98,9 +99,11 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     baseline[entry.name] = child;
   }
   node.structure = baseline;
+  const children = Object.values(baseline);
+  const published = node.children;
   node.children = captureFieldNodeChange(
     node,
     'children',
-    Object.values(baseline),
+    isSameChildList(published, children) ? published : children,
   );
 };

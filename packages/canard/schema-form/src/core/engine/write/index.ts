@@ -6,6 +6,7 @@ export { dispatchPush } from './utils/entry/dispatchPush';
 export { dispatchPop } from './utils/entry/dispatchPop';
 export { dispatchUpdate } from './utils/entry/dispatchUpdate';
 export { dispatchRemove } from './utils/entry/dispatchRemove';
+export { dispatchInsert } from './utils/entry/dispatchInsert';
 export { dispatchClear } from './utils/entry/dispatchClear';
 export { dispatchResetSubtree } from './utils/entry/dispatchResetSubtree';
 export { dispatchResetForm } from './utils/entry/dispatchResetForm';

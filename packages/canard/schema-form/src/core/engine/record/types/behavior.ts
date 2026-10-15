@@ -26,6 +26,7 @@ export type ArrayOperation =
   | { kind: 'pop' }
   | { kind: 'update'; index: number; value: unknown }
   | { kind: 'remove'; index: number }
+  | { kind: 'insert'; index: number; value: unknown }
   | { kind: 'clear' };
 
 /** Where settlement obtains the synchronous result of an array verb. */
@@ -55,7 +56,14 @@ export interface Behavior<Self = unknown> {
     node: FieldNodeRecord<Node>,
     children: readonly Node[],
     recalculated?: readonly Node[],
-    hint?: { incremental: boolean },
+    hint?: {
+      /** Set by the row when it compared only recalculated or appended slots, or truncated its previous local. */
+      incremental: boolean;
+      /** Previous item count when settlement holds a valid append proof for this host. */
+      append?: number;
+      /** Remaining item count when settlement holds a valid pop proof for this host. */
+      truncate?: number;
+    },
   ): unknown;
   /** Project a local value into the outgoing value. */
   project<Node extends Self>(
