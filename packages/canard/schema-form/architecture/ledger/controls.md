@@ -1159,6 +1159,7 @@
   > 편집자 결정(29C-04): "【추론】 조각 객체의 `controls`에 둘 수 있는 키는 CONTROLS-077의 닫힌 목록(`active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`)이고 `injectTo`는 청사진 오류다; `controls.children` 항목의 안쪽 `controls`도 같다(CONTROLS-030)." (`reviews/round-29-closing.md:45`)
   > 편집자 결정(29C-04): "【추론】 FRAGMENT-050의 "조각의 `controls`에 둔 에지 규칙(`unsetValue`·`derived`·`resetInteraction`·`injectTo`)"에서 `injectTo`는 18C-51이 지나가며 적은 열거이며, 같은 18라운드의 뒤 블록 18C-60이 허용 키 집합을 명시적으로 닫았으므로 CONTROLS-077이 이긴다; 조각 층의 에지 규칙은 `unsetValue`·`derived`·`resetInteraction` 셋으로 읽는다." (`reviews/round-29-closing.md:46`)
   > 편집자 결정(29C-04): "【추론】 02(PR-1) 청사진이 조각과 `controls.children` 항목의 `controls`에 `injectTo`를 모르는 키로 거부하는 것(`src/core/blueprint/utils/diagnostics/validateControlGroups.ts:27-46,95-113`의 키 목록과 모르는 키 거부, 조각 여부는 `src/core/blueprint/utils/diagnostics/collectDeclarations.ts:30-35,89`)은 원장과 맞으며 고칠 것이 없다." (`reviews/round-29-closing.md:48`)
+  > 소유자(373라운드, 배열 조각의 controls가 한 스키마 items 아이템에 걸리지 않는 것은 결함이며 수정한다): "아. 그렇네 완전 결함이군. \n너희 판단이 맞아. 수정이 필요하다" (`reviews/round-373-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1704-1720`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-60)
