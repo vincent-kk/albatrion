@@ -1,6 +1,7 @@
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { isSameChildList } from '../structure/isSameChildList';
 import { updateOutput } from './updateOutput';
 
 /**
@@ -14,10 +15,12 @@ export const flushPendingOutput = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): boolean => {
   if (!context.pendingOutputs?.delete(node)) return false;
+  const children = Object.values(node.structure ?? {});
+  const published = node.children;
   node.children = captureFieldNodeChange(
     node,
     'children',
-    Object.values(node.structure ?? {}),
+    isSameChildList(published, children) ? published : children,
   );
   updateOutput(node, context);
   return true;

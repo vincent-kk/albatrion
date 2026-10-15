@@ -17,6 +17,7 @@ import { distributeLatentValue } from '../../latent/distributeLatentValue';
 import { getLatentOrder } from '../../latentStore/getLatentOrder';
 import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
 import { flushPendingOutput } from '../../output/flushPendingOutput';
+import { isSameChildList } from '../../structure/isSameChildList';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
@@ -434,10 +435,20 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     }
   }
   const nextChildren = Object.values(next);
-  if (nextChildren.length !== before.length) changed = true;
-  for (let index = 0; !changed && index < nextChildren.length; index++)
-    if (nextChildren[index] !== before[index]) changed = true;
-  node.children = captureFieldNodeChange(node, 'children', nextChildren);
+  const published = node.children;
+  const sameAsBefore = isSameChildList(before, nextChildren);
+  if (!sameAsBefore) changed = true;
+  node.children = captureFieldNodeChange(
+    node,
+    'children',
+    published === before
+      ? sameAsBefore
+        ? before
+        : nextChildren
+      : isSameChildList(published, nextChildren)
+        ? published
+        : nextChildren,
+  );
   if (changed) context.changedNodes.add(node);
   return changed;
 };
