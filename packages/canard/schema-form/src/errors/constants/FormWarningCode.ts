@@ -1,6 +1,6 @@
 import { FormWarningGroup } from './FormWarningGroup';
 import { SchemaFormWarningSpecific } from './SchemaFormWarningSpecific';
-import { assembleCodeGroup } from './assembleCodeGroup';
+import { assembleCodeGroup } from '../utils/assembleCodeGroup';
 
 /**
  * Every warning code the package reports, in ledger order (ERROR-164 and its supplements).

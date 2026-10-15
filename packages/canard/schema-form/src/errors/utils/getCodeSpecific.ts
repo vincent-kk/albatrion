@@ -1,12 +1,12 @@
-import type { FormErrorCode } from './FormErrorCode';
-import { FormErrorGroup } from './FormErrorGroup';
-import type { FormWarningCode } from './FormWarningCode';
-import { FormWarningGroup } from './FormWarningGroup';
-import { JSONSchemaErrorSpecific } from './JSONSchemaErrorSpecific';
-import { SchemaFormErrorSpecific } from './SchemaFormErrorSpecific';
-import { SchemaFormWarningSpecific } from './SchemaFormWarningSpecific';
-import { UnhandledErrorSpecific } from './UnhandledErrorSpecific';
-import { ValidationErrorSpecific } from './ValidationErrorSpecific';
+import type { FormErrorCode } from '../constants/FormErrorCode';
+import { FormErrorGroup } from '../constants/FormErrorGroup';
+import type { FormWarningCode } from '../constants/FormWarningCode';
+import { FormWarningGroup } from '../constants/FormWarningGroup';
+import { JSONSchemaErrorSpecific } from '../constants/JSONSchemaErrorSpecific';
+import { SchemaFormErrorSpecific } from '../constants/SchemaFormErrorSpecific';
+import { SchemaFormWarningSpecific } from '../constants/SchemaFormWarningSpecific';
+import { UnhandledErrorSpecific } from '../constants/UnhandledErrorSpecific';
+import { ValidationErrorSpecific } from '../constants/ValidationErrorSpecific';
 
 /** Code-to-specific index assembled once from the bare specific tables. */
 const SPECIFICS = new Map<string, string>(

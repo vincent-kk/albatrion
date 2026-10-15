@@ -1,4 +1,4 @@
-import { FormWarningCode } from './FormWarningCode';
+import { FormWarningCode } from '../constants/FormWarningCode';
 
 /** Every warning code value, built once for membership checks. */
 const CODES: ReadonlySet<string> = new Set(Object.values(FormWarningCode));

@@ -1,7 +1,7 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
-import { FormErrorGroup } from '../codes/FormErrorGroup';
-import { getCodeSpecific } from '../codes/getCodeSpecific';
+import { FormErrorGroup } from '../constants/FormErrorGroup';
+import { getCodeSpecific } from '../utils/getCodeSpecific';
 import type { SchemaFormErrorCode } from '../type';
 
 /** Group every SchemaFormError code carries; the code value repeats it before the bare name. */
