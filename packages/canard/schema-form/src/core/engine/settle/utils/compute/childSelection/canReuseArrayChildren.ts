@@ -5,6 +5,7 @@ import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { getLoadValue } from '../../loadValues/getLoadValue';
 import { canReuseAppendedChild } from './canReuseAppendedChild';
+import { canReuseSplicedChildren } from './canReuseSplicedChildren';
 import { canReuseTruncatedChildren } from './canReuseTruncatedChildren';
 
 /** Ungated effective schemas select their immutable static contributions. */
@@ -12,7 +13,8 @@ const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 
 /**
  * Prove that a static array shape survives a prefix-preserving length change.
- * A valid append proof for this host is checked at its new position alone, and a valid pop proof without visiting any position; when that check fails the proof is invalidated and the full proof runs.
+ * A valid append proof for this host is checked at its new position alone, a valid pop proof without visiting any position, and a valid splice proof at its tail positions alone;
+ * when that check fails the proof is invalidated and the full proof runs.
  * Writes nothing else; publication belongs to the caller.
  * @param node - Array host whose structural operation already published its slots
  * @param context - Settlement facts the proof reads: gate presence, previous item counts, distributed inputs, path changes, pending exits, previous emit and entered records
@@ -33,6 +35,11 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   if (pop?.host === node && pop.valid) {
     if (canReuseTruncatedChildren(node, context, prior, pop)) return true;
     pop.valid = false;
+  }
+  const splice = context.arraySplice;
+  if (splice?.host === node && splice.valid) {
+    if (canReuseSplicedChildren(node, context, prior, splice)) return true;
+    splice.valid = false;
   }
   const capabilities = node.runtime.blueprint.capabilities;
   const oldCount = context.arrayCounts.get(node);

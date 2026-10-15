@@ -227,15 +227,26 @@ describe('static array selection matches the full route', () => {
     expect(root.emit).toEqual({ rows: [1, 2], sibling: 'same' });
   });
 
-  it('retains full selection for a removal that moves prefix paths', () => {
-    compareArraySelection(
-      {
-        type: 'array',
-        items: { type: 'object', properties: { value: { type: 'string' } } },
-      },
-      [{ value: 'a' }, { value: 'b' }, { value: 'c' }],
-      [{ apply: (node) => dispatchRemove(node, 0), reuse: false }],
-    );
+  it('retains full selection for a removal that moves paths under a gate or an expression', () => {
+    for (const controls of [{ active: '../flag' }, { visible: '../flag' }])
+      compareArraySelection(
+        {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              flag: { type: 'boolean' },
+              value: { type: 'string', controls },
+            },
+          },
+        },
+        [
+          { flag: true, value: 'a' },
+          { flag: false, value: 'b' },
+          { flag: true, value: 'c' },
+        ],
+        [{ apply: (node) => dispatchRemove(node, 0), reuse: false }],
+      );
   });
 
   it('retains full selection for whole replacement and a wrong-kind host', () => {

@@ -1,6 +1,6 @@
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { ArrayOperation, FieldNodeRecord } from '../../../../record';
-import type { ArraySpliceProof } from '../../types/spliceProof';
+import type { ArraySpliceProof } from '../../../types/settlement';
 import { admitsStaticArrayTail } from './admitsStaticArrayTail';
 
 /** Ungated effective schemas select their immutable static contributions. */
@@ -59,6 +59,7 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
         slots: NO_SLOTS,
         result: { source: 'removed', index },
       },
+      valid: true,
     };
   const entry = getItemEntry(template, index);
   if (!entry || entry.node.kind === 'virtual' || !entry.declarations.length)
@@ -79,5 +80,6 @@ export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
       slots: [{ value: operation.value }],
       result: LENGTH_RESULT,
     },
+    valid: true,
   };
 };

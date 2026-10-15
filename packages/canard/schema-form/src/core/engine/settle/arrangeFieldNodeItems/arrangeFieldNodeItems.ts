@@ -161,8 +161,12 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
       removed = applyArrayTail(node, pop.plan, context, pop.count - 1);
       pop.children = node.children;
       pop.snapshot = node.runtime.loadSnapshot;
-    } else if (splice) removed = applyArraySplice(node, splice, context);
-    else removed = applyArraySlots(node, plan, context);
+    } else if (splice) {
+      context.arraySplice = splice;
+      removed = applyArraySplice(node, splice, context);
+      splice.children = node.children;
+      splice.pathChanges = context.pathChanges.length;
+    } else removed = applyArraySlots(node, plan, context);
     registerRecalculation(context);
     computeNode(context.root, context);
     finishSettlement(context, scratch);
