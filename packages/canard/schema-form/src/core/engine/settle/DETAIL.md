@@ -438,7 +438,7 @@
 
 ### settle-pending-exit-key — 빈 이탈 대기 맵의 키 생략
 
-- oneOf-20 모양의 마운트와 아무 노드도 나가지 않는 갱신에서 `selectChildren`·`primeHost`가 부르는 `JSON.stringify`가 0회인지 확인한다. 앞 바퀴에서 나간 노드의 게이트가 뒤 바퀴에서 실패하면 그 나감을 찾아 잠재 원본을 지키는지, `primeHost`가 이탈 대기 중인 게이트 없는 자식을 같은 노드 인스턴스로 되살리는지 확인한다(L2b P1, ERROR-125, GOAL-011).
+- oneOf-20 모양의 마운트와 아무 노드도 나가지 않는 갱신에서 `selectChildren`·`primeHost`가 부르는 `JSON.stringify`가 0회인지 확인한다. 앞 바퀴에서 나간 노드의 게이트가 뒤 바퀴에서 실패하면 그 나감을 찾아 잠재 원본을 지키는지, `primeHost`가 이탈 대기 중인 게이트 없는 자식을 같은 노드 인스턴스로 되살리는지 확인한다(L2b P1, ERROR-125, GOAL-011). `primeHost` 사례는 조회 계약 확인용이다. 자연 적중은 오류로 끝나는 지연된 SharedNodeConflict 정착뿐이라, 스파이로 대기 나감을 둔다.
 
 ## Boundary Exemptions
 

@@ -435,3 +435,38 @@ L2 설계의 W4입니다. 판정 기준은 370라운드("늘리는 코드가 지
 - P2·P3은 기록만 합니다. 얻는 것이 잡음 안이기 때문입니다. 같은 키 묶음을 다음에 고칠 때 구분자로 바꿉니다.
 - P4·P5도 기록만 합니다. P4는 두 문자열 모두 구분자를 담을 수 있어 중첩 Map이 필요합니다. P5는 이름 변경과 자리 이동이 필요합니다.
 - oneOf의 옛 판 대비 차이는 H10에서 오지 않습니다. 갱신 시간의 대부분은 `evaluateGate` 480회(약 330 µs), 선택 패스, 전이·마감 단계(`transitionSettlement`·`finalizeExits`·`finishSettlement`)입니다.
+
+### 발견 — `primeHost`의 대기 나감 조회는 도달 가능하다
+
+**판정:** 도달 가능합니다. 다만 자연 경로는 지연된 SharedNodeConflict 하나뿐이고, 그 정착은 `finishSettlement.ts:108`에서 오류로 끝납니다.
+
+**왜 그 경로 하나뿐인가**
+
+- 대기 나감은 게이트 자식에 한정되지 않고, 밀려난 모든 이전 자식을 `[path, kind]` 키로 넣습니다(`selectChildren.ts:444`).
+- 맵은 정착이 끝날 때만 비워집니다(`releaseSettlementScratch.ts:14`).
+- `transitionSettlement.ts:198`과 `runDeriveRounds.ts:128`이 같은 문맥으로 `computeNode`를 다시 부릅니다. 그래서 둘째 패스의 `primeHost`(라운드 고리 전 1회, `computeNode.ts:99-164`)가 앞 패스의 대기 나감을 볼 수 있습니다.
+- 보통의 게이트 나감은 `primeHost.ts:47`의 비게이트 기준선 필터에 걸려 닿지 않습니다.
+- 배열 이름 바뀜은 첫 계산 전에 끝납니다(`arrangeFieldNodeItems.ts:169`).
+- 반례는 종류가 다른 자식이 밀려나는 경우뿐입니다.
+
+**최소 장면**
+
+- 스키마: 루트 `on: boolean`, 그리고 `oneOf` 두 분기입니다.
+  - 첫 분기: `controls.active: './on === true'`, `x: number`(기본값 1)
+  - 둘째 분기: `x: string`
+- 마운트 값은 `{ on: false, x: 'K' }`이고, `on`에 `true`를 입력합니다.
+- 진행:
+  1. 첫 계산이 비게이트 string `x`를 기준선에 둡니다.
+  2. 선택이 number `x`를 먼저 받습니다. string 항목은 충돌을 기록하고 계속합니다(`selectChildren.ts:250`).
+  3. 밀린 string `x`가 `["/x","string"]` 키로 대기 나감에 들어갑니다.
+  4. 전이가 number의 기본값 1을 채우고 다시 계산합니다(`transitionSettlement.ts:96`, `:198`).
+  5. 둘째 `primeHost`가 비게이트 string 키로 `:69`에서 적중합니다. 이전 자식이 이제 number라 `:70`이 그것을 고르고, `:72`가 대기 string 키를 지웁니다.
+  6. 그 뒤 충돌 오류가 납니다.
+
+**처리**
+
+- 조회는 제거하지 않습니다. 실제로 적중하는 경로가 있기 때문입니다.
+- 자연 장면은 시험으로 더하지 않습니다. 정착이 오류로 끝나 적중 전후에 관측 가능한 차이가 없고, 차이를 보려면 오류 경로 안쪽 상태를 들여다봐야 해서 test-validity 기준에 맞지 않습니다(편집자 결정).
+- `settle-pending-exit-key`의 `primeHost` 사례는 조회 계약 확인용 합성 시험으로 유지합니다.
+
+**도구:** codex 읽기 전용 조사(세션 `37b1356e…`)입니다. 메모리 안 탐침으로 맵 동작만 관찰했고, 항목을 주입하지 않았습니다.

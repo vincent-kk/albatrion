@@ -120,6 +120,8 @@ describe('pending-exit keys are built only while an exit is pending', () => {
     );
   });
 
+  // Lookup contract check: the only natural hit is a deferred SharedNodeConflict,
+  // whose settlement throws, so a spy places the pending exit.
   it('revives a pending ungated child in priming as the same node instance', () => {
     const { root } = createTestTree({
       type: 'object',
