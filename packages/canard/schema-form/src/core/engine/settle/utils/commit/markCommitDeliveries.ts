@@ -40,11 +40,12 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     automaticNodes.add(context.automaticLog[index].node);
   const watchIndex = runtime.deliveryWatchIndex;
   const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
-  const fullWatchScan = context.exited.size > 0;
   let affectedPaths: Set<string> | undefined;
-  if (watchIndex?.allNodes.size && !fullWatchScan) {
+  if (watchIndex?.allNodes.size) {
     affectedPaths = runtime.deliveryAffectedPaths ?? new Set<string>();
     for (const node of context.entered) affectedPaths.add(node.path);
+    for (const node of context.exited)
+      affectedPaths.add(node.deliveryPreviousPath ?? node.path);
     for (const node of context.perished)
       affectedPaths.add(node.deliveryPreviousPath ?? node.path);
     for (const change of context.pathChanges) {
@@ -93,9 +94,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   candidates.add(context.root);
   for (const change of context.pathChanges) candidates.add(change.node);
   if (watchIndex) {
-    if (fullWatchScan)
-      for (const watcher of watchIndex.allNodes) candidates.add(watcher);
-    else if (runtime.deliveredContext !== runtime.context)
+    if (runtime.deliveredContext !== runtime.context)
       for (const watcher of watchIndex.contextNodes) candidates.add(watcher);
     if (affectedPaths)
       for (const path of affectedPaths) watchIndex.affected(path, candidates);
