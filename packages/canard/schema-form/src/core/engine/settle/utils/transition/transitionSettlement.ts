@@ -85,7 +85,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           if (filledNodes.has(node)) continue;
           filledNodes.add(node);
         } else if (filled) {
-          const key = JSON.stringify([node.path, node.blueprintNode.kind]);
+          const key = JSON.stringify([
+            node.path,
+            getBlueprintNodeIdentity(node.blueprintNode),
+          ]);
           if (filled.has(key)) continue;
           filled.add(key);
         }
