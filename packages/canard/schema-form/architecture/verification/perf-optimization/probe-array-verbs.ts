@@ -7,6 +7,12 @@
  * loadFieldNodeAtMount, so the first verb also drains the pending mount
  * deliveries. Lane `drained` (정착 뒤) mounts through the public mountFieldNode
  * path, whose chain end drains those deliveries before timing starts.
+ * Lane `steady` (정상 상태, the contract lane) also pushes once onto a separate
+ * one-item tree outside timing, so the engine's shared working set is warm
+ * again after the large mount evicted it; lane `cold` instead walks a 64 MB
+ * buffer before timing. Time ratios of every lane are reference columns; the
+ * contract is judged by work counts (settle.array-append-cost) and --jitless
+ * stage timings.
  */
 import { performance } from 'node:perf_hooks';
 
@@ -34,8 +40,35 @@ const removeIndex = 1;
 const operations = ['push', 'remove'] as const;
 const lanes = [
   { lane: 'mounted', label: '마운트 직후(참고)' },
-  { lane: 'drained', label: '정착 뒤(마운트 배달 소진)' },
+  { lane: 'drained', label: '정착 뒤(마운트 배달 소진, 참고)' },
+  { lane: 'steady', label: '정상 상태(작은 트리 push로 엔진 데움, 계약 레인)' },
+  { lane: 'cold', label: '완전히 차가움(64 MB 훑기, 참고)' },
 ] as const;
+const evictionBuffer = new Float64Array((64 * 1024 * 1024) / 8);
+
+/** Create, mount and push once onto a one-item tree so shared engine code and data are cached. */
+function warmEngine(): void {
+  const tiny = fieldNodeFactory(analysis, {
+    diagnostics: { status: 'stable' },
+    loadSnapshot: undefined,
+    latentRaw: new PathKeyedMap('pair'),
+    misfitPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<
+      readonly { path: string; value: unknown }[]
+    >('path'),
+  });
+  if (!isArrayNode(tiny)) throw new Error('Missing warm-up array node');
+  mountFieldNode(tiny, [0], SetValueOption.Overwrite);
+  tiny.push(1);
+}
+
+/** Read every cache line of a 64 MB buffer so the timed verb starts from evicted caches. */
+function evictCaches(): number {
+  let sum = 0;
+  for (let index = 0; index < evictionBuffer.length; index += 8)
+    sum += evictionBuffer[index];
+  return sum;
+}
 const analysis = blueprint({
   type: 'array',
   items: { type: 'number' },
@@ -69,6 +102,8 @@ const sizes = lanes.flatMap(({ lane, label }) =>
         if (lane === 'mounted')
           loadFieldNodeAtMount(record, input, SetValueOption.Overwrite);
         else mountFieldNode(root, input, SetValueOption.Overwrite);
+        if (lane === 'steady') warmEngine();
+        if (lane === 'cold') evictCaches();
         if (root.children?.length !== n || root.value?.length !== n)
           throw new Error(
             `Array fixture length mismatch: ${operation}, N=${n}`,
