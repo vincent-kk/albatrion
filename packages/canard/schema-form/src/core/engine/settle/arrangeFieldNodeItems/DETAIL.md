@@ -71,7 +71,7 @@
 
 ### settle-array-splice-cost — 꼬리에만 비례하는 자르고 잇기 작업량
 
-- N=1,000과 N=8,000에서 같은 꼬리 T의 자격을 얻은 remove·insert는 자격과 적용의 접두 작업(`readRawTree`·`copyArraySlots`·`canApplyArrayTail`·`applyArraySlots` 호출, 접두 자리의 `getItemEntry` 요청), 재계산 등록, 계산 방문이 N과 함께 늘지 않고, 이름·경로 재게시는 T에만 비례하며, 수 아이템의 계산 방문은 T와도 무관함을 확인한다. 자격을 거절한 일반 경로의 아이템 템플릿 배열은 원본 트리를 읽지 않음을 확인한다.
+- N=1,000과 N=8,000에서 같은 꼬리 T의 자격을 얻은 remove·insert는 자격과 적용의 접두 작업(`readRawTree`·`canApplyArrayTail`·`applyArraySlots` 호출, 접두 자리의 `getItemEntry` 요청), 재계산 등록, 계산 방문이 N과 함께 늘지 않고, 이름·경로 재게시는 T에만 비례하며, 수 아이템의 계산 방문은 T와도 무관함을 확인한다. 자격을 거절한 일반 경로의 아이템 템플릿 배열은 원본 트리를 읽지 않음을 확인한다.
 
 ### settle-array-insert — 가운데 삽입과 경계
 
