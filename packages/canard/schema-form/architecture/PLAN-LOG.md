@@ -585,3 +585,4 @@
 - **352라운드(2026-10-15, 소유자).** CLAUDE.md 경로 수정 승인, 속도 그림 물음(reviews/round-352-owner-answers.md).
 - **353라운드(2026-10-15, 소유자).** 속도 측정·개선 착수(reviews/round-353-owner-answers.md).
 - **354라운드(2026-10-15, 소유자).** 루프 전체 시간을 20~30시간으로(reviews/round-354-owner-answers.md).
+- **355라운드(2026-10-15, 닫기/원장 관리자).** M0 기준선·M1 우선순위표 #397 병합, 계약 해석 넷(reviews/round-355-closing.md).

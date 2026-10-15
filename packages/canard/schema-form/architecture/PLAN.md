@@ -108,6 +108,7 @@
 | 2026-10-15 | 352라운드 소유자: CLAUDE.md 경로 수정 승인(대기열 57 닫힘), 속도 그림 물음. 보충 1줄 | `reviews/round-352-owner-answers.md` |
 | 2026-10-15 | 353라운드 소유자: 속도 측정·개선 착수, 계획 브리핑. 보충 1줄 | `reviews/round-353-owner-answers.md` |
 | 2026-10-15 | 354라운드 소유자: 루프 전체 시간을 20~30시간으로(대기열 56 갱신). 보충 1줄 | `reviews/round-354-owner-answers.md` |
+| 2026-10-15 | 355라운드 닫기: M0 기준선·M1 우선순위표 #397 병합, 편집자 결정 넷. 보충 5줄 | `reviews/round-355-closing.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
