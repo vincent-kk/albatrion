@@ -290,6 +290,7 @@
 | 2026-10-14 | 328라운드 소유자: INTENT·DETAIL 문서 전부 한국어로(humanizer, sonnet·agy 병렬), fairy08 문서 PR. 보충 1줄 | `reviews/round-328-owner-answers.md` |
 | 2026-10-15 | 376라운드(닫기): 나감 정리 결함 PR #402 검증·squash-merge(ba0b36c88); NODE-044 결함 둘의 기록, CONTROLS-077 보충(배열 아이템은 조각의 직계 자식)과 대기열 60 닫음. 보충 2줄 | `reviews/round-376-closing.md` |
 | 2026-10-15 | 377라운드(닫기): items 조각 층 결함 PR #403 검증·squash-merge(3f02269ab); 조각 소유 판정 도우미 한 벌, 아이템의 조각 층, 기존 기대 변경 0건. 보충 2줄 | `reviews/round-377-closing.md` |
+| 2026-10-15 | 378라운드 소유자: 오류·경고 코드의 그룹 상수화와 그룹별 표(속도 루프 뒤 정돈 항목, 공개 여부는 대기열 61). 보충 1줄 | `reviews/round-378-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -610,3 +611,4 @@
 - **375라운드(2026-10-15, 소유자).** 가결정 55·56 확정(reviews/round-375-owner-answers.md).
 - **376라운드(2026-10-15, 닫기).** 나감 정리 결함 PR #402 병합(ba0b36c88); NODE-044 결함 둘, CONTROLS-077 보충, 대기열 60 닫음(reviews/round-376-closing.md).
 - **377라운드(2026-10-15, 닫기).** items 조각 층 결함 PR #403 병합(3f02269ab); 조각 소유 판정 한 벌(reviews/round-377-closing.md).
+- **378라운드(2026-10-15, 소유자).** 오류·경고 코드 그룹 상수화, 속도 루프 뒤(reviews/round-378-owner-answers.md).
