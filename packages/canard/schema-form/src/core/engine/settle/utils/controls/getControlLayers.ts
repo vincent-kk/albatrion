@@ -4,6 +4,7 @@ import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { DeclarationLayer } from '../../../types/controls';
+import { collectFragmentOwnerPaths } from '../../../utils/controls/collectFragmentOwnerPaths';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
@@ -20,30 +21,6 @@ const declarationIds = (node: BlueprintNode): readonly number[] => {
     DECLARATION_IDS.set(node, ids);
   }
   return ids;
-};
-
-/** Path segments through which a fragment contributes a declaration to a child. */
-const OWNER_MARKERS = ['/properties/', '/items/', '/prefixItems/'] as const;
-
-/**
- * Collect the fragment paths that own a selected node declaration.
- * @param declarations - Static declarations of the addressed node
- * @param ids - Selected declaration IDs of that node
- * @returns Every prefix that a selected declaration path continues with an owner marker
- */
-const collectOwnerPaths = (
-  declarations: BlueprintNode['declarations'],
-  ids: readonly number[],
-): ReadonlySet<string> => {
-  const owners = new Set<string>();
-  for (const { id, schemaPath } of declarations)
-    if (ids.includes(id))
-      for (const marker of OWNER_MARKERS) {
-        let at = schemaPath.indexOf(marker);
-        for (; at !== -1; at = schemaPath.indexOf(marker, at + 1))
-          owners.add(schemaPath.slice(0, at));
-      }
-  return owners;
 };
 
 /** Shape data needed to resolve a declaration for a live or latent occurrence. */
@@ -138,7 +115,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       continue;
     if (
       declaration.scope === 'fragment' &&
-      (owners ??= collectOwnerPaths(declarations, nodeIds)).has(
+      (owners ??= collectFragmentOwnerPaths(declarations, nodeIds)).has(
         declaration.schemaPath,
       )
     )
