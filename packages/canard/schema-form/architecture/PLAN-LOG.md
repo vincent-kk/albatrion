@@ -586,3 +586,4 @@
 - **353라운드(2026-10-15, 소유자).** 속도 측정·개선 착수(reviews/round-353-owner-answers.md).
 - **354라운드(2026-10-15, 소유자).** 루프 전체 시간을 20~30시간으로(reviews/round-354-owner-answers.md).
 - **355라운드(2026-10-15, 닫기/원장 관리자).** M0 기준선·M1 우선순위표 #397 병합, 계약 해석 넷(reviews/round-355-closing.md).
+- **356라운드(2026-10-15, 소유자).** 개선 즉시 진행, stringify 배제 가설, 측정은 dist 기준(reviews/round-356-owner-answers.md).
