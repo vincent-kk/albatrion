@@ -8,7 +8,7 @@
 - 경로 색인 보조는 레코드 형과 정착·생성이 함께 소비하므로 engine의 utils 구획에 둔다. 기존 native Map·Set과 prefix 색인 계약은 그대로 유지한다.
 - 조각 소유 판정은 하나다. 선언 경로 c가 조각 D에 속한다는 것은, c가 D.schemaPath 뒤에 `/properties/` 또는 `/prefixItems/`로 이어지거나, `/items` 또는 `/additionalItems`로 이어지고 그 뒤가 끝이거나 `/`인 경우를 말한다. 그래서 한 스키마 `items`(`D/items`), 옛 튜플 `items`(`D/items/<i>`), `prefixItems`(`D/prefixItems/<i>`), 옛 꼬리 `additionalItems`(`D/additionalItems`)로 선언한 배열 아이템도 그 조각이 직접 선언한 직계 자식이다(CONTROLS-077, 35C-08).
 - 이 판정은 `utils/controls/getFragmentOwnerPaths.ts` 한 벌이 맡는다. 선언 경로 c를 받아 c가 속하는 D 후보를 모두 짧은 순서로 돌려주고, 호출자는 조각 경로가 목록에 있는지로 소유를 판정한다. blueprint의 `buildFeatureNodeIndex`, settle의 `getControlLayers`, derive의 `getDeriveRuleTable` 세 곳이 이 보조를 쓴다. 세 사용자는 engine의 서로 다른 자식 fractal이므로 가장 낮은 공통 fractal은 engine이고, 보조는 문자열만 받으므로 자식의 형을 가져오지 않는 engine의 `utils/controls` organ에 둔다. 각 자식은 위로 열린 방향으로 직접 가져온다.
-- 조각 derive 규칙(derived·unsetValue·resetInteraction)은 아직 배열 아이템에 닿지 않는다(376C-02, 별도 결함 수정; 조각의 injectTo는 청사진 오류라 대상이 아니다). `getDeriveRuleTable`은 같은 판정을 쓰지만 대상 후보를 객체 속성 항목(`childEntries`)에서만 찾기 때문이다. 아이템 자리는 `item`·`prefixItems` 템플릿에 있으므로, 규칙 표가 이를 대상으로 삼으려면 아이템 이름(`*`, 색인)에 묶인 다중 대상 규칙과 그 런타임 대상 해석이 따로 필요하다.
+- 조각 derive 규칙(derived·unsetValue·resetInteraction)은 조각이 켜진 동안 직접 선언한 모든 배열 아이템에 닿는다. 공유 소유 판정으로 한 스키마 `items`·`additionalItems`의 `*` 템플릿과 튜플·`prefixItems`의 색인 자리를 고르고, 현재 형상의 아이템마다 대상을 묶는다. 식은 호스트에서 라운드마다 한 번 평가한 값을 함께 쓰며, 쓰기와 에지는 아이템마다 따로 둔다(CONTROLS-077, FRAGMENT-050, 377C-01; 조각의 injectTo는 청사진 오류라 대상이 아니다).
 
 ## API Contracts
 
