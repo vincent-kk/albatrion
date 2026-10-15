@@ -595,3 +595,4 @@
 - **362라운드(2026-10-15, 소유자).** push 지름길 승낙, 두 번째 값 복사는 가능하면 줄임, pop·remove 물음(reviews/round-362-owner-answers.md).
 - **363라운드(2026-10-15, 소유자).** 배열 동사 전부와 복사 둘의 검증 데이터 요구(reviews/round-363-owner-answers.md).
 - **364라운드(2026-10-15, 소유자).** 지름길은 배열 동사 전부에, 원칙 변경은 보고(reviews/round-364-owner-answers.md).
+- **365라운드(2026-10-15, 소유자).** 꼬리 연산·재매김 동사 틀, insert 추가를 지금(reviews/round-365-owner-answers.md).

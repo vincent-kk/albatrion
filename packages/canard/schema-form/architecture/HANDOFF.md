@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-15, 364라운드(소유자: 지름길은 배열 동사 전부에, 원칙 변경은 보고) — 동사별 측정·분해와 설계 뒤 승인된 동사부터 구현, L1b PR 하나; 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–56, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
+## 1. 지금 어디인가 (2026-10-15, 365라운드(소유자: insert를 지금 추가해 remove와 짝, 꼬리 연산·재매김 동사 틀) — insert 설계 한 쪽 뒤 remove·insert 비효율 셋, pop 지름길, L1b PR 하나; 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–56, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -103,6 +103,7 @@
 - **362라운드(2026-10-15, 소유자).** 배열 push 지름길 승낙. 기본값 채움 때의 두 번째 값 복사는 줄일 수 있으면 줄이고 못 줄이면 수용. 자식 노드 배열·로드 스냅숏 복사의 설명 요구, pop·remove 지름길 필요 여부 물음(reviews/round-362-owner-answers.md). 다음 라운드 번호는 363.
 - **363라운드(2026-10-15, 소유자).** 배열 동사 전부와 자식 노드 배열·로드 스냅숏 복사를 검증해 판단 가능한 데이터로. fairy08 읽기 전용 분류 보고, fixy08 동사별 측정과 비용 분해, L1b PR은 그 뒤(reviews/round-363-owner-answers.md). 다음 라운드 번호는 364.
 - **364라운드(2026-10-15, 소유자).** 지름길은 쓸 수 있는 배열 동사 전부에; 원칙 변경이 필요하면 보고, 아니면 절차적 개선. L1b 범위를 동사 전부로 넓히고 동사별 설계 한 쪽 뒤 승인된 동사부터 구현(reviews/round-364-owner-answers.md). 다음 라운드 번호는 365.
+- **365라운드(2026-10-15, 소유자).** push·pop은 꼬리 연산, remove·insert는 꼬리 재매김 동사로 틀 확정(안정 키는 하지 않음). insert를 지금 추가해 remove와 짝을 맞추고 둘의 전체 길이 비례 비효율 셋을 함께 걷어냄. fixy08 권한 거절은 소유자가 질의를 본 적 없어 fixy08이 직접 보고(reviews/round-365-owner-answers.md). 다음 라운드 번호는 366.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -561,6 +562,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-362-owner-answers.md` | 362라운드 소유자: push 지름길 승낙, 두 번째 값 복사는 가능하면 줄임, pop·remove 물음 |
 | `reviews/round-363-owner-answers.md` | 363라운드 소유자: 배열 동사 전부와 복사 둘의 검증 데이터 요구 |
 | `reviews/round-364-owner-answers.md` | 364라운드 소유자: 지름길은 배열 동사 전부에, 원칙 변경은 보고 |
+| `reviews/round-365-owner-answers.md` | 365라운드 소유자: 꼬리 연산·재매김 동사 틀, insert 추가를 지금, remove 비효율과 함께 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
