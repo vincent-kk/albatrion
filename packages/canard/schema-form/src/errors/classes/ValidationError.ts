@@ -1,9 +1,10 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import { FormErrorGroup } from '../codes/FormErrorGroup';
 import type { ValidationErrorCode } from '../type';
 
 /** Group every ValidationError code carries; the code value repeats it before the bare name. */
-const GROUP = 'VALIDATION_ERROR';
+const GROUP = FormErrorGroup.Validation;
 
 /**
  * Error class for form submission validation errors.

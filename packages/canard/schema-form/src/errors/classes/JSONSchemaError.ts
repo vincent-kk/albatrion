@@ -1,9 +1,10 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import { FormErrorGroup } from '../codes/FormErrorGroup';
 import type { JSONSchemaErrorCode } from '../type';
 
 /** Group every JSONSchemaError code carries; the code value repeats it before the bare name. */
-const GROUP = 'JSON_SCHEMA_ERROR';
+const GROUP = FormErrorGroup.JsonSchema;
 
 /**
  * Error class for json schema errors.
