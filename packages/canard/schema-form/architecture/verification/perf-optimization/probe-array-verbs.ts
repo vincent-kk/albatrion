@@ -2,8 +2,9 @@
  * Loaded directly by tsx/Bun. Public array verbs delegate to dispatchPush and
  * dispatchRemove, including their entry/settlement/delivery completion paths.
  * Each sample has a fresh loaded tree; setup and assertions are outside timing.
- * Operations: push, pop, remove-front/remove(1)/remove-mid/remove-end, update-mid,
- * clear, set-same-length and set-grow (whole-array setValue). remove(1) leaves a
+ * Operations: push, pop, remove-front/remove(1)/remove-mid/remove-end,
+ * insert-front/insert-mid/insert-end, update-mid, clear, set-same-length and
+ * set-grow (whole-array setValue). remove(1) leaves a
  * long tail of n - 2 items whose paths must shift.
  * Options: --lanes=a,b --operations=a,b --sizes=1000,2000 (defaults: all lanes,
  * all operations, 1000,2000,4000,8000); --smoke lowers samples and sizes.
@@ -75,6 +76,16 @@ const removeSpec = (
   returned: index,
   expected: (n) => without(n, index(n)),
 });
+const insertSpec = (
+  name: string,
+  index: (n: number) => number,
+): OperationSpec => ({
+  name,
+  argument: () => -1,
+  invoke: (root, argument, n) => root.insert(index(n), argument),
+  returned: (n) => n + 1,
+  expected: (n) => [...range(0, index(n)), -1, ...range(index(n), n)],
+});
 const operationSpecs: OperationSpec[] = [
   {
     name: 'push',
@@ -94,6 +105,9 @@ const operationSpecs: OperationSpec[] = [
   removeSpec('remove', () => 1),
   removeSpec('remove-mid', middle),
   removeSpec('remove-end', (n) => n - 1),
+  insertSpec('insert-front', () => 0),
+  insertSpec('insert-mid', middle),
+  insertSpec('insert-end', (n) => n),
   {
     name: 'update-mid',
     argument: () => -1,
