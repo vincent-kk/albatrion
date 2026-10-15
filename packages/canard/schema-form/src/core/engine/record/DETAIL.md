@@ -54,7 +54,7 @@
 - 선택적 `deliveredContext`는 배달 표시가 마지막으로 본 맥락 참조이며 `@` 감시 노드는 이 참조가 바뀐 커밋에서만 후보가 된다. 트리당 참조 칸 하나가 든다(NODE-045, 44C-01).
 - 선택적 `settlementScratch?: SettlementScratch<Self>`는 트리의 노드 형으로 지정된 정착 작업 컨테이너를 첫 쓰기 뒤 재사용한다. `record`는 형만 선언하고 정착 구현은 가져오지 않는다. 비용은 트리당 런타임 슬롯 하나와 첫 쓰기 뒤 비운 Set·Map·배열 컨테이너의 상주 메모리이며, 중첩 쓰기 동안에만 별도 컨테이너가 추가된다. 노드별 필드·생성자 할당은 늘지 않는다(NODE-004·010·045, SETTLE-047).
 - `SettlementScratch<Self>`는 소멸 노드 집합을 나감 대기와 따로 보관한다. 자동 쓰기의 배열 구조 기록은 호스트, 직전 순서의 아이템 노드 목록, 직전 `itemCount`, 직전 `undeclaredValues`를 담고 원본 B에서 거꾸로 재생하며, 재인덱싱으로 바뀐 노드와 자손의 `(previous, current)` 경로 사실도 보관한다. 이 자료는 정착 작업 칸이고 노드별 고정 칸이 아니다(NODE-004·045·051, WRITE-036, EVENT-068, 35C-02·05·09).
-- 첫 정착의 구조화 경고는 선택적 `misfitRecords`에 마지막 커밋에서 새로 켜진 `MISFIT` 기록으로 둔다. `misfitsMemo`는 커밋 번호와 경로별 하위 목록을 묶으며 정착이 커밋마다 다시 채운다. 통지·보고기를 소유할 뒤 단계가 기록의 전달을 맡고, 기록의 형은 정착 계약의 `level`, `code`, `path`, `expected`, `received`, `reason`, `candidates?`, `source`를 따른다(VALUE-037, 26C-03).
+- 첫 정착의 구조화 경고는 선택적 `misfitRecords`에 마지막 커밋에서 새로 켜진 `MISFIT` 기록으로 둔다. `misfitsMemo`는 경로별 하위 목록과 그 행을 만든 커밋 번호를 묶으며, 정착은 불일치 집합이 바뀐 정착에서만 다시 만든다(`misfitPaths`의 변경 계수, 메모의 크기나 정체성이 마지막 만듦과 다를 때). 읽는 쪽은 `.paths`만 쓴다(`readFieldNodeMisfits`, `captureDetachedFieldNodeReads`). 통지·보고기를 소유할 뒤 단계가 기록의 전달을 맡고, 기록의 형은 정착 계약의 `level`, `code`, `path`, `expected`, `received`, `reason`, `candidates?`, `source`를 따른다(VALUE-037, 26C-03).
 - `updateFieldNodeNameAndPath<Self extends { path: string; depth: number }>(node: FieldNodeRecord<Self>, name: string, parent: Self | null): void`는 JSON Pointer 이스케이프를 적용한 `escapedName`·절대 `path`·`depth`를 일관되게 고친다. 부모의 `path`·`depth`를 읽으므로 `Self`에 그 두 칸을 요구한다. 호출자가 영향받은 자손을 같은 함수로 갱신한다. `patchFieldNodeInteractionState<Self>(node: FieldNodeRecord<Self>, patch: Partial<NodeStateFlags>): void`는 `shallowPatch<State extends object>(previous: State, patch: Partial<State>): State`의 결과만 `interactionState`에 반영한다. 같은 키·값이면 이전 참조를 돌려준다(NODE-008, LANDING-082).
 - `record`가 `settle`, `FieldNode`, `write`, `validation`, 앱·플러그인 및 레거시를 가져오는 일은 타입 전용 import까지 금지한다. 행이나 런타임 칸을 늘릴 때 이 선언을 먼저 고치는 것이 의존 역전의 비용이다(NODE-016·045, LANDING-159).
 
@@ -88,4 +88,4 @@
 
 ## Last Updated
 
-계약 기준: 69C-02·04, REACT-003·024, WRITE-046·086, 실행 ADR D5; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15).
+계약 기준: 69C-02·04, REACT-003·024, WRITE-046·086, 실행 ADR D5; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02).

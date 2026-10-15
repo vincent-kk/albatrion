@@ -11,11 +11,13 @@ import type { gateSelectionCases } from '../fixtures/gateSelectionCases';
  * Run one authored history and capture values, shape, delivery order and failures.
  * @param fixture - Fixed verifier boundary and its input history
  * @param configure - Internal mode hook before the first baseline evaluation
+ * @param observe - Optional extra observation of the root, recorded as `extra` after every settlement
  * @returns Deterministic observations immediately after every settlement
  */
 export const runGateSelectionCase = (
   fixture: (typeof gateSelectionCases)[number],
   configure: (analysis: Blueprint) => void = () => {},
+  observe?: (root: PlainNode) => unknown,
 ) => {
   const { root, blueprint, visits } = createTestTree(fixture.schema);
   configure(blueprint);
@@ -55,6 +57,7 @@ export const runGateSelectionCase = (
       latent: [...root.runtime.latentRaw],
       deliveries: [...(root.runtime.deliveries ?? [])].map((node) => node.path),
       visits: [...visits],
+      ...(observe ? { extra: observe(root) } : {}),
     });
   };
   let failure: unknown;

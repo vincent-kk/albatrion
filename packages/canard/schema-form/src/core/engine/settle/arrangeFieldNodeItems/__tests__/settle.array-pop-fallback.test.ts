@@ -38,6 +38,10 @@ const itemsWith = (controls: Record<string, unknown>): BlueprintSchema => ({
   },
 });
 
+/** The array declared under the name `list` in the root object. */
+const listOf = (root: DispatchTestNode): DispatchTestNode =>
+  root.children!.find((child) => child.name === 'list')!;
+
 // filid:contract settle-array-pop-fallback
 describe('pop admission declines and the general path settles', () => {
   it.each<[string, BlueprintSchema, unknown]>([
@@ -100,6 +104,76 @@ describe('pop admission declines and the general path settles', () => {
       { apply: (root) => dispatchPop(root), pop: false },
       { apply: (root) => dispatchPop(root), pop: false },
     ]);
+  });
+
+  it.each<[string, BlueprintSchema, unknown]>([
+    [
+      'oneOf',
+      {
+        type: 'object',
+        properties: { branch: { type: 'string' } },
+        oneOf: [
+          {
+            properties: {
+              branch: { const: 'a' },
+              list: { type: 'array', items: { type: 'number', minimum: 0 } },
+            },
+          },
+          {
+            properties: {
+              branch: { const: 'b' },
+              list: { type: 'array', items: { type: 'number', maximum: 100 } },
+            },
+          },
+        ],
+      },
+      { branch: 'a', list: [1, 2, 3] },
+    ],
+    [
+      'anyOf',
+      {
+        type: 'object',
+        properties: { list: { type: 'array', items: { type: 'number' } } },
+        anyOf: [{ properties: { list: { minItems: 1 } } }],
+      },
+      { list: [10, 20, 30] },
+    ],
+    [
+      'if then',
+      {
+        type: 'object',
+        properties: { list: { type: 'array', items: { type: 'number' } } },
+        if: { properties: { list: { minItems: 1 } } },
+        then: {},
+      },
+      { list: [100, 200, 300] },
+    ],
+  ])('an array inside a %s branch schema', (_, schema, input) => {
+    compareArrayPop(
+      schema,
+      input,
+      [
+        { apply: (root) => dispatchPop(listOf(root)), pop: false },
+        { apply: (root) => dispatchPop(listOf(root)), pop: false },
+      ],
+      listOf,
+    );
+  });
+
+  it('a pop from one past the tuple prefix length takes the truncation path and a pop at the prefix length falls back', () => {
+    compareArrayPop(
+      {
+        type: 'array',
+        prefixItems: [{ type: 'string' }, { type: 'number' }],
+        items: { type: 'boolean' },
+      },
+      ['a', 1, true],
+      [
+        { apply: (root) => dispatchPop(root), pop: true },
+        { apply: (root) => dispatchPop(root), pop: false },
+        { apply: (root) => dispatchPop(root), pop: false },
+      ],
+    );
   });
 
   it('an empty array, a batch and a visit walk', () => {
