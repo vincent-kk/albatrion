@@ -7,7 +7,8 @@
  * set-grow (whole-array setValue). remove(1) leaves a
  * long tail of n - 2 items whose paths must shift.
  * Options: --lanes=a,b --operations=a,b --sizes=1000,2000 (defaults: all lanes,
- * all operations, 1000,2000,4000,8000); --smoke lowers samples and sizes.
+ * all operations, 1000,2000,4000,8000); --smoke lowers samples and sizes;
+ * --check runs a single sample per row with no warm-up (correctness only).
  * Lane `mounted` (마운트 직후(참고)) times the verb right after the low-level
  * loadFieldNodeAtMount, so the first verb also drains the pending mount
  * deliveries. Lane `drained` (정착 뒤) mounts through the public mountFieldNode
@@ -18,6 +19,14 @@
  * buffer before timing. Time ratios of every lane are reference columns; the
  * contract is judged by work counts (settle.array-append-cost) and --jitless
  * stage timings.
+ * Completion criterion, shared with the legacy probe: the measured root carries a
+ * consumer `onChange` (runtime seed, the hook Form wires) whose recorder reads the
+ * clock, stores the value and returns. The timed region ends when the verb call
+ * returns; right after, outside timing, the probe checks that onChange was already
+ * called with the expected value (length and checkpoint values) and that the root
+ * value, child count and checkpoint children's emit and path hold. A sample that
+ * fails the check is counted in `incompleteAtReturn` (the engine would not be
+ * synchronous for that verb) instead of being waited for.
  */
 import { performance } from 'node:perf_hooks';
 
@@ -39,8 +48,9 @@ const {
 const engine = { source: 'dist', distSha256 };
 
 const smoke = process.argv.includes('--smoke');
-const warmups = smoke ? 2 : 20;
-const samples = smoke ? 3 : 100;
+const check = process.argv.includes('--check');
+const warmups = check ? 0 : smoke ? 2 : 20;
+const samples = check ? 1 : smoke ? 3 : 100;
 
 /** One public array verb: its call, its argument, and the exact array it must leave behind. */
 interface OperationSpec {
@@ -50,6 +60,34 @@ interface OperationSpec {
   invoke: (root: ArrayRoot, argument: unknown, n: number) => unknown;
   returned: (n: number) => unknown;
   expected: (n: number) => number[];
+  /** Positions whose value and child path the completion criterion checks. */
+  checkpoints: (n: number) => number[];
+}
+/** Consumer onChange recorder; identical in both probes so the consumer cost is equal. */
+interface ChangeRecorder {
+  calls: number;
+  value: unknown;
+  at: number;
+  onCall: (() => void) | undefined;
+  readonly onChange: (value: unknown) => void;
+}
+
+/** Create the recorder: the callback reads the clock first, stores the value, then runs the probe hook. */
+function createChangeRecorder(): ChangeRecorder {
+  const recorder: ChangeRecorder = {
+    calls: 0,
+    value: undefined,
+    at: 0,
+    onCall: undefined,
+    onChange: (value) => {
+      const at = performance.now();
+      recorder.calls++;
+      recorder.value = value;
+      recorder.at = at;
+      recorder.onCall?.();
+    },
+  };
+  return recorder;
 }
 type ArrayRoot = Extract<
   ReturnType<typeof fieldNodeFactory>,
@@ -75,6 +113,7 @@ const removeSpec = (
   invoke: (root, argument) => root.remove(argument as number),
   returned: index,
   expected: (n) => without(n, index(n)),
+  checkpoints: (n) => (index(n) < n - 1 ? [index(n), n - 2] : [n - 2]),
 });
 const insertSpec = (
   name: string,
@@ -85,6 +124,7 @@ const insertSpec = (
   invoke: (root, argument, n) => root.insert(index(n), argument),
   returned: (n) => n + 1,
   expected: (n) => [...range(0, index(n)), -1, ...range(index(n), n)],
+  checkpoints: (n) => (index(n) < n ? [index(n), n] : [n]),
 });
 const operationSpecs: OperationSpec[] = [
   {
@@ -93,6 +133,7 @@ const operationSpecs: OperationSpec[] = [
     invoke: (root, argument) => root.push(argument),
     returned: (n) => n + 1,
     expected: (n) => range(0, n + 1),
+    checkpoints: (n) => [n],
   },
   {
     name: 'pop',
@@ -100,6 +141,7 @@ const operationSpecs: OperationSpec[] = [
     invoke: (root) => root.pop(),
     returned: (n) => n - 1,
     expected: (n) => range(0, n - 1),
+    checkpoints: (n) => [n - 2],
   },
   removeSpec('remove-front', () => 0),
   removeSpec('remove', () => 1),
@@ -114,6 +156,7 @@ const operationSpecs: OperationSpec[] = [
     invoke: (root, argument, n) => root.update(middle(n), argument),
     returned: () => -1,
     expected: withMiddleChanged,
+    checkpoints: (n) => [middle(n)],
   },
   {
     name: 'clear',
@@ -121,6 +164,7 @@ const operationSpecs: OperationSpec[] = [
     invoke: (root) => root.clear(),
     returned: () => undefined,
     expected: () => [],
+    checkpoints: () => [],
   },
   {
     name: 'set-same-length',
@@ -128,6 +172,7 @@ const operationSpecs: OperationSpec[] = [
     invoke: (root, argument) => root.setValue(argument as number[]),
     returned: () => undefined,
     expected: withMiddleChanged,
+    checkpoints: (n) => [middle(n)],
   },
   {
     name: 'set-grow',
@@ -135,6 +180,7 @@ const operationSpecs: OperationSpec[] = [
     invoke: (root, argument) => root.setValue(argument as number[]),
     returned: () => undefined,
     expected: (n) => range(0, n + 1),
+    checkpoints: (n) => [n],
   },
 ];
 const lanes = [
@@ -215,6 +261,36 @@ function quantile(sorted: number[], p: number): number {
   return sorted[low] + (sorted[Math.ceil(at)] - sorted[low]) * (at - low);
 }
 
+/** Criterion (1): an emitted value with the expected length and checkpoint values. */
+function matchesChange(
+  value: unknown,
+  expected: number[],
+  checkpoints: number[],
+): boolean {
+  return (
+    Array.isArray(value) &&
+    value.length === expected.length &&
+    checkpoints.every((position) => value[position] === expected[position])
+  );
+}
+/** Criterion (2): root value, child count and checkpoint children's emit and path. */
+function nodesSettled(
+  root: ArrayRoot,
+  expected: number[],
+  checkpoints: number[],
+): boolean {
+  const children = root.children;
+  if (
+    !matchesChange(root.value, expected, checkpoints) ||
+    (children?.length ?? 0) !== expected.length
+  )
+    return false;
+  return checkpoints.every((position) => {
+    const child = children?.[position];
+    return child?.emit === expected[position] && child.path === `/${position}`;
+  });
+}
+
 const sizes = selectedLanes.flatMap(({ lane, label }) =>
   selectedOperations.flatMap((spec) =>
     selectedSizes.map((n) => {
@@ -223,8 +299,12 @@ const sizes = selectedLanes.flatMap(({ lane, label }) =>
       const expectedOutput = spec.expected(n);
       const expectedReturned = spec.returned(n);
       const argument = spec.argument(n);
+      const checkpoints = spec.checkpoints(n);
       const samplesMs: number[] = [];
+      let incompleteAtReturn = 0;
+      let incompleteReason: string | undefined;
       for (let index = -warmups; index < samples; index++) {
+        const recorder = createChangeRecorder();
         const root = fieldNodeFactory(analysis, {
           diagnostics: { status: 'stable' },
           loadSnapshot: undefined,
@@ -233,6 +313,7 @@ const sizes = selectedLanes.flatMap(({ lane, label }) =>
           inactiveValuesMemo: new PathKeyedMap<
             readonly { path: string; value: unknown }[]
           >('path'),
+          onChange: recorder.onChange,
         });
         if (!isArrayNode(root) || !isTestFieldNode(root))
           throw new Error('Missing public array node/runtime record');
@@ -246,9 +327,23 @@ const sizes = selectedLanes.flatMap(({ lane, label }) =>
           throw new Error(
             `Array fixture length mismatch: ${operation}, N=${n}`,
           );
+        recorder.calls = 0;
+        recorder.value = undefined;
         const start = performance.now();
         const returned = spec.invoke(root, argument, n);
         const elapsed = performance.now() - start;
+        const changeDelivered =
+          recorder.calls > 0 &&
+          matchesChange(recorder.value, expectedOutput, checkpoints);
+        if (
+          !changeDelivered ||
+          !nodesSettled(root, expectedOutput, checkpoints)
+        ) {
+          incompleteAtReturn++;
+          incompleteReason ??= changeDelivered
+            ? 'onChange matched but nodes not settled at return'
+            : `onChange not called with the expected value at return (calls: ${recorder.calls})`;
+        }
         const output = root.value;
         if (
           returned !== expectedReturned ||
@@ -286,6 +381,10 @@ const sizes = selectedLanes.flatMap(({ lane, label }) =>
         p10Ms: quantile(sorted, 0.1),
         p90Ms: quantile(sorted, 0.9),
         meanMs: samplesMs.reduce((sum, ms) => sum + ms, 0) / samples,
+        completionMicrotaskHopsMedian: 0,
+        completionMacrotaskHopsMedian: 0,
+        incompleteAtReturn,
+        ...(incompleteReason === undefined ? {} : { incompleteReason }),
         samplesMs,
       };
     }),
