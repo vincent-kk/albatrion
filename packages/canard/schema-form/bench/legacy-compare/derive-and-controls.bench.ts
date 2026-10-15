@@ -18,7 +18,7 @@ const {
   SetValueOption,
   distSha256,
 } = await loadDistEngine();
-const { legacySha256 } = await loadLegacyEngine();
+const { legacySha256 } = await loadLegacyEngine(undefined, '0.16.0');
 const engine = { source: 'dist', distSha256, legacy: '0.16.0', legacySha256 };
 
 const elementCount = 10_000;

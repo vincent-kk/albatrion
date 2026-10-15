@@ -22,7 +22,10 @@ const {
   SetValueOption,
   distSha256,
 } = await loadDistEngine();
-const { create: nodeFromJSONSchema, legacySha256 } = await loadLegacyEngine();
+const { create: nodeFromJSONSchema, legacySha256 } = await loadLegacyEngine(
+  undefined,
+  '0.16.0',
+);
 const engine = { source: 'dist', distSha256, legacy: '0.16.0', legacySha256 };
 
 const noop = () => {};
