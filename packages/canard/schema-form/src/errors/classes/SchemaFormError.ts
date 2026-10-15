@@ -1,9 +1,10 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import { FormErrorGroup } from '../codes/FormErrorGroup';
 import type { SchemaFormErrorCode } from '../type';
 
 /** Group every SchemaFormError code carries; the code value repeats it before the bare name. */
-const GROUP = 'SCHEMA_FORM_ERROR';
+const GROUP = FormErrorGroup.SchemaForm;
 
 /**
  * Error class for schema form construction errors.
