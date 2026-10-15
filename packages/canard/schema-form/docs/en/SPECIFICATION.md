@@ -1147,6 +1147,7 @@ const arrayNode = node.find('/items') as ArrayNode;
 arrayNode.push(); // Add item with default value
 arrayNode.push('custom'); // Add item with custom value
 arrayNode.remove(index); // Remove item at index
+arrayNode.insert(index, 'custom'); // Insert at index in [0, length]; returns the new length (length appends like push; out of range does nothing)
 arrayNode.clear(); // Remove all items
 
 arrayNode.children?.length; // Current number of item nodes (null on an array rendered as a single input)
@@ -1399,7 +1400,7 @@ A nullable object or array (`type: ['object', 'null']`, `type: ['array', 'null']
 - It becomes `null` through `defaultValue` / schema `default: null`, or `setValue(null)` on the node or through an ancestor.
 - It becomes an object/array when one is assigned to the node itself — `setValue({})`, `setValue([])`, or `setValue({ ... }, SetValueOption.Merge)` with keys — or when a write **that carries a value** reaches an active descendant: user input, `setValue`, array `push`, or an `injectTo` the user caused. Confirming the value a field already shows counts.
 - It stays `null` for values the form produces by itself: a child's `default`, `controls.derived`, `oneOf`/`anyOf` branch restore, reactivation by `controls.active`, the restore of a child during a reset, and an `injectTo` triggered only by such values (a source that merely has a `default` or a derived value).
-- It stays `null` for a write without a value: emptying a field, `pop()`/`remove()`/`update()`/`clear()` on a null array, and `setValue({}, SetValueOption.Merge)`. An emptied field is remembered and honored once the node is created.
+- It stays `null` for a write without a value: emptying a field, `pop()`/`remove()`/`update()`/`clear()` and `insert()` at an index other than 0 on a null array, and `setValue({}, SetValueOption.Merge)`. An emptied field is remembered and honored once the node is created.
 
 A field is _emptied_ when its node emits `undefined`. Under the default `omitEmpty` an empty string is emptying; `false`, `0` and `null` are values. With `options: { omitEmpty: false }` an empty string is a value too. A write into an inactive field reaches nobody.
 

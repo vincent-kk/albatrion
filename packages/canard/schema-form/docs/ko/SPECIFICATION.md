@@ -1145,6 +1145,7 @@ const arrayNode = node.find('/items') as ArrayNode;
 arrayNode.push(); // 기본값으로 항목 추가
 arrayNode.push('custom'); // 커스텀 값으로 항목 추가
 arrayNode.remove(index); // 인덱스의 항목 제거
+arrayNode.insert(index, 'custom'); // [0, length] 범위의 인덱스에 항목 삽입, 새 길이 반환 (length는 push와 같고 범위 밖은 무동작)
 arrayNode.clear(); // 모든 항목 제거
 
 arrayNode.children?.length; // 현재 항목 노드 수 (하나의 입력으로 렌더된 배열은 children이 null)
@@ -1397,7 +1398,7 @@ nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)�
 - `defaultValue`·스키마 `default: null`, 노드 자신이나 조상을 통한 `setValue(null)`로 `null`이 됩니다.
 - 노드 자신에 객체/배열을 대입하거나 — `setValue({})`, `setValue([])`, 키를 담은 `setValue({ ... }, SetValueOption.Merge)` — **값을 담은 쓰기**가 활성 자손에 도착하면 객체/배열이 됩니다: 사용자 입력, `setValue`, 배열 `push`, 사용자가 일으킨 `injectTo`. 필드가 이미 보여 주는 값을 그대로 확정하는 것도 쓰기입니다.
 - 폼이 스스로 만든 값으로는 `null`이 유지됩니다: 자식의 `default`, `controls.derived`, `oneOf`/`anyOf` 분기 복원, `controls.active`에 의한 재활성화, reset 중의 자식 복원, 그리고 그런 값만으로 구동된 `injectTo`(`default`나 derived 값만 가진 source).
-- 값 없는 쓰기로도 `null`이 유지됩니다: 필드 비우기, null 배열의 `pop()`/`remove()`/`update()`/`clear()`, `setValue({}, SetValueOption.Merge)`. 비운 필드는 기억되어 이후 노드가 만들어질 때 반영됩니다.
+- 값 없는 쓰기로도 `null`이 유지됩니다: 필드 비우기, null 배열의 `pop()`/`remove()`/`update()`/`clear()`와 0이 아닌 인덱스의 `insert()`, `setValue({}, SetValueOption.Merge)`. 비운 필드는 기억되어 이후 노드가 만들어질 때 반영됩니다.
 
 필드를 *비운다*는 것은 그 노드가 `undefined`를 emit한다는 뜻입니다. 기본 `omitEmpty`에서 빈 문자열은 비우기이고, `false`·`0`·`null`은 값입니다. `options: { omitEmpty: false }`이면 빈 문자열도 값입니다. 비활성 필드에 쓴 값은 누구에게도 도착하지 않습니다.
 

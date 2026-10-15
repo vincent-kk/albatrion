@@ -650,6 +650,7 @@ interface ArrayNodeMethods<Item> {
   pop(): Item | undefined; // remove the last item; returns its value
   update(index: number, value: Item): Item | undefined; // replace one position
   remove(index: number): Item | undefined; // remove one position; returns its value
+  insert(index: number, value?: Item): number; // insert at a position in [0, length]; returns the new length
   clear(): void; // remove every item
 }
 ```
@@ -822,7 +823,7 @@ node.revision(mask?) / node.batch(fn)
 // ── ArrayNode additional ────────────────────────────────────────
 arrayNode.children?.length / arrayNode.children   // children is null on an array rendered as a single input
 arrayNode.push(value?) → length / arrayNode.pop() / arrayNode.update(index, value)
-arrayNode.remove(index) / arrayNode.clear()
+arrayNode.remove(index) / arrayNode.insert(index, value?) → length / arrayNode.clear()
 
 // ── Hooks ───────────────────────────────────────────────────────
 useFormSubmit(ref)                              → { submit, pending }
