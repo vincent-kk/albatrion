@@ -13,7 +13,7 @@
 - **표본:** 준비 20회, 표본 100회. L1b 전과 HEAD를 번갈아 두 바퀴 돌렸고, 칸은 두 바퀴 중앙값의 중앙값입니다.
 - **런타임:** Node v26.11.1, Bun 1.4.3. 스키마는 `{ type: 'array', items: { type: 'number' } }`입니다.
 - **원본:** `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/448b7d0a-b9df-485a-b3b6-4666d6a02181/scratchpad/l1b-ab/out2/`(저장소에 넣지 않음).
-- **공개 동사:** `push(value?)`·`pop()`·`update(index, value)`·`remove(index)`·`clear()`(`src/core/surface/type.ts`)와 통째 `setValue`입니다. `insert`는 이 측정 시점에 공개 API에 없었고 365라운드에 추가 중이라, 아래 표의 `insert` 행은 추가 뒤에 채웁니다. `move`는 공개 API에 없습니다.
+- **공개 동사:** `push(value?)`·`pop()`·`update(index, value)`·`remove(index)`·`clear()`(`src/core/surface/type.ts`)와 통째 `setValue`입니다. `insert`는 365라운드에 추가되어 아래 표에 따로 잰 행으로 넣었습니다. `move`는 공개 API에 없습니다.
 
 ## 동사별 시간 — 중앙값 ms(정상 상태)
 
@@ -29,7 +29,16 @@
 | clear | 1.076 / 4.435 / 10.73 | 1.084 / 4.313 / 10.61 | 0.99 | 9.8배 | 11.10 | 10.93 | 8.7배 |
 | setValue 같은 길이(중간 하나 바뀜) | 1.170 / 4.724 / 10.18 | 1.176 / 4.685 / 10.07 | 0.99 | 8.6배 | 13.71 | 14.56 | 10.3배 |
 | setValue N+1 | 1.136 / 4.706 / 10.04 | 1.136 / 4.716 / 10.16 | 1.01 | 9.0배 | 12.44 | 12.35 | 10.2배 |
-| insert | 365라운드 추가 뒤 측정 | | | | | | |
+| insert(0) | — | 2.382 / 9.563 / 21.69 | — | 9.1배 | — | 20.71 | 9.2배 |
+| insert(N/2) | — | 1.600 / 6.675 / 14.74 | — | 9.2배 | — | 16.05 | 11.4배 |
+| insert(N) | — | 0.0129 / 0.0261 / 0.0413 | — | 3.2배 | — | 0.0342 | 3.4배 |
+
+insert 행은 365라운드 추가 뒤 따로 잰 값입니다. HEAD `589ebe5a2`(dist sha256 `f333568d…`)이고, 조용한 창은 07:22:31Z–07:24:44Z, 레인·표본은 위와 같습니다. 같은 실행에서 비교용으로 다시 잰 값은 다음과 같습니다.
+- remove(0): Node 22.03 ms, Bun 19.34 ms
+- remove(N/2): Node 14.93 ms, Bun 15.54 ms
+- push: Node 0.0422 ms, Bun 0.0419 ms
+
+insert(0)과 insert(N/2)는 remove(0)·remove(N/2)의 거울이고, insert(N)은 push와 같은 덧붙임 경로입니다. "전" 열이 비어 있는 것은 L1b 전에는 insert가 없었기 때문입니다.
 
 이 표의 요지는 다음과 같습니다.
 - push만 바뀌었고, 다른 동사는 L1b 전과 같습니다(0.94–1.10).
