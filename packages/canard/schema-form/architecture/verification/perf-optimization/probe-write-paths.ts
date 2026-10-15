@@ -14,6 +14,18 @@
  * - handle-root: root.setValue(next) with one key changed. The steady lane has no
  *   FormHandle; FormRoot's handle.setValue only forwards to root.setValue(value,
  *   options), so the root call is the handle's whole engine path.
+ * - nested-wide-leaf: writeFieldNodeInput on the deepest leaf of a D-deep object with
+ *   W keys at every level (`o` plus W−1 numbers; --wide-width, default 100;
+ *   --wide-depths, default 1,2,4), isolating each ancestor's output comparison.
+ * - latent-object-one-key: h.setValue(next, Overwrite) with one key changed while a
+ *   closed `then` branch keeps K values as latent raw (supplied at mount).
+ * - misfit-object-one-key: the same write while a sibling host holds K strings in
+ *   number fields (K misfit paths).
+ * - gate-toggle-exit: writeFieldNodeInput(flag, false) closes the gate of one field
+ *   (`controls.active: '../flag'`) beside N watchers (`controls.watch: ['../a']`);
+ *   the width is N.
+ * - gate-form-one-key: writeFieldNodeInput(h.sw, 2) on host `h` whose K children are
+ *   each gated on `'../sw >= 0'`; every gate is re-evaluated and stays open.
  * Each sample builds a fresh tree (fieldNodeFactory + mountFieldNode), then warms the
  * engine with one leaf input write on a separate one-item object tree, outside timing.
  * Completion criterion, shared with the legacy probe: the root carries the consumer
@@ -25,7 +37,8 @@
  * object-same-ref (1) is optional: the row records how many samples fired onChange.
  * The final root value is compared with the expectation in full after every sample,
  * and input scenes check the target is dirty.
- * Options: --operations=a,b --sizes=10,100 --depths=1,4; --smoke lowers samples;
+ * Options: --operations=a,b --sizes=10,100 --depths=1,4 --wide-width=100
+ * --wide-depths=1,2,4; --smoke lowers samples;
  * --check runs a single sample per row with no warm-up (correctness only).
  */
 import { performance } from 'node:perf_hooks';
@@ -44,7 +57,13 @@ const {
   distSha256,
 } = await loadDistEngine();
 /** Scenes that go through the input binding and so must leave the target dirty. */
-const INPUT_SCENES = new Set(['leaf-input', 'nested-leaf']);
+const INPUT_SCENES = new Set([
+  'leaf-input',
+  'nested-leaf',
+  'nested-wide-leaf',
+  'gate-toggle-exit',
+  'gate-form-one-key',
+]);
 const engine = { source: 'dist', distSha256 };
 
 const smoke = process.argv.includes('--smoke');
@@ -94,9 +113,13 @@ interface Prepared {
 /** One write scene: its tree, its call, and the state it must leave behind. */
 interface OperationSpec {
   name: string;
-  dimension: 'width' | 'depth';
+  dimension: 'width' | 'depth' | 'wide-depth';
   schema: (size: number) => Plain;
   input: (size: number) => Plain;
+  /** Root value right after the mount when it differs from the input (closed branches). */
+  loaded?: (size: number) => Plain;
+  /** Check the scene's form-wide condition outside timing and return it for the row. */
+  fixture?: (root: WriteNode, size: number) => Plain;
   prepare: (root: WriteNode, size: number) => Prepared;
   invoke: (root: WriteNode, prepared: Prepared) => void;
   expected: (size: number) => Plain;
@@ -144,6 +167,108 @@ const nestedInput = (depth: number, leaf = 1): Plain =>
     ? { a: 0, b: leaf, c: 2, d: 3 }
     : { o: nestedInput(depth - 1, leaf), a: 0, b: 1, c: 2 };
 const nestedLeafPath = (depth: number): string => '/o'.repeat(depth - 1) + '/b';
+const wideWidth = Number(
+  process.argv.find((value) => value.startsWith('--wide-width='))?.slice(13) ??
+    100,
+);
+if (!Number.isInteger(wideWidth) || wideWidth < 2)
+  throw new Error('--wide-width needs an integer of at least 2');
+/** Depth-D object with W keys at every level: `o` (next level) or `n0` at the bottom, plus n1..n{W-1}. */
+const wideSchema = (depth: number): Plain => ({
+  type: 'object',
+  properties: Object.fromEntries([
+    depth > 1 ? ['o', wideSchema(depth - 1)] : ['n0', { type: 'number' }],
+    ...Array.from({ length: wideWidth - 1 }, (_, i) => [
+      `n${i + 1}`,
+      { type: 'number' },
+    ]),
+  ]),
+});
+const wideInput = (depth: number, leaf = 1): Plain =>
+  Object.fromEntries([
+    depth > 1 ? ['o', wideInput(depth - 1, leaf)] : ['n0', 0],
+    ...Array.from({ length: wideWidth - 1 }, (_, i) => [
+      `n${i + 1}`,
+      depth <= 1 && i === 0 ? leaf : i + 1,
+    ]),
+  ]);
+const wideLeafPath = (depth: number): string => '/o'.repeat(depth - 1) + '/n1';
+/** Number properties x0..x{width-1}. */
+const extraProperties = (width: number): Plain =>
+  Object.fromEntries(
+    Array.from({ length: width }, (_, i) => [`x${i}`, { type: 'number' }]),
+  );
+const extraInput = (width: number): Plain =>
+  Object.fromEntries(Array.from({ length: width }, (_, i) => [`x${i}`, i]));
+/** Root with a closed `then` branch of K numbers beside host `h`; the branch values stay latent. */
+const latentSchema = (width: number): Plain => ({
+  type: 'object',
+  properties: { mode: { type: 'boolean' }, h: flatSchema(width) },
+  if: { properties: { mode: { const: true } }, required: ['mode'] },
+  then: { properties: extraProperties(width) },
+});
+/** Root with host `h` and a sibling host `m` whose K number leaves hold strings. */
+const misfitSchema = (width: number): Plain => ({
+  type: 'object',
+  properties: { h: flatSchema(width), m: flatSchema(width) },
+});
+const misfitHost = (width: number): Plain =>
+  Object.fromEntries(Array.from({ length: width }, (_, i) => [keyOf(i), 'x']));
+/** Root with a gated field `g` and N watchers of `a`. */
+const watcherSchema = (watchers: number): Plain => ({
+  type: 'object',
+  properties: {
+    flag: { type: 'boolean' },
+    a: { type: 'number' },
+    g: { type: 'number', controls: { active: '../flag' } },
+    ...Object.fromEntries(
+      Array.from({ length: watchers }, (_, i) => [
+        `w${i}`,
+        { type: 'number', controls: { watch: ['../a'] } },
+      ]),
+    ),
+  },
+});
+const watcherInput = (watchers: number, flag: boolean): Plain => ({
+  flag,
+  a: 0,
+  ...(flag ? { g: 5 } : {}),
+  ...Object.fromEntries(
+    Array.from({ length: watchers }, (_, i) => [`w${i}`, i]),
+  ),
+});
+/** Host `h` whose K children are each gated on the sibling `sw`. */
+const gatedHostSchema = (width: number): Plain => ({
+  type: 'object',
+  properties: {
+    h: {
+      type: 'object',
+      properties: {
+        sw: { type: 'number' },
+        ...Object.fromEntries(
+          Array.from({ length: width }, (_, i) => [
+            keyOf(i),
+            { type: 'number', controls: { active: '../sw >= 0' } },
+          ]),
+        ),
+      },
+    },
+  },
+});
+/** Read an internal runtime store size from the root record, outside timing. */
+const runtimeStoreSize = (
+  root: WriteNode,
+  store: 'latentRaw' | 'misfitPaths',
+): number => {
+  const runtime: unknown = Reflect.get(root, 'runtime');
+  const value: unknown =
+    runtime !== null && typeof runtime === 'object'
+      ? Reflect.get(runtime, store)
+      : undefined;
+  return value instanceof Map || value instanceof Set
+    ? value.size
+    : Number(Reflect.get(Object(value), 'size') ?? -1);
+};
 
 /** Resolve a pointer to a node or throw. */
 function requireNode(root: WriteNode, pointer: string): WriteNode {
@@ -292,6 +417,117 @@ const operationSpecs: OperationSpec[] = [
     expected: (width) => withKey(flatInput(width), middleKey(width), -1),
     checkpoints: (width) => [[`/${middleKey(width)}`, -1]],
   },
+  {
+    name: 'nested-wide-leaf',
+    dimension: 'wide-depth',
+    schema: wideSchema,
+    input: (depth) => wideInput(depth),
+    prepare: (root, depth) => ({
+      target: requireNode(root, wideLeafPath(depth)),
+      host: root,
+      argument: -1,
+      previousHostValue: root.value,
+    }),
+    invoke: (_root, { target }) =>
+      writeFieldNodeInput(target, -1, SetValueOption.Overwrite),
+    expected: (depth) => wideInput(depth, -1),
+    checkpoints: (depth) => [[wideLeafPath(depth), -1]],
+  },
+  {
+    name: 'latent-object-one-key',
+    dimension: 'width',
+    schema: latentSchema,
+    input: (width) => ({
+      mode: false,
+      h: flatInput(width),
+      ...extraInput(width),
+    }),
+    loaded: (width) => ({ mode: false, h: flatInput(width) }),
+    fixture: (root, width) => {
+      const latentEntries = runtimeStoreSize(root, 'latentRaw');
+      if (latentEntries !== width)
+        throw new Error(
+          `Expected ${width} latent entries, got ${latentEntries}`,
+        );
+      return { latentEntries };
+    },
+    prepare: (root, width) => ({
+      target: requireNode(root, `/h/${middleKey(width)}`),
+      host: requireNode(root, '/h'),
+      argument: withKey(flatInput(width), middleKey(width), -1),
+      previousHostValue: requireNode(root, '/h').value,
+    }),
+    invoke: (_root, { host, argument }) =>
+      host.setValue(argument, SetValueOption.Overwrite),
+    expected: (width) => ({
+      mode: false,
+      h: withKey(flatInput(width), middleKey(width), -1),
+    }),
+    checkpoints: (width) => [[`/h/${middleKey(width)}`, -1]],
+  },
+  {
+    name: 'misfit-object-one-key',
+    dimension: 'width',
+    schema: misfitSchema,
+    input: (width) => ({ h: flatInput(width), m: misfitHost(width) }),
+    fixture: (root, width) => {
+      const misfitPaths = runtimeStoreSize(root, 'misfitPaths');
+      if (misfitPaths !== width)
+        throw new Error(`Expected ${width} misfit paths, got ${misfitPaths}`);
+      return { misfitPaths };
+    },
+    prepare: (root, width) => ({
+      target: requireNode(root, `/h/${middleKey(width)}`),
+      host: requireNode(root, '/h'),
+      argument: withKey(flatInput(width), middleKey(width), -1),
+      previousHostValue: requireNode(root, '/h').value,
+    }),
+    invoke: (_root, { host, argument }) =>
+      host.setValue(argument, SetValueOption.Overwrite),
+    expected: (width) => ({
+      h: withKey(flatInput(width), middleKey(width), -1),
+      m: misfitHost(width),
+    }),
+    checkpoints: (width) => [[`/h/${middleKey(width)}`, -1]],
+  },
+  {
+    name: 'gate-toggle-exit',
+    dimension: 'width',
+    schema: watcherSchema,
+    input: (watchers) => watcherInput(watchers, true),
+    prepare: (root) => ({
+      target: requireNode(root, '/flag'),
+      host: root,
+      argument: false,
+      previousHostValue: root.value,
+    }),
+    invoke: (_root, { target }) =>
+      writeFieldNodeInput(target, false, SetValueOption.Overwrite),
+    expected: (watchers) => watcherInput(watchers, false),
+    checkpoints: () => [
+      ['/flag', false],
+      ['/g', undefined],
+    ],
+  },
+  {
+    name: 'gate-form-one-key',
+    dimension: 'width',
+    schema: gatedHostSchema,
+    input: (width) => ({ h: { sw: 1, ...flatInput(width) } }),
+    prepare: (root) => ({
+      target: requireNode(root, '/h/sw'),
+      host: requireNode(root, '/h'),
+      argument: 2,
+      previousHostValue: requireNode(root, '/h').value,
+    }),
+    invoke: (_root, { target }) =>
+      writeFieldNodeInput(target, 2, SetValueOption.Overwrite),
+    expected: (width) => ({ h: { sw: 2, ...flatInput(width) } }),
+    checkpoints: (width) => [
+      ['/h/sw', 2],
+      [`/h/${middleKey(width)}`, Math.floor(width / 2)],
+    ],
+  },
 ];
 const lane = 'steady';
 const laneLabel = '정상 상태(작은 트리 잎 입력으로 엔진 데움, 계약 레인)';
@@ -330,6 +566,18 @@ if (selectedSizes.some((n) => !Number.isInteger(n) || n < 2))
   throw new Error('--sizes needs integers of at least 2');
 if (selectedDepths.some((n) => !Number.isInteger(n) || n < 1))
   throw new Error('--depths needs integers of at least 1');
+const selectedWideDepths = (listOption('wide-depths') ?? ['1', '2', '4']).map(
+  Number,
+);
+if (selectedWideDepths.some((n) => !Number.isInteger(n) || n < 1))
+  throw new Error('--wide-depths needs integers of at least 1');
+/** Sizes a scene runs over: K, D, or D at the fixed --wide-width. */
+const sizesOf = (spec: OperationSpec): number[] =>
+  spec.dimension === 'width'
+    ? selectedSizes
+    : spec.dimension === 'depth'
+      ? selectedDepths
+      : selectedWideDepths;
 
 /** Build and mount a loaded tree whose root reports changes to `onChange`. */
 function createTree(
@@ -395,10 +643,11 @@ function nodesSettled(
 }
 
 const rows = selectedOperations.flatMap((spec) =>
-  (spec.dimension === 'width' ? selectedSizes : selectedDepths).map((size) => {
+  sizesOf(spec).map((size) => {
     const operation = spec.name;
     const schema = spec.schema(size);
     const input = spec.input(size);
+    const loadedJson = JSON.stringify(spec.loaded?.(size) ?? input);
     const expected = spec.expected(size);
     const expectedJson = JSON.stringify(expected);
     const checkpoints = spec.checkpoints(size);
@@ -407,12 +656,14 @@ const rows = selectedOperations.flatMap((spec) =>
     let incompleteReason: string | undefined;
     let onChangeFired = 0;
     let hostReferenceKept = 0;
+    let fixtureInfo: Plain = {};
     for (let index = -warmups; index < samples; index++) {
       const recorder = createChangeRecorder();
       const root = createTree(schema, input, recorder.onChange);
       warmEngine();
-      if (JSON.stringify(root.value) !== JSON.stringify(input))
+      if (JSON.stringify(root.value) !== loadedJson)
         throw new Error(`Fixture mismatch: ${operation}, size=${size}`);
+      if (spec.fixture) fixtureInfo = spec.fixture(root, size);
       const prepared = spec.prepare(root, size);
       recorder.calls = 0;
       recorder.value = undefined;
@@ -444,6 +695,7 @@ const rows = selectedOperations.flatMap((spec) =>
         throw new Error(
           `Input write did not mark dirty: ${operation}, size=${size}`,
         );
+      if (spec.fixture) spec.fixture(root, size);
       if (index >= 0) samplesMs.push(elapsed);
     }
     const sorted = [...samplesMs].sort((a, b) => a - b);
@@ -453,7 +705,12 @@ const rows = selectedOperations.flatMap((spec) =>
       operation,
       n: size,
       dimension: spec.dimension,
-      ...(spec.dimension === 'width' ? { width: size } : { depth: size }),
+      ...(spec.dimension === 'width'
+        ? { width: size }
+        : spec.dimension === 'depth'
+          ? { depth: size }
+          : { depth: size, width: wideWidth }),
+      ...fixtureInfo,
       medianMs: quantile(sorted, 0.5),
       p10Ms: quantile(sorted, 0.1),
       p90Ms: quantile(sorted, 0.9),

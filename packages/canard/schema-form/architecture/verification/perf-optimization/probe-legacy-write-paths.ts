@@ -22,6 +22,16 @@
  * - object-*: h.setValue(argument, SetValueOption.Overwrite / Merge).
  * - handle-root: FormHandle.setValue(next) when the captured handle's node is the
  *   root, otherwise root.setValue(next); the row's `entry` records which.
+ * - nested-wide-leaf: the input handler body on the deepest leaf of a D-deep object
+ *   with W keys at every level (--wide-width, default 100; --wide-depths, 1,2,4).
+ * - gate-toggle-exit: the input handler body writes `flag` false, closing the gate of
+ *   one field (`computed.active: '../flag'`) beside N watchers
+ *   (`computed.watch: '../a'`); the width is N.
+ * - gate-form-one-key: the input handler body writes `h.sw` 2 on host `h` whose K
+ *   children are each gated on `'../sw >= 0'`.
+ * - latent-object-one-key and misfit-object-one-key: `개념 없음` rows. 0.16.x keeps a
+ *   closed then-branch's values in the host value itself (no latent raw store) and
+ *   turns a string in a number field into null (no misfit), so neither scene exists.
  *
  * Settlement and timed region, as in probe-legacy-array-verbs.ts: the clock starts
  * right before the call and stops at the later of (1) the Form `onChange` prop called
@@ -48,7 +58,8 @@
  * timing the whole root value is compared with the expectation, and input scenes
  * check the target is dirty.
  * Options: --bundle=<dist/index.mjs> (required), --operations=a,b --sizes=10,100
- * --depths=1,4 (defaults 10,100,1000 and 1,4,8); --smoke lowers samples; --check runs a
+ * --depths=1,4 --wide-width=100 --wide-depths=1,2,4 (defaults 10,100,1000, 1,4,8, 100
+ * and 1,2,4); --smoke lowers samples; --check runs a
  * single sample per row with no warm-up and no hop baseline (correctness only).
  */
 import { createHash } from 'node:crypto';
@@ -255,7 +266,9 @@ interface Prepared {
 /** One write scene: its tree, its call, and the state it must leave behind. */
 interface OperationSpec {
   name: string;
-  dimension: 'width' | 'depth';
+  dimension: 'width' | 'depth' | 'wide-depth';
+  /** Why 0.16.x has no comparable concept; the row is reported without a measurement. */
+  unsupported?: string;
   schema: (size: number) => Plain;
   input: (size: number) => Plain;
   prepare: (root: LegacyNode, size: number) => Prepared;
@@ -266,7 +279,13 @@ interface OperationSpec {
   changeOptional?: boolean;
 }
 /** Scene flags kept beside the spec. */
-const INPUT_SCENES = new Set(['leaf-input', 'nested-leaf']);
+const INPUT_SCENES = new Set([
+  'leaf-input',
+  'nested-leaf',
+  'nested-wide-leaf',
+  'gate-toggle-exit',
+  'gate-form-one-key',
+]);
 
 const keyOf = (index: number): string => `k${index}`;
 const middleKey = (width: number): string => keyOf(Math.floor(width / 2));
@@ -307,6 +326,87 @@ const nestedInput = (depth: number, leaf = 1): Plain =>
     ? { a: 0, b: leaf, c: 2, d: 3 }
     : { o: nestedInput(depth - 1, leaf), a: 0, b: 1, c: 2 };
 const nestedLeafPath = (depth: number): string => '/o'.repeat(depth - 1) + '/b';
+const wideWidth = Number(
+  process.argv.find((value) => value.startsWith('--wide-width='))?.slice(13) ??
+    100,
+);
+if (!Number.isInteger(wideWidth) || wideWidth < 2)
+  throw new Error('--wide-width needs an integer of at least 2');
+/** Depth-D object with W keys at every level: `o` (next level) or `n0` at the bottom, plus n1..n{W-1}. */
+const wideSchema = (depth: number): Plain => ({
+  type: 'object',
+  properties: Object.fromEntries([
+    depth > 1 ? ['o', wideSchema(depth - 1)] : ['n0', { type: 'number' }],
+    ...Array.from({ length: wideWidth - 1 }, (_, i) => [
+      `n${i + 1}`,
+      { type: 'number' },
+    ]),
+  ]),
+});
+const wideInput = (depth: number, leaf = 1): Plain =>
+  Object.fromEntries([
+    depth > 1 ? ['o', wideInput(depth - 1, leaf)] : ['n0', 0],
+    ...Array.from({ length: wideWidth - 1 }, (_, i) => [
+      `n${i + 1}`,
+      depth <= 1 && i === 0 ? leaf : i + 1,
+    ]),
+  ]);
+const wideLeafPath = (depth: number): string => '/o'.repeat(depth - 1) + '/n1';
+/** Root with a gated field `g` and N watchers of `a` (0.16.x `computed` syntax). */
+const watcherSchema = (watchers: number): Plain => ({
+  type: 'object',
+  properties: {
+    flag: { type: 'boolean' },
+    a: { type: 'number' },
+    g: { type: 'number', computed: { active: '../flag' } },
+    ...Object.fromEntries(
+      Array.from({ length: watchers }, (_, i) => [
+        `w${i}`,
+        { type: 'number', computed: { watch: '../a' } },
+      ]),
+    ),
+  },
+});
+const watcherInput = (watchers: number, flag: boolean): Plain => ({
+  flag,
+  a: 0,
+  ...(flag ? { g: 5 } : {}),
+  ...Object.fromEntries(
+    Array.from({ length: watchers }, (_, i) => [`w${i}`, i]),
+  ),
+});
+/** Host `h` whose K children are each gated on the sibling `sw` (0.16.x `computed` syntax). */
+const gatedHostSchema = (width: number): Plain => ({
+  type: 'object',
+  properties: {
+    h: {
+      type: 'object',
+      properties: {
+        sw: { type: 'number' },
+        ...Object.fromEntries(
+          Array.from({ length: width }, (_, i) => [
+            keyOf(i),
+            { type: 'number', computed: { active: '../sw >= 0' } },
+          ]),
+        ),
+      },
+    },
+  },
+});
+/** A scene whose engine concept 0.16.x lacks: reported as `개념 없음` without a measurement. */
+const unsupportedSpec = (name: string, reason: string): OperationSpec => ({
+  name,
+  dimension: 'width',
+  unsupported: reason,
+  schema: () => ({}),
+  input: () => ({}),
+  prepare: () => {
+    throw new Error(`${name} is not measured on 0.16.x`);
+  },
+  invoke: () => undefined,
+  expected: () => ({}),
+  checkpoints: () => [],
+});
 
 /** Resolve a pointer to a node or throw. */
 function requireNode(root: LegacyNode, pointer: string): LegacyNode {
@@ -458,6 +558,65 @@ const operationSpecs: OperationSpec[] = [
     expected: (width) => withKey(flatInput(width), middleKey(width), -1),
     checkpoints: (width) => [[`/${middleKey(width)}`, -1]],
   },
+  {
+    name: 'nested-wide-leaf',
+    dimension: 'wide-depth',
+    schema: wideSchema,
+    input: (depth) => wideInput(depth),
+    prepare: (root, depth) => ({
+      target: requireNode(root, wideLeafPath(depth)),
+      host: root,
+      argument: -1,
+      previousHostValue: root.value,
+    }),
+    invoke: (_tree, { target }) => writeLegacyInput(target, -1),
+    expected: (depth) => wideInput(depth, -1),
+    checkpoints: (depth) => [[wideLeafPath(depth), -1]],
+  },
+  unsupportedSpec(
+    'latent-object-one-key',
+    '0.16.x has no latent raw store: values of a closed then-branch stay in the host value itself',
+  ),
+  unsupportedSpec(
+    'misfit-object-one-key',
+    '0.16.x does not keep wrong-kind leaves: a string in a number field becomes null and the host drops out of the value',
+  ),
+  {
+    name: 'gate-toggle-exit',
+    dimension: 'width',
+    schema: watcherSchema,
+    input: (watchers) => watcherInput(watchers, true),
+    prepare: (root) => ({
+      target: requireNode(root, '/flag'),
+      host: root,
+      argument: false,
+      previousHostValue: root.value,
+    }),
+    invoke: (_tree, { target }) => writeLegacyInput(target, false),
+    expected: (watchers) => watcherInput(watchers, false),
+    checkpoints: () => [
+      ['/flag', false],
+      ['/g', undefined],
+    ],
+  },
+  {
+    name: 'gate-form-one-key',
+    dimension: 'width',
+    schema: gatedHostSchema,
+    input: (width) => ({ h: { sw: 1, ...flatInput(width) } }),
+    prepare: (root) => ({
+      target: requireNode(root, '/h/sw'),
+      host: requireNode(root, '/h'),
+      argument: 2,
+      previousHostValue: requireNode(root, '/h').value,
+    }),
+    invoke: (_tree, { target }) => writeLegacyInput(target, 2),
+    expected: (width) => ({ h: { sw: 2, ...flatInput(width) } }),
+    checkpoints: (width) => [
+      ['/h/sw', 2],
+      [`/h/${middleKey(width)}`, Math.floor(width / 2)],
+    ],
+  },
 ];
 const lane = 'steady';
 const laneLabel = '정상 상태(작은 트리 잎 입력으로 엔진 데움, 계약 레인)';
@@ -490,6 +649,18 @@ if (selectedSizes.some((n) => !Number.isInteger(n) || n < 2))
   throw new Error('--sizes needs integers of at least 2');
 if (selectedDepths.some((n) => !Number.isInteger(n) || n < 1))
   throw new Error('--depths needs integers of at least 1');
+const selectedWideDepths = (listOption('wide-depths') ?? ['1', '2', '4']).map(
+  Number,
+);
+if (selectedWideDepths.some((n) => !Number.isInteger(n) || n < 1))
+  throw new Error('--wide-depths needs integers of at least 1');
+/** Sizes a scene runs over: K, D, or D at the fixed --wide-width. */
+const sizesOf = (spec: OperationSpec): number[] =>
+  spec.dimension === 'width'
+    ? selectedSizes
+    : spec.dimension === 'depth'
+      ? selectedDepths
+      : selectedWideDepths;
 
 const warmSchema = flatSchema(1);
 /** Create a one-item object tree and write its leaf once so shared engine code and data are cached. */
@@ -655,10 +826,27 @@ const hopBaselineMs = check ? null : median(hopSamples);
 
 const rows: Record<string, unknown>[] = [];
 for (const spec of selectedOperations) {
-  for (const size of spec.dimension === 'width'
-    ? selectedSizes
-    : selectedDepths) {
+  for (const size of sizesOf(spec)) {
     const operation = spec.name;
+    if (spec.unsupported !== undefined) {
+      rows.push({
+        lane,
+        laneLabel,
+        operation,
+        n: size,
+        dimension: spec.dimension,
+        width: size,
+        measured: false,
+        status: '개념 없음',
+        reason: spec.unsupported,
+        medianMs: null,
+        p10Ms: null,
+        p90Ms: null,
+        meanMs: null,
+        samplesMs: [],
+      });
+      continue;
+    }
     const schema = spec.schema(size);
     const input = spec.input(size);
     const expected = spec.expected(size);
@@ -707,7 +895,7 @@ for (const spec of selectedOperations) {
         !prepared.target.state[NodeState.Dirty]
       )
         throw new Error(`Input write did not mark dirty: ${label}`);
-      if (prepared.host.value === prepared.previousHostValue)
+      if (index >= 0 && prepared.host.value === prepared.previousHostValue)
         hostReferenceKept++;
       if (index >= 0) {
         samplesMs.push(outcome.elapsed);
@@ -725,7 +913,11 @@ for (const spec of selectedOperations) {
       operation,
       n: size,
       dimension: spec.dimension,
-      ...(spec.dimension === 'width' ? { width: size } : { depth: size }),
+      ...(spec.dimension === 'width'
+        ? { width: size }
+        : spec.dimension === 'depth'
+          ? { depth: size }
+          : { depth: size, width: wideWidth }),
       ...(operation === 'handle-root' ? { entry: handleEntry } : {}),
     };
     if (failure !== undefined) {
