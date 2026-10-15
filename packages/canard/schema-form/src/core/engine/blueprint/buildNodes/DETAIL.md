@@ -26,7 +26,7 @@
 
 ## API Contracts
 
-- 같은 종류의 그룹 판정은 engine 공통 fold 보조를 소비한다. 이 보조는 schemaType을 읽는 런타임 식별과 같은 비트 의미를 소유하므로 빌드와 정착이 number/integer·nullable·형 나열 순서를 동일하게 접는다. 청사진 노드에는 새 필드를 보관하지 않는다(BLUEPRINT-043, 389C-02, (390라운드 마감 결정)).
+- 같은 종류의 그룹 판정은 engine 공통 fold 보조를 소비한다. 이 보조는 schemaType을 읽는 런타임 식별과 같은 비트 의미를 소유하므로 빌드와 정착이 number/integer·nullable·형 나열 순서를 동일하게 접는다. 청사진 노드에는 새 필드를 보관하지 않는다(BLUEPRINT-043, 389C-02, 390C-01).
 
 - 옛 표기 `items: [...]`는 자리별 `prefixItems` 템플릿으로 컴파일한다. 같은 선언의 `additionalItems`가 스키마 객체이면 그 꼬리 자리의 아이템 템플릿(`item`)으로 컴파일한다. `additionalItems`가 `false`나 `true`이거나 없으면 꼬리는 청사진이 없는 자리다. 꼬리가 닫혔는지는 검증기가 판단할 일이라 청사진은 모형으로 두지 않는다. 기존 `items` 튜플 컴파일과 그 시험은 그대로다(NODE-052, SCHEMA-001, 36C-02).
 
