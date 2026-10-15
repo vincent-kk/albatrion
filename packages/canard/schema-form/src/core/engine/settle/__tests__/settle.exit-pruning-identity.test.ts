@@ -134,6 +134,10 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     expect(moved.path).toBe('/rows/1/note');
     expect(registered(root, '/rows/1/note')).toBe(false);
     expect(deliveries).toEqual([]);
+    expect(Reflect.get(root, 'inactiveValues')).toEqual([
+      { path: '/rows/0/note', value: 'n1' },
+      { path: '/rows/1/note', value: 'n2' },
+    ]);
   });
 
   it('leaves a moved item without an exit live, with its path delivered', () => {
@@ -162,7 +166,7 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     ]);
   });
 
-  it('prunes a pending exit inside the perished item itself as part of the perish, not as an exit', () => {
+  it('detaches a pending exit inside the perished item with that item, not as an exit', () => {
     const { root, at } = mount(
       {
         type: 'object',
@@ -187,6 +191,9 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     );
     const item = at('/rows/1');
     const note = at('/rows/1/note');
+    const events: number[] = [];
+    subscribeFieldNode(note, (event) => events.push(event.type));
+    expect(registered(root, '/rows/1/note')).toBe(true);
     dispatchSetValue(
       root,
       {
@@ -201,8 +208,10 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     expect(root.emit).toEqual({ trim: true, rows: [{ on: true, note: 'n0' }] });
     expect(item.detached).toBe(true);
     expect(item.active).toBe(false);
-    expect(note.detached).toBe(false);
-    expect(note.active).toBe(true);
+    expect(note.detached).toBe(true);
+    expect(note.active).toBe(false);
+    expect(registered(root, '/rows/1/note')).toBe(false);
+    expect(events).toEqual([]);
     expect(Reflect.get(root, 'inactiveValues')).toEqual([]);
   });
 
@@ -232,6 +241,11 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     expect(registered(root, '/rows/1/note')).toBe(false);
     expect(registered(root, '/rows/2/note')).toBe(false);
     expect(deliveries).toEqual([[], []]);
+    expect(Reflect.get(root, 'inactiveValues')).toEqual([
+      { path: '/rows/0/note', value: 'x' },
+      { path: '/rows/1/note', value: 'n0' },
+      { path: '/rows/2/note', value: 'n1' },
+    ]);
   });
 
   it('detaches exits moved up by insert while a prefixItems item perishes in the same commit', () => {
@@ -269,6 +283,12 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     expect(notes.map((note) => note.active)).toEqual([false, false, false]);
     expect(registered(root, '/rows/3/note')).toBe(false);
     expect(deliveries).toEqual([[], [], []]);
+    expect(Reflect.get(root, 'inactiveValues')).toEqual([
+      { path: '/rows/0/note', value: 'x' },
+      { path: '/rows/1/note', value: 'n0' },
+      { path: '/rows/2/note', value: 'n1' },
+      { path: '/rows/3/note', value: 'n2' },
+    ]);
   });
 
   it('detaches a nested exiting field when an outer remove moves its row onto the perished row path', () => {
@@ -316,6 +336,9 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     expect(note.active).toBe(false);
     expect(registered(root, '/rows/0/cells/0/note')).toBe(false);
     expect(noteDeliveries).toEqual([]);
+    expect(Reflect.get(root, 'inactiveValues')).toEqual([
+      { path: '/rows/0/cells/0/note', value: 'b' },
+    ]);
     expect(cell.detached).toBe(false);
     expect(cellDeliveries).toEqual([
       { previous: '/rows/1/cells/0', current: '/rows/0/cells/0' },
@@ -357,5 +380,8 @@ describe('NODE-044 pending exits are pruned at perish by node identity', () => {
     expect(moved.active).toBe(false);
     expect(registered(root, '/rows/0/cells/0/note')).toBe(false);
     expect(deliveries).toEqual([]);
+    expect(Reflect.get(root, 'inactiveValues')).toEqual([
+      { path: '/rows/0/cells/0/note', value: 'b' },
+    ]);
   });
 });
