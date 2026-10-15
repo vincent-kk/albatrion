@@ -18,7 +18,7 @@ export const getDeriveSourceOrder = <Self extends FieldNodeRecord<Self>>(
     const found = getDeriveChildEntry(
       parent.blueprintNode,
       current.name,
-      current.blueprintNode.kind,
+      current.blueprintNode,
     );
     order.unshift(found?.position ?? (Number(current.name) || 0));
     node = parent;

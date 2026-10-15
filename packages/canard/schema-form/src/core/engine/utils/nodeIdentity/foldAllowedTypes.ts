@@ -1,13 +1,17 @@
-import type { SchemaTypeName } from '../../../types/schema';
-
 /**
  * Encode a kind set independently of integer restrictions and nullable decoration.
- * @param types - Accepted explicit JSON types, including possible null
+ * @param types - Closed JSON type name, readonly type list, or undefined for no type
  * @returns A stable bit mask used for same-kind grouping and containment
  */
-export const foldAllowedTypes = (types: readonly SchemaTypeName[]): number => {
+export const foldAllowedTypes = (
+  types:
+    | keyof typeof TYPE_MASK
+    | readonly (keyof typeof TYPE_MASK)[]
+    | undefined,
+): number => {
+  const allowed = typeof types === 'string' ? [types] : (types ?? []);
   let mask = 0;
-  for (const type of types) if (type !== 'null') mask |= TYPE_MASK[type];
+  for (const type of allowed) if (type !== 'null') mask |= TYPE_MASK[type];
   return mask || TYPE_MASK.null;
 };
 

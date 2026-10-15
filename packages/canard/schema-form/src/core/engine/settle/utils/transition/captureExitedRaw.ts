@@ -1,4 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { captureArrayLatent } from '../latent/captureArrayLatent';
 import { captureOwnLatent } from '../latentStore/captureOwnLatent';
@@ -31,18 +32,10 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
     : (node.children ?? [])) {
     if (child.parent !== node) continue;
     const entries = node.blueprintNode.childEntries;
-    const exact = entries.findIndex(
+    const index = entries.findIndex(
       (entry) =>
         entry.name === child.name && entry.node === child.blueprintNode,
     );
-    const index =
-      exact >= 0
-        ? exact
-        : entries.findIndex(
-            (entry) =>
-              entry.name === child.name &&
-              entry.node.kind === child.blueprintNode.kind,
-          );
     captureExitedRaw(child, clear, context, policy, [
       ...order,
       index >= 0 ? index : 0,
@@ -55,7 +48,10 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
     node.behavior.strategy === 'branch'
   )
     distributeAbsentChildInputs(node, context, order);
-  const key = JSON.stringify([node.path, node.blueprintNode.kind]);
+  const key = JSON.stringify([
+    node.path,
+    getBlueprintNodeIdentity(node.blueprintNode),
+  ]);
   const value = clear
     ? undefined
     : node.behavior.type === 'array' &&

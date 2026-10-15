@@ -40,6 +40,8 @@
 
 ## API Contracts
 
+- union의 런타임 식별은 schemaType에 보관한 정규화 형 집합의 fold mask로 정한다. number/integer는 같은 비트이고 null은 nullable 장식이므로 비null 집합에 비트를 더하지 않는다. 기존 schemaType으로 이 mask를 얻을 수 있어 별도 저장 필드는 없으며, 서로 다른 생성 순서와 형 나열 순서에서도 같은 fold는 같은 토큰을 쓴다(BLUEPRINT-043, 389C-02, 390C-01).
+
 - `createDynamicFunction`, `DynamicFunction`, `getPathManager`, `PathManager`, `JSON_POINTER_PATH_REGEX`와 `BlueprintFeatureNodeIndex`, `BlueprintCacheEntry`, `EffectiveSchemaOptions`, `EffectiveSchemaMemo`, `EffectiveSchemaCacheEntry`는 blueprint 집계 index가 내보내지 않는 내부 계약이다. 내부 단위 검증은 소유 파일을 직접 읽으며, `compileBlueprintExpressions` 안의 컴파일러와 경로 관리자 프랙탈은 각자의 고유한 진입점 계약을 소유한다.
 
 - `__tests__/blueprint.derive-convergence-lazy.test.ts`는 수렴 증명 지연 수집을 검증하므로 blueprint가 소유한다. 정규화 재사용의 병합 수와 노드 관측은 `effectiveSchema/__tests__/schema-merge.mount.test.ts`가 검증하므로 해당 자식이 소유한다. 공유 owned-inline 기준 데이터는 engine의 공용 시험 fixture에서 읽는다.

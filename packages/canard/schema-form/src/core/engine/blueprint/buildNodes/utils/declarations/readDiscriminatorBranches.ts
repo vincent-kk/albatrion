@@ -10,13 +10,13 @@ import {
 } from '@/schema-form/helpers/schemaIntersection';
 
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
+import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema } from '../../../types/schema';
 import { intersectAllowedTypes } from '../../../utils/allowedTypes/intersectAllowedTypes';
 import { readAllowedTypes } from '../../../utils/allowedTypes/readAllowedTypes';
 import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
-import { foldAllowedTypes } from '../nodeTypes/foldAllowedTypes';
 import { inferAllowedTypes } from '../nodeTypes/inferAllowedTypes';
 import { collectStaticSchemas } from '../references/collectStaticSchemas';
 

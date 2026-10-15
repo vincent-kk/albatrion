@@ -1,5 +1,6 @@
 import type { FieldNodeRecord } from '../../record';
 import { sameValue } from '../../utils/compute/sameValue';
+import { getBlueprintNodeIdentity } from '../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type {
   DeriveRoundDecision,
   DeriveTraceEntry,
@@ -76,7 +77,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
           : getRuleTargets(node, rule, state)) {
           const key = getDeriveRuleKey(
             node.path,
-            node.blueprintNode.kind,
+            getBlueprintNodeIdentity(node.blueprintNode),
             rule,
             target,
           );

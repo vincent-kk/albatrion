@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
@@ -22,7 +23,12 @@ export const hasLatentUnder = <Self extends FieldNodeRecord<Self>>(
         !node.detached &&
         (!node.parent || node.parent.structure?.[node.name] === node)
       )
-        ignored.add(JSON.stringify([node.path, node.blueprintNode.kind]));
+        ignored.add(
+          JSON.stringify([
+            node.path,
+            getBlueprintNodeIdentity(node.blueprintNode),
+          ]),
+        );
     const prefixes = new Set<string>();
     for (const key of context.root.runtime.latentRaw.keys()) {
       if (ignored.has(key)) continue;

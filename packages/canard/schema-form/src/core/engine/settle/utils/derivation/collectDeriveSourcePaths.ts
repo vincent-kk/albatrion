@@ -1,6 +1,7 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 
@@ -31,7 +32,7 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   }
   for (const [node, ids] of context.selectedDeclarationIds) {
     const previous = node.runtime.committedDeclarationIds?.get(
-      JSON.stringify([node.path, node.blueprintNode.kind]),
+      JSON.stringify([node.path, getBlueprintNodeIdentity(node.blueprintNode)]),
     );
     if (
       !previous ||

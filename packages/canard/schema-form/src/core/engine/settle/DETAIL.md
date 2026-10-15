@@ -84,6 +84,8 @@
 
 ## API Contracts
 
+- 이 계약의 `(path, kind)`와 `(경로, 종류)`에서 kind/종류는 union의 fold를 포함한 식별 토큰이다. union은 `union:<fold mask>`, 다른 종류는 기존 kind 문자열을 쓴다. 이탈 대기·잠복 원본과 순서·게이트 경로 등록·커밋 선언·나감 정책·채움 집합은 모두 같은 토큰으로 구별한다. 선택의 재사용·비활성 삭제와 문서 순서 검색은 청사진 노드 객체 동일성으로 판정하므로 뒤 종류가 살아 있어도 첫 활성 종류가 생존하며 다른 fold의 잠복 값은 넘겨받지 않는다. 나감 정책의 호스트 식별도 같은 토큰을 써서 fold별 마지막 커밋 값을 읽는다. 행 선택과 object/array/virtual 분류는 기존 kind를 쓴다(BLUEPRINT-043, NODE-043·044, FRAGMENT-049, 389C-02, 390C-01).
+
 - `getControlLayers`의 조각 소유권은 선택된 노드 선언의 `getFragmentOwnerPaths` 결과로 호출마다 지연 생성한 소유 경로 집합 하나에서 판정하며 호출 간 캐시는 두지 않는다. 선언·층 순서는 유지하고, 나감의 `commitExitPolicyValues`·`captureLatentDescendants`가 자식마다 한 번 호출하는 경로는 기록만 하며 바꾸지 않는다(P-08, GOAL-011).
 
 - `__tests__/scenarios`의 `effectiveList.test.ts`·`union.entry-two-step.test.ts`는 정착 선택과 union 진입의 통합 장면을 이 소유 구획에서 검증한다. 공유 owned-inline 기준 데이터는 engine 공용 시험 fixture에서 읽는다.

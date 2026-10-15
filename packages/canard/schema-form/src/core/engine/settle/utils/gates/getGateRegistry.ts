@@ -2,12 +2,9 @@ import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import type {
-  Blueprint,
-  BlueprintGate,
-  BlueprintNodeKind,
-} from '../../../blueprint';
+import type { Blueprint, BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import { getGateExpression } from './getGateExpression';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
@@ -23,8 +20,8 @@ interface RegisteredGateOccurrence extends GateOccurrence {
 interface RegisteredNode {
   /** Live node that owns this path. */
   node: object;
-  /** Analyzed kind at this live path. */
-  kind: BlueprintNodeKind;
+  /** Fold-inclusive kind token at this live path. */
+  kind: string;
   /** Gate occurrences registered by its template and direct edges. */
   occurrences: readonly RegisteredGateOccurrence[];
   /** Gates on this node's own declarations, before direct child edges. */
@@ -84,10 +81,7 @@ class GateRegistry {
   }
 
   /** Compare a path and kind in the current indexed shape, if indexed. */
-  hasRegisteredPathKind(
-    path: string,
-    kind: BlueprintNodeKind,
-  ): boolean | undefined {
+  hasRegisteredPathKind(path: string, kind: string): boolean | undefined {
     if (this.byPath.size === 0) return undefined;
     return this.byPath.get(path)?.kind === kind;
   }
@@ -133,7 +127,7 @@ class GateRegistry {
     this.byEdge.set(node, edges);
     this.byPath.set(node.path, {
       node,
-      kind: node.blueprintNode.kind,
+      kind: getBlueprintNodeIdentity(node.blueprintNode),
       ownOccurrences,
       occurrences: [
         ...memo.values(),
@@ -161,7 +155,7 @@ class GateRegistry {
     const edges = this.byEdge.get(node);
     this.byPath.set(node.path, {
       node,
-      kind: node.blueprintNode.kind,
+      kind: getBlueprintNodeIdentity(node.blueprintNode),
       ownOccurrences: this.byPath.get(node.path)?.ownOccurrences ?? [],
       occurrences: [
         ...memo.values(),

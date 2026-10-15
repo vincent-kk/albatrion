@@ -1,5 +1,6 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { effectiveType } from '../commit/effectiveType';
 import { computeNode } from '../compute/computeNode';
@@ -73,7 +74,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           node.detached ||
           (context.pendingExits.size !== 0 &&
             context.pendingExits.has(
-              JSON.stringify([node.path, node.blueprintNode.kind]),
+              JSON.stringify([
+                node.path,
+                getBlueprintNodeIdentity(node.blueprintNode),
+              ]),
             ))
         )
           continue;
@@ -81,7 +85,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           if (filledNodes.has(node)) continue;
           filledNodes.add(node);
         } else if (filled) {
-          const key = JSON.stringify([node.path, node.blueprintNode.kind]);
+          const key = JSON.stringify([
+            node.path,
+            getBlueprintNodeIdentity(node.blueprintNode),
+          ]);
           if (filled.has(key)) continue;
           filled.add(key);
         }
@@ -152,7 +159,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
         node.detached ||
         (context.pendingExits.size !== 0 &&
           context.pendingExits.has(
-            JSON.stringify([node.path, node.blueprintNode.kind]),
+            JSON.stringify([
+              node.path,
+              getBlueprintNodeIdentity(node.blueprintNode),
+            ]),
           ))
       )
         continue;

@@ -6,6 +6,7 @@ import { mergeEffectiveSchema } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
+import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
 import { recordSettlementFailure } from '../../errors/recordSettlementFailure';
 import { evaluateGate } from '../../gates/evaluateGate';
@@ -213,14 +214,14 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         ? prior[entry.name]
         : undefined;
       const exiting =
-        priorChild?.blueprintNode.kind === entry.node.kind
+        priorChild?.blueprintNode === entry.node
           ? priorChild
           : context.pendingExits.size === 0
             ? undefined
             : context.pendingExits.get(
                 JSON.stringify([
                   node.path + '/' + escapeSegment(entry.name),
-                  entry.node.kind,
+                  getBlueprintNodeIdentity(entry.node),
                 ]),
               );
       if (exiting) {
@@ -232,7 +233,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       if (
         next[entry.name] &&
         !seen.has(entry.name) &&
-        next[entry.name].blueprintNode.kind === entry.node.kind
+        next[entry.name].blueprintNode === entry.node
       ) {
         delete next[entry.name];
         changed = true;
@@ -245,7 +246,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const retained = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]
       : undefined;
-    if (retained?.blueprintNode.kind === entry.node.kind)
+    if (retained?.blueprintNode === entry.node)
       context.throwingGateExits?.delete(retained);
     if (seen.has(entry.name)) {
       if (seen.get(entry.name) !== entry.node) {
@@ -264,11 +265,11 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     seen.set(entry.name, entry.node);
     const priorChild =
       hasOwnProperty(prior, entry.name) &&
-      prior[entry.name].blueprintNode.kind === entry.node.kind
+      prior[entry.name].blueprintNode === entry.node
         ? prior[entry.name]
         : undefined;
     const currentChild =
-      next[entry.name]?.blueprintNode.kind === entry.node.kind
+      next[entry.name]?.blueprintNode === entry.node
         ? next[entry.name]
         : undefined;
     const distribution =
@@ -288,7 +289,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       latent.size > 0 && !priorChild
         ? JSON.stringify([
             node.path + '/' + escapeSegment(entry.name),
-            entry.node.kind,
+            getBlueprintNodeIdentity(entry.node),
           ])
         : undefined;
     const input = ownsInput
@@ -321,7 +322,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       context.pendingExits.size > 0
         ? JSON.stringify([
             node.path + '/' + escapeSegment(entry.name),
-            entry.node.kind,
+            getBlueprintNodeIdentity(entry.node),
           ])
         : undefined;
     const pending =
@@ -445,7 +446,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
         context.perished.add(child);
       else {
-        const key = JSON.stringify([child.path, child.blueprintNode.kind]);
+        const key = JSON.stringify([
+          child.path,
+          getBlueprintNodeIdentity(child.blueprintNode),
+        ]);
         context.pendingExits.set(key, child);
       }
     }

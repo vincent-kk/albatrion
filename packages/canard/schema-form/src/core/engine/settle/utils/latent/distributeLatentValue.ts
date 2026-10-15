@@ -5,6 +5,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { isPlain } from '../input/isPlain';
@@ -41,16 +42,20 @@ export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
   seen: WeakSet<object> = new WeakSet(),
 ): boolean => {
   if (template.kind === 'virtual') return false;
-  const key = JSON.stringify([path, template.kind]);
+  const key = JSON.stringify([path, getBlueprintNodeIdentity(template)]);
   const log = context?.inTransition ? context.latentAutomaticLog : undefined;
   const name = unescapeSegment(path.slice(path.lastIndexOf($.Separator) + 1));
   const clearOtherKinds = (): void => {
     for (const entry of siblings)
-      if (entry.name === name && entry.node.kind !== template.kind)
+      if (
+        entry.name === name &&
+        getBlueprintNodeIdentity(entry.node) !==
+          getBlueprintNodeIdentity(template)
+      )
         setLatentRaw(
           runtime,
           log,
-          JSON.stringify([path, entry.node.kind]),
+          JSON.stringify([path, getBlueprintNodeIdentity(entry.node)]),
           false,
           undefined,
           undefined,

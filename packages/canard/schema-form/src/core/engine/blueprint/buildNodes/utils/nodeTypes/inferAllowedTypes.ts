@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { FormErrorCode } from '../../../../../../errors';
+import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema, SchemaTypeName } from '../../../types/schema';
 import { intersectAllowedTypes } from '../../../utils/allowedTypes/intersectAllowedTypes';
@@ -8,7 +9,6 @@ import { readAllowedTypes } from '../../../utils/allowedTypes/readAllowedTypes';
 import { unionAllowedTypes } from '../../../utils/allowedTypes/unionAllowedTypes';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
 import { collectStaticSchemas } from '../references/collectStaticSchemas';
-import { foldAllowedTypes } from './foldAllowedTypes';
 import { inferLiteralTypes } from './inferLiteralTypes';
 
 /** Shared frozen result for a branch cut by recursion. */
