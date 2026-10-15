@@ -1,4 +1,4 @@
-import { FormErrorCode } from './FormErrorCode';
+import { FormErrorCode } from '../constants/FormErrorCode';
 
 /** Every error code value, built once for membership checks. */
 const CODES: ReadonlySet<string> = new Set(Object.values(FormErrorCode));

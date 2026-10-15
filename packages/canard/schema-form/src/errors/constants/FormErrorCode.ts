@@ -3,7 +3,7 @@ import { JSONSchemaErrorSpecific } from './JSONSchemaErrorSpecific';
 import { SchemaFormErrorSpecific } from './SchemaFormErrorSpecific';
 import { UnhandledErrorSpecific } from './UnhandledErrorSpecific';
 import { ValidationErrorSpecific } from './ValidationErrorSpecific';
-import { assembleCodeGroup } from './assembleCodeGroup';
+import { assembleCodeGroup } from '../utils/assembleCodeGroup';
 
 /**
  * Every error code the package raises, in ledger order (ERROR-164 and its supplements).

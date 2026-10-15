@@ -1,9 +1,9 @@
 import type { ErrorDetails } from '@winglet/common-utils/error';
 
 import type { SchemaFormError } from './classes/SchemaFormError';
-import type { FormErrorCode } from './codes/FormErrorCode';
-import type { FormErrorGroup } from './codes/FormErrorGroup';
-import type { FormWarningCode } from './codes/FormWarningCode';
+import type { FormErrorCode } from './constants/FormErrorCode';
+import type { FormErrorGroup } from './constants/FormErrorGroup';
+import type { FormWarningCode } from './constants/FormWarningCode';
 
 /** Error codes a JSONSchemaError carries. */
 export type JSONSchemaErrorCode = Extract<
