@@ -106,7 +106,11 @@ export const ArrayItems = memo(function ArrayItems({
       <EmptySlot
         key={'slot:' + index}
         index={index}
-        kind={readSlotKind(jsonSchema, index)}
+        kind={readSlotKind(
+          jsonSchema,
+          index,
+          node.find('./' + index)?.jsonSchema,
+        )}
         readOnly={readOnly}
         disabled={disabled}
         onWrite={handleSlotWrite}
