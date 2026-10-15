@@ -29,6 +29,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
   const table = getDeriveRuleTable(root.runtime.blueprint);
   const pending = getDeriveSourceNodes(root, state);
   const nodes: Self[] = [];
+  const resetNodes = new Set<Self>();
   const trace: DeriveTraceEntry[] = [];
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
   let failures:
@@ -86,7 +87,10 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
             )
           )
             continue;
-          if (!nodes.includes(target)) nodes.push(target);
+          if (!resetNodes.has(target)) {
+            resetNodes.add(target);
+            nodes.push(target);
+          }
           if (state.trace)
             trace.push({
               phase: 'commit',

@@ -13,7 +13,7 @@
 - 조각의 대상 자식 검색은 그 조각에 `derived`, `unsetValue`, `resetInteraction`, `injectTo` 중 하나라도 있을 때만 수행한다. `active`만 있는 분기가 B개일 때 파생 표 생성은 전체 자식 검색 B회가 아니라 O(선언 수) 시간이면 되고, 불필요한 대상 배열도 할당하지 않는다. `fields`의 별도 규칙은 계속 처리하며, 규칙 순서, 층, 에지의 의미는 바꾸지 않는다(SETTLE-017·043, 82C-01).
 
 - 조각이 대상 자식을 직접 선언했는지는 engine의 공유 보조 `utils/controls/getFragmentOwnerPaths.ts`로 정한다. 객체 속성뿐 아니라 한 스키마 `items`·`additionalItems`의 `*` 템플릿과 튜플·`prefixItems`의 색인 자리를 후보로 삼으므로, 조각 derive 규칙(derived·unsetValue·resetInteraction)은 조각이 켜진 동안 직접 선언한 모든 배열 아이템에 닿는다(CONTROLS-077, 377C-01; 조각의 injectTo는 청사진 오류라 대상이 아니다).
-- `getRuleTargets`는 아이템 템플릿의 현재 아이템 중 해당 조각의 선언이 선택된 대상을 모두 돌려주고, 색인 대상은 그 자리에만 묶는다. 식은 호스트에서 라운드마다 한 번 평가해 같은 값을 모든 대상에 쓰며, 쓰기·상호작용 초기화·기준점과 에지는 아이템마다 따로 둔다. push는 새 아이템을 묶고 remove는 사라진 아이템을 해제하며, 중첩 배열은 각 호스트 발생을 기준으로 해석한다(FRAGMENT-050, CONTROLS-077, 377C-01). 추가 비용은 현재 아이템 수에 비례하고 식 결과 캐시는 호스트·식마다 한 칸이며, 라운드 상한 25는 그대로이다(SETTLE-004).
+- `getRuleTargets`는 아이템 템플릿의 현재 아이템 중 해당 조각의 선언이 선택된 대상을 모두 돌려주고, 색인 대상은 그 자리에만 묶는다. 식은 평가가 필요한 라운드에서 호스트마다 한 번 평가하고 모든 대상이 그 결과를 함께 쓰며, 쓰기·상호작용 초기화·기준점과 에지는 아이템마다 따로 둔다. push는 새 아이템을 묶고 remove는 사라진 아이템을 해제하며, 중첩 배열은 각 호스트 발생을 기준으로 해석한다(FRAGMENT-050, CONTROLS-077, 377C-01). 규칙 수가 같을 때 추가 비용은 현재 아이템 수에 비례한다. 상호작용 초기화 후보는 호출마다 하나의 동일성 Set으로 중복을 제거하고 최초 발생 순서의 배열을 유지하며, 동일성 색인의 임시 메모리는 고유 초기화 대상 수에 비례한다. 식 결과 캐시는 호스트·식마다 한 칸이며, 라운드 상한 25는 그대로이다(SETTLE-004).
 
 - `index.ts`는 다음을 이름으로 내보낸다. `getDeriveRuleTable(blueprint: Blueprint): DeriveRuleTable`, `evaluateDeriveRound<Self>(root: FieldNodeRecord<Self>, state: DeriveState<Self>): DeriveRoundDecision<Self>`, `evaluateResetInteraction<Self>(root: FieldNodeRecord<Self>, state: DeriveState<Self>): DeriveResetInteractionDecision<Self>`, `DERIVE_ROUND_CAP = 25`, 그리고 `DeriveState`·`DeriveRoundDecision`·`DeriveTraceEntry` 형이다. 반환 자료를 설명하는 `DeriveRuleTable`·`DeriveResetInteractionDecision` 형은 내부 계약이므로 index가 내보내지 않는다. `settle/utils/derivation/`은 이 진입점에서 라운드 판정을, `settle/utils/commit/`은 상호작용 초기화 판정을 가져다 쓴다(SETTLE-004·006·017, NODE-016, CONTROLS-029).
 - `DeriveState<Self>`는 완성된 트리, 호출의 로드 범위와 억제 여부, 직전 커밋의 규칙 값, 이번 정착에서 소비한 값, 대상별로 이미 적용한 종류 순위를 판정에 건넨다. `DeriveRoundDecision<Self>`는 대상마다 승자 하나만 남긴 쓰기 후보, 승패와 상관없이 소비할 에지, 개발 모드 기록 항목을 돌려주며 원본은 바꾸지 않는다(SETTLE-004·028·048·049, WRITE-015, ERROR-159).
@@ -48,11 +48,11 @@
 
 ### derive-fragment-array-reset — 배열 아이템별 상호작용 초기화
 
-한 스키마 아이템, 옛 튜플, 추가 아이템과 prefixItems 경계에서 조각의 resetInteraction이 직접 선언한 아이템의 상호작용만 초기화한다. 중첩 배열과 push·remove에서도 호스트별 식과 아이템별 에지를 유지하고, 꺼진 조각은 초기화하지 않는다(CONTROLS-077, FRAGMENT-050, 377C-01).
+한 스키마 아이템, 옛 튜플, 추가 아이템과 prefixItems 경계에서 조각의 resetInteraction이 직접 선언한 아이템의 상호작용만 초기화한다. 중첩 배열과 push·remove에서도 호스트별 식과 아이템별 에지를 유지하고, 꺼진 조각은 초기화하지 않는다. 조각을 다시 켜면 공유 아이템의 값과 상호작용은 유지하고 기준만 잡으며, 같은 커밋에 새로 들어온 아이템은 거짓에서 참으로 바뀐 에지로 초기화한다(CONTROLS-077, FRAGMENT-050, 377C-01).
 
 ### derive-fragment-array-cost — 호스트 식 평가와 아이템별 비용
 
-현재 아이템 수가 늘어도 derived·unsetValue·resetInteraction의 호스트 식은 한 라운드에 정확히 한 번 평가한다. 쓰기·초기화 후보와 소비한 에지만 아이템 수에 비례하며, 서로 다른 템플릿 자리도 같은 호스트 식 결과를 함께 쓴다(CONTROLS-077, FRAGMENT-050, SETTLE-004).
+현재 아이템 수가 늘어도 derived·unsetValue·resetInteraction의 호스트 식은 평가가 필요한 라운드에서 호스트마다 한 번 평가하고 모든 대상이 그 결과를 함께 쓴다. 규칙 수가 같을 때 쓰기·초기화 후보와 소비한 에지의 비용은 아이템 수에 비례하며, 서로 다른 템플릿 자리도 같은 호스트 식 결과를 함께 쓴다. 초기화 후보 수집의 동일성 조회 작업은 아이템 수를 두 배로 늘려도 두 배를 넘지 않고, 반환 노드는 아이템마다 최초 발생 순서로 하나씩만 남긴다. 발화한 규칙별 기록과 대상별 소비 에지는 중복 제거와 관계없이 모두 유지한다(CONTROLS-077, FRAGMENT-050, SETTLE-004).
 
 ## Boundary Exemptions
 
@@ -82,4 +82,4 @@
 
 ## Last Updated
 
-2026-10-15; 배열 조각 derive 대상과 아이템별 에지(CONTROLS-077, 377C-01).
+2026-10-16; 배열 조각 derive 대상과 선형 초기화 후보 수집(CONTROLS-077, 377C-01).
