@@ -12,11 +12,15 @@ import { hasDistributedChildInput } from './hasDistributedChildInput';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
+import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
+import { keepsHostKeys } from './utils/keepsHostKeys';
 
 /**
  * Mark a terminal source or distribute an object host write by declared key.
  * An object host is written whole only inside the context's replacement scope; under a
  * multi-write batch that scope is the union of the written paths (191C-01).
+ * In an admitted static write a host keeping its key set or item count stays out of
+ * shape-dirty and its leaf children whose interpreted value equals their raw are not marked (W1).
  * @param node - Caller target or descendant reached by a whole host write
  * @param input - Value received at this occurrence's write boundary
  * @param context - Work list recording source, shape, and automatic changes
@@ -119,6 +123,14 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   }
   const rawChanged = !sameValue(node.raw, nextRaw);
   const extrasChanged = !sameValue(node.undeclaredValues, extras);
+  const sameShape =
+    node.raw === undefined &&
+    nextRaw === undefined &&
+    node.undeclaredValues === undefined &&
+    extras === undefined &&
+    !countChanged &&
+    admitsSameValueWrite(node, context) &&
+    keepsHostKeys(node, value, isMerge);
   if (rawChanged || extrasChanged || countChanged) {
     node.raw = nextRaw;
     node.undeclaredValues = extras;
@@ -132,7 +144,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     automatic: context.automatic,
   });
   context.dirtyPaths.add(node.path);
-  context.shapeDirtyPaths.add(node.path);
+  if (!sameShape) context.shapeDirtyPaths.add(node.path);
   if (node.structure === null) return;
   for (const name of Object.keys(node.structure)) {
     if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
@@ -151,6 +163,18 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     )
       ? Reflect.get(value, name)
       : undefined;
+    if (
+      sameShape &&
+      child.behavior.strategy !== 'branch' &&
+      sameValue(
+        child.raw,
+        child.behavior.interpret(
+          childInput,
+          staticSpec(child.schemaType, child.nullable),
+        ),
+      )
+    )
+      continue;
     if (context.automatic) {
       context.writtenInputs.set(child, childInput);
       context.filledNodes.add(child);
