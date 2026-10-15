@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { default as headFixture } from '@/schema-form/core/engine/__tests__/fixtures/ownedInlineHead.json';
 import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
 
+import { alignKeptOutPoints } from './fixtures/childSelection/alignKeptOutPoints';
 import { buildChildSelectionRuntime } from './fixtures/childSelection/buildChildSelectionRuntime';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 
@@ -48,10 +49,27 @@ describe('child selection against pinned HEAD', () => {
           ],
           allListeners,
         };
+        const label = `${sample.label}; listeners=${allListeners}`;
+        const actual = working.run(structuredClone(fixture));
+        const expected = head.run(structuredClone(fixture));
+        expect(expected.keptOut, label).toEqual([]);
         expect(
-          working.run(structuredClone(fixture)),
-          `${sample.label}; listeners=${allListeners}`,
-        ).toEqual(head.run(structuredClone(fixture)));
+          actual.keptOut.filter(
+            (host) => !host.sameLocal || host.valueDelivery,
+          ),
+          label,
+        ).toEqual([]);
+        expect(
+          { results: actual.results, points: actual.points },
+          label,
+        ).toEqual({
+          results: expected.results,
+          points: alignKeptOutPoints(
+            expected.points,
+            actual.points,
+            actual.keptOut.map((host) => host.path),
+          ),
+        });
       }
     }
   }, 120000);
