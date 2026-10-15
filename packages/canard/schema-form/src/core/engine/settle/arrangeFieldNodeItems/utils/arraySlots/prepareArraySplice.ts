@@ -1,6 +1,6 @@
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { ArrayOperation, FieldNodeRecord } from '../../../../record';
-import type { ArraySpliceProof } from '../../../types/settlement';
+import type { ArraySpliceProof } from '../../types/spliceProof';
 import { admitsStaticArrayTail } from './admitsStaticArrayTail';
 
 /** Ungated effective schemas select their immutable static contributions. */

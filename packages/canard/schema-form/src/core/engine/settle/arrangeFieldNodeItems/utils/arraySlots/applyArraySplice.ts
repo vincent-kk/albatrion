@@ -6,10 +6,7 @@ import {
   updateFieldNodeNameAndPath,
 } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
-import type {
-  ArraySpliceProof,
-  SettlementContext,
-} from '../../../types/settlement';
+import type { SettlementContext } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
 import { markWrite } from '../../../utils/input/markWrite';
@@ -18,6 +15,7 @@ import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
 import type { ArrayPathMove } from '../../types/pathMoves';
+import type { ArraySpliceProof } from '../../types/spliceProof';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 
 /**
