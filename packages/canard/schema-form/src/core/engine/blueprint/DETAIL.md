@@ -131,6 +131,10 @@
 
 - 같은 템플릿과 색인의 자리 항목은 같은 참조이고, 선언 경로는 템플릿 경로를 유지하며, 청사진이 없는 자리에는 항목이 없다. 옛 표기에서 스키마 객체인 `additionalItems`는 꼬리 자리의 템플릿이 되고, `false`·`true`·없음은 청사진이 없는 꼬리다(NODE-009·052, WRITE-022, 35C-04·08, 36C-02).
 
+### blueprint-feature-index-ownership — 기능 색인의 조각 대상 기준 대조
+
+- 직전 구현을 옮긴 기준 함수와 `buildFeatureNodeIndex`를 같은 청사진에 돌려 `stateKeyNodes`·`stateKeyChildren`·`watchNodes`가 원소와 순서까지 같은지 확인한다. 조각 소속의 경계 스키마와 59개 코퍼스 스키마를 덮는다(CONTROLS-073, P-08).
+
 ## Boundary Exemptions
 
 ### `utils/features/getFeatureNodeIndex.ts` — 기능 색인 보조 유지
