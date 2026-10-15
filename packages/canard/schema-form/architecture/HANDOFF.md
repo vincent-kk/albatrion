@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-16, 388라운드(소유자: 실험 결과가 원장·사양에 맞는 길이면 PR·병합까지 원장 관리자가 진행, 수용 못 하면 revert; 387: 마운트는 방향 탐색 실험, 게이트 폼 한 키 쓰기는 같은 원리면 시도) — 공유 충돌 fold 결함 PR(codex) 진행, 그 뒤 측정 먼저 묶음(터미널 모드·all-keys 분해·EXIT-LAYERS·B2 분류); 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54·58, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
+## 1. 지금 어디인가 (2026-10-16, 389라운드(닫기: 공유 선언 충돌 fold 판정 결함 PR #409 병합 10710d8b2; 같은 뿌리의 F1 union fold 정체·F2 배열 아이템 종류별 노드는 별도 PR) — 388: 실험이 원장·사양에 맞으면 PR·병합까지 진행, 수용 못 하면 revert; 387: 마운트는 방향 탐색 실험, 게이트 폼 한 키 쓰기는 같은 원리면 시도 — F1 PR(codex 분류 먼저) 진행, 그 뒤 측정 먼저 묶음(터미널 모드·all-keys 분해·EXIT-LAYERS·B2 분류); 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54·58, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -126,7 +126,8 @@
 - **385라운드(2026-10-16, 소유자).** 지시 셋: 지우기 전 리뷰(늦음 — 원장 관리자가 #406을 리뷰 전에 병합·삭제한 것을 바로잡아 알림), errors codes의 상수·보조를 filid organ(constants·utils)으로 정리(#407, 원장 관리자 직접), 리뷰 완료·병합·복귀(reviews/round-385-owner-answers.md).
 - **386라운드(2026-10-16, 닫기).** L2 둘째 묶음 L2b PR #408 병합(58200ff5a): P1 이탈 대기 키 생략(5줄, 잡음 안), P-08 조각 소유 집합(순 +1줄, F=128 1,936 → 315 µs), 18C 벤치 격리·재측정, P-139는 벤치 GC로 R-25 닫힘; codex 구현·codex 검증자(agy 한도), 기존 기대 변경 0건(reviews/round-386-closing.md).
 - **387라운드(2026-10-16, 소유자).** 지시 둘: 마운트 상수 가설은 개선 방향을 찾는 실험까지만(불가능하면 포기), 게이트 폼 한 키 쓰기는 실험으로 안정성·효용성을 검증하고 같은 원리·사상이면 시도 가능(결정 58은 실험 뒤 판단으로). 함께 fairy08 조사로 공유 충돌 fold 결함을 확인해 codex 결함 PR로 돌림(reviews/round-387-owner-answers.md).
-- **388라운드(2026-10-16, 소유자).** 387라운드 실험 둘의 채택: 실험 결과가 원장과 정한 사양에 비추어 수용 가능한 길이면 원장 관리자가 편집자 결정으로 채택하고 PR 생성·병합까지 진행, 소유자가 뒤에 수용 못 하면 revert — 그래서 채택마다 허용 근거 항목과 revert 커밋을 적는다(reviews/round-388-owner-answers.md). 다음 라운드 번호는 389.
+- **388라운드(2026-10-16, 소유자).** 387라운드 실험 둘의 채택: 실험 결과가 원장과 정한 사양에 비추어 수용 가능한 길이면 원장 관리자가 편집자 결정으로 채택하고 PR 생성·병합까지 진행, 소유자가 뒤에 수용 못 하면 revert — 그래서 채택마다 허용 근거 항목과 revert 커밋을 적는다(reviews/round-388-owner-answers.md).
+- **389라운드(2026-10-16, 닫기).** 공유 선언 충돌 fold 판정 결함 PR #409 병합(10710d8b2): 첫 활성 간선의 청사진 노드 identity 비교, hasSharedConflict 삭제, 기존 기대 변경 0건; 원장 보충 셋(ERROR-133 cause는 첫 실패, NODE-006 386C-01 근거 수준, NODE-043 종류는 fold); 같은 뿌리의 F1(union fold 정체)·F2(배열 아이템 종류별 노드)는 별도 PR; priority.md 낡은 표시 둘 고침(reviews/round-389-closing.md). 다음 라운드 번호는 390.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -609,6 +610,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-386-closing.md` | 386라운드 닫기: L2b #408 병합, P1·P-08 수용, H10 나머지·P-139(R-25)·Bun 배가 비는 기록만 |
 | `reviews/round-387-owner-answers.md` | 387라운드 소유자: 마운트 가설은 방향 탐색 실험까지, 게이트 폼 한 키 쓰기는 실험 뒤 같은 원리면 시도(58) |
 | `reviews/round-388-owner-answers.md` | 388라운드 소유자: 실험이 원장·사양에 맞으면 PR·병합까지 진행, 수용 못 하면 revert |
+| `reviews/round-389-closing.md` | 389라운드 닫기: 공유 충돌 fold 판정 #409 병합, 원장 보충 셋, F1·F2 별도 PR |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |

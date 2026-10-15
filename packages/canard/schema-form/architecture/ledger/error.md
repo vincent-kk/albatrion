@@ -2054,6 +2054,7 @@
   > 편집자 결정(26C-05): "【추론】 정착은 활성 집합의 유효 스키마를 계산한 뒤 `typeConflict`가 참인 노드마다 정착 오류 `SHARED_NODE_CONFLICT`를 내고, `diagnostics.cause`는 `'sharedConflict'`이며, 드러남은 정착 오류 규칙대로 모든 환경에서 커밋·통지 뒤 사슬 끝이다(PR-2에서 사슬은 `settle` 호출 하나)." (`reviews/round-26-closing.md:57`)
   > 편집자 결정(26C-05): "【추론】 오류의 조건은 그 게이트들이 켜진 동안이고(BLUEPRINT-041 U2), 그로 인한 `degraded`는 ERROR-204대로 폼 수준 로드에서만 비운다." (`reviews/round-26-closing.md:58`)
   > 편집자 결정(26C-05): "【추론】 BLUEPRINT-044 S5의 다른 조건(정적 선언이 없는 이름에서 fold가 다른 게이트 선언이 동시에 켜짐)은 유효 스키마의 신호가 아니며, 정착이 켜진 선언 집합에서 판정해 같은 코드 `SHARED_NODE_CONFLICT`와 `cause: 'sharedConflict'`로 낸다." (`reviews/round-26-closing.md:59`)
+  > 편집자 결정(389C-02): "【추론】 (1) `diagnostics.cause`의 `sharedConflict`는 공유 충돌이 그 정착의 첫 실패일 때의 값이다. 정착 실패 기록은 첫 실패의 cause를 유지하므로(`recordSettlementFailure`), 식·가드 실패가 먼저 기록된 정착에서 공유 충돌이 뒤따르면 cause는 `expression`으로 남는다 — ERROR-133의 네 값 규칙은 "어느 실패인가"를 정하지 "여러 실패 중 어느 것이 남는가"는 ERROR-070의 첫 실패 규칙이 정한다. (2) 386C-01의 "`primeHost`의 조회는 지연된 SharedNodeConflict 정착에서만 자연 적중한다"는 코드 판독으로 찾은 후보 경로가 하나뿐이라는 뜻이지 유일성의 증명이 아니며, 그 시험은 스파이로 대기 나감을 둔 합성 시험이다. 조회를 남긴 결정은 그대로다. (3) NODE-043의 잠복 원본 키 "(절대 경로, 종류)"와 "어느 종류의 노드를 살릴지"의 "종류"는 BLUEPRINT-043 (2)대로 union이면 접은 집합까지 포함한 종류다. 코드의 `kind` 문자열 `union`은 그보다 거칠어 정체 용도로 쓰면 결함이다(F1)." (`reviews/round-389-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:201#6`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:28,666-668`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 원인 넷), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`; 값 이름), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21)

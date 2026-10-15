@@ -142,6 +142,7 @@
 | 2026-10-16 | 386라운드(닫기): L2b PR #408 검증·squash-merge(58200ff5a); P1 이탈 대기 키 생략·P-08 조각 소유 집합 수용, 18C 재측정, P-139는 R-25로 닫힘, 기존 기대 변경 0건. 보충 4줄 | `reviews/round-386-closing.md` |
 | 2026-10-16 | 387라운드 소유자: 마운트 상수 가설은 방향 탐색 실험까지(불가능하면 포기), 게이트 폼 한 키 쓰기는 실험으로 검증 뒤 같은 원리면 시도(58은 실험 뒤 판단). 보충 2줄 | `reviews/round-387-owner-answers.md` |
 | 2026-10-16 | 388라운드 소유자: 실험 결과가 원장·사양에 맞는 길이면 PR 생성·병합까지 원장 관리자가 진행, 소유자가 수용 못 하면 revert. 보충 1줄 | `reviews/round-388-owner-answers.md` |
+| 2026-10-16 | 389라운드(닫기): 공유 선언 충돌 fold 판정 결함 PR #409 검증·squash-merge(10710d8b2); 청사진 노드 identity 비교, hasSharedConflict 삭제, 기존 기대 변경 0건; 보충 셋; F1·F2는 별도 PR. 보충 8줄 | `reviews/round-389-closing.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
