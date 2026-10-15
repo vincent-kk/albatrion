@@ -19,14 +19,12 @@ import { readFieldNodeDefaultValue } from '../../utils/loadValues/readFieldNodeD
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 import { compareArrayAppend } from './fixtures/compareArrayAppend';
-import {
-  compareArrayInsert,
-  runArrayWrite,
-} from './fixtures/compareArrayInsert';
-import type { InsertRun } from './fixtures/compareArrayInsert';
+import { compareArrayInsert } from './fixtures/compareArrayInsert';
+import { runArrayWrite } from './fixtures/runArrayWrite';
+import type { ArrayWriteRun } from './fixtures/runArrayWrite';
 
 /** Item nodes, keys, names and paths of a run's root array after its write. */
-const itemsOf = (run: InsertRun) =>
+const itemsOf = (run: ArrayWriteRun) =>
   (run.root.children ?? []).map((item) => ({
     item,
     key: item.itemKey,
@@ -39,7 +37,7 @@ const itemsOf = (run: InsertRun) =>
  * the inserted position is a new node with a new key, and the tail keeps nodes and keys
  * while only its names and paths move one position back.
  */
-const expectInsertIdentity = (run: InsertRun, index: number) => {
+const expectInsertIdentity = (run: ArrayWriteRun, index: number) => {
   const items = itemsOf(run);
   expect(items).toHaveLength(run.before.length + 1);
   for (let position = 0; position < items.length; position++) {
