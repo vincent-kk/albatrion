@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 
 import { createFragmentArrayTree } from '../../__tests__/fixtures/createFragmentArrayTree';
 
@@ -116,9 +117,76 @@ describe('CONTROLS-077 fragment unsetValue array targets', () => {
     root.find('/trigger')?.setValue(true);
     expect(list.value).toEqual(['a', 'b', 'c']);
     expect(runtime.committedRuleValues?.size).toBe(0);
+    for (const child of list.children ?? [])
+      child.setState({
+        [FieldNodeState.Dirty]: true,
+        [FieldNodeState.Touched]: true,
+      });
+    /** Selection changes must retain shared node identities and their state. */
+    const retained = [...(list.children ?? [])];
     root.find('/enabled')?.setValue(true);
+    expect(list.children).toEqual(retained);
+    expect(list.value).toEqual(['a', 'b', 'c']);
+    expect(runtime.committedRuleValues?.size).toBe(3);
+    expect(runtime.settlementTrace).toBeDefined();
+    expect(
+      runtime.settlementTrace?.rounds
+        .flat()
+        .filter((entry) => entry.kind === 'unsetValue'),
+    ).toEqual([]);
+    for (const child of list.children ?? [])
+      expect(child.state).toMatchObject({
+        [FieldNodeState.Dirty]: true,
+        [FieldNodeState.Touched]: true,
+      });
     root.find('/trigger')?.setValue(false);
     root.find('/trigger')?.setValue(true);
+    expect(list.value).toEqual([null, null, null]);
+  });
+
+  it('FRAGMENT-050 clears a new item added in the same commit that selects the fragment', () => {
+    /** The true host expression has no active fragment edges while off. */
+    const { root, list, runtime } = createFragmentArrayTree('unsetValue');
+    root.find('/enabled')?.setValue(false);
+    root.find('/trigger')?.setValue(true);
+    root.batch(() => {
+      root.find('/enabled')?.setValue(true);
+      list.push('new');
+    });
+    expect(list.value).toEqual(['a', 'b', 'c', null]);
+    expect(list.children).toHaveLength(4);
+    expect(root.find('/list/3')?.value).toBeUndefined();
+    expect(runtime.committedRuleValues?.size).toBe(4);
+    expect(
+      runtime.settlementTrace?.rounds
+        .flat()
+        .filter(
+          (entry) => entry.kind === 'unsetValue' && entry.result === 'applied',
+        )
+        .map((entry) => entry.targetPath),
+    ).toEqual(['/list/3']);
+  });
+
+  it('SETTLE-004 lets fragment unsetValue beat each item node derived rule', () => {
+    /** Kind precedence overrides the more specific item-node declaration. */
+    const { root, list } = createFragmentArrayTree(
+      'unsetValue',
+      { items: { type: 'string' } },
+      {
+        items: {
+          type: 'string',
+          controls: { derived: '../../source' },
+        },
+      },
+    );
+    expect(list.value).toEqual(['A', 'A', 'A']);
+    root.batch(() => {
+      root.find('/trigger')?.setValue(true);
+      root.find('/source')?.setValue('B');
+    });
+    expect(list.children).toHaveLength(3);
+    for (const child of list.children ?? [])
+      expect(child.value).toBeUndefined();
     expect(list.value).toEqual([null, null, null]);
   });
 });

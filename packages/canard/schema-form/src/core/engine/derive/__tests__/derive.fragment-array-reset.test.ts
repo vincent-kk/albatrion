@@ -145,10 +145,50 @@ describe('CONTROLS-077 fragment resetInteraction array targets', () => {
     for (const child of list.children ?? [])
       expect(child.state).toMatchObject(INTERACTION);
     expect(runtime.committedRuleValues?.size).toBe(0);
+    /** Shared nodes must only take a baseline when the fragment returns. */
+    const retained = [...(list.children ?? [])];
     root.find('/enabled')?.setValue(true);
+    expect(list.children).toEqual(retained);
+    expect(list.value).toEqual(['a', 'b', 'c']);
+    expect(runtime.committedRuleValues?.size).toBe(3);
+    expect(runtime.settlementTrace).toBeDefined();
+    expect(
+      runtime.settlementTrace?.rounds
+        .flat()
+        .filter((entry) => entry.kind === 'resetInteraction'),
+    ).toEqual([]);
+    for (const child of list.children ?? [])
+      expect(child.state).toMatchObject(INTERACTION);
     root.find('/trigger')?.setValue(false);
     root.find('/trigger')?.setValue(true);
     for (const child of list.children ?? [])
       expect(child.state).toMatchObject(CLEARED);
+  });
+
+  it('FRAGMENT-050 resets a new item added in the same commit that selects the fragment', () => {
+    /** Shared items retain interactions while only the new item takes an edge. */
+    const { root, list, runtime } = createFragmentArrayTree('resetInteraction');
+    root.find('/enabled')?.setValue(false);
+    root.find('/trigger')?.setValue(true);
+    for (const child of list.children ?? []) child.setState(INTERACTION);
+    root.batch(() => {
+      root.find('/enabled')?.setValue(true);
+      list.push('new');
+      root.find('/list/3')?.setState(INTERACTION);
+    });
+    expect(list.value).toEqual(['a', 'b', 'c', 'new']);
+    expect(runtime.committedRuleValues?.size).toBe(4);
+    for (const index of [0, 1, 2])
+      expect(root.find('/list/' + index)?.state).toMatchObject(INTERACTION);
+    expect(root.find('/list/3')?.state).toMatchObject(CLEARED);
+    expect(
+      runtime.settlementTrace?.rounds
+        .flat()
+        .filter(
+          (entry) =>
+            entry.kind === 'resetInteraction' && entry.result === 'applied',
+        )
+        .map((entry) => entry.targetPath),
+    ).toEqual(['/list/3']);
   });
 });
