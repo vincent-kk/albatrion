@@ -8,11 +8,11 @@
 
 | 대상 | 무엇 |
 | --- | --- |
-| 기존 시험 전부 | `unit`·`render`·`storybook` 세 프로젝트와 코어 시나리오. 묶음 PR마다 초록. 기대값 변경 0 |
-| 독립 스크립트 벤치 | `bench/legacy-compare/node-and-settle.bench.ts`(B1–B6, 18C-15·67·81)와 `bench/legacy-compare/derive-and-controls.bench.ts`(TEST-071 행)를 `node --import tsx`와 `bun`으로 따로 돌려 최적화 전 판과 비교. Node/V8과 Bun/JSC 둘 다(NODE-055). 새 엔진 안의 회귀 감시이며 옛 판 비교는 아니다(TEST-026) |
-| vitest 벤치 일곱 | `yarn --cwd packages/canard/schema-form bench:baseline`과 `bench:compare`로 최적화 전 판과 비교(Node만). 대상은 `benchmark.include`의 일곱 이름이며, 독립 스크립트는 들지 않는다 |
-| 통계 게이트 | `benchmark-form`의 `--equivalent --mode=core`와 `--mode=render`, `--min-samples=100`(TEST-073의 선: 같은 실행의 옛 판 0.16.0 대비 처리량 15% 넘는 하락과 Welch p<0.05면 회귀). `guard:check`는 저장된 파일과 견주므로 쓰지 않는다 |
-| 차수 탐침 | 대장의 이차·선형 행마다 N을 네 배율로 바꿔 시간 비를 적는 벤치 행(P-03 N=1천–8천, P-08 조각 16·32·64·128, P-09 형제 수). 고친 뒤에도 남겨 차수 회귀의 신호로 쓴다 |
+| 기존 시험 전부 | `unit`·`render`·`storybook` 세 프로젝트와 코어 시나리오. 묶음 PR마다 초록. 기대값 변경 0. 동작 시험은 src를 돌고, 속도 주장에는 쓰지 않는다(357라운드) |
+| 독립 스크립트 벤치 | `bench/legacy-compare/node-and-settle.bench.ts`(B1–B6, 18C-15·67·81)와 `bench/legacy-compare/derive-and-controls.bench.ts`(TEST-071 행)를 `node --import tsx`와 `bun`으로 따로 돌려 최적화 전 판과 비교. 잴 엔진은 dist 진입점에서 가져온다(357라운드; dist가 내보내지 않는 내부 이름은 git 밖의 개입한 복사본, 358라운드의 임시 조치). Node/V8과 Bun/JSC 둘 다(NODE-055). 새 엔진 안의 회귀 감시이며 옛 판 비교는 아니다(TEST-026) |
+| vitest 벤치 일곱 | `yarn --cwd packages/canard/schema-form bench:baseline`과 `bench:compare`로 최적화 전 판과 비교(Node만). 대상은 `benchmark.include`의 일곱 이름이며, 독립 스크립트는 들지 않는다. 벤치 파일은 dist 진입점을 가져온다(357라운드) |
+| 통계 게이트 | `benchmark-form`의 `--equivalent --mode=core`와 `--mode=render`(둘 다 dist를 잰다), `--min-samples=100`(TEST-073의 선: 같은 실행의 옛 판 0.16.0 대비 처리량 15% 넘는 하락과 Welch p<0.05면 회귀). `guard:check`는 저장된 파일과 견주므로 쓰지 않는다 |
+| 차수 탐침 | 대장의 이차·선형 행마다 N을 네 배율로 바꿔 시간 비를 적는 벤치 행(P-03 N=1천–8천, P-08 조각 16·32·64·128, P-09 형제 수). 고친 뒤에도 남겨 차수 회귀의 신호로 쓴다. dist 진입점을 잰다(357라운드) |
 | 메모리 | `B2` 노드당 잔존 힙과 `heap-snapshot` 보유 경로. 나빠지지 않음 |
 | 원장 검사 | 계획서나 원장을 고친 PR은 `HANDOFF.md` §4의 검사(`plan-links`·`verbatim`·`sup`·`ref`·`tokens`) 0 |
 

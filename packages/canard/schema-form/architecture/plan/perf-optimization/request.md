@@ -34,12 +34,20 @@
 | 최적화 전 | 루프를 시작하는 커밋(정돈-3과 8단계 구조 정리가 반영된 `feat/schema-form-08-review-and-perf`의 그 시점 HEAD. 해시는 `baseline.md` 머리와 실행 ID에 적는다) | 이 작업이 얼마나 줄였는지의 기준. 묶음마다 이 판과 견준다 |
 | 묶음 뒤 | 각 M2 PR의 머지 커밋 | 다음 묶음의 "최적화 전" |
 
-행 모음(독립 스크립트는 Node/V8과 Bun/JSC, NODE-055; vitest 벤치와 `benchmark-form`은 Node). 런타임 판은 측정 세션에서 바꾸지 않고 `env.json`과 표에 적는다. 점검 시점은 Node 26.11.1과 Bun 1.4.3이다. 03·04의 기록은 Node 26.10.0과 Bun 1.4.2이므로, 그 기록의 수치와는 직접 견주지 않는다:
+행 모음(독립 스크립트는 Node/V8과 Bun/JSC, NODE-055; vitest 벤치와 `benchmark-form`은 Node). 런타임 판은 측정 세션에서 바꾸지 않고 `env.json`과 표에 적는다. 점검 시점은 Node 26.11.1과 Bun 1.4.3이다. 03·04의 기록은 Node 26.10.0과 Bun 1.4.2이므로, 그 기록의 수치와는 직접 견주지 않는다.
 
-- 독립 스크립트 벤치: B1–B6과 18C-15·67·81은 `bench/legacy-compare/node-and-settle.bench.ts`, TEST-071 행은 `bench/legacy-compare/derive-and-controls.bench.ts`다. 둘은 vitest 벤치가 아니라 패키지 디렉터리에서 `node --import tsx <파일>`과 `bun <파일>`로 따로 돌리는 독립 스크립트이며(03·04 성능 기록의 명령, 경로만 정돈-3 뒤의 것), 이 길로만 두 런타임 수치가 나온다. 이 스크립트는 새 엔진 안의 회귀 감시이며 옛 판 비교는 아니다(TEST-026).
-- vitest 벤치 일곱(`vitest.bench.config.ts`의 `benchmark.include`가 이름으로 나열하며, 자리는 `src/core/__benchmarks__/`): `yarn --cwd packages/canard/schema-form bench:baseline`으로 최적화 전 판의 JSON(`bench/.results/baseline.json`)을 남기고, `bench:compare`로 견준다(`bench/README.md`). `bench:compare`는 비교 표를 출력하고 `benchmark.outputJson`에 따라 `bench/.results/latest.json`도 쓰므로, 그 표와 두 JSON을 실행 디렉터리로 복사한다(원본은 `bench/.results/`에 남긴다). Node에서만 돈다.
+**모든 속도 행은 빌드 결과물(dist)을 잰다(357라운드).** 독립 스크립트 벤치 둘·vitest 벤치 일곱·탐침 넷·`--equivalent`의 core lane은 모두 빌드한 dist의 패키지 진입점을 가져오고, src는 동작 시험(unit·render·storybook, 정확성 오라클)에만 쓴다. src를 tsx로 돌린 수치는 속도 주장에 쓰지 않는다. dist가 내보내지 않는 내부 이름은 지금 단계에서 `dist/index.mjs`를 git 밖 자리에 복사해 그 이름의 export를 붙인 복사본(빌드 결과물 개입)으로 재거나, 빌드 스크립트에 벤치 전용 진입점을 두어 잰다. 이것은 임시 조치이며(358라운드), 공개 겉면은 바뀌지 않고 복사본은 저장소에 넣지 않으며 `baseline.md`의 환경 절에 적는다.
+
+> 소유자(357라운드): "소스로 하면 기본적으로 느릴거야. 이거 빌드 결과물로 테스트 해야할걸? 소스로 돌리면 파일을 프렉탈로 쪼갠 신판이 느릴수밖에 없어" (`reviews/round-357-owner-answers.md:7`)
+
+> 소유자(358라운드): "dist로 노출되지 않는건 지금 단계에선 빌드스크립트를 수정하거나 빌드 결과물에 직접 개입하거나 하고, 이후에는 form 전체에 대한 e2e로 속도비교를 하도록 하자. 임시로" (`reviews/round-358-owner-answers.md:7`)
+
+행은 다음과 같다:
+
+- 독립 스크립트 벤치: B1–B6과 18C-15·67·81은 `bench/legacy-compare/node-and-settle.bench.ts`, TEST-071 행은 `bench/legacy-compare/derive-and-controls.bench.ts`다. 둘은 vitest 벤치가 아니라 패키지 디렉터리에서 `node --import tsx <파일>`과 `bun <파일>`로 따로 돌리는 독립 스크립트다(03·04 성능 기록의 명령, 경로만 정돈-3 뒤의 것). tsx는 스크립트 파일을 읽을 뿐이고, 잴 엔진은 src가 아니라 dist의 패키지 진입점(내부 이름은 위의 개입한 복사본)에서 가져온다. 이 길로만 두 런타임 수치가 나온다. 이 스크립트는 새 엔진 안의 회귀 감시이며 옛 판 비교는 아니다(TEST-026).
+- vitest 벤치 일곱(`vitest.bench.config.ts`의 `benchmark.include`가 이름으로 나열하며, 자리는 `src/core/__benchmarks__/`; 벤치 파일은 dist 진입점을 가져온다): `yarn --cwd packages/canard/schema-form bench:baseline`으로 최적화 전 판의 JSON(`bench/.results/baseline.json`)을 남기고, `bench:compare`로 견준다(`bench/README.md`). `bench:compare`는 비교 표를 출력하고 `benchmark.outputJson`에 따라 `bench/.results/latest.json`도 쓰므로, 그 표와 두 JSON을 실행 디렉터리로 복사한다(원본은 `bench/.results/`에 남긴다). Node에서만 돈다.
 - `benchmark-form`의 `--equivalent`: 패키지를 빌드한 뒤 `benchmark-form` 디렉터리에서 `node --expose-gc --import tsx src/index.ts --equivalent --mode=core --min-samples=100 --out=<실행 디렉터리>/equivalent-core.json`과 `--mode=render`를 차례로 돈다. 옛 판(0.16.0)과 새 판을 같은 실행에서 재고, 판정은 TEST-073의 선(처리량 평균 15% 넘는 하락과 Welch p<0.05, 표본 100회 이상)이다. `guard:baseline`과 `guard:check`는 쓰지 않는다. 둘은 `latest`만 재서 git이 추적하는 `results/baseline.json`(2026-05-29)과 견주고, `guard:baseline`은 그 파일을 덮어쓴다. 07 뒤라 React·jsdom 경로가 새 엔진이다. 상황은 `fixtures/equivalent`의 고정 쌍이며 TEST-032의 네 상황에 대응한다.
-- 대장 탐침(`verification/perf-optimization/`): `probe-gate-siblings.ts`(P-03 회귀 신호, N = 1천·2천·4천·8천), `probe-fragment-toggle.ts`(P-08, 조각 16·32·64·128 토글), `probe-if-host-siblings.ts`(P-09, 비루트 `if` 호스트 형제 1천–8천에서 쓰기 한 번), `bisect-b5.mjs`(P-10, `B5` 커밋 이분). **상태가 미확인·미측정인 행(P-08·P-09·P-10)은 여기서 수치나 원인 분리를 얻어 대장에 적는다.**
+- 대장 탐침(`verification/perf-optimization/`, dist 진입점을 가져온다): `probe-gate-siblings.ts`(P-03 회귀 신호, N = 1천·2천·4천·8천), `probe-fragment-toggle.ts`(P-08, 조각 16·32·64·128 토글), `probe-if-host-siblings.ts`(P-09, 비루트 `if` 호스트 형제 1천–8천에서 쓰기 한 번), `bisect-b5.mjs`(P-10, `B5` 커밋 이분). **상태가 미확인·미측정인 행(P-08·P-09·P-10)은 여기서 수치나 원인 분리를 얻어 대장에 적는다.**
 - 메모리: `B2`의 노드당 잔존 힙, `benchmark-form`의 `heap-snapshot`·`heap-parse`로 보유 경로 분류(P-07).
 - 환경: 기기, OS, Node·Bun 판, 커밋, `NODE_ENV`(독립 스크립트는 `production`을 기본으로 하고, `development`는 필요한 행만), 조용한 창(측정하는 동안 다른 세션이 빌드·시험·벤치를 돌리지 않음), 준비 횟수, 표본 수, 중앙값과 10–90백분위(`benchmark-form` 행은 TEST-026대로 99번째 백분위도)를 표에 함께 적는다(P-11의 흔들림을 재현 조건 고정으로 다룬다).
 
@@ -95,10 +103,11 @@ M0의 수치로 대장의 열림 행마다 네 칸을 채운다.
 
 ### M3 종합 재측정과 수용 — 09로 넘기는 것
 
-- 모든 묶음 뒤 M0와 같은 명령으로 세 판(옛 판·최적화 전·최적화 뒤)을 다시 재어 대조표를 만든다.
+- 모든 묶음 뒤 M0와 같은 명령으로 세 판(옛 판·최적화 전·최적화 뒤)을 다시 재어 대조표를 만든다. 모든 행은 dist를 잰다(357라운드).
+- 이 작업이 끝나면 속도 비교의 정본은 폼 전체 e2e다: `benchmark-form`의 render lane처럼 `<Form>`을 마운트하고 갱신하는 비교다. 내부 심볼 벤치(독립 스크립트·vitest 벤치·탐침)는 회귀 신호로만 남기고, dist 개입한 복사본으로 내부 이름을 재는 방법은 이 작업 안의 임시 조치로 끝낸다(358라운드).
 - 남은 느린 행마다 이유와 수치를 적고 **소유자가 받아들인다(TEST-027)**. 수용은 `reviews/round-NN-owner-answers.md` 행으로 받아 TEST-027·관련 항목에 보충으로 적는다(27라운드의 절차).
 - NODE-055의 B1–B6 합격선을 다시 판정한다. 대장의 열림은 "해결"이거나 "소유자 수용"이어야 하고 "미확인"·"미측정"·"측정 과제"는 남지 않는다.
-- 09의 "릴리스 전 벤치 재실행"(LANDING-096)은 이 대조표의 "최적화 뒤" 판을 다시 재는 일이 된다. 번들 크기(TEST-075)와 모바일 재측정(TEST-074)은 09가 한다.
+- 09의 "릴리스 전 벤치 재실행"(LANDING-096)은 이 대조표의 "최적화 뒤" 판을 다시 재는 일이 된다. 그 재실행의 속도 비교는 폼 전체 e2e(`benchmark-form`의 render lane 방식)를 정본으로 하고, 내부 심볼 벤치는 회귀 신호로만 본다(358라운드). 번들 크기(TEST-075)와 모바일 재측정(TEST-074)은 09가 한다.
 
 ## 부딪히는 코드 · 그대로 쓰는 것 · 새 fractal
 
