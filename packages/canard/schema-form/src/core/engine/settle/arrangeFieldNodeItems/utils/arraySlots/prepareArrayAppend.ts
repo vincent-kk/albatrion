@@ -1,14 +1,7 @@
-import { isArray } from '@winglet/common-utils/filter';
-
-import { BEHAVIORS, getStaticChoices } from '../../../../behaviors';
-import {
-  StaticFirstLoadCapability,
-  getItemEntry,
-  mergeEffectiveSchema,
-} from '../../../../blueprint';
+import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { ArrayOperation, FieldNodeRecord } from '../../../../record';
 import type { ArrayAppendProof } from '../../../types/settlement';
-import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
+import { admitsStaticArrayTail } from './admitsStaticArrayTail';
 
 /** Ungated effective schemas select their immutable static contributions. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
@@ -33,32 +26,10 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
     (operation.kind !== 'insert' || operation.index !== count)
   )
     return undefined;
-  const runtime = node.runtime;
   const template = node.blueprintNode;
-  const local = node.local;
   if (
-    node.behavior.arrange !== BEHAVIORS.array?.branch?.arrange ||
-    node.behavior.type !== 'array' ||
-    node.behavior.strategy !== 'branch' ||
-    node.detached ||
-    !node.active ||
-    !node.deliveryInitialized ||
-    runtime.batchDepth ||
-    runtime.visitDepth ||
-    !StaticFirstLoadCapability.has(runtime.blueprint) ||
-    runtime.latentRaw.size > 0 ||
-    runtime.latentRawDirty ||
-    runtime.misfitPaths.size > 0 ||
-    node.raw !== undefined ||
-    node.undeclaredValues !== undefined ||
-    !template.item ||
-    count < (template.prefixItems?.length ?? 0) ||
-    !isArray(local) ||
-    local.length !== count ||
-    (node.children?.length ?? 0) !== count ||
-    (count > 0 && !node.structure) ||
-    getStaticChoices(node.schema).omitTrailing ||
-    !isArray(getLoadValue(node.rootNode.emit, node.path))
+    !admitsStaticArrayTail(node) ||
+    count < (template.prefixItems?.length ?? 0)
   )
     return undefined;
   const entry = getItemEntry(template, count);
@@ -66,7 +37,7 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
     return undefined;
   const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {
     mode: 'runtime',
-    isAtomic: runtime.blueprint.isAtomic,
+    isAtomic: node.runtime.blueprint.isAtomic,
   });
   if (schema.typeConflict) return undefined;
   return {
@@ -79,7 +50,7 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
       slots: [{ value: operation.value }],
       result: LENGTH_RESULT,
     },
-    local,
+    local: node.local,
     valid: true,
   };
 };

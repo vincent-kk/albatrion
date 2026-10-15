@@ -57,10 +57,12 @@ export interface Behavior<Self = unknown> {
     children: readonly Node[],
     recalculated?: readonly Node[],
     hint?: {
-      /** Set by the row when it compared only recalculated or appended slots. */
+      /** Set by the row when it compared only recalculated or appended slots, or truncated its previous local. */
       incremental: boolean;
       /** Previous item count when settlement holds a valid append proof for this host. */
       append?: number;
+      /** Remaining item count when settlement holds a valid pop proof for this host. */
+      truncate?: number;
     },
   ): unknown;
   /** Project a local value into the outgoing value. */

@@ -45,6 +45,26 @@ export interface ArrayAppendProof<Self extends FieldNodeRecord<Self>> {
   valid: boolean;
 }
 
+/** Call-local evidence of one admitted static pop or remove of the last position; it never outlives its settlement. */
+export interface ArrayPopProof<Self extends FieldNodeRecord<Self>> {
+  /** Live static branch array losing its last position. */
+  host: Self;
+  /** Item count before the pop; the removed position is `count - 1`. */
+  count: number;
+  /** Tail-only proposal: no slot, applied at offset `count - 1`, reporting the removed value. */
+  plan: Extract<ArrayArrangePlan, { kind: 'slots' }>;
+  /** Host local before the pop, an array of `count` slots. */
+  local: unknown;
+  /** Children array published by the tail application. */
+  children?: readonly Self[] | null;
+  /** Root load snapshot published by the tail application. */
+  snapshot?: unknown;
+  /** First local assembled through the truncate hint. */
+  assembled?: unknown;
+  /** Cleared when a selection-time check fails; later phases then use the general path. */
+  valid: boolean;
+}
+
 /** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Live root reached through the record boundary. */
@@ -77,6 +97,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   hasGates: boolean;
   /** Proof that this call is one admitted static push, consulted by selection, assembly and alignment. */
   arrayAppend?: ArrayAppendProof<Self>;
+  /** Proof that this call is one admitted static pop, consulted by selection, assembly and alignment. */
+  arrayPop?: ArrayPopProof<Self>;
   /** First-load postorder awaiting independent leaf fill before its only assembly. */
   initialOutputs?: Self[];
   /** Cached reverse references, absent for a blueprint without virtual nodes. */

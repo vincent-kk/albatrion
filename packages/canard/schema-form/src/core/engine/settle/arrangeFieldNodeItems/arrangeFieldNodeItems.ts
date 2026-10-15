@@ -19,6 +19,7 @@ import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { applyArraySlots } from './utils/arraySlots/applyArraySlots';
 import { applyArrayTail } from './utils/arraySlots/applyArrayTail';
 import { prepareArrayAppend } from './utils/arraySlots/prepareArrayAppend';
+import { prepareArrayPop } from './utils/arraySlots/prepareArrayPop';
 
 /** Synchronous result of a plan whose slot source has already been captured. */
 const resultOf = <Self extends FieldNodeRecord<Self>>(
@@ -42,6 +43,7 @@ const resultOf = <Self extends FieldNodeRecord<Self>>(
 /**
  * Apply an array behavior's pure proposal and commit one synchronous write.
  * An admitted static push, or an insert at the current length, skips the row's slot plan and the prefix proofs; see prepareArrayAppend.
+ * An admitted static pop, or a remove of the last position, does the same for the truncation; see prepareArrayPop.
  * @param node - Array host, or any node whose behavior rejects this verb
  * @param operation - The requested public structural operation
  * @returns Length, removed or updated value, or void as declared by the plan
@@ -51,7 +53,12 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   operation: ArrayOperation,
 ): unknown => {
   const append = prepareArrayAppend(node, operation);
-  const plan = append ? append.plan : node.behavior.arrange(node, operation);
+  const pop = append ? undefined : prepareArrayPop(node, operation);
+  const plan = append
+    ? append.plan
+    : pop
+      ? pop.plan
+      : node.behavior.arrange(node, operation);
   if (plan.kind === 'noop')
     return operation.kind === 'push' || operation.kind === 'insert'
       ? readArrayLength(node)
@@ -142,6 +149,11 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
       removed = applyArrayTail(node, append.plan, context, append.count);
       append.children = node.children;
       append.snapshot = node.runtime.loadSnapshot;
+    } else if (pop) {
+      context.arrayPop = pop;
+      removed = applyArrayTail(node, pop.plan, context, pop.count - 1);
+      pop.children = node.children;
+      pop.snapshot = node.runtime.loadSnapshot;
     } else removed = applyArraySlots(node, plan, context);
     registerRecalculation(context);
     computeNode(context.root, context);

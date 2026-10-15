@@ -8,9 +8,10 @@ import { keepsChildEmissions } from './utils/keepsChildEmissions';
 
 /**
  * Assemble and project a node once from its current child order.
- * For the host of a still-valid append proof it passes the appended position to the row and records the first appended assembly in `arrayAppend.assembled`.
+ * For the host of a still-valid append proof it passes the appended position to the row and records the first appended assembly in `arrayAppend.assembled`;
+ * for the host of a still-valid pop proof it passes the remaining item count and records the first truncated assembly in `arrayPop.assembled`.
  * @param node - Live node whose row owns assembly and projection
- * @param context - Current commit's changed-node set and the optional `arrayAppend` proof it reads
+ * @param context - Current commit's changed-node set and the optional `arrayAppend` and `arrayPop` proofs it reads
  * @param recalculated - Direct children recomputed with an unchanged host shape
  * @returns Whether either calculated value changed
  */
@@ -31,12 +32,22 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     !recalculated &&
     node.children === append.children &&
     (node.local === append.local || node.local === append.assembled);
+  const pop = context.arrayPop;
+  const truncating =
+    pop !== undefined &&
+    pop.host === node &&
+    pop.valid &&
+    !recalculated &&
+    node.children === pop.children &&
+    (node.local === pop.local || node.local === pop.assembled);
   const hint =
     recalculated && host
       ? { incremental: false }
       : appending
         ? { incremental: false, append: append.count }
-        : undefined;
+        : truncating
+          ? { incremental: false, truncate: pop.count - 1 }
+          : undefined;
   const assembled = node.behavior.assemble(
     node,
     node.children ?? [],
@@ -44,6 +55,7 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     hint,
   );
   if (appending && hint?.incremental) append.assembled = assembled;
+  if (truncating && hint?.incremental) pop.assembled = assembled;
   const previousLocal = node.local;
   const same = hint?.incremental
     ? node.behavior.type === 'object' &&

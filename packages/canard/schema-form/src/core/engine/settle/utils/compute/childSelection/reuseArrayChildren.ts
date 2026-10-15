@@ -6,6 +6,7 @@ import { staticIds } from './staticIds';
 /**
  * Publish the static selection of an array host already proven reusable.
  * The caller has established eligibility with `canReuseArrayChildren`; under a still-valid append proof only the new position is published, because every retained position keeps the selection it already holds.
+ * Under a still-valid pop proof nothing is published: no position is new and the proof found no dirty child.
  * @param node - Array host whose structural operation already published its slots
  * @param context - Selection registry updated and dirty frontier consulted
  * @param prior - Structure captured before the host's selection round
@@ -27,6 +28,8 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
     if (context.dirtyPaths.has(child.path)) computeChild(child);
     return;
   }
+  const pop = context.arrayPop;
+  if (pop?.host === node && pop.valid) return;
   for (let index = 0; index < node.itemCount; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) continue;

@@ -21,9 +21,9 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
  * Apply a proven prefix-preserving proposal without composing retained raw trees.
  * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
  * @param host - Live branch array with no whole raw override
- * @param plan - Proposal accepted by canApplyArrayTail or prepareArrayAppend; appended slots carry values and retained prefix slots are never read
+ * @param plan - Proposal accepted by canApplyArrayTail, prepareArrayAppend or prepareArrayPop; appended slots carry values and retained prefix slots are never read
  * @param context - Settlement receiving the same lifecycle and dirty facts as a full plan
- * @param offset - Position of `plan.slots[0]`; an append proof's plan lists only the new slot after its retained prefix
+ * @param offset - Position of `plan.slots[0]`; an append proof's plan lists only the new slot after its retained prefix, and a pop proof's plan lists no slot after its N-1 retained positions
  * @returns Committed removed-slot value, or its retained source when no item is live
  */
 export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(

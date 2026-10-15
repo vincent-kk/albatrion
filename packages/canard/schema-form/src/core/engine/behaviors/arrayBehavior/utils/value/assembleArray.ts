@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Behavior } from '../../../../record';
+import type { Behavior, FieldNodeRecord } from '../../../../record';
 import { holeValue } from './holeValue';
 
 /** The previous slot owners make unchanged shapes eligible for sparse patches. */
@@ -16,11 +16,33 @@ const STABLE_SHAPES = new WeakMap<
 >();
 
 /**
+ * Record the slot owners of this assembly so a later unchanged-shape write may patch it.
+ * @param node - Array host just assembled
+ * @param children - Ordered item nodes the assembly read
+ * @returns Nothing; the module's stable-shape record holds the owners
+ */
+const rememberShape = (
+  node: Pick<
+    FieldNodeRecord<unknown>,
+    'schema' | 'undeclaredValues' | 'raw' | 'itemCount'
+  >,
+  children: readonly unknown[],
+): void => {
+  STABLE_SHAPES.set(node, {
+    children,
+    schema: node.schema,
+    undeclaredValues: node.undeclaredValues,
+    raw: node.raw,
+    itemCount: node.itemCount,
+  });
+};
+
+/**
  * Combine emitted items and undeclared tail positions without changing source.
  * @param node - Array host with committed child projections and tail extras
  * @param children - Current ordered item nodes
  * @param recalculated - Direct items computed during an unchanged-shape write
- * @param hint - Reports whether only the recalculated slots were compared; an `append` count from a valid append proof patches only that slot into one copy of the previous local
+ * @param hint - Reports whether only the recalculated slots were compared; an `append` count from a valid append proof patches only that slot into one copy of the previous local, and a `truncate` count from a valid pop proof keeps that many leading slots of the previous local in one copy
  * @returns Local array, reusing its prior reference when elements are identical
  */
 export const assembleArray: Behavior['assemble'] = (
@@ -30,6 +52,20 @@ export const assembleArray: Behavior['assemble'] = (
   hint,
 ) => {
   const previous = isArray(node.local) ? node.local : undefined;
+  const truncate = hint?.truncate;
+  if (
+    hint &&
+    truncate !== undefined &&
+    previous &&
+    node.itemCount === truncate &&
+    (previous.length === truncate + 1 || previous.length === truncate)
+  ) {
+    rememberShape(node, children);
+    hint.incremental = true;
+    return previous.length === truncate
+      ? previous
+      : previous.slice(0, truncate);
+  }
   const append = hint?.append;
   if (
     hint &&
@@ -47,13 +83,7 @@ export const assembleArray: Behavior['assemble'] = (
         emission === undefined
           ? holeValue(template.kind, previous[append])
           : emission;
-      STABLE_SHAPES.set(node, {
-        children,
-        schema: node.schema,
-        undeclaredValues: node.undeclaredValues,
-        raw: node.raw,
-        itemCount: node.itemCount,
-      });
+      rememberShape(node, children);
       hint.incremental = true;
       if (previous.length === append + 1 && Object.is(value, previous[append]))
         return previous;
@@ -139,13 +169,7 @@ export const assembleArray: Behavior['assemble'] = (
         : emission,
     );
   }
-  STABLE_SHAPES.set(node, {
-    children,
-    schema: node.schema,
-    undeclaredValues: node.undeclaredValues,
-    raw: node.raw,
-    itemCount: node.itemCount,
-  });
+  rememberShape(node, children);
   if (
     previous?.length === result.length &&
     result.every((value, index) => Object.is(value, previous[index]))
