@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
+import { getChildDistribution } from '../input/getChildDistribution';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
-import { isWithinReplacePaths } from '../input/isWithinReplacePaths';
 import { markWrite } from '../input/markWrite';
 import { restoreLatentState } from '../latent/restoreLatentState';
 
@@ -21,9 +21,7 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
   name: string,
   context: SettlementContext<Self>,
 ): void => {
-  const distribution = isWithinReplacePaths(context, child.path)
-    ? context.distributedInputs.get(host)
-    : undefined;
+  const distribution = getChildDistribution(host, name, context, child.path);
   const latent = context.root.runtime.latentRaw;
   const key =
     latent.size > 0

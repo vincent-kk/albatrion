@@ -1,8 +1,11 @@
+import { getItemEntries } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { captureArrayLatent } from '../latent/captureArrayLatent';
+import { HostLatent } from '../latentStore/HostLatent';
 import { captureOwnLatent } from '../latentStore/captureOwnLatent';
+import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
 import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
 import { distributeAbsentChildInputs } from './distributeAbsentChildInputs';
 import { isReplacedLivePath } from './isReplacedLivePath';
@@ -16,8 +19,8 @@ import { writeLatentRaw } from './writeLatentRaw';
  * @param context - Settlement whose latent changes may need rollback
  * @param policy - Whether exit clearing applies to this subtree
  * @param order - This occurrence's blueprint document order
- * @returns Nothing; each descendant receives its own latent entry, and a declared child
- * this settlement's write supplied without a node is distributed as latent too (211C-01)
+ * @returns Nothing; object children and multi-candidate array items retain their own
+ * entries, and newly written absent object children are distributed as latent too (211C-01)
  */
 export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -27,19 +30,33 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
   order: readonly number[],
 ): void => {
   const clear = policy && readUnsetPolicy(node, inherited);
-  for (const child of node.behavior.type === 'array'
-    ? []
-    : (node.children ?? [])) {
-    if (child.parent !== node) continue;
-    const entries = node.blueprintNode.childEntries;
-    const index = entries.findIndex(
-      (entry) =>
-        entry.name === child.name && entry.node === child.blueprintNode,
-    );
-    captureExitedRaw(child, clear, context, policy, [
-      ...order,
-      index >= 0 ? index : 0,
-    ]);
+  if (
+    node.behavior.type !== 'array' ||
+    (!clear &&
+      (node.blueprintNode.itemCandidates ||
+        node.blueprintNode.prefixItemCandidates))
+  ) {
+    for (const child of node.children ?? []) {
+      if (child.parent !== node) continue;
+      if (
+        node.behavior.type === 'array' &&
+        getItemEntries(node.blueprintNode, Number(child.name)).length < 2
+      )
+        continue;
+      const entries = node.blueprintNode.childEntries;
+      const index = entries.findIndex(
+        (entry) =>
+          entry.name === child.name && entry.node === child.blueprintNode,
+      );
+      captureExitedRaw(child, clear, context, policy, [
+        ...order,
+        index >= 0
+          ? index
+          : node.behavior.type === 'array'
+            ? Number(child.name)
+            : 0,
+      ]);
+    }
   }
   if (
     !clear &&
@@ -59,8 +76,23 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
         node.raw === undefined
       ? captureArrayLatent(node, context)
       : captureOwnLatent(node, context.root.runtime.latentRaw.get(key));
-  if (node.behavior.type === 'array' && node.behavior.strategy === 'branch')
+  if (node.behavior.type === 'array' && node.behavior.strategy === 'branch') {
+    let retained: { key: string; value: unknown }[] | undefined;
+    if (value instanceof HostLatent && value.retainedItemNames)
+      for (const name of value.retainedItemNames) {
+        const keys = getLatentPathIndex(context).get(node.path + '/' + name);
+        if (!keys) continue;
+        for (const key of keys)
+          (retained ??= []).push({
+            key,
+            value: node.runtime.latentRaw.get(key),
+          });
+      }
     pruneLatentRaw(node.runtime, node.path, undefined, context);
+    if (retained)
+      for (const entry of retained)
+        writeLatentRaw(context, entry.key, true, entry.value);
+  }
   writeLatentRaw(
     context,
     key,

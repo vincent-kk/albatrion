@@ -1,8 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { BEHAVIORS } from '../../../behaviors';
-import { getItemEntry } from '../../../blueprint';
+import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
+import type { FieldNodeRecord } from '../../../record';
 import { isPlain } from './isPlain';
 import { staticSpec } from './staticSpec';
 
@@ -16,15 +17,18 @@ const OBJECT_CHILDREN = new WeakMap<
  * Interpret an input subtree without applying any settlement semantics.
  * @param template - Static occurrence restriction, including array item bindings
  * @param input - Marked raw input; undeclared keys and tail slots remain intact
+ * @param live - Current occurrence, whose selected descendants take priority over first candidates
  * @param seen - Ancestors already visited, preventing cyclic input recursion
- * @returns Interpreted raw tree with unchanged containers retained by reference
+ * @returns Interpreted raw tree; unselected multi-candidate slots retain their input until selection, and unchanged containers retain their reference
  * @remarks O(visited input subtree); only changed containers are copied.
  */
-export const interpretFieldNodeInput = (
+export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
   input: unknown,
+  live?: Self,
   seen = new WeakSet<object>(),
 ): unknown => {
+  template = live?.blueprintNode ?? template;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
   const value = row
     ? row.interpret(input, staticSpec(template.schemaType, template.nullable))
@@ -41,9 +45,13 @@ export const interpretFieldNodeInput = (
     if (template.kind === 'array' && isArray(value)) {
       let copy: unknown[] | undefined;
       for (let index = 0; index < value.length; index++) {
-        const child = getItemEntry(template, index);
+        const item = live?.structure?.[String(index)];
+        const candidates = getItemEntries(template, index);
+        const child =
+          item?.blueprintNode ??
+          (candidates.length === 1 ? candidates[0].node : undefined);
         if (!child) continue;
-        const next = interpretFieldNodeInput(child.node, value[index], seen);
+        const next = interpretFieldNodeInput(child, value[index], item, seen);
         if (next !== value[index]) (copy ??= value.slice())[index] = next;
       }
       return copy ?? value;
@@ -58,9 +66,10 @@ export const interpretFieldNodeInput = (
       }
       let copy: Record<string, unknown> | undefined;
       for (const name of Object.keys(value)) {
-        const child = children.get(name);
+        const item = live?.structure?.[name];
+        const child = item?.blueprintNode ?? children.get(name);
         if (!child) continue;
-        const next = interpretFieldNodeInput(child, value[name], seen);
+        const next = interpretFieldNodeInput(child, value[name], item, seen);
         if (next !== value[name]) (copy ??= { ...value })[name] = next;
       }
       return copy ?? value;

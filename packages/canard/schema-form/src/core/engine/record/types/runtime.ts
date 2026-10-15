@@ -127,6 +127,8 @@ export interface Distribution {
   readonly whole: boolean;
   /** Whether this distribution was an automatic transition write. */
   readonly automatic: boolean;
+  /** Restored array positions whose sources remain under candidate-specific latent keys. */
+  readonly retainedItemNames?: readonly string[];
 }
 
 /** Reusable settlement work containers bound to one tree's node type. */
