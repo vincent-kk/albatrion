@@ -588,3 +588,4 @@
 - **355라운드(2026-10-15, 닫기/원장 관리자).** M0 기준선·M1 우선순위표 #397 병합, 계약 해석 넷(reviews/round-355-closing.md).
 - **356라운드(2026-10-15, 소유자).** 개선 즉시 진행, stringify 배제 가설, 측정은 dist 기준(reviews/round-356-owner-answers.md).
 - **357라운드(2026-10-15, 소유자).** 속도 측정은 빌드 결과물로(reviews/round-357-owner-answers.md).
+- **358라운드(2026-10-15, 소유자).** 내부 이름은 빌드 결과물 개입으로(임시), 이후 폼 e2e(reviews/round-358-owner-answers.md).
