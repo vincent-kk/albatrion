@@ -15,6 +15,9 @@ import { staticSpec } from './staticSpec';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
 
+/** Default of `changedValue`: the caller has not interpreted this node's input. */
+const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
+
 /**
  * Mark a terminal source or distribute an object host write by declared key.
  * An object host is written whole only inside the context's replacement scope; under a
@@ -25,6 +28,7 @@ import { keepsHostKeys } from './utils/keepsHostKeys';
  * @param input - Value received at this occurrence's write boundary
  * @param context - Work list recording source, shape, and automatic changes
  * @param spec - Static or narrowed type restriction used for interpretation
+ * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its raw by the distribution's skip test; omitted, the input is interpreted and compared here
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends FieldNodeRecord<Self>>(
@@ -32,6 +36,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   input: unknown,
   context: SettlementContext<Self>,
   spec: UnionSpec = staticSpec(node.schemaType, node.nullable),
+  changedValue: unknown = UNINTERPRETED,
 ): void => {
   if (
     node.behavior.type === 'virtual' &&
@@ -55,9 +60,10 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       previousExtras: node.undeclaredValues,
       previousDistributed: context.distributedInputs.get(node),
     });
-  const value = node.behavior.interpret(input, spec);
+  const known = changedValue !== UNINTERPRETED;
+  const value = known ? changedValue : node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
-    if (!sameValue(node.raw, value)) {
+    if (known || !sameValue(node.raw, value)) {
       node.raw = value;
       context.changedRaw.add(node.path);
       context.changedNodes.add(node);
@@ -163,22 +169,19 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     )
       ? Reflect.get(value, name)
       : undefined;
-    if (
-      sameShape &&
-      child.behavior.strategy !== 'branch' &&
-      sameValue(
-        child.raw,
-        child.behavior.interpret(
-          childInput,
-          staticSpec(child.schemaType, child.nullable),
-        ),
-      )
-    )
+    const interpreted =
+      sameShape && child.behavior.strategy !== 'branch'
+        ? child.behavior.interpret(
+            childInput,
+            staticSpec(child.schemaType, child.nullable),
+          )
+        : UNINTERPRETED;
+    if (interpreted !== UNINTERPRETED && sameValue(child.raw, interpreted))
       continue;
     if (context.automatic) {
       context.writtenInputs.set(child, childInput);
       context.filledNodes.add(child);
     }
-    markWrite(child, childInput, context);
+    markWrite(child, childInput, context, undefined, interpreted);
   }
 };
