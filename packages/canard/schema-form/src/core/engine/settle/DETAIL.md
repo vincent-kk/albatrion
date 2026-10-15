@@ -28,6 +28,7 @@
 - 정착의 내부 organ은 진입점에서 이름으로 제공하며, 바깥 소비자를 섬기는 칸의 유지 이유와 직접 import 예외는 Boundary Exemptions에 기록한다(NODE-016).
 - `__tests__/settle.branchless-feature-indexes.test.ts`는 분기 없는 청사진에서도 derive·watch·state 기능 색인과 역의존 색인이 만들어지는지, 그리고 빈 파생 규칙 표를 derive 부재가 capability로 증명된 경우에만 공유하는지를 검증한다. 두 사례는 일반 분석 강제(`vi.mock`)를 쓰지 않는다.
 - 한 진입은 동기적으로 표시 → 계산(호스트 바퀴) → 파생(쓰기가 나오면 표시로) → 전이(쓰기가 나오면 표시로) → 커밋한다. 전이가 재계산을 부른 뒤에도 파생을 다시 판정하며, 적용 쓰기가 있는 파생 라운드는 한 정착 전체에서 전이 뒤에도 이어 세고 상한은 25이다(SETTLE-002–006·017, EVENT-020, LANDING-063).
+- 출력 참조의 되살림은 한 정착에서 두 번 이상 바뀐 노드에 대해 직전 커밋의 배달 기준(`deliveryPreviousLocal`·`deliveryPreviousEmit`)과도 견준다. 정착 중간 값을 거쳐 직전 커밋과 내용이 같아지면 직전 커밋의 local·emit 참조를 되살려, 배달·revision·감시가 나가지 않는다(SETTLE-043 (나), GOAL-011, EVENT-006, P-25). 비교는 이 정착에서 이미 `UpdateValue` 비트가 선 노드의 출력 계산에만 더해지며, 다른 출력 채널마다 호스트 폭에 비례하는 `sameValue` 한 번이다. 저장하는 필드나 단계 순서의 변경은 없고, 배달 자리는 여전히 참조로 비교한다(67C-01).
 
 ## Structure
 
@@ -362,6 +363,10 @@
 ### settle-derive-same-value — 깊은 값 동등과 원본 참조 유지
 
 - sameValue는 중첩 평범한 값과 SameValueZero 원시 값을 비교하고, 참조가 같은 원소는 깊은 비교에 들어가지 않는지 확인한다. terminal에 깊이 같은 값을 다시 쓰면 기존 raw 참조를 유지하는지도 확인한다(18C-50, TEST-071).
+
+### settle-reference-revival — 직전 커밋 기준의 참조 되살림
+
+- 객체 호스트가 한 정착 안에서 중간 값을 거쳐 직전 커밋과 같은 내용으로 돌아오면, 커밋된 local·emit 참조가 직전 커밋의 것과 같고 호스트의 `UpdateValue`와 그 호스트를 감시하는 노드의 `UpdateControlledProperties` revision이 오르지 않는지 확인한다(P-25, SETTLE-043 (나)).
 
 ### settle-write-traversal — 잎·통째 쓰기의 실제 방문 범위
 

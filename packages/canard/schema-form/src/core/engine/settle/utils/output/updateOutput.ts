@@ -1,4 +1,4 @@
-import { captureFieldNodeChange } from '../../../record';
+import { FieldNodeEventType, captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
@@ -42,7 +42,13 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
         ),
       )
     : sameValue(node.local, assembled);
-  const local = same ? node.local : assembled;
+  let local = same ? node.local : assembled;
+  if (
+    node.deliveryChanges & FieldNodeEventType.UpdateValue &&
+    local !== node.deliveryPreviousLocal &&
+    sameValue(node.deliveryPreviousLocal, local)
+  )
+    local = node.deliveryPreviousLocal;
   let projected = node.behavior.project(node, local);
   if (
     node.parent === null &&
@@ -50,12 +56,18 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
     (node.behavior.type === 'object' || node.behavior.type === 'array')
   )
     projected = local;
-  const emit =
+  let emit =
     node.emit === node.local && projected === local
       ? local
       : sameValue(node.emit, projected)
         ? node.emit
         : projected;
+  if (
+    node.deliveryChanges & FieldNodeEventType.UpdateValue &&
+    emit !== node.deliveryPreviousEmit &&
+    sameValue(node.deliveryPreviousEmit, emit)
+  )
+    emit = node.deliveryPreviousEmit;
   const changed = local !== node.local || emit !== node.emit;
   node.local = captureFieldNodeChange(node, 'local', local);
   node.emit = captureFieldNodeChange(node, 'emit', emit);
