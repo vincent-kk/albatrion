@@ -215,12 +215,14 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       const exiting =
         priorChild?.blueprintNode.kind === entry.node.kind
           ? priorChild
-          : context.pendingExits.get(
-              JSON.stringify([
-                node.path + '/' + escapeSegment(entry.name),
-                entry.node.kind,
-              ]),
-            );
+          : context.pendingExits.size === 0
+            ? undefined
+            : context.pendingExits.get(
+                JSON.stringify([
+                  node.path + '/' + escapeSegment(entry.name),
+                  entry.node.kind,
+                ]),
+              );
       if (exiting) {
         if (threw) (context.throwingGateExits ??= new Set()).add(exiting);
         else context.throwingGateExits?.delete(exiting);

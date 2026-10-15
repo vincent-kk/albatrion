@@ -98,6 +98,15 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   if (!parent) return groups;
   const parentIds = selected(parent);
   const parentDeclarations = parent.blueprintNode.declarations;
+  const buildOwners = (): ReadonlySet<string> => {
+    const paths = new Set<string>();
+    for (const declaration of declarations)
+      if (nodeIds.includes(declaration.id))
+        for (const path of getFragmentOwnerPaths(declaration.schemaPath))
+          paths.add(path);
+    return paths;
+  };
+  let owners: ReadonlySet<string> | undefined;
   for (let index = 0; index < parentDeclarations.length; index++) {
     const declaration = parentDeclarations[index];
     if (
@@ -112,21 +121,10 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
     );
     if (!controls || typeof controls !== 'object' || isArray(controls))
       continue;
-    let ownsFragment = false;
-    if (declaration.scope === 'fragment')
-      for (let childIndex = 0; childIndex < declarations.length; childIndex++) {
-        const child = declarations[childIndex];
-        if (
-          nodeIds.includes(child.id) &&
-          getFragmentOwnerPaths(child.schemaPath).includes(
-            declaration.schemaPath,
-          )
-        ) {
-          ownsFragment = true;
-          break;
-        }
-      }
-    if (ownsFragment)
+    if (
+      declaration.scope === 'fragment' &&
+      (owners ??= buildOwners()).has(declaration.schemaPath)
+    )
       groups.push({
         layer: 'fragment',
         declarationId: declaration.id,

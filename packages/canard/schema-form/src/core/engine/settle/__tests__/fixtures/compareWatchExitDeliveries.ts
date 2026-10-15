@@ -15,12 +15,23 @@ import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTr
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import * as watchIndex from '../../utils/commit/utils/createWatchDeliveryIndex';
 
-/** One input write applied identically to the candidate and the oracle. */
-export interface WatchExitStep {
+/** One write applied identically to the candidate and the oracle. */
+export type WatchExitStep = WatchExitInput | WatchExitVerb;
+
+/** One input write settled through the public chain. */
+export interface WatchExitInput {
   /** Absolute path of the written field. */
   path: string;
   /** Input value written with Overwrite. */
   value: unknown;
+}
+
+/** One array verb, or any other public dispatch, settled as one commit. */
+export interface WatchExitVerb {
+  /** Absolute path of the live field the dispatch targets. */
+  path: string;
+  /** Dispatch run against the field found at `path` in each tree. */
+  apply: (target: DispatchTestNode) => void;
 }
 
 /** Observations of one step, identical between the candidate and the oracle. */
@@ -44,7 +55,7 @@ export interface WatchExitObservation {
  * Marks are compared per path in call order, deliveries in full delivery order.
  * @param schema - Authored declarations for two independently owned trees
  * @param input - Source mounted through the public chain before the history
- * @param steps - Input writes, each settled and delivered before the next
+ * @param steps - Input writes or dispatches, each settled and delivered before the next
  * @returns Per-step observations of the candidate, after asserting the oracle's are equal
  */
 export const compareWatchExitDeliveries = (
@@ -105,7 +116,8 @@ export const compareWatchExitDeliveries = (
         delivered.length = 0;
         const target = find(root, step.path);
         if (!target) throw new Error(`No live field at ${step.path}`);
-        dispatchWriteInput(target, step.value, WriteOption.Overwrite);
+        if ('apply' in step) step.apply(target);
+        else dispatchWriteInput(target, step.value, WriteOption.Overwrite);
         const commit = root.runtime.commitNumber;
         const watchers: string[] = [];
         const reread: string[] = [];

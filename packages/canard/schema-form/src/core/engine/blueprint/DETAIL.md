@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 상태 키가 있는 첫 조각에서만 호스트의 자식 순서대로 각 자식의 전체 선언에 `getFragmentOwnerPaths`를 적용한 소유 경로 집합을 만든다. 같은 호스트의 조각은 이 집합을 재사용하고 대상 삽입 순서와 비활성 선언 포함을 유지하며, 호출 간 캐시나 새 청사진 필드는 두지 않는다(P-08, GOAL-011).
+
 - 형 목록은 기존의 some·indexOf 검사에 predicate를 붙여 검증과 iterator 복사를 분리하며, 희소 배열, getter·iterator 읽기, 오류는 그대로 유지한다. 가드 호출 하나를 빼면 새 순회, 결과 배열, 보유 자료는 없다. 가상 필드 entry와 인라인 종단 경고의 map형 자식은 검증을 거치기 전의 작성 값이므로, 이유를 적은 형 단언으로 읽는다. 여기에 가드를 두면 지금 받아들이는 값(함수, 상속 필드를 가진 원시값)이 달라지기 때문이다.
 
 - 참조 조회 결과와 controls 봉투는 단언 없는 가드로 걸러, 기존에 받아들이던 boolean·비null 객체 집합과 비null 객체 집합을 좁힌다. controls의 watch·default를 직접 읽는 순서와 횟수, 소유 등록, 단일 정적 기여의 키 순서는 유지한다. 새로 만든 hint 병합 객체의 root와 재귀 순회에 진입할 때 봉투 가드를 호출하며, 빌린 참조와 동결 정책은 유지한다. 속도 비용은 참조 조회, controls 기여, 생성 hint 순회마다 고정된 가드 호출이며 새 캐시, 색인, 보유 객체는 없다. 일반 갱신에서는 유효 스키마 메모가 빗나간 controls·hint 병합 경로에만 적용된다.
@@ -72,7 +74,7 @@
 
 ### owned-inline-counts — core mount 동결 계수
 
-- module 초기화 상수를 제외한 core mount의 distinct 동결 수(운영/개발)는 nested 1,706/29,007, flat 502/10,523, oneOf-20 116/1,569, sample-0 5/66이며, 재동결과 primitive 호출은 0이다. oneOf-20의 다섯은 로드에서 모든 선언이 켜진 게이트 폼 간선(`common`·`kind`·`payload_0_a`·`payload_0_b`·`payload_0_c`)이 정적 선언 ID 목록(`staticIds`)을 간선마다 한 번 얼린 것이다(settle DETAIL의 완전 수용 간선, L2 (d1)). options 없는 choices의 생성 지점 동결을 모듈 상수로 옮겨서 없어지는 호출은 각각 1,365, 501, 5, 3이고, 기록별 소속 배열의 보호는 같다(batch2 4-default-choices).
+- module 초기화 상수를 제외한 core mount의 distinct 동결 수(운영/개발)는 nested 1,706/29,007, flat 502/10,523, oneOf-20 116/1,569, sample-0 5/66이며, 재동결과 primitive 호출은 0이다. oneOf-20의 다섯은 로드에서 모든 선언이 켜진 게이트 폼 간선(`common`·`kind`·`payload_0_a`·`payload_0_b`·`payload_0_c`)이 정적 선언 ID 목록(`staticIds`)을 간선마다 한 번 얼린 것이다(settle DETAIL의 완전 수용 간선, 372C-02). options 없는 choices의 생성 지점 동결을 모듈 상수로 옮겨서 없어지는 호출은 각각 1,365, 501, 5, 3이고, 기록별 소속 배열의 보호는 같다(batch2 4-default-choices).
 
 ### owned-inline-render — 렌더 중 작성된 React 값
 

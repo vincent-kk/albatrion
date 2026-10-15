@@ -49,6 +49,15 @@ export const buildFeatureNodeIndex = (
           ]
         : []),
     ];
+    const buildOwners = () =>
+      children.map((child) => {
+        const paths = new Set<string>();
+        for (const declaration of child.node.declarations)
+          for (const path of getFragmentOwnerPaths(declaration.schemaPath))
+            paths.add(path);
+        return paths;
+      });
+    let owners: readonly ReadonlySet<string>[] | undefined;
     for (const declaration of node.declarations) {
       if (declaration.validationOnly || typeof declaration.schema !== 'object')
         continue;
@@ -67,15 +76,9 @@ export const buildFeatureNodeIndex = (
       )
         watchNodes.add(node.id);
       if (declaration.scope === 'fragment' && hasStateKeys(controls))
-        for (const child of children)
-          if (
-            child.node.declarations.some((entry) =>
-              getFragmentOwnerPaths(entry.schemaPath).includes(
-                declaration.schemaPath,
-              ),
-            )
-          )
-            targets.add(child.name);
+        for (let index = 0; index < children.length; index++)
+          if ((owners ??= buildOwners())[index].has(declaration.schemaPath))
+            targets.add(children[index].name);
       const groups: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (isArray(groups))
         for (const group of groups) {
