@@ -28,7 +28,8 @@ const isPerishedWith = <Self extends FieldNodeRecord<Self>>(
 /**
  * Detach final length-removed items without exit clearing or latent capture.
  * The tree's gate registry and the visitor are obtained once; when pending exits exist,
- * those that perished with an item are dropped once by node identity (NODE-044).
+ * those that perished with an item, matched once by node identity, leave the exits and
+ * are detached with it like its other descendants (NODE-044).
  * @param context - Settlement whose array selection marked perished items
  * @returns Nothing; old references retain their last committed reads
  */
@@ -61,7 +62,12 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   }
   if (perishing?.size)
     for (const [key, pending] of pendingExits)
-      if (isPerishedWith(pending, perishing)) pendingExits.delete(key);
+      if (isPerishedWith(pending, perishing)) {
+        pendingExits.delete(key);
+        // Already out of its item's children, so the owned walk above missed it.
+        visitFieldNodes(pending, detach, OWNED);
+        registry.remove(pending);
+      }
   if (perishedPaths) {
     prunePerishedPaths(context.root.runtime, perishedPaths);
     context.latentDescendantKeys = undefined;
