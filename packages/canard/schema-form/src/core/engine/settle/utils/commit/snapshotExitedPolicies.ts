@@ -4,6 +4,7 @@ import { CONTROL_KEY } from '../../../constants/controlKey';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
@@ -21,7 +22,10 @@ export const snapshotExitedPolicies = <Self extends FieldNodeRecord<Self>>(
     visitFieldNodes(
       exited,
       (node) => {
-        const key = JSON.stringify([node.path, node.blueprintNode.kind]);
+        const key = JSON.stringify([
+          node.path,
+          getBlueprintNodeIdentity(node.blueprintNode),
+        ]);
         if (!runtime.latentRaw.has(key)) return;
         const metadata = runtime.latentRawMetadata?.get(key);
         if (!metadata) return;

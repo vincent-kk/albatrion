@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
@@ -25,7 +26,7 @@ export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
         return false;
       const key = JSON.stringify([
         group.host.path,
-        group.host.blueprintNode.kind,
+        getBlueprintNodeIdentity(group.host.blueprintNode),
       ]);
       const selected =
         context.selectedDeclarationIds.get(group.host) ??

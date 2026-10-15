@@ -7,6 +7,7 @@ import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
@@ -79,7 +80,10 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       !context.shapeDirtyPaths.has(source.path)
     )
       continue;
-    const sourceKey = JSON.stringify([source.path, source.blueprintNode.kind]);
+    const sourceKey = JSON.stringify([
+      source.path,
+      getBlueprintNodeIdentity(source.blueprintNode),
+    ]);
     const selected =
       context.selectedDeclarationIds.get(source) ??
       source.runtime.committedDeclarationIds?.get(sourceKey);
