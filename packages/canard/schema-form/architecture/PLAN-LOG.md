@@ -294,6 +294,7 @@
 | 2026-10-15 | 379라운드 소유자: 코드 그룹 상수는 공개하지 않음(내부 관리용), 대기열 61 닫힘. 보충 1줄 | `reviews/round-379-owner-answers.md` |
 | 2026-10-16 | 380라운드 소유자: 코드 그룹 상수화를 지금 codex에게 /orchestration으로(범위 src/errors, 값·공개 이름·순서 불변). 보충 1줄 | `reviews/round-380-owner-answers.md` |
 | 2026-10-16 | 381라운드 소유자: 위임 도구는 cennad·orchestration 어느 것이든, 결과 확인과 에이전트·CLI 정리 필수. 보충 1줄 | `reviews/round-381-owner-answers.md` |
+| 2026-10-16 | 382라운드(닫기): 코드 그룹 상수화 PR #404 검증·squash-merge(c1f3016de); 그룹 상수 한 벌, 그룹별 파생 표 내부용, 값·순서·공개 이름 불변. 보충 2줄 | `reviews/round-382-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -618,3 +619,4 @@
 - **379라운드(2026-10-15, 소유자).** 코드 그룹 상수는 내부용, 대기열 61 닫힘(reviews/round-379-owner-answers.md).
 - **380라운드(2026-10-16, 소유자).** 코드 그룹 상수화를 지금 codex에게(reviews/round-380-owner-answers.md).
 - **381라운드(2026-10-16, 소유자).** 위임 도구 자유, 결과 확인·자원 정리(reviews/round-381-owner-answers.md).
+- **382라운드(2026-10-16, 닫기).** 코드 그룹 상수화 PR #404 병합(c1f3016de)(reviews/round-382-closing.md).
