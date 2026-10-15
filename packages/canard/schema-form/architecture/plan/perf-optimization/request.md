@@ -104,7 +104,7 @@ M0의 수치로 대장의 열림 행마다 네 칸을 채운다.
 
 | 부딪히는 코드 | 그대로 쓰는 것 | 새 fractal |
 | --- | --- | --- |
-| `src/core/engine/settle/utils/compute/selectChildren.ts`, `src/core/engine/settle/utils/compute/publishStateKeys.ts`, `src/core/engine/settle/utils/controls/getControlLayers.ts`, `src/core/engine/settle/utils/latent/getLatentOrder.ts`, `src/core/engine/settle/utils/write/registerRecalculation.ts`, 값 모델 쓰기 경로, `src/core/engine/utils/compute/sameValue.ts`(정돈-3이 settle과 derive의 공통 organ으로 올림) — 대장의 "위치" 칸 | 공개 겉면 전부, 시험 전부, `bench/legacy-compare/*.bench.ts`와 `src/**/__benchmarks__/*.bench.ts`의 기존 행 | 없음. 재현 스크립트와 탐침은 `verification/perf-optimization/` 아래에 둔다(07의 `measure-*.mjs`와 같은 자리이며 제품 코드가 아니다) |
+| `src/core/engine/settle/utils/compute/childSelection/selectChildren.ts`, `src/core/engine/settle/utils/compute/publishStateKeys.ts`, `src/core/engine/settle/utils/controls/getControlLayers.ts`, `src/core/engine/settle/utils/latentStore/getLatentOrder.ts`, `src/core/engine/settle/utils/dependencies/registerRecalculation.ts`, 값 모델 쓰기 경로, `src/core/engine/utils/compute/sameValue.ts`(정돈-3이 settle과 derive의 공통 organ으로 올림) — 대장의 "위치" 칸 | 공개 겉면 전부, 시험 전부, `bench/legacy-compare/*.bench.ts`와 `src/**/__benchmarks__/*.bench.ts`의 기존 행 | 없음. 재현 스크립트와 탐침은 `verification/perf-optimization/` 아래에 둔다(07의 `measure-*.mjs`와 같은 자리이며 제품 코드가 아니다) |
 
 ## 레거시 (LANDING-159·205)
 
