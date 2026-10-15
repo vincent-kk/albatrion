@@ -1,5 +1,9 @@
 import { FormErrorGroup } from './FormErrorGroup';
-import { filterCodeGroup } from './filterCodeGroup';
+import { JSONSchemaErrorSpecific } from './JSONSchemaErrorSpecific';
+import { SchemaFormErrorSpecific } from './SchemaFormErrorSpecific';
+import { UnhandledErrorSpecific } from './UnhandledErrorSpecific';
+import { ValidationErrorSpecific } from './ValidationErrorSpecific';
+import { assembleCodeGroup } from './assembleCodeGroup';
 
 /**
  * Every error code the package raises, in ledger order (ERROR-164 and its supplements).
@@ -7,112 +11,112 @@ import { filterCodeGroup } from './filterCodeGroup';
  */
 export const FormErrorCode = {
   /** Class: JSONSchemaError; when: schema analysis cannot determine a supported shape. */
-  UnknownJsonSchema: `${FormErrorGroup.JsonSchema}.UNKNOWN_JSON_SCHEMA`,
+  UnknownJsonSchema: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.UnknownJsonSchema}`,
   /** Class: JSONSchemaError; when: schema analysis finds an invalid array declaration. */
-  UnexpectedArraySchema: `${FormErrorGroup.JsonSchema}.UNEXPECTED_ARRAY_SCHEMA`,
+  UnexpectedArraySchema: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.UnexpectedArraySchema}`,
   /** Class: JSONSchemaError; when: static allOf types have an empty intersection. */
-  AllOfTypeRedefinition: `${FormErrorGroup.JsonSchema}.ALL_OF_TYPE_REDEFINITION`,
+  AllOfTypeRedefinition: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.AllOfTypeRedefinition}`,
   /** Class: JSONSchemaError; when: static allOf constants conflict. */
-  ConflictingConstValues: `${FormErrorGroup.JsonSchema}.CONFLICTING_CONST_VALUES`,
+  ConflictingConstValues: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.ConflictingConstValues}`,
   /** Class: JSONSchemaError; when: static allOf range intersection is empty. */
-  InvalidRange: `${FormErrorGroup.JsonSchema}.INVALID_RANGE`,
+  InvalidRange: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.InvalidRange}`,
   /** Class: JSONSchemaError; when: static allOf enum intersection is empty. */
-  EmptyEnumIntersection: `${FormErrorGroup.JsonSchema}.EMPTY_ENUM_INTERSECTION`,
+  EmptyEnumIntersection: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.EmptyEnumIntersection}`,
   /** Class: JSONSchemaError; when: virtual field references are invalid. */
-  VirtualFieldsNotValid: `${FormErrorGroup.JsonSchema}.VIRTUAL_FIELDS_NOT_VALID`,
+  VirtualFieldsNotValid: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.VirtualFieldsNotValid}`,
   /** Class: JSONSchemaError; when: virtual fields are absent from declared properties. */
-  VirtualFieldsNotInProperties: `${FormErrorGroup.JsonSchema}.VIRTUAL_FIELDS_NOT_IN_PROPERTIES`,
+  VirtualFieldsNotInProperties: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.VirtualFieldsNotInProperties}`,
   /** Class: JSONSchemaError; when: a controls expression cannot be compiled. */
-  CreateDynamicFunction: `${FormErrorGroup.JsonSchema}.CREATE_DYNAMIC_FUNCTION`,
+  CreateDynamicFunction: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.CreateDynamicFunction}`,
   /** Class: JSONSchemaError; when: observed-value expression analysis fails. */
-  ObservedValues: `${FormErrorGroup.JsonSchema}.OBSERVED_VALUES`,
+  ObservedValues: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.ObservedValues}`,
   /** Class: JSONSchemaError; when: a controls, options, or child controls key is outside its closed list. */
-  UnknownGroupKey: `${FormErrorGroup.JsonSchema}.UNKNOWN_GROUP_KEY`,
+  UnknownGroupKey: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.UnknownGroupKey}`,
   /** Class: JSONSchemaError; when: a discriminator key or branch value is inconsistent. */
-  DiscriminatorMismatch: `${FormErrorGroup.JsonSchema}.DISCRIMINATOR_MISMATCH`,
+  DiscriminatorMismatch: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.DiscriminatorMismatch}`,
   /** Class: JSONSchemaError; when: static and ungated branch node kinds conflict. */
-  SharedNodeKindConflict: `${FormErrorGroup.JsonSchema}.SHARED_NODE_KIND_CONFLICT`,
+  SharedNodeKindConflict: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.SharedNodeKindConflict}`,
   /** Class: JSONSchemaError; when: declarations disagree on a node's terminal strategy. */
-  TerminalStrategyMismatch: `${FormErrorGroup.JsonSchema}.TERMINAL_STRATEGY_MISMATCH`,
+  TerminalStrategyMismatch: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.TerminalStrategyMismatch}`,
   /** Class: SchemaFormError; when: active declarations cannot share one node kind. */
-  SharedNodeConflict: `${FormErrorGroup.SchemaForm}.SHARED_NODE_CONFLICT`,
+  SharedNodeConflict: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.SharedNodeConflict}`,
   /** Class: SchemaFormError; when: settlement exceeds its host, derive, or transition budget. */
-  BudgetExceeded: `${FormErrorGroup.SchemaForm}.BUDGET_EXCEEDED`,
+  BudgetExceeded: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.BudgetExceeded}`,
   /** Class: SchemaFormError; when: an active controls expression throws during settlement. */
-  ExpressionThrew: `${FormErrorGroup.SchemaForm}.EXPRESSION_THREW`,
+  ExpressionThrew: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.ExpressionThrew}`,
   /** Class: SchemaFormError; when: guard compilation or synchronous evaluation fails. */
-  GuardFailed: `${FormErrorGroup.SchemaForm}.GUARD_FAILED`,
+  GuardFailed: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.GuardFailed}`,
   /** Class: SchemaFormError; when: a dynamic injection has no target. */
-  InjectTargetMissing: `${FormErrorGroup.SchemaForm}.INJECT_TARGET_MISSING`,
+  InjectTargetMissing: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.InjectTargetMissing}`,
   /** Class: SchemaFormError; when: listener feedback or onChange nesting exceeds its budget. */
-  FeedbackLimitExceeded: `${FormErrorGroup.SchemaForm}.FEEDBACK_LIMIT_EXCEEDED`,
+  FeedbackLimitExceeded: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.FeedbackLimitExceeded}`,
   /** Class: SchemaFormError; when: a subscriber or form callback throws. */
-  ListenerThrew: `${FormErrorGroup.SchemaForm}.LISTENER_THREW`,
+  ListenerThrew: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.ListenerThrew}`,
   /** Class: SchemaFormError; when: a dispatch chain or observer produces multiple errors. */
-  MultipleErrors: `${FormErrorGroup.SchemaForm}.MULTIPLE_ERRORS`,
+  MultipleErrors: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.MultipleErrors}`,
   /** Class: SchemaFormError; when: render input-map normalization fails. */
-  FormTypeInputMap: `${FormErrorGroup.SchemaForm}.FORM_TYPE_INPUT_MAP`,
+  FormTypeInputMap: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.FormTypeInputMap}`,
   /** Class: UnhandledError; when: global plugin registration fails outside a form instance. */
-  RegisterPlugin: `${FormErrorGroup.Unhandled}.REGISTER_PLUGIN`,
+  RegisterPlugin: `${FormErrorGroup.Unhandled}.${UnhandledErrorSpecific.RegisterPlugin}`,
   /** Class: SchemaFormError; when: a public write combines incompatible options. */
-  InvalidWriteOption: `${FormErrorGroup.SchemaForm}.INVALID_WRITE_OPTION`,
+  InvalidWriteOption: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.InvalidWriteOption}`,
   /** Class: SchemaFormError; when: a caller writes through a disposed node reference. */
-  DisposedNodeWrite: `${FormErrorGroup.SchemaForm}.DISPOSED_NODE_WRITE`,
+  DisposedNodeWrite: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.DisposedNodeWrite}`,
   /** Class: SchemaFormError; when: onError tries to write to its own form. */
-  WriteInObserver: `${FormErrorGroup.SchemaForm}.WRITE_IN_OBSERVER`,
+  WriteInObserver: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.WriteInObserver}`,
   /** Class: SchemaFormError; when: submission is attempted while diagnostics are degraded. */
-  SubmitWhileDegraded: `${FormErrorGroup.SchemaForm}.SUBMIT_WHILE_DEGRADED`,
+  SubmitWhileDegraded: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.SubmitWhileDegraded}`,
   /** Class: SchemaFormError; when: whole-schema compilation fails on the first validation request. */
-  ValidatorCompileFailed: `${FormErrorGroup.SchemaForm}.VALIDATOR_COMPILE_FAILED`,
+  ValidatorCompileFailed: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.ValidatorCompileFailed}`,
   /** Class: SchemaFormError; when: a compiled validator throws during validation. */
-  ValidatorThrew: `${FormErrorGroup.SchemaForm}.VALIDATOR_THREW`,
+  ValidatorThrew: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.ValidatorThrew}`,
   /** Class: SchemaFormError; when: an injected renderer or root render throws. */
-  RenderFailed: `${FormErrorGroup.SchemaForm}.RENDER_FAILED`,
+  RenderFailed: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.RenderFailed}`,
   /** Class: SchemaFormError; when: a virtual node receives values with the wrong shape. */
-  InvalidVirtualNodeValues: `${FormErrorGroup.SchemaForm}.INVALID_VIRTUAL_NODE_VALUES`,
+  InvalidVirtualNodeValues: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.InvalidVirtualNodeValues}`,
   /** Class: SchemaFormError; when: an array-only command is called on another node kind. */
-  ArrayMethodOnNonArray: `${FormErrorGroup.SchemaForm}.ARRAY_METHOD_ON_NON_ARRAY`,
+  ArrayMethodOnNonArray: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.ArrayMethodOnNonArray}`,
   /** Class: JSONSchemaError; when: schema analysis finds an unbounded recursive shape. */
-  RecursiveShapeUnbounded: `${FormErrorGroup.JsonSchema}.RECURSIVE_SHAPE_UNBOUNDED`,
+  RecursiveShapeUnbounded: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.RecursiveShapeUnbounded}`,
   /** Class: SchemaFormError; when: recursive shape expansion exceeds the settlement budget. */
-  RecursiveShapeDiverged: `${FormErrorGroup.SchemaForm}.RECURSIVE_SHAPE_DIVERGED`,
+  RecursiveShapeDiverged: `${FormErrorGroup.SchemaForm}.${SchemaFormErrorSpecific.RecursiveShapeDiverged}`,
   /** Class: JSONSchemaError; when: declarations disagree on virtual fields. */
-  VirtualFieldsMismatch: `${FormErrorGroup.JsonSchema}.VIRTUAL_FIELDS_MISMATCH`,
+  VirtualFieldsMismatch: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.VirtualFieldsMismatch}`,
   /** Class: JSONSchemaError; when: a declared child name is absent from the schema. */
-  ChildrenTargetNotFound: `${FormErrorGroup.JsonSchema}.CHILDREN_TARGET_NOT_FOUND`,
+  ChildrenTargetNotFound: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.ChildrenTargetNotFound}`,
   /** Class: JSONSchemaError; when: a single-row kind declares a different terminal option. */
-  TerminalOptionUnsupported: `${FormErrorGroup.JsonSchema}.TERMINAL_OPTION_UNSUPPORTED`,
+  TerminalOptionUnsupported: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.TerminalOptionUnsupported}`,
   /** Class: UnhandledError; when: a plugin refuses a bound validator instance outside a form. */
-  ValidatorBindRefused: `${FormErrorGroup.Unhandled}.VALIDATOR_BIND_REFUSED`,
+  ValidatorBindRefused: `${FormErrorGroup.Unhandled}.${UnhandledErrorSpecific.ValidatorBindRefused}`,
   /** Class: JSONSchemaError; when: a known controls, options, or child controls key has the wrong shape. */
-  InvalidControlShape: `${FormErrorGroup.JsonSchema}.INVALID_CONTROL_SHAPE`,
+  InvalidControlShape: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.InvalidControlShape}`,
   /** Class: ValidationError; when: schema validation rejects a submission. */
-  SchemaValidationFailed: `${FormErrorGroup.Validation}.SCHEMA_VALIDATION_FAILED`,
+  SchemaValidationFailed: `${FormErrorGroup.Validation}.${ValidationErrorSpecific.SchemaValidationFailed}`,
 } as const;
 
 /** Closed union of the error code values. */
 export type FormErrorCode = (typeof FormErrorCode)[keyof typeof FormErrorCode];
 
-/** Internal JsonSchema codes derived from the canonical ledger table. */
-export const JSONSchemaErrorCodes = filterCodeGroup(
-  FormErrorCode,
+/** Internal JsonSchema codes assembled from its specific table. */
+export const JSONSchemaErrorCodes = assembleCodeGroup(
   FormErrorGroup.JsonSchema,
+  JSONSchemaErrorSpecific,
 );
 
-/** Internal SchemaForm codes derived from the canonical ledger table. */
-export const SchemaFormErrorCodes = filterCodeGroup(
-  FormErrorCode,
+/** Internal SchemaForm codes assembled from its specific table. */
+export const SchemaFormErrorCodes = assembleCodeGroup(
   FormErrorGroup.SchemaForm,
+  SchemaFormErrorSpecific,
 );
 
-/** Internal Unhandled codes derived from the canonical ledger table. */
-export const UnhandledErrorCodes = filterCodeGroup(
-  FormErrorCode,
+/** Internal Unhandled codes assembled from its specific table. */
+export const UnhandledErrorCodes = assembleCodeGroup(
   FormErrorGroup.Unhandled,
+  UnhandledErrorSpecific,
 );
 
-/** Internal Validation codes derived from the canonical ledger table. */
-export const ValidationErrorCodes = filterCodeGroup(
-  FormErrorCode,
+/** Internal Validation codes assembled from its specific table. */
+export const ValidationErrorCodes = assembleCodeGroup(
   FormErrorGroup.Validation,
+  ValidationErrorSpecific,
 );

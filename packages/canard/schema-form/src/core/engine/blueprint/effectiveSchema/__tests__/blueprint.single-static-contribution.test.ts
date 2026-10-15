@@ -26,7 +26,7 @@ describe('single static contribution regression records', () => {
       try {
         result = blueprint(structuredClone(sample.schema));
       } catch (cause) {
-        expect((cause as Error).name, sample.label).toBe('JSONSchemaError');
+        expect((cause as Error).name, sample.label).toBe('JSON_SCHEMA_ERROR');
         continue;
       }
       for (const node of result.nodes) {

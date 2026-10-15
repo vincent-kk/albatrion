@@ -99,7 +99,7 @@ describe('owned-inline ownership and protection', () => {
         analysis = blueprint(structuredClone(schema) as BlueprintSchema);
       } catch (cause) {
         if (sampleIndex >= corpus.cases.length) throw cause;
-        expect((cause as Error).name).toBe('JSONSchemaError');
+        expect((cause as Error).name).toBe('JSON_SCHEMA_ERROR');
         continue;
       }
       const slots = [];

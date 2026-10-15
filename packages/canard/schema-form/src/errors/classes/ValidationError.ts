@@ -1,6 +1,7 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
 import { FormErrorGroup } from '../codes/FormErrorGroup';
+import { getCodeSpecific } from '../codes/getCodeSpecific';
 import type { ValidationErrorCode } from '../type';
 
 /** Group every ValidationError code carries; the code value repeats it before the bare name. */
@@ -28,8 +29,8 @@ export class ValidationError extends BaseError {
     message: string,
     details: ErrorDetails = {},
   ) {
-    super(GROUP, code.slice(GROUP.length + 1), message, details);
-    this.name = 'ValidationError';
+    super(GROUP, getCodeSpecific(code), message, details);
+    this.name = GROUP;
   }
 }
 
