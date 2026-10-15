@@ -407,6 +407,48 @@ function b5() {
   return { new: newSample, legacy: oldSample };
 }
 
+/**
+ * Measure the 18C rows: fragment key input, ancestor latent memo, relocated gate key input.
+ * @returns Samples keyed by the published 18C row names
+ * @throws When the latent fixture does not update its ancestor memo
+ */
+function keyInputRows() {
+  return {
+    '18C-15': {
+      n0: keyInput(fragmentSchema(0), { enabled: true, key: 0 }),
+      n16: keyInput(fragmentSchema(16), { enabled: true, key: 0 }),
+      n64: keyInput(fragmentSchema(64), { enabled: true, key: 0 }),
+    },
+    '18C-67': latentCosts(),
+    '18C-81': {
+      n0: keyInput(relocatedGateSchema(0), { trigger: true, key: 0 }),
+      n16: keyInput(relocatedGateSchema(16), { trigger: true, key: 0 }),
+      n64: keyInput(relocatedGateSchema(64), { trigger: true, key: 0 }),
+    },
+  };
+}
+
+/**
+ * Run the 18C rows in a fresh child process of the same runtime.
+ * The legacy B6 trees stay live until the event loop turns, so in-process 18C samples on
+ * Node would overlap V8 incremental marking of that heap (P-139).
+ * @returns The child's {@link keyInputRows} result
+ * @throws When the child exits with a non-zero status
+ */
+function keyInputRowsInChild(): ReturnType<typeof keyInputRows> {
+  const file = 'bench/legacy-compare/node-and-settle.bench.ts';
+  const args = Reflect.get(globalThis, 'Bun')
+    ? [file, '--18c-only']
+    : ['--import', 'tsx', file, '--18c-only'];
+  const child = spawnSync(process.execPath, args, {
+    encoding: 'utf8',
+    cwd: process.cwd(),
+    maxBuffer: 1024 * 1024 * 4,
+  });
+  if (child.status !== 0) throw new Error(`18C child failed: ${child.stderr}`);
+  return JSON.parse(child.stdout) as ReturnType<typeof keyInputRows>;
+}
+
 function main() {
   const one = process.argv.find((argument) =>
     argument.startsWith('--heap-one='),
@@ -441,7 +483,12 @@ function main() {
     console.log(JSON.stringify(latentCosts()));
     return;
   }
+  if (process.argv.includes('--18c-only')) {
+    console.log(JSON.stringify(keyInputRows()));
+    return;
+  }
   const fixtures = verifyFixtures();
+  const keyInputSamples = keyInputRowsInChild();
 
   const large = flat(10000, true);
   const largeAnalysis = blueprint(large.schema);
@@ -524,17 +571,6 @@ function main() {
     }, 5),
   };
 
-  const fragments = {
-    n0: keyInput(fragmentSchema(0), { enabled: true, key: 0 }),
-    n16: keyInput(fragmentSchema(16), { enabled: true, key: 0 }),
-    n64: keyInput(fragmentSchema(64), { enabled: true, key: 0 }),
-  };
-  const latent = latentCosts();
-  const gates = {
-    n0: keyInput(relocatedGateSchema(0), { trigger: true, key: 0 }),
-    n16: keyInput(relocatedGateSchema(16), { trigger: true, key: 0 }),
-    n64: keyInput(relocatedGateSchema(64), { trigger: true, key: 0 }),
-  };
   console.log(
     JSON.stringify({
       runtime: Reflect.get(globalThis, 'Bun') ? 'bun' : 'node',
@@ -551,9 +587,7 @@ function main() {
         B4,
         B5,
         B6,
-        '18C-15': fragments,
-        '18C-67': latent,
-        '18C-81': gates,
+        ...keyInputSamples,
       },
       sink,
     }),
