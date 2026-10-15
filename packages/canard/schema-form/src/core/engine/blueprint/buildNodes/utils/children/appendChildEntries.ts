@@ -25,6 +25,7 @@ export const appendChildEntries = (
   inputs: readonly SchemaInput[],
   declarationInputs: ReadonlyMap<number, number>,
 ): void => {
+  if (children.length > 1) node.hasPropertyCandidates = true;
   const entries = node.childEntries;
   for (let childIndex = 0; childIndex < children.length; childIndex++) {
     const child = children[childIndex];

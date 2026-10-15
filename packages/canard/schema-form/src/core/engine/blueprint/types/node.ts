@@ -128,6 +128,10 @@ export interface BlueprintNode {
   readonly declarations: readonly PropertyDeclaration[];
   /** Canonical named edges; host bindings stay separate from reusable templates. */
   readonly childEntries: readonly BlueprintChildEntry[];
+  /** At least one named property binds multiple candidate templates. */
+  readonly hasPropertyCandidates?: boolean;
+  /** A reachable host, including this one, binds multiple slot candidates. */
+  readonly hasCandidateDescendants?: boolean;
   /**
    * First repeated item candidate, retained for single-candidate consumers.
    * First candidate; paths that distinguish folds use the candidate list (itemCandidates / prefixItemCandidates / getItemEntries).

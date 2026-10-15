@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { unescapeSegment } from '@winglet/json/pointer';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
@@ -12,6 +13,8 @@ import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 import { readLatentExitPolicy } from '../controls/readLatentExitPolicy';
 import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
+import { reachesLatentPath } from './reachesLatentPath';
+import { selectCandidateOwnedLatent } from './selectCandidateOwnedLatent';
 import { writeLatentRaw } from './writeLatentRaw';
 
 /** One stored source and its last-live exit decisions. */
@@ -54,10 +57,29 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
   const runtime = context.root.runtime;
   const index = getLatentPathIndex(context);
   const entries: LatentEntry[] = [];
+  const ownsLatent = selectCandidateOwnedLatent(node);
   for (const key of index.get(node.path) ?? []) {
     const identity: unknown = JSON.parse(key);
     if (!isArray(identity) || typeof identity[0] !== 'string') continue;
     const path = identity[0];
+    if (
+      ownsLatent &&
+      ownsLatent(key) &&
+      !reachesLatentPath(
+        node.blueprintNode,
+        path === node.path
+          ? []
+          : path
+              .slice(node.path.length + 1)
+              .split('/')
+              .map(unescapeSegment),
+        0,
+        identity[1],
+      )
+    ) {
+      writeLatentRaw(context, key, false, undefined);
+      continue;
+    }
     if (path === node.path) continue;
     const info = runtime.latentRawMetadata?.get(key);
     if (info)
@@ -112,6 +134,7 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
     const samePath = resolved.get(entry.path) ?? [];
     samePath.push({ path: entry.path, order: entry.order, clear });
     resolved.set(entry.path, samePath);
-    if (clear) writeLatentRaw(context, entry.key, false, undefined);
+    if (clear && (!ownsLatent || ownsLatent(entry.key)))
+      writeLatentRaw(context, entry.key, false, undefined);
   }
 };

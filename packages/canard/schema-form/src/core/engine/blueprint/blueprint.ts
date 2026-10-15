@@ -7,6 +7,7 @@ import { compileBlueprintExpressions } from './compileBlueprintExpressions';
 import type { AnalysisContext } from './types/analysis';
 import type { Blueprint, BlueprintOptions } from './types/blueprint';
 import type { BlueprintSchema } from './types/schema';
+import { markCandidateDescendants } from './utils/features/markCandidateDescendants';
 import { validateChildTargets } from './validateChildTargets';
 import { validateShape } from './validateShape';
 
@@ -76,6 +77,7 @@ export const blueprint = (
   );
   validateShape(context);
   validateChildTargets(context);
+  markCandidateDescendants(context.nodes);
   const expressions =
     context.capabilities.hasExpressions || context.capabilities.hasWatch
       ? compileBlueprintExpressions(context)
