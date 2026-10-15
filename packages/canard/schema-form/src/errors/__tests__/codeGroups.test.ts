@@ -17,27 +17,49 @@ import {
   SchemaFormWarningCodes,
 } from '../codes/FormWarningCode';
 import { FormWarningGroup } from '../codes/FormWarningGroup';
+import { JSONSchemaErrorSpecific } from '../codes/JSONSchemaErrorSpecific';
+import { SchemaFormErrorSpecific } from '../codes/SchemaFormErrorSpecific';
+import { SchemaFormWarningSpecific } from '../codes/SchemaFormWarningSpecific';
+import { UnhandledErrorSpecific } from '../codes/UnhandledErrorSpecific';
+import { ValidationErrorSpecific } from '../codes/ValidationErrorSpecific';
+import { getCodeSpecific } from '../codes/getCodeSpecific';
 
 it('partitions canonical codes by group and matches error class groups', () => {
+  expect(new JSONSchemaError(FormErrorCode.UnknownJsonSchema, '').name).toBe(
+    FormErrorGroup.JsonSchema,
+  );
   const errorGroups = [
-    [FormErrorGroup.JsonSchema, JSONSchemaErrorCodes],
-    [FormErrorGroup.SchemaForm, SchemaFormErrorCodes],
-    [FormErrorGroup.Unhandled, UnhandledErrorCodes],
-    [FormErrorGroup.Validation, ValidationErrorCodes],
+    [FormErrorGroup.JsonSchema, JSONSchemaErrorCodes, JSONSchemaErrorSpecific],
+    [FormErrorGroup.SchemaForm, SchemaFormErrorCodes, SchemaFormErrorSpecific],
+    [FormErrorGroup.Unhandled, UnhandledErrorCodes, UnhandledErrorSpecific],
+    [FormErrorGroup.Validation, ValidationErrorCodes, ValidationErrorSpecific],
   ] as const;
   const warningGroups = [
-    [FormWarningGroup.SchemaForm, SchemaFormWarningCodes],
+    [
+      FormWarningGroup.SchemaForm,
+      SchemaFormWarningCodes,
+      SchemaFormWarningSpecific,
+    ],
   ] as const;
 
   for (const [canonical, groups] of [
     [FormErrorCode, errorGroups],
     [FormWarningCode, warningGroups],
   ] as const) {
-    const derivedValues = groups.flatMap(([group, codes]) => {
+    const derivedValues = groups.flatMap(([group, codes, specifics]) => {
+      expect(Object.keys(codes)).toEqual(Object.keys(specifics));
+      for (const [key, specific] of Object.entries(specifics)) {
+        const value = Object.entries(canonical).find(
+          ([name]) => name === key,
+        )?.[1];
+        expect(value).toBe(`${group}.${specific}`);
+      }
       const values = Object.values(codes);
       expect(values.length).toBeGreaterThan(0);
       for (const value of values)
         expect(value.startsWith(`${group}.`)).toBe(true);
+      for (const value of values)
+        expect(value).toBe(`${group}.${getCodeSpecific(value)}`);
       return values;
     });
     expect(derivedValues).toHaveLength(Object.values(canonical).length);
@@ -66,4 +88,56 @@ it('partitions canonical codes by group and matches error class groups', () => {
   expectTypeOf(JSONSchemaErrorCodes.UnknownJsonSchema).toEqualTypeOf<
     typeof FormErrorCode.UnknownJsonSchema
   >();
+  expectTypeOf(SchemaFormErrorCodes.RenderFailed).toEqualTypeOf<
+    typeof FormErrorCode.RenderFailed
+  >();
+  expectTypeOf(UnhandledErrorCodes.RegisterPlugin).toEqualTypeOf<
+    typeof FormErrorCode.RegisterPlugin
+  >();
+  expectTypeOf(ValidationErrorCodes.SchemaValidationFailed).toEqualTypeOf<
+    typeof FormErrorCode.SchemaValidationFailed
+  >();
+  expectTypeOf(SchemaFormWarningCodes.Misfit).toEqualTypeOf<
+    typeof FormWarningCode.Misfit
+  >();
+});
+
+it('preserves every class code, group, specific, message and details with group names', () => {
+  const details = { path: '/field' };
+  const groups = [
+    [
+      FormErrorGroup.JsonSchema,
+      Object.values(JSONSchemaErrorCodes).map(
+        (code) => new JSONSchemaError(code, 'message', details),
+      ),
+    ],
+    [
+      FormErrorGroup.SchemaForm,
+      Object.values(SchemaFormErrorCodes).map(
+        (code) => new SchemaFormError(code, 'message', details),
+      ),
+    ],
+    [
+      FormErrorGroup.Unhandled,
+      Object.values(UnhandledErrorCodes).map(
+        (code) => new UnhandledError(code, 'message', details),
+      ),
+    ],
+    [
+      FormErrorGroup.Validation,
+      Object.values(ValidationErrorCodes).map(
+        (code) => new ValidationError(code, 'message', details),
+      ),
+    ],
+  ] as const;
+  for (const [group, errors] of groups)
+    for (const error of errors) {
+      expect(error.name).toBe(group);
+      expect(error.group).toBe(group);
+      expect(error.specific).toBe(getCodeSpecific(error.code as FormErrorCode));
+      expect(error.code).toBe(`${group}.${error.specific}`);
+      expect(Object.values(FormErrorCode)).toContain(error.code);
+      expect(error.message).toBe('message');
+      expect(error.details).toBe(details);
+    }
 });

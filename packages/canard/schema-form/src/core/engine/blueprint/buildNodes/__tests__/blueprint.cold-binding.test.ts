@@ -105,7 +105,7 @@ describe('cold blueprint child declaration binding', () => {
       try {
         blueprint(structuredClone(schema));
       } catch (cause) {
-        if (!(cause instanceof Error) || cause.name !== 'JSONSchemaError')
+        if (!(cause instanceof Error) || cause.name !== 'JSON_SCHEMA_ERROR')
           throw cause;
       }
     }

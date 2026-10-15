@@ -10,6 +10,43 @@ import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBr
 /** Owner round 117's reverted baseline; never regenerate from the candidate. */
 const HEAD = '3a637c4cd';
 
+/**
+ * Compare selection observations while retaining error codes, messages and details.
+ * @param actual - Candidate selection observations.
+ * @param expected - Pinned selection observations.
+ * @param label - Optional fixture label for a comparison failure.
+ */
+const expectSelectionEqual = (
+  actual: unknown,
+  expected: unknown,
+  label?: string,
+): void => {
+  // Error name is the class group and is not part of the selection contract.
+  const [actualSelection, expectedSelection] = [actual, expected].map(
+    (observation) =>
+      JSON.parse(
+        JSON.stringify(observation, (_key, value) => {
+          if (
+            value &&
+            typeof value === 'object' &&
+            'message' in value &&
+            Array.isArray(value.fields)
+          ) {
+            const { name: _name, fields, ...error } = value;
+            return {
+              ...error,
+              fields: fields.filter(
+                ([key]: [string, unknown]) => key !== 'name',
+              ),
+            };
+          }
+          return value;
+        }),
+      ),
+  );
+  expect(actualSelection, label).toEqual(expectedSelection);
+};
+
 // filid:contract settle-child-selection-differential
 describe('child selection against pinned HEAD', () => {
   let head: Awaited<ReturnType<typeof buildChildSelectionRuntime>>;
@@ -59,17 +96,18 @@ describe('child selection against pinned HEAD', () => {
           ),
           label,
         ).toEqual([]);
-        expect(
+        expectSelectionEqual(
           { results: actual.results, points: actual.points },
+          {
+            results: expected.results,
+            points: alignKeptOutPoints(
+              expected.points,
+              actual.points,
+              actual.keptOut.map((host) => host.path),
+            ),
+          },
           label,
-        ).toEqual({
-          results: expected.results,
-          points: alignKeptOutPoints(
-            expected.points,
-            actual.points,
-            actual.keptOut.map((host) => host.path),
-          ),
-        });
+        );
       }
     }
   }, 120000);
@@ -89,7 +127,8 @@ describe('child selection against pinned HEAD', () => {
           { path: '/kind', value: 'kind_0' },
         ],
       };
-      expect(working.run(structuredClone(fixture))).toEqual(
+      expectSelectionEqual(
+        working.run(structuredClone(fixture)),
         head.run(structuredClone(fixture)),
       );
     },
@@ -130,7 +169,7 @@ describe('child selection against pinned HEAD', () => {
           };
           const expected = head.run(structuredClone(fixture));
           const actual = working.run(structuredClone(fixture));
-          expect(actual, fixture.label).toEqual(expected);
+          expectSelectionEqual(actual, expected, fixture.label);
         }
       }
     },
