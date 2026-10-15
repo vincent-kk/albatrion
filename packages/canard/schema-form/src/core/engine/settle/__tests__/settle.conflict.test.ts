@@ -8,6 +8,119 @@ import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-gates-conflicts
 describe('shared declaration conflicts', () => {
+  it.each([
+    {
+      label: 'A: reordered union members',
+      left: ['string', 'number'],
+      right: ['number', 'string'],
+      conflict: false,
+      partial: false,
+    },
+    {
+      label: 'B: nullable and non-nullable string',
+      left: ['null', 'string'],
+      right: 'string',
+      conflict: false,
+      partial: false,
+    },
+    {
+      label: 'C: different union folds',
+      left: ['string', 'number'],
+      right: ['string', 'boolean'],
+      conflict: true,
+      partial: false,
+    },
+    {
+      label: 'D: different scalar folds',
+      left: 'number',
+      right: 'string',
+      conflict: true,
+      partial: false,
+    },
+    {
+      label: 'E: identical string folds',
+      left: 'string',
+      right: 'string',
+      conflict: false,
+      partial: false,
+    },
+    {
+      label: 'A with a rejected same-fold declaration',
+      left: ['string', 'number'],
+      right: ['number', 'string'],
+      conflict: false,
+      partial: true,
+    },
+    {
+      label: 'B with a rejected same-fold declaration',
+      left: ['null', 'string'],
+      right: 'string',
+      conflict: false,
+      partial: true,
+    },
+  ])('$label', ({ left, right, conflict, partial }) => {
+    const { root, blueprint } = createTestTree({
+      type: 'object',
+      properties: { enabled: { type: 'boolean' } },
+      allOf: [
+        {
+          controls: { active: './enabled' },
+          properties: { shared: { type: left } },
+        },
+        {
+          controls: { active: './enabled' },
+          properties: { shared: { type: right } },
+        },
+        ...(partial
+          ? [
+              {
+                controls: { active: 'false' },
+                properties: { shared: { type: left } },
+              },
+            ]
+          : []),
+      ],
+    });
+    loadFieldNodeAtMount(root, { enabled: false }, WriteOption.Overwrite);
+    expect(root.structure?.shared).toBeUndefined();
+    expect(root.runtime.diagnostics.status).toBe('stable');
+
+    let caught: unknown;
+    try {
+      writeFieldNode(
+        root.structure!.enabled,
+        true,
+        'callerReplace',
+        WriteOption.Overwrite,
+      );
+    } catch (error) {
+      caught = error;
+    }
+
+    expect(
+      root.children?.filter((child) => child.name === 'shared'),
+    ).toHaveLength(1);
+    expect(root.structure?.shared?.blueprintNode).toBe(
+      blueprint.root.childEntries.find((entry) => entry.name === 'shared')
+        ?.node,
+    );
+    expect(root.structure?.enabled?.raw).toBe(true);
+    if (conflict) {
+      expect(caught).toMatchObject({
+        code: 'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT',
+        message: 'Active declarations conflict at /shared',
+      });
+      expect(root.runtime.diagnostics).toMatchObject({
+        status: 'degraded',
+        cause: 'sharedConflict',
+        commit: 2,
+      });
+    } else {
+      expect(caught).toBeUndefined();
+      expect(root.runtime.diagnostics.status).toBe('stable');
+    }
+  });
+
   it('29C-03 shared conflict commits derive, fill, and unrelated exit clearing', () => {
     const { root } = createTestTree({
       type: 'object',

@@ -21,7 +21,6 @@ import { isSameChildList } from '../../structure/isSameChildList';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
-import { hasSharedConflict } from '../hasSharedConflict';
 import { canReuseArrayChildren } from './canReuseArrayChildren';
 import {
   DIRECT_CHILD_SELECTION_PLANS,
@@ -39,6 +38,7 @@ const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
 
 /**
  * Select all declared direct children in authored order for one host round.
+ * Same-named blueprint nodes identify fold groups independently of retained live children.
  * @param node - Branch host whose behavior declares every candidate edge
  * @param context - Gate input, node factory, and deferred failure state
  * @param prior - Shape before the wheel's fixed ungated start
@@ -128,7 +128,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     }
   }
   node.structure = next;
-  const seen = new Set<string>();
+  const seen = new Map<string, BlueprintChildEntry['node']>();
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
   const cached =
@@ -248,7 +248,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     if (retained?.blueprintNode.kind === entry.node.kind)
       context.throwingGateExits?.delete(retained);
     if (seen.has(entry.name)) {
-      if (next[entry.name]?.blueprintNode.kind !== entry.node.kind) {
+      if (seen.get(entry.name) !== entry.node) {
         recordSettlementFailure(
           context,
           new SchemaFormError(
@@ -261,7 +261,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       }
       continue;
     }
-    seen.add(entry.name);
+    seen.set(entry.name, entry.node);
     const priorChild =
       hasOwnProperty(prior, entry.name) &&
       prior[entry.name].blueprintNode.kind === entry.node.kind
@@ -371,11 +371,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       changed = true;
       entryChanged = true;
     }
-    if (
-      admittedEdge
-        ? admittedEdge.conflict
-        : effective.typeConflict || hasSharedConflict(entry, declarations)
-    ) {
+    if (admittedEdge ? admittedEdge.conflict : effective.typeConflict) {
       recordSettlementFailure(
         context,
         new SchemaFormError(
@@ -414,7 +410,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       (context.kind !== 'load' && hasOwnProperty(prior, entry.name))
     )
       continue;
-    seen.add(entry.name);
+    seen.set(entry.name, entry.node);
     const distribution =
       context.replacePaths === undefined ||
       isWithinReplacePaths(context, node.path + '/' + escapeSegment(entry.name))
