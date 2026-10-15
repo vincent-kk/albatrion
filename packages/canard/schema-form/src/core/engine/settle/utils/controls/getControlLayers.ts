@@ -4,7 +4,6 @@ import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { DeclarationLayer } from '../../../types/controls';
-import { collectFragmentOwnerPaths } from '../../../utils/controls/collectFragmentOwnerPaths';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
@@ -98,7 +97,6 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   if (!parent) return groups;
   const parentIds = selected(parent);
   const parentDeclarations = parent.blueprintNode.declarations;
-  let owners: ReadonlySet<string> | undefined;
   for (let index = 0; index < parentDeclarations.length; index++) {
     const declaration = parentDeclarations[index];
     if (
@@ -113,12 +111,25 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
     );
     if (!controls || typeof controls !== 'object' || isArray(controls))
       continue;
-    if (
-      declaration.scope === 'fragment' &&
-      (owners ??= collectFragmentOwnerPaths(declarations, nodeIds)).has(
-        declaration.schemaPath,
-      )
-    )
+    let ownsFragment = false;
+    if (declaration.scope === 'fragment')
+      for (let childIndex = 0; childIndex < declarations.length; childIndex++) {
+        const child = declarations[childIndex];
+        if (
+          nodeIds.includes(child.id) &&
+          (child.schemaPath.startsWith(
+            declaration.schemaPath + '/properties/',
+          ) ||
+            child.schemaPath.startsWith(declaration.schemaPath + '/items/') ||
+            child.schemaPath.startsWith(
+              declaration.schemaPath + '/prefixItems/',
+            ))
+        ) {
+          ownsFragment = true;
+          break;
+        }
+      }
+    if (ownsFragment)
       groups.push({
         layer: 'fragment',
         declarationId: declaration.id,

@@ -4,7 +4,6 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
-import { collectFragmentOwnerPaths } from '../../../utils/controls/collectFragmentOwnerPaths';
 import type {
   Blueprint,
   BlueprintFeatureNodeIndex,
@@ -49,7 +48,6 @@ export const buildFeatureNodeIndex = (
           ]
         : []),
     ];
-    let owners: readonly ReadonlySet<string>[] | undefined;
     for (const declaration of node.declarations) {
       if (declaration.validationOnly || typeof declaration.schema !== 'object')
         continue;
@@ -67,14 +65,23 @@ export const buildFeatureNodeIndex = (
         Reflect.get(controls, CONTROL_KEY.watch) !== undefined
       )
         watchNodes.add(node.id);
-      if (declaration.scope === 'fragment' && hasStateKeys(controls)) {
-        owners ??= children.map((child) =>
-          collectFragmentOwnerPaths(child.node.declarations),
-        );
-        for (let index = 0; index < children.length; index++)
-          if (owners[index].has(declaration.schemaPath))
-            targets.add(children[index].name);
-      }
+      if (declaration.scope === 'fragment' && hasStateKeys(controls))
+        for (const child of children)
+          if (
+            child.node.declarations.some(
+              (entry) =>
+                entry.schemaPath.startsWith(
+                  declaration.schemaPath + '/properties/',
+                ) ||
+                entry.schemaPath.startsWith(
+                  declaration.schemaPath + '/items/',
+                ) ||
+                entry.schemaPath.startsWith(
+                  declaration.schemaPath + '/prefixItems/',
+                ),
+            )
+          )
+            targets.add(child.name);
       const groups: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (isArray(groups))
         for (const group of groups) {

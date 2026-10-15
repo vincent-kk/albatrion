@@ -133,7 +133,6 @@
 - 게이트를 가진 호스트의 자식 목록·출력은 완료한 자식 선택을 모아 게이트의 투영 값 읽기 직전 또는 자식 선택 끝에 한 번 갱신한다. 하위 게이트가 미갱신 조상을 읽으면 자식을 바꾸기 전에 갱신해 같은 바퀴의 관측값(같은 바퀴에 들어온 사촌은 보이고 계산 중인 자식은 섞이지 않음)을 지킨다(51C-01, NODE-026, SETTLE-017·045, 18C-15).
 - 정착 도중 노드 객체의 읽기는 직전 커밋을 돌려주고, 바퀴 중간 상태는 관측 계약이 아니다. 게이트와 식의 입력만 정착 자신의 읽기 길로 같은 바퀴에 들어온 자식을 본다(VALUE-013, EVENT-061, 51C-01, 57C-01).
 - 계산 끝에는 이번 최종 형상에서 노드 자신·부모의 `controls.fields` 항목·직접 선언한 조각의 `controls`를 같은 층 해석으로 모은다. 표준 `readOnly`와 로컬 잠금(`readOnly`·`disabled`)은 OR, 로컬 표시(`visible`)는 AND로 결합하고 순서와 무관하게 레코드의 세 계산 필드에 쓴다. 상태 키 식이 던지면 그 선언은 없는 것으로 보며 커밋은 `degraded`·`cause: 'expression'`이다. Form 속성의 전체 잠금은 렌더 계층에서 결합하고 코어 쓰기를 막지 않는다(SETTLE-003, CONTROLS-042·045·046·073·082·083, ERROR-122·132).
-- 직접 선언한 조각의 소속: 노드의 선택 선언 c가 부모의 조각 선언 D에 속하는 것은 c의 `schemaPath`가 D의 `schemaPath`에 `/properties/`·`/items/`·`/prefixItems/` 표지 하나를 이어 계속될 때이다. `getControlLayers`는 이 소속을 호출마다 노드의 선택 선언에서 engine의 `collectFragmentOwnerPaths`로 한 번 모은 경로 집합으로 판정하며 캐시를 두지 않는다. `/items` 아이템 선언이 표지 뒤 `/`가 없어 빠지는 것은 소유자 결정 대기열 59까지의 현행 동작이다(CONTROLS-073, P-08).
 - 게이트 없는 객체 호스트의 정적 자식 선택은 청사진 호스트별로 메모한다. 선언 종류·순서·유효 스키마가 같은 완성된 발생은 같은 자식 참조와 선언 ID를 재사용하고 더러운 자식의 계산은 그대로 수행한다. 처음 생성, 미완성 재귀 확장, 충돌, 가상 자식과 배열 호스트는 기존 선택 경로를 유지한다. 약한 캐시의 비용은 정적 호스트의 선언 수와 살아 있는 발생 수에 비례하며 노드의 고정 필드를 늘리지 않는다(NODE-006, SETTLE-003, 65C-01, I11 step 1).
 - 청사진의 유한 선언에서 표준 `readOnly`와 `visible`·`readOnly`·`disabled` 제어(조각과 부모 `fields` 항목 포함)가 하나도 없으면 상태 키 공표를 생략한다. 이 판정만 청사진별 약한 캐시에 보관하며 노드별 기능 색인을 만들지 않는다. 키가 선언된 청사진은 기존 후보·층 해석·실패 순서로 계산하고, 선언 없는 노드는 생성자의 `visible: true`, `readOnly: false`, `disabled: false`를 유지한다(CONTROLS-045, NODE-006, 65C-01, I11 step 1).
 - 게이트 입력은 투영 값과 `undeclaredValues`이며 `@`와 식·`injectTo`의 `ctx.context`는 트리 런타임의 맥락 객체를 읽는다. 투영에서 빠진 선언 자식은 원본·분배 입력을 읽지 않아 `undefined`이고, 선언 밖 경로 키만 `undeclaredValues`에서 읽는다(CONTROLS-080, 28C-03). 판별 게이트는 `./<propertyName>` 값을 `values`의 각 후보와 `===`로 비교하고 분기 `controls.active`와 AND한다. 따라서 `0`과 `−0`은 같고 수 `1`과 문자열 `'1'`은 다르며, `NaN`은 자신을 포함한 어느 후보와도 일치하지 않는다(BLUEPRINT-017, 97C-02). 값 목록은 첫 일치에서 끝나는 인덱스 `for`로 순회하며 O(V) 시간·O(1) 추가 공간이고 영구 상태를 추가하지 않는다. 노드·조각의 active는 `BlueprintExpression.evaluate`로 실제 평가한다. `if`는 `validation` 진입점의 동기 가드로 평가하고 검증기가 없으면 조각을 끈다. 가드 실패·던짐·boolean 아닌 값은 게이트 거짓과 `GUARD_FAILED` 기록이며, 식 실패는 `cause: 'expression'`이다(VALIDATE-015·044·047, ERROR-041·133, TEST-069 (나), 26C-04).
@@ -436,14 +435,6 @@
 ### settle-child-selection-differential — 고정 HEAD의 자식 선택 관측
 
 - 고정 HEAD와 59개 코퍼스의 모든 노드 리스너, B=5/10/20/40의 첫·준비된 전환, if-then의 자동 쓰기 억제·가드 실패·중첩 위치에 대한 최종 관측을 비교한다. 같은 값 통째 쓰기가 형상 dirty 밖에 둔 호스트는 `selectChildren` 지점을 내지 않는다(371C-03, 372C-01). 그런 호스트마다 쓰기 뒤 출력이 직전 `local`과 같은 참조이고 그 쓰기에서 `UpdateValue`·`UpdateChildren` 배달을 받지 않았음을 확인하며, 나머지 지점은 고정 HEAD와 그대로 같아야 한다.
-
-### settle-control-layers-ownership — 조각 소속 판정의 기준 대조
-
-- 직전 구현을 옮긴 기준 함수와 `getControlLayers`를 같은 호출에 돌려 층·선언 ID·`schemaPath`·`controls` 참조·호스트·순서가 원소마다 같은지 확인한다. `properties`라는 이름의 프로퍼티, 중첩 조각, `#/allOf/1`과 `#/allOf/11` 같은 형제 접두, `items`·`prefixItems` 조각, 선택에서 뺀 자식 선언과 59개 코퍼스 스키마를 덮는다(CONTROLS-073, P-08).
-
-### settle-control-layers-scaling — 조각 수에 선형인 층 해석
-
-- 한 자식에 조각 F=16·32·64·128개가 `controls`를 주는 장면에서 `getControlLayers` 한 번의 배열 포함 검사·문자열 탐색·자르기 호출 수가 F가 배가될 때마다 2.2배 이하로 자라는지 확인한다(P-08, GOAL-011).
 
 ### settle-pending-exit-key — 빈 이탈 대기 맵의 키 생략
 
