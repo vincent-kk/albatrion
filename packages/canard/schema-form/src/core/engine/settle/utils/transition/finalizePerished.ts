@@ -11,8 +11,25 @@ import { prunePerishedPaths } from './prunePerishedPaths';
 const OWNED = { owned: true } as const;
 
 /**
+ * Whether an occurrence perished with one of the given nodes, read through its parent chain.
+ * @param node - Pending exit occurrence; a moved item's path may equal a perished one's
+ * @param perishing - Perished nodes detached in this pass
+ * @returns True when the occurrence is one of them or below one of them
+ */
+const isPerishedWith = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  perishing: ReadonlySet<Self>,
+): boolean => {
+  for (let current: Self | null = node; current; current = current.parent)
+    if (perishing.has(current)) return true;
+  return false;
+};
+
+/**
  * Detach final length-removed items without exit clearing or latent capture.
- * The tree's gate registry and the visitor are obtained once; pending exits are scanned per node only when any exist.
+ * The tree's gate registry and the visitor are obtained once; when pending exits exist,
+ * those that perished with an item, matched once by node identity, leave the exits and
+ * are detached with it like its other descendants (NODE-044).
  * @param context - Settlement whose array selection marked perished items
  * @returns Nothing; old references retain their last committed reads
  */
@@ -22,6 +39,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   let perishedPaths: Set<string> | undefined;
   const registry = getGateRegistry(context.root.runtime);
   const pendingExits = context.pendingExits;
+  const perishing = pendingExits.size ? new Set<Self>() : undefined;
   const detach = (departing: Self): void => {
     if (!departing.runtime.detachedReads?.has(departing))
       captureDetachedFieldNodeReads(departing, {
@@ -38,16 +56,18 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
     if (node.parent?.structure?.[node.name] === node) continue;
     visitFieldNodes(node, detach, OWNED);
     registry.remove(node);
-    if (pendingExits.size)
-      for (const [key, pending] of pendingExits)
-        if (
-          pending.path === node.path ||
-          pending.path.startsWith(node.path + '/')
-        )
-          pendingExits.delete(key);
+    perishing?.add(node);
     if (!node.parent?.structure?.[node.name])
       (perishedPaths ??= new Set()).add(node.path);
   }
+  if (perishing?.size)
+    for (const [key, pending] of pendingExits)
+      if (isPerishedWith(pending, perishing)) {
+        pendingExits.delete(key);
+        // Already out of its item's children, so the owned walk above missed it.
+        visitFieldNodes(pending, detach, OWNED);
+        registry.remove(pending);
+      }
   if (perishedPaths) {
     prunePerishedPaths(context.root.runtime, perishedPaths);
     context.latentDescendantKeys = undefined;
