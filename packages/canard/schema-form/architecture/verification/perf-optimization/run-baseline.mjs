@@ -1,11 +1,13 @@
+// Temporary measure (round 358): internals not exported by dist are reached by copying the built bundle and appending an export; the canonical speed comparison will be whole-form e2e (Form mount and update, like benchmark-form's render lane) from M3, and internal-symbol benches stay as regression signals only.
 /**
  * From the schema-form package directory:
- * /Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before --quiet-since=<ISO>
- * First build with: yarn --cwd packages/canard/schema-form build
+ * /Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<ISO>
+ * Builds the JS bundles directly with this Node executable and rolldown -c before running rows.
  * Raw results stay outside the repository under /private/tmp/claude-501/perf-runs/.
  * --only=<row,row> selects the row IDs below, retaining their original order.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -30,8 +32,10 @@ const only = args
   ?.slice(7)
   .split(',');
 const startedAt = new Date().toISOString();
-if (!label || !/^(before|after-[a-zA-Z0-9-]+|final)$/.test(label))
-  throw new Error('Label must be before, after-<group-or-PR>, or final');
+if (!label || !/^(before|before-dist|after-[a-zA-Z0-9-]+|final)$/.test(label))
+  throw new Error(
+    'Label must be before, before-dist, after-<group-or-PR>, or final',
+  );
 if (
   !quietSince ||
   !/^\d{4}-\d{2}-\d{2}T.+(?:Z|[+-]\d{2}:\d{2})$/.test(quietSince) ||
@@ -41,12 +45,6 @@ if (
   throw new Error('--quiet-since must be an ISO timestamp in the past');
 if (process.version !== 'v26.11.1')
   throw new Error('Launch with Node v26.11.1');
-if (
-  !fs.existsSync(path.join(packageDir, 'dist')) ||
-  !fs.statSync(path.join(packageDir, 'dist')).isDirectory()
-)
-  throw new Error('Build the package first; dist/ is missing');
-
 const setupCommands = [];
 /** Capture a short environment query before any measurement starts. */
 function inspect(executable, argv) {
@@ -65,13 +63,44 @@ function inspect(executable, argv) {
   });
   return output;
 }
+/** Find the installed CLI entry the same way package scripts find node_modules/.bin. */
+function findBin(from, name) {
+  for (let dir = from; ; dir = path.dirname(dir)) {
+    const candidate = path.join(dir, 'node_modules/.bin', name);
+    if (fs.existsSync(candidate)) return fs.realpathSync(candidate);
+    if (dir === path.dirname(dir)) throw new Error(`${name} bin not found`);
+  }
+}
+const rolldownBin = findBin(packageDir, 'rolldown');
+inspect(process.execPath, [rolldownBin, '-c']);
+const distPath = path.join(packageDir, 'dist/index.mjs');
+const dist = {
+  path: distPath,
+  sha256: createHash('sha256').update(fs.readFileSync(distPath)).digest('hex'),
+  builtBy: {
+    executable: process.execPath,
+    argv: [rolldownBin, '-c'],
+    cwd: packageDir,
+  },
+  mtime: fs.statSync(distPath).mtime.toISOString(),
+};
+const legacyPath = fileURLToPath(
+  import.meta.resolve('@canard/schema-form_0.16.0'),
+);
+const legacy = {
+  version: '0.16.0',
+  path: legacyPath,
+  sha256: createHash('sha256')
+    .update(fs.readFileSync(legacyPath))
+    .digest('hex'),
+};
 const commit = inspect('git', ['rev-parse', 'HEAD']);
 const shortCommit = inspect('git', ['rev-parse', '--short=7', 'HEAD']);
 if (!/^[0-9a-f]{7}$/.test(shortCommit))
   throw new Error('Expected a seven-character commit ID');
 const nodeVersion = inspect(process.execPath, ['-v']);
 const bunVersion = inspect('bun', ['-v']);
-const buildNodeVersion = inspect('node', ['-v']);
+const buildNodeVersion = inspect(process.execPath, ['-v']);
 if (bunVersion !== '1.4.3') throw new Error('Bun 1.4.3 is required');
 const minute = startedAt.slice(0, 16).replace(/[-:]/g, '');
 const runId = `${minute}-${shortCommit}-${label}`;
@@ -111,19 +140,7 @@ for (const name of ['node-and-settle', 'derive-and-controls'])
         ],
       ),
     );
-/**
- * Find the vitest bin the way yarn does: the nearest node_modules/.bin/vitest walking up.
- * @param {string} from - Directory to start from
- * @returns {string} Absolute path of the vitest bin entry
- */
-function findVitestBin(from) {
-  for (let dir = from; ; dir = path.dirname(dir)) {
-    const candidate = path.join(dir, 'node_modules/.bin/vitest');
-    if (fs.existsSync(candidate)) return fs.realpathSync(candidate);
-    if (dir === path.dirname(dir)) throw new Error('vitest bin not found');
-  }
-}
-const vitestBin = findVitestBin(packageDir);
+const vitestBin = findBin(packageDir, 'vitest');
 
 // Equivalent to bench:baseline / bench:compare package scripts, invoked directly with process.execPath.
 rows.push(
@@ -237,10 +254,12 @@ const environment = {
   bun: { executable: 'bun', version: bunVersion },
   buildNode: {
     label: 'build node',
-    executable: 'node (PATH)',
+    executable: process.execPath,
     version: buildNodeVersion,
   },
   commit: { full: commit, short: shortCommit },
+  dist,
+  legacy,
   invocation: [process.execPath, ...process.argv.slice(1)],
   startedAt,
   endedAt: null,
@@ -321,6 +340,14 @@ try {
     const record = {
       id: entry.id,
       nodeEnv: entry.nodeEnv,
+      engine: {
+        source: 'dist',
+        distSha256: dist.sha256,
+        ...(entry.id.startsWith('standalone-') ||
+        entry.id.startsWith('equivalent-')
+          ? { legacy: '0.16.0', legacySha256: legacy.sha256 }
+          : {}),
+      },
       startedAt: new Date().toISOString(),
       endedAt: null,
       status: 'running',
@@ -335,7 +362,17 @@ try {
         `${entry.id}${jsonProbe ? '.json' : '.txt'}`,
       );
       execute(entry, record, stdout);
-      if (jsonProbe) JSON.parse(fs.readFileSync(stdout, 'utf8'));
+      if (jsonProbe || entry.id.startsWith('standalone-')) {
+        const measured = JSON.parse(fs.readFileSync(stdout, 'utf8'));
+        if (
+          measured.engine?.source !== 'dist' ||
+          measured.engine.distSha256 !== dist.sha256 ||
+          (entry.id.startsWith('standalone-') &&
+            measured.engine.legacySha256 !== legacy.sha256)
+        )
+          throw new Error(`Engine digest mismatch in ${entry.id}`);
+        record.engine = measured.engine;
+      }
       if (entry.id.startsWith('standalone-node-and-settle-')) {
         const measured = JSON.parse(fs.readFileSync(stdout, 'utf8'));
         if (!measured.rows?.B2)
@@ -376,11 +413,23 @@ try {
           };
         }
       }
-      if (entry.id.startsWith('equivalent-'))
+      if (entry.id.startsWith('equivalent-')) {
         for (const suffix of ['.json', '-summary.json'])
           JSON.parse(
             fs.readFileSync(path.join(runDir, `${entry.id}${suffix}`), 'utf8'),
           );
+        const summary = JSON.parse(
+          fs.readFileSync(
+            path.join(runDir, `${entry.id}-summary.json`),
+            'utf8',
+          ),
+        );
+        if (
+          summary.coreBundleDigests?.workspace !== dist.sha256 ||
+          summary.coreBundleDigests?.legacy !== legacy.sha256
+        )
+          throw new Error(`Core bundle digest mismatch in ${entry.id}`);
+      }
       if (entry.id === 'heap') {
         const resultDir = path.join(runDir, 'results');
         const snapshots = fs

@@ -6,21 +6,21 @@
  */
 import { performance } from 'node:perf_hooks';
 
-import {
+import { isRuntimeFieldNode as isTestFieldNode } from '../../../bench/distEngine/isRuntimeFieldNode';
+import { loadDistEngine } from '../../../bench/distEngine/loadDistEngine';
+import type { TestFieldNode } from '../../../src/core/__tests__/fixtures/testFieldNode';
+
+const {
   SetValueOption,
   blueprint,
   fieldNodeFactory,
   isArrayNode,
-} from '../../../src/core';
-import {
-  type TestFieldNode,
-  isTestFieldNode,
-} from '../../../src/core/__tests__/fixtures/testFieldNode';
-import {
   PathKeyedMap,
   PathKeyedSet,
   loadFieldNodeAtMount,
-} from '../../../src/core/engine';
+  distSha256,
+} = await loadDistEngine();
+const engine = { source: 'dist', distSha256 };
 
 const smoke = process.argv.includes('--smoke');
 const warmups = smoke ? 2 : 20;
@@ -109,6 +109,7 @@ const sizes = operations.flatMap((operation) =>
 console.log(
   JSON.stringify({
     probe: 'array-verbs',
+    engine,
     ledgerRow: 'NODE-026 / SETTLE-017 (array verbs)',
     runtime: Reflect.get(globalThis, 'Bun') ? 'bun' : 'node',
     version: Reflect.get(globalThis, 'Bun')

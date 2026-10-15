@@ -2,7 +2,7 @@
  * Loaded directly by tsx/Bun. P-09: /host has N siblings at its parent;
  * /host/flag changes the host's own if declaration, marking its parent
  * shape-dirty in registerRecalculation. Reset writes are outside timing.
- * A probe-owned ESM export wrapper counts real calls, including timing overhead.
+ * Dist timings run first; a separate source pass counts real selectChildren calls.
  * Node uses registerHooks; Bun uses mock.module. Product files stay untouched.
  */
 import { createRequire } from 'node:module';
@@ -10,9 +10,24 @@ import * as nodeModule from 'node:module';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
 
+import { createBenchmarkValidator } from '../../../bench/distEngine/createBenchmarkValidator';
+import { isRuntimeFieldNode as isTestFieldNode } from '../../../bench/distEngine/isRuntimeFieldNode';
+import { loadDistEngine } from '../../../bench/distEngine/loadDistEngine';
 import type { TestFieldNode } from '../../../src/core/__tests__/fixtures/testFieldNode';
 import type { BlueprintSchema } from '../../../src/core/engine';
 import type { selectChildren as SelectChildren } from '../../../src/core/engine/settle/utils/compute/childSelection/selectChildren';
+
+const dist = await loadDistEngine();
+const engine = { source: 'dist', distSha256: dist.distSha256 };
+type CoreEngine = Pick<
+  typeof dist,
+  | 'SetValueOption'
+  | 'blueprint'
+  | 'fieldNodeFactory'
+  | 'PathKeyedMap'
+  | 'PathKeyedSet'
+  | 'loadFieldNodeAtMount'
+>;
 
 const smoke = process.argv.includes('--smoke');
 const warmups = smoke ? 2 : 20;
@@ -27,81 +42,71 @@ function countSelection(nodePath: string): void {
   else if (nodePath === '') activeCounts.parent++;
 }
 
-const selectionURL = new URL(
-  '../../../src/core/engine/settle/utils/compute/childSelection/selectChildren.ts',
-  import.meta.url,
-);
-let restoreCounter = (): void => {};
-if (isBun) {
-  const originalModule = await import(`${selectionURL.href}?m0-original`);
-  const original: typeof SelectChildren = originalModule.selectChildren;
-  const counted: typeof SelectChildren = (
-    node,
-    context,
-    prior,
-    computeChild,
-    immediate,
-  ) => {
-    countSelection(node.path);
-    return original(node, context, prior, computeChild, immediate);
-  };
-  const { mock } = createRequire(import.meta.url)('bun:test') as {
-    mock: {
-      module(
-        specifier: string,
-        factory: () => { selectChildren: typeof SelectChildren },
-      ): void;
+/** Install the original module wrapper only after the dist timing pass is complete. */
+async function installCounter() {
+  const selectionURL = new URL(
+    '../../../src/core/engine/settle/utils/compute/childSelection/selectChildren.ts',
+    import.meta.url,
+  );
+  let restoreCounter = (): void => {};
+  if (isBun) {
+    const originalModule = await import(`${selectionURL.href}?m0-original`);
+    const original: typeof SelectChildren = originalModule.selectChildren;
+    const counted: typeof SelectChildren = (
+      node,
+      context,
+      prior,
+      computeChild,
+      immediate,
+    ) => {
+      countSelection(node.path);
+      return original(node, context, prior, computeChild, immediate);
     };
-  };
-  const selectionFile = fileURLToPath(selectionURL);
-  mock.module(selectionFile, () => ({ selectChildren: counted }));
-  restoreCounter = () =>
-    mock.module(selectionFile, () => ({ selectChildren: original }));
-} else {
-  const registerHooks: unknown = Reflect.get(nodeModule, 'registerHooks');
-  if (typeof registerHooks !== 'function')
-    throw new Error(
-      'Node registerHooks is required to wrap this ESM export without editing product files',
-    );
-  const counterKey = Symbol.for('schema-form.m0.selectChildren.counter');
-  if (Reflect.has(globalThis, counterKey))
-    throw new Error('Probe counter already registered');
-  Reflect.set(globalThis, counterKey, countSelection);
-  const hooks = registerHooks({
-    load(
-      url: string,
-      context: unknown,
-      nextLoad: (url: string, context: unknown) => unknown,
-    ) {
-      if (url !== selectionURL.href) return nextLoad(url, context);
-      return {
-        format: 'module',
-        shortCircuit: true,
-        source: `import { selectChildren as original } from ${JSON.stringify(`${selectionURL.href}?m0-original`)};
+    const { mock } = createRequire(import.meta.url)('bun:test') as {
+      mock: {
+        module(
+          specifier: string,
+          factory: () => { selectChildren: typeof SelectChildren },
+        ): void;
+      };
+    };
+    const selectionFile = fileURLToPath(selectionURL);
+    mock.module(selectionFile, () => ({ selectChildren: counted }));
+    restoreCounter = () =>
+      mock.module(selectionFile, () => ({ selectChildren: original }));
+  } else {
+    const registerHooks: unknown = Reflect.get(nodeModule, 'registerHooks');
+    if (typeof registerHooks !== 'function')
+      throw new Error(
+        'Node registerHooks is required to wrap this ESM export without editing product files',
+      );
+    const counterKey = Symbol.for('schema-form.m0.selectChildren.counter');
+    if (Reflect.has(globalThis, counterKey))
+      throw new Error('Probe counter already registered');
+    Reflect.set(globalThis, counterKey, countSelection);
+    const hooks = registerHooks({
+      load(
+        url: string,
+        context: unknown,
+        nextLoad: (url: string, context: unknown) => unknown,
+      ) {
+        if (url !== selectionURL.href) return nextLoad(url, context);
+        return {
+          format: 'module',
+          shortCircuit: true,
+          source: `import { selectChildren as original } from ${JSON.stringify(`${selectionURL.href}?m0-original`)};
 const count = Reflect.get(globalThis, Symbol.for('schema-form.m0.selectChildren.counter'));
 export const selectChildren = (...args) => { count(args[0].path); return original(...args); };`,
-      };
-    },
-  }) as { deregister(): void };
-  restoreCounter = () => {
-    hooks.deregister();
-    Reflect.deleteProperty(globalThis, counterKey);
-  };
+        };
+      },
+    }) as { deregister(): void };
+    restoreCounter = () => {
+      hooks.deregister();
+      Reflect.deleteProperty(globalThis, counterKey);
+    };
+  }
+  return restoreCounter;
 }
-
-// Runtime imports follow counter registration; type-only imports above are erased.
-const { SetValueOption, blueprint, fieldNodeFactory } = await import(
-  '../../../src/core/index'
-);
-const { createTestValidator } = await import(
-  '../../../src/core/__tests__/fixtures/createTestValidator'
-);
-const { isTestFieldNode } = await import(
-  '../../../src/core/__tests__/fixtures/testFieldNode'
-);
-const { PathKeyedMap, PathKeyedSet, loadFieldNodeAtMount } = await import(
-  '../../../src/core/engine/index'
-);
 
 /** Return an interpolated quantile of a nonempty sorted timing array. */
 function quantile(sorted: number[], p: number): number {
@@ -110,7 +115,15 @@ function quantile(sorted: number[], p: number): number {
   return sorted[low] + (sorted[Math.ceil(at)] - sorted[low]) * (at - low);
 }
 
-const sizes = (smoke ? [1000] : [1000, 2000, 4000, 8000]).map((n) => {
+function exerciseSize(n: number, core: CoreEngine, countCalls: boolean) {
+  const {
+    SetValueOption,
+    blueprint,
+    fieldNodeFactory,
+    PathKeyedMap,
+    PathKeyedSet,
+    loadFieldNodeAtMount,
+  } = core;
   const properties: Record<string, unknown> = {
     host: {
       type: 'object',
@@ -138,7 +151,7 @@ const sizes = (smoke ? [1000] : [1000, 2000, 4000, 8000]).map((n) => {
         readonly { path: string; value: unknown }[]
       >('path'),
     },
-    createTestValidator(),
+    createBenchmarkValidator(),
   );
   if (!isTestFieldNode(root)) throw new Error('Missing runtime record');
   const rootRecord: TestFieldNode = root;
@@ -153,12 +166,12 @@ const sizes = (smoke ? [1000] : [1000, 2000, 4000, 8000]).map((n) => {
     if (root.find('/host/selected'))
       throw new Error('P-09 branch did not exit');
     const counts = { host: 0, parent: 0 };
-    activeCounts = counts;
+    activeCounts = countCalls ? counts : undefined;
     let elapsed: number;
     try {
-      const start = performance.now();
+      const start = countCalls ? 0 : performance.now();
       flag.setValue(true);
-      elapsed = performance.now() - start;
+      elapsed = countCalls ? 0 : performance.now() - start;
     } finally {
       activeCounts = undefined;
     }
@@ -168,7 +181,7 @@ const sizes = (smoke ? [1000] : [1000, 2000, 4000, 8000]).map((n) => {
       root.find('/host/selected')?.value !== 'entered'
     )
       throw new Error(`P-09 if declaration did not change at N=${n}`);
-    if (counts.host < 1 || counts.parent < 1)
+    if (countCalls && (counts.host < 1 || counts.parent < 1))
       throw new Error(
         `P-09 selectChildren wrapper missed the host or parent: ${JSON.stringify(counts)}`,
       );
@@ -176,32 +189,61 @@ const sizes = (smoke ? [1000] : [1000, 2000, 4000, 8000]).map((n) => {
       if (root.structure?.[`s${sibling}`].emit !== String(sibling))
         throw new Error(`P-09 sibling ${sibling} changed`);
     if (index >= 0) {
-      samplesMs.push(elapsed);
-      hostSamples.push(counts.host);
-      parentSamples.push(counts.parent);
+      if (countCalls) {
+        hostSamples.push(counts.host);
+        parentSamples.push(counts.parent);
+      } else samplesMs.push(elapsed);
     }
   }
+  return { samplesMs, hostSamples, parentSamples };
+}
+
+const timings = (smoke ? [1000] : [1000, 2000, 4000, 8000]).map((n) => {
+  const { samplesMs } = exerciseSize(n, dist, false);
   const sorted = [...samplesMs].sort((a, b) => a - b);
   return {
     n,
+    source: 'dist',
     medianMs: quantile(sorted, 0.5),
     p10Ms: quantile(sorted, 0.1),
     p90Ms: quantile(sorted, 0.9),
     meanMs: samplesMs.reduce((sum, ms) => sum + ms, 0) / samples,
     samplesMs,
-    selectChildrenCalls: {
-      hostPath: '/host',
-      hostSamples,
-      parentPath: '',
-      parentSamples,
-    },
   };
 });
-restoreCounter();
+
+const restoreCounter = await installCounter();
+const sizes = await (async () => {
+  try {
+    // Source imports are confined to the untimed instrumentation pass.
+    const sourceCore = await import('../../../src/core/index');
+    const sourceEngine = await import('../../../src/core/engine/index');
+    return timings.map((timing) => {
+      const { hostSamples, parentSamples } = exerciseSize(
+        timing.n,
+        { ...sourceCore, ...sourceEngine },
+        true,
+      );
+      return {
+        ...timing,
+        selectChildrenCalls: {
+          source: 'src',
+          hostPath: '/host',
+          hostSamples,
+          parentPath: '',
+          parentSamples,
+        },
+      };
+    });
+  } finally {
+    restoreCounter();
+  }
+})();
 
 console.log(
   JSON.stringify({
     probe: 'if-host-siblings',
+    engine,
     ledgerRow: 'P-09',
     runtime: Reflect.get(globalThis, 'Bun') ? 'bun' : 'node',
     version: Reflect.get(globalThis, 'Bun')
@@ -213,7 +255,7 @@ console.log(
     callCounting: isBun
       ? 'Bun mock.module export wrapper'
       : 'Node registerHooks ESM export wrapper',
-    timingIncludesCounterOverhead: true,
+    timingIncludesCounterOverhead: false,
     sizes,
     ratios: sizes.slice(1).map((row, index) => ({
       from: sizes[index].n,

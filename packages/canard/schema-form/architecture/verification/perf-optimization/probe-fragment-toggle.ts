@@ -6,18 +6,22 @@
  */
 import { performance } from 'node:perf_hooks';
 
-import { SetValueOption, blueprint, fieldNodeFactory } from '../../../src/core';
-import {
-  type TestFieldNode,
-  isTestFieldNode,
-} from '../../../src/core/__tests__/fixtures/testFieldNode';
-import {
-  type BlueprintSchema,
+import { isRuntimeFieldNode as isTestFieldNode } from '../../../bench/distEngine/isRuntimeFieldNode';
+import { loadDistEngine } from '../../../bench/distEngine/loadDistEngine';
+import type { TestFieldNode } from '../../../src/core/__tests__/fixtures/testFieldNode';
+import type { BlueprintSchema } from '../../../src/core/engine';
+
+const {
+  SetValueOption,
+  blueprint,
+  fieldNodeFactory,
   PathKeyedMap,
   PathKeyedSet,
   loadFieldNodeAtMount,
-} from '../../../src/core/engine';
-import { getControlLayers } from '../../../src/core/engine/settle/utils/controls/getControlLayers';
+  getControlLayers,
+  distSha256,
+} = await loadDistEngine();
+const engine = { source: 'dist', distSha256 };
 
 const smoke = process.argv.includes('--smoke');
 const warmups = smoke ? 2 : 20;
@@ -93,6 +97,7 @@ const sizes = (smoke ? [16] : [16, 32, 64, 128]).map((n) => {
 console.log(
   JSON.stringify({
     probe: 'fragment-toggle',
+    engine,
     ledgerRow: 'P-08',
     runtime: Reflect.get(globalThis, 'Bun') ? 'bun' : 'node',
     version: Reflect.get(globalThis, 'Bun')
