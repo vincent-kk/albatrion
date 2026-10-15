@@ -296,6 +296,7 @@
 | 2026-10-16 | 381라운드 소유자: 위임 도구는 cennad·orchestration 어느 것이든, 결과 확인과 에이전트·CLI 정리 필수. 보충 1줄 | `reviews/round-381-owner-answers.md` |
 | 2026-10-16 | 382라운드(닫기): 코드 그룹 상수화 PR #404 검증·squash-merge(c1f3016de); 그룹 상수 한 벌, 그룹별 파생 표 내부용, 값·순서·공개 이름 불변. 보충 2줄 | `reviews/round-382-closing.md` |
 | 2026-10-16 | 383라운드 소유자: #404 후속 — group·specific 상수 조립(slice 제거), 클래스 name을 그룹 상수로, codex. 보충 1줄 | `reviews/round-383-owner-answers.md` |
+| 2026-10-16 | 384라운드(닫기): 파생 규칙 결함 PR #405 검증·squash-merge(8f8a3368b); 조각 derive 규칙이 배열 아이템에, 다중 대상·호스트 1회 평가, 기존 기대 변경 1건. 보충 2줄 | `reviews/round-384-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -622,3 +623,4 @@
 - **381라운드(2026-10-16, 소유자).** 위임 도구 자유, 결과 확인·자원 정리(reviews/round-381-owner-answers.md).
 - **382라운드(2026-10-16, 닫기).** 코드 그룹 상수화 PR #404 병합(c1f3016de)(reviews/round-382-closing.md).
 - **383라운드(2026-10-16, 소유자).** #404 후속 수정 의뢰, codex(reviews/round-383-owner-answers.md).
+- **384라운드(2026-10-16, 닫기).** 파생 규칙 결함 PR #405 병합(8f8a3368b)(reviews/round-384-closing.md).
