@@ -120,8 +120,36 @@ describe('append admission declines and the general path settles', () => {
           append: false,
         },
         { apply: () => dispatchPush(popped!, 5), append: false },
-        { apply: (root) => dispatchPush(root, [6]), append: false },
+        {
+          apply: (root) => {
+            expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
+            expect(root.runtime.misfitPaths.size).toBe(0);
+            return dispatchPush(root, [6]);
+          },
+          append: false,
+        },
       ],
+    );
+  });
+
+  it('a non-root empty array whose emission is omitted, until it holds an item', () => {
+    compareArrayAppend(
+      {
+        type: 'object',
+        properties: { rows: { type: 'array', items: { type: 'number' } } },
+      },
+      { rows: [] },
+      [
+        {
+          apply: (root) => dispatchPush(root.structure!.rows, 1),
+          append: false,
+        },
+        {
+          apply: (root) => dispatchPush(root.structure!.rows, 2),
+          append: true,
+        },
+      ],
+      (root) => root.structure!.rows,
     );
   });
 
