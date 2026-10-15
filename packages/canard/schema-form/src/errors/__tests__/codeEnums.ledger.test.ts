@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { FormErrorCode } from '../codes/FormErrorCode';
-import { FormWarningCode } from '../codes/FormWarningCode';
+import { FormErrorCode } from '../constants/FormErrorCode';
+import { FormWarningCode } from '../constants/FormWarningCode';
 
 /** Ledger rows retired without a producer (ERROR-162, 305C-01). */
 const RETIRED = new Set([

@@ -10,19 +10,19 @@ import {
   SchemaFormErrorCodes,
   UnhandledErrorCodes,
   ValidationErrorCodes,
-} from '../codes/FormErrorCode';
-import { FormErrorGroup } from '../codes/FormErrorGroup';
+} from '../constants/FormErrorCode';
+import { FormErrorGroup } from '../constants/FormErrorGroup';
 import {
   FormWarningCode,
   SchemaFormWarningCodes,
-} from '../codes/FormWarningCode';
-import { FormWarningGroup } from '../codes/FormWarningGroup';
-import { JSONSchemaErrorSpecific } from '../codes/JSONSchemaErrorSpecific';
-import { SchemaFormErrorSpecific } from '../codes/SchemaFormErrorSpecific';
-import { SchemaFormWarningSpecific } from '../codes/SchemaFormWarningSpecific';
-import { UnhandledErrorSpecific } from '../codes/UnhandledErrorSpecific';
-import { ValidationErrorSpecific } from '../codes/ValidationErrorSpecific';
-import { getCodeSpecific } from '../codes/getCodeSpecific';
+} from '../constants/FormWarningCode';
+import { FormWarningGroup } from '../constants/FormWarningGroup';
+import { JSONSchemaErrorSpecific } from '../constants/JSONSchemaErrorSpecific';
+import { SchemaFormErrorSpecific } from '../constants/SchemaFormErrorSpecific';
+import { SchemaFormWarningSpecific } from '../constants/SchemaFormWarningSpecific';
+import { UnhandledErrorSpecific } from '../constants/UnhandledErrorSpecific';
+import { ValidationErrorSpecific } from '../constants/ValidationErrorSpecific';
+import { getCodeSpecific } from '../utils/getCodeSpecific';
 
 it('partitions canonical codes by group and matches error class groups', () => {
   expect(new JSONSchemaError(FormErrorCode.UnknownJsonSchema, '').name).toBe(
