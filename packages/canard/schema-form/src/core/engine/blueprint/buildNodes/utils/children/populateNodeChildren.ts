@@ -244,15 +244,34 @@ export const populateNodeChildren = (
       context.declarationInputs,
     );
   }
-  if (itemInputs.length)
-    node.item = build(context, itemInputs, node.path + '/*')[0];
-  if (tuples.size)
-    node.prefixItems = [...tuples]
+  if (itemInputs.length) {
+    const candidates = build(context, itemInputs, node.path + '/*');
+    node.item = candidates[0];
+    if (candidates.length > 1) {
+      node.itemCandidates = candidates;
+      context.staticFirstLoad = false;
+    }
+  }
+  if (tuples.size) {
+    const candidates = [...tuples]
       .sort(([a], [b]) => a - b)
-      .map(
-        ([index, inputs]) => build(context, inputs, node.path + '/' + index)[0],
+      .map(([index, inputs]) =>
+        build(context, inputs, node.path + '/' + index),
       );
-  if (process.env.NODE_ENV !== 'production' && node.prefixItems)
-    Object.freeze(node.prefixItems);
+    node.prefixItems = candidates.map((items) => items[0]);
+    if (candidates.some((items) => items.length > 1)) {
+      node.prefixItemCandidates = candidates;
+      context.staticFirstLoad = false;
+    }
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    if (node.itemCandidates) Object.freeze(node.itemCandidates);
+    if (node.prefixItemCandidates) {
+      for (const candidates of node.prefixItemCandidates)
+        Object.freeze(candidates);
+      Object.freeze(node.prefixItemCandidates);
+    }
+    if (node.prefixItems) Object.freeze(node.prefixItems);
+  }
   if (node.kind === 'object') populateVirtualNodes(context, node);
 };
