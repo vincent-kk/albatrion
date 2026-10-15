@@ -4,6 +4,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markWrite } from '../input/markWrite';
 import { HostLatent } from '../latentStore/HostLatent';
+import { replayMovedInput } from './replayMovedInput';
 
 /**
  * Restore only one entering node's own latent state.
@@ -17,6 +18,16 @@ export const restoreLatentState = <Self extends FieldNodeRecord<Self>>(
   value: unknown,
   context: SettlementContext<Self>,
 ): void => {
+  if (
+    context.root.blueprintNode.hasCandidateDescendants &&
+    ((node.behavior.strategy === 'terminal' && value instanceof HostLatent) ||
+      (node.behavior.strategy === 'branch' &&
+        value !== undefined &&
+        !(value instanceof HostLatent)))
+  ) {
+    replayMovedInput(node, value, context);
+    return;
+  }
   if (node.behavior.strategy === 'terminal') {
     markWrite(node, value, context);
     return;
@@ -27,11 +38,12 @@ export const restoreLatentState = <Self extends FieldNodeRecord<Self>>(
   if (node.behavior.type === 'array' && isArray(raw)) {
     markWrite(node, raw, context);
     if (value instanceof HostLatent && value.retainedItemNames) {
-      const distribution = context.distributedInputs.get(node)!;
-      context.distributedInputs.set(node, {
-        ...distribution,
-        retainedItemNames: value.retainedItemNames,
-      });
+      const distribution = context.distributedInputs.get(node);
+      if (distribution)
+        context.distributedInputs.set(node, {
+          ...distribution,
+          retainedItemNames: value.retainedItemNames,
+        });
     }
     return;
   }

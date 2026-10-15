@@ -178,6 +178,16 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   }[];
   /** Initial array lengths for non-load snapshot alignment. */
   arrayCounts: Map<Self, number>;
+  /** Existing source moves from candidate-bearing structural plans, retained only for this call. */
+  rekeyedArrayMoves?: Map<
+    Self,
+    readonly {
+      /** Old source-slot address, including slots whose record is recreated. */
+      previous: string;
+      /** Surviving destination, absent for a truly destroyed source slot. */
+      current?: string;
+    }[]
+  >;
   /** Reindexed node and descendant paths, without event delivery. */
   pathChanges: { node: Self; previous: string; current: string }[];
   /** Nodes whose missing input received a default during this call. */

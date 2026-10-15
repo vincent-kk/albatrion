@@ -21,6 +21,7 @@ import { writeLatentRaw } from './writeLatentRaw';
  * @param policy - Whether exit clearing applies to this subtree
  * @param order - This occurrence's blueprint document order
  * @param inheritedOwnership - Enclosing candidate's restriction on latent cleanup
+ * @param structural - Preserve every descendant source during candidate-bearing slot recreation
  * @returns Nothing; object children and multi-candidate array items retain their own
  * entries, and newly written absent object children are distributed as latent too (211C-01)
  */
@@ -31,11 +32,13 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
   policy: boolean,
   order: readonly number[],
   inheritedOwnership?: (key: string) => boolean,
+  structural = false,
 ): void => {
   const ownsLatent = selectCandidateOwnedLatent(node, inheritedOwnership);
   const clear = policy && readUnsetPolicy(node, inherited);
   if (
     node.behavior.type !== 'array' ||
+    structural ||
     (!clear &&
       (node.blueprintNode.itemCandidates ||
         node.blueprintNode.prefixItemCandidates))
@@ -44,6 +47,7 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
       if (child.parent !== node) continue;
       if (
         node.behavior.type === 'array' &&
+        !structural &&
         getItemEntries(node.blueprintNode, Number(child.name)).length < 2
       )
         continue;
@@ -66,6 +70,7 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
               : 0,
         ],
         ownsLatent,
+        structural,
       );
     }
   }
@@ -88,7 +93,11 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
           node.raw === undefined
         ? captureArrayLatent(node, context)
         : captureOwnLatent(node, context.root.runtime.latentRaw.get(key));
-  if (node.behavior.type === 'array' && node.behavior.strategy === 'branch') {
+  if (
+    !structural &&
+    node.behavior.type === 'array' &&
+    node.behavior.strategy === 'branch'
+  ) {
     let retained: { key: string; value: unknown }[] | undefined;
     if (value instanceof HostLatent && value.retainedItemNames)
       for (const name of value.retainedItemNames) {

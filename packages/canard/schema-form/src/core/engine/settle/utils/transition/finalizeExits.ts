@@ -12,6 +12,7 @@ import { updateOutput } from '../output/updateOutput';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
 import { finalizePerished } from './finalizePerished';
+import { isRekeyedDestination } from './utils/isRekeyedDestination';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { writeLatentRaw } from './writeLatentRaw';
 
@@ -30,6 +31,9 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     const parent = node.parent;
     if (parent?.structure?.[node.name] === node) continue;
     context.exited.add(node);
+    const rekeyed =
+      context.rekeyedArrayMoves &&
+      isRekeyedDestination(node, context.rekeyedArrayMoves);
     visitFieldNodes(
       node,
       (departing) => {
@@ -41,12 +45,14 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
               context.originalSchemas.get(departing.path)?.schema ??
               departing.schema.schema,
           });
+        if (rekeyed) departing.runtime.misfitPaths.delete(departing.path);
         departing.detached = true;
         departing.active = captureFieldNodeChange(departing, 'active', false);
       },
       { owned: true },
     );
     getGateRegistry(node.runtime).remove(node);
+    if (rekeyed) continue;
     if (!misfitIndex) {
       misfitIndex = new Map();
       for (const path of context.root.runtime.misfitPaths) {

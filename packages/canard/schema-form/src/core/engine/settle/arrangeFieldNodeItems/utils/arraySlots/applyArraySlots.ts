@@ -4,6 +4,7 @@ import { getItemEntries } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
 import { captureFieldNodeChange } from '../../../../record';
 import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
+import type { Distribution } from '../../../../record';
 import { updateFieldNodeNameAndPath } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
@@ -12,28 +13,16 @@ import { getGateRegistry } from '../../../utils/gates/getGateRegistry';
 import { arrayExtras } from '../../../utils/input/arrayExtras';
 import { markWrite } from '../../../utils/input/markWrite';
 import { readRawTree } from '../../../utils/latent/readRawTree';
+import { replayMovedInput } from '../../../utils/latent/replayMovedInput';
+import { getLatentOrder } from '../../../utils/latentStore/getLatentOrder';
 import { indexEnteredLatentKey } from '../../../utils/latentStore/indexEnteredLatentKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
-import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
+import { captureExitedRaw } from '../../../utils/transition/captureExitedRaw';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from '../rekey/rekeyArrayRuntimePaths';
 import { applyArrayTail } from './applyArrayTail';
 import { canApplyArrayTail } from './canApplyArrayTail';
-
-/**
- * Read the host's composed raw tree as slots.
- * @param host - Live array occurrence before its plan is applied
- * @param context - Settlement holding retained sources beneath the host
- * @returns Raw slots, or none when the tree is not an array
- */
-const readRawSlots = <Self extends FieldNodeRecord<Self>>(
-  host: Self,
-  context: SettlementContext<Self>,
-): readonly unknown[] => {
-  const raw = readRawTree(host, context);
-  return isArray(raw) ? raw : [];
-};
 
 /**
  * Apply a branch plan before calculation while paths are free to change.
@@ -78,9 +67,10 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   const nextRaw: unknown[] = [];
   const nextSnapshot: unknown[] = [];
   const reused = new Set<Self>();
-  const created: { node: Self; value: unknown }[] = [];
+  const created: { node: Self; value: unknown; moved: boolean }[] = [];
   let deferred = false;
   const destinations = new Map<number, number>();
+  const candidateMoves = host.blueprintNode.hasCandidateDescendants === true;
   for (let index = 0; index < plan.slots.length; index++) {
     const slot = plan.slots[index];
     const from = 'from' in slot ? slot.from : undefined;
@@ -88,6 +78,23 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     nextRaw.push(value);
     nextSnapshot.push('value' in slot ? slot.value : oldSnapshot[slot.from]);
     const candidates = getItemEntries(host.blueprintNode, index);
+    const sourceCandidates =
+      from !== undefined && candidateMoves
+        ? getItemEntries(host.blueprintNode, from)
+        : undefined;
+    const moved =
+      from !== undefined &&
+      candidateMoves &&
+      (candidates.length > 1 ||
+        candidates.some(
+          (candidate) => candidate.node.hasCandidateDescendants,
+        ) ||
+        (sourceCandidates !== undefined &&
+          (sourceCandidates.length > 1 ||
+            sourceCandidates.some(
+              (candidate) => candidate.node.hasCandidateDescendants,
+            ))));
+    if (from !== undefined && moved) destinations.set(from, index);
     const entry = candidates[0];
     if (!entry) continue;
     const old = from === undefined ? undefined : oldItems[String(from)];
@@ -97,14 +104,24 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     ) {
       nextItems[String(index)] = old;
       reused.add(old);
-      destinations.set(from!, index);
+      if (from !== undefined && !moved) destinations.set(from, index);
       continue;
     }
     const source =
       from === undefined || rawSlots
         ? value
         : (rawSlots = readRawSlots(host, context))[from];
-    if (from !== undefined && !old) destinations.set(from, index);
+    if (from !== undefined && !old && !moved) destinations.set(from, index);
+    if (old && moved)
+      captureExitedRaw(
+        old,
+        false,
+        context,
+        false,
+        getLatentOrder(old.parent, old.name, old.blueprintNode),
+        undefined,
+        true,
+      );
     if (candidates.length > 1) {
       nextRaw[index] = source;
       deferred = true;
@@ -112,11 +129,14 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     }
     const node = createChildNode(host, entry);
     nextItems[String(index)] = node;
-    created.push({ node, value: source });
+    created.push({
+      node,
+      value: source,
+      moved,
+    });
   }
 
   const moves: ArrayPathMove[] = [];
-  let perishedPaths: Set<string> | undefined;
   for (let index = 0; index < oldCount; index++) {
     const item = oldItems[String(index)];
     const current = destinations.get(index);
@@ -138,10 +158,10 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       },
       { owned: true },
     );
-    (perishedPaths ??= new Set()).add(item.path);
   }
-  if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
+  if (candidateMoves)
+    (context.rekeyedArrayMoves ??= new Map()).set(host, moves);
   context.latentDescendantKeys = undefined;
   context.enteredLatentKeys = undefined;
 
@@ -183,16 +203,24 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   context.changedNodes.add(host);
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);
-  if (deferred)
-    context.distributedInputs.set(host, {
+  if (deferred) {
+    const distribution: Distribution = {
       input: nextRaw,
       whole: false,
       automatic: false,
-    });
-  for (const { node, value } of created) {
+    };
+    if (host.runtime.latentRaw.pathIndex.under(host.path).size > 0) {
+      context.distributedInputs.set(host, {
+        ...distribution,
+        preserveLatent: true,
+      });
+    } else context.distributedInputs.set(host, distribution);
+  }
+  for (const { node, value, moved } of created) {
     context.entered.add(node);
     indexEnteredLatentKey(context, node);
-    markWrite(node, value, context);
+    if (moved) replayMovedInput(node, value, context);
+    else markWrite(node, value, context);
   }
   if (context.hasGates)
     for (const item of host.children)
@@ -209,4 +237,18 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     nextSnapshot,
   );
   return removed;
+};
+
+/**
+ * Read the host's composed raw tree as slots.
+ * @param host - Live array occurrence before its plan is applied
+ * @param context - Settlement holding retained sources beneath the host
+ * @returns Raw slots, or none when the tree is not an array
+ */
+const readRawSlots = <Self extends FieldNodeRecord<Self>>(
+  host: Self,
+  context: SettlementContext<Self>,
+): readonly unknown[] => {
+  const raw = readRawTree(host, context);
+  return isArray(raw) ? raw : [];
 };
