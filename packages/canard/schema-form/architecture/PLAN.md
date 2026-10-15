@@ -139,6 +139,7 @@
 | 2026-10-16 | 383라운드 소유자: #404 후속 — group·specific 상수 조립(slice 제거), 클래스 name을 그룹 상수로, codex. 보충 1줄 | `reviews/round-383-owner-answers.md` |
 | 2026-10-16 | 384라운드(닫기): 파생 규칙 결함 PR #405 검증·squash-merge(8f8a3368b); 조각 derive 규칙이 배열 아이템에, 다중 대상·호스트 1회 평가, 기존 기대 변경 1건. 보충 2줄 | `reviews/round-384-closing.md` |
 | 2026-10-16 | 385라운드 소유자: 삭제 전 리뷰(늦음), errors codes를 constants·utils organ으로(#407), 리뷰 완료·병합·복귀; #406(6bd6a157e)·#407(4a9b14b4e) 병합. 보충 3줄 | `reviews/round-385-owner-answers.md` |
+| 2026-10-16 | 386라운드(닫기): L2b PR #408 검증·squash-merge(58200ff5a); P1 이탈 대기 키 생략·P-08 조각 소유 집합 수용, 18C 재측정, P-139는 R-25로 닫힘, 기존 기대 변경 0건. 보충 4줄 | `reviews/round-386-closing.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
