@@ -30,6 +30,7 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
   if (sameValue(previous.emit, node.emit))
     node.emit = captureFieldNodeChange(node, 'emit', previous.emit);
   if (
+    previous.children !== node.children &&
     previous.children &&
     node.children &&
     previous.children.length === node.children.length &&

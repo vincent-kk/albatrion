@@ -73,10 +73,20 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
   )
     finalizeExits(context);
   if (context.kind !== 'load' && context.arrayCounts.size > 0) {
+    const append = context.arrayAppend;
+    // The append's tail application already published a dense slot per item.
+    const aligned =
+      append &&
+      append.host.runtime.loadSnapshot === append.snapshot &&
+      append.host.itemCount === append.count + 1
+        ? append.host
+        : undefined;
     const resized = [...context.arrayCounts]
       .filter(
         ([host, previousCount]) =>
-          !host.detached && host.itemCount !== previousCount,
+          host !== aligned &&
+          !host.detached &&
+          host.itemCount !== previousCount,
       )
       .map(([host]) => host);
     alignArraySnapshotSlots(resized);

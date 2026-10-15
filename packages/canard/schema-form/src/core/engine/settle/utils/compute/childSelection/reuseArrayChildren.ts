@@ -5,7 +5,7 @@ import { staticIds } from './staticIds';
 
 /**
  * Publish the static selection of an array host already proven reusable.
- * The caller has established eligibility with `canReuseArrayChildren`.
+ * The caller has established eligibility with `canReuseArrayChildren`; under a still-valid append proof only the new position is published, because every retained position keeps the selection it already holds.
  * @param node - Array host whose structural operation already published its slots
  * @param context - Selection registry updated and dirty frontier consulted
  * @param prior - Structure captured before the host's selection round
@@ -18,6 +18,15 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   prior: Record<string, Self>,
   computeChild: (child: Self) => void,
 ): void => {
+  const append = context.arrayAppend;
+  if (append?.host === node && append.valid) {
+    const child = prior[String(append.count)];
+    const ids = staticIds(append.entry);
+    if (context.selectedDeclarationIds.get(child) !== ids)
+      context.selectedDeclarationIds.set(child, ids);
+    if (context.dirtyPaths.has(child.path)) computeChild(child);
+    return;
+  }
   for (let index = 0; index < node.itemCount; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) continue;

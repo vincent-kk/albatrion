@@ -20,7 +20,7 @@ const STABLE_SHAPES = new WeakMap<
  * @param node - Array host with committed child projections and tail extras
  * @param children - Current ordered item nodes
  * @param recalculated - Direct items computed during an unchanged-shape write
- * @param hint - Reports whether only the recalculated slots were compared
+ * @param hint - Reports whether only the recalculated slots were compared; an `append` count from a valid append proof patches only that slot into one copy of the previous local
  * @returns Local array, reusing its prior reference when elements are identical
  */
 export const assembleArray: Behavior['assemble'] = (
@@ -30,6 +30,39 @@ export const assembleArray: Behavior['assemble'] = (
   hint,
 ) => {
   const previous = isArray(node.local) ? node.local : undefined;
+  const append = hint?.append;
+  if (
+    hint &&
+    append !== undefined &&
+    previous &&
+    node.itemCount === append + 1 &&
+    (previous.length === append || previous.length === append + 1)
+  ) {
+    const template =
+      node.blueprintNode.prefixItems?.[append] ?? node.blueprintNode.item;
+    const child = node.structure?.[String(append)];
+    if (template && child !== null && typeof child === 'object') {
+      const emission = 'emit' in child ? child.emit : undefined;
+      const value =
+        emission === undefined
+          ? holeValue(template.kind, previous[append])
+          : emission;
+      STABLE_SHAPES.set(node, {
+        children,
+        schema: node.schema,
+        undeclaredValues: node.undeclaredValues,
+        raw: node.raw,
+        itemCount: node.itemCount,
+      });
+      hint.incremental = true;
+      if (previous.length === append + 1 && Object.is(value, previous[append]))
+        return previous;
+      if (previous.length === append) return previous.concat([value]);
+      const result = previous.slice();
+      result[append] = value;
+      return result;
+    }
+  }
   const stable = STABLE_SHAPES.get(node);
   if (
     recalculated &&

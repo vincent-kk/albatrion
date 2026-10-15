@@ -17,6 +17,8 @@ import { finishSettlement } from '../utils/settlement/finishSettlement';
 import { readArrayLength } from '../utils/structure/readArrayLength';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { applyArraySlots } from './utils/arraySlots/applyArraySlots';
+import { applyArrayTail } from './utils/arraySlots/applyArrayTail';
+import { prepareArrayAppend } from './utils/arraySlots/prepareArrayAppend';
 
 /** Synchronous result of a plan whose slot source has already been captured. */
 const resultOf = <Self extends FieldNodeRecord<Self>>(
@@ -39,6 +41,7 @@ const resultOf = <Self extends FieldNodeRecord<Self>>(
 
 /**
  * Apply an array behavior's pure proposal and commit one synchronous write.
+ * An admitted static push skips the row's slot plan and the prefix proofs; see prepareArrayAppend.
  * @param node - Array host, or any node whose behavior rejects this verb
  * @param operation - The requested public structural operation
  * @returns Length, removed or updated value, or void as declared by the plan
@@ -47,7 +50,8 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
 ): unknown => {
-  const plan = node.behavior.arrange(node, operation);
+  const append = prepareArrayAppend(node, operation);
+  const plan = append ? append.plan : node.behavior.arrange(node, operation);
   if (plan.kind === 'noop')
     return operation.kind === 'push' ? readArrayLength(node) : undefined;
   if (plan.kind === 'raw') {
@@ -130,7 +134,13 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   try {
     if (context.hasGates)
       getGateRegistry(context.root.runtime).register(context.root);
-    const removed = applyArraySlots(node, plan, context);
+    let removed: unknown;
+    if (append) {
+      context.arrayAppend = append;
+      removed = applyArrayTail(node, append.plan, context, append.count);
+      append.children = node.children;
+      append.snapshot = node.runtime.loadSnapshot;
+    } else removed = applyArraySlots(node, plan, context);
     registerRecalculation(context);
     computeNode(context.root, context);
     finishSettlement(context, scratch);

@@ -21,17 +21,20 @@ import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
  * Apply a proven prefix-preserving proposal without composing retained raw trees.
  * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
  * @param host - Live branch array with no whole raw override
- * @param plan - Proposal accepted by canApplyArrayTail; appended slots carry values
+ * @param plan - Proposal accepted by canApplyArrayTail or prepareArrayAppend; appended slots carry values and retained prefix slots are never read
  * @param context - Settlement receiving the same lifecycle and dirty facts as a full plan
+ * @param offset - Position of `plan.slots[0]`; an append proof's plan lists only the new slot after its retained prefix
  * @returns Committed removed-slot value, or its retained source when no item is live
  */
 export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
   context: SettlementContext<Self>,
+  offset: number = 0,
 ): unknown => {
   const oldCount = host.itemCount;
-  const prefixCount = Math.min(oldCount, plan.slots.length);
+  const length = offset + plan.slots.length;
+  const prefixCount = Math.min(oldCount, length);
   const items: Record<string, Self> = host.structure ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
@@ -69,8 +72,8 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       extras.push(oldExtras[index - templateCount]);
   }
   const created: { node: Self; value: unknown }[] = [];
-  for (let index = prefixCount; index < plan.slots.length; index++) {
-    const slot = plan.slots[index];
+  for (let index = prefixCount; index < length; index++) {
+    const slot = plan.slots[index - offset];
     if (!('value' in slot)) continue;
     nextSnapshot.push(slot.value);
     const entry = getItemEntry(host.blueprintNode, index);
@@ -111,7 +114,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   context.latentDescendantKeys = undefined;
   context.enteredLatentKeys = undefined;
 
-  host.itemCount = plan.slots.length;
+  host.itemCount = length;
   host.raw = undefined;
   host.undeclaredValues = extras.length ? extras : undefined;
   host.structure = items;

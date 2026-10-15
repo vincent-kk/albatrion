@@ -55,7 +55,12 @@ export interface Behavior<Self = unknown> {
     node: FieldNodeRecord<Node>,
     children: readonly Node[],
     recalculated?: readonly Node[],
-    hint?: { incremental: boolean },
+    hint?: {
+      /** Set by the row when it compared only recalculated or appended slots. */
+      incremental: boolean;
+      /** Previous item count when settlement holds a valid append proof for this host. */
+      append?: number;
+    },
   ): unknown;
   /** Project a local value into the outgoing value. */
   project<Node extends Self>(

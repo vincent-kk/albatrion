@@ -1,7 +1,12 @@
 import type { SchemaFormError } from '../../../../errors';
-import type { BlueprintNode, EffectiveSchema } from '../../blueprint';
+import type {
+  BlueprintChildEntry,
+  BlueprintNode,
+  EffectiveSchema,
+} from '../../blueprint';
 import type { DeriveState, DeriveTraceEntry } from '../../derive';
 import type {
+  ArrayArrangePlan,
   Distribution,
   FieldNodeRecord,
   SettlementBudget,
@@ -15,6 +20,30 @@ export type VirtualReferenceIndex = ReadonlyMap<
   BlueprintNode,
   ReadonlyMap<string, readonly string[]>
 >;
+
+/** Call-local evidence of one admitted static push; it never outlives its settlement. */
+export interface ArrayAppendProof<Self extends FieldNodeRecord<Self>> {
+  /** Live static branch array receiving the new last position. */
+  host: Self;
+  /** Item count before the push; the new position's index. */
+  count: number;
+  /** Analyzed child edge of the new position. */
+  entry: BlueprintChildEntry;
+  /** Static effective schema the new child must carry. */
+  schema: EffectiveSchema;
+  /** Tail-only proposal: the new slot alone, applied at offset `count`. */
+  plan: Extract<ArrayArrangePlan, { kind: 'slots' }>;
+  /** Host local before the push, an array of `count` slots. */
+  local: unknown;
+  /** Children array published by the tail application. */
+  children?: readonly Self[] | null;
+  /** Root load snapshot published by the tail application. */
+  snapshot?: unknown;
+  /** First local assembled through the append hint. */
+  assembled?: unknown;
+  /** Cleared when a selection-time check fails; later phases then use the general path. */
+  valid: boolean;
+}
 
 /** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
@@ -46,6 +75,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
+  /** Proof that this call is one admitted static push, consulted by selection, assembly and alignment. */
+  arrayAppend?: ArrayAppendProof<Self>;
   /** First-load postorder awaiting independent leaf fill before its only assembly. */
   initialOutputs?: Self[];
   /** Cached reverse references, absent for a blueprint without virtual nodes. */

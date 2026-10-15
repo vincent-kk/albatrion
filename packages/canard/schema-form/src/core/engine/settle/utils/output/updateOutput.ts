@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import { FieldNodeEventType, captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
@@ -20,13 +22,27 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   const host =
     (node.behavior.type === 'array' || node.behavior.type === 'object') &&
     node.behavior.strategy === 'branch';
-  const hint = recalculated && host ? { incremental: false } : undefined;
+  const append = context.arrayAppend;
+  const appending =
+    append !== undefined &&
+    append.host === node &&
+    append.valid &&
+    !recalculated &&
+    node.children === append.children &&
+    (node.local === append.local || node.local === append.assembled);
+  const hint =
+    recalculated && host
+      ? { incremental: false }
+      : appending
+        ? { incremental: false, append: append.count }
+        : undefined;
   const assembled = node.behavior.assemble(
     node,
     node.children ?? [],
     recalculated,
     hint,
   );
+  if (appending && hint?.incremental) append.assembled = assembled;
   const previousLocal = node.local;
   const same = hint?.incremental
     ? node.behavior.type === 'object' &&
@@ -42,9 +58,11 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
       )
     : sameValue(node.local, assembled);
   let local = same ? node.local : assembled;
+  const baseline = node.deliveryPreviousLocal;
   const revisit =
     (node.deliveryChanges & FieldNodeEventType.UpdateValue) !== 0 &&
-    local !== node.deliveryPreviousLocal;
+    local !== baseline &&
+    !(isArray(baseline) && isArray(local) && baseline.length !== local.length);
   if (
     revisit &&
     (!host ||
