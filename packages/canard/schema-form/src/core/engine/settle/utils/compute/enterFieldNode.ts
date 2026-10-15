@@ -1,4 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { isWithinReplacePaths } from '../input/isWithinReplacePaths';
@@ -26,7 +27,10 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
   const latent = context.root.runtime.latentRaw;
   const key =
     latent.size > 0
-      ? JSON.stringify([child.path, child.blueprintNode.kind])
+      ? JSON.stringify([
+          child.path,
+          getBlueprintNodeIdentity(child.blueprintNode),
+        ])
       : undefined;
   const own = key === undefined ? undefined : latent.get(key);
   const write =

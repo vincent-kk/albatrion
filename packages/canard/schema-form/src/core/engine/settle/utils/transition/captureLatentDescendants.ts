@@ -6,6 +6,7 @@ import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { DeclarationLayer } from '../../../types/controls';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
@@ -73,7 +74,10 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
     node,
     (current) => {
       live.set(
-        JSON.stringify([current.path, current.blueprintNode.kind]),
+        JSON.stringify([
+          current.path,
+          getBlueprintNodeIdentity(current.blueprintNode),
+        ]),
         current,
       );
     },

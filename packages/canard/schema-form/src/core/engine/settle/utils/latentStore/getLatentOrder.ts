@@ -19,21 +19,13 @@ export const getLatentOrder = <Self extends FieldNodeRecord<Self>>(
   let childTemplate = template;
   while (host) {
     const entries = host.blueprintNode.childEntries;
-    const exact = entries.findIndex(
+    const index = entries.findIndex(
       (entry) => entry.name === childName && entry.node === childTemplate,
     );
-    const sameKind =
-      exact < 0
-        ? entries.findIndex(
-            (entry) =>
-              entry.name === childName &&
-              entry.node.kind === childTemplate.kind,
-          )
-        : exact;
     const arrayIndex = Number(childName);
     order.unshift(
-      sameKind >= 0
-        ? sameKind
+      index >= 0
+        ? index
         : Number.isInteger(arrayIndex) && arrayIndex >= 0
           ? arrayIndex
           : 0,

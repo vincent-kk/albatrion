@@ -3,6 +3,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { isPlain } from '../input/isPlain';
 import { HostLatent } from '../latentStore/HostLatent';
@@ -22,7 +23,9 @@ export const readLatentSlotSource = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
 ): unknown => {
   const runtime = context.root.runtime;
-  const own = runtime.latentRaw.get(JSON.stringify([path, template.kind]));
+  const own = runtime.latentRaw.get(
+    JSON.stringify([path, getBlueprintNodeIdentity(template)]),
+  );
   if (own !== undefined && !(own instanceof HostLatent)) return own;
   if (own instanceof HostLatent && own.raw !== undefined) return own.raw;
   if (template.kind !== 'object' || template.strategy !== 'branch')
