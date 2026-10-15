@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import * as plans from '@/schema-form/core/engine/behaviors/arrayBehavior/utils/plan/copyArraySlots';
 import * as blueprint from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import * as records from '@/schema-form/core/engine/record';
@@ -98,7 +97,6 @@ const measure = (
   );
   const spies = {
     readRawTree: vi.spyOn(rawTree, 'readRawTree'),
-    copyArraySlots: vi.spyOn(plans, 'copyArraySlots'),
     canApplyArrayTail: vi.spyOn(tailProof, 'canApplyArrayTail'),
     applyArraySlots: vi.spyOn(general, 'applyArraySlots'),
     updateOutput: vi.spyOn(output, 'updateOutput'),
@@ -128,7 +126,6 @@ describe('an admitted middle remove or insert does tail-sized work', () => {
       expect(large.calls).toEqual(small.calls);
       expect(large.registered).toBe(small.registered);
       expect(large.calls.readRawTree).toBe(0);
-      expect(large.calls.copyArraySlots).toBe(0);
       expect(large.calls.canApplyArrayTail).toBe(0);
       expect(large.calls.applyArraySlots).toBe(0);
       expect(small.prefixEntries).toBe(0);
