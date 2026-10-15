@@ -91,6 +91,11 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
     for (const [ancestor, children] of byAncestor)
       memo.set(ancestor, { commit, paths: Object.freeze(children) });
   }
+  runtime.misfitsMemoBuild = {
+    memo,
+    size: memo.size,
+    mutations: runtime.misfitPaths.mutations,
+  };
   runtime.inactiveValueEntries ??= new PathKeyedMap('pair');
   runtime.inactiveValuesMemo.set('', EMPTY_VALUES);
   runtime.latentRawDirty = false;

@@ -392,11 +392,20 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   refreshTargets?: Set<string>;
   /** Newly lit misfit records in the last committed batch. */
   misfitRecords?: readonly MisfitRecord[];
-  /** Commit-scoped subtree misfit path lists. */
+  /** Subtree misfit path lists, each row stamped with the commit that built it. */
   misfitsMemo?: PathKeyedMap<{
     commit: number;
     paths: readonly string[];
   }>;
+  /** Memo, its size and the misfit set's mutation count right after the last memo build. */
+  misfitsMemoBuild?: {
+    /** Memo instance the build filled. */
+    readonly memo: NonNullable<FieldNodeRuntime<Self>['misfitsMemo']>;
+    /** Row count the build left. */
+    readonly size: number;
+    /** `misfitPaths.mutations` the build read. */
+    readonly mutations: number;
+  };
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedFieldNodeReads>;
   /** Stable watch path results for each node within one completed commit. */

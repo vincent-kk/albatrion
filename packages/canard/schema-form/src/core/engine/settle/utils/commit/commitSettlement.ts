@@ -193,34 +193,46 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const misfitsMemo =
     runtime.misfitsMemo ??
     new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');
-  if (runtime.misfitPaths.size === 0) {
-    const empty = misfitsMemo.get('');
-    if (misfitsMemo.size === 1 && empty?.paths.length === 0)
-      empty.commit = commit;
-    else {
-      misfitsMemo.clear();
-      misfitsMemo.set('', { commit, paths: EMPTY_PATHS });
-    }
-  } else {
-    misfitsMemo.clear();
-    const allPaths = [...runtime.misfitPaths].sort();
-    misfitsMemo.set('', { commit, paths: Object.freeze(allPaths) });
-    const byAncestor = new Map<string, string[]>();
-    for (let index = 0; index < allPaths.length; index++) {
-      const path = allPaths[index];
-      let ancestor = path;
-      while (ancestor) {
-        let paths = byAncestor.get(ancestor);
-        if (!paths) {
-          paths = [];
-          byAncestor.set(ancestor, paths);
-        }
-        paths.push(path);
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+  const built = runtime.misfitsMemoBuild;
+  if (
+    built?.memo !== misfitsMemo ||
+    built.mutations !== runtime.misfitPaths.mutations ||
+    built.size !== misfitsMemo.size
+  ) {
+    if (runtime.misfitPaths.size === 0) {
+      const empty = misfitsMemo.get('');
+      if (misfitsMemo.size === 1 && empty?.paths.length === 0)
+        empty.commit = commit;
+      else {
+        misfitsMemo.clear();
+        misfitsMemo.set('', { commit, paths: EMPTY_PATHS });
       }
+    } else {
+      misfitsMemo.clear();
+      const allPaths = [...runtime.misfitPaths].sort();
+      misfitsMemo.set('', { commit, paths: Object.freeze(allPaths) });
+      const byAncestor = new Map<string, string[]>();
+      for (let index = 0; index < allPaths.length; index++) {
+        const path = allPaths[index];
+        let ancestor = path;
+        while (ancestor) {
+          let paths = byAncestor.get(ancestor);
+          if (!paths) {
+            paths = [];
+            byAncestor.set(ancestor, paths);
+          }
+          paths.push(path);
+          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+        }
+      }
+      for (const [ancestor, paths] of byAncestor)
+        misfitsMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
     }
-    for (const [ancestor, paths] of byAncestor)
-      misfitsMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
+    runtime.misfitsMemoBuild = {
+      memo: misfitsMemo,
+      size: misfitsMemo.size,
+      mutations: runtime.misfitPaths.mutations,
+    };
   }
   runtime.misfitsMemo = misfitsMemo;
   if (
