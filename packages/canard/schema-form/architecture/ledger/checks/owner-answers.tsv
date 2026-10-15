@@ -512,3 +512,5 @@ reviews/round-383-owner-answers.md:7	383	group·specific 둘 다 상수화해 co
 reviews/round-385-owner-answers.md:7	385	지우기 전에 리뷰한다	"잠깐. 리뷰 한번 하고 지우자" (2026-10-16, 원장 세션)
 reviews/round-385-owner-answers.md:8	385	codes 디렉토리의 상수·보조 혼재를 filid 규칙에 맞게 organ으로 정리	"이미 머지를 해버렸군... 그럼 이건 네가 간단히 수정해주겠나?\n/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/errors/codes 이거 말이야 유틸리티와 상수가 어지럽게 섞여있잖아.\n이걸 filid 규칙에 맞게 정리를 좀 해주겠어? organ 으로라도 정리해야할거같거든" (2026-10-16, 원장 세션)
 reviews/round-385-owner-answers.md:9	385	리뷰 완료, 병합하고 원래 업무로 복귀	"리뷰완료 병합하고 원래 업무로 복귀해" (2026-10-16, 원장 세션)
+reviews/round-387-owner-answers.md:7	387	마운트 상수 가설은 개선 방향을 찾는 실험까지만, 불가능하면 포기	"마운트 상수 가설에 대해서는 개선방향을 찾는 정도로만 실험해봐. 불가능하다면 포기하겠어." (2026-10-16, 원장 세션)
+reviews/round-387-owner-answers.md:8	387	게이트 폼 한 키 쓰기는 실험으로 안정성·효용성을 검증, 같은 원리·사상이면 시도 가능	"게이트가 있는 폼의 한 키 쓰기(gate-form-one-key)에 대해서는 실험을 통해서 안정성과 효용성을 검증해봐. 동일한 원리와 사상에서 동작한다면 시도해볼 수 있다." (2026-10-16, 원장 세션)
