@@ -2,6 +2,9 @@
 
 ## Requirements
 
+- An optional distribution `preserveLatent` marker identifies a surviving source slot's composed replay during record recreation. Entering candidates prefer their own stored source, and already-stored absent candidate paths are not redistributed from the single composed value. The marker propagates only through that replay and is absent on caller writes, load and reset (NODE-051/NODE-043 supplements, 41C-01, WRITE-036; (392라운드 마감 결정)).
+- Structural slot application sets `preserveLatent` on distributions backed by retained sources; descendant entry propagates it and child selection reads it. It lasts only for that settlement: normal input distributions replace it, and scratch release clears the distribution map in the entry's `finally` path on success or failure. It is never stored on a node or load snapshot (NODE-051, NODE-045; (392라운드 마감 결정)).
+
 - 경로 키 런타임 칸은 명시적인 PathKeyedMap·PathKeyedSet 형으로 선언하고 생성자가 색인을 소유한다. record와 settle의 공통 소유자 core의 보조 형을 소비하여 settle 역의존을 만들지 않는다. native Map·Set의 조회·열거 계약을 유지하고 값은 복제하지 않는다. 메모리 비용은 K개 항목과 경로 깊이 D에 O(KD) 키 참조, 유일한 prefix 문자열·부모 연결·숫자 radix 마디이다(NODE-045, SETTLE-017·047).
 
 - `blueprint < record < {종류 동작, navigation} < validation < derive < settle < dispatch < FieldNode`의 방향을 값 import와 `import type`에 똑같이 적용한다. `record`는 청사진의 선언 형만 소비하며 상위 엔진을 알지 않는다(NODE-016·045, LANDING-084).
