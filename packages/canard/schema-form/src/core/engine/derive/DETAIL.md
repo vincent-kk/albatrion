@@ -12,7 +12,7 @@
 
 - 조각의 대상 자식 검색은 그 조각에 `derived`, `unsetValue`, `resetInteraction`, `injectTo` 중 하나라도 있을 때만 수행한다. `active`만 있는 분기가 B개일 때 파생 표 생성은 전체 자식 검색 B회가 아니라 O(선언 수) 시간이면 되고, 불필요한 대상 배열도 할당하지 않는다. `fields`의 별도 규칙은 계속 처리하며, 규칙 순서, 층, 에지의 의미는 바꾸지 않는다(SETTLE-017·043, 82C-01).
 
-- 조각이 대상 자식을 직접 선언했는지는 engine DETAIL의 조각 소유 판정 한 벌(`getFragmentOwnerPaths`)로 정하고, 대상 후보는 객체 속성 항목(`childEntries`)에 한정한다. 따라서 조각 derive 규칙(derived·unsetValue·resetInteraction·injectTo)은 아직 배열 아이템에 닿지 않음(대기열 60). 이 한정이 있으므로 같은 판정으로 바꾸어도 규칙 표는 옛 세 접두 판정의 표와 원소마다 같다(CONTROLS-077).
+- 조각이 대상 자식을 직접 선언했는지는 engine DETAIL의 조각 소유 판정 한 벌(`getFragmentOwnerPaths`)로 정하고, 대상 후보는 객체 속성 항목(`childEntries`)에 한정한다. 따라서 조각 derive 규칙(derived·unsetValue·resetInteraction)은 아직 배열 아이템에 닿지 않는다(376C-02, 별도 결함 수정; 조각의 injectTo는 청사진 오류라 대상이 아니다). 이 한정이 있으므로 같은 판정으로 바꾸어도 규칙 표는 옛 세 접두 판정의 표와 원소마다 같다(CONTROLS-077).
 
 - `index.ts`는 다음을 이름으로 내보낸다. `getDeriveRuleTable(blueprint: Blueprint): DeriveRuleTable`, `evaluateDeriveRound<Self>(root: FieldNodeRecord<Self>, state: DeriveState<Self>): DeriveRoundDecision<Self>`, `evaluateResetInteraction<Self>(root: FieldNodeRecord<Self>, state: DeriveState<Self>): DeriveResetInteractionDecision<Self>`, `DERIVE_ROUND_CAP = 25`, 그리고 `DeriveState`·`DeriveRoundDecision`·`DeriveTraceEntry` 형이다. 반환 자료를 설명하는 `DeriveRuleTable`·`DeriveResetInteractionDecision` 형은 내부 계약이므로 index가 내보내지 않는다. `settle/utils/derivation/`은 이 진입점에서 라운드 판정을, `settle/utils/commit/`은 상호작용 초기화 판정을 가져다 쓴다(SETTLE-004·006·017, NODE-016, CONTROLS-029).
 - `DeriveState<Self>`는 완성된 트리, 호출의 로드 범위와 억제 여부, 직전 커밋의 규칙 값, 이번 정착에서 소비한 값, 대상별로 이미 적용한 종류 순위를 판정에 건넨다. `DeriveRoundDecision<Self>`는 대상마다 승자 하나만 남긴 쓰기 후보, 승패와 상관없이 소비할 에지, 개발 모드 기록 항목을 돌려주며 원본은 바꾸지 않는다(SETTLE-004·028·048·049, WRITE-015, ERROR-159).
@@ -73,4 +73,4 @@
 
 ## Last Updated
 
-2026-10-03; 정돈-2(2026-10-14); 정돈-3 derive 재구성(2026-10-15); 373라운드 공유 조각 소유 판정(2026-10-15, CONTROLS-077, 대기열 60).
+2026-10-03; 정돈-2(2026-10-14); 정돈-3 derive 재구성(2026-10-15); 373라운드 공유 조각 소유 판정(2026-10-15, CONTROLS-077, 376C-02).
