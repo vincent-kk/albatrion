@@ -4,7 +4,7 @@
 
 - **판정에 쓰는 실행:** `20261015T0247-a3be21d-before-dist`(`/private/tmp/claude-501/perf-runs/20261015T0247-a3be21d-before-dist/`). 빌드 결과물(dist)로 다시 잰 행 전부: 독립 스크립트 둘×두 런타임(`B2` 포함), vitest 벤치, `--equivalent` core, 탐침 넷×두 런타임.
 - **그대로 쓰는 실행:** `20261015T0138-c59ba13-before`(`/private/tmp/claude-501/perf-runs/20261015T0138-c59ba13-before/`). `--equivalent` render와 heap 행은 그때도 dist였으므로 이 실행의 값을 씁니다. 나머지 행의 이 실행 값은 "소스 기준(참고)" 절에만 둡니다.
-- **재현:** 패키지 디렉터리에서 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<조용한 창 시작 ISO 시각>`을 실행합니다. 스크립트는 먼저 rolldown으로 JS 번들을 빌드하고, 아래 행을 같은 인자로 순서대로 돌리며, 행마다 명령·작업 디렉터리·`NODE_ENV`·시작과 끝 시각·사용한 dist 해시를 `env.json`에 적습니다. `--only=<행,행>`으로 일부 행만 다시 잴 수 있습니다.
+- **재현:** 패키지 디렉터리에서 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<조용한 창 시작 ISO 시각>`을 실행합니다. 스크립트는 먼저 rolldown으로 JS 번들을 빌드하고, 아래 행을 같은 인자로 순서대로 돌리며, 행마다 명령·작업 디렉터리·`NODE_ENV`·시작과 끝 시각·사용한 dist 해시를 `env.json`에 적습니다. `--only=<행,행>`으로 일부 행만 다시 잴 수 있습니다. 러너의 rolldown 빌드는 `dist`를 비우고 JS 번들만 다시 만들어 타입 선언(`.d.ts`)이 사라지므로, 러너를 돌린 뒤 플러그인 빌드나 타입을 읽는 검사를 하려면 먼저 `yarn --cwd packages/canard/schema-form build`를 다시 돌립니다.
 
 ## 환경
 
@@ -589,3 +589,11 @@ TEST-071 행입니다. 원소 10,000개, 깊은 노드 작은 쪽 4·큰 쪽 19(
 ## 대장으로 간 것
 
 [속도 문제 대장](../performance-issues.md)의 P-08·P-09·P-10 행의 근거와 원인 칸에 dist 실행의 수치와 원인 분리를 적었고, P-138을 새로 더했습니다. 상태 칸은 바꾸지 않았습니다. P-10의 `B5` 커밋 이분은 354라운드 소유자 지시로 M0에서 빼고 L2 묶음에 닿을 때 합니다.
+
+## L1 뒤 실행 — `20261015T0407-e900c1d-after-l1-fix`
+
+가설 0과 그 비용 수정까지 담은 커밋의 dist(sha256 `36ac0af9…`)로 같은 러너를 돌린 실행입니다(`/private/tmp/claude-501/perf-runs/20261015T0407-e900c1d-after-l1-fix/`). 위 "최적화 전" 표는 바꾸지 않습니다.
+
+- **판정 수:** `--equivalent` core 29/38(그대로), render 26/114(원 기준 실행 27/114). 판정이 바뀐 render 행은 모두 15% 선 근처의 마운트 행입니다: `sample-0`·`array-replace-200`의 `render-mount-wall`이 회귀에서 빠지고(처리량 하락 14.1%·12.1%), `sample-2`의 `render-mount-wall`이 회귀가 됐습니다(15.0%).
+- **P-09 탐침:** Node·Bun 1천–8천 여덟 칸 모두 before-dist의 10–90백분위 안입니다(Node 8천 39.31→39.40 ms, Bun 8천 31.66→30.13 ms).
+- **TEST-071 16행:** 12행이 before-dist의 10–90백분위 안이고, 네 행의 중앙값이 90백분위를 조금 넘었습니다: Node `element/array/large` 비 1.058, Node `whole/object/small` 1.057, Bun `element/object/large` 1.067, Bun `whole/array/small` 1.075. 같은 조용한 창에서 가설 0 없는 번들(`9ca9ea95…`)과 번갈아 돈 비교에서는 같은 네 행의 비가 0.929·1.004·0.987·1.008이고, 가설 0 없는 번들 자신도 실행 사이에 7%까지 흔들려(Node `whole/object/small` 11,796 대 11,024 µs) 단일 실행의 초과는 실행 간 잡음으로 판정했습니다. 비용 중립 판정의 근거는 그 번갈아 돈 비교입니다(16행 비 0.929–1.013, 원장 관리자 결정).
