@@ -11,6 +11,7 @@ import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatc
 import type { DispatchTestNode } from '../../../../__tests__/fixtures/createDispatchTree';
 import { observeArraySelection } from '../../../__tests__/fixtures/observeArraySelection';
 import { observeDetachedReads } from '../../../__tests__/fixtures/observeDetachedReads';
+import * as selection from '../../../utils/compute/childSelection/canReuseArrayChildren';
 import * as general from '../../utils/arraySlots/applyArraySlots';
 import * as admission from '../../utils/arraySlots/prepareArraySplice';
 import { defaultsOf } from './defaultsOf';
@@ -22,10 +23,13 @@ export interface SpliceStep {
   apply: (root: DispatchTestNode) => unknown;
   /** Whether the candidate must admit this step to the splice path. */
   splice: boolean;
+  /** Whether the candidate must reuse the static selection of an admitted step; `splice` when absent, unchecked for a declined step. */
+  reuse?: boolean;
 }
 
 /**
  * Run identical public writes with the splice admission enabled and declined.
+ * An admitted step must also reuse its host's selection in the candidate unless the step says otherwise, while the oracle never reuses it.
  * After each step it compares results, deliveries with payloads in order, settlement observations (raw, keys, names, paths, revisions and latent raw included),
  * default sources, where every former item now sits, departed nodes' detached reads and the contents of every container retained before the step.
  * @param schema - Authored declarations for two independently owned trees
@@ -65,12 +69,14 @@ export const compareArraySplice = (
     const admit = vi.spyOn(admission, 'prepareArraySplice');
     if (declined) admit.mockReturnValue(undefined);
     const slots = vi.spyOn(general, 'applyArraySlots');
+    const route = vi.spyOn(selection, 'canReuseArrayChildren');
     try {
       for (let index = 0; index < steps.length; index++) {
         const step = steps[index];
         delivered.length = 0;
         admit.mockClear();
         slots.mockClear();
+        route.mockClear();
         const host = select(root);
         const children = host.children;
         const formerChildren = [...(children ?? [])];
@@ -94,6 +100,11 @@ export const compareArraySplice = (
           ).toBe(step.splice);
           if (step.splice) expect(slots).not.toHaveBeenCalled();
         }
+        if (step.splice)
+          expect(
+            route.mock.results.some((call) => call.value === true),
+            `selection reuse at step ${index}`,
+          ).toBe(!declined && (step.reuse ?? true));
         expect(children ? [...children] : children).toEqual(
           children ? formerChildren : children,
         );
@@ -122,6 +133,7 @@ export const compareArraySplice = (
     } finally {
       admit.mockRestore();
       slots.mockRestore();
+      route.mockRestore();
     }
     histories.push(history);
     roots.push(root);

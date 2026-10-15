@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { getItemEntry } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import {
@@ -14,6 +15,9 @@ import {
 
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
+import type { ArraySpliceProof } from '../../types/settlement';
+import * as selectionProof from '../../utils/compute/childSelection/canReuseSplicedChildren';
+import { canReuseSplicedChildren } from '../../utils/compute/childSelection/canReuseSplicedChildren';
 import * as output from '../../utils/output/updateOutput';
 import { getSettlementScratch } from '../../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../../utils/scratch/releaseSettlementScratch';
@@ -414,5 +418,117 @@ describe('the splice admission reads the shared static admission and the tail', 
       ],
     );
     expect(candidate.emit).toEqual([3, 4]);
+  });
+});
+
+describe('the splice selection proof reads only the tail', () => {
+  it('a selection-time proof failure continues in the general selection within the same settlement', () => {
+    const proof = vi
+      .spyOn(selectionProof, 'canReuseSplicedChildren')
+      .mockReturnValue(false);
+    const { candidate } = compareArraySplice(
+      {
+        type: 'array',
+        items: { type: 'object', properties: { v: { type: 'number' } } },
+      },
+      [{ v: 1 }, { v: 2 }, { v: 3 }, { v: 4 }],
+      [
+        {
+          apply: (root) => dispatchRemove(root, 1),
+          splice: true,
+          reuse: false,
+        },
+        {
+          apply: (root) => dispatchInsert(root, 1, { v: 9 }),
+          splice: true,
+          reuse: false,
+        },
+      ],
+    );
+    expect(proof).toHaveBeenCalledTimes(2);
+    expect(candidate.emit).toEqual([{ v: 1 }, { v: 9 }, { v: 3 }, { v: 4 }]);
+  });
+
+  it('accepts the published splice and rejects each moved fact', () => {
+    const root = mounted(
+      { type: 'array', items: { type: 'number' } },
+      [1, 2, 3, 4],
+    );
+    const scratch = getSettlementScratch(root.runtime);
+    try {
+      const context = createSettlementContext(
+        root,
+        'callerReplace',
+        WriteOption.Overwrite,
+        scratch,
+      );
+      const prior = root.structure!;
+      const children = root.children!;
+      const proof: ArraySpliceProof<DispatchTestNode> = {
+        host: root,
+        count: 5,
+        index: 1,
+        plan: {
+          kind: 'slots',
+          slots: [],
+          result: { source: 'removed', index: 1 },
+        },
+        children,
+        pathChanges: 0,
+        valid: true,
+      };
+      const check = (structure = prior) =>
+        canReuseSplicedChildren(root, context, structure, proof);
+      expect(check()).toBe(true);
+
+      context.dirtyChildrenByParent.set(root.path, new Map([['/1', '1']]));
+      expect(check()).toBe(true);
+      context.dirtyChildrenByParent.set(root.path, new Map([['/0', '0']]));
+      expect(check()).toBe(false);
+      context.dirtyChildrenByParent.delete(root.path);
+
+      context.entered.add(children[1]);
+      expect(check()).toBe(false);
+      proof.count = 3;
+      proof.entry = getItemEntry(root.blueprintNode, 1);
+      expect(check()).toBe(true);
+      context.entered.clear();
+      context.entered.add(children[2]);
+      expect(check()).toBe(false);
+      context.entered.clear();
+      proof.count = 5;
+      proof.entry = undefined;
+
+      proof.count = 4;
+      expect(check()).toBe(false);
+      proof.count = 5;
+      expect(check({ ...prior })).toBe(false);
+      proof.children = [...children];
+      expect(check()).toBe(false);
+      proof.children = children;
+      proof.pathChanges = 1;
+      expect(check()).toBe(false);
+      proof.pathChanges = 0;
+      root.structure = { ...prior, '2': prior['3'] };
+      expect(check(root.structure)).toBe(false);
+      root.structure = prior;
+
+      context.hasGates = true;
+      expect(check()).toBe(false);
+      context.hasGates = false;
+      context.pendingExits.set('exit', children[0]);
+      expect(check()).toBe(false);
+      context.pendingExits.clear();
+      context.distributedInputs.set(root, {
+        input: [],
+        whole: true,
+        automatic: false,
+      });
+      expect(check()).toBe(false);
+      context.distributedInputs.clear();
+      expect(check()).toBe(true);
+    } finally {
+      releaseSettlementScratch(scratch);
+    }
   });
 });

@@ -12,6 +12,9 @@ import {
 
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
+import * as proof from '../../utils/compute/childSelection/canReuseArrayChildren';
+import * as reuse from '../../utils/compute/childSelection/reuseArrayChildren';
+import * as ids from '../../utils/compute/childSelection/staticIds';
 import * as registration from '../../utils/dependencies/registerRecalculation';
 import * as rawTree from '../../utils/latent/readRawTree';
 import * as output from '../../utils/output/updateOutput';
@@ -40,6 +43,8 @@ const original = {
   registerRecalculation: registration.registerRecalculation,
   prepareArraySplice: admission.prepareArraySplice,
   applyArraySplice: splicing.applyArraySplice,
+  canReuseArrayChildren: proof.canReuseArrayChildren,
+  reuseArrayChildren: reuse.reuseArrayChildren,
 };
 
 /**
@@ -48,7 +53,7 @@ const original = {
  * @param tail - T = N - i, the length of the re-keyed tail
  * @param verb - Public remove or insert
  * @param schema - Array schema; number items by default
- * @returns Calls of every counted site, prefix entry requests inside admission and application, and the registered dirty paths
+ * @returns Calls of every counted site, prefix entry requests inside admission, application and child selection, and the registered dirty paths
  */
 const measure = (
   count: number,
@@ -81,6 +86,12 @@ const measure = (
   vi.spyOn(splicing, 'applyArraySplice').mockImplementation(
     within(original.applyArraySplice),
   );
+  vi.spyOn(proof, 'canReuseArrayChildren').mockImplementation(
+    within(original.canReuseArrayChildren),
+  );
+  vi.spyOn(reuse, 'reuseArrayChildren').mockImplementation(
+    within(original.reuseArrayChildren),
+  );
   let prefixEntries = 0;
   vi.spyOn(blueprint, 'getItemEntry').mockImplementation(
     (template, position) => {
@@ -101,6 +112,7 @@ const measure = (
     applyArraySlots: vi.spyOn(general, 'applyArraySlots'),
     updateOutput: vi.spyOn(output, 'updateOutput'),
     updateFieldNodeNameAndPath: vi.spyOn(records, 'updateFieldNodeNameAndPath'),
+    staticIds: vi.spyOn(ids, 'staticIds'),
   };
   verb(root, index);
   const admitted = admit.mock.results.some((call) => call.value !== undefined);
@@ -117,7 +129,7 @@ describe('an admitted middle remove or insert does tail-sized work', () => {
     ['remove', remove],
     ['insert', insert],
   ])(
-    '%s counts the same admission, application, registration and calculation work at 1,000 and 8,000 items for a fixed tail',
+    '%s counts the same admission, application, selection, registration and calculation work at 1,000 and 8,000 items for a fixed tail',
     (_, verb) => {
       const small = measure(1000, 10, verb);
       const large = measure(8000, 10, verb);
