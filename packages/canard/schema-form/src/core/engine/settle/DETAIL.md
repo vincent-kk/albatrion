@@ -84,6 +84,8 @@
 
 ## API Contracts
 
+- `getControlLayers`의 조각 소유권은 선택된 노드 선언의 `getFragmentOwnerPaths` 결과로 호출마다 지연 생성한 소유 경로 집합 하나에서 판정하며 호출 간 캐시는 두지 않는다. 선언·층 순서는 유지하고, 나감의 `commitExitPolicyValues`·`captureLatentDescendants`가 자식마다 한 번 호출하는 경로는 기록만 하며 바꾸지 않는다(P-08, GOAL-011).
+
 - `__tests__/scenarios`의 `effectiveList.test.ts`·`union.entry-two-step.test.ts`는 정착 선택과 union 진입의 통합 장면을 이 소유 구획에서 검증한다. 공유 owned-inline 기준 데이터는 engine 공용 시험 fixture에서 읽는다.
 - watched object의 동일성 비교는 `utils/commit/utils/__tests__/isSameDeliveryValue.test.ts`가 비교 함수의 소유 구획에서 검증한다. write 배달 시험은 이 내부 단위를 직접 가져오지 않는다.
 
@@ -179,6 +181,14 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지한다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화한다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산한다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문한다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
+
+### settle-control-layers-ownership — 조각 소유권과 층 순서 보존
+
+- 현재 구현의 참조 사본과 모든 장면·노드·선택 조합에서 층, 선언 ID, 스키마 경로, controls·host 참조와 순서가 같은지 확인한다. `properties` 이름, 중첩 조각, 형제 접두, items·additionalItems·prefixItems, 선택하지 않은 자식 선언과 게이트 꺼짐·켜짐을 포함한다.
+
+### settle-control-layers-scaling — 호출별 소유 경로 수집의 작업량
+
+- P-08 장면의 조각 수 16·32·64·128에서 한 호출의 배열 포함 검사와 문자열 경로 연산을 세어 인접 배율이 2.2 이하이고 조각 층 수가 조각 수와 같은지 확인한다. 나감의 두 호출 경로는 기록만 하며 이 검증의 최적화 범위에 넣지 않는다.
 
 ### scenario-runner-union-entry — 정착 선택과 union 진입 장면
 
