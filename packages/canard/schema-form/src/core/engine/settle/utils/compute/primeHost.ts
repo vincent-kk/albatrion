@@ -4,6 +4,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
@@ -63,7 +64,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
         ? undefined
         : JSON.stringify([
             node.path + '/' + escapeSegment(entry.name),
-            entry.node.kind,
+            getBlueprintNodeIdentity(entry.node),
           ]);
     const pending =
       key === undefined ? undefined : context.pendingExits.get(key);
