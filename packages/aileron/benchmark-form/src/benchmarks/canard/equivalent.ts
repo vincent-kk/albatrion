@@ -6,6 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { flushSync } from 'react-dom';
 
+import type { LegacyVersion } from '../../../../../canard/schema-form/bench/distEngine/loadDistEngine';
 import { equivalentFixtures } from '../../../fixtures/equivalent';
 import type {
   BenchHandle,
@@ -110,7 +111,19 @@ async function sampleRender(
   }
 }
 
-/** Runs the U13 paired fixture measurements through the benchmark-form CLI. */
+/**
+ * Read the `--legacy=<version>` option naming the published release paired with the workspace.
+ * @param option - Option value, or undefined when absent
+ * @returns The installed legacy alias; 0.16.1 when absent
+ * @throws When the value names no installed legacy alias
+ */
+function parseLegacyVersion(option: string | undefined): LegacyVersion {
+  if (option === undefined || option === '0.16.1') return '0.16.1';
+  if (option === '0.16.0') return '0.16.0';
+  throw new Error(`--legacy must be 0.16.0 or 0.16.1, got ${option}`);
+}
+
+/** Runs the U13 paired fixture measurements through the benchmark-form CLI; `--legacy=<version>` picks the paired release. */
 export async function runEquivalentBenchmarks() {
   if (!reactVersion.startsWith('19.'))
     throw new Error(`React 19 required, got ${reactVersion}`);
@@ -125,8 +138,11 @@ export async function runEquivalentBenchmarks() {
     ),
   );
   const warmup = 10;
+  const legacy = parseLegacyVersion(
+    args.find((arg) => arg.startsWith('--legacy='))?.slice('--legacy='.length),
+  );
   const cores = {
-    '0.16.0': await loadCoreBenchmark('0.16.0'),
+    [legacy]: await loadCoreBenchmark(legacy),
     latest: await loadCoreBenchmark('latest'),
   };
   const rows: object[] = [];
@@ -147,12 +163,12 @@ export async function runEquivalentBenchmarks() {
     for (const fixture of equivalentFixtures.filter(
       (fixture) => !selected || fixture.name === selected,
     )) {
-      const samples: Record<string, Sample[]> = { '0.16.0': [], latest: [] };
+      const samples: Record<string, Sample[]> = { [legacy]: [], latest: [] };
       for (let index = -warmup; index < count; index++) {
         // Alternate AB/BA to distribute JIT and temperature drift across versions.
         for (const version of index % 2 === 0
-          ? (['0.16.0', 'latest'] as const)
-          : (['latest', '0.16.0'] as const)) {
+          ? ([legacy, 'latest'] as const)
+          : (['latest', legacy] as const)) {
           forceGc();
           const sample =
             lane === 'core'
@@ -164,15 +180,24 @@ export async function runEquivalentBenchmarks() {
           performance.clearMarks();
         }
       }
-      raw.push({ fixture: fixture.name, lane, samples: Object.fromEntries(
-        Object.entries(samples).map(([version, values]) => [version, values.map(
-          sample => Object.fromEntries(Object.entries(sample).filter(([key]) => !key.startsWith('commits'))),
-        )]),
-      ) });
+      raw.push({
+        fixture: fixture.name,
+        lane,
+        samples: Object.fromEntries(
+          Object.entries(samples).map(([version, values]) => [
+            version,
+            values.map((sample) =>
+              Object.fromEntries(
+                Object.entries(sample).filter(
+                  ([key]) => !key.startsWith('commits'),
+                ),
+              ),
+            ),
+          ]),
+        ),
+      });
       for (const metric of Object.keys(samples.latest[0])) {
-        const old = summarize(
-          samples['0.16.0'].map((sample) => sample[metric]),
-        );
+        const old = summarize(samples[legacy].map((sample) => sample[metric]));
         const current = summarize(
           samples.latest.map((sample) => sample[metric]),
         );
@@ -202,27 +227,31 @@ export async function runEquivalentBenchmarks() {
       }
       fs.mkdirSync(path.dirname(output), { recursive: true });
       const summary = JSON.stringify(
-          {
-            timestamp,
-            commit,
-            node: process.version,
-            react: reactVersion,
-            cpu: os.cpus()[0].model,
-            os: `${os.type()} ${os.release()} ${os.arch()}`,
-            warmup,
-            count,
-            mode,
-            coreBundleDigests: {
-              legacy: cores['0.16.0'].digest,
-              workspace: cores.latest.digest,
-            },
-            rows,
+        {
+          timestamp,
+          commit,
+          node: process.version,
+          react: reactVersion,
+          cpu: os.cpus()[0].model,
+          os: `${os.type()} ${os.release()} ${os.arch()}`,
+          warmup,
+          count,
+          mode,
+          legacyVersion: legacy,
+          coreBundleDigests: {
+            legacy: cores[legacy].digest,
+            workspace: cores.latest.digest,
           },
-          null,
-          2,
-        );
+          rows,
+        },
+        null,
+        2,
+      );
       const timings = JSON.stringify({ timestamp, commit, warmup, count, raw });
-      if (Buffer.byteLength(summary) > 5_000_000 || Buffer.byteLength(timings) > 5_000_000)
+      if (
+        Buffer.byteLength(summary) > 5_000_000 ||
+        Buffer.byteLength(timings) > 5_000_000
+      )
         throw new Error('Measurement exceeds 5 MB');
       fs.writeFileSync(output.replace(/\.json$/, '-summary.json'), summary);
       fs.writeFileSync(output, timings);
