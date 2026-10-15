@@ -584,3 +584,4 @@
 - **351라운드(2026-10-15, 닫기/원장 관리자).** 최종 경로 #396 병합, 밤 작업 종료(reviews/round-351-closing.md).
 - **352라운드(2026-10-15, 소유자).** CLAUDE.md 경로 수정 승인, 속도 그림 물음(reviews/round-352-owner-answers.md).
 - **353라운드(2026-10-15, 소유자).** 속도 측정·개선 착수(reviews/round-353-owner-answers.md).
+- **354라운드(2026-10-15, 소유자).** 루프 전체 시간을 20~30시간으로(reviews/round-354-owner-answers.md).

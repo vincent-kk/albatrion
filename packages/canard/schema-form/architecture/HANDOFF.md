@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-15, 353라운드(소유자: 속도 측정·개선 착수) — 최적화 트랙 시작, M0 측정판 고정 진행; 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–56, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
+## 1. 지금 어디인가 (2026-10-15, 354라운드(소유자: 루프 전체를 20~30시간으로) — 최적화 트랙 시작, M0 측정판 고정 진행; 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–56, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -91,7 +91,8 @@
 - **350라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 settle PR #395 병합(90527e29b): 칸 열하나의 순환을 층이 진 organ으로, 자식 fractal 둘, pathStores·templatePaths, type.ts → types/ 칸(settle·write·validation·Form 조각 셋), misfits 저장소 키, 시험 네 쌍 병합, 형 칸 유지 이유. 검증은 agy·fairy08 대조·verifier이고 보완 열한 가지를 같은 PR에서. 편집자 결정 셋(350C-01 층 순서와 이름, 350C-02 자식 DETAIL은 자기 구현의 계약만, 350C-03 후속 셋)(reviews/round-350-closing.md). 묶음 3이 끝났다.
 - **351라운드(2026-10-15, 닫기/원장 관리자).** 최종 경로 PR #396 병합(65f3150d4)으로 밤의 구조 정리 토막이 끝났다. 밤 동안 PR 아홉(#388~#396) 병합, 라운드 345~351. 가지는 유지 다섯뿐. 소유자가 돌아와 할 일: 가지 리뷰, 결정 대기열 54~57 판정, 속도 루프 시작(351C-01)(reviews/round-351-closing.md).
 - **352라운드(2026-10-15, 소유자).** 대기열 57 승인으로 패키지 CLAUDE.md의 옮겨진 경로 한 줄을 고쳤고(대기열 57 닫힘), 속도 작업의 그림을 물어 plan/perf-optimization의 측정판 고정, 분류, 묶음별 최적화, 종합 재측정의 순서와 권고 진행을 답했다(reviews/round-352-owner-answers.md).
-- **353라운드(2026-10-15, 소유자).** 밤 작업 전부 병합과 베이스 가지 확인 뒤 속도 측정·개선 작업 착수. 순서는 plan/perf-optimization대로 측정판 고정(fixy08, 조용한 창, 재현 스크립트와 탐침), 분류·우선순위(fairy08 초안, 소유자 확인은 대기열 55의 가결정대로 기다리지 않음), 묶음별 최적화(가설마다 커밋, 수용 가설 3~4개마다 PR), 종합 재측정과 소유자 수용(reviews/round-353-owner-answers.md). 다음 라운드 번호는 354.
+- **353라운드(2026-10-15, 소유자).** 밤 작업 전부 병합과 베이스 가지 확인 뒤 속도 측정·개선 작업 착수. 순서는 plan/perf-optimization대로 측정판 고정(fixy08, 조용한 창, 재현 스크립트와 탐침), 분류·우선순위(fairy08 초안, 소유자 확인은 대기열 55의 가결정대로 기다리지 않음), 묶음별 최적화(가설마다 커밋, 수용 가설 3~4개마다 PR), 종합 재측정과 소유자 수용(reviews/round-353-owner-answers.md).
+- **354라운드(2026-10-15, 소유자).** 루프 전체를 40시간이 아니라 20~30시간으로. 편집자 결정으로 다섯 곳을 줄인다: 커밋 이분은 L2에 닿을 때만, 체감 높은 묶음부터 하고 런타임 교차는 측정과 수용만, 가설마다 상한 1시간, 구현은 codex 병렬·측정은 직렬, PR 하나에 수용 가설 4~5개(대기열 56 갱신). 목표 약 25시간(reviews/round-354-owner-answers.md). 다음 라운드 번호는 355.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -539,6 +540,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-351-closing.md` | 351라운드 닫기: 최종 경로 #396 병합, 밤 작업 종료, 소유자에게 넘기는 상태 |
 | `reviews/round-352-owner-answers.md` | 352라운드 소유자: CLAUDE.md 경로 수정 승인, 속도 그림 물음 |
 | `reviews/round-353-owner-answers.md` | 353라운드 소유자: 속도 측정·개선 착수, 계획 브리핑 |
+| `reviews/round-354-owner-answers.md` | 354라운드 소유자: 루프 전체 시간을 20~30시간으로 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
