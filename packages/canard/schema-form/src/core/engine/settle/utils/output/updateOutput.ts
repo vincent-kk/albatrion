@@ -2,6 +2,7 @@ import { FieldNodeEventType, captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
+import { keepsChildEmissions } from './utils/keepsChildEmissions';
 
 /**
  * Assemble and project a node once from its current child order.
@@ -16,12 +17,10 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   recalculated?: readonly Self[],
 ): boolean => {
   context.pendingOutputs?.delete(node);
-  const hint =
-    recalculated &&
+  const host =
     (node.behavior.type === 'array' || node.behavior.type === 'object') &&
-    node.behavior.strategy === 'branch'
-      ? { incremental: false }
-      : undefined;
+    node.behavior.strategy === 'branch';
+  const hint = recalculated && host ? { incremental: false } : undefined;
   const assembled = node.behavior.assemble(
     node,
     node.children ?? [],
@@ -43,9 +42,18 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
       )
     : sameValue(node.local, assembled);
   let local = same ? node.local : assembled;
+  const revisit =
+    (node.deliveryChanges & FieldNodeEventType.UpdateValue) !== 0 &&
+    local !== node.deliveryPreviousLocal;
   if (
-    node.deliveryChanges & FieldNodeEventType.UpdateValue &&
-    local !== node.deliveryPreviousLocal &&
+    revisit &&
+    (!host ||
+      ((!recalculated ||
+        keepsChildEmissions(node.deliveryPreviousLocal, recalculated)) &&
+        keepsChildEmissions(
+          node.deliveryPreviousLocal,
+          node.children ?? [],
+        ))) &&
     sameValue(node.deliveryPreviousLocal, local)
   )
     local = node.deliveryPreviousLocal;
@@ -65,6 +73,11 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   if (
     node.deliveryChanges & FieldNodeEventType.UpdateValue &&
     emit !== node.deliveryPreviousEmit &&
+    !(
+      revisit &&
+      emit === local &&
+      node.deliveryPreviousEmit === node.deliveryPreviousLocal
+    ) &&
     sameValue(node.deliveryPreviousEmit, emit)
   )
     emit = node.deliveryPreviousEmit;
