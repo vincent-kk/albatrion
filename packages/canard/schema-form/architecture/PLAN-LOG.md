@@ -303,6 +303,7 @@
 | 2026-10-16 | 388라운드 소유자: 실험 결과가 원장·사양에 맞는 길이면 PR 생성·병합까지 원장 관리자가 진행, 소유자가 수용 못 하면 revert. 보충 1줄 | `reviews/round-388-owner-answers.md` |
 | 2026-10-16 | 389라운드(닫기): 공유 선언 충돌 fold 판정 결함 PR #409 검증·squash-merge(10710d8b2); 청사진 노드 identity 비교, hasSharedConflict 삭제, 기존 기대 변경 0건; 보충 셋; F1·F2는 별도 PR. 보충 8줄 | `reviews/round-389-closing.md` |
 | 2026-10-16 | 390라운드(닫기): union fold 정체 결함 F1 PR #410 검증·squash-merge(319a1109b); 정체 토큰 union:<fold mask>, 선택은 청사진 노드 동일성, 기존 기대 변경 2건(옛 범주 열쇠 단언); 보충 둘. 보충 5줄 | `reviews/round-390-closing.md` |
+| 2026-10-16 | 391라운드(닫기): F2 배열 아이템 종류별 노드 PR #411 검증·squash-merge(ef87cfbcc); fold별 아이템 후보, 후보별 잠복 열쇠, 단일 후보 불변, 기존 기대 변경 0건; F3 별도 PR, 대기열 62, agy 한도 기간 검증 조건. 보충 7줄 | `reviews/round-391-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -636,3 +637,4 @@
 - **388라운드(2026-10-16, 소유자).** 실험이 원장·사양에 맞으면 PR·병합까지 진행, 수용 못 하면 revert(reviews/round-388-owner-answers.md).
 - **389라운드(2026-10-16, 닫기).** 공유 충돌 fold 판정 #409 병합(10710d8b2), F1·F2 별도 PR(reviews/round-389-closing.md).
 - **390라운드(2026-10-16, 닫기).** F1 union fold 정체 #410 병합(319a1109b), 정체 토큰, 보충 둘(reviews/round-390-closing.md).
+- **391라운드(2026-10-16, 닫기).** F2 배열 아이템 종류별 노드 #411 병합(ef87cfbcc), F3 별도 PR, 대기열 62(reviews/round-391-closing.md).
