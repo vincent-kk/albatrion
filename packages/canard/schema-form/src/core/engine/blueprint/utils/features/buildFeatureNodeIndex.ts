@@ -34,20 +34,20 @@ export const buildFeatureNodeIndex = (
     const targets = new Set<string>();
     const children = [
       ...node.childEntries,
-      ...(node.prefixItems ?? []).map((child, index) => ({
-        name: String(index),
-        node: child,
-        declarations: child.declarations,
-      })),
-      ...(node.item
-        ? [
-            {
-              name: $.Wildcard,
-              node: node.item,
-              declarations: node.item.declarations,
-            },
-          ]
-        : []),
+      ...(node.prefixItems ?? []).flatMap((item, index) =>
+        (node.prefixItemCandidates?.[index] ?? [item]).map((child) => ({
+          name: String(index),
+          node: child,
+          declarations: child.declarations,
+        })),
+      ),
+      ...(node.itemCandidates ?? (node.item ? [node.item] : [])).map(
+        (item) => ({
+          name: $.Wildcard,
+          node: item,
+          declarations: item.declarations,
+        }),
+      ),
     ];
     const buildOwners = () =>
       children.map((child) => {
