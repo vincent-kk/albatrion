@@ -1,9 +1,10 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import { FormErrorGroup } from '../codes/FormErrorGroup';
 import type { UnhandledErrorCode } from '../type';
 
 /** Group every UnhandledError code carries; the code value repeats it before the bare name. */
-const GROUP = 'UNHANDLED_ERROR';
+const GROUP = FormErrorGroup.Unhandled;
 
 /**
  * Error class for unexpected or undefined errors.
