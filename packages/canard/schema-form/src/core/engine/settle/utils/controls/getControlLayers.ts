@@ -22,6 +22,30 @@ const declarationIds = (node: BlueprintNode): readonly number[] => {
   return ids;
 };
 
+/** Path segments through which a fragment contributes a declaration to a child. */
+const OWNER_MARKERS = ['/properties/', '/items/', '/prefixItems/'] as const;
+
+/**
+ * Collect the fragment paths that own a selected node declaration.
+ * @param declarations - Static declarations of the addressed node
+ * @param ids - Selected declaration IDs of that node
+ * @returns Every prefix that a selected declaration path continues with an owner marker
+ */
+const collectOwnerPaths = (
+  declarations: BlueprintNode['declarations'],
+  ids: readonly number[],
+): ReadonlySet<string> => {
+  const owners = new Set<string>();
+  for (const { id, schemaPath } of declarations)
+    if (ids.includes(id))
+      for (const marker of OWNER_MARKERS) {
+        let at = schemaPath.indexOf(marker);
+        for (; at !== -1; at = schemaPath.indexOf(marker, at + 1))
+          owners.add(schemaPath.slice(0, at));
+      }
+  return owners;
+};
+
 /** Shape data needed to resolve a declaration for a live or latent occurrence. */
 export interface ControlTarget<Self> {
   /** Decoded direct-child name used by controls.fields. */
@@ -97,6 +121,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   if (!parent) return groups;
   const parentIds = selected(parent);
   const parentDeclarations = parent.blueprintNode.declarations;
+  let owners: ReadonlySet<string> | undefined;
   for (let index = 0; index < parentDeclarations.length; index++) {
     const declaration = parentDeclarations[index];
     if (
@@ -111,25 +136,12 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
     );
     if (!controls || typeof controls !== 'object' || isArray(controls))
       continue;
-    let ownsFragment = false;
-    if (declaration.scope === 'fragment')
-      for (let childIndex = 0; childIndex < declarations.length; childIndex++) {
-        const child = declarations[childIndex];
-        if (
-          nodeIds.includes(child.id) &&
-          (child.schemaPath.startsWith(
-            declaration.schemaPath + '/properties/',
-          ) ||
-            child.schemaPath.startsWith(declaration.schemaPath + '/items/') ||
-            child.schemaPath.startsWith(
-              declaration.schemaPath + '/prefixItems/',
-            ))
-        ) {
-          ownsFragment = true;
-          break;
-        }
-      }
-    if (ownsFragment)
+    if (
+      declaration.scope === 'fragment' &&
+      (owners ??= collectOwnerPaths(declarations, nodeIds)).has(
+        declaration.schemaPath,
+      )
+    )
       groups.push({
         layer: 'fragment',
         declarationId: declaration.id,
