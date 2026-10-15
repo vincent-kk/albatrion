@@ -68,7 +68,25 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         Reflect.get(controls, CONTROL_KEY.resetInteraction) !== undefined ||
         Reflect.get(controls, CONTROL_KEY.injectTo) !== undefined;
       if (hasOwnRules && declaration.scope === 'fragment') {
-        for (const entry of node.childEntries) {
+        // Tuple positions bind by index, apart from the repeated item template (`*`).
+        const targets = [
+          ...node.childEntries,
+          ...(node.prefixItems ?? []).map((item, index) => ({
+            name: String(index),
+            node: item,
+            declarations: item.declarations,
+          })),
+          ...(node.item
+            ? [
+                {
+                  name: '*',
+                  node: node.item,
+                  declarations: node.item.declarations,
+                },
+              ]
+            : []),
+        ];
+        for (const entry of targets) {
           const selected = entry.declarations.filter((child) =>
             getFragmentOwnerPaths(child.schemaPath).includes(
               declaration.schemaPath,

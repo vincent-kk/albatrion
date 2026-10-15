@@ -176,14 +176,28 @@ describe('derive rule table under the shared owner rule', () => {
     owners.legacy = false;
   });
 
-  it('keeps every edge-schema rule table element-wise equal', () => {
-    for (const [label, schema] of EDGE_SCHEMAS)
+  it('keeps object edge-schema tables equal and includes every declared array target', () => {
+    for (const [label, schema] of EDGE_SCHEMAS.slice(0, 2))
       expect(tableOf(schema, false), label).toBe(tableOf(schema, true));
     expect(
       JSON.parse(tableOf(EDGE_SCHEMAS[0][1], false)).rules.filter(
         (rule: { layer: string }) => rule.layer === 'fragment',
       ),
     ).toHaveLength(12);
+    expect(
+      JSON.parse(tableOf(EDGE_SCHEMAS[2][1], false)).rules.map(
+        (rule: { kind: string; targetName?: string }) => [
+          rule.kind,
+          rule.targetName,
+        ],
+      ),
+    ).toEqual([
+      ['derived', '*'],
+      ['unsetValue', '0'],
+      ['unsetValue', '*'],
+      ['resetInteraction', '0'],
+    ]);
+    expect(JSON.parse(tableOf(EDGE_SCHEMAS[2][1], true)).rules).toHaveLength(2);
   });
 
   it('keeps every corpus rule table element-wise equal', () => {
