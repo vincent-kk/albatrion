@@ -8,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { nodeFromJSONSchema as LegacyFactory } from '../../src/__legacy__/core/nodeFromJSONSchema';
 import type {
   AuthoredSchema,
+  FieldNodeState,
   InferFieldNode,
   SetValueOption,
   ValidationMode,
@@ -16,6 +17,7 @@ import type {
   fieldNodeFactory,
   isArrayNode,
   mountFieldNode,
+  writeFieldNodeInput,
 } from '../../src/core';
 import type {
   BEHAVIORS,
@@ -42,6 +44,8 @@ type DistEngine = {
   SetValueOption: typeof SetValueOption;
   ValidationMode: typeof ValidationMode;
   isArrayNode: typeof isArrayNode;
+  writeFieldNodeInput: typeof writeFieldNodeInput;
+  FieldNodeState: typeof FieldNodeState;
 };
 
 const internalNames = [
@@ -57,6 +61,7 @@ const internalNames = [
   'sameValue',
   'mountFieldNode',
   'buildFieldNodeTree',
+  'writeFieldNodeInput',
 ] as const;
 const defaultDirectory = fileURLToPath(
   new URL('../.results/dist-engine/', import.meta.url),
