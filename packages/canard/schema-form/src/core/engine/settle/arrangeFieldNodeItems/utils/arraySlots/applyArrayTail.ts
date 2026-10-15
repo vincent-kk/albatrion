@@ -19,8 +19,20 @@ import { clearArrayRuntimePaths } from '../rekey/clearArrayRuntimePaths';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 
 /**
+ * Read one position of the host's load value, as the last step of the item's load-path walk does.
+ * @param hostValue - The host's load value, read once per application
+ * @param key - Canonical position name, its own unescaped path segment
+ * @returns The retained source at that position, or undefined beneath a non-object
+ */
+const readPositionLoadValue = (hostValue: unknown, key: string): unknown =>
+  hostValue !== null && typeof hostValue === 'object'
+    ? Reflect.get(hostValue, key)
+    : undefined;
+
+/**
  * Apply a proven prefix-preserving proposal without composing retained raw trees.
  * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
+ * A perished item's detached defaultValue is filled from the host's load value by position (NODE-044 reads unchanged).
  * An empty result (clear, or a pop of the only item) removes the host's path-store entries by host prefix instead of per-position re-keying.
  * @param host - Live branch array with no whole raw override
  * @param plan - Proposal accepted by canApplyArrayTail, prepareArrayAppend or prepareArrayPop; appended slots carry values and retained prefix slots are never read
@@ -92,19 +104,30 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const moves: ArrayPathMove[] = [];
   let perishedPaths: Set<string> | undefined;
   for (let index = prefixCount; index < oldCount; index++) {
-    const item = items[String(index)];
+    const key = String(index);
+    const item = items[key];
     if (length) moves.push({ previous: host.path + '/' + index });
     if (!item) continue;
     context.perished.add(item);
+    // Equals the item's load-path walk: its path is the host's plus this position,
+    // and the load snapshot is not replaced before the end of this application.
+    const load =
+      !item.detached && item.path === host.path + '/' + key
+        ? { value: readPositionLoadValue(snapshot, key) }
+        : undefined;
     visitFieldNodes(
       item,
       (departing) => {
         if (!departing.runtime.detachedReads?.has(departing))
-          captureDetachedFieldNodeReads(departing, {
-            emit: context.previousEmit,
-            context: context.previousContext,
-            schema: departing.schema.schema,
-          });
+          captureDetachedFieldNodeReads(
+            departing,
+            {
+              emit: context.previousEmit,
+              context: context.previousContext,
+              schema: departing.schema.schema,
+            },
+            departing === item ? load : undefined,
+          );
       },
       { owned: true },
     );
