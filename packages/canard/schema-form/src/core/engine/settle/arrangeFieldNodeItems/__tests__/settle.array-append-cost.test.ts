@@ -102,6 +102,6 @@ describe('an admitted push does prefix work independent of the item count', () =
     expect(large.sized.every).toBe(0);
     expect(small.sized.slice).toBe(1);
     expect(small.sized.concat).toBe(1);
-    expect(large.sized.push - 8000).toBe(small.sized.push - 1000);
+    expect(large.sized.push).toBe(small.sized.push);
   });
 });

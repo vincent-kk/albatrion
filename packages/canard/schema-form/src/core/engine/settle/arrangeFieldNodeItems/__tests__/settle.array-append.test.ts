@@ -14,6 +14,66 @@ afterEach(() => vi.restoreAllMocks());
 
 // filid:contract settle-array-append
 describe('static push through the append path matches the general path', () => {
+  it('densifies a sparse and a short load snapshot on an admitted push without changing them', () => {
+    const sparse: unknown[] = [];
+    sparse.length = 3;
+    sparse[1] = 'snapshot';
+    const short: unknown[] = ['x'];
+    const { candidate: fromSparse } = compareArrayAppend(
+      { type: 'array', items: { type: 'string' } },
+      ['a', 'b', 'c'],
+      [
+        {
+          apply: (root) => {
+            root.runtime.loadSnapshot = sparse;
+          },
+          append: false,
+        },
+        { apply: (root) => dispatchPush(root, 'd'), append: true },
+      ],
+    );
+    const { candidate: fromShort } = compareArrayAppend(
+      { type: 'array', items: { type: 'string' } },
+      ['a', 'b', 'c'],
+      [
+        {
+          apply: (root) => {
+            root.runtime.loadSnapshot = short;
+          },
+          append: false,
+        },
+        { apply: (root) => dispatchPush(root, 'd'), append: true },
+      ],
+    );
+
+    expect(Object.keys(Object(fromSparse.runtime.loadSnapshot))).toEqual([
+      '0',
+      '1',
+      '2',
+      '3',
+    ]);
+    expect(fromSparse.runtime.loadSnapshot).toEqual([
+      undefined,
+      'snapshot',
+      undefined,
+      'd',
+    ]);
+    expect(Object.keys(Object(fromShort.runtime.loadSnapshot))).toEqual([
+      '0',
+      '1',
+      '2',
+      '3',
+    ]);
+    expect(fromShort.runtime.loadSnapshot).toEqual([
+      'x',
+      undefined,
+      undefined,
+      'd',
+    ]);
+    expect(Object.keys(sparse)).toEqual(['1']);
+    expect(short).toEqual(['x']);
+  });
+
   it('appends numbers, undefined and an absent value, then a leaf edit, -0 and NaN', () => {
     const { candidate } = compareArrayAppend(
       { type: 'array', items: { type: 'number' } },

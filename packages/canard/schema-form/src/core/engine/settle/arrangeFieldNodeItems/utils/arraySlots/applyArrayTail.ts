@@ -64,13 +64,13 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     for (const item of host.children ?? []) registry.remove(item);
 
   const children = (host.children ?? []).slice(0, prefixCount);
-  const nextSnapshot: unknown[] = [];
+  const nextSnapshot: unknown[] = new Array(prefixCount);
+  for (let index = 0; index < prefixCount; index++)
+    nextSnapshot[index] = oldSnapshot[index];
   const extras: unknown[] = [];
-  for (let index = 0; index < prefixCount; index++) {
-    nextSnapshot.push(oldSnapshot[index]);
-    if (!host.blueprintNode.item && index >= templateCount)
+  if (!host.blueprintNode.item)
+    for (let index = templateCount; index < prefixCount; index++)
       extras.push(oldExtras[index - templateCount]);
-  }
   const created: { node: Self; value: unknown }[] = [];
   for (let index = prefixCount; index < length; index++) {
     const slot = plan.slots[index - offset];
