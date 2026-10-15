@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { getItemEntry } from '../../../../blueprint';
+import { getItemEntries } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
 import { captureFieldNodeChange } from '../../../../record';
 import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
@@ -79,6 +79,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   const nextSnapshot: unknown[] = [];
   const reused = new Set<Self>();
   const created: { node: Self; value: unknown }[] = [];
+  let deferred = false;
   const destinations = new Map<number, number>();
   for (let index = 0; index < plan.slots.length; index++) {
     const slot = plan.slots[index];
@@ -86,10 +87,14 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     const value = 'value' in slot ? slot.value : rawSlots?.[slot.from];
     nextRaw.push(value);
     nextSnapshot.push('value' in slot ? slot.value : oldSnapshot[slot.from]);
-    const entry = getItemEntry(host.blueprintNode, index);
+    const candidates = getItemEntries(host.blueprintNode, index);
+    const entry = candidates[0];
     if (!entry) continue;
     const old = from === undefined ? undefined : oldItems[String(from)];
-    if (old && old.blueprintNode === entry.node) {
+    if (
+      old &&
+      candidates.some((candidate) => old.blueprintNode === candidate.node)
+    ) {
       nextItems[String(index)] = old;
       reused.add(old);
       destinations.set(from!, index);
@@ -99,6 +104,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       from === undefined || rawSlots
         ? value
         : (rawSlots = readRawSlots(host, context))[from];
+    if (from !== undefined && !old) destinations.set(from, index);
+    if (candidates.length > 1) {
+      nextRaw[index] = source;
+      deferred = true;
+      continue;
+    }
     const node = createChildNode(host, entry);
     nextItems[String(index)] = node;
     created.push({ node, value: source });
@@ -172,6 +183,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   context.changedNodes.add(host);
   context.dirtyPaths.add(host.path);
   context.shapeDirtyPaths.add(host.path);
+  if (deferred)
+    context.distributedInputs.set(host, {
+      input: nextRaw,
+      whole: false,
+      automatic: false,
+    });
   for (const { node, value } of created) {
     context.entered.add(node);
     indexEnteredLatentKey(context, node);

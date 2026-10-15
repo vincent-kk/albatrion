@@ -11,6 +11,12 @@ export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
 ): boolean => {
+  const template = host.blueprintNode;
+  if (
+    (template.itemCandidates?.length ?? 0) > 1 ||
+    template.prefixItemCandidates?.some((candidates) => candidates.length > 1)
+  )
+    return false;
   if (host.raw !== undefined || host.itemCount === plan.slots.length)
     return false;
   const prefixCount = Math.min(host.itemCount, plan.slots.length);
