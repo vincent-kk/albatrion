@@ -6,6 +6,9 @@
 - 의존 순서는 blueprint < record < {behaviors, navigation} < validation < derive < settle < write이다. `derive`와 `settle`은 형제이며, settle이 derive 진입점을 소비한다. 둘이 함께 쓰는 순수 보조 넷은 engine의 `utils/compute/sameValue.ts`, `utils/paths/resolveDependencyPath.ts`, `utils/controls/getCommittedDeclarationKey.ts`, `utils/controls/getControlExpression.ts`에 있으며, 두 자식이 위로 열린 방향으로 직접 가져온다. 이 보조들은 engine의 organ이므로 자식 fractal(`blueprint` 등)의 형도 가져오지 않는다(모델 B1). 필요한 칸만 구조 형으로 받는다. `getControlExpression`은 청사진의 식 목록을 받은 그대로의 원소 형으로 돌려준다. 검증은 결과 콜백으로 쓰기에 돌려주며 타입 간선도 거꾸로 만들지 않는다(NODE-016·045).
 - surface는 이 진입점만 거쳐서 엔진 계약을 소비한다. 자식 엔진 모듈은 형제의 진입점을 직접 소비한다.
 - 경로 색인 보조는 레코드 형과 정착·생성이 함께 소비하므로 engine의 utils 구획에 둔다. 기존 native Map·Set과 prefix 색인 계약은 그대로 유지한다.
+- 조각 소유 판정은 하나다. 선언 경로 c가 조각 D에 속한다는 것은, c가 D.schemaPath 뒤에 `/properties/` 또는 `/prefixItems/`로 이어지거나, `/items` 또는 `/additionalItems`로 이어지고 그 뒤가 끝이거나 `/`인 경우를 말한다. 그래서 한 스키마 `items`(`D/items`), 옛 튜플 `items`(`D/items/<i>`), `prefixItems`(`D/prefixItems/<i>`), 옛 꼬리 `additionalItems`(`D/additionalItems`)로 선언한 배열 아이템도 그 조각이 직접 선언한 직계 자식이다(CONTROLS-077, 35C-08).
+- 이 판정은 `utils/controls/getFragmentOwnerPaths.ts` 한 벌이 맡는다. 선언 경로 c를 받아 c가 속하는 D 후보를 모두 짧은 순서로 돌려주고, 호출자는 조각 경로가 목록에 있는지로 소유를 판정한다. blueprint의 `buildFeatureNodeIndex`, settle의 `getControlLayers`, derive의 `getDeriveRuleTable` 세 곳이 이 보조를 쓴다. 세 사용자는 engine의 서로 다른 자식 fractal이므로 가장 낮은 공통 fractal은 engine이고, 보조는 문자열만 받으므로 자식의 형을 가져오지 않는 engine의 `utils/controls` organ에 둔다. 각 자식은 위로 열린 방향으로 직접 가져온다.
+- 조각 derive 규칙(derived·unsetValue·resetInteraction·injectTo)은 아직 배열 아이템에 닿지 않음(대기열 60). `getDeriveRuleTable`은 같은 판정을 쓰지만 대상 후보를 객체 속성 항목(`childEntries`)에서만 찾기 때문이다. 아이템 자리는 `item`·`prefixItems` 템플릿에 있으므로, 규칙 표가 이를 대상으로 삼으려면 아이템 이름(`*`, 색인)에 묶인 다중 대상 규칙과 그 런타임 대상 해석이 따로 필요하다.
 
 ## API Contracts
 
@@ -43,6 +46,10 @@
 
 - 진입점은 위 그룹의 값과 형을 이름으로 재수출하며 와일드카드 수출은 없다. surface가 엔진을 참조할 때는 반드시 engine/index를 통해서만 닿는다.
 
+### fragment-owner-paths — 조각 소유 판정의 한 정본
+
+- 선언 경로마다 그 선언을 직접 선언한 위치가 `/properties/`·`/prefixItems/`·`/items`·`/additionalItems` 표지에 따라 빠짐없이 나오며, `/items`와 `/additionalItems`는 경로 끝이거나 `/`가 뒤따를 때만 표지로 읽힌다. `itemsList`처럼 표지로 시작하는 다른 이름이나 끝에 색인이 없는 `/prefixItems`는 소유를 만들지 않는다.
+
 ### engine-observables — 재배치의 관측 보존
 
 - 기존 청사진, 동작 행, 정착, 쓰기, 검증 시험이 값, 형상, 오류, 사건에 대해 같은 단언 결과를 낸다. 고정 리비전 대조 시험은 옛 경로를 현재 배치로 바꿔 해석한다.
@@ -57,4 +64,4 @@
 
 ## Last Updated
 
-계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02).
+계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077, 35C-08).
