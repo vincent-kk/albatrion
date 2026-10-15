@@ -113,6 +113,16 @@
 | 2026-10-15 | 357라운드 소유자: 속도 측정은 빌드 결과물로. 보충 1줄 | `reviews/round-357-owner-answers.md` |
 | 2026-10-15 | 358라운드 소유자: 내부 이름은 빌드 결과물 개입으로(임시), 이후 폼 e2e. 보충 1줄 | `reviews/round-358-owner-answers.md` |
 | 2026-10-15 | 359라운드 소유자: codex 위임의 데이터 공유 허용 공유. 보충 1줄 | `reviews/round-359-owner-answers.md` |
+| 2026-10-15 | 360라운드(닫기): L1 PR #399 검증·squash-merge(3c0e46576); SETTLE-043 보강, G8 설계 넷, L1 예외, L2 이월. 보충 4줄 | `reviews/round-360-closing.md` |
+| 2026-10-15 | 361라운드 소유자: 속도 수용은 옛·현재·배율·절대시간으로 소유자가, push 설계는 소유자 검토. 보충 1줄 | `reviews/round-361-owner-answers.md` |
+| 2026-10-15 | 362라운드 소유자: push 지름길 승낙, 두 번째 값 복사는 가능하면 줄임, pop·remove 지름길 물음. 보충 1줄 | `reviews/round-362-owner-answers.md` |
+| 2026-10-15 | 363라운드 소유자: 배열 동사 전부와 자식 노드 배열·로드 스냅숏 복사의 검증 데이터 요구. 보충 1줄 | `reviews/round-363-owner-answers.md` |
+| 2026-10-15 | 364라운드 소유자: 지름길은 배열 동사 전부에, 원칙 변경이 필요하면 보고. 보충 1줄 | `reviews/round-364-owner-answers.md` |
+| 2026-10-15 | 365라운드 소유자: push·pop 꼬리 연산, remove·insert 재매김 동사 틀; insert를 지금 추가해 remove 비효율과 함께 해결. 보충 1줄 | `reviews/round-365-owner-answers.md` |
+| 2026-10-15 | 366라운드 소유자: 지름길 설계는 볼 것 없음, 중간 결과 보고. 보충 1줄 | `reviews/round-366-owner-answers.md` |
+| 2026-10-15 | 367라운드 소유자: 배열 지름길 마무리 뒤 onChange·setValue·객체 경로의 유사 비효율 확인(L2 첫 묶음). 보충 1줄 | `reviews/round-367-owner-answers.md` |
+| 2026-10-15 | 368라운드 소유자: 전후 표는 옛 판·수정 전·수정 후 각각 비율과 절대값. 보충 1줄 | `reviews/round-368-owner-answers.md` |
+| 2026-10-15 | 369라운드 소유자: 비동기 옛 판도 적용 시점까지 측정. 보충 1줄 | `reviews/round-369-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
