@@ -42,6 +42,27 @@ const hostWith = (controls: Record<string, unknown>): BlueprintSchema => ({
   },
 });
 
+/** Two sibling hosts, `a` holding an array of arrays, so latent raw and misfits can sit inside or outside the written host. */
+const SCOPED: BlueprintSchema = {
+  type: 'object',
+  properties: {
+    a: {
+      type: 'object',
+      properties: {
+        v: { type: 'number' },
+        rows: {
+          type: 'array',
+          items: { type: 'array', items: { type: 'number' } },
+        },
+      },
+    },
+    b: { type: 'object', properties: { w: { type: 'number' } } },
+  },
+};
+
+/** Mounted source of `SCOPED`. */
+const SCOPED_INPUT = { a: { v: 1, rows: [[1], [2]] }, b: { w: 2 } };
+
 /** Mounted source of `hostWith`. */
 const INPUT = { h: { flag: true, key: 1, field: 2 }, s: 's', rows: [[1], [2]] };
 
@@ -77,42 +98,84 @@ describe('same-value admission declines and the general path settles', () => {
     ]);
   });
 
-  it('a tree holding latent raw, until the latent write is gone', async () => {
+  it('latent raw under the written host declines; latent raw outside it does not once its change is published', async () => {
     let popped: DispatchTestNode | undefined;
-    await compareSameValueWrite(hostWith({}), INPUT, [
+    await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
         apply: (root) => {
-          popped = root.structure!.rows.children![1];
-          return dispatchPop(root.structure!.rows);
+          const rows = root.structure!.a.structure!.rows;
+          popped = rows.children![1];
+          return dispatchPop(rows);
         },
         skip: false,
       },
       { apply: () => dispatchPush(popped!, 5), skip: false },
       {
+        apply: (root) => dispatchSetValue(root.structure!.b.structure!.w, 3),
+        skip: false,
+      },
+      {
         apply: (root) => {
           expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
           expect(root.runtime.misfitPaths.size).toBe(0);
-          return dispatchSetValue(hostOf(root), hostOf(root).emit);
+          return dispatchSetValue(root.structure!.b, root.structure!.b.emit);
+        },
+        skip: true,
+      },
+      {
+        apply: (root) =>
+          dispatchSetValue(root.structure!.a, { v: 1 }, WriteOption.Merge),
+        skip: false,
+      },
+    ]);
+  });
+
+  it('a root setValue(getValue()) turns the latent raw under it into none and falls back, its prune marking a pending latent change (18C-96)', async () => {
+    let popped: DispatchTestNode | undefined;
+    await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
+      {
+        apply: (root) => {
+          const rows = root.structure!.a.structure!.rows;
+          popped = rows.children![1];
+          return dispatchPop(rows);
+        },
+        skip: false,
+      },
+      { apply: () => dispatchPush(popped!, 5), skip: false },
+      {
+        apply: (root) => dispatchSetValue(root.structure!.b.structure!.w, 3),
+        skip: false,
+      },
+      {
+        apply: (root) => {
+          expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
+          dispatchSetValue(root, root.emit);
+          expect(root.runtime.latentRaw.size).toBe(0);
         },
         skip: false,
       },
     ]);
   });
 
-  it('a retained misfit path', async () => {
-    await compareSameValueWrite(
-      hostWith({}),
-      { ...INPUT, h: { ...INPUT.h, key: 'text' } },
-      [
-        {
-          apply: (root) => {
-            expect(root.runtime.misfitPaths.size).toBeGreaterThan(0);
-            return dispatchSetValue(hostOf(root), hostOf(root).emit);
-          },
-          skip: false,
+  it('a misfit under the written host declines; a misfit outside it does not', async () => {
+    await compareSameValueWrite(SCOPED, { ...SCOPED_INPUT, b: { w: 'text' } }, [
+      {
+        apply: (root) => {
+          expect(root.runtime.misfitPaths.size).toBeGreaterThan(0);
+          return dispatchSetValue(root.structure!.a, root.structure!.a.emit);
         },
-      ],
-    );
+        skip: true,
+      },
+      {
+        apply: (root) =>
+          dispatchSetValue(root.structure!.b, root.structure!.b.emit),
+        skip: false,
+      },
+      {
+        apply: (root) => dispatchSetValue(root, root.emit),
+        skip: false,
+      },
+    ]);
   });
 
   it('a load, a multi-write batch and a visit walk with two writes', async () => {
