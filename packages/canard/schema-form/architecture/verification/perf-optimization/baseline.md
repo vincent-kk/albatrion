@@ -8,7 +8,7 @@
 
 - **판정에 쓰는 실행:** `20261015T0247-a3be21d-before-dist`(`/private/tmp/claude-501/perf-runs/20261015T0247-a3be21d-before-dist/`). 빌드 결과물(dist)로 다시 잰 행 전부: 독립 스크립트 둘×두 런타임(`B2` 포함), vitest 벤치, `--equivalent` core, 탐침 넷×두 런타임.
 - **그대로 쓰는 실행:** `20261015T0138-c59ba13-before`(`/private/tmp/claude-501/perf-runs/20261015T0138-c59ba13-before/`). `--equivalent` render와 heap 행은 그때도 dist였으므로 이 실행의 값을 씁니다. 나머지 행의 이 실행 값은 "소스 기준(참고)" 절에만 둡니다.
-- **재현:** 패키지 디렉터리에서 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<조용한 창 시작 ISO 시각>`을 실행합니다. 스크립트는 먼저 rolldown으로 JS 번들을 빌드하고, 아래 행을 같은 인자로 순서대로 돌리며, 행마다 명령·작업 디렉터리·`NODE_ENV`·시작과 끝 시각·사용한 dist 해시를 `env.json`에 적습니다. `--only=<행,행>`으로 일부 행만 다시 잴 수 있습니다. 러너의 rolldown 빌드는 `dist`를 비우고 JS 번들만 다시 만들어 타입 선언(`.d.ts`)이 사라지므로, 러너를 돌린 뒤 플러그인 빌드나 타입을 읽는 검사를 하려면 먼저 `yarn --cwd packages/canard/schema-form build`를 다시 돌립니다.
+- **재현:** 패키지 디렉터리에서 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<조용한 창 시작 ISO 시각>`을 실행합니다. 스크립트는 먼저 rolldown으로 JS 번들을 빌드하고, 아래 행을 같은 인자로 순서대로 돌리며, 행마다 명령·작업 디렉터리·`NODE_ENV`·시작과 끝 시각·사용한 dist 해시를 `env.json`에 적습니다. `--only=<행,행>`으로 일부 행만 다시 잴 수 있습니다. `--legacy=<0.16.0|0.16.1>`은 `--equivalent` 행이 짝지을 옛 판입니다. 기본값 0.16.0이 이 기준선의 재현이고, M3 종합 재측정은 `--legacy=0.16.1`을 줍니다. 요약의 옛 판 번들 해시는 넘긴 판의 번들과 대조합니다. 독립 스크립트 행은 늘 0.16.0과 비교합니다. 러너의 rolldown 빌드는 `dist`를 비우고 JS 번들만 다시 만들어 타입 선언(`.d.ts`)이 사라지므로, 러너를 돌린 뒤 플러그인 빌드나 타입을 읽는 검사를 하려면 먼저 `yarn --cwd packages/canard/schema-form build`를 다시 돌립니다.
 
 ## 환경
 
@@ -38,13 +38,13 @@ dist 실행 디렉터리에는 아래 가운데 `equivalent-render*`와 `heap-sn
 
 ## 옛 판 — v0.16.0과 같은 실행 (`benchmark-form --equivalent`)
 
-`packages/aileron/benchmark-form`에서 `node --expose-gc --import tsx src/index.ts --equivalent --mode=<core|render> --min-samples=100 --out=<실행 디렉터리>/equivalent-<mode>.json`. 준비 10회, 쌍 표본 100회. 옛 판은 `@canard/schema-form_0.16.0`(배포 tgz), 새 판은 작업 폴더 빌드입니다. 칸은 ms 중앙값(10–90백분위; 99백분위)이고, 판정은 TEST-073의 선(처리량 평균 15% 넘는 하락과 Welch p<0.05)입니다. `guard:baseline`과 `guard:check`는 쓰지 않았습니다. 패키지 독립 스크립트의 레거시 열은 아래 "최적화 전" 표에 보조 자료로 있습니다.
+`packages/aileron/benchmark-form`에서 `node --expose-gc --import tsx src/index.ts --equivalent --mode=<core|render> --min-samples=100 --legacy=0.16.0 --out=<실행 디렉터리>/equivalent-<mode>.json`. 준비 10회, 쌍 표본 100회. 옛 판은 `@canard/schema-form_0.16.0`(배포 tgz), 새 판은 작업 폴더 빌드입니다. 칸은 ms 중앙값(10–90백분위; 99백분위)이고, 판정은 TEST-073의 선(처리량 평균 15% 넘는 하락과 Welch p<0.05)입니다. `guard:baseline`과 `guard:check`는 쓰지 않았습니다. 패키지 독립 스크립트의 레거시 열은 아래 "최적화 전" 표에 보조 자료로 있습니다.
 
 ### core (`equivalent-core-summary.json`)
 
 실행 `20261015T0247-a3be21d-before-dist`의 값입니다. 357라운드부터 새 판도 dist 복사본을 씁니다(환경 절).
 
-| 상황 | 지표 | 옛 판 0.16.0 | 최적화 전 `c59ba13` | 비 | 처리량 하락 | p | 판정 |
+| 상황 | 지표 | 옛 판 0.16.0 | 최적화 전 `c59ba13` | 비(0.16.0 대비) | 처리량 하락 | p | 판정 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | sample-0 | core-mount | 0.254 (0.242–0.271; p99 0.316) | 0.306 (0.289–0.337; p99 0.380) | 1.21× | 17.0% | 1.6e-54 | **회귀** |
 | sample-0 | core-update | 0.066 (0.059–0.080; p99 0.092) | 0.169 (0.159–0.190; p99 0.213) | 2.56× | 61.1% | 2.1e-79 | **회귀** |
@@ -89,7 +89,7 @@ dist 실행 디렉터리에는 아래 가운데 `equivalent-render*`와 `heap-sn
 
 React 19.2.6과 jsdom 위의 마운트·갱신 벽시계와 Profiler 시간입니다.
 
-| 상황 | 지표 | 옛 판 0.16.0 | 최적화 전 `c59ba13` | 비 | 처리량 하락 | p | 판정 |
+| 상황 | 지표 | 옛 판 0.16.0 | 최적화 전 `c59ba13` | 비(0.16.0 대비) | 처리량 하락 | p | 판정 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | sample-0 | render-mount-wall | 4.92 (3.69–5.12; p99 5.26) | 5.18 (5.03–5.35; p99 5.58) | 1.05× | 15.1% | 5.4e-17 | **회귀** |
 | sample-0 | render-update-wall | 2.19 (1.92–3.42; p99 3.51) | 3.23 (2.20–3.47; p99 3.62) | 1.48× | 21.8% | 1.0e-12 | **회귀** |
@@ -379,7 +379,7 @@ TEST-071 행입니다. 원소 10,000개, 깊은 노드 작은 쪽 4·큰 쪽 19(
 
 ### 옛 판 대비 core — 새 판을 `src` 한 파일 번들로 잰 값
 
-| 상황 | 지표 | 옛 판 0.16.0 | 최적화 전 `c59ba13` | 비 | 처리량 하락 | p | 판정 |
+| 상황 | 지표 | 옛 판 0.16.0 | 최적화 전 `c59ba13` | 비(0.16.0 대비) | 처리량 하락 | p | 판정 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | sample-0 | core-mount | 0.252 (0.243–0.274; p99 0.356) | 0.301 (0.287–0.326; p99 0.381) | 1.20× | 15.9% | 1.2e-40 | **회귀** |
 | sample-0 | core-update | 0.063 (0.056–0.070; p99 0.088) | 0.165 (0.154–0.182; p99 0.203) | 2.64× | 62.1% | 4.0e-89 | **회귀** |

@@ -1,10 +1,13 @@
 // Temporary measure (round 358): internals not exported by dist are reached by copying the built bundle and appending an export; the canonical speed comparison will be whole-form e2e (Form mount and update, like benchmark-form's render lane) from M3, and internal-symbol benches stay as regression signals only.
+
 /**
  * From the schema-form package directory:
  * /Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<ISO>
  * Builds the JS bundles directly with this Node executable and rolldown -c before running rows.
  * Raw results stay outside the repository under /private/tmp/claude-501/perf-runs/.
  * --only=<row,row> selects the row IDs below, retaining their original order.
+ * --legacy=<0.16.0|0.16.1> picks the release paired by the `--equivalent` rows (default 0.16.0, the M0 reproduction; M3 re-measures pass 0.16.1).
+ * Standalone rows always compare against 0.16.0.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -18,9 +21,11 @@ const repoDir = path.resolve(packageDir, '../../..');
 const benchmarkDir = path.join(repoDir, 'packages/aileron/benchmark-form');
 const toolPath = 'architecture/verification/perf-optimization';
 const args = process.argv.slice(2);
-if (args.some((arg) => !/^--(label|quiet-since|only)=.+$/.test(arg)))
-  throw new Error('Use --label=<label> --quiet-since=<ISO> [--only=<row,row>]');
-for (const key of ['label', 'quiet-since', 'only'])
+if (args.some((arg) => !/^--(label|quiet-since|only|legacy)=.+$/.test(arg)))
+  throw new Error(
+    'Use --label=<label> --quiet-since=<ISO> [--only=<row,row>] [--legacy=0.16.0|0.16.1]',
+  );
+for (const key of ['label', 'quiet-since', 'only', 'legacy'])
   if (args.filter((arg) => arg.startsWith(`--${key}=`)).length > 1)
     throw new Error(`Duplicate --${key}`);
 const label = args.find((arg) => arg.startsWith('--label='))?.slice(8);
@@ -31,6 +36,10 @@ const only = args
   .find((arg) => arg.startsWith('--only='))
   ?.slice(7)
   .split(',');
+const equivalentLegacyVersion =
+  args.find((arg) => arg.startsWith('--legacy='))?.slice(9) ?? '0.16.0';
+if (!['0.16.0', '0.16.1'].includes(equivalentLegacyVersion))
+  throw new Error('--legacy must be 0.16.0 or 0.16.1');
 const startedAt = new Date().toISOString();
 if (!label || !/^(before|before-dist|after-[a-zA-Z0-9-]+|final)$/.test(label))
   throw new Error(
@@ -84,16 +93,25 @@ const dist = {
   },
   mtime: fs.statSync(distPath).mtime.toISOString(),
 };
-const legacyPath = fileURLToPath(
-  import.meta.resolve('@canard/schema-form_0.16.0'),
-);
-const legacy = {
-  version: '0.16.0',
-  path: legacyPath,
-  sha256: createHash('sha256')
-    .update(fs.readFileSync(legacyPath))
-    .digest('hex'),
-};
+/**
+ * Locate and hash one installed legacy release bundle.
+ * @param version - Release behind the `@canard/schema-form_<version>` alias
+ * @returns The version, resolved bundle path and its sha256
+ */
+function readLegacyBundle(version) {
+  const bundlePath = fileURLToPath(
+    import.meta.resolve(`@canard/schema-form_${version}`),
+  );
+  const sha256 = createHash('sha256')
+    .update(fs.readFileSync(bundlePath))
+    .digest('hex');
+  return { version, path: bundlePath, sha256 };
+}
+const legacy = readLegacyBundle('0.16.0');
+const equivalentLegacy =
+  equivalentLegacyVersion === legacy.version
+    ? legacy
+    : readLegacyBundle(equivalentLegacyVersion);
 const commit = inspect('git', ['rev-parse', 'HEAD']);
 const shortCommit = inspect('git', ['rev-parse', '--short=7', 'HEAD']);
 if (!/^[0-9a-f]{7}$/.test(shortCommit))
@@ -188,6 +206,7 @@ for (const mode of ['core', 'render'])
         '--equivalent',
         `--mode=${mode}`,
         '--min-samples=100',
+        `--legacy=${equivalentLegacy.version}`,
         `--out=${runDir}/equivalent-${mode}.json`,
       ],
       benchmarkDir,
@@ -260,6 +279,7 @@ const environment = {
   commit: { full: commit, short: shortCommit },
   dist,
   legacy,
+  equivalentLegacy,
   invocation: [process.execPath, ...process.argv.slice(1)],
   startedAt,
   endedAt: null,
@@ -343,10 +363,14 @@ try {
       engine: {
         source: 'dist',
         distSha256: dist.sha256,
-        ...(entry.id.startsWith('standalone-') ||
-        entry.id.startsWith('equivalent-')
-          ? { legacy: '0.16.0', legacySha256: legacy.sha256 }
-          : {}),
+        ...(entry.id.startsWith('standalone-')
+          ? { legacy: legacy.version, legacySha256: legacy.sha256 }
+          : entry.id.startsWith('equivalent-')
+            ? {
+                legacy: equivalentLegacy.version,
+                legacySha256: equivalentLegacy.sha256,
+              }
+            : {}),
       },
       startedAt: new Date().toISOString(),
       endedAt: null,
@@ -426,7 +450,8 @@ try {
         );
         if (
           summary.coreBundleDigests?.workspace !== dist.sha256 ||
-          summary.coreBundleDigests?.legacy !== legacy.sha256
+          summary.legacyVersion !== equivalentLegacy.version ||
+          summary.coreBundleDigests?.legacy !== equivalentLegacy.sha256
         )
           throw new Error(`Core bundle digest mismatch in ${entry.id}`);
       }
