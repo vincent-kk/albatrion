@@ -18,7 +18,7 @@
 - `FieldNodeEvent`는 내부 배달 형이며 write index가 내보내지 않는다. 외부 구독자는 공개 `FieldNodeListener` 계약을 사용한다. 시험 트리 생성 fixture는 engine 층의 공용 시험 구획이 소유한다.
 - `dispatch.nan-delivery.test.ts`는 write 배달을 검증하며 watched object의 동일성 비교 단위 검증은 settle의 `isSameDeliveryValue` 소유 시험 구획이 담당한다. `dispatch.source-path.test.ts`는 errors 진입점의 `FormErrorRecord`로 기록을 관찰하며, 코드별 상세 형의 계약은 errors의 시험 구획이 검증한다.
 
-- `dispatchPush`·`dispatchPop`·`dispatchUpdate`·`dispatchRemove`·`dispatchClear`는 같은 공개 쓰기 사슬로 들어가며 거부 시 push는 바뀌지 않은 현재 길이, 나머지는 `undefined`를 돌려준다. 배치 밖에서는 배열 정착의 동기 결과를 돌려주고, 배치 안에서는 `readBatchValue`의 앞선 표시를 얹은 배열에 행의 순수 계획을 적용하여 결과 배열을 Replace로 표시한다. push는 호출 뒤의 배열 길이이며, 되먹임 한도 거부·사슬 끝으로 넘긴 중첩 호출의 실패·무동작 계획에서는 바뀌지 않은 현재 길이(branch는 `itemCount`, terminal은 `raw` 배열 길이, 그 밖은 0, settle의 `readArrayLength`)이다. pop·remove는 표시된 자리의 원본, update는 입력 값, clear는 `undefined`이다. 잘못된 종류 값에는 push만 `[x]`를 표시하고 나머지는 무동작이다. 비배열 호출은 사슬 끝에서 `ARRAY_METHOD_ON_NON_ARRAY`를 `surface: 'thrown'`으로 보고하고 던진다. 배치 끝 정착은 통째 쓰기라 아이템 키는 위치로 잇고 정착·`onChange`는 한 번이다. 비용은 배열 계획/복사 O(배열 길이), 앞선 표시 합성 비용이며 노드별 고정 칸은 늘리지 않는다(33C-01, 35C-01, 62C-01, EVENT-035·061).
+- `dispatchPush`·`dispatchPop`·`dispatchUpdate`·`dispatchRemove`·`dispatchInsert`·`dispatchClear`는 같은 공개 쓰기 사슬로 들어가며 거부 시 push·insert는 바뀌지 않은 현재 길이, 나머지는 `undefined`를 돌려준다. 배치 밖에서는 배열 정착의 동기 결과를 돌려주고, 배치 안에서는 `readBatchValue`의 앞선 표시를 얹은 배열에 행의 순수 계획을 적용하여 결과 배열을 Replace로 표시한다. push·insert는 호출 뒤의 배열 길이이며, 되먹임 한도 거부·사슬 끝으로 넘긴 중첩 호출의 실패·무동작 계획(insert의 [0, N] 밖 색인 포함)에서는 바뀌지 않은 현재 길이(branch는 `itemCount`, terminal은 `raw` 배열 길이, 그 밖은 0, settle의 `readArrayLength`)이다. pop·remove는 표시된 자리의 원본, update는 입력 값, clear는 `undefined`이다. 잘못된 종류 값에는 push와 `insert(0, x)`만 `[x]`를 표시하고 나머지는 무동작이다. 비배열 호출은 사슬 끝에서 `ARRAY_METHOD_ON_NON_ARRAY`를 `surface: 'thrown'`으로 보고하고 던진다. 배치 끝 정착은 통째 쓰기라 아이템 키는 위치로 잇고 정착·`onChange`는 한 번이다. 비용은 배열 계획/복사 O(배열 길이), 앞선 표시 합성 비용이며 노드별 고정 칸은 늘리지 않는다(33C-01, 35C-01, 62C-01, EVENT-035·061).
 
 - `dispatchSetValue(node, value, option?)`, `dispatchResetSubtree(node, option?)`, `dispatchResetForm(root, value, option?)`, `dispatchMount(root, value?, option?, { deferValidation? })`, `dispatchBatch(node, fn: () => void)`, `dispatchContextChange(root, context)`는 공개 쓰기 사슬을 연다. 폼 reset의 값은 `undefined`도 그대로 로드하는 필수 인자이며 이전 스냅숏을 다시 읽는 호출자는 그 값을 명시한다. `dispatchBatch`의 중첩은 바깥 배치가 이기고, 함수가 던져도 표시된 쓰기를 정착·배달한 뒤 그 예외를 사슬 끝에서 드러낸다. 쓰기가 둘 이상인 배치는 루트 한 번 정착으로 합치되 통째 교체 범위(잠복 원본 정리, whole 분배, 교체 나감 판정)는 표시된 경로의 합집합이고 얕은 Merge 표시는 받은 키의 자식 경로이므로, 쓰이지 않은 경로의 잠복 비활성 원본은 남는다. 배치 안 가상 노드 표시는 합성 때 참조 필드 키로 펼쳐지므로(호출 순서대로, 나중 필드 쓰기가 앞선 가상 쓰기를 이김) 합성 루트 입력에 가상 키가 남지 않고, 덮어쓰기 가상 표시는 참조 형제 경로를 교체 범위에 더하며, 가상 대상의 updater는 참조 필드 튜플을 읽고, 틀린 모양은 단일 쓰기처럼 표시 시점에 `INVALID_VIRTUAL_NODE_VALUES`를 던진다; 바인딩 입력(`dispatchWriteInput`)도 배치 안 표시이므로 틀린 가상 모양은 값 표시에서 던지고, 같은 진입의 외부 오류 지우기와 Dirty 표시는 일어나지 않는다(EVENT-013–019·035·061, LANDING-064, 191C-01, 26C-10, R2).
 - 입력 출처 쓰기 진입은 사슬 진입 칸에 `source: 'input'`을 싣는다. 이 출처는 `UpdateValue`의 `options.source`, 쓴 입력 자신을 제외하는 Refresh 판정과 늦은 쓰기 차단에 흐르며 공개 `SetValueOption`의 비트가 아니다. `handleChange`의 값 쓰기·외부 오류 지움·dirty를 한 `batch`로 묶은 진입 전체가 같은 표식을 갖고, 폐기된 노드의 표식 있는 셋은 조용히 버린다(REACT-009·010·011, EVENT-071, 69C-01·02, 실행 ADR D4).
@@ -53,7 +53,7 @@
 
 ### dispatch-array-entry — 배열 진입과 배치 표시
 
-- 다섯 배열 진입은 거부 시 `undefined`이며 배치 안에서 앞선 표시를 읽고 동기 결과를 반환한다. 배열 동사를 포함한 배치는 한 번 정착·통지하며 경로가 옮겨진 아이템과 자손의 이전·현재 경로를 배달한다(33C-01, 35C-01·02, 62C-01, EVENT-035·068).
+- 여섯 배열 진입은 거부 시 push·insert는 현재 길이, 나머지는 `undefined`이며 배치 안에서 앞선 표시를 읽고 동기 결과를 반환한다. 배치 안에서 섞은 insert·remove는 호출 자리마다 앞선 표시 위의 새 길이·지운 값을 돌려주고 끝의 통째 쓰기로 한 번 정착한다. 배열 동사를 포함한 배치는 한 번 정착·통지하며 경로가 옮겨진 아이템과 자손의 이전·현재 경로를 배달한다(33C-01, 35C-01·02, 62C-01, EVENT-035·068).
 
 ### dispatch-source-details — 자동 쓰기의 원천 경로
 
@@ -89,4 +89,4 @@
 
 ## Last Updated
 
-계약 기준: 69C-01–03·05, REACT-009–011, WRITE-045·046·083·086; 정돈-2(2026-10-14).
+계약 기준: 69C-01–03·05, REACT-009–011, WRITE-045·046·083·086; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15).

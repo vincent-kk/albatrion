@@ -56,6 +56,7 @@
 | `pop()` | method | 같은 구조 진입; 빠진 아이템의 직전 커밋 `value` 또는 `undefined` 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
 | `update(index, value)` | method | 같은 구조 진입; 쓰기 뒤 아이템 `value` 또는 범위 밖이면 `undefined` 반환 | NODE-010·014, SURFACE-005, 35C-06 |
 | `remove(index)` | method | 같은 구조 진입; 빠진 아이템의 직전 커밋 `value` 또는 `undefined` 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
+| `insert(index, value?)` | method | 같은 구조 진입; 유효 색인 [0, N]에 새 아이템을 끼우고 동기적으로 새 길이 반환, 범위 밖·음수·정수 아닌 색인은 무동작으로 현재 길이 반환 | NODE-010·014·051, SURFACE-005, WRITE-099, 35C-06 |
 | `clear()` | method | 같은 구조 진입; 동기적으로 `void` 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
 | `resetSubtree(option?)` | method | `dispatch.dispatchResetSubtree` | WRITE-085, SETTLE-049, LANDING-064 |
 | `request(kind: FieldNodeRequestType)` | method | `dispatch.dispatchRequest`; `Focus`·`Select`·`Refresh`·`Remount` 가운데 하나 | EVENT-063·073, SURFACE-058 |
@@ -73,10 +74,10 @@
 | `clearSubtreeState()` | method | `dispatch.dispatchClearSubtreeState` | EVENT-067, NODE-010 |
 | `batch(fn: () => void)` | method | `dispatch.dispatchBatch` | EVENT-013–019·061, SURFACE-008 |
 
-- 배열 동사 다섯은 클래스에서 종류를 검사하지 않고 write의 동사별 진입 함수에 한 문장으로 위임한다. 진입 함수는 배치 밖 정착의 동기 결과를 돌려주고 배치 안에서는 앞선 표시를 얹은 원본 배열에 행 계획을 적용하여 Replace로 표시한다. 비배열 오류는 사슬 끝에서 보고하고 던지며 진입 거부는 `undefined`이다. 배치 끝 통째 쓰기는 위치로 아이템 키를 잇는다(NODE-010·014, ERROR-197, GOAL-058, 33C-01, 35C-01·06, 36C-01, 62C-01, 실행 ADR D1·D4).
+- 배열 동사 여섯은 클래스에서 종류를 검사하지 않고 write의 동사별 진입 함수에 한 문장으로 위임한다. 진입 함수는 배치 밖 정착의 동기 결과를 돌려주고 배치 안에서는 앞선 표시를 얹은 원본 배열에 행 계획을 적용하여 Replace로 표시한다. 비배열 오류는 사슬 끝에서 보고하고 던지며 진입 거부는 push·insert에서 현재 길이, 나머지에서 `undefined`이다. 배치 끝 통째 쓰기는 위치로 아이템 키를 잇는다(NODE-010·014, ERROR-197, GOAL-058, 33C-01, 35C-01·06, 36C-01, 62C-01, 실행 ADR D1·D4).
 - 클래스 파일에는 레코드 순서의 저장 필드, 상수 읽기 게터, 한 문장 위임만 둔다. 정착이 쓰는 공개 레코드 칸은 같은 이름의 게터와 한 문장 저장 세터를 짝지어 프로토타입 이름을 유지한다. 생성자는 고정 선언 순서의 대입만 하고 필드 초기화식과 생성자에 객체·배열 리터럴·함수·`new`를 두지 않는다. `type`·`strategy` 분기는 가드 외에는 행에서만 한다. 구현한 레코드 인터페이스에 문서가 있는 멤버는 클래스에 주석을 두지 않아 그 문서를 물려받고, 레코드에 없지만 공개 인터페이스(NodeSurface·ArrayNode)에 문서가 있는 공개 멤버는 그 첫 문장을 클래스에 한 줄 요약으로 둔다. 어느 쪽에도 문서가 없는 멤버는 주석을 두지 않는다. 인라인 `{@inheritDoc}`는 쓰지 않는다(NODE-010·049).
 - 공개 `FieldNode`는 `type`으로 판별하는 `StringNode | NumberNode | BooleanNode | NullNode | ObjectNode | ArrayNode | VirtualNode | UnionNode`이다. `schemaType`은 차례로 `'string'`, `'number' | 'integer'`, `'boolean'`, `'null'`, `'object'`, `'array'`, `undefined`, `UnionSchemaType`으로 좁힌다. `schemaType`은 JSON 형만 담으며, JSON 형이 없는 virtual 노드는 `undefined`이고 `type`으로 판별한다. virtual 노드의 내부 `jsonSchema.type`은 `'virtual'`이다. `UnionMemberType = 'string' | 'number' | 'integer' | 'boolean' | 'object' | 'array'`이고 `UnionSchemaType = readonly [UnionMemberType, UnionMemberType, ...UnionMemberType[]]`이다(NODE-057·058).
-- 다섯 배열 메서드의 공개 형은 이 합집합의 `ArrayNode` 구성원에만 두고 branch·terminal 두 전략이 같은 서명을 가진다. `type`으로 좁히지 않은 다른 노드 형에는 메서드가 없으며, 런타임에서 비배열 호출을 시도하면 행의 거부 칸이 처리한다(NODE-010·014, SURFACE-005, TEST-070, 26C-01, 35C-01).
+- 여섯 배열 메서드의 공개 형은 이 합집합의 `ArrayNode` 구성원에만 두고 branch·terminal 두 전략이 같은 서명을 가진다. `type`으로 좁히지 않은 다른 노드 형에는 메서드가 없으며, 런타임에서 비배열 호출을 시도하면 행의 거부 칸이 처리한다(NODE-010·014, SURFACE-005, TEST-070, 26C-01, 35C-01).
 - `UnionNode`는 `type: 'union'`, `strategy: 'terminal'`, `children: null`이고 `misfit: false`일 때 `value`는 허용 종류의 값·`undefined`·nullable일 때 `null`, `misfit: true`일 때 `value: unknown`인 두 구성원으로 나뉜다. `misfit`는 `node.type`이 아니라 현재 `schemaType`·유효 목록과 `nullable` 기준이며 `false`는 검증 통과가 아니다(NODE-058, VALUE-037, SURFACE-061).
 - union 입력의 `FieldInputProps`는 `value`에 같은 판별 결과를 보여 주고 `onChange`는 목록 종류의 값과 `undefined`, nullable일 때만 `null`을 받는다. `misfit: true`의 `value: unknown`을 그대로 `onChange`의 허용 범위로 넓히지 않는다. `ObjectValue`·`ArrayValue`를 포함한 객체·배열 원본 참조는 변환하지 않는다(NODE-058, VALUE-037).
 - 공개 가드 열은 `isFieldNode`, `isStringNode`, `isNumberNode`, `isBooleanNode`, `isObjectNode`, `isArrayNode`, `isVirtualNode`, `isUnionNode`, `isBranchNode`, `isTerminalNode`이다. 첫째는 단일 클래스 `instanceof`, 종류 가드 일곱은 `type`, 마지막 둘은 `strategy`를 본다. `isNullNode`는 소비자가 없어 내보내지 않는다. `isTerminalNode`는 union과 터미널 객체도 좁힌다(NODE-015·041, raw-round17 §4).
@@ -106,7 +107,7 @@
 
 ### surface-members — 정확한 겉면
 
-- 멤버 목록 시험은 배열 메서드 다섯을 포함한 이 표의 40개 게터·메서드 이름과 종류를 프로토타입 및 공개 형과 대조하고 스텁이 없음을 확인한다. 클래스 파일 한정 린트와 행 칸 순서 시험도 통과한다(NODE-010·014, SURFACE-005, 26C-01, LANDING-066, 28C-07·08).
+- 멤버 목록 시험은 배열 메서드 여섯을 포함한 이 표의 55개 게터·세터·메서드 이름과 종류를 프로토타입 및 공개 형과 대조하고 스텁이 없음을 확인한다. 클래스 파일 한정 린트와 행 칸 순서 시험도 통과한다(NODE-010·014, SURFACE-005, 26C-01, LANDING-066, 28C-07·08).
 
 ### surface-types — 판별과 참조
 
@@ -123,4 +124,4 @@
 
 ## Last Updated
 
-계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024, 정돈-1(2026-10-14); 정돈-2(2026-10-14).
+계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024, 정돈-1(2026-10-14); 정돈-2(2026-10-14); 365라운드 insert(2026-10-15).
