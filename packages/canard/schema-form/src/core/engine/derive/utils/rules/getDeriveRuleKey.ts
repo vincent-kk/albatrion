@@ -1,3 +1,4 @@
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { DeriveRule } from '../../types/rules';
 
 /** Live targets receive stable IDs for their record lifetime. */
@@ -8,7 +9,7 @@ let nextTargetId = 0;
 /**
  * Address one authored rule at a live occurrence across settlement calls.
  * @param path - Current absolute occurrence path
- * @param kind - Kind of the live node at that path
+ * @param kind - Fold-inclusive kind token of the live node at that path
  * @param rule - Authored declaration and expression position
  * @param target - Live value target, or the source for an injection rule
  * @returns Stable key for committed and consumed values
@@ -19,7 +20,7 @@ export const getDeriveRuleKey = (
   rule: DeriveRule,
   target: {
     readonly path: string;
-    readonly blueprintNode: { readonly kind: string };
+    readonly blueprintNode: Parameters<typeof getBlueprintNodeIdentity>[0];
   },
 ): string => {
   let targetId = TARGET_IDS.get(target);
@@ -34,7 +35,7 @@ export const getDeriveRuleKey = (
     rule.schemaPath,
     rule.targetName,
     target.path,
-    target.blueprintNode.kind,
+    getBlueprintNodeIdentity(target.blueprintNode),
     targetId,
   ]);
 };

@@ -1,4 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type {
   DeriveResetInteractionDecision,
   DeriveTraceEntry,
@@ -46,7 +47,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
         for (const target of getRuleTargets(node, rule, state)) {
           const key = getDeriveRuleKey(
             node.path,
-            node.blueprintNode.kind,
+            getBlueprintNodeIdentity(node.blueprintNode),
             rule,
             target,
           );

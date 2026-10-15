@@ -1,4 +1,4 @@
-import type { BlueprintNode, BlueprintNodeKind } from '../../../../blueprint';
+import type { BlueprintNode } from '../../../../blueprint';
 
 /** Immutable template indexes are built once when a rule first uses the host. */
 const CHILDREN = new WeakMap<
@@ -10,13 +10,13 @@ const CHILDREN = new WeakMap<
  * Find a declared child without rescanning a wide host on every injection.
  * @param parent - Immutable analyzed host template
  * @param name - Decoded direct child name
- * @param kind - Optional live kind for a same-name declaration
+ * @param template - Optional live blueprint node for a same-name declaration
  * @returns First matching edge and its document position
  */
 export const getDeriveChildEntry = (
   parent: BlueprintNode,
   name: string,
-  kind?: BlueprintNodeKind,
+  template?: BlueprintNode,
 ) => {
   let index = CHILDREN.get(parent);
   if (!index) {
@@ -30,9 +30,9 @@ export const getDeriveChildEntry = (
     CHILDREN.set(parent, index);
   }
   const positions = index.get(name);
-  const position = kind
+  const position = template
     ? positions?.find(
-        (candidate) => parent.childEntries[candidate].node.kind === kind,
+        (candidate) => parent.childEntries[candidate].node === template,
       )
     : positions?.[0];
   return position === undefined
