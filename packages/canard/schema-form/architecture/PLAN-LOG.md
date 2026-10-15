@@ -581,3 +581,4 @@
 - **348라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 blueprint #393 병합, 설정 glob 점검, 대기열 57(reviews/round-348-closing.md).
 - **349라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 derive #394 병합, navigation 무변경, 계약 id 규칙(reviews/round-349-closing.md).
 - **350라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 settle #395 병합, 묶음 3 완료, 후속 셋(reviews/round-350-closing.md).
+- **351라운드(2026-10-15, 닫기/원장 관리자).** 최종 경로 #396 병합, 밤 작업 종료(reviews/round-351-closing.md).
