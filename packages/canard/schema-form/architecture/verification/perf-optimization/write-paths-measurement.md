@@ -398,14 +398,14 @@ L2 설계의 W4입니다. 판정 기준은 370라운드("늘리는 코드가 지
 
 **자리 분류**
 
-| 묶음 | 자리 | 다시 parse | 빈도(oneOf-20) |
-| --- | --- | --- | --- |
-| 이탈 대기(`pendingExits`) 키 | `selectChildren.ts:219`·`:320`·`:450`, `primeHost.ts:61`, `transitionSettlement.ts:76`·`:155` | 안 함. 이 여섯 자리 밖에서 키를 읽지 않음 | `:219` 갱신당 330회, 마운트당 288회. 나머지는 갱신당 6–20회 |
-| 지역 집합·캐시 | `transitionSettlement.ts:84`(채움 집합), `calculateStateKeys.ts:118`, `evaluateScopedExpression.ts:30`, `getControlExpression.ts:31`·`:42`, `commitExitPolicyValues.ts:38`·`:154` | 안 함 | 정착당 몇 회. P-08 F=128에서 `:118`과 `:42`가 각 128회 |
-| 청사진 시점 | `resolveNodeStrategy.ts:48`, `getTemplateKey.ts:15`·`:64` | 안 함. `getTemplateKey`는 일부러 JSON 모양을 바이트 그대로 맞춘 키 | 마운트당 20·123·60회 |
-| 쌍 키 `[경로, 종류]` | `latentRaw`·`committedDeclarationIds`에 들어가는 13곳(`getCommittedDeclarationKey`, `captureExitedRaw`, `finalizeExits`, `enterFieldNode`, `selectChildren.ts:287` 등) | 함(`getStoreKeyPaths`, `getLatentPathIndex`, `setLatentRaw`, `pruneLatentRaw` 등) | 갱신당 3–12회 |
-| 경고 키 | `dedupeWarningRecord`, `commitSettlement.ts:156`·`:173`, `selectNodeSchema`, `finishStaticFirstLoad`, `adoptFieldNodeChain.ts:93`, `rekeyArrayRuntimePaths`, `fieldNodeFactory` | 함(`clearWarningKeys`, `exitFieldNodeChain.ts:57`, `adoptFieldNodeChain.ts:66` 등) | 경고가 날 때만 |
-| 규칙 키 | `getDeriveRuleKey`, `getExitPolicyKey`, `rekeyCommittedRules`, `rekeyPairedPathStore` | 함(`updateCommittedRuleValue`, `pruneCommittedRuleKeys`) | 파생 폼에서만 |
+| 묶음                         | 자리                                                                                                                                                                              | 다시 parse                                                                         | 빈도(oneOf-20)                                              |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| 이탈 대기(`pendingExits`) 키 | `selectChildren.ts:219`·`:320`·`:450`, `primeHost.ts:61`, `transitionSettlement.ts:76`·`:155`                                                                                     | 안 함. 이 여섯 자리 밖에서 키를 읽지 않음                                          | `:219` 갱신당 330회, 마운트당 288회. 나머지는 갱신당 6–20회 |
+| 지역 집합·캐시               | `transitionSettlement.ts:84`(채움 집합), `calculateStateKeys.ts:118`, `evaluateScopedExpression.ts:30`, `getControlExpression.ts:31`·`:42`, `commitExitPolicyValues.ts:38`·`:154` | 안 함                                                                              | 정착당 몇 회. P-08 F=128에서 `:118`과 `:42`가 각 128회      |
+| 청사진 시점                  | `resolveNodeStrategy.ts:48`, `getTemplateKey.ts:15`·`:64`                                                                                                                         | 안 함. `getTemplateKey`는 일부러 JSON 모양을 바이트 그대로 맞춘 키                 | 마운트당 20·123·60회                                        |
+| 쌍 키 `[경로, 종류]`         | `latentRaw`·`committedDeclarationIds`에 들어가는 13곳(`getCommittedDeclarationKey`, `captureExitedRaw`, `finalizeExits`, `enterFieldNode`, `selectChildren.ts:287` 등)            | 함(`getStoreKeyPaths`, `getLatentPathIndex`, `setLatentRaw`, `pruneLatentRaw` 등)  | 갱신당 3–12회                                               |
+| 경고 키                      | `dedupeWarningRecord`, `commitSettlement.ts:156`·`:173`, `selectNodeSchema`, `finishStaticFirstLoad`, `adoptFieldNodeChain.ts:93`, `rekeyArrayRuntimePaths`, `fieldNodeFactory`   | 함(`clearWarningKeys`, `exitFieldNodeChain.ts:57`, `adoptFieldNodeChain.ts:66` 등) | 경고가 날 때만                                              |
+| 규칙 키                      | `getDeriveRuleKey`, `getExitPolicyKey`, `rekeyCommittedRules`, `rekeyPairedPathStore`                                                                                             | 함(`updateCommittedRuleValue`, `pruneCommittedRuleKeys`)                           | 파생 폼에서만                                               |
 
 - 다시 parse하는 세 묶음(쌍 키, 경고 키, 규칙 키)은 335라운드 3번의 예외로 형식을 그대로 둡니다.
 - 함정 1: `exitFieldNodeChain.ts:57`은 `startsWith('[')`로 키 형식을 가립니다.
@@ -421,13 +421,13 @@ L2 설계의 W4입니다. 판정 기준은 370라운드("늘리는 코드가 지
 
 **제안**
 
-| 제안 | 내용 | 실행 줄 | 위험 |
-| --- | --- | --- | --- |
-| P1 | `selectChildren.ts:219`와 `primeHost.ts:61`에서 이탈 대기 맵이 비었으면 키를 만들지 않고 조회·삭제도 하지 않음. 형식은 그대로 | 4–6 | 없음. 빈 맵 조회는 늘 undefined |
-| P2 | 이탈 대기 키 여섯 자리를 `경로 + UNIT_SEPARATOR + 종류`로 | 약 6과 import | 경로에는 `\x1F`가 들어갈 수 있음(`escapeSegment`는 `~`·`/`만 이스케이프). 그러나 종류는 닫힌 어휘(`BlueprintNodeKind`)이고 맨 뒤라 키가 겹치지 않음. 여섯 자리를 함께 바꿔야 하며, 하나라도 빠지면 컴파일은 되지만 조회가 조용히 빗나감 |
-| P3 | `transitionSettlement.ts:84` 채움 집합을 같은 구분자로 | 1 | P2와 같은 논리. 다른 저장소라 P2에 포함되지 않음 |
-| P4 | 두 자유 문자열 키(`calculateStateKeys.ts:118`, `evaluateScopedExpression.ts:30`)는 중첩 Map, 선언 ID와 스키마 경로 키(`getControlExpression`, `commitExitPolicyValues`)는 구분자 | 각 2–6 | 호스트 경로와 스키마 경로 둘 다 구분자를 담을 수 있어 구분자만 쓰면 이론상 겹침. 그래서 중첩 Map이 필요함 |
-| P5 | parse하는 쌍 키 약 12곳을 노드별로 캐시된 `getCommittedDeclarationKey(node)` 호출로 | 자리당 1 | 형식은 그대로. 이름이 쓰임과 맞지 않아 이름 변경과 자리 이동이 필요함 |
+| 제안 | 내용                                                                                                                                                                             | 실행 줄       | 위험                                                                                                                                                                                                                                    |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P1   | `selectChildren.ts:219`와 `primeHost.ts:61`에서 이탈 대기 맵이 비었으면 키를 만들지 않고 조회·삭제도 하지 않음. 형식은 그대로                                                    | 4–6           | 없음. 빈 맵 조회는 늘 undefined                                                                                                                                                                                                         |
+| P2   | 이탈 대기 키 여섯 자리를 `경로 + UNIT_SEPARATOR + 종류`로                                                                                                                        | 약 6과 import | 경로에는 `\x1F`가 들어갈 수 있음(`escapeSegment`는 `~`·`/`만 이스케이프). 그러나 종류는 닫힌 어휘(`BlueprintNodeKind`)이고 맨 뒤라 키가 겹치지 않음. 여섯 자리를 함께 바꿔야 하며, 하나라도 빠지면 컴파일은 되지만 조회가 조용히 빗나감 |
+| P3   | `transitionSettlement.ts:84` 채움 집합을 같은 구분자로                                                                                                                           | 1             | P2와 같은 논리. 다른 저장소라 P2에 포함되지 않음                                                                                                                                                                                        |
+| P4   | 두 자유 문자열 키(`calculateStateKeys.ts:118`, `evaluateScopedExpression.ts:30`)는 중첩 Map, 선언 ID와 스키마 경로 키(`getControlExpression`, `commitExitPolicyValues`)는 구분자 | 각 2–6        | 호스트 경로와 스키마 경로 둘 다 구분자를 담을 수 있어 구분자만 쓰면 이론상 겹침. 그래서 중첩 Map이 필요함                                                                                                                               |
+| P5   | parse하는 쌍 키 약 12곳을 노드별로 캐시된 `getCommittedDeclarationKey(node)` 호출로                                                                                              | 자리당 1      | 형식은 그대로. 이름이 쓰임과 맞지 않아 이름 변경과 자리 이동이 필요함                                                                                                                                                                   |
 
 **판정**
 
