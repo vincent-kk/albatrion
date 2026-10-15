@@ -599,3 +599,4 @@
 - **366라운드(2026-10-15, 소유자).** 지름길 설계는 볼 것 없음, 중간 결과 보고(reviews/round-366-owner-answers.md).
 - **367라운드(2026-10-15, 소유자).** 마무리 뒤 onChange·setValue·객체 경로의 유사 비효율 확인(reviews/round-367-owner-answers.md).
 - **368라운드(2026-10-15, 소유자).** 전후 표 형식(reviews/round-368-owner-answers.md).
+- **369라운드(2026-10-15, 소유자).** 비동기 옛 판도 적용 시점까지 측정(reviews/round-369-owner-answers.md).
