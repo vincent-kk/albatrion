@@ -164,6 +164,15 @@ describe('new FieldNode public types', () => {
     >().toEqualTypeOf<false>();
   });
 
+  it('TEST-070 keeps insert on both array strategies and off other kinds', () => {
+    expectTypeOf<ArrayNode<string>['insert']>().toEqualTypeOf<
+      (index: number, value?: string) => number
+    >();
+    expectTypeOf<
+      'insert' extends keyof StringNode ? true : false
+    >().toEqualTypeOf<false>();
+  });
+
   it('splits union values by mismatch without widening onChange', () => {
     type Types = readonly ['string', 'number'];
     type Matching = Extract<UnionNode<Types, false>, { misfit: false }>;

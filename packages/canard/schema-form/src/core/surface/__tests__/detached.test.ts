@@ -44,6 +44,7 @@ const DETACHED_VERBS: readonly [
   ['push', (node) => node.push('z'), 3, ['a', 'b', 'z']],
   ['pop', (node) => node.pop(), 'b', ['a']],
   ['remove', (node) => node.remove(0), 'a', ['b']],
+  ['insert', (node) => node.insert(1, 'z'), 3, ['a', 'z', 'b']],
   ['update', (node) => node.update(0, 'q'), 'q', ['q', 'b']],
   ['clear', (node) => node.clear(), undefined, []],
 ];
