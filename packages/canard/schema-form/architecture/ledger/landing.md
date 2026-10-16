@@ -2770,7 +2770,8 @@
 
 - 결정:
   > 이주(LANDING-184): mui 수 입력은 오늘 빈 칸이 `null`이고(`schema-form-mui-plugin/src/formTypeInputs/FormTypeInputNumber.tsx:74-76`), 정수를 `type === 'integer'`로 판정해 `parseInt`로 자르며(`:81`), `step`을 쓴다(`:109`). 새 설계에서는 빈 칸이 `undefined`, 판정은 `schemaType === 'integer'`, 자르지 않음, 해석할 수 없는 글은 초안이다(REACT-027, WRITE-075).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(394C-03): "【추론】 fairy08의 읽기 전용 대조(393라운드 소유자 지시) 결과를 적어 둔다. 확정 결함 일곱: 문자열 체크박스에 배열 가드가 없어 antd5·6은 문자열·수 값이면 렌더 중 TypeError, 내장 정의는 문자열을 글자 단위로 펼치고 수이면 TypeError; antd5·6 범위 입력 셋이 길이 2만 검사; 네 플러그인의 스위치 둘이 불리언 아닌 값을 유효한 켜짐·꺼짐으로 그리고 무효 표지가 없음(REACT-027 "받은 값이나 무효 표지" 위반); antd 셋의 Slider가 null을 NaN으로 방출; antd 셋의 Number가 nullable이 아니어도 null 방출; MUI Number가 빈 칸을 null로 보내고 parseInt로 자르며 일부만 해석(LANDING-184 위반); 네 플러그인 모두 misfit(SURFACE-061)을 읽는 곳이 없음. 원장 해석 필요 하나(소유자 물음): 내장 Number가 nullable이면 빈 칸에서 null을 보내는데 REACT-027의 "빈 칸이면 undefined"와 "비우기 조작은 nullable이면 null"이 갈린다. 권장 미적용 하나: 플러그인별 union 시험 항목 없음(내장 Union은 맞음). 옛 이름 typeMismatch의 잔재는 플러그인에 없다. 고치는 일은 소유자 지시대로 나중에 플러그인 PR로 한다." (`reviews/round-394-closing.md:12`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2650`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)

@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-16, 393라운드(소유자: 54는 플러그인·내장 fallback 대조를 지금 먼저(이름은 misfit), 62는 현행 유지 쪽이되 UX 일관성 검토; 392: 기능 오류 반드시 해결, 속도 불만족; 391: F2 #411 병합 ef87cfbcc; 390: F1 union fold 정체 #410; 389: 공유 충돌 fold 판정 #409; F3 후보 소유 잠복 자손 정리는 다음 결함 PR; 대기열 62 소유자 물음; agy 한도 기간 codex 검증자 조건 셋) — 388: 실험이 원장·사양에 맞으면 PR·병합까지 진행, 수용 못 하면 revert; 387: 마운트는 방향 탐색 실험, 게이트 폼 한 키 쓰기는 같은 원리면 시도 — F3 PR(codex 읽기 조사 먼저) 진행, 그 뒤 측정 먼저 묶음(터미널 모드·all-keys 분해·EXIT-LAYERS·B2 분류); 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54·58, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
+## 1. 지금 어디인가 (2026-10-16, 394라운드(닫기: 후보 소유 잠복 정리 결함 F3 PR #412 병합 efa621543; 남은 같은 계열 결함 다섯은 394C-02로 다음 PR; 54 대조 결과 결함 아홉(개선 보류); 393: 54 대조 먼저, 62 현행 유지 쪽; 392: 기능 오류 반드시 해결, 속도 불만족; 391: F2 #411 병합 ef87cfbcc; 390: F1 union fold 정체 #410; 389: 공유 충돌 fold 판정 #409; F3 후보 소유 잠복 자손 정리는 다음 결함 PR; 대기열 62 소유자 물음; agy 한도 기간 codex 검증자 조건 셋) — 388: 실험이 원장·사양에 맞으면 PR·병합까지 진행, 수용 못 하면 revert; 387: 마운트는 방향 탐색 실험, 게이트 폼 한 키 쓰기는 같은 원리면 시도 — 394C-02 묶음 결함 PR(codex) 진행, 그 뒤 측정 먼저 묶음(터미널 모드·all-keys 분해·EXIT-LAYERS·B2 분류); 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54·58, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 최종 경로 #396 병합, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -69,7 +69,7 @@
 - **328라운드(2026-10-14, 소유자).** schema-form의 INTENT·DETAIL 문서를 모두 한국어로(humanizer, sonnet·agy 병렬, codex 금지) — fairy08, 문서 전용 PR, 원장 관리자 병합(reviews/round-328-owner-answers.md).
 - **329라운드(2026-10-15, 닫기/원장 관리자).** 문서 한국어화 PR #386을 d25a8aee8로 squash 병합: 138개 중 96 재작성(의미 변경 43건 되돌림), 파일마다 한 문체(섞인 10개는 -다로), app/plugin INTENT의 플러그인 규칙 문장을 코드대로 정정, filid documents 0. 작업자 둘 대기, 밤 루프는 소유자 결정 둘 대기.
 - **330라운드(2026-10-15, 소유자).** 중간 브랜치 전부 삭제, 백업 backup/1.0.0-beta-2026-10-15 뒤 1.0.0-beta를 344 → 48 커밋으로 압축(기능 PR은 그대로, 원장 커밋은 라운드 범위별 하나; 트리 동일). 8단계(소유자 코드 리뷰·속도 측정, 원장 표의 최적화 트랙)는 브랜치 feat/schema-form-08-review-and-perf에서; 원장 작업 트리 /tmp/claude-501/ledger-08, 작업자 워크트리도 이 브랜치에서, 끝나면 1.0.0-beta에 squash(reviews/round-330-owner-answers.md).
-- **331라운드(2026-10-15, 소유자).** 08 플러그인은 완료로(이주는 07b·07d에서 끝남, 플러그인 0.17.0); 미확인 셋(union 시험 객체·typeMismatch 표지, 수 입력 빈 값 방출, 자사 수정 목록)은 대기열 54로 09 정리 때 대조. 최적화 트랙 진행. 소유자가 거슬리는 점을 하나씩 말하며 작업(reviews/round-331-owner-answers.md).
+- **331라운드(2026-10-15, 소유자).** 08 플러그인은 완료로(이주는 07b·07d에서 끝남, 플러그인 0.17.0); 미확인 셋(union 시험 객체·misfit 표지(당시 이름 typeMismatch), 수 입력 빈 값 방출, 자사 수정 목록)은 대기열 54로 09 정리 때 대조. 최적화 트랙 진행. 소유자가 거슬리는 점을 하나씩 말하며 작업(reviews/round-331-owner-answers.md).
 - **332라운드(2026-10-15, 소유자).** 리뷰 1차 열넷: rolled·types 병합(types/ 아래 두 칸 병존), schemaType의 virtual·union 정리, 한글 주석 영문화, typeMismatch 이름 공모, 입력을 아는 JSON.stringify와 템플릿 리터럴을 문자열 연결로, WeakMap 54곳 이유, NODE_ENV 판정의 한곳 모음 여부, 함수 안 정규식 상수화, engine 하위(blueprint·derive·navigation·record·settle) utils의 fractal 승격과 미묘한 디렉토리 재구조화(재검증 필요), hooks/hooks 해소, 훅 안 상수 끌어올림, @inheritDoc 54곳 제거. 배분은 reviews/round-332-owner-answers.md.
 - **333라운드(2026-10-15, 소유자).** 작업자 fixy08·fairy08. WeakMap은 memo(측정은 밤 루프). NODE_ENV는 React의 배포 방식을 fairy08이 확인해 따른다. types/internal·rolled, hooks/fieldNode·form 수용. typeMismatch → misfit(drift는 과정의 말, misfit은 상태의 말)(reviews/round-333-owner-answers.md).
 - **334라운드(2026-10-15, 소유자).** 구조 정리를 먼저 빠르게 codex 없이 소유자 감독으로, 그 뒤 속도 최적화부터 codex·agy 사용(reviews/round-334-owner-answers.md).
@@ -131,7 +131,8 @@
 - **390라운드(2026-10-16, 닫기).** union fold 정체 결함 F1 PR #410 병합(319a1109b): 정체 토큰 하나(union은 union:<fold mask>, 다른 종류는 기존 kind)로 아홉 열쇠 계열을 구별하고 선택 재사용은 청사진 노드 동일성; codex 분류·구현, fairy08 분류표·커밋 대조(빠진 자리 하나 잡음), codex 검증자 PASS, 기존 기대 변경 2건(옛 범주 열쇠 단언); 보충 둘(386C-01 유일 경로 문장 반례, 경로 단위 열쇠 경계)(reviews/round-390-closing.md).
 - **391라운드(2026-10-16, 닫기).** 배열 아이템 종류별 노드 결함 F2 PR #411 병합(ef87cfbcc): fold마다 아이템 후보(목록은 fold가 여럿일 때만), 배타면 그 종류의 아이템 노드·동시에 켜지면 충돌, 호스트 이탈·복원은 후보별 잠복 열쇠, 단일 후보 지름길·정적 첫 로드 불변; codex 구현·검증자(결함 하나 잡아 고침)·fairy08 두 번 통과, 기존 기대 변경 0건; F3(후보 소유 잠복 자손 정리, 객체에도 있는 기존 결함)은 별도 PR; 대기열 62(모든 분기가 꺼진 자리의 값이 뒤 분기를 켤 때 사라짐 — 현행 규칙, 바람직한지 소유자); agy 한도 기간 codex 검증자 조건 셋(reviews/round-391-closing.md).
 - **392라운드(2026-10-16, 소유자).** 기능 오류는 절대로 막아야 하는 문제라 반드시 해결, 속도는 아직 불만족, 결정 사항(54·62·M3 수용)은 자세한 정보로 다시; 과정 고침(codex 구현의 자기 대조 행렬 필수, 규칙 문장 하나로 수정, 검증자 새 세션)(reviews/round-392-owner-answers.md).
-- **393라운드(2026-10-16, 소유자).** 54: 경고등 이름은 misfit(원장 관리자 표기 오류 정정), UI 플러그인과 내장 fallback fieldInput을 지금 읽기 전용 대조만, 개선은 나중에; 62: 현행 유지(가)가 적절해 보이나 UX 일관성을 깨는지 검토(fairy08)(reviews/round-393-owner-answers.md). 다음 라운드 번호는 394.
+- **393라운드(2026-10-16, 소유자).** 54: 경고등 이름은 misfit(원장 관리자 표기 오류 정정), UI 플러그인과 내장 fallback fieldInput을 지금 읽기 전용 대조만, 개선은 나중에; 62: 현행 유지(가)가 적절해 보이나 UX 일관성을 깨는지 검토(fairy08)(reviews/round-393-owner-answers.md).
+- **394라운드(2026-10-16, 닫기).** 후보 소유 잠복 자손 정리 결함 F3 PR #412 병합(efa621543): 떠나는 후보는 자기만 닿는 열쇠만 정리(공유 보존, 낡은 열쇠 삭제), 자리 이동은 모든 후보 열쇠 동반·진짜 소멸만 삭제, 재생 자리는 자기 종류 원천 우선 규칙 하나, 질의 안 방문 집합; codex 구현·검증 일곱 번·fairy08 대조 네 번·생성 행렬 대조, 기존 기대 변경 0건, 새 시험 114건; 남은 같은 계열 결함 다섯(394C-02)은 다음 PR, 수용 잔여 둘(깊은 재귀 이탈 비용); 54 대조 결과 결함 아홉(394C-03, 개선 보류); codex 과정 고침 셋(394C-04)(reviews/round-394-closing.md). 다음 라운드 번호는 395.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -619,6 +620,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-391-closing.md` | 391라운드 닫기: F2 배열 아이템 종류별 노드 #411 병합, F3 별도 PR, 대기열 62, 검증 운영 메모 |
 | `reviews/round-392-owner-answers.md` | 392라운드 소유자: 기능 오류는 반드시 해결, 속도 불만족, 결정 사항은 자세히 |
 | `reviews/round-393-owner-answers.md` | 393라운드 소유자: 54 대조 먼저(misfit), 62 현행 유지 쪽·UX 검토 |
+| `reviews/round-394-closing.md` | 394라운드 닫기: F3 #412 병합, 남은 결함 다섯(394C-02), 54 대조 결과, codex 과정 고침 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |

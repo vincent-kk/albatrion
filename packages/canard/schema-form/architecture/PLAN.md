@@ -147,6 +147,7 @@
 | 2026-10-16 | 391라운드(닫기): F2 배열 아이템 종류별 노드 PR #411 검증·squash-merge(ef87cfbcc); fold별 아이템 후보, 후보별 잠복 열쇠, 단일 후보 불변, 기존 기대 변경 0건; F3 별도 PR, 대기열 62, agy 한도 기간 검증 조건. 보충 7줄 | `reviews/round-391-closing.md` |
 | 2026-10-16 | 392라운드 소유자: 기능 오류는 반드시 해결(절대로 막아야 하는 문제), 속도는 아직 불만족, 결정 54·62·M3 수용은 자세한 정보로; codex 구현 과정 고침 셋. 보충 1줄 | `reviews/round-392-owner-answers.md` |
 | 2026-10-16 | 393라운드 소유자: 54는 플러그인·내장 fallback fieldInput 대조를 지금 먼저(이름은 misfit, 개선은 나중), 62는 현행 유지 쪽이되 UX 일관성 검토. 보충 2줄 | `reviews/round-393-owner-answers.md` |
+| 2026-10-16 | 394라운드(닫기): F3 후보 소유 잠복 정리 PR #412 검증·squash-merge(efa621543); 소유 선택자·자리 이동·재생 규칙·질의 안 방문 집합, 기존 기대 변경 0건, 새 시험 114건; 남은 결함 다섯은 다음 PR, 수용 잔여 둘; 54 대조 결과 결함 아홉; codex 과정 고침 셋. 보충 11줄 | `reviews/round-394-closing.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
