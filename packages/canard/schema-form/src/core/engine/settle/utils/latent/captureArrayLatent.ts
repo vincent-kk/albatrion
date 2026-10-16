@@ -13,7 +13,7 @@ import { readRawTree } from './readRawTree';
  * A templated slot uses its item's raw tree, including empty-source array slots;
  * a gated-out slot uses its retained own-kind latent source before host capture, and a
  * written slot without a node uses this call's distributed input (211C-01);
- * multi-candidate slots with owned sources retain their per-candidate latent keys;
+ * candidate-bearing slot subtrees retain their per-candidate latent keys;
  * an untemplated tail slot uses extras at the matching tail position.
  * @param node - Departing array branch with its final slot nodes
  * @param context - Latent-aware source test for templated item slots
@@ -39,7 +39,7 @@ export const captureArrayLatent = <Self extends FieldNodeRecord<Self>>(
     tailStart++;
     const item = node.structure?.[String(index)];
     if (
-      candidates.length > 1 &&
+      (candidates.length > 1 || candidates[0]?.node.hasCandidateDescendants) &&
       (item || getLatentPathIndex(context).get(node.path + '/' + index)?.size)
     )
       (retainedItemNames ??= []).push(String(index));

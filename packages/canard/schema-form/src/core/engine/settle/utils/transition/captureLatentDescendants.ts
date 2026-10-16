@@ -47,17 +47,21 @@ interface ResolvedAncestor {
  * @param context - Transition work and reversible latent writes
  * @param node - Exiting host whose descendants may already be absent
  * @param inherited - Resolved policy at the departing host
+ * @param applyPolicy - Whether automatic exit-policy writes are enabled
+ * @param ownsLatent - Reused capture scope, otherwise selected for ordinary policy application
  * @returns Nothing; cleared nodes lose raw and extras together
  */
 export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   node: Self,
   inherited: boolean,
+  applyPolicy = true,
+  ownsLatent = selectCandidateOwnedLatent(node),
 ): void => {
+  if (!applyPolicy && !ownsLatent) return;
   const runtime = context.root.runtime;
   const index = getLatentPathIndex(context);
-  const entries: LatentEntry[] = [];
-  const ownsLatent = selectCandidateOwnedLatent(node);
+  const entries: LatentEntry[] | undefined = applyPolicy ? [] : undefined;
   for (const key of index.get(node.path) ?? []) {
     const identity: unknown = JSON.parse(key);
     if (!isArray(identity) || typeof identity[0] !== 'string') continue;
@@ -80,7 +84,7 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
       writeLatentRaw(context, key, false, undefined);
       continue;
     }
-    if (path === node.path) continue;
+    if (!entries || path === node.path) continue;
     const info = runtime.latentRawMetadata?.get(key);
     if (info)
       entries.push({
@@ -90,6 +94,7 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
         exitLayers: info.exitLayers,
       });
   }
+  if (!entries) return;
   entries.sort((left, right) => left.path.length - right.path.length);
   const live = new Map<string, Self>();
   visitFieldNodes(

@@ -96,7 +96,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
             ))));
     if (from !== undefined && moved) destinations.set(from, index);
     const entry = candidates[0];
-    if (!entry) continue;
+    if (!entry && !moved) continue;
     const old = from === undefined ? undefined : oldItems[String(from)];
     if (
       old &&
@@ -122,6 +122,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         undefined,
         true,
       );
+    if (!entry) continue;
     if (candidates.length > 1) {
       nextRaw[index] = source;
       deferred = true;
