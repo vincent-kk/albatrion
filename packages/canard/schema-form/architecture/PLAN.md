@@ -154,6 +154,7 @@
 | 2026-10-16 | 398라운드 소유자: 청사진을 폼 사이에 공유하는 것은 지금 이득이 아니며 하더라도 app 수준 캐시, 부분 스키마 공유는 가속 안 됨 — 물음 닫힘, 폼 하나 기준 메모리 +20%는 M3 수용 목록. 보충 2줄 | `reviews/round-398-owner-answers.md` |
 | 2026-10-16 | 399라운드 소유자: 측정 문서 PR #414 병합·마감까지 끝내고 일시 휴식, 갈무리(상황 파악·원장 갱신·결정) 뒤 다음으로; L3는 시작하지 않음. 보충 1줄 | `reviews/round-399-owner-answers.md` |
 | 2026-10-16 | 400라운드(닫기): 측정 먼저 묶음 문서 PR #414 squash-merge(25c500e40, 제품 코드 변경 0); 터미널 모드 빠름·자식 0개 호스트 느림, 결함 수정 셋 동사 비용 불변, all-keys 계약·알고리즘 구분, EXIT-LAYERS 초선형, 메모리 청사진 미공유; L3 가설 다섯·증명 먼저·수용 후보, 측정 방법, 재개 지점. 일시 휴식. 보충 13줄 | `reviews/round-400-closing.md` |
+| 2026-10-16 | 401라운드 소유자: 설계 문서(00–07)의 이름 어긋남(controls.children→controls.fields, 05·06의 옛 공개 이름)은 휴식과 별개 작업으로 codex에게 고치게 하되 임의 수정 금지; 원장 본문 제외. 보충 2줄 | `reviews/round-401-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
