@@ -11,6 +11,7 @@ import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { updateOutput } from '../output/updateOutput';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
+import { captureLatentDescendants } from './captureLatentDescendants';
 import { finalizePerished } from './finalizePerished';
 import { isRekeyedDestination } from './utils/isRekeyedDestination';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
@@ -101,14 +102,17 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       (context.entered.has(node) ||
         !applyPolicy ||
         context.throwingGateExits?.has(node))
-    )
-      captureExitedRaw(
+    ) {
+      const ownsLatent = captureExitedRaw(
         node,
         false,
         context,
         false,
         getLatentOrder(node.parent, node.name, node.blueprintNode),
       );
+      if (ownsLatent)
+        captureLatentDescendants(context, node, false, false, ownsLatent);
+    }
   if (context.root.runtime.latentRaw.size > 0)
     for (const node of [...context.entered, ...context.revived]) {
       if (node.detached) continue;
