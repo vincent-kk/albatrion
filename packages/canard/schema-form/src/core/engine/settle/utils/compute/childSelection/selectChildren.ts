@@ -15,6 +15,7 @@ import { getGateRegistry } from '../../gates/getGateRegistry';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
 import { distributeLatentValue } from '../../latent/distributeLatentValue';
+import { distributeMovedLatentInput } from '../../latent/distributeMovedLatentInput';
 import { getLatentOrder } from '../../latentStore/getLatentOrder';
 import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
 import { flushPendingOutput } from '../../output/flushPendingOutput';
@@ -146,12 +147,14 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           true,
         )
       : cached;
-  const entries = direct ? null : node.behavior.declareChildren(node);
-  const count = direct ? direct.steps.length : entries!.length;
+  const entries = direct
+    ? node.blueprintNode.childEntries
+    : node.behavior.declareChildren(node);
+  const count = direct ? direct.steps.length : entries.length;
   const flushReads = immediate && !direct;
   for (let entryIndex = 0; entryIndex < count; entryIndex++) {
     const step = direct?.steps[entryIndex];
-    const entry = step ? step.entry : entries![entryIndex];
+    const entry = step ? step.entry : entries[entryIndex];
     if (flushReads && context.pendingOutputs?.size)
       flushPendingGateReads(
         entry.node,
@@ -418,10 +421,21 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       )
     )
       continue;
+    const path = node.path + '/' + escapeSegment(entry.name);
+    if (distribution.preserveLatent) {
+      distributeMovedLatentInput(
+        context,
+        path,
+        entry.node,
+        Reflect.get(distribution.input, entry.name),
+        getLatentOrder(node, entry.name, entry.node),
+      );
+      continue;
+    }
     distributeLatentValue(
       node.runtime,
       context,
-      node.path + '/' + escapeSegment(entry.name),
+      path,
       entry.node,
       Reflect.get(distribution.input, entry.name),
       getLatentOrder(node, entry.name, entry.node),

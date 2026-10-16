@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- Named property bindings expose an optional `hasPropertyCandidates` proof when any name has multiple candidate templates. Construction determines it once; exit ownership uses it to avoid traversing single-candidate hosts. It contains no runtime selection or gate result (NODE-043, BLUEPRINT-044; 394C-01).
+- Completed templates expose optional `hasCandidateDescendants` reachability, including recursive edges, when a named or array slot below them has multiple candidates. Construction makes one O(V) first pass over V templates for candidate-free graphs; graphs containing candidates also build and traverse the construction-only reverse graph, for O(V+E) total work over template edges E. Graphs without candidates perform no structural retained-source query or replay-marker allocation. A candidate-bearing source slot or host can carry the replay marker into single-candidate destination templates or newly inserted single-candidate objects (370라운드 원칙, NODE-051; 394C-01).
+- Candidate flags are primitive metadata on existing templates, assigned only during blueprint construction before template freezing. They cache no runtime value or gate result and add no frozen objects or schema/control fields, so the recorded owned-inline freeze counts and field-specific bounds remain unchanged (370라운드 원칙; 394C-01).
+
 - 반복 아이템과 각 prefixItems 자리는 작성 순서의 fold별 후보를 모두 보존한다. `item`과 `prefixItems[i]`는 첫 후보를 유지하고, 추가 후보 목록과 자리별 바인딩은 후보의 선언·게이트·작성 위치를 보존한다. 게이트 충돌은 분석 오류가 아니며 정적 첫 로드 자격은 단일 후보에만 허용한다(BLUEPRINT-011·012·044, 389C-03, 391C-01).
 
 - 상태 키가 있는 첫 조각에서만 호스트의 자식 순서대로 각 자식의 전체 선언에 `getFragmentOwnerPaths`를 적용한 소유 경로 집합을 만든다. 같은 호스트의 조각은 이 집합을 재사용하고 대상 삽입 순서와 비활성 선언 포함을 유지하며, 호출 간 캐시나 새 청사진 필드는 두지 않는다(P-08, GOAL-011).

@@ -5,6 +5,7 @@ import type { SettlementContext } from '../../types/settlement';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { isWithinReplacePaths } from '../input/isWithinReplacePaths';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
+import { distributeMovedLatentInput } from '../latent/distributeMovedLatentInput';
 
 /**
  * Store, as latent raw, the declared children of a departing object host that this
@@ -37,6 +38,16 @@ export const distributeAbsentChildInputs = <Self extends FieldNodeRecord<Self>>(
       !hasDistributedChildInput(distribution.input, entry.name, false)
     )
       continue;
+    if (distribution.preserveLatent) {
+      distributeMovedLatentInput(
+        context,
+        path,
+        entry.node,
+        Reflect.get(distribution.input, entry.name),
+        [...order, index],
+      );
+      continue;
+    }
     distributeLatentValue(
       node.runtime,
       context,

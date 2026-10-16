@@ -129,6 +129,8 @@ export interface Distribution {
   readonly automatic: boolean;
   /** Restored array positions whose sources remain under candidate-specific latent keys. */
   readonly retainedItemNames?: readonly string[];
+  /** Surviving-slot reconstruction whose stored candidates remain authoritative. */
+  readonly preserveLatent?: boolean;
 }
 
 /** Reusable settlement work containers bound to one tree's node type. */

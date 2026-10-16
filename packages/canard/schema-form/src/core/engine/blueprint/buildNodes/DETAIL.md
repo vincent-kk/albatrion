@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Appending multiple templates for one named property sets the host's optional `hasPropertyCandidates` flag. Single-candidate bindings leave it absent, without a new index or cache; array candidate presence remains represented by the existing candidate lists. This construction-time proof guards candidate-owned exit cleanup (NODE-043, BLUEPRINT-044; 394C-01).
+
 - 배열의 반복 템플릿과 각 prefixItems 자리에는 build가 돌려준 fold별 후보 전부를 작성 순서로 연결한다. 기존 단일 후보 필드는 첫 후보를 가리키며, 후보별 작성 스키마 위치와 선언 소유를 보존한다(BLUEPRINT-044, 389C-03, 391C-01).
 
 - 선언 수집에서 packed gates/order를 복사할 때는 native slice를 사용한다. fragment와 declaration의 배열은 계속 각자 소유하고, 값, 순서, ID, DFS, 진단, capability는 같다. 속도 비용은 같은 원소 수에 비례하는 native 복사이며, 입력과 fragment를 iterator로 순회하던 일은 없어진다. 메모리 비용은 호출마다 기존의 네 배열과 원소 참조 수를 그대로 유지하고, 추가로 보유하는 자료는 없다(batch2 2-declaration-slice).
