@@ -152,6 +152,7 @@
 | 2026-10-16 | 396라운드 소유자: 열린 결정의 사양은 일관성·합리성·예측 가능성으로 구성하면 수용. 62는 (가) 꺼진 자리 값은 첫 종류의 몫, ⑧은 빈 칸 undefined·명시적 비우기만 nullable이면 null. 보충 1줄 | `reviews/round-396-owner-answers.md` |
 | 2026-10-16 | 397라운드 소유자: agy 개인 한도 복구. 검증은 agy로 복귀(high는 최고급, mid 이하 효율, apex 비권장), codex 검증자는 대체로만. 보충 1줄 | `reviews/round-397-owner-answers.md` |
 | 2026-10-16 | 398라운드 소유자: 청사진을 폼 사이에 공유하는 것은 지금 이득이 아니며 하더라도 app 수준 캐시, 부분 스키마 공유는 가속 안 됨 — 물음 닫힘, 폼 하나 기준 메모리 +20%는 M3 수용 목록. 보충 2줄 | `reviews/round-398-owner-answers.md` |
+| 2026-10-16 | 399라운드 소유자: 측정 문서 PR #414 병합·마감까지 끝내고 일시 휴식, 갈무리(상황 파악·원장 갱신·결정) 뒤 다음으로; L3는 시작하지 않음. 보충 1줄 | `reviews/round-399-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
