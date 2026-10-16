@@ -145,6 +145,7 @@
 | 2026-10-16 | 389라운드(닫기): 공유 선언 충돌 fold 판정 결함 PR #409 검증·squash-merge(10710d8b2); 청사진 노드 identity 비교, hasSharedConflict 삭제, 기존 기대 변경 0건; 보충 셋; F1·F2는 별도 PR. 보충 8줄 | `reviews/round-389-closing.md` |
 | 2026-10-16 | 390라운드(닫기): union fold 정체 결함 F1 PR #410 검증·squash-merge(319a1109b); 정체 토큰 union:<fold mask>, 선택은 청사진 노드 동일성, 기존 기대 변경 2건(옛 범주 열쇠 단언); 보충 둘. 보충 5줄 | `reviews/round-390-closing.md` |
 | 2026-10-16 | 391라운드(닫기): F2 배열 아이템 종류별 노드 PR #411 검증·squash-merge(ef87cfbcc); fold별 아이템 후보, 후보별 잠복 열쇠, 단일 후보 불변, 기존 기대 변경 0건; F3 별도 PR, 대기열 62, agy 한도 기간 검증 조건. 보충 7줄 | `reviews/round-391-closing.md` |
+| 2026-10-16 | 392라운드 소유자: 기능 오류는 반드시 해결(절대로 막아야 하는 문제), 속도는 아직 불만족, 결정 54·62·M3 수용은 자세한 정보로; codex 구현 과정 고침 셋. 보충 1줄 | `reviews/round-392-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
