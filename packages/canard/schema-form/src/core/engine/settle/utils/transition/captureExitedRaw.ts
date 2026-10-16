@@ -39,15 +39,14 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
   if (
     node.behavior.type !== 'array' ||
     structural ||
-    (!clear &&
-      (node.blueprintNode.itemCandidates ||
-        node.blueprintNode.prefixItemCandidates))
+    (!clear && node.blueprintNode.hasCandidateDescendants)
   ) {
     for (const child of node.children ?? []) {
       if (child.parent !== node) continue;
       if (
         node.behavior.type === 'array' &&
         !structural &&
+        !child.blueprintNode.hasCandidateDescendants &&
         getItemEntries(node.blueprintNode, Number(child.name)).length < 2
       )
         continue;
