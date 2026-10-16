@@ -305,6 +305,7 @@
 | 2026-10-16 | 390라운드(닫기): union fold 정체 결함 F1 PR #410 검증·squash-merge(319a1109b); 정체 토큰 union:<fold mask>, 선택은 청사진 노드 동일성, 기존 기대 변경 2건(옛 범주 열쇠 단언); 보충 둘. 보충 5줄 | `reviews/round-390-closing.md` |
 | 2026-10-16 | 391라운드(닫기): F2 배열 아이템 종류별 노드 PR #411 검증·squash-merge(ef87cfbcc); fold별 아이템 후보, 후보별 잠복 열쇠, 단일 후보 불변, 기존 기대 변경 0건; F3 별도 PR, 대기열 62, agy 한도 기간 검증 조건. 보충 7줄 | `reviews/round-391-closing.md` |
 | 2026-10-16 | 392라운드 소유자: 기능 오류는 반드시 해결(절대로 막아야 하는 문제), 속도는 아직 불만족, 결정 54·62·M3 수용은 자세한 정보로; codex 구현 과정 고침 셋. 보충 1줄 | `reviews/round-392-owner-answers.md` |
+| 2026-10-16 | 393라운드 소유자: 54는 플러그인·내장 fallback fieldInput 대조를 지금 먼저(이름은 misfit, 개선은 나중), 62는 현행 유지 쪽이되 UX 일관성 검토. 보충 2줄 | `reviews/round-393-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -640,3 +641,4 @@
 - **390라운드(2026-10-16, 닫기).** F1 union fold 정체 #410 병합(319a1109b), 정체 토큰, 보충 둘(reviews/round-390-closing.md).
 - **391라운드(2026-10-16, 닫기).** F2 배열 아이템 종류별 노드 #411 병합(ef87cfbcc), F3 별도 PR, 대기열 62(reviews/round-391-closing.md).
 - **392라운드(2026-10-16, 소유자).** 기능 오류 반드시 해결, 속도 불만족, 결정 사항 자세히(reviews/round-392-owner-answers.md).
+- **393라운드(2026-10-16, 소유자).** 54 대조 먼저(misfit), 62 현행 유지 쪽·UX 검토(reviews/round-393-owner-answers.md).
