@@ -150,6 +150,7 @@
 | 2026-10-16 | 394라운드(닫기): F3 후보 소유 잠복 정리 PR #412 검증·squash-merge(efa621543); 소유 선택자·자리 이동·재생 규칙·질의 안 방문 집합, 기존 기대 변경 0건, 새 시험 114건; 남은 결함 다섯은 다음 PR, 수용 잔여 둘; 54 대조 결과 결함 아홉; codex 과정 고침 셋. 보충 11줄 | `reviews/round-394-closing.md` |
 | 2026-10-16 | 395라운드(닫기): 후보 원천 보존 결함 다섯 PR #413 검증·squash-merge(65efdccec); 규칙 셋 R1 보존·R2 억제 이탈 정리·R3 꺼진 배열 쓰기 첫 종류 묶음, 35C-10 좁힘, 결정 62 (가) 잠정, 기존 기대 변경 0건, 새 시험 89건; DETAIL 문장 수정 기준과 과정 관찰; 관찰 둘. 보충 11줄 | `reviews/round-395-closing.md` |
 | 2026-10-16 | 396라운드 소유자: 열린 결정의 사양은 일관성·합리성·예측 가능성으로 구성하면 수용. 62는 (가) 꺼진 자리 값은 첫 종류의 몫, ⑧은 빈 칸 undefined·명시적 비우기만 nullable이면 null. 보충 1줄 | `reviews/round-396-owner-answers.md` |
+| 2026-10-16 | 397라운드 소유자: agy 개인 한도 복구. 검증은 agy로 복귀(high는 최고급, mid 이하 효율, apex 비권장), codex 검증자는 대체로만. 보충 1줄 | `reviews/round-397-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
