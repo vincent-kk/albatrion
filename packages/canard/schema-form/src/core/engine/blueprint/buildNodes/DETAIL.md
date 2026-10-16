@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Appending multiple templates for one named property sets the host's optional `hasPropertyCandidates` flag. Single-candidate bindings leave it absent, without a new index or cache; array candidate presence remains represented by the existing candidate lists. This construction-time proof guards candidate-owned exit cleanup (NODE-043, BLUEPRINT-044; (392라운드 마감 결정)).
+- Appending multiple templates for one named property sets the host's optional `hasPropertyCandidates` flag. Single-candidate bindings leave it absent, without a new index or cache; array candidate presence remains represented by the existing candidate lists. This construction-time proof guards candidate-owned exit cleanup (NODE-043, BLUEPRINT-044; 394C-01).
 
 - 배열의 반복 템플릿과 각 prefixItems 자리에는 build가 돌려준 fold별 후보 전부를 작성 순서로 연결한다. 기존 단일 후보 필드는 첫 후보를 가리키며, 후보별 작성 스키마 위치와 선언 소유를 보존한다(BLUEPRINT-044, 389C-03, 391C-01).
 
