@@ -1,6 +1,5 @@
-import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
-
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { isArray } from '@winglet/common-utils/filter';
+import { escapeSegment } from '@winglet/json/pointer';
 
 import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
@@ -14,6 +13,8 @@ import { staticSpec } from '../input/staticSpec';
 import { HostLatent } from '../latentStore/HostLatent';
 import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
 import { setLatentRaw } from '../latentStore/setLatentRaw';
+import { clearOtherLatentKinds } from './utils/clearOtherLatentKinds';
+import { distributeLatentArrayValue } from './utils/distributeLatentArrayValue';
 
 /**
  * Distribute an absent-path write to one kind and clear other kinds (26C-14).
@@ -44,24 +45,8 @@ export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
   if (template.kind === 'virtual') return false;
   const key = JSON.stringify([path, getBlueprintNodeIdentity(template)]);
   const log = context?.inTransition ? context.latentAutomaticLog : undefined;
-  const name = unescapeSegment(path.slice(path.lastIndexOf($.Separator) + 1));
   const clearOtherKinds = (): void => {
-    for (const entry of siblings)
-      if (
-        entry.name === name &&
-        getBlueprintNodeIdentity(entry.node) !==
-          getBlueprintNodeIdentity(template)
-      )
-        setLatentRaw(
-          runtime,
-          log,
-          JSON.stringify([path, getBlueprintNodeIdentity(entry.node)]),
-          false,
-          undefined,
-          undefined,
-          undefined,
-          context,
-        );
+    clearOtherLatentKinds(runtime, context, path, template, siblings);
   };
   if (template.strategy === 'terminal') {
     const row = BEHAVIORS[template.kind]?.[template.strategy];
@@ -80,6 +65,37 @@ export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
     );
     clearOtherKinds();
     return interpreted !== undefined && !isOmittedEmpty(template, interpreted);
+  }
+  if (
+    template.kind === 'array' &&
+    template.hasCandidateDescendants &&
+    isArray(value)
+  ) {
+    if (seen.has(value)) return false;
+    seen.add(value);
+    const wrote = distributeLatentArrayValue(
+      runtime,
+      context,
+      path,
+      template,
+      value,
+      order,
+      (childPath, childTemplate, childValue, childOrder, entries) =>
+        distributeLatentValue(
+          runtime,
+          context,
+          childPath,
+          childTemplate,
+          childValue,
+          childOrder,
+          whole,
+          entries,
+          automatic,
+          seen,
+        ),
+    );
+    seen.delete(value);
+    return wrote;
   }
   if (!isPlain(value)) {
     pruneLatentRaw(runtime, path, undefined, context);
