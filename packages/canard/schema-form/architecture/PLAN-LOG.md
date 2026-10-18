@@ -325,6 +325,7 @@
 | 2026-10-18 | 410라운드 닫기: L3 측정 문서 다섯 PR #421 squash 병합(c350e7651), 제품 변경 없음, agy 여섯 축 통과·수정 관찰 없음. 근거 결손과 M3 잔여를 명시하고 마운트 원인 분해로 진행. 보충 3줄 | `reviews/round-410-closing.md` |
 | 2026-10-18 | 411라운드 닫기: 마운트 완료 경계·영속 가드와 새 창 독립 수치 검산을 기록하고 PR #422는 metadata 독립 확인 미검증으로 병합 보류. Filid 전역 FAIL·자동 제외 한계와 원자료를 보존. 보충 3줄 | `reviews/round-411-closing.md` |
 | 2026-10-18 | 412라운드 소유자: PR #422 메타데이터의 코디네이터 대체 확인·병합 승인, agy 권한 문제는 목적·상황을 듣고 대행 허용. 원문 1건 | `reviews/round-412-owner-answers.md` |
+| 2026-10-18 | 413 | 승인된 코디네이터 metadata 대체 확인 뒤 PR #422를 ef6747ea0으로 squash 병합했다. 제품 변경과 성능 잔여 수용은 없으며 다음은 itemless 배열 계획·독립 검토다. | [닫기](reviews/round-413-closing.md) |
 
 ## 2. 라운드별 요지
 
@@ -680,3 +681,4 @@
 - **272라운드(2026-10-14, 닫기/원장 관리자).** 07b-7 #366을 직접 검증(시험 3950·storybook 241·typecheck·lint·json-schema·플러그인 일곱·documents·G16·verifier·agy)하고 squash 병합(c0ddd4b51): 로드 null·종류 틀린 원본 아래 자식 미채움(41·45), enum select undefined 표시(44), nullable 공식 지원 문구(269C-02), #365 후속 여섯(272C-01, reviews/round-272-closing.md). 07c 재배치 브리프를 fixy07에게 발송(codex 구현), 07b-6은 c0ddd4b51에 rebase 뒤 PR.
 - **273라운드(2026-10-14, 닫기/원장 관리자).** 07b-6 #367을 직접 검증(storybook 251·시험 3949·typecheck·lint·documents·verifier)하고 squash 병합(beff4b5ec): 패널 데코레이터(42), FormHandle 스토리 10개(43), docs 직렬화 방어 수정(40, 재현 불가로 소유자 재확인), CLAUDE.md:125 문장 확정(273C-01, reviews/round-273-closing.md). fairy07은 README 1.0.0 이주 절 초안, fixy07은 07c 재배치 진행 중.
 - **274라운드(2026-10-14, 닫기/원장 관리자).** README 두 파일의 Migration (1.0.0) 절 #368을 agy·직접 대조로 검증하고 squash 병합(e5f7f9fa3)(274C-01, reviews/round-274-closing.md); 옛 최상위 키 조용한 무시의 개발 빌드 경고는 대기열 47; fairy07은 #354 본문 갱신 초안, fixy07은 07c 재배치 진행 중.
+- **275라운드(2026-10-14, 닫기/원장 관리자).** 07c 재배치 #369를 직접 검증(시험 3840·storybook 251·typecheck·lint·플러그인 일곱·documents·G16·d.ts 바이트 동일·verifier·agy)하고 squash 병합(4da9567ea): core/{engine, surface}, 미사용 helpers 셋 삭제, src/constants, helpers·components는 compartment(275C-01, reviews/round-275-closing.md). 267C-01 1~4 완료, 5(마무리) 진행: 설명 문서 갱신(fairy07), #354 본문 갱신 완료, 워크트리 정리·대기열 총정리는 소유자 보고.
