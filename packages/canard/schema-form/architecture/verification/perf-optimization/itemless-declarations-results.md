@@ -2,6 +2,48 @@
 
 fresh root/nested form의 빈 자리 조회가 N=1000/8000에서 실제1000/8000회→0회로 줄었습니다. 유일한 제품 변경은 완성된 유효 청사진의 전역 자리 선언 부재를 확인하는 E 조건7행입니다. **TEST-027·대기열60에서 수치 수용과 PR 병합을 보류하며 G13 독립 구현/수치 검토도 미완료입니다.** Node primary object-B0와 보조 대조군 세 행의 악화를 포함해 모든 수치를 보존합니다.
 
+## 규칙 소유 객체 강화 관측의 후속 결과
+
+후속 검증 코드의 고정 HEAD는 `4ac1433fdd59559880a616949860f4ef9050b8da`이며, core 검증 계약의 선행 DETAIL-only 커밋은 `8838b7973dc50575cd8ac2acc007c9e95f090bce`입니다. 이 절은 기존 `79d873de8fe7582b473de771287de3a3f33367ef`의 관측 한계를 보완한 결과입니다. 아래의 기존 구현·측정 절과 모든 수치는 그 당시 epoch의 역사적 기록이며 새 관측 프로토콜로 소급 검증했다고 주장하지 않습니다. 이 보고서의 후속 문서 커밋과 PR의 최신 headRefOid는 별도로 구별합니다.
+
+원래 live-source 58개 특성화와 8개 실제 source 비용 spy, adapter의 import/call·기대값을 바이트 그대로 보존했습니다. strict factory는 격리 source/A/B 각각 자기 실행 모듈의 기존 WeakMap.get만 읽으며 실제 known/live/retired 노드의 기존 codec 참조에 연결합니다. 첫 일곱 키 항목은 그대로 유지하며 최신 path/kind 추정으로 fallback하지 않습니다. 알 수 없거나 모호하거나 path/kind/codec 연결이 충돌하면 실패합니다. 규칙 소유 객체와 실제 injectTo 목적지를 구별하며, 실제 경로 색인의 양방향 membership을 검사하고 다섯 항목 정책 키에 없는 target 색인을 요구하지 않습니다. 호출자의 공유 참조·기존 별칭 계약은 유지합니다.
+
+기존 실제 collector와 실제 key producer를 쓴 격리 synthetic 12축에서 최초 retired/retained stale 및 미존재 ID의 세 누락을 새로 재현했습니다. 세 검출 assertion은 보강 전에 실제 exit1이었고, strict collector에서는 앞의 두 축이 실제 occurrence 차이를 보존하고 미존재 ID는 오류로 거절됐습니다. 다른 경로 대상·직접 노드 참조·기존 index 불일치 등 이미 잡던 축은 유지됐으며 metadata 숫자만 다른 정상 관계는 수락했습니다. 이는 생산 resolver가 잘못된 대상을 선택한다는 제품 결함 재현이 아닙니다. 새 pure helper test-record 12개는 별도 Vitest로 통과했고, 같은 12개 Vitest가 변경 전 전부 실패했다는 주장은 하지 않습니다.
+
+| 새 검증 | 실제 결과 |
+| --- | --- |
+| scoped Vitest | 원66 + helper12 = 78 pass, 5파일입니다. |
+| 별도 standalone SB1–SB4 | Node24.20.0/Bun1.4.3 각각4개, readiness 한 번당8 runtime-case executions입니다. |
+| 실제 binding 음성대조 | SB1–SB4 각각 wrong-module mutation exit1이며 fresh readiness도 각 runtime의 네 거절을 확인합니다. |
+| strict 전체 관측 | 원58 ID × source/A/B × Node/Bun = 348 actual histories, runtime별174, 완료348/거절0/실패0입니다. |
+| 저장 raw 교차 비교 | runtime 안의 세 쌍과 runtime 사이 세 lane, 총9×58=522 comparisons이며 새 장면 실행으로 세지 않습니다. |
+| 원 네 음성대조 | rules-omission/alias-loss/event-loss/rule-target-change의 기존 동작과 각 runtime comparator 거절을 유지했습니다. |
+| package typecheck/lint/test/build | 모두 exit0이며 전체764파일·4863pass·기존1todo입니다. |
+
+private source graph는 physical input533개·실제 producer1개·같은 입력으로 향하는 평가 두 곳과 관측 entry의3간선입니다. 별도 fixture graph input5개에는 engine/producer가 없습니다. getter AST는 같은 lexical Map의 get만 호출하며, 실제 자연 key·known128/unknown128 읽기 뒤 상태 불변·다음 자연 ID 차이1·같은 path의 old/current 객체 구별로 확인했습니다. source/A/B getter 행은 8824/16560/16561입니다. 별도 준비는 직접 선언한 rolldown1.2.0/TypeScript5.9.2만 사용하며 숨은 prototype helper 의존0과 명시 frozen raw 입력2개를 구별합니다. cached output과 잘못된 SHA는 준비 전에 exit1로 거절했습니다.
+
+준비 과정에서 optional 빈 규칙 저장소를 필수 Map으로 가정한 검증 오류와 함수 소스의 runtime별 들여쓰기 차이가 나왔으며 실패 raw를 보존했습니다. 빈 저장소의 기존 optional 계약을 반영했고 membership을 약화하지 않았습니다. 생성된 private fixture의 선행 탭만 두 공백으로 변환하되 TypeScript parser의 모든 leaf token이 동일함을 확인하여 literal·구문 변경을 거절했습니다. 생산 source/raw 엔진·codec·기존 기대값은 변경하지 않았습니다. 같은 최종 source/A/B/fixture 바이트의 두 fresh 준비 결과를 확인했으며 반복 실행을 새 고유 사례로 합산하지 않았습니다.
+
+| 새 입력/도구 | SHA256 |
+| --- | --- |
+| helper | `639fd2c56141048ce395fd6b968de16ee671cf0010c016018f9126c7d93a8698` |
+| observer | `2f25a99cd526aa5104306a792ad88bcfd16ba1609b09ac2262027e8b57b7eeb4` |
+| prepare | `7b10ae64217bdf0bfe25b6c99662781576f737b9128039bfa2c241b7edfbbba4` |
+| standalone cases | `0773ffe6fadc241cda47e21a64978a359f492ce673ddf0b5a251c2d39a2272ca` |
+| readiness | `e50fab90426effb2c3693086e708771426a9d6d13aa144333b300b64b7c426c3` |
+| compare | `1271706d0a67a59b9c1bb19b8abad8d5bd7319543f1afc215b511c4474bd82d3` |
+| standalone 기존 entry | `18746434900d6e5d9ed15ed2ca6f92d3c12aca6a3a826285644999e058bba466` |
+| 격리 source 실행물 | `57eb96cb42482d13c9a6da4ee757b2c8a1d9a631a90478311dc82a0e028288a8` |
+| A observation 사본 | `1749ddc1949ec96154c877b54b1239ca2c71e15626af8b594e9d8a993235b545` |
+| B observation 사본 | `d2816850b065f82cbb739d3f9373e90c6fa3ee06c8beeee45396bcb221935053` |
+| private fixture | `cfc05953017e3a67ad969a68d1cadce52cba7e0749378312ef52125700ab784c` |
+
+후속 Filid 세 표면의 snapshot은 `d1c2d26926f2e6e48cc5565aa5a9022b326f96de28cd9a314a96464beb191c4f`로 같습니다. 전역 FAIL/분석 INDETERMINATE이며 구조384=error24/warning52/면제info308, non-exempt 고유76, verification24=error2/warning22입니다. 진단130=detail33/intent20/unresolved4/unowned73의 원문 및 nextAction을 보존했고 기존 감사와 finding·진단 signature 차등은0입니다. 변경 파일의 직접 finding/진단은0이지만 루트 DAG/import/fragmentation/contract-link의 네 미확정 경고는 남습니다. `**/fixtures`·`**/__benchmarks__`·`**/architecture`는 자동 제외이므로 helper12와 standalone4의 최근접 core 배치·test-record 역할·32 cap 아래 개수는 수동 증거이며 자동 PASS가 아닙니다. 설정이나 scanner를 바꾸지 않았습니다.
+
+새 로그·실패·실행 명령과 코드/도구/raw SHA, 보존·차등 검사는 ignored `.seiri/tasks/itemless-rule-target-implementation/`에 있습니다. 보호8373파일 중 승인된 DETAIL/observer/standalone entry/이 보고서 외 원입력을 보존했으며, 승인 build가 ignored agents-hashes.json을 재생성한 hash delta는 별도로 기록했습니다. E 제품7행·producer·공개 표면·원래66/adapter·기존 guard29/binding61/scope81/A-A30·원시 측정은 유지했습니다. runtime dist 바이트와 추적 build 산출물 차등0이므로 빈 build 커밋은 없습니다. count/measure 분기 본문과 export-only 실행물 바이트를 보존하고 새 준비의 compatibility manifest도 생성했지만 시간 명령·warmup·quiet 창은 실행하지 않았습니다.
+
+새 독립 G13 구현 검토, TEST-027·대기열60의 악화 수용/병합, 대기열59의 격리 정책과 M3는 미충족입니다. 기존 대조군 악화를 무해나 노이즈로 수용하지 않았고 이번 untimed 검증을 성능 수용이나 소유자 승인으로 올리지 않았습니다.
+
 ## 기준과 범위
 
 검토 당시 기준은 `e714a3b491a38814da7e310e35868b13a1f70d38`, 실행 기준은 `6d7d78d32bfcd9b6822410ecec4fc769dc7aa3f5`입니다. zero-own-commit branch를 non-destructive rebase로 정렬했습니다. 두 기준의 누적 차등18경로는 architecture 문서이며 source/dist/dependencies/manifests/tools 차등0을 별도로 확인했습니다. 이전 PR422/round413의 metadata 수정으로 ancestry가 달라졌으므로 ancestry를 동일성 증명으로 대체하지 않았습니다.
