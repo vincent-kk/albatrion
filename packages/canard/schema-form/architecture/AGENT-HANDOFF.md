@@ -1,6 +1,6 @@
 # 메인 에이전트 인계 — Claude 원장 관리자에서 codex 메인 에이전트로
 
-이 문서는 메인 에이전트(codex)가 Claude 세션의 자리를 이어받아 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 "지금 이 순간의 작업대"(Orca 상태, 열린 PR, 작업 폴더, brief 위치)와 이전 메인 에이전트가 쓰던 판단 기준(7~9절)을 적는다. 갱신 2026-10-19, 원장 라운드 416 검사 완료 뒤 진행 중인 마운트 작업. 소유자는 Vincent다.
+이 문서는 메인 에이전트(codex)가 Claude 세션의 자리를 이어받아 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 "지금 이 순간의 작업대"(Orca 상태, 열린 PR, 작업 폴더, brief 위치)와 이전 메인 에이전트가 쓰던 판단 기준(7~9절)을 적는다. 갱신 2026-10-19, 원장 라운드 418의 검증 준비와 보류 기록. 소유자는 Vincent다.
 
 ## 1. 역할과 구속 규칙
 
@@ -24,6 +24,14 @@
 - 워커 brief 원본: `verification/perf-optimization/l3-briefs/` (가설별 구현 brief 와 검증 brief 여섯 편). 다음 가설의 brief 는 이 꼴을 복제해 쓴다.
 
 ## 3. Orca 상태
+
+현재 재개점은 검토된 준비 계획을 바탕으로 한 별도 추적 실행의 범위 판정이다. 이 문단과 충돌하는 아래의 진행 중 표현은 지나간 단계의 기록이다. 417문서20경로는c598d60c20020a8aba31f28359f056cd1e3456f7로게시했고제품변경0이며27검사뒤좁은재검증까지마쳤다. 418의결정8/10/12행은삽입뒤불변이다. 실제검사결과와범위는reviews/round-418-closing.md에덧붙이며현재HEAD는git log로확인한다. 고정PR423 head79d873de8·대기열59/60·G13보류는유지한다.
+
+source task_7015be1825b2·ctx_023fa00ea09d의61파일은실제source/A/B WeakMap.get의Node/Bun연결근거이며live TS/Vitest와다른격리module이다. 174/runtime·348전체·522 raw재사용과agy의정적/저장자료범위,거절뒤bypass 원격조회제외와412 root metadata대행은reviews/round-418-closing.md에구별했다. 뒤의source task_e923f46b1677·ctx_729e33959e22는81파일의fresh준비/4 standalone binding을완료/release/ACK했다. 새도구는직접선언rolldown1.2.0/TypeScript5.9.2와명시raw2입력/해시를쓰며옛ignored helper를숨은런타임전제로두지않는다. 실제Node/Bun6양성gate·24반복사례이고향후unit는기존66+helper12=78/별도standalone4이며helper와strict58관측은미구현이다. 새agy3.8 task_b08cc38e807a·ctx_a8f01883b4cd/term_05cd4c36-af8a-47b0-ba3d-4b4ad7629bb5가이도구·명시입력·계획의파일/저장자료독립검토를표준권한으로마쳤고별도추적dispatch의근거라는한정판정을냈다. 실제IPC거절뒤우회없이전체최종보고/idle을확인해정확한검토터미널만stop/release했다. 후속게이트나G13수용은자동충족되지않았다. 제공driver/Git/gh/childprocess/쓰기/우회는금지이며표준IPC거절시전체최종보고와idle을확인해복구한다. 추적구현·제품·기존기대·PR/refs·측정변경은아직미승인이다.
+
+main task_8bed86855612·ctx_b12305c8b8a7의legacy러너53파일과새고유68행·synthetic20·옛raw68·추가Node34는완료/release/ACK했다. agy의표준파일/저장자료계산·읽기전용boundary/matrix/readiness검산은범위내기여지만새live preservation은코디네이터418문서수정으로exit1이어서G3새통과가아니다. 저장manifest검산과현재트리불일치를구별하고Node26분석을Node24/Bun생산관측으로바꾸어적지않는다. 실제IPC거절뒤우회없이최종보고/idle을확인해ctx_0e02f441913c를abandon·즉시명확화ctx_288e3de7b2a4로재사용했고전체최종보고뒤정확한검토터미널만stop/release했다. 성공worker_done이나archive확보를꾸미지않는다. 원장task_97adb06900a6·ctx_4f27f75194c9는기존27검사+기준3을모두exit0으로마쳐2913/누락464·소유자539·새6보충·기존추론불변을확인했으며결과prose와새brief뒤최종입력의게시조건및실제별도보고서는같은닫기문서에구별한다. strict rule identity·별도quiet·시간표본·소유자성능수용은미충족이다. 첫객체names의독립main기준은확인했지만미완성helper채택/제품실행은하지않는다. 옛A/A epoch는보존하며미래실행전에새문서/ref/도구입력을정확히고정한다.
+
+### 이전 단계의 상태 메모
 
 최신 재개점은417라운드 문서 마감과규칙대상 관측 가드의최소보강계획이다. 아래진행중표현은각단계의기록이며이문단이우선한다. main HEAD6d7과PR423 head79d873de8는그대로다. 원장 task_2d08dcc6f830·ctx_2b72673d4989의27검사를마쳤고2912/누락465·소유자539·새5보충·추론불변을확인했다. 뒤의결과prose·HANDOFF/brief오기·대기열설명에대한좁은재검증후417문서만게시한다. 새상세agy task_c38c3f7f4256·ctx_cd17d89892a9는40행독립수치표와58ID/27필드·실행재사용범위를전달했고,Git/gh실제거절뒤412승인으로코디네이터가metadata만따로확인했다. 이어같은agy의task_1c5af71c4ccd·ctx_71cc26fdb3f9가동일path/kind의과거대상을최신으로정규화할수있는가드틈과목록삭제뿐인음성대조를finding으로확인했다. 실제worker_done후마지막dispatch release로소유터미널을닫았고이전것은ownership_transferred였다. G13·수용·병합은보류한다. source codex의새task_98330d3f1af8·ctx_4d7034e6f378는새ignored .seiri/tasks/itemless-rule-target-guard/에서실제그래프반례·최소계획만작성한다. 제품/추적파일/Git/PR/빌드/측정변경은미승인이다. A/A준비 task_43211bbe6345·ctx_b84b98d3b078는30ignored파일·Node/Bun무타이머84행·6실패대조·136예정행정체성을확인하고완료/release/ACK했다. 실제표본0·quiet미승인이며두label모두E없는같은A다. 첫객체조건부계획과옛판비동기68행근거/미래48행계획은독립검토와새실행판정이남는다. 상세와SHA는reviews/round-417-closing.md에있다. 다음라운드는418이며이번추론8/10행은삽입후불변이다.
 

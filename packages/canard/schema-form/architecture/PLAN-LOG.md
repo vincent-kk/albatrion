@@ -330,6 +330,7 @@
 | 2026-10-18 | 415 | 소유자가 동일 코드·메시지의 게시 이력 이름 표기 수정을 승인해994dd3a68로 교체했고 사용 완료 브랜치 정리를 지시했다. 승인 원문과 old/new 대응을 보존한다. | [소유자 답](reviews/round-415-owner-answers.md) |
 | 2026-10-18 | 416라운드 닫기: 승인된 이력 수정과 완료 참조9개 정리, itemless 독립 계획 검토·결정 대기열 현행화. 제품 구현은 별도 발주하며 수용은 없음. | `reviews/round-416-closing.md` |
 | 2026-10-19 | 417라운드: itemless Draft PR423 고정·대기열59/60 범위 보류·독립 검증과 후보 조사 | reviews/round-417-closing.md |
+| 2026-10-19 | 418라운드: 실제 rule reader feasibility·legacy 비동기 러너 준비·독립 검증 귀속과 보류 | reviews/round-418-closing.md |
 
 ## 2. 라운드별 요지
 
@@ -690,3 +691,4 @@
 - **277라운드(2026-10-14, 소유자).** G23 실행 주체 교정: "스토리 도는건 너 말고 다른애 시켜. 넌 관리해야지" — 원장 관리자의 ego-browser 실행을 멈추고 fairy07에게 발주(스토리북 6007, 스크립트 scratchpad/g23-run-all-stories.js). 대기열 39 oneOf 터미널 이유는 원장 관리자가 소유자에게 직접 답함(reviews/round-277-owner-answers.md).
 - **278라운드(2026-10-14, 소유자).** 대기열 40 내용 질문에 답했고, 39의 고침 방향을 소유자 지적대로 명세의 덮어쓰기 규칙(게이트 없는 분기 선언도 전체 순서에서 나중 승)으로 정정해 fixy07의 07d 브리프를 고침(reviews/round-278-owner-answers.md).
 - **279라운드(2026-10-14, 소유자).** "좋아 쭉 작업해 다시" — 39 세부 결정(분기가 호스트 자신에 단 terminal은 무시) 승인으로 읽고 07d·G23을 기다려 병합·보고(reviews/round-279-owner-answers.md).
+- **280라운드(2026-10-14, 소유자).** 38의 verifier 결함(스키마 모양 판정과 입력 선출의 어긋남)에 소유자가 "자유도를 해치지 않고 사용 방식에 따라 맞추게" 답해, 라벨은 항상 htmlFor와 id를 갖고 묶음은 aria-labelledby로 제목을 가리키는 추측 없는 규약으로 바꿔 fixy07에게 보냄(reviews/round-280-owner-answers.md). alias 자리는 문제없음.
