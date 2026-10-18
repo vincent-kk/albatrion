@@ -318,6 +318,7 @@
 | 2026-10-18 | 403라운드(닫기): L3 가설 (e) 조각 소유 직접 판정 PR #416 squash-merge(fde6ab359); 평상시 쓰기 F=64 Node 3.522→1.134 ms·Bun 16.575→1.412 ms, 나감 불변, 72장면 차이 0, 런타임 +13/−5; Orca 조정 루프 운영 방식 기록. 보충 7줄 | `reviews/round-403-closing.md` |
 | 2026-10-18 | 404라운드(닫기): L3 가설 (b) items 없는 배열의 끝 덧붙임 지름길 PR #417 squash-merge(8e35b01fc); getItemEntries 8천 24,003→2회, push 8천 Node 0.653→0.063 ms·Bun 1.816→0.080 ms, compareArrayAppend 배달 차이 0, 런타임 +61/−23. 보충 6줄 | `reviews/round-404-closing.md` |
 | 2026-10-18 | 405라운드(닫기): L3 가설 (a) 선언 밖 키 일반 대입 PR #418 squash-merge(89ea2c98b); __proto__만 own property, 나머지 일반 대입, writeObjectKey는 engine/utils로; Node 마운트 −31.6~−44.5%, Bun B1 마운트 행은 재측정으로 창 변동; 메인 에이전트 인계 문서 AGENT-HANDOFF.md(405C-02). 보충 7줄 | `reviews/round-405-closing.md` |
+| 2026-10-18 | 406라운드(닫기): L3 가설 (c) 선언 밖 값 구조 비교를 쓰기 한 번에 한 번으로 PR #419 squash-merge(bb4ff19d9); arrayExtras 참조 되살림·markWrite 참조 비교; B0 한 키 Node −6.2%·Bun −13.7%; 370라운드 원칙은 줄 수가 아니라 비례. 보충 4줄 | `reviews/round-406-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -666,3 +667,4 @@
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
 - **266라운드(2026-10-14, 소유자).** 스토리북 관찰 셋을 기록해 대기열 40·41·42로 올렸다: docs 페이지의 jsonSchema 순환참조 직렬화 오류, nullable 분기 스토리의 화면·값 불일치(설계 판단 필요), 스토리 가독성(설명·값·오류·스키마·설정 수록)(reviews/round-266-owner-answers.md).
 - **267라운드(2026-10-14, 소유자).** 중지 없이 끝까지 진행하라는 지시: PR 병합 포함, C 재배치와 스토리·런타임 묶음까지, 결정은 대기열에 모아 끝에 한 번에(267C-01 계획, reviews/round-267-owner-answers.md).
+- **268라운드(2026-10-14, 소유자).** codex·agy 멀티에이전트 작업 재개(덧붙임: `nullable: true`는 잔류, 265C-01의 제거 항목 취소): 257라운드의 "이번에 한해 claude 직접" 예외를 끝내고 217C-01 규칙으로 복귀(268C-01, reviews/round-268-owner-answers.md); 07b-5 후속은 fixy07이 마무리, 07b-6·07b-7·07c부터 codex 구현.
