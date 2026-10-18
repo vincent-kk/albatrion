@@ -15,9 +15,9 @@
 | 스키마 → 청사진 | `src/core/surface/utils/binding/buildFieldNodeTree.ts:41` → `src/core/engine/blueprint/blueprint.ts:23`; buildNodes 뒤 validateShape·validateChildTargets를 마칩니다. |
 | 청사진 → 루트·자식 레코드 | `src/core/surface/utils/fieldNodeFactory.ts:77,95,141`; createFieldNode가 경로·행·유효 스키마를 준비하고 RuntimeFieldNode를 만듭니다. 자식 연결은 `src/core/engine/settle/utils/compute/createChildNode.ts:10`의 runtime.nodeFactory입니다. |
 | 마운트 기본 입력 | `src/core/engine/write/utils/entry/dispatchMount.ts:24,26,39`; 생략한 value를 runtime.loadSnapshot으로 치환합니다. 따라서 이 fixture의 defaultValue는 loadFieldNodeAtMount에 실제 객체로 도착합니다. |
-| 정적 첫 로드/범용 정착 | `src/core/engine/settle/loadFieldNodeAtMount/loadFieldNodeAtMount.ts:23–24`; `utils/staticFirst/canLoadStaticFirstTree.ts:14`는 value === undefined를 요구합니다. 이번 호출 수는 loadStaticFirstTree 0·writeFieldNode 1로 범용 경로를 확인합니다. 정적 첫 로드와 같은 비용이라고 해석하지 않습니다. |
+| 정적 첫 로드/범용 정착 | `src/core/engine/settle/loadFieldNodeAtMount/loadFieldNodeAtMount.ts:23–24`; `src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/canLoadStaticFirstTree.ts:14`는 value === undefined를 요구합니다. 이번 호출 수는 loadStaticFirstTree 0·writeFieldNode 1로 범용 경로를 확인합니다. 정적 첫 로드와 같은 비용이라고 해석하지 않습니다. |
 | 입력·자식 선택·계산·커밋 | `src/core/engine/settle/utils/write/writeFieldNode.ts:136,139,140,143` → markWrite·registerRecalculation·computeNode·finishSettlement입니다. |
-| 선언 배열의 실제 dispatch | `src/core/engine/settle/utils/compute/childSelection/selectChildren.ts:152` → `src/core/engine/behaviors/arrayBehavior/branch/arrayBranchBehavior.ts:15` → `branch/utils/declareArrayChildren.ts:21–33`; child/node 이름만으로 경로를 추정하지 않았습니다. |
+| 선언 배열의 실제 dispatch | `src/core/engine/settle/utils/compute/childSelection/selectChildren.ts:152` → `src/core/engine/behaviors/arrayBehavior/branch/arrayBranchBehavior.ts:15` → `src/core/engine/behaviors/arrayBehavior/branch/utils/declareArrayChildren.ts:21–33`; child/node 이름만으로 경로를 추정하지 않았습니다. |
 | extras 복사와 합성 | `src/core/engine/settle/utils/input/nextExtras.ts:18–27`; 객체 합성은 `src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:161–177,236`의 Map·names·seen과 결과 객체, 배열 합성은 `src/core/engine/behaviors/arrayBehavior/utils/value/assembleArray.ts:166` 이후 자리 순회입니다. |
 | 커밋·배달 | `src/core/engine/settle/utils/commit/commitSettlement.ts:32`와 `src/core/engine/write/utils/chain/runDeliveryWaves.ts:11`; dispatchMount:65의 exitFieldNodeChain이 배달 사슬을 마칩니다. 리스너 호출 이전 revision·payload 확정은 지킬 결과입니다. |
 
@@ -330,7 +330,7 @@ SETTLE-001·018(충돌 포함)·020(96/97 보충 포함)·042·043, BLUEPRINT-00
 
 ## 우선순위가 있는 별도 구현 가설
 
-1. **첫 후보 — itemless 배열의 자리별 빈 선언 조회 제거.** 근거: `declareArrayChildren.ts:21–33`의 count 순회와 `getItemEntries.ts:25–30`의 후보 부재, 위의 N회 계수입니다. `populateNodeChildren.ts:247–263`는 itemCandidates를 item과 함께, prefixItemCandidates를 prefixItems와 함께 생성합니다. 최소 규칙은 불변 청사진에서 item·prefixItems 및 대응 candidate가 없음을 확정한 배열만 기존 EMPTY 선언 결과를 곧바로 쓰는 것입니다. 그 외는 현재 길을 유지합니다. 그 조회 작업만 O(N) 시간·N개의 빈 slot memo 셀에서 O(1)로 바뀔 가설이며 extras 복사·출력 합성의 O(N)은 그대로입니다. 예상 코드는 고정 자격 분기 약 2–6행이며 새로운 캐시·전역 상태·공개 이름은 없습니다. 이 범위는 제안이고 구현 diff를 검토하기 전 확정 수치가 아닙니다.
+1. **첫 후보 — itemless 배열의 자리별 빈 선언 조회 제거.** 근거: `src/core/engine/behaviors/arrayBehavior/branch/utils/declareArrayChildren.ts:21–33`의 count 순회와 `src/core/engine/blueprint/utils/itemEntry/getItemEntries.ts:25–30`의 후보 부재, 위의 N회 계수입니다. `src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts:247–263`는 itemCandidates를 item과 함께, prefixItemCandidates를 prefixItems와 함께 생성합니다. 최소 규칙은 불변 청사진에서 item·prefixItems 및 대응 candidate가 없음을 확정한 배열만 기존 EMPTY 선언 결과를 곧바로 쓰는 것입니다. 그 외는 현재 길을 유지합니다. 그 조회 작업만 O(N) 시간·N개의 빈 slot memo 셀에서 O(1)로 바뀔 가설이며 extras 복사·출력 합성의 O(N)은 그대로입니다. 예상 코드는 고정 자격 분기 약 2–6행이며 새로운 캐시·전역 상태·공개 이름은 없습니다. 이 범위는 제안이고 구현 diff를 검토하기 전 확정 수치가 아닙니다.
 2. **둘째 — nextExtras의 비었는지 확인하기 위한 결과 키 재열거 제거.** `nextExtras.ts:26`은 이미 쓴 결과에 Object.keys(result)를 다시 만들어 length만 읽습니다. B0/1000에서 2회 호출로 결과 키 1000개를 열거합니다. 기존 복사 루프 안에서 '실제로 한 키라도 썼는지'를 호출 한정 지역값으로 기록하는 한 규칙이면 됩니다. 이 빈 판정의 O(N) 키 배열 하나만 제거하며 전체 복사·비교는 O(N)입니다. 예상 순증 약 2–4행; Merge의 기존 키, 선언 키 거름, own undefined, __proto__, 빈 값·같은 값 참조를 기존 차등과 함께 증명해야 합니다. measured extras 전체 점유를 이 한 열거의 몫으로 주장하지 않습니다.
 3. **셋째 — B0 첫 객체 합성의 중간 이름/중복 집합 구성 제거.** `assembleObject.ts:161–177,236`은 자식·선호 순서가 없는 첫 합성도 빈 childValues와 names·seen을 거쳐 복사합니다. 이전 local 부재·빈 선언/자식·선호 순서 부재가 증명된 경우만 extras own 키 순서로 결과를 새로 쓰는 가설입니다. O(N)은 유지하되 중간 O(N) 이름/집합과 순회를 덜 수 있으며 분기 약 5–15행이 필요할 수 있습니다. 스키마 조각의 inactive 선언, propertyOrder, integer-like 키·__proto__·undefined, 참조와 후속 쓰기의 기존 STABLE_SHAPES 관측까지 검증하기 전에는 첫 후보보다 준비도가 낮습니다. 새 메모나 입력 alias는 제안하지 않습니다.
 
@@ -372,4 +372,12 @@ BN의 repeated effective-schema 조회 수(객체 3N+5·배열 2N+5)는 현재 �
 
 TMPDIR는 영구 보관소가 아니며 raw는 커밋에 넣지 않습니다. 정리되면 해시만으로 표본을 복원할 수 없습니다. 창을 합친 정밀도·신뢰구간이나 JIT/GC 비용 분리를 주장하지 않습니다. 첫 창의 분해 filter도 사후 보수적 해석 규칙일 뿐 통계/계약 gate가 아닙니다. 1 ms = 1000 µs이며 profiler 점유율을 생산 지연의 절감 ms로 환산하지 않습니다.
 
-최종 범위는 이 보고서, verification loader, readiness 가드, first-batch 공통 도구·README의 다섯 경로입니다. 기존 다섯 L3 보고서와 ignored/raw 증거는 보존합니다. 독립 검토를 위해 기준214부터 최종 PR head까지의 범위·검증·한계를 조정자에게 인계하며, 독립 agy 검증·병합·M3/원장 마감은 조정자에게 남깁니다.
+## Filid 병합 경계 검사와 독립 검토 상태
+
+고정 HEAD `d0300133765c1f0e5b7635ee5dbed0d7d2a76264`의 전체 Filid seam 판정은 **FAIL, 분석 완전성은 INDETERMINATE**입니다. snapshot summary·여섯 scope 구조 검사·전체 검증 문서 감사의 snapshot은 모두 `e216ba42c97f592b0810c4daba0218ee95b091b1a2d6600cf152d66cd4e14776`로 일치했습니다. 구조 raw 384건은 오류 24·경고 52·설정상 면제 info 308건이며, 검증 문서 위반 24건(오류 2·경고 22)은 구조 finding에 중복 포함됩니다. 중복 제거한 non-exempt finding은 76건이고 진단은 130건(detail-document-contract 33·intent-document-contract 20·unresolved-local-dependency 4·unowned-local-dependency 73)입니다. facts 2,596파일은 exact여도 미해결·소유자 없는 참조와 동적 case 수 때문에 의존·검증 축은 미확정입니다. 기존 finding을 이번에 고치거나 면제하지 않았습니다.
+
+기준과 같은 `.filid/config.json`의 `**/architecture`·`**/bench` ignore 때문에 PR의 다섯 변경 경로는 자동 구조·검증 감사에서 모두 제외됩니다. 수동으로 공개 `src/index.ts`·package exports 불변, 제품의 helper 소비 없음, first-batch 공통 도구의 내부 helper 직접 import와 guard의 기존 distEngine 배치를 확인했습니다. 이 확인은 자동 PASS가 아니며 standalone guard의 자동 verification role·case cap은 미판정입니다. 원본 감사·전체 finding·진단·기준 대조는 `/private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/filid-seam-task_614c1ed6f279/filid-seam-report.md`에 보존했습니다. 이번 보완은 위 감사 뒤의 문서 변경뿐이며 전체 scan을 반복하지 않았습니다.
+
+수치 검산 도구와 `validate-completed.py`는 구현자가 작성한 증거입니다. g4의 구조·계약·readiness 검토는 코드가 그대로인 범위의 근거로 재사용하되, 그 Python 재실행을 독립 수치 재계산으로 보지 않습니다. g4는 Git config 접근 거부로 commit metadata도 검증하지 못했습니다. 조정자가 받은 별도 g3.8 보완 검증은 자체 수치 계산의 일치를 보고했지만, gh·Git global config 접근 거부로 PR·commit metadata는 **UNVERIFIED**로 남겼습니다. 구현자의 정상 허용 경로 PR 위생 확인은 본인 근거이며 이를 독립 metadata 통과로 대체하지 않습니다. 최종 독립 승인이나 병합 준비 완료를 주장하지 않으며 남은 검증과 병합 판단은 조정자·소유자에게 남깁니다.
+
+최종 범위는 이 보고서, verification loader, readiness 가드, first-batch 공통 도구·README의 다섯 경로입니다. 기존 다섯 L3 보고서와 ignored/raw 증거는 보존합니다. 독립 검토의 후속 결과·병합·M3/원장 마감은 조정자에게 남깁니다.
