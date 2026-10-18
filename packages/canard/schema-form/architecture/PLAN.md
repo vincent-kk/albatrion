@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-18 | 406라운드(닫기): L3 가설 (c) 선언 밖 값 구조 비교를 쓰기 한 번에 한 번으로 PR #419 squash-merge(bb4ff19d9); arrayExtras 참조 되살림·markWrite 참조 비교; B0 한 키 Node −6.2%·Bun −13.7%; 370라운드 원칙은 줄 수가 아니라 비례. 보충 4줄 | `reviews/round-406-closing.md` |
+| 2026-10-18 | 407라운드(닫기): L3 가설 (d) 해석한 자식에 staticSpec 전달 PR #420 squash-merge(67484c0be); 조회 2001→1001, 시간 효과 없음(중복 호출 제거로 기록); L3 가설 다섯 모두 병합, 다음은 마운트 원인 분해·결정 58 실험·M3. 보충 4줄 | `reviews/round-407-closing.md` |
 | 2026-10-15 | 330라운드 소유자: 중간 브랜치 삭제, 1.0.0-beta 압축(48 커밋, 백업 유지), 8단계는 feat/schema-form-08-review-and-perf에서 원장·워크트리 운영. 보충 2줄 | `reviews/round-330-owner-answers.md` |
 | 2026-10-15 | 331라운드 소유자: 08 플러그인 완료 처리(07b·07d), 미확인 셋은 대기열 54, 최적화 진행. 보충 1줄 | `reviews/round-331-owner-answers.md` |
 | 2026-10-15 | 332라운드 소유자: 8단계 리뷰 1차 열넷(구조·조사·이름·질문). 보충 1줄 | `reviews/round-332-owner-answers.md` |

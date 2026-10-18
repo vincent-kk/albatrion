@@ -15,16 +15,16 @@
 ## 2. 지금 상태 (2026-10-18)
 
 - 가지: `feat/schema-form-08-review-and-perf`, 끝은 405라운드 닫기 커밋(`git log -1`로 확인). 메인 작업 폴더 `/Users/Vincent/Workspace/albatrion` 는 그 가지를 체크아웃하고 있고 깨끗하다(추적 밖 `l3e-direct-ownership/` 폴더는 아래 Orca 작업 폴더다; `git add .` 를 쓰지 말 것).
-- 병합된 PR: #416 L3-e 조각 소유 직접 판정(`fde6ab359`, 403C-01), #417 L3-b items 없는 배열 끝 덧붙임 지름길(`8e35b01fc`, 404C-01), #418 L3-a 선언 밖 키 일반 대입(`89ea2c98b`, 405C-01), #419 L3-c 선언 밖 값 구조 비교 한 번(`bb4ff19d9`, 406C-01).
-- 열린 PR: 없음. 진행 중: L3-d(codex 워커 dispatch `ctx_36a3ece86101`, 가지 perf/schema-form-static-spec-pass-through, brief `verification/perf-optimization/l3-briefs/l3d-brief.md`). 끝나면 검증 워커(agy mid 면 충분) → 병합 → 407라운드 닫기(대상 GOAL-011·SETTLE 해당 항목).
-- 측정 결과 표(미커밋, 작업 폴더 안): `verification/perf-optimization/l3e-direct-ownership-results.md`, `l3b-array-append-results.md`, `l3a-extras-plain-assignment-results.md`. 요지는 각 PR 본문에 있다.
+- 병합된 PR: #416 L3-e 조각 소유 직접 판정(`fde6ab359`, 403C-01), #417 L3-b items 없는 배열 끝 덧붙임 지름길(`8e35b01fc`, 404C-01), #418 L3-a 선언 밖 키 일반 대입(`89ea2c98b`, 405C-01), #419 L3-c 선언 밖 값 구조 비교 한 번(`bb4ff19d9`, 406C-01), #420 L3-d staticSpec 전달(`67484c0be`, 407C-01). L3 구현 묶음 다섯 가설 완료.
+- 열린 PR: 없음. 진행 중인 워커 없음(codex 터미널은 유지됨).
+- 측정 결과 표(미커밋, 작업 폴더 안): `verification/perf-optimization/l3e-direct-ownership-results.md`, `l3b-array-append-results.md`, `l3a-extras-plain-assignment-results.md`, `l3c-extras-single-compare-results.md`, `l3d-static-spec-pass-through-results.md`. 요지는 각 PR 본문에 있다.
 - 워커 brief 원본: `verification/perf-optimization/l3-briefs/` (가설별 구현 brief 와 검증 brief 여섯 편). 다음 가설의 brief 는 이 꼴을 복제해 쓴다.
 
 ## 3. Orca 상태
 
 - run: `run_313832ef19e0` (objective: schema-form L3 implementation bundle). 코디네이터 터미널은 Claude 세션의 것이었으므로 새 메인 에이전트는 자기 터미널에서 `orca orchestration run-use --id run_313832ef19e0 --json` 으로 묶은 뒤 `orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 590000 --json` 으로 기다린다. 안내는 `orca skills get orchestration` 으로 읽는다.
 - 작업 폴더(Orca 최상위 worktree): `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`, id `e6ce1c03-a2d9-41a9-a217-79ad5c407d6d::/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`. 가설마다 이 폴더에서 origin 가지 끝 기준으로 새 가지를 만든다(worker-start 에 `--worktree 'id:<위 id>'`).
-- codex 워커 터미널(유지됨, 재사용): `term_4172d8a2-ba30-4eda-91ce-0f63839e2f84` (모델 gpt-6.1-sol, effort high). 재사용은 `worker-start --spec '...' --worktree 'id:<위 id>' --terminal term_4172d8a2-ba30-4eda-91ce-0f63839e2f84 --json`. 마지막 dispatch `ctx_36a3ece86101`(L3-d, 진행 중).
+- codex 워커 터미널(유지됨, 재사용): `term_4172d8a2-ba30-4eda-91ce-0f63839e2f84` (모델 gpt-6.1-sol, effort high). 재사용은 `worker-start --spec '...' --worktree 'id:<위 id>' --terminal term_4172d8a2-ba30-4eda-91ce-0f63839e2f84 --json`. 마지막 dispatch `ctx_36a3ece86101`(L3-d, succeeded, retained).
 - 검증 워커: 가설마다 새로 띄운다(`worker-start --spec ... --worktree current --agent antigravity --model gemini-4-argon-medium --json`; 끝나면 `worker-release`). 마지막 검증 dispatch `ctx_c553a9fd035c`(L3-a, 통과, released).
 - 주의: 워커가 `run-use` 나 `--terminal` 없는 `check` 를 실행하면 코디네이터 바인딩을 빼앗아 `consumer_fenced` 가 난다. brief 에 "run-use 금지, check 는 --terminal 로" 를 적고, 끊기면 `run-use` 로 다시 묶는다. 새 최상위 작업 폴더를 만들면 기준이 master(0.16.1)일 수 있으니 brief 첫 단계에 기준 커밋 확인을 둔다.
 
