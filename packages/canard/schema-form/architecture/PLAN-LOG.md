@@ -327,6 +327,8 @@
 | 2026-10-18 | 412라운드 소유자: PR #422 메타데이터의 코디네이터 대체 확인·병합 승인, agy 권한 문제는 목적·상황을 듣고 대행 허용. 원문 1건 | `reviews/round-412-owner-answers.md` |
 | 2026-10-18 | 413 | 승인된 코디네이터 metadata 대체 확인 뒤 PR #422를 ef6747ea0으로 squash 병합했다. 제품 변경과 성능 잔여 수용은 없으며 다음은 itemless 배열 계획·독립 검토다. | [닫기](reviews/round-413-closing.md) |
 | 2026-10-18 | 414 | 소유자가 이후 agy 검증에 Gemini 3.8 사용을 지시했다. 예정된 독립 계획 검토부터 gemini-3.8-flash-high로 적용하고 과거 검증 이력은 보존한다. | [소유자 답](reviews/round-414-owner-answers.md) |
+| 2026-10-18 | 415 | 소유자가 동일 코드·메시지의 게시 이력 이름 표기 수정을 승인해994dd3a68로 교체했고 사용 완료 브랜치 정리를 지시했다. 승인 원문과 old/new 대응을 보존한다. | [소유자 답](reviews/round-415-owner-answers.md) |
+| 2026-10-18 | 416라운드 닫기: 승인된 이력 수정과 완료 참조9개 정리, itemless 독립 계획 검토·결정 대기열 현행화. 제품 구현은 별도 발주하며 수용은 없음. | `reviews/round-416-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -684,3 +686,5 @@
 - **274라운드(2026-10-14, 닫기/원장 관리자).** README 두 파일의 Migration (1.0.0) 절 #368을 agy·직접 대조로 검증하고 squash 병합(e5f7f9fa3)(274C-01, reviews/round-274-closing.md); 옛 최상위 키 조용한 무시의 개발 빌드 경고는 대기열 47; fairy07은 #354 본문 갱신 초안, fixy07은 07c 재배치 진행 중.
 - **275라운드(2026-10-14, 닫기/원장 관리자).** 07c 재배치 #369를 직접 검증(시험 3840·storybook 251·typecheck·lint·플러그인 일곱·documents·G16·d.ts 바이트 동일·verifier·agy)하고 squash 병합(4da9567ea): core/{engine, surface}, 미사용 helpers 셋 삭제, src/constants, helpers·components는 compartment(275C-01, reviews/round-275-closing.md). 267C-01 1~4 완료, 5(마무리) 진행: 설명 문서 갱신(fairy07), #354 본문 갱신 완료, 워크트리 정리·대기열 총정리는 소유자 보고.
 - **276라운드(2026-10-14, 소유자).** 대기 결정 일괄 답(reviews/round-276-owner-answers.md): 47은 경고 없이 문서 안내만("과거와의 결별"), 패키지 CLAUDE.md:142 수정 승인, G23은 ego-browser로 원장 관리자가 직접 실행, 38(접근성 묶음)·39(분기 terminal 합쳐 읽기)·48(플러그인 셋 enum select)·49(constants 이름 열거; 시험·bench 직접 import는 소유자 면제)는 후속 PR 07d로 fixy07 발주, 45 넓은 해석 확정, 40 소유자 추후 확인. 버전 올리기는 최종 단계로 미룸.
+- **277라운드(2026-10-14, 소유자).** G23 실행 주체 교정: "스토리 도는건 너 말고 다른애 시켜. 넌 관리해야지" — 원장 관리자의 ego-browser 실행을 멈추고 fairy07에게 발주(스토리북 6007, 스크립트 scratchpad/g23-run-all-stories.js). 대기열 39 oneOf 터미널 이유는 원장 관리자가 소유자에게 직접 답함(reviews/round-277-owner-answers.md).
+- **278라운드(2026-10-14, 소유자).** 대기열 40 내용 질문에 답했고, 39의 고침 방향을 소유자 지적대로 명세의 덮어쓰기 규칙(게이트 없는 분기 선언도 전체 순서에서 나중 승)으로 정정해 fixy07의 07d 브리프를 고침(reviews/round-278-owner-answers.md).

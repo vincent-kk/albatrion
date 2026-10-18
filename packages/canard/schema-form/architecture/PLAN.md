@@ -58,7 +58,7 @@
 | 07 | 전환 | 리뷰 | [#354](https://github.com/vincent-kk/albatrion/pull/354) | 브랜치 `feat/schema-form-switch`(2026-10-02 착수, 2026-10-11 `1.0.0-beta` `351ece24e` 위에 다시 세움). 원샷. 착수 물음은 68라운드로 닫힘. G23·G26·G27이 소유자 답([질의 목록](reviews/owner-queue-07.md))으로 닫힐 때까지 머지하지 않음. 측정 원자료는 `archive/stage-07-verification-raw`(140라운드). 실행 계획은 [execution-plan](plan/07-switch/execution-plan.md), 기록은 [log](plan/07-switch/log.md) |
 | 08 | 플러그인 | 완료 | — | 별도 PR 없음. `presentation.*` 이주와 이름 대응은 07b(#365)·07d(입력 설정 이주, 플러그인 0.17.0)에서 끝났고 PR마다 플러그인 일곱 빌드가 게이트로 돌았다(331라운드 소유자 답). 계획서가 인용한 옛 경로(`plan/07-switch/log.md` "08 목록")는 역사 기록. 미확인 셋은 대기열 54 |
 | 정돈 | 코드 정돈 | 진행 | — | 07 뒤·08 앞(287라운드), 최적화 앞. 계획 [request](plan/tidy-structure/request.md), 결정 D1–D6 확정(289라운드). 정돈-1부터 PR 넷. 정돈-1 #374 병합 ae502f7bd(297라운드), 정돈-2 진행. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
-| 최적화 | 성능 최적화 | 진행 | [#422](https://github.com/vincent-kk/albatrion/pull/422) | 브랜치 `feat/schema-form-08-review-and-perf`에서 원장과 작업 폴더를 운영한다. L3 다섯 가설과 측정 문서 PR #421은 완료했고, 마운트 원인 분해·완료 경계 보정·영속 가드와 독립 수치 검산 PR #422도 412라운드 승인에 따른 코디네이터 metadata 대체 확인 뒤 ef6747ea0으로 병합했다. agy 직접 metadata 미검증과 Filid 전역 FAIL·자동 제외 범위는 구별했다. 제품 변경과 잔여 지연 수용은 없다. 다음은 itemless 배열의 빈 선언 N회 조회 제거 가설이며 별도 계획·독립 검토·전체 동치 가드가 선행한다. M3 종합 재측정·소유자 수용과 결정 58·54는 남아 있다. 413라운드 마감 뒤 계획을 작성 중이다. 414라운드 소유자 지시에 따라 이후 agy 검증은 gemini-3.8-flash-high를 사용한다. 계획은 [request](plan/perf-optimization/request.md)이며 끝나면 `1.0.0-beta`에 squash한다. |
+| 최적화 | 성능 최적화 | 진행 | [#422](https://github.com/vincent-kk/albatrion/pull/422) | 브랜치 `feat/schema-form-08-review-and-perf`에서 원장과 작업 폴더를 운영한다. L3 다섯 가설과 측정 문서 PR #421은 완료했고, 마운트 원인 분해·완료 경계 보정·영속 가드와 독립 수치 검산 PR #422도 412라운드 승인에 따른 코디네이터 metadata 대체 확인 뒤 ef6747ea0으로 병합했다. agy 직접 metadata 미검증과 Filid 전역 FAIL·자동 제외 범위는 구별했다. 제품 변경과 잔여 지연 수용은 없다. 다음은 itemless 배열의 빈 선언 N회 조회 제거 가설이며 별도 계획·독립 검토·전체 동치 가드가 선행한다. M3 종합 재측정·소유자 수용과 결정 58·54는 남아 있다. 416라운드까지 계획·독립 기술 검토와 권한 대행을 구별해 마쳤고 최신 게시 기준의 구현을 준비한다. 승인된 이력 이름 표기는994dd3a68로 수정됐으며 대응 병합 주소는20b07ee2e다. 완료 참조9개만 정리했고 필수 소유자 판단은 대기열에 적어 해당 범위만 보류한다. 414라운드 소유자 지시에 따라 이후 agy 검증은 gemini-3.8-flash-high를 사용한다. 계획은 [request](plan/perf-optimization/request.md)이며 끝나면 `1.0.0-beta`에 squash한다. |
 | 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
 | 별도 | 릴리스 전환 | 대기 | — | 시점은 소유자가 정한다(LANDING-204) |
 
@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-18 | 414 | 소유자가 이후 agy 검증에 Gemini 3.8 사용을 지시했다. 예정된 독립 계획 검토부터 gemini-3.8-flash-high로 적용하고 과거 검증 이력은 보존한다. | [소유자 답](reviews/round-414-owner-answers.md) |
+| 2026-10-18 | 416라운드 닫기: 승인된 이력 수정과 완료 참조9개 정리, itemless 독립 계획 검토·결정 대기열 현행화. 제품 구현은 별도 발주하며 수용은 없음. | `reviews/round-416-closing.md` |
 | 2026-10-15 | 330라운드 소유자: 중간 브랜치 삭제, 1.0.0-beta 압축(48 커밋, 백업 유지), 8단계는 feat/schema-form-08-review-and-perf에서 원장·워크트리 운영. 보충 2줄 | `reviews/round-330-owner-answers.md` |
 | 2026-10-15 | 331라운드 소유자: 08 플러그인 완료 처리(07b·07d), 미확인 셋은 대기열 54, 최적화 진행. 보충 1줄 | `reviews/round-331-owner-answers.md` |
 | 2026-10-15 | 332라운드 소유자: 8단계 리뷰 1차 열넷(구조·조사·이름·질문). 보충 1줄 | `reviews/round-332-owner-answers.md` |

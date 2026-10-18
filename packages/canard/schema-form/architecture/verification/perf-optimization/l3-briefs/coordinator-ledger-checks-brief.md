@@ -2,7 +2,7 @@
 
 Repository and workspace: /Users/Vincent/Workspace/albatrion. Package: packages/canard/schema-form. This worker validates coordinator documentation in the main workspace; do not cross into the nested Orca work folder, edit source, or create a PR.
 
-Orca rules: do not run run-use or coordinator commands. Check follow-ups only with check --terminal <the live preamble handle>. Ask using the live preamble ask command. Do not start agents. Run CLIs standalone without pipes, semicolons, redirects, or environment prefixes. No installation, permission workaround, Git mutation, source edit, or edits to any tracked files. Generated artifacts and logs belong only under TMPDIR.
+Orca rules: run-use 와 코디네이터 명령 금지, check 는 --terminal 로. Do not run run-use or coordinator commands. Check follow-ups only with check --terminal <the live preamble handle>. Ask using the live preamble ask command. Do not start agents. Run CLIs standalone without pipes, semicolons, redirects, or environment prefixes. No installation, permission workaround, Git mutation, source edit, or edits to any tracked files. Generated artifacts and logs belong only under TMPDIR.
 
 ## 0. Baseline
 
