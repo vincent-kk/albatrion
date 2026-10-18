@@ -316,6 +316,7 @@
 | 2026-10-16 | 401라운드 소유자: 설계 문서(00–07)의 이름 어긋남(controls.children→controls.fields, 05·06의 옛 공개 이름)은 휴식과 별개 작업으로 codex에게 고치게 하되 임의 수정 금지; 원장 본문 제외. 보충 2줄 | `reviews/round-401-owner-answers.md` |
 | 2026-10-18 | 402라운드 소유자: 휴식을 끝내고 L3 구현 묶음 재개; Claude 사용량 극도 억제, 보조 Claude 세션 없이 Orca 조정 루프 아래 codex(sol)가 구현·agy(gemini-4·gemini-3.8)가 검증; 첫 가설 L3-e 승인과 검토·검증 개선 루프. 보충 2줄 | `reviews/round-402-owner-answers.md` |
 | 2026-10-18 | 403라운드(닫기): L3 가설 (e) 조각 소유 직접 판정 PR #416 squash-merge(fde6ab359); 평상시 쓰기 F=64 Node 3.522→1.134 ms·Bun 16.575→1.412 ms, 나감 불변, 72장면 차이 0, 런타임 +13/−5; Orca 조정 루프 운영 방식 기록. 보충 7줄 | `reviews/round-403-closing.md` |
+| 2026-10-18 | 404라운드(닫기): L3 가설 (b) items 없는 배열의 끝 덧붙임 지름길 PR #417 squash-merge(8e35b01fc); getItemEntries 8천 24,003→2회, push 8천 Node 0.653→0.063 ms·Bun 1.816→0.080 ms, compareArrayAppend 배달 차이 0, 런타임 +61/−23. 보충 6줄 | `reviews/round-404-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -662,3 +663,4 @@
 - **401라운드(2026-10-16, 소유자).** 설계 문서 이름 어긋남은 별개 작업으로 codex에게, 임의 수정 금지(reviews/round-401-owner-answers.md).
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
+- **266라운드(2026-10-14, 소유자).** 스토리북 관찰 셋을 기록해 대기열 40·41·42로 올렸다: docs 페이지의 jsonSchema 순환참조 직렬화 오류, nullable 분기 스토리의 화면·값 불일치(설계 판단 필요), 스토리 가독성(설명·값·오류·스키마·설정 수록)(reviews/round-266-owner-answers.md).

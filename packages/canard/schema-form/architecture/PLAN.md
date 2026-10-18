@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-18 | 403라운드(닫기): L3 가설 (e) 조각 소유 직접 판정 PR #416 squash-merge(fde6ab359); 평상시 쓰기 F=64 Node 3.522→1.134 ms·Bun 16.575→1.412 ms, 나감 불변, 72장면 차이 0, 런타임 +13/−5; Orca 조정 루프 운영 방식 기록. 보충 7줄 | `reviews/round-403-closing.md` |
+| 2026-10-18 | 404라운드(닫기): L3 가설 (b) items 없는 배열의 끝 덧붙임 지름길 PR #417 squash-merge(8e35b01fc); getItemEntries 8천 24,003→2회, push 8천 Node 0.653→0.063 ms·Bun 1.816→0.080 ms, compareArrayAppend 배달 차이 0, 런타임 +61/−23. 보충 6줄 | `reviews/round-404-closing.md` |
 | 2026-10-15 | 330라운드 소유자: 중간 브랜치 삭제, 1.0.0-beta 압축(48 커밋, 백업 유지), 8단계는 feat/schema-form-08-review-and-perf에서 원장·워크트리 운영. 보충 2줄 | `reviews/round-330-owner-answers.md` |
 | 2026-10-15 | 331라운드 소유자: 08 플러그인 완료 처리(07b·07d), 미확인 셋은 대기열 54, 최적화 진행. 보충 1줄 | `reviews/round-331-owner-answers.md` |
 | 2026-10-15 | 332라운드 소유자: 8단계 리뷰 1차 열넷(구조·조사·이름·질문). 보충 1줄 | `reviews/round-332-owner-answers.md` |
