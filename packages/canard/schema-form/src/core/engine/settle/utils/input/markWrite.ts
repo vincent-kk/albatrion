@@ -128,7 +128,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     extras = nextExtras(node.undeclaredValues, value, declared, isMerge);
   }
   const rawChanged = !sameValue(node.raw, nextRaw);
-  const extrasChanged = !sameValue(node.undeclaredValues, extras);
+  const extrasChanged = node.undeclaredValues !== extras;
   const sameShape =
     node.raw === undefined &&
     nextRaw === undefined &&
