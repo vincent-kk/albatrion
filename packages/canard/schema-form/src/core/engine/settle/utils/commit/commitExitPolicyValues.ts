@@ -7,6 +7,8 @@ import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
+import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
@@ -99,12 +101,18 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         typeof Reflect.get(controls, CONTROL_KEY.unsetOnInactive) === 'string'
       )
         for (const child of source.children ?? []) {
+          const childSelected =
+            context.selectedDeclarationIds.get(child) ??
+            child.runtime.committedDeclarationIds?.get(
+              getCommittedDeclarationKey(child),
+            );
           if (
-            !getControlLayers(child, context.selectedDeclarationIds).some(
-              (group) =>
-                group.layer === 'fragment' &&
-                group.host === source &&
-                group.declarationId === declaration.id,
+            !child.blueprintNode.declarations.some(
+              (childDeclaration) =>
+                (!childSelected || childSelected.includes(childDeclaration.id)) &&
+                getFragmentOwnerPaths(childDeclaration.schemaPath).includes(
+                  declaration.schemaPath,
+                ),
             )
           )
             continue;
