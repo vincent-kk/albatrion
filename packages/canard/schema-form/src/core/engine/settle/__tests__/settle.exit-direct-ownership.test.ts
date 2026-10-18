@@ -55,7 +55,6 @@ describe('direct exit-policy child ownership', () => {
     expect(exitCalls).toBeGreaterThan(64);
     expect(exitCalls).toBeLessThanOrEqual(84);
     expect(root.emit).toEqual({ flag: false, h: { probe: -1 } });
-    console.log('L3-e layer calls:', { controlCalls, exitCalls });
   });
 
   it.each(['current', 'committed', 'authored', 'unselected'] as const)(

@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 선택된 선언과 직전 커밋의 선택 fallback 및 선언 자식의 소유 경로로 첫 소유 자식 여부만 직접 판정하고, 전체 정책 층 수집·평가와 우선순위 및 직전 커밋 나감 의미는 그대로 둔다(CONTROLS-077·CONTROLS-073(7)·WRITE-032·NODE-044; 같은 층의 keep이 이긴다).
+- The first owned child is identified directly from selected declarations, the previous commit's selection fallback, and declaration child owner paths, while full policy-layer collection and evaluation, priority, and previous-commit exit semantics remain unchanged (CONTROLS-077·CONTROLS-073(7)·WRITE-032·NODE-044; same-layer keep wins).
 
 - The suppressed-exit stale cleanup runs only for exits inside a candidate ownership scope, reusing the ownership decision already computed for the capture; candidate-free and single-kind exits keep base traversal and allocation (NODE-043, WRITE-015, 370라운드 원칙; 395C-01).
 
