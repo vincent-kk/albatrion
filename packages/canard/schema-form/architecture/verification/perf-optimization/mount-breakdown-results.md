@@ -216,6 +216,10 @@ BN의 repeated effective-schema 조회 수(객체 3N+5·배열 2N+5)는 현재 �
 
 현재 [L3-b append 시험](../../../src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-extras-append.test.ts)과 [static-first-load 시험](../../../src/core/engine/settle/loadFieldNodeAtMount/__tests__/static-first-load.test.ts)은 각각 append와 정적 첫 로드를 지킵니다. 이번 caller snapshot의 **범용 mount에서 N과 무관한 빈 선언 조회 상한**은 이번 보고서의 계수일 뿐 영속 회귀 가드가 아닙니다.
 
+자격은 원본 `jsonSchema.items`가 없다는 검사로 정하지 않습니다. 실제 `node.blueprintNode`가 합성된 뒤 item·prefixItems와 대응 후보가 모두 없다는 증명이어야 합니다. `oneOf/allOf/then/else/controls`의 기여나 아직 비활성인 조각에서 items가 생기는 경우, tuple/prefixItems와 additionalItems 기여를 모두 포함해 부재를 확인해야 하며 현재 활성 분기만 비어 있다는 이유로 허용하지 않습니다. `getItemEntries.ts:25–30`의 모든 후보 선택 경로가 모든 비음수 자리에서 빈 결과임을 `populateNodeChildren.ts:247–263`의 생성 불변과 함께 증명해야 합니다. 확정하지 못한 경우는 기존 선언 경로로 되돌립니다.
+
+첫 로드·명시적 defaultValue·스키마 기본값에서 온 입력을 구별하고, 자동 쓰기 억제/허용, 비배열·null/wrong-kind에서도 이후 선택·정착·EMPTY 결과와 source metadata가 같음을 대조해야 합니다. 기존 EMPTY는 declareChildren의 내부 결과일 뿐 공개 children 참조를 새로 정의하는 근거가 아닙니다. 빈 children의 참조·UpdateChildren 사건·모든 revision 및 commit은 각각 기존 기준 dist의 관측대로 보존해야 합니다.
+
 별도 구현 PR의 실패해야 하는 새 가드는 items·prefixItems가 없는 배열을 N=1,000/8,000의 서로 다른 새 청사진으로 mount하고, getItemEntries 호출에 같은 작은 상한을 둡니다. 현행의 N회 호출은 그 상한을 넘습니다. blueprint를 폼마다 새로 만들어 기존 LAST/ENTRIES의 히트가 문제를 가리지 않게 해야 합니다. 숫자 배열뿐 아니라 빈 배열·성긴 배열·own undefined·NaN·null/wrong-kind·동결 caller·중첩 host, 후속 push/insert/remove/pop/clear/update·Overwrite/Merge·배치까지 기준 dist와 대조해야 합니다. items·prefixItems·옛 tuple·additionalItems, fragment 후보·게이트·union·재귀·terminal은 자격을 넓히지 않고 그대로 fallback해야 합니다.
 
 비교 기록은 값·raw/local/emit/extras·키 순서, 전체 listener event/payload/순서·onChange, 모든 revision bit·commit, 선언/선택·latent/inactive/misfit·경고/진단, 보관한 children·extras·snapshot 참조의 전후 동일성을 포함해야 합니다. 첫 리스너 시점에 다른 노드의 revision/payload도 이미 확정됐는지 확인해야 합니다. 이번 숫자 mount 프로브는 이 전체 기록을 만들지 않으므로 **가드 결손**으로 남깁니다.
