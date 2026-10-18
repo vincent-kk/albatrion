@@ -22,6 +22,7 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const append = context.arrayAppend;
   if (append?.host === node && append.valid) {
+    if (!append.entry) return;
     const child = prior[String(append.count)];
     const ids = staticIds(append.entry);
     if (context.selectedDeclarationIds.get(child) !== ids)

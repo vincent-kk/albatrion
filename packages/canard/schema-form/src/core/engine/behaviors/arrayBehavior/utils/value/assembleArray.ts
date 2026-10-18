@@ -75,6 +75,23 @@ export const assembleArray: Behavior['assemble'] = (
     node.itemCount === append + 1 &&
     (previous.length === append || previous.length === append + 1)
   ) {
+    const extras = node.undeclaredValues;
+    if (
+      !node.blueprintNode.item &&
+      !node.blueprintNode.prefixItems?.length &&
+      children.length === 0 &&
+      isArray(extras) &&
+      extras.length === append + 1
+    ) {
+      const value = extras[append];
+      rememberShape(node, children);
+      hint.incremental = true;
+      if (previous.length === append) return previous.concat([value]);
+      if (Object.is(value, previous[append])) return previous;
+      const result = previous.slice();
+      result[append] = value;
+      return result;
+    }
     const template = getArrayItemTemplate(node, append);
     const child = node.structure?.[String(append)];
     if (template && child !== null && typeof child === 'object') {

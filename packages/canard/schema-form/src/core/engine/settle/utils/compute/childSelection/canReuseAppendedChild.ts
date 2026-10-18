@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { FieldNodeRecord } from '../../../../record';
 import type {
   ArrayAppendProof,
@@ -36,13 +38,19 @@ export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
     (dirty === undefined ||
       dirty.size === 0 ||
       (dirty.size === 1 && dirty.has(path))) &&
-    child !== undefined &&
-    child.blueprintNode === proof.entry.node &&
-    child.name === name &&
-    child.parent === node &&
-    child.path === path &&
-    child.schema === proof.schema &&
-    child.active &&
-    !child.detached
+    (proof.entry === undefined
+      ? child === undefined &&
+        node.children?.length === 0 &&
+        isArray(node.undeclaredValues) &&
+        node.undeclaredValues.length === node.itemCount &&
+        !dirty?.size
+      : child !== undefined &&
+        child.blueprintNode === proof.entry.node &&
+        child.name === name &&
+        child.parent === node &&
+        child.path === path &&
+        child.schema === proof.schema &&
+        child.active &&
+        !child.detached)
   );
 };
