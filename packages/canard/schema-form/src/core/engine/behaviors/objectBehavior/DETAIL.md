@@ -16,6 +16,7 @@
 - branch의 키 순서는 유효 스키마의 `options.propertyOrder`, 각 이름의 첫 선언 전순서, `undeclaredValues` 삽입 순서 차례로 정해진다. 키 집합이 같으면 `Object.is`로 비교해 바뀐 자식만 얕게 패치하고, 집합이 바뀌면 해당 호스트의 키 수만큼 새 객체를 만든다. `NaN`을 포함해 값이 같은 자식은 부모의 `local`과 `emit` 참조를 유지한다(SETTLE-043). `project`는 순서를 보존하고, 빈 `local`에는 `omitEmpty`에 따른 방출 생략을 적용한다. `raw`가 객체가 아니면 그 `raw`를 받은 그대로 방출하되 자식의 방출만 뺀다. 그 아래의 자식은 편집 상태로 계산한다(SETTLE-042, VALUE-033·034·036, WRITE-013·096, 39C-01).
 - terminal에는 자식 선언이 없고, `interpret`·`assemble`·`project`가 통째로 받은 객체 참조를 유지한다. 내부 키는 정규화하지 않는다. `Merge`가 객체 호스트에 대한 부분 쓰기인지 통째 값 쓰기인지는 정착의 쓰기 종류가 판정한다(NODE-005·006, VALUE-037, WRITE-079).
 - `utils/` organ은 두 전략이 함께 쓰는 `omitEmptyObject`와 객체 값 동등성 보조를 소유한다. `omitEmptyObject`는 입력을 바꾸지 않는 투영 계산이며 다른 종류에 재수출하지 않는다(NODE-009, LANDING-082).
+- 객체 합성의 안전한 키 쓰기는 정착의 선언 밖 값 복사와 공유하므로 최저 공통 소유자인 engine의 utils 구획에서 가져온다. `__proto__`의 own property 보호와 그 밖의 키의 일반 대입은 같은 보조가 맡는다.
 
 ## Acceptance Criteria
 
