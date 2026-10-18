@@ -1,4 +1,5 @@
 import { sameValue } from '../../../utils/compute/sameValue';
+import { writeObjectKey } from '../../../utils/writeObjectKey';
 
 /**
  * Preserve undeclared keys in received order across a whole or partial write.
@@ -17,20 +18,10 @@ export const nextExtras = (
   const result: Record<string, unknown> = {};
   if (merge && previous !== null && typeof previous === 'object')
     for (const name of Object.keys(previous))
-      Object.defineProperty(result, name, {
-        value: Reflect.get(previous, name),
-        enumerable: true,
-        configurable: true,
-        writable: true,
-      });
+      writeObjectKey(result, name, Reflect.get(previous, name));
   for (const name of Object.keys(input)) {
     if (declared.has(name)) continue;
-    Object.defineProperty(result, name, {
-      value: Reflect.get(input, name),
-      enumerable: true,
-      configurable: true,
-      writable: true,
-    });
+    writeObjectKey(result, name, Reflect.get(input, name));
   }
   const next = Object.keys(result).length ? result : undefined;
   return sameValue(previous, next) ? previous : next;

@@ -2,8 +2,8 @@ import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Behavior } from '../../../../record';
+import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
-import { writeObjectKey } from '../../utils/keys/writeObjectKey';
 import { objectKeyCounts } from '../../utils/objectKeyCounts';
 
 /** Last assembled shape allows a value-only write to patch its existing order. */
