@@ -1,14 +1,14 @@
 # 현행 dist 마운트 비용 분해
 
-기준은 `214534c2f6e820f58cadf75f03828196a6c9760a`, 가지는 `perf/schema-form-mount-breakdown`입니다. PR #421이 `c350e7651`로 병합된 뒤의 post-L3 코드만 빌드하여 측정했습니다. 보고서 한 파일만 추가하며 제품 소스·시험·매니페스트·INTENT·DETAIL·빌드 산출물·어댑터의 커밋 변경은 0건입니다. 구현·반사실 치환·새 캐시·전역 상태·공개 이름 추가는 하지 않았습니다.
+제품 기준은 `214534c2f6e820f58cadf75f03828196a6c9760a`, 가지는 `perf/schema-form-mount-breakdown`입니다. PR #421 병합 뒤 post-L3 dist를 조사했습니다. 이어 조정자가 승인한 완료 경계 보정으로 검증 어댑터·first-batch 공통 도구·영속 readiness 가드와 설명 문서를 갱신했습니다. **제품 소스·기존 제품 시험 기대값·매니페스트·INTENT·DETAIL·추적 빌드 산출물 변경은 0건**입니다. 제품 최적화·새 의존성·유지 캐시·전역 상태·제품 공개 이름 추가는 하지 않았습니다.
 
-현재 창의 BN 객체 1,000키는 Node 6.3688 ms·Bun 3.7340 ms, B0 객체 1,000키는 Node 0.8636 ms·Bun 0.4519 ms입니다. 이 값은 바퀴 중앙값의 평균입니다. **옛 판의 factory 반환 뒤 value getter에서 지연 합성이 확인되어, 옛 판의 관측 완료 ms와 current 대비 완료 격차·비율은 미검증입니다.** 기존 factory-only 원자료는 별도 참고 진단으로 보존하며 완료 비교나 회귀·수용 판단에 쓰지 않습니다. current 비용 분해와 제거 후보는 그 비교와 분리합니다. 옛 판은 목표치가 아닙니다.
+**공개 값 확정을 포함한 새 완료 창**의 BN 객체 1,000키는 Node **6.6765 ms**·Bun **4.0709 ms**, B0 객체 1,000키는 Node **0.9511 ms**·Bun **0.4750 ms**입니다. 두 바퀴 중앙값의 평균입니다. 옛 판 factory 반환 뒤 지연 합성을 확인했으므로 첫 창의 legacy factory-only 시간과 대비 비율은 완료 비교로 무효입니다. 새 창은 양 판 모두 자식부터 공개 값을 읽는 순회 비용까지 포함합니다. 첫 창의 current 비용 분해는 원래 경계의 진단으로 보존하며 새 시간에 합산하지 않습니다. 옛 판은 목표치가 아니고 회귀 수용을 결정하지 않습니다.
 
 첫 별도 구현 후보는 **items·prefixItems가 모두 없는 배열의 빈 자식 선언을 알아내려고 모든 자리를 탐색하는 작업 하나**입니다. 현재 1,000/8,000자리에서 자식은 0개인데 `getItemEntries`를 1,000/8,000회 호출합니다. 기존 `EMPTY` 결과를 직접 반환할 수 있는 정적 자격을 증명하는 작은 변경을 제안하며, 전체 마운트의 시간 절감을 예측하지 않습니다.
 
 ## 측정 경계와 실제 호출 경로
 
-기존 [probe-terminal-mode.ts:77](probe-terminal-mode.ts#L77)의 `createCore`와 [loadDistEngine.ts:106](../../../bench/distEngine/loadDistEngine.ts#L106)을 대조했습니다. 타이머 안에서 `buildFieldNodeTree(props)`와 `mountFieldNode(root, undefined, undefined, { deferValidation: false })`를 부릅니다. [buildFieldNodeTree.ts:39](../../../src/core/surface/utils/binding/buildFieldNodeTree.ts#L39)는 청사진을 그 안에서 만듭니다. 청사진 생성·정적 검증은 기존 core mount에 이미 포함되며, 폼 한 개의 엔진 준비 비용을 별도 합산하지 않습니다. React DOM 렌더·마운트·validator 플러그인 비용은 이 경계에 없습니다.
+기존 [probe-terminal-mode.ts:77](probe-terminal-mode.ts#L77)의 `createCore`와 [loadDistEngine.ts:152](../../../bench/distEngine/loadDistEngine.ts#L152)을 대조했습니다. 타이머 안에서 `buildFieldNodeTree(props)`와 `mountFieldNode(root, undefined, undefined, { deferValidation: false })`를 부릅니다. [buildFieldNodeTree.ts:39](../../../src/core/surface/utils/binding/buildFieldNodeTree.ts#L39)는 청사진을 그 안에서 만듭니다. 청사진 생성·정적 검증은 기존 core mount에 이미 포함되며, 폼 한 개의 엔진 준비 비용을 별도 합산하지 않습니다. React DOM 렌더·마운트·validator 플러그인 비용은 이 경계에 없습니다.
 
 | 연결 | 실제 경계와 증거 |
 | --- | --- |
@@ -23,9 +23,9 @@
 
 경로는 패키지 기준입니다. 인터프리터·게이트 장면은 이번 숫자로 추적 완료라고 주장하지 않습니다. 게이트 없는 숫자 fixture의 실제 경로만 계수와 함께 확인했습니다.
 
-## 창·입력·재현 자료
+## 첫 창의 입력·재현 자료
 
-하나의 조용한 창: **2026-10-18T10:59:59.475Z → 2026-10-18T11:03:09.740Z UTC**, arm64, Node v26.12.0, Bun 1.4.3, `NODE_ENV=production`입니다. 창을 열기 전에 `yarn workspace @canard/schema-form build`를 완료했고, 창 안에는 빌드·게이트·다른 벤치·대규모 분석을 겹치지 않았습니다. 전체 명령 순서·시작·종료·종료 코드는 `window.json`에 있습니다.
+첫 번째 조용한 창: **2026-10-18T10:59:59.475Z → 2026-10-18T11:03:09.740Z UTC**, arm64, Node v26.12.0, Bun 1.4.3, `NODE_ENV=production`입니다. 창을 열기 전에 `yarn workspace @canard/schema-form build`를 완료했고, 창 안에는 빌드·게이트·다른 벤치·대규모 분석을 겹치지 않았습니다. 전체 명령 순서·시작·종료·종료 코드는 `window.json`에 있습니다.
 
 | 입력 | SHA-256 |
 | --- | --- |
@@ -54,7 +54,7 @@
 
 TMPDIR는 영구 저장소가 아니며 원자료는 보고서 커밋에 포함하지 않습니다. 현재 재현 입력은 전부 존재하지만 TMPDIR가 정리되면 원자료·도구 해시만으로 표본을 복원할 수 없습니다. 기존 L3 원자료를 덮어쓰지 않았습니다.
 
-## 비계측 core mount
+## 첫 창의 current 시간과 factory-only 진단
 
 각 판·장면·바퀴에 준비 20회·표본 100회입니다. 스키마·입력 작성과 sample input 복제는 시간 밖, 시작은 core factory 직전, 끝은 factory 반환과 마지막 mount onChange 중 늦은 시점입니다. 두 zero-delay timer를 기다린 polling 시간은 더하지 않습니다. current는 반환 직후 및 drain 후 값·자식·경로를 검사했고, legacy는 기존 mount probe처럼 drain 후 전체 관측을 확인했습니다. 실제로 legacy는 모든 지원 mount 표본에서 초기 onChange 0회, current는 1회였으며, 양 판의 초기 callback 횟수가 같다고 주장하지 않습니다. 쓰기의 비동기 완료 시간을 이 mount 수치로 대신하지 않습니다.
 
@@ -103,7 +103,9 @@ T는 terminal, B0는 하위 선언 없음, 객체 B1은 k0만 선언, BN은 모�
 
 창을 닫은 뒤 같은 사본에서 지원 12장면을 새로 20회씩, Node 240회·Bun 240회 확인했습니다. factory 반환 뒤 await·microtask·timer·drain 전에 root/host의 전체 값·자식·경로를 읽으면 모두 맞았고 drain 뒤에도 같으며 callback은 0회였습니다. 그러나 getter를 읽기 **전** 루트 strategy는 모든 480회에서 `expired=true, locked=false, composedValid=false`였고 읽은 뒤 composedValid=true가 됐습니다. 로컬 0.16.1 raw dist의 **5146–5152행**은 이 경우 value getter가 `__parseValue__`를 호출함을 보여 줍니다. 따라서 이 correctness 성공으로 factory 반환 시 합성 완료를 추정할 수 없습니다.
 
-`legacy-completion-state.mjs`와 `legacy-completion-state-node.json`, `legacy-completion-state-bun.json`이 getter 접근 전후 상태를 보존합니다. 최초의 약한 확인인 `legacy-completion-{node,bun}.json`도 덮어쓰지 않았습니다. 이 후속 확인은 correctness-only이며 새로운 시간 창이나 시간 표본을 만들지 않았습니다. 이 범위에서 옛 판 시간/비율을 관측 완료 비교로 쓰지 않습니다. M3에서 값의 첫 관측을 포함한 완료 경계를 공정하게 짝지어 다시 측정해야 합니다.
+`legacy-completion-state.mjs`와 `legacy-completion-state-node.json`, `legacy-completion-state-bun.json`이 getter 접근 전후 상태를 보존합니다. 최초의 약한 확인인 `legacy-completion-{node,bun}.json`도 덮어쓰지 않았습니다. 이 후속 확인은 correctness-only이며 새로운 시간 창이나 시간 표본을 만들지 않았습니다. 이 범위에서 옛 판 시간/비율을 관측 완료 비교로 쓰지 않습니다. 이 결손 때문에 아래의 canonical 보정과 새 완료 경계 창을 추가했습니다. 사후 검사의 성공을 첫 창의 완료 비교 복구에 쓰지 않습니다.
+
+정확한 후속 명령은 `/opt/homebrew/bin/node /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f/legacy-completion-state.mjs`와 `bun /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f/legacy-completion-state.mjs`이며 각각 Node v26.12.0·Bun 1.4.3에서 실행했습니다. 기존 run.mjs·window.mjs·prepare.mjs·계측 사본·원시 시간 표본은 고치지 않았고 측정 당시 window.json의 도구 해시가 그대로 재현됩니다. 이 scratch 상태 확인의 범위는 지원 12장면의 factory 반환 직후 상태·즉시 public 읽기·drain 후 상태·callback뿐이며, 이 확인의 경과 시간을 재거나 원래 표본에 더하지 않았습니다.
 
 다음은 잃어버리지 않도록 남긴 **factory-only 참고 진단**입니다. 합성 완료 시간도, current와의 속도 비교도 아닙니다. 원래 analysis.json의 changePct는 이 factory-only 시간으로 계산한 값이므로 산술 검산 성공과 무관하게 완료 비교에서는 무효입니다. 아래에서는 그 비율을 다시 주장하지 않습니다.
 
@@ -134,7 +136,94 @@ T는 terminal, B0는 하위 선언 없음, 객체 B1은 k0만 선언, BN은 모�
 | Bun 1.4.3 | array/BN N=1,000 | 0.7702 [0.7165–0.8240] |
 | Bun 1.4.3 | array/BN N=8,000 | 5.3261 [5.2238–5.4284] |
 
+## 완료 경계 보정과 영속 가드
+
+[loadDistEngine.ts:103](../../../bench/distEngine/loadDistEngine.ts#L103)의 `materializeMountedValues`는 공개 children을 후위 순회하고 각 노드의 value를 읽은 뒤 반환합니다. 같은 호출에서 공유 가상 자식의 중복 관측만 막고 상태를 유지하지 않습니다. current·legacy create 양쪽과 [first-batch bench-common](first-batch/b-a2/bench-common.mjs)에 같은 helper를 연결했습니다. 루트 value만 읽는 중간 수정은 루트 composedValid=true여도 B0·BN 객체 host에 lazy 합성을 남겨 네 장면에서 실패했으므로 채택하지 않았습니다.
+
+[check-mount-readiness.mjs](../../../bench/distEngine/check-mount-readiness.mjs)는 실제 로컬 0.16.1과 current dist로 adapter·first-batch 두 표면을 검사합니다. public find/value/children 또는 await로 상태를 바꾸기 **전에** root/host strategy의 expired·locked·composedValid를 확인합니다. 이어 전체 값·모든 자식 이름/경로/값·키 순서·caller 불변, drain 뒤 관측·callback 안정성을 검사합니다. private 상태는 이 고정 legacy dist의 반례를 잡는 진단이며 제품 API 계약으로 추가하지 않습니다.
+
+| 실제 실행 단계 | Node adapter | Node first-batch | Bun adapter | Bun first-batch |
+| --- | --- | --- | --- | --- |
+| 보정 전 red | 통과 16 / 미지원 4 / 실패 12 | 통과 16 / 미지원 4 / 실패 12 | 통과 16 / 미지원 4 / 실패 12 | 통과 16 / 미지원 4 / 실패 12 |
+| 루트만 읽는 중간 반례 | 통과 24 / 미지원 4 / 실패 4 | 통과 24 / 미지원 4 / 실패 4 | 통과 24 / 미지원 4 / 실패 4 | 통과 24 / 미지원 4 / 실패 4 |
+| 최종 green | 통과 28 / 미지원 4 / 실패 0 | 통과 28 / 미지원 4 / 실패 0 | 통과 28 / 미지원 4 / 실패 0 | 통과 28 / 미지원 4 / 실패 0 |
+
+red는 실제 종료 코드 1로 `lazy-composition-at-clock-boundary`를 기록했고, 최종 green은 네 명령 모두 종료 코드 0입니다. 작업 폴더 루트에서 실행한 명령은 다음과 같습니다. Node는 v26.12.0의 native TypeScript를 사용했습니다.
+
+```sh
+/opt/homebrew/bin/node packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs
+/opt/homebrew/bin/node packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs --surface=first-batch
+bun packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs
+bun packages/canard/schema-form/bench/distEngine/check-mount-readiness.mjs --surface=first-batch
+```
+
+최종 green 원본 폴더는 위 순서로 `mount-readiness-guard-lglNOS`, `mount-readiness-guard-DH9pvl`, `mount-readiness-guard-DT6bch`, `mount-readiness-guard-VLgrKt`입니다. red·중간 반례·green result.json을 새 창의 `guard-evidence/`에 별도 복사했고 manifest의 hash·surface·runtime·source hash로 연결합니다. 기준214의 보정 전 canonical 파일과 234의 보정 후 파일도 보존했습니다. 최종 loader SHA-256은 `343857dd924916ef59c369033bf654692506cb3024022a8a61065385ed8f8f7d`, canonical bench-common은 `2c28118bafe1b429d78a6840649acd38874ce46ddeb792ba0e7146a199b8ef95`입니다.
+
+이는 이 지원 fixture의 공개 값 준비 가드입니다. 전체 실제 제품 event/payload/revision 차등·다른 스키마·다른 런타임·M3 Form 렌더까지 검증했다고 주장하지 않습니다. 원래 raw dist와 첫 창 실행 파일·원자료는 변경하지 않았습니다.
+
+## 새 창의 관측 완료 core mount
+
+보정 커밋 **`234d88ce0bb059eea47c11b7227cb871e1b19fbc`**, 제품 기준 **`214534c2f6e820f58cadf75f03828196a6c9760a`**에서 별도 조용한 창을 열고 닫았습니다: **2026-10-18T11:49:39.642Z → 2026-10-18T11:52:05.641Z UTC**. Node v26.12.0·Bun 1.4.3·arm64·production이며 Node1→Bun1→Node2→Bun2의 네 명령을 직렬 실행했습니다. 두 번째 바퀴는 판·장면 역순입니다. 동일한 스키마·입력 16장면을 사용하며 T0 표기·array T items·T0 terminal 판별의 복사본 정렬도 유지했습니다.
+
+판·장면·바퀴마다 준비 20회·표본 100회입니다. 스키마·입력 작성과 복제는 시간 밖입니다. 타이머는 core factory 직전부터 **후위 공개 값 materialization을 끝낸 factory 반환과 마지막 mount onChange 중 늦은 시점**까지입니다. 양 판에 같은 관측 순회 비용이 들어갑니다. runner는 추가 public 읽기보다 먼저 종료 직후 지연 합성 상태를 기록합니다. 모든 지원 표본에서 lazy 미완료·비동기 종료는 0건이며 시간 밖 fullCheck·전체 snapshot을 drain 전후 대조했습니다. timer polling 대기는 더하지 않습니다. current callback은 표본당 1회(총6,400회), legacy는 0회이고 drain 뒤에도 같았습니다.
+
+ms는 **두 바퀴 중앙값의 평균 [최소–최대]**, ±%는 **바퀴마다 (current/legacy−1)×100을 구한 평균 [최소–최대]**입니다. 평균 ms끼리 나눈 비율과 다를 수 있습니다. 범위는 신뢰구간이 아니며 작은 장면의 바퀴 차이가 큽니다. 배열 T0/B0는 legacy 미지원입니다.
+
+| 런타임 | 장면 | 0.16.1 완료 ms [바퀴 범위] | current 완료 ms [바퀴 범위] | current/0.16.1 ±% [바퀴 범위] |
+| --- | --- | ---: | ---: | ---: |
+| Node v26.12.0 | object/T N=100 | 0.1475 [0.1244–0.1706] | 0.2663 [0.2001–0.3325] | +92.3 [+17.3–+167.3] |
+| Node v26.12.0 | object/T N=1,000 | 1.9853 [1.9651–2.0054] | 0.1965 [0.1898–0.2032] | -90.1 [-90.5–-89.7] |
+| Node v26.12.0 | object/B0 N=100 | 0.0878 [0.0472–0.1285] | 0.2068 [0.1301–0.2835] | +251.1 [+1.3–+500.9] |
+| Node v26.12.0 | object/B0 N=1,000 | 0.0469 [0.0397–0.0541] | 0.9511 [0.9375–0.9648] | +1972.2 [+1684.6–+2259.8] |
+| Node v26.12.0 | object/B1 N=100 | 0.2034 [0.0910–0.3159] | 0.3605 [0.3127–0.4082] | +136.5 [+29.2–+243.8] |
+| Node v26.12.0 | object/B1 N=1,000 | 1.4598 [1.4324–1.4873] | 0.8272 [0.7695–0.8850] | -43.4 [-46.3–-40.5] |
+| Node v26.12.0 | object/BN N=100 | 0.2326 [0.2187–0.2465] | 0.9851 [0.9180–1.0522] | +326.8 [+272.4–+381.2] |
+| Node v26.12.0 | object/BN N=1,000 | 1.9444 [1.8559–2.0330] | 6.6765 [6.3900–6.9631] | +243.4 [+242.5–+244.3] |
+| Node v26.12.0 | array/T N=1,000 | 0.9516 [0.9443–0.9588] | 0.1115 [0.1088–0.1141] | -88.3 [-88.6–-87.9] |
+| Node v26.12.0 | array/T N=8,000 | 37.5503 [37.2728–37.8279] | 0.1507 [0.1352–0.1662] | -99.6 [-99.6–-99.6] |
+| Node v26.12.0 | array/T0 N=1,000 | 미지원 | 0.1582 [0.0901–0.2263] | 미지원 |
+| Node v26.12.0 | array/T0 N=8,000 | 미지원 | 0.1731 [0.1228–0.2234] | 미지원 |
+| Node v26.12.0 | array/B0 N=1,000 | 미지원 | 0.5140 [0.4998–0.5282] | 미지원 |
+| Node v26.12.0 | array/B0 N=8,000 | 미지원 | 2.0307 [1.9377–2.1237] | 미지원 |
+| Node v26.12.0 | array/BN N=1,000 | 0.9768 [0.9700–0.9835] | 3.1812 [3.1510–3.2115] | +225.7 [+224.8–+226.5] |
+| Node v26.12.0 | array/BN N=8,000 | 11.2643 [10.7219–11.8068] | 30.5530 [29.8573–31.2488] | +172.2 [+152.9–+191.4] |
+| Bun 1.4.3 | object/T N=100 | 0.1213 [0.0549–0.1877] | 0.2691 [0.2095–0.3287] | +178.5 [+75.1–+281.9] |
+| Bun 1.4.3 | object/T N=1,000 | 0.6926 [0.6199–0.7654] | 0.2382 [0.1327–0.3436] | -66.8 [-78.6–-55.1] |
+| Bun 1.4.3 | object/B0 N=100 | 0.0856 [0.0770–0.0941] | 0.5140 [0.4669–0.5611] | +512.3 [+396.1–+628.5] |
+| Bun 1.4.3 | object/B0 N=1,000 | 0.1401 [0.1397–0.1404] | 0.4750 [0.4456–0.5043] | +239.1 [+217.3–+260.9] |
+| Bun 1.4.3 | object/B1 N=100 | 0.1474 [0.0824–0.2124] | 0.1986 [0.1600–0.2373] | +52.9 [+11.7–+94.1] |
+| Bun 1.4.3 | object/B1 N=1,000 | 0.6950 [0.6196–0.7703] | 0.6270 [0.6069–0.6471] | -8.4 [-21.2–+4.4] |
+| Bun 1.4.3 | object/BN N=100 | 0.1796 [0.1310–0.2282] | 0.6183 [0.5827–0.6539] | +265.7 [+186.5–+344.8] |
+| Bun 1.4.3 | object/BN N=1,000 | 1.3931 [1.2821–1.5041] | 4.0709 [4.0678–4.0740] | +194.1 [+170.9–+217.3] |
+| Bun 1.4.3 | array/T N=1,000 | 2.1637 [2.0229–2.3046] | 0.1498 [0.0975–0.2022] | -93.2 [-95.2–-91.2] |
+| Bun 1.4.3 | array/T N=8,000 | 90.7134 [90.5807–90.8461] | 0.1977 [0.1580–0.2373] | -99.8 [-99.8–-99.7] |
+| Bun 1.4.3 | array/T0 N=1,000 | 미지원 | 0.1337 [0.1157–0.1518] | 미지원 |
+| Bun 1.4.3 | array/T0 N=8,000 | 미지원 | 0.2125 [0.1486–0.2764] | 미지원 |
+| Bun 1.4.3 | array/B0 N=1,000 | 미지원 | 0.2546 [0.2432–0.2659] | 미지원 |
+| Bun 1.4.3 | array/B0 N=8,000 | 미지원 | 1.3564 [1.0594–1.6534] | 미지원 |
+| Bun 1.4.3 | array/BN N=1,000 | 0.8295 [0.7614–0.8975] | 2.4885 [2.2472–2.7299] | +199.6 [+195.1–+204.2] |
+| Bun 1.4.3 | array/BN N=8,000 | 6.1943 [6.1556–6.2330] | 22.6071 [22.0399–23.1744] | +265.0 [+253.6–+276.5] |
+
+지원 시간 표본 **11,200개**, 준비 **2,240회**, 지원 행 **112개**, 미지원 행 **16개**입니다. 값·자식·경로·순서·caller 불변·drain 안정성과 종료 직후 상태 검사는 11,200표본 모두 통과했습니다. B0 객체/1,000은 Node +1972.2%·Bun +239.1%, BN 객체/1,000은 +243.4%·+194.1%이지만 새 회귀 수용이나 제품 최적화 예상 절감률을 정하지 않습니다. 첫 창과의 차이도 보정의 성능 개선/악화로 계산하지 않습니다.
+
+새 원자료·도구·사본은 **`/private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-completed-task_7e0e67a1893f`**에 있습니다. `complete-{node,bun}-{1,2}.json`과 `.err`, `window.json`, `manifest.json`, `analysis-completed.json`을 보존합니다. 창 진입 명령은 `/opt/homebrew/bin/node /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-completed-task_7e0e67a1893f/window.mjs`이며 재현은 새 TMPDIR에서 해야 합니다. raw dist SHA는 위 표와 같습니다. source·canonical·Winglet 603개·기존 원자료 138개·첫 창 파일 58개 해시가 모두 유지됐습니다. **실제 실행 도구의 identity는 각 window.json.scriptHashes**이며, 첫 창 manifest의 준비 중 generated snapshot보다 실제 window 해시를 우선합니다.
+
+### 창 밖의 패키지 검사
+
+새 창 전 11:38:40.167Z–11:41:19.346Z에 아래 명령을 순차 실행했고 모두 종료 코드 0입니다. **759파일·4,785시험 통과, 기존 todo 1개, 120.22초**이며 unit/render/storybook을 포함합니다. 기존 기대값 변경·검사 생략은 없습니다. build 뒤 current dist 해시도 같았으며 추적 빌드 변경은 없었습니다. 게이트 runner Node v24.20.0은 측정 런타임과 구별합니다.
+
+```sh
+yarn workspace @canard/schema-form typecheck
+yarn workspace @canard/schema-form lint
+yarn workspace @canard/schema-form test --run
+yarn workspace @canard/schema-form build
+```
+
+원본 로그는 `/private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-readiness-gates-task_7e0e67a1893f`이며 새 폴더의 `package-gates/`에도 복사했습니다. guard·loader의 Prettier check와 first-batch common의 Node syntax check도 통과했습니다. 모든 빌드·게이트는 측정 창 밖입니다.
+
 ## 계측의 포괄·배타 합계와 유효 범위
+
+이 절부터의 시간 분해와 호출 계수는 **첫 창의 current factory-only 경계**입니다. 새 완료 경계의 순회 비용은 포함하지 않으며 새 total의 성분으로 바꾸지 않습니다.
 
 scratch current 사본의 함수 진입·반환만 감쌌고 제품 알고리즘은 치환하지 않았습니다. timer는 현재 호출 stack의 자식 포괄 시간을 부모에서 빼서 exclusiveMs를 만들고 각 배타 시간을 단계에 한 번만 배정합니다. 같은 함수의 재귀 포괄 값은 가장 바깥 호출만 합칩니다. blueprint·loadFieldNodeAtMount·selectChildren 같은 부모의 포괄 시간을 자식 시간과 합산하지 않습니다. `other = 측정 envelope − 배타 단계 합`은 timer 경계 밖의 wiring·루트 runtime 준비 등을 포함하며 특정 함수의 비용으로 추정하지 않습니다.
 
@@ -270,15 +359,17 @@ BN의 repeated effective-schema 조회 수(객체 3N+5·배열 2N+5)는 현재 �
 | caller 소유권을 분리하는 B0 키 복사·출력 구성 | B0/1000의 writeObjectKey 2001회; Node 성긴 계측 extras 38.2%·assembly 47.0%, Bun 세부 계측 extras 29.1%·assembly 37.3% | VALUE-002·WRITE-013·SETTLE-042·043. 순서/소유 결과는 필요하나 모든 열거와 중간 집합이 필요한 것은 아닙니다. 비율을 비계측 절감 ms로 환산하지 않습니다. |
 | BN의 eager occurrence와 commit-before-delivery | 객체/1000 및 배열/1000은 1002개 record, 배열/8000은 8002개; Node 배열/8000 성긴 commit 29.1%·Bun 20.4% | SETTLE-001과 공개 노드·revision 관측. commit 후보 자료구조나 할당 하나마다의 불가피성은 미증명입니다. |
 | 폼 하나의 독립된 청사진 준비 | 객체 BN/1000의 성긴 blueprint Node 46.2%·Bun 45.2%, 배열 BN/8000은 각각 0.3%·0.4% | 398라운드에 따라 폼 간 청사진 공유는 제안하지 않습니다. 객체에서 큰 현재 정적 분석 구현이 최솟값이라는 뜻은 아닙니다. |
-| source snapshot·extras·출력 배열 소유와 순서 | itemless/8000도 current Node 2.4627 ms·Bun 1.0503 ms; old는 미지원 | VALUE-002·WRITE-013과 기존 L3-b 관측. 빈 선언 N회 제거 후보는 먼저 분리하고 사본의 잔여를 재측정해야 합니다. |
+| source snapshot·extras·출력 배열 소유와 순서 | 새 완료 창 itemless/8000 current Node 2.0307 ms·Bun 1.3564 ms; old는 미지원 | VALUE-002·WRITE-013과 기존 L3-b 관측. 빈 선언 N회 제거 후보는 먼저 분리하고 사본의 잔여를 재측정해야 합니다. |
 | 노드·청사진 메모리와 게이트 형상 비용 | 이번 heap·게이트 장면은 미측정 | NODE-018은 추정, NODE-055/TEST-027의 허용 여부는 별도 판단입니다. 과거 376 B나 약 20% 초과를 이번 현재 수치로 인용하지 않습니다. SETTLE-018/020·BLUEPRINT-007의 고정점 조건도 유지합니다. |
 
 [이전 L3-e](l3e-direct-ownership-results.md)·[L3-b](l3b-array-append-results.md)·[L3-a](l3a-extras-plain-assignment-results.md)·[L3-c](l3c-extras-single-compare-results.md)·[L3-d](l3d-static-spec-pass-through-results.md)와 [첫 묶음](first-batch-measurement.md)은 다른 창입니다. 특히 L3-d는 중복 조회 제거이지 시간 개선이 아닙니다. 이전 창의 절대 시간과 이어 붙이거나 개선율을 누적하지 않습니다. [400C-02](../../reviews/round-400-closing.md)의 계측 해석, [인계 7–9절](../../AGENT-HANDOFF.md)의 정상 동작·가드 기준과 [398라운드](../../reviews/round-398-owner-answers.md)를 유지합니다.
 
 ## 검산과 한계
 
-`node /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f/analyze.mjs`는 원시 JSON의 midpoint median·평균·바퀴별 비율·배타 합계·관측/준비 횟수·runtime/역순 표지·dist/Winglet/기존 증거·도구 해시를 대조했습니다. 실패 0건, 음수 remainder 0건, 계측 합 오차 0 ms입니다. 시간 표본 17,600개와 별도 계수 확인 32개, 준비 3,520회가 모두 기록됐고, legacy 미지원 행은 바퀴를 포함해 16개입니다. 숫자를 복원하거나 실패 행을 제외하고 성공으로 바꾸지 않았습니다.
+첫 창 `analyze.mjs`·`analysis.json`·`report.mjs`·`validate.py`는 당시 결과와 함께 동결했습니다. 첫 창 17,600시간 표본·계수 확인 32개·준비 3,520회·미지원 16행, 계측 표본 6,400개의 배타 합 오차 0 ms·음수 remainder 0건이라는 증거는 유지합니다. 옛 판 factory-only 대비 비율은 산술이 맞아도 완료 비교로 무효입니다.
 
-한 창의 두 바퀴이며 통계적 신뢰구간이 아닙니다. 계측 필터가 통과한 행도 JIT·GC·순서 영향이 남습니다. 단위는 시간 표에서 ms, 단계 표에서 ms와 %, 호출 수에서 회입니다. 1 ms = 1000 µs이며 profiler 점유율을 생산 지연의 성분으로 환산하지 않았습니다. 옛 판과의 초기 onChange 계약 차이·runtime 버전·변형 export 사본을 밝히므로, 공개 Form 렌더 성능이나 전체 엔진 동등성·M3 합격으로 해석할 수 없습니다.
+새 창 `analyze-completed.mjs`는 median·바퀴 평균/범위/비율·관측 상태·callback·drain·source/canonical/Winglet/기존 증거/실행 도구 해시를 검산했고 실패 0건입니다. 별도 Python 검산은 raw samples에서 다시 median·평균·비율을 구해 새 완료 표 32행, 첫 창 current 32행·factory-only 진단 24행·계측 32행·포괄/배타 함수 16행·계수 8행을 대조했습니다. **수치 필드 1,104개·상대 링크 24개·red/중간 반례/green·해시 검사 통과, 오류 0건**입니다. 새 명령은 `python3 /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-completed-task_7e0e67a1893f/validate-completed.py`이며 동결 원본을 고치지 않습니다.
 
-검증 명령은 `python3 /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f/validate.py`(별도 구현으로 수치 필드 864개·current 32행·factory-only 진단 24행·단계 32행·포괄/배타 함수 16행·계수 8행·소스 anchor 6개 및 사후 legacy 상태 480회 대조), `node /private/var/folders/gn/1d1dzy8j28q6m79gbswbptbh0000gn/T/mount-breakdown-task_7e0e67a1893f/report.mjs --check`(전정밀도 분석의 보고서 재생성 일치·상대 링크 21개), `git diff --cached --check`, `git diff --cached --name-only`이며 모두 종료 코드 0입니다. 산술 검산 통과를 legacy 완료 경계의 통과로 읽지 않습니다. 스테이징된 경로는 이 보고서 하나뿐입니다. 커밋/PR 위생은 최종 PR 본문에도 기록합니다. 문서 작업에 대한 새 제품 test/typecheck/lint/build 게이트는 실행하지 않으며, 사전 측정 입력 준비 build와 구별합니다. 독립 agy 검증과 병합·원장 마감은 조정자에게 남깁니다.
+TMPDIR는 영구 보관소가 아니며 raw는 커밋에 넣지 않습니다. 정리되면 해시만으로 표본을 복원할 수 없습니다. 창을 합친 정밀도·신뢰구간이나 JIT/GC 비용 분리를 주장하지 않습니다. 첫 창의 분해 filter도 사후 보수적 해석 규칙일 뿐 통계/계약 gate가 아닙니다. 1 ms = 1000 µs이며 profiler 점유율을 생산 지연의 절감 ms로 환산하지 않습니다.
+
+최종 범위는 이 보고서, verification loader, readiness 가드, first-batch 공통 도구·README의 다섯 경로입니다. 기존 다섯 L3 보고서와 ignored/raw 증거는 보존합니다. 독립 검토를 위해 기준214부터 최종 PR head까지의 범위·검증·한계를 조정자에게 인계하며, 독립 agy 검증·병합·M3/원장 마감은 조정자에게 남깁니다.
