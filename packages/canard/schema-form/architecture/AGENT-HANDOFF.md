@@ -14,9 +14,9 @@
 
 ## 2. 지금 상태 (2026-10-18)
 
-- 가지: `feat/schema-form-08-review-and-perf`, 끝 `07e297431`(404라운드 닫기). 메인 작업 폴더 `/Users/Vincent/Workspace/albatrion` 는 그 가지를 체크아웃하고 있고 깨끗하다(추적 밖 `l3e-direct-ownership/` 폴더는 아래 Orca 작업 폴더다; `git add .` 를 쓰지 말 것).
-- 병합된 PR: #416 L3-e 조각 소유 직접 판정(`fde6ab359`, 403C-01), #417 L3-b items 없는 배열 끝 덧붙임 지름길(`8e35b01fc`, 404C-01).
-- 열린 PR: **#418 L3-a 선언 밖 키 일반 대입**(가지 `perf/schema-form-extras-plain-assignment`, 기준 `07e297431`, 커밋 `a4375e180` DETAIL·`cad821b8d` 코드와 시험). agy 검증 진행 중(아래 Orca 상태). 판정 뒤 할 일: 통과면 `gh pr merge 418 --repo vincent-kk/albatrion --squash --delete-branch --subject "..."` 로 병합하고 405라운드 닫기(결정 하나: L3-a 병합과 `__proto__` 보호를 VALUE-002 보충으로; 대상 GOAL-011·VALUE-002·WRITE-013·SETTLE-042·SETTLE-043); 조건부 통과면 Bun B1 mount 의 −31.7% 행을 닫기 문서에 적고 수용 후보 목록에 둔다; 실패면 codex 워커에게 수정 지시 뒤 재검증.
+- 가지: `feat/schema-form-08-review-and-perf`, 끝은 405라운드 닫기 커밋(`git log -1`로 확인). 메인 작업 폴더 `/Users/Vincent/Workspace/albatrion` 는 그 가지를 체크아웃하고 있고 깨끗하다(추적 밖 `l3e-direct-ownership/` 폴더는 아래 Orca 작업 폴더다; `git add .` 를 쓰지 말 것).
+- 병합된 PR: #416 L3-e 조각 소유 직접 판정(`fde6ab359`, 403C-01), #417 L3-b items 없는 배열 끝 덧붙임 지름길(`8e35b01fc`, 404C-01), #418 L3-a 선언 밖 키 일반 대입(`89ea2c98b`, 405C-01).
+- 열린 PR: 없음(진행 중인 가설은 3절의 codex 워커 dispatch 를 보라).
 - 측정 결과 표(미커밋, 작업 폴더 안): `verification/perf-optimization/l3e-direct-ownership-results.md`, `l3b-array-append-results.md`, `l3a-extras-plain-assignment-results.md`. 요지는 각 PR 본문에 있다.
 - 워커 brief 원본: `verification/perf-optimization/l3-briefs/` (가설별 구현 brief 와 검증 brief 여섯 편). 다음 가설의 brief 는 이 꼴을 복제해 쓴다.
 
@@ -25,7 +25,7 @@
 - run: `run_313832ef19e0` (objective: schema-form L3 implementation bundle). 코디네이터 터미널은 Claude 세션의 것이었으므로 새 메인 에이전트는 자기 터미널에서 `orca orchestration run-use --id run_313832ef19e0 --json` 으로 묶은 뒤 `orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 590000 --json` 으로 기다린다. 안내는 `orca skills get orchestration` 으로 읽는다.
 - 작업 폴더(Orca 최상위 worktree): `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`, id `e6ce1c03-a2d9-41a9-a217-79ad5c407d6d::/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`. 가설마다 이 폴더에서 origin 가지 끝 기준으로 새 가지를 만든다(worker-start 에 `--worktree 'id:<위 id>'`).
 - codex 워커 터미널(유지됨, 재사용): `term_4172d8a2-ba30-4eda-91ce-0f63839e2f84` (모델 gpt-6.1-sol, effort high). 재사용은 `worker-start --spec '...' --worktree 'id:<위 id>' --terminal term_4172d8a2-ba30-4eda-91ce-0f63839e2f84 --json`. 마지막 dispatch `ctx_2dd274324423`(L3-a, succeeded, retained).
-- 검증 워커(진행 중): dispatch `ctx_c553a9fd035c`, 터미널 `term_6839c1b0-e886-44a5-a46c-4dfc295b62a6`, agy gemini-4-argon-medium, 본 폴더에서 읽기 전용. 끝나면 `worker-release --dispatch ctx_c553a9fd035c`.
+- 검증 워커: 가설마다 새로 띄운다(`worker-start --spec ... --worktree current --agent antigravity --model gemini-4-argon-medium --json`; 끝나면 `worker-release`). 마지막 검증 dispatch `ctx_c553a9fd035c`(L3-a, 통과, released).
 - 주의: 워커가 `run-use` 나 `--terminal` 없는 `check` 를 실행하면 코디네이터 바인딩을 빼앗아 `consumer_fenced` 가 난다. brief 에 "run-use 금지, check 는 --terminal 로" 를 적고, 끊기면 `run-use` 로 다시 묶는다. 새 최상위 작업 폴더를 만들면 기준이 master(0.16.1)일 수 있으니 brief 첫 단계에 기준 커밋 확인을 둔다.
 
 ## 4. 라운드 닫기 절차 (`architecture/` 에서)
@@ -40,12 +40,11 @@
 
 ## 5. 다음 할 일 (400C-04 순서)
 
-1. PR #418 판정·병합·405라운드 닫기(위 2절).
-2. L3-c: `nextExtras` 끝의 sameValue 이중 비교 제거(Merge 경로 동일성 확인이 선행; 측정 문서 A2 절 끝과 L3-c 행).
-3. L3-d: 이미 해석된 자식에 `staticSpec` 을 넘겨 두 번째 조회 제거(해석한 자식에만; L3-d 행).
-4. 마운트 원인 분해(방향만, 코드 없음) → 결정 58 실험(입구 수치는 L3-e 뒤 남은 비용 기준으로 다시 잼) → M3 종합 재측정과 소유자 수용 목록(HANDOFF 1절과 400C-01의 수용 후보) → 플러그인·내장 fallback 결함 여덟 수정 PR(393·396라운드) → 9단계.
-5. L3 묶음이 끝나면 Orca 작업 폴더 `l3e-direct-ownership` 를 지우고(`orca worktree` 명령은 소유자 승인 뒤), 미커밋 측정 결과 표는 M3 때 측정 문서로 정리한다.
+1. L3-c: `nextExtras` 끝의 sameValue 이중 비교 제거(Merge 경로 동일성 확인이 선행; 측정 문서 A2 절 끝과 L3-c 행).
+2. L3-d: 이미 해석된 자식에 `staticSpec` 을 넘겨 두 번째 조회 제거(해석한 자식에만; L3-d 행).
+3. 마운트 원인 분해(방향만, 코드 없음) → 결정 58 실험(입구 수치는 L3-e 뒤 남은 비용 기준으로 다시 잼) → M3 종합 재측정과 소유자 수용 목록(HANDOFF 1절과 400C-01의 수용 후보) → 플러그인·내장 fallback 결함 여덟 수정 PR(393·396라운드) → 9단계.
+4. L3 묶음이 끝나면 Orca 작업 폴더 `l3e-direct-ownership` 를 지우고(`orca worktree` 명령은 소유자 승인 뒤), 미커밋 측정 결과 표는 M3 때 측정 문서로 정리한다.
 
 ## 6. 열린 소유자 물음
 
-없음. 결정 58 은 실험 뒤, 결정 54 는 플러그인 PR 때 돌아온다. Bun B1 mount 의 L3-a 행이 재측정에서도 느리면 소유자 수용 목록에 올린다(TEST-027).
+없음. 결정 58 은 실험 뒤, 결정 54 는 플러그인 PR 때 돌아온다. L3-a 의 Bun B1 mount 행은 재측정으로 창 변동으로 닫혔다(405C-01).
