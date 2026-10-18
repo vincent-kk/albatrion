@@ -1,6 +1,10 @@
 import type { BlueprintNode } from '../../../engine';
 import type { TestFieldNode, TestPublicFieldNode } from '../testFieldNode';
 import { ObservationCodec, assertObservationEqual } from './codec';
+import {
+  assertRuleIndexes,
+  createRuleTargetIdentity,
+} from './ruleTargetIdentity';
 import type { ItemlessScene } from './scenes';
 
 /** Minimal unchanged dispatcher/binding surface shared by source and copied production dist. */
@@ -223,6 +227,29 @@ export function runItemlessScene(
   scene: ItemlessScene,
   validator: unknown,
 ): SceneResult {
+  return captureItemlessScene(engine, scene, validator);
+}
+
+/** Bind a strict observer only to the readonly reader of its own isolated execution module. */
+export function createStrictItemlessObserver(
+  engine: ItemlessEngine,
+  readExistingId: (node: object) => number | undefined,
+): (scene: ItemlessScene, validator: unknown) => SceneResult {
+  if (typeof readExistingId !== 'function')
+    throw new Error(
+      'Strict observation requires its own existing owner reader',
+    );
+  return (scene, validator) =>
+    captureItemlessScene(engine, scene, validator, readExistingId);
+}
+
+/** Share the original capture/history plumbing while keeping legacy characterization separate. */
+function captureItemlessScene(
+  engine: ItemlessEngine,
+  scene: ItemlessScene,
+  validator: unknown,
+  readExistingId?: (node: object) => number | undefined,
+): SceneResult {
   const codec = new ObservationCodec();
   const known: TestPublicFieldNode[] = [];
   const listenerHistory: unknown[] = [];
@@ -298,13 +325,22 @@ export function runItemlessScene(
     }
     return JSON.stringify([...parts.slice(0, 7), ['occurrence', local]]);
   };
-  const capture = () =>
-    Object.fromEntries(
-      Object.entries(stateOf(root, known, ruleKey)).map(([key, value]) => [
-        key,
-        codec.encode(value),
-      ]),
+  const strictRuleKey = readExistingId
+    ? createRuleTargetIdentity(() => known, readExistingId, codec.nodes)
+    : undefined;
+  const capture = () => {
+    if (strictRuleKey)
+      assertRuleIndexes(
+        root.runtime.committedRuleValues,
+        root.runtime.committedRuleKeysBySource,
+        root.runtime.committedRuleKeysByTarget,
+      );
+    return Object.fromEntries(
+      Object.entries(stateOf(root, known, strictRuleKey ?? ruleKey)).map(
+        ([key, value]) => [key, codec.encode(value)],
+      ),
     );
+  };
   const register = (node: TestFieldNode) => {
     const publicNode = node as TestPublicFieldNode;
     if (known.includes(publicNode)) return;
