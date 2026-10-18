@@ -4,7 +4,6 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { performance } from 'node:perf_hooks';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 process.env.NODE_ENV = 'production';
@@ -140,6 +139,18 @@ if (mode === 'prepare') {
     tool: {
       path: fileURLToPath(import.meta.url),
       sha256: fileHash(fileURLToPath(import.meta.url)),
+    },
+    measurementFixture: {
+      path: path.join(
+        packageRoot,
+        'src/core/__tests__/fixtures/itemlessDeclarations/measurements.mjs',
+      ),
+      sha256: fileHash(
+        path.join(
+          packageRoot,
+          'src/core/__tests__/fixtures/itemlessDeclarations/measurements.mjs',
+        ),
+      ),
     },
   });
   console.log(
@@ -292,179 +303,80 @@ if (mode === 'prepare') {
       positiveRows,
     });
     console.log(JSON.stringify({ file, positiveRows }));
-  } else if (mode === 'measure') {
-    const round = Number(arg('round', '1'));
-    const reverse = round === 2;
+  } else if (mode === 'preflight' || mode === 'measure') {
     const { materializeMountedValues } = await load(
       path.join(packageRoot, 'bench/distEngine/loadDistEngine.ts'),
+    );
+    const { runMountPreflight, runMountMeasurements } = await load(
+      path.join(
+        packageRoot,
+        'src/core/__tests__/fixtures/itemlessDeclarations/measurements.mjs',
+      ),
     );
     const engines = {
       base: await load(manifest.bundles.base.executedPath),
       candidate: await load(manifest.bundles.candidate.executedPath),
       legacy: await load(manifest.legacy.executedPath),
     };
-    const specs = [
-      ['root-itemless-N1000', 'root', 'itemless', 1000],
-      ['root-itemless-N8000', 'root', 'itemless', 8000],
-      ['nested-itemless-N1000', 'nested', 'itemless', 1000],
-      ['nested-itemless-N8000', 'nested', 'itemless', 8000],
-      ['root-BN-N1000', 'root', 'BN', 1000],
-      ['root-BN-N8000', 'root', 'BN', 8000],
-      ['root-terminal-N1000', 'root', 'terminal', 1000],
-      ['root-terminal-N8000', 'root', 'terminal', 8000],
-      ['object-B0-N1000', 'root', 'object', 1000],
-    ];
-    if (reverse) specs.reverse();
-    const rows = [],
-      unsupported = [];
-    for (const [id, host, kind, n] of specs)
-      for (const name of reverse
-        ? ['legacy', 'candidate', 'base']
-        : ['base', 'candidate', 'legacy']) {
-        const schema =
-          kind === 'object'
-            ? { type: 'object' }
-            : {
-                type: 'array',
-                ...(kind === 'BN' || kind === 'terminal'
-                  ? { items: { type: 'number' } }
-                  : {}),
-                ...(kind === 'terminal'
-                  ? name === 'legacy'
-                    ? { terminal: true }
-                    : { options: { terminal: true } }
-                  : {}),
-              };
-        const jsonSchema =
-          host === 'nested'
-            ? { type: 'object', properties: { list: schema } }
-            : schema;
-        const values = Array.from({ length: n }, (_, i) => i);
-        const expected =
-          kind === 'object'
-            ? Object.fromEntries(values.map((value) => ['k' + value, value]))
-            : host === 'nested'
-              ? { list: values }
-              : values;
-        if (name === 'legacy' && kind === 'itemless') {
-          let rejected = false;
-          try { engines.legacy.nodeFromJSONSchema({ jsonSchema, defaultValue: structuredClone(expected) }); }
-          catch (error) {
-            assert.ok(error.message.includes("Array must have 'items' or 'prefixItems' defined."));
-            rejected = true; unsupported.push({ id, engine: name, reason: error.message });
-          }
-          assert.ok(rejected, 'Legacy support changed; re-evaluate the reference lane');
-          continue;
-        }
-        const samplesMs = [],
-          observations = [];
-        for (let sample = -20; sample < 100; sample++) {
-          const input = structuredClone(expected);
-          let callbacks = 0,
-            lastChange;
-          const props = {
-            jsonSchema,
-            defaultValue: input,
-            validationMode: 0,
-            onChange: (value) => {
-              callbacks++;
-              lastChange = value;
-            },
-          };
-          const start = performance.now();
-          const root =
-            name === 'legacy'
-              ? engines.legacy.nodeFromJSONSchema(props)
-              : engines[name].buildFieldNodeTree(props);
-          if (name !== 'legacy') engines[name].mountFieldNode(root);
-          materializeMountedValues(root);
-          const end = performance.now();
-          const target = host === 'nested' ? root.find('/list') : root;
-          const children = Array.from(target.children ?? [], child => child?.node ?? child);
-          assert.equal(children.length, kind === 'BN' ? n : 0);
-          assert.equal(name === 'legacy' ? target.group : target.strategy, kind === 'terminal' ? 'terminal' : 'branch');
-          const targetExpected = host === 'nested' ? expected.list : expected;
-          assert.deepEqual(target.value, targetExpected);
-          assert.deepEqual(Object.keys(target.value), Object.keys(targetExpected));
-          for (let index = 0; index < children.length; index++) {
-            assert.equal(children[index].name, String(index));
-            assert.equal(children[index].path, target.path + '/' + index);
-            assert.equal(children[index].value, targetExpected[index]);
-          }
-          const noLazyWorkAfterClock = [root, target, ...children].every(
-            (node) =>
-              !node.__strategy__ ||
-              !(
-                node.__strategy__.__expired__ === true &&
-                node.__strategy__.__locked__ !== true &&
-                node.__strategy__.__composedValid__ === false
-              ),
-          );
-          assert.ok(noLazyWorkAfterClock);
-          assert.deepEqual(root.value, expected);
-          assert.deepEqual(input, expected);
-          assert.deepEqual(Object.keys(root.value), Object.keys(expected));
-          const callbacksAtEnd = callbacks;
-          assert.equal(callbacks, name === 'legacy' ? 0 : 1);
-          if (callbacks) assert.deepEqual(lastChange, expected);
-          const captured = structuredClone(root.value);
-          await new Promise((resolve) =>
-            setTimeout(() => setTimeout(resolve, 0), 0),
-          );
-          assert.deepEqual(root.value, captured);
-          assert.deepEqual(target.value, targetExpected);
-          for (let index = 0; index < children.length; index++) assert.equal(children[index].value, targetExpected[index]);
-          assert.deepEqual(input, expected);
-          assert.equal(callbacks, callbacksAtEnd);
-          if (sample >= 0) {
-            samplesMs.push(end - start);
-            observations.push({
-              immediate: true,
-              full: true,
-              stable: true,
-              caller: true,
-              order: true,
-              noLazyWorkAfterClock,
-              callbacksAtEnd,
-              callbacksAfterDrain: callbacks,
-              asynchronous: false,
-            });
-          }
-        }
-        const sorted = [...samplesMs].sort((a, b) => a - b);
-        rows.push({
-          id,
-          runtime,
-          engine: name,
-          round,
-          warmups: 20,
-          samplesMs,
-          observations,
-          medianMs: (sorted[49] + sorted[50]) / 2,
-          correctnessFailures: 0,
-          asyncAfterEndpoint: 0,
-          callbackCount: name === 'legacy' ? 0 : 1,
-          drainStable: true,
-        });
-      }
-    const file = write('measure-' + runtime + '-' + round + '.json', {
-      rows,
-      unsupported,
-      runtime,
-      version: process.versions.bun ?? process.version,
-      round,
-      reverse,
-      manifestPath,
-    });
+    const round = Number(arg('round', '1'));
+    const result =
+      mode === 'preflight'
+        ? await runMountPreflight(engines, materializeMountedValues)
+        : await runMountMeasurements(engines, materializeMountedValues, round);
+    const prefix = arg('measurement-prefix', 'corrected-measure');
+    const file = write(
+      mode === 'preflight'
+        ? label + '-preflight-' + runtime + '.json'
+        : prefix + '-' + runtime + '-' + round + '.json',
+      {
+        ...result,
+        runtime,
+        version: process.versions.bun ?? process.version,
+        manifestPath,
+        fixtureToolPath: path.join(
+          packageRoot,
+          'src/core/__tests__/fixtures/itemlessDeclarations/measurements.mjs',
+        ),
+        fixtureToolSHA256: fileHash(
+          path.join(
+            packageRoot,
+            'src/core/__tests__/fixtures/itemlessDeclarations/measurements.mjs',
+          ),
+        ),
+      },
+    );
     console.log(
       JSON.stringify({
         file,
-        rows: rows.map(({ id, engine, medianMs }) => ({
-          id,
-          engine,
-          medianMs,
-        })),
-        unsupported: unsupported.length,
+        mode,
+        runtime,
+        round: mode === 'measure' ? round : undefined,
+        statusCounts: result.statusCounts ?? result.preflight.statusCounts,
+        primaryScenes:
+          result.primarySceneIds?.length ??
+          result.preflight.primarySceneIds.length,
+        referenceScenes:
+          result.referenceSceneIds?.length ??
+          result.preflight.referenceSceneIds.length,
+        timedRows:
+          result.timedRowsPerExecution ??
+          result.preflight.timedRowsPerExecution,
+        rows:
+          mode === 'measure'
+            ? result.rows.map(({ id, engine, medianMs }) => ({
+                id,
+                engine,
+                medianMs,
+              }))
+            : undefined,
+        referenceRows:
+          mode === 'measure'
+            ? result.referenceRows.map(({ id, engine, medianMs }) => ({
+                id,
+                engine,
+                medianMs,
+              }))
+            : undefined,
       }),
     );
   } else throw new Error('Unknown mode: ' + mode);

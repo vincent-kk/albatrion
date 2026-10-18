@@ -333,10 +333,12 @@ export function runItemlessScene(
     register(node);
     return node;
   };
-  if (scene.id === 'pre-requested-empty-memo') {
-    const before = engine.getItemEntries(root.blueprintNode, 0);
-    referenceMatrix.push({ preRequested: codec.id(before) });
-  }
+  const preRequested =
+    scene.id === 'pre-requested-empty-memo'
+      ? engine.getItemEntries(root.blueprintNode, 0)
+      : undefined;
+  if (preRequested)
+    referenceMatrix.push({ preRequested: codec.id(preRequested) });
   const retain = () =>
     known
       .flatMap((node) => [
@@ -378,6 +380,16 @@ export function runItemlessScene(
       })),
     );
     histories.push(capture());
+    if (preRequested) {
+      const after = engine.getItemEntries(root.blueprintNode, 0);
+      if (after !== preRequested)
+        throw new Error('Pre-requested empty memo identity changed');
+      referenceMatrix.push({
+        preRequested: codec.id(preRequested),
+        after: codec.id(after),
+        same: true,
+      });
+    }
   };
   run(() => engine.mountFieldNode(root));
   for (const step of scene.steps)
