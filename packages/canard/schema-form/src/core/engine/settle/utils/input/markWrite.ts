@@ -169,19 +169,18 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     )
       ? Reflect.get(value, name)
       : undefined;
-    const interpreted =
-      sameShape && child.behavior.strategy !== 'branch'
-        ? child.behavior.interpret(
-            childInput,
-            staticSpec(child.schemaType, child.nullable),
-          )
-        : UNINTERPRETED;
+    let childSpec: UnionSpec | undefined;
+    let interpreted: unknown = UNINTERPRETED;
+    if (sameShape && child.behavior.strategy !== 'branch') {
+      childSpec = staticSpec(child.schemaType, child.nullable);
+      interpreted = child.behavior.interpret(childInput, childSpec);
+    }
     if (interpreted !== UNINTERPRETED && sameValue(child.raw, interpreted))
       continue;
     if (context.automatic) {
       context.writtenInputs.set(child, childInput);
       context.filledNodes.add(child);
     }
-    markWrite(child, childInput, context, undefined, interpreted);
+    markWrite(child, childInput, context, childSpec, interpreted);
   }
 };
