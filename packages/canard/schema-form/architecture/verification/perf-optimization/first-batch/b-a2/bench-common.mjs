@@ -3,9 +3,11 @@
 // remain outside write timing; legacy completion follows the round-369 probes.
 import { performance } from 'node:perf_hooks';
 import { isDeepStrictEqual } from 'node:util';
-import { SB, runtime, identity, currentStages, legacyStages } from './config.mjs';
+import { SB, P, runtime, identity, currentStages, legacyStages } from './config.mjs';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
+// The workspace adapter owns the same observable mount endpoint for copied runners.
+const { materializeMountedValues } = await import(pathToFileURL(path.join(P, 'bench/distEngine/loadDistEngine.ts')).href);
 const comparisonLabel = 'nextExtras.sameValue';
 
 export const option = (name, fallback) => process.argv.find((arg) => arg.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
@@ -118,10 +120,13 @@ export async function loadEngine(name = 'current', variant = 'baseline', instrum
     return root;
   };
   engine.core = (schema, input, onChange) => {
-    if (legacy) return M.nodeFromJSONSchema({ jsonSchema: schema, defaultValue: input, validationMode: 0, onChange });
+    if (legacy) {
+      const root = M.nodeFromJSONSchema({ jsonSchema: schema, defaultValue: input, validationMode: 0, onChange });
+      return materializeMountedValues(root);
+    }
     const root = M.buildFieldNodeTree({ jsonSchema: schema, defaultValue: input, validationMode: 0, onChange });
     M.mountFieldNode(root, undefined, undefined, { deferValidation: false });
-    return root;
+    return materializeMountedValues(root);
   };
   return engine;
 }
