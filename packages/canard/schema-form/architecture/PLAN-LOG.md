@@ -314,6 +314,8 @@
 | 2026-10-16 | 399라운드 소유자: 측정 문서 PR #414 병합·마감까지 끝내고 일시 휴식, 갈무리(상황 파악·원장 갱신·결정) 뒤 다음으로; L3는 시작하지 않음. 보충 1줄 | `reviews/round-399-owner-answers.md` |
 | 2026-10-16 | 400라운드(닫기): 측정 먼저 묶음 문서 PR #414 squash-merge(25c500e40, 제품 코드 변경 0); 터미널 모드 빠름·자식 0개 호스트 느림, 결함 수정 셋 동사 비용 불변, all-keys 계약·알고리즘 구분, EXIT-LAYERS 초선형, 메모리 청사진 미공유; L3 가설 다섯·증명 먼저·수용 후보, 측정 방법, 재개 지점. 일시 휴식. 보충 13줄 | `reviews/round-400-closing.md` |
 | 2026-10-16 | 401라운드 소유자: 설계 문서(00–07)의 이름 어긋남(controls.children→controls.fields, 05·06의 옛 공개 이름)은 휴식과 별개 작업으로 codex에게 고치게 하되 임의 수정 금지; 원장 본문 제외. 보충 2줄 | `reviews/round-401-owner-answers.md` |
+| 2026-10-18 | 402라운드 소유자: 휴식을 끝내고 L3 구현 묶음 재개; Claude 사용량 극도 억제, 보조 Claude 세션 없이 Orca 조정 루프 아래 codex(sol)가 구현·agy(gemini-4·gemini-3.8)가 검증; 첫 가설 L3-e 승인과 검토·검증 개선 루프. 보충 2줄 | `reviews/round-402-owner-answers.md` |
+| 2026-10-18 | 403라운드(닫기): L3 가설 (e) 조각 소유 직접 판정 PR #416 squash-merge(fde6ab359); 평상시 쓰기 F=64 Node 3.522→1.134 ms·Bun 16.575→1.412 ms, 나감 불변, 72장면 차이 0, 런타임 +13/−5; Orca 조정 루프 운영 방식 기록. 보충 7줄 | `reviews/round-403-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -658,3 +660,5 @@
 - **399라운드(2026-10-16, 소유자).** PR #414까지 끝내고 일시 휴식, 갈무리 뒤 다음으로(reviews/round-399-owner-answers.md).
 - **400라운드(2026-10-16, 닫기).** 측정 먼저 묶음 #414 병합(25c500e40), L3 가설 다섯, 재개 지점; 일시 휴식(reviews/round-400-closing.md).
 - **401라운드(2026-10-16, 소유자).** 설계 문서 이름 어긋남은 별개 작업으로 codex에게, 임의 수정 금지(reviews/round-401-owner-answers.md).
+- **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
+- **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
