@@ -28,18 +28,20 @@ export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
     return undefined;
   const template = node.blueprintNode;
   if (
-    !admitsStaticArrayTail(node) ||
+    !admitsStaticArrayTail(node, true) ||
     count < (template.prefixItems?.length ?? 0)
   )
     return undefined;
   const entry = getItemEntry(template, count);
-  if (!entry || entry.node.kind === 'virtual' || !entry.declarations.length)
+  if (entry && (entry.node.kind === 'virtual' || !entry.declarations.length))
     return undefined;
-  const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {
-    mode: 'runtime',
-    isAtomic: node.runtime.blueprint.isAtomic,
-  });
-  if (schema.typeConflict) return undefined;
+  const schema = entry
+    ? mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {
+        mode: 'runtime',
+        isAtomic: node.runtime.blueprint.isAtomic,
+      })
+    : undefined;
+  if (schema?.typeConflict) return undefined;
   return {
     host: node,
     count,

@@ -27,10 +27,10 @@ export interface ArrayAppendProof<Self extends FieldNodeRecord<Self>> {
   host: Self;
   /** Item count before the push; the new position's index. */
   count: number;
-  /** Analyzed child edge of the new position. */
-  entry: BlueprintChildEntry;
-  /** Static effective schema the new child must carry. */
-  schema: EffectiveSchema;
+  /** Analyzed child edge of the new position; absent for an extras-only append. */
+  entry?: BlueprintChildEntry;
+  /** Static effective schema the new child must carry; absent without a child edge. */
+  schema?: EffectiveSchema;
   /** Tail-only proposal: the new slot alone, applied at offset `count`. */
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>;
   /** Host local before the push, an array of `count` slots. */
