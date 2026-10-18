@@ -1,6 +1,6 @@
 # 메인 에이전트 인계 — Claude 원장 관리자에서 codex 메인 에이전트로
 
-이 문서는 메인 에이전트(codex)가 Claude 세션의 자리를 이어받아 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 "지금 이 순간의 작업대"(Orca 상태, 열린 PR, 작업 폴더, brief 위치)와 이전 메인 에이전트가 쓰던 판단 기준(7~9절)을 적는다. 갱신 2026-10-18, 원장 라운드 409 뒤. 소유자는 Vincent다.
+이 문서는 메인 에이전트(codex)가 Claude 세션의 자리를 이어받아 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 "지금 이 순간의 작업대"(Orca 상태, 열린 PR, 작업 폴더, brief 위치)와 이전 메인 에이전트가 쓰던 판단 기준(7~9절)을 적는다. 갱신 2026-10-18, 원장 라운드 410 뒤. 소유자는 Vincent다.
 
 ## 1. 역할과 구속 규칙
 
@@ -16,16 +16,16 @@
 
 - 가지: `feat/schema-form-08-review-and-perf`, 인계 시 끝은 `1630854de`(408라운드 소유자 기록). 현재 끝은 `git log -1`로 확인한다. 메인 작업 폴더 `/Users/Vincent/Workspace/albatrion`는 그 가지에서 원장 기록을 관리한다(추적 밖 `l3e-direct-ownership/` 폴더는 아래 Orca 작업 폴더다; `git add .`를 쓰지 말 것).
 - 병합된 PR: #416 L3-e 조각 소유 직접 판정(`fde6ab359`, 403C-01), #417 L3-b items 없는 배열 끝 덧붙임 지름길(`8e35b01fc`, 404C-01), #418 L3-a 선언 밖 키 일반 대입(`89ea2c98b`, 405C-01), #419 L3-c 선언 밖 값 구조 비교 한 번(`bb4ff19d9`, 406C-01), #420 L3-d staticSpec 전달(`67484c0be`, 407C-01). L3 구현 묶음 다섯 가설 완료.
-- 열린 PR: 측정 문서 다섯의 문서 전용 PR을 codex 워커가 준비 중이다. dispatch는 `ctx_f68f235dc62c`, task는 `task_a393f9ce4b4c`다. 소유자가 측정 문서 정리 뒤 마운트 원인 분해 착수를 승인했다(409라운드).
-- 측정 결과 표(미커밋, 작업 폴더 안): `verification/perf-optimization/l3e-direct-ownership-results.md`, `l3b-array-append-results.md`, `l3a-extras-plain-assignment-results.md`, `l3c-extras-single-compare-results.md`, `l3d-static-spec-pass-through-results.md`. 요지는 각 PR 본문에 있다.
+- 열린 PR: 없음. 측정 문서 PR #421은 `c350e7651`로 병합되었으며 제품 코드 변경은 없다. 소유자가 승인한 다음 작업은 현재 dist의 마운트 원인 분해다(409라운드, 마감은 410라운드).
+- 측정 결과 표(정본, PR #421로 커밋됨): `verification/perf-optimization/l3e-direct-ownership-results.md`, `l3b-array-append-results.md`, `l3a-extras-plain-assignment-results.md`, `l3c-extras-single-compare-results.md`, `l3d-static-spec-pass-through-results.md`. 같은 창의 옛 판 표본 등 결손을 미검증으로 구별했으며 M3 세 판 완전 비교와 소유자 수용은 남아 있다.
 - 워커 brief 원본: `verification/perf-optimization/l3-briefs/` (가설별 구현 brief 와 검증 brief 여섯 편). 다음 가설의 brief 는 이 꼴을 복제해 쓴다.
 
 ## 3. Orca 상태
 
-- run: `run_313832ef19e0` (objective: schema-form L3 implementation bundle). 코디네이터 터미널은 Claude 세션의 것이었으므로 새 메인 에이전트는 자기 터미널에서 `orca orchestration run-use --id run_313832ef19e0 --json` 으로 묶은 뒤 `orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 590000 --json` 으로 기다린다. 안내는 `orca skills get orchestration` 으로 읽는다.
+- run: `run_313832ef19e0` (objective: schema-form L3 implementation bundle). 현재 codex 코디네이터 터미널은 `term_edfe8a93-bd0e-47ad-8bdb-670109008352`다. 다음 메인 에이전트도 자기 터미널에서 `orca orchestration run-use --id run_313832ef19e0 --json`으로 묶고 안내는 `orca skills get orchestration`으로 읽는다. 기다림은 한 번에 60초 이내로 두고 checkpoint마다 소유자에게 진행 상황을 보고한다.
 - 작업 폴더(Orca 최상위 worktree): `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`, id `e6ce1c03-a2d9-41a9-a217-79ad5c407d6d::/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`. 가설마다 이 폴더에서 origin 가지 끝 기준으로 새 가지를 만든다(worker-start 에 `--worktree 'id:<위 id>'`).
-- codex 워커 터미널: `term_0cf34ebb-ef46-4ba8-9fea-e5107e842e52` (Orca launch.effective에서 gpt-6.1-sol, effort high 확인). 현재 dispatch는 `ctx_f68f235dc62c`(측정 문서 정리)다. 정착 보고를 수락한 뒤 즉시 다음 작업에 재사용하거나 retained/released를 명시한다. 재사용은 `worker-start --spec '...' --worktree 'id:<위 id>' --terminal term_0cf34ebb-ef46-4ba8-9fea-e5107e842e52 --json`이다. 옛 handle `term_4172d8a2-ba30-4eda-91ce-0f63839e2f84`는 terminal_handle_stale이었고 재조회 결과 작업 폴더에 셸만 남아 있어 새 워커를 시작했다. 옛 handle로 보내지 않는다.
-- 검증 워커: 가설마다 새로 띄운다(`worker-start --spec ... --worktree current --agent antigravity --model gemini-4-argon-medium --json`; 끝나면 `worker-release`). 마지막 검증 dispatch `ctx_c553a9fd035c`(L3-a, 통과, released).
+- codex 워커 터미널: `term_0cf34ebb-ef46-4ba8-9fea-e5107e842e52` (Orca launch.effective에서 gpt-6.1-sol, effort high 확인). 마지막 dispatch는 `ctx_f68f235dc62c`(측정 문서 정리, succeeded, retained)이며 마운트 조사에 재사용한다. 재사용은 `worker-start --spec '...' --worktree 'id:<위 id>' --terminal term_0cf34ebb-ef46-4ba8-9fea-e5107e842e52 --json`이다. 옛 handle `term_4172d8a2-ba30-4eda-91ce-0f63839e2f84`는 terminal_handle_stale이었고 재조회 결과 작업 폴더에 셸만 남아 있어 새 워커를 시작했다. 옛 handle로 보내지 않는다. 메인 원장 검사용 별도 codex 터미널 `term_afdd38e8-12ea-4fdb-8610-79bbf73f99bc`도 같은 모델·effort로 시작했으며 마지막 dispatch `ctx_01538c0c249f`의 검사 결과를 수락하고 release를 요청했으나 기존 터미널이라 retained(external_terminal)로 남아 있다. 같은 메인 작업 폴더의 다음 검사에 재사용할 수 있다.
+- 검증 워커: 가설마다 새로 띄운다(`worker-start --spec ... --worktree current --agent antigravity --model gemini-4-argon-medium --json`; 끝나면 `worker-release`). 마지막 검증 dispatch `ctx_29acb9cd7092`(PR #421, 여섯 축 통과·수정 관찰 없음, worker_done 수신 뒤 released). 표준 샌드박스의 Orca 런타임 메타데이터 접근 오류가 있었으므로 실패 뒤 권한을 넓히거나 다른 도구로 우회하지 말고 정확한 오류를 보고한다. 실제 완료 신호 없이 코디네이터가 worker_done을 대신 만들지 않는다.
 - 주의: 워커가 `run-use` 나 `--terminal` 없는 `check` 를 실행하면 코디네이터 바인딩을 빼앗아 `consumer_fenced` 가 난다. brief 에 "run-use 금지, check 는 --terminal 로" 를 적고, 끊기면 `run-use` 로 다시 묶는다. 새 최상위 작업 폴더를 만들면 기준이 master(0.16.1)일 수 있으니 brief 첫 단계에 기준 커밋 확인을 둔다.
 
 ## 4. 라운드 닫기 절차 (`architecture/` 에서)
@@ -40,7 +40,7 @@
 
 ## 5. 다음 할 일 (400C-04 순서; 408라운드 소유자 지시로 마운트 해결과 정상동작 검증까지 codex 메인 에이전트의 몫)
 
-1. 작업 폴더의 미커밋 측정 결과 표 다섯(l3e·l3b·l3a·l3c·l3d)을 `verification/perf-optimization/` 의 측정 문서로 정리해 문서 PR 로 커밋한다(제품 코드 변경 0, 표는 368라운드 형식, 창 안 비율만).
+1. **완료.** 측정 결과 표 다섯(l3e·l3b·l3a·l3c·l3d)을 `verification/perf-optimization/`의 정본 측정 문서로 정리한 문서 PR #421을 병합했다(`c350e7651`, 제품 코드 변경 0). 같은 창의 옛 판 표본 등 결손은 미검증이며 M3 완전 비교를 대체하지 않는다.
 2. **마운트 문제 해결.** 가장 큰 남은 격차다: 선언 있는 BN 객체 100키 마운트 0.16.1 대비 +446%, 배열 1천 BN 마운트 +286%, 선언 없는 B0 객체 1000키 마운트 L3-a 뒤에도 약 28배. 절차는 (가) 원인 분해 먼저 — 측정 문서 A 절의 B0·BN 마운트 행과 400C-01 의 단서(자식 0개 호스트는 키마다 선언 밖 값 복사와 재조립; BN 은 노드 생성·청사진·정착 첫 바퀴)에서 출발해 함수별 계측 비율로 몫을 나누고, 몫마다 "지우는 비효율 하나"를 이름 짓는다(370라운드). 계측 비율은 비율로만 읽고 절감량으로 읽지 않는다(400C-02). (나) 가설마다 L3 와 같은 루프(brief → codex 구현 → agy 검증 → 병합 → 라운드 닫기). (다) 지울 수 없는 몫(원장 계약이 요구하는 결과: SETTLE-001 정착 순서, SETTLE-018 출발점 고정, SETTLE-020 매 바퀴 게이트 전부 평가, BLUEPRINT-007, NODE-018 레코드 크기, 청사진 폼마다 생성 398라운드)은 수치와 근거를 적어 M3 수용 목록에 올린다. 결정 58 실험(마운트 상수는 방향 찾기용, 387라운드)은 이 분해의 결과로 조건이 정해지면 그때 한다.
 3. **정상동작 검증.** 성능 PR 마다 아래 7절의 증거를 모두 갖춘다. 마운트 묶음이 끝나면 M3 종합 재측정(세 판 dist 를 한 창에서, 368·369 형식)과 함께 전체 정상동작 검증 보고(7절)를 소유자에게 올리고 수용 판정을 받는다.
 4. 그다음 플러그인·내장 fallback 결함 여덟 수정 PR(393·396라운드; 결정 54 는 이때) → 9단계.

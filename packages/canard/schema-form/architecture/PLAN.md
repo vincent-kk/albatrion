@@ -58,7 +58,7 @@
 | 07 | 전환 | 리뷰 | [#354](https://github.com/vincent-kk/albatrion/pull/354) | 브랜치 `feat/schema-form-switch`(2026-10-02 착수, 2026-10-11 `1.0.0-beta` `351ece24e` 위에 다시 세움). 원샷. 착수 물음은 68라운드로 닫힘. G23·G26·G27이 소유자 답([질의 목록](reviews/owner-queue-07.md))으로 닫힐 때까지 머지하지 않음. 측정 원자료는 `archive/stage-07-verification-raw`(140라운드). 실행 계획은 [execution-plan](plan/07-switch/execution-plan.md), 기록은 [log](plan/07-switch/log.md) |
 | 08 | 플러그인 | 완료 | — | 별도 PR 없음. `presentation.*` 이주와 이름 대응은 07b(#365)·07d(입력 설정 이주, 플러그인 0.17.0)에서 끝났고 PR마다 플러그인 일곱 빌드가 게이트로 돌았다(331라운드 소유자 답). 계획서가 인용한 옛 경로(`plan/07-switch/log.md` "08 목록")는 역사 기록. 미확인 셋은 대기열 54 |
 | 정돈 | 코드 정돈 | 진행 | — | 07 뒤·08 앞(287라운드), 최적화 앞. 계획 [request](plan/tidy-structure/request.md), 결정 D1–D6 확정(289라운드). 정돈-1부터 PR 넷. 정돈-1 #374 병합 ae502f7bd(297라운드), 정돈-2 진행. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
-| 최적화 | 성능 최적화 | 진행 | — | 브랜치 `feat/schema-form-08-review-and-perf`(330라운드; 원장 커밋도 이 위에, 끝나면 `1.0.0-beta`에 squash). 소유자 리뷰 항목을 먼저 받는다(331라운드). 정돈 뒤 착수(76라운드 소유자 답), 09 전에 끝냄. 가설마다 커밋 하나, 수용 가설 4~5개마다 PR 하나(결정 대기열 56, 344라운드 편집자 가결정을 375라운드 소유자가 확정). 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
+| 최적화 | 성능 최적화 | 진행 | [#421](https://github.com/vincent-kk/albatrion/pull/421) | 브랜치 `feat/schema-form-08-review-and-perf`에서 원장과 작업 폴더를 운영한다. L3 가설 다섯의 구현과 측정 문서 PR #421 병합(c350e7651)이 완료되었다. 다음은 현재 dist의 마운트 원인 분해이며, 제거할 비효율 하나를 입증한 뒤 가설마다 PR 하나로 구현한다(DETAIL 먼저, codex 구현·게이트·측정·PR, agy 독립 검증, 원장 관리자 병합·마감). 같은 창의 옛 판 표본 등 기존 측정 결손과 M3 세 판 재측정·소유자 수용은 남아 있다. 409라운드 소유자 승인, 410라운드 마감. 계획은 [request](plan/perf-optimization/request.md)이며 끝나면 `1.0.0-beta`에 squash한다. |
 | 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
 | 별도 | 릴리스 전환 | 대기 | — | 시점은 소유자가 정한다(LANDING-204) |
 
@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-18 | 409라운드 소유자: codex 메인 에이전트 인계와 운영 규칙, 측정 문서 PR 정리·검증·병합·원장 마감 뒤 마운트 원인 분해 착수 승인. 보충 2줄 | `reviews/round-409-owner-answers.md` |
+| 2026-10-18 | 410라운드 닫기: L3 측정 문서 다섯 PR #421 squash 병합(c350e7651), 제품 변경 없음, agy 여섯 축 통과·수정 관찰 없음. 근거 결손과 M3 잔여를 명시하고 마운트 원인 분해로 진행. 보충 3줄 | `reviews/round-410-closing.md` |
 | 2026-10-15 | 330라운드 소유자: 중간 브랜치 삭제, 1.0.0-beta 압축(48 커밋, 백업 유지), 8단계는 feat/schema-form-08-review-and-perf에서 원장·워크트리 운영. 보충 2줄 | `reviews/round-330-owner-answers.md` |
 | 2026-10-15 | 331라운드 소유자: 08 플러그인 완료 처리(07b·07d), 미확인 셋은 대기열 54, 최적화 진행. 보충 1줄 | `reviews/round-331-owner-answers.md` |
 | 2026-10-15 | 332라운드 소유자: 8단계 리뷰 1차 열넷(구조·조사·이름·질문). 보충 1줄 | `reviews/round-332-owner-answers.md` |
