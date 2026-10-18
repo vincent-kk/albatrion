@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-18, 408라운드(소유자: 메인 에이전트를 codex로 넘기며 마운트 해결·정상동작 검증·가드 보강·원장 판단 기준은 AGENT-HANDOFF 문서; 직전 407라운드 닫기: L3 가설 (d) staticSpec 전달 PR #420 병합 67484c0be 407C-01, L3 묶음 다섯 완료 407C-02; 직전 406라운드: L3-c PR #419 병합 bb4ff19d9 406C-01; 405라운드: L3-a PR #418 병합 89ea2c98b 405C-01, 메인 에이전트 인계 문서 405C-02; 404라운드: L3-b PR #417 병합 8e35b01fc 404C-01; 403라운드: L3-e PR #416 병합 fde6ab359 403C-01·403C-02; 402라운드 소유자: 재개하되 Claude 사용량 극도 억제, Orca 아래 codex(sol) 구현·agy(gemini-4·gemini-3.8) 검증) — **L3 구현 묶음 완료(PR #416~#420)**. 남은 순서: 작업 폴더의 미커밋 측정 결과 표 다섯을 측정 문서로 정리 → 마운트 원인 분해(방향만) → 결정 58 실험(입구 수치는 L3-e 뒤 남은 비용 기준으로 다시 잼) → M3 종합 재측정과 소유자 수용 → 플러그인·내장 fallback 결함 여덟 수정 PR → 9단계. 운영(메인 에이전트를 codex로 바꿀 때의 작업대·Orca 상태는 AGENT-HANDOFF 문서): 원장 관리자는 Orca 코디네이터로 brief 작성·대기·판정·병합·원장만 하고 보조 Claude 세션은 없다; 워커 brief는 scratchpad 파일로 두고 spec에는 경로와 요약만 적으며 첫 단계로 기준 커밋 확인을 적는다; 검증 워커는 본 폴더에서 읽기 전용; 측정 창은 워커가 열고 닫는다. 작업 폴더: Orca 최상위 작업 폴더 l3e-direct-ownership(저장소 안, 추적 밖; 다음 가설에서 재사용, 끝나면 삭제), 이전 fixy08·fairy08 세션과 임시 작업 폴더 셋은 소멸했고 측정 원본 중 저장소에 남은 것은 verification/perf-optimization의 측정 문서와 first-batch 러너뿐이다. 닫힌 소유자 물음: 62 (가), ⑧ 빈 칸 undefined·비우기만 null, 청사진 공유 지금 하지 않음. 열린 것: 58(실험 뒤), 54(플러그인 PR 때). 검증 도구: agy(gemini-4, 좁은 확인은 gemini-3.8, apex 안 씀), codex는 sol만. 가지 feat/schema-form-08-review-and-perf; 이전 라운드 요약은 §2)
+## 1. 지금 어디인가 (2026-10-18, 소유자 승인 뒤 측정 문서 정리 착수(직전 인계: 메인 에이전트를 codex로 넘기며 마운트 해결·정상동작 검증·가드 보강·원장 판단 기준은 AGENT-HANDOFF 문서; 직전 407라운드 닫기: L3 가설 (d) staticSpec 전달 PR #420 병합 67484c0be 407C-01, L3 묶음 다섯 완료 407C-02; 직전 406라운드: L3-c PR #419 병합 bb4ff19d9 406C-01; 405라운드: L3-a PR #418 병합 89ea2c98b 405C-01, 메인 에이전트 인계 문서 405C-02; 404라운드: L3-b PR #417 병합 8e35b01fc 404C-01; 403라운드: L3-e PR #416 병합 fde6ab359 403C-01·403C-02; 402라운드 소유자: 재개하되 Claude 사용량 극도 억제, Orca 아래 codex(sol) 구현·agy(gemini-4·gemini-3.8) 검증) — **L3 구현 묶음 완료(PR #416~#420)**. 남은 순서: 작업 폴더의 미커밋 측정 결과 표 다섯을 측정 문서로 정리 → 마운트 원인 분해(방향만) → 결정 58 실험(입구 수치는 L3-e 뒤 남은 비용 기준으로 다시 잼) → M3 종합 재측정과 소유자 수용 → 플러그인·내장 fallback 결함 여덟 수정 PR → 9단계. 운영(메인 에이전트를 codex로 바꿀 때의 작업대·Orca 상태는 AGENT-HANDOFF 문서): 원장 관리자는 Orca 코디네이터로 brief 작성·대기·판정·병합·원장만 하고 보조 Claude 세션은 없다; 워커 brief는 scratchpad 파일로 두고 spec에는 경로와 요약만 적으며 첫 단계로 기준 커밋 확인을 적는다; 검증 워커는 본 폴더에서 읽기 전용; 측정 창은 워커가 열고 닫는다. 작업 폴더: Orca 최상위 작업 폴더 l3e-direct-ownership(저장소 안, 추적 밖; 다음 가설에서 재사용, 끝나면 삭제), 이전 fixy08·fairy08 세션과 임시 작업 폴더 셋은 소멸했고 측정 원본 중 저장소에 남은 것은 verification/perf-optimization의 측정 문서와 first-batch 러너뿐이다. 닫힌 소유자 물음: 62 (가), ⑧ 빈 칸 undefined·비우기만 null, 청사진 공유 지금 하지 않음. 열린 것: 58(실험 뒤), 54(플러그인 PR 때). 검증 도구: agy(gemini-4, 좁은 확인은 gemini-3.8, apex 안 씀), codex는 sol만. 가지 feat/schema-form-08-review-and-perf; 이전 라운드 요약은 §2)
 
-- **271라운드(2026-10-14, 소유자).** 대기열 46 승인: `src/helpers`·`src/components`는 INTENT/DETAIL/index 없는 compartment로 두고 자식 fractal은 그대로(271C-01, reviews/round-271-owner-answers.md; 264라운드 결정 4 번복). 07c 계획 확정.
 - **272라운드(2026-10-14, 닫기/원장 관리자).** 07b-7 #366을 직접 검증(시험 3950·storybook 241·typecheck·lint·json-schema·플러그인 일곱·documents·G16·verifier·agy)하고 squash 병합(c0ddd4b51): 로드 null·종류 틀린 원본 아래 자식 미채움(41·45), enum select undefined 표시(44), nullable 공식 지원 문구(269C-02), #365 후속 여섯(272C-01, reviews/round-272-closing.md). 07c 재배치 브리프를 fixy07에게 발송(codex 구현), 07b-6은 c0ddd4b51에 rebase 뒤 PR.
 - **273라운드(2026-10-14, 닫기/원장 관리자).** 07b-6 #367을 직접 검증(storybook 251·시험 3949·typecheck·lint·documents·verifier)하고 squash 병합(beff4b5ec): 패널 데코레이터(42), FormHandle 스토리 10개(43), docs 직렬화 방어 수정(40, 재현 불가로 소유자 재확인), CLAUDE.md:125 문장 확정(273C-01, reviews/round-273-closing.md). fairy07은 README 1.0.0 이주 절 초안, fixy07은 07c 재배치 진행 중.
 - **274라운드(2026-10-14, 닫기/원장 관리자).** README 두 파일의 Migration (1.0.0) 절 #368을 agy·직접 대조로 검증하고 squash 병합(e5f7f9fa3)(274C-01, reviews/round-274-closing.md); 옛 최상위 키 조용한 무시의 개발 빌드 경고는 대기열 47; fairy07은 #354 본문 갱신 초안, fixy07은 07c 재배치 진행 중.
@@ -139,7 +138,8 @@
 - **405라운드(2026-10-18, 닫기).** L3 가설 (a) 선언 밖 키 일반 대입 PR #418 병합(89ea2c98b): 선언 밖 값 사본은 __proto__만 own property로 정의하고 나머지 키는 일반 대입하며 __proto__ 보호는 코드 불변이라 시험으로 고정(405C-01, VALUE-002 보충). 소유자 지시로 메인 에이전트를 Claude에서 codex로 바꿀 때의 인계 문서와 Orca 바인딩 규칙(405C-02). 편집자 결정 둘(reviews/round-405-closing.md).
 - **406라운드(2026-10-18, 닫기).** L3 가설 (c) PR #419 병합(bb4ff19d9): 선언 밖 값의 같은 값 판단은 쓰기 한 번에 한 번이며 객체의 nextExtras와 배열의 arrayExtras가 같은 값이면 이전 참조를 되살리고 markWrite는 참조만 비교한다; 잠복 Merge가 의존하는 되살림은 유지(406C-01). 편집자 결정 하나(reviews/round-406-closing.md).
 - **407라운드(2026-10-18, 닫기).** L3 가설 (d) PR #420 병합(67484c0be): 해석한 잎 자식은 첫 조회의 staticSpec을 재귀 호출에 넘기고 두 번째 조회를 하지 않으며 시간 효과는 측정되지 않아 중복 호출 제거로만 기록(407C-01). L3 구현 묶음 다섯 가설 완료와 다음 단계(407C-02). 편집자 결정 둘(reviews/round-407-closing.md).
-- **408라운드(2026-10-18, 소유자).** 메인 에이전트를 codex로 넘기며 마운트 문제 해결과 정상동작 검증까지 codex의 몫으로 하고, 가드가 모자라면 채우면서 진행하며, 원장 해석과 판단의 기준(정본의 순서, 성능 변경 수용 기준, 관측 동치 판단, 측정 읽기, 멈추는 경우)을 인계 문서에 적는다(reviews/round-408-owner-answers.md). 다음 라운드 번호는 409.
+- **408라운드(2026-10-18, 소유자).** 메인 에이전트를 codex로 넘기며 마운트 문제 해결과 정상동작 검증까지 codex의 몫으로 하고, 가드가 모자라면 채우면서 진행하며, 원장 해석과 판단의 기준(정본의 순서, 성능 변경 수용 기준, 관측 동치 판단, 측정 읽기, 멈추는 경우)을 인계 문서에 적는다(reviews/round-408-owner-answers.md).
+- **409라운드(2026-10-18, 소유자).** codex 메인 에이전트가 원장 관리자이자 Orca 코디네이터를 이어받았다. 측정 결과 문서 다섯의 문서 전용 PR을 codex 워커가 만들고 agy 검증 뒤 병합·원장 마감을 한 다음 마운트 원인 분해로 이어가는 순서를 소유자가 승인했다(reviews/round-409-owner-answers.md). 다음 라운드 번호는 410.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -230,7 +230,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 
 - **원천 묶음.** `bundle-*.md`는 `section-map.tsv`에서 언제든 다시 만든다.
 - **문장 검사.** 인용을 먼저 보고 분류 행을 본다. 그래서 인용된 문장에 남은 낡은 분류 행은 무해하다.
-- **토큰 잔여.** 지금 484이다(25·26라운드 뒤. 옛 문서 이동과 README·HANDOFF 재작성 뒤에는 485였다). 옛 문서에 원천이 있는 잔여(419)는 HEAD 잔여의 부분집합이고, 나머지(66)는 README·HANDOFF의 자기 서술 토큰이다(`ledger/checks/token-review.md`).
+- **토큰 잔여.** 현재 검증 값은 468이다. 인계 시 안내된 수치는 기준 커밋에서 재현되지 않았고 원본의 실제 잔여는 470이었다. 감소 둘은 새 소유자 원문 인용과 이전 라운드의 PLAN-LOG 이동으로 설명되며 자료 삭제나 검사 변경은 없다. 수가 바뀌면 정확한 토큰별 차이를 확인하고 미해명 증가를 통과로 보지 않는다(검증 경위는 reviews/round-409-owner-answers.md, 과거 분류의 근거는 ledger/checks/token-review.md).
 - **`verbatim-check`의 한계.** 인용한 줄이 출처 파일 어딘가에 있는지만 본다. 그래서 줄 범위가 틀리거나, 줄이 빠지거나, 순서가 바뀐 것은 잡지 못한다.
   - 18라운드에서는 세션 scratchpad의 임시 스크립트 셋(`exact-check.mjs` 정확 일치, `block-check.mjs` 블록 덮개와 항목↔블록 이름, `diff-guard.mjs` 옛 항목은 자라기만 한다)으로 이것을 보았다. 저장소에는 없다. 정본 블록을 새로 반영할 때는 같은 대조를 다시 만든다(각 40–80줄).
 
@@ -642,6 +642,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-406-closing.md` | 406라운드 닫기: L3-c PR #419 병합, 구조 비교 한 번 규칙, 370라운드 원칙의 비례 해석 |
 | `reviews/round-407-closing.md` | 407라운드 닫기: L3-d PR #420 병합, L3 묶음 다섯 완료, 다음 단계 |
 | `reviews/round-408-owner-answers.md` | 408라운드 소유자: codex 메인 에이전트가 마운트 해결·정상동작 검증·가드 보강·원장 판단까지 |
+| `reviews/round-409-owner-answers.md` | 메인 에이전트 인계, 운영 규칙, 측정 문서 PR 뒤 마운트 문제 해결 착수 승인 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |

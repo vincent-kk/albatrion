@@ -1,0 +1,17 @@
+# 409라운드 — Vincent의 인계 지시와 작업 승인
+
+2026-10-18. codex 메인 에이전트가 지정된 인계 문서를 순서대로 읽고 기존 Orca run에 연결했다. 가지 끝 1630854de와 추적 밖 작업 폴더 외 변경 없음, 미커밋 측정 문서 다섯의 보존을 확인했다. 측정 문서 전용 PR을 먼저 만들고 독립 검증·병합·원장 마감 뒤 마운트 원인 분해로 이어가는 범위를 보고했고 소유자가 승인했다.
+
+| 확인 | 물음(요지) | 답 원문 | 반영 |
+| --- | --- | --- | --- |
+| 메인 에이전트 인계와 운영 규칙 | 소유자의 지시(물음 아님) | "당신은 @canard/schema-form 1.0.0 작업의 메인 에이전트(원장 관리자이자 Orca 코디네이터)를 Claude 세션으로부터 이어받습니다. 저장소는 /Users/Vincent/Workspace/albatrion, 가지는 feat/schema-form-08-review-and-perf 입니다. 소유자는 Vincent 이며, 소유자에게는 한국어 존댓말의 완전한 문장으로만 보고합니다.\n\n먼저 다음 셋을 이 순서로 끝까지 읽고 나서 시작하십시오.\n1. packages/canard/schema-form/architecture/AGENT-HANDOFF.md — 역할, 구속 규칙, 현재 상태, Orca run·작업 폴더·터미널 handle, 라운드 닫기 절차, 다음 할 일(5절), 정상동작 검증 기준(7절), 가드 보강 규칙(8절), 원장 해석과 판단 기준(9절). 이 문서가 당신의 작업대입니다.\n2. packages/canard/schema-form/architecture/HANDOFF.md 의 1절과 4절 — 재개 지점과 검사 명령.\n3. packages/canard/schema-form/architecture/PLAN.md — 단일 진입점과 기록 규칙.\n\n반드시 지킬 것:\n- 커밋 메시지와 PR 본문에 공동 저자, 세션 ID, "Claude-Session" 같은 줄을 절대 넣지 않습니다. 소유자의 법적 이름을 어떤 파일·커밋·출력에도 적지 않습니다(Vincent 또는 Vincent Kelvin 만).\n- 당신은 코드를 직접 고치지 않습니다. 구현·게이트·측정·PR 은 Orca 워커의 codex(모델 gpt-6.1-sol, effort high), 검증은 Orca 워커의 agy(gemini-4-argon-medium; 좁은 확인은 gemini-3.8-flash-high)가 맡습니다. apex 등급과 astra 모델은 쓰지 않습니다. Claude 세션은 띄우지 않습니다.\n- 워커 brief 는 packages/canard/schema-form/architecture/verification/perf-optimization/l3-briefs/ 의 꼴을 복제해 쓰고, brief 에 "run-use 와 코디네이터 명령 금지, check 는 --terminal 로"를 반드시 적습니다.\n- 가설·작업 하나마다 PR 하나, 커밋은 DETAIL 먼저 그 다음 코드와 시험입니다. 검증 통과 뒤 당신이 squash 병합하고, 라운드 닫기(AGENT-HANDOFF.md 4절 절차)를 하고, 검사가 모두 통과하면 커밋·push 합니다. 소유자가 검토 중인 PR 은 병합하지 않습니다.\n- 소유자의 말은 라운드 문서에 원문 그대로 적습니다. 소유자의 질문에는 답만 하고 실행하지 않습니다. AGENT-HANDOFF.md 9절의 "멈추고 소유자에게 가는 경우"에 해당하면 진행하지 말고 소유자에게 묻습니다.\n- gh·yarn·orca 같은 CLI 는 파이프·세미콜론·리디렉션 없이 단독으로 실행합니다. 맨 git stash 는 쓰지 않습니다.\n\n첫 동작:\n1. `orca skills get orchestration` 으로 안내를 읽고, 자기 터미널에서 `orca orchestration run-use --id run_313832ef19e0 --json` 으로 run 에 묶습니다.\n2. `git -C /Users/Vincent/Workspace/albatrion status --short` 와 `git log -1 --oneline` 으로 가지 끝이 1630854de 이고 깨끗한지 확인합니다(추적 밖 폴더 l3e-direct-ownership 은 Orca 작업 폴더이므로 git add 하지 않습니다).\n3. AGENT-HANDOFF.md 5절의 1번(작업 폴더 /Users/Vincent/Workspace/albatrion/l3e-direct-ownership 에 미커밋으로 남은 측정 결과 표 다섯을 verification/perf-optimization/ 의 측정 문서로 정리하는 문서 PR, 제품 코드 변경 0)부터 시작하고, 이어서 5절 2번(마운트 문제 해결)으로 갑니다. 진행 전에 무엇을 할지 결정해 소유자에게 먼저 짧게 브리핑하고 승인을 받은 뒤 시작하십시오." (2026-10-18, 원장 세션) | 원장 관리와 Orca 조정을 이어받았다. 제품 코드·게이트·측정·PR은 codex 워커, 검증은 agy 워커가 맡는다. 기존 터미널 handle이 stale이라 현재 작업 폴더를 다시 조회했고 셸만 남아 있음을 확인하여 지정 모델·effort의 새 codex 워커를 발주했다. |
+| 측정 문서 정리 뒤 마운트 문제 해결 착수 승인 | 측정 표 다섯의 문서 PR, agy 독립 검증, 병합·원장 마감 뒤 함수별 마운트 원인 분해로 진행할지 | "응 진행하도록 해." (2026-10-18, 원장 세션) | 측정 문서 작업을 발주했다. 문서 작업에서는 제품 코드 변경이 없으며 기존 수치의 근거와 측정 창의 한계를 보존한다. 관측 변경·기존 기대 변경·원장 충돌·새로운 지연 수용·열린 결정은 소유자에게 돌아온다. |
+
+## 검사 기준 확인 (원장 관리자의 판단)
+
+Orca codex 검사 워커가 기준 커밋 1630854de의 원본 파일을 별도로 추출하고 바이트 동일성을 확인한 뒤 기존 검사 도구를 교차 실행했다. 인계 문서의 토큰 잔여 471은 재현되지 않았으며 실제 기준은 전체 2906개 중 잔여 470개, 이 라운드 기록 뒤에는 전체 2904개 중 잔여 468개였다. 감소 둘 중 하나인 git log는 새 소유자 원문 인용으로 충족되었고, 다른 숫자 표기는 round-close가 이전 라운드 문단을 HANDOFF에서 PLAN-LOG로 옮겨 inventory 범위 밖으로 이동한 것이다. 제목 행의 수정은 원인이 아니며 원문·역사는 보존되었다. 이는 소유자의 새 결정이 아니라 재현된 입력에 맞춰 운영 안내의 오래된 수치를 바로잡은 것이다. 검사 도구나 계약은 바꾸지 않았다.
+
+문서 구현 워커는 context-mode가 작업 폴더 밖 읽기를 거절한 뒤 다른 도구로 메인 원장 검사를 실행했다고 보고했다. 코디네이터는 그 작업을 중단시키고 해당 결과를 수용 근거에서 제외했다. 메인 폴더에 별도로 배치한 읽기 전용 codex 워커의 검사와 원인 대조만 사용한다. 이후에도 접근 경계를 다른 도구로 우회하지 않는다.
+
+다음 라운드 번호는 410이다.
+

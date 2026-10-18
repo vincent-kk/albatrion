@@ -1,6 +1,6 @@
 # 메인 에이전트 인계 — Claude 원장 관리자에서 codex 메인 에이전트로
 
-이 문서는 다음 메인 에이전트(codex)가 Claude 세션의 자리를 그대로 이어받기 위한 것이다. 설계의 정본은 `ledger/`, 진행 상황의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 "지금 이 순간의 작업대"(Orca 상태, 열린 PR, 작업 폴더, brief 위치)와 이전 메인 에이전트가 쓰던 판단 기준(7~9절)을 적는다. 작성 2026-10-18, 원장 라운드 408 뒤. 소유자는 Vincent다.
+이 문서는 메인 에이전트(codex)가 Claude 세션의 자리를 이어받아 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 "지금 이 순간의 작업대"(Orca 상태, 열린 PR, 작업 폴더, brief 위치)와 이전 메인 에이전트가 쓰던 판단 기준(7~9절)을 적는다. 갱신 2026-10-18, 원장 라운드 409 뒤. 소유자는 Vincent다.
 
 ## 1. 역할과 구속 규칙
 
@@ -14,9 +14,9 @@
 
 ## 2. 지금 상태 (2026-10-18)
 
-- 가지: `feat/schema-form-08-review-and-perf`, 끝은 405라운드 닫기 커밋(`git log -1`로 확인). 메인 작업 폴더 `/Users/Vincent/Workspace/albatrion` 는 그 가지를 체크아웃하고 있고 깨끗하다(추적 밖 `l3e-direct-ownership/` 폴더는 아래 Orca 작업 폴더다; `git add .` 를 쓰지 말 것).
+- 가지: `feat/schema-form-08-review-and-perf`, 인계 시 끝은 `1630854de`(408라운드 소유자 기록). 현재 끝은 `git log -1`로 확인한다. 메인 작업 폴더 `/Users/Vincent/Workspace/albatrion`는 그 가지에서 원장 기록을 관리한다(추적 밖 `l3e-direct-ownership/` 폴더는 아래 Orca 작업 폴더다; `git add .`를 쓰지 말 것).
 - 병합된 PR: #416 L3-e 조각 소유 직접 판정(`fde6ab359`, 403C-01), #417 L3-b items 없는 배열 끝 덧붙임 지름길(`8e35b01fc`, 404C-01), #418 L3-a 선언 밖 키 일반 대입(`89ea2c98b`, 405C-01), #419 L3-c 선언 밖 값 구조 비교 한 번(`bb4ff19d9`, 406C-01), #420 L3-d staticSpec 전달(`67484c0be`, 407C-01). L3 구현 묶음 다섯 가설 완료.
-- 열린 PR: 없음. 진행 중인 워커 없음(codex 터미널은 유지됨).
+- 열린 PR: 측정 문서 다섯의 문서 전용 PR을 codex 워커가 준비 중이다. dispatch는 `ctx_f68f235dc62c`, task는 `task_a393f9ce4b4c`다. 소유자가 측정 문서 정리 뒤 마운트 원인 분해 착수를 승인했다(409라운드).
 - 측정 결과 표(미커밋, 작업 폴더 안): `verification/perf-optimization/l3e-direct-ownership-results.md`, `l3b-array-append-results.md`, `l3a-extras-plain-assignment-results.md`, `l3c-extras-single-compare-results.md`, `l3d-static-spec-pass-through-results.md`. 요지는 각 PR 본문에 있다.
 - 워커 brief 원본: `verification/perf-optimization/l3-briefs/` (가설별 구현 brief 와 검증 brief 여섯 편). 다음 가설의 brief 는 이 꼴을 복제해 쓴다.
 
@@ -24,7 +24,7 @@
 
 - run: `run_313832ef19e0` (objective: schema-form L3 implementation bundle). 코디네이터 터미널은 Claude 세션의 것이었으므로 새 메인 에이전트는 자기 터미널에서 `orca orchestration run-use --id run_313832ef19e0 --json` 으로 묶은 뒤 `orca orchestration check --wait --types "worker_done,escalation,question" --timeout-ms 590000 --json` 으로 기다린다. 안내는 `orca skills get orchestration` 으로 읽는다.
 - 작업 폴더(Orca 최상위 worktree): `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`, id `e6ce1c03-a2d9-41a9-a217-79ad5c407d6d::/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`. 가설마다 이 폴더에서 origin 가지 끝 기준으로 새 가지를 만든다(worker-start 에 `--worktree 'id:<위 id>'`).
-- codex 워커 터미널(유지됨, 재사용): `term_4172d8a2-ba30-4eda-91ce-0f63839e2f84` (모델 gpt-6.1-sol, effort high). 재사용은 `worker-start --spec '...' --worktree 'id:<위 id>' --terminal term_4172d8a2-ba30-4eda-91ce-0f63839e2f84 --json`. 마지막 dispatch `ctx_36a3ece86101`(L3-d, succeeded, retained).
+- codex 워커 터미널: `term_0cf34ebb-ef46-4ba8-9fea-e5107e842e52` (Orca launch.effective에서 gpt-6.1-sol, effort high 확인). 현재 dispatch는 `ctx_f68f235dc62c`(측정 문서 정리)다. 정착 보고를 수락한 뒤 즉시 다음 작업에 재사용하거나 retained/released를 명시한다. 재사용은 `worker-start --spec '...' --worktree 'id:<위 id>' --terminal term_0cf34ebb-ef46-4ba8-9fea-e5107e842e52 --json`이다. 옛 handle `term_4172d8a2-ba30-4eda-91ce-0f63839e2f84`는 terminal_handle_stale이었고 재조회 결과 작업 폴더에 셸만 남아 있어 새 워커를 시작했다. 옛 handle로 보내지 않는다.
 - 검증 워커: 가설마다 새로 띄운다(`worker-start --spec ... --worktree current --agent antigravity --model gemini-4-argon-medium --json`; 끝나면 `worker-release`). 마지막 검증 dispatch `ctx_c553a9fd035c`(L3-a, 통과, released).
 - 주의: 워커가 `run-use` 나 `--terminal` 없는 `check` 를 실행하면 코디네이터 바인딩을 빼앗아 `consumer_fenced` 가 난다. brief 에 "run-use 금지, check 는 --terminal 로" 를 적고, 끊기면 `run-use` 로 다시 묶는다. 새 최상위 작업 폴더를 만들면 기준이 master(0.16.1)일 수 있으니 brief 첫 단계에 기준 커밋 확인을 둔다.
 
@@ -34,7 +34,7 @@
 2. `node ledger/checks/sup-insert.mjs reviews/round-NN-closing.md <plan.json>` — plan 은 `[{"code":"NNC-01","line":8,"targets":["ledger/goal.md:GOAL-011", ...]}]`.
 3. `node ledger/checks/round-close.mjs NN "<PLAN 5절 표 행>" "<HANDOFF 1절 bullet, 끝에 ' 다음 라운드 번호는 NN+1.'>" "<HANDOFF 5절 지도 행>"`.
 4. `HANDOFF.md` 5행(1절 제목)을 손으로 갱신한다(역따옴표 파일 이름과 새 숫자 표기를 피한다).
-5. `HANDOFF.md` 4절의 검사를 모두 돌린다: verbatim-check, sup-check, ref-check, owner-cited, bundle 과 sentence-check(17영역 모두 missing 0), tokens inventory·check(missing 은 471 에서 변하지 않아야 함), plan-links, doc-coverage(알려진 미인용 LANDING-209·210 둘만).
+5. `HANDOFF.md` 4절의 검사를 모두 돌린다: verbatim-check, sup-check, ref-check, owner-cited, bundle 과 sentence-check(17영역 모두 missing 0), tokens inventory·check(409라운드 현재 missing 468; 수가 바뀌면 토큰별 원인을 대조하고 미해명 증가를 통과로 보지 않음), plan-links, doc-coverage(알려진 미인용 LANDING-209·210 둘만). 인계 당시의 471은 기준 커밋에서 재현되지 않았고 실제 기준은 470이었다. 현재까지의 감소 둘은 새 소유자 원문 인용과 이전 라운드의 PLAN-LOG 이동 때문이며 자료 삭제나 검사 변경은 없다(reviews/round-409-owner-answers.md).
 6. 바뀐 파일을 경로로 지정해 커밋하고, 커밋 전 `HEAD == origin/feat/schema-form-08-review-and-perf` 를 확인하며(아니면 rebase), 커밋마다 push 한다.
 7. 소유자 라운드(소유자의 새 지시)는 `reviews/round-NN-owner-answers.md`(표: 확인·물음 요지·답 원문·반영) + `ledger/checks/owner-answers.tsv` 행(`reviews/round-NN-owner-answers.md:L<TAB>NN<TAB>라벨<TAB>"원문" (날짜, 원장 세션)`) + `ledger/landing.md` 의 직전 소유자 줄 뒤에 `  > 소유자(NN라운드, 라벨): "원문" (\`reviews/round-NN-owner-answers.md:L\`)` + round-close.
 

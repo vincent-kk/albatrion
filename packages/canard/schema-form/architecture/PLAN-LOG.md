@@ -321,6 +321,7 @@
 | 2026-10-18 | 406라운드(닫기): L3 가설 (c) 선언 밖 값 구조 비교를 쓰기 한 번에 한 번으로 PR #419 squash-merge(bb4ff19d9); arrayExtras 참조 되살림·markWrite 참조 비교; B0 한 키 Node −6.2%·Bun −13.7%; 370라운드 원칙은 줄 수가 아니라 비례. 보충 4줄 | `reviews/round-406-closing.md` |
 | 2026-10-18 | 407라운드(닫기): L3 가설 (d) 해석한 자식에 staticSpec 전달 PR #420 squash-merge(67484c0be); 조회 2001→1001, 시간 효과 없음(중복 호출 제거로 기록); L3 가설 다섯 모두 병합, 다음은 마운트 원인 분해·결정 58 실험·M3. 보충 4줄 | `reviews/round-407-closing.md` |
 | 2026-10-18 | 408라운드 소유자: 마운트 문제 해결과 정상동작 검증까지 codex 메인 에이전트가 진행; 가드가 모자라면 채우면서; 원장 해석과 판단 기준을 인계 문서(AGENT-HANDOFF 7~9절)에. 보충 1줄 | `reviews/round-408-owner-answers.md` |
+| 2026-10-18 | 409라운드 소유자: codex 메인 에이전트 인계와 운영 규칙, 측정 문서 PR 정리·검증·병합·원장 마감 뒤 마운트 원인 분해 착수 승인. 보충 2줄 | `reviews/round-409-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -672,3 +673,4 @@
 - **268라운드(2026-10-14, 소유자).** codex·agy 멀티에이전트 작업 재개(덧붙임: `nullable: true`는 잔류, 265C-01의 제거 항목 취소): 257라운드의 "이번에 한해 claude 직접" 예외를 끝내고 217C-01 규칙으로 복귀(268C-01, reviews/round-268-owner-answers.md); 07b-5 후속은 fixy07이 마무리, 07b-6·07b-7·07c부터 codex 구현.
 - **269라운드(2026-10-14, 소유자).** 07b-6 스토리 설계의 결정: usage 스토리에 play 단언을 두고 패키지 CLAUDE.md의 "documentation-only" 문장을 고치는 권장안 승인(269C-01, reviews/round-269-owner-answers.md); nullable은 잔류·공식 지원으로 확정(269C-02, 오류 없음; 07b-7에서 형·문서 보강).
 - **270라운드(2026-10-14, 닫기/원장 관리자).** 07b-5 #365를 직접 검증(시험 3943·storybook 241·typecheck·lint·플러그인 일곱·documents·G16·verifier·agy)하고 squash 병합(17414cd4a); fixy07 판단 셋 승인; 지적 일곱은 07b-7로 이월(270C-01, reviews/round-270-closing.md); fairy07 07b-6·fixy07 07b-7을 17414cd4a에서 병렬 착수(codex 구현).
+- **271라운드(2026-10-14, 소유자).** 대기열 46 승인: `src/helpers`·`src/components`는 INTENT/DETAIL/index 없는 compartment로 두고 자식 fractal은 그대로(271C-01, reviews/round-271-owner-answers.md; 264라운드 결정 4 번복). 07c 계획 확정.
