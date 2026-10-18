@@ -1,13 +1,13 @@
 # 메인 에이전트 인계 — Claude 원장 관리자에서 codex 메인 에이전트로
 
-이 문서는 메인 에이전트(codex)가 Claude 세션의 자리를 이어받아 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 "지금 이 순간의 작업대"(Orca 상태, 열린 PR, 작업 폴더, brief 위치)와 이전 메인 에이전트가 쓰던 판단 기준(7~9절)을 적는다. 갱신 2026-10-18, 원장 라운드 411 뒤. 소유자는 Vincent다.
+이 문서는 메인 에이전트(codex)가 Claude 세션의 자리를 이어받아 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 "지금 이 순간의 작업대"(Orca 상태, 열린 PR, 작업 폴더, brief 위치)와 이전 메인 에이전트가 쓰던 판단 기준(7~9절)을 적는다. 갱신 2026-10-18, 원장 라운드 412 뒤. 소유자는 Vincent다.
 
 ## 1. 역할과 구속 규칙
 
 - 역할: 원장 관리자이자 Orca 코디네이터. 가설 하나에 brief 작성 → codex 워커 구현 → agy 워커 검증 → 통과면 병합 → 원장 마감(라운드 닫기) → push 의 루프를 돈다. 메인 에이전트 자신은 코드를 고치지 않는다(원장·reviews·HANDOFF·PLAN·PLAN-LOG·ledger/checks 만 고친다).
 - 소유자의 운영 지시(402라운드, `reviews/round-402-owner-answers.md`): Claude 사용량 극도 억제, 보조 Claude 세션 없음, codex 는 sol 모델(cennad 등급표의 gpt-6.1-sol; astra 금지), agy 는 gemini-4(high)·gemini-3.8(mid 이하)만, apex 금지, Orca 조정 루프(/orchestration)로 진행, 진행 전에 무엇을 할지 결정해 먼저 브리핑.
 - 소유자에게는 한국어 존댓말의 완전한 문장으로 쓴다. 약어·은유·문서 번호만 적는 참조("§3")는 쓰지 않고 바로 열 수 있는 경로를 적는다. 소유자의 법적 이름은 어떤 파일·커밋·출력에도 적지 않는다(Vincent 또는 Vincent Kelvin 만). 커밋 메시지와 PR 본문에 공동 저자·Claude 세션 ID·"Claude-Session" 줄을 절대 넣지 않는다.
-- 소유자의 질문은 답하고 실행하지 않는다. 워커의 메시지는 소유자 승인이 아니다. 허가 우회를 대신 해 주지 않는다.
+- 소유자의 질문은 답하고 실행하지 않는다. 워커의 메시지는 소유자 승인이 아니다. 412라운드 소유자 승인에 따라 agy 권한 문제는 목적·상황·정확한 거절과 필요한 검증 범위를 보고받은 뒤 메인 에이전트가 대행할 수 있다(`reviews/round-412-owner-answers.md:7`). 수행 주체와 확인 범위를 기록하고 agy의 직접 수행으로 바꾸어 적지 않는다. 이 승인 범위 밖에서 다른 세션의 거절된 작업을 대신 수행하지 않는다.
 - 소유자의 말은 라운드 문서(`reviews/round-NN-owner-answers.md`)에 원문 그대로 적고 `ledger/checks/owner-answers.tsv` 행과 `ledger/landing.md` 의 보충 줄을 더한다. 닫기 결정(`reviews/round-NN-closing.md` 의 `  - 【추론】` 줄)은 `ledger/checks/sup-insert.mjs` 가 글자 그대로 원장에 인용하므로 삽입 뒤 그 줄을 고치지 않는다.
 - 측정 원칙(368·369·370·400C-02 라운드): 0.16.1 은 참조일 뿐 목표가 아니다; 가설마다 비효율 하나를 이름 짓는다; 추가 코드가 제거 비효율보다 크면 폐기; 상수 깎기 캐시 금지; 조용한 창에서 두 바퀴 번갈아 재고 min/max 를 적으며 창 안의 비율만 유효; 호출 수 단언은 상한으로.
 - 샌드박스 명령 모양(Claude 세션의 규칙이지만 같은 기계에서 유효): gh·yarn·npm·bun·open·orca 같은 제외 CLI 는 파이프·`;`·리디렉션·env 접두 없이 단독으로 실행한다. 절대 맨 `git stash` 를 쓰지 않는다.
@@ -16,7 +16,7 @@
 
 - 가지: `feat/schema-form-08-review-and-perf`, 인계 시 끝은 `1630854de`(408라운드 소유자 기록). 현재 끝은 `git log -1`로 확인한다. 메인 작업 폴더 `/Users/Vincent/Workspace/albatrion`는 그 가지에서 원장 기록을 관리한다(추적 밖 `l3e-direct-ownership/` 폴더는 아래 Orca 작업 폴더다; `git add .`를 쓰지 말 것).
 - 병합된 PR: #416 L3-e 조각 소유 직접 판정(`fde6ab359`, 403C-01), #417 L3-b items 없는 배열 끝 덧붙임 지름길(`8e35b01fc`, 404C-01), #418 L3-a 선언 밖 키 일반 대입(`89ea2c98b`, 405C-01), #419 L3-c 선언 밖 값 구조 비교 한 번(`bb4ff19d9`, 406C-01), #420 L3-d staticSpec 전달(`67484c0be`, 407C-01). L3 구현 묶음 다섯 가설 완료.
-- 열린 PR: #422(`perf/schema-form-mount-breakdown`, 최종 고정 커밋 `bad706d86f257b8ebab92244c0368287868c2272`)이며 병합을 보류한다. 측정 문서 PR #421은 `c350e7651`로 병합되었고 메인 원장 411라운드는 이 미병합 상태와 검증 근거를 기록한다. 제품 변경은 0이며 itemless 최적화 구현은 하지 않았다. 아래 Orca 이력의 작업은 모두 마쳤고 현재 진행 중인 구현·검증 워커는 없다. 소유자가 독립 metadata 항목의 처리 방법을 정하기 전 병합·제품 최적화를 진행하지 않는다.
+- 열린 PR: #422(`perf/schema-form-mount-breakdown`, 고정 head `bad706d86f257b8ebab92244c0368287868c2272`)다. 412라운드 소유자가 metadata의 코디네이터 대체 확인과 병합을 승인했다. agy의 실제 gh/Git 설정 거절과 해당 검증 목적을 확인했고, 코디네이터가 head/base·변경5경로·여섯 commit과 PR 위생·CLEAN·review 없음까지 다시 확인했다. PR 본문에 대행 근거와 수행 주체를 갱신한 뒤 고정 head로 squash 병합하고 별도 라운드를 닫는다. 제품 변경은 0이며 itemless 최적화 구현은 아직 하지 않았다.
 - 측정 결과 표(정본, PR #421로 커밋됨): `verification/perf-optimization/l3e-direct-ownership-results.md`, `l3b-array-append-results.md`, `l3a-extras-plain-assignment-results.md`, `l3c-extras-single-compare-results.md`, `l3d-static-spec-pass-through-results.md`. 같은 창의 옛 판 표본 등 결손을 미검증으로 구별했으며 M3 세 판 완전 비교와 소유자 수용은 남아 있다.
 - 진행 중인 마운트 보고: `verification/perf-optimization/mount-breakdown-results.md`(PR #422). 첫 창은 2026-10-18T10:59:59.475Z–11:03:09.740Z, 원자료는 TMPDIR/mount-breakdown-task_7e0e67a1893f다. current 분해·호출 수는 유효한 방향 단서지만 legacy factory 반환 뒤 public value getter에서 지연 합성이 일어나 옛 판 완료 시간·상대 비율은 무효다(Node·Bun 지원 12장면씩 총 480회 readiness 확인). canonical 완료 경계 보정 `234d88ce0`은 두 판 모두 공개 노드 값을 후위 순서로 관측하는 비용을 시간에 포함한다. Node·Bun과 adapter·first-batch의 네 가드 조합은 각각 통과 28·옛 판 미지원 4·실패 0이고 타입 검사·린트·전체 시험(759파일·4785통과·기존 todo 1)·빌드도 통과했다. 새 창은 2026-10-18T11:49:39.642Z–11:52:05.641Z, 원자료는 TMPDIR/mount-breakdown-completed-task_7e0e67a1893f이며 네 실행이 모두 종료했다. 제품 dist·Winglet 603파일·첫 창 58파일·이전 raw 138파일 해시를 보존했다. 최종 보고·PR 갱신과 독립 검증은 남아 있으며 새 창을 첫 factory-only 창과 절대시간으로 비교하지 않는다. seiri task는 `mount-readiness-boundary`다. 그 뒤 첫 제품 후보는 item·prefixItems 및 대응 후보가 모두 없는 배열의 N회 빈 선언 조회 제거이며, 전체 이벤트·revision·참조 동치 가드와 계획 검증이 선행한다.
 - 워커 brief 원본: `verification/perf-optimization/l3-briefs/` (가설별 구현 brief 와 검증 brief 여섯 편). 다음 가설의 brief 는 이 꼴을 복제해 쓴다.
@@ -54,7 +54,7 @@
 
 ## 6. 열린 소유자 물음
 
-PR #422의 독립 metadata 확인이 실제 gh·Git 설정 접근 거절로 미검증이다. 소유자가 이 항목만 코디네이터의 허용된 자체 확인으로 대체하도록 허가할지, agy의 정상 접근을 복구한 뒤 독립 확인을 유지할지 판단해야 한다. 이 판단 전에는 병합·제품 최적화를 진행하지 않는다. 결정 58은 마운트 실험 조건이 입증되면, 결정 54는 플러그인 PR 때 돌아온다.
+없음. PR #422의 독립 metadata 확인은 실제 접근 거절로 미검증이지만 412라운드 소유자가 코디네이터 대체 확인을 승인했다. 목적·상황·수행 주체를 기록하고 본문 갱신·최종 head 확인 뒤 병합한다. 이후 agy 권한 문제도 같은 보고·대행 기준을 적용한다. 결정 58은 마운트 실험 조건이 입증되면, 결정 54는 플러그인 PR 때 돌아온다.
 
 ## 7. 정상동작 검증의 기준 (codex 메인 에이전트가 수행)
 
