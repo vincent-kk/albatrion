@@ -112,3 +112,20 @@ C/D 원본·기준·계측 사본은 별도의 기존 측정 실행 폴더에서
 v1은 Merge 손실·B1 k0 유출·호출자 사후 변조 별칭 때문에 폐기했습니다. 원본 A2 summarizer의 VALUE-002 항목은 순서 중심 관측이라 B1 유출 판정은 별도 extras-isolation 열에 있습니다. 최종 문서에서는 VALUE-002 전체 계약에 맞춰 B1 v1을 fail로 바로잡았습니다. 잘못된 Merge v1 시간을 인용하지 않습니다. A2 분해는 Node 계측 합 안의 비율만 읽고 배열 분해는 성능 근거에서 제외합니다.
 
 이번 이관의 확인은 모든 .mjs/.cjs의 `node --check`, 모든 .sh의 `zsh -n`, 기존 빌드 작업 트리에서 터미널 프로브 둘의 --check 한 번씩입니다. 새 작업 트리에서는 설치·빌드·전체 성능 창·힙 수집을 실행하지 않습니다. 파일 범위는 perf-optimization 아래 문서·검증 도구뿐이며, 원장·DETAIL·priority·baseline·write-paths 문서는 수정하지 않습니다.
+
+## 마운트 완료 경계와 영속 가드
+
+core mount의 factory는 공개 노드 값을 자식부터 materialize한 뒤 반환합니다. `bench/distEngine/loadDistEngine.ts`의 `materializeMountedValues`가 adapter와 `b-a2/bench-common.mjs` 양쪽의 경계를 소유합니다. 루트만 읽으면 legacy B0/BN host의 지연 합성이 남을 수 있으므로, 공개 children을 따라가 각 값을 후위로 읽습니다. 이 관측 순회도 양 판의 마운트 시간 안에 포함되며 새 캐시나 제품 동작을 추가하지 않습니다.
+
+기존 0.16.1의 초기 onChange 0회와 current의 1회 차이는 유지합니다. 이후 callback이 있으면 기존 mount 러너의 마지막 callback timestamp도 종료 시점에 포함하고, 값·자식·경로·입력 불변·키 순서와 drain 후 안정성을 별도로 확인합니다. factory 반환 뒤 첫 getter가 일을 했던 과거 factory-only ms는 같은 관측 완료 비교로 사용할 수 없습니다. 첫 값 materialization 뒤에도 준비가 끝나지 않은 새 장면은 검증 없이 시간 행으로 인용하지 않습니다.
+
+패키지 디렉터리에서 다음 가드를 실행합니다(Node v26.12.0·Bun 1.4.3에서 확인). 각각 지원 28행과 legacy 미지원 배열 4행을 검사하며 결과 JSON은 stdout의 TMPDIR 경로에 보존합니다.
+
+```sh
+node bench/distEngine/check-mount-readiness.mjs
+bun bench/distEngine/check-mount-readiness.mjs
+node bench/distEngine/check-mount-readiness.mjs --surface=first-batch
+bun bench/distEngine/check-mount-readiness.mjs --surface=first-batch
+```
+
+가드는 legacy의 getter 접근 전 expired/locked/composedValid를 먼저 관측하므로 사후 값 읽기가 결손을 숨기지 못합니다. 이후 전체 값·자식·경로·키 순서·caller 입력과 drain 후 상태 및 callback 수를 대조합니다. 복사한 first-batch 도구도 config의 작업 폴더 `P`를 통해 canonical adapter를 가져오므로 실행 전에 그 verification adapter의 해시를 함께 고정해야 합니다. 원래 측정에 쓴 사본·원시 표본은 덮어쓰지 말고 수정한 경계는 새 TMPDIR 실행 폴더와 새 창으로 확인합니다.

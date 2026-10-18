@@ -94,6 +94,47 @@ async function copyAndLoad<Module>(
   return { module, digest };
 }
 
+type MountedValueNode = {
+  readonly value: unknown;
+  readonly children?: readonly unknown[] | null;
+};
+
+/** Internal verification hook shared with first-batch: materialize public values before core mount returns. */
+export function materializeMountedValues<Node extends MountedValueNode>(
+  root: Node,
+): Node {
+  const stack: { node: MountedValueNode; leave: boolean }[] = [
+    { node: root, leave: false },
+  ];
+  // Shared virtual children are observed once per call; nothing is retained across mounts.
+  const visited = new Set<MountedValueNode>();
+  while (stack.length) {
+    const { node, leave } = stack.pop()!;
+    if (leave) {
+      void node.value;
+      continue;
+    }
+    if (visited.has(node)) continue;
+    visited.add(node);
+    stack.push({ node, leave: true });
+    const children = node.children;
+    for (let index = (children?.length ?? 0) - 1; index >= 0; index--) {
+      const child = children![index];
+      const candidate =
+        child !== null && typeof child === 'object' && 'node' in child
+          ? child.node
+          : child;
+      if (
+        candidate !== null &&
+        typeof candidate === 'object' &&
+        'value' in candidate
+      )
+        stack.push({ node: candidate as MountedValueNode, leave: false });
+    }
+  }
+  return root;
+}
+
 /** Load the workspace dist engine and compose the same mounted-tree factory used by tests. */
 export async function loadDistEngine(directory = defaultDirectory) {
   const { module, digest } = await copyAndLoad<DistEngine>(
@@ -112,7 +153,7 @@ export async function loadDistEngine(directory = defaultDirectory) {
     module.mountFieldNode(root, undefined, undefined, {
       deferValidation: props.deferMountValidation ?? false,
     });
-    return root;
+    return materializeMountedValues(root);
   }
   return { ...module, create, distSha256: digest };
 }
@@ -147,5 +188,9 @@ export async function loadLegacyEngine(
     ['nodeFromJSONSchema'],
     'export { nodeFromJSONSchema as benchmarkCore };',
   );
-  return { create: module.benchmarkCore, legacySha256: digest };
+  const create: typeof LegacyFactory = (props) => {
+    const root = module.benchmarkCore(props);
+    return materializeMountedValues(root);
+  };
+  return { create, legacySha256: digest };
 }
