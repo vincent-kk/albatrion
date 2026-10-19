@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-19 | 421라운드: P1 계획·도구 독립 검토와 재개 두실행; 옛 journal 보존 실패·한정 산술·작업 경계 진단 기록 | reviews/round-421-closing.md |
+| 2026-10-19 | 422라운드: T14 독립 계획 검토 복원과 retained-owner 한정 보완 수락. 격리된 검증 도구 구현 배정 | reviews/round-422-closing.md |
 | 2026-10-15 | 330라운드 소유자: 중간 브랜치 삭제, 1.0.0-beta 압축(48 커밋, 백업 유지), 8단계는 feat/schema-form-08-review-and-perf에서 원장·워크트리 운영. 보충 2줄 | `reviews/round-330-owner-answers.md` |
 | 2026-10-15 | 331라운드 소유자: 08 플러그인 완료 처리(07b·07d), 미확인 셋은 대기열 54, 최적화 진행. 보충 1줄 | `reviews/round-331-owner-answers.md` |
 | 2026-10-15 | 332라운드 소유자: 8단계 리뷰 1차 열넷(구조·조사·이름·질문). 보충 1줄 | `reviews/round-332-owner-answers.md` |
