@@ -383,7 +383,12 @@ const cases = [
     name: 'wrong-module and invalid owner identity rejection',
     run() {
       const rows = [];
+      const guardChecks = [];
       for (const [label, f] of Object.entries(forms)) {
+        const reject = (kind, check, expected) => {
+          assert.throws(check, expected);
+          guardChecks.push({lane: label, kind, rejected:true});
+        };
         for (const [other, engine] of Object.entries(engines))
           if (other !== label) {
             assert.equal(
@@ -399,20 +404,20 @@ const cases = [
             rows.push({ nodeLane: label, readerLane: other, rejected: true });
           }
         const getter = engines[label].__readExistingRuleOwnerId;
-        assert.throws(() => ownerOf(f.key, [], getter));
-        assert.throws(() => ownerOf(f.key, [f.owner, f.owner], getter));
+        reject('empty-known', () => ownerOf(f.key, [], getter));
+        reject('ambiguous-known', () => ownerOf(f.key, [f.owner, f.owner], getter));
         const unknown = [...f.parts];
         unknown[7] = 900000000;
-        assert.throws(() => ownerOf(JSON.stringify(unknown), f.known, getter));
+        reject('unknown-id', () => ownerOf(JSON.stringify(unknown), f.known, getter));
         const conflict = [...f.parts];
         conflict[5] = '/other';
-        assert.throws(() => ownerOf(JSON.stringify(conflict), f.known, getter));
+        reject('conflicting-path', () => ownerOf(JSON.stringify(conflict), f.known, getter));
         const kindConflict = [...f.parts];
         kindConflict[6] = 'string';
-        assert.throws(() =>
+        reject('conflicting-kind', () =>
           ownerOf(JSON.stringify(kindConflict), f.known, getter),
         );
-        assert.throws(() =>
+        reject('codec-unreachable', () =>
           fixture.createRuleTargetIdentity(
             () => f.known,
             getter,
@@ -422,13 +427,13 @@ const cases = [
         const codec = new fixture.ObservationCodec();
         f.known.forEach((node, index) => codec.nodes.set(node, index + 1));
         f.owner.detached = true;
-        assert.throws(
+        reject('current-attachment',
           () => fixture.captureObservationState(f.tree, f.known, codec, getter),
           /attachment/,
         );
         f.owner.detached = false;
       }
-      return { wrongModuleDirections: rows, invalidKnownSetChecks: 12 };
+      return { wrongModuleDirections: rows, invalidKnownSetChecks: guardChecks.length, guardChecks };
     },
   },
 ];
@@ -453,11 +458,11 @@ try {
       marker: result.marker,
       runtime,
       version: result.version,
-      standaloneCases: 4,
+      standaloneCases: result.cases.length,
       vitestCasesAdded: 0,
-      laneRowsPerFirstThreeCases: 3,
-      wrongModuleDirections: 6,
-      invalidKnownSetChecks: 12,
+      laneRowsPerFirstThreeCases: Object.keys(engines).length,
+      wrongModuleDirections: result.cases.find(row=>row.id==='SB4')?.evidence.wrongModuleDirections.length ?? 0,
+      invalidKnownSetChecks: result.cases.find(row=>row.id==='SB4')?.evidence.invalidKnownSetChecks ?? 0,
       inputFingerprint: result.inputFingerprint,
       caseSummary: result.cases.map((c) => ({
         id: c.id,
