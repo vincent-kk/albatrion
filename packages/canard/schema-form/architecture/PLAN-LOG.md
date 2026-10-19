@@ -335,6 +335,7 @@
 | 2026-10-19 | 420라운드: 같은 A strict 준비·정정 독립 검증과 승인된 네실행; F 상태 schema 두 보완 검토와 성능 수용 보류 | reviews/round-420-closing.md |
 | 2026-10-19 | 421라운드: P1 계획·도구 독립 검토와 재개 두실행; 옛 journal 보존 실패·한정 산술·작업 경계 진단 기록 | reviews/round-421-closing.md |
 | 2026-10-19 | 422라운드: T14 독립 계획 검토 복원과 retained-owner 한정 보완 수락. 격리된 검증 도구 구현 배정 | reviews/round-422-closing.md |
+2026-10-19 | 423라운드: T14 검증 도구와 전체 시험 실패를 초안으로 인계하고 소유자 지시에 따라 원장 갱신 뒤 대기 | reviews/round-423-closing.md
 
 ## 2. 라운드별 요지
 
@@ -700,3 +701,4 @@
 - **282라운드(2026-10-14, 소유자).** 08단계 씨앗 메모: fractal 최소 export 계약 위반(가장 거슬림), nodeFromJSONSchema가 root export인 이유, FormContents의 이름·위계. 시험·bench가 index를 경유하는 것은 filid의 한계가 아니라 07c·07d의 선택이었음을 원장 관리자가 export 소비자 셈으로 답함(reviews/round-282-owner-answers.md).
 - **283라운드(2026-10-14, 닫기/원장 관리자).** PR #370(07d) squash 병합(0b879e594): 47 문서 안내, CLAUDE.md:142, 38 추측 없는 label id 규약(`label:${path}`), 45 원칙 문장, 48 플러그인 시험, 49 이름 열거·면제 선언. verifier FAIL→PASS, agy 차단 없음, 직접 게이트 전부 통과(283C-01). 낮은 후속 넷은 07e로.
 - **284라운드(2026-10-14, 닫기/원장 관리자).** PR #371(07e) squash 병합(89898d107): 45 원칙 문장, 플러그인 셋 FormGroup 제목 id, 형제 충돌 시험, skills 문서 접미어, Prettier 다섯 파일(284C-01). 남은 것은 G23 보고와 #354 병합, 08단계 계획.
+- **285라운드(2026-10-14, 닫기/원장 관리자).** G23 닫힘: fairy07이 ego-browser(spaceId 39)로 tip 89898d107의 스토리 251개 전부 finished·실패 0, 자동 게이트 251 통과(285C-01). 첫 실행은 대기 조건 오류로 무효. NaN defaultValue 경고 세 스토리는 debugger 진단 중. 다음은 #354 병합.
