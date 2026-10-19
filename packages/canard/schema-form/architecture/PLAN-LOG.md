@@ -333,6 +333,7 @@
 | 2026-10-19 | 418라운드: 실제 rule reader feasibility·legacy 비동기 러너 준비·독립 검증 귀속과 보류 | reviews/round-418-closing.md |
 | 2026-10-19 | 419라운드: strict 규칙 관측 구현·새 G13 귀속과 정상동작 범위 확인; 성능 수용·병합 보류 | reviews/round-419-closing.md |
 | 2026-10-19 | 420라운드: 같은 A strict 준비·정정 독립 검증과 승인된 네실행; F 상태 schema 두 보완 검토와 성능 수용 보류 | reviews/round-420-closing.md |
+| 2026-10-19 | 421라운드: P1 계획·도구 독립 검토와 재개 두실행; 옛 journal 보존 실패·한정 산술·작업 경계 진단 기록 | reviews/round-421-closing.md |
 
 ## 2. 라운드별 요지
 
@@ -696,3 +697,4 @@
 - **280라운드(2026-10-14, 소유자).** 38의 verifier 결함(스키마 모양 판정과 입력 선출의 어긋남)에 소유자가 "자유도를 해치지 않고 사용 방식에 따라 맞추게" 답해, 라벨은 항상 htmlFor와 id를 갖고 묶음은 aria-labelledby로 제목을 가리키는 추측 없는 규약으로 바꿔 fixy07에게 보냄(reviews/round-280-owner-answers.md). alias 자리는 문제없음.
 - **281라운드(2026-10-14, 소유자).** "할거 다 하고 PR을 머지하고 다음으로 가자. 7단계가 너무 비대해졌네" — #370·Prettier PR·G23을 끝낸 뒤 #354를 병합하고, 디렉터리·구성 다듬기는 새 단계(08)로(reviews/round-281-owner-answers.md).
 - **282라운드(2026-10-14, 소유자).** 08단계 씨앗 메모: fractal 최소 export 계약 위반(가장 거슬림), nodeFromJSONSchema가 root export인 이유, FormContents의 이름·위계. 시험·bench가 index를 경유하는 것은 filid의 한계가 아니라 07c·07d의 선택이었음을 원장 관리자가 export 소비자 셈으로 답함(reviews/round-282-owner-answers.md).
+- **283라운드(2026-10-14, 닫기/원장 관리자).** PR #370(07d) squash 병합(0b879e594): 47 문서 안내, CLAUDE.md:142, 38 추측 없는 label id 규약(`label:${path}`), 45 원칙 문장, 48 플러그인 시험, 49 이름 열거·면제 선언. verifier FAIL→PASS, agy 차단 없음, 직접 게이트 전부 통과(283C-01). 낮은 후속 넷은 07e로.
