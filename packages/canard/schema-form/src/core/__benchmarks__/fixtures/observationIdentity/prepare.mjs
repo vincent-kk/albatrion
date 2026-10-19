@@ -183,14 +183,11 @@ try {
         buildEnd() {
           for (const id of this.getModuleIds()) {
             const info = this.getModuleInfo(id);
+            assert.ok(info, 'Actual source module information is required');
             graph.push({
               id,
               imports: info?.importedIds ?? [],
-              external: Boolean(
-                info?.isExternal ||
-                  (!path.isAbsolute(id) && !id.startsWith('\0')) ||
-                  (path.isAbsolute(id) && !id.startsWith(core + path.sep)),
-              ),
+              external: info.code === null,
             });
           }
         },
@@ -355,14 +352,11 @@ try {
         buildEnd() {
           for (const id of this.getModuleIds()) {
             const info = this.getModuleInfo(id);
+            assert.ok(info, 'Actual fixture module information is required');
             fixtureGraph.push({
               id,
               imports: info?.importedIds ?? [],
-              external: Boolean(
-                info?.isExternal ||
-                  (!path.isAbsolute(id) && !id.startsWith('\0')) ||
-                  (path.isAbsolute(id) && !id.startsWith(core + path.sep)),
-              ),
+              external: info.code === null,
             });
           }
         },
