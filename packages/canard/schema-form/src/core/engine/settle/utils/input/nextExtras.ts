@@ -1,3 +1,5 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 import { sameValue } from '../../../utils/compute/sameValue';
 import { writeObjectKey } from '../../../utils/writeObjectKey';
 
@@ -30,5 +32,4 @@ export const nextExtras = (
   const next = hasOwnKey ? result : undefined;
   return sameValue(previous, next) ? previous : next;
 };
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 
