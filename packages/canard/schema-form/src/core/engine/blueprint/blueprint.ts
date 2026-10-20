@@ -75,7 +75,7 @@ export const blueprint = (
     ],
     '',
   );
-  validateShape(context);
+  if (context.hasTemplateRecursion) validateShape(context);
   validateChildTargets(context);
   markCandidateDescendants(context.nodes);
   const expressions =
