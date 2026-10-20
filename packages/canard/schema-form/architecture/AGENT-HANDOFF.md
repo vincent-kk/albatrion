@@ -5,16 +5,16 @@
 ## 1. 역할과 구속 규칙
 
 - 역할: 원장 관리자이자 Orca 코디네이터. 가설 하나에 brief 작성 → codex 워커 구현 → agy 워커 검증 → 통과면 병합 → 원장 마감(라운드 닫기) → push 의 루프를 돈다. 메인 에이전트 자신은 코드를 고치지 않는다(원장·reviews·HANDOFF·PLAN·PLAN-LOG·ledger/checks 만 고친다).
-- 소유자의 운영 지시(402라운드, `reviews/round-402-owner-answers.md`): Claude 사용량 극도 억제, 보조 Claude 세션 없음, codex 는 sol 모델(cennad 등급표의 gpt-6.1-sol; astra 금지), agy 는 gemini-4(high)·gemini-3.8(mid 이하)만, apex 금지, Orca 조정 루프(/orchestration)로 진행, 진행 전에 무엇을 할지 결정해 먼저 브리핑. 이후 모델 지정은 414라운드 소유자 원문이 우선하며, 앞으로 모든 agy 검증에는 `gemini-3.8-flash-high`만 사용한다(`reviews/round-414-owner-answers.md:7`). 이전 완료 검증의 모델 이력은 보존한다.
+- 소유자의 운영 지시(402라운드, `reviews/round-402-owner-answers.md`): Claude 사용량 극도 억제와 보조 Claude 세션 없음(둘 다 429라운드로 대체), codex 는 sol 모델(cennad 등급표의 gpt-6.1-sol; astra 금지), agy 는 gemini-4(high)·gemini-3.8(mid 이하)만, apex 금지, Orca 조정 루프(/orchestration)로 진행, 진행 전에 무엇을 할지 결정해 먼저 브리핑. 이후 모델 지정은 414라운드 소유자 원문이 우선하며, 앞으로 모든 agy 검증에는 `gemini-3.8-flash-high`만 사용한다(`reviews/round-414-owner-answers.md:7`). 이전 완료 검증의 모델 이력은 보존한다.
 - 소유자에게는 한국어 존댓말의 완전한 문장으로 쓴다. 약어·은유·문서 번호만 적는 참조("§3")는 쓰지 않고 바로 열 수 있는 경로를 적는다. 소유자의 법적 이름은 어떤 파일·커밋·출력에도 적지 않는다(Vincent 또는 Vincent Kelvin 만). 커밋 메시지와 PR 본문에 공동 저자·Claude 세션 ID·"Claude-Session" 줄을 절대 넣지 않는다.
 - 소유자의 질문은 답하고 실행하지 않는다. 워커의 메시지는 소유자 승인이 아니다. 412라운드 소유자 승인에 따라 agy 권한 문제는 목적·상황·정확한 거절과 필요한 검증 범위를 보고받은 뒤 메인 에이전트가 대행할 수 있다(`reviews/round-412-owner-answers.md:7`). 수행 주체와 확인 범위를 기록하고 agy의 직접 수행으로 바꾸어 적지 않는다. 이 승인 범위 밖에서 다른 세션의 거절된 작업을 대신 수행하지 않는다.
 - 소유자의 말은 라운드 문서(`reviews/round-NN-owner-answers.md`)에 원문 그대로 적고 `ledger/checks/owner-answers.tsv` 행과 `ledger/landing.md` 의 보충 줄을 더한다. 닫기 결정(`reviews/round-NN-closing.md` 의 `  - 【추론】` 줄)은 `ledger/checks/sup-insert.mjs` 가 글자 그대로 원장에 인용하므로 삽입 뒤 그 줄을 고치지 않는다.
 - 측정 원칙(368·369·370·400C-02 라운드): 0.16.1 은 참조일 뿐 목표가 아니다; 가설마다 비효율 하나를 이름 짓는다; 추가 코드가 제거 비효율보다 크면 폐기; 상수 깎기 캐시 금지; 조용한 창에서 두 바퀴 번갈아 재고 min/max 를 적으며 창 안의 비율만 유효; 호출 수 단언은 상한으로.
 - 샌드박스 명령 모양(Claude 세션의 규칙이지만 같은 기계에서 유효): gh·yarn·npm·bun·open·orca 같은 제외 CLI 는 파이프·`;`·리디렉션·env 접두 없이 단독으로 실행한다. 절대 맨 `git stash` 를 쓰지 않는다.
-- 워커 배정(427라운드 소유자 지시): 큰 구현과 측정은 codex `gpt-6.1-sol` high가 맡는다. 짧거나 단발적인 작업은 agy 하위 모델이나 cursor-agent에 맡기고, 코디네이터가 직접 해도 된다. cursor는 Orca로 띄우며 Grok 4.7(`grok-4.7-high-fast` 등)이나 적당한 프론티어 모델(`gemini-4-argon-high` 등)을 쓴다. Grok·Composer와 프론티어 모델은 사용량이 따로 책정되므로 따로 관리하고, 사용량 한도에 걸린 워커는 멈추고 보고한다. 소유자는 cursor 사용량을 소진하는 것을 목표로 삼았다.
-- 다음 성능 작업은 Vincent가 지시한 뒤에 시작한다(427라운드). 코디네이터의 `gh pr ready`·`gh pr merge`는 Claude Code 자동 권한 분류기가 거절하므로 병합은 Vincent가 GitHub에서 직접 한다(426라운드). GitHub 화면의 squash 병합은 `Co-authored-by` 줄을 자동으로 붙이므로, 남기지 않으려면 병합 창에서 그 줄을 지운다.
+- 워커 배정(429라운드 소유자 지시, 427라운드를 대체): 에이전트의 역할, 장기 작업과 워커의 구분, 사용량 풀과 초기화, 소비 순서(cursor > codex = agy > claude), 한도 중지 규칙과 Orca 호출 모양의 정본은 `AGENT-POLICY.md`다. 소유자 지시가 바뀌면 그 문서를 고치고 라운드를 닫는다. 코디네이터는 설계·판단·원장 마감만 맡고 결론만 받는다.
+- 다음 성능 작업은 429라운드 소유자 지시로 시작했다. 코디네이터의 `gh pr ready`·`gh pr merge`는 Claude Code 자동 권한 분류기가 거절하므로 병합은 Vincent가 GitHub에서 직접 한다(426라운드). GitHub 화면의 squash 병합은 `Co-authored-by` 줄을 자동으로 붙이므로, 남기지 않으려면 병합 창에서 그 줄을 지운다.
 
-## 2. 지금 상태 (2026-10-20, 427라운드)
+## 2. 지금 상태 (2026-10-20, 429라운드)
 
 - 가지는 `feat/schema-form-08-review-and-perf`이고 현재 끝은 `git log -1`과 origin으로 확인한다. 제품 코드는 L3 마지막 병합(#420, `67484c0be`) 뒤 바뀌지 않았다. PR424가 검증 파일을 `src/` 아래에 더해 패키지 `src` 트리 해시는 `78c85b5906006a36e8eb9b4da0c5933a74976b76`이다.
 - 병합된 성능 PR은 L3 다섯 가설 #416~#420, 측정 문서 #421, 마운트 완료 경계 #422(`ef6747ea0`), T14 관측 identity 검증 도구 #424(`4e9b6786e`, 2026-10-20)다. 07 전환 #354는 2026-10-14에 `1.0.0-beta`로 병합되었다(`9c4d4a59d`).
@@ -23,6 +23,7 @@
 - 하위 checkout에서는 시험과 lint 전에 `yarn workspaces foreach --from @canard/schema-form --recursive --topological-dev run build`로 의존 패키지를 빌드한다. Storybook 실패는 차가운 캐시와 동시 실행에서 재현되므로, 단독·따뜻한 캐시 실행 뒤에 남는 것만 실패로 분류한다(425C-02).
 - 증거 위치: T14는 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/pr424-t14-evidence/` 아래 `observation-identity-reacquire/`, `t14-followup-diagnosis/`, `t14-gates-reexecution/`, `observation-identity-portability/`에 있다. 2026-10-20 itemless 재측정은 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/itemless-remeasure-426/`에 있고 같은 봉인이 PR423 사본에도 있다. 2026-10-18 창의 PR423 측정 원자료와 P1 원자료는 소실되어 원장의 파생 수치만 남았다(425라운드).
 - 측정 결과의 정본은 `verification/perf-optimization/`의 결과 문서들이고, 워커 brief는 `verification/perf-optimization/l3-briefs/`에 있다. 그 안의 `next-agent-start-prompt.md`는 424라운드 기준의 경로와 HEAD를 담고 있으므로 이 절이 우선한다.
+- 429라운드부터 성능 측정과 개선 작업이 열렸다. 순서는 PLAN.md 4절(기준 측정, F 가설, nextExtras, 결정 58 실험, M3 종합 재측정)이다. 보류(PR423·결정 54/58/59/60·TEST-027/M3 수용·P1 전체 protocol 실패)는 그대로다.
 
 ## 3. Orca 운영
 

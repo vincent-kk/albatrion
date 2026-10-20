@@ -900,6 +900,8 @@
   > 편집자 결정(427C-01): "【추론】 AGENT-HANDOFF·HANDOFF·PLAN의 라운드별 경위와 끝난 항목을 PLAN-LOG와 `_archive/2026-10-20/`으로 옮기고 현재 상태·운영 규칙·다음 할 일만 남긴다. 지우는 줄은 없으며 모든 줄은 두 곳 중 하나에 원문으로 남는다. 원장 본문과 reviews 기록은 줄 번호 인용이 깨지므로 9단계 squash 직전에 한 번 보관한다." (`reviews/round-427-closing.md:8`)
   > 편집자 결정(427C-02): "【추론】 큰 구현·측정은 codex gpt-6.1-sol high, 짧거나 단발적인 작업은 agy 하위 모델이나 Orca로 띄운 cursor(Grok 4.7 또는 적당한 프론티어 모델)에 맡기며, Grok·Composer와 프론티어 모델의 사용량을 따로 관리하고 한도에 걸린 워커는 멈추고 보고한다. 다음 성능 작업은 소유자 지시 뒤 시작한다." (`reviews/round-427-closing.md:10`)
   > 편집자 결정(428C-01): "【추론】 끝난 워커의 터미널은 닫고, 병합된 PR의 작업 폴더는 로컬 증거를 메인의 `.seiri/tasks/`로 옮겨 내용과 봉인 해시가 같음을 확인한 뒤 지운다. 소유자 판단을 기다리는 PR의 작업 폴더와 코디네이터 터미널은 남긴다. 원격 가지와 다른 저장소의 작업 폴더는 건드리지 않는다." (`reviews/round-428-closing.md:8`)
+  > 편집자 결정(429C-01): "【추론】 장기 작업은 codex gpt-6.1-sol, Claude Opus(상주 세션 fairy08·fixy08 포함, Fable 제외), agy gemini-4 argon(어렵고 복합적인 내용에만)이 맡는다. agy gemini-3.8, cursor-agent(grok 4.7 기본, 다른 모델 선택 가능), 그 밖의 모델은 코디네이터나 장기 작업 에이전트의 통제 아래 워커로만 쓴다. codex astra는 쓰지 않는다. 402라운드의 "보조 Claude 세션 없음"은 이 결정으로 대체된다. 코디네이터는 설계·판단·원장 마감만 맡고 결론만 받아 컨텍스트를 아낀다." (`reviews/round-429-closing.md:8`)
+  > 편집자 결정(429C-02): "【추론】 토큰 소비는 cursor > codex = agy > claude 순서로 배분하고, 할 수 있는 일이 제한적인 cursor를 먼저 소진한다. Claude는 Fable을 제외한 모든 모델이 한도를 공유하며 매주 화요일 오전 11시에 초기화된다. codex는 모든 모델이 한도를 공유하며 초기화는 약 5일 뒤로 유동적이다. agy는 gemini-4 argon, 그 밖의 gemini 모델, 외부 모델(opus 등)이 각각 다른 한도를 가지며 외부 모델은 소진 상태(초기화 약 2일 11시간 뒤)이고 gemini 계열은 약 5일 뒤 초기화된다. cursor는 월간 한도로 이달 말까지이며 한도에 닿으면 다음 달까지 다시 시도하지 않는다. 한도에 걸린 워커는 멈추고 보고한다." (`reviews/round-429-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-agenda.md:116-124`(정본), `HANDOFF.md:154`
 - 닫은 사람: 소유자 답(`HANDOFF.md:148` 소유자 지시 "교차검증까지 모두 끝내서 설계완료를 확정하면"), 편집자 결정(17라운드, `reviews/round-18-agenda.md:114-124`)
