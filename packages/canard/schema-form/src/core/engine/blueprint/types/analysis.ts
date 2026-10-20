@@ -40,6 +40,8 @@ export interface SchemaInput {
 }
 /** State owned by one invocation, never process-global or reused across roots. */
 export interface AnalysisContext {
+  /** Monotonic declaration evidence requiring child-target validation; never published. */
+  hasChildTargets: boolean;
   /** Literal/default and finite-shape evidence, independent of branchless evidence. */
   staticFirstLoad: boolean;
   /** Monotonic feature evidence collected together with authored declarations. */

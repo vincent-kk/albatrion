@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- 선언 수집은 선언을 만드는 자리에서 `controls.discriminator` 또는 `controls.fields`가 정의되어 있는지를 분석 문맥 전용 `hasChildTargets`에 단조 기능 증거로 기록한다. 기존 선언 수집 과정에서 함께 수집하며, 공개 `Blueprint.capabilities`의 키는 늘리지 않는다. 실제 파이프라인인 `buildNodes → validateShape → validateChildTargets → markCandidateDescendants → compileBlueprintExpressions → collectBlueprintWarnings`에서 자식 대상 검증은 이 증거가 있을 때만 실행한다. 증거가 없으면 자식 대상·판별 키 오류가 발생할 수 없으므로 결과는 동일하고, 검증을 실행할 때의 오류 순서도 유지한다. 선언마다 고정 검사와 분석 호출당 boolean 하나만 더하며, 기능이 없는 경우 전체 노드·선언의 자식 대상 검증 순회를 생략한다.
+
+- 조각 범위 controls에는 fields·discriminator가 허용되지 않으므로 작성 가능한 JSON에서는 조각 범위 선언의 증거 누락을 직접 관측할 수 없으며, 게이트가 있는 oneOf 분기의 자식 노드 선언으로 수집 범위를 검증한다.
+
 - Named property bindings expose an optional `hasPropertyCandidates` proof when any name has multiple candidate templates. Construction determines it once; exit ownership uses it to avoid traversing single-candidate hosts. It contains no runtime selection or gate result (NODE-043, BLUEPRINT-044; 394C-01).
 - Completed templates expose optional `hasCandidateDescendants` reachability, including recursive edges, when a named or array slot below them has multiple candidates. Construction makes one O(V) first pass over V templates for candidate-free graphs; graphs containing candidates also build and traverse the construction-only reverse graph, for O(V+E) total work over template edges E. Graphs without candidates perform no structural retained-source query or replay-marker allocation. A candidate-bearing source slot or host can carry the replay marker into single-candidate destination templates or newly inserted single-candidate objects (370라운드 원칙, NODE-051; 394C-01).
 - Candidate flags are primitive metadata on existing templates, assigned only during blueprint construction before template freezing. They cache no runtime value or gate result and add no frozen objects or schema/control fields, so the recorded owned-inline freeze counts and field-specific bounds remain unchanged (370라운드 원칙; 394C-01).

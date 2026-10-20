@@ -104,6 +104,11 @@ export const collectDeclarations = (
     inherited: input.inherited,
     hostPath: input.hostPath,
   };
+  if (
+    schema.controls?.discriminator !== undefined ||
+    schema.controls?.fields !== undefined
+  )
+    context.hasChildTargets = true;
   if (process.env.NODE_ENV !== 'production') {
     Object.freeze(fragment.order);
     Object.freeze(fragment.gates);
