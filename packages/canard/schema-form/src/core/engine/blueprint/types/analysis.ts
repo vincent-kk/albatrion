@@ -44,6 +44,8 @@ export interface AnalysisContext {
   hasChildTargets: boolean;
   /** Literal/default and finite-shape evidence, independent of branchless evidence. */
   staticFirstLoad: boolean;
+  /** Monotonic evidence that construction hit a template still being built. */
+  hasTemplateRecursion: boolean;
   /** Monotonic feature evidence collected together with authored declarations. */
   capabilities: { -readonly [Key in keyof Blueprint['capabilities']]: boolean };
   schema: BlueprintSchema;

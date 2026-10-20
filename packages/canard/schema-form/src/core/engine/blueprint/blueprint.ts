@@ -41,6 +41,7 @@ export const blueprint = (
   const context: AnalysisContext = {
     hasChildTargets: false,
     staticFirstLoad: true,
+    hasTemplateRecursion: false,
     capabilities: {
       branchless: true,
       hasExpressions: false,
@@ -76,7 +77,7 @@ export const blueprint = (
     ],
     '',
   );
-  validateShape(context);
+  if (context.hasTemplateRecursion) validateShape(context);
   if (context.hasChildTargets) validateChildTargets(context);
   markCandidateDescendants(context.nodes);
   const expressions =

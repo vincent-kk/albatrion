@@ -12,6 +12,7 @@ const createContext = (
   options: AnalysisContext['options'],
 ): AnalysisContext => ({
   hasChildTargets: false,
+  hasTemplateRecursion: false,
   staticFirstLoad: true,
   capabilities: {
     branchless: true,

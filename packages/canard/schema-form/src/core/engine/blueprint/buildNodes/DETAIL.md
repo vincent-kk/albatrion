@@ -22,6 +22,8 @@
 
 - 선언 수집은 선언을 만들 때 그 스키마의 controls.discriminator 또는 controls.fields가 정의되어 있으면 분석 문맥의 hasChildTargets를 true로 바꾸며, false로 되돌리지 않는다.
 
+- 노드 구성은 `constructing.has(key)`가 참인 연결에서 분석 문맥의 `hasTemplateRecursion`을 true로 바꾸며, false로 되돌리지 않는다. 어느 조회가 템플릿을 돌려주었는지로 판단하지 않는다.
+
 - 조각 순서는 properties, allOf, if/then/else, oneOf, anyOf이며, 배열 인덱스와 중첩 경로로 전순서를 정한다. 조각 문맥은 연언과 선언을 구별하고, 상속 overlay가 어느 호스트에 속하는지를 보존한다.
 
 - 형이 없는 칸은 BLUEPRINT-048·050·051에 따라 먼저 게이트 없는 oneOf·anyOf의 허용 집합을 합친다. 두 키워드가 함께 있으면 둘을 교차한 U에서 null을 뗀 F로 종류를 정한다. F가 `{object}`나 `{array}`이면 variant 호스트이고, 다른 종류와 섞이면 오류다. 게이트 분기는 U에서 제외하며, 재귀 분기와 참조는 현재 경로에 다시 들어오는 지점에서 절단한다. 분기 없는 `const`·`enum` 칸은 단일 JSON 종류의 원시 리터럴 잎이고, 분기 안의 리터럴 전용 칸은 여전히 ⊤이다. union은 터미널이며, 가상 노드를 포함한 종류는 여덟 가지다.

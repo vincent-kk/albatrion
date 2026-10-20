@@ -38,7 +38,10 @@ export const buildNodes = (
   const { key, boundKey } = getTemplateKey(context, inputs);
   const cached =
     context.templates.get(boundKey) ?? context.constructing.get(key);
-  if (context.constructing.has(key)) context.staticFirstLoad = false;
+  if (context.constructing.has(key)) {
+    context.staticFirstLoad = false;
+    context.hasTemplateRecursion = true;
+  }
   if (cached) return cached;
   const declarations: PropertyDeclaration[] = [];
   for (let index = 0; index < inputs.length; index++) {

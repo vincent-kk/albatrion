@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 노드 구성은 생성 중인 템플릿에 도달한 사실(템플릿 재귀)을 분석 문맥에 단조 증거로 기록한다. `validateShape`는 이 증거가 있을 때만 실행한다. 템플릿 재귀가 없으면 노드 그래프는 비순환이므로 무한 형상 오류가 발생할 수 없고 결과는 같다. 증거가 있으면 기존 형상 검증과 오류 순서를 그대로 유지한다. 구성 → 형상 검증 → 자식 대상 검증 → 후보 자손 표시 → 식 컴파일 → 경고 수집의 순서를 유지한다. 재귀 증거는 `staticFirstLoad`와 독립적이며 공개 capability에 추가하지 않는다. 문맥당 불리언 필드 `hasTemplateRecursion`은 항상 존재하며 문맥 생성 시 false로 초기화한다. 재귀 연결 시 고정 대입을 더하고, 비재귀 그래프의 O(V+E) 형상 순회와 임시 방문 집합을 생략한다.
+
 - 선언 수집은 선언을 만드는 자리에서 `controls.discriminator` 또는 `controls.fields`가 정의되어 있는지를 분석 문맥 전용 `hasChildTargets`에 단조 기능 증거로 기록한다. 기존 선언 수집 과정에서 함께 수집하며, 공개 `Blueprint.capabilities`의 키는 늘리지 않는다. 실제 파이프라인인 `buildNodes → validateShape → validateChildTargets → markCandidateDescendants → compileBlueprintExpressions → collectBlueprintWarnings`에서 자식 대상 검증은 이 증거가 있을 때만 실행한다. 증거가 없으면 자식 대상·판별 키 오류가 발생할 수 없으므로 결과는 동일하고, 검증을 실행할 때의 오류 순서도 유지한다. 선언마다 고정 검사와 분석 호출당 boolean 하나만 더하며, 기능이 없는 경우 전체 노드·선언의 자식 대상 검증 순회를 생략한다.
 
 - 조각 범위 controls에는 fields·discriminator가 허용되지 않으므로 작성 가능한 JSON에서는 조각 범위 선언의 증거 누락을 직접 관측할 수 없으며, 게이트가 있는 oneOf 분기의 자식 노드 선언으로 수집 범위를 검증한다.
@@ -79,6 +81,14 @@
 - 자식 프랙탈은 `buildNodes`(선언과 노드 구성), `compileBlueprintExpressions`(식과 의존 컴파일), `validateShape`(유한 형상 검증), `collectBlueprintWarnings`(예약 키 경고 수집), `validateChildTargets`(자식 대상 검증), `StaticFirstLoadCapability`(첫 로드 자격 보관), `effectiveSchema`(활성 선언 병합)이다. `types/`는 공용 형을, `utils/<topic>/`는 자식이 위쪽으로 가져다 쓰는 보조와 진입점을 거쳐 바깥 소비자를 섬기는 보조(`features`, `itemEntry`)를 소유한다.
 
 ## Acceptance Criteria
+
+### shape-validation-counts — 템플릿 재귀 증거와 형상 검증 호출
+
+- 평면·중첩·oneOf·가상 필드·비재귀 형제 참조는 형상 검증을 호출하지 않는다. 무게이트 루트 참조, 게이트를 거친 참조, 배열 아이템 재귀는 생성 중 템플릿에 도달하면 한 번 호출한다.
+
+### shape-validation-equivalence — 무조건 형상 검증과 관측 동등성
+
+- 기존 재귀·진단 기대값을 유지하고, 코퍼스의 노드·선언·진단·오류는 같은 문맥을 무조건 검증하는 실행과 같다.
 
 ### owned-inline-differential — 구현 전 HEAD와 동결 계수
 
