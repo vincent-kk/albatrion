@@ -115,4 +115,3 @@ STABLE_SHAPES 기존 fast path, aligned 최초 합성, patch 경로, nextExtras,
 ## 증거 보관
 
 작업 namespace는 `.seiri/tasks/assemble-first-432/`이며 기준·기준 사본·후보 dist, 관측 도구 산출물, 환경, 명령과 종료 코드, 원시 시간 표본, 판정표, 감사 보고서를 보존합니다. 기준 index.mjs SHA256은 `20e9321ba693d6fc810ab2f04a2aced52e7ccc996f17978a27db342133166fbd`, 후보는 `701d1946c2d2a4ca218d396dd7d064cd893c6b36c25d63d0e0986c9dfa67fee1`입니다. namespace 전체를 메인 체크아웃의 같은 경로로 복사하고 `diff -rq` 종료 0을 확인했습니다. `seal.json`에는 자기 자신을 제외한 모든 파일의 크기와 SHA256을 기록하며 최종 PR 정보를 반영한 뒤 다시 봉인·복사합니다. 최종 PR 번호와 head SHA, 모든 관측 명령은 namespace의 `report.md`에 기록합니다.
-
