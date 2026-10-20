@@ -185,6 +185,9 @@ export const buildChildSelectionRuntime = async (
     const result = await build({
       stdin: {
         contents:
+          (revision
+            ? ''
+            : "import { gateWheelEvaluation } from './src/core/engine/settle/utils/gates/gateWheelEvaluation'; gateWheelEvaluation.mode = 'shadow';\n") +
           "export { runChildSelectionHistory } from './src/core/engine/settle/__tests__/fixtures/childSelection/runChildSelectionHistory';",
         loader: 'ts',
         resolveDir: packageRoot,
