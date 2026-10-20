@@ -14,6 +14,7 @@ import type {
   SettlementFailureCause,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
+import type { GateWheelFrame } from './gateWheel';
 
 /** Virtual child names indexed by their real sibling's host template and field. */
 export type VirtualReferenceIndex = ReadonlyMap<
@@ -153,6 +154,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   throwingGateExits?: Set<Self>;
   /** Incremented by each thrown gate evaluation to identify its selecting edge. */
   gateThrowVersion?: number;
+  /** Actual inputs of the current host wheel; nested compute calls save and restore it. */
+  gateWheelFrame?: GateWheelFrame;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original inputs retained for effective-list interpretation. */

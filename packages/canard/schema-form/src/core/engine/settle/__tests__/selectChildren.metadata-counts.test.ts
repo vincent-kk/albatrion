@@ -9,6 +9,7 @@ import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as priming from '../utils/compute/primeHost';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
+import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 import { observeChildSelectionPlans } from './fixtures/childSelection/observeChildSelectionPlans';
@@ -71,7 +72,9 @@ describe('lazy child selection metadata runtime visits', () => {
           return flush(template, path, context);
         },
       );
+      const previousMode = gateWheelEvaluation.mode;
       try {
+        gateWheelEvaluation.mode = 'record';
         const builds = observeChildSelectionPlans();
         const { root } = createTestTree(createFixedBranchSchema(count));
         const declare = root.behavior.declareChildren;
@@ -133,6 +136,7 @@ describe('lazy child selection metadata runtime visits', () => {
         }
       } finally {
         vi.restoreAllMocks();
+        gateWheelEvaluation.mode = previousMode;
       }
     },
   );
