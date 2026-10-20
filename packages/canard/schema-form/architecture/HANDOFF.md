@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-19, 증거 소실 기록·checkout 복원·시험 증거 재취득 마감; 측정·P1 원자료 미복구, 제품 수정·측정·병합은 대기하며 소유자 지시를 기다림)
+## 1. 지금 어디인가 (2026-10-20, 426라운드 닫힘; T14 수용·PR424 병합, 새 재측정 창의 차이 미입증, 소유자 결정60 대기)
 
-- **288라운드(2026-10-14, 소유자).** 전수 검사 보고에 답: 뿌리·최소 export 문제는 filid 플러그인 원칙 문제라 ogham에 이슈 하나를 남기되 바로 등록하지 말고 "구현 위반인지 규칙 결함인지"를 진행하며 가릴 것, CLAUDE.md 자리(루트/패키지)는 검토할 것, 수정 계획을 먼저 보일 것(reviews/round-288-owner-answers.md). 계획은 plan/tidy-structure/request.md(발견 F1–F8의 판정표, PR 넷, 결정 D1–D6).
 - **289라운드(2026-10-14, 소유자).** 정돈 결정: D1 진행, D2 nodeFromJSONSchema는 문서에서 지우고 뿌리에서 아래로 옮김, D3 providers organ은 components·hooks 둘, D4 잉여 export는 지우되 오류 코드 상수는 object enum으로 root export(발화 가능한 오류의 일람, 안전한 상수 사용 계약), D5 가이드는 루트에 원칙·패키지에 적용, D6 filid 이슈(규칙 결함 셋·도구 결함 하나)는 정돈-2 뒤 등록(reviews/round-289-owner-answers.md).
 - **290라운드(2026-10-14, 소유자).** 정돈 작업자는 fixy08(구현)·fairy08(문서), 원장 관리자는 관리만(reviews/round-290-owner-answers.md). 정돈-1 브리프 plan/tidy-structure/brief-tidy-1.md를 fixy08에게 보냄.
 - **291라운드(2026-10-14, 소유자).** 문자열 리터럴 규약은 JSON Schema type 외에 금지(변경 표면), 추가 사례·method·event dispatch 안전 여부 물음, 순서는 정돈 → 구조 리뷰 → 속도 개선(reviews/round-291-owner-answers.md). 전수 판정은 plan/tidy-structure/string-literal-audit.md(dispatch·메서드 안전, 누수는 오류 코드 생성자·controls 키·FieldNode 형 미연결·경로 토큰). 정돈-E 범위 E1–E5.
@@ -139,7 +138,8 @@
 - **422라운드(2026-10-19, 닫기/원장 관리자).** 옛 portability 검토의 전체 최종 증거를 회수할 수 없어 새 agy3.8 독립 검토를 받았고 retired-owner 거절 요약의 상충 가능한 문구만 새 보완 계약으로 한정했다. SB3 known/held retired의 유효한 이력 정체성과 현재 rebirth 결속을 구별하며 한정 G3/SB3/SB4 재검토 cleared 뒤 root의 일반 G1 범위로 원래14경로와66/58 분리를 수락했다. 원형58·28채널·동일 module readonly reader·좁은 capture와 미래 F60/480/20/384를 유지하며 옛 문서11 pending을 실행 통과로 바꾸지 않는다. root/Vincent 귀속을 정정하고 원문을 보존했으며 새 child의 Sol/high 워커는 setup skip과 실제 turn_started로 T 구현에 진입했다. 제품 코드·기대값·F·timing은 이번 문서 마감에서 바꾸지 않았고 P1 실패·owner54/58/59/60·PR423·TEST-027/M3·성능 수용은 해당 범위만 보류한다(reviews/round-422-closing.md).
 - **423라운드(2026-10-19, 소유자 지시와 마감).** 진행 범위·소요 시간 질문에 답하고 T14를 마지막으로 원장 갱신 뒤 대기하라는 원문3개를 기록했다. T14 검증·DETAIL14경로는별도 가지의 초안으로 보존하며 대상26과 typecheck/lint/build의 부분 통과를 전체 시험61실패/18errors·G5 및 독립 구현 검토 미완료와 구별한다. 제품 수정·기존 기대 변경·후속 F·새 측정·병합과 최종 완료는 진행하지 않는다. 소유자 지시가 종전의 자율 진행 설명보다 우선하며 P1 실패와 owner54/58/59/60·PR423·M3·성능 수용 보류는 유지한다(reviews/round-423-owner-answers.md, reviews/round-423-t14-handoff.md).
 - **424라운드(2026-10-19, 소유자 지시와 환경 인계).** 불필요한 환경 정리와 보존 경로·개시 프롬프트 작성 지시를 원문으로 기록했다. 실제 메인·PR423·미통과 Draft PR424의 세 작업 폴더와 원자료를 보존하고 유휴 보조 터미널3곳과 물리 경로가 없는 Git 등록3곳만 정리한다. 제품 수정·후속 F·측정·병합은 재개하지 않으며 최신 환경 경로와 마감 조건은 reviews/round-424-environment-handoff.md, 다음 담당자의 첫 읽기와 승인 경계는 verification/perf-optimization/l3-briefs/next-agent-start-prompt.md를 따른다. 원장 검사 뒤 마지막 보조 세션도 닫고 문서만 게시하여 대기한다.
-- **425라운드(2026-10-19, 소유자 지시와 증거 재취득 마감).** 소실 경위·백업 없음 전제 재취득·조기 마감 지시를 원문으로 기록했다. origin에서 두 checkout을 다시 만들고 게이트·전체 시험 증거를 새 namespace에 취득했으며 하위 checkout의 의존 패키지 빌드 전제를 기록했다. T14는 따뜻한 캐시·단독 실행 뒤 시간 assertion 한 건이 남아 원인 미확정이고 PR423은 단독 실행이 없어 경합을 배제하지 못한다. 측정·P1 원자료는 복구되지 않아 원장의 파생 수치만 남았으며 옛 실패의 원인을 소급해 단정하지 않는다. 현재 경로·봉인과 상세 결과는 reviews/round-425-evidence-reacquisition.md를 따른다. 제품 수정·측정·P1·병합을 재개하지 않고 기존 보류를 유지하며 소유자 지시를 기다린다. 다음 라운드 번호는 426.
+- **425라운드(2026-10-19, 소유자 지시와 증거 재취득 마감).** 소실 경위·백업 없음 전제 재취득·조기 마감 지시를 원문으로 기록했다. origin에서 두 checkout을 다시 만들고 게이트·전체 시험 증거를 새 namespace에 취득했으며 하위 checkout의 의존 패키지 빌드 전제를 기록했다. T14는 따뜻한 캐시·단독 실행 뒤 시간 assertion 한 건이 남아 원인 미확정이고 PR423은 단독 실행이 없어 경합을 배제하지 못한다. 측정·P1 원자료는 복구되지 않아 원장의 파생 수치만 남았으며 옛 실패의 원인을 소급해 단정하지 않는다. 현재 경로·봉인과 상세 결과는 reviews/round-425-evidence-reacquisition.md를 따른다. 제품 수정·측정·P1·병합을 재개하지 않고 기존 보류를 유지하며 소유자 지시를 기다린다.
+- **426라운드(2026-10-20, 소유자 지시와 T14 후속·재측정 마감).** 후속·재측정 지시와 시간 잡음 예외 및 직접 병합 통지를 원문으로 기록했다. Node24.20.0에서 시간 시험은 head·base 각5/5 통과하고 import 경로 변경이 없어 소유자 예외로 기록했으며 재실행 G3/G4와 조건부 독립 검토로 T14를 수용했다. 코디네이터의 병합 명령은 자동 분류기가 거절해 Vincent가 PR424를4e9b6786e로 직접 병합했다. 제품 코드 변경은0이다. itemless 재측정의 대표 Node 행은 두 라운드의 부호가 반대여서 새 창에서는 차이가 입증되지 않았으며 이전 창의 일관된 지연을 뒤집거나 확인하지 않고 두 창을 소유자 결정60에 넘긴다. 현재 경로·봉인·독립 검토 및 측정의 한계는 reviews/round-426-t14-followup-and-remeasurement.md를 따른다. owner54/58/59/60·TEST-027/M3·성능 수용·PR423 병합·P1 전체 protocol 실패는 보류하며 F는 미착수이고 두 child를 보존한다. 다음 라운드 번호는 427.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -659,6 +659,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-423-closing.md` | T14 검증 도구 초안 인계와 미통과 게이트 보존 및 소유자 지시에 따른 대기 |
 | `reviews/round-424-closing.md` | 작업환경 정리와 보존 경로·다음 담당자 개시 프롬프트 인계 |
 | `reviews/round-425-closing.md` | 증거 소실과 checkout 복원·시험 재취득, 측정 원자료 미복구 및 대기 |
+| `reviews/round-426-closing.md` | T14 수용과 PR424 직접 병합, itemless 재측정의 차이 미입증 및 결정60 대기 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
