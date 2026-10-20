@@ -115,3 +115,15 @@ STABLE_SHAPES 기존 fast path, aligned 최초 합성, patch 경로, nextExtras,
 ## 증거 보관
 
 작업 namespace는 `.seiri/tasks/assemble-first-432/`이며 기준·기준 사본·후보 dist, 관측 도구 산출물, 환경, 명령과 종료 코드, 원시 시간 표본, 판정표, 감사 보고서를 보존합니다. 기준 index.mjs SHA256은 `20e9321ba693d6fc810ab2f04a2aced52e7ccc996f17978a27db342133166fbd`, 후보는 `701d1946c2d2a4ca218d396dd7d064cd893c6b36c25d63d0e0986c9dfa67fee1`입니다. namespace 전체를 메인 체크아웃의 같은 경로로 복사하고 `diff -rq` 종료 0을 확인했습니다. `seal.json`에는 자기 자신을 제외한 모든 파일의 크기와 SHA256을 기록하며 최종 PR 정보를 반영한 뒤 다시 봉인·복사합니다. 최종 PR 번호와 head SHA, 모든 관측 명령은 namespace의 `report.md`에 기록합니다.
+
+## 입증 표시 행의 인과 확인
+
+A/A/B 창에서 `입증`으로 표시된 세 행(Node `array-B0-mount-N8000` 느림 +2.83 % / +3.43 %, Bun `array-B0-mount-N8000` 빠름, Bun `array-T0-mount-N8000` 빠름)에 대해 코디네이터의 debugger 하위 에이전트가 변경과의 인과를 확인했습니다. 저장소는 수정하지 않았고, 계측 사본과 스크립트, 출력은 `.seiri/tasks/assemble-first-432/causality/`에 있습니다.
+
+- 장면 정의: 러너의 fixture는 루트를 `{type:'object', properties:{h}}`로 만들고, `array-B0`는 `h = {type:'array'}`(items 없음), `array-T0`는 `h = {type:'array', options:{terminal:true}}`이며 값은 숫자 배열 `[0..N-1]`입니다. 객체 항목이 없으므로 항목마다 `assembleObject`가 돌지 않습니다. 루트는 previous 없음·undeclaredValues 없음·entries 1 = children 1 조건을 만족해 새 분기보다 앞선 정렬 빠른 경로에서 반환합니다. `object-B0`만 `h = {type:'object'}`(properties 없음)에 `k0..kN` 객체 값이라 호스트에서 새 분기가 마운트당 1회 실행됩니다.
+- 계측 카운트(`$TMPDIR` 사본, 장면당 1회 마운트, Node·Bun 동일): 배열 장면 넷(B0·T0 × N1000·N8000)은 두 dist 모두 진입 1, 정렬 경로 반환 1, 새 분기 0, 일반 경로 0입니다. `object-B0` N100·N1000은 base가 진입 2·정렬 1·일반 경로 1, candidate가 진입 2·정렬 1·새 분기 1·일반 경로 0입니다.
+- 번들 차이: `dist/index.mjs`의 차이는 `assembleObject` 본문의 한 덩어리뿐이며 661,003 → 661,448바이트(+445)입니다. A와 A′의 dist와 러너 번들은 바이트 단위로 같습니다.
+- 원시 표본(Mann–Whitney 양측): Node `array-B0-N8000` 1바퀴는 B 대 A p = 8.5e-7이지만 바이트가 같은 A′ 대 A도 p ≈ 0(P(A′>A) = 0.89)이고, 2바퀴는 B 프로세스 하나의 분포 전체가 위로 밀린 모양입니다. Bun `array-B0-N8000`은 B 대 A p가 0.97과 0.062, Bun `array-T0-N8000`은 0.52와 0.20이며 2바퀴 A′ 대 A가 p = 0.007이라 폭 1.36 %는 표본이 좁게 잡힌 결과입니다.
+- 교차 재측정(Node `array-B0-N8000`, 실행마다 새 프로세스, A·B 순서를 바꿔 8쌍, 예열 20회·표본 100개): 실행별 min의 중앙값은 A 2.4614 ms, B 2.4605 ms로 Δ −0.04 %이고 8쌍 중 5쌍에서 B가 빨랐습니다. 실행별 p50의 중앙값은 A 2.5738, B 2.5626(Δ −0.43 %)입니다. A끼리의 실행 간 폭은 1.64 %입니다. 절대값이 창보다 높은 것은 실행 환경과 시점 차이이므로 상대값만 봅니다.
+
+세 행은 변경 코드가 실행되지 않는 장면이므로 이 PR의 회귀나 개선 근거로 쓰지 않습니다. 새 분기가 실제로 도는 `object-B0` 네 행(Node·Bun × N100·N1000)은 이 창에서 방향이 뒤집히거나 A′ 대 A 차이가 유의해 판정할 수 없습니다(Bun N1000은 두 바퀴 모두 B가 빨랐으나 1바퀴 A′ 대 A도 p = 1.6e-5라 가설로 둡니다). 판정 폭을 두 바퀴의 |Δ(A′/A)|로만 잡으면 실제 프로세스 간 편차(약 1.6–1.8 %)를 과소 추정하므로, 이 네 행은 실행마다 새 프로세스로 A·A′·B를 교대로 여러 번 돌려 실행별 min의 중앙값으로 다시 판정합니다(다음 절). 수용 판단은 소유자에게 있습니다.
