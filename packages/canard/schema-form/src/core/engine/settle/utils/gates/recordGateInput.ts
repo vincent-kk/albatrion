@@ -5,7 +5,7 @@ import type { SettlementContext } from '../../types/settlement';
 /**
  * Retain each distinct read and reject different values at the same input site.
  * @param context - Settlement with the currently executing host frame, if any
- * @param path - Absolute dependency or host path; empty for the binding context
+ * @param path - Absolute dependency or host path; '@' (JSONPointer.Context) for the binding context
  * @param value - Value already read by the real evaluation
  * @param kind - Dependency publication, projected host extras, or binding context
  * @returns Nothing; the frame records the first value and any inconsistency

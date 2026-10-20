@@ -5,6 +5,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-gate-selection-counts
@@ -26,7 +27,9 @@ describe('baseline fixed-width branch-axis characterization', () => {
             return evaluate(dependencies);
           };
         });
+      const previousMode = gateWheelEvaluation.mode;
       try {
+        gateWheelEvaluation.mode = 'record';
         const schema = {
           type: 'object',
           properties: {
@@ -68,6 +71,7 @@ describe('baseline fixed-width branch-axis characterization', () => {
         }
       } finally {
         compiling.mockRestore();
+        gateWheelEvaluation.mode = previousMode;
       }
     },
   );

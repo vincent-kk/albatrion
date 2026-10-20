@@ -22,6 +22,7 @@ import { recordGateInput } from './recordGateInput';
 
 /**
  * Evaluate one bound gate with the real expression or validator guard.
+ * This helper stays here because it recurses through the exported wrapper; a separate file would create an import cycle.
  * @param gate - Declarative condition bound to the current occurrence
  * @param context - Projected tree and deferred gate failure collection to update
  * @param owner - Live occurrence whose template contains this gate

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { getCommittedDeclarationKey } from '../../utils/controls/getCommittedDeclarationKey';
 import * as predicate from '../utils/gates/canSkipGateWheel';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { gateWheelCases } from './fixtures/gateWheelCases';
@@ -15,13 +16,23 @@ describe('gate-wheel input evidence at critical wheels', () => {
       const previousMode = gateWheelEvaluation.mode;
       const proving = vi.spyOn(predicate, 'canSkipGateWheel');
       const decisions: { round: number; allowed: boolean }[][] = [];
+      const observations: {
+        emit: unknown;
+        declarations: readonly number[] | undefined;
+      }[] = [];
       try {
         runGateSelectionCase(
           fixture,
           () => {
             gateWheelEvaluation.mode = 'skip';
           },
-          () => {
+          (root) => {
+            observations.push({
+              emit: root.emit,
+              declarations: root.runtime.committedDeclarationIds?.get(
+                getCommittedDeclarationKey(root),
+              ),
+            });
             decisions.push(
               proving.mock.calls
                 .filter(([node]) => node.path === '')
@@ -42,6 +53,16 @@ describe('gate-wheel input evidence at critical wheels', () => {
         for (const wheels of critical) {
           expect(wheels.length).toBeGreaterThan(0);
           expect(wheels[0]).toEqual({ round: 0, allowed: false });
+        }
+        const observation = prefix.startsWith('S3')
+          ? observations[observations.length - 1]
+          : observations[1];
+        if (prefix.startsWith('S3')) {
+          expect(observation.emit).toEqual({ mode: 'x', p: 'P', extra: 'on' });
+          expect(observation.declarations).toEqual([0, 1, 2]);
+        } else {
+          expect(observation.emit).toEqual({ flag: true });
+          expect(observation.declarations).toEqual([0, 2]);
         }
       } finally {
         proving.mockRestore();

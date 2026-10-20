@@ -8,6 +8,7 @@ import * as paths from '../../utils/paths/resolveDependencyPath';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
+import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 
@@ -66,7 +67,9 @@ describe('gate path resolution runtime visits', () => {
           }
         },
       );
+      const previousMode = gateWheelEvaluation.mode;
       try {
+        gateWheelEvaluation.mode = 'record';
         const { root } = createTestTree(createFixedBranchSchema(count));
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         for (const [index, kind] of [
@@ -101,6 +104,7 @@ describe('gate path resolution runtime visits', () => {
         }
       } finally {
         vi.restoreAllMocks();
+        gateWheelEvaluation.mode = previousMode;
       }
     },
   );

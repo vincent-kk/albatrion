@@ -19,6 +19,7 @@ import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
 
 /**
  * Finish a dirty subtree with one descent and a bounded host gate wheel.
+ * This helper stays here because it recurses through the exported wrapper; a separate file would create an import cycle.
  * @param node - Current live node reached from the root
  * @param context - Dirty paths and current commit's deferred failure
  * @returns Nothing; the record carries its calculated values

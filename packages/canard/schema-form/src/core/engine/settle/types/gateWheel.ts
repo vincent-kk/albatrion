@@ -2,21 +2,33 @@ import type { BlueprintGate } from '../../blueprint';
 
 /** One actual input read; only the current host wheel retains its value. */
 export interface GateWheelInput {
+  /** Absolute dependency or host path, or '@' for the binding context. */
   path: string;
+  /** Channel whose value must remain identical at the confirmation boundary. */
   kind: 'value' | 'extra' | 'context';
+  /** Reference or primitive observed by the actual gate evaluation. */
   value: unknown;
 }
 
 /** Recursive host frames never share inputs or shadow evaluation sequences. */
 export interface GateWheelFrame {
+  /** First actual input at each distinct channel and path in this host wheel. */
   inputs: Map<string, GateWheelInput>;
+  /** Whether every repeated read at an input site was Object.is-identical. */
   consistent: boolean;
+  /** Registered gate count at the beginning of this host wheel. */
   gateCount: number;
+  /** Settlement gate exception version at the beginning of this host wheel. */
   throwVersion: number | undefined;
+  /** Actual evaluation sequence retained only for shadow confirmation. */
   evaluations?: {
+    /** Bound condition evaluated at this position, including prerequisites. */
     gate: BlueprintGate;
+    /** Live occurrence path of the owner that evaluated the condition. */
     path: string;
+    /** Direct child selected by a node gate, absent for a host gate. */
     edgeName: string | undefined;
+    /** Actual boolean result to compare with the confirmation wheel. */
     value: boolean;
   }[];
 }

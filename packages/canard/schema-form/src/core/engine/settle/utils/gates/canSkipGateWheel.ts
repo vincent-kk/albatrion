@@ -44,6 +44,7 @@ export const canSkipGateWheel = <Self extends FieldNodeRecord<Self>>(
               context,
               input.path,
               readProjectedValue(context, input.path),
+              node,
             )
           : readProjectedValue(context, input.path);
     if (!Object.is(input.value, value)) return false;
