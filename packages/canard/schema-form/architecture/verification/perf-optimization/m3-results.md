@@ -542,102 +542,120 @@ UTC 2026-10-20T06:12:47.833Z → 2026-10-20T08:03:37.111Z에 측정했습니다.
 
 ## 0.16.1보다 느린 행 — TEST-027
 
-core 16행, 폼 E4 76행입니다. 1 ms 이상 장면과 폼은 두 바퀴 모두 양수인 행이고 작은 장면은 실행별 min 중앙값 비율이 양수인 행입니다. 이유 칸은 코디네이터가 채우도록 비워 두었습니다.
+core 16행, 폼 E4 76행입니다. 1 ms 이상 장면과 폼은 두 바퀴 모두 양수인 행이고 작은 장면은 실행별 min 중앙값 비율이 양수인 행입니다. 이유 칸은 아래 귀속 그룹의 부호이며 코디네이터가 채웠습니다.
 
 | 장면 | 런타임 | 지표 | E0 수치 | E4 수치 | Δ % | 이유 |
 | --- | --- | --- | ---: | ---: | ---: | --- |
-| object-T-mount-N100 | node | core-mount min ms | 0.051042 | 0.097438 | +90.898 | |
-| object-B0-mount-N100 | node | core-mount min ms | 0.016375 | 0.118104 | +621.246 | |
-| object-B0-mount-N1000 | node | core-mount min ms | 0.018646 | 0.638583 | +3324.867 | |
-| object-B1-mount-N100 | node | core-mount min ms | 0.059146 | 0.154458 | +161.147 | |
-| object-BN-mount-N100 | node | core-mount min ms | 0.174333 | 0.821479 | +371.213 | |
-| object-BN-mount-N1000 | node | core-mount min ms | 1.816125 / 1.838083 | 5.764708 / 5.721917 | +217.418 / +211.298 | |
-| array-BN-mount-N1000 | node | core-mount min ms | 0.771834 / 0.769000 | 2.973333 / 2.784000 | +285.230 / +262.029 | |
-| array-BN-mount-N8000 | node | core-mount min ms | 7.882750 / 7.799750 | 27.510000 / 27.905875 | +248.990 / +257.779 | |
-| object-T-mount-N100 | bun | core-mount min ms | 0.029062 | 0.074625 | +156.774 | |
-| object-B0-mount-N100 | bun | core-mount min ms | 0.017459 | 0.084500 | +383.988 | |
-| object-B0-mount-N1000 | bun | core-mount min ms | 0.073938 | 0.234896 | +217.695 | |
-| object-B1-mount-N100 | bun | core-mount min ms | 0.035062 | 0.099562 | +183.961 | |
-| object-BN-mount-N100 | bun | core-mount min ms | 0.114812 | 0.389687 | +239.414 | |
-| object-BN-mount-N1000 | bun | core-mount min ms | 0.969333 / 0.983000 | 2.893208 / 3.075291 | +198.474 / +212.848 | |
-| array-BN-mount-N1000 | bun | core-mount min ms | 0.522291 / 0.546083 | 1.864250 / 1.845459 | +256.937 / +237.945 | |
-| array-BN-mount-N8000 | bun | core-mount min ms | 4.856458 / 5.061500 | 17.998709 / 17.002500 | +270.614 / +235.918 | |
-| core/sample-0 | node | core-mount ms | 0.273855 / 0.280416 | 0.319521 / 0.322645 | +16.675 / +15.060 | |
-| core/sample-0 | node | core-update ms | 0.067687 / 0.071688 | 0.173521 / 0.173896 | +156.356 / +142.575 | |
-| core/sample-1 | node | core-mount ms | 0.378604 / 0.375396 | 0.415938 / 0.407625 | +9.861 / +8.585 | |
-| core/sample-1 | node | core-update ms | 0.074000 / 0.073333 | 0.184625 / 0.181688 | +149.493 / +147.756 | |
-| core/sample-2 | node | core-mount ms | 0.396875 / 0.390042 | 0.522666 / 0.505980 | +31.695 / +29.725 | |
-| core/sample-2 | node | core-update ms | 0.088729 / 0.085209 | 0.196146 / 0.191792 | +121.062 / +125.085 | |
-| core/sample-3 | node | core-mount ms | 0.694312 / 0.668792 | 1.133750 / 1.085750 | +63.291 / +62.345 | |
-| core/sample-3 | node | core-update ms | 0.079959 / 0.081833 | 0.172125 / 0.170916 | +115.268 / +108.860 | |
-| core/flat-50 | node | core-mount ms | 0.934312 / 0.927479 | 1.554083 / 1.629854 | +66.334 / +75.729 | |
-| core/flat-50 | node | core-update ms | 0.726604 / 0.794333 | 0.843520 / 0.946375 | +16.091 / +19.141 | |
-| core/flat-100 | node | core-mount ms | 1.387187 / 1.215208 | 2.580187 / 2.238146 | +86.001 / +84.178 | |
-| core/flat-500 | node | core-mount ms | 3.363938 / 3.162271 | 6.725937 / 6.569479 | +99.942 / +107.746 | |
-| core/nested-d3-f4 | node | core-mount ms | 1.047604 / 0.966354 | 2.049251 / 1.897729 | +95.613 / +96.380 | |
-| core/nested-d3-f4 | node | core-update ms | 0.505479 / 0.523916 | 0.898062 / 0.867040 | +77.665 / +65.492 | |
-| core/nested-d5-f4 | node | core-mount ms | 5.677562 / 5.068563 | 15.228459 / 13.811166 | +168.222 / +172.487 | |
-| core/nested-d5-f4 | node | core-update ms | 0.405374 / 0.398126 | 0.686832 / 0.657666 | +69.432 / +65.190 | |
-| core/array-100 | node | core-update ms | 0.112147 / 0.113959 | 0.200250 / 0.201000 | +78.561 / +76.380 | |
-| core/array-500 | node | core-update ms | 0.195813 / 0.194687 | 0.218979 / 0.219312 | +11.830 / +12.648 | |
-| core/oneOf-5 | node | core-mount ms | 0.572292 / 0.569478 | 1.829042 / 1.773375 | +219.599 / +211.403 | |
-| core/oneOf-5 | node | core-update ms | 0.192188 / 0.185021 | 1.056251 / 1.015938 | +449.594 / +449.093 | |
-| core/oneOf-10 | node | core-mount ms | 0.637896 / 0.623062 | 2.211771 / 2.105063 | +246.729 / +237.857 | |
-| core/oneOf-10 | node | core-update ms | 0.187187 / 0.184334 | 1.296021 / 1.202396 | +592.365 / +552.294 | |
-| core/oneOf-20 | node | core-mount ms | 0.780896 / 0.749020 | 3.126605 / 2.908604 | +300.387 / +288.321 | |
-| core/oneOf-20 | node | core-update ms | 0.190187 / 0.186958 | 1.697396 / 1.533750 | +792.486 / +720.369 | |
-| core/array-push-100 | node | core-mount ms | 0.329729 / 0.302521 | 0.586687 / 0.580459 | +77.930 / +91.874 | |
-| core/array-replace-200 | node | core-mount ms | 0.214980 / 0.214437 | 0.391645 / 0.391542 | +82.178 / +82.590 | |
-| core/array-replace-200 | node | core-update ms | 3.333937 / 2.965521 | 6.919229 / 5.988854 | +107.539 / +101.949 | |
-| core/array-push-remove-100 | node | core-mount ms | 0.302354 / 0.294583 | 0.585708 / 0.524208 | +93.716 / +77.949 | |
-| core/array-push-remove-100 | node | core-update ms | 59.767457 / 52.025066 | 94.217463 / 84.552102 | +57.640 / +62.522 | |
-| core/computed-visible-derived | node | core-mount ms | 0.446501 / 0.429166 | 0.976229 / 0.973958 | +118.640 / +126.942 | |
-| core/computed-visible-derived | node | core-update ms | 0.143542 / 0.140062 | 0.410250 / 0.402792 | +185.805 / +187.581 | |
-| render/sample-0 | node | render-mount-wall ms | 5.027187 / 5.041729 | 5.215104 / 5.204791 | +3.738 / +3.234 | |
-| render/sample-0 | node | render-update-wall ms | 2.203792 / 2.232208 | 3.249646 / 3.247062 | +47.457 / +45.464 | |
-| render/sample-0 | node | profiler-mount ms | 2.001043 / 2.002788 | 2.150354 / 2.139901 | +7.462 / +6.846 | |
-| render/sample-1 | node | render-mount-wall ms | 6.112729 / 6.157167 | 7.206958 / 7.152271 | +17.901 / +16.162 | |
-| render/sample-1 | node | render-update-wall ms | 2.319125 / 2.147709 | 3.363438 / 3.369104 | +45.030 / +56.870 | |
-| render/sample-1 | node | profiler-mount ms | 3.985664 / 3.965530 | 4.016040 / 3.977136 | +0.762 / +0.293 | |
-| render/sample-2 | node | render-mount-wall ms | 5.149042 / 5.296271 | 6.597895 / 6.505708 | +28.138 / +22.836 | |
-| render/sample-2 | node | render-update-wall ms | 2.166500 / 2.146375 | 3.390021 / 3.394687 | +56.475 / +58.159 | |
-| render/sample-2 | node | profiler-mount ms | 3.196188 / 3.175222 | 3.472936 / 3.400064 | +8.659 / +7.081 | |
-| render/sample-3 | node | render-mount-wall ms | 13.891354 / 13.844146 | 15.046855 / 14.955605 | +8.318 / +8.028 | |
-| render/sample-3 | node | render-update-wall ms | 3.237875 / 3.234770 | 3.289687 / 3.263416 | +1.600 / +0.886 | |
-| render/sample-3 | node | profiler-mount ms | 10.452737 / 10.352909 | 10.863025 / 10.743334 | +3.925 / +3.771 | |
-| render/flat-50 | node | render-mount-wall ms | 13.301479 / 13.327396 | 14.267729 / 14.165938 | +7.264 / +6.292 | |
-| render/flat-50 | node | render-update-wall ms | 27.699145 / 27.856208 | 29.819792 / 29.677708 | +7.656 / +6.539 | |
-| render/flat-50 | node | profiler-mount ms | 9.969385 / 9.886967 | 10.151434 / 10.046753 | +1.826 / +1.616 | |
-| render/flat-100 | node | render-update-wall ms | 25.984042 / 26.008522 | 30.622687 / 30.608917 | +17.852 / +17.688 | |
-| render/flat-500 | node | render-update-wall ms | 29.966646 / 29.561313 | 39.893437 / 39.902021 | +33.126 / +34.981 | |
-| render/nested-d3-f4 | node | render-mount-wall ms | 20.037063 / 19.643729 | 20.294042 / 19.917542 | +1.283 / +1.394 | |
-| render/nested-d3-f4 | node | render-update-wall ms | 25.251271 / 25.592750 | 31.234354 / 31.217938 | +23.694 / +21.980 | |
-| render/nested-d3-f4 | node | profiler-mount ms | 15.196084 / 14.810455 | 15.245346 / 14.877319 | +0.324 / +0.451 | |
-| render/nested-d5-f4 | node | render-update-wall ms | 24.386959 / 25.124396 | 33.841542 / 33.722583 | +38.769 / +34.222 | |
-| render/oneOf-5 | node | render-mount-wall ms | 5.071583 / 5.088438 | 7.027625 / 6.961791 | +38.569 / +36.816 | |
-| render/oneOf-5 | node | render-update-wall ms | 6.382980 / 6.227209 | 9.062042 / 9.003708 | +41.972 / +44.587 | |
-| render/oneOf-5 | node | profiler-mount ms | 2.953809 / 2.941512 | 3.905345 / 3.893167 | +32.214 / +32.353 | |
-| render/oneOf-10 | node | render-mount-wall ms | 5.169146 / 5.062875 | 7.451020 / 7.446687 | +44.144 / +47.084 | |
-| render/oneOf-10 | node | render-update-wall ms | 6.412854 / 6.236583 | 9.266854 / 9.256501 | +44.504 / +48.423 | |
-| render/oneOf-10 | node | profiler-mount ms | 3.025749 / 2.950023 | 4.355338 / 4.331126 | +43.942 / +46.817 | |
-| render/oneOf-20 | node | render-mount-wall ms | 5.275083 / 5.245584 | 8.214646 / 8.183771 | +55.725 / +56.013 | |
-| render/oneOf-20 | node | render-update-wall ms | 6.375146 / 6.253645 | 9.614375 / 9.586479 | +50.810 / +53.294 | |
-| render/oneOf-20 | node | profiler-mount ms | 3.145445 / 3.093708 | 5.144984 / 5.107889 | +63.569 / +65.106 | |
-| render/array-push-100 | node | render-mount-wall ms | 4.321188 / 4.363583 | 4.738250 / 4.764584 | +9.652 / +9.190 | |
-| render/array-push-100 | node | render-update-wall ms | 391.493834 / 393.860229 | 535.823563 / 517.450209 | +36.866 / +31.379 | |
-| render/array-push-100 | node | profiler-mount ms | 1.413202 / 1.440620 | 1.774129 / 1.773520 | +25.540 / +23.108 | |
-| render/array-push-100 | node | profiler-update ms | 158.320375 / 161.871044 | 198.181318 / 184.664313 | +25.177 / +14.081 | |
-| render/array-replace-200 | node | render-mount-wall ms | 4.403562 / 4.366083 | 4.734021 / 4.754813 | +7.504 / +8.903 | |
-| render/array-replace-200 | node | render-update-wall ms | 163.461333 / 165.057292 | 177.722125 / 179.139229 | +8.724 / +8.532 | |
-| render/array-replace-200 | node | profiler-mount ms | 1.443454 / 1.462819 | 1.712022 / 1.712704 | +18.606 / +17.082 | |
-| render/array-replace-200 | node | profiler-update ms | 132.851788 / 134.541794 | 139.457326 / 141.017361 | +4.972 / +4.813 | |
-| render/array-push-remove-100 | node | render-mount-wall ms | 5.214563 / 4.971271 | 5.749812 / 5.801834 | +10.265 / +16.707 | |
-| render/array-push-remove-100 | node | render-update-wall ms | 759.560125 / 762.545791 | 1026.243000 / 1024.153334 | +35.110 / +34.307 | |
-| render/array-push-remove-100 | node | profiler-mount ms | 2.258685 / 2.247813 | 2.580192 / 2.719265 | +14.234 / +20.974 | |
-| render/array-push-remove-100 | node | profiler-update ms | 275.687517 / 277.545208 | 312.106309 / 308.050678 | +13.210 / +10.991 | |
-| render/computed-visible-derived | node | render-mount-wall ms | 4.692042 / 4.639021 | 5.957104 / 5.999187 | +26.962 / +29.320 | |
-| render/computed-visible-derived | node | render-update-wall ms | 7.153355 / 7.219792 | 9.906396 / 9.830521 | +38.486 / +36.161 | |
-| render/computed-visible-derived | node | profiler-mount ms | 2.644268 / 2.616550 | 2.915370 / 2.981915 | +10.252 / +13.964 | |
+| object-T-mount-N100 | node | core-mount min ms | 0.051042 | 0.097438 | +90.898 | C2 |
+| object-B0-mount-N100 | node | core-mount min ms | 0.016375 | 0.118104 | +621.246 | C1 |
+| object-B0-mount-N1000 | node | core-mount min ms | 0.018646 | 0.638583 | +3324.867 | C1 |
+| object-B1-mount-N100 | node | core-mount min ms | 0.059146 | 0.154458 | +161.147 | C2 |
+| object-BN-mount-N100 | node | core-mount min ms | 0.174333 | 0.821479 | +371.213 | C3 |
+| object-BN-mount-N1000 | node | core-mount min ms | 1.816125 / 1.838083 | 5.764708 / 5.721917 | +217.418 / +211.298 | C3 |
+| array-BN-mount-N1000 | node | core-mount min ms | 0.771834 / 0.769000 | 2.973333 / 2.784000 | +285.230 / +262.029 | C4 |
+| array-BN-mount-N8000 | node | core-mount min ms | 7.882750 / 7.799750 | 27.510000 / 27.905875 | +248.990 / +257.779 | C4 |
+| object-T-mount-N100 | bun | core-mount min ms | 0.029062 | 0.074625 | +156.774 | C2 |
+| object-B0-mount-N100 | bun | core-mount min ms | 0.017459 | 0.084500 | +383.988 | C1 |
+| object-B0-mount-N1000 | bun | core-mount min ms | 0.073938 | 0.234896 | +217.695 | C1 |
+| object-B1-mount-N100 | bun | core-mount min ms | 0.035062 | 0.099562 | +183.961 | C2 |
+| object-BN-mount-N100 | bun | core-mount min ms | 0.114812 | 0.389687 | +239.414 | C3 |
+| object-BN-mount-N1000 | bun | core-mount min ms | 0.969333 / 0.983000 | 2.893208 / 3.075291 | +198.474 / +212.848 | C3 |
+| array-BN-mount-N1000 | bun | core-mount min ms | 0.522291 / 0.546083 | 1.864250 / 1.845459 | +256.937 / +237.945 | C4 |
+| array-BN-mount-N8000 | bun | core-mount min ms | 4.856458 / 5.061500 | 17.998709 / 17.002500 | +270.614 / +235.918 | C4 |
+| core/sample-0 | node | core-mount ms | 0.273855 / 0.280416 | 0.319521 / 0.322645 | +16.675 / +15.060 | F3 |
+| core/sample-0 | node | core-update ms | 0.067687 / 0.071688 | 0.173521 / 0.173896 | +156.356 / +142.575 | F4 |
+| core/sample-1 | node | core-mount ms | 0.378604 / 0.375396 | 0.415938 / 0.407625 | +9.861 / +8.585 | F3 |
+| core/sample-1 | node | core-update ms | 0.074000 / 0.073333 | 0.184625 / 0.181688 | +149.493 / +147.756 | F4 |
+| core/sample-2 | node | core-mount ms | 0.396875 / 0.390042 | 0.522666 / 0.505980 | +31.695 / +29.725 | F3 |
+| core/sample-2 | node | core-update ms | 0.088729 / 0.085209 | 0.196146 / 0.191792 | +121.062 / +125.085 | F4 |
+| core/sample-3 | node | core-mount ms | 0.694312 / 0.668792 | 1.133750 / 1.085750 | +63.291 / +62.345 | F3 |
+| core/sample-3 | node | core-update ms | 0.079959 / 0.081833 | 0.172125 / 0.170916 | +115.268 / +108.860 | F4 |
+| core/flat-50 | node | core-mount ms | 0.934312 / 0.927479 | 1.554083 / 1.629854 | +66.334 / +75.729 | F3 |
+| core/flat-50 | node | core-update ms | 0.726604 / 0.794333 | 0.843520 / 0.946375 | +16.091 / +19.141 | F4 |
+| core/flat-100 | node | core-mount ms | 1.387187 / 1.215208 | 2.580187 / 2.238146 | +86.001 / +84.178 | F3 |
+| core/flat-500 | node | core-mount ms | 3.363938 / 3.162271 | 6.725937 / 6.569479 | +99.942 / +107.746 | F3 |
+| core/nested-d3-f4 | node | core-mount ms | 1.047604 / 0.966354 | 2.049251 / 1.897729 | +95.613 / +96.380 | F3 |
+| core/nested-d3-f4 | node | core-update ms | 0.505479 / 0.523916 | 0.898062 / 0.867040 | +77.665 / +65.492 | F4 |
+| core/nested-d5-f4 | node | core-mount ms | 5.677562 / 5.068563 | 15.228459 / 13.811166 | +168.222 / +172.487 | F3 |
+| core/nested-d5-f4 | node | core-update ms | 0.405374 / 0.398126 | 0.686832 / 0.657666 | +69.432 / +65.190 | F4 |
+| core/array-100 | node | core-update ms | 0.112147 / 0.113959 | 0.200250 / 0.201000 | +78.561 / +76.380 | F4 |
+| core/array-500 | node | core-update ms | 0.195813 / 0.194687 | 0.218979 / 0.219312 | +11.830 / +12.648 | F4 |
+| core/oneOf-5 | node | core-mount ms | 0.572292 / 0.569478 | 1.829042 / 1.773375 | +219.599 / +211.403 | F2 |
+| core/oneOf-5 | node | core-update ms | 0.192188 / 0.185021 | 1.056251 / 1.015938 | +449.594 / +449.093 | F1 |
+| core/oneOf-10 | node | core-mount ms | 0.637896 / 0.623062 | 2.211771 / 2.105063 | +246.729 / +237.857 | F2 |
+| core/oneOf-10 | node | core-update ms | 0.187187 / 0.184334 | 1.296021 / 1.202396 | +592.365 / +552.294 | F1 |
+| core/oneOf-20 | node | core-mount ms | 0.780896 / 0.749020 | 3.126605 / 2.908604 | +300.387 / +288.321 | F2 |
+| core/oneOf-20 | node | core-update ms | 0.190187 / 0.186958 | 1.697396 / 1.533750 | +792.486 / +720.369 | F1 |
+| core/array-push-100 | node | core-mount ms | 0.329729 / 0.302521 | 0.586687 / 0.580459 | +77.930 / +91.874 | F3 |
+| core/array-replace-200 | node | core-mount ms | 0.214980 / 0.214437 | 0.391645 / 0.391542 | +82.178 / +82.590 | F3 |
+| core/array-replace-200 | node | core-update ms | 3.333937 / 2.965521 | 6.919229 / 5.988854 | +107.539 / +101.949 | F5a |
+| core/array-push-remove-100 | node | core-mount ms | 0.302354 / 0.294583 | 0.585708 / 0.524208 | +93.716 / +77.949 | F3 |
+| core/array-push-remove-100 | node | core-update ms | 59.767457 / 52.025066 | 94.217463 / 84.552102 | +57.640 / +62.522 | F5b |
+| core/computed-visible-derived | node | core-mount ms | 0.446501 / 0.429166 | 0.976229 / 0.973958 | +118.640 / +126.942 | F3 |
+| core/computed-visible-derived | node | core-update ms | 0.143542 / 0.140062 | 0.410250 / 0.402792 | +185.805 / +187.581 | F4 |
+| render/sample-0 | node | render-mount-wall ms | 5.027187 / 5.041729 | 5.215104 / 5.204791 | +3.738 / +3.234 | R2 |
+| render/sample-0 | node | render-update-wall ms | 2.203792 / 2.232208 | 3.249646 / 3.247062 | +47.457 / +45.464 | R2 |
+| render/sample-0 | node | profiler-mount ms | 2.001043 / 2.002788 | 2.150354 / 2.139901 | +7.462 / +6.846 | R3 |
+| render/sample-1 | node | render-mount-wall ms | 6.112729 / 6.157167 | 7.206958 / 7.152271 | +17.901 / +16.162 | R2 |
+| render/sample-1 | node | render-update-wall ms | 2.319125 / 2.147709 | 3.363438 / 3.369104 | +45.030 / +56.870 | R2 |
+| render/sample-1 | node | profiler-mount ms | 3.985664 / 3.965530 | 4.016040 / 3.977136 | +0.762 / +0.293 | R3 |
+| render/sample-2 | node | render-mount-wall ms | 5.149042 / 5.296271 | 6.597895 / 6.505708 | +28.138 / +22.836 | R2 |
+| render/sample-2 | node | render-update-wall ms | 2.166500 / 2.146375 | 3.390021 / 3.394687 | +56.475 / +58.159 | R2 |
+| render/sample-2 | node | profiler-mount ms | 3.196188 / 3.175222 | 3.472936 / 3.400064 | +8.659 / +7.081 | R3 |
+| render/sample-3 | node | render-mount-wall ms | 13.891354 / 13.844146 | 15.046855 / 14.955605 | +8.318 / +8.028 | R2 |
+| render/sample-3 | node | render-update-wall ms | 3.237875 / 3.234770 | 3.289687 / 3.263416 | +1.600 / +0.886 | R2 |
+| render/sample-3 | node | profiler-mount ms | 10.452737 / 10.352909 | 10.863025 / 10.743334 | +3.925 / +3.771 | R3 |
+| render/flat-50 | node | render-mount-wall ms | 13.301479 / 13.327396 | 14.267729 / 14.165938 | +7.264 / +6.292 | R2 |
+| render/flat-50 | node | render-update-wall ms | 27.699145 / 27.856208 | 29.819792 / 29.677708 | +7.656 / +6.539 | R2 |
+| render/flat-50 | node | profiler-mount ms | 9.969385 / 9.886967 | 10.151434 / 10.046753 | +1.826 / +1.616 | R3 |
+| render/flat-100 | node | render-update-wall ms | 25.984042 / 26.008522 | 30.622687 / 30.608917 | +17.852 / +17.688 | R2 |
+| render/flat-500 | node | render-update-wall ms | 29.966646 / 29.561313 | 39.893437 / 39.902021 | +33.126 / +34.981 | R2 |
+| render/nested-d3-f4 | node | render-mount-wall ms | 20.037063 / 19.643729 | 20.294042 / 19.917542 | +1.283 / +1.394 | R2 |
+| render/nested-d3-f4 | node | render-update-wall ms | 25.251271 / 25.592750 | 31.234354 / 31.217938 | +23.694 / +21.980 | R2 |
+| render/nested-d3-f4 | node | profiler-mount ms | 15.196084 / 14.810455 | 15.245346 / 14.877319 | +0.324 / +0.451 | R3 |
+| render/nested-d5-f4 | node | render-update-wall ms | 24.386959 / 25.124396 | 33.841542 / 33.722583 | +38.769 / +34.222 | R2 |
+| render/oneOf-5 | node | render-mount-wall ms | 5.071583 / 5.088438 | 7.027625 / 6.961791 | +38.569 / +36.816 | R1 |
+| render/oneOf-5 | node | render-update-wall ms | 6.382980 / 6.227209 | 9.062042 / 9.003708 | +41.972 / +44.587 | R1 |
+| render/oneOf-5 | node | profiler-mount ms | 2.953809 / 2.941512 | 3.905345 / 3.893167 | +32.214 / +32.353 | R1 |
+| render/oneOf-10 | node | render-mount-wall ms | 5.169146 / 5.062875 | 7.451020 / 7.446687 | +44.144 / +47.084 | R1 |
+| render/oneOf-10 | node | render-update-wall ms | 6.412854 / 6.236583 | 9.266854 / 9.256501 | +44.504 / +48.423 | R1 |
+| render/oneOf-10 | node | profiler-mount ms | 3.025749 / 2.950023 | 4.355338 / 4.331126 | +43.942 / +46.817 | R1 |
+| render/oneOf-20 | node | render-mount-wall ms | 5.275083 / 5.245584 | 8.214646 / 8.183771 | +55.725 / +56.013 | R1 |
+| render/oneOf-20 | node | render-update-wall ms | 6.375146 / 6.253645 | 9.614375 / 9.586479 | +50.810 / +53.294 | R1 |
+| render/oneOf-20 | node | profiler-mount ms | 3.145445 / 3.093708 | 5.144984 / 5.107889 | +63.569 / +65.106 | R1 |
+| render/array-push-100 | node | render-mount-wall ms | 4.321188 / 4.363583 | 4.738250 / 4.764584 | +9.652 / +9.190 | R2 |
+| render/array-push-100 | node | render-update-wall ms | 391.493834 / 393.860229 | 535.823563 / 517.450209 | +36.866 / +31.379 | R2 |
+| render/array-push-100 | node | profiler-mount ms | 1.413202 / 1.440620 | 1.774129 / 1.773520 | +25.540 / +23.108 | R3 |
+| render/array-push-100 | node | profiler-update ms | 158.320375 / 161.871044 | 198.181318 / 184.664313 | +25.177 / +14.081 | R3 |
+| render/array-replace-200 | node | render-mount-wall ms | 4.403562 / 4.366083 | 4.734021 / 4.754813 | +7.504 / +8.903 | R2 |
+| render/array-replace-200 | node | render-update-wall ms | 163.461333 / 165.057292 | 177.722125 / 179.139229 | +8.724 / +8.532 | R2 |
+| render/array-replace-200 | node | profiler-mount ms | 1.443454 / 1.462819 | 1.712022 / 1.712704 | +18.606 / +17.082 | R3 |
+| render/array-replace-200 | node | profiler-update ms | 132.851788 / 134.541794 | 139.457326 / 141.017361 | +4.972 / +4.813 | R3 |
+| render/array-push-remove-100 | node | render-mount-wall ms | 5.214563 / 4.971271 | 5.749812 / 5.801834 | +10.265 / +16.707 | R2 |
+| render/array-push-remove-100 | node | render-update-wall ms | 759.560125 / 762.545791 | 1026.243000 / 1024.153334 | +35.110 / +34.307 | R2 |
+| render/array-push-remove-100 | node | profiler-mount ms | 2.258685 / 2.247813 | 2.580192 / 2.719265 | +14.234 / +20.974 | R3 |
+| render/array-push-remove-100 | node | profiler-update ms | 275.687517 / 277.545208 | 312.106309 / 308.050678 | +13.210 / +10.991 | R3 |
+| render/computed-visible-derived | node | render-mount-wall ms | 4.692042 / 4.639021 | 5.957104 / 5.999187 | +26.962 / +29.320 | R2 |
+| render/computed-visible-derived | node | render-update-wall ms | 7.153355 / 7.219792 | 9.906396 / 9.830521 | +38.486 / +36.161 | R2 |
+| render/computed-visible-derived | node | profiler-mount ms | 2.644268 / 2.616550 | 2.915370 / 2.981915 | +10.252 / +13.964 | R3 |
+
+이유 칸의 부호는 아래 귀속 그룹을 가리킵니다. 귀속은 433라운드에 debugger(Claude Opus)가 두 판의 번들을 새 프로세스에 올려 호출 수·노드 수·CPU 프로파일로 확인했고, 스크립트와 프로파일은 `.seiri/tasks/m3-433/causality/`에 있습니다(봉인 뒤에 더한 폴더라 `seal.json`에는 없습니다). 측정은 Node v26.12.0에서만 했으므로 Bun 행의 호출 수는 같되 프로파일 비율은 Node 기준입니다. 어느 행도 잡음으로 처리하지 않았습니다.
+
+- C1 (object-B0 4행) — 비교 불가(일의 양이 다름): 0.16.1은 host 값으로 호출자 입력 객체를 그대로 받아 키 복사를 하지 않고 마운트 onChange도 보내지 않는 반면, E4는 `nextExtras`와 `assembleObject`에서 키를 2N번 복사하고(N1000에서 `writeObjectKey` 2001회) onChange를 1회 보냅니다. 0.16.1의 N100과 N1000이 같은 상수 시간(0.016·0.019 ms)인 까닭입니다.
+- C2 (object-T-N100·object-B1-N100 4행) — 비교 불가(일의 양이 다름): 0.16.1은 마운트 onChange를 보내지 않고 호출자 루트 객체를 그대로 돌려주지만, E4는 N과 무관한 정착·커밋·전달 고정 경로를 돌리며, 러너의 예열 20회 상태라 이 경로가 덜 최적화된 채 측정됩니다(T-N100은 5000회 예열 뒤 0.0318 대 0.0308 ms로 차이가 사라지고, B1-N100은 0.0219 대 0.0376 ms가 남습니다).
+- C3 (object-BN 4행) — 입증된 비용: 노드 수가 1002개로 같은데, E4는 마운트마다 blueprint를 다시 만들고(`buildNodes`·`collectDeclarations`·`appendChildEntries`, 포함 45 %) 노드마다 `computeNode`·`selectChildren` 정착(31 %)과 `markCommitDeliveries`(12 %)를 실행합니다.
+- C4 (array-BN 4행) — 입증된 비용: 노드 수가 8002개로 같은데, E4는 마운트마다 항목 엔트리를 `getItemEntries`로 새로 만들고(템플릿이 마운트마다 새것이라 캐시가 맞지 않아 8000회 모두 생성, 포함 18.4 %) 항목마다 정착과 `markCommitDeliveries`(25 %)를 실행합니다.
+- F1 (oneOf core-update 3행) — 입증된 비용: 결과(노드 6개, 값 키 5개, onChange 1회)는 같지만 E4는 분기를 바꿀 때마다 노드 3개를 새로 만들고, `selectNodeSchema`와 `selectChildren`에서 분기 gate를 `evaluateGate`로 24N회 평가하며(N=20에서 480회), 빠져나간 분기 값을 저장하는 정착 전체를 동기로 실행합니다. 0.16.1은 미리 만든 분기 노드를 reset만 합니다(갱신당 엔진 CPU 약 180 µs 대 10 µs).
+- F2 (oneOf core-mount 3행) — 입증된 비용: 0.16.1이 노드를 더 많이(3N+3개) 만드는데도, E4는 모든 분기의 blueprint를 만들고(포함 41 %) 마운트 정착에서 gate를 20N회 평가합니다(마운트 구간 엔진 CPU 1251 대 139 µs).
+- F3 (그 밖의 core-mount 13행) — 입증된 비용: 만드는 노드 수가 같은데(flat-100 101개, nested-d5 1365개), E4는 마운트마다 blueprint 전체를 새로 만들고(nested-d5에서 마운트 시간의 74 %) 그다음 `loadStaticFirstTree`·`commitStaticFirstNode`로 정적 트리를 붙입니다.
+- F4 (잎 하나 쓰기 core-update 10행) — 입증된 비용: 값과 onChange 1회가 같은데, E4는 잎 하나를 쓸 때도 `finishSettlement`·`commitSettlement`·`markCommitDeliveries`까지 `setValue` 안에서 동기로 끝내고, 0.16.1은 동기 구간이 몇 µs뿐이며 나머지를 microtask와 setImmediate로 넘깁니다(동기 반환 합계 sample-0 0.009 대 0.074 ms, computed 0.053 대 0.711 ms).
+- F5a (array-replace-200 core-update 1행) — 입증된 비용: 새로 만드는 노드가 800개로 같은데, E4는 항목마다 `selectChildren`(포함 58 %)이 `declareArrayChildren`·`getItemEntries`를 거치고 `mergeEffectiveSchema`가 1603회 불리며 `finishSettlement`가 37.5 %입니다.
+- F5b (array-push-remove-100 core-update 1행) — 미확정: 같은 장치 모양으로 재현하면 +8 %(78.0 대 84.1 ms)에 그치고, 표본 전 강제 GC 유무에 따라 E4 단독이 93.0 ms와 54.8 ms로 갈려 원인을 정하지 못했습니다.
+- R1 (render oneOf 9행) — 입증된 비용: F1·F2의 엔진 비용이 렌더 안에 그대로 실리며(반복당 번들 self 4.58 대 1.16 ms), React 커밋 수는 E4가 오히려 적습니다(마운트 2 대 3, 갱신 2 대 6).
+- R2 (oneOf 제외 render-mount-wall·render-update-wall 23행) — 측정 장치 효과: CPU는 같거나 E4가 적은데(flat-500 갱신 15.7 대 21.1 ms), E4는 작업을 flushSync 안에서 끝내 장치의 setTimeout(0) 대기(1.28~1.30 ms)를 두 번 그대로 기다리고, 0.16.1은 남은 작업을 비동기로 미뤄 첫 대기 안에서 처리하므로(첫 대기 0.50~1.06 ms) 마운트나 상호작용 1회마다 wall이 약 1 ms 늘어납니다. 이 행들은 엔진 비용이 아니라 장치 모양의 차이입니다.
+- R3 (profiler-mount 10행·배열 profiler-update 3행) — 미확정: Profiler 구간 안의 CPU를 schema-form과 react-dom으로 나누지 못했고, array-push-100 profiler-update는 다시 재면 방향이 바뀝니다(143.2 대 151.8 ms, 다음 210.7 대 147.9 ms).
+
+귀속 그룹의 수용(이유·수치)은 TEST-027에 따라 Vincent가 합니다. 미확정 두 그룹(F5b·R3)은 수용 자료가 아니라 추가 확인 대상입니다.
 
 ## 결정 60 자료
 
