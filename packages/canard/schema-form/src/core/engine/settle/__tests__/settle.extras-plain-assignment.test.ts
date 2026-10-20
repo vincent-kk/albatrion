@@ -9,10 +9,63 @@ import {
   subscribeFieldNode,
 } from '../../write';
 import * as copying from '../utils/input/nextExtras';
+import { enumeratingNextExtras } from './fixtures/enumeratingNextExtras';
 import { observeArraySelection } from './fixtures/observeArraySelection';
 import { referenceNextExtras } from './fixtures/referenceNextExtras';
 
 describe('extras copy settlement equivalence', () => {
+  it('preserves frozen-input observations and references across extras normalization', () => {
+    const histories: unknown[][] = [];
+    for (const reference of [false, true]) {
+      const copy = vi.spyOn(copying, 'nextExtras');
+      if (reference) copy.mockImplementation(enumeratingNextExtras);
+      try {
+        const { root } = createDispatchTree({
+          type: 'object',
+          properties: { known: { type: 'number' } },
+        });
+        const delivered: unknown[] = [];
+        const changed: unknown[] = [];
+        root.runtime.onChange = (value) => changed.push(value);
+        subscribeFieldNode(root, (event) => delivered.push(event));
+        const inputs = [
+          Object.freeze({ known: 1, absent: undefined }),
+          Object.freeze(JSON.parse('{"__proto__":{"safe":true},"kept":2}')),
+          Object.freeze({ kept: 3, appended: 4 }),
+          Object.freeze({ kept: 3, appended: 4 }),
+          Object.freeze({ known: 2 }),
+          Object.freeze({}),
+        ];
+        const history: unknown[] = [];
+        for (let index = 0; index < inputs.length; index++) {
+          delivered.length = 0;
+          changed.length = 0;
+          const oldOutput = root.emit;
+          const oldExtras = root.undeclaredValues;
+          if (index === 0) dispatchMount(root, inputs[index]);
+          else
+            dispatchWriteInput(
+              root,
+              inputs[index],
+              index === 2 ? WriteOption.Merge : WriteOption.Overwrite,
+            );
+          history.push({
+            observation: observeArraySelection(root),
+            delivered: [...delivered],
+            changed: [...changed],
+            extraKeys: Object.keys(Object(root.undeclaredValues)),
+            sameOutput: root.emit === oldOutput,
+            sameExtras: root.undeclaredValues === oldExtras,
+          });
+        }
+        histories.push(history);
+      } finally {
+        copy.mockRestore();
+      }
+    }
+    expect(histories[0]).toStrictEqual(histories[1]);
+  });
+
   it.each([false, true])(
     'retains full observations and deliveries with declared child=%s',
     (declared) => {
