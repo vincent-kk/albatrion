@@ -270,16 +270,38 @@
 | 2026-10-14 | 284라운드 닫기: PR #371(07e) 병합 89898d107 — 낮은 후속 넷과 Prettier 다섯 파일. 보충 1줄 | `reviews/round-284-closing.md` |
 | 2026-10-14 | 285라운드 닫기: G23 닫힘 — ego-browser 251 finished·실패 0, 자동 게이트 251. 보충 1줄 | `reviews/round-285-closing.md` |
 | 2026-10-14 | 286라운드 닫기: #372(07f) 3c1a7f2c3, #354(07 전환) 1.0.0-beta 병합 9c4d4a59d — 07단계 닫힘. 보충 1줄 | `reviews/round-286-closing.md` |
+| 2026-10-14 | 287라운드 소유자 지시: 최소 export 원칙의 까닭·전제를 가이드에 적고 fractal 뿌리·index를 전수 재검사. 보충 1줄 | `reviews/round-287-owner-answers.md` |
+| 2026-10-14 | 288라운드 소유자 지시: filid 이슈는 초안만(규칙 위반/결함 가린 뒤 등록), CLAUDE.md 자리 검토, 수정 계획 제시 → `plan/tidy-structure/request.md`. 보충 1줄 | `reviews/round-288-owner-answers.md` |
+| 2026-10-14 | 289라운드 소유자 답: 정돈 D1–D6 확정(진행, nodeFromJSONSchema 하향·문서 삭제, providers organ 둘, 오류 코드 object enum root export, 가이드 자리, 이슈는 정돈-2 뒤). 보충 1줄 | `reviews/round-289-owner-answers.md` |
+| 2026-10-14 | 290라운드 소유자 지시: 작업자 fixy08·fairy08, 원장 관리자는 관리만. 정돈-1 브리프 발송 | `reviews/round-290-owner-answers.md` |
+| 2026-10-14 | 291라운드 소유자: 리터럴 규약 금지(JSON Schema type 제외), 순서 정돈 → 구조 리뷰 → 최적화. 전수 판정 string-literal-audit.md, 정돈-E E1–E5 | `reviews/round-291-owner-answers.md` |
 | 2026-10-14 | 292라운드 닫기: 문서 정합 PR #373 병합 0d17c3080(18건, 주석 넷), 정돈-1 편집자 결정 둘(공유 보조는 helpers/error, rolled 보존). 보충 2줄 | `reviews/round-292-closing.md` |
+| 2026-10-14 | 293라운드 소유자: FCA import 멘탈모델(외부·형제·직계, 직계는 내부 모듈, 공통 부모 organ, 부모→자식 비대칭). 보충 2줄 | `reviews/round-293-owner-answers.md` |
+| 2026-10-14 | 294라운드 소유자: 보강 다섯 수용, 모델 기록(fca-import-model.md), 구조 검사 지시, filid 개선 여부는 마지막에 결정. 보충 1줄 | `reviews/round-294-owner-answers.md` |
+| 2026-10-14 | 295라운드 소유자: D7(공개 API 시험은 외부)·D8(B6·B7) 허용, 모델 안 변용 허용, filid 언어 중립. 보충 1줄 | `reviews/round-295-owner-answers.md` |
+| 2026-10-14 | 296라운드 소유자: 정돈-1 뒤 정돈-2 즉시, fairy08에 export 재검사 배정 | `reviews/round-296-owner-answers.md` |
 | 2026-10-14 | 297라운드 닫기: 정돈-1 PR #374 병합 ae502f7bd(포맷터 27 삭제, nodeFromJSONSchema 하향, 표면 92 동일), 정돈-2 투입. 보충 1줄 | `reviews/round-297-closing.md` |
+| 2026-10-14 | 298라운드 소유자: 구조 리뷰 전까지 정돈 전부 무정지 진행, 판단은 대기열, PR 병합 허용 | `reviews/round-298-owner-answers.md` |
 | 2026-10-14 | 299라운드 닫기: 문서 사이트 api-reference 재작성 PR #375 병합 c2c6007b2, 대기열 53(maxItems·minItems 비강제). 보충 1줄 | `reviews/round-299-closing.md` |
 | 2026-10-14 | 300라운드 닫기: 대기열 53(원장 write 표)·50(존재만 기여 유지, fieldInputMap 안내)·52(정돈-4 PR diff로 소유자 리뷰) 닫음, 51·40은 코드 확인으로. 보충 4줄 | `reviews/round-300-closing.md` |
+| 2026-10-14 | 301라운드 소유자: 대기열은 직접 닫기, 53은 옵션 기능으로 재검토(SPECIFICATION의 minItems 채움 문장은 코드와 어긋남), CLAUDE.md 갱신 진행. 보충 2줄 | `reviews/round-301-owner-answers.md` |
+| 2026-10-14 | 302라운드 소유자 생각: 53 유익·손해 비교 요청 → array-limits-review.md. 보충 1줄 | `reviews/round-302-owner-answers.md` |
+| 2026-10-14 | 303라운드 소유자 생각: 53 경계·일관성 → "적용 가능성에는 따르고 제약은 강제하지 않음" 한 줄. 보충 1줄 | `reviews/round-303-owner-answers.md` |
+| 2026-10-14 | 304라운드 소유자 답: 53 확정(경계 문장 수용, 현행 유지, UI 전용 빈 슬롯 작은 PR, controls 옵트인은 새 라운드). 보충 2줄 | `reviews/round-304-owner-answers.md` |
 | 2026-10-14 | 305라운드 닫기: 대기열 51(넷 모두 폐기 — ERROR-162가 이미 폐기)·40(재현 안 됨, #367 유효) 닫음; 옛 조건 문법 무시는 CONTROLS-001 원리; 배열 한도 문서는 fairy08 문서 PR. 보충 7줄 | `reviews/round-305-closing.md` |
 | 2026-10-14 | 306라운드 닫기: 배열 한도 문서 PR #376 병합(c40d6de8f) — 경계 문장·배열 한도 절이 공개 문서에, documents 데모의 없는 이름 교체. 보충 2줄 | `reviews/round-306-closing.md` |
 | 2026-10-14 | 307라운드 닫기: 정돈-2 PR #377 병합(fd2a56c2f; 표면 92 동일, 시험 3825, 모델 위반 0), 편집자 결정·변용 기록, B8 첫 사례. 정돈-3 투입, filid 이슈 등록 지시. 보충 3줄 | `reviews/round-307-closing.md` |
 | 2026-10-14 | 308라운드 닫기: filid 개선 요청을 ogham 이슈 #143으로 등록(정돈-2 뒤 수치, B8 사례·mock 경로 제안·훅 차단 사례 포함). 보충 1줄 | `reviews/round-308-closing.md` |
+| 2026-10-14 | 309라운드 소유자: 이동 속도 지적; 순수 이동은 fixy08 직접, 전체 게이트는 PR 직전 한 번 허락(217C-01 예외). 보충 2줄 | `reviews/round-309-owner-answers.md` |
+| 2026-10-14 | 310라운드 소유자: 벤치는 측정 없이 시작 확인 한 번, 오래 걸리는 절차는 묶어 한 번(단계마다 전부 검사는 과함). 보충 2줄 | `reviews/round-310-owner-answers.md` |
+| 2026-10-14 | 311라운드 소유자: 정돈-3이 구조 리뷰 전 마지막, 리뷰 중 구조 추가 조정, 오늘 밤 속도 측정·개선 루프. 보충 1줄 | `reviews/round-311-owner-answers.md` |
 | 2026-10-14 | 312라운드 닫기: 정돈-3 PR #378 병합(eeb1bd374; 표면 92 동일, 시험 3826, filid 면제 한 줄 제거), 결정 여섯·선택 여섯 기록. 구조 리뷰 시작 가능, 정돈-E 투입. 보충 2줄 | `reviews/round-312-closing.md` |
+| 2026-10-14 | 313라운드 소유자: 정돈-E·S도 codex 없이 fixy08 직접. 보충 1줄 | `reviews/round-313-owner-answers.md` |
+| 2026-10-14 | 314라운드 소유자: Form 재구성(FormCore·Form.* 다섯은 fractal), 이름 함정 수정, 문서화는 fairy08 위임, INTENT 한국어. 보충 1줄 | `reviews/round-314-owner-answers.md` |
 | 2026-10-14 | 315라운드 닫기: 소유자 Form 재구성 PR #379 병합(여섯 fractal 문서, 이름 함정 해소, 표준 틀 확정). 보충 1줄 | `reviews/round-315-closing.md` |
+| 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
+| 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
+| 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
 | 2026-10-14 | 319라운드 닫기: 정돈-E PR #380 병합(8f4dce4ab; 표면 +2, 시험 3835, 코드 58, push는 호출 뒤 길이). 보충 3줄 | `reviews/round-319-closing.md` |
 | 2026-10-14 | 320라운드 소유자: fieldInputs 자식은 fieldInputDefinitions/ 아래. 321라운드 닫기: 정돈-S PR #381 병합(a8277781f). 보충 4줄 | `reviews/round-320-owner-answers.md`, `reviews/round-321-closing.md` |
 | 2026-10-14 | 322라운드 닫기: 구조 손질 2·3 PR #382 병합(496148de7; constants organ, barrel 제거, Field 모양, surface runtime). 보충 1줄 | `reviews/round-322-closing.md` |
@@ -288,6 +310,52 @@
 | 2026-10-14 | 326라운드 소유자: Field fractal을 FieldProxy로(본체 이름), 부품 둘은 그 아래; 병합 전 약식 전체 게이트. 보충 2줄 | `reviews/round-326-owner-answers.md` |
 | 2026-10-14 | 327라운드 닫기: 구조-5 PR #385 병합(c2d5f737e; Field → FieldProxy fractal, 약식 전체 게이트 통과). 보충 1줄 | `reviews/round-327-closing.md` |
 | 2026-10-14 | 328라운드 소유자: INTENT·DETAIL 문서 전부 한국어로(humanizer, sonnet·agy 병렬), fairy08 문서 PR. 보충 1줄 | `reviews/round-328-owner-answers.md` |
+| 2026-10-15 | 330라운드 소유자: 중간 브랜치 삭제, 1.0.0-beta 압축(48 커밋, 백업 유지), 8단계는 feat/schema-form-08-review-and-perf에서 원장·워크트리 운영. 보충 2줄 | `reviews/round-330-owner-answers.md` |
+| 2026-10-15 | 331라운드 소유자: 08 플러그인 완료 처리(07b·07d), 미확인 셋은 대기열 54, 최적화 진행. 보충 1줄 | `reviews/round-331-owner-answers.md` |
+| 2026-10-15 | 332라운드 소유자: 8단계 리뷰 1차 열넷(구조·조사·이름·질문). 보충 1줄 | `reviews/round-332-owner-answers.md` |
+| 2026-10-15 | 333라운드 소유자: 작업자 지정, NODE_ENV는 React 방식, 칸 이름 수용, typeMismatch → misfit. 보충 1줄 | `reviews/round-333-owner-answers.md` |
+| 2026-10-15 | 334라운드 소유자: 구조 정리 먼저(codex 없이, 소유자 감독), 속도 최적화부터 codex·agy. 보충 1줄 | `reviews/round-334-owner-answers.md` |
+| 2026-10-15 | 335라운드 소유자: WeakMap 측정, schemaType 안 1 유지, stringify는 control.ts 구분자로 속도 토막, engine 재구조화 수용. 보충 1줄 | `reviews/round-335-owner-answers.md` |
+| 2026-10-15 | 336라운드 소유자: 결정 여덟(NODE_ENV 현행, misfit 전면, virtual 유지, CLAUDE.md 승인, settle 2개·순환 지금, types/ 분할, walkFieldNodes 삭제, 혼재 금지). 보충 1줄 | `reviews/round-336-owner-answers.md` |
+| 2026-10-15 | 337라운드 소유자: Roll을 정의 자리에서 한 번 펴고 rolled 칸·Base 접두사 제거. 보충 3줄 | `reviews/round-337-owner-answers.md` |
+| 2026-10-15 | 338라운드 소유자: Roll 실험 실패(재귀 스키마 형) → rolled 칸 유지, Rolled 접두사·export rename. 보충 1줄 | `reviews/round-338-owner-answers.md` |
+| 2026-10-15 | 339라운드 닫기: 묶음 1 PR #387 병합(daadce7ab), 편집자 결정 넷, CLAUDE.md 두 줄 | `reviews/round-339-closing.md` |
+| 2026-10-15 | 340라운드 소유자: walkFieldNodes 삭제 대신 순회 한 벌로 합침(동작 불변). 보충 3줄 | `reviews/round-340-owner-answers.md` |
+| 2026-10-15 | 341라운드 소유자: 하위 방문 공개 기능 추가 → 설계 초안 walk-subtree-design.md, 판정 여섯. 보충 1줄 | `reviews/round-341-owner-answers.md` |
+| 2026-10-15 | 342라운드 소유자: visitSubtree 확정(지연 batch, 옵션 없음), SURFACE-062 신설. 보충 6줄 | `reviews/round-342-owner-answers.md` |
+| 2026-10-15 | 343라운드 소유자: 묶음 2 마무리, 전체 게이트 한 번. 보충 1줄 | `reviews/round-343-owner-answers.md` |
+| 2026-10-15 | 344라운드 소유자: 밤까지 자율 진행(원장 기반 판단, 결정 대기열, PR 병합 허용, codex·agy 분산). 보충 2줄 | `reviews/round-344-owner-answers.md` |
+| 2026-10-15 | 345라운드 소유자: 작업 끝난 브랜치 즉시 정리. 보충 1줄 | `reviews/round-345-owner-answers.md` |
+| 2026-10-15 | 346라운드 닫기: 묶음 2 #389 병합, 편집자 결정 일곱. 보충 10줄 | `reviews/round-346-closing.md` |
+| 2026-10-15 | 347라운드 닫기: #390·#391·#392 병합, 편집자 결정 셋, 최적화 행의 PR 단위를 대기열 56으로. 보충 5줄 | `reviews/round-347-closing.md` |
+| 2026-10-15 | 348라운드 닫기: 묶음 3 blueprint #393 병합, 편집자 결정 셋, 대기열 57. 보충 3줄 | `reviews/round-348-closing.md` |
+| 2026-10-15 | 349라운드 닫기: 묶음 3 derive #394 병합, 편집자 결정 둘. 보충 2줄 | `reviews/round-349-closing.md` |
+| 2026-10-15 | 350라운드 닫기: 묶음 3 settle #395 병합, 묶음 3 완료, 편집자 결정 셋. 보충 3줄 | `reviews/round-350-closing.md` |
+| 2026-10-15 | 351라운드 닫기: 최종 경로 #396 병합, 밤 작업 종료. 보충 1줄 | `reviews/round-351-closing.md` |
+| 2026-10-15 | 352라운드 소유자: CLAUDE.md 경로 수정 승인(대기열 57 닫힘), 속도 그림 물음. 보충 1줄 | `reviews/round-352-owner-answers.md` |
+| 2026-10-15 | 353라운드 소유자: 속도 측정·개선 착수, 계획 브리핑. 보충 1줄 | `reviews/round-353-owner-answers.md` |
+| 2026-10-15 | 354라운드 소유자: 루프 전체 시간을 20~30시간으로(대기열 56 갱신). 보충 1줄 | `reviews/round-354-owner-answers.md` |
+| 2026-10-15 | 355라운드 닫기: M0 기준선·M1 우선순위표 #397 병합, 편집자 결정 넷. 보충 5줄 | `reviews/round-355-closing.md` |
+| 2026-10-15 | 356라운드 소유자: 개선 즉시 진행, stringify 배제 가설, 측정은 dist 기준. 보충 1줄 | `reviews/round-356-owner-answers.md` |
+| 2026-10-15 | 357라운드 소유자: 속도 측정은 빌드 결과물로. 보충 1줄 | `reviews/round-357-owner-answers.md` |
+| 2026-10-15 | 358라운드 소유자: 내부 이름은 빌드 결과물 개입으로(임시), 이후 폼 e2e. 보충 1줄 | `reviews/round-358-owner-answers.md` |
+| 2026-10-15 | 359라운드 소유자: codex 위임의 데이터 공유 허용 공유. 보충 1줄 | `reviews/round-359-owner-answers.md` |
+| 2026-10-15 | 360라운드(닫기): L1 PR #399 검증·squash-merge(3c0e46576); SETTLE-043 보강, G8 설계 넷, L1 예외, L2 이월. 보충 4줄 | `reviews/round-360-closing.md` |
+| 2026-10-15 | 361라운드 소유자: 속도 수용은 옛·현재·배율·절대시간으로 소유자가, push 설계는 소유자 검토. 보충 1줄 | `reviews/round-361-owner-answers.md` |
+| 2026-10-15 | 362라운드 소유자: push 지름길 승낙, 두 번째 값 복사는 가능하면 줄임, pop·remove 지름길 물음. 보충 1줄 | `reviews/round-362-owner-answers.md` |
+| 2026-10-15 | 363라운드 소유자: 배열 동사 전부와 자식 노드 배열·로드 스냅숏 복사의 검증 데이터 요구. 보충 1줄 | `reviews/round-363-owner-answers.md` |
+| 2026-10-15 | 364라운드 소유자: 지름길은 배열 동사 전부에, 원칙 변경이 필요하면 보고. 보충 1줄 | `reviews/round-364-owner-answers.md` |
+| 2026-10-15 | 365라운드 소유자: push·pop 꼬리 연산, remove·insert 재매김 동사 틀; insert를 지금 추가해 remove 비효율과 함께 해결. 보충 1줄 | `reviews/round-365-owner-answers.md` |
+| 2026-10-15 | 366라운드 소유자: 지름길 설계는 볼 것 없음, 중간 결과 보고. 보충 1줄 | `reviews/round-366-owner-answers.md` |
+| 2026-10-15 | 367라운드 소유자: 배열 지름길 마무리 뒤 onChange·setValue·객체 경로의 유사 비효율 확인(L2 첫 묶음). 보충 1줄 | `reviews/round-367-owner-answers.md` |
+| 2026-10-15 | 368라운드 소유자: 전후 표는 옛 판·수정 전·수정 후 각각 비율과 절대값. 보충 1줄 | `reviews/round-368-owner-answers.md` |
+| 2026-10-15 | 369라운드 소유자: 비동기 옛 판도 적용 시점까지 측정. 보충 1줄 | `reviews/round-369-owner-answers.md` |
+| 2026-10-15 | 370라운드 소유자: 옛 판은 목표치가 아니라 비교치, 목표는 비효율 제거와 설계 개선점. 보충 1줄 | `reviews/round-370-owner-answers.md` |
+| 2026-10-15 | 371라운드(닫기): L1b PR #400 검증·squash-merge(f441a9159); 배열 동사 계약 해석, SURFACE-005 insert, 수용 복사 셋, L2 이월·대기열 58. 보충 4줄 | `reviews/round-371-closing.md` |
+| 2026-10-15 | 372라운드(닫기): L2 첫 묶음 PR #401 검증·squash-merge(b9e2f63dc); 같은 값 통째 쓰기, 감시 색인, 불일치 메모, 간선 스키마, 기록만 항목. 보충 3줄 | `reviews/round-372-closing.md` |
+| 2026-10-15 | 373라운드 소유자: items 조각 층 누락은 결함, 별도 fix PR. 보충 2줄 | `reviews/round-373-owner-answers.md` |
+| 2026-10-15 | 374라운드 소유자: 앞으로 agy·codex를 더 활발히, codex 기본·agy 검증. 보충 1줄 | `reviews/round-374-owner-answers.md` |
+| 2026-10-15 | 375라운드 소유자: 가결정 55·56 그대로 확정(닫힘). 보충 1줄 | `reviews/round-375-owner-answers.md` |
 | 2026-10-15 | 376라운드(닫기): 나감 정리 결함 PR #402 검증·squash-merge(ba0b36c88); NODE-044 결함 둘의 기록, CONTROLS-077 보충(배열 아이템은 조각의 직계 자식)과 대기열 60 닫음. 보충 2줄 | `reviews/round-376-closing.md` |
 | 2026-10-15 | 377라운드(닫기): items 조각 층 결함 PR #403 검증·squash-merge(3f02269ab); 조각 소유 판정 도우미 한 벌, 아이템의 조각 층, 기존 기대 변경 0건. 보충 2줄 | `reviews/round-377-closing.md` |
 | 2026-10-15 | 378라운드 소유자: 오류·경고 코드의 그룹 상수화와 그룹별 표(속도 루프 뒤 정돈 항목, 공개 여부는 대기열 61). 보충 1줄 | `reviews/round-378-owner-answers.md` |
@@ -339,6 +407,7 @@
 | 2026-10-19 | 424라운드: 유휴 보조 세션과 사라진 Git 등록 정리, 세 작업 폴더·원자료 보존 경로와 다음 담당자 개시 프롬프트 인계 | reviews/round-424-closing.md |
 | 2026-10-19 | 425라운드: 증거 소실 기록, origin checkout 복원과 게이트·전체 시험 재취득, 측정·P1 원자료 미복구 및 기존 보류 유지, 소유자 지시 대기 | reviews/round-425-closing.md |
 | 2026-10-20 | 426라운드: T14 후속 진단·재실행과 시간 잡음 소유자 예외로 수용, PR424 직접 병합4e9b6786e, itemless 재측정은 새 창의 차이 미입증·결정60 대기 및 기존 보류 유지 | reviews/round-426-closing.md |
+| 2026-10-20 | 427라운드: 진입 문서 셋 압축(PLAN-LOG.md와 _archive/2026-10-20/에 보존), 다음 성능 작업은 소유자 지시 대기, cursor 워커는 Grok 4.7 또는 적당한 프론티어 모델이며 사용량은 따로 관리 | reviews/round-427-closing.md |
 
 
 ## 2. 라운드별 요지
@@ -709,3 +778,137 @@
 - **286라운드(2026-10-14, 닫기/원장 관리자).** #372(07f, NaN 표시) 병합 3c1a7f2c3, PR #354(07 전환)를 1.0.0-beta에 squash 병합 9c4d4a59d(가지 보존). 07단계 닫힘(286C-01). 다음은 08단계 계획(282라운드 메모).
 - **287라운드(2026-10-14, 소유자).** 정돈 단계 설계(PR 셋, 결정 넷)에 답: 단계 순서는 괘념치 말 것, 최소 export 원칙의 까닭(계약의 기록, 복잡도 폭발 방지)과 "fractal의 1차 이미지" 전제를 적고, 뿌리에 보이지만 외부에서 안 쓰이는 파일(surface/nodeFromJSONSchema.ts)을 기능 고장에 준한다고 봄. 원칙을 CLAUDE.md 등 가이드에 적고 전수 재검사를 지시(reviews/round-287-owner-answers.md).
 - **288라운드(2026-10-14, 소유자).** 전수 검사 보고에 답: 뿌리·최소 export 문제는 filid 플러그인 원칙 문제라 ogham에 이슈 하나를 남기되 바로 등록하지 말고 "구현 위반인지 규칙 결함인지"를 진행하며 가릴 것, CLAUDE.md 자리(루트/패키지)는 검토할 것, 수정 계획을 먼저 보일 것(reviews/round-288-owner-answers.md). 계획은 plan/tidy-structure/request.md(발견 F1–F8의 판정표, PR 넷, 결정 D1–D6).
+- **289라운드(2026-10-14, 소유자).** 정돈 결정: D1 진행, D2 nodeFromJSONSchema는 문서에서 지우고 뿌리에서 아래로 옮김, D3 providers organ은 components·hooks 둘, D4 잉여 export는 지우되 오류 코드 상수는 object enum으로 root export(발화 가능한 오류의 일람, 안전한 상수 사용 계약), D5 가이드는 루트에 원칙·패키지에 적용, D6 filid 이슈(규칙 결함 셋·도구 결함 하나)는 정돈-2 뒤 등록(reviews/round-289-owner-answers.md).
+- **290라운드(2026-10-14, 소유자).** 정돈 작업자는 fixy08(구현)·fairy08(문서), 원장 관리자는 관리만(reviews/round-290-owner-answers.md). 정돈-1 브리프 plan/tidy-structure/brief-tidy-1.md를 fixy08에게 보냄.
+- **291라운드(2026-10-14, 소유자).** 문자열 리터럴 규약은 JSON Schema type 외에 금지(변경 표면), 추가 사례·method·event dispatch 안전 여부 물음, 순서는 정돈 → 구조 리뷰 → 속도 개선(reviews/round-291-owner-answers.md). 전수 판정은 plan/tidy-structure/string-literal-audit.md(dispatch·메서드 안전, 누수는 오류 코드 생성자·controls 키·FieldNode 형 미연결·경로 토큰). 정돈-E 범위 E1–E5.
+- **292라운드(2026-10-14, 닫기/원장 관리자).** fairy08의 문서 정합 PR #373을 0d17c3080으로 squash 병합(SPECIFICATION·README·QUICK_REFERENCE·api-reference 18건, 소스는 주석 넷). 정돈-1 편집자 결정 둘(292C-02). 대기열 51(NULLABLE_ONE_OF_NULL_UNREACHABLE 이식 누락 여부) 개설.
+- **293라운드(2026-10-14, 소유자).** FCA import 멘탈모델: import는 외부·형제·직계 셋, 형제는 index로만(외부 패키지에 준하는 최소 계약), 직계 서브트리는 index 없이 "내부 모듈", 시험·벤치는 fractal 안에서 가장 가까운 곳, 공유 기능은 공통 부모 organ, 부모는 자식의 비방출 내부에 못 닿음(비대칭). 재구성·헛점 지적 요청(reviews/round-293-owner-answers.md).
+- **294라운드(2026-10-14, 소유자).** 보강 다섯(부모 organ은 자식을 모른다, 삼촌·사촌은 혈통 밖, 조상 index 경유 금지, organ은 맨 위만, 벤치도 안에) 수용. 모델은 plan/tidy-structure/fca-import-model.md, 모델 기준 구조 검사는 lineage-audit.md. **마지막에 이 모두를 포함해 filid 개선 여부를 소유자가 결정한다 — 잊지 말 것**(reviews/round-294-owner-answers.md).
+- **295라운드(2026-10-14, 소유자).** D7 허용(src/__tests__/e2e·scenarios·migration의 공개 API 시험은 외부 소비자, 루트 index 경유), D8 허용(B6·B7). 모델 안에서의 약간의 변용 허용 — 핵심은 가독성·인터페이스 계약·폭발 반경 억제. filid는 언어 중립이라 alias 처리는 어댑터 층(reviews/round-295-owner-answers.md). 검사 결과는 plan/tidy-structure/lineage-audit.md(제품 위반 2, 시험 326, settle↔derive 층 순환).
+- **296라운드(2026-10-14, 소유자).** 정돈-1 병합 즉시 정돈-2 투입, 끝나는 대로 보고. fairy08은 유휴 → export 재검사(와일드카드 재수출 추적) 배정(reviews/round-296-owner-answers.md).
+- **297라운드(2026-10-14, 닫기/원장 관리자).** 정돈-1 PR #374를 ae502f7bd로 squash 병합(297C-01; 시험 3823·storybook 251·플러그인 일곱·표면 92 동일). 정돈-2 브리프를 fixy08에게 넘김.
+- **298라운드(2026-10-14, 소유자).** 구조 리뷰(5단계) 전까지 정돈-2·3·E·4를 멈추지 말고 진행, 판단은 대기열에 모아 한 번에, 생성 PR 병합 허용(reviews/round-298-owner-answers.md). CLAUDE.md 둘만 승인 대기(대기열 52).
+- **299라운드(2026-10-14, 닫기/원장 관리자).** fairy08의 api-reference(en·ko) 전면 재작성 PR #375를 c2c6007b2로 squash 병합(299C-01). 대기열 53(core가 maxItems·minItems를 강제하지 않음) 개설.
+- **300라운드(2026-10-14, 닫기/원장 관리자).** 소유자 지적대로 대기열을 원장 원리로 닫음: 53(core는 배열 한도를 강제하지 않음 — write 표 현행), 50(분기 선언은 존재만 기여 유지, 다중 분기 터미널은 fieldInputMap 안내), 52(CLAUDE.md 둘은 정돈-4 PR의 diff로 소유자가 보고 소유자가 병합). 51·40은 fairy08 코드 확인으로.
+- **301라운드(2026-10-14, 소유자).** 대기열은 원장 원리·코드 확인으로 직접 닫을 것. 53은 "core는 값을 조작·제어하지 않는다" 원칙의 산물이나 옵션 기능으로 재검토(레거시는 maxItems push 차단·minItems 채움 지원, 새 엔진은 둘 다 안 함을 시험이 고정; SPECIFICATION 986·998행이 코드와 어긋남 → 정돈-E 문서). CLAUDE.md 갱신은 필요하면 진행 → 정돈-4 PR, 원장 관리자 병합(reviews/round-301-owner-answers.md).
+- **302라운드(2026-10-14, 소유자).** 53의 유익·손해 비교 요청(controls 어휘, 입력 컴포넌트의 일인지, 타입 불일치 값과의 유비). 답은 plan/tidy-structure/array-limits-review.md(권고: 1.0.0은 현행, UX는 입력의 UI 전용 빈 슬롯, 제어는 controls 옵트인으로 별도 라운드)(reviews/round-302-owner-answers.md).
+- **303라운드(2026-10-14, 소유자).** 53의 경계·일관성 물음. 답: core는 적용 가능성(효력 중인 선언)에는 따르고 제약 키워드는 강제하지 않는다 — 가려진 필드 제거와 배열 개수 비강제가 한 규칙; 제공하지 않는 쪽이 일관적(reviews/round-303-owner-answers.md).
+- **304라운드(2026-10-14, 소유자).** 53 확정 — 경계 한 줄 수용(WRITE-003 보충, ADR 0013 §3.1 문장 추가), 1.0.0은 현행, 기본 배열 입력의 UI 전용 빈 슬롯은 작은 PR(정돈-S), controls 옵트인은 새 라운드, 문서는 지금(reviews/round-304-owner-answers.md).
+- **305라운드(2026-10-14, 닫기/원장 관리자).** fairy08 코드 확인으로 대기열 51(넷 모두 폐기 — 경고 하나는 fairy08이 이식 누락으로 보았으나 ERROR-162가 17라운드에 폐기함; 정돈-E가 다섯을 지움)과 40(docs 페이지 85개 재현 안 됨, #367 방어 수정 유효) 닫음. 옛 조건 문법이 보고 없이 무시되는 것은 CONTROLS-001의 결과라 대기열에 올리지 않음. 배열 한도·경계 문장 문서는 fairy08 문서 전용 PR(documents 데모의 없는 이름 교체 포함), 원장 관리자 병합. 대기열은 비었다.
+- **306라운드(2026-10-14, 닫기/원장 관리자).** fairy08의 배열 한도 문서 PR #376 병합(c40d6de8f): 304라운드 경계 문장과 배열 한도 절이 SPECIFICATION·README·QUICK_REFERENCE·docs/agents·documents에 들어갔고, documents 데모가 새 엔진에 없는 이름 대신 outputValue를 읽는다.
+- **307라운드(2026-10-14, 닫기/원장 관리자).** 정돈-2 PR #377을 fd2a56c2f로 squash 병합(verifier 독립 검증: 공개 표면 92 동일, unit·render·react18 3825 통과, 가드 시험이 옛 트리의 위반을 잡음). 정돈-2의 편집자 결정과 변용 일곱, B8 첫 실제 사례(engine DETAIL 선언, vi.mock 경로는 검사기가 못 봄 → filid 결정 재료)를 기록. fixy08에게 정돈-3 투입, fairy08은 filid 이슈 수치 갱신 뒤 ogham 등록.
+- **308라운드(2026-10-14, 닫기/원장 관리자).** fairy08이 filid 개선 요청을 ogham 이슈 #143으로 등록(289라운드 D6). 수치는 정돈-2 뒤 트리 기준(시험 쪽 위반은 D7 밖 0, index 48항목 삭제), B8 첫 사례와 mock 경로 제안, 훅 차단 사례를 더함. 소유자의 마지막 filid 결정 재료.
+- **309라운드(2026-10-14, 소유자).** 이동 작업의 소요 시간 지적 → 217C-01에 예외: 순수 이동·이름 변경·import 고침은 fixy08이 직접(새 로직만 codex), 전체 게이트는 PR 직전 한 번(중간은 typecheck만, verifier도 한 번). 정돈-3에 즉시 적용(reviews/round-309-owner-answers.md).
+- **310라운드(2026-10-14, 소유자).** 벤치는 게이트가 아님 — 경로 바뀐 파일만 PR 직전 시작 확인 한 번, 측정 없음. 오래 걸리는 절차는 몇 단계를 묶어 한 번(원칙은 PR 직전), 중간은 typecheck만; 정돈-E·S에도 적용(reviews/round-310-owner-answers.md).
+- **311라운드(2026-10-14, 소유자).** 정돈-3이 구조 리뷰 전 마지막; 리뷰하며 구조를 더 잡고 오늘 밤 속도 측정·개선 루프. 리뷰 동안 E·S·4를 끝내고 밤에는 측정만(조용한 창), 속도 계획 점검은 fairy08(reviews/round-311-owner-answers.md).
+- **312라운드(2026-10-14, 닫기/원장 관리자).** 정돈-3 PR #378을 eeb1bd374로 squash 병합(verifier: 표면 92 동일, 3826 통과, 이동 147건 이력 유지, 비이동 편집은 B1에 따른 둘뿐). 결정 D1–D6과 선택 여섯 기록(rolled는 src/rolled, 형 전용 순환 하나는 리뷰 항목, round-87 스크립트는 돌지 않음). 구조 이동 끝 → 소유자 구조 리뷰(5단계) 시작 가능. fixy08은 정돈-E.
+- **313라운드(2026-10-14, 소유자).** 정돈-E·S도 codex 없이 fixy08이 직접(진행 중 codex 작업은 멈춤). 소유자는 E·S·4가 모두 병합된 뒤 구조를 직접 손보고 원장 관리자가 diff를 읽어 모델 기준으로 짚는다(소유자 편집이 정돈-E 작업과 부딪혀 되돌림)(reviews/round-313-owner-answers.md).
+- **314라운드(2026-10-14, 소유자).** 구조 리뷰 첫 손질: Form fractal 재구성(뿌리는 문서·index·Form.tsx만, FormCore와 Form.* 다섯은 components/ 아래 fractal 여섯, 오류 바운더리 래핑은 FormCore로). 여섯은 fractal(INTENT·DETAIL 한국어), 이름 함정(FormCore.tsx의 FormRoot, 별칭)은 오타로 수정, 문서화·정리는 fairy08 위임 → 워크트리 stage-form-fractals, PR은 원장 관리자 병합(reviews/round-314-owner-answers.md).
+- **315라운드(2026-10-14, 닫기/원장 관리자).** 소유자 Form 재구성 PR #379 병합: FormCore·Form.* 다섯이 components/ 아래 fractal로 INTENT·DETAIL(한국어)과 함께, 이름 함정 해소(바깥 FormCore, 안쪽 FormRoot), 공개 export 불변. 이 모양을 구조 리뷰의 표준 틀로. 남은 리뷰 항목: FieldInputSlot↔FieldProxy 형 전용 순환, getAbsolutePointer 시험 상한.
+- **316라운드(2026-10-14, 소유자).** Form 재구성의 뜻은 컴포지션의 독립 컴포넌트(같은 위계). 구조 지도(fractal 59·organ 125) 뒤 결정: constants·hooks는 organ(index 제거, 직접 import), types·rolled는 fractal 그대로, organ 안의 barrel은 두지 않음(Form/components/index.ts도 제거), Field는 Form처럼 자식 셋을 components/ 아래로. fairy08 PR, 정돈-E 뒤 rebase(reviews/round-316-owner-answers.md).
+- **317라운드(2026-10-14, 소유자).** Form barrel 삭제 확정; 개발은 병렬·병합만 직렬, 정돈-S는 fairy08이 병렬 시작; PR 셋과 정돈-4는 원장 관리자가 검증 뒤 병합; surface/classes는 단일 클래스라 runtime/으로(보조 둘 동반), 손질은 같은 PR에 모음(reviews/round-317-owner-answers.md). hooks는 B1 때문에 organ이 아니라 fractal 유지(fairy08 지적, 편집자 결정 A).
+- **318라운드(2026-10-14, 소유자).** 넷째 손질: fieldInputs를 내장 입력 열한 개의 fractal로(components/ 아래, index.ts에 Definition, 보조는 각자 아래, 한국어 문서), fixy08이 정돈-E 뒤 별도 PR(정돈-S 병합 뒤 base). ArrayItems 래핑은 memo 경계(설계 의도)라 유지(reviews/round-318-owner-answers.md).
+- **319라운드(2026-10-14, 닫기/원장 관리자).** 정돈-E PR #380을 8f4dce4ab로 squash 병합(직접 검증: 표면 92→94는 정확히 FormErrorCode·FormWarningCode, 시험 3835 통과, 리터럴 발화 0, 플러그인은 32C-02대로 group·code). 결정 묶음 열 기록; 남는 항목은 타이밍 시험 한도와 클래스의 공개 형 매개변수화.
+- **320·321라운드(2026-10-14, 소유자·닫기).** 320: fieldInputs의 열한 fractal은 컴포넌트가 아니라 FieldInputDefinition이므로 components/가 아니라 fieldInputDefinitions/ 아래(additionalOrganNames에 추가), 뿌리 이름은 고민 중(reviews/round-320-owner-answers.md). 321: 정돈-S PR #381을 a8277781f로 squash 병합 — 기본 배열 입력의 UI 전용 빈 슬롯, core 불변, 입력 기원 쓰기만.
+- **322라운드(2026-10-14, 닫기/원장 관리자).** 구조 손질 2·3 PR #382를 496148de7로 squash 병합(삭제는 barrel 둘, 이름 바꿈 39, 루트 index 불변, 가드 넷 0). 남은 구조 작업: fieldInputs(구조-4, fixy08), CLAUDE.md(정돈-4 — fairy08이 교차 세션 규칙으로 사양, 원장 관리자가 직접).
+- **323라운드(2026-10-14, 닫기/원장 관리자).** 정돈-4 PR #383을 3d9082f2d로 squash 병합: 루트 CLAUDE.md의 모듈 계약 원칙 여섯과 개발 흐름 7항, 패키지 CLAUDE.md의 fractal 계약 절과 Node System 교체(단일 런타임 클래스). 정돈 단계 전부와 구조 손질 1–3 완료; 남은 것은 구조-4(fixy08)와 소유자 추가 손질, 속도 계획 개정, 밤 루프.
+- **324·325라운드(2026-10-14, 소유자·닫기).** 324: 밤 루프 결정은 소유자가 작업을 본 뒤, 지금은 대기(reviews/round-324-owner-answers.md). 325: 구조-4 PR #384를 307728a6d로 squash 병합 — fieldInputs는 fieldInputDefinitions/ 아래 열한 fractal, filid 키는 organNames(규칙 문서의 additionalOrganNames와 불일치 → filid 결정 재료). 구조 손질 1–4 완료, 작업자 둘 대기.
+- **326라운드(2026-10-14, 소유자).** 구조 손질 5: components/Field의 본체는 FieldProxy이므로 fractal을 components/FieldProxy로(뿌리에 동명 구현, 부품 둘은 components/ 아래), fixy08 직접; 병합 전 전체 게이트는 약식(스토리북·플러그인·documents 생략), 문제가 생기면 자세히(reviews/round-326-owner-answers.md).
+- **327라운드(2026-10-14, 닫기/원장 관리자).** 구조-5 PR #385를 c2d5f737e로 squash 병합(약식 전체 게이트: 시험 3841 통과, 표면 94, filid 새 지적 0). 부품의 뿌리 type.ts 위로 import는 DETAIL 예외 선언 → filid 결정 재료. 구조 손질 1–5 완료, 작업자 둘 대기, 밤 루프는 소유자 결정 대기.
+- **328라운드(2026-10-14, 소유자).** schema-form의 INTENT·DETAIL 문서를 모두 한국어로(humanizer, sonnet·agy 병렬, codex 금지) — fairy08, 문서 전용 PR, 원장 관리자 병합(reviews/round-328-owner-answers.md).
+- **329라운드(2026-10-15, 닫기/원장 관리자).** 문서 한국어화 PR #386을 d25a8aee8로 squash 병합: 138개 중 96 재작성(의미 변경 43건 되돌림), 파일마다 한 문체(섞인 10개는 -다로), app/plugin INTENT의 플러그인 규칙 문장을 코드대로 정정, filid documents 0. 작업자 둘 대기, 밤 루프는 소유자 결정 둘 대기.
+- **330라운드(2026-10-15, 소유자).** 중간 브랜치 전부 삭제, 백업 backup/1.0.0-beta-2026-10-15 뒤 1.0.0-beta를 344 → 48 커밋으로 압축(기능 PR은 그대로, 원장 커밋은 라운드 범위별 하나; 트리 동일). 8단계(소유자 코드 리뷰·속도 측정, 원장 표의 최적화 트랙)는 브랜치 feat/schema-form-08-review-and-perf에서; 원장 작업 트리 /tmp/claude-501/ledger-08, 작업자 워크트리도 이 브랜치에서, 끝나면 1.0.0-beta에 squash(reviews/round-330-owner-answers.md).
+- **331라운드(2026-10-15, 소유자).** 08 플러그인은 완료로(이주는 07b·07d에서 끝남, 플러그인 0.17.0); 미확인 셋(union 시험 객체·misfit 표지(당시 이름 typeMismatch), 수 입력 빈 값 방출, 자사 수정 목록)은 대기열 54로 09 정리 때 대조. 최적화 트랙 진행. 소유자가 거슬리는 점을 하나씩 말하며 작업(reviews/round-331-owner-answers.md).
+- **332라운드(2026-10-15, 소유자).** 리뷰 1차 열넷: rolled·types 병합(types/ 아래 두 칸 병존), schemaType의 virtual·union 정리, 한글 주석 영문화, typeMismatch 이름 공모, 입력을 아는 JSON.stringify와 템플릿 리터럴을 문자열 연결로, WeakMap 54곳 이유, NODE_ENV 판정의 한곳 모음 여부, 함수 안 정규식 상수화, engine 하위(blueprint·derive·navigation·record·settle) utils의 fractal 승격과 미묘한 디렉토리 재구조화(재검증 필요), hooks/hooks 해소, 훅 안 상수 끌어올림, @inheritDoc 54곳 제거. 배분은 reviews/round-332-owner-answers.md.
+- **333라운드(2026-10-15, 소유자).** 작업자 fixy08·fairy08. WeakMap은 memo(측정은 밤 루프). NODE_ENV는 React의 배포 방식을 fairy08이 확인해 따른다. types/internal·rolled, hooks/fieldNode·form 수용. typeMismatch → misfit(drift는 과정의 말, misfit은 상태의 말)(reviews/round-333-owner-answers.md).
+- **334라운드(2026-10-15, 소유자).** 구조 정리를 먼저 빠르게 codex 없이 소유자 감독으로, 그 뒤 속도 최적화부터 codex·agy 사용(reviews/round-334-owner-answers.md).
+- **335라운드(2026-10-15, 소유자).** WeakMap은 측정으로; schemaType은 integer 구분·플러그인 시험 계약 때문에 안 1 유지(배제는 나중); stringify 키는 control.ts 구분자로 속도 토막에서, 되읽는 키만 예외; blueprint 등 engine 재구조화 수용(reviews/round-335-owner-answers.md).
+- **336라운드(2026-10-15, 소유자).** NODE_ENV 현행 유지; misfit은 히스토리 문서까지; virtual type은 내부 jsonSchema에 유지하되 입력 스키마 추론에는 없게; CLAUDE.md 한 줄 승인; settle fractal 2개, 순환은 지금 푼다; 형은 types/ 칸으로 관심사별 분할; walkFieldNodes 삭제; organ 안 파일·디렉토리 혼재 금지(reviews/round-336-owner-answers.md).
+- **337라운드(2026-10-15, 소유자).** PR #387의 Base* 접두사 물음 → Roll의 가치 검토 → 둘째 안: 내부 형 정의 자체를 Roll로 펴고 rolled 칸·Base 접두사 제거(공개 이름 = 내부 이름), fixy08이 #387 위에서 typecheck로 확인(reviews/round-337-owner-answers.md).
+- **338라운드(2026-10-15, 소유자).** 실험 실패(스키마 형은 재귀라 정의 자리 Roll이 순환 별칭 오류) → (가): rolled 칸 유지, 내부 형은 본명, 공개 형은 Rolled 접두사로 두고 src/index.ts에서 rename(reviews/round-338-owner-answers.md).
+- **339라운드(2026-10-15, 닫기/원장 관리자).** 묶음 1 PR #387을 daadce7ab로 squash 병합(types 칸 넷·Rolled 접두사, hooks/fieldNode·form, 한글 주석 셋, misfit 이름 전면). 편집자 결정 339C-01~04, CLAUDE.md 두 줄 갱신(336라운드 승인). fairy08 misfit 문서 PR, fixy08 묶음 2 시작(reviews/round-339-closing.md).
+- **340라운드(2026-10-15, 소유자).** walkFieldNodes는 삭제가 아니라 순회 한 벌로 합침: navigation의 walkFieldNodes를 남기고 subtree state 디스패치 둘과 settle의 walkOwnedFieldNodes 소비처가 그것을 쓴다, 동작은 이전과 같아야 함(reviews/round-340-owner-answers.md).
+- **341라운드(2026-10-15, 소유자).** 하위 노드 방문을 공개 표면에 추가; 설계 초안 plan/tidy-structure/walk-subtree-design.md(권고 walkSubtree, 자기 포함 전위, 가지치기, 형상 한정), 판정 여섯 대기(reviews/round-341-owner-answers.md).
+- **342라운드(2026-10-15, 소유자).** visitSubtree 확정: 자기 포함 전위, false는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch, 옵션 없음), FormHandle 없음, 내부 순회 visitFieldNodes 한 벌·형제 정순(SURFACE-062). batch 자체에는 예산이 없고 예산은 EVENT-020의 다섯과 재귀(reviews/round-342-owner-answers.md).
+- **343라운드(2026-10-15, 소유자).** 묶음 2를 마무리까지, 새 로직이 들어가니 전체 게이트 한 번(약식 규칙의 예외)과 verifier(reviews/round-343-owner-answers.md).
+- **344라운드(2026-10-15, 소유자).** 밤까지 속도 루프 전 작업 자율 진행: 원장 기반 판단으로 fixy08·fairy08을 이끌고, PR 검토·병합 허용, 꼭 필요한 결정만 대기열(진행 차단 금지), codex·agy 멀티에이전트로 사용량 분산(334라운드 대체). 목표는 소유자 복귀 때 검증·검토 끝난 feat/schema-form-08-review-and-perf(reviews/round-344-owner-answers.md).
+- **345라운드(2026-10-15, 소유자).** 작업이 끝난 브랜치는 바로 정리해 불필요하게 늘어나지 않게 한다: PR squash 병합 때 원격 가지 삭제, 작업자는 병합 통지 즉시 로컬 가지 삭제와 워크트리 분리 HEAD 이동. misfit 문서 PR #388은 병합(509f0ae3b)(reviews/round-345-owner-answers.md).
+- **346라운드(2026-10-15, 닫기/원장 관리자).** 묶음 2 PR #389를 검증 다섯 번(verifier 둘·codex·agy·원장 관리자 verifier) 뒤 squash 병합(085676f77): WeakMap→Map·Set, inheritDoc 정리, 정규식·상수 끌어올리기, 템플릿 리터럴 연결, schemaType JSON 형 한정, 순회 한 벌과 공개 visitSubtree. 편집자 결정 일곱(346C-01 떼어진 시작 노드는 함께 떼어진 하위를 걷음, 346C-02 순회 안 정착 밖 진입은 끝에 한 번, 346C-03 떼어진 쓰기는 batch 안에서도 표시하지 않고 생사 판정은 직전 커밋 형상, 346C-04·05 SURFACE-062 문장 정정 둘, 346C-06 NODE-049 inheritDoc 관례 대체, 346C-07 병합 기록과 후속 둘)(reviews/round-346-closing.md).
+- **347라운드(2026-10-15, 닫기/원장 관리자).** PR 셋 병합: visitSubtree 공개 문서 #390(6b4934bf9), 속도 계획 개정 #392(d403d1658, 루프 base는 이 가지, 대기열 55·56 인용, bench 스크립트는 재실행 불가 사유를 적어 보존), 전달 중 인계 결함 수정 #391(42811f452; debugger·codex 둘·verifier·production 게이트). 편집자 결정 셋(347C-01 인계는 새 런타임에서 사슬을 끝내고 지나간 런타임을 모두 되돌림, 347C-02 물러난 루트로의 인계는 DISPOSED_NODE_WRITE로 거부, 347C-03 문서 PR 기록과 후속 둘)(reviews/round-347-closing.md).
+- **348라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 blueprint PR #393 병합(36c661f49): 자식 fractal 일곱·주제 organ 여섯·types/ 칸, stripSchema·resolveArrayLimits 삭제, 동작 변경 없음(옮긴 선언 모두 본문 동치). 검증은 agy·fairy08 문서 대조·verifier이고, verifier가 production 프로젝트 glob이 옮긴 owned-inline 시험 넷을 놓친 것을 잡아 고쳤다. 편집자 결정 셋(348C-01 이동 PR의 설정 glob 점검과 production 게이트, 348C-02 진입점이 내보내는 형 칸의 유지 이유 한 줄, 348C-03 CLAUDE.md 경로 한 줄은 대기열 57)(reviews/round-348-closing.md).
+- **349라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 derive PR #394 병합(fa674d5fa): evaluateDeriveRound 자식 fractal, utils/evaluate·rules 평탄화, constants·types 칸, DETAIL 5-6 모순 삭제, 동작 변경 없음. 검증은 codex·fairy08 대조·verifier이고 보완 넷(판정 출력 형의 자리, 의존 목록, derive-failures 시험, 계약 id 겹침)을 같은 PR에서. navigation은 바꿀 것이 없어 묶음 3은 PR 셋으로 끝난다(349C-01). 계약 id는 시험 파일 하나에 하나, 표지 없는 절은 시험을 얻는다(349C-02)(reviews/round-349-closing.md).
+- **350라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 settle PR #395 병합(90527e29b): 칸 열하나의 순환을 층이 진 organ으로, 자식 fractal 둘, pathStores·templatePaths, type.ts → types/ 칸(settle·write·validation·Form 조각 셋), misfits 저장소 키, 시험 네 쌍 병합, 형 칸 유지 이유. 검증은 agy·fairy08 대조·verifier이고 보완 열한 가지를 같은 PR에서. 편집자 결정 셋(350C-01 층 순서와 이름, 350C-02 자식 DETAIL은 자기 구현의 계약만, 350C-03 후속 셋)(reviews/round-350-closing.md). 묶음 3이 끝났다.
+- **351라운드(2026-10-15, 닫기/원장 관리자).** 최종 경로 PR #396 병합(65f3150d4)으로 밤의 구조 정리 토막이 끝났다. 밤 동안 PR 아홉(#388~#396) 병합, 라운드 345~351. 가지는 유지 다섯뿐. 소유자가 돌아와 할 일: 가지 리뷰, 결정 대기열 54~57 판정, 속도 루프 시작(351C-01)(reviews/round-351-closing.md).
+- **352라운드(2026-10-15, 소유자).** 대기열 57 승인으로 패키지 CLAUDE.md의 옮겨진 경로 한 줄을 고쳤고(대기열 57 닫힘), 속도 작업의 그림을 물어 plan/perf-optimization의 측정판 고정, 분류, 묶음별 최적화, 종합 재측정의 순서와 권고 진행을 답했다(reviews/round-352-owner-answers.md).
+- **353라운드(2026-10-15, 소유자).** 밤 작업 전부 병합과 베이스 가지 확인 뒤 속도 측정·개선 작업 착수. 순서는 plan/perf-optimization대로 측정판 고정(fixy08, 조용한 창, 재현 스크립트와 탐침), 분류·우선순위(fairy08 초안, 소유자 확인은 대기열 55의 가결정대로 기다리지 않음), 묶음별 최적화(가설마다 커밋, 수용 가설 3~4개마다 PR), 종합 재측정과 소유자 수용(reviews/round-353-owner-answers.md).
+- **354라운드(2026-10-15, 소유자).** 루프 전체를 40시간이 아니라 20~30시간으로. 편집자 결정으로 다섯 곳을 줄인다: 커밋 이분은 L2에 닿을 때만, 체감 높은 묶음부터 하고 런타임 교차는 측정과 수용만, 가설마다 상한 1시간, 구현은 codex 병렬·측정은 직렬, PR 하나에 수용 가설 4~5개(대기열 56 갱신). 목표 약 25시간(reviews/round-354-owner-answers.md).
+- **355라운드(2026-10-15, 닫기/원장 관리자).** 속도 루프 M0·M1 PR #397 병합(ea4870067): 조용한 창 한 번의 기준선(baseline.md), 탐침 넷, priority.md, 대장 P-138. 편집자 결정 넷(355C-01 배열 push 길이 비례는 위반·호스트 재선택은 준수·상태 키 결합은 이차, 355C-02 소유자 수용 행은 다시 열지 않고 같은 꼴은 새 행, 355C-03 보유 경로 분류는 L3로·메모리 게이트 기준은 M0 값, 355C-04 M1 확정과 L1 구성 0·1·2·3·7)(reviews/round-355-closing.md).
+- **356라운드(2026-10-15, 소유자).** M0 표를 보고 개선 즉시 진행 승인; 키 생성에서 JSON.stringify를 쓰지 않는 방향을 새 가설(H10, L2 첫 가설)로; 시험은 대부분 src를 돌고 dist를 도는 것은 benchmark-form equivalent와 production-test뿐이므로 커밋마다의 측정에 dist 재빌드와 equivalent 행을 넣는다(reviews/round-356-owner-answers.md).
+- **357라운드(2026-10-15, 소유자).** 속도 측정은 소스가 아니라 빌드 결과물로. 옛 판 대비 표는 이미 dist이고, src를 돌던 독립 스크립트·vitest 벤치·탐침은 dist 진입점으로 바꿔 다시 재어 기준선을 dist 값으로 바꾼다. 동작 시험은 src 그대로(정확성 오라클)(reviews/round-357-owner-answers.md).
+- **358라운드(2026-10-15, 소유자).** dist가 내보내지 않는 내부 이름은 지금 단계에서 빌드 스크립트 수정이나 빌드 결과물 개입(dist 복사본에 export 추가)으로 재고 임시 조치로 적는다. 이후 속도 비교의 정본은 폼 전체 e2e이며 내부 심볼 벤치는 회귀 신호로만(reviews/round-358-owner-answers.md).
+- **359라운드(2026-10-15, 소유자).** 각 에이전트 세션의 권한 분류기에 codex 위임을 클로드 서브에이전트에 준하는 데이터 공유로 허용한다고 직접 지시했음을 공유. 허가 세탁 금지 규칙은 그대로(reviews/round-359-owner-answers.md). 다음 라운드 번호는 360.
+- **360라운드(2026-10-15, 닫기).** 속도 루프 L1 PR #399 병합(3c0e46576): 가설 0(P-25 참조 되살림)을 폭 순회를 늘리지 않는 자리로 고치고, 모든 수치 행을 빌드 결과물로 다시 쟀다. 편집자 결정 넷: SETTLE-043 보강(조립 자리 되살림과 얕은 필요조건), G8 push 설계 넷, L1 예외와 가설 3 해소, P-139와 oneOf 재판정은 L2로(reviews/round-360-closing.md). 다음 라운드 번호는 361.
+- **361라운드(2026-10-15, 소유자).** 속도 지연의 수용은 옛 수치·현재 수치·배율·절대시간을 보고 소유자가 결정하고, 배열 push 설계 변경은 소유자가 상세히 검토한다. L1b PR은 소유자 검토까지 가지에 둔다(reviews/round-361-owner-answers.md). 다음 라운드 번호는 362.
+- **362라운드(2026-10-15, 소유자).** 배열 push 지름길 승낙. 기본값 채움 때의 두 번째 값 복사는 줄일 수 있으면 줄이고 못 줄이면 수용. 자식 노드 배열·로드 스냅숏 복사의 설명 요구, pop·remove 지름길 필요 여부 물음(reviews/round-362-owner-answers.md). 다음 라운드 번호는 363.
+- **363라운드(2026-10-15, 소유자).** 배열 동사 전부와 자식 노드 배열·로드 스냅숏 복사를 검증해 판단 가능한 데이터로. fairy08 읽기 전용 분류 보고, fixy08 동사별 측정과 비용 분해, L1b PR은 그 뒤(reviews/round-363-owner-answers.md). 다음 라운드 번호는 364.
+- **364라운드(2026-10-15, 소유자).** 지름길은 쓸 수 있는 배열 동사 전부에; 원칙 변경이 필요하면 보고, 아니면 절차적 개선. L1b 범위를 동사 전부로 넓히고 동사별 설계 한 쪽 뒤 승인된 동사부터 구현(reviews/round-364-owner-answers.md). 다음 라운드 번호는 365.
+- **365라운드(2026-10-15, 소유자).** push·pop은 꼬리 연산, remove·insert는 꼬리 재매김 동사로 틀 확정(안정 키는 하지 않음). insert를 지금 추가해 remove와 짝을 맞추고 둘의 전체 길이 비례 비효율 셋을 함께 걷어냄. fixy08 권한 거절은 소유자가 질의를 본 적 없어 fixy08이 직접 보고(reviews/round-365-owner-answers.md). 다음 라운드 번호는 366.
+- **366라운드(2026-10-15, 소유자).** 동사별 지름길 설계는 소유자가 볼 것 없음, 중간 결과가 나오면 알림. pop과 remove·insert 공통 비효율은 편집자 승인으로 진행, 통째 setValue 접두 증명은 원장 대조 뒤(reviews/round-366-owner-answers.md). 다음 라운드 번호는 367.
+- **367라운드(2026-10-15, 소유자).** 배열 동사 지름길을 잘 마무리한 뒤 잦은 호출 경로(onChange·setValue, 객체)의 유사 비효율 확인. L2 첫 묶음을 잦은 쓰기 경로로, fairy08 읽기 전용 분류표 먼저(reviews/round-367-owner-answers.md). 다음 라운드 번호는 368.
+- **368라운드(2026-10-15, 소유자).** 전후 비교 표는 옛 판·수정 전·수정 후 각각 비율(±%)과 절대값 ms. 옛 판 열은 레거시 사본 프로브로 채움(reviews/round-368-owner-answers.md). 다음 라운드 번호는 369.
+- **369라운드(2026-10-15, 소유자).** 비동기 옛 판도 적용 시점(루트 onChange 기대 값·노드 value 일치)까지 잰다(reviews/round-369-owner-answers.md). 다음 라운드 번호는 370.
+- **370라운드(2026-10-15, 소유자).** 옛 판 수치는 목표치가 아니라 비교치. 목표는 비효율 제거와 필요한 경우 설계 재구성·개선점 찾기이며, 과한 집착은 과도한 코드를 만든다(reviews/round-370-owner-answers.md). 다음 라운드 번호는 371.
+- **371라운드(2026-10-15, 닫기).** 속도 루프 L1b PR #400 병합(f441a9159): push·pop·끝 자리 지름길, insert 추가, remove·insert 꼬리 비례, clear 일괄 정리, 가설 7·스냅숏 사본. 편집자 결정 넷: 배열 동사 계약 해석과 레인 합격 기준, SURFACE-005 보강(배열 여섯), 수용 복사 셋과 선택 재사용 계약 변경, L1b 구성·L2 이월·대기열 58(reviews/round-371-closing.md). 다음 라운드 번호는 372.
+- **372라운드(2026-10-15, 닫기).** 속도 루프 L2 첫 묶음 PR #401 병합(b9e2f63dc): 통째 쓰기의 같은 값 잎 건너뛰기와 자격 범위, 나감 감시 색인, 불일치 메모 재구성 조건, 완전 승인 간선 스키마. 편집자 결정 셋(reviews/round-372-closing.md). 다음 라운드 번호는 373.
+- **373라운드(2026-10-15, 소유자).** allOf 조각이 배열 items에 적은 controls가 아이템에 걸리지 않는 것은 결함, 수정(대기열 59 닫힘; 별도 fix PR, CONTROLS-077 보충은 다음 마감)(reviews/round-373-owner-answers.md). 다음 라운드 번호는 374.
+- **374라운드(2026-10-15, 소유자).** 앞으로 agy·codex를 더 활발히(claude보다 codex 토큰). 구현·조사는 codex 기본, 검증은 agy 기본, Claude 서브에이전트는 둘이 못 할 때만(reviews/round-374-owner-answers.md). 다음 라운드 번호는 375.
+- **375라운드(2026-10-15, 소유자).** 가결정 55·56 그대로 확정(닫힘). 열린 대기열은 54·58·60(reviews/round-375-owner-answers.md).
+- **376라운드(2026-10-15, 닫기).** 나감 정리 결함 PR #402 병합(ba0b36c88): 소멸 때 보류 나감 정리를 경로 접두에서 노드 동일성으로, 소멸 아이템 안 보류 나감도 떼어냄(NODE-044 결함 둘, #389 이전). CONTROLS-077 보충(배열 아이템은 조각의 직계 자식; 값·상태 키는 items 조각 층 PR, 파생 규칙은 별도 PR)으로 대기열 60 닫음(reviews/round-376-closing.md).
+- **377라운드(2026-10-15, 닫기).** items 조각 층 결함 PR #403 병합(3f02269ab): 조각 소유 판정 도우미 하나를 blueprint·settle·derive가 함께 씀, 아이템이 조각의 상태 키·default·unsetOnInactive를 받음, 기존 기대 변경 0건; 파생 규칙은 별도 PR(reviews/round-377-closing.md).
+- **378라운드(2026-10-15, 소유자).** 오류·경고 코드의 그룹 부분을 상수로 빼고 오류는 그룹별 표로, 경고도 같은 꼴로 — 속도 루프 뒤 정돈 항목; 그룹 상수의 공개 여부는 대기열 61(reviews/round-378-owner-answers.md).
+- **379라운드(2026-10-15, 소유자).** 코드 그룹 상수는 공개하지 않고 내부 관리용(대기열 61 닫힘). 열린 대기열은 54·58(reviews/round-379-owner-answers.md).
+- **380라운드(2026-10-16, 소유자).** 코드 그룹 상수화를 기다리지 않고 지금 codex에게 /orchestration으로 맡김; 범위 src/errors, 값·공개 이름·ERROR-164 순서 불변(reviews/round-380-owner-answers.md).
+- **381라운드(2026-10-16, 소유자).** 위임 도구는 cennad·orchestration 어느 것이든; 결과 확인과 쓴 에이전트·CLI 정리를 잘 할 것(reviews/round-381-owner-answers.md).
+- **382라운드(2026-10-16, 닫기).** 코드 그룹 상수화 PR #404 병합(c1f3016de): 그룹 상수 한 벌과 그룹별 파생 표(내부용), 값·순서·공개 이름 94 불변; Orca·codex 작업자, 원장 관리자 diff 확인(reviews/round-382-closing.md).
+- **383라운드(2026-10-16, 소유자).** #404 후속: group·specific을 상수로 두고 code를 조립(slice 제거), 클래스 name을 그룹 상수로; codex로(reviews/round-383-owner-answers.md).
+- **384라운드(2026-10-16, 닫기).** 조각 파생 규칙의 배열 아이템 결함 PR #405 병합(8f8a3368b): 다중 대상 규칙, 호스트 식 1회, 아이템마다 쓰기·에지; codex 구현·codex 검증자(agy 한도)·fairy08 대조; 기존 기대 변경 1건(reviews/round-384-closing.md).
+- **385라운드(2026-10-16, 소유자).** 지시 셋: 지우기 전 리뷰(늦음 — 원장 관리자가 #406을 리뷰 전에 병합·삭제한 것을 바로잡아 알림), errors codes의 상수·보조를 filid organ(constants·utils)으로 정리(#407, 원장 관리자 직접), 리뷰 완료·병합·복귀(reviews/round-385-owner-answers.md).
+- **386라운드(2026-10-16, 닫기).** L2 둘째 묶음 L2b PR #408 병합(58200ff5a): P1 이탈 대기 키 생략(5줄, 잡음 안), P-08 조각 소유 집합(순 +1줄, F=128 1,936 → 315 µs), 18C 벤치 격리·재측정, P-139는 벤치 GC로 R-25 닫힘; codex 구현·codex 검증자(agy 한도), 기존 기대 변경 0건(reviews/round-386-closing.md).
+- **387라운드(2026-10-16, 소유자).** 지시 둘: 마운트 상수 가설은 개선 방향을 찾는 실험까지만(불가능하면 포기), 게이트 폼 한 키 쓰기는 실험으로 안정성·효용성을 검증하고 같은 원리·사상이면 시도 가능(결정 58은 실험 뒤 판단으로). 함께 fairy08 조사로 공유 충돌 fold 결함을 확인해 codex 결함 PR로 돌림(reviews/round-387-owner-answers.md).
+- **388라운드(2026-10-16, 소유자).** 387라운드 실험 둘의 채택: 실험 결과가 원장과 정한 사양에 비추어 수용 가능한 길이면 원장 관리자가 편집자 결정으로 채택하고 PR 생성·병합까지 진행, 소유자가 뒤에 수용 못 하면 revert — 그래서 채택마다 허용 근거 항목과 revert 커밋을 적는다(reviews/round-388-owner-answers.md).
+- **389라운드(2026-10-16, 닫기).** 공유 선언 충돌 fold 판정 결함 PR #409 병합(10710d8b2): 첫 활성 간선의 청사진 노드 identity 비교, hasSharedConflict 삭제, 기존 기대 변경 0건; 원장 보충 셋(ERROR-133 cause는 첫 실패, NODE-006 386C-01 근거 수준, NODE-043 종류는 fold); 같은 뿌리의 F1(union fold 정체)·F2(배열 아이템 종류별 노드)는 별도 PR; priority.md 낡은 표시 둘 고침(reviews/round-389-closing.md).
+- **390라운드(2026-10-16, 닫기).** union fold 정체 결함 F1 PR #410 병합(319a1109b): 정체 토큰 하나(union은 union:<fold mask>, 다른 종류는 기존 kind)로 아홉 열쇠 계열을 구별하고 선택 재사용은 청사진 노드 동일성; codex 분류·구현, fairy08 분류표·커밋 대조(빠진 자리 하나 잡음), codex 검증자 PASS, 기존 기대 변경 2건(옛 범주 열쇠 단언); 보충 둘(386C-01 유일 경로 문장 반례, 경로 단위 열쇠 경계)(reviews/round-390-closing.md).
+- **391라운드(2026-10-16, 닫기).** 배열 아이템 종류별 노드 결함 F2 PR #411 병합(ef87cfbcc): fold마다 아이템 후보(목록은 fold가 여럿일 때만), 배타면 그 종류의 아이템 노드·동시에 켜지면 충돌, 호스트 이탈·복원은 후보별 잠복 열쇠, 단일 후보 지름길·정적 첫 로드 불변; codex 구현·검증자(결함 하나 잡아 고침)·fairy08 두 번 통과, 기존 기대 변경 0건; F3(후보 소유 잠복 자손 정리, 객체에도 있는 기존 결함)은 별도 PR; 대기열 62(모든 분기가 꺼진 자리의 값이 뒤 분기를 켤 때 사라짐 — 현행 규칙, 바람직한지 소유자); agy 한도 기간 codex 검증자 조건 셋(reviews/round-391-closing.md).
+- **392라운드(2026-10-16, 소유자).** 기능 오류는 절대로 막아야 하는 문제라 반드시 해결, 속도는 아직 불만족, 결정 사항(54·62·M3 수용)은 자세한 정보로 다시; 과정 고침(codex 구현의 자기 대조 행렬 필수, 규칙 문장 하나로 수정, 검증자 새 세션)(reviews/round-392-owner-answers.md).
+- **393라운드(2026-10-16, 소유자).** 54: 경고등 이름은 misfit(원장 관리자 표기 오류 정정), UI 플러그인과 내장 fallback fieldInput을 지금 읽기 전용 대조만, 개선은 나중에; 62: 현행 유지(가)가 적절해 보이나 UX 일관성을 깨는지 검토(fairy08)(reviews/round-393-owner-answers.md).
+- **394라운드(2026-10-16, 닫기).** 후보 소유 잠복 자손 정리 결함 F3 PR #412 병합(efa621543): 떠나는 후보는 자기만 닿는 열쇠만 정리(공유 보존, 낡은 열쇠 삭제), 자리 이동은 모든 후보 열쇠 동반·진짜 소멸만 삭제, 재생 자리는 자기 종류 원천 우선 규칙 하나, 질의 안 방문 집합; codex 구현·검증 일곱 번·fairy08 대조 네 번·생성 행렬 대조, 기존 기대 변경 0건, 새 시험 114건; 남은 같은 계열 결함 다섯(394C-02)은 다음 PR, 수용 잔여 둘(깊은 재귀 이탈 비용); 54 대조 결과 결함 아홉(394C-03, 개선 보류); codex 과정 고침 셋(394C-04)(reviews/round-394-closing.md).
+- **395라운드(2026-10-16, 닫기).** 후보 원천 보존 결함 다섯 PR #413 병합(65efdccec): R1 보존하는 자리는 모든 깊이의 후보 원천을 포착·보존·재생(후보를 포함한 하위 트리 기준, 후보 없는·단일 종류 자리는 base 그대로), R2 억제 이탈도 소유 범위 안의 낡은 열쇠 정리(판정은 같은 이탈 결정 안에서 인자로만 재사용), R3 후보 있는 배열의 꺼진 쓰기는 쓰는 순간 첫 종류에 묶음(35C-10 좁힘, 결정 62 (가) 잠정); codex 구현·검증 세 번·fairy08 대조 두 번, 기존 기대 변경 0건, 새 시험 89건; DETAIL 문장 수정 기준과 검증 과정 관찰(395C-02); 고치지 않은 관찰 둘(395C-03)(reviews/round-395-closing.md).
+- **396라운드(2026-10-16, 소유자).** 열린 결정의 사양은 일관성과 합리성으로 구성하고 노드 동작이 일관된 구조와 예측 가능성을 가지면 수용한다는 원칙 하나. 원장 관리자가 그 원칙으로 둘을 닫음: 62는 (가) 꺼진 자리에 쓴 값은 선언 순서 첫 종류의 몫(객체·배열 같음), ⑧은 빈 칸은 nullable과 무관하게 undefined이고 명시적 비우기 조작만 nullable이면 null(내장 Number의 현행은 결함, 플러그인 수정 PR에서 고침)(reviews/round-396-owner-answers.md).
+- **397라운드(2026-10-16, 소유자).** agy 개인 한도 복구. 검증은 374라운드 기본대로 agy로 돌아가고(틀린 통과 비용이 큰 일은 high, 좁은 일은 mid 이하, apex는 쓰지 않음), codex 검증자는 agy 503·rate_limit 때의 대체로만; 391C-03의 fairy08 필수 대조 조건은 풀림(reviews/round-397-owner-answers.md).
+- **398라운드(2026-10-16, 소유자).** D 측정의 발견(제품 경로가 폼마다 청사진을 새로 지어 폼 하나 기준 트리+청사진 메모리가 0.16.1보다 약 5분의 1 많음)에 대한 물음 "같은 스키마 참조의 청사진을 폼 사이에 공유할지"는 "지금 하지 않는다"로 닫힘: 이득은 같은 루트 스키마 객체로 폼 여럿을 띄울 때뿐이고 스키마 불변 계약이 전제이며, 하더라도 app 수준 주입형 캐시(blueprint의 cache 옵션은 이미 있음)이고, 부분 스키마 공유는 루트 단위 청사진이라 가속이 안 됨. 메모리 약 5분의 1 증가는 M3 수용 목록(reviews/round-398-owner-answers.md).
+- **399라운드(2026-10-16, 소유자).** 지금 하는 일(측정 문서 PR #414 병합과 마감)까지 끝내고 일시 휴식; 상황 파악·정보 이해·원장 갱신·결정의 갈무리 뒤 다음으로. L3 구현 묶음은 시작하지 않고, 작업자 둘은 정리 뒤 대기. 예상 소요 삼사십 분(reviews/round-399-owner-answers.md).
+- **400라운드(2026-10-16, 닫기).** 측정 먼저 묶음 문서 PR #414 병합(25c500e40, 제품 코드 변경 0): 터미널 모드는 느리지 않고 느린 것은 표시 없이 하위 선언이 없는 호스트(선언 밖 값의 키마다 복사·재조립); 결함 수정 셋은 배열 동사 비용 불변; all-keys 격차는 원장 계약 몫(수용 후보)과 DETAIL 알고리즘 몫(증명 먼저)으로 구분; EXIT-LAYERS 소유 판정은 조각 수에 초선형이고 직접 판정이 차등 0; 폼 하나 기준 메모리는 청사진 미공유로 0.16.1보다 약 5분의 1 많음. L3 가설 다섯·증명 먼저 후보·수용 후보·폐기·기록(400C-01), 측정 방법(400C-02), DETAIL 대 원장 계약 구분(400C-03), 재개 지점(400C-04)(reviews/round-400-closing.md). 일시 휴식.
+- **401라운드(2026-10-16, 소유자).** 설명 문서 작성 중 발견한 설계 문서의 이름 어긋남(자식 제어 키의 옛 이름, 05·06의 옛 공개 이름)을 휴식과 별개 작업으로 codex에게 고치게 하되 임의 수정은 금지. 범위는 설계 문서 여덟 편뿐이고 원장 본문은 역사 기록으로 둔다(reviews/round-401-owner-answers.md).
+- **402라운드(2026-10-18, 소유자).** 휴식을 끝내고 L3 구현 묶음을 재개하되 Claude 사용량을 극도로 억제한다: 보조 Claude 세션 없이 Orca 조정 루프 아래 codex(sol 모델)가 구현·게이트·측정·PR을, agy(gemini-4, 좁은 확인은 gemini-3.8)가 검증을 맡고 apex는 쓰지 않는다. 첫 가설 L3-e를 승인하고 검토와 검증으로 개선 루프를 돌린다(reviews/round-402-owner-answers.md).
+- **403라운드(2026-10-18, 닫기).** L3 가설 (e) 조각 소유 직접 판정 PR #416 병합(fde6ab359): 조각이 켜진 평상시 쓰기의 소유 판정을 선택 선언·직전 커밋 선택 fallback·선언 자식 소유 경로로 직접 하고 정책 층 평가·우선순위·나감 의미는 그대로. 평상시 쓰기 F=64가 Node와 Bun 모두 크게 줄고 나감 쓰기는 불변, 배달 비교 차이 0(403C-01). Orca 조정 루프의 운영 방식 기록(403C-02). 편집자 결정 둘(reviews/round-403-closing.md).
+- **404라운드(2026-10-18, 닫기).** L3 가설 (b) items 없는 배열의 끝 덧붙임 지름길 PR #417 병합(8e35b01fc): items와 prefixItems가 모두 없는 정적 branch 배열의 단독 push·insert(N)은 덧붙인 칸 하나만 보고 접두를 다시 증명하지 않으며 관측은 일반 길과 같다; 접두 재증명이 상수가 되고 남은 비용은 세 배열의 얕은 사본(404C-01). 편집자 결정 하나(reviews/round-404-closing.md).
+- **405라운드(2026-10-18, 닫기).** L3 가설 (a) 선언 밖 키 일반 대입 PR #418 병합(89ea2c98b): 선언 밖 값 사본은 __proto__만 own property로 정의하고 나머지 키는 일반 대입하며 __proto__ 보호는 코드 불변이라 시험으로 고정(405C-01, VALUE-002 보충). 소유자 지시로 메인 에이전트를 Claude에서 codex로 바꿀 때의 인계 문서와 Orca 바인딩 규칙(405C-02). 편집자 결정 둘(reviews/round-405-closing.md).
+- **406라운드(2026-10-18, 닫기).** L3 가설 (c) PR #419 병합(bb4ff19d9): 선언 밖 값의 같은 값 판단은 쓰기 한 번에 한 번이며 객체의 nextExtras와 배열의 arrayExtras가 같은 값이면 이전 참조를 되살리고 markWrite는 참조만 비교한다; 잠복 Merge가 의존하는 되살림은 유지(406C-01). 편집자 결정 하나(reviews/round-406-closing.md).
+- **407라운드(2026-10-18, 닫기).** L3 가설 (d) PR #420 병합(67484c0be): 해석한 잎 자식은 첫 조회의 staticSpec을 재귀 호출에 넘기고 두 번째 조회를 하지 않으며 시간 효과는 측정되지 않아 중복 호출 제거로만 기록(407C-01). L3 구현 묶음 다섯 가설 완료와 다음 단계(407C-02). 편집자 결정 둘(reviews/round-407-closing.md).
+- **408라운드(2026-10-18, 소유자).** 메인 에이전트를 codex로 넘기며 마운트 문제 해결과 정상동작 검증까지 codex의 몫으로 하고, 가드가 모자라면 채우면서 진행하며, 원장 해석과 판단의 기준(정본의 순서, 성능 변경 수용 기준, 관측 동치 판단, 측정 읽기, 멈추는 경우)을 인계 문서에 적는다(reviews/round-408-owner-answers.md).
+- **409라운드(2026-10-18, 소유자).** codex 메인 에이전트가 원장 관리자이자 Orca 코디네이터를 이어받았다. 측정 결과 문서 다섯의 문서 전용 PR을 codex 워커가 만들고 agy 검증 뒤 병합·원장 마감을 한 다음 마운트 원인 분해로 이어가는 순서를 소유자가 승인했다(reviews/round-409-owner-answers.md).
+- **410라운드(2026-10-18, 닫기/원장 관리자).** L3 측정 결과 문서 다섯의 PR #421을 c350e7651로 squash 병합했다. 원본 수치·표본·dist 해시를 보존하고 같은 창의 옛 판 표본 등 결손을 미검증으로 남겼으며 제품 변경 없음, agy 여섯 축 통과·수정 필요 관찰 없음이다. 토큰 기준 안내는 재현된 입력으로 정정했고 다음은 현재 dist의 마운트 원인 분해다(reviews/round-410-closing.md).
+- **411라운드(2026-10-18, 닫기/원장 관리자).** 마운트 완료 경계 보강·네 가드 조합·패키지 게이트와 별도 독립 수치 검산을 기록했다. PR #422 최종 문서 보완 head bad706d86은 미병합이며, agy의 실제 gh/Git 설정 접근 거절로 독립 metadata 확인은 미검증이다. Filid 전역 FAIL과 기존 자동 제외 범위도 보존한다. 권한을 우회하지 않고 소유자 판단 전 병합·제품 최적화를 보류한다(411C-01·411C-02, reviews/round-411-closing.md).
+- **412라운드(2026-10-18, 소유자).** PR #422 메타데이터는 코디네이터가 확인한 근거로 대체해 병합하도록 승인했다. 이후 agy 권한 문제도 목적과 상황을 듣고 대행할 수 있다. 수행 주체와 확인 범위를 구별해 기록하며 제품 구현·관측 동치·열린 결정 기준은 유지한다(reviews/round-412-owner-answers.md).
+- **413라운드(2026-10-18) 마운트 완료 경계 보강 병합.** 소유자 승인에 따른 코디네이터 metadata 확인 뒤 PR #422를 ef6747ea0으로 squash 병합했다. agy 직접 metadata 미검증과 Filid 전역 한계는 구별하고 제품 성능 개선이나 잔여 수용으로 바꾸지 않았다. 다음은 itemless 배열 계획과 독립 검토다.
+- **414라운드(2026-10-18) 소유자 지시: 이후 agy는 Gemini 3.8.** 예정된 itemless 배열 독립 계획 검토부터 gemini-3.8-flash-high를 사용한다. 이전 완료 검증의 모델 이력과 codex 구현 역할·권한 대행·관측 동치 기준은 유지한다.
+- **415라운드(2026-10-18) 소유자 승인과 지시: 이름 표기 수정·완료 가지 정리.** 승인된 동일 tree/message 후보994dd3a68을 원격 lease 조건으로 반영했다. 원래 SHA와 GitHub 병합 주소는 역사로 구별하고, 완료한 작업 가지는 병합·head·worktree 사용을 대조해 정리한다. 진행 중인 itemless 가지와 작업 폴더는 보존한다.
+- **416라운드(2026-10-18, 닫기/원장 관리자).** 소유자 승인으로 이력 이름 표기를 보정했고 완료 로컬7·추적2참조만 안전하게 정리했다. itemless 기술 계획 검토와 권한 대행을 구별했고 필수 판단은 대기열에서 해당 범위만 보류한다. 다음은 최신 메인 기준의 제품 구현·동치·게이트·측정·독립 검증이다(reviews/round-416-closing.md).
+- **417라운드(2026-10-19, 닫기/원장 관리자).** itemless Draft PR #423을79d873de8로 고정했고58장면 정정·memo/import 가드·최종4게이트·교정136행의 근거를 기록했다. 대조군 악화 수용·병합은 대기열60, 외부 변조의 새 격리 정책은59로 해당 범위만 보류한다. nextExtras 무조건flag는 반례로 기각했고 첫 객체 names는 조건부 계획과 독립 검토까지이며 제품·시간 효과는 미검증이다. PR 상세 독립 근거 보완·대조군 원인·legacy 직접root 비동기 완료 경계 조사는 별도로 계속한다(reviews/round-417-closing.md).
+- **418라운드(2026-10-19, 닫기/원장 관리자).** 실제 source/A/B reader feasibility와 legacy 비동기 러너 준비를 기록했고 새 측정·제품 변경은 없다. 독립 검토의 정적/저장자료 범위와 권한 거절 뒤 우회 주장을 구별해 해당 원격조회는 제외하고 코디네이터가 승인된 metadata만 대행했다. 기존 source 시험을 보존하는 별도 강화 관측 경로의 최소 연결과 러너 독립 검토를 계속하며 성능 수용·병합과 격리 정책은 대기열에서 해당 부분만 보류한다(reviews/round-418-closing.md).
+- **419라운드(2026-10-19, 닫기/원장 관리자).** strict helper와실제producer 연결을기존source시험과분리해구현하고새G13의코드·저장자료독립검토를기술범위에서수락했다. 실제348이력/파생522·네게이트764파일4863passed/기존1todo와Storybook·jsdom e2e의실제범위를구별하고시험설정의다섯project를바로잡았다. agy는새runtime/AST/해시실행0이며root metadata·ready-6/7 실제해시는별도근거다. PR423 Draft·대기열59/60·M3/성능수용·병합은보류하고E없는첫객체도구인계계획과새epoch 측정준비를이어간다. (`reviews/round-419-closing.md`)
+- **420라운드(2026-10-19, 닫기/원장 관리자).** 같은 A strict 준비348실제이력/522저장비교/84preflight와103원본·15정정의독립M1을한정수용했다. exact witness와다른worker유휴를확인한별도M2승인뒤UTC21:27:49–21:31:23 Node1/Bun1/Node2/Bun2가모두exit0으로끝났다. 실제136행/13600표본/2720예열과내부preflight168·56쌍/28바퀴쌍/12교차를새agy가독립재계산해일치를확인했으며같은A의큰차이를무해noise나옛E원인으로수용하지않는다. 첫객체상태22단언/8도구음성의wrapper·emitted-instance미래절차두보완은별도독립계획검토를통과했으나T/F제품구현0이다. 다섯시험project표기를바로잡고대기열59/60·성능수용·PR423병합은그대로보류한다. 읽기전용순서/상태수명진단은계속하며새측정은별도판정한다(reviews/round-420-closing.md).
+- **421라운드(2026-10-19, 닫기/원장 관리자).** 소유자의 중단 물음과 계속 진행 원문 두 개를 기록하고 P1 계획·tool/controller M1을 고정 소스의 근거로만 수용했다. 새 witness와 실제M2 뒤 controller1회·AB/BA는 모두exit0으로 자동창01:37:20.248Z–01:38:03.475Z를 닫았으나 protected325중 옛gates 한 파일이 달라 전체protocol failed와 G9/G11–13 중단을 남겼다. 새agy의38중앙값·18비율 일치와 같은라벨의17/18위치 관찰은 실패창의 한정 산술이며 G14/G15·성능·PR423·owner59/60을 닫지 않는다. 현재 자동journal 경로의 저장명령 일치와 lifecycle 작업연결 진단은 역사적hook envelope/당시SHA 결손을 구별하며 옛원문복구·기대해시교체·재실행·hook/config수정은0이다. 새진단의 정식finish와 작업연결해제를 기록하고 독립검토의 외부소스 범위이탈은 거부하고 필수문서26·원문·source 대조를 마쳤다(reviews/round-421-closing.md).
+- **422라운드(2026-10-19, 닫기/원장 관리자).** 옛 portability 검토의 전체 최종 증거를 회수할 수 없어 새 agy3.8 독립 검토를 받았고 retired-owner 거절 요약의 상충 가능한 문구만 새 보완 계약으로 한정했다. SB3 known/held retired의 유효한 이력 정체성과 현재 rebirth 결속을 구별하며 한정 G3/SB3/SB4 재검토 cleared 뒤 root의 일반 G1 범위로 원래14경로와66/58 분리를 수락했다. 원형58·28채널·동일 module readonly reader·좁은 capture와 미래 F60/480/20/384를 유지하며 옛 문서11 pending을 실행 통과로 바꾸지 않는다. root/Vincent 귀속을 정정하고 원문을 보존했으며 새 child의 Sol/high 워커는 setup skip과 실제 turn_started로 T 구현에 진입했다. 제품 코드·기대값·F·timing은 이번 문서 마감에서 바꾸지 않았고 P1 실패·owner54/58/59/60·PR423·TEST-027/M3·성능 수용은 해당 범위만 보류한다(reviews/round-422-closing.md).
+- **423라운드(2026-10-19, 소유자 지시와 마감).** 진행 범위·소요 시간 질문에 답하고 T14를 마지막으로 원장 갱신 뒤 대기하라는 원문3개를 기록했다. T14 검증·DETAIL14경로는별도 가지의 초안으로 보존하며 대상26과 typecheck/lint/build의 부분 통과를 전체 시험61실패/18errors·G5 및 독립 구현 검토 미완료와 구별한다. 제품 수정·기존 기대 변경·후속 F·새 측정·병합과 최종 완료는 진행하지 않는다. 소유자 지시가 종전의 자율 진행 설명보다 우선하며 P1 실패와 owner54/58/59/60·PR423·M3·성능 수용 보류는 유지한다(reviews/round-423-owner-answers.md, reviews/round-423-t14-handoff.md).
+- **424라운드(2026-10-19, 소유자 지시와 환경 인계).** 불필요한 환경 정리와 보존 경로·개시 프롬프트 작성 지시를 원문으로 기록했다. 실제 메인·PR423·미통과 Draft PR424의 세 작업 폴더와 원자료를 보존하고 유휴 보조 터미널3곳과 물리 경로가 없는 Git 등록3곳만 정리한다. 제품 수정·후속 F·측정·병합은 재개하지 않으며 최신 환경 경로와 마감 조건은 reviews/round-424-environment-handoff.md, 다음 담당자의 첫 읽기와 승인 경계는 verification/perf-optimization/l3-briefs/next-agent-start-prompt.md를 따른다. 원장 검사 뒤 마지막 보조 세션도 닫고 문서만 게시하여 대기한다.

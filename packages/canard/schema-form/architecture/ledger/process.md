@@ -897,6 +897,8 @@
   > 편집자 결정(425C-01): "【추론】 하위 작업 폴더 두 곳과 로컬 원자료의 소실을 사실로 기록하고, origin 가지에서 checkout만 복원하며 게이트·전체 시험 증거를 새 namespace에 재취득한다. 소실된 측정 원자료와 P1 원자료는 복원된 것으로 적지 않고 원장의 파생 수치만 유효하게 남긴다. 옛 결과(61 failed/18 errors)의 원인을 소급해 단정하지 않는다." (`reviews/round-425-closing.md:8`)
   > 편집자 결정(425C-02): "【추론】 하위 checkout에서는 워크스페이스 의존 패키지 빌드가 게이트 전제이며, Storybook 동적 모듈 fetch 실패와 timeout은 차가운 캐시·동시 실행 조건에서 재현되므로 단독·따뜻한 캐시 실행 뒤에 남는 실패만 head-only로 분류한다. T14의 남은 1건(시간 임계값 assertion)은 미확정으로 두고 기대값·제품·설정을 바꾸지 않는다." (`reviews/round-425-closing.md:10`)
   > 편집자 결정(426C-01): "【추론】 T14는 재실행한 G3/G4 증거와 독립 검토 통과(조건부)를 근거로 수용하고, 전체 시험에 남은 `global-errors.timing.test.ts` 1건은 head·base 각 5회 단독 통과와 import 경로 무변경에 따라 소유자 예외로 시간 잡음으로 기록한다. 시험·임계값·기대값은 바꾸지 않는다. Filid 전역 FAIL은 변경 전 baseline이며 변경 14파일의 직접 finding은 0이다. 병합은 소유자가 직접 수행했고 이 수용은 F·owner54/58/59/60·M3·성능 수용을 닫지 않는다." (`reviews/round-426-closing.md:8`)
+  > 편집자 결정(427C-01): "【추론】 AGENT-HANDOFF·HANDOFF·PLAN의 라운드별 경위와 끝난 항목을 PLAN-LOG와 `_archive/2026-10-20/`으로 옮기고 현재 상태·운영 규칙·다음 할 일만 남긴다. 지우는 줄은 없으며 모든 줄은 두 곳 중 하나에 원문으로 남는다. 원장 본문과 reviews 기록은 줄 번호 인용이 깨지므로 9단계 squash 직전에 한 번 보관한다." (`reviews/round-427-closing.md:8`)
+  > 편집자 결정(427C-02): "【추론】 큰 구현·측정은 codex gpt-6.1-sol high, 짧거나 단발적인 작업은 agy 하위 모델이나 Orca로 띄운 cursor(Grok 4.7 또는 적당한 프론티어 모델)에 맡기며, Grok·Composer와 프론티어 모델의 사용량을 따로 관리하고 한도에 걸린 워커는 멈추고 보고한다. 다음 성능 작업은 소유자 지시 뒤 시작한다." (`reviews/round-427-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-agenda.md:116-124`(정본), `HANDOFF.md:154`
 - 닫은 사람: 소유자 답(`HANDOFF.md:148` 소유자 지시 "교차검증까지 모두 끝내서 설계완료를 확정하면"), 편집자 결정(17라운드, `reviews/round-18-agenda.md:114-124`)

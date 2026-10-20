@@ -552,3 +552,8 @@ reviews/round-426-owner-answers.md:8	426	T14 후속·재측정 진행 지시와 
 reviews/round-426-owner-answers.md:9	426	다음 절차 설명 요청	"그래. 다음 절차가 뭔지 말해봐 그럼" (2026-10-19–2026-10-20, 원장 세션)
 reviews/round-426-owner-answers.md:10	426	시간 잡음 예외 승인과 병합 진행	"네 시간잡음으로 보고 진행하시죠" (2026-10-19–2026-10-20, 원장 세션)
 reviews/round-426-owner-answers.md:11	426	소유자 직접 병합 통지	"병합완료했어" (2026-10-19–2026-10-20, 원장 세션)
+reviews/round-427-owner-answers.md:7	427	core 마운트 비효율 수정 확인 물음과 압축 시점 물음	"응 core 의 마운트 비효율은 수정을 해야하는 문제가 맞지.\n그냥 확인차 물어본거야.\n\n그럼 다음 작업은 내가 지시하면 시작하고,\n그전에 원장과 히스토리 중 지나치게 길어진 곳이나 불필요한 내용은 암축하거나 제거했으면 하는데.\n작업을 마무리하고 하는게 나을까?" (2026-10-20, 원장 세션)
+reviews/round-427-owner-answers.md:8	427	압축 진행 승인	"응 지금 진행해줘." (2026-10-20, 원장 세션)
+reviews/round-427-owner-answers.md:9	427	워커 배정 지시	"이 작업에는 agy 나 cursor-agent 의 빠른 모델을 쓰도록 하던가 직접 하도록 해.\nagy 하위모델이나 cursor-agent 는 아무래도 큰 작업보단 짧거나 단발적인 작업을 시켜야 할거야.\ncursor-agent 도 사용량이 좀 남으니까 이걸 쓰는걸 고려해봐 orca cli를 써서 말이지" (2026-10-20, 원장 세션)
+reviews/round-427-owner-answers.md:10	427	cursor 모델 지정	"어? 아 cursor 도 grok 4.7 정도는 써줘" (2026-10-20, 원장 세션)
+reviews/round-427-owner-answers.md:11	427	cursor 모델 범위와 사용량 관리	"그리고 cursor 쓸때는 grok 4.7 을 쓰던가, 아니면 다른 프론티어모델(gemini4 / fable4.1 등. 적당한 모델 선출)을 써도 돼.\n사용량 초과하면 멈추도록만 하면 된다. 아무튼 목표는 사용량을 소진하는 것이니까. \n참고로 grok / composer-2.5 이랑 프론티어모델은 사용량이 따로 책정되니까 따로따로 관리해야해." (2026-10-20, 원장 세션)
