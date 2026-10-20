@@ -557,3 +557,5 @@ reviews/round-427-owner-answers.md:8	427	압축 진행 승인	"응 지금 진행
 reviews/round-427-owner-answers.md:9	427	워커 배정 지시	"이 작업에는 agy 나 cursor-agent 의 빠른 모델을 쓰도록 하던가 직접 하도록 해.\nagy 하위모델이나 cursor-agent 는 아무래도 큰 작업보단 짧거나 단발적인 작업을 시켜야 할거야.\ncursor-agent 도 사용량이 좀 남으니까 이걸 쓰는걸 고려해봐 orca cli를 써서 말이지" (2026-10-20, 원장 세션)
 reviews/round-427-owner-answers.md:10	427	cursor 모델 지정	"어? 아 cursor 도 grok 4.7 정도는 써줘" (2026-10-20, 원장 세션)
 reviews/round-427-owner-answers.md:11	427	cursor 모델 범위와 사용량 관리	"그리고 cursor 쓸때는 grok 4.7 을 쓰던가, 아니면 다른 프론티어모델(gemini4 / fable4.1 등. 적당한 모델 선출)을 써도 돼.\n사용량 초과하면 멈추도록만 하면 된다. 아무튼 목표는 사용량을 소진하는 것이니까. \n참고로 grok / composer-2.5 이랑 프론티어모델은 사용량이 따로 책정되니까 따로따로 관리해야해." (2026-10-20, 원장 세션)
+reviews/round-428-owner-answers.md:7	428	쓰지 않는 에이전트 정리	"나머지 사용하지 않는 에이전트들은 정리해도 되지 않겠나?\n이후 쓸 내용들은 제외하고" (2026-10-20, 원장 세션)
+reviews/round-428-owner-answers.md:8	428	쓰지 않는 작업 폴더 제거	"워크스페이스도 제거해줘. 안쓰는건. 너무 정신사납더라" (2026-10-20, 원장 세션)

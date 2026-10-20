@@ -19,9 +19,9 @@
 - 가지는 `feat/schema-form-08-review-and-perf`이고 현재 끝은 `git log -1`과 origin으로 확인한다. 제품 코드는 L3 마지막 병합(#420, `67484c0be`) 뒤 바뀌지 않았다. PR424가 검증 파일을 `src/` 아래에 더해 패키지 `src` 트리 해시는 `78c85b5906006a36e8eb9b4da0c5933a74976b76`이다.
 - 병합된 성능 PR은 L3 다섯 가설 #416~#420, 측정 문서 #421, 마운트 완료 경계 #422(`ef6747ea0`), T14 관측 identity 검증 도구 #424(`4e9b6786e`, 2026-10-20)다. 07 전환 #354는 2026-10-14에 `1.0.0-beta`로 병합되었다(`9c4d4a59d`).
 - 열린 PR은 Draft #423 하나다. itemless 배열의 빈 선언 조회 제거이며 head는 `282685f27`이다. 2026-10-18 창에서는 Node object-B0-N1000이 두 바퀴 모두 약 14% 느렸고, 2026-10-20 창에서는 두 바퀴의 부호가 반대였다. 성능 수용과 병합은 소유자 결정 60을 기다린다.
-- 보존 작업 폴더는 둘이다. `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`은 PR423의 사본(로컬 가지 `vincent-kk/l3e-direct-ownership`)이고, `/Users/Vincent/Workspace/albatrion/schema-form-observation-identity-2`는 병합된 PR424의 읽기 전용 사본이다. 둘 다 메인에서 추적 밖이므로 메인에서 `git add .`나 `git clean`을 하지 않는다. 지우는 것은 소유자 승인 뒤다.
+- 보존 작업 폴더는 `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership` 하나다. PR423의 사본(로컬 가지 `vincent-kk/l3e-direct-ownership`)이며 메인에서 추적 밖이므로 메인에서 `git add .`나 `git clean`을 하지 않는다. 지우는 것은 소유자 승인 뒤다. 병합된 PR424의 사본 `schema-form-observation-identity-2`는 428라운드 소유자 지시로 증거를 옮긴 뒤 지웠다.
 - 하위 checkout에서는 시험과 lint 전에 `yarn workspaces foreach --from @canard/schema-form --recursive --topological-dev run build`로 의존 패키지를 빌드한다. Storybook 실패는 차가운 캐시와 동시 실행에서 재현되므로, 단독·따뜻한 캐시 실행 뒤에 남는 것만 실패로 분류한다(425C-02).
-- 증거 위치: T14는 `/Users/Vincent/Workspace/albatrion/schema-form-observation-identity-2/.seiri/tasks/` 아래 `observation-identity-reacquire/`, `t14-followup-diagnosis/`, `t14-gates-reexecution/`, `observation-identity-portability/`에 있다. 2026-10-20 itemless 재측정은 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/itemless-remeasure-426/`에 있고 같은 봉인이 PR423 사본에도 있다. 2026-10-18 창의 PR423 측정 원자료와 P1 원자료는 소실되어 원장의 파생 수치만 남았다(425라운드).
+- 증거 위치: T14는 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/pr424-t14-evidence/` 아래 `observation-identity-reacquire/`, `t14-followup-diagnosis/`, `t14-gates-reexecution/`, `observation-identity-portability/`에 있다. 2026-10-20 itemless 재측정은 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/itemless-remeasure-426/`에 있고 같은 봉인이 PR423 사본에도 있다. 2026-10-18 창의 PR423 측정 원자료와 P1 원자료는 소실되어 원장의 파생 수치만 남았다(425라운드).
 - 측정 결과의 정본은 `verification/perf-optimization/`의 결과 문서들이고, 워커 brief는 `verification/perf-optimization/l3-briefs/`에 있다. 그 안의 `next-agent-start-prompt.md`는 424라운드 기준의 경로와 HEAD를 담고 있으므로 이 절이 우선한다.
 
 ## 3. Orca 운영
@@ -49,7 +49,7 @@
 1. **마운트 비효율 제거.** 가설마다 brief → codex 구현 → agy 독립 검토 → 같은 창 측정 → Vincent 병합 → 라운드 닫기를 지킨다. 기준 수치는 PR #422의 완료 경계 창이며 과거 창의 수치와 잇지 않는다(400C-02). 원장 계약이 요구하는 정착 순서·출발점 고정·게이트 평가 결과·발생 정체와 소유·폼마다 청사진 생성은 지키되, 현재 루프와 할당이 최솟값이라고 단정하지 않는다. 지울 근거가 없는 잔여는 재측정 수치와 근거를 붙여 M3 수용 후보로 올린다. 결정 58은 게이트 조건이 있는 실험 fixture를 갖춘 뒤 소유자에게 돌아간다.
 2. **정상동작 검증과 M3.** 성능 PR마다 7절의 증거를 갖춘다. 묶음이 끝나면 세 판을 한 창에서 core와 React 포함 폼 수준으로 재고, 정상동작 검증 보고와 함께 수용 판정을 받는다. 정본은 폼 전체 e2e다(358라운드).
 3. 플러그인·내장 fallback 결함 여덟 수정 PR(393·396라운드, 결정 54는 이때) 뒤 9단계로 간다.
-4. 묶음이 끝나면 작업 폴더 둘을 지운다. `orca worktree` 삭제는 소유자 승인 뒤다.
+4. 묶음이 끝나면 작업 폴더 `l3e-direct-ownership`을 지운다. `orca worktree` 삭제는 소유자 승인 뒤다.
 
 ## 6. 열린 소유자 물음
 
