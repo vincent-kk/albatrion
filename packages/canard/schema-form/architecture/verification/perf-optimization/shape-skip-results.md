@@ -6,15 +6,15 @@
 
 기준 HEAD는 `23988dab651de3d3b4606776de1c27c14f67fa3f`이며 기준 `index.mjs` SHA256은 `612ca03e268be03714021baf2ef91c6c1d0ca156fe2206c61bc57d3db92a204e`, 후보는 `e0f676bc3070ec6d32910160d356e63a8274f8267b95dc83d6b4d7c54e960b8f`입니다. 증거의 정본은 `.seiri/tasks/shape-skip-439/`이며 측정 후 MAIN의 같은 namespace에 봉인본을 복사하고 `diff -rq`의 종료 0을 확인했습니다.
 
-DETAIL 단독 커밋 `fb9738aa7`이 구현·시험 커밋 `b23f5920d`보다 앞섭니다. 제품 TypeScript는 +7/-2, 순증 5행이며 타입과 JSDoc을 포함하고 시험·DETAIL은 제외한 수치입니다. 기존 시험 기대값 변경은 0건입니다.
+DETAIL 단독 커밋 `fb9738aa7`이 구현·시험 커밋 `b23f5920d`보다 앞섭니다. 최초 측정 대상 구현의 제품 TypeScript는 +7/-2, 순증 5행이며 타입과 JSDoc을 포함하고 시험·DETAIL은 제외한 수치입니다. 기존 시험 기대값 변경은 0건입니다.
 
-- `src/core/engine/blueprint/types/analysis.ts:45`의 선택적 `hasTemplateRecursion`은 호출마다 소유하는 단조 증거입니다. 공개 `Blueprint.capabilities`와 export는 넓히지 않았습니다.
+- `src/core/engine/blueprint/types/analysis.ts:48`의 필수 `hasTemplateRecursion`은 호출마다 소유하는 단조 증거이며, `src/core/engine/blueprint/blueprint.ts:44`에서 false로 초기화합니다. 공개 `Blueprint.capabilities`와 export는 넓히지 않았습니다.
 - `src/core/engine/blueprint/buildNodes/buildNodes.ts:41`의 `constructing.has(key)` 분기에서만 증거를 설정합니다. `templates.get(boundKey)`가 생성 중 템플릿을 먼저 반환할 수 있으므로 `constructing.get(key)`의 반환 여부로 대체할 수 없습니다. 기존 `staticFirstLoad` 판정은 독립적으로 유지합니다.
-- `src/core/engine/blueprint/blueprint.ts:78`에서 이 증거가 있을 때만 `validateShape`를 호출합니다. 증거가 있는 경우 검증 내용과 오류 순서는 그대로입니다. 비재귀 문맥에는 새 방문 집합이나 공개 결과 필드를 만들지 않습니다.
+- `src/core/engine/blueprint/blueprint.ts:80`에서 이 증거가 있을 때만 `validateShape`를 호출합니다. 증거가 있는 경우 검증 내용과 오류 순서는 그대로입니다. 비재귀 문맥에는 새 방문 집합이나 공개 결과 필드를 만들지 않습니다.
 
 ## 게이트와 관측 동등성
 
-지정 의존 빌드와 패키지 typecheck·lint·build는 모두 종료 0입니다. 다섯 프로젝트 전체 test는 774파일 중 773파일, 4,939시험 중 4,937통과·1todo·1실패였습니다. 유일한 실패는 Storybook `browser-gates.stories.tsx`의 EVENT-065 IME 입력 클릭 timeout이며, 425C-02에 따른 해당 파일의 단독 warm-cache 재실행은 4/4 통과·종료 0입니다. 이 규칙 아래 네 게이트를 통과한 것으로 기록하며 최초 실패 원문도 보존했습니다.
+지정 의존 빌드와 패키지 typecheck·lint·build는 모두 종료 0입니다. 착지 전 다섯 프로젝트 전체 test는 774파일 중 773파일, 4,939시험 중 4,937통과·1todo·1실패였습니다. 유일한 실패는 Storybook `browser-gates.stories.tsx`의 EVENT-065 IME 입력 클릭 timeout이며, 425C-02에 따른 해당 파일의 단독 warm-cache 재실행은 4/4 통과·종료 0입니다. 최초 전체 실행의 실패는 0건이 아니라 1건이며, 이 규칙 아래 네 게이트를 통과한 것으로 기록하고 최초 실패 원문도 보존했습니다.
 
 새 호출 수 시험의 비재귀 5사례는 구현 전 모두 실패하고 구현 후 통과했습니다. 평면·중첩·oneOf·가상 필드·비재귀 형제 참조에서 호출 0회, 무게이트 루트 참조·oneOf의 active 게이트를 통한 재귀·배열 아이템 재귀에서 1회를 확인했습니다. 기존 재귀·재귀 게이트·진단 시험을 바꾸지 않고 새 시험과 함께 44시험이 통과했습니다. 배열 아이템 재귀도 생성 중 템플릿에 도달하므로 검증은 호출되며, 형상 순회는 배열에서 절단됩니다.
 
@@ -26,15 +26,24 @@ DETAIL 단독 커밋 `fb9738aa7`이 구현·시험 커밋 `b23f5920d`보다 앞�
 
 병합 커밋 `213aa8f08`은 자식 대상 검증 생략 #428이 포함된 기준 `cc1b1db47`을 이 브랜치에 병합했습니다. `blueprint.ts`와 `DETAIL.md`의 충돌은 두 검증 게이트와 계약을 모두 보존하여 해결했고, 자동 병합된 `analysis.ts`의 두 필드와 JSDoc을 확인했으며 `resolveReference.test.ts`도 두 필드를 명시했습니다. 기준 대비 제품 차이는 이 PR의 형상 검증 생략뿐입니다. 병합 후 typecheck·lint·build는 종료 0이며, 다섯 프로젝트 전체 시험은 776파일·4,954시험에서 최초 4,949통과·4실패·1todo, 재실행 4,951통과·2실패·1todo였습니다. 다른 워크트리의 동시 게이트 부하를 코디네이터가 확인했고, Storybook 세 파일은 단독 warm-cache 6/6 통과, 재실행에만 실패한 시간 상한 시험은 단독 2/2 통과하여 코디네이터 승인과 425C-02에 따라 시험 게이트를 통과한 것으로 분류했습니다. 두 전체 실행의 실제 종료 1과 원문·JSON은 보존했습니다. 변경 없는 관측 도구로 Node v24.20.0·Bun 1.4.3 각각 174이력·174비교 차이 0, standalone 4사례와 음성 대조 10명령을 확인하고 readiness가 통과했습니다. 원래 측정 후보 SHA256 `e0f676bc3070ec6d32910160d356e63a8274f8267b95dc83d6b4d7c54e960b8f`는 #428 이전이므로 성능 증거는 형상 검증 생략 가설에만 적용되며, 두 변경을 합친 성능을 입증하지 않습니다. 착지 번들 SHA256 `5b50c6e3cb848c3459217c95fead50b954ee5c7c449836d7e1117487fcee9515`와 재검증 증거는 `.seiri/tasks/shape-skip-439/landing/`에 별도로 기록했고 새 벤치마크는 실행하지 않았습니다.
 
+## 검증
+
+독립 검토(agy)는 PASS·지적 0건이며, 검증자(Claude Opus)는 PASS로 판정했습니다(낮은 지적: F1 선택 필드의 형태 변화, F2 buildNodes DETAIL 문장, F3 실패 수 표기; 정보 F4~F6). F1·F2·F3를 반영했습니다. F2 계약 커밋 `0a22140d0`이 F1 코드 커밋 `587e48762`보다 앞서며, 분석 문맥은 생성 시 필수 불리언을 false로 초기화하고 `constructing.has(key)`에 적중한 연결에서만 true로 바꿉니다. 검토 파일은 봉인 뒤 코디네이터 사후 산출물입니다.
+
+수정 후 typecheck·lint·build는 종료 0입니다. 다섯 프로젝트 전체 시험은 776파일·4,954시험에서 4,952통과·1실패·1todo로 종료 1이었고, 유일한 실패 EVENT-065 IME 클릭 timeout은 해당 Storybook 파일의 단독 warm-cache 재실행 4/4 통과·종료 0으로 425C-02에 따라 분류했습니다. 원문과 실제 종료를 `.seiri/tasks/shape-skip-439/amend/gates/`에 보존했습니다. 변경 없는 관측 도구로 Node·Bun 각각 174이력·174비교 차이 0건, standalone 4사례와 음성 대조 10명령의 예상 종료를 확인하고 readiness가 통과했습니다. M4는 차등 시험과 재귀 호출 수 시험에서 탐지했으며 복원했습니다.
+
+성능 측정 증거는 F1 초기화 이전의 후보 번들 SHA256 `e0f676bc3070ec6d32910160d356e63a8274f8267b95dc83d6b4d7c54e960b8f`에 대한 것입니다. 수정 후 번들 SHA256은 `498e0942ee76a4209295360ea69dee8429cf5a50fd30f2418f973f44631cb3d7`입니다. 이번 수정은 초기화된 불리언 하나를 추가했으며 재측정하지 않았습니다. 기존 시간 판정을 이 초기화의 성능 증거로 확대하지 않습니다. 수정 검증의 정본은 `.seiri/tasks/shape-skip-439/amend/`입니다.
+
 ## 변이 검증
 
-모든 변이는 커밋하지 않고 실행 후 `git checkout -- .`로 복원했습니다. 마지막 복원 뒤 작업 트리는 깨끗했으며 명령·cwd·종료·원출력은 namespace의 `mutations.md`, `commands.jsonl`, `gates/`에 있습니다.
+M1~M3은 커밋하지 않고 실행 후 `git checkout -- .`로 복원했습니다. 마지막 복원 뒤 작업 트리는 깨끗했으며 명령·cwd·종료·원출력은 최초 namespace의 `mutations.md`, `commands.jsonl`, `gates/`에 있습니다. M4는 원래 게이트 문장을 되돌린 뒤 작업 트리 청결을 확인했으며 수정 namespace에 증거를 보존했습니다.
 
 | 변이 | 관측 결과 |
 | --- | --- |
 | M1: `constructing.get(key)`가 값을 반환할 때만 증거 설정 | 무게이트 루트 참조의 무한 형상 오류가 사라져 1시험이 실패했습니다. |
 | M2: 호출 조건 제거 | 비재귀 5사례가 호출 0회 대신 1회로 모두 실패했습니다. |
 | M3: 적중 템플릿에 게이트가 있을 때만 증거 설정 | 무게이트 루트 참조의 오류가 사라져 1시험이 실패했습니다. |
+| M4: 호출 게이트를 항상 거짓으로 만들어 검증 전부 생략 | 차등 시험이 edge-23의 무한 형상 오류 누락을 탐지했고, 재귀 호출 수 3시험을 포함해 총 9시험이 실패했습니다. for-loop가 첫 실패에서 멈춰 edge-24에는 도달하지 않았으며, 코디네이터는 이 증거를 충분하다고 판정했습니다. 수정 namespace의 `mutations.md`에 기록하고 원래 게이트를 복원했습니다. |
 
 ## 측정 창과 판정
 
@@ -86,6 +95,6 @@ nested d6의 첫 두 라운드 Δ(B/A)는 -2.919%와 -2.944%여서 보정 폭 1.
 | oneOf 40 | 1/0 | 125/0 |
 | oneOf 80 | 1/0 | 245/0 |
 
-제거한 작업은 계수와 경로로 확인했지만 한 장비·한 창의 Node 시간이며 Bun 성능이나 다른 날짜의 결과로 일반화하지 않습니다. 측정 도구는 업데이트를 수행하지 않으며 마운트만 비교했습니다. 추가 재측정으로 불리한 라운드를 교체하지 않았습니다. FCA 감사 원문과 다음 조치, 검토 인계는 namespace 보고서에 기록합니다. 독립 작업자 생성이 금지되어 있으므로 독립 검토 완료를 주장하지 않습니다.
+제거한 작업은 계수와 경로로 확인했지만 한 장비·한 창의 Node 시간이며 Bun 성능이나 다른 날짜의 결과로 일반화하지 않습니다. 측정 도구는 업데이트를 수행하지 않으며 마운트만 비교했습니다. 추가 재측정으로 불리한 라운드를 교체하지 않았습니다. FCA 감사 원문과 다음 조치, 검토 인계는 namespace 보고서에 기록합니다. 독립 검토와 검증자의 판정은 위 검증 절에 기록했습니다.
 
 결정 54·59와 보류 항목 P1의 처분은 변경하지 않습니다. 채택과 병합은 Vincent의 판단으로 남깁니다.
