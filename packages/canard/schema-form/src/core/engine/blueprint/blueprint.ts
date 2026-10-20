@@ -41,6 +41,7 @@ export const blueprint = (
   const context: AnalysisContext = {
     hasChildTargets: false,
     staticFirstLoad: true,
+    hasTemplateRecursion: false,
     capabilities: {
       branchless: true,
       hasExpressions: false,
