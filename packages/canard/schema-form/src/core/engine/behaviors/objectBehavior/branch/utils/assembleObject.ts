@@ -158,6 +158,31 @@ export const assembleObject: Behavior['assemble'] = (
       return result;
     }
   }
+  const extra = node.undeclaredValues;
+  const extras =
+    extra !== null && typeof extra === 'object' && !isArray(extra)
+      ? extra
+      : undefined;
+  if (
+    previous === undefined &&
+    children.length === 0 &&
+    preferred.length === 0 &&
+    entries.length === 0 &&
+    extras
+  ) {
+    const names = Object.keys(extras);
+    const result: Record<string, unknown> = {};
+    for (const name of names)
+      writeObjectKey(result, name, Reflect.get(extras, name));
+    STABLE_SHAPES.set(node, {
+      children,
+      schema: node.schema,
+      undeclaredValues: node.undeclaredValues,
+      names,
+    });
+    objectKeyCounts.set(result, names.length);
+    return result;
+  }
   const childValues = new Map<string, unknown>();
   for (const child of children)
     if (
@@ -168,11 +193,6 @@ export const assembleObject: Behavior['assemble'] = (
       'emit' in child
     )
       childValues.set(child.name, child.emit);
-  const extra = node.undeclaredValues;
-  const extras =
-    extra !== null && typeof extra === 'object' && !isArray(extra)
-      ? extra
-      : undefined;
   const names: string[] = [];
   const seen = new Set<string>();
 

@@ -1,3 +1,5 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 import { sameValue } from '../../../utils/compute/sameValue';
 import { writeObjectKey } from '../../../utils/writeObjectKey';
 
@@ -16,13 +18,18 @@ export const nextExtras = (
   merge: boolean,
 ): unknown => {
   const result: Record<string, unknown> = {};
+  let hasOwnKey = false;
   if (merge && previous !== null && typeof previous === 'object')
-    for (const name of Object.keys(previous))
+    for (const name of Object.keys(previous)) {
       writeObjectKey(result, name, Reflect.get(previous, name));
+      hasOwnKey ||= hasOwnProperty(result, name);
+    }
   for (const name of Object.keys(input)) {
     if (declared.has(name)) continue;
     writeObjectKey(result, name, Reflect.get(input, name));
+    hasOwnKey ||= hasOwnProperty(result, name);
   }
-  const next = Object.keys(result).length ? result : undefined;
+  const next = hasOwnKey ? result : undefined;
   return sameValue(previous, next) ? previous : next;
 };
+

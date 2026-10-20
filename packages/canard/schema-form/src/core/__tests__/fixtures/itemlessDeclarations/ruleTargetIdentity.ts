@@ -39,6 +39,30 @@ export function assertRuleIndexes(
   targets: ReadonlyMap<string, ReadonlySet<string>> | undefined,
 ): void {
   for (const key of rules?.keys() ?? []) {
+    const parts: unknown = JSON.parse(key);
+    if (
+      !Array.isArray(parts) ||
+      ![5, 8].includes(parts.length) ||
+      typeof parts[0] !== 'string' ||
+      typeof parts[1] !== 'string' ||
+      !Number.isSafeInteger(parts[2]) ||
+      parts[2] < 0 ||
+      typeof parts[3] !== 'string'
+    )
+      throw new Error('Unsupported rule key domain or field shape: ' + key);
+    if (parts.length === 5) {
+      if (parts[4] !== null || !parts[3].endsWith('/unsetOnInactive'))
+        throw new Error('Invalid exit policy key shape: ' + key);
+    } else if (
+      (parts[4] !== null && typeof parts[4] !== 'string') ||
+      typeof parts[5] !== 'string' ||
+      typeof parts[6] !== 'string' ||
+      !Number.isSafeInteger(parts[7]) ||
+      parts[7] <= 0
+    )
+      throw new Error('Invalid runtime rule key shape: ' + key);
+  }
+  for (const key of rules?.keys() ?? []) {
     const parts = JSON.parse(key) as unknown[];
     if (!sources?.get(String(parts[0]))?.has(key))
       throw new Error('Missing rule source membership: ' + key);
