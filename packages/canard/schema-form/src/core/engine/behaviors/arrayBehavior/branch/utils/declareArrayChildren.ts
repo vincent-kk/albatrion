@@ -20,6 +20,13 @@ const EMPTY: readonly BlueprintChildEntry[] = Object.freeze([]);
  */
 export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
   const template = node.blueprintNode;
+  if (
+    template.item === undefined &&
+    template.prefixItems === undefined &&
+    template.itemCandidates === undefined &&
+    template.prefixItemCandidates === undefined
+  )
+    return EMPTY;
   const count = node.itemCount;
   const cached = LAST.get(template);
   if (cached?.count === count) return cached.result;

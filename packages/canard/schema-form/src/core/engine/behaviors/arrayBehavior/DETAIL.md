@@ -11,6 +11,7 @@
 
 - 진입점은 `arrayBehavior: { branch: Behavior; terminal: Behavior }`를 이름으로 내보냅니다. 두 행 모두 `interpret`, `assemble`, `project`, `finishInput`, `declareChildren`, `arrange`, `type`, `strategy` 순서의 여덟 칸을 가지며 `type`은 `'array'`, `strategy`만 각각 `'branch'`·`'terminal'`입니다. `finishInput`은 별도의 배열 입력 마침 쓰기를 하지 않습니다(NODE-002·006, LANDING-056, 36C-01, 실행 ADR D1).
 - branch의 `interpret`는 배열을 자식 분배 입력으로 두고 호스트 `raw`에는 저장하지 않으며, `null`·수·평범한 객체 같은 잘못된 종류는 호스트 `raw`로 보존합니다. `declareChildren`은 청사진의 자리 항목 보조로 `0`부터 `itemCount - 1`까지 청사진이 있는 자리의 항목만 돌려주며 노드를 생성하지 않습니다(NODE-006·021·052, VALUE-002, 실행 ADR D2).
+- branch의 완성된 불변 유효 청사진에서 `item`, `prefixItems`, `itemCandidates`, `prefixItemCandidates`가 모두 `undefined`이면, 모든 자리에 선언 후보가 없으므로 자리 수와 무관하게 기존 공유 빈 선언을 반환합니다. 존재하는 빈 목록도 이 자격으로 간주하지 않으며, inactive 조각을 포함해 어느 필드든 존재하면 기존 자리 조회·후보 선택과 메모 동작을 따릅니다. 원본 스키마나 현재 active branch만으로 자격을 판단하지 않고 gate 평가·값 복사·자식 참조·통지는 바꾸지 않습니다.
 - branch의 `assemble`은 아이템 방출을 자리 순서로 놓고 방출 없는 객체 아이템은 `{}`, 배열 아이템은 `[]`, 잎 아이템은 `null`로 채운 뒤 청사진 없는 꼬리 자리의 `undeclaredValues`를 순서대로 잇습니다. `omitEmpty`가 켜진 union 잎 아이템의 `{}`도 방출 없는 자리여서 `null`입니다. 아이템이 없으면 `local`은 `[]`입니다. 아이템 수와 자리마다의 노드가 이전 조립과 같으면 재계산 목록에 든 아이템 자리만 이전 `local`의 사본에 고쳐 쓰고 그 자리만 견주며, 바뀐 자리가 없으면 이전 배열 참조를 그대로 둡니다(O(재계산 목록)). 아이템 수나 자리의 노드가 바뀐 조립(구조 연산, 통째 쓰기, 아이템 게이트 전환)은 모든 자리를 다시 만들고(O(itemCount)) 각 원소가 이전 값과 같으면 이전 배열 참조를 재사용합니다. 두 길의 방출 값과 같은 참조 규칙은 같습니다(NODE-026·052, SETTLE-042, VALUE-034·037, LANDING-165, 44C-01). 정착이 정적 push의 덧붙임 증명으로 `hint.append`(이전 아이템 수 N)를 넘기면, 아이템 수가 N+1이고 이전 `local`의 길이가 N이거나 N+1이며 N 자리에 템플릿과 노드가 있거나 items·prefixItems가 모두 없이 빈 children과 길이 N+1의 extras만 있을 때 이전 `local`의 사본 한 번에 N 자리만 채우거나 고치고(길이 N+1의 이전 배열에서 그 자리가 같으면 이전 참조) `hint.incremental`을 켜며 안정 형상 기록을 현재 children으로 갱신합니다. 조건이 어긋나면 전체 재합성입니다(G8, SETTLE-042, 63C-03). 정착이 정적 pop의 끝 자르기 증명으로 `hint.truncate`(남은 아이템 수 M=N−1)를 넘기면, 아이템 수가 M이고 이전 `local`의 길이가 M+1이거나 M일 때 이전 `local`의 앞 M 자리 사본 한 번(`slice(0, M)`)을 돌려주고(길이가 이미 M이면 이전 참조) `hint.incremental`을 켜며 안정 형상 기록을 현재 children으로 갱신합니다. 조건이 어긋나면 전체 재합성입니다(G8 pop, SETTLE-042).
 - branch의 `project`는 유효 스키마 메모와 함께 한 번 계산한 정적 `options`의 `omitTrailing`·`omitEmpty` 비트로 분기합니다. `omitTrailing`은 방출 배열 꼬리에서 빈 자리의 최대 연속 구간을 자릅니다. 빈 자리는 방출 없는 아이템의 채움(`{}`·`[]`·`null`), `null`을 방출한 잎 아이템, 청사진 없는 자리의 `undefined`·`null`이며, 실제로 `{}`·`[]`를 방출한 아이템과 앞·가운데의 빈 자리는 남기고 원본은 건드리지 않습니다(37C-01). 터미널 배열은 꼬리의 `undefined`·`null`만 자릅니다(35C-12). 그리고 기본으로 켜진 `omitEmpty`는 아이템 없는 `[]`의 방출을 생략합니다. 비배열 `raw`(`null`·수·평범한 객체)를 든 호스트는 아이템이 없고 그 `raw`를 받은 그대로 방출하며 정합 경고등이 켜집니다(38C-01, 39C-01). 투영은 `raw`와 상태를 바꾸지 않고 배열 루트의 방출이 없으면 루트 `outputValue`는 `[]`입니다(NODE-006, VALUE-034·037, LANDING-085).
 - 두 행의 `arrange(node, operation)`는 순수 계획만 돌려줍니다. 연산은 `push(value?)`, `pop()`, `update(index, value)`, `remove(index)`, `insert(index, value?)`, `clear()`이고, branch 계획은 새 자리마다 이전 자리 색인 또는 생성 값, 무동작 여부, 반환 값의 출처를 담습니다. 범위 밖·음수 색인의 `update`·`remove`, 빈 배열의 `pop`, 값이 배열이 아닌(`null`·`undefined`·수·객체 등) 배열의 `update`·`remove`·`pop`·`clear`는 오류 없는 무동작입니다(`clear`는 그 값을 그대로 둠). 두 행 모두 배열이 아닌 값을 든 호스트의 `push(x)`는 그 값을 새 아이템 하나 `[x]`로 바꾸고 misfit 경고등을 끕니다(38C-01, 47C-02, 48C-02).
@@ -29,10 +30,14 @@
 
 - terminal은 자식과 구조 로그 없이 배열 참조를 원본으로 들고, 여섯 동사를 사본의 새 원본 계획으로 나타내며 같은 투영 선택을 따릅니다(NODE-005, 35C-12).
 
+### array-empty-declarations — 전역 자리 선언 부재
+
+- 네 유효 청사진 필드가 모두 부재한 branch의 선언 계산은 N개의 빈 자리 조회를 수행하지 않습니다. 선언 결과와 기존 빈 children 참조·empty-to-empty 통지, 입력 소유권·값·방출·이벤트 순서·commit/revision·latent/진단은 일반 경로와 같습니다. 이후 동사와 배치, 후보가 존재하는 조각·gate·tuple·재귀 및 terminal 경로의 계약은 그대로입니다.
+
 ### array-arrange — 순수 계획과 거부
 
 - branch 계획은 자리 출처·무동작·반환 출처를 나타내고, 터미널 계획은 새 원본을 나타냅니다. 범위 밖·빈 배열·`null` 무동작과 비배열 공유 칸의 즉시 오류가 행에서 확정됩니다. `insert`는 0·가운데·N 자리의 계획과 음수·N 초과·정수 아닌 색인의 무동작, 비배열 호스트의 0번 삽입과 그 밖 색인의 무동작을 두 행에서 확정합니다(NODE-014, ERROR-197, 35C-01·03·06, 47C-02).
 
 ## Last Updated
 
-2026-10-15, 365라운드 insert(371C-02)
+2026-10-18, 전역 자리 선언 부재의 상수 비용 계약
