@@ -9,6 +9,9 @@ import type {
 import { readSchemaObject } from '../utils/analyze/readSchemaObject';
 import { collectInlineTerminalWarnings } from './utils/collectInlineTerminalWarnings';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Dependency keywords the form ignores on any declaration. */
 const IGNORED_DEPENDENCY_KEYWORDS = ['dependentSchemas', 'dependencies'];
 
@@ -45,11 +48,7 @@ export const collectBlueprintWarnings = (
     const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;
     if (seen.has(key)) return;
     seen.add(key);
-    collect(
-      process.env.NODE_ENV !== 'production'
-        ? Object.freeze(diagnostic)
-        : diagnostic,
-    );
+    collect(developmentChecks ? Object.freeze(diagnostic) : diagnostic);
   };
   for (const node of blueprint.nodes) {
     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);

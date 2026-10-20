@@ -46,10 +46,14 @@ describe('warnDevelopmentIssue', () => {
     expect(warn).toHaveBeenCalledTimes(1);
   });
 
-  it('production 환경에서는 출력하지 않는다', () => {
+  it('production 환경에서는 출력하지 않는다', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.stubEnv('NODE_ENV', 'production');
-    warnDevelopmentIssue({
+    vi.resetModules();
+    const { warnDevelopmentIssue: freshWarnDevelopmentIssue } = await import(
+      '../utils/warnDevelopmentIssue'
+    );
+    freshWarnDevelopmentIssue({
       code: FormWarningCode.VirtualizationDisabledForForm,
       message: 'silent',
     });

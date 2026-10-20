@@ -2,8 +2,8 @@ import { expect, it } from 'vitest';
 
 import { runDeriveConvergenceCase } from './fixtures/runDeriveConvergenceCase';
 
-it('includes expression reads and watches of a disabled fragment', () => {
-  const result = runDeriveConvergenceCase(
+it('includes expression reads and watches of a disabled fragment', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -31,8 +31,8 @@ it('includes expression reads and watches of a disabled fragment', () => {
   expect(result.proof?.has('/target')).toBe(false);
 });
 
-it('rejects ancestor targets intersecting a descendant gate read', () => {
-  const result = runDeriveConvergenceCase(
+it('rejects ancestor targets intersecting a descendant gate read', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -61,8 +61,8 @@ it('rejects ancestor targets intersecting a descendant gate read', () => {
   expect(result.proof?.has('/group')).toBe(false);
 });
 
-it('binds parent-scoped rules and target watches without treating a path prefix as ancestry', () => {
-  const result = runDeriveConvergenceCase(
+it('binds parent-scoped rules and target watches without treating a path prefix as ancestry', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -90,8 +90,8 @@ it('binds parent-scoped rules and target watches without treating a path prefix 
   expect(result.proof?.has('/targetLong')).toBe(true);
 });
 
-it('does not skip a virtual write whose actual targets are sibling paths', () => {
-  const result = runDeriveConvergenceCase(
+it('does not skip a virtual write whose actual targets are sibling paths', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {

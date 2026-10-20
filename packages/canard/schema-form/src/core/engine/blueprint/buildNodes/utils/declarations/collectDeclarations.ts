@@ -16,6 +16,9 @@ import { collectSchemaCapabilities } from './collectSchemaCapabilities';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { validateControlGroups } from './validateControlGroups';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Shared frozen empty expansion path. */
 const NO_VISITING: readonly string[] = Object.freeze([]);
 
@@ -109,7 +112,7 @@ export const collectDeclarations = (
     schema.controls?.fields !== undefined
   )
     context.hasChildTargets = true;
-  if (process.env.NODE_ENV !== 'production') {
+  if (developmentChecks) {
     Object.freeze(fragment.order);
     Object.freeze(fragment.gates);
     Object.freeze(declaration.order);

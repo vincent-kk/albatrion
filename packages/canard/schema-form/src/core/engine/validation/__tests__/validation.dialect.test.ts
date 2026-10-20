@@ -48,11 +48,15 @@ describe('dialect reporting', () => {
     expect(report).not.toHaveBeenCalled();
   });
 
-  it('ERROR-188 emits nothing in production', () => {
+  it('ERROR-188 emits nothing in production', async () => {
     vi.stubEnv('NODE_ENV', 'production');
+    vi.resetModules();
+    const { createDispatchTree: freshCreateDispatchTree } = await import(
+      '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree'
+    );
     try {
       const report = vi.fn();
-      createDispatchTree(
+      freshCreateDispatchTree(
         { $schema: 'draft-07', type: 'string' },
         undefined,
         {

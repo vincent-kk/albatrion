@@ -25,6 +25,9 @@ import type {
   NodeSurface,
 } from '../type';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Empty active-declaration list: only ungated contributions apply. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
 
@@ -160,7 +163,7 @@ export function fieldNodeFactory(
     });
   const authoredSchema = analysis.schema;
   if (
-    process.env.NODE_ENV !== 'production' &&
+    developmentChecks &&
     validator?.dialect &&
     authoredSchema !== null &&
     typeof authoredSchema === 'object' &&
@@ -189,7 +192,7 @@ export function fieldNodeFactory(
   }
   if (
     validator &&
-    process.env.NODE_ENV !== 'production' &&
+    developmentChecks &&
     analysis.schema !== null &&
     typeof analysis.schema === 'object'
   )

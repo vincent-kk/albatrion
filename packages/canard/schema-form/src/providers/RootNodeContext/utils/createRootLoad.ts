@@ -8,6 +8,9 @@ import {
 
 import type { RootLoad, RootLoadProps } from '../type';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Build a speculative root whose reports wait in `records` until the load is committed (`ready`).
  * @param props - Committed Form props for this load; the default value is cloned before building.
@@ -34,8 +37,7 @@ export const createRootLoad = (
       isTerminal: isRenderTerminal,
       isAtomic: isRenderAtomic,
       errorReporter: {
-        hasConsumer: () =>
-          reporter?.hasConsumer() ?? process.env.NODE_ENV !== 'production',
+        hasConsumer: () => reporter?.hasConsumer() ?? developmentChecks,
         report: (record) => {
           if (load.ready) {
             if (reporter && load.root) reporter.root = load.root;

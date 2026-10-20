@@ -7,7 +7,6 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import type { Validator } from '@/schema-form/core/engine/validation';
 import { SchemaFormError } from '@/schema-form/errors';
 
-import { dispatchMount } from '../utils/entry/dispatchMount';
 import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 
 describe('round 55 gate failure regression', () => {
@@ -278,10 +277,17 @@ describe('round 55 gate failure regression', () => {
     ]);
   });
 
-  it('ERROR-005 ERROR-041 keeps the development mount pass as sink records without throwing', () => {
+  it('ERROR-005 ERROR-041 keeps the development mount pass as sink records without throwing', async () => {
     const report = vi.fn();
     const sink = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     vi.stubEnv('NODE_ENV', 'development');
+    vi.resetModules();
+    const { createDispatchTree: freshCreateDispatchTree } = await import(
+      '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree'
+    );
+    const { dispatchMount: freshDispatchMount } = await import(
+      '../utils/entry/dispatchMount'
+    );
     try {
       const validator: Validator = {
         compile: () => () => null,
@@ -289,7 +295,7 @@ describe('round 55 gate failure regression', () => {
           throw new Error(pointer);
         },
       };
-      const { root } = createDispatchTree(
+      const { root } = freshCreateDispatchTree(
         {
           type: 'object',
           allOf: [
@@ -301,7 +307,7 @@ describe('round 55 gate failure regression', () => {
         validator,
         { hasConsumer: () => true, report },
       );
-      expect(() => dispatchMount(root, { input: 'value' })).not.toThrow();
+      expect(() => freshDispatchMount(root, { input: 'value' })).not.toThrow();
       expect(report).toHaveBeenCalledTimes(2);
       for (const [record] of report.mock.calls)
         expect(record).toMatchObject({

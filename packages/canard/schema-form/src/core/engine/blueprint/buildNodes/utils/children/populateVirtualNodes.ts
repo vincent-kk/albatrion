@@ -13,6 +13,9 @@ import { collectDeclarations } from '../declarations/collectDeclarations';
 import { copyBlueprintDeclarations } from '../declarations/copyBlueprintDeclarations';
 import { resolveNodeStrategy } from '../nodeTypes/resolveNodeStrategy';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Bind virtual tuples to real sibling templates without rewriting schema keywords.
  * Virtual bindings own their containers; authored fields remain borrowed inputs, so only
@@ -102,10 +105,7 @@ export const populateVirtualNodes = (
       if (group) group.declarations.push(...declarations);
       else
         groups.set(name, {
-          fields:
-            process.env.NODE_ENV !== 'production'
-              ? Object.freeze([...fields])
-              : [...fields],
+          fields: developmentChecks ? Object.freeze([...fields]) : [...fields],
           declarations,
         });
     }
@@ -120,9 +120,7 @@ export const populateVirtualNodes = (
           ...edge,
           declarations: copyBlueprintDeclarations(edge.declarations),
         };
-        childEntries.push(
-          process.env.NODE_ENV !== 'production' ? Object.freeze(copy) : copy,
-        );
+        childEntries.push(developmentChecks ? Object.freeze(copy) : copy);
       }
     }
     const node: MutableNode = {
@@ -133,10 +131,9 @@ export const populateVirtualNodes = (
       schemaType: undefined,
       nullable: false,
       strategy: resolveNodeStrategy(context, 'virtual', group.declarations),
-      declarations:
-        process.env.NODE_ENV !== 'production'
-          ? Object.freeze(group.declarations)
-          : group.declarations,
+      declarations: developmentChecks
+        ? Object.freeze(group.declarations)
+        : group.declarations,
       childEntries,
       fields: group.fields,
     };
@@ -147,8 +144,6 @@ export const populateVirtualNodes = (
       declarations: copyBlueprintDeclarations(node.declarations),
       hostPath: host.path,
     };
-    host.childEntries.push(
-      process.env.NODE_ENV !== 'production' ? Object.freeze(entry) : entry,
-    );
+    host.childEntries.push(developmentChecks ? Object.freeze(entry) : entry);
   }
 };

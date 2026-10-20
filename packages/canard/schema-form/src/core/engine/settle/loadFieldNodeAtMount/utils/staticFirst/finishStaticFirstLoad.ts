@@ -7,6 +7,9 @@ import type { WriteOption } from '../../../../types/value';
 import { PathKeyedMap } from '../../../../utils/pathIndex/PathKeyedMap';
 import { EMPTY_VALUES } from '../../../utils/detached/emptyDetachedReads';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Empty committed projections are shared without a per-load empty output list. */
 const EMPTY_WARNINGS: readonly MisfitRecord[] = Object.freeze([]);
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
@@ -25,7 +28,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = root.runtime;
   const commit = runtime.commitNumber!;
-  if (process.env.NODE_ENV !== 'production')
+  if (developmentChecks)
     runtime.settlementTrace = { entry: { api: 'load', option }, rounds: [] };
   else delete runtime.settlementTrace;
   runtime.refreshTargets ??= new Set();

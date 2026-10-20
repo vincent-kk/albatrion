@@ -415,7 +415,7 @@ describe('settle exits and budgets', () => {
     });
   });
 
-  it('ERROR-070 throws at the end of settlement in production too', () => {
+  it('ERROR-070 throws at the end of settlement in production too', async () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -424,9 +424,13 @@ describe('settle exits and budgets', () => {
       },
     });
     vi.stubEnv('NODE_ENV', 'production');
+    vi.resetModules();
+    const { writeFieldNode: freshWriteFieldNode } = await import(
+      '../utils/write/writeFieldNode'
+    );
     try {
       expect(() =>
-        writeFieldNode(
+        freshWriteFieldNode(
           root,
           { a: true, b: true },
           'callerReplace',

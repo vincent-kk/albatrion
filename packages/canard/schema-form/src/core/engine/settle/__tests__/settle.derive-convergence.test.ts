@@ -17,8 +17,8 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-it('preserves values, shape, errors, deliveries, write rounds and iterations for terminal writes', () => {
-  const result = runDeriveConvergenceCase(
+it('preserves values, shape, errors, deliveries, write rounds and iterations for terminal writes', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -53,8 +53,8 @@ it('preserves values, shape, errors, deliveries, write rounds and iterations for
     expect(result.proof?.has('/target')).toBe(true);
 });
 
-it('keeps ancestor injectTo edges when derived writes a descendant', () => {
-  const result = runDeriveConvergenceCase(
+it('keeps ancestor injectTo edges when derived writes a descendant', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -84,8 +84,8 @@ it('keeps ancestor injectTo edges when derived writes a descendant', () => {
     expect(result.proof?.has('/group/value')).toBe(false);
 });
 
-it('includes disabled gates and the rules they can introduce', () => {
-  const result = runDeriveConvergenceCase(
+it('includes disabled gates and the rules they can introduce', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -110,8 +110,8 @@ it('includes disabled gates and the rules they can introduce', () => {
     expect(result.proof?.has('/target')).toBe(false);
 });
 
-it('retains the watch-only edge after a user override', () => {
-  const result = runDeriveConvergenceCase(
+it('retains the watch-only edge after a user override', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -135,8 +135,8 @@ it('retains the watch-only edge after a user override', () => {
     expect(result.proof?.has('/first')).toBe(false);
 });
 
-it('runs every writing round of a dependency chain', () => {
-  const result = runDeriveConvergenceCase(
+it('runs every writing round of a dependency chain', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -153,8 +153,8 @@ it('runs every writing round of a dependency chain', () => {
   expect(result.contexts[1].deriveRounds).toBe(3);
 });
 
-it('consumes losing edges and preserves rank across subsequent caller writes', () => {
-  const result = runDeriveConvergenceCase(
+it('consumes losing edges and preserves rank across subsequent caller writes', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -188,8 +188,8 @@ it('consumes losing edges and preserves rank across subsequent caller writes', (
   ).toBe(7);
 });
 
-it('re-enters derive after transition fills even when an earlier round was terminal', () => {
-  const result = runDeriveConvergenceCase(
+it('re-enters derive after transition fills even when an earlier round was terminal', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -220,8 +220,8 @@ it('re-enters derive after transition fills even when an earlier round was termi
   expect(result.contexts[1].deriveRounds).toBe(2);
 });
 
-it('falls back for context expressions anywhere in the blueprint', () => {
-  const result = runDeriveConvergenceCase(
+it('falls back for context expressions anywhere in the blueprint', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -237,8 +237,8 @@ it('falls back for context expressions anywhere in the blueprint', () => {
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
-it('falls back for whole host expressions anywhere in the blueprint', () => {
-  const result = runDeriveConvergenceCase(
+it('falls back for whole host expressions anywhere in the blueprint', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -254,8 +254,8 @@ it('falls back for whole host expressions anywhere in the blueprint', () => {
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
-it('falls back for reads not proven complete rather than guessing from an empty dependency list', () => {
-  const result = runDeriveConvergenceCase(
+it('falls back for reads not proven complete rather than guessing from an empty dependency list', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -271,8 +271,8 @@ it('falls back for reads not proven complete rather than guessing from an empty 
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
-it('falls back for recursive templates with per-occurrence paths', () => {
-  const result = runDeriveConvergenceCase(
+it('falls back for recursive templates with per-occurrence paths', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -289,8 +289,8 @@ it('falls back for recursive templates with per-occurrence paths', () => {
   if (process.env.ROUND99_SKIP === 'on') expect(result.proof).toBeUndefined();
 });
 
-it('preserves deferred errors and committed values', () => {
-  const result = runDeriveConvergenceCase(
+it('preserves deferred errors and committed values', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -312,8 +312,8 @@ it('preserves deferred errors and committed values', () => {
   });
 });
 
-it('preserves derive budget rollback and iterations exactly', () => {
-  const result = runDeriveConvergenceCase(
+it('preserves derive budget rollback and iterations exactly', async () => {
+  const result = await runDeriveConvergenceCase(
     {
       type: 'object',
       properties: {
@@ -331,11 +331,14 @@ it('preserves derive budget rollback and iterations exactly', () => {
   expect(result.contexts[0].deriveRounds).toBe(25);
 });
 
-it('skips the confirmation evaluation in development while preserving its empty trace slot', () => {
+it('skips the confirmation evaluation in development while preserving its empty trace slot', async () => {
   deriveShadowEvaluation.enabled = false;
   vi.stubEnv('NODE_ENV', 'development');
   vi.stubEnv('ROUND99_SKIP', 'on');
-  const result = runDeriveConvergenceCase(
+  vi.resetModules();
+  const { runDeriveConvergenceCase: freshRunDeriveConvergenceCase } =
+    await import('./fixtures/runDeriveConvergenceCase');
+  const result = await freshRunDeriveConvergenceCase(
     {
       type: 'object',
       properties: {

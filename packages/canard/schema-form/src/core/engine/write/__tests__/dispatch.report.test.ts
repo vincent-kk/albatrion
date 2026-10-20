@@ -309,7 +309,7 @@ describe('chain error reporting', () => {
     );
   });
 
-  it('WRITE-099 31C-02 checks whole non-JSON values only in development', () => {
+  it('WRITE-099 31C-02 checks whole non-JSON values only in development', async () => {
     const consoleWarn = vi
       .spyOn(console, 'warn')
       .mockImplementation(() => undefined);
@@ -325,8 +325,15 @@ describe('chain error reporting', () => {
       ).toBe(true);
       consoleWarn.mockClear();
       vi.stubEnv('NODE_ENV', 'production');
-      const prod = createDispatchTree(schema);
-      dispatchSetValue(prod.root, { bad: undefined });
+      vi.resetModules();
+      const { createDispatchTree: freshCreateDispatchTree } = await import(
+        '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree'
+      );
+      const { dispatchSetValue: freshDispatchSetValue } = await import(
+        '../utils/entry/dispatchSetValue'
+      );
+      const prod = freshCreateDispatchTree(schema);
+      freshDispatchSetValue(prod.root, { bad: undefined });
       expect(consoleWarn).not.toHaveBeenCalled();
       expect(prod.runtime.warningKeys).toBeUndefined();
     } finally {

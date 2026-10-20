@@ -19,6 +19,9 @@ import { snapshotExitedPolicies } from './snapshotExitedPolicies';
 import { updateInactiveValuesMemo } from './updateInactiveValuesMemo';
 import { readSettlementSource } from './utils/readSettlementSource';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Shared frozen empty list for inactive and misfit projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
 /** Shared empty warning batch. */
@@ -33,7 +36,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
-  const development = process.env.NODE_ENV !== 'production';
+  const development = developmentChecks;
   if (context.exited.size > 0) snapshotExitedPolicies(context);
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)

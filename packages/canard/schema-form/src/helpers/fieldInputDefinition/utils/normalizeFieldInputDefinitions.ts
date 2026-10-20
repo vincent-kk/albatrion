@@ -16,6 +16,9 @@ import type {
 import type { NormalizedFieldInputDefinition } from '../type';
 import { withFieldInputErrorBoundary } from './withFieldInputErrorBoundary';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Keep wrappers and one-time diagnostics at the definition's ownership point. */
 const cache = new WeakMap<
   FieldInputDefinition,
@@ -56,7 +59,7 @@ export const normalizeFieldInputDefinitions = (
         ? test.type
         : [test.type];
       if (types.includes('integer')) invalid.push('type:integer');
-      if (invalid.length && process.env.NODE_ENV !== 'production')
+      if (invalid.length && developmentChecks)
         console.warn(FormWarningCode.FormTypeTestInvalid, {
           definition,
           invalid,

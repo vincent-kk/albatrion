@@ -6,8 +6,8 @@ import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('stage 03 ledger adjudication regressions', () => {
-  const selfNegatingGate = () =>
-    makeFieldNodeTree({
+  const selfNegatingGate = (makeTree = makeFieldNodeTree) =>
+    makeTree({
       type: 'object',
       if: { not: { required: ['x'] } },
       then: {
@@ -18,8 +18,12 @@ describe('stage 03 ledger adjudication regressions', () => {
       },
     }).root;
 
-  const expectSelfNegatingBudget = () => {
-    const root = selfNegatingGate();
+  const expectSelfNegatingBudget = async () => {
+    vi.resetModules();
+    const { makeFieldNodeTree: makeTree } = await import(
+      '../makeFieldNodeTree'
+    );
+    const root = selfNegatingGate(makeTree);
     expect(() => root.setValue({})).toThrow();
     expect(root.raw).toBeUndefined();
     expect(root.outputValue).toEqual({});
@@ -33,19 +37,19 @@ describe('stage 03 ledger adjudication regressions', () => {
     });
   };
 
-  it('selfcheck-v5.mjs:220 commits Source B after a self-negating shape cycle in production', () => {
+  it('selfcheck-v5.mjs:220 commits Source B after a self-negating shape cycle in production', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     try {
-      expectSelfNegatingBudget();
+      await expectSelfNegatingBudget();
     } finally {
       vi.unstubAllEnvs();
     }
   });
 
-  it('selfcheck-v5.mjs:227 throws after that commit in development', () => {
+  it('selfcheck-v5.mjs:227 throws after that commit in development', async () => {
     vi.unstubAllEnvs();
     try {
-      expectSelfNegatingBudget();
+      await expectSelfNegatingBudget();
     } finally {
       vi.unstubAllEnvs();
     }

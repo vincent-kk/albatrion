@@ -1,6 +1,9 @@
 import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 import { getItemSchemaPath } from './getItemSchemaPath';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Entries belong to immutable templates and are allocated only for requested slots. */
 const ENTRIES = new WeakMap<
   BlueprintNode,
@@ -46,7 +49,7 @@ export const getItemEntries = (
             ? schemaPath
             : declaration.schemaPath,
       };
-      if (process.env.NODE_ENV !== 'production') {
+      if (developmentChecks) {
         Object.freeze(binding.order);
         Object.freeze(binding.gates);
         Object.freeze(binding);
@@ -59,13 +62,13 @@ export const getItemEntries = (
       hostPath: template.path,
       declarations,
     };
-    if (process.env.NODE_ENV !== 'production') {
+    if (developmentChecks) {
       Object.freeze(declarations);
       Object.freeze(entry);
     }
     result.push(entry);
   }
-  if (process.env.NODE_ENV !== 'production') Object.freeze(result);
+  if (developmentChecks) Object.freeze(result);
   entries[index] = result;
   return result;
 };

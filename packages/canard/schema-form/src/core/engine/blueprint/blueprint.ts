@@ -11,6 +11,9 @@ import { markCandidateDescendants } from './utils/features/markCandidateDescenda
 import { validateChildTargets } from './validateChildTargets';
 import { validateShape } from './validateShape';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Shared options for a build without injected predicates, collector, or cache. */
 const DEFAULT_BLUEPRINT_OPTIONS: BlueprintOptions = {};
 
@@ -92,12 +95,12 @@ export const blueprint = (
         node.strategy !== 'branch')
     )
       context.staticFirstLoad = false;
-    if (process.env.NODE_ENV !== 'production') {
+    if (developmentChecks) {
       Object.freeze(node.childEntries);
       Object.freeze(node);
     }
   }
-  if (process.env.NODE_ENV !== 'production')
+  if (developmentChecks)
     for (let index = 0; index < context.fragments.length; index++) {
       const fragment = context.fragments[index];
       Object.freeze(fragment.declares);
@@ -117,7 +120,7 @@ export const blueprint = (
     dependencies: context.dependencies ?? Object.create(null),
     expressions,
   };
-  if (process.env.NODE_ENV !== 'production') {
+  if (developmentChecks) {
     Object.freeze(context.capabilities);
     Object.freeze(context.nodes);
     Object.freeze(context.fragments);

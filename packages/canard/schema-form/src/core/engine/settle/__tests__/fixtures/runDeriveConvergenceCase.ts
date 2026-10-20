@@ -31,7 +31,7 @@ interface ConvergenceTargets {
  * @param writes - Ordered leaf/root replacements after that load
  * @returns The selected tree, its final context, decisions, and snapshots
  */
-export const runDeriveConvergenceCase = (
+export const runDeriveConvergenceCase = async (
   schema: BlueprintSchema,
   input: unknown,
   writes: readonly { path: string; value: unknown }[] = [],
@@ -47,26 +47,46 @@ export const runDeriveConvergenceCase = (
   const observations: string[][] = [];
   let result;
   for (let variant = 0; variant < variants; variant++) {
+    let createTree = createTestTree;
+    let mount = loadFieldNodeAtMount;
+    let writeNode = writeFieldNode;
+    let settlement = settlementApi;
+    let derive = deriveApi;
+    let targets = sidecar;
+    let shadow = deriveShadowEvaluation;
     if (variant === 2) {
       vi.stubEnv('NODE_ENV', 'development');
-      deriveShadowEvaluation.enabled = false;
+      vi.resetModules();
+      createTree = (await import('../../../__tests__/fixtures/createTestTree'))
+        .createTestTree;
+      mount = (await import('../../loadFieldNodeAtMount')).loadFieldNodeAtMount;
+      writeNode = (await import('../../utils/write/writeFieldNode'))
+        .writeFieldNode;
+      settlement = await import(
+        '../../utils/settlement/createSettlementContext'
+      );
+      derive = await import('../../../derive');
+      targets = (await import('../../../blueprint')).DeriveConvergenceTargets;
+      shadow = (await import('../../utils/derivation/deriveShadowEvaluation'))
+        .deriveShadowEvaluation;
+      shadow.enabled = false;
     }
-    const { root, blueprint } = createTestTree(schema);
-    if (variant === 0 || !enabled) sidecar?.set(blueprint, undefined);
+    const { root, blueprint } = createTree(schema);
+    if (variant === 0 || !enabled) targets?.set(blueprint, undefined);
     const snapshots: string[] = [];
     const contexts: SettlementContext<PlainNode>[] = [];
     const decisions: { writes: number; failures: number }[] = [];
-    const createContext = settlementApi.createSettlementContext;
-    const decide = deriveApi.evaluateDeriveRound;
+    const createContext = settlement.createSettlementContext;
+    const decide = derive.evaluateDeriveRound;
     const contextSpy = vi
-      .spyOn(settlementApi, 'createSettlementContext')
+      .spyOn(settlement, 'createSettlementContext')
       .mockImplementation((...args) => {
         const context = createContext(...args) as SettlementContext<PlainNode>;
         contexts.push(context);
         return context;
       });
     const decisionSpy = vi
-      .spyOn(deriveApi, 'evaluateDeriveRound')
+      .spyOn(derive, 'evaluateDeriveRound')
       .mockImplementation((...args) => {
         const decision = decide(...args);
         decisions.push({
@@ -82,14 +102,13 @@ export const runDeriveConvergenceCase = (
         root.runtime.deliveries?.clear();
         let error;
         try {
-          if (step === -1)
-            loadFieldNodeAtMount(root, input, WriteOption.Overwrite);
+          if (step === -1) mount(root, input, WriteOption.Overwrite);
           else {
             const write = writes[step];
             let target = root;
             const segments = write.path.split('/').filter(Boolean);
             for (const segment of segments) target = target.structure![segment];
-            writeFieldNode(target, write.value, 'input', WriteOption.Overwrite);
+            writeNode(target, write.value, 'input', WriteOption.Overwrite);
           }
         } catch (cause) {
           error = cause instanceof Error ? cause.message : String(cause);
@@ -141,7 +160,7 @@ export const runDeriveConvergenceCase = (
       contextSpy.mockRestore();
       decisionSpy.mockRestore();
       if (variant === 2) {
-        deriveShadowEvaluation.enabled = shadowEnabled;
+        shadow.enabled = shadowEnabled;
         vi.stubEnv('NODE_ENV', environment);
       }
     }

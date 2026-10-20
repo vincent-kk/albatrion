@@ -3,6 +3,9 @@ import type { FormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { reportOwnerlessError } from './reportOwnerlessError';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Deliver every queued occurrence and isolate synchronous reporter failures.
  * @param runtime - Per-form reporter and delivery flag
@@ -22,7 +25,7 @@ export const deliverChainRecords = (
   for (const record of records) {
     if (!reporter?.hasConsumer()) {
       if (
-        process.env.NODE_ENV !== 'production' &&
+        developmentChecks &&
         record.code === FormWarningCode.NonJsonWholeValue
       )
         console.warn(record.code, record.message, record.details);

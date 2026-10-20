@@ -356,17 +356,24 @@ describe('settle derivation', () => {
     );
   });
 
-  it('28C-01 trace slot is absent in production settlements', () => {
+  it('28C-01 trace slot is absent in production settlements', async () => {
     vi.stubEnv('NODE_ENV', 'production');
+    vi.resetModules();
+    const { createTestTree: freshCreateTestTree } = await import(
+      '../../__tests__/fixtures/createTestTree'
+    );
+    const { loadFieldNodeAtMount: freshLoadFieldNodeAtMount } = await import(
+      '../loadFieldNodeAtMount'
+    );
     try {
-      const { root } = createTestTree({
+      const { root } = freshCreateTestTree({
         type: 'object',
         properties: {
           source: { type: 'string' },
           target: { type: 'string', controls: { derived: '../source' } },
         },
       });
-      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
+      freshLoadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
       expect(root.structure?.target?.raw).toBe('A');
       expect('settlementTrace' in root.runtime).toBe(false);
     } finally {

@@ -7,6 +7,9 @@ import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 import type { ChildField } from '../type';
 import { isDetectableTerminal } from './utils/isDetectableTerminal';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** A property key made only of digits, as an array index read. */
 const NUMERIC_KEY = /^\d+$/;
 
@@ -43,11 +46,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
   const accessed = useRef(0);
   return useMemo(() => {
     accessed.current = 0;
-    if (
-      process.env.NODE_ENV !== 'production' &&
-      reporter &&
-      isDetectableTerminal(node)
-    ) {
+    if (developmentChecks && reporter && isDetectableTerminal(node)) {
       let readLoad = reporter.load;
       const get = (
         target: object = EMPTY_CHILDREN,

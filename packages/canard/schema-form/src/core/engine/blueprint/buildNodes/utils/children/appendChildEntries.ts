@@ -1,6 +1,9 @@
 import type { MutableNode, SchemaInput } from '../../../types/analysis';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Append host-owned bindings for constructed templates in their existing order.
  * A binding's gates are the referring input's gates followed by the template's own
@@ -55,7 +58,7 @@ export const appendChildEntries = (
             : declaration.schemaPath,
         gates,
       };
-      if (process.env.NODE_ENV !== 'production') {
+      if (developmentChecks) {
         Object.freeze(binding.order);
         Object.freeze(gates);
         Object.freeze(binding);
@@ -68,7 +71,7 @@ export const appendChildEntries = (
       hostPath: node.path,
       declarations,
     };
-    if (process.env.NODE_ENV !== 'production') {
+    if (developmentChecks) {
       Object.freeze(declarations);
       Object.freeze(entry);
     }

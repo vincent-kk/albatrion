@@ -4,6 +4,9 @@ import {
 } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Delivery type of a static first load: a value update plus a refresh request. */
 const STATIC_FIRST_DELIVERY_TYPE =
   FieldNodeEventType.UpdateValue | FieldNodeEventType.RequestRefresh;
@@ -27,10 +30,9 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
   node.pendingDelivery = {
     type,
     payload: {
-      [FieldNodeEventType.UpdateValue]:
-        process.env.NODE_ENV !== 'production'
-          ? Object.freeze(payload)
-          : payload,
+      [FieldNodeEventType.UpdateValue]: developmentChecks
+        ? Object.freeze(payload)
+        : payload,
     },
     options: {
       [FieldNodeEventType.UpdateValue]: {

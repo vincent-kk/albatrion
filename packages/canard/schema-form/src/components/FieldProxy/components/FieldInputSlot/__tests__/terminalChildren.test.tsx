@@ -22,12 +22,18 @@ const detectable = (Input: ComponentType<FieldInputProps>) =>
 
 afterEach(() => {
   vi.unstubAllEnvs();
+  vi.doUnmock('react/jsx-dev-runtime');
   cleanup();
   vi.restoreAllMocks();
 });
 
 it('round 180 hands a production build a plain empty list even with an error handler', async () => {
+  const jsxRuntime = await import('react/jsx-dev-runtime');
+  // The renderer stays in development while the product graph is loaded in production.
+  vi.doMock('react/jsx-dev-runtime', () => jsxRuntime);
   vi.stubEnv('NODE_ENV', 'production');
+  vi.resetModules();
+  const { Form: FreshForm } = await import('@/schema-form/components/Form');
   const onError = vi.fn();
   const lists: unknown[] = [];
   const Input = ({ ChildFields }: FieldInputProps) => {
@@ -35,7 +41,7 @@ it('round 180 hands a production build a plain empty list even with an error han
     return <input data-count={ChildFields.length} />;
   };
   render(
-    <Form
+    <FreshForm
       validationMode={0}
       jsonSchema={detectable(Input)}
       onError={onError}
@@ -51,7 +57,7 @@ it('round 180 hands a production build a plain empty list even with an error han
     return <input data-count={ChildFields.length} />;
   };
   render(
-    <Form
+    <FreshForm
       validationMode={0}
       jsonSchema={{
         type: 'string',

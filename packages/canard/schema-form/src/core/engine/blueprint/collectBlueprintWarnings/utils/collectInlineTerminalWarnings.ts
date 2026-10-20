@@ -8,6 +8,9 @@ import type { BlueprintNode } from '../../types/node';
 import type { BlueprintSchema } from '../../types/schema';
 import { readSchemaObject } from '../../utils/analyze/readSchemaObject';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Form-only groups that a terminal ignores. */
 const FORM_GROUP_KEYS = [
   SCHEMA_GROUP.controls,
@@ -132,14 +135,8 @@ export const collectInlineTerminalWarnings = (
       level: 'warning',
       schemaPath: node.schemaPath,
       details: {
-        keys:
-          process.env.NODE_ENV !== 'production'
-            ? Object.freeze(keys.sort())
-            : keys.sort(),
-        paths:
-          process.env.NODE_ENV !== 'production'
-            ? Object.freeze(paths.sort())
-            : paths.sort(),
+        keys: developmentChecks ? Object.freeze(keys.sort()) : keys.sort(),
+        paths: developmentChecks ? Object.freeze(paths.sort()) : paths.sort(),
       },
     });
 };

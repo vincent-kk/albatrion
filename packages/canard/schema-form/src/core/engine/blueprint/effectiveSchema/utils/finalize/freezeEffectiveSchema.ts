@@ -3,6 +3,9 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { EffectiveSchema } from '../../../types/effectiveSchema';
 import { OwnedSchemaValues } from './OwnedSchemaValues';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Protect producer-owned public values once at the end of one schema merge.
  * @param result - Fresh completed envelope; its authored descendants are never traversed.
@@ -66,6 +69,6 @@ export const freezeEffectiveSchema = (
       }
     Object.freeze(schema);
   }
-  if (process.env.NODE_ENV !== 'production') Object.freeze(result);
+  if (developmentChecks) Object.freeze(result);
   return result;
 };

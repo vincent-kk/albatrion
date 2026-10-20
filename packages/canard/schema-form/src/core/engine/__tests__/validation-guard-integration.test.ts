@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 import type { Validator } from '@/schema-form/core/engine/validation';
 import {
   dispatchMount,
@@ -122,8 +121,16 @@ describe('guard records at public entry boundaries', () => {
     ]);
   });
 
-  it('ERROR-041 production skips unevaluated guards and reports first failure after commit', () => {
+  it('ERROR-041 production skips unevaluated guards and reports first failure after commit', async () => {
     vi.stubEnv('NODE_ENV', 'production');
+    vi.resetModules();
+    const {
+      dispatchMount: freshDispatchMount,
+      dispatchSetValue: freshDispatchSetValue,
+    } = await import('@/schema-form/core/engine/write');
+    const { createDispatchTree: freshCreateDispatchTree } = await import(
+      './fixtures/createDispatchTree'
+    );
     const compileGuard = vi.fn(() => {
       throw new Error('bad guard');
     });
@@ -134,7 +141,7 @@ describe('guard records at public entry boundaries', () => {
       report: (record: { code: string; surface?: string }) =>
         records.push(record),
     };
-    const { root, runtime } = createDispatchTree(
+    const { root, runtime } = freshCreateDispatchTree(
       schema,
       undefined,
       validator,
@@ -142,7 +149,7 @@ describe('guard records at public entry boundaries', () => {
     );
     expect(compileGuard).not.toHaveBeenCalled();
     expect(records).toEqual([]);
-    expect(() => dispatchMount(root, { enabled: false })).toThrow(
+    expect(() => freshDispatchMount(root, { enabled: false })).toThrow(
       'Gate evaluation failed',
     );
     expect(compileGuard).toHaveBeenCalledTimes(1);
@@ -152,9 +159,9 @@ describe('guard records at public entry boundaries', () => {
       ),
     ).toEqual([expect.objectContaining({ surface: 'thrown' })]);
     expect(runtime.commitNumber).toBeGreaterThan(0);
-    expect(() => dispatchSetValue(root, { enabled: true })).toThrow();
-    expect(() => dispatchSetValue(root, { enabled: false })).toThrow();
-    expect(() => dispatchSetValue(root, { enabled: true })).toThrow();
+    expect(() => freshDispatchSetValue(root, { enabled: true })).toThrow();
+    expect(() => freshDispatchSetValue(root, { enabled: false })).toThrow();
+    expect(() => freshDispatchSetValue(root, { enabled: true })).toThrow();
     expect(
       records.filter(
         (record) => record.code === 'SCHEMA_FORM_ERROR.GUARD_FAILED',
@@ -163,16 +170,26 @@ describe('guard records at public entry boundaries', () => {
     expect(compileGuard).toHaveBeenCalledTimes(1);
   });
 
-  it('VALIDATE-044 treats a Promise-returning guard as GUARD_FAILED', () => {
+  it('VALIDATE-044 treats a Promise-returning guard as GUARD_FAILED', async () => {
     vi.stubEnv('NODE_ENV', 'production');
+    vi.resetModules();
+    const { createTestValidator: freshCreateTestValidator } = await import(
+      '@/schema-form/core/__tests__/fixtures/createTestValidator'
+    );
+    const { dispatchMount: freshDispatchMount } = await import(
+      '@/schema-form/core/engine/write'
+    );
+    const { createDispatchTree: freshCreateDispatchTree } = await import(
+      './fixtures/createDispatchTree'
+    );
     const report = vi.fn();
-    const { root } = createDispatchTree(
+    const { root } = freshCreateDispatchTree(
       schema,
       undefined,
-      createTestValidator('promise'),
+      freshCreateTestValidator('promise'),
       { report, hasConsumer: () => true },
     );
-    expect(() => dispatchMount(root, { enabled: true })).toThrow(
+    expect(() => freshDispatchMount(root, { enabled: true })).toThrow(
       'Gate evaluation failed',
     );
     expect(report).toHaveBeenCalledWith(

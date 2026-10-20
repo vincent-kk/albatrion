@@ -20,6 +20,9 @@ import { resolveNodeStrategy } from './utils/nodeTypes/resolveNodeStrategy';
 import { resolveNodeTypes } from './utils/nodeTypes/resolveNodeTypes';
 import { getTemplateKey } from './utils/references/getTemplateKey';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Static construction has no active gated declaration IDs. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = [];
 
@@ -88,7 +91,7 @@ export const buildNodes = (
               validationOnly: true,
             }
           : declaration;
-      if (process.env.NODE_ENV !== 'production' && owned !== declaration) {
+      if (developmentChecks && owned !== declaration) {
         Object.freeze(owned.order);
         Object.freeze(owned.gates);
         Object.freeze(owned);
@@ -104,10 +107,9 @@ export const buildNodes = (
       schemaType,
       nullable,
       strategy: resolveNodeStrategy(context, kind, group.declarations),
-      declarations:
-        process.env.NODE_ENV !== 'production'
-          ? Object.freeze(ownedDeclarations)
-          : ownedDeclarations,
+      declarations: developmentChecks
+        ? Object.freeze(ownedDeclarations)
+        : ownedDeclarations,
       childEntries: [],
     };
     context.nodes.push(node);

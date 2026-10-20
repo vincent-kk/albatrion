@@ -5,14 +5,16 @@ import { FormErrorCode } from '@/schema-form/errors';
 import type { FormErrorService } from '../type';
 import { reportErrorToHost } from './reportErrorToHost';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Create an instance reporter; React supplies the current callback through onError. */
 export const createFormErrorService = (): FormErrorService => {
   const seen = new WeakSet<object>();
   const warnings = new Set<string>();
   let delivering = false;
   const service: FormErrorService = {
-    hasConsumer: () =>
-      !!service.onError || process.env.NODE_ENV !== 'production',
+    hasConsumer: () => !!service.onError || developmentChecks,
     load: 0,
     beginLoad: () => {
       service.load++;
@@ -34,8 +36,7 @@ export const createFormErrorService = (): FormErrorService => {
           const deliver = () => service.onError?.(record);
           if (service.root) observeFieldNodeReports(service.root, deliver);
           else deliver();
-        } else if (process.env.NODE_ENV !== 'production')
-          console.warn(record.message, record);
+        } else if (developmentChecks) console.warn(record.message, record);
       } finally {
         delivering = false;
       }

@@ -18,6 +18,9 @@ import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
 import { readSettlementSource } from './utils/readSettlementSource';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Candidates without a watch declaration share the same immutable empty value. */
 const EMPTY_WATCH_VALUES: readonly unknown[] = Object.freeze([]);
 
@@ -198,9 +201,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         mark(
           node,
           FieldNodeEventType.UpdateValue,
-          process.env.NODE_ENV !== 'production'
-            ? Object.freeze(payload)
-            : payload,
+          developmentChecks ? Object.freeze(payload) : payload,
           { source },
         );
       }
@@ -217,9 +218,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         mark(
           node,
           FieldNodeEventType.UpdatePath,
-          process.env.NODE_ENV !== 'production'
-            ? Object.freeze(payload)
-            : payload,
+          developmentChecks ? Object.freeze(payload) : payload,
         );
       }
       if (
@@ -263,9 +262,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         mark(
           node,
           FieldNodeEventType.UpdateJsonSchema,
-          process.env.NODE_ENV !== 'production'
-            ? Object.freeze(payload)
-            : payload,
+          developmentChecks ? Object.freeze(payload) : payload,
         );
       }
     } else if (context.changedNodes.has(node)) {
@@ -281,9 +278,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       mark(
         node,
         FieldNodeEventType.UpdateValue,
-        process.env.NODE_ENV !== 'production'
-          ? Object.freeze(payload)
-          : payload,
+        developmentChecks ? Object.freeze(payload) : payload,
         { source },
       );
     }

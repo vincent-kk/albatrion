@@ -13,6 +13,9 @@ import { createBlueprintGate } from '../gates/createBlueprintGate';
 import { appendChildEntries } from './appendChildEntries';
 import { populateVirtualNodes } from './populateVirtualNodes';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Bind object properties and array templates without allocating runtime nodes.
  * Host binding memberships are owned even when their templates are shared, so they
@@ -264,7 +267,7 @@ export const populateNodeChildren = (
       context.staticFirstLoad = false;
     }
   }
-  if (process.env.NODE_ENV !== 'production') {
+  if (developmentChecks) {
     if (node.itemCandidates) Object.freeze(node.itemCandidates);
     if (node.prefixItemCandidates) {
       for (const candidates of node.prefixItemCandidates)

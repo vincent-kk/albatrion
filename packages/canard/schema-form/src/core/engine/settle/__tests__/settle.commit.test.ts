@@ -752,7 +752,7 @@ describe('settle commit', () => {
     expect(root.behavior.assemble(root, root.children ?? [])).toBe(local);
   });
 
-  it('VALUE-037 warns about non-JSON data inside a whole terminal value only in development', () => {
+  it('VALUE-037 warns about non-JSON data inside a whole terminal value only in development', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const first = createTestTree({
       type: 'object',
@@ -773,11 +773,18 @@ describe('settle commit', () => {
     ]);
     warn.mockClear();
     vi.stubEnv('NODE_ENV', 'production');
-    const second = createTestTree({
+    vi.resetModules();
+    const { createTestTree: freshCreateTestTree } = await import(
+      '../../__tests__/fixtures/createTestTree'
+    );
+    const { writeFieldNode: freshWriteFieldNode } = await import(
+      '../utils/write/writeFieldNode'
+    );
+    const second = freshCreateTestTree({
       type: 'object',
       options: { terminal: true },
     }).root;
-    writeFieldNode(
+    freshWriteFieldNode(
       second,
       { bad: undefined },
       'callerReplace',

@@ -3,6 +3,9 @@ import type { DeriveState } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Allocate call-local edge baselines only for analyses with authored rules.
  * @param context - Current settlement and its previous committed runtime
@@ -28,7 +31,7 @@ export const getDeriveState = <Self extends FieldNodeRecord<Self>>(
     entered: context.entered,
     revived: context.revived,
     suppressAutomaticWrites: context.suppressAutomaticWrites,
-    trace: process.env.NODE_ENV !== 'production',
+    trace: developmentChecks,
   };
   context.deriveState = state;
   return state;

@@ -10,6 +10,9 @@ import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { restoreAdoptedExternalErrors } from '../chain/restoreAdoptedExternalErrors';
 import { clearWarningKeys } from '../report/clearWarningKeys';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /** Shared mount settings for a load that validates immediately. */
 const NO_MOUNT_SETTINGS: { deferValidation?: boolean } = {};
 
@@ -34,7 +37,7 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
   root.runtime.deferMountValidation = settings.deferValidation === true;
   if (!settings.deferValidation)
     (root.runtime.validationTargets ??= new Set()).add(root);
-  root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
+  root.runtime.mountingGuardPass = developmentChecks;
   try {
     loadFieldNodeAtMount(root, value, option);
   } catch (error) {

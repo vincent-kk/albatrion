@@ -12,6 +12,9 @@ import { getPathManager } from './getPathManager';
 import { hasCompleteExpressionReads } from './utils/hasCompleteExpressionReads';
 import { registerBlueprintDependency } from './utils/registerBlueprintDependency';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Compile authored control expressions while preserving relative dependency paths.
  * @param context - Completed graph and invocation-owned dependency index
@@ -102,7 +105,7 @@ export const compileBlueprintExpressions = (
             dependencies,
             evaluate,
           };
-          if (process.env.NODE_ENV !== 'production') {
+          if (developmentChecks) {
             Object.freeze(dependencies);
             Object.freeze(compiled);
           }
@@ -116,9 +119,7 @@ export const compileBlueprintExpressions = (
       }
     }
   }
-  if (process.env.NODE_ENV !== 'production' && context.dependencies)
+  if (developmentChecks && context.dependencies)
     for (const ids of Object.values(context.dependencies)) Object.freeze(ids);
-  return process.env.NODE_ENV !== 'production'
-    ? Object.freeze(expressions)
-    : expressions;
+  return developmentChecks ? Object.freeze(expressions) : expressions;
 };

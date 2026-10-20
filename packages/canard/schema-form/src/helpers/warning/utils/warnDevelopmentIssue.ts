@@ -4,6 +4,9 @@ import { isEmptyObject } from '@winglet/common-utils/filter';
 
 import type { FormWarningCode } from '@/schema-form/errors';
 
+/** Captures the build environment once for this module's development checks. */
+const productionBuild = process.env.NODE_ENV === 'production';
+
 export interface DevelopmentIssue {
   code: FormWarningCode;
   message: string;
@@ -18,14 +21,14 @@ const emittedWarnings = new Set<string>();
  * `code + formatted message + details` structure.
  *
  * @remarks
- * - Silent when `process.env.NODE_ENV === 'production'`. The bare token is compared at
- *   the use site so consumer bundlers can replace it statically and drop the branch.
+ * - Silent when the private module constant `productionBuild` is true. Its initializer
+ *   keeps the bare NODE_ENV token so consumer bundlers can replace it and drop the branch.
  * - Deduplicated per session by `code + message`, so warnings raised from
  *   per-node pipelines (e.g. schema merging) cannot flood the console.
  * @param issue - The diagnostic to report, carrying code, message, and details
  */
 export const warnDevelopmentIssue = (issue: DevelopmentIssue): void => {
-  if (process.env.NODE_ENV === 'production') return;
+  if (productionBuild) return;
   const signature = `${issue.code}\n${issue.message}`;
   if (emittedWarnings.has(signature)) return;
   emittedWarnings.add(signature);

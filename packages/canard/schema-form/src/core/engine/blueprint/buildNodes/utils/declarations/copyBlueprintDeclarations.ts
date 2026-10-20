@@ -1,5 +1,8 @@
 import type { PropertyDeclaration } from '../../../types/node';
 
+/** Captures the build environment once for this module's development checks. */
+const developmentChecks = process.env.NODE_ENV !== 'production';
+
 /**
  * Give a virtual binding its own records and memberships while borrowing graph links.
  * @param source - Complete declarations whose gate elements and authored schemas stay shared.
@@ -16,12 +19,12 @@ export const copyBlueprintDeclarations = (
       order: [...declaration.order],
       gates: [...declaration.gates],
     };
-    if (process.env.NODE_ENV !== 'production') {
+    if (developmentChecks) {
       Object.freeze(copy.order);
       Object.freeze(copy.gates);
       Object.freeze(copy);
     }
     result.push(copy);
   }
-  return process.env.NODE_ENV !== 'production' ? Object.freeze(result) : result;
+  return developmentChecks ? Object.freeze(result) : result;
 };
