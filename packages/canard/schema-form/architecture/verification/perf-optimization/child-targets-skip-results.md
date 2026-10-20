@@ -14,6 +14,8 @@
 
 ## 게이트와 관측 동치
 
+독립 검토(agy) PASS 0건과 검증자(Claude Opus) PASS(낮은 지적 3건: 봉인 밖 review-agy.md, 차등 시험의 강제 호출 단언, buildNodes DETAIL 문장)를 거쳤고 세 지적을 반영했다.
+
 패키지 typecheck·lint·전체 test·build는 모두 종료 0입니다. 다섯 프로젝트(unit·render·react18·production·storybook)의 774파일에서 4,944시험이 통과했고 기존 todo 1개, 실패 0개입니다. 타입 검사 첫 실행은 기존 resolveReference 시험 문맥에 새 필드 초기화가 없어 실패했으며 초기화만 추가한 최종 실행은 통과했습니다.
 
 새 계수 시험은 flat·nested·무판별 oneOf·재귀 ref·가상 fields에서 무호출을 확인하고, root·oneOf 자식·참조·가상 선언의 fields·discriminator에서는 정확히 한 번 호출됨을 확인합니다. 꺼진 oneOf 자식의 없는 대상도 정적 오류로 남습니다. 기존 판별·없는 대상 오류 시험은 기대값 그대로 통과했습니다. 별도 차등 시험은 기존 59종 코퍼스·경계 fixture를 진단 끔/켬으로 실행하고, 시험 spy가 build 뒤 검증 증거를 강제로 켠 실행과 노드·선언·정규화·진단·경고·오류를 비교했습니다. 제품 시험 전용 스위치는 없습니다.
