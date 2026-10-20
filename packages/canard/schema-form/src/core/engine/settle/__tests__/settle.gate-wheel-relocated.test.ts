@@ -64,7 +64,11 @@ it.each([false, true])(
         () => {
           gateWheelEvaluation.mode = mode;
         },
-        (root) => [...(root.runtime.committedDeclarationIds ?? [])],
+        (root) => {
+          if (root.structure?.mode?.emit === 'x')
+            expect(root.structure.p?.structure?.child?.emit).toBe('P');
+          return [...(root.runtime.committedDeclarationIds ?? [])];
+        },
       ).map((observation) => {
         const { visits: _visits, ...publication } = observation as {
           visits: unknown;
@@ -73,6 +77,17 @@ it.each([false, true])(
         return publication;
       });
     try {
+      runGateSelectionCase(
+        {
+          ...fixture,
+          input: { mode: 'x', p: { child: 'P' }, later: true },
+          writes: [],
+        },
+        () => {
+          gateWheelEvaluation.mode = 'record';
+        },
+        (root) => expect(root.structure?.p?.structure?.child?.emit).toBe('P'),
+      );
       const expected = run('record');
       decisions.length = 0;
       expect(run('skip')).toEqual(expected);
@@ -81,7 +96,7 @@ it.each([false, true])(
         host: '',
         round: 0,
         allowed: false,
-        added: newHost,
+        added: true,
         dirty: ['/p'],
       });
       expect(run('shadow')).toEqual(expected);
