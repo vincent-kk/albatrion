@@ -9,7 +9,7 @@ import { captureOwnedInlineObservables } from './fixtures/captureOwnedInlineObse
 
 afterEach(() => vi.restoreAllMocks());
 
-// filid:contract shape-validation-skip
+// filid:contract shape-validation-equivalence
 it('preserves corpus graphs, declarations, diagnostics and errors with unconditional validation', () => {
   const samples = headFixture.cases as {
     label: string;

@@ -78,9 +78,12 @@
 
 ## Acceptance Criteria
 
-### shape-validation-skip — 템플릿 재귀 증거와 형상 검증
+### shape-validation-counts — 템플릿 재귀 증거와 형상 검증 호출
 
 - 평면·중첩·oneOf·가상 필드·비재귀 형제 참조는 형상 검증을 호출하지 않는다. 무게이트 루트 참조, 게이트를 거친 참조, 배열 아이템 재귀는 생성 중 템플릿에 도달하면 한 번 호출한다.
+
+### shape-validation-equivalence — 무조건 형상 검증과 관측 동등성
+
 - 기존 재귀·진단 기대값을 유지하고, 코퍼스의 노드·선언·진단·오류는 같은 문맥을 무조건 검증하는 실행과 같다.
 
 ### owned-inline-differential — 구현 전 HEAD와 동결 계수

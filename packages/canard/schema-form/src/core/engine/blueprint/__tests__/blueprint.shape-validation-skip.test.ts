@@ -8,7 +8,7 @@ import * as shapeValidation from '../validateShape';
 
 afterEach(() => vi.restoreAllMocks());
 
-// filid:contract shape-validation-skip
+// filid:contract shape-validation-counts
 describe('shape validation follows template recursion evidence', () => {
   it.each([
     {
