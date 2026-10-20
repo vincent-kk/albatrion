@@ -128,6 +128,84 @@ class DependencyIndex {
     return [...owners];
   }
 
+  /**
+   * Resolve presence readers while excluding in-progress and changed-subtree owners.
+   * @param hostPath - Live host whose direct child changed identity
+   * @param childSegment - Escaped name of that child
+   * @param root - Live tree used to expand unbound wildcard owners
+   * @returns Recalculation owners and ancestor-reading owners eligible only for state keys
+   */
+  affectedByPresence<Self extends FieldNodeRecord<Self>>(
+    hostPath: string,
+    childSegment: string,
+    root: Self,
+  ): { owners: Set<string>; stateOnly: Set<string> } {
+    const owners = new Set<string>();
+    const stateOnly = new Set<string>();
+    if (!this.root) return { owners, stateOnly };
+    const changedPath = hostPath + '/' + childSegment;
+    const ancestorOwners = new Set<string>();
+    let current = [this.root];
+    this.collectPresenceOwners(current, changedPath, root, ancestorOwners);
+    const segments = hostPath ? hostPath.slice(1).split($.Separator) : [];
+    for (const segment of segments) {
+      current = this.presenceChildren(current, segment);
+      this.collectPresenceOwners(current, changedPath, root, ancestorOwners);
+      if (current.length === 0) break;
+    }
+    for (const owner of ancestorOwners)
+      if (owner.startsWith(hostPath + '/')) stateOnly.add(owner);
+      else owners.add(owner);
+    const pending = this.presenceChildren(current, childSegment);
+    const direct = new Set<string>();
+    while (pending.length) {
+      const child = pending.pop()!;
+      this.collectPresenceOwners([child], changedPath, root, direct);
+      for (const descendant of child.children.values())
+        pending.push(descendant);
+    }
+    for (const owner of direct)
+      if (owner !== changedPath && !owner.startsWith(changedPath + '/'))
+        owners.add(owner);
+    return { owners, stateOnly };
+  }
+
+  /** Bind exact and wildcard trie steps without rebuilding a prefix index. */
+  private presenceChildren(
+    nodes: readonly DependencyNode[],
+    segment: string,
+  ): DependencyNode[] {
+    const next: DependencyNode[] = [];
+    for (const node of nodes) {
+      const exact = node.children.get(segment);
+      if (exact) next.push(exact);
+      const wildcard = isCanonicalArrayIndex(segment)
+        ? node.children.get($.Wildcard)
+        : undefined;
+      if (wildcard) next.push(wildcard);
+    }
+    return next;
+  }
+
+  /** Bind affected owner templates against one changed live child path. */
+  private collectPresenceOwners<Self extends FieldNodeRecord<Self>>(
+    nodes: readonly DependencyNode[],
+    changedPath: string,
+    root: Self,
+    owners: Set<string>,
+  ): void {
+    for (const node of nodes)
+      for (const entry of node.owners) {
+        const path = entry.bindable
+          ? bindTemplatePath(entry.path, changedPath)
+          : entry.path;
+        if (path.includes('/*'))
+          for (const expanded of expandTemplatePaths(root, path))
+            owners.add(expanded);
+        else owners.add(path);
+      }
+  }
+
   /** Insert one exact watched location into the pointer trie. */
   private add(watchedPath: string, owner: string): void {
     const ownerParts = owner.split($.Separator);

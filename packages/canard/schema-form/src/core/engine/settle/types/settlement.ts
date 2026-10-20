@@ -118,6 +118,25 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
+  /** Hosts whose direct child identity may differ from the wheel's prior shape. */
+  presenceHosts?: Set<Self>;
+  /** Emitted child paths that changed identity at any point in this settlement. */
+  changedPresence?: Set<string>;
+  /** Ancestor prefixes accumulated only when a new presence path is added. */
+  presencePrefixes?: Set<string>;
+  /** Monotone registration version used to recheck non-shape-dirty ancestors. */
+  presenceRegistrations?: number;
+  /** Record-mode proof counters; shipping skip mode never allocates this record. */
+  presenceMetrics?: {
+    /** Dirty node computations per live path, excluding immediately returned no-op calls. */
+    computes: Map<string, number>;
+    /** Ancestor batches reconsidered after a registration version change. */
+    ancestorRechecks: number;
+    /** Non-shape-dirty branches handed to the bounded host wheel. */
+    ancestorWheels: number;
+    /** Calls to the presence identity comparison. */
+    calls: number;
+  };
   /** Proof that this call is one admitted static push, consulted by selection, assembly and alignment. */
   arrayAppend?: ArrayAppendProof<Self>;
   /** Proof that this call is one admitted static pop, consulted by selection, assembly and alignment. */
