@@ -62,7 +62,7 @@
 | 07 | 전환 | 머지 | [#354](https://github.com/vincent-kk/albatrion/pull/354) | 2026-10-14에 `1.0.0-beta`로 병합(`9c4d4a59d`). 브랜치 `feat/schema-form-switch`(2026-10-02 착수, 2026-10-11 `1.0.0-beta` `351ece24e` 위에 다시 세움). 원샷. 측정 원자료는 `archive/stage-07-verification-raw`(140라운드). 실행 계획은 [execution-plan](plan/07-switch/execution-plan.md), 기록은 [log](plan/07-switch/log.md) |
 | 08 | 플러그인 | 완료 | — | 별도 PR 없음. `presentation.*` 이주와 이름 대응은 07b(#365)·07d(입력 설정 이주, 플러그인 0.17.0)에서 끝났고 PR마다 플러그인 일곱 빌드가 게이트로 돌았다(331라운드 소유자 답). 계획서가 인용한 옛 경로(`plan/07-switch/log.md` "08 목록")는 역사 기록. 미확인 셋은 대기열 54 |
 | 정돈 | 코드 정돈 | 진행 | — | 07 뒤·08 앞(287라운드), 최적화 앞. 계획 [request](plan/tidy-structure/request.md), 결정 D1–D6 확정(289라운드). 정돈-1부터 PR 넷. 정돈-1 #374 병합 ae502f7bd(297라운드), 정돈-2 진행. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
-| 최적화 | 성능 최적화 | 진행(429라운드 착수) | [#423](https://github.com/vincent-kk/albatrion/pull/423) | 브랜치 `feat/schema-form-08-review-and-perf`에서 원장과 작업 폴더를 운영한다. 병합: L3 다섯 가설 #416~#420, 측정 문서 #421, 마운트 완료 경계 #422(`ef6747ea0`), T14 검증 도구 #424(`4e9b6786e`). Draft #423(itemless 빈 선언 조회 제거)은 두 측정 창이 엇갈려 결정 60을 기다린다. 남은 것은 F·nextExtras 가설, 결정 58 실험, M3 종합 재측정과 소유자 수용, 결정 54이며 대기열 59·TEST-027·P1 전체 protocol 실패도 보류다. 429라운드 소유자 지시로 다음 작업을 시작했다. 지난 경위는 `PLAN-LOG.md`와 `_archive/2026-10-20/PLAN.md`에 있다. 계획은 [request](plan/perf-optimization/request.md)이며 끝나면 `1.0.0-beta`에 squash한다. |
+| 최적화 | 성능 최적화 | 진행(429라운드 착수) | [#423](https://github.com/vincent-kk/albatrion/pull/423) | 브랜치 `feat/schema-form-08-review-and-perf`에서 원장과 작업 폴더를 운영한다. 병합: L3 다섯 가설 #416~#420, 측정 문서 #421, 마운트 완료 경계 #422(`ef6747ea0`), T14 검증 도구 #424(`4e9b6786e`). Draft #423(itemless 빈 선언 조회 제거)은 두 측정 창이 엇갈려 결정 60을 기다린다. 남은 것은 F·nextExtras 가설, 결정 58 실험, M3 종합 재측정과 소유자 수용, 결정 54이며 대기열 59·TEST-027·P1 전체 protocol 실패도 보류다. 429라운드 소유자 지시로 다음 작업을 시작했다. 430라운드에 기준 측정 창(`verification/perf-optimization/baseline-430-results.md`)을 쟀고, 가설 N(nextExtras)은 Draft #425로 열려 독립 검토 PASS와 A/A/B 보정까지 마쳤다. 지난 경위는 `PLAN-LOG.md`와 `_archive/2026-10-20/PLAN.md`에 있다. 계획은 [request](plan/perf-optimization/request.md)이며 끝나면 `1.0.0-beta`에 squash한다. |
 | 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
 | 별도 | 릴리스 전환 | 대기 | — | 시점은 소유자가 정한다(LANDING-204) |
 
@@ -77,7 +77,7 @@
 
 **429라운드 소유자 지시로 성능 측정과 개선 작업을 시작했습니다.** 에이전트 분담과 사용량 한도는 AGENT-HANDOFF.md 1절을 따릅니다. 순서와 단계별 목표는 다음과 같습니다.
 
-1. **core 마운트 비효율 제거(최적화 M2 계속).** 이름 붙은 비효율을 하나씩 없애되 관측 결과는 그대로 둡니다. 남은 항목은 결정 60의 itemless 판단, F 가설(첫 객체 합성의 중간 이름 구성 제거), nextExtras 결과 키 재열거 제거, 결정 58 게이트 폼 실험입니다. 가설마다 네 게이트·관측 동치·독립 검토·같은 창 측정을 거쳐 병합하고, 지울 근거가 없는 잔여는 M3 수용 후보로 넘깁니다. 첫 작업은 현재 끝에서 core와 React 포함 폼 수준을 같은 창에서 재는 기준 측정입니다(429라운드).
+1. **core 마운트 비효율 제거(최적화 M2 계속).** 이름 붙은 비효율을 하나씩 없애되 관측 결과는 그대로 둡니다. 남은 항목은 준비도 순으로 nextExtras 결과 키 재열거 제거(가설 N, Draft #425), F 가설(첫 객체 합성의 중간 이름 구성 제거), 결정 58 게이트 폼 실험, 결정 60의 itemless 판단(M3 창에서)입니다. 가설마다 네 게이트·관측 동치·독립 검토·같은 창 측정을 거쳐 병합하고, 지울 근거가 없는 잔여는 M3 수용 후보로 넘깁니다. 기준 측정은 430라운드에 마쳤습니다(`verification/perf-optimization/baseline-430-results.md`).
 2. **M3 종합 재측정과 수용.** 0.16.1, 최적화 전, 최적화 뒤의 세 판을 한 창에서 core와 React 포함 폼 수준으로 재고 정상동작 검증 보고와 함께 올립니다. 정본은 폼 전체 e2e입니다(358라운드). 남은 느린 행마다 이유와 수치를 붙여 Vincent가 수용합니다(TEST-027). React 포함 폼 수준의 마지막 측정은 2026-10-15 L1 직후입니다.
 3. **플러그인·내장 fallback 결함 여덟 건 수정 PR.** 결정 54를 이때 판단합니다.
 4. **09 정리와 릴리스.** 레거시 삭제, 릴리스 전 벤치 재실행(폼 전체 e2e), 번들 크기와 모바일 재측정을 하고 릴리스 전환 시점(D-2)을 정한 뒤 `1.0.0-beta`에 squash합니다. 원장 본문과 `reviews/` 기록의 보관도 이때 한 번 합니다(427라운드).
@@ -90,4 +90,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-20 | 429라운드: 에이전트 분담과 사용량 정책 기록(장기 작업은 codex sol·Claude Opus·agy argon, 나머지는 워커, 소비 순서 cursor > codex = agy > claude), 성능 측정·개선 착수 | reviews/round-429-closing.md |
+| 2026-10-20 | 430라운드: 자율 운행과 선행판단 기록(COORDINATOR-JUDGMENTS.md), HEAD 9a473b2a2 기준 측정 창(core 16장면·React 포함 폼 수준, 참조용) | reviews/round-430-closing.md |

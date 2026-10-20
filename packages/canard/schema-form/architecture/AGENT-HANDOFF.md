@@ -1,6 +1,6 @@
 # 코디네이터 인계 — 원장 관리자 겸 Orca 코디네이터의 작업대
 
-이 문서는 원장 관리자이자 Orca 코디네이터가 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황과 다음 할 일의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 이 문서는 그 셋이 적지 않는 지금 이 순간의 작업대(Orca 운영, 열린 PR, 작업 폴더, 증거 위치)와 판단 기준(7~9절)을 적는다. 라운드마다 문단을 덧붙이지 않고 2절과 3절을 고쳐 쓴다. 427라운드 압축 전의 글은 `_archive/2026-10-20/AGENT-HANDOFF.md`에 있다. 소유자는 Vincent다.
+이 문서는 원장 관리자이자 Orca 코디네이터가 쓰는 작업대다. 설계의 정본은 `ledger/`, 진행 상황과 다음 할 일의 단일 진입점은 `PLAN.md`, 재개 지점과 일하는 법은 `HANDOFF.md`다. 코디네이터의 선행판단 기록과 소유자 결정 대기열은 `COORDINATOR-JUDGMENTS.md`, 에이전트 정책은 `AGENT-POLICY.md`다. 이 문서는 그 셋이 적지 않는 지금 이 순간의 작업대(Orca 운영, 열린 PR, 작업 폴더, 증거 위치)와 판단 기준(7~9절)을 적는다. 라운드마다 문단을 덧붙이지 않고 2절과 3절을 고쳐 쓴다. 427라운드 압축 전의 글은 `_archive/2026-10-20/AGENT-HANDOFF.md`에 있다. 소유자는 Vincent다.
 
 ## 1. 역할과 구속 규칙
 
@@ -14,16 +14,16 @@
 - 워커 배정(429라운드 소유자 지시, 427라운드를 대체): 에이전트의 역할, 장기 작업과 워커의 구분, 사용량 풀과 초기화, 소비 순서(cursor > codex = agy > claude), 한도 중지 규칙과 Orca 호출 모양의 정본은 `AGENT-POLICY.md`다. 소유자 지시가 바뀌면 그 문서를 고치고 라운드를 닫는다. 코디네이터는 설계·판단·원장 마감만 맡고 결론만 받는다.
 - 다음 성능 작업은 429라운드 소유자 지시로 시작했다. 코디네이터의 `gh pr ready`·`gh pr merge`는 Claude Code 자동 권한 분류기가 거절하므로 병합은 Vincent가 GitHub에서 직접 한다(426라운드). GitHub 화면의 squash 병합은 `Co-authored-by` 줄을 자동으로 붙이므로, 남기지 않으려면 병합 창에서 그 줄을 지운다.
 
-## 2. 지금 상태 (2026-10-20, 429라운드)
+## 2. 지금 상태 (2026-10-20, 430라운드)
 
 - 가지는 `feat/schema-form-08-review-and-perf`이고 현재 끝은 `git log -1`과 origin으로 확인한다. 제품 코드는 L3 마지막 병합(#420, `67484c0be`) 뒤 바뀌지 않았다. PR424가 검증 파일을 `src/` 아래에 더해 패키지 `src` 트리 해시는 `78c85b5906006a36e8eb9b4da0c5933a74976b76`이다.
 - 병합된 성능 PR은 L3 다섯 가설 #416~#420, 측정 문서 #421, 마운트 완료 경계 #422(`ef6747ea0`), T14 관측 identity 검증 도구 #424(`4e9b6786e`, 2026-10-20)다. 07 전환 #354는 2026-10-14에 `1.0.0-beta`로 병합되었다(`9c4d4a59d`).
-- 열린 PR은 Draft #423 하나다. itemless 배열의 빈 선언 조회 제거이며 head는 `282685f27`이다. 2026-10-18 창에서는 Node object-B0-N1000이 두 바퀴 모두 약 14% 느렸고, 2026-10-20 창에서는 두 바퀴의 부호가 반대였다. 성능 수용과 병합은 소유자 결정 60을 기다린다.
-- 보존 작업 폴더는 `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership` 하나다. PR423의 사본(로컬 가지 `vincent-kk/l3e-direct-ownership`)이며 메인에서 추적 밖이므로 메인에서 `git add .`나 `git clean`을 하지 않는다. 지우는 것은 소유자 승인 뒤다. 병합된 PR424의 사본 `schema-form-observation-identity-2`는 428라운드 소유자 지시로 증거를 옮긴 뒤 지웠다.
+- 열린 PR은 Draft #423과 Draft #425 둘이다. itemless 배열의 빈 선언 조회 제거이며 head는 `282685f27`이다. 2026-10-18 창에서는 Node object-B0-N1000이 두 바퀴 모두 약 14% 느렸고, 2026-10-20 창에서는 두 바퀴의 부호가 반대였다. 성능 수용과 병합은 소유자 결정 60을 기다린다. Draft #425(https://github.com/vincent-kk/albatrion/pull/425)는 가설 N(nextExtras의 결과 키 재열거 제거, 가지 `vincent-kk/schema-form-next-extras`)이며 독립 검토 PASS와 A/A/B 보정 창까지 마쳤고 판정은 431라운드에서 한다.
+- 보존 작업 폴더는 `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`와 `/Users/Vincent/Workspace/albatrion/schema-form-next-extras`(PR425, 가지 `vincent-kk/schema-form-next-extras`) 둘이다. PR423의 사본(로컬 가지 `vincent-kk/l3e-direct-ownership`)이며 메인에서 추적 밖이므로 메인에서 `git add .`나 `git clean`을 하지 않는다. 지우는 것은 소유자 승인 뒤다. 병합된 PR424의 사본 `schema-form-observation-identity-2`는 428라운드 소유자 지시로 증거를 옮긴 뒤 지웠다.
 - 하위 checkout에서는 시험과 lint 전에 `yarn workspaces foreach --from @canard/schema-form --recursive --topological-dev run build`로 의존 패키지를 빌드한다. Storybook 실패는 차가운 캐시와 동시 실행에서 재현되므로, 단독·따뜻한 캐시 실행 뒤에 남는 것만 실패로 분류한다(425C-02).
-- 증거 위치: T14는 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/pr424-t14-evidence/` 아래 `observation-identity-reacquire/`, `t14-followup-diagnosis/`, `t14-gates-reexecution/`, `observation-identity-portability/`에 있다. 2026-10-20 itemless 재측정은 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/itemless-remeasure-426/`에 있고 같은 봉인이 PR423 사본에도 있다. 2026-10-18 창의 PR423 측정 원자료와 P1 원자료는 소실되어 원장의 파생 수치만 남았다(425라운드).
+- 증거 위치: T14는 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/pr424-t14-evidence/` 아래 `observation-identity-reacquire/`, `t14-followup-diagnosis/`, `t14-gates-reexecution/`, `observation-identity-portability/`에 있다. 2026-10-20 itemless 재측정은 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/itemless-remeasure-426/`에 있고 같은 봉인이 PR423 사본에도 있다. 2026-10-18 창의 PR423 측정 원자료와 P1 원자료는 소실되어 원장의 파생 수치만 남았다(425라운드). 430라운드 기준 측정은 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/baseline-430/`에, 가설 N의 게이트·관측 동치·측정·A/A/B 보정은 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/next-extras-431/`(작업 폴더의 같은 경로 사본과 바이트 동일)에 있다.
 - 측정 결과의 정본은 `verification/perf-optimization/`의 결과 문서들이고, 워커 brief는 `verification/perf-optimization/l3-briefs/`에 있다. 그 안의 `next-agent-start-prompt.md`는 424라운드 기준의 경로와 HEAD를 담고 있으므로 이 절이 우선한다.
-- 429라운드부터 성능 측정과 개선 작업이 열렸다. 순서는 PLAN.md 4절(기준 측정, F 가설, nextExtras, 결정 58 실험, M3 종합 재측정)이다. 보류(PR423·결정 54/58/59/60·TEST-027/M3 수용·P1 전체 protocol 실패)는 그대로다.
+- 430라운드에 기준 측정을 마쳤다. 순서는 PLAN.md 4절(가설 N nextExtras → F → 결정 58 실험 → M3 종합 재측정)이다. 선행판단 기록과 소유자 결정 대기열은 `COORDINATOR-JUDGMENTS.md`다. 보류(PR423·결정 54/58/59/60·TEST-027/M3 수용·P1 전체 protocol 실패)는 그대로다.
 
 ## 3. Orca 운영
 
