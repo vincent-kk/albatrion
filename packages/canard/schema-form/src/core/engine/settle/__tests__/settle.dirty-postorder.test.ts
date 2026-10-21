@@ -25,7 +25,7 @@ describe('gate-less write dirty indexing', () => {
     });
     mountFieldNode(root, undefined, undefined, { deferValidation: false });
     const begin = vi.spyOn(DirtyPathSet.prototype, 'beginPostOrder');
-    root.find('/toggle').setValue(true);
+    root.find('/toggle')!.setValue(true);
     expect(begin).not.toHaveBeenCalled();
     expect(root.value).toEqual({ toggle: true, head: 'h' });
   });
