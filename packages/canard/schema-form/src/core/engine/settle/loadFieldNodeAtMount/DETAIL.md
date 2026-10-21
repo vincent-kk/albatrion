@@ -13,6 +13,10 @@
 
 ## Acceptance Criteria
 
+### settle-static-gate-selection-preparation — 정적 첫 로드의 준비 생략
+
+- 정적 로더는 분기·식 없는 청사진만 받으므로 선택 계획과 표를 준비하지 않습니다. 정적 로더에 실제 도달하며 관련 캐시는 비어 있는지 확인합니다.
+
 ### settle-static-first-load — 정적 첫 로드의 범용 경로 동등성
 
 - 동일 행렬에서 범용 oracle과 정적 첫 로드의 최종 값·오류·진단·순서·revision·commit·전역 상태·리스너 페이로드·경고가 같다. 자격 밖 경로는 커밋 번호를 소비하지 않고 범용 경로로 간다.

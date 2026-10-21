@@ -1,5 +1,6 @@
 import type { FieldNodeRecord } from '../../record';
 import type { WriteOption } from '../../types/value';
+import { prepareGateSelection } from '../utils/compute/childSelection/prepareGateSelection';
 import { setLoadValue } from '../utils/loadValues/setLoadValue';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { canLoadStaticFirstTree } from './utils/staticFirst/canLoadStaticFirstTree';
@@ -20,6 +21,12 @@ export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
   const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
   root.runtime.diagnostics = { status: 'stable' };
   try {
+    const blueprint = root.runtime.blueprint;
+    if (
+      !blueprint.capabilities.branchless &&
+      blueprint.capabilities.hasExpressions
+    )
+      prepareGateSelection(blueprint);
     if (canLoadStaticFirstTree(root, value)) loadStaticFirstTree(root, option);
     else writeFieldNode(root, value, 'load', option);
   } finally {
