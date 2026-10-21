@@ -24,6 +24,66 @@ const branchSchema = (): BlueprintSchema => ({
 afterEach(() => vi.restoreAllMocks());
 
 describe('branch-switch constant-factor regression records', () => {
+  it('keeps the pending-exit path count while two exits wait at one path', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        s: { type: 'number' },
+        x1: {
+          type: 'number',
+          default: 1,
+          controls: { active: '../s === 1' },
+        },
+        x2: {
+          type: 'number',
+          default: 1,
+          controls: { active: '../x1 === 1' },
+        },
+        x3: {
+          type: 'number',
+          default: 1,
+          controls: { active: '../x2 === 1' },
+        },
+      },
+      oneOf: [
+        {
+          controls: { active: './s === 0 || ./x3 === 1' },
+          properties: { p: { type: 'string' } },
+        },
+        {
+          controls: { active: './s === 1 && ./x1 === undefined' },
+          properties: { p: { type: 'number' } },
+        },
+        {
+          controls: {
+            active: './s === 1 && ./x1 === 1 && ./x3 === undefined',
+          },
+          properties: { p: { type: 'boolean' } },
+        },
+      ],
+    });
+    loadFieldNodeAtMount(root, { s: 0, p: 'keep' }, WriteOption.Overwrite);
+    const original = root.structure!.p;
+    const selected = selection.selectChildren;
+    const counts: number[] = [];
+    vi.spyOn(selection, 'selectChildren').mockImplementation((...args) => {
+      const changed = selected(...args);
+      const context = args[1];
+      const paths = new Map<string, number>();
+      for (const key of context.pendingExits.keys()) {
+        const [path] = JSON.parse(key) as [string, unknown];
+        paths.set(path, (paths.get(path) ?? 0) + 1);
+      }
+      expect(context.pendingExitPaths ?? new Map()).toEqual(paths);
+      counts.push(paths.get('/p') ?? 0);
+      return changed;
+    });
+    writeFieldNode(root.structure!.s, 1, 'input', WriteOption.Overwrite);
+    expect(Math.max(...counts)).toBe(2);
+    expect(root.structure!.p).toBe(original);
+    expect(original.local).toBe('keep');
+  });
+
   it('encodes no unrelated inactive path while the outgoing branch is pending', () => {
     const { root } = createTestTree(branchSchema());
     loadFieldNodeAtMount(root, { kind: 0 }, WriteOption.Overwrite);
