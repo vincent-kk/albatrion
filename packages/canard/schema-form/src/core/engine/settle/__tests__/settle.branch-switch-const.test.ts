@@ -172,7 +172,7 @@ describe('branch-switch constant-factor regression records', () => {
         },
       );
       for (const input of writes)
-        writeFieldNode(root, input, 'caller', WriteOption.Overwrite);
+        writeFieldNode(root, input, 'input', WriteOption.Overwrite);
       expect(observed.length).toBeGreaterThan(0);
       expect(observed).toMatchSnapshot();
     },
