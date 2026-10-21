@@ -1,6 +1,5 @@
 import { FormErrorCode, JSONSchemaError } from '@/schema-form/errors';
 
-import { JSON_POINTER_PATH_REGEX } from '../../utils/expressions/regex';
 import type { PathManager } from '../getPathManager';
 import type {
   CreateDynamicFunction,
@@ -8,9 +7,7 @@ import type {
 } from './types/dynamicFunction';
 import { formatCreateDynamicFunctionError } from './utils/formatCreateDynamicFunctionError';
 import { getFunctionBody } from './utils/getFunctionBody';
-
-/** One semicolon at the end of an expression. */
-const TRAILING_SEMICOLON = /;$/;
+import { substituteDependencyPaths } from './utils/substituteDependencyPaths';
 
 /**
  * Create a dynamic function that takes dependency array and returns a value based on the expression.
@@ -29,13 +26,10 @@ export const createDynamicFunction: CreateDynamicFunction = (
 ) => {
   if (typeof expression !== 'string') return;
 
-  const processedExpression = expression
-    .replace(JSON_POINTER_PATH_REGEX, (path) => {
-      pathManager.set(path);
-      return 'dependencies[' + pathManager.findIndex(path) + ']';
-    })
-    .trim()
-    .replace(TRAILING_SEMICOLON, '');
+  const processedExpression = substituteDependencyPaths(
+    pathManager,
+    expression,
+  );
 
   if (processedExpression.length === 0) return;
 
