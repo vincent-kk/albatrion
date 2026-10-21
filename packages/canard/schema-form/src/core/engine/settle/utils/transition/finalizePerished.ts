@@ -2,6 +2,7 @@ import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { pruneArrayTailPaths } from './pruneArrayTailPaths';
 import { prunePerishedPaths } from './prunePerishedPaths';
 import { detachPerishedNode } from './utils/detachPerishedNode';
@@ -57,9 +58,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
           : undefined;
         pendingExits.delete(key);
         const path: string = JSON.parse(key)[0];
-        const count = context.pendingExitPaths?.get(path) ?? 0;
-        if (count > 1) context.pendingExitPaths!.set(path, count - 1);
-        else context.pendingExitPaths?.delete(path);
+        updatePendingExitIndex(context, path, -1);
         // Already out of its item's children, so the owned walk above missed it.
         visitFieldNodes(pending, detach, OWNED);
         registry.remove(pending);

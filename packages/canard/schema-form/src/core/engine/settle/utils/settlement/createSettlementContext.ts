@@ -47,6 +47,8 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     revived: scratch.revived,
     exited: scratch.exited,
     pendingExits: scratch.pendingExits,
+    pendingExitPaths: scratch.pendingExitPaths,
+    pendingExitScratch: scratch,
     perished: scratch.perished,
     selectedDeclarationIds: scratch.selectedDeclarationIds,
     writtenInputs: scratch.writtenInputs,

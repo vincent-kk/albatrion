@@ -20,6 +20,8 @@ export interface GateWheelFrame {
   gateCount: number;
   /** Settlement gate exception version at the beginning of this host wheel. */
   throwVersion: number | undefined;
+  /** Independent full-evaluation inputs for table selection's verify mode. */
+  selectionShadow?: Pick<GateWheelFrame, 'inputs' | 'consistent'>;
   /** Actual evaluation sequence retained only for shadow confirmation. */
   evaluations?: {
     /** Bound condition evaluated at this position, including prerequisites. */

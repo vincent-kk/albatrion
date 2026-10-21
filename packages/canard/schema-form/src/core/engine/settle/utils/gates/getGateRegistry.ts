@@ -164,6 +164,11 @@ class GateRegistry {
     });
   }
 
+  /** Count existing host occurrences without binding or enumerating them; verify only. */
+  occurrenceCount(path: string): number {
+    return this.byPath.get(path)?.occurrences.length ?? 0;
+  }
+
   /** Find or bind a gate inherited indirectly by a declaration. */
   locate<Self extends FieldNodeRecord<Self>>(
     node: Self,
@@ -447,6 +452,7 @@ type GateRegistryView = Pick<
   | 'remove'
   | 'resolveRead'
   | 'pathSegments'
+  | 'occurrenceCount'
 >;
 /** Decode only pointer syntax; no lookup result can survive a shape change. */
 const decodePointerSegments = (path: string): readonly string[] => {
@@ -469,6 +475,7 @@ const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   remove: () => undefined,
   resolveRead: resolveDependencyPath,
   pathSegments: decodePointerSegments,
+  occurrenceCount: () => 0,
 });
 /** Repeated absent relocation reads preserve reference identity. */
 const EMPTY_OCCURRENCES: readonly GateOccurrence[] = Object.freeze([]);

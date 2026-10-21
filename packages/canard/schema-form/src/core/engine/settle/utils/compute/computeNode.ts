@@ -5,8 +5,10 @@ import type { SettlementContext } from '../../types/settlement';
 import { flushPresenceTemplates } from '../dependencies/flushPresenceTemplates';
 import { registerPresenceChanges } from '../dependencies/registerPresenceChanges';
 import { canSkipGateWheel } from '../gates/canSkipGateWheel';
+import { finishGateTableRound } from '../gates/finishGateTableRound';
 import { gateWheelEvaluation } from '../gates/gateWheelEvaluation';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
+import { prepareGateTableRound } from '../gates/prepareGateTableRound';
 import { verifyGateWheelConfirmation } from '../gates/verifyGateWheelConfirmation';
 import { updateOutput } from '../output/updateOutput';
 import { selectChildren } from './childSelection/selectChildren';
@@ -193,6 +195,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
           }
         : undefined;
     context.gateWheelFrame = frame;
+    prepareGateTableRound(node, context, round);
     const schemaChanged =
       node.parent === null && selectNodeSchema(node, context);
     if (context.hasGates) {
@@ -235,6 +238,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
     const wheelChanged = schemaChanged || changed || outputChanged;
+    finishGateTableRound(node, context);
     if (frame && confirmation)
       verifyGateWheelConfirmation(confirmation, frame, wheelChanged);
     if (frame && previousPredicate === false && !wheelChanged)
@@ -283,5 +287,9 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
     if (node === context.root) flushPresenceTemplates(undefined, context);
   } finally {
     context.gateWheelFrame = parentFrame;
+    if (node === context.root) {
+      context.restoreGateSelectionDirty?.();
+      context.gateSelectionRounds?.clear();
+    }
   }
 };

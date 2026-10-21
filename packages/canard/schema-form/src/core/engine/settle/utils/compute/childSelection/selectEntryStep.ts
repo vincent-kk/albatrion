@@ -15,6 +15,7 @@ import { getGateRegistry } from '../../gates/getGateRegistry';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
 import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
+import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
@@ -49,6 +50,8 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   changed: boolean;
   /** Whether a general-path entry must flush pending gate reads first. */
   readonly flushReads: boolean;
+  /** Present only for a table step; its pure recognized expression cannot throw. */
+  tableVerdict?: boolean;
 }
 
 /**
@@ -93,7 +96,9 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   let fullyAdmitted = false;
   if (step) {
     const version = context.gateThrowVersion;
-    const admitted = !step.gate || evaluateGate(step.gate, context, node);
+    const admitted =
+      frame.tableVerdict ??
+      (!step.gate || evaluateGate(step.gate, context, node));
     declarations = admitted ? entry.declarations : NO_DECLARATIONS;
     activeIds = admitted ? step.ids : NO_ACTIVE_IDS;
     threw = !admitted && context.gateThrowVersion !== version;
@@ -145,9 +150,9 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     const exiting =
       priorChild?.blueprintNode === entry.node
         ? priorChild
-        : !context.pendingExitPaths?.has(
-              node.path + '/' + escapeSegment(entry.name),
-            )
+        : !context.pendingExitPaths
+              ?.get(node.path)
+              ?.has(node.path + '/' + escapeSegment(entry.name))
           ? undefined
           : context.pendingExits.get(
               JSON.stringify([
@@ -260,9 +265,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   context.perished.delete(child);
   if (key !== undefined && context.pendingExits.delete(key)) {
     const path = node.path + '/' + escapeSegment(entry.name);
-    const count = context.pendingExitPaths?.get(path) ?? 0;
-    if (count > 1) context.pendingExitPaths!.set(path, count - 1);
-    else context.pendingExitPaths?.delete(path);
+    updatePendingExitIndex(context, path, -1);
   }
   if (pending && child === pending) {
     context.revived.add(child);

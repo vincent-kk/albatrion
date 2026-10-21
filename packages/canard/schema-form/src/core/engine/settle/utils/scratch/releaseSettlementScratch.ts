@@ -12,6 +12,7 @@ export const releaseSettlementScratch = <Self>(
   if (scratch.revived.size) scratch.revived.clear();
   if (scratch.exited.size) scratch.exited.clear();
   if (scratch.pendingExits.size) scratch.pendingExits.clear();
+  if (scratch.pendingExitPaths?.size) scratch.pendingExitPaths.clear();
   if (scratch.perished.size) scratch.perished.clear();
   if (scratch.selectedDeclarationIds.size)
     scratch.selectedDeclarationIds.clear();

@@ -145,6 +145,8 @@ export interface SettlementScratch<Self> {
   exited: Set<Self>;
   /** Temporarily absent occurrences, addressed by path and blueprint kind. */
   pendingExits: Map<string, Self>;
+  /** Lazily allocated host-to-child pending counts, cleared alongside pendingExits. */
+  pendingExitPaths?: Map<string, Map<string, number>>;
   /** Array items removed by length rather than declaration gating. */
   perished: Set<Self>;
   /** Active declaration choices waiting for commit. */
