@@ -16,8 +16,13 @@ export class DirtyPathSet extends Set<string> {
     this.childrenByParent = childrenByParent;
   }
 
+  /** Whether dirty paths already use the direct-edge post-order index. */
+  get isPostOrder(): boolean {
+    return this.postOrder;
+  }
+
   /**
-   * Close the scheduled frontier at the start of an ungated computation.
+   * Close the frontier before ungated write marking or computation.
    * Registration must still repair ancestors of unresolved paths each round.
    * @returns Nothing; indexes each unique prefix once in first-descendant order
    */

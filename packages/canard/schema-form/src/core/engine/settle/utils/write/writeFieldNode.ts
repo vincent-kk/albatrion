@@ -15,6 +15,7 @@ import { markWrite } from '../input/markWrite';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
+import { DirtyPathSet } from '../scratch/DirtyPathSet';
 import { getSettlementScratch } from '../scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
@@ -133,6 +134,12 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
         }
       } else pruneLatentRaw(node.runtime, node.path, undefined, context);
     }
+    if (
+      !context.hasGates &&
+      context.dirtyPaths instanceof DirtyPathSet &&
+      !context.dirtyPaths.isPostOrder
+    )
+      context.dirtyPaths.beginPostOrder();
     markWrite(node, input, context);
     if (kind !== 'load' && kind !== 'automatic')
       markWrongKindAncestors(node, context);
