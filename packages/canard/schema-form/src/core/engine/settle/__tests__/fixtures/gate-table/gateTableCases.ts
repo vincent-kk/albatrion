@@ -219,4 +219,75 @@ export const gateTableCases: GateTableCase[] = [
     input: { A: { h: { kind: 'none' } } },
     writes: [{ path: '/A/h/kind', value: 'b' }],
   },
+  {
+    name: 'converging revival preserves pb identity and retained value',
+    schema: {
+      type: 'object',
+      properties: {
+        kind: {
+          type: 'string',
+          default: 'b',
+          controls: { derived: '../kind === "a" ? "b" : undefined' },
+        },
+      },
+      oneOf: [
+        {
+          controls: { active: "./kind === 'a'" },
+          properties: { pa: { type: 'string', default: 'A' } },
+        },
+        {
+          controls: { active: "./kind === 'b'" },
+          properties: { pb: { type: 'string', default: 'B' } },
+        },
+      ],
+    },
+    input: {},
+    writes: [
+      { path: '/pb', value: 'kept' },
+      { path: '/kind', value: 'a' },
+    ],
+  },
+  {
+    name: 'verified anchor (derived includes)',
+    schema: {
+      type: 'object',
+      properties: {
+        h: {
+          type: 'object',
+          properties: { kind: { type: 'string', default: 'none' } },
+          oneOf: [
+            {
+              controls: { active: "./kind === 'a'" },
+              properties: { ha: { type: 'string', default: 'HA' } },
+            },
+            {
+              controls: { active: "./kind === 'b'" },
+              properties: { hb: { type: 'string', default: 'HB' } },
+            },
+          ],
+        },
+        g: {
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              controls: { derived: "../../h/kind === 'b' ? 'y' : 'x'" },
+            },
+          },
+          oneOf: [
+            {
+              controls: { active: "['x'].includes(./type)" },
+              properties: { gx: { type: 'string', default: 'GX' } },
+            },
+            {
+              controls: { active: "['y'].includes(./type)" },
+              properties: { gy: { type: 'string', default: 'GY' } },
+            },
+          ],
+        },
+      },
+    },
+    input: { h: { kind: 'none' } },
+    writes: [{ path: '/h/kind', value: 'b' }],
+  },
 ];

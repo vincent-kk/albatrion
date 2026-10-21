@@ -28,6 +28,11 @@ export const observeGateTableCase = (
   const revivals: string[] = [];
   const observedRevivalSets: Set<unknown>[] = [];
   const restoreRevivalSpies: (() => void)[] = [];
+  const identities = new Map<PlainNode, number>();
+  const identityOf = (node: PlainNode): number => {
+    if (!identities.has(node)) identities.set(node, identities.size);
+    return identities.get(node)!;
+  };
   let transitionDepth = 0;
   let deriveDepth = 0;
   const originalDirty = traversal.dirtyChildren;
@@ -101,6 +106,11 @@ export const observeGateTableCase = (
           .spyOn(context.revived, 'add')
           .mockImplementation((child) => {
             revivals.push(child.path);
+            timeline.push({
+              event: 'revival',
+              path: child.path,
+              identity: identityOf(child),
+            });
             return add.call(context.revived, child);
           });
         restoreRevivalSpies.push(() => revivalSpy.mockRestore());
@@ -163,6 +173,7 @@ export const observeGateTableCase = (
           const node = pending.pop()!;
           hosts.push({
             path: node.path,
+            identity: identityOf(node),
             structure: node.structure ? Object.keys(node.structure) : null,
             revision: node.revisionLedger,
             payload: node.pendingDelivery,

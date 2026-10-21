@@ -1,9 +1,15 @@
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { observeGateTableCase } from './fixtures/gate-table/observeGateTableCase';
+import { snapshotGateTableCase } from './fixtures/gate-table/snapshotGateTableCase/snapshotGateTableCase';
 import { gateWheelCases } from './fixtures/gateWheelCases';
 
-/** Pre-extraction gate-wheel corpus; snapshot ownership is documented in the sibling selection suite. */
+/**
+ * Pre-extraction gate-wheel corpus; snapshot ownership is in the selection suite.
+ * Regenerate on base source 394c284a7 (carrier e73d162db) with:
+ * yarn workspace @canard/schema-form test --run gate-table --update --no-file-parallelism
+ */
 describe('decision-62 pre-extraction gate-wheel characterization', () => {
   it.each([
     { index: 0, name: 'S1 shared key K=100' },
@@ -24,8 +30,11 @@ describe('decision-62 pre-extraction gate-wheel characterization', () => {
   ])('$name', async ({ index }) => {
     expect(gateWheelCases).toHaveLength(15);
     const fixture = gateWheelCases[index];
-    await expect(observeGateTableCase(fixture)).toMatchFileSnapshot(
-      `./fixtures/gate-table/wheel-${index}.json`,
+    const serialized = observeGateTableCase(fixture);
+    expect(serialized).not.toMatch(/\.ts:\d+:\d+/);
+    expect(serialized).not.toContain(
+      resolve(import.meta.dirname, '../../../../../../../..'),
     );
+    await snapshotGateTableCase(`wheel-${index}`, serialized);
   });
 });

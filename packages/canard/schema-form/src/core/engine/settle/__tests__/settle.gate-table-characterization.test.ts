@@ -1,12 +1,17 @@
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { gateTableCases } from './fixtures/gate-table/gateTableCases';
 import { observeGateTableCase } from './fixtures/gate-table/observeGateTableCase';
+import { snapshotGateTableCase } from './fixtures/gate-table/snapshotGateTableCase/snapshotGateTableCase';
 import { gateSelectionCases } from './fixtures/gateSelectionCases';
 
 /** Narrow observation fields used to prove that the critical scenes really execute. */
 interface GateTableObservation {
+  nodes: { path: string; local: unknown }[];
+  failure: unknown;
   extra: {
+    hosts: { path: string; identity: number }[];
     dirtyChildren: { phase: string; host: string; children: string[] }[];
     timeline: {
       event: string;
@@ -15,6 +20,7 @@ interface GateTableObservation {
       revived?: boolean;
       pendingExits?: string[];
       dirty?: string[];
+      identity?: number;
     }[];
     commits: { revived: string[] }[];
     revivals: string[];
@@ -27,6 +33,8 @@ interface GateTableObservation {
  * PR-2d may change the pending-path index representation only; PR-3a/3b/5 may
  * remove inactive dirty owners only while preserving every dirtyChildren result.
  * Delivery payloads/order, values, structure, revisions and failures stay fixed.
+ * Regenerate on base source 394c284a7 (characterization carrier e73d162db):
+ * yarn workspace @canard/schema-form test --run gate-table --update --no-file-parallelism
  */
 describe('decision-62 pre-extraction gate-table characterization', () => {
   it.each([
@@ -53,11 +61,21 @@ describe('decision-62 pre-extraction gate-table characterization', () => {
     { index: 20, name: 'unrecognized expressions' },
     { index: 21, name: 'relocated gate' },
     { index: 22, name: 'finite recursive occurrence' },
+    { index: 23, name: 'converging revival preserves identity' },
+    { index: 24, name: 'verified anchor (derived includes)' },
   ])('$name', async ({ index }) => {
-    const cases = [...gateTableCases, ...gateSelectionCases];
-    expect(cases).toHaveLength(23);
+    const cases = [
+      ...gateTableCases.slice(0, 9),
+      ...gateSelectionCases,
+      ...gateTableCases.slice(9),
+    ];
+    expect(cases).toHaveLength(25);
     const fixture = cases[index];
     const actual = observeGateTableCase(fixture);
+    expect(actual).not.toMatch(/\.ts:\d+:\d+/);
+    expect(actual).not.toContain(
+      resolve(import.meta.dirname, '../../../../../../../..'),
+    );
     const { observations } = JSON.parse(actual) as {
       observations: GateTableObservation[];
     };
@@ -73,19 +91,22 @@ describe('decision-62 pre-extraction gate-table characterization', () => {
         expect(call.children).toEqual(['/A/h', '/A/g']);
     }
     if (fixture.name.startsWith('verified anchor')) {
+      const prefix =
+        fixture.name === 'verified anchor (derived includes)' ? '' : '/A';
       for (const phase of ['derive', 'transition']) {
         const calls = observations[1].extra.dirtyChildren.filter(
           (call) =>
             call.phase === phase &&
-            call.host === '/A' &&
+            call.host === prefix &&
             call.children.length > 0,
         );
         expect(calls.length).toBeGreaterThan(0);
         for (const call of calls)
-          expect(call.children).toEqual(['/A/h', '/A/g']);
+          expect(call.children).toEqual([`${prefix}/h`, `${prefix}/g`]);
       }
     }
     if (fixture.name.startsWith('revival p')) {
+      expect(observations[1].failure).toContain('Derive budget exceeded');
       const { timeline, commits, revivals } = observations[1].extra;
       const entered = timeline.findIndex(
         (event) =>
@@ -120,8 +141,27 @@ describe('decision-62 pre-extraction gate-table characterization', () => {
           .filter((path) => path === '/p').length,
       ).toBeGreaterThanOrEqual(1);
     }
-    await expect(actual).toMatchFileSnapshot(
-      `./fixtures/gate-table/selection-${index}.json`,
-    );
+    if (fixture.name.startsWith('converging revival')) {
+      const final = observations[2];
+      const before = observations[1].extra.hosts.find(
+        (node) => node.path === '/pb',
+      )!;
+      const after = final.extra.hosts.find((node) => node.path === '/pb')!;
+      expect(final.failure).toEqual({ $undefined: true });
+      expect(final.nodes.find((node) => node.path === '')?.local).toEqual({
+        kind: 'b',
+        pb: 'kept',
+      });
+      expect(
+        final.extra.revivals.filter((path) => path === '/pb').length,
+      ).toBeGreaterThanOrEqual(1);
+      expect(after.identity).toBe(before.identity);
+      expect(final.extra.timeline).toContainEqual({
+        event: 'revival',
+        path: '/pb',
+        identity: before.identity,
+      });
+    }
+    await snapshotGateTableCase(`selection-${index}`, actual);
   });
 });
