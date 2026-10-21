@@ -1,6 +1,6 @@
 # 결정 62 PR-1 — 자식 선택 단계 추출과 기준 특성화
 
-후속 값→분기 표 고리가 현재 선택기와 같은 엔트리 처리를 재사용하도록 `selectEntryStep`을 추출했습니다. 게이트 평가 순서와 자식 선택·되살림·잠복 분배·배달 계약을 유지합니다. 추출 전 제품 소스 `394c284a7`에서 38개 스냅숏을 캡처해 별도 커밋으로 고정했고, 추출 뒤 모든 해시가 같습니다.
+후속 값→분기 표 고리가 현재 선택기와 같은 엔트리 처리를 재사용하도록 `selectEntryStep`을 추출했습니다. 게이트 평가 순서와 자식 선택·되살림·잠복 분배·배달 계약을 유지합니다. 추출 전 제품 소스 `394c284a7`에서 초기 38개 스냅숏을 고정했고, 아래 보완에서 같은 추출 전 소스를 가진 `e73d162db`에 두 장면을 더해 40개 기준을 재캡처했습니다.
 
 ## 선택 단계
 
@@ -22,7 +22,7 @@ selectEntryStep<Self extends FieldNodeRecord<Self>>(
 
 ## 특성화 기록
 
-주 시험은 `settle.gate-table-characterization.test.ts`의 23사례와 `settle.gate-table-wheel-characterization.test.ts`의 15사례입니다. 고정물과 JSON은 같은 `__tests__/fixtures/gate-table/`에 있습니다. 모든 JSON은 고정물 이름을 담습니다.
+주 시험은 `settle.gate-table-characterization.test.ts`의 25사례와 `settle.gate-table-wheel-characterization.test.ts`의 15사례입니다. 고정물과 JSON은 같은 `__tests__/fixtures/gate-table/`에 있습니다. 각 고정물 JSON은 이름을 담고, 큰 고정물의 해시는 공용 manifest가 담습니다.
 
 | 추가 고정물 | 쓰기와 확인 경계 |
 |---|---|
@@ -35,7 +35,7 @@ selectEntryStep<Self extends FieldNodeRecord<Self>>(
 | 별도 예산 초과 복구 | `restoreSourceB`의 복구 값과 실패 기록 |
 | 비활성 h와 파생 g의 검증된 닻 장면 | `none`에서 시작해 h를 켜고 g를 파생으로 전환하며 파생·전이의 h→g 순서 확인 |
 
-추가 9사례에 기존 `gateSelectionCases` 14사례와 `gateWheelCases` 15사례를 모두 포함합니다. 따라서 FRAGMENT-048 결합 게이트, 던지는 게이트의 퇴장, 파생 판별 키, pending-exit 되살림, wrong-kind 조상, 옮긴 게이트, 리터럴과 escape 경계, 투영 변경, 같은 바퀴 기본값도 함께 고정합니다.
+추가 11사례에 기존 `gateSelectionCases` 14사례와 `gateWheelCases` 15사례를 모두 포함합니다. 따라서 FRAGMENT-048 결합 게이트, 던지는 게이트의 퇴장, 파생 판별 키, pending-exit 되살림, wrong-kind 조상, 옮긴 게이트, 리터럴과 escape 경계, 투영 변경, 같은 바퀴 기본값도 함께 고정합니다.
 
 각 정착에서 노드 값·스키마·오류·진단·커밋 번호·전역 상태·잠복 값, 호스트별 `structure`와 자식 순서, pending-exit 키와 경로 셈, revision과 선언 ID를 기록합니다. 실제 모든 노드 리스너의 사건 순서·payload 종류와 내용도 기존 관측 실행기로 캡처합니다. 내부 기록은 매 `dirtyChildren` 호출의 결과·순서, 등록 직후 dirty·shape-dirty·소유자 집합, `changedNodes`·`stateDirtyNodes`·`entered`의 삽입 순서와 실제 되살림 호출을 포함합니다. 체크포인트는 그 자리에서 복사해 뒤 정착의 payload 변경이 앞 기록을 바꾸지 않도록 했습니다. undefined·NaN·−0은 구별해 JSON으로 인코딩합니다.
 
@@ -48,7 +48,7 @@ selectEntryStep<Self extends FieldNodeRecord<Self>>(
 | PR-2d | pending 경로 색인의 표현만 변경 가능하며 정확한 퇴장 키와 의미 유지 |
 | PR-3a·3b·5 | 비생존 dirty 소유자의 내부 기록만 축소 가능하며 매 dirtyChildren의 구성원·순서와 관측 효과 유지 |
 
-## 검증
+## 초기 추출 검증
 
 | 관문 | 결과 |
 |---|---|
@@ -154,3 +154,43 @@ Vincent의 2026-10-21 지시 442C에 따라 N=5·10·20·40·80의 분기 전환
 증거 namespace는 `.seiri/tasks/gate-table-pr1-442/`입니다. `tests-before.md`에 기준 캡처, `gates/`에 argv·cwd·UTC·종료·출력·세 runtime 번들의 SHA256·변이·FCA, `observation/`에 변경 없는 Node/Bun 도구 결과, `measure/`에 승인·명령 순서·원시 표본·프로세스 스냅숏·세 표와 기울기 적합을 남겼습니다.
 
 커밋 순서는 DETAIL `d396dbe16` → 추출 전 특성화 `e73d162db` → 본문 추출 `67dce69d4` → 이 결과 문서입니다. 생성된 runtime 번들은 소스 커밋에 포함하지 않았습니다. 이 PR은 후속 표 선택 구현이 재사용할 본문과 비교 기준을 제공합니다.
+
+## 경로 없는 섹션별 특성화 보완
+
+Error를 직렬화할 때 `toJSON()` 적용 뒤의 값 대신 replacer의 원본 `this[key]`를 확인합니다. name·message·code·details만 남기고 details 안의 cause에도 같은 처리를 적용합니다. 두 시험은 TypeScript 줄·열 번호와 저장소 절대 경로가 직렬화 결과에 없음을 단언합니다. 기존 판별 방식으로 잠시 되돌린 시험이 줄 번호 금지 단언에서 실패하는 것을 확인했습니다.
+
+고정물의 정렬된 키·무들여쓰기 직렬화가 100,000 bytes 이하이면 전체 JSON을 유지합니다. 큰 고정물은 dirtyChildren·selections·commits·timeline·revivals·registrations의 모든 호출별 기록을 전문으로 유지하고, 나머지 고정 섹션 및 변경 허용 visits·pendingExitPaths는 섹션별 SHA256·bytes·관측 수·관측별 노드 수·배달 수·표면 사건 수·dirtyChildren 호출 수·되살림 수로 manifest에 고정합니다. 배열 순서는 바꾸지 않습니다. 해시가 다르면 실제 섹션을 OS 임시 디렉터리의 `gate-table-actual/<fixture>/<section>.json`에 쓰고 실패 메시지에 경로를 표시합니다.
+
+수렴하는 되살림은 마운트 후 `/pb`에 `kept`, `/kind`에 `a`를 쓰고 최종 `{kind:'b', pb:'kept'}`, 오류 없음, 같은 `/pb` 노드의 실제 되살림을 확인합니다. 진동하는 기존 장면의 예산 오류는 계속 보존합니다. 새 루트 닻 장면은 `h/kind='none'`에서 `/h/kind`에 `b`를 한 번 쓰고, includes 형식 게이트를 가진 `g`가 파생으로 바뀔 때 파생·전이 패스 모두 `dirtyChildren('')`가 `[h,g]`임을 확인합니다. 기존 `/A` 장면과 일괄 쓰기 장면도 유지합니다.
+
+재캡처는 추출 전 임시 가지에서 완료한 `a70fda6d3`을 PR 가지의 `acbff44c2`로 cherry-pick했습니다. 이어 `0f7d056a7`에는 Prettier import 순서와 DETAIL의 추적 문서 참조만 반영했습니다. 제품 함수 본문은 바꾸지 않았습니다.
+
+| 보완 검증 | 결과 |
+|---|---|
+| 추출 전 업데이트 캡처·업데이트 없는 재검증·HEAD 재검증 | 각각 40/40 통과 |
+| JSON 고정물과 manifest 합계 | 31,289,831 → 1,918,935 bytes; 3 MB 이하 |
+| 저장 방식 | 전체 JSON 27개, 섹션 보관 13개와 manifest 1개 |
+| typecheck·lint | 각각 종료 0 |
+| settle 시험 | 1,339개 통과, 실패 0 |
+| Storybook 포함 전체 시험 | 789파일, 5,102개 통과·1todo·실패 0; 재실행 불필요 |
+| 변경 없는 분기 전환 도구 | 8개 비교, 차이 0 |
+
+보완 증거는 `.seiri/tasks/gate-table-pr1-442/amend/`에 있습니다. `snapshots-before.sha256`은 추출 전 재캡처 파일을 고정하며 HEAD에서 다시 업데이트하지 않았습니다.
+
+보완 뒤 FCA 재검사는 같은 스냅숏으로 전체 scan·6개 범위 validate·verification을 수행했습니다. 사실 1,343개는 exact이며 두 특성화 파일은 test-record 25·15사례로 정확히 집계되었습니다. 전체의 기존 27개 발견(error 2·warning 24·info 1)은 이전 검사와 동일하며 새 발견과 제거된 발견은 각각 0개입니다. 기존 위반 때문에 전체 결과는 FAIL이고 분석 완전성은 indeterminate이므로, 변경 범위의 새 발견 0개를 전체 통과로 해석하지 않습니다.
+
+## 재측정
+
+독점 측정 창은 2026-10-21T12:24:55.578Z부터 2026-10-21T12:32:57.208Z까지입니다. 다섯 행 모두 A/A′/B를 새 프로세스로 교대하여 초기 3바퀴와 추가 12바퀴를 실행했습니다. 프로세스는 225개이며 각 프로세스는 production에서 20회 예열과 100회 표본을 기록했습니다(보관 표본 22,500개). 기존 measure/tools와 번들 해시는 그대로입니다.
+
+표는 추가 12바퀴의 실행별 최소값 중앙값입니다. 보정 폭은 |Δ(A′/A)|와 A·A′ 각각의 추가 바퀴 max/min 변동률 중 최댓값입니다. 두 B 대비값의 부호가 같고 둘 다 보정 폭을 넘을 때만 빠름 또는 느림을 입증합니다.
+
+| 장면 | 항목 | A ms | A′ ms | B ms | Δ(B/A) | Δ(B/A′) | 보정 폭 | 판정 |
+|---|---|---:|---:|---:|---:|---:|---:|---|
+| mount | oneOf-20 | 1.0456 | 0.9787 | 0.9716 | -7.08% | -0.73% | +35.62% | 동치 범위 안 |
+| mount | flat-1000 | 2.8727 | 2.7212 | 2.8445 | -0.98% | +4.53% | +25.36% | 동치 범위 안 |
+| mount | flat-2000 | 5.1324 | 5.2221 | 5.2197 | +1.70% | -0.05% | +13.54% | 동치 범위 안 |
+| single | flat-500 | 0.0284 | 0.0300 | 0.0305 | +7.11% | +1.39% | +38.86% | 동치 범위 안 |
+| single | flat-1000 | 0.0364 | 0.0381 | 0.0362 | -0.69% | -5.13% | +17.79% | 동치 범위 안 |
+
+원시 표본과 초기 3바퀴·추가 12바퀴별 값은 measure/remeasure-window.json, measure/remeasure-rows.json 및 wall/*-r101..115.json에 보관했습니다. 재측정의 동치 판정은 이 측정 창의 보정 폭 안이라는 뜻이며 모든 환경의 성능을 단정하지 않습니다.
