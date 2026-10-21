@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import { observeGateTableCase } from './fixtures/gate-table/observeGateTableCase';
+import { observeGateTableModes } from './fixtures/gate-table/observeGateTableModes';
 import { snapshotGateTableCase } from './fixtures/gate-table/snapshotGateTableCase/snapshotGateTableCase';
 import { gateWheelCases } from './fixtures/gateWheelCases';
 
@@ -31,7 +31,7 @@ describe('decision-62 pre-extraction gate-wheel characterization', () => {
   ])('$name', async ({ index }) => {
     expect(gateWheelCases).toHaveLength(15);
     const fixture = gateWheelCases[index];
-    const serialized = observeGateTableCase(fixture);
+    const serialized = observeGateTableModes(fixture);
     expect(serialized).not.toMatch(/\.ts:\d+:\d+/);
     expect(serialized).not.toContain(
       resolve(import.meta.dirname, '../../../../../../../..'),

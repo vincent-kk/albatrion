@@ -9,15 +9,17 @@ import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as priming from '../utils/compute/primeHost';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
+import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 import { observeChildSelectionPlans } from './fixtures/childSelection/observeChildSelectionPlans';
+import { expectedGateSelectionCalls } from './fixtures/expectedGateSelectionCalls';
 
 // filid:contract settle-child-selection-metadata
 describe('mount-prepared child selection metadata runtime visits', () => {
   it.each([5, 10, 20, 40])(
-    'B=%i preserves one condition call at each evaluation position',
+    'B=%i preserves exact expression and gate counts for the selected mode',
     (count) => {
       const evaluations = new Array<number>(count).fill(0);
       const gateVisits = new Array<number>(count).fill(0);
@@ -124,10 +126,14 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           const writePlans = builds.plans.length - beforeWrite;
           expect(writePlans).toBe(0);
           if (index === 0) expect(mountPlans + writePlans).toBe(1);
-          expect(evaluations).toEqual(
-            new Array(count).fill(index === 0 ? 16 : 8),
+          const expected = expectedGateSelectionCalls(
+            gateSelectionTable.mode,
+            index === 0,
           );
-          expect(evaluations).toEqual(gateVisits);
+          expect(evaluations).toEqual(
+            new Array(count).fill(expected.expressions),
+          );
+          expect(gateVisits).toEqual(new Array(count).fill(expected.gates));
           for (let branch = 0; branch < count; branch++) {
             if (branch === 0 || branch === 4) continue;
             expect({

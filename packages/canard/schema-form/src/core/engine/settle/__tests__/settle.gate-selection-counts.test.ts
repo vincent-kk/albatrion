@@ -6,6 +6,7 @@ import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
+import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-gate-selection-counts
@@ -28,8 +29,10 @@ describe('baseline fixed-width branch-axis characterization', () => {
           };
         });
       const previousMode = gateWheelEvaluation.mode;
+      const previousSelectionMode = gateSelectionTable.mode;
       try {
         gateWheelEvaluation.mode = 'record';
+        gateSelectionTable.mode = 'table';
         const schema = {
           type: 'object',
           properties: {
@@ -51,10 +54,10 @@ describe('baseline fixed-width branch-axis characterization', () => {
         const { root } = createTestTree(schema);
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         const transitions = [
-          { kind: 'kind_4', calls: 16 * count },
-          { kind: 'kind_0', calls: 8 * count },
-          { kind: 'kind_4', calls: 8 * count },
-          { kind: 'kind_0', calls: 8 * count },
+          { kind: 'kind_4', calls: 0 },
+          { kind: 'kind_0', calls: 0 },
+          { kind: 'kind_4', calls: 0 },
+          { kind: 'kind_0', calls: 0 },
         ];
         for (const transition of transitions) {
           evaluations = 0;
@@ -72,6 +75,7 @@ describe('baseline fixed-width branch-axis characterization', () => {
       } finally {
         compiling.mockRestore();
         gateWheelEvaluation.mode = previousMode;
+        gateSelectionTable.mode = previousSelectionMode;
       }
     },
   );

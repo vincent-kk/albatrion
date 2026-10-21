@@ -8,6 +8,7 @@ import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as relocation from '../utils/compute/relocatedGates';
 import * as budget from '../utils/gates/getGateBudgetCap';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { expectPendingExitIndex } from './fixtures/expectPendingExitIndex';
 
 /** Build ten branches with one independently gated payload each. */
 const branchSchema = (): BlueprintSchema => ({
@@ -74,7 +75,7 @@ describe('branch-switch constant-factor regression records', () => {
         const [path] = JSON.parse(key) as [string, unknown];
         paths.set(path, (paths.get(path) ?? 0) + 1);
       }
-      expect(context.pendingExitPaths ?? new Map()).toEqual(paths);
+      expectPendingExitIndex(context);
       counts.push(paths.get('/p') ?? 0);
       return changed;
     });
