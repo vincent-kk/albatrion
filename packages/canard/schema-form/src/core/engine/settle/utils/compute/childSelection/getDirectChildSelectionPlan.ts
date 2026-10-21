@@ -9,7 +9,7 @@ import type {
 } from '../../../../blueprint';
 import { getGateExpression } from '../../gates/getGateExpression';
 
-/** One authored evaluation position; its condition still runs on every visit. */
+/** One authored evaluation position; eligible table gates use their bucket verdict. */
 export interface DirectChildSelection {
   /** Original edge retained for creation and inactive-exit handling. */
   readonly entry: BlueprintChildEntry;
