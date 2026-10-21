@@ -1,4 +1,5 @@
 import type { SettlementScratch } from '../../../record';
+import { DirtyPathSet } from './DirtyPathSet';
 
 /**
  * Drop populated call-local references and reset dirty traversal before reuse.
@@ -8,6 +9,8 @@ import type { SettlementScratch } from '../../../record';
 export const releaseSettlementScratch = <Self>(
   scratch: SettlementScratch<Self>,
 ): void => {
+  if (scratch.dirtyPaths instanceof DirtyPathSet)
+    scratch.dirtyPaths.restoreRegistrationObserver?.();
   if (scratch.entered.size) scratch.entered.clear();
   if (scratch.revived.size) scratch.revived.clear();
   if (scratch.exited.size) scratch.exited.clear();

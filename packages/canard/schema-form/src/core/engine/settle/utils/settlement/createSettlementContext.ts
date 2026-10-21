@@ -3,7 +3,9 @@ import type { FieldNodeRecord, SettlementScratch } from '../../../record';
 import { WriteOption } from '../../../types/value';
 import type { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
+import { prepareGateSelection } from '../compute/childSelection/prepareGateSelection';
 import { getVirtualReferenceIndex } from '../compute/getVirtualReferenceIndex';
+import { watchSplitRegistration } from '../gates/watchSplitRegistration';
 import { getTransitionCap } from '../transition/getTransitionCap';
 
 /**
@@ -27,7 +29,11 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
   const blueprint = runtime.blueprint;
   const disable = (option & WriteOption.DisableAutomaticWrites) !== 0;
   const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
-  return {
+  const hasSplitRegistration =
+    !blueprint.capabilities.branchless &&
+    blueprint.capabilities.hasExpressions &&
+    prepareGateSelection(blueprint, kind !== 'load');
+  const context: SettlementContext<Self> = {
     root,
     previousEmit: root.emit,
     previousContext: runtime.context,
@@ -72,4 +78,6 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     stateDirtyNodes: scratch.stateDirtyNodes,
     originalSchemas: scratch.originalSchemas,
   };
+  if (hasSplitRegistration) watchSplitRegistration(context);
+  return context;
 };
