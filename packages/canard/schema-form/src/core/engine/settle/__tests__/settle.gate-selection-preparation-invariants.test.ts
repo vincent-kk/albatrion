@@ -20,7 +20,7 @@ const hashes: Record<string, string> = JSON.parse(
 );
 
 // filid:contract settle-gate-selection-preparation-invariants
-it('preserves every non-visits section byte in the 25 selection histories', () => {
+it('preserves every non-visits section byte in the 25 selection histories', async () => {
   const fixtures = [
     ...gateTableCases.slice(0, 9),
     ...gateSelectionCases,
@@ -29,7 +29,7 @@ it('preserves every non-visits section byte in the 25 selection histories', () =
   expect(fixtures).toHaveLength(25);
   for (const [index, fixture] of fixtures.entries()) {
     const { sections } = sectionGateTableObservation(
-      observeGateTableModes(fixture),
+      await observeGateTableModes(fixture),
     );
     const preserved = Object.fromEntries(
       Object.entries(sections).filter(([key]) => key !== 'visits'),
@@ -41,11 +41,11 @@ it('preserves every non-visits section byte in the 25 selection histories', () =
   }
 }, 30_000);
 
-it('preserves every non-visits section byte in the 15 wheel histories', () => {
+it('preserves every non-visits section byte in the 15 wheel histories', async () => {
   expect(gateWheelCases).toHaveLength(15);
   for (const [index, fixture] of gateWheelCases.entries()) {
     const { sections } = sectionGateTableObservation(
-      observeGateTableModes(fixture),
+      await observeGateTableModes(fixture),
     );
     const preserved = Object.fromEntries(
       Object.entries(sections).filter(([key]) => key !== 'visits'),

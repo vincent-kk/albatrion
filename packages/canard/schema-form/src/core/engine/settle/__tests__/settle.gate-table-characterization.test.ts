@@ -73,7 +73,7 @@ describe('decision-62 pre-extraction gate-table characterization', () => {
     ];
     expect(cases).toHaveLength(25);
     const fixture = cases[index];
-    const actual = observeGateTableModes(fixture);
+    const actual = await observeGateTableModes(fixture);
     expect(actual).not.toMatch(/\.ts:\d+:\d+/);
     expect(actual).not.toContain(
       resolve(import.meta.dirname, '../../../../../../../..'),
