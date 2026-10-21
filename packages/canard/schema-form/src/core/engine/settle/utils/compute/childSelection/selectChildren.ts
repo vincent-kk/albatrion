@@ -20,9 +20,9 @@ import {
   getDirectChildSelectionPlan,
 } from './getDirectChildSelectionPlan';
 import { reuseArrayChildren } from './reuseArrayChildren';
-import { staticShape } from './staticShape';
 import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
+import { staticShape } from './staticShape';
 
 /**
  * Select all declared direct children in authored order for one host round.
