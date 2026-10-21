@@ -250,7 +250,6 @@ export class DirtyPathSet extends Set<string> {
 
   override delete(path: string): boolean {
     if (!super.delete(path)) return false;
-    this.releaseSplitMember(path);
     if (this.postOrder) {
       if (path) {
         const parent = path.slice(0, path.lastIndexOf($.Separator));
@@ -260,6 +259,7 @@ export class DirtyPathSet extends Set<string> {
       }
       return true;
     }
+    if (this.splitOwners) this.releaseSplitMember(path);
     let start = 1;
     while (start <= path.length) {
       const slash = path.indexOf($.Separator, start);

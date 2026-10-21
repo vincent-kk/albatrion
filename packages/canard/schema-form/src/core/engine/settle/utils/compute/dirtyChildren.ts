@@ -3,6 +3,7 @@ import { unescapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { gateSelectionTable } from '../gates/gateSelectionTable';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
 
 /**
@@ -30,7 +31,10 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
       children.push(child);
     }
   }
-  const shadow = context.registrationShadow;
+  const shadow =
+    gateSelectionTable.mode === 'verify'
+      ? context.registrationShadow
+      : undefined;
   if (shadow) {
     const expected = dirtyChildren(node, {
       ...context,

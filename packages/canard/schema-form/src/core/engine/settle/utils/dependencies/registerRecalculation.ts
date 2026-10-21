@@ -24,9 +24,10 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   const dependencies = getDependencyIndex(blueprint);
   const epoch = (context.registrationEpoch =
     (context.registrationEpoch ?? 0) + 1);
-  const shadow = context.shadowRegistration
-    ? undefined
-    : context.registrationShadow;
+  const shadow =
+    gateSelectionTable.mode === 'verify' && !context.shadowRegistration
+      ? context.registrationShadow
+      : undefined;
   if (shadow) {
     registerRecalculation({
       ...context,
