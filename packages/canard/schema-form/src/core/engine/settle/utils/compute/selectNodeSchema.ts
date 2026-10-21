@@ -10,6 +10,7 @@ import { indexFieldNodeWarning } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { evaluateGate } from '../gates/evaluateGate';
+import { selectRootGateDeclarations } from './childSelection/gateSelection/selectRootGateDeclarations';
 
 /** A schema path through a `oneOf` branch; captures the `oneOf` prefix and the branch index. */
 const ONE_OF_BRANCH_PREFIX = /^(.*\/oneOf)\/(\d+)(?:\/|$)/;
@@ -24,9 +25,11 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
-  const active = node.blueprintNode.declarations.filter((declaration) =>
-    declaration.gates.every((gate) => evaluateGate(gate, context, node)),
-  );
+  const active =
+    selectRootGateDeclarations(node, context) ??
+    node.blueprintNode.declarations.filter((declaration) =>
+      declaration.gates.every((gate) => evaluateGate(gate, context, node)),
+    );
   if (node.runtime.errorReporter?.hasConsumer()) {
     const branches = new Map<string, number[]>();
     for (const declaration of active) {

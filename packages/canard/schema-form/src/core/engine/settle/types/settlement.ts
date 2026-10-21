@@ -12,8 +12,10 @@ import type {
   SettlementBudget,
   SettlementEntryApi,
   SettlementFailureCause,
+  SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
+import type { GateSelectionRound } from './gateSelectionRound';
 import type { GateWheelFrame } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 import type { PresenceQueryCursor } from './presenceQueryCursor';
@@ -187,8 +189,10 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
   pendingExits: Map<string, Self>;
-  /** Counts pending keys per registered path, allocated only after an exit. */
-  pendingExitPaths?: Map<string, number>;
+  /** Host-to-child pending counts, shared with scratch after the first exit. */
+  pendingExitPaths?: Map<string, Map<string, number>>;
+  /** Scratch owner receives the lazily allocated pending-path index. */
+  pendingExitScratch?: SettlementScratch<Self>;
   /** Array items removed by length, without exit policy. */
   perished: Set<Self>;
   /** Exits whose selecting gate threw and therefore cannot clear their subtree. */
@@ -197,6 +201,10 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   gateThrowVersion?: number;
   /** Actual inputs of the current host wheel; nested compute calls save and restore it. */
   gateWheelFrame?: GateWheelFrame;
+  /** Per-host eligibility and watched values for the current wheel round only. */
+  gateSelectionRounds?: Map<Self, GateSelectionRound>;
+  /** Restore the verify-only dirty observer even when a settlement throws. */
+  restoreGateSelectionDirty?: () => void;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original inputs retained for effective-list interpretation. */

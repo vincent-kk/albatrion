@@ -10,6 +10,7 @@ import * as transitioning from '../../../utils/transition/transitionSettlement';
 import { runGateSelectionCase } from '../../helpers/runGateSelectionCase';
 import type { gateSelectionCases } from '../gateSelectionCases';
 import { observeGateTableDelivery } from './observeGateTableDelivery';
+import { observePendingExitPaths } from './observePendingExitPaths';
 import { serializeGateTableObservation } from './serializeGateTableObservation';
 
 /**
@@ -157,7 +158,7 @@ export const observeGateTableCase = (
         entered: [...context.entered].map((node) => node.path),
         revived: [...context.revived].map((node) => node.path),
         pendingExits: [...context.pendingExits.keys()],
-        pendingExitPaths: [...(context.pendingExitPaths ?? [])],
+        pendingExitPaths: observePendingExitPaths(context),
         failures: context.failures,
       });
     });

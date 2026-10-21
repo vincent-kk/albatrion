@@ -6,6 +6,7 @@ import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as gates from '../utils/gates/evaluateGate';
+import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { gateWheelCases } from './fixtures/gateWheelCases';
@@ -43,7 +44,7 @@ describe('gate-form-one-key confirmation wheel counts', () => {
   });
 
   it.each([5, 20, 80])(
-    'S2 oneOf-%i halves both write wheels and gate evaluations',
+    'S2 oneOf-%i halves write wheels and retains exact mode-specific gate counts',
     (count) => {
       const fixture = gateWheelCases.find(
         (item) => item.name === `S2 oneOf-${count}, nested=false`,
@@ -75,12 +76,24 @@ describe('gate-form-one-key confirmation wheel counts', () => {
         const candidate = run('skip');
         expect(candidate[0]).toEqual(baseline[0]);
         expect(baseline.slice(1)).toEqual([
-          { wheels: 4, gates: 16 * count },
-          { wheels: 2, gates: 8 * count },
+          {
+            wheels: 4,
+            gates: gateSelectionTable.mode === 'off' ? 16 * count : 0,
+          },
+          {
+            wheels: 2,
+            gates: gateSelectionTable.mode === 'off' ? 8 * count : 0,
+          },
         ]);
         expect(candidate.slice(1)).toEqual([
-          { wheels: 2, gates: 8 * count },
-          { wheels: 1, gates: 4 * count },
+          {
+            wheels: 2,
+            gates: gateSelectionTable.mode === 'off' ? 8 * count : 0,
+          },
+          {
+            wheels: 1,
+            gates: gateSelectionTable.mode === 'off' ? 4 * count : 0,
+          },
         ]);
       } finally {
         selecting.mockRestore();

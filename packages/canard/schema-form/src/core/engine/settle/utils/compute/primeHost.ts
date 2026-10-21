@@ -8,6 +8,7 @@ import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBluepri
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
+import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { isSameChildList } from '../structure/isSameChildList';
 import {
   DIRECT_CHILD_SELECTION_PLANS,
@@ -72,9 +73,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     context.perished.delete(child);
     if (key !== undefined && context.pendingExits.delete(key)) {
       const path = node.path + '/' + escapeSegment(entry.name);
-      const count = context.pendingExitPaths?.get(path) ?? 0;
-      if (count > 1) context.pendingExitPaths!.set(path, count - 1);
-      else context.pendingExitPaths?.delete(path);
+      updatePendingExitIndex(context, path, -1);
     }
     if (pending && child === pending) {
       context.revived.add(child);

@@ -13,8 +13,10 @@ import { distributeLatentValue } from '../../latent/distributeLatentValue';
 import { distributeMovedLatentInput } from '../../latent/distributeMovedLatentInput';
 import { getLatentOrder } from '../../latentStore/getLatentOrder';
 import { flushPendingOutput } from '../../output/flushPendingOutput';
+import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { isSameChildList } from '../../structure/isSameChildList';
 import { canReuseArrayChildren } from './canReuseArrayChildren';
+import { selectTableChildren } from './gateSelection/selectTableChildren';
 import {
   DIRECT_CHILD_SELECTION_PLANS,
   getDirectChildSelectionPlan,
@@ -153,11 +155,14 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     changed,
     flushReads,
   };
-  for (let entryIndex = 0; entryIndex < count; entryIndex++) {
-    const step = direct?.steps[entryIndex];
-    const entry = step ? step.entry : entries[entryIndex];
-    selectEntryStep(entry, step, frame);
-  }
+  const round = direct && context.gateSelectionRounds?.get(node);
+  if (round?.active) selectTableChildren(frame, round);
+  else
+    for (let entryIndex = 0; entryIndex < count; entryIndex++) {
+      const step = direct?.steps[entryIndex];
+      const entry = step ? step.entry : entries[entryIndex];
+      selectEntryStep(entry, step, frame);
+    }
   changed = frame.changed;
   flushPendingOutput(node, context);
   for (let index = 0; index < inactiveEntries.length; index++) {
@@ -217,11 +222,9 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           child.path,
           getBlueprintNodeIdentity(child.blueprintNode),
         ]);
-        if (!context.pendingExits.has(key)) {
-          const paths = (context.pendingExitPaths ??= new Map());
-          paths.set(child.path, (paths.get(child.path) ?? 0) + 1);
-        }
+        const added = !context.pendingExits.has(key);
         context.pendingExits.set(key, child);
+        if (added) updatePendingExitIndex(context, child.path, 1);
       }
     }
   }

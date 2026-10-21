@@ -1,11 +1,18 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { verifyGateSelection } from '../utils/gates/verifyGateSelection';
 
 describe('gate selection scaffold', () => {
-  it('defaults to off with no recorded violations', () => {
-    expect(gateSelectionTable.mode).toBe('off');
+  it('defaults to table with no recorded violations', () => {
+    expect(
+      readFileSync(
+        new URL('../utils/gates/gateSelectionTable.ts', import.meta.url),
+        'utf8',
+      ),
+    ).toContain("mode: 'table'");
+    expect(['table', 'verify']).toContain(gateSelectionTable.mode);
     expect(gateSelectionTable.violations).toBe(0);
   });
 

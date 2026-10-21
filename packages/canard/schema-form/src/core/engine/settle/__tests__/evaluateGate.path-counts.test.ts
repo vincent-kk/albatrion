@@ -8,14 +8,16 @@ import * as paths from '../../utils/paths/resolveDependencyPath';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
+import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
+import { expectedGateSelectionCalls } from './fixtures/expectedGateSelectionCalls';
 
 // filid:contract settle-gate-path-resolution
 describe('gate path resolution runtime visits', () => {
   it.each([5, 10, 20, 40])(
-    'B=%i resolves each pointer once while evaluating every condition',
+    'B=%i reuses pointer resolution with exact mode-specific expression calls',
     (count) => {
       const resolutions = new Array<number>(count).fill(0);
       const evaluations = new Array<number>(count).fill(0);
@@ -88,10 +90,14 @@ describe('gate path resolution runtime visits', () => {
             'input',
             WriteOption.Overwrite,
           );
-          expect(evaluations).toEqual(
-            new Array(count).fill(index === 0 ? 16 : 8),
+          const expected = expectedGateSelectionCalls(
+            gateSelectionTable.mode,
+            index === 0,
           );
-          expect(evaluations).toEqual(gateVisits);
+          expect(evaluations).toEqual(
+            new Array(count).fill(expected.expressions),
+          );
+          expect(gateVisits).toEqual(new Array(count).fill(expected.gates));
           for (let branch = 0; branch < count; branch++) {
             if (branch === 0 || branch === 4) continue;
             expect({ branch, resolutions: resolutions[branch] }).toEqual({

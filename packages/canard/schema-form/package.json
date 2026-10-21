@@ -56,7 +56,7 @@
     "build:hashes": "agents-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
-    "build:verify": "node scripts/verifyDevelopmentFlag.mjs",
+    "build:verify": "node scripts/verifyDevelopmentFlag.mjs && node scripts/verifyGateSelectionMode.mjs",
     "build-storybook": "yarn run -T storybook build",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",

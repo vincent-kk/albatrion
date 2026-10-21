@@ -138,6 +138,8 @@ const sourceBinding = inspect(originalSource, producer, ts.ScriptKind.TS);
 const suffix = `\nexport const __readExistingRuleOwnerId = (target: object): number | undefined => ${sourceBinding.mapName}.get(target);\n`;
 const virtual = '\0itemless-rule-owner-source-entry';
 const entry = [
+  `import {gateSelectionTable} from ${JSON.stringify(path.join(core, 'engine/settle/utils/gates/gateSelectionTable.ts'))}; gateSelectionTable.mode = 'verify';`,
+  `export const __readGateTableVerification = () => ({mode: gateSelectionTable.mode, violations: gateSelectionTable.violations, assertions: {...gateSelectionTable.assertions}});`,
   `export {buildFieldNodeTree,mountFieldNode} from ${JSON.stringify(path.join(core, 'surface/index.ts'))};`,
   `export {dispatchSetValue,dispatchPush,dispatchInsert,dispatchRemove,dispatchPop,dispatchClear,dispatchUpdate,dispatchBatch,subscribeFieldNode} from ${JSON.stringify(path.join(core, 'engine/write/index.ts'))};`,
   `export {getItemEntries} from ${JSON.stringify(path.join(core, 'engine/blueprint/index.ts'))};`,
@@ -257,15 +259,26 @@ try {
       incoming,
     },
   };
-  const executionFooter =
+  const exportedExecutionFooter =
     '\nexport { buildFieldNodeTree, mountFieldNode, dispatchSetValue, dispatchPush, dispatchInsert, dispatchRemove, dispatchPop, dispatchClear, dispatchUpdate, dispatchBatch, subscribeFieldNode, getItemEntries };\n';
   const prefixChecks = [];
   for (const [label, inputName, commit] of [
     ['A', 'baseline', base],
     ['B', 'candidate', head],
   ]) {
+    const verificationFooter =
+      label === 'B'
+        ? '\ngateSelectionTable.mode = "verify";\nexport const __readGateTableVerification = () => ({mode: gateSelectionTable.mode, violations: gateSelectionTable.violations, assertions: {...gateSelectionTable.assertions}});\n'
+        : '\nexport const __readGateTableVerification = () => ({mode: "off", violations: 0, assertions: {}});\n';
+    const executionFooter = verificationFooter + exportedExecutionFooter;
     const inputPath = fs.realpathSync(path.resolve(root, options[inputName])),
       raw = fs.readFileSync(inputPath, 'utf8');
+    if (label === 'B')
+      assert.match(
+        raw,
+        /\b(?:var|const|let) gateSelectionTable\b/,
+        'Candidate must retain its real internal mode switch',
+      );
     assert.match(options[inputName + '-sha256'], /^[a-f0-9]{64}$/);
     assert.equal(
       hash(raw),
@@ -467,9 +480,12 @@ try {
   );
   const ids = JSON.parse(fs.readFileSync(idsFile, 'utf8'));
   assert.equal(ids.length, 58);
-  assert.ok(ids.every((id,index) => ids.indexOf(id) === index));
+  assert.ok(ids.every((id, index) => ids.indexOf(id) === index));
   const modules = [...graph, ...fixtureGraph];
-  const externalIds = modules.filter(module => module.external && !module.id.startsWith('node:')).map(module=>module.id).filter((id,index,all)=>all.indexOf(id)===index);
+  const externalIds = modules
+    .filter((module) => module.external && !module.id.startsWith('node:'))
+    .map((module) => module.id)
+    .filter((id, index, all) => all.indexOf(id) === index);
   const dependencies = [];
   for (const id of externalIds) {
     const resolved = path.isAbsolute(id) ? id : require.resolve(id);
@@ -559,6 +575,7 @@ try {
     hiddenPrototypeDependencies: 0,
     explicitFrozenRawInputs: 2,
     configurationEdits: 0,
+    gateSelectionMode: { source: 'verify', A: 'off', B: 'verify' },
   };
   write('manifest.json', manifest);
   console.log(

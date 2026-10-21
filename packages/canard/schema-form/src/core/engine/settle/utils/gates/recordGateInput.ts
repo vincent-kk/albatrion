@@ -1,6 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
 import type { GateWheelInput } from '../../types/gateWheel';
 import type { SettlementContext } from '../../types/settlement';
+import { recordGateFrameInput } from './recordGateFrameInput';
 
 /**
  * Retain each distinct read and reject different values at the same input site.
@@ -18,9 +19,7 @@ export const recordGateInput = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const frame = context.gateWheelFrame;
   if (!frame) return;
-  const key = kind === 'value' ? path : `${kind}:${path}`;
-  const previous = frame.inputs.get(key);
-  if (previous) {
-    if (!Object.is(previous.value, value)) frame.consistent = false;
-  } else frame.inputs.set(key, { path, kind, value });
+  recordGateFrameInput(frame, { path, kind, value });
+  if (frame.selectionShadow)
+    recordGateFrameInput(frame.selectionShadow, { path, kind, value });
 };

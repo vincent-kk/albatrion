@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { gateTableCases } from './fixtures/gate-table/gateTableCases';
-import { observeGateTableCase } from './fixtures/gate-table/observeGateTableCase';
+import { observeGateTableModes } from './fixtures/gate-table/observeGateTableModes';
 import { snapshotGateTableCase } from './fixtures/gate-table/snapshotGateTableCase/snapshotGateTableCase';
 import { gateSelectionCases } from './fixtures/gateSelectionCases';
 
@@ -73,7 +73,7 @@ describe('decision-62 pre-extraction gate-table characterization', () => {
     ];
     expect(cases).toHaveLength(25);
     const fixture = cases[index];
-    const actual = observeGateTableCase(fixture);
+    const actual = observeGateTableModes(fixture);
     expect(actual).not.toMatch(/\.ts:\d+:\d+/);
     expect(actual).not.toContain(
       resolve(import.meta.dirname, '../../../../../../../..'),

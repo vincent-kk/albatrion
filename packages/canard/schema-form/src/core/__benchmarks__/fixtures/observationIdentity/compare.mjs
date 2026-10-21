@@ -54,6 +54,10 @@ for (const [label, lane] of Object.entries(manifest.lanes)) {
     );
   }
   engines[label] = label === 'source' ? require(file) : await load(file);
+  assert.equal(
+    engines[label].__readGateTableVerification().mode,
+    label === 'A' ? 'off' : 'verify',
+  );
 }
 const runtime = process.versions.bun ? 'bun' : 'node',
   histories = [],
@@ -228,6 +232,12 @@ fs.writeFileSync(
       comparisons,
       negativeControls,
       schemaCoverage,
+      gateTableVerification: Object.fromEntries(
+        Object.entries(engines).map(([label, engine]) => [
+          label,
+          engine.__readGateTableVerification(),
+        ]),
+      ),
       manifestSHA256: sha(manifestFile),
     },
     null,
@@ -245,3 +255,5 @@ console.log(
   }),
 );
 if (failures.length) process.exitCode = 1;
+for (const engine of Object.values(engines))
+  assert.equal(engine.__readGateTableVerification().violations, 0);
