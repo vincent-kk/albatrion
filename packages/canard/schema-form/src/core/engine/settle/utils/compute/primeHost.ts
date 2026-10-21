@@ -70,7 +70,12 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       key === undefined ? undefined : context.pendingExits.get(key);
     const child = priorChild ?? pending ?? createChildNode(node, entry);
     context.perished.delete(child);
-    if (key !== undefined) context.pendingExits.delete(key);
+    if (key !== undefined && context.pendingExits.delete(key)) {
+      const path = node.path + '/' + escapeSegment(entry.name);
+      const count = context.pendingExitPaths?.get(path) ?? 0;
+      if (count > 1) context.pendingExitPaths!.set(path, count - 1);
+      else context.pendingExitPaths?.delete(path);
+    }
     if (pending && child === pending) {
       context.revived.add(child);
       indexEnteredLatentKey(context, child);

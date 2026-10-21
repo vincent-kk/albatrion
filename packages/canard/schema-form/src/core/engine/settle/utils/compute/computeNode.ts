@@ -17,6 +17,7 @@ import { relocatedGates } from './relocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
 import { selectNodeSchema } from './selectNodeSchema';
 import { computeStableNode } from './utils/computeStableNode';
+import { getStaticGateList } from './utils/getStaticGateList';
 import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
 
 /**
@@ -151,46 +152,17 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     if (context.presenceMetrics) context.presenceMetrics.ancestorWheels++;
   }
   const prior = node.structure ?? {};
-  const gates: BlueprintGate[] = [];
+  const staticList = context.hasGates ? getStaticGateList(node) : undefined;
+  const gates: BlueprintGate[] = staticList ? [...staticList.gates] : [];
   const seenGates = new Set<BlueprintGate>();
   if (context.hasGates) {
-    const entries = node.behavior.declareChildren(node);
-    for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
-      const declarations = entries[entryIndex].declarations;
-      for (
-        let declarationIndex = 0;
-        declarationIndex < declarations.length;
-        declarationIndex++
-      ) {
-        const declaredGates = declarations[declarationIndex].gates;
-        for (let gateIndex = 0; gateIndex < declaredGates.length; gateIndex++) {
-          const gate = declaredGates[gateIndex];
-          if (!seenGates.has(gate)) {
-            seenGates.add(gate);
-            gates.push(gate);
-          }
-        }
-      }
-    }
-    const declarations = node.blueprintNode.declarations;
-    for (
-      let declarationIndex = 0;
-      declarationIndex < declarations.length;
-      declarationIndex++
-    ) {
-      const declaredGates = declarations[declarationIndex].gates;
-      for (let gateIndex = 0; gateIndex < declaredGates.length; gateIndex++) {
-        const gate = declaredGates[gateIndex];
-        if (!seenGates.has(gate)) {
-          seenGates.add(gate);
-          gates.push(gate);
-        }
-      }
-    }
     const relocated = relocatedGates(node);
     for (let index = 0; index < relocated.length; index++) {
       const occurrence = relocated[index];
-      if (!seenGates.has(occurrence.gate)) {
+      if (
+        !staticList?.seenGates.has(occurrence.gate) &&
+        !seenGates.has(occurrence.gate)
+      ) {
         seenGates.add(occurrence.gate);
         gates.push(occurrence.gate);
       }
@@ -252,7 +224,10 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     const currentRelocated = context.hasGates ? relocatedGates(node) : [];
     for (let index = 0; index < currentRelocated.length; index++) {
       const occurrence = currentRelocated[index];
-      if (!seenGates.has(occurrence.gate)) {
+      if (
+        !staticList?.seenGates.has(occurrence.gate) &&
+        !seenGates.has(occurrence.gate)
+      ) {
         seenGates.add(occurrence.gate);
         gates.push(occurrence.gate);
       }

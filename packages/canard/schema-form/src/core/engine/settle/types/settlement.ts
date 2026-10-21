@@ -187,6 +187,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
   pendingExits: Map<string, Self>;
+  /** Counts pending keys per registered path, allocated only after an exit. */
+  pendingExitPaths?: Map<string, number>;
   /** Array items removed by length, without exit policy. */
   perished: Set<Self>;
   /** Exits whose selecting gate threw and therefore cannot clear their subtree. */

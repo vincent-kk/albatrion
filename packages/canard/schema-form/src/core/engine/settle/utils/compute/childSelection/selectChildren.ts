@@ -222,7 +222,9 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       const exiting =
         priorChild?.blueprintNode === entry.node
           ? priorChild
-          : context.pendingExits.size === 0
+          : !context.pendingExitPaths?.has(
+                node.path + '/' + escapeSegment(entry.name),
+              )
             ? undefined
             : context.pendingExits.get(
                 JSON.stringify([
@@ -334,7 +336,12 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const child =
       currentChild ?? priorChild ?? pending ?? createChildNode(node, entry);
     context.perished.delete(child);
-    if (key !== undefined) context.pendingExits.delete(key);
+    if (key !== undefined && context.pendingExits.delete(key)) {
+      const path = node.path + '/' + escapeSegment(entry.name);
+      const count = context.pendingExitPaths?.get(path) ?? 0;
+      if (count > 1) context.pendingExitPaths!.set(path, count - 1);
+      else context.pendingExitPaths?.delete(path);
+    }
     if (pending && child === pending) {
       context.revived.add(child);
       indexEnteredLatentKey(context, child);
@@ -464,6 +471,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           child.path,
           getBlueprintNodeIdentity(child.blueprintNode),
         ]);
+        if (!context.pendingExits.has(key)) {
+          const paths = (context.pendingExitPaths ??= new Map());
+          paths.set(child.path, (paths.get(child.path) ?? 0) + 1);
+        }
         context.pendingExits.set(key, child);
       }
     }
