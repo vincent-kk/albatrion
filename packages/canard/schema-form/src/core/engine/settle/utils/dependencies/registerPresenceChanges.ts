@@ -5,6 +5,7 @@ import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { deferPresenceTemplate } from './deferPresenceTemplate';
 import { getDependencyIndex } from './getDependencyIndex';
 
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
@@ -38,6 +39,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
   const owners = new Set<string>();
   const stateOnly = new Set<string>();
+  let marked = false;
   for (const name of names) {
     const path = host.path + '/' + name;
     if (!accumulated.has(path)) {
@@ -51,13 +53,18 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     const affected = dependencies.affectedByPresence(
       host.path,
       name,
-      context.root,
+      context.presenceMetrics,
     );
     for (const owner of affected.owners) owners.add(owner);
     for (const owner of affected.stateOnly) stateOnly.add(owner);
+    for (const template of affected.outerTemplates)
+      marked =
+        deferPresenceTemplate(template, 'outer', host.path, context) || marked;
+    for (const template of affected.directTemplates)
+      marked =
+        deferPresenceTemplate(template, 'direct', path, context) || marked;
   }
 
-  let marked = false;
   for (const owner of owners) {
     context.dirtyPaths.add(owner);
     context.dependencyOwnerPaths.add(owner);

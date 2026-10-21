@@ -118,7 +118,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     );
     if (changed) {
       context.changedNodes.add(node);
-      (context.presenceHosts ??= new Set()).add(node);
+      if (context.hasGates) (context.presenceHosts ??= new Set()).add(node);
     }
     return changed;
   }
@@ -274,7 +274,8 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       prior[entry.name].blueprintNode === entry.node
         ? prior[entry.name]
         : undefined;
-    if (!priorChild) (context.presenceHosts ??= new Set()).add(node);
+    if (!priorChild && context.hasGates)
+      (context.presenceHosts ??= new Set()).add(node);
     const currentChild =
       next[entry.name]?.blueprintNode === entry.node
         ? next[entry.name]
@@ -455,7 +456,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const name = priorNames[index];
     const child = prior[name];
     if (next[name] !== child) {
-      (context.presenceHosts ??= new Set()).add(node);
+      if (context.hasGates) (context.presenceHosts ??= new Set()).add(node);
       if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
         context.perished.add(child);
       else {

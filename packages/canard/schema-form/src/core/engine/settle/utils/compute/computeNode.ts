@@ -2,6 +2,7 @@ import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { GateWheelFrame } from '../../types/gateWheel';
 import type { SettlementContext } from '../../types/settlement';
+import { flushPresenceTemplates } from '../dependencies/flushPresenceTemplates';
 import { registerPresenceChanges } from '../dependencies/registerPresenceChanges';
 import { canSkipGateWheel } from '../gates/canSkipGateWheel';
 import { gateWheelEvaluation } from '../gates/gateWheelEvaluation';
@@ -45,6 +46,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       ancestorRechecks: 0,
       ancestorWheels: 0,
       calls: 0,
+      ownerInsertions: 0,
     });
     metrics.computes.set(node.path, (metrics.computes.get(node.path) ?? 0) + 1);
   }
@@ -225,6 +227,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       registered =
         registerPresenceChanges(node, lastStructure, context) || registered;
     lastStructure = node.structure ?? {};
+    flushPresenceTemplates(node, context);
     const dirty = dirtyChildren(node, context);
     for (let index = 0; index < dirty.length; index++)
       computeNode(dirty[index], context);
@@ -287,6 +290,7 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
   context.gateWheelFrame = undefined;
   try {
     computeNodeBody(node, context);
+    if (node === context.root) flushPresenceTemplates(undefined, context);
   } finally {
     context.gateWheelFrame = parentFrame;
   }

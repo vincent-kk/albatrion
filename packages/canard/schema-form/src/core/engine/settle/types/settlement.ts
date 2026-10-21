@@ -15,6 +15,7 @@ import type {
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
 import type { GateWheelFrame } from './gateWheel';
+import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 
 /** Virtual child names indexed by their real sibling's host template and field. */
 export type VirtualReferenceIndex = ReadonlyMap<
@@ -126,6 +127,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   presencePrefixes?: Set<string>;
   /** Monotone registration version used to recheck non-shape-dirty ancestors. */
   presenceRegistrations?: number;
+  /** Unbound readers deduplicated by query phase and template until expansion. */
+  presenceTemplates?: Map<string, PendingPresenceTemplate>;
   /** Record-mode proof counters; shipping skip mode never allocates this record. */
   presenceMetrics?: {
     /** Dirty node computations per live path, excluding immediately returned no-op calls. */
@@ -136,6 +139,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     ancestorWheels: number;
     /** Calls to the presence identity comparison. */
     calls: number;
+    /** Presence reader candidates inserted during lookup and deferred expansion. */
+    ownerInsertions: number;
   };
   /** Proof that this call is one admitted static push, consulted by selection, assembly and alignment. */
   arrayAppend?: ArrayAppendProof<Self>;

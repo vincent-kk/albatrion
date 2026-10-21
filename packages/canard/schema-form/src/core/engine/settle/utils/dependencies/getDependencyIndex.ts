@@ -9,6 +9,7 @@ import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPat
 import { getGateExpression } from '../gates/getGateExpression';
 import { bindTemplatePath } from '../templatePaths/bindTemplatePath';
 import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
+import { intersectsWatchedPath } from '../templatePaths/intersectsWatchedPath';
 import { isCanonicalArrayIndex } from '../templatePaths/isCanonicalArrayIndex';
 import { getContextOwners } from './getContextOwners';
 
@@ -18,7 +19,14 @@ const NO_OWNERS: readonly string[] = Object.freeze([]);
 /** One absolute watch prefix and declarations registered exactly here. */
 interface DependencyNode {
   /** Declaration hosts that read this exact path. */
-  owners: { path: string; bindable: boolean }[];
+  owners: {
+    /** Absolute owner path, possibly containing array wildcards. */
+    path: string;
+    /** Whether changed indices can bind every wildcard in this owner. */
+    bindable: boolean;
+    /** Original reads folded onto this host; absent for an unconditional host read. */
+    watched?: string[];
+  }[];
   /** Reused membership index preserves linear registration and owner order. */
   ownerPaths: Set<string>;
   /** Next escaped JSON Pointer segments. */
@@ -132,25 +140,45 @@ class DependencyIndex {
    * Resolve presence readers while excluding in-progress and changed-subtree owners.
    * @param hostPath - Live host whose direct child changed identity
    * @param childSegment - Escaped name of that child
-   * @param root - Live tree used to expand unbound wildcard owners
-   * @returns Recalculation owners and ancestor-reading owners eligible only for state keys
+   * @param metrics - Optional record-mode insertion counter
+   * @returns Bound owners, state-only owners and unbound templates for each query phase
    */
-  affectedByPresence<Self extends FieldNodeRecord<Self>>(
+  affectedByPresence(
     hostPath: string,
     childSegment: string,
-    root: Self,
-  ): { owners: Set<string>; stateOnly: Set<string> } {
+    metrics?: { ownerInsertions: number },
+  ): {
+    owners: Set<string>;
+    stateOnly: Set<string>;
+    outerTemplates: Set<string>;
+    directTemplates: Set<string>;
+  } {
     const owners = new Set<string>();
     const stateOnly = new Set<string>();
-    if (!this.root) return { owners, stateOnly };
+    const outerTemplates = new Set<string>();
+    const directTemplates = new Set<string>();
+    if (!this.root)
+      return { owners, stateOnly, outerTemplates, directTemplates };
     const changedPath = hostPath + '/' + childSegment;
     const ancestorOwners = new Set<string>();
     let current = [this.root];
-    this.collectPresenceOwners(current, changedPath, root, ancestorOwners);
+    this.collectPresenceOwners(
+      current,
+      changedPath,
+      ancestorOwners,
+      outerTemplates,
+      metrics,
+    );
     const segments = hostPath ? hostPath.slice(1).split($.Separator) : [];
     for (const segment of segments) {
       current = this.presenceChildren(current, segment);
-      this.collectPresenceOwners(current, changedPath, root, ancestorOwners);
+      this.collectPresenceOwners(
+        current,
+        changedPath,
+        ancestorOwners,
+        outerTemplates,
+        metrics,
+      );
       if (current.length === 0) break;
     }
     for (const owner of ancestorOwners)
@@ -160,14 +188,20 @@ class DependencyIndex {
     const direct = new Set<string>();
     while (pending.length) {
       const child = pending.pop()!;
-      this.collectPresenceOwners([child], changedPath, root, direct);
+      this.collectPresenceOwners(
+        [child],
+        changedPath,
+        direct,
+        directTemplates,
+        metrics,
+      );
       for (const descendant of child.children.values())
         pending.push(descendant);
     }
     for (const owner of direct)
       if (owner !== changedPath && !owner.startsWith(changedPath + '/'))
         owners.add(owner);
-    return { owners, stateOnly };
+    return { owners, stateOnly, outerTemplates, directTemplates };
   }
 
   /** Bind exact and wildcard trie steps without rebuilding a prefix index. */
@@ -188,28 +222,37 @@ class DependencyIndex {
   }
 
   /** Bind affected owner templates against one changed live child path. */
-  private collectPresenceOwners<Self extends FieldNodeRecord<Self>>(
+  private collectPresenceOwners(
     nodes: readonly DependencyNode[],
     changedPath: string,
-    root: Self,
     owners: Set<string>,
+    templates: Set<string>,
+    metrics?: { ownerInsertions: number },
   ): void {
+    const sizeBefore = owners.size;
     for (const node of nodes)
       for (const entry of node.owners) {
+        if (
+          entry.watched &&
+          !entry.watched.some((watched) =>
+            intersectsWatchedPath(watched, changedPath),
+          )
+        )
+          continue;
         const path = entry.bindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
-        if (path.includes('/*'))
-          for (const expanded of expandTemplatePaths(root, path))
-            owners.add(expanded);
+        if (path.includes('/*')) templates.add(path);
         else owners.add(path);
       }
+    if (metrics) metrics.ownerInsertions += owners.size - sizeBefore;
   }
 
   /** Insert one exact watched location into the pointer trie. */
   private add(watchedPath: string, owner: string): void {
     const ownerParts = owner.split($.Separator);
     const watchedParts = watchedPath.split($.Separator);
+    const originalWatchedPath = watchedPath;
     // A fixed read of another item depends on that array host's whole subtree.
     for (let index = 1; index < ownerParts.length; index++) {
       if (
@@ -242,7 +285,17 @@ class DependencyIndex {
           (part, index) =>
             part !== $.Wildcard || indexedParts[index] === $.Wildcard,
         ),
+        ...(watchedPath !== originalWatchedPath
+          ? { watched: [originalWatchedPath] }
+          : {}),
       });
+    } else {
+      const entry = current.owners.find(
+        (candidate) => candidate.path === owner,
+      )!;
+      if (watchedPath === originalWatchedPath) delete entry.watched;
+      else if (entry.watched && !entry.watched.includes(originalWatchedPath))
+        entry.watched.push(originalWatchedPath);
     }
   }
 }
