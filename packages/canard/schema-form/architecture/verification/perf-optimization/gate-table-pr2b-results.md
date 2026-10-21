@@ -24,7 +24,8 @@ PR-0의 S는 게이트 평가 총 640→0, 단계 방문 484→16(상한 19)이�
 | --- | --- | --- |
 | typecheck·lint·build | 각각 종료 0 | `gates/final-typecheck.log`, `gates/final-lint.log`, `gates/build.log` |
 | 비브라우저 전체, verify | 704파일·4959통과·1todo·실패 0 | `gates/final-verify-node.log` |
-| 비브라우저 전체, table | 704파일·4959통과·1todo·실패 0 | `gates/final-table-node.log` |
+| 비브라우저 전체, table | 704파일·4959통과·1todo·실패 0 (shadow 바퀴이므로 `selectTableChildren`의 단계 건너뛰기는 실행되지 않음) | `gates/final-table-node.log` |
+| 비브라우저 전체, skip 바퀴 + verify (검증자 실행, `SCHEMA_FORM_GATE_WHEEL_MODE=skip`) | unit·render 4,156 통과·검증 위반 0·S2′ 단언 169,695회; 실패 40건은 shadow 바퀴로 캡처한 저장 기준 비교(34건; 특성화 고정물의 `visits` 는 shadow 바퀴 기준이라 skip 바퀴에서는 같은 파일 안의 off·table·verify 상호 비교만 유효)와 사본 환경(6건)으로 표와 무관 | 검증자 scratchpad `r442/pr2b/full-skip-verify.log` |
 | Storybook, verify | 최종 최소 설정 100파일·251통과 | `gates/storybook-verify-no-log.log` |
 | Storybook, table | 완료 실행 100파일·251통과; 최종 최소 설정 40+60파일·134+117통과 | `gates/final-storybook-table.log`, `gates/storybook-table-no-log.log`, `gates/storybook-table-remaining.log` |
 | Node/Bun 관측 동치 | 각각 174비교·차이 0·음성 대조 4개 | `observation/strict-node.json`, `observation/strict-bun.json` |

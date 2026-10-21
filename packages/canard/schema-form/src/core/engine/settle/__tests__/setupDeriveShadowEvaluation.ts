@@ -6,7 +6,8 @@ import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 
 deriveShadowEvaluation.enabled = true;
-gateWheelEvaluation.mode = 'shadow';
+gateWheelEvaluation.mode =
+  process.env.SCHEMA_FORM_GATE_WHEEL_MODE === 'skip' ? 'skip' : 'shadow';
 gateSelectionTable.mode =
   process.env.SCHEMA_FORM_GATE_SELECTION_MODE === 'table' ? 'table' : 'verify';
 
