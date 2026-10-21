@@ -10,7 +10,7 @@ import type {
 import { getGateExpression } from '../../gates/getGateExpression';
 
 /** One authored evaluation position; its condition still runs on every visit. */
-interface DirectChildSelection {
+export interface DirectChildSelection {
   /** Original edge retained for creation and inactive-exit handling. */
   readonly entry: BlueprintChildEntry;
   /** Inherited host gate, absent for an ungated declaration. */
