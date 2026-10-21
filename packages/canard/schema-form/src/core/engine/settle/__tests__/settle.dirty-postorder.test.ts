@@ -8,6 +8,28 @@ import { observeDirtyPostOrderWrites } from './fixtures/observeDirtyPostOrderWri
 afterEach(() => vi.restoreAllMocks());
 
 describe('gate-less write dirty indexing', () => {
+  it('keeps the general index during a gated write', () => {
+    const root = buildFieldNodeTree({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          toggle: { type: 'boolean', default: false },
+          head: {
+            type: 'string',
+            default: 'h',
+            controls: { active: '../toggle === true' },
+          },
+        },
+      },
+      validationMode: 0,
+    });
+    mountFieldNode(root, undefined, undefined, { deferValidation: false });
+    const begin = vi.spyOn(DirtyPathSet.prototype, 'beginPostOrder');
+    root.find('/toggle').setValue(true);
+    expect(begin).not.toHaveBeenCalled();
+    expect(root.value).toEqual({ toggle: true, head: 'h' });
+  });
+
   it('starts post-order indexing before adding the first path of a nested root write', () => {
     const root = buildFieldNodeTree({
       jsonSchema: {
