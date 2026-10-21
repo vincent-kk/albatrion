@@ -95,7 +95,8 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
     expect(rows[2].owners).toEqual([241, 241]);
     expect(rows[2].dormant).toBe(237);
     expect(rows[2].sweeps).toBe(1429);
-    expect(rows[3].owners).toEqual([4, 4]);
+    // Four unique paths produce five events: the host is also a plain owner.
+    expect(rows[3].owners).toEqual([5, 5]);
     expect(rows[3].dormant).toBe(0);
     expect(rows[3].sweeps).toBe(rows[1].sweeps);
   } finally {

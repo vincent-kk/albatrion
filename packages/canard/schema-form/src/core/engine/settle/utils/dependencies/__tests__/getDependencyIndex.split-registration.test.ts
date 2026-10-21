@@ -35,12 +35,20 @@ describe('dependency registration table injection', () => {
     ]));
     const before = index.affected('/kind', root);
     const registered: string[] = [];
+    const plain: string[] = [];
+    const hosts: string[] = [];
     index.affectedForRegistration('/kind', root, {
-      owner: (path) => registered.push(path),
+      owner: (path, kind) => {
+        if (!registered.includes(path)) registered.push(path);
+        if (kind === 'plain') plain.push(path);
+        if (kind === 'host') hosts.push(path);
+      },
       hit: () => [],
     });
     expect(before).toHaveLength(241);
     expect(registered).toEqual(['', '/p0a', '/p0b', '/p0c']);
+    expect(plain).toEqual(before.filter((path) => !index.splitOwners.has(path)));
+    expect(hosts).toEqual(['']);
     expect(index.affected('/kind', root)).toEqual(before);
   });
 

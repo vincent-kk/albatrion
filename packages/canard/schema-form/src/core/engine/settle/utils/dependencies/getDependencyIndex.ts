@@ -4,13 +4,13 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type {
   Blueprint,
+  BlueprintGate,
   BlueprintNode,
   PropertyDeclaration,
 } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
-import type { GateSelectionTable } from '../../types/gateSelectionTable';
 import type {
   RegistrationSink,
   SplitBucket,
@@ -25,6 +25,15 @@ import { getContextOwners } from './getContextOwners';
 
 /** No reverse dependency owners for a gate-free input path. */
 const NO_OWNERS: readonly string[] = Object.freeze([]);
+
+/** Minimal injected evidence keeps dependency analysis independent of compute. */
+interface RegistrationTable {
+  readonly plan: {
+    readonly steps: readonly { readonly gate: BlueprintGate | undefined }[];
+  };
+  readonly stepIndexByName: ReadonlyMap<string, number>;
+  readonly tableSteps: ReadonlySet<number>;
+}
 
 /** One absolute watch prefix and declarations registered exactly here. */
 interface DependencyNode {
@@ -130,7 +139,7 @@ class DependencyIndex {
    * @returns Nothing; immutable split metadata is built at most once
    */
   prepareRegistration(
-    tables: ReadonlyMap<BlueprintNode, GateSelectionTable>,
+    tables: ReadonlyMap<BlueprintNode, RegistrationTable>,
   ): void {
     if (this.registrationPrepared || !this.blueprint || !tables.size) return;
     this.registrationPrepared = true;
@@ -250,6 +259,7 @@ class DependencyIndex {
   ): void {
     if (!this.root) return;
     const emitted = new Set<string>();
+    const hostsEmitted = new Set<string>();
     const collect = (node: DependencyNode): void => {
       const events: { rank: number; emit: () => void }[] = [];
       for (const { rank, entry } of node.plainOwners ??
@@ -294,8 +304,8 @@ class DependencyIndex {
         events.push({
           rank: bucket.firstRank,
           emit: () => {
-            if (!emitted.has(bucket.hostPath)) {
-              emitted.add(bucket.hostPath);
+            if (!hostsEmitted.has(bucket.hostPath)) {
+              hostsEmitted.add(bucket.hostPath);
               sink.owner(bucket.hostPath, 'host', bucket);
             }
           },
@@ -584,7 +594,7 @@ Object.freeze(EMPTY_INDEX);
  */
 export const getDependencyIndex = (
   blueprint: Blueprint,
-  tables?: ReadonlyMap<BlueprintNode, GateSelectionTable>,
+  tables?: ReadonlyMap<BlueprintNode, RegistrationTable>,
 ): DependencyIndex => {
   if (
     !blueprint.capabilities.hasDependencies &&
