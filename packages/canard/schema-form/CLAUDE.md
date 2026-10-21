@@ -159,4 +159,4 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Build Output
 
-`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts`. 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)
+Runtime bundles are `dist/index.mjs`, `dist/index.node.mjs`, and `dist/index.cjs`; declarations remain in `dist/index.d.ts`. The `node` export condition selects `index.node.mjs` for imports and `index.cjs` for require. Both Node outputs read `NODE_ENV` once at load and retain that decision after later environment changes. The default ESM keeps call-site comparisons. All runtime outputs intentionally remain unminified so consumer bundlers perform final minification.
