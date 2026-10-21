@@ -8,6 +8,7 @@ import type { SettlementContext } from '../../types/settlement';
  * @param kind - Presence query phase whose exclusion rule must be preserved
  * @param origin - Registering host for outer reads or changed child for direct reads
  * @param context - Call-local pending table and dirty indexes to update
+ * @param stamp - Logical time of the contributing presence change
  * @returns Whether a new pending entry was created and its host scheduled
  */
 export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
@@ -15,13 +16,14 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
   kind: PendingPresenceTemplate['kind'],
   origin: string,
   context: SettlementContext<Self>,
+  stamp: number,
 ): boolean => {
   const pending = (context.presenceTemplates ??= new Map());
   const key = kind + '\u0000' + template;
   const entry = pending.get(key);
   if (!entry) {
     const host = template.slice(0, template.indexOf('/*'));
-    pending.set(key, { template, kind, deepest: origin, host });
+    pending.set(key, { template, kind, deepest: origin, host, stamp });
     context.dirtyPaths.add(host);
     context.shapeDirtyPaths.add(host);
     for (let ancestor = host; ancestor; ) {
@@ -30,6 +32,7 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
     }
     return true;
   }
+  entry.stamp = Math.max(entry.stamp, stamp);
   const deepest = entry.deepest;
   if (
     deepest !== null &&

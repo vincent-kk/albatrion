@@ -37,6 +37,11 @@ interface DependencyNode {
 class DependencyIndex {
   /** Root of the absolute JSON Pointer watch trie. */
   private readonly root: DependencyNode | undefined;
+  /** Ancestor trie steps retained only while their settlement context lives. */
+  private readonly presenceMemos = new WeakMap<
+    object,
+    Map<string, DependencyNode[][]>
+  >();
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
   constructor(blueprint?: Blueprint) {
@@ -141,12 +146,14 @@ class DependencyIndex {
    * @param hostPath - Live host whose direct child changed identity
    * @param childSegment - Escaped name of that child
    * @param metrics - Optional record-mode insertion counter
+   * @param settlement - Call identity isolating the ancestor-step memo
    * @returns Bound owners, state-only owners and unbound templates for each query phase
    */
   affectedByPresence(
     hostPath: string,
     childSegment: string,
     metrics?: { ownerInsertions: number },
+    settlement?: object,
   ): {
     owners: Set<string>;
     stateOnly: Set<string>;
@@ -161,47 +168,72 @@ class DependencyIndex {
       return { owners, stateOnly, outerTemplates, directTemplates };
     const changedPath = hostPath + '/' + childSegment;
     const ancestorOwners = new Set<string>();
-    let current = [this.root];
+    let memo = settlement ? this.presenceMemos.get(settlement) : undefined;
+    if (!memo) {
+      memo = new Map();
+      if (settlement) this.presenceMemos.set(settlement, memo);
+    }
+    const levels = this.presenceLevels(hostPath, memo);
     this.collectPresenceOwners(
-      current,
+      levels.flat(),
       changedPath,
       ancestorOwners,
       outerTemplates,
       metrics,
     );
-    const segments = hostPath ? hostPath.slice(1).split($.Separator) : [];
-    for (const segment of segments) {
-      current = this.presenceChildren(current, segment);
-      this.collectPresenceOwners(
-        current,
-        changedPath,
-        ancestorOwners,
-        outerTemplates,
-        metrics,
-      );
-      if (current.length === 0) break;
-    }
     for (const owner of ancestorOwners)
       if (owner.startsWith(hostPath + '/')) stateOnly.add(owner);
       else owners.add(owner);
-    const pending = this.presenceChildren(current, childSegment);
+    const depth = hostPath ? hostPath.split($.Separator).length : 1;
+    const reached = levels.length === depth ? levels[levels.length - 1] : [];
+    const pending = this.presenceChildren(reached, childSegment);
     const direct = new Set<string>();
+    const subtree: DependencyNode[] = [];
     while (pending.length) {
       const child = pending.pop()!;
+      subtree.push(child);
+      for (const descendant of child.children.values())
+        pending.push(descendant);
+    }
+    if (subtree.length)
       this.collectPresenceOwners(
-        [child],
+        subtree,
         changedPath,
         direct,
         directTemplates,
         metrics,
       );
-      for (const descendant of child.children.values())
-        pending.push(descendant);
-    }
     for (const owner of direct)
       if (owner !== changedPath && !owner.startsWith(changedPath + '/'))
         owners.add(owner);
     return { owners, stateOnly, outerTemplates, directTemplates };
+  }
+
+  /**
+   * Extend the parent's memoized trie levels without changing traversal order.
+   * @param path - Bound host pointer in the current settlement
+   * @param memo - Private call-local table, never exposing trie nodes to callers
+   * @returns Ordered ancestor levels, ending at the first missing trie step
+   */
+  private presenceLevels(
+    path: string,
+    memo: Map<string, DependencyNode[][]>,
+  ): DependencyNode[][] {
+    const known = memo.get(path);
+    if (known) return known;
+    let levels: DependencyNode[][];
+    if (!path) levels = [[this.root!]];
+    else {
+      const cut = path.lastIndexOf($.Separator);
+      const parent = this.presenceLevels(path.slice(0, cut), memo);
+      const last = parent[parent.length - 1];
+      levels =
+        last.length === 0
+          ? parent
+          : [...parent, this.presenceChildren(last, path.slice(cut + 1))];
+    }
+    memo.set(path, levels);
+    return levels;
   }
 
   /** Bind exact and wildcard trie steps without rebuilding a prefix index. */

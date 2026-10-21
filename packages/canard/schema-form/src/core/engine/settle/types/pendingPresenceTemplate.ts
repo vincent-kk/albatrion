@@ -8,4 +8,6 @@ export interface PendingPresenceTemplate {
   deepest: string | null;
   /** Static live host preceding the template's first wildcard. */
   host: string;
+  /** Latest change admitted to this pending template, on the settlement clock. */
+  stamp: number;
 }

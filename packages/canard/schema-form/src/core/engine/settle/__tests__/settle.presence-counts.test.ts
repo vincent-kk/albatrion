@@ -54,6 +54,7 @@ it('an unchanged presence write computes only root and leaf with no registration
     ancestorWheels: 0,
     calls: 0,
     ownerInsertions: 0,
+    indexLookups: 0,
   });
   for (const t of ['off', 'on']) {
     dispatchSetValue(getDispatchNode(root, 'h', 't'), t);

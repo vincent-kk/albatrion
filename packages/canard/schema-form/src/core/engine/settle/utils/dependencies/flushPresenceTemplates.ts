@@ -5,6 +5,8 @@ import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
+import { evaluatedPresenceAfter } from './evaluatedPresenceAfter';
+import { publishPresenceOwner } from './publishPresenceOwner';
 
 /**
  * Expand parked readers once at their static host, preserving both exclusions.
@@ -32,6 +34,14 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
         deepest !== null &&
         ((deepest === '' ? owner !== '' : owner.startsWith(deepest + '/')) ||
           (entry.kind === 'direct' && owner === deepest));
+      if (
+        !excluded &&
+        host !== undefined &&
+        evaluatedPresenceAfter(owner, entry.stamp, context)
+      ) {
+        publishPresenceOwner(owner, context);
+        continue;
+      }
       if (!excluded) {
         context.dirtyPaths.add(owner);
         context.dependencyOwnerPaths.add(owner);

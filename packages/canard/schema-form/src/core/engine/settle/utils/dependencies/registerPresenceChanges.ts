@@ -6,7 +6,9 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { deferPresenceTemplate } from './deferPresenceTemplate';
+import { evaluatedPresenceAfter } from './evaluatedPresenceAfter';
 import { getDependencyIndex } from './getDependencyIndex';
+import { publishPresenceOwner } from './publishPresenceOwner';
 
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
 const parentOf = (path: string): string => path.slice(0, path.lastIndexOf('/'));
@@ -36,36 +38,66 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
 
   const accumulated = (context.changedPresence ??= new Set());
   const prefixes = (context.presencePrefixes ??= new Set());
+  const changedLog = (context.presenceLog ??= []);
+  const prefixLog = (context.presencePrefixLog ??= []);
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
   const owners = new Set<string>();
+  const ownerStamps = new Map<string, number>();
   const stateOnly = new Set<string>();
   let marked = false;
   for (const name of names) {
     const path = host.path + '/' + name;
+    const rawName = unescapeSegment(name);
+    const child = hasOwnProperty(structure, rawName)
+      ? structure[rawName]
+      : undefined;
+    const computeStart = child
+      ? (context.presenceComputeStarts?.get(child) ?? 0)
+      : 0;
+    let stamp = computeStart;
+    if (computeStart <= (context.presenceRoundStarts?.get(host) ?? 0)) {
+      context.presenceClock = (context.presenceClock ?? 0) + 1;
+      stamp = context.presenceClock;
+    }
     if (!accumulated.has(path)) {
       accumulated.add(path);
+      changedLog.push(path);
       for (let prefix = path; prefix; ) {
         prefix = parentOf(prefix);
         if (prefixes.has(prefix)) break;
         prefixes.add(prefix);
+        prefixLog.push(prefix);
       }
     }
     const affected = dependencies.affectedByPresence(
       host.path,
       name,
       context.presenceMetrics,
+      context,
     );
-    for (const owner of affected.owners) owners.add(owner);
+    for (const owner of affected.owners) {
+      owners.add(owner);
+      ownerStamps.set(owner, Math.max(ownerStamps.get(owner) ?? 0, stamp));
+    }
     for (const owner of affected.stateOnly) stateOnly.add(owner);
     for (const template of affected.outerTemplates)
       marked =
-        deferPresenceTemplate(template, 'outer', host.path, context) || marked;
+        deferPresenceTemplate(template, 'outer', host.path, context, stamp) ||
+        marked;
     for (const template of affected.directTemplates)
       marked =
-        deferPresenceTemplate(template, 'direct', path, context) || marked;
+        deferPresenceTemplate(template, 'direct', path, context, stamp) ||
+        marked;
   }
 
   for (const owner of owners) {
+    if (
+      (owner !== '' && parentOf(owner) === host.path) ||
+      evaluatedPresenceAfter(owner, ownerStamps.get(owner)!, context)
+    ) {
+      publishPresenceOwner(owner, context);
+      continue;
+    }
     context.dirtyPaths.add(owner);
     context.dependencyOwnerPaths.add(owner);
     context.shapeDirtyPaths.add(parentOf(owner));
@@ -106,12 +138,27 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     host.path;
     ancestor = parentOf(ancestor)
   ) {
-    if (
-      !context.shapeDirtyPaths.has(ancestor) &&
-      registry.mayChangeAt(ancestor, accumulated, prefixes)
-    ) {
-      context.shapeDirtyPaths.add(ancestor);
-      marked = true;
+    if (!context.shapeDirtyPaths.has(ancestor)) {
+      const cursors = (context.presenceQueryCursors ??= new Map());
+      let cursor = cursors.get(ancestor);
+      if (!cursor) {
+        cursor = { changed: 0, prefixes: 0, index: 0 };
+        cursors.set(ancestor, cursor);
+      }
+      if (
+        registry.mayPresenceChangeAt(
+          ancestor,
+          accumulated,
+          prefixes,
+          changedLog,
+          prefixLog,
+          cursor,
+          context.presenceMetrics,
+        )
+      ) {
+        context.shapeDirtyPaths.add(ancestor);
+        marked = true;
+      }
     }
     if (
       ancestor &&

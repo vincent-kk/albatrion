@@ -40,6 +40,13 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   if (!context.dirtyPaths.has(node.path)) return;
+  if (context.hasGates) {
+    context.presenceClock = (context.presenceClock ?? 0) + 1;
+    (context.presenceComputeStarts ??= new Map()).set(
+      node,
+      context.presenceClock,
+    );
+  }
   if (gateWheelEvaluation.mode === 'record') {
     const metrics = (context.presenceMetrics ??= {
       computes: new Map(),
@@ -47,6 +54,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       ancestorWheels: 0,
       calls: 0,
       ownerInsertions: 0,
+      indexLookups: 0,
     });
     metrics.computes.set(node.path, (metrics.computes.get(node.path) ?? 0) + 1);
   }
@@ -215,6 +223,13 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     context.gateWheelFrame = frame;
     const schemaChanged =
       node.parent === null && selectNodeSchema(node, context);
+    if (context.hasGates) {
+      context.presenceClock = (context.presenceClock ?? 0) + 1;
+      (context.presenceRoundStarts ??= new Map()).set(
+        node,
+        context.presenceClock,
+      );
+    }
     const changed = selectChildren(
       node,
       context,

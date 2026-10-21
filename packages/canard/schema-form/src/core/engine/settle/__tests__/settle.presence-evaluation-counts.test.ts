@@ -96,9 +96,20 @@ it.each(['record', 'skip', 'shadow'] as const)(
           },
           'collectPresenceOwners',
         );
+        const steps = vi.spyOn(
+          index as unknown as {
+            presenceChildren: (...args: unknown[]) => unknown;
+          },
+          'presenceChildren',
+        );
         dispatchSetValue(getDispatchNode(root, 'items', '0', 'active'), false);
         const write = lookup.mock.calls.length;
         lookup.mockRestore();
+        if (kind === 'fixed')
+          expect
+            .soft(steps.mock.calls.length)
+            .toBeLessThanOrEqual(2 * count + 1);
+        steps.mockRestore();
         if (kind === 'fixed') expect.soft(write).toBeLessThanOrEqual(count);
         expect(latest?.presenceMetrics?.indexLookups ?? 0).toBe(0);
         expect
@@ -118,6 +129,40 @@ it.each(['record', 'skip', 'shadow'] as const)(
       expect.soft(totals[1].mount).toBeLessThanOrEqual(4 * totals[0].mount);
       expect.soft(totals[1].write).toBeLessThanOrEqual(4 * totals[0].write);
     }
+    gateWheelEvaluation.mode = mode;
+    const fields = Object.fromEntries(
+      Array.from({ length: 1_000 }, (_, index) => [
+        `k${index}`,
+        { type: 'number', controls: { active: '../sw >= 0' } },
+      ]),
+    );
+    const root = mountPresenceTree(
+      {
+        type: 'object',
+        properties: {
+          h: {
+            type: 'object',
+            properties: { sw: { type: 'number' }, ...fields },
+          },
+        },
+      },
+      {
+        h: {
+          sw: 1,
+          ...Object.fromEntries(
+            Array.from({ length: 1_000 }, (_, index) => [`k${index}`, index]),
+          ),
+        },
+      },
+    );
+    dispatchSetValue(getDispatchNode(root, 'h', 'sw'), 2);
+    const total = latest?.presenceMetrics
+      ? [...latest.presenceMetrics.computes.values()].reduce((a, b) => a + b, 0)
+      : computes;
+    expect(total).toBe(1_003);
+    expect(latest?.presenceMetrics?.calls ?? 0).toBe(0);
+    expect(latest?.presenceMetrics?.ownerInsertions ?? 0).toBe(0);
+    expect(latest?.presenceMetrics?.indexLookups ?? 0).toBe(0);
   },
   60_000,
 );
