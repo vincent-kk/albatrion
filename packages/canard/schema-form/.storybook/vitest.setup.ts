@@ -9,4 +9,3 @@ gateSelectionTable.mode =
   import.meta.env.VITE_SCHEMA_FORM_GATE_SELECTION_MODE === 'table'
     ? 'table'
     : 'verify';
-
