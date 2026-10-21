@@ -29,7 +29,9 @@ interface GateTableObservation {
 
 /**
  * Characterization of the pre-extraction engine at 394c284a7 (decision 62 PR-1).
- * PR-1/1b/2a preserve every snapshot. PR-2b may change gate evaluation counts only;
+ * PR-1/1b preserve every snapshot. PR-2a changes only the first non-load select visits
+ * omitted with declareChildren; every non-visits section remains byte-identical.
+ * PR-2b may change gate evaluation counts only;
  * PR-2d may change the pending-path index representation only; PR-3a/3b/5 may
  * remove inactive dirty owners only while preserving every dirtyChildren result.
  * Delivery payloads/order, values, structure, revisions and failures stay fixed.

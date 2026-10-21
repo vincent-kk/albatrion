@@ -101,7 +101,7 @@ describe('child selection plan lookup runtime counts', () => {
   );
 
   it.each([5, 10, 20, 40])(
-    'B=%i union transitions keep 1b candidate visits and stop plan calls after preparation',
+    'B=%i union transitions omit declaration visits and plan calls after mount preparation',
     (count) => {
       const candidateVisits = new Array<number>(count).fill(0);
       let phase = '';
@@ -138,14 +138,16 @@ describe('child selection plan lookup runtime counts', () => {
       });
       root.behavior.declareChildren = () => candidates;
       const calls = countPlanCalls();
+      const builds = vi.spyOn(planning.DIRECT_CHILD_SELECTION_PLANS, 'set');
       loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
+      expect(calls.count).toBe(2);
+      const mountPlans = builds.mock.calls.filter(
+        ([host, plan]) => host === root.blueprintNode && plan !== null,
+      ).length;
+      expect(mountPlans).toBe(1);
+      builds.mockClear();
       const perWrite: number[] = [];
-      for (const [index, kind] of [
-        'kind_4',
-        'kind_0',
-        'kind_4',
-        'kind_0',
-      ].entries()) {
+      for (const kind of ['kind_4', 'kind_0', 'kind_4', 'kind_0']) {
         calls.count = 0;
         candidateVisits.fill(0);
         writeFieldNode(
@@ -155,18 +157,19 @@ describe('child selection plan lookup runtime counts', () => {
           WriteOption.Overwrite,
         );
         perWrite.push(calls.count);
+        expect(builds).not.toHaveBeenCalled();
+        expect(mountPlans + builds.mock.calls.length).toBe(1);
         for (let branch = 0; branch < count; branch++) {
           if (branch === 0 || branch === 4) continue;
           expect({ branch, candidates: candidateVisits[branch] }).toEqual({
             branch,
-            candidates: index === 0 ? 3 : 0,
+            candidates: 0,
           });
         }
         expect(root.children).toHaveLength(5);
         expect(root.runtime.diagnostics.status).toBe('stable');
       }
-      expect(perWrite[0]).toBeGreaterThan(0);
-      expect(perWrite.slice(1)).toEqual([0, 0, 0]);
+      expect(perWrite).toEqual([0, 0, 0, 0]);
     },
   );
 });

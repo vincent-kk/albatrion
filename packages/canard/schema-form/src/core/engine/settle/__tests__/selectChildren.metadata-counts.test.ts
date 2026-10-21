@@ -15,7 +15,7 @@ import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBr
 import { observeChildSelectionPlans } from './fixtures/childSelection/observeChildSelectionPlans';
 
 // filid:contract settle-child-selection-metadata
-describe('lazy child selection metadata runtime visits', () => {
+describe('mount-prepared child selection metadata runtime visits', () => {
   it.each([5, 10, 20, 40])(
     'B=%i preserves one condition call at each evaluation position',
     (count) => {
@@ -94,14 +94,15 @@ describe('lazy child selection metadata runtime visits', () => {
         });
         root.behavior.declareChildren = () => candidates;
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
-        expect(builds.plans).toHaveLength(0);
+        expect(builds.plans).toHaveLength(1);
+        const mountPlans = builds.plans.length;
         writeFieldNode(
           root.structure!.common,
           'new common',
           'input',
           WriteOption.Overwrite,
         );
-        expect(builds.plans).toHaveLength(0);
+        expect(builds.plans).toHaveLength(1);
         for (const [index, kind] of [
           'kind_4',
           'kind_0',
@@ -112,6 +113,7 @@ describe('lazy child selection metadata runtime visits', () => {
           gateVisits.fill(0);
           candidateVisits.fill(0);
           flushVisits.fill(0);
+          const beforeWrite = builds.plans.length;
           writeFieldNode(
             root.structure!.kind,
             kind,
@@ -119,6 +121,9 @@ describe('lazy child selection metadata runtime visits', () => {
             WriteOption.Overwrite,
           );
           expect(builds.hosts).toEqual([root.blueprintNode]);
+          const writePlans = builds.plans.length - beforeWrite;
+          expect(writePlans).toBe(0);
+          if (index === 0) expect(mountPlans + writePlans).toBe(1);
           expect(evaluations).toEqual(
             new Array(count).fill(index === 0 ? 16 : 8),
           );
@@ -129,7 +134,7 @@ describe('lazy child selection metadata runtime visits', () => {
               branch,
               candidates: candidateVisits[branch],
               flushes: flushVisits[branch],
-            }).toEqual({ branch, candidates: index === 0 ? 3 : 0, flushes: 0 });
+            }).toEqual({ branch, candidates: 0, flushes: 0 });
           }
           expect(root.children).toHaveLength(5);
           expect(root.runtime.diagnostics.status).toBe('stable');

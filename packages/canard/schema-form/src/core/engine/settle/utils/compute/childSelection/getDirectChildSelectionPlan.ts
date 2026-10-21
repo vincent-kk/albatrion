@@ -43,7 +43,7 @@ export const DIRECT_CHILD_SELECTION_PLANS = new WeakMap<
  * read leaves the entry absent so a later selection can still prepare it.
  * @param host - Immutable object host providing authored candidates
  * @param blueprint - Owning analysis providing compiled expression descriptors
- * @param prepare - True only during a non-load selection that visits the candidates
+ * @param prepare - True during mount preparation or a non-load selection visiting candidates
  * @returns Ordered metadata, or null when the general selector remains necessary
  */
 export const getDirectChildSelectionPlan = (

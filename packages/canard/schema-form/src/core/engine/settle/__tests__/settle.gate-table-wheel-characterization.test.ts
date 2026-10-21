@@ -7,6 +7,7 @@ import { gateWheelCases } from './fixtures/gateWheelCases';
 
 /**
  * Pre-extraction gate-wheel corpus; snapshot ownership is in the selection suite.
+ * PR-2a changes only first non-load select visits when declareChildren is omitted.
  * Regenerate on base source 394c284a7 (carrier e73d162db) with:
  * yarn workspace @canard/schema-form test --run gate-table --update --no-file-parallelism
  */
