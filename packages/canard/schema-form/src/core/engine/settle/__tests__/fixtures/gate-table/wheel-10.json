@@ -1,0 +1,3321 @@
+{
+  "fixture": "S4 two distinct dependencies on one host",
+  "observations": [
+    {
+      "nodes": [
+        {
+          "path": "",
+          "kind": "object",
+          "schema": {
+            "schema": {
+              "properties": {
+                "q": {
+                  "type": "string"
+                }
+              },
+              "allOf": [
+                {
+                  "controls": {
+                    "active": "./k1 === \"on\""
+                  },
+                  "properties": {
+                    "p": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "controls": {
+                    "active": "./k2 === \"on\""
+                  },
+                  "properties": {
+                    "q": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ],
+              "type": "object"
+            },
+            "typeConflict": false
+          },
+          "raw": {
+            "$undefined": true
+          },
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": {
+            "k1": "off",
+            "k2": "on"
+          },
+          "emit": {
+            "k1": "off",
+            "k2": "on"
+          },
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 8196,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "local": {
+                    "k1": "off",
+                    "k2": "on"
+                  },
+                  "emit": {
+                    "k1": "off",
+                    "k2": "on"
+                  }
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        },
+        {
+          "path": "/k1",
+          "kind": "string",
+          "schema": {
+            "schema": {
+              "type": "string"
+            },
+            "typeConflict": false
+          },
+          "raw": "off",
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": "off",
+          "emit": "off",
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 8196,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": "off"
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        },
+        {
+          "path": "/k2",
+          "kind": "string",
+          "schema": {
+            "schema": {
+              "type": "string"
+            },
+            "typeConflict": false
+          },
+          "raw": "on",
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": "on",
+          "emit": "on",
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 8196,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": "on"
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        },
+        {
+          "path": "/q",
+          "kind": "string",
+          "schema": {
+            "schema": {
+              "type": "string"
+            },
+            "typeConflict": false
+          },
+          "raw": {
+            "$undefined": true
+          },
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": {
+            "$undefined": true
+          },
+          "emit": {
+            "$undefined": true
+          },
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 8196,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "$undefined": true
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        }
+      ],
+      "failure": {
+        "$undefined": true
+      },
+      "diagnostics": {
+        "status": "stable"
+      },
+      "commit": 1,
+      "globalState": {},
+      "latent": [],
+      "deliveries": [
+        "",
+        "/k1",
+        "/k2",
+        "/q"
+      ],
+      "visits": [
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "/k1",
+        "/k2",
+        "",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "/q",
+        "",
+        "",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        ""
+      ],
+      "extra": {
+        "hosts": [
+          {
+            "path": "",
+            "structure": [
+              "k1",
+              "k2",
+              "q"
+            ],
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1
+              ]
+            },
+            "payload": {
+              "type": 8196,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": {
+                    "local": {
+                      "k1": "off",
+                      "k2": "on"
+                    },
+                    "emit": {
+                      "k1": "off",
+                      "k2": "on"
+                    }
+                  }
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "load"
+                }
+              }
+            }
+          },
+          {
+            "path": "/k1",
+            "structure": null,
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1
+              ]
+            },
+            "payload": {
+              "type": 8196,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": "off"
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "load"
+                }
+              }
+            }
+          },
+          {
+            "path": "/k2",
+            "structure": null,
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1
+              ]
+            },
+            "payload": {
+              "type": 8196,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": "on"
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "load"
+                }
+              }
+            }
+          },
+          {
+            "path": "/q",
+            "structure": null,
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1
+              ]
+            },
+            "payload": {
+              "type": 8196,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": {
+                    "$undefined": true
+                  }
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "load"
+                }
+              }
+            }
+          }
+        ],
+        "deliveryOrder": [
+          {
+            "path": "",
+            "type": 8196,
+            "payloadKinds": [
+              "4"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "local": {
+                    "k1": "off",
+                    "k2": "on"
+                  },
+                  "emit": {
+                    "k1": "off",
+                    "k2": "on"
+                  }
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          {
+            "path": "/k1",
+            "type": 8196,
+            "payloadKinds": [
+              "4"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": "off"
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          {
+            "path": "/k2",
+            "type": 8196,
+            "payloadKinds": [
+              "4"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": "on"
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          {
+            "path": "/q",
+            "type": 8196,
+            "payloadKinds": [
+              "4"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "$undefined": true
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          }
+        ],
+        "declarationIds": [
+          [
+            "[\"\",\"object\"]",
+            [
+              0,
+              2
+            ]
+          ],
+          [
+            "[\"/k1\",\"string\"]",
+            [
+              3
+            ]
+          ],
+          [
+            "[\"/k2\",\"string\"]",
+            [
+              4
+            ]
+          ],
+          [
+            "[\"/q\",\"string\"]",
+            [
+              6
+            ]
+          ]
+        ],
+        "dirtyChildren": [
+          {
+            "phase": "write",
+            "host": "",
+            "children": [
+              "/k1",
+              "/k2"
+            ]
+          },
+          {
+            "phase": "write",
+            "host": "",
+            "children": []
+          },
+          {
+            "phase": "write",
+            "host": "",
+            "children": []
+          }
+        ],
+        "registrations": [
+          {
+            "dirty": [
+              ""
+            ],
+            "shapeDirty": [
+              ""
+            ],
+            "owners": [],
+            "pendingExits": []
+          }
+        ],
+        "selections": [
+          {
+            "host": "",
+            "changed": true,
+            "structure": [
+              "k1",
+              "k2",
+              "q"
+            ],
+            "pendingExits": [],
+            "revived": [],
+            "entered": [
+              "",
+              "/k1",
+              "/k2",
+              "/q"
+            ],
+            "throwingExits": []
+          },
+          {
+            "host": "",
+            "changed": false,
+            "structure": [
+              "k1",
+              "k2",
+              "q"
+            ],
+            "pendingExits": [],
+            "revived": [],
+            "entered": [
+              "",
+              "/k1",
+              "/k2",
+              "/q"
+            ],
+            "throwingExits": []
+          }
+        ],
+        "commits": [
+          {
+            "kind": "load",
+            "changedNodes": [
+              "",
+              "/k1",
+              "/k2",
+              "/q"
+            ],
+            "stateDirtyNodes": [
+              "",
+              "/k1",
+              "/k2",
+              "/q"
+            ],
+            "entered": [
+              "",
+              "/k1",
+              "/k2",
+              "/q"
+            ],
+            "revived": [],
+            "pendingExits": [],
+            "pendingExitPaths": [],
+            "failures": {
+              "$undefined": true
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "event": "registration",
+            "pendingExits": [],
+            "dirty": [
+              ""
+            ],
+            "changedRaw": []
+          },
+          {
+            "event": "computeChild",
+            "path": "/q",
+            "entered": true,
+            "revived": false,
+            "value": {
+              "$undefined": true
+            }
+          }
+        ],
+        "revivals": []
+      }
+    },
+    {
+      "nodes": [
+        {
+          "path": "",
+          "kind": "object",
+          "schema": {
+            "schema": {
+              "properties": {
+                "q": {
+                  "type": "string"
+                }
+              },
+              "allOf": [
+                {
+                  "controls": {
+                    "active": "./k1 === \"on\""
+                  },
+                  "properties": {
+                    "p": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "controls": {
+                    "active": "./k2 === \"on\""
+                  },
+                  "properties": {
+                    "q": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ],
+              "type": "object"
+            },
+            "typeConflict": false
+          },
+          "raw": {
+            "$undefined": true
+          },
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": {
+            "k1": "on",
+            "k2": "on"
+          },
+          "emit": {
+            "k1": "on",
+            "k2": "on"
+          },
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              2,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1,
+              {
+                "$undefined": true
+              },
+              1
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 41092,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "local": {
+                    "k1": "on",
+                    "k2": "on"
+                  },
+                  "emit": {
+                    "k1": "on",
+                    "k2": "on"
+                  }
+                }
+              },
+              "32768": {
+                "previous": {
+                  "properties": {
+                    "q": {
+                      "type": "string"
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "controls": {
+                        "active": "./k1 === \"on\""
+                      },
+                      "properties": {
+                        "p": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "controls": {
+                        "active": "./k2 === \"on\""
+                      },
+                      "properties": {
+                        "q": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ],
+                  "type": "object"
+                },
+                "current": {
+                  "properties": {
+                    "q": {
+                      "type": "string"
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "controls": {
+                        "active": "./k1 === \"on\""
+                      },
+                      "properties": {
+                        "p": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "controls": {
+                        "active": "./k2 === \"on\""
+                      },
+                      "properties": {
+                        "q": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "callerReplace"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        },
+        {
+          "path": "/k1",
+          "kind": "string",
+          "schema": {
+            "schema": {
+              "type": "string"
+            },
+            "typeConflict": false
+          },
+          "raw": "on",
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": "on",
+          "emit": "on",
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              2,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              2
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 8196,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": "on"
+              }
+            },
+            "options": {
+              "4": {
+                "source": "callerReplace"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        },
+        {
+          "path": "/k2",
+          "kind": "string",
+          "schema": {
+            "schema": {
+              "type": "string"
+            },
+            "typeConflict": false
+          },
+          "raw": "on",
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": "on",
+          "emit": "on",
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 8196,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": "on"
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        },
+        {
+          "path": "/p",
+          "kind": "string",
+          "schema": {
+            "schema": {
+              "type": "string"
+            },
+            "typeConflict": false
+          },
+          "raw": {
+            "$undefined": true
+          },
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": {
+            "$undefined": true
+          },
+          "emit": {
+            "$undefined": true
+          },
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 4,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "$undefined": true
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "callerReplace"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        },
+        {
+          "path": "/q",
+          "kind": "string",
+          "schema": {
+            "schema": {
+              "type": "string"
+            },
+            "typeConflict": false
+          },
+          "raw": {
+            "$undefined": true
+          },
+          "undeclaredValues": {
+            "$undefined": true
+          },
+          "local": {
+            "$undefined": true
+          },
+          "emit": {
+            "$undefined": true
+          },
+          "active": true,
+          "visible": true,
+          "disabled": false,
+          "revisions": {
+            "counts": [
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1,
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              {
+                "$undefined": true
+              },
+              1
+            ]
+          },
+          "pendingRevision": 0,
+          "delivery": {
+            "type": 8196,
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "$undefined": true
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          "deliveryChanges": 0
+        }
+      ],
+      "failure": {
+        "$undefined": true
+      },
+      "diagnostics": {
+        "status": "stable"
+      },
+      "commit": 2,
+      "globalState": {},
+      "latent": [],
+      "deliveries": [
+        "",
+        "/k1",
+        "/k2",
+        "/q",
+        "/p"
+      ],
+      "visits": [
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "/k1",
+        "/k2",
+        "",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "/q",
+        "",
+        "",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "/k1",
+        "",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        "/p",
+        "",
+        "",
+        "select:/k1",
+        "select:/k2",
+        "select:/p",
+        "select:/q",
+        ""
+      ],
+      "extra": {
+        "hosts": [
+          {
+            "path": "",
+            "structure": [
+              "k1",
+              "k2",
+              "p",
+              "q"
+            ],
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                2,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1,
+                {
+                  "$undefined": true
+                },
+                1
+              ]
+            },
+            "payload": {
+              "type": 41092,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": {
+                    "local": {
+                      "k1": "on",
+                      "k2": "on"
+                    },
+                    "emit": {
+                      "k1": "on",
+                      "k2": "on"
+                    }
+                  }
+                },
+                "32768": {
+                  "previous": {
+                    "properties": {
+                      "q": {
+                        "type": "string"
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "controls": {
+                          "active": "./k1 === \"on\""
+                        },
+                        "properties": {
+                          "p": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      {
+                        "controls": {
+                          "active": "./k2 === \"on\""
+                        },
+                        "properties": {
+                          "q": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    ],
+                    "type": "object"
+                  },
+                  "current": {
+                    "properties": {
+                      "q": {
+                        "type": "string"
+                      }
+                    },
+                    "allOf": [
+                      {
+                        "controls": {
+                          "active": "./k1 === \"on\""
+                        },
+                        "properties": {
+                          "p": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      {
+                        "controls": {
+                          "active": "./k2 === \"on\""
+                        },
+                        "properties": {
+                          "q": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    ],
+                    "type": "object"
+                  }
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "callerReplace"
+                }
+              }
+            }
+          },
+          {
+            "path": "/k1",
+            "structure": null,
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                2,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                2
+              ]
+            },
+            "payload": {
+              "type": 8196,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": "on"
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "callerReplace"
+                }
+              }
+            }
+          },
+          {
+            "path": "/k2",
+            "structure": null,
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1
+              ]
+            },
+            "payload": {
+              "type": 8196,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": "on"
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "load"
+                }
+              }
+            }
+          },
+          {
+            "path": "/p",
+            "structure": null,
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1
+              ]
+            },
+            "payload": {
+              "type": 4,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": {
+                    "$undefined": true
+                  }
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "callerReplace"
+                }
+              }
+            }
+          },
+          {
+            "path": "/q",
+            "structure": null,
+            "revision": {
+              "counts": [
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1,
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                {
+                  "$undefined": true
+                },
+                1
+              ]
+            },
+            "payload": {
+              "type": 8196,
+              "payload": {
+                "4": {
+                  "previous": {
+                    "$undefined": true
+                  },
+                  "current": {
+                    "$undefined": true
+                  }
+                }
+              },
+              "options": {
+                "4": {
+                  "source": "load"
+                }
+              }
+            }
+          }
+        ],
+        "deliveryOrder": [
+          {
+            "path": "",
+            "type": 41092,
+            "payloadKinds": [
+              "4",
+              "32768"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "local": {
+                    "k1": "on",
+                    "k2": "on"
+                  },
+                  "emit": {
+                    "k1": "on",
+                    "k2": "on"
+                  }
+                }
+              },
+              "32768": {
+                "previous": {
+                  "properties": {
+                    "q": {
+                      "type": "string"
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "controls": {
+                        "active": "./k1 === \"on\""
+                      },
+                      "properties": {
+                        "p": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "controls": {
+                        "active": "./k2 === \"on\""
+                      },
+                      "properties": {
+                        "q": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ],
+                  "type": "object"
+                },
+                "current": {
+                  "properties": {
+                    "q": {
+                      "type": "string"
+                    }
+                  },
+                  "allOf": [
+                    {
+                      "controls": {
+                        "active": "./k1 === \"on\""
+                      },
+                      "properties": {
+                        "p": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "controls": {
+                        "active": "./k2 === \"on\""
+                      },
+                      "properties": {
+                        "q": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "callerReplace"
+              }
+            }
+          },
+          {
+            "path": "/k1",
+            "type": 8196,
+            "payloadKinds": [
+              "4"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": "on"
+              }
+            },
+            "options": {
+              "4": {
+                "source": "callerReplace"
+              }
+            }
+          },
+          {
+            "path": "/k2",
+            "type": 8196,
+            "payloadKinds": [
+              "4"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": "on"
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          {
+            "path": "/q",
+            "type": 8196,
+            "payloadKinds": [
+              "4"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "$undefined": true
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "load"
+              }
+            }
+          },
+          {
+            "path": "/p",
+            "type": 4,
+            "payloadKinds": [
+              "4"
+            ],
+            "payload": {
+              "4": {
+                "previous": {
+                  "$undefined": true
+                },
+                "current": {
+                  "$undefined": true
+                }
+              }
+            },
+            "options": {
+              "4": {
+                "source": "callerReplace"
+              }
+            }
+          }
+        ],
+        "declarationIds": [
+          [
+            "[\"\",\"object\"]",
+            [
+              0,
+              1,
+              2
+            ]
+          ],
+          [
+            "[\"/k1\",\"string\"]",
+            [
+              3
+            ]
+          ],
+          [
+            "[\"/k2\",\"string\"]",
+            [
+              4
+            ]
+          ],
+          [
+            "[\"/q\",\"string\"]",
+            [
+              6
+            ]
+          ],
+          [
+            "[\"/p\",\"string\"]",
+            [
+              5
+            ]
+          ]
+        ],
+        "dirtyChildren": [
+          {
+            "phase": "write",
+            "host": "",
+            "children": [
+              "/k1"
+            ]
+          },
+          {
+            "phase": "write",
+            "host": "",
+            "children": []
+          },
+          {
+            "phase": "write",
+            "host": "",
+            "children": []
+          },
+          {
+            "phase": "write",
+            "host": "",
+            "children": []
+          }
+        ],
+        "registrations": [
+          {
+            "dirty": [
+              "/k1",
+              "",
+              "/p"
+            ],
+            "shapeDirty": [
+              ""
+            ],
+            "owners": [
+              "",
+              "/p"
+            ],
+            "pendingExits": []
+          }
+        ],
+        "selections": [
+          {
+            "host": "",
+            "changed": true,
+            "structure": [
+              "k1",
+              "k2",
+              "p",
+              "q"
+            ],
+            "pendingExits": [],
+            "revived": [],
+            "entered": [
+              "/p"
+            ],
+            "throwingExits": []
+          },
+          {
+            "host": "",
+            "changed": false,
+            "structure": [
+              "k1",
+              "k2",
+              "p",
+              "q"
+            ],
+            "pendingExits": [],
+            "revived": [],
+            "entered": [
+              "/p"
+            ],
+            "throwingExits": []
+          }
+        ],
+        "commits": [
+          {
+            "kind": "callerReplace",
+            "changedNodes": [
+              "/k1",
+              "",
+              "/p"
+            ],
+            "stateDirtyNodes": [
+              "",
+              "/k1",
+              "/p"
+            ],
+            "entered": [
+              "/p"
+            ],
+            "revived": [],
+            "pendingExits": [],
+            "pendingExitPaths": [],
+            "failures": {
+              "$undefined": true
+            }
+          }
+        ],
+        "timeline": [
+          {
+            "event": "registration",
+            "pendingExits": [],
+            "dirty": [
+              "/k1",
+              "",
+              "/p"
+            ],
+            "changedRaw": [
+              "/k1"
+            ]
+          },
+          {
+            "event": "computeChild",
+            "path": "/p",
+            "entered": true,
+            "revived": false,
+            "value": {
+              "$undefined": true
+            }
+          }
+        ],
+        "revivals": []
+      }
+    }
+  ],
+  "surface": [
+    [
+      [
+        "failure",
+        {
+          "scalar": "undefined"
+        }
+      ],
+      [
+        "deliveryOrder",
+        []
+      ],
+      [
+        "events",
+        [
+          [
+            [
+              "path",
+              ""
+            ],
+            [
+              "identity",
+              0
+            ],
+            [
+              "event",
+              [
+                [
+                  "type",
+                  8196
+                ],
+                [
+                  "payload",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "previous",
+                          [
+                            [
+                              "scalar",
+                              "undefined"
+                            ]
+                          ]
+                        ],
+                        [
+                          "current",
+                          [
+                            [
+                              "local",
+                              [
+                                [
+                                  "k1",
+                                  "off"
+                                ],
+                                [
+                                  "k2",
+                                  "on"
+                                ]
+                              ]
+                            ],
+                            [
+                              "emit",
+                              [
+                                [
+                                  "k1",
+                                  "off"
+                                ],
+                                [
+                                  "k2",
+                                  "on"
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "options",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "source",
+                          "load"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "revisions",
+              [
+                [
+                  "counts",
+                  [
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1,
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              "commit",
+              1
+            ],
+            [
+              "value",
+              [
+                [
+                  "k1",
+                  "off"
+                ],
+                [
+                  "k2",
+                  "on"
+                ]
+              ]
+            ],
+            [
+              "emit",
+              [
+                [
+                  "k1",
+                  "off"
+                ],
+                [
+                  "k2",
+                  "on"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "path",
+              "/k1"
+            ],
+            [
+              "identity",
+              1
+            ],
+            [
+              "event",
+              [
+                [
+                  "type",
+                  8196
+                ],
+                [
+                  "payload",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "previous",
+                          [
+                            [
+                              "scalar",
+                              "undefined"
+                            ]
+                          ]
+                        ],
+                        [
+                          "current",
+                          "off"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "options",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "source",
+                          "load"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "revisions",
+              [
+                [
+                  "counts",
+                  [
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1,
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              "commit",
+              1
+            ],
+            [
+              "value",
+              "off"
+            ],
+            [
+              "emit",
+              "off"
+            ]
+          ],
+          [
+            [
+              "path",
+              "/k2"
+            ],
+            [
+              "identity",
+              2
+            ],
+            [
+              "event",
+              [
+                [
+                  "type",
+                  8196
+                ],
+                [
+                  "payload",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "previous",
+                          [
+                            [
+                              "scalar",
+                              "undefined"
+                            ]
+                          ]
+                        ],
+                        [
+                          "current",
+                          "on"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "options",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "source",
+                          "load"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "revisions",
+              [
+                [
+                  "counts",
+                  [
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1,
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              "commit",
+              1
+            ],
+            [
+              "value",
+              "on"
+            ],
+            [
+              "emit",
+              "on"
+            ]
+          ],
+          [
+            [
+              "path",
+              "/q"
+            ],
+            [
+              "identity",
+              3
+            ],
+            [
+              "event",
+              [
+                [
+                  "type",
+                  8196
+                ],
+                [
+                  "payload",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "previous",
+                          [
+                            [
+                              "scalar",
+                              "undefined"
+                            ]
+                          ]
+                        ],
+                        [
+                          "current",
+                          [
+                            [
+                              "scalar",
+                              "undefined"
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "options",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "source",
+                          "load"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "revisions",
+              [
+                [
+                  "counts",
+                  [
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1,
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              "commit",
+              1
+            ],
+            [
+              "value",
+              [
+                [
+                  "scalar",
+                  "undefined"
+                ]
+              ]
+            ],
+            [
+              "emit",
+              [
+                [
+                  "scalar",
+                  "undefined"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "changes",
+        [
+          [
+            [
+              "k1",
+              "off"
+            ],
+            [
+              "k2",
+              "on"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      [
+        "failure",
+        {
+          "scalar": "undefined"
+        }
+      ],
+      [
+        "deliveryOrder",
+        []
+      ],
+      [
+        "events",
+        [
+          [
+            [
+              "path",
+              ""
+            ],
+            [
+              "identity",
+              0
+            ],
+            [
+              "event",
+              [
+                [
+                  "type",
+                  32900
+                ],
+                [
+                  "payload",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "previous",
+                          [
+                            [
+                              "local",
+                              [
+                                [
+                                  "k1",
+                                  "off"
+                                ],
+                                [
+                                  "k2",
+                                  "on"
+                                ]
+                              ]
+                            ],
+                            [
+                              "emit",
+                              [
+                                [
+                                  "k1",
+                                  "off"
+                                ],
+                                [
+                                  "k2",
+                                  "on"
+                                ]
+                              ]
+                            ]
+                          ]
+                        ],
+                        [
+                          "current",
+                          [
+                            [
+                              "local",
+                              [
+                                [
+                                  "k1",
+                                  "on"
+                                ],
+                                [
+                                  "k2",
+                                  "on"
+                                ]
+                              ]
+                            ],
+                            [
+                              "emit",
+                              [
+                                [
+                                  "k1",
+                                  "on"
+                                ],
+                                [
+                                  "k2",
+                                  "on"
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                      ]
+                    ],
+                    [
+                      "32768",
+                      [
+                        [
+                          "previous",
+                          [
+                            [
+                              "properties",
+                              [
+                                [
+                                  "q",
+                                  [
+                                    [
+                                      "type",
+                                      "string"
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "allOf",
+                              [
+                                [
+                                  [
+                                    "controls",
+                                    [
+                                      [
+                                        "active",
+                                        "./k1 === \"on\""
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "properties",
+                                    [
+                                      [
+                                        "p",
+                                        [
+                                          [
+                                            "type",
+                                            "string"
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                [
+                                  [
+                                    "controls",
+                                    [
+                                      [
+                                        "active",
+                                        "./k2 === \"on\""
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "properties",
+                                    [
+                                      [
+                                        "q",
+                                        [
+                                          [
+                                            "type",
+                                            "string"
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "type",
+                              "object"
+                            ]
+                          ]
+                        ],
+                        [
+                          "current",
+                          [
+                            [
+                              "properties",
+                              [
+                                [
+                                  "q",
+                                  [
+                                    [
+                                      "type",
+                                      "string"
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "allOf",
+                              [
+                                [
+                                  [
+                                    "controls",
+                                    [
+                                      [
+                                        "active",
+                                        "./k1 === \"on\""
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "properties",
+                                    [
+                                      [
+                                        "p",
+                                        [
+                                          [
+                                            "type",
+                                            "string"
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ],
+                                [
+                                  [
+                                    "controls",
+                                    [
+                                      [
+                                        "active",
+                                        "./k2 === \"on\""
+                                      ]
+                                    ]
+                                  ],
+                                  [
+                                    "properties",
+                                    [
+                                      [
+                                        "q",
+                                        [
+                                          [
+                                            "type",
+                                            "string"
+                                          ]
+                                        ]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [
+                              "type",
+                              "object"
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "options",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "source",
+                          "callerReplace"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "revisions",
+              [
+                [
+                  "counts",
+                  [
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    2,
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1,
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1,
+                    {
+                      "$undefined": true
+                    },
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              "commit",
+              2
+            ],
+            [
+              "value",
+              [
+                [
+                  "k1",
+                  "on"
+                ],
+                [
+                  "k2",
+                  "on"
+                ]
+              ]
+            ],
+            [
+              "emit",
+              [
+                [
+                  "k1",
+                  "on"
+                ],
+                [
+                  "k2",
+                  "on"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "path",
+              "/k1"
+            ],
+            [
+              "identity",
+              1
+            ],
+            [
+              "event",
+              [
+                [
+                  "type",
+                  8196
+                ],
+                [
+                  "payload",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "previous",
+                          "off"
+                        ],
+                        [
+                          "current",
+                          "on"
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "options",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "source",
+                          "callerReplace"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "revisions",
+              [
+                [
+                  "counts",
+                  [
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    2,
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    2
+                  ]
+                ]
+              ]
+            ],
+            [
+              "commit",
+              2
+            ],
+            [
+              "value",
+              "on"
+            ],
+            [
+              "emit",
+              "on"
+            ]
+          ],
+          [
+            [
+              "path",
+              "/p"
+            ],
+            [
+              "identity",
+              4
+            ],
+            [
+              "event",
+              [
+                [
+                  "type",
+                  4
+                ],
+                [
+                  "payload",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "previous",
+                          [
+                            [
+                              "scalar",
+                              "undefined"
+                            ]
+                          ]
+                        ],
+                        [
+                          "current",
+                          [
+                            [
+                              "scalar",
+                              "undefined"
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ],
+                [
+                  "options",
+                  [
+                    [
+                      "4",
+                      [
+                        [
+                          "source",
+                          "callerReplace"
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "revisions",
+              [
+                [
+                  "counts",
+                  [
+                    {
+                      "$undefined": true
+                    },
+                    {
+                      "$undefined": true
+                    },
+                    1
+                  ]
+                ]
+              ]
+            ],
+            [
+              "commit",
+              2
+            ],
+            [
+              "value",
+              [
+                [
+                  "scalar",
+                  "undefined"
+                ]
+              ]
+            ],
+            [
+              "emit",
+              [
+                [
+                  "scalar",
+                  "undefined"
+                ]
+              ]
+            ]
+          ]
+        ]
+      ],
+      [
+        "changes",
+        [
+          [
+            [
+              "k1",
+              "on"
+            ],
+            [
+              "k2",
+              "on"
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+}

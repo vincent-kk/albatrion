@@ -12,12 +12,14 @@ import type { gateSelectionCases } from '../fixtures/gateSelectionCases';
  * @param fixture - Fixed verifier boundary and its input history
  * @param configure - Internal mode hook before the first baseline evaluation
  * @param observe - Optional extra observation of the root, recorded as `extra` after every settlement
+ * @param snapshot - Optional checkpoint copier before later settlements can mutate retained payloads
  * @returns Deterministic observations immediately after every settlement
  */
 export const runGateSelectionCase = (
   fixture: (typeof gateSelectionCases)[number],
   configure: (analysis: Blueprint) => void = () => {},
   observe?: (root: PlainNode) => unknown,
+  snapshot?: (observation: unknown) => unknown,
 ) => {
   const { root, blueprint, visits } = createTestTree(fixture.schema);
   configure(blueprint);
@@ -48,7 +50,7 @@ export const runGateSelectionCase = (
       for (let index = children.length - 1; index >= 0; index--)
         if (children[index].parent === node) pending.push(children[index]);
     }
-    observations.push({
+    const observation = {
       nodes,
       failure: failure instanceof Error ? failure.message : failure,
       diagnostics: { ...root.runtime.diagnostics },
@@ -58,7 +60,8 @@ export const runGateSelectionCase = (
       deliveries: [...(root.runtime.deliveries ?? [])].map((node) => node.path),
       visits: [...visits],
       ...(observe ? { extra: observe(root) } : {}),
-    });
+    };
+    observations.push(snapshot ? snapshot(observation) : observation);
   };
   let failure: unknown;
   try {
