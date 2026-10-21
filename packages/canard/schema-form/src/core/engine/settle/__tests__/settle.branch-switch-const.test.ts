@@ -94,7 +94,8 @@ describe('branch-switch constant-factor regression records', () => {
         ?.split('\n')
         .find((line) => line.includes('/src/') && !line.includes('__tests__'));
       if (
-        caller?.includes('/childSelection/selectChildren.ts') &&
+        (caller?.includes('/childSelection/selectChildren.ts') ||
+          caller?.includes('/childSelection/selectEntryStep.ts')) &&
         Array.isArray(args[0]) &&
         /^\/payload_[1-8]$/.test(args[0][0])
       )

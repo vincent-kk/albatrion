@@ -9,10 +9,11 @@ import * as priming from '../utils/compute/primeHost';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Source files whose pending-exit key building is counted. */
-const KEY_SITES = /\/(childSelection\/selectChildren|compute\/primeHost)\.ts/;
+const KEY_SITES =
+  /\/(childSelection\/(?:selectChildren|selectEntryStep)|compute\/primeHost)\.ts/;
 
 /**
- * Count `JSON.stringify` calls whose nearest engine caller is selectChildren or primeHost.
+ * Count `JSON.stringify` calls whose nearest engine caller is selection or priming.
  * @returns Live counter read after the history; mocks restore after each case
  */
 const countKeySiteEncodings = () => {

@@ -3,6 +3,7 @@ import type { TestGuardMode } from '@/schema-form/core/__tests__/fixtures/create
 import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
 import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core/surface';
+import type { SetValueOption } from '@/schema-form/core/surface';
 
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
@@ -16,7 +17,14 @@ export interface ChildSelectionHistory {
   /** Root input used for the first mounted settlement. */
   input?: unknown;
   /** Sequential public writes; an empty path replaces the root. */
-  writes: readonly { path: string; value: unknown }[];
+  writes: readonly {
+    path: string;
+    value: unknown;
+    option?: SetValueOption;
+    context?: Record<string, unknown>;
+  }[];
+  /** Optional initial context for histories containing context-dependent gates. */
+  context?: Record<string, unknown>;
   /** Attach listeners to every occurrence, including ones created during a write. */
   allListeners?: boolean;
   /** Select a real or deliberately failing if validator; omission keeps it absent. */
@@ -117,6 +125,7 @@ export const runChildSelectionHistory = (
     return [normalizeSelectionObservation({ failure })];
   }
   occurrences.push(root);
+  if (fixture.context) root.runtime.context = fixture.context;
   subscribe(root);
   const factory = root.runtime.nodeFactory!;
   root.runtime.nodeFactory = (entry, parent, runtime) => {
@@ -140,9 +149,12 @@ export const runChildSelectionHistory = (
   for (const write of fixture.writes) {
     failure = undefined;
     try {
+      if (write.context) root.runtime.context = write.context;
       const target = write.path ? root.find(write.path) : root;
       if (!target) throw new Error(`Missing write target ${write.path}`);
-      target.setValue(write.value);
+      if (write.option !== undefined)
+        target.setValue(write.value, write.option);
+      else target.setValue(write.value);
     } catch (cause) {
       failure = cause;
     }
