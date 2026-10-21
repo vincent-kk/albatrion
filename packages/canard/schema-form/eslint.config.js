@@ -7,7 +7,7 @@ import { createESLintConfig } from '../../../eslint.config.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/** `process.env.NODE_ENV` appears only as a bare `!== 'production'` / `=== 'production'` comparison at its use site, so consumer bundlers fold every development-only branch (rounds 189, 196, 200C-01). */
+/** Keep bare call-site comparisons in the default ESM: esbuild 0.25 observations show that top-level constants in ESM files with imports are not inlined. Node/CJS outputs replace them at build time and read NODE_ENV once at load; later changes are not reflected, and hosts without define or process fail at load. Build verification checks output shape; separate experiments check folding (200C-01, decision 61). */
 const ENVIRONMENT_TOKEN =
   "[object.object.name='process'][object.property.name='env'][property.name='NODE_ENV']";
 const environmentTokenRules = [
