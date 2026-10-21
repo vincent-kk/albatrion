@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { expect, vi } from 'vitest';
 
 import { getGateSelectionTable } from '../../../utils/compute/childSelection/getGateSelectionTable';
@@ -13,9 +14,9 @@ import { sectionGateTableObservation } from './snapshotGateTableCase/utils/secti
  * @param fixture - History whose off execution remains the stored baseline
  * @returns Off serialization for the unchanged file snapshot assertion
  */
-export const observeGateTableModes = (
+export const observeGateTableModes = async (
   fixture: (typeof gateSelectionCases)[number],
-): string => {
+): Promise<string> => {
   const previous = gateSelectionTable.mode;
   const previousWheel = gateWheelEvaluation.mode;
   let reference = '';
@@ -56,10 +57,38 @@ export const observeGateTableModes = (
       for (let mode = 1; mode < histories.length; mode++) {
         const actual = sectionGateTableObservation(histories[mode]).sections;
         for (const [section, value] of Object.entries(baseline))
-          if (section !== 'visits')
+          if (
+            section !== 'visits' &&
+            section !== 'registrations' &&
+            section !== 'timeline'
+          )
             expect(actual[section], fixture.name + '/' + section).toEqual(
               value,
             );
+        const normalizedTimeline = (rows: unknown) =>
+          (rows as Record<string, unknown>[][]).map((row) =>
+            row.map((event) => {
+              if (event.event !== 'registration') return event;
+              const { dirty: _dirty, ...fixed } = event;
+              return fixed;
+            }),
+          );
+        expect(
+          normalizedTimeline(actual.timeline),
+          fixture.name + '/timeline except registration dirty',
+        ).toEqual(normalizedTimeline(baseline.timeline));
+        const shapes = (rows: unknown) =>
+          (rows as { shapeDirty: string[] }[][]).map((row) =>
+            row.map((entry) => [...entry.shapeDirty].sort()),
+          );
+        expect(
+          shapes(actual.registrations),
+          fixture.name + '/shape dirty after every registration',
+        ).toEqual(shapes(baseline.registrations));
+        if (mode === 2)
+          expect(actual.registrations).toEqual(
+            sectionGateTableObservation(histories[1]).sections.registrations,
+          );
         expect(actual.visits, fixture.name + '/non-table visits').toEqual(
           baseline.visits,
         );
@@ -76,6 +105,18 @@ export const observeGateTableModes = (
             ).toBe(true);
         }
         expect(cursor).toBe(visits[mode].length);
+      }
+      if (wheel === 'skip') {
+        const registrations = sectionGateTableObservation(histories[1]).sections
+          .registrations;
+        const name = fixture.name
+          .replace(/[^a-zA-Z0-9]+/g, '-')
+          .replace(/-$/, '');
+        await expect(JSON.stringify(registrations) + '\n').toMatchFileSnapshot(
+          fileURLToPath(
+            new URL('./registration-pr3/' + name + '.json', import.meta.url),
+          ),
+        );
       }
       if (!reference) reference = histories[0];
       if (wheel === 'skip')

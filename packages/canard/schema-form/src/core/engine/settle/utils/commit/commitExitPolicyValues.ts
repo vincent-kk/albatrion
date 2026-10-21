@@ -14,6 +14,7 @@ import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
 import { readStateDependency } from '../controls/readStateDependency';
+import { isDependencyOwner } from '../dependencies/isDependencyOwner';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
@@ -78,7 +79,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
     if (source.detached || !source.structure) continue;
     if (
       context.kind !== 'load' &&
-      !context.dependencyOwnerPaths.has(source.path) &&
+      !isDependencyOwner(context, source.path) &&
       !context.shapeDirtyPaths.has(source.path)
     )
       continue;
@@ -109,7 +110,8 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           if (
             !child.blueprintNode.declarations.some(
               (childDeclaration) =>
-                (!childSelected || childSelected.includes(childDeclaration.id)) &&
+                (!childSelected ||
+                  childSelected.includes(childDeclaration.id)) &&
                 getFragmentOwnerPaths(childDeclaration.schemaPath).includes(
                   declaration.schemaPath,
                 ),

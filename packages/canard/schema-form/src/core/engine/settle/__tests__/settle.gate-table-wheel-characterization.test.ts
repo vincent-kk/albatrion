@@ -31,7 +31,7 @@ describe('decision-62 pre-extraction gate-wheel characterization', () => {
   ])('$name', async ({ index }) => {
     expect(gateWheelCases).toHaveLength(15);
     const fixture = gateWheelCases[index];
-    const serialized = observeGateTableModes(fixture);
+    const serialized = await observeGateTableModes(fixture);
     expect(serialized).not.toMatch(/\.ts:\d+:\d+/);
     expect(serialized).not.toContain(
       resolve(import.meta.dirname, '../../../../../../../..'),

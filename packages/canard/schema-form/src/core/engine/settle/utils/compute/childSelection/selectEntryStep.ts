@@ -8,6 +8,7 @@ import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
+import { supplementSplitOwner } from '../../dependencies/supplementSplitOwner';
 import { recordSettlementFailure } from '../../errors/recordSettlementFailure';
 import { evaluateGate } from '../../gates/evaluateGate';
 import { flushPendingGateReads } from '../../gates/flushPendingGateReads';
@@ -284,6 +285,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     entryChanged = true;
   }
   const ids = activeIds ?? staticIds(entry);
+  if ((!priorChild && !currentChild) || (pending && child === pending))
+    supplementSplitOwner(child, context);
   if (context.selectedDeclarationIds.get(child) !== ids)
     context.selectedDeclarationIds.set(child, ids);
   const isAtomic = node.runtime.blueprint?.isAtomic;

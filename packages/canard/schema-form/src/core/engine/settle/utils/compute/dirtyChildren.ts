@@ -3,6 +3,8 @@ import { unescapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { gateSelectionTable } from '../gates/gateSelectionTable';
+import { verifyGateSelection } from '../gates/verifyGateSelection';
 
 /**
  * Resolve only scheduled direct children instead of scanning a host's shape.
@@ -28,6 +30,22 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
       seen.add(child);
       children.push(child);
     }
+  }
+  const shadow =
+    gateSelectionTable.mode === 'verify'
+      ? context.registrationShadow
+      : undefined;
+  if (shadow) {
+    const expected = dirtyChildren(node, {
+      ...context,
+      registrationShadow: undefined,
+      dirtyChildrenByParent: shadow.dirty.childrenByParent,
+    });
+    verifyGateSelection(
+      children.length === expected.length &&
+        children.every((child, index) => child === expected[index]),
+      'S3 dirtyChildren members/order differ at: ' + node.path,
+    );
   }
   return children;
 };

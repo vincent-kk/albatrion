@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import * as selection from '../utils/compute/childSelection/selectEntryStep';
+import * as registration from '../utils/dependencies/registerRecalculation';
+import * as supplementation from '../utils/dependencies/supplementSplitOwner';
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import * as expressions from '../utils/gates/getGateExpression';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
@@ -19,6 +21,41 @@ afterEach(() => {
 
 // filid:contract settle-gate-table-verification
 describe('table invariants reject actual positional violations', () => {
+  it('S3 rejects a shape path missing from the optimized registration', () => {
+    const { root } = gateTableScene();
+    gateSelectionTable.mode = 'verify';
+    const register = registration.registerRecalculation;
+    vi.spyOn(registration, 'registerRecalculation').mockImplementation(
+      (context) => {
+        if (context.registrationShadow)
+          context.registrationShadow.shape.add('/missing-shape');
+        register(context);
+      },
+    );
+    const before = gateSelectionTable.violations;
+    expect(() =>
+      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+    ).toThrow('S3 shape dirty differs after registration');
+    expect(gateSelectionTable.violations).toBe(before + 1);
+  });
+
+  it('S4 rejects an entering split owner that is no longer dirty', () => {
+    const { root } = gateTableScene();
+    gateSelectionTable.mode = 'verify';
+    const supplement = supplementation.supplementSplitOwner;
+    vi.spyOn(supplementation, 'supplementSplitOwner').mockImplementation(
+      (child, context) => {
+        context.dirtyPaths.delete(child.path);
+        supplement(child, context);
+      },
+    );
+    const before = gateSelectionTable.violations;
+    expect(() =>
+      writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite),
+    ).toThrow('S4 entry/revival must already be dirty');
+    expect(gateSelectionTable.violations).toBe(before + 1);
+  });
+
   it('S1 rejects a bucket verdict that differs from the authored expression', () => {
     const { root } = gateTableScene();
     gateSelectionTable.mode = 'verify';

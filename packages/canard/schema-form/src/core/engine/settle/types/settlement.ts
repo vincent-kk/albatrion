@@ -15,10 +15,12 @@ import type {
   SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
+import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import type { GateSelectionRound } from './gateSelectionRound';
 import type { GateWheelFrame } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 import type { PresenceQueryCursor } from './presenceQueryCursor';
+import type { SplitBucket } from './splitRegistration';
 
 /** Virtual child names indexed by their real sibling's host template and field. */
 export type VirtualReferenceIndex = ReadonlyMap<
@@ -205,6 +207,23 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   gateSelectionRounds?: Map<Self, GateSelectionRound>;
   /** Restore the verify-only dirty observer even when a settlement throws. */
   restoreGateSelectionDirty?: () => void;
+  /** Monotone clock shared by every raw registration call site. */
+  registrationEpoch?: number;
+  /** Latest raw registration hit of each immutable split bucket. */
+  splitHitEpochs?: Map<SplitBucket, number>;
+  /** Latest registration generation applied to a living split owner. */
+  splitMarks?: Map<string, number>;
+  /** Verify-only full-registration history, retained for the complete settlement. */
+  registrationShadow?: {
+    dirty: DirtyPathSet;
+    shape: Set<string>;
+    owners: Set<string>;
+    registering: boolean;
+    supplementInsertions: number;
+    restore: () => void;
+  };
+  /** Only the independent verification pass takes the old raw registration path. */
+  shadowRegistration?: boolean;
   /** Active declaration choices published only after this call commits. */
   selectedDeclarationIds: Map<Self, readonly number[]>;
   /** Original inputs retained for effective-list interpretation. */
