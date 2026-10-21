@@ -15,6 +15,8 @@ import type {
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
 import type { GateWheelFrame } from './gateWheel';
+import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
+import type { PresenceQueryCursor } from './presenceQueryCursor';
 
 /** Virtual child names indexed by their real sibling's host template and field. */
 export type VirtualReferenceIndex = ReadonlyMap<
@@ -118,6 +120,43 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
+  /** Hosts whose direct child identity may differ from the wheel's prior shape. */
+  presenceHosts?: Set<Self>;
+  /** Emitted child paths that changed identity at any point in this settlement. */
+  changedPresence?: Set<string>;
+  /** Ancestor prefixes accumulated only when a new presence path is added. */
+  presencePrefixes?: Set<string>;
+  /** Insertion-ordered paths added to changedPresence in this settlement. */
+  presenceLog?: string[];
+  /** Insertion-ordered ancestors added to presencePrefixes in this settlement. */
+  presencePrefixLog?: string[];
+  /** Incremental presence query progress, isolated by evaluation location. */
+  presenceQueryCursors?: Map<string, PresenceQueryCursor>;
+  /** Logical evaluation clock, advanced only in a gate-bearing settlement. */
+  presenceClock?: number;
+  /** Latest gate evaluation round start for each live host in this call. */
+  presenceRoundStarts?: Map<Self, number>;
+  /** Latest dirty computation start for each live node in this call. */
+  presenceComputeStarts?: Map<Self, number>;
+  /** Monotone registration version used to recheck non-shape-dirty ancestors. */
+  presenceRegistrations?: number;
+  /** Unbound readers deduplicated by query phase and template until expansion. */
+  presenceTemplates?: Map<string, PendingPresenceTemplate>;
+  /** Record-mode proof counters; shipping skip mode never allocates this record. */
+  presenceMetrics?: {
+    /** Dirty node computations per live path, excluding immediately returned no-op calls. */
+    computes: Map<string, number>;
+    /** Ancestor batches reconsidered after a registration version change. */
+    ancestorRechecks: number;
+    /** Non-shape-dirty branches handed to the bounded host wheel. */
+    ancestorWheels: number;
+    /** Calls to the presence identity comparison. */
+    calls: number;
+    /** Presence reader candidates inserted during lookup and deferred expansion. */
+    ownerInsertions: number;
+    /** Incremental location-watch probes, excluding raw invalidation queries. */
+    indexLookups: number;
+  };
   /** Proof that this call is one admitted static push, consulted by selection, assembly and alignment. */
   arrayAppend?: ArrayAppendProof<Self>;
   /** Proof that this call is one admitted static pop, consulted by selection, assembly and alignment. */

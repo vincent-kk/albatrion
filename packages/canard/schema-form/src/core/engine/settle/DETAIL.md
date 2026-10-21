@@ -2,6 +2,18 @@
 
 ## Requirements
 
+- 호스트 바퀴의 한 라운드가 직접 자식의 있음(이름별 노드 정체)을 직전 라운드 끝과 다르게 만들면, 그 경로를 이 호출의 누적 있음 집합과 기록에 같은 조건에서 더한다. 그 경로나 그 하위를 읽는 역의존 소유자와, 그 경로를 읽는 게이트를 가진 엄격 조상을 재계산과 형상 dirty로 표시하되, 이미 새 입력을 평가한 소유자는 아래 공표 규칙을 따른다(SETTLE-020·021·045, 97C-01 (4)).
+- 등록 호스트의 직접 자식 소유자는 dirty 경로와 조상을 추가하지 않고, 의존 소유 경로와 부모 형상 dirty를 유지하며 살아 있는 소유자를 상태 공표 집합에 더한다. 그 밖의 소유자도 부모 평가 호스트가 변화 뒤 게이트 평가 라운드를 시작했다면 같은 공표만 한다. 시각은 게이트 있는 정착 문맥의 형 있는 Map에만 기록한다. 현재 호스트 라운드에서 계산된 자식은 계산 시작 시각, 나머지는 등록 시각을 쓰고, 대기 템플릿에는 접수 시각의 최댓값을 남긴다. 배열 재사용은 게이트 없는 문맥에서만 일어나므로 평가 시각 기록에 재사용 예외가 필요 없다. 루트 수준 대기 펼침에서는 시각에 따른 생략을 하지 않는다.
+- 있음 역의존 조회는 정착마다 호스트의 조상 트라이 단계를 DependencyIndex 내부에 기억하여 호스트당 한 번 수집한다. 조상 단계와 직접 하위 트리의 소유자 순서 및 제외 규칙은 유지하며, private 트라이 형을 정착 문맥 밖으로 노출하지 않는다.
+- 게이트 등록표는 첫 있음 질의 때만 위치별 감시 색인을 만들고 이후 발생 추가·제거를 참조 계수로 반영한다. 정확 경로, 엄격 접두, 루트 감시 수와 감시 경로 기록을 사용하며 정착별 커서로 새 있음 경로·접두와 새 감시 경로만 비교한다. 있음 집합은 단조 증가하고 참을 답한 위치는 형상 dirty로 남으므로, 같은 위치의 질의 총비용은 변경 경로·접두·고유 감시 경로 수에 선형이다. 기록이 살아 있는 정확 경로 수의 두 배에 8을 더한 길이를 넘으면 정확 경로 키로 압축하고 세대를 올려 기존 커서를 다시 시작한다. raw 변경은 withdrawDetachedFills.ts:29와 restoreSourceB.ts:45에서 줄어들 수 있으므로 mayChangeAt과 affected의 raw 질의는 그대로 둔다.
+- 제외 규칙 1: 진행 중인 호스트 하위의 소유자가 그 호스트나 그 조상을 읽는 경우는 표시하지 않는다(18C-15, 51C-01). 다만 그 가운데 상태 키 소유자는 공표 때 최종 트리로 평가하며, 의존 소유 경로와 살아 있는 상태 키 노드만 등록한다. 제외 규칙 2: 바뀐 하위 트리 안의 소유자는 표시하지 않는다(CONTROLS-080).
+- 있음 변경의 역의존 조회는 배열 호스트로 접힌 고정 색인 소유자를 접기 전 감시 경로와의 양방향 교차로만 고른다. raw 판정의 접기는 유지한다. 결합 뒤 와일드카드가 남는 소유자는 호출 단위로 정적 호스트 S에 대기시켜 S의 바퀴 라운드마다 한 번 펼친다. 제외 규칙 1·2는 등록 경로들의 가장 깊은 조상 사슬로 재현하며, 남은 대기는 루트 계산 직후 모두 펼쳐 즉시 표시보다 약해지지 않게 한다(97C-01 (4), SETTLE-017·020·045, 18C-15, GOAL-011). 대기 때문에 생략·정지를 막는 조건은 이를 제거한 변이를 검출하는 장면이 있을 때만 사용하고, 그 라운드도 기존 바퀴 예산에 센다.
+- 형상 dirty가 아니던 조상은 자식 계산 뒤 등록 계수가 바뀌었을 때만 다시 확인하고, 필요하면 같은 계산 안에서 바퀴로 들어간다. 이 재진입도 호스트 바퀴 예산에 센다. 직접 자식의 계산 여부는 이 노드의 이번 계산을 기준으로 한다. 각 반복은 아직 계산하지 않은 직접 자식을 하나 이상 계산하거나, 바퀴로 넘기거나, 계수가 그대로여서 끝난다. 계수는 배치의 computeNode 호출 안에서만 바뀌므로 빈 배치 뒤에는 반드시 끝난다. 직접 자식 수는 유한하고 바퀴에는 자체 상한이 있다.
+- 배열 재사용 경로(canReuseArrayChildren의 append, pop, splice)는 표시 자리를 거치지 않는다. 그 있음 변화는 raw 쓰기라 registerRecalculation이 덮는다. 재사용 라운드 뒤 새 자식은 다음 라운드에 첫째 자리에서 표시된다.
+- 변화 없는 쓰기의 추가 작업은 라운드마다 presenceHosts 조회 하나와, 형상 dirty가 아닌 branch마다 정수 비교 하나다. 게이트 없는 문맥은 있음 등록에서 즉시 돌아오며, 누적 있음 접두는 새 경로에 대해서만 추가한다. 조상 질의는 이미 형상 dirty인 자리에서는 집합 조회로 끝나고, load 범위 위의 조상도 필요한 경우 질의한다(GOAL-011).
+- 알려진 남은 결함: overlay가 omitEmpty, omitTrailing, type을 바꾸어 있음은 그대로이고 투영 방출만 바뀌는 읽기 누락은 이번 있음 등록의 범위 밖이다. 재현 장면은 아직 필요하다. 열린 항목: 옮긴 게이트를 처음 locate한 뒤 평가 자리에서 선언 호스트까지의 경로 재계산은, 있음 변화 없이 값만 바뀌는 경우에도 SETTLE-045의 매 바퀴 평가를 지키는지 별도로 확인해야 한다.
+- 필드명이 문자 그대로 `*` 인 노드의 상태 키 판독자(`controls.visible`·`readOnly`)는 있음 변화 뒤 다시 계산되지 않는다. 소유자 템플릿 표현이 `*` 를 배열 와일드카드로 읽기 때문이며(`getDependencyIndex` 의 접기, `collectPresenceOwners`, `deferPresenceTemplate`, `expandTemplatePaths`), `active` 게이트는 레지스트리 경로가 덮어 영향이 없다. 장면은 `settle.presence-star-name.test.ts` 에 `it.fails` 로 기록한다.
+
 - The first owned child is identified directly from selected declarations, the previous commit's selection fallback, and declaration child owner paths, while full policy-layer collection and evaluation, priority, and previous-commit exit semantics remain unchanged (CONTROLS-077·CONTROLS-073(7)·WRITE-032·NODE-044; same-layer keep wins).
 
 - The suppressed-exit stale cleanup runs only for exits inside a candidate ownership scope, reusing the ownership decision already computed for the capture; candidate-free and single-kind exits keep base traversal and allocation (NODE-043, WRITE-015, 370라운드 원칙; 395C-01).
@@ -79,9 +91,9 @@
 - `utils/latent/`: 잠재 값의 분배와 복원: 저장 기본 단위를 사용해 노드·슬롯의 원본을 해석하며 저장 색인의 소유권은 갖지 않는다.
 - `utils/controls/`: 감시 값과 상태 키의 읽기·결합.
 - `utils/loadValues/`: 로드 값과 기본값·배열 스냅숏 자리의 정렬.
-- `utils/compute/`: 현재 형상과 자식 선택의 계산.
 - `utils/scratch/`: 정착별 작업 공간과 dirty 경로.
-- `utils/dependencies/`: 의존 색인과 재계산 등록.
+- `utils/dependencies/`: 의존 색인과 재계산·있음 변경 등록.
+- `utils/compute/`: 현재 형상과 자식 선택의 계산.
 - `utils/detached/`: 떼어진 참조와 비활성·불일치 값의 읽기.
 - `utils/dispose/`: 폐기 트리와 쓰기 가능 여부.
 - `utils/pathStores/`: 런타임 경로 저장소의 묶음.
@@ -201,6 +213,16 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지한다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화한다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산한다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문한다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
+
+### settle-presence-readers — 있음 변경을 읽는 게이트와 상태 키
+
+- oneOf·속성 게이트를 기본값 있음·없음과 양방향으로 전환하며 비루트 호스트, 배열 아이템, visible, 같은 호스트의 옮긴 읽기와 늦은 사촌을 검증한다. 늦은 사촌은 마운트와 갱신 뒤 모두 p.child가 P여야 한다. record·skip·shadow에서 emit, 있음, active, visible, readOnly, disabled, diagnostics.status와 살아 있는 노드의 committedDeclarationIds가 최종 값·맥락의 새 마운트와 같아야 한다.
+- prior 자식이 나갔다 되살아나는 틈과 이번 바퀴에 들어온 자식이 뒤 라운드에 나가는 틈, 진행 중 호스트를 읽는 상태 키, setContext로 생기는 양방향 있음 변화를 검증한다. 렌더 장면은 공유 순수 데이터와 playScenario로 최종 DOM을 확인한다.
+- oneOf·default 호스트의 재진입은 노드별 계산 횟수가 바퀴 상한 이하여야 한다. 있음 변화 없는 쓰기는 기준선과 같은 계산 수, 재진입 0회, 등록과 registerPresenceChanges 호출 0회여야 한다. 반복의 세 종료 경로와 빈 배치 종료를 유지하고, 배열 재사용의 raw 쓰기 등록 및 다음 라운드의 새 자식 표시를 보존한다.
+- 등록 직후 모든 등록 발생을 훑어, 감시 경로가 누적 있음 집합과 어느 방향으로든 교차하는 발생이 (가) 바뀐 호스트나 그 조상에 평가 자리를 두는지 단언한다(SETTLE-045 재배치 불변식). (나) 그 평가 자리가 엄격 조상이면 형상 dirty인지 단언한다.
+- 고정 색인 읽기와 배열 전체 읽기를 record·skip·shadow에서 양방향으로 쓰고 새 마운트와 관측이 같은지 확인한다. n=1,000의 소유자 삽입은 고정 색인 마운트에서 2n+1 이하, 그 색인 값 쓰기에서 0이며, 배열 전체 읽기는 마운트에서 3n 이하, 쓰기에서 n 이하이다. n=250에서 n=1,000으로 늘려도 삽입은 4배와 상수 1 이내여야 한다. 접힌 읽기와 접히지 않은 읽기의 혼합, 둘 이상의 고정 색인, 감시 대상 자체의 있음 변화와 등록 호스트 아래의 배열 전체 읽기 상태 키가 제외 사슬과 원래 감시 경로 거르기를 검증한다.
+- 세 모드에서 n=1,000의 gated-array 마운트 계산은 3,505 이하, fixed-index 마운트 계산은 6,005 이하, fixed-index 쓰기 조회는 1,000 이하이며 n=250 대비 비율은 4 이하이다. 게이트 없는 문맥의 실제 append·pop·splice 재사용은 시각 기록 0·있음 등록 0·빈 presenceHosts를 검증하여 재사용과 있음 등록의 배타성을 보인다.
+- 고정 색인 읽기와 mode 게이트가 함께 있는 장면의 있음 색인 조회는 n=1,000에서 n=250의 4.2배 이하이고 우회 변이를 검출한다. 기존 여섯 비용 장면의 색인 조회는 0이다. 새 발생과 엄격 접두 장면은 모든 모드에서 색인 답과 같은 인자의 전수 순회 답을 한 번 이상 비교하고 차이가 0이어야 한다. 서로 다른 감시 경로의 삽입·제거 500회 뒤 기록 길이는 15 이하이며 누적 있음 기록 길이는 집합 크기와 같다.
 
 ### settle-control-layers-ownership — 조각 소유권과 층 순서 보존
 
