@@ -65,6 +65,9 @@ export interface BlueprintFeatureNodeIndex {
   readonly watchNodes: ReadonlySet<number>;
 }
 
+/** Primitive literal whose strict comparison can be indexed without execution. */
+export type EqualityLiteral = string | number | boolean | null;
+
 /** A compiled expression never executed during schema analysis. */
 export interface BlueprintExpression {
   /** Contribution whose controls contain this expression. */
@@ -77,6 +80,8 @@ export interface BlueprintExpression {
   readonly key: ChildControlKey;
   /** Relative or absolute authored paths, without a first-host rewrite. */
   readonly dependencies: readonly string[];
+  /** Whole-expression strict comparisons proven without executing authored code. */
+  readonly equality?: { readonly literals: readonly EqualityLiteral[] };
   /** Pure compiled callable; execution belongs to settlement, never blueprint. */
   readonly evaluate: (dependencies: any[]) => any;
 }

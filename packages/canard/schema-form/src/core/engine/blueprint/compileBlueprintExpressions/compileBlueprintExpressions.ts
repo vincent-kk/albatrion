@@ -9,6 +9,7 @@ import { CompleteExpressionReads } from '../utils/expressions/CompleteExpression
 import { EXPRESSION_CONTROL_KEYS } from '../utils/expressions/expressionControlKeys';
 import { createDynamicFunction } from './createDynamicFunction';
 import { getPathManager } from './getPathManager';
+import { recognizeEqualityExpression } from './recognizeEqualityExpression';
 import { hasCompleteExpressionReads } from './utils/hasCompleteExpressionReads';
 import { registerBlueprintDependency } from './utils/registerBlueprintDependency';
 
@@ -94,13 +95,18 @@ export const compileBlueprintExpressions = (
               declaration,
               schemaPath,
             );
-          const compiled = {
+          const equality =
+            key === 'active' && dependencies.length === 1
+              ? recognizeEqualityExpression(source, dependencies)
+              : undefined;
+          const compiled: BlueprintExpression = {
             declarationId: declaration.id,
             schemaPath,
             hostPath: declaration.path,
             key,
             dependencies,
             evaluate,
+            ...(equality ? { equality } : {}),
           };
           if (process.env.NODE_ENV !== 'production') {
             Object.freeze(dependencies);
