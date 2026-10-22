@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 내부 tuple의 문자열 잎은 JSON.stringify와 바이트가 같은 key와 boundKey를 보존합니다. 따옴표·역슬래시·제어문자·홀로 남은 surrogate는 JSON의 소문자 escape 표기를 유지하고 정상 surrogate pair와 일반 Unicode는 그대로 둡니다. 작성 위치와 참조 해석 위치, gate descriptor·host path의 순서 및 중복 제거는 바뀌지 않습니다. 마운트마다 청사진을 새로 만들며 마운트 사이에 키나 청사진을 재사용하지 않습니다.
+
 - Appending multiple templates for one named property sets the host's optional `hasPropertyCandidates` flag. Single-candidate bindings leave it absent, without a new index or cache; array candidate presence remains represented by the existing candidate lists. This construction-time proof guards candidate-owned exit cleanup (NODE-043, BLUEPRINT-044; 394C-01).
 
 - 배열의 반복 템플릿과 각 prefixItems 자리에는 build가 돌려준 fold별 후보 전부를 작성 순서로 연결한다. 기존 단일 후보 필드는 첫 후보를 가리키며, 후보별 작성 스키마 위치와 선언 소유를 보존한다(BLUEPRINT-044, 389C-03, 391C-01).
@@ -45,6 +47,14 @@
 - 내부 참조의 URI 디코딩이나 JSON Pointer 해석이 실패하면, 작성 위치와 원인을 보존한 UNKNOWN_JSON_SCHEMA로 보고한다.
 
 ## Acceptance Criteria
+
+### template-leaf-bytes — 문자열 잎과 bound key 바이트
+
+- quote, backslash, 제어문자 0–31, 0x7F, U+2028/U+2029, 소문자 16진 escape, 빈 이름, RFC6901 경로, 정상·역순 surrogate pair와 끝 high surrogate의 key·boundKey가 독립 JSON.stringify oracle과 같습니다. Node와 Bun에서 확인합니다.
+
+### template-leaf-scale-bytes — 측정 계열 전체 키 바이트
+
+- 기존 59개 owned-inline 스키마와 flat·nested d3–d6·oneOf·nested-gate 측정 스키마의 모든 실제 key·boundKey가 독립 JSON.stringify oracle과 같습니다. 비재귀 형상 검증 생략과 재귀 그래프 검증은 기존대로 유지합니다.
 
 ### owned-inline-public — 생성 지점 공개·공유 값 보호
 

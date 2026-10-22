@@ -4,6 +4,8 @@
 
 ### 의존 색인과 owner-split 등록
 
+- 의존 색인과 표의 준비는 선언·owner·감시 경로 및 표 단계의 내용과 순서뿐 아니라 split bucket의 공유 identity를 보존합니다. 트라이의 기존 push/pop 순서가 run id와 닻 키의 순서를 결정합니다. 빈 경로 조각을 버리는 트라이 순회와 버리지 않는 접힌 indexedParts 판정은 구별합니다. gate 경로 해석 메모를 사용한다면 각 색인 생성·등록 작업이 끝날 때 폐기하고 청사진 사이에 공유하지 않습니다. 준비 비용 개선은 현 production 마운트 프로파일과 측정으로 채택 여부를 결정합니다.
+
 - 결정 62 (라) PR-3의 분할 소유자는 표 단계의 선언 경로와 일치하는 와일드카드 없는 잎 소유자입니다. 감시 경로를 접은 기여나 의존·파생·표 밖 게이트의 일반 기여가 청사진의 어느 트라이 노드에라도 있는 경로는 분할하지 않습니다. 기존 `owners`, `affected`, `affectedByPresence`는 구성원과 순서를 유지합니다. 각 트라이 노드는 일반 항목을 원래 순서로 가진 `plainOwners`와 호스트별 `splitBuckets`를 보유하며, 묶음의 `ranksByName`과 `firstRank`는 기존 owners 순번입니다.
 - `affectedForRegistration(changedPath, root, sink)`는 기존 affected의 트라이 순서를 유지하고 일반 소유자, 묶음의 첫 순번에서 호스트, 현재 살아 있는 분할 자식을 각자의 순번으로 합쳐 전달합니다. 호스트의 생존은 루트 structure를 따라 찾고 살아 있는 자식만 수집·정렬합니다. 표가 없는 청사진은 기존 등록 경로를 유지합니다. 여섯 재계산 등록 진입은 모두 호출마다 `registrationEpoch`를 올리고 적중 묶음의 `splitHitEpochs`를 갱신합니다.
 
@@ -269,6 +271,14 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지한다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화한다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산한다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문한다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
+
+### settle-dependency-preparation-content — 준비 자료 내용과 공유
+
+- 14개 loading fixture의 의존 트라이, plainOwners 순위, watched 배열, splitOwners·bucket 공유 identity, runs의 id·firstRank, 실제 닻 키와 gate table·plan이 기준 구현의 고정 자료와 같습니다.
+
+### settle-dependency-preparation-paths — 경로와 준비 수명
+
+- 빈 segment, escape된 이름, derive 대상 경로, 배열 wildcard 접기와 표 둘 이상인 청사진에서도 준비 자료와 질의 순서를 유지합니다. 같은 gate를 사용하는 단계의 gate identity와 split bucket 공유를 유지하고 allowPreparation=false는 준비를 시작하지 않습니다. 선언 조회를 만들 때 flatMap 중간 배열을 만들지 않습니다.
 
 ### settle-split-registration — 등록 축약과 순서·관측 불변
 
