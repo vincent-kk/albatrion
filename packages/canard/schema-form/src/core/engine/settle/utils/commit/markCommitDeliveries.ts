@@ -88,9 +88,6 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         );
     }
   }
-  for (const node of context.changedNodes) candidates.add(node);
-  for (const node of context.entered) candidates.add(node);
-  for (const node of context.stateDirtyNodes) candidates.add(node);
   candidates.add(context.root);
   for (const change of context.pathChanges) candidates.add(change.node);
   if (watchIndex) {
@@ -119,24 +116,48 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     mark(context.root, FieldNodeEventType.UpdateDiagnostics);
   runtime.deliveredDiagnostics = runtime.diagnostics;
   const globalState = commitGlobalState(context);
-  const globalNodes: ReadonlySet<unknown> = globalState.nodes;
-  let iterator: Iterator<unknown> = globalState.nodes.values();
-  let additional = false;
+  const { departing: globalDeparting, loadNodes } = globalState;
+  const { entered, changedNodes, stateDirtyNodes } = context;
+  const sources: readonly (ReadonlySet<unknown> | undefined)[] = [
+    globalDeparting,
+    entered,
+    changedNodes,
+    stateDirtyNodes,
+    loadNodes,
+    candidates,
+  ];
+  let sourceIndex = 0;
+  let iterator: Iterator<unknown> = globalDeparting.values();
   while (true) {
     const next = iterator.next();
     if (next.done) {
-      if (additional) break;
-      additional = true;
-      iterator = candidates.values();
+      do sourceIndex++;
+      while (sourceIndex < sources.length && !sources[sourceIndex]?.size);
+      if (sourceIndex === sources.length) break;
+      iterator = sources[sourceIndex]!.values();
       continue;
     }
     const candidate = next.value;
-    if (additional && globalNodes.has(candidate)) continue;
     if (!isTreeNode(candidate)) continue;
     const node = candidate;
+    if (
+      (sourceIndex > 0 && globalDeparting.size && globalDeparting.has(node)) ||
+      (sourceIndex > 1 && entered.size && entered.has(node)) ||
+      (sourceIndex > 2 && changedNodes.size && changedNodes.has(node)) ||
+      (sourceIndex > 3 && stateDirtyNodes.size && stateDirtyNodes.has(node)) ||
+      (sourceIndex > 4 && loadNodes?.size && loadNodes.has(node))
+    )
+      continue;
     visit?.(node);
-    globalState.visit(node);
-    if (!candidates.has(node)) {
+    if (sourceIndex < 5) globalState.visit(node);
+    if (
+      !(sourceIndex >= 1 && sourceIndex <= 3) &&
+      sourceIndex !== 5 &&
+      !candidates.has(node) &&
+      !(entered.size && entered.has(node)) &&
+      !(changedNodes.size && changedNodes.has(node)) &&
+      !(stateDirtyNodes.size && stateDirtyNodes.has(node))
+    ) {
       clearFieldNodeChanges(node);
       continue;
     }
