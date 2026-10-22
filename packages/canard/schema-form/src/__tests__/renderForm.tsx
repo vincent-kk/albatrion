@@ -2,6 +2,7 @@ import {
   type FC,
   type ReactElement,
   StrictMode,
+  cloneElement,
   createRef,
   useState,
 } from 'react';
@@ -197,6 +198,10 @@ export interface FormHarness {
   setValue: (value: any, option?: number) => Promise<void>;
   /** Load current Form props synchronously, then wait for commit reconciliation. */
   reset: () => Promise<void>;
+  /** Re-render the same Form with a new context prop and drain its effects. */
+  rerenderContext: (
+    context: Readonly<Record<string, unknown>>,
+  ) => Promise<void>;
   validate: () => Promise<readonly ValidationIssue[]>;
 
   // ---- async draining ----
@@ -308,6 +313,13 @@ export const renderForm = async (
     handle: ref.current as FormHandle,
     container,
     user,
+    rerenderContext: async (context) => {
+      const next = cloneElement(form, { context });
+      await act(async () => {
+        utils.rerender(strictMode ? <StrictMode>{next}</StrictMode> : next);
+      });
+      await flush();
+    },
     lastValue: () => changes[changes.length - 1],
     changeLog: () => changes.slice(),
     caughtErrors: () =>

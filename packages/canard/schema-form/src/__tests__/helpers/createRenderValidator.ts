@@ -1,4 +1,5 @@
 import type { AnySchema } from 'ajv';
+import AjvDraft7 from 'ajv';
 import Ajv from 'ajv/dist/2020';
 
 import type { ValidatorPlugin } from '@/schema-form/app/plugin';
@@ -6,15 +7,19 @@ import type { ValidationIssue } from '@/schema-form/core';
 
 /**
  * Register each copied root once so synchronous guards resolve root-local refs.
+ * @param dialect - Tuple vocabulary used by the authored verification scene.
  * @returns An isolated validator with root registration, guards, and release; an
  *   `additionalProperties` issue names its extra key in `rejectedKey`, as the ajv8 plugin does.
  */
-export const createRenderValidator = (): ValidatorPlugin => {
-  const roots = new WeakMap<object, { ajv: Ajv; id: string }>();
+export const createRenderValidator = (
+  dialect: '2020' | 'draft7' = '2020',
+): ValidatorPlugin => {
+  const roots = new WeakMap<object, { ajv: Ajv | AjvDraft7; id: string }>();
   const registered = (root: Parameters<ValidatorPlugin['compile']>[0]) => {
     let entry = roots.get(root);
     if (!entry) {
-      const ajv = new Ajv({
+      const Constructor = dialect === 'draft7' ? AjvDraft7 : Ajv;
+      const ajv = new Constructor({
         allErrors: true,
         strict: false,
         validateFormats: false,

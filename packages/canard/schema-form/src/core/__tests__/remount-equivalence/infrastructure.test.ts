@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest';
+import { beforeEach, expect, it } from 'vitest';
 
 import { locateNode } from '@/schema-form/__tests__/fixtures/remountEquivalence/locateNode';
 import { prepareMasks } from '@/schema-form/__tests__/fixtures/remountEquivalence/prepareMasks';
@@ -130,4 +130,40 @@ it('retains independent marker keywords for simultaneous anyOf selections', () =
   );
   expect(root.jsonSchema).not.toHaveProperty('x-remount-a');
   expect(root.jsonSchema).toHaveProperty('x-remount-b', true);
+});
+
+beforeEach(({ task }) => {
+  Object.assign(task.meta, { project: task.file.projectName });
+});
+
+it('requires the effective projection option before admitting a static mask', () => {
+  const scene: RemountScene = {
+    id: 'mask-option',
+    seed: 443,
+    group: 'infrastructure',
+    writes: [],
+    schema: { type: 'object' },
+    masks: [
+      {
+        prefix: 0,
+        entries: [
+          {
+            path: '/nodes/~1cfg/value',
+            fresh: undefined,
+            category: 'omitEmpty',
+            clause: 'VALUE-031(b)',
+          },
+        ],
+      },
+    ],
+  };
+  expect(() => prepareMasks(scene, 0, () => ({ type: 'string' }))).toThrow(
+    'MASK_OPTION_NOT_ENABLED',
+  );
+  expect(
+    prepareMasks(scene, 0, () => ({
+      type: 'string',
+      options: { omitEmpty: true },
+    })),
+  ).toHaveLength(1);
 });

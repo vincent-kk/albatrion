@@ -28,6 +28,11 @@ export function collectDifferences(
   const mask = masks.find((candidate) => candidate.path === path);
   if (
     mask &&
+    present[1] === (mask.freshPresent ?? true) &&
+    (!Object.prototype.hasOwnProperty.call(mask, 'updated') ||
+      (present[0] &&
+        JSON.stringify(encodeValue(updated)) ===
+          JSON.stringify(encodeValue(mask.updated)))) &&
     JSON.stringify(encodeValue(fresh)) ===
       JSON.stringify(encodeValue(mask.fresh))
   ) {

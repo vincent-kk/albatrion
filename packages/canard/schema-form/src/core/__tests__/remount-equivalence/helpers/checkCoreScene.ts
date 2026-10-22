@@ -1,5 +1,6 @@
 import { compareObservations } from '@/schema-form/__tests__/fixtures/remountEquivalence/compareObservations';
 import { encodeValue } from '@/schema-form/__tests__/fixtures/remountEquivalence/encodeValue';
+import { locateNode } from '@/schema-form/__tests__/fixtures/remountEquivalence/locateNode';
 import { prepareMasks } from '@/schema-form/__tests__/fixtures/remountEquivalence/prepareMasks';
 import { readObservation } from '@/schema-form/__tests__/fixtures/remountEquivalence/readObservation';
 import type {
@@ -44,7 +45,11 @@ export async function checkCoreScene(
     try {
       if (prefix)
         applyCoreWrite(updated.root, scene.writes[prefix - 1], retained);
-      const masks = prepareMasks(scene, prefix);
+      const masks = prepareMasks(
+        scene,
+        prefix,
+        (path) => locateNode(updated.root, path)?.jsonSchema,
+      );
       const fresh = mountScene(
         scene,
         updated.root.outputValue,

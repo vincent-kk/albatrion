@@ -29,6 +29,10 @@ export interface RemountWrite {
 export interface ObservationMask {
   path: string;
   fresh: unknown;
+  freshPresent?: boolean;
+  updated?: unknown;
+  projectionOwner?: string;
+  trimmedIndex?: number;
   category: 'omitEmpty' | 'omitTrailing' | 'fill' | 'lifecycle';
   clause: string;
 }
@@ -43,6 +47,7 @@ export interface RemountScene {
   writes: readonly RemountWrite[];
   group: string;
   features?: readonly string[];
+  manualReads?: readonly string[];
   masks?: readonly { prefix: number; entries: readonly ObservationMask[] }[];
 }
 

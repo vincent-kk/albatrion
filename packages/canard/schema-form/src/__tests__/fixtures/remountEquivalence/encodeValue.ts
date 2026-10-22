@@ -15,6 +15,15 @@ export function encodeValue(
   if (value === null || typeof value !== 'object') return value;
   if (ancestors.includes(value)) throw new Error('CYCLIC_OBSERVATION');
   const lineage = [...ancestors, value];
+  if (value instanceof Error)
+    return [
+      'error',
+      value.name,
+      value.message,
+      encodeValue(Reflect.get(value, 'code'), lineage),
+      encodeValue(Reflect.get(value, 'details'), lineage),
+      encodeValue(Reflect.get(value, 'cause'), lineage),
+    ];
   return [
     Array.isArray(value) ? 'array' : 'object',
     Array.isArray(value) ? value.length : null,

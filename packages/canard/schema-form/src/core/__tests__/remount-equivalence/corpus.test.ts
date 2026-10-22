@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest';
+import { beforeEach, expect, it } from 'vitest';
 
 import { encodeValue } from '@/schema-form/__tests__/fixtures/remountEquivalence/encodeValue';
 import { generateCorpus } from '@/schema-form/__tests__/fixtures/remountEquivalence/generateCorpus';
@@ -41,3 +41,7 @@ for (const family of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
     );
     expect(mismatches).toEqual([]);
   }, 120000);
+
+beforeEach(({ task }) => {
+  Object.assign(task.meta, { project: task.file.projectName });
+});

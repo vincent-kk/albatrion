@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { compareObservations } from '../compareObservations';
 import { encodeValue } from '../encodeValue';
@@ -59,4 +59,14 @@ describe('remount-equivalence observation infrastructure', () => {
   it('keeps missing keys different from present undefined', () => {
     expect(compareObservations({}, { value: undefined })).toHaveLength(1);
   });
+
+  it('preserves nested Error messages in operational finding diagnostics', () => {
+    expect(encodeValue({ error: new Error('first') })).not.toEqual(
+      encodeValue({ error: new Error('second') }),
+    );
+  });
+});
+
+beforeEach(({ task }) => {
+  Object.assign(task.meta, { project: task.file.projectName });
 });

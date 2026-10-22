@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest';
+import { beforeEach, expect, it } from 'vitest';
 
 import { requiredFeatures, requiredPairs } from '../coverageRequirements';
 import { encodeValue } from '../encodeValue';
@@ -74,4 +74,8 @@ it('does not directly write automatic targets and predicts zero generic masks', 
     }
     expect(scene.masks ?? []).toEqual([]);
   }
+});
+
+beforeEach(({ task }) => {
+  Object.assign(task.meta, { project: task.file.projectName });
 });

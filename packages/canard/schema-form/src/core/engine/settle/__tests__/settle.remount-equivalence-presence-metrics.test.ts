@@ -1,4 +1,4 @@
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { createAncestorScenes } from '@/schema-form/__tests__/fixtures/remountEquivalence/createAncestorScenes';
 import { checkCoreScene } from '@/schema-form/core/__tests__/remount-equivalence/helpers/checkCoreScene';
@@ -72,3 +72,7 @@ it('the ancestor lattice reaches recorded rechecks and wheel promotion', async (
   }
   expect(missing).toEqual([]);
 }, 120000);
+
+beforeEach(({ task }) => {
+  Object.assign(task.meta, { project: task.file.projectName });
+});

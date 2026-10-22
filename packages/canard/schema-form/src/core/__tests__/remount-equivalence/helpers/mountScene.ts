@@ -1,8 +1,7 @@
+import { createSceneValidator } from '@/schema-form/__tests__/fixtures/remountEquivalence/createSceneValidator';
 import type { RemountScene } from '@/schema-form/__tests__/fixtures/remountEquivalence/types';
 import { type AuthoredSchema, ValidationMode } from '@/schema-form/core/engine';
 import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core/surface';
-
-import { createTestValidator } from '../../fixtures/createTestValidator';
 
 /**
  * Compile and mount a wholly independent tree; no blueprint is reused.
@@ -22,7 +21,7 @@ export function mountScene(
     defaultValue: value,
     context,
     validationMode: ValidationMode.OnChange,
-    validator: createTestValidator(),
+    validator: createSceneValidator(scene),
     errorReporter: {
       hasConsumer: () => true,
       report: (record) => records.push(record),
