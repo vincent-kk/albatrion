@@ -92,6 +92,7 @@ describe('mount-time gate selection preparation', () => {
   it('prepares once before the generic load writer', () => {
     const { root, blueprint } = createBranchTree(5);
     const tables = vi.spyOn(gateSelection, 'getGateSelectionTable');
+    const builds = vi.spyOn(WeakMap.prototype, 'set');
     const write = writer.writeFieldNode;
     const loading = vi
       .spyOn(writer, 'writeFieldNode')
@@ -107,7 +108,21 @@ describe('mount-time gate selection preparation', () => {
       });
     loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
     expect(loading).toHaveBeenCalledOnce();
-    expect(tables).toHaveBeenCalledOnce();
+    // The four load rounds query the same table that mount preparation constructs once.
+    expect(
+      builds.mock.calls.filter(
+        ([host, value]) =>
+          host === blueprint.root &&
+          value &&
+          typeof value === 'object' &&
+          'plan' in value,
+      ),
+    ).toHaveLength(1);
+    expect(
+      tables.mock.results.every(
+        ({ value }) => value === tables.mock.results[0].value,
+      ),
+    ).toBe(true);
   });
 
   it('leaves branchless expression caches untouched', () => {

@@ -9,6 +9,7 @@ import { resolveDependencyPath } from '../../utils/paths/resolveDependencyPath';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import type { SettlementContext } from '../types/settlement';
 import * as gateEvaluation from '../utils/gates/evaluateGate';
+import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { readProjectedValueWithoutPublication } from './helpers/readProjectedValueWithoutPublication';
 
@@ -88,6 +89,9 @@ describe('gate selection original-site shadow precondition', () => {
 
   it('full evaluation leaves consumed and baseline-published nodes ready at every shadow read', () => {
     const { root, blueprint } = createTestTree(SCHEMA);
+    const previousMode = gateSelectionTable.mode;
+    // Pin the full-evaluation reference path without the table.
+    gateSelectionTable.mode = 'off';
     const original = gateEvaluation.evaluateGate;
     const violations: {
       site: string;
@@ -153,6 +157,7 @@ describe('gate selection original-site shadow precondition', () => {
       );
     } finally {
       spy.mockRestore();
+      gateSelectionTable.mode = previousMode;
     }
     expect(root.runtime.diagnostics.status).toBe('stable');
     expect(shadowReads).toBeGreaterThan(0);

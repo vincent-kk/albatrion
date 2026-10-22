@@ -4,6 +4,7 @@ import { gateSelectionTable } from '../../../gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../../../gates/gateWheelEvaluation';
 import { readGateSelectionGroup } from '../../../gates/readGateSelectionGroup';
 import { verifyTableGate } from '../../../gates/verifyTableGate';
+import { verifyTablePrePublication } from '../../../gates/verifyTablePrePublication';
 import { verifyUnvisitedGateStep } from '../../../gates/verifyUnvisitedGateStep';
 import { selectEntryStep } from '../selectEntryStep';
 import type { ChildSelectionFrame } from '../selectEntryStep';
@@ -41,6 +42,16 @@ export const selectTableChildren = <Self extends FieldNodeRecord<Self>>(
             selected[cursor] ?? Infinity,
             table.groups[groupIndex]?.firstStepIndex ?? Infinity,
           );
+    const step = table.plan.steps[index];
+    const tableStep = table.tableSteps.has(index);
+    if (
+      verify &&
+      gateWheelEvaluation.mode === 'skip' &&
+      tableStep &&
+      frame.flushReads &&
+      frame.context.pendingOutputs?.size
+    )
+      verifyTablePrePublication(frame.node, frame.context, step.entry);
     while (
       groupIndex < table.groups.length &&
       table.groups[groupIndex].firstStepIndex <= index
@@ -53,8 +64,6 @@ export const selectTableChildren = <Self extends FieldNodeRecord<Self>>(
     }
     const listed = selected[cursor] === index;
     if (listed) cursor++;
-    const step = table.plan.steps[index];
-    const tableStep = table.tableSteps.has(index);
     const admitted = active.has(index);
     if (tableStep && (verify || shadow))
       verifyTableGate(frame.node, frame.context, step.gate!, admitted);

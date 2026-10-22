@@ -22,7 +22,11 @@ export const snapshotGateTableCase = async (
 ): Promise<void> => {
   const directory = fileURLToPath(new URL('../', import.meta.url));
   const canonical = canonicalGateTableJSON(JSON.parse(serialized));
-  if (Buffer.byteLength(canonical) <= 100_000) {
+  const manifestPath = join(directory, 'large.manifest.json');
+  const manifest = existsSync(manifestPath)
+    ? JSON.parse(readFileSync(manifestPath, 'utf8'))
+    : {};
+  if (Buffer.byteLength(canonical) <= 100_000 && !manifest[fixture]) {
     await expect(canonical + '\n').toMatchFileSnapshot(
       join(directory, fixture + '.json'),
     );
@@ -40,10 +44,6 @@ export const snapshotGateTableCase = async (
   ];
   const full: Record<string, unknown> = {};
   const hashes: Record<string, unknown> = {};
-  const manifestPath = join(directory, 'large.manifest.json');
-  const manifest = existsSync(manifestPath)
-    ? JSON.parse(readFileSync(manifestPath, 'utf8'))
-    : {};
   const updating =
     Reflect.get(expect.getState().snapshotState, '_updateSnapshot') === 'all';
   for (const [section, value] of Object.entries(sections)) {

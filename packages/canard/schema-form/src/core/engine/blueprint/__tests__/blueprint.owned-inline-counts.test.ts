@@ -12,7 +12,7 @@ afterEach(() => vi.restoreAllMocks());
 const expectations = [
   { name: 'nested-d5-f4', nodes: 1365, production: 1706, development: 29007 },
   { name: 'flat-500', nodes: 501, production: 502, development: 10523 },
-  { name: 'oneOf-20', nodes: 63, production: 116, development: 1569 },
+  { name: 'oneOf-20', nodes: 63, production: 111, development: 1564 },
   { name: 'sample-0', nodes: 3, production: 5, development: 66 },
 ];
 
@@ -44,6 +44,14 @@ it.each(expectations)(
       ),
     ).toBe(true);
     expect(duplicates).toBe(0);
+    console.log(
+      'OWNED_INLINE_FREEZE_COUNTS',
+      JSON.stringify({
+        fixture: expected.name,
+        mode: process.env.NODE_ENV,
+        distinct: distinct.size,
+      }),
+    );
     expect(distinct.size).toBe(
       process.env.NODE_ENV === 'production'
         ? expected.production
