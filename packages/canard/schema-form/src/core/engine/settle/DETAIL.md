@@ -68,7 +68,7 @@
 - 배열 재사용 경로(canReuseArrayChildren의 append, pop, splice)는 표시 자리를 거치지 않는다. 그 있음 변화는 raw 쓰기라 registerRecalculation이 덮는다. 재사용 라운드 뒤 새 자식은 다음 라운드에 첫째 자리에서 표시된다.
 - 변화 없는 쓰기의 추가 작업은 라운드마다 presenceHosts 조회 하나와, 형상 dirty가 아닌 branch마다 정수 비교 하나다. 게이트 없는 문맥은 있음 등록에서 즉시 돌아오며, 누적 있음 접두는 새 경로에 대해서만 추가한다. 조상 질의는 이미 형상 dirty인 자리에서는 집합 조회로 끝나고, load 범위 위의 조상도 필요한 경우 질의한다(GOAL-011).
 - 알려진 남은 결함: overlay가 omitEmpty, omitTrailing, type을 바꾸어 있음은 그대로이고 투영 방출만 바뀌는 읽기 누락은 이번 있음 등록의 범위 밖이다. 재현 장면은 아직 필요하다. 열린 항목: 옮긴 게이트를 처음 locate한 뒤 평가 자리에서 선언 호스트까지의 경로 재계산은, 있음 변화 없이 값만 바뀌는 경우에도 SETTLE-045의 매 바퀴 평가를 지키는지 별도로 확인해야 한다.
-- 필드명이 문자 그대로 `*` 인 노드의 상태 키 판독자(`controls.visible`·`readOnly`)는 있음 변화 뒤 다시 계산되지 않는다. 소유자 템플릿 표현이 `*` 를 배열 와일드카드로 읽기 때문이며(`getDependencyIndex` 의 접기, `collectPresenceOwners`, `deferPresenceTemplate`, `expandTemplatePaths`), `active` 게이트는 레지스트리 경로가 덮어 영향이 없다. 장면은 `settle.presence-star-name.test.ts` 에 `it.fails` 로 기록한다.
+- `*` 조각은 청사진이 반복 아이템 템플릿을 선언한 호스트 아래에서만 펼쳐지고, 그 밖에서는 문자 그대로의 속성 이름이다.
 
 - The first owned child is identified directly from selected declarations, the previous commit's selection fallback, and declaration child owner paths, while full policy-layer collection and evaluation, priority, and previous-commit exit semantics remain unchanged (CONTROLS-077·CONTROLS-073(7)·WRITE-032·NODE-044; same-layer keep wins).
 
