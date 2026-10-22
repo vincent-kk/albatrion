@@ -18,6 +18,8 @@ afterEach(() => {
 });
 
 it('preserves values, shape, errors, deliveries, write rounds and iterations for terminal writes', () => {
+  // The exact decision trace includes the shadow confirmation evaluations.
+  deriveShadowEvaluation.enabled = true;
   const result = runDeriveConvergenceCase(
     {
       type: 'object',
@@ -355,6 +357,7 @@ it('skips the confirmation evaluation in development while preserving its empty 
 });
 
 it('actually runs shadow and rejects a false proof with nonzero confirmation candidates', () => {
+  deriveShadowEvaluation.enabled = true;
   const { root, blueprint } = createTestTree({
     type: 'object',
     properties: {

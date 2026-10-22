@@ -112,11 +112,12 @@ Applies the root `Module Contract Principles` to this package.
 
 ## Render-Level Test Harness (`src/__tests__/`)
 
-Vitest uses three projects: `unit` runs TypeScript core tests in Node, `render`
+Vitest uses five projects: `unit` runs TypeScript core tests in Node, `render`
 runs React tests and DOM-dependent TypeScript tests in jsdom, and `storybook`
-runs portable stories through addon-vitest in headless Chromium. Source globs
+runs portable stories through addon-vitest in headless Chromium, `react18` repeats the render project on React 18, and `production` checks the built bundles. Source globs
 include `src/__legacy__/**`; architecture spike tests remain outside these
 product projects. Run `yarn test --run --project <name>` to select a project.
+The dedicated `verify-unit` and `verify-render` bundle runs shadow wheel, verify table, and derive shadow checks via `yarn workspace @canard/schema-form test:verify --run`; default `unit`, `render`, and `react18` projects exercise the shipped skip/table configuration with derive shadow disabled.
 
 - `src/__tests__/renderForm.tsx` remains the legacy Form regression harness.
   It observes both DOM (`data-path`, input values, deferred placeholders) and

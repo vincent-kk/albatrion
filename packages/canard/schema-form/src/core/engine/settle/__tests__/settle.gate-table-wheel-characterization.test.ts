@@ -1,3 +1,4 @@
+// Runs only in the verify bundle because stored visits require the shadow wheel.
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 

@@ -16,10 +16,6 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-it('enables shadow verification through the package test setup', () => {
-  expect(deriveShadowEvaluation.enabled).toBe(true);
-});
-
 it('does not run shadow with the internal flag off even when NODE_ENV is test', () => {
   deriveShadowEvaluation.enabled = false;
   vi.stubEnv('NODE_ENV', 'test');
