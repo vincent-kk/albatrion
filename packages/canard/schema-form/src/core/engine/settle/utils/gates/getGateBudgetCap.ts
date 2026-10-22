@@ -12,8 +12,10 @@ interface GateBudgetIndex {
 }
 
 interface HostBudgetCache {
-  /** Gate identities in the host's last evaluated order. */
-  readonly gates: readonly BlueprintGate[];
+  /** Immutable authored prefix shared by this host's evaluated lists. */
+  readonly staticGates: readonly BlueprintGate[];
+  /** Relocated gate identities after that prefix, in evaluation order. */
+  readonly tail: readonly BlueprintGate[];
   /** Ceiling for that exact gate list. */
   readonly cap: number;
 }
@@ -21,6 +23,8 @@ interface HostBudgetCache {
 /** One finite decision index per immutable analysis and one ceiling per live host. */
 const INDICES = new WeakMap<Blueprint, GateBudgetIndex>();
 const HOST_CAPS = new WeakMap<object, HostBudgetCache>();
+/** Unpartitioned callers retain the full-list comparison contract. */
+const EMPTY_STATIC_GATES: readonly BlueprintGate[] = Object.freeze([]);
 
 /** Map evaluated gates to their owning fragments or node-gate entries. */
 const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
@@ -74,13 +78,17 @@ export const getHostWheelBudgetCap = (
   host: object,
   blueprint: Blueprint,
   gates: readonly BlueprintGate[],
+  staticGates: readonly BlueprintGate[] = EMPTY_STATIC_GATES,
 ): number => {
   if (blueprint.capabilities.branchless) return 1;
   const cached = HOST_CAPS.get(host);
   if (
     cached &&
-    cached.gates.length === gates.length &&
-    cached.gates.every((gate, index) => gate === gates[index])
+    cached.staticGates === staticGates &&
+    cached.tail.length === gates.length - staticGates.length &&
+    cached.tail.every(
+      (gate, index) => gate === gates[staticGates.length + index],
+    )
   )
     return cached.cap;
   const index = getIndex(blueprint);
@@ -88,6 +96,10 @@ export const getHostWheelBudgetCap = (
   for (const gate of gates)
     for (const key of index.decisionsByGate.get(gate) ?? []) decisions.add(key);
   const cap = decisions.size + 1;
-  HOST_CAPS.set(host, { gates: [...gates], cap });
+  HOST_CAPS.set(host, {
+    staticGates,
+    tail: gates.slice(staticGates.length),
+    cap,
+  });
   return cap;
 };

@@ -4,6 +4,11 @@ import {
   SchemaFormError,
 } from '../../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
+import type {
+  Blueprint,
+  BlueprintNode,
+  EffectiveSchema,
+} from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
@@ -15,6 +20,12 @@ import { selectRootGateDeclarations } from './childSelection/gateSelection/selec
 /** A schema path through a `oneOf` branch; captures the `oneOf` prefix and the branch index. */
 const ONE_OF_BRANCH_PREFIX = /^(.*\/oneOf)\/(\d+)(?:\/|$)/;
 
+/** Stable root bucket combinations retain the merger's atomic-predicate partitions. */
+const ROOT_EFFECTIVE_SCHEMAS = new WeakMap<
+  readonly BlueprintNode['declarations'][number][],
+  Map<Blueprint['isAtomic'], EffectiveSchema>
+>();
+
 /**
  * Recompute one node's active overlays and effective schema in a host round.
  * @param node - Current occurrence whose declarations may have changed gates
@@ -25,8 +36,9 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
+  const tableActive = selectRootGateDeclarations(node, context);
   const active =
-    selectRootGateDeclarations(node, context) ??
+    tableActive ??
     node.blueprintNode.declarations.filter((declaration) =>
       declaration.gates.every((gate) => evaluateGate(gate, context, node)),
     );
@@ -68,11 +80,25 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
     node,
     active.map((declaration) => declaration.id),
   );
-  const effective = mergeEffectiveSchema(
-    node.blueprintNode,
-    active.map((declaration) => declaration.id),
-    { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic },
-  );
+  const isAtomic = node.runtime.blueprint?.isAtomic;
+  let schemas = tableActive
+    ? ROOT_EFFECTIVE_SCHEMAS.get(tableActive)
+    : undefined;
+  let effective = schemas?.get(isAtomic);
+  if (!effective) {
+    effective = mergeEffectiveSchema(
+      node.blueprintNode,
+      active.map((declaration) => declaration.id),
+      { mode: 'runtime', isAtomic },
+    );
+    if (tableActive) {
+      if (!schemas) {
+        schemas = new Map();
+        ROOT_EFFECTIVE_SCHEMAS.set(tableActive, schemas);
+      }
+      schemas.set(isAtomic, effective);
+    }
+  }
   if (effective.typeConflict) {
     recordSettlementFailure(
       context,

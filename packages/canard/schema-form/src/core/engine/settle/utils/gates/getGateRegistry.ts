@@ -75,6 +75,11 @@ class GateRegistry {
     string,
     Set<RegisteredGateOccurrence>
   >();
+  /** Same insertion order as byLocation, restricted to relocated occurrences. */
+  private readonly relocatedByLocation = new Map<
+    string,
+    Set<RegisteredGateOccurrence>
+  >();
   /** Absolute reads shared by gates that ask the same pointer at one host. */
   private readonly resolvedReads = new Map<string, Map<string, string>>();
   /** Decoded pointers contain no live shape or projected value. */
@@ -204,9 +209,8 @@ class GateRegistry {
 
   /** Read relocated gates at one host without scanning other templates. */
   relocated(path: string): readonly GateOccurrence[] {
-    return [...(this.byLocation.get(path) ?? [])].filter(
-      (entry) => entry.hostPath !== path,
-    );
+    const entries = this.relocatedByLocation.get(path);
+    return entries ? [...entries] : EMPTY_OCCURRENCES;
   }
 
   /** Whether changed raw intersects any read that can affect this host's wheel. */
@@ -329,6 +333,16 @@ class GateRegistry {
       this.byLocation.set(occurrence.evaluationHostPath, entries);
     }
     entries.add(occurrence);
+    if (occurrence.hostPath !== occurrence.evaluationHostPath) {
+      let relocated = this.relocatedByLocation.get(
+        occurrence.evaluationHostPath,
+      );
+      if (!relocated) {
+        relocated = new Set();
+        this.relocatedByLocation.set(occurrence.evaluationHostPath, relocated);
+      }
+      relocated.add(occurrence);
+    }
     this.indexOccurrence(occurrence, 1);
   }
 
@@ -430,8 +444,14 @@ class GateRegistry {
     for (const occurrence of previous.occurrences)
       if (
         this.byLocation.get(occurrence.evaluationHostPath)?.delete(occurrence)
-      )
+      ) {
+        const relocated = this.relocatedByLocation.get(
+          occurrence.evaluationHostPath,
+        );
+        if (relocated?.delete(occurrence) && relocated.size === 0)
+          this.relocatedByLocation.delete(occurrence.evaluationHostPath);
         this.indexOccurrence(occurrence, -1);
+      }
     this.byPath.delete(path);
   }
 }

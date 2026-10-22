@@ -155,7 +155,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   }
   const prior = node.structure ?? {};
   const staticList = context.hasGates ? getStaticGateList(node) : undefined;
-  const gates: BlueprintGate[] = staticList ? [...staticList.gates] : [];
+  let gates: readonly BlueprintGate[] = staticList?.gates ?? [];
+  let mutableGates: BlueprintGate[] | undefined;
   const seenGates = new Set<BlueprintGate>();
   if (context.hasGates) {
     const relocated = relocatedGates(node);
@@ -166,7 +167,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
         !seenGates.has(occurrence.gate)
       ) {
         seenGates.add(occurrence.gate);
-        gates.push(occurrence.gate);
+        if (!mutableGates) gates = mutableGates = [...gates];
+        mutableGates.push(occurrence.gate);
       }
     }
   }
@@ -176,7 +178,12 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     computeNode(initialDirty[index], context);
   if (gates.length > 0 && updateOutput(node, context))
     scheduleRelocatedGates(relocatedGates(node), context);
-  let cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
+  let cap = getHostWheelBudgetCap(
+    node,
+    node.runtime.blueprint,
+    gates,
+    staticList?.gates,
+  );
   let confirmation: GateWheelFrame | undefined;
   let previousPredicate: boolean | undefined;
   let lastStructure = prior;
@@ -232,10 +239,16 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
         !seenGates.has(occurrence.gate)
       ) {
         seenGates.add(occurrence.gate);
-        gates.push(occurrence.gate);
+        if (!mutableGates) gates = mutableGates = [...gates];
+        mutableGates.push(occurrence.gate);
       }
     }
-    cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
+    cap = getHostWheelBudgetCap(
+      node,
+      node.runtime.blueprint,
+      gates,
+      staticList?.gates,
+    );
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
     const wheelChanged = schemaChanged || changed || outputChanged;
     finishGateTableRound(node, context);
