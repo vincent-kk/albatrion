@@ -5,6 +5,8 @@ import type {
   SplitBucket,
   SplitOwner,
 } from '../../types/splitRegistration';
+import { gateSelectionTable } from '../gates/gateSelectionTable';
+import { verifyGateSelection } from '../gates/verifyGateSelection';
 
 /** One compressed group of absent keys occupying a single ancestor position. */
 interface SplitAnchor {
@@ -224,6 +226,7 @@ export class DirtyPathSet extends Set<string> {
           children = new Map();
           this.childrenByParent.set(parent, children);
         }
+        if (children.has(current)) children.delete(current);
         children.set(current, current.slice(slash + 1));
         current = parent;
       }
@@ -270,6 +273,24 @@ export class DirtyPathSet extends Set<string> {
       if (slash < 0) break;
       start = slash + 1;
     }
+    return true;
+  }
+
+  /**
+   * Consume a settled node after its children without slicing its parent path.
+   * @param path - Completed node; post-order child entries must already be consumed
+   * @returns Whether a dirty member was removed; ordinary indexes use delete
+   */
+  consume(path: string): boolean {
+    if (!this.postOrder) return this.delete(path);
+    if (gateSelectionTable.mode === 'verify')
+      for (const child of this.childrenByParent.get(path)?.keys() ?? [])
+        verifyGateSelection(
+          !this.has(child),
+          'S6 consume has an unconsumed child: ' + child,
+        );
+    if (!super.delete(path)) return false;
+    this.childrenByParent.delete(path);
     return true;
   }
 

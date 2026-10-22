@@ -5,6 +5,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { gateSelectionTable } from '../gates/gateSelectionTable';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
+import { DirtyPathSet } from '../scratch/DirtyPathSet';
 
 /**
  * Resolve only scheduled direct children instead of scanning a host's shape.
@@ -27,6 +28,15 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
         ? node.structure[name]
         : undefined;
     if (child && !seen.has(child)) {
+      if (
+        gateSelectionTable.mode === 'verify' &&
+        context.dirtyPaths instanceof DirtyPathSet &&
+        context.dirtyPaths.isPostOrder
+      )
+        verifyGateSelection(
+          context.dirtyPaths.has(child.path),
+          'S6 dirtyChildren returned a consumed child: ' + child.path,
+        );
       seen.add(child);
       children.push(child);
     }
