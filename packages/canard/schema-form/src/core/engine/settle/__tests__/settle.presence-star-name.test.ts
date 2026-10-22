@@ -14,9 +14,7 @@ for (const name of ['plain', '*', '*x'])
   for (const key of ['active', 'visible', 'readOnly'] as const)
     for (const nested of [false, true])
       for (const mode of ['skip', 'shadow'] as const) {
-        // Literal "*" state-key owners are mistaken for array wildcard templates.
-        const test = name === '*' && key !== 'active' ? it.fails : it;
-        test(`${JSON.stringify(name)} ${key} nested=${nested} ${mode}`, () => {
+        it(`${JSON.stringify(name)} ${key} nested=${nested} ${mode}`, () => {
           gateWheelEvaluation.mode = mode;
           const reader: BlueprintSchema = {
             type: 'string',

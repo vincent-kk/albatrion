@@ -8,6 +8,7 @@ import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
+import { captureProjectionBaseline } from '../../dependencies/captureProjectionBaseline';
 import { supplementSplitOwner } from '../../dependencies/supplementSplitOwner';
 import { recordSettlementFailure } from '../../errors/recordSettlementFailure';
 import { evaluateGate } from '../../gates/evaluateGate';
@@ -63,7 +64,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
  * current structure, admitted-name map, inactive list and accumulated changed flag
  * @returns Nothing; mutates frame.changed, frame.next, frame.seen and frame.inactiveEntries
  * @remarks Gate reads may publish pending projections and record inputs or failures.
- * Updates throwing exits, presence hosts, recursion budget, perished/pending exit
+ * Updates throwing exits, presence hosts, projection baselines, recursion budget, perished/pending exit
  * maps and path counts, revived/entered sets and latent-entry indexes, gate registry,
  * selected declaration IDs, original schemas, dirty/shape/state/change records,
  * child schema/active/detached state and pending host outputs. Creates or enters
@@ -301,6 +302,12 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       { mode: 'runtime', isAtomic },
     );
   if (child.schema !== effective) {
+    captureProjectionBaseline(
+      node,
+      child,
+      !!(priorChild || currentChild),
+      context,
+    );
     if (!context.originalSchemas.has(child.path))
       context.originalSchemas.set(child.path, child.schema);
     child.schema = captureFieldNodeChange(child, 'schema', effective);

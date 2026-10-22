@@ -29,6 +29,14 @@ export type VirtualReferenceIndex = ReadonlyMap<
   ReadonlyMap<string, readonly string[]>
 >;
 
+/** Last compared projection references for one retained child in a settlement. */
+interface ProjectionBaseline {
+  /** Effective schema before its first change or at the last presence comparison. */
+  schema: EffectiveSchema;
+  /** Emitted value before its first schema change or at the last comparison. */
+  emit: unknown;
+}
+
 /** Call-local evidence of one admitted static push; it never outlives its settlement. */
 export interface ArrayAppendProof<Self extends FieldNodeRecord<Self>> {
   /** Live static branch array receiving the new last position. */
@@ -125,11 +133,13 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
-  /** Hosts whose direct child identity may differ from the wheel's prior shape. */
+  /** Hosts whose direct child identity or projected emission may have changed. */
   presenceHosts?: Set<Self>;
   /** Latest actual dependency reads of relocated occurrences in this settlement. */
   relocatedReads?: Map<GateOccurrence, RelocatedGateReads>;
-  /** Emitted child paths that changed identity at any point in this settlement. */
+  /** Retained child projection baselines grouped by their existing host wheel. */
+  projectionBaselines?: Map<Self, Map<Self, ProjectionBaseline>>;
+  /** Emitted child paths whose identity or projected emission changed in this settlement. */
   changedPresence?: Set<string>;
   /** Ancestor prefixes accumulated only when a new presence path is added. */
   presencePrefixes?: Set<string>;

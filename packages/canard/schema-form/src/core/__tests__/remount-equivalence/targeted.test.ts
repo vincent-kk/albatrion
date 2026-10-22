@@ -8,8 +8,7 @@ import { encodeValue } from '@/schema-form/__tests__/fixtures/remountEquivalence
 
 import { checkCoreScene } from './helpers/checkCoreScene';
 
-// D443-01 — 결함, 수정 PR 대기.
-it.fails('literal-star state owners match a fresh public-output mount', async ({
+it('literal-star state owners match a fresh public-output mount', async ({
   task,
 }) => {
   const mismatches = [];
@@ -19,7 +18,7 @@ it.fails('literal-star state owners match a fresh public-output mount', async ({
   expect(mismatches).toEqual([]);
 }, 120000);
 
-// D443-02 — 결함, 수정 PR 대기; D443-04 — 원장 판정 대기; D443-05 — U7 후보, 소유자 판정 대기; C443-01·C443-02 — VALUE-031 ㄴ 후보, 소유자 판정 대기.
+// D443-04 — 원장 판정 대기; D443-05 — U7 후보, 소유자 판정 대기; C443-01·C443-02 — VALUE-031 ㄴ 후보, 소유자 판정 대기.
 it.fails('projection overlays reach readers outside the overlay host', async ({
   task,
 }) => {

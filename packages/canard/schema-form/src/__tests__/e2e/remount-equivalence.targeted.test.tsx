@@ -9,9 +9,8 @@ import { encodeValue } from '@/schema-form/__tests__/fixtures/remountEquivalence
 import { checkRenderScene } from './remount-equivalence/helpers/checkRenderScene';
 
 for (const [group, scenes, test] of [
-  // D443-01 — 결함, 수정 PR 대기.
-  ['star', createStarScenes(), it.fails],
-  // D443-02 — 결함, 수정 PR 대기; D443-04 — 원장 판정 대기; D443-05 — U7 후보, 소유자 판정 대기; C443-01·C443-02 — VALUE-031 ㄴ 후보, 소유자 판정 대기.
+  ['star', createStarScenes(), it],
+  // D443-04 — 원장 판정 대기; D443-05 — U7 후보, 소유자 판정 대기; C443-01·C443-02 — VALUE-031 ㄴ 후보, 소유자 판정 대기.
   ['overlay', createOverlayScenes(), it.fails],
   ['relocated', createRelocatedScenes(), it],
   ['ancestor', createAncestorScenes(), it],
