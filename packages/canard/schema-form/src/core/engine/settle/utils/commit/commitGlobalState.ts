@@ -9,9 +9,12 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
- * Prepare ordered global-state candidates for the shared commit visitor.
+ * Accumulate global-state deltas for the departing and load sources and expose the visitor the commit uses for the five global sources.
+ * The visitor adds a node's state keys to the global counts when no state existed before, so `visit` must be called only for nodes
+ * from the five global sources (departing, entered, changed, stateDirty, load); `markCommitDeliveries` assembles the visit order and
+ * never passes an additional candidate to it.
  * @param context - Final shape facts, including revived perished candidates
- * @returns Departing/load sources, global-candidate accumulation and publication
+ * @returns Departing/load sources, the global-source visitor and the delta publication
  */
 export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
