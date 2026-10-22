@@ -1,0 +1,551 @@
+{
+  "$id": 0,
+  "object": [
+    [
+      "trie",
+      {
+        "$id": 1,
+        "object": [
+          [
+            "owners",
+            {
+              "$id": 2,
+              "array": []
+            }
+          ],
+          [
+            "ownerPaths",
+            {
+              "$id": 3,
+              "set": []
+            }
+          ],
+          [
+            "children",
+            {
+              "$id": 4,
+              "map": [
+                [
+                  "outer",
+                  {
+                    "$id": 5,
+                    "object": [
+                      [
+                        "owners",
+                        {
+                          "$id": 6,
+                          "array": [
+                            {
+                              "$id": 7,
+                              "object": [
+                                [
+                                  "path",
+                                  ""
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 8,
+                              "object": [
+                                [
+                                  "path",
+                                  "/inner"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 9,
+                              "object": [
+                                [
+                                  "path",
+                                  "/inner/common"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 10,
+                              "object": [
+                                [
+                                  "path",
+                                  "/inner/kind"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 11,
+                              "object": [
+                                [
+                                  "path",
+                                  "/inner/pa"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 12,
+                              "object": [
+                                [
+                                  "path",
+                                  "/inner/pb"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 13,
+                              "object": [
+                                [
+                                  "path",
+                                  "/other"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      [
+                        "ownerPaths",
+                        {
+                          "$id": 14,
+                          "set": [
+                            "",
+                            "/inner",
+                            "/inner/common",
+                            "/inner/kind",
+                            "/inner/pa",
+                            "/inner/pb",
+                            "/other"
+                          ]
+                        }
+                      ],
+                      [
+                        "children",
+                        {
+                          "$id": 15,
+                          "map": []
+                        }
+                      ]
+                    ]
+                  }
+                ],
+                [
+                  "inner",
+                  {
+                    "$id": 16,
+                    "object": [
+                      [
+                        "owners",
+                        {
+                          "$id": 17,
+                          "array": []
+                        }
+                      ],
+                      [
+                        "ownerPaths",
+                        {
+                          "$id": 18,
+                          "set": []
+                        }
+                      ],
+                      [
+                        "children",
+                        {
+                          "$id": 19,
+                          "map": [
+                            [
+                              "kind",
+                              {
+                                "$id": 20,
+                                "object": [
+                                  [
+                                    "owners",
+                                    {
+                                      "$id": 21,
+                                      "array": [
+                                        {
+                                          "$id": 22,
+                                          "object": [
+                                            [
+                                              "path",
+                                              "/inner"
+                                            ],
+                                            [
+                                              "bindable",
+                                              true
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "$id": 23,
+                                          "object": [
+                                            [
+                                              "path",
+                                              "/inner/common"
+                                            ],
+                                            [
+                                              "bindable",
+                                              true
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "$id": 24,
+                                          "object": [
+                                            [
+                                              "path",
+                                              "/inner/pa"
+                                            ],
+                                            [
+                                              "bindable",
+                                              true
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "$id": 25,
+                                          "object": [
+                                            [
+                                              "path",
+                                              "/inner/pb"
+                                            ],
+                                            [
+                                              "bindable",
+                                              true
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ],
+                                  [
+                                    "ownerPaths",
+                                    {
+                                      "$id": 26,
+                                      "set": [
+                                        "/inner",
+                                        "/inner/common",
+                                        "/inner/pa",
+                                        "/inner/pb"
+                                      ]
+                                    }
+                                  ],
+                                  [
+                                    "children",
+                                    {
+                                      "$id": 27,
+                                      "map": []
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    [
+      "splitOwners",
+      {
+        "$id": 28,
+        "map": []
+      }
+    ],
+    [
+      "tables",
+      {
+        "$id": 29,
+        "array": [
+          {
+            "$id": 30,
+            "array": [
+              0,
+              null
+            ]
+          },
+          {
+            "$id": 31,
+            "array": [
+              1,
+              null
+            ]
+          },
+          {
+            "$id": 32,
+            "array": [
+              2,
+              null
+            ]
+          },
+          {
+            "$id": 33,
+            "array": [
+              3,
+              null
+            ]
+          },
+          {
+            "$id": 34,
+            "array": [
+              4,
+              null
+            ]
+          },
+          {
+            "$id": 35,
+            "array": [
+              5,
+              null
+            ]
+          },
+          {
+            "$id": 36,
+            "array": [
+              6,
+              null
+            ]
+          },
+          {
+            "$id": 37,
+            "array": [
+              7,
+              null
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      "queries",
+      {
+        "$id": 38,
+        "array": [
+          {
+            "$id": 39,
+            "array": [
+              "",
+              {
+                "$id": 40,
+                "array": [
+                  "/inner",
+                  "/inner/common",
+                  "/inner/pa",
+                  "/inner/pb",
+                  "",
+                  "/inner/kind",
+                  "/other"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 41,
+            "array": [
+              "/kind",
+              {
+                "$id": 42,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 43,
+            "array": [
+              "/common",
+              {
+                "$id": 44,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 45,
+            "array": [
+              "/missing",
+              {
+                "$id": 46,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 47,
+            "array": [
+              "/",
+              {
+                "$id": 48,
+                "array": [
+                  "/inner",
+                  "/inner/common",
+                  "/inner/pa",
+                  "/inner/pb",
+                  "",
+                  "/inner/kind",
+                  "/other"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 49,
+            "array": [
+              "//value",
+              {
+                "$id": 50,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 51,
+            "array": [
+              "/a~1b",
+              {
+                "$id": 52,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 53,
+            "array": [
+              "/items/0/value",
+              {
+                "$id": 54,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 55,
+            "array": [
+              "/outer",
+              {
+                "$id": 56,
+                "array": [
+                  "",
+                  "/inner",
+                  "/inner/common",
+                  "/inner/kind",
+                  "/inner/pa",
+                  "/inner/pb",
+                  "/other"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 57,
+            "array": [
+              "/inner",
+              {
+                "$id": 58,
+                "array": [
+                  "/inner",
+                  "/inner/common",
+                  "/inner/pa",
+                  "/inner/pb"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 59,
+            "array": [
+              "/inner/common",
+              {
+                "$id": 60,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 61,
+            "array": [
+              "/inner/kind",
+              {
+                "$id": 62,
+                "array": [
+                  "/inner",
+                  "/inner/common",
+                  "/inner/pa",
+                  "/inner/pb"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 63,
+            "array": [
+              "/inner/pa",
+              {
+                "$id": 64,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 65,
+            "array": [
+              "/inner/pb",
+              {
+                "$id": 66,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 67,
+            "array": [
+              "/other",
+              {
+                "$id": 68,
+                "array": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      "anchors",
+      {
+        "$id": 69,
+        "map": []
+      }
+    ]
+  ]
+}

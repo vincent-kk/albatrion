@@ -1,0 +1,1320 @@
+{
+  "$id": 0,
+  "object": [
+    [
+      "trie",
+      {
+        "$id": 1,
+        "object": [
+          [
+            "owners",
+            {
+              "$id": 2,
+              "array": []
+            }
+          ],
+          [
+            "ownerPaths",
+            {
+              "$id": 3,
+              "set": []
+            }
+          ],
+          [
+            "children",
+            {
+              "$id": 4,
+              "map": [
+                [
+                  "kind",
+                  {
+                    "$id": 5,
+                    "object": [
+                      [
+                        "owners",
+                        {
+                          "$id": 6,
+                          "array": [
+                            {
+                              "$id": 7,
+                              "object": [
+                                [
+                                  "path",
+                                  ""
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 8,
+                              "object": [
+                                [
+                                  "path",
+                                  "/common"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 9,
+                              "object": [
+                                [
+                                  "path",
+                                  "/pa"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 10,
+                              "object": [
+                                [
+                                  "path",
+                                  "/pb"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      [
+                        "ownerPaths",
+                        {
+                          "$id": 11,
+                          "set": [
+                            "",
+                            "/common",
+                            "/pa",
+                            "/pb"
+                          ]
+                        }
+                      ],
+                      [
+                        "children",
+                        {
+                          "$id": 12,
+                          "map": []
+                        }
+                      ],
+                      [
+                        "plainOwners",
+                        {
+                          "$id": 13,
+                          "array": [
+                            {
+                              "$id": 14,
+                              "object": [
+                                [
+                                  "rank",
+                                  0
+                                ],
+                                [
+                                  "entry",
+                                  {
+                                    "$ref": 7
+                                  }
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 15,
+                              "object": [
+                                [
+                                  "rank",
+                                  1
+                                ],
+                                [
+                                  "entry",
+                                  {
+                                    "$ref": 8
+                                  }
+                                ]
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      [
+                        "splitBuckets",
+                        {
+                          "$id": 16,
+                          "array": [
+                            {
+                              "$id": 17,
+                              "object": [
+                                [
+                                  "hostPath",
+                                  ""
+                                ],
+                                [
+                                  "ranksByName",
+                                  {
+                                    "$id": 18,
+                                    "map": [
+                                      [
+                                        "pa",
+                                        2
+                                      ],
+                                      [
+                                        "pb",
+                                        3
+                                      ]
+                                    ]
+                                  }
+                                ],
+                                [
+                                  "firstRank",
+                                  2
+                                ],
+                                [
+                                  "runs",
+                                  {
+                                    "$id": 19,
+                                    "array": [
+                                      {
+                                        "$id": 20,
+                                        "object": [
+                                          [
+                                            "ranks",
+                                            {
+                                              "$id": 21,
+                                              "array": [
+                                                2,
+                                                3
+                                              ]
+                                            }
+                                          ],
+                                          [
+                                            "firstRank",
+                                            2
+                                          ],
+                                          [
+                                            "id",
+                                            0
+                                          ]
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ],
+                                [
+                                  "runByName",
+                                  {
+                                    "$id": 22,
+                                    "map": [
+                                      [
+                                        "pa",
+                                        0
+                                      ],
+                                      [
+                                        "pb",
+                                        0
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    ]
+                  }
+                ]
+              ]
+            }
+          ],
+          [
+            "plainOwners",
+            {
+              "$id": 23,
+              "array": []
+            }
+          ],
+          [
+            "splitBuckets",
+            {
+              "$id": 24,
+              "array": []
+            }
+          ]
+        ]
+      }
+    ],
+    [
+      "splitOwners",
+      {
+        "$id": 25,
+        "map": [
+          [
+            "/pa",
+            {
+              "$id": 26,
+              "object": [
+                [
+                  "bucket",
+                  {
+                    "$ref": 17
+                  }
+                ],
+                [
+                  "rank",
+                  2
+                ],
+                [
+                  "run",
+                  0
+                ]
+              ]
+            }
+          ],
+          [
+            "/pb",
+            {
+              "$id": 27,
+              "object": [
+                [
+                  "bucket",
+                  {
+                    "$ref": 17
+                  }
+                ],
+                [
+                  "rank",
+                  3
+                ],
+                [
+                  "run",
+                  0
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    [
+      "tables",
+      {
+        "$id": 28,
+        "array": [
+          {
+            "$id": 29,
+            "array": [
+              0,
+              {
+                "$id": 30,
+                "object": [
+                  [
+                    "plan",
+                    {
+                      "$id": 31,
+                      "object": [
+                        [
+                          "steps",
+                          {
+                            "$id": 32,
+                            "array": [
+                              {
+                                "$id": 33,
+                                "object": [
+                                  [
+                                    "entry",
+                                    {
+                                      "$id": 34,
+                                      "object": [
+                                        [
+                                          "name",
+                                          "common"
+                                        ],
+                                        [
+                                          "node",
+                                          {
+                                            "$blueprintNode": 1
+                                          }
+                                        ],
+                                        [
+                                          "hostPath",
+                                          ""
+                                        ],
+                                        [
+                                          "declarations",
+                                          {
+                                            "$id": 35,
+                                            "array": [
+                                              {
+                                                "$id": 36,
+                                                "object": [
+                                                  [
+                                                    "id",
+                                                    3
+                                                  ],
+                                                  [
+                                                    "name",
+                                                    "common"
+                                                  ],
+                                                  [
+                                                    "path",
+                                                    "/common"
+                                                  ],
+                                                  [
+                                                    "schemaPath",
+                                                    "#/properties/common"
+                                                  ],
+                                                  [
+                                                    "schema",
+                                                    {
+                                                      "$id": 37,
+                                                      "object": [
+                                                        [
+                                                          "type",
+                                                          "string"
+                                                        ],
+                                                        [
+                                                          "default",
+                                                          "shared"
+                                                        ],
+                                                        [
+                                                          "controls",
+                                                          {
+                                                            "$id": 38,
+                                                            "object": [
+                                                              [
+                                                                "visible",
+                                                                "../kind === 'a'"
+                                                              ],
+                                                              [
+                                                                "readOnly",
+                                                                "../kind === 'b'"
+                                                              ]
+                                                            ]
+                                                          }
+                                                        ]
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "fragmentId",
+                                                    3
+                                                  ],
+                                                  [
+                                                    "role",
+                                                    "declaration"
+                                                  ],
+                                                  [
+                                                    "scope",
+                                                    "node"
+                                                  ],
+                                                  [
+                                                    "validationOnly",
+                                                    false
+                                                  ],
+                                                  [
+                                                    "context",
+                                                    "conjunction"
+                                                  ],
+                                                  [
+                                                    "gates",
+                                                    {
+                                                      "$id": 39,
+                                                      "array": []
+                                                    }
+                                                  ],
+                                                  [
+                                                    "order",
+                                                    {
+                                                      "$id": 40,
+                                                      "array": [
+                                                        0,
+                                                        0
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "inherited",
+                                                    false
+                                                  ],
+                                                  [
+                                                    "hostPath",
+                                                    ""
+                                                  ]
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      ]
+                                    }
+                                  ],
+                                  [
+                                    "gate",
+                                    {
+                                      "$undefined": true
+                                    }
+                                  ],
+                                  [
+                                    "ids",
+                                    {
+                                      "$id": 41,
+                                      "array": [
+                                        3
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              },
+                              {
+                                "$id": 42,
+                                "object": [
+                                  [
+                                    "entry",
+                                    {
+                                      "$id": 43,
+                                      "object": [
+                                        [
+                                          "name",
+                                          "kind"
+                                        ],
+                                        [
+                                          "node",
+                                          {
+                                            "$blueprintNode": 2
+                                          }
+                                        ],
+                                        [
+                                          "hostPath",
+                                          ""
+                                        ],
+                                        [
+                                          "declarations",
+                                          {
+                                            "$id": 44,
+                                            "array": [
+                                              {
+                                                "$id": 45,
+                                                "object": [
+                                                  [
+                                                    "id",
+                                                    4
+                                                  ],
+                                                  [
+                                                    "name",
+                                                    "kind"
+                                                  ],
+                                                  [
+                                                    "path",
+                                                    "/kind"
+                                                  ],
+                                                  [
+                                                    "schemaPath",
+                                                    "#/properties/kind"
+                                                  ],
+                                                  [
+                                                    "schema",
+                                                    {
+                                                      "$id": 46,
+                                                      "object": [
+                                                        [
+                                                          "type",
+                                                          "string"
+                                                        ],
+                                                        [
+                                                          "default",
+                                                          "a"
+                                                        ]
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "fragmentId",
+                                                    4
+                                                  ],
+                                                  [
+                                                    "role",
+                                                    "declaration"
+                                                  ],
+                                                  [
+                                                    "scope",
+                                                    "node"
+                                                  ],
+                                                  [
+                                                    "validationOnly",
+                                                    false
+                                                  ],
+                                                  [
+                                                    "context",
+                                                    "conjunction"
+                                                  ],
+                                                  [
+                                                    "gates",
+                                                    {
+                                                      "$id": 47,
+                                                      "array": []
+                                                    }
+                                                  ],
+                                                  [
+                                                    "order",
+                                                    {
+                                                      "$id": 48,
+                                                      "array": [
+                                                        0,
+                                                        1
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "inherited",
+                                                    false
+                                                  ],
+                                                  [
+                                                    "hostPath",
+                                                    ""
+                                                  ]
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      ]
+                                    }
+                                  ],
+                                  [
+                                    "gate",
+                                    {
+                                      "$undefined": true
+                                    }
+                                  ],
+                                  [
+                                    "ids",
+                                    {
+                                      "$id": 49,
+                                      "array": [
+                                        4
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              },
+                              {
+                                "$id": 50,
+                                "object": [
+                                  [
+                                    "entry",
+                                    {
+                                      "$id": 51,
+                                      "object": [
+                                        [
+                                          "name",
+                                          "pa"
+                                        ],
+                                        [
+                                          "node",
+                                          {
+                                            "$blueprintNode": 3
+                                          }
+                                        ],
+                                        [
+                                          "hostPath",
+                                          ""
+                                        ],
+                                        [
+                                          "declarations",
+                                          {
+                                            "$id": 52,
+                                            "array": [
+                                              {
+                                                "$id": 53,
+                                                "object": [
+                                                  [
+                                                    "id",
+                                                    5
+                                                  ],
+                                                  [
+                                                    "name",
+                                                    "pa"
+                                                  ],
+                                                  [
+                                                    "path",
+                                                    "/pa"
+                                                  ],
+                                                  [
+                                                    "schemaPath",
+                                                    "#/oneOf/0/properties/pa"
+                                                  ],
+                                                  [
+                                                    "schema",
+                                                    {
+                                                      "$id": 54,
+                                                      "object": [
+                                                        [
+                                                          "type",
+                                                          "number"
+                                                        ],
+                                                        [
+                                                          "default",
+                                                          1
+                                                        ]
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "fragmentId",
+                                                    5
+                                                  ],
+                                                  [
+                                                    "role",
+                                                    "declaration"
+                                                  ],
+                                                  [
+                                                    "scope",
+                                                    "node"
+                                                  ],
+                                                  [
+                                                    "validationOnly",
+                                                    false
+                                                  ],
+                                                  [
+                                                    "context",
+                                                    "conjunction"
+                                                  ],
+                                                  [
+                                                    "gates",
+                                                    {
+                                                      "$id": 55,
+                                                      "array": [
+                                                        {
+                                                          "$id": 56,
+                                                          "object": [
+                                                            [
+                                                              "kind",
+                                                              "active"
+                                                            ],
+                                                            [
+                                                              "schemaPath",
+                                                              "#/oneOf/0/controls/active"
+                                                            ],
+                                                            [
+                                                              "hostPath",
+                                                              ""
+                                                            ],
+                                                            [
+                                                              "condition",
+                                                              "./kind === 'a'"
+                                                            ],
+                                                            [
+                                                              "evaluationReads",
+                                                              {
+                                                                "$id": 57,
+                                                                "array": [
+                                                                  0
+                                                                ]
+                                                              }
+                                                            ]
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "order",
+                                                    {
+                                                      "$id": 58,
+                                                      "array": [
+                                                        3,
+                                                        0,
+                                                        0,
+                                                        0
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "inherited",
+                                                    false
+                                                  ],
+                                                  [
+                                                    "hostPath",
+                                                    ""
+                                                  ]
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      ]
+                                    }
+                                  ],
+                                  [
+                                    "gate",
+                                    {
+                                      "$ref": 56
+                                    }
+                                  ],
+                                  [
+                                    "ids",
+                                    {
+                                      "$id": 59,
+                                      "array": [
+                                        5
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              },
+                              {
+                                "$id": 60,
+                                "object": [
+                                  [
+                                    "entry",
+                                    {
+                                      "$id": 61,
+                                      "object": [
+                                        [
+                                          "name",
+                                          "pb"
+                                        ],
+                                        [
+                                          "node",
+                                          {
+                                            "$blueprintNode": 4
+                                          }
+                                        ],
+                                        [
+                                          "hostPath",
+                                          ""
+                                        ],
+                                        [
+                                          "declarations",
+                                          {
+                                            "$id": 62,
+                                            "array": [
+                                              {
+                                                "$id": 63,
+                                                "object": [
+                                                  [
+                                                    "id",
+                                                    6
+                                                  ],
+                                                  [
+                                                    "name",
+                                                    "pb"
+                                                  ],
+                                                  [
+                                                    "path",
+                                                    "/pb"
+                                                  ],
+                                                  [
+                                                    "schemaPath",
+                                                    "#/oneOf/1/properties/pb"
+                                                  ],
+                                                  [
+                                                    "schema",
+                                                    {
+                                                      "$id": 64,
+                                                      "object": [
+                                                        [
+                                                          "type",
+                                                          "number"
+                                                        ],
+                                                        [
+                                                          "default",
+                                                          2
+                                                        ]
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "fragmentId",
+                                                    6
+                                                  ],
+                                                  [
+                                                    "role",
+                                                    "declaration"
+                                                  ],
+                                                  [
+                                                    "scope",
+                                                    "node"
+                                                  ],
+                                                  [
+                                                    "validationOnly",
+                                                    false
+                                                  ],
+                                                  [
+                                                    "context",
+                                                    "conjunction"
+                                                  ],
+                                                  [
+                                                    "gates",
+                                                    {
+                                                      "$id": 65,
+                                                      "array": [
+                                                        {
+                                                          "$id": 66,
+                                                          "object": [
+                                                            [
+                                                              "kind",
+                                                              "active"
+                                                            ],
+                                                            [
+                                                              "schemaPath",
+                                                              "#/oneOf/1/controls/active"
+                                                            ],
+                                                            [
+                                                              "hostPath",
+                                                              ""
+                                                            ],
+                                                            [
+                                                              "condition",
+                                                              "./kind === 'b'"
+                                                            ],
+                                                            [
+                                                              "evaluationReads",
+                                                              {
+                                                                "$id": 67,
+                                                                "array": [
+                                                                  0
+                                                                ]
+                                                              }
+                                                            ]
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "order",
+                                                    {
+                                                      "$id": 68,
+                                                      "array": [
+                                                        3,
+                                                        1,
+                                                        0,
+                                                        0
+                                                      ]
+                                                    }
+                                                  ],
+                                                  [
+                                                    "inherited",
+                                                    false
+                                                  ],
+                                                  [
+                                                    "hostPath",
+                                                    ""
+                                                  ]
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      ]
+                                    }
+                                  ],
+                                  [
+                                    "gate",
+                                    {
+                                      "$ref": 66
+                                    }
+                                  ],
+                                  [
+                                    "ids",
+                                    {
+                                      "$id": 69,
+                                      "array": [
+                                        6
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ],
+                        [
+                          "baseline",
+                          {
+                            "$id": 70,
+                            "array": [
+                              {
+                                "$ref": 34
+                              },
+                              {
+                                "$ref": 43
+                              }
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "groups",
+                    {
+                      "$id": 71,
+                      "array": [
+                        {
+                          "$id": 72,
+                          "object": [
+                            [
+                              "watchedName",
+                              "kind"
+                            ],
+                            [
+                              "firstGate",
+                              {
+                                "$ref": 56
+                              }
+                            ],
+                            [
+                              "firstStepIndex",
+                              2
+                            ],
+                            [
+                              "buckets",
+                              {
+                                "$id": 73,
+                                "map": [
+                                  [
+                                    "a",
+                                    {
+                                      "$id": 74,
+                                      "array": [
+                                        2
+                                      ]
+                                    }
+                                  ],
+                                  [
+                                    "b",
+                                    {
+                                      "$id": 75,
+                                      "array": [
+                                        3
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ],
+                            [
+                              "literalsByGate",
+                              {
+                                "$id": 76,
+                                "map": [
+                                  [
+                                    {
+                                      "$ref": 56
+                                    },
+                                    {
+                                      "$id": 77,
+                                      "set": [
+                                        "a"
+                                      ]
+                                    }
+                                  ],
+                                  [
+                                    {
+                                      "$ref": 66
+                                    },
+                                    {
+                                      "$id": 78,
+                                      "set": [
+                                        "b"
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  [
+                    "alwaysSteps",
+                    {
+                      "$id": 79,
+                      "array": [
+                        0,
+                        1
+                      ]
+                    }
+                  ],
+                  [
+                    "stepIndexByName",
+                    {
+                      "$id": 80,
+                      "map": [
+                        [
+                          "common",
+                          0
+                        ],
+                        [
+                          "kind",
+                          1
+                        ],
+                        [
+                          "pa",
+                          2
+                        ],
+                        [
+                          "pb",
+                          3
+                        ]
+                      ]
+                    }
+                  ],
+                  [
+                    "tableSteps",
+                    {
+                      "$id": 81,
+                      "set": [
+                        2,
+                        3
+                      ]
+                    }
+                  ],
+                  [
+                    "root",
+                    {
+                      "$id": 82,
+                      "object": [
+                        [
+                          "ungatedIndices",
+                          {
+                            "$id": 83,
+                            "array": [
+                              0
+                            ]
+                          }
+                        ],
+                        [
+                          "groups",
+                          {
+                            "$id": 84,
+                            "array": [
+                              {
+                                "$id": 85,
+                                "object": [
+                                  [
+                                    "watchedName",
+                                    "kind"
+                                  ],
+                                  [
+                                    "firstGate",
+                                    {
+                                      "$ref": 56
+                                    }
+                                  ],
+                                  [
+                                    "buckets",
+                                    {
+                                      "$id": 86,
+                                      "map": [
+                                        [
+                                          "a",
+                                          {
+                                            "$id": 87,
+                                            "array": [
+                                              1
+                                            ]
+                                          }
+                                        ],
+                                        [
+                                          "b",
+                                          {
+                                            "$id": 88,
+                                            "array": [
+                                              2
+                                            ]
+                                          }
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 89,
+            "array": [
+              1,
+              null
+            ]
+          },
+          {
+            "$id": 90,
+            "array": [
+              2,
+              null
+            ]
+          },
+          {
+            "$id": 91,
+            "array": [
+              3,
+              null
+            ]
+          },
+          {
+            "$id": 92,
+            "array": [
+              4,
+              null
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      "queries",
+      {
+        "$id": 93,
+        "array": [
+          {
+            "$id": 94,
+            "array": [
+              "",
+              {
+                "$id": 95,
+                "array": [
+                  "",
+                  "/common",
+                  "/pa",
+                  "/pb"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 96,
+            "array": [
+              "/kind",
+              {
+                "$id": 97,
+                "array": [
+                  "",
+                  "/common",
+                  "/pa",
+                  "/pb"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 98,
+            "array": [
+              "/common",
+              {
+                "$id": 99,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 100,
+            "array": [
+              "/missing",
+              {
+                "$id": 101,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 102,
+            "array": [
+              "/",
+              {
+                "$id": 103,
+                "array": [
+                  "",
+                  "/common",
+                  "/pa",
+                  "/pb"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 104,
+            "array": [
+              "//value",
+              {
+                "$id": 105,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 106,
+            "array": [
+              "/a~1b",
+              {
+                "$id": 107,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 108,
+            "array": [
+              "/items/0/value",
+              {
+                "$id": 109,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 110,
+            "array": [
+              "/pa",
+              {
+                "$id": 111,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 112,
+            "array": [
+              "/pb",
+              {
+                "$id": 113,
+                "array": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      "anchors",
+      {
+        "$id": 114,
+        "map": []
+      }
+    ]
+  ]
+}

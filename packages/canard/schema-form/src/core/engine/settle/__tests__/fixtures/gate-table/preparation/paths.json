@@ -1,0 +1,413 @@
+{
+  "$id": 0,
+  "object": [
+    [
+      "trie",
+      {
+        "$id": 1,
+        "object": [
+          [
+            "owners",
+            {
+              "$id": 2,
+              "array": []
+            }
+          ],
+          [
+            "ownerPaths",
+            {
+              "$id": 3,
+              "set": []
+            }
+          ],
+          [
+            "children",
+            {
+              "$id": 4,
+              "map": [
+                [
+                  "source",
+                  {
+                    "$id": 5,
+                    "object": [
+                      [
+                        "owners",
+                        {
+                          "$id": 6,
+                          "array": [
+                            {
+                              "$id": 7,
+                              "object": [
+                                [
+                                  "path",
+                                  ""
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 8,
+                              "object": [
+                                [
+                                  "path",
+                                  "/a~1b"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            },
+                            {
+                              "$id": 9,
+                              "object": [
+                                [
+                                  "path",
+                                  "//value"
+                                ],
+                                [
+                                  "bindable",
+                                  true
+                                ]
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      [
+                        "ownerPaths",
+                        {
+                          "$id": 10,
+                          "set": [
+                            "",
+                            "/a~1b",
+                            "//value"
+                          ]
+                        }
+                      ],
+                      [
+                        "children",
+                        {
+                          "$id": 11,
+                          "map": []
+                        }
+                      ]
+                    ]
+                  }
+                ],
+                [
+                  "items",
+                  {
+                    "$id": 12,
+                    "object": [
+                      [
+                        "owners",
+                        {
+                          "$id": 13,
+                          "array": [
+                            {
+                              "$id": 14,
+                              "object": [
+                                [
+                                  "path",
+                                  "/items/*/value"
+                                ],
+                                [
+                                  "bindable",
+                                  false
+                                ],
+                                [
+                                  "watched",
+                                  {
+                                    "$id": 15,
+                                    "array": [
+                                      "/items/0/value"
+                                    ]
+                                  }
+                                ]
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      [
+                        "ownerPaths",
+                        {
+                          "$id": 16,
+                          "set": [
+                            "/items/*/value"
+                          ]
+                        }
+                      ],
+                      [
+                        "children",
+                        {
+                          "$id": 17,
+                          "map": []
+                        }
+                      ]
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        ]
+      }
+    ],
+    [
+      "splitOwners",
+      {
+        "$id": 18,
+        "map": []
+      }
+    ],
+    [
+      "tables",
+      {
+        "$id": 19,
+        "array": [
+          {
+            "$id": 20,
+            "array": [
+              0,
+              null
+            ]
+          },
+          {
+            "$id": 21,
+            "array": [
+              1,
+              null
+            ]
+          },
+          {
+            "$id": 22,
+            "array": [
+              2,
+              null
+            ]
+          },
+          {
+            "$id": 23,
+            "array": [
+              3,
+              null
+            ]
+          },
+          {
+            "$id": 24,
+            "array": [
+              4,
+              null
+            ]
+          },
+          {
+            "$id": 25,
+            "array": [
+              5,
+              null
+            ]
+          },
+          {
+            "$id": 26,
+            "array": [
+              6,
+              null
+            ]
+          },
+          {
+            "$id": 27,
+            "array": [
+              7,
+              null
+            ]
+          },
+          {
+            "$id": 28,
+            "array": [
+              8,
+              null
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      "queries",
+      {
+        "$id": 29,
+        "array": [
+          {
+            "$id": 30,
+            "array": [
+              "",
+              {
+                "$id": 31,
+                "array": [
+                  "/items/0/value",
+                  "/items/1/value",
+                  "",
+                  "/a~1b",
+                  "//value"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 32,
+            "array": [
+              "/kind",
+              {
+                "$id": 33,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 34,
+            "array": [
+              "/common",
+              {
+                "$id": 35,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 36,
+            "array": [
+              "/missing",
+              {
+                "$id": 37,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 38,
+            "array": [
+              "/",
+              {
+                "$id": 39,
+                "array": [
+                  "/items/0/value",
+                  "/items/1/value",
+                  "",
+                  "/a~1b",
+                  "//value"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 40,
+            "array": [
+              "//value",
+              {
+                "$id": 41,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 42,
+            "array": [
+              "/a~1b",
+              {
+                "$id": 43,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 44,
+            "array": [
+              "/items/0/value",
+              {
+                "$id": 45,
+                "array": [
+                  "/items/0/value",
+                  "/items/1/value"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 46,
+            "array": [
+              "/source",
+              {
+                "$id": 47,
+                "array": [
+                  "",
+                  "/a~1b",
+                  "//value"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 48,
+            "array": [
+              "/derived",
+              {
+                "$id": 49,
+                "array": []
+              }
+            ]
+          },
+          {
+            "$id": 50,
+            "array": [
+              "/items",
+              {
+                "$id": 51,
+                "array": [
+                  "/items/0/value",
+                  "/items/1/value"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 52,
+            "array": [
+              "/items/*",
+              {
+                "$id": 53,
+                "array": [
+                  "/items/0/value",
+                  "/items/1/value"
+                ]
+              }
+            ]
+          },
+          {
+            "$id": 54,
+            "array": [
+              "/items/*/value",
+              {
+                "$id": 55,
+                "array": [
+                  "/items/0/value",
+                  "/items/1/value"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    [
+      "anchors",
+      {
+        "$id": 56,
+        "map": []
+      }
+    ]
+  ]
+}
