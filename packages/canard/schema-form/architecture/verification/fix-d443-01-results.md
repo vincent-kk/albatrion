@@ -60,6 +60,7 @@
 | `gap-relocated-cousin-value-deep` | 2 | D443-03 |
 | `corpus-443-f14-v0`부터 `v7`까지 | 1 | D443-02, C443-01; 기본 128장면 코퍼스 |
 | `corpus-443-f14-v0`부터 `v63`까지 | 1 | D443-02, C443-01; verify 1,024장면 코퍼스 |
+| 렌더 corpus(`remount-equivalence.corpus.test.tsx`) family 14 `~` 이름 장면 | 1 | D443-02, C443-01; 화면 어댑터 재생, 기본 128장면·verify 1,024장면 |
 
 targeted의 overlay 6건과 relocated 2건은 수정 전 기록과 수정 후 단위 시험의 metadata.remount 전체가 정확히 같습니다. 별표 여섯 장면은 불일치 0건이며 ancestor도 0건입니다. 후보 finding의 판정은 변경하지 않았습니다.
 
