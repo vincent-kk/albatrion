@@ -30,7 +30,8 @@ primeHost가 복귀 스키마를 먼저 적용하고 initialDirty가 방출까�
 | 새 회귀 수정 전 / 수정 뒤 | 6건 모두 결함으로 실패 / 6건 모두 통과 |
 | 바퀴·선택 모드 | record·skip·shadow 각각에서 off·table·verify와 flag true→false를 검증합니다. |
 | 있음 등록 제거 변이 / 복구 | 6건 모두 실패 / 6건 모두 통과, 복구 뒤 소스 diff 0 |
-| presence 전체 + 게이트 표 특성화 두 파일 | 8파일 97/97 통과, 기대값·스냅숏 변경 없음 |
+| presence 전체(unit 8파일) | 97/97 통과, 기대값 변경 없음 |
+| 게이트 표 특성화 두 파일(verify-unit 프로젝트) | test:verify 실행에서 통과, 스냅숏 변경 없음(unit 프로젝트에서는 제외되어 단일 실행 명령으로는 돌지 않음) |
 | typecheck / lint / build | 모두 통과, 세 런타임 산출물 GATE_SELECTION_DIST_OK |
 | 기본 전체 실행 | 5288건: 5283통과·브라우저 4실패·1todo |
 | 브라우저 단독 재실행 | 세 파일 6/6 통과, 제품·스토리 코드 변경 없음 |
