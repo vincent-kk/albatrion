@@ -98,7 +98,7 @@
 
 ### owned-inline-counts — core mount 동결 계수
 
-- module 초기화 상수를 제외한 core mount의 distinct 동결 수(운영/개발)는 nested 1,706/29,007, flat 502/10,523, oneOf-20 116/1,569, sample-0 5/66이며, 재동결과 primitive 호출은 0이다. oneOf-20의 다섯은 로드에서 모든 선언이 켜진 게이트 폼 간선(`common`·`kind`·`payload_0_a`·`payload_0_b`·`payload_0_c`)이 정적 선언 ID 목록(`staticIds`)을 간선마다 한 번 얼린 것이다(settle DETAIL의 완전 수용 간선, 372C-02). options 없는 choices의 생성 지점 동결을 모듈 상수로 옮겨서 없어지는 호출은 각각 1,365, 501, 5, 3이고, 기록별 소속 배열의 보호는 같다(batch2 4-default-choices).
+- module 초기화 상수를 제외한 core mount의 distinct 동결 수(운영/개발)는 nested 1,706/29,007, flat 502/10,523, oneOf-20 111/1,564, sample-0 5/66이며, 재동결과 primitive 호출은 0입니다. 준비된 직접 계획을 쓰는 load는 plan.ids를 재사용하여 활성 간선의 staticIds 배열을 별도로 생성·동결하지 않습니다. 공개 schema·생산자 소유 배열·controls·hint 봉투의 동결과 기록별 소속 배열의 보호는 유지합니다. options 없는 choices의 모듈 상수 재사용은 각각 1,365, 501, 5, 3개의 생성 지점 호출을 생략합니다(batch2 4-default-choices).
 
 ### owned-inline-render — 렌더 중 작성된 React 값
 
@@ -192,6 +192,12 @@
 - `__tests__/fixtures/captureOwnedInlineObservables.ts`는 부모와 `buildNodes` 테스트가 공유하는 관측 fixture이므로 최저 공통 소유자인 blueprint에 둔다. 병합은 `effectiveSchema` 진입점으로 읽는다.
 - owned-inline 정책 시험은 `buildNodes`의 게이트 생성 내부를 직접 쓰므로 `buildNodes/__tests__/`에 두고, 병합은 `effectiveSchema` 진입점으로 읽는다.
 
+## History
+
+- 2026-10-22. 결정 62 PR-6의 적재 선택은 준비된 plan.ids를 재사용합니다. oneOf-20의 기존 추가 동결 다섯은 common·kind·활성 페이로드 세 간선의 staticIds 배열이었으며, 그 배열 생성이 사라져 운영/개발 계수를 각각 116→111과 1,569→1,564로 정정했습니다. 공개 소유 schema의 보호 정책은 유지합니다.
+
 ## Last Updated
+
+2026-10-22. 준비된 적재 선택의 정적 ID 배열 재사용과 owned-inline 계수.
 
 2026-10-13. 계약 기준: 211C-01, REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline. 비용 기록: 105라운드 자식 열거, 106라운드 선언 수집, 참조·controls·hint 봉투 가드와 형 목록 predicate; 정돈-2(2026-10-14). 정돈-3 blueprint 재구성(2026-10-15). 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077).
