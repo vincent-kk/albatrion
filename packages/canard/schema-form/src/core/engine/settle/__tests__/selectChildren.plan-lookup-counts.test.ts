@@ -8,6 +8,8 @@ import * as planning from '../utils/compute/childSelection/getDirectChildSelecti
 import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as priming from '../utils/compute/primeHost';
 import * as publication from '../utils/gates/flushPendingGateReads';
+import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
+import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 
@@ -91,12 +93,44 @@ describe('child selection plan lookup runtime counts', () => {
   ])(
     'B=%i mount enters pre-publication only with pending outputs (%i calls)',
     (count, pending) => {
-      const { root } = createTestTree(createFixedBranchSchema(count));
-      const calls = countFlushCalls();
-      loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
-      expect(calls).toEqual({ empty: 0, pending });
-      expect(root.children).toHaveLength(5);
-      expect(root.runtime.diagnostics.status).toBe('stable');
+      const previousMode = gateSelectionTable.mode;
+      const previousWheelMode = gateWheelEvaluation.mode;
+      // These counts preserve the shadow wheel's full-step visitation contract.
+      gateSelectionTable.mode = 'table';
+      gateWheelEvaluation.mode = 'shadow';
+      try {
+        const { root } = createTestTree(createFixedBranchSchema(count));
+        const calls = countFlushCalls();
+        loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
+        expect(calls).toEqual({ empty: 0, pending });
+        expect(root.children).toHaveLength(5);
+        expect(root.runtime.diagnostics.status).toBe('stable');
+      } finally {
+        gateSelectionTable.mode = previousMode;
+        gateWheelEvaluation.mode = previousWheelMode;
+      }
+    },
+  );
+
+  it.each([5, 10, 20, 40])(
+    'B=%i skip mount enters pre-publication only four times',
+    (count) => {
+      const previousMode = gateSelectionTable.mode;
+      const previousWheelMode = gateWheelEvaluation.mode;
+      // The skip wheel omits inactive declarations, so table publication is constant.
+      gateSelectionTable.mode = 'table';
+      gateWheelEvaluation.mode = 'skip';
+      try {
+        const { root } = createTestTree(createFixedBranchSchema(count));
+        const calls = countFlushCalls();
+        loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
+        expect(calls).toEqual({ empty: 0, pending: 4 });
+        expect(root.children).toHaveLength(5);
+        expect(root.runtime.diagnostics.status).toBe('stable');
+      } finally {
+        gateSelectionTable.mode = previousMode;
+        gateWheelEvaluation.mode = previousWheelMode;
+      }
     },
   );
 

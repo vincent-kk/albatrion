@@ -22,6 +22,7 @@ export interface ChildSelectionHistory {
     value: unknown;
     option?: SetValueOption;
     context?: Record<string, unknown>;
+    reset?: 'form' | 'subtree';
   }[];
   /** Optional initial context for histories containing context-dependent gates. */
   context?: Record<string, unknown>;
@@ -36,10 +37,16 @@ export interface ChildSelectionHistory {
 /**
  * Observe a real mounted form, publications, revisions and synchronous listener payloads.
  * @param fixture - Fixed schema, mount input, public input history and listener mode
+ * @param performReset - Load probe's injected reset operations; historical builds need no reset imports
  * @returns Ordered observations after mounting and after every write
  */
 export const runChildSelectionHistory = (
   fixture: ChildSelectionHistory,
+  performReset?: (
+    root: ChildSelectionRuntimeNode,
+    target: ChildSelectionRuntimeNode,
+    write: ChildSelectionHistory['writes'][number],
+  ) => void,
 ): unknown[] => {
   const results: unknown[] = [];
   const events: unknown[] = [];
@@ -152,7 +159,10 @@ export const runChildSelectionHistory = (
       if (write.context) root.runtime.context = write.context;
       const target = write.path ? root.find(write.path) : root;
       if (!target) throw new Error(`Missing write target ${write.path}`);
-      if (write.option !== undefined)
+      if (write.reset) {
+        if (!performReset) throw new Error('Missing reset observer');
+        performReset(root, target, write);
+      } else if (write.option !== undefined)
         target.setValue(write.value, write.option);
       else target.setValue(write.value);
     } catch (cause) {

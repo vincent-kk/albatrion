@@ -4,6 +4,8 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
+import { resetFieldNodeForm } from '../../utils/reset/resetFieldNodeForm';
+import { resetFieldNodeSubtree } from '../../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import type { gateSelectionCases } from '../fixtures/gateSelectionCases';
 
@@ -78,12 +80,17 @@ export const runGateSelectionCase = (
         target.structure![segment.replace(/~1/g, '/').replace(/~0/g, '~')];
     failure = undefined;
     try {
-      writeFieldNode(
-        target,
-        write.value,
-        write.merge ? 'callerPartial' : 'callerReplace',
-        write.merge ? WriteOption.Merge : WriteOption.Overwrite,
-      );
+      if (write.reset === 'form')
+        resetFieldNodeForm(root, write.value, WriteOption.Overwrite);
+      else if (write.reset === 'subtree')
+        resetFieldNodeSubtree(target, WriteOption.Overwrite);
+      else
+        writeFieldNode(
+          target,
+          write.value,
+          write.merge ? 'callerPartial' : 'callerReplace',
+          write.merge ? WriteOption.Merge : WriteOption.Overwrite,
+        );
     } catch (cause) {
       failure = cause;
     }
