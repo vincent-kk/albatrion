@@ -2,10 +2,10 @@ import type { RemountScene } from './types';
 
 /**
  * Exercise literal star owners with value and context presence changes.
- * @returns Four star targets and four star-prefix controls with identical writes.
+ * @returns Literal and prefix controls plus value-only and direct-context readers.
  */
 export function createStarScenes(): RemountScene[] {
-  return ['*', '*x'].flatMap((name) =>
+  const scenes = ['*', '*x'].flatMap((name) =>
     [false, true].flatMap((nested) =>
       [false, true].map((contextual) => {
         const reader = {
@@ -61,4 +61,56 @@ export function createStarScenes(): RemountScene[] {
       }),
     ),
   );
+  return [
+    ...scenes,
+    {
+      id: 'gap-star-literal-value-only',
+      group: 'star',
+      seed: 443,
+      schema: {
+        type: 'object',
+        properties: {
+          side: { type: 'object', properties: { x: { type: 'string' } } },
+          '*': {
+            type: 'string',
+            controls: {
+              visible: "../side/x === 'v'",
+              readOnly: "../side/x === 'v'",
+              disabled: "../side/x === 'v'",
+            },
+          },
+        },
+      },
+      context: {},
+      initialValue: { side: { x: 'v' }, '*': 'R' },
+      writes: [
+        { action: 'setValue', path: '/side/x', value: 'w' },
+        { action: 'setValue', path: '/side/x', value: 'v' },
+      ],
+    },
+    {
+      id: 'gap-star-literal-direct-context-reader',
+      group: 'star',
+      seed: 443,
+      schema: {
+        type: 'object',
+        properties: {
+          '*': {
+            type: 'string',
+            controls: {
+              visible: '(@).on === true',
+              readOnly: '(@).on === true',
+              disabled: '(@).on === true',
+            },
+          },
+        },
+      },
+      context: { on: true },
+      initialValue: { '*': 'R' },
+      writes: [
+        { action: 'context', value: { on: false } },
+        { action: 'context', value: { on: true } },
+      ],
+    },
+  ];
 }

@@ -8,8 +8,7 @@ import { encodeValue } from '@/schema-form/__tests__/fixtures/remountEquivalence
 
 import { checkCoreScene } from './helpers/checkCoreScene';
 
-// D443-01 — 결함, 수정 PR 대기.
-it.fails('literal-star state owners match a fresh public-output mount', async ({
+it('literal-star state owners match a fresh public-output mount', async ({
   task,
 }) => {
   const mismatches = [];
