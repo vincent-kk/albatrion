@@ -2,6 +2,7 @@
 export interface RemountWrite {
   action:
     | 'setValue'
+    | 'bulk'
     | 'merge'
     | 'same'
     | 'push'

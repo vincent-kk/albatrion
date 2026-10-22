@@ -15,10 +15,12 @@ import { mountScene } from './mountScene';
 /**
  * Compare every write prefix with a new mount of the public output.
  * @param scene - Deterministic schema, values and public write sequence.
+ * @param report - Emit raw diagnostics when no task metadata sink is used.
  * @returns Every mismatch, including thrown operations and automatic validation.
  */
 export async function checkCoreScene(
   scene: RemountScene,
+  report = true,
 ): Promise<RemountMismatch[]> {
   const mismatches: RemountMismatch[] = [];
   const retained = new Map<string, FieldNode>();
@@ -127,7 +129,7 @@ export async function checkCoreScene(
       });
     }
   }
-  if (mismatches.length)
+  if (report && mismatches.length)
     console.log('REMOUNT_MISMATCH', JSON.stringify(encodeValue(mismatches)));
   return mismatches;
 }

@@ -38,6 +38,11 @@ export function applyCoreWrite(
     return node.resetSubtree();
   if (write.action === 'same')
     return node.setValue(node.outputValue, write.option);
+  if (write.action === 'bulk')
+    return node.setValue(
+      { ...(node.outputValue as object), ...(write.value as object) },
+      write.option,
+    );
   if (
     write.action === 'setValue' ||
     write.action === 'retained' ||

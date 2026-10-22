@@ -101,3 +101,33 @@ it('rejects a static mask whose value is read by watch', () => {
   };
   expect(() => prepareMasks(scene, 0)).toThrow('MASK_READER_OVERLAP');
 });
+
+it('retains independent marker keywords for simultaneous anyOf selections', () => {
+  const scene: RemountScene = {
+    id: 'anyof-marker',
+    seed: 443,
+    group: 'infrastructure',
+    initialValue: { a: true, b: true },
+    writes: [],
+    schema: {
+      type: 'object',
+      properties: { a: { type: 'boolean' }, b: { type: 'boolean' } },
+      anyOf: [
+        { 'x-remount-a': true, controls: { active: './a === true' } },
+        { 'x-remount-b': true, controls: { active: './b === true' } },
+      ],
+    },
+  };
+  const { root } = mountScene(scene, scene.initialValue);
+  expect(root.jsonSchema).toMatchObject({
+    'x-remount-a': true,
+    'x-remount-b': true,
+  });
+  applyCoreWrite(
+    root,
+    { action: 'setValue', path: '/a', value: false },
+    new Map(),
+  );
+  expect(root.jsonSchema).not.toHaveProperty('x-remount-a');
+  expect(root.jsonSchema).toHaveProperty('x-remount-b', true);
+});
