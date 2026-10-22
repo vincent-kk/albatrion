@@ -16,10 +16,13 @@ import { serializeGateTableObservation } from './serializeGateTableObservation';
 /**
  * Freeze one pre-extraction history, including effects invisible in the final value.
  * @param fixture - Authored schema, input, and write sequence
+ * @param compactSchemas - Hash only schemas for the two large bulk fixtures;
+ * selections, delivery, shape dirty and verification observations remain intact
  * @returns JSON text with explicit non-JSON primitives and ordered internal observations
  */
 export const observeGateTableCase = (
   fixture: (typeof gateSelectionCases)[number],
+  compactSchemas = false,
 ): string => {
   const dirty: unknown[] = [];
   const registrations: unknown[] = [];
@@ -208,7 +211,7 @@ export const observeGateTableCase = (
         };
         return extra;
       },
-      (observation) => JSON.parse(serializeGateTableObservation(observation)),
+      (observation) => JSON.parse(serializeGateTableObservation(observation, compactSchemas)),
     );
   } finally {
     dirtySpy.mockRestore();
@@ -219,11 +222,12 @@ export const observeGateTableCase = (
     deriveSpy.mockRestore();
     for (const restore of restoreRevivalSpies) restore();
   }
+  const surface = observeGateTableDelivery(fixture);
   return (
     serializeGateTableObservation({
       fixture: fixture.name,
       observations,
-      surface: observeGateTableDelivery(fixture),
-    }) + '\n'
+      surface,
+    }, compactSchemas) + '\n'
   );
 };

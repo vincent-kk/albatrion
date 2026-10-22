@@ -12,10 +12,13 @@ import { sectionGateTableObservation } from './snapshotGateTableCase/utils/secti
 /**
  * Compare every stored field in three modes and prove that omitted calls are table steps.
  * @param fixture - History whose off execution remains the stored baseline
+ * @param compactSchemas - Hash only record schemas for large bulk histories;
+ * all selection, delivery, shape-dirty and verify comparisons remain unchanged
  * @returns Off serialization for the unchanged file snapshot assertion
  */
 export const observeGateTableModes = async (
   fixture: (typeof gateSelectionCases)[number],
+  compactSchemas = false,
 ): Promise<string> => {
   const previous = gateSelectionTable.mode;
   const previousWheel = gateWheelEvaluation.mode;
@@ -47,7 +50,7 @@ export const observeGateTableModes = async (
             original(entry, step, frame);
           });
         try {
-          histories.push(observeGateTableCase(fixture));
+          histories.push(observeGateTableCase(fixture, compactSchemas));
           visits.push(calls);
         } finally {
           spy.mockRestore();
