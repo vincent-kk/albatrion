@@ -1,8 +1,10 @@
 import { expect, it, vi } from 'vitest';
 
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
+import { getStaticGateList } from '../utils/compute/utils/getStaticGateList';
 import * as predicate from '../utils/gates/canSkipGateWheel';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
+import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import type { gateSelectionCases } from './fixtures/gateSelectionCases';
 import { runGateSelectionCase } from './helpers/runGateSelectionCase';
 
@@ -37,6 +39,10 @@ it.each([false, true])(
       writes: [{ path: '/mode', value: 'x' }],
     };
     const previousMode = gateWheelEvaluation.mode;
+    const staticReferences = new WeakMap<
+      object,
+      { reference: readonly unknown[]; contents: readonly unknown[] }
+    >();
     const original = predicate.canSkipGateWheel;
     const decisions: {
       host: string;
@@ -65,6 +71,33 @@ it.each([false, true])(
           gateWheelEvaluation.mode = mode;
         },
         (root) => {
+          const staticList = getStaticGateList(root);
+          const staticGates = staticList.gates.slice();
+          const previousStatic = staticReferences.get(root);
+          if (previousStatic) {
+            expect(staticList.gates).toBe(previousStatic.reference);
+            expect(staticList.gates).toEqual(previousStatic.contents);
+          } else
+            staticReferences.set(root, {
+              reference: staticList.gates,
+              contents: staticGates,
+            });
+          const registry = getGateRegistry(root.runtime);
+          const locations = (
+            registry as unknown as {
+              byLocation: Map<string, Set<{ hostPath: string }>>;
+            }
+          ).byLocation;
+          const expected = [...(locations.get('') ?? [])].filter(
+            (entry) => entry.hostPath !== '',
+          );
+          const relocated = registry.relocated('');
+          expect(relocated).toHaveLength(expected.length);
+          relocated.forEach((entry, index) =>
+            expect(entry).toBe(expected[index]),
+          );
+          expect(getStaticGateList(root).gates).toBe(staticList.gates);
+          expect(staticList.gates).toEqual(staticGates);
           if (root.structure?.mode?.emit === 'x')
             expect(root.structure.p?.structure?.child?.emit).toBe('P');
           return [...(root.runtime.committedDeclarationIds ?? [])];
