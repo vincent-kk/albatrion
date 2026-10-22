@@ -6,6 +6,7 @@ import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
+import { captureProjectionBaseline } from '../dependencies/captureProjectionBaseline';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
@@ -99,6 +100,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       },
     );
     if (child.schema !== schema) {
+      captureProjectionBaseline(node, child, !!priorChild, context);
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
       child.schema = captureFieldNodeChange(child, 'schema', schema);

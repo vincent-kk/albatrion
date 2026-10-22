@@ -9,16 +9,17 @@ import { deferPresenceTemplate } from './deferPresenceTemplate';
 import { evaluatedPresenceAfter } from './evaluatedPresenceAfter';
 import { getDependencyIndex } from './getDependencyIndex';
 import { publishPresenceOwner } from './publishPresenceOwner';
+import { registerProjectionChanges } from './registerProjectionChanges';
 
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
 const parentOf = (path: string): string => path.slice(0, path.lastIndexOf('/'));
 
 /**
- * Register emitted child identity changes inside their existing host wheel.
+ * Register child identity or projected emission changes in their existing host wheel.
  * @param host - Live branch whose latest round has finished computing children
  * @param previous - Name-to-node identities at the preceding round's end
  * @param context - Call-local dirty indexes and accumulated presence evidence
- * @returns Whether any child identity differs, even if no reader was scheduled
+ * @returns Whether any child identity or projected emission differs, even if no reader was scheduled
  */
 export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   host: Self,
@@ -34,6 +35,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
       names.push(escapeSegment(name));
   for (const name in structure)
     if (!hasOwnProperty(previous, name)) names.push(escapeSegment(name));
+  registerProjectionChanges(host, names, context);
   if (names.length === 0) return false;
 
   const accumulated = (context.changedPresence ??= new Set());
