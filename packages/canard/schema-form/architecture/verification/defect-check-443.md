@@ -59,17 +59,21 @@ yarn workspace @canard/schema-form test:verify --run
 
 | ID | 1차 분류 | 관찰 차이 | 최소 재현 자료 | 추정 영역(원인 확정 아님) |
 | --- | --- | --- | --- | --- |
-| D443-01 | (i) 제품 결함 후보 | literal-star 소유자의 visible/readOnly/disabled가 U=true, F=false | `<ns>/findings/D443-01.md` | `src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:170` |
+| D443-01 | (i) 제품 결함 후보 | literal-star 소유자의 visible/readOnly/disabled가 U=true, F=false | `<ns>/findings/D443-01.md` | `src/core/engine/settle/utils/templatePaths/expandTemplatePaths.ts:34`, `src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:361` |
 | D443-02 | (i) 제품 결함 후보 | overlay 투영 뒤 바깥 상태/게이트 독자가 이전 결과에 남음 | `<ns>/findings/D443-02.md` | `src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:37` |
 | D443-03 | (i) 제품 결함 후보 | 옮긴 게이트의 값 변경 뒤 /p/child가 U에만 없음 | `<ns>/findings/D443-03.md` | `src/core/engine/settle/utils/gates/getGateRegistry.ts:173` |
 | D443-04 | (i) 후보 | string items의 undefined→null 출력 왕복에서 F에만 misfit/경고 | `<ns>/findings/D443-04.md` | `src/core/engine/behaviors/arrayBehavior/utils/value/holeValue.ts:37` |
-| D443-05 | (i) 제품 결함 후보 | type overlay 뒤 U 문자열 2/type 오류, F 숫자 2/오류 없음 | `<ns>/findings/D443-05.md` | `src/core/engine/behaviors/unionBehavior/unionBehavior.ts:11` |
+| D443-05 | (ii) 정당한 차이 후보(U7) | type overlay 뒤 U 문자열 2/type 오류, F 숫자 2/오류 없음 | `<ns>/findings/D443-05.md` | `src/core/engine/behaviors/unionBehavior/unionBehavior.ts:11` |
 | C443-01 | (ii) 정당한 차이 후보 | omitEmpty의 raw/value만 빈 문자열/undefined로 다름 | `<ns>/findings/C443-01.md` | `src/core/engine/behaviors/utils/slots/projectEmpty.ts:7` |
 | C443-02 | (ii) 정당한 차이 후보 | omitTrailing 뒤 U에만 꼬리 /1 노드가 남음 | `<ns>/findings/C443-02.md` | `src/core/engine/behaviors/arrayBehavior/utils/projection/omitTrailingArray.ts:19` |
 
 D443-01~03의 근거는 CONTROLS-080·SETTLE-020/021/045입니다. 반대 가설은 공개 계약이 이 계산 상태/형상의 이력 차이를 허용한다는 것이며, 현재 원장 근거는 확인되지 않았습니다. D443-05는 VALUE-031(c)·WRITE-052에 따라 정규화를 엄격 비교했습니다. 반대 가설은 overlay가 기존 원본을 보존하는 별도 계약입니다.
 
+D443-05 반대 가설의 원장 근거는 소유자 답 U7(architecture/ledger/settle.md:142)과 WRITE-099(architecture/ledger/write.md:1673)입니다. G2 type 표적은 U7 때문에 U의 방출이 바뀌지 않아 투영 전용 독자 누락을 보일 수 없습니다.
+
 D443-04는 승인된 misfit 엄격 비교에 따라 (i) 후보로 두었습니다. 반대 가설은 VALUE-034의 빈자리 null 방출이 F의 misfit 차이를 허용하므로 (ii)라는 것입니다. C443-01은 VALUE-031 ㄴ의 omitEmpty 투영이 근거입니다. 원본 S5는 루트 게이트 `./cfg === ""`를 읽지만 상태/watch 독자는 없고, 해당 접두사의 형상·게이트·계산 상태·오류·DOM은 같습니다. 반대 가설은 raw/value가 식 판독 계약의 일부이므로 이 차이 자체가 결함이라는 것입니다. C443-02는 같은 ㄴ의 omitTrailing 투영이 근거이며, 반대 가설은 출력 투영 뒤에도 형상 동등성을 요구하므로 남는 /1이 결함이라는 것입니다. 새 마스크를 추가하지 않아 세 항목도 계속 red입니다.
+
+D443-04는 VALUE-034(architecture/ledger/value.md:576)와 VALUE-033이 함께 만드는 차이이며 VALUE-031 ㄹ의 닫힌 다섯에 없습니다. 원장 판정 대상이고 엔진 수정 대상이 아닙니다.
 
 ### 공개 검토용 최소 장면
 
@@ -137,12 +141,14 @@ const typeOverlay = { type: 'object', properties: {
 
 | 알려진 틈 | 결과 |
 | --- | --- |
-| `*` 이름 필드의 상태 키 독자 | 8개 표적과 생성 말뭉치에서 재현, D443-01 |
+| `*` 이름 필드의 상태 키 독자 | 문자 * 4개 표적에서 재현(*x 대조군 4개 통과), 생성 말뭉치 family 3·6·7·8·14·15에서 재현, D443-01 |
 | overlay 투영 전용 변화 | 바깥 상태·게이트·빈값·꼬리·타입의 4개 표적, D443-02/04/05 및 C443-02 |
-| 옮긴 게이트의 첫 locate 뒤 경로 | 얕은/깊은 호스트와 왕복 4장면에서 차이, D443-03 |
+| 옮긴 게이트의 첫 locate 뒤 경로 | cousin 값 전용 shallow·deep 2개 표적에서 재현, D443-03. /current/primer 값 전용 변형과 있음 대조군은 통과하여 재현되지 않음 |
 | 조상 dirty 반복 | 16장면 모두 동등, 반복 결함 미재현 |
 
 마지막 틈은 소유 깊이 0/2·읽는 거리 1/2·문맥 여부·순방향/역방향을 교차했습니다. 같은 settle tick에서 record 계수를 읽었고 깊이0은 ancestorRechecks=0/gateWheelSteps=3, 깊이2는 3/6을 명시 기대표로 모두 확인했습니다. 깊이0의 0은 실제 선택 경로이므로 미도달로 오판하지 않습니다. 이 그리드의 통과는 다른 입력에서 반복 결함이 없다는 증명이 아닙니다.
+
+네 번째 틈인 조상 dirty 반복은 재현되지 않았으며, G4 그리드 16행 중 재검사 루프에 도달하는 행은 8개입니다.
 
 생성 공간은 유한하며 함수식 전체·임의 비동기 검증·실제 브라우저 레이아웃/IME/선택 유지·모든 외부 UI 플러그인·전체 JSON Schema 의미·모든 연산 순열은 덮지 않습니다. React는 15개 덮음 표본이며 1,024개 전체를 렌더하지 않습니다. 자동 쓰기 대상 직접 편집의 수명 기대는 코어 세 장면으로 제한합니다. 퇴화·경고의 누적 이력과 현재 오류는 위 규칙으로 구별하므로 완전한 이력 일치를 주장하지 않습니다.
 
