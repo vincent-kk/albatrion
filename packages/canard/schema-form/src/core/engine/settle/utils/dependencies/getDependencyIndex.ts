@@ -86,18 +86,14 @@ class DependencyIndex {
     if (!blueprint) return;
     this.root = { owners: [], ownerPaths: new Set(), children: new Map() };
     getContextOwners(blueprint);
-    const dependencies = Object.entries(blueprint.dependencies);
+    const dependencies = Object.keys(blueprint.dependencies);
     if (dependencies.length === 0 && blueprint.expressions.length === 0) return;
-    const declarations = new Map<number, PropertyDeclaration>(
-      blueprint.nodes.flatMap((node) =>
-        node.declarations.map((declaration): [number, PropertyDeclaration] => [
-          declaration.id,
-          declaration,
-        ]),
-      ),
-    );
-    for (const [dependency, ids] of dependencies)
-      for (const id of ids) {
+    const declarations = new Map<number, PropertyDeclaration>();
+    for (const node of blueprint.nodes)
+      for (const declaration of node.declarations)
+        declarations.set(declaration.id, declaration);
+    for (const dependency of dependencies)
+      for (const id of blueprint.dependencies[dependency]) {
         const declaration = declarations.get(id);
         if (!declaration) continue;
         const watched = resolveDependencyPath(declaration.path, dependency);
@@ -120,16 +116,26 @@ class DependencyIndex {
             }
           }
         }
+    const gateWatches = new Map<BlueprintGate, readonly string[]>();
     for (const node of blueprint.nodes)
       for (const declaration of node.declarations)
         for (const gate of declaration.gates) {
-          const expression = getGateExpression(blueprint, gate.schemaPath);
-          if (!expression) continue;
-          for (const dependency of expression.dependencies) {
-            const watched = resolveDependencyPath(gate.hostPath, dependency);
-            if (watched === $.Context) continue;
-            this.add(watched, declaration.path);
+          let watches = gateWatches.get(gate);
+          if (!watches) {
+            const paths: string[] = [];
+            const expression = getGateExpression(blueprint, gate.schemaPath);
+            if (expression)
+              for (const dependency of expression.dependencies) {
+                const watched = resolveDependencyPath(
+                  gate.hostPath,
+                  dependency,
+                );
+                if (watched !== $.Context) paths.push(watched);
+              }
+            watches = paths;
+            gateWatches.set(gate, watches);
           }
+          for (const watched of watches) this.add(watched, declaration.path);
         }
   }
 
@@ -145,28 +151,37 @@ class DependencyIndex {
     this.registrationPrepared = true;
     const candidates = new Map<string, string>();
     const plain = new Set(this.ordinaryOwners);
+    const gateDependencies = new Map<BlueprintGate, boolean>();
     for (const node of this.blueprint.nodes)
       for (const declaration of node.declarations)
         for (const gate of declaration.gates) {
-          const expression = getGateExpression(this.blueprint, gate.schemaPath);
-          if (
-            !expression?.dependencies.some(
-              (dependency) =>
-                resolveDependencyPath(gate.hostPath, dependency) !== $.Context,
-            )
-          )
-            continue;
-          let hostPath: string | undefined;
-          for (const [host, table] of tables) {
-            const name = unescapeSegment(
-              declaration.path.slice(declaration.path.lastIndexOf('/') + 1),
+          let dependent = gateDependencies.get(gate);
+          if (dependent === undefined) {
+            const expression = getGateExpression(
+              this.blueprint,
+              gate.schemaPath,
             );
+            dependent =
+              expression?.dependencies.some(
+                (dependency) =>
+                  resolveDependencyPath(gate.hostPath, dependency) !==
+                  $.Context,
+              ) ?? false;
+            gateDependencies.set(gate, dependent);
+          }
+          if (!dependent) continue;
+          let hostPath: string | undefined;
+          const name = unescapeSegment(
+            declaration.path.slice(declaration.path.lastIndexOf('/') + 1),
+          );
+          const escapedName = escapeSegment(name);
+          for (const [host, table] of tables) {
             const stepIndex = table.stepIndexByName.get(name);
             if (
               stepIndex !== undefined &&
               table.tableSteps.has(stepIndex) &&
               table.plan.steps[stepIndex].gate === gate &&
-              declaration.path === host.path + '/' + escapeSegment(name) &&
+              declaration.path === host.path + '/' + escapedName &&
               !declaration.path.includes('/*')
             ) {
               hostPath = host.path;
@@ -531,24 +546,24 @@ class DependencyIndex {
   /** Insert one exact watched location into the pointer trie. */
   private add(watchedPath: string, owner: string): void {
     const ownerParts = owner.split($.Separator);
-    const watchedParts = watchedPath.split($.Separator);
+    let indexedParts = watchedPath.split($.Separator);
     const originalWatchedPath = watchedPath;
     // A fixed read of another item depends on that array host's whole subtree.
     for (let index = 1; index < ownerParts.length; index++) {
       if (
         ownerParts[index] === $.Wildcard &&
-        watchedParts[index] !== $.Wildcard &&
-        ownerParts
-          .slice(1, index)
-          .every((part, position) => part === watchedParts[position + 1]) &&
-        watchedParts[index]
+        indexedParts[index] !== $.Wildcard &&
+        indexedParts[index]
       ) {
-        watchedPath = ownerParts.slice(0, index).join($.Separator);
+        indexedParts = ownerParts.slice(0, index);
+        watchedPath = indexedParts.join($.Separator);
         break;
       }
+      if (ownerParts[index] !== indexedParts[index]) break;
     }
     let current = this.root!;
-    for (const segment of watchedPath.split($.Separator).filter(Boolean)) {
+    for (const segment of indexedParts) {
+      if (!segment) continue;
       let child = current.children.get(segment);
       if (!child) {
         child = { owners: [], ownerPaths: new Set(), children: new Map() };
@@ -556,7 +571,6 @@ class DependencyIndex {
       }
       current = child;
     }
-    const indexedParts = watchedPath.split($.Separator);
     if (!current.ownerPaths.has(owner)) {
       current.ownerPaths.add(owner);
       current.owners.push({

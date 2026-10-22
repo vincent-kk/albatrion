@@ -2,6 +2,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 
 import type {
   Blueprint,
+  BlueprintExpression,
   BlueprintGate,
   BlueprintNode,
 } from '../../../../blueprint';
@@ -55,20 +56,34 @@ export const getGateSelectionTable = (
   const alwaysSteps: number[] = [];
   const stepIndexByName = new Map<string, number>();
   const tableSteps = new Set<number>();
+  const resolvedGates = new Map<
+    BlueprintGate,
+    {
+      watchedName: string | undefined;
+      equality: BlueprintExpression['equality'];
+    }
+  >();
   for (let index = 0; index < plan.steps.length; index++) {
     const step = plan.steps[index];
     const gate = step.gate;
     stepIndexByName.set(step.entry.name, index);
-    const expression = gate
-      ? getGateExpression(blueprint, gate.schemaPath)
-      : undefined;
-    const equality = expression?.equality;
-    const watchedName =
-      equality && expression
-        ? watchedNames.get(
-            resolveDependencyPath(host.path, expression.dependencies[0]),
-          )
-        : undefined;
+    let resolved = gate ? resolvedGates.get(gate) : undefined;
+    if (gate && !resolved) {
+      const expression = getGateExpression(blueprint, gate.schemaPath);
+      const equality = expression?.equality;
+      resolved = {
+        equality,
+        watchedName:
+          equality && expression
+            ? watchedNames.get(
+                resolveDependencyPath(host.path, expression.dependencies[0]),
+              )
+            : undefined,
+      };
+      resolvedGates.set(gate, resolved);
+    }
+    const equality = resolved?.equality;
+    const watchedName = resolved?.watchedName;
     if (!gate || !equality || watchedName === undefined) {
       alwaysSteps.push(index);
       continue;
