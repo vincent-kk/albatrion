@@ -52,6 +52,61 @@ it.each(['record', 'skip', 'shadow'] as const)(
   },
 );
 
+it.each(['record', 'skip', 'shadow'] as const)(
+  '%s: relocated declaring-host reader follows a sibling gate that flips mid-round',
+  (mode) => {
+    const previousMode = gateWheelEvaluation.mode;
+    try {
+      runGateSelectionCase(
+        {
+          name: 'declaring-host reader after a mid-round sibling gate flip',
+          schema: {
+            type: 'object',
+            properties: {
+              X: {
+                type: 'object',
+                properties: {
+                  current: {
+                    type: 'object',
+                    properties: {
+                      b: { type: 'string' },
+                      a: {
+                        type: 'string',
+                        controls: {
+                          active: '(#/X)?.current?.b === "B"',
+                        },
+                      },
+                      reader: {
+                        type: 'string',
+                        controls: {
+                          active: '(#/X)?.current?.a === "A"',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          input: { X: { current: { b: 'no', a: 'A' } } },
+          writes: [{ path: '/X/current/b', value: 'B' }],
+        },
+        () => {
+          gateWheelEvaluation.mode = mode;
+        },
+        (root) => {
+          const current = root.structure?.X?.structure?.current;
+          expect(current?.structure?.reader !== undefined).toBe(
+            current?.structure?.a?.emit === 'A',
+          );
+        },
+      );
+    } finally {
+      gateWheelEvaluation.mode = previousMode;
+    }
+  },
+);
+
 it.each([false, true])(
   'real relocated child with newly gated host=%s retains its next wheel',
   (newHost) => {
