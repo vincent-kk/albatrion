@@ -15,9 +15,10 @@ import type {
   SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
+import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import type { GateSelectionRound } from './gateSelectionRound';
-import type { GateWheelFrame } from './gateWheel';
+import type { GateWheelFrame, RelocatedGateReads } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 import type { PresenceQueryCursor } from './presenceQueryCursor';
 import type { SplitBucket } from './splitRegistration';
@@ -126,6 +127,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   hasGates: boolean;
   /** Hosts whose direct child identity may differ from the wheel's prior shape. */
   presenceHosts?: Set<Self>;
+  /** Latest actual dependency reads of relocated occurrences in this settlement. */
+  relocatedReads?: Map<GateOccurrence, RelocatedGateReads>;
   /** Emitted child paths that changed identity at any point in this settlement. */
   changedPresence?: Set<string>;
   /** Ancestor prefixes accumulated only when a new presence path is added. */

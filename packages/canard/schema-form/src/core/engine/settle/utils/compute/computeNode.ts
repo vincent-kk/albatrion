@@ -16,6 +16,7 @@ import { dirtyChildren } from './dirtyChildren';
 import { preserveReferences } from './preserveReferences';
 import { primeHost } from './primeHost';
 import { relocatedGates } from './relocatedGates';
+import { scheduleChangedRelocatedGates } from './scheduleChangedRelocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
 import { selectNodeSchema } from './selectNodeSchema';
 import { computeStableNode } from './utils/computeStableNode';
@@ -182,6 +183,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   let lastStructure = prior;
   let registered = false;
   for (let round = 0; round < cap; round++) {
+    const roundLocal = node.local;
+    const roundEmit = node.emit;
     const frame: GateWheelFrame | undefined =
       gates.length > 0 && context.kind !== 'load'
         ? {
@@ -237,7 +240,13 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     }
     cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
-    const wheelChanged = schemaChanged || changed || outputChanged;
+    const publishedChanged =
+      !outputChanged &&
+      context.kind !== 'load' &&
+      (node.local !== roundLocal || node.emit !== roundEmit) &&
+      scheduleChangedRelocatedGates(currentRelocated, context);
+    const wheelChanged =
+      schemaChanged || changed || outputChanged || publishedChanged;
     finishGateTableRound(node, context);
     if (frame && confirmation)
       verifyGateWheelConfirmation(confirmation, frame, wheelChanged);
@@ -259,7 +268,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     confirmation =
       skip && gateWheelEvaluation.mode === 'shadow' ? frame : undefined;
     previousPredicate = skip;
-    if (!schemaChanged && !changed && !outputChanged) {
+    if (!schemaChanged && !changed && !outputChanged && !publishedChanged) {
       preserveReferences(node, previous, context);
       context.dirtyPaths.delete(node.path);
       return;
