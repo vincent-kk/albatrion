@@ -20,7 +20,7 @@ yarn workspace @canard/schema-form test:verify --run
 yarn workspace @canard/schema-form test --run --project verify-unit --project verify-render
 ```
 
-PR-2b 결과 문서에서 도입한 `SCHEMA_FORM_GATE_WHEEL_MODE` 전환과 기존 `SCHEMA_FORM_GATE_SELECTION_MODE` 전환은 PR-7의 시험 setup에서 제거했으며, 이제 환경 변수 대신 프로젝트 선택으로 두 실행 구성을 고릅니다.
+PR-2b 결과 문서에서 도입한 `SCHEMA_FORM_GATE_WHEEL_MODE` 전환과 기존 `SCHEMA_FORM_GATE_SELECTION_MODE` 전환은 PR-7의 시험 setup에서 제거했으며, 이제 환경 변수 대신 프로젝트 선택으로 두 실행 구성을 고릅니다. Storybook 프로젝트는 변경하지 않았으므로 `.storybook/vitest.setup.ts`의 `VITE_SCHEMA_FORM_GATE_SELECTION_MODE` 전환과 verify 표 기본값이 그대로 남습니다. verify-render는 React 19 렌더 프로젝트만 shadow·verify로 실행하므로, 변경 전 react18 프로젝트가 shadow·verify로 돌던 (파일, 모드, React 18) 조합 하나는 이 변경으로 줄었고 파일 집합은 같습니다.
 
 ## verify 전용 파일
 
@@ -32,7 +32,7 @@ PR-2b 결과 문서에서 도입한 `SCHEMA_FORM_GATE_WHEEL_MODE` 전환과 기�
 | settle.gate-table-wheel-characterization.test.ts | 저장된 바퀴 이력의 방문 기록이 shadow 기준입니다. |
 | settle.gate-selection-preparation-invariants.test.ts | 고정된 섹션 해시가 shadow 실행 이력의 바이트를 비교합니다. |
 | settle.gate-table-key-order.test.ts | 키 순서 변경을 거부하는 대조군이 같은 shadow 스냅샷을 사용합니다. |
-| settle.derive-shadow.test.ts | package setup이 derive shadow를 켰다는 계약 자체를 검증합니다. |
+| settle.derive-shadow-setup.test.ts | package setup이 derive shadow를 켰다는 계약 자체를 검증합니다(verify 검토 뒤 settle.derive-shadow.test.ts에서 분리; 출하 기본값 off와 플래그 off 동작을 지키는 나머지 두 시험은 기본 실행에 남습니다). |
 
 새로 모드를 고정한 파일은 `settle.derive-convergence.test.ts`입니다. 정확한 결정 이력에는 빈 확인 평가가 포함되어야 하므로 첫 시험에서 derive shadow를 켰고, 잘못된 proof가 거부되는지 확인하는 시험에서도 이를 명시했습니다. 기존 `afterEach`가 각 프로젝트의 setup 값으로 복구합니다. 다른 동작 시험은 기본 출하 설정으로 남습니다.
 
@@ -51,14 +51,14 @@ PR-2b 결과 문서에서 도입한 `SCHEMA_FORM_GATE_WHEEL_MODE` 전환과 기�
 | verify-unit·verify-render | 589파일, 4,249통과, 실패 0, 기존 todo 1 | verify.json·verify.log |
 | production | 9파일, 20통과, 실패 0 | production.json·production.log |
 | Storybook | 실행 합집합 100파일, 251통과, 제품 단언 실패 0 | storybook.json·storybook-retry-1.json 및 각 log |
-| 실행 파일 집합 | 변경 전과 동일한 고유 589파일 | before-files.json·final-selected-files.json·summary.log |
+| 실행 파일 집합 | 변경 전 589개와 분리한 새 파일 1개를 더한 590개 | before-files.json·final-selected-files.json·summary.log(분리 전 수집), 분리 뒤 unit·verify-unit 재실행 |
 | FCA 기준 비교 | 새 구조·진단·검증 발견 0 | fca-delta.log 및 세 전체 보고서 |
 
 첫 기본 실행은 701파일 중 697통과·4실패, 4,931통과·6실패·1todo였습니다. 위의 추가 전용 파일 세 개와 derive-convergence의 두 플래그 고정 후 최종 기본 전체 실행이 통과했습니다. 최초 실패 결과와 대상 재검증 결과도 `default-initial.*`, `mode-targeted.*`로 보존했습니다.
 
 Storybook 첫 전체 실행은 26파일·81시험을 통과한 뒤 Chromium WebSocket 연결 종료로 종료 1이었습니다. JSON의 빈 파일 항목을 실행 성공으로 세지 않았습니다. 미실행 74파일만 단독 warm-cache 실행하여 74파일·170시험 통과·종료 0을 확인했습니다. 두 실행의 실제 단언을 가진 통과 파일 합집합은 100파일·251시험이며 제품 단언 실패는 0입니다. 브리프의 425C-02에 따라 분류했고, 최초 종료 1과 원문을 그대로 보존했습니다.
 
-변경 전 수집은 unit 475·render 114·react18 114파일이었고, 최종 기본 수집은 unit 470·render 114·react18 114파일입니다. verify는 unit의 기존 475파일과 render의 기존 114파일을 실행합니다. 기본 실행의 고유 584파일과 verify의 고유 589파일의 합집합이 변경 전 고유 589파일과 정확히 같으며, 누락·추가는 없습니다. 각 실제 실행 파일에 단언이 존재하는지도 검사했습니다.
+변경 전 수집은 unit 475·render 114·react18 114파일이었고, verify 검토 전 기본 수집은 unit 470·render 114·react18 114파일, verify는 unit 475·render 114파일이었으며 두 집합의 합집합 589파일이 변경 전과 같았습니다. 검토 뒤 derive-shadow의 setup 계약 시험 하나를 `settle.derive-shadow-setup.test.ts`로 분리해 나머지 두 시험을 기본 실행으로 되돌렸으므로, 최종 기본 수집은 unit 471파일(고유 585), verify-unit은 476파일(고유 590)이고 합집합은 변경 전 589개와 분리한 새 파일 1개를 더한 590개이며 누락은 없습니다. 각 실제 실행 파일에 단언이 존재하는지도 검사했습니다.
 
 ## verify 단언 계수
 

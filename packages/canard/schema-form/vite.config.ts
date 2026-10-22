@@ -15,7 +15,7 @@ const renderTests = [
 
 /** Shadow setup contracts and stored full-visitation histories run in verification projects. */
 const verifyOnlyTests = [
-  'src/core/engine/settle/__tests__/settle.derive-shadow.test.ts',
+  'src/core/engine/settle/__tests__/settle.derive-shadow-setup.test.ts',
   'src/core/engine/settle/__tests__/settle.gate-selection-preparation-invariants.test.ts',
   'src/core/engine/settle/__tests__/settle.gate-table-characterization.test.ts',
   'src/core/engine/settle/__tests__/settle.gate-table-key-order.test.ts',
