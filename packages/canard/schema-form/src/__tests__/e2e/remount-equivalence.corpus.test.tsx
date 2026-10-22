@@ -6,7 +6,7 @@ import { selectRenderScenes } from '@/schema-form/__tests__/fixtures/remountEqui
 
 import { checkRenderScene } from './remount-equivalence/helpers/checkRenderScene';
 
-// D443-01(verify-render)·D443-02 — 결함, 수정 PR 대기.
+// D443-02(14) — 결함, 수정 PR 대기; C443-01(14) — VALUE-031 ㄴ 후보, 소유자 판정 대기.
 it.fails('replays a deterministic feature-pair cover through the screen adapter', async ({
   task,
 }) => {
