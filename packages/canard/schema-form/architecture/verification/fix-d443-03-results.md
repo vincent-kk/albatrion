@@ -102,6 +102,14 @@ stage-8 도구와 현재 bench fixture의 최초 조회에서는 게이트 행�
 
 근거는 작업 기록의 `measure/rows-r15.json`, `measure/slopes.json`, `measure/stopped-window.json`, 개별 `measure/wall/` 표본과 전후 프로세스 스냅숏, `gates/measurement-verification.json`입니다. nested-d6는 B/A +4.126565%, B/A′ +3.411971%이며 두 절대 차이 0.413542·0.344292ms가 폭 0.111125ms를 넘었습니다. 다른 19행과 oneOf 두 가족의 폭 (다) 기울기는 미입증입니다.
 
+### 설계 검토 예상과 실제 측정의 대조
+
+설계 검토는 gate-form-one-key 입력, gated-array와 fixed-index 쓰기, whole-array 쓰기에 읽기 기록·재예약 비용이 생길 것으로 예상했고, whole-array 쓰기는 느림이 입증될 가능성을 명시했습니다. 이번 정본 게이트 8행은 모두 폭 (다)에서 미입증입니다. whole-array write의 +2.114%/+5.456%도 두 비교가 함께 폭을 넘지는 않았으므로 느림으로 판정하지 않습니다. gate-form-one-key-1000 input의 +3.773%/+3.460% 역시 폭 안에서 미입증입니다.
+
+설계가 동치를 예상한 oneOf 전환·마운트는 개별 행과 가족 기울기에서 느림이 입증되지 않았습니다. 반면 nested-d6 bulk 통제는 예상과 달리 +4.127%/+3.412% 느림이 입증됐습니다. flat 통제는 설계가 언급한 flat-500 대신 코디네이터 지정 flat-1000 bulk이며 미입증입니다. 이 차이를 숨기거나 원인을 확인하지 않은 채 잡음이라고 해석하지 않습니다.
+
+설계의 gated-array write에 대해서는 이번 정본의 mount·remove-0을 측정했으므로 일반 write의 성능을 주장하지 않습니다. presence-index write도 영향 예상 행이었으나 코디네이터 지정 20행에서 제외되어 미측정입니다. 성능 수용과 추가 검증 여부는 TEST-027에 따라 소유자의 마지막 검증에 남깁니다.
+
 ## D443-02와의 상호작용
 
 같은 settle DETAIL 항목과 `settlement.ts`의 인접 필드가 겹칩니다. D443-02 뒤 등록된 자식은 같은 라운드에서 계산되어 읽기를 다시 기록하므로 새 비교가 같은 값을 보면 이중 예약하지 않습니다. 합친 코드에서 relocated·overlay·corpus와 gate-table의 overlay projection 스냅숏은 코디네이터가 재확인합니다.
