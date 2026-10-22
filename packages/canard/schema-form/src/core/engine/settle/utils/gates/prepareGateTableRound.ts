@@ -2,6 +2,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { DIRECT_CHILD_SELECTION_PLANS } from '../compute/childSelection/getDirectChildSelectionPlan';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
 import { gateSelectionTable } from './gateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
@@ -21,7 +22,8 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   context.gateSelectionRounds?.delete(node);
   if (
     gateSelectionTable.mode === 'off' ||
-    context.kind === 'load' ||
+    (context.kind === 'load' &&
+      !DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)) ||
     !context.hasGates ||
     node.behavior.type !== 'object'
   )

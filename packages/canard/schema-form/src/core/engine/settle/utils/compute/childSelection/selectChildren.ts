@@ -125,24 +125,24 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
   const cached =
-    context.kind !== 'load' &&
-    context.hasGates &&
-    node.behavior.type === 'object'
+    context.hasGates && node.behavior.type === 'object'
       ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)
       : null;
   const direct =
     cached === undefined
-      ? getDirectChildSelectionPlan(
-          node.blueprintNode,
-          node.runtime.blueprint,
-          true,
-        )
+      ? context.kind === 'load'
+        ? null
+        : getDirectChildSelectionPlan(
+            node.blueprintNode,
+            node.runtime.blueprint,
+            true,
+          )
       : cached;
   const entries = direct
     ? node.blueprintNode.childEntries
     : node.behavior.declareChildren(node);
   const count = direct ? direct.steps.length : entries.length;
-  const flushReads = immediate && !direct;
+  const flushReads = immediate && (!direct || context.kind === 'load');
   const frame: ChildSelectionFrame<Self> = {
     node,
     context,

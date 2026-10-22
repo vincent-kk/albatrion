@@ -12,7 +12,7 @@ const PREPARED = new WeakMap<Blueprint, boolean>();
 /**
  * Memoize static selection metadata before a mount's load without evaluating gates.
  * @param blueprint - Immutable mount analysis with branches and compiled expressions
- * @param allowPreparation - False for a generic load that must retain lazy preparation
+ * @param allowPreparation - False for a generic load; only already-prepared metadata may be consumed there
  * @returns Whether the injected registration index contains split owners
  */
 export const prepareGateSelection = (

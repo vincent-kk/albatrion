@@ -35,16 +35,18 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   const baseline: Record<string, Self> = {};
   Object.setPrototypeOf(baseline, null);
   const cached =
-    context.kind !== 'load' && node.behavior.type === 'object'
+    node.behavior.type === 'object'
       ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)
       : null;
   const direct =
     cached === undefined
-      ? getDirectChildSelectionPlan(
-          node.blueprintNode,
-          node.runtime.blueprint,
-          false,
-        )
+      ? context.kind === 'load'
+        ? null
+        : getDirectChildSelectionPlan(
+            node.blueprintNode,
+            node.runtime.blueprint,
+            false,
+          )
       : cached;
   const entries = direct?.baseline ?? node.behavior.declareChildren(node);
   for (let index = 0; index < entries.length; index++) {
