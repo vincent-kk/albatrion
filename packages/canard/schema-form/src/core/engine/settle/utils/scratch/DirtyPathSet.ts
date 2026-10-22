@@ -39,7 +39,7 @@ export class DirtyPathSet extends Set<string> {
   /** Only re-represented members need an explicit member-to-anchor entry. */
   private memberAnchors = new Map<string, SplitAnchor>();
 
-  /** Live descendant paths and their direct child names in insertion order. */
+  /** Dirty descendant edges by parent in insertion order; post-order keeps a consumed child's edge until its parent is consumed. */
   readonly childrenByParent: Map<string, Map<string, string>>;
 
   /** Ungated computation consumes live nodes only after their children. */
@@ -280,6 +280,7 @@ export class DirtyPathSet extends Set<string> {
    * Consume a settled node after its children without slicing its parent path.
    * @param path - Completed node; post-order child entries must already be consumed
    * @returns Whether a dirty member was removed; ordinary indexes use delete
+   * @throws S6 verification failure in verify mode when a post-order child is still dirty
    */
   consume(path: string): boolean {
     if (!this.postOrder) return this.delete(path);

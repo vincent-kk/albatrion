@@ -18,9 +18,10 @@ it('bulk fixtures keep complete observations in off/table/verify with zero viola
   expect(gateSelectionTable.violations).toBe(before);
 }, 120000);
 
-it('recreates /list/0 after /list was consumed within the same settlement', async () => {
+it('recreates /list/0 after /list was deleted in a non-stable pass within the same settlement', async () => {
   const consumed = new WeakSet<DirtyPathSet>();
   let recreated = 0;
+  let consumes = 0;
   const add = DirtyPathSet.prototype.add;
   const clear = DirtyPathSet.prototype.clear;
   const remove = DirtyPathSet.prototype.delete;
@@ -40,9 +41,8 @@ it('recreates /list/0 after /list was consumed within the same settlement', asyn
   if ('consume' in DirtyPathSet.prototype) {
     const consume = DirtyPathSet.prototype.consume;
     vi.spyOn(DirtyPathSet.prototype, 'consume').mockImplementation(function (this: DirtyPathSet, path) {
-      const result = consume.call(this, path);
-      if (result && path === '/list') consumed.add(this);
-      return result;
+      consumes++;
+      return consume.call(this, path);
     });
   }
   try {
@@ -50,7 +50,8 @@ it('recreates /list/0 after /list was consumed within the same settlement', asyn
     await observeGateTableModes(bulkConsumeCases[2]);
     expect(gateSelectionTable.violations).toBe(before);
     expect(recreated).toBeGreaterThanOrEqual(6);
-    console.log('DIRTY_CONSUME_RECREATED', JSON.stringify({ recreated }));
+    expect(consumes).toBe(0);
+    console.log('DIRTY_CONSUME_RECREATED', JSON.stringify({ recreated, consumes }));
   } finally { vi.restoreAllMocks(); }
 });
 
