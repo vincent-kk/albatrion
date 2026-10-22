@@ -1,3 +1,4 @@
+// Runs only in the verify bundle because it asserts the shadow setup contract.
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';

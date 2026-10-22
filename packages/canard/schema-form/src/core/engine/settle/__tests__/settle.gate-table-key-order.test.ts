@@ -1,3 +1,4 @@
+// Runs only in the verify bundle because the key-order oracle is a shadow history snapshot.
 import { expect, it } from 'vitest';
 
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';

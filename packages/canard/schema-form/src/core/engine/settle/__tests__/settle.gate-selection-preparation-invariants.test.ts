@@ -1,3 +1,4 @@
+// Runs only in the verify bundle because stored section hashes require shadow histories.
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';

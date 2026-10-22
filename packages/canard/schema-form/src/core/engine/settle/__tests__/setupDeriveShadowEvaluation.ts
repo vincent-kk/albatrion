@@ -1,4 +1,4 @@
-// Loaded by Vitest setupFiles for unit, render and react18; each worker owns its switch.
+// Loaded by Vitest setupFiles for verify-unit and verify-render; each file owns its shadow checks.
 import { afterAll, expect } from 'vitest';
 
 import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
@@ -6,10 +6,8 @@ import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 
 deriveShadowEvaluation.enabled = true;
-gateWheelEvaluation.mode =
-  process.env.SCHEMA_FORM_GATE_WHEEL_MODE === 'skip' ? 'skip' : 'shadow';
-gateSelectionTable.mode =
-  process.env.SCHEMA_FORM_GATE_SELECTION_MODE === 'table' ? 'table' : 'verify';
+gateWheelEvaluation.mode = 'shadow';
+gateSelectionTable.mode = 'verify';
 
 /** Exclude assertions from any earlier file sharing this module instance. */
 const assertionsBefore = { ...gateSelectionTable.assertions };
