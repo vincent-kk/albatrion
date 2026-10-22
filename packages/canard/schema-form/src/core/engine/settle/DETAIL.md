@@ -278,7 +278,7 @@
 
 ### settle-dependency-preparation-paths — 경로와 준비 수명
 
-- 빈 segment, escape된 이름, derive 대상 경로, 배열 wildcard 접기와 표 둘 이상인 청사진에서도 준비 자료와 질의 순서를 유지합니다. 같은 gate를 사용하는 단계의 gate identity와 split bucket 공유를 유지하고 allowPreparation=false는 준비를 시작하지 않습니다. 선언 조회를 만들 때 flatMap 중간 배열을 만들지 않습니다.
+- 빈 segment, escape된 이름, derive 대상 경로, 배열 wildcard 접기와 표 둘 이상인 청사진에서도 준비 자료와 질의 순서를 유지합니다. 같은 gate를 사용하는 단계의 gate identity와 split bucket 공유를 유지하고 allowPreparation=false는 준비를 시작하지 않습니다. 선언 조회를 만들 때 flatMap 중간 배열을 만들지 않습니다. wildcard 앞 조각이 감시 경로와 다른 owner는 접지 않고 감시 경로 그대로 등록합니다.
 
 ### settle-split-registration — 등록 축약과 순서·관측 불변
 
