@@ -6,6 +6,52 @@ import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import type { gateSelectionCases } from './fixtures/gateSelectionCases';
 import { runGateSelectionCase } from './helpers/runGateSelectionCase';
 
+it.each(['record', 'skip', 'shadow'] as const)(
+  '%s: relocated child follows a value-only write after its host was located',
+  (mode) => {
+    const previousMode = gateWheelEvaluation.mode;
+    try {
+      runGateSelectionCase(
+        {
+          name: 'value-only change after relocated host locate',
+          schema: {
+            type: 'object',
+            properties: {
+              mode: { type: 'string' },
+              p: {
+                type: 'object',
+                properties: {
+                  child: {
+                    type: 'string',
+                    controls: { active: '#/later === true' },
+                  },
+                },
+              },
+            },
+            allOf: [
+              {
+                controls: { active: './mode === "x"' },
+                properties: { later: { type: 'boolean' } },
+              },
+            ],
+          },
+          input: { mode: 'x', p: { child: 'P' } },
+          writes: [{ path: '/later', value: true }],
+        },
+        () => {
+          gateWheelEvaluation.mode = mode;
+        },
+        (root) =>
+          expect(root.structure?.p?.structure?.child !== undefined).toBe(
+            root.structure?.later?.emit === true,
+          ),
+      );
+    } finally {
+      gateWheelEvaluation.mode = previousMode;
+    }
+  },
+);
+
 it.each([false, true])(
   'real relocated child with newly gated host=%s retains its next wheel',
   (newHost) => {

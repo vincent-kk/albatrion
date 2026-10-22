@@ -313,9 +313,18 @@ describe('44C-01 array settlement scaling', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(observations.length).toBeGreaterThan(0);
-    for (const value of observations)
-      expect(value).toEqual({ first: { value: 'entered' } });
+    // SETTLE-045 re-evaluates the relocated reader in root rounds after current
+    // publishes; those reads see the published current, never an in-progress one (51C-01).
+    // 이 단언은 사전 공표에 가려 옮긴 게이트를 다시 평가하지 않던 구현의 특성화였습니다. SETTLE-045는 옮긴 게이트를 L의 매 바퀴 평가하라고 정하므로, current가 공표된 뒤 라운드의 관찰은 완성된 루트를 읽습니다. 같은 바퀴에 들어온 사촌은 보이고 계산 중인 current는 섞이지 않는다는 51C-01과 18C-15의 성질은 첫 관찰 묶음으로 그대로 단언합니다.
+    const inProgress = { first: { value: 'entered' } };
+    const settled = observations.findIndex(
+      (value) => JSON.stringify(value) !== JSON.stringify(inProgress),
+    );
+    expect(settled).toBeGreaterThan(0);
+    for (const value of observations.slice(0, settled))
+      expect(value).toEqual(inProgress);
+    for (const value of observations.slice(settled))
+      expect(value).toEqual(root.emit);
     expect(root.emit).toEqual({
       first: { value: 'entered' },
       current: { value: 'in-progress', primer: 'ready', reader: 'visible' },
