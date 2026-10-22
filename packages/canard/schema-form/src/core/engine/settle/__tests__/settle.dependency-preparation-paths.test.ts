@@ -89,4 +89,34 @@ describe('dependency preparation path and lifetime boundaries', () => {
       flatMap.mockRestore();
     }
   });
+
+  it('preserves watched paths when owner prefixes differ before a wildcard', () => {
+    const { blueprint } = createTestTree({
+      type: 'object',
+      properties: {
+        meta: {
+          type: 'object',
+          properties: { flag: { type: 'string' } },
+        },
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              value: {
+                type: 'string',
+                controls: { visible: '/meta/flag' },
+              },
+            },
+          },
+        },
+      },
+    });
+    const index = getDependencyIndex(blueprint);
+    const root = Reflect.get(index, 'root');
+    expect(root.children.get('meta').children.get('flag').owners).toEqual([
+      { path: '/items/*/value', bindable: false },
+    ]);
+    expect(root.children.get('items')?.owners ?? []).toEqual([]);
+  });
 });
