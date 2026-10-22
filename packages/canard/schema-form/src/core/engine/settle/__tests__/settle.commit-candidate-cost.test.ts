@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { runDeliveryWaves } from '@/schema-form/core/engine/write/utils/chain/runDeliveryWaves';
+import { dispatchBatch } from '@/schema-form/core/engine/write';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -20,7 +20,7 @@ describe('commit candidate Set work', () => {
       },
     });
     loadFieldNodeAtMount(root, { a: 'A', b: 'B', c: 'C' }, 0);
-    runDeliveryWaves(root);
+    dispatchBatch(root, () => {});
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(root, 'callerReplace', 0, scratch);
     for (const node of [...root.children!, root]) {
@@ -51,7 +51,7 @@ describe('commit candidate Set work', () => {
       properties: { a: { type: 'string' } },
     });
     loadFieldNodeAtMount(root, { a: 'A' }, 0);
-    runDeliveryWaves(root);
+    dispatchBatch(root, () => {});
     const a = root.structure!.a;
     a.detached = true;
     const scratch = getSettlementScratch(root.runtime);

@@ -5,7 +5,7 @@ import {
   captureFieldNodeChange,
   markFieldNodeEvent,
 } from '@/schema-form/core/engine/record';
-import { runDeliveryWaves } from '@/schema-form/core/engine/write/utils/chain/runDeliveryWaves';
+import { dispatchBatch } from '@/schema-form/core/engine/write';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
@@ -26,7 +26,7 @@ const fixture = () => {
     },
   });
   loadFieldNodeAtMount(root, { a: 'A', b: 'B', c: 'C' }, 0);
-  runDeliveryWaves(root);
+  dispatchBatch(root, () => {});
   return root;
 };
 
@@ -50,7 +50,7 @@ describe('commit source visit characterization', () => {
       { left: { a: 'A', b: 'B' }, right: { a: 'C', b: 'D' } },
       0,
     );
-    runDeliveryWaves(root);
+    dispatchBatch(root, () => {});
     const { left, right } = root.structure!;
     const nodes = [
       left.structure!.a,
@@ -90,7 +90,7 @@ describe('commit source visit characterization', () => {
       then: { required: ['a'] },
     });
     loadFieldNodeAtMount(root, { enabled: true, a: 'A', b: 'B' }, 0);
-    runDeliveryWaves(root);
+    dispatchBatch(root, () => {});
     const { a, b } = root.structure!;
     a.interactionState = { arbitrary: true };
     root.runtime.globalStateCounts.set('arbitrary', 1);
@@ -254,7 +254,7 @@ describe('commit source visit characterization', () => {
     commit(a, 'A1');
     commit(b, 'B1');
     const before = b.revisionLedger[E.UpdateValue] ?? 0;
-    runDeliveryWaves(root);
+    dispatchBatch(root, () => {});
     expect(order).toEqual([
       ['/a', ''],
       ['/b', ''],
@@ -284,7 +284,7 @@ describe('commit source visit characterization', () => {
     } finally {
       releaseSettlementScratch(scratch);
     }
-    runDeliveryWaves(root);
+    dispatchBatch(root, () => {});
     const nextScratch = getSettlementScratch(root.runtime);
     const next = createSettlementContext(root, 'callerReplace', 0, nextScratch);
     next.changedNodes.add(b);
