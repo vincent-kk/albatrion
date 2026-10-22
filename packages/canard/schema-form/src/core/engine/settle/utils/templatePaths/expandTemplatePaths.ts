@@ -7,6 +7,7 @@ import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Expand a template owner address over the currently live array positions.
+ * A star segment expands only under a host with a repeating item blueprint.
  * @param root - Live tree whose array item counts determine wildcard positions
  * @param templatePath - Absolute declaration path with optional array segments
  * @returns Real owner paths, including a gated-out final item slot
@@ -31,7 +32,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
     }
     if (!node) continue;
     const segment = segments[depth];
-    if (segment === $.Wildcard) {
+    if (segment === $.Wildcard && node.blueprintNode.item !== undefined) {
       for (let index = node.itemCount - 1; index >= 0; index--) {
         const name = String(index);
         const child = node.structure?.[name];
