@@ -27,9 +27,9 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | `latentRaw`, `latentRawMetadata` | 기존 두 단계 경로/순서 이동 유지 | 기존 경로 제거·dirty 표시 유지 |
 | `committedDeclarationIds` | 기존 (path, kind) 재키 유지 | 기존 소멸 경로 삭제 유지 |
 | `committedRuleValues`, `committedRuleKeysBySource`, `committedRuleKeysByTarget` | 기존 원천/대상 경로 이동과 역색인 재구성 유지 | 기존 원천 또는 대상 소멸 규칙 삭제 유지 |
-| `typeMismatchPaths` | 기존 이동 유지 | 기존 삭제 유지 |
-| `typeMismatchesMemo`, `inactiveValuesMemo`, `inactiveValueEntries` | 기존 영향 범위 무효화 유지 | 기존 latent dirty 커밋에서 사라진 항목과 조상 메모 제거 |
-| `refreshTargets`, `typeMismatchRecords` | 커밋에서 현재 경로로 교체 | 같은 커밋 교체이므로 별도 재키/삭제 없음 |
+| `misfitPaths` | 기존 이동 유지 | 기존 삭제 유지 |
+| `misfitsMemo`, `inactiveValuesMemo`, `inactiveValueEntries` | 기존 영향 범위 무효화 유지 | 기존 latent dirty 커밋에서 사라진 항목과 조상 메모 제거 |
+| `refreshTargets`, `misfitRecords` | 커밋에서 현재 경로로 교체 | 같은 커밋 교체이므로 별도 재키/삭제 없음 |
 | `warningKeys`, `pendingWarningRecords` | 경고 구조 키의 데이터 경로만 충돌 없이 이동. 기록 객체는 발생 당시 path·details·identity 유지 | 해당 접두사의 데이터 경고 키/대기 항목 삭제. 이미 모인 사슬 발생 기록은 보존 |
 | `warningKeysByPath` (신규) | 영향받은 경고 키만 조상 색인에서 삭제/재등록 | 해당 접두사의 키만 삭제. 배달 후 일회성 키 제거, 폼 로드 초기화, 새 루트 인계 시 대기 기록 재색인 |
 | `deliverySnapshots` | 이전 path를 보존한 뒤 pathChanges 후보로 새 커밋 비교 | 소멸 아이템과 자손 삭제 |
@@ -190,8 +190,8 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 | M23 | `arrangeTerminalArray.ts`, `arrayBehavior/DETAIL.md` | 터미널 배열의 `push`가 `null`·`undefined`만 바꾸고 수·객체에서는 무동작 | 47C-02 머리말, 48C-02 | 두 번째 verifier가 지적(비차단). 06이 고침(`59022ad3d`): 배열이 아닌 값 모두 `[x]` |
 | M24 | `updateInactiveValuesMemo.ts:86-88`, `finalizeExits.ts:69-71`, `captureLatentDescendants.ts:44-49`(03·04) | 집단 나감이 나간 노드 수 × 전체(메모·조상 출력·잠복 저장소)로 제곱 비용 | SETTLE-017, 44C-01, 48C-01 | 두 번째 verifier가 찾음, 48C-01이 06에 배정. 06이 고침(codex `f5e0730f`): 메모 항목 한 번 분류, 조상 출력은 깊은 곳부터 조상마다 한 번, 정착 범위의 잠복 자손 경로 색인. P-03·P-04에 관련 관측만 덧붙이고 상태는 그대로 |
 | M25 | `captureExitedRaw.ts`·`readLatentSlotSource.ts`(06), `distributeLatentValue.ts`·`markWrite.ts`의 `pruneLatentRaw`(03) | 호스트마다 잠복 저장소 전체를 훑고 열쇠를 `JSON.parse` | SETTLE-017·047, 44C-01, 48C-01, 49C-01 | 세 번째 verifier가 찾음. 06이 고침(codex `5d1f895f`, `130aec77d`): 정착 범위 잠복 경로 색인(자기 경로와 조상), 직접 변경 자리에서 색인 무효화. 색인 유지가 없으면 실패하는 두 형제 그룹 시험 추가 |
-| M26 | `commitSettlement.ts:104-112`(03) | 커밋마다 형 불일치 경로마다 조상마다 전체 경로 거르기: 무관한 잎 입력 하나가 2천 행에서 590 ms | 49C-01 | 06이 고침(codex `d54f03f7`, `1418295da`): 한 번의 경로 순회 |
-| M27 | `finalizeExits.ts:40-42`(03) | 나감마다 `typeMismatchPaths` 전체 복사·훑기 | 49C-01 | 06이 고침(`0bb4db661`): 첫 나감에서 조상 색인을 한 번 만듦 |
+| M26 | `commitSettlement.ts:104-112`(03) | 커밋마다 misfit 경로마다 조상마다 전체 경로 거르기: 무관한 잎 입력 하나가 2천 행에서 590 ms | 49C-01 | 06이 고침(codex `d54f03f7`, `1418295da`): 한 번의 경로 순회 |
+| M27 | `finalizeExits.ts:40-42`(03) | 나감마다 `misfitPaths` 전체 복사·훑기 | 49C-01 | 06이 고침(`0bb4db661`): 첫 나감에서 조상 색인을 한 번 만듦 |
 | M28 | `finishSettlement.ts`, `alignArraySnapshotSlots.ts`(06) | 크기가 바뀐 호스트마다 스냅숏 루트 배열을 경로 복사 | 49C-01 | 06이 고침(`fd66556bd`): 정착마다 한 초안, 용기마다 얕은 복사 한 번 |
 | M29 | `readProjectedValue.ts:37`(03) | 게이트 평가마다 자식 항목 선형 탐색; 객체 집단 나감의 남은 비용 절반을 P-04의 `getLatentOrder` 몫으로 잘못 적었음 | 49C-01 | 06이 고침(`4f5d8ae17`): 청사진별 자식 이름 집합. P-04 관련 관측 문장을 고침 |
 | M30 | `src/core/settle/utils/latent/readLatentSlotSource.ts`(06, `130aec77d`의 회귀) | 자리 읽기마다 들어온·되살아난 노드 전체로 집합을 다시 만들어 한 배열이 나가고 형제 배열이 들어오는 정착이 제곱 | 49C-01 | 네 번째 verifier가 찾음. 06이 고침(codex `71844513`, `6a9a34ad8`): 정착마다 들어온 잠복 열쇠 색인을 한 번 만들고 추가 자리에서 갱신. 1,000개에서 `JSON.stringify` 2,026,029 → 27,030회 |

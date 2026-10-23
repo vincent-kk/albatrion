@@ -177,11 +177,11 @@ it('LANDING-044 onError observes mismatch warnings without replacing the value',
     expect.arrayContaining([
       expect.objectContaining({
         level: 'warning',
-        code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+        code: 'SCHEMA_FORM_WARNING.MISFIT',
       }),
     ]),
   );
-  expect(form.handle.node?.typeMismatch).toBe(true);
+  expect(form.handle.node?.misfit).toBe(true);
 });
 
 it('LANDING-045 degraded diagnostics survive writes and subtree reset and reject submit', async () => {

@@ -12,7 +12,7 @@ export type {
   SettlementEntryApi,
   SettlementFailureCause,
   SettlementScratch,
-  TypeMismatchRecord,
+  MisfitRecord,
 } from './types/runtime';
 export { EMPTY_REVISION_LEDGER } from './constants/emptyRevisionLedger';
 export { FieldNodeRevisionLedger } from './utils/FieldNodeRevisionLedger';

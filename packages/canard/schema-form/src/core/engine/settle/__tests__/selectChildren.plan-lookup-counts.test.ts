@@ -3,11 +3,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import * as planning from '../utils/compute/childSelection/getDirectChildSelectionPlan';
+import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as priming from '../utils/compute/primeHost';
-import * as selection from '../utils/compute/selectChildren';
-import * as planning from '../utils/compute/selectChildren/utils/getDirectChildSelectionPlan';
 import * as publication from '../utils/gates/flushPendingGateReads';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
+import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 
@@ -91,17 +93,49 @@ describe('child selection plan lookup runtime counts', () => {
   ])(
     'B=%i mount enters pre-publication only with pending outputs (%i calls)',
     (count, pending) => {
-      const { root } = createTestTree(createFixedBranchSchema(count));
-      const calls = countFlushCalls();
-      loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
-      expect(calls).toEqual({ empty: 0, pending });
-      expect(root.children).toHaveLength(5);
-      expect(root.runtime.diagnostics.status).toBe('stable');
+      const previousMode = gateSelectionTable.mode;
+      const previousWheelMode = gateWheelEvaluation.mode;
+      // These counts preserve the shadow wheel's full-step visitation contract.
+      gateSelectionTable.mode = 'table';
+      gateWheelEvaluation.mode = 'shadow';
+      try {
+        const { root } = createTestTree(createFixedBranchSchema(count));
+        const calls = countFlushCalls();
+        loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
+        expect(calls).toEqual({ empty: 0, pending });
+        expect(root.children).toHaveLength(5);
+        expect(root.runtime.diagnostics.status).toBe('stable');
+      } finally {
+        gateSelectionTable.mode = previousMode;
+        gateWheelEvaluation.mode = previousWheelMode;
+      }
     },
   );
 
   it.each([5, 10, 20, 40])(
-    'B=%i union transitions keep 1b candidate visits and stop plan calls after preparation',
+    'B=%i skip mount enters pre-publication only four times',
+    (count) => {
+      const previousMode = gateSelectionTable.mode;
+      const previousWheelMode = gateWheelEvaluation.mode;
+      // The skip wheel omits inactive declarations, so table publication is constant.
+      gateSelectionTable.mode = 'table';
+      gateWheelEvaluation.mode = 'skip';
+      try {
+        const { root } = createTestTree(createFixedBranchSchema(count));
+        const calls = countFlushCalls();
+        loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
+        expect(calls).toEqual({ empty: 0, pending: 4 });
+        expect(root.children).toHaveLength(5);
+        expect(root.runtime.diagnostics.status).toBe('stable');
+      } finally {
+        gateSelectionTable.mode = previousMode;
+        gateWheelEvaluation.mode = previousWheelMode;
+      }
+    },
+  );
+
+  it.each([5, 10, 20, 40])(
+    'B=%i union transitions omit declaration visits and plan calls after mount preparation',
     (count) => {
       const candidateVisits = new Array<number>(count).fill(0);
       let phase = '';
@@ -138,14 +172,16 @@ describe('child selection plan lookup runtime counts', () => {
       });
       root.behavior.declareChildren = () => candidates;
       const calls = countPlanCalls();
+      const builds = vi.spyOn(planning.DIRECT_CHILD_SELECTION_PLANS, 'set');
       loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
+      expect(calls.count).toBe(2);
+      const mountPlans = builds.mock.calls.filter(
+        ([host, plan]) => host === root.blueprintNode && plan !== null,
+      ).length;
+      expect(mountPlans).toBe(1);
+      builds.mockClear();
       const perWrite: number[] = [];
-      for (const [index, kind] of [
-        'kind_4',
-        'kind_0',
-        'kind_4',
-        'kind_0',
-      ].entries()) {
+      for (const kind of ['kind_4', 'kind_0', 'kind_4', 'kind_0']) {
         calls.count = 0;
         candidateVisits.fill(0);
         writeFieldNode(
@@ -155,18 +191,19 @@ describe('child selection plan lookup runtime counts', () => {
           WriteOption.Overwrite,
         );
         perWrite.push(calls.count);
+        expect(builds).not.toHaveBeenCalled();
+        expect(mountPlans + builds.mock.calls.length).toBe(1);
         for (let branch = 0; branch < count; branch++) {
           if (branch === 0 || branch === 4) continue;
           expect({ branch, candidates: candidateVisits[branch] }).toEqual({
             branch,
-            candidates: index === 0 ? 3 : 0,
+            candidates: 0,
           });
         }
         expect(root.children).toHaveLength(5);
         expect(root.runtime.diagnostics.status).toBe('stable');
       }
-      expect(perWrite[0]).toBeGreaterThan(0);
-      expect(perWrite.slice(1)).toEqual([0, 0, 0]);
+      expect(perWrite).toEqual([0, 0, 0, 0]);
     },
   );
 });

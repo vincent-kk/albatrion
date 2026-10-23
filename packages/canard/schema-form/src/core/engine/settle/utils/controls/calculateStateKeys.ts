@@ -114,7 +114,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
         let value: boolean | undefined;
         if (typeof literal === 'boolean') value = literal;
         else if (typeof literal === 'string') {
-          const schemaPath = `${group.schemaPath}/${key}`;
+          const schemaPath = group.schemaPath + '/' + key;
           const cacheKey = JSON.stringify([group.host.path, schemaPath]);
           if (evaluated.has(cacheKey)) value = evaluated.get(cacheKey);
           else {

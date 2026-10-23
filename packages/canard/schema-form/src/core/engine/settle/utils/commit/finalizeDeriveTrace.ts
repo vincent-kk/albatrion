@@ -4,7 +4,7 @@ import { unescapeSegment } from '@winglet/json/pointer';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Mark development rule writes whose target did not survive the final shape.

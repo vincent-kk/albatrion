@@ -42,7 +42,7 @@ export const createValidatorCopy = (
 ): BlueprintSchema => {
   if (typeof authored !== 'object' || authored === null) return authored;
   const copy: Record<string, unknown> = {};
-  const seen = new WeakMap<object, object>([[authored, copy]]);
+  const seen = new Map<object, object>([[authored, copy]]);
   const pending: {
     source: object;
     target: object;

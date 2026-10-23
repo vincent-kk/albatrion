@@ -1,13 +1,18 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import type { Blueprint, BlueprintOptions, BlueprintSchema } from './type';
-import { buildNodes } from './utils/analyze/buildNodes';
-import { compileBlueprintExpressions } from './utils/analyze/compileBlueprintExpressions';
-import type { AnalysisContext } from './utils/analyze/type';
-import { validateShape } from './utils/analyze/validateShape';
-import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
-import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
-import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
+import { StaticFirstLoadCapability } from './StaticFirstLoadCapability';
+import { buildNodes } from './buildNodes';
+import { collectBlueprintWarnings } from './collectBlueprintWarnings';
+import { compileBlueprintExpressions } from './compileBlueprintExpressions';
+import type { AnalysisContext } from './types/analysis';
+import type { Blueprint, BlueprintOptions } from './types/blueprint';
+import type { BlueprintSchema } from './types/schema';
+import { markCandidateDescendants } from './utils/features/markCandidateDescendants';
+import { validateChildTargets } from './validateChildTargets';
+import { validateShape } from './validateShape';
+
+/** Shared options for a build without injected predicates, collector, or cache. */
+const DEFAULT_BLUEPRINT_OPTIONS: BlueprintOptions = {};
 
 /**
  * Analyze authored schema data into an immutable, finite declaration graph.
@@ -17,7 +22,7 @@ import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapab
  */
 export const blueprint = (
   schema: BlueprintSchema,
-  options: BlueprintOptions = {},
+  options: BlueprintOptions = DEFAULT_BLUEPRINT_OPTIONS,
 ): Blueprint => {
   const entries =
     typeof schema === 'object' ? options.cache?.get(schema) : undefined;
@@ -34,7 +39,9 @@ export const blueprint = (
     return cached.blueprint;
   }
   const context: AnalysisContext = {
+    hasChildTargets: false,
     staticFirstLoad: true,
+    hasTemplateRecursion: false,
     capabilities: {
       branchless: true,
       hasExpressions: false,
@@ -70,8 +77,9 @@ export const blueprint = (
     ],
     '',
   );
-  validateShape(context);
-  validateChildTargets(context);
+  if (context.hasTemplateRecursion) validateShape(context);
+  if (context.hasChildTargets) validateChildTargets(context);
+  markCandidateDescendants(context.nodes);
   const expressions =
     context.capabilities.hasExpressions || context.capabilities.hasWatch
       ? compileBlueprintExpressions(context)

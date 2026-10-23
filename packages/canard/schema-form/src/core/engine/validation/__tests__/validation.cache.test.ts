@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 
 describe('validator cache', () => {

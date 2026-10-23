@@ -1,0 +1,16 @@
+# 405라운드 — 닫기 (L3 가설 (a) 선언 밖 키 일반 대입 PR #418 병합 89ea2c98b; 소유자 지시로 메인 에이전트 인계 문서; 편집자 결정 둘)
+
+2026-10-18. 404라운드에 이어 L3 구현 묶음의 셋째 가설 L3-a(선언 밖 키의 defineProperty 복사를 일반 대입으로)를 같은 Orca 조정 루프로 구현·검증·병합했다. codex 워커가 07e297431 기준 가지에서 DETAIL 세 곳을 먼저 고치고 nextExtras의 두 복사 루프를 writeObjectKey 호출로 바꿨으며(런타임 +4/−13줄), writeObjectKey는 두 소비자(settle의 nextExtras, objectBehavior의 assembleObject)의 최저 공통 fractal인 engine의 utils 구획으로 이름과 본문 그대로 옮겼다(R100). 새 시험·픽스처 +263줄에는 400C-03이 요구한 __proto__ 불변 시험이 들어 있다. agy 워커(gemini-4-argon-medium)가 읽기 전용으로 여섯 축을 검증했고, 측정 표의 Bun B1 마운트 −31.7% 행은 원시 시계열 재계산(초반 표본 동일, 후반 GC 스파이크)과 조용한 창 재측정(같은 러너 두 바퀴 합친 중앙값 +15.5%, 바퀴별 −39.7%~+45.7%; 격리 교차 두 바퀴 −57.5%~+28.4%)으로 바퀴 범위가 0을 넓게 걸쳐 400C-02 기준 창 변동으로 판정했다. 작업 중 codex 워커가 run-use와 --terminal 없는 check로 코디네이터 바인딩을 두 번 가져가 코디네이터가 끊겼고 run-use로 되묶었다. 같은 날 소유자가 메인 에이전트를 Claude에서 codex로 바꿀 수 있게 인계를 관리하라고 지시해 AGENT-HANDOFF.md와 워커 brief 여섯 편을 저장소에 넣었다(d59cb3fcc). 검증 보고 원본은 원장 세션 scratchpad의 l3a-verify-report.md에 있다.
+
+## 편집자 결정
+
+- **405C-01 (L3-a 병합: 선언 밖 값 사본은 `__proto__`만 own property로 정의하고 나머지 키는 일반 대입하며, `__proto__` 보호는 원장 근거가 아닌 코드 불변이므로 시험으로 고정한다 — GOAL-011·VALUE-002·WRITE-013·SETTLE-042·SETTLE-043의 적용과 VALUE-002의 보충).**
+  - 【추론】 PR #418을 89ea2c98b로 squash 병합했다(커밋 a4375e180 DETAIL 셋, cad821b8d 코드·시험). 비효율 하나: nextExtras의 두 복사 루프가 선언 밖 값의 키마다 Object.defineProperty로 썼다. 바뀐 규칙 한 문장: 선언 밖 값은 새 사본에 복사하되 `__proto__`만 own property로 정의하고 나머지 키는 일반 대입하며, 선언 키 거름·Merge의 기존 키 보존과 새 키 순서·호출자 입력 불변·빈 값 처리·같은 값의 기존 참조 되살림은 그대로다(VALUE-002, WRITE-013, SETTLE-042, SETTLE-043). 안전한 키 쓰기 writeObjectKey는 객체 합성과 정착이 함께 쓰므로 두 소비자의 최저 공통 fractal인 engine의 utils 구획에 두고 자식 fractal의 형을 가져오거나 공개 진입점에 수출하지 않는다. `__proto__` 보호는 원장 항목이 요구한 적 없는 코드만의 불변이므로 이 결정이 VALUE-002의 보충이 되고, 시험 packages/canard/schema-form/src/core/engine/settle/utils/input/__tests__/nextExtras.plain-assignment.test.ts의 "keeps __proto__ as an own data property without changing prototypes (merge=%s)", "copies a previous __proto__ key during Merge", "filters a declared input key"가 prototype 오염 없음과 own property 유지를 고정한다. 효과(Node v26.12.0·Bun 1.4.3, 두 바퀴 중앙값): Node B0 마운트 1.412→0.966 ms(−31.6%), 한 키 −11.8%, 모든 키 −18.2%; Node B1 마운트 1.809→1.004 ms(−44.5%), 한 키 −8.8%, 모든 키 −14.8%; Bun B0 마운트 −18.6%, 모든 키 −2.2~−8.9%, 한 키 ±1% 안; Bun B1 마운트는 첫 창 +31.7%였으나 재측정 두 바퀴 범위가 0을 걸쳐 차이 없음으로 읽는다(400C-02). 캐시·전역 상태는 없고 공개 API는 불변이며 기존 시험 기대값 변경은 0건이다. 388라운드 허용 범위의 실험이며 소유자가 되돌릴 수 있다. v1 입력 참조 재사용은 396·400라운드대로 폐기 상태다.
+- **405C-02 (메인 에이전트 인계 문서와 Orca 바인딩 규칙 — PROCESS-060·TEST-027의 보충).**
+  - 【추론】 메인 에이전트를 Claude에서 codex로 바꿀 때 필요한 작업대 상태(가지 끝, 병합·열린 PR, Orca run·작업 폴더·터미널 handle, 라운드 닫기 절차, 다음 가설)는 architecture/AGENT-HANDOFF.md에 두고 PLAN.md 머리에서 가리킨다; 설계 정본(ledger)과 재개 지점(HANDOFF.md)은 그대로이며 이 문서는 그 둘이 적지 않는 순간 상태만 적는다. 워커 brief는 verification/perf-optimization/l3-briefs/에 보관해 다음 가설이 같은 꼴을 복제한다. Orca 규칙: 워커는 run-use와 --terminal 없는 check를 실행하지 않는다(코디네이터 바인딩을 빼앗아 consumer_fenced가 남); brief에 이를 적고, 끊기면 코디네이터가 run-use로 되묶는다. 검증 워커의 재측정은 $TMPDIR에만 쓰고 저장소 파일을 만들지 않으며, 측정 판정은 400C-02대로 바퀴 범위가 0을 걸치면 차이 없음이다. Bun 마운트 장면은 표본 후반의 GC 스파이크로 합친 중앙값이 바퀴별 부호와 어긋날 수 있으므로 Bun 마운트 행의 합친 %만으로 악화를 말하지 않는다(TEST-027의 "옛 판보다 느린 항목"도 같은 기준으로 읽는다).
+
+## 남은 것
+
+다음은 400C-04 순서의 (c) nextExtras 끝의 sameValue 이중 비교 제거(Merge 경로 동일성 확인이 선행; 측정 문서 A2 절 끝 문단과 L3-c 행), 그다음 (d) staticSpec 넘김. 소유자 물음 없음.
+
+다음 라운드 번호는 406이다.

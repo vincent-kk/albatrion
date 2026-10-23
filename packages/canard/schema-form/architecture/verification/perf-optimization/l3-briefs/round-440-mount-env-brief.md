@@ -1,0 +1,21 @@
+# Round 440 — re-measure the 14 mount rows at the new product end `0645705c1` (0.16.1 vs current, NODE_ENV production and unset)
+
+Measurement only, in the MAIN worktree `/Users/Vincent/Workspace/albatrion` (HEAD and product end `0645705c1`, which contains #431 — the presence-change reader fix — on top of `8a3ee595a`). Report in complete formal Korean sentences; owner names only Vincent or Vincent Kelvin.
+
+Orca rules: run-use 와 코디네이터 명령 금지, check 는 --terminal 로. No delegation, spawning, terminal/worktree creation or removal, model substitution, no config/auth changes, no `git stash`, no commit, push, PR or install. Excluded CLIs (`yarn`, `gh`, `orca`, `npm`, `bun`) run as the only thing in a shell call: no pipes, `;`, redirects, env prefixes or heredocs. Use `/opt/homebrew/bin/node` (v26.12.0) for every measured process. If your provider reports a usage limit, stop and send `worker_done --outcome failed` naming the step reached. Stop and send a `question` on anything not covered rather than guessing.
+
+## Namespace and editions
+
+`<ns>` = `/Users/Vincent/Workspace/albatrion/.seiri/tasks/mount-env-440/` (create; gitignored). The previous window's namespace `/Users/Vincent/Workspace/albatrion/.seiri/tasks/mount-env-439b/` is read-only reference: its `tools/`, `report.md`, `rows.md`, `bundles/E0.mjs` (SHA256 `8724b4d98ceea5b27dae868ff228f8eb315fe8e70a34e2a540827499ffda605c`) and `bundles/E6.mjs` (`index.mjs` SHA256 `498e0942ee76a4209295360ea69dee8429cf5a50fd30f2418f973f44631cb3d7`) and the probe export tail it used.
+
+- `E0` = copy `mount-env-439b/bundles/E0.mjs`; verify the SHA256 above.
+- `E7` = the build of `0645705c1`. First confirm `git rev-parse HEAD` is `0645705c1` and `git status --porcelain` shows only `architecture/COORDINATOR-JUDGMENTS.md` modified, untracked briefs/docs and the `schema-form-env-hoist/` directory (never touch that directory or the modified file). Run `yarn workspace @canard/schema-form build` as its own shell call. Afterwards `git status --porcelain` must show no new tracked change; if a tracked file changed (for example a hash manifest), record it in `<ns>/build.md` and stop with a `question`. Copy `packages/canard/schema-form/dist/index.mjs` to `<ns>/bundles/E7.mjs`, record its SHA256 (and of `index.cjs`, `index.d.ts`) in `<ns>/build.md`, and build the probe copy `E7-probe.mjs` exactly as `mount-env-439b` built `E6-probe.mjs` (same export tail; record both hashes). Keep `E6.mjs` (copy from `mount-env-439b/bundles/`) for one production sanity round only; it does not go in the owner table.
+
+## Steps
+
+1. Copy `mount-env-439b/tools/` to `<ns>/tools/`, point the namespace constant(s) at `<ns>` and the edition list at `E0`/`E7` (+`E6` sanity); change nothing else. Record `<ns>/environment.json` and the tool diff against `mount-env-439b/tools/` in `<ns>/tools-diff.txt`.
+2. Quiet window (nothing else running; process snapshots before and after; UTC times in `<ns>/window.json`): 14 sizes × editions `E0`,`E7` × conditions `prod`,`unset` × 3 rounds, interleaved and rotated as before (168 processes), plus the `E6` prod sanity round (14 processes). Every command must exit 0; on a failure record it, rerun once, and report if it repeats. One read-only Claude agent may be reading files on this machine during the window; note it under limitations.
+3. Derive `<ns>/rows.md`: Table 1 (owner table, production): 항목, N, E0-prod ms, 폭, E7-prod ms, 폭, Δ ms (E7−E0), Δ %, E0 µs/N, E7 µs/N, and a column `E6-prod ms (439b 창)` copied from `mount-env-439b/rows.md` plus `Δ% vs E6`. Table 2 (condition effect) as before for E0 and E7. Table 3: E6 sanity row versus the `mount-env-439b` E6-prod numbers with the percentage difference (window-to-window variation).
+4. Write `<ns>/report.md` (Korean): scope, the three tables, the per-family summary of the change E6→E7 and E0→E7, and limitations (one machine, one window, no A′ calibration, no 동치/입증 verdicts claimed). Seal `<ns>` into `<ns>/seal.json` with the finalize tool (SHA256 of every file).
+
+`worker_done --outcome succeeded` only when all runs exited 0, the tables and the seal exist, and `git status --porcelain` shows nothing new (apart from what step 0 recorded). Otherwise `failed` with the failing command, cwd, exit and output. Check the live mailbox once before one genuine worker_done, then idle.

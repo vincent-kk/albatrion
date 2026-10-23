@@ -8,7 +8,9 @@ import ts from 'typescript';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SettlementContext } from '../../../type';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+
+import type { SettlementContext } from '../../../types/settlement';
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
 import { renameControlsFields } from './renameControlsFields';
@@ -22,7 +24,18 @@ interface ChildSelectionRuntime {
   run(fixture: ChildSelectionHistory): {
     results: unknown[];
     points: unknown[];
+    keptOut: KeptOutHost[];
   };
+}
+
+/** A host W1 kept out of shape-dirty in one write, checked when that write's deliveries are marked. */
+export interface KeptOutHost {
+  /** Host path; its `selectChildren` point may be missing from that write. */
+  path: string;
+  /** Whether the host's local after the write is the reference it held before the write. */
+  sameLocal: boolean;
+  /** Whether the write delivered `UpdateValue` or `UpdateChildren` to the host. */
+  valueDelivery: boolean;
 }
 
 /** Pinned-layout rewrites; the constants entry follows the separate constants move. */
@@ -75,12 +88,35 @@ export const buildChildSelectionRuntime = async (
   delete require.cache[require.resolve('esbuild')];
   const { build } = require('esbuild') as typeof import('esbuild');
   const points: unknown[] = [];
+  const keptOut: KeptOutHost[] = [];
+  const pendingKeptOut: { host: ChildSelectionRuntimeNode; local: unknown }[] =
+    [];
   const observer = (
     label: string,
     node: ChildSelectionRuntimeNode,
     context: SettlementContext<ChildSelectionRuntimeNode>,
     before: readonly unknown[],
   ): void => {
+    if (label === 'markWrite') {
+      if (
+        node.behavior.strategy === 'branch' &&
+        node.behavior.type !== 'virtual' &&
+        !context.shapeDirtyPaths.has(node.path)
+      )
+        pendingKeptOut.push({ host: node, local: before[0] });
+      return;
+    }
+    if (label === 'markCommitDeliveries')
+      for (const { host, local } of pendingKeptOut.splice(0))
+        keptOut.push({
+          path: host.path,
+          sameLocal: host.local === local,
+          valueDelivery:
+            ((host.pendingDelivery?.type ?? 0) &
+              (FieldNodeEventType.UpdateValue |
+                FieldNodeEventType.UpdateChildren)) !==
+            0,
+        });
     if (
       label === 'updateOutput' &&
       before[0] === node.local &&
@@ -149,6 +185,9 @@ export const buildChildSelectionRuntime = async (
     const result = await build({
       stdin: {
         contents:
+          (revision
+            ? ''
+            : "import { gateWheelEvaluation } from './src/core/engine/settle/utils/gates/gateWheelEvaluation'; gateWheelEvaluation.mode = 'shadow';\n") +
           "export { runChildSelectionHistory } from './src/core/engine/settle/__tests__/fixtures/childSelection/runChildSelectionHistory';",
         loader: 'ts',
         resolveDir: packageRoot,
@@ -233,6 +272,7 @@ export const buildChildSelectionRuntime = async (
               if (
                 path.endsWith('/selectChildren.ts') ||
                 path.endsWith('/updateOutput.ts') ||
+                path.endsWith('/markWrite.ts') ||
                 path.endsWith('/markCommitDeliveries.ts')
               ) {
                 const source = ts.createSourceFile(
@@ -250,6 +290,7 @@ export const buildChildSelectionRuntime = async (
                         [
                           'selectChildren',
                           'updateOutput',
+                          'markWrite',
                           'markCommitDeliveries',
                         ].includes(node.name.text) &&
                         node.initializer &&
@@ -381,8 +422,10 @@ export const buildChildSelectionRuntime = async (
   return {
     run(fixture) {
       points.length = 0;
+      keptOut.length = 0;
+      pendingKeptOut.length = 0;
       const results = module.exports.runChildSelectionHistory(fixture);
-      return { results, points: [...points] };
+      return { results, points: [...points], keptOut: [...keptOut] };
     },
   };
 };

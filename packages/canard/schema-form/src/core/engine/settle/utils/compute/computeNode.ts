@@ -1,25 +1,36 @@
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { GateWheelFrame } from '../../types/gateWheel';
+import type { SettlementContext } from '../../types/settlement';
+import { flushPresenceTemplates } from '../dependencies/flushPresenceTemplates';
+import { registerPresenceChanges } from '../dependencies/registerPresenceChanges';
+import { canSkipGateWheel } from '../gates/canSkipGateWheel';
+import { finishGateTableRound } from '../gates/finishGateTableRound';
+import { gateWheelEvaluation } from '../gates/gateWheelEvaluation';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
+import { prepareGateTableRound } from '../gates/prepareGateTableRound';
+import { verifyGateWheelConfirmation } from '../gates/verifyGateWheelConfirmation';
+import { updateOutput } from '../output/updateOutput';
+import { selectChildren } from './childSelection/selectChildren';
 import { dirtyChildren } from './dirtyChildren';
 import { preserveReferences } from './preserveReferences';
 import { primeHost } from './primeHost';
 import { relocatedGates } from './relocatedGates';
+import { scheduleChangedRelocatedGates } from './scheduleChangedRelocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
-import { selectChildren } from './selectChildren';
 import { selectNodeSchema } from './selectNodeSchema';
-import { updateOutput } from './updateOutput';
 import { computeStableNode } from './utils/computeStableNode';
+import { getStaticGateList } from './utils/getStaticGateList';
 import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
 
 /**
  * Finish a dirty subtree with one descent and a bounded host gate wheel.
+ * This helper stays here because it recurses through the exported wrapper; a separate file would create an import cycle.
  * @param node - Current live node reached from the root
  * @param context - Dirty paths and current commit's deferred failure
  * @returns Nothing; the record carries its calculated values
  */
-export const computeNode = <Self extends FieldNodeRecord<Self>>(
+const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {
@@ -33,6 +44,24 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   if (!context.dirtyPaths.has(node.path)) return;
+  if (context.hasGates) {
+    context.presenceClock = (context.presenceClock ?? 0) + 1;
+    (context.presenceComputeStarts ??= new Map()).set(
+      node,
+      context.presenceClock,
+    );
+  }
+  if (gateWheelEvaluation.mode === 'record') {
+    const metrics = (context.presenceMetrics ??= {
+      computes: new Map(),
+      ancestorRechecks: 0,
+      ancestorWheels: 0,
+      calls: 0,
+      ownerInsertions: 0,
+      indexLookups: 0,
+    });
+    metrics.computes.set(node.path, (metrics.computes.get(node.path) ?? 0) + 1);
+  }
   if (
     node === context.root &&
     context.kind === 'load' &&
@@ -89,54 +118,54 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
   }
   if (!context.shapeDirtyPaths.has(node.path)) {
     const recalculated = dirtyChildren(node, context);
+    let registrations = context.presenceRegistrations ?? 0;
     for (let index = 0; index < recalculated.length; index++)
       computeNode(recalculated[index], context);
-    updateOutput(node, context, recalculated);
-    preserveReferences(node, previous, context);
-    context.dirtyPaths.delete(node.path);
-    return;
+    let wheel = context.shapeDirtyPaths.has(node.path);
+    let computed: Set<Self> | undefined;
+    while (!wheel && (context.presenceRegistrations ?? 0) !== registrations) {
+      if (context.presenceMetrics) context.presenceMetrics.ancestorRechecks++;
+      registrations = context.presenceRegistrations ?? 0;
+      computed ??= new Set(recalculated);
+      const pending: Self[] = [];
+      const candidates = dirtyChildren(node, context);
+      for (let index = 0; index < candidates.length; index++) {
+        const child = candidates[index];
+        if (!context.dirtyPaths.has(child.path)) continue;
+        if (computed.has(child)) {
+          wheel = true;
+          break;
+        }
+        pending.push(child);
+      }
+      if (wheel) break;
+      for (let index = 0; index < pending.length; index++) {
+        computed.add(pending[index]);
+        recalculated.push(pending[index]);
+        computeNode(pending[index], context);
+      }
+      wheel = context.shapeDirtyPaths.has(node.path);
+    }
+    if (!wheel) {
+      updateOutput(node, context, recalculated);
+      preserveReferences(node, previous, context);
+      context.dirtyPaths.delete(node.path);
+      return;
+    }
+    if (context.presenceMetrics) context.presenceMetrics.ancestorWheels++;
   }
   const prior = node.structure ?? {};
-  const gates: BlueprintGate[] = [];
+  const staticList = context.hasGates ? getStaticGateList(node) : undefined;
+  const gates: BlueprintGate[] = staticList ? [...staticList.gates] : [];
   const seenGates = new Set<BlueprintGate>();
   if (context.hasGates) {
-    const entries = node.behavior.declareChildren(node);
-    for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
-      const declarations = entries[entryIndex].declarations;
-      for (
-        let declarationIndex = 0;
-        declarationIndex < declarations.length;
-        declarationIndex++
-      ) {
-        const declaredGates = declarations[declarationIndex].gates;
-        for (let gateIndex = 0; gateIndex < declaredGates.length; gateIndex++) {
-          const gate = declaredGates[gateIndex];
-          if (!seenGates.has(gate)) {
-            seenGates.add(gate);
-            gates.push(gate);
-          }
-        }
-      }
-    }
-    const declarations = node.blueprintNode.declarations;
-    for (
-      let declarationIndex = 0;
-      declarationIndex < declarations.length;
-      declarationIndex++
-    ) {
-      const declaredGates = declarations[declarationIndex].gates;
-      for (let gateIndex = 0; gateIndex < declaredGates.length; gateIndex++) {
-        const gate = declaredGates[gateIndex];
-        if (!seenGates.has(gate)) {
-          seenGates.add(gate);
-          gates.push(gate);
-        }
-      }
-    }
     const relocated = relocatedGates(node);
     for (let index = 0; index < relocated.length; index++) {
       const occurrence = relocated[index];
-      if (!seenGates.has(occurrence.gate)) {
+      if (
+        !staticList?.seenGates.has(occurrence.gate) &&
+        !seenGates.has(occurrence.gate)
+      ) {
         seenGates.add(occurrence.gate);
         gates.push(occurrence.gate);
       }
@@ -149,9 +178,36 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
   if (gates.length > 0 && updateOutput(node, context))
     scheduleRelocatedGates(relocatedGates(node), context);
   let cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
+  let confirmation: GateWheelFrame | undefined;
+  let previousPredicate: boolean | undefined;
+  let lastStructure = prior;
+  let registered = false;
   for (let round = 0; round < cap; round++) {
+    const roundLocal = node.local;
+    const roundEmit = node.emit;
+    const frame: GateWheelFrame | undefined =
+      gates.length > 0 && context.kind !== 'load'
+        ? {
+            inputs: new Map(),
+            consistent: true,
+            gateCount: gates.length,
+            throwVersion: context.gateThrowVersion,
+            ...(gateWheelEvaluation.mode === 'shadow'
+              ? { evaluations: [] }
+              : {}),
+          }
+        : undefined;
+    context.gateWheelFrame = frame;
+    prepareGateTableRound(node, context, round);
     const schemaChanged =
       node.parent === null && selectNodeSchema(node, context);
+    if (context.hasGates) {
+      context.presenceClock = (context.presenceClock ?? 0) + 1;
+      (context.presenceRoundStarts ??= new Map()).set(
+        node,
+        context.presenceClock,
+      );
+    }
     const changed = selectChildren(
       node,
       context,
@@ -159,6 +215,12 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
       (child) => computeNode(child, context),
       gates.length > 0,
     );
+    const flagged = context.presenceHosts?.delete(node) === true;
+    if (flagged || registered)
+      registered =
+        registerPresenceChanges(node, lastStructure, context) || registered;
+    lastStructure = node.structure ?? {};
+    flushPresenceTemplates(node, context);
     const dirty = dirtyChildren(node, context);
     for (let index = 0; index < dirty.length; index++)
       computeNode(dirty[index], context);
@@ -168,14 +230,45 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
     const currentRelocated = context.hasGates ? relocatedGates(node) : [];
     for (let index = 0; index < currentRelocated.length; index++) {
       const occurrence = currentRelocated[index];
-      if (!seenGates.has(occurrence.gate)) {
+      if (
+        !staticList?.seenGates.has(occurrence.gate) &&
+        !seenGates.has(occurrence.gate)
+      ) {
         seenGates.add(occurrence.gate);
         gates.push(occurrence.gate);
       }
     }
     cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
-    if (!schemaChanged && !changed && !outputChanged) {
+    const publishedChanged =
+      !outputChanged &&
+      context.kind !== 'load' &&
+      (node.local !== roundLocal || node.emit !== roundEmit) &&
+      scheduleChangedRelocatedGates(currentRelocated, context);
+    const wheelChanged =
+      schemaChanged || changed || outputChanged || publishedChanged;
+    finishGateTableRound(node, context);
+    if (frame && confirmation)
+      verifyGateWheelConfirmation(confirmation, frame, wheelChanged);
+    if (frame && previousPredicate === false && !wheelChanged)
+      gateWheelEvaluation.missed++;
+    const skip =
+      frame !== undefined &&
+      wheelChanged &&
+      canSkipGateWheel(node, context, frame, round, cap, gates.length);
+    if (skip) {
+      gateWheelEvaluation.predictions++;
+      if (gateWheelEvaluation.mode === 'skip') {
+        gateWheelEvaluation.skipped++;
+        preserveReferences(node, previous, context);
+        context.dirtyPaths.delete(node.path);
+        return;
+      }
+    }
+    confirmation =
+      skip && gateWheelEvaluation.mode === 'shadow' ? frame : undefined;
+    previousPredicate = skip;
+    if (!schemaChanged && !changed && !outputChanged && !publishedChanged) {
       preserveReferences(node, previous, context);
       context.dirtyPaths.delete(node.path);
       return;
@@ -184,4 +277,28 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
   if (gates.length > 0) context.hostWheelExceeded = cap;
   preserveReferences(node, previous, context);
   context.dirtyPaths.delete(node.path);
+};
+
+/**
+ * Isolate recursive computation so a child host never contributes parent gate witnesses.
+ * @param node - Dirty subtree reached by the existing compute traversal
+ * @param context - Current settlement with its caller's optional gate frame
+ * @returns Nothing; restores the caller frame even if computation throws
+ */
+export const computeNode = <Self extends FieldNodeRecord<Self>>(
+  node: Self,
+  context: SettlementContext<Self>,
+): void => {
+  const parentFrame = context.gateWheelFrame;
+  context.gateWheelFrame = undefined;
+  try {
+    computeNodeBody(node, context);
+    if (node === context.root) flushPresenceTemplates(undefined, context);
+  } finally {
+    context.gateWheelFrame = parentFrame;
+    if (node === context.root) {
+      context.restoreGateSelectionDirty?.();
+      context.gateSelectionRounds?.clear();
+    }
+  }
 };

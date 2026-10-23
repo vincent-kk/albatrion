@@ -31,6 +31,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "source": "./src/index.ts",
+      "node": {
+        "import": "./dist/index.node.mjs",
+        "require": "./dist/index.cjs"
+      },
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
@@ -48,10 +52,11 @@
     "bench:baseline": "vitest bench --config vitest.bench.config.ts --run --outputJson bench/.results/baseline.json",
     "bench:compare": "vitest bench --config vitest.bench.config.ts --run --compare bench/.results/baseline.json",
     "bench:watch": "vitest bench --config vitest.bench.config.ts",
-    "build": "rolldown -c && yarn build:types && yarn build:hashes && yarn typecheck",
+    "build": "rolldown -c && yarn build:verify && yarn build:types && yarn build:hashes && yarn typecheck",
     "build:hashes": "agents-build-hashes",
     "build:publish:npm": "yarn build && yarn publish:npm",
     "build:types": "node ../../aileron/script/build/buildTypes.mjs",
+    "build:verify": "node scripts/verifyDevelopmentFlag.mjs && node scripts/verifyGateSelectionMode.mjs",
     "build-storybook": "yarn run -T storybook build",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
@@ -60,6 +65,7 @@
     "start": "yarn build && yarn storybook",
     "storybook": "yarn run -T storybook dev -p 6006",
     "test": "vitest",
+    "test:verify": "vitest --project verify-unit --project verify-render",
     "test:production": "NODE_ENV=production vitest run --project production --reporter=dot --configLoader runner --cache false",
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",

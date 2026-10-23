@@ -1,6 +1,6 @@
 import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
-import type { VirtualReferenceIndex } from '../../type';
+import type { VirtualReferenceIndex } from '../../types/settlement';
 
 /** Reverse field references live for the lifetime of one analyzed blueprint. */
 const REFERENCES = new WeakMap<Blueprint, VirtualReferenceIndex | null>();

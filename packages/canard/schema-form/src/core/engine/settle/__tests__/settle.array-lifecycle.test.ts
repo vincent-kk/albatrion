@@ -6,7 +6,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-array
+// filid:contract settle-array-lifecycle
 describe('array settlement lifecycle', () => {
   it('35C-09 and WRITE-036 perish without exit latent or inactive entries', () => {
     const { root, runtime } = makeFieldNodeTree(

@@ -3,12 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { sourceAt } from './fixtures/sourceAt';
 
-// filid:contract settle-write
+// filid:contract settle-write-value-model
 describe('per-node branch sources', () => {
   it('39C-01 preserves null and scalar object hosts without child emission', () => {
     const schema = {

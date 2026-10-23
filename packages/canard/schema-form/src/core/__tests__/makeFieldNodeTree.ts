@@ -24,7 +24,7 @@ export const makeFieldNodeTree = (
     diagnostics: { status: 'stable' as const },
     loadSnapshot: options.snapshot,
     latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
+    misfitPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<
       readonly { path: string; value: unknown }[]
     >('path'),

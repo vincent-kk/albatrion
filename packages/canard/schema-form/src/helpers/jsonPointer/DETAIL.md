@@ -19,6 +19,7 @@ schema-form의 경로 문자열은 RFC 6901의 루트, 구분자, fragment 표�
 `stripFragment`는 해시로 시작하는 경로에서 해시를 제거한다. 해시만 있는 입력, 해시와 슬래시만 있는 입력, 슬래시만 있는 입력은 빈 루트 문자열로 정규화한다. `joinSegment`는 기준 경로의 기본값을 빈 루트로 두고, 비어 있지 않은 문자열이나 숫자 세그먼트 앞에는 구분자를 붙인다. 빈 문자열 세그먼트에서는 기준 경로를 그대로 돌려준다.
 
 - `JSONPointerPrefix`는 `JSONPointer` 기호에 구분자를 붙인 두 글자 접두사 세 개(`Fragment`는 해시와 슬래시, `Parent`는 부모 표식과 슬래시, `Current`는 현재 표식과 슬래시)로 이루어져 있으며 `JSONPointer`에서 조립한다. 이 fractal의 index가 이름으로 내보내지만 패키지 공개 진입점은 내보내지 않는다. 경로 토큰을 비교하고 분해하는 engine 코드는 리터럴 대신 이 상수 두 개를 쓴다. 정규식 안의 토큰은 그대로 둔다.
+- 세그먼트 이스케이프 정규식 넷(`ESCAPED_SLASH_REGEX`는 `~1`, `ESCAPED_TILDE_REGEX`는 `~0`, `TILDE_REGEX`는 `~`, `SLASH_REGEX`는 `/`)은 `constants/regex.ts`에 있고 이 fractal의 index가 이름으로 내보낸다. 패키지 공개 진입점은 내보내지 않는다. 모두 `g` 플래그를 가지므로 `lastIndex`를 되돌리는 `replace`에만 쓴다. 세그먼트를 이스케이프하거나 풀어 쓰는 engine·surface 코드는 정규식을 새로 쓰지 않고 이 상수를 가져온다.
 - `JSONPointer` 상수 객체는 `constants/JSONPointer.ts`에 있다. 뿌리에는 문서, 진입점, 타입 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
 
 ## Acceptance Criteria

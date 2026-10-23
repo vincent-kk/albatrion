@@ -1,8 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { setLatentRaw } from '../latent/setLatentRaw';
+import type { SettlementContext } from '../../types/settlement';
+import { setLatentRaw } from '../latentStore/setLatentRaw';
 import { restoreArrayStructure } from './restoreArrayStructure';
 
 /**
@@ -33,7 +33,7 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
       if (
         !isArray(identity) ||
         typeof identity[0] !== 'string' ||
-        (identity[0] !== node.path && !identity[0].startsWith(`${node.path}/`))
+        (identity[0] !== node.path && !identity[0].startsWith(node.path + '/'))
       )
         continue;
       setLatentRaw(

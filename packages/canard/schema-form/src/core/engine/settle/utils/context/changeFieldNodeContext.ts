@@ -4,13 +4,13 @@ import type { FieldNodeRecord } from '../../../record';
 import { WriteOption } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
 import { computeNode } from '../compute/computeNode';
+import { getContextOwners } from '../dependencies/getContextOwners';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { expandTemplatePaths } from '../paths/expandTemplatePaths';
+import { getSettlementScratch } from '../scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
-import { getSettlementScratch } from '../write/getSettlementScratch';
-import { releaseSettlementScratch } from '../write/releaseSettlementScratch';
-import { getContextOwners } from './getContextOwners';
+import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
 
 /**
  * Settle a changed binding context from the previous committed edge baseline.

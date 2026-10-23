@@ -86,12 +86,24 @@ export interface NodeSurface<
   readonly watchValues: readonly unknown[];
   /** Shared context reference supplied by the current Form binding. */
   readonly context: Readonly<Record<string, unknown>>;
-  readonly typeMismatch: boolean;
-  readonly typeMismatches: readonly string[];
+  readonly misfit: boolean;
+  readonly misfits: readonly string[];
   readonly diagnostics: NodeDiagnostics;
   readonly defaultValue: unknown;
   find(pointer?: string | readonly string[] | null): FieldNode | null;
   findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
+  /**
+   * Call `visitor` on this node and then its descendants in preorder, siblings in order.
+   * From a live node only nodes in the current shape are visited; from a detached node, the
+   * subtree it was detached with. Terminals are leaves, a node reached twice through a reference
+   * is visited once, and nodes created during the walk may be missed. Returning `false` skips
+   * that node's descendants. The walk batches like `batch`: value writes are marked and settle
+   * once when it ends, so value reads during the walk see the last committed values; state and
+   * external-error changes apply at once while their events wait; a form reset and
+   * `resetSubtree()` still settle their load at once. Inside an enclosing batch, everything waits
+   * for that batch's end instead.
+   */
+  visitSubtree(visitor: (node: FieldNode) => void | boolean): void;
   setValue(value: unknown, option?: SetValueOption): void;
   resetSubtree(option?: SetValueOption): void;
   /** Local interaction flags, patched through the dispatcher on assignment. */
@@ -126,7 +138,10 @@ export interface NodeSurface<
   request(kind: FieldNodeRequestType): void;
   /**
    * Group synchronous writes in one outer delivery boundary.
-   * 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)도 부른 자리에서 앞선 표시를 얹은 배열로 계산해 동기 결과를 돌려주고 결과 배열을 표시하며, 배치 끝의 정착은 통째 쓰기라 아이템 키는 위치로 잇는다.
+   * Array verbs (`push`, `pop`, `update`, `remove`, `insert`, `clear`) also compute their
+   * array at the call site on top of prior marks, return the synchronous result
+   * and mark the resulting array. Settlement at the end of the batch is a whole
+   * write, so item keys carry over by position.
    */
   batch(fn: () => void): void;
 }
@@ -184,6 +199,17 @@ interface ArrayNodeMethods<Item> {
   update(index: number, value: Item): Item | undefined;
   /** Remove one position and return its last committed value. */
   remove(index: number): Item | undefined;
+  /**
+   * Insert one caller value at a position in [0, length] and return the new length synchronously.
+   * Items at and after `index` keep their nodes and keys and move one position back; `index` equal
+   * to the length appends exactly like `push`. A negative, fractional or larger index changes
+   * nothing and returns the current length. A host holding a non-array value becomes `[value]` at
+   * index 0, like `push`, and ignores any other index. `minItems` and `maxItems` are not enforced.
+   * @param index - Integer position in [0, length]
+   * @param value - Value of the new item; omitted or undefined lets the new item fill its defaults
+   * @returns Array length after the call
+   */
+  insert(index: number, value?: Item): number;
   /** Remove every position without returning an item. */
   clear(): void;
 }
@@ -208,7 +234,7 @@ export type ArrayNode<Item = unknown> =
 export type VirtualNode = NodeSurface<
   'virtual',
   'branch',
-  'virtual',
+  undefined,
   readonly unknown[] | undefined,
   readonly FieldNode[]
 >;
@@ -226,18 +252,18 @@ export type UnionNode<
       | (Nullable extends true ? null : never),
       null,
       Nullable
-    > & { readonly typeMismatch: false })
+    > & { readonly misfit: false })
   | (NodeSurface<'union', 'terminal', Types, unknown, null, Nullable> & {
-      readonly typeMismatch: true;
+      readonly misfit: true;
     });
 
-/** Union input sees the mismatch lamp without accepting a mismatched write. */
+/** Union input sees the misfit lamp without accepting a misfitting write. */
 export type FieldNodeInputProps<
   Types extends UnionSchemaType = UnionSchemaType,
   Nullable extends boolean = boolean,
 > =
   | {
-      readonly typeMismatch: false;
+      readonly misfit: false;
       readonly value:
         | ValueForKind<Types[number]>
         | undefined
@@ -250,7 +276,7 @@ export type FieldNodeInputProps<
       ) => void;
     }
   | {
-      readonly typeMismatch: true;
+      readonly misfit: true;
       readonly value: unknown;
       readonly onChange: (
         value:

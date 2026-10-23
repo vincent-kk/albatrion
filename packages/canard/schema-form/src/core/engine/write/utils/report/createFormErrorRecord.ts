@@ -58,7 +58,7 @@ export function createFormErrorRecord(
   const message =
     error instanceof Error
       ? error.message
-      : `${code.code.slice(code.code.indexOf('.') + 1)} at ${code.schemaPath}`;
+      : code.code.slice(code.code.indexOf('.') + 1) + ' at ' + code.schemaPath;
   const details =
     error instanceof JSONSchemaError ? error.details : { ...code.details };
   if (code.level === 'error')

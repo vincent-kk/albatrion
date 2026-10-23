@@ -4,15 +4,22 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
+import { captureProjectionBaseline } from '../dependencies/captureProjectionBaseline';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
-import { createChildNode } from './createChildNode';
-import { enterFieldNode } from './enterFieldNode';
+import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
+import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
+import { isSameChildList } from '../structure/isSameChildList';
 import {
   DIRECT_CHILD_SELECTION_PLANS,
   getDirectChildSelectionPlan,
-} from './selectChildren/utils/getDirectChildSelectionPlan';
+} from './childSelection/getDirectChildSelectionPlan';
+import { createChildNode } from './createChildNode';
+import { enterFieldNode } from './enterFieldNode';
+
+/** Empty active-declaration list: only ungated contributions apply. */
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
@@ -29,16 +36,18 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   const baseline: Record<string, Self> = {};
   Object.setPrototypeOf(baseline, null);
   const cached =
-    context.kind !== 'load' && node.behavior.type === 'object'
+    node.behavior.type === 'object'
       ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)
       : null;
   const direct =
     cached === undefined
-      ? getDirectChildSelectionPlan(
-          node.blueprintNode,
-          node.runtime.blueprint,
-          false,
-        )
+      ? context.kind === 'load'
+        ? null
+        : getDirectChildSelectionPlan(
+            node.blueprintNode,
+            node.runtime.blueprint,
+            false,
+          )
       : cached;
   const entries = direct?.baseline ?? node.behavior.declareChildren(node);
   for (let index = 0; index < entries.length; index++) {
@@ -54,14 +63,21 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]
       : undefined;
-    const key = JSON.stringify([
-      `${node.path}/${escapeSegment(entry.name)}`,
-      entry.node.kind,
-    ]);
-    const pending = context.pendingExits.get(key);
+    const key =
+      context.pendingExits.size === 0
+        ? undefined
+        : JSON.stringify([
+            node.path + '/' + escapeSegment(entry.name),
+            getBlueprintNodeIdentity(entry.node),
+          ]);
+    const pending =
+      key === undefined ? undefined : context.pendingExits.get(key);
     const child = priorChild ?? pending ?? createChildNode(node, entry);
     context.perished.delete(child);
-    context.pendingExits.delete(key);
+    if (key !== undefined && context.pendingExits.delete(key)) {
+      const path = node.path + '/' + escapeSegment(entry.name);
+      updatePendingExitIndex(context, path, -1);
+    }
     if (pending && child === pending) {
       context.revived.add(child);
       indexEnteredLatentKey(context, child);
@@ -75,11 +91,16 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
     }
-    const schema = mergeEffectiveSchema(child.blueprintNode, [], {
-      mode: 'runtime',
-      isAtomic: node.runtime.blueprint?.isAtomic,
-    });
+    const schema = mergeEffectiveSchema(
+      child.blueprintNode,
+      NO_ACTIVE_DECLARATION_IDS,
+      {
+        mode: 'runtime',
+        isAtomic: node.runtime.blueprint?.isAtomic,
+      },
+    );
     if (child.schema !== schema) {
+      captureProjectionBaseline(node, child, !!priorChild, context);
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
       child.schema = captureFieldNodeChange(child, 'schema', schema);
@@ -91,9 +112,11 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     baseline[entry.name] = child;
   }
   node.structure = baseline;
+  const children = Object.values(baseline);
+  const published = node.children;
   node.children = captureFieldNodeChange(
     node,
     'children',
-    Object.values(baseline),
+    isSameChildList(published, children) ? published : children,
   );
 };

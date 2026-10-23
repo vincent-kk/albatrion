@@ -1,10 +1,13 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { getLatentOrder } from '../latent/getLatentOrder';
+import type { SettlementContext } from '../../types/settlement';
+import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { captureExitedRaw } from './captureExitedRaw';
 import { captureLatentDescendants } from './captureLatentDescendants';
 import { readDepartingAncestorPolicy } from './readDepartingAncestorPolicy';
 import { readUnsetPolicy } from './readUnsetPolicy';
+
+/** Skip predicate that lets every exit be processed. */
+const NEVER_SKIP = (): boolean => false;
 
 /**
  * Apply final exit policies to each detached previously live subtree.
@@ -14,7 +17,7 @@ import { readUnsetPolicy } from './readUnsetPolicy';
  */
 export const applyExitClearing = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
-  skip: (node: Self) => boolean = () => false,
+  skip: (node: Self) => boolean = NEVER_SKIP,
 ): void => {
   for (const node of context.exited) {
     if (skip(node) || context.entered.has(node) || !node.detached) continue;

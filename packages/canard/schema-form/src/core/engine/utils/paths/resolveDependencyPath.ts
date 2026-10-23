@@ -27,5 +27,5 @@ export const resolveDependencyPath = (
   if (remaining.startsWith(JSONPointerPrefix.Current))
     remaining = remaining.slice(2);
   if (remaining) parts.push(...remaining.split($.Separator));
-  return parts.length ? `/${parts.join($.Separator)}` : '';
+  return parts.length ? '/' + parts.join($.Separator) : '';
 };

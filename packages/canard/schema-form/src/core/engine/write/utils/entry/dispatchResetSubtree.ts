@@ -20,7 +20,7 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   if (runtime.batchWrites)
     runtime.batchWrites = runtime.batchWrites.filter(
       (write) =>
-        write.node !== node && !write.node.path.startsWith(`${node.path}/`),
+        write.node !== node && !write.node.path.startsWith(node.path + '/'),
     );
   (runtime.validationTargets ??= new Set()).add(node);
   try {

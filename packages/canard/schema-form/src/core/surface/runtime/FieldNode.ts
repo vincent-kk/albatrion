@@ -8,6 +8,7 @@ import {
   dispatchClear,
   dispatchClearExternalErrors,
   dispatchClearSubtreeState,
+  dispatchInsert,
   dispatchPop,
   dispatchPush,
   dispatchRemove,
@@ -19,6 +20,7 @@ import {
   dispatchSetValue,
   dispatchUpdate,
   dispatchValidate,
+  dispatchVisitSubtree,
   readFieldNodeRevision,
   subscribeFieldNode,
 } from '../../engine';
@@ -35,8 +37,8 @@ import type {
 import {
   readFieldNodeDefaultValue,
   readFieldNodeInactiveValues,
-  readFieldNodeTypeMismatch,
-  readFieldNodeTypeMismatches,
+  readFieldNodeMisfit,
+  readFieldNodeMisfits,
   readFieldNodeWatchValues,
 } from '../../engine';
 import type { NodeStateFlags } from '../../engine';
@@ -57,7 +59,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   private storedDepth: number;
   private storedRequired: boolean;
   private readonly storedNullable: boolean;
-  private readonly storedSchemaType: BlueprintSchemaType;
+  private readonly storedSchemaType: BlueprintSchemaType | undefined;
   structure: Record<string, FieldNode> | null;
   private storedChildren: readonly FieldNode[] | null;
   itemKey: number | null;
@@ -152,255 +154,231 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.interactionReset = 0;
   }
 
-  /** {@inheritDoc NodeSurface.type} */
   get type() {
     return this.behavior.type;
   }
-  /** {@inheritDoc NodeSurface.strategy} */
   get strategy() {
     return this.behavior.strategy;
   }
-  /** {@inheritDoc NodeSurface.schemaType} */
   get schemaType() {
     return this.storedSchemaType;
   }
-  /** {@inheritDoc NodeSurface.jsonSchema} */
   get jsonSchema() {
     return this.schema.schema;
   }
-  /** {@inheritDoc NodeSurface.required} */
   get required() {
     return this.storedRequired;
   }
   set required(value: boolean) {
     this.storedRequired = value;
   }
-  /** {@inheritDoc NodeSurface.nullable} */
   get nullable() {
     return this.storedNullable;
   }
-  /** {@inheritDoc NodeSurface.depth} */
   get depth() {
     return this.storedDepth;
   }
   set depth(value: number) {
     this.storedDepth = value;
   }
-  /** {@inheritDoc NodeSurface.isRoot} */
   get isRoot() {
     return this.parent === null;
   }
-  /** {@inheritDoc NodeSurface.rootNode} */
   get rootNode() {
     return this.root;
   }
-  /** {@inheritDoc NodeSurface.parentNode} */
   get parentNode() {
     return this.parent;
   }
-  /** {@inheritDoc NodeSurface.name} */
   get name() {
     return this.storedName;
   }
   set name(value: string) {
     this.storedName = value;
   }
-  /** {@inheritDoc NodeSurface.escapedName} */
   get escapedName() {
     return this.storedEscapedName;
   }
   set escapedName(value: string) {
     this.storedEscapedName = value;
   }
-  /** {@inheritDoc NodeSurface.path} */
   get path() {
     return this.storedPath;
   }
   set path(value: string) {
     this.storedPath = value;
   }
-  /** {@inheritDoc NodeSurface.children} */
   get children() {
     return this.storedChildren;
   }
   set children(value: readonly FieldNode[] | null) {
     this.storedChildren = value;
   }
-  /** {@inheritDoc NodeSurface.raw} */
   get raw() {
     return this.storedRaw;
   }
   set raw(value: unknown) {
     this.storedRaw = value;
   }
-  /** {@inheritDoc NodeSurface.undeclaredValues} */
   get undeclaredValues() {
     return this.storedUndeclaredValues;
   }
   set undeclaredValues(value: unknown) {
     this.storedUndeclaredValues = value;
   }
-  /** {@inheritDoc NodeSurface.value} */
   get value() {
     return this.local;
   }
-  /** {@inheritDoc NodeSurface.outputValue} */
   get outputValue() {
     return this.emit;
   }
-  /** {@inheritDoc NodeSurface.inactiveValues} */
   get inactiveValues() {
     return readFieldNodeInactiveValues<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.active} */
   get active() {
     return this.storedActive;
   }
   set active(value: boolean) {
     this.storedActive = value;
   }
-  /** {@inheritDoc NodeSurface.visible} */
   get visible() {
     return this.storedVisible;
   }
   set visible(value: boolean) {
     this.storedVisible = value;
   }
-  /** {@inheritDoc NodeSurface.enabled} */
+  /** A node is enabled when it remains active and visible. */
   get enabled() {
     return this.active && this.visible;
   }
-  /** {@inheritDoc NodeSurface.readOnly} */
   get readOnly() {
     return this.storedReadOnly;
   }
   set readOnly(value: boolean) {
     this.storedReadOnly = value;
   }
-  /** {@inheritDoc NodeSurface.disabled} */
   get disabled() {
     return this.storedDisabled;
   }
   set disabled(value: boolean) {
     this.storedDisabled = value;
   }
-  /** {@inheritDoc NodeSurface.watchValues} */
+  /** Effective watched values read from the emitted tree. */
   get watchValues() {
     return readFieldNodeWatchValues<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.context} */
+  /** Shared context reference supplied by the current Form binding. */
   get context() {
     return this.runtime.context;
   }
-  /** {@inheritDoc NodeSurface.typeMismatch} */
-  get typeMismatch() {
-    return readFieldNodeTypeMismatch<FieldNode>(this);
+  get misfit() {
+    return readFieldNodeMisfit<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.typeMismatches} */
-  get typeMismatches() {
-    return readFieldNodeTypeMismatches<FieldNode>(this);
+  get misfits() {
+    return readFieldNodeMisfits<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.diagnostics} */
   get diagnostics(): FieldNodeRuntime<FieldNode>['diagnostics'] {
     return this.runtime.diagnostics;
   }
-  /** {@inheritDoc NodeSurface.defaultValue} */
   get defaultValue() {
     return readFieldNodeDefaultValue<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.find} */
   find(pointer?: string | readonly string[] | null) {
     return find<FieldNode>(this, pointer);
   }
-  /** {@inheritDoc NodeSurface.findNodes} */
   findNodes(pointer?: string | readonly string[] | null) {
     return findNodes<FieldNode>(this, pointer);
   }
-  /** {@inheritDoc NodeSurface.setValue} */
+  /** Visit this occurrence and its current-shape subtree in preorder; writes settle once at the end. */
+  visitSubtree(visitor: (node: FieldNode) => void | boolean) {
+    return dispatchVisitSubtree<FieldNode>(this, visitor);
+  }
   setValue(value: unknown, option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchSetValue<FieldNode>(this, value, option);
   }
-  /** {@inheritDoc ArrayNode.push} */
+  /** Append one caller value and return the new length synchronously. */
   push(value?: unknown) {
     return dispatchPush<FieldNode>(this, value);
   }
-  /** {@inheritDoc ArrayNode.pop} */
+  /** Remove the final position and return its last committed value. */
   pop() {
     return dispatchPop<FieldNode>(this);
   }
-  /** {@inheritDoc ArrayNode.update} */
+  /** Replace one position without changing its snapshot or identity. */
   update(index: number, value: unknown) {
     return dispatchUpdate<FieldNode>(this, index, value);
   }
-  /** {@inheritDoc ArrayNode.remove} */
+  /** Remove one position and return its last committed value. */
   remove(index: number) {
     return dispatchRemove<FieldNode>(this, index);
   }
-  /** {@inheritDoc ArrayNode.clear} */
+  /** Insert one caller value at a position in [0, length] and return the new length synchronously. */
+  insert(index: number, value?: unknown) {
+    return dispatchInsert<FieldNode>(this, index, value);
+  }
+  /** Remove every position without returning an item. */
   clear() {
     return dispatchClear<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.resetSubtree} */
   resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchResetSubtree<FieldNode>(this, option);
   }
-  /** {@inheritDoc NodeSurface.state} */
+  /** Local interaction flags, patched through the dispatcher on assignment. */
   get state() {
     return this.interactionState;
   }
-  /** {@inheritDoc NodeSurface.state} */
   set state(value: NodeStateFlags) {
     dispatchSetState<FieldNode>(this, value);
   }
-  /** {@inheritDoc NodeSurface.setState} */
+  /** Patch this occurrence's interaction flags. */
   setState(state: NodeStateFlags) {
     return dispatchSetState<FieldNode>(this, state);
   }
-  /** {@inheritDoc NodeSurface.globalState} */
+  /** Interaction flags present on at least one node in the current tree shape. */
   get globalState() {
     return this.runtime.globalState;
   }
-  /** {@inheritDoc NodeSurface.setSubtreeState} */
+  /** Patch interaction flags throughout this live subtree. */
   setSubtreeState(state: NodeStateFlags) {
     return dispatchSetSubtreeState<FieldNode>(this, state);
   }
-  /** {@inheritDoc NodeSurface.clearSubtreeState} */
+  /** Clear interaction flags throughout this live subtree. */
   clearSubtreeState() {
     return dispatchClearSubtreeState<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.errors} */
+  /** Displayed validator and external issues for this occurrence. */
   get errors() {
     return readFieldNodeErrors<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.globalErrors} */
+  /** Ordered whole-tree validator issues. */
   get globalErrors() {
     return this.runtime.globalErrors ?? EMPTY_GLOBAL_ERRORS;
   }
-  /** {@inheritDoc NodeSurface.setExternalErrors} */
+  /** Replace this occurrence's external issues; a non-root write also replaces the root list's issues at this path. */
   setExternalErrors(errors: readonly ValidationIssue[]) {
     return dispatchSetExternalErrors<FieldNode>(this, errors);
   }
-  /** {@inheritDoc NodeSurface.clearExternalErrors} */
+  /** Clear this occurrence's external issues; a non-root clear also removes the root list's issues at this path. */
   clearExternalErrors() {
     return dispatchClearExternalErrors<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.validate} */
+  /** Request a fresh whole-schema validation verdict. */
   validate() {
     return dispatchValidate<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.subscribe} */
+  /** Subscribe to future event deliveries. */
   subscribe(listener: FieldNodeListener) {
     return subscribeFieldNode<FieldNode>(this, listener);
   }
-  /** {@inheritDoc NodeSurface.revision} */
+  /** Read the accumulated delivery revision for selected event bits. */
   revision(mask?: FieldNodeEventType) {
     return readFieldNodeRevision<FieldNode>(this, mask);
   }
-  /** {@inheritDoc NodeSurface.request} */
+  /** Request one renderer action. */
   request(kind: FieldNodeRequestType) {
     return dispatchRequest<FieldNode>(this, kind);
   }
-  /** {@inheritDoc NodeSurface.batch} */
+  /** Group synchronous writes in one outer delivery boundary. */
   batch(fn: () => void) {
     return dispatchBatch<FieldNode>(this, fn);
   }

@@ -10,6 +10,7 @@ export const gateSelectionCases: {
     value: unknown;
     merge?: boolean;
     context?: Record<string, unknown>;
+    reset?: 'form' | 'subtree';
   }[];
 }[] = [
   {

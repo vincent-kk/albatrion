@@ -1,31 +1,32 @@
 import type { ErrorDetails } from '@winglet/common-utils/error';
 
 import type { SchemaFormError } from './classes/SchemaFormError';
-import type { FormErrorCode } from './codes/FormErrorCode';
-import type { FormWarningCode } from './codes/FormWarningCode';
+import type { FormErrorCode } from './constants/FormErrorCode';
+import type { FormErrorGroup } from './constants/FormErrorGroup';
+import type { FormWarningCode } from './constants/FormWarningCode';
 
 /** Error codes a JSONSchemaError carries. */
 export type JSONSchemaErrorCode = Extract<
   FormErrorCode,
-  `JSON_SCHEMA_ERROR.${string}`
+  `${typeof FormErrorGroup.JsonSchema}.${string}`
 >;
 
 /** Error codes a SchemaFormError carries. */
 export type SchemaFormErrorCode = Extract<
   FormErrorCode,
-  `SCHEMA_FORM_ERROR.${string}`
+  `${typeof FormErrorGroup.SchemaForm}.${string}`
 >;
 
 /** Error codes an UnhandledError carries. */
 export type UnhandledErrorCode = Extract<
   FormErrorCode,
-  `UNHANDLED_ERROR.${string}`
+  `${typeof FormErrorGroup.Unhandled}.${string}`
 >;
 
 /** Error codes a ValidationError carries. */
 export type ValidationErrorCode = Extract<
   FormErrorCode,
-  `VALIDATION_ERROR.${string}`
+  `${typeof FormErrorGroup.Validation}.${string}`
 >;
 
 /** Every code a report record carries: an error or a warning code. */
@@ -36,7 +37,7 @@ export type FormErrorReason<Code extends FormRecordCode> = Code extends
   | typeof FormErrorCode.ValidatorCompileFailed
   | typeof FormErrorCode.GuardFailed
   ? 'duplicateSchemaId'
-  : Code extends typeof FormWarningCode.TypeMismatch
+  : Code extends typeof FormWarningCode.Misfit
     ? 'unconvertible' | 'ambiguous'
     : Code extends typeof FormErrorCode.DiscriminatorMismatch
       ? 'missing' | 'kind' | 'overlap' | 'key'

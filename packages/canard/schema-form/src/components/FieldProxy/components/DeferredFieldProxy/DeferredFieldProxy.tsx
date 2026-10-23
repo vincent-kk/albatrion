@@ -16,6 +16,10 @@ import type { DeferredFieldProxyProps } from './type';
 const FORCE_REVEAL_EVENT =
   FieldNodeEventType.RequestFocus | FieldNodeEventType.RequestSelect;
 
+/** Events that re-render the proxy when controlled properties or the path change. */
+const DEFERRED_TRACKING_EVENTS =
+  FieldNodeEventType.UpdateControlledProperties | FieldNodeEventType.UpdatePath;
+
 /**
  * Virtualization gate for a single field node.
  *
@@ -35,11 +39,7 @@ export const DeferredFieldProxy = ({
   const pendingEventsRef = useRef(0);
   const placeholderRef = useRef<Element | null>(null);
 
-  useFieldNodeTracker(
-    node,
-    FieldNodeEventType.UpdateControlledProperties |
-      FieldNodeEventType.UpdatePath,
-  );
+  useFieldNodeTracker(node, DEFERRED_TRACKING_EVENTS);
 
   useFieldNodeSubscribe(revealed ? null : node, ({ type }) => {
     const forced = type & FORCE_REVEAL_EVENT;

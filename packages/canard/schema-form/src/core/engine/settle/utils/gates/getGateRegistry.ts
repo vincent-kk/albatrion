@@ -2,13 +2,11 @@ import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import type {
-  Blueprint,
-  BlueprintGate,
-  BlueprintNodeKind,
-} from '../../../blueprint';
+import type { Blueprint, BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
+import type { PresenceQueryCursor } from '../../types/presenceQueryCursor';
 import { getGateExpression } from './getGateExpression';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
@@ -23,16 +21,43 @@ interface RegisteredGateOccurrence extends GateOccurrence {
 interface RegisteredNode {
   /** Live node that owns this path. */
   node: object;
-  /** Analyzed kind at this live path. */
-  kind: BlueprintNodeKind;
+  /** Fold-inclusive kind token at this live path. */
+  kind: string;
   /** Gate occurrences registered by its template and direct edges. */
   occurrences: readonly RegisteredGateOccurrence[];
   /** Gates on this node's own declarations, before direct child edges. */
   ownOccurrences: readonly RegisteredGateOccurrence[];
 }
 
+/** Reference-counted watched paths of the live gates evaluated at one location. */
+interface LocationWatchIndex {
+  /** Live non-root watched paths and their occurrence counts. */
+  exact: Map<string, number>;
+  /** Strict watched-path prefixes, including the empty document pointer. */
+  strictPrefixes: Map<string, number>;
+  /** Live gates that watch the whole document. */
+  root: number;
+  /** Paths appended when their exact reference count changes from zero to one. */
+  log: string[];
+  /** Generation changed when dead record entries are compacted. */
+  epoch: number;
+}
+
+/** Increment or remove one counted watch; callers keep paired indexes aligned. */
+const bumpWatchCount = (
+  map: Map<string, number>,
+  key: string,
+  by: number,
+): void => {
+  const next = (map.get(key) ?? 0) + by;
+  if (next > 0) map.set(key, next);
+  else map.delete(key);
+};
+
 /** Settlement-owned location index that follows live record lifetimes. */
 class GateRegistry {
+  /** Lazily created location watches; unqueried locations incur no index work. */
+  private readonly watchIndex = new Map<string, LocationWatchIndex>();
   /** Gates bound to a live node's own template and inherited declarations. */
   private readonly byNode = new WeakMap<
     object,
@@ -84,10 +109,7 @@ class GateRegistry {
   }
 
   /** Compare a path and kind in the current indexed shape, if indexed. */
-  hasRegisteredPathKind(
-    path: string,
-    kind: BlueprintNodeKind,
-  ): boolean | undefined {
+  hasRegisteredPathKind(path: string, kind: string): boolean | undefined {
     if (this.byPath.size === 0) return undefined;
     return this.byPath.get(path)?.kind === kind;
   }
@@ -107,7 +129,7 @@ class GateRegistry {
           node,
           gate,
           memo,
-          gate.schemaPath === `${node.blueprintNode.schemaPath}/controls/active`
+          gate.schemaPath === node.blueprintNode.schemaPath + '/controls/active'
             ? node.path
             : undefined,
         );
@@ -120,12 +142,12 @@ class GateRegistry {
       }
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates)
-          if (gate.schemaPath === `${declaration.schemaPath}/controls/active`)
+          if (gate.schemaPath === declaration.schemaPath + '/controls/active')
             this.add(
               node,
               gate,
               edgeMemo,
-              `${node.path}/${escapeSegment(entry.name)}`,
+              node.path + '/' + escapeSegment(entry.name),
             );
           else this.add(node, gate, memo);
     }
@@ -133,13 +155,18 @@ class GateRegistry {
     this.byEdge.set(node, edges);
     this.byPath.set(node.path, {
       node,
-      kind: node.blueprintNode.kind,
+      kind: getBlueprintNodeIdentity(node.blueprintNode),
       ownOccurrences,
       occurrences: [
         ...memo.values(),
         ...[...edges.values()].flatMap((edge) => [...edge.values()]),
       ],
     });
+  }
+
+  /** Count existing host occurrences without binding or enumerating them; verify only. */
+  occurrenceCount(path: string): number {
+    return this.byPath.get(path)?.occurrences.length ?? 0;
   }
 
   /** Find or bind a gate inherited indirectly by a declaration. */
@@ -161,7 +188,7 @@ class GateRegistry {
     const edges = this.byEdge.get(node);
     this.byPath.set(node.path, {
       node,
-      kind: node.blueprintNode.kind,
+      kind: getBlueprintNodeIdentity(node.blueprintNode),
       ownOccurrences: this.byPath.get(node.path)?.ownOccurrences ?? [],
       occurrences: [
         ...memo.values(),
@@ -191,6 +218,70 @@ class GateRegistry {
     for (const occurrence of this.byLocation.get(path) ?? [])
       if (this.readsChanged(occurrence, changedRaw, changedAncestors))
         return true;
+    return false;
+  }
+
+  /**
+   * Query grow-only presence evidence with the same answer as full traversal.
+   * @param path - Evaluation location whose live watches are compared
+   * @param changed - Accumulated identity changes, never removed within this call
+   * @param prefixes - Accumulated strict ancestors of changed paths
+   * @param changedLog - Insertion record corresponding exactly to changed
+   * @param prefixLog - Insertion record corresponding exactly to prefixes
+   * @param cursor - Settlement-owned progress; a true result retires this location
+   * @param metrics - Optional record-mode index probe counter
+   * @returns Whether a live watched path intersects accumulated presence changes
+   */
+  mayPresenceChangeAt(
+    path: string,
+    changed: ReadonlySet<string>,
+    prefixes: ReadonlySet<string>,
+    changedLog: readonly string[],
+    prefixLog: readonly string[],
+    cursor: PresenceQueryCursor,
+    metrics?: { indexLookups: number },
+  ): boolean {
+    if (changed.size === 0) return false;
+    let index = this.watchIndex.get(path);
+    if (!index) {
+      const entries = this.byLocation.get(path);
+      if (!entries?.size) return false;
+      index = {
+        exact: new Map(),
+        strictPrefixes: new Map(),
+        root: 0,
+        log: [],
+        epoch: 0,
+      };
+      for (const occurrence of entries) this.indexWatched(index, occurrence, 1);
+      this.watchIndex.set(path, index);
+    }
+    if (cursor.epoch !== index.epoch) {
+      cursor.epoch = index.epoch;
+      cursor.index = 0;
+    }
+    if (index.root > 0) return true;
+    for (; cursor.changed < changedLog.length; cursor.changed++) {
+      if (metrics) metrics.indexLookups++;
+      const entry = changedLog[cursor.changed];
+      if (index.exact.has(entry) || index.strictPrefixes.has(entry))
+        return true;
+    }
+    for (; cursor.prefixes < prefixLog.length; cursor.prefixes++) {
+      if (metrics) metrics.indexLookups++;
+      if (index.exact.has(prefixLog[cursor.prefixes])) return true;
+    }
+    for (; cursor.index < index.log.length; cursor.index++) {
+      if (metrics) metrics.indexLookups++;
+      const watched = index.log[cursor.index];
+      if (!index.exact.has(watched)) continue;
+      if (changed.has(watched) || prefixes.has(watched)) return true;
+      if (watched.startsWith($.Separator))
+        for (let prefix = watched; prefix; ) {
+          prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
+          if (changed.has(prefix)) return true;
+        }
+    }
     return false;
   }
 
@@ -238,6 +329,52 @@ class GateRegistry {
       this.byLocation.set(occurrence.evaluationHostPath, entries);
     }
     entries.add(occurrence);
+    this.indexOccurrence(occurrence, 1);
+  }
+
+  /**
+   * Maintain a location index only after that location has been queried.
+   * @param occurrence - Live gate entering or leaving its evaluation location
+   * @param by - One added or removed occurrence reference
+   * @returns Nothing; an existing derived watch index follows the location bucket
+   */
+  private indexOccurrence(
+    occurrence: RegisteredGateOccurrence,
+    by: 1 | -1,
+  ): void {
+    const index = this.watchIndex.get(occurrence.evaluationHostPath);
+    if (index) this.indexWatched(index, occurrence, by);
+  }
+
+  /**
+   * Apply one occurrence's watches and bound stale insertion records.
+   * @param index - Existing location index, possibly being initialized
+   * @param occurrence - Gate with the canonical watchPaths used by raw queries
+   * @param by - One added or removed occurrence reference
+   * @returns Nothing; count maps and root count remain synchronized
+   */
+  private indexWatched(
+    index: LocationWatchIndex,
+    occurrence: RegisteredGateOccurrence,
+    by: 1 | -1,
+  ): void {
+    for (const watched of occurrence.watchPaths) {
+      if (watched === '') {
+        index.root += by;
+        continue;
+      }
+      if (by > 0 && !index.exact.has(watched)) index.log.push(watched);
+      bumpWatchCount(index.exact, watched, by);
+      if (watched.startsWith($.Separator))
+        for (let prefix = watched; prefix; ) {
+          prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
+          bumpWatchCount(index.strictPrefixes, prefix, by);
+        }
+    }
+    if (by > 0 && index.log.length > 2 * index.exact.size + 8) {
+      index.log = [...index.exact.keys()];
+      index.epoch++;
+    }
   }
 
   /** Resolve expression reads once at occurrence registration. */
@@ -252,7 +389,7 @@ class GateRegistry {
       typeof gate.condition.propertyName === 'string'
     )
       return [
-        `${location.hostPath}/${escapeSegment(gate.condition.propertyName)}`,
+        location.hostPath + '/' + escapeSegment(gate.condition.propertyName),
       ];
     const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression
@@ -291,7 +428,10 @@ class GateRegistry {
     const previous = this.byPath.get(path);
     if (!previous) return;
     for (const occurrence of previous.occurrences)
-      this.byLocation.get(occurrence.evaluationHostPath)?.delete(occurrence);
+      if (
+        this.byLocation.get(occurrence.evaluationHostPath)?.delete(occurrence)
+      )
+        this.indexOccurrence(occurrence, -1);
     this.byPath.delete(path);
   }
 }
@@ -307,10 +447,12 @@ type GateRegistryView = Pick<
   | 'locate'
   | 'relocated'
   | 'mayChangeAt'
+  | 'mayPresenceChangeAt'
   | 'mayChangeOwnDeclarationAt'
   | 'remove'
   | 'resolveRead'
   | 'pathSegments'
+  | 'occurrenceCount'
 >;
 /** Decode only pointer syntax; no lookup result can survive a shape change. */
 const decodePointerSegments = (path: string): readonly string[] => {
@@ -328,10 +470,12 @@ const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   },
   relocated: () => EMPTY_OCCURRENCES,
   mayChangeAt: () => false,
+  mayPresenceChangeAt: () => false,
   mayChangeOwnDeclarationAt: () => false,
   remove: () => undefined,
   resolveRead: resolveDependencyPath,
   pathSegments: decodePointerSegments,
+  occurrenceCount: () => 0,
 });
 /** Repeated absent relocation reads preserve reference identity. */
 const EMPTY_OCCURRENCES: readonly GateOccurrence[] = Object.freeze([]);

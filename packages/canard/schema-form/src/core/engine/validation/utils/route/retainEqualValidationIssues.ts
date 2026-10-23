@@ -1,7 +1,7 @@
 import { equals } from '@winglet/common-utils/object';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { ValidationIssue } from '../../type';
+import type { ValidationIssue } from '../../types/issue';
 
 /**
  * Keep the previous verdict's list when a new verdict deep-equals it, so routing reuses its issue objects.

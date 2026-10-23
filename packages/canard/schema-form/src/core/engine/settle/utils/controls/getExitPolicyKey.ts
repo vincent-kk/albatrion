@@ -1,3 +1,4 @@
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { ControlLayer } from './getControlLayers';
 
 /**
@@ -6,12 +7,15 @@ import type { ControlLayer } from './getControlLayers';
  * @returns Stable key shared by commit evaluation and later exit reads
  */
 export const getExitPolicyKey = (
-  group: ControlLayer<{ path: string; blueprintNode: { kind: string } }>,
+  group: ControlLayer<{
+    path: string;
+    blueprintNode: Parameters<typeof getBlueprintNodeIdentity>[0];
+  }>,
 ): string =>
   JSON.stringify([
     group.host.path,
-    group.host.blueprintNode.kind,
+    getBlueprintNodeIdentity(group.host.blueprintNode),
     group.declarationId,
-    `${group.schemaPath}/unsetOnInactive`,
+    group.schemaPath + '/unsetOnInactive',
     undefined,
   ]);

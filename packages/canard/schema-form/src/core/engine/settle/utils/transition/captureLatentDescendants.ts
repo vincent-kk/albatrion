@@ -1,15 +1,20 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { unescapeSegment } from '@winglet/json/pointer';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
+import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { DeclarationLayer } from '../../../types/controls';
-import type { SettlementContext } from '../../type';
+import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 import { readLatentExitPolicy } from '../controls/readLatentExitPolicy';
-import { getLatentPathIndex } from '../latent/getLatentPathIndex';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
+import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
+import { reachesLatentPath } from './reachesLatentPath';
+import { selectCandidateOwnedLatent } from './selectCandidateOwnedLatent';
 import { writeLatentRaw } from './writeLatentRaw';
 
 /** One stored source and its last-live exit decisions. */
@@ -42,21 +47,44 @@ interface ResolvedAncestor {
  * @param context - Transition work and reversible latent writes
  * @param node - Exiting host whose descendants may already be absent
  * @param inherited - Resolved policy at the departing host
+ * @param applyPolicy - Whether automatic exit-policy writes are enabled
+ * @param ownsLatent - Reused capture scope, otherwise selected for ordinary policy application
  * @returns Nothing; cleared nodes lose raw and extras together
  */
 export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   node: Self,
   inherited: boolean,
+  applyPolicy = true,
+  ownsLatent = selectCandidateOwnedLatent(node),
 ): void => {
+  if (!applyPolicy && !ownsLatent) return;
   const runtime = context.root.runtime;
   const index = getLatentPathIndex(context);
-  const entries: LatentEntry[] = [];
+  const entries: LatentEntry[] | undefined = applyPolicy ? [] : undefined;
   for (const key of index.get(node.path) ?? []) {
     const identity: unknown = JSON.parse(key);
     if (!isArray(identity) || typeof identity[0] !== 'string') continue;
     const path = identity[0];
-    if (path === node.path) continue;
+    if (
+      ownsLatent &&
+      ownsLatent(key) &&
+      !reachesLatentPath(
+        node.blueprintNode,
+        path === node.path
+          ? []
+          : path
+              .slice(node.path.length + 1)
+              .split('/')
+              .map(unescapeSegment),
+        0,
+        identity[1],
+      )
+    ) {
+      writeLatentRaw(context, key, false, undefined);
+      continue;
+    }
+    if (!entries || path === node.path) continue;
     const info = runtime.latentRawMetadata?.get(key);
     if (info)
       entries.push({
@@ -66,13 +94,21 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
         exitLayers: info.exitLayers,
       });
   }
+  if (!entries) return;
   entries.sort((left, right) => left.path.length - right.path.length);
   const live = new Map<string, Self>();
-  walkOwnedFieldNodes(node, (current) =>
-    live.set(
-      JSON.stringify([current.path, current.blueprintNode.kind]),
-      current,
-    ),
+  visitFieldNodes(
+    node,
+    (current) => {
+      live.set(
+        JSON.stringify([
+          current.path,
+          getBlueprintNodeIdentity(current.blueprintNode),
+        ]),
+        current,
+      );
+    },
+    { owned: true },
   );
   const resolved = new Map<string, ResolvedAncestor[]>([
     [node.path, [{ path: node.path, order: [], clear: inherited }]],
@@ -95,7 +131,7 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
     const current = live.get(entry.key);
     const clear = current
       ? readExitLayerPolicy(
-          getControlLayers(current, new Map()),
+          getControlLayers(current, emptyReadonlyMap),
           context.root.runtime.committedRuleValues,
           inheritedPolicy,
         )
@@ -103,6 +139,7 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
     const samePath = resolved.get(entry.path) ?? [];
     samePath.push({ path: entry.path, order: entry.order, clear });
     resolved.set(entry.path, samePath);
-    if (clear) writeLatentRaw(context, entry.key, false, undefined);
+    if (clear && (!ownsLatent || ownsLatent(entry.key)))
+      writeLatentRaw(context, entry.key, false, undefined);
   }
 };

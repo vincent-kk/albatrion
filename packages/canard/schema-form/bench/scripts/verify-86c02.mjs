@@ -1,4 +1,5 @@
 // Evidence entry: validate captured checks against unchanged source; --run reproduces suites.
+// Reads 86c02-verification.json, which is not committed; passes only when HEAD is the commit recorded in it (architecture/verification/07-switch/remeasure-86c02.md).
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -21,8 +22,8 @@ assert.equal(execFileSync('git', ['rev-parse', '--short=9', 'HEAD'],
   { cwd: repo, encoding: 'utf8' }).trim(), evidence.head);
 const reserved = ['providers/RootNodeContext/components/RootNodeContextProvider.tsx',
   'providers/RootNodeContext/hooks/useLiveNode.ts', 'providers/RootNodeContext/utils/applyFormErrors.ts',
-  'components/Field/FieldInputSlot/FieldInputSlot.tsx',
-  'components/Field/FieldInputSlot/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
+  'components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx',
+  'components/FieldProxy/components/FieldInputSlot/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
 for (const relative of reserved) {
   const file = `packages/canard/schema-form/src/${relative}`;
   assert(fs.readFileSync(path.join(repo, file)).equals(execFileSync('git', ['show', `HEAD:${file}`], { cwd: repo })));

@@ -2,12 +2,52 @@ import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import {
+  FieldNodeEventType,
   loadFieldNodeAtMount,
   resetFieldNodeForm,
 } from '@/schema-form/core/engine';
 
 import { FieldNode } from '../runtime/FieldNode';
 import { SetValueOption } from '../type';
+import type { ArrayNode } from '../type';
+import { finishFieldNodeInput } from '../utils/binding/finishFieldNodeInput';
+import { isArrayNode } from '../utils/guards';
+
+const detachedList = () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      flag: { type: 'boolean' },
+      list: {
+        type: 'array',
+        items: { type: 'string' },
+        controls: { active: '../flag' },
+      },
+    },
+  });
+  root.setValue({ flag: true, list: ['a', 'b'] });
+  const old = root.find('/list');
+  root.find('/flag')?.setValue(false);
+  root.find('/flag')?.setValue(true);
+  const current = root.find('/list');
+  if (!old || !isArrayNode(old) || !current || current === old)
+    throw new Error('Expected a new /list');
+  return { root, old, current };
+};
+
+const DETACHED_VERBS: readonly [
+  string,
+  (node: ArrayNode) => unknown,
+  unknown,
+  readonly string[],
+][] = [
+  ['push', (node) => node.push('z'), 3, ['a', 'b', 'z']],
+  ['pop', (node) => node.pop(), 'b', ['a']],
+  ['remove', (node) => node.remove(0), 'a', ['b']],
+  ['insert', (node) => node.insert(1, 'z'), 3, ['a', 'z', 'b']],
+  ['update', (node) => node.update(0, 'q'), 'q', ['q', 'b']],
+  ['clear', (node) => node.clear(), undefined, []],
+];
 
 // filid:contract surface-detached
 describe('detached FieldNode references', () => {
@@ -29,15 +69,15 @@ describe('detached FieldNode references', () => {
     );
     const target = root.find('/target');
     if (!target) throw new Error('Expected the loaded target');
-    expect(target.typeMismatch).toBe(true);
+    expect(target.misfit).toBe(true);
     resetFieldNodeForm(
       runtimeRoot,
       { flag: false, target: 'other' },
       SetValueOption.Overwrite,
     );
     expect(Reflect.get(target, 'detached')).toBe(true);
-    expect(target.typeMismatch).toBe(true);
-    expect(target.typeMismatches).toEqual(['/target']);
+    expect(target.misfit).toBe(true);
+    expect(target.misfits).toEqual(['/target']);
     expect(target.defaultValue).toBe('bad');
   });
 
@@ -202,26 +242,26 @@ describe('detached FieldNode references', () => {
     const target = root.find('/group/target');
     if (!target) throw new Error('Expected the active target');
     const before = {
-      typeMismatch: target.typeMismatch,
-      typeMismatches: target.typeMismatches,
+      misfit: target.misfit,
+      misfits: target.misfits,
       inactiveValues: target.inactiveValues,
       defaultValue: target.defaultValue,
     };
-    expect(before.typeMismatch).toBe(true);
-    expect(before.typeMismatches).toContain('/group/target');
+    expect(before.misfit).toBe(true);
+    expect(before.misfits).toContain('/group/target');
     root.find('/flag')?.setValue(false);
-    expect(target.typeMismatch).toBe(before.typeMismatch);
-    expect(target.typeMismatches).toBe(before.typeMismatches);
+    expect(target.misfit).toBe(before.misfit);
+    expect(target.misfits).toBe(before.misfits);
     Reflect.set(runtime, 'loadSnapshot', {
       group: { target: { seed: 'changed' } },
     });
     root.setValue({ flag: true, group: { target: { updated: true } } });
     const current = root.find('/group/target');
     expect(current).not.toBe(target);
-    expect(current?.typeMismatch).toBe(false);
+    expect(current?.misfit).toBe(false);
     expect(current?.defaultValue).toEqual({ seed: 'changed' });
-    expect(target.typeMismatch).toBe(before.typeMismatch);
-    expect(target.typeMismatches).toBe(before.typeMismatches);
+    expect(target.misfit).toBe(before.misfit);
+    expect(target.misfits).toBe(before.misfits);
     expect(target.inactiveValues).toBe(before.inactiveValues);
     expect(target.defaultValue).toBe(before.defaultValue);
   });
@@ -287,6 +327,101 @@ describe('detached FieldNode references', () => {
     old.setValue('y');
     root.find('/flag')?.setValue(true);
     expect(root.find('/target')?.raw).toBe('y');
+  });
+
+  it('26C-12 NODE-044 sends a detached write inside a batch to the latent source, never to the live node at its path', () => {
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        target: { type: 'string', controls: { active: '../flag' } },
+      },
+    });
+    root.setValue({ flag: true, target: 'initial' });
+    const old = root.find('/target');
+    if (!old) throw new Error('Expected the first target');
+    root.find('/flag')?.setValue(false);
+    root.find('/flag')?.setValue(true);
+    const current = root.find('/target');
+    if (!current || current === old) throw new Error('Expected a new target');
+    root.batch(() => {
+      old.setValue('x');
+    });
+    expect(current.raw).toBe('initial');
+    root.find('/flag')?.setValue(false);
+    root.batch(() => {
+      old.setValue('y');
+    });
+    root.find('/flag')?.setValue(true);
+    expect(root.find('/target')?.raw).toBe('y');
+  });
+
+  for (const [verb, call, result, latent] of DETACHED_VERBS)
+    it(`26C-12 NODE-044 sends a detached ${verb} inside a batch to the latent source, never to the live array at its path`, () => {
+      const { root, old, current } = detachedList();
+      let events = 0;
+      root.subscribe((event) => {
+        if (event.type & FieldNodeEventType.UpdateValue) events += 1;
+      });
+      let returned: unknown;
+      root.batch(() => {
+        returned = call(old);
+      });
+      expect(returned).toEqual(result);
+      expect(current.value).toEqual(['a', 'b']);
+      expect(events).toBe(0);
+      root.find('/flag')?.setValue(false);
+      root.batch(() => {
+        call(old);
+      });
+      root.find('/flag')?.setValue(true);
+      expect(root.find('/list')?.value).toEqual(latent);
+    });
+
+  it('26C-12 NODE-044 never sends a detached finishInput inside a batch to the live node at its path', () => {
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        target: {
+          type: 'string',
+          options: { trim: true },
+          controls: { active: '../flag' },
+        },
+      },
+    });
+    root.setValue({ flag: true, target: ' x ' });
+    const old = root.find('/target');
+    root.find('/flag')?.setValue(false);
+    root.find('/flag')?.setValue(true);
+    const current = root.find('/target');
+    if (!old || !current || current === old)
+      throw new Error('Expected a new /target');
+    root.batch(() => {
+      finishFieldNodeInput(old);
+    });
+    expect(current.raw).toBe(' x ');
+  });
+
+  it('26C-12 EVENT-013 judges a detached write against the shape committed before the batch', () => {
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        target: { type: 'string', controls: { active: '../flag' } },
+      },
+    });
+    root.setValue({ flag: true, target: 'initial' });
+    const old = root.find('/target');
+    if (!old) throw new Error('Expected the first target');
+    root.find('/flag')?.setValue(false);
+    root.find('/flag')?.setValue(true);
+    root.batch(() => {
+      root.find('/flag')?.setValue(false);
+      old.setValue('y');
+    });
+    root.find('/flag')?.setValue(true);
+    expect(root.find('/target')?.raw).toBe('initial');
   });
 
   it('26C-12 ignores Merge through an old detached object while its path is live', () => {

@@ -67,6 +67,7 @@
 | SURFACE-059 | 원장이 바꾸지 않은 오늘의 공개 표면은 그대로 — `FormProps` 열아홉 칸·`FormHandle` 열여섯 멤버·`ValidationMode`·공개 이벤트 형 여섯, PR-7 이주 점검 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-87) |
 | SURFACE-060 | 안쪽 코드도 `SchemaNodeState`·`SchemaNodeEventType` 한 이름 — 공개 표면과 안쪽 코드에 함께, 한 형에 한 이름, 별칭 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:25` 18C 검토 3번) |
 | SURFACE-061 | 경고등의 공개 이름 확정 — 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`; 뜻은 VALUE-037 그대로, 주석에 `schemaType`·유효 목록 기준 한 줄, 시험 파일 이름은 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:41` 반영 칸; 시험 파일 이름) |
+| SURFACE-062 | 하위 방문 — `visitSubtree(visitor)`: 자기 포함 전위, `false`는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch), 내부 순회는 `visitFieldNodes` 한 벌 | 현행 | 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순) |
 
 ## 항목
 
@@ -150,6 +151,7 @@
   > 편집자 결정(18C-44): "【추론】 `node.resetSubtree()`는 진입 하나에서 `clearSubtreeState()`를 한 뒤 `node.defaultValue`를 그 하위 트리에 로드한다." (`reviews/round-18-closing.md:1227`)
   > 편집자 결정(35C-03): "【추론】 SURFACE-005가 배열 쓰기를 다섯(`push`·`pop`·`update`·`remove`·`clear`)으로 닫았고, 원장의 "삽입"은 모두 "`push(v)`·삽입"(WRITE-085, WRITE-099) 또는 "`push`·`remove`·`insert`류"(NODE-051)로 연산 부류를 이름한 것이라 공개 동사도 내부 연산도 아니다; 06은 삽입을 만들지 않고, WRITE-099의 스냅숏 게이트는 `push('x')`로 충족하며 삽입 쪽은 동사가 없어 해당 없음으로 적는다. 삽입 동사가 필요해지면 SURFACE 라운드다." (`reviews/round-35-closing.md:25`)
   > 편집자 결정(35C-06): "【추론】 `update(i, v)`는 i번째 아이템에 `v`를 통째로 쓰는 로드 아닌 쓰기이고(그 안의 위치 재조정은 NODE-051), WRITE-007대로 그 아이템만 바뀌며 WRITE-085대로 구조 연산이 아니라 키와 스냅숏 자리를 지킨다." (`reviews/round-35-closing.md:48`)
+  > 편집자 결정(371C-02): "【추론】 공개 배열 동사는 push·pop·update·remove·clear에 insert(index, value?)를 더해 여섯이며 새 길이를 돌려준다(365라운드 소유자 결정, 겉면 이름 수 94 그대로, 멤버 55). WRITE-099 결정은 이미 삽입을 push와 같은 구조 연산으로 적어 두었다. 규칙은 기존 동사의 규칙을 옮긴다: 유효 범위는 [0, N]이고 N은 push와 같은 결과·같은 지름길(WRITE-088·099), 범위 밖·음수·정수 아님은 오류 없는 무동작에 현재 길이(35C-06의 확장), 배열이 아닌 호스트는 insert(0)만 push처럼 [x]를 만들고 misfit 경고등을 끄며 그 밖은 무동작(47C-02의 추론: 있는 아이템을 전제하는 동사만 무효), batch 안은 62C-01대로 호출 자리에서 끼우고 끝에서 통째 쓰기, minItems·maxItems는 막지 않는다(SURFACE-005 보충·WRITE-022). 구현의 발견 넷: insert의 defaultValue는 통째 쓰기와 같을 수 없다(통째는 스냅숏 유지 WRITE-085, insert는 생성 값을 끼움 WRITE-099); 끼운 자리 뒤 아이템은 값 갱신 대신 경로 갱신 revision 하나를 받는다(NODE-051); 아이템 기본값이 있는 스키마는 차등에서 뺀다(새 아이템은 채움 WRITE-088, 통째의 기존 자리는 아님 WRITE-090); 겉면 DETAIL의 멤버 시험 수는 이미 54였던 것을 55로 바로잡았다. 06-conclusions.md:386의 "배열 다섯"은 이 결정과 충돌이다." (`reviews/round-371-closing.md:10`)
   > 편집자 결정(35C-06): "【추론】 범위 밖([0, 길이) 밖)·음수 인덱스의 `update`·`remove`, 빈 배열의 `pop()`, 값이 `null`인 터미널 배열의 `update`·`remove`·`pop`은 원장이 정한 바가 없으므로 레거시(`src/__legacy__/core/nodes/ArrayNode/strategies/BranchStrategy/BranchStrategy.ts:413-447`, `TerminalStrategy/TerminalStrategy.ts:195-224`)를 따라 오류도 경고도 없는 무효 호출이다; 새 코드는 없고 06의 시험이 무효 호출을 단언해 고정한다." (`reviews/round-35-closing.md:49`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:411`(정본), `02-target-overview.md:306`, `06-conclusions.md:338,386`, `07-conclusions.md:350`, `05-before-after.md:77` (같은 규칙: FRAGMENT-010, WRITE-015, EVENT-002; `resetSubtree`의 존폐는 열림 WRITE-050), `reviews/round-18-closing.md:1227`
@@ -158,6 +160,7 @@
 - 까닭: `06-conclusions.md:386`, `07-conclusions.md:142`, `reviews/round-18-closing.md:1240-1247`
 - 충돌:
   > `02-target-overview.md:306`의 "배열 `push`·`remove`·`update`"는 정본과 다르다(`pop`·`clear`가 없다). 정본이 이긴다(`08-design-a-to-z.md:411`; `02-target-overview.md:3`은 새 결정을 만들지 않는다고 적는다).
+  > `06-conclusions.md:386`의 "`remove(index)`, `clear()`"은 배열 동사를 다섯으로 닫은 줄이라 371C-02(insert 추가로 여섯)와 충돌이다. 371C-02가 이긴다(365라운드 소유자 결정, `reviews/round-365-owner-answers.md:7`).
 
 ### SURFACE-006 값 읽기 — `value`, `outputValue`, `getInactiveValues(path)`, `FormHandle.getValue()`
 
@@ -174,7 +177,7 @@
   > 소유자(12-8 답): "이대로 가도 되는데요, value 랑 outputValue 가 다르면, 투영할때만 바뀌는 경우(빠지는 값?)은 어떤게 있죠?" (`reviews/round-18-owner-answers.md:18`)
   > 반영 칸(12-8, 이름): "가. 이름은 표대로 확정한다" (`reviews/round-18-owner-answers.md:18`)
   > 편집자 결정(18C-44): "【추론】 `node.defaultValue`는 `getIn(snapshot, node.path)`다." (`reviews/round-18-closing.md:1225`)
-  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.MISFIT`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `misfit`·`misfits`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:412`(정본), `02-target-overview.md:307-309`, `06-conclusions.md:352-358,388`, `07-conclusions.md:347`, `05-before-after.md:96,136`, `reviews/round-18-owner-answers.md:18` (같은 규칙: VALUE-011, WRITE-019; 반환 모양은 열림 WRITE-020), `reviews/round-18-closing.md:1225`
 - 닫은 사람: 편집자 결정(8라운드 D-23, `06-conclusions.md:186-190`), 편집자 결정(9라운드 N3 그대로, `07-conclusions.md:347`), 소유자 답(`reviews/round-18-owner-answers.md:18` 12-8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-44)
@@ -227,6 +230,7 @@
 - 보충:
   > "| 경로 조회 | `find(path)`, `findNodes(path)` | 터미널 노드 아래의 경로는 둘 다 노드 없음으로 답한다. 공개 API가 객체를 조용히 파괴하면 안 되기 때문이다(07 4.29) | ADR 0006 §4 |" (`02-target-overview.md:316`)
   > "| 46 | 노드 메서드 `findAll` | `findNodes`(`FormHandle`은 이미 `findNodes`다) |" (`08-design-a-to-z.md:478`)
+  > 소유자(341라운드, 하위 노드 방문을 공개 표면으로; 설계는 원장 기준, 판정은 소유자): "그리고 공개표면으로도 추가했으면 하네. \n\n자신을 기준으로 하위 모든 노드를 방문하는 공개 기능으로서. \n\n네이밍과 위치, 동작, 배치여부 등은 원장을 참고해서 추정하고 설계를 구성하라.\n판정과 판단이 필요하면 나에게 묻도록" (`reviews/round-341-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:415`(정본), `02-target-overview.md:316`, `08-design-a-to-z.md:478`, `06-conclusions.md:394`, `07-conclusions.md:205-210,351`, `05-before-after.md:95` (같은 규칙: NODE-020; 형상에 없는 노드를 돌려주는지는 열림 NODE-019)
 - 닫은 사람: 원리(`06-conclusions.md:175` P2·G4; `find`), 편집자 결정(10라운드 추정 채택 규칙, `07-conclusions.md:209`; `findNodes`), 편집자 결정(17라운드, `08-design-a-to-z.md:478` 이주 행 46; `findAll`)
@@ -816,7 +820,7 @@
   > 편집자 결정(18C-89): "【추론】 노드 형에는 제네릭을 두지 않으며, 목록 형으로 좁히는 것은 `FormTypeInputProps`가 맡는다." (`reviews/round-18-closing.md:2342`)
   > 편집자 결정(18C-89): "【추론】 props의 `onChange`는 목록 종류의 값, `undefined`, 그리고 nullable일 때만 `null`을 받는다." (`reviews/round-18-closing.md:2345`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
-  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.MISFIT`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `misfit`·`misfits`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1091-1095`(정본), `reviews/round-18-closing.md:2340-2342,2345`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-89), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -900,7 +904,7 @@
   > 【추론】 새 이름의 공개 형은 PR-2의 `SchemaNode/type.ts`가 처음부터 쓰고, 소비자 이주는 PR-7이다.
 - 보충:
   > 반영 칸(18C 검토 3번, 안쪽 코드): "18C-47의 두 개명(`SchemaNodeState`, `SchemaNodeEventType`)은 공개 표면과 안쪽 코드에 함께 적용되며, 한 형에 한 이름이고 별칭을 두지 않는다(NODE-011)." (`reviews/round-18-owner-answers.md:25`)
-  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.MISFIT`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `misfit`·`misfits`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1291-1299`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-47)
@@ -980,7 +984,7 @@
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:25`
 
-### SURFACE-061 경고등의 공개 이름 확정 — 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`; 뜻은 VALUE-037 그대로, 주석에 `schemaType`·유효 목록 기준 한 줄, 시험 파일 이름은 그대로
+### SURFACE-061 경고등의 공개 이름 확정 — 게터 `misfit: boolean`, 경로 목록 `misfits: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.MISFIT`; 뜻은 VALUE-037 그대로, 주석에 `schemaType`·유효 목록 기준 한 줄, 시험 파일 이름은 그대로
 
 - 결정:
   > 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`.
@@ -991,9 +995,36 @@
 - 보충:
   > 소유자(설계서 메모 4): "typeMismatch 정도가 적절하지 않나 싶네. 아님 더 짧게 mismatch 같은것도 괜찮고 근데 너무 포괄적이면 또 파악하기 힘드니까.." (`reviews/round-18-owner-answers.md:41`)
   > 소유자(설계서 메모 4, 권장에): "그래 그걸로 메모해둬" (`reviews/round-18-owner-answers.md:41`)
-  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.MISFIT`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `misfit`·`misfits`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
+  > 편집자 결정(394C-03): "【추론】 fairy08의 읽기 전용 대조(393라운드 소유자 지시) 결과를 적어 둔다. 확정 결함 일곱: 문자열 체크박스에 배열 가드가 없어 antd5·6은 문자열·수 값이면 렌더 중 TypeError, 내장 정의는 문자열을 글자 단위로 펼치고 수이면 TypeError; antd5·6 범위 입력 셋이 길이 2만 검사; 네 플러그인의 스위치 둘이 불리언 아닌 값을 유효한 켜짐·꺼짐으로 그리고 무효 표지가 없음(REACT-027 "받은 값이나 무효 표지" 위반); antd 셋의 Slider가 null을 NaN으로 방출; antd 셋의 Number가 nullable이 아니어도 null 방출; MUI Number가 빈 칸을 null로 보내고 parseInt로 자르며 일부만 해석(LANDING-184 위반); 네 플러그인 모두 misfit(SURFACE-061)을 읽는 곳이 없음. 원장 해석 필요 하나(소유자 물음): 내장 Number가 nullable이면 빈 칸에서 null을 보내는데 REACT-027의 "빈 칸이면 undefined"와 "비우기 조작은 nullable이면 null"이 갈린다. 권장 미적용 하나: 플러그인별 union 시험 항목 없음(내장 Union은 맞음). 옛 이름 typeMismatch의 잔재는 플러그인에 없다. 고치는 일은 소유자 지시대로 나중에 플러그인 PR로 한다." (`reviews/round-394-closing.md:12`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:41`(정본, 반영 칸)
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:41` 반영 칸; 시험 파일 이름)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:41`
+
+### SURFACE-062 하위 방문 — `visitSubtree(visitor)`: 자기 포함 전위, `false`는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch), 내부 순회는 `visitFieldNodes` 한 벌
+
+- 결정:
+  > 【추론】 `NodeSurface`에 `visitSubtree(visitor: (node: FieldNode) => void | boolean): void`를 `find`·`findNodes` 옆에 둔다. 런타임 `FieldNode`는 write 엔진의 디스패치에 위임하고, 디스패치는 navigation의 `visitFieldNodes`로 돈다.
+  > 【추론】 자기 자신부터 전위 순서(부모 먼저, 형제는 `children` 순)로 방문한다. visitor가 `false`를 돌려주면 그 노드의 하위만 건너뛰고 형제는 계속한다. 전체 중단과 후위 순서 옵션은 두지 않는다(첫 일치는 `find`·`findNodes`의 몫).
+  > 【추론】 형상에 있는 노드만 돈다(NODE-043). 터미널은 잎이고(NODE-020), 참조로 두 번 닿는 같은 인스턴스는 한 번만 방문한다. 걷는 중 생긴 노드는 방문을 보장하지 않는다.
+  > 【추론】 지연 batch: 순회 자체는 chain에 들어가지 않는다. 순회 안에서 첫 쓰기가 chain 진입 지점에 닿는 순간 batch가 열리고, 그 뒤 쓰기는 표시만 되며, 순회가 끝날 때 루트에서 한 번 정착한다(`batch`와 같은 규칙: 읽기는 직전 커밋 값, 교체 범위는 쓰인 경로의 합). 쓰기가 없으면 아무것도 열지 않는다. 바깥 batch가 열려 있으면 거기에 합류한다. 전달 중(리스너 안)에는 쓰기가 평소처럼 거부되고 읽기 순회만 된다.
+  > 【추론】 `FormHandle`에는 두지 않는다(`handle.node`로 충분). 공개 형 이름은 더하지 않고 함수 형을 인라인으로 적어 표면 이름 수는 그대로다.
+  > 【추론】 내부 순회 셋(write의 subtree state 디스패치 둘, settle의 `walkOwnedFieldNodes`, navigation의 `walkFieldNodes`)은 navigation의 `visitFieldNodes(origin, visit, { owned?: boolean })` 한 벌로 합친다. `owned`는 `child.parent === node` 간선만 따라가며 공개하지 않는다. 형제 순서는 정순으로 통일한다 — `setSubtreeState`·`clearSubtreeState`의 역순은 스택 구현의 부산물이었고, 한 파동 안 형제 리스너가 `UpdateState`를 듣는 순서만 바뀌며 전역 상태 합계는 같다.
+- 보충:
+  > 소유자(342라운드, 이름부터 다시 숙고): "visit 이 끌리긴 하는데...\n이름부터 나머지까지 깊이 숙고해서 다시 추천해봐." (`reviews/round-342-owner-answers.md:7`)
+  > 소유자(342라운드, 순회 중 쓰기가 배치되는가): "확정하기 전에 한가지만 검토했으면 합니다.\n만약 visitSubtree 를 사용해서 "값"을 바꾼다고 할때, 이 변경은 배치처리가 됩니까?\n\n그러니까, 모든 순회가 끝난 후, 한번에 반영이 이루어집니까? 아니면 순회 중간중간 매번 값이 반영되면서 내려가게 되나요?" (`reviews/round-342-owner-answers.md:8`)
+  > 소유자(342라운드, batch를 메서드에 넣는 편이 낫지 않은가): "흠... 그런데 visit 을 사용할때 항상 batch 를 해야한다면 이걸 메소드 기능에 넣는게 좋을거같긴 한데... 권하지 않는다는거지.." (`reviews/round-342-owner-answers.md:9`)
+  > 소유자(342라운드, batch 옵션(기본 켬) 설계와 재저울질): "그럼 batch 옵션을 갖도록 하고, 기본값은 배치 사용, 읽기전용인 경우 배치를 끄고 쓰는 그런 메소드 설계는 어떤지? \n그리고 중간에 권고가 달라져서... 다시 저울질을 해보길 바람" (`reviews/round-342-owner-answers.md:10`)
+  > 소유자(342라운드, 지연 batch 확정, 배치 예산 물음): "좋아 그렇게 가죠.\n배치 예산인 몇입니까 지금?" (`reviews/round-342-owner-answers.md:11`)
+  > 소유자(343라운드, 묶음 2 마무리와 전체 시험 한 번, 소요 시간 물음): "좋네. 개발 마무리까지 진행하고, 신규기능과 공통기능이 포함되니 테스트를 한번 거치도록 하세.\n시간이 얼마나 걸리겠나?" (`reviews/round-343-owner-answers.md:7`)
+  > 편집자 결정(346C-01): "【추론】 떼어진 노드에서 부른 `visitSubtree`는 NODE-044의 구조 읽기 규칙을 따라 그 노드와 함께 떼어진 하위 트리(마지막 커밋의 형상)를 걷는다. SURFACE-062의 "형상에 있는 노드만 돈다"는 살아 있는 시작 노드에 대한 문장이다. 무동작은 명령과 상태 진입에만 정해진 것이므로 `dispatchSetSubtreeState`의 방식을 유추하지 않는다." (`reviews/round-346-closing.md:8`)
+  > 편집자 결정(346C-02): "【추론】 순회 안의 정착 밖 진입 여섯(`setState`·`setSubtreeState`·`clearSubtreeState`·`setExternalErrors`·`clearExternalErrors`·`request`)은 즉시 전달하지 않고 순회의 묶음을 열어 순회 끝에 한 번 전달한다(`batch` 안과 같은 규칙, EVENT-013). 열린 진입도 순회도 없으면 전과 같이 바로 전달하고, 쓰기도 진입도 없는 순회는 아무것도 열지 않는다. 상태와 외부 오류의 데이터는 즉시 바뀌고 사건만 미뤄진다." (`reviews/round-346-closing.md:10`)
+  > 편집자 결정(346C-04): "【추론】 SURFACE-062 결정의 "전달 중(리스너 안)에는 쓰기가 평소처럼 거부되고 읽기 순회만 된다"는 틀렸다. 전달 중의 쓰기는 거부되지 않고 평소 규칙대로 리스너 되먹임으로 세어지며(EVENT-016, EVENT-020), 오류 관찰자 안의 쓰기만 `WriteInObserver`로 거부된다. 리스너 안의 순회에서 쓰기가 묶음을 열면 visitor의 예외는 순회를 부른 쪽에 닿지 않는다(`batch`와 같음)." (`reviews/round-346-closing.md:14`)
+  > 편집자 결정(346C-05): "【추론】 SURFACE-062 결정의 "한 파동 안 형제 리스너가 `UpdateState`를 듣는 순서만 바뀌며"는 일어나지 않는다. `deliverWave`가 파동을 문서 순서로 정렬하므로 방문 순서가 정순으로 바뀌어도 전달 순서는 그대로이고 리스너는 아무 차이도 관찰할 수 없다. 두 번 닿는 노드는 한 번만 패치되며 전에는 둘째 패치가 무동작이었다." (`reviews/round-346-closing.md:16`)
+- 상태: 현행
+- 출처: `reviews/round-342-owner-answers.md:15-20`(정본), `reviews/round-342-owner-answers.md:7-11`(소유자 답), `plan/tidy-structure/walk-subtree-design.md`
+- 닫은 사람: 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순)
+- 라운드: 342
+- 까닭: `reviews/round-342-owner-answers.md:10`(옵션 설계 재저울질 — 엔진은 쓰기가 들어오는 순간 아니까 사용자에게 묻지 않는다)

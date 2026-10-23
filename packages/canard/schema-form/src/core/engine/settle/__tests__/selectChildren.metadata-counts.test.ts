@@ -3,20 +3,23 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
+import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as priming from '../utils/compute/primeHost';
-import * as selection from '../utils/compute/selectChildren';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
+import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 import { observeChildSelectionPlans } from './fixtures/childSelection/observeChildSelectionPlans';
+import { expectedGateSelectionCalls } from './fixtures/expectedGateSelectionCalls';
 
 // filid:contract settle-child-selection-metadata
-describe('lazy child selection metadata runtime visits', () => {
+describe('mount-prepared child selection metadata runtime visits', () => {
   it.each([5, 10, 20, 40])(
-    'B=%i preserves one condition call at each evaluation position',
+    'B=%i preserves exact expression and gate counts for the selected mode',
     (count) => {
       const evaluations = new Array<number>(count).fill(0);
       const gateVisits = new Array<number>(count).fill(0);
@@ -71,7 +74,9 @@ describe('lazy child selection metadata runtime visits', () => {
           return flush(template, path, context);
         },
       );
+      const previousMode = gateWheelEvaluation.mode;
       try {
+        gateWheelEvaluation.mode = 'record';
         const builds = observeChildSelectionPlans();
         const { root } = createTestTree(createFixedBranchSchema(count));
         const declare = root.behavior.declareChildren;
@@ -91,14 +96,15 @@ describe('lazy child selection metadata runtime visits', () => {
         });
         root.behavior.declareChildren = () => candidates;
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
-        expect(builds.plans).toHaveLength(0);
+        expect(builds.plans).toHaveLength(1);
+        const mountPlans = builds.plans.length;
         writeFieldNode(
           root.structure!.common,
           'new common',
           'input',
           WriteOption.Overwrite,
         );
-        expect(builds.plans).toHaveLength(0);
+        expect(builds.plans).toHaveLength(1);
         for (const [index, kind] of [
           'kind_4',
           'kind_0',
@@ -109,6 +115,7 @@ describe('lazy child selection metadata runtime visits', () => {
           gateVisits.fill(0);
           candidateVisits.fill(0);
           flushVisits.fill(0);
+          const beforeWrite = builds.plans.length;
           writeFieldNode(
             root.structure!.kind,
             kind,
@@ -116,23 +123,31 @@ describe('lazy child selection metadata runtime visits', () => {
             WriteOption.Overwrite,
           );
           expect(builds.hosts).toEqual([root.blueprintNode]);
-          expect(evaluations).toEqual(
-            new Array(count).fill(index === 0 ? 16 : 8),
+          const writePlans = builds.plans.length - beforeWrite;
+          expect(writePlans).toBe(0);
+          if (index === 0) expect(mountPlans + writePlans).toBe(1);
+          const expected = expectedGateSelectionCalls(
+            gateSelectionTable.mode,
+            index === 0,
           );
-          expect(evaluations).toEqual(gateVisits);
+          expect(evaluations).toEqual(
+            new Array(count).fill(expected.expressions),
+          );
+          expect(gateVisits).toEqual(new Array(count).fill(expected.gates));
           for (let branch = 0; branch < count; branch++) {
             if (branch === 0 || branch === 4) continue;
             expect({
               branch,
               candidates: candidateVisits[branch],
               flushes: flushVisits[branch],
-            }).toEqual({ branch, candidates: index === 0 ? 3 : 0, flushes: 0 });
+            }).toEqual({ branch, candidates: 0, flushes: 0 });
           }
           expect(root.children).toHaveLength(5);
           expect(root.runtime.diagnostics.status).toBe('stable');
         }
       } finally {
         vi.restoreAllMocks();
+        gateWheelEvaluation.mode = previousMode;
       }
     },
   );

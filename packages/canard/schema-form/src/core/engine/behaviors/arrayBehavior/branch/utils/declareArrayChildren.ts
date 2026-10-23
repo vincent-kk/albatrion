@@ -1,4 +1,4 @@
-import { getItemEntry } from '../../../../blueprint';
+import { getItemEntries } from '../../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../../blueprint';
 import type { Behavior } from '../../../../record';
 
@@ -20,13 +20,20 @@ const EMPTY: readonly BlueprintChildEntry[] = Object.freeze([]);
  */
 export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
   const template = node.blueprintNode;
+  if (
+    template.item === undefined &&
+    template.prefixItems === undefined &&
+    template.itemCandidates === undefined &&
+    template.prefixItemCandidates === undefined
+  )
+    return EMPTY;
   const count = node.itemCount;
   const cached = LAST.get(template);
   if (cached?.count === count) return cached.result;
   const entries: BlueprintChildEntry[] = [];
   for (let index = 0; index < count; index++) {
-    const entry = getItemEntry(template, index);
-    if (entry) entries.push(entry);
+    const candidates = getItemEntries(template, index);
+    for (const entry of candidates) entries.push(entry);
   }
   const result = entries.length === 0 ? EMPTY : Object.freeze(entries);
   LAST.set(template, { count, result });

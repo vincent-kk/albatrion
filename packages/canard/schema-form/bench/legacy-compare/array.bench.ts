@@ -54,7 +54,7 @@ function makeTree(engine: Engine, input: Item[], analysis?: ReturnType<typeof bl
   const root = fieldNodeFactory(analysis ?? blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+    misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }, createTestValidator());
   if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
   const rootRecord: TestFieldNode = root;

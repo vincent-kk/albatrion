@@ -18,7 +18,7 @@
   - `VALIDATOR_BIND_REFUSED`: 32C-02(`ledger/surface.md:312`)가 이미 정했다 — 플러그인의 bind 거부는 폼 밖에서 호출자에게 가므로 코어의 `instanceof` 가드가 알아보지 못하는 것을 받아들이고 호출자는 `group`과 `code`로 가른다. 그러므로 **클래스를 루트에서 내보내지 않고** 플러그인 셋은 자기 `Error`를 던지되 `group='UNHANDLED_ERROR'`, `code='UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`(`FormErrorCode.ValidatorBindRefused`의 값과 같은 문자열)로 맞춘다. 플러그인 시험의 failing-first 단언은 `group`·`code` 비교다(정돈-E 진행 중 원장 관리자 정정, 2026-10-14; 처음 쓴 "UnhandledError를 던지게 고친다"는 32C-02와 어긋난 오류였다). 이것은 플러그인의 공개 동작 변경이므로 PR 본문과 플러그인 CHANGELOG 자리(커밋 메시지)에 적는다.
 - 생성자 넷(`SchemaFormError.ts:18`, `JSONSchemaError.ts:25`, `ValidationError.ts:20`, `UnhandledError.ts:18`)의 `code: string`을 클래스별 코드 형(그 그룹 접두어의 부분집합)으로 좁힌다. 클래스가 접두어를 붙이는 지금 방식은 값이 이미 접두어를 포함하므로 **접두어를 두 번 붙이지 않게** 고친다(발화되는 `error.code` 문자열은 전과 같아야 한다 — 시험으로 고정).
 - 리터럴 발화 6곳을 상수로: `registerPlugin.ts:216`, `pathExactMatchFnFactory.ts:20`, `submitForm.ts:15,23`, `createDynamicFunction.ts:42`, `fieldInputDefinitions.ts:58`(`console.warn` → `warnDevelopmentIssue` 또는 상수). (d)의 `ERROR_CODES` 지역 맵과 `evaluateGate.ts:185`는 상수 경유이므로 형만 맞춘다.
-- `DevelopmentIssue.code: string`, `TypeMismatchRecord.code: string`을 코드 형으로.
+- `DevelopmentIssue.code: string`, `MisfitRecord.code: string`을 코드 형으로.
 - 루트 `src/index.ts`에 `FormErrorCode`·`FormWarningCode`(값과 형)를 추가하고 README·SPECIFICATION에 "오류 처리는 가드와 `FormErrorCode` 상수로 비교한다" 절을 더한다(fairy08 문안). aileron scenarios의 `onErrorCodes` 리터럴은 상수로 바꾼다.
 - failing-first: 루트 표면 시험에 두 이름을 먼저 단언; `error.code` 문자열이 전과 동일함을 발화 사이트별 시험(기존 시험의 기대값이 그대로 초록이어야 함)으로.
 
@@ -39,7 +39,7 @@
 
 - `'branch' | 'terminal'` 3벌 → 정본 하나(`core/engine/types/`에 `NodeStrategy`), layer 4벌, error surface 3벌, diagnostics cause·exceededBudget 2벌, mode 2벌, level 2벌, scope 5벌(정돈-1 뒤 남은 것만) → 각각 정본 하나.
 - `isRenderableDateInputValue.ts:12`의 `type: string` → 날짜 포맷 합집합; `fieldInputDefinitions.ts:23-31`의 `testKeys: string[]` + 캐스트 → `ListMatchedHintKey[]`로.
-- `TypeMismatchRecord.source`·`settlementTrace.entry.api` 같은 진단 문자열은 합집합 형으로 좁힌다(시험만 읽으므로 동작 영향 없음).
+- `MisfitRecord.source`·`settlementTrace.entry.api` 같은 진단 문자열은 합집합 형으로 좁힌다(시험만 읽으므로 동작 영향 없음).
 
 ## 3. 게이트
 

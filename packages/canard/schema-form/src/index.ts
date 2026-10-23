@@ -8,9 +8,12 @@ export {
   Form,
   type FormChildrenProps,
   type FormErrorProps,
+  type RolledFormFieldProps as FormFieldProps,
   type FormHandle,
+  type RolledFormInputProps as FormInputProps,
   type FormLabelProps,
   type FormProps,
+  type RolledFormRenderProps as FormRenderProps,
 } from './components/Form';
 
 export {
@@ -84,28 +87,25 @@ export type {
 } from './types';
 
 export type {
-  FormFieldProps,
-  FormInputProps,
-  FormRenderProps,
-  FieldRendererProps,
-  NonNullableBooleanSchema,
-  NullableBooleanSchema,
-  BooleanSchema,
-  NonNullableNumberSchema,
-  NullableNumberSchema,
-  NumberSchema,
-  NonNullableStringSchema,
-  NullableStringSchema,
-  StringSchema,
-  NonNullableArraySchema,
-  NullableArraySchema,
-  ArraySchema,
-  NonNullableObjectSchema,
-  NullableObjectSchema,
-  ObjectSchema,
-  NullSchema,
-  InferJSONSchema,
-} from './rolled';
+  RolledFieldRendererProps as FieldRendererProps,
+  RolledNonNullableBooleanSchema as NonNullableBooleanSchema,
+  RolledNullableBooleanSchema as NullableBooleanSchema,
+  RolledBooleanSchema as BooleanSchema,
+  RolledNonNullableNumberSchema as NonNullableNumberSchema,
+  RolledNullableNumberSchema as NullableNumberSchema,
+  RolledNumberSchema as NumberSchema,
+  RolledNonNullableStringSchema as NonNullableStringSchema,
+  RolledNullableStringSchema as NullableStringSchema,
+  RolledStringSchema as StringSchema,
+  RolledNonNullableArraySchema as NonNullableArraySchema,
+  RolledNullableArraySchema as NullableArraySchema,
+  RolledArraySchema as ArraySchema,
+  RolledNonNullableObjectSchema as NonNullableObjectSchema,
+  RolledNullableObjectSchema as NullableObjectSchema,
+  RolledObjectSchema as ObjectSchema,
+  RolledNullSchema as NullSchema,
+  RolledInferJSONSchema as InferJSONSchema,
+} from './types';
 
 export { useFieldNodeTracker } from './hooks';
 export { useFieldNodeSubscribe } from './hooks';

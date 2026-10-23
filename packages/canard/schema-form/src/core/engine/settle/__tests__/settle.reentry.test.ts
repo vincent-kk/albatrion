@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { resetFieldNodeForm } from '../utils/load/resetFieldNodeForm';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-transition
@@ -206,7 +206,7 @@ describe('final-shape exits', () => {
         .get('')
         ?.some((entry) => entry.path === '/value'),
     ).toBe(false);
-    expect(root.runtime.typeMismatchPaths.has('/value')).toBe(false);
+    expect(root.runtime.misfitPaths.has('/value')).toBe(false);
     writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
     expect(root.structure?.value?.blueprintNode.kind).toBe('number');
     expect(root.structure?.value?.raw).not.toBe(3);
@@ -223,7 +223,7 @@ describe('final-shape exits', () => {
     writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
     expect(root.structure?.value?.blueprintNode.kind).toBe('number');
     expect(root.structure?.value?.raw).toBeUndefined();
-    expect(root.runtime.typeMismatchPaths.has('/value')).toBe(false);
+    expect(root.runtime.misfitPaths.has('/value')).toBe(false);
     expect(
       root.runtime.inactiveValuesMemo
         .get('')
@@ -257,7 +257,7 @@ describe('final-shape exits', () => {
     writeFieldNode(outer.structure!.kind, 'b', 'input', WriteOption.Overwrite);
     expect(outer.structure?.value?.blueprintNode.kind).toBe('number');
     expect(outer.structure?.value?.raw).toBeUndefined();
-    expect(root.runtime.typeMismatchPaths.has('/outer/value')).toBe(false);
+    expect(root.runtime.misfitPaths.has('/outer/value')).toBe(false);
     expect(
       root.runtime.inactiveValuesMemo
         .get('')

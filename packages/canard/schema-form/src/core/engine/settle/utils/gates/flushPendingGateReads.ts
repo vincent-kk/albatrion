@@ -5,8 +5,8 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { flushPendingOutput } from '../compute/flushPendingOutput';
+import type { SettlementContext } from '../../types/settlement';
+import { flushPendingOutput } from '../output/flushPendingOutput';
 import { bindGateHostPath } from './bindGateHostPath';
 import { getGateExpression } from './getGateExpression';
 import { getGateRegistry } from './getGateRegistry';
@@ -58,12 +58,12 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
             node,
             suffix,
             childSuffix:
-              gate.schemaPath === `${node.schemaPath}/controls/active`
+              gate.schemaPath === node.schemaPath + '/controls/active'
                 ? suffix
                 : undefined,
           });
       for (const entry of node.childEntries) {
-        const childSuffix = `${suffix}/${escapeSegment(entry.name)}`;
+        const childSuffix = suffix + '/' + escapeSegment(entry.name);
         for (const declaration of entry.declarations)
           for (const gate of declaration.gates)
             built.occurrences.push({
@@ -71,16 +71,17 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
               node,
               suffix,
               childSuffix:
-                gate.schemaPath === `${declaration.schemaPath}/controls/active`
+                gate.schemaPath === declaration.schemaPath + '/controls/active'
                   ? childSuffix
                   : undefined,
             });
         visit(entry.node, childSuffix);
       }
       for (const [index, item] of (node.prefixItems ?? []).entries())
-        visit(item, `${suffix}/${index}`);
-      if (node.item)
-        visit(node.item, `${suffix}/${node.prefixItems?.length ?? 0}`);
+        for (const candidate of node.prefixItemCandidates?.[index] ?? [item])
+          visit(candidate, suffix + '/' + index);
+      for (const item of node.itemCandidates ?? (node.item ? [node.item] : []))
+        visit(item, suffix + '/' + (node.prefixItems?.length ?? 0));
       ancestors.delete(node);
     };
     visit(template, '');
@@ -94,12 +95,12 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
   }
   const flushRead = (read: string): void => {
     if (read === $.Context) return;
-    const local = read === path || read.startsWith(`${path}/`);
+    const local = read === path || read.startsWith(path + '/');
     for (const host of context.pendingOutputs ?? []) {
       // A read inside the entry walks the entry node that the host holds before its subtree gates run.
       if (local && host.raw === undefined) continue;
       if (read === host.path) flushPendingOutput(host, context);
-      else if (read.startsWith(`${host.path}/`)) {
+      else if (read.startsWith(host.path + '/')) {
         const name = unescapeSegment(
           read.slice(host.path.length + 1).split($.Separator)[0],
         );
@@ -139,10 +140,10 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
     flushGate(
       occurrence.gate,
       occurrence.node,
-      `${path}${occurrence.suffix}`,
+      path + occurrence.suffix,
       occurrence.childSuffix === undefined
         ? undefined
-        : `${path}${occurrence.childSuffix}`,
+        : path + occurrence.childSuffix,
     );
   }
 };

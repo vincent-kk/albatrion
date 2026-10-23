@@ -8,7 +8,7 @@
 
 - 진입점은 `virtualBehavior: Behavior`를 이름으로 내보낸다. 공통 여덟 칸 순서(`arrange`는 공유 거부 칸, 36C-01), `type: 'virtual'`, `strategy: 'branch'`를 지킨다. `options.terminal: true`는 행을 고르는 값이 아니라 청사진 오류다(NODE-002·006·047).
 - `declareChildren`은 청사진 `fields`가 가리키는 형제 참조를 선언 순서대로 돌려주며 새 독립 노드를 만들지 않는다. `assemble`은 참조 노드의 `value`를 같은 순서의 튜플 `local`로 만든다. `value` 게터는 그 `local`을 읽고, 자체 `raw`와 `emit`은 없다(NODE-034·054).
-- `project`는 방출하지 않으며, 표준 `required`·가드·검증에는 가상 이름을 넣지 않는다. `interpret`는 참조 노드로 보낼 입력을 계산할 뿐이고, 쓰기와 자식 확정은 정착이 맡는다. 가상 노드는 `typeMismatch`를 켜지 않는다(NODE-006·034, VALUE-030).
+- `project`는 방출하지 않으며, 표준 `required`·가드·검증에는 가상 이름을 넣지 않는다. `interpret`는 참조 노드로 보낼 입력을 계산할 뿐이고, 쓰기와 자식 확정은 정착이 맡는다. 가상 노드는 `misfit`을 켜지 않는다(NODE-006·034, VALUE-030).
 
 ## Acceptance Criteria
 

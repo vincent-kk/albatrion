@@ -4,9 +4,10 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-state-keys
+// filid:contract settle-state-keys-context
 describe('context state keys', () => {
   it('GOAL-011 state-key load does not search the expression array per sibling', () => {
     const properties: Record<string, BlueprintSchema> = {};
@@ -74,5 +75,47 @@ describe('context state keys', () => {
       cause: 'expression',
     });
     expect(root.structure?.child?.visible).toBe(true);
+  });
+});
+
+describe('state-key failures during settlement', () => {
+  it('ERROR-122 throwing visible leaves an unrelated unsetOnInactive exit clear', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        secret: {
+          type: 'string',
+          controls: {
+            active: '../flag',
+            unsetOnInactive: true,
+          },
+        },
+        noisy: {
+          type: 'string',
+          controls: {
+            visible:
+              '!../flag ? (() => { throw new Error("visibility") })() : true',
+          },
+        },
+      },
+    });
+    loadFieldNodeAtMount(
+      root,
+      { flag: true, secret: 'held' },
+      WriteOption.Overwrite,
+    );
+    expect(() =>
+      writeFieldNode(
+        root.structure!.flag,
+        false,
+        'input',
+        WriteOption.Overwrite,
+      ),
+    ).toThrow('State key expression failed');
+    expect(root.structure?.secret).toBeUndefined();
+    expect(
+      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
+    ).toBe(false);
   });
 });

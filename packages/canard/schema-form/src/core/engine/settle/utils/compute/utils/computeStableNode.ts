@@ -1,8 +1,9 @@
 import type { FieldNodeRecord } from '../../../../record';
-import type { SettlementContext } from '../../../type';
+import type { SettlementContext } from '../../../types/settlement';
+import { DirtyPathSet } from '../../scratch/DirtyPathSet';
+import { updateOutput } from '../../output/updateOutput';
 import { dirtyChildren } from '../dirtyChildren';
 import { selectNodeSchema } from '../selectNodeSchema';
-import { updateOutput } from '../updateOutput';
 
 /**
  * Consume a dirty frontier whose gates, appearances, and shape work are absent.
@@ -25,5 +26,7 @@ export const computeStableNode = <Self extends FieldNodeRecord<Self>>(
     if (node.parent === null) selectNodeSchema(node, context);
     updateOutput(node, context);
   }
-  context.dirtyPaths.delete(node.path);
+  if (context.dirtyPaths instanceof DirtyPathSet)
+    context.dirtyPaths.consume(node.path);
+  else context.dirtyPaths.delete(node.path);
 };

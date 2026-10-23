@@ -12,21 +12,24 @@ import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import { readFieldNodeGuard } from '../../../validation';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { getGateExpression } from './getGateExpression';
 import { getGateRegistry } from './getGateRegistry';
+import { readGateProjectedExtra } from './readGateProjectedExtra';
 import { readProjectedValue } from './readProjectedValue';
+import { recordGateInput } from './recordGateInput';
 
 /**
  * Evaluate one bound gate with the real expression or validator guard.
+ * This helper stays here because it recurses through the exported wrapper; a separate file would create an import cycle.
  * @param gate - Declarative condition bound to the current occurrence
  * @param context - Projected tree and deferred gate failure collection to update
  * @param owner - Live occurrence whose template contains this gate
  * @param edgeName - Direct child whose own active gate is being evaluated
  * @returns Whether the condition currently admits its declaration
  */
-export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
+const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   context: SettlementContext<Self>,
   owner: Self,
@@ -46,42 +49,14 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
   const host =
     raw !== null && typeof raw === 'object' && !isArray(raw) ? raw : {};
   let input: Record<string, unknown> = { ...host };
-  let hostNode: Self | undefined;
+  const projectedExtra =
+    gate.kind === 'active'
+      ? undefined
+      : readGateProjectedExtra(context, hostPath, raw, owner);
   if (gate.kind !== 'active') {
-    if (hostPath === owner.path) hostNode = owner;
-    else {
-      hostNode = context.root;
-      const segments = hostPath ? registry.pathSegments(hostPath) : [];
-      for (let index = 0; index < segments.length; index++) {
-        const structure: Record<string, Self> | null | undefined =
-          hostNode?.structure;
-        const name = segments[index];
-        hostNode =
-          structure && hasOwnProperty(structure, name)
-            ? structure[name]
-            : undefined;
-      }
-    }
+    recordGateInput(context, hostPath, raw);
+    recordGateInput(context, hostPath, projectedExtra, 'extra');
   }
-  const extra = hostNode?.undeclaredValues;
-  let projectedHost = hostNode !== undefined;
-  for (
-    let ancestor: Self | null | undefined = hostNode;
-    ancestor;
-    ancestor = ancestor.parent
-  )
-    if (
-      ancestor.behavior.strategy === 'branch' &&
-      ancestor.raw !== undefined &&
-      (ancestor.parent !== null ||
-        raw === null ||
-        typeof raw !== 'object' ||
-        isArray(raw))
-    ) {
-      projectedHost = false;
-      break;
-    }
-  const projectedExtra = projectedHost ? extra : undefined;
   if (
     projectedExtra !== null &&
     typeof projectedExtra === 'object' &&
@@ -169,7 +144,18 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
           path === $.Context
             ? context.root.runtime.context
             : readProjectedValue(context, path);
+        recordGateInput(
+          context,
+          path,
+          dependencies[index],
+          path === $.Context ? 'context' : 'value',
+        );
       }
+      if (occurrence.evaluationHostPath !== occurrence.hostPath)
+        (context.relocatedReads ??= new Map()).set(occurrence, {
+          paths: occurrence.watchPaths,
+          values: dependencies,
+        });
       return Boolean(expression.evaluate(dependencies));
     }
     return gate.condition === true;
@@ -203,7 +189,7 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
       const record = {
         level: 'error' as const,
         code: FormErrorCode.GuardFailed,
-        message: `Gate evaluation failed at ${gate.schemaPath}`,
+        message: 'Gate evaluation failed at ' + gate.schemaPath,
         schemaPath: gate.schemaPath,
         path: hostPath,
         details: { cause },
@@ -217,4 +203,28 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
     if (failure) recordSettlementFailure(context, failure, 'expression');
     return false;
   }
+};
+
+/**
+ * Evaluate a gate and retain its result only for test-owned shadow verification.
+ * @param gate - Bound condition, including recursive appliesWhen prerequisites
+ * @param context - Current settlement and isolated host-wheel frame
+ * @param owner - Live occurrence defining the condition
+ * @param edgeName - Optional direct child selected by a node gate
+ * @returns The real condition result without caching or changing evaluation order
+ */
+export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
+  gate: BlueprintGate,
+  context: SettlementContext<Self>,
+  owner: Self,
+  edgeName?: string,
+): boolean => {
+  const value = evaluateGateValue(gate, context, owner, edgeName);
+  context.gateWheelFrame?.evaluations?.push({
+    gate,
+    path: owner.path,
+    edgeName,
+    value,
+  });
+  return value;
 };

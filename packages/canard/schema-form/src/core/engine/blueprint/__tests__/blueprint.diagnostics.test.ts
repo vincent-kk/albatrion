@@ -2,7 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FormErrorCode, FormWarningCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { type BlueprintCacheEntry, type BlueprintDiagnostic } from '../type';
+import {
+  type BlueprintCacheEntry,
+  type BlueprintDiagnostic,
+} from '../types/blueprint';
 
 // filid:contract diagnostics
 describe('blueprint diagnostic data and late collection', () => {
@@ -82,6 +85,10 @@ describe('blueprint diagnostic data and late collection', () => {
     ).toThrow(
       expect.objectContaining({
         code: FormErrorCode.ChildrenTargetNotFound,
+        details: expect.objectContaining({
+          schemaPath: '#/controls/fields/0',
+          target: 'missing',
+        }),
       }),
     );
   });

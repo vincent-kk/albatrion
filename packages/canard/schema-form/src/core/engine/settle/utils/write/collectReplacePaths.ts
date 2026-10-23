@@ -1,7 +1,7 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Collect the whole-replacement scopes of a multi-write batch (191C-01, 26C-10).
@@ -20,7 +20,7 @@ export const collectReplacePaths = <Self extends FieldNodeRecord<Self>>(
     if (origin.source === 'automatic') continue;
     if (origin.keys)
       for (let key = 0; key < origin.keys.length; key++)
-        paths.push(`${origin.path}/${escapeSegment(origin.keys[key])}`);
+        paths.push(origin.path + '/' + escapeSegment(origin.keys[key]));
     else paths.push(origin.path);
     if (origin.fields) paths.push(...origin.fields);
   }

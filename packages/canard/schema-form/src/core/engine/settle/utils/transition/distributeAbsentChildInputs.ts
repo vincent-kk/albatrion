@@ -1,10 +1,11 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
+import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
+import { isWithinReplacePaths } from '../input/isWithinReplacePaths';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
-import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
-import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
+import { distributeMovedLatentInput } from '../latent/distributeMovedLatentInput';
 
 /**
  * Store, as latent raw, the declared children of a departing object host that this
@@ -27,7 +28,7 @@ export const distributeAbsentChildInputs = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
     if (node.structure?.[entry.name] !== undefined) continue;
-    const path = `${node.path}/${escapeSegment(entry.name)}`;
+    const path = node.path + '/' + escapeSegment(entry.name);
     const distribution = isWithinReplacePaths(context, path)
       ? context.distributedInputs.get(node)
       : undefined;
@@ -37,6 +38,16 @@ export const distributeAbsentChildInputs = <Self extends FieldNodeRecord<Self>>(
       !hasDistributedChildInput(distribution.input, entry.name, false)
     )
       continue;
+    if (distribution.preserveLatent) {
+      distributeMovedLatentInput(
+        context,
+        path,
+        entry.node,
+        Reflect.get(distribution.input, entry.name),
+        [...order, index],
+      );
+      continue;
+    }
     distributeLatentValue(
       node.runtime,
       context,

@@ -4,8 +4,8 @@ import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { runDeriveConvergenceCase } from './fixtures/runDeriveConvergenceCase';
 
@@ -18,6 +18,8 @@ afterEach(() => {
 });
 
 it('preserves values, shape, errors, deliveries, write rounds and iterations for terminal writes', () => {
+  // The exact decision trace includes the shadow confirmation evaluations.
+  deriveShadowEvaluation.enabled = true;
   const result = runDeriveConvergenceCase(
     {
       type: 'object',
@@ -355,6 +357,7 @@ it('skips the confirmation evaluation in development while preserving its empty 
 });
 
 it('actually runs shadow and rejects a false proof with nonzero confirmation candidates', () => {
+  deriveShadowEvaluation.enabled = true;
   const { root, blueprint } = createTestTree({
     type: 'object',
     properties: {

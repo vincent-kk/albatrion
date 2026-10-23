@@ -5,6 +5,7 @@ import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { DeclarationLayer } from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
 const DECLARATION_IDS = new WeakMap<BlueprintNode, readonly number[]>();
@@ -88,7 +89,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       groups.push({
         layer: 'node',
         declarationId: declaration.id,
-        schemaPath: `${declaration.schemaPath}/controls`,
+        schemaPath: declaration.schemaPath + '/controls',
         controls,
         host: node,
       });
@@ -97,6 +98,15 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   if (!parent) return groups;
   const parentIds = selected(parent);
   const parentDeclarations = parent.blueprintNode.declarations;
+  const buildOwners = (): ReadonlySet<string> => {
+    const paths = new Set<string>();
+    for (const declaration of declarations)
+      if (nodeIds.includes(declaration.id))
+        for (const path of getFragmentOwnerPaths(declaration.schemaPath))
+          paths.add(path);
+    return paths;
+  };
+  let owners: ReadonlySet<string> | undefined;
   for (let index = 0; index < parentDeclarations.length; index++) {
     const declaration = parentDeclarations[index];
     if (
@@ -111,29 +121,14 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
     );
     if (!controls || typeof controls !== 'object' || isArray(controls))
       continue;
-    let ownsFragment = false;
-    if (declaration.scope === 'fragment')
-      for (let childIndex = 0; childIndex < declarations.length; childIndex++) {
-        const child = declarations[childIndex];
-        if (
-          nodeIds.includes(child.id) &&
-          (child.schemaPath.startsWith(
-            `${declaration.schemaPath}/properties/`,
-          ) ||
-            child.schemaPath.startsWith(`${declaration.schemaPath}/items/`) ||
-            child.schemaPath.startsWith(
-              `${declaration.schemaPath}/prefixItems/`,
-            ))
-        ) {
-          ownsFragment = true;
-          break;
-        }
-      }
-    if (ownsFragment)
+    if (
+      declaration.scope === 'fragment' &&
+      (owners ??= buildOwners()).has(declaration.schemaPath)
+    )
       groups.push({
         layer: 'fragment',
         declarationId: declaration.id,
-        schemaPath: `${declaration.schemaPath}/controls`,
+        schemaPath: declaration.schemaPath + '/controls',
         controls,
         host: parent,
       });
@@ -153,7 +148,8 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         groups.push({
           layer: 'fields',
           declarationId: declaration.id,
-          schemaPath: `${declaration.schemaPath}/controls/fields/${index}/controls`,
+          schemaPath:
+            declaration.schemaPath + '/controls/fields/' + index + '/controls',
           controls: itemControls,
           host: parent,
         });

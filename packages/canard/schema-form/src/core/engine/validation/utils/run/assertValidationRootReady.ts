@@ -1,9 +1,12 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import type { ValidateFunction } from '../../type';
+import type { ValidateFunction } from '../../types/validator';
 import { readValidationEntry } from '../cache/readValidationEntry';
 import { isValidator } from '../guard/isValidator';
 import { recentReleaseList } from '../lifetime/recentReleaseList';
+
+/** A validator compile failure message that reports a duplicate schema id. */
+const DUPLICATE_SCHEMA_ID_MESSAGE = /already exists|duplicate/i;
 
 /**
  * Compile a replacement root before a binding transfers its old live chain.
@@ -29,7 +32,7 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   const duplicate =
     !!id &&
     entry.failure instanceof Error &&
-    /already exists|duplicate/i.test(entry.failure.message) &&
+    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message) &&
     [...recentReleaseList(validator).counts].some(
       ([other, count]) =>
         other !== authoredRoot &&

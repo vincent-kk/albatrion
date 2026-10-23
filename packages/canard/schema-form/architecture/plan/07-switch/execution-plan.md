@@ -172,7 +172,7 @@ U0–U4는 바깥 동작을 바꾸지 않으며 각자 초록으로 끝난다. U
 - 원장: LANDING-067·087·159·205, GOAL-088, NODE-015·058, SURFACE-056·059·061, REACT-032, LANDING-181·185, 32C-01, 34C-02·50C-01.
 - `CORE/nodeFromJSONSchema.ts`를 ADR D3대로 다시 짓는다(70C-01). 옛 `contextNodeFactory` 내보내기는 `src/__legacy__/`로 옮기고 `CORE/index.ts`에서 뺀다. `CORE/index.ts`가 `SchemaNode/`·`validation/` 진입점과 바인딩 전용 함수를 이름으로 내보낸다. `CORE/types/node.ts`·`constructor.ts`를 지운다. `CORE/INTENT.md`의 공개 경계 문장을 같은 커밋에서 고친다.
 - `src/index.ts`: 새 노드 형·가드(`isUnionNode` 포함)·`UnionNode`·`InferSchemaNode`·`SchemaNodeEventType`·`SchemaNodeRequestType`·`SetValueOption`·`ValidationIssue`, `JSONSchemaError` 제거(I12). 공개 이벤트 형 여섯과 `ValidationMode`는 SURFACE-059대로.
-- `types/jsonSchema.ts`: `JSONSchema<Options, Presentation>`의 바인딩 판을 같은 이름으로(GOAL-088, 전역 모듈 확장 없음). `types/formTypeInput.ts`: Hint·`FormTypeInputProps`의 `type`·`schemaType`·`nullable`·`typeMismatch`, `FormTypeTestObject.type`·`schemaType`(REACT-032, LANDING-181·185). `types/formTypeRenderer.ts`·`Form/components/FormGroup.tsx`: `FormTypeRenderer` 칸 → `FormTypeGroupRenderer`(LANDING-067). `types/error.ts`: `ValidatorFactory`·`ValidateFunction`의 옛 모양 제거, Form 속성 검증기 형(I11).
+- `types/jsonSchema.ts`: `JSONSchema<Options, Presentation>`의 바인딩 판을 같은 이름으로(GOAL-088, 전역 모듈 확장 없음). `types/formTypeInput.ts`: Hint·`FormTypeInputProps`의 `type`·`schemaType`·`nullable`·`misfit`, `FormTypeTestObject.type`·`schemaType`(REACT-032, LANDING-181·185). `types/formTypeRenderer.ts`·`Form/components/FormGroup.tsx`: `FormTypeRenderer` 칸 → `FormTypeGroupRenderer`(LANDING-067). `types/error.ts`: `ValidatorFactory`·`ValidateFunction`의 옛 모양 제거, Form 속성 검증기 형(I11).
 - 경계 린트 넓힘(I22).
 - 완료: 이 단위만으로는 게이트를 두지 않는다(묶음 끝 G12–G16).
 

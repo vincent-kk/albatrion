@@ -4,6 +4,9 @@ import { CONTROL_KEY } from '../../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../../record';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 
+/** Shared frozen result for a node without watch paths. */
+const NO_PATHS: readonly string[] = Object.freeze([]);
+
 /**
  * Resolve the final effective watch list against this live occurrence.
  * @param node - Live node whose effective schema declares watch paths
@@ -19,7 +22,7 @@ export const getWatchDeliveryPaths = <Self extends FieldNodeRecord<Self>>(
     controls && typeof controls === 'object'
       ? Reflect.get(controls, CONTROL_KEY.watch)
       : undefined;
-  if (!isArray(watch)) return [];
+  if (!isArray(watch)) return NO_PATHS;
   const paths: string[] = [];
   for (const path of watch)
     if (typeof path === 'string')

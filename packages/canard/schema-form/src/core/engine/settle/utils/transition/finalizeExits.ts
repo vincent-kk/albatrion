@@ -1,16 +1,19 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
+import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { updateOutput } from '../compute/updateOutput';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { getLatentOrder } from '../latent/getLatentOrder';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
+import { getLatentOrder } from '../latentStore/getLatentOrder';
+import { updateOutput } from '../output/updateOutput';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
+import { captureLatentDescendants } from './captureLatentDescendants';
 import { finalizePerished } from './finalizePerished';
+import { isRekeyedDestination } from './utils/isRekeyedDestination';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { writeLatentRaw } from './writeLatentRaw';
 
@@ -23,34 +26,43 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   finalizePerished(context);
-  let mismatchIndex: Map<string, Set<string>> | undefined;
+  let misfitIndex: Map<string, Set<string>> | undefined;
   for (const node of context.pendingExits.values()) {
     if (node.detached) continue;
     const parent = node.parent;
     if (parent?.structure?.[node.name] === node) continue;
     context.exited.add(node);
-    walkOwnedFieldNodes(node, (departing) => {
-      if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedFieldNodeReads(departing, {
-          emit: context.previousEmit,
-          context: context.previousContext,
-          schema:
-            context.originalSchemas.get(departing.path)?.schema ??
-            departing.schema.schema,
-        });
-      departing.detached = true;
-      departing.active = captureFieldNodeChange(departing, 'active', false);
-    });
+    const rekeyed =
+      context.rekeyedArrayMoves &&
+      isRekeyedDestination(node, context.rekeyedArrayMoves);
+    visitFieldNodes(
+      node,
+      (departing) => {
+        if (!departing.runtime.detachedReads?.has(departing))
+          captureDetachedFieldNodeReads(departing, {
+            emit: context.previousEmit,
+            context: context.previousContext,
+            schema:
+              context.originalSchemas.get(departing.path)?.schema ??
+              departing.schema.schema,
+          });
+        if (rekeyed) departing.runtime.misfitPaths.delete(departing.path);
+        departing.detached = true;
+        departing.active = captureFieldNodeChange(departing, 'active', false);
+      },
+      { owned: true },
+    );
     getGateRegistry(node.runtime).remove(node);
-    if (!mismatchIndex) {
-      mismatchIndex = new Map();
-      for (const path of context.root.runtime.typeMismatchPaths) {
+    if (rekeyed) continue;
+    if (!misfitIndex) {
+      misfitIndex = new Map();
+      for (const path of context.root.runtime.misfitPaths) {
         let ancestor = path;
         while (true) {
-          let paths = mismatchIndex.get(ancestor);
+          let paths = misfitIndex.get(ancestor);
           if (!paths) {
             paths = new Set();
-            mismatchIndex.set(ancestor, paths);
+            misfitIndex.set(ancestor, paths);
           }
           paths.add(path);
           if (!ancestor) break;
@@ -58,11 +70,11 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
         }
       }
     }
-    for (const path of [...(mismatchIndex.get(node.path) ?? [])]) {
-      context.root.runtime.typeMismatchPaths.delete(path);
+    for (const path of [...(misfitIndex.get(node.path) ?? [])]) {
+      context.root.runtime.misfitPaths.delete(path);
       let ancestor = path;
       while (true) {
-        mismatchIndex.get(ancestor)?.delete(path);
+        misfitIndex.get(ancestor)?.delete(path);
         if (!ancestor) break;
         ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       }
@@ -74,7 +86,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     scope !== undefined &&
     (!scope.path ||
       node.path === scope.path ||
-      node.path.startsWith(`${scope.path}/`));
+      node.path.startsWith(scope.path + '/'));
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
   if (applyPolicy)
@@ -90,14 +102,17 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       (context.entered.has(node) ||
         !applyPolicy ||
         context.throwingGateExits?.has(node))
-    )
-      captureExitedRaw(
+    ) {
+      const ownsLatent = captureExitedRaw(
         node,
         false,
         context,
         false,
         getLatentOrder(node.parent, node.name, node.blueprintNode),
       );
+      if (ownsLatent)
+        captureLatentDescendants(context, node, false, false, ownsLatent);
+    }
   if (context.root.runtime.latentRaw.size > 0)
     for (const node of [...context.entered, ...context.revived]) {
       if (node.detached) continue;
@@ -114,7 +129,10 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       if (live)
         writeLatentRaw(
           context,
-          JSON.stringify([node.path, node.blueprintNode.kind]),
+          JSON.stringify([
+            node.path,
+            getBlueprintNodeIdentity(node.blueprintNode),
+          ]),
           false,
           undefined,
         );

@@ -7,9 +7,13 @@ import { mergeEffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { evaluateGate } from '../gates/evaluateGate';
+import { selectRootGateDeclarations } from './childSelection/gateSelection/selectRootGateDeclarations';
+
+/** A schema path through a `oneOf` branch; captures the `oneOf` prefix and the branch index. */
+const ONE_OF_BRANCH_PREFIX = /^(.*\/oneOf)\/(\d+)(?:\/|$)/;
 
 /**
  * Recompute one node's active overlays and effective schema in a host round.
@@ -21,17 +25,19 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
-  const active = node.blueprintNode.declarations.filter((declaration) =>
-    declaration.gates.every((gate) => evaluateGate(gate, context, node)),
-  );
+  const active =
+    selectRootGateDeclarations(node, context) ??
+    node.blueprintNode.declarations.filter((declaration) =>
+      declaration.gates.every((gate) => evaluateGate(gate, context, node)),
+    );
   if (node.runtime.errorReporter?.hasConsumer()) {
     const branches = new Map<string, number[]>();
     for (const declaration of active) {
-      const match = /^(.*\/oneOf)\/(\d+)(?:\/|$)/.exec(declaration.schemaPath);
+      const match = ONE_OF_BRANCH_PREFIX.exec(declaration.schemaPath);
       if (
         !match ||
         !declaration.gates.some((gate) =>
-          gate.schemaPath.startsWith(`${match[1]}/${match[2]}/`),
+          gate.schemaPath.startsWith(match[1] + '/' + match[2] + '/'),
         )
       )
         continue;
@@ -51,7 +57,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
         code,
         path: node.path,
         schemaPath,
-        message: `Multiple gated oneOf branches are active at ${schemaPath}`,
+        message: 'Multiple gated oneOf branches are active at ' + schemaPath,
         details: { branches: selected },
       } as const;
       indexFieldNodeWarning(node.runtime, key, node.path, record);

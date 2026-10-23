@@ -75,7 +75,7 @@ interface FieldNodeRootRuntimeState {
   /** Latent occurrence shape and document position, keyed like latentRaw. */
   latentRawMetadata?: PathKeyedMap<LatentRawMetadata>;
   /** Current paths whose raw values miss their effective types. */
-  typeMismatchPaths: PathKeyedSet;
+  misfitPaths: PathKeyedSet;
   /** Commit-scoped inactive value lists keyed by node path. */
   inactiveValuesMemo: PathKeyedMap<readonly { path: string; value: unknown }[]>;
   /** Published latent item objects retained across unrelated commits. */
@@ -85,8 +85,8 @@ interface FieldNodeRootRuntimeState {
 /** Last committed reads retained for one node reference after it exits. */
 interface DetachedFieldNodeReads {
   readonly errors: readonly { readonly dataPath: string }[];
-  readonly typeMismatch: boolean;
-  readonly typeMismatches: readonly string[];
+  readonly misfit: boolean;
+  readonly misfits: readonly string[];
   readonly inactiveValues: readonly { path: string; value: unknown }[];
   readonly defaultValue: unknown;
   readonly visible: boolean;
@@ -95,9 +95,9 @@ interface DetachedFieldNodeReads {
 }
 
 /** Structured warning emitted when a committed raw value misses its effective type. */
-export interface TypeMismatchRecord {
+export interface MisfitRecord {
   readonly level: 'warning';
-  readonly code: typeof FormWarningCode.TypeMismatch;
+  readonly code: typeof FormWarningCode.Misfit;
   readonly path: string;
   readonly expected: {
     readonly schemaType: BlueprintSchemaType;
@@ -116,7 +116,7 @@ export interface TypeMismatchRecord {
     | 'other';
   readonly reason: 'unconvertible' | 'ambiguous';
   readonly candidates?: readonly string[];
-  readonly source: TypeMismatchSource;
+  readonly source: MisfitSource;
 }
 
 /** One host write's input and replacement mode for child distribution. */
@@ -127,6 +127,10 @@ export interface Distribution {
   readonly whole: boolean;
   /** Whether this distribution was an automatic transition write. */
   readonly automatic: boolean;
+  /** Restored array positions whose sources remain under candidate-specific latent keys. */
+  readonly retainedItemNames?: readonly string[];
+  /** Surviving-slot reconstruction whose stored candidates remain authoritative. */
+  readonly preserveLatent?: boolean;
 }
 
 /** Reusable settlement work containers bound to one tree's node type. */
@@ -141,6 +145,8 @@ export interface SettlementScratch<Self> {
   exited: Set<Self>;
   /** Temporarily absent occurrences, addressed by path and blueprint kind. */
   pendingExits: Map<string, Self>;
+  /** Lazily allocated host-to-child pending counts, cleared alongside pendingExits. */
+  pendingExitPaths?: Map<string, Map<string, number>>;
   /** Array items removed by length rather than declaration gating. */
   perished: Set<Self>;
   /** Active declaration choices waiting for commit. */
@@ -256,6 +262,10 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   feedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
+  /** Number of active nested `visitSubtree` walks on this tree. */
+  visitDepth?: number;
+  /** Entry whose write opened the batch held open until the outermost walk ends. */
+  visitBatchEntry?: Self;
   /** Caller writes postponed until the outer batch callback finishes. */
   batchWrites?: {
     node: Self;
@@ -386,13 +396,22 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   commitNumber?: number;
   /** Changed non-load paths in the last settlement, excluding the written input. */
   refreshTargets?: Set<string>;
-  /** Newly lit mismatch records in the last committed batch. */
-  typeMismatchRecords?: readonly TypeMismatchRecord[];
-  /** Commit-scoped subtree mismatch path lists. */
-  typeMismatchesMemo?: PathKeyedMap<{
+  /** Newly lit misfit records in the last committed batch. */
+  misfitRecords?: readonly MisfitRecord[];
+  /** Subtree misfit path lists, each row stamped with the commit that built it. */
+  misfitsMemo?: PathKeyedMap<{
     commit: number;
     paths: readonly string[];
   }>;
+  /** Memo, its size and the misfit set's mutation count right after the last memo build. */
+  misfitsMemoBuild?: {
+    /** Memo instance the build filled. */
+    readonly memo: NonNullable<FieldNodeRuntime<Self>['misfitsMemo']>;
+    /** Row count the build left. */
+    readonly size: number;
+    /** `misfitPaths.mutations` the build read. */
+    readonly mutations: number;
+  };
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedFieldNodeReads>;
   /** Stable watch path results for each node within one completed commit. */
@@ -426,5 +445,5 @@ export type SettlementBudget =
 /** Entry that started a settlement: a write kind, or a binding entry without one. */
 export type SettlementEntryApi = FieldNodeWriteKind | 'setContext';
 
-/** Write that produced a type mismatch: a write kind, an automatic fill, or a gate change that re-read the raw. */
-export type TypeMismatchSource = FieldNodeWriteKind | 'fill' | 'gate';
+/** Write that produced a misfit: a write kind, an automatic fill, or a gate change that re-read the raw. */
+export type MisfitSource = FieldNodeWriteKind | 'fill' | 'gate';

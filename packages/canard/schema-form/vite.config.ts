@@ -13,6 +13,15 @@ const renderTests = [
   'src/**/helpers/virtualization/VirtualizationManager/__tests__/VirtualizationManager.test.ts',
 ];
 
+/** Shadow setup contracts and stored full-visitation histories run in verification projects. */
+const verifyOnlyTests = [
+  'src/core/engine/settle/__tests__/settle.derive-shadow-setup.test.ts',
+  'src/core/engine/settle/__tests__/settle.gate-selection-preparation-invariants.test.ts',
+  'src/core/engine/settle/__tests__/settle.gate-table-characterization.test.ts',
+  'src/core/engine/settle/__tests__/settle.gate-table-key-order.test.ts',
+  'src/core/engine/settle/__tests__/settle.gate-table-wheel-characterization.test.ts',
+];
+
 const resolvePackage = createRequire(import.meta.url).resolve;
 const react18Aliases = [
   'react/jsx-runtime',
@@ -35,22 +44,23 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    project: ['unit', 'render', 'react18', 'production', 'storybook'],
     projects: [
       {
         extends: true,
         test: {
           name: 'unit',
-          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          setupFiles: ['src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts'],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: [...renderTests, 'src/__legacy__/**'],
+          exclude: [...renderTests, ...verifyOnlyTests, 'src/__legacy__/**'],
         },
       },
       {
         extends: true,
         test: {
           name: 'render',
-          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          setupFiles: ['src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts'],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
@@ -77,7 +87,7 @@ export default defineConfig({
         },
         test: {
           name: 'react18',
-          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          setupFiles: ['src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts'],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
@@ -102,12 +112,33 @@ export default defineConfig({
       },
       {
         extends: true,
+        test: {
+          name: 'verify-unit',
+          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          environment: 'node',
+          include: ['src/**/*.{spec,test}.ts'],
+          exclude: [...renderTests, 'src/__legacy__/**'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'verify-render',
+          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          environment: 'jsdom',
+          include: renderTests,
+          exclude: ['src/__legacy__/**'],
+          provide: { reactMajor: '19' },
+        },
+      },
+      {
+        extends: true,
         esbuild: { jsxDev: false },
         test: {
           name: 'production',
           environment: 'jsdom',
           transformMode: { ssr: [/\.ts$/], web: [/\.tsx$/] },
-          include: ['src/core/engine/blueprint/__tests__/*.owned-inline*.test.{ts,tsx}'],
+          include: ['src/core/engine/blueprint/**/__tests__/*.owned-inline*.test.{ts,tsx}'],
           provide: { reactMajor: '19' },
         },
       },

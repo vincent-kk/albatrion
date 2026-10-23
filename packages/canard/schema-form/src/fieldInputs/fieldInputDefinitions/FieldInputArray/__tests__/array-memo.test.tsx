@@ -77,7 +77,7 @@ it('skips list rendering for value-only props and observes style and schema prop
     required: false,
     type: node.type,
     schemaType: node.schemaType,
-    typeMismatch: false,
+    misfit: false,
     name: '',
     path: '',
     nullable: false,

@@ -1,4 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
+import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 
@@ -13,7 +14,7 @@ export const readUnsetPolicy = <Self extends FieldNodeRecord<Self>>(
   inherited: boolean,
 ): boolean =>
   readExitLayerPolicy(
-    getControlLayers(node, new Map()),
+    getControlLayers(node, emptyReadonlyMap),
     node.runtime.committedRuleValues,
     inherited,
   );

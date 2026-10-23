@@ -7,7 +7,7 @@ import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import { useFieldRendererContext } from '@/schema-form/providers';
 import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
-import type { FormInputProps } from './type';
+import type { FormInputProps } from './types/props';
 
 /**
  * Renders form input fields with automatic type detection from schema.

@@ -39,7 +39,7 @@ export const createTestTree = (
     globalState: {},
     loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
+    misfitPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<
       readonly { path: string; value: unknown }[]
     >('path'),

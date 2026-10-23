@@ -3,24 +3,25 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
 import type { FieldNodeWriteKind } from '../../../types/value';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
+import { registerRecalculation } from '../dependencies/registerRecalculation';
 import { hasLivePathKind } from '../detached/hasLivePathKind';
 import { assertFieldNodeWritable } from '../dispose/assertFieldNodeWritable';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { assertVirtualWriteShape } from '../input/assertVirtualWriteShape';
+import { isPlain } from '../input/isPlain';
+import { markWrite } from '../input/markWrite';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
-import { getLatentOrder } from '../latent/getLatentOrder';
+import { getLatentOrder } from '../latentStore/getLatentOrder';
+import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
+import { DirtyPathSet } from '../scratch/DirtyPathSet';
+import { getSettlementScratch } from '../scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
-import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { collectReplacePaths } from './collectReplacePaths';
-import { getSettlementScratch } from './getSettlementScratch';
-import { isPlain } from './isPlain';
-import { markWrite } from './markWrite';
 import { markWrongKindAncestors } from './markWrongKindAncestors';
-import { pruneLatentRaw } from './pruneLatentRaw';
-import { registerRecalculation } from './registerRecalculation';
-import { releaseSettlementScratch } from './releaseSettlementScratch';
 import { releaseWrongKindHosts } from './releaseWrongKindHosts';
 
 /**
@@ -133,6 +134,12 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
         }
       } else pruneLatentRaw(node.runtime, node.path, undefined, context);
     }
+    if (
+      !context.hasGates &&
+      context.dirtyPaths instanceof DirtyPathSet &&
+      !context.dirtyPaths.isPostOrder
+    )
+      context.dirtyPaths.beginPostOrder();
     markWrite(node, input, context);
     if (kind !== 'load' && kind !== 'automatic')
       markWrongKindAncestors(node, context);

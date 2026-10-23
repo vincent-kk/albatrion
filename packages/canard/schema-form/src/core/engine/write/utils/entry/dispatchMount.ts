@@ -10,6 +10,9 @@ import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { restoreAdoptedExternalErrors } from '../chain/restoreAdoptedExternalErrors';
 import { clearWarningKeys } from '../report/clearWarningKeys';
 
+/** Shared mount settings for a load that validates immediately. */
+const NO_MOUNT_SETTINGS: { deferValidation?: boolean } = {};
+
 /**
  * Commit the first form source through the same entry boundary as later writes.
  * @param root - Unloaded form root
@@ -22,7 +25,7 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown = root.runtime.loadSnapshot,
   option: WriteOption = WriteOption.Overwrite,
-  settings: { deferValidation?: boolean } = {},
+  settings: { deferValidation?: boolean } = NO_MOUNT_SETTINGS,
 ): void => {
   if (!enterFieldNodeChain(root)) return;
   clearWarningKeys(root.runtime);

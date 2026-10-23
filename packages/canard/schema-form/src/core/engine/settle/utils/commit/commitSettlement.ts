@@ -1,28 +1,28 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
-import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
+import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
 import { commitExitPolicyValues } from './commitExitPolicyValues';
 import { conversionCandidates } from './conversionCandidates';
 import { effectiveType } from './effectiveType';
 import { finalizeDeriveTrace } from './finalizeDeriveTrace';
-import { isTypeMismatch } from './isTypeMismatch';
+import { isMisfit } from './isMisfit';
 import { markCommitDeliveries } from './markCommitDeliveries';
 import { receivedType } from './receivedType';
 import { snapshotExitedPolicies } from './snapshotExitedPolicies';
 import { updateInactiveValuesMemo } from './updateInactiveValuesMemo';
 import { readSettlementSource } from './utils/readSettlementSource';
 
-/** Shared frozen empty list for inactive and mismatch projections. */
+/** Shared frozen empty list for inactive and misfit projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
 /** Shared empty warning batch. */
-const EMPTY_WARNINGS: readonly TypeMismatchRecord[] = Object.freeze([]);
+const EMPTY_WARNINGS: readonly MisfitRecord[] = Object.freeze([]);
 
 /**
  * Publish calculated changes, lamps, memoized paths, and one commit number.
@@ -73,7 +73,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
-  const loadPrefix = loadScope ? `${loadScope.path}/` : '';
+  const loadPrefix = loadScope ? loadScope.path + '/' : '';
   for (const path of context.changedRaw) {
     if (loadScope && (path === loadScope.path || path.startsWith(loadPrefix)))
       continue;
@@ -81,22 +81,20 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       refreshTargets.add(path);
   }
   runtime.refreshTargets = refreshTargets;
-  let warnings: TypeMismatchRecord[] | undefined;
+  let warnings: MisfitRecord[] | undefined;
   let warningTasks: Map<Self, () => void> | undefined;
   markCommitDeliveries(context, (node) => {
-    if (
-      !context.changedNodes.has(node) ||
-      node.detached ||
-      node.blueprintNode.kind === 'virtual'
-    )
-      return;
+    if (!context.changedNodes.has(node) || node.detached) return;
+    const schemaType = node.schemaType;
     const effective = effectiveType(node);
-    const mismatch = isTypeMismatch(node.raw, effective, node.nullable);
-    const wasOn = runtime.typeMismatchPaths.has(node.path);
-    if (mismatch) runtime.typeMismatchPaths.add(node.path);
-    else runtime.typeMismatchPaths.delete(node.path);
+    // Only a virtual node lacks a JSON type, and it never misfits.
+    if (schemaType === undefined || effective === undefined) return;
+    const misfit = isMisfit(node.raw, effective, node.nullable);
+    const wasOn = runtime.misfitPaths.has(node.path);
+    if (misfit) runtime.misfitPaths.add(node.path);
+    else runtime.misfitPaths.delete(node.path);
     if (
-      !(mismatch && !wasOn) &&
+      !(misfit && !wasOn) &&
       !(
         development &&
         node.behavior.strategy === 'terminal' &&
@@ -107,15 +105,15 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     )
       return;
     (warningTasks ??= new Map()).set(node, () => {
-      if (mismatch && !wasOn) {
+      if (misfit && !wasOn) {
         const candidates = conversionCandidates(node, effective);
         const ambiguous = candidates.length > 1;
-        const warning: TypeMismatchRecord = {
+        const warning: MisfitRecord = {
           level: 'warning',
-          code: FormWarningCode.TypeMismatch,
+          code: FormWarningCode.Misfit,
           path: node.path,
           expected: {
-            schemaType: node.schemaType,
+            schemaType,
             nullable: node.nullable,
             effective,
           },
@@ -133,12 +131,17 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
         if (!warnings) warnings = [];
         warnings.push(warning);
         if (runtime.errorReporter?.hasConsumer()) {
-          const code = FormWarningCode.TypeMismatch;
+          const code = FormWarningCode.Misfit;
           const record = {
             level: 'warning',
             code,
             path: node.path,
-            message: `Type mismatch at ${node.path} (commit ${commit})`,
+            message:
+              'Value does not fit the schema type at ' +
+              node.path +
+              ' (commit ' +
+              commit +
+              ')',
             details: {
               path: node.path,
               expected: warning.expected,
@@ -186,42 +189,52 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   });
   if (warningTasks)
     for (const node of context.changedNodes) warningTasks.get(node)?.();
-  runtime.typeMismatchRecords = warnings
-    ? Object.freeze(warnings)
-    : EMPTY_WARNINGS;
-  const mismatchMemo =
-    runtime.typeMismatchesMemo ??
+  runtime.misfitRecords = warnings ? Object.freeze(warnings) : EMPTY_WARNINGS;
+  const misfitsMemo =
+    runtime.misfitsMemo ??
     new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');
-  if (runtime.typeMismatchPaths.size === 0) {
-    const empty = mismatchMemo.get('');
-    if (mismatchMemo.size === 1 && empty?.paths.length === 0)
-      empty.commit = commit;
-    else {
-      mismatchMemo.clear();
-      mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
-    }
-  } else {
-    mismatchMemo.clear();
-    const allPaths = [...runtime.typeMismatchPaths].sort();
-    mismatchMemo.set('', { commit, paths: Object.freeze(allPaths) });
-    const byAncestor = new Map<string, string[]>();
-    for (let index = 0; index < allPaths.length; index++) {
-      const path = allPaths[index];
-      let ancestor = path;
-      while (ancestor) {
-        let paths = byAncestor.get(ancestor);
-        if (!paths) {
-          paths = [];
-          byAncestor.set(ancestor, paths);
-        }
-        paths.push(path);
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+  const built = runtime.misfitsMemoBuild;
+  if (
+    built?.memo !== misfitsMemo ||
+    built.mutations !== runtime.misfitPaths.mutations ||
+    built.size !== misfitsMemo.size
+  ) {
+    if (runtime.misfitPaths.size === 0) {
+      const empty = misfitsMemo.get('');
+      if (misfitsMemo.size === 1 && empty?.paths.length === 0)
+        empty.commit = commit;
+      else {
+        misfitsMemo.clear();
+        misfitsMemo.set('', { commit, paths: EMPTY_PATHS });
       }
+    } else {
+      misfitsMemo.clear();
+      const allPaths = [...runtime.misfitPaths].sort();
+      misfitsMemo.set('', { commit, paths: Object.freeze(allPaths) });
+      const byAncestor = new Map<string, string[]>();
+      for (let index = 0; index < allPaths.length; index++) {
+        const path = allPaths[index];
+        let ancestor = path;
+        while (ancestor) {
+          let paths = byAncestor.get(ancestor);
+          if (!paths) {
+            paths = [];
+            byAncestor.set(ancestor, paths);
+          }
+          paths.push(path);
+          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+        }
+      }
+      for (const [ancestor, paths] of byAncestor)
+        misfitsMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
     }
-    for (const [ancestor, paths] of byAncestor)
-      mismatchMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
+    runtime.misfitsMemoBuild = {
+      memo: misfitsMemo,
+      size: misfitsMemo.size,
+      mutations: runtime.misfitPaths.mutations,
+    };
   }
-  runtime.typeMismatchesMemo = mismatchMemo;
+  runtime.misfitsMemo = misfitsMemo;
   if (
     runtime.latentRaw.size > 0 &&
     (context.entered.size > 0 || context.exited.size > 0)

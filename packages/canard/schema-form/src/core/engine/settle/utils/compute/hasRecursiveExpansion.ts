@@ -4,8 +4,8 @@ import type {
   EffectiveSchema,
 } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { hasLatentUnder } from '../latent/hasLatentUnder';
+import type { SettlementContext } from '../../types/settlement';
+import { hasLatentUnder } from '../latentStore/hasLatentUnder';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
 
 /** Only the cycle verdict outlives the one-time graph traversal. */
@@ -29,10 +29,14 @@ const hasTemplateCycle = (
   for (let index = 0; index < node.childEntries.length; index++)
     if (hasTemplateCycle(node.childEntries[index].node, visiting, visited))
       return true;
-  if (node.item && hasTemplateCycle(node.item, visiting, visited)) return true;
+  for (const item of node.itemCandidates ?? (node.item ? [node.item] : []))
+    if (hasTemplateCycle(item, visiting, visited)) return true;
   const prefixItems = node.prefixItems;
   for (let index = 0; prefixItems && index < prefixItems.length; index++)
-    if (hasTemplateCycle(prefixItems[index], visiting, visited)) return true;
+    for (const item of node.prefixItemCandidates?.[index] ?? [
+      prefixItems[index],
+    ])
+      if (hasTemplateCycle(item, visiting, visited)) return true;
   visiting.delete(node);
   visited.add(node);
   return false;
@@ -73,7 +77,7 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
       const previous = context.latentAutomaticLog.get(key);
       if ((previous && !previous.present) || value === undefined) continue;
       const path: string = JSON.parse(key)[0];
-      if (path.startsWith(`${node.path}/`)) return true;
+      if (path.startsWith(node.path + '/')) return true;
     }
   }
   const children = node.children;

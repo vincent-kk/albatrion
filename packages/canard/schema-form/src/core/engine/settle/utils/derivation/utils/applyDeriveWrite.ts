@@ -2,9 +2,9 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
-import type { SettlementContext } from '../../../type';
+import type { SettlementContext } from '../../../types/settlement';
+import { markWrite } from '../../input/markWrite';
 import { distributeLatentValue } from '../../latent/distributeLatentValue';
-import { markWrite } from '../../write/markWrite';
 
 /**
  * Apply one selected automatic replacement to live or latent raw.

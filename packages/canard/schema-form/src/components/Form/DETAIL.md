@@ -12,6 +12,7 @@
 ## API Contracts
 
 - 보조 렌더링 컴포넌트는 `Form.Render`·`Form.Field`·`Form.Label`·`Form.Input`·`Form.Error` 정적 멤버로 제공한다. `FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`는 내부 구현이며 이 fractal의 index가 별도 이름으로 내보내지 않는다.
+- 공개 `Roll` 형 셋은 이 fractal이 소유한다. 각 자식 fractal(`components/FormField` 등)의 `types` 칸 props 파일이 본 형(`FormFieldProps` 등)과 그 `Roll` 표현(`RolledFormFieldProps` 등)을 함께 정의하고, 자식 관문과 이 fractal의 index는 `Rolled*` 형을 내보낸다. 루트 `src/index.ts`가 `RolledFormFieldProps as FormFieldProps`처럼 공개 이름으로 바꿔 재수출한다.
 
 - 기본값·스키마 변경과 같은 React 배치에서 호출한 `reset(option?)`은 커밋 재대조에도 원래 자동 쓰기 억제 옵션을 전달하여 최신 기본값을 자동 채움 없이 읽는다(WRITE-044).
 

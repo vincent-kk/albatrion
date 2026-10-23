@@ -1,7 +1,13 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, SchemaFragment } from '../../../blueprint';
-import type { ValidationIssue } from '../../type';
+import type { ValidationIssue } from '../../types/issue';
+
+/** A schema path ending in a `oneOf` or `anyOf` branch index. */
+const UNION_BRANCH_FRAGMENT_PATH = /^.*\/(?:oneOf|anyOf)\/\d+$/;
+
+/** A property key made only of digits, as a branch index. */
+const NUMERIC_KEY = /^\d+$/;
 
 /**
  * Determine whether an issue belongs exclusively to an inactive union fragment.
@@ -19,7 +25,7 @@ export const isOffUnionBranchIssue = (
   const matches = blueprint.fragments.filter(
     (fragment) =>
       issue.schemaPath === fragment.schemaPath ||
-      issue.schemaPath?.startsWith(`${fragment.schemaPath}/`),
+      issue.schemaPath?.startsWith(fragment.schemaPath + '/'),
   );
   if (!matches.length) return false;
   const longest = Math.max(
@@ -30,7 +36,7 @@ export const isOffUnionBranchIssue = (
   );
   const branches: SchemaFragment[] = [];
   for (const fragment of blueprint.fragments) {
-    if (!/^.*\/(?:oneOf|anyOf)\/\d+$/.test(fragment.schemaPath)) continue;
+    if (!UNION_BRANCH_FRAGMENT_PATH.test(fragment.schemaPath)) continue;
     const pending = [fragment.id];
     const visited = new Set<number>();
     while (pending.length) {
@@ -58,8 +64,8 @@ export const isOffUnionBranchIssue = (
   const siblings = blueprint.fragments.filter(
     (fragment) =>
       fragment.id !== owner.id &&
-      /^\d+$/.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
-      fragment.schemaPath.startsWith(`${unionPath}/`),
+      NUMERIC_KEY.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
+      fragment.schemaPath.startsWith(unionPath + '/'),
   );
   const isActive = (fragment: SchemaFragment): boolean =>
     fragment.declares.some((id) => activeIds.has(id)) ||

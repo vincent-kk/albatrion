@@ -10,14 +10,22 @@
 - `FormRoot`(`components/FormRoot.tsx`)는 경계가 없는 안쪽 컴포넌트입니다. Provider 여섯 개를 정해진 순서로 중첩하고, 바인딩 ref, 첨부 파일 맵, `showError` 상태, 추적 제출 핸들을 소유합니다. `useImperativeHandle`로 현재 루트에 위임하는 핸들을 노출합니다.
 - `components/`: `FormRoot`는 위에서 설명한 대로이고, `FormRootProxy`는 `<form onSubmit>`을 그리며 자식이 없으면 루트 `FieldProxy`를 렌더합니다. `FormChildrenRenderer`는 함수 자식이 루트 노드의 값, 전역 오류, refresh, remount 사건을 구독해서 다시 실행되게 합니다.
 - `utils/`: `createChildren`은 요소 자식은 그대로 두고 함수 자식은 `FormChildrenRenderer`로 바꿉니다. `submitForm`은 degraded 거부, 투영 값 확정, 검증, `onSubmit` 호출 순서로 진행하며, 검증 실패가 아닌 거부만 `onFailure`로 보고합니다.
-- `type.ts`는 진입점이 내보내는 형 세 가지를 정의합니다.
-- 뿌리에는 문서, 진입점, `FormCore.tsx`, `type.ts`만 둡니다(filid zero-peer-file).
+- `types/props.ts`는 FormChildrenProps·FormProps를, `types/handle.ts`는 FormHandle을 선언하고 진입점이 세 형을 이름으로 내보냅니다.
+- 뿌리에는 문서, 진입점과 `FormCore.tsx`만 두며 형은 관심사별 칸에 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
 
 ### root-boundary — 경계와 보고기의 순서
 
 - 루트 렌더 오류는 fallback 안에 가두고, `onError`에 `RENDER_FAILED` 기록으로 한 번 전달합니다. 부모의 시험은 진입점의 `FormCore`를 직접 렌더해서 이를 확인합니다.
+
+## Boundary Exemptions
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `FormProps`·`FormHandle`·`FormChildrenProps`는 이름으로 진입점에 올라 `components/Form/index.ts`를 거쳐 `src/index.ts`가 공개하고, `FormProps`·`FormHandle`은 `providers/*`와 `hooks/form/useFormSubmit.ts`도 쓴다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
 
 ## Last Updated
 

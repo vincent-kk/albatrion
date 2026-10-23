@@ -3,11 +3,12 @@ import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { isPlain } from '../write/isPlain';
-import { HostLatent } from './HostLatent';
-import { getEnteredLatentKeys } from './getEnteredLatentKeys';
-import { getLatentPathIndex } from './getLatentPathIndex';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
+import { isPlain } from '../input/isPlain';
+import { HostLatent } from '../latentStore/HostLatent';
+import { getEnteredLatentKeys } from '../latentStore/getEnteredLatentKeys';
+import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
 
 /**
  * Recompose a gated-out item from its retained own-kind latent sources.
@@ -22,7 +23,9 @@ export const readLatentSlotSource = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
 ): unknown => {
   const runtime = context.root.runtime;
-  const own = runtime.latentRaw.get(JSON.stringify([path, template.kind]));
+  const own = runtime.latentRaw.get(
+    JSON.stringify([path, getBlueprintNodeIdentity(template)]),
+  );
   if (own !== undefined && !(own instanceof HostLatent)) return own;
   if (own instanceof HostLatent && own.raw !== undefined) return own.raw;
   if (template.kind !== 'object' || template.strategy !== 'branch')
@@ -56,7 +59,7 @@ export const readLatentSlotSource = <Self extends FieldNodeRecord<Self>>(
     if (hasOwnProperty(value, entry.name)) continue;
     const child = readLatentSlotSource(
       context,
-      `${path}/${escapeSegment(entry.name)}`,
+      path + '/' + escapeSegment(entry.name),
       entry.node,
     );
     if (child === undefined) continue;

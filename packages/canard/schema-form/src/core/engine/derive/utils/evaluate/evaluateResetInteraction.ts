@@ -1,17 +1,18 @@
 import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type {
   DeriveResetInteractionDecision,
-  DeriveState,
   DeriveTraceEntry,
-} from '../../type';
-import { getDeriveRuleKey } from '../edges/getDeriveRuleKey';
+} from '../../types/decisions';
+import type { DeriveState } from '../../types/state';
+import { getDeriveRuleKey } from '../rules/getDeriveRuleKey';
 import { getDeriveRuleTable } from '../rules/getDeriveRuleTable';
-import { addActiveRuleKey } from './utils/addActiveRuleKey';
-import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
-import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
-import { getDeriveSourceNodes } from './utils/getDeriveSourceNodes';
-import { getRuleTargets } from './utils/getRuleTargets';
-import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
+import { addActiveRuleKey } from './addActiveRuleKey';
+import { evaluateScopedExpression } from './evaluateScopedExpression';
+import type { ScopedExpressionResult } from './evaluateScopedExpression';
+import { getDeriveSourceNodes } from './getDeriveSourceNodes';
+import { getRuleTargets } from './getRuleTargets';
+import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
 
 /** Frozen result reused when no expression fails. */
 const NO_FAILURES: readonly [] = Object.freeze([]);
@@ -29,6 +30,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
   const table = getDeriveRuleTable(root.runtime.blueprint);
   const pending = getDeriveSourceNodes(root, state);
   const nodes: Self[] = [];
+  const resetNodes = new Set<Self>();
   const trace: DeriveTraceEntry[] = [];
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
   let failures:
@@ -42,62 +44,65 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
     for (const id of selected)
       for (const rule of table.byDeclaration.get(id) ?? []) {
         if (rule.kind !== 'resetInteraction') continue;
-        const target = getRuleTargets(node, rule, state)[0];
-        if (!target) continue;
-        const key = getDeriveRuleKey(
-          node.path,
-          node.blueprintNode.kind,
-          rule,
-          target,
-        );
-        addActiveRuleKey(state, node.path, key);
-        const previous = state.committedRuleValues.get(key);
-        const previousExists = state.committedRuleValues.has(key);
-        let current: boolean;
-        try {
-          const evaluated = evaluateScopedExpression(
-            root,
-            node,
+        for (const target of getRuleTargets(node, rule, state)) {
+          const key = getDeriveRuleKey(
+            node.path,
+            getBlueprintNodeIdentity(node.blueprintNode),
             rule,
-            evaluatedExpressions,
+            target,
           );
-          if (evaluated.threw) throw evaluated.cause;
-          current = Boolean(evaluated.value);
-        } catch (cause) {
-          (failures ??= []).push({
-            sourcePath: node.path,
-            schemaPath: rule.schemaPath,
-            cause,
-          });
-          state.consumedRuleValues.set(key, false);
-          continue;
-        }
-        state.consumedRuleValues.set(key, current);
-        const load =
-          state.loadScope &&
-          (node.path === state.loadScope.path ||
-            node.path.startsWith(`${state.loadScope.path}/`));
-        if (
-          !current ||
-          !(
-            load ||
-            state.entered.has(target) ||
-            state.revived.has(target) ||
-            (previousExists && !previous)
+          addActiveRuleKey(state, node.path, key);
+          const previous = state.committedRuleValues.get(key);
+          const previousExists = state.committedRuleValues.has(key);
+          let current: boolean;
+          try {
+            const evaluated = evaluateScopedExpression(
+              root,
+              node,
+              rule,
+              evaluatedExpressions,
+            );
+            if (evaluated.threw) throw evaluated.cause;
+            current = Boolean(evaluated.value);
+          } catch (cause) {
+            (failures ??= []).push({
+              sourcePath: node.path,
+              schemaPath: rule.schemaPath,
+              cause,
+            });
+            state.consumedRuleValues.set(key, false);
+            continue;
+          }
+          state.consumedRuleValues.set(key, current);
+          const load =
+            state.loadScope &&
+            (node.path === state.loadScope.path ||
+              node.path.startsWith(state.loadScope.path + '/'));
+          if (
+            !current ||
+            !(
+              load ||
+              state.entered.has(target) ||
+              state.revived.has(target) ||
+              (previousExists && !previous)
+            )
           )
-        )
-          continue;
-        if (!nodes.includes(target)) nodes.push(target);
-        if (state.trace)
-          trace.push({
-            phase: 'commit',
-            kind: rule.kind,
-            sourcePath: node.path,
-            targetPath: target.path,
-            previousValue: previous,
-            nextValue: current,
-            result: 'applied',
-          });
+            continue;
+          if (!resetNodes.has(target)) {
+            resetNodes.add(target);
+            nodes.push(target);
+          }
+          if (state.trace)
+            trace.push({
+              phase: 'commit',
+              kind: rule.kind,
+              sourcePath: node.path,
+              targetPath: target.path,
+              previousValue: previous,
+              nextValue: current,
+              result: 'applied',
+            });
+        }
       }
     if (!state.sourcePaths)
       for (let index = (node.children?.length ?? 0) - 1; index >= 0; index--)

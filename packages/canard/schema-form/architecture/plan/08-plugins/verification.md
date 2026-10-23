@@ -2,7 +2,7 @@
 
 ## 검증 원칙
 
-본체는 07에서 기본 입력으로 검증됐다. 여기서는 플러그인마다 같은 시나리오를 그 플러그인의 `formTypeInputDefinitions`로 다시 돌려, 플러그인이 새 계약(Hint·props·`typeMismatch`·`finishInput`·`presentation.*`)을 지키는지 본다.
+본체는 07에서 기본 입력으로 검증됐다. 여기서는 플러그인마다 같은 시나리오를 그 플러그인의 `formTypeInputDefinitions`로 다시 돌려, 플러그인이 새 계약(Hint·props·`misfit`·`finishInput`·`presentation.*`)을 지키는지 본다.
 
 ## 시험 구성
 
@@ -14,7 +14,7 @@
 
 ## 게이트 — 이 PR이 단독으로 통과해야 하는 것
 
-- 플러그인마다 렌더 시나리오 매트릭스 초록, union 항목 포함(LANDING-198): `{type:'union'}` 시험 객체, 유효 목록 기준의 초안·표시·비우기, `typeMismatch`의 무효 표지(REACT-033).
+- 플러그인마다 렌더 시나리오 매트릭스 초록, union 항목 포함(LANDING-198): `{type:'union'}` 시험 객체, 유효 목록 기준의 초안·표시·비우기, `misfit`의 무효 표지(REACT-033).
 - 자사 플러그인 수정 목록(LANDING-151)마다 오늘 동작과 새 동작을 대조하는 시험 하나.
 - 플러그인 패키지 넷에서 `presentation.*` 이주 뒤 `options.*`를 읽는 곳 0(검색), `node.group` 소비 0과 `FormTypeRenderer` prop 0은 07이 끝낸 상태 그대로(LANDING-067), `{type:['number','integer']}` 시험 객체 0(REACT-032). 본체 쪽과 플러그인 쪽의 이름 이주는 07이 끝냈다(LANDING-095·067).
 - 플러그인 패키지 넷의 검사: `yarn workspace @canard/schema-form-antd5-plugin lint`·`test`·`build`, 같은 셋을 `@canard/schema-form-antd6-plugin`·`@canard/schema-form-antd-mobile-plugin`·`@canard/schema-form-mui-plugin`에(각 패키지의 `build`는 `typecheck`까지 돈다). 루트의 `lint`·`typecheck`·`test` 스크립트는 릴리스 전환 PR이 만들고 그 뒤에는 저장소 전체로.

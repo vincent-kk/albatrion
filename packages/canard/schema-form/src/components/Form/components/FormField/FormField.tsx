@@ -5,7 +5,7 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
-import type { FormFieldProps } from './type';
+import type { FormFieldProps } from './types/props';
 
 /**
  * Renders a complete form field group with customizable input and renderer components.

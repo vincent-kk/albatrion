@@ -1,0 +1,56 @@
+# Round 435 — record the owner's acceptance of decision 60 (PR423) and of the (나) 58 slow rows, close the mount-delay stage, and close the round
+
+Run in the MAIN worktree `/Users/Vincent/Workspace/albatrion`. First confirm HEAD equals `origin/feat/schema-form-08-review-and-perf` (expected `5bcaad1b4`). Working-tree changes to commit this round: the coordinator's edits to `packages/canard/schema-form/architecture/COORDINATOR-JUDGMENTS.md` (rows J-21·J-22, the closed queue rows 60 and TEST-027/M3, the closing sentence of section 2 and rule 1 of section 3; do not change them) and this untracked brief under `packages/canard/schema-form/architecture/verification/perf-optimization/l3-briefs/`. `l3e-direct-ownership/`, `schema-form-m3-pre-opt/` and `schema-form-m3-itemless/` are nested worktrees: never stage, build or touch them. Documentation only: no product, test, build, timing, PR, merge or install work. The coordinator commits and pushes. Report in complete formal Korean sentences; owner names only Vincent or Vincent Kelvin.
+
+Orca rules: run-use 와 코디네이터 명령 금지, check 는 --terminal 로. No delegation, spawning, terminal/worktree creation or removal, model substitution. Never use bare git stash, `git add .`, `git add -A`, `git commit`, `git push`, config/auth changes or denied-operation bypass. Stop and ask on anything not covered. If your provider reports a usage limit, stop and send `worker_done --outcome failed` naming the step reached.
+
+Paths below are under `packages/canard/schema-form/architecture/` unless absolute. Mirror round 433's documents for form (`reviews/round-433-owner-answers.md`, `reviews/round-433-closing.md`, the round-433 row of `ledger/checks/owner-answers.tsv`, the `소유자(433라운드, …)` line of `ledger/landing.md`, `/Users/Vincent/Workspace/albatrion/.seiri/tasks/round433-insert-plan.json`, `/Users/Vincent/Workspace/albatrion/.seiri/tasks/round433-commit-message.txt`). This round HAS two new owner statements, so it is an owner round: owner-answers document, two tsv rows, two landing lines, then round-close (`AGENT-HANDOFF.md` section 4, item 7). Quote the owner's words exactly as given below, character for character, with the line break preserved as `\n` inside the table cell and the tsv field.
+
+## Owner statements (two; `reviews/round-435-owner-answers.md`, table rows at lines 7 and 8)
+
+Title: `# 435라운드 — 결정 60(PR423)과 (나) 58행의 소유자 수용, 마운트 지연 단계 종료`. Intro paragraph (line 3): 2026-10-20. 434라운드에 제출한 M3 결과를 근거로 코디네이터가 결정 60(PR423 수용·병합 권고)과 TEST-027/M3((나) 58행 묶음 수용 권고)의 판단 자료를 보고했고, 소유자가 두 권고를 받아들이며 전제를 붙였다. 이어 코디네이터가 이후 작업 순서(원장 기록, PR423 재기반·게이트·검토·병합, 단계 종료, (가) 20행 진단과 결정 58 실험)를 설명했고 소유자가 진행을 승인했다.
+
+Row 1 (line 7): 확인 `결정 60과 (나) 58행의 수용`; 물음(요지) `결정 60(PR423 수용·병합)과 TEST-027/M3((나) 58행 묶음 수용)에 대한 코디네이터 권고를 받아들이는가`; 답 원문 exactly: `"좋습니다. 둘 다 코디네이터 권고를 수용. 이후 작업을 설명하라. 각 수용의 전제는 기능무결성과 예측가능성 등 원장의 설계원칙을 준수하는 것입니다" (2026-10-20, 원장 세션)`; 반영: 결정 60은 수용으로 닫힌다(PR423 병합은 재기반·네 게이트·관측 동치 0건·독립 검토·검증자 통과 뒤 코디네이터가 한다, J-22). TEST-027의 (나) 58행(C1·C2 비교 불가 8, C3·C4 입증된 비용 8, F3 나머지 8, F4 10, F5a 1, R2 측정 장치 효과 23)은 "소유자 수용(2026-10-20, 435라운드)"으로 기록하고 C3·C4 8행은 후속 개선 우선 항목으로 표시한다. 전제(기능 무결성과 예측 가능성 등 설계 원칙 준수)는 56라운드 소유자 규칙의 첫 조건(동작 정상)의 재확인으로 기록한다(J-21). 마운트 지연 단계는 닫힌다. (가) 20행과 (다) 14행은 수용 항목이 아니다.
+
+Row 2 (line 8): 확인 `이후 작업 순서의 승인`; 물음(요지) `원장 기록 → PR423 재기반·게이트·검토·병합 → 단계 종료 → (가) 20행 82C-01 진단·결정 58 실험·(다) 14행 확인의 순서로 진행하는가`; 답 원문 exactly: `"그래 진행하자" (2026-10-20, 원장 세션)`; 반영: 코디네이터가 435라운드부터 그 순서로 진행한다. PR423 병합의 수행 주체는 코디네이터다(J-22).
+
+Closing line (line 10): `소유자 원문의 줄바꿈은 표 안에서 \`\n\`으로 보존했습니다.` (row 1 has no line break; keep the sentence for form).
+
+tsv rows (append after the round-433 row): `reviews/round-435-owner-answers.md:7<TAB>435<TAB>결정 60과 (나) 58행의 수용<TAB>"좋습니다. 둘 다 코디네이터 권고를 수용. 이후 작업을 설명하라. 각 수용의 전제는 기능무결성과 예측가능성 등 원장의 설계원칙을 준수하는 것입니다" (2026-10-20, 원장 세션)` and `reviews/round-435-owner-answers.md:8<TAB>435<TAB>이후 작업 순서의 승인<TAB>"그래 진행하자" (2026-10-20, 원장 세션)`.
+
+landing lines: after the `소유자(433라운드, …)` line of `ledger/landing.md` add `  > 소유자(435라운드, 결정 60과 (나) 58행의 수용): "좋습니다. 둘 다 코디네이터 권고를 수용. 이후 작업을 설명하라. 각 수용의 전제는 기능무결성과 예측가능성 등 원장의 설계원칙을 준수하는 것입니다" (\`reviews/round-435-owner-answers.md:7\`)` and `  > 소유자(435라운드, 이후 작업 순서의 승인): "그래 진행하자" (\`reviews/round-435-owner-answers.md:8\`)`.
+
+## Closing decisions (two; `reviews/round-435-closing.md` lines 7–8 and 9–10)
+
+- 435C-01 (target `ledger/process.md:PROCESS-060`; 결정 60 수용과 PR423 착지 조건): 소유자는 435라운드에 결정 60의 코디네이터 권고(PR423 수용·병합)를 받아들였고 전제로 기능 무결성과 예측 가능성 등 원장의 설계 원칙 준수를 붙였다(`reviews/round-435-owner-answers.md:7`). PR423(head `282685f27`, 기준 `6d7d78d32` 위 7커밋, 제품 변경은 `declareArrayChildren.ts` 7줄과 arrayBehavior DETAIL.md)은 M3 창에서 제품 파일만 얹은 E3′로 쟀고 전체 패치는 `observe.ts`·`ruleTargetIdentity.ts`에서 충돌했으므로, 착지 조건은 (1) 현재 기준으로 재기반과 충돌 해소, (2) 재기반 뒤 `declareArrayChildren.ts`가 E3′ 패치와 바이트 같음, (3) 네 게이트, (4) Node·Bun 관측 동치 0건, (5) 독립 검토(agy gemini-3.8-flash-high) PASS, (6) Claude Opus 검증자 통과다. 성능은 M3 결과(434C-03)를 그대로 쓰고 다시 재지 않는다. 병합은 소유자가 435라운드에 승인한 작업 순서(`reviews/round-435-owner-answers.md:8`)에 따라 코디네이터가 gh squash로 하며, 여섯 조건 가운데 하나라도 어긋나면 병합하지 않고 보고한다. 병합 뒤 작업 폴더 `l3e-direct-ownership`·`schema-form-m3-pre-opt`·`schema-form-m3-itemless`는 `orca worktree rm`이 묻는 승인 뒤 지우고 원격 가지는 남긴다.
+- 435C-02 (target `ledger/test.md:TEST-027`; (나) 58행의 소유자 수용과 마운트 지연 단계 종료): 소유자는 435라운드에 434C-02의 (나) 58행(C1·C2 비교 불가 8, C3·C4 입증된 비용 8, F3 나머지 8, F4 10, F5a 1, R2 측정 장치 효과 23)을 한 묶음으로 수용했고 전제로 기능 무결성과 예측 가능성 등 설계 원칙 준수를 붙였다(`reviews/round-435-owner-answers.md:7`). 전제는 56라운드 소유자 규칙의 첫 조건(동작 정상: 수용은 verifier·차등 시험·게이트로 동작 무결성이 확보된 행에만 미침)의 재확인이며, M3 창의 E4(`335874be2`)는 네 게이트·관측 동치·독립 검토를 거친 PR들의 끝이므로 이를 충족한다. 58행은 "소유자 수용(2026-10-20, 435라운드)"이고 C3·C4 8행(object-BN N1000 1.8→5.7 ms, array-BN N8000 7.9→27.5 ms; 마운트마다 blueprint 재생성과 `getItemEntries` 캐시 불일치)은 후속 개선 우선 항목이다. 이로써 마운트 지연 단계(429라운드 소유자 목표)는 닫힌다. (가) 20행은 수용 항목이 아니라 82C-01 진단 대상(GOAL-011 계약 위반 후보)이고, (다) 14행은 추가 확인 대상이며, 둘 다 어느 PR의 병합도 막지 않는다.
+
+The closing ends with `다음 라운드 번호는 436이다.` In the "근거와 남은 것" paragraph state: 소유자 원문은 `reviews/round-435-owner-answers.md`에 있다. 소유자 결정 대기열(`COORDINATOR-JUDGMENTS.md` 2절)에서 결정 60과 TEST-027/M3는 닫혔고 열린 것은 결정 58·대기열 59·결정 54·P1이다. 다음 작업은 PR423 착지(재기반·게이트·검토·병합), 그 뒤 (가) 20행의 82C-01 진단과 결정 58 게이트 폼 실험 설계, (다) 14행의 추가 확인이다(PLAN.md 4절 1항).
+
+## AGENT-HANDOFF.md edits (exact; keep every other line)
+
+1. Section 2 heading `## 2. 지금 상태 (2026-10-20, 434라운드)` → `## 2. 지금 상태 (2026-10-20, 435라운드)`.
+2. In the section 2 bullet that begins `- 열린 PR은 Draft #423 하나다.`, replace `성능 수용과 병합은 소유자 결정 60이다.` with `소유자는 435라운드에 결정 60을 수용했고(전제: 기능 무결성·예측 가능성 등 설계 원칙 준수), 병합은 재기반·네 게이트·관측 동치 0건·독립 검토·검증자 통과 뒤 코디네이터가 한다(435C-01).`
+3. In the section 2 bullet that begins `- 보존 작업 폴더는`, replace `지우는 것은 소유자 승인 뒤다. M3 창용 두 폴더는 고유 자료가 없으며(증거는 `.seiri/tasks/m3-433/`) 역시 소유자 승인 뒤 지운다.` with `PR423 병합 뒤 세 폴더는 `orca worktree rm`이 묻는 승인 뒤 지우고 원격 가지는 남긴다(435C-01). M3 창용 두 폴더는 고유 자료가 없다(증거는 `.seiri/tasks/m3-433/`).`
+4. Replace the section 2 bullet that begins `- 430라운드에 기준 측정을, 434라운드에 M3 종합 재측정` with `- 430라운드에 기준 측정을, 434라운드에 M3 종합 재측정(`verification/perf-optimization/m3-results.md`)을 마쳤다. 435라운드에 소유자가 (나) 58행을 묶음 수용해 마운트 지연 단계가 닫혔고, (가) 20행은 82C-01 진단 대상, (다) 14행은 추가 확인 대상이다. 다음은 PR423 착지, 그 뒤 (가) 진단과 결정 58 게이트 폼 실험 설계다(PLAN.md 4절). 선행판단 기록과 소유자 결정 대기열은 `COORDINATOR-JUDGMENTS.md`다. 보류(결정 54/58/59·P1 전체 protocol 실패)는 그대로다.`
+5. In the paragraph that begins `정본 대기열은 `reviews/owner-queue-07.md`다.`, replace `열린 것은 결정 60(itemless 성능 수용과 PR423 병합, 두 측정 창이 근거), 결정 58(게이트 폼 실험 뒤 채택 판단)` with `결정 60은 435라운드에 수용으로 닫혔다. 열린 것은 결정 58(게이트 폼 실험 뒤 채택 판단)`.
+
+## reviews/owner-queue-07.md edit (exact)
+
+In the row that begins `| 60 (열림 — itemless 같은 창의 성능 수용;`, replace the leading `| 60 (열림 — ` with `| 60 (해결 — ` and append at the very end of the second cell (the long description cell, immediately before the ` | TEST-027은 느린 결과의 이유와` cell separator): ` — **435라운드(2026-10-20): 소유자 "둘 다 코디네이터 권고를 수용"(전제: 기능 무결성·예측 가능성 등 설계 원칙 준수). M3 창(434C-03)에서 E3′ 대 E4 느려진 행 0, items 없는 배열 마운트 빠름 입증 3. PR423은 재기반·네 게이트·관측 동치·독립 검토·검증자 통과 뒤 코디네이터가 병합한다(`reviews/round-435-owner-answers.md:7`).**`
+
+## PLAN.md edits (exact)
+
+1. Section 3 table, row `| 최적화 | 성능 최적화 |`: replace `진행(M3 결과 제출, 소유자 수용 대기)` with `진행(마운트 지연 단계 종료, PR423 착지 중)`, and after `(가) 20행(oneOf·nested·flat)은 82C-01 진단과 결정 58 실험으로 이어진다.` insert ` 435라운드에 소유자가 결정 60과 (나) 58행을 코디네이터 권고대로 수용했다(전제: 기능 무결성·예측 가능성 등 설계 원칙 준수). 마운트 지연 단계는 닫혔고 PR423은 재기반·게이트·검토 뒤 코디네이터가 병합한다.`
+2. Section 4 item 1: replace `M3 창(434라운드)은 PR423 판에서 느려진 행이 없음을 보였고 결정 60은 소유자에게 올렸습니다.` with `M3 창(434라운드)은 PR423 판에서 느려진 행이 없음을 보였고, 435라운드에 소유자가 결정 60과 (나) 58행을 수용해 마운트 지연 단계가 닫혔습니다. 먼저 PR423을 착지합니다(현재 기준으로 재기반, 충돌 fixture 둘 해소, 네 게이트, 관측 동치 0건, 독립 검토, 검증자 통과, gh squash 병합). C3·C4 8행은 후속 개선 우선 항목입니다.`
+3. Section 5 paragraph (line 49) that begins `최적화 작업은 **소유자 결정 60과 다음 지시 대기**입니다.`: replace `최적화 작업은 **소유자 결정 60과 다음 지시 대기**입니다.` with `최적화 작업은 **마운트 지연 단계를 닫고 PR423 착지와 (가) 20행 진단으로 진행 중**입니다(435라운드).`
+
+## Steps
+
+1. Write `reviews/round-435-owner-answers.md`, append the two tsv rows and the two landing lines, write `reviews/round-435-closing.md` (two decisions), `/Users/Vincent/Workspace/albatrion/.seiri/tasks/round435-insert-plan.json` (two entries, lines 8 and 10), apply the AGENT-HANDOFF.md, owner-queue-07.md and PLAN.md edits, and from `architecture/` run `node ledger/checks/sup-insert.mjs reviews/round-435-closing.md /Users/Vincent/Workspace/albatrion/.seiri/tasks/round435-insert-plan.json`.
+2. Run `node ledger/checks/round-close.mjs 435 "<PLAN §5 row>" "<HANDOFF §1 bullet ending with ' 다음 라운드 번호는 436.'>" "<HANDOFF §5 map row>"`. PLAN §5 row: `| 2026-10-20 | 435라운드: 소유자가 결정 60(PR423 수용·병합)과 TEST-027 (나) 58행 묶음 수용을 권고대로 수용(전제: 설계 원칙 준수), 마운트 지연 단계 종료, PR423 착지 조건과 다음 순서((가) 진단·결정 58 실험·(다) 확인) 기록 | reviews/round-435-closing.md |`. Then hand-update `HANDOFF.md` line 5 to `## 1. 지금 어디인가 (2026-10-20, 435라운드 닫힘; 결정 60과 (나) 58행 소유자 수용, 마운트 지연 단계 종료, 다음은 PR423 착지와 (가) 진단)`.
+3. Run every check in `HANDOFF.md` section 4 from `architecture/`. All must report 0 problems; doc-coverage may show only LANDING-209/210. Expected owner answers 570 cited 570. Explain any token count change (previous missing 443).
+4. Stage only by exact path: `AGENT-HANDOFF.md`, `HANDOFF.md`, `PLAN.md`, `PLAN-LOG.md`, `COORDINATOR-JUDGMENTS.md`, `ledger/checks/owner-answers.tsv`, `ledger/landing.md`, the ledger file(s) sup-insert touched, `reviews/owner-queue-07.md`, `reviews/round-435-owner-answers.md`, `reviews/round-435-closing.md`, and this brief. Confirm with `git status --porcelain` that nothing else is staged.
+5. Write `/Users/Vincent/Workspace/albatrion/.seiri/tasks/round435-commit-message.txt` (subject `docs(schema-form): record owner acceptance of decision 60 and the 58 slow rows, closing the mount-delay stage in round 435`; short Korean body; no co-author, session or ID lines) and `/Users/Vincent/Workspace/albatrion/.seiri/tasks/ledger435/report.md` with each check's result line and the staged list.
+
+`worker_done --outcome succeeded` only when every check reports 0 problems and staging is exact; otherwise `failed` with the failing command, cwd, exit and output. Check the live mailbox once before one genuine worker_done, then idle.

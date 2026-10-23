@@ -2,7 +2,10 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
+import { gateSelectionTable } from '../gates/gateSelectionTable';
+import { verifyGateSelection } from '../gates/verifyGateSelection';
+import { DirtyPathSet } from '../scratch/DirtyPathSet';
 
 /**
  * Resolve only scheduled direct children instead of scanning a host's shape.
@@ -25,9 +28,34 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
         ? node.structure[name]
         : undefined;
     if (child && !seen.has(child)) {
+      if (
+        gateSelectionTable.mode === 'verify' &&
+        context.dirtyPaths instanceof DirtyPathSet &&
+        context.dirtyPaths.isPostOrder
+      )
+        verifyGateSelection(
+          context.dirtyPaths.has(child.path),
+          'S6 dirtyChildren returned a consumed child: ' + child.path,
+        );
       seen.add(child);
       children.push(child);
     }
+  }
+  const shadow =
+    gateSelectionTable.mode === 'verify'
+      ? context.registrationShadow
+      : undefined;
+  if (shadow) {
+    const expected = dirtyChildren(node, {
+      ...context,
+      registrationShadow: undefined,
+      dirtyChildrenByParent: shadow.dirty.childrenByParent,
+    });
+    verifyGateSelection(
+      children.length === expected.length &&
+        children.every((child, index) => child === expected[index]),
+      'S3 dirtyChildren members/order differ at: ' + node.path,
+    );
   }
   return children;
 };

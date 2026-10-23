@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { resetFieldNodeForm } from '../utils/load/resetFieldNodeForm';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
 import { getTransitionCap } from '../utils/transition/getTransitionCap';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
@@ -337,7 +337,7 @@ describe('settle exits and budgets', () => {
       writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite),
     ).toThrow();
     expect(root.structure?.a?.raw).toBe(0);
-    expect(root.runtime.typeMismatchPaths.has('/a')).toBe(true);
+    expect(root.runtime.misfitPaths.has('/a')).toBe(true);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',

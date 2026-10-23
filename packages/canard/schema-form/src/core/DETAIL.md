@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- 검증 전용 관찰 session은 실제 engine module과 그 module의 기존 producer WeakMap을 읽기만 하는 reader, graph-local codec 및 실제로 생성·보존한 객체를 함께 결속한다. 제품 소스·공개 표면·사건·기존 기대값을 변경하지 않으며 관찰 사본의 readonly footer만 허용한다.
+- 관찰은 19개 상태와 9개 이력 채널, 원형58의 ID·순서·초기화·연산·결과와 listener/retained 참조 관계를 보존한다. runtime key의 앞 일곱 부분과 다섯 부분 exit-policy key는 유지하고 여덟 번째 실제 producer ID만 같은 module의 실제 객체에 대한 codec occurrence로 바꾼다. 모든 optional rule store 부재는 빈 상태이며, 실제 누락·orphan·충돌·미지원 key shape는 거절한다.
+- 현재 규칙은 실제 current attachment/lifetime와 일치해야 한다. 동일 module의 적법한 known retained 역사 occurrence는 원래 ID·참조·기록된 수명이 맞으면 detached라는 이유로 거절하지 않는다. unknown·foreign·ambiguous·conflicting·잘못 부착된·codec-unreachable 및 phase/lifetime 불일치는 실패하며 최신 경로 역추정·producer 재호출·shadow ID·전역 registry는 쓰지 않는다.
+
 - 청사진에서 정규화한 무조건 선언을 재사용해도 마운트와 후속 쓰기의 값·유효 스키마·노드 순서·상태·경고·리비전·통지가 같아야 한다. 런타임 실제 병합 수는 마운트 단위로 검증하며 정적 검사 수는 줄이지 않는다(BLUEPRINT-021, NODE-006, SETTLE-017, 100라운드).
 
 - 청사진·정착·파생이 공유하는 기능 부재 결과는 engine이 소유한 불변 빈 Map/Set 조회 객체를 쓴다. 변경 메서드를 제공하지 않으며 기능 부재가 각각 증명된 경우에만 공유한다. 영구 저장은 전체 프로세스에서 O(1)이며 청사진별 빈 Map/Set 할당을 제거한다(89C-03).
@@ -79,6 +83,12 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 
 ## Acceptance Criteria
 
+### observation-identity-portability — 검증 전용 occurrence 결속
+
+- 원래 selection collector의 실제 rules·ruleSources·ruleTargets 소실에 의한 거짓 동치와 raw occurrence offset에 의한 거짓 차이를 재현하고, 완전 capture는 그 오류를 구별한다.
+- 실제 source/raw A/raw B의 producer와 reader가 같은 module에 결속되고 fixture graph에는 engine/producer가 없다. 명시 입력 SHA, 원문 prefix/footer, compiler/parser/dependency와 source graph 계보를 검증하며 cached output·잘못된 입력·literal을 바꾸는 서식 변환은 거절한다.
+- 원형58 호환과 helper 회귀, source-owner와 injection 목적지 구별·readonly 무할당·rebirth/held history·잘못된 owner 거절을 Node/Bun에서 별도 단위로 검증한다. 과거 live66 및 성능·후속 제품 가설의 결과를 이번 실행으로 합산하지 않는다.
+
 ### two-channel — 두 채널이 분리되어 있다
 
 - `options.omitTrailing`이 켜진 배열 노드에서 `node.value`에는 후행 빈 항목이 남아 있고 `node.outputValue`에는 없다.
@@ -98,11 +108,13 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 - 시나리오 명세 표는 각 부류의 장면 목록에서 생성되므로 사례 수를 정적으로 셀 수 없으며 `spec-document-case-cap`은 `indeterminate`로 유지한다(60C-01).
 - TEST-023에 따라 코어 시험이 공유 시나리오 데이터를 해석한다. 비공개 시나리오 패키지는 코어 실행기를 소유하지 않는다.
 - 주입된 코어 어댑터가 단계를 순서대로 한 번씩 실행하며 정착을 기다린 뒤 기대를 검사하고 실패를 호출자에게 전달한다.
+- 규칙 대상의 강화 관측은 실행 모듈의 기존 ID 조회와 실제 live·retained·retired 노드 참조를 연결한다. 같은 경로·종류의 최신 노드 추정이나 임의 출현 순서로 수명 차이를 숨기지 않으며, 알 수 없거나 모호하거나 서로 충돌하는 연결은 실패로 보고한다.
+- 강화 관측은 규칙 키의 첫 일곱 항목과 양방향 경로 색인, 별칭·사건·호출자 공유 참조를 보존한다. `injectTo`의 규칙 소유 노드와 실제 주입 목적지를 구별하고, 대상 ID가 없는 다섯 항목 정책 키에 없는 대상 색인을 요구하지 않는다. 기존 source 특성화·비용 spy와 격리 모듈의 강화 관측은 별도 증거로 유지한다.
 - 각 부류의 시나리오를 새 `FieldNode` 트리에서 실행하고 단계별 형상·방출·진단·상태 키를 검증한다. `reset`은 루트 폼 수준 로드이며 `resetSubtree()`는 해당 하위 트리만 로드한다(TEST-011·016·019·023, SETTLE-049).
 
 ### scenario-value — 값 부류 시나리오
 
-- 공유 `value` 부류의 모든 시나리오가 코어 실행기에서 기대한 원본·방출·형 불일치 기록을 낸다(TEST-019·023).
+- 공유 `value` 부류의 모든 시나리오가 코어 실행기에서 기대한 원본·방출·misfit 기록을 낸다(TEST-019·023).
 
 ### scenario-settle — 정착 부류 시나리오
 

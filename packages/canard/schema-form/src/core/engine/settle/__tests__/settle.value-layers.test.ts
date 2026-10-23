@@ -4,7 +4,7 @@ import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 describe('settled value rule layers', () => {

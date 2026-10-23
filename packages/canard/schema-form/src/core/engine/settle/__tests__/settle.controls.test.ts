@@ -8,7 +8,7 @@ import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeye
 import { fieldNodeFactory } from '@/schema-form/core/surface';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Create a runtime surface tree for commit-scoped getter checks. */
@@ -18,7 +18,7 @@ const createSurfaceTree = (schema: BlueprintSchema) =>
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
+    misfitPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<
       readonly { path: string; value: unknown }[]
     >('path'),

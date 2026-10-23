@@ -7,7 +7,7 @@ import type {
   BlueprintSchema,
 } from '@/schema-form/core/engine/blueprint';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 import { compileEntryGuards } from '../utils/guard/compileEntryGuards';
 import { readFieldNodeGuard } from '../utils/guard/readFieldNodeGuard';

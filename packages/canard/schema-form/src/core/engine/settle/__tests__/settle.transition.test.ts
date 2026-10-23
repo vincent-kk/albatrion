@@ -4,10 +4,10 @@ import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { readFieldNodeDefaultValue } from '../utils/load/readFieldNodeDefaultValue';
-import { resetFieldNodeForm } from '../utils/load/resetFieldNodeForm';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { readFieldNodeDefaultValue } from '../utils/loadValues/readFieldNodeDefaultValue';
+import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
@@ -90,7 +90,7 @@ describe('settle transitions and loads', () => {
     writeFieldNode(root, null, 'callerPartial', WriteOption.Merge);
     expect(root.raw).toBeNull();
     expect(root.structure?.a?.raw).toBeUndefined();
-    expect(root.runtime.typeMismatchPaths.has('')).toBe(true);
+    expect(root.runtime.misfitPaths.has('')).toBe(true);
   });
 
   it('TEST-069 SetValueOption DisableAutomaticWrites suppresses an actual fill', () => {
@@ -391,14 +391,11 @@ describe('settle transitions and loads', () => {
     expect(
       root.structure?.right?.interactionState[FieldNodeState.Touched],
     ).toBe(true);
-    expect([...root.runtime.typeMismatchPaths].sort()).toEqual([
+    expect([...root.runtime.misfitPaths].sort()).toEqual(['/left', '/right']);
+    expect(root.runtime.misfitRecords?.map((record) => record.path)).toEqual([
       '/left',
-      '/right',
     ]);
-    expect(
-      root.runtime.typeMismatchRecords?.map((record) => record.path),
-    ).toEqual(['/left']);
-    expect(root.runtime.typeMismatchRecords?.[0]?.source).toBe('load');
+    expect(root.runtime.misfitRecords?.[0]?.source).toBe('load');
   });
 
   it('WRITE-085 repeated form load with the same source reconstructs inactive raw', () => {

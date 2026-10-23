@@ -2,8 +2,10 @@ import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
 import { WriteOption } from '../../../types/value';
 import type { FieldNodeWriteKind } from '../../../types/value';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
+import { prepareGateSelection } from '../compute/childSelection/prepareGateSelection';
 import { getVirtualReferenceIndex } from '../compute/getVirtualReferenceIndex';
+import { watchSplitRegistration } from '../gates/watchSplitRegistration';
 import { getTransitionCap } from '../transition/getTransitionCap';
 
 /**
@@ -27,7 +29,11 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
   const blueprint = runtime.blueprint;
   const disable = (option & WriteOption.DisableAutomaticWrites) !== 0;
   const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
-  return {
+  const hasSplitRegistration =
+    !blueprint.capabilities.branchless &&
+    blueprint.capabilities.hasExpressions &&
+    prepareGateSelection(blueprint, kind !== 'load');
+  const context: SettlementContext<Self> = {
     root,
     previousEmit: root.emit,
     previousContext: runtime.context,
@@ -47,6 +53,8 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     revived: scratch.revived,
     exited: scratch.exited,
     pendingExits: scratch.pendingExits,
+    pendingExitPaths: scratch.pendingExitPaths,
+    pendingExitScratch: scratch,
     perished: scratch.perished,
     selectedDeclarationIds: scratch.selectedDeclarationIds,
     writtenInputs: scratch.writtenInputs,
@@ -64,10 +72,13 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     dirtyPaths: scratch.dirtyPaths,
     dirtyChildrenByParent: scratch.dirtyChildrenByParent,
     dependencyOwnerPaths: scratch.dependencyOwnerPaths,
+    registrationEpoch: 0,
     shapeDirtyPaths: scratch.shapeDirtyPaths,
     changedRaw: scratch.changedRaw,
     changedNodes: scratch.changedNodes,
     stateDirtyNodes: scratch.stateDirtyNodes,
     originalSchemas: scratch.originalSchemas,
   };
+  if (hasSplitRegistration) watchSplitRegistration(context);
+  return context;
 };

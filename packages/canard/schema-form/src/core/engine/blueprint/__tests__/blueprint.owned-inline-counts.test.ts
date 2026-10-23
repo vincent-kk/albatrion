@@ -44,6 +44,14 @@ it.each(expectations)(
       ),
     ).toBe(true);
     expect(duplicates).toBe(0);
+    console.log(
+      'OWNED_INLINE_FREEZE_COUNTS',
+      JSON.stringify({
+        fixture: expected.name,
+        mode: process.env.NODE_ENV,
+        distinct: distinct.size,
+      }),
+    );
     expect(distinct.size).toBe(
       process.env.NODE_ENV === 'production'
         ? expected.production

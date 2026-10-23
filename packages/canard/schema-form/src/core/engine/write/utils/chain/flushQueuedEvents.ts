@@ -5,6 +5,7 @@ import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalError
 import { finishQueuedErrors } from '../report/finishQueuedErrors';
 import { captureChainError } from './captureChainError';
 import { deliverWave } from './deliverWave';
+import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 import { runDeliveryWaves } from './runDeliveryWaves';
 
 /**
@@ -34,31 +35,39 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   caller = true,
 ): void => {
-  const runtime = root.runtime;
-  if (runtime.flushingQueuedEvents) return;
-  runtime.flushingQueuedEvents = true;
-  const standalone = !runtime.entryDepth && !runtime.chainErrors;
-  const previousErrors = runtime.chainErrors;
-  const previousOccurrences = runtime.chainOccurrences;
+  const entryRuntime = root.runtime;
+  if (entryRuntime.flushingQueuedEvents) return;
+  entryRuntime.flushingQueuedEvents = true;
+  const standalone = !entryRuntime.entryDepth && !entryRuntime.chainErrors;
+  const previousErrors = entryRuntime.chainErrors;
+  const previousOccurrences = entryRuntime.chainOccurrences;
   let waves = 0;
   let budgetReported = false;
   if (standalone) {
-    runtime.chainErrors = [];
-    runtime.chainOccurrences = [];
+    entryRuntime.chainErrors = [];
+    entryRuntime.chainOccurrences = [];
   }
+  const owners = new Set([entryRuntime]);
+  let active = root;
+  let runtime = entryRuntime;
   try {
-    while (
-      runtime.pendingExternalErrorNodes?.size ||
-      runtime.queuedNonSettleEvents?.size ||
-      runtime.deliveries?.size ||
-      (!runtime.entryDepth && runtime.stateChanged)
-    ) {
+    for (;;) {
+      active = resolveFieldNodeChainRoot(active, owners);
+      runtime = active.runtime;
+      runtime.flushingQueuedEvents = true;
+      if (
+        !runtime.pendingExternalErrorNodes?.size &&
+        !runtime.queuedNonSettleEvents?.size &&
+        !runtime.deliveries?.size &&
+        !(!runtime.entryDepth && runtime.stateChanged)
+      )
+        break;
       if (runtime.pendingExternalErrorNodes?.size) {
-        rebuildRootExternalErrors(root);
+        rebuildRootExternalErrors(active);
         continue;
       }
       if (runtime.deliveries?.size) {
-        runDeliveryWaves(root);
+        runDeliveryWaves(active);
         continue;
       }
       if (runtime.queuedNonSettleEvents?.size) {
@@ -92,14 +101,17 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
           );
         }
         runtime.queuedNonSettleEvents = undefined;
-        deliverWave(root, pending);
+        deliverWave(active, pending);
         continue;
       }
       runtime.stateChanged = false;
       try {
         runtime.onStateChange?.();
       } catch (error) {
-        captureChainError(runtime, error);
+        captureChainError(
+          resolveFieldNodeChainRoot(active, owners).runtime,
+          error,
+        );
       }
     }
     if (standalone)
@@ -110,10 +122,12 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
         caller,
       );
   } finally {
-    runtime.flushingQueuedEvents = false;
-    if (standalone) {
-      runtime.chainErrors = previousErrors;
-      runtime.chainOccurrences = previousOccurrences;
+    for (const owner of owners) {
+      owner.flushingQueuedEvents = false;
+      if (!standalone) continue;
+      owner.chainErrors = previousErrors;
+      owner.chainOccurrences = previousOccurrences;
+      if (owner !== entryRuntime) owner.chainRoot = undefined;
     }
   }
 };

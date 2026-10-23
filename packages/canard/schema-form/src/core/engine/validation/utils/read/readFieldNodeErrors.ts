@@ -1,5 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { ValidationIssue } from '../../type';
+import type { ValidationIssue } from '../../types/issue';
 
 /** Stable empty read shared by nodes with no external or validator issues. */
 const EMPTY_ISSUES: readonly ValidationIssue[] = Object.freeze([]);

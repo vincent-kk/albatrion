@@ -1,5 +1,5 @@
-import { getItemEntry } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { getArrayItemTemplate } from '../value/getArrayItemTemplate';
 
 /** Reuse the most recent trimmed view while its source prefix is unchanged. */
 const TRIMMED = new WeakMap<
@@ -26,8 +26,8 @@ export const omitTrailingArray = <Self>(
     if (!node) {
       if (value[index] != null) break;
     } else {
-      const entry = getItemEntry(node.blueprintNode, index);
-      if (!entry) {
+      const template = getArrayItemTemplate(node, index);
+      if (!template) {
         if (value[index] != null) break;
       } else {
         const child = node.structure?.[String(index)];
@@ -39,8 +39,8 @@ export const omitTrailingArray = <Self>(
           emission !== undefined &&
           !(
             emission === null &&
-            entry.node.kind !== 'object' &&
-            entry.node.kind !== 'array'
+            template.kind !== 'object' &&
+            template.kind !== 'array'
           )
         )
           break;

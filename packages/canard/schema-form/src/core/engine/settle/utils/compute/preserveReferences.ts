@@ -2,7 +2,7 @@ import type { EffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /** Calculated identities held at entry to one bounded node computation. */
 export interface CalculatedSnapshot<Self> {
@@ -30,6 +30,7 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
   if (sameValue(previous.emit, node.emit))
     node.emit = captureFieldNodeChange(node, 'emit', previous.emit);
   if (
+    previous.children !== node.children &&
     previous.children &&
     node.children &&
     previous.children.length === node.children.length &&

@@ -10,9 +10,9 @@ import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import * as blueprintApi from '../../../blueprint';
 import * as deriveApi from '../../../derive';
-import type { SettlementContext } from '../../type';
+import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
+import type { SettlementContext } from '../../types/settlement';
 import { deriveShadowEvaluation } from '../../utils/derivation/deriveShadowEvaluation';
-import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
 import * as settlementApi from '../../utils/settlement/createSettlementContext';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 

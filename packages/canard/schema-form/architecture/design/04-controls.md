@@ -44,7 +44,7 @@
 
 | 그룹 | 뜻 | 읽는 이 | 키 |
 | --- | --- | --- | --- |
-| `controls` | 값·형상을 **때에 따라** 바꾸는 규칙과 정책 | 정착 루프 | `active` `visible` `readOnly` `disabled` `default` `derived` `injectTo` `unsetValue` `resetInteraction` `unsetOnInactive` `children` `discriminator` `watch` |
+| `controls` | 값·형상을 **때에 따라** 바꾸는 규칙과 정책 | 정착 루프 | `active` `visible` `readOnly` `disabled` `default` `derived` `injectTo` `unsetValue` `resetInteraction` `unsetOnInactive` `fields` `discriminator` `watch` |
 | `options` | 값·형상의 **정적** 설정 | 청사진과 투영 | `terminal` `virtual` `propertyKeys` `omitEmpty` `omitTrailing` `trim`(포커스 아웃 때 문자열 동작 행이 자른다, 17라운드 소유자 답 R17-3) |
 | `presentation` | 보이는 것 | 렌더 계층만(청사진은 `presentation`을 읽지 않는다. 인라인 `FormTypeInput`의 암묵 터미널은 렌더 계층의 판정 함수가 정한다) | `formType` `FormTypeInput` `FormTypeInputProps` `FormTypeRendererProps` `errorMessages`, 플러그인 자유 칸(`trim`은 `options`의 키다. `presentation`에 적은 `trim`은 `controls`·`options`의 키 이름이라 개발 모드 경고 `PRESENTATION_KEY_SUSPECT`(가칭)의 대상이다, ERROR-164) |
 
@@ -70,7 +70,7 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 
 터미널 판정은 렌더 계층의 판정 함수로 옮겨 core는 React 구성 요소를 판정하지 않는다(17라운드 스웜 수렴(편집자 결정), 통보 1은 17라운드 소유자 답으로 허용)(CONTROLS-052). 인라인 `FormTypeInput`을 꽂은 객체·배열 노드가 터미널이 되는 암묵 규칙은 소유자가 의도된 기능이라 한 것이므로(NODE-027) 유지하되 렌더 계층의 기능으로 옮긴다(CONTROLS-052). 렌더 계층(React 바인딩)이 노드 선언의 `presentation.FormTypeInput`이 있고 `null`이 아닌지를 보는 판정 함수를 청사진에 넘기고, 청사진은 한 노드의 터미널 전략을 `options.terminal`(명시, 양방향) → 넘겨받은 판정 → `type`의 순서로 정한다(CONTROLS-052, NODE-028). 이 순서는 두 행을 가진 종류(object·array)에만 적용되고, 행이 하나인 종류는 전략을 그 행에서 정한다(CONTROLS-052, NODE-047). core는 `presentation`을 그룹 객체로 병합하고 검증기 앞에서 지울 뿐 그 안의 키를 읽지도 해석하지도 않으며(원리 P5(core는 렌더러를 모른다)), core만 쓰는 호스트에는 암묵 규칙이 없다(17라운드 스웜 수렴(편집자 결정), 소유자 통보 1 허용)(CONTROLS-052, GOAL-031).
 
-【추론】 (2) 인라인 구성 요소를 담은 스키마는 직렬화할 수 없고, 이를 풀 장치를 두지 않는다(CONTROLS-076). 【추론】 직렬화할 수 있는 길은 `presentation.formType`과 `formTypeInputMap`·`formTypeInputDefinitions`다(CONTROLS-076). 【추론】 core는 스키마를 직렬화하지 않는다(CONTROLS-076). 【추론】 사본은 `presentation`을 지우고, 같은 스키마 비교는 JSON 밖 칸을 참조로 본다(CONTROLS-076, VALIDATE-004, LANDING-039).
+【추론】 (2) 인라인 구성 요소를 담은 스키마는 직렬화할 수 없고, 이를 풀 장치를 두지 않는다(CONTROLS-076). 【추론】 직렬화할 수 있는 길은 `presentation.formType`과 `fieldInputMap`·`fieldInputDefinitions`다(CONTROLS-076). 【추론】 core는 스키마를 직렬화하지 않는다(CONTROLS-076). 【추론】 사본은 `presentation`을 지우고, 같은 스키마 비교는 JSON 밖 칸을 참조로 본다(CONTROLS-076, VALIDATE-004, LANDING-039).
 
 【추론】 `alias`·`placeholder`는 그룹 키가 아니다(CONTROLS-081). 【추론】 둘 다 오늘처럼 `FormTypeInputProps` 안의 키이며, `FormTypeInputProps`가 `presentation`으로 옮겨 가므로 `presentation.FormTypeInputProps.alias`·`presentation.FormTypeInputProps.placeholder`가 된다(CONTROLS-081, CONTROLS-051). 【추론】 렌더 계층은 이 둘을 해석하지 않고 오늘처럼 입력 구성 요소의 prop으로 펼쳐 넘긴다(CONTROLS-081). 【추론】 `presentation`의 스키마 타입에는 `className`·`style`과 함께 문서화된 선택 키로 남긴다(선택 키가 하나도 없는 타입은 GOAL-088을 따른다)(CONTROLS-081). 【추론】 맨 키 `placeholder`는 폼 키가 아니다(CONTROLS-081). 【추론】 맨 키 `placeholder`는 JSON Schema 층의 모르는 키로 검증기에 가고 폼은 읽지 않는다(CONTROLS-081). 【추론】 `errorMessages`는 이미 `presentation.errorMessages`로 정해졌고, `presentation`은 통째로 검증기 앞에서 지워진다(CONTROLS-081, CONTROLS-051, LANDING-031).
 
@@ -85,7 +85,7 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 | 형용사 | `boolean` 또는 식→`boolean`. 참인 동안 | `active` `visible` `readOnly` `disabled` `unsetOnInactive` |
 | 명사 | 값의 출처 | `default`(값), `derived`(식→값), `injectTo`(함수→`{ 경로: 값 }`. 남에게 주는 값의 출처) |
 | 동사 | `boolean` 또는 식→`boolean`. 참이 되는 순간 | `unsetValue` `resetInteraction` |
-| 선언 | 구조 | `children`(배열), `discriminator`(문자열), `watch`(문자열 배열) |
+| 선언 | 구조 | `fields`(배열), `discriminator`(문자열), `watch`(문자열 배열) |
 
 형용사·동사 키와 `controls.derived`의 문자열 값은 언제나 식이다(CONTROLS-018). 문자열 상수는 `"'KRW'"`처럼 따옴표 안에 적는다(CONTROLS-018). `controls.default`는 값이고, 선언 부류의 문자열은 식이 아니다(`discriminator`는 키 이름, `watch`는 경로)(CONTROLS-018, CONTROLS-019, CONTROLS-031, CONTROLS-032).
 
@@ -93,7 +93,7 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 
 ### 1.6 식의 기준점과 값 읽기
 
-**식의 기준점(15라운드).**(CONTROLS-043) 모든 JSON Pointer는 그것을 선언한 노드를 기준으로 푼다(CONTROLS-043). 노드는 그 자체로 행위의 원천이자 네임스페이스다(CONTROLS-043). `oneOf`·`allOf`·`then` 조각, `controls.children` 항목, `controls.discriminator`가 만드는 게이트는 모두 호스트 스키마 안의 선언이므로 호스트가 기준이다(CONTROLS-043). 조각은 같은 네임스페이스의 다른 표현 위치이지 다른 네임스페이스가 아니다(소유자)(CONTROLS-043). `if` 부속 스키마가 검증기에 의해 호스트 인스턴스에 대고 평가되는 것과 같은 자리다(CONTROLS-043). 5차 본문이 조각 식의 기준을 "호스트의 직계 자식 자리"로 두었던 것은 편집자의 도출이었고 이 판에서 되돌렸다(CONTROLS-043). `.`·`..`는 폼의 확장 표기이므로 폼이 정당하고 일관되게 처리한다(소유자 12라운드)(CONTROLS-043). 자식에 적던 식을 `controls.children`으로 옮기면 `../x`를 `./x`로 고친다(CONTROLS-043).
+**식의 기준점(15라운드).**(CONTROLS-043) 모든 JSON Pointer는 그것을 선언한 노드를 기준으로 푼다(CONTROLS-043). 노드는 그 자체로 행위의 원천이자 네임스페이스다(CONTROLS-043). `oneOf`·`allOf`·`then` 조각, `controls.fields` 항목, `controls.discriminator`가 만드는 게이트는 모두 호스트 스키마 안의 선언이므로 호스트가 기준이다(CONTROLS-043). 조각은 같은 네임스페이스의 다른 표현 위치이지 다른 네임스페이스가 아니다(소유자)(CONTROLS-043). `if` 부속 스키마가 검증기에 의해 호스트 인스턴스에 대고 평가되는 것과 같은 자리다(CONTROLS-043). 5차 본문이 조각 식의 기준을 "호스트의 직계 자식 자리"로 두었던 것은 편집자의 도출이었고 이 판에서 되돌렸다(CONTROLS-043). `.`·`..`는 폼의 확장 표기이므로 폼이 정당하고 일관되게 처리한다(소유자 12라운드)(CONTROLS-043). 자식에 적던 식을 `controls.fields`으로 옮기면 `../x`를 `./x`로 고친다(CONTROLS-043).
 
 【추론】 (1) 문법: 식은 JavaScript 식 하나이거나 `{ … }`로 감싼 문장 몸통(값은 `return`으로 낸다)이다(CONTROLS-080). 【추론】 청사진이 경로 토큰을 뽑아 인자 배열 참조로 바꾸고 `new Function`으로 컴파일한다(CONTROLS-080). 【추론】 오늘의 토크나이저 `JSON_POINTER_PATH_REGEX`와 `getFunctionBody`를 그대로 옮긴다(CONTROLS-080). 【추론】 형용사·동사 키의 식은 `!!`로 불리언이 된다(CONTROLS-080). 【추론】 식은 작성된 스키마 위치마다 한 번 컴파일하고, 그 위치의 모든 노드(배열 아이템 포함)가 결과를 공유한다(CONTROLS-080). 【추론】 컴파일 실패는 이미 정한 대로 청사진 오류다(CONTROLS-080). 【추론】 문자열 상수와 식의 구분은 CONTROLS-018대로다(CONTROLS-080, CONTROLS-018).
 
@@ -101,7 +101,7 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 
 【추론】 (3) 토큰: 경로 토큰은 오늘 그대로 `./p`, `../p`(되풀이할 수 있다), `/p`다(CONTROLS-080). 【추론】 `#/p`는 `/p`와 같다(RFC 6901의 URI 조각 표기)(CONTROLS-080). 【추론】 `#` 단독과 `(/)`는 루트의 값이다(CONTROLS-080). 【추론】 `@`는 맥락이다(CONTROLS-080). 【추론】 `@/p`는 경로가 아니다(CONTROLS-080). 【추론】 맥락 안의 값은 `@.x`나 `@['x']`처럼 JS로 읽는다(CONTROLS-080). 【추론】 기준점은 CONTROLS-043대로다(CONTROLS-080, CONTROLS-043). 【추론】 경로 조각 안의 `[n]`은 색인이 아니라 이름의 일부다(CONTROLS-080).
 
-【추론】 (4) `*`: 식과 `controls.watch`의 경로에서 `*` 조각은 지원하지 않는다(CONTROLS-080). 【추론】 쓰면 청사진 오류(식 컴파일 실패와 같은 분류)다(CONTROLS-080). 【추론】 `*`는 `findNodes`와 `formTypeInputMap` 키의 표기로만 남는다(CONTROLS-080). 【추론】 같은 표현은 배열 전체를 읽어서 한다(예: `(../items).some(i => i.price > 0)`)(CONTROLS-080).
+【추론】 (4) `*`: 식과 `controls.watch`의 경로에서 `*` 조각은 지원하지 않는다(CONTROLS-080). 【추론】 쓰면 청사진 오류(식 컴파일 실패와 같은 분류)다(CONTROLS-080). 【추론】 `*`는 `findNodes`와 `fieldInputMap` 키의 표기로만 남는다(CONTROLS-080). 【추론】 같은 표현은 배열 전체를 읽어서 한다(예: `(../items).some(i => i.price > 0)`)(CONTROLS-080).
 
 【추론】 (5) 경로가 읽는 값: 경로는 방출 트리의 값을 읽는다(CONTROLS-080). 【추론】 루트의 방출 값(`outputValue`)에서 그 절대 경로를 따라 JSON Pointer처럼 내려간 값이며, 조상의 투영이 뺀 키는 `undefined`다(CONTROLS-080). 【추론】 계산 단계의 게이트에게 방출 트리는 이번 계산의 현재 상태이고, 바퀴 안이면 그 바퀴의 G다(CONTROLS-080, FRAGMENT-016). 【추론】 게이트, 상태 키, `derived`, `unsetValue`, `resetInteraction`, `watch`의 `watchValues`가 모두 이 규칙 하나를 따른다(CONTROLS-080). 【추론】 `controls.unsetOnInactive`의 식은 직전 커밋의 방출 트리를 읽는다(17라운드 통보 2)(CONTROLS-080, CONTROLS-024, WRITE-038). 【추론】 원본과 잠복 원본은 식이 읽지 못한다(CONTROLS-080). 【추론】 잠복 원본은 `node.inactiveValues`로만 읽는다(CONTROLS-080). 【추론】 노드가 없는 곳도 값 수준으로 읽힌다(CONTROLS-080). 【추론】 `extras`의 키, 터미널 노드 안(`./tags/0`)이 그렇다(CONTROLS-080). 【추론】 합성 노드를 읽는 식은 그 하위 트리 전체에 기댄다(CONTROLS-080). 【추론】 따라서 역의존 조회는 값이 바뀐 노드의 경로와 그 조상·자손 경로를 읽는 식을 모두 찾는다(CONTROLS-080, SETTLE-017). 【추론】 식의 경로는 객체의 자기 키와 배열의 색인으로만 내려가고 원시 값 아래는 `undefined`다(CONTROLS-080, BLUEPRINT-036). 【추론】 그래서 union 값이 `"abc"`일 때 `./slot/length`는 `undefined`다(CONTROLS-080, CONTROLS-085).
 
@@ -124,19 +124,19 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 | `active` | 게이트. 거짓이면 그 노드는 형상에 없다 — 숨겨지고 방출에서 빠진다. 원본은 기본으로 남아 `node.inactiveValues`로 읽는다. 나감 정책 키를 켜면 나갈 때 한 번 비운다(CONTROLS-024). 노드 스키마에 쓰면 노드 게이트, 조각 객체에 쓰면 조각 게이트이며, 두 범위는 한 장치다. 거짓에서 참이 되면 노드가 생기므로 그때 없음이면 채운다 | 계산 — 호스트 바퀴 안에서 `if` 가드와 같이 평가 | 형용사 |
 | `visible` | 거짓이면 숨기기만 한다. 방출은 그대로다. 전환은 노드 생성이 아니다 | 계산의 끝 | 형용사 |
 | `readOnly`, `disabled` | 잠금. 그 노드에만 걸린다. 값·형상·방출을 바꾸지 않는다 | 계산의 끝에서 한 번(코어에 글로벌 없음) | 형용사 |
-| `unsetOnInactive` | 나감 정책이 참으로 정해진 노드가 나갈 때 원본을 한 번 비운다. 기본 꺼짐. 네 층(노드 > `children` 항목의 `controls` > 조각의 `controls` > Form 속성), 같은 층은 하나라도 유지면 유지. 나가는 객체·분기에 켠 정책은 함께 나가는 하위 트리로 내려가고, 자손이 스스로 적은 선언이 가까운 순서로 이긴다(17라운드 소유자 답 R17-2 ㄴ, WRITE-033) | 전이 | 형용사(어느 선언이 걸리는가도, 걸린 선언이 식일 때의 값도 직전 커밋의 것이며 나가는 순간 새로 평가하지 않는다. Form 속성은 `boolean`만) |
+| `unsetOnInactive` | 나감 정책이 참으로 정해진 노드가 나갈 때 원본을 한 번 비운다. 기본 꺼짐. 네 층(노드 > `fields` 항목의 `controls` > 조각의 `controls` > Form 속성), 같은 층은 하나라도 유지면 유지. 나가는 객체·분기에 켠 정책은 함께 나가는 하위 트리로 내려가고, 자손이 스스로 적은 선언이 가까운 순서로 이긴다(17라운드 소유자 답 R17-2 ㄴ, WRITE-033) | 전이 | 형용사(어느 선언이 걸리는가도, 걸린 선언이 식일 때의 값도 직전 커밋의 것이며 나가는 순간 새로 평가하지 않는다. Form 속성은 `boolean`만) |
 | `default` | 노드가 생길 때 값이 없음이면 채우는 원천. 표준 `default`보다 앞선다(`controls.default` > `default` > 없음). 이미 있던 노드는 다시 채우지 않는다 | 전이 | 명사(값) |
 | `derived` | 의존 값이 바뀌는 에지에서 자기 값을 다시 계산해 원본을 덮는다. 사용자가 쓴 값은 다음 의존 변화 또는 그 노드가 다시 생길 때까지 남는다 | 파생 | 명사(식) |
 | `injectTo` | 자기 방출 값이 직전 커밋과 다를 때(에지) 다른 노드를 덮는다. 로드에는 직전 값이 없으므로 발화한다. 이름은 원천에 적고 대상을 가리키므로 방향을 남긴다(`inject`만 남기면 방향이 읽히지 않는다. 15라운드) | 파생 | 명사(함수) |
 | `unsetValue` | 식이 거짓에서 참이 되는 에지에서 자기 값을 없음으로 만든다. 로드에서는 로드된 값으로 평가해 참이면 지운다. 지운 뒤의 입력은 남는다. 참에서 거짓이 되면 아무 일도 하지 않는다(값을 되살리지 않는다). 둘째 발화원은 정책이 참으로 정해진 노드의 나감이다(WRITE-030) | 파생(식), 전이(나감) | 동사 |
 | `resetInteraction` | 식이 참이 되면 `dirty`·`touched`를 초기화한다. 값은 건드리지 않는다. 옛 이름 `pristine` | 커밋 | 동사 |
-| `children` | 부모가 이름으로 가리킨 직계 자식에 제어를 건다. 형태는 `[{ targets: [...], controls: { readOnly, disabled, visible, active, default, derived, unsetValue, resetInteraction, unsetOnInactive } }]`이다. `targets`와 `controls`를 나누고, `controls`에는 상태 키뿐 아니라 값 키도 둔다(소유자 답 14·15). 안쪽 `controls`는 닫힌 목록이며 `children`·`injectTo`·`discriminator`·`watch`는 들지 않는다. 한 홉짜리 장치라 손자에 걸려면 자식 스키마에 `controls.children`을 적는다 | 안쪽 `controls`의 각 키가 위 행의 단계를 따른다 | 선언 |
+| `fields` | 부모가 이름으로 가리킨 직계 자식에 제어를 건다. 형태는 `[{ targets: [...], controls: { readOnly, disabled, visible, active, default, derived, unsetValue, resetInteraction, unsetOnInactive } }]`이다. `targets`와 `controls`를 나누고, `controls`에는 상태 키뿐 아니라 값 키도 둔다(소유자 답 14·15). 안쪽 `controls`는 닫힌 목록이며 `fields`·`injectTo`·`discriminator`·`watch`는 들지 않는다. 한 홉짜리 장치라 손자에 걸려면 자식 스키마에 `controls.fields`을 적는다 | 안쪽 `controls`의 각 키가 위 행의 단계를 따른다 | 선언 |
 | `discriminator` | 작성자가 union 호스트에 적은 판별 키 이름(`"discriminator": "kind"`). 청사진이 각 분기의 그 키의 `const`·`enum`을 읽어 분기별 `active: "./kind === 값"`으로 바꾸고 그 키의 분기 선언을 게이트 없는 선언으로도 취급해 끌어올린다(14라운드 O-1). 분기 스키마(`kind: { const }`, `required`)는 고치지 않는다(FRAGMENT-008) | 청사진 — 상태와 작업 루프를 바꾸지 않는다 | 선언 |
 | `watch` | 의존 경로 선언. 값과 형상을 바꾸지 않는다. 경로의 값은 공개 prop `watchValues`(위치 배열)로 입력에 전달된다. 선언이 여럿이면 의존은 합집합, `watchValues`는 유효 스키마의 것(나중 승) | 청사진과 표시 | 선언 |
 
 잠복 원본 열거는 루트 노드의 함수이고 노드마다 getter `inactiveValues`가 있다(CONTROLS-021, VALUE-029). 로드에서 `active`가 거짓인 노드는 생기지 않고, 런타임에서는 거짓→참에 노드가 생겨 채움을 받는다(CONTROLS-021). `visible`은 형상·값·방출을 바꾸지 않는다(CONTROLS-022). `readOnly`·`disabled`는 그 노드의 입력을 잠그며 자손에 내려가지 않는다(CONTROLS-023).
 
-`unsetOnInactive`에서 어느 선언이 걸리는가도, 걸린 선언이 식일 때의 값도 직전 커밋(그 노드가 형상에 있던 마지막 커밋)의 것이다(CONTROLS-024). 로드에는 나감이 없다(CONTROLS-024). 로드에서는 형상의 모든 노드가 생긴 노드이고, 런타임에서 `default`는 생긴 노드에만 채운다(CONTROLS-025). `derived`의 식이 `undefined`면 쓰지 않는다(CONTROLS-026). 로드에서 `derived`는 직전 값이 없어 발화한다(CONTROLS-026). `injectTo`는 원천의 방출 값이 바뀔 때 대상에 전체 교체를 쓴다(CONTROLS-027). `resetInteraction`은 `unsetValue`와 같은 시점 규칙을 따른다(CONTROLS-029). `children`의 형태는 `controls: { children: [{ targets: ['name', 'email'], controls: { readOnly: './locked', unsetValue: '...' } }] }`이며, 안쪽 `controls`에는 상태 키뿐 아니라 값 키(`default`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive`)도 둔다(소유자 답 14·15)(CONTROLS-030). `children`의 자리는 객체 노드다(CONTROLS-030).
+`unsetOnInactive`에서 어느 선언이 걸리는가도, 걸린 선언이 식일 때의 값도 직전 커밋(그 노드가 형상에 있던 마지막 커밋)의 것이다(CONTROLS-024). 로드에는 나감이 없다(CONTROLS-024). 로드에서는 형상의 모든 노드가 생긴 노드이고, 런타임에서 `default`는 생긴 노드에만 채운다(CONTROLS-025). `derived`의 식이 `undefined`면 쓰지 않는다(CONTROLS-026). 로드에서 `derived`는 직전 값이 없어 발화한다(CONTROLS-026). `injectTo`는 원천의 방출 값이 바뀔 때 대상에 전체 교체를 쓴다(CONTROLS-027). `resetInteraction`은 `unsetValue`와 같은 시점 규칙을 따른다(CONTROLS-029). `fields`의 형태는 `controls: { fields: [{ targets: ['name', 'email'], controls: { readOnly: './locked', unsetValue: '...' } }] }`이며, 안쪽 `controls`에는 상태 키뿐 아니라 값 키(`default`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive`)도 둔다(소유자 답 14·15)(CONTROLS-030). `fields`의 자리는 객체 노드다(CONTROLS-030).
 
 `discriminator`는 그 키의 분기 선언을 **게이트 없는 선언으로도 취급해 끌어올린다**(14라운드 확정)(CONTROLS-031). 태그 키가 분기 안에만 있는 생성기 스키마도 그대로 받는다(CONTROLS-031). 존재만 더하는 선언이며 제약은 교차하지 않는다 — 게이트 없는 분기와 같은 문맥, 편집자 도출(CONTROLS-031). 어느 분기에도 그 키의 `const`·`enum`이 없거나, 분기 선언의 종류가 서로 다르거나, `const`·`enum` 값이 두 분기에 겹치면 청사진 오류다(CONTROLS-031).
 
@@ -160,7 +160,7 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 
 정책 키(`unsetOnInactive`, 이름은 소유자 13라운드 확정)는 형용사 형(`boolean` 또는 식→`boolean`, 15라운드 결정 2)이며 Form 속성은 `boolean`만이다(CONTROLS-039).
 
-노드 자신 > `children` 항목의 `controls` > 조각 객체의 `controls` > Form 속성 순으로 세부가 포괄을 덮고, 같은 층에 여럿이면 하나라도 유지면 유지한다(CONTROLS-040).
+노드 자신 > `fields` 항목의 `controls` > 조각 객체의 `controls` > Form 속성 순으로 세부가 포괄을 덮고, 같은 층에 여럿이면 하나라도 유지면 유지한다(CONTROLS-040).
 
 기본은 유지다(13라운드 답 2)(CONTROLS-041).
 
@@ -170,12 +170,12 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 나감의 정책은 꺼지는 순간에도 적용한다(CONTROLS-042, WRITE-032).
 조각 객체(`allOf` 항목, 분기, `then`)의 `controls.active`는 그 조각의 게이트이고, 그 밖의 제어 키(`controls.readOnly` 등)는 그 조각이 직접 선언한 호스트의 직계 자식에 조각이 켜진 동안 걸린다(조각 범위 제어)(CONTROLS-042).
 
-조각 범위 제어와 `controls.children`은 조상에서 내려오는 상속이 아니라 명시한 대상에 거는 제어다(CONTROLS-044).
+조각 범위 제어와 `controls.fields`은 조상에서 내려오는 상속이 아니라 명시한 대상에 거는 제어다(CONTROLS-044).
 상태 키가 아닌 나감의 비움 정책 `unsetOnInactive`만은 나가는 객체·분기에 켠 정책이 함께 나가는 하위 트리로 내려간다(17라운드 소유자 답 R17-2 ㄴ, WRITE-033)(CONTROLS-044).
 나감의 비움 정책 `unsetOnInactive`는 상태 키가 아니며, 13라운드 답 1의 둘째 예외로 함께 나가는 하위 트리에 내려간다(17라운드 소유자 답 R17-2 ㄴ, WRITE-033)(CONTROLS-044).
 
 【추론】 PR-1·PR-2가 쓰는 부분은 (1)–(5)이고, PR-6이 쓰는 부분은 (6)–(7)이다(CONTROLS-073).
-【추론】 (1) 대상 해석: `targets`의 이름은 그 `children` 선언을 가진 호스트 청사진의 직계 자식 이름으로 푼다(CONTROLS-073).
+【추론】 (1) 대상 해석: `targets`의 이름은 그 `fields` 선언을 가진 호스트 청사진의 직계 자식 이름으로 푼다(CONTROLS-073).
 【추론】 자식 이름은 본체와 모든 조각 선언의 합집합이고, 끌어올린 판별 키와 가상 이름을 포함한다(CONTROLS-073).
 【추론】 조각에서만 선언된 자식도 가리킬 수 있다(CONTROLS-073).
 【추론】 같은 이름에 종류가 다른 노드가 여럿이면 모두에 걸린다(CONTROLS-073).
@@ -183,14 +183,14 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 【추론】 (3) 형상에 없는 대상: 청사진에 있으나 지금 형상에 없는 대상은 오류가 아니다(CONTROLS-073).
 【추론】 그 항목은 대상이 형상에 있는 동안만 효력을 가진다(CONTROLS-073).
 【추론】 항목 자신의 `controls.active`는 (4)의 게이트로서 호스트에서 평가되어 대상의 존재를 정하며, 이 문장의 대상이 아니다(CONTROLS-073).
-【추론】 그래서 `controls.children` 대상이 형상에 없을 때의 코드는 생기지 않는다(CONTROLS-073).
+【추론】 그래서 `controls.fields` 대상이 형상에 없을 때의 코드는 생기지 않는다(CONTROLS-073).
 【추론】 (4) 항목 게이트의 전순서 자리: 항목의 `controls.active`는 노드 게이트와 같은 장치이므로 노드 게이트의 자리 규칙을 따른다(CONTROLS-073).
-【추론】 곧 그 `children` 선언을 담은 조각(본체면 본체) 바로 뒤, 그 조각의 노드 게이트들 다음에 항목 순서대로 든다(CONTROLS-073).
-【추론】 (5) 예산 셈: 호스트 바퀴와 전이 라운드 식의 '노드 게이트 수'는 `controls.active`를 가진 `children` 항목을 대상 수와 무관하게 항목마다 하나로 센다(CONTROLS-073, SETTLE-041).
+【추론】 곧 그 `fields` 선언을 담은 조각(본체면 본체) 바로 뒤, 그 조각의 노드 게이트들 다음에 항목 순서대로 든다(CONTROLS-073).
+【추론】 (5) 예산 셈: 호스트 바퀴와 전이 라운드 식의 '노드 게이트 수'는 `controls.active`를 가진 `fields` 항목을 대상 수와 무관하게 항목마다 하나로 센다(CONTROLS-073, SETTLE-041).
 【추론】 (6) 대상별 식: 항목 `controls`의 식은 기준점이 호스트이고 항목마다 한 번 평가되어 모든 대상에 같은 값으로 걸린다(CONTROLS-073).
 【추론】 대상마다 다른 식은 항목을 나눠 적는다(CONTROLS-073).
-【추론】 (7) 값 키: 값 키(`default`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive`)는 각 대상 노드에 그 키를 적은 것처럼 동작하되 층은 `children` 항목 층이다(CONTROLS-073).
-【추론】 같은 대상에서는 조각의 `controls` < `children` 항목 < 노드 자신이다(CONTROLS-073).
+【추론】 (7) 값 키: 값 키(`default`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive`)는 각 대상 노드에 그 키를 적은 것처럼 동작하되 층은 `fields` 항목 층이다(CONTROLS-073).
+【추론】 같은 대상에서는 조각의 `controls` < `fields` 항목 < 노드 자신이다(CONTROLS-073).
 【추론】 같은 층이면 전순서에서 나중이 이기고 한 배열 안이면 뒤 항목이 이긴다(CONTROLS-073).
 【추론】 다만 `unsetOnInactive`는 CONTROLS-040대로 같은 층에 여럿이면 하나라도 유지면 유지한다(CONTROLS-073).
 【추론】 `derived`는 대상마다 같은 값을 쓴다(CONTROLS-073).
@@ -198,14 +198,14 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 【추론】 잠금(`readOnly`·`disabled`)은 하나라도 참이면 잠기고(OR), 표시(`active`·`visible`)는 모두 참이어야 켜진다(AND)(CONTROLS-073).
 【추론】 CONTROLS-046이 그대로다(CONTROLS-073, CONTROLS-082).
 
-【추론】 조각 객체(`allOf` 항목, 분기, `then`/`else`)의 `controls`에 둘 수 있는 키는 `controls.children` 항목의 닫힌 목록과 같다: `active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`(CONTROLS-077).
+【추론】 조각 객체(`allOf` 항목, 분기, `then`/`else`)의 `controls`에 둘 수 있는 키는 `controls.fields` 항목의 닫힌 목록과 같다: `active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`(CONTROLS-077).
 【추론】 `active`는 조각 게이트이고, 나머지는 조각 범위 제어다(CONTROLS-077).
-【추론】 `children`·`injectTo`·`discriminator`·`watch`는 청사진 오류다(CONTROLS-077).
+【추론】 `fields`·`injectTo`·`discriminator`·`watch`는 청사진 오류다(CONTROLS-077).
 【추론】 값 키는 조각이 켜져 있는 동안, 그 조각이 직접 선언한 호스트의 직계 자식마다 따로 걸린다(CONTROLS-077).
 【추론】 각 대상에게는 조각 층의 선언으로 작용하며, 같은 값이나 같은 식이 대상 모두에 쓰인다(CONTROLS-077).
 【추론】 식의 기준점은 호스트다(CONTROLS-077).
 【추론】 `default`는 켜진 조각의 대상 노드가 생길 때 채움 원천이 된다(CONTROLS-077).
-【추론】 그 순위는 노드 자신의 `controls.default` > `children` 항목 > 조각의 `controls.default` > 표준 `default`(유효 스키마) > 없음이다(CONTROLS-077).
+【추론】 그 순위는 노드 자신의 `controls.default` > `fields` 항목 > 조각의 `controls.default` > 표준 `default`(유효 스키마) > 없음이다(CONTROLS-077).
 【추론】 같은 층이면 조각 전순서에서 나중이 이긴다(CONTROLS-077).
 【추론】 대상마다 다른 기본값은 조각 안의 자식 선언에 적는다(CONTROLS-077).
 【추론】 `unsetValue`는 식 하나가 거짓→참이 되는 에지에서 대상 모두를 없음으로 만든다(CONTROLS-077).
@@ -218,15 +218,15 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 
 ### 1.11 노드 상태와 잠금
 
-코어에는 글로벌이 없다(소유자 13라운드 답 1: "글로벌 readOnly 나 disabled 같은 개념은 없애고 모든 control 필드는 자체 노드만 지원. children 그룹은 예외.")(CONTROLS-045). 표준 `readOnly`와 `controls`의 키는 그 노드에만 걸린다(CONTROLS-045). 루트 스키마의 키는 루트 노드의 로컬 키이며, 오늘 루트 키 다섯(`readOnly`·`disabled`·`active`·`visible`·`pristine`)의 특수 처리는 사라진다(이주)(CONTROLS-045). 조상의 상태는 자손에 상속되지 않는다(소유자 답 13)(CONTROLS-045). 그래서 터미널이 아닌 객체 노드를 대상으로 한 잠금은 입력이 없으므로 효과가 없고(표준 `readOnly`는 청사진 경고), 배열 노드의 잠금은 렌더 계층이 아이템 추가·삭제·이동 입력에 적용하며, 터미널 객체·배열은 입력이 있으므로 리프와 같다(CONTROLS-045). `active`·`visible`은 구조상 하위 트리를 가린다(SCHEMA-010, CONTROLS-045). 자손을 거는 길은 부모의 `controls.children`과 켜진 조각의 `controls`뿐이다(CONTROLS-044, CONTROLS-045). Form 속성 `readOnly`·`disabled`는 렌더 계층이 참일 때만 거는 전체 잠금이며 코어의 상태가 아니다(원리 P5(core는 렌더러를 모른다), CONTROLS-045).
+코어에는 글로벌이 없다(소유자 13라운드 답 1: "글로벌 readOnly 나 disabled 같은 개념은 없애고 모든 control 필드는 자체 노드만 지원. children 그룹은 예외.")(CONTROLS-045). 표준 `readOnly`와 `controls`의 키는 그 노드에만 걸린다(CONTROLS-045). 루트 스키마의 키는 루트 노드의 로컬 키이며, 오늘 루트 키 다섯(`readOnly`·`disabled`·`active`·`visible`·`pristine`)의 특수 처리는 사라진다(이주)(CONTROLS-045). 조상의 상태는 자손에 상속되지 않는다(소유자 답 13)(CONTROLS-045). 그래서 터미널이 아닌 객체 노드를 대상으로 한 잠금은 입력이 없으므로 효과가 없고(표준 `readOnly`는 청사진 경고), 배열 노드의 잠금은 렌더 계층이 아이템 추가·삭제·이동 입력에 적용하며, 터미널 객체·배열은 입력이 있으므로 리프와 같다(CONTROLS-045). `active`·`visible`은 구조상 하위 트리를 가린다(SCHEMA-010, CONTROLS-045). 자손을 거는 길은 부모의 `controls.fields`과 켜진 조각의 `controls`뿐이다(CONTROLS-044, CONTROLS-045). Form 속성 `readOnly`·`disabled`는 렌더 계층이 참일 때만 거는 전체 잠금이며 코어의 상태가 아니다(원리 P5(core는 렌더러를 모른다), CONTROLS-045).
 **로컬**은 노드 자신의 키와 `controls`의 식이다(CONTROLS-045).
 오늘 루트 키 다섯(`readOnly`·`disabled`·`active`·`visible`·`pristine`)의 특수 처리와 README의 "Priority System"은 사라진다(CONTROLS-045).
 
-로컬 층 안에서 상태 키가 여럿 겹칠 때(표준 `readOnly`, `controls.readOnly`, 켜진 조각의 범위 제어, 부모의 `controls.children` 항목)는 선언은 합집합·제한은 교집합의 원리대로 잠금(`readOnly`·`disabled`)은 하나라도 참이면 잠기고 표시(`active`·`visible`)는 모두 참이어야 켜진다(CONTROLS-046).
+로컬 층 안에서 상태 키가 여럿 겹칠 때(표준 `readOnly`, `controls.readOnly`, 켜진 조각의 범위 제어, 부모의 `controls.fields` 항목)는 선언은 합집합·제한은 교집합의 원리대로 잠금(`readOnly`·`disabled`)은 하나라도 참이면 잠기고 표시(`active`·`visible`)는 모두 참이어야 켜진다(CONTROLS-046).
 코어에 글로벌은 없고, Form 속성의 전체 잠금은 렌더 계층이 그 결과 위에 OR한다(소유자 13라운드)(CONTROLS-046, CONTROLS-082).
 이 결합은 18C-69의 편집자 결정(18라운드)으로 확정되어 소유자 확인을 기다리지 않는다(CONTROLS-046, CONTROLS-082).
 
-【추론】 한 노드 위에서 로컬 선언이 겹칠 수 있는 자리는 넷이다: 노드 자신의 표준 `readOnly`, 자기 `controls.readOnly`·`controls.disabled`, 켜진 조각의 범위 제어, 부모의 `controls.children` 항목(CONTROLS-082).
+【추론】 한 노드 위에서 로컬 선언이 겹칠 수 있는 자리는 넷이다: 노드 자신의 표준 `readOnly`, 자기 `controls.readOnly`·`controls.disabled`, 켜진 조각의 범위 제어, 부모의 `controls.fields` 항목(CONTROLS-082).
 【추론】 이것들이 겹치면 잠금(`readOnly`·`disabled`)은 하나라도 참이면 잠기고, 표시(`active`·`visible`)는 모두 참이어야 켜진다(CONTROLS-082).
 【추론】 CONTROLS-046을 그대로 확정한다(CONTROLS-082).
 【추론】 어느 자리의 `false`도 다른 자리의 잠금을 풀지 않는다(CONTROLS-082).
@@ -329,7 +329,7 @@ BE가 같은 스키마를 자기 검증기에 넣을 때: 미지 키워드를 �
 
 - **사라진다:**(CONTROLS-050) 평면 `&키` 축약 전부(CONTROLS-050). 분기의 `const`·`enum`을 판별식으로 자동 감지하는 것(`getExpressionFromSchema.ts:35-51`)(CONTROLS-050). 폼은 `oneOf`·`anyOf`로 분기를 고르지 않는다(원리 P1′(폼이 스키마에서 읽는 것은 노드 트리의 모양을 정하는 문법뿐), CONTROLS-050). 판별이 필요하면 작성자가 `controls.discriminator`나 분기별 `controls.active`를 적는다(CONTROLS-050).
 
-- **이주 항목:**(CONTROLS-051) `computed` → `controls`(별칭 없음), `&X` → `controls.X`, `&if`·`computed.if` → 분기 객체의 `controls.active`, 판별식 자동 감지 → `controls.discriminator` 또는 분기별 `controls.active`, `&pristine`·맨 키 `pristine` → `controls.resetInteraction`, `injectTo` → `controls.injectTo`, 맨 키 `disabled`·`visible`·`active` → `controls.*`, 루트 스키마 키 다섯의 특수 처리 제거, 맨 키 `terminal`·`virtual`·`propertyKeys` → `options.*`, 맨 키 `formType`·`FormTypeInput`·`FormTypeInputProps`·`FormTypeRendererProps`·`errorMessages`와 `options`의 플러그인 자유 칸 → `presentation.*`, `options.trim`은 `options`에 남고 포커스 아웃 때 문자열 동작 행이 자른다(17라운드 소유자 답 R17-3), 자식의 식을 `controls.children`으로 옮길 때 `../x` → `./x`, 플러그인 키 `FormGroup`·`FormLabel`·`FormInput`·`FormError` → `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`, Form 속성 `CustomFormTypeRenderer` → `FormTypeGroupRenderer`(같은 이름의 Form 속성 셋이 새로 생긴다), `ChildNodeComponentProps`와 `FormGroupProps`의 prop `FormTypeRenderer`(와 `OverridableFormTypeInputProps`의 Omit 목록) → `FormTypeGroupRenderer`(CONTROLS-051).
+- **이주 항목:**(CONTROLS-051) `computed` → `controls`(별칭 없음), `&X` → `controls.X`, `&if`·`computed.if` → 분기 객체의 `controls.active`, 판별식 자동 감지 → `controls.discriminator` 또는 분기별 `controls.active`, `&pristine`·맨 키 `pristine` → `controls.resetInteraction`, `injectTo` → `controls.injectTo`, 맨 키 `disabled`·`visible`·`active` → `controls.*`, 루트 스키마 키 다섯의 특수 처리 제거, 맨 키 `terminal`·`virtual`·`propertyKeys` → `options.*`, 맨 키 `formType`·`FormTypeInput`·`FormTypeInputProps`·`FormTypeRendererProps`·`errorMessages`와 `options`의 플러그인 자유 칸 → `presentation.*`, `options.trim`은 `options`에 남고 포커스 아웃 때 문자열 동작 행이 자른다(17라운드 소유자 답 R17-3), 자식의 식을 `controls.fields`으로 옮길 때 `../x` → `./x`, 플러그인 키 `FormGroup`·`FormLabel`·`FormInput`·`FormError` → `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`, Form 속성 `CustomFormTypeRenderer` → `FormTypeGroupRenderer`(같은 이름의 Form 속성 셋이 새로 생긴다), `ChildNodeComponentProps`와 `FormGroupProps`의 prop `FormTypeRenderer`(와 `OverridableFormTypeInputProps`의 Omit 목록) → `FormTypeGroupRenderer`(CONTROLS-051).
 
 【추론】 `virtualRequired`는 새 설계에 없고, 대체도 없다(CONTROLS-078).
 【추론】 이 키를 만드는 곳은 `processVirtualSchema`의 `required` 재작성뿐이고(`src/helpers/jsonSchema/preprocessSchema/utils/processVirtualSchema/utils/transformCondition.ts:40-52`), 읽는 곳은 `BranchStrategy/utils`의 조건 사전뿐이다(`src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/utils/flattenConditions.ts:55,87`)(CONTROLS-078).

@@ -1,6 +1,6 @@
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Whether a whole replacement already gave this path's only raw to a live node.
@@ -15,14 +15,14 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   const scope = context.replaceScope;
   const withinScope =
     scope !== undefined &&
-    (!scope.path || path === scope.path || path.startsWith(`${scope.path}/`));
+    (!scope.path || path === scope.path || path.startsWith(scope.path + '/'));
   const withinVirtual =
     context.virtualReplacePaths?.some(
-      (replaced) => path === replaced || path.startsWith(`${replaced}/`),
+      (replaced) => path === replaced || path.startsWith(replaced + '/'),
     ) ?? false;
   const withinBatch =
     context.replacePaths?.some(
-      (replaced) => path === replaced || path.startsWith(`${replaced}/`),
+      (replaced) => path === replaced || path.startsWith(replaced + '/'),
     ) ?? false;
   if (!withinScope && !withinVirtual && !withinBatch) return false;
   const live = find(context.root, path);

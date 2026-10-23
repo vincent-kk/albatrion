@@ -12,6 +12,10 @@ import type { RootLoad, RootLoadProps } from '../type';
 import { applyFormErrors } from './applyFormErrors';
 import { createRootLoad } from './createRootLoad';
 
+/** Mask selecting the automatic-write override bits of a reset option. */
+const AUTOMATIC_WRITES_MASK =
+  SetValueOption.DisableAutomaticWrites | SetValueOption.EnableAutomaticWrites;
+
 /**
  * Perform one synchronous load, preserving equal authored roots and replacing others.
  * @param previous - Committed load whose tree may be retained
@@ -26,10 +30,7 @@ export const resetRootLoad = (
     | typeof SetValueOption.DisableAutomaticWrites
     | typeof SetValueOption.EnableAutomaticWrites,
 ): RootLoad => {
-  const automaticWrites =
-    (option ?? 0) &
-    (SetValueOption.DisableAutomaticWrites |
-      SetValueOption.EnableAutomaticWrites);
+  const automaticWrites = (option ?? 0) & AUTOMATIC_WRITES_MASK;
   const loadOption =
     automaticWrites ||
     (props.disableAutomaticWrites

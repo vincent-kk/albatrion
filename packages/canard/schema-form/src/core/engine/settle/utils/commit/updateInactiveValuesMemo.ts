@@ -6,8 +6,8 @@ import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
-import { HostLatent } from '../latent/HostLatent';
-import { isTypeMismatch } from './isTypeMismatch';
+import { HostLatent } from '../latentStore/HostLatent';
+import { isMisfit } from './isMisfit';
 
 /** Compare two occurrence positions without converting them to path strings. */
 const compareOrder = (
@@ -50,11 +50,7 @@ export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>(
             ((template.kind === 'array' &&
               template.strategy === 'branch' &&
               isArray(source.raw)) ||
-              isTypeMismatch(
-                source.raw,
-                template.schemaType,
-                template.nullable,
-              ))
+              isMisfit(source.raw, template.schemaType, template.nullable))
           ? source.raw
           : undefined;
     if (value !== undefined)

@@ -1,4 +1,5 @@
-export type { ValidateFunction, ValidationIssue, Validator } from './type';
+export type { ValidationIssue } from './types/issue';
+export type { ValidateFunction, Validator } from './types/validator';
 export { readValidationEntry } from './utils/cache/readValidationEntry';
 export { readFieldNodeGuard } from './utils/guard/readFieldNodeGuard';
 export { compileEntryGuards } from './utils/guard/compileEntryGuards';
