@@ -6,7 +6,7 @@ import { selectRenderScenes } from '@/schema-form/__tests__/fixtures/remountEqui
 
 import { checkRenderScene } from './remount-equivalence/helpers/checkRenderScene';
 
-// D443-02(14) — 결함, 수정 PR 대기; C443-01(14) — VALUE-031 ㄴ 후보, 소유자 판정 대기.
+// 남은 차이는 C443-01(omitEmpty 투영의 raw·value)뿐이며 444C-01 로 정당한 차이로 닫혔다(architecture/reviews/round-444-closing.md).
 it.fails('replays a deterministic feature-pair cover through the screen adapter', async ({
   task,
 }) => {

@@ -10,9 +10,9 @@ import { checkRenderScene } from './remount-equivalence/helpers/checkRenderScene
 
 for (const [group, scenes, test] of [
   ['star', createStarScenes(), it],
-  // D443-04 — 원장 판정 대기; D443-05 — U7 후보, 소유자 판정 대기; C443-01·C443-02 — VALUE-031 ㄴ 후보, 소유자 판정 대기.
+  // 정당한 차이로 닫힌 핀(architecture/reviews/round-444-closing.md): C443-01(444C-01)·C443-02(444C-02)·D443-04(444C-03)·D443-05(444C-04).
   ['overlay', createOverlayScenes(), it.fails],
-  // D443-03 — 결함, 수정 PR 대기.
+  // D443-03 — 결함, 수정 PR #451 의 소유자 수용(TEST-027) 대기.
   ['relocated', createRelocatedScenes(), it.fails],
   ['ancestor', createAncestorScenes(), it],
 ] as const)

@@ -9,7 +9,7 @@
 - `recognizeEqualityExpression(source, dependencies)`는 형제 컴파일러의 공용 치환과 새 경로 관리자를 사용합니다. 얻은 경로가 정확히 하나이며 컴파일 결과와 원소별로 같아야 합니다. 반환값은 `literals` 순서를 보존하며 실패하면 undefined입니다.
 - 스캐너는 정확한 `dependencies[0]`만 받고 프로퍼티·색인·호출·연쇄 비교·블록·임의 식별자·목록 포함을 거절합니다. 우선순위는 JavaScript와 같으며 괄호·논리합은 반복형 파서와 트리 순회로 처리합니다.
 - 문자열은 명시된 단순 이스케이프, 뒤에 숫자가 없는 NUL, hex, Unicode와 코드 포인트만 받습니다. 줄 이음·옛 8진·식별 이스케이프·날 줄바꿈·U+2028·U+2029는 거절합니다. 수는 단항 음수, 십진 정수·소수·지수, hex·octal·binary만 받고 옛 8진·구분자·BigInt·비유한 값은 거절합니다.
-- 문법 정본은 `.seiri/tasks/decision-62-442/design.md` 2.1절입니다. 문자열 길이에 비례하는 시간·임시 토큰과 트리 공간이 들며 결과 리터럴 목록만 청사진에 남깁니다.
+- 문법 정본은 `architecture/verification/perf-optimization/decision-62-gate-table-design.md` 2.1절입니다. 문자열 길이에 비례하는 시간·임시 토큰과 트리 공간이 들며 결과 리터럴 목록만 청사진에 남깁니다.
 
 ## Acceptance Criteria
 

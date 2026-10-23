@@ -12,12 +12,9 @@ const arg = (name, fallback) =>
   process.argv
     .find((value) => value.startsWith('--' + name + '='))
     ?.slice(name.length + 3) ?? fallback;
-const run = path.resolve(
-  arg(
-    'run',
-    path.join(root, '.seiri/tasks/itemless-declarations/run-task_b9d615956067'),
-  ),
-);
+const runArgument = arg('run');
+assert.ok(runArgument, 'Pass --run=<ignored run directory>; there is no default');
+const run = path.resolve(runArgument);
 const label = arg('label', 'candidate');
 const mode = process.argv[2];
 const hash = (value) => createHash('sha256').update(value).digest('hex');
