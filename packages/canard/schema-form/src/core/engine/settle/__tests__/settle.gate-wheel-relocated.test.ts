@@ -6,6 +6,107 @@ import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import type { gateSelectionCases } from './fixtures/gateSelectionCases';
 import { runGateSelectionCase } from './helpers/runGateSelectionCase';
 
+it.each(['record', 'skip', 'shadow'] as const)(
+  '%s: relocated child follows a value-only write after its host was located',
+  (mode) => {
+    const previousMode = gateWheelEvaluation.mode;
+    try {
+      runGateSelectionCase(
+        {
+          name: 'value-only change after relocated host locate',
+          schema: {
+            type: 'object',
+            properties: {
+              mode: { type: 'string' },
+              p: {
+                type: 'object',
+                properties: {
+                  child: {
+                    type: 'string',
+                    controls: { active: '#/later === true' },
+                  },
+                },
+              },
+            },
+            allOf: [
+              {
+                controls: { active: './mode === "x"' },
+                properties: { later: { type: 'boolean' } },
+              },
+            ],
+          },
+          input: { mode: 'x', p: { child: 'P' } },
+          writes: [{ path: '/later', value: true }],
+        },
+        () => {
+          gateWheelEvaluation.mode = mode;
+        },
+        (root) =>
+          expect(root.structure?.p?.structure?.child !== undefined).toBe(
+            root.structure?.later?.emit === true,
+          ),
+      );
+    } finally {
+      gateWheelEvaluation.mode = previousMode;
+    }
+  },
+);
+
+it.each(['record', 'skip', 'shadow'] as const)(
+  '%s: relocated declaring-host reader follows a sibling gate that flips mid-round',
+  (mode) => {
+    const previousMode = gateWheelEvaluation.mode;
+    try {
+      runGateSelectionCase(
+        {
+          name: 'declaring-host reader after a mid-round sibling gate flip',
+          schema: {
+            type: 'object',
+            properties: {
+              X: {
+                type: 'object',
+                properties: {
+                  current: {
+                    type: 'object',
+                    properties: {
+                      b: { type: 'string' },
+                      a: {
+                        type: 'string',
+                        controls: {
+                          active: '(#/X)?.current?.b === "B"',
+                        },
+                      },
+                      reader: {
+                        type: 'string',
+                        controls: {
+                          active: '(#/X)?.current?.a === "A"',
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          input: { X: { current: { b: 'no', a: 'A' } } },
+          writes: [{ path: '/X/current/b', value: 'B' }],
+        },
+        () => {
+          gateWheelEvaluation.mode = mode;
+        },
+        (root) => {
+          const current = root.structure?.X?.structure?.current;
+          expect(current?.structure?.reader !== undefined).toBe(
+            current?.structure?.a?.emit === 'A',
+          );
+        },
+      );
+    } finally {
+      gateWheelEvaluation.mode = previousMode;
+    }
+  },
+);
+
 it.each([false, true])(
   'real relocated child with newly gated host=%s retains its next wheel',
   (newHost) => {

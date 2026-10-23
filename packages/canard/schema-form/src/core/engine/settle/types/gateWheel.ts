@@ -1,5 +1,13 @@
 import type { BlueprintGate } from '../../blueprint';
 
+/** Reads of one relocated gate occurrence at its latest evaluation in this settlement. */
+export interface RelocatedGateReads {
+  /** Absolute dependency paths in expression order; '@' for the binding context. */
+  paths: readonly string[];
+  /** Values that evaluation observed at those paths. */
+  values: readonly unknown[];
+}
+
 /** One actual input read; only the current host wheel retains its value. */
 export interface GateWheelInput {
   /** Absolute dependency or host path, or '@' for the binding context. */

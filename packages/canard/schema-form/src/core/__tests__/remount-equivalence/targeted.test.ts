@@ -30,8 +30,7 @@ it.fails('projection overlays reach readers outside the overlay host', async ({
   expect(mismatches).toEqual([]);
 }, 120000);
 
-// D443-03 — 결함, 수정 PR #451 의 소유자 수용(TEST-027) 대기.
-it.fails('relocated gates observe value-only changes after first locate', async ({
+it('relocated gates observe value-only changes after first locate', async ({
   task,
 }) => {
   const mismatches = [];

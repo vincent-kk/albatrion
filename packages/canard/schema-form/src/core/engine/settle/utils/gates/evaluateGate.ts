@@ -151,6 +151,11 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
           path === $.Context ? 'context' : 'value',
         );
       }
+      if (occurrence.evaluationHostPath !== occurrence.hostPath)
+        (context.relocatedReads ??= new Map()).set(occurrence, {
+          paths: occurrence.watchPaths,
+          values: dependencies,
+        });
       return Boolean(expression.evaluate(dependencies));
     }
     return gate.condition === true;
