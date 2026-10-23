@@ -52,7 +52,7 @@
 
 ## API Contracts
 
-- 결정 62 (라)의 `BlueprintExpression.equality?: { readonly literals: readonly EqualityLiteral[] }`는 `active`이며 의존 경로가 하나인 식에서만 만드는 정적 증거입니다. `EqualityLiteral`은 string·유한 number·boolean·null이며, 공용 경로 치환을 새 관리자로 다시 수행한 의존 목록이 컴파일 결과와 원소별로 같아야 합니다. 인식기는 Function·eval·컴파일된 함수·toString을 호출하지 않고 식 전체를 수동 스캔한 뒤 우선순위 구문 트리를 검사합니다. 괄호로 감싼 참조와 리터럴의 `===`, 그 비교들의 `||`만 허용하며 연쇄 비교·프로퍼티 접근·호출·배열·블록·식별자 리터럴은 거절합니다. 문자열은 명시된 단순·NUL·hex·Unicode 이스케이프만, 수는 십진 소수·지수와 hex·octal·binary 및 단항 음수만 해석하며 옛 8진·구분자·BigInt·비유한 값·줄 이음은 거절합니다. 범위와 리터럴 의미의 정본은 원본 저장소 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/decision-62-442/design.md` 2.1절입니다. PR-1b는 메타데이터만 추가하며 정착의 게이트 평가 계약을 바꾸지 않습니다.
+- 결정 62 (라)의 `BlueprintExpression.equality?: { readonly literals: readonly EqualityLiteral[] }`는 `active`이며 의존 경로가 하나인 식에서만 만드는 정적 증거입니다. `EqualityLiteral`은 string·유한 number·boolean·null이며, 공용 경로 치환을 새 관리자로 다시 수행한 의존 목록이 컴파일 결과와 원소별로 같아야 합니다. 인식기는 Function·eval·컴파일된 함수·toString을 호출하지 않고 식 전체를 수동 스캔한 뒤 우선순위 구문 트리를 검사합니다. 괄호로 감싼 참조와 리터럴의 `===`, 그 비교들의 `||`만 허용하며 연쇄 비교·프로퍼티 접근·호출·배열·블록·식별자 리터럴은 거절합니다. 문자열은 명시된 단순·NUL·hex·Unicode 이스케이프만, 수는 십진 소수·지수와 hex·octal·binary 및 단항 음수만 해석하며 옛 8진·구분자·BigInt·비유한 값·줄 이음은 거절합니다. 범위와 리터럴 의미의 정본은 원본 저장소 `architecture/verification/perf-optimization/decision-62-gate-table-design.md` 2.1절입니다. PR-1b는 메타데이터만 추가하며 정착의 게이트 평가 계약을 바꾸지 않습니다.
 
 - union의 런타임 식별은 schemaType에 보관한 정규화 형 집합의 fold mask로 정한다. number/integer는 같은 비트이고 null은 nullable 장식이므로 비null 집합에 비트를 더하지 않는다. 기존 schemaType으로 이 mask를 얻을 수 있어 별도 저장 필드는 없으며, 서로 다른 생성 순서와 형 나열 순서에서도 같은 fold는 같은 토큰을 쓴다(BLUEPRINT-043, 389C-02, 390C-01).
 

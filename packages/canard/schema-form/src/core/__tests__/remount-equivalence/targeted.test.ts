@@ -18,7 +18,8 @@ it('literal-star state owners match a fresh public-output mount', async ({
   expect(mismatches).toEqual([]);
 }, 120000);
 
-// D443-04 — 원장 판정 대기; D443-05 — U7 후보, 소유자 판정 대기; C443-01·C443-02 — VALUE-031 ㄴ 후보, 소유자 판정 대기.
+// 정당한 차이로 닫힌 핀(architecture/reviews/round-444-closing.md): C443-01(444C-01)·C443-02(444C-02)·D443-04(444C-03)·D443-05(444C-04).
+// 정적 마스크를 더해 `it` 로 되돌리는 일은 9단계 시험 장치 항목이다.
 it.fails('projection overlays reach readers outside the overlay host', async ({
   task,
 }) => {
