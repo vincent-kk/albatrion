@@ -52,6 +52,8 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   changed: boolean;
   /** Whether a general-path entry must flush pending gate reads first. */
   readonly flushReads: boolean;
+  /** Prepared once by selectChildren; table and general paths share this entry predicate. */
+  readonly reuseStatic?: (entry: BlueprintChildEntry) => boolean;
   /** Present only for a table step; its pure recognized expression cannot throw. */
   tableVerdict?: boolean;
 }

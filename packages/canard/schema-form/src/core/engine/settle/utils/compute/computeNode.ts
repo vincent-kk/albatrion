@@ -1,3 +1,4 @@
+import { HostStaticPartition } from '../../../blueprint';
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { GateWheelFrame } from '../../types/gateWheel';
@@ -8,6 +9,7 @@ import { canSkipGateWheel } from '../gates/canSkipGateWheel';
 import { finishGateTableRound } from '../gates/finishGateTableRound';
 import { gateWheelEvaluation } from '../gates/gateWheelEvaluation';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
+import { getGateExpression } from '../gates/getGateExpression';
 import { prepareGateTableRound } from '../gates/prepareGateTableRound';
 import { verifyGateWheelConfirmation } from '../gates/verifyGateWheelConfirmation';
 import { updateOutput } from '../output/updateOutput';
@@ -158,8 +160,8 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   const staticList = context.hasGates ? getStaticGateList(node) : undefined;
   const gates: BlueprintGate[] = staticList ? [...staticList.gates] : [];
   const seenGates = new Set<BlueprintGate>();
+  const relocated = context.hasGates ? relocatedGates(node) : [];
   if (context.hasGates) {
-    const relocated = relocatedGates(node);
     for (let index = 0; index < relocated.length; index++) {
       const occurrence = relocated[index];
       if (
@@ -171,17 +173,32 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       }
     }
   }
-  if (gates.length > 0) primeHost(node, prior, context);
+  if (gates.length > 0) primeHost(node, prior, context, relocated.length > 0);
   const initialDirty = dirtyChildren(node, context);
   for (let index = 0; index < initialDirty.length; index++)
     computeNode(initialDirty[index], context);
-  if (gates.length > 0 && updateOutput(node, context))
+  const deferBaseline =
+    gates.length > 0 &&
+    context.kind !== 'load' &&
+    node.behavior.type === 'object' &&
+    relocated.length === 0 &&
+    !context.distributedInputs.has(node) &&
+    context.pathChanges.length === 0 &&
+    !HostStaticPartition.get(node.blueprintNode).hasGatedOverlays &&
+    gates.every(
+      (gate) =>
+        getGateExpression(node.runtime.blueprint, gate.schemaPath)?.equality,
+    ) &&
+    HostStaticPartition.get(node.blueprintNode).staticEntries.length > 0;
+  if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);
+  else if (gates.length > 0 && updateOutput(node, context))
     scheduleRelocatedGates(relocatedGates(node), context);
   let cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
   let confirmation: GateWheelFrame | undefined;
   let previousPredicate: boolean | undefined;
   let lastStructure = prior;
   let registered = false;
+  let hasRelocated = relocated.length > 0;
   for (let round = 0; round < cap; round++) {
     const roundLocal = node.local;
     const roundEmit = node.emit;
@@ -208,26 +225,50 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
         context.presenceClock,
       );
     }
+    const publication = { flushed: false };
     const changed = selectChildren(
       node,
       context,
       prior,
       (child) => computeNode(child, context),
       gates.length > 0,
+      hasRelocated,
+      registered,
+      publication,
     );
     const flagged = context.presenceHosts?.delete(node) === true;
     if (flagged || registered)
       registered =
         registerPresenceChanges(node, lastStructure, context) || registered;
-    lastStructure = node.structure ?? {};
+    if (registered) lastStructure = node.structure ?? {};
     flushPresenceTemplates(node, context);
     const dirty = dirtyChildren(node, context);
     for (let index = 0; index < dirty.length; index++)
       computeNode(dirty[index], context);
     let outputChanged = false;
+    const unchangedPublication =
+      deferBaseline &&
+      !hasRelocated &&
+      !schemaChanged &&
+      !changed &&
+      dirty.length === 0 &&
+      !context.pendingOutputs?.has(node) &&
+      node.local === roundLocal &&
+      node.emit === roundEmit &&
+      !context.distributedInputs.has(node) &&
+      context.pathChanges.length === 0;
     if (context.initialOutputs) context.initialOutputs.push(node);
-    else outputChanged = updateOutput(node, context);
+    else if (
+      !unchangedPublication &&
+      (!deferBaseline ||
+        hasRelocated ||
+        !publication.flushed ||
+        dirty.length > 0 ||
+        context.pendingOutputs?.has(node))
+    )
+      outputChanged = updateOutput(node, context);
     const currentRelocated = context.hasGates ? relocatedGates(node) : [];
+    hasRelocated = currentRelocated.length > 0;
     for (let index = 0; index < currentRelocated.length; index++) {
       const occurrence = currentRelocated[index];
       if (

@@ -23,6 +23,7 @@ export const selectTableChildren = <Self extends FieldNodeRecord<Self>>(
   round: GateSelectionRound,
 ): void => {
   const { table } = round;
+  const reuse = frame.reuseStatic;
   let selected = getTableVisitSteps(frame, table);
   const active = new Set<number>();
   const verify = gateSelectionTable.mode === 'verify';
@@ -72,6 +73,7 @@ export const selectTableChildren = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     frame.tableVerdict = tableStep ? admitted : undefined;
+    if (reuse?.(step.entry)) continue;
     selectEntryStep(step.entry, step, frame);
   }
   frame.tableVerdict = undefined;

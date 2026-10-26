@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- H1의 지연 공표 자격은 정적 선언에 게이트 overlay가 겹친 엔트리를 제외합니다. 이 순수 청사진 증명은 분할과 함께 보유하며 일반 선택·공표의 사적 방문 순서를 유지합니다.
+
+- 호스트별 정적 분할은 불변 BlueprintNode를 약한 키로 지연 계산한다. 분할은 gated 여부와 게이트 없는 자식 엔트리만 보유하고 모든 선언·overlay를 확인하며, virtual·동명 후보는 보수적으로 제외한다. 값·노드·직전 활성 집합·게이트 판정은 저장하지 않는다. 엔진 내부의 이름 붙은 진입점으로 제공하며 공개 Blueprint/FieldNode 형에는 필드를 추가하지 않는다. 최초 계산은 호스트 선언 수, 보유량은 적격 엔트리 수에 비례하고 두 번째 조회는 O(1)이다(H1, SETTLE-044, GOAL-029).
+
 - 노드 구성은 생성 중인 템플릿에 도달한 사실(템플릿 재귀)을 분석 문맥에 단조 증거로 기록한다. `validateShape`는 이 증거가 있을 때만 실행한다. 템플릿 재귀가 없으면 노드 그래프는 비순환이므로 무한 형상 오류가 발생할 수 없고 결과는 같다. 증거가 있으면 기존 형상 검증과 오류 순서를 그대로 유지한다. 구성 → 형상 검증 → 자식 대상 검증 → 후보 자손 표시 → 식 컴파일 → 경고 수집의 순서를 유지한다. 재귀 증거는 `staticFirstLoad`와 독립적이며 공개 capability에 추가하지 않는다. 문맥당 불리언 필드 `hasTemplateRecursion`은 항상 존재하며 문맥 생성 시 false로 초기화한다. 재귀 연결 시 고정 대입을 더하고, 비재귀 그래프의 O(V+E) 형상 순회와 임시 방문 집합을 생략한다.
 
 - 선언 수집은 선언을 만드는 자리에서 `controls.discriminator` 또는 `controls.fields`가 정의되어 있는지를 분석 문맥 전용 `hasChildTargets`에 단조 기능 증거로 기록한다. 기존 선언 수집 과정에서 함께 수집하며, 공개 `Blueprint.capabilities`의 키는 늘리지 않는다. 실제 파이프라인인 `buildNodes → validateShape → validateChildTargets → markCandidateDescendants → compileBlueprintExpressions → collectBlueprintWarnings`에서 자식 대상 검증은 이 증거가 있을 때만 실행한다. 증거가 없으면 자식 대상·판별 키 오류가 발생할 수 없으므로 결과는 동일하고, 검증을 실행할 때의 오류 순서도 유지한다. 선언마다 고정 검사와 분석 호출당 boolean 하나만 더하며, 기능이 없는 경우 전체 노드·선언의 자식 대상 검증 순회를 생략한다.
