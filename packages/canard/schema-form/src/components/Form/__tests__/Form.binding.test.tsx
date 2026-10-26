@@ -29,7 +29,7 @@ describe('Form engine binding', () => {
     expect(onChange).toHaveBeenCalledExactlyOnceWith('next');
   });
 
-  it('SURFACE-059 EVENT-073 exposes exactly eighteen handle members and optional-path commands', () => {
+  it('SURFACE-059 EVENT-073 exposes exactly nineteen handle members and optional-path commands', () => {
     const ref = createRef<FormHandle>();
     render(
       <FormCore ref={ref} jsonSchema={{ type: 'string' }}>
@@ -44,6 +44,7 @@ describe('Form engine binding', () => {
         'refresh',
         'remount',
         'reset',
+        'rebuild',
         'findNode',
         'findNodes',
         'getState',
