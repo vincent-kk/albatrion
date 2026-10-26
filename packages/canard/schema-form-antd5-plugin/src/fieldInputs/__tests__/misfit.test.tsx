@@ -3,23 +3,42 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import { Form, type FormHandle } from '@canard/schema-form';
+import {
+  type FieldInputDefinition,
+  Form,
+  type FormHandle,
+  type JSONSchema,
+} from '@canard/schema-form';
 
 import { FieldInputBooleanDefinition } from '../FieldInputBoolean';
+import { FieldInputBooleanSwitchDefinition } from '../FieldInputBooleanSwitch';
 import { FieldInputDateDefinition } from '../FieldInputDate';
+import { FieldInputDateRangeDefinition } from '../FieldInputDateRange';
 import { FieldInputMonthDefinition } from '../FieldInputMonth';
+import { FieldInputMonthRangeDefinition } from '../FieldInputMonthRange';
 import { FieldInputNumberDefinition } from '../FieldInputNumber';
 import { FieldInputRadioGroupDefinition } from '../FieldInputRadioGroup';
 import { FieldInputSliderDefinition } from '../FieldInputSlider';
 import { FieldInputStringDefinition } from '../FieldInputString';
+import { FieldInputStringCheckboxDefinition } from '../FieldInputStringCheckbox';
 import { FieldInputStringEnumDefinition } from '../FieldInputStringEnum';
+import { FieldInputStringSwitchDefinition } from '../FieldInputStringSwitch';
 import { FieldInputTextareaDefinition } from '../FieldInputTextarea';
 import { FieldInputTimeDefinition } from '../FieldInputTime';
+import { FieldInputTimeRangeDefinition } from '../FieldInputTimeRange';
 import { FieldInputUriDefinition } from '../FieldInputUri';
 
 afterEach(cleanup);
 
-const cases = [
+type MisfitCase = readonly [
+  name: string,
+  definition: FieldInputDefinition,
+  jsonSchema: JSONSchema,
+  bad: unknown,
+  good: unknown,
+];
+
+const cases: MisfitCase[] = [
   ['String', FieldInputStringDefinition, { type: 'string' }, { a: 1 }, 'x'],
   ['Number', FieldInputNumberDefinition, { type: 'number' }, 'abc', 7],
   [
@@ -83,7 +102,57 @@ const cases = [
     'abc',
     3,
   ],
-] as const;
+  [
+    'BooleanSwitch',
+    FieldInputBooleanSwitchDefinition,
+    { type: 'boolean', presentation: { inputType: 'switch' } },
+    { a: 1 },
+    true,
+  ],
+  [
+    'StringSwitch',
+    FieldInputStringSwitchDefinition,
+    {
+      type: 'string',
+      enum: ['on', 'off'],
+      presentation: { inputType: 'switch' },
+    },
+    { a: 1 },
+    'on',
+  ],
+  [
+    'StringCheckbox',
+    FieldInputStringCheckboxDefinition,
+    {
+      type: 'array',
+      items: { type: 'string', enum: ['a', 'b'] },
+      presentation: { inputType: 'checkbox' },
+    },
+    'ab',
+    ['a'],
+  ],
+  [
+    'DateRange',
+    FieldInputDateRangeDefinition,
+    { type: 'array', format: 'date-range', items: { type: 'string' } },
+    'ab',
+    [],
+  ],
+  [
+    'MonthRange',
+    FieldInputMonthRangeDefinition,
+    { type: 'array', format: 'month-range', items: { type: 'string' } },
+    'ab',
+    [],
+  ],
+  [
+    'TimeRange',
+    FieldInputTimeRangeDefinition,
+    { type: 'array', format: 'time-range', items: { type: 'string' } },
+    'ab',
+    [],
+  ],
+];
 
 it.each(cases)(
   '%s marks a misfit value in the DOM and clears it for a valid one',
@@ -93,17 +162,25 @@ it.each(cases)(
       <Form
         ref={ref}
         fieldInputDefinitions={[definition]}
-        jsonSchema={jsonSchema as never}
+        jsonSchema={jsonSchema}
         defaultValue={good as never}
         onError={() => {}}
       />,
     );
-    const invalid = () => container.querySelector('[aria-invalid="true"]');
+    const invalid = () =>
+      container.querySelector(
+        'input[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]',
+      );
+    const visible = () =>
+      container.querySelector('[class*="-status-error"], [role="status"]');
     expect(invalid()).toBeNull();
+    expect(visible()).toBeNull();
     act(() => ref.current!.setValue(bad as never));
     expect(invalid()).not.toBeNull();
+    expect(visible()).not.toBeNull();
     act(() => ref.current!.setValue(good as never));
     expect(invalid()).toBeNull();
+    expect(visible()).toBeNull();
   },
 );
 

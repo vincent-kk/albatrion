@@ -1,7 +1,13 @@
 import { createRef } from 'react';
 import type { ComponentProps } from 'react';
 
-import { act, cleanup, render } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import type { InputNumber as AntdInputNumber } from 'antd';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
@@ -13,13 +19,16 @@ type NumberProps = ComponentProps<typeof AntdInputNumber>;
 
 const received = vi.hoisted(() => ({ props: [] as NumberProps[] }));
 
-vi.mock('antd', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('antd')>()),
-  InputNumber: (props: NumberProps) => {
-    received.props.push(props);
-    return null;
-  },
-}));
+vi.mock('antd', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('antd')>();
+  return {
+    ...actual,
+    InputNumber: (props: NumberProps) => {
+      received.props.push(props);
+      return <actual.InputNumber {...props} />;
+    },
+  };
+});
 
 beforeEach(() => {
   received.props.length = 0;
@@ -66,4 +75,14 @@ it('does not publish 1.5 on an integer node but publishes an integer', () => {
   expect(ref.current!.getValue()).toBe(3);
   send(4);
   expect(ref.current!.getValue()).toBe(4);
+});
+
+it('reverts a withheld 1.5 on an integer node to the node value at blur', () => {
+  const { ref } = mount('integer');
+  const input = () => screen.getByRole('spinbutton') as HTMLInputElement;
+  fireEvent.change(input(), { target: { value: '1.5' } });
+  expect(input().value).toBe('1.5');
+  fireEvent.blur(input());
+  expect(input().value).toBe('3');
+  expect(ref.current!.getValue()).toBe(3);
 });
