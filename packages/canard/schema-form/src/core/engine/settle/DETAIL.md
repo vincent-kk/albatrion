@@ -168,7 +168,7 @@
 
 ## API Contracts
 
-- H1의 후속은 기존 relocation 조회의 증명을 선택·priming에 전달하여 자격 확인용 추가 순회·filter를 만들지 않는다. priming의 새 baseline이 원래 prior와 다르고 아직 presence 전이가 없을 때만 선택이 그 구조 맵을 직접 갱신하며, presence 비교의 이전 맵은 원래 prior로 유지하고 첫 정체성 전이 뒤에는 사본 경로로 돌아간다. 고정 출발점 공표는 pendingOutputs에 대기시키고 게이트가 실제 읽을 때 공표하며, 이미 끝난 같은 라운드 출력을 다시 조립하지 않는다. dirty 자식 조회는 기존 dirtyChildrenByParent 색인을 유지하고 preserveReferences는 H2까지 바꾸지 않는다(코디네이터의 H1 1차 측정 후 결정).
+- H1의 후속은 기존 relocation 조회의 증명을 선택·priming에 전달하여 자격 확인용 추가 순회·filter를 만들지 않는다. priming의 새 baseline이 원래 prior와 다르고 아직 presence 전이가 없을 때만 선택이 그 구조 맵을 직접 갱신하며, presence 비교의 이전 맵은 원래 prior로 유지하고 첫 정체성 전이 뒤에는 사본 경로로 돌아간다. 고정 출발점 지연 공표와 같은 라운드 출력 재조립 생략은 모든 게이트가 정적 equality 증명을 가진 경우로 제한한다. 그 밖의 식과 overlay는 기존 공표 순서를 유지한다. dirty 자식 조회는 기존 dirtyChildrenByParent 색인을 유지하고 preserveReferences는 H2까지 바꾸지 않는다(코디네이터의 H1 1차 측정 후 결정).
 
 - H1의 호스트별 정적 분할은 게이트 없는 선언과 overlay만으로 결정한 고정 출발점의 부분 형상이다. 직전 커밋의 활성 집합을 읽지 않으며 동적 후보는 기존 바퀴와 작성 순서로 평가한다. 비로드 object 호스트에 입력 분배·경로 이동·relocated gate·virtual·동명 후보가 없고, 정적 자식의 기존 인스턴스·부모·이름·경로·청사진·스키마·active·미분리·구조 맵이 모두 맞을 때만 병합·게이트 등록·변경 캡처를 생략한다. 선언 ID는 그대로 공표하고 dirty 자식만 계산하며 즉시 투영 대기는 기존 순서를 유지한다. primeHost와 일반/table 선택은 재사용 판정 하나를 공유하고 부적격 엔트리는 기존 선택을 쓴다. 청사진별 분할·정적 스키마의 보유량은 O(정적 엔트리 수), 최초 준비는 선언 수에 비례하며 이후 검사와 구조 사본은 호스트 폭에 비례하되 무관한 정적 형제의 selectEntryStep 호출·병합·등록·캡처는 제거한다(SETTLE-044, GOAL-011·029, BLUEPRINT-007, NODE-060, TEST-080 D1-H1).
 
@@ -311,7 +311,7 @@
 
 - oneOf-5·80의 mount에서 실제 게이트 평가와 단계 방문을 skip 바퀴의 off 및 verify로 세고 정확한 전후 값을 단언합니다. 표 게이트의 제품 평가 호출은 0이며 활성·정리 단계만 방문합니다. load 제외를 복구한 변이가 새 계수 단언에 실패해야 합니다.
 - 일반 load의 미준비 계획은 계획 함수를 부르지 않으며 최초 비적재 선택까지 준비되지 않습니다. 기존 if-then mount 및 일반 load 준비 계약 시험은 변경하지 않습니다.
-- PR-1 특성화의 fixed·invariant 기록은 유지합니다. H1의 판별 잎 재설정 이력 loading-12만 방문 집합 동일·길이 상한으로 검증하며 원본 golden의 surface·노드·기타 기록은 그대로 비교합니다(400C-03). 다른 제품 관측 변화는 허용하지 않습니다.
+- PR-1 특성화의 fixed·invariant 기록은 유지합니다. H1의 판별 잎 재설정 이력 loading-12는 방문 집합 동일·길이 상한으로 검증합니다. selection·wheel의 사적 visits는 원본 소스 8d5c5dba1에서 추출한 방문열의 부분수열·길이 상한이고, commits.changedNodes는 같은 구성원 집합입니다. 이 두 필드만 원본 순서로 정규화한 뒤 기존 golden의 surface·노드·배달·revision·선택 결과·유효 스키마와 모든 다른 필드를 exact로 비교합니다. 원본 golden은 바꾸지 않습니다(코디네이터가 확장 승인한 400C-03). 다른 제품 관측 변화는 허용하지 않습니다.
 
 ### settle-gate-table-root — 루트 표의 선언과 경고 보존
 
