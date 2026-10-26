@@ -36,13 +36,16 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-const mount = (type: 'number' | 'integer' | ['number', 'null']) => {
+const mount = (
+  type: 'number' | 'integer' | ['number', 'null'],
+  bounds: { minimum?: number; maximum?: number } = {},
+) => {
   const ref = createRef<FormHandle>();
   render(
     <Form
       ref={ref}
       fieldInputDefinitions={[FieldInputNumberDefinition]}
-      jsonSchema={{ type }}
+      jsonSchema={{ type, ...bounds }}
       defaultValue={3}
       onError={() => {}}
     />,
@@ -77,12 +80,33 @@ it('does not publish 1.5 on an integer node but publishes an integer', () => {
   expect(ref.current!.getValue()).toBe(4);
 });
 
-it('reverts a withheld 1.5 on an integer node to the node value at blur', () => {
+it('reverts a withheld 1.5 on an integer node to the node value at blur', async () => {
   const { ref } = mount('integer');
   const input = () => screen.getByRole('spinbutton') as HTMLInputElement;
   fireEvent.change(input(), { target: { value: '1.5' } });
   expect(input().value).toBe('1.5');
-  fireEvent.blur(input());
+  await act(async () => {
+    fireEvent.blur(input());
+  });
   expect(input().value).toBe('3');
   expect(ref.current!.getValue()).toBe(3);
 });
+
+it.each([
+  { bound: 'maximum', bounds: { minimum: 0, maximum: 3.5 }, draft: '10' },
+  { bound: 'minimum', bounds: { minimum: 2.5 }, draft: '0' },
+])(
+  'reverts a blur correction to a non-integer $bound on an integer node',
+  async ({ bounds, draft }) => {
+    const { ref } = mount('integer', bounds);
+    const input = () => screen.getByRole('spinbutton') as HTMLInputElement;
+    fireEvent.change(input(), { target: { value: draft } });
+    expect(input().value).toBe(draft);
+    expect(ref.current!.getValue()).toBe(3);
+    await act(async () => {
+      fireEvent.blur(input());
+    });
+    expect(input().value).toBe('3');
+    expect(ref.current!.getValue()).toBe(3);
+  },
+);
