@@ -320,6 +320,28 @@ it.each(uncoercibleCases)(
   },
 );
 
+it('StringCheckbox with an uncoercible element renders both checkboxes unchecked and keeps the node value without throwing', () => {
+  const ref = createRef<FormHandle>();
+  const bad = ['a', { toString: 'oops' }];
+  const { container } = render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputStringCheckboxDefinition]}
+      jsonSchema={{
+        type: 'array',
+        items: { type: 'string', enum: ['a', 'b'] },
+        presentation: { inputType: 'checkbox' },
+      }}
+      defaultValue={bad as never}
+      onError={() => {}}
+    />,
+  );
+  expect(container.querySelectorAll('input[type="checkbox"]')).toHaveLength(2);
+  expect(container.querySelector('input:checked')).toBeNull();
+  expect(ref.current!.getValue()).toEqual(bad);
+  expect(container.querySelector('.Mui-error')).toBeNull();
+});
+
 it('puts aria-invalid on the text input of a TextField', () => {
   const { container } = render(
     <Form

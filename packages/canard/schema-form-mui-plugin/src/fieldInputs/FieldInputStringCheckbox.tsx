@@ -70,7 +70,10 @@ const FieldInputStringCheckbox = ({
   }, [jsonSchema, alias]);
 
   const [value, setValue] = useState<string[]>(() =>
-    isArray(defaultValue) ? defaultValue.map((v) => '' + v) : [],
+    isArray(defaultValue) &&
+    defaultValue.every((v) => v === null || typeof v === 'string')
+      ? defaultValue.map((v) => '' + v)
+      : [],
   );
 
   const handleToggle = useHandle((optionValue: string) => {
