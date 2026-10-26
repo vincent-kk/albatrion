@@ -30,7 +30,7 @@ const FieldInputTime = ({
   misfit,
 }: FieldInputTimeProps) => {
   const handleChange = useHandle((date: Dayjs | null) => {
-    onChange(date?.format(DATE_FORMAT) || '');
+    onChange(date ? date.format(DATE_FORMAT) : undefined);
   });
   const initialValue = useMemo(
     () => (defaultValue ? dayjs(defaultValue, DATE_FORMAT) : undefined),
