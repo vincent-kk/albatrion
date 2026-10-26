@@ -81,7 +81,7 @@ it.each(cases)(
         jsonSchema={{
           type: 'object',
           properties: {
-            field: fieldSchema,
+            field: { ...fieldSchema, options: { omitEmpty: false } },
           },
         }}
       />,
