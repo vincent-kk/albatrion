@@ -1,7 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { mergeEffectiveSchema } from '../../../../blueprint';
-import { HostStaticPartition } from '../../../../blueprint';
 import type {
   BlueprintChildEntry,
   BlueprintNode,
@@ -27,12 +26,14 @@ const STATIC_SHAPES = new WeakMap<
  * Memoize the fixed static entries in the structure's property order.
  * @param host - Object blueprint host whose child edges are inspected once
  * @param isAtomic - Atomic-schema predicate of the owning form's blueprint options
+ * @param candidates - Fixed static partition, or every edge on the original ungated path
  * @returns The admitted static subset with stable IDs and schemas; unsafe entries
  *   remain on general selection, and later calls return the same subset
  */
 export const staticShape = (
   host: BlueprintNode,
   isAtomic: BlueprintOptions['isAtomic'],
+  candidates: readonly BlueprintChildEntry[] = host.childEntries,
 ) => {
   if (STATIC_SHAPES.has(host)) return STATIC_SHAPES.get(host);
   const selected: Record<
@@ -43,7 +44,7 @@ export const staticShape = (
       schema: EffectiveSchema;
     }
   > = Object.create(null);
-  const entries = HostStaticPartition.get(host).staticEntries;
+  const entries = candidates;
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
     const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {

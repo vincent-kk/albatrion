@@ -2,6 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintChildEntry } from '../../../../../blueprint';
+import { HostStaticPartition } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
 import type { SettlementContext } from '../../../../types/settlement';
 import { relocatedGates } from '../../relocatedGates';
@@ -39,9 +40,12 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
     relocatedGates(node).length > 0
   )
     return undefined;
+  const partition = HostStaticPartition.get(node.blueprintNode);
+  if (!partition.staticEntries.length) return undefined;
   const shape = staticShape(
     node.blueprintNode,
     node.runtime.blueprint.isAtomic,
+    partition.staticEntries,
   );
   if (!shape) return undefined;
   let entries = SHAPES.get(shape);
