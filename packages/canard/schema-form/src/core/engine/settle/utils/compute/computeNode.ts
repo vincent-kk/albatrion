@@ -254,7 +254,9 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     if (context.initialOutputs) context.initialOutputs.push(node);
     else if (
       !unchangedPublication &&
-      (!publication.flushed ||
+      (!deferBaseline ||
+        hasRelocated ||
+        !publication.flushed ||
         dirty.length > 0 ||
         context.pendingOutputs?.has(node))
     )
