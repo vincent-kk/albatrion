@@ -8,18 +8,14 @@ import { Form, type FormHandle } from '@/schema-form/components/Form';
 afterEach(cleanup);
 
 it.each([
-  ['nullable', ['string', 'null']],
-  ['nonnullable', 'string'],
+  ['nullable', { type: ['string', 'null'] }],
+  ['nonnullable', { type: 'string' }],
 ] as const)(
   'publishes undefined, not null, for a cleared %s string input',
-  (_, type) => {
+  (_, jsonSchema) => {
     const ref = createRef<FormHandle>();
     const view = render(
-      <Form
-        ref={ref}
-        jsonSchema={{ type: type as never }}
-        defaultValue={'abc' as never}
-      />,
+      <Form ref={ref} jsonSchema={jsonSchema} defaultValue={"abc"} />,
     );
     fireEvent.change(view.container.querySelector('input')!, {
       target: { value: '' },

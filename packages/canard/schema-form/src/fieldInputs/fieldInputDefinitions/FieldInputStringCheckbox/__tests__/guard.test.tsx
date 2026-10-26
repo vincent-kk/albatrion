@@ -23,7 +23,7 @@ const nullableSchema = { ...schema, type: ['array', 'null'] } as const;
 it.each([['ab'], [{ a: 1 }]])(
   'renders a non-array value %j without throwing, checks nothing, and marks the group',
   (value) => {
-    render(<Form jsonSchema={schema} defaultValue={value as never} />);
+    render(<Form jsonSchema={schema} defaultValue={value} />);
     const inputs = screen.getAllByRole<HTMLInputElement>('checkbox');
     expect(inputs.map((input) => input.checked)).toEqual([false, false]);
     expect(screen.getByRole('group').getAttribute('aria-invalid')).toBe('true');
@@ -34,7 +34,7 @@ it.each([['ab'], [{ a: 1 }]])(
 it.each([[null], [undefined]])(
   'shows %s of a nullable array as an empty selection without a marker',
   (value) => {
-    render(<Form jsonSchema={nullableSchema} defaultValue={value as never} />);
+    render(<Form jsonSchema={nullableSchema} defaultValue={value} />);
     const inputs = screen.getAllByRole<HTMLInputElement>('checkbox');
     expect(inputs.map((input) => input.checked)).toEqual([false, false]);
     expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
@@ -44,7 +44,7 @@ it.each([[null], [undefined]])(
 
 it('turns a string value into the exact array on one check and removes the marker', () => {
   const ref = createRef<FormHandle>();
-  render(<Form ref={ref} jsonSchema={schema} defaultValue={'ab' as never} />);
+  render(<Form ref={ref} jsonSchema={schema} defaultValue="ab" />);
   act(() => {
     fireEvent.click(screen.getAllByRole<HTMLInputElement>('checkbox')[0]);
   });
