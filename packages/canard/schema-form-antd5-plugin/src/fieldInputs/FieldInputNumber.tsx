@@ -63,12 +63,7 @@ const FieldInputNumber = ({
       setRevision((previous) => previous + 1);
     });
   });
-  const initialValue =
-    revision === 0
-      ? defaultValue
-      : typeof value === 'number'
-        ? value
-        : undefined;
+  const initialValue = revision === 0 ? defaultValue : value;
   return (
     <InputNumber
       key={revision}
@@ -82,7 +77,7 @@ const FieldInputNumber = ({
       step={jsonSchema.multipleOf}
       formatter={formatter}
       parser={parser}
-      defaultValue={initialValue ?? undefined}
+      defaultValue={typeof initialValue === 'number' ? initialValue : undefined}
       onChange={handleChange}
       onBlur={handleBlur}
       size={size || context?.size}

@@ -54,7 +54,9 @@ const FieldInputSlider = ({
           min={min}
           max={max}
           step={step}
-          defaultValue={defaultValue ?? undefined}
+          defaultValue={
+            typeof defaultValue === 'number' ? defaultValue : undefined
+          }
           {...changeHandler}
         />
       </div>
