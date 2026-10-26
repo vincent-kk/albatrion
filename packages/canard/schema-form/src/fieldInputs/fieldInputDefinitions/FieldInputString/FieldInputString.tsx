@@ -10,6 +10,7 @@ export const FieldInputString = ({
   name,
   readOnly,
   disabled,
+  misfit,
   jsonSchema,
   defaultValue,
   onChange,
@@ -26,11 +27,7 @@ export const FieldInputString = ({
     else return 'text';
   }, [jsonSchema?.format]);
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(
-      event.target.value === ''
-        ? undefined
-        : event.target.value,
-    );
+    onChange(event.target.value === '' ? undefined : event.target.value);
   });
   return (
     <input
@@ -44,6 +41,7 @@ export const FieldInputString = ({
       onChange={handleChange}
       style={style}
       className={className}
+      aria-invalid={misfit || undefined}
       {...inputProps}
     />
   );

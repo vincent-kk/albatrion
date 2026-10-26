@@ -10,7 +10,7 @@ export const FieldInputBoolean = ({
   name,
   readOnly,
   disabled,
-  defaultValue,
+  misfit,
   value,
   onChange,
   style,
@@ -30,10 +30,11 @@ export const FieldInputBoolean = ({
       id={path}
       name={name}
       disabled={disabled || readOnly}
-      defaultChecked={defaultValue === true}
+      checked={value === true}
       onChange={handleChange}
       style={style}
       className={className}
+      aria-invalid={misfit || undefined}
     />
   );
 };

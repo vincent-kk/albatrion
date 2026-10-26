@@ -17,6 +17,7 @@ export const FieldInputStringRadio = ({
   jsonSchema,
   readOnly,
   disabled,
+  misfit,
   defaultValue,
   onChange,
   context,
@@ -50,7 +51,11 @@ export const FieldInputStringRadio = ({
     onChange(rawValue);
   });
   return (
-    <span role="group" aria-labelledby={'label:' + path}>
+    <span
+      role="group"
+      aria-labelledby={'label:' + path}
+      aria-invalid={misfit || undefined}
+    >
       {map(radioOptions, ({ value, rawValue, label }, index) => {
         const id = path + '-' + index;
         return (

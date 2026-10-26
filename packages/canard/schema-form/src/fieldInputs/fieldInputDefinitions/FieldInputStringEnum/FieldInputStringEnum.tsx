@@ -19,6 +19,7 @@ export const FieldInputStringEnum = ({
   onChange,
   readOnly,
   disabled,
+  misfit,
   context,
   alias,
   style,
@@ -70,6 +71,7 @@ export const FieldInputStringEnum = ({
       onChange={handleChange}
       style={style}
       className={className}
+      aria-invalid={misfit || undefined}
     >
       {outOfDomainValue !== undefined && (
         <option disabled value={outOfDomainValue}>
