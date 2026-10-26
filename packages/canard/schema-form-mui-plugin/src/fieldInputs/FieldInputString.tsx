@@ -43,6 +43,7 @@ const FieldInputString = ({
   variant: variantProp,
   fullWidth: fullWidthProp,
   hideLabel,
+  misfit,
 }: FieldInputStringProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -90,7 +91,8 @@ const FieldInputString = ({
       label={label}
       required={required}
       disabled={disabled}
-      defaultValue={defaultValue ?? undefined}
+      error={misfit}
+      defaultValue={typeof defaultValue === 'string' ? defaultValue : undefined}
       onChange={handleChange}
       size={size}
       slotProps={{

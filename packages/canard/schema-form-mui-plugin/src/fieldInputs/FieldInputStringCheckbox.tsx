@@ -2,6 +2,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
+import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -41,7 +42,7 @@ const FieldInputStringCheckbox = ({
   jsonSchema,
   required,
   disabled,
-  defaultValue = [],
+  defaultValue,
   onChange,
   context,
   label: labelProp,
@@ -49,6 +50,7 @@ const FieldInputStringCheckbox = ({
   size: sizeProp = 'medium',
   row = true,
   hideLabel,
+  misfit,
 }: FieldInputStringCheckboxProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
@@ -67,7 +69,12 @@ const FieldInputStringCheckbox = ({
     });
   }, [jsonSchema, alias]);
 
-  const [value, setValue] = useState<string[]>(defaultValue.map((v) => '' + v));
+  const [value, setValue] = useState<string[]>(() =>
+    isArray(defaultValue) &&
+    defaultValue.every((v) => v === null || typeof v === 'string')
+      ? defaultValue.map((v) => '' + v)
+      : [],
+  );
 
   const handleToggle = useHandle((optionValue: string) => {
     const currentValues = value;
@@ -98,7 +105,7 @@ const FieldInputStringCheckbox = ({
         gap: 8,
       }}
       control={
-        <FormGroup row={row}>
+        <FormGroup row={row} role="group" aria-invalid={misfit || undefined}>
           {options.map((option) => {
             const isChecked = value.includes(option.value);
             return (
