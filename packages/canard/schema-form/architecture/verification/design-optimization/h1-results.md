@@ -83,3 +83,50 @@
 - 400C-02: 작업량 기록 단언 2건을 상한으로 정정했습니다(off stepVisits 484→≤480, table stepVisits 16→≤12). rootEvaluations·childEvaluations와 제품 관측 기대는 유지합니다.
 - 400C-03: 내부 실행 이력 비교 2파일을 한정 조정했습니다. B5·10·20·40의 points만 비교에서 제외하고 48개 이하로 묶으며 공개 results·keptOut·기타 필드는 pinned HEAD와 같습니다. loading-12의 visits는 집합 동일·길이 상한으로 보고 surface·노드·모든 다른 필드는 원본 golden과 그대로 비교합니다. golden은 재생성하지 않았습니다.
 - 독립 진단: `/private/tmp/448-h1/head-comparison-all.json`은 네 B 값 모두 공개 results 동일을 보이며, `/private/tmp/448-h1/loading-12.actual.json`은 surface 동일·visits 이외 차이 0입니다. 진단 실행 로그는 `observation-probe-all.log`에 있습니다. 임시 진단 시험은 커밋하지 않았습니다.
+
+### 내부 실행 이력 비교 조정 — verify 확장
+
+코디네이터가 400C-03을 verify의 특성화·wheel·준비 불변식·키 순서 4파일과 공통 snapshot helper에 한정 확장했습니다. visits는 기준선 방문열의 부분수열이고 길이가 기준선 이하이며, commits.changedNodes는 구성원이 같습니다. 이 두 필드만 원래 순서로 정규화한 뒤 모든 다른 필드와 원본 golden을 exact로 비교합니다. golden 파일은 하나도 바꾸지 않았습니다.
+
+증인은 `src/core/engine/settle/__tests__/fixtures/gate-table/snapshotGateTableCase/fixtures/h1-private-histories.json`에 있으며, base `8d5c5dba1`의 원본 소스를 실제 실행하여 visits·changedNodes만 추출했습니다. 추출 명령·날짜는 이를 읽는 helper의 주석에 있습니다. 원본 소스 대조 40장면의 진단은 `/private/tmp/448-h1/verify-source-comparison.json`, 기존 golden 대조는 `verify-comparison.json`, 원본/HEAD 관측은 `base-verify-*.json`·`verify-*.json`입니다. 원래 진단에서 부분수열이 아니었던 selection-16·20은 시험을 완화하지 않고 일반 식·gated overlay의 지연 공표를 제외하여 복원했습니다. 최종 관련 45시험이 엄격한 부분수열·구성원 비교와 그 밖의 exact 비교를 모두 통과했습니다(`verify-private-green2.log`).
+
+최종 소스를 40장면 모두 다시 실행한 독립 대조는 `/private/tmp/448-h1/verify-source-comparison-final.json`입니다. 40개 모두 visits 부분수열·길이 상한, changedNodes 구성원 동일, 그 밖 모든 필드 exact가 통과했습니다. 원본 최종 관측은 `final-verify-*.json`, 실행 로그는 `verify-probe-final.log`이며 임시 probe 시험은 제거했습니다.
+
+## 최종 관문 — 소스 `013f1ea69`
+
+명령은 모두 `yarn workspace @canard/schema-form`이며 시험 프로젝트는 순차 실행했습니다. 원시 로그는 `/private/tmp/448-h1/` 아래 있습니다.
+
+| 관문 | 결과 | 로그 |
+| --- | --- | --- |
+| `build` | 종료 0, 개발 플래그·gate-selection dist 검사 포함 | `final-build.log` |
+| `typecheck` / `lint` | 각각 종료 0 | `final-typecheck.log` / `final-lint.log` |
+| `test --run --project unit` | 491파일, 3,562통과·기존 todo 1 | `final-unit.log` |
+| `test --run --project render` | 126파일, 753통과 | `final-render.log` |
+| `test --run --project react18` | 126파일, 753통과 | `final-react18.log` |
+| `test --run --project storybook` | 100파일, 251통과 | `final-storybook.log` |
+| `test --run --project production` | 9파일, 20통과 | `final-production.log` |
+| `test:verify --run` | 622파일, 4,359통과·기존 todo 1 | `final-verify.log` |
+| `dist/index.d.ts` 기준선 대조 | 바이트 차이 0 | base/HEAD 보관본 `/private/tmp/448-h1/base/`, `head-final/` |
+| first-batch C 전후 배달 비교 | 72장면·323단계 차이 0 | `c-d/final-differential.json`, 상세 `c-d/out/differential-details.json` |
+
+수정 전 호출 수 `[6, 206, 2006]`의 상한 실패와 수정 후 상한 통과를 확인했습니다. 최종 공유 분기 시험은 shadow·skip 모두 루트 공표 1회도 확인합니다. 복잡한 식·gated overlay, load·입력 분배·이동·relocation은 해당 최적화에서 보수적으로 물러납니다.
+
+FCA 전체 validate는 `indeterminate`입니다(378 findings, reported failed 14, skipped 308). 변경한 blueprint·settle에는 오류가 없고 기존 동적 gate-wheel 시험표의 사례 수 경고가 남았습니다. 전체의 범위 밖 문서·순환·경계·사례 수 문제는 고치지 않았습니다. 최종 artifact는 `/Users/Vincent/.codex/plugins/filid/artifacts/fractal_inspect/b446af5f8497351ff98c7ebb4d0f14817a49f84b9ef94864b894f12ab163d1e5.json`이며 변경 시험 6파일은 사례 수가 각각 정확하고 제한 위반이 0입니다. seiri는 임시 계획의 G1~G4 증거로 검증하며 저장소 task ledger는 없습니다. 독립 antigravity 검토는 PR 생성 후 코디네이터에게 인계합니다.
+
+속도 비용은 정적 자식의 선택·병합·등록·캡처를 없애되, 일치 검사와 baseline·최종 값 조립의 O(호스트 폭) 비용을 남깁니다. 메모리 비용은 청사진 수명의 정적 분할·스키마/엔트리 색인 O(정적 엔트리 수)와 선택 호출당 재사용 closure이며 live node·직전 게이트 판정은 캐시에 보유하지 않습니다. B2 힙·전체 canonical 행·독립 Node/Bun 벤치·React equivalent·플러그인 일곱의 확대 관문은 이 한정 작업에서 실행하지 않았으므로 단계 전체 채택을 주장하지 않습니다.
+
+## 최종 전후 — 일반 식·gated overlay 제외를 포함한 번들
+
+- 실행 ID `20261026T1719-013f1ea-h1-before3` / `20261026T1719-013f1ea-h1-after3`. 앞선 실행과 같은 승인 창·Node v26.12.1 production·20예열/100표본/3반복·0.16.1 AB/BA 쌍입니다. 측정 중 다른 무거운 작업은 없었습니다.
+- 전은 base `8d5c5dba1`의 같은 원본 번들, 후는 최종 소스 `013f1ea69`, SHA256 `7da06ded9a19f6493086c8049c7ba04306cbbbbcd588a78f399e8d06f29d98dc`입니다.
+
+| 형제 수 | 전 ms | 전 폭 ms | 후 ms | 후 폭 ms | 후/전 | 개선 % |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 | 0.0894 | 0.0464 | 0.1025 | 0.0229 | 1.1463 | -14.63 |
+| 100 | 0.3125 | 0.0780 | 0.2947 | 0.0590 | 0.9431 | 5.69 |
+| 1,000 | 3.0607 | 0.0135 | 2.0532 | 0.0375 | 0.6708 | 32.92 |
+| 4,000 | 10.5232 | 0.0590 | 6.7940 | 0.0358 | 0.6456 | 35.44 |
+
+0·100은 폭 안이므로 개선·회귀를 주장하지 않습니다. 큰 두 행의 차이는 각 폭의 합보다 큽니다. 같은 실행의 0.16.1은 N1,000에서 2.5046→2.4945ms, N4,000에서 8.9557→7.9441ms이며 폭은 각각 0.0217→0.0870ms, 0.1749→1.0127ms입니다. HEAD의 paired 비율은 각각 약 0.8232·0.8552입니다. 원시 `results.json`과 `rows.md`에 모든 반복과 쌍을 보존했습니다.
+
+최종 H1/leaf는 N1,000 **78.97배**, N4,000 **8.12배**로 1.5배 상한에 미달합니다. 선택 호출은 상수화했으나 전체 선형항은 제거하지 못했습니다. 위 D2 이관 목록은 그대로 남으며, H2의 preserveReferences는 바꾸지 않았습니다.
