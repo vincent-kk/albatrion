@@ -3,7 +3,12 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import { Form, type FormHandle } from '@canard/schema-form';
+import {
+  type FieldInputDefinition,
+  Form,
+  type FormHandle,
+  type JSONSchema,
+} from '@canard/schema-form';
 
 import { FieldInputBooleanDefinition } from '../FieldInputBoolean';
 import { FieldInputBooleanSwitchDefinition } from '../FieldInputBooleanSwitch';
@@ -17,7 +22,15 @@ import { FieldInputTextareaDefinition } from '../FieldInputTextarea';
 
 afterEach(cleanup);
 
-const cases = [
+type MisfitCase = readonly [
+  name: string,
+  definition: FieldInputDefinition,
+  jsonSchema: JSONSchema,
+  bad: unknown,
+  good: unknown,
+];
+
+const cases: MisfitCase[] = [
   ['String', FieldInputStringDefinition, { type: 'string' }, { a: 1 }, 'x'],
   ['Number', FieldInputNumberDefinition, { type: 'number' }, 'abc', 7],
   [
@@ -75,7 +88,7 @@ const cases = [
     'abc',
     3,
   ],
-] as const;
+];
 
 const INVALID_CONTROL =
   'input[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]';
@@ -88,7 +101,7 @@ it.each(cases)(
       <Form
         ref={ref}
         fieldInputDefinitions={[definition]}
-        jsonSchema={jsonSchema as never}
+        jsonSchema={jsonSchema}
         defaultValue={good as never}
         onError={() => {}}
       />,

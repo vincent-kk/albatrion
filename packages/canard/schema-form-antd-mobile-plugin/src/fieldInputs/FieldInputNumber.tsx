@@ -1,5 +1,3 @@
-import { useRef, useState } from 'react';
-
 import { Stepper, type StepperProps } from 'antd-mobile';
 
 import { useHandle } from '@winglet/react-utils/hook';
@@ -20,48 +18,40 @@ interface FieldInputNumberProps
   parser?: SingleStepperProps['parser'];
 }
 
+/** Parses draft text, returning NaN for non-numeric text so the Stepper keeps the draft. */
+const parseDraft = (text: string) => (text.trim() === '' ? NaN : Number(text));
+
 const FieldInputNumber = ({
   jsonSchema,
   schemaType,
   readOnly,
   disabled,
   value,
-  defaultValue,
   onChange,
   formatter,
   parser,
   misfit,
 }: FieldInputNumberProps) => {
-  const withheld = useRef(false);
-  const [generation, setGeneration] = useState(0);
   const handleChange = useHandle((input: number | null) => {
-    withheld.current = false;
     if (input === null) onChange(undefined);
-    else if (Number.isNaN(input)) withheld.current = true;
-    else if (schemaType === 'integer' && !Number.isInteger(input))
-      withheld.current = true;
+    else if (Number.isNaN(input)) return;
+    else if (schemaType === 'integer' && !Number.isInteger(input)) return;
     else onChange(input);
-  });
-  const handleBlur = useHandle(() => {
-    if (!withheld.current) return;
-    withheld.current = false;
-    setGeneration((previous) => previous + 1);
   });
   return (
     <>
       <div role="group" aria-invalid={misfit || undefined}>
         <Stepper
-          key={generation}
           inputReadOnly={readOnly}
           disabled={disabled}
           min={jsonSchema.minimum}
           max={jsonSchema.maximum}
           step={jsonSchema.multipleOf}
           formatter={formatter}
-          parser={parser}
-          defaultValue={(generation === 0 ? defaultValue : value) ?? undefined}
+          parser={parser ?? parseDraft}
+          allowEmpty
+          value={value ?? null}
           onChange={handleChange}
-          onBlur={handleBlur}
         />
       </div>
       {misfit && <span role="status">Invalid value</span>}
