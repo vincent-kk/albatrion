@@ -106,3 +106,21 @@ it.each(cases)(
     expect(invalid()).toBeNull();
   },
 );
+
+it('Uri renders an object value without throwing and shows the error status', () => {
+  const ref = createRef<FormHandle>();
+  const { container } = render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputUriDefinition]}
+      jsonSchema={{ type: 'string', format: 'uri' }}
+      defaultValue={{ a: 1 } as never}
+      onError={() => {}}
+    />,
+  );
+  const input = container.querySelector('input[type="text"]');
+  expect(input).not.toBeNull();
+  expect(container.querySelector('.ant-input-status-error')).not.toBeNull();
+  act(() => ref.current!.setValue('https://a.b'));
+  expect(container.querySelector('.ant-input-status-error')).toBeNull();
+});
