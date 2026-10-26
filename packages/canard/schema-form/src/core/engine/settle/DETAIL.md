@@ -274,7 +274,7 @@
 
 ### settle-non-wheel-reference-cost — 바퀴 없는 참조 보존 비용
 
-- 게이트 있는 폼의 무관한 잎 쓰기에서 형제 250·1,000·4,000개에 대한 sameValue 외부 진입 수는 같은 상한 안이며 전체 값 Object.keys 열거가 0이다. 비교 함수 내부 재귀는 모듈 스파이로 계수되지 않으므로 넓은 값의 키 열거도 따로 관측한다. 같은 값 쓰기·파생 중간값 되돌림 뒤 변하지 않은 조상의 value·outputValue·children·schema·active와 배달·revision은 유지하며, 자식 하강 중 바퀴로 승격하는 기존 관측도 exact로 유지한다. 기준선/HEAD 전후 배달 차이와 공개 선언 파일 차이는 0이며 leaf-gate-4000은 같은 창의 leaf-plain-4000 두 배 안이다(TEST-080 D1-H2).
+- 게이트 있는 폼의 무관한 잎 쓰기에서 준비 쓰기 한 번 뒤의 형제 250·1,000·4,000개에 대한 sameValue 외부 진입 수는 같은 상한 안이며 전체 값 Object.keys 열거가 0이다. 첫 쓰기의 행 캐시 cold 불일치에서 생기는 assembleObject·updateOutput의 열거 3회는 제외하며 D2 잔여 비용으로 기록한다(코디네이터 승인). 비교 함수 내부 재귀는 모듈 스파이로 계수되지 않으므로 넓은 값의 키 열거도 따로 관측한다. 같은 값 쓰기·파생 중간값 되돌림 뒤 변하지 않은 조상의 value·outputValue·children·schema·active와 배달·revision은 유지하며, 자식 하강 중 바퀴로 승격하는 기존 관측도 exact로 유지한다. 기준선/HEAD 전후 배달 차이와 공개 선언 파일 차이는 0이며 leaf-gate-4000은 같은 창의 leaf-plain-4000 두 배 안이다(TEST-080 D1-H2).
 
 ### settle-split-registration — 등록 축약과 순서·관측 불변
 
