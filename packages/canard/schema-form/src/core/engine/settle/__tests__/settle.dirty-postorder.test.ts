@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core/surface';
 
+import * as registration from '../utils/dependencies/registerRecalculation';
 import { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import { observeDirtyPostOrderWrites } from './fixtures/observeDirtyPostOrderWrites';
 
@@ -31,6 +32,14 @@ describe('gate-less write dirty indexing', () => {
   });
 
   it('needs no dirty paths for an eligible nested root write', () => {
+    let scheduled: Set<string> | undefined;
+    const register = registration.registerRecalculation;
+    vi.spyOn(registration, 'registerRecalculation').mockImplementation(
+      (context) => {
+        scheduled = context.dirtyPaths;
+        register(context);
+      },
+    );
     const root = buildFieldNodeTree({
       jsonSchema: {
         type: 'object',
@@ -48,7 +57,9 @@ describe('gate-less write dirty indexing', () => {
     const add = vi.spyOn(DirtyPathSet.prototype, 'add');
     root.setValue({ a: { b: 'after' } });
     expect(begin).toHaveBeenCalled();
-    expect(add.mock.calls.length).toBe(0);
+    expect(
+      add.mock.contexts.filter((dirty) => dirty === scheduled).length,
+    ).toBe(0);
     expect(root.value).toEqual({ a: { b: 'after' } });
   });
 

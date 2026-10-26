@@ -7,6 +7,7 @@ import type { SettlementContext } from '../../types/settlement';
 import { gateSelectionTable } from '../gates/gateSelectionTable';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
+import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
 import { getDependencyIndex } from './getDependencyIndex';
 
@@ -26,6 +27,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       context.dirtyPaths.add(parent.path);
       parent = parent.parent;
     }
+    if (gateSelectionTable.mode === 'verify') verifyWriteEpoch(context);
     return;
   }
   if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)

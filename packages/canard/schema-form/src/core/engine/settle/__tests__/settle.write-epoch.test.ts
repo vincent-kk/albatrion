@@ -42,14 +42,16 @@ const changed = (value: unknown): unknown =>
     : String(value) + '-changed';
 
 /** Observe path bookkeeping only during the supplied synchronous write. */
-const measure = (write: () => void) => {
+const measure = (root: DispatchTestNode, write: () => void) => {
   const add = vi.spyOn(DirtyPathSet.prototype, 'add');
   const consume = vi.spyOn(DirtyPathSet.prototype, 'consume');
   const children = vi.spyOn(selection, 'dirtyChildren');
   try {
     write();
     return {
-      adds: add.mock.calls.length,
+      adds: add.mock.contexts.filter(
+        (dirty) => dirty === root.runtime.settlementScratch?.dirtyPaths,
+      ).length,
       consumes: consume.mock.calls.length,
       childLists: children.mock.calls.length,
     };
@@ -75,7 +77,7 @@ describe('whole-write epoch scheduling', () => {
       dispatchMount(root, undefined);
       for (let round = 0; round < 2; round++) {
         const next = changed(root.emit);
-        const work = measure(() => dispatchSetValue(root, next));
+        const work = measure(root, () => dispatchSetValue(root, next));
         expect(root.emit).toEqual(next);
         expect(work.adds).toBe(0);
         expect(work.consumes).toBe(0);
@@ -114,7 +116,9 @@ describe('whole-write epoch scheduling', () => {
     const { root } = createDispatchTree(nested(6));
     dispatchMount(root, undefined);
     const next = changed(root.emit);
-    const work = measure(() => dispatchSetValue(root, next, WriteOption.Merge));
+    const work = measure(root, () =>
+      dispatchSetValue(root, next, WriteOption.Merge),
+    );
     expect(work.consumes).toBe(5461);
     expect(root.emit).toEqual(next);
   });
@@ -166,7 +170,7 @@ describe('whole-write epoch scheduling', () => {
     const { root } = createDispatchTree(schema);
     dispatchMount(root, { flag: true, v: 1 });
     expect(
-      measure(() => dispatchSetValue(root, { flag: true, v: 2 })).adds,
+      measure(root, () => dispatchSetValue(root, { flag: true, v: 2 })).adds,
     ).toBeGreaterThan(0);
   });
 
@@ -180,7 +184,9 @@ describe('whole-write epoch scheduling', () => {
     });
     dispatchMount(root, { first: 1, rows: [1, 2] });
     const next = { first: 2, rows: [3, 4, 5] };
-    expect(measure(() => dispatchSetValue(root, next)).adds).toBeGreaterThan(0);
+    expect(
+      measure(root, () => dispatchSetValue(root, next)).adds,
+    ).toBeGreaterThan(0);
     expect(root.emit).toEqual(next);
     dispatchSetValue(root, { first: 3, rows: [4, 5, 6] });
     expect(root.emit).toEqual({ first: 3, rows: [4, 5, 6] });
@@ -191,7 +197,7 @@ describe('whole-write epoch scheduling', () => {
     dispatchMount(root, undefined);
     const previous = root.children![1].emit;
     expect(
-      measure(() =>
+      measure(root, () =>
         dispatchSetValue(root, { n0: { n0: 'partial' } }, WriteOption.Merge),
       ).adds,
     ).toBeGreaterThan(0);
@@ -203,7 +209,9 @@ describe('whole-write epoch scheduling', () => {
     dispatchMount(root, undefined);
     root.runtime.latentRaw.set(JSON.stringify(['/ghost', 'unknown']), 42);
     const next = changed(root.emit);
-    expect(measure(() => dispatchSetValue(root, next)).adds).toBeGreaterThan(0);
+    expect(
+      measure(root, () => dispatchSetValue(root, next)).adds,
+    ).toBeGreaterThan(0);
     expect(root.emit).toEqual(next);
   });
 
@@ -211,8 +219,9 @@ describe('whole-write epoch scheduling', () => {
     const { root } = createDispatchTree(nested(2));
     dispatchMount(root, undefined);
     expect(
-      measure(() => dispatchSetValue(root, { n0: { n0: 'changed' }, n1: null }))
-        .adds,
+      measure(root, () =>
+        dispatchSetValue(root, { n0: { n0: 'changed' }, n1: null }),
+      ).adds,
     ).toBeGreaterThan(0);
     expect(Object(root.emit).n0.n0).toBe('changed');
     expect(Object(root.emit).n1).toBeNull();

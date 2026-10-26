@@ -87,7 +87,11 @@ describe('whole-write epoch entry guards', () => {
     dispatchMount(root, [1, 2, 3]);
     const add = vi.spyOn(DirtyPathSet.prototype, 'add');
     dispatchSetValue(root, [4, 5, 6]);
-    expect(add.mock.calls.length).toBe(0);
+    expect(
+      add.mock.contexts.filter(
+        (dirty) => dirty === root.runtime.settlementScratch?.dirtyPaths,
+      ).length,
+    ).toBe(0);
     expect(root.emit).toEqual([4, 5, 6]);
   });
 });
