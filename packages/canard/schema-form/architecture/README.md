@@ -15,7 +15,7 @@
    - [`00-goals-and-values.md`](./design/00-goals-and-values.md) 목표와 가치 · [`01-schema-to-blueprint.md`](./design/01-schema-to-blueprint.md) 스키마에서 청사진까지 · [`02-node-and-value.md`](./design/02-node-and-value.md) 노드와 값 · [`03-settle-and-events.md`](./design/03-settle-and-events.md) 정착과 통지
    - [`04-controls.md`](./design/04-controls.md) 제어 · [`05-validation-and-errors.md`](./design/05-validation-and-errors.md) 검증과 오류 · [`06-react-and-surface.md`](./design/06-react-and-surface.md) React와 공개 표면 · [`07-landing-and-tests.md`](./design/07-landing-and-tests.md) 이주·착수와 시험
 3. [`adr/`](./adr/) — 주제별 결정 기록 17편(0001–0017, 0001–0014는 옛 번호의 주제를 잇는다). 본문은 설계문서의 같은 절을 글자 그대로 모은 것이다
-4. [`plan/`](./plan/README.md) — 개발계획: 단계 디렉토리마다 개발요청서, 검증 구성요건, ADR과 핵심 축. 원장이 줄 번호로 인용하는 단계 기록(03·04·05·07 의 log.md)은 증거라서 남겼다
+4. [`plan/`](./plan/README.md) — 개발계획: 단계 디렉토리마다 개발요청서, 검증 구성요건, ADR과 핵심 축. 원장이 경로나 줄 번호로 인용하는 단계 기록(03·04·05·07 의 log.md)은 증거라서 남겼다
 5. reviews/ — 기록. 라운드마다의 편집자 결정 정본(round-N-closing.md)과 소유자 답 원문(round-N-owner-answers.md), 소유자 결정 대기열, 단계별 경과([reviews/README.md](./reviews/README.md))
 6. verification/ — 단계별 측정·검증 결과 문서. 원자료(스크립트·패치·로그·JSON)는 445라운드 정리에서 지웠고 되살리는 법은 reviews/README.md 의 정리 기록에 있다
 7. [`_archive/2026-09-29/`](./_archive/2026-09-29/README.md) — 원장 이전의 설계 문서(00–09, `open-questions.md`, 옛 ADR 0001–0014). 동결됐다. 새 설계문서·ADR이 드는 옛 문서 경로는 기준 커밋 `ba398c330`의 것이며 지금은 `_archive/2026-09-29/` 아래에 있다(25C-10).
