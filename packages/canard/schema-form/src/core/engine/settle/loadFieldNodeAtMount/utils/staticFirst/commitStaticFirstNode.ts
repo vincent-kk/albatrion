@@ -1,6 +1,8 @@
 import {
   FieldNodeEventType,
   FieldNodeRevisionLedger,
+  advanceFieldNodeRevision,
+  canOmitFieldNodePayload,
 } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 
@@ -18,27 +20,36 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   automatic: boolean,
 ): void => {
-  const current =
-    node.behavior.strategy === 'branch'
-      ? { local: node.local, emit: node.emit }
-      : node.local;
-  const payload = { previous: undefined, current };
   const type = STATIC_FIRST_DELIVERY_TYPE;
-  node.pendingDelivery = {
-    type,
-    payload: {
-      [FieldNodeEventType.UpdateValue]:
-        process.env.NODE_ENV !== 'production'
-          ? Object.freeze(payload)
-          : payload,
-    },
-    options: {
-      [FieldNodeEventType.UpdateValue]: {
-        source: automatic ? 'automatic' : 'load',
+  const silent = canOmitFieldNodePayload(node);
+  if (silent) node.pendingDelivery = undefined;
+  else {
+    const current =
+      node.behavior.strategy === 'branch'
+        ? { local: node.local, emit: node.emit }
+        : node.local;
+    const payload = { previous: undefined, current };
+    node.pendingDelivery = {
+      type,
+      payload: {
+        [FieldNodeEventType.UpdateValue]:
+          process.env.NODE_ENV !== 'production'
+            ? Object.freeze(payload)
+            : payload,
       },
-    },
-  };
+      options: {
+        [FieldNodeEventType.UpdateValue]: {
+          source: automatic ? 'automatic' : 'load',
+        },
+      },
+    };
+  }
   node.deliveryInitialized = true;
-  node.revisionLedger = new FieldNodeRevisionLedger(node.revisionLedger, type);
+  if (silent) advanceFieldNodeRevision(node, type, silent);
+  else
+    node.revisionLedger = new FieldNodeRevisionLedger(
+      node.revisionLedger,
+      type,
+    );
   node.pendingRevision = 0;
 };

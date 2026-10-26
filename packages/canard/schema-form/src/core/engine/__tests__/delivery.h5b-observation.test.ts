@@ -99,6 +99,14 @@ it.each(['generic', 'static-first'])(
       },
     });
     let event: FieldNodeDelivery | undefined;
+    let installedMemos = 0;
+    Object.defineProperty(root.runtime, 'revisionTransitions', {
+      configurable: true,
+      get: () => undefined,
+      set: (value: unknown) => {
+        if (value !== undefined) installedMemos++;
+      },
+    });
     subscribeFieldNode(root, (next) => {
       event = next;
     });
@@ -110,10 +118,12 @@ it.each(['generic', 'static-first'])(
       { deferValidation: true },
     );
     expect(counts.constructors).toBe(4);
+    expect(installedMemos).toBe(0);
     expect(root.runtime.revisionTransitions).toBeUndefined();
     counts.constructors = 0;
     dispatchSetValue(root, { a: 1, b: 1, c: 1 });
     expect(counts.constructors).toBe(4);
+    expect(installedMemos).toBe(0);
     expect(
       new Set([root, ...root.children!].map((node) => node.revisionLedger))
         .size,
