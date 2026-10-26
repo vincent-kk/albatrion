@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createElement, createRef } from 'react';
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
@@ -69,3 +69,29 @@ it('writes exactly the one checked value and clears the marker', () => {
   expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
   expect(screen.queryByRole('status')).toBeNull();
 });
+
+it.each([
+  ['string', 'ab'],
+  ['object', { a: 1 }],
+  ['null', null],
+])(
+  'renders a %s value directly without throwing and checks nothing',
+  (_, value) => {
+    render(
+      createElement(FieldInputStringCheckboxDefinition.Component, {
+        name: 'c',
+        jsonSchema: {
+          type: 'array',
+          items: { type: 'string', enum: ['a', 'b'] },
+        },
+        value,
+        defaultValue: value,
+        onChange: () => {},
+        context: {},
+        misfit: true,
+      } as never),
+    );
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+    expect(checkedBoxes()).toHaveLength(0);
+  },
+);

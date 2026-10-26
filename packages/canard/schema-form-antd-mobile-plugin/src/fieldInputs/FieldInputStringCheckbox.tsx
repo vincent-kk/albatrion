@@ -52,9 +52,7 @@ const FieldInputStringCheckbox = ({
   }, [context, jsonSchema, alias]);
 
   const initialValue = useMemo(() => {
-    return isArray(defaultValue)
-      ? map(defaultValue, (v) => '' + v)
-      : undefined;
+    return isArray(defaultValue) ? map(defaultValue, (v) => '' + v) : undefined;
   }, [defaultValue]);
 
   const handleChange = useHandle((value: CheckboxValue[]) => {
