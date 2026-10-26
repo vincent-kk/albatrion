@@ -42,4 +42,4 @@
 
 ## 후속 범위
 
-구조 사본, 정적 자식의 재검사, primeHost의 전폭 순회와 루트 이중 조립이 남았습니다. dirtyChildren은 현재 코드에서도 이미 dirtyChildrenByParent 색인으로 조회하므로 전체 형상 순회로 바꾸지 않습니다. 후보 보존 비용 시험의 filter 상한 15·77은 그대로 유지하고 기존 computeNode relocation 증명을 전달하여 새 filter 호출을 없앱니다. 코디네이터가 승인한 작업량 기록 단언 한 건만 상한으로 정정합니다(400C-02, 정적 엔트리 2×라운드 2 생략).
+구조 사본, 정적 자식의 재검사, primeHost의 전폭 순회와 루트 이중 조립이 남았습니다. dirtyChildren은 현재 코드에서도 이미 dirtyChildrenByParent 색인으로 조회하므로 전체 형상 순회로 바꾸지 않습니다. 후보 보존 비용 시험의 filter 상한 15·77은 그대로 유지하고 기존 computeNode relocation 증명을 전달하여 새 filter 호출을 없앱니다. 코디네이터가 승인한 작업량 기록 단언 두 건만 상한으로 정정합니다(off stepVisits 484→≤480, table stepVisits 16→≤12)(400C-02, 정적 엔트리 2×라운드 2 생략).

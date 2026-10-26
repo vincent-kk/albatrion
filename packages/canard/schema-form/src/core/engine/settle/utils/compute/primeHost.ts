@@ -27,12 +27,14 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
  * @param node - Branch host starting one bounded calculation wheel
  * @param prior - Previous committed shape retained for identity reuse
  * @param context - Current write and its record factory
+ * @param hasRelocated - Wheel's already collected relocation evidence
  * @returns Nothing; the host now exposes the fixed baseline shape
  */
 export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   prior: Record<string, Self>,
   context: SettlementContext<Self>,
+  hasRelocated = true,
 ): void => {
   const baseline: Record<string, Self> = {};
   Object.setPrototypeOf(baseline, null);
@@ -51,7 +53,15 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
           )
       : cached;
   const entries = direct?.baseline ?? node.behavior.declareChildren(node);
-  const reuse = createStaticEntryReuser(node, prior, context, baseline);
+  const reuse = createStaticEntryReuser(
+    node,
+    prior,
+    context,
+    baseline,
+    undefined,
+    false,
+    hasRelocated,
+  );
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
     if (

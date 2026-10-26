@@ -5,7 +5,6 @@ import type { BlueprintChildEntry } from '../../../../../blueprint';
 import { HostStaticPartition } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
 import type { SettlementContext } from '../../../../types/settlement';
-import { relocatedGates } from '../../relocatedGates';
 import { staticShape } from '../staticShape';
 
 /** Static schemas indexed once per host shape, shared by prime and both selectors. */
@@ -22,6 +21,7 @@ const SHAPES = new WeakMap<
  * @param next - Destination structure, including the priming baseline
  * @param computeChild - Dirty-child computation, absent while priming
  * @param immediate - Whether child computation queues host publication
+ * @param hasRelocated - Existing wheel evidence; unknown callers keep the general path
  * @returns An entry reuser, or undefined when this host call needs general selection
  */
 export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
@@ -31,13 +31,14 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
   next: Record<string, Self>,
   computeChild?: (child: Self) => void,
   immediate = false,
+  hasRelocated = true,
 ): ((entry: BlueprintChildEntry) => boolean) | undefined => {
   if (
     node.behavior.type !== 'object' ||
     context.kind === 'load' ||
     context.distributedInputs.has(node) ||
     context.pathChanges.length > 0 ||
-    relocatedGates(node).length > 0
+    hasRelocated
   )
     return undefined;
   const partition = HostStaticPartition.get(node.blueprintNode);
@@ -54,6 +55,7 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
     SHAPES.set(shape, entries);
   }
   const registered = context.presenceRegistrations;
+  const ownNames = Object.getPrototypeOf(prior) === null;
   return (entry) => {
     if (
       context.presenceRegistrations !== registered ||
@@ -62,9 +64,10 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
     )
       return false;
     const selected = entries.get(entry);
-    const child = hasOwnProperty(prior, entry.name)
-      ? prior[entry.name]
-      : undefined;
+    const child =
+      ownNames || hasOwnProperty(prior, entry.name)
+        ? prior[entry.name]
+        : undefined;
     if (
       !selected ||
       !child ||

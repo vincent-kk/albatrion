@@ -73,10 +73,16 @@ describe('untimed attribution at the fixed-width first switch', () => {
                 mode,
                 rootEvaluations: 160,
                 childEvaluations: 480,
-                stepVisits: 484,
+                stepVisits: expect.any(Number),
               }
-            : { mode, rootEvaluations: 0, childEvaluations: 0, stepVisits: 16 },
+            : {
+                mode,
+                rootEvaluations: 0,
+                childEvaluations: 0,
+                stepVisits: expect.any(Number),
+              },
         );
+        expect(stepVisits).toBeLessThanOrEqual(mode === 'off' ? 480 : 12);
         observations.push(counts);
       }
       console.log('GATE_TABLE_COUNTS', JSON.stringify(observations));
