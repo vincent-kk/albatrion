@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
 import type { FieldNodeWriteKind } from '../../../types/value';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
@@ -13,6 +14,7 @@ import { assertVirtualWriteShape } from '../input/assertVirtualWriteShape';
 import { isPlain } from '../input/isPlain';
 import { markWrite } from '../input/markWrite';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
+import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
@@ -80,22 +82,29 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
       assertVirtualWriteShape(node, input);
   }
   if (!scalarWrite && node.detached) {
-    if (hasLivePathKind(node)) return;
+    const address = DetachedWriteAddress.read(node);
+    const path = address?.path ?? node.path;
+    if (hasLivePathKind(node, path)) return;
     const whole =
       kind !== 'callerPartial' ||
       !isPlain(input) ||
       node.behavior.strategy !== 'branch';
-    if (whole) pruneLatentRaw(node.rootNode.runtime, node.path);
+    if (whole) pruneLatentRaw(node.rootNode.runtime, path);
     distributeLatentValue(
       node.rootNode.runtime,
       undefined,
-      node.path,
+      path,
       node.blueprintNode,
       input,
-      getLatentOrder(node.parent, node.name, node.blueprintNode),
+      address?.order ??
+        getLatentOrder(node.parent, node.name, node.blueprintNode),
       whole,
       node.parent?.blueprintNode.childEntries ?? [],
     );
+    const metadata = node.runtime.latentRawMetadata?.get(
+      JSON.stringify([path, getBlueprintNodeIdentity(node.blueprintNode)]),
+    );
+    if (metadata) DetachedWriteAddress.retain(node, metadata);
     return;
   }
   const scratch = getSettlementScratch(root.runtime);

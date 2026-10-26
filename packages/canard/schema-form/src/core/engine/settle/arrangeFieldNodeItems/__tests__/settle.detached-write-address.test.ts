@@ -38,7 +38,9 @@ it.each(['insert', 'replace'] as const)(
       destination = '/items/3';
     } else {
       list.remove(0);
-      root.setValue({ items: [{ flag: true, gated: 'second' }, { flag: false }] });
+      root.setValue({
+        items: [{ flag: true, gated: 'second' }, { flag: false }],
+      });
       const latent = Reflect.get(runtime, 'latentRaw');
       expect(latent.size).toBe(0);
       destination = '/items/1';

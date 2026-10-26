@@ -8,6 +8,7 @@ import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBluepri
 import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
+import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
 
 /**
  * Transfer an exiting occurrence's last-live decisions to its latent source.
@@ -41,7 +42,9 @@ export const snapshotExitedPolicies = <Self extends FieldNodeRecord<Self>>(
               false,
             ),
           }));
-        runtime.latentRawMetadata?.set(key, { ...metadata, exitLayers });
+        const current = { ...metadata, exitLayers };
+        DetachedWriteAddress.transfer(metadata, current);
+        runtime.latentRawMetadata?.set(key, current);
         context.latentDescendantKeys = undefined;
       },
       { owned: true },
