@@ -14,6 +14,7 @@ export const FieldInputDateFormat = ({
   disabled,
   defaultValue,
   value,
+  misfit,
   onChange,
   style,
   className,
@@ -37,6 +38,7 @@ export const FieldInputDateFormat = ({
       readOnly={readOnly}
       disabled={disabled}
       max={maximum}
+      aria-invalid={misfit || undefined}
       min={minimum}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
