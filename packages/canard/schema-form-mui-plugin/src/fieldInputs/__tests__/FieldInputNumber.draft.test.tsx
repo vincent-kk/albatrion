@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 
 import { cleanup, fireEvent, render } from '@testing-library/react';
-import { afterEach, expect, it } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@canard/schema-form';
 
@@ -70,4 +70,21 @@ it('leaves the displayed text alone on blur when no draft is pending', () => {
   fireEvent.change(input, { target: { value: '7' } });
   fireEvent.blur(input);
   expect(input.value).toBe('7');
+});
+
+it('restores an empty display on blur when the browser holds unparsable text in an empty field', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      fieldInputDefinitions={[FieldInputNumberDefinition]}
+      jsonSchema={{ type: 'number' }}
+      onError={() => {}}
+    />,
+  );
+  const input = view.container.querySelector('input') as HTMLInputElement;
+  Object.defineProperty(input, 'validity', { value: { badInput: true } });
+  const write = vi.spyOn(input, 'value', 'set');
+  fireEvent.blur(input);
+  expect(write).toHaveBeenCalledWith('');
 });

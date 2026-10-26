@@ -51,25 +51,25 @@ const FieldInputBoolean = ({
   // label이 없는 경우 Checkbox만 렌더링
   return (
     <>
-    <FormControlLabel
-      label={label}
-      htmlFor={path}
-      required={required}
-      disabled={disabled}
-      control={
-        <Checkbox
-          id={path}
-          name={name}
-          disabled={disabled}
-          indeterminate={indeterminate}
-          defaultChecked={defaultChecked}
-          onChange={handleChange}
-          size={size}
-          slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
-        />
-      }
-    />
-    {misfit && <span role="status">Invalid value</span>}
+      <FormControlLabel
+        label={label}
+        htmlFor={path}
+        required={required}
+        disabled={disabled}
+        control={
+          <Checkbox
+            id={path}
+            name={name}
+            disabled={disabled}
+            indeterminate={indeterminate}
+            defaultChecked={defaultChecked}
+            onChange={handleChange}
+            size={size}
+            slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
+          />
+        }
+      />
+      {misfit && <span role="status">Invalid value</span>}
     </>
   );
 };

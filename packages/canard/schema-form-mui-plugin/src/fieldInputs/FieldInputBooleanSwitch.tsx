@@ -51,25 +51,27 @@ const FieldInputBooleanSwitch = ({
 
   return (
     <>
-    <FormControlLabel
-      label={label}
-      htmlFor={path}
-      required={required}
-      disabled={disabled}
-      labelPlacement="start"
-      control={
-        <Switch
-          id={path}
-          name={name}
-          checked={value === true}
-          onChange={handleChange}
-          disabled={disabled}
-          size={size}
-          slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
-        />
-      }
-    />
-    {misfit && <span role="status">Invalid value</span>}
+      <FormControlLabel
+        label={label}
+        htmlFor={path}
+        required={required}
+        disabled={disabled}
+        labelPlacement="start"
+        control={
+          <Switch
+            id={path}
+            name={name}
+            checked={value === true}
+            onChange={handleChange}
+            disabled={disabled}
+            size={size}
+            slotProps={{
+              input: { role: 'switch', 'aria-invalid': misfit || undefined },
+            }}
+          />
+        }
+      />
+      {misfit && <span role="status">Invalid value</span>}
     </>
   );
 };

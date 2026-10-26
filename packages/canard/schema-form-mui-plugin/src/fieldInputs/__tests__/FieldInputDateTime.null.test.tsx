@@ -4,7 +4,12 @@ import { act, cleanup, render } from '@testing-library/react';
 import dayjs, { type Dayjs } from 'dayjs';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import { Form, type FormHandle } from '@canard/schema-form';
+import {
+  type FieldInputDefinition,
+  Form,
+  type FormHandle,
+  type JSONSchema,
+} from '@canard/schema-form';
 
 import { FieldInputDateDefinition } from '../FieldInputDate';
 import { FieldInputMonthDefinition } from '../FieldInputMonth';
@@ -36,7 +41,16 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-const cases = [
+type DateTimeCase = readonly [
+  name: string,
+  definition: FieldInputDefinition,
+  jsonSchema: JSONSchema,
+  initial: string,
+  valid: Dayjs,
+  formatted: string,
+];
+
+const cases: DateTimeCase[] = [
   [
     'Date',
     FieldInputDateDefinition,
@@ -61,7 +75,7 @@ const cases = [
     dayjs('2024-03-05T08:09:10'),
     '08:09:10',
   ],
-] as const;
+];
 
 it.each(cases)(
   '%s maps null to undefined, skips an invalid Dayjs and formats a valid one',
@@ -71,7 +85,7 @@ it.each(cases)(
       <Form
         ref={ref}
         fieldInputDefinitions={[definition]}
-        jsonSchema={jsonSchema as never}
+        jsonSchema={jsonSchema}
         defaultValue={initial as never}
         onError={() => {}}
       />,
