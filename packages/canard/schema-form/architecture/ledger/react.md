@@ -455,6 +455,7 @@
   > 편집자 결정(176C-01): "【추론】 G23의 정의는 "실제 브라우저에서 소유자가 직접 확인"이고, 그 가운데 에이전트가 대신할 수 있는 것(실제 Chrome 창에서의 DOM·세터·이벤트 관찰, 숫자 입력 단계, 재마운트 기록)은 모두 기대값과 일치했다. 실제 OS IME는 에이전트가 칠 수 없으므로 소유자가 눈으로 보는 두 행만 남기되, 사람이 셀 수 없는 수치는 CDP 증거로 대신하는 것이 사람 확인표의 취지(IME 조합 중 DOM과 노드가 어긋나지 않음)에 맞다. 감지 비용은 원장이 합격선을 두지 않았으므로 수치를 그대로 소유자에게 올린다." (`reviews/round-176-closing.md:9`)
   > 편집자 결정(394C-03): "【추론】 fairy08의 읽기 전용 대조(393라운드 소유자 지시) 결과를 적어 둔다. 확정 결함 일곱: 문자열 체크박스에 배열 가드가 없어 antd5·6은 문자열·수 값이면 렌더 중 TypeError, 내장 정의는 문자열을 글자 단위로 펼치고 수이면 TypeError; antd5·6 범위 입력 셋이 길이 2만 검사; 네 플러그인의 스위치 둘이 불리언 아닌 값을 유효한 켜짐·꺼짐으로 그리고 무효 표지가 없음(REACT-027 "받은 값이나 무효 표지" 위반); antd 셋의 Slider가 null을 NaN으로 방출; antd 셋의 Number가 nullable이 아니어도 null 방출; MUI Number가 빈 칸을 null로 보내고 parseInt로 자르며 일부만 해석(LANDING-184 위반); 네 플러그인 모두 misfit(SURFACE-061)을 읽는 곳이 없음. 원장 해석 필요 하나(소유자 물음): 내장 Number가 nullable이면 빈 칸에서 null을 보내는데 REACT-027의 "빈 칸이면 undefined"와 "비우기 조작은 nullable이면 null"이 갈린다. 권장 미적용 하나: 플러그인별 union 시험 항목 없음(내장 Union은 맞음). 옛 이름 typeMismatch의 잔재는 플러그인에 없다. 고치는 일은 소유자 지시대로 나중에 플러그인 PR로 한다." (`reviews/round-394-closing.md:12`)
   > 편집자 결정(444C-09): "【추론】 입력의 빈 칸은 `nullable` 과 무관하게 언제나 `undefined` 를 보낸다. 입력은 `null` 을 자동으로 만들지 않으며, `null` 은 입력이 그 뜻의 조작으로 명시적으로 `onChange(null)` 을 부를 때만 노드에 들어간다." (`reviews/round-444-closing.md:32`)
+  > 편집자 결정(444C-11): "【추론】 입력 구성 요소는 무효 문구를 그리지 않는다. `misfit`(내장 union 은 무효 초안 포함)이면 역할 있는 조작 요소에 `aria-invalid="true"` 를 붙이고, 라이브러리가 오류 상태를 주는 구성 요소(antd `status="error"`, mui `error`)에서만 그 상태를 켠다. 무효 문구는 폼의 오류 렌더러와 소비자의 몫이다(소유자 결정 (가), 위 답변 표 14·15행)." (`reviews/round-444-closing.md:42`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1104-1114,1143-1147`(정본), `reviews/round-18-closing.md:2600-2602,2607`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-40), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -624,6 +625,7 @@
   > 편집자 결정(199C-01): "【추론】 영역 밖 값의 표시는 원장이 비워 둔 제품 결정이고 다른 그룹에 의존하지 않으니 미루는 데 비용이 없다." (`reviews/round-199-closing.md:9`)
   > 소유자(232라운드, 대기열 9 영역 밖 값): "두 번째 방법으로 구성. 안전한 내부 기본컴포넌트로" (`reviews/round-232-owner-answers.md:7`)
   > 편집자 결정(233C-01): "【추론】 엔진이 presentation.formType만 읽기로 정해진 뒤 내장 정의가 최상위 키를 검사하는 것은 새 범위가 아니라 전환이 남긴 어긋남이고, 고치지 않으면 내장 checkbox·radio가 공개 문법으로 쓸 수 없다. 데모 코드의 옛 문법은 문서가 가르치는 것과 돌아가는 것이 달라지는 문제라 문서 PR의 범위다." (`reviews/round-233-closing.md:11`)
+  > 편집자 결정(444C-11): "【추론】 플러그인의 union 입력(LANDING-206·REACT-033)도 같은 규칙을 따른다: 보이는 문구 없이 `aria-invalid` 와 라이브러리 오류 상태만 붙인다. REACT-033 의 "무효 표지" 는 이제 이 뜻이다." (`reviews/round-444-closing.md:43`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2575-2580,2582-2618,2627-2630`(정본), `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
