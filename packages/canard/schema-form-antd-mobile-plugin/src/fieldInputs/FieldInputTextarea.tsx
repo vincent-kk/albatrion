@@ -26,7 +26,9 @@ const FieldInputTextarea = ({
   placeholder,
   misfit,
 }: FieldInputPropsWithSchema<string, TextareaSchema>) => {
-  const handleChange = useHandle(onChange);
+  const handleChange = useHandle((text: string) =>
+    onChange(text === '' ? undefined : text),
+  );
   const autoSize = useMemo(
     () => ({
       minRows: jsonSchema.minRows,

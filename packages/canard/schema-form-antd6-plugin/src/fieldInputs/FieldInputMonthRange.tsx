@@ -56,7 +56,8 @@ const FieldInputMonthRange = ({
   misfit,
 }: FieldInputMonthRangeProps) => {
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
-    const [start, end] = range || [];
+    if (!range) return onChange(undefined);
+    const [start, end] = range;
     if (!start || !end) return;
     onChange([start.format(DATE_FORMAT), end.format(DATE_FORMAT)]);
   });

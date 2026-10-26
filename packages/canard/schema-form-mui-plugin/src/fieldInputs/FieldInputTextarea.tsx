@@ -76,7 +76,8 @@ const FieldInputTextarea = ({
   ]);
 
   const handleChange = useHandle((event: ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(event.target.value);
+    const text = event.target.value;
+    onChange(text === '' ? undefined : text);
   });
 
   const finalMinRows = minRows ?? jsonSchema.minRows ?? 3;

@@ -24,7 +24,9 @@ const FieldInputString = ({
   misfit,
 }: FieldInputPropsWithSchema<string | null, StringJSONSchema>) => {
   const type = jsonSchema.format === 'password' ? 'password' : 'text';
-  const handleChange = useHandle(onChange);
+  const handleChange = useHandle((text: string) =>
+    onChange(text === '' ? undefined : text),
+  );
   return (
     <div role="group" aria-invalid={misfit || undefined}>
       <Input

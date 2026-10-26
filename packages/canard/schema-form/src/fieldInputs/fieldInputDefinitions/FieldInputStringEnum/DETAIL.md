@@ -9,6 +9,8 @@
 - undefined를 맨 앞의 빈 비활성 옵션으로 표시하며, enum에 빈 문자열이 있어도 이 옵션이 초기 선택을 차지합니다. null·undefined가 아닌 집합 밖 기본값은 맨 앞의 비활성 옵션으로 표시하고, null의 기존 선택 동작은 유지합니다. 추가 판정은 O(1)이며 undefined일 때 옵션 DOM 하나만 추가합니다.
 - `type.ts`는 이 입력의 문맥 형을 정의합니다.
 
+- `misfit` 값은 조작 요소에 `aria-invalid="true"`로 표시하며 노드 값은 바꾸지 않습니다(REACT-027, SURFACE-061).
+
 ## Acceptance Criteria
 
 ### enum-placeholder — 빈 선택
@@ -17,4 +19,4 @@
 
 ## Last Updated
 
-2026-10-14: 소유자 구조 리뷰 넷째 손질(기본 입력을 입력마다 fractal로 분리).
+2026-10-26: 무효 값의 aria-invalid 표지와 노드 값 보존 계약을 명시합니다.

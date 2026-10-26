@@ -47,7 +47,8 @@ const FieldInputString = ({
   }, [jsonSchema]);
 
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    const text = event.target.value;
+    onChange(text === '' ? undefined : text);
   });
   return (
     <TextInput
