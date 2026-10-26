@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- H5b 커밋은 기존 여섯 출처와 후보 방문 순서를 그대로 사용한다. 공개 최외곽·트리 전체 미구독·revision 읽기 없음·노드 기존 pending 없음일 때만 사건 봉투와 payload를 만들지 않고 같은 비트를 원장에 확정한다. 최초 revision 읽기 뒤에는 계속 기존 payload 경로를 쓴다. 같은 자격에서만 불변 원장 전이를 공유하고 정상·예외 종료에 메모를 해제한다. 그 밖은 기존 constructor와 pending previous 병합을 유지한다. 리스너에게 실제 배달되는 개발 모드 payload 동결은 유지한다. 변경 포착·사건 표시·후보 수집·정착 scratch/context에는 큐 기록을 넣지 않는다(EVENT-006, GOAL-011, NODE-060, TEST-080 D1-H5b).
+
 ### 의존 색인과 owner-split 등록
 
 - 결정 62 (라) PR-3의 분할 소유자는 표 단계의 선언 경로와 일치하는 와일드카드 없는 잎 소유자입니다. 감시 경로를 접은 기여나 의존·파생·표 밖 게이트의 일반 기여가 청사진의 어느 트라이 노드에라도 있는 경로는 분할하지 않습니다. 기존 `owners`, `affected`, `affectedByPresence`는 구성원과 순서를 유지합니다. 각 트라이 노드는 일반 항목을 원래 순서로 가진 `plainOwners`와 호스트별 `splitBuckets`를 보유하며, 묶음의 `ranksByName`과 `firstRank`는 기존 owners 순번입니다.

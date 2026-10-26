@@ -98,7 +98,7 @@
 
 ### owned-inline-counts — core mount 동결 계수
 
-- module 초기화 상수를 제외한 core mount의 distinct 동결 수(운영/개발)는 nested 1,706/29,007, flat 502/10,523, oneOf-20 111/1,564, sample-0 5/66이며, 재동결과 primitive 호출은 0입니다. 준비된 직접 계획을 쓰는 load는 plan.ids를 재사용하여 활성 간선의 staticIds 배열을 별도로 생성·동결하지 않습니다. 공개 schema·생산자 소유 배열·controls·hint 봉투의 동결과 기록별 소속 배열의 보호는 유지합니다. options 없는 choices의 모듈 상수 재사용은 각각 1,365, 501, 5, 3개의 생성 지점 호출을 생략합니다(batch2 4-default-choices).
+- module 초기화 상수를 제외한 core mount의 distinct 동결 수 상한(운영/개발)은 nested 1,706/29,007, flat 502/10,523, oneOf-20 111/1,564, sample-0 5/66이며, 재동결과 primitive 호출은 0입니다. 호출·작업 계수는 정확값 대신 옛 값 이하를 보장합니다(400C-02). H5b의 미관측 payload 생략은 개발 모드에도 동일하게 적용하되 실제 리스너에게 배달되는 payload 동결은 유지합니다. 준비된 직접 계획을 쓰는 load는 plan.ids를 재사용하여 활성 간선의 staticIds 배열을 별도로 생성·동결하지 않습니다. 공개 schema·생산자 소유 배열·controls·hint 봉투의 동결과 기록별 소속 배열의 보호는 유지합니다. options 없는 choices의 모듈 상수 재사용은 각각 1,365, 501, 5, 3개의 생성 지점 호출을 생략합니다(batch2 4-default-choices).
 
 ### owned-inline-render — 렌더 중 작성된 React 값
 
