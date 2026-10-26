@@ -66,7 +66,7 @@ export interface FieldInputProps<
   defaultValue: Value | undefined;
   /** Current value; the input owns its draft. An empty field is undefined. */
   value: Value | undefined;
-  /** Publish the input draft; clearing writes null when the schema is nullable (REACT-027, LANDING-150). */
+  /** Publish the input draft; an empty field publishes undefined, and null is published only when the input explicitly publishes null (REACT-027). */
   onChange: SetStateFnWithOptions<Value | undefined>;
   /** onFileAttach handler of FieldInput Component */
   onFileAttach: Fn<[file: File | File[] | undefined]>;

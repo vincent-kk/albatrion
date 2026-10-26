@@ -13,7 +13,6 @@ export const FieldInputNumber = ({
   disabled,
   defaultValue,
   value,
-  nullable,
   onChange,
   placeholder,
   style,
@@ -23,9 +22,7 @@ export const FieldInputNumber = ({
     if (event.target.validity.badInput) return;
     onChange(
       event.target.value === ''
-        ? nullable
-          ? null
-          : undefined
+        ? undefined
         : event.target.valueAsNumber,
     );
   });

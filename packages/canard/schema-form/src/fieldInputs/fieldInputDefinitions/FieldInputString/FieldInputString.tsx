@@ -12,7 +12,6 @@ export const FieldInputString = ({
   disabled,
   jsonSchema,
   defaultValue,
-  nullable,
   onChange,
   placeholder,
   style,
@@ -29,9 +28,7 @@ export const FieldInputString = ({
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(
       event.target.value === ''
-        ? nullable
-          ? null
-          : undefined
+        ? undefined
         : event.target.value,
     );
   });
