@@ -52,9 +52,12 @@ const FieldInputNumber = ({
     else onChange(next);
   });
   const handleBlur = useHandle(() => {
-    if (!withheld.current) return;
-    withheld.current = false;
-    setGeneration((g) => g + 1);
+    // rc-input-number applies its blur bound correction after this callback.
+    queueMicrotask(() => {
+      if (!withheld.current) return;
+      withheld.current = false;
+      setGeneration((g) => g + 1);
+    });
   });
   return (
     <InputNumber

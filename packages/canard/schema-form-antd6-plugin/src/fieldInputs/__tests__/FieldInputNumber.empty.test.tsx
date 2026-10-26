@@ -19,19 +19,16 @@ type NumberProps = ComponentProps<typeof AntdInputNumber>;
 
 const received = vi.hoisted(() => ({ props: [] as NumberProps[] }));
 
-vi.mock('antd', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('antd')>()),
-  InputNumber: (props: NumberProps) => {
-    received.props.push(props);
-    return (
-      <input
-        data-testid="number"
-        defaultValue={props.defaultValue as number | undefined}
-        onBlur={props.onBlur}
-      />
-    );
-  },
-}));
+vi.mock('antd', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('antd')>();
+  return {
+    ...actual,
+    InputNumber: (props: NumberProps) => {
+      received.props.push(props);
+      return <actual.InputNumber {...props} />;
+    },
+  };
+});
 
 beforeEach(() => {
   received.props.length = 0;
@@ -39,13 +36,16 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-const mount = (type: 'number' | 'integer' | ['number', 'null']) => {
+const mount = (
+  type: 'number' | 'integer' | ['number', 'null'],
+  bounds: { minimum?: number; maximum?: number } = {},
+) => {
   const ref = createRef<FormHandle>();
   render(
     <Form
       ref={ref}
       fieldInputDefinitions={[FieldInputNumberDefinition]}
-      jsonSchema={{ type }}
+      jsonSchema={{ type, ...bounds }}
       defaultValue={3}
       onError={() => {}}
     />,
@@ -80,13 +80,33 @@ it('does not publish 1.5 on an integer node but publishes an integer', () => {
   expect(ref.current!.getValue()).toBe(4);
 });
 
-it('reverts the displayed draft to the node value on blur after a withheld 1.5', () => {
-  const { ref, send } = mount('integer');
-  const input = screen.getByTestId('number') as HTMLInputElement;
-  fireEvent.change(input, { target: { value: '1.5' } });
-  send(1.5);
-  expect(input.value).toBe('1.5');
-  fireEvent.blur(input);
-  expect((screen.getByTestId('number') as HTMLInputElement).value).toBe('3');
+it('reverts a withheld 1.5 on an integer node to the node value at blur', async () => {
+  const { ref } = mount('integer');
+  const input = () => screen.getByRole('spinbutton') as HTMLInputElement;
+  fireEvent.change(input(), { target: { value: '1.5' } });
+  expect(input().value).toBe('1.5');
+  await act(async () => {
+    fireEvent.blur(input());
+  });
+  expect(input().value).toBe('3');
   expect(ref.current!.getValue()).toBe(3);
 });
+
+it.each([
+  { bound: 'maximum', bounds: { minimum: 0, maximum: 3.5 }, draft: '10' },
+  { bound: 'minimum', bounds: { minimum: 2.5 }, draft: '0' },
+])(
+  'reverts a blur correction to a non-integer $bound on an integer node',
+  async ({ bounds, draft }) => {
+    const { ref } = mount('integer', bounds);
+    const input = () => screen.getByRole('spinbutton') as HTMLInputElement;
+    fireEvent.change(input(), { target: { value: draft } });
+    expect(input().value).toBe(draft);
+    expect(ref.current!.getValue()).toBe(3);
+    await act(async () => {
+      fireEvent.blur(input());
+    });
+    expect(input().value).toBe('3');
+    expect(ref.current!.getValue()).toBe(3);
+  },
+);
