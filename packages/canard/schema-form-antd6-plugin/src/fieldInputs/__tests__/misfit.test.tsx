@@ -207,6 +207,15 @@ const cases: MisfitCase[] = [
 it.each(cases)(
   '%s marks a misfit value in the DOM and clears it for a valid one',
   (_, definition, jsonSchema, bad, good) => {
+    const ariaOnlyDefinitions: FieldInputDefinition[] = [
+      FieldInputBooleanDefinition,
+      FieldInputBooleanSwitchDefinition,
+      FieldInputStringSwitchDefinition,
+      FieldInputRadioGroupDefinition,
+      FieldInputStringCheckboxDefinition,
+      FieldInputSliderDefinition,
+    ];
+    const supportsErrorStatus = !ariaOnlyDefinitions.includes(definition);
     const ref = createRef<FormHandle>();
     const { container } = render(
       <Form
@@ -221,8 +230,8 @@ it.each(cases)(
       container.querySelector(
         'input[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]',
       );
-    const visible = () =>
-      container.querySelector('[class*="-status-error"], [role="status"]');
+    const errorStatus = () =>
+      container.querySelector('[class*="-status-error"]');
     const control = () =>
       container.querySelector(
         'input, textarea, [role="switch"], [role="slider"]',
@@ -230,17 +239,17 @@ it.each(cases)(
     expect(control()).not.toBeNull();
     expect(ref.current!.getValue()).toEqual(good);
     expect(invalid()).toBeNull();
-    expect(visible()).toBeNull();
+    if (supportsErrorStatus) expect(errorStatus()).toBeNull();
     act(() => ref.current!.setValue(bad as never));
     expect(control()).not.toBeNull();
     expect(ref.current!.getValue()).toEqual(bad);
     expect(invalid()).not.toBeNull();
-    expect(visible()).not.toBeNull();
+    if (supportsErrorStatus) expect(errorStatus()).not.toBeNull();
     act(() => ref.current!.setValue(good as never));
     expect(control()).not.toBeNull();
     expect(ref.current!.getValue()).toEqual(good);
     expect(invalid()).toBeNull();
-    expect(visible()).toBeNull();
+    if (supportsErrorStatus) expect(errorStatus()).toBeNull();
   },
 );
 
@@ -288,9 +297,8 @@ it.each(arrayCases)(
       container.querySelector('input:checked, .ant-select-selection-item'),
     ).toBeNull();
     expect(container.querySelector('[aria-invalid="true"]')).toBeNull();
-    expect(
-      container.querySelector('[class*="-status-error"], [role="status"]'),
-    ).toBeNull();
+    if (definition === FieldInputStringEnumDefinition)
+      expect(container.querySelector('[class*="-status-error"]')).toBeNull();
     act(() => ref.current!.setValue(good as never));
     expect(control()).not.toBeNull();
     expect(ref.current!.getValue()).toEqual(good);

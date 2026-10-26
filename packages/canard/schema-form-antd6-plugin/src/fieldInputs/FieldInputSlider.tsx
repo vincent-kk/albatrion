@@ -46,22 +46,19 @@ const FieldInputSlider = ({
   }, [handleChange, jsonSchema, lazy]);
 
   return (
-    <>
-      <div role="group" aria-invalid={misfit || undefined}>
-        <Slider
-          id={path}
-          disabled={disabled}
-          min={min}
-          max={max}
-          step={step}
-          defaultValue={
-            typeof defaultValue === 'number' ? defaultValue : undefined
-          }
-          {...changeHandler}
-        />
-      </div>
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <div role="group" aria-invalid={misfit || undefined}>
+      <Slider
+        id={path}
+        disabled={disabled}
+        min={min}
+        max={max}
+        step={step}
+        defaultValue={
+          typeof defaultValue === 'number' ? defaultValue : undefined
+        }
+        {...changeHandler}
+      />
+    </div>
   );
 };
 

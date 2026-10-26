@@ -48,7 +48,6 @@ it.each([
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
     expect(checkedBoxes()).toHaveLength(0);
     expect(screen.getByRole('group').getAttribute('aria-invalid')).toBe('true');
-    expect(screen.getByRole('status').textContent).toBe('Invalid value');
   },
 );
 
@@ -58,7 +57,6 @@ it.each([null, undefined])(
     renderCheckbox(['array', 'null'], value);
     expect(checkedBoxes()).toHaveLength(0);
     expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
-    expect(screen.queryByRole('status')).toBeNull();
   },
 );
 
@@ -67,7 +65,6 @@ it('writes exactly the one checked value and clears the marker', () => {
   fireEvent.click(screen.getAllByRole('checkbox')[0]);
   expect(ref.current!.getValue()).toEqual(['a']);
   expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
-  expect(screen.queryByRole('status')).toBeNull();
 });
 
 it.each([
