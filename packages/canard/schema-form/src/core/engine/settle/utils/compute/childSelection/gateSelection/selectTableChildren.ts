@@ -8,6 +8,7 @@ import { verifyTablePrePublication } from '../../../gates/verifyTablePrePublicat
 import { verifyUnvisitedGateStep } from '../../../gates/verifyUnvisitedGateStep';
 import { selectEntryStep } from '../selectEntryStep';
 import type { ChildSelectionFrame } from '../selectEntryStep';
+import { createStaticEntryReuser } from '../utils/createStaticEntryReuser';
 import { getTableVisitSteps } from './getTableVisitSteps';
 import { mergeGateSteps } from './mergeGateSteps';
 import { readGateBucket } from './readGateBucket';
@@ -23,6 +24,14 @@ export const selectTableChildren = <Self extends FieldNodeRecord<Self>>(
   round: GateSelectionRound,
 ): void => {
   const { table } = round;
+  const reuse = createStaticEntryReuser(
+    frame.node,
+    frame.prior,
+    frame.context,
+    frame.next,
+    frame.computeChild,
+    frame.immediate,
+  );
   let selected = getTableVisitSteps(frame, table);
   const active = new Set<number>();
   const verify = gateSelectionTable.mode === 'verify';
@@ -72,6 +81,7 @@ export const selectTableChildren = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     frame.tableVerdict = tableStep ? admitted : undefined;
+    if (reuse?.(step.entry)) continue;
     selectEntryStep(step.entry, step, frame);
   }
   frame.tableVerdict = undefined;

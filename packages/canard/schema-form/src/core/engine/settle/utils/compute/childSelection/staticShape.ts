@@ -1,6 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { mergeEffectiveSchema } from '../../../../blueprint';
+import { HostStaticPartition } from '../../../../blueprint';
 import type {
   BlueprintChildEntry,
   BlueprintNode,
@@ -23,12 +24,11 @@ const STATIC_SHAPES = new WeakMap<
 >();
 
 /**
- * Memoize an unambiguous static host in the structure's property order.
+ * Memoize the fixed static entries in the structure's property order.
  * @param host - Object blueprint host whose child edges are inspected once
  * @param isAtomic - Atomic-schema predicate of the owning form's blueprint options
- * @returns One entry per child with its static IDs and ungated schema, or null when
- *   a duplicate name, virtual child, empty declaration list, type conflict or gate
- *   rules the static shape out; the same value is returned on every later call
+ * @returns The admitted static subset with stable IDs and schemas; unsafe entries
+ *   remain on general selection, and later calls return the same subset
  */
 export const staticShape = (
   host: BlueprintNode,
@@ -43,8 +43,9 @@ export const staticShape = (
       schema: EffectiveSchema;
     }
   > = Object.create(null);
-  for (let index = 0; index < host.childEntries.length; index++) {
-    const entry = host.childEntries[index];
+  const entries = HostStaticPartition.get(host).staticEntries;
+  for (let index = 0; index < entries.length; index++) {
+    const entry = entries[index];
     const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {
       mode: 'runtime',
       isAtomic,
@@ -66,8 +67,7 @@ export const staticShape = (
       schema.typeConflict ||
       hasGate
     ) {
-      STATIC_SHAPES.set(host, null);
-      return null;
+      continue;
     }
     selected[entry.name] = { entry, ids: staticIds(entry), schema };
   }

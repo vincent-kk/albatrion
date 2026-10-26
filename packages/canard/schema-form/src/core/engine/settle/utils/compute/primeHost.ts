@@ -15,6 +15,7 @@ import {
   DIRECT_CHILD_SELECTION_PLANS,
   getDirectChildSelectionPlan,
 } from './childSelection/getDirectChildSelectionPlan';
+import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
 import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
 
@@ -50,6 +51,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
           )
       : cached;
   const entries = direct?.baseline ?? node.behavior.declareChildren(node);
+  const reuse = createStaticEntryReuser(node, prior, context, baseline);
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
     if (
@@ -60,6 +62,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
         ))
     )
       continue;
+    if (reuse?.(entry)) continue;
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]
       : undefined;

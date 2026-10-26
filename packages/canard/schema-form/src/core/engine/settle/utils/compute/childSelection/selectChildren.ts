@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { getItemEntries } from '../../../../blueprint';
+import { HostStaticPartition, getItemEntries } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
@@ -25,6 +25,7 @@ import { reuseArrayChildren } from './reuseArrayChildren';
 import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
 import { staticShape } from './staticShape';
+import { createStaticEntryReuser } from './utils/createStaticEntryReuser';
 
 /**
  * Select all declared direct children in authored order for one host round.
@@ -50,7 +51,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     reuseArrayChildren(node, context, prior, computeChild);
     return false;
   }
-  if (!context.hasGates && node.behavior.type === 'object') {
+  if (
+    node.behavior.type === 'object' &&
+    (!context.hasGates || !HostStaticPartition.get(node.blueprintNode).gated)
+  ) {
     const shape = staticShape(
       node.blueprintNode,
       node.runtime.blueprint?.isAtomic,
@@ -74,13 +78,30 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         }
       }
     if (matches && shape && children) {
-      for (let index = 0; index < shape.length; index++) {
-        const child = children[index];
-        if (context.selectedDeclarationIds.get(child) !== shape[index].ids)
-          context.selectedDeclarationIds.set(child, shape[index].ids);
-        if (context.dirtyPaths.has(child.path)) computeChild(child);
+      if (context.hasGates) {
+        const reuse = createStaticEntryReuser(
+          node,
+          prior,
+          context,
+          node.structure!,
+          computeChild,
+        );
+        let reused = true;
+        for (const { entry } of shape)
+          if (!reuse?.(entry)) {
+            reused = false;
+            break;
+          }
+        if (reused) return false;
+      } else {
+        for (let index = 0; index < shape.length; index++) {
+          const child = children[index];
+          if (context.selectedDeclarationIds.get(child) !== shape[index].ids)
+            context.selectedDeclarationIds.set(child, shape[index].ids);
+          if (context.dirtyPaths.has(child.path)) computeChild(child);
+        }
+        return false;
       }
-      return false;
     }
   }
   if (node.behavior.type === 'virtual') {
@@ -157,12 +178,22 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   };
   const round = direct && context.gateSelectionRounds?.get(node);
   if (round?.active) selectTableChildren(frame, round);
-  else
+  else {
+    const reuse = createStaticEntryReuser(
+      node,
+      prior,
+      context,
+      next,
+      computeChild,
+      immediate,
+    );
     for (let entryIndex = 0; entryIndex < count; entryIndex++) {
       const step = direct?.steps[entryIndex];
       const entry = step ? step.entry : entries[entryIndex];
+      if (reuse?.(entry)) continue;
       selectEntryStep(entry, step, frame);
     }
+  }
   changed = frame.changed;
   flushPendingOutput(node, context);
   for (let index = 0; index < inactiveEntries.length; index++) {

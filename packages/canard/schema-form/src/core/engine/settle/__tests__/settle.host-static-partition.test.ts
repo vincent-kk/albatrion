@@ -35,7 +35,7 @@ it.each(['off', 'table'] as const)(
       });
       root.setValue({ kind: 'a' });
       const pad = root.find('/pad_0');
-      const schema = pad?.schema;
+      const schema = pad?.jsonSchema;
       const step = vi.spyOn(selection, 'selectEntryStep');
       root.find('/kind')!.setValue('b');
       counts.push(step.mock.calls.length);
@@ -44,12 +44,47 @@ it.each(['off', 'table'] as const)(
       expect(root.find('/b')!.value).toBe('b');
       if (pad) {
         expect(root.find('/pad_0')).toBe(pad);
-        expect(pad.schema).toBe(schema);
+        expect(pad.jsonSchema).toBe(schema);
         expect(pad.value).toBe(0);
       }
     }
-    expect(counts.every((count) => count <= 24), JSON.stringify(counts)).toBe(
-      true,
-    );
+    expect(
+      counts.every((count) => count <= 24),
+      JSON.stringify(counts),
+    ).toBe(true);
   },
 );
+
+it('keeps gated overlays dynamic and computes a dirty static child before later gates', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      flag: { type: 'boolean' },
+      source: { type: 'number', controls: { derived: '../flag ? 2 : 0' } },
+      shared: { type: 'string' },
+    },
+    allOf: [
+      {
+        controls: { active: './source === 2' },
+        properties: {
+          shared: { minLength: 4 },
+          entered: { type: 'number', default: 7 },
+        },
+      },
+    ],
+  });
+  root.setValue({ flag: false, shared: 'text' });
+  const shared = root.find('/shared')!;
+  const source = root.find('/source')!;
+  expect(root.find('/entered')).toBeNull();
+  root.find('/flag')!.setValue(true);
+  expect(root.find('/source')).toBe(source);
+  expect(source.value).toBe(2);
+  expect(root.find('/shared')).toBe(shared);
+  expect(shared.jsonSchema).toMatchObject({ minLength: 4 });
+  expect(root.find('/entered')!.value).toBe(7);
+  root.find('/flag')!.setValue(false);
+  expect(source.value).toBe(0);
+  expect(root.find('/entered')).toBeNull();
+  expect(shared.jsonSchema).not.toHaveProperty('minLength');
+});
