@@ -27,7 +27,6 @@ it.each([['ab'], [{ a: 1 }]])(
     const inputs = screen.getAllByRole<HTMLInputElement>('checkbox');
     expect(inputs.map((input) => input.checked)).toEqual([false, false]);
     expect(screen.getByRole('group').getAttribute('aria-invalid')).toBe('true');
-    expect(screen.getByRole('status').textContent).toBe('Invalid value');
   },
 );
 
@@ -38,7 +37,6 @@ it.each([[null], [undefined]])(
     const inputs = screen.getAllByRole<HTMLInputElement>('checkbox');
     expect(inputs.map((input) => input.checked)).toEqual([false, false]);
     expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
-    expect(screen.queryByRole('status')).toBeNull();
   },
 );
 
@@ -50,5 +48,4 @@ it('turns a string value into the exact array on one check and removes the marke
   });
   expect(ref.current!.getValue()).toEqual(['a']);
   expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
-  expect(screen.queryByRole('status')).toBeNull();
 });

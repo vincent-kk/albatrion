@@ -63,35 +63,32 @@ export const FieldInputUnion = (props: FieldInputProps) => {
   }, [effectiveKey, publish]);
   const invalid = misfit || display.invalid;
   return (
-    <>
-      <FieldInputString
-        {...props}
-        defaultValue={display.text}
-        readOnly={props.readOnly || !editable}
-        inputProps={{
-          value: text,
-          defaultValue: undefined,
-          'aria-invalid': invalid || undefined,
-          onChange: handleChange,
-          onCompositionStart: () => {
-            composing.current = true;
-          },
-          onCompositionEnd: (event) => {
-            composing.current = false;
-            draft.current = event.currentTarget.value;
-            setText(draft.current);
-            publish(draft.current);
-          },
-          onBlur: () => {
-            if (composing.current) return;
-            if (draft.current !== undefined && !publish(draft.current)) {
-              draft.current = undefined;
-              setText(readUnionDisplay(node.value, nullable).text);
-            }
-          },
-        }}
-      />
-      {invalid && <span role="status">Invalid value</span>}
-    </>
+    <FieldInputString
+      {...props}
+      defaultValue={display.text}
+      readOnly={props.readOnly || !editable}
+      inputProps={{
+        value: text,
+        defaultValue: undefined,
+        'aria-invalid': invalid || undefined,
+        onChange: handleChange,
+        onCompositionStart: () => {
+          composing.current = true;
+        },
+        onCompositionEnd: (event) => {
+          composing.current = false;
+          draft.current = event.currentTarget.value;
+          setText(draft.current);
+          publish(draft.current);
+        },
+        onBlur: () => {
+          if (composing.current) return;
+          if (draft.current !== undefined && !publish(draft.current)) {
+            draft.current = undefined;
+            setText(readUnionDisplay(node.value, nullable).text);
+          }
+        },
+      }}
+    />
   );
 };

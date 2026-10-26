@@ -79,7 +79,6 @@ export const FieldInputStringCheckbox = ({
           </label>
         );
       })}
-      {misfit && <span role="status">Invalid value</span>}
     </div>
   );
 };
