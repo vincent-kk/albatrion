@@ -52,6 +52,7 @@ export {
   FieldNodeRequestType,
   FieldNodeState,
   SetValueOption,
+  interpretFieldNodeDraft,
   isArrayNode,
   isBooleanNode,
   isBranchNode,

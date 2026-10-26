@@ -5,7 +5,7 @@ import type { SchemaTypeName } from '../../../engine';
 import type { FieldNode } from '../../type';
 
 /**
- * Binding-only; not exported from src/index.ts.
+ * Public; lets UI plugins interpret a union draft against the node's effective types without writing.
  * Interpret a draft against the node's current effective types without writing.
  * @param node - Public node supplying authored and effective type restrictions
  * @param draft - Uncommitted input; undefined is the clearing value

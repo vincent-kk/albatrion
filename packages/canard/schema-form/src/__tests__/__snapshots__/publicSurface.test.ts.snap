@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`preserves the 94-name package public surface 1`] = `
+exports[`preserves the 95-name package public surface 1`] = `
 "ArrayNode	type	ArrayNode<Item>
 ArraySchema	type	RolledArraySchema<Options>
 BooleanNode	type	BooleanNode
@@ -75,6 +75,7 @@ VirtualizationBackfill	value+type	typeof VirtualizationBackfill
 VirtualizationOptions	type	VirtualizationOptions
 VirtualizationPlaceholderProps	type	VirtualizationPlaceholderProps
 VirtualizationRootMargin	type	VirtualizationRootMargin
+interpretFieldNodeDraft	value	(node: FieldNode, draft: unknown) => { value: unknown; isMember: boolean; }
 isArrayNode	value	(node: FieldNode) => node is ArrayNode
 isBooleanNode	value	(node: FieldNode) => node is BooleanNode
 isBranchNode	value	(node: FieldNode) => node is BranchNode
