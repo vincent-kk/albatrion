@@ -11,6 +11,7 @@ import {
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
+import { blueprintCacheDomain } from '@/schema-form/app/cache';
 import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
 import {
@@ -94,34 +95,45 @@ export const RootNodeContextProvider = ({
     | undefined
   >(undefined);
   const [, schedule] = useState(0);
-  const reset = useHandle((option?: Parameters<RootBinding['reset']>[0]) => {
-    const used = committed.current;
-    store.load = resetRootLoad(store.load, used, option);
-    store.unsubscribe();
-    store.unsubscribe = subscribeRootLoad(store.load, store);
-    binding.current.root = store.load.root;
-    attachedFilesMap.clear();
-    onReset();
-    pending.current = { props: used, option };
-    schedule((version) => version + 1);
-    for (const listener of store.listeners) listener();
-    try {
-      if (
-        store.load.root &&
-        !store.load.root.globalErrors.length &&
-        store.lastReportedErrors?.length
-      )
-        reportRootLoadValidation(store.load, store);
-    } catch (error) {
-      throw store.load.error || error;
-    }
-    if (store.load.error) throw store.load.error;
-  });
+  const reset = useHandle(
+    (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
+      const used = committed.current;
+      store.load = resetRootLoad(store.load, used, option, rebuild);
+      store.unsubscribe();
+      store.unsubscribe = subscribeRootLoad(store.load, store);
+      binding.current.root = store.load.root;
+      attachedFilesMap.clear();
+      onReset();
+      pending.current = { props: used, option };
+      schedule((version) => version + 1);
+      for (const listener of store.listeners) listener();
+      try {
+        if (
+          store.load.root &&
+          !store.load.root.globalErrors.length &&
+          store.lastReportedErrors?.length
+        )
+          reportRootLoadValidation(store.load, store);
+      } catch (error) {
+        throw store.load.error || error;
+      }
+      if (store.load.error) throw store.load.error;
+    },
+  );
+
+  const rebuild = useHandle(
+    (option?: Parameters<RootBinding['rebuild']>[0]) => {
+      const schema = committed.current.jsonSchema;
+      if (schema !== null && typeof schema === 'object')
+        blueprintCacheDomain.invalidate(schema);
+      reset(option, true);
+    },
+  );
 
   useLayoutEffect(() => {
     const previous = committed.current;
     committed.current = current;
-    binding.current = { root: store.load.root, reset };
+    binding.current = { root: store.load.root, reset, rebuild };
     store.load.props = {
       ...store.load.props,
       onChange: current.onChange,

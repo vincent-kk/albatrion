@@ -9,15 +9,28 @@ import { FormWarningCode } from '@/schema-form/errors';
 
 /** Read the runtime proof without exposing it through the public node contract. */
 const analysis = (handle: FormHandle) =>
-  (handle.node as unknown as { runtime: { blueprint: object } }).runtime.blueprint;
+  (handle.node as unknown as { runtime: { blueprint: object } }).runtime
+    .blueprint;
 
 afterEach(cleanup);
 
 it('shares a blueprint across two mounts of the same schema object', () => {
-  const schema = { type: 'object' as const, properties: { value: { type: 'string' as const } } };
+  const schema = {
+    type: 'object' as const,
+    properties: { value: { type: 'string' as const } },
+  };
   const a = createRef<FormHandle>();
   const b = createRef<FormHandle>();
-  render(<><Form ref={a} jsonSchema={schema}><span /></Form><Form ref={b} jsonSchema={schema}><span /></Form></>);
+  render(
+    <>
+      <Form ref={a} jsonSchema={schema}>
+        <span />
+      </Form>
+      <Form ref={b} jsonSchema={schema}>
+        <span />
+      </Form>
+    </>,
+  );
   expect(a.current!.node).not.toBe(b.current!.node);
   expect(analysis(a.current!)).toBe(analysis(b.current!));
 });
@@ -26,23 +39,53 @@ it('delivers blueprint warnings to both forms sharing the authored object', () =
   const schema = { type: 'object' as const, dependentSchemas: {} };
   const first = vi.fn();
   const second = vi.fn();
-  render(<><Form jsonSchema={schema} onError={first}><span /></Form><Form jsonSchema={schema} onError={second}><span /></Form></>);
+  render(
+    <>
+      <Form jsonSchema={schema} onError={first}>
+        <span />
+      </Form>
+      <Form jsonSchema={schema} onError={second}>
+        <span />
+      </Form>
+    </>,
+  );
   for (const collector of [first, second])
-    expect(collector).toHaveBeenCalledWith(expect.objectContaining({ code: FormWarningCode.DependentSchemasIgnoredForForm }));
+    expect(collector).toHaveBeenCalledWith(
+      expect.objectContaining({
+        code: FormWarningCode.DependentSchemasIgnoredForForm,
+      }),
+    );
 });
 
 it('does not share structurally equal authored objects', () => {
   const a = createRef<FormHandle>();
   const b = createRef<FormHandle>();
-  render(<><Form ref={a} jsonSchema={{ type: 'string' }} /><Form ref={b} jsonSchema={{ type: 'string' }} /></>);
+  render(
+    <>
+      <Form ref={a} jsonSchema={{ type: 'string' }} />
+      <Form ref={b} jsonSchema={{ type: 'string' }} />
+    </>,
+  );
   expect(analysis(a.current!)).not.toBe(analysis(b.current!));
 });
 
 it('rebuilds only its own tree while another form reset preserves the old blueprint', () => {
-  const schema = { type: 'object' as const, properties: { value: { type: 'string' as const } } };
+  const schema = {
+    type: 'object' as const,
+    properties: { value: { type: 'string' as const } },
+  };
   const a = createRef<FormHandle>();
   const b = createRef<FormHandle>();
-  render(<><Form ref={a} jsonSchema={schema}><span /></Form><Form ref={b} jsonSchema={schema}><span /></Form></>);
+  render(
+    <>
+      <Form ref={a} jsonSchema={schema}>
+        <span />
+      </Form>
+      <Form ref={b} jsonSchema={schema}>
+        <span />
+      </Form>
+    </>,
+  );
   const old = analysis(a.current!);
   const otherRoot = b.current!.node;
   act(() => a.current!.rebuild());
@@ -58,9 +101,48 @@ it('rebuilds only its own tree while another form reset preserves the old bluepr
 
 it('forwards automatic-write overrides through rebuild reset semantics', () => {
   const ref = createRef<FormHandle>();
-  const schema = { type: 'object' as const, properties: { source: { type: 'number' as const, default: 2 }, target: { type: 'number' as const, default: 0, controls: { derived: '../source * 2' } } } };
-  render(<Form ref={ref} jsonSchema={schema} defaultValue={{ source: 2, target: 0 }} disableAutomaticWrites><span /></Form>);
+  const schema = {
+    type: 'object' as const,
+    properties: {
+      source: { type: 'number' as const, default: 2 },
+      target: {
+        type: 'number' as const,
+        default: 0,
+        controls: { derived: '../source * 2' },
+      },
+    },
+  };
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      defaultValue={{ source: 2, target: 0 }}
+      disableAutomaticWrites
+    >
+      <span />
+    </Form>,
+  );
   expect(ref.current!.getValue()).toEqual({ source: 2, target: 0 });
   act(() => ref.current!.rebuild(SetValueOption.EnableAutomaticWrites));
   expect(ref.current!.getValue()).toEqual({ source: 2, target: 4 });
+});
+
+it('rebuild observes an explicit mutation of the same authored schema object', () => {
+  const schema = {
+    type: 'object' as const,
+    properties: { value: { type: 'string' as const } } as Record<
+      string,
+      { type: 'string' | 'number'; default?: number }
+    >,
+  };
+  const ref = createRef<FormHandle>();
+  render(
+    <Form ref={ref} jsonSchema={schema}>
+      <span />
+    </Form>,
+  );
+  expect(ref.current!.findNode('/added')).toBeNull();
+  schema.properties.added = { type: 'number', default: 7 };
+  act(() => ref.current!.rebuild());
+  expect(ref.current!.findNode('/added')!.value).toBe(7);
 });

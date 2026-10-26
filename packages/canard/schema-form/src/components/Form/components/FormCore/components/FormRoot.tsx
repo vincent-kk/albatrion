@@ -37,7 +37,7 @@ import { FormRootProxy } from './FormRootProxy';
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
 export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
-    current: { reset: NOOP_FUNCTION },
+    current: { reset: NOOP_FUNCTION, rebuild: NOOP_FUNCTION },
   }));
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();
@@ -77,6 +77,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       remount: (path) =>
         binding.current.root?.find(path)?.request(FieldNodeRequestType.Remount),
       reset: (option) => binding.current.reset(option),
+      rebuild: (option) => binding.current.rebuild(option),
       findNode: (path) => binding.current.root?.find(path) ?? null,
       findNodes: (path) => binding.current.root?.findNodes(path) ?? [],
       getState: () => binding.current.root?.globalState ?? {},
