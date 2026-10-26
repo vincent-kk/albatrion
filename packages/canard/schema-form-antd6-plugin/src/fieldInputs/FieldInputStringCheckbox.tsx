@@ -65,7 +65,10 @@ const FieldInputStringCheckbox = ({
   });
 
   const initialValue = useMemo(() => {
-    return isArray(defaultValue) ? defaultValue.map((v) => '' + v) : undefined;
+    return isArray(defaultValue) &&
+      defaultValue.every((value) => value === null || typeof value === 'string')
+      ? defaultValue.map((value) => '' + value)
+      : undefined;
   }, [defaultValue]);
 
   return (

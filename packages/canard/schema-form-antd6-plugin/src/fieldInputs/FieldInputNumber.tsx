@@ -59,6 +59,7 @@ const FieldInputNumber = ({
       setGeneration((g) => g + 1);
     });
   });
+  const initialValue = generation ? value : defaultValue;
   return (
     <InputNumber
       key={generation}
@@ -72,7 +73,7 @@ const FieldInputNumber = ({
       step={jsonSchema.multipleOf}
       formatter={formatter}
       parser={parser}
-      defaultValue={(generation ? value : defaultValue) ?? undefined}
+      defaultValue={typeof initialValue === 'number' ? initialValue : undefined}
       onChange={handleChange}
       onBlur={handleBlur}
       size={size || context?.size}
