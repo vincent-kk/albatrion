@@ -56,6 +56,8 @@
 
 ## API Contracts
 
+- BLUEPRINT-052: caller-owned cached entries retain lazy diagnostic lists and a WeakSet of collect function identities. Each distinct collector receives the stored records once; no collector means no warning traversal. Cache entry-list membership is replaced rather than appended so app domains may shallow-freeze lists. This replaces the warningsCollected field contract only; warning codes/order remain unchanged.
+
 - 결정 62 (라)의 `BlueprintExpression.equality?: { readonly literals: readonly EqualityLiteral[] }`는 `active`이며 의존 경로가 하나인 식에서만 만드는 정적 증거입니다. `EqualityLiteral`은 string·유한 number·boolean·null이며, 공용 경로 치환을 새 관리자로 다시 수행한 의존 목록이 컴파일 결과와 원소별로 같아야 합니다. 인식기는 Function·eval·컴파일된 함수·toString을 호출하지 않고 식 전체를 수동 스캔한 뒤 우선순위 구문 트리를 검사합니다. 괄호로 감싼 참조와 리터럴의 `===`, 그 비교들의 `||`만 허용하며 연쇄 비교·프로퍼티 접근·호출·배열·블록·식별자 리터럴은 거절합니다. 문자열은 명시된 단순·NUL·hex·Unicode 이스케이프만, 수는 십진 소수·지수와 hex·octal·binary 및 단항 음수만 해석하며 옛 8진·구분자·BigInt·비유한 값·줄 이음은 거절합니다. 범위와 리터럴 의미의 정본은 원본 저장소 `architecture/verification/perf-optimization/decision-62-gate-table-design.md` 2.1절입니다. PR-1b는 메타데이터만 추가하며 정착의 게이트 평가 계약을 바꾸지 않습니다.
 
 - union의 런타임 식별은 schemaType에 보관한 정규화 형 집합의 fold mask로 정한다. number/integer는 같은 비트이고 null은 nullable 장식이므로 비null 집합에 비트를 더하지 않는다. 기존 schemaType으로 이 mask를 얻을 수 있어 별도 저장 필드는 없으며, 서로 다른 생성 순서와 형 나열 순서에서도 같은 fold는 같은 토큰을 쓴다(BLUEPRINT-043, 389C-02, 390C-01).
@@ -66,7 +68,7 @@
 
 - 기능 정적 색인은 청사진 identity마다 한 번 만들어 재사용한다. 상태 키는 표준 `readOnly`와 노드 `controls.visible/readOnly/disabled`를 가진 템플릿, 그리고 조각·부모 `controls.fields`가 주소로 지정한 직접 자식 경계를 구별한다. 비활성 선언도 색인에 남겨 두어 마지막 상태 키를 기본값으로 되돌릴 수 있게 하고, 참조 템플릿과 배열 아이템은 실제 부모와 이름으로 자식 대상을 판정한다. 조각이 어느 자식을 직접 선언했는지는 engine DETAIL의 조각 소유 판정 한 벌(`getFragmentOwnerPaths`)로 정하므로, 조각이 `items`·`additionalItems`로 선언한 아이템은 `*`, `prefixItems`나 옛 튜플 `items`로 선언한 자리는 그 색인 이름으로 색인된다(CONTROLS-077, 35C-08). 감시는 유효 스키마에 `controls.watch`를 기여할 수 있는 노드·참조 에지 선언을 색인한다. 리터럴과 식은 평가하지 않으며, 색인의 메모리는 O(기능 선언 템플릿 + 직접 자식 대상 수)다(SETTLE-017, CONTROLS-045, EVENT-064, 65C-02).
 
-- `blueprint(schema, options?)`는 작성 루트와 분석 옵션으로 청사진을 만든다. 옵션으로는 터미널 판정, 원자 판정, 진단 수집기를 주입한다. 청사진 결과는 작성 때 받은 `isAtomic`·`isTerminal`의 함수 identity를 보유하며, 덕분에 정적 분석과 런타임 병합이 같은 판정을 쓴다. 캐시를 사용하는 호출은 호출자가 소유한 캐시를 명시적으로 전달해야 하고, 같은 스키마와 같은 판정 조건이면 결과 참조를 재사용한다. 캐시 키는 작성 루트와 판정 함수 둘의 identity를 구분하는 규칙을 유지한다(REACT-003·004, 69C-04). 캐시는 진단 소비자가 나중에 붙더라도 루트당 경고를 한 번 수집할 수 있어야 한다.
+- `blueprint(schema, options?)`는 작성 루트와 분석 옵션으로 청사진을 만든다. 옵션으로는 터미널 판정, 원자 판정, 진단 수집기를 주입한다. 청사진 결과는 작성 때 받은 `isAtomic`·`isTerminal`의 함수 identity를 보유하며, 덕분에 정적 분석과 런타임 병합이 같은 판정을 쓴다. 캐시를 사용하는 호출은 호출자가 소유한 캐시를 명시적으로 전달해야 하고, 같은 스키마와 같은 판정 조건이면 결과 참조를 재사용한다. 캐시 키는 작성 루트와 판정 함수 둘의 identity를 구분하는 규칙을 유지한다(REACT-003·004, 69C-04). 캐시는 진단 소비자가 나중에 붙으면 경고 목록을 한 번 수집하고 서로 다른 collect 함수마다 그 목록을 한 번 재생한다.
 
 - 배열 템플릿과 색인 `i`를 받는 자리 항목 보조는 `BlueprintChildEntry` 모양을 돌려준다. 이 항목은 이름 `String(i)`, 노드 `prefixItems[i] ?? item`, 호스트 경로를 갖고, 선언은 속성 항목과 같은 방식으로 다시 묶은 것이다. 선언 경로는 템플릿의 `/arr/*` 또는 `/arr/<i>`를 유지하며, 템플릿과 색인별 지연 메모로 같은 자리의 항목 참조를 재사용한다. 청사진이 없으면 `undefined`다. 이 보조는 런타임 노드를 만들지 않고 청사진 분석 결과도 바꾸지 않는다(NODE-006·052, CONTROLS-080, 35C-08, 실행 ADR D2).
 
@@ -80,7 +82,7 @@
 
 - 식을 받는 제어 키 목록은 식 컴파일과 capability 수집이 한 벌(`EXPRESSION_CONTROL_KEYS`)을 공유하며, 모든 제어 키 목록은 `ControlKey`로 형 검사를 받는다. 닫힌 목록 검사의 `options` 키 목록은 제어 키가 아니며, 그 형은 공개 스키마 형에 있어서 engine이 참조하지 않는다.
 
-- 진단은 코드, schemaPath, 세부 정보를 담는다. 진단 코드는 `errors`의 그룹 한정 값(오류는 `JSONSchemaErrorCode`, 경고는 `FormWarningCode`)이며, 청사진 전용 코드 집합은 두지 않는다. 소비자가 없으면 경고 검사를 수행하지 않고, 캐시에서 늦게 수집하는 것은 루트마다 한 번이다.
+- 진단은 코드, schemaPath, 세부 정보를 담는다. 진단 코드는 `errors`의 그룹 한정 값(오류는 `JSONSchemaErrorCode`, 경고는 `FormWarningCode`)이며, 청사진 전용 코드 집합은 두지 않는다. 소비자가 없으면 경고 검사를 수행하지 않고, 캐시의 늦은 수집은 목록을 한 번 만들며 전달은 collect 함수 identity마다 한 번이다.
 
 ## Structure
 

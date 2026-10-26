@@ -94,8 +94,10 @@ export interface BlueprintCacheEntry {
   readonly isAtomic: BlueprintOptions['isAtomic'];
   /** Completed immutable analysis. */
   readonly blueprint: Blueprint;
-  /** Late warnings are delivered at most once per authored root/cache entry. */
-  warningsCollected: boolean;
+  /** Lazy warning records reused across distinct consumers; absent before the first request. */
+  diagnostics?: readonly BlueprintDiagnostic[];
+  /** Consumers already served without retaining their lifetime. */
+  readonly collectors: WeakSet<NonNullable<BlueprintOptions['collect']>>;
 }
 
 /** Explicit dependencies and diagnostics; no process-global cache is used. */

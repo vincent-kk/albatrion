@@ -73,7 +73,7 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
   >().toEqualTypeOf<never>();
 });
 
-it('SURFACE-059 FormHandle has exactly eighteen typed members', () => {
+it('SURFACE-059 FormHandle retains its members and adds SURFACE-063 rebuild', () => {
   type Expected = {
     node?: InferFieldNode<Schema>;
     focus: (path?: string) => void;
@@ -81,6 +81,11 @@ it('SURFACE-059 FormHandle has exactly eighteen typed members', () => {
     refresh: (path?: string) => void;
     remount: (path?: string) => void;
     reset: (
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ) => void;
+    rebuild: (
       option?:
         | typeof SetValueOption.DisableAutomaticWrites
         | typeof SetValueOption.EnableAutomaticWrites,

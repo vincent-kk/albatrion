@@ -21,6 +21,7 @@ const AUTOMATIC_WRITES_MASK =
  * @param previous - Committed load whose tree may be retained
  * @param props - Committed schema, source and Form defaults for the new load
  * @param option - Call-local automatic-write override; other bits are ignored
+ * @param rebuild - Explicitly replace the tree even when the schema is unchanged.
  * @returns The retained or replacement load with synchronous errors recorded
  */
 export const resetRootLoad = (
@@ -29,6 +30,7 @@ export const resetRootLoad = (
   option?:
     | typeof SetValueOption.DisableAutomaticWrites
     | typeof SetValueOption.EnableAutomaticWrites,
+  rebuild = false,
 ): RootLoad => {
   const automaticWrites = (option ?? 0) & AUTOMATIC_WRITES_MASK;
   const loadOption =
@@ -39,6 +41,7 @@ export const resetRootLoad = (
   previous.reporter?.beginLoad();
   const root = previous.root;
   if (
+    !rebuild &&
     root &&
     previous.props.validator === props.validator &&
     isSameSchema(previous.props.jsonSchema, props.jsonSchema)

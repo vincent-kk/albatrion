@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- BLUEPRINT-052 / SURFACE-063: createRootLoad injects the app-owned schema identity cache with stable renderer predicates. Explicit rebuild invalidates the committed schema and forces the existing replacement-load path with the same reset option. Ordinary reset preserves its existing root, even after another form invalidates the shared cache (round-447 coordinator clarification).
+
 - 스키마와 기본값 의존성에 맞춰 루트 생성 결과를 재사용하거나 재생성합니다.
 - `onValidate`는 보고된 오류 목록이 바뀔 때만 부릅니다. 같은 목록 참조는 연속으로 두 번 보고하지 않으며(246C-01), 직전 보고가 빈 목록이면 검증 모드와 경로(reset 안팎)에 관계없이 이어지는 빈 집계는 다시 보고하지 않습니다(245C-01).
 - reset의 빈 목록 보충 보고에서 소비자 `onValidate`가 던져도 로드 오류가 있으면 그 오류를 우선 던집니다. 첫 보고 전 OnRequest 재생성 reset은 빈 목록을 보고하지 않습니다(246C-01).
