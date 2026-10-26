@@ -28,12 +28,14 @@ const FieldInputSlider = ({
   range,
   marks,
   lazy,
+  misfit,
 }: FieldInputSliderProps) => {
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
-      if (value === null) onChange(NaN);
-      else if (typeof value === 'number') onChange(value);
-      else onChange(value);
+      if (value === null) onChange(undefined);
+      else if (typeof value === 'number') {
+        if (!Number.isNaN(value)) onChange(value);
+      } else if (!value.some(Number.isNaN)) onChange(value);
     },
     [onChange],
   );
@@ -50,16 +52,21 @@ const FieldInputSlider = ({
   }, [handleChange, jsonSchema, lazy]);
 
   return (
-    <Slider
-      disabled={disabled}
-      min={min}
-      max={max}
-      step={step}
-      range={range}
-      marks={marks}
-      defaultValue={defaultValue ?? undefined}
-      {...changeHandler}
-    />
+    <>
+      <div role="group" aria-invalid={misfit || undefined}>
+        <Slider
+          disabled={disabled}
+          min={min}
+          max={max}
+          step={step}
+          range={range}
+          marks={marks}
+          defaultValue={defaultValue ?? undefined}
+          {...changeHandler}
+        />
+      </div>
+      {misfit && <span role="status">Invalid value</span>}
+    </>
   );
 };
 

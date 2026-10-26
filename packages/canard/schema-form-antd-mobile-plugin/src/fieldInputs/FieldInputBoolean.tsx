@@ -14,6 +14,7 @@ const FieldInputBoolean = ({
   disabled,
   value,
   onChange,
+  misfit,
 }: FieldInputProps<boolean | null>) => {
   const [indeterminate, checked] = useMemo(
     () => [
@@ -24,17 +25,22 @@ const FieldInputBoolean = ({
   );
   const handleChange = useHandle(onChange);
   return (
-    <Checkbox
-      id={path}
-      disabled={disabled}
-      indeterminate={indeterminate}
-      checked={checked}
-      onChange={handleChange}
-      style={{
-        '--icon-size': '24px',
-        '--font-size': '20px',
-      }}
-    />
+    <>
+      <div role="group" aria-invalid={misfit || undefined}>
+        <Checkbox
+          id={path}
+          disabled={disabled}
+          indeterminate={indeterminate}
+          checked={checked}
+          onChange={handleChange}
+          style={{
+            '--icon-size': '24px',
+            '--font-size': '20px',
+          }}
+        />
+      </div>
+      {misfit && <span role="status">Invalid value</span>}
+    </>
   );
 };
 

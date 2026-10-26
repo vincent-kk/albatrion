@@ -20,28 +20,38 @@ interface FieldInputNumberProps
 
 const FieldInputNumber = ({
   jsonSchema,
+  schemaType,
   readOnly,
   disabled,
   defaultValue,
   onChange,
   formatter,
   parser,
+  misfit,
 }: FieldInputNumberProps) => {
   const handleChange = useHandle((value: number | null) => {
-    onChange(value);
+    if (value === null) onChange(undefined);
+    else if (Number.isNaN(value)) return;
+    else if (schemaType === 'integer' && !Number.isInteger(value)) return;
+    else onChange(value);
   });
   return (
-    <Stepper
-      inputReadOnly={readOnly}
-      disabled={disabled}
-      min={jsonSchema.minimum}
-      max={jsonSchema.maximum}
-      step={jsonSchema.multipleOf}
-      formatter={formatter}
-      parser={parser}
-      defaultValue={defaultValue ?? undefined}
-      onChange={handleChange}
-    />
+    <>
+      <div role="group" aria-invalid={misfit || undefined}>
+        <Stepper
+          inputReadOnly={readOnly}
+          disabled={disabled}
+          min={jsonSchema.minimum}
+          max={jsonSchema.maximum}
+          step={jsonSchema.multipleOf}
+          formatter={formatter}
+          parser={parser}
+          defaultValue={defaultValue ?? undefined}
+          onChange={handleChange}
+        />
+      </div>
+      {misfit && <span role="status">Invalid value</span>}
+    </>
   );
 };
 
