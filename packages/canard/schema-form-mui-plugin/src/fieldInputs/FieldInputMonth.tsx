@@ -39,6 +39,7 @@ const FieldInputMonth = ({
   variant: variantProp,
   fullWidth: fullWidthProp,
   hideLabel,
+  misfit,
 }: FieldInputMonthProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -65,11 +66,12 @@ const FieldInputMonth = ({
   ]);
 
   const handleChange = useHandle((newValue: Dayjs | null) => {
-    if (newValue && newValue.isValid()) {
-      onChange(newValue.format('YYYY-MM'));
-    } else {
-      onChange(null);
+    if (newValue === null) {
+      onChange(undefined);
+      return;
     }
+    if (!newValue.isValid()) return;
+    onChange(newValue.format('YYYY-MM'));
   });
 
   return (
@@ -90,6 +92,7 @@ const FieldInputMonth = ({
             size,
             variant,
             fullWidth,
+            error: misfit,
           },
         }}
       />

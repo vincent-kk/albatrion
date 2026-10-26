@@ -35,12 +35,13 @@ const FieldInputStringSwitch = ({
   jsonSchema,
   required,
   disabled,
-  defaultValue,
+  value,
   onChange,
   context,
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
+  misfit,
 }: FieldInputStringSwitchProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
@@ -71,6 +72,7 @@ const FieldInputStringSwitch = ({
   const switchSize = jsonSchema.switchSize || size;
 
   return (
+    <>
     <FormControlLabel
       label={label}
       htmlFor={path}
@@ -87,15 +89,18 @@ const FieldInputStringSwitch = ({
           <Switch
             id={path}
             name={name}
-            defaultChecked={defaultValue === onValue}
+            checked={value === onValue}
             onChange={handleChange}
             disabled={disabled}
             size={switchSize}
+            slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
           />
           <Typography>{onLabel}</Typography>
         </Stack>
       }
     />
+    {misfit && <span role="status">Invalid value</span>}
+    </>
   );
 };
 

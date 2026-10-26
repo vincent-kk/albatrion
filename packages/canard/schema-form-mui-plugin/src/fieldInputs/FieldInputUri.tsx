@@ -91,6 +91,7 @@ const FieldInputUri = ({
   fullWidth: fullWidthProp,
   protocols: protocolsProp,
   hideLabel,
+  misfit,
 }: FieldInputUriProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -130,7 +131,7 @@ const FieldInputUri = ({
 
   // defaultValue에서 초기 프로토콜과 URI 추출
   const { initialProtocol, initialUri } = useMemo(() => {
-    if (!defaultValue) {
+    if (typeof defaultValue !== 'string' || !defaultValue) {
       return {
         initialProtocol: normalizedProtocols[0],
         initialUri: '',
@@ -208,6 +209,7 @@ const FieldInputUri = ({
           defaultValue={initialUri}
           onChange={handleUriChange}
           disabled={disabled}
+          error={misfit}
           slotProps={{
             input: {
               readOnly,

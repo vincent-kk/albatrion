@@ -1,4 +1,10 @@
-import { type ChangeEvent, type ReactNode, useMemo } from 'react';
+import {
+  type ChangeEvent,
+  type FocusEvent,
+  type ReactNode,
+  useMemo,
+  useRef,
+} from 'react';
 
 import { TextField } from '@mui/material';
 
@@ -34,6 +40,7 @@ const FieldInputNumber = ({
   readOnly,
   disabled,
   defaultValue,
+  value,
   onChange,
   context,
   label: labelProp,
@@ -42,6 +49,7 @@ const FieldInputNumber = ({
   variant: variantProp,
   fullWidth: fullWidthProp,
   hideLabel,
+  misfit,
 }: FieldInputNumberProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -67,23 +75,35 @@ const FieldInputNumber = ({
     hideLabel,
   ]);
 
+  const draftRef = useRef<string | null>(null);
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
-
-    // 빈 문자열인 경우 null로 처리
-    if (inputValue === '') {
-      onChange(null);
+    if (event.target.validity.badInput) {
+      draftRef.current = inputValue;
       return;
     }
-
-    // 숫자로 변환
-    const numericValue =
-      type === 'integer' ? parseInt(inputValue, 10) : parseFloat(inputValue);
-
-    // 유효한 숫자인지 확인
-    if (!isNaN(numericValue)) {
-      onChange(numericValue);
+    if (inputValue === '') {
+      draftRef.current = null;
+      onChange(undefined);
+      return;
     }
+    const numeric = Number(inputValue);
+    if (
+      !Number.isFinite(numeric) ||
+      (type === 'integer' && !Number.isInteger(numeric))
+    ) {
+      draftRef.current = inputValue;
+      return;
+    }
+    draftRef.current = null;
+    onChange(numeric);
+  });
+
+  const handleBlur = useHandle((event: FocusEvent<HTMLInputElement>) => {
+    if (draftRef.current === null) return;
+    event.target.value = typeof value === 'number' ? String(value) : '';
+    draftRef.current = null;
   });
 
   return (
@@ -99,7 +119,9 @@ const FieldInputNumber = ({
       placeholder={placeholder}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
+      onBlur={handleBlur}
       disabled={disabled}
+      error={misfit}
       slotProps={{
         input: {
           readOnly,

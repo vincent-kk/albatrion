@@ -49,6 +49,7 @@ const FieldInputTextarea = ({
   minRows,
   maxRows,
   hideLabel,
+  misfit,
 }: FieldInputTextareaProps) => {
   const [label, size, variant, fullWidth] = useMemo(() => {
     if (hideLabel)
@@ -95,6 +96,7 @@ const FieldInputTextarea = ({
       defaultValue={defaultValue}
       onChange={handleChange}
       disabled={disabled}
+      error={misfit}
       minRows={finalMinRows}
       maxRows={finalMaxRows}
       slotProps={{

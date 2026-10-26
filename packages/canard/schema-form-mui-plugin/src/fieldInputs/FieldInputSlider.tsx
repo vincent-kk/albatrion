@@ -49,6 +49,7 @@ const FieldInputSlider = ({
   showMarks = false,
   hideLabel,
   lazy,
+  misfit,
 }: FieldInputSliderProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
@@ -97,9 +98,11 @@ const FieldInputSlider = ({
         disabled={disabled}
         size={size}
         marks={showMarks}
+        slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
         valueLabelDisplay="auto"
         sx={{ mt: 1 }}
       />
+      {misfit && <span role="status">Invalid value</span>}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
         <Typography variant="caption" color="text.secondary">
           {min}

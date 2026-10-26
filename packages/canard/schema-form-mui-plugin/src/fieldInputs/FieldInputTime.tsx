@@ -42,6 +42,7 @@ const FieldInputTime = ({
   fullWidth: fullWidthProp,
   ampm: ampmProp,
   hideLabel,
+  misfit,
 }: FieldInputTimeProps) => {
   const [label, size, variant, fullWidth, ampm] = useMemo(() => {
     if (hideLabel)
@@ -81,11 +82,12 @@ const FieldInputTime = ({
   }, [defaultValue]);
 
   const handleChange = useHandle((newValue: Dayjs | null) => {
-    if (newValue && newValue.isValid()) {
-      onChange(newValue.format('HH:mm:ss'));
-    } else {
-      onChange(null);
+    if (newValue === null) {
+      onChange(undefined);
+      return;
     }
+    if (!newValue.isValid()) return;
+    onChange(newValue.format('HH:mm:ss'));
   });
 
   return (
@@ -104,6 +106,7 @@ const FieldInputTime = ({
             size,
             variant,
             fullWidth,
+            error: misfit,
           },
         }}
       />

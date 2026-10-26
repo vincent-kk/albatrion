@@ -47,6 +47,7 @@ const FieldInputRadioGroup = ({
   size: sizeProp = 'medium',
   row = true,
   hideLabel,
+  misfit,
 }: FieldInputRadioGroupProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
@@ -83,6 +84,7 @@ const FieldInputRadioGroup = ({
   );
 
   return (
+    <>
     <FormControlLabel
       label={label}
       htmlFor={path}
@@ -107,13 +109,21 @@ const FieldInputRadioGroup = ({
               key={option.value}
               value={option.value}
               disabled={disabled}
-              control={<Radio size={size} id={`${path}-${option.value}`} />}
+              control={
+                <Radio
+                  size={size}
+                  id={`${path}-${option.value}`}
+                  slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
+                />
+              }
               label={option.label}
             />
           ))}
         </RadioGroup>
       }
     />
+    {misfit && <span role="status">Invalid value</span>}
+    </>
   );
 };
 

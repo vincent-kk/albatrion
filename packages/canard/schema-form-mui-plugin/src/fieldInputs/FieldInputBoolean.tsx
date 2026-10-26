@@ -29,6 +29,7 @@ const FieldInputBoolean = ({
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
+  misfit,
 }: FieldInputBooleanProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
@@ -49,6 +50,7 @@ const FieldInputBoolean = ({
 
   // label이 없는 경우 Checkbox만 렌더링
   return (
+    <>
     <FormControlLabel
       label={label}
       htmlFor={path}
@@ -63,9 +65,12 @@ const FieldInputBoolean = ({
           defaultChecked={defaultChecked}
           onChange={handleChange}
           size={size}
+          slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
         />
       }
     />
+    {misfit && <span role="status">Invalid value</span>}
+    </>
   );
 };
 
