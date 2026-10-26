@@ -1,5 +1,6 @@
 // Invoked by Node CLI; compares a saved workspace bundle (--before=...) with current dist.
-// Plain leaf fixtures retain one unrelated latent entry. Defaults: 20 warmups, 100 samples, 3 processes.
+// Default leaf rows retain one unrelated latent entry. Defaults: 20 warmups, 100 samples, 3 processes.
+// --only=latent-count-1,latent-count-100,latent-count-1000,latent-count-4000 selects fixed leaf250 with A/B/A-prime calibration.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -23,10 +24,19 @@ const config = readConfig(
   argv.filter((arg) => !arg.startsWith('--before=')),
   new URL('./', import.meta.url),
 );
-const rows = [250, 1000, 4000, 8000].map((n) => ({
+const leafRows = [250, 1000, 4000, 8000].map((n) => ({
   id: `latent-leaf-${n}`,
   n,
+  m: 1,
+  axis: 'leaf-count',
 }));
+const countRows = [1, 100, 1000, 4000].map((m) => ({
+  id: `latent-count-${m}`,
+  n: 250,
+  m,
+  axis: 'latent-count',
+}));
+const rows = [...leafRows, ...countRows];
 assert.ok(
   !config.only ||
     config.only.every(
@@ -34,9 +44,10 @@ assert.ok(
         rows.some((row) => row.id === id) && config.only.indexOf(id) === i,
     ),
 );
-const chosen = rows.filter(
-  (row) => !config.only || config.only.includes(row.id),
-);
+const chosen = config.only
+  ? rows.filter((row) => config.only.includes(row.id))
+  : leafRows;
+const calibrated = chosen.some((row) => row.axis === 'latent-count');
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 if (config.worker) {
@@ -46,8 +57,18 @@ if (config.worker) {
     fs.readFileSync(path.join(config.runDir, 'engines.json'), 'utf8'),
   ).engines;
   const actors = {};
+  const actorNames =
+    row.axis === 'latent-count'
+      ? ['legacy', 'current', 'prime']
+      : ['legacy', 'current'];
   const latentKey = JSON.stringify(['/dormant/leaf', 'number']);
-  for (const actor of ['legacy', 'current']) {
+  const latentEntries = Array.from({ length: row.m }, (_, index) => [
+    index === 0
+      ? latentKey
+      : JSON.stringify([`/dormant/leaf_${index}`, 'number']),
+    31 + index,
+  ]);
+  for (const actor of actorNames) {
     const module = await import(pathToFileURL(engines[actor].destination));
     const schema = buildFixture({
       shape: 'siblings',
@@ -64,7 +85,8 @@ if (config.worker) {
     const leaf = root.find('/pad_7');
     assert.ok(leaf);
     // The persistent path index is updated by the store's declared mutation surface.
-    root.runtime.latentRaw.set(latentKey, 31);
+    for (const [key, value] of latentEntries)
+      root.runtime.latentRaw.set(key, value);
     actors[actor] = {
       root,
       leaf,
@@ -73,13 +95,26 @@ if (config.worker) {
       schema,
     };
   }
-  const samples = { legacy: [], current: [] };
+  const samples = Object.fromEntries(actorNames.map((actor) => [actor, []]));
+  // Every adjacent pair is reversed; both A/B and A-prime/B are balanced per process.
+  const completeOrders = [
+    ['legacy', 'current', 'prime'],
+    ['prime', 'current', 'legacy'],
+    ['current', 'prime', 'legacy'],
+    ['legacy', 'prime', 'current'],
+    ['prime', 'legacy', 'current'],
+    ['current', 'legacy', 'prime'],
+  ];
   const orders = [];
   for (let i = -config.warmups; i < config.samples; i++) {
     const order =
-      (i + config.warmups + config.repeat) % 2
-        ? ['current', 'legacy']
-        : ['legacy', 'current'];
+      row.axis === 'latent-count'
+        ? completeOrders[
+            (i + config.warmups + config.repeat * 2) % completeOrders.length
+          ]
+        : (i + config.warmups + config.repeat) % 2
+          ? ['current', 'legacy']
+          : ['legacy', 'current'];
     if (i >= 0) orders.push(order.join(','));
     for (const actor of order) {
       const prepared = actors[actor];
@@ -90,25 +125,30 @@ if (config.worker) {
       const ms = performance.now() - start;
       assert.equal(prepared.leaf.value, value);
       assert.equal(prepared.root.value.pad_7, value);
-      assert.equal(prepared.root.runtime.latentRaw.size, 1);
+      assert.equal(prepared.root.runtime.latentRaw.size, row.m);
       assert.equal(prepared.root.runtime.latentRaw.get(latentKey), 31);
+      const last = latentEntries.at(-1);
+      assert.equal(prepared.root.runtime.latentRaw.get(last[0]), last[1]);
       if (i >= 0) samples[actor].push(ms);
     }
   }
-  for (const actor of Object.values(actors))
+  for (const actor of Object.values(actors)) {
     assert.equal(JSON.stringify(actor.schema), actor.original);
+    assert.deepEqual([...actor.root.runtime.latentRaw], latentEntries);
+  }
   console.log(
     JSON.stringify({
       row: row.id,
       n: row.n,
+      m: row.m,
+      axis: row.axis,
       repeat: config.repeat,
       pid: process.pid,
       orders,
       samples,
-      minima: {
-        legacy: Math.min(...samples.legacy),
-        current: Math.min(...samples.current),
-      },
+      minima: Object.fromEntries(
+        actorNames.map((actor) => [actor, Math.min(...samples[actor])]),
+      ),
     }),
   );
 } else {
@@ -125,10 +165,12 @@ if (config.worker) {
   fs.mkdirSync(config.runDir, { recursive: false });
   fs.mkdirSync(path.join(config.runDir, 'engines'));
   const engines = {};
-  for (const [actor, source] of [
+  const bundleJobs = [
     ['legacy', before],
     ['current', path.join(config.packageDir, 'dist/index.node.mjs')],
-  ]) {
+    ...(calibrated ? [['prime', before]] : []),
+  ];
+  for (const [actor, source] of bundleJobs) {
     const bytes = fs.readFileSync(source);
     const text = bytes.toString('utf8');
     for (const name of ['buildFieldNodeTree', 'mountFieldNode'])
@@ -136,7 +178,11 @@ if (config.worker) {
         new RegExp(`^(?:const|let|var|function) ${name}\\b`, 'm').test(text),
         `Missing ${name}`,
       );
-    const destination = path.join(config.runDir, 'engines', `${actor}.mjs`);
+    const destination =
+      actor === 'prime'
+        ? path.join(config.runDir, 'prime/engines/legacy.mjs')
+        : path.join(config.runDir, 'engines', `${actor}.mjs`);
+    fs.mkdirSync(path.dirname(destination), { recursive: true });
     fs.writeFileSync(
       destination,
       text + '\nexport { buildFieldNodeTree, mountFieldNode };\n',
@@ -153,6 +199,13 @@ if (config.worker) {
     path.join(config.runDir, 'engines.json'),
     JSON.stringify({ engines }, null, 2),
   );
+  if (calibrated) {
+    assert.equal(engines.legacy.sha256, engines.prime.sha256);
+    fs.writeFileSync(
+      path.join(config.runDir, 'prime/engines.json'),
+      JSON.stringify({ engines: { legacy: engines.prime } }, null, 2),
+    );
+  }
   const environment = {
     config,
     startedAt: new Date().toISOString(),
@@ -161,7 +214,11 @@ if (config.worker) {
     platform: os.platform(),
     release: os.release(),
     arch: os.arch(),
-    engineRoles: { legacy: 'before-workspace', current: 'after-workspace' },
+    engineRoles: {
+      legacy: 'baseline-A',
+      current: 'candidate-B',
+      ...(calibrated ? { prime: 'baseline-A-prime' } : {}),
+    },
     engines,
   };
   fs.writeFileSync(
@@ -169,49 +226,53 @@ if (config.worker) {
     JSON.stringify(environment, null, 2),
   );
   const results = [];
-  for (const row of chosen)
-    for (let repeat = 0; repeat < config.runs; repeat++) {
-      const args = [
-        '--import',
-        fileURLToPath(new URL('./profile/register.mjs', import.meta.url)),
-        fileURLToPath(import.meta.url),
-        `--worker=${row.id}`,
-        `--samples=${config.samples}`,
-        `--warmups=${config.warmups}`,
-        `--run-dir=${config.runDir}`,
-        `--repeat=${repeat}`,
-      ];
-      const start = new Date().toISOString();
-      const child = spawnSync(process.execPath, args, {
-        encoding: 'utf8',
-        env: { ...process.env, NODE_ENV: 'production' },
-        maxBuffer: 16 * 1024 * 1024,
-      });
-      const stem = path.join(config.runDir, `${row.id}-${repeat}`);
-      fs.writeFileSync(stem + '.stdout', child.stdout ?? '');
-      fs.writeFileSync(stem + '.stderr', child.stderr ?? '');
-      fs.writeFileSync(
-        stem + '.command.json',
-        JSON.stringify(
-          {
-            executable: process.execPath,
-            args,
-            start,
-            end: new Date().toISOString(),
-            status: child.status,
-          },
-          null,
-          2,
-        ),
-      );
-      assert.equal(child.status, 0, child.stderr);
-      results.push(JSON.parse(child.stdout));
-    }
+  const repeats = Array.from({ length: config.runs }, (_, repeat) => repeat);
+  const measurementJobs = chosen.every((row) => row.axis === 'latent-count')
+    ? repeats.flatMap((repeat) => chosen.map((row) => ({ row, repeat })))
+    : chosen.flatMap((row) => repeats.map((repeat) => ({ row, repeat })));
+  for (const { row, repeat } of measurementJobs) {
+    const args = [
+      '--import',
+      fileURLToPath(new URL('./profile/register.mjs', import.meta.url)),
+      fileURLToPath(import.meta.url),
+      `--worker=${row.id}`,
+      `--samples=${config.samples}`,
+      `--warmups=${config.warmups}`,
+      `--run-dir=${config.runDir}`,
+      `--repeat=${repeat}`,
+    ];
+    const start = new Date().toISOString();
+    const child = spawnSync(process.execPath, args, {
+      encoding: 'utf8',
+      env: { ...process.env, NODE_ENV: 'production' },
+      maxBuffer: 16 * 1024 * 1024,
+    });
+    const stem = path.join(config.runDir, `${row.id}-${repeat}`);
+    fs.writeFileSync(stem + '.stdout', child.stdout ?? '');
+    fs.writeFileSync(stem + '.stderr', child.stderr ?? '');
+    fs.writeFileSync(
+      stem + '.command.json',
+      JSON.stringify(
+        {
+          executable: process.execPath,
+          args,
+          start,
+          end: new Date().toISOString(),
+          status: child.status,
+        },
+        null,
+        2,
+      ),
+    );
+    assert.equal(child.status, 0, child.stderr);
+    results.push(JSON.parse(child.stdout));
+  }
   const summary = chosen.map((row) => {
     const output = { ...row };
     for (const [actor, label] of [
       ['legacy', 'before'],
       ['current', 'current'],
+      ...(row.axis === 'latent-count' ? [['prime', 'beforePrime']] : []),
     ]) {
       const minima = results
         .filter((result) => result.row === row.id)
@@ -225,16 +286,37 @@ if (config.worker) {
       };
     }
     output.deltaPercent = 100 * (output.current.ms / output.before.ms - 1);
+    if (output.beforePrime) {
+      const baselineMinima = [
+        ...output.before.minimaMs,
+        ...output.beforePrime.minimaMs,
+      ];
+      output.widthC = Math.max(
+        Math.abs(output.before.ms - output.beforePrime.ms),
+        Math.max(...baselineMinima) - Math.min(...baselineMinima),
+      );
+      output.deltaPrimePercent =
+        100 * (output.current.ms / output.beforePrime.ms - 1);
+    }
     return output;
   });
-  const markdown = [
-    '| row | before ms | width ms | current ms | width ms | delta % |',
-    '| --- | ---: | ---: | ---: | ---: | ---: |',
-    ...summary.map(
-      (row) =>
-        `| ${row.id} | ${row.before.ms.toFixed(6)} | ${row.before.widthMs.toFixed(6)} | ${row.current.ms.toFixed(6)} | ${row.current.widthMs.toFixed(6)} | ${row.deltaPercent.toFixed(2)} |`,
-    ),
-  ].join('\n');
+  const markdown = calibrated
+    ? [
+        '| row | M | A ms | A width | A-prime ms | A-prime width | B ms | B width | width(c) | B/A delta % | B/A-prime delta % |',
+        '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',
+        ...summary.map(
+          (row) =>
+            `| ${row.id} | ${row.m} | ${row.before.ms.toFixed(6)} | ${row.before.widthMs.toFixed(6)} | ${row.beforePrime?.ms.toFixed(6) ?? '—'} | ${row.beforePrime?.widthMs.toFixed(6) ?? '—'} | ${row.current.ms.toFixed(6)} | ${row.current.widthMs.toFixed(6)} | ${row.widthC?.toFixed(6) ?? '—'} | ${row.deltaPercent.toFixed(2)} | ${row.deltaPrimePercent?.toFixed(2) ?? '—'} |`,
+        ),
+      ].join('\n')
+    : [
+        '| row | before ms | width ms | current ms | width ms | delta % |',
+        '| --- | ---: | ---: | ---: | ---: | ---: |',
+        ...summary.map(
+          (row) =>
+            `| ${row.id} | ${row.before.ms.toFixed(6)} | ${row.before.widthMs.toFixed(6)} | ${row.current.ms.toFixed(6)} | ${row.current.widthMs.toFixed(6)} | ${row.deltaPercent.toFixed(2)} |`,
+        ),
+      ].join('\n');
   fs.writeFileSync(
     path.join(config.runDir, 'results.json'),
     JSON.stringify(
