@@ -39,7 +39,8 @@ const FieldInputTextarea = ({
   misfit,
 }: FieldInputTextareaProps) => {
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(value.target.value);
+    const text = value.target.value;
+    onChange(text === '' ? undefined : text);
   });
   const autoSize = useMemo(
     () => ({
