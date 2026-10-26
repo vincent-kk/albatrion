@@ -89,45 +89,42 @@ const FieldInputStringCheckbox = ({
   });
 
   return (
-    <>
-      <FormControlLabel
-        label={label}
-        htmlFor={path}
-        required={required}
-        disabled={disabled}
-        labelPlacement="start"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-          gap: 8,
-        }}
-        control={
-          <FormGroup row={row} role="group" aria-invalid={misfit || undefined}>
-            {options.map((option) => {
-              const isChecked = value.includes(option.value);
-              return (
-                <FormControlLabel
-                  key={option.value}
-                  disabled={disabled}
-                  control={
-                    <Checkbox
-                      id={`${path}-${option.value}`}
-                      name={`${name}[]`}
-                      checked={isChecked}
-                      onChange={() => handleToggle(option.value)}
-                      size={size}
-                    />
-                  }
-                  label={option.label}
-                />
-              );
-            })}
-          </FormGroup>
-        }
-      />
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <FormControlLabel
+      label={label}
+      htmlFor={path}
+      required={required}
+      disabled={disabled}
+      labelPlacement="start"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'start',
+        gap: 8,
+      }}
+      control={
+        <FormGroup row={row} role="group" aria-invalid={misfit || undefined}>
+          {options.map((option) => {
+            const isChecked = value.includes(option.value);
+            return (
+              <FormControlLabel
+                key={option.value}
+                disabled={disabled}
+                control={
+                  <Checkbox
+                    id={`${path}-${option.value}`}
+                    name={`${name}[]`}
+                    checked={isChecked}
+                    onChange={() => handleToggle(option.value)}
+                    size={size}
+                  />
+                }
+                label={option.label}
+              />
+            );
+          })}
+        </FormGroup>
+      }
+    />
   );
 };
 

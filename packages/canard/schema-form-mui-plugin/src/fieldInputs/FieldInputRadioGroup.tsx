@@ -84,48 +84,45 @@ const FieldInputRadioGroup = ({
   );
 
   return (
-    <>
-      <FormControlLabel
-        label={label}
-        htmlFor={path}
-        required={required}
-        disabled={disabled}
-        labelPlacement="start"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-          gap: 8,
-        }}
-        control={
-          <RadioGroup
-            name={name}
-            defaultValue={initialValue}
-            onChange={handleChange}
-            row={row}
-          >
-            {options.map((option) => (
-              <FormControlLabel
-                key={option.value}
-                value={option.value}
-                disabled={disabled}
-                control={
-                  <Radio
-                    size={size}
-                    id={`${path}-${option.value}`}
-                    slotProps={{
-                      input: { 'aria-invalid': misfit || undefined },
-                    }}
-                  />
-                }
-                label={option.label}
-              />
-            ))}
-          </RadioGroup>
-        }
-      />
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <FormControlLabel
+      label={label}
+      htmlFor={path}
+      required={required}
+      disabled={disabled}
+      labelPlacement="start"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'start',
+        gap: 8,
+      }}
+      control={
+        <RadioGroup
+          name={name}
+          defaultValue={initialValue}
+          onChange={handleChange}
+          row={row}
+        >
+          {options.map((option) => (
+            <FormControlLabel
+              key={option.value}
+              value={option.value}
+              disabled={disabled}
+              control={
+                <Radio
+                  size={size}
+                  id={`${path}-${option.value}`}
+                  slotProps={{
+                    input: { 'aria-invalid': misfit || undefined },
+                  }}
+                />
+              }
+              label={option.label}
+            />
+          ))}
+        </RadioGroup>
+      }
+    />
   );
 };
 

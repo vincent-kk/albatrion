@@ -72,37 +72,34 @@ const FieldInputStringSwitch = ({
   const switchSize = jsonSchema.switchSize || size;
 
   return (
-    <>
-      <FormControlLabel
-        label={label}
-        htmlFor={path}
-        required={required}
-        disabled={disabled}
-        labelPlacement="start"
-        sx={{
-          alignItems: 'center',
-          gap: 1,
-        }}
-        control={
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography>{offLabel}</Typography>
-            <Switch
-              id={path}
-              name={name}
-              checked={value === onValue}
-              onChange={handleChange}
-              disabled={disabled}
-              size={switchSize}
-              slotProps={{
-                input: { role: 'switch', 'aria-invalid': misfit || undefined },
-              }}
-            />
-            <Typography>{onLabel}</Typography>
-          </Stack>
-        }
-      />
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <FormControlLabel
+      label={label}
+      htmlFor={path}
+      required={required}
+      disabled={disabled}
+      labelPlacement="start"
+      sx={{
+        alignItems: 'center',
+        gap: 1,
+      }}
+      control={
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+          <Typography>{offLabel}</Typography>
+          <Switch
+            id={path}
+            name={name}
+            checked={value === onValue}
+            onChange={handleChange}
+            disabled={disabled}
+            size={switchSize}
+            slotProps={{
+              input: { role: 'switch', 'aria-invalid': misfit || undefined },
+            }}
+          />
+          <Typography>{onLabel}</Typography>
+        </Stack>
+      }
+    />
   );
 };
 

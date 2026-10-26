@@ -102,7 +102,6 @@ const FieldInputSlider = ({
         valueLabelDisplay="auto"
         sx={{ mt: 1 }}
       />
-      {misfit && <span role="status">Invalid value</span>}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
         <Typography variant="caption" color="text.secondary">
           {min}

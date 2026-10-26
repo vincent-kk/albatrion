@@ -189,7 +189,7 @@ const uncoercibleCases: MisfitCase[] = [
   ],
 ];
 
-const uncoercibleStatusCases: MisfitCase[] = [
+const uncoercibleAriaOnlyCases: MisfitCase[] = [
   [
     'RadioGroup',
     FieldInputRadioGroupDefinition,
@@ -246,9 +246,18 @@ const uncoercibleStatusCases: MisfitCase[] = [
   ],
 ];
 
-it.each([...cases, ...uncoercibleStatusCases])(
+const ariaOnlyNames = [
+  'RadioGroup',
+  'Boolean',
+  'BooleanSwitch',
+  'StringSwitch',
+  'StringCheckbox',
+  'Slider',
+];
+
+it.each([...cases, ...uncoercibleAriaOnlyCases])(
   '%s marks a misfit value with aria-invalid and clears it for a valid one',
-  (_, definition, jsonSchema, bad, good) => {
+  (name, definition, jsonSchema, bad, good) => {
     const ref = createRef<FormHandle>();
     const { container } = render(
       <Form
@@ -263,14 +272,18 @@ it.each([...cases, ...uncoercibleStatusCases])(
       container.querySelector(
         'input:not([aria-hidden="true"])[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]',
       );
-    const visible = () =>
-      container.querySelector('.Mui-error, [role="status"]');
+    const supportsError = !ariaOnlyNames.includes(name);
+    const visible = () => container.querySelector('.Mui-error');
     expect(invalid()).toBeNull();
     expect(visible()).toBeNull();
     expect(ref.current!.getValue()).toEqual(good);
     act(() => ref.current!.setValue(bad as never));
     expect(invalid()).not.toBeNull();
-    expect(visible()).not.toBeNull();
+    if (supportsError) {
+      expect(visible()).not.toBeNull();
+    } else {
+      expect(visible()).toBeNull();
+    }
     expect(ref.current!.getValue()).toEqual(bad);
     act(() => ref.current!.setValue(good as never));
     expect(invalid()).toBeNull();
