@@ -13,6 +13,7 @@ export const FieldInputNumber = ({
   disabled,
   defaultValue,
   value,
+  misfit,
   onChange,
   placeholder,
   style,
@@ -21,9 +22,7 @@ export const FieldInputNumber = ({
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.validity.badInput) return;
     onChange(
-      event.target.value === ''
-        ? undefined
-        : event.target.valueAsNumber,
+      event.target.value === '' ? undefined : event.target.valueAsNumber,
     );
   });
   return (
@@ -35,6 +34,7 @@ export const FieldInputNumber = ({
       readOnly={readOnly}
       disabled={disabled}
       placeholder={placeholder}
+      aria-invalid={misfit || undefined}
       defaultValue={
         defaultValue == null ||
         (typeof defaultValue === 'number' && !Number.isFinite(defaultValue))
