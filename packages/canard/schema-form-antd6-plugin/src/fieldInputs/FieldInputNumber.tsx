@@ -1,3 +1,5 @@
+import { useRef, useState } from 'react';
+
 import { InputNumber, type InputNumberProps } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 
@@ -27,6 +29,7 @@ const FieldInputNumber = ({
   schemaType,
   readOnly,
   disabled,
+  value,
   defaultValue,
   onChange,
   context,
@@ -36,14 +39,23 @@ const FieldInputNumber = ({
   size,
   misfit,
 }: FieldInputNumberProps) => {
-  const handleChange = useHandle((value: number | null) => {
-    if (value === null) onChange(undefined);
-    else if (Number.isNaN(value)) return;
-    else if (schemaType === 'integer' && !Number.isInteger(value)) return;
-    else onChange(value);
+  const withheld = useRef(false);
+  const [generation, setGeneration] = useState(0);
+  const handleChange = useHandle((next: number | null) => {
+    withheld.current = false;
+    if (next === null) onChange(undefined);
+    else if (Number.isNaN(next) || (schemaType === 'integer' && !Number.isInteger(next)))
+      withheld.current = true;
+    else onChange(next);
+  });
+  const handleBlur = useHandle(() => {
+    if (!withheld.current) return;
+    withheld.current = false;
+    setGeneration((g) => g + 1);
   });
   return (
     <InputNumber
+      key={generation}
       id={path}
       name={name}
       readOnly={readOnly}
@@ -54,8 +66,9 @@ const FieldInputNumber = ({
       step={jsonSchema.multipleOf}
       formatter={formatter}
       parser={parser}
-      defaultValue={defaultValue ?? undefined}
+      defaultValue={(generation ? value : defaultValue) ?? undefined}
       onChange={handleChange}
+      onBlur={handleBlur}
       size={size || context?.size}
       status={misfit ? 'error' : undefined}
       aria-invalid={misfit || undefined}

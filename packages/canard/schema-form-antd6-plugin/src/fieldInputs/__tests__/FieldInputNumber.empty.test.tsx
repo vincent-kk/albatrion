@@ -1,7 +1,7 @@
 import { createRef } from 'react';
 import type { ComponentProps } from 'react';
 
-import { act, cleanup, render } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import type { InputNumber as AntdInputNumber } from 'antd';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
@@ -17,7 +17,13 @@ vi.mock('antd', async (importOriginal) => ({
   ...(await importOriginal<typeof import('antd')>()),
   InputNumber: (props: NumberProps) => {
     received.props.push(props);
-    return null;
+    return (
+      <input
+        data-testid="number"
+        defaultValue={props.defaultValue as number | undefined}
+        onBlur={props.onBlur}
+      />
+    );
   },
 }));
 
@@ -66,4 +72,15 @@ it('does not publish 1.5 on an integer node but publishes an integer', () => {
   expect(ref.current!.getValue()).toBe(3);
   send(4);
   expect(ref.current!.getValue()).toBe(4);
+});
+
+it('reverts the displayed draft to the node value on blur after a withheld 1.5', () => {
+  const { ref, send } = mount('integer');
+  const input = screen.getByTestId('number') as HTMLInputElement;
+  fireEvent.change(input, { target: { value: '1.5' } });
+  send(1.5);
+  expect(input.value).toBe('1.5');
+  fireEvent.blur(input);
+  expect((screen.getByTestId('number') as HTMLInputElement).value).toBe('3');
+  expect(ref.current!.getValue()).toBe(3);
 });

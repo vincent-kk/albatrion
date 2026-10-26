@@ -3,8 +3,19 @@ import { createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, expect, it, vi } from 'vitest';
 
-import { Form, type FormHandle } from '@canard/schema-form';
+import {
+  type FieldInputDefinition,
+  Form,
+  type JSONSchema,
+  type FormHandle,
+} from '@canard/schema-form';
 
+import { FieldInputBooleanSwitchDefinition } from '../FieldInputBooleanSwitch';
+import { FieldInputDateRangeDefinition } from '../FieldInputDateRange';
+import { FieldInputMonthRangeDefinition } from '../FieldInputMonthRange';
+import { FieldInputStringCheckboxDefinition } from '../FieldInputStringCheckbox';
+import { FieldInputStringSwitchDefinition } from '../FieldInputStringSwitch';
+import { FieldInputTimeRangeDefinition } from '../FieldInputTimeRange';
 import { FieldInputBooleanDefinition } from '../FieldInputBoolean';
 import { FieldInputDateDefinition } from '../FieldInputDate';
 import { FieldInputMonthDefinition } from '../FieldInputMonth';
@@ -34,7 +45,9 @@ afterAll(() => {
   vi.unstubAllGlobals();
 });
 
-const cases = [
+const cases: Array<
+  [string, FieldInputDefinition, JSONSchema, unknown, unknown]
+> = [
   ['String', FieldInputStringDefinition, { type: 'string' }, { a: 1 }, 'x'],
   ['Number', FieldInputNumberDefinition, { type: 'number' }, 'abc', 7],
   [
@@ -98,7 +111,57 @@ const cases = [
     'abc',
     3,
   ],
-] as const;
+  [
+    'BooleanSwitch',
+    FieldInputBooleanSwitchDefinition,
+    { type: 'boolean', presentation: { inputType: 'switch' } },
+    { a: 1 },
+    true,
+  ],
+  [
+    'StringSwitch',
+    FieldInputStringSwitchDefinition,
+    {
+      type: 'string',
+      enum: ['on', 'off'],
+      presentation: { inputType: 'switch' },
+    },
+    { a: 1 },
+    'on',
+  ],
+  [
+    'StringCheckbox',
+    FieldInputStringCheckboxDefinition,
+    {
+      type: 'array',
+      items: { type: 'string', enum: ['a', 'b'] },
+      presentation: { inputType: 'checkbox' },
+    },
+    'ab',
+    ['a'],
+  ],
+  [
+    'DateRange',
+    FieldInputDateRangeDefinition,
+    { type: 'array', format: 'date-range', items: { type: 'string' } },
+    'ab',
+    [],
+  ],
+  [
+    'MonthRange',
+    FieldInputMonthRangeDefinition,
+    { type: 'array', format: 'month-range', items: { type: 'string' } },
+    'ab',
+    [],
+  ],
+  [
+    'TimeRange',
+    FieldInputTimeRangeDefinition,
+    { type: 'array', format: 'time-range', items: { type: 'string' } },
+    'ab',
+    [],
+  ],
+];
 
 it.each(cases)(
   '%s marks a misfit value in the DOM and clears it for a valid one',
@@ -108,17 +171,25 @@ it.each(cases)(
       <Form
         ref={ref}
         fieldInputDefinitions={[definition]}
-        jsonSchema={jsonSchema as never}
+        jsonSchema={jsonSchema}
         defaultValue={good as never}
         onError={() => {}}
       />,
     );
-    const invalid = () => container.querySelector('[aria-invalid="true"]');
+    const invalid = () =>
+      container.querySelector(
+        'input[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]',
+      );
+    const visible = () =>
+      container.querySelector('[class*="-status-error"], [role="status"]');
     expect(invalid()).toBeNull();
+    expect(visible()).toBeNull();
     act(() => ref.current!.setValue(bad as never));
     expect(invalid()).not.toBeNull();
+    expect(visible()).not.toBeNull();
     act(() => ref.current!.setValue(good as never));
     expect(invalid()).toBeNull();
+    expect(visible()).toBeNull();
   },
 );
 
