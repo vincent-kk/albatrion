@@ -9,6 +9,7 @@ import { canSkipGateWheel } from '../gates/canSkipGateWheel';
 import { finishGateTableRound } from '../gates/finishGateTableRound';
 import { gateWheelEvaluation } from '../gates/gateWheelEvaluation';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
+import { getGateExpression } from '../gates/getGateExpression';
 import { prepareGateTableRound } from '../gates/prepareGateTableRound';
 import { verifyGateWheelConfirmation } from '../gates/verifyGateWheelConfirmation';
 import { updateOutput } from '../output/updateOutput';
@@ -183,6 +184,11 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     relocated.length === 0 &&
     !context.distributedInputs.has(node) &&
     context.pathChanges.length === 0 &&
+    !HostStaticPartition.get(node.blueprintNode).hasGatedOverlays &&
+    gates.every(
+      (gate) =>
+        getGateExpression(node.runtime.blueprint, gate.schemaPath)?.equality,
+    ) &&
     HostStaticPartition.get(node.blueprintNode).staticEntries.length > 0;
   if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);
   else if (gates.length > 0 && updateOutput(node, context))

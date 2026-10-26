@@ -4,6 +4,8 @@ import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 interface Partition {
   /** Whether any authored contribution requires gate-dependent selection. */
   readonly gated: boolean;
+  /** A gated overlay shares an entry with an unconditional declaration. */
+  readonly hasGatedOverlays: boolean;
   /** Unique nonvirtual edges with ungated declarations and overlays. */
   readonly staticEntries: readonly BlueprintChildEntry[];
 }
@@ -41,6 +43,13 @@ export class HostStaticPartition {
             ),
         );
     const partition = {
+      hasGatedOverlays: host.childEntries.some((entry) => {
+        const declarations = entry.node.declarations;
+        return (
+          declarations.some((declaration) => declaration.gates.length === 0) &&
+          declarations.some((declaration) => declaration.gates.length > 0)
+        );
+      }),
       gated:
         staticEntries.length !== host.childEntries.length ||
         host.declarations.some((declaration) => declaration.gates.length > 0),
