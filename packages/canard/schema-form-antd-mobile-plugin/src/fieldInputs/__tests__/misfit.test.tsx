@@ -88,6 +88,27 @@ const cases: MisfitCase[] = [
     'abc',
     3,
   ],
+  [
+    'String with an uncoercible object',
+    FieldInputStringDefinition,
+    { type: 'string' },
+    { toString: 'oops' },
+    'x',
+  ],
+  [
+    'Number with an uncoercible object',
+    FieldInputNumberDefinition,
+    { type: 'number' },
+    { toString: 'oops' },
+    7,
+  ],
+  [
+    'Slider with an uncoercible object',
+    FieldInputSliderDefinition,
+    { type: 'number', format: 'slider' },
+    { toString: 'oops' },
+    3,
+  ],
 ];
 
 const INVALID_CONTROL =
@@ -108,13 +129,63 @@ it.each(cases)(
     );
     const invalid = () => container.querySelector(INVALID_CONTROL);
     const visible = () => container.querySelector('[role="status"]');
+    const control = () =>
+      container.querySelector('input, textarea, [role="switch"], .adm-slider');
+    expect(control()).not.toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
     expect(invalid()).toBeNull();
     expect(visible()).toBeNull();
     act(() => ref.current!.setValue(bad as never));
+    expect(control()).not.toBeNull();
+    expect(ref.current!.getValue()).toEqual(bad);
     expect(invalid()).not.toBeNull();
     expect(visible()?.textContent).toBe('Invalid value');
     act(() => ref.current!.setValue(good as never));
+    expect(control()).not.toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
     expect(invalid()).toBeNull();
     expect(visible()).toBeNull();
+  },
+);
+
+const rangeCases: MisfitCase[] = [
+  [
+    'Range Slider with an uncoercible element',
+    FieldInputSliderDefinition,
+    {
+      type: 'array',
+      items: { type: 'number' },
+      format: 'slider',
+      presentation: { FieldInputProps: { range: true } },
+    },
+    [1, { toString: 'oops' }],
+    [1, 3],
+  ],
+];
+
+it.each(rangeCases)(
+  '%s keeps the input and node value without marking the array parent',
+  (_, definition, jsonSchema, bad, good) => {
+    const ref = createRef<FormHandle>();
+    const { container } = render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[definition]}
+        jsonSchema={jsonSchema}
+        defaultValue={good as never}
+        onError={() => {}}
+      />,
+    );
+    const slider = () => container.querySelector('.adm-slider');
+    expect(slider()).not.toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
+    act(() => ref.current!.setValue(bad as never));
+    expect(slider()).not.toBeNull();
+    expect(ref.current!.getValue()).toEqual(bad);
+    expect(container.querySelector(INVALID_CONTROL)).toBeNull();
+    expect(container.querySelector('[role="status"]')).toBeNull();
+    act(() => ref.current!.setValue(good as never));
+    expect(slider()).not.toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
   },
 );

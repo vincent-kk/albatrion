@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import { Slider, type SliderProps } from 'antd-mobile';
 
+import { isArray } from '@winglet/common-utils/filter';
 import { isNumberSchema } from '@winglet/json-schema/filter';
 
 import type {
@@ -30,6 +31,15 @@ const FieldInputSlider = ({
   lazy,
   misfit,
 }: FieldInputSliderProps) => {
+  const initialValue = range
+    ? isArray(defaultValue) &&
+      defaultValue.length === 2 &&
+      defaultValue.every((value) => typeof value === 'number')
+      ? defaultValue
+      : undefined
+    : typeof defaultValue === 'number'
+      ? defaultValue
+      : undefined;
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
       if (value === null) onChange(undefined);
@@ -61,7 +71,7 @@ const FieldInputSlider = ({
           step={step}
           range={range}
           marks={marks}
-          defaultValue={defaultValue ?? undefined}
+          defaultValue={initialValue}
           {...changeHandler}
         />
       </div>

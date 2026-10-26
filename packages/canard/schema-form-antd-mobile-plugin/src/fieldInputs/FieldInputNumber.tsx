@@ -50,7 +50,7 @@ const FieldInputNumber = ({
           formatter={formatter}
           parser={parser ?? parseDraft}
           allowEmpty
-          value={value ?? null}
+          value={typeof value === 'number' ? value : null}
           onChange={handleChange}
         />
       </div>
