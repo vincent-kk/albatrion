@@ -168,14 +168,14 @@ const FieldInputUri = ({
     const separator = getProtocolSeparator(newProtocol);
     const newValue = currentUri
       ? `${newProtocol}${separator}${currentUri}`
-      : `${newProtocol}${separator}`;
+      : undefined;
     onChange(newValue);
   });
 
   const handleUriChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const newUri = event.target.value;
     const separator = getProtocolSeparator(protocol);
-    const newValue = newUri ? `${protocol}${separator}${newUri}` : '';
+    const newValue = newUri ? `${protocol}${separator}${newUri}` : undefined;
     onChange(newValue);
   });
 
