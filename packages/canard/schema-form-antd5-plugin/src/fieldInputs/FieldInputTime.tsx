@@ -27,6 +27,7 @@ const FieldInputTime = ({
   onChange,
   context,
   size,
+  misfit,
 }: FieldInputTimeProps) => {
   const handleChange = useHandle((date: Dayjs | null) => {
     onChange(date?.format(DATE_FORMAT) || '');
@@ -45,6 +46,8 @@ const FieldInputTime = ({
       defaultValue={initialValue}
       onChange={handleChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };

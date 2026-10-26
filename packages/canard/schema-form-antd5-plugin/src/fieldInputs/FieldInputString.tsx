@@ -35,6 +35,7 @@ const FieldInputString = ({
   context,
   placeholder,
   size,
+  misfit,
 }: FieldInputStringProps) => {
   const TextInput = useMemo(() => {
     if (
@@ -55,9 +56,11 @@ const FieldInputString = ({
       readOnly={readOnly}
       disabled={disabled}
       placeholder={placeholder}
-      defaultValue={defaultValue ?? undefined}
+      defaultValue={typeof defaultValue === 'string' ? defaultValue : undefined}
       onChange={handleChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };
