@@ -70,16 +70,15 @@ const FieldInputStringCheckbox = ({
 
   return (
     <>
-      <div role="group" aria-invalid={misfit || undefined}>
-        <Checkbox.Group
-          name={name}
-          style={{ display: 'flex' }}
-          options={options}
-          disabled={disabled}
-          defaultValue={initialValue}
-          onChange={handleChange}
-        />
-      </div>
+      <Checkbox.Group
+        name={name}
+        style={{ display: 'flex' }}
+        options={options}
+        disabled={disabled}
+        defaultValue={initialValue}
+        onChange={handleChange}
+        aria-invalid={misfit || undefined}
+      />
       {misfit && <span role="status">Invalid value</span>}
     </>
   );

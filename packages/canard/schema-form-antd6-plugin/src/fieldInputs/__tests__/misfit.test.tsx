@@ -6,26 +6,26 @@ import { afterAll, afterEach, beforeAll, expect, it, vi } from 'vitest';
 import {
   type FieldInputDefinition,
   Form,
-  type JSONSchema,
   type FormHandle,
+  type JSONSchema,
 } from '@canard/schema-form';
 
-import { FieldInputBooleanSwitchDefinition } from '../FieldInputBooleanSwitch';
-import { FieldInputDateRangeDefinition } from '../FieldInputDateRange';
-import { FieldInputMonthRangeDefinition } from '../FieldInputMonthRange';
-import { FieldInputStringCheckboxDefinition } from '../FieldInputStringCheckbox';
-import { FieldInputStringSwitchDefinition } from '../FieldInputStringSwitch';
-import { FieldInputTimeRangeDefinition } from '../FieldInputTimeRange';
 import { FieldInputBooleanDefinition } from '../FieldInputBoolean';
+import { FieldInputBooleanSwitchDefinition } from '../FieldInputBooleanSwitch';
 import { FieldInputDateDefinition } from '../FieldInputDate';
+import { FieldInputDateRangeDefinition } from '../FieldInputDateRange';
 import { FieldInputMonthDefinition } from '../FieldInputMonth';
+import { FieldInputMonthRangeDefinition } from '../FieldInputMonthRange';
 import { FieldInputNumberDefinition } from '../FieldInputNumber';
 import { FieldInputRadioGroupDefinition } from '../FieldInputRadioGroup';
 import { FieldInputSliderDefinition } from '../FieldInputSlider';
 import { FieldInputStringDefinition } from '../FieldInputString';
+import { FieldInputStringCheckboxDefinition } from '../FieldInputStringCheckbox';
 import { FieldInputStringEnumDefinition } from '../FieldInputStringEnum';
+import { FieldInputStringSwitchDefinition } from '../FieldInputStringSwitch';
 import { FieldInputTextareaDefinition } from '../FieldInputTextarea';
 import { FieldInputTimeDefinition } from '../FieldInputTime';
+import { FieldInputTimeRangeDefinition } from '../FieldInputTimeRange';
 import { FieldInputUriDefinition } from '../FieldInputUri';
 
 afterEach(cleanup);

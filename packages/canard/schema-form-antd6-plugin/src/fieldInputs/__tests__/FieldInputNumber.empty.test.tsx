@@ -1,7 +1,13 @@
 import { createRef } from 'react';
 import type { ComponentProps } from 'react';
 
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import type { InputNumber as AntdInputNumber } from 'antd';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 

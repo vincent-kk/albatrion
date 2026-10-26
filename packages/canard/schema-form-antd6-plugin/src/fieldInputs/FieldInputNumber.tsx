@@ -44,7 +44,10 @@ const FieldInputNumber = ({
   const handleChange = useHandle((next: number | null) => {
     withheld.current = false;
     if (next === null) onChange(undefined);
-    else if (Number.isNaN(next) || (schemaType === 'integer' && !Number.isInteger(next)))
+    else if (
+      Number.isNaN(next) ||
+      (schemaType === 'integer' && !Number.isInteger(next))
+    )
       withheld.current = true;
     else onChange(next);
   });

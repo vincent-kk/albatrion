@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createElement, createRef } from 'react';
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
@@ -47,7 +47,7 @@ it.each([
     renderCheckbox('array', value);
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
     expect(checkedBoxes()).toHaveLength(0);
-    expect(screen.getAllByRole('group')[0].getAttribute('aria-invalid')).toBe('true');
+    expect(screen.getByRole('group').getAttribute('aria-invalid')).toBe('true');
     expect(screen.getByRole('status').textContent).toBe('Invalid value');
   },
 );
@@ -57,7 +57,7 @@ it.each([null, undefined])(
   (value) => {
     renderCheckbox(['array', 'null'], value);
     expect(checkedBoxes()).toHaveLength(0);
-    expect(screen.getAllByRole('group')[0].hasAttribute('aria-invalid')).toBe(false);
+    expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
     expect(screen.queryByRole('status')).toBeNull();
   },
 );
@@ -66,6 +66,31 @@ it('writes exactly the one checked value and clears the marker', () => {
   const ref = renderCheckbox('array', 'ab');
   fireEvent.click(screen.getAllByRole('checkbox')[0]);
   expect(ref.current!.getValue()).toEqual(['a']);
-  expect(screen.getAllByRole('group')[0].hasAttribute('aria-invalid')).toBe(false);
+  expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
   expect(screen.queryByRole('status')).toBeNull();
+});
+
+it.each([
+  ['string', 'ab'],
+  ['object', { a: 1 }],
+])('renders a %s value directly with two unchecked boxes', (_, value) => {
+  const { container } = render(
+    createElement(FieldInputStringCheckboxDefinition.Component, {
+      name: 'c',
+      jsonSchema: {
+        type: 'array',
+        items: { type: 'string', enum: ['a', 'b'] },
+      },
+      value,
+      defaultValue: value,
+      onChange: () => {},
+      context: {},
+      misfit: true,
+    } as never),
+  );
+  const boxes = Array.from(
+    container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'),
+  );
+  expect(boxes).toHaveLength(2);
+  expect(boxes.every((box) => !box.checked)).toBe(true);
 });
