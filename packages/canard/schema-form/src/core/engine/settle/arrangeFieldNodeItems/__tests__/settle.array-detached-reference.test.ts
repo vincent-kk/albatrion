@@ -4,7 +4,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { isArrayNode } from '@/schema-form/core/surface';
 
 // 446C-07 (가): A detached field write must follow its surviving item to the new index.
-it.fails('keeps a detached field write with its surviving array item after remove(0)', () => {
+it('keeps a detached field write with its surviving array item after remove(0)', () => {
   const { root, runtime } = makeFieldNodeTree({
     type: 'object',
     properties: {
