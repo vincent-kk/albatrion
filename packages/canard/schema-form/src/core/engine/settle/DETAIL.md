@@ -645,6 +645,10 @@
 - bulk 루트 교체는 DirtyPathSet add·consume 상수 상한과 dirtyChildren 호출 0을 지키며 값·배달 순서와 payload·revision이 같은 폼의 강제 일반 경로와 같다. 같은 값 잎·반복 쓰기·형제 참조와 하위트리 경계를 유지한다.
 - 게이트·파생·잠복·가상·배열 개수 변경·부분 쓰기·키/종류 변경·batch·visit·load·automatic은 기존 경로로 후퇴하며, 늦게 거절된 표시도 유실되지 않는다.
 
+### settle-write-epoch-fallback — 진입 자격의 추가 거절 조건
+
+- 실제 batch·visit·load·automatic·misfit 진입은 경로 장부를 유지하며, 아이템 수가 같은 정적 배열 전체 교체는 세대 경로에서 같은 값을 방출한다.
+
 ## Boundary Exemptions
 
 ### `utils/input/` — 입력 해석 유지
