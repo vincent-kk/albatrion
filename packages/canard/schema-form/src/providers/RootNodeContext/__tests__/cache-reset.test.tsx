@@ -16,4 +16,3 @@ it('mounts a fresh blueprint after CacheManager.reset without changing a live fo
   expect(analysis(a.current!)).toBe(old);
   expect(analysis(b.current!)).not.toBe(old);
 });
-
