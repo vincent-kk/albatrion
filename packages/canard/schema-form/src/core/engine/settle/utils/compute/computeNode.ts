@@ -104,20 +104,17 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   }
   if (!context.originalSchemas.has(node.path))
     context.originalSchemas.set(node.path, node.schema);
-  const previous = {
-    local: node.local,
-    emit: node.emit,
-    children: node.children,
-    schema: node.schema,
-    active: node.active,
-  };
   if (node.behavior.strategy !== 'branch') {
     if (node.parent === null) selectNodeSchema(node, context);
     updateOutput(node, context);
-    preserveReferences(node, previous, context);
     context.dirtyPaths.delete(node.path);
     return;
   }
+  const previousLocal = node.local;
+  const previousEmit = node.emit;
+  const previousChildren = node.children;
+  const previousSchema = node.schema;
+  const previousActive = node.active;
   if (!context.shapeDirtyPaths.has(node.path)) {
     const recalculated = dirtyChildren(node, context);
     let registrations = context.presenceRegistrations ?? 0;
@@ -150,12 +147,18 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     }
     if (!wheel) {
       updateOutput(node, context, recalculated);
-      preserveReferences(node, previous, context);
       context.dirtyPaths.delete(node.path);
       return;
     }
     if (context.presenceMetrics) context.presenceMetrics.ancestorWheels++;
   }
+  const previous = {
+    local: previousLocal,
+    emit: previousEmit,
+    children: previousChildren,
+    schema: previousSchema,
+    active: previousActive,
+  };
   const prior = node.structure ?? {};
   const staticList = context.hasGates ? getStaticGateList(node) : undefined;
   const gates: BlueprintGate[] = staticList ? [...staticList.gates] : [];

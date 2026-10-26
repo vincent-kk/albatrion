@@ -174,6 +174,8 @@
 
 - H1의 호스트별 정적 분할은 게이트 없는 선언과 overlay만으로 결정한 고정 출발점의 부분 형상이다. 직전 커밋의 활성 집합을 읽지 않으며 동적 후보는 기존 바퀴와 작성 순서로 평가한다. 비로드 object 호스트에 입력 분배·경로 이동·relocated gate·virtual·동명 후보가 없고, 정적 자식의 기존 인스턴스·부모·이름·경로·청사진·스키마·active·미분리·구조 맵이 모두 맞을 때만 병합·게이트 등록·변경 캡처를 생략한다. 선언 ID는 그대로 공표하고 dirty 자식만 계산하며 즉시 투영 대기는 기존 순서를 유지한다. primeHost와 일반/table 선택은 재사용 판정 하나를 공유하고 부적격 엔트리는 기존 선택을 쓴다. 청사진별 분할·정적 스키마의 보유량은 O(정적 엔트리 수), 최초 준비는 선언 수에 비례하며 이후 검사와 구조 사본은 호스트 폭에 비례하되 무관한 정적 형제의 selectEntryStep 호출·병합·등록·캡처는 제거한다(SETTLE-044, GOAL-011·029, BLUEPRINT-007, NODE-060, TEST-080 D1-H1).
 
+- H2의 바퀴 없는 terminal·형상 불변 branch 경로는 updateOutput의 자식 단위 같음 비교와 배달 기준 local·emit 참조 되살림에 의존하며 preserveReferences의 전체 값 깊은 비교를 반복하지 않는다. 그 경로는 자식 선택을 하지 않으므로 children·active를 다시 만들지 않고, terminal 루트의 schema 선택은 기존 변경 기록을 유지한다. 자식 하강 뒤 presence 등록으로 바퀴가 필요해지면 하강 전 local·emit·children·schema·active 참조를 사용하며, 객체 스냅숏은 실제 바퀴 경로에서만 만든다. 바퀴의 고정 출발점·참조 복원·변경 정리와 예산은 그대로다. 비바퀴 참조 보존의 추가 비용은 O(1) 지역 참조이며 형제 수에 비례하는 깊은 비교·전체 값 키 열거와 계산당 스냅숏 객체를 없앤다. 행의 불변 값 조립에 드는 O(호스트 폭) 사본은 유지한다(GOAL-011, SETTLE-017, NODE-060, TEST-080 D1-H2).
+
 - 이 계약의 `(path, kind)`와 `(경로, 종류)`에서 kind/종류는 union의 fold를 포함한 식별 토큰이다. union은 `union:<fold mask>`, 다른 종류는 기존 kind 문자열을 쓴다. 이탈 대기·잠복 원본과 순서·게이트 경로 등록·커밋 선언·나감 정책·채움 집합은 모두 같은 토큰으로 구별한다. 선택의 재사용·비활성 삭제와 문서 순서 검색은 청사진 노드 객체 동일성으로 판정하므로 뒤 종류가 살아 있어도 첫 활성 종류가 생존하며 다른 fold의 잠복 값은 넘겨받지 않는다. 나감 정책의 호스트 식별도 같은 토큰을 써서 fold별 마지막 커밋 값을 읽는다. 행 선택과 object/array/virtual 분류는 기존 kind를 쓴다(BLUEPRINT-043, NODE-043·044, FRAGMENT-049, 389C-02, 390C-01).
 
 - `getControlLayers`의 조각 소유권은 선택된 노드 선언의 `getFragmentOwnerPaths` 결과로 호출마다 지연 생성한 소유 경로 집합 하나에서 판정하며 호출 간 캐시는 두지 않는다. 선언·층 순서는 유지하고, 나감의 `commitExitPolicyValues`·`captureLatentDescendants`가 자식마다 한 번 호출하는 경로는 기록만 하며 바꾸지 않는다(P-08, GOAL-011).
@@ -283,6 +285,10 @@
 ### settle-host-static-partition — 게이트 호스트의 정적 형제 재사용
 
 - off/table 모드에서 형제 0·100·1,000개의 판별자 쓰기 한 번에 selectEntryStep 호출 수가 동적 엔트리와 라운드 수의 상한 안에 있고, 정적 형제의 인스턴스·스키마·값과 배달은 같다. load·분배·이동·virtual·동명 후보·게이트 overlay·relocation에서는 일반 경로를 유지하며 verify/shadow 관측과 전후 배달 차이는 0이다(SETTLE-044, TEST-080 D1-H1).
+
+### settle-non-wheel-reference-cost — 바퀴 없는 참조 보존 비용
+
+- 게이트 있는 폼의 무관한 잎 쓰기에서 준비 쓰기 한 번 뒤의 형제 250·1,000·4,000개에 대한 sameValue 외부 진입 수는 같은 상한 안이며 전체 값 Object.keys 열거가 0이다. 첫 쓰기의 행 캐시 cold 불일치에서 생기는 assembleObject·updateOutput의 열거 3회는 제외하며 D2 잔여 비용으로 기록한다(코디네이터 승인). 비교 함수 내부 재귀는 모듈 스파이로 계수되지 않으므로 넓은 값의 키 열거도 따로 관측한다. 같은 값 쓰기·파생 중간값 되돌림 뒤 변하지 않은 조상의 value·outputValue·children·schema·active와 배달·revision은 유지하며, 자식 하강 중 바퀴로 승격하는 기존 관측도 exact로 유지한다. 기준선/HEAD 전후 배달 차이와 공개 선언 파일 차이는 0이며 leaf-gate-4000은 같은 창의 leaf-plain-4000 두 배 안이다(TEST-080 D1-H2).
 
 ### settle-split-registration — 등록 축약과 순서·관측 불변
 
