@@ -69,6 +69,7 @@
 | SURFACE-061 | 경고등의 공개 이름 확정 — 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`; 뜻은 VALUE-037 그대로, 주석에 `schemaType`·유효 목록 기준 한 줄, 시험 파일 이름은 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:41` 반영 칸; 시험 파일 이름) |
 | SURFACE-062 | 하위 방문 — `visitSubtree(visitor)`: 자기 포함 전위, `false`는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch), 내부 순회는 `visitFieldNodes` 한 벌 | 현행 | 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순) |
 | SURFACE-063 | 캐시 계층(446라운드) — 소비자 소유 키 캐시는 `src/app/cache` fractal(도메인 계약: `resolve` 멱등, 값 불변, `invalidate`·`clear`는 항목 제거만, 세대 번호), 엔진 파생 캐시는 `getBlueprintDerived`·`getHostDerived` 레코드 둘, 값·노드 키 메모의 자리, 모드 플래그는 `engineModes`, 공개 API는 `FormHandle.rebuild(option?)` 하나 | 현행 | 소유자 답(`reviews/round-446-owner-answers.md:9-10` 캐시 계층의 자리와 폼 핸들), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-04) |
+| SURFACE-064 | reset과 rebuild의 관계(447라운드) — `reset`은 언제나 그 폼의 기존 청사진을 유지, 새 청사진은 그 폼 자신의 `rebuild`나 새 마운트에서만, 폐기된 캐시 항목은 이후의 마운트와 rebuild에만 영향, 446C-04 (마)의 "다른 폼은 다음 reset에서 새 청사진" 대체 | 현행 | 편집자 결정(447라운드, `reviews/round-447-closing.md` 447C-02) |
 
 ## 항목
 
@@ -1037,8 +1038,21 @@
 - 보충:
   > 소유자(446라운드, 캐시 계층의 자리와 요건): "캐시 레이어는 app/ 하위에 모았으면 좋겠어. plugin 매니저 처럼.\n캐시 라이프사이클이랑 리프레시, 멱등성과 불변성을 보장해야하고, 강제 업데이트(기존 캐시를 없애고 새로 만드는 등)도 어떤 형태로든 제공이 되어야하는 기능일거같거든.\n\n그리고 지금 찾은 결함을 포함해서, 동일 기능을 하는 함수나, 여러 파일에 분산된 weakmap 등 캐시 레이어를 좀 더 잘 관리할 수 있는 방법이 없을지도 검토해봐.\n지금처럼 사용처에 직접 두는게 나으면 둬도 되는데, 아무래도 관리가 좀 어려워보여서 말이야." (`reviews/round-446-owner-answers.md:9`)
   > 소유자(446라운드, 캐시 폐기의 공개 API와 설계 수정의 허용 범위): "1. 캐시 폐기를 공개 api로 내려고 한다 formHandle 에 추가하면 되지 않을까? \n\n그리고, 해당 코드는 아직 배포된건 아니라서, 검증에 대한 자신만 있으면(테스트와 시나리오는 꽤 충실하게 작성해두었고, 필요하면 더 작성할 수 있음) 설계 수정을 시도해도 좋아. \n\n다만, 아직은 설계서를 작성하거나 원장을 수정하진 말고, 검토만 해보는걸로.\n\n지금 정도 수준에서의 개선으로도 괜찮나? 아니면 근본적 설계수정이 필요한가?" (`reviews/round-446-owner-answers.md:10`)
+  > 편집자 결정(447C-02): "【추론】 446C-04 (마)는 "같은 스키마 객체를 쓰는 다른 폼은 각자 다음 reset에서 새 청사진을 받는다"고 적었다. D3 구현에서 이 문장이 한 폼의 `rebuild`가 다른 폼의 `reset` 뜻을 바꾸게 만든다는 것이 드러났다: reset은 폼 자신을 기본값으로 되돌리는 동작인데, 다른 폼이 먼저 rebuild했는지에 따라 같은 reset이 청사진까지 바꾸게 된다. 패키지의 설계 가치(공개 인터페이스가 이끄는 일관성)에 따라 고친다: `reset`은 언제나 그 폼의 기존 청사진을 유지하고, 새 청사진은 그 폼 자신의 `rebuild`나 새 마운트에서만 받는다. `rebuild`가 폐기한 캐시 항목은 이후의 새 마운트와 rebuild에만 영향을 준다. 살아 있는 폼이 가리키는 옛 청사진은 rebuild 뒤에도 그 폼과 함께 남는다(446C-04의 "마운트된 폼은 옛 청사진을 끝까지 쓴다"와 같다). 결과 문서는 `verification/design-optimization/d3-cache-results.md`이다." (`reviews/round-447-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-446-closing.md:14`(정본), `reviews/round-446-owner-answers.md:9-10`
 - 닫은 사람: 소유자 답(`reviews/round-446-owner-answers.md:9-10` 캐시 계층의 자리와 폼 핸들), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-04)
 - 라운드: 446
 - 까닭: `reviews/round-446-owner-answers.md:9`
+
+### SURFACE-064 reset과 rebuild의 관계(447라운드) — `reset`은 언제나 그 폼의 기존 청사진을 유지, 새 청사진은 그 폼 자신의 `rebuild`나 새 마운트에서만, 폐기된 캐시 항목은 이후의 마운트와 rebuild에만 영향, 446C-04 (마)의 "다른 폼은 다음 reset에서 새 청사진" 대체
+
+- 결정:
+  > 【추론】 446C-04 (마)는 "같은 스키마 객체를 쓰는 다른 폼은 각자 다음 reset에서 새 청사진을 받는다"고 적었다. D3 구현에서 이 문장이 한 폼의 `rebuild`가 다른 폼의 `reset` 뜻을 바꾸게 만든다는 것이 드러났다: reset은 폼 자신을 기본값으로 되돌리는 동작인데, 다른 폼이 먼저 rebuild했는지에 따라 같은 reset이 청사진까지 바꾸게 된다. 패키지의 설계 가치(공개 인터페이스가 이끄는 일관성)에 따라 고친다: `reset`은 언제나 그 폼의 기존 청사진을 유지하고, 새 청사진은 그 폼 자신의 `rebuild`나 새 마운트에서만 받는다. `rebuild`가 폐기한 캐시 항목은 이후의 새 마운트와 rebuild에만 영향을 준다. 살아 있는 폼이 가리키는 옛 청사진은 rebuild 뒤에도 그 폼과 함께 남는다(446C-04의 "마운트된 폼은 옛 청사진을 끝까지 쓴다"와 같다). 결과 문서는 `verification/design-optimization/d3-cache-results.md`이다.
+- 보충:
+  > 소유자(446라운드, 캐시 폐기의 공개 API와 설계 수정의 허용 범위): "1. 캐시 폐기를 공개 api로 내려고 한다 formHandle 에 추가하면 되지 않을까? \n\n그리고, 해당 코드는 아직 배포된건 아니라서, 검증에 대한 자신만 있으면(테스트와 시나리오는 꽤 충실하게 작성해두었고, 필요하면 더 작성할 수 있음) 설계 수정을 시도해도 좋아. \n\n다만, 아직은 설계서를 작성하거나 원장을 수정하진 말고, 검토만 해보는걸로.\n\n지금 정도 수준에서의 개선으로도 괜찮나? 아니면 근본적 설계수정이 필요한가?" (`reviews/round-446-owner-answers.md:10`)
+- 상태: 현행
+- 출처: `reviews/round-447-closing.md:10`(정본), `reviews/round-446-owner-answers.md:10`, `verification/design-optimization/d3-cache-results.md`
+- 닫은 사람: 편집자 결정(447라운드, `reviews/round-447-closing.md` 447C-02)
+- 라운드: 447
+- 까닭: `reviews/round-447-closing.md:10`
