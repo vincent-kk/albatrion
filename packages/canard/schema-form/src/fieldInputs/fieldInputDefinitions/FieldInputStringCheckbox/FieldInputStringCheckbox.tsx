@@ -1,6 +1,7 @@
 import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
+import { isArray } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type { FieldInputPropsWithSchema } from '@/schema-form/types';
@@ -15,6 +16,7 @@ export const FieldInputStringCheckbox = ({
   readOnly,
   disabled,
   defaultValue,
+  misfit,
   onChange,
   context,
   alias,
@@ -39,18 +41,26 @@ export const FieldInputStringCheckbox = ({
         : [],
     [context, jsonSchema, alias],
   );
+  const selected = isArray(defaultValue) ? defaultValue : [];
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
     const rawValue = checkboxOptions.find(
       (option) => option.value === value,
     )?.rawValue;
     if (rawValue === undefined) return;
-    if (checked) onChange((prev) => [...(prev || []), rawValue]);
+    if (checked)
+      onChange((prev) => [...(isArray(prev) ? prev : []), rawValue]);
     else
-      onChange((prev) => prev?.filter((option) => option !== rawValue) || []);
+      onChange((prev) =>
+        isArray(prev) ? prev.filter((option) => option !== rawValue) : [],
+      );
   });
   return (
-    <div role="group" aria-labelledby={'label:' + path}>
+    <div
+      role="group"
+      aria-labelledby={'label:' + path}
+      aria-invalid={misfit || undefined}
+    >
       {map(checkboxOptions, ({ value, rawValue, label }, index) => {
         const id = path + '-' + index;
         return (
@@ -62,13 +72,14 @@ export const FieldInputStringCheckbox = ({
               readOnly={readOnly}
               disabled={disabled}
               value={value}
-              defaultChecked={defaultValue?.includes(rawValue)}
+              defaultChecked={selected.includes(rawValue)}
               onChange={handleChange}
             />
             {label}
           </label>
         );
       })}
+      {misfit && <span role="status">Invalid value</span>}
     </div>
   );
 };
