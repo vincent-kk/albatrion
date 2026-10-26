@@ -18,6 +18,16 @@ import { getDependencyIndex } from './getDependencyIndex';
 export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  if (context.writeEpoch !== undefined) {
+    if (context.target.parent !== null)
+      context.dirtyPaths.add(context.target.path);
+    let parent = context.target.parent;
+    while (parent) {
+      context.dirtyPaths.add(parent.path);
+      parent = parent.parent;
+    }
+    return;
+  }
   if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)
     context.dirtyPaths.beginPostOrder();
   const blueprint = context.root.runtime.blueprint;

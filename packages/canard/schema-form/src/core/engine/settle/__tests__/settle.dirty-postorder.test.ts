@@ -30,7 +30,7 @@ describe('gate-less write dirty indexing', () => {
     expect(root.value).toEqual({ toggle: true, head: 'h' });
   });
 
-  it('starts post-order indexing before adding the first path of a nested root write', () => {
+  it('needs no dirty paths for an eligible nested root write', () => {
     const root = buildFieldNodeTree({
       jsonSchema: {
         type: 'object',
@@ -38,6 +38,34 @@ describe('gate-less write dirty indexing', () => {
           a: {
             type: 'object',
             properties: { b: { type: 'string', default: 'before' } },
+          },
+        },
+      },
+      validationMode: 0,
+    });
+    mountFieldNode(root, undefined, undefined, { deferValidation: false });
+    const begin = vi.spyOn(DirtyPathSet.prototype, 'beginPostOrder');
+    const add = vi.spyOn(DirtyPathSet.prototype, 'add');
+    root.setValue({ a: { b: 'after' } });
+    expect(begin).toHaveBeenCalled();
+    expect(add.mock.calls.length).toBe(0);
+    expect(root.value).toEqual({ a: { b: 'after' } });
+  });
+
+  it('starts post-order indexing before the first path on a derive-ineligible nested root write', () => {
+    const root = buildFieldNodeTree({
+      jsonSchema: {
+        type: 'object',
+        properties: {
+          a: {
+            type: 'object',
+            properties: {
+              b: {
+                type: 'string',
+                default: 'before',
+                controls: { derived: 'undefined' },
+              },
+            },
           },
         },
       },

@@ -133,6 +133,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
+  /** Admitted whole-write generation, cleared before falling back to path work. */
+  writeEpoch?: number;
   /** Hosts whose direct child identity or projected emission may have changed. */
   presenceHosts?: Set<Self>;
   /** Latest actual dependency reads of relocated occurrences in this settlement. */

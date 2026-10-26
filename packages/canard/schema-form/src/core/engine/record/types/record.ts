@@ -35,6 +35,8 @@ export interface FieldNodeRecord<Self> {
   escapedName: string;
   /** Canonical absolute path of this occurrence. */
   path: string;
+  /** Settlement generation marking this occurrence for a static whole write. */
+  writeEpoch?: number;
   /** Number of structural edges from the root. */
   depth: number;
   /** Whether the current declaration requires this node. */

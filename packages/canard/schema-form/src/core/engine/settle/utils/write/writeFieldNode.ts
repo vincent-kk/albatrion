@@ -13,6 +13,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { assertVirtualWriteShape } from '../input/assertVirtualWriteShape';
 import { isPlain } from '../input/isPlain';
 import { markWrite } from '../input/markWrite';
+import { prepareWriteEpoch } from '../input/utils/prepareWriteEpoch';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
 import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
@@ -130,6 +131,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   context.source = source;
   context.writeOrigins = writeOrigins;
   if (batch) context.replacePaths = collectReplacePaths(writeOrigins);
+  if (!scalarWrite && replaces) prepareWriteEpoch(context);
   try {
     if (context.hasGates)
       getGateRegistry(context.root.runtime).register(context.root);
