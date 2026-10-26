@@ -6,10 +6,13 @@ import { afterEach, expect, it } from 'vitest';
 import { Form, type FormHandle } from '@canard/schema-form';
 
 import { FieldInputBooleanDefinition } from '../FieldInputBoolean';
+import { FieldInputBooleanSwitchDefinition } from '../FieldInputBooleanSwitch';
 import { FieldInputNumberDefinition } from '../FieldInputNumber';
 import { FieldInputRadioGroupDefinition } from '../FieldInputRadioGroup';
 import { FieldInputSliderDefinition } from '../FieldInputSlider';
 import { FieldInputStringDefinition } from '../FieldInputString';
+import { FieldInputStringCheckboxDefinition } from '../FieldInputStringCheckbox';
+import { FieldInputStringSwitchDefinition } from '../FieldInputStringSwitch';
 import { FieldInputTextareaDefinition } from '../FieldInputTextarea';
 
 afterEach(cleanup);
@@ -37,6 +40,35 @@ const cases = [
   ],
   ['Boolean', FieldInputBooleanDefinition, { type: 'boolean' }, { a: 1 }, true],
   [
+    'BooleanSwitch',
+    FieldInputBooleanSwitchDefinition,
+    { type: 'boolean', presentation: { inputType: 'switch' } },
+    { a: 1 },
+    true,
+  ],
+  [
+    'StringSwitch',
+    FieldInputStringSwitchDefinition,
+    {
+      type: 'string',
+      enum: ['on', 'off'],
+      presentation: { inputType: 'switch' },
+    },
+    { a: 1 },
+    'on',
+  ],
+  [
+    'StringCheckbox',
+    FieldInputStringCheckboxDefinition,
+    {
+      type: 'array',
+      items: { type: 'string', enum: ['a', 'b'] },
+      presentation: { inputType: 'checkbox' },
+    },
+    { a: 1 },
+    ['a'],
+  ],
+  [
     'Slider',
     FieldInputSliderDefinition,
     { type: 'number', format: 'slider' },
@@ -44,6 +76,9 @@ const cases = [
     3,
   ],
 ] as const;
+
+const INVALID_CONTROL =
+  'input[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]';
 
 it.each(cases)(
   '%s marks a misfit value in the DOM and clears it for a valid one',
@@ -58,15 +93,15 @@ it.each(cases)(
         onError={() => {}}
       />,
     );
-    const invalid = () => container.querySelector('[aria-invalid="true"]');
-    const status = () => container.querySelector('[role="status"]');
+    const invalid = () => container.querySelector(INVALID_CONTROL);
+    const visible = () => container.querySelector('[role="status"]');
     expect(invalid()).toBeNull();
-    expect(status()).toBeNull();
+    expect(visible()).toBeNull();
     act(() => ref.current!.setValue(bad as never));
     expect(invalid()).not.toBeNull();
-    expect(status()?.textContent).toBe('Invalid value');
+    expect(visible()?.textContent).toBe('Invalid value');
     act(() => ref.current!.setValue(good as never));
     expect(invalid()).toBeNull();
-    expect(status()).toBeNull();
+    expect(visible()).toBeNull();
   },
 );
