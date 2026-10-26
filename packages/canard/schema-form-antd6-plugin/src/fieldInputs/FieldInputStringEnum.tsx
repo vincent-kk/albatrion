@@ -38,6 +38,7 @@ const FieldInputStringEnum = ({
   alias: aliasProp,
   placeholder,
   size,
+  misfit,
 }: FieldInputStringEnumProps) => {
   const [schema, alias, mode] = useMemo(() => {
     const labels = context.enumLabels || aliasProp;
@@ -96,6 +97,8 @@ const FieldInputStringEnum = ({
       onChange={handleChange}
       style={{ width: '100%' }}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     >
       {Options}
     </Select>

@@ -36,6 +36,7 @@ const FieldInputTextarea = ({
   context,
   placeholder,
   size,
+  misfit,
 }: FieldInputTextareaProps) => {
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(value.target.value);
@@ -58,6 +59,8 @@ const FieldInputTextarea = ({
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };

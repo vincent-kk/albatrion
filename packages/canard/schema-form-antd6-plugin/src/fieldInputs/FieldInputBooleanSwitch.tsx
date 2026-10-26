@@ -38,6 +38,7 @@ const FieldInputBooleanSwitch = ({
   context,
   size,
   alias,
+  misfit,
 }: FieldInputBooleanSwitchProps) => {
   const [checkedLabel, uncheckedLabel] = useMemo(() => {
     const labels = context?.checkboxLabels || alias || {};
@@ -49,15 +50,19 @@ const FieldInputBooleanSwitch = ({
   });
 
   return (
-    <Switch
-      key={path}
-      disabled={disabled}
-      checked={value ?? undefined}
-      checkedChildren={checkedLabel}
-      unCheckedChildren={uncheckedLabel}
-      onChange={handleChange}
-      size={size || context?.switchSize}
-    />
+    <>
+      <Switch
+        aria-invalid={misfit || undefined}
+        key={path}
+        disabled={disabled}
+        checked={value === true}
+        checkedChildren={checkedLabel}
+        unCheckedChildren={uncheckedLabel}
+        onChange={handleChange}
+        size={size || context?.switchSize}
+      />
+      {misfit && <span role="status">Invalid value</span>}
+    </>
   );
 };
 export const FieldInputBooleanSwitchDefinition = {
