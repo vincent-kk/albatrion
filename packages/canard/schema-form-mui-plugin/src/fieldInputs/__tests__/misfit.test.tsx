@@ -23,6 +23,7 @@ import { FieldInputStringEnumDefinition } from '../FieldInputStringEnum';
 import { FieldInputStringSwitchDefinition } from '../FieldInputStringSwitch';
 import { FieldInputTextareaDefinition } from '../FieldInputTextarea';
 import { FieldInputTimeDefinition } from '../FieldInputTime';
+import { FieldInputUnionDefinition } from '../FieldInputUnion';
 import { FieldInputUriDefinition } from '../FieldInputUri';
 
 afterEach(cleanup);
@@ -38,6 +39,13 @@ type MisfitCase = readonly [
 const cases: MisfitCase[] = [
   ['String', FieldInputStringDefinition, { type: 'string' }, { a: 1 }, 'x'],
   ['Number', FieldInputNumberDefinition, { type: 'number' }, 'abc', 7],
+  [
+    'Union',
+    FieldInputUnionDefinition,
+    { type: ['number', 'boolean'] },
+    'abc',
+    7,
+  ],
   [
     'Textarea',
     FieldInputTextareaDefinition,

@@ -14,6 +14,7 @@ import { FieldInputStringEnumDefinition } from './FieldInputStringEnum';
 import { FieldInputStringSwitchDefinition } from './FieldInputStringSwitch';
 import { FieldInputTextareaDefinition } from './FieldInputTextarea';
 import { FieldInputTimeDefinition } from './FieldInputTime';
+import { FieldInputUnionDefinition } from './FieldInputUnion';
 import { FieldInputUriDefinition } from './FieldInputUri';
 
 export const fieldInputDefinitions: FieldInputDefinition[] = [
@@ -29,6 +30,7 @@ export const fieldInputDefinitions: FieldInputDefinition[] = [
   FieldInputArrayDefinition,
   FieldInputSliderDefinition,
   FieldInputTextareaDefinition,
+  FieldInputUnionDefinition,
   FieldInputStringDefinition,
   FieldInputNumberDefinition,
   FieldInputBooleanDefinition,
