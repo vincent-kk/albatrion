@@ -650,6 +650,10 @@
 
 - 실제 batch·visit·load·automatic·misfit 진입은 경로 장부를 유지하며, 아이템 수가 같은 정적 배열 전체 교체는 세대 경로에서 같은 값을 방출한다.
 
+### settle-write-epoch-verification — 세대 표식 그림자 검증
+
+- verify 묶음은 S7 구성원 동등성 확인을 실제 수행하고, 노드 표식을 제거한 변이가 계산 전에 거부됨을 확인한다.
+
 ## Boundary Exemptions
 
 ### `utils/input/` — 입력 해석 유지
