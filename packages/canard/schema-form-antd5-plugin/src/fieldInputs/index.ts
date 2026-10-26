@@ -17,6 +17,7 @@ import { FieldInputStringSwitchDefinition } from './FieldInputStringSwitch';
 import { FieldInputTextareaDefinition } from './FieldInputTextarea';
 import { FieldInputTimeDefinition } from './FieldInputTime';
 import { FieldInputTimeRangeDefinition } from './FieldInputTimeRange';
+import { FieldInputUnionDefinition } from './FieldInputUnion';
 import { FieldInputUriDefinition } from './FieldInputUri';
 
 export const fieldInputDefinitions: FieldInputDefinition[] = [
@@ -35,6 +36,7 @@ export const fieldInputDefinitions: FieldInputDefinition[] = [
   FieldInputArrayDefinition,
   FieldInputSliderDefinition,
   FieldInputTextareaDefinition,
+  FieldInputUnionDefinition,
   FieldInputStringDefinition,
   FieldInputNumberDefinition,
   FieldInputBooleanDefinition,

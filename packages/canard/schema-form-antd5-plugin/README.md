@@ -152,6 +152,12 @@ This plugin provides the following Ant Design components:
 - **Applied when**: `type` is `"string"` and `format` or `inputType` is `"textarea"`
 - **Additional features**: Support for automatic resizing via `minRows`, `maxRows`
 
+### **[`FieldInputUnion.tsx`](./src/fieldInputs/FieldInputUnion.tsx)**
+
+- **Role**: Text input for multi-type (`union`) schemas interpreted against effective union types
+- **Applied when**: `type` is `"union"`
+- **Additional features**: Holds uninterpretable drafts locally until blur, displays object/array values read-only
+
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
 - **Role**: Default string input field
@@ -203,7 +209,18 @@ Component selection is determined by the following priority order:
 6. **Fallback**: Default fallback components
 
 Within the same priority level, earlier items in the array take precedence. Components in this plugin are defined in the following order:
-`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputUri` → `FieldInputMonth` → `FieldInputDate` → `FieldInputTime` → `FieldInputMonthRange` → `FieldInputDateRange` → `FieldInputTimeRange` → `FieldInputRadioGroup` → `FieldInputStringEnum` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
+`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputUri` → `FieldInputMonth` → `FieldInputDate` → `FieldInputTime` → `FieldInputMonthRange` → `FieldInputDateRange` → `FieldInputTimeRange` → `FieldInputRadioGroup` → `FieldInputStringEnum` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputUnion` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
+
+## Union input contract
+
+- A union input reads the following when `type === 'union'`. `schemaType`: the authored list of types; core assigns no meaning to its order. `nullable`, `value`, `misfit`, `required`. `jsonSchema`: `jsonSchema.type` is the intersection of active declarations and may be absent on typeless fields. The gate-narrowed effective list is the intersection of `schemaType` and `jsonSchema.type`.
+- Emitted values are either a value whose JSON type is in the effective list or `undefined`. `null` is emitted only by an explicit clear action when `nullable` is true, and an empty input emits `undefined`. Because `value` may be a mismatched value, its type is wider than `onChange`.
+- Uninterpretable drafts and text undergoing IME composition are held locally by the input and revert to the node value on blur.
+- Emitting a value outside the list is neither an error nor discarded. Core Rule A accepts it: if exactly one type in the list can accept the value, it converts it to that type; otherwise it keeps the value as-is and turns on the warning indicator. While a gate narrows the list, interpretation uses the narrowed list. The input observes this outcome through `misfit` on the next render. `misfit === false` does not mean validation passed.
+- Treat object and array values as immutable. Emit a new reference when updating and never mutate the received value in place. Do not place non-JSON values (`undefined` keys, `Date`, etc.) inside the value.
+- Do not rely on the order of the type list. Do not assume core selects the type the user intended.
+- This plugin's union input does not emit `null` through a clear action (an empty input always emits `undefined`).
+- This plugin's union input does not create or edit objects or arrays; received object and array values are displayed read-only.
 
 ---
 
