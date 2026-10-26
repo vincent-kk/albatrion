@@ -92,7 +92,7 @@ const FieldInputString = ({
       required={required}
       disabled={disabled}
       error={misfit}
-      defaultValue={defaultValue ?? undefined}
+      defaultValue={typeof defaultValue === 'string' ? defaultValue : undefined}
       onChange={handleChange}
       size={size}
       slotProps={{

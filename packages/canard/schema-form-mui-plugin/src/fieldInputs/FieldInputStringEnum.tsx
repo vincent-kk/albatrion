@@ -92,9 +92,9 @@ const FieldInputStringEnum = ({
   const labelId = useMemo(() => `label-${path}`, [path]);
 
   const initialValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
     if (defaultValue === null) return '' + null;
-    return defaultValue;
+    if (typeof defaultValue === 'string') return defaultValue;
+    return undefined;
   }, [defaultValue]);
 
   return (

@@ -130,7 +130,123 @@ const cases: MisfitCase[] = [
   ],
 ];
 
-it.each(cases)(
+const uncoercibleCases: MisfitCase[] = [
+  [
+    'String',
+    FieldInputStringDefinition,
+    { type: 'string' },
+    { toString: 'oops' },
+    'x',
+  ],
+  [
+    'Number',
+    FieldInputNumberDefinition,
+    { type: 'number' },
+    { toString: 'oops' },
+    7,
+  ],
+  [
+    'Textarea',
+    FieldInputTextareaDefinition,
+    { type: 'string', format: 'textarea' },
+    { toString: 'oops' },
+    'x',
+  ],
+  [
+    'StringEnum',
+    FieldInputStringEnumDefinition,
+    { type: 'string', enum: ['a', 'b'] },
+    { toString: 'oops' },
+    'a',
+  ],
+  [
+    'Date',
+    FieldInputDateDefinition,
+    { type: 'string', format: 'date' },
+    { toString: 'oops' },
+    '2024-01-01',
+  ],
+  [
+    'Month',
+    FieldInputMonthDefinition,
+    { type: 'string', format: 'month' },
+    { toString: 'oops' },
+    '2024-01',
+  ],
+  [
+    'Time',
+    FieldInputTimeDefinition,
+    { type: 'string', format: 'time' },
+    { toString: 'oops' },
+    '10:00:00',
+  ],
+  [
+    'Uri',
+    FieldInputUriDefinition,
+    { type: 'string', format: 'uri' },
+    { toString: 'oops' },
+    'https://a.b',
+  ],
+];
+
+const uncoercibleStatusCases: MisfitCase[] = [
+  [
+    'RadioGroup',
+    FieldInputRadioGroupDefinition,
+    {
+      type: 'string',
+      enum: ['a', 'b'],
+      presentation: { inputType: 'radio' },
+    },
+    { toString: 'oops' },
+    'a',
+  ],
+  [
+    'Boolean',
+    FieldInputBooleanDefinition,
+    { type: 'boolean' },
+    { toString: 'oops' },
+    true,
+  ],
+  [
+    'BooleanSwitch',
+    FieldInputBooleanSwitchDefinition,
+    { type: 'boolean', presentation: { inputType: 'switch' } },
+    { toString: 'oops' },
+    true,
+  ],
+  [
+    'StringSwitch',
+    FieldInputStringSwitchDefinition,
+    {
+      type: 'string',
+      enum: ['on', 'off'],
+      presentation: { inputType: 'switch' },
+    },
+    { toString: 'oops' },
+    'on',
+  ],
+  [
+    'StringCheckbox',
+    FieldInputStringCheckboxDefinition,
+    {
+      type: 'array',
+      items: { type: 'string', enum: ['a', 'b'] },
+      presentation: { inputType: 'checkbox' },
+    },
+    { toString: 'oops' },
+    ['a'],
+  ],
+  [
+    'Slider',
+    FieldInputSliderDefinition,
+    { type: 'number', presentation: { inputType: 'slider' } },
+    { toString: 'oops' },
+    5,
+  ],
+];
+
+it.each([...cases, ...uncoercibleStatusCases])(
   '%s marks a misfit value with aria-invalid and clears it for a valid one',
   (_, definition, jsonSchema, bad, good) => {
     const ref = createRef<FormHandle>();
@@ -151,12 +267,43 @@ it.each(cases)(
       container.querySelector('.Mui-error, [role="status"]');
     expect(invalid()).toBeNull();
     expect(visible()).toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
     act(() => ref.current!.setValue(bad as never));
     expect(invalid()).not.toBeNull();
     expect(visible()).not.toBeNull();
+    expect(ref.current!.getValue()).toEqual(bad);
     act(() => ref.current!.setValue(good as never));
     expect(invalid()).toBeNull();
     expect(visible()).toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
+  },
+);
+
+it.each(uncoercibleCases)(
+  '%s renders an uncoercible object without throwing, sets aria-invalid="true" and .Mui-error, clears them on a valid value, and keeps the node value intact',
+  (_, definition, jsonSchema, bad, good) => {
+    const ref = createRef<FormHandle>();
+    const { container } = render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[definition]}
+        jsonSchema={jsonSchema}
+        defaultValue={bad as never}
+        onError={() => {}}
+      />,
+    );
+    const invalid = () =>
+      container.querySelector(
+        'input:not([aria-hidden="true"])[aria-invalid="true"], textarea[aria-invalid="true"], [role][aria-invalid="true"]',
+      );
+    const muiError = () => container.querySelector('.Mui-error');
+    expect(invalid()).not.toBeNull();
+    expect(muiError()).not.toBeNull();
+    expect(ref.current!.getValue()).toEqual(bad);
+    act(() => ref.current!.setValue(good as never));
+    expect(invalid()).toBeNull();
+    expect(muiError()).toBeNull();
+    expect(ref.current!.getValue()).toEqual(good);
   },
 );
 

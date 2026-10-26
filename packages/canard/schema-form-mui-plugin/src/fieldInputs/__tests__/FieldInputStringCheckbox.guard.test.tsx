@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createElement, createRef } from 'react';
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
@@ -50,6 +50,28 @@ it.each([
     expect(checkedBoxes()).toHaveLength(0);
     expect(screen.getByRole('group').getAttribute('aria-invalid')).toBe('true');
     expect(screen.getByRole('status').textContent).toBe('Invalid value');
+  },
+);
+
+it.each([
+  ['string', 'ab'],
+  ['object', { a: 1 }],
+  ['null', null],
+])(
+  'directly renders a %s defaultValue with two unchecked checkboxes without throwing',
+  (_, defaultValue) => {
+    render(
+      createElement(FieldInputStringCheckboxDefinition.Component, {
+        path: '/tags',
+        name: 'tags',
+        jsonSchema: schemaOf('array'),
+        defaultValue,
+        onChange: () => {},
+        context: {},
+      } as never),
+    );
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+    expect(checkedBoxes()).toHaveLength(0);
   },
 );
 

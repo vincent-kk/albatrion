@@ -93,7 +93,7 @@ const FieldInputTextarea = ({
       required={required}
       size={size}
       placeholder={placeholder}
-      defaultValue={defaultValue}
+      defaultValue={typeof defaultValue === 'string' ? defaultValue : undefined}
       onChange={handleChange}
       disabled={disabled}
       error={misfit}

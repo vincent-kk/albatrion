@@ -94,7 +94,11 @@ const FieldInputDate = ({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
         label={label}
-        defaultValue={defaultValue ? dayjs(defaultValue) : null}
+        defaultValue={
+          typeof defaultValue === 'string' && defaultValue
+            ? dayjs(defaultValue)
+            : null
+        }
         onChange={handleChange}
         disabled={disabled}
         minDate={minDate}

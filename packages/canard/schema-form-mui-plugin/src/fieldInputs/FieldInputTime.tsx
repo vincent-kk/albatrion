@@ -73,7 +73,7 @@ const FieldInputTime = ({
   ]);
 
   const timeValue = useMemo(() => {
-    if (!defaultValue) return null;
+    if (typeof defaultValue !== 'string' || !defaultValue) return null;
 
     // time 형식이 HH:mm 또는 HH:mm:ss인 경우
     // dayjs에서 파싱하기 위해 오늘 날짜와 결합

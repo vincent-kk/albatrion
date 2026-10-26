@@ -117,7 +117,11 @@ const FieldInputNumber = ({
       required={required}
       size={size}
       placeholder={placeholder}
-      defaultValue={defaultValue ?? undefined}
+      defaultValue={
+        typeof defaultValue === 'number' && Number.isFinite(defaultValue)
+          ? defaultValue
+          : undefined
+      }
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
