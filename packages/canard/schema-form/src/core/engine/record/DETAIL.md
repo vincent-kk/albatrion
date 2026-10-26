@@ -2,6 +2,9 @@
 
 ## Requirements
 
+- H5b의 bit-only 자격은 공개 dispatch 최외곽 커밋(entryDepth=1), 트리 전체 리스너 없음, revision을 읽은 적 없음, 해당 노드의 기존 pendingDelivery 없음이다. revision()을 한 번이라도 읽으면 그 트리는 이후 영구히 관측 모드이며 payload 생략을 재개하지 않는다. 자격이 없으면 기존 payload와 최초 previous 병합을 그대로 유지한다. 카운터는 관측·payload 유무와 무관하게 동일하게 증가하고 최초 커밋은 빈 deliveries Set을 보장한다(EVENT-006, GOAL-011, NODE-060, TEST-080 D1-H5b).
+- 불변 원장 전이 공유는 미구독 bit-only 자격을 만족하는 커밋에서만 허용한다. 같은 이전 원장+mask는 같은 불변 다음 원장을 공유하고 옛 snapshot은 바뀌지 않는다. 약한 전이 메모는 커밋 종료·예외에서 버려 EMPTY를 뿌리로 역사 사슬이 남지 않게 한다. 구독·revision 관측·기존 pending·raw·중첩 진입·정착 밖 파동은 기존 불변 constructor 경로와 횟수를 유지하며 새 Map 작업을 추가하지 않는다. 원장 helper는 record가 소유하고 소비자는 명명 진입점을 거친다. 후보 큐와 그 scratch/context 기록은 추가하지 않는다.
+
 - An optional distribution `preserveLatent` marker identifies a surviving source slot's composed replay during record recreation. Entering candidates prefer their own stored source, and already-stored absent candidate paths are not redistributed from the single composed value. The marker propagates only through that replay and is absent on caller writes, load and reset (NODE-051/NODE-043 supplements, 41C-01, WRITE-036; 394C-01).
 - Structural slot application sets `preserveLatent` on distributions backed by retained sources; descendant entry propagates it and child selection reads it. It lasts only for that settlement: normal input distributions replace it, and scratch release clears the distribution map in the entry's `finally` path on success or failure. It is never stored on a node or load snapshot (NODE-051, NODE-045; 394C-01).
 

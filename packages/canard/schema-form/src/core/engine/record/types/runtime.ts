@@ -210,6 +210,13 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   deliveries?: Set<Self>;
   /** Nodes with revision bits marked before the commit visitor reaches them. */
   revisionNodes?: Set<Self>;
+  /** Once publicly read, this tree permanently retains delivery payloads. */
+  revisionObserved?: boolean;
+  /** Unobserved bit-only transitions retained only by the current commit. */
+  revisionTransitions?: WeakMap<
+    object,
+    Map<number, Readonly<Record<number, number>>>
+  >;
   /** Live reverse watch dependencies, allocated on the first watched node. */
   deliveryWatchIndex?: FieldNodeWatchDeliveryIndex;
   /** Paths captured at value/state mutations and consumed by commit watch lookup. */

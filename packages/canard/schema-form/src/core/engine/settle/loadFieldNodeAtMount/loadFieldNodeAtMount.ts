@@ -20,6 +20,7 @@ export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
   root.runtime.diagnostics = { status: 'stable' };
+  const previousTransitions = root.runtime.revisionTransitions;
   try {
     const blueprint = root.runtime.blueprint;
     if (
@@ -30,6 +31,8 @@ export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
     if (canLoadStaticFirstTree(root, value)) loadStaticFirstTree(root, option);
     else writeFieldNode(root, value, 'load', option);
   } finally {
+    if (root.runtime.revisionTransitions !== previousTransitions)
+      root.runtime.revisionTransitions = previousTransitions;
     root.runtime.loadSnapshot = nextSnapshot;
   }
 };
