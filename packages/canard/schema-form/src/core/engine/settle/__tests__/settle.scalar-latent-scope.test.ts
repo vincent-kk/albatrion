@@ -75,7 +75,7 @@ it('H4 keeps the scalar fast path when an exited array item owns an unrelated la
 
   expect(observed.fast).toEqual([true]);
   expect(observed.prunes).toBe(0);
-  expect(root.emit).toEqual({ group: { stable: 1 }, other: [] });
+  expect(root.emit).toEqual({ group: { stable: 1 } });
   expect(root.runtime.latentRaw.get(key)).toBe(11);
   expect(seen).toEqual(['', '/group', '/group/stable']);
 });
