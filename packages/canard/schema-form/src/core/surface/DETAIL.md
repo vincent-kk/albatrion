@@ -87,7 +87,7 @@
 
 ### 바인딩 전용 통로
 
-통로의 몸은 `engine/write/`의 진입 함수가 소유한다. `surface/index.ts`의 겉면은 공개 `FieldNode` 형을 받는 이름 있는 함수이며, `core/index.ts`가 와일드카드 없이 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않는다. 각 함수의 문서 주석은 `binding-only; not exported from src/index.ts`를 명시한다(69C-01, LANDING-064, 실행 ADR D2).
+통로의 몸은 `engine/write/`의 진입 함수가 소유한다. `surface/index.ts`의 겉면은 공개 `FieldNode` 형을 받는 이름 있는 함수이며, `core/index.ts`가 와일드카드 없이 이름으로 다시 내보내고 `interpretFieldNodeDraft`를 제외한 함수는 `src/index.ts`가 내보내지 않는다. 비공개 함수의 문서 주석은 `binding-only; not exported from src/index.ts`를 명시한다(69C-01, LANDING-064, 실행 ADR D2).
 
 | 함수                                                          | 계약                                                                                                                                                                      | 원장                      |
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
@@ -99,7 +99,7 @@
 | `finishFieldNodeInput(node)`                                  | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용한다                                                                                                  | WRITE-083, 69C-01         |
 | `readFieldNodeInteractionReset(node)`                         | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽는다                                                                                                                 | REACT-024, 69C-02         |
 | `observeFieldNodeReports(root, deliver)`                      | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원한다                                                                                            | ERROR-113, 69C-01         |
-| `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려준다                                                                                 | REACT-033, 69C-01         |
+| `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려준다. UI 플러그인의 union 입력이 같은 해석을 쓰도록 패키지 진입점(`src/index.ts`)에서도 이름으로 공개 내보낸다 | REACT-033, 69C-01         |
 
 - 위계: `runtime/`은 공개 노드 표면 뒤에서 움직이는 런타임 객체의 칸이다. 일부러 하나만 둔 클래스라 복수형 역할 이름 classes 대신 주제 이름을 쓴다. 이 칸에는 런타임 노드 클래스 `FieldNode`(`runtime/FieldNode.ts`)와, 런타임 노드 객체에만 작용하는 `requireRuntimeFieldNode`·`setContext`가 있다. `utils/`에는 바인딩 통로(`utils/binding/`)·가드(`guards.ts`)·생성 통로(`fieldNodeFactory.ts`)가 남는다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
 
@@ -124,4 +124,4 @@
 
 ## Last Updated
 
-계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024, 정돈-1(2026-10-14); 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02).
+계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024, 정돈-1(2026-10-14); 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); interpretFieldNodeDraft 공개 내보내기(2026-10-26, REACT-033).
