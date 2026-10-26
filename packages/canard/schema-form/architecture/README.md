@@ -4,21 +4,25 @@
 
 다른 세션이 이 대화 없이 이어받을 수 있도록 쓴다. 구현 작업 분해나 코드 수정 지시는 여기에 두지 않는다.
 
+## 지금 상태
+
+8단계(검토와 성능)가 끝났다. 최종 PR #445(8단계 가지에서 1.0.0-beta 로)는 Vincent의 버전 번호 결정과 병합을 기다리고, 다음은 Vincent의 지시 뒤에 시작하는 9단계(정리와 릴리스, [plan/09-release-and-cleanup](./plan/09-release-and-cleanup/request.md))다. 단계별 경과와 마감 상태는 [reviews/README.md](./reviews/README.md)에 있다.
+
 ## 읽는 순서
 
-이어받는 세션은 [`HANDOFF.md`](./HANDOFF.md)부터 읽는다 — 현재 상태, 다음 할 일, 검사 명령.
-
-1. [`PLAN.md`](./PLAN.md) — 개발의 단일 진입점: 계획 링크, 수행 방법, 단계별 진행 상황, 다음 할 일. 기록(날짜·무엇·어디의 표와 라운드별 요지)은 [PLAN-LOG.md](./PLAN-LOG.md)
-2. [`ledger/`](./ledger/README.md) — 원장. 결정의 정본이다(영역 열일곱, 항목마다 결정과 상태, 있을 때 보충과 충돌)
-3. [`design/`](./design/) — 원장을 읽는 표면인 설계문서 여덟. 문장 끝 괄호의 ID가 근거이고, 어긋나면 원장이 이긴다
+1. [`ledger/`](./ledger/README.md) — 원장. 결정의 정본이다(영역 열일곱, 항목마다 결정과 상태, 있을 때 보충과 충돌). 검사 명령과 라운드 기록 절차는 [ledger/checks/README.md](./ledger/checks/README.md)에 있다
+2. [`design/`](./design/) — 원장을 읽는 표면인 설계문서 여덟. 문장 끝 괄호의 ID가 근거이고, 어긋나면 원장이 이긴다
    - [`00-goals-and-values.md`](./design/00-goals-and-values.md) 목표와 가치 · [`01-schema-to-blueprint.md`](./design/01-schema-to-blueprint.md) 스키마에서 청사진까지 · [`02-node-and-value.md`](./design/02-node-and-value.md) 노드와 값 · [`03-settle-and-events.md`](./design/03-settle-and-events.md) 정착과 통지
    - [`04-controls.md`](./design/04-controls.md) 제어 · [`05-validation-and-errors.md`](./design/05-validation-and-errors.md) 검증과 오류 · [`06-react-and-surface.md`](./design/06-react-and-surface.md) React와 공개 표면 · [`07-landing-and-tests.md`](./design/07-landing-and-tests.md) 이주·착수와 시험
-4. [`adr/`](./adr/) — 주제별 결정 기록 17편(0001–0017, 0001–0014는 옛 번호의 주제를 잇는다). 본문은 설계문서의 같은 절을 글자 그대로 모은 것이다
-5. [`plan/`](./plan/README.md) — 개발계획: PR 디렉토리마다 개발요청서, 검증 구성요건, ADR과 핵심 축
-6. `reviews/` — 라운드마다의 적대적 검토, 편집자 결정의 정본(`round-N-closing.md`), 소유자 답 원문
+3. [`adr/`](./adr/) — 주제별 결정 기록 17편(0001–0017, 0001–0014는 옛 번호의 주제를 잇는다). 본문은 설계문서의 같은 절을 글자 그대로 모은 것이다
+4. [`plan/`](./plan/README.md) — 개발계획: 단계 디렉토리마다 개발요청서, 검증 구성요건, ADR과 핵심 축. 원장이 경로나 줄 번호로 인용하는 단계 기록(03·04·05·07 의 log.md)은 증거라서 남겼다
+5. reviews/ — 기록. 라운드마다의 편집자 결정 정본(round-N-closing.md)과 소유자 답 원문(round-N-owner-answers.md), 소유자 결정 대기열, 단계별 경과([reviews/README.md](./reviews/README.md))
+6. verification/ — 단계별 측정·검증 결과 문서. 원자료(스크립트·패치·로그·JSON)는 445라운드 정리에서 지웠고 되살리는 법은 reviews/README.md 의 정리 기록에 있다
 7. [`_archive/2026-09-29/`](./_archive/2026-09-29/README.md) — 원장 이전의 설계 문서(00–09, `open-questions.md`, 옛 ADR 0001–0014). 동결됐다. 새 설계문서·ADR이 드는 옛 문서 경로는 기준 커밋 `ba398c330`의 것이며 지금은 `_archive/2026-09-29/` 아래에 있다(25C-10).
 
-그 밖에 `research/`(선행 사례 조사), `spikes/`(프로토타입과 실측)가 있다.
+에이전트의 역할, 장기 작업과 워커의 구분, 사용량 정책은 [AGENT-POLICY.md](./AGENT-POLICY.md)가 든다(작업이 끝날 때까지 둔다).
+
+그 밖에 research/(선행 사례 조사)와 spikes/(원장이 인용하거나 시험이 쓰는 프로토타입 파일만 남았다)가 있다.
 
 ## ADR 목록
 
