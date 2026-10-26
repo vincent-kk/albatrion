@@ -10,6 +10,8 @@ import {
 import { act, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { isTruthy } from '@winglet/common-utils/filter';
+
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
 import { registerPlugin } from '@/schema-form/app/plugin';
@@ -368,7 +370,7 @@ export const renderForm = async (
     errorTexts: () =>
       Array.from(container.querySelectorAll('em'))
         .map((el) => el.textContent?.trim() ?? '')
-        .filter(Boolean),
+        .filter(isTruthy),
 
     node: (path) => ref.current?.findNode(path) ?? null,
     getValue: () => ref.current?.getValue(),

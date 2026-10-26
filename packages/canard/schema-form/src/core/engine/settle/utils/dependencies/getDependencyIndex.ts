@@ -1,3 +1,4 @@
+import { isTruthy } from '@winglet/common-utils/filter';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
@@ -326,7 +327,7 @@ class DependencyIndex {
     };
     let current = [this.root];
     collect(this.root);
-    for (const segment of changedPath.split($.Separator).filter(Boolean)) {
+    for (const segment of changedPath.split($.Separator).filter(isTruthy)) {
       const next = this.presenceChildren(current, segment);
       if (!next.length) return;
       current = next;
@@ -365,7 +366,7 @@ class DependencyIndex {
       }
     };
     collect(rootIndex);
-    for (const segment of changedPath.split($.Separator).filter(Boolean)) {
+    for (const segment of changedPath.split($.Separator).filter(isTruthy)) {
       const next: DependencyNode[] = [];
       for (const node of current) {
         const exact = node.children.get(segment);
@@ -548,7 +549,7 @@ class DependencyIndex {
       }
     }
     let current = this.root!;
-    for (const segment of watchedPath.split($.Separator).filter(Boolean)) {
+    for (const segment of watchedPath.split($.Separator).filter(isTruthy)) {
       let child = current.children.get(segment);
       if (!child) {
         child = { owners: [], ownerPaths: new Set(), children: new Map() };

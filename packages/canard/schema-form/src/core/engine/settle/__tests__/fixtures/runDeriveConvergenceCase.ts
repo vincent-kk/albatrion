@@ -1,5 +1,7 @@
 import { expect, vi } from 'vitest';
 
+import { isTruthy } from '@winglet/common-utils/filter';
+
 import type {
   Blueprint,
   BlueprintSchema,
@@ -87,7 +89,7 @@ export const runDeriveConvergenceCase = (
           else {
             const write = writes[step];
             let target = root;
-            const segments = write.path.split('/').filter(Boolean);
+            const segments = write.path.split('/').filter(isTruthy);
             for (const segment of segments) target = target.structure![segment];
             writeFieldNode(target, write.value, 'input', WriteOption.Overwrite);
           }

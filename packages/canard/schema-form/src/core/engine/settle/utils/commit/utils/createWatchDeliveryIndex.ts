@@ -1,3 +1,5 @@
+import { isTruthy } from '@winglet/common-utils/filter';
+
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRuntime } from '../../../../record';
@@ -44,7 +46,7 @@ class WatchDeliveryIndex {
         continue;
       }
       let current = this.root;
-      for (const segment of path.split($.Separator).filter(Boolean)) {
+      for (const segment of path.split($.Separator).filter(isTruthy)) {
         let child = current.children.get(segment);
         if (!child) {
           child = { watchers: new Set(), children: new Map() };
@@ -65,7 +67,7 @@ class WatchDeliveryIndex {
     this.contextNodes.delete(node);
     for (const path of paths) {
       if (path === $.Context) continue;
-      const segments = path.split($.Separator).filter(Boolean);
+      const segments = path.split($.Separator).filter(isTruthy);
       const parents: WatchPathNode[] = [this.root];
       for (const segment of segments) {
         const child = parents[parents.length - 1].children.get(segment);
@@ -86,7 +88,7 @@ class WatchDeliveryIndex {
   affected(path: string, candidates: Set<unknown>): void {
     let current: WatchPathNode | undefined = this.root;
     for (const watcher of current.watchers) candidates.add(watcher);
-    for (const segment of path.split($.Separator).filter(Boolean)) {
+    for (const segment of path.split($.Separator).filter(isTruthy)) {
       current = current.children.get(segment);
       if (!current) return;
       for (const watcher of current.watchers) candidates.add(watcher);

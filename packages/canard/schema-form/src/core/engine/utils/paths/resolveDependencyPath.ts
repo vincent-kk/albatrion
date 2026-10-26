@@ -1,3 +1,5 @@
+import { isTruthy } from '@winglet/common-utils/filter';
+
 import {
   JSONPointer as $,
   JSONPointerPrefix,
@@ -18,7 +20,7 @@ export const resolveDependencyPath = (
   if (dependency.startsWith(JSONPointerPrefix.Fragment))
     return dependency.slice(1);
   if (dependency.startsWith($.Separator)) return dependency;
-  const parts = hostPath.split($.Separator).filter(Boolean);
+  const parts = hostPath.split($.Separator).filter(isTruthy);
   let remaining = dependency;
   while (remaining.startsWith(JSONPointerPrefix.Parent)) {
     parts.pop();
