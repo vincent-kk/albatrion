@@ -88,6 +88,7 @@ const FieldInputUri = ({
   placeholder,
   size,
   protocols,
+  misfit,
 }: FieldInputUriProps) => {
   // 프로토콜 배열 정규화 및 준비
   const normalizedProtocols = useMemo(() => {
@@ -103,7 +104,7 @@ const FieldInputUri = ({
 
   // defaultValue에서 초기 프로토콜과 URI 추출
   const { initialProtocol, initialUri } = useMemo(() => {
-    if (!defaultValue) {
+    if (typeof defaultValue !== 'string' || !defaultValue) {
       return {
         initialProtocol: normalizedProtocols[0],
         initialUri: '',
@@ -184,6 +185,8 @@ const FieldInputUri = ({
       defaultValue={initialUri}
       onChange={handleUriChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };

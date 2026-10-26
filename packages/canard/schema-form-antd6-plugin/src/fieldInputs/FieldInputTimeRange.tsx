@@ -4,6 +4,7 @@ import { DatePicker } from 'antd';
 import type { SizeType } from 'antd/es/config-provider/SizeContext';
 import dayjs, { type Dayjs } from 'dayjs';
 
+import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -52,10 +53,11 @@ const FieldInputTimeRange = ({
   size,
   minimum,
   maximum,
+  misfit,
 }: FieldInputTimeRangeProps) => {
   const initialValue = useMemo<RangeValueType<Dayjs>>(
     () =>
-      defaultValue?.length === 2
+      isArray(defaultValue) && defaultValue.length === 2
         ? [
             dayjs(defaultValue[0], DATE_FORMAT),
             dayjs(defaultValue[1], DATE_FORMAT),
@@ -95,6 +97,8 @@ const FieldInputTimeRange = ({
       onChange={handleChange}
       onPanelChange={handleChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };

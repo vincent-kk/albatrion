@@ -36,6 +36,7 @@ const FieldInputMonth = ({
   size,
   minimum,
   maximum,
+  misfit,
 }: FieldInputMonthProps) => {
   const handleChange = useHandle((value: Dayjs | null) => {
     onChange(value?.format(DATA_FORMAT) || '');
@@ -65,6 +66,8 @@ const FieldInputMonth = ({
       defaultValue={initialValue}
       onChange={handleChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };
