@@ -3,6 +3,7 @@
 ## Requirements
 
 - 배열의 일반 slot 경로와 정적 splice는 잠복 메타데이터를 재키할 때 그 occurrence를 붙든 분리된 참조의 쓰기 주소 셀도 새 경로·문서 순서로 옮긴다. 참조의 고정된 공개 `path`는 바꾸지 않으며 값이 삭제된 뒤에도 마지막 쓰기 주소는 셀에 남는다. 보존 접두와 사라진 occurrence는 이동하지 않는다(NODE-044, VALUE-031, 446C-07 (가)).
+- 정적 splice의 자격은 청사진 전체에 게이트·식이 없음을 요구하므로 살아남은 아이템 아래에 형상을 떠난 자손이 생길 수 없다. 이 결함의 분리된 자손 재키는 일반 slot 경로에서 시험하며 정적 자격을 강제로 넓히거나 불가능한 상태를 만들지 않는다(447라운드 코디네이터 결정, 446C-07 (가)).
 
 - The template-less destination exception applies only to source capture for candidate-bearing moves; candidate-free and single-kind slots keep the existing early return and destination-registration conditions (NODE-051, 370라운드 원칙; 395C-01).
 
