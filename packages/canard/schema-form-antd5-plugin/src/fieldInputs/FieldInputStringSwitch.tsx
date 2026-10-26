@@ -35,6 +35,7 @@ const FieldInputStringSwitch = ({
   context,
   size,
   alias,
+  misfit,
 }: FieldInputStringSwitchProps) => {
   const [checked, unchecked] = useMemo(() => {
     const [checked, unchecked] = jsonSchema.enum || [];
@@ -57,15 +58,19 @@ const FieldInputStringSwitch = ({
   });
 
   return (
-    <Switch
-      key={path}
-      disabled={disabled}
-      checked={value === checked}
-      checkedChildren={checkedLabel}
-      unCheckedChildren={uncheckedLabel}
-      onChange={handleChange}
-      size={size || context?.switchSize}
-    />
+    <>
+      <Switch
+        aria-invalid={misfit || undefined}
+        key={path}
+        disabled={disabled}
+        checked={value === checked}
+        checkedChildren={checkedLabel}
+        unCheckedChildren={uncheckedLabel}
+        onChange={handleChange}
+        size={size || context?.switchSize}
+      />
+      {misfit && <span role="status">Invalid value</span>}
+    </>
   );
 };
 

@@ -24,6 +24,7 @@ const FieldInputNumber = ({
   path,
   name,
   jsonSchema,
+  schemaType,
   readOnly,
   disabled,
   defaultValue,
@@ -33,9 +34,13 @@ const FieldInputNumber = ({
   formatter,
   parser,
   size,
+  misfit,
 }: FieldInputNumberProps) => {
   const handleChange = useHandle((value: number | null) => {
-    onChange(value);
+    if (value === null) onChange(undefined);
+    else if (Number.isNaN(value)) return;
+    else if (schemaType === 'integer' && !Number.isInteger(value)) return;
+    else onChange(value);
   });
   return (
     <InputNumber
@@ -52,6 +57,8 @@ const FieldInputNumber = ({
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };
