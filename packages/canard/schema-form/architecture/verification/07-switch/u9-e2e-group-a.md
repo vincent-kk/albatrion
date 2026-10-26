@@ -200,7 +200,7 @@ disposition은 render-disposition.md, spike log.md는 architecture/plan/07-switc
 | TEST-023 value.omit-empty-object | TEST-023 | `U9 / TEST-023: existing SCN value` | 통과 |
 | VALUE-036 loaded null retains child defaults for later input promotion | VALUE-036 | `disposition L103: nullable.object-blank-state.render.test.tsx` | 통과 |
 | LANDING-200 child input promotes caller null without sibling filling | LANDING-200 | `disposition L104: nullable.object-initial-null.render.test.tsx` | 통과 |
-| REACT-027 clearing a nullable string sends undefined instead of an empty string | REACT-027 | `disposition L110: nullable.render.test.tsx` | 통과 |
+| REACT-027 clearing a nullable string sends null instead of an empty string | REACT-027 | `disposition L110: nullable.render.test.tsx` | 통과 |
 | LANDING-196 non-nullable empty input sends undefined | LANDING-196 | `disposition: nullable.render.test.tsx; LANDING-196 / REACT-027` | 통과 |
 
 ### value.test.tsx
