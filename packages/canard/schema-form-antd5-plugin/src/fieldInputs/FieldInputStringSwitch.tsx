@@ -58,19 +58,16 @@ const FieldInputStringSwitch = ({
   });
 
   return (
-    <>
-      <Switch
-        aria-invalid={misfit || undefined}
-        key={path}
-        disabled={disabled}
-        checked={value === checked}
-        checkedChildren={checkedLabel}
-        unCheckedChildren={uncheckedLabel}
-        onChange={handleChange}
-        size={size || context?.switchSize}
-      />
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <Switch
+      aria-invalid={misfit || undefined}
+      key={path}
+      disabled={disabled}
+      checked={value === checked}
+      checkedChildren={checkedLabel}
+      unCheckedChildren={uncheckedLabel}
+      onChange={handleChange}
+      size={size || context?.switchSize}
+    />
   );
 };
 

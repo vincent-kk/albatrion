@@ -68,20 +68,17 @@ const FieldInputRadioGroup = ({
     onChange(rawValue);
   });
   return (
-    <>
-      <div role="radiogroup" aria-invalid={misfit || undefined}>
-        <Radio.Group
-          id={path}
-          name={name}
-          disabled={disabled}
-          defaultValue={initialValue}
-          options={options}
-          onChange={handleChange}
-          size={size || context?.size}
-        />
-      </div>
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <div role="radiogroup" aria-invalid={misfit || undefined}>
+      <Radio.Group
+        id={path}
+        name={name}
+        disabled={disabled}
+        defaultValue={initialValue}
+        options={options}
+        onChange={handleChange}
+        size={size || context?.size}
+      />
+    </div>
   );
 };
 
