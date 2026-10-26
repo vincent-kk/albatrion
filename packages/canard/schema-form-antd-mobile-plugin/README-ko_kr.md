@@ -88,6 +88,12 @@ registerPlugin(plugin);
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"textarea"`인 경우
 - **추가 사항**: `minRows`, `maxRows`를 통한 자동 크기 조절 지원
 
+### **[`FieldInputUnion.tsx`](./src/fieldInputs/FieldInputUnion.tsx)**
+
+- **역할**: 유효 타입 목록을 기준으로 초안을 해석하는 다중 타입(`union`) 입력 필드
+- **적용 조건**: `type`이 `"union"`인 경우
+- **추가 사항**: 해석되지 않는 초안을 포커스 해제 전까지 지역 상태로 유지, 객체·배열 값은 읽기 전용으로 표시
+
 ### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
 - **역할**: 기본 문자열 입력 필드
@@ -141,7 +147,18 @@ const jsonSchema = {
 6. **Fallback**: 기본 fallback 컴포넌트
 
 같은 우선순위 내에서는 배열의 앞순서가 우선합니다. 현재 플러그인의 컴포넌트는 다음 순서로 정의되어 있습니다:
-`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
+`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputUnion` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
+
+## union 입력 계약
+
+- union 입력은 `type === 'union'`일 때 다음을 읽는다. `schemaType`: 목록이며, 순서에 core의 뜻은 없다. `nullable`, `value`, `misfit`, `required`. `jsonSchema`: `jsonSchema.type`은 켜진 선언의 교집합이며, 형 없는 칸에서는 없을 수 있다. 게이트가 좁힌 목록은 `schemaType`과 `jsonSchema.type`의 교집합이다.
+- 보내는 값은 JSON 형이 목록에 있는 값이나 `undefined`다. `null`은 nullable일 때 비우기 조작으로만 보내고, 빈 칸은 `undefined`로 보낸다. `value`는 어긋난 값일 수 있으므로 `onChange`보다 넓은 형이다.
+- 치다 만 글과 입력기 조합 중인 글은 입력이 초안으로 들고, 흐려지면 노드 값으로 되돌린다.
+- 목록 밖의 값을 보내도 오류가 아니고 버려지지도 않는다. core의 규칙 A가 받아서, 받아 줄 형이 정확히 하나면 그 형으로 바꾸고, 아니면 그대로 두고 경고등을 켠다. 게이트가 목록을 좁힌 동안에는 좁혀진 목록으로 해석한다. 입력은 이 결과를 다음 렌더의 `misfit`으로 안다. `misfit === false`는 검증 통과가 아니다.
+- 객체·배열 값은 불변으로 다룬다. 바꿀 때는 새 참조를 보내고, 받은 값을 제자리에서 바꾸지 마라. 값 안에 JSON이 아닌 것(`undefined`인 키, `Date` 등)을 넣지 마라.
+- 목록의 순서에 기대지 마라. core가 사용자가 뜻한 형을 골라 준다고 가정하지 마라.
+- 이 플러그인의 union 입력은 비우기 조작으로 `null`을 보내지 않는다(빈 칸은 언제나 `undefined`다).
+- 이 플러그인의 union 입력은 객체·배열을 만들거나 편집하지 않으며, 받은 객체·배열 값은 읽기 전용으로만 표시한다.
 
 ---
 

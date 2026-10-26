@@ -10,6 +10,7 @@ import { FieldInputStringDefinition } from './FieldInputString';
 import { FieldInputStringCheckboxDefinition } from './FieldInputStringCheckbox';
 import { FieldInputStringSwitchDefinition } from './FieldInputStringSwitch';
 import { FieldInputTextareaDefinition } from './FieldInputTextarea';
+import { FieldInputUnionDefinition } from './FieldInputUnion';
 
 export const fieldInputDefinitions: FieldInputDefinition[] = [
   FieldInputBooleanSwitchDefinition,
@@ -19,6 +20,7 @@ export const fieldInputDefinitions: FieldInputDefinition[] = [
   FieldInputArrayDefinition,
   FieldInputSliderDefinition,
   FieldInputTextareaDefinition,
+  FieldInputUnionDefinition,
   FieldInputStringDefinition,
   FieldInputNumberDefinition,
   FieldInputBooleanDefinition,

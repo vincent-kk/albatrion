@@ -19,6 +19,7 @@ import { FieldInputStringDefinition } from '../FieldInputString';
 import { FieldInputStringCheckboxDefinition } from '../FieldInputStringCheckbox';
 import { FieldInputStringSwitchDefinition } from '../FieldInputStringSwitch';
 import { FieldInputTextareaDefinition } from '../FieldInputTextarea';
+import { FieldInputUnionDefinition } from '../FieldInputUnion';
 
 afterEach(cleanup);
 
@@ -33,6 +34,13 @@ type MisfitCase = readonly [
 const cases: MisfitCase[] = [
   ['String', FieldInputStringDefinition, { type: 'string' }, { a: 1 }, 'x'],
   ['Number', FieldInputNumberDefinition, { type: 'number' }, 'abc', 7],
+  [
+    'Union',
+    FieldInputUnionDefinition,
+    { type: ['number', 'boolean'] },
+    'abc',
+    7,
+  ],
   [
     'Textarea',
     FieldInputTextareaDefinition,
