@@ -56,7 +56,9 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     !root.disposed &&
     root.runtime.blueprint.capabilities.branchless &&
     !root.runtime.blueprint.capabilities.hasDerive &&
-    root.runtime.latentRaw.size === 0 &&
+    (root.runtime.latentRaw.size === 0 ||
+      (root.runtime.latentRaw.pathIndex.under(node.path).size === 0 &&
+        root.runtime.latentRaw.pathIndex.intersecting(node.path).size === 0)) &&
     (kind === 'input' ||
       kind === 'callerReplace' ||
       kind === 'callerPartial') &&
