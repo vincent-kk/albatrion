@@ -1,18 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { FieldNodeEventType } from '../../record';
 import { WriteOption } from '../../types/value';
 import * as comparisons from '../../utils/compute/sameValue';
 import { dispatchMount, dispatchSetValue } from '../../write';
-import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 
 afterEach(() => vi.restoreAllMocks());
 
 // filid:contract settle-non-wheel-reference-cost
 describe('H2 non-wheel reference preservation', () => {
   it.each([250, 1000, 4000])(
-    'bounds comparison work and avoids whole-value keys beside %i static siblings',
+    'bounds steady comparison work and avoids whole-value keys beside %i static siblings',
     (count) => {
       const properties: Record<string, BlueprintSchema> = {
         kind: { type: 'string', default: 'a' },
@@ -31,6 +31,7 @@ describe('H2 non-wheel reference preservation', () => {
         deferValidation: true,
       });
       const leaf = root.structure!['pad_' + (count - 1)];
+      dispatchSetValue(leaf, -2);
       const compare = vi.spyOn(comparisons, 'sameValue');
       const keys = vi.spyOn(Object, 'keys');
 
@@ -41,13 +42,13 @@ describe('H2 non-wheel reference preservation', () => {
         ([value]) =>
           value !== null &&
           typeof value === 'object' &&
-          Object.hasOwn(value, 'pad_' + (count - 1)),
+          Object.prototype.hasOwnProperty.call(value, 'pad_' + (count - 1)),
       ).length;
       keys.mockRestore();
       compare.mockRestore();
       console.info('H2_WORK', JSON.stringify({ count, calls, wholeKeys }));
       expect(Reflect.get(Object(root.emit), leaf.name)).toBe(-1);
-      expect(calls).toBeLessThanOrEqual(8);
+      expect(calls).toBeLessThanOrEqual(3);
       // Module spies miss sameValue's local recursion; key enumeration exposes that work.
       expect(wholeKeys).toBe(0);
     },
