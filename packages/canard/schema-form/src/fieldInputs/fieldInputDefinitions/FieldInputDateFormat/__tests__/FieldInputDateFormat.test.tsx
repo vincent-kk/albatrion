@@ -106,7 +106,11 @@ it('REACT-027 publishes undefined when a date input is cleared whether or not it
   const view = render(
     <Form
       ref={ref}
-      jsonSchema={{ type: 'string', format: 'date' }}
+      jsonSchema={{
+        type: 'string',
+        format: 'date',
+        options: { omitEmpty: false },
+      }}
       defaultValue="2024-02-29"
     />,
   );
@@ -118,7 +122,11 @@ it('REACT-027 publishes undefined when a date input is cleared whether or not it
   const nullable = render(
     <Form
       ref={ref}
-      jsonSchema={{ type: ['string', 'null'], format: 'date' }}
+      jsonSchema={{
+        type: ['string', 'null'],
+        format: 'date',
+        options: { omitEmpty: false },
+      }}
       defaultValue="2024-02-29"
     />,
   );
