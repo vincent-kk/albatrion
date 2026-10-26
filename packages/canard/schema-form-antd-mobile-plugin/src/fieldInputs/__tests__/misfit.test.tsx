@@ -178,3 +178,38 @@ it.each(rangeCases)(
     expect(container.querySelector(INVALID_CONTROL)).toBeNull();
   },
 );
+
+const checkboxElementCases: MisfitCase[] = [
+  [
+    'StringCheckbox with an uncoercible element',
+    FieldInputStringCheckboxDefinition,
+    {
+      type: 'array',
+      items: { type: 'string', enum: ['a', 'b'] },
+      presentation: { inputType: 'checkbox' },
+    },
+    ['a', { toString: 'oops' }],
+    ['a'],
+  ],
+];
+
+it.each(checkboxElementCases)(
+  '%s renders both checkboxes unchecked and keeps the node value without throwing',
+  (_, definition, jsonSchema, bad) => {
+    const ref = createRef<FormHandle>();
+    const { container } = render(
+      <Form
+        ref={ref}
+        fieldInputDefinitions={[definition]}
+        jsonSchema={jsonSchema}
+        defaultValue={bad as never}
+        onError={() => {}}
+      />,
+    );
+    const inputs = container.querySelectorAll('input[type="checkbox"]');
+    expect(inputs).toHaveLength(2);
+    expect(container.querySelector('input:checked')).toBeNull();
+    expect(ref.current!.getValue()).toEqual(bad);
+    expect(container.querySelector(INVALID_CONTROL)).toBeNull();
+  },
+);
