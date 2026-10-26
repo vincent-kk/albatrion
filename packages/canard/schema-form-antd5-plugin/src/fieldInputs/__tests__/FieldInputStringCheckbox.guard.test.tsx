@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createElement, createRef } from 'react';
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
@@ -69,3 +69,30 @@ it('writes exactly the one checked value and clears the marker', () => {
   expect(screen.getByRole('group').hasAttribute('aria-invalid')).toBe(false);
   expect(screen.queryByRole('status')).toBeNull();
 });
+
+it.each([
+  ['string', 'ab'],
+  ['object', { a: 1 }],
+])(
+  'direct render of a %s value checks no box and does not throw',
+  (_, value) => {
+    const { container } = render(
+      createElement(FieldInputStringCheckboxDefinition.Component, {
+        name: 'c',
+        jsonSchema: {
+          type: 'array',
+          items: { type: 'string', enum: ['a', 'b'] },
+        },
+        value,
+        defaultValue: value,
+        onChange: () => {},
+        context: {},
+        misfit: true,
+      } as never),
+    );
+    const boxes = container.querySelectorAll('input[type="checkbox"]');
+    expect(boxes).toHaveLength(2);
+    for (const box of boxes)
+      expect((box as HTMLInputElement).checked).toBe(false);
+  },
+);

@@ -1,3 +1,5 @@
+import { createElement } from 'react';
+
 import { cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
@@ -33,5 +35,30 @@ it.each([
     for (const input of inputs) expect(input.value).toBe('');
     expect(container.querySelector('[aria-invalid="true"]')).not.toBeNull();
     expect(container.querySelector('.ant-picker-status-error')).not.toBeNull();
+  },
+);
+
+it.each([
+  ['date-range', FieldInputDateRangeDefinition],
+  ['month-range', FieldInputMonthRangeDefinition],
+  ['time-range', FieldInputTimeRangeDefinition],
+])(
+  '%s direct render of a length-2 string yields an empty range',
+  (format, definition) => {
+    const { container } = render(
+      createElement(definition.Component, {
+        path: '/r',
+        name: 'r',
+        jsonSchema: { type: 'array', format, items: { type: 'string' } },
+        value: 'ab',
+        defaultValue: 'ab',
+        onChange: () => {},
+        context: {},
+        misfit: true,
+      } as never),
+    );
+    const inputs = Array.from(container.querySelectorAll('input'));
+    expect(inputs.length).toBeGreaterThanOrEqual(2);
+    for (const input of inputs) expect(input.value).toBe('');
   },
 );
