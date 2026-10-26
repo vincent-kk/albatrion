@@ -254,6 +254,8 @@ interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   /** Find the node at a JSONPointer path */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** Find every node matching a JSONPointer path */
@@ -285,6 +287,7 @@ interface FormHandle<
 - Before the first mount, queries do not throw: `findNode` returns `null`, `findNodes`, `getErrors` and `validate` return an empty array, and `getState` returns an empty object.
 - `showError(false)` does not hide errors; it hands control back to the Form's `showError` prop.
 - `reset()` also empties the attached-files map and drops a `showError(true)` override, so error display follows the `showError` prop again.
+- `rebuild(option?)` invalidates this schema object's cached blueprint and replaces this form's tree using the same options as `reset`. Other mounted forms keep their existing tree, including during ordinary `reset`; their own `rebuild` or a new mount resolves fresh analysis.
 
 ### FormChildrenProps
 

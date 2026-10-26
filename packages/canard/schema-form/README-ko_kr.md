@@ -154,6 +154,8 @@ interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   /** JSONPointer 경로의 노드 찾기 */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** JSONPointer 경로에 맞는 모든 노드 찾기 */
@@ -185,6 +187,7 @@ interface FormHandle<
 - 첫 마운트 전에도 조회는 예외를 던지지 않습니다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체를 반환합니다.
 - `showError(false)`는 오류를 숨기지 않습니다. 표시 여부를 Form의 `showError` prop에 되돌려 줍니다.
 - `reset()`은 첨부 파일 맵도 비우고 `showError(true)`로 켠 표시도 풀어, 오류 표시가 다시 `showError` prop을 따르게 합니다.
+- `rebuild(option?)`은 이 스키마 객체의 청사진 캐시를 폐기하고 `reset`과 같은 옵션으로 현재 폼의 트리를 새로 만듭니다. 다른 폼은 일반 `reset`에서도 기존 트리를 유지하며, 그 폼 자신의 `rebuild`나 새 마운트에서 새 청사진을 받습니다.
 
 #### AttachedFilesMap
 

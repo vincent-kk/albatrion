@@ -16,15 +16,15 @@
 
 ## Acceptance Criteria
 
-### domain-identity
+### domain-identity — Stable weak-key ownership
 
 - Same keys resolve the same value and generation until invalidated or cleared; different keys resolve independently; development freezing never freezes authored keys.
 
-### blueprint-consumers
+### blueprint-consumers — Schema and predicate identity
 
 - Same schema and predicate identities reuse the blueprint; distinct objects or predicates do not. Every distinct warning collector receives the preserved records once.
 
-### form-rebuild
+### form-rebuild — Explicit replacement only
 
 - Shared-schema forms mount with the same blueprint and each receives warnings. Own rebuild replaces blueprint/tree and follows reset option semantics; another form's ordinary reset preserves its original tree. CacheManager.reset makes subsequent mounts resolve a new blueprint.
 
