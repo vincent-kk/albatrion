@@ -74,6 +74,7 @@
 | PROCESS-066 | 18라운드 닫기 방식 — 유도할 수 있는 것은 편집자가 추론으로 닫고 `reviews/round-18-closing.md`에 적는다 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:23` 닫기 방식) |
 | PROCESS-067 | 개발 PR마다 계획서 셋 — `request.md`(개발요청서, 원장 링크)·`verification.md`(검증 구성요건)·`adr-and-axes.md`(ADR과 핵심 축), 그 디렉토리만 보고 개발하고 단독으로 검증, 절차는 seiri와 filid | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:46` 개발계획 계획서 형식) |
 | PROCESS-068 | 새 설계문서와 ADR의 근거 표기 — 문장 끝 괄호 안에 원장 ID, 옛 표기("원장 §n", "ADR 00nn", "07 n.n")는 옛 문서의 것, 약어 금지와 풀어 쓰기는 그대로 | 현행 | 편집자 결정(20라운드, `reviews/round-20-closing.md` 20C-01) |
+| PROCESS-069 | 설계 최적화 단계의 에이전트 배정(446라운드) — `AGENT-POLICY.md` 적용: Fable 오케스트레이터는 설계·판단·원장·커밋만, 구현·게이트·측정·PR은 codex gpt-6.1-sol high(Orca `worker-start`), 독립 검토는 antigravity gemini-3.8-flash-high(종합은 argon), 원장 마감·단발 문서는 cursor, 읽기·검증 보조는 Claude 하위 에이전트, 소비 순서 cursor > codex = antigravity > claude | 현행 | 소유자 답(`reviews/round-446-owner-answers.md:11-12` 다중 에이전트와 역할, 이후 작업의 위임), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-08) |
 
 ## 항목
 
@@ -1027,3 +1028,16 @@
 - 닫은 사람: 편집자 결정(20라운드, `reviews/round-20-closing.md` 20C-01)
 - 라운드: 20
 - 까닭: `reviews/round-20-closing.md:12`
+
+### PROCESS-069 설계 최적화 단계의 에이전트 배정(446라운드) — `AGENT-POLICY.md` 적용: Fable 오케스트레이터는 설계·판단·원장·커밋만, 구현·게이트·측정·PR은 codex gpt-6.1-sol high(Orca `worker-start`), 독립 검토는 antigravity gemini-3.8-flash-high(종합은 argon), 원장 마감·단발 문서는 cursor, 읽기·검증 보조는 Claude 하위 에이전트, 소비 순서 cursor > codex = antigravity > claude
+
+- 결정:
+  > 【추론】 소유자가 `AGENT-POLICY.md` 기반의 다중 에이전트를 쓰고 설계 뒤에는 원장 관리자이자 오케스트레이터로 일하라고 했으며(위 5행), Fable은 소유자 대화에만 쓰라고 했다(위 2행). 정책 2·3절대로: Fable 오케스트레이터는 설계·판단·원장 마감·커밋만 하고 코드를 고치지 않는다; 구현·게이트·측정·PR은 codex `gpt-6.1-sol high`가 Orca `worker-start`로 맡고(브리프에 "run-use와 코디네이터 명령 금지, check는 --terminal로"와 한도 중지 규칙을 적는다), 독립 검토는 antigravity `gemini-3.8-flash-high`(D4 종합 판정은 `gemini-4-argon-high`), 원장 마감과 단발 문서 작업은 cursor `grok-4.7-high-fast`, 파일 읽기·요약·검증 보조는 Claude 하위 에이전트(scout·verifier, Sonnet·Opus)다. 소비 순서는 cursor > codex = antigravity > claude이고, 한도를 알리면 멈추고 다음 풀로 넘긴다. 끝난 dispatch는 `worker-release`로 정리한다. 정책 문서는 바꾸지 않고 7절 변경 이력에 이 라운드의 적용 한 줄만 더한다.
+- 보충:
+  > 소유자(446라운드, 8단계 뒤 작업의 허용과 역할): "좋아. 8단계 이후 작업을 명시적으로 허용한다.\n작업계획을 작성하고, 실험 및 검증을 진행한다.\n\n/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/AGENT-POLICY.md 를 기반으로 다중에이전트를 사용하고, \n너는 설계 이후에는 원장관리자이자, 오케스트레이터로 작업하라.\n\n계획 작성을 시작하고, 결정이 필요한 사항이 나오면 원장의 설계원칙을 참고하여 결정하되, 결정사항 등을 기록해서 나에게 보고하라.\n\n/orchestration" (`reviews/round-446-owner-answers.md:11`)
+  > 소유자(446라운드, 이후 작업의 위임): "이후 작업은 너에게 위임한다. 안정적인 작업으로, 설계 개편과 오류 수정, 테스트와 벤치마크까지 완료하여 PR 생성 및 검증까지 마무리하라." (`reviews/round-446-owner-answers.md:12`)
+- 상태: 현행
+- 출처: `reviews/round-446-closing.md:22`(정본), `reviews/round-446-owner-answers.md:8`, `reviews/round-446-owner-answers.md:11-12`, `AGENT-POLICY.md`
+- 닫은 사람: 소유자 답(`reviews/round-446-owner-answers.md:11-12` 다중 에이전트와 역할, 이후 작업의 위임), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-08)
+- 라운드: 446
+- 까닭: `reviews/round-446-owner-answers.md:11`

@@ -2,7 +2,7 @@
 
 이 폴더는 `@canard/schema-form` 1.0.0 재설계의 라운드 기록이다. 설계의 정본은 원장 [`../ledger/`](../ledger/README.md)이고, 이 폴더는 그 원장이 인용하는 근거다. `round-NN-closing.md`는 편집자(원장 관리자, 뒤의 코디네이터)가 내린 결정의 정본 기록이며 원장 항목이 그 줄을 줄 번호로 글자 그대로 인용하므로, 이 파일들의 내용과 줄 번호는 절대 고치지 않는다. `round-NN-owner-answers.md`는 Vincent의 말을 원문 그대로 적은 표이고 `../ledger/checks/owner-answers.tsv`가 줄 번호로 가리키므로 역시 줄을 옮기지 않는다. [`owner-queue-07.md`](owner-queue-07.md)는 소유자 결정 대기열의 정본이고, [`pr-445-narrative.md`](pr-445-narrative.md)는 8단계 최종 PR #445의 긴 서술판 본문이다. 그 밖에 `round-1.md`~`round-4.md`(ADR 초안의 적대적 검토), `round-NN-<주제>.md`(라운드의 명세·도출·검토 문서), `raw-*`(검토자와 조사자의 원본 증거)가 있다.
 
-이 문서는 단계별 경과, 8단계 마감 상태, 지금도 유효한 운영 원칙, 코디네이터 선행판단의 요지를 모은 색인이다. 결정의 정본은 이 문서가 가리키는 라운드 문서와 원장이며, 둘이 다르면 그쪽이 이긴다. 라운드 번호는 소유자 지시나 편집자 결정을 닫을 때마다 하나씩 오르고, 다음 라운드 번호는 446이다. "제품 끝"은 제품 코드를 바꾼 마지막 커밋을 뜻한다.
+이 문서는 단계별 경과, 8단계 마감 상태, 지금도 유효한 운영 원칙, 코디네이터 선행판단의 요지를 모은 색인이다. 결정의 정본은 이 문서가 가리키는 라운드 문서와 원장이며, 둘이 다르면 그쪽이 이긴다. 라운드 번호는 소유자 지시나 편집자 결정을 닫을 때마다 하나씩 오르고, 다음 라운드 번호는 447이다. "제품 끝"은 제품 코드를 바꾼 마지막 커밋을 뜻한다.
 
 ## 단계별 경과
 
@@ -60,6 +60,10 @@ PR-5를 05와 병렬로 진행하고 05를 통합한 뒤 PR #353(`07a083c18`, 20
 
 결정 기록: `round-330-owner-answers.md`, `round-355-closing.md`, `round-400-closing.md`, `round-402-owner-answers.md`, `round-409-owner-answers.md`, `round-421-closing.md`, `round-426-closing.md`, `round-429-owner-answers.md`, `round-434-closing.md`, `round-435-owner-answers.md`, `round-438-closing.md`, `round-439-closing.md`, `round-440-closing.md`, `round-441-closing.md`, `round-442-closing.md`, `round-443-closing.md`, `round-444-closing.md`.
 
+### 설계 최적화 (2026-10-26~, 446라운드~)
+
+446라운드에 소유자가 8단계 뒤 코어 설계 수정을 명시적으로 허용하고 이후 작업을 위임했다(`round-446-owner-answers.md`). 코어 엔진 속도의 설계 수준 원인 분석(설계 문서·최종 측정·CPU 프로파일 `../verification/design-optimization/profile-446.md`의 교차)과 교차검토(codex·antigravity·claude opus), 노드 수명 감사와 캐시 인벤토리를 바탕으로 결정 여덟(446C-01~08)을 닫았다: 단계의 자리와 가지(LANDING-211), 설계 Ⅰ(호스트별 컴파일 계획과 2단계 정착) 먼저·설계 Ⅱ(내부 슬롯 유지와 수명별 공개 핸들)는 관문 뒤·NODE-044 유지(NODE-060), 청사진 캐시는 스키마 객체 identity(BLUEPRINT-052), 캐시 계층은 `src/app/cache`와 엔진 파생 레코드 둘·공개 API는 `FormHandle.rebuild`(SURFACE-063), 게이트 입력 메모의 허용(BLUEPRINT-053, 대기열 63), 단계 구성 D0~D5와 D4 관문 수치(TEST-080, 대기열 64), 결함 후보 둘의 재현(446C-07), 에이전트 배정(PROCESS-069). 계획은 `../plan/design-optimization/`이다. 결정 기록: `round-446-closing.md`, `round-446-owner-answers.md`.
+
 ## 8단계 마감 상태
 
 - **제품 끝과 가지.** 제품 끝은 `0db7b01ca`(#460)이고, 이 기록을 정리하기 직전 가지 `feat/schema-form-08-review-and-perf`의 끝은 `291509ca5`(444C-14 기록 커밋)였다.
@@ -94,7 +98,7 @@ Vincent가 준 규칙 가운데 지금도 유효한 것만 한 줄씩 적는다.
 18. 이득이 측정되지 않은 성능 PR은 병합하지 않는다(442라운드, 442C-03).
 19. 옛 판보다 느린 행은 이유와 수치를 붙여 소유자가 수용해야 병합하고(TEST-027), 수용은 동작이 정상인 행에만 미치며 크기에 비례 이상으로 커지는 비용은 수용 대상이 아니다(56라운드). 느린 행의 원인이 오류 수정이면 수용한다(440라운드).
 20. 기능 오류는 반드시 고친다(392라운드). 단계마다 마운트·단일 입력·setValue 일괄 세 속도 표를 보고한다(439·441라운드).
-21. 9단계에는 코어 로직 수정이 없고, 청사진은 폼마다 다시 만든다(재사용 금지)(438·443라운드).
+21. 9단계에는 코어 로직 수정이 없다(443라운드). 8단계와 9단계 사이의 설계 최적화 단계는 코어 설계를 고치며(446라운드, LANDING-211), 청사진은 같은 스키마 객체와 같은 술어 identity일 때만 재사용한다(446라운드, BLUEPRINT-052; 438·443라운드의 "재생성 유지"를 대체).
 22. 장기 작업은 codex gpt-6.1-sol·Claude Opus·antigravity argon이 맡고, 소비 순서는 cursor > codex = antigravity > claude이며, antigravity 독립 검토는 `gemini-3.8-flash-high`, codex astra는 금지다(402·414·429라운드). Claude Fable 사용량이 모자라 Opus와 codex·antigravity·cursor를 더 쓴다(444라운드).
 23. 커밋 작성자는 Vincent Kelvin이고, 법적 이름·공동 저자·세션 ID·"Claude-Session" 줄을 커밋과 PR 본문에 넣지 않는다(409라운드 인계, 429라운드 정책에서 재확인).
 24. 배경 작업을 남기지 않고, 동시 서브에이전트는 하나, 전체 시험은 한 번에 하나만 돌린다(298라운드 뒤). 다섯 vitest 프로젝트의 동시 실행 실패는 프로젝트별·파일별 단독 재실행 뒤 남는 것만 실패로 분류한다(425C-02).

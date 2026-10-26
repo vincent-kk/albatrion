@@ -68,6 +68,7 @@
 | SURFACE-060 | 안쪽 코드도 `SchemaNodeState`·`SchemaNodeEventType` 한 이름 — 공개 표면과 안쪽 코드에 함께, 한 형에 한 이름, 별칭 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:25` 18C 검토 3번) |
 | SURFACE-061 | 경고등의 공개 이름 확정 — 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`; 뜻은 VALUE-037 그대로, 주석에 `schemaType`·유효 목록 기준 한 줄, 시험 파일 이름은 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:41` 반영 칸; 시험 파일 이름) |
 | SURFACE-062 | 하위 방문 — `visitSubtree(visitor)`: 자기 포함 전위, `false`는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch), 내부 순회는 `visitFieldNodes` 한 벌 | 현행 | 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순) |
+| SURFACE-063 | 캐시 계층(446라운드) — 소비자 소유 키 캐시는 `src/app/cache` fractal(도메인 계약: `resolve` 멱등, 값 불변, `invalidate`·`clear`는 항목 제거만, 세대 번호), 엔진 파생 캐시는 `getBlueprintDerived`·`getHostDerived` 레코드 둘, 값·노드 키 메모의 자리, 모드 플래그는 `engineModes`, 공개 API는 `FormHandle.rebuild(option?)` 하나 | 현행 | 소유자 답(`reviews/round-446-owner-answers.md:9-10` 캐시 계층의 자리와 폼 핸들), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-04) |
 
 ## 항목
 
@@ -1028,3 +1029,16 @@
 - 닫은 사람: 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순)
 - 라운드: 342
 - 까닭: `reviews/round-342-owner-answers.md:10`(옵션 설계 재저울질 — 엔진은 쓰기가 들어오는 순간 아니까 사용자에게 묻지 않는다)
+
+### SURFACE-063 캐시 계층(446라운드) — 소비자 소유 키 캐시는 `src/app/cache` fractal(도메인 계약: `resolve` 멱등, 값 불변, `invalidate`·`clear`는 항목 제거만, 세대 번호), 엔진 파생 캐시는 `getBlueprintDerived`·`getHostDerived` 레코드 둘, 값·노드 키 메모의 자리, 모드 플래그는 `engineModes`, 공개 API는 `FormHandle.rebuild(option?)` 하나
+
+- 결정:
+  > 【추론】 소유자가 캐시 계층을 플러그인 매니저처럼 `app/` 아래에 모으고 수명·갱신·멱등성·불변성과 강제 갱신을 요구했으며(위 3행), 강제 폐기는 폼 핸들에 더해 공개 API로 내자고 했다(위 4행). 엔진의 프로세스 전역 가변 상태는 약 55개이고 대부분 청사진(14개)이나 청사진 노드(17개)를 키로 하는 WeakMap이며 무효화·강제 재생성 경로는 검증기 캐시(`validation/utils/cache/validationEntries.ts`의 `$id` 밀어내기와 해제 대기열 8)뿐이다. 둘로 가른다. (가) 소비자가 소유한 객체(스키마, 검증기)를 키로 쓰는 캐시만 `src/app/cache` fractal로 모은다 — `app/plugin`과 같은 모양(`INTENT.md`·`DETAIL.md`·`index.ts`·`type.ts`, `utils/CacheManager.ts` static singleton과 `reset()`, `utils/createCacheDomain.ts`, 첫 도메인 `utils/blueprintCacheDomain.ts`). 도메인 계약: `resolve(key, build)`는 같은 키에 같은 참조(멱등), 값은 생성 뒤 바뀌지 않고 개발 모드에서 freeze(불변), `invalidate(key)`·`clear()`는 항목만 제거하고 기존 값을 고치지 않아 마운트된 폼은 옛 청사진을 끝까지 쓴다(강제 갱신), 항목에 생성 세대 번호를 적는다. 소비처는 Form 바인딩뿐이고 core는 app을 import하지 않는다. (나) 엔진이 소유한 불변 객체에서 파생되는 캐시는 엔진 안에서 레코드 둘로 합친다 — 청사진당 `getBlueprintDerived(blueprint)`(파생 규칙 표, 기능 색인, 의존 색인, 게이트 예산 색인, 컨텍스트 소유자, 가상 참조 색인, 순환 여부 등 14 슬롯)와 청사진 노드당 `getHostDerived(blueprintNode)`(선택 표, 직접 선택 계획, 정적 모양, 정적 id, 정적 게이트 목록, 선언 이름, 자식 항목 등 17 슬롯), 지연 계산. 설계 Ⅰ의 호스트별 계획은 이 레코드의 새 슬롯이다. (다) 전이하는 값 객체를 키로 쓰는 메모(`STABLE_SHAPES` 둘, `objectKeyCounts`, `TRIMMED`, `staticSpec`의 둘)는 모듈 범위에 두되 이름을 갈라 한 파일에 모으고, 살아 있는 노드를 키로 쓰는 메모(`getCommittedDeclarationKey`의 `KEYS`, `HOST_CAPS`, `watchValuesMemo`, `detachedReads`)는 런타임 레코드 필드로 옮긴다. (라) `gateSelectionTable.mode`·`gateWheelEvaluation.mode`는 한 파일의 `engineModes`로 합치고 `setMode()`가 파생 레코드를 비우며, 모드를 바꾸는 벤치 fixture는 복원까지 책임진다(`__benchmarks__/fixtures/observationIdentity/prepare.mjs:141`은 복원하지 않는다). (마) 공개 API는 `FormHandle.rebuild(option?)` 하나다: 이 폼의 스키마 항목을 폐기한 뒤 `reset(option)`과 같이 트리를 다시 만든다. 폐기만 하는 메서드는 이 폼이 remount 전까지 옛 청사진을 쓰고 다른 폼에만 영향이 가서 뜻이 닫히지 않는다. 같은 스키마 객체를 쓰는 다른 폼은 각자 다음 reset에서 새 청사진을 받는데, 이는 "소비자가 스키마 객체를 변형했다"는 강제 갱신의 전제와 맞다. 전체 폐기와 테스트용 `CacheManager.reset()`은 공개하지 않는다. `rebuild`는 공개 이름 추가라 `dist/index.d.ts` 대조와 공개 이름 스냅숏 갱신이 따르고 LANDING 이주 항목으로 기록한다.
+- 보충:
+  > 소유자(446라운드, 캐시 계층의 자리와 요건): "캐시 레이어는 app/ 하위에 모았으면 좋겠어. plugin 매니저 처럼.\n캐시 라이프사이클이랑 리프레시, 멱등성과 불변성을 보장해야하고, 강제 업데이트(기존 캐시를 없애고 새로 만드는 등)도 어떤 형태로든 제공이 되어야하는 기능일거같거든.\n\n그리고 지금 찾은 결함을 포함해서, 동일 기능을 하는 함수나, 여러 파일에 분산된 weakmap 등 캐시 레이어를 좀 더 잘 관리할 수 있는 방법이 없을지도 검토해봐.\n지금처럼 사용처에 직접 두는게 나으면 둬도 되는데, 아무래도 관리가 좀 어려워보여서 말이야." (`reviews/round-446-owner-answers.md:9`)
+  > 소유자(446라운드, 캐시 폐기의 공개 API와 설계 수정의 허용 범위): "1. 캐시 폐기를 공개 api로 내려고 한다 formHandle 에 추가하면 되지 않을까? \n\n그리고, 해당 코드는 아직 배포된건 아니라서, 검증에 대한 자신만 있으면(테스트와 시나리오는 꽤 충실하게 작성해두었고, 필요하면 더 작성할 수 있음) 설계 수정을 시도해도 좋아. \n\n다만, 아직은 설계서를 작성하거나 원장을 수정하진 말고, 검토만 해보는걸로.\n\n지금 정도 수준에서의 개선으로도 괜찮나? 아니면 근본적 설계수정이 필요한가?" (`reviews/round-446-owner-answers.md:10`)
+- 상태: 현행
+- 출처: `reviews/round-446-closing.md:14`(정본), `reviews/round-446-owner-answers.md:9-10`
+- 닫은 사람: 소유자 답(`reviews/round-446-owner-answers.md:9-10` 캐시 계층의 자리와 폼 핸들), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-04)
+- 라운드: 446
+- 까닭: `reviews/round-446-owner-answers.md:9`
