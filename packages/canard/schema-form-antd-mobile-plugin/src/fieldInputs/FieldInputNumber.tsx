@@ -39,23 +39,20 @@ const FieldInputNumber = ({
     else onChange(input);
   });
   return (
-    <>
-      <div role="group" aria-invalid={misfit || undefined}>
-        <Stepper
-          inputReadOnly={readOnly}
-          disabled={disabled}
-          min={jsonSchema.minimum}
-          max={jsonSchema.maximum}
-          step={jsonSchema.multipleOf}
-          formatter={formatter}
-          parser={parser ?? parseDraft}
-          allowEmpty
-          value={typeof value === 'number' ? value : null}
-          onChange={handleChange}
-        />
-      </div>
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <div role="group" aria-invalid={misfit || undefined}>
+      <Stepper
+        inputReadOnly={readOnly}
+        disabled={disabled}
+        min={jsonSchema.minimum}
+        max={jsonSchema.maximum}
+        step={jsonSchema.multipleOf}
+        formatter={formatter}
+        parser={parser ?? parseDraft}
+        allowEmpty
+        value={typeof value === 'number' ? value : null}
+        onChange={handleChange}
+      />
+    </div>
   );
 };
 

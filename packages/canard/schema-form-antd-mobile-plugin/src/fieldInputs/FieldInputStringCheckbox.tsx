@@ -64,34 +64,31 @@ const FieldInputStringCheckbox = ({
   });
 
   return (
-    <>
-      <div
-        role="group"
-        aria-invalid={misfit || undefined}
-        style={{ display: 'flex', flexDirection: 'row', gap: 8 }}
+    <div
+      role="group"
+      aria-invalid={misfit || undefined}
+      style={{ display: 'flex', flexDirection: 'row', gap: 8 }}
+    >
+      <Checkbox.Group
+        disabled={disabled}
+        defaultValue={initialValue}
+        onChange={handleChange}
       >
-        <Checkbox.Group
-          disabled={disabled}
-          defaultValue={initialValue}
-          onChange={handleChange}
-        >
-          {map(options, (option) => (
-            <Checkbox
-              key={option.value}
-              value={option.value}
-              style={{
-                '--icon-size': '24px',
-                '--font-size': '20px',
-                '--gap': '6px',
-              }}
-            >
-              {option.label}
-            </Checkbox>
-          ))}
-        </Checkbox.Group>
-      </div>
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+        {map(options, (option) => (
+          <Checkbox
+            key={option.value}
+            value={option.value}
+            style={{
+              '--icon-size': '24px',
+              '--font-size': '20px',
+              '--gap': '6px',
+            }}
+          >
+            {option.label}
+          </Checkbox>
+        ))}
+      </Checkbox.Group>
+    </div>
   );
 };
 

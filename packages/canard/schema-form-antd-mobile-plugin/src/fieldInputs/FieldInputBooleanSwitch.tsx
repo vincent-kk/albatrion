@@ -41,18 +41,15 @@ const FieldInputBooleanSwitch = ({
   const handleChange = useHandle(onChange);
 
   return (
-    <>
-      <Switch
-        aria-invalid={misfit || undefined}
-        key={path}
-        disabled={disabled}
-        checked={value === true}
-        checkedText={checkedLabel}
-        uncheckedText={uncheckedLabel}
-        onChange={handleChange}
-      />
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <Switch
+      aria-invalid={misfit || undefined}
+      key={path}
+      disabled={disabled}
+      checked={value === true}
+      checkedText={checkedLabel}
+      uncheckedText={uncheckedLabel}
+      onChange={handleChange}
+    />
   );
 };
 export const FieldInputBooleanSwitchDefinition = {

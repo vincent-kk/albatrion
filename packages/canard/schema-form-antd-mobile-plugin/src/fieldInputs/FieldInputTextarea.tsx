@@ -35,23 +35,20 @@ const FieldInputTextarea = ({
     [jsonSchema],
   );
   return (
-    <>
-      <div role="group" aria-invalid={misfit || undefined}>
-        <TextArea
-          id={path}
-          name={name}
-          disabled={disabled}
-          readOnly={readOnly}
-          autoSize={autoSize}
-          placeholder={placeholder}
-          defaultValue={
-            typeof defaultValue === 'string' ? defaultValue : undefined
-          }
-          onChange={handleChange}
-        />
-      </div>
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <div role="group" aria-invalid={misfit || undefined}>
+      <TextArea
+        id={path}
+        name={name}
+        disabled={disabled}
+        readOnly={readOnly}
+        autoSize={autoSize}
+        placeholder={placeholder}
+        defaultValue={
+          typeof defaultValue === 'string' ? defaultValue : undefined
+        }
+        onChange={handleChange}
+      />
+    </div>
   );
 };
 

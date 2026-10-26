@@ -25,22 +25,19 @@ const FieldInputBoolean = ({
   );
   const handleChange = useHandle(onChange);
   return (
-    <>
-      <div role="group" aria-invalid={misfit || undefined}>
-        <Checkbox
-          id={path}
-          disabled={disabled}
-          indeterminate={indeterminate}
-          checked={checked}
-          onChange={handleChange}
-          style={{
-            '--icon-size': '24px',
-            '--font-size': '20px',
-          }}
-        />
-      </div>
-      {misfit && <span role="status">Invalid value</span>}
-    </>
+    <div role="group" aria-invalid={misfit || undefined}>
+      <Checkbox
+        id={path}
+        disabled={disabled}
+        indeterminate={indeterminate}
+        checked={checked}
+        onChange={handleChange}
+        style={{
+          '--icon-size': '24px',
+          '--font-size': '20px',
+        }}
+      />
+    </div>
   );
 };
 
