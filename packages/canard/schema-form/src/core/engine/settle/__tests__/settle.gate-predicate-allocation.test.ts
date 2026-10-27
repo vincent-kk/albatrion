@@ -94,6 +94,40 @@ describe('gate predicate allocation bounds', () => {
     ).toHaveLength(0);
   });
 
+  it('releases failed input references and retries without replacing the buffer', () => {
+    const { root } = createTestTree(
+      createGatePredicateSchema('if', 3),
+      createTestValidator(),
+    );
+    loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
+    const gate = root.blueprintNode.declarations
+      .flatMap((declaration) => declaration.gates)
+      .find((candidate) => candidate.kind === 'if')!;
+    const occurrence = getGateRegistry(root.runtime).locate(root, gate);
+    const input = occurrence.predicate.arguments;
+    const evaluate = vi
+      .spyOn(occurrence.predicate, 'evaluate')
+      .mockImplementation(() => {
+        throw new Error('guard failed');
+      });
+    for (const tag of ['tag_2', 'tag_0']) {
+      const before = evaluate.mock.calls.length;
+      expect(() =>
+        writeFieldNode(
+          root.structure!.kind,
+          tag,
+          'input',
+          WriteOption.Overwrite,
+        ),
+      ).toThrow();
+      expect(evaluate.mock.calls.length).toBeGreaterThan(before);
+      expect(occurrence.memo).toBeUndefined();
+      expect(occurrence.predicate.arguments).toBe(input);
+      expect(input.values).toEqual(Array(input.values.length).fill(undefined));
+      expect(input.view).toBeUndefined();
+    }
+  });
+
   it('creates no active host view and shares the empty schema-path list across rounds', () => {
     engineModes.setMode('gateSelection', 'table');
     engineModes.setMode('gateWheel', 'skip');

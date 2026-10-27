@@ -188,7 +188,10 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
     if (failure) recordSettlementFailure(context, failure, 'expression');
     return false;
   } finally {
-    if (input) input.view = undefined;
+    if (input) {
+      input.view = undefined;
+      if (!occurrence.memo) input.values.fill(undefined);
+    }
   }
 };
 
