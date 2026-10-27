@@ -5,6 +5,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
@@ -440,6 +441,8 @@ describe('44C-01 array settlement scaling', () => {
   });
 
   it('48C-01 SETTLE-017 visits latent entries linearly on mass exit', () => {
+    // These assertions inspect the latent-store baseline and its preparation work.
+    pinLatentBaseline();
     const count = 2000;
     const { root, runtime } = gatedRows(count);
     const keys = runtime.latentRaw.keys.bind(runtime.latentRaw);
@@ -462,6 +465,8 @@ describe('44C-01 array settlement scaling', () => {
   });
 
   it('48C-01 retains mass exit and re-entry values and inactive sources', () => {
+    // These assertions inspect the latent-store baseline and its preparation work.
+    pinLatentBaseline();
     for (const count of [1, 7, 13]) {
       const { root, runtime } = gatedRows(count);
       const rows = Array.from({ length: count }, (_, index) => ({
@@ -491,6 +496,8 @@ describe('44C-01 array settlement scaling', () => {
   });
 
   it('48C-01 SETTLE-017 bounds latent key visits for exit, capture and absent writes', () => {
+    // These assertions inspect the latent-store baseline and its preparation work.
+    pinLatentBaseline();
     const count = 250;
     const tags = makeFieldNodeTree({
       type: 'object',

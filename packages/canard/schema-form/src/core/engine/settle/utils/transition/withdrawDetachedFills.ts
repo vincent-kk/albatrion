@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { setLatentRaw } from '../latentStore/setLatentRaw';
+import { restoreSlotSources } from '../slots/restoreSlotSources';
 import { restoreArrayStructure } from './restoreArrayStructure';
 
 /**
@@ -16,6 +17,7 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
   for (const node of context.filledNodes) {
     if (!node.detached) continue;
     restoreArrayStructure(context, node);
+    restoreSlotSources(context, node.path);
     for (let index = context.automaticLog.length - 1; index >= 0; index--) {
       const entry = context.automaticLog[index];
       let ancestor: Self | null = entry.node;

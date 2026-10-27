@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { pinSlotShipping } from '../../__tests__/fixtures/pinSlotShipping';
 import type { BlueprintSchema } from '../blueprint';
 import * as records from '../record';
 import type { FieldNodeDelivery } from '../record';
@@ -90,6 +91,8 @@ it('shares immutable unobserved first-load transitions and releases the memo', (
 it.each(['generic', 'static-first'])(
   'keeps one constructor per observed node on %s load and write',
   (route) => {
+    // Shipping constructor and memo counts exclude independent verification replay.
+    pinSlotShipping();
     const { root } = createDispatchTree({
       type: 'object',
       properties: {
@@ -136,6 +139,8 @@ it.each(['generic', 'static-first'])(
 );
 
 it('retains payloads permanently after the first revision read', () => {
+  // This spy observes one shipping tree's internal event marks.
+  pinSlotShipping();
   const { root } = createDispatchTree({ type: 'number' });
   expect(readFieldNodeRevision(root)).toBe(0);
   const marks = vi.spyOn(records, 'markFieldNodeEvent');
@@ -155,6 +160,8 @@ it('retains payloads permanently after the first revision read', () => {
 });
 
 it('retains an existing pending previous instead of entering bit-only mode', () => {
+  // The injected private pending envelope belongs to the shipping tree alone.
+  pinSlotShipping();
   const { root } = createDispatchTree({ type: 'number' });
   dispatchMount(root, 0, undefined, { deferValidation: true });
   root.pendingDelivery = {

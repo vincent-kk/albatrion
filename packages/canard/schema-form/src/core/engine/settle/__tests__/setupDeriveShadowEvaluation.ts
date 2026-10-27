@@ -6,6 +6,7 @@ import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 
 const previousModes = {
+  slots: engineModes.slots,
   gateSelection: engineModes.gateSelection,
   gateWheel: engineModes.gateWheel,
   deriveShadow: engineModes.deriveShadow,
@@ -13,6 +14,7 @@ const previousModes = {
 engineModes.setMode('deriveShadow', true);
 engineModes.setMode('gateWheel', 'shadow');
 engineModes.setMode('gateSelection', 'verify');
+engineModes.setMode('slots', 'verify');
 
 /** Exclude assertions from any earlier file sharing this module instance. */
 const assertionsBefore = { ...gateSelectionTable.assertions };
@@ -31,6 +33,7 @@ afterAll(() => {
     if (gateWheelEvaluation.predictions || gateWheelEvaluation.missed)
       console.log('gate-wheel-shadow', JSON.stringify(gateWheelEvaluation));
   } finally {
+    engineModes.setMode('slots', previousModes.slots);
     engineModes.setMode('gateSelection', previousModes.gateSelection);
     engineModes.setMode('gateWheel', previousModes.gateWheel);
     engineModes.setMode('deriveShadow', previousModes.deriveShadow);

@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import {
   dispatchInsert,
@@ -13,6 +14,8 @@ import { getDispatchNode } from './fixtures/getDispatchNode';
 it.each(['items', 'prefixItems'] as const)(
   '%s single-kind off-write retains whole raw, inactiveValues and entry interpretation',
   (keyword) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree({
       type: 'object',
       properties: {
@@ -44,6 +47,8 @@ it.each(['items', 'prefixItems'] as const)(
 );
 
 it('candidate-free structural moves reuse their existing source records', () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const { root, runtime } = createDispatchTree({
     type: 'array',
     items: { type: 'number' },

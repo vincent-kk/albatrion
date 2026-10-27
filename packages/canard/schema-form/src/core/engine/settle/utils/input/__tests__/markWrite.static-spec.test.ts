@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { pinSlotShipping } from '../../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchWriteInput } from '../../../../write';
 import * as specs from '../staticSpec';
@@ -8,6 +9,8 @@ describe('interpreted child static specs', () => {
   it.each(['all', 'one', 'equal'] as const)(
     'bounds N=1000 %s-key writes to N+1 lookups',
     (change) => {
+      // Shipping static-spec lookup bounds exclude independent slot replay.
+      pinSlotShipping();
       const count = 1000;
       const { root } = createDispatchTree({
         type: 'object',

@@ -1,11 +1,15 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
+import { find } from '../../../navigation';
 import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
+import { commitSlotChanges } from '../slots/commitSlotChanges';
+import { isSlotEligible } from '../slots/isSlotEligible';
+import { compareSlotShadowCommit } from '../verify/compareSlotShadowCommit';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
 import { commitExitPolicyValues } from './commitExitPolicyValues';
@@ -34,7 +38,8 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = context.root.runtime;
   const development = process.env.NODE_ENV !== 'production';
-  if (context.exited.size > 0) snapshotExitedPolicies(context);
+  if (context.exited.size > 0 && !isSlotEligible(runtime))
+    snapshotExitedPolicies(context);
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)
     commitExitPolicyValues(context);
@@ -240,5 +245,54 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     (context.entered.size > 0 || context.exited.size > 0)
   )
     runtime.latentRawDirty = true;
-  updateInactiveValuesMemo(context.root);
+  if (
+    runtime.slots !== 'on' ||
+    context.entered.size > 0 ||
+    context.exited.size > 0 ||
+    runtime.latentRaw.size > 0 ||
+    runtime.slotDirtyHosts?.size ||
+    runtime.latentRawDirty ||
+    runtime.inactiveValueEntries?.size ||
+    runtime.inactiveValuesMemo.size > 0
+  ) {
+    if (!isSlotEligible(runtime)) updateInactiveValuesMemo(context.root);
+    else {
+      for (const node of context.entered)
+        if (!node.detached) {
+          if (node.inactiveValueMemo !== undefined)
+            node.inactiveValueMemo = undefined;
+          const parent = node.parent;
+          if (
+            parent &&
+            (parent.inactiveSlots?.size || parent.inactiveSlotOverlays?.size)
+          )
+            (runtime.slotDirtyHosts ??= new Set()).add(parent);
+        }
+      if (runtime.slotDirtyHosts?.size) commitSlotChanges(context.root);
+      if (runtime.latentRawDirty || runtime.inactiveValueEntries?.size) {
+        if (runtime.latentRawDirty)
+          for (const node of context.changedNodes)
+            if (!node.detached) node.inactiveValuesDirty = true;
+        context.root.inactiveValuesDirty = true;
+        const previous = runtime.inactiveValueEntries
+          ? [...runtime.inactiveValueEntries.values()]
+          : [];
+        updateInactiveValuesMemo(context.root);
+        const paths = [
+          ...previous,
+          ...(runtime.inactiveValueEntries?.values() ?? []),
+        ];
+        for (const retained of paths) {
+          let path = retained.entry.path;
+          while (true) {
+            const host = find(context.root, path);
+            if (host) host.inactiveValuesDirty = true;
+            if (!path) break;
+            path = path.slice(0, path.lastIndexOf('/'));
+          }
+        }
+      }
+    }
+  }
+  if (runtime.slots !== 'on') compareSlotShadowCommit(context.root);
 };

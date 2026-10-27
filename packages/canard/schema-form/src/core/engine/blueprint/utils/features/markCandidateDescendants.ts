@@ -2,9 +2,9 @@ import type { MutableNode } from '../../types/analysis';
 import type { BlueprintNode } from '../../types/node';
 
 /**
- * Mark candidate reachability once on the completed finite template graph.
+ * Mark candidate and literal-star reachability on the completed finite graph.
  * @param nodes - Construction-owned templates before development freezing
- * @returns Nothing; single-candidate graphs allocate no reverse graph or work list
+ * @returns Nothing; star-free single-candidate graphs allocate no reverse graph or work list
  */
 export const markCandidateDescendants = (
   nodes: readonly MutableNode[],
@@ -14,9 +14,15 @@ export const markCandidateDescendants = (
     if (
       node.hasPropertyCandidates ||
       node.itemCandidates ||
-      node.prefixItemCandidates
+      node.prefixItemCandidates ||
+      node.containsLiteralStar
     ) {
-      node.hasCandidateDescendants = true;
+      if (
+        node.hasPropertyCandidates ||
+        node.itemCandidates ||
+        node.prefixItemCandidates
+      )
+        node.hasCandidateDescendants = true;
       (pending ??= []).push(node);
     }
   if (!pending) return;
@@ -35,11 +41,21 @@ export const markCandidateDescendants = (
           appendParent(parents, child, node);
   }
   for (let index = 0; index < pending.length; index++)
-    for (const parent of parents.get(pending[index]) ?? [])
-      if (!parent.hasCandidateDescendants) {
+    for (const parent of parents.get(pending[index]) ?? []) {
+      let changed = false;
+      if (
+        pending[index].hasCandidateDescendants &&
+        !parent.hasCandidateDescendants
+      ) {
         parent.hasCandidateDescendants = true;
-        pending.push(parent);
+        changed = true;
       }
+      if (pending[index].containsLiteralStar && !parent.containsLiteralStar) {
+        parent.containsLiteralStar = true;
+        changed = true;
+      }
+      if (changed) pending.push(parent);
+    }
 };
 
 /**

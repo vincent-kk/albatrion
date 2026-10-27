@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import {
@@ -21,6 +22,8 @@ describe('tuple source-slot candidate ownership', () => {
   it.each([1, 2] as const)(
     'depth %s entering candidate prefers its retained source over tuple replay',
     (depth) => {
+      // These assertions inspect the latent-store baseline directly.
+      pinLatentBaseline();
       const { root } = createDispatchTree(replayTupleSchema(depth));
       dispatchMount(root, {
         kind: 'string',
@@ -51,6 +54,8 @@ describe('tuple source-slot candidate ownership', () => {
   it.each(['insert', 'remove'] as const)(
     '[control] single-candidate tuple %s creates no replay marker or retained-source query',
     (operation) => {
+      // These assertions inspect the latent-store baseline directly.
+      pinLatentBaseline();
       const item: BlueprintSchema = {
         type: 'object',
         properties: {
@@ -116,6 +121,8 @@ describe('tuple source-slot candidate ownership', () => {
   }[])(
     '$operation before a latent $kind moves every candidate source',
     ({ kind, operation }) => {
+      // These assertions inspect the latent-store baseline directly.
+      pinLatentBaseline();
       const { root } = createDispatchTree(tupleSchema());
       const value = kind === 'string' ? 'held' : 37;
       dispatchMount(root, { kind, list: [{ v: value }, { v: value }] });
@@ -166,6 +173,8 @@ describe('tuple source-slot candidate ownership', () => {
   it.each(['insert', 'remove'] as const)(
     '%s carries several already-latent candidates through record recreation',
     (operation) => {
+      // These assertions inspect the latent-store baseline directly.
+      pinLatentBaseline();
       const { root } = createDispatchTree(tupleSchema(true));
       dispatchMount(root, {
         kind: 'string',
@@ -208,6 +217,8 @@ describe('tuple source-slot candidate ownership', () => {
   it.each(['remove', 'pop', 'clear'] as const)(
     '[control] true %s destroys all latent candidates in a slot',
     (operation) => {
+      // These assertions inspect the latent-store baseline directly.
+      pinLatentBaseline();
       const { root } = createDispatchTree(tupleSchema(true));
       dispatchMount(root, { kind: 'string', list: [{ v: 'held' }] });
       const list = getDispatchNode(root, 'list');
