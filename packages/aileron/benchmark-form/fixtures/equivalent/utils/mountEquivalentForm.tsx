@@ -1,9 +1,10 @@
-import React, { Profiler, createRef } from 'react';
+import { Profiler, createRef } from 'react';
 
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 
-import { drainTicks, drainUntilReady } from '../../../src/utils/setup-env';
+import { settleUpdates } from '../../../src/utils/settleUpdates';
+import { drainUntilReady } from '../../../src/utils/setup-env';
 import type { BenchHandle, EquivalentFixture } from '../types';
 
 /** Mounts a versioned fixture and returns its handle, Profiler commits and teardown. */
@@ -47,7 +48,7 @@ export async function mountEquivalentForm(
       ),
     );
     await drainUntilReady(() => ref.current?.findNode('') != null);
-    await drainTicks();
+    await settleUpdates();
     return {
       container,
       handle: ref.current!,

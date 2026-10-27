@@ -4,7 +4,6 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { flushSync } from 'react-dom';
 
 import type { LegacyVersion } from '../../../../../canard/schema-form/bench/distEngine/loadDistEngine';
 import { equivalentFixtures } from '../../../fixtures/equivalent';
@@ -15,14 +14,16 @@ import type {
 import { applyInteraction } from '../../../fixtures/equivalent/utils/applyInteraction';
 import { mountEquivalentForm } from '../../../fixtures/equivalent/utils/mountEquivalentForm';
 import { loadCoreBenchmark } from '../../utils/loadCoreBenchmark';
-import { drainTicks, forceGc, setupJsdom } from '../../utils/setup-env';
+import { measureRenderUpdates } from '../../utils/measureRenderUpdates';
+import { settleUpdates } from '../../utils/settleUpdates';
+import { forceGc, setupJsdom } from '../../utils/setup-env';
 import { welchTTest } from '../../utils/stats';
 
 type Sample = Record<string, number>;
 
 /** Summarizes milliseconds with nearest-rank p99 and the midpoint median. */
 function summarize(samples: number[]) {
-  const sorted = samples.toSorted((left, right) => left - right);
+  const sorted = [...samples].sort((left, right) => left - right);
   const middle = Math.floor(sorted.length / 2);
   return {
     samples,
@@ -52,7 +53,7 @@ async function sampleCore(
     },
   });
   const constructedAt = performance.now();
-  await drainTicks(2);
+  await settleUpdates();
   const mount = Math.max(constructedAt, completedAt) - start;
   const handle: BenchHandle = {
     findNode: (pointer) => root.find(pointer),
@@ -65,13 +66,13 @@ async function sampleCore(
     applyInteraction(handle, interaction);
     // Timestamp at root completion, before polling resumes; exclude the polling timer floor.
     for (let tick = 0; changes === before && tick < 12; tick++)
-      await drainTicks();
+      await settleUpdates();
     if (changes === before)
       throw new Error(`${fixture.name}/${version}: no completed root update`);
     update += completedAt - started;
-    await drainTicks();
+    await settleUpdates();
   }
-  await drainTicks();
+  await settleUpdates();
   return { 'core-mount': mount, 'core-update': update };
 }
 
@@ -88,16 +89,15 @@ async function sampleRender(
   const mountCommits = mounted.commits.length;
   mounted.commits.length = 0;
   try {
-    const start = performance.now();
-    for (const interaction of fixture.interactions) {
-      flushSync(() => applyInteraction(mounted.handle, interaction));
-      await drainTicks(2);
-    }
+    const updates = await measureRenderUpdates(
+      mounted.handle,
+      fixture.interactions,
+    );
     if (mountCommits === 0)
       throw new Error('Profiler disabled; use development React 19');
     return {
       'render-mount-wall': mounted.mountMs,
-      'render-update-wall': performance.now() - start,
+      ...updates,
       'profiler-mount': mountDuration,
       'profiler-update': mounted.commits.reduce(
         (sum, duration) => sum + duration,
@@ -145,7 +145,7 @@ export async function runEquivalentBenchmarks() {
     [legacy]: await loadCoreBenchmark(legacy),
     latest: await loadCoreBenchmark('latest'),
   };
-  const rows: object[] = [];
+  const rows = [];
   const raw: object[] = [];
   const commit = execFileSync('git', ['rev-parse', '--short=9', 'HEAD'], {
     encoding: 'utf8',
@@ -184,16 +184,7 @@ export async function runEquivalentBenchmarks() {
         fixture: fixture.name,
         lane,
         samples: Object.fromEntries(
-          Object.entries(samples).map(([version, values]) => [
-            version,
-            values.map((sample) =>
-              Object.fromEntries(
-                Object.entries(sample).filter(
-                  ([key]) => !key.startsWith('commits'),
-                ),
-              ),
-            ),
-          ]),
+          Object.entries(samples).map(([version, values]) => [version, values]),
         ),
       });
       for (const metric of Object.keys(samples.latest[0])) {
@@ -242,6 +233,10 @@ export async function runEquivalentBenchmarks() {
             legacy: cores[legacy].digest,
             workspace: cores.latest.digest,
           },
+          updateSettlement:
+            'microtasks -> immediate/message -> timer(0) -> immediate/message',
+          updateFloor:
+            'separate empty barrier after each settled interaction; net is signed subtraction',
           rows,
         },
         null,
@@ -258,5 +253,14 @@ export async function runEquivalentBenchmarks() {
       console.log(`${lane} ${fixture.name}: ${count} paired samples saved`);
     }
   }
+  console.table(
+    rows.map(({ fixture, metric, old, new: current, ratio }) => ({
+      fixture,
+      metric,
+      L: old.median,
+      E: current.median,
+      'E/L': ratio,
+    })),
+  );
   console.log(`Saved ${output}`);
 }
