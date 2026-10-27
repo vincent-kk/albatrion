@@ -26,6 +26,7 @@ import { finishSettlement } from '../settlement/finishSettlement';
 import { isSlotEligible } from '../slots/isSlotEligible';
 import { resolveSlotSource } from '../slots/resolveSlotSource';
 import { writeSlotPath } from '../slots/writeSlotPath';
+import { getSlotShadowSession } from '../verify/getSlotShadowSession';
 import { prepareSlotShadow } from '../verify/prepareSlotShadow';
 import { collectReplacePaths } from './collectReplacePaths';
 import { markWrongKindAncestors } from './markWrongKindAncestors';
@@ -44,7 +45,7 @@ import { releaseWrongKindHosts } from './releaseWrongKindHosts';
  * @returns Nothing; live records carry the committed shape and values
  * @throws A deferred gate or shared declaration failure after commit
  */
-const writeFieldNodeBody = <Self extends FieldNodeRecord<Self>>(
+export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
   kind: FieldNodeWriteKind,
@@ -53,6 +54,15 @@ const writeFieldNodeBody = <Self extends FieldNodeRecord<Self>>(
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
 ): void => {
   const root = node.rootNode;
+  if (root.runtime.slots === 'verify' && !getSlotShadowSession(root)?.active)
+    return writeFieldNodeWithShadow(
+      node,
+      input,
+      kind,
+      option,
+      source,
+      writeOrigins,
+    );
   if (source === 'input' && (node.disposed || root.disposed)) return;
   const schema = node.schema.schema;
   const inputType = typeof input;
@@ -193,8 +203,8 @@ const writeFieldNodeBody = <Self extends FieldNodeRecord<Self>>(
   }
 };
 
-/** Replay resolved inputs only in verification mode, preserving the ordinary entry. */
-export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
+/** Replay one outer operation while keeping the shipping entry in the kernel. */
+const writeFieldNodeWithShadow = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
   kind: FieldNodeWriteKind,
@@ -202,14 +212,12 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   source: FieldNodeWriteKind = kind,
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
 ): void => {
-  if (node.runtime.slots !== 'verify')
-    return writeFieldNodeBody(node, input, kind, option, source, writeOrigins);
   const complete = prepareSlotShadow(node, (shadow) =>
     writeFieldNode(shadow, input, kind, option, source, writeOrigins),
   );
   let failure: unknown;
   try {
-    return writeFieldNodeBody(node, input, kind, option, source, writeOrigins);
+    return writeFieldNode(node, input, kind, option, source, writeOrigins);
   } catch (error) {
     failure = error;
     throw error;
