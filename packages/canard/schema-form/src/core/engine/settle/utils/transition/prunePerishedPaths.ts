@@ -44,7 +44,10 @@ export const prunePerishedPaths = <Self>(
     if (store.size)
       for (const path of paths)
         for (const key of store.pathIndex.under(path)) {
-          if (store === stores.metadata) runtime.inactiveValuesRebuild = true;
+          if (store === stores.metadata) {
+            runtime.inactiveValuesRebuild = true;
+            runtime.inactiveValueChanges?.delete(key);
+          }
           store.delete(key);
         }
   if (stores.rules.size)

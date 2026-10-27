@@ -92,7 +92,10 @@ export const clearArrayRuntimePaths = <Self>(
     }
     for (const store of [stores.metadata, stores.misfits, stores.declarations])
       for (const key of store.pathIndex.under(slot)) {
-        if (store === stores.metadata) runtime.inactiveValuesRebuild = true;
+        if (store === stores.metadata) {
+          runtime.inactiveValuesRebuild = true;
+          runtime.inactiveValueChanges?.delete(key);
+        }
         store.delete(key);
       }
     for (const key of stores.rules.pathIndex.under(slot))
