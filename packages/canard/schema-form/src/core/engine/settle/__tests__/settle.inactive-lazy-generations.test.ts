@@ -134,3 +134,36 @@ it('bounds unread journals by compression while preserving older detached tokens
   expect(group.inactiveValues).toEqual([{ path: '/group/held', value: 'old' }]);
   expect(group.inactiveValues).toBe(group.inactiveValues);
 });
+
+it('does not revisit journal facts on repeated reads of an untouched host', () => {
+  engineModes.setMode('inactiveValues', 'lazy');
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      kind: { type: 'string' },
+      quiet: {
+        type: 'object',
+        properties: { held: { type: 'string', controls: { active: false } } },
+      },
+    },
+    oneOf: [0, 1].map((index) => ({
+      controls: { active: `./kind === "${index}"` },
+      properties: { [`value_${index}`]: { type: 'string' } },
+    })),
+  });
+  root.setValue({ kind: '0', quiet: { held: 'saved' }, value_0: 'a', value_1: 'b' });
+  void root.inactiveValues;
+  const quiet = root.find('/quiet')!;
+  const held = quiet.inactiveValues;
+  root.find('/kind')!.setValue('1');
+  expect(quiet.inactiveValues).toBe(held);
+  const values = vi.spyOn(Map.prototype, 'values');
+  const keys = vi.spyOn(Map.prototype, 'keys');
+  const first = quiet.inactiveValues;
+  const second = quiet.inactiveValues;
+  const visits = values.mock.calls.length + keys.mock.calls.length;
+  vi.restoreAllMocks();
+  expect(first).toBe(held);
+  expect(second).toBe(held);
+  expect(visits).toBe(0);
+});
