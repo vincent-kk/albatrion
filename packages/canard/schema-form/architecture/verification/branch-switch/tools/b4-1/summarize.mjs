@@ -491,6 +491,10 @@ for (const [name, data] of Object.entries({
   'judgement.json': judgment,
   'quality.json': raw.quality,
   'results.summary.json': {
+    node: raw.node?.version ?? null,
+    machine: raw.machine ?? null,
+    startedAt: raw.startedAt ?? null,
+    endedAt: raw.endedAt ?? null,
     processOrder: raw.processOrder,
     runsPerRole: 10,
     warmups: 20,

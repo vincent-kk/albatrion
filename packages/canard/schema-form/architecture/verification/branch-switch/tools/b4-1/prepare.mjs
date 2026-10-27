@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -99,6 +100,15 @@ fs.writeFileSync(
       files,
       stageBundles,
       preparedAt: new Date().toISOString(),
+      environment: {
+        node: process.version,
+        bun: execFileSync('/opt/homebrew/bin/bun', ['--version'], {
+          encoding: 'utf8',
+        }).trim(),
+        cpu: os.cpus()[0].model,
+        arch: os.arch(),
+        release: os.release(),
+      },
       stages: ['switch-oneOf-80', 'switch-payload-12', 'switch-siblings-0'],
       enteringGroup:
         'inclusive outermost factory, child creation, entry, restore, recursive clone and overlay calls',
