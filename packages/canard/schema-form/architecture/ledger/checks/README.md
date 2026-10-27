@@ -25,18 +25,18 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md
 
 ## 2. 기준값
 
-2026-10-27(448라운드 D2 중간 판정 뒤)의 결과다.
+2026-10-27(449라운드 소유자 지시 반영 뒤)의 결과다.
 
 | 검사 | 기준값 |
 | --- | --- |
-| verbatim-check | 항목 1,371, 조각 327, 원문과 다른 결정 줄 0 |
-| sup-check | 보충·충돌 인용 3,185, 인용 줄에 없는 것 0, 해석 못 한 것 0 |
-| ref-check | 항목 1,371, 문제 0 |
-| owner-cited | 소유자 답 619, 인용 619, 미인용 0 |
+| verbatim-check | 항목 1,374, 조각 327, 원문과 다른 결정 줄 0 |
+| sup-check | 보충·충돌 인용 3,199, 인용 줄에 없는 것 0, 해석 못 한 것 0 |
+| ref-check | 항목 1,374, 문제 0 |
+| owner-cited | 소유자 답 620, 인용 620, 미인용 0 |
 | sentence-check | 영역 열일곱 모두 missing 0, bad classifications 0 |
 | tokens | 목록 2,357, 잔여 400(목록의 셋은 446라운드에 고친 `README.md` 지금 상태 문단에서 왔고 새 잔여는 0이다; 판정은 token-review.md 의 445라운드 절) |
 | plan-links | 문제 0 |
-| doc-coverage | 미인용 22(LANDING-209·210, 446라운드 항목 일곱 — LANDING-211·NODE-060·BLUEPRINT-052·053·SURFACE-063·TEST-080·PROCESS-069, 447라운드 항목 여섯 — TEST-081·082·083·SURFACE-064·EVENT-074·NODE-061, 448라운드 항목 일곱 — SETTLE-051·052·TEST-084·085·086·PROCESS-070·SURFACE-065; 설계문서·ADR 반영은 설계 최적화 단계의 루트 PR이 한다), 그 밖의 문제 0 |
+| doc-coverage | 미인용 25(LANDING-209·210, 446라운드 항목 일곱 — LANDING-211·NODE-060·BLUEPRINT-052·053·SURFACE-063·TEST-080·PROCESS-069, 447라운드 항목 여섯 — TEST-081·082·083·SURFACE-064·EVENT-074·NODE-061, 448라운드 항목 일곱 — SETTLE-051·052·TEST-084·085·086·PROCESS-070·SURFACE-065, 449라운드 항목 셋 — TEST-087·PROCESS-071·NODE-062; 설계문서·ADR 반영은 설계 최적화 단계의 루트 PR이 한다), 그 밖의 문제 0 |
 
 수가 바뀌면 토큰·문장·인용별 원인을 대조하고, 까닭을 설명할 수 없는 증가를 통과로 보지 않는다.
 

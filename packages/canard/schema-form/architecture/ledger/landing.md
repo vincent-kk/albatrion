@@ -3484,6 +3484,7 @@
 - 보충:
   > 소유자(446라운드, 8단계 뒤 작업의 허용과 역할): "좋아. 8단계 이후 작업을 명시적으로 허용한다.\n작업계획을 작성하고, 실험 및 검증을 진행한다.\n\n/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/AGENT-POLICY.md 를 기반으로 다중에이전트를 사용하고, \n너는 설계 이후에는 원장관리자이자, 오케스트레이터로 작업하라.\n\n계획 작성을 시작하고, 결정이 필요한 사항이 나오면 원장의 설계원칙을 참고하여 결정하되, 결정사항 등을 기록해서 나에게 보고하라.\n\n/orchestration" (`reviews/round-446-owner-answers.md:11`)
   > 소유자(446라운드, 이후 작업의 위임): "이후 작업은 너에게 위임한다. 안정적인 작업으로, 설계 개편과 오류 수정, 테스트와 벤치마크까지 완료하여 PR 생성 및 검증까지 마무리하라." (`reviews/round-446-owner-answers.md:12`)
+  > 소유자(449라운드, 분기 전환의 잠정 수용과 진행 방향): "일단 수용으로 넘어가고, 마운트까지 작업해.\n너의 임의판단을 넣은 부분은 추후 전부 재검증 대상이니, 임의판단보단 1차 계획대로 진행하도록 해줘.\n그렇게 마운트까지 검증을 마치고,\n분기전환에 대해서는 다시 검토하자. 어때?" (`reviews/round-449-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-446-closing.md:8`(정본), `reviews/round-446-owner-answers.md:11`, `reviews/round-446-owner-answers.md:12`
 - 닫은 사람: 소유자 답(`reviews/round-446-owner-answers.md:11` "좋아. 8단계 이후 작업을 명시적으로 허용한다."), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-01)
