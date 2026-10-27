@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- A form whose root blueprint has `containsLiteralStar` uses the existing latent array path throughout, including packed snapshots, descendant-key folding, structural rekey, and detached writes. Slot transfers and source conversion apply only to slot-eligible forms; no separate packed-star metadata is introduced.
+
 - B4-1은 같은 템플릿의 슬롯을 직접 이전한다. 후보가 있는 살아남는 배열 자리가 다른 튜플 청사진 또는 미선언 꼬리로 이동하면, 그 배열 범위의 보유 후보·overlay를 한 번 잠복 표현으로 직렬화하고 살아 있는 소유자의 슬롯을 비운 뒤 기존 구조 재생·재키를 적용한다. 모든 후보 종류와 중첩 배열의 원본 채널·extras·문서 순서·옛 참조의 쓰기 주소를 보존한다. 비용은 영향 배열의 방문 노드와 실제 보유 소스 크기에 선형이며 일반 나감은 직렬화하지 않는다. B4-2는 이 변환을 직접 소스 이전으로 대체해야 한다.
 
 - B4-1 슬롯 경로의 배열 이동은 값의 폐기가 아니다. 호스트 레코드가 가진 inactiveSlots와 overlay는 살아남는 아이템과 함께 이동하고 새 레코드로 재생성되면 새 호스트로 이전한다. 떼어진 원본 인스턴스의 공개 path·읽기는 바꾸지 않고 옛 참조의 쓰기 주소만 현재 슬롯을 가리키게 한다. 기존 NODE-051·394C-01의 모든 후보 원천 보존·재키·소멸 구분을 유지한다.
