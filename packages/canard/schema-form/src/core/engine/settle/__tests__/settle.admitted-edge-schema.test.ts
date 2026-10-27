@@ -66,7 +66,8 @@ const nestedHosts: BlueprintSchema = {
 // filid:contract settle-admitted-edge-schema
 describe('L2 (d1) GOAL-011 fully admitted edges reuse a constant schema', () => {
   it('matches the declined read over every gate-selection history', () => {
-    for (const fixture of gateSelectionCases) compareAdmittedEdgeSchema(fixture);
+    for (const fixture of gateSelectionCases)
+      compareAdmittedEdgeSchema(fixture);
   });
 
   it('matches with all gates open, some closed and toggled', () => {
@@ -162,10 +163,20 @@ describe('L2 (d1) GOAL-011 fully admitted edges reuse a constant schema', () => 
     const { blueprint } = createTestTree(gatedSiblings);
     const [, a, b] = blueprint.root.childEntries;
     expect(
-      admitted.readAdmittedEdgeSchema(a, b.node, blueprint.isAtomic),
+      admitted.readAdmittedEdgeSchema(
+        a,
+        b.node,
+        blueprint.isAtomic,
+        blueprint.root,
+      ),
     ).toBeUndefined();
     expect(
-      admitted.readAdmittedEdgeSchema(a, a.node, blueprint.isAtomic)?.schema,
+      admitted.readAdmittedEdgeSchema(
+        a,
+        a.node,
+        blueprint.isAtomic,
+        blueprint.root,
+      )?.schema,
     ).toBe(
       mergeEffectiveSchema(a.node, [a.declarations[0].id], {
         mode: 'runtime',

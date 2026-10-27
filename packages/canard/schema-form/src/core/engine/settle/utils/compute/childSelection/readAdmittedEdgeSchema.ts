@@ -26,6 +26,7 @@ interface AdmittedEdgeSchema {
  * @param entry - Analyzed child edge, all of whose declarations the current pass admitted
  * @param node - Blueprint node of the live child selected for the edge
  * @param isAtomic - Atomic-value predicate the runtime merge passes
+ * @param owner - Immutable parent host that declared this entry
  * @returns The edge's merge result and conflict verdict, or undefined when the child was
  * created from another edge's node and the caller must merge for that node
  */
@@ -33,16 +34,17 @@ export const readAdmittedEdgeSchema = (
   entry: BlueprintChildEntry,
   node: BlueprintNode,
   isAtomic: BlueprintOptions['isAtomic'],
+  owner: BlueprintNode,
 ): AdmittedEdgeSchema | undefined => {
   if (node !== entry.node) return undefined;
   const record = getHostDerived<
     'admittedEdgeSchemas',
     Map<BlueprintChildEntry, AdmittedEdgeSchema>
-  >(entry.node);
+  >(owner);
   const entries = (record.admittedEdgeSchemas ??= new Map());
   const cached = entries.get(entry);
   if (cached && cached.isAtomic === isAtomic) return cached;
-  const schema = mergeEffectiveSchema(entry.node, staticIds(entry), {
+  const schema = mergeEffectiveSchema(entry.node, staticIds(entry, owner), {
     mode: 'runtime',
     isAtomic,
   });

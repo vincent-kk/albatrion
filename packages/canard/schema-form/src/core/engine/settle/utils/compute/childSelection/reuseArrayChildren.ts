@@ -24,7 +24,7 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   if (append?.host === node && append.valid) {
     if (!append.entry) return;
     const child = prior[String(append.count)];
-    const ids = staticIds(append.entry);
+    const ids = staticIds(append.entry, node.blueprintNode);
     if (context.selectedDeclarationIds.get(child) !== ids)
       context.selectedDeclarationIds.set(child, ids);
     if (context.dirtyPaths.has(child.path)) computeChild(child);
@@ -38,7 +38,7 @@ export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) continue;
     const child = prior[entry.name];
-    const ids = staticIds(entry);
+    const ids = staticIds(entry, node.blueprintNode);
     if (context.selectedDeclarationIds.get(child) !== ids)
       context.selectedDeclarationIds.set(child, ids);
     if (context.dirtyPaths.has(child.path)) computeChild(child);

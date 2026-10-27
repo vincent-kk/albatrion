@@ -75,7 +75,7 @@ export const staticShape = (
     ) {
       continue;
     }
-    selected[entry.name] = { entry, ids: staticIds(entry), schema };
+    selected[entry.name] = { entry, ids: staticIds(entry, host), schema };
   }
   const shape = Object.values(selected);
   memo.entries = shape;

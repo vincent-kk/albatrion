@@ -1,4 +1,4 @@
-import type { BlueprintChildEntry } from '../../../../blueprint';
+import type { BlueprintChildEntry, BlueprintNode } from '../../../../blueprint';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 
 /** Static selection IDs belong to the analyzed child edge. */
@@ -6,13 +6,17 @@ import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 /**
  * Return one stable active-ID list for an ungated child edge.
  * @param entry - Analyzed child edge whose declarations are all active
+ * @param owner - Immutable parent host that declared this entry
  * @returns Frozen declaration IDs, identical on every call for the same edge
  */
-export const staticIds = (entry: BlueprintChildEntry): readonly number[] => {
+export const staticIds = (
+  entry: BlueprintChildEntry,
+  owner: BlueprintNode,
+): readonly number[] => {
   const record = getHostDerived<
     'staticIds',
     Map<BlueprintChildEntry, readonly number[]>
-  >(entry.node);
+  >(owner);
   const entries = (record.staticIds ??= new Map());
   let ids = entries.get(entry);
   if (!ids) {

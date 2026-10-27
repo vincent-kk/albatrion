@@ -18,20 +18,61 @@ import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 
+it('shares one edge memo Map per declaring host across 64 static siblings', () => {
+  const analysis = blueprint({
+    type: 'object',
+    properties: Object.fromEntries(
+      Array.from({ length: 64 }, (_, index) => [
+        `field_${index}`,
+        { type: 'string' },
+      ]),
+    ),
+  });
+  for (const entry of analysis.root.childEntries) {
+    staticIds(entry, analysis.root);
+    readAdmittedEdgeSchema(entry, entry.node, undefined, analysis.root);
+  }
+  const record = getHostDerived(analysis.root);
+  expect(record.staticIds).toBeInstanceOf(Map);
+  expect(record.admittedEdgeSchemas).toBeInstanceOf(Map);
+  if (
+    !(record.staticIds instanceof Map) ||
+    !(record.admittedEdgeSchemas instanceof Map)
+  )
+    throw new Error('Expected the declaring host edge maps');
+  expect(record.staticIds.size).toBe(64);
+  expect(record.admittedEdgeSchemas.size).toBe(64);
+  for (const entry of analysis.root.childEntries) {
+    expect(record.staticIds.get(entry)).toBe(staticIds(entry, analysis.root));
+    expect(record.admittedEdgeSchemas.get(entry)).toBe(
+      readAdmittedEdgeSchema(entry, entry.node, undefined, analysis.root),
+    );
+    expect(getHostDerived(entry.node).staticIds).toBeUndefined();
+    expect(getHostDerived(entry.node).admittedEdgeSchemas).toBeUndefined();
+  }
+});
+
 it('retains distinct edge memo results when two entries refer to the same node', () => {
   const analysis = blueprint({ type: 'array', items: { type: 'string' } });
   const first = getItemEntries(analysis.root, 0)[0];
   const second = getItemEntries(analysis.root, 1)[0];
   expect(first.node).toBe(second.node);
-  const ids = staticIds(first);
-  expect(staticIds(second)).not.toBe(ids);
-  expect(staticIds(first)).toBe(ids);
-  const admitted = readAdmittedEdgeSchema(first, first.node, undefined);
-  expect(readAdmittedEdgeSchema(second, second.node, undefined)).not.toBe(
-    admitted,
+  const ids = staticIds(first, analysis.root);
+  expect(staticIds(second, analysis.root)).not.toBe(ids);
+  expect(staticIds(first, analysis.root)).toBe(ids);
+  const admitted = readAdmittedEdgeSchema(
+    first,
+    first.node,
+    undefined,
+    analysis.root,
   );
-  expect(readAdmittedEdgeSchema(first, first.node, undefined)).toBe(admitted);
-  const record = getHostDerived(first.node);
+  expect(
+    readAdmittedEdgeSchema(second, second.node, undefined, analysis.root),
+  ).not.toBe(admitted);
+  expect(
+    readAdmittedEdgeSchema(first, first.node, undefined, analysis.root),
+  ).toBe(admitted);
+  const record = getHostDerived(analysis.root);
   expect(record.staticIds).toBeInstanceOf(Map);
   expect(record.admittedEdgeSchemas).toBeInstanceOf(Map);
 });
