@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Inactive-value publication preserves the existing wildcard-query exclusion: a literal `*` segment is tested by navigation's wildcard interpretation, so another live match can hide that retained value. Only wildcard-bearing graphs perform this compatibility work. A departing wildcard scope retains Boolean query results against its previous committed children; it retains no serialized values or latent-store entries. This narrow departure-time exception preserves an unread detached host after external matches later leave. Ordinary candidates allocate no proof fields, traverse no additional source graph, and retain exit serialization and latent bookkeeping at zero. The wildcard exception's calls and bytes are reported separately.
+
 - B4-1의 튜플 재생성·미선언 꼬리 이동에서 일회 변환한 잠복 소스와 보유 슬롯은 공존한다. 정확한 슬롯 소스가 우선하며 없으면 잠복 소스를 읽고, 비활성 값은 두 표현의 문서 순서·점유 경로 제외·동결 참조를 유지한다. 잠복 소스가 실제로 있을 때만 해당 커밋 메모를 갱신한다. 통째 쓰기·load/reset·진짜 삭제는 두 표현을 함께 정리하고, 재진입 또는 슬롯 나감이 소유한 동일 종류의 오래된 잠복 항목을 제거한다. 변환된 옛 참조는 이동한 약한 쓰기 주소로 쓰되 고정 읽기를 유지한다. 일반 retained-instance 저장과 나감의 잠복 포착 0은 유지하며 B4-2에서 배열 변환을 직접 이전으로 교체한다.
 
 - Array exit clearing preserves the baseline's narrower keep exception: an array without a candidate ownership scope removes every descendant source, including explicit keep descendants, and re-enters at length zero. Within candidate ownership, only previously inactive keep sources survive; active array descendants are not captured by clearing. Object hosts retain the existing explicit keep exception. This pre-existing inconsistency remains an owner decision, and on/off/verify comparisons cover all three cases.
@@ -339,6 +341,7 @@
 ### settle-slot-shadow — 두 저장 경로의 관측 동등
 
 - verify는 매 커밋의 value·inactiveValues·떼어진 읽기·사건·payload·revision·참조 수명을 대조한다. 복제 원본·비움/보존·overlay·배열 이동의 차이를 검출하고 차이 0만 통과로 센다. 정상 on 경로에 그림자 비용을 넣지 않는다.
+- The independent verify replay evaluates user guards and context predicates on both trees. Stateful callbacks therefore run twice in verify only; the shipping on path evaluates them once. Tests that count internal calls, inject one-shot mutations, or demonstrate this stateful-callback limitation pin the shipping mode and restore it afterward; public-behavior tests retain verification.
 
 ### settle-b2-p2-wheel-static-cost — 바퀴와 정적 준비 비용
 
