@@ -11,6 +11,8 @@ import { captureProjectionBaseline } from '../dependencies/captureProjectionBase
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
+import { cloneFromSlot } from '../slots/cloneFromSlot';
+import { enterSlotClone } from '../slots/enterSlotClone';
 import { isSameChildList } from '../structure/isSameChildList';
 import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
@@ -102,7 +104,16 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
           ]);
     const pending =
       key === undefined ? undefined : context.pendingExits.get(key);
-    const child = priorChild ?? pending ?? createChildNode(node, entry);
+    const slotSource =
+      !priorChild && !pending && node.runtime.slots !== 'off'
+        ? node.inactiveSlots?.get(entry)
+        : undefined;
+    const child =
+      priorChild ??
+      pending ??
+      (slotSource
+        ? cloneFromSlot(node, entry, slotSource, context)
+        : createChildNode(node, entry));
     context.perished.delete(child);
     if (key !== undefined && context.pendingExits.delete(key)) {
       const path = node.path + '/' + escapeSegment(entry.name);
@@ -117,6 +128,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       context.entered.add(child);
       indexEnteredLatentKey(context, child);
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
+      else if (slotSource) enterSlotClone(node, child, entry.name, context);
       else enterFieldNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
