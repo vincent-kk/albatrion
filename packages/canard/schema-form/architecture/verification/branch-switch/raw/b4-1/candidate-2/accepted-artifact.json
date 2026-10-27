@@ -1,0 +1,16 @@
+{
+  "acceptedProductCommit": "da0d498744f5882d20d913465eba1778854a1c68",
+  "measuredProductCommit": "0778bd955",
+  "productSourcesAndTestConfigurationIdentical": true,
+  "gitObjectHashes": {
+    "src": "6c678e970bdbecc30a7a674597fe87cb6942a496",
+    "scripts": "745e7257acbc6a83ff869125e72fd03e78bf2dd1",
+    "vite.config.ts": "224d7e91cb1963c5f228642ccb8b06071a3f37c0"
+  },
+  "designatedRebuildExit": 0,
+  "allThreeRuntimeBundleHashesIdentical": true,
+  "publicDeclarationIdentical": true,
+  "fullSuites": "Reused the completed candidate-2 gates: source, test configuration, environment and bundle hashes are identical. Interrupted baseline-restoration checks are excluded.",
+  "originalFixedAdoptionGates": "Still failed enteringHalf and stageNoise; subsequent adoption is an editorial decision with recorded departures.",
+  "history": "Temporary baseline restoration was undone by new git revert commits; history was preserved without rewriting."
+}

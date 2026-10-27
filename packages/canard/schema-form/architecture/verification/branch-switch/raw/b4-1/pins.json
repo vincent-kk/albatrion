@@ -152,6 +152,21 @@
       "on": 1
     },
     {
+      "file": "src/core/engine/settle/__tests__/settle.retained-slot-active-address.test.ts",
+      "off": 0,
+      "on": 2
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.retained-slot-plain-write.test.ts",
+      "off": 0,
+      "on": 2
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.retained-slot-registration-cost.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
       "file": "src/core/engine/settle/__tests__/settle.scalar-latent-scope.test.ts",
       "off": 3,
       "on": 0
