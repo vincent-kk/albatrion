@@ -4,25 +4,24 @@ import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { DeclarationLayer } from '../../../types/controls';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
-let DECLARATION_IDS = new WeakMap<BlueprintNode, readonly number[]>();
-registerEngineDerivedReset(() => {
-  DECLARATION_IDS = new WeakMap<BlueprintNode, readonly number[]>();
-});
 
 /** Return the authored declaration order without a per-occurrence copy. */
 const declarationIds = (node: BlueprintNode): readonly number[] => {
-  let ids = DECLARATION_IDS.get(node);
+  let ids = getHostDerived<'declarationIds', readonly number[]>(
+    node,
+  ).declarationIds;
   if (!ids) {
     const collected: number[] = [];
     for (let index = 0; index < node.declarations.length; index++)
       collected.push(node.declarations[index].id);
     ids = Object.freeze(collected);
-    DECLARATION_IDS.set(node, ids);
+    getHostDerived<'declarationIds', readonly number[]>(node).declarationIds =
+      ids;
   }
   return ids;
 };

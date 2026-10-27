@@ -1,12 +1,8 @@
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 import { getItemSchemaPath } from './getItemSchemaPath';
 
 /** Entries belong to immutable templates and are allocated only for requested slots. */
-let ENTRIES = new WeakMap<BlueprintNode, (readonly BlueprintChildEntry[])[]>();
-registerEngineDerivedReset(() => {
-  ENTRIES = new WeakMap<BlueprintNode, (readonly BlueprintChildEntry[])[]>();
-});
 
 /**
  * Bind every authored fold candidate to an array slot without creating runtime nodes.
@@ -18,10 +14,15 @@ export const getItemEntries = (
   template: BlueprintNode,
   index: number,
 ): readonly BlueprintChildEntry[] => {
-  let entries = ENTRIES.get(template);
+  let entries = getHostDerived<
+    'itemEntries',
+    (readonly BlueprintChildEntry[])[]
+  >(template).itemEntries;
   if (!entries) {
     entries = [];
-    ENTRIES.set(template, entries);
+    getHostDerived<'itemEntries', (readonly BlueprintChildEntry[])[]>(
+      template,
+    ).itemEntries = entries;
   }
   if (index in entries) return entries[index];
   const first = template.prefixItems?.[index] ?? template.item;

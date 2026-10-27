@@ -5,7 +5,6 @@ import type { AnalysisContext } from '../types/analysis';
 import type { BlueprintExpression } from '../types/blueprint';
 import { readSchemaObject } from '../utils/analyze/readSchemaObject';
 import { throwBlueprintError } from '../utils/diagnostics/throwBlueprintError';
-import { CompleteExpressionReads } from '../utils/expressions/CompleteExpressionReads';
 import { EXPRESSION_CONTROL_KEYS } from '../utils/expressions/expressionControlKeys';
 import { createDynamicFunction } from './createDynamicFunction';
 import { getPathManager } from './getPathManager';
@@ -106,17 +105,15 @@ export const compileBlueprintExpressions = (
             key,
             dependencies,
             evaluate,
+            completeReads:
+              context.capabilities.hasDerive &&
+              hasCompleteExpressionReads(source),
             ...(equality ? { equality } : {}),
           };
           if (process.env.NODE_ENV !== 'production') {
             Object.freeze(dependencies);
             Object.freeze(compiled);
           }
-          if (
-            context.capabilities.hasDerive &&
-            hasCompleteExpressionReads(source)
-          )
-            CompleteExpressionReads.add(compiled);
           expressions.push(compiled);
         }
       }

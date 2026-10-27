@@ -3,7 +3,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import * as directSelection from '../../utils/compute/childSelection/getDirectChildSelectionPlan';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
+import { observeHostSlotWrites } from '../../__tests__/fixtures/observeHostSlotWrites';
 import * as gateSelection from '../../utils/compute/childSelection/getGateSelectionTable';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as staticLoader from '../utils/staticFirst/loadStaticFirstTree';
@@ -18,12 +19,12 @@ it('reaches the static loader without preparing a branchless blueprint', () => {
   });
   const loading = vi.spyOn(staticLoader, 'loadStaticFirstTree');
   const tables = vi.spyOn(gateSelection, 'getGateSelectionTable');
-  const builds = vi.spyOn(directSelection.DIRECT_CHILD_SELECTION_PLANS, 'set');
+  const builds = observeHostSlotWrites('directChildSelectionPlan');
   loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(loading).toHaveBeenCalledOnce();
   expect(tables).not.toHaveBeenCalled();
   expect(builds).not.toHaveBeenCalled();
-  expect(directSelection.DIRECT_CHILD_SELECTION_PLANS.has(blueprint.root)).toBe(
-    false,
-  );
+  expect(
+    getHostDerived(blueprint.root).directChildSelectionPlan !== undefined,
+  ).toBe(false);
 });

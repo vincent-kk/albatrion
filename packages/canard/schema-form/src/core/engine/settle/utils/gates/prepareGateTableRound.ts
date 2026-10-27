@@ -1,9 +1,9 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
-import { DIRECT_CHILD_SELECTION_PLANS } from '../compute/childSelection/getDirectChildSelectionPlan';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
 
@@ -23,7 +23,7 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   if (
     engineModes.gateSelection === 'off' ||
     (context.kind === 'load' &&
-      !DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)) ||
+      !getHostDerived(node.blueprintNode).directChildSelectionPlan) ||
     !context.hasGates ||
     node.behavior.type !== 'object'
   )

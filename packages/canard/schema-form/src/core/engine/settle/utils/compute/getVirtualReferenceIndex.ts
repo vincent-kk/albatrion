@@ -1,13 +1,9 @@
 import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import type { VirtualReferenceIndex } from '../../types/settlement';
 
 /** Reverse field references live for the lifetime of one analyzed blueprint. */
-let REFERENCES = new WeakMap<Blueprint, VirtualReferenceIndex | null>();
-registerEngineDerivedReset(() => {
-  REFERENCES = new WeakMap<Blueprint, VirtualReferenceIndex | null>();
-});
 
 /**
  * Resolve the reverse index once per settlement and cache it per blueprint.
@@ -17,11 +13,16 @@ registerEngineDerivedReset(() => {
 export const getVirtualReferenceIndex = (
   blueprint: Blueprint,
 ): VirtualReferenceIndex | null => {
-  let index = REFERENCES.get(blueprint);
+  let index = getBlueprintDerived<
+    'virtualReferenceIndex',
+    VirtualReferenceIndex | null
+  >(blueprint).virtualReferenceIndex;
   if (index !== undefined) return index;
   // Static first-load eligibility already proves the blueprint has no virtual node.
   if (StaticFirstLoadCapability.has(blueprint)) {
-    REFERENCES.set(blueprint, null);
+    getBlueprintDerived<'virtualReferenceIndex', VirtualReferenceIndex | null>(
+      blueprint,
+    ).virtualReferenceIndex = null;
     return null;
   }
   let hosts: Map<BlueprintNode, Map<string, string[]>> | undefined;
@@ -42,6 +43,8 @@ export const getVirtualReferenceIndex = (
     }
   }
   index = hosts ?? null;
-  REFERENCES.set(blueprint, index);
+  getBlueprintDerived<'virtualReferenceIndex', VirtualReferenceIndex | null>(
+    blueprint,
+  ).virtualReferenceIndex = index;
   return index;
 };

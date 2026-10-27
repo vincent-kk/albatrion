@@ -5,7 +5,7 @@ import type {
   BlueprintOptions,
   EffectiveSchema,
 } from '../../../../blueprint';
-import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { staticIds } from './staticIds';
 
 /** Runtime merge and conflict verdict of one edge whose declarations are all admitted. */
@@ -19,16 +19,6 @@ interface AdmittedEdgeSchema {
 }
 
 /** Merge results belong to the analyzed child edge; live records are never retained. */
-let ADMITTED_EDGE_SCHEMAS = new WeakMap<
-  BlueprintChildEntry,
-  AdmittedEdgeSchema
->();
-registerEngineDerivedReset(() => {
-  ADMITTED_EDGE_SCHEMAS = new WeakMap<
-    BlueprintChildEntry,
-    AdmittedEdgeSchema
-  >();
-});
 
 /**
  * Read the constant schema and conflict of a child edge whose every declaration is admitted.
@@ -45,7 +35,12 @@ export const readAdmittedEdgeSchema = (
   isAtomic: BlueprintOptions['isAtomic'],
 ): AdmittedEdgeSchema | undefined => {
   if (node !== entry.node) return undefined;
-  const cached = ADMITTED_EDGE_SCHEMAS.get(entry);
+  const record = getHostDerived<
+    'admittedEdgeSchemas',
+    Map<BlueprintChildEntry, AdmittedEdgeSchema>
+  >(entry.node);
+  const entries = (record.admittedEdgeSchemas ??= new Map());
+  const cached = entries.get(entry);
   if (cached && cached.isAtomic === isAtomic) return cached;
   const schema = mergeEffectiveSchema(entry.node, staticIds(entry), {
     mode: 'runtime',
@@ -56,6 +51,6 @@ export const readAdmittedEdgeSchema = (
     conflict: schema.typeConflict,
     isAtomic,
   };
-  ADMITTED_EDGE_SCHEMAS.set(entry, admitted);
+  entries.set(entry, admitted);
   return admitted;
 };

@@ -1,11 +1,7 @@
 import type { ControlKey } from '../../types/controls';
-import { registerEngineDerivedReset } from '../cache/engineModes';
+import { getBlueprintDerived } from '../cache/derivedRecords';
 
 /** Authored control expression positions indexed once per immutable analysis. */
-let CONTROL_EXPRESSIONS = new WeakMap<object, ReadonlyMap<string, number>>();
-registerEngineDerivedReset(() => {
-  CONTROL_EXPRESSIONS = new WeakMap<object, ReadonlyMap<string, number>>();
-});
 
 /**
  * Find one compiled control expression without scanning the analysis each time.
@@ -28,7 +24,10 @@ export const getControlExpression = <
   schemaPath: string,
   key: ControlKey,
 ): Expression | undefined => {
-  let expressions = CONTROL_EXPRESSIONS.get(blueprint);
+  let expressions = getBlueprintDerived<
+    'controlExpressions',
+    ReadonlyMap<string, number>
+  >(blueprint).controlExpressions;
   if (!expressions) {
     expressions = new Map(
       blueprint.expressions.map((expression, index) => [
@@ -40,7 +39,9 @@ export const getControlExpression = <
         index,
       ]),
     );
-    CONTROL_EXPRESSIONS.set(blueprint, expressions);
+    getBlueprintDerived<'controlExpressions', ReadonlyMap<string, number>>(
+      blueprint,
+    ).controlExpressions = expressions;
   }
   const index = expressions.get(
     JSON.stringify([declarationId, schemaPath, key]),

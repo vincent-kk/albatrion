@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { DEFAULT_NO_ACTIVE } from '../effectiveSchema';
+import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { mergeSchemaContributions } from '../effectiveSchema';
 import { selectEffectiveDeclarations } from '../effectiveSchema';
 import type {
@@ -146,7 +146,9 @@ export const buildNodes = (
             schema.pattern === undefined &&
             !isArray(schema.type)))
       )
-        DEFAULT_NO_ACTIVE.set(node, effective);
+        getHostDerived<'defaultEffectiveSchema', typeof effective>(
+          node,
+        ).defaultEffectiveSchema = effective;
     }
     nodes.push(node);
   }

@@ -4,24 +4,12 @@ import { escapeSegment } from '@winglet/json/pointer';
 import type { BlueprintChildEntry } from '../../../../../blueprint';
 import { HostStaticPartition } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
-import { registerEngineDerivedReset } from '../../../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../../../utils/cache/derivedRecords';
 import type { SettlementContext } from '../../../../types/settlement';
 import { staticShape } from '../staticShape';
+import type { StaticShapeMemo } from '../staticShape';
 
 /** Static schemas indexed once per host shape, shared by prime and both selectors. */
-let SHAPES = new WeakMap<
-  object,
-  Map<BlueprintChildEntry, NonNullable<ReturnType<typeof staticShape>>[number]>
->();
-registerEngineDerivedReset(() => {
-  SHAPES = new WeakMap<
-    object,
-    Map<
-      BlueprintChildEntry,
-      NonNullable<ReturnType<typeof staticShape>>[number]
-    >
-  >();
-});
 
 /**
  * Prepare one selection call to reuse only its fixed ungated entries.
@@ -59,10 +47,13 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
     partition.staticEntries,
   );
   if (!shape) return undefined;
-  let entries = SHAPES.get(shape);
+  const memo = getHostDerived<'staticShape', StaticShapeMemo>(
+    node.blueprintNode,
+  ).staticShape!;
+  let entries = memo.byEntry;
   if (!entries) {
     entries = new Map(shape.map((selected) => [selected.entry, selected]));
-    SHAPES.set(shape, entries);
+    memo.byEntry = entries;
   }
   const registered = context.presenceRegistrations;
   const ownNames = Object.getPrototypeOf(prior) === null;

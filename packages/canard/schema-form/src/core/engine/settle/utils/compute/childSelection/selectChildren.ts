@@ -5,6 +5,7 @@ import { HostStaticPartition, getItemEntries } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
 import { getChildDistribution } from '../../input/getChildDistribution';
@@ -17,10 +18,7 @@ import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { isSameChildList } from '../../structure/isSameChildList';
 import { canReuseArrayChildren } from './canReuseArrayChildren';
 import { selectTableChildren } from './gateSelection/selectTableChildren';
-import {
-  DIRECT_CHILD_SELECTION_PLANS,
-  getDirectChildSelectionPlan,
-} from './getDirectChildSelectionPlan';
+import { getDirectChildSelectionPlan } from './getDirectChildSelectionPlan';
 import { reuseArrayChildren } from './reuseArrayChildren';
 import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
@@ -178,7 +176,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   let changed = false;
   const cached =
     context.hasGates && node.behavior.type === 'object'
-      ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)
+      ? getHostDerived<
+          'directChildSelectionPlan',
+          ReturnType<typeof getDirectChildSelectionPlan>
+        >(node.blueprintNode).directChildSelectionPlan
       : null;
   const direct =
     cached === undefined

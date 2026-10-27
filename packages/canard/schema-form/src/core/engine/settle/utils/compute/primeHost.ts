@@ -4,6 +4,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { captureProjectionBaseline } from '../dependencies/captureProjectionBaseline';
@@ -11,10 +12,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { isSameChildList } from '../structure/isSameChildList';
-import {
-  DIRECT_CHILD_SELECTION_PLANS,
-  getDirectChildSelectionPlan,
-} from './childSelection/getDirectChildSelectionPlan';
+import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
 import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
@@ -40,7 +38,10 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   Object.setPrototypeOf(baseline, null);
   const cached =
     node.behavior.type === 'object'
-      ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)
+      ? getHostDerived<
+          'directChildSelectionPlan',
+          ReturnType<typeof getDirectChildSelectionPlan>
+        >(node.blueprintNode).directChildSelectionPlan
       : null;
   const direct =
     cached === undefined

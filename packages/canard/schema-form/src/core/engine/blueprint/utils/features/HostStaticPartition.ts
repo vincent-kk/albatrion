@@ -1,4 +1,4 @@
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 
 /** Authored static membership; contains no occurrence or gate verdict. */
@@ -14,12 +14,6 @@ interface Partition {
 /** Lazy blueprint-owned partition consumed by settlement's fixed baseline. */
 export class HostStaticPartition {
   /** Immutable host identities own the lifetime of their derived membership. */
-  private static partitions = new WeakMap<BlueprintNode, Partition>();
-  static {
-    registerEngineDerivedReset(() => {
-      this.partitions = new WeakMap<BlueprintNode, Partition>();
-    });
-  }
 
   /**
    * Separate unconditionally declared entries without reading any live shape.
@@ -27,7 +21,9 @@ export class HostStaticPartition {
    * @returns Stable membership, empty for virtual or duplicate-name candidates
    */
   static get(host: BlueprintNode): Partition {
-    const cached = this.partitions.get(host);
+    const cached = getHostDerived<'staticPartition', Partition>(
+      host,
+    ).staticPartition;
     if (cached) return cached;
     const names = new Map<string, number>();
     let ambiguous = false;
@@ -61,7 +57,8 @@ export class HostStaticPartition {
         host.declarations.some((declaration) => declaration.gates.length > 0),
       staticEntries,
     };
-    this.partitions.set(host, partition);
+    getHostDerived<'staticPartition', Partition>(host).staticPartition =
+      partition;
     return partition;
   }
 }

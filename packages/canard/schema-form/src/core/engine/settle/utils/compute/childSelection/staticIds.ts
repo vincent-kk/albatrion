@@ -1,11 +1,7 @@
 import type { BlueprintChildEntry } from '../../../../blueprint';
-import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 
 /** Static selection IDs belong to the analyzed child edge. */
-let STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
-registerEngineDerivedReset(() => {
-  STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
-});
 
 /**
  * Return one stable active-ID list for an ungated child edge.
@@ -13,13 +9,18 @@ registerEngineDerivedReset(() => {
  * @returns Frozen declaration IDs, identical on every call for the same edge
  */
 export const staticIds = (entry: BlueprintChildEntry): readonly number[] => {
-  let ids = STATIC_IDS.get(entry);
+  const record = getHostDerived<
+    'staticIds',
+    Map<BlueprintChildEntry, readonly number[]>
+  >(entry.node);
+  const entries = (record.staticIds ??= new Map());
+  let ids = entries.get(entry);
   if (!ids) {
     const collected: number[] = [];
     for (let index = 0; index < entry.declarations.length; index++)
       collected.push(entry.declarations[index].id);
     ids = Object.freeze(collected);
-    STATIC_IDS.set(entry, ids);
+    entries.set(entry, ids);
   }
   return ids;
 };

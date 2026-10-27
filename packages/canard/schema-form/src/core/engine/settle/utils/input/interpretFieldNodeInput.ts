@@ -4,21 +4,11 @@ import { BEHAVIORS } from '../../../behaviors';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { isPlain } from './isPlain';
 import { staticSpec } from './staticSpec';
 
 /** First declared child bindings are shared by all occurrences of a template. */
-let OBJECT_CHILDREN = new WeakMap<
-  BlueprintNode,
-  ReadonlyMap<string, BlueprintNode>
->();
-registerEngineDerivedReset(() => {
-  OBJECT_CHILDREN = new WeakMap<
-    BlueprintNode,
-    ReadonlyMap<string, BlueprintNode>
-  >();
-});
 
 /**
  * Interpret an input subtree without applying any settlement semantics.
@@ -64,12 +54,17 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
       return copy ?? value;
     }
     if (template.kind === 'object' && isPlain(value)) {
-      let children = OBJECT_CHILDREN.get(template);
+      let children = getHostDerived<
+        'objectChildren',
+        ReadonlyMap<string, BlueprintNode>
+      >(template).objectChildren;
       if (!children) {
         const bindings = new Map<string, BlueprintNode>();
         for (const entry of template.childEntries)
           if (!bindings.has(entry.name)) bindings.set(entry.name, entry.node);
-        OBJECT_CHILDREN.set(template, (children = bindings));
+        getHostDerived<'objectChildren', ReadonlyMap<string, BlueprintNode>>(
+          template,
+        ).objectChildren = children = bindings;
       }
       let copy: Record<string, unknown> | undefined;
       for (const name of Object.keys(value)) {

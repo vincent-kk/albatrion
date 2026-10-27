@@ -1,6 +1,5 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import { StaticFirstLoadCapability } from './StaticFirstLoadCapability';
 import { buildNodes } from './buildNodes';
 import { collectBlueprintWarnings } from './collectBlueprintWarnings';
 import { compileBlueprintExpressions } from './compileBlueprintExpressions';
@@ -114,6 +113,14 @@ export const blueprint = (
       Object.freeze(fragment);
     }
   const result: Blueprint = {
+    staticFirstLoadEligible:
+      context.staticFirstLoad &&
+      context.capabilities.branchless &&
+      !context.capabilities.hasExpressions &&
+      !context.capabilities.hasDerive &&
+      !context.capabilities.hasWatch &&
+      !context.capabilities.hasState &&
+      !context.capabilities.hasDependencies,
     capabilities: context.capabilities,
     isAtomic: options.isAtomic,
     isTerminal: options.isTerminal,
@@ -133,17 +140,6 @@ export const blueprint = (
       Object.freeze(expressions);
     Object.freeze(result);
   }
-  const capabilities = result.capabilities;
-  StaticFirstLoadCapability.set(
-    result,
-    context.staticFirstLoad &&
-      capabilities.branchless &&
-      !capabilities.hasExpressions &&
-      !capabilities.hasDerive &&
-      !capabilities.hasWatch &&
-      !capabilities.hasState &&
-      !capabilities.hasDependencies,
-  );
   if (typeof schema === 'object' && options.cache) {
     const entry: BlueprintCacheEntry = {
       blueprint: result,

@@ -7,32 +7,22 @@ import type {
   BlueprintOptions,
   EffectiveSchema,
 } from '../../../../blueprint';
-import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { staticIds } from './staticIds';
 
 /** Ungated effective schemas select their immutable static contributions. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
-/** Immutable, ungated object shapes shared by occurrences of one blueprint host. */
-let STATIC_SHAPES = new WeakMap<
-  BlueprintNode,
-  | readonly {
-      entry: BlueprintChildEntry;
-      ids: readonly number[];
-      schema: EffectiveSchema;
-    }[]
-  | null
->();
-registerEngineDerivedReset(() => {
-  STATIC_SHAPES = new WeakMap<
-    BlueprintNode,
-    | readonly {
-        entry: BlueprintChildEntry;
-        ids: readonly number[];
-        schema: EffectiveSchema;
-      }[]
-    | null
-  >();
-});
+/** Immutable selected static edge and its fixed schema. */
+export interface StaticShapeEntry {
+  entry: BlueprintChildEntry;
+  ids: readonly number[];
+  schema: EffectiveSchema;
+}
+/** The entry list and its derivative are populated independently. */
+export interface StaticShapeMemo {
+  entries?: readonly StaticShapeEntry[] | null;
+  byEntry?: Map<BlueprintChildEntry, StaticShapeEntry>;
+}
 
 /**
  * Memoize the fixed static entries in the structure's property order.
@@ -46,8 +36,11 @@ export const staticShape = (
   host: BlueprintNode,
   isAtomic: BlueprintOptions['isAtomic'],
   candidates: readonly BlueprintChildEntry[] = host.childEntries,
-) => {
-  if (STATIC_SHAPES.has(host)) return STATIC_SHAPES.get(host);
+): readonly StaticShapeEntry[] | null => {
+  const memo = (getHostDerived<'staticShape', StaticShapeMemo>(
+    host,
+  ).staticShape ??= {});
+  if (memo.entries !== undefined) return memo.entries;
   const selected: Record<
     string,
     {
@@ -85,6 +78,6 @@ export const staticShape = (
     selected[entry.name] = { entry, ids: staticIds(entry), schema };
   }
   const shape = Object.values(selected);
-  STATIC_SHAPES.set(host, shape);
+  memo.entries = shape;
   return shape;
 };

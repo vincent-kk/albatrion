@@ -4,7 +4,7 @@ import type {
   PropertyDeclaration,
 } from '../../../blueprint';
 import type { TreeMemoStores } from '../../../types/treeMemoStores';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 
 interface GateBudgetIndex {
   /** Authored decisions reached by each evaluated gate. */
@@ -14,14 +14,12 @@ interface GateBudgetIndex {
 }
 
 /** One finite decision index per immutable analysis and one ceiling per live host. */
-let INDICES = new WeakMap<Blueprint, GateBudgetIndex>();
-registerEngineDerivedReset(() => {
-  INDICES = new WeakMap<Blueprint, GateBudgetIndex>();
-});
 
 /** Map evaluated gates to their owning fragments or node-gate entries. */
 const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
-  const cached = INDICES.get(blueprint);
+  const cached = getBlueprintDerived<'gateBudgetIndex', GateBudgetIndex>(
+    blueprint,
+  ).gateBudgetIndex;
   if (cached) return cached;
   const decisionsByGate = new Map<BlueprintGate, Set<string>>();
   const decisions = new Set<string>();
@@ -58,7 +56,9 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
       for (const declaration of entry.declarations) collect(declaration);
   }
   const index = { decisionsByGate, transitionCap: decisions.size + 1 };
-  INDICES.set(blueprint, index);
+  getBlueprintDerived<'gateBudgetIndex', GateBudgetIndex>(
+    blueprint,
+  ).gateBudgetIndex = index;
   return index;
 };
 

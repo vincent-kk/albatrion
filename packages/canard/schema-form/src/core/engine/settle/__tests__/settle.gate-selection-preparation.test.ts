@@ -3,10 +3,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { getHostDerived } from '../../utils/cache/derivedRecords';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as directSelection from '../utils/compute/childSelection/getDirectChildSelectionPlan';
 import * as gateSelection from '../utils/compute/childSelection/getGateSelectionTable';
 import * as writer from '../utils/write/writeFieldNode';
+import { observeHostSlotWrites } from './fixtures/observeHostSlotWrites';
 
 /** Mirror the fixed-width benchmark's three payload fields per oneOf branch. */
 const createBranchTree = (count: number) =>
@@ -70,10 +72,7 @@ describe('mount-time gate selection preparation', () => {
 
   it('N=80 builds one plan at mount and zero at the first non-load write', () => {
     const { root, blueprint } = createBranchTree(80);
-    const builds = vi.spyOn(
-      directSelection.DIRECT_CHILD_SELECTION_PLANS,
-      'set',
-    );
+    const builds = observeHostSlotWrites('directChildSelectionPlan');
     loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
     const mountBuilds = builds.mock.calls.filter(
       ([host]) => host === blueprint.root,
@@ -92,7 +91,7 @@ describe('mount-time gate selection preparation', () => {
   it('prepares once before the generic load writer', () => {
     const { root, blueprint } = createBranchTree(5);
     const tables = vi.spyOn(gateSelection, 'getGateSelectionTable');
-    const builds = vi.spyOn(WeakMap.prototype, 'set');
+    const builds = observeHostSlotWrites('gateSelectionTable');
     const write = writer.writeFieldNode;
     const loading = vi
       .spyOn(writer, 'writeFieldNode')
@@ -102,7 +101,7 @@ describe('mount-time gate selection preparation', () => {
           blueprint,
         );
         expect(
-          directSelection.DIRECT_CHILD_SELECTION_PLANS.has(blueprint.root),
+          getHostDerived(blueprint.root).directChildSelectionPlan !== undefined,
         ).toBe(true);
         return write(node, value, mode, option);
       });
@@ -133,10 +132,7 @@ describe('mount-time gate selection preparation', () => {
     expect(blueprint.capabilities.branchless).toBe(true);
     expect(blueprint.capabilities.hasExpressions).toBe(true);
     const tables = vi.spyOn(gateSelection, 'getGateSelectionTable');
-    const builds = vi.spyOn(
-      directSelection.DIRECT_CHILD_SELECTION_PLANS,
-      'set',
-    );
+    const builds = observeHostSlotWrites('directChildSelectionPlan');
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(tables).not.toHaveBeenCalled();
     expect(builds).not.toHaveBeenCalled();
@@ -154,10 +150,7 @@ describe('mount-time gate selection preparation', () => {
     expect(blueprint.capabilities.branchless).toBe(false);
     expect(blueprint.capabilities.hasExpressions).toBe(false);
     const tables = vi.spyOn(gateSelection, 'getGateSelectionTable');
-    const builds = vi.spyOn(
-      directSelection.DIRECT_CHILD_SELECTION_PLANS,
-      'set',
-    );
+    const builds = observeHostSlotWrites('directChildSelectionPlan');
     loadFieldNodeAtMount(root, { kind: 'a' }, WriteOption.Overwrite);
     expect(tables).not.toHaveBeenCalled();
     expect(builds).not.toHaveBeenCalled();
@@ -172,12 +165,9 @@ describe('mount-time gate selection preparation', () => {
       WriteOption.Overwrite,
     );
     expect(
-      directSelection.DIRECT_CHILD_SELECTION_PLANS.has(blueprint.root),
+      getHostDerived(blueprint.root).directChildSelectionPlan !== undefined,
     ).toBe(false);
-    const builds = vi.spyOn(
-      directSelection.DIRECT_CHILD_SELECTION_PLANS,
-      'set',
-    );
+    const builds = observeHostSlotWrites('directChildSelectionPlan');
     writer.writeFieldNode(
       root.structure!.kind,
       'kind_4',
