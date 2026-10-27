@@ -192,6 +192,7 @@
 
 ## Structure
 
+- Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
 - `types/`: 정착 문맥과 경로 저장소의 계약 형.
 - `utils/declarations/`: 선택 선언과 제어 층의 해석.
 - `utils/latentStore/`: 잠재 저장의 기본 단위: 경로·종류별 원본과 저장 메타데이터의 기본 단위를 제공한다(분배와 복원은 `latent`).
