@@ -75,12 +75,6 @@ interface FieldNodeRootRuntimeState {
   latentRaw: PathKeyedMap<unknown>;
   /** Whether latent sources changed since the last inactive-value publication. */
   latentRawDirty?: boolean;
-  /** Existing pair keys changed since the last inactive generation publication. */
-  inactiveValueChanges?: Set<string>;
-  /** Whole-source or address changes requiring the full inactive oracle. */
-  inactiveValuesRebuild?: boolean;
-  /** Settlement-owned lazy generations; record never imports their implementation. */
-  inactiveValuesState?: unknown;
   /** Latent occurrence shape and document position, keyed like latentRaw. */
   latentRawMetadata?: PathKeyedMap<LatentRawMetadata>;
   /** Current paths whose raw values miss their effective types. */

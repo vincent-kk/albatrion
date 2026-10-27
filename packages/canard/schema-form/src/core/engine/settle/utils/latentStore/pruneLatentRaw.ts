@@ -25,8 +25,7 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
     const index = getLatentPathIndex(context);
     const paths = childPaths ?? [path];
     for (const childPath of paths)
-      for (const key of [...(index.get(childPath) ?? [])]) {
-        if (runtime.latentRaw.has(key)) runtime.inactiveValuesRebuild = true;
+      for (const key of [...(index.get(childPath) ?? [])])
         setLatentRaw(
           runtime,
           context.inTransition ? context.latentAutomaticLog : undefined,
@@ -37,7 +36,6 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
           undefined,
           context,
         );
-      }
     return;
   }
   for (const key of runtime.latentRaw.keys()) {
@@ -51,9 +49,7 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
               identity[0].startsWith(childPath + '/'),
           )
         : !path || identity[0] === path || identity[0].startsWith(path + '/')
-    ) {
-      runtime.inactiveValuesRebuild = true;
+    )
       setLatentRaw(runtime, undefined, key, false, undefined);
-    }
   }
 };

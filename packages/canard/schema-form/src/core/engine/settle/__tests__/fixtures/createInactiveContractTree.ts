@@ -5,7 +5,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
  * @param count - Number of mutually exclusive authored branches
  * @returns Public root whose first branch is live and other payloads are latent
  */
-export const createInactiveLazyTree = (count = 8) => {
+export const createInactiveContractTree = (count = 8) => {
   const tree = makeFieldNodeTree({
     type: 'object',
     properties: { kind: { type: 'string' } },

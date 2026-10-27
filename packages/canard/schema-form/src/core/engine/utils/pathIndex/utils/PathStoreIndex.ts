@@ -88,11 +88,6 @@ export class PathStoreIndex {
     this.batchDepth = 0;
   }
 
-  /** Query occurrence keys exactly at this already indexed path. */
-  at(path: string): ReadonlySet<string> {
-    return this.prefixes.get(path)?.exact ?? EMPTY_KEYS;
-  }
-
   /** Query subtree keys without visiting unrelated entries. */
   under(path: string): ReadonlySet<string> {
     return this.prefixes.get(path)?.keys ?? EMPTY_KEYS;

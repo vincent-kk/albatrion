@@ -1,5 +1,4 @@
 import type { FieldNodeRecord } from '../../../record';
-import { getInactiveValuesState } from '../inactiveValues/getInactiveValuesState';
 import { EMPTY_VALUES } from './emptyDetachedReads';
 
 /** Read the current or final committed inactive values for one reference. */
@@ -8,6 +7,4 @@ export const readFieldNodeInactiveValues = <Self extends FieldNodeRecord<Self>>(
 ): readonly { path: string; value: unknown }[] =>
   node.detached
     ? (node.runtime.detachedReads?.get(node)?.inactiveValues ?? EMPTY_VALUES)
-    : (getInactiveValuesState(node)?.read(node) ??
-      node.runtime.inactiveValuesMemo.get(node.path) ??
-      EMPTY_VALUES);
+    : (node.runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES);

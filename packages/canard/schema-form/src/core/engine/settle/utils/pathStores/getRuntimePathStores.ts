@@ -1,7 +1,6 @@
 import type { FieldNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { RuntimePathStores } from '../../types/pathStores';
-import { InactiveValuesState } from '../inactiveValues/InactiveValuesState';
 
 /**
  * Read explicitly typed stores, constructing absent optional stores as empty indexes.
@@ -10,21 +9,13 @@ import { InactiveValuesState } from '../inactiveValues/InactiveValuesState';
  */
 export const getRuntimePathStores = <Self>(
   runtime: FieldNodeRuntime<Self>,
-): RuntimePathStores<Self> => {
-  if (runtime.inactiveValuesState instanceof InactiveValuesState)
-    runtime.inactiveValuesState.publishAll();
-  return {
-    latent: runtime.latentRaw,
-    metadata: (runtime.latentRawMetadata ??= new PathKeyedMap('pair')),
-    declarations: (runtime.committedDeclarationIds ??= new PathKeyedMap(
-      'pair',
-    )),
-    rules: (runtime.committedRuleValues ??= new PathKeyedMap('rule')),
-    misfits: runtime.misfitPaths,
-    misfitsMemo: (runtime.misfitsMemo ??= new PathKeyedMap('path')),
-    inactiveMemo: runtime.inactiveValuesMemo,
-    inactiveEntries: (runtime.inactiveValueEntries ??= new PathKeyedMap(
-      'pair',
-    )),
-  };
-};
+): RuntimePathStores<Self> => ({
+  latent: runtime.latentRaw,
+  metadata: (runtime.latentRawMetadata ??= new PathKeyedMap('pair')),
+  declarations: (runtime.committedDeclarationIds ??= new PathKeyedMap('pair')),
+  rules: (runtime.committedRuleValues ??= new PathKeyedMap('rule')),
+  misfits: runtime.misfitPaths,
+  misfitsMemo: (runtime.misfitsMemo ??= new PathKeyedMap('path')),
+  inactiveMemo: runtime.inactiveValuesMemo,
+  inactiveEntries: (runtime.inactiveValueEntries ??= new PathKeyedMap('pair')),
+});

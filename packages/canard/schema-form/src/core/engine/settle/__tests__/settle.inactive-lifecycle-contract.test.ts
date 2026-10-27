@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-it('preserves unread perished snapshots through array rekey and clear fallback', () => {
+it('preserves unread perished snapshots through array rekey and clear', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {

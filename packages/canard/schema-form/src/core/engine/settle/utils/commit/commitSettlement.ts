@@ -240,5 +240,5 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     (context.entered.size > 0 || context.exited.size > 0)
   )
     runtime.latentRawDirty = true;
-  updateInactiveValuesMemo(context.root, context);
+  updateInactiveValuesMemo(context.root);
 };

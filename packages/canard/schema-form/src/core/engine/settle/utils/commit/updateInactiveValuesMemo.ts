@@ -1,58 +1,139 @@
-// Internal modes are runtime-owned; only explicit verify bundles enable the oracle.
+import { isArray } from '@winglet/common-utils/filter';
+
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
+import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
-import { engineModes } from '../../../utils/cache/engineModes';
-import type { SettlementContext } from '../../types/settlement';
-import { InactiveValuesState } from '../inactiveValues/InactiveValuesState';
-import { captureInactiveOracle } from '../inactiveValues/captureInactiveOracle';
-import { getInactiveValuesState } from '../inactiveValues/getInactiveValuesState';
-import { rebuildInactiveValuesMemo } from './rebuildInactiveValuesMemo';
-import { verifyInactiveValuesMemo } from './verifyInactiveValuesMemo';
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
+import { HostLatent } from '../latentStore/HostLatent';
+import { isMisfit } from './isMisfit';
+
+/** Compare two occurrence positions without converting them to path strings. */
+const compareOrder = (
+  left: readonly number[],
+  right: readonly number[],
+): number => {
+  for (let index = 0; index < Math.min(left.length, right.length); index++) {
+    const difference = left[index] - right[index];
+    if (difference) return difference;
+  }
+  return left.length - right.length;
+};
 
 /**
- * Record only the committed latent delta, rebuilding on wholesale changes.
- * @param root - Final live shape and root-owned source stores
- * @param context - Completed entry, exit and load facts
- * @returns Nothing; host arrays remain deferred until their first read
+ * Publish only changed latent subtrees while retaining unchanged item objects.
+ * @param root - Current shape and tree-local latent classification and memo
+ * @returns Nothing; inactiveValuesMemo is updated at this commit boundary
  */
 export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  context?: SettlementContext<Self>,
 ): void => {
   const runtime = root.runtime;
-  let state = getInactiveValuesState(root);
-  if (!runtime.latentRawDirty && (state || runtime.inactiveValuesMemo.has('')))
-    return;
-  const oracle =
-    engineModes.inactiveValues === 'verify'
-      ? captureInactiveOracle(root)
-      : undefined;
-  const rebuild =
-    !state ||
-    runtime.inactiveValuesRebuild ||
-    context?.kind === 'load' ||
-    engineModes.inactiveValues === 'rebuild' ||
-    (runtime.latentRawDirty && !runtime.inactiveValueChanges?.size);
-  if (rebuild) {
-    if (state) {
-      state.publishAll();
-      state.busy = true;
-    }
-    try {
-      runtime.latentRawDirty = true;
-      rebuildInactiveValuesMemo(root);
-      if (state) state.reset();
-      else if (engineModes.inactiveValues !== 'rebuild')
-        runtime.inactiveValuesState = state = new InactiveValuesState(root);
-    } finally {
-      if (state) state.busy = false;
-    }
-  } else {
-    state!.append(context);
-    for (const key of runtime.inactiveValueChanges ?? [])
-      if (!runtime.latentRaw.has(key)) runtime.latentRawMetadata?.delete(key);
-    runtime.latentRawDirty = false;
+  if (!runtime.latentRawDirty && runtime.inactiveValuesMemo.has('')) return;
+  const metadata = runtime.latentRawMetadata;
+  const entries = (runtime.inactiveValueEntries ??= new PathKeyedMap('pair'));
+  const changedPaths: string[] = [];
+  const candidates = new Map<
+    string,
+    { path: string; value: unknown; order: readonly number[] }
+  >();
+  for (const [key, source] of runtime.latentRaw) {
+    const info = metadata?.get(key);
+    if (!info || find(root, info.path)) continue;
+    const template = info.blueprintNode;
+    const value =
+      template.strategy === 'terminal'
+        ? source
+        : source instanceof HostLatent &&
+            source.raw !== undefined &&
+            ((template.kind === 'array' &&
+              template.strategy === 'branch' &&
+              isArray(source.raw)) ||
+              isMisfit(source.raw, template.schemaType, template.nullable))
+          ? source.raw
+          : undefined;
+    if (value !== undefined)
+      candidates.set(key, { path: info.path, value, order: info.order });
   }
-  runtime.inactiveValueChanges?.clear();
-  runtime.inactiveValuesRebuild = false;
-  if (oracle) verifyInactiveValuesMemo(root, oracle);
+  const chosen = new Map<string, string>();
+  for (const [key, candidate] of candidates) {
+    const held = candidates.get(chosen.get(candidate.path) ?? '');
+    if (!held || compareOrder(candidate.order, held.order) < 0)
+      chosen.set(candidate.path, key);
+  }
+  for (const [key, candidate] of candidates)
+    if (chosen.get(candidate.path) !== key) candidates.delete(key);
+  for (const [key, candidate] of candidates) {
+    const previous = entries.get(key);
+    if (
+      previous &&
+      Object.is(previous.value, candidate.value) &&
+      compareOrder(previous.order, candidate.order) === 0
+    )
+      continue;
+    entries.set(key, {
+      value: candidate.value,
+      order: candidate.order,
+      entry:
+        previous && Object.is(previous.value, candidate.value)
+          ? previous.entry
+          : Object.freeze({ path: candidate.path, value: candidate.value }),
+    });
+    changedPaths.push(candidate.path);
+  }
+  for (const [key, previous] of entries)
+    if (!candidates.has(key)) {
+      entries.delete(key);
+      changedPaths.push(previous.entry.path);
+    }
+  if (metadata)
+    for (const key of metadata.keys())
+      if (!runtime.latentRaw.has(key)) metadata.delete(key);
+  runtime.inactiveValueEntries = entries;
+  runtime.latentRawDirty = false;
+  if (changedPaths.length === 0 && runtime.inactiveValuesMemo.has('')) return;
+  const ordered = [...entries.values()].sort(
+    (left, right) =>
+      compareOrder(left.order, right.order) ||
+      (left.entry.path < right.entry.path
+        ? -1
+        : left.entry.path > right.entry.path
+          ? 1
+          : 0),
+  );
+  const affected = new Set<string>(['']);
+  for (const path of changedPaths) {
+    let ancestor = path;
+    while (ancestor) {
+      affected.add(ancestor);
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+    }
+  }
+  const entriesByHost = new Map<string, { path: string; value: unknown }[]>();
+  for (const { entry } of ordered) {
+    let ancestor = entry.path;
+    while (true) {
+      if (affected.has(ancestor)) {
+        const descendants = entriesByHost.get(ancestor) ?? [];
+        descendants.push(entry);
+        entriesByHost.set(ancestor, descendants);
+      }
+      if (!ancestor) break;
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+    }
+  }
+  for (const host of affected) {
+    const next = entriesByHost.get(host) ?? [];
+    const previous = runtime.inactiveValuesMemo.get(host);
+    if (
+      previous &&
+      previous.length === next.length &&
+      previous.every((entry, index) => entry === next[index])
+    )
+      continue;
+    if (next.length) runtime.inactiveValuesMemo.set(host, Object.freeze(next));
+    else if (!host) runtime.inactiveValuesMemo.set('', EMPTY_VALUES);
+    else runtime.inactiveValuesMemo.delete(host);
+  }
 };
