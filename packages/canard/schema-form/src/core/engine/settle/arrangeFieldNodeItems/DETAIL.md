@@ -2,6 +2,13 @@
 
 ## Requirements
 
+- A form whose root blueprint has `containsLiteralStar` uses the existing latent array path throughout, including packed snapshots, descendant-key folding, structural rekey, and detached writes. Slot transfers and source conversion apply only to slot-eligible forms; no separate packed-star metadata is introduced.
+
+- B4-1은 같은 템플릿의 슬롯을 직접 이전한다. 후보가 있는 살아남는 배열 자리가 다른 튜플 청사진 또는 미선언 꼬리로 이동하면, 그 배열 범위의 보유 후보·overlay를 한 번 잠복 표현으로 직렬화하고 살아 있는 소유자의 슬롯을 비운 뒤 기존 구조 재생·재키를 적용한다. 모든 후보 종류와 중첩 배열의 원본 채널·extras·문서 순서·옛 참조의 쓰기 주소를 보존한다. 비용은 영향 배열의 방문 노드와 실제 보유 소스 크기에 선형이며 일반 나감은 직렬화하지 않는다. B4-2는 이 변환을 직접 소스 이전으로 대체해야 한다.
+
+- B4-1 슬롯 경로의 배열 이동은 값의 폐기가 아니다. 호스트 레코드가 가진 inactiveSlots와 overlay는 살아남는 아이템과 함께 이동하고 새 레코드로 재생성되면 새 호스트로 이전한다. 떼어진 원본 인스턴스의 공개 path·읽기는 바꾸지 않고 옛 참조의 쓰기 주소만 현재 슬롯을 가리키게 한다. 기존 NODE-051·394C-01의 모든 후보 원천 보존·재키·소멸 구분을 유지한다.
+- 두 저장 표현이 공존하는 B4-1에서 필요한 경우에만 영향 슬롯을 기존 잠복 표현으로 일회 변환한 뒤 기존 충돌 없는 재키를 사용할 수 있다. 이 fallback은 배열 이동 범위의 보유 서브트리에 비례하고 일반 분기 전환의 잠복 포착 0 조건에 포함하지 않는다. 사용 여부와 비용을 결과에 밝히며 B4-2에서는 슬롯 이전으로 대체한다. clear·진짜 소멸은 원본을 지우되 옛 참조의 마지막 inactiveValues 읽기는 유지한다.
+
 - 배열의 일반 slot 경로와 정적 splice는 잠복 메타데이터를 재키할 때 그 occurrence를 붙든 분리된 참조의 쓰기 주소 셀도 새 경로·문서 순서로 옮긴다. 참조의 고정된 공개 `path`는 바꾸지 않으며 값이 삭제된 뒤에도 마지막 쓰기 주소는 셀에 남는다. 보존 접두와 사라진 occurrence는 이동하지 않는다(NODE-044, VALUE-031, 446C-07 (가)).
 - 정적 splice의 자격은 청사진 전체에 게이트·식이 없음을 요구하므로 살아남은 아이템 아래에 형상을 떠난 자손이 생길 수 없다. 이 결함의 분리된 자손 재키는 일반 slot 경로에서 시험하며 정적 자격을 강제로 넓히거나 불가능한 상태를 만들지 않는다(447라운드 코디네이터 결정, 446C-07 (가)).
 
