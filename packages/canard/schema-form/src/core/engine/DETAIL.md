@@ -138,6 +138,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## Last Updated
 
-2026-10-27. B1 gatePredicate on/off 기준 경로와 출하 기본 설정.
+2026-10-28. B1 gatePredicate on/off 기준 경로와 출하 기본 설정.
 
 계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077, 35C-08).
