@@ -43,7 +43,13 @@ export const captureSlotShadowObservations = <
     const revisions: (number | undefined)[] = [];
     for (let bit = 1; bit <= 65536; bit *= 2)
       revisions.push(node.revisionLedger[bit]);
-    snapshot.nodes.set(node, { values, revisions });
+    snapshot.nodes.set(node, {
+      values,
+      children: node.children,
+      pendingDelivery: node.pendingDelivery,
+      pendingNonSettleDelivery: node.pendingNonSettleDelivery,
+      revisions,
+    });
   }
   return snapshot;
 };

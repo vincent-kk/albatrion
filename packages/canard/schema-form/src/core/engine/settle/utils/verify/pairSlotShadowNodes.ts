@@ -29,13 +29,8 @@ export const pairSlotShadowNodes = <Self extends FieldNodeRecord<Self>>(
   session.nodes.set(actual, shadow);
   session.reverseNodes.set(shadow, actual);
   const children = actual.children ?? [];
-  const baseline =
-    (snapshot?.nodes.get(shadow)?.values.children as
-      | readonly Self[]
-      | null
-      | undefined) ??
-    shadow.children ??
-    [];
+  const observation = snapshot?.nodes.get(shadow);
+  const baseline = (observation ? observation.children : shadow.children) ?? [];
   if (children.length !== baseline.length)
     rejectSlotShadowDifference(session, actual.path + '.children.length');
   for (let index = 0; index < children.length; index++)

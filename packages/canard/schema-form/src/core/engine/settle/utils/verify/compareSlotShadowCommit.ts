@@ -1,9 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SlotShadowSession } from '../../types/slotVerification';
 import { captureSlotShadowObservations } from './captureSlotShadowObservations';
 import { compareSlotShadowObservations } from './compareSlotShadowObservations';
+import { getSlotShadowSession } from './getSlotShadowSession';
 import { rejectSlotShadowDifference } from './rejectSlotShadowDifference';
-import { slotShadowSessions } from './slotShadowSessions';
 
 /**
  * Reject a divergent committed result and count only completed comparisons.
@@ -14,9 +13,7 @@ export const compareSlotShadowCommit = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   if (root.runtime.slots !== 'verify' && root.runtime.slots !== 'off') return;
-  const session = slotShadowSessions.get(root.runtime) as
-    | SlotShadowSession<Self>
-    | undefined;
+  const session = getSlotShadowSession(root);
   if (root.runtime.slots === 'off') {
     if (session)
       session.expectedCommits.push(captureSlotShadowObservations(session));

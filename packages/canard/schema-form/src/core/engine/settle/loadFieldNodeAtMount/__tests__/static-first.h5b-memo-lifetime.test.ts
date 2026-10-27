@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount } from '../../../write';
 import * as assembly from '../utils/staticFirst/assembleStaticFirstNode';
@@ -7,6 +8,8 @@ import * as assembly from '../utils/staticFirst/assembleStaticFirstNode';
 afterEach(() => vi.restoreAllMocks());
 
 it('releases the first-load memo when assembly fails after a child commit', () => {
+  // The injected assembly failure targets the shipping tree's private memo lifetime.
+  pinSlotShipping();
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: { child: { type: 'number', default: 1 } },

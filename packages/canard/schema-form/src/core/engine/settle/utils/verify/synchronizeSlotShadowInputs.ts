@@ -1,3 +1,5 @@
+import { isPlainObject } from '@winglet/common-utils/filter';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SlotShadowSession } from '../../types/slotVerification';
 
@@ -15,15 +17,33 @@ export const synchronizeSlotShadowInputs = <Self extends FieldNodeRecord<Self>>(
   const actual = session.actual.runtime;
   const shadow = session.shadow.runtime;
   shadow.entryDepth = actual.entryDepth;
+  shadow.validationMode = actual.validationMode;
+  shadow.validator = actual.validator;
+  shadow.unsetOnInactive = actual.unsetOnInactive;
+  shadow.disableAutomaticWrites = actual.disableAutomaticWrites;
+  shadow.deferMountValidation = actual.deferMountValidation;
+  shadow.mountingGuardPass = actual.mountingGuardPass;
+  shadow.errorReporter = actual.errorReporter?.hasConsumer()
+    ? { hasConsumer: () => true, report: () => undefined }
+    : undefined;
   shadow.revisionObserved = actual.revisionObserved;
-  shadow.context = actual.context;
-  shadow.loadSnapshot = actual.loadSnapshot;
+  const context = session.references.get(actual.context);
+  shadow.context = isPlainObject(context) ? context : actual.context;
+  const snapshot = actual.loadSnapshot;
+  shadow.loadSnapshot =
+    snapshot !== null && typeof snapshot === 'object'
+      ? (session.references.get(snapshot) ?? snapshot)
+      : snapshot;
   shadow.chainErrors = actual.chainErrors ? [...actual.chainErrors] : undefined;
   shadow.chainOccurrences = actual.chainOccurrences
     ? [...actual.chainOccurrences]
     : undefined;
-  shadow.globalState = (session.references.get(actual.globalState) ??
-    actual.globalState) as typeof actual.globalState;
+  const globalState = session.references.get(actual.globalState);
+  shadow.globalState =
+    isPlainObject<Record<string, true>>(globalState) &&
+    Object.values(globalState).every((value) => value === true)
+      ? globalState
+      : actual.globalState;
   shadow.globalStateCounts = new Map();
   shadow.globalErrors = actual.globalErrors;
   shadow.routedValidationErrors = actual.routedValidationErrors;
@@ -34,9 +54,10 @@ export const synchronizeSlotShadowInputs = <Self extends FieldNodeRecord<Self>>(
   shadow.validationErrors = actual.validationErrors ? new Map() : undefined;
   shadow.deliveries = new Set();
   for (const [node, baseline] of session.nodes) {
-    baseline.interactionState = (session.references.get(
-      node.interactionState,
-    ) ?? node.interactionState) as typeof node.interactionState;
+    const interactionState = session.references.get(node.interactionState);
+    baseline.interactionState = isPlainObject(interactionState)
+      ? interactionState
+      : node.interactionState;
     if (!baseline.detached)
       for (const key of Object.keys(baseline.interactionState))
         if (baseline.interactionState[key])

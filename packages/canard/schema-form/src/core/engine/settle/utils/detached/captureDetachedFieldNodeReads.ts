@@ -1,9 +1,12 @@
+import { hasLiteralWildcardNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { readFieldNodeErrors } from '../../../validation';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
+import { captureSlotWildcardQueries } from '../slots/captureSlotWildcardQueries';
 import { materializeInactiveSlotValues } from '../slots/materializeInactiveSlotValues';
+import { hasSlotWildcardPath } from '../slots/slotWildcardQueryProofs';
 import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
 
 /**
@@ -21,6 +24,14 @@ export const captureDetachedFieldNodeReads = <
   load?: { readonly value: unknown },
 ): void => {
   const runtime = node.runtime;
+  if (
+    runtime.slots !== 'off' &&
+    hasLiteralWildcardNode(runtime.blueprint.root) &&
+    (hasLiteralWildcardNode(node.blueprintNode) ||
+      (node.blueprintNode.strategy === 'branch' &&
+        hasSlotWildcardPath(node.path)))
+  )
+    captureSlotWildcardQueries(node);
   if (runtime.slots !== 'off' && runtime.inactiveValueEntries?.size)
     materializeInactiveSlotValues(node);
   runtime.watchValuesMemo?.delete(node);

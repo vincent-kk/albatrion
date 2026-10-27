@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SlotShadowSession } from '../../types/slotVerification';
 import { compareSlotShadowObservations } from './compareSlotShadowObservations';
 import { compareSlotShadowValue } from './compareSlotShadowValue';
 import { createSlotShadowSession } from './createSlotShadowSession';
+import { getSlotShadowSession } from './getSlotShadowSession';
 import { rejectSlotShadowDifference } from './rejectSlotShadowDifference';
 import { slotShadowSessions } from './slotShadowSessions';
 import { synchronizeSlotShadowInputs } from './synchronizeSlotShadowInputs';
@@ -19,9 +19,7 @@ export const prepareSlotShadow = <Self extends FieldNodeRecord<Self>>(
 ): ((error?: unknown) => void) | undefined => {
   const root = node.rootNode;
   if (root.runtime.slots !== 'verify') return undefined;
-  let session = slotShadowSessions.get(root.runtime) as
-    | SlotShadowSession<Self>
-    | undefined;
+  let session = getSlotShadowSession(root);
   if (!session) {
     if (root.runtime.commitNumber)
       throw new Error('Slot shadow must begin before the first commit');

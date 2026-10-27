@@ -1,4 +1,4 @@
-import type { FieldNodeRecord } from '../../record';
+import type { FieldNodeDelivery, FieldNodeRecord } from '../../record';
 
 /** Public data captured before an independent baseline commit leaves its entry. */
 export interface SlotShadowSnapshot<Self> {
@@ -11,6 +11,9 @@ export interface SlotShadowSnapshot<Self> {
     Self,
     {
       values: Record<string, unknown>;
+      children: readonly Self[] | null;
+      pendingDelivery: FieldNodeDelivery | undefined;
+      pendingNonSettleDelivery: FieldNodeDelivery | undefined;
       revisions: readonly (number | undefined)[];
     }
   >;

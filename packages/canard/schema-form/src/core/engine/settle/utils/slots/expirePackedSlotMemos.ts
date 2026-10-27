@@ -28,7 +28,9 @@ export const expirePackedSlotMemos = <Self extends FieldNodeRecord<Self>>(
     if (
       entry.node.hasCandidateDescendants ||
       getItemEntries(source.blueprintNode, Number(entry.name)).length > 1 ||
-      overlay?.children?.has(entry)
+      (overlay?.children?.has(entry) &&
+        overlay.children.get(entry) !==
+          source.retainedSourceOverlay?.children?.get(entry))
     )
       continue;
     const child = getSlotSource(source, entry, overlay);

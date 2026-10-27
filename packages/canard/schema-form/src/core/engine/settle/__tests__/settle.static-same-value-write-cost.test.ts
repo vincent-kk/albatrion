@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import {
@@ -6,12 +7,15 @@ import {
   dispatchSetValue,
 } from '@/schema-form/core/engine/write';
 
+import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import * as values from '../../utils/compute/sameValue';
 import * as recalculation from '../utils/dependencies/registerRecalculation';
 import * as settlement from '../utils/settlement/finishSettlement';
 
 afterEach(() => vi.restoreAllMocks());
+// These internal work counts measure one shipping tree, excluding oracle replay.
+beforeEach(() => pinSlotShipping());
 
 /**
  * Count the per-child work of one whole object write to the host `h`.

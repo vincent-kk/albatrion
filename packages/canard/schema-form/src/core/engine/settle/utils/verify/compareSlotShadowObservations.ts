@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type {
   SlotShadowSession,
   SlotShadowSnapshot,
@@ -67,7 +67,7 @@ export const compareSlotShadowObservations = <
       compareSlotShadowDelivery(
         session,
         node[key],
-        observation.values[key] as FieldNodeDelivery | undefined,
+        observation[key],
         node.path + '.' + key,
       );
     for (let bit = 1, index = 0; bit <= 65536; bit *= 2, index++)

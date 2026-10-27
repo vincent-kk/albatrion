@@ -23,6 +23,7 @@ export const createSlotShadowSession = <Self extends FieldNodeRecord<Self>>(
     unsetOnInactive: source.unsetOnInactive,
     disableAutomaticWrites: source.disableAutomaticWrites,
     validator: source.validator,
+    validationMode: source.validationMode,
     deferMountValidation: source.deferMountValidation,
     latentRaw: new PathKeyedMap('pair'),
     inactiveValuesMemo: new PathKeyedMap('path'),

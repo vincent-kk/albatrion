@@ -1,5 +1,7 @@
 import { expect, it } from 'vitest';
+import { beforeEach } from 'vitest';
 
+import { pinLatentBaseline } from '../../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '../../../../types/value';
 import { dispatchMount, dispatchSetValue } from '../../../../write';
@@ -11,6 +13,9 @@ import { cloneFromSlot } from '../cloneFromSlot';
 import { createSlotValueOverlay } from '../createSlotValueOverlay';
 import { getRetainedChildEntry } from '../getRetainedChildEntry';
 import { materializeInactiveSlotValues } from '../materializeInactiveSlotValues';
+
+// The test constructs the off oracle's sources before applying slot helpers directly.
+beforeEach(() => pinLatentBaseline());
 
 it('matches an inactive merge while cloning only the patched source channels', () => {
   const { root, runtime } = createDispatchTree({

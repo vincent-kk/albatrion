@@ -1,11 +1,16 @@
 import { expect, it } from 'vitest';
+import { beforeEach } from 'vitest';
 
+import { pinLatentBaseline } from '../../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../../../write';
 import { getDispatchNode } from '../../../__tests__/fixtures/getDispatchNode';
 import { createExitSlotOverlay } from '../createExitSlotOverlay';
 import { getRetainedChildEntry } from '../getRetainedChildEntry';
 import { materializeInactiveSlotValues } from '../materializeInactiveSlotValues';
+
+// The test constructs the off oracle's publication before installing slots directly.
+beforeEach(() => pinLatentBaseline());
 
 it('matches the latent publication while preserving a detached host own view', () => {
   const { root, runtime } = createDispatchTree({

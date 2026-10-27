@@ -1,9 +1,15 @@
+import { hasLiteralWildcardNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { InactiveSlotCandidate } from '../../types/slots';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { collectHostSlotValues } from './collectHostSlotValues';
 import { compareSlotOrder } from './compareSlotOrder';
+import { isSlotWildcardHidden } from './isSlotWildcardHidden';
+import {
+  hasSlotWildcardPath,
+  slotWildcardReadCommits,
+} from './slotWildcardQueryProofs';
 
 /**
  * Materialize one host's frozen inactive list once per committed change.
@@ -15,6 +21,18 @@ export const materializeInactiveSlotValues = <
 >(
   host: Self,
 ): readonly { path: string; value: unknown }[] => {
+  if (
+    !host.detached &&
+    (hasLiteralWildcardNode(host.blueprintNode) ||
+      (host.blueprintNode.strategy === 'branch' &&
+        hasSlotWildcardPath(host.path)))
+  ) {
+    const commit = host.runtime.commitNumber ?? 0;
+    if (slotWildcardReadCommits.get(host) !== commit) {
+      slotWildcardReadCommits.set(host, commit);
+      host.inactiveValuesDirty = true;
+    }
+  }
   if (host.inactiveValuesCache && !host.inactiveValuesDirty)
     return host.inactiveValuesCache;
   const values: InactiveSlotCandidate[] = [];
@@ -40,7 +58,10 @@ export const materializeInactiveSlotValues = <
   );
   const chosen = new Map<string, Readonly<{ path: string; value: unknown }>>();
   for (const candidate of values)
-    if (!chosen.has(candidate.entry.path))
+    if (
+      !chosen.has(candidate.entry.path) &&
+      !isSlotWildcardHidden(host, candidate.entry.path)
+    )
       chosen.set(candidate.entry.path, candidate.entry);
   const next = [...chosen.values()];
   const previous = host.inactiveValuesCache;

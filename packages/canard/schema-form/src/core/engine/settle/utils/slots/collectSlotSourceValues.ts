@@ -73,7 +73,10 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
   if (template.strategy === 'terminal') return;
   const packed = array && composed && !patchOnly;
   for (const entry of getSlotEntries(source, overlay, template)) {
-    const explicit = overlay?.children?.has(entry) === true;
+    const explicit =
+      overlay?.children?.has(entry) === true &&
+      overlay.children.get(entry) !==
+        source?.retainedSourceOverlay?.children?.get(entry);
     const candidate =
       array &&
       (entry.node.hasCandidateDescendants ||

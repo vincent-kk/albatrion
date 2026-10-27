@@ -30,8 +30,10 @@ export const compareSlotShadowValue = <Self extends FieldNodeRecord<Self>>(
     if (!Object.is(actual, shadow)) rejectSlotShadowDifference(session, path);
     return;
   }
-  const actualNode = session.nodes.get(actual as Self);
-  const shadowNode = session.reverseNodes.get(shadow as Self);
+  const actualNodes: ReadonlyMap<object, Self> = session.nodes;
+  const shadowNodes: ReadonlyMap<object, Self> = session.reverseNodes;
+  const actualNode = actualNodes.get(actual);
+  const shadowNode = shadowNodes.get(shadow);
   if (actualNode || shadowNode) {
     if (actualNode !== shadow || shadowNode !== actual)
       rejectSlotShadowDifference(session, path + '.nodeReference');
