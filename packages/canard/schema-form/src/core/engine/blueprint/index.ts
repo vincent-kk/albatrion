@@ -27,4 +27,3 @@ export type {
   SchemaTypeName,
 } from './types/schema';
 export type { EffectiveSchema } from './types/effectiveSchema';
-export { hasLiteralWildcardNode } from './utils/features/literalWildcardNodes';

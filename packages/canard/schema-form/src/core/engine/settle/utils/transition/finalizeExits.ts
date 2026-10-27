@@ -10,6 +10,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { updateOutput } from '../output/updateOutput';
 import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
+import { isSlotEligible } from '../slots/isSlotEligible';
 import { retainExitedSlot } from '../slots/retainExitedSlot';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
@@ -91,7 +92,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       node.path.startsWith(scope.path + '/'));
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
-  const retainedSlots = context.root.runtime.slots !== 'off';
+  const retainedSlots = isSlotEligible(context.root.runtime);
   if (retainedSlots) {
     for (const node of context.exited)
       if (!inLoadScope(node) && node.detached)

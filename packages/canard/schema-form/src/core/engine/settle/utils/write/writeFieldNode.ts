@@ -23,6 +23,7 @@ import { getSettlementScratch } from '../scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
+import { isSlotEligible } from '../slots/isSlotEligible';
 import { resolveSlotSource } from '../slots/resolveSlotSource';
 import { writeSlotPath } from '../slots/writeSlotPath';
 import { prepareSlotShadow } from '../verify/prepareSlotShadow';
@@ -95,7 +96,7 @@ const writeFieldNodeBody = <Self extends FieldNodeRecord<Self>>(
       kind !== 'callerPartial' ||
       !isPlain(input) ||
       node.behavior.strategy !== 'branch';
-    if (node.runtime.slots !== 'off') {
+    if (isSlotEligible(node.runtime)) {
       const lineage = [];
       for (let current: Self | null = node; current; current = current.parent)
         lineage.unshift(current.blueprintNode);

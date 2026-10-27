@@ -8,6 +8,7 @@ import { getCommittedDeclarationKey } from '../../../utils/controls/getCommitted
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
 import { commitSlotChanges } from '../slots/commitSlotChanges';
+import { isSlotEligible } from '../slots/isSlotEligible';
 import { compareSlotShadowCommit } from '../verify/compareSlotShadowCommit';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
@@ -37,7 +38,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = context.root.runtime;
   const development = process.env.NODE_ENV !== 'production';
-  if (runtime.slots === 'off' && context.exited.size > 0)
+  if (!isSlotEligible(runtime) && context.exited.size > 0)
     snapshotExitedPolicies(context);
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)
@@ -244,7 +245,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     (context.entered.size > 0 || context.exited.size > 0)
   )
     runtime.latentRawDirty = true;
-  if (runtime.slots === 'off') updateInactiveValuesMemo(context.root);
+  if (!isSlotEligible(runtime)) updateInactiveValuesMemo(context.root);
   else {
     for (const node of context.entered)
       if (!node.detached) {

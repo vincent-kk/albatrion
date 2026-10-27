@@ -1,4 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
+import { isSlotEligible } from '../slots/isSlotEligible';
 import { materializeInactiveSlotValues } from '../slots/materializeInactiveSlotValues';
 import { EMPTY_VALUES } from './emptyDetachedReads';
 
@@ -6,7 +7,7 @@ import { EMPTY_VALUES } from './emptyDetachedReads';
 export const readFieldNodeInactiveValues = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly { path: string; value: unknown }[] =>
-  node.runtime.slots !== 'off'
+  isSlotEligible(node.runtime)
     ? materializeInactiveSlotValues(node)
     : node.detached
       ? (node.runtime.detachedReads?.get(node)?.inactiveValues ?? EMPTY_VALUES)

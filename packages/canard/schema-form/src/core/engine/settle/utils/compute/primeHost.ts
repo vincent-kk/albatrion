@@ -14,6 +14,7 @@ import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../slots/createFromSlotOverlay';
 import { enterSlotClone } from '../slots/enterSlotClone';
+import { isSlotEligible } from '../slots/isSlotEligible';
 import { isSameChildList } from '../structure/isSameChildList';
 import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
@@ -106,11 +107,11 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     const pending =
       key === undefined ? undefined : context.pendingExits.get(key);
     const slotSource =
-      !priorChild && !pending && node.runtime.slots !== 'off'
+      !priorChild && !pending && isSlotEligible(node.runtime)
         ? node.inactiveSlots?.get(entry)
         : undefined;
     const slotOverlay =
-      !priorChild && !pending && node.runtime.slots !== 'off'
+      !priorChild && !pending && isSlotEligible(node.runtime)
         ? node.inactiveSlotOverlays?.get(entry)
         : undefined;
     const child =

@@ -22,6 +22,7 @@ import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
 import { enterSlotClone } from '../../slots/enterSlotClone';
+import { isSlotEligible } from '../../slots/isSlotEligible';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
@@ -263,12 +264,12 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       node.behavior.type === 'array',
     );
   const latent = context.root.runtime.latentRaw;
-  const slotSource =
-    node.runtime.slots !== 'off' ? node.inactiveSlots?.get(entry) : undefined;
-  const slotOverlay =
-    node.runtime.slots !== 'off'
-      ? node.inactiveSlotOverlays?.get(entry)
-      : undefined;
+  const slotSource = isSlotEligible(node.runtime)
+    ? node.inactiveSlots?.get(entry)
+    : undefined;
+  const slotOverlay = isSlotEligible(node.runtime)
+    ? node.inactiveSlotOverlays?.get(entry)
+    : undefined;
   const latentKey =
     latent.size > 0 && !priorChild
       ? JSON.stringify([

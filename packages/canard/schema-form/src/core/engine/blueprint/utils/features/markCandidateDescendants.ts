@@ -1,14 +1,10 @@
 import type { MutableNode } from '../../types/analysis';
 import type { BlueprintNode } from '../../types/node';
-import {
-  hasLiteralWildcardNode,
-  markLiteralWildcardNode,
-} from './literalWildcardNodes';
 
 /**
- * Mark candidate and literal-wildcard reachability on the completed finite graph.
+ * Mark candidate and literal-star reachability on the completed finite graph.
  * @param nodes - Construction-owned templates before development freezing
- * @returns Nothing; ordinary single-candidate graphs allocate no reverse graph or work list
+ * @returns Nothing; star-free single-candidate graphs allocate no reverse graph or work list
  */
 export const markCandidateDescendants = (
   nodes: readonly MutableNode[],
@@ -19,7 +15,7 @@ export const markCandidateDescendants = (
       node.hasPropertyCandidates ||
       node.itemCandidates ||
       node.prefixItemCandidates ||
-      hasLiteralWildcardNode(node)
+      node.containsLiteralStar
     ) {
       if (
         node.hasPropertyCandidates ||
@@ -54,11 +50,8 @@ export const markCandidateDescendants = (
         parent.hasCandidateDescendants = true;
         changed = true;
       }
-      if (
-        hasLiteralWildcardNode(pending[index]) &&
-        !hasLiteralWildcardNode(parent)
-      ) {
-        markLiteralWildcardNode(parent);
+      if (pending[index].containsLiteralStar && !parent.containsLiteralStar) {
+        parent.containsLiteralStar = true;
         changed = true;
       }
       if (changed) pending.push(parent);

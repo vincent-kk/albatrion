@@ -3,6 +3,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { isSlotEligible } from '../slots/isSlotEligible';
 import { pruneSlotSources } from '../slots/pruneSlotSources';
 import { getLatentPathIndex } from './getLatentPathIndex';
 import { setLatentRaw } from './setLatentRaw';
@@ -21,7 +22,7 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
   names?: readonly string[],
   context?: SettlementContext<Self>,
 ): void => {
-  if (runtime.slots !== 'off' && context) {
+  if (isSlotEligible(runtime) && context) {
     pruneSlotSources(context.root, path, names, context);
   }
   const childPaths = names?.map((name) => path + '/' + escapeSegment(name));

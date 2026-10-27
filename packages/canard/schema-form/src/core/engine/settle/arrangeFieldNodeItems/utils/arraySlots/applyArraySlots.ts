@@ -18,6 +18,7 @@ import { getLatentOrder } from '../../../utils/latentStore/getLatentOrder';
 import { indexEnteredLatentKey } from '../../../utils/latentStore/indexEnteredLatentKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
+import { isSlotEligible } from '../../../utils/slots/isSlotEligible';
 import { rekeyArraySlotBindings } from '../../../utils/slots/rekeyArraySlotBindings';
 import { rekeySlotWriteAddresses } from '../../../utils/slots/rekeySlotWriteAddresses';
 import { serializeArraySlotSources } from '../../../utils/slots/serializeArraySlotSources';
@@ -42,7 +43,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
   const serialized =
-    host.runtime.slots !== 'off' &&
+    isSlotEligible(host.runtime) &&
     serializeArraySlotSources(host, plan, context);
   const oldCount = host.itemCount;
   const oldItems = host.structure ?? {};
@@ -166,7 +167,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       { owned: true },
     );
   }
-  if (host.runtime.slots !== 'off')
+  if (isSlotEligible(host.runtime))
     rekeyArraySlotBindings(host, moves, context);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
   if (candidateMoves || serialized)
@@ -190,7 +191,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           previous,
           current: descendant.path,
         });
-        if (host.runtime.slots !== 'off') rekeySlotWriteAddresses(descendant);
+        if (isSlotEligible(host.runtime)) rekeySlotWriteAddresses(descendant);
         context.dirtyPaths.add(descendant.path);
         if (descendant.behavior.strategy === 'branch')
           context.shapeDirtyPaths.add(descendant.path);

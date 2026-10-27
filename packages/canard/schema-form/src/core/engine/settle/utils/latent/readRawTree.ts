@@ -7,6 +7,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { isPlain } from '../input/isPlain';
 import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
+import { isSlotEligible } from '../slots/isSlotEligible';
 import { readSlotRawTree } from '../slots/readSlotRawTree';
 import { resolveSlotSource } from '../slots/resolveSlotSource';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
@@ -23,7 +24,7 @@ export const readRawTree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown => {
-  if (node.runtime.slots !== 'off') {
+  if (isSlotEligible(node.runtime)) {
     if (
       !node.detached &&
       !node.runtime.latentRaw.pathIndex.under(node.path).size
