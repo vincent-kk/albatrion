@@ -287,6 +287,8 @@ D09/D10은 현재 root 하나가 두 수명을 포함하므로 분리 항목으�
 
 #### D3b-2 — 두 파생 레코드와 생성 사실/정착 수명 분리
 
+현재 계약과 계획서 순서 대응표는 engine DETAIL의 D3b-2 절이 정본이다. 승인된 대응은 실제 파생 WeakMap 32개를 두 레코드의 외부 슬롯 31개와 staticShape.byEntry 하위 색인으로 모으며, 계획서에 없던 controlExpressions·staticPartition을 명시한다. 정적 첫 로드·완전 읽기는 생성 고정 사실이고 LAST count는 D3b-1 트리 저장소이다. D2-M readers는 진행 중이며 이 PR은 변경하지 않는다.
+
 - T1은 **단방향 공통 슬롯 저장소 + 소유자별 builder**로 승인됐습니다. 레코드 모듈은 슬롯 저장소만 두고 기능 소유자를 import하지 않으며, 소유자가 읽을 때 자신의 builder로 그 슬롯만 채웁니다. 슬롯별 독립 지연과 null/undefined의 부재 증거를 유지합니다. 새 공통 저장소는 엔진의 최저 공통 소유 경계 아래에 두고 settle/derive를 역으로 import하지 않습니다. 구현 base에 D2-P4가 들어오면 HostStaticPartition에 먼저 적용된 같은 모양을 재사용할 수 있는지 확인합니다.
 - 변경 파일(root 정의)은 확정 파생31개와 생성 사실2개·분리 root2개의 다음 목록입니다. 생성 사실은 setMode 폐기 대상이 아니고, D16은 이 목록의 host 슬롯에 흡수되어 셋째 전역 저장소를 만들지 않습니다.
   - `core/engine/behaviors/arrayBehavior/branch/utils/declareArrayChildren.ts`

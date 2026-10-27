@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 완전 읽기 증거는 컴파일 때만 판정해 식 기록의 선택적 completeReads=true로 freeze 전에 고정한다. 별도 전역 WeakSet에 등록하지 않으며 모드 전환이 이 생성 사실을 지우지 않는다.
+
 작성된 선언과 게이트의 표현식을 컴파일하고 호스트별 정적 의존 경로를 등록한다.
 
 ## API Contracts

@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D3b-2의 규칙 표는 blueprint.deriveRuleTable, 감시 경로와 자식 위치는 host.watchPaths·deriveChildren의 지연 슬롯에 둔다. builder와 규칙 순서는 유지하고 공통 저장소는 derive를 import하지 않는다.
+
 - D3b-1의 규칙 target ID 메모는 호출자가 넘긴 root runtime에 지연 생성한다. nextTargetId는 기존 프로세스 전역 단조 발급을 유지하며 reset으로 되감지 않는다. 폼 전체 reset·폐기에서 target 메모를 해제하고 부분 reset은 유지한다. 선언 키도 같은 runtime의 별도 WeakMap에 두며 규칙 키의 직렬화와 소비 순서는 보존한다(SURFACE-065).
 
 - 배열 조각 규칙 표는 반복 템플릿과 prefixItems 자리의 후보마다 대상 행과 해당 `targetDeclarationIds`를 만든다. 조각 기능 색인도 전체 후보 소유를 이름별로 합치며, 실제 대상은 현재 선택된 선언으로 제한한다(377C-01, 389C-03, 391C-01).

@@ -2,13 +2,13 @@
 
 ## Requirements
 
-- D3b-1에서 생산자 소유 값 membership은 engine 공통의 이름 붙인 ownedSchemaValues 메모에 두며 기존 add/delete와 동결 시점은 보존한다. 병합 파생 메모는 실제 엔진 모드 변경 때 초기화하지만 값 메모는 초기화하지 않는다. 공통 저장소는 자식의 타입을 import하지 않는다(SURFACE-063·065).
+- 생산자 소유 값 membership은 공통 ownedSchemaValues 값 메모에 유지한다. D3b-2에서 기본 유효 스키마와 기본 병합 메모는 host 레코드의 defaultEffectiveSchema·effectiveSchemaMemo 슬롯으로 옮기고 실제 모드 변경 때 재생성한다. 소유 builder는 이 모듈에 남고 명시 caller-owned WeakMap 인수·모드/원자성 분리는 그대로 유지한다(SURFACE-063·065).
 
 활성 선언의 전순서를 따라 유효 스키마를 병합하고 소유 값의 보호와 메모 참조를 보존한다.
 
 ## API Contracts
 
-- `index.ts`는 `mergeEffectiveSchema` 말고도 `buildNodes`가 쓰는 셋을 이름으로 내보낸다. 선언 기여를 하나로 합치는 `mergeSchemaContributions`, 활성 선언 집합을 고르는 `selectEffectiveDeclarations`, 기본 런타임 메모인 변경 가능한 `WeakMap` `DEFAULT_NO_ACTIVE`이다. `buildNodes`는 증명된 무조건 정적 정규화의 결과로 이 메모를 미리 채운다(`buildNodes/buildNodes.ts`).
+- 진입점은 병합과 선언 선택 계약을 이름으로 내보낸다. buildNodes는 증명된 무조건 정규화 결과를 공통 host 레코드의 기본 유효 스키마 슬롯에 넣고 병합 소유자는 같은 슬롯을 읽는다. 저장소를 WeakMap API로 노출하지 않는다.
 
 - 유효 스키마 병합은 활성 선언을 전순서로 받아 결과 기록 `EffectiveSchema { schema, typeConflict }`를 돌려준다. 정적 모드에서 둘 이상의 기여를 교차한 결과가 공집합이면 경로가 있는 JSONSchemaError다. 선언 하나 안에서 범위가 뒤집힌 경우와 리터럴 `enum: []`은 검증기 몫이므로 그대로 둔다. 런타임에서 enum·const가 공집합이 되면 enum 빈 배열로 표시하고, 충돌한 const는 제거한다. 형 교집합이 비면 enum 빈 배열을 적지 않고 `typeConflict`로 드러내며, 형과 nullable은 정적 선언대로 남긴다(BLUEPRINT-041). 이를 정착 오류로 던지는 일은 후속 정착 계약의 몫이다. 서로 다른 키워드 사이의 모순은 판정하지 않는다.
 

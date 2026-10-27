@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- D3b-1에서 재계산 가능한 파생 WeakMap은 공통 engineModes에 초기화 콜백을 등록한다. 실제 모드 변경 때만 새 저장소가 되며 생성 중 확정한 StaticFirstLoadCapability·CompleteExpressionReads 사실은 유지한다. 저장소의 빌더와 의미는 이 소유자에 남고 공통 모드가 blueprint를 역으로 import하지 않는다(SURFACE-065).
+- D3b-2에서 재계산 가능한 분석·호스트 자료는 engine 공통 두 레코드에 독립 지연으로 보관하고 builder는 원 소유자가 맡는다. 정적 첫 로드 자격은 Blueprint.staticFirstLoadEligible, 완전 읽기 증거는 compiled expression.completeReads의 생성 고정 사실이다. freeze 전에 정하고 모드 전환 때 유지하며 읽기에서 그래프를 재분석하지 않는다. 라이브 노드 칸은 늘리지 않는다(SURFACE-065).
 
 - H1의 지연 공표 자격은 정적 선언에 게이트 overlay가 겹친 엔트리를 제외합니다. 이 순수 청사진 증명은 분할과 함께 보유하며 일반 선택·공표의 사적 방문 순서를 유지합니다.
 
