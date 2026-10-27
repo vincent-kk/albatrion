@@ -5,11 +5,11 @@
 - 떼어진 참조의 쓰기는 정착·커밋·배달을 만들지 않으며 원래 떼어진 인스턴스의 읽기도 바꾸지 않는다. 호스트 소유 overlay가 바뀐 자리에서 살아 있는 호스트와 조상의 inactiveValues materialization을 즉시 무효화하여 다음 읽기가 새 값을 공표한다. 같은 값과 항목은 다음 변경까지 참조를 재사용하며 이미 떼어진 호스트의 고정된 읽기는 유지한다(NODE-044, VALUE-031, WRITE-087).
 
 - 일반 원본의 유일한 모델은 호스트 보유 슬롯과 overlay다. off 기준 경로·verify 원본 그림자·잠복 직렬화·잠복 색인·커밋 전체 비활성 메모 재구성은 없다. 이름이 정확히 `*`인 선언을 포함한 폼의 wildcard 제외·공표 alias·떼어진 마지막 읽기만 별표 공표 호환 경로로 보존한다. 일반 배열 이동은 잠복 변환 없이 원본 슬롯·overlay·쓰기 주소를 함께 이전한다.
-- 슬롯이나 보유 가능한 엔트리가 없는 호스트는 최초 준비 때 슬롯 없는 실행 경로를 고른다. 반복 쓰기에는 슬롯 적격 검사·overlay 조회·플래그 읽기를 더하지 않으며 준비물은 load·reset·rebuild·새 호스트·청사진/경로 변경에서 폐기한다. 복제 노드의 커밋 표시는 생성 노드와 같은 변경 기준을 사용하여 중복 등록을 하지 않는다. 슬롯 삽입 평균 O(1), 복제 O(보유 서브트리), 첫 읽기 O(열거 원본과 정렬), 반복 읽기 O(1), 보유량은 방문 엔트리 M·실제 값 깊이 K·overlay·읽은 목록에 비례한다.
+- 슬롯이나 보유 가능한 엔트리가 없는 호스트는 최초 준비 때 슬롯 없는 실행 경로를 고른다. 이 증명은 불변 청사진의 선언과 종류별 조상만 읽으며, 배열 호스트나 배열 자손은 떼어진 자리 쓰기가 원본을 만들 수 있으므로 항상 일반 지움을 유지한다. 반복 쓰기에는 슬롯 적격 검사·overlay 조회·플래그 읽기를 더하지 않으며 준비물은 load·reset·rebuild·새 호스트·청사진/경로 변경에서 폐기한다. 복제 노드의 커밋 표시는 생성 노드와 같은 변경 기준을 사용하여 중복 등록을 하지 않는다. 슬롯 삽입 평균 O(1), 복제 O(보유 서브트리), 첫 읽기 O(열거 원본과 정렬), 반복 읽기 O(1), 보유량은 방문 엔트리 M·실제 값 깊이 K·overlay·읽은 목록에 비례한다.
 
 - Gate registration of newly active clones belongs to the selected-entry phase, as it does for blueprint-created occurrences. Recursive clone construction restores source channels and entry marks without eagerly registering the same occurrences a second time; selection and gate queries bind them before use. The common registration cost remains in the enclosing selection stage for both source representations.
 
-- Shipping writes enter the settlement kernel directly. Only an outer verify operation dispatches independent replay; nested writes in the active replay session execute the same kernel without replaying twice. Error equivalence and final public comparisons remain in the outer cleanup, and the source modes stay fixed per tree.
+- Shipping writes enter the settlement kernel directly. General source-mode switches and independent source-shadow sessions do not exist; gate, derive, and selection verification remain independent of the retained-source representation.
 
 - A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
 
@@ -194,32 +194,8 @@
 
 - Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
 - `types/`: 정착 문맥과 경로 저장소의 계약 형.
-- `utils/declarations/`: 선택 선언과 제어 층의 해석.
-- `utils/latentStore/`: 잠재 저장의 기본 단위: 경로·종류별 원본과 저장 메타데이터의 기본 단위를 제공한다(분배와 복원은 `latent`).
-- `utils/input/`: 호출자 입력의 해석과 쓰기 표시.
-- `utils/templatePaths/`: 템플릿 경로의 결합과 확장.
-- `utils/errors/`: 정착 실패의 수집과 식별.
-- `utils/output/`: 계산 출력의 갱신과 공표.
-- `utils/gates/`: 게이트 등록과 평가.
-- `utils/latent/`: 잠재 값의 분배와 복원: 저장 기본 단위를 사용해 노드·슬롯의 원본을 해석하며 저장 색인의 소유권은 갖지 않는다.
-- `utils/controls/`: 감시 값과 상태 키의 읽기·결합.
-- `utils/loadValues/`: 로드 값과 기본값·배열 스냅숏 자리의 정렬.
-- `utils/scratch/`: 정착별 작업 공간과 dirty 경로.
-- `utils/dependencies/`: 의존 색인과 재계산·있음 변경 등록.
-- `utils/compute/`: 현재 형상과 자식 선택의 계산.
-- `utils/detached/`: 떼어진 참조와 비활성·불일치 값의 읽기.
-- `utils/dispose/`: 폐기 트리와 쓰기 가능 여부.
-- `utils/pathStores/`: 런타임 경로 저장소의 묶음.
-- `utils/derivation/`: 파생 라운드와 쓰기 적용의 조율.
-- `utils/commit/`: 커밋 상태·배달 기준의 확정.
-- `utils/transition/`: 생김·나감·채움의 전이.
-- `utils/settlement/`: 표시 뒤 계산·파생·전이·커밋의 실행.
-- `utils/write/`: 일반 쓰기와 교체 범위의 조율.
-- `utils/structure/`: 배열 길이와 공통 구조 읽기.
 - `loadFieldNodeAtMount/`: 첫 마운트 정착을 소유하는 자식 fractal.
 - `arrangeFieldNodeItems/`: 배열 구조 계획의 적용을 소유하는 자식 fractal.
-- `utils/reset/`: 폼·하위 트리 로드와 상태 초기화.
-- `utils/context/`: 맥락 변경의 정착.
 
 - 위 순서는 아래에서 위로 향하는 의존 층이며, 각 compartment는 이 순서에서 자기보다 아래에 놓인 compartment만 import한다. 두 자식 fractal은 공통 구조 층 위, reset과 context 층 아래에 놓인다.
 
@@ -345,17 +321,12 @@
 
 ### settle-slot-overlays — 비활성 쓰기와 범위
 
-- 옛 참조 쓰기·조상의 Merge·전체 교체는 슬롯/overlay에 같은 해석·우선순위·삭제 범위를 적용한다. 동일 종류의 살아 있는 인스턴스가 있으면 옛 쓰기는 무효과다. 옛 참조의 값·구조·상태·오류·비활성 목록 읽기는 이후 overlay와 무관하며, 커밋 전 pending 원본이 공표 시점을 앞당기지 않는다.
+- 옛 참조 쓰기·조상의 Merge·전체 교체는 슬롯/overlay에 같은 해석·우선순위·삭제 범위를 적용한다. 동일 종류의 살아 있는 인스턴스가 있으면 옛 쓰기는 무효과다. 옛 참조의 값·구조·상태·오류·비활성 목록 읽기는 이후 overlay와 무관하며, 정착 중 pending 원본은 공표 시점을 앞당기지 않으며, 정착을 만들지 않는 떼어진 참조의 명시적 쓰기는 살아 있는 읽기를 즉시 무효화한다.
 
 ### settle-slot-inactive-reads — 지연 공표와 참조
 
-- 별표 없는 폼의 on 커밋에서 updateInactiveValuesMemo 호출과 나감의 inactiveValues 포착은 0이다. literal-star를 포함한 폼은 서브트리 전체의 기존 잠복 원본과 마지막 커밋 목록을 보존하며 배열은 off의 packed snapshot 우선순위도 유지한다. 첫 읽기 결과는 off의 항목·순서·값·동결과 같고, 영향 없는 호스트 및 항목 참조를 보존하며 읽히지 않은 진입·이탈도 항목 수명에 반영한다. unread detached 읽기는 reset·재배치·후속 생명주기와 독립이다.
+- 일반 커밋은 비활성 전체 목록을 재구성하거나 나간 노드의 inactiveValues를 포착하지 않는다. 별표 이름을 포함한 폼의 공표 호환은 packed snapshot 우선순위를 유지한다. 첫 읽기는 계약의 항목·순서·값·동결을 충족하고, 영향 없는 호스트 및 항목 참조를 보존하며 읽히지 않은 진입·이탈도 항목 수명에 반영한다. unread detached 읽기는 reset·재배치·후속 생명주기와 독립이다.
 - Wildcard membership changes participate in entry lifetimes: visible-hidden-visible publication creates a fresh entry after the hidden commit, including when that commit was unread. The old detached host's final committed entry identity remains shared with its previously published ancestor entry despite later external matches or overlay writes. Source-owned value memos cannot transfer the live reader's new lifetime into that frozen reader.
-
-### settle-slot-shadow — 두 저장 경로의 관측 동등
-
-- verify는 매 커밋의 value·inactiveValues·떼어진 읽기·사건·payload·revision·참조 수명을 대조한다. 복제 원본·비움/보존·overlay·배열 이동의 차이를 검출하고 차이 0만 통과로 센다. 정상 on 경로에 그림자 비용을 넣지 않는다.
-- The independent verify replay evaluates user guards and context predicates on both trees. Stateful callbacks therefore run twice in verify only; the shipping on path evaluates them once. Tests that count internal calls, inject one-shot mutations, or demonstrate this stateful-callback limitation pin the shipping mode and restore it afterward; public-behavior tests retain verification.
 
 ### settle-b2-p2-wheel-static-cost — 바퀴와 정적 준비 비용
 
