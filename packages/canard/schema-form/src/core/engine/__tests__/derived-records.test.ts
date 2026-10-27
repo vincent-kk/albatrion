@@ -12,6 +12,22 @@ import {
 } from '../utils/cache/derivedRecords';
 import { engineModes } from '../utils/cache/engineModes';
 
+it('keeps compiler creation facts outside enumerable blueprint observables', () => {
+  const analysis = blueprint({
+    type: 'object',
+    properties: {
+      source: { type: 'number' },
+      target: { type: 'number', controls: { derived: '../source' } },
+    },
+  });
+  const expression = analysis.expressions.find(
+    (item) => item.key === 'derived',
+  )!;
+  expect(Object.keys(analysis)).not.toContain('staticFirstLoadEligible');
+  expect(Object.keys(expression)).not.toContain('completeReads');
+  expect(Reflect.get(expression, 'completeReads')).toBe(true);
+});
+
 it('retains one record per immutable key and starts without eager slots', () => {
   const first = {};
   const second = {};

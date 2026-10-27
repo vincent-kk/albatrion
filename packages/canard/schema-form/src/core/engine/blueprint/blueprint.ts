@@ -113,14 +113,6 @@ export const blueprint = (
       Object.freeze(fragment);
     }
   const result: Blueprint = {
-    staticFirstLoadEligible:
-      context.staticFirstLoad &&
-      context.capabilities.branchless &&
-      !context.capabilities.hasExpressions &&
-      !context.capabilities.hasDerive &&
-      !context.capabilities.hasWatch &&
-      !context.capabilities.hasState &&
-      !context.capabilities.hasDependencies,
     capabilities: context.capabilities,
     isAtomic: options.isAtomic,
     isTerminal: options.isTerminal,
@@ -131,6 +123,16 @@ export const blueprint = (
     dependencies: context.dependencies ?? Object.create(null),
     expressions,
   };
+  Object.defineProperty(result, 'staticFirstLoadEligible', {
+    value:
+      context.staticFirstLoad &&
+      context.capabilities.branchless &&
+      !context.capabilities.hasExpressions &&
+      !context.capabilities.hasDerive &&
+      !context.capabilities.hasWatch &&
+      !context.capabilities.hasState &&
+      !context.capabilities.hasDependencies,
+  });
   if (process.env.NODE_ENV !== 'production') {
     Object.freeze(context.capabilities);
     Object.freeze(context.nodes);

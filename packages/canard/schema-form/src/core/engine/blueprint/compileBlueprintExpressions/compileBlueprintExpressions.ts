@@ -105,11 +105,13 @@ export const compileBlueprintExpressions = (
             key,
             dependencies,
             evaluate,
-            completeReads:
-              context.capabilities.hasDerive &&
-              hasCompleteExpressionReads(source),
             ...(equality ? { equality } : {}),
           };
+          Object.defineProperty(compiled, 'completeReads', {
+            value:
+              context.capabilities.hasDerive &&
+              hasCompleteExpressionReads(source),
+          });
           if (process.env.NODE_ENV !== 'production') {
             Object.freeze(dependencies);
             Object.freeze(compiled);
