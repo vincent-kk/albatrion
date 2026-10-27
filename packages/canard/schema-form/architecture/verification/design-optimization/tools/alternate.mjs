@@ -15,7 +15,10 @@ const { runAlternatingParent } = await import(
 );
 assert.equal(process.versions.node.split('.')[0], '26', 'Node26 required');
 const config = readAlternatingConfig(process.argv.slice(2));
-const allRows = buildAlternatingRows();
+const allRows = buildAlternatingRows(
+  config.only?.includes('switch-payload-12') ||
+    config.worker === 'switch-payload-12',
+);
 if (config.worker) {
   const row = allRows.find((candidate) => candidate.id === config.worker);
   assert.ok(row, 'Unknown worker row');

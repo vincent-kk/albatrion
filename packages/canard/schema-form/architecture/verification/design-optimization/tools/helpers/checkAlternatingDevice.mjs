@@ -247,3 +247,10 @@ if (runDir) {
     `ALTERNATING_ARTIFACT_OK rows=21 processes=${report.results.length}`,
   );
 }
+
+const payloadRows = buildAlternatingRows(true);
+assert.equal(buildAlternatingRows().length, 21);
+assert.equal(payloadRows.length, 22);
+assert.equal(payloadRows.filter((row) => row.id === 'switch-payload-12').length, 1);
+assert.equal(payloadRows.filter((row) => !row.currentOnly).length, 18);
+console.log('ALTERNATING_PAYLOAD_REGISTRY_OK rows=22 legacy=18');
