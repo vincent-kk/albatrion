@@ -15,6 +15,7 @@ import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 afterEach(() => vi.restoreAllMocks());
 
+// filid:contract settle-b2-p2-exit-preparation
 describe('exit preparation preserves committed policies and document order', () => {
   it('does not rescan root control declarations for repeated sparse exits', () => {
     const fragments: BlueprintSchema[] = Array.from({ length: 24 }, (_, i) => ({

@@ -32,7 +32,7 @@ it('reports the original derive budget failure after prepared-host revival', () 
   expect(getHostDerived(root).preparedStaticHost).toBeUndefined();
 });
 
-// filid:contract settle-b2-p2-preparation
+// filid:contract settle-b2-p2-lifetimes
 it('does not copy or enumerate the prepared gate list on a scalar switch', () => {
   const { root } = createTestTree(preparedHostSchema);
   loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);

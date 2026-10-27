@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { WriteOption } from '../../types/value';
@@ -32,9 +32,21 @@ const createHost = (siblings: number, branches = 2) => {
   return tree;
 };
 
-// filid:contract settle-b2-p2-preparation
+// filid:contract settle-b2-p2-wheel-static-cost
 describe('host lifetime preparation', () => {
-  afterEach(() => vi.restoreAllMocks());
+  const initialModes = {
+    wheel: engineModes.gateWheel,
+    selection: engineModes.gateSelection,
+  };
+  beforeEach(() => {
+    engineModes.setMode('gateWheel', 'skip');
+    engineModes.setMode('gateSelection', 'table');
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+    engineModes.setMode('gateWheel', initialModes.wheel);
+    engineModes.setMode('gateSelection', initialModes.selection);
+  });
 
   it('keeps an absent relocation list by identity without root bucket copies', () => {
     const { root } = createHost(0, 80);

@@ -308,11 +308,18 @@
 
 ## Acceptance Criteria
 
-### settle-b2-p2-preparation — 호스트 수명 준비물
+### settle-b2-p2-wheel-static-cost — 바퀴와 정적 준비 비용
 
 - 쓰기 반복에서 게이트 배열 복사·식 자격·예산 전수 검사가 늘지 않고 relocation 등록/제거 후 새 목록과 예산을 사용한다.
+- 정적 형제 0·100·1000에서 준비 뒤 정적 증인 재검사·ID 재공표 증가가 없고 이전 structure·children·값 객체의 내용이 바뀌지 않는다.
+
+### settle-b2-p2-exit-preparation — 나감 정책과 문서 순서
+
 - 나감은 루트 선언 전체를 방문하지 않으며 정책 상속·표현식·조각/fields 소유와 inactiveValues 문서 순서가 기준과 같다.
-- 정적 형제 0·100·1000에서 준비 뒤 정적 증인 재검사·ID 재공표 증가가 없고 동적 선택·불변 옛 참조·load/reset/rebuild/재진입/배열 이동·오류 후 복구·그림자 동등성을 유지한다.
+
+### settle-b2-p2-lifetimes — 준비물 무효화
+
+- load/reset/rebuild/재진입/배열 이동·오류 후 복구에서 준비물은 폐기되거나 새로운 발생에 묶이며 동적 선택·그림자 동등성을 유지한다. 파생 예산 실패 뒤 일반 경로는 준비물의 낡은 나감 비교 목록을 읽지 않는다.
 
 ### gate-predicate — 세 종류의 판정과 보수적 입력 공유
 
