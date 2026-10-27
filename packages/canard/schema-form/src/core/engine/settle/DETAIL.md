@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- A commit with no entered or exited occurrence, dirty slot owner, latent source, or legacy inactive publication bypasses source-selection and slot-publication helpers. The empty exit set is checked before source eligibility. Active occurrences without an inactive item memo do not acquire an own memo field merely to clear it. Verification still observes every commit through its independent replay hook.
+
 - Active clone construction does not allocate a detached write-address cell or compute its document-order array. A real departure captures the current address through the ordinary retained-exit path. Recursive inactive clones still transfer and rebind their address cells, so old references follow array rekeys without mutating frozen reads.
 
 - A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
