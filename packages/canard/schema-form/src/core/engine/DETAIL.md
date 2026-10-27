@@ -82,8 +82,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## API Contracts
 
-- 경로 색인은 이미 보유한 exact occurrence 집합을 읽는 조회를 제공해 비활성 지연 projection이 같은 경로의 후보 종류만 비교하게 한다. 조회는 새 색인을 만들거나 무관한 하위 항목을 순회하지 않으며 갱신·삭제·숫자 자리·배치 계약은 그대로다. 비활성 lazy/rebuild/verify 제어는 내부 설정이며 공개 API에 수출하지 않는다.
-
 - `(path, kind)` 식별에서 kind는 union의 fold를 포함한다. 공유 토큰 보조는 union에 `union:<fold mask>`, 나머지에 기존 kind를 돌려준다. union 청사진은 정규화된 schemaType 목록을 항상 가지며, mask는 그 목록에서 number/integer를 합치고 null 장식을 제외해 호출마다 계산한다. fold 보조와 토큰 보조는 blueprint·settle·derive의 가장 낮은 공통 소유자인 engine의 `utils/nodeIdentity` organ에 두고 필요한 칸만 구조 형으로 받는다. 자식 모듈은 조상 organ의 구체 파일을 직접 가져오며 이 보조는 자식 모듈의 형을 가져오지 않는다. 청사진 저장 필드는 늘리지 않으며 비용은 호출마다 최대 7개 형 이름을 OR하는 상수 작업이고 토큰 캐시는 보관하지 않는다(BLUEPRINT-043, NODE-043, 389C-02, 390C-01).
 
 ### 진입점 이름
