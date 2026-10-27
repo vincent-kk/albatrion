@@ -68,7 +68,7 @@
 - `staticPartition`: HostStaticPartition.partitions는 host 레코드의 별도 슬롯이다. `readers`는 **진행 중 D2-M**이며 이 변경에서 구현하거나 고치지 않는다.
 - `staticShape.byEntry`: SHAPES는 정적 모양의 파생이므로 같은 슬롯의 하위 색인이다. entries를 읽어도 byEntry는 만들지 않으며 셋째 전역 저장소를 두지 않는다.
 
-STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 host 슬롯 안에 entry별 Map을 둔다. entry는 청사진이 소유하는 불변 객체여서 그 Map의 수명은 host 레코드와 같다. 경로가 다른 entry를 같은 node의 단일 값으로 합치지 않고 기존 결과 identity를 보존한다.
+STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선언한 부모 host의 슬롯 안에 entry별 Map을 하나씩 둔다. caller는 소유 BlueprintNode를 명시 인수로 전달하며 entry.node인 자식 대상에 Map을 만들지 않는다. 한 호스트의 정적 형제 N개가 같은 Map을 공유한다. entry는 청사진이 소유하는 불변 객체여서 그 Map의 수명은 host 레코드와 같다. 경로가 다른 entry를 같은 node의 단일 값으로 합치지 않고 기존 결과 identity를 보존한다.
 
 ### 생성 사실과 정착 수명 분리
 
