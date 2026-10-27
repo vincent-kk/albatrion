@@ -2,19 +2,19 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
+import { engineModes } from '../../utils/cache/engineModes';
 import * as selection from '../utils/compute/childSelection/selectEntryStep';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 
-const previousMode = gateSelectionTable.mode;
+const previousMode = engineModes.gateSelection;
 afterEach(() => {
-  gateSelectionTable.mode = previousMode;
+  engineModes.setMode('gateSelection', previousMode);
   vi.restoreAllMocks();
 });
 
 it.each(['off', 'table'] as const)(
   'H1 %s bounds selection work independently of 1000 static siblings',
   (mode) => {
-    gateSelectionTable.mode = mode;
+    engineModes.setMode('gateSelection', mode);
     const counts: number[] = [];
     for (const siblings of [0, 100, 1000]) {
       const { root } = makeFieldNodeTree({

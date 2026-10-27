@@ -2,23 +2,13 @@ import type {
   BlueprintChildEntry,
   BlueprintNode,
   BlueprintNodeKind,
-  SchemaTypeName,
 } from '../../blueprint';
 import type { NodeStrategy } from '../../types/strategy';
+import type { UnionSpec } from '../../types/unionSpec';
 import type { FieldNodeRecord } from './record';
 import type { FieldNodeRuntime } from './runtime';
 
-/** Read-only type candidates used by a calculation row. */
-export interface UnionSpec {
-  /** Non-null allowed types in declaration order. */
-  readonly kinds:
-    | Exclude<SchemaTypeName, 'null'>
-    | readonly Exclude<SchemaTypeName, 'null'>[];
-  /** Bit mask of the same allowed types. */
-  readonly mask: number;
-  /** Whether null remains an allowed input. */
-  readonly nullable: boolean;
-}
+export type { UnionSpec } from '../../types/unionSpec';
 
 /** Caller verb represented without changing a node or its children. */
 export type ArrayOperation =

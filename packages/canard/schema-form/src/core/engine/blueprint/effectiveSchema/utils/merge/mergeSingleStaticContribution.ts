@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
+import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type {
   EffectiveSchema,
   EffectiveSchemaOptions,
@@ -8,7 +9,6 @@ import type {
 import type { BlueprintNode, PropertyDeclaration } from '../../../types/node';
 import type { EffectiveSchemaFields } from '../../types/state';
 import { applyControlHints } from '../apply/applyControlHints';
-import { OwnedSchemaValues } from '../finalize/OwnedSchemaValues';
 import { freezeEffectiveSchema } from '../finalize/freezeEffectiveSchema';
 
 /**
@@ -78,10 +78,10 @@ export const mergeSingleStaticContribution = (
         if (item in value && value.indexOf(value[item]) === item)
           required.push(value[item]);
       schema.required = required;
-      OwnedSchemaValues.add(required);
+      ownedSchemaValues.add(required);
     } else if (key === 'allOf' && isArray(value)) {
       schema.allOf = [...value];
-      OwnedSchemaValues.add(schema.allOf);
+      ownedSchemaValues.add(schema.allOf);
     } else schema[key] = value;
   }
   schema.type = node.schemaType;

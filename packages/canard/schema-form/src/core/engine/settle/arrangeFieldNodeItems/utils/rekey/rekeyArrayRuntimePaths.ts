@@ -95,7 +95,7 @@ export const rekeyArrayRuntimePaths = <Self>(
     changed,
     mapPath,
     (metadata, path, previous) =>
-      rekeyLatentMetadata(metadata, path, previous, hostPath),
+      rekeyLatentMetadata(metadata, path, previous, hostPath, runtime),
   );
   rekeyPairedPathStore(stores.declarations, changed, mapPath);
   if (latentChanged) runtime.latentRawDirty = true;

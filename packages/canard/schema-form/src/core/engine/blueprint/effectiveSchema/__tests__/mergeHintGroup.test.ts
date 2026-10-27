@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { OwnedSchemaValues } from '../utils/finalize/OwnedSchemaValues';
+import { ownedSchemaValues } from '../../../utils/cache/valueMemos';
 import { freezeCreatedHintObjects } from '../utils/finalize/freezeCreatedHintObjects';
 import * as guards from '../utils/finalize/isObjectRecord';
 import { mergeHintGroup } from '../utils/merge/mergeHintGroup';
@@ -27,8 +27,8 @@ it('guards the merge-owned root and each created descendant, retaining borrowed 
   expect(Object.isFrozen(borrowed)).toBe(false);
   expect(Object.isFrozen(earlier.style)).toBe(false);
   expect(Object.isFrozen(later.style)).toBe(false);
-  expect(OwnedSchemaValues.has(earlier)).toBe(false);
-  expect(OwnedSchemaValues.has(later)).toBe(false);
+  expect(ownedSchemaValues.has(earlier)).toBe(false);
+  expect(ownedSchemaValues.has(later)).toBe(false);
   expect(calls).toHaveBeenNthCalledWith(1, result);
 });
 

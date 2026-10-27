@@ -1,7 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
-import { gateSelectionTable } from './gateSelectionTable';
 import { verifyGateSelection } from './verifyGateSelection';
 
 /**
@@ -12,7 +12,7 @@ import { verifyGateSelection } from './verifyGateSelection';
 export const watchSplitRegistration = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  if (gateSelectionTable.mode !== 'verify' || !context.hasGates) return;
+  if (engineModes.gateSelection !== 'verify' || !context.hasGates) return;
   const dirty = context.dirtyPaths;
   const shape = context.shapeDirtyPaths;
   const owners = context.dependencyOwnerPaths;

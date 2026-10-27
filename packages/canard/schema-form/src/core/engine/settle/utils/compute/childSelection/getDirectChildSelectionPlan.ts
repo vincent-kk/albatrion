@@ -7,6 +7,7 @@ import type {
   BlueprintGate,
   BlueprintNode,
 } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 import { getGateExpression } from '../../gates/getGateExpression';
 
 /** One authored evaluation position; eligible table gates use their bucket verdict. */
@@ -32,10 +33,16 @@ interface DirectChildSelectionPlan {
  * hosts own the lifetime and live records are never retained. Callers read an entry
  * here first and call {@link getDirectChildSelectionPlan} only while it is `undefined`.
  */
-export const DIRECT_CHILD_SELECTION_PLANS = new WeakMap<
+export let DIRECT_CHILD_SELECTION_PLANS = new WeakMap<
   BlueprintNode,
   DirectChildSelectionPlan | null
 >();
+registerEngineDerivedReset(() => {
+  DIRECT_CHILD_SELECTION_PLANS = new WeakMap<
+    BlueprintNode,
+    DirectChildSelectionPlan | null
+  >();
+});
 
 /**
  * Read a prepared baseline or lazily prepare eligible multi-branch union candidates.

@@ -23,8 +23,12 @@ export const runGateSelectionCase = (
   observe?: (root: PlainNode) => unknown,
   snapshot?: (observation: unknown) => unknown,
 ) => {
-  const { root, blueprint, visits } = createTestTree(fixture.schema);
-  configure(blueprint);
+  const { root, visits } = createTestTree(
+    fixture.schema,
+    undefined,
+    {},
+    configure,
+  );
   root.runtime.context = { gate: () => true };
   const observations: unknown[] = [];
   const capture = (failure: unknown): void => {

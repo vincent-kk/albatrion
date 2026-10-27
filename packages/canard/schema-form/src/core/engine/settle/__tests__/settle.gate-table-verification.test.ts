@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { engineModes } from '../../utils/cache/engineModes';
 import * as selection from '../utils/compute/childSelection/selectEntryStep';
 import * as registration from '../utils/dependencies/registerRecalculation';
 import * as supplementation from '../utils/dependencies/supplementSplitOwner';
@@ -13,17 +14,19 @@ import * as inputs from '../utils/gates/recordGateInput';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { gateTableScene } from './fixtures/gateTableScene';
 
+const previousMode = engineModes.gateSelection;
 const previous = { ...gateSelectionTable };
 afterEach(() => {
   vi.restoreAllMocks();
   Object.assign(gateSelectionTable, previous);
+  engineModes.setMode('gateSelection', previousMode);
 });
 
 // filid:contract settle-gate-table-verification
 describe('table invariants reject actual positional violations', () => {
   it('S3 rejects a shape path missing from the optimized registration', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const register = registration.registerRecalculation;
     vi.spyOn(registration, 'registerRecalculation').mockImplementation(
       (context) => {
@@ -41,7 +44,7 @@ describe('table invariants reject actual positional violations', () => {
 
   it('S4 rejects an entering split owner that is no longer dirty', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const supplement = supplementation.supplementSplitOwner;
     vi.spyOn(supplementation, 'supplementSplitOwner').mockImplementation(
       (child, context) => {
@@ -58,7 +61,7 @@ describe('table invariants reject actual positional violations', () => {
 
   it('S1 rejects a bucket verdict that differs from the authored expression', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const expression = expressions.getGateExpression;
     vi.spyOn(expressions, 'getGateExpression').mockImplementation((...args) => {
       const value = expression(...args);
@@ -73,7 +76,7 @@ describe('table invariants reject actual positional violations', () => {
 
   it('S2 rejects a changed value at the original skipped gate site', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const read = reads.readProjectedValue;
     let calls = 0;
     vi.spyOn(reads, 'readProjectedValue').mockImplementation(
@@ -91,7 +94,7 @@ describe('table invariants reject actual positional violations', () => {
 
   it('S2 rejects publication or a pendingOutputs change during a reread', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const read = reads.readProjectedValue;
     let calls = 0;
     vi.spyOn(reads, 'readProjectedValue').mockImplementation(
@@ -111,7 +114,7 @@ describe('table invariants reject actual positional violations', () => {
 
   it('S2 rejects even a transient dirty mark between original gate sites', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const select = selection.selectEntryStep;
     vi.spyOn(selection, 'selectEntryStep').mockImplementation(
       (entry, step, frame) => {
@@ -129,7 +132,7 @@ describe('table invariants reject actual positional violations', () => {
 
   it('S5 rejects real witness inputs that differ from shadow full evaluation', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const record = inputs.recordGateInput;
     vi.spyOn(inputs, 'recordGateInput').mockImplementation(
       (context, path, value, kind) => {
@@ -146,7 +149,7 @@ describe('table invariants reject actual positional violations', () => {
 
   it('S2 rejects a changed host registry occurrence count', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const registry = getGateRegistry(root.runtime);
     const count = registry.occurrenceCount(root.path);
     let reads = 0;
@@ -162,7 +165,7 @@ describe('table invariants reject actual positional violations', () => {
 
   it('S5 rejects inconsistent real witness state despite equal input values', () => {
     const { root } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
+    engineModes.setMode('gateSelection', 'verify');
     const record = inputs.recordGateInput;
     vi.spyOn(inputs, 'recordGateInput').mockImplementation(
       (context, path, value, kind) => {

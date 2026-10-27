@@ -3,6 +3,8 @@ import type {
   BlueprintGate,
   PropertyDeclaration,
 } from '../../../blueprint';
+import type { TreeMemoStores } from '../../../types/treeMemoStores';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 
 interface GateBudgetIndex {
   /** Authored decisions reached by each evaluated gate. */
@@ -11,16 +13,11 @@ interface GateBudgetIndex {
   readonly transitionCap: number;
 }
 
-interface HostBudgetCache {
-  /** Gate identities in the host's last evaluated order. */
-  readonly gates: readonly BlueprintGate[];
-  /** Ceiling for that exact gate list. */
-  readonly cap: number;
-}
-
 /** One finite decision index per immutable analysis and one ceiling per live host. */
-const INDICES = new WeakMap<Blueprint, GateBudgetIndex>();
-const HOST_CAPS = new WeakMap<object, HostBudgetCache>();
+let INDICES = new WeakMap<Blueprint, GateBudgetIndex>();
+registerEngineDerivedReset(() => {
+  INDICES = new WeakMap<Blueprint, GateBudgetIndex>();
+});
 
 /** Map evaluated gates to their owning fragments or node-gate entries. */
 const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
@@ -74,9 +71,10 @@ export const getHostWheelBudgetCap = (
   host: object,
   blueprint: Blueprint,
   gates: readonly BlueprintGate[],
+  runtime: Pick<TreeMemoStores<unknown, BlueprintGate>, 'hostBudgetCaps'>,
 ): number => {
   if (blueprint.capabilities.branchless) return 1;
-  const cached = HOST_CAPS.get(host);
+  const cached = runtime.hostBudgetCaps?.get(host);
   if (
     cached &&
     cached.gates.length === gates.length &&
@@ -88,6 +86,9 @@ export const getHostWheelBudgetCap = (
   for (const gate of gates)
     for (const key of index.decisionsByGate.get(gate) ?? []) decisions.add(key);
   const cap = decisions.size + 1;
-  HOST_CAPS.set(host, { gates: [...gates], cap });
+  (runtime.hostBudgetCaps ??= new WeakMap()).set(host, {
+    gates: [...gates],
+    cap,
+  });
   return cap;
 };

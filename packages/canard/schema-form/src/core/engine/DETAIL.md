@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- engineModes는 트리를 만들기 전에 정한다. 살아 있는 트리가 있는 동안 모드를 바꾸면 파생 레코드가 비워져 그 트리의 문맥은 보장되지 않는다. 모드 전환은 시험·벤치 전용 기능이며 출하 모드는 고정이다(SURFACE-065, D3b-1 코디네이터 결정).
+
+- D3b-1의 engineModes와 이름 붙인 값 메모는 이 엔진의 공통 cache organ이 소유한다. 자식 모듈은 구조 형만 쓰는 공통 저장소를 직접 소비하고 공통 저장소가 자식 모듈을 import하지 않는다. 모드의 setMode(name, value)는 실제 변경 때만 등록된 엔진 파생 메모를 새로 만들며 생성 고정 사실·값 메모·트리 상태는 유지한다. D3b-2 전까지 빌더와 메모의 의미는 원 소유자에 남고, 초기화 콜백만 공통 모드에 등록한다. 세 모드를 변경하는 시험·벤치 fixture는 이전 설정을 복원한다(SURFACE-063·065). 비용은 파생 저장소별 콜백 하나와 모드 변경 시 저장소 수에 비례하는 초기화이며 일반 읽기에 초기화 검사나 새 노드 칸은 없다.
+
 - 청사진에서 쓰기까지의 실행 규칙과 원본, 계산, 투영 채널을 보존한다. 재배치를 하더라도 노드 형상, 값, 오류, 리비전, 경고, 통지는 달라지지 않는다.
 - 의존 순서는 blueprint < record < {behaviors, navigation} < validation < derive < settle < write이다. `derive`와 `settle`은 형제이며, settle이 derive 진입점을 소비한다. 둘이 함께 쓰는 순수 보조는 engine의 `utils/compute/sameValue.ts`, `utils/paths/resolveDependencyPath.ts`, `utils/controls/getCommittedDeclarationKey.ts`, `utils/controls/getControlExpression.ts`에 있으며, 두 자식이 위로 열린 방향으로 직접 가져온다. 이 보조들은 engine의 organ이므로 자식 fractal(`blueprint` 등)의 형도 가져오지 않는다(모델 B1). 필요한 칸만 구조 형으로 받는다. `getControlExpression`은 청사진의 식 목록을 받은 그대로의 원소 형으로 돌려준다. 검증은 결과 콜백으로 쓰기에 돌려주며 타입 간선도 거꾸로 만들지 않는다(NODE-016·045).
 - surface는 이 진입점만 거쳐서 엔진 계약을 소비한다. 자식 엔진 모듈은 형제의 진입점을 직접 소비한다.

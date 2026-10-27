@@ -4,14 +4,24 @@ import { escapeSegment } from '@winglet/json/pointer';
 import type { BlueprintChildEntry } from '../../../../../blueprint';
 import { HostStaticPartition } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
+import { registerEngineDerivedReset } from '../../../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../../../types/settlement';
 import { staticShape } from '../staticShape';
 
 /** Static schemas indexed once per host shape, shared by prime and both selectors. */
-const SHAPES = new WeakMap<
+let SHAPES = new WeakMap<
   object,
   Map<BlueprintChildEntry, NonNullable<ReturnType<typeof staticShape>>[number]>
 >();
+registerEngineDerivedReset(() => {
+  SHAPES = new WeakMap<
+    object,
+    Map<
+      BlueprintChildEntry,
+      NonNullable<ReturnType<typeof staticShape>>[number]
+    >
+  >();
+});
 
 /**
  * Prepare one selection call to reuse only its fixed ungated entries.

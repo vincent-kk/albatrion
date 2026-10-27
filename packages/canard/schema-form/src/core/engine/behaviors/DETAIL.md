@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D3b-1에서 값 identity 메모는 공통 이름 붙인 저장소에 모으고 노드 identity 메모는 root runtime에 둔다. 정적 선택·값 키 개수·trim 결과·정적 spec·소유 값 membership의 키와 결과는 보존한다. 공통 구조 형은 engine types가 소유하여 자식 간 역의존을 만들지 않는다. 안정 형상과 배열 선언 개수 메모는 트리별로 지연 생성하며 폼 전체 reset·폐기에서 해제한다(SURFACE-063·065).
+
 - options가 없는 유효 스키마의 선택은 생성 때 동결한 기본 choices 객체 하나에 연결합니다. 유효 스키마별 WeakMap 조회·등록과 options/propertyOrder의 해석·독립 동결 배열은 유지하며 schema 결과는 공유하지 않습니다. 속도 면에서는 기본 분기가 WeakMap에 등록하고 상수를 반환하므로 유효 스키마마다 네 필드 객체를 만들고 freeze하는 일이 없어집니다. 메모리 면에서는 기존 WeakMap 항목 수를 유지하고, 적격한 유효 스키마마다 두는 choices 객체를 모듈 상수 하나로 대체합니다(batch2 4-default-choices).
 
 - `record < 종류 fractal < behaviors 뿌리 < settle < FieldNode`이며 종류 fractal과 `navigation`은 서로 의존하지 않습니다. `settle`은 살아 있는 노드의 행을 `node.behavior`로 호출하고 형상 밖 노드의 정적 해석과 빈 값 판정에는 이 fractal의 진입점을 소비합니다(NODE-016, WRITE-082·098).

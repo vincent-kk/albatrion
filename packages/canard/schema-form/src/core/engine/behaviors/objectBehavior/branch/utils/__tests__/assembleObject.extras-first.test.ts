@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest';
 
-import { objectKeyCounts } from '../../../utils/objectKeyCounts';
+import { objectKeyCounts } from '../../../../../utils/cache/valueMemos';
 import { assembleObject } from '../assembleObject';
 import { assembleObjectBaseline } from './fixtures/assembleObject.baseline';
 
@@ -24,6 +24,7 @@ const makeNode = (
   childEntries: { name: string }[] = [],
 ) =>
   ({
+    runtime: {},
     local: undefined,
     undeclaredValues: extras,
     schema: {

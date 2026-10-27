@@ -1,11 +1,12 @@
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 import { getItemSchemaPath } from './getItemSchemaPath';
 
 /** Entries belong to immutable templates and are allocated only for requested slots. */
-const ENTRIES = new WeakMap<
-  BlueprintNode,
-  (readonly BlueprintChildEntry[])[]
->();
+let ENTRIES = new WeakMap<BlueprintNode, (readonly BlueprintChildEntry[])[]>();
+registerEngineDerivedReset(() => {
+  ENTRIES = new WeakMap<BlueprintNode, (readonly BlueprintChildEntry[])[]>();
+});
 
 /**
  * Bind every authored fold candidate to an array slot without creating runtime nodes.

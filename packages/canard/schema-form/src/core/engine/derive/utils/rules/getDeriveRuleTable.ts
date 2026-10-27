@@ -4,6 +4,7 @@ import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { ControlKey } from '../../../types/controls';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
@@ -11,7 +12,10 @@ import type { DeriveRule, DeriveRuleTable } from '../../types/rules';
 import { getWatchPaths } from './getWatchPaths';
 
 /** Rule tables follow the immutable analysis lifetime. */
-const TABLES = new WeakMap<Blueprint, DeriveRuleTable>();
+let TABLES = new WeakMap<Blueprint, DeriveRuleTable>();
+registerEngineDerivedReset(() => {
+  TABLES = new WeakMap<Blueprint, DeriveRuleTable>();
+});
 /** Rule-free analyses share a read-only empty table. */
 const EMPTY_TABLE: DeriveRuleTable = Object.freeze({
   rules: Object.freeze([]),

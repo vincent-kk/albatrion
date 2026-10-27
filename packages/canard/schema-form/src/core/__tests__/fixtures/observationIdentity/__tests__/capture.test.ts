@@ -89,7 +89,7 @@ beforeAll(async () => {
           if (id === producer)
             return (
               fs.readFileSync(id, 'utf8') +
-              '\nexport const __readExistingRuleOwnerId = (node: object) => TARGET_IDS.get(node);\n'
+              '\nexport const __readExistingRuleOwnerId = (node: object) => node.runtime.deriveTargetIds?.get(node);\n'
             );
           return undefined;
         },

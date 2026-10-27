@@ -7,6 +7,7 @@ import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -20,10 +21,16 @@ import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
 /** Compiled exit expressions indexed once per immutable analysis. */
-const EXIT_EXPRESSIONS = new WeakMap<
+let EXIT_EXPRESSIONS = new WeakMap<
   Blueprint,
   ReadonlyMap<string, BlueprintExpression>
 >();
+registerEngineDerivedReset(() => {
+  EXIT_EXPRESSIONS = new WeakMap<
+    Blueprint,
+    ReadonlyMap<string, BlueprintExpression>
+  >();
+});
 
 /**
  * Index authored exit expressions by their declaration and schema address.
@@ -105,7 +112,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           const childSelected =
             context.selectedDeclarationIds.get(child) ??
             child.runtime.committedDeclarationIds?.get(
-              getCommittedDeclarationKey(child),
+              getCommittedDeclarationKey(child, child.runtime),
             );
           if (
             !child.blueprintNode.declarations.some(

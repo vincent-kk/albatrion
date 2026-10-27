@@ -1,13 +1,17 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Blueprint, BlueprintNode } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 import type { GateSelectionTable } from '../../../types/gateSelectionTable';
 import { getDependencyIndex } from '../../dependencies/getDependencyIndex';
 import { getDirectChildSelectionPlan } from './getDirectChildSelectionPlan';
 import { getGateSelectionTable } from './getGateSelectionTable';
 
 /** Preparation is a one-time blueprint operation, including negative table evidence. */
-const PREPARED = new WeakMap<Blueprint, boolean>();
+let PREPARED = new WeakMap<Blueprint, boolean>();
+registerEngineDerivedReset(() => {
+  PREPARED = new WeakMap<Blueprint, boolean>();
+});
 
 /**
  * Memoize static selection metadata before a mount's load without evaluating gates.

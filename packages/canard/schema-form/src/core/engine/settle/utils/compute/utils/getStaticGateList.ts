@@ -1,5 +1,6 @@
 import type { BlueprintGate, BlueprintNode } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 
 /** Immutable authored gate order and membership before live relocation. */
 interface StaticGateList {
@@ -10,7 +11,10 @@ interface StaticGateList {
 }
 
 /** Blueprint-owned cache; object branch rows return fixed childEntries. */
-const STATIC_GATE_LISTS = new WeakMap<BlueprintNode, StaticGateList>();
+let STATIC_GATE_LISTS = new WeakMap<BlueprintNode, StaticGateList>();
+registerEngineDerivedReset(() => {
+  STATIC_GATE_LISTS = new WeakMap<BlueprintNode, StaticGateList>();
+});
 
 /**
  * Collect authored gates, caching only hosts with blueprint-fixed child entries.

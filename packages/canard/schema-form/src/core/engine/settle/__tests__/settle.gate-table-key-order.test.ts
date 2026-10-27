@@ -1,14 +1,14 @@
 // Runs only in the verify bundle because the key-order oracle is a shadow history snapshot.
 import { expect, it } from 'vitest';
 
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
+import { engineModes } from '../../utils/cache/engineModes';
 import { gateTableCases } from './fixtures/gate-table/gateTableCases';
 import { observeGateTableCase } from './fixtures/gate-table/observeGateTableCase';
 import { snapshotGateTableCase } from './fixtures/gate-table/snapshotGateTableCase/snapshotGateTableCase';
 
 it('rejects a fixture observation when only local value key order changes', async () => {
-  const mode = gateSelectionTable.mode;
-  gateSelectionTable.mode = 'off';
+  const mode = engineModes.gateSelection;
+  engineModes.setMode('gateSelection', 'off');
   try {
     const serialized = observeGateTableCase(gateTableCases[0]);
     await snapshotGateTableCase('selection-0', serialized);
@@ -26,6 +26,6 @@ it('rejects a fixture observation when only local value key order changes', asyn
       snapshotGateTableCase('selection-0', JSON.stringify(history)),
     ).rejects.toThrow();
   } finally {
-    gateSelectionTable.mode = mode;
+    engineModes.setMode('gateSelection', mode);
   }
 });

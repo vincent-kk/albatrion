@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D3b-1에서 재계산 가능한 파생 WeakMap은 공통 engineModes에 초기화 콜백을 등록한다. 실제 모드 변경 때만 새 저장소가 되며 생성 중 확정한 StaticFirstLoadCapability·CompleteExpressionReads 사실은 유지한다. 저장소의 빌더와 의미는 이 소유자에 남고 공통 모드가 blueprint를 역으로 import하지 않는다(SURFACE-065).
+
 - H1의 지연 공표 자격은 정적 선언에 게이트 overlay가 겹친 엔트리를 제외합니다. 이 순수 청사진 증명은 분할과 함께 보유하며 일반 선택·공표의 사적 방문 순서를 유지합니다.
 
 - 호스트별 정적 분할은 불변 BlueprintNode를 약한 키로 지연 계산한다. 분할은 gated 여부와 게이트 없는 자식 엔트리만 보유하고 모든 선언·overlay를 확인하며, virtual·동명 후보는 보수적으로 제외한다. 값·노드·직전 활성 집합·게이트 판정은 저장하지 않는다. 엔진 내부의 이름 붙은 진입점으로 제공하며 공개 Blueprint/FieldNode 형에는 필드를 추가하지 않는다. 최초 계산은 호스트 선언 수, 보유량은 적격 엔트리 수에 비례하고 두 번째 조회는 O(1)이다(H1, SETTLE-044, GOAL-029).

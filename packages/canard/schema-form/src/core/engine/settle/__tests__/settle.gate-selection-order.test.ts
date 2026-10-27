@@ -5,11 +5,11 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { resolveDependencyPath } from '../../utils/paths/resolveDependencyPath';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import type { SettlementContext } from '../types/settlement';
 import * as gateEvaluation from '../utils/gates/evaluateGate';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { readProjectedValueWithoutPublication } from './helpers/readProjectedValueWithoutPublication';
 
@@ -89,9 +89,9 @@ describe('gate selection original-site shadow precondition', () => {
 
   it('full evaluation leaves consumed and baseline-published nodes ready at every shadow read', () => {
     const { root, blueprint } = createTestTree(SCHEMA);
-    const previousMode = gateSelectionTable.mode;
+    const previousMode = engineModes.gateSelection;
     // Pin the full-evaluation reference path without the table.
-    gateSelectionTable.mode = 'off';
+    engineModes.setMode('gateSelection', 'off');
     const original = gateEvaluation.evaluateGate;
     const violations: {
       site: string;
@@ -157,7 +157,7 @@ describe('gate selection original-site shadow precondition', () => {
       );
     } finally {
       spy.mockRestore();
-      gateSelectionTable.mode = previousMode;
+      engineModes.setMode('gateSelection', previousMode);
     }
     expect(root.runtime.diagnostics.status).toBe('stable');
     expect(shadowReads).toBeGreaterThan(0);

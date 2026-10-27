@@ -107,7 +107,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     const metadata = node.runtime.latentRawMetadata?.get(
       JSON.stringify([path, getBlueprintNodeIdentity(node.blueprintNode)]),
     );
-    if (metadata) DetachedWriteAddress.retain(node, metadata);
+    if (metadata) DetachedWriteAddress.retain(node, metadata, node.runtime);
     return;
   }
   const scratch = getSettlementScratch(root.runtime);

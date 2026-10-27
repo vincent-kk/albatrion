@@ -4,32 +4,20 @@ import type { Behavior, FieldNodeRecord } from '../../../../record';
 import { getArrayItemTemplate } from './getArrayItemTemplate';
 import { holeValue } from './holeValue';
 
-/** The previous slot owners make unchanged shapes eligible for sparse patches. */
-const STABLE_SHAPES = new WeakMap<
-  object,
-  {
-    children: readonly unknown[];
-    schema: unknown;
-    undeclaredValues: unknown;
-    raw: unknown;
-    itemCount: number;
-  }
->();
-
 /**
  * Record the slot owners of this assembly so a later unchanged-shape write may patch it.
  * @param node - Array host just assembled
  * @param children - Ordered item nodes the assembly read
- * @returns Nothing; the module's stable-shape record holds the owners
+ * @returns Nothing; the runtime's stable-shape record holds the owners
  */
-const rememberShape = (
+const rememberShape = <Self>(
   node: Pick<
-    FieldNodeRecord<unknown>,
-    'schema' | 'undeclaredValues' | 'raw' | 'itemCount'
+    FieldNodeRecord<Self>,
+    'schema' | 'undeclaredValues' | 'raw' | 'itemCount' | 'runtime'
   >,
   children: readonly unknown[],
 ): void => {
-  STABLE_SHAPES.set(node, {
+  (node.runtime.arrayShapes ??= new WeakMap()).set(node, {
     children,
     schema: node.schema,
     undeclaredValues: node.undeclaredValues,
@@ -110,7 +98,7 @@ export const assembleArray: Behavior['assemble'] = (
       return result;
     }
   }
-  const stable = STABLE_SHAPES.get(node);
+  const stable = node.runtime.arrayShapes?.get(node);
   if (
     recalculated &&
     previous?.length === node.itemCount &&

@@ -1,3 +1,4 @@
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import { emptyReadonlySet } from '../../../utils/emptyReadonlySet';
 import type {
@@ -7,7 +8,10 @@ import type {
 import { buildFeatureNodeIndex } from './buildFeatureNodeIndex';
 
 /** Static bounds retained only while their immutable blueprint remains reachable. */
-const INDICES = new WeakMap<Blueprint, BlueprintFeatureNodeIndex>();
+let INDICES = new WeakMap<Blueprint, BlueprintFeatureNodeIndex>();
+registerEngineDerivedReset(() => {
+  INDICES = new WeakMap<Blueprint, BlueprintFeatureNodeIndex>();
+});
 /** No mutable memberships are published for independently proven absent features. */
 const EMPTY_INDEX: BlueprintFeatureNodeIndex = Object.freeze({
   stateKeyNodes: emptyReadonlySet,

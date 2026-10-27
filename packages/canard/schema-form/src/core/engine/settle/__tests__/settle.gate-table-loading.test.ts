@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
+import { engineModes } from '../../utils/cache/engineModes';
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { gateTableLoadingCases } from './fixtures/gate-table/gateTableLoadingCases';
 import { observeGateTableModes } from './fixtures/gate-table/observeGateTableModes';
 import { snapshotGateTableCase } from './fixtures/gate-table/snapshotGateTableCase/snapshotGateTableCase';
@@ -13,11 +13,11 @@ describe('gate table load and reset observations', () => {
     'load/reset fixture %i',
     async (index) => {
       const fixture = gateTableLoadingCases[index];
-      const previousWheel = gateWheelEvaluation.mode;
-      const previousTable = gateSelectionTable.mode;
+      const previousWheel = engineModes.gateWheel;
+      const previousTable = engineModes.gateSelection;
       try {
-        gateWheelEvaluation.mode = 'skip';
-        gateSelectionTable.mode = 'verify';
+        engineModes.setMode('gateWheel', 'skip');
+        engineModes.setMode('gateSelection', 'verify');
         const actual = await observeGateTableModes(fixture);
         expect(gateSelectionTable.violations).toBe(0);
         const history = JSON.parse(actual);
@@ -116,8 +116,8 @@ describe('gate table load and reset observations', () => {
           actual,
         );
       } finally {
-        gateWheelEvaluation.mode = previousWheel;
-        gateSelectionTable.mode = previousTable;
+        engineModes.setMode('gateWheel', previousWheel);
+        engineModes.setMode('gateSelection', previousTable);
       }
     },
   );

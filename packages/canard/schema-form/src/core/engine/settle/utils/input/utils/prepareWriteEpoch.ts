@@ -1,7 +1,7 @@
 import { StaticFirstLoadCapability } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { engineModes } from '../../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../../types/settlement';
-import { gateSelectionTable } from '../../gates/gateSelectionTable';
 import { watchWriteEpoch } from './watchWriteEpoch';
 
 /**
@@ -33,5 +33,5 @@ export const prepareWriteEpoch = <Self extends FieldNodeRecord<Self>>(
   if (!Number.isSafeInteger(epoch)) return;
   runtime.writeEpoch = epoch;
   context.writeEpoch = epoch;
-  if (gateSelectionTable.mode === 'verify') watchWriteEpoch(context);
+  if (engineModes.gateSelection === 'verify') watchWriteEpoch(context);
 };

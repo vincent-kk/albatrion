@@ -1,32 +1,34 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { engineModes } from '../../utils/cache/engineModes';
 import * as visits from '../utils/compute/childSelection/gateSelection/getTableVisitSteps';
 import { selectChildren } from '../utils/compute/childSelection/selectChildren';
 import * as steps from '../utils/compute/childSelection/selectEntryStep';
 import { selectNodeSchema } from '../utils/compute/selectNodeSchema';
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { prepareGateTableRound } from '../utils/gates/prepareGateTableRound';
 import * as reading from '../utils/gates/readGateSelectionGroup';
 import { updatePendingExitIndex } from '../utils/scratch/updatePendingExitIndex';
 import { gateTableScene } from './fixtures/gateTableScene';
 
+const previousMode = engineModes.gateSelection;
 const previous = { ...gateSelectionTable };
-const previousWheel = gateWheelEvaluation.mode;
+const previousWheel = engineModes.gateWheel;
 beforeEach(() => {
-  gateWheelEvaluation.mode = 'skip';
+  engineModes.setMode('gateWheel', 'skip');
 });
 afterEach(() => {
   vi.restoreAllMocks();
   Object.assign(gateSelectionTable, previous);
-  gateWheelEvaluation.mode = previousWheel;
+  engineModes.setMode('gateSelection', previousMode);
+  engineModes.setMode('gateWheel', previousWheel);
 });
 
 // filid:contract settle-gate-table-mutations
 describe('named decision-62 mutation witnesses', () => {
   it('V1 requires the root group read before the first child step computation', () => {
+    engineModes.setMode('gateSelection', 'table');
     const { root, context } = gateTableScene();
-    gateSelectionTable.mode = 'table';
     context.dirtyPaths.add('/common');
     const events: string[] = [];
     const read = reading.readGateSelectionGroup;
@@ -56,8 +58,8 @@ describe('named decision-62 mutation witnesses', () => {
   });
 
   it('V2 removing R3 leaves a pending exit unvisited and violates S2′', () => {
+    engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
     const child = root.structure!.a;
     context.pendingExits.set('["/a","string"]', child);
     updatePendingExitIndex(context, '/a', 1);
@@ -78,8 +80,8 @@ describe('named decision-62 mutation witnesses', () => {
   });
 
   it('V3 removing R4 loses a dormant caller input and violates S2′', () => {
+    engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
     delete root.structure!.a;
     root.structure!.kind.local = root.structure!.kind.emit = 'b';
     context.distributedInputs.set(root, {
@@ -102,8 +104,8 @@ describe('named decision-62 mutation witnesses', () => {
   });
 
   it('V2 retains the required pending-exit visit without a fault injection', () => {
+    engineModes.setMode('gateSelection', 'verify');
     const { root, context } = gateTableScene();
-    gateSelectionTable.mode = 'verify';
     context.pendingExits.set('["/a","string"]', root.structure!.a);
     updatePendingExitIndex(context, '/a', 1);
     delete root.structure!.a;
@@ -120,8 +122,9 @@ describe('named decision-62 mutation witnesses', () => {
   it.each(['table', 'verify'] as const)(
     'V3 %s retains dormant distributed input without a fault injection',
     (mode) => {
+      engineModes.setMode('gateSelection', mode);
+
       const { root, context } = gateTableScene();
-      gateSelectionTable.mode = mode;
       delete root.structure!.a;
       root.structure!.kind.raw =
         root.structure!.kind.local =

@@ -1,9 +1,13 @@
 import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import type { VirtualReferenceIndex } from '../../types/settlement';
 
 /** Reverse field references live for the lifetime of one analyzed blueprint. */
-const REFERENCES = new WeakMap<Blueprint, VirtualReferenceIndex | null>();
+let REFERENCES = new WeakMap<Blueprint, VirtualReferenceIndex | null>();
+registerEngineDerivedReset(() => {
+  REFERENCES = new WeakMap<Blueprint, VirtualReferenceIndex | null>();
+});
 
 /**
  * Resolve the reverse index once per settlement and cache it per blueprint.

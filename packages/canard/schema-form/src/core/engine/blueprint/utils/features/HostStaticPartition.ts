@@ -1,3 +1,4 @@
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 
 /** Authored static membership; contains no occurrence or gate verdict. */
@@ -13,7 +14,12 @@ interface Partition {
 /** Lazy blueprint-owned partition consumed by settlement's fixed baseline. */
 export class HostStaticPartition {
   /** Immutable host identities own the lifetime of their derived membership. */
-  private static readonly partitions = new WeakMap<BlueprintNode, Partition>();
+  private static partitions = new WeakMap<BlueprintNode, Partition>();
+  static {
+    registerEngineDerivedReset(() => {
+      this.partitions = new WeakMap<BlueprintNode, Partition>();
+    });
+  }
 
   /**
    * Separate unconditionally declared entries without reading any live shape.

@@ -1,7 +1,11 @@
 import type { BlueprintChildEntry } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 
 /** Static selection IDs belong to the analyzed child edge. */
-const STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
+let STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
+registerEngineDerivedReset(() => {
+  STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
+});
 
 /**
  * Return one stable active-ID list for an ungated child edge.

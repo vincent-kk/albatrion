@@ -1,7 +1,11 @@
 import type { ControlKey } from '../../types/controls';
+import { registerEngineDerivedReset } from '../cache/engineModes';
 
 /** Authored control expression positions indexed once per immutable analysis. */
-const CONTROL_EXPRESSIONS = new WeakMap<object, ReadonlyMap<string, number>>();
+let CONTROL_EXPRESSIONS = new WeakMap<object, ReadonlyMap<string, number>>();
+registerEngineDerivedReset(() => {
+  CONTROL_EXPRESSIONS = new WeakMap<object, ReadonlyMap<string, number>>();
+});
 
 /**
  * Find one compiled control expression without scanning the analysis each time.

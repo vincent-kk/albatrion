@@ -1,10 +1,17 @@
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 
 /** Active gate expressions indexed by authored path for each analysis. */
-const GATE_EXPRESSIONS = new WeakMap<
+let GATE_EXPRESSIONS = new WeakMap<
   Blueprint,
   ReadonlyMap<string, BlueprintExpression>
 >();
+registerEngineDerivedReset(() => {
+  GATE_EXPRESSIONS = new WeakMap<
+    Blueprint,
+    ReadonlyMap<string, BlueprintExpression>
+  >();
+});
 
 /**
  * Find the first compiled active gate at an authored schema path.

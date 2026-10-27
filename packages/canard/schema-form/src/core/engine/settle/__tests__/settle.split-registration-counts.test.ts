@@ -3,18 +3,17 @@ import { expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as traversal from '../utils/compute/dirtyChildren';
 import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
 import * as registration from '../utils/dependencies/registerRecalculation';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { gateTableCases } from './fixtures/gate-table/gateTableCases';
 
 it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80', () => {
-  const mode = gateSelectionTable.mode;
-  const wheel = gateWheelEvaluation.mode;
+  const mode = engineModes.gateSelection;
+  const wheel = engineModes.gateWheel;
   const rows: {
     count: number;
     mode: string;
@@ -23,10 +22,10 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
     dormant: number;
   }[] = [];
   try {
-    gateWheelEvaluation.mode = 'skip';
+    engineModes.setMode('gateWheel', 'skip');
     for (const count of [5, 80])
       for (const selection of ['off', 'table'] as const) {
-        gateSelectionTable.mode = selection;
+        engineModes.setMode('gateSelection', selection);
         const { root, blueprint } = createTestTree(
           gateTableCases[count === 5 ? 0 : 1].schema,
         );
@@ -100,8 +99,8 @@ it('keeps registration owners and dirtyChildren sweeps constant at N=5 and N=80'
     expect(rows[3].dormant).toBe(0);
     expect(rows[3].sweeps).toBe(rows[1].sweeps);
   } finally {
-    gateSelectionTable.mode = mode;
-    gateWheelEvaluation.mode = wheel;
+    engineModes.setMode('gateSelection', mode);
+    engineModes.setMode('gateWheel', wheel);
     vi.restoreAllMocks();
   }
 });

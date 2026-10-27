@@ -4,14 +4,21 @@ import { BEHAVIORS } from '../../../behaviors';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import { isPlain } from './isPlain';
 import { staticSpec } from './staticSpec';
 
 /** First declared child bindings are shared by all occurrences of a template. */
-const OBJECT_CHILDREN = new WeakMap<
+let OBJECT_CHILDREN = new WeakMap<
   BlueprintNode,
   ReadonlyMap<string, BlueprintNode>
 >();
+registerEngineDerivedReset(() => {
+  OBJECT_CHILDREN = new WeakMap<
+    BlueprintNode,
+    ReadonlyMap<string, BlueprintNode>
+  >();
+});
 
 /**
  * Interpret an input subtree without applying any settlement semantics.

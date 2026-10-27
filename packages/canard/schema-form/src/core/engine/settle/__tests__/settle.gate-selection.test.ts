@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
+import { engineModes } from '../../utils/cache/engineModes';
 import { gateSelectionCases } from './fixtures/gateSelectionCases';
 import { installGateSelectionShadow } from './helpers/installGateSelectionShadow';
 import { runGateSelectionCase } from './helpers/runGateSelectionCase';
@@ -26,17 +25,17 @@ describe('gate selection verifier histories on full evaluation', () => {
     gateSelectionCases[13],
   ])('$name', (fixture) => {
     expect(gateSelectionCases).toHaveLength(14);
-    const mode = gateSelectionTable.mode;
-    const wheel = gateWheelEvaluation.mode;
-    gateWheelEvaluation.mode = 'skip';
+    const mode = engineModes.gateSelection;
+    const wheel = engineModes.gateWheel;
+    engineModes.setMode('gateWheel', 'skip');
     const expected = runGateSelectionCase(fixture, () => {
-      gateSelectionTable.mode = 'off';
+      engineModes.setMode('gateSelection', 'off');
     });
     const shadow = installGateSelectionShadow();
     try {
       for (const selected of ['table', 'verify'] as const) {
         const actual = runGateSelectionCase(fixture, () => {
-          gateSelectionTable.mode = selected;
+          engineModes.setMode('gateSelection', selected);
         });
         expect(withoutGateVisits(actual)).toEqual(withoutGateVisits(expected));
       }
@@ -44,8 +43,8 @@ describe('gate selection verifier histories on full evaluation', () => {
       expect(shadow.count).toBeGreaterThan(0);
     } finally {
       shadow.restore();
-      gateSelectionTable.mode = mode;
-      gateWheelEvaluation.mode = wheel;
+      engineModes.setMode('gateSelection', mode);
+      engineModes.setMode('gateWheel', wheel);
     }
   });
 });

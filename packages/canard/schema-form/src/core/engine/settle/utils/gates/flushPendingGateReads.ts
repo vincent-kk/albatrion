@@ -5,6 +5,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
 import { flushPendingOutput } from '../output/flushPendingOutput';
 import { bindGateHostPath } from './bindGateHostPath';
@@ -25,7 +26,10 @@ interface GateReadPlan {
 }
 
 /** Templates share their read plan across array items and settlement calls. */
-const READ_PLANS = new WeakMap<BlueprintNode, GateReadPlan>();
+let READ_PLANS = new WeakMap<BlueprintNode, GateReadPlan>();
+registerEngineDerivedReset(() => {
+  READ_PLANS = new WeakMap<BlueprintNode, GateReadPlan>();
+});
 
 /**
  * Publish read ancestors before an entry can mutate their in-progress subtree.

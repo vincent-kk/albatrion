@@ -4,20 +4,20 @@ import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
-import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Restore the package setup's switch after each consumer-mode counterexample. */
-const setupEnabled = deriveShadowEvaluation.enabled;
+const setupEnabled = engineModes.deriveShadow;
 
 afterEach(() => {
-  deriveShadowEvaluation.enabled = setupEnabled;
+  engineModes.setMode('deriveShadow', setupEnabled);
   vi.unstubAllEnvs();
 });
 
 it('does not run shadow with the internal flag off even when NODE_ENV is test', () => {
-  deriveShadowEvaluation.enabled = false;
+  engineModes.setMode('deriveShadow', false);
   vi.stubEnv('NODE_ENV', 'test');
   const { root, blueprint } = createTestTree({
     type: 'object',
@@ -36,6 +36,6 @@ it('does not run shadow with the internal flag off even when NODE_ENV is test', 
 
 it('defaults to off in a fresh module without package test setup', async () => {
   vi.resetModules();
-  const fresh = await import('../utils/derivation/deriveShadowEvaluation');
-  expect(fresh.deriveShadowEvaluation.enabled).toBe(false);
+  const fresh = await import('../../utils/cache/engineModes');
+  expect(fresh.engineModes.deriveShadow).toBe(false);
 });

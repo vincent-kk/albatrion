@@ -1,13 +1,16 @@
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import type { Blueprint } from '../../types/blueprint';
 import { collectDeriveConvergenceTargets } from './collectDeriveConvergenceTargets';
 
 /** First-write proof consumed by settle; no public Blueprint slots are added. */
 export class DeriveConvergenceTargets {
   /** Null memoizes conservative fallback for the immutable analysis lifetime. */
-  private static readonly targets = new WeakMap<
-    Blueprint,
-    ReadonlySet<string> | null
-  >();
+  private static targets = new WeakMap<Blueprint, ReadonlySet<string> | null>();
+  static {
+    registerEngineDerivedReset(() => {
+      this.targets = new WeakMap<Blueprint, ReadonlySet<string> | null>();
+    });
+  }
 
   /**
    * Retain proven targets, or disable skipping for a reference run.

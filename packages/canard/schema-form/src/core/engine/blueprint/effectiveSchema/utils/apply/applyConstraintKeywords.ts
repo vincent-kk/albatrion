@@ -11,10 +11,10 @@ import {
   validateRange,
 } from '@/schema-form/helpers/schemaIntersection';
 
+import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type { EffectiveSchemaOptions } from '../../../types/effectiveSchema';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
 import type { EffectiveSchemaState } from '../../types/state';
-import { OwnedSchemaValues } from '../finalize/OwnedSchemaValues';
 
 /** Bound keyword paired with its boolean exclusive counterpart. */
 const BOUND_KEYWORD_PAIRS = [
@@ -53,9 +53,9 @@ export const applyConstraintKeywords = (
       [exclusive]: source[exclusive],
       ...(source[bound] === undefined ? {} : { [bound]: source[bound] }),
     };
-    OwnedSchemaValues.add(clause);
+    ownedSchemaValues.add(clause);
     target.allOf = [...(isArray(target.allOf) ? target.allOf : []), clause];
-    OwnedSchemaValues.add(target.allOf);
+    ownedSchemaValues.add(target.allOf);
   }
   for (const [lower, upper] of RANGES) {
     const crossing =
@@ -103,10 +103,10 @@ export const applyConstraintKeywords = (
         options,
       );
     target.enum = [];
-    OwnedSchemaValues.add(target.enum);
+    ownedSchemaValues.add(target.enum);
   } else if (enumeration !== undefined) {
     if (enumeration !== target.enum && enumeration !== source.enum)
-      OwnedSchemaValues.add(enumeration);
+      ownedSchemaValues.add(enumeration);
     target.enum = enumeration;
   }
   const constant = intersectConst(target.const, source.const);
@@ -124,7 +124,7 @@ export const applyConstraintKeywords = (
   if (state.conflictingConst) {
     delete target.const;
     target.enum = [];
-    OwnedSchemaValues.add(target.enum);
+    ownedSchemaValues.add(target.enum);
   }
 };
 

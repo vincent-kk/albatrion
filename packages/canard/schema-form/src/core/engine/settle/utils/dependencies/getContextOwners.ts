@@ -2,9 +2,13 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 
 /** Context readers are held apart from absolute JSON Pointer dependencies. */
-const OWNERS = new WeakMap<Blueprint, readonly string[]>();
+let OWNERS = new WeakMap<Blueprint, readonly string[]>();
+registerEngineDerivedReset(() => {
+  OWNERS = new WeakMap<Blueprint, readonly string[]>();
+});
 /** Shared result for blueprints without context reads. */
 const EMPTY_OWNERS: readonly string[] = Object.freeze([]);
 

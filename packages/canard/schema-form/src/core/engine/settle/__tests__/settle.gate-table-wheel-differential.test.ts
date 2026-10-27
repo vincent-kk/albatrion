@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
+import { engineModes } from '../../utils/cache/engineModes';
 import { gateWheelCases } from './fixtures/gateWheelCases';
 import { runGateSelectionCase } from './helpers/runGateSelectionCase';
 import { withoutGateVisits } from './helpers/withoutGateVisits';
@@ -26,22 +25,22 @@ describe('gate wheel histories through the internal setup hook', () => {
     gateWheelCases[14],
   ])('$name', (fixture) => {
     expect(gateWheelCases).toHaveLength(15);
-    const mode = gateSelectionTable.mode;
-    const wheel = gateWheelEvaluation.mode;
-    gateWheelEvaluation.mode = 'skip';
+    const mode = engineModes.gateSelection;
+    const wheel = engineModes.gateWheel;
+    engineModes.setMode('gateWheel', 'skip');
     try {
       const baseline = runGateSelectionCase(fixture, () => {
-        gateSelectionTable.mode = 'off';
+        engineModes.setMode('gateSelection', 'off');
       });
       for (const selected of ['table', 'verify'] as const) {
         const actual = runGateSelectionCase(fixture, () => {
-          gateSelectionTable.mode = selected;
+          engineModes.setMode('gateSelection', selected);
         });
         expect(withoutGateVisits(actual)).toEqual(withoutGateVisits(baseline));
       }
     } finally {
-      gateSelectionTable.mode = mode;
-      gateWheelEvaluation.mode = wheel;
+      engineModes.setMode('gateSelection', mode);
+      engineModes.setMode('gateWheel', wheel);
     }
   });
 });

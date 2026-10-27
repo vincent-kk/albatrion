@@ -1,20 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
+import { engineModes } from '../../utils/cache/engineModes';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { gateWheelCases } from './fixtures/gateWheelCases';
 import { runGateSelectionCase } from './helpers/runGateSelectionCase';
 
 describe('gate-form-one-key full observation equivalence', () => {
   it.each(gateWheelCases)('$name', (fixture) => {
-    const previousMode = gateWheelEvaluation.mode;
+    const previousMode = engineModes.gateWheel;
     const observe: Parameters<typeof runGateSelectionCase>[2] = (root) => [
       ...(root.runtime.committedDeclarationIds ?? []),
     ];
-    const capture = (mode: typeof gateWheelEvaluation.mode) =>
+    const capture = (mode: typeof engineModes.gateWheel) =>
       runGateSelectionCase(
         fixture,
         () => {
-          gateWheelEvaluation.mode = mode;
+          engineModes.setMode('gateWheel', mode);
         },
         observe,
       ).map((observation) => {
@@ -32,7 +33,7 @@ describe('gate-form-one-key full observation equivalence', () => {
       expect(confirmed).toEqual(expected);
       expect(gateWheelEvaluation.nonNoop).toBe(0);
     } finally {
-      gateWheelEvaluation.mode = previousMode;
+      engineModes.setMode('gateWheel', previousMode);
     }
   });
 });

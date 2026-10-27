@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { WriteOption } from '../../types/value';
 import { getCommittedDeclarationKey } from '../../utils/controls/getCommittedDeclarationKey';
 import { dispatchMount, dispatchWriteInput } from '../../write';
-import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
-import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { commitExitPolicyValues } from '../utils/commit/commitExitPolicyValues';
 import * as layers from '../utils/controls/getControlLayers';
@@ -95,12 +95,12 @@ describe('direct exit-policy child ownership', () => {
             child.blueprintNode.declarations.map(({ id }) => id),
           );
           root.runtime.committedDeclarationIds?.set(
-            getCommittedDeclarationKey(child),
+            getCommittedDeclarationKey(child, child.runtime),
             [],
           );
         } else if (selection === 'authored')
           root.runtime.committedDeclarationIds?.delete(
-            getCommittedDeclarationKey(child),
+            getCommittedDeclarationKey(child, child.runtime),
           );
         else if (selection === 'unselected')
           context.selectedDeclarationIds.set(child, []);
@@ -109,7 +109,9 @@ describe('direct exit-policy child ownership', () => {
         expect(collect.mock.calls.map(([node]) => node.path)).toEqual(
           selection === 'unselected' ? [''] : ['', '/secret'],
         );
-        expect(policy.mock.calls.length).toBe(selection === 'unselected' ? 0 : 1);
+        expect(policy.mock.calls.length).toBe(
+          selection === 'unselected' ? 0 : 1,
+        );
       } finally {
         releaseSettlementScratch(scratch);
       }
@@ -117,7 +119,12 @@ describe('direct exit-policy child ownership', () => {
   );
 
   it.each([
-    { label: 'same-layer keep', fields: undefined, node: undefined, keep: true },
+    {
+      label: 'same-layer keep',
+      fields: undefined,
+      node: undefined,
+      keep: true,
+    },
     { label: 'fields clear', fields: true, node: undefined, keep: false },
     { label: 'node keep', fields: true, node: false, keep: true },
     { label: 'node clear', fields: false, node: true, keep: false },
@@ -129,7 +136,12 @@ describe('direct exit-policy child ownership', () => {
         fields:
           scene.fields === undefined
             ? []
-            : [{ targets: ['secret'], controls: { unsetOnInactive: scene.fields } }],
+            : [
+                {
+                  targets: ['secret'],
+                  controls: { unsetOnInactive: scene.fields },
+                },
+              ],
       },
       allOf: [true, false].map((clear) => ({
         controls: {
@@ -162,9 +174,9 @@ describe('direct exit-policy child ownership', () => {
     dispatchWriteInput(root.structure!.flag, false);
     expect(old.detached).toBe(true);
     expect(old.raw).toBe('S');
-    expect(root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string']))).toBe(
-      scene.keep,
-    );
+    expect(
+      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
+    ).toBe(scene.keep);
     expect(changed.mock.calls.map(([value]) => value)).toEqual([
       { flag: false, probe: -1 },
     ]);

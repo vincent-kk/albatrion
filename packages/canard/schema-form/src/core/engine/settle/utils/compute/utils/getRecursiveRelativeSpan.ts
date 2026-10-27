@@ -1,7 +1,11 @@
 import type { Blueprint } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 
 /** One maximum authored relative read per immutable blueprint. */
-const RELATIVE_SPANS = new WeakMap<Blueprint, number>();
+let RELATIVE_SPANS = new WeakMap<Blueprint, number>();
+registerEngineDerivedReset(() => {
+  RELATIVE_SPANS = new WeakMap<Blueprint, number>();
+});
 
 /**
  * Memoize the whole-blueprint span shared by recursive expansion and fill.

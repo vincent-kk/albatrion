@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D3b-1에서 모드 읽기는 공통 engineModes, 변경은 setMode를 거친다. 파생 메모는 실제 모드 변경 때 재생성하며 생성 사실을 잃지 않는다. 라이브 호스트 예산과 떼어진 주소 셀은 runtime의 지연 WeakMap을 쓴다. 폼 전체 reset·폐기는 재계산 가능한 트리 메모만 비우고 부분 reset은 비우지 않는다. 주소 셀은 상태 예외로 reset 뒤에도 유지하여 재키된 옛 참조의 쓰기 목적지를 보존한다. 이 초기화는 커밋·배달 순서·public path의 고정 읽기를 바꾸지 않는다(SURFACE-065, NODE-044).
+
 - D2-P1의 쓰기 세대 경로는 정적 첫 로드 자격 청사진의 살아 있는 branch에 대한 독립적인 callerReplace/input 전체 쓰기만 허용한다. 게이트·식·파생·감시·가상·재귀, load·automatic·partial·batch·visit, 잠복 원본·미확정 잠복 변경·misfit이 있으면 기존 DirtyPathSet 경로를 쓴다. 판정은 청사진 증거와 고정 수의 런타임 읽기로 하며 쓰기 전에 전체 트리를 걷지 않는다(SETTLE-017·047, TEST-080 D2-P1).
 - 허용된 표시에서 `node.writeEpoch === context.writeEpoch`는 이번 계산의 아직 소비하지 않은 dirty 구성원임을 뜻한다. 바뀌지 않은 잎을 건너뛰는 기존 규칙과 raw·분배 입력·changedRaw·writtenInputs 기록은 유지한다. branch의 기존 sameShape 증명이 하나라도 실패하면, 이미 표식한 writtenInputs를 원래 삽입 순서로 DirtyPathSet에 재생하고 이후 모두 일반 경로로 후퇴한다. 배열 개수·키 집합·extras·잘못된 종류 변화는 이 후퇴에 포함된다. 정착 세대가 안전 정수 범위를 넘으면 처음부터 일반 경로다.
 - 쓰기 대상 내부의 dirty 경로 add·consume 및 dirtyChildren 배열 할당은 0이다. 현재 children 순서에서 이번 세대인 자식만 후위 계산하고, 원래 children 배열을 조립의 recalculated 인수로 재사용한다. 안 바뀐 자식은 같은 방출 참조를 유지하므로 조립·참조 복원·배달 판정은 같다. 엄격 조상은 한 번만 기존 dirty 경로로 등록하여 대상 밖 하위트리를 순회하지 않는다. 역의존 조회는 청사진의 의존·식 부재 증거로 생략한다. 일반 비용은 O(쓴 하위트리 노드 수 + 조상 깊이), 늦은 거절도 이미 표시한 범위의 O(N) 재생이며 단계 순서·고정 출발점·상태·revision·배달은 바꾸지 않는다.

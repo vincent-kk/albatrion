@@ -4,12 +4,16 @@ import type {
   EffectiveSchema,
 } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
 import { hasLatentUnder } from '../latentStore/hasLatentUnder';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
 
 /** Only the cycle verdict outlives the one-time graph traversal. */
-const CYCLIC_BLUEPRINTS = new WeakMap<Blueprint, boolean>();
+let CYCLIC_BLUEPRINTS = new WeakMap<Blueprint, boolean>();
+registerEngineDerivedReset(() => {
+  CYCLIC_BLUEPRINTS = new WeakMap<Blueprint, boolean>();
+});
 
 /**
  * Detect a back edge without mistaking shared DAG templates for recursion.
