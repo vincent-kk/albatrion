@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-/** Finish each A/B row before publishing and abort a failed formal control. */
+/** Finish each A/B row and defer legacy quality until all rows are published. */
 export function executeAlternatingRows(config, rows, measure, publish) {
   const results = [];
   const completed = [];
@@ -20,6 +20,7 @@ export function executeAlternatingRows(config, rows, measure, publish) {
       completed,
       completed.length === rows.length,
     );
+    if (config.quality === 'legacy' && completed.length < rows.length) continue;
     if (config.formal && report.quality?.passed === false) return 2;
   }
   return 0;

@@ -21,6 +21,11 @@ function prepare(config) {
     fs.mkdirSync(target);
     engines[lane] = prepareEngines(config.packageDir, target, '0.16.1', source);
   }
+  assert.equal(
+    engines.A.engines.legacy.sha256,
+    engines.B.engines.legacy.sha256,
+    'Quality needs identical legacy bytes',
+  );
   const environment = {
     startedAt: new Date().toISOString(),
     config,
@@ -55,6 +60,7 @@ function measure(config, row, lane, repeat) {
     `--samples=${config.samples}`,
     `--warmups=${config.warmups}`,
     `--runs=${config.runs}`,
+    `--quality=${config.quality ?? 'branchless'}`,
     `--repeat=${repeat}`,
     `--run-dir=${config.runDir}`,
   ];
@@ -89,12 +95,21 @@ function measure(config, row, lane, repeat) {
   assert.equal(result.samples.current.length, config.samples);
   assert.ok(result.samples.current.every((v) => Number.isFinite(v) && v > 0));
   assert.equal(result.minima.current, Math.min(...result.samples.current));
+  if (!row.currentOnly) {
+    assert.equal(result.samples.legacy.length, config.samples);
+    assert.ok(result.samples.legacy.every((v) => Number.isFinite(v) && v > 0));
+    assert.equal(result.minima.legacy, Math.min(...result.samples.legacy));
+  }
   return result;
 }
 
 /** Preserve completed rows, including an invalid control window, without dropping raw data. */
 function save(config, environment, results, rows, completed) {
-  const summary = summarizeAlternating(rows, results);
+  const summary = summarizeAlternating(rows, results, config.quality);
+  if (config.quality === 'legacy' && !completed) {
+    summary.quality.pending = true;
+    summary.quality.passed = null;
+  }
   const validWindow = !config.formal || summary.quality?.passed === true;
   const report = {
     ...environment,
@@ -104,6 +119,7 @@ function save(config, environment, results, rows, completed) {
     completed,
     validWindow,
   };
+  if (summary.quality?.pending) report.validWindow = null;
   fs.writeFileSync(
     path.join(config.runDir, 'results.json'),
     JSON.stringify(report, null, 2),
@@ -115,13 +131,18 @@ function save(config, environment, results, rows, completed) {
   return report;
 }
 
-/** Interleave by row and stop immediately after an invalid formal control. */
+/** Interleave by row and apply the selected quality boundary. */
 export function runAlternatingParent(config, rows) {
-  if (config.formal)
+  if (config.formal && config.quality !== 'legacy')
     assert.equal(
       rows[0].id,
       'single-flat-1000',
       'Formal window needs the control first',
+    );
+  if (config.formal && config.quality === 'legacy')
+    assert.ok(
+      rows.some((row) => !row.currentOnly),
+      'Legacy quality needs a paired row',
     );
   const environment = prepare(config);
   const code = executeAlternatingRows(

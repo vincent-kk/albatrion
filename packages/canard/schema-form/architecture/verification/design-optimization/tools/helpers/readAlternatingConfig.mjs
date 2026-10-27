@@ -8,6 +8,12 @@ export function readAlternatingConfig(argv) {
   const flags = {};
   const common = [];
   for (const argument of argv) {
+    const quality = /^--quality=(branchless|legacy)$/.exec(argument);
+    if (quality) {
+      assert.ok(!flags.quality, 'Duplicate quality');
+      flags.quality = quality[1];
+      continue;
+    }
     const match = /^--(baseline-bundle|candidate-bundle|lane)=(.+)$/.exec(
       argument,
     );
@@ -36,5 +42,6 @@ export function readAlternatingConfig(argv) {
           flags[name].endsWith('.mjs'),
         `Use an absolute local --${name}=...mjs`,
       );
+  flags.quality ??= 'branchless';
   return { ...config, formal, ...flags };
 }

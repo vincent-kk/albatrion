@@ -18,8 +18,34 @@ function statistics(values) {
   };
 }
 
+/** Compare identical legacy lanes over both roles' complete process sets. */
+function legacyStatistics(row, results) {
+  if (row.currentOnly) return null;
+  const minima = Object.fromEntries(
+    ['A', 'B'].map((lane) => [
+      lane,
+      results
+        .filter((r) => r.row === row.id && r.lane === lane)
+        .map((r) => r.minima.legacy),
+    ]),
+  );
+  if (
+    !minima.A.length ||
+    minima.A.length !== minima.B.length ||
+    ![...minima.A, ...minima.B].every((v) => Number.isFinite(v) && v > 0)
+  )
+    return null;
+  const A = statistics(minima.A);
+  const B = statistics(minima.B);
+  return { A, B, ratio: B.ms / A.ms };
+}
+
 /** Split A by process order while retaining all B processes and all-A quality. */
-export function summarizeAlternating(rows, results) {
+export function summarizeAlternating(
+  rows,
+  results,
+  qualityMode = 'branchless',
+) {
   const summary = rows.map((row) => {
     const minima = Object.fromEntries(
       ['A', 'B'].map((lane) => [
@@ -40,6 +66,8 @@ export function summarizeAlternating(rows, results) {
     const Aprime = statistics(minima.A.slice(half));
     const Aall = statistics(minima.A);
     const B = statistics(minima.B);
+    const legacy = legacyStatistics(row, results);
+    const currentRatio = B.ms / Aall.ms;
     const widthMs = Math.max(
       Math.abs(A.ms - Aprime.ms),
       A.widthMs,
@@ -51,6 +79,10 @@ export function summarizeAlternating(rows, results) {
       Aprime,
       Aall,
       B,
+      legacy,
+      legacyRatio: legacy?.ratio ?? null,
+      currentRatio,
+      ratioOfRatios: legacy ? currentRatio / legacy.ratio : null,
       widthMs,
       decision:
         B.ms < A.ms - widthMs && B.ms < Aprime.ms
@@ -62,6 +94,25 @@ export function summarizeAlternating(rows, results) {
   });
   const control = summary.find((row) => row.id === 'single-flat-1000');
   const ratio = control ? control.B.ms / control.Aall.ms : null;
+  if (qualityMode === 'legacy') {
+    const available = summary.filter((row) => row.legacyRatio !== null);
+    const ratio = available.length
+      ? median(available.map((row) => row.legacyRatio))
+      : null;
+    return {
+      rows: summary,
+      quality: {
+        kind: 'legacy',
+        ratio,
+        passed: ratio !== null && ratio >= 0.95 && ratio <= 1.05,
+        assessedRows: available.length,
+        rows: available.map((row) => ({ id: row.id, ratio: row.legacyRatio })),
+        omittedRows: summary
+          .filter((row) => row.legacyRatio === null)
+          .map((row) => ({ id: row.id, reason: 'No compatible legacy lane' })),
+      },
+    };
+  }
   return {
     rows: summary,
     quality: control

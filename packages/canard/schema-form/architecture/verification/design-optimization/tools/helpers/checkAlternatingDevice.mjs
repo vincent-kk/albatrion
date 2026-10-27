@@ -143,6 +143,51 @@ if (process.env.ALTERNATING_FROZEN_SOURCE) {
   assert.equal(changed, '', 'Frozen product source and dist');
 }
 console.log('ALTERNATING_MATH_OK');
+const legacyRows = [
+  control,
+  { id: 'paired-other' },
+  { id: 'paired-middle' },
+  { id: 'no-legacy', currentOnly: true },
+];
+function legacyObservations(id, current, legacy, scale) {
+  return observations(Array(10).fill(1), Array(10).fill(current)).map((r) => ({
+    ...r,
+    row: id,
+    minima: { ...r.minima, legacy: scale * (r.lane === 'A' ? 1 : legacy) },
+  }));
+}
+const legacySummary = summarizeAlternating(
+  legacyRows,
+  [
+    ...legacyObservations(control.id, 1.3, 0.96, 1),
+    ...legacyObservations('paired-other', 2, 1, 1000),
+    ...legacyObservations('paired-middle', 0.5, 1.04, 100),
+    ...legacyObservations('no-legacy', 3, 3, 5),
+  ],
+  'legacy',
+);
+assert.equal(legacySummary.quality.ratio, 1);
+assert.equal(legacySummary.quality.passed, true);
+assert.equal(legacySummary.quality.assessedRows, 3);
+assert.equal(legacySummary.rows[3].legacyRatio, null);
+assert.equal(legacySummary.rows[0].currentRatio, 1.3);
+assert.ok(Math.abs(legacySummary.rows[0].ratioOfRatios - 1.3 / 0.96) < 1e-12);
+assert.equal(
+  readAlternatingConfig([...flags, '--quality=legacy']).quality,
+  'legacy',
+);
+let deferredCalls = 0;
+assert.equal(
+  executeAlternatingRows(
+    { formal: true, runs: 10, quality: 'legacy' },
+    [control, { id: 'second' }],
+    (row, lane, repeat) => ({ row: row.id, repeat, pid: ++deferredCalls }),
+    () => ({ quality: { passed: false } }),
+  ),
+  2,
+);
+assert.equal(deferredCalls, 40);
+console.log('ALTERNATING_LEGACY_QUALITY_OK');
 console.log(
   `ALTERNATING_CONTRACT_OK syntax=${syntax} rows=21 control-abort=20`,
 );
@@ -155,6 +200,13 @@ if (runDir) {
   assert.equal(report.rows.length, 21);
   assert.equal(report.completed, true);
   assert.equal(report.results.length, 21 * report.config.runs * 2);
+  if (report.config.quality === 'legacy') {
+    assert.equal(report.quality.kind, 'legacy');
+    assert.equal(report.quality.assessedRows, 17);
+    assert.equal(report.quality.omittedRows.length, 4);
+    for (const row of report.rows)
+      assert.equal(row.legacyRatio === null, row.currentOnly === true);
+  }
   const pids = report.results.map((r) => r.pid);
   assert.ok(pids.every((pid, index) => pids.indexOf(pid) === index));
   for (const row of report.rows) {

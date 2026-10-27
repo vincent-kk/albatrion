@@ -324,3 +324,27 @@ smoke의 품질도 출력하지만 실패로 중단하지 않으며 수용 증�
   --baseline-bundle="$B1_BASELINE_NODE" --candidate-bundle="$B1_CANDIDATE_NODE" \
   --runs=2 --warmups=2 --samples=3 --label=alternating-smoke
 ```
+
+### 전체 행의 동일 레거시 레인 품질
+
+`--quality=legacy`를 추가하면 같은 프로세스 안에서 함께 측정한 **동일한 0.16.1 코드**를
+창 대조로 씁니다. 기존 `--quality=branchless`가 기본이며 앞 절의 제어 행 즉시 중단 규칙을
+유지합니다. legacy 모드에서는 21시간 행을 모두 실행한 뒤 품질을 판정합니다.
+
+각 행의 0.16.1 레인에서 A 전체10개와 B 전체10개의 프로세스 최소값 중앙을 구하고 B/A를
+계산합니다. 호환되는 **17행의 비율 중앙값**이 0.95~1.05이면 유효입니다. if·discriminator·
+구독2행은 원래 장치부터 레거시 레인이 없으므로 품질과 보정 지표를 N/A로 두고 제외합니다.
+다른 fixture로 대체한 가짜 쌍은 만들지 않습니다. 두 역할의 레거시 원본 SHA가 같은지도
+준비 단계에서 확인합니다. 행별 비율·제외 사유·전체 중앙을 `quality.json`에 남깁니다.
+
+보조 `ratioOfRatios`는 `(current B전체10/A전체10) ÷ (legacy B전체10/A전체10)`입니다.
+시간 표의 A앞5·A′뒤5와 구별하며 채택 판정에는 사용하지 않습니다. 실행 중의 legacy 품질은
+`pending`·`passed=null`로 표시합니다. 전 행 뒤 품질이 무효이면 CLI는 exit2로 끝나지만,
+창 실행기는 같은 창의 힙·단계·호출 수까지 완료하여 참고 결과로 남길 수 있습니다.
+그 뒤 시간 판정은 판정 불가이며 자동 재시도하지 않습니다.
+
+```sh
+"$D0_NODE" "$D0_TOOLS/alternate.mjs" \
+  --baseline-bundle="$B1_BASELINE_NODE" --candidate-bundle="$B1_CANDIDATE_NODE" \
+  --quality=legacy --runs=2 --warmups=2 --samples=3 --label=legacy-quality-smoke
+```
