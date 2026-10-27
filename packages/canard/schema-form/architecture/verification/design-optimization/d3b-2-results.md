@@ -131,3 +131,9 @@ staticIds 저장만 바꾸어 Bun에서 79.062587 B/노드(79.078400 B/entry)가
 승인된 선택지 가운데 **선언 부모 host가 소유하는 WeakMap**을 최종 후보에 사용한다. 소유 host 명시 인수와 64형제 공유 시험을 유지하고, admittedEdgeSchemas 등 다른 슬롯은 바꾸지 않는다. 비용은 실제 staticIds를 쓰는 host마다 WeakMap 하나이며 전역 파생 저장소는 여전히 두 개다. 최종 후보는 전체 열 행·Node/Bun B2와 필요한 기능 관문을 다시 검증한 뒤 같은 판정으로 판단한다.
 
 원시는 `/private/tmp/454-d3b-2/staticIds-probe/`이며 중단한 실행은 `invalid-os-load/`로 구분한다. 모든 측정 자식이 exit0인 뒤 Node의 deprecation stderr가 섞인 요약 JSON 파서만 실패했고, 원시 JSON 객체를 다시 파싱하여 계산했으며 측정은 반복하지 않았다.
+
+## 최종 후보의 비교 기준 — 측정 전 코디네이터 결정
+
+코디네이터가 최종 A를 이 PR의 base `8569ec0e1`(#470 병합)로 지정했다. #470의 Bun 증가를 소유자가 이미 TEST-027로 수용했으므로 D3b-2의 증분을 그 위에서 판단한다. 최초 `53d49ca94` 비교의 미달 기록은 유지하며 지우거나 수용으로 바꾸지 않는다.
+
+최종 B는 host-owned WeakMap 구현 `de14aa1da`이다. 같은 창에서 A/B/A′ 열 행(20예열·100표본·3독립 프로세스)과 Node·Bun B2 각 7표본을 실행한다. 폭 밖 악화 0, B2 B 중앙값≤A 최댓값 조건은 유지한다. 실제 안정화 표본 뒤 새 quiet-since는 `2026-10-27T03:50:44Z`이다. 기준본을 이 작업 트리에서 분리 HEAD로 빌드한 뒤 후보 가지로 돌아왔으며 추가 git 가지는 만들지 않았다. 기준본 Node SHA는 `cca627b4e38506551c786aaa778b87ac1d2e6f7d8a3a6aab9bc699f2b1d3a418`로 이전 D3b-1 최종 산출물과 같다.
