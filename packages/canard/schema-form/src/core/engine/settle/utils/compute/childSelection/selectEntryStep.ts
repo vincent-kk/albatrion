@@ -20,6 +20,7 @@ import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
 import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../../slots/cloneFromSlot';
+import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
 import { enterSlotClone } from '../../slots/enterSlotClone';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
@@ -262,6 +263,12 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       node.behavior.type === 'array',
     );
   const latent = context.root.runtime.latentRaw;
+  const slotSource =
+    node.runtime.slots !== 'off' ? node.inactiveSlots?.get(entry) : undefined;
+  const slotOverlay =
+    node.runtime.slots !== 'off'
+      ? node.inactiveSlotOverlays?.get(entry)
+      : undefined;
   const latentKey =
     latent.size > 0 && !priorChild
       ? JSON.stringify([
@@ -279,6 +286,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   if (
     !priorChild &&
     !currentChild &&
+    !slotSource &&
+    !slotOverlay &&
     hasRecursiveExpansion(node, entry.node, input, context)
   ) {
     if (!context.exceededBudget) {
@@ -303,17 +312,15 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         ])
       : undefined;
   const pending = key === undefined ? undefined : context.pendingExits.get(key);
-  const slotSource =
-    !currentChild && !priorChild && !pending && node.runtime.slots !== 'off'
-      ? node.inactiveSlots?.get(entry)
-      : undefined;
   const child =
     currentChild ??
     priorChild ??
     pending ??
     (slotSource
       ? cloneFromSlot(node, entry, slotSource, context)
-      : createChildNode(node, entry));
+      : slotOverlay
+        ? createFromSlotOverlay(node, entry, slotOverlay, context)
+        : createChildNode(node, entry));
   context.perished.delete(child);
   if (key !== undefined && context.pendingExits.delete(key)) {
     const path = node.path + '/' + escapeSegment(entry.name);
@@ -329,7 +336,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     context.entered.add(child);
     indexEnteredLatentKey(context, child);
     if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
-    else if (slotSource) enterSlotClone(node, child, entry.name, context);
+    else if (slotSource || slotOverlay)
+      enterSlotClone(node, child, entry.name, context);
     else enterFieldNode(node, child, entry.name, context);
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);

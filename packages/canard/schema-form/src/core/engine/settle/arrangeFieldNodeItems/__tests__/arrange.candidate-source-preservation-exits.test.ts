@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import {
@@ -14,6 +15,8 @@ import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 it.each(['destination', 'nested', 'direct-control'] as const)(
   'preserves candidate sources when the %s array exits during its move settlement',
   (scene) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const gate =
       scene === 'nested' ? '../../../list/length < 2' : '../../list/length < 2';
     const path = scene === 'nested' ? '../../../../kind' : '../../../kind';

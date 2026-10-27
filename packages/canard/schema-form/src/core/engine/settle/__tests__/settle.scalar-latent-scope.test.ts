@@ -1,6 +1,7 @@
 // filid:contract settle-write
 import { expect, it, vi } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { FieldNodeEventType } from '../../record';
 import {
@@ -60,6 +61,8 @@ function beginObservation() {
 }
 
 it('H4 keeps the scalar fast path when an exited array item owns an unrelated latent value', () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const { root, leaf, other, seen } = createScopeTree();
   const retired = getDispatchNode(root, 'other', '0');
   dispatchSetValue(other, []);
@@ -86,6 +89,8 @@ it.each([
 ])(
   'H4 uses the ordinary path and clears covered latent slot %s',
   (path, kind) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, leaf, seen } = createScopeTree();
     const key = JSON.stringify([path, kind]);
     root.runtime.latentRaw.set(key, 99);
@@ -102,6 +107,8 @@ it.each([
 );
 
 it('H4 keeps the ordinary path for a same-path other-kind slot of an ancestor', () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const { root, leaf, seen } = createScopeTree();
   const key = JSON.stringify(['/group', 'string']);
   root.runtime.latentRaw.set(key, 'retained');

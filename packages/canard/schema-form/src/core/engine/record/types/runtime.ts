@@ -90,7 +90,7 @@ interface DetachedFieldNodeReads {
   readonly errors: readonly { readonly dataPath: string }[];
   readonly misfit: boolean;
   readonly misfits: readonly string[];
-  readonly inactiveValues: readonly { path: string; value: unknown }[];
+  readonly inactiveValues?: readonly { path: string; value: unknown }[];
   readonly defaultValue: unknown;
   readonly visible: boolean;
   readonly readOnly: boolean;

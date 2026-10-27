@@ -3,8 +3,12 @@ import { expect, it } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { isArrayNode } from '@/schema-form/core/surface';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
+
 // 446C-07 (가): A detached field write must follow its surviving item to the new index.
 it('keeps a detached field write with its surviving array item after remove(0)', () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const { root, runtime } = makeFieldNodeTree({
     type: 'object',
     properties: {

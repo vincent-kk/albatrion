@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import type { BlueprintSchema } from '../../blueprint';
@@ -17,6 +18,8 @@ afterEach(() => vi.restoreAllMocks());
 
 describe('direct exit-policy child ownership', () => {
   it('bounds F=64 C=16 control collections while retaining the exit range', () => {
+    // These assertions inspect the latent-store baseline and its preparation work.
+    pinLatentBaseline();
     const { root } = createDispatchTree({
       type: 'object',
       properties: {
@@ -129,6 +132,8 @@ describe('direct exit-policy child ownership', () => {
     { label: 'node keep', fields: true, node: false, keep: true },
     { label: 'node clear', fields: false, node: true, keep: false },
   ])('preserves $label and delivery through exit and reentry', (scene) => {
+    // These assertions inspect the latent-store baseline and its preparation work.
+    pinLatentBaseline();
     const schema: BlueprintSchema = {
       type: 'object',
       properties: { flag: { type: 'boolean' }, probe: { type: 'number' } },

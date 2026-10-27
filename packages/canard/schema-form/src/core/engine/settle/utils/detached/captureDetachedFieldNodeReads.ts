@@ -26,7 +26,12 @@ export const captureDetachedFieldNodeReads = <
     errors: readFieldNodeErrors(node),
     misfit: runtime.misfitPaths.has(node.path),
     misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
-    inactiveValues: runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
+    ...(runtime.slots === 'off'
+      ? {
+          inactiveValues:
+            runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
+        }
+      : undefined),
     defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
     visible: node.visible,
     readOnly: node.readOnly,

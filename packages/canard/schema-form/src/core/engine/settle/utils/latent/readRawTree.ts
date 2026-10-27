@@ -6,6 +6,9 @@ import { getItemEntries } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { isPlain } from '../input/isPlain';
+import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
+import { readSlotRawTree } from '../slots/readSlotRawTree';
+import { resolveSlotSource } from '../slots/resolveSlotSource';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
 import { readLatentSlotSource } from './readLatentSlotSource';
 
@@ -20,6 +23,23 @@ export const readRawTree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown => {
+  if (node.runtime.slots !== 'off') {
+    if (!node.detached) return readSlotRawTree(node.blueprintNode, node);
+    const lineage = [];
+    for (let current: Self | null = node; current; current = current.parent)
+      lineage.unshift(current.blueprintNode);
+    const resolved = resolveSlotSource(
+      context.root,
+      DetachedWriteAddress.read(node)?.path ?? node.path,
+      node.blueprintNode,
+      lineage,
+    );
+    return readSlotRawTree(
+      node.blueprintNode,
+      resolved.source ?? node,
+      resolved.overlay,
+    );
+  }
   if (node.raw !== undefined || node.behavior.strategy === 'terminal')
     return node.raw;
   if (node.behavior.type === 'array') {

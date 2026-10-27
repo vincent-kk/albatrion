@@ -3,6 +3,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
+import { pruneArraySlotTail } from '../slots/pruneArraySlotTail';
 import { pruneArrayTailPaths } from './pruneArrayTailPaths';
 import { prunePerishedPaths } from './prunePerishedPaths';
 import { detachPerishedNode } from './utils/detachPerishedNode';
@@ -70,8 +71,10 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   }
   const resizedHosts = new Map<string, number>();
   for (const [host, previousCount] of context.arrayCounts)
-    if (!host.detached && host.itemCount !== previousCount)
+    if (!host.detached && host.itemCount !== previousCount) {
+      if (host.runtime.slots !== 'off') pruneArraySlotTail(host, context);
       resizedHosts.set(host.path, host.itemCount);
+    }
   if (resizedHosts.size) {
     pruneArrayTailPaths(context.root.runtime, resizedHosts);
     context.latentDescendantKeys = undefined;

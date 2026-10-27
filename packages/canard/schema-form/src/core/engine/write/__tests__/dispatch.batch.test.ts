@@ -7,6 +7,7 @@ import {
 } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
 import { dispatchFinishInput } from '../utils/entry/dispatchFinishInput';
 import { dispatchMount } from '../utils/entry/dispatchMount';
@@ -70,6 +71,8 @@ const latent = (path: string, kind: string) => JSON.stringify([path, kind]);
 
 /** Mount a guarded tree, close the branch, and return the root with its latent raw retained. */
 const hideVat = (schema: typeof noteSchema | typeof companySchema) => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const tree = createDispatchTree(schema, undefined, createTestValidator());
   dispatchMount(tree.root, { company: true, vat: 'VAT-9' });
   dispatchSetValue(getDispatchChild(tree.root, 'company'), false);
@@ -238,6 +241,7 @@ describe('dispatcher batch', () => {
   });
 
   it('191C-01 LANDING-018 LANDING-032 keeps latent raw outside a two-write batch', () => {
+    pinLatentBaseline();
     const { root, runtime } = hideVat(noteSchema);
     const note = getDispatchChild(root, 'note');
     dispatchBatch(root, () => {
@@ -297,6 +301,7 @@ describe('dispatcher batch', () => {
   ])(
     '191C-01 keeps latent raw outside array and object batches: %s',
     (_, writes) => {
+      pinLatentBaseline();
       const { root, runtime } = createDispatchTree(
         hostSchema,
         undefined,
@@ -318,6 +323,7 @@ describe('dispatcher batch', () => {
   );
 
   it('26C-10 clears latent raw under a root write inside a batch', () => {
+    pinLatentBaseline();
     const { root, runtime } = hideVat(noteSchema);
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(root, 'note'), 'x');
@@ -329,6 +335,7 @@ describe('dispatcher batch', () => {
   });
 
   it('191C-01 keeps latent raw under a shallow Merge batch', () => {
+    pinLatentBaseline();
     const { root, runtime } = hideVat(noteSchema);
     dispatchBatch(root, () => {
       dispatchSetValue(root, { note: 'z' }, WriteOption.Merge);
@@ -339,6 +346,7 @@ describe('dispatcher batch', () => {
   });
 
   it('191C-01 keeps a single-write batch unchanged', () => {
+    pinLatentBaseline();
     const { root, runtime } = hideVat(noteSchema);
     const before = runtime.commitNumber ?? 0;
     dispatchBatch(root, () =>
@@ -351,6 +359,7 @@ describe('dispatcher batch', () => {
   });
 
   it('191C-01 keeps an unwritten sibling object intact across a two-write batch', () => {
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree(
       {
         type: 'object',
@@ -405,6 +414,7 @@ describe('dispatcher batch', () => {
   });
 
   it('191C-01 pins the replaced-exit clause for a written path inside a batch', () => {
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree(
       kindSchema(false),
       undefined,
@@ -420,6 +430,7 @@ describe('dispatcher batch', () => {
   });
 
   it('191C-01 pins the automatic-origin skip: a batched trim keeps the other-kind latent raw', () => {
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree(
       kindSchema(true),
       undefined,
@@ -438,6 +449,7 @@ describe('dispatcher batch', () => {
   });
 
   it('191C-01 pins replacement without a root scope: a batched same-node double write keeps latent raw', () => {
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree(
       kindSchema(false),
       undefined,
@@ -455,6 +467,7 @@ describe('dispatcher batch', () => {
 
 describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
   it('restores the latent string on a single re-entry write (control)', () => {
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree(
       kindSchema(true),
       undefined,
@@ -470,6 +483,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
   });
 
   it('restores the latent string when the re-entry write shares a batch with another path', () => {
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree(
       kindSchema(true),
       undefined,
@@ -487,6 +501,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
   });
 
   it('leaves the other-kind node empty when a batched double write switches the branch', () => {
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree(
       kindSchema(false),
       undefined,
@@ -504,6 +519,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
   });
 
   it('prunes only the latent raw of the sibling a batched virtual overwrite replaces while the branch switches', () => {
+    pinLatentBaseline();
     const schema = {
       type: 'object',
       properties: {

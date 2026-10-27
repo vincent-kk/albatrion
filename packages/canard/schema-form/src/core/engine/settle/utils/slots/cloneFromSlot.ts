@@ -1,6 +1,7 @@
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { applySlotOverlay } from './applySlotOverlay';
 import { cloneSlotSubtree } from './cloneSlotSubtree';
 import { markSlotChange } from './markSlotChange';
 
@@ -19,7 +20,9 @@ export const cloneFromSlot = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): Self => {
   const node = cloneSlotSubtree(host, entry, source, context, true);
-  markSlotChange(host, entry);
+  const overlay = host.inactiveSlotOverlays?.get(entry);
+  if (overlay) applySlotOverlay(node, overlay, context);
+  markSlotChange(host, entry, undefined, context);
   host.inactiveSlots?.delete(entry);
   host.inactiveSlotOverlays?.delete(entry);
   return node;

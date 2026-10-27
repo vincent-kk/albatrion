@@ -3,9 +3,13 @@ import { expect, it } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { isArrayNode, reloadFieldNodeForm } from '@/schema-form/core/surface';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
+
 it.each(['subtree', 'form'] as const)(
   'preserves a rekeyed old reference address through %s reset',
   (reset) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {

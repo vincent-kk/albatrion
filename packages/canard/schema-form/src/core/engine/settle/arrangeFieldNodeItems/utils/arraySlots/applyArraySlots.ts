@@ -18,6 +18,8 @@ import { getLatentOrder } from '../../../utils/latentStore/getLatentOrder';
 import { indexEnteredLatentKey } from '../../../utils/latentStore/indexEnteredLatentKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
+import { rekeyArraySlotBindings } from '../../../utils/slots/rekeyArraySlotBindings';
+import { rekeySlotWriteAddresses } from '../../../utils/slots/rekeySlotWriteAddresses';
 import { captureExitedRaw } from '../../../utils/transition/captureExitedRaw';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from '../rekey/rekeyArrayRuntimePaths';
@@ -160,6 +162,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       { owned: true },
     );
   }
+  if (host.runtime.slots !== 'off')
+    rekeyArraySlotBindings(host, moves, context);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
   if (candidateMoves)
     (context.rekeyedArrayMoves ??= new Map()).set(host, moves);
@@ -182,6 +186,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           previous,
           current: descendant.path,
         });
+        if (host.runtime.slots !== 'off') rekeySlotWriteAddresses(descendant);
         context.dirtyPaths.add(descendant.path);
         if (descendant.behavior.strategy === 'branch')
           context.shapeDirtyPaths.add(descendant.path);

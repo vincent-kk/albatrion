@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { WriteOption } from '../../types/value';
@@ -15,6 +16,8 @@ afterEach(() => vi.restoreAllMocks());
 
 describe('candidate exit policy ownership', () => {
   it('a terminal sibling clear cannot apply its policy to an object candidate', () => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root } = createDispatchTree(
       propertySchema(
         { type: 'object', properties: { x: { type: 'number' } } },
@@ -34,6 +37,8 @@ describe('candidate exit policy ownership', () => {
   });
 
   it('array clearing isolates siblings and honors owned latent retain overrides', () => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root } = createDispatchTree(
       propertySchema(
         { type: 'object', properties: { x: { type: 'number' } } },
@@ -76,6 +81,8 @@ describe('candidate exit policy ownership', () => {
   it.each([false, true])(
     'shared path/token survives an array candidate exit, clear=%s',
     (clear) => {
+      // These assertions inspect the latent-store baseline directly.
+      pinLatentBaseline();
       const { root } = createDispatchTree(
         propertySchema(
           { type: 'object', properties: { '0': { type: 'number' } } },
@@ -108,6 +115,8 @@ describe('candidate exit policy ownership', () => {
   ] satisfies readonly { host: 'object' | 'array'; clear: boolean }[])(
     '[control] single-candidate $host clear=$clear skips ownership selection and child-entry traversal',
     ({ host, clear }) => {
+      // These assertions inspect the latent-store baseline directly.
+      pinLatentBaseline();
       const { root } = createDispatchTree({
         type: host,
         ...(host === 'array'

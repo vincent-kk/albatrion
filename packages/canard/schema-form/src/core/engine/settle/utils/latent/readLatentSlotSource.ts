@@ -9,6 +9,8 @@ import { isPlain } from '../input/isPlain';
 import { HostLatent } from '../latentStore/HostLatent';
 import { getEnteredLatentKeys } from '../latentStore/getEnteredLatentKeys';
 import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
+import { readSlotRawTree } from '../slots/readSlotRawTree';
+import { resolveSlotSource } from '../slots/resolveSlotSource';
 
 /**
  * Recompose a gated-out item from its retained own-kind latent sources.
@@ -23,6 +25,12 @@ export const readLatentSlotSource = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
 ): unknown => {
   const runtime = context.root.runtime;
+  if (runtime.slots !== 'off') {
+    const resolved = resolveSlotSource(context.root, path, template);
+    return resolved.source || resolved.overlay
+      ? readSlotRawTree(template, resolved.source, resolved.overlay)
+      : undefined;
+  }
   const own = runtime.latentRaw.get(
     JSON.stringify([path, getBlueprintNodeIdentity(template)]),
   );

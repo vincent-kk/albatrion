@@ -4,7 +4,10 @@ import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
+import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
+import { markRestoredSlotRaw } from './markRestoredSlotRaw';
 
 /**
  * Rebind retained state without sharing any node or parent link with its source.
@@ -23,16 +26,23 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
   entering: boolean,
 ): Self => {
   const node = host.runtime.nodeFactory(entry, host, host.runtime, source);
+  const address = {
+    path: node.path,
+    order: getLatentOrder(host, entry.name, entry.node),
+  };
+  DetachedWriteAddress.transfer(source, address, node.runtime);
+  DetachedWriteAddress.retain(node, address, node.runtime);
   node.raw = source.raw;
   node.undeclaredValues = source.undeclaredValues;
   node.itemCount = source.itemCount;
   node.nextItemKey = source.nextItemKey;
+  node.inactiveValueMemo = source.inactiveValueMemo;
   if (host.behavior.type === 'array' && host.behavior.strategy === 'branch')
     node.itemKey = host.nextItemKey++;
   if (!entering) {
     node.active = false;
     node.detached = true;
-    node.inactiveValueMemo = source.inactiveValueMemo;
+    node.retainedSourceOverlay = source.retainedSourceOverlay;
     if (hasOwnProperty(source, 'retainedExitPolicy'))
       node.retainedExitPolicy = source.retainedExitPolicy;
   }
@@ -60,11 +70,18 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
       const copied = cloneSlotSubtree(node, binding, child, context, entering);
       structure[binding.name] = copied;
       children.push(copied);
+      if (
+        copied.inactiveSlots?.size ||
+        copied.inactiveSlotOverlays?.size ||
+        copied.inactiveSlotChildren?.size
+      )
+        (node.inactiveSlotChildren ??= new Map()).set(binding.name, copied);
     }
     node.structure = structure;
     node.children = children;
   }
   if (entering) {
+    markRestoredSlotRaw(node, context);
     context.entered.add(node);
     context.dirtyPaths.add(node.path);
     if (node.behavior.strategy === 'branch')

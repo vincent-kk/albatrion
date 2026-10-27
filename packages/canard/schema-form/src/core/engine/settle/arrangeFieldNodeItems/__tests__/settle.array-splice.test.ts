@@ -10,6 +10,7 @@ import {
   dispatchSetValue,
 } from '@/schema-form/core/engine/write';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import * as output from '../../utils/output/updateOutput';
 import { compareArraySplice } from './fixtures/compareArraySplice';
@@ -101,6 +102,8 @@ describe('static middle remove and insert through the splice path match the gene
   });
 
   it('keeps the removed node detached with its reads and sends its later write to latent raw', () => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     let removed: DispatchTestNode | undefined;
     compareArraySplice(
       OBJECTS,
