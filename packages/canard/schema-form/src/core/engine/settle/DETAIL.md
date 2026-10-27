@@ -2,6 +2,11 @@
 
 ## Requirements
 
+- B2-P2 바퀴 계획은 live host identity와 청사진·relocation 목록 identity로 묶는다. 최초 O(G)의 목록·식 자격·예산 준비 뒤 반복 읽기는 O(1)이며, 새 relocation 등록/제거 때만 목록을 갱신한다. 같은 바퀴에서 이미 발견한 게이트는 기존 예산 의미대로 유지한다. 청사진 교체·rebuild·호스트 재진입은 새 키이며 게이트 값·판정은 계획에 저장하지 않는다.
+- B2-P2 나감 계층은 template별 선언·fields 대상·조각 소유를 최초에 색인하고 unsetOnInactive 후보만 읽는다. 선택 ID와 committed rule value는 매번 현재 기록을 사용하여 node→fields→fragment 우선순위와 keep 우선을 유지한다. 선언이 없는 나감은 O(1), 정책이 있는 나감은 관련 정책 수에 비례하며 루트 선언 전체를 재방문하지 않는다. 자식 문서 위치는 template별 최초 O(E) 색인 뒤 조상당 O(1) 조회한다.
+- B2-P2 정적 준비물은 게이트·overlay·relocation이 없는 고유 객체 엔트리의 schema·ID·소유·경로 증인을 live host당 최초 O(S)로 검증한다(SETTLE-052). 준비된 정적 baseline은 청사진의 항상 활성인 성질이며 이전 동적 선택이 아니다. 동적 엔트리는 매 정착 고정 baseline에서 원래 순서로 선택한다(SETTLE-044·GOAL-029·BLUEPRINT-007). 이전 structure·children·값은 변경하지 않으며 전체 형상 공표의 O(S+K) 복사·조립 비용은 유지한다.
+- load·reset·rebuild·호스트 재진입·배열 재배치/경로 변경·분배 입력·relocated 게이트·실패 시 정적 준비물을 폐기하거나 일반 경로로 후퇴한다. 새 호스트는 새 약한 키이며 경로/청사진 identity 변경도 증인을 무효화한다. verify만 독립 정적 증인 재검사와 손상 거부를 수행하고 출하 경로는 반복 witness·ID 재공표를 생략한다. 보유 비용은 준비된 gated host당 O(S) 정적 참조와 O(G) wheel metadata다.
+
 - B1의 게이트는 발생별 `reads`와 `evaluate(inputs)` 계약을 공유한다. `active`의 컴파일 의존, `discriminator`의 태그 프로퍼티, `if`의 완전한 정적 읽기 증거 또는 전체 호스트 읽기를 바인딩하며, 입력이 더러워지면 해당 호스트의 모든 게이트를 원래 순서로 판정한다(BLUEPRINT-007·055). 역색인으로 개별 게이트를 생략하지 않는다. 형상은 매 정착의 무게이트 baseline에서 계산한다(SETTLE-044·GOAL-029).
 - `if`·`discriminator`는 호스트 투영 객체와 extras의 두 identity가 같은 구간에서 하나의 전체 입력 view를 공유한다. 앞선 진입·퇴장·스키마 변화가 투영을 새로 공표하면 뒤 게이트부터 새 view를 사용한다. 전체 호스트를 읽는 불투명 조건의 일관성 실패와 추가 확인 라운드는 유지한다. 라운드 최초 snapshot 고정은 즉시 반영 계약에 어긋나므로 허용하지 않는다(SETTLE-020·050).
 - `if` 읽기의 화이트리스트는 객체 수준의 `type: object`, `properties`, `required`, `dependentRequired`, `allOf`·`anyOf`·`oneOf`·`not`이다. 프로퍼티 값 제약은 `type`, `const`, `enum`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `minLength`, `maxLength`, `pattern`만 허용하며 같은 논리 조합을 재귀 검사한다. 논리 조합 안이라도 `$ref`, `patternProperties`, `additionalProperties`, `propertyNames`, `unevaluated*`, 중첩 `if`·`then`·`else`, 알 수 없는 키워드가 있으면 전체 호스트 읽기로 후퇴한다. 정적으로 알려진 속성의 값·존재와 extras 우선순위를 메모와 증인 기록에 포함하며 guard에는 항상 현재 전체 view를 전달한다. 분석은 guard를 실행하지 않는다.
@@ -302,6 +307,12 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지한다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화한다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산한다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문한다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
+
+### settle-b2-p2-preparation — 호스트 수명 준비물
+
+- 쓰기 반복에서 게이트 배열 복사·식 자격·예산 전수 검사가 늘지 않고 relocation 등록/제거 후 새 목록과 예산을 사용한다.
+- 나감은 루트 선언 전체를 방문하지 않으며 정책 상속·표현식·조각/fields 소유와 inactiveValues 문서 순서가 기준과 같다.
+- 정적 형제 0·100·1000에서 준비 뒤 정적 증인 재검사·ID 재공표 증가가 없고 동적 선택·불변 옛 참조·load/reset/rebuild/재진입/배열 이동·오류 후 복구·그림자 동등성을 유지한다.
 
 ### gate-predicate — 세 종류의 판정과 보수적 입력 공유
 
