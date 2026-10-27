@@ -432,7 +432,9 @@ const portableWindow = (record) => ({
   quietSince: record.quietSince,
   durationSeconds: record.durationSeconds,
   heavy: record.heavy,
-  processes: record.rows,
+  processCount: record.rows?.length,
+  zeroCpuRowsOmitted: record.rows?.filter((row) => row.cpuPercent === 0).length,
+  processes: record.rows?.filter((row) => row.cpuPercent > 0),
 });
 const judgment = {
   adopt: Object.values(gates).every(Boolean),

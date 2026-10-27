@@ -114,10 +114,11 @@ if (config.worker) {
   }
   const profile = await collectProfiles(
     operations.wrapped,
-    config,
+    { ...config, profileLabel: pass },
     row,
     recorder,
     pass === 'ledger' ? ledgerNames : stageNames,
+    pass === 'ledger' ? 'wrapped.mjs' : 'supplemental.mjs',
   );
   console.log(
     JSON.stringify({

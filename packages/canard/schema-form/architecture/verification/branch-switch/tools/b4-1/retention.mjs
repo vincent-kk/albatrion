@@ -99,7 +99,7 @@ const measure = (label, trackedHeapIds = []) => {
   return {
     label,
     analysis,
-    survivingHeapIds: trackedHeapIds.filter((id) =>
+    matchingNumericHeapIds: trackedHeapIds.filter((id) =>
       graph.rpo.some((index) => graph.id(index) === id),
     ),
     hosts: hosts.map((host) => {
@@ -131,6 +131,8 @@ console.log(
       writesBeforeSnapshot: 120,
       release: 'resetSubtree followed by delivery drain and two full GCs',
       trackedHeapIds,
+      identity:
+        'Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection',
       reset,
       limitation:
         'Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed.',

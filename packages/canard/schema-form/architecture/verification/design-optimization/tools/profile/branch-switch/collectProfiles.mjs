@@ -11,6 +11,7 @@ export async function collectProfiles(
   row,
   recorder,
   names = stageNames,
+  bundleName = 'wrapped.mjs',
 ) {
   recorder.enabled = false;
   const session = new Session();
@@ -26,7 +27,7 @@ export async function collectProfiles(
   await session.post('Profiler.stopPreciseCoverage');
   const calls = {};
   for (const script of coverage.result.filter((s) =>
-    s.url.endsWith('/scratch/wrapped.mjs'),
+    s.url.endsWith('/scratch/' + bundleName),
   ))
     for (const fn of script.functions)
       if (names.includes(fn.functionName))
@@ -45,7 +46,7 @@ export async function collectProfiles(
   const stageByNode = new Map();
   const walk = (node, inherited = 'everythingElse', insideEngine = false) => {
     const active =
-      insideEngine || node.callFrame.url.endsWith('/scratch/wrapped.mjs');
+      insideEngine || node.callFrame.url.endsWith('/scratch/' + bundleName);
     const stage = names.includes(node.callFrame.functionName)
       ? node.callFrame.functionName
       : inherited;
@@ -62,7 +63,10 @@ export async function collectProfiles(
     if (stage)
       allocationSampleCounts[stage] = (allocationSampleCounts[stage] ?? 0) + 1;
   }
-  const prefix = path.join(config.runDir, `${row.id}-${config.repeat}`);
+  const prefix = path.join(
+    config.runDir,
+    `${row.id}-${config.repeat}${config.profileLabel ? '-' + config.profileLabel : ''}`,
+  );
   fs.writeFileSync(`${prefix}.coverage.json`, JSON.stringify(coverage));
   fs.writeFileSync(`${prefix}.heapprofile`, JSON.stringify(allocation));
   recorder.reset();
