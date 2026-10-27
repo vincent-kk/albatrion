@@ -98,10 +98,7 @@ export const rekeyArrayRuntimePaths = <Self>(
       rekeyLatentMetadata(metadata, path, previous, hostPath, runtime),
   );
   rekeyPairedPathStore(stores.declarations, changed, mapPath);
-  if (latentChanged) {
-    runtime.latentRawDirty = true;
-    runtime.inactiveValuesRebuild = true;
-  }
+  if (latentChanged) runtime.latentRawDirty = true;
   rekeyCommittedRules(runtime, changed, mapPath);
 
   const misfitKeys = new Set<string>();

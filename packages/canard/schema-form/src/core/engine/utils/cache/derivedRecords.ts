@@ -34,7 +34,6 @@ export interface HostDerived {
   defaultEffectiveSchema?: unknown;
   effectiveSchemaMemo?: unknown;
   staticPartition?: unknown;
-  latentEntryOrder?: unknown;
 }
 
 type SlotValue<Record, Slot extends keyof Record, Value> = Omit<

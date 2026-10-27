@@ -1,6 +1,5 @@
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { getLatentChildOrder } from './getLatentChildOrder';
 
 /**
  * Locate a latent occurrence in the blueprint's child order at every depth.
@@ -19,12 +18,21 @@ export const getLatentOrder = <Self extends FieldNodeRecord<Self>>(
   let childName = name;
   let childTemplate = template;
   while (host) {
-    order.push(
-      getLatentChildOrder(host.blueprintNode, childName, childTemplate),
+    const entries = host.blueprintNode.childEntries;
+    const index = entries.findIndex(
+      (entry) => entry.name === childName && entry.node === childTemplate,
+    );
+    const arrayIndex = Number(childName);
+    order.unshift(
+      index >= 0
+        ? index
+        : Number.isInteger(arrayIndex) && arrayIndex >= 0
+          ? arrayIndex
+          : 0,
     );
     childName = host.name;
     childTemplate = host.blueprintNode;
     host = host.parent;
   }
-  return order.reverse();
+  return order;
 };
