@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- B2-P2는 기존 HostDerived 저장소를 불변 template와 live host의 약한 identity 키로 함께 사용한다. wheelPlan은 settle이 구체 형과 무효화를 소유하는 라이브 준비물이고, controlLayerIndex·childOrderIndex는 청사진의 순수 파생 자료다. 노드 고정 필드와 공개 surface는 늘리지 않으며 모드 전환은 기존 저장소 초기화로 함께 버린다.
+- B2-P2는 기존 HostDerived 저장소를 불변 template와 live host의 약한 identity 키로 함께 사용한다. wheelPlan·preparedStaticHost는 settle이 구체 형과 무효화를 소유하는 라이브 준비물이고, controlLayerIndex·childOrderIndex는 청사진의 순수 파생 자료다. 노드 고정 필드와 공개 surface는 늘리지 않으며 모드 전환은 기존 저장소 초기화로 함께 버린다.
 
 - 청사진과 컴파일된 식의 생성 고정 사실은 비열거·읽기 전용 속성으로 freeze 전에 정의한다. 기존 열거 관측에는 추가하지 않으며 직접 사실 조회와 모드 변경 뒤의 보존은 유지한다(D3b-2).
 
