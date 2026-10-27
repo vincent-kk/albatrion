@@ -40,9 +40,11 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     const refreshTargets = runtime.refreshTargets;
     const loadScope = context.kind === 'load' ? context.loadScope : undefined;
     const loadPrefix = loadScope ? loadScope.path + '/' : '';
-    const automaticNodes = new Set<Self>();
+    const automaticNodes = context.automaticLog.length
+      ? new Set<Self>()
+      : undefined;
     for (let index = 0; index < context.automaticLog.length; index++)
-      automaticNodes.add(context.automaticLog[index].node);
+      automaticNodes!.add(context.automaticLog[index].node);
     const watchIndex = runtime.deliveryWatchIndex;
     const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
     let affectedPaths: Set<string> | undefined;
@@ -105,10 +107,11 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       if (affectedPaths)
         for (const path of affectedPaths) watchIndex.affected(path, candidates);
     }
-    const isTreeNode = (value: unknown): value is Self =>
-      value !== null &&
-      typeof value === 'object' &&
-      Reflect.get(value, 'runtime') === runtime;
+    const isTreeNode = (value: unknown, knownRecord: boolean): value is Self =>
+      knownRecord ||
+      (value !== null &&
+        typeof value === 'object' &&
+        Reflect.get(value, 'runtime') === runtime);
     let silentMask = 0;
     const markSilent = (_node: Self, bit: FieldNodeEventType): void => {
       silentMask |= bit;
@@ -149,7 +152,8 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         continue;
       }
       const candidate = next.value;
-      if (!isTreeNode(candidate)) continue;
+      // The five settlement sources already contain records; only watch candidates are opaque.
+      if (!isTreeNode(candidate, sourceIndex < 5)) continue;
       const node = candidate;
       if (
         (sourceIndex > 0 &&
@@ -234,7 +238,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
                 : node.local;
             const payload = { previous: oldValue, current };
             const source =
-              automaticNodes.has(node) || context.filledNodes.has(node)
+              automaticNodes?.has(node) || context.filledNodes.has(node)
                 ? 'automatic'
                 : readSettlementSource(context, node.path);
             mark(
@@ -330,7 +334,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
               : node.local;
           const payload = { previous: undefined, current };
           const source =
-            automaticNodes.has(node) || context.filledNodes.has(node)
+            automaticNodes?.has(node) || context.filledNodes.has(node)
               ? 'automatic'
               : readSettlementSource(context, node.path);
           mark(

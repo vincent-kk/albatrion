@@ -1,6 +1,6 @@
 import { getItemEntries } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import type { SettlementContext } from '../../types/settlement';
 import { captureArrayLatent } from '../latent/captureArrayLatent';
 import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
@@ -82,10 +82,7 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
     node.behavior.strategy === 'branch'
   )
     distributeAbsentChildInputs(node, context, order);
-  const key = JSON.stringify([
-    node.path,
-    getBlueprintNodeIdentity(node.blueprintNode),
-  ]);
+  const key = getCommittedDeclarationKey(node, node.runtime);
   const value =
     clear && (!ownsLatent || ownsLatent(key))
       ? undefined

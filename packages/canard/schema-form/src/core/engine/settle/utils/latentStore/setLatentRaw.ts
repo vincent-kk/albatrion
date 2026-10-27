@@ -1,11 +1,9 @@
-import { isArray } from '@winglet/common-utils/filter';
-
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
+import { readNodeKeyPath } from '../../../utils/nodeIdentity/readNodeKeyPath';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
 import { DetachedWriteAddress } from './DetachedWriteAddress';
-import { indexLatentDescendant } from './indexLatentDescendant';
 
 /**
  * Change one latent entry and retain its classification across deletions.
@@ -32,12 +30,6 @@ export const setLatentRaw = <Self extends FieldNodeRecord<Self>>(
   const latent = runtime.latentRaw;
   const had = latent.has(key);
   const prior = latent.get(key);
-  const index = context?.latentDescendantKeys;
-  const identity: unknown = index ? JSON.parse(key) : undefined;
-  const path =
-    isArray(identity) && typeof identity[0] === 'string'
-      ? identity[0]
-      : undefined;
   const missingMetadata =
     present && template !== undefined && !runtime.latentRawMetadata?.has(key);
   if (log && !log.has(key)) log.set(key, { present: had, value: prior });
@@ -46,18 +38,17 @@ export const setLatentRaw = <Self extends FieldNodeRecord<Self>>(
   if (template && order) {
     const metadata = (runtime.latentRawMetadata ??= new PathKeyedMap('pair'));
     runtime.latentRawMetadata = metadata;
-    const identity: unknown = JSON.parse(key);
-    if (isArray(identity) && typeof identity[0] === 'string') {
+    const path =
+      latent.pathIndex.pathOf(key) ??
+      metadata.get(key)?.path ??
+      readNodeKeyPath(key);
+    if (path !== undefined) {
       const previous = metadata.get(key);
-      const current = { path: identity[0], blueprintNode: template, order };
+      const current = { path, blueprintNode: template, order };
       if (previous) DetachedWriteAddress.transfer(previous, current, runtime);
-      metadata.set(key, current);
+      metadata.set(key, current, [path]);
     }
   }
-  if (index && path !== undefined && had && !present)
-    indexLatentDescendant(index, key, path, false);
-  if (index && path !== undefined && present && !had)
-    indexLatentDescendant(index, key, path, true);
   if (
     had !== present ||
     (present && !Object.is(prior, value)) ||

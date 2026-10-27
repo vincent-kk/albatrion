@@ -34,6 +34,31 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     context.dirtyPaths.beginPostOrder();
   const blueprint = context.root.runtime.blueprint;
   const dependencies = getDependencyIndex(blueprint);
+  const liveByPath = new Map<string, Self | null>([['', context.root]]);
+  for (const node of context.changedNodes ?? [])
+    liveByPath.set(node.path, node);
+  for (
+    let node: Self | null | undefined = context.target;
+    node;
+    node = node.parent
+  )
+    liveByPath.set(node.path, node);
+  const liveAt = (path: string): Self | null => {
+    if (liveByPath.has(path)) return liveByPath.get(path)!;
+    let node: Self | undefined = context.root;
+    const segments = path.split('/');
+    for (let index = 1; node && index < segments.length; index++)
+      node = node.structure?.[unescapeSegment(segments[index])];
+    const live = node && !node.detached ? node : null;
+    liveByPath.set(path, live);
+    return live;
+  };
+  const parentPath = (path: string): string => {
+    if (!path) return '';
+    return (
+      liveAt(path)?.parent?.path ?? path.slice(0, path.lastIndexOf($.Separator))
+    );
+  };
   const epoch = (context.registrationEpoch =
     (context.registrationEpoch ?? 0) + 1);
   const shadow =
@@ -75,9 +100,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           else if (kind === 'split')
             (context.splitMarks ??= new Map()).set(path, epoch);
           context.shapeDirtyPaths.add(
-            kind === 'host'
-              ? path
-              : path.slice(0, path.lastIndexOf($.Separator)),
+            kind === 'host' ? path : parentPath(path),
           );
         },
       });
@@ -89,28 +112,47 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       )) {
         context.dirtyPaths.add(declarationPath);
         context.dependencyOwnerPaths.add(declarationPath);
-        context.shapeDirtyPaths.add(
-          declarationPath.slice(0, declarationPath.lastIndexOf($.Separator)),
-        );
+        context.shapeDirtyPaths.add(parentPath(declarationPath));
       }
   }
   const expanded = new Set<string>();
   for (const path of context.dirtyPaths) {
-    let ancestor = path;
-    while (ancestor && !expanded.has(ancestor)) {
-      expanded.add(ancestor);
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
-      context.dirtyPaths.add(ancestor);
+    const node = liveAt(path);
+    if (node) {
+      for (
+        let current = node;
+        current.parent && !expanded.has(current.path);
+        current = current.parent
+      ) {
+        expanded.add(current.path);
+        context.dirtyPaths.add(current.parent.path);
+      }
+    } else {
+      let ancestor = path;
+      while (ancestor && !expanded.has(ancestor)) {
+        expanded.add(ancestor);
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+        context.dirtyPaths.add(ancestor);
+      }
     }
   }
   if (context.hasGates) {
     const changedAncestors = new Set<string>();
-    for (const changed of context.changedRaw)
-      for (let prefix = changed; prefix; ) {
-        prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
-        if (changedAncestors.has(prefix)) break;
-        changedAncestors.add(prefix);
+    for (const changed of context.changedRaw) {
+      const node = liveAt(changed);
+      if (node) {
+        for (let parent = node.parent; parent; parent = parent.parent) {
+          if (changedAncestors.has(parent.path)) break;
+          changedAncestors.add(parent.path);
+        }
+      } else {
+        for (let prefix = changed; prefix; ) {
+          prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
+          if (changedAncestors.has(prefix)) break;
+          changedAncestors.add(prefix);
+        }
       }
+    }
     const registry = getGateRegistry(context.root.runtime);
     for (const path of context.dirtyPaths) {
       if (registry.mayChangeAt(path, context.changedRaw, changedAncestors))
@@ -123,9 +165,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           changedAncestors,
         )
       )
-        context.shapeDirtyPaths.add(
-          path.slice(0, path.lastIndexOf($.Separator)),
-        );
+        context.shapeDirtyPaths.add(parentPath(path));
     }
   }
   if (shadow) {

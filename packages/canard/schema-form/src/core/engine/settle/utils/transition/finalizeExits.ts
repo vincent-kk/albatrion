@@ -3,7 +3,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
@@ -129,10 +129,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       if (live)
         writeLatentRaw(
           context,
-          JSON.stringify([
-            node.path,
-            getBlueprintNodeIdentity(node.blueprintNode),
-          ]),
+          getCommittedDeclarationKey(node, node.runtime),
           false,
           undefined,
         );

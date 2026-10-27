@@ -23,6 +23,7 @@ export interface HostDerived {
   declaredNames?: unknown;
   declarationIds?: unknown;
   objectChildren?: unknown;
+  objectAssemblyOrder?: unknown;
   readPlans?: unknown;
   staticGateList?: unknown;
   gateSelectionTable?: unknown;
