@@ -5,7 +5,13 @@ import path from 'node:path';
 import { stageNames } from './buildBundle.mjs';
 
 /** Collect precise function counts and sampled allocated bytes in separate untimed passes; retain raw inspector data. */
-export async function collectProfiles(operation, config, row, recorder) {
+export async function collectProfiles(
+  operation,
+  config,
+  row,
+  recorder,
+  names = stageNames,
+) {
   recorder.enabled = false;
   const session = new Session();
   session.connect();
@@ -23,7 +29,7 @@ export async function collectProfiles(operation, config, row, recorder) {
     s.url.endsWith('/scratch/wrapped.mjs'),
   ))
     for (const fn of script.functions)
-      if (stageNames.includes(fn.functionName))
+      if (names.includes(fn.functionName))
         calls[fn.functionName] =
           (calls[fn.functionName] ?? 0) + fn.ranges[0].count / config.samples;
   await session.post('HeapProfiler.enable');
@@ -40,7 +46,7 @@ export async function collectProfiles(operation, config, row, recorder) {
   const walk = (node, inherited = 'everythingElse', insideEngine = false) => {
     const active =
       insideEngine || node.callFrame.url.endsWith('/scratch/wrapped.mjs');
-    const stage = stageNames.includes(node.callFrame.functionName)
+    const stage = names.includes(node.callFrame.functionName)
       ? node.callFrame.functionName
       : inherited;
     if (active) {

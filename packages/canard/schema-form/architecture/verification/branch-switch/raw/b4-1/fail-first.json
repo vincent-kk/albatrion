@@ -31,5 +31,13 @@
     "expectationsChanged": 0
   },
   "setupFailureExcluded": "An earlier collection attempt lacked local common-utils/json distribution files and is not counted as fail-first evidence.",
-  "scope": "Baseline failure evidence only; implementation and final gates were not complete at this checkpoint. Full logs are retained locally."
+  "scope": "Baseline failure evidence only; implementation and final gates were not complete at this checkpoint. Full logs are retained locally.",
+  "rebasedContractCommit": "fa1b91dbb",
+  "measurementBaseline": "fc341d51b6afb14fba88557d11f7e251fe4d365f",
+  "baselineEquivalence": {
+    "productSourceChanges": 0,
+    "addedExistingTestFiles": 1,
+    "addedExistingTestLines": 90,
+    "evidence": "git diff a28b502cc fc341d51b -- src shows only surface.delta-application.test.ts additions; product source is unchanged"
+  }
 }
