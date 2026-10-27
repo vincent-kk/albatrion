@@ -1103,6 +1103,7 @@
 - 보충:
   > 소유자(451라운드, 생존 신호의 처리): "생존신고로 계속 컨텍스트 낭비를 하는거 아닌가? 이게 정식 사용법이야?" (`reviews/round-451-owner-answers.md:9`)
   > 소유자(451라운드, 에이전트 정책의 수정): "이전에도 비슷한 지적을 했는데 고쳐지지 않았다. 에이전트 정책에 혹시 기록이 있나? 그걸 수정하던가 하라" (`reviews/round-451-owner-answers.md:10`)
+  > 편집자 결정(458C-03): "【추론】 B4-1의 첫 정식 창은 9/22행(180프로세스) 뒤 `switch-if-80`의 A0에서 AJV8 플러그인의 로컬 dist(`dist/default/index.cjs`)가 없어 MODULE_NOT_FOUND로 멈췄다(B2-P3 때와 같은 원인). 이것은 측정의 흐트러짐이 아니라 환경 준비 실패이므로 수집된 행은 판정에 쓰지 않고 "중단 창"으로 한 줄 기록하며, 플러그인을 빌드하고 A/B 사본에서 22행 44동작의 무계측 적재 점검을 통과시킨 뒤 같은 고정 구성으로 새 창을 한 번만 연다(재측정이 아니라 준비 뒤의 최초 정식 수집, TEST-095의 "재시도 없음"과 어긋나지 않음). 후보 2의 창은 시작 전 5초 CPU 검사에서 macOS XProtect(61 %)에 세 번 걸려 표본 0으로 보류되었고 2분 간격의 네 번째 검사 뒤 열렸다; 정식 표본이 0이면 보류는 재시도가 아니다. 플러그인 dist 빌드와 44동작 적재 점검은 모든 창의 사전 점검에 넣는다. 보유량 측정에서 "reset 뒤 1노드 잔존"으로 보였던 것은 독립 `writeHeapSnapshot` 사이의 숫자 ID 재사용(read의 FieldNode가 reset에서는 AllocationSite가 지배하는 일반 Object)이었으므로 개별 노드의 ID 추적 회수 수는 판정 불가로 두고, 호스트당 슬롯 수·바이트와 reset 뒤 슬롯 호스트 0은 단일 스냅샷 관측으로 유지한다." (`reviews/round-458-closing.md:12`)
 - 상태: 현행
 - 출처: `reviews/round-451-closing.md:10`(정본), `reviews/round-451-owner-answers.md:9-10`, `AGENT-POLICY.md`
 - 닫은 사람: 소유자 답(`reviews/round-451-owner-answers.md:9-10`), 편집자 결정(451라운드, `reviews/round-451-closing.md` 451C-02)

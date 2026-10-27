@@ -3522,6 +3522,8 @@
   > 소유자(457라운드, 1차 확인의 요청): "그래 지금 올려줘" (`reviews/round-457-owner-answers.md:8`)
   > 소유자(457라운드, 설계 Ⅱ 착수): "A로 가자. 설계를 미리 하고 롱턴 작업을 위임하고싶어." (`reviews/round-457-owner-answers.md:9`)
   > 소유자(457라운드, PR 본문의 기계 로컬 경로): "아 그리고 PR 본문에 \"/private/tmp/claude-501/perf-runs/20261027T1501-e8c1229-b2p2\" 이렇게 임시파일 경로를 쓰면 어떻게하니. 이럼 PR의 의미가 없잖아" (`reviews/round-457-owner-answers.md:10`)
+  > 소유자(458라운드, 진행 브리핑): "현재 진행 상황 짧게 브리핑해줘.\n지금부터 롱턴작업 가능한가?" (`reviews/round-458-owner-answers.md:7`)
+  > 소유자(458라운드, 롱턴 자율 진행): "너의 작업 제외, 모두 꺼줄게. 이제 네가 파워조절을 하면서 진행하도록 해. \n끊기지 않게 목표한 작업을 모두 진행하도록." (`reviews/round-458-owner-answers.md:8`)
   > 편집자 결정(457C-05): "【추론】 소유자가 PR 본문의 `/private/tmp/...` 경로를 지적했다(위 4행): GitHub의 독자가 열 수 없으므로 PR의 의미가 없다. 규칙: PR 본문·결과 문서·커밋 메시지는 그 자체로 읽혀야 하며 기계 로컬 경로를 인용하지 않는다. 판정이 기대는 측정 요약(장치의 `judgement.json`, 행별 요약, 품질·창 CPU 기록, 단계 장부 요약 — 표본 전체 덤프는 제외)은 `verification/branch-switch/raw/<가설>/`에 커밋하고, 독립 검토의 판정 파일은 `verification/branch-switch/reviews/pr-NNN-<가설>-antigravity.md`에 커밋해 저장소 경로로 인용한다. 전체 표본 원자료는 측정 기계에 남고 존재만 한 줄로 적는다. #478의 본문과 결과 문서를 이 규칙으로 고쳤고(원자료 요약 `raw/b2-p2/`), #474~#478의 검토 판정 파일을 저장소에 넣었다. 이미 병합된 #474~#477의 스쿼시 커밋 메시지와 결과 문서에 남은 기계 로컬 경로는 바꾸지 않고(이력 불변) 이 결정으로 대체 경로를 밝힌다. 이 규칙은 `AGENT-POLICY.md`와 모든 워커 브리프에 넣는다." (`reviews/round-457-closing.md:16`)
 - 상태: 현행
 - 출처: `reviews/round-453-closing.md:8`(정본), `reviews/round-453-owner-answers.md:7`, `reviews/round-453-owner-answers.md:9`, `plan/branch-switch/request.md`
