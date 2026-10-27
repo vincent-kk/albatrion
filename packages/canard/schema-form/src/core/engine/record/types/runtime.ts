@@ -202,6 +202,8 @@ export interface SettlementScratch<Self> {
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
+  /** Last issued static whole-write generation; never reused within this tree. */
+  writeEpoch?: number;
   /** Number of current-shape nodes with a truthy value for each state key. */
   globalStateCounts: Map<string, number>;
   /** Stable aggregate of keys whose count is positive. */

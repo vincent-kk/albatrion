@@ -12,6 +12,7 @@ import type { gateSelectionCases } from '../gateSelectionCases';
 import { observeGateTableDelivery } from './observeGateTableDelivery';
 import { observePendingExitPaths } from './observePendingExitPaths';
 import { serializeGateTableObservation } from './serializeGateTableObservation';
+import { readScheduledPaths } from './utils/readScheduledPaths';
 
 /**
  * Freeze one pre-extraction history, including effects invisible in the final value.
@@ -88,11 +89,11 @@ export const observeGateTableCase = (
       timeline.push({
         event: 'registration',
         pendingExits: [...context.pendingExits.keys()],
-        dirty: [...context.dirtyPaths],
+        dirty: readScheduledPaths(context),
         changedRaw: [...context.changedRaw],
       });
       registrations.push({
-        dirty: [...context.dirtyPaths],
+        dirty: readScheduledPaths(context),
         shapeDirty: [...context.shapeDirtyPaths],
         owners: [...context.dependencyOwnerPaths],
         pendingExits: [...context.pendingExits.keys()],

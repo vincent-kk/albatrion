@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D2-P1의 선택적 `writeEpoch` 숫자는 노드와 트리 runtime의 정착 작업 기록이며 공개 상태나 revision이 아니다. settle이 자격 경로에서만 할당·비교·소비하고 record는 실행하지 않는다. 논리 보유 비용은 자격 경로에 도달한 노드당 8바이트와 트리당 8바이트이며, 실제 객체 확장·정렬 비용은 엔진마다 다르다. class의 고정 필드 순서와 공개 surface에는 추가하지 않는다(TEST-080 D2-P1, NODE-045·060).
+
 - H5b의 bit-only 자격은 공개 dispatch 최외곽 커밋(entryDepth=1), 트리 전체 리스너 없음, revision을 읽은 적 없음, 해당 노드의 기존 pendingDelivery 없음이다. revision()을 한 번이라도 읽으면 그 트리는 이후 영구히 관측 모드이며 payload 생략을 재개하지 않는다. 자격이 없으면 기존 payload와 최초 previous 병합을 그대로 유지한다. 카운터는 관측·payload 유무와 무관하게 동일하게 증가하고 최초 커밋은 빈 deliveries Set을 보장한다(EVENT-006, GOAL-011, NODE-060, TEST-080 D1-H5b).
 - 불변 원장 전이 공유는 미구독 bit-only 자격을 만족하는 커밋에서만 허용한다. 같은 이전 원장+mask는 같은 불변 다음 원장을 공유하고 옛 snapshot은 바뀌지 않는다. 약한 전이 메모는 커밋 종료·예외에서 버려 EMPTY를 뿌리로 역사 사슬이 남지 않게 한다. 구독·revision 관측·기존 pending·raw·중첩 진입·정착 밖 파동은 기존 불변 constructor 경로와 횟수를 유지하며 새 Map 작업을 추가하지 않는다. 원장 helper는 record가 소유하고 소비자는 명명 진입점을 거친다. 후보 큐와 그 scratch/context 기록은 추가하지 않는다.
 
@@ -98,4 +100,4 @@
 
 ## Last Updated
 
-계약 기준: 69C-02·04, REACT-003·024, WRITE-046·086, 실행 ADR D5; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02).
+2026-10-27. D2-P1 정적 전체 쓰기의 세대 표식·후퇴·verify 그림자와 메모리 비용.
