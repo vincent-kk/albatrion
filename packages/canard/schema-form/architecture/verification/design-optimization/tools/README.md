@@ -348,3 +348,11 @@ smoke의 품질도 출력하지만 실패로 중단하지 않으며 수용 증�
   --baseline-bundle="$B1_BASELINE_NODE" --candidate-bundle="$B1_CANDIDATE_NODE" \
   --quality=legacy --runs=2 --warmups=2 --samples=3 --label=legacy-quality-smoke
 ```
+
+### B2-P1b payload-12 명시 행
+
+기본 registry 21행과 그 검사 기대값은 유지합니다. `--only` 목록에 `switch-payload-12`를
+명시하면 같은 기존 branch fixture를 registry에 추가하고, 해당 worker도 그 행을 인식합니다.
+B2-P1b의 승인 집합은 기본21행에 이 행을 더한22행이며 모두 `--only`에 명시합니다.
+`--quality=legacy`는 호환18행의 B10/A10 비 중앙값을 사용하고 if·discriminator·구독2행은
+그대로 제외합니다. 이 추가 행에도 A0 B0 … A9 B9, A앞5/A′뒤5/B10과 기존 Welch 규칙을 적용합니다.
