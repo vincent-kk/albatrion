@@ -2,6 +2,12 @@
 
 ## Requirements
 
+- B1의 게이트는 발생별 `reads`와 `evaluate(inputs)` 계약을 공유한다. `active`의 컴파일 의존, `discriminator`의 태그 프로퍼티, `if`의 완전한 정적 읽기 증거 또는 전체 호스트 읽기를 바인딩하며, 입력이 더러워지면 해당 호스트의 모든 게이트를 원래 순서로 판정한다(BLUEPRINT-007·055). 역색인으로 개별 게이트를 생략하지 않는다. 형상은 매 정착의 무게이트 baseline에서 계산한다(SETTLE-044·GOAL-029).
+- `if`·`discriminator`는 호스트 투영 객체와 extras의 두 identity가 같은 구간에서 하나의 전체 입력 view를 공유한다. 앞선 진입·퇴장·스키마 변화가 투영을 새로 공표하면 뒤 게이트부터 새 view를 사용한다. 전체 호스트를 읽는 불투명 조건의 일관성 실패와 추가 확인 라운드는 유지한다. 라운드 최초 snapshot 고정은 즉시 반영 계약에 어긋나므로 허용하지 않는다(SETTLE-020·050).
+- `if` 읽기의 화이트리스트는 객체 수준의 `type: object`, `properties`, `required`, `dependentRequired`, `allOf`·`anyOf`·`oneOf`·`not`이다. 프로퍼티 값 제약은 `type`, `const`, `enum`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `minLength`, `maxLength`, `pattern`만 허용하며 같은 논리 조합을 재귀 검사한다. 논리 조합 안이라도 `$ref`, `patternProperties`, `additionalProperties`, `propertyNames`, `unevaluated*`, 중첩 `if`·`then`·`else`, 알 수 없는 키워드가 있으면 전체 호스트 읽기로 후퇴한다. 정적으로 알려진 속성의 값·존재와 extras 우선순위를 메모와 증인 기록에 포함하며 guard에는 항상 현재 전체 view를 전달한다. 분석은 guard를 실행하지 않는다.
+- 술어 메모는 경로 문자열이나 새 view가 아니라 등록 occurrence identity에 귀속된다. 마지막 읽기가 모두 `Object.is`로 같을 때만 결과를 재사용하며, 던진 평가와 실패한 guard 컴파일은 결과 메모를 채우지 않는다. guard는 첫 성공 컴파일에서 occurrence에 묶되 missing-validator의 경고 코드·메시지·순서와 GuardFailed·ExpressionThrew의 기존 표면을 보존한다. 동적 context callback 식은 기존의 매회 실행을 유지한다.
+- 직접 선택 계획과 표는 알려진 읽기가 무게이트 baseline의 고유 단말을 가리켜 라운드 중 불변임을 증명할 때 세 종류에 적용한다. 판별자는 strict equality 태그→선언·엔트리 표를 사용하고, 일반 술어는 G개의 판정과 결과 적용을 구별한다. 평가 비용은 라운드당 O(전체 읽기 수 + 실제 guard 비용), 적격 표의 적용은 O(A+Δ)다. view 구성은 투영 identity 변경 구간별 O(A)이며, 전체 읽기 후퇴의 비용과 확인 라운드를 숨기지 않는다. 최초 정적 계획의 시간·공간은 엔트리·게이트·리터럴 수에 비례하고 occurrence당 마지막 입력·결과·지연 guard를 보유한다. 바퀴 준비·나감 정책·잠복 장부는 이 계약에서 바꾸지 않는다.
+
 - D3b-2의 분석·호스트 파생 builder는 공통 두 레코드의 자기 슬롯만 지연 채운다. DependencyIndex에는 정적 색인만 두며 presenceLevels의 호출 한정 메모는 SettlementContext의 지연 Map이다. context를 재사용하지 않아 다음 정착으로 남지 않으며 staticShape의 entries·byEntry는 서로 독립 지연이다. child entry별 두 색인은 선언 부모 host 슬롯의 저장소로 동일성을 보존한다. staticIds와 readAdmittedEdgeSchema는 모두 첫 사용에 만드는 WeakMap이며 caller는 선언 부모 BlueprintNode를 명시 인수로 넘겨 형제 N개당 저장소 하나씩을 공유한다. 두 저장소를 같은 WeakMap으로 두는 이유는 staticIds 분리 실험에서 확인한 JSC Map의 항목당 비용을 같은 entry 키의 둘째 저장소에서도 피하려는 것이며 다른 슬롯의 저장 모양은 바꾸지 않는다(D3b-2b).
 
 - D3b-1에서 모드 읽기는 공통 engineModes, 변경은 setMode를 거친다. 파생 메모는 실제 모드 변경 때 재생성하며 생성 사실을 잃지 않는다. 라이브 호스트 예산과 떼어진 주소 셀은 runtime의 지연 WeakMap을 쓴다. 폼 전체 reset·폐기는 재계산 가능한 트리 메모만 비우고 부분 reset은 비우지 않는다. 주소 셀은 상태 예외로 reset 뒤에도 유지하여 재키된 옛 참조의 쓰기 목적지를 보존한다. 이 초기화는 커밋·배달 순서·public path의 고정 읽기를 바꾸지 않는다(SURFACE-065, NODE-044).
@@ -289,6 +295,11 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지한다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화한다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산한다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문한다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
+
+### gate-predicate — 세 종류의 판정과 보수적 입력 공유
+
+- 같은 형상의 `active`·`if`·`discriminator`에서 선택·값·배달이 같고 입력 불변이 증명된 쓰기는 같은 라운드 수를 갖는다. guard의 실제 호출은 동일 입력에서 재사용되며 던진 평가는 다음 평가에서 다시 실행한다. 발생 교체와 서로 다른 재귀·배열 호스트는 결과를 공유하지 않는다.
+- whitelist의 속성 읽기와 논리 조합, `not` 아래 `$ref`를 포함한 전체 읽기 후퇴를 검사한다. 불투명 guard는 라운드 중 앞선 분기가 공표한 값을 관측한다. 태그 표 verify와 바퀴 shadow는 세 종류에서 기준 경로와 판정·증인·관측이 같다.
 
 ### settle-detached-address — 분리된 참조의 현재 쓰기 주소
 
