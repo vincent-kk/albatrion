@@ -35,23 +35,18 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     node.runtime.blueprint,
   );
   if (!table) return;
-  const watchedPaths = table.groups.map(
-    (group) => node.path + '/' + escapeSegment(group.watchedName),
+  const watchedPaths = table.watchedNames.map(
+    (name) => node.path + '/' + escapeSegment(name),
   );
-  for (const group of table.predicateGroups)
-    for (const name of group.watchedNames) {
-      const path = node.path + '/' + escapeSegment(name);
-      if (!watchedPaths.includes(path)) watchedPaths.push(path);
-    }
   if (watchedPaths.some((path) => context.dirtyPaths.has(path))) return;
   (context.gateSelectionRounds ??= new Map()).set(node, {
     round,
     table,
     values: new Map(),
     watchedPaths,
-    stableSchemaPaths: table.plan.steps
-      .filter((step) => step.general)
-      .map((step) => node.path + '/' + escapeSegment(step.entry.name)),
+    stableSchemaPaths: table.stableSchemaNames.map(
+      (name) => node.path + '/' + escapeSegment(name),
+    ),
     active: true,
   });
   if (engineModes.gateSelection === 'verify') {

@@ -409,7 +409,7 @@ class GateRegistry {
       const names =
         engineModes.gatePredicate === 'off'
           ? undefined
-          : getIfGateReadNames(gate.condition);
+          : getIfGateReadNames(gate.condition, this.blueprint);
       return names
         ? names.map((name) => location.hostPath + '/' + escapeSegment(name))
         : [location.hostPath];

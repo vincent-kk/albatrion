@@ -70,6 +70,7 @@ export const getGateSelectionTable = (
       watchedNames.set(host.path + '/' + escapeSegment(entry.name), entry.name);
   const groups = new Map<string, MutableGateSelectionGroup>();
   const alwaysSteps: number[] = [];
+  const stableSchemaNames: string[] = [];
   const stepIndexByName = new Map<string, number>();
   const tableSteps = new Set<number>();
   const predicateGroups = new Map<
@@ -78,6 +79,7 @@ export const getGateSelectionTable = (
   >();
   for (let index = 0; index < plan.steps.length; index++) {
     const step = plan.steps[index];
+    if (step.general) stableSchemaNames.push(step.entry.name);
     const gate = step.gate;
     stepIndexByName.set(step.entry.name, index);
     const expression = gate
@@ -100,7 +102,7 @@ export const getGateSelectionTable = (
           : undefined;
     const ifReads =
       gate?.kind === 'if'
-        ? getIfGateReadNames(gate.condition)
+        ? getIfGateReadNames(gate.condition, blueprint)
         : engineModes.gatePredicate !== 'off' &&
             expression?.completeReads &&
             !equality
@@ -172,8 +174,14 @@ export const getGateSelectionTable = (
     return null;
   }
   const orderedGroups = [...groups.values()];
+  const roundWatchedNames = orderedGroups.map((group) => group.watchedName);
+  for (const group of predicateGroups.values())
+    for (const name of group.watchedNames)
+      if (!roundWatchedNames.includes(name)) roundWatchedNames.push(name);
   const root = computeRootGateSelection(host, blueprint, orderedGroups);
   const table: GateSelectionTable = {
+    watchedNames: roundWatchedNames,
+    stableSchemaNames,
     predicateGroups: [...predicateGroups.values()],
     plan,
     groups: orderedGroups,

@@ -35,6 +35,10 @@ export interface RootGateSelectionGroup {
 
 /** Cached static metadata; no runtime values or selection results are retained. */
 export interface GateSelectionTable {
+  /** Unique baseline names actually read by literal and pure predicate groups. */
+  readonly watchedNames: readonly string[];
+  /** Hoisted scalar names whose constraint-only schemas may be reselected. */
+  readonly stableSchemaNames: readonly string[];
   /** Non-literal pure gates whose complete reads are stable baseline terminals. */
   readonly predicateGroups: readonly {
     /** Occurrence-bound gate evaluated once before its selected steps apply. */

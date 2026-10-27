@@ -29,7 +29,7 @@ export const createGatePredicate = (
       : undefined;
   const names =
     gate.kind === 'if' && engineModes.gatePredicate !== 'off'
-      ? getIfGateReadNames(gate.condition)
+      ? getIfGateReadNames(gate.condition, runtime.blueprint)
       : undefined;
   let guard: ReturnType<typeof readFieldNodeGuard>;
   const inputs: GatePredicate['inputs'][number][] = [];

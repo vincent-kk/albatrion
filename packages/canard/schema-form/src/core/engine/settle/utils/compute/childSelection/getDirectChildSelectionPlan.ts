@@ -139,7 +139,8 @@ export const getDirectChildSelectionPlan = (
           (!expression ||
             (expression.dependencies.length !== 1 &&
               !expression.completeReads))) ||
-        (gate.kind === 'if' && getIfGateReadNames(gate.condition) === undefined)
+        (gate.kind === 'if' &&
+          getIfGateReadNames(gate.condition, blueprint) === undefined)
       ) {
         getHostDerived<
           'directChildSelectionPlan',
