@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- B2-P3의 committed 선언 키 메모를 잠복 값·메타데이터에서도 공유한다. 재진입은 새 노드이며 메모는 노드 identity와 현재 경로·종류를 검사한다. 고정 노드 필드는 추가하지 않고 기존 트리별 지연 WeakMap의 항목을 재사용한다. 영속 latentRaw 경로 색인이 정착별 descendant 색인 재구성을 대체한다.
+- B2-P3의 committed 선언 키 메모를 잠복 값·메타데이터에서도 공유한다. 재진입은 새 노드이며 메모는 노드 identity와 현재 경로·종류를 검사한다. 고정 노드 필드는 추가하지 않고 기존 트리별 지연 WeakMap의 항목을 재사용한다. 유니온 키 메모만 schemaType 참조 한 칸을 추가하여 같은 불변 타입 목록의 fold를 다시 계산하지 않는다. 영속 latentRaw 경로 색인이 정착별 descendant 색인 재구성을 대체한다.
 
 - D3b-1의 노드 키 메모는 root runtime의 지연 WeakMap 칸으로 소유한다. 선언 키·derive target ID·객체/배열 안정 형상·호스트 예산·배열 선언 count/result는 트리마다 독립이며 폼 전체 reset과 폐기에서 해제하고 부분 reset에서는 유지한다. 떼어진 쓰기 주소 셀은 재계산 메모가 아닌 상태이므로 같은 runtime을 재사용하는 폼 reset을 포함한 어떤 reset에서도 해제하지 않는다. 살아 있는 옛 참조가 runtime을 계속 소유하여 기존 약한 키 수명을 보존한다. nextTargetId 단조 카운터와 이미 runtime 키인 등록소는 유지한다. 노드 칸은 늘리지 않으며 비용은 실제 사용하는 트리당 최대 일곱 지연 WeakMap이다(SURFACE-065, NODE-044·045).
 
