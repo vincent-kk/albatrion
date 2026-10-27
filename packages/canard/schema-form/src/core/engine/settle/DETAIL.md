@@ -339,6 +339,7 @@
 ### settle-slot-inactive-reads — 지연 공표와 참조
 
 - on의 커밋에서 updateInactiveValuesMemo 호출과 나감의 inactiveValues 포착은 0이다. 첫 읽기 결과는 off의 항목·순서·값·동결과 같고, 영향 없는 호스트 및 항목 참조를 보존하며 읽히지 않은 진입·이탈도 항목 수명에 반영한다. unread detached 읽기는 reset·재배치·후속 생명주기와 독립이다.
+- Wildcard membership changes participate in entry lifetimes: visible-hidden-visible publication creates a fresh entry after the hidden commit, including when that commit was unread. The old detached host's final committed entry identity remains shared with its previously published ancestor entry despite later external matches or overlay writes. Source-owned value memos cannot transfer the live reader's new lifetime into that frozen reader.
 
 ### settle-slot-shadow — 두 저장 경로의 관측 동등
 
