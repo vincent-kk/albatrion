@@ -3,7 +3,6 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { getGateRegistry } from '../gates/getGateRegistry';
 import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
@@ -100,7 +99,6 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     context.dirtyPaths.add(node.path);
     if (node.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(node.path);
-    if (context.hasGates) getGateRegistry(node.runtime).register(node);
   }
   return node;
 };
