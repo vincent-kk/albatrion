@@ -1,6 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode, BlueprintSchema } from '../../../blueprint';
@@ -105,8 +104,6 @@ it.each<MoveCase>([
 ])(
   'W4 absent $layout slots preserve base latent order and metadata on $operation',
   ({ layout, operation, expected }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const item: BlueprintSchema = {
       type: 'object',
       controls: { active: '../../show', unsetOnInactive: false },

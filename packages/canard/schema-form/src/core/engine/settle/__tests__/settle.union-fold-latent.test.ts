@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -27,8 +26,6 @@ describe('union fold pending exits and retained raw', () => {
   ])(
     'isolates pending exits and restores $from and $to raw independently',
     ({ from, to, first, second, own, other }) => {
-      // These assertions inspect the latent-store baseline directly.
-      pinLatentBaseline();
       const { root } = createUnionFoldTree();
       loadFieldNodeAtMount(
         root,
@@ -103,8 +100,6 @@ describe('union fold pending exits and retained raw', () => {
   );
 
   it('permits a detached fold to write latent raw beside a different live union fold', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root } = createUnionFoldTree();
     loadFieldNodeAtMount(
       root,

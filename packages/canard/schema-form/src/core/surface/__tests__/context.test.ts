@@ -4,15 +4,12 @@ import { blueprint } from '@/schema-form/core/engine';
 import { PathKeyedMap } from '@/schema-form/core/engine';
 import { PathKeyedSet } from '@/schema-form/core/engine';
 
-import { pinLatentBaseline } from '../../__tests__/fixtures/pinLatentBaseline';
 import { setContext } from '../runtime/setContext';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 
 // filid:contract surface-members
 describe('FieldNode context', () => {
   it('28C-08 context getter delegates the shared runtime reference', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const initial = { label: 'initial' };
     const root = fieldNodeFactory(
       blueprint({

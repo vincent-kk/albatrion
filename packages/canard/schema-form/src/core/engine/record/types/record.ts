@@ -1,5 +1,4 @@
 import type {
-  BlueprintChildEntry,
   BlueprintNode,
   BlueprintSchemaType,
   EffectiveSchema,
@@ -7,11 +6,6 @@ import type {
 import type { NodeStateFlags } from '../../types/state';
 import type { Behavior } from './behavior';
 import type { FieldNodeRuntime } from './runtime';
-import type {
-  InactiveSlotBaseline,
-  InactiveSlotOverlay,
-  InactiveSlotValueMemo,
-} from './slots';
 
 /** One pending node event with values indexed by their event bits. */
 export interface FieldNodeDelivery {
@@ -55,24 +49,6 @@ export interface FieldNodeRecord<Self> {
   structure: Record<string, Self> | null;
   /** Stored public child array for the last committed shape. */
   children: readonly Self[] | null;
-  /** Previously active occurrences retained by their exact blueprint binding. */
-  inactiveSlots?: Map<BlueprintChildEntry, Self>;
-  /** Immutable missing-child inputs and source exclusions at this occurrence's exit. */
-  retainedSourceOverlay?: InactiveSlotOverlay;
-  /** Host-owned source patches that never mutate retained public references. */
-  inactiveSlotOverlays?: Map<BlueprintChildEntry, InactiveSlotOverlay>;
-  /** Pre-change sources retained until a live host publishes its next commit. */
-  inactiveSlotBaselines?: Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>;
-  /** Owned active child hosts with retained descendants, excluding unrelated siblings. */
-  inactiveSlotChildren?: Map<string, Self>;
-  /** Frozen materialization for this reference's committed inactive sources. */
-  inactiveValuesCache?: readonly { path: string; value: unknown }[];
-  /** Whether a committed slot or descendant change invalidated this host read. */
-  inactiveValuesDirty?: boolean;
-  /** Last item published from this inactive lifetime; absent on active clones. */
-  inactiveValueMemo?: InactiveSlotValueMemo;
-  /** Last-live explicit keep/clear decision; an own undefined means inheritance. */
-  retainedExitPolicy?: boolean;
   /** Creation-order nonce for an array item, absent on other nodes. */
   itemKey: number | null;
   /** Number of array host positions, including positions without templates. */

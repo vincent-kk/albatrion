@@ -28,9 +28,6 @@ export const admitsSameValueWrite = <Self extends FieldNodeRecord<Self>>(
     !StaticFirstLoadCapability.has(runtime.blueprint) ||
     runtime.latentRaw.pathIndex.under(scope).size > 0 ||
     runtime.latentRawDirty ||
-    context.target.inactiveSlots?.size ||
-    context.target.inactiveSlotOverlays?.size ||
-    context.target.inactiveSlotChildren?.size ||
     runtime.misfitPaths.pathIndex.under(scope).size > 0
   );
 };

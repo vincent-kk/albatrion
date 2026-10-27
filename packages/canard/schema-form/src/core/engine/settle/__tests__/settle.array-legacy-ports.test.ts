@@ -5,8 +5,6 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
-
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);
   if (!isTestFieldNode(tree.root))
@@ -178,8 +176,6 @@ describe('array legacy contract ports', () => {
   });
 
   it('GOAL-074 restores omitTrailing slots from raw after branch reactivation', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root, runtime } = makeRecordTree({
       type: 'object',
       properties: {

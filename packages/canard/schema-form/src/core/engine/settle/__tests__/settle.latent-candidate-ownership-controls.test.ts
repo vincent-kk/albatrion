@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '../../types/value';
 import {
@@ -22,8 +21,6 @@ describe('candidate cleanup preserves broad clearing contracts', () => {
   ] as const)(
     '[control] %s erases in-scope sources and retains out-of-scope sources',
     (operation) => {
-      // These assertions inspect the latent-store baseline directly.
-      pinLatentBaseline();
       const { root } = createDispatchTree({
         type: 'object',
         properties: {

@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import { FieldNodeEventType } from '../../../record';
@@ -24,8 +23,6 @@ it.each([
 ] satisfies readonly { operation: 'insert' | 'remove'; depth: 1 | 2 }[])(
   'V3 $operation at depth $depth retains the previously live candidate on switch-back',
   async ({ operation, depth }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const inputs: unknown[] = [];
     const validator: Validator = {
       compile: () => (value) => {

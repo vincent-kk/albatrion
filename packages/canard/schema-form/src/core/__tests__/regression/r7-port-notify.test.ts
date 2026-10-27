@@ -5,7 +5,6 @@ import { FieldNodeEventType } from '@/schema-form/core/engine';
 import { SetValueOption } from '@/schema-form/core/surface';
 import type { FieldNode } from '@/schema-form/core/surface';
 
-import { pinSlotShipping } from '../fixtures/pinSlotShipping';
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const requireNode = (root: FieldNode, path: string): FieldNode => {
@@ -214,8 +213,6 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('CONTROLS-079 treats injectTo callback public writes as nested feedback', () => {
-    // This callback mutates its captured tree; shipping execution invokes it once.
-    pinSlotShipping();
     let root: FieldNode | undefined;
     const created = makeFieldNodeTree({
       type: 'object',

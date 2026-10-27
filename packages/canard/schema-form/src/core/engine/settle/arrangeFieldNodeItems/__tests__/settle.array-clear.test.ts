@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { beforeEach } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import {
@@ -17,7 +16,6 @@ import {
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
-import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
@@ -30,8 +28,6 @@ import type { ClearStep } from './fixtures/compareArrayClear';
 import { observePathStores } from './fixtures/observePathStores';
 
 afterEach(() => vi.restoreAllMocks());
-// The fixture counts one shipping tree's bulk cleanup calls and mutations.
-beforeEach(() => pinSlotShipping());
 
 /** Object items whose third field carries the given controls. */
 const itemsWith = (controls: Record<string, unknown>): BlueprintSchema => ({

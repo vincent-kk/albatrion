@@ -4,7 +4,6 @@ import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testField
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import type { NumberNode } from '@/schema-form/core/surface';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import * as stateKeys from '../utils/controls/calculateStateKeys';
 import * as watchValues from '../utils/controls/readFieldNodeWatchValues';
 
@@ -33,8 +32,6 @@ const makeFeatureTree = (features: boolean) => {
 
 describe('65C-02 feature visits intersect static declarations and changed scope', () => {
   it('bounds state-key visits on whole writes and skips unrelated leaf writes', () => {
-    // Shipping visit counts exclude the independent slot-verification tree.
-    pinSlotShipping();
     const { root, value } = makeFeatureTree(true);
     const calculate = stateKeys.calculateStateKeys;
     let visits = 0;
@@ -61,8 +58,6 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
   });
 
   it('bounds candidate watch reads on whole writes and skips unrelated leaves', () => {
-    // Shipping watch-read counts exclude the independent slot-verification tree.
-    pinSlotShipping();
     const { root, value } = makeFeatureTree(true);
     const spy = vi.spyOn(watchValues, 'readFieldNodeWatchValues');
     try {
@@ -82,8 +77,6 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
   });
 
   it('visits neither scoped pass when the blueprint declares neither feature', () => {
-    // Shipping scoped-pass counts exclude independent verification observations.
-    pinSlotShipping();
     const { root, value } = makeFeatureTree(false);
     const stateSpy = vi.spyOn(stateKeys, 'calculateStateKeys');
     const watchSpy = vi.spyOn(watchValues, 'readFieldNodeWatchValues');

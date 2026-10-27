@@ -132,8 +132,6 @@ export interface BlueprintNode {
   readonly hasPropertyCandidates?: boolean;
   /** A reachable host, including this one, binds multiple slot candidates. */
   readonly hasCandidateDescendants?: boolean;
-  /** A finite reachable template binds a property named exactly star. */
-  readonly containsLiteralStar?: true;
   /**
    * First repeated item candidate, retained for single-candidate consumers.
    * First candidate; paths that distinguish folds use the candidate list (itemCandidates / prefixItemCandidates / getItemEntries).

@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { beforeEach } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
@@ -9,14 +8,11 @@ import {
   dispatchRemove,
 } from '@/schema-form/core/engine/write';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import type { DispatchTestNode } from '../../__tests__/fixtures/createDispatchTree';
 import { compareWatchExitDeliveries } from './fixtures/compareWatchExitDeliveries';
 import type { WatchExitObservation } from './fixtures/compareWatchExitDeliveries';
 
 afterEach(() => vi.restoreAllMocks());
-// Internal mark and index-read counts describe one shipping tree, excluding replay.
-beforeEach(() => pinSlotShipping());
 
 /**
  * List the paths that received one event bit in one step.

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { FieldNodeEventType } from '../../record';
@@ -31,8 +30,6 @@ describe('candidate-owned latent descendant cleanup', () => {
   }[])(
     '$slot preserves object descendants through $route',
     async ({ slot, route }) => {
-      // These assertions inspect the latent-store baseline directly.
-      pinLatentBaseline();
       const validationInputs: unknown[] = [];
       const validator: Validator = {
         compile: () => (value) => {

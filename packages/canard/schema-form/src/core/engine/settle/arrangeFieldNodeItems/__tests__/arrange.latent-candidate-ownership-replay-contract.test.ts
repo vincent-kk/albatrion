@@ -1,7 +1,6 @@
 import { expect, it } from 'vitest';
 
 import type { FormErrorRecord } from '../../../../../errors';
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import { FieldNodeEventType } from '../../../record';
 import type { FieldNodeDelivery } from '../../../record';
@@ -47,8 +46,6 @@ it.each([
   MoveReplayCase['mode'],
   MoveReplayCase['operation'],
 ][])('%s', async (name, mode, operation) => {
-  // These assertions inspect the latent-store baseline directly.
-  pinLatentBaseline();
   const scene = { name, mode, operation };
   const fixture = createMoveReplayScene(scene);
   const validationInputs: unknown[] = [];
