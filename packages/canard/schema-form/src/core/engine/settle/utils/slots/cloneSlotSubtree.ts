@@ -39,12 +39,15 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
   node.undeclaredValues = source.undeclaredValues;
   node.itemCount = source.itemCount;
   node.nextItemKey = source.nextItemKey;
-  node.inactiveValueMemo = source.inactiveValueMemo;
-  node.inactiveValuesCache =
-    source.inactiveValuesCache && !hasAdditionalInactiveSources(source)
-      ? source.inactiveValuesCache
-      : undefined;
-  node.inactiveValuesDirty = true;
+  if (source.inactiveValueMemo !== undefined)
+    node.inactiveValueMemo = source.inactiveValueMemo;
+  if (
+    source.inactiveValuesCache?.length &&
+    !hasAdditionalInactiveSources(source)
+  ) {
+    node.inactiveValuesCache = source.inactiveValuesCache;
+    node.inactiveValuesDirty = true;
+  }
   if (host.behavior.type === 'array' && host.behavior.strategy === 'branch')
     node.itemKey = host.nextItemKey++;
   if (!entering) {
