@@ -1,8 +1,7 @@
 import type { BlueprintNode } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
+import { engineModes } from '../../../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../../../types/settlement';
-import { gateSelectionTable } from '../../../gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../../../gates/gateWheelEvaluation';
 import { readGateSelectionGroup } from '../../../gates/readGateSelectionGroup';
 import { verifyTableGate } from '../../../gates/verifyTableGate';
 import { mergeGateSteps } from './mergeGateSteps';
@@ -31,8 +30,8 @@ export const selectRootGateDeclarations = <Self extends FieldNodeRecord<Self>>(
       ),
     );
   if (
-    gateSelectionTable.mode === 'verify' ||
-    gateWheelEvaluation.mode === 'shadow'
+    engineModes.gateSelection === 'verify' ||
+    engineModes.gateWheel === 'shadow'
   ) {
     const admitted = new Set(selected);
     for (

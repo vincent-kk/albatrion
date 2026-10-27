@@ -1,7 +1,11 @@
 import type { BlueprintChildEntry, BlueprintNode } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 
 /** Property enumeration order is shared by every occurrence of a static template. */
-const ENTRIES = new WeakMap<BlueprintNode, readonly BlueprintChildEntry[]>();
+let ENTRIES = new WeakMap<BlueprintNode, readonly BlueprintChildEntry[]>();
+registerEngineDerivedReset(() => {
+  ENTRIES = new WeakMap<BlueprintNode, readonly BlueprintChildEntry[]>();
+});
 
 /**
  * Preserve the generic structure's integer-name order without reselecting shape.

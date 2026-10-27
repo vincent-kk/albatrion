@@ -1,17 +1,17 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import type { DispatchTestNode } from '../../__tests__/fixtures/createDispatchTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchInsert, dispatchPop, dispatchPush } from '../../write';
 import type { SettlementContext } from '../types/settlement';
 import * as reuse from '../utils/compute/childSelection/canReuseArrayChildren';
 import * as registration from '../utils/dependencies/registerPresenceChanges';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import * as settlement from '../utils/settlement/createSettlementContext';
 import { mountPresenceTree } from './helpers/mountPresenceTree';
 
 afterEach(() => {
   vi.restoreAllMocks();
-  gateWheelEvaluation.mode = 'skip';
+  engineModes.setMode('gateWheel', 'skip');
 });
 
 it.each(['append', 'pop', 'splice'] as const)(
@@ -65,7 +65,7 @@ it.each(['append', 'pop', 'splice'] as const)(
 it.each(['push', 'pop', 'insert'] as const)(
   'M9 exclusivity: gated-array %s counts presence calls and never reuses children',
   (kind) => {
-    gateWheelEvaluation.mode = 'record';
+    engineModes.setMode('gateWheel', 'record');
     let latest: SettlementContext<DispatchTestNode> | undefined;
     const create = settlement.createSettlementContext;
     vi.spyOn(settlement, 'createSettlementContext').mockImplementation(

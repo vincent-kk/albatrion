@@ -1,6 +1,7 @@
 import { HostStaticPartition } from '../../../blueprint';
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type { GateWheelFrame } from '../../types/gateWheel';
 import type { SettlementContext } from '../../types/settlement';
 import { flushPresenceTemplates } from '../dependencies/flushPresenceTemplates';
@@ -53,7 +54,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       context.presenceClock,
     );
   }
-  if (gateWheelEvaluation.mode === 'record') {
+  if (engineModes.gateWheel === 'record') {
     const metrics = (context.presenceMetrics ??= {
       computes: new Map(),
       ancestorRechecks: 0,
@@ -196,7 +197,12 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
   if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);
   else if (gates.length > 0 && updateOutput(node, context))
     scheduleRelocatedGates(relocatedGates(node), context);
-  let cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
+  let cap = getHostWheelBudgetCap(
+    node,
+    node.runtime.blueprint,
+    gates,
+    node.runtime,
+  );
   let confirmation: GateWheelFrame | undefined;
   let previousPredicate: boolean | undefined;
   let lastStructure = prior;
@@ -212,9 +218,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
             consistent: true,
             gateCount: gates.length,
             throwVersion: context.gateThrowVersion,
-            ...(gateWheelEvaluation.mode === 'shadow'
-              ? { evaluations: [] }
-              : {}),
+            ...(engineModes.gateWheel === 'shadow' ? { evaluations: [] } : {}),
           }
         : undefined;
     context.gateWheelFrame = frame;
@@ -282,7 +286,12 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
         gates.push(occurrence.gate);
       }
     }
-    cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
+    cap = getHostWheelBudgetCap(
+      node,
+      node.runtime.blueprint,
+      gates,
+      node.runtime,
+    );
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
     const publishedChanged =
       !outputChanged &&
@@ -302,7 +311,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       canSkipGateWheel(node, context, frame, round, cap, gates.length);
     if (skip) {
       gateWheelEvaluation.predictions++;
-      if (gateWheelEvaluation.mode === 'skip') {
+      if (engineModes.gateWheel === 'skip') {
         gateWheelEvaluation.skipped++;
         preserveReferences(node, previous, context);
         context.dirtyPaths.delete(node.path);
@@ -310,7 +319,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
       }
     }
     confirmation =
-      skip && gateWheelEvaluation.mode === 'shadow' ? frame : undefined;
+      skip && engineModes.gateWheel === 'shadow' ? frame : undefined;
     previousPredicate = skip;
     if (!schemaChanged && !changed && !outputChanged && !publishedChanged) {
       preserveReferences(node, previous, context);

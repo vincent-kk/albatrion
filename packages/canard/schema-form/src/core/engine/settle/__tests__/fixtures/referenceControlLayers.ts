@@ -34,6 +34,10 @@ export interface ControlTarget<Self> {
   readonly parent: Self | null;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
+    committedDeclarationKeys?: WeakMap<
+      object,
+      { path: string; kind: string; key: string }
+    >;
     readonly committedDeclarationIds?: ReadonlyMap<string, readonly number[]>;
   };
 }
@@ -65,7 +69,7 @@ export const referenceControlLayers = <Self extends ControlTarget<Self>>(
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
     current.runtime.committedDeclarationIds?.get(
-      getCommittedDeclarationKey(current),
+      getCommittedDeclarationKey(current, current.runtime),
     ) ??
     declarationIds(current.blueprintNode);
   const nodeIds = selected(node);

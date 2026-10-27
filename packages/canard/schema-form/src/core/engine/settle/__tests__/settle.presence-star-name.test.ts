@@ -1,13 +1,13 @@
 import { afterEach, expect, it } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchContextChange } from '../../write';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { mountPresenceTree } from './helpers/mountPresenceTree';
 import { observePresenceTree } from './helpers/observePresenceTree';
 
 afterEach(() => {
-  gateWheelEvaluation.mode = 'skip';
+  engineModes.setMode('gateWheel', 'skip');
 });
 
 for (const name of ['plain', '*', '*x'])
@@ -15,13 +15,11 @@ for (const name of ['plain', '*', '*x'])
     for (const nested of [false, true])
       for (const mode of ['skip', 'shadow'] as const) {
         it(`${JSON.stringify(name)} ${key} nested=${nested} ${mode}`, () => {
-          gateWheelEvaluation.mode = mode;
+          engineModes.setMode('gateWheel', mode);
           const reader: BlueprintSchema = {
             type: 'string',
             controls: {
-              [key]: nested
-                ? "../../side/x === 'v'"
-                : "../side/x === 'v'",
+              [key]: nested ? "../../side/x === 'v'" : "../side/x === 'v'",
             },
           };
           const schema: BlueprintSchema = {

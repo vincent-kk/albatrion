@@ -5,6 +5,7 @@ import type {
   BlueprintOptions,
   EffectiveSchema,
 } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 import { staticIds } from './staticIds';
 
 /** Runtime merge and conflict verdict of one edge whose declarations are all admitted. */
@@ -18,10 +19,16 @@ interface AdmittedEdgeSchema {
 }
 
 /** Merge results belong to the analyzed child edge; live records are never retained. */
-const ADMITTED_EDGE_SCHEMAS = new WeakMap<
+let ADMITTED_EDGE_SCHEMAS = new WeakMap<
   BlueprintChildEntry,
   AdmittedEdgeSchema
 >();
+registerEngineDerivedReset(() => {
+  ADMITTED_EDGE_SCHEMAS = new WeakMap<
+    BlueprintChildEntry,
+    AdmittedEdgeSchema
+  >();
+});
 
 /**
  * Read the constant schema and conflict of a child edge whose every declaration is admitted.

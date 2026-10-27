@@ -1,7 +1,11 @@
 import type { Blueprint } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 
 /** Proof results share the lifetime of their immutable analyzed graph. */
-const INDEPENDENT = new WeakMap<Blueprint, boolean>();
+let INDEPENDENT = new WeakMap<Blueprint, boolean>();
+registerEngineDerivedReset(() => {
+  INDEPENDENT = new WeakMap<Blueprint, boolean>();
+});
 
 /**
  * Prove that filling cannot alter shape or observe an intermediate projection.

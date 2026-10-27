@@ -1,3 +1,4 @@
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 import type {
   EffectiveSchema,
   EffectiveSchemaMemo,
@@ -13,7 +14,10 @@ import { selectEffectiveDeclarations } from './selectEffectiveDeclarations';
 const DEFAULT_MERGE_OPTIONS: EffectiveSchemaOptions = {};
 
 /** Default memo is weak by node lifetime; callers can isolate a separate memo. */
-const DEFAULT_MEMO: EffectiveSchemaMemo = new WeakMap();
+let DEFAULT_MEMO: EffectiveSchemaMemo = new WeakMap();
+registerEngineDerivedReset(() => {
+  DEFAULT_MEMO = new WeakMap();
+});
 
 /**
  * Derive immutable rendering hints from selected declarations without evaluating gates.

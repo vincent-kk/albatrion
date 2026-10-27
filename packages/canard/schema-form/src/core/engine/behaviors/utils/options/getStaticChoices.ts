@@ -1,21 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { EffectiveSchema } from '../../../blueprint';
+import type { StaticChoices } from '../../../types/staticChoices';
+import { staticChoices } from '../../../utils/cache/valueMemos';
 
-/** Option-derived choices shared by every call using one effective-schema memo result. */
-export interface StaticChoices {
-  /** Whether an empty scalar or object is absent from output. */
-  readonly omitEmpty: boolean;
-  /** Whether nullish and unfilled trailing array positions are excluded. */
-  readonly omitTrailing: boolean;
-  /** Whether completed string input loses surrounding whitespace. */
-  readonly trim: boolean;
-  /** Emitted object key order ahead of authored declarations; it does not change the on-screen order. */
-  readonly propertyOrder: readonly string[];
-}
+export type { StaticChoices } from '../../../types/staticChoices';
 
-/** Effective-schema identity owns its one computed option selection. */
-const CHOICES = new WeakMap<EffectiveSchema, StaticChoices>();
 /** Shared empty order for schemas without a propertyOrder option. */
 const NO_KEYS: readonly string[] = Object.freeze([]);
 /** Optionless schemas link to this producer-frozen default selection. */
@@ -28,13 +18,13 @@ const DEFAULT_CHOICES: StaticChoices = Object.freeze({
 
 /** Read static options once for the lifetime of a merged effective schema. */
 export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
-  const cached = CHOICES.get(effective);
+  const cached = staticChoices.get(effective);
   if (cached) return cached;
   const schema = effective.schema;
   const options =
     typeof schema === 'object' && schema !== null ? schema.options : undefined;
   if (options === undefined) {
-    CHOICES.set(effective, DEFAULT_CHOICES);
+    staticChoices.set(effective, DEFAULT_CHOICES);
     return DEFAULT_CHOICES;
   }
   const hints =
@@ -56,6 +46,6 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
         )
       : NO_KEYS,
   });
-  CHOICES.set(effective, choices);
+  staticChoices.set(effective, choices);
   return choices;
 };

@@ -1,18 +1,20 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import * as registration from '../utils/dependencies/registerRecalculation';
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 
 /** Restore shared verification controls after deliberate invariant violations. */
+const previousMode = engineModes.gateSelection;
 const previous = {
-  mode: gateSelectionTable.mode,
   violations: gateSelectionTable.violations,
 };
 afterEach(() => {
   vi.restoreAllMocks();
   Object.assign(gateSelectionTable, previous);
+  engineModes.setMode('gateSelection', previousMode);
 });
 
 // filid:contract settle-write-epoch-verification
@@ -22,7 +24,7 @@ it('verify mode compares epoch members against an independent path shadow', () =
     properties: { a: { type: 'string' } },
   });
   dispatchMount(root, { a: 'old' });
-  gateSelectionTable.mode = 'verify';
+  engineModes.setMode('gateSelection', 'verify');
   const before = gateSelectionTable.assertions.S7 ?? 0;
   dispatchSetValue(root, { a: 'new' });
   expect(gateSelectionTable.assertions.S7).toBeGreaterThan(before);
@@ -35,7 +37,7 @@ it('verify mode rejects a missing actual node generation before computation', ()
     properties: { a: { type: 'string' } },
   });
   dispatchMount(root, { a: 'old' });
-  gateSelectionTable.mode = 'verify';
+  engineModes.setMode('gateSelection', 'verify');
   const register = registration.registerRecalculation;
   vi.spyOn(registration, 'registerRecalculation').mockImplementation(
     (context) => {

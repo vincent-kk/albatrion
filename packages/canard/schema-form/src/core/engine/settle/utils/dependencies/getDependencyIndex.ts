@@ -11,6 +11,7 @@ import type {
 } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import type {
   RegistrationSink,
@@ -582,7 +583,10 @@ class DependencyIndex {
 }
 
 /** Cached dependency indexes live only while their analyzed blueprint lives. */
-const INDEXES = new WeakMap<Blueprint, DependencyIndex>();
+let INDEXES = new WeakMap<Blueprint, DependencyIndex>();
+registerEngineDerivedReset(() => {
+  INDEXES = new WeakMap<Blueprint, DependencyIndex>();
+});
 /** Dependency absence is proven independently of branch presence. */
 const EMPTY_INDEX = new DependencyIndex();
 Object.freeze(EMPTY_INDEX);

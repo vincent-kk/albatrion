@@ -1,7 +1,11 @@
 import type { BlueprintNode } from '../../../blueprint';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 
 /** Immutable child-name indexes live only while their analyzed template lives. */
-const DECLARED_NAMES = new WeakMap<BlueprintNode, ReadonlySet<string>>();
+let DECLARED_NAMES = new WeakMap<BlueprintNode, ReadonlySet<string>>();
+registerEngineDerivedReset(() => {
+  DECLARED_NAMES = new WeakMap<BlueprintNode, ReadonlySet<string>>();
+});
 
 /**
  * Reuse declared child-name membership for writes and projected reads.

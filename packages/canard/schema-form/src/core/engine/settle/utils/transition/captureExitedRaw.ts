@@ -130,6 +130,6 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
     order,
   );
   const metadata = node.runtime.latentRawMetadata?.get(key);
-  if (metadata) DetachedWriteAddress.retain(node, metadata);
+  if (metadata) DetachedWriteAddress.retain(node, metadata, node.runtime);
   return ownsLatent;
 };

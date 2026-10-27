@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchContextChange, dispatchSetValue } from '../../write';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import {
   presenceCousinSchema,
@@ -15,16 +15,16 @@ import { mountPresenceTree } from './helpers/mountPresenceTree';
 import { observePresenceTree } from './helpers/observePresenceTree';
 
 /** Regression records run the same assertion history in every wheel mode. */
-const previousMode = gateWheelEvaluation.mode;
+const previousMode = engineModes.gateWheel;
 afterEach(() => {
-  gateWheelEvaluation.mode = previousMode;
+  engineModes.setMode('gateWheel', previousMode);
 });
 
 describe.each(['record', 'skip', 'shadow'] as const)(
   'presence readers: %s',
   (mode) => {
     it('oneOf and property readers agree with fresh mounts with and without defaults', () => {
-      gateWheelEvaluation.mode = mode;
+      engineModes.setMode('gateWheel', mode);
       for (const oneOf of [false, true])
         for (const withDefault of [false, true]) {
           const schema: BlueprintSchema = {
@@ -66,7 +66,7 @@ describe.each(['record', 'skip', 'shadow'] as const)(
     });
 
     it('non-root, array, visible and ancestor readers follow both directions', () => {
-      gateWheelEvaluation.mode = mode;
+      engineModes.setMode('gateWheel', mode);
       for (const shape of [
         'nested',
         'array',
@@ -147,7 +147,7 @@ describe.each(['record', 'skip', 'shadow'] as const)(
     });
 
     it('same-host relocated readers follow presence changes', () => {
-      gateWheelEvaluation.mode = mode;
+      engineModes.setMode('gateWheel', mode);
       const value = (value: string) => ({
         current: { value, primer: 'ready' },
       });
@@ -163,7 +163,7 @@ describe.each(['record', 'skip', 'shadow'] as const)(
     });
 
     it('late cousin exists on a fresh mount and after an update', () => {
-      gateWheelEvaluation.mode = mode;
+      engineModes.setMode('gateWheel', mode);
       const value = (mode: string) => ({
         mode,
         p: { child: 'P' },
@@ -178,7 +178,7 @@ describe.each(['record', 'skip', 'shadow'] as const)(
     });
 
     it('retains registration across both prior-child and entered-child wheel gaps', () => {
-      gateWheelEvaluation.mode = mode;
+      engineModes.setMode('gateWheel', mode);
       for (const schema of presenceGapSchemas) {
         const value = (t: string) => ({
           h: { t, c: 'C', n: 'N', d: 'D', e: 'E', f: 'F' },
@@ -194,7 +194,7 @@ describe.each(['record', 'skip', 'shadow'] as const)(
     });
 
     it('state-key ancestor readers evaluate the final emitted tree', () => {
-      gateWheelEvaluation.mode = mode;
+      engineModes.setMode('gateWheel', mode);
       const value = (k: number) => ({ k, h: { p: 'P' } });
       const root = mountPresenceTree(presenceStateSchema, value(1));
       for (const k of [2, 1]) {
@@ -206,7 +206,7 @@ describe.each(['record', 'skip', 'shadow'] as const)(
     });
 
     it('setContext presence changes re-evaluate other gates in both directions', () => {
-      gateWheelEvaluation.mode = mode;
+      engineModes.setMode('gateWheel', mode);
       const schema: BlueprintSchema = {
         type: 'object',
         properties: {

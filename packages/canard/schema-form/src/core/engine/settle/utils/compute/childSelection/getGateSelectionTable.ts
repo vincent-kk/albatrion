@@ -5,6 +5,7 @@ import type {
   BlueprintGate,
   BlueprintNode,
 } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 import type {
   GateSelectionGroup,
@@ -16,10 +17,16 @@ import { computeRootGateSelection } from './gateSelection/computeRootGateSelecti
 import { getDirectChildSelectionPlan } from './getDirectChildSelectionPlan';
 
 /** Weak host lifetime includes negative eligibility decisions; never retains live nodes. */
-const GATE_SELECTION_TABLES = new WeakMap<
+let GATE_SELECTION_TABLES = new WeakMap<
   BlueprintNode,
   GateSelectionTable | null
 >();
+registerEngineDerivedReset(() => {
+  GATE_SELECTION_TABLES = new WeakMap<
+    BlueprintNode,
+    GateSelectionTable | null
+  >();
+});
 
 /** Construction-only mutable buckets, exposed through readonly table contracts. */
 type MutableGateSelectionGroup = Omit<

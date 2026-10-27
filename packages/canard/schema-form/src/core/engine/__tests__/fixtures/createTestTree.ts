@@ -24,6 +24,7 @@ export const createTestTree = (
   schema: BlueprintSchema,
   validator: Validator = createTestValidator(),
   options: BlueprintOptions = {},
+  beforeRoot: (analysis: Blueprint) => void = () => {},
 ): { root: PlainNode; blueprint: Blueprint; visits: string[] } => {
   const analysis = blueprint(schema, options);
   const visits: string[] = [];
@@ -44,6 +45,7 @@ export const createTestTree = (
       readonly { path: string; value: unknown }[]
     >('path'),
   };
+  beforeRoot(analysis);
   return {
     root: createPlainNode(analysis.root, null, runtime, visits),
     blueprint: analysis,

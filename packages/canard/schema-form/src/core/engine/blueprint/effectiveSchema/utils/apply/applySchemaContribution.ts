@@ -1,10 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
+import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type { EffectiveSchemaOptions } from '../../../types/effectiveSchema';
 import type { PropertyDeclaration } from '../../../types/node';
 import type { EffectiveSchemaState } from '../../types/state';
-import { OwnedSchemaValues } from '../finalize/OwnedSchemaValues';
 import { mergeHintGroup } from '../merge/mergeHintGroup';
 import { applyConstraintKeywords } from './applyConstraintKeywords';
 import { applyControlHints } from './applyControlHints';
@@ -73,7 +73,7 @@ export const applySchemaContribution = (
             !earlier.includes(entry) && value.indexOf(entry) === index,
         ),
       ];
-      OwnedSchemaValues.add(state.schema.required);
+      ownedSchemaValues.add(state.schema.required);
     } else if (key === 'pattern' && typeof value === 'string') {
       if (!state.patterns.includes(value)) state.patterns.push(value);
     } else if (key === 'allOf' && isArray(value)) {
@@ -81,7 +81,7 @@ export const applySchemaContribution = (
         ...(isArray(state.schema.allOf) ? state.schema.allOf : []),
         ...value,
       ];
-      OwnedSchemaValues.add(state.schema.allOf);
+      ownedSchemaValues.add(state.schema.allOf);
     } else state.schema[key] = value;
   }
   applyConstraintKeywords(state, schema, declaration.schemaPath, options);

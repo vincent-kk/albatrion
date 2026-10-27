@@ -3,8 +3,8 @@ import { unescapeSegment } from '@winglet/json/pointer';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
-import { gateSelectionTable } from '../gates/gateSelectionTable';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
 import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
@@ -27,7 +27,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       context.dirtyPaths.add(parent.path);
       parent = parent.parent;
     }
-    if (gateSelectionTable.mode === 'verify') verifyWriteEpoch(context);
+    if (engineModes.gateSelection === 'verify') verifyWriteEpoch(context);
     return;
   }
   if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)
@@ -37,7 +37,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   const epoch = (context.registrationEpoch =
     (context.registrationEpoch ?? 0) + 1);
   const shadow =
-    gateSelectionTable.mode === 'verify' && !context.shadowRegistration
+    engineModes.gateSelection === 'verify' && !context.shadowRegistration
       ? context.registrationShadow
       : undefined;
   if (shadow) {
@@ -55,7 +55,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   const split =
     !context.shadowRegistration &&
     context.hasGates &&
-    gateSelectionTable.mode !== 'off' &&
+    engineModes.gateSelection !== 'off' &&
     dependencies.hasSplitOwners;
   if (split) {
     const dirty = context.dirtyPaths;

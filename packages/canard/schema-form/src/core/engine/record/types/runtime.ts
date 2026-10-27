@@ -5,12 +5,15 @@ import type {
 } from '../../../../errors';
 import type {
   Blueprint,
+  BlueprintChildEntry,
+  BlueprintGate,
   BlueprintNode,
   BlueprintSchemaType,
   EffectiveSchema,
 } from '../../blueprint';
 import type { DeclarationLayer } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
+import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
@@ -201,7 +204,9 @@ export interface SettlementScratch<Self> {
 }
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
-export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
+export interface FieldNodeRuntime<Self>
+  extends FieldNodeRootRuntimeState,
+    TreeMemoStores<BlueprintChildEntry, BlueprintGate> {
   /** Last issued static whole-write generation; never reused within this tree. */
   writeEpoch?: number;
   /** Number of current-shape nodes with a truthy value for each state key. */

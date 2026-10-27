@@ -1,10 +1,17 @@
 import type { BlueprintNode } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 
 /** Immutable template indexes are built once when a rule first uses the host. */
-const CHILDREN = new WeakMap<
+let CHILDREN = new WeakMap<
   BlueprintNode,
   ReadonlyMap<string, readonly number[]>
 >();
+registerEngineDerivedReset(() => {
+  CHILDREN = new WeakMap<
+    BlueprintNode,
+    ReadonlyMap<string, readonly number[]>
+  >();
+});
 
 /**
  * Find a declared child without rescanning a wide host on every injection.

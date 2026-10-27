@@ -4,13 +4,12 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as priming from '../utils/compute/primeHost';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 import { observeChildSelectionPlans } from './fixtures/childSelection/observeChildSelectionPlans';
@@ -74,9 +73,9 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           return flush(template, path, context);
         },
       );
-      const previousMode = gateWheelEvaluation.mode;
+      const previousMode = engineModes.gateWheel;
       try {
-        gateWheelEvaluation.mode = 'record';
+        engineModes.setMode('gateWheel', 'record');
         const builds = observeChildSelectionPlans();
         const { root } = createTestTree(createFixedBranchSchema(count));
         const declare = root.behavior.declareChildren;
@@ -127,7 +126,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
           expect(writePlans).toBe(0);
           if (index === 0) expect(mountPlans + writePlans).toBe(1);
           const expected = expectedGateSelectionCalls(
-            gateSelectionTable.mode,
+            engineModes.gateSelection,
             index === 0,
           );
           expect(evaluations).toEqual(
@@ -147,7 +146,7 @@ describe('mount-prepared child selection metadata runtime visits', () => {
         }
       } finally {
         vi.restoreAllMocks();
-        gateWheelEvaluation.mode = previousMode;
+        engineModes.setMode('gateWheel', previousMode);
       }
     },
   );

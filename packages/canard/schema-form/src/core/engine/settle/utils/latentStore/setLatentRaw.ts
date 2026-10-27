@@ -50,7 +50,7 @@ export const setLatentRaw = <Self extends FieldNodeRecord<Self>>(
     if (isArray(identity) && typeof identity[0] === 'string') {
       const previous = metadata.get(key);
       const current = { path: identity[0], blueprintNode: template, order };
-      if (previous) DetachedWriteAddress.transfer(previous, current);
+      if (previous) DetachedWriteAddress.transfer(previous, current, runtime);
       metadata.set(key, current);
     }
   }

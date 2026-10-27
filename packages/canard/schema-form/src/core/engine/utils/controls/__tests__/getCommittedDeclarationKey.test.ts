@@ -5,6 +5,7 @@ import type { BlueprintNodeKind } from '@/schema-form/core/engine/blueprint';
 import { getCommittedDeclarationKey } from '../getCommittedDeclarationKey';
 
 describe('getCommittedDeclarationKey identity', () => {
+  const runtime = {};
   it('matches JSON pair semantics for escaped paths, root and every kind', () => {
     const kinds: BlueprintNodeKind[] = [
       'string',
@@ -24,22 +25,25 @@ describe('getCommittedDeclarationKey identity', () => {
             : { kind };
         const node = { path, blueprintNode };
         if (kind === 'union')
-          expect(getCommittedDeclarationKey(node)).toBe(
+          expect(getCommittedDeclarationKey(node, runtime)).toBe(
             JSON.stringify([path, 'union:3']),
           );
         else
-          expect(getCommittedDeclarationKey(node)).toBe(
+          expect(getCommittedDeclarationKey(node, runtime)).toBe(
             JSON.stringify([path, kind]),
           );
-        expect(getCommittedDeclarationKey(node)).toBe(
-          getCommittedDeclarationKey(node),
+        expect(getCommittedDeclarationKey(node, runtime)).toBe(
+          getCommittedDeclarationKey(node, runtime),
         );
         expect(
-          getCommittedDeclarationKey({
-            path,
-            blueprintNode: { ...blueprintNode },
-          }),
-        ).toBe(getCommittedDeclarationKey(node));
+          getCommittedDeclarationKey(
+            {
+              path,
+              blueprintNode: { ...blueprintNode },
+            },
+            runtime,
+          ),
+        ).toBe(getCommittedDeclarationKey(node, runtime));
       }
   });
 
@@ -48,18 +52,18 @@ describe('getCommittedDeclarationKey identity', () => {
       path: '/list/1',
       blueprintNode: { kind: 'string' as BlueprintNodeKind },
     };
-    const previous = getCommittedDeclarationKey(node);
+    const previous = getCommittedDeclarationKey(node, runtime);
     node.path = '/list/0';
-    expect(getCommittedDeclarationKey(node)).toBe(
+    expect(getCommittedDeclarationKey(node, runtime)).toBe(
       JSON.stringify(['/list/0', 'string']),
     );
-    expect(getCommittedDeclarationKey(node)).not.toBe(previous);
+    expect(getCommittedDeclarationKey(node, runtime)).not.toBe(previous);
     node.blueprintNode.kind = 'number';
-    expect(getCommittedDeclarationKey(node)).toBe(
+    expect(getCommittedDeclarationKey(node, runtime)).toBe(
       JSON.stringify(['/list/0', 'number']),
     );
     node.path = '/list/1';
     node.blueprintNode.kind = 'string';
-    expect(getCommittedDeclarationKey(node)).toBe(previous);
+    expect(getCommittedDeclarationKey(node, runtime)).toBe(previous);
   });
 });

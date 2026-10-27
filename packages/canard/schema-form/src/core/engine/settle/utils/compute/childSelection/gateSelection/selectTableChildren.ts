@@ -1,7 +1,6 @@
 import type { FieldNodeRecord } from '../../../../../record';
+import { engineModes } from '../../../../../utils/cache/engineModes';
 import type { GateSelectionRound } from '../../../../types/gateSelectionRound';
-import { gateSelectionTable } from '../../../gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../../../gates/gateWheelEvaluation';
 import { readGateSelectionGroup } from '../../../gates/readGateSelectionGroup';
 import { verifyTableGate } from '../../../gates/verifyTableGate';
 import { verifyTablePrePublication } from '../../../gates/verifyTablePrePublication';
@@ -26,8 +25,8 @@ export const selectTableChildren = <Self extends FieldNodeRecord<Self>>(
   const reuse = frame.reuseStatic;
   let selected = getTableVisitSteps(frame, table);
   const active = new Set<number>();
-  const verify = gateSelectionTable.mode === 'verify';
-  const shadow = gateWheelEvaluation.mode === 'shadow';
+  const verify = engineModes.gateSelection === 'verify';
+  const shadow = engineModes.gateWheel === 'shadow';
   let groupIndex = 0;
   let cursor = 0;
   let fullIndex = 0;
@@ -47,7 +46,7 @@ export const selectTableChildren = <Self extends FieldNodeRecord<Self>>(
     const tableStep = table.tableSteps.has(index);
     if (
       verify &&
-      gateWheelEvaluation.mode === 'skip' &&
+      engineModes.gateWheel === 'skip' &&
       tableStep &&
       frame.flushReads &&
       frame.context.pendingOutputs?.size

@@ -1,5 +1,5 @@
+import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type { EffectiveSchemaFields } from '../../types/state';
-import { OwnedSchemaValues } from '../finalize/OwnedSchemaValues';
 import { isObjectRecord } from '../finalize/isObjectRecord';
 
 /**
@@ -20,6 +20,6 @@ export function applyControlHints(
   if (hints.default !== undefined) controls.default = hints.default;
   if (Object.keys(controls).length) {
     target.controls = controls;
-    OwnedSchemaValues.add(controls);
+    ownedSchemaValues.add(controls);
   }
 }

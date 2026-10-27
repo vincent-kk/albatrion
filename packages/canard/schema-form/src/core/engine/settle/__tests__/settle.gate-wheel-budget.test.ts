@@ -4,8 +4,8 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { FormErrorCode } from '@/schema-form/errors';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import * as budget from '../utils/gates/getGateBudgetCap';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
@@ -18,8 +18,8 @@ it('P1 retains BudgetExceeded when a changed wheel consumes the complete cap', (
     },
   });
   loadFieldNodeAtMount(root, { sw: 1 }, WriteOption.Overwrite);
-  const previousMode = gateWheelEvaluation.mode;
-  gateWheelEvaluation.mode = 'skip';
+  const previousMode = engineModes.gateWheel;
+  engineModes.setMode('gateWheel', 'skip');
   const cap = vi.spyOn(budget, 'getHostWheelBudgetCap').mockReturnValue(1);
   try {
     expect(() =>
@@ -32,6 +32,6 @@ it('P1 retains BudgetExceeded when a changed wheel consumes the complete cap', (
     });
   } finally {
     cap.mockRestore();
-    gateWheelEvaluation.mode = previousMode;
+    engineModes.setMode('gateWheel', previousMode);
   }
 });

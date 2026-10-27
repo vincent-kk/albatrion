@@ -4,12 +4,11 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
+import { engineModes } from '../../utils/cache/engineModes';
 import * as paths from '../../utils/paths/resolveDependencyPath';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 import { expectedGateSelectionCalls } from './fixtures/expectedGateSelectionCalls';
@@ -69,9 +68,9 @@ describe('gate path resolution runtime visits', () => {
           }
         },
       );
-      const previousMode = gateWheelEvaluation.mode;
+      const previousMode = engineModes.gateWheel;
       try {
-        gateWheelEvaluation.mode = 'record';
+        engineModes.setMode('gateWheel', 'record');
         const { root } = createTestTree(createFixedBranchSchema(count));
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         for (const [index, kind] of [
@@ -91,7 +90,7 @@ describe('gate path resolution runtime visits', () => {
             WriteOption.Overwrite,
           );
           const expected = expectedGateSelectionCalls(
-            gateSelectionTable.mode,
+            engineModes.gateSelection,
             index === 0,
           );
           expect(evaluations).toEqual(
@@ -110,7 +109,7 @@ describe('gate path resolution runtime visits', () => {
         }
       } finally {
         vi.restoreAllMocks();
-        gateWheelEvaluation.mode = previousMode;
+        engineModes.setMode('gateWheel', previousMode);
       }
     },
   );

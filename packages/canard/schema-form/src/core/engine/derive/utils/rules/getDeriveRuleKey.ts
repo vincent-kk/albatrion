@@ -1,8 +1,7 @@
+import type { TreeMemoStores } from '../../../types/treeMemoStores';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { DeriveRule } from '../../types/rules';
 
-/** Live targets receive stable IDs for their record lifetime. */
-const TARGET_IDS = new WeakMap<object, number>();
 /** Next ID separates a reborn record from its prior occurrence. */
 let nextTargetId = 0;
 
@@ -12,6 +11,7 @@ let nextTargetId = 0;
  * @param kind - Fold-inclusive kind token of the live node at that path
  * @param rule - Authored declaration and expression position
  * @param target - Live value target, or the source for an injection rule
+ * @param runtime - Root owner of this occurrence memo or retained address state
  * @returns Stable key for committed and consumed values
  */
 export const getDeriveRuleKey = (
@@ -22,7 +22,12 @@ export const getDeriveRuleKey = (
     readonly path: string;
     readonly blueprintNode: Parameters<typeof getBlueprintNodeIdentity>[0];
   },
+  runtime: Pick<TreeMemoStores, 'deriveTargetIds'>,
 ): string => {
+  const TARGET_IDS = (runtime.deriveTargetIds ??= new WeakMap<
+    object,
+    number
+  >());
   let targetId = TARGET_IDS.get(target);
   if (targetId === undefined) {
     targetId = ++nextTargetId;

@@ -13,5 +13,7 @@ export const getSelectedDeclarationIds = <Self extends FieldNodeRecord<Self>>(
   state: DeriveState<Self>,
 ): readonly number[] =>
   state.selectedDeclarationIds.get(node) ??
-  node.runtime.committedDeclarationIds?.get(getCommittedDeclarationKey(node)) ??
+  node.runtime.committedDeclarationIds?.get(
+    getCommittedDeclarationKey(node, node.runtime),
+  ) ??
   node.blueprintNode.declarations.map((declaration) => declaration.id);

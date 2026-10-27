@@ -7,12 +7,13 @@ import type {
   BlueprintOptions,
   EffectiveSchema,
 } from '../../../../blueprint';
+import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
 import { staticIds } from './staticIds';
 
 /** Ungated effective schemas select their immutable static contributions. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 /** Immutable, ungated object shapes shared by occurrences of one blueprint host. */
-const STATIC_SHAPES = new WeakMap<
+let STATIC_SHAPES = new WeakMap<
   BlueprintNode,
   | readonly {
       entry: BlueprintChildEntry;
@@ -21,6 +22,17 @@ const STATIC_SHAPES = new WeakMap<
     }[]
   | null
 >();
+registerEngineDerivedReset(() => {
+  STATIC_SHAPES = new WeakMap<
+    BlueprintNode,
+    | readonly {
+        entry: BlueprintChildEntry;
+        ids: readonly number[];
+        schema: EffectiveSchema;
+      }[]
+    | null
+  >();
+});
 
 /**
  * Memoize the fixed static entries in the structure's property order.

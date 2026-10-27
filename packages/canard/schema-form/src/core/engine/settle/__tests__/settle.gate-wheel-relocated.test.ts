@@ -1,15 +1,15 @@
 import { expect, it, vi } from 'vitest';
 
+import { engineModes } from '../../utils/cache/engineModes';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
 import * as predicate from '../utils/gates/canSkipGateWheel';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import type { gateSelectionCases } from './fixtures/gateSelectionCases';
 import { runGateSelectionCase } from './helpers/runGateSelectionCase';
 
 it.each(['record', 'skip', 'shadow'] as const)(
   '%s: relocated child follows a value-only write after its host was located',
   (mode) => {
-    const previousMode = gateWheelEvaluation.mode;
+    const previousMode = engineModes.gateWheel;
     try {
       runGateSelectionCase(
         {
@@ -39,7 +39,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
           writes: [{ path: '/later', value: true }],
         },
         () => {
-          gateWheelEvaluation.mode = mode;
+          engineModes.setMode('gateWheel', mode);
         },
         (root) =>
           expect(root.structure?.p?.structure?.child !== undefined).toBe(
@@ -47,7 +47,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
           ),
       );
     } finally {
-      gateWheelEvaluation.mode = previousMode;
+      engineModes.setMode('gateWheel', previousMode);
     }
   },
 );
@@ -55,7 +55,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
 it.each(['record', 'skip', 'shadow'] as const)(
   '%s: relocated declaring-host reader follows a sibling gate that flips mid-round',
   (mode) => {
-    const previousMode = gateWheelEvaluation.mode;
+    const previousMode = engineModes.gateWheel;
     try {
       runGateSelectionCase(
         {
@@ -92,7 +92,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
           writes: [{ path: '/X/current/b', value: 'B' }],
         },
         () => {
-          gateWheelEvaluation.mode = mode;
+          engineModes.setMode('gateWheel', mode);
         },
         (root) => {
           const current = root.structure?.X?.structure?.current;
@@ -102,7 +102,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
         },
       );
     } finally {
-      gateWheelEvaluation.mode = previousMode;
+      engineModes.setMode('gateWheel', previousMode);
     }
   },
 );
@@ -137,7 +137,7 @@ it.each([false, true])(
       input: { mode: 'y', p: { child: 'P' }, later: true },
       writes: [{ path: '/mode', value: 'x' }],
     };
-    const previousMode = gateWheelEvaluation.mode;
+    const previousMode = engineModes.gateWheel;
     const original = predicate.canSkipGateWheel;
     const decisions: {
       host: string;
@@ -159,11 +159,11 @@ it.each([false, true])(
         });
         return allowed;
       });
-    const run = (mode: typeof gateWheelEvaluation.mode) =>
+    const run = (mode: typeof engineModes.gateWheel) =>
       runGateSelectionCase(
         fixture,
         () => {
-          gateWheelEvaluation.mode = mode;
+          engineModes.setMode('gateWheel', mode);
         },
         (root) => {
           if (root.structure?.mode?.emit === 'x')
@@ -185,7 +185,7 @@ it.each([false, true])(
           writes: [],
         },
         () => {
-          gateWheelEvaluation.mode = 'record';
+          engineModes.setMode('gateWheel', 'record');
         },
         (root) => expect(root.structure?.p?.structure?.child?.emit).toBe('P'),
       );
@@ -203,7 +203,7 @@ it.each([false, true])(
       expect(run('shadow')).toEqual(expected);
     } finally {
       proving.mockRestore();
-      gateWheelEvaluation.mode = previousMode;
+      engineModes.setMode('gateWheel', previousMode);
     }
   },
 );

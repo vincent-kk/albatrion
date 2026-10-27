@@ -1,6 +1,6 @@
 import { isEmptyObject } from '@winglet/common-utils/filter';
 
-import { objectKeyCounts } from './objectKeyCounts';
+import { objectKeyCounts } from '../../../utils/cache/valueMemos';
 
 /** Project an empty object as absence while retaining non-empty input identity. */
 export const omitEmptyObject = (value: unknown): unknown => {

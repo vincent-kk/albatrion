@@ -1,8 +1,8 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { ownedSchemaValues } from '../../../utils/cache/valueMemos';
 import { blueprint } from '../../blueprint';
 import * as hints from '../utils/apply/applyControlHints';
-import { OwnedSchemaValues } from '../utils/finalize/OwnedSchemaValues';
 import * as guards from '../utils/finalize/isObjectRecord';
 import { mergeSingleStaticContribution } from '../utils/merge/mergeSingleStaticContribution';
 
@@ -64,7 +64,7 @@ it('uses the guarded controls producer once in the sole static contribution path
       expect(Object.isFrozen(result?.schema.controls)).toBe(true);
       const envelope = produce.mock.calls[0][0].controls;
       expect(envelope).toBe(result?.schema.controls);
-      expect(OwnedSchemaValues.has(envelope!)).toBe(false);
+      expect(ownedSchemaValues.has(envelope!)).toBe(false);
     } else if (source === null || typeof source !== 'object') {
       expect(result?.schema.controls).toBeUndefined();
       expect(Object.keys(result?.schema ?? {})).toEqual([

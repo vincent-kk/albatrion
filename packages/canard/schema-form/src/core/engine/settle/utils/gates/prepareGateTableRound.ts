@@ -1,10 +1,10 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
 import { DIRECT_CHILD_SELECTION_PLANS } from '../compute/childSelection/getDirectChildSelectionPlan';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
-import { gateSelectionTable } from './gateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
 
 /**
@@ -21,7 +21,7 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   context.gateSelectionRounds?.delete(node);
   if (
-    gateSelectionTable.mode === 'off' ||
+    engineModes.gateSelection === 'off' ||
     (context.kind === 'load' &&
       !DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)) ||
     !context.hasGates ||
@@ -46,7 +46,7 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     watchedPaths,
     active: true,
   });
-  if (gateSelectionTable.mode === 'verify') {
+  if (engineModes.gateSelection === 'verify') {
     if (context.gateWheelFrame)
       context.gateWheelFrame.selectionShadow = {
         inputs: new Map(),

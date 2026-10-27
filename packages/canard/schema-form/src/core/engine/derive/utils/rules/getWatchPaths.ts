@@ -3,9 +3,13 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
 
 /** Immutable target templates retain their authored watch union. */
-const WATCH_PATHS = new WeakMap<BlueprintNode, readonly string[]>();
+let WATCH_PATHS = new WeakMap<BlueprintNode, readonly string[]>();
+registerEngineDerivedReset(() => {
+  WATCH_PATHS = new WeakMap<BlueprintNode, readonly string[]>();
+});
 
 /**
  * Read all authored watches on a value target without other expression paths.

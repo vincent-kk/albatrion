@@ -1,9 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type { EffectiveSchema } from '../../../types/effectiveSchema';
 import type { BlueprintNode } from '../../../types/node';
 import type { EffectiveSchemaState } from '../../types/state';
-import { OwnedSchemaValues } from './OwnedSchemaValues';
 import { freezeEffectiveSchema } from './freezeEffectiveSchema';
 
 /**
@@ -24,11 +24,11 @@ export const finalizeEffectiveSchema = (
       const clauses = [...(isArray(schema.allOf) ? schema.allOf : [])];
       for (let index = 1; index < state.patterns.length; index++) {
         const clause = { pattern: state.patterns[index] };
-        OwnedSchemaValues.add(clause);
+        ownedSchemaValues.add(clause);
         clauses.push(clause);
       }
       schema.allOf = clauses;
-      OwnedSchemaValues.add(clauses);
+      ownedSchemaValues.add(clauses);
     }
   }
   const types = state.allowedTypes?.filter((type) => type !== 'null');
@@ -47,14 +47,14 @@ export const finalizeEffectiveSchema = (
           ? 'null'
           : types;
   if (schema.type === types && types !== undefined)
-    OwnedSchemaValues.add(types);
+    ownedSchemaValues.add(types);
   if (state.conflictingType) {
     if (node.nullable) schema.nullable = true;
   } else if (node.nullable || state.allowedTypes?.includes('null'))
     schema.nullable = state.allowedTypes?.includes('null') ?? node.nullable;
   if (state.conflictingConst) {
     schema.enum = [];
-    OwnedSchemaValues.add(schema.enum);
+    ownedSchemaValues.add(schema.enum);
   }
   return freezeEffectiveSchema({
     schema,

@@ -1,11 +1,11 @@
-import type { gateSelectionTable } from '../../utils/gates/gateSelectionTable';
+import type { engineModes } from '../../../utils/cache/engineModes';
 
 /**
  * Exact per-branch calls in record wheels: four rounds on first fill, two thereafter.
  * Off calls one root and three child gates; verify calls only the three S1 expressions.
  */
 export const expectedGateSelectionCalls = (
-  mode: typeof gateSelectionTable.mode,
+  mode: typeof engineModes.gateSelection,
   first: boolean,
 ): { expressions: number; gates: number } => {
   const rounds = first ? 4 : 2;

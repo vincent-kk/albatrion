@@ -3,10 +3,10 @@ import { expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
 import * as registration from '../utils/dependencies/registerRecalculation';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 
 /** Canonical buildNestedSchema(6, 4) fixture, pinned by the schema hash below. */
@@ -27,8 +27,8 @@ const changed = (value: unknown): unknown =>
     : String(value) + '-changed';
 
 it('nested-d6-f4 bulk has no split release, shadow read or split registration in table mode', () => {
-  const mode = gateSelectionTable.mode;
-  gateSelectionTable.mode = 'table';
+  const mode = engineModes.gateSelection;
+  engineModes.setMode('gateSelection', 'table');
   try {
     const schema = nestedSchema(6);
     expect(
@@ -76,7 +76,7 @@ it('nested-d6-f4 bulk has no split release, shadow read or split registration in
     expect(split).not.toHaveBeenCalled();
     expect(root.emit).toEqual(value);
   } finally {
-    gateSelectionTable.mode = mode;
+    engineModes.setMode('gateSelection', mode);
     vi.restoreAllMocks();
   }
 });

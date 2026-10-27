@@ -1,15 +1,7 @@
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { UnionSpec } from '../../../record';
+import { scalarSpecs, unionSpecs } from '../../../utils/cache/valueMemos';
 
-/** Scalar restrictions are finite; union arrays are weakly keyed by blueprint identity. */
-const SCALAR_SPECS = [
-  new Map<string, UnionSpec>(),
-  new Map<string, UnionSpec>(),
-];
-const UNION_SPECS = [
-  new WeakMap<readonly SchemaTypeName[], UnionSpec>(),
-  new WeakMap<readonly SchemaTypeName[], UnionSpec>(),
-];
 const NO_KINDS: readonly Exclude<SchemaTypeName, 'null'>[] = Object.freeze([]);
 /** Specs for a template without a JSON type, indexed like the caches by nullable. */
 const NO_KIND_SPECS: readonly UnionSpec[] = [
@@ -30,14 +22,14 @@ export const staticSpec = (
   const index = nullable ? 1 : 0;
   if (schemaType === undefined) return NO_KIND_SPECS[index];
   if (typeof schemaType === 'string') {
-    const cached = SCALAR_SPECS[index].get(schemaType);
+    const cached = scalarSpecs[index].get(schemaType);
     if (cached) return cached;
     const kinds = schemaType === 'null' ? NO_KINDS : schemaType;
     const spec: UnionSpec = { kinds, mask: 0, nullable };
-    SCALAR_SPECS[index].set(schemaType, spec);
+    scalarSpecs[index].set(schemaType, spec);
     return spec;
   }
-  const cached = UNION_SPECS[index].get(schemaType);
+  const cached = unionSpecs[index].get(schemaType);
   if (cached) return cached;
   const kinds = schemaType.filter(
     (kind): kind is Exclude<SchemaTypeName, 'null'> => kind !== 'null',
@@ -47,6 +39,6 @@ export const staticSpec = (
     mask: 0,
     nullable,
   };
-  UNION_SPECS[index].set(schemaType, spec);
+  unionSpecs[index].set(schemaType, spec);
   return spec;
 };

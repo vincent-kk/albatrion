@@ -43,7 +43,7 @@ export const snapshotExitedPolicies = <Self extends FieldNodeRecord<Self>>(
             ),
           }));
         const current = { ...metadata, exitLayers };
-        DetachedWriteAddress.transfer(metadata, current);
+        DetachedWriteAddress.transfer(metadata, current, runtime);
         runtime.latentRawMetadata?.set(key, current);
         context.latentDescendantKeys = undefined;
       },

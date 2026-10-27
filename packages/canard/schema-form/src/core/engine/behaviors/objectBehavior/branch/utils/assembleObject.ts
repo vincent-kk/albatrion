@@ -2,20 +2,9 @@ import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Behavior } from '../../../../record';
+import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
-import { objectKeyCounts } from '../../utils/objectKeyCounts';
-
-/** Last assembled shape allows a value-only write to patch its existing order. */
-const STABLE_SHAPES = new WeakMap<
-  object,
-  {
-    children: readonly unknown[];
-    schema: unknown;
-    undeclaredValues: unknown;
-    names: readonly string[];
-  }
->();
 
 /** Combine live child projections and undeclared input in stable host order. */
 export const assembleObject: Behavior['assemble'] = (
@@ -25,7 +14,7 @@ export const assembleObject: Behavior['assemble'] = (
   hint,
 ) => {
   const previous = node.local;
-  const stable = STABLE_SHAPES.get(node);
+  const stable = node.runtime.objectShapes?.get(node);
   if (
     recalculated &&
     hint &&
@@ -148,7 +137,7 @@ export const assembleObject: Behavior['assemble'] = (
       }
     }
     if (aligned) {
-      STABLE_SHAPES.set(node, {
+      (node.runtime.objectShapes ??= new WeakMap()).set(node, {
         children,
         schema: node.schema,
         undeclaredValues: node.undeclaredValues,
@@ -174,7 +163,7 @@ export const assembleObject: Behavior['assemble'] = (
     const result: Record<string, unknown> = {};
     for (const name of names)
       writeObjectKey(result, name, Reflect.get(extras, name));
-    STABLE_SHAPES.set(node, {
+    (node.runtime.objectShapes ??= new WeakMap()).set(node, {
       children,
       schema: node.schema,
       undeclaredValues: node.undeclaredValues,
@@ -243,7 +232,7 @@ export const assembleObject: Behavior['assemble'] = (
           writeObjectKey(patch, name, value);
         }
       }
-      STABLE_SHAPES.set(node, {
+      (node.runtime.objectShapes ??= new WeakMap()).set(node, {
         children,
         schema: node.schema,
         undeclaredValues: node.undeclaredValues,
@@ -264,7 +253,7 @@ export const assembleObject: Behavior['assemble'] = (
           ? Reflect.get(extras, name)
           : undefined,
     );
-  STABLE_SHAPES.set(node, {
+  (node.runtime.objectShapes ??= new WeakMap()).set(node, {
     children,
     schema: node.schema,
     undeclaredValues: node.undeclaredValues,

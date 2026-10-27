@@ -1,16 +1,16 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchContextChange } from '../../write';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import { mountPresenceTree } from './helpers/mountPresenceTree';
 import { observePresenceTree } from './helpers/observePresenceTree';
 
-const previousMode = gateWheelEvaluation.mode;
+const previousMode = engineModes.gateWheel;
 afterEach(() => {
   vi.restoreAllMocks();
-  gateWheelEvaluation.mode = previousMode;
+  engineModes.setMode('gateWheel', previousMode);
 });
 
 const scenes: { label: string; schema: BlueprintSchema; value: unknown }[] = [
@@ -96,7 +96,7 @@ for (const scene of scenes)
   for (const mode of ['record', 'skip', 'shadow'] as const)
     for (const start of [false, true])
       it(`${scene.label}: ${mode}, start=${start}`, () => {
-        gateWheelEvaluation.mode = mode;
+        engineModes.setMode('gateWheel', mode);
         const root = mountPresenceTree(scene.schema, scene.value, {
           on: start,
         });

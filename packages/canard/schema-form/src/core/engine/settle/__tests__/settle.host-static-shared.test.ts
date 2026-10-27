@@ -2,22 +2,22 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { HostStaticPartition } from '../../blueprint';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import * as selection from '../utils/compute/childSelection/selectEntryStep';
 import { relocatedGates } from '../utils/compute/relocatedGates';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import * as output from '../utils/output/updateOutput';
 
-const wheelMode = gateWheelEvaluation.mode;
+const wheelMode = engineModes.gateWheel;
 afterEach(() => {
-  gateWheelEvaluation.mode = wheelMode;
+  engineModes.setMode('gateWheel', wheelMode);
   vi.restoreAllMocks();
 });
 
 it.each(['skip', 'shadow'] as const)(
   'bounds static sibling selection and root assembly in %s with shared x/y branches',
   (mode) => {
-    gateWheelEvaluation.mode = mode;
+    engineModes.setMode('gateWheel', mode);
     const { root } = createDispatchTree({
       type: 'object',
       properties: {
