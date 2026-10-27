@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- D3b-2의 분석·호스트 파생 builder는 공통 두 레코드의 자기 슬롯만 지연 채운다. DependencyIndex에는 정적 색인만 두며 presenceLevels의 호출 한정 메모는 SettlementContext의 지연 Map이다. context를 재사용하지 않아 다음 정착으로 남지 않으며 staticShape의 entries·byEntry는 서로 독립 지연이다. child entry별 두 색인은 선언 부모 host 슬롯의 Map으로 동일성을 보존한다. staticIds와 readAdmittedEdgeSchema의 caller는 선언 부모 BlueprintNode를 명시 인수로 넘겨 형제 N개당 Map 하나씩을 공유한다.
+- D3b-2의 분석·호스트 파생 builder는 공통 두 레코드의 자기 슬롯만 지연 채운다. DependencyIndex에는 정적 색인만 두며 presenceLevels의 호출 한정 메모는 SettlementContext의 지연 Map이다. context를 재사용하지 않아 다음 정착으로 남지 않으며 staticShape의 entries·byEntry는 서로 독립 지연이다. child entry별 두 색인은 선언 부모 host 슬롯의 저장소로 동일성을 보존한다. staticIds는 첫 사용에 만드는 WeakMap, readAdmittedEdgeSchema는 Map이며 caller는 선언 부모 BlueprintNode를 명시 인수로 넘겨 형제 N개당 저장소 하나씩을 공유한다. staticIds만 WeakMap으로 둔 이유는 분리 실험에서 확인한 JSC Map의 항목당 비용이며 다른 슬롯의 저장 모양은 바꾸지 않는다.
 
 - D3b-1에서 모드 읽기는 공통 engineModes, 변경은 setMode를 거친다. 파생 메모는 실제 모드 변경 때 재생성하며 생성 사실을 잃지 않는다. 라이브 호스트 예산과 떼어진 주소 셀은 runtime의 지연 WeakMap을 쓴다. 폼 전체 reset·폐기는 재계산 가능한 트리 메모만 비우고 부분 reset은 비우지 않는다. 주소 셀은 상태 예외로 reset 뒤에도 유지하여 재키된 옛 참조의 쓰기 목적지를 보존한다. 이 초기화는 커밋·배달 순서·public path의 고정 읽기를 바꾸지 않는다(SURFACE-065, NODE-044).
 
