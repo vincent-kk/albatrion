@@ -24,6 +24,7 @@ import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
 import { staticShape } from './staticShape';
 import { createStaticEntryReuser } from './utils/createStaticEntryReuser';
+import { prepareStaticHost } from './utils/prepareStaticHost';
 
 /**
  * Select all declared direct children in authored order for one host round.
@@ -139,8 +140,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   }
   const before = node.children ?? [];
   const current = node.structure;
-  let reuse =
-    !preserveStructure && current && current !== prior
+  const prepared = prepareStaticHost(node, prior, context, hasRelocated);
+  let reuse = prepared
+    ? (entry: BlueprintChildEntry) => prepared.entries.has(entry.name)
+    : !preserveStructure && current && current !== prior
       ? createStaticEntryReuser(
           node,
           prior,
@@ -197,6 +200,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   const count = direct ? direct.steps.length : entries.length;
   const flushReads = immediate && (!direct || context.kind === 'load');
   const frame: ChildSelectionFrame<Self> = {
+    preparedStatic: prepared,
+    priorDynamicNames: prepared
+      ? context.preparedStaticPriorNames?.get(node)
+      : undefined,
     node,
     context,
     prior,
@@ -266,7 +273,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       distribution.automatic,
     );
   }
-  const priorNames = Object.keys(prior);
+  const priorNames = frame.priorDynamicNames ?? Object.keys(prior);
   for (let index = 0; index < priorNames.length; index++) {
     const name = priorNames[index];
     const child = prior[name];
@@ -286,6 +293,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     }
   }
   const nextChildren = flushed ? (node.children ?? []) : Object.values(next);
+  if (prepared)
+    prepared.dynamicNames = [...seen.keys()].filter(
+      (name) => !prepared.entries.has(name),
+    );
   const published = node.children;
   const sameAsBefore = isSameChildList(before, nextChildren);
   if (!sameAsBefore) changed = true;

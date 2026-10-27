@@ -27,6 +27,7 @@ import { readAdmittedEdgeSchema } from './readAdmittedEdgeSchema';
 import { staticIds } from './staticIds';
 import type { PreparedDiscriminatorEntry } from './utils/prepareDiscriminatorEntrySelection';
 import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
+import type { PreparedStaticHost } from './utils/prepareStaticHost';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
@@ -35,6 +36,10 @@ const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
 
 /** Shared state is allocated once for a host selection, never once per entry. */
 export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
+  /** Static occurrences already present in the fixed private baseline. */
+  readonly preparedStatic?: PreparedStaticHost<Self>;
+  /** Original dynamic membership is retained solely for exit comparison. */
+  readonly priorDynamicNames?: readonly string[];
   /** Host whose current structure is selected. */
   readonly node: Self;
   /** Settlement effects, dirty paths, failures, latent state and gate evidence. */

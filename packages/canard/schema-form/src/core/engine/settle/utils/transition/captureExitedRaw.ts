@@ -6,6 +6,7 @@ import { captureArrayLatent } from '../latent/captureArrayLatent';
 import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
 import { HostLatent } from '../latentStore/HostLatent';
 import { captureOwnLatent } from '../latentStore/captureOwnLatent';
+import { getBlueprintChildIndex } from '../latentStore/getBlueprintChildIndex';
 import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
 import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
 import { distributeAbsentChildInputs } from './distributeAbsentChildInputs';
@@ -52,10 +53,10 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
         getItemEntries(node.blueprintNode, Number(child.name)).length < 2
       )
         continue;
-      const entries = node.blueprintNode.childEntries;
-      const index = entries.findIndex(
-        (entry) =>
-          entry.name === child.name && entry.node === child.blueprintNode,
+      const index = getBlueprintChildIndex(
+        node.blueprintNode,
+        child.name,
+        child.blueprintNode,
       );
       captureExitedRaw(
         child,
