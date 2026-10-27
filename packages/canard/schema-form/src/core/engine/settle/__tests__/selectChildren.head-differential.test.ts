@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { default as headFixture } from '@/schema-form/core/engine/__tests__/fixtures/ownedInlineHead.json';
 import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { alignKeptOutPoints } from './fixtures/childSelection/alignKeptOutPoints';
 import { buildChildSelectionRuntime } from './fixtures/childSelection/buildChildSelectionRuntime';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
@@ -72,6 +73,8 @@ describe('child selection against pinned HEAD', () => {
   }, 240000);
 
   it('preserves all 59 corpus schemas with root and every-node listeners', () => {
+    // These assertions inspect latent restoration and its internal stage records.
+    pinLatentBaseline();
     expect(headFixture.cases).toHaveLength(59);
     for (const sample of headFixture.cases) {
       for (const allListeners of [false, true]) {
@@ -115,6 +118,8 @@ describe('child selection against pinned HEAD', () => {
   it.each([5, 10, 20, 40])(
     'preserves B=%i first and prepared transitions with every-node listeners',
     (count) => {
+      // These assertions inspect latent restoration and its internal stage records.
+      pinLatentBaseline();
       const fixture = {
         label: `oneOf-${count}`,
         schema: createFixedBranchSchema(count) as AuthoredSchema,
@@ -140,6 +145,8 @@ describe('child selection against pinned HEAD', () => {
   it.each([false, true])(
     'preserves if-then publication and failures with automatic writes disabled=%s',
     (disabled) => {
+      // These assertions inspect latent restoration and its internal stage records.
+      pinLatentBaseline();
       for (const guardMode of [
         undefined,
         'normal',

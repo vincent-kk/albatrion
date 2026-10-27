@@ -19,6 +19,10 @@ import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
 import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
+import { cloneFromSlot } from '../../slots/cloneFromSlot';
+import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
+import { enterSlotClone } from '../../slots/enterSlotClone';
+import { isSlotEligible } from '../../slots/isSlotEligible';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
@@ -26,8 +30,8 @@ import type { DirectChildSelection } from './getDirectChildSelectionPlan';
 import { readAdmittedEdgeSchema } from './readAdmittedEdgeSchema';
 import { staticIds } from './staticIds';
 import type { PreparedDiscriminatorEntry } from './utils/prepareDiscriminatorEntrySelection';
-import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
 import type { PreparedStaticHost } from './utils/prepareStaticHost';
+import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
@@ -260,6 +264,12 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       node.behavior.type === 'array',
     );
   const latent = context.root.runtime.latentRaw;
+  const slotSource = isSlotEligible(node.runtime)
+    ? node.inactiveSlots?.get(entry)
+    : undefined;
+  const slotOverlay = isSlotEligible(node.runtime)
+    ? node.inactiveSlotOverlays?.get(entry)
+    : undefined;
   const latentKey =
     latent.size > 0 && !priorChild
       ? JSON.stringify([
@@ -277,6 +287,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   if (
     !priorChild &&
     !currentChild &&
+    !slotSource &&
+    !slotOverlay &&
     hasRecursiveExpansion(node, entry.node, input, context)
   ) {
     if (!context.exceededBudget) {
@@ -302,7 +314,14 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       : undefined;
   const pending = key === undefined ? undefined : context.pendingExits.get(key);
   const child =
-    currentChild ?? priorChild ?? pending ?? createChildNode(node, entry);
+    currentChild ??
+    priorChild ??
+    pending ??
+    (slotSource
+      ? cloneFromSlot(node, entry, slotSource, context)
+      : slotOverlay
+        ? createFromSlotOverlay(node, entry, slotOverlay, context)
+        : createChildNode(node, entry));
   context.perished.delete(child);
   if (key !== undefined && context.pendingExits.delete(key)) {
     const path = node.path + '/' + escapeSegment(entry.name);
@@ -318,6 +337,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     context.entered.add(child);
     indexEnteredLatentKey(context, child);
     if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
+    else if (slotSource || slotOverlay)
+      enterSlotClone(node, child, entry.name, context);
     else enterFieldNode(node, child, entry.name, context);
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);

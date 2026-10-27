@@ -1,0 +1,56 @@
+{
+  "scope": "Read-only scratch proposal probe, not product changes or performance samples",
+  "edges": ["parent", "rootNode", "structure", "inactiveSlots"],
+  "reports": [
+    {
+      "variant": "current",
+      "points": [
+        {
+          "cycles": 0,
+          "nodes": 7
+        },
+        {
+          "cycles": 4,
+          "nodes": 7
+        },
+        {
+          "cycles": 8,
+          "nodes": 7
+        },
+        {
+          "cycles": 16,
+          "nodes": 7
+        },
+        {
+          "cycles": 24,
+          "nodes": 7
+        }
+      ]
+    },
+    {
+      "variant": "shared",
+      "points": [
+        {
+          "cycles": 0,
+          "nodes": 7
+        },
+        {
+          "cycles": 4,
+          "nodes": 15
+        },
+        {
+          "cycles": 8,
+          "nodes": 23
+        },
+        {
+          "cycles": 16,
+          "nodes": 39
+        },
+        {
+          "cycles": 24,
+          "nodes": 55
+        }
+      ]
+    }
+  ]
+}

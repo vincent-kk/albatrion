@@ -1,10 +1,13 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
 it('K1 removes a stale key reached by no candidate on array exit', () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const { root } = createDispatchTree({
     type: 'object',
     properties: { a: { type: 'boolean' } },

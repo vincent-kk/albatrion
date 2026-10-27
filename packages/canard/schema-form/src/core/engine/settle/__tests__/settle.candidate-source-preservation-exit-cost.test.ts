@@ -1,5 +1,6 @@
 import { expect, it, vi } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import * as ownership from '../utils/transition/selectCandidateOwnedLatent';
@@ -11,6 +12,8 @@ it.each([
 ])(
   'keeps base ownership-selector and filter cost for $slots suppressed single-kind exits with unrelated candidates',
   ({ slots, filters }) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree({
       type: 'object',
       properties: {
@@ -75,6 +78,8 @@ it.each([
 it.each([{ slots: 1 }, { slots: 32 }])(
   'reuses candidate ownership for $slots suppressed candidate-slot exits',
   ({ slots }) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, runtime } = createDispatchTree({
       type: 'object',
       properties: {

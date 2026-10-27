@@ -1,0 +1,43 @@
+{
+  "sourceCommit": "ff79e2c33",
+  "toolCommit": "f290cd04d",
+  "node": "v26.12.1",
+  "scope": "Final product gates; no performance evidence",
+  "checks": {
+    "typecheck": {
+      "exit": 0,
+      "command": "yarn workspace @canard/schema-form typecheck"
+    },
+    "lint": {
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "command": "yarn workspace @canard/schema-form lint"
+    },
+    "build": {
+      "exit": 0,
+      "command": "yarn workspace @canard/schema-form build",
+      "artifacts": "Three product bundles checked for slots:on; public dts identical to baseline"
+    }
+  },
+  "suites": [
+    {
+      "name": "five-projects",
+      "files": 927,
+      "passed": 5705,
+      "todo": 1,
+      "failed": 0,
+      "exit": 0,
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test --run --maxWorkers=1 --no-file-parallelism"
+    },
+    {
+      "name": "verify",
+      "files": 694,
+      "passed": 4717,
+      "todo": 1,
+      "failed": 0,
+      "exit": 0,
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test:verify --run --maxWorkers=1 --no-file-parallelism"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "kind": "supplemental-profile-classification-correction",
+  "newMeasurements": false,
+  "reason": "The collector filtered wrapped.mjs while this pass runs supplemental.mjs; classify the existing captured profile bytes with the correct suffix",
+  "sources": [
+    {
+      "row": "switch-oneOf-80",
+      "repeat": 0,
+      "coverageSha256": "0ef95542c7c3ea8201d2efa19733cd697ec205264f14ea0a8f6796713aa46cd6",
+      "heapProfileSha256": "ab7ffa53aade526585bd1eb49e58eeb4b2a7e20f21a32289adbc14639d2afce7"
+    },
+    {
+      "row": "switch-oneOf-80",
+      "repeat": 1,
+      "coverageSha256": "7f60c60297894a986d2e5f3fbadd90954dde16c924943f0dd73bf3f560998a5d",
+      "heapProfileSha256": "71f3faa15cf2ddc5438c39405e1a3348bd9e483d39a64e9d35c072e713488148"
+    },
+    {
+      "row": "switch-oneOf-80",
+      "repeat": 2,
+      "coverageSha256": "6d3858c637e3d1d8650b91a69d1aa990942d96e400650e5e9ae78c4c3d730902",
+      "heapProfileSha256": "f21eb05731ae41cfd4e58a8b80191a8834417c57f460e39b3162abd8e52b3416"
+    },
+    {
+      "row": "switch-payload-12",
+      "repeat": 0,
+      "coverageSha256": "9d7d3ee309f4b7750c81d36dad5c081e9581620f8db7f9d01580913a3afa3bad",
+      "heapProfileSha256": "18cbfd1c8c52ae4c1236538312aacd9c226a4bca024310f68e8740fde71fd8e7"
+    },
+    {
+      "row": "switch-payload-12",
+      "repeat": 1,
+      "coverageSha256": "1ac1abe67281cfa1e6125a41c7c90f3fb1635cd58b4bd9f4214a88f1f37c9b5d",
+      "heapProfileSha256": "6e9fb52ae82603b7f9175e78874cc2d02641ae7b52e201c649f890154a18e223"
+    },
+    {
+      "row": "switch-payload-12",
+      "repeat": 2,
+      "coverageSha256": "f42a23f4b85253fe709e52cfc328c7007205b937532a2fa436cc89866cbc8eaf",
+      "heapProfileSha256": "39dea8b17e7d0936bf783cbbc63fd1a00c04f71ecca0cb64450e4d944f585d2f"
+    },
+    {
+      "row": "switch-siblings-0",
+      "repeat": 0,
+      "coverageSha256": "3004ebf9f94a103ef04294ca80e9a549330d71bed9ef608a675b68fa8b48f1dc",
+      "heapProfileSha256": "4b05653c485042d6403456cf9ad6492ddc881222490d1f0d1752fa4205cdad9d"
+    },
+    {
+      "row": "switch-siblings-0",
+      "repeat": 1,
+      "coverageSha256": "1c71a3423534efbce5cacfdbe13ab80317935c06d20226fd2dfb999b1799f9b8",
+      "heapProfileSha256": "f1cc6b487e888ef24461279346db2d26ce27ce3c8ef64f2629017affc9bfd8e4"
+    },
+    {
+      "row": "switch-siblings-0",
+      "repeat": 2,
+      "coverageSha256": "fc5b5d12e5a7fb3345cc10c3dca21196dd6c476612f08b50e362e04e308929a6",
+      "heapProfileSha256": "2768b180391d016a507dbc0a648ad7fcc8dd6ff1839392433632ea329468ed42"
+    }
+  ]
+}

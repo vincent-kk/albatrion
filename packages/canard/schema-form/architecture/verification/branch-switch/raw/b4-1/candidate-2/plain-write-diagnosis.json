@@ -1,0 +1,93 @@
+{
+  "scope": "Untimed diagnostics only; no adoption evidence",
+  "report": [
+    {
+      "lane": "A",
+      "row": "single-flat-1000",
+      "optionalFieldsAfterInitialMount": {
+        "nodes": 1001,
+        "inactiveValueMemo": 0,
+        "inactiveValuesCache": 0,
+        "inactiveValuesDirty": 0,
+        "inactiveSlots": 0,
+        "inactiveSlotOverlays": 0
+      },
+      "callsPerTenWrites": {
+        "markWrite": 10,
+        "registerRecalculation": 10,
+        "updateOutput": 20,
+        "assembleObject": 10,
+        "computeNode": 10,
+        "markCommitDeliveries": 10,
+        "updateInactiveValuesMemo": 10,
+        "commitSettlement": 10
+      }
+    },
+    {
+      "lane": "A",
+      "row": "single-nested-d6-f4",
+      "optionalFieldsAfterInitialMount": {
+        "nodes": 5461,
+        "inactiveValueMemo": 0,
+        "inactiveValuesCache": 0,
+        "inactiveValuesDirty": 0,
+        "inactiveSlots": 0,
+        "inactiveSlotOverlays": 0
+      },
+      "callsPerTenWrites": {
+        "markWrite": 10,
+        "registerRecalculation": 10,
+        "updateOutput": 70,
+        "assembleObject": 60,
+        "computeNode": 10,
+        "markCommitDeliveries": 10,
+        "updateInactiveValuesMemo": 10,
+        "commitSettlement": 10
+      }
+    },
+    {
+      "lane": "B",
+      "row": "single-flat-1000",
+      "optionalFieldsAfterInitialMount": {
+        "nodes": 1001,
+        "inactiveValueMemo": 0,
+        "inactiveValuesCache": 0,
+        "inactiveValuesDirty": 0,
+        "inactiveSlots": 0,
+        "inactiveSlotOverlays": 0
+      },
+      "callsPerTenWrites": {
+        "markWrite": 10,
+        "registerRecalculation": 10,
+        "updateOutput": 20,
+        "assembleObject": 10,
+        "computeNode": 10,
+        "markCommitDeliveries": 10,
+        "isSlotEligible": 10,
+        "commitSettlement": 10
+      }
+    },
+    {
+      "lane": "B",
+      "row": "single-nested-d6-f4",
+      "optionalFieldsAfterInitialMount": {
+        "nodes": 5461,
+        "inactiveValueMemo": 0,
+        "inactiveValuesCache": 0,
+        "inactiveValuesDirty": 0,
+        "inactiveSlots": 0,
+        "inactiveSlotOverlays": 0
+      },
+      "callsPerTenWrites": {
+        "markWrite": 10,
+        "registerRecalculation": 10,
+        "updateOutput": 70,
+        "assembleObject": 60,
+        "computeNode": 10,
+        "markCommitDeliveries": 10,
+        "isSlotEligible": 10,
+        "commitSettlement": 10
+      }
+    }
+  ]
+}

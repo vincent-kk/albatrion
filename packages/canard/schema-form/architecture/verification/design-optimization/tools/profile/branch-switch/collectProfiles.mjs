@@ -5,7 +5,14 @@ import path from 'node:path';
 import { stageNames } from './buildBundle.mjs';
 
 /** Collect precise function counts and sampled allocated bytes in separate untimed passes; retain raw inspector data. */
-export async function collectProfiles(operation, config, row, recorder) {
+export async function collectProfiles(
+  operation,
+  config,
+  row,
+  recorder,
+  names = stageNames,
+  bundleName = 'wrapped.mjs',
+) {
   recorder.enabled = false;
   const session = new Session();
   session.connect();
@@ -20,10 +27,10 @@ export async function collectProfiles(operation, config, row, recorder) {
   await session.post('Profiler.stopPreciseCoverage');
   const calls = {};
   for (const script of coverage.result.filter((s) =>
-    s.url.endsWith('/scratch/wrapped.mjs'),
+    s.url.endsWith('/scratch/' + bundleName),
   ))
     for (const fn of script.functions)
-      if (stageNames.includes(fn.functionName))
+      if (names.includes(fn.functionName))
         calls[fn.functionName] =
           (calls[fn.functionName] ?? 0) + fn.ranges[0].count / config.samples;
   await session.post('HeapProfiler.enable');
@@ -39,8 +46,8 @@ export async function collectProfiles(operation, config, row, recorder) {
   const stageByNode = new Map();
   const walk = (node, inherited = 'everythingElse', insideEngine = false) => {
     const active =
-      insideEngine || node.callFrame.url.endsWith('/scratch/wrapped.mjs');
-    const stage = stageNames.includes(node.callFrame.functionName)
+      insideEngine || node.callFrame.url.endsWith('/scratch/' + bundleName);
+    const stage = names.includes(node.callFrame.functionName)
       ? node.callFrame.functionName
       : inherited;
     if (active) {
@@ -56,7 +63,10 @@ export async function collectProfiles(operation, config, row, recorder) {
     if (stage)
       allocationSampleCounts[stage] = (allocationSampleCounts[stage] ?? 0) + 1;
   }
-  const prefix = path.join(config.runDir, `${row.id}-${config.repeat}`);
+  const prefix = path.join(
+    config.runDir,
+    `${row.id}-${config.repeat}${config.profileLabel ? '-' + config.profileLabel : ''}`,
+  );
   fs.writeFileSync(`${prefix}.coverage.json`, JSON.stringify(coverage));
   fs.writeFileSync(`${prefix}.heapprofile`, JSON.stringify(allocation));
   recorder.reset();

@@ -1,5 +1,6 @@
 import { expect, it, vi } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { FieldNodeEventType } from '../../record';
@@ -15,6 +16,8 @@ import { selectCandidateOwnedLatent } from '../utils/transition/selectCandidateO
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
 it('V1 independent nested exit preserves a source shared with an enclosing sibling', async () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const a: BlueprintSchema = {
     type: 'object',
     allOf: [

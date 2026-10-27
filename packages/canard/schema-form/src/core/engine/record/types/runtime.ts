@@ -90,7 +90,7 @@ interface DetachedFieldNodeReads {
   readonly errors: readonly { readonly dataPath: string }[];
   readonly misfit: boolean;
   readonly misfits: readonly string[];
-  readonly inactiveValues: readonly { path: string; value: unknown }[];
+  readonly inactiveValues?: readonly { path: string; value: unknown }[];
   readonly defaultValue: unknown;
   readonly visible: boolean;
   readonly readOnly: boolean;
@@ -207,6 +207,17 @@ export interface SettlementScratch<Self> {
 export interface FieldNodeRuntime<Self>
   extends FieldNodeRootRuntimeState,
     TreeMemoStores<BlueprintChildEntry, BlueprintGate> {
+  /** Source representation fixed by the internal mode before tree creation. */
+  slots?: 'on' | 'off' | 'verify';
+  /** Hosts whose unpublished slot changes must become visible at a commit. */
+  slotDirtyHosts?: Set<Self>;
+  /** Verification-only accounting; ordinary on/off trees allocate none. */
+  slotVerification?: {
+    /** Commits whose slot and latent public results were compared. */
+    commits: number;
+    /** Public-result differences rejected by the slot oracle. */
+    differences: number;
+  };
   /** Last issued static whole-write generation; never reused within this tree. */
   writeEpoch?: number;
   /** Number of current-shape nodes with a truthy value for each state key. */

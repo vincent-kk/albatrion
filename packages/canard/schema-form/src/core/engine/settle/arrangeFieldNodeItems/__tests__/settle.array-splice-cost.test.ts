@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach } from 'vitest';
 
 import * as blueprint from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
@@ -10,6 +11,7 @@ import {
   dispatchRemove,
 } from '@/schema-form/core/engine/write';
 
+import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import * as proof from '../../utils/compute/childSelection/canReuseArrayChildren';
@@ -24,6 +26,8 @@ import * as tailProof from '../utils/arraySlots/canApplyArrayTail';
 import * as admission from '../utils/arraySlots/prepareArraySplice';
 
 afterEach(() => vi.restoreAllMocks());
+// These internal work bounds measure one shipping tree, excluding oracle replay.
+beforeEach(() => pinSlotShipping());
 
 /** Number items, the measured shape. */
 const NUMBERS: BlueprintSchema = { type: 'array', items: { type: 'number' } };

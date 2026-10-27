@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { WriteOption } from '../../types/value';
@@ -8,6 +9,8 @@ import { HostLatent } from '../utils/latentStore/HostLatent';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
 it('keeps declared off-write payload out of the host raw and inactive host value', () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: {
@@ -36,6 +39,8 @@ it('keeps declared off-write payload out of the host raw and inactive host value
 });
 
 it('replaces nested off-write array scope on a partial parent write', () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: {
@@ -123,6 +128,8 @@ it.each([
 ])(
   '$keyword $layout binds an off-write at write time, reversed=$reversed B-first=$bFirst',
   ({ keyword, layout, reversed, bFirst }) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const gate = layout === 'direct' ? '../' : '../../';
     const declarations: BlueprintSchema[] = (['number', 'string'] as const).map(
       (type) => ({
@@ -198,6 +205,8 @@ it.each([
 it.each([false, true])(
   'retains off-write length and undeclared tails, reversed=%s',
   (reversed) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const fragments: BlueprintSchema[] = [
       { controls: { active: '../a' }, prefixItems: [{ type: 'number' }] },
       { controls: { active: '../b' }, prefixItems: [{ type: 'string' }] },

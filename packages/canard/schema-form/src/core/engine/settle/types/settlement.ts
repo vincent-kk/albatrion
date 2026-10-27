@@ -9,6 +9,7 @@ import type {
   ArrayArrangePlan,
   Distribution,
   FieldNodeRecord,
+  InactiveSlotBaseline,
   SettlementBudget,
   SettlementEntryApi,
   SettlementFailureCause,
@@ -294,6 +295,13 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   inTransition: boolean;
   /** Previous latent entries changed during transition, indexed once per key. */
   latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
+  /** First source bindings changed by reversible transition work, local to this call. */
+  slotAutomaticLog?: Map<
+    Self,
+    Map<BlueprintChildEntry, InactiveSlotBaseline<Self>>
+  >;
+  /** Caller raw-change membership before restoring each fresh retained clone. */
+  slotRestoredRaw?: Map<Self, boolean>;
   /** Proper ancestor paths of current latent keys, rebuilt after map changes. */
   latentPrefixes?: Set<string>;
   /** Latent keys under their own path and each ancestor, built on first path lookup. */

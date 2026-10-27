@@ -4,6 +4,7 @@ import type { TestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFi
 import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
@@ -239,6 +240,8 @@ describe('array structural verbs', () => {
   });
 
   it('WRITE-085 updates a gated-out slot through the host raw tree', () => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, runtime } = makeRecordTree({
       type: 'array',
       items: { type: 'string', controls: { active: 'false' } },
@@ -342,6 +345,8 @@ describe('array structural verbs', () => {
   });
 
   it('47C-01 updates a gated slot through the raw tree without dropping nested slots', () => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, runtime } = makeRecordTree({
       type: 'array',
       prefixItems: [

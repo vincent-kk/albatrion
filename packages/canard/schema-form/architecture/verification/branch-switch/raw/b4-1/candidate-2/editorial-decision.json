@@ -1,0 +1,203 @@
+{
+  "round": 458,
+  "authority": "Coordinator editorial decision",
+  "decision": "adopt with recorded departures and owner revalidation",
+  "verdict": "채택 — 편집자 결정(458라운드): 잠복 저장 0·메모 0·주판정 0·Node 힙 통과, entering 절반 미달과 단계 4건 0.2~2.1 µs 악화는 기록한 채 채택, 소유자 재검증 목록",
+  "productCommit": "0778bd955",
+  "deviceCommit": "cdfc65725",
+  "fixedDeviceJudgment": "채택 조건 미충족",
+  "fixedDeviceJudgmentSha256": "bc9e3ba737d03682f5c6941af54356a37c05f615eac89111bb2a02e63ed44ab5",
+  "fixedGates": {
+    "quality": true,
+    "latentZero": true,
+    "inactiveMemoZero": true,
+    "enteringHalf": false,
+    "stageNoise": false,
+    "test073": true,
+    "nodeHeap": true
+  },
+  "qualityRatio": 1.0004783550513419,
+  "mainTest073Regressions": 0,
+  "auxiliaryTest073Regressions": 4,
+  "selfTimeSums": [
+    {
+      "row": "switch-oneOf-80",
+      "AUs": 201.74800000043547,
+      "BUs": 165.8355000002132
+    },
+    {
+      "row": "switch-payload-12",
+      "AUs": 375.8520000002079,
+      "BUs": 272.856000000246
+    },
+    {
+      "row": "switch-siblings-0",
+      "AUs": 81.14799999995626,
+      "BUs": 82.89750000007245
+    }
+  ],
+  "departures": {
+    "enteringHalf": [
+      {
+        "row": "switch-oneOf-80",
+        "latentZero": true,
+        "inactiveMemoZero": true,
+        "enteringHalf": false,
+        "enteringRatio": 0.8591139775831426
+      },
+      {
+        "row": "switch-payload-12",
+        "latentZero": true,
+        "inactiveMemoZero": true,
+        "enteringHalf": false,
+        "enteringRatio": 1.0221056226385046
+      },
+      {
+        "row": "switch-siblings-0",
+        "latentZero": true,
+        "inactiveMemoZero": true,
+        "enteringHalf": true,
+        "enteringRatio": null
+      }
+    ],
+    "originalStageOwnNoise": [
+      {
+        "row": "switch-oneOf-80",
+        "stage": "markCommitDeliveries",
+        "A": {
+          "median": 10.104500000011285,
+          "min": 10.103999999984126,
+          "max": 10.37500000001046,
+          "width": 0.2710000000263335,
+          "processMedians": [
+            10.103999999984126, 10.37500000001046, 10.104500000011285
+          ]
+        },
+        "B": {
+          "median": 12.167000000005146,
+          "min": 11.833000000024185,
+          "max": 12.167000000033568,
+          "width": 0.33400000000938235,
+          "processMedians": [
+            12.167000000005146, 11.833000000024185, 12.167000000033568
+          ]
+        }
+      },
+      {
+        "row": "switch-payload-12",
+        "stage": "markCommitDeliveries",
+        "A": {
+          "median": 14.81249999997658,
+          "min": 14.625000000023647,
+          "max": 14.833499999980404,
+          "width": 0.20849999995675716,
+          "processMedians": [
+            14.81249999997658, 14.625000000023647, 14.833499999980404
+          ]
+        },
+        "B": {
+          "median": 15.041500000023689,
+          "min": 14.749500000021953,
+          "max": 15.396000000009735,
+          "width": 0.6464999999877818,
+          "processMedians": [
+            15.396000000009735, 14.749500000021953, 15.041500000023689
+          ]
+        }
+      },
+      {
+        "row": "switch-siblings-0",
+        "stage": "computeNode",
+        "A": {
+          "median": 53.58400000000074,
+          "min": 53.478999999981625,
+          "max": 53.75050000002091,
+          "width": 0.271500000039282,
+          "processMedians": [
+            53.75050000002091, 53.58400000000074, 53.478999999981625
+          ]
+        },
+        "B": {
+          "median": 54.43650000003686,
+          "min": 53.60450000003425,
+          "max": 54.85499999997501,
+          "width": 1.2504999999407573,
+          "processMedians": [
+            54.85499999997501, 54.43650000003686, 53.60450000003425
+          ]
+        }
+      },
+      {
+        "row": "switch-siblings-0",
+        "stage": "selectChildren",
+        "A": {
+          "median": 25.354000000007204,
+          "min": 25.33350000001633,
+          "max": 25.416500000005726,
+          "width": 0.08299999998939711,
+          "processMedians": [
+            25.33350000001633, 25.354000000007204, 25.416500000005726
+          ]
+        },
+        "B": {
+          "median": 25.874999999999204,
+          "min": 25.812500000014893,
+          "max": 26.082999999999856,
+          "width": 0.2704999999849633,
+          "processMedians": [
+            26.082999999999856, 25.812500000014893, 25.874999999999204
+          ]
+        }
+      }
+    ]
+  },
+  "nodeHeap": {
+    "runtime": "node",
+    "A": {
+      "bytesPerNode": 1439.113777244551,
+      "samples": [
+        1890.3259348130373, 1452.7366526694661, 1432.2831433713257,
+        1439.113777244551, 1440.628674265147, 1438.0883823235354,
+        1434.738652269546
+      ]
+    },
+    "B": {
+      "bytesPerNode": 1443.3353329334134,
+      "samples": [
+        1893.622875424915, 1458.9162167566487, 1447.6976604679064,
+        1440.867026594681, 1443.3353329334134, 1443.0953809238151,
+        1431.0497900419916
+      ]
+    },
+    "maximumA": 1890.3259348130373,
+    "passed": true
+  },
+  "bunReportOnly": {
+    "runtime": "bun",
+    "A": {
+      "bytesPerNode": 2239.088782243551,
+      "samples": [
+        2232.6572685462907, 2239.088782243551, 2239.9108178364327,
+        2239.9100179964007, 2239.9246150769845, 2232.6626674665067,
+        2232.4327134573086
+      ]
+    },
+    "B": {
+      "bytesPerNode": 2246.371325734853,
+      "samples": [
+        2246.5604879024195, 2246.2987402519498, 2246.371325734853,
+        2246.5952809438113, 2246.513097380524, 2245.9002199560086,
+        2245.7066586682663
+      ]
+    },
+    "maximumA": 2239.9246150769845,
+    "passed": false
+  },
+  "ownerRevalidationRequired": true,
+  "B4_2": [
+    "Zero slot bookkeeping cost for hosts without slots",
+    "Reduce delivery marking cost for restored clones",
+    "Investigate registry and index contribution to remaining entering cost"
+  ],
+  "rollback": "Select engineModes.slots=off to use the preserved baseline path"
+}
