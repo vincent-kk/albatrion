@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- A retained occurrence may hold one immutable exit-source patch for caller-supplied descendants that never received a node. Packed-array reads use that exit patch while later host-owned overlays remain separate, so detached descendant writes do not rewrite the packed snapshot. The patch owns source channels only and holds no prior host or history chain.
+
 - B4-1의 보유 슬롯은 호스트 레코드가 소유하는 선택적 상태 보유 자료이다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"는 설계 Ⅱ의 상한을 따른다. 이름과 청사진 노드가 같은 엔트리를 구별하고 같은 이름의 다른 종류는 별도로 보유한다. 슬롯 값은 떼어진 인스턴스이며 공개 `structure`·`children`에는 넣지 않는다. 노드의 고정 생성자 필드와 공개 surface는 늘리지 않고 슬롯이 필요한 호스트에서만 자료를 할당한다(NODE-043·044·045·060).
 - 슬롯의 raw·extras·선언 밖 값은 원래 인스턴스에 남는다. "슬롯 인스턴스는 떼어진 채라 고칠 수 없으므로" 비활성 쓰기는 호스트가 소유한 슬롯별 overlay로 보관한다. 선택과 정착은 record가 실행하지 않는다. 보유 자료의 변경은 이미 떼어진 참조가 보는 읽기 자료와 공유된 가변 상태를 만들지 않는다. 슬롯은 "후보 풀"이며 직전 형상을 출발점으로 재사용하는 기록이 아니다(VALUE-031, SETTLE-044·GOAL-029).
 - `unsetOnInactive`가 참인 호스트도 명시 보존 자손이 있으면 슬롯으로 보유한다. 호스트 자신의 raw·extras와 보존 지시가 없는 자손 원본은 overlay의 지움 표식으로 제외하고, 명시 `unsetOnInactive: false` 자손의 원본을 유지한다. 보존할 자손이 하나도 없으면 슬롯을 만들지 않는다. 지움 표식은 원래 떼어진 인스턴스를 변경하지 않으며 재진입 때 없음인 원본에 적용되는 기존 채움 규칙을 유지한다(WRITE-034, NODE-044, 설계 Ⅱ 정책 상속 정정).

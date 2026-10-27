@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Array exit clearing preserves the baseline's narrower keep exception: an array without a candidate ownership scope removes every descendant source, including explicit keep descendants, and re-enters at length zero. Within candidate ownership, only previously inactive keep sources survive; active array descendants are not captured by clearing. Object hosts retain the existing explicit keep exception. This pre-existing inconsistency remains an owner decision, and on/off/verify comparisons cover all three cases.
+
 - B4-1의 슬롯 경로는 호스트가 나간 인스턴스를 그대로 보유하고 재진입 때 새 인스턴스로 복제한다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"와 "슬롯은 후보 풀이지 직전 형상이 아니다"를 유지한다. 같은 이름·다른 청사진 노드는 독립 원본이며 공개 structure·children에는 활성 형상만 둔다(NODE-043·044·060, SETTLE-044·GOAL-029).
 - 이 문서의 잠복 원본은 형상 밖 원본의 의미이다. 물리적인 latentRaw·메타데이터·색인·포착 함수는 off 기준 경로와 B4-1의 명시적 공존 지점에 한정한다. on의 정상 나감은 기존 분리·읽기 고정·게이트/경로 등록 해제 뒤 슬롯 삽입을 하고 captureExitedRaw·setLatentRaw·잠복 메타데이터·색인 등록을 하지 않는다. 중간 나감·같은 정착의 되살림과 진짜 소멸을 기존대로 구분한다.
 - 복제는 raw·extras·선언 밖 값과 자손 슬롯을 재귀적으로 보존하고 부모·경로·등록·색인을 새로 결합한다. 상호작용·오류·배달 기록은 이어받지 않으며 배열 itemKey는 새로 발급한다. 비활성 자손도 새 부모로 복제하여 옛 parent 연결이 과거 호스트를 누적 보유하지 않게 한다. 복제된 새 노드의 entered·채움·resetInteraction과 모든 중첩 호스트의 고정 baseline 재선택을 유지한다(NODE-044·053, SETTLE-044, WRITE-007).
