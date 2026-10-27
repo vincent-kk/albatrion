@@ -3515,6 +3515,8 @@
 - 보충:
   > 소유자(453라운드, 분기 전환 단계의 개시): "좋아. 이제 분기 전환에 집중한다. 이건 oneOf로 대표되지만 모든 브랜치 분기에 해당할 것이라 생각한다.\n해당 문제에 대해서 설계로 풀어보도록 한다." (`reviews/round-453-owner-answers.md:7`)
   > 소유자(453라운드, 설계안의 허가와 진행 방식): "네 진행을 허가합니다. 멀티에이전트 작업으로 진행하세요" (`reviews/round-453-owner-answers.md:9`)
+  > 소유자(455라운드, 물음의 요청): "물어볼 내용 있으면 물어보거라." (`reviews/round-455-owner-answers.md:7`)
+  > 소유자(455라운드, 재측정과 프로토콜 보강의 승인): "1. 승인. \n2. 승인" (`reviews/round-455-owner-answers.md:8`)
 - 상태: 현행
 - 출처: `reviews/round-453-closing.md:8`(정본), `reviews/round-453-owner-answers.md:7`, `reviews/round-453-owner-answers.md:9`, `plan/branch-switch/request.md`
 - 닫은 사람: 소유자 답(`reviews/round-453-owner-answers.md:7`, `reviews/round-453-owner-answers.md:9`), 편집자 결정(453라운드, `reviews/round-453-closing.md` 453C-01)
