@@ -13,7 +13,7 @@
 | 새 시험 | B1: 세 게이트 종류의 같은 형상 폼에서 선택 결과와 바퀴 수가 같음, `if` 호스트의 라운드당 guard 호출 수 상한(게이트 수 G), 입력이 같을 때 guard·식이 다시 불리지 않음, 던진 평가는 메모되지 않음. B2: 나감 정책이 청사진 준비물에서 읽혀도 결과가 같음, 증분 메모의 `inactiveValues`가 전체 재구성과 같음(그림자 비교), 조립이 활성 자식만 걸어도 방출 값과 키 순서가 같음, 정적 자식 준비물이 load·reset·rebuild·호스트 재진입·배열 재배치에서 버려짐. 각 시험은 수정 전 구현에서 실패하거나(규칙 고정) 호출 수 상한이다 |
 | 그림자 검증 | 기존 `gateSelectionTable` verify 모드와 `gateWheelEvaluation` shadow 모드를 세 게이트 종류에 적용해 최적화 경로와 기준 경로의 동등성을 증명한다. 증분 메모는 전체 재구성 경로를 그림자로 둔다 |
 | 설계 Ⅱ의 여섯 의미 시험(B4만) | `../design-optimization/verification.md`의 것 그대로 |
-| 측정 장치 | `../../verification/design-optimization/tools/`에 B0가 더하는 것: `switch-if-80`(패키지의 AJV 검증기 플러그인으로 `if`/`then` 분기, 0.16.1 쌍은 같은 의미의 구문이 있을 때만), `switch-discriminator-80`, 깊은 분기 하나(중첩 호스트 안의 전환), 쓰기 한 번의 단계별 µs·할당 장부 스크립트(정착 단계 경계에서 `performance.now()`와 V8 할당 샘플링, 제품 코드 무수정). 프로토콜은 20 예열·100 표본, 조용한 창. 455라운드(TEST-094)부터 행마다 A·B 프로세스를 번갈아 각 10개 돌리고 A′는 A의 뒤 절반이며, 가설이 닿지 않는 행의 B/A가 ±5 % 밖이면 창 무효, TEST-073은 교대 짝의 A 대 B(A′ 대 B 병기) |
+| 측정 장치 | `../../verification/design-optimization/tools/`에 B0가 더하는 것: `switch-if-80`(패키지의 AJV 검증기 플러그인으로 `if`/`then` 분기, 0.16.1 쌍은 같은 의미의 구문이 있을 때만), `switch-discriminator-80`, 깊은 분기 하나(중첩 호스트 안의 전환), 쓰기 한 번의 단계별 µs·할당 장부 스크립트(정착 단계 경계에서 `performance.now()`와 V8 할당 샘플링, 제품 코드 무수정). 프로토콜은 20 예열·100 표본, 조용한 창. 455라운드(TEST-094)부터 행마다 A·B 프로세스를 번갈아 각 10개 돌리고 A′는 A의 뒤 절반이며, 같은 프로세스의 0.16.1 레인 B(10)/A(10) 최소값 중앙 비의 전체 행 중앙값이 0.95~1.05 밖이면 창 무효(456라운드 정정, 모든 행을 돌린 뒤 판정), TEST-073은 교대 짝의 A 대 B(A′ 대 B 병기) |
 | React 전체 폼 | B5의 통합 판에서 `benchmark-form --equivalent --mode=render`를 한 번(oneOf 픽스처의 `update-settled`) |
 | 메모리 | PR마다 B2 노드당 잔존 힙(Node·Bun 7 표본, B 중앙 ≤ A 최대), 설계 Ⅱ는 비활성 레코드 보유량을 호스트당 K·M으로 따로 |
 | 원장 검사 | 계획서나 원장을 고친 PR은 `ledger/checks/README.md`의 검사 전부가 기준값과 같다 |
