@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Gate registration of newly active clones belongs to the selected-entry phase, as it does for blueprint-created occurrences. Recursive clone construction restores source channels and entry marks without eagerly registering the same occurrences a second time; selection and gate queries bind them before use. The common registration cost remains in the enclosing selection stage for both source representations.
+
 - Shipping writes enter the settlement kernel directly. Only an outer verify operation dispatches independent replay; nested writes in the active replay session execute the same kernel without replaying twice. Error equivalence and final public comparisons remain in the outer cleanup, and the source modes stay fixed per tree.
 
 - A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
