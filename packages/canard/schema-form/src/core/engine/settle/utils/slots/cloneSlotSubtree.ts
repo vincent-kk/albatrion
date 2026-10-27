@@ -27,12 +27,14 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
   entering: boolean,
 ): Self => {
   const node = host.runtime.nodeFactory(entry, host, host.runtime, source);
-  const address = {
-    path: node.path,
-    order: getLatentOrder(host, entry.name, entry.node),
-  };
-  if (!entering) DetachedWriteAddress.transfer(source, address, node.runtime);
-  DetachedWriteAddress.retain(node, address, node.runtime);
+  if (!entering) {
+    const address = {
+      path: node.path,
+      order: getLatentOrder(host, entry.name, entry.node),
+    };
+    DetachedWriteAddress.transfer(source, address, node.runtime);
+    DetachedWriteAddress.retain(node, address, node.runtime);
+  }
   node.raw = source.raw;
   node.undeclaredValues = source.undeclaredValues;
   node.itemCount = source.itemCount;
