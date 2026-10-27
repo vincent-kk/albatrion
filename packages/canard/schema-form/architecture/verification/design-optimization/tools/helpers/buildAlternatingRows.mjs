@@ -1,7 +1,7 @@
 import { buildRows } from './buildRows.mjs';
 
-/** Keep the approved 21 fixtures and put the independent control before all others. */
-export function buildAlternatingRows() {
+/** Keep the default 21 fixtures and append the explicitly requested payload-12 fixture. */
+export function buildAlternatingRows(includePayload12 = false) {
   const canonical = buildRows(false);
   return [
     canonical.find((row) => row.id === 'single-flat-1000'),
@@ -24,5 +24,8 @@ export function buildAlternatingRows() {
       operation: 'subscription',
       currentOnly: true,
     })),
+    ...(includePayload12
+      ? buildRows(false, true).filter((row) => row.id === 'switch-payload-12')
+      : []),
   ];
 }
