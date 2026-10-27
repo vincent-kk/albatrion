@@ -2,13 +2,15 @@
 
 ## Requirements
 
+- 일반 비활성 원본은 호스트의 보유 슬롯·overlay만 소유하며 트리 단위 잠복 저장소·메타데이터·비활성 목록 메모는 두지 않는다. 별표 공표의 기존 wildcard 제외·항목 alias를 보존하는 호환 자료만 별도로 이름 붙여 필요한 폼에 지연 생성한다. 슬롯이 생길 수 없는 호스트는 준비 때 결정하며 반복 쓰기에서 적격 검사·overlay 조회·기능 플래그 읽기를 하지 않는다.
+
 - Detached write-address cells belong to departed occurrences. A fresh active clone has no cell until an actual exit captures its current path and order; an inactive clone keeps the existing transfer and rebind rules. This avoids allocating transient address objects and order arrays for active re-entry without changing old references' write destinations.
 
 - 배열이 나가는 쓰기에서 처음 받은 아이템의 입력 patch는 지연된 packed-array 원본의 일부이며 독립 비활성 잎 항목이 아니다. 선택적 overlay 표식은 이 입력 patch와 나중의 독립 옛 참조 쓰기를 구별해 비활성 열거를 맞춘다. 표식은 실제 overlay에만 붙고 노드의 고정 필드나 공개 계약을 늘리지 않으며 복제·정책 patch에서도 같은 원본 의미를 유지한다.
 
 - A retained occurrence may hold one immutable exit-source patch for caller-supplied descendants that never received a node. Packed-array reads use that exit patch while later host-owned overlays remain separate, so detached descendant writes do not rewrite the packed snapshot. The patch owns source channels only and holds no prior host or history chain.
 
-- B4-1의 보유 슬롯은 호스트 레코드가 소유하는 선택적 상태 보유 자료이다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"는 설계 Ⅱ의 상한을 따른다. 이름과 청사진 노드가 같은 엔트리를 구별하고 같은 이름의 다른 종류는 별도로 보유한다. 슬롯 값은 떼어진 인스턴스이며 공개 `structure`·`children`에는 넣지 않는다. 노드의 고정 생성자 필드와 공개 surface는 늘리지 않고 슬롯이 필요한 호스트에서만 자료를 할당한다(NODE-043·044·045·060).
+- 보유 슬롯은 호스트 레코드가 소유하는 선택적 상태 보유 자료이다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"는 설계 Ⅱ의 상한을 따른다. 이름과 청사진 노드가 같은 엔트리를 구별하고 같은 이름의 다른 종류는 별도로 보유한다. 슬롯 값은 떼어진 인스턴스이며 공개 `structure`·`children`에는 넣지 않는다. 노드의 고정 생성자 필드와 공개 surface는 늘리지 않고 슬롯이 필요한 호스트에서만 자료를 할당한다(NODE-043·044·045·060).
 - 슬롯의 raw·extras·선언 밖 값은 원래 인스턴스에 남는다. "슬롯 인스턴스는 떼어진 채라 고칠 수 없으므로" 비활성 쓰기는 호스트가 소유한 슬롯별 overlay로 보관한다. 선택과 정착은 record가 실행하지 않는다. 보유 자료의 변경은 이미 떼어진 참조가 보는 읽기 자료와 공유된 가변 상태를 만들지 않는다. 슬롯은 "후보 풀"이며 직전 형상을 출발점으로 재사용하는 기록이 아니다(VALUE-031, SETTLE-044·GOAL-029).
 - `unsetOnInactive`가 참인 호스트도 명시 보존 자손이 있으면 슬롯으로 보유한다. 호스트 자신의 raw·extras와 보존 지시가 없는 자손 원본은 overlay의 지움 표식으로 제외하고, 명시 `unsetOnInactive: false` 자손의 원본을 유지한다. 보존할 자손이 하나도 없으면 슬롯을 만들지 않는다. 지움 표식은 원래 떼어진 인스턴스를 변경하지 않으며 재진입 때 없음인 원본에 적용되는 기존 채움 규칙을 유지한다(WRITE-034, NODE-044, 설계 Ⅱ 정책 상속 정정).
 - 떼어진 참조의 쓰기는 정착·커밋을 만들지 않는다. 그 쓰기의 overlay는 다음 재진입 원본에 즉시 사용하지만 살아 있는 호스트의 `inactiveValues`는 다음 커밋 전까지 직전 공표 내용을 유지한다. 읽기 자료는 커밋된 overlay와 아직 공표하지 않은 쓰기를 구분하여 지연 materialize가 이 시점 계약을 앞당기지 않게 한다(NODE-044, VALUE-029·031).

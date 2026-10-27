@@ -2,11 +2,12 @@
 
 ## Requirements
 
-- A literal `*` property's inactive publication retains navigation's existing wildcard-query exclusion in on/off/verify. An unread detached host preserves the query result from its final committed view after an external matching branch changes. This is compatibility with an existing inconsistency and does not add public members or alter pointer syntax.
-- Wildcard exclusion ends a public entry's lifetime even when the hidden commit is unread. An unread detached host retains the last committed entry identities already published through an ancestor; later live publication or inactive overlays cannot replace those identities in the old host's view. These requirements apply when the star segment belongs to an ancestor as well as to the immediate host.
-- A form whose blueprint reaches a property named exactly `*` retains the complete latent implementation for this compatibility boundary, including ordinary ancestors, siblings, and packed arrays. Star-free forms use slots. The public surface and pointer syntax remain unchanged, and the pre-existing literal-star behavior requires an owner decision before removing the latent implementation in B4-2.
+- 트리 생성은 일반 비활성 원본을 슬롯·overlay로만 구성하며 슬롯 모드 선택이나 원본 그림자 런타임을 만들지 않는다. 별표 이름의 기존 공표 제외·참조 alias·마지막 커밋 읽기는 별표 호환 경로로 유지한다. 공개 멤버·선언·배달·오류 기대값은 그대로이며 슬롯 자료는 실제 사용하는 호스트에만 지연 할당한다.
 
-- B4-1의 런타임은 설계 Ⅱ의 "떼어진 참조의 읽기는 마지막 커밋으로 고정되고(NODE-044), 재진입 노드는 새 인스턴스이며, 옛 참조의 구독은 발화하지 않는다"를 유지한다. 슬롯 보유는 내부 원본의 소유 방식이며 공개 멤버·프로토타입·판별 합집합·구독 수명을 바꾸지 않는다. 생성 통로는 새 부모·경로·런타임을 결합하고 복제된 노드의 상호작용·오류·배달 기록을 이어받지 않는다(NODE-043·044·060).
+- A literal `*` property's inactive publication retains navigation's existing wildcard-query exclusion in 별표 호환 경로. An unread detached host preserves the query result from its final committed view after an external matching branch changes. This is compatibility with an existing inconsistency and does not add public members or alter pointer syntax.
+- Wildcard exclusion ends a public entry's lifetime even when the hidden commit is unread. An unread detached host retains the last committed entry identities already published through an ancestor; later live publication or inactive overlays cannot replace those identities in the old host's view. These requirements apply when the star segment belongs to an ancestor as well as to the immediate host.
+
+- 런타임은 설계 Ⅱ의 "떼어진 참조의 읽기는 마지막 커밋으로 고정되고(NODE-044), 재진입 노드는 새 인스턴스이며, 옛 참조의 구독은 발화하지 않는다"를 유지한다. 슬롯 보유는 내부 원본의 소유 방식이며 공개 멤버·프로토타입·판별 합집합·구독 수명을 바꾸지 않는다. 생성 통로는 새 부모·경로·런타임을 결합하고 복제된 노드의 상호작용·오류·배달 기록을 이어받지 않는다(NODE-043·044·060).
 - 슬롯의 raw·extras·선언 밖 값과 보유 자손은 엔진의 복제 재진입 입력이다. 런타임 클래스에는 정착·슬롯 선택 알고리즘을 두지 않는다. 배열 itemKey는 새로 발급하며 중첩 호스트는 엔진이 고정 출발점에서 형상을 다시 고른다. 호스트별 지연 보유 자료 이외에 모든 노드의 생성자 할당이나 공개 읽기의 전체 트리 순회를 추가하지 않는다(SETTLE-044·GOAL-029, NODE-053·055).
 
 - 의존 방향의 마지막은 `record < {behaviors 종류, navigation} < validation < derive < settle < write < surface`이다. 이 fractal만 행 선택과 단일 클래스 생성을 함께 안다. 쓰기·상태·검증·구독은 engine의 write 계약, 읽기는 `settle`·`validation`·`navigation`의 진입점에 위임한다(NODE-010·016, LANDING-084).
