@@ -151,7 +151,12 @@ it('does not revisit journal facts on repeated reads of an untouched host', () =
       properties: { [`value_${index}`]: { type: 'string' } },
     })),
   });
-  root.setValue({ kind: '0', quiet: { held: 'saved' }, value_0: 'a', value_1: 'b' });
+  root.setValue({
+    kind: '0',
+    quiet: { held: 'saved' },
+    value_0: 'a',
+    value_1: 'b',
+  });
   void root.inactiveValues;
   const quiet = root.find('/quiet')!;
   const held = quiet.inactiveValues;

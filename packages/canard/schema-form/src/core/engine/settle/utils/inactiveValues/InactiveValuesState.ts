@@ -133,11 +133,13 @@ export class InactiveValuesState<Self extends FieldNodeRecord<Self>> {
     if (
       held &&
       held.path === node.path &&
-      !this.dirty.has(node) &&
-      (this.generation.base.versions.get(node.path) ?? EMPTY_VERSION) ===
-        held.version &&
-      !hasInactiveRangeChanges(this.generation, node.path)
+      (this.generation.readVersions.get(node.path) === held.version ||
+        (!this.dirty.has(node) &&
+          (this.generation.base.versions.get(node.path) ?? EMPTY_VERSION) ===
+            held.version &&
+          !hasInactiveRangeChanges(this.generation, node.path)))
     ) {
+      this.dirty.delete(node);
       this.generation.readVersions.set(node.path, held.version);
       if (engineModes.inactiveValues === 'verify')
         verifyInactiveRead(
