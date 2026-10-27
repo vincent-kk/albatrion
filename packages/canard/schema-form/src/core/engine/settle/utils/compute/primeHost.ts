@@ -14,6 +14,7 @@ import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { isSameChildList } from '../structure/isSameChildList';
 import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
+import { prepareStaticHost } from './childSelection/utils/prepareStaticHost';
 import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
 
@@ -34,6 +35,21 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   hasRelocated = true,
 ): void => {
+  const prepared = prepareStaticHost(node, prior, context, hasRelocated);
+  if (prepared) {
+    (context.preparedStaticPriorNames ??= new Map()).set(
+      node,
+      prepared.dynamicNames,
+    );
+    node.structure = Object.assign(Object.create(null), prepared.baseline);
+    const children = Object.values(node.structure!);
+    node.children = captureFieldNodeChange(
+      node,
+      'children',
+      isSameChildList(node.children, children) ? node.children : children,
+    );
+    return;
+  }
   const baseline: Record<string, Self> = {};
   Object.setPrototypeOf(baseline, null);
   const cached =

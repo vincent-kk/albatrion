@@ -107,6 +107,10 @@ export interface ArraySpliceProof<Self extends FieldNodeRecord<Self>> {
 
 /** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
+  /** Prepared occurrence owners touched by this settlement, invalidated on failure. */
+  preparedStaticHosts?: Set<Self>;
+  /** Dynamic cleanup names captured before each host wheel's fixed start. */
+  preparedStaticPriorNames?: Map<Self, readonly string[]>;
   /** Complete gate inputs shared only across identical host projection intervals. */
   gateHostViews?: Map<string, GateHostView>;
   /** Traversal results live only with this settlement context. */

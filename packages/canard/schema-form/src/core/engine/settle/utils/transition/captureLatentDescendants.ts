@@ -131,7 +131,7 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
     const current = live.get(entry.key);
     const clear = current
       ? readExitLayerPolicy(
-          getControlLayers(current, emptyReadonlyMap),
+          getControlLayers(current, emptyReadonlyMap, true),
           context.root.runtime.committedRuleValues,
           inheritedPolicy,
         )

@@ -1,6 +1,3 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-
-import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -20,10 +17,8 @@ export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) {
     if (ancestor.detached) continue;
-    const previous = getControlLayers(ancestor, emptyReadonlyMap);
+    const previous = getControlLayers(ancestor, emptyReadonlyMap, true);
     const departed = previous.filter((group) => {
-      if (!hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive))
-        return false;
       const key = JSON.stringify([
         group.host.path,
         getBlueprintNodeIdentity(group.host.blueprintNode),

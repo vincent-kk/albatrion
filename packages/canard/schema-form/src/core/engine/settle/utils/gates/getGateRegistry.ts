@@ -106,6 +106,13 @@ class GateRegistry {
     string,
     Set<RegisteredGateOccurrence>
   >();
+  /** Only relocated occurrences invalidate their lazily materialized bucket. */
+  private readonly relocatedBuckets = new Map<string, Set<GateOccurrence>>();
+  /** Stable arrays are replaced only when relocated membership changes. */
+  private readonly relocatedLists = new Map<
+    string,
+    readonly GateOccurrence[]
+  >();
   /** Absolute reads shared by gates that ask the same pointer at one host. */
   private readonly resolvedReads = new Map<string, Map<string, string>>();
   /** Decoded pointers contain no live shape or projected value. */
@@ -238,9 +245,14 @@ class GateRegistry {
 
   /** Read relocated gates at one host without scanning other templates. */
   relocated(path: string): readonly GateOccurrence[] {
-    return [...(this.byLocation.get(path) ?? [])].filter(
-      (entry) => entry.hostPath !== path,
-    );
+    const bucket = this.relocatedBuckets.get(path);
+    if (!bucket?.size) return EMPTY_OCCURRENCES;
+    let list = this.relocatedLists.get(path);
+    if (!list) {
+      list = [...bucket];
+      this.relocatedLists.set(path, list);
+    }
+    return list;
   }
 
   /** Whether changed raw intersects any read that can affect this host's wheel. */
@@ -365,6 +377,15 @@ class GateRegistry {
       this.byLocation.set(occurrence.evaluationHostPath, entries);
     }
     entries.add(occurrence);
+    if (occurrence.hostPath !== occurrence.evaluationHostPath) {
+      let bucket = this.relocatedBuckets.get(occurrence.evaluationHostPath);
+      if (!bucket) {
+        bucket = new Set();
+        this.relocatedBuckets.set(occurrence.evaluationHostPath, bucket);
+      }
+      bucket.add(occurrence);
+      this.relocatedLists.delete(occurrence.evaluationHostPath);
+    }
     this.indexOccurrence(occurrence, 1);
   }
 
@@ -471,11 +492,21 @@ class GateRegistry {
   private removePath(path: string): void {
     const previous = this.byPath.get(path);
     if (!previous) return;
-    for (const occurrence of previous.occurrences)
+    for (const occurrence of previous.occurrences) {
       if (
         this.byLocation.get(occurrence.evaluationHostPath)?.delete(occurrence)
       )
         this.indexOccurrence(occurrence, -1);
+      if (
+        this.relocatedBuckets
+          .get(occurrence.evaluationHostPath)
+          ?.delete(occurrence)
+      ) {
+        this.relocatedLists.delete(occurrence.evaluationHostPath);
+        if (!this.relocatedBuckets.get(occurrence.evaluationHostPath)?.size)
+          this.relocatedBuckets.delete(occurrence.evaluationHostPath);
+      }
+    }
     this.byPath.delete(path);
   }
 }
