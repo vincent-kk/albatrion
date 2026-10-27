@@ -93,11 +93,6 @@ export class PathStoreIndex {
     return this.prefixes.get(path)?.keys ?? EMPTY_KEYS;
   }
 
-  /** Query occurrence keys at this path without visiting its descendants. */
-  at(path: string): ReadonlySet<string> {
-    return this.prefixes.get(path)?.exact ?? EMPTY_KEYS;
-  }
-
   /** Query only indexed numeric positions at or beyond the supplied length. */
   tail(host: string, count: number): Iterable<string> {
     return this.slots.get(host)?.tail(count) ?? EMPTY_KEYS;

@@ -44,7 +44,6 @@ export const setLatentRaw = <Self extends FieldNodeRecord<Self>>(
   if (present) latent.set(key, value);
   else latent.delete(key);
   if (template && order) {
-    (runtime.inactiveValueChanges ??= new Set()).add(key);
     const metadata = (runtime.latentRawMetadata ??= new PathKeyedMap('pair'));
     runtime.latentRawMetadata = metadata;
     const identity: unknown = JSON.parse(key);
@@ -65,7 +64,6 @@ export const setLatentRaw = <Self extends FieldNodeRecord<Self>>(
     missingMetadata
   ) {
     runtime.latentRawDirty = true;
-    (runtime.inactiveValueChanges ??= new Set()).add(key);
     if (context) context.latentPrefixes = undefined;
   }
 };

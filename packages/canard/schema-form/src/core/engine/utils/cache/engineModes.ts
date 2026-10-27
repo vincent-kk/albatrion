@@ -5,13 +5,11 @@ interface Modes {
   gateSelection: 'table' | 'off' | 'verify';
   gateWheel: 'skip' | 'record' | 'shadow';
   deriveShadow: boolean;
-  inactiveValues: 'incremental' | 'rebuild' | 'verify';
 }
 const modes: Modes = {
   gateSelection: 'table',
   gateWheel: 'skip',
   deriveShadow: false,
-  inactiveValues: 'incremental',
 };
 /** All mode changes pass through setMode; counters remain with their producers. */
 export const engineModes = {
@@ -23,9 +21,6 @@ export const engineModes = {
   },
   get deriveShadow(): boolean {
     return modes.deriveShadow;
-  },
-  get inactiveValues(): Modes['inactiveValues'] {
-    return modes.inactiveValues;
   },
   /** Set before building trees; changing this test/bench control invalidates existing tree contexts. */
   setMode<Name extends keyof Modes>(name: Name, value: Modes[Name]): void {

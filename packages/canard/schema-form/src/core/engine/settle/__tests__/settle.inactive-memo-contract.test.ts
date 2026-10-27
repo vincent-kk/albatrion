@@ -1,16 +1,8 @@
-import { afterEach, beforeEach, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-import { engineModes } from '../../utils/cache/engineModes';
-import { inactiveValuesVerification } from '../utils/commit/verifyInactiveValuesMemo';
-
-const previousMode = engineModes.inactiveValues;
-beforeEach(() => engineModes.setMode('inactiveValues', 'verify'));
-afterEach(() => engineModes.setMode('inactiveValues', previousMode));
-
-it('checks nested hosts, descendant visibility and repeated re-entry against the full oracle', () => {
-  const before = inactiveValuesVerification.comparisons;
+it('preserves nested inactive ordering and values through repeated host re-entry', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
@@ -48,10 +40,9 @@ it('checks nested hosts, descendant visibility and repeated re-entry against the
     { path: '/group/value', value: 'held' },
     { path: '/group/nested/hidden', value: 7 },
   ]);
-  expect(inactiveValuesVerification.comparisons).toBeGreaterThan(before);
 });
 
-it('checks array item exits, reordered latent paths and wholesale pruning', () => {
+it('preserves array item exit order across removal and wholesale pruning', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
@@ -80,7 +71,7 @@ it('checks array item exits, reordered latent paths and wholesale pruning', () =
   expect(root.inactiveValues).toEqual([]);
 });
 
-it('checks same-name different-kind candidates and unsetOnInactive exits', () => {
+it('preserves same-name candidate values while applying unsetOnInactive', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: { kind: { type: 'string' } },
@@ -108,7 +99,7 @@ it('checks same-name different-kind candidates and unsetOnInactive exits', () =>
   expect(root.inactiveValues).toEqual([]);
 });
 
-it('checks load, reset and a rebuilt tree without retaining earlier publication state', () => {
+it('keeps load, reset and rebuilt-tree inactive publications independent', () => {
   const schema = {
     type: 'object' as const,
     properties: {
@@ -136,4 +127,43 @@ it('checks load, reset and a rebuilt tree without retaining earlier publication 
     { path: '/value', value: 'rebuilt' },
   ]);
   expect(root.inactiveValues).toEqual([{ path: '/value', value: 'loaded' }]);
+});
+
+it('retains untouched host lists and item objects across branch switches', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      flip: { type: 'boolean' },
+      changing: {
+        type: 'object',
+        properties: {
+          a: { type: 'string', controls: { active: '#/flip' } },
+          b: { type: 'string', controls: { active: '#/flip === false' } },
+        },
+      },
+      quiet: {
+        type: 'object',
+        properties: { hidden: { type: 'string', controls: { active: false } } },
+      },
+    },
+  });
+  root.setValue({
+    flip: true,
+    changing: { a: 'A', b: 'B' },
+    quiet: { hidden: 'held' },
+  });
+  const quiet = root.find('/quiet')!;
+  const held = quiet.inactiveValues;
+  const item = held[0];
+  const before = root.inactiveValues;
+  for (const next of [false, true, false]) {
+    root.find('/flip')!.setValue(next);
+    expect(quiet.inactiveValues).toBe(held);
+    expect(
+      root.inactiveValues.find(({ path }) => path === '/quiet/hidden'),
+    ).toBe(item);
+    expect(Object.isFrozen(root.inactiveValues)).toBe(true);
+    expect(root.inactiveValues.every(Object.isFrozen)).toBe(true);
+  }
+  expect(before[0]).toEqual({ path: '/changing/b', value: 'B' });
 });
