@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 청사진과 컴파일된 식의 생성 고정 사실은 비열거·읽기 전용 속성으로 freeze 전에 정의한다. 기존 열거 관측에는 추가하지 않으며 직접 사실 조회와 모드 변경 뒤의 보존은 유지한다(D3b-2).
+
 - 엔진 파생 자료는 공통 cache organ의 `getBlueprintDerived(blueprint)`·`getHostDerived(blueprintNode)` 두 WeakMap 레코드에 모은다. 공통 모듈은 슬롯 이름·저장·초기화만 소유하며 자식 타입이나 builder를 import하지 않는다. 소유자가 자기 슬롯 형을 좁혀 독립적으로 계산하고 최초 읽기 전에는 그 슬롯을 만들지 않는다. null·false·미등록의 기존 의미를 유지한다.
 - engineModes.setMode는 실제 설정 변경 때 두 저장소를 통째로 새로 만든다. 콜백 등록 목록은 두지 않는다. 생성 고정 사실·값 메모·트리 저장소는 유지하며 모드를 바꾼 시험·벤치 fixture는 이전 설정을 복원한다. 비용은 실제 읽은 blueprint/host당 레코드 한 개와 채운 슬롯, 모드 변경마다 두 WeakMap이며 노드 고정 칸은 늘리지 않는다(SURFACE-063·065, D3b-2).
 
