@@ -2,32 +2,6 @@
 
 ## Requirements
 
-- Gate registration of newly active clones belongs to the selected-entry phase, as it does for blueprint-created occurrences. Recursive clone construction restores source channels and entry marks without eagerly registering the same occurrences a second time; selection and gate queries bind them before use. The common registration cost remains in the enclosing selection stage for both source representations.
-
-- Shipping writes enter the settlement kernel directly. Only an outer verify operation dispatches independent replay; nested writes in the active replay session execute the same kernel without replaying twice. Error equivalence and final public comparisons remain in the outer cleanup, and the source modes stay fixed per tree.
-
-- A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
-
-- A shipping slot commit with no entered or exited occurrence, dirty slot owner, latent source, or legacy inactive publication bypasses source-selection and slot-publication helpers. The empty exit set is checked before source eligibility. Active occurrences without an inactive item memo do not acquire an own memo field merely to clear it. Off and verify keep their source-publication dispatch, and independent replay still observes every verified commit.
-
-- Active clone construction does not allocate a detached write-address cell or compute its document-order array. A real departure captures the current address through the ordinary retained-exit path. Recursive inactive clones still transfer and rebind their address cells, so old references follow array rekeys without mutating frozen reads.
-
-- A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
-
-- A blueprint template that reaches a property named exactly `*` excludes its entire subtree from slots. The finite template graph computes the optional `containsLiteralStar` Boolean once, including recursive references. The root inherits that fact, so a literal-star-bearing form retains the existing latent capture, source metadata, packed-array snapshots, commit publication, and frozen detached reads in every storage mode. One `isSlotEligible` predicate owns this routing. No Boolean departure-query proof, reader epoch, or publication-history map exists. Star-free forms retain the slot path with exit serialization and latent bookkeeping at zero; literal-star fallback calls and bytes are reported separately. The existing literal-star behavior remains an owner decision before B4-2.
-
-- B4-1의 튜플 재생성·미선언 꼬리 이동에서 일회 변환한 잠복 소스와 보유 슬롯은 공존한다. 정확한 슬롯 소스가 우선하며 없으면 잠복 소스를 읽고, 비활성 값은 두 표현의 문서 순서·점유 경로 제외·동결 참조를 유지한다. 잠복 소스가 실제로 있을 때만 해당 커밋 메모를 갱신한다. 통째 쓰기·load/reset·진짜 삭제는 두 표현을 함께 정리하고, 재진입 또는 슬롯 나감이 소유한 동일 종류의 오래된 잠복 항목을 제거한다. 변환된 옛 참조는 이동한 약한 쓰기 주소로 쓰되 고정 읽기를 유지한다. 일반 retained-instance 저장과 나감의 잠복 포착 0은 유지하며 B4-2에서 배열 변환을 직접 이전으로 교체한다.
-
-- Array exit clearing preserves the baseline's narrower keep exception: an array without a candidate ownership scope removes every descendant source, including explicit keep descendants, and re-enters at length zero. Within candidate ownership, only previously inactive keep sources survive; active array descendants are not captured by clearing. Object hosts retain the existing explicit keep exception. This pre-existing inconsistency remains an owner decision, and on/off/verify comparisons cover all three cases.
-
-- B4-1의 슬롯 경로는 호스트가 나간 인스턴스를 그대로 보유하고 재진입 때 새 인스턴스로 복제한다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"와 "슬롯은 후보 풀이지 직전 형상이 아니다"를 유지한다. 같은 이름·다른 청사진 노드는 독립 원본이며 공개 structure·children에는 활성 형상만 둔다(NODE-043·044·060, SETTLE-044·GOAL-029).
-- 이 문서의 잠복 원본은 형상 밖 원본의 의미이다. 물리적인 latentRaw·메타데이터·색인·포착 함수는 off 기준 경로와 B4-1의 명시적 공존 지점에 한정한다. on의 정상 나감은 기존 분리·읽기 고정·게이트/경로 등록 해제 뒤 슬롯 삽입을 하고 captureExitedRaw·setLatentRaw·잠복 메타데이터·색인 등록을 하지 않는다. 중간 나감·같은 정착의 되살림과 진짜 소멸을 기존대로 구분한다.
-- 복제는 raw·extras·선언 밖 값과 자손 슬롯을 재귀적으로 보존하고 부모·경로·등록·색인을 새로 결합한다. 상호작용·오류·배달 기록은 이어받지 않으며 배열 itemKey는 새로 발급한다. 비활성 자손도 새 부모로 복제하여 옛 parent 연결이 과거 호스트를 누적 보유하지 않게 한다. 복제된 새 노드의 entered·채움·resetInteraction과 모든 중첩 호스트의 고정 baseline 재선택을 유지한다(NODE-044·053, SETTLE-044, WRITE-007).
-- overlay는 호스트 소유이며 떼어진 인스턴스의 원본·읽기를 수정하지 않는다. 비활성 쓰기·동일 경로 다른 종류 정리·전체 교체의 누락 경로 삭제·배치 교체 범위는 기준 경로와 같다. 아직 방문하지 않은 부재 선언의 입력도 기존 첫 종류 분배를 유지한다. 떼어진 쓰기는 정착을 만들지 않아 그 원본의 즉시 갱신과 다음 커밋의 inactiveValues 공표를 구분한다(VALUE-031, NODE-044, WRITE-007·087).
-- 나감 비움은 overlay의 지움 표식이다. clear 호스트 아래 명시 keep 자손이 있으면 호스트 슬롯을 보유하되 own raw·extras와 보존하지 않는 자손을 제외하고 keep 원본만 남긴다. 보존할 자손이 전혀 없으면 슬롯을 만들지 않는다. 식·가드 실패의 나감은 비우지 않고, 자동 쓰기 억제·Source B·채움 철회도 같은 원본을 남긴다(WRITE-034, ERROR-125, SETTLE-001).
-- inactiveValues는 호스트별 첫 읽기에만 materialize하며 다음 공표 변경까지 같은 동결 배열을 반환한다. 열거 대상·문서 순서·동일 경로 첫 종류·항목 객체 참조·배열 원본 읽기는 기준 경로와 같다. 떼어진 호스트는 자신이 보유한 자손 슬롯에서 마지막 커밋 목록을 읽으므로 나감 때 목록을 포착하거나 루트 잠복 전체를 걷지 않는다. 영향 없는 호스트는 dirty로 만들지 않고, 재진입·재이탈한 항목의 과거 객체를 되살리지 않는다.
-- load·reset·rebuild는 해당 범위 슬롯과 overlay를 버린다. 배열 재배치는 값을 버리지 않고 살아남는 아이템 호스트와 슬롯·overlay를 함께 이동하거나 새 호스트로 이전하며 공개 path는 고정된 옛 참조의 쓰기 주소만 옮긴다. B4-1의 일회 잠복 변환 fallback을 사용하는 경우 영향 서브트리만 변환·재키하고 B4-2에서 슬롯 이전으로 교체할 의무를 결과에 기록한다. 소멸 원본과 옛 참조의 고정 읽기는 구별한다(NODE-051·044, 394C-01).
-- 비용 모델: 슬롯 삽입은 엔트리당 평균 O(1), 분리·레지스트리 제거는 기존 이탈 서브트리 비용, 복제는 실제 보유 서브트리 크기, dirty 전파는 영향 호스트와 부모 깊이에 비례한다. 첫 읽기는 열거 원본 수와 정렬 비용이며 변화 없는 반복 읽기는 O(1)이다. 커밋에서 전체 잠복 목록·동결 배열을 복사하지 않는다. 보유량은 방문한 엔트리 M과 값 깊이 K, 실제 overlay와 읽은 목록에 비례하며 전역 역사 journal을 두지 않는다.
 - B2-P2 바퀴 계획은 live host identity와 청사진·relocation 목록 identity로 묶는다. 최초 O(G)의 목록·식 자격·예산 준비 뒤 반복 읽기는 O(1)이며, 새 relocation 등록/제거 때만 목록을 갱신한다. 같은 바퀴에서 이미 발견한 게이트는 기존 예산 의미대로 유지한다. 청사진 교체·rebuild·호스트 재진입은 새 키이며 게이트 값·판정은 계획에 저장하지 않는다.
 - B2-P2 나감 계층은 template별 선언·fields 대상·조각 소유를 최초에 색인하고 unsetOnInactive 후보만 읽는다. 선택 ID와 committed rule value는 매번 현재 기록을 사용하여 node→fields→fragment 우선순위와 keep 우선을 유지한다. 선언이 없는 나감은 O(1), 정책이 있는 나감은 관련 정책 수에 비례하며 루트 선언 전체를 재방문하지 않는다. 자식 문서 위치는 template별 최초 O(E) 색인 뒤 조상당 O(1) 조회한다.
 - B2-P2 정적 준비물은 게이트·overlay·relocation이 없는 고유 객체 엔트리의 schema·ID·소유·경로 증인을 live host당 최초 O(S)로 검증한다(SETTLE-052). 준비된 정적 baseline은 청사진의 항상 활성인 성질이며 이전 동적 선택이 아니다. 동적 엔트리는 매 정착 고정 baseline에서 원래 순서로 선택한다(SETTLE-044·GOAL-029·BLUEPRINT-007). 이전 structure·children·값은 변경하지 않으며 전체 형상 공표의 O(S+K) 복사·조립 비용은 유지한다.
@@ -333,28 +307,6 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지한다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화한다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산한다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문한다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
-
-### settle-slot-exits — 잠복 포착 없는 나감
-
-- on의 정상 분기 나감에서 captureExitedRaw·setLatentRaw 호출은 0이고 호스트 슬롯은 정확히 그 detached 인스턴스를 보유한다. 다른 종류·실패 게이트·상속 keep/clear·억제·자동 채움 철회와 최종/중간 나감 결과는 off와 같다.
-
-### settle-slot-entry — 새 수명의 복제와 재선택
-
-- source 채널·extras·선언 밖 값과 후보별 원본을 복원하되 모든 재진입 참조와 배열 nonce는 새 값이다. 중첩 게이트 입력이 비활성 동안 바뀌어도 고정 baseline에서 선택하며 옛 형상을 후보 밖의 힌트로 쓰지 않는다. 보존 원본이 없음인 새 노드는 기존 채움·상호작용 초기화를 받는다.
-
-### settle-slot-overlays — 비활성 쓰기와 범위
-
-- 옛 참조 쓰기·조상의 Merge·전체 교체는 슬롯/overlay에 같은 해석·우선순위·삭제 범위를 적용한다. 동일 종류의 살아 있는 인스턴스가 있으면 옛 쓰기는 무효과다. 옛 참조의 값·구조·상태·오류·비활성 목록 읽기는 이후 overlay와 무관하며, 커밋 전 pending 원본이 공표 시점을 앞당기지 않는다.
-
-### settle-slot-inactive-reads — 지연 공표와 참조
-
-- 별표 없는 폼의 on 커밋에서 updateInactiveValuesMemo 호출과 나감의 inactiveValues 포착은 0이다. literal-star를 포함한 폼은 서브트리 전체의 기존 잠복 원본과 마지막 커밋 목록을 보존하며 배열은 off의 packed snapshot 우선순위도 유지한다. 첫 읽기 결과는 off의 항목·순서·값·동결과 같고, 영향 없는 호스트 및 항목 참조를 보존하며 읽히지 않은 진입·이탈도 항목 수명에 반영한다. unread detached 읽기는 reset·재배치·후속 생명주기와 독립이다.
-- Wildcard membership changes participate in entry lifetimes: visible-hidden-visible publication creates a fresh entry after the hidden commit, including when that commit was unread. The old detached host's final committed entry identity remains shared with its previously published ancestor entry despite later external matches or overlay writes. Source-owned value memos cannot transfer the live reader's new lifetime into that frozen reader.
-
-### settle-slot-shadow — 두 저장 경로의 관측 동등
-
-- verify는 매 커밋의 value·inactiveValues·떼어진 읽기·사건·payload·revision·참조 수명을 대조한다. 복제 원본·비움/보존·overlay·배열 이동의 차이를 검출하고 차이 0만 통과로 센다. 정상 on 경로에 그림자 비용을 넣지 않는다.
-- The independent verify replay evaluates user guards and context predicates on both trees. Stateful callbacks therefore run twice in verify only; the shipping on path evaluates them once. Tests that count internal calls, inject one-shot mutations, or demonstrate this stateful-callback limitation pin the shipping mode and restore it afterward; public-behavior tests retain verification.
 
 ### settle-b2-p2-wheel-static-cost — 바퀴와 정적 준비 비용
 

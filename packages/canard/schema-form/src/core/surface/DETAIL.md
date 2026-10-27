@@ -2,13 +2,6 @@
 
 ## Requirements
 
-- A literal `*` property's inactive publication retains navigation's existing wildcard-query exclusion in on/off/verify. An unread detached host preserves the query result from its final committed view after an external matching branch changes. This is compatibility with an existing inconsistency and does not add public members or alter pointer syntax.
-- Wildcard exclusion ends a public entry's lifetime even when the hidden commit is unread. An unread detached host retains the last committed entry identities already published through an ancestor; later live publication or inactive overlays cannot replace those identities in the old host's view. These requirements apply when the star segment belongs to an ancestor as well as to the immediate host.
-- A form whose blueprint reaches a property named exactly `*` retains the complete latent implementation for this compatibility boundary, including ordinary ancestors, siblings, and packed arrays. Star-free forms use slots. The public surface and pointer syntax remain unchanged, and the pre-existing literal-star behavior requires an owner decision before removing the latent implementation in B4-2.
-
-- B4-1의 런타임은 설계 Ⅱ의 "떼어진 참조의 읽기는 마지막 커밋으로 고정되고(NODE-044), 재진입 노드는 새 인스턴스이며, 옛 참조의 구독은 발화하지 않는다"를 유지한다. 슬롯 보유는 내부 원본의 소유 방식이며 공개 멤버·프로토타입·판별 합집합·구독 수명을 바꾸지 않는다. 생성 통로는 새 부모·경로·런타임을 결합하고 복제된 노드의 상호작용·오류·배달 기록을 이어받지 않는다(NODE-043·044·060).
-- 슬롯의 raw·extras·선언 밖 값과 보유 자손은 엔진의 복제 재진입 입력이다. 런타임 클래스에는 정착·슬롯 선택 알고리즘을 두지 않는다. 배열 itemKey는 새로 발급하며 중첩 호스트는 엔진이 고정 출발점에서 형상을 다시 고른다. 호스트별 지연 보유 자료 이외에 모든 노드의 생성자 할당이나 공개 읽기의 전체 트리 순회를 추가하지 않는다(SETTLE-044·GOAL-029, NODE-053·055).
-
 - 의존 방향의 마지막은 `record < {behaviors 종류, navigation} < validation < derive < settle < write < surface`이다. 이 fractal만 행 선택과 단일 클래스 생성을 함께 안다. 쓰기·상태·검증·구독은 engine의 write 계약, 읽기는 `settle`·`validation`·`navigation`의 진입점에 위임한다(NODE-010·016, LANDING-084).
 - 제품 코드는 내부 구현을 진입점 밖에서 직접 소비하지 않는다(NODE-016). core 시나리오 러너와 engine 시험은 core 소유 시험 fixture의 `FieldNodeRecord` 기반 형을 사용하며 구현 클래스를 직접 가져오지 않는다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않는다(filid 경계 규칙 §5).
 - 아래 멤버 표가 클래스 프로토타입과 공개 형의 정확한 목록이다. 기제가 들어오는 단계에서 멤버 표·멤버 목록 시험·공개 형을 함께 갱신하며 스텁·시험 전용 주입 자리를 두지 않는다(26C-01, NODE-010, LANDING-066, 28C-07·08).
@@ -45,7 +38,7 @@
 | `undeclaredValues` | getter | 객체 branch의 선언 밖 키 또는 배열 branch의 청사진 없는 꼬리 자리 값을 받은 순서로 보관하는 상태 칸 | VALUE-002·004, NODE-052, 26C-01 |
 | `value` | getter | 계산된 `local` | VALUE-027 |
 | `outputValue` | getter | 계산된 `emit` | VALUE-027·034 |
-| `inactiveValues` | getter | 슬롯 경로는 호스트의 보유 자료에서 지연 계산한 동결 목록, 기준 경로는 잠복 원본 메모. 떼어지면 마지막 커밋의 내용과 참조를 유지 | VALUE-029, WRITE-087, NODE-044 |
+| `inactiveValues` | getter | 살아 있으면 루트 잠복 원본 메모, 떼어졌으면 마지막 커밋에 동결한 목록 | VALUE-029, WRITE-087, NODE-044 |
 | `active` | getter | 최종 형상에 있는가. 정착 중 임시 이탈 뒤 재진입한 노드는 같은 인스턴스로 참이고, 최종 이탈해 떼어진 옛 참조는 다시 들어도 거짓이다. NODE-044의 마지막 커밋 고정에서 빠지는 살아 있는 트리의 사실 | LANDING-062, 26C-04, 26C-08 |
 | `visible` | getter | 레코드 `visible`의 로컬 AND 결과. 떼어지면 마지막 커밋 값으로 고정 | (CONTROLS-022·082, NODE-044, 28C-02) |
 | `enabled` | getter | `active && visible`. 살아 있으면 `visible`과 같고 `disabled`와 무관하며 떼어지면 거짓 | (LANDING-066, 26C-08, 28C-02) |
@@ -113,30 +106,6 @@
 - 위계: `runtime/`은 공개 노드 표면 뒤에서 움직이는 런타임 객체의 칸이다. 일부러 하나만 둔 클래스라 복수형 역할 이름 classes 대신 주제 이름을 쓴다. 이 칸에는 런타임 노드 클래스 `FieldNode`(`runtime/FieldNode.ts`)와, 런타임 노드 객체에만 작용하는 `requireRuntimeFieldNode`·`setContext`가 있다. `utils/`에는 바인딩 통로(`utils/binding/`)·가드(`guards.ts`)·생성 통로(`fieldNodeFactory.ts`)가 남는다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
 
 ## Acceptance Criteria
-
-### surface-slot-new-instance — 슬롯 복제의 새 수명
-
-- 재진입한 노드와 자손은 새 인스턴스이고 옛 참조는 떼어진 채 유지된다. raw·extras·선언 밖 값과 보존된 자손 원본은 같은 공개 값으로 복원된다.
-
-### surface-slot-old-subscriptions — 옛 구독의 무통지
-
-- 슬롯으로 보유한 옛 참조의 구독은 후속 재진입·입력·상태 변경에서 발화하지 않는다. 새 참조의 구독은 기존 사건·payload·revision 계약을 따른다.
-
-### surface-slot-interaction-reset — 상호작용과 오류의 새 수명
-
-- 새 인스턴스는 비어 있는 상호작용·오류 상태로 기존 채움·resetInteraction 규칙을 받는다. 옛 참조의 상태·오류 읽기는 마지막 커밋 그대로이다.
-
-### surface-slot-array-keys — 복제된 배열의 새 아이템 키
-
-- 배열 자손의 itemKey는 새 값이다. 반복 재진입에서도 이전 수명의 nonce를 다시 발급하지 않으며 원본 배열 값과 아이템 전량 실체화를 유지한다.
-
-### surface-slot-frozen-reads — 떼어진 슬롯의 고정 읽기
-
-- 옛 참조의 value·raw·선언 밖 값·children·inactiveValues 읽기는 이후 overlay·재진입·reset에서 바뀌지 않는다. 같은 인스턴스에서 변화 없는 inactiveValues 반복 읽기는 같은 동결 배열을 반환한다.
-
-### surface-slot-memory-bound — 방문한 슬롯의 보유 상한
-
-- 같은 엔트리의 반복 왕복은 이전 수명들을 누적 보유하지 않는다. 슬롯 수는 호스트가 실제 방문한 엔트리 수 이하이며 재귀는 실제 값 깊이까지만 보유한다.
 
 ### surface-members — 정확한 겉면
 

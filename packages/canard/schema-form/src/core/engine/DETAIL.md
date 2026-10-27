@@ -2,9 +2,6 @@
 
 ## Requirements
 
-- B4-1은 `engineModes.slots`를 내부 시험·벤치 제어로 두며 출하 기본 `on`, 기준 잠복 저장 경로 `off`, 공개 관측을 대조하는 `verify`를 제공한다. 모드는 트리 생성 전에 고르고 기존 setMode의 파생 메모 초기화와 시험 복구 규칙을 따른다. 공개 package export나 환경 변수는 늘리지 않는다.
-- 설계 Ⅱ의 "나간 노드의 공개 인스턴스는 지금처럼 떼어진 채로 남지만, 호스트가 그 인스턴스를 비활성 슬롯으로 보유한다"를 구현한다. 슬롯은 상태의 위치이며 형상의 시작점이 아니다. NODE-043·044·060, SETTLE-044·GOAL-029, BLUEPRINT-007, ERROR-125와 표시→계산→전이→커밋→배달의 순서를 유지한다. core는 app을 가져오지 않고 슬롯 형은 record, 전이·복제·원본·읽기는 settle, 클래스 생성 결합은 surface가 소유한다.
-- 비용은 나감의 슬롯 삽입 O(1)과 기존 분리·등록 해제, 진입의 실제 복제 서브트리 크기, 첫 inactiveValues 읽기의 보유 원본 수와 문서 순서 정렬에 비례한다. 정상 슬롯 나감의 잠복 직렬화·메타데이터·색인 등록과 커밋의 비활성 목록 전수 재구성은 0이다. 보유 공간은 호스트당 실제 방문한 엔트리 M개 이하와 값 깊이 K의 원본·overlay이며, 고정 노드 생성자 필드나 방문하지 않은 재귀 실체화는 늘리지 않는다. host별 슬롯 수·실제 보유 바이트와 Node/Bun 힙을 따로 보고한다.
 - B2-P2는 기존 HostDerived 저장소를 불변 template와 live host의 약한 identity 키로 함께 사용한다. wheelPlan·preparedStaticHost는 settle이 구체 형과 무효화를 소유하는 라이브 준비물이고, controlLayerIndex·childOrderIndex는 청사진의 순수 파생 자료다. 노드 고정 필드와 공개 surface는 늘리지 않으며 모드 전환은 기존 저장소 초기화로 함께 버린다.
 
 - 청사진과 컴파일된 식의 생성 고정 사실은 비열거·읽기 전용 속성으로 freeze 전에 정의한다. 기존 열거 관측에는 추가하지 않으며 직접 사실 조회와 모드 변경 뒤의 보존은 유지한다(D3b-2).
@@ -114,10 +111,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 - `__tests__/blueprint.branchless-differential.test.ts`는 같은 스키마를 branchless 분석과 일반 분석으로 각각 실행해 관측 결과가 같은지 비교하는 engine 통합 시험이다. 일반 분석을 강제하려면 blueprint 내부의 capability 수집 단위(`blueprint/buildNodes/utils/declarations/collectSchemaCapabilities`)를 `vi.mock` 경로로 바꿔야 한다. 이 단위는 blueprint index로 나가지 않으며, 스키마 입력만으로는 같은 스키마의 일반 분석을 만들어 낼 수 없다. 부모 수준의 시험 도구가 자식 내부에 닿는 B8 사례로 선언하고, 정돈-3에서 시험 도구의 자리와 함께 다시 검토한다.
 
 ## Acceptance Criteria
-
-### engine-slot-modes — 기준 경로와 그림자
-
-- on/off는 값·비활성 목록·떼어진 읽기·사건·payload·revision·노드 수명 대응이 같다. verify는 매 커밋의 두 경로 결과를 대조하고 차이를 거부하며, test:verify 전체가 이를 실행한다. 복제 원본 손상 음성 시험이 차이를 검출한다. 공개 겉면·기존 기대값 변경과 배달 비교 차이는 0이다.
 
 ### branchless-observables — 분기 없는 청사진의 코어 관측 동등성
 
