@@ -110,9 +110,29 @@
 
 ## Acceptance Criteria
 
-### surface-slot-lifetimes — 슬롯 복제의 공개 수명
+### surface-slot-new-instance — 슬롯 복제의 새 수명
 
-- 재진입한 노드와 자손은 새 인스턴스이고 옛 참조는 떼어진 채 유지된다. 옛 구독은 후속 재진입·입력·상태 변경에서 발화하지 않으며 새 인스턴스는 비어 있는 상호작용·오류 상태로 기존 채움·resetInteraction 규칙을 받는다. 배열 자손의 itemKey는 새 값이고 옛 참조의 value·raw·선언 밖 값·children·inactiveValues 읽기는 동결된다. 같은 인스턴스에서 변화 없는 inactiveValues 반복 읽기는 같은 동결 배열을 반환한다.
+- 재진입한 노드와 자손은 새 인스턴스이고 옛 참조는 떼어진 채 유지된다. raw·extras·선언 밖 값과 보존된 자손 원본은 같은 공개 값으로 복원된다.
+
+### surface-slot-old-subscriptions — 옛 구독의 무통지
+
+- 슬롯으로 보유한 옛 참조의 구독은 후속 재진입·입력·상태 변경에서 발화하지 않는다. 새 참조의 구독은 기존 사건·payload·revision 계약을 따른다.
+
+### surface-slot-interaction-reset — 상호작용과 오류의 새 수명
+
+- 새 인스턴스는 비어 있는 상호작용·오류 상태로 기존 채움·resetInteraction 규칙을 받는다. 옛 참조의 상태·오류 읽기는 마지막 커밋 그대로이다.
+
+### surface-slot-array-keys — 복제된 배열의 새 아이템 키
+
+- 배열 자손의 itemKey는 새 값이다. 반복 재진입에서도 이전 수명의 nonce를 다시 발급하지 않으며 원본 배열 값과 아이템 전량 실체화를 유지한다.
+
+### surface-slot-frozen-reads — 떼어진 슬롯의 고정 읽기
+
+- 옛 참조의 value·raw·선언 밖 값·children·inactiveValues 읽기는 이후 overlay·재진입·reset에서 바뀌지 않는다. 같은 인스턴스에서 변화 없는 inactiveValues 반복 읽기는 같은 동결 배열을 반환한다.
+
+### surface-slot-memory-bound — 방문한 슬롯의 보유 상한
+
+- 같은 엔트리의 반복 왕복은 이전 수명들을 누적 보유하지 않는다. 슬롯 수는 호스트가 실제 방문한 엔트리 수 이하이며 재귀는 실제 값 깊이까지만 보유한다.
 
 ### surface-members — 정확한 겉면
 
