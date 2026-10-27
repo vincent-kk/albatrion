@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D3b-1에서 생산자 소유 값 membership은 engine 공통의 이름 붙인 ownedSchemaValues 메모에 두며 기존 add/delete와 동결 시점은 보존한다. 병합 파생 메모는 실제 엔진 모드 변경 때 초기화하지만 값 메모는 초기화하지 않는다. 공통 저장소는 자식의 타입을 import하지 않는다(SURFACE-063·065).
+
 활성 선언의 전순서를 따라 유효 스키마를 병합하고 소유 값의 보호와 메모 참조를 보존한다.
 
 ## API Contracts

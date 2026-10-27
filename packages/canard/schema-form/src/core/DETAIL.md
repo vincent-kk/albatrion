@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D3b-1에서 관찰 fixture는 옮겨진 실제 runtime target-ID 메모를 읽고 모드는 engineModes.setMode를 거쳐 변경한다. 관찰 실행은 이전 설정을 finally에서 복원하며 별도 ID 생산자나 전역 대체 registry를 만들지 않는다.
+
 - 검증 전용 관찰 session은 실제 engine module과 그 module의 기존 producer WeakMap을 읽기만 하는 reader, graph-local codec 및 실제로 생성·보존한 객체를 함께 결속한다. 제품 소스·공개 표면·사건·기존 기대값을 변경하지 않으며 관찰 사본의 readonly footer만 허용한다.
 - 관찰은 19개 상태와 9개 이력 채널, 원형58의 ID·순서·초기화·연산·결과와 listener/retained 참조 관계를 보존한다. runtime key의 앞 일곱 부분과 다섯 부분 exit-policy key는 유지하고 여덟 번째 실제 producer ID만 같은 module의 실제 객체에 대한 codec occurrence로 바꾼다. 모든 optional rule store 부재는 빈 상태이며, 실제 누락·orphan·충돌·미지원 key shape는 거절한다.
 - 현재 규칙은 실제 current attachment/lifetime와 일치해야 한다. 동일 module의 적법한 known retained 역사 occurrence는 원래 ID·참조·기록된 수명이 맞으면 detached라는 이유로 거절하지 않는다. unknown·foreign·ambiguous·conflicting·잘못 부착된·codec-unreachable 및 phase/lifetime 불일치는 실패하며 최신 경로 역추정·producer 재호출·shadow ID·전역 registry는 쓰지 않는다.

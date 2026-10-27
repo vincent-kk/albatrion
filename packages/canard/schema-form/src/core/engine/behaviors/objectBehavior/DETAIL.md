@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- D3b-1의 안정 형상은 root runtime의 지연 WeakMap이며 폼 전체 reset·폐기에서 해제하고 부분 reset에서는 유지한다. 결과 객체의 키 개수는 노드가 아닌 값 identity를 키로 하는 공통 named memo이다. 조립의 증명 조건·키 순서·값과 참조 안정성은 보존한다(SURFACE-065).
+
 - 최초 합성이 다음 조건을 모두 만족하면 classic loop 한 번으로 값 객체, names, stable shape, 키 수를 만들어 낸다. 조건은 local과 undeclaredValues가 없고, propertyOrder가 비었고, entries와 children의 길이·순서·이름이 같은 경우다. 조건이 맞지 않으면 기존 순서 합성으로 처리하며, undefined 방출과 예약 키의 의미, 같은 값의 참조 재사용은 그대로 보존한다. 속도 면에서는 자식 수에 비례하는 직접 검사와 쓰기만 하고, 적격 호출에서 Map/Set 구축과 중복 조회를 없앤다. 메모리 면에서는 기존 결과, names, stable shape를 유지하면서 일시 Map/Set 두 객체와 그 원소 저장을 없앤다. 불일치가 드러나기 전에 만들어 둔 일시 결과와 names는 보유하지 않는다(batch2 3-object-assembly).
 
 - 의존 방향은 `blueprint·record·behaviors 공유 보조 < objectBehavior < behaviors 뿌리 < FieldNode`이다. `branch/`와 `terminal/`은 내부 organ이다. 둘 다 이 종류 안에서만 소비하므로 경계 예외가 없다(NODE-009·016).
