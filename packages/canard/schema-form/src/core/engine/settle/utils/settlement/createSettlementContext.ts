@@ -31,7 +31,6 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
   const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
   const hasSplitRegistration =
     !blueprint.capabilities.branchless &&
-    blueprint.capabilities.hasExpressions &&
     prepareGateSelection(blueprint, kind !== 'load');
   const context: SettlementContext<Self> = {
     root,

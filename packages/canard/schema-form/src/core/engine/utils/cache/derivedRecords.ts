@@ -5,6 +5,7 @@ export interface BlueprintDerived {
   deriveConvergenceTargets?: unknown;
   gateBudgetIndex?: unknown;
   gateExpressions?: unknown;
+  ifGateReadNames?: unknown;
   exitPolicyExpressions?: unknown;
   dependencyIndex?: unknown;
   contextOwners?: unknown;

@@ -32,7 +32,14 @@ export const prepareGateSelection = (
       schema === null ||
       !(
         (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
-        (isArray(schema.anyOf) && schema.anyOf.length > 1)
+        (isArray(schema.anyOf) && schema.anyOf.length > 1) ||
+        (isArray(schema.allOf) &&
+          schema.allOf.length > 1 &&
+          host.childEntries.some((entry) =>
+            entry.declarations.some((declaration) =>
+              declaration.gates.some((gate) => gate.kind === 'if'),
+            ),
+          ))
       )
     )
       continue;

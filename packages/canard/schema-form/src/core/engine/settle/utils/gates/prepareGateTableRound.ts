@@ -7,6 +7,9 @@ import type { SettlementContext } from '../../types/settlement';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
 
+/** No per-round allocation when a table has no constraint-only tag schema. */
+const NO_SCHEMA_PATHS: readonly string[] = Object.freeze([]);
+
 /**
  * Decide G1–G4 once before either root declarations or children execute this round.
  * @param node - Host occurrence after the fixed baseline and initial dirty children
@@ -35,8 +38,8 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     node.runtime.blueprint,
   );
   if (!table) return;
-  const watchedPaths = table.groups.map(
-    (group) => node.path + '/' + escapeSegment(group.watchedName),
+  const watchedPaths = table.watchedNames.map(
+    (name) => node.path + '/' + escapeSegment(name),
   );
   if (watchedPaths.some((path) => context.dirtyPaths.has(path))) return;
   (context.gateSelectionRounds ??= new Map()).set(node, {
@@ -44,6 +47,11 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     table,
     values: new Map(),
     watchedPaths,
+    stableSchemaPaths: table.stableSchemaNames.length
+      ? table.stableSchemaNames.map(
+          (name) => node.path + '/' + escapeSegment(name),
+        )
+      : NO_SCHEMA_PATHS,
     active: true,
   });
   if (engineModes.gateSelection === 'verify') {

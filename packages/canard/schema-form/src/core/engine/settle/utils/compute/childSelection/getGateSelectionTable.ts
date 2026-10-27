@@ -6,6 +6,7 @@ import type {
   BlueprintNode,
 } from '../../../../blueprint';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
+import { engineModes } from '../../../../utils/cache/engineModes';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 import type {
   GateSelectionGroup,
@@ -13,6 +14,7 @@ import type {
   GateSelectionTable,
 } from '../../../types/gateSelectionTable';
 import { getGateExpression } from '../../gates/getGateExpression';
+import { getIfGateReadNames } from '../../gates/predicates/getIfGateReadNames';
 import { computeRootGateSelection } from './gateSelection/computeRootGateSelection';
 import { getDirectChildSelectionPlan } from './getDirectChildSelectionPlan';
 
@@ -26,6 +28,19 @@ type MutableGateSelectionGroup = Omit<
   buckets: Map<GateSelectionLiteral, number[]>;
   literalsByGate: Map<BlueprintGate, ReadonlySet<GateSelectionLiteral>>;
 };
+
+/**
+ * Admit only the strict primitive keys shared by equality and discriminator tables.
+ * @param value - Authored tag; non-finite numbers and composite values stay general
+ * @returns Whether a Map key has the exact supported strict-equality semantics
+ */
+const isGateSelectionLiteral = (
+  value: unknown,
+): value is GateSelectionLiteral =>
+  value === null ||
+  typeof value === 'string' ||
+  typeof value === 'boolean' ||
+  (typeof value === 'number' && Number.isFinite(value));
 
 /**
  * Lazily cache E1–E5 metadata without reading values or changing settlement paths.
@@ -55,22 +70,64 @@ export const getGateSelectionTable = (
       watchedNames.set(host.path + '/' + escapeSegment(entry.name), entry.name);
   const groups = new Map<string, MutableGateSelectionGroup>();
   const alwaysSteps: number[] = [];
+  const stableSchemaNames: string[] = [];
   const stepIndexByName = new Map<string, number>();
   const tableSteps = new Set<number>();
+  const predicateGroups = new Map<
+    BlueprintGate,
+    { gate: BlueprintGate; steps: number[]; watchedNames: readonly string[] }
+  >();
   for (let index = 0; index < plan.steps.length; index++) {
     const step = plan.steps[index];
+    if (step.general) stableSchemaNames.push(step.entry.name);
     const gate = step.gate;
     stepIndexByName.set(step.entry.name, index);
     const expression = gate
       ? getGateExpression(blueprint, gate.schemaPath)
       : undefined;
-    const equality = expression?.equality;
+    const equality =
+      gate?.kind === 'discriminator' &&
+      gate.condition.values.every(isGateSelectionLiteral)
+        ? { literals: gate.condition.values }
+        : expression?.equality;
     const watchedName =
-      equality && expression
+      gate?.kind === 'discriminator'
         ? watchedNames.get(
-            resolveDependencyPath(host.path, expression.dependencies[0]),
+            host.path + '/' + escapeSegment(gate.condition.propertyName),
           )
-        : undefined;
+        : equality && expression
+          ? watchedNames.get(
+              resolveDependencyPath(host.path, expression.dependencies[0]),
+            )
+          : undefined;
+    const ifReads =
+      gate?.kind === 'if'
+        ? getIfGateReadNames(gate.condition, blueprint)
+        : engineModes.gatePredicate !== 'off' &&
+            expression?.completeReads &&
+            !equality
+          ? expression.dependencies.map((dependency) =>
+              watchedNames.get(resolveDependencyPath(host.path, dependency)),
+            )
+          : undefined;
+    if (
+      gate &&
+      ifReads &&
+      ifReads.every(
+        (name): name is string =>
+          name !== undefined &&
+          watchedNames.has(host.path + '/' + escapeSegment(name)),
+      )
+    ) {
+      let group = predicateGroups.get(gate);
+      if (!group) {
+        group = { gate, steps: [], watchedNames: ifReads };
+        predicateGroups.set(gate, group);
+      }
+      group.steps.push(index);
+      tableSteps.add(index);
+      continue;
+    }
     if (!gate || !equality || watchedName === undefined) {
       alwaysSteps.push(index);
       continue;
@@ -98,15 +155,34 @@ export const getGateSelectionTable = (
     }
     tableSteps.add(index);
   }
-  if (groups.size === 0) {
+  for (const [gate, group] of predicateGroups)
+    if (
+      group.steps[group.steps.length - 1] - group.steps[0] + 1 !==
+      group.steps.length
+    ) {
+      for (const index of group.steps) {
+        alwaysSteps.push(index);
+        tableSteps.delete(index);
+      }
+      predicateGroups.delete(gate);
+    }
+  alwaysSteps.sort((left, right) => left - right);
+  if (groups.size === 0 && predicateGroups.size === 0) {
     getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
       host,
     ).gateSelectionTable = null;
     return null;
   }
   const orderedGroups = [...groups.values()];
+  const roundWatchedNames = orderedGroups.map((group) => group.watchedName);
+  for (const group of predicateGroups.values())
+    for (const name of group.watchedNames)
+      if (!roundWatchedNames.includes(name)) roundWatchedNames.push(name);
   const root = computeRootGateSelection(host, blueprint, orderedGroups);
   const table: GateSelectionTable = {
+    watchedNames: roundWatchedNames,
+    stableSchemaNames,
+    predicateGroups: [...predicateGroups.values()],
     plan,
     groups: orderedGroups,
     alwaysSteps,

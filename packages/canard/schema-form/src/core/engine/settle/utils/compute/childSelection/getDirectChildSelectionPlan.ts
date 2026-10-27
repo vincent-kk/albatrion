@@ -8,10 +8,19 @@ import type {
   BlueprintNode,
 } from '../../../../blueprint';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
+import { engineModes } from '../../../../utils/cache/engineModes';
 import { getGateExpression } from '../../gates/getGateExpression';
+import { getIfGateReadNames } from '../../gates/predicates/getIfGateReadNames';
+import { isStableDiscriminatorEntry } from './utils/isStableDiscriminatorEntry';
+import { prepareDiscriminatorEntrySelection } from './utils/prepareDiscriminatorEntrySelection';
+import type { DiscriminatorEntrySelection } from './utils/prepareDiscriminatorEntrySelection';
 
 /** One authored evaluation position; eligible table gates use their bucket verdict. */
 export interface DirectChildSelection {
+  /** A discriminator's hoisted tag keeps its authored multi-declaration selector. */
+  readonly general?: boolean;
+  /** Strict tag-to-declaration metadata for a stable hoisted discriminator key. */
+  readonly discriminatorSelection?: DiscriminatorEntrySelection;
   /** Original edge retained for creation and inactive-exit handling. */
   readonly entry: BlueprintChildEntry;
   /** Inherited host gate, absent for an ungated declaration. */
@@ -60,7 +69,14 @@ export const getDirectChildSelectionPlan = (
     schema === null ||
     !(
       (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
-      (isArray(schema.anyOf) && schema.anyOf.length > 1)
+      (isArray(schema.anyOf) && schema.anyOf.length > 1) ||
+      (isArray(schema.allOf) &&
+        schema.allOf.length > 1 &&
+        host.childEntries.some((entry) =>
+          entry.declarations.some((declaration) =>
+            declaration.gates.some((gate) => gate.kind === 'if'),
+          ),
+        ))
     )
   ) {
     getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
@@ -74,6 +90,22 @@ export const getDirectChildSelectionPlan = (
   for (let index = 0; index < host.childEntries.length; index++) {
     const entry = host.childEntries[index];
     const declarations = entry.declarations;
+    if (
+      engineModes.gatePredicate !== 'off' &&
+      !hasOwnProperty(names, entry.name) &&
+      isStableDiscriminatorEntry(entry, host)
+    ) {
+      names[entry.name] = true;
+      baseline.push(entry);
+      steps.push({
+        entry,
+        gate: undefined,
+        ids: [],
+        general: true,
+        discriminatorSelection: prepareDiscriminatorEntrySelection(entry),
+      });
+      continue;
+    }
     if (
       hasOwnProperty(names, entry.name) ||
       declarations.length !== 1 ||
@@ -99,12 +131,16 @@ export const getDirectChildSelectionPlan = (
     if (gate) {
       const expression = getGateExpression(blueprint, gate.schemaPath);
       if (
-        gate.kind !== 'active' ||
+        (engineModes.gatePredicate === 'off' && gate.kind !== 'active') ||
         gate.appliesWhen?.length ||
         gate.hostPath !== host.path ||
         gate.schemaPath === declaration.schemaPath + '/controls/active' ||
-        !expression ||
-        expression.dependencies.length !== 1
+        (gate.kind === 'active' &&
+          (!expression ||
+            (expression.dependencies.length !== 1 &&
+              !expression.completeReads))) ||
+        (gate.kind === 'if' &&
+          getIfGateReadNames(gate.condition, blueprint) === undefined)
       ) {
         getHostDerived<
           'directChildSelectionPlan',
