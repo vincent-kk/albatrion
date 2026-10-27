@@ -10,7 +10,7 @@ import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 
 /** Latent storage sites; pending-exit selection has a separate cost contract. */
 const LATENT_SITE =
-  /(?:latentStore|pathIndex|captureExitedRaw|enterFieldNode|getCommittedDeclarationKey)/;
+  /(?:latentStore|pathIndex|captureExitedRaw|enterFieldNode|getCommittedDeclarationKey|encodeNodeKey|readNodeKeyPath)/;
 
 afterEach(() => vi.restoreAllMocks());
 
