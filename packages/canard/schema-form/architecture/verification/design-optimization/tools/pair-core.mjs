@@ -19,7 +19,7 @@ const config = readConfig(
   process.argv.slice(2),
   new URL('./', import.meta.url),
 );
-const allRows = buildRows(config.probes);
+const allRows = buildRows(config.probes, config.branchSwitch);
 if (
   config.only?.some(
     (id, i) =>
@@ -84,6 +84,7 @@ if (config.worker) {
         `--run-dir=${config.runDir}`,
         `--repeat=${repeat}`,
         `--probes=${config.probes}`,
+        `--branch-switch=${config.branchSwitch}`,
       ];
       const start = new Date().toISOString();
       const child = spawnSync(process.execPath, args, {

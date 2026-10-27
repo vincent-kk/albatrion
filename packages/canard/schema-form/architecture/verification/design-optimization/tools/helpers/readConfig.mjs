@@ -15,6 +15,8 @@ export function readConfig(argv, toolsURL) {
     'repeat',
     'probes',
     'quiet-since',
+    'branch-switch',
+    'prepared',
   ];
   const values = {};
   for (const arg of argv) {
@@ -51,7 +53,7 @@ export function readConfig(argv, toolsURL) {
     values['run-dir'] ?? `/private/tmp/claude-501/perf-runs/${runId}`,
   );
   if (
-    !/^\/private\/tmp\/claude-501\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+$/.test(
+    !/^\/private\/tmp\/claude-501\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\/(?:pair|stages))?$/.test(
       runDir,
     )
   )
@@ -76,6 +78,8 @@ export function readConfig(argv, toolsURL) {
     runId: path.basename(runDir),
     only: values.only?.split(','),
     probes: values.probes === 'true',
+    branchSwitch: values['branch-switch'] === 'true',
+    prepared: values.prepared === 'true',
     worker: values.worker,
     repeat: Number(values.repeat ?? 0),
     quietSince,

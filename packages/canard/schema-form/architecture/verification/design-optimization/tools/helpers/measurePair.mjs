@@ -7,19 +7,20 @@ import { setupOperation } from './setupOperation.mjs';
 /** Measure one same-process pair with alternating import/execution order and untimed timer yields. */
 export async function measurePair(row, config, engines, repeat) {
   const prepared = {};
-  for (const engine of ['legacy', 'current'])
+  const engineNames = row.currentOnly ? ['current'] : ['legacy', 'current'];
+  for (const engine of engineNames)
     prepared[engine] = await setupOperation(
       row,
       engine,
       await import(pathToFileURL(engines[engine].destination)),
     );
-  for (const engine of ['legacy', 'current'])
-    await prepared[engine].preflight?.();
+  for (const engine of engineNames) await prepared[engine].preflight?.();
   const samples = { legacy: [], current: [] };
   const orders = [];
   for (let i = -config.warmups; i < config.samples; i++) {
-    const order =
-      (i + config.warmups + repeat) % 2
+    const order = row.currentOnly
+      ? ['current']
+      : (i + config.warmups + repeat) % 2
         ? ['current', 'legacy']
         : ['legacy', 'current'];
     if (i >= 0) orders.push(order.join(','));
@@ -41,7 +42,7 @@ export async function measurePair(row, config, engines, repeat) {
     orders,
     samples,
     minima: {
-      legacy: Math.min(...samples.legacy),
+      legacy: row.currentOnly ? null : Math.min(...samples.legacy),
       current: Math.min(...samples.current),
     },
   };
