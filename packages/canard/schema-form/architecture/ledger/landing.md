@@ -219,6 +219,7 @@
 | LANDING-209 | 이주(80라운드) — 폼 핸들 명령 넷(`focus`·`select`·`refresh`·`remount`)의 경로는 선택 인자(없으면 루트), `focus`·`select`의 필수 경로가 선택으로, `refresh`·`remount` 추가 | 현행 | 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-01) |
 | LANDING-210 | 이주(80라운드) — 공개 표면의 배열(`FormProps.errors`·`onValidate` 인자, `FormHandle.getErrors`·`validate`·`findNodes` 반환, `errorMatrix` 안 배열)은 `readonly` | 현행 | 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02) |
 | LANDING-211 | 설계 최적화 단계(446라운드) — 8단계 뒤, 9단계 앞에 코어 설계 수정 단계를 둠(443C-01의 "8단계가 마지막 코어 수정" 대체), 계획서는 `plan/design-optimization/`, 가지는 8단계 가지 위에 쌓고 #445 병합 뒤 base를 `1.0.0-beta`로, PR 규칙은 그대로 | 현행 | 소유자 답(`reviews/round-446-owner-answers.md:11` "좋아. 8단계 이후 작업을 명시적으로 허용한다."), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-01) |
+| LANDING-212 | 분기 전환 단계(453라운드) — 설계 최적화 단계 뒤·9단계 앞, 계획서는 `plan/branch-switch/`, 가지 `feat/schema-form-branch-switch`는 설계 최적화 가지 위에 쌓고 #472·#445 병합 뒤 base를 옮김, PR 규칙은 LANDING-211·451C-04 그대로, 보류한 D2-P5 가지는 B2 자료, 범위는 분기 전환뿐 | 현행 | 소유자 답(`reviews/round-453-owner-answers.md:7`, `reviews/round-453-owner-answers.md:9`), 편집자 결정(453라운드, `reviews/round-453-closing.md` 453C-01) |
 
 ## 항목
 
@@ -3495,10 +3496,27 @@
   > 소유자(452라운드, D4 관문 미달의 처리와 세 물음): "분기전환에 대해서는 다음 단계에서 집중적으로 다룬다. 설계의 대규모 개편 없이 도달 가능한 상한으로 기록하면 된다.\n형제 선형항은 무슨 의미인가? 차이가 너무 큰데. 힙당 크기는 수용 가능하다. \n청사진 캐싱으로 충분한 속도 가속이 나오지 않은 이유는 매번 청사진 캐시를 비운 까닭인가? 그리고 react 벽시계는 뭘 말하는건가? 용어가 이상하다" (`reviews/round-452-owner-answers.md:7`)
   > 소유자(452라운드, 갱신 경과 시간과 Profiler의 차이 검토): "갱신경과시간이 커밋 프로파일과 다른걸 검토하라. 엔진작업이 끝나야 리엑트 트리에 반영할텐데 어떻게 차이가 나는거지?" (`reviews/round-452-owner-answers.md:8`)
   > 소유자(452라운드, 러너 수정 뒤 다음 단계): "이 문제까지 수정하고 다음으로 간다. 분기전환은 분기전환 문제에만 집중하기 위함이다" (`reviews/round-452-owner-answers.md:9`)
+  > 소유자(453라운드, 분기 전환 단계의 개시): "좋아. 이제 분기 전환에 집중한다. 이건 oneOf로 대표되지만 모든 브랜치 분기에 해당할 것이라 생각한다.\n해당 문제에 대해서 설계로 풀어보도록 한다." (`reviews/round-453-owner-answers.md:7`)
+  > 소유자(453라운드, 관문 유지와 검증기 분기의 포함, 설계안 요청): "그래. 그리고 path는 다르지만 if-then 구문을 사용한 검증기 브랜치 전환도 대상에 넣도록 해. 아마 내부적으로 사용하는 경로는 동일할거고, 검증 경로만 함수식이 아니라 검증기일거라서. 물론 검증기를 사용한 브랜치 운영은 기존 사례가 없으니까 앞선 개선과 맞물리도록 개선하는걸 최우선으로 하자. 설계안 보여줘봐. 어떻게 바꾸고자 하는지" (`reviews/round-453-owner-answers.md:8`)
+  > 소유자(453라운드, 설계안의 허가와 진행 방식): "네 진행을 허가합니다. 멀티에이전트 작업으로 진행하세요" (`reviews/round-453-owner-answers.md:9`)
   > 편집자 결정(450C-02): "【추론】 소유자가 이 단계는 8단계와 분리된 설계 최적화 가지에서 가지 PR들을 병합하고, 오케스트레이터가 만든 PR은 오케스트레이터가 병합할 수 있다고 했다(위 1행). 병합 대상은 `feat/schema-form-design-optimization`이다. 측정과 독립 검토를 마친 PR #463~#469는 개별 squash 대신, 그 일곱을 이미 합쳐 측정한 통합 가지 `integration/schema-form-d2`를 병합 커밋 하나로 들였다(829c217e0). 그 결과의 `src`와 `package.json`은 측정한 통합 판과 바이트 단위로 같고, 다른 차이는 그 사이 단계 가지에 쌓인 원장과 결과 문서뿐이다. GitHub은 일곱 PR을 병합됨으로 표시했다. 개별 squash를 쓰면 #464와 #466의 `settle/DETAIL.md` 문서 충돌을 다시 풀어야 하고, 측정한 판과 다른 판이 들어갈 수 있기 때문이다. #470(D3b-1)은 Bun 노드당 힙이 기준 최댓값보다 1.465 B(+0.066 %) 커서 TEST-027의 소유자 수용이 남았다. 병합 권한이 그 수용까지 대신하지는 않으므로, base만 설계 최적화 가지로 옮기고 수용 뒤에 병합한다. 앞으로 오케스트레이터가 만든 PR은 독립 검토를 통과하고 TEST-027 같은 수용 조건이 없으면 오케스트레이터가 병합한다. 8단계 가지와 #445는 손대지 않는다." (`reviews/round-450-closing.md:10`)
   > 편집자 결정(452C-06): "【추론】 D4의 관문 다섯은 일괄 입력 nested(1.13배, 4.05 ms)와 게이트 잎 쓰기(최대 1.17배)가 통과, 분기 전환·형제 선형항·Bun B2가 미달이었고 셋은 452C-01~03으로 처리했다. 단계의 성과는 일괄 입력이 S 대비 0.45~0.56배(L의 1.13~1.23배), React 배열 갱신 0.11~0.57배, React 마운트 0.80~0.85배이고, 분기 전환·중첩 마운트는 S 대비 0.93배에 그쳤다. 단계 루트 PR #472(설계 최적화 가지에서 8단계 가지로, #445 병합 뒤 base를 `1.0.0-beta`로)는 세 판 비교표와 관문 판정, 소유자 결정을 본문에 싣고 초안으로 두며 병합은 소유자 몫이다. 남은 가지는 8단계 가지·단계 가지·D2-P5 셋, 남은 worktree는 없다. 다음 단계는 분기 전환에만 집중하며(위 3행), 그 계획서는 새 라운드에서 연다. 재검증 목록(447·448라운드의 편집자 판단, 449C-04, 451C-03의 두 판정)과 대기열 65·66·67은 그 단계의 첫 라운드로 넘긴다." (`reviews/round-452-closing.md:18`)
+  > 편집자 결정(453C-01): "【추론】 452C-01이 분기 전환을 다음 단계의 유일한 주제로 넘겼고 소유자가 그 단계를 열었다(위 1행 "이제 분기 전환에 집중한다", 위 3행 "진행을 허가합니다"). 단계는 설계 최적화 단계 뒤, 9단계 앞이며 계획서는 `plan/branch-switch/`다. 가지 `feat/schema-form-branch-switch`는 설계 최적화 가지(`feat/schema-form-design-optimization`, b8db53997) 위에 쌓고, #472와 #445가 병합되면 base를 옮긴다. PR 규칙(가설 하나에 PR 하나, DETAIL 선행, 스쿼시 병합, 독립 검토, 원장 검사)은 LANDING-211·451C-04 그대로다. 보류한 D2-P5 가지 `perf/schema-form-d2-sibling-linear`(4681c0aff)는 이 단계의 B2 자료이며, 그 PR이 병합되거나 폐기될 때 지운다. 이 단계의 범위는 분기 전환뿐이고 마운트·일괄 입력의 추가 최적화는 하지 않는다(452라운드 위 3행 "분기전환 문제에만 집중")." (`reviews/round-453-closing.md:8`)
 - 상태: 현행
 - 출처: `reviews/round-446-closing.md:8`(정본), `reviews/round-446-owner-answers.md:11`, `reviews/round-446-owner-answers.md:12`
 - 닫은 사람: 소유자 답(`reviews/round-446-owner-answers.md:11` "좋아. 8단계 이후 작업을 명시적으로 허용한다."), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-01)
 - 라운드: 446
 - 까닭: `reviews/round-446-owner-answers.md:11`
+
+### LANDING-212 분기 전환 단계(453라운드) — 설계 최적화 단계 뒤·9단계 앞, 계획서는 `plan/branch-switch/`, 가지 `feat/schema-form-branch-switch`는 설계 최적화 가지 위에 쌓고 #472·#445 병합 뒤 base를 옮김, PR 규칙은 LANDING-211·451C-04 그대로, 보류한 D2-P5 가지는 B2 자료, 범위는 분기 전환뿐
+
+- 결정:
+  > 【추론】 452C-01이 분기 전환을 다음 단계의 유일한 주제로 넘겼고 소유자가 그 단계를 열었다(위 1행 "이제 분기 전환에 집중한다", 위 3행 "진행을 허가합니다"). 단계는 설계 최적화 단계 뒤, 9단계 앞이며 계획서는 `plan/branch-switch/`다. 가지 `feat/schema-form-branch-switch`는 설계 최적화 가지(`feat/schema-form-design-optimization`, b8db53997) 위에 쌓고, #472와 #445가 병합되면 base를 옮긴다. PR 규칙(가설 하나에 PR 하나, DETAIL 선행, 스쿼시 병합, 독립 검토, 원장 검사)은 LANDING-211·451C-04 그대로다. 보류한 D2-P5 가지 `perf/schema-form-d2-sibling-linear`(4681c0aff)는 이 단계의 B2 자료이며, 그 PR이 병합되거나 폐기될 때 지운다. 이 단계의 범위는 분기 전환뿐이고 마운트·일괄 입력의 추가 최적화는 하지 않는다(452라운드 위 3행 "분기전환 문제에만 집중").
+- 보충:
+  > 소유자(453라운드, 분기 전환 단계의 개시): "좋아. 이제 분기 전환에 집중한다. 이건 oneOf로 대표되지만 모든 브랜치 분기에 해당할 것이라 생각한다.\n해당 문제에 대해서 설계로 풀어보도록 한다." (`reviews/round-453-owner-answers.md:7`)
+  > 소유자(453라운드, 설계안의 허가와 진행 방식): "네 진행을 허가합니다. 멀티에이전트 작업으로 진행하세요" (`reviews/round-453-owner-answers.md:9`)
+- 상태: 현행
+- 출처: `reviews/round-453-closing.md:8`(정본), `reviews/round-453-owner-answers.md:7`, `reviews/round-453-owner-answers.md:9`, `plan/branch-switch/request.md`
+- 닫은 사람: 소유자 답(`reviews/round-453-owner-answers.md:7`, `reviews/round-453-owner-answers.md:9`), 편집자 결정(453라운드, `reviews/round-453-closing.md` 453C-01)
+- 라운드: 453
+- 까닭: `reviews/round-453-owner-answers.md:7`

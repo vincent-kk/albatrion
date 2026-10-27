@@ -25,18 +25,18 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md
 
 ## 2. 기준값
 
-2026-10-27(452라운드 설계 최적화 단계 마감 뒤)의 결과다.
+2026-10-27(453라운드 분기 전환 단계 개시 뒤)의 결과다.
 
 | 검사 | 기준값 |
 | --- | --- |
-| verbatim-check | 항목 1,382, 조각 327, 원문과 다른 결정 줄 0 |
-| sup-check | 보충·충돌 인용 3,254, 인용 줄에 없는 것 0, 해석 못 한 것 0 |
-| ref-check | 항목 1,382, 문제 0 |
-| owner-cited | 소유자 답 630, 인용 630, 미인용 0 |
+| verbatim-check | 항목 1,387, 조각 327, 원문과 다른 결정 줄 0 |
+| sup-check | 보충·충돌 인용 3,277, 인용 줄에 없는 것 0, 해석 못 한 것 0 |
+| ref-check | 항목 1,387, 문제 0 |
+| owner-cited | 소유자 답 633, 인용 633, 미인용 0 |
 | sentence-check | 영역 열일곱 모두 missing 0, bad classifications 0 |
-| tokens | 목록 2,357, 잔여 400(목록의 셋은 446라운드에 고친 `README.md` 지금 상태 문단에서 왔고 새 잔여는 0이다; 판정은 token-review.md 의 445라운드 절) |
+| tokens | 목록 2,364, 잔여 400(목록의 일곱은 453라운드에 고친 `README.md` 지금 상태 문단에서, 셋은 446라운드에 고친 `README.md` 지금 상태 문단에서 왔고 새 잔여는 0이다; 판정은 token-review.md 의 445라운드 절) |
 | plan-links | 문제 0 |
-| doc-coverage | 미인용 33(452라운드 항목 셋 — TEST-090·TEST-091·BLUEPRINT-054; 451라운드 항목 셋 — PROCESS-073·TEST-089·PROCESS-074; LANDING-209·210, 446라운드 항목 일곱 — LANDING-211·NODE-060·BLUEPRINT-052·053·SURFACE-063·TEST-080·PROCESS-069, 447라운드 항목 여섯 — TEST-081·082·083·SURFACE-064·EVENT-074·NODE-061, 448라운드 항목 일곱 — SETTLE-051·052·TEST-084·085·086·PROCESS-070·SURFACE-065, 449라운드 항목 셋 — TEST-087·PROCESS-071·NODE-062, 450라운드 항목 둘 — TEST-088·PROCESS-072; 설계문서·ADR 반영은 설계 최적화 단계의 루트 PR이 한다), 그 밖의 문제 0 |
+| doc-coverage | 미인용 38(453라운드 항목 다섯 — LANDING-212·SETTLE-053·BLUEPRINT-055·TEST-092·PROCESS-075; 452라운드 항목 셋 — TEST-090·TEST-091·BLUEPRINT-054; 451라운드 항목 셋 — PROCESS-073·TEST-089·PROCESS-074; LANDING-209·210, 446라운드 항목 일곱 — LANDING-211·NODE-060·BLUEPRINT-052·053·SURFACE-063·TEST-080·PROCESS-069, 447라운드 항목 여섯 — TEST-081·082·083·SURFACE-064·EVENT-074·NODE-061, 448라운드 항목 일곱 — SETTLE-051·052·TEST-084·085·086·PROCESS-070·SURFACE-065, 449라운드 항목 셋 — TEST-087·PROCESS-071·NODE-062, 450라운드 항목 둘 — TEST-088·PROCESS-072; 설계문서·ADR 반영은 설계 최적화 단계의 루트 PR이 한다), 그 밖의 문제 0 |
 
 수가 바뀌면 토큰·문장·인용별 원인을 대조하고, 까닭을 설명할 수 없는 증가를 통과로 보지 않는다.
 
