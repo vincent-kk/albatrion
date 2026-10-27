@@ -634,3 +634,7 @@ reviews/round-453-owner-answers.md:9	453	설계안의 허가와 진행 방식	"�
 reviews/round-455-owner-answers.md:7	455	물음의 요청	"물어볼 내용 있으면 물어보거라." (2026-10-27, 원장 세션)
 reviews/round-455-owner-answers.md:8	455	재측정과 프로토콜 보강의 승인	"1. 승인. \n2. 승인" (2026-10-27, 원장 세션)
 reviews/round-456-owner-answers.md:7	456	재승인과 창 구성의 지시	"재승인. 이번엔 잘 구성해서 해보도록" (2026-10-27, 원장 세션)
+reviews/round-457-owner-answers.md:7	457	결과 보고의 방식	"그래. 결과 보고 확인하자. 결과는 짧게 추세만 보도록.\n이게 최종안이 아니니까, 너무 시간을 많이 쓰지 않고 판정만 했으면 해." (2026-10-27, 원장 세션)
+reviews/round-457-owner-answers.md:8	457	1차 확인의 요청	"그래 지금 올려줘" (2026-10-27, 원장 세션)
+reviews/round-457-owner-answers.md:9	457	설계 Ⅱ 착수	"A로 가자. 설계를 미리 하고 롱턴 작업을 위임하고싶어." (2026-10-28, 원장 세션)
+reviews/round-457-owner-answers.md:10	457	PR 본문의 기계 로컬 경로	"아 그리고 PR 본문에 \"/private/tmp/claude-501/perf-runs/20261027T1501-e8c1229-b2p2\" 이렇게 임시파일 경로를 쓰면 어떻게하니. 이럼 PR의 의미가 없잖아" (2026-10-28, 원장 세션)
