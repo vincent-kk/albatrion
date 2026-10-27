@@ -18,7 +18,7 @@ import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 
-it('shares one edge memo Map per declaring host across 64 static siblings', () => {
+it('shares one edge memo store per declaring host across 64 static siblings', () => {
   const analysis = blueprint({
     type: 'object',
     properties: Object.fromEntries(
@@ -33,16 +33,16 @@ it('shares one edge memo Map per declaring host across 64 static siblings', () =
     readAdmittedEdgeSchema(entry, entry.node, undefined, analysis.root);
   }
   const record = getHostDerived(analysis.root);
-  expect(record.staticIds).toBeInstanceOf(Map);
+  expect(record.staticIds).toBeInstanceOf(WeakMap);
   expect(record.admittedEdgeSchemas).toBeInstanceOf(Map);
   if (
-    !(record.staticIds instanceof Map) ||
+    !(record.staticIds instanceof WeakMap) ||
     !(record.admittedEdgeSchemas instanceof Map)
   )
-    throw new Error('Expected the declaring host edge maps');
-  expect(record.staticIds.size).toBe(64);
+    throw new Error('Expected the declaring host edge stores');
   expect(record.admittedEdgeSchemas.size).toBe(64);
   for (const entry of analysis.root.childEntries) {
+    expect(record.staticIds.has(entry)).toBe(true);
     expect(record.staticIds.get(entry)).toBe(staticIds(entry, analysis.root));
     expect(record.admittedEdgeSchemas.get(entry)).toBe(
       readAdmittedEdgeSchema(entry, entry.node, undefined, analysis.root),
@@ -73,7 +73,7 @@ it('retains distinct edge memo results when two entries refer to the same node',
     readAdmittedEdgeSchema(first, first.node, undefined, analysis.root),
   ).toBe(admitted);
   const record = getHostDerived(analysis.root);
-  expect(record.staticIds).toBeInstanceOf(Map);
+  expect(record.staticIds).toBeInstanceOf(WeakMap);
   expect(record.admittedEdgeSchemas).toBeInstanceOf(Map);
 });
 

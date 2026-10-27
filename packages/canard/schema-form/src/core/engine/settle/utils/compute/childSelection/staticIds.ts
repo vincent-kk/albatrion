@@ -15,9 +15,9 @@ export const staticIds = (
 ): readonly number[] => {
   const record = getHostDerived<
     'staticIds',
-    Map<BlueprintChildEntry, readonly number[]>
+    WeakMap<BlueprintChildEntry, readonly number[]>
   >(owner);
-  const entries = (record.staticIds ??= new Map());
+  const entries = (record.staticIds ??= new WeakMap());
   let ids = entries.get(entry);
   if (!ids) {
     const collected: number[] = [];
