@@ -39,9 +39,9 @@ export const readAdmittedEdgeSchema = (
   if (node !== entry.node) return undefined;
   const record = getHostDerived<
     'admittedEdgeSchemas',
-    Map<BlueprintChildEntry, AdmittedEdgeSchema>
+    WeakMap<BlueprintChildEntry, AdmittedEdgeSchema>
   >(owner);
-  const entries = (record.admittedEdgeSchemas ??= new Map());
+  const entries = (record.admittedEdgeSchemas ??= new WeakMap());
   const cached = entries.get(entry);
   if (cached && cached.isAtomic === isAtomic) return cached;
   const schema = mergeEffectiveSchema(entry.node, staticIds(entry, owner), {

@@ -34,16 +34,16 @@ it('shares one edge memo store per declaring host across 64 static siblings', ()
   }
   const record = getHostDerived(analysis.root);
   expect(record.staticIds).toBeInstanceOf(WeakMap);
-  expect(record.admittedEdgeSchemas).toBeInstanceOf(Map);
+  expect(record.admittedEdgeSchemas).toBeInstanceOf(WeakMap);
   if (
     !(record.staticIds instanceof WeakMap) ||
-    !(record.admittedEdgeSchemas instanceof Map)
+    !(record.admittedEdgeSchemas instanceof WeakMap)
   )
     throw new Error('Expected the declaring host edge stores');
-  expect(record.admittedEdgeSchemas.size).toBe(64);
   for (const entry of analysis.root.childEntries) {
     expect(record.staticIds.has(entry)).toBe(true);
     expect(record.staticIds.get(entry)).toBe(staticIds(entry, analysis.root));
+    expect(record.admittedEdgeSchemas.has(entry)).toBe(true);
     expect(record.admittedEdgeSchemas.get(entry)).toBe(
       readAdmittedEdgeSchema(entry, entry.node, undefined, analysis.root),
     );
@@ -74,7 +74,7 @@ it('retains distinct edge memo results when two entries refer to the same node',
   ).toBe(admitted);
   const record = getHostDerived(analysis.root);
   expect(record.staticIds).toBeInstanceOf(WeakMap);
-  expect(record.admittedEdgeSchemas).toBeInstanceOf(Map);
+  expect(record.admittedEdgeSchemas).toBeInstanceOf(WeakMap);
 });
 
 it('keeps the by-entry derivative lazy after preparing a static shape', () => {
