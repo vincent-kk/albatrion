@@ -10,7 +10,6 @@ import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
-import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
@@ -86,10 +85,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       !context.shapeDirtyPaths.has(source.path)
     )
       continue;
-    const sourceKey = JSON.stringify([
-      source.path,
-      getBlueprintNodeIdentity(source.blueprintNode),
-    ]);
+    const sourceKey = getCommittedDeclarationKey(source, source.runtime);
     const selected =
       context.selectedDeclarationIds.get(source) ??
       source.runtime.committedDeclarationIds?.get(sourceKey);

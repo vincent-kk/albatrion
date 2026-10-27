@@ -1,4 +1,9 @@
-/** Encode the path/kind pair without a general-purpose JSON serialization pass. */
+/**
+ * Encode the path/kind pair without a general-purpose JSON serialization pass.
+ * @param path - Absolute pointer, including arbitrary UTF-16 field names
+ * @param kind - Blueprint kind token, or the normalized union:<mask> token
+ * @returns The same bytes as JSON.stringify([path, kind]) for these kind tokens
+ */
 export const encodeNodeKey = (path: string, kind: string): string => {
   const escaped = path.replace(
     // eslint-disable-next-line no-control-regex -- JSON strings must escape every control code point.

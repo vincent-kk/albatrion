@@ -36,7 +36,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   const dependencies = getDependencyIndex(blueprint);
   const liveByPath = new Map<string, Self | null>([['', context.root]]);
   for (const node of context.changedNodes ?? [])
-    liveByPath.set(node.path, node);
+    if (!node.detached) liveByPath.set(node.path, node);
   for (
     let node: Self | null | undefined = context.target;
     node;
@@ -44,7 +44,8 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   )
     liveByPath.set(node.path, node);
   const liveAt = (path: string): Self | null => {
-    if (liveByPath.has(path)) return liveByPath.get(path)!;
+    const cached = liveByPath.get(path);
+    if (cached !== undefined) return cached;
     let node: Self | undefined = context.root;
     const segments = path.split('/');
     for (let index = 1; node && index < segments.length; index++)

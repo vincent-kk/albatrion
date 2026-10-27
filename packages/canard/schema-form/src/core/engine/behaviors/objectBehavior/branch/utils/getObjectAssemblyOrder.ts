@@ -1,7 +1,11 @@
 import type { BlueprintNode } from '../../../../blueprint';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 
-/** Cache each name's first declaration position; active candidate position does not reorder it. */
+/**
+ * Retain each name's first declaration rank in the engine-owned weak template memo.
+ * @param host - Immutable completed host blueprint, including candidate entries
+ * @returns Shared first-name ranks; populates its host memo on first use
+ */
 export const getObjectAssemblyOrder = (
   host: BlueprintNode,
 ): ReadonlyMap<string, number> => {

@@ -8,7 +8,7 @@ import {
 
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 
-// Count only latent storage and its shared pair-key codec; pending-exit selection is separate.
+/** Latent storage sites; pending-exit selection has a separate cost contract. */
 const LATENT_SITE =
   /(?:latentStore|pathIndex|captureExitedRaw|enterFieldNode|getCommittedDeclarationKey)/;
 

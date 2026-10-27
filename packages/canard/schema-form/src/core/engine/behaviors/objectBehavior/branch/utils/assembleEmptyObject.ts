@@ -5,7 +5,14 @@ import type { FieldNodeRecord } from '../../../../record';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 
-/** Preserve the empty-child generic extras path and its existing collection contract. */
+/**
+ * Assemble undeclared sources when no child projection is active.
+ * @param node - Object host whose stable shape memo is updated
+ * @param children - Empty child array retained as the stable shape identity
+ * @param preferred - Effective schema's preferred key order
+ * @param extras - Plain undeclared source, when present
+ * @returns Ordered object, reusing or patching the previous value when keys match
+ */
 export const assembleEmptyObject = <Node>(
   node: FieldNodeRecord<Node>,
   children: readonly Node[],

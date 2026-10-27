@@ -19,14 +19,22 @@ export const getCommittedDeclarationKey = (
   const cached = runtime.committedDeclarationKeys?.get(node);
   const kind =
     node.blueprintNode.kind === 'union'
-      ? getBlueprintNodeIdentity(node.blueprintNode)
+      ? cached !== undefined &&
+        cached.schemaType === node.blueprintNode.schemaType &&
+        cached.kind.startsWith('union:')
+        ? cached.kind
+        : getBlueprintNodeIdentity(node.blueprintNode)
       : node.blueprintNode.kind;
   if (cached?.path === path && cached.kind === kind) return cached.key;
   const key = encodeNodeKey(path, kind);
-  (runtime.committedDeclarationKeys ??= new WeakMap()).set(node, {
-    path,
-    kind,
-    key,
-  });
+  const entry: {
+    path: string;
+    kind: string;
+    key: string;
+    schemaType?: unknown;
+  } = { path, kind, key };
+  if (node.blueprintNode.kind === 'union')
+    entry.schemaType = node.blueprintNode.schemaType;
+  (runtime.committedDeclarationKeys ??= new WeakMap()).set(node, entry);
   return key;
 };

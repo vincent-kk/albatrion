@@ -1,4 +1,8 @@
-/** Read the first JSON string of a canonical path/kind pair, including escapes. */
+/**
+ * Read a canonical path/kind pair without a general-purpose JSON parse.
+ * @param key - Valid compact JSON pair emitted by node-key encoding
+ * @returns Its decoded occurrence path, or undefined when no first string exists
+ */
 export const readNodeKeyPath = (key: string): string | undefined => {
   if (key[0] !== '[' || key[1] !== '"') return undefined;
   let end = 2;
