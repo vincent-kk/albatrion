@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- B2-P3의 path/kind 키는 기존 JSON pair 형식과 바이트 호환을 유지하며 잠복 저장과 committed 선언이 노드별 메모를 공유한다. pair 전용 codec은 JSON 직렬화·해석 호출 없이 경로를 보존하고 rule 키 형식은 유지한다. 키 생성은 최초 사용·rekey에 O(경로 길이), 이후 조회는 O(1)이며 트리별 약한 메모의 노드당 경로·종류·키 참조만 보유한다.
+
 - 청사진과 컴파일된 식의 생성 고정 사실은 비열거·읽기 전용 속성으로 freeze 전에 정의한다. 기존 열거 관측에는 추가하지 않으며 직접 사실 조회와 모드 변경 뒤의 보존은 유지한다(D3b-2).
 
 - 엔진 파생 자료는 공통 cache organ의 `getBlueprintDerived(blueprint)`·`getHostDerived(blueprintNode)` 두 WeakMap 레코드에 모은다. 공통 모듈은 슬롯 이름·저장·초기화만 소유하며 자식 타입이나 builder를 import하지 않는다. 소유자가 자기 슬롯 형을 좁혀 독립적으로 계산하고 최초 읽기 전에는 그 슬롯을 만들지 않는다. null·false·미등록의 기존 의미를 유지한다.

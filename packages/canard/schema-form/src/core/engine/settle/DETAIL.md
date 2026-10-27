@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- B2-P3에서 잠복 키는 committed 선언과 같은 노드별 메모를 사용하며 잠복 저장·메타데이터·색인의 pair codec은 JSON 왕복을 만들지 않는다. 하위 잠복 조회는 영속 PathStoreIndex를 사용하여 정착마다 O(L·depth) 색인을 다시 만들지 않는다. 재계산 등록은 살아 있는 노드의 조상을 부모 사슬로 걸으며 없는 경로만 문자열 후퇴를 쓴다. 배달 후보는 변경·진입·나감·상태·watch 기록을 기준으로 순회한다. 메모와 영속 색인의 수명·rollback·rekey·NODE-044는 유지하며 비활성 값 메모 방식은 바꾸지 않는다. 존재 차분 재사용은 B2-P2 통합 뒤 라운드별 변화 이름을 받을 때까지 보류한다.
+
 - B1의 게이트는 발생별 `reads`와 `evaluate(inputs)` 계약을 공유한다. `active`의 컴파일 의존, `discriminator`의 태그 프로퍼티, `if`의 완전한 정적 읽기 증거 또는 전체 호스트 읽기를 바인딩하며, 입력이 더러워지면 해당 호스트의 모든 게이트를 원래 순서로 판정한다(BLUEPRINT-007·055). 역색인으로 개별 게이트를 생략하지 않는다. 형상은 매 정착의 무게이트 baseline에서 계산한다(SETTLE-044·GOAL-029).
 - `if`·`discriminator`는 호스트 투영 객체와 extras의 두 identity가 같은 구간에서 하나의 전체 입력 view를 공유한다. 앞선 진입·퇴장·스키마 변화가 투영을 새로 공표하면 뒤 게이트부터 새 view를 사용한다. 전체 호스트를 읽는 불투명 조건의 일관성 실패와 추가 확인 라운드는 유지한다. 라운드 최초 snapshot 고정은 즉시 반영 계약에 어긋나므로 허용하지 않는다(SETTLE-020·050).
 - `if` 읽기의 화이트리스트는 객체 수준의 `type: object`, `properties`, `required`, `dependentRequired`, `allOf`·`anyOf`·`oneOf`·`not`이다. 프로퍼티 값 제약은 `type`, `const`, `enum`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `minLength`, `maxLength`, `pattern`만 허용하며 같은 논리 조합을 재귀 검사한다. 논리 조합 안이라도 `$ref`, `patternProperties`, `additionalProperties`, `propertyNames`, `unevaluated*`, 중첩 `if`·`then`·`else`, 알 수 없는 키워드가 있으면 전체 호스트 읽기로 후퇴한다. 정적으로 알려진 속성의 값·존재와 extras 우선순위를 메모와 증인 기록에 포함하며 guard에는 항상 현재 전체 view를 전달한다. 분석은 guard를 실행하지 않는다.
