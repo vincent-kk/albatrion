@@ -1,0 +1,35 @@
+{
+  "base": "a28b502cc",
+  "contractCommit": "f805acf13",
+  "project": "unit",
+  "command": "yarn workspace @canard/schema-form test --run --project unit --maxWorkers=1 --no-file-parallelism surface.slots- settle.retained-slot- settle.inactive-lifecycle-contract.test.ts settle.inactive-read-contract.test.ts settle.latent-candidate-ownership-inactive-move.test.ts",
+  "testFiles": {
+    "failed": 13,
+    "passed": 4,
+    "total": 17
+  },
+  "collectedCases": {
+    "failed": 25,
+    "passed": 14,
+    "total": 39
+  },
+  "newSymbolCollectionFailure": {
+    "test": "src/core/engine/settle/__tests__/settle.retained-slot-shadow.test.ts",
+    "missingModule": "src/core/engine/settle/utils/slots/cloneFromSlot.ts",
+    "casesNotCollected": 2
+  },
+  "observedFailureReasons": [
+    "inactiveSlots is undefined rather than a Map holding the detached source",
+    "setLatentRaw is called once on a normal branch exit rather than zero times",
+    "updateInactiveValuesMemo is called once at commit rather than zero times",
+    "same-name candidate instances have no retained host slots"
+  ],
+  "existingCharacterization": {
+    "files": 3,
+    "cases": 10,
+    "passed": 10,
+    "expectationsChanged": 0
+  },
+  "setupFailureExcluded": "An earlier collection attempt lacked local common-utils/json distribution files and is not counted as fail-first evidence.",
+  "scope": "Baseline failure evidence only; implementation and final gates were not complete at this checkpoint. Full logs are retained locally."
+}
