@@ -20,6 +20,15 @@ export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
 ): void => {
   const runtime = root.runtime;
+  if (
+    !runtime.latentRawDirty &&
+    runtime.inactiveValuesMemo.has('') &&
+    !(
+      runtime.latentRaw.size > 0 &&
+      (context?.entered.size || context?.exited.size)
+    )
+  )
+    return;
   const rebuild =
     !runtime.inactiveValueOrders ||
     runtime.inactiveValuesRebuild ||
@@ -27,15 +36,6 @@ export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>(
     context?.kind === 'load' ||
     engineModes.inactiveValues === 'rebuild' ||
     (runtime.latentRawDirty && !runtime.inactiveValueChanges?.size);
-  if (
-    !rebuild &&
-    !runtime.latentRawDirty &&
-    !runtime.inactiveValueChanges?.size &&
-    !context?.entered.size &&
-    !context?.exited.size &&
-    !context?.revived.size
-  )
-    return;
   const oracle: FieldNodeRuntime<Self> | undefined =
     engineModes.inactiveValues === 'verify'
       ? {

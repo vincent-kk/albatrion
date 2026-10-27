@@ -140,3 +140,40 @@ it('prunes metadata of unset exits whose raw source was already absent', () => {
     [...root.runtime.latentRawMetadata!.values()].map(({ path }) => path),
   ).toEqual(['/latent']);
 });
+
+it('retains classification when an unset exit leaves no latent source and publication is skipped', () => {
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      show: { type: 'boolean' },
+      value: {
+        type: 'string',
+        controls: { active: '../show', unsetOnInactive: true },
+      },
+      held: {
+        type: 'string',
+        default: 'retained',
+        controls: { active: '../show === false' },
+      },
+    },
+  });
+  loadFieldNodeAtMount(
+    root,
+    { show: true, value: 'cleared' },
+    WriteOption.Overwrite,
+  );
+  const before = root.runtime.inactiveValuesMemo.get('');
+  writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
+  expect(root.runtime.latentRaw.size).toBe(0);
+  expect(
+    root.runtime.latentRawMetadata!.has(JSON.stringify(['/value', 'string'])),
+  ).toBe(true);
+  expect(root.runtime.inactiveValuesMemo.get('')).toBe(before);
+  writeFieldNode(root.structure!.show, true, 'input', WriteOption.Overwrite);
+  expect(
+    root.runtime.latentRawMetadata!.has(JSON.stringify(['/value', 'string'])),
+  ).toBe(false);
+  expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+    { path: '/held', value: 'retained' },
+  ]);
+});
