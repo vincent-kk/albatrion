@@ -10,7 +10,6 @@ import {
   dispatchSetValue,
 } from '@/schema-form/core/engine/write';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import * as admission from '../utils/arraySlots/prepareArrayPop';
 import { compareArrayPop } from './fixtures/compareArrayPop';
@@ -94,8 +93,6 @@ describe('static pop through the truncation path matches the general path', () =
   });
 
   it('retires a nested object item and keeps its detached reads and latent-free runtime', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     let popped: DispatchTestNode | undefined;
     const { candidate } = compareArrayPop(
       OBJECTS,
@@ -113,7 +110,6 @@ describe('static pop through the truncation path matches the general path', () =
     );
     expect(popped?.detached).toBe(true);
     expect(popped?.local).toEqual({ name: 'b', fill: 7, nested: [3] });
-    expect(candidate.runtime.latentRaw.size).toBe(0);
     expect(candidate.emit).toEqual([{ name: 'a', fill: 7, nested: [1, 2] }]);
   });
 

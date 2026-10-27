@@ -9,10 +9,10 @@ import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../../../utils/gates/getGateRegistry';
 import { markWrite } from '../../../utils/input/markWrite';
-import { readLatentSlotSource } from '../../../utils/latent/readLatentSlotSource';
-import { indexEnteredLatentKey } from '../../../utils/latentStore/indexEnteredLatentKey';
+import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
+import { readInactiveSlotSource } from '../../../utils/slots/readInactiveSlotSource';
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
 import type { ArrayPathMove } from '../../types/pathMoves';
 import { clearArrayRuntimePaths } from '../rekey/clearArrayRuntimePaths';
@@ -67,7 +67,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       : removedItem
         ? removedItem.local
         : removedEntry
-          ? readLatentSlotSource(
+          ? readInactiveSlotSource(
               context,
               host.path + '/' + removedIndex,
               removedEntry.node,
@@ -145,8 +145,8 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
     rekeyArrayRuntimePaths(host.runtime, host.path, moves, prefixCount);
   }
-  context.latentDescendantKeys = undefined;
-  context.enteredLatentKeys = undefined;
+  context.literalStarDescendantKeys = undefined;
+  context.enteredLiteralStarKeys = undefined;
 
   host.itemCount = length;
   host.raw = undefined;
@@ -160,7 +160,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   context.shapeDirtyPaths.add(host.path);
   for (const { node, value } of created) {
     context.entered.add(node);
-    indexEnteredLatentKey(context, node);
+    indexEnteredLiteralStarKey(context, node);
     markWrite(node, value, context);
   }
   if (context.hasGates)

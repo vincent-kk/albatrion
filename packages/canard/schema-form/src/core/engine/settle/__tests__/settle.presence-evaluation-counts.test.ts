@@ -1,6 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import type { DispatchTestNode } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -22,7 +21,6 @@ it.each(['record', 'skip', 'shadow'] as const)(
   '%s: six registration scenes keep evaluation and lookup work linear',
   (mode) => {
     // Shipping evaluation and lookup bounds exclude independent slot replay.
-    pinSlotShipping();
     let latest: SettlementContext<DispatchTestNode> | undefined;
     let computes = 0;
     const create = settlement.createSettlementContext;

@@ -2,7 +2,6 @@ import type { FieldNodeRecord } from '../../record';
 import type { WriteOption } from '../../types/value';
 import { prepareGateSelection } from '../utils/compute/childSelection/prepareGateSelection';
 import { setLoadValue } from '../utils/loadValues/setLoadValue';
-import { prepareSlotShadow } from '../utils/verify/prepareSlotShadow';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { canLoadStaticFirstTree } from './utils/staticFirst/canLoadStaticFirstTree';
 import { loadStaticFirstTree } from './utils/staticFirst/loadStaticFirstTree';
@@ -14,7 +13,7 @@ import { loadStaticFirstTree } from './utils/staticFirst/loadStaticFirstTree';
  * @param option - Mount's automatic-write selection
  * @returns Nothing; one settle call commits the loaded tree
  */
-const loadFieldNodeAtMountBody = <Self extends FieldNodeRecord<Self>>(
+export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown,
   option: WriteOption,
@@ -35,27 +34,5 @@ const loadFieldNodeAtMountBody = <Self extends FieldNodeRecord<Self>>(
     if (root.runtime.revisionTransitions !== previousTransitions)
       root.runtime.revisionTransitions = previousTransitions;
     root.runtime.loadSnapshot = nextSnapshot;
-  }
-};
-
-/** Replay resolved inputs only in verification mode, preserving the ordinary entry. */
-export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
-  root: Self,
-  value: unknown,
-  option: WriteOption,
-): void => {
-  if (root.runtime.slots !== 'verify')
-    return loadFieldNodeAtMountBody(root, value, option);
-  const complete = prepareSlotShadow(root, (shadow) =>
-    loadFieldNodeAtMount(shadow, value, option),
-  );
-  let failure: unknown;
-  try {
-    return loadFieldNodeAtMountBody(root, value, option);
-  } catch (error) {
-    failure = error;
-    throw error;
-  } finally {
-    complete?.(failure);
   }
 };

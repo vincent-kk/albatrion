@@ -6,6 +6,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
 
 // filid:contract settle-state-keys-context
 describe('context state keys', () => {
@@ -114,8 +115,6 @@ describe('state-key failures during settlement', () => {
       ),
     ).toThrow('State key expression failed');
     expect(root.structure?.secret).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 });

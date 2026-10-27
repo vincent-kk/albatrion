@@ -3,8 +3,11 @@ import { unescapeSegment } from '@winglet/json/pointer';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { createSlotValueOverlay } from './createSlotValueOverlay';
+import { getSlotBinding } from './getSlotBinding';
+import { getSlotPathEntry } from './getSlotPathEntry';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
@@ -18,6 +21,7 @@ import { markSlotChange } from './markSlotChange';
  * @param context - Optional automatic-write rollback scope
  * @param lineage - Old reference's blueprint chain, when its ancestors disambiguate kinds
  * @param automatic - Whether projected child writes preserve wrong-kind ancestor raw
+ * @param preserveCandidates - Structural replay keeps other kinds at the same address
  * @returns Whether a terminal descendant has a projected value
  */
 export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
@@ -29,6 +33,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
   context?: SettlementContext<Self>,
   lineage?: readonly BlueprintNode[],
   automatic = false,
+  preserveCandidates = false,
 ): boolean => {
   const names = path.split('/').slice(1).map(unescapeSegment);
   let host = root;
@@ -40,11 +45,14 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         ? getItemEntries(template, Number(name))
         : template.childEntries;
     const selected = depth === names.length - 1 ? target : lineage?.[depth + 1];
-    const entry = entries.find(
-      (entry) =>
-        entry.name === name &&
-        (selected === undefined || entry.node === selected),
+    const requested = getSlotPathEntry(
+      template,
+      host,
+      undefined,
+      name,
+      selected,
     );
+    const entry = requested && getSlotBinding(host, requested);
     if (!entry) return false;
     const live = host.structure?.[name];
     if (
@@ -83,11 +91,14 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
           : template.childEntries;
       const selected =
         index === names.length - 1 ? target : lineage?.[index + 1];
-      const binding = entries.find(
-        (entry) =>
-          entry.name === name &&
-          (selected === undefined || entry.node === selected),
+      const requested = getSlotPathEntry(
+        template,
+        source,
+        previous,
+        name,
+        selected,
       );
+      const binding = requested && getSlotBinding(source, requested, previous);
       if (!binding) return previous ?? {};
       const prior = getSlotSource(source, binding, previous);
       const children = new Map(previous?.children);
@@ -96,7 +107,14 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         patch(binding.node, prior.source, prior.overlay, index + 1),
       );
       for (const other of entries) {
-        if (other.name !== name || other.node === binding.node) continue;
+        if (
+          preserveCandidates ||
+          other.name !== name ||
+          getBlueprintNodeIdentity(other.node) ===
+            getBlueprintNodeIdentity(binding.node) ||
+          source?.structure?.[name]?.blueprintNode === other.node
+        )
+          continue;
         const prior = getSlotSource(source, other, previous);
         if (prior.source || prior.overlay)
           children.set(other, { replace: true });
@@ -109,7 +127,13 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       patch(entry.node, source, previous, depth + 1),
     );
     for (const other of entries) {
-      if (other.name !== name || other.node === entry.node) continue;
+      if (
+        preserveCandidates ||
+        other.name !== name ||
+        getBlueprintNodeIdentity(other.node) ===
+          getBlueprintNodeIdentity(entry.node)
+      )
+        continue;
       if (
         !host.inactiveSlots?.has(other) &&
         !host.inactiveSlotOverlays?.has(other)

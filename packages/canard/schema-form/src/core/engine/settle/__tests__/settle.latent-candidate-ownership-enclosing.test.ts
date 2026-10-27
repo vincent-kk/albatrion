@@ -1,6 +1,5 @@
 import { expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { FieldNodeEventType } from '../../record';
@@ -14,10 +13,10 @@ import {
 } from '../../write';
 import { selectCandidateOwnedLatent } from '../utils/transition/selectCandidateOwnedLatent';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readRetainedSlotEntry } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 it('V1 independent nested exit preserves a source shared with an enclosing sibling', async () => {
-  // These assertions inspect the latent-store baseline directly.
-  pinLatentBaseline();
   const a: BlueprintSchema = {
     type: 'object',
     allOf: [
@@ -67,14 +66,12 @@ it('V1 independent nested exit preserves a source shared with an enclosing sibli
   const events: FieldNodeDelivery[] = [];
   subscribeFieldNode(root, (event) => events.push(event));
   dispatchSetValue(getDispatchNode(root, 'b'), false);
-  const key = JSON.stringify(['/v/0/0', 'number']);
-  const metadata = root.runtime.latentRawMetadata?.get(key);
+  const metadata = readRetainedSlotEntry(root, '/v/0/0', 'number');
   expect(metadata).toBeDefined();
-  expect(root.runtime.latentRaw.get(key)).toBe(5);
+  expect(readRetainedSlotRaw(root, '/v/0/0', 'number')).toBe(5);
   dispatchSetValue(getDispatchNode(root, 'a'), true);
   dispatchSetValue(getDispatchNode(root, 'inner'), false);
-  expect(root.runtime.latentRaw.get(key)).toBe(5);
-  expect(root.runtime.latentRawMetadata?.get(key)).toEqual(metadata);
+  expect(readRetainedSlotRaw(root, '/v/0/0', 'number')).toBe(5);
   dispatchSetValue(getDispatchNode(root, 'a'), false);
   dispatchSetValue(getDispatchNode(root, 'b'), true);
   const expected = { ...initial, inner: false };

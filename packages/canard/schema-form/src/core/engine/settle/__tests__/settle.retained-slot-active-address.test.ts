@@ -1,17 +1,15 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../write';
+import { DetachedWriteAddress } from '../utils/detached/DetachedWriteAddress';
 import { readFieldNodeInactiveValues } from '../utils/detached/readFieldNodeInactiveValues';
-import { DetachedWriteAddress } from '../utils/latentStore/DetachedWriteAddress';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
 afterEach(() => vi.restoreAllMocks());
 
 it('allocates a clone write address only when that lifetime departs', () => {
   // Address allocation is a shipping-path cost, independent of shadow replay.
-  pinSlotShipping();
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: {
@@ -49,7 +47,6 @@ it('allocates a clone write address only when that lifetime departs', () => {
 
 it('does not copy empty aggregate caches onto an active leaf clone', () => {
   // Empty optional records are part of the shipping clone allocation bound.
-  pinSlotShipping();
   const { root } = createDispatchTree({
     type: 'object',
     properties: {
@@ -67,8 +64,8 @@ it('does not copy empty aggregate caches onto an active leaf clone', () => {
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   const second = getDispatchNode(root, 'value');
   expect(
-    ['inactiveValuesCache', 'inactiveValuesDirty'].filter(
-      (key) => Object.prototype.hasOwnProperty.call(second, key),
+    ['inactiveValuesCache', 'inactiveValuesDirty'].filter((key) =>
+      Object.prototype.hasOwnProperty.call(second, key),
     ),
   ).toEqual([]);
   expect(second.inactiveValueMemo).toBeUndefined();

@@ -6,7 +6,5 @@ import type { FieldNodeRuntime } from '../../../record';
  * @returns Whether the form uses slots; literal-star forms retain latent semantics
  */
 export const isSlotEligible = (
-  runtime: Pick<FieldNodeRuntime<never>, 'slots' | 'blueprint'>,
-): boolean =>
-  runtime.slots !== 'off' &&
-  runtime.blueprint.root.containsLiteralStar !== true;
+  runtime: Pick<FieldNodeRuntime<never>, 'blueprint'>,
+): boolean => runtime.blueprint.root.containsLiteralStar !== true;

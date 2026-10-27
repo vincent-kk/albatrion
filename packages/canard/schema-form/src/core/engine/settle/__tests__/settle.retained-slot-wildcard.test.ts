@@ -2,20 +2,16 @@ import { expect, it, onTestFinished, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '../../types/value';
-import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { readFieldNodeInactiveValues } from '../utils/detached/readFieldNodeInactiveValues';
-import * as latent from '../utils/latentStore/setLatentRaw';
+import * as capture from '../utils/literalStar/captureLiteralStarExit';
+import * as latent from '../utils/literalStarStore/setLiteralStarRaw';
 import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
-import * as capture from '../utils/transition/captureExitedRaw';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
 it('keeps the complete latent path when the root template reaches a literal star', () => {
-  const previous = engineModes.slots;
-  engineModes.setMode('slots', 'on');
   onTestFinished(() => {
     vi.restoreAllMocks();
-    engineModes.setMode('slots', previous);
   });
   const { root, runtime } = createDispatchTree({
     type: 'object',
@@ -37,20 +33,26 @@ it('keeps the complete latent path when the root template reaches a literal star
     group: { '*': { x: 'star' }, plain: 'plain' },
     sibling: 'sibling',
   });
-  const serialize = vi.spyOn(capture, 'captureExitedRaw');
-  const store = vi.spyOn(latent, 'setLatentRaw');
+  const serialize = vi.spyOn(capture, 'captureLiteralStarExit');
+  const store = vi.spyOn(latent, 'setLiteralStarRaw');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(root.inactiveSlots).toBeUndefined();
   expect(runtime.blueprint.root.containsLiteralStar).toBe(true);
-  expect(runtime.latentRaw.size).toBeGreaterThan(0);
+  expect(runtime.literalStarRaw?.size ?? 0).toBeGreaterThan(0);
   expect(
-    [...runtime.latentRaw.keys()].map((key) => JSON.parse(key)[0]),
+    [...(runtime.literalStarRaw?.keys() ?? [])].map(
+      (key) => JSON.parse(key)[0],
+    ),
   ).toContain('/group/*/x');
   expect(
-    [...runtime.latentRaw.keys()].map((key) => JSON.parse(key)[0]),
+    [...(runtime.literalStarRaw?.keys() ?? [])].map(
+      (key) => JSON.parse(key)[0],
+    ),
   ).toContain('/group/plain');
   expect(
-    [...runtime.latentRaw.keys()].map((key) => JSON.parse(key)[0]),
+    [...(runtime.literalStarRaw?.keys() ?? [])].map(
+      (key) => JSON.parse(key)[0],
+    ),
   ).toContain('/sibling');
   expect(serialize).toHaveBeenCalled();
   expect(store).toHaveBeenCalled();
@@ -58,10 +60,7 @@ it('keeps the complete latent path when the root template reaches a literal star
 
 it.each(['off', 'on', 'verify'] as const)(
   '%s loads and replaces initially inactive mixed sources before ordinary parent entry',
-  (mode) => {
-    const previous = engineModes.slots;
-    engineModes.setMode('slots', mode);
-    onTestFinished(() => engineModes.setMode('slots', previous));
+  (_mode) => {
     const { root } = createDispatchTree({
       type: 'object',
       properties: {
@@ -108,11 +107,8 @@ it.each(['off', 'on', 'verify'] as const)(
 );
 
 it('keeps star-like and escaped-slash names on the ordinary zero-capture path', () => {
-  const previous = engineModes.slots;
-  engineModes.setMode('slots', 'on');
   onTestFinished(() => {
     vi.restoreAllMocks();
-    engineModes.setMode('slots', previous);
   });
   const { root, runtime } = createDispatchTree({
     type: 'object',
@@ -127,11 +123,11 @@ it('keeps star-like and escaped-slash names on the ordinary zero-capture path', 
     '*suffix': 'prefix',
     'slash/*': 'escaped',
   });
-  const serialize = vi.spyOn(capture, 'captureExitedRaw');
-  const store = vi.spyOn(latent, 'setLatentRaw');
+  const serialize = vi.spyOn(capture, 'captureLiteralStarExit');
+  const store = vi.spyOn(latent, 'setLiteralStarRaw');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(root.inactiveSlots?.size).toBe(2);
-  expect(runtime.latentRaw.size).toBe(0);
+  expect(runtime.literalStarRaw?.size ?? 0).toBe(0);
   expect(serialize).not.toHaveBeenCalled();
   expect(store).not.toHaveBeenCalled();
 });

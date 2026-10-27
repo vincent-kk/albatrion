@@ -11,6 +11,7 @@ import { createSettlementContext } from '../utils/settlement/createSettlementCon
 import { hasWrongKindBranchAncestor } from '../utils/transition/hasWrongKindBranchAncestor';
 import { transitionSettlement } from '../utils/transition/transitionSettlement';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
 
 // filid:contract settle-array-writes
 describe('array settlement writes', () => {
@@ -90,7 +91,7 @@ describe('array settlement writes', () => {
   });
 
   it('NODE-044 and WRITE-007 Merge whole-replaces an array and perishes its tail', () => {
-    const { root, runtime } = makeFieldNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: { type: 'string' },
     });
@@ -102,8 +103,7 @@ describe('array settlement writes', () => {
     expect(root.children).toEqual([first]);
     expect(Reflect.get(perished, 'detached')).toBe(true);
     expect(perished.value).toBe('b');
-    const latent: Map<string, unknown> = Reflect.get(runtime, 'latentRaw');
-    expect(latent.has(JSON.stringify(['/1', 'string']))).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/1', 'string')).toBe(false);
   });
 
   it('NODE-052 and 25C-11 retain tuple extras and template schemaType reference', () => {

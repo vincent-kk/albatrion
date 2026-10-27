@@ -1,16 +1,12 @@
-import { expect, it, onTestFinished } from 'vitest';
+import { expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
-import { engineModes } from '@/schema-form/core/engine';
 
 import { SetValueOption } from '../type';
 
-for (const mode of ['off', 'on', 'verify'] as const) {
+{
   for (const keep of [true, false])
-    it(`${mode} applies an ordinary parent's clearing policy to an inactive star with keep=${keep}`, () => {
-      const previous = engineModes.slots;
-      engineModes.setMode('slots', mode);
-      onTestFinished(() => engineModes.setMode('slots', previous));
+    it(`applies an ordinary parent's clearing policy to an inactive star with keep=${keep}`, () => {
       const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
@@ -46,10 +42,7 @@ for (const mode of ['off', 'on', 'verify'] as const) {
       expect(root.find('/group')!.value).toEqual({});
     });
 
-  it(`${mode} resets mixed sources while retaining an unread detached parent's wildcard entry`, () => {
-    const previous = engineModes.slots;
-    engineModes.setMode('slots', mode);
-    onTestFinished(() => engineModes.setMode('slots', previous));
+  it(`resets mixed sources while retaining an unread detached parent's wildcard entry`, () => {
     const snapshot = {
       open: true,
       xOpen: true,
@@ -95,10 +88,7 @@ for (const mode of ['off', 'on', 'verify'] as const) {
     expect(group.inactiveValues[0]).toBe(entry);
   });
 
-  it(`${mode} preserves caller Source B after an automatic wildcard fill is withdrawn`, () => {
-    const previous = engineModes.slots;
-    engineModes.setMode('slots', mode);
-    onTestFinished(() => engineModes.setMode('slots', previous));
+  it(`preserves caller Source B after an automatic wildcard fill is withdrawn`, () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {

@@ -3,9 +3,9 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
-import { getLatentOrder } from '../latentStore/getLatentOrder';
+import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
+import { getSlotOrder } from './getSlotOrder';
 import { hasAdditionalInactiveSources } from './hasAdditionalInactiveSources';
 import { markRestoredSlotRaw } from './markRestoredSlotRaw';
 
@@ -29,7 +29,7 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
   if (!entering) {
     const address = {
       path: node.path,
-      order: getLatentOrder(host, entry.name, entry.node),
+      order: getSlotOrder(host, entry.name, entry.node),
     };
     DetachedWriteAddress.transfer(source, address, node.runtime);
     DetachedWriteAddress.retain(node, address, node.runtime);

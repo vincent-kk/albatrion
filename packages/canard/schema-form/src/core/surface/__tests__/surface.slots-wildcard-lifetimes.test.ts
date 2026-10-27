@@ -1,16 +1,12 @@
-import { expect, it, onTestFinished } from 'vitest';
+import { expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
-import { engineModes } from '@/schema-form/core/engine';
 
 import { SetValueOption } from '../type';
 
-for (const mode of ['off', 'on', 'verify'] as const) {
+{
   for (const readHidden of [true, false])
-    it(`${mode} renews a wildcard entry after a ${readHidden ? 'read' : 'unread'} hidden commit`, () => {
-      const previous = engineModes.slots;
-      engineModes.setMode('slots', mode);
-      onTestFinished(() => engineModes.setMode('slots', previous));
+    it(`renews a wildcard entry after a ${readHidden ? 'read' : 'unread'} hidden commit`, () => {
       const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
@@ -56,10 +52,7 @@ for (const mode of ['off', 'on', 'verify'] as const) {
       expect(root.inactiveValues).toBe(root.inactiveValues);
     });
 
-  it(`${mode} preserves an unread detached wildcard host's ancestor-published entry after an overlay changes`, () => {
-    const previous = engineModes.slots;
-    engineModes.setMode('slots', mode);
-    onTestFinished(() => engineModes.setMode('slots', previous));
+  it(`preserves an unread detached wildcard host's ancestor-published entry after an overlay changes`, () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -105,10 +98,7 @@ for (const mode of ['off', 'on', 'verify'] as const) {
     expect(Object.isFrozen(host.inactiveValues[0])).toBe(true);
   });
 
-  it(`${mode} preserves ancestor-star entry identity in an unread detached descendant`, () => {
-    const previous = engineModes.slots;
-    engineModes.setMode('slots', mode);
-    onTestFinished(() => engineModes.setMode('slots', previous));
+  it(`preserves ancestor-star entry identity in an unread detached descendant`, () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -150,10 +140,7 @@ for (const mode of ['off', 'on', 'verify'] as const) {
     expect(host.inactiveValues[0]).toBe(entry);
   });
 
-  it(`${mode} keeps an unread detached host's entry when live wildcard visibility starts a new lifetime`, () => {
-    const previous = engineModes.slots;
-    engineModes.setMode('slots', mode);
-    onTestFinished(() => engineModes.setMode('slots', previous));
+  it(`keeps an unread detached host's entry when live wildcard visibility starts a new lifetime`, () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {

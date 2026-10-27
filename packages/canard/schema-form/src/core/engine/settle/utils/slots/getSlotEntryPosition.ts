@@ -1,5 +1,5 @@
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
-import { getBlueprintChildIndex } from '../latentStore/getBlueprintChildIndex';
+import { getSlotChildIndex } from './getSlotChildIndex';
 
 /**
  * Read one retained binding's local document position without serializing its path.
@@ -11,7 +11,7 @@ export const getSlotEntryPosition = (
   template: BlueprintNode,
   entry: BlueprintChildEntry,
 ): number => {
-  const index = getBlueprintChildIndex(template, entry.name, entry.node);
+  const index = getSlotChildIndex(template, entry.name, entry.node);
   return index >= 0
     ? index
     : template.kind === 'array'

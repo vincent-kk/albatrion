@@ -3,8 +3,11 @@ import type { PartialBy } from '@aileron/declare';
 import { SLASH_REGEX, TILDE_REGEX } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../errors';
-import { BEHAVIORS, engineModes } from '../../engine';
-import { collectBlueprintWarnings, mergeEffectiveSchema } from '../../engine';
+import {
+  BEHAVIORS,
+  collectBlueprintWarnings,
+  mergeEffectiveSchema,
+} from '../../engine';
 import type {
   Blueprint,
   BlueprintChildEntry,
@@ -45,9 +48,9 @@ type RuntimeArrayVerbs = Pick<
 
 /** Runtime fields the factory fills when the seed omits them: path-indexed stores and an empty context. */
 type SeededRuntimeFields =
-  | 'latentRaw'
+  | 'literalStarRaw'
   | 'misfitPaths'
-  | 'inactiveValuesMemo'
+  | 'literalStarValuesMemo'
   | 'context';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
@@ -132,11 +135,15 @@ export function fieldNodeFactory(
 ): RuntimeNodeSurface {
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
-    slots: runtimeSeed.slots ?? engineModes.slots,
-    latentRaw: runtimeSeed.latentRaw ?? new PathKeyedMap('pair'),
+    ...(analysis.root.containsLiteralStar === true
+      ? {
+          literalStarRaw:
+            runtimeSeed.literalStarRaw ?? new PathKeyedMap('pair'),
+          literalStarValuesMemo:
+            runtimeSeed.literalStarValuesMemo ?? new PathKeyedMap('path'),
+        }
+      : {}),
     misfitPaths: runtimeSeed.misfitPaths ?? new PathKeyedSet(),
-    inactiveValuesMemo:
-      runtimeSeed.inactiveValuesMemo ?? new PathKeyedMap('path'),
     globalStateCounts: new Map(),
     globalState: {},
     validator,

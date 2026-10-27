@@ -9,12 +9,12 @@ import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBluepri
 import type { SettlementContext } from '../../types/settlement';
 import { captureProjectionBaseline } from '../dependencies/captureProjectionBaseline';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
+import { indexEnteredLiteralStarKey } from '../literalStarStore/indexEnteredLiteralStarKey';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../slots/createFromSlotOverlay';
 import { enterSlotClone } from '../slots/enterSlotClone';
-import { isSlotEligible } from '../slots/isSlotEligible';
+import { getSlotSource } from '../slots/getSlotSource';
 import { isSameChildList } from '../structure/isSameChildList';
 import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
@@ -106,14 +106,10 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
           ]);
     const pending =
       key === undefined ? undefined : context.pendingExits.get(key);
-    const slotSource =
-      !priorChild && !pending && isSlotEligible(node.runtime)
-        ? node.inactiveSlots?.get(entry)
-        : undefined;
-    const slotOverlay =
-      !priorChild && !pending && isSlotEligible(node.runtime)
-        ? node.inactiveSlotOverlays?.get(entry)
-        : undefined;
+    const retained =
+      !priorChild && !pending ? getSlotSource(node, entry) : undefined;
+    const slotSource = retained?.source;
+    const slotOverlay = retained?.overlay;
     const child =
       priorChild ??
       pending ??
@@ -129,12 +125,12 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     }
     if (pending && child === pending) {
       context.revived.add(child);
-      indexEnteredLatentKey(context, child);
+      indexEnteredLiteralStarKey(context, child);
     }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.entered.add(child);
-      indexEnteredLatentKey(context, child);
+      indexEnteredLiteralStarKey(context, child);
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
       else if (slotSource || slotOverlay)
         enterSlotClone(node, child, entry.name, context);

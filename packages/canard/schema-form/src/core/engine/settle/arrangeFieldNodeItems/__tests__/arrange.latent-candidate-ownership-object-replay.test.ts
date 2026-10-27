@@ -22,7 +22,7 @@ interface ReplayCase {
   operation: 'insert' | 'remove';
   /** Whether the destination declares v as a number or receives it as an extra. */
   destination: 'declared' | 'extra';
-  /** Whether the source root retains its own HostLatent through an extra key. */
+  /** Whether the source root retains its own LiteralStarHostSource through an extra key. */
   extras: boolean;
 }
 

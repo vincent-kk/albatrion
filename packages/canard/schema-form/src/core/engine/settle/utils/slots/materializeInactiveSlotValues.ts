@@ -1,9 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
 import type { InactiveSlotCandidate } from '../../types/slots';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
-import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { collectHostSlotValues } from './collectHostSlotValues';
 import { compareSlotOrder } from './compareSlotOrder';
+import { getSlotOrder } from './getSlotOrder';
 
 /**
  * Materialize one host's frozen inactive list once per committed change.
@@ -18,15 +18,9 @@ export const materializeInactiveSlotValues = <
   if (host.inactiveValuesCache && !host.inactiveValuesDirty)
     return host.inactiveValuesCache;
   const values: InactiveSlotCandidate[] = [];
-  if (!host.detached)
-    for (const retained of host.runtime.inactiveValueEntries?.values() ?? []) {
-      const path = retained.entry.path;
-      if (path !== host.path && !path.startsWith(host.path + '/')) continue;
-      values.push({ order: retained.order, entry: retained.entry });
-    }
   collectHostSlotValues(
     host,
-    getLatentOrder(host.parent, host.name, host.blueprintNode),
+    getSlotOrder(host.parent, host.name, host.blueprintNode),
     values,
   );
   values.sort(

@@ -9,13 +9,12 @@ import { WriteOption } from '../../types/value';
 import { computeNode } from '../utils/compute/computeNode';
 import { registerRecalculation } from '../utils/dependencies/registerRecalculation';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
-import { readRawTree } from '../utils/latent/readRawTree';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { finishSettlement } from '../utils/settlement/finishSettlement';
+import { readSourceTree } from '../utils/slots/readSourceTree';
 import { readArrayLength } from '../utils/structure/readArrayLength';
-import { prepareSlotShadow } from '../utils/verify/prepareSlotShadow';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { applyArraySlots } from './utils/arraySlots/applyArraySlots';
 import { applyArraySplice } from './utils/arraySlots/applyArraySplice';
@@ -52,7 +51,7 @@ const resultOf = <Self extends FieldNodeRecord<Self>>(
  * @param operation - The requested public structural operation
  * @returns Length, removed or updated value, or void as declared by the plan
  */
-const arrangeFieldNodeItemsBody = <Self extends FieldNodeRecord<Self>>(
+export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
 ): unknown => {
@@ -92,7 +91,7 @@ const arrangeFieldNodeItemsBody = <Self extends FieldNodeRecord<Self>>(
     );
     let oldRaw: unknown;
     try {
-      oldRaw = readRawTree(node, context);
+      oldRaw = readSourceTree(node, context);
     } finally {
       releaseSettlementScratch(scratch);
     }
@@ -122,7 +121,7 @@ const arrangeFieldNodeItemsBody = <Self extends FieldNodeRecord<Self>>(
           WriteOption.Overwrite,
           readScratch,
         );
-        const current = readRawTree(node, readContext);
+        const current = readSourceTree(node, readContext);
         return isArray(current) ? current[plan.index] : undefined;
       } finally {
         releaseSettlementScratch(readScratch);
@@ -174,26 +173,5 @@ const arrangeFieldNodeItemsBody = <Self extends FieldNodeRecord<Self>>(
     return resultOf(node, plan, removed);
   } finally {
     releaseSettlementScratch(scratch);
-  }
-};
-
-/** Replay resolved inputs only in verification mode, preserving the ordinary entry. */
-export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
-  node: Self,
-  operation: ArrayOperation,
-): unknown => {
-  if (node.runtime.slots !== 'verify')
-    return arrangeFieldNodeItemsBody(node, operation);
-  const complete = prepareSlotShadow(node, (shadow) =>
-    arrangeFieldNodeItems(shadow, operation),
-  );
-  let failure: unknown;
-  try {
-    return arrangeFieldNodeItemsBody(node, operation);
-  } catch (error) {
-    failure = error;
-    throw error;
-  } finally {
-    complete?.(failure);
   }
 };

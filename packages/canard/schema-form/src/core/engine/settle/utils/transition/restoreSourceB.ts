@@ -2,7 +2,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
-import { setLatentRaw } from '../latentStore/setLatentRaw';
+import { setLiteralStarRaw } from '../literalStarStore/setLiteralStarRaw';
 import { restoreSlotSources } from '../slots/restoreSlotSources';
 import { restoreArrayStructure } from './restoreArrayStructure';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
@@ -30,8 +30,8 @@ export const restoreSourceB = <Self extends FieldNodeRecord<Self>>(
   }
   restoreArrayStructure(context);
   restoreSlotSources(context);
-  for (const [key, previous] of context.latentAutomaticLog)
-    setLatentRaw(
+  for (const [key, previous] of context.literalStarAutomaticLog ?? [])
+    setLiteralStarRaw(
       context.root.runtime,
       undefined,
       key,

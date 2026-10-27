@@ -6,6 +6,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 /** Live tree root created by the shared settle fixture. */
 type TestRoot = ReturnType<typeof createTestTree>['root'];
@@ -55,7 +56,7 @@ const stateKeys = (root: TestRoot, ...path: number[]) => {
  * @returns The kept raw value, or `undefined` when it was cleared
  */
 const latentItem = (root: TestRoot, index: number) =>
-  root.runtime.latentRaw.get(JSON.stringify(['/list/' + index, 'string']));
+  readRetainedSlotRaw(root, '/list/' + index, 'string');
 
 /**
  * Turn `/flag` off with an input write.

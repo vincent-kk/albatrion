@@ -12,21 +12,13 @@ import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
 it.each([
-  ['on', 'insert', 'string'],
-  ['off', 'insert', 'string'],
-  ['verify', 'insert', 'string'],
-  ['on', 'remove', 'string'],
-  ['off', 'remove', 'string'],
-  ['verify', 'remove', 'string'],
-  ['on', 'insert', 'number'],
-  ['off', 'insert', 'number'],
-  ['verify', 'insert', 'number'],
-  ['on', 'remove', 'number'],
-  ['off', 'remove', 'number'],
-  ['verify', 'remove', 'number'],
+  ['insert', 'string'],
+  ['remove', 'string'],
+  ['insert', 'number'],
+  ['remove', 'number'],
 ] as const)(
-  '%s moves depth-zero %s root candidates from %s',
-  (mode, operation, live) => {
+  'moves depth-zero %s root candidates from %s',
+  (operation, live) => {
     const current: BlueprintSchema = {
       type: live,
       default: live === 'string' ? 'held' : 37,
@@ -36,7 +28,7 @@ it.each([
     };
     const positions =
       operation === 'insert' ? [current, other] : [other, current];
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         a: { type: 'boolean' },
@@ -53,7 +45,7 @@ it.each([
         },
       },
     });
-    runtime.slots = mode;
+
     const stored = live === 'string' ? 37 : 'held';
     const liveValue = live === 'string' ? 'held' : 37;
     dispatchMount(root, {

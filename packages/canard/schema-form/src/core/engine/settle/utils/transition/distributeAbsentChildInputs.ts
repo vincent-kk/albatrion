@@ -4,8 +4,8 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { isWithinReplacePaths } from '../input/isWithinReplacePaths';
-import { distributeLatentValue } from '../latent/distributeLatentValue';
-import { distributeMovedLatentInput } from '../latent/distributeMovedLatentInput';
+import { distributeLiteralStarValue } from '../literalStar/distributeLiteralStarValue';
+import { distributeMovedSource } from '../slots/distributeMovedSource';
 
 /**
  * Store, as latent raw, the declared children of a departing object host that this
@@ -39,7 +39,7 @@ export const distributeAbsentChildInputs = <Self extends FieldNodeRecord<Self>>(
     )
       continue;
     if (distribution.preserveLatent) {
-      distributeMovedLatentInput(
+      distributeMovedSource(
         context,
         path,
         entry.node,
@@ -48,7 +48,7 @@ export const distributeAbsentChildInputs = <Self extends FieldNodeRecord<Self>>(
       );
       continue;
     }
-    distributeLatentValue(
+    distributeLiteralStarValue(
       node.runtime,
       context,
       path,

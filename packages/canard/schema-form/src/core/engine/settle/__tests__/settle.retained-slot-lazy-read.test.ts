@@ -1,18 +1,11 @@
-import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { afterEach } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
-import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchMount, dispatchSetValue } from '../../write';
-import * as memo from '../utils/commit/updateInactiveValuesMemo';
 import * as reads from '../utils/detached/readFieldNodeInactiveValues';
+import * as memo from '../utils/literalStar/updateLiteralStarValues';
 import { getDispatchNode } from './fixtures/getDispatchNode';
-
-const previous = engineModes.slots;
-beforeEach(() => engineModes.setMode('slots', 'on'));
-afterEach(() => {
-  vi.restoreAllMocks();
-  engineModes.setMode('slots', previous);
-});
 
 it('commits a slot exit without rebuilding inactive lists or capturing their reads', () => {
   const { root } = createDispatchTree({
@@ -23,7 +16,7 @@ it('commits a slot exit without rebuilding inactive lists or capturing their rea
     },
   });
   dispatchMount(root, { open: true, value: 'held' });
-  const rebuild = vi.spyOn(memo, 'updateInactiveValuesMemo');
+  const rebuild = vi.spyOn(memo, 'updateLiteralStarValues');
   const read = vi.spyOn(reads, 'readFieldNodeInactiveValues');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(rebuild).not.toHaveBeenCalled();
@@ -33,7 +26,7 @@ it('commits a slot exit without rebuilding inactive lists or capturing their rea
   ]);
 });
 
-it('publishes detached overlays only at a later commit while retaining old arrays', () => {
+it('publishes detached overlays only at the next live commit', () => {
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: {
@@ -57,3 +50,5 @@ it('publishes detached overlays only at a later commit while retaining old array
   expect(reads.readFieldNodeInactiveValues(root)).not.toBe(published);
   expect(published).toEqual([{ path: '/value', value: 'held' }]);
 });
+
+afterEach(() => vi.restoreAllMocks());

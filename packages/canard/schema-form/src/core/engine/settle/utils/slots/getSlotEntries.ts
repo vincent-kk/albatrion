@@ -1,8 +1,8 @@
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
-import { getBlueprintChildIndex } from '../latentStore/getBlueprintChildIndex';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
+import { getSlotChildIndex } from './getSlotChildIndex';
 
 /**
  * Enumerate only materialized candidates, preserving blueprint document order.
@@ -43,8 +43,8 @@ export const getSlotEntries = <Self extends FieldNodeRecord<Self>>(
         return candidates.indexOf(left) - candidates.indexOf(right);
       }
       return (
-        getBlueprintChildIndex(template, left.name, left.node) -
-        getBlueprintChildIndex(template, right.name, right.node)
+        getSlotChildIndex(template, left.name, left.node) -
+        getSlotChildIndex(template, right.name, right.node)
       );
     });
   return ordered;

@@ -6,7 +6,7 @@ import { markSlotChange } from './markSlotChange';
 import { rekeySlotWriteAddresses } from './rekeySlotWriteAddresses';
 
 /**
- * Move same-template inactive item bindings in two phases without path collisions.
+ * Move retained item bindings, including foreign declarations, in two phases without path collisions.
  * @param host - Array whose live items have not yet published their new structure
  * @param moves - Source-position destinations, absent for destroyed items
  * @param context - Publication and rollback work for the structural operation
@@ -38,9 +38,9 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
     const target =
       name === undefined
         ? undefined
-        : getItemEntries(host.blueprintNode, Number(name)).find(
+        : (getItemEntries(host.blueprintNode, Number(name)).find(
             (candidate) => candidate.node === entry.node,
-          );
+          ) ?? { ...entry, name });
     const source = host.inactiveSlots?.get(entry);
     const overlay = host.inactiveSlotOverlays?.get(entry);
     markSlotChange(host, entry, undefined, context);

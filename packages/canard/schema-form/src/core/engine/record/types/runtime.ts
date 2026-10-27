@@ -49,7 +49,7 @@ interface FieldNodeDiagnostics {
 }
 
 /** Classification, document position, and retained exit decisions of a latent occurrence. */
-interface LatentRawMetadata {
+interface LiteralStarSourceMetadata {
   readonly path: string;
   readonly blueprintNode: BlueprintNode;
   readonly order: readonly number[];
@@ -61,7 +61,7 @@ interface LatentRawMetadata {
 }
 
 /** Last published item and sort position for one enumerable latent occurrence. */
-interface InactiveValueEntryMemo {
+interface LiteralStarValueEntryMemo {
   readonly value: unknown;
   readonly order: readonly number[];
   readonly entry: Readonly<{ path: string; value: unknown }>;
@@ -72,17 +72,19 @@ interface FieldNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
   /** Per-kind latent leaf raw or a host's own frozen raw and undeclared values. */
-  latentRaw: PathKeyedMap<unknown>;
+  literalStarRaw?: PathKeyedMap<unknown>;
   /** Whether latent sources changed since the last inactive-value publication. */
-  latentRawDirty?: boolean;
-  /** Latent occurrence shape and document position, keyed like latentRaw. */
-  latentRawMetadata?: PathKeyedMap<LatentRawMetadata>;
+  literalStarRawDirty?: boolean;
+  /** Latent occurrence shape and document position, keyed like literalStarRaw. */
+  literalStarRawMetadata?: PathKeyedMap<LiteralStarSourceMetadata>;
   /** Current paths whose raw values miss their effective types. */
   misfitPaths: PathKeyedSet;
   /** Commit-scoped inactive value lists keyed by node path. */
-  inactiveValuesMemo: PathKeyedMap<readonly { path: string; value: unknown }[]>;
+  literalStarValuesMemo?: PathKeyedMap<
+    readonly { path: string; value: unknown }[]
+  >;
   /** Published latent item objects retained across unrelated commits. */
-  inactiveValueEntries?: PathKeyedMap<InactiveValueEntryMemo>;
+  literalStarValueEntries?: PathKeyedMap<LiteralStarValueEntryMemo>;
 }
 
 /** Last committed reads retained for one node reference after it exits. */
@@ -182,7 +184,7 @@ export interface SettlementScratch<Self> {
   /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;
   /** Previous values of latent entries touched in a transition. */
-  latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
+  literalStarAutomaticLog?: Map<string, { present: boolean; value: unknown }>;
   /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
   /** Dirty descendant paths and their direct child names by ancestor. */
@@ -207,17 +209,8 @@ export interface SettlementScratch<Self> {
 export interface FieldNodeRuntime<Self>
   extends FieldNodeRootRuntimeState,
     TreeMemoStores<BlueprintChildEntry, BlueprintGate> {
-  /** Source representation fixed by the internal mode before tree creation. */
-  slots?: 'on' | 'off' | 'verify';
   /** Hosts whose unpublished slot changes must become visible at a commit. */
   slotDirtyHosts?: Set<Self>;
-  /** Verification-only accounting; ordinary on/off trees allocate none. */
-  slotVerification?: {
-    /** Commits whose slot and latent public results were compared. */
-    commits: number;
-    /** Public-result differences rejected by the slot oracle. */
-    differences: number;
-  };
   /** Last issued static whole-write generation; never reused within this tree. */
   writeEpoch?: number;
   /** Number of current-shape nodes with a truthy value for each state key. */

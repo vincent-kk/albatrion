@@ -33,10 +33,10 @@ export const getSettlementScratch = <Self>(
           arrayCounts: new Map<Self, number>(),
           pathChanges: [],
           filledNodes: new Set<Self>(),
-          latentAutomaticLog: new Map<
-            string,
-            { present: boolean; value: unknown }
-          >(),
+          literalStarAutomaticLog:
+            runtime.blueprint.root.containsLiteralStar === true
+              ? new Map<string, { present: boolean; value: unknown }>()
+              : undefined,
           dirtyPaths: new DirtyPathSet(dirtyChildrenByParent),
           dirtyChildrenByParent,
           dependencyOwnerPaths: new Set<string>(),

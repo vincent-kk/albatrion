@@ -1,6 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import { dispatchInsert, dispatchMount, dispatchRemove } from '../../../write';
 import * as rekeying from '../utils/rekey/rekeyArrayRuntimePaths';
@@ -11,7 +10,6 @@ it.each(['insert', 'remove'] as const)(
   '[control] W4 single-candidate tuple %s registers no recreated-source destination',
   (operation) => {
     // Shipping-path destination registration counts exclude independent replay.
-    pinSlotShipping();
     const { root } = createDispatchTree({
       type: 'array',
       prefixItems: [{ type: 'string' }, { type: 'number' }, { type: 'string' }],

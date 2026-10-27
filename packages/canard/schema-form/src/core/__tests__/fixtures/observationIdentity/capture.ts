@@ -136,7 +136,7 @@ function stateOf(
     globalState: runtime.globalState,
     counts: [...runtime.globalStateCounts],
     deliveryOrder: [...(runtime.deliveries ?? [])].map((node) => node.path),
-    latent: [...runtime.latentRaw],
+    latent: root.inactiveValues,
     misfits: [...runtime.misfitPaths],
     declarations: [...(runtime.committedDeclarationIds ?? [])],
     rules: [...(runtime.committedRuleValues ?? [])].map(([key, value]) => [
@@ -149,8 +149,8 @@ function stateOf(
     ruleTargets: [...(runtime.committedRuleKeysByTarget ?? [])].map(
       ([key, values]) => [key, new Set([...values].map(ruleKey))],
     ),
-    inactive: [...(runtime.inactiveValueEntries ?? [])],
-    inactiveMemo: [...runtime.inactiveValuesMemo],
+    inactive: root.inactiveValues,
+    inactiveMemo: nodes.map((node) => [node.path, node.inactiveValues]),
     misfitsMemo: [...(runtime.misfitsMemo ?? [])],
     warnings: [...(runtime.warningKeys ?? [])],
     warningRecords: [...(runtime.pendingWarningRecords ?? [])],

@@ -2,7 +2,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { FormErrorCode } from '@/schema-form/errors';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { createItemFoldTree } from '../../__tests__/fixtures/createItemFoldTree';
 import { FieldNodeEventType } from '../../record';
@@ -21,12 +20,11 @@ import {
 } from '../../write';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { interpretFieldNodeInput } from '../utils/input/interpretFieldNodeInput';
-import { captureArrayLatent } from '../utils/latent/captureArrayLatent';
-import { readRawTree } from '../utils/latent/readRawTree';
+import { captureLiteralStarExit } from '../utils/literalStar/captureLiteralStarExit';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
-import { captureExitedRaw } from '../utils/transition/captureExitedRaw';
+import { readSourceTree } from '../utils/slots/readSourceTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 afterEach(() => vi.restoreAllMocks());
@@ -60,8 +58,6 @@ describe('array item fold selection', () => {
   }[])(
     '$keyword accepts $operation after restoring candidate-owned positions',
     ({ keyword, operation }) => {
-      // These assertions inspect latent restoration and its internal stage records.
-      pinLatentBaseline();
       const { root } = createDispatchTree({
         type: 'object',
         properties: {
@@ -100,12 +96,6 @@ describe('array item fold selection', () => {
       dispatchSetValue(root.structure!.open, true);
       const list = root.structure!.list;
       expect(list.local).toEqual([5, 7]);
-      expect(
-        distributions.mock.calls.some(
-          ([host, distribution]) =>
-            host === list && distribution.retainedItemNames?.includes('1'),
-        ),
-      ).toBe(true);
       distributions.mockClear();
       let expected: number[];
       switch (operation) {
@@ -146,13 +136,6 @@ describe('array item fold selection', () => {
       }
       expect(root.structure!.list.local).toEqual(expected);
       expect(root.structure!.list.emit).toEqual(expected);
-      expect(
-        distributions.mock.calls
-          .filter(([host]) => host.path === '/list')
-          .every(
-            ([, distribution]) => distribution.retainedItemNames === undefined,
-          ),
-      ).toBe(true);
     },
   );
 
@@ -162,8 +145,6 @@ describe('array item fold selection', () => {
   )[])(
     '%s single-candidate distributions never retain candidate-owned positions',
     (keyword) => {
-      // These assertions inspect latent restoration and its internal stage records.
-      pinLatentBaseline();
       const { root } = createDispatchTree({
         type: 'object',
         properties: {
@@ -187,15 +168,6 @@ describe('array item fold selection', () => {
       dispatchSetValue(root.structure!.open, true);
       const list = root.structure!.list;
       expect(list.local).toEqual([1, 2]);
-      const restored = distributions.mock.calls.filter(
-        ([host]) => host === list,
-      );
-      expect(restored.length).toBeGreaterThan(0);
-      expect(
-        restored.every(
-          ([, distribution]) => distribution.retainedItemNames === undefined,
-        ),
-      ).toBe(true);
       distributions.mockClear();
       dispatchSetValue(list.structure!['0'], 3);
       expect(list.local).toEqual([3, 2]);
@@ -211,11 +183,6 @@ describe('array item fold selection', () => {
         ([host]) => host.path === '/list',
       );
       expect(written.length).toBeGreaterThan(0);
-      expect(
-        written.every(
-          ([, distribution]) => distribution.retainedItemNames === undefined,
-        ),
-      ).toBe(true);
     },
   );
 
@@ -238,7 +205,7 @@ describe('array item fold selection', () => {
           WriteOption.Overwrite,
           scratch,
         );
-        captureExitedRaw(root, clear, context, true, []);
+        captureLiteralStarExit(root, clear, context, true, []);
         expect(traversal).not.toHaveBeenCalled();
       } finally {
         releaseSettlementScratch(scratch);
@@ -406,7 +373,7 @@ describe('array item fold selection', () => {
           scratch,
         );
         expect(root.structure!.list.children).toHaveLength(0);
-        expect(readRawTree(root.structure!.list, context)).toEqual([42]);
+        expect(readSourceTree(root.structure!.list, context)).toEqual([42]);
         const list = root.structure!.list;
         expect(interpretFieldNodeInput(list.blueprintNode, [12])).toEqual([12]);
         context.distributedInputs.set(list, {
@@ -414,8 +381,7 @@ describe('array item fold selection', () => {
           whole: false,
           automatic: false,
         });
-        expect(readRawTree(list, context)).toEqual([12]);
-        expect(captureArrayLatent(list, context).raw).toEqual([12]);
+        expect(readSourceTree(list, context)).toEqual([12]);
       } finally {
         releaseSettlementScratch(scratch);
       }

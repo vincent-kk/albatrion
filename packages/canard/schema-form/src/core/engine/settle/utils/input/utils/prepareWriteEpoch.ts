@@ -23,8 +23,8 @@ export const prepareWriteEpoch = <Self extends FieldNodeRecord<Self>>(
     context.replacePaths !== undefined ||
     runtime.batchDepth ||
     runtime.visitDepth ||
-    runtime.latentRaw.size ||
-    runtime.latentRawDirty ||
+    (runtime.literalStarRaw?.size ?? 0) ||
+    runtime.literalStarRawDirty ||
     context.root.inactiveSlots?.size ||
     context.root.inactiveSlotOverlays?.size ||
     context.root.inactiveSlotChildren?.size ||

@@ -33,8 +33,8 @@ export const admitsStaticArrayTail = <Self extends FieldNodeRecord<Self>>(
     runtime.batchDepth ||
     runtime.visitDepth ||
     !StaticFirstLoadCapability.has(runtime.blueprint) ||
-    runtime.latentRaw.size > 0 ||
-    runtime.latentRawDirty ||
+    (runtime.literalStarRaw?.size ?? 0) > 0 ||
+    runtime.literalStarRawDirty ||
     node.inactiveSlots?.size ||
     node.inactiveSlotOverlays?.size ||
     node.inactiveSlotChildren?.size ||

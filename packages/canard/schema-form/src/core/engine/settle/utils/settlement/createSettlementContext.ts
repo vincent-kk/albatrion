@@ -65,7 +65,7 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     pathChanges: scratch.pathChanges,
     filledNodes: scratch.filledNodes,
     inTransition: false,
-    latentAutomaticLog: scratch.latentAutomaticLog,
+    literalStarAutomaticLog: scratch.literalStarAutomaticLog,
     automatic: false,
     automaticChanged: false,
     dirtyPaths: scratch.dirtyPaths,

@@ -6,6 +6,7 @@ import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { markCommitDeliveries } from '../../utils/commit/markCommitDeliveries';
 import { getSettlementScratch } from '../../utils/scratch/getSettlementScratch';
 import { createSettlementContext } from '../../utils/settlement/createSettlementContext';
@@ -230,7 +231,10 @@ describe('static first load eligibility', () => {
       expect(root.runtime.commitNumber).toBeUndefined();
       expect(root.children).toEqual([]);
     }
-    root.runtime.latentRaw.set('["/value","string"]', 'latent');
+    (root.runtime.literalStarRaw ??= new PathKeyedMap('pair')).set(
+      '["/value","string"]',
+      'latent',
+    );
     expect(canLoadStaticFirstTree(root, undefined)).toBe(false);
   });
 });

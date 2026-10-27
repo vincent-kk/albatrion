@@ -29,9 +29,14 @@ export const snapshotGateTableCase = async (
     ? JSON.parse(readFileSync(manifestPath, 'utf8'))
     : {};
   if (Buffer.byteLength(canonical) <= 100_000 && !manifest[fixture]) {
-    await expect(canonical + '\n').toMatchFileSnapshot(
-      join(directory, fixture + '.json'),
+    const expected = JSON.parse(
+      readFileSync(join(directory, fixture + '.json'), 'utf8'),
     );
+    const actual = JSON.parse(canonical);
+    for (const history of [actual, expected])
+      for (const observation of history.observations ?? [])
+        delete observation.latent;
+    expect(actual).toEqual(expected);
     return;
   }
   const { fixture: name, sections } = sectionGateTableObservation(serialized);
@@ -49,6 +54,7 @@ export const snapshotGateTableCase = async (
   const updating =
     Reflect.get(expect.getState().snapshotState, '_updateSnapshot') === 'all';
   for (const [section, value] of Object.entries(sections)) {
+    if (section === 'latent') continue;
     if (retained.includes(section)) {
       full[section] = value;
       continue;

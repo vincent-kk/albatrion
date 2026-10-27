@@ -1,0 +1,24 @@
+import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
+
+/**
+ * Append an entered or revived occurrence only when its lazy index exists.
+ * @param context - Settlement whose latent-key index tracks occurrence additions
+ * @param node - Occurrence just added to the entered or revived set
+ * @returns Nothing; an existing index gains this occurrence under its current key
+ */
+export const indexEnteredLiteralStarKey = <Self extends FieldNodeRecord<Self>>(
+  context: SettlementContext<Self>,
+  node: Self,
+): void => {
+  const index = context.enteredLiteralStarKeys;
+  if (!index) return;
+  const key = JSON.stringify([
+    node.path,
+    getBlueprintNodeIdentity(node.blueprintNode),
+  ]);
+  const occurrences = index.get(key);
+  if (occurrences) occurrences.push(node);
+  else index.set(key, [node]);
+};

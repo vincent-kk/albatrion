@@ -13,7 +13,7 @@ import type {
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
 import { markWrite } from '../../../utils/input/markWrite';
-import { indexEnteredLatentKey } from '../../../utils/latentStore/indexEnteredLatentKey';
+import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
@@ -97,8 +97,8 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     prunePerishedPaths(host.runtime, new Set([removedItem.path]));
   }
   rekeyArrayRuntimePaths(host.runtime, host.path, moves, index);
-  context.latentDescendantKeys = undefined;
-  context.enteredLatentKeys = undefined;
+  context.literalStarDescendantKeys = undefined;
+  context.enteredLiteralStarKeys = undefined;
 
   for (
     let position = inserted ? index + 1 : index;
@@ -139,7 +139,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
   context.shapeDirtyPaths.add(host.path);
   if (inserted) {
     context.entered.add(inserted);
-    indexEnteredLatentKey(context, inserted);
+    indexEnteredLiteralStarKey(context, inserted);
     markWrite(inserted, value, context);
   }
   host.runtime.loadSnapshot = setLoadValue(

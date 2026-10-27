@@ -28,21 +28,23 @@ export const prunePerishedPaths = <Self>(
       indexFieldNodeWarning(runtime, key, parts[1], undefined, true);
   }
   // A store without entries has nothing beneath any path, so it is not queried per path.
-  if (stores.latent.size)
+  if (stores.latent?.size)
     for (const path of paths)
       for (const key of stores.latent.pathIndex.under(path)) {
         stores.latent.delete(key);
-        runtime.latentRawDirty = true;
+        runtime.literalStarRawDirty = true;
       }
   for (const store of [
     stores.metadata,
     stores.misfits,
     stores.inactiveMemo,
     stores.declarations,
-  ])
+  ]) {
+    if (!store) continue;
     if (store.size)
       for (const path of paths)
         for (const key of store.pathIndex.under(path)) store.delete(key);
+  }
   if (stores.rules.size)
     for (const path of paths)
       for (const key of stores.rules.pathIndex.under(path))

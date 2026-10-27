@@ -26,8 +26,10 @@ export const pruneArrayTailPaths = <Self>(
       stores.declarations,
       stores.misfits,
       stores.rules,
-    ])
+    ]) {
+      if (!store) continue;
       for (const path of store.pathIndex.tail(host, count)) removed.add(path);
+    }
     for (const key of runtime.warningKeysByPath?.get(host) ?? []) {
       const parts: unknown = JSON.parse(key);
       if (!isArray(parts) || typeof parts[1] !== 'string') continue;

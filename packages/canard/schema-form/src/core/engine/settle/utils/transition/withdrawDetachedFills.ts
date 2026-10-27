@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { setLatentRaw } from '../latentStore/setLatentRaw';
+import { setLiteralStarRaw } from '../literalStarStore/setLiteralStarRaw';
 import { restoreSlotSources } from '../slots/restoreSlotSources';
 import { restoreArrayStructure } from './restoreArrayStructure';
 
@@ -30,7 +30,7 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
       else context.distributedInputs.delete(entry.node);
       context.changedRaw.delete(entry.node.path);
     }
-    for (const [key, previous] of context.latentAutomaticLog) {
+    for (const [key, previous] of context.literalStarAutomaticLog ?? []) {
       const identity: unknown = JSON.parse(key);
       if (
         !isArray(identity) ||
@@ -38,7 +38,7 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
         (identity[0] !== node.path && !identity[0].startsWith(node.path + '/'))
       )
         continue;
-      setLatentRaw(
+      setLiteralStarRaw(
         context.root.runtime,
         undefined,
         key,

@@ -5,7 +5,6 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
@@ -13,6 +12,7 @@ import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
+import * as slotEntries from '../utils/slots/getSlotEntries';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 const schema = {
@@ -50,31 +50,15 @@ const gatedRows = (count: number) => {
   return { root, runtime: root.runtime };
 };
 
-/**
- * Count latent key visits made by one settlement operation.
- * @param latent - Store whose key iterator is the measured operation
- * @param action - Settlement operation to run while visits are counted
- * @returns Number of latent keys yielded during the operation
- */
-const countLatentKeyVisits = (
-  latent: Map<string, unknown>,
-  action: () => void,
-): number => {
-  const keys = latent.keys.bind(latent);
-  let visited = 0;
-  const spy = vi.spyOn(latent, 'keys').mockImplementation(function* () {
-    for (const key of keys()) {
-      visited++;
-      yield key;
-    }
-    return undefined;
-  });
+/** Count slot candidate queries performed by an operation without changing its sources. */
+const countSlotEntryQueries = (action: () => void): number => {
+  const spy = vi.spyOn(slotEntries, 'getSlotEntries');
   try {
     action();
+    return spy.mock.calls.length;
   } finally {
     spy.mockRestore();
   }
-  return visited;
 };
 
 // filid:contract settle-array-scaling
@@ -440,35 +424,18 @@ describe('44C-01 array settlement scaling', () => {
     }
   });
 
-  it('48C-01 SETTLE-017 visits latent entries linearly on mass exit', () => {
-    // These assertions inspect the latent-store baseline and its preparation work.
-    pinLatentBaseline();
+  it('48C-01 SETTLE-017 bounds slot entry queries on mass exit', () => {
     const count = 2000;
-    const { root, runtime } = gatedRows(count);
-    const keys = runtime.latentRaw.keys.bind(runtime.latentRaw);
-    let visited = 0;
-    const spy = vi
-      .spyOn(runtime.latentRaw, 'keys')
-      .mockImplementation(function* () {
-        for (const key of keys()) {
-          visited++;
-          yield key;
-        }
-        return undefined;
-      });
-    try {
-      root.find('/flag')!.setValue(false);
-      expect(visited).toBeLessThan(count * 12);
-    } finally {
-      spy.mockRestore();
-    }
+    const { root } = gatedRows(count);
+    const visits = countSlotEntryQueries(() =>
+      root.find('/flag')!.setValue(false),
+    );
+    expect(visits).toBeLessThan(count * 12);
   });
 
   it('48C-01 retains mass exit and re-entry values and inactive sources', () => {
-    // These assertions inspect the latent-store baseline and its preparation work.
-    pinLatentBaseline();
     for (const count of [1, 7, 13]) {
-      const { root, runtime } = gatedRows(count);
+      const { root } = gatedRows(count);
       const rows = Array.from({ length: count }, (_, index) => ({
         child: String(index),
       }));
@@ -483,21 +450,11 @@ describe('44C-01 array settlement scaling', () => {
           rows: flag ? rows : Array.from({ length: count }, () => ({})),
         });
         expect(root.inactiveValues).toEqual(flag ? [] : inactive);
-        expect([...runtime.latentRaw]).toEqual(
-          flag
-            ? []
-            : inactive.map(({ path, value }) => [
-                JSON.stringify([path, 'string']),
-                value,
-              ]),
-        );
       }
     }
   });
 
   it('48C-01 SETTLE-017 bounds latent key visits for exit, capture and absent writes', () => {
-    // These assertions inspect the latent-store baseline and its preparation work.
-    pinLatentBaseline();
     const count = 250;
     const tags = makeFieldNodeTree({
       type: 'object',
@@ -523,7 +480,7 @@ describe('44C-01 array settlement scaling', () => {
       tags: [String(index)],
     }));
     tags.setValue({ flag: true, rows: tagRows });
-    const tagVisits = countLatentKeyVisits(tags.runtime.latentRaw, () =>
+    const tagVisits = countSlotEntryQueries(() =>
       tags.find('/flag')!.setValue(false),
     );
     expect(tags.value).toEqual({
@@ -571,7 +528,7 @@ describe('44C-01 array settlement scaling', () => {
       list: [{ on: false, child: String(index) }],
     }));
     list.setValue({ flag: true, rows: listRows });
-    const listVisits = countLatentKeyVisits(list.runtime.latentRaw, () =>
+    const listVisits = countSlotEntryQueries(() =>
       list.find('/flag')!.setValue(false),
     );
     expect(list.value).toEqual({ flag: false, rows: listRows.map(() => ({})) });
@@ -619,7 +576,7 @@ describe('44C-01 array settlement scaling', () => {
       ]),
     );
     absent.setValue({ flag: false });
-    const absentVisits = countLatentKeyVisits(absent.runtime.latentRaw, () =>
+    const absentVisits = countSlotEntryQueries(() =>
       absent.setValue({ flag: false, ...absentRows }),
     );
     expect(absent.value).toEqual({ flag: false });

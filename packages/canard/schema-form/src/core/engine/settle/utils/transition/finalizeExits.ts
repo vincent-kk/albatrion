@@ -7,18 +7,18 @@ import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBluepri
 import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { getLatentOrder } from '../latentStore/getLatentOrder';
+import { captureLiteralStarDescendants } from '../literalStar/captureLiteralStarDescendants';
+import { captureLiteralStarExit } from '../literalStar/captureLiteralStarExit';
+import { clearLiteralStarExits } from '../literalStar/clearLiteralStarExits';
+import { writeLiteralStarRaw } from '../literalStar/writeLiteralStarRaw';
 import { updateOutput } from '../output/updateOutput';
 import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
+import { getSlotOrder } from '../slots/getSlotOrder';
 import { isSlotEligible } from '../slots/isSlotEligible';
 import { retainExitedSlot } from '../slots/retainExitedSlot';
-import { applyExitClearing } from './applyExitClearing';
-import { captureExitedRaw } from './captureExitedRaw';
-import { captureLatentDescendants } from './captureLatentDescendants';
 import { finalizePerished } from './finalizePerished';
 import { isRekeyedDestination } from './utils/isRekeyedDestination';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
-import { writeLatentRaw } from './writeLatentRaw';
 
 /**
  * Decide exits only against the settled final shape, including Source B.
@@ -104,7 +104,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
             !context.throwingGateExits?.has(node),
         );
   } else if (applyPolicy)
-    applyExitClearing(
+    clearLiteralStarExits(
       context,
       (node) =>
         inLoadScope(node) || context.throwingGateExits?.has(node) === true,
@@ -118,17 +118,17 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
         !applyPolicy ||
         context.throwingGateExits?.has(node))
     ) {
-      const ownsLatent = captureExitedRaw(
+      const ownsLatent = captureLiteralStarExit(
         node,
         false,
         context,
         false,
-        getLatentOrder(node.parent, node.name, node.blueprintNode),
+        getSlotOrder(node.parent, node.name, node.blueprintNode),
       );
       if (ownsLatent)
-        captureLatentDescendants(context, node, false, false, ownsLatent);
+        captureLiteralStarDescendants(context, node, false, false, ownsLatent);
     }
-  if (context.root.runtime.latentRaw.size > 0)
+  if ((context.root.runtime.literalStarRaw?.size ?? 0) > 0)
     for (const node of [...context.entered, ...context.revived]) {
       if (node.detached) continue;
       let live = true;
@@ -142,7 +142,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           break;
         }
       if (live)
-        writeLatentRaw(
+        writeLiteralStarRaw(
           context,
           JSON.stringify([
             node.path,

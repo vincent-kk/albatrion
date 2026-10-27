@@ -3,7 +3,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { dispatchClear, dispatchMount } from '@/schema-form/core/engine/write';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import * as gates from '../../utils/gates/getGateRegistry';
 import * as loadValues from '../../utils/loadValues/getLoadValue';
@@ -29,7 +28,7 @@ const measure = (count: number) => {
     WriteOption.Overwrite,
     { deferValidation: true },
   );
-  const index = Object.getPrototypeOf(root.runtime.latentRaw.pathIndex);
+  const index = Object.getPrototypeOf(root.runtime.misfitPaths.pathIndex);
   const spies = {
     under: vi.spyOn(index, 'under'),
     intersecting: vi.spyOn(index, 'intersecting'),
@@ -51,16 +50,15 @@ const measure = (count: number) => {
 // filid:contract settle-array-clear-cost
 describe('clear cleanup constants', () => {
   it('does not grow host-prefix path-store lookups, re-keying, item load reads or registry lookups with the item count', () => {
-    // This count contract measures the latent-store path-index cleanup implementation.
-    pinLatentBaseline();
+    // This count contract covers the shared path-index cleanup for array removal.
     const small = measure(1_000);
     const large = measure(8_000);
-    // The perish finalization's prune still asks the one store holding entries elsewhere in the tree once per removed item.
-    expect(large.under - small.under).toBe(7_000);
+    // Slot-free removals never consult the deleted source path index.
+    expect(large.under - small.under).toBe(0);
     expect({ ...large, under: 0 }).toEqual({ ...small, under: 0 });
     expect(small.rekeyArrayRuntimePaths).toBe(0);
     expect(small.clearArrayRuntimePaths).toBe(1);
-    expect(small.under - 1_000 + small.intersecting).toBeLessThan(50);
+    expect(small.under + small.intersecting).toBeLessThan(50);
     expect(small.getLoadValue).toBeLessThan(10);
     expect(small.getGateRegistry).toBeLessThan(10);
   });

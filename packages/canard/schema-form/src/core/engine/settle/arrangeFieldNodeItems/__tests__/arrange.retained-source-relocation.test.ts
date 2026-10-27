@@ -11,16 +11,9 @@ import {
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
-it.each([
-  ['on', 'insert'],
-  ['off', 'insert'],
-  ['verify', 'insert'],
-  ['on', 'remove'],
-  ['off', 'remove'],
-  ['verify', 'remove'],
-] as const)(
-  '%s preserves inactive tuple sources across %s and old-reference writes',
-  (mode, operation) => {
+it.each([['insert'], ['remove']] as const)(
+  'preserves inactive tuple sources across %s and old-reference writes',
+  (operation) => {
     const item: BlueprintSchema = {
       type: 'object',
       controls: { active: '../../show' },
@@ -35,7 +28,7 @@ it.each([
         },
       ],
     };
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         show: { type: 'boolean' },
@@ -43,7 +36,7 @@ it.each([
         list: { type: 'array', prefixItems: [item, item, item, item] },
       },
     });
-    runtime.slots = mode;
+
     dispatchMount(root, {
       show: true,
       numbers: true,
