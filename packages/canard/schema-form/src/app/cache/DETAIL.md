@@ -256,7 +256,7 @@ D09/D10은 현재 root 하나가 두 수명을 포함하므로 분리 항목으�
   - `core/engine/settle/utils/gates/gateWheelEvaluation.ts`
   - `core/engine/settle/utils/gates/getGateBudgetCap.ts`
   - `core/engine/settle/utils/input/staticSpec.ts`
-  - `core/engine/settle/utils/latentStore/DetachedWriteAddress.ts`
+  - `core/engine/settle/utils/detached/DetachedWriteAddress.ts`
   - `core/engine/utils/controls/getCommittedDeclarationKey.ts`
 - 추가 호출/수명 파일: `core/engine/record/types/runtime.ts`, `derive/evaluateDeriveRound/evaluateDeriveRound.ts`, `derive/utils/evaluate/evaluateResetInteraction.ts`, `settle/utils/commit/commitSettlement.ts`, `settle/utils/commit/commitExitPolicyValues.ts`, `settle/utils/controls/getControlLayers.ts`, `derive/utils/evaluate/getSelectedDeclarationIds.ts`, `settle/utils/compute/computeNode.ts`, `settle/utils/write/writeFieldNode.ts`, `settle/utils/transition/captureExitedRaw.ts`, `settle/utils/latentStore/setLatentRaw.ts`, `settle/utils/commit/snapshotExitedPolicies.ts`, `settle/arrangeFieldNodeItems/utils/rekey/rekeyLatentMetadata.ts`, `rekeyArrayRuntimePaths.ts`와 reset/폐기 연결입니다. 엔진 상대 경로는 `core/engine/` 기준입니다.
 - 모드 직접 소비 파일(시험/벤치 제외)도 import/호출부를 이전합니다:
