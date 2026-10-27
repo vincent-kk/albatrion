@@ -65,7 +65,7 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
         : materialized;
     }
   }
-  if (value !== undefined && !live)
+  if (value !== undefined && !live && !overlay?.packedArrayInput)
     values.push({
       order,
       entry: readSlotValueEntry(source, overlay, path, value, composed),

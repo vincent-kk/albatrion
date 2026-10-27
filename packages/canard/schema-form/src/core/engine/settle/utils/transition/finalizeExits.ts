@@ -9,6 +9,7 @@ import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldN
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { updateOutput } from '../output/updateOutput';
+import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
 import { retainExitedSlot } from '../slots/retainExitedSlot';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
@@ -126,7 +127,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       if (ownsLatent)
         captureLatentDescendants(context, node, false, false, ownsLatent);
     }
-  if (!retainedSlots && context.root.runtime.latentRaw.size > 0)
+  if (context.root.runtime.latentRaw.size > 0)
     for (const node of [...context.entered, ...context.revived]) {
       if (node.detached) continue;
       let live = true;
@@ -151,6 +152,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
         );
     }
   const affectedAncestors = new Set<Self>();
+  if (retainedSlots) finalizeRestoredSlotRaw(context);
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.detached) affectedAncestors.add(ancestor);

@@ -1,4 +1,9 @@
+import { escapeSegment } from '@winglet/json/pointer';
+
 import type { FieldNodeRecord } from '../../../record';
+import { expireOccupiedSlotMemos } from './expireOccupiedSlotMemos';
+import { preserveConvertedSlotMemos } from './preserveConvertedSlotMemos';
+import { preserveSlotValueMemos } from './preserveSlotValueMemos';
 import { updateSlotChildIndex } from './updateSlotChildIndex';
 
 /**
@@ -14,9 +19,34 @@ export const commitSlotChanges = <Self extends FieldNodeRecord<Self>>(
   const visited = new Set<Self>();
   for (const host of hosts) {
     if (!host.detached) {
-      for (const entry of host.inactiveSlotBaselines?.keys() ?? [])
+      for (const [entry, previous] of host.inactiveSlotBaselines ?? []) {
+        preserveSlotValueMemos(
+          previous.source,
+          previous.overlay,
+          host.inactiveSlots?.get(entry),
+          host.inactiveSlotOverlays?.get(entry),
+        );
         updateSlotChildIndex(host, entry.name);
+      }
       host.inactiveSlotBaselines?.clear();
+      const bindings = new Set(host.inactiveSlots?.keys());
+      for (const entry of host.inactiveSlotOverlays?.keys() ?? [])
+        bindings.add(entry);
+      for (const entry of bindings) {
+        if (host.runtime.inactiveValueEntries?.size)
+          preserveConvertedSlotMemos(
+            entry.node,
+            host.inactiveSlots?.get(entry),
+            host.inactiveSlotOverlays?.get(entry),
+            host.path + '/' + escapeSegment(entry.name),
+            host.runtime,
+          );
+        expireOccupiedSlotMemos(
+          host.inactiveSlots?.get(entry),
+          host.inactiveSlotOverlays?.get(entry),
+          host.structure?.[entry.name],
+        );
+      }
     }
     for (let current: Self | null = host; current; current = current.parent) {
       const parent = current.parent;

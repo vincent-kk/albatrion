@@ -20,6 +20,7 @@ import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
 import { rekeyArraySlotBindings } from '../../../utils/slots/rekeyArraySlotBindings';
 import { rekeySlotWriteAddresses } from '../../../utils/slots/rekeySlotWriteAddresses';
+import { serializeArraySlotSources } from '../../../utils/slots/serializeArraySlotSources';
 import { captureExitedRaw } from '../../../utils/transition/captureExitedRaw';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from '../rekey/rekeyArrayRuntimePaths';
@@ -40,6 +41,9 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): unknown => {
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
+  const serialized =
+    host.runtime.slots !== 'off' &&
+    serializeArraySlotSources(host, plan, context);
   const oldCount = host.itemCount;
   const oldItems = host.structure ?? {};
   // With an item template and no tuple positions, extras or whole raw, only a slot without a live node reads raw.
@@ -165,7 +169,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   if (host.runtime.slots !== 'off')
     rekeyArraySlotBindings(host, moves, context);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
-  if (candidateMoves)
+  if (candidateMoves || serialized)
     (context.rekeyedArrayMoves ??= new Map()).set(host, moves);
   context.latentDescendantKeys = undefined;
   context.enteredLatentKeys = undefined;

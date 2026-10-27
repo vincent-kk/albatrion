@@ -23,7 +23,6 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (runtime.slots !== 'off' && context) {
     pruneSlotSources(context.root, path, names, context);
-    return;
   }
   const childPaths = names?.map((name) => path + '/' + escapeSegment(name));
   if (context) {

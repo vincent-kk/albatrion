@@ -3,6 +3,7 @@ import { readFieldNodeErrors } from '../../../validation';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
+import { materializeInactiveSlotValues } from '../slots/materializeInactiveSlotValues';
 import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
 
 /**
@@ -20,6 +21,8 @@ export const captureDetachedFieldNodeReads = <
   load?: { readonly value: unknown },
 ): void => {
   const runtime = node.runtime;
+  if (runtime.slots !== 'off' && runtime.inactiveValueEntries?.size)
+    materializeInactiveSlotValues(node);
   runtime.watchValuesMemo?.delete(node);
   readFieldNodeWatchValues(node, watchSnapshot);
   const reads = Object.freeze({

@@ -39,4 +39,13 @@ export const markSlotChange = <Self extends FieldNodeRecord<Self>>(
       overlay: host.inactiveSlotOverlays?.get(entry),
     });
   (host.runtime.slotDirtyHosts ??= new Set()).add(host);
+  for (
+    let child = host;
+    !child.detached && child.parent;
+    child = child.parent
+  ) {
+    const parent = child.parent;
+    if (parent.detached || parent.structure?.[child.name] !== child) break;
+    (parent.inactiveSlotChildren ??= new Map()).set(child.name, child);
+  }
 };

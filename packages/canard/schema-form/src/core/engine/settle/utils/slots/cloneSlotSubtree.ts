@@ -7,6 +7,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
+import { hasAdditionalInactiveSources } from './hasAdditionalInactiveSources';
 import { markRestoredSlotRaw } from './markRestoredSlotRaw';
 
 /**
@@ -30,13 +31,18 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     path: node.path,
     order: getLatentOrder(host, entry.name, entry.node),
   };
-  DetachedWriteAddress.transfer(source, address, node.runtime);
+  if (!entering) DetachedWriteAddress.transfer(source, address, node.runtime);
   DetachedWriteAddress.retain(node, address, node.runtime);
   node.raw = source.raw;
   node.undeclaredValues = source.undeclaredValues;
   node.itemCount = source.itemCount;
   node.nextItemKey = source.nextItemKey;
   node.inactiveValueMemo = source.inactiveValueMemo;
+  node.inactiveValuesCache =
+    source.inactiveValuesCache && !hasAdditionalInactiveSources(source)
+      ? source.inactiveValuesCache
+      : undefined;
+  node.inactiveValuesDirty = true;
   if (host.behavior.type === 'array' && host.behavior.strategy === 'branch')
     node.itemKey = host.nextItemKey++;
   if (!entering) {
@@ -81,8 +87,11 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     node.children = children;
   }
   if (entering) {
+    if (node.behavior.type === 'array' && node.behavior.strategy === 'branch')
+      context.arrayCounts.set(node, 0);
     markRestoredSlotRaw(node, context);
     context.entered.add(node);
+    context.changedNodes.add(node);
     context.dirtyPaths.add(node.path);
     if (node.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(node.path);

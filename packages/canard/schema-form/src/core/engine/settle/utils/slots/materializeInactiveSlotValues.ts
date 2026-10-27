@@ -18,6 +18,12 @@ export const materializeInactiveSlotValues = <
   if (host.inactiveValuesCache && !host.inactiveValuesDirty)
     return host.inactiveValuesCache;
   const values: InactiveSlotCandidate[] = [];
+  if (!host.detached)
+    for (const retained of host.runtime.inactiveValueEntries?.values() ?? []) {
+      const path = retained.entry.path;
+      if (path !== host.path && !path.startsWith(host.path + '/')) continue;
+      values.push({ order: retained.order, entry: retained.entry });
+    }
   collectHostSlotValues(
     host,
     getLatentOrder(host.parent, host.name, host.blueprintNode),

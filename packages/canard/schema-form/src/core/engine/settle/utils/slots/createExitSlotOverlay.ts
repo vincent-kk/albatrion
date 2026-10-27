@@ -4,6 +4,7 @@ import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { captureAbsentSlotInputs } from './captureAbsentSlotInputs';
+import { expirePackedSlotMemos } from './expirePackedSlotMemos';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { hasSlotCandidateOwner } from './hasSlotCandidateOwner';
 import { hasSlotOverlaySource } from './hasSlotOverlaySource';
@@ -128,5 +129,7 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       ? { ...previous, children }
       : previous;
   if (context) node.retainedSourceOverlay = overlay;
+  if (!clear && node.behavior.type === 'array' && node.raw === undefined)
+    expirePackedSlotMemos(node, overlay);
   return { overlay, hasSource, retain: !clear || hasSource };
 };

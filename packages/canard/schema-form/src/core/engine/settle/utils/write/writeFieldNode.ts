@@ -23,6 +23,7 @@ import { getSettlementScratch } from '../scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
+import { resolveSlotSource } from '../slots/resolveSlotSource';
 import { writeSlotPath } from '../slots/writeSlotPath';
 import { prepareSlotShadow } from '../verify/prepareSlotShadow';
 import { collectReplacePaths } from './collectReplacePaths';
@@ -98,16 +99,24 @@ const writeFieldNodeBody = <Self extends FieldNodeRecord<Self>>(
       const lineage = [];
       for (let current: Self | null = node; current; current = current.parent)
         lineage.unshift(current.blueprintNode);
-      writeSlotPath(
+      const resolved = resolveSlotSource(
         root,
         path,
         node.blueprintNode,
-        input,
-        whole,
-        undefined,
         lineage,
       );
-      return;
+      if (resolved.source || resolved.overlay || !node.runtime.latentRaw.size) {
+        writeSlotPath(
+          root,
+          path,
+          node.blueprintNode,
+          input,
+          whole,
+          undefined,
+          lineage,
+        );
+        return;
+      }
     }
     if (whole) pruneLatentRaw(node.rootNode.runtime, path);
     distributeLatentValue(

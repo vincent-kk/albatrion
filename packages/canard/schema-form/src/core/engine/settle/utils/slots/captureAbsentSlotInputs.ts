@@ -24,6 +24,20 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
     return undefined;
   let children: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;
   const array = node.behavior.type === 'array';
+  const packed = (overlay: InactiveSlotOverlay): InactiveSlotOverlay => ({
+    ...overlay,
+    packedArrayInput: true,
+    ...(overlay.children
+      ? {
+          children: new Map(
+            [...overlay.children].map(([entry, child]) => [
+              entry,
+              packed(child),
+            ]),
+          ),
+        }
+      : undefined),
+  });
   for (const name of Object.keys(distribution.input ?? {})) {
     if (node.structure?.[name]) continue;
     const current = getChildDistribution(node, name, context);
@@ -41,7 +55,12 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
       prior.overlay,
       current.whole,
     );
-    (children ??= new Map()).set(entry, result.overlay);
+    (children ??= new Map()).set(
+      entry,
+      array && !node.blueprintNode.hasCandidateDescendants
+        ? packed(result.overlay)
+        : result.overlay,
+    );
   }
   return children ? { children } : undefined;
 };

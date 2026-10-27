@@ -24,21 +24,36 @@ export const readRawTree = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): unknown => {
   if (node.runtime.slots !== 'off') {
-    if (!node.detached) return readSlotRawTree(node.blueprintNode, node);
-    const lineage = [];
-    for (let current: Self | null = node; current; current = current.parent)
-      lineage.unshift(current.blueprintNode);
-    const resolved = resolveSlotSource(
-      context.root,
-      DetachedWriteAddress.read(node)?.path ?? node.path,
-      node.blueprintNode,
-      lineage,
-    );
-    return readSlotRawTree(
-      node.blueprintNode,
-      resolved.source ?? node,
-      resolved.overlay,
-    );
+    if (
+      !node.detached &&
+      !node.runtime.latentRaw.pathIndex.under(node.path).size
+    )
+      return readSlotRawTree(node.blueprintNode, node);
+    if (node.detached) {
+      const lineage = [];
+      for (let current: Self | null = node; current; current = current.parent)
+        lineage.unshift(current.blueprintNode);
+      const resolved = resolveSlotSource(
+        context.root,
+        DetachedWriteAddress.read(node)?.path ?? node.path,
+        node.blueprintNode,
+        lineage,
+      );
+      if (resolved.source || resolved.overlay)
+        return readSlotRawTree(
+          node.blueprintNode,
+          resolved.source,
+          resolved.overlay,
+        );
+      const latent = readLatentSlotSource(
+        context,
+        DetachedWriteAddress.read(node)?.path ?? node.path,
+        node.blueprintNode,
+      );
+      return latent === undefined
+        ? readSlotRawTree(node.blueprintNode, node)
+        : latent;
+    }
   }
   if (node.raw !== undefined || node.behavior.strategy === 'terminal')
     return node.raw;

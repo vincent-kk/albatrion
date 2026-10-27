@@ -1,6 +1,7 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
+import { find } from '../../../navigation';
 import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
@@ -246,8 +247,39 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   if (runtime.slots === 'off') updateInactiveValuesMemo(context.root);
   else {
     for (const node of context.entered)
-      if (!node.detached) node.inactiveValueMemo = undefined;
+      if (!node.detached) {
+        node.inactiveValueMemo = undefined;
+        const parent = node.parent;
+        if (
+          parent &&
+          (parent.inactiveSlots?.size || parent.inactiveSlotOverlays?.size)
+        )
+          (runtime.slotDirtyHosts ??= new Set()).add(parent);
+      }
     commitSlotChanges(context.root);
+    if (runtime.latentRawDirty || runtime.inactiveValueEntries?.size) {
+      if (runtime.latentRawDirty)
+        for (const node of context.changedNodes)
+          if (!node.detached) node.inactiveValuesDirty = true;
+      context.root.inactiveValuesDirty = true;
+      const previous = runtime.inactiveValueEntries
+        ? [...runtime.inactiveValueEntries.values()]
+        : [];
+      updateInactiveValuesMemo(context.root);
+      const paths = [
+        ...previous,
+        ...(runtime.inactiveValueEntries?.values() ?? []),
+      ];
+      for (const retained of paths) {
+        let path = retained.entry.path;
+        while (true) {
+          const host = find(context.root, path);
+          if (host) host.inactiveValuesDirty = true;
+          if (!path) break;
+          path = path.slice(0, path.lastIndexOf('/'));
+        }
+      }
+    }
   }
   compareSlotShadowCommit(context.root);
 };

@@ -27,9 +27,8 @@ export const readLatentSlotSource = <Self extends FieldNodeRecord<Self>>(
   const runtime = context.root.runtime;
   if (runtime.slots !== 'off') {
     const resolved = resolveSlotSource(context.root, path, template);
-    return resolved.source || resolved.overlay
-      ? readSlotRawTree(template, resolved.source, resolved.overlay)
-      : undefined;
+    if (resolved.source || resolved.overlay)
+      return readSlotRawTree(template, resolved.source, resolved.overlay);
   }
   const own = runtime.latentRaw.get(
     JSON.stringify([path, getBlueprintNodeIdentity(template)]),

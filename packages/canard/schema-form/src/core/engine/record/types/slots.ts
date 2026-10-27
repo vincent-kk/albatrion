@@ -22,6 +22,8 @@ export interface InactiveSlotOverlay {
   readonly children?: ReadonlyMap<BlueprintChildEntry, InactiveSlotOverlay>;
   /** Array positions retained even when no declared item has a source. */
   readonly itemCount?: number;
+  /** Descendant input patches belong only to the packed array's own value. */
+  readonly packedArrayInput?: boolean;
   /** Last published item; allocated only by an inactive-value read. */
   valueMemo?: InactiveSlotValueMemo;
 }
