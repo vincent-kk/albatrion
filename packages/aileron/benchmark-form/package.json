@@ -22,7 +22,8 @@
     "render-trace": "node --expose-gc --import tsx src/utils/render-trace.tsx",
     "stat-regression": "node --import tsx src/utils/stat-regression.ts",
     "summary": "node --import tsx src/utils/summary.ts",
-    "test": "yarn run -T vitest run --root . --config vite.config.ts"
+    "test": "yarn run -T vitest run --root . --config vite.config.ts",
+    "test:cli": "node --import tsx fixtures/equivalent/__tests__/tsx-smoke.ts"
   },
   "dependencies": {
     "@canard/schema-form": "workspace:^",

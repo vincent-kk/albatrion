@@ -1,4 +1,4 @@
-import { Profiler, createRef } from 'react';
+import React, { createRef } from 'react';
 
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
@@ -29,7 +29,7 @@ export async function mountEquivalentForm(
   try {
     flushSync(() =>
       root.render(
-        <Profiler
+        <React.Profiler
           id={fixture.name}
           onRender={(_id, _phase, duration) => commits.push(duration)}
         >
@@ -44,7 +44,7 @@ export async function mountEquivalentForm(
             }}
             children={coreOnly ? () => null : undefined}
           />
-        </Profiler>,
+        </React.Profiler>,
       ),
     );
     await drainUntilReady(() => ref.current?.findNode('') != null);
