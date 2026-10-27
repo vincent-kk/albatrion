@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 /** Return the median without changing process order. */
-export function median(values) {
+function median(values) {
   const sorted = [...values].sort((a, b) => a - b);
   const middle = Math.floor(sorted.length / 2);
   return sorted.length % 2
