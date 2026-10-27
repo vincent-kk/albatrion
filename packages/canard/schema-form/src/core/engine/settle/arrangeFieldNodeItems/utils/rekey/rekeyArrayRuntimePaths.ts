@@ -28,6 +28,7 @@ export const rekeyArrayRuntimePaths = <Self>(
   moves: readonly ArrayPathMove[],
   preservedPrefixCount: number = 0,
 ): void => {
+  runtime.inactiveValuesRebuild = true;
   const stores = getRuntimePathStores(runtime);
   const unaddressed = new Set<string>();
   for (const store of [

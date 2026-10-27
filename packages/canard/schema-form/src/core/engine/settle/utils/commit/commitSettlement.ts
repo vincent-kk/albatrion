@@ -235,10 +235,5 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     };
   }
   runtime.misfitsMemo = misfitsMemo;
-  if (
-    runtime.latentRaw.size > 0 &&
-    (context.entered.size > 0 || context.exited.size > 0)
-  )
-    runtime.latentRawDirty = true;
-  updateInactiveValuesMemo(context.root);
+  updateInactiveValuesMemo(context.root, context);
 };

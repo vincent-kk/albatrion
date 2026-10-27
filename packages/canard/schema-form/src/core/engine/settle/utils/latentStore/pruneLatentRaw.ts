@@ -20,6 +20,7 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
   names?: readonly string[],
   context?: SettlementContext<Self>,
 ): void => {
+  runtime.inactiveValuesRebuild = true;
   const childPaths = names?.map((name) => path + '/' + escapeSegment(name));
   if (context) {
     const index = getLatentPathIndex(context);

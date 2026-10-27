@@ -41,6 +41,7 @@ export const clearArrayRuntimePaths = <Self>(
   oldCount: number,
   perished: ReadonlySet<string>,
 ): void => {
+  runtime.inactiveValuesRebuild = true;
   const stores = getRuntimePathStores(runtime);
   const prefix = hostPath + '/';
   const inRange = (slot: string) =>

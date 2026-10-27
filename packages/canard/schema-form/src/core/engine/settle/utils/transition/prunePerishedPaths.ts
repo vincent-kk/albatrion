@@ -16,6 +16,7 @@ export const prunePerishedPaths = <Self>(
   paths: ReadonlySet<string>,
 ): void => {
   if (paths.size === 0) return;
+  runtime.inactiveValuesRebuild = true;
   const stores = getRuntimePathStores(runtime);
   const warningKeys = new Set<string>();
   if (runtime.warningKeysByPath?.size)
