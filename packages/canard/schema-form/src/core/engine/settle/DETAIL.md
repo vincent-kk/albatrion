@@ -159,6 +159,15 @@
 
   - 바뀌지 않는 원칙: SETTLE-001(단계 순서), SETTLE-042(키 순서와 수용된 사본), SETTLE-043, NODE-051, BLUEPRINT-007, WRITE-013, 공개 API.
 
+### 비활성 값의 지연 세대 공표
+
+- 일반 정착은 비활성 목록을 배열로 만들지 않고 바뀐 기존 `(path, kind)` 키의 불변 원본·분류 참조와 최종 형상 경로 Δ를 세대 journal로 기록한다. 노드 identity 캐시는 영향 호스트를 dirty로 표시한다. 경로 문자열을 새로 조립하거나 무관한 잠복 항목을 find/sort/group하지 않는다. 쓰기 비용은 O(|Δ|·depth) 표식·journal이며, 첫 읽기는 호스트 범위 K의 선택·정렬 O(K log K)+미소비 Δ, 같은 세대의 재읽기는 캐시 조회다. 루트는 모든 잠복 값을 포함하므로 첫 루트 읽기의 K는 L일 수 있다. 값·종류별 중복 선택·문서 순서·배열/항목 동결과 Object.is 재사용 규칙은 전체 재구성과 같다(VALUE-029·031, NODE-044, SETTLE-053).
+- 살아 있는 공개 읽기와 내부 비활성 메모의 Map get/열거는 같은 지연 projection을 소비한다. 배달 marker·FormHandle.getValue의 outputValue·hydration·React hook은 메모를 직접 읽지 않으며 공개 inactiveValues를 요청하면 이 경로를 탄다. 정적 첫 load의 잠복 없는 빈 메모는 상태를 추가하지 않는다. 비활성 메모와 항목 재사용 메모만 최초 동적 load에서 명시적인 lazy PathKeyedMap subclass를 설치한다. 다른 경로 저장소의 I9 생성·색인·무-adoption 계약은 바꾸지 않는다. 배열 재키·비움의 pathIndex 소비자는 wholesale 변경 전에 직전 세대 projection을 확정한다.
+- 나가는 참조의 읽기 캡처는 구독 유무와 무관하므로 배열을 즉시 생성하지 않는다. 직전 커밋의 불변 세대와 당시 경로 토큰만 보유하고, 그 참조의 첫 inactiveValues 읽기에서 해당 세대를 materialize한다. 이미 만든 세대 배열은 같은 참조로 재사용한다. N회 미읽기 전환도 매번 읽은 경우와 같은 값·순서·동결·identity 규칙을 가지며 중간 세대에서 값이 바뀌었다 돌아온 항목의 새 참조도 재현한다. 세대는 원본·분류·경로만 보유하고 꺼진 공개 노드 객체를 살려두지 않는다(NODE-044).
+- 현재 미읽기 source+visibility journal이 `max(2·L, 512)` 항목을 넘으면 커밋에서 원본과 선택 항목을 새 기준 세대로 압축한다. 계수 2와 최소 512는 상수다. 압축은 배열 정렬/공표 없이 O(L·depth+D)이며 누적 Δ 단위 상각 비용이다. 쓰기마다 Δ가 상수일 때 쓰기당 상각 O(1)이고 큰 정착을 쓰기 횟수와 혼동하지 않는다. 압축 직전 한 정착의 Δ만큼 상한을 넘을 수 있다. 현재 기준 원본은 O(L), 호스트 projection은 O(K), 미읽기 journal은 O(max(L,512)+한 정착 Δ)다. 외부가 보유한 옛 detached 토큰은 자기 세대 사슬의 고유 원본/journal을 추가로 붙잡으며 외부 토큰 수와 각 토큰까지의 고유 Δ에 비례한다. 압축은 옛 토큰의 결과를 바꾸지 않고 현재 세대의 과거 연결만 끊는다. 압축 횟수와 압축 포함 쓰기당 평균을 측정해 3 µs 판정에서 압축을 숨기지 않는다.
+- load/reset/rebuild, 실제 잠복 prune, 배열 경로 재배치/정리, 추적하지 못한 잠복 변경은 기존 전체 재구성으로 한 번 후퇴하고 새 기준 세대를 만든다. 실제 항목이 없는 prune는 후퇴를 요구하지 않는다. `latentRawDirty`가 없고 이미 루트 메모가 있는 값 없는 나감의 공표 생략 및 metadata 지연 정리를 그대로 유지한다.
+- 내부 `engineModes.inactiveValues`는 lazy/rebuild/verify이며 출하 기본값은 lazy다. verify는 모든 읽기에서 전체 재구성 oracle와 값을 비교하고 매 commit에도 강제로 materialize해 값·순서·호스트 그룹·동결·참조 규칙을 검사한다. verify-unit/render 설정에서 켜고 위반을 계수·실패로 남긴다. 공개 export·옵션은 늘리지 않으며 정착 순서·나감 정책·오류 경로는 바꾸지 않는다.
+
 ## Structure
 
 - `types/`: 정착 문맥과 경로 저장소의 계약 형.
@@ -311,6 +320,10 @@
 ### gate-predicate-allocation — 발생별 순수 입력 버퍼
 
 - 입력이 바뀌는 세 쓰기에서 80개의 순수 active·if 발생마다 마운트 때 준비한 같은 호출 객체와 배열만 사용하며 호출 뒤 view를 보유하지 않는다. 던짐이나 누락 검증기로 성공 메모가 없으면 재사용 버퍼의 읽기 참조도 비운다. 등록 getter는 발생별로 새 함수를 만들지 않고, 리터럴 active의 round는 전체 호스트 view를 만들지 않으며 빈 스키마 경로 목록을 공유한다.
+
+### settle-inactive-lazy-generations — 지연 읽기와 불변 과거 세대
+
+- 공개 setValue 전환에서 무관 잠복 find/sort와 비접촉 호스트 배열 생성이 없고, 첫 읽기·재읽기·N회 미읽기·떼어진 참조의 직전 세대·무관 호스트 identity가 전체 재구성과 같다. cap 압축 뒤에도 옛 토큰과 이미 읽은 배열 참조가 유지되고 미읽기 journal 상한과 압축 횟수가 확인된다. load/reset/rebuild·배열 재배치·실제 prune의 후퇴, 빈 prune의 무효과와 verify 읽기/commit 비교를 포함한다.
 
 ### settle-detached-address — 분리된 참조의 현재 쓰기 주소
 
@@ -750,4 +763,4 @@
 
 ## Last Updated
 
-2026-10-27. B1 발생별 술어·입력 메모·투영 identity view·태그 선언 표·기준/그림자 모드와 비용. D2-P1 정적 전체 쓰기의 세대 표식·후퇴·verify 그림자와 메모리 비용.
+2026-10-27. B1 발생별 술어·입력 메모·투영 identity view·태그 선언 표·기준/그림자 모드와 비용. D2-P1 정적 전체 쓰기의 세대 표식·후퇴·verify 그림자와 메모리 비용. B2-P1b 지연 세대·detached 토큰·상한 압축과 읽기/쓰기 비용.
