@@ -1,8 +1,8 @@
 # B4-2 — latent 경로 제거와 슬롯 없는 쓰기 비용
 
-**채택 조건 미충족 — delivery 0·슬롯 없는 쓰기 목표·복제 배달 표시·TEST-073·Node 힙은 통과했으나 개별 단계 6개가 A 자체 폭을 초과했습니다.**
+**채택 — 편집자 결정(459라운드): 공개 동작 불변·과제 둘 통과·주판정 0·Node 힙 통과, 개별 단계 6건 1 µs 미만 악화와 payload-12 +1.3 %는 창 흐름 안이라 기록한 채 채택, 소유자 재검증 목록**
 
-측정 후 제품 소스와 장치는 수정하지 않았으며 재측정이나 되돌리기를 하지 않았습니다. 이 문서는 고정 장치의 원판정을 보존하며 채택 결정은 별도 검토에 남깁니다.
+고정 장치 원판정은 **채택 조건 미충족**입니다. 단계6건의 원판정과 원수치는 그대로 보존하고 코디네이터의 편집자 결정을 별도로 기록합니다. 측정 후 제품 소스와 장치는 수정하지 않았으며 재측정이나 되돌리기를 하지 않았습니다. 검토와 소유자 재검증이 남으며 이후 되돌림은 PR revert로 판단합니다. [편집자 결정](raw/b4-2/editorial-decision.json).
 
 ## 측정 입력과 품질
 
@@ -48,6 +48,18 @@
 | switch-siblings-0 | 장부 합계     | 87.166  | 81.521  | 3.354        | 통과 |
 | switch-siblings-0 | 비계측 지연   | 75.249  | 72.438  | 3.355        | 통과 |
 | switch-siblings-0 | entering 합계 | 0.000   | 0.000   | 0.000        | 통과 |
+
+## 편집자 결정의 집계와 재검증 목록
+
+편집자가 인용한 장부 수치는 개별 단계 **자체 중앙값의 합**입니다. 공식 장치의 `ledgerSumUs`는 **매 표본의 자체 비용을 합한 뒤 얻는 중앙값**이므로 두 통계는 같지 않습니다. 위의 공식 장부 관문 수치를 바꾸지 않고 편집자 판단에 사용한 합을 따로 보고합니다.
+
+| 행                | 자체 중앙값 합 A µs | B µs     | 변화%  |
+| ----------------- | ------------------- | -------- | ------ |
+| switch-oneOf-80   | 166.8545            | 165.2100 | -0.986 |
+| switch-payload-12 | 276.2890            | 279.8785 | 1.299  |
+| switch-siblings-0 | 82.1465             | 79.0430  | -3.778 |
+
+payload12의 개별 중앙값 합은276.2890→279.8785µs(+1.299%)이고, 공식 summed-ledger 중앙값은283.8955→292.9785µs(+3.199%)입니다. 해당 본 측정의 A→A′는544.875→560.792µs(+15.917)입니다. 이 창에서 체계적 비용으로 확정하지 않는다는 것은 편집자 판단이며 개별 단계 폭 실패를 통과로 재분류하지 않습니다. 소유자 재검증 목록은 단계6건, payload12 집계, Bun B중앙값의 A최대 초과3.970B/node(A중앙 대비+11.415), 보존 원본·지연 읽기 메모의 수명입니다.
 
 ## 전체 22행
 
@@ -243,6 +255,8 @@
 | switch-payload-12 | 12   | 12        | 18120     | 18696     | 0                 |
 | switch-siblings-0 | 0    | 0         | 0         | 0         | 0                 |
 
+읽기 후 보존량이 늘어난 이유는 슬롯의 보존 원본에 `inactiveValueMemo`와 동결된 공표 entry가 지연 생성되어 새로 달리기 때문입니다(oneOf +320B, payload +576B); 슬롯 수는3/12로 같습니다. `readSlotValueEntry`가 원본에 메모를 보유하고 reset에서 해당 slot Map이 사라지는 것을 확인했습니다.
+
 120쓰기 후 V8 strong-edge immediate dominator로 각 inactiveSlots Map이 독점 보유한 원본 트리 바이트를 측정했습니다. 공통 blueprint와 외부에서 보유한 detached 참조는 이 추정치 밖입니다. 중첩 Map은 바이트가 겹칠 수 있어 합산하지 않습니다. resetSubtree·배달 drain·full GC2회 후 slot Map은 모두0입니다. 서로 다른 snapshot의 수치 heap ID 일치는 객체 생존 증거가 아닙니다. [보존량·수명 한계](raw/b4-2/retention.json).
 
 ## 기능·공개 계약·FCA 검증
@@ -263,8 +277,154 @@
 
 FCA는 scan376노드·depth9·위반200, validate201지적, verification691파일·위반22·fragmentation0입니다. 동일 snapshot `5141343990ac4e9cd80dbfb10fc88398a63e9a9ac57dcda0734008e191efb634`를 사용했습니다. exact facts1,603개 외 unsupported173개를 pass로 바꾸지 않았습니다. B4-1 대비 신규 지적0이며 FCA 전체 통과라는 주장은 하지 않습니다. `src/app` 제품 코드는 바꾸지 않았고 승인된 `app/cache/DETAIL.md` 문서 포인터1개만 이동 주소에 맞췄습니다. [전체 기존 지적](raw/b4-2/fca.json).
 
+## B4-1 슬롯 경로의 공개 계약 결함과 기준선 실패
+
+기존 공개 기대를 불변 B4-1 off/on과 B4-2 번들에 동일하게 적용했습니다. 무계측9행(두 결함 중 tail은 선언 순서2방향)에서 off는3/3통과, on은3/3실패, B는3/3통과했습니다. 제품이나 성능 장치를 고치지 않고 기존 실패의 기준선 비교 근거를 추가 보존했습니다.
+
+| 기존 시험                                                                                                   | 기대                                                                  | B4-1 on 실제                              | B4-2           |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------- | -------------- |
+| settle.value-model.test.ts / 26C-14 OPEN-4                                                                  | 다른 kind 원본 old가 host default D를 막아 number default7            | D                                         | 7              |
+| settle.candidate-source-preservation-inactive-write.test.ts / retains off-write length and undeclared tails | [null, tail, {extra:true}], 이후 [7 또는 7문자열, tail, {extra:true}] | tail 두 자리가 null로 손실(정방향·역방향) | 기존 기대 유지 |
+
+[동일 기대의 실패/통과9행과 번들 해시](raw/b4-2/public-contract-conflicts.json), [실행 재현 장치](raw/b4-2/reproduce-public-contract-conflicts.mjs). whole-write의 wrong-kind 재포획 방지는 원본 이전 과정에서 같은 기존 계약을 유지한 수정이며 세 번째 B4-1 공개 결함으로 세지 않습니다. 떼어진 쓰기 공표 시점은 off와 같음([재현6행](raw/b4-2/detached-publication.json)).
+
 ## 시험 이식과 제거 추적
 
 [77파일 pin 목록](raw/b4-2/pin-removals.json), [101파일의 단언·case별 이식 목록](raw/b4-2/test-migrations.json), [172개 기준선 삭제 행과 경로 이동](raw/b4-2/source-removal.json)을 제공합니다. 삭제 행172개 중 제품 소스165개·문서7개이며 파일67개에 걸칩니다. 실제 삭제된 코드, slots로 옮긴 조회/원본 주소, literal-star 전용으로 남긴 기능을 혼동하지 않도록 이전·새 경로를 함께 기록했습니다.
 
 일반 물리 map을 직접 보던 단언은 실제 슬롯 원본/own-source를 확인하도록 옮겼습니다. off 전용·verify oracle·도달 불가능한 synthetic global-map key 사례와 latent map 방문 수 사례의 제거·대체는 목록에 case 이름과 기존 단언을 남겼습니다. 공개 값이나 동결된 옛 참조의 기대를 바꾸어 맞추지 않았습니다. 두 dispatch 시험과 원본 관찰 fixture는 검증 대상 소유자인 settle 아래로 옮겼으며 export 확대나 경계 면제는 추가하지 않았습니다.
+
+### import 모델의 검증 배치 조정
+
+| 이전 주소                                                        | 최종 주소                                                               |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| src/core/engine/write/**tests**/dispatch.batch.test.ts           | src/core/engine/settle/**tests**/dispatch.batch.test.ts                 |
+| src/core/engine/write/**tests**/dispatch.closing-branch.test.ts  | src/core/engine/settle/**tests**/dispatch.closing-branch.test.ts        |
+| src/core/engine/**tests**/fixtures/collectRetainedSlotSources.ts | src/core/engine/settle/**tests**/fixtures/collectRetainedSlotSources.ts |
+| src/core/engine/**tests**/fixtures/readInactiveValuesAt.ts       | src/core/engine/settle/**tests**/fixtures/readInactiveValuesAt.ts       |
+| src/core/engine/**tests**/fixtures/readRetainedSlotRaw.ts        | src/core/engine/settle/**tests**/fixtures/readRetainedSlotRaw.ts        |
+
+두 시험은 기준선 대비 이동이며 fixture3개는 이번 구현 도중 새로 만든 관찰 장치의 최종 배치 조정입니다. [배치 근거](raw/b4-2/import-placement.json).
+
+기준선 주소가 사라진 파일은56개이며 이 중29개는 의미에 따라 slots/detached/literal-star로 이동했습니다. `.detached` 직접 읽기를 포함한 제거·대체 행은10개(일반8·shadow2)이고, 별도로 `captureDetachedFieldNodeReads`의 전역 inactive memo 읽기1개를 슬롯 공표 관측으로 바꿨습니다. 이 수는 전체 detached 지원 제거를 뜻하지 않습니다.
+
+| 기준선 파일                                                          | detached 읽기 제거·대체 행 |
+| -------------------------------------------------------------------- | -------------------------- |
+| src/core/engine/settle/utils/commit/commitSettlement.ts              | 261                        |
+| src/core/engine/settle/utils/commit/commitSettlement.ts              | 275                        |
+| src/core/engine/settle/utils/latent/readLatentSlotSource.ts          | 51                         |
+| src/core/engine/settle/utils/latent/readRawTree.ts                   | 29                         |
+| src/core/engine/settle/utils/latent/readRawTree.ts                   | 33                         |
+| src/core/engine/settle/utils/latentStore/hasLatentUnder.ts           | 23                         |
+| src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts  | 21                         |
+| src/core/engine/settle/utils/transition/applyExitClearing.ts         | 23                         |
+| src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts | 85                         |
+| src/core/engine/settle/utils/verify/synchronizeSlotShadowInputs.ts   | 61                         |
+
+### 시험 파일별 이식·삭제 원장
+
+아래 수는 case 선언 기준입니다. each의 확장 실행 수와 다르며 상세 기대와 대체 근거는 [원장](raw/b4-2/test-migrations.json)의 동일 파일 항목에 있습니다.
+
+| 파일                                                                                                                  | 단언 이식 | 삭제 case | 추가 case | 행렬 축소 |
+| --------------------------------------------------------------------------------------------------------------------- | --------- | --------- | --------- | --------- |
+| src/core/engine/settle/**tests**/selectChildren.head-differential.test.ts                                             | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.array-legacy-ports.test.ts                                                    | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.array-lifecycle.test.ts                                                       | 5         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.array-scaling.test.ts                                                         | 1         | 1         | 1         | 0         |
+| src/core/engine/settle/**tests**/settle.array-verbs.test.ts                                                           | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.array-write.test.ts                                                           | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.branch-switch-const.test.ts                                                   | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.candidate-source-preservation-controls.test.ts                                | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.candidate-source-preservation-exit-cost.test.ts                               | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.candidate-source-preservation-gate.test.ts                                    | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.candidate-source-preservation-inactive-write.test.ts                          | 4         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.candidate-source-preservation-stale.test.ts                                   | 1         | 2         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.commit.test.ts                                                                | 11        | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.conflict.test.ts                                                              | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.context-preparation.test.ts                                                   | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.controls-context.test.ts                                                      | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.derive-shadow-setup.test.ts                                                   | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.empty-phases.test.ts                                                          | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.error-gate-exits.test.ts                                                      | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.exit-and-budget.test.ts                                                       | 6         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.exit-direct-ownership.test.ts                                                 | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.exit-latent.test.ts                                                           | 4         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.exit-layers.test.ts                                                           | 14        | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.exit-preparation.test.ts                                                      | 3         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.extras-single-compare.test.ts                                                 | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.gate-selection-preparation-invariants.test.ts                                 | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.gate-table-loading.test.ts                                                    | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.gate-table-mutations.test.ts                                                  | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.item-fold-selection.test.ts                                                   | 3         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.latent-candidate-ownership-controls.test.ts                                   | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.latent-candidate-ownership-enclosing.test.ts                                  | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.latent-candidate-ownership-inactive-move.test.ts                              | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.latent-candidate-ownership-policy.test.ts                                     | 4         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.latent-candidate-ownership-retention.test.ts                                  | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.latent-candidate-ownership-stale-policy.test.ts                               | 0         | 1         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.latent-candidate-ownership-stale.test.ts                                      | 0         | 1         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.latent-candidate-ownership.test.ts                                            | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.pending-exit-key.test.ts                                                      | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.reentry.test.ts                                                               | 13        | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-array-policy.test.ts                                            | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-capture.test.ts                                                 | 1         | 1         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-lazy-read.test.ts                                               | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-shadow.test.ts                                                  | 0         | 2         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-verify-delivery.test.ts                                         | 4         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-verify-nested.test.ts                                           | 3         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-verify-oracle.test.ts                                           | 0         | 8         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-verify-policy.test.ts                                           | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.retained-slot-wildcard.test.ts                                                | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.scalar-latent-scope.test.ts                                                   | 1         | 2         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.static-same-value-write-fallback.test.ts                                      | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.transition.test.ts                                                            | 3         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.union-fold-latent.test.ts                                                     | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.union-fold-rules.test.ts                                                      | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.value-model.test.ts                                                           | 9         | 0         | 0         | 0         |
+| src/core/engine/settle/**tests**/settle.write-epoch.test.ts                                                           | 0         | 1         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.candidate-source-preservation-exits.test.ts            | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.candidate-source-preservation-tail-scope.test.ts       | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.candidate-source-preservation-tail.test.ts             | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership-absent-destinations.test.ts | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership-inactive-source.test.ts     | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership-live-descendants.test.ts    | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership-nested-array.test.ts        | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership-replay-contract.test.ts     | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership-replay-mutations.test.ts    | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership-root.test.ts                | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership-unrelated-slots.test.ts     | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.latent-candidate-ownership.test.ts                     | 5         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-absent.test.ts                         | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-deletion.test.ts                       | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-nested.test.ts                         | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-packed.test.ts                         | 2         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-policy.test.ts                         | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-pruning.test.ts                        | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-relocation.test.ts                     | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-root.test.ts                           | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/arrange.retained-source-tail.test.ts                           | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-append-fallback.test.ts                           | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-clear-cost.test.ts                                | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-detached-reference.test.ts                        | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-detached-reset-address.test.ts                    | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-insert.test.ts                                    | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-pop-fallback.test.ts                              | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-pop.test.ts                                       | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-prefix.test.ts                                    | 0         | 2         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-rekey.test.ts                                     | 3         | 2         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-splice-cost.test.ts                               | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-splice-fallback.test.ts                           | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.array-splice.test.ts                                    | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/arrangeFieldNodeItems/**tests**/settle.detached-write-address.test.ts                          | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/utils/latentStore/**tests**/setLatentRaw.test.ts                                               | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/utils/slots/**tests**/createSlotValueOverlay.test.ts                                           | 1         | 0         | 0         | 0         |
+| src/core/engine/settle/utils/slots/**tests**/materializeInactiveSlotValues.test.ts                                    | 2         | 0         | 0         | 0         |
+| src/core/engine/write/**tests**/dispatch.batch.test.ts                                                                | 14        | 0         | 0         | 0         |
+| src/core/engine/write/**tests**/dispatch.closing-branch.test.ts                                                       | 1         | 0         | 0         | 0         |
+| src/core/surface/**tests**/detached.test.ts                                                                           | 2         | 0         | 0         | 0         |
+| src/core/surface/**tests**/surface.slots-memory-bound.test.ts                                                         | 1         | 0         | 0         | 0         |
+| src/core/surface/**tests**/surface.slots-wildcard-lifetimes.test.ts                                                   | 4         | 0         | 0         | 0         |
+| src/core/surface/**tests**/surface.slots-wildcard-mixed-storage.test.ts                                               | 3         | 0         | 0         | 0         |
+| src/core/surface/**tests**/surface.slots-wildcard-packed-array.test.ts                                                | 1         | 0         | 0         | 0         |
+| src/core/surface/**tests**/surface.slots-wildcard-policies.test.ts                                                    | 3         | 0         | 0         | 0         |
+| src/core/surface/**tests**/surface.slots-wildcard-publication.test.ts                                                 | 2         | 0         | 1         | 1         |
