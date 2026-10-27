@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Detached write-address cells belong to departed occurrences. A fresh active clone has no cell until an actual exit captures its current path and order; an inactive clone keeps the existing transfer and rebind rules. This avoids allocating transient address objects and order arrays for active re-entry without changing old references' write destinations.
+
 - 배열이 나가는 쓰기에서 처음 받은 아이템의 입력 patch는 지연된 packed-array 원본의 일부이며 독립 비활성 잎 항목이 아니다. 선택적 overlay 표식은 이 입력 patch와 나중의 독립 옛 참조 쓰기를 구별해 비활성 열거를 맞춘다. 표식은 실제 overlay에만 붙고 노드의 고정 필드나 공개 계약을 늘리지 않으며 복제·정책 patch에서도 같은 원본 의미를 유지한다.
 
 - A retained occurrence may hold one immutable exit-source patch for caller-supplied descendants that never received a node. Packed-array reads use that exit patch while later host-owned overlays remain separate, so detached descendant writes do not rewrite the packed snapshot. The patch owns source channels only and holds no prior host or history chain.

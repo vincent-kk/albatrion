@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Active clone construction does not allocate a detached write-address cell or compute its document-order array. A real departure captures the current address through the ordinary retained-exit path. Recursive inactive clones still transfer and rebind their address cells, so old references follow array rekeys without mutating frozen reads.
+
 - A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
 
 - A blueprint template that reaches a property named exactly `*` excludes its entire subtree from slots. The finite template graph computes the optional `containsLiteralStar` Boolean once, including recursive references. The root inherits that fact, so a literal-star-bearing form retains the existing latent capture, source metadata, packed-array snapshots, commit publication, and frozen detached reads in every storage mode. One `isSlotEligible` predicate owns this routing. No Boolean departure-query proof, reader epoch, or publication-history map exists. Star-free forms retain the slot path with exit serialization and latent bookkeeping at zero; literal-star fallback calls and bytes are reported separately. The existing literal-star behavior remains an owner decision before B4-2.
