@@ -9,7 +9,6 @@
 - 원본·계산값·방출값의 채널과 동기 정착·사건 배달 순서를 유지합니다.
 - 자식 모듈은 형제의 진입점을 소비하며 내부 파일은 소유 모듈 안에서 직접 가져옵니다.
 - 공통 레코드 형과 경로 색인 보조는 이 엔진의 내부 구획에 둡니다.
-- Source-representation modes are internal construction inputs: surface reads them through this boundary, and package entry points never expose their controls.
 
 ## Boundaries
 
