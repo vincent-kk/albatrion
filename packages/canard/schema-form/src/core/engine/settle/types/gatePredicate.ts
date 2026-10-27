@@ -16,6 +16,8 @@ export interface GatePredicate {
   readonly names?: readonly string[];
   /** Stable witness metadata; values are supplied at evaluation time. */
   readonly inputs: readonly Omit<GateWheelInput, 'value'>[];
+  /** Reusable positional buffer and call object for proven pure evaluations. */
+  readonly arguments: GatePredicateInputs;
   /** Whether input equality proves that reusing the last result is valid. */
   readonly memoizable: boolean;
   /** Execute the expression, strict tag predicate, or lazily bound validator. */
@@ -27,5 +29,5 @@ export interface GatePredicateMemo {
   /** Exact primitive or projected-reference inputs of that successful execution. */
   readonly values: readonly unknown[];
   /** Boolean outcome; throws and missing validators never populate this slot. */
-  readonly value: boolean;
+  value: boolean;
 }

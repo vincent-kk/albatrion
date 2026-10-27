@@ -19,13 +19,33 @@ import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
 
 /** Bound gate with exact read paths used to invalidate its L. */
-interface RegisteredGateOccurrence extends GateOccurrence {
-  /** Absolute paths whose raw or projected changes can alter this decision. */
-  watchPaths: readonly string[];
-  /** Runtime predicate bound only to this live occurrence. */
-  readonly predicate: GatePredicate;
+class RegisteredGateOccurrence implements GateOccurrence {
+  readonly gate: BlueprintGate;
+  readonly hostPath: string;
+  readonly evaluationHostPath: string;
   /** Last successful pure evaluation; a throwing attempt clears it. */
   memo?: GatePredicateMemo;
+  /** Runtime predicate allocated only when this occurrence is actually read. */
+  private boundPredicate?: GatePredicate;
+
+  constructor(
+    private readonly runtime: { blueprint: Blueprint; validator?: unknown },
+    location: GateOccurrence,
+    readonly watchPaths: readonly string[],
+  ) {
+    this.gate = location.gate;
+    this.hostPath = location.hostPath;
+    this.evaluationHostPath = location.evaluationHostPath;
+  }
+
+  /** @returns One evaluator through a shared prototype accessor. */
+  get predicate(): GatePredicate {
+    return (this.boundPredicate ??= createGatePredicate(
+      this.runtime,
+      this,
+      this.watchPaths,
+    ));
+  }
 }
 
 /** A node path and its currently live memoized gate occurrences. */
@@ -333,20 +353,11 @@ class GateRegistry {
       childHostPath,
     );
     const watchPaths = this.watchPaths(location);
-    let predicate: GatePredicate | undefined;
-    const runtime = this.runtime;
-    const occurrence: RegisteredGateOccurrence = {
-      ...location,
+    const occurrence = new RegisteredGateOccurrence(
+      this.runtime,
+      location,
       watchPaths,
-      /** @returns One evaluator, bound only when this occurrence is actually read. */
-      get predicate() {
-        return (predicate ??= createGatePredicate(
-          runtime,
-          location,
-          watchPaths,
-        ));
-      },
-    };
+    );
     memo.set(gate, occurrence);
     let entries = this.byLocation.get(occurrence.evaluationHostPath);
     if (!entries) {

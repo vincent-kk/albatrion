@@ -20,6 +20,13 @@ export const recordGateInput = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const frame = context.gateWheelFrame;
   if (!frame) return;
+  if (!site) {
+    const input = { path, kind, value };
+    recordGateFrameInput(frame, input);
+    if (frame.selectionShadow)
+      recordGateFrameInput(frame.selectionShadow, input);
+    return;
+  }
   const key = site?.key ?? (kind === 'value' ? path : kind + ':' + path);
   const previous = frame.inputs.get(key);
   if (previous) {

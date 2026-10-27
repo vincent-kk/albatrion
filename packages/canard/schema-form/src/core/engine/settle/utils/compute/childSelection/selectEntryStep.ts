@@ -104,18 +104,20 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   let activeIds: readonly number[] | undefined;
   let fullyAdmitted = false;
   let discriminator: PreparedDiscriminatorEntry | undefined;
-  const round = context.gateSelectionRounds?.get(node);
-  const tagGroup =
-    step?.discriminatorSelection && round?.active
+  if (step?.discriminatorSelection) {
+    const round = context.gateSelectionRounds?.get(node);
+    const tagGroup = round?.active
       ? round.table.groups.find((group) => group.watchedName === entry.name)
       : undefined;
-  if (tagGroup && step?.discriminatorSelection) {
-    discriminator = readDiscriminatorEntrySelection(
-      entry,
-      step.discriminatorSelection,
-      readGateSelectionGroup(node, context, tagGroup),
-      node.runtime.blueprint.isAtomic,
-    );
+    if (tagGroup)
+      discriminator = readDiscriminatorEntrySelection(
+        entry,
+        step.discriminatorSelection,
+        readGateSelectionGroup(node, context, tagGroup),
+        node.runtime.blueprint.isAtomic,
+      );
+  }
+  if (discriminator) {
     declarations = entry.declarations;
     activeIds = discriminator.ids;
   } else if (step && !step.general) {

@@ -64,6 +64,7 @@ export const createGatePredicate = (
     reads,
     names,
     inputs,
+    arguments: { values: new Array<unknown>(inputs.length), view: undefined },
     memoizable:
       engineModes.gatePredicate !== 'off' &&
       (gate.kind !== 'active' ||

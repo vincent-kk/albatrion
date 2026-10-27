@@ -42,12 +42,17 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   const occurrence = registry.locate(owner, gate, edgeName);
   const hostPath = occurrence.hostPath;
   const predicate = occurrence.predicate;
+  const reusable = !reference && !!context.kind && predicate.memoizable;
+  const input = reusable ? predicate.arguments : undefined;
   try {
     const view =
       gate.kind === 'active'
         ? undefined
         : readGateHostView(context, hostPath, owner);
-    const dependencies = new Array<unknown>(predicate.inputs.length);
+    const dependencies =
+      input?.values ?? new Array<unknown>(predicate.inputs.length);
+    const memo = occurrence.memo;
+    let identical = !!memo && memo.values.length === predicate.inputs.length;
     for (let index = 0; index < predicate.inputs.length; index++) {
       const site = predicate.inputs[index];
       const value =
@@ -67,6 +72,8 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
                       ? view!.value[gate.condition.propertyName]
                       : undefined
                     : readProjectedValue(context, site.path);
+      if (identical && !Object.is(memo!.values[index], value))
+        identical = false;
       dependencies[index] = value;
       recordGateInput(context, site.path, value, site.kind, site);
     }
@@ -78,21 +85,11 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
         paths: occurrence.watchPaths,
         values: dependencies,
       });
-    const memo = occurrence.memo;
-    if (
-      !reference &&
-      context.kind &&
-      predicate.memoizable &&
-      memo &&
-      memo.values.length === dependencies.length &&
-      memo.values.every((value, index) => Object.is(value, dependencies[index]))
-    )
-      return memo.value;
+    if (reusable && identical && memo) return memo.value;
     if (!reference) occurrence.memo = undefined;
-    const result = predicate.evaluate({
-      values: dependencies,
-      view: view?.value,
-    });
+    const args = input ?? { values: dependencies, view: undefined };
+    args.view = view?.value;
+    const result = predicate.evaluate(args);
     if (result === undefined && gate.kind === 'if') {
       const runtime = context.root.runtime;
       const keys = runtime.errorReporter?.hasConsumer()
@@ -141,7 +138,10 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
       predicate.memoizable &&
       result !== undefined
     )
-      occurrence.memo = { values: dependencies, value };
+      if (memo) {
+        memo.value = value;
+        occurrence.memo = memo;
+      } else occurrence.memo = { values: dependencies, value };
     return value;
   } catch (cause) {
     if (!reference) occurrence.memo = undefined;
@@ -187,6 +187,8 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
     }
     if (failure) recordSettlementFailure(context, failure, 'expression');
     return false;
+  } finally {
+    if (input) input.view = undefined;
   }
 };
 
