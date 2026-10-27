@@ -8,7 +8,7 @@
 | 대표값·폭 | 프로세스 최소값의 중앙. A=앞5 A, A′=뒤5 A, B=전체10 B. 폭(다)=max(abs(A−A′), range A앞5, range A′뒤5) |
 | 품질 | 호환18행의 동일0.16.1 레인 B전체10/A전체10 비율 중앙 **0.995998052**, 허용0.95–1.05 통과. if·discriminator·구독2행 N/A |
 | 단계·힙 | oneOf80·siblings1000 각각 A/B3프로세스·20예열/100표본, 총12 PID. Node/Bun 각각 A/B7힙표본·5001노드 |
-| 원자료 | `/private/tmp/claude-501/perf-runs/20261027T1501-e8c1229-b2p2`; 단계 사본은 같은 접두사 `-stage-a/stages`·`-stage-b/stages`, `judgement.json`이 원표본·계측·통계를 연결 |
+| 측정 요약 | [요약 목록](raw/b2-p2/README.md), [원 장치 판정](raw/b2-p2/judgement.json), [22행 최소값·중앙값](raw/b2-p2/results.json), [품질](raw/b2-p2/quality.json), [시작 CPU](raw/b2-p2/quiet-window.json)·[종료 CPU](raw/b2-p2/window-end.json), [단계 장부](raw/b2-p2/stages.json) |
 
 | 기능 관문 | 결과 |
 | --- | --- |
@@ -17,7 +17,7 @@
 | 별도 verify | 전체 651파일·4498시험 통과, 기존 `global-errors.timing` 1건 **50.806ms >40ms** 실패·todo1. 전체 종료 후 원 단언 그대로 단일 워커 재실행 **2/2 통과**. 실패 로그도 보존 |
 | 새 비용 시험의 모드 | 출하 비용은 skip/table로 명시하고 원 모드 복구. 첫 verify의 의도적 shadow 식 조회642회를 출하 상한2회와 비교한 시험 설정을 수정했으며 수정 뒤8/8 통과 |
 | 배달·공개 겉면 | Node/Bun 각각72장면 차이0, `dist/index.d.ts` 바이트 동일·공개 index/manifest 변경0 |
-| 최종 전달물 재확인 | 측정 B 소스와 일치, 표적9파일79시험·타입·린트·빌드 재확인 통과. Node/Bun 각72장면 배달 재확인 차이0. 원자료 `restored-product-identity.json` |
+| 최종 전달물 재확인 | 측정 B 소스와 일치, 표적9파일79시험·타입·린트·빌드 재확인 통과. Node/Bun 각72장면 배달 재확인 차이0. [제품 동일성](raw/b2-p2/restored-product-identity.json)·[검증 요약](raw/b2-p2/verification.json) |
 | fail-first | 기준 source에서 신규24시험 중17실패·7통과. 예산 복구 회귀는 별도 red→green. 기존 기대값·스냅숏 변경0 |
 
 | 행 | A µs/행 | B µs/행 | A′ µs/행 | 폭(다) µs | 판정 | legacy B/A |
@@ -85,7 +85,9 @@
 | 전달 사항 | 상태 |
 | --- | --- |
 | 힙 범위 | 정본 flat5001 장면의 잔존 힙이며 gated host의 O(S+G) 보유량 자체를 측정한 값은 아님. heap legacy는 정본0.16.0, 시간 품질은0.16.1 |
-| 원 기준과 편집자 결정 | 원 고정 성능선은 실패하며 raw `judgement.json`의 fail은 보존. 코디네이터는 단계 장부 감소+주 TEST-073 회귀0+Node 힙으로 기준을 바꿔 측정 B 전체를 그대로 편집자 채택(소유자 재검증 대상)한다고 최종 결정함. 최종 제품 소스와 재빌드 Node/ESM/type SHA는 측정 B=e8c122986과 동일함. 기준 변경의 라운드 기록·소유자 보고는 코디네이터 소유, 총합 누적 판정은 B3 |
-| 산출물 | 소스와 계약 커밋 분리. dist는 저장소에서 추적하지 않으므로 빌드 원본·SHA는 raw의 A/B에 보존. PR 생성·독립 검토·Filid PR seam은 코디네이터 소유 |
+| 원 기준과 편집자 결정 | [원 장치 판정](raw/b2-p2/judgement.json)의 fail을 보존. 코디네이터는 단계 장부 감소+주 TEST-073 회귀0+Node 힙으로 기준을 바꿔 측정 B 전체를 그대로 편집자 채택(소유자 재검증 대상)한다고 최종 결정함. 최종 제품 소스와 재빌드 Node/ESM/type SHA는 측정 B=e8c122986과 동일함. [결정 기록](raw/b2-p2/coordinator-decision.json)의 기준 변경·소유자 보고는 코디네이터 소유, 총합 누적 판정은 B3 |
+| 산출물 | 소스와 계약 커밋 분리. [원본 SHA·변환 내역](raw/b2-p2/provenance.json), [TEST-073](raw/b2-p2/test073.json), [힙](raw/b2-p2/heaps.json), [형제항](raw/b2-p2/siblings.json)을 커밋함. PR 생성·독립 검토·Filid PR seam은 코디네이터 소유 |
+
+전체 표본별 원자료는 측정 머신에 보존하며, 이 문서는 저장소에 커밋한 측정 요약을 참조합니다.
 
 판정: 원 고정 성능선은 미달이며, 단계 장부 감소·주 TEST-073 회귀0·Node 힙을 근거로 **코디네이터 편집자 채택(소유자 재검증 대상)**입니다. 총합은 B3에서 판정하며 재측정하지 않았습니다.
