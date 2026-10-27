@@ -33,6 +33,7 @@ export const prunePerishedPaths = <Self>(
       for (const key of stores.latent.pathIndex.under(path)) {
         stores.latent.delete(key);
         runtime.latentRawDirty = true;
+        runtime.inactiveValuesRebuild = true;
       }
   for (const store of [
     stores.metadata,
@@ -42,7 +43,10 @@ export const prunePerishedPaths = <Self>(
   ])
     if (store.size)
       for (const path of paths)
-        for (const key of store.pathIndex.under(path)) store.delete(key);
+        for (const key of store.pathIndex.under(path)) {
+          if (store === stores.metadata) runtime.inactiveValuesRebuild = true;
+          store.delete(key);
+        }
   if (stores.rules.size)
     for (const path of paths)
       for (const key of stores.rules.pathIndex.under(path))

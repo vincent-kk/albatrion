@@ -88,14 +88,21 @@ export const clearArrayRuntimePaths = <Self>(
     for (const key of stores.latent.pathIndex.under(slot)) {
       stores.latent.delete(key);
       runtime.latentRawDirty = true;
+      runtime.inactiveValuesRebuild = true;
     }
     for (const store of [stores.metadata, stores.misfits, stores.declarations])
-      for (const key of store.pathIndex.under(slot)) store.delete(key);
+      for (const key of store.pathIndex.under(slot)) {
+        if (store === stores.metadata) runtime.inactiveValuesRebuild = true;
+        store.delete(key);
+      }
     for (const key of stores.rules.pathIndex.under(slot))
       updateCommittedRuleValue(runtime, key, 'delete');
   }
   for (const key of inactive) stores.inactiveMemo.delete(key);
-  if (latentChanged) runtime.latentRawDirty = true;
+  if (latentChanged) {
+    runtime.latentRawDirty = true;
+    runtime.inactiveValuesRebuild = true;
+  }
   if (oldCount === 0) return;
   for (const store of [
     stores.misfitsMemo,

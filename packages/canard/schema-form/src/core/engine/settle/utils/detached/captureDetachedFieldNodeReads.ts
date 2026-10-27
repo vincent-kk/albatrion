@@ -2,6 +2,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { readFieldNodeErrors } from '../../../validation';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
+import { getInactiveValuesState } from '../inactiveValues/getInactiveValuesState';
 import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
 import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
 
@@ -22,11 +23,17 @@ export const captureDetachedFieldNodeReads = <
   const runtime = node.runtime;
   runtime.watchValuesMemo?.delete(node);
   readFieldNodeWatchValues(node, watchSnapshot);
+  const inactive = getInactiveValuesState(node)?.capture(node.path);
+  const heldInactive = inactive
+    ? undefined
+    : runtime.inactiveValuesMemo.get(node.path);
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
     misfit: runtime.misfitPaths.has(node.path),
     misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
-    inactiveValues: runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
+    get inactiveValues() {
+      return inactive ? inactive() : (heldInactive ?? EMPTY_VALUES);
+    },
     defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
     visible: node.visible,
     readOnly: node.readOnly,
