@@ -4,6 +4,7 @@ import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
+import { DetachedWriteAddress } from './DetachedWriteAddress';
 import { indexLatentDescendant } from './indexLatentDescendant';
 
 /**
@@ -46,8 +47,12 @@ export const setLatentRaw = <Self extends FieldNodeRecord<Self>>(
     const metadata = (runtime.latentRawMetadata ??= new PathKeyedMap('pair'));
     runtime.latentRawMetadata = metadata;
     const identity: unknown = JSON.parse(key);
-    if (isArray(identity) && typeof identity[0] === 'string')
-      metadata.set(key, { path: identity[0], blueprintNode: template, order });
+    if (isArray(identity) && typeof identity[0] === 'string') {
+      const previous = metadata.get(key);
+      const current = { path: identity[0], blueprintNode: template, order };
+      if (previous) DetachedWriteAddress.transfer(previous, current);
+      metadata.set(key, current);
+    }
   }
   if (index && path !== undefined && had && !present)
     indexLatentDescendant(index, key, path, false);

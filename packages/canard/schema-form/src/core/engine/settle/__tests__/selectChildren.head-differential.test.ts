@@ -127,10 +127,13 @@ describe('child selection against pinned HEAD', () => {
           { path: '/kind', value: 'kind_0' },
         ],
       };
-      expectSelectionEqual(
-        working.run(structuredClone(fixture)),
-        head.run(structuredClone(fixture)),
+      const { points, ...actual } = working.run(structuredClone(fixture));
+      const { points: _expectedPoints, ...expected } = head.run(
+        structuredClone(fixture),
       );
+      // 400C-03: H1 changes private stage work; public results and every other field remain pinned.
+      expectSelectionEqual(actual, expected);
+      expect(points.length).toBeLessThanOrEqual(48);
     },
   );
 

@@ -15,7 +15,7 @@ import type {
   SetStateFnWithOptions,
 } from '@/schema-form/types';
 
-/** Eighteen imperative operations always addressing the current root. */
+/** Imperative operations always addressing the current root. */
 export interface FormHandle<
   Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
@@ -33,6 +33,8 @@ export interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Invalidate this schema's cached analysis and rebuild with reset's load options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
   getState: Fn<[], FieldNode['globalState']>;

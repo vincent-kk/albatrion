@@ -202,6 +202,8 @@ export interface SettlementScratch<Self> {
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
 export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
+  /** Last issued static whole-write generation; never reused within this tree. */
+  writeEpoch?: number;
   /** Number of current-shape nodes with a truthy value for each state key. */
   globalStateCounts: Map<string, number>;
   /** Stable aggregate of keys whose count is positive. */
@@ -210,6 +212,13 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   deliveries?: Set<Self>;
   /** Nodes with revision bits marked before the commit visitor reaches them. */
   revisionNodes?: Set<Self>;
+  /** Once publicly read, this tree permanently retains delivery payloads. */
+  revisionObserved?: boolean;
+  /** Unobserved bit-only transitions retained only by the current commit. */
+  revisionTransitions?: WeakMap<
+    object,
+    Map<number, Readonly<Record<number, number>>>
+  >;
   /** Live reverse watch dependencies, allocated on the first watched node. */
   deliveryWatchIndex?: FieldNodeWatchDeliveryIndex;
   /** Paths captured at value/state mutations and consumed by commit watch lookup. */

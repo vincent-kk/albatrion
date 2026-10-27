@@ -59,4 +59,6 @@ export interface RootBinding {
   root?: FieldNode;
   /** Start a new load from the latest committed props, keeping the root when the schema is unchanged. */
   reset: FormHandle['reset'];
+  /** Explicit cache invalidation and replacement through reset load semantics. */
+  rebuild: FormHandle['rebuild'];
 }

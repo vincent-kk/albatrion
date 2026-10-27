@@ -7,6 +7,7 @@ import { expect } from 'vitest';
 
 import { canonicalGateTableJSON } from './utils/canonicalGateTableJSON';
 import { countGateTableObservation } from './utils/countGateTableObservation';
+import { normalizeH1PrivateHistory } from './utils/normalizeH1PrivateHistory';
 import { sectionGateTableObservation } from './utils/sectionGateTableObservation';
 
 /**
@@ -20,6 +21,7 @@ export const snapshotGateTableCase = async (
   fixture: string,
   serialized: string,
 ): Promise<void> => {
+  serialized = normalizeH1PrivateHistory(fixture, serialized);
   const directory = fileURLToPath(new URL('../', import.meta.url));
   const canonical = canonicalGateTableJSON(JSON.parse(serialized));
   const manifestPath = join(directory, 'large.manifest.json');

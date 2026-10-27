@@ -25,6 +25,7 @@ type BuildFieldNodeTreeProps<Schema extends AuthoredSchema = AuthoredSchema> = {
   disableAutomaticWrites?: boolean;
   isTerminal?: BlueprintOptions['isTerminal'];
   isAtomic?: BlueprintOptions['isAtomic'];
+  cache?: BlueprintOptions['cache'];
 };
 
 /**

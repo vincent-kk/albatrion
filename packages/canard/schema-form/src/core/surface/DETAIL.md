@@ -8,6 +8,8 @@
 
 ## API Contracts
 
+- BLUEPRINT-052: buildFieldNodeTree accepts an optional caller-owned blueprint cache and forwards it to blueprint without importing app state. Per-tree warning collection and runtime ownership remain unchanged.
+
 - surface의 엔진 참조는 engine/index를 통해서만 도달하며 내부 엔진 파일을 직접 가져오지 않는다(07c 계획 9.2·9.3).
 - `fieldNodeFactory`의 수출을 유지하는 이유는 core 수준 시험 기반 도구(makeFieldNodeTree, 시나리오 실행기, createDispatchTree)가 이 생성 통로를 쓰기 때문이다. 제품 소비자는 없으며, 정돈-3에서 시험 도구의 자리와 함께 다시 검토한다.
 - `UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 내부 형이며 surface index가 내보내지 않는다. 자기 index 모양 검증은 부모 core의 시험 구획이 소유하고 surface 내부 시험은 구체 파일을 직접 가져온다.

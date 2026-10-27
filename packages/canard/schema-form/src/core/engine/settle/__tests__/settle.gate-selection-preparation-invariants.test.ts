@@ -5,6 +5,7 @@ import { expect, it } from 'vitest';
 
 import { gateTableCases } from './fixtures/gate-table/gateTableCases';
 import { observeGateTableModes } from './fixtures/gate-table/observeGateTableModes';
+import { normalizeH1PrivateHistory } from './fixtures/gate-table/snapshotGateTableCase/utils/normalizeH1PrivateHistory';
 import { sectionGateTableObservation } from './fixtures/gate-table/snapshotGateTableCase/utils/sectionGateTableObservation';
 import { gateSelectionCases } from './fixtures/gateSelectionCases';
 import { gateWheelCases } from './fixtures/gateWheelCases';
@@ -30,7 +31,10 @@ it('preserves every non-visits section byte in the 25 selection histories', asyn
   expect(fixtures).toHaveLength(25);
   for (const [index, fixture] of fixtures.entries()) {
     const { sections } = sectionGateTableObservation(
-      await observeGateTableModes(fixture),
+      normalizeH1PrivateHistory(
+        `selection-${index}`,
+        await observeGateTableModes(fixture),
+      ),
     );
     const preserved = Object.fromEntries(
       Object.entries(sections).filter(([key]) => key !== 'visits'),
@@ -46,7 +50,10 @@ it('preserves every non-visits section byte in the 15 wheel histories', async ()
   expect(gateWheelCases).toHaveLength(15);
   for (const [index, fixture] of gateWheelCases.entries()) {
     const { sections } = sectionGateTableObservation(
-      await observeGateTableModes(fixture),
+      normalizeH1PrivateHistory(
+        `wheel-${index}`,
+        await observeGateTableModes(fixture),
+      ),
     );
     const preserved = Object.fromEntries(
       Object.entries(sections).filter(([key]) => key !== 'visits'),
