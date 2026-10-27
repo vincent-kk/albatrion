@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
+
 - Inactive-value publication preserves the existing wildcard-query exclusion: a literal `*` segment is tested by navigation's wildcard interpretation, so another live match can hide that retained value. Only wildcard-bearing graphs perform this compatibility work. A departing wildcard scope retains Boolean query results against its previous committed children; it retains no serialized values or latent-store entries. This narrow departure-time exception preserves an unread detached host after external matches later leave. Ordinary candidates allocate no proof fields, traverse no additional source graph, and retain exit serialization and latent bookkeeping at zero. The wildcard exception's calls and bytes are reported separately.
 
 - B4-1의 튜플 재생성·미선언 꼬리 이동에서 일회 변환한 잠복 소스와 보유 슬롯은 공존한다. 정확한 슬롯 소스가 우선하며 없으면 잠복 소스를 읽고, 비활성 값은 두 표현의 문서 순서·점유 경로 제외·동결 참조를 유지한다. 잠복 소스가 실제로 있을 때만 해당 커밋 메모를 갱신한다. 통째 쓰기·load/reset·진짜 삭제는 두 표현을 함께 정리하고, 재진입 또는 슬롯 나감이 소유한 동일 종류의 오래된 잠복 항목을 제거한다. 변환된 옛 참조는 이동한 약한 쓰기 주소로 쓰되 고정 읽기를 유지한다. 일반 retained-instance 저장과 나감의 잠복 포착 0은 유지하며 B4-2에서 배열 변환을 직접 이전으로 교체한다.
