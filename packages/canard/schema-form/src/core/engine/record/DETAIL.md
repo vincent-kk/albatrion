@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 떼어진 참조의 쓰기는 정착·커밋·배달을 만들지 않으며 원래 떼어진 인스턴스의 읽기도 바꾸지 않는다. 호스트 소유 overlay가 바뀐 자리에서 살아 있는 호스트와 조상의 inactiveValues materialization을 즉시 무효화하여 다음 읽기가 새 값을 공표한다. 같은 값과 항목은 다음 변경까지 참조를 재사용하며 이미 떼어진 호스트의 고정된 읽기는 유지한다(NODE-044, VALUE-031, WRITE-087).
+
 - 일반 비활성 원본은 호스트의 보유 슬롯·overlay만 소유하며 트리 단위 잠복 저장소·메타데이터·비활성 목록 메모는 두지 않는다. 별표 공표의 기존 wildcard 제외·항목 alias를 보존하는 호환 자료만 별도로 이름 붙여 필요한 폼에 지연 생성한다. 슬롯이 생길 수 없는 호스트는 준비 때 결정하며 반복 쓰기에서 적격 검사·overlay 조회·기능 플래그 읽기를 하지 않는다.
 
 - Detached write-address cells belong to departed occurrences. A fresh active clone has no cell until an actual exit captures its current path and order; an inactive clone keeps the existing transfer and rebind rules. This avoids allocating transient address objects and order arrays for active re-entry without changing old references' write destinations.
@@ -13,7 +15,6 @@
 - 보유 슬롯은 호스트 레코드가 소유하는 선택적 상태 보유 자료이다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"는 설계 Ⅱ의 상한을 따른다. 이름과 청사진 노드가 같은 엔트리를 구별하고 같은 이름의 다른 종류는 별도로 보유한다. 슬롯 값은 떼어진 인스턴스이며 공개 `structure`·`children`에는 넣지 않는다. 노드의 고정 생성자 필드와 공개 surface는 늘리지 않고 슬롯이 필요한 호스트에서만 자료를 할당한다(NODE-043·044·045·060).
 - 슬롯의 raw·extras·선언 밖 값은 원래 인스턴스에 남는다. "슬롯 인스턴스는 떼어진 채라 고칠 수 없으므로" 비활성 쓰기는 호스트가 소유한 슬롯별 overlay로 보관한다. 선택과 정착은 record가 실행하지 않는다. 보유 자료의 변경은 이미 떼어진 참조가 보는 읽기 자료와 공유된 가변 상태를 만들지 않는다. 슬롯은 "후보 풀"이며 직전 형상을 출발점으로 재사용하는 기록이 아니다(VALUE-031, SETTLE-044·GOAL-029).
 - `unsetOnInactive`가 참인 호스트도 명시 보존 자손이 있으면 슬롯으로 보유한다. 호스트 자신의 raw·extras와 보존 지시가 없는 자손 원본은 overlay의 지움 표식으로 제외하고, 명시 `unsetOnInactive: false` 자손의 원본을 유지한다. 보존할 자손이 하나도 없으면 슬롯을 만들지 않는다. 지움 표식은 원래 떼어진 인스턴스를 변경하지 않으며 재진입 때 없음인 원본에 적용되는 기존 채움 규칙을 유지한다(WRITE-034, NODE-044, 설계 Ⅱ 정책 상속 정정).
-- 떼어진 참조의 쓰기는 정착·커밋을 만들지 않는다. 그 쓰기의 overlay는 다음 재진입 원본에 즉시 사용하지만 살아 있는 호스트의 `inactiveValues`는 다음 커밋 전까지 직전 공표 내용을 유지한다. 읽기 자료는 커밋된 overlay와 아직 공표하지 않은 쓰기를 구분하여 지연 materialize가 이 시점 계약을 앞당기지 않게 한다(NODE-044, VALUE-029·031).
 - 호스트당 보유 슬롯은 실제 방문한 엔트리 수 M 이하이고 재귀 보유 깊이는 실제 값 깊이 K까지이다. 보유 공간은 슬롯 아래의 실제 원본 서브트리와 overlay에 비례하며, 정적 청사진 전체나 방문하지 않은 재귀 가지를 실체화하지 않는다. load·reset·rebuild는 해당 범위의 슬롯·overlay를 버리고, 배열 위치 이동은 원본 보존·주소 이동 계약을 유지한다. 고정된 읽기 자료의 수명은 옛 참조의 수명에 묶는다(NODE-053·055·060).
 
 - D3b-1의 노드 키 메모는 root runtime의 지연 WeakMap 칸으로 소유한다. 선언 키·derive target ID·객체/배열 안정 형상·호스트 예산·배열 선언 count/result는 트리마다 독립이며 폼 전체 reset과 폐기에서 해제하고 부분 reset에서는 유지한다. 떼어진 쓰기 주소 셀은 재계산 메모가 아닌 상태이므로 같은 runtime을 재사용하는 폼 reset을 포함한 어떤 reset에서도 해제하지 않는다. 살아 있는 옛 참조가 runtime을 계속 소유하여 기존 약한 키 수명을 보존한다. nextTargetId 단조 카운터와 이미 runtime 키인 등록소는 유지한다. 노드 칸은 늘리지 않으며 비용은 실제 사용하는 트리당 최대 일곱 지연 WeakMap이다(SURFACE-065, NODE-044·045).
