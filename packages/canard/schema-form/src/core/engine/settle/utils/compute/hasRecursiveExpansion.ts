@@ -1,19 +1,11 @@
-import type {
-  Blueprint,
-  BlueprintNode,
-  EffectiveSchema,
-} from '../../../blueprint';
+import type { BlueprintNode, EffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import type { SettlementContext } from '../../types/settlement';
 import { hasLatentUnder } from '../latentStore/hasLatentUnder';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
 
 /** Only the cycle verdict outlives the one-time graph traversal. */
-let CYCLIC_BLUEPRINTS = new WeakMap<Blueprint, boolean>();
-registerEngineDerivedReset(() => {
-  CYCLIC_BLUEPRINTS = new WeakMap<Blueprint, boolean>();
-});
 
 /**
  * Detect a back edge without mistaking shared DAG templates for recursion.
@@ -110,10 +102,14 @@ export const hasRecursiveExpansion = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (input !== undefined) return false;
   const analysis = parent.runtime.blueprint;
-  let cyclic = CYCLIC_BLUEPRINTS.get(analysis);
+  let cyclic = getBlueprintDerived<'recursiveExpansion', boolean>(
+    analysis,
+  ).recursiveExpansion;
   if (cyclic === undefined) {
     cyclic = hasTemplateCycle(analysis.root, new Set(), new Set());
-    CYCLIC_BLUEPRINTS.set(analysis, cyclic);
+    getBlueprintDerived<'recursiveExpansion', boolean>(
+      analysis,
+    ).recursiveExpansion = cyclic;
   }
   if (!cyclic) return false;
   let relativeSpan: number | undefined;

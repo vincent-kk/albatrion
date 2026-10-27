@@ -5,7 +5,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import type { SettlementContext } from '../../types/settlement';
 import { flushPendingOutput } from '../output/flushPendingOutput';
 import { bindGateHostPath } from './bindGateHostPath';
@@ -26,10 +26,6 @@ interface GateReadPlan {
 }
 
 /** Templates share their read plan across array items and settlement calls. */
-let READ_PLANS = new WeakMap<BlueprintNode, GateReadPlan>();
-registerEngineDerivedReset(() => {
-  READ_PLANS = new WeakMap<BlueprintNode, GateReadPlan>();
-});
 
 /**
  * Publish read ancestors before an entry can mutate their in-progress subtree.
@@ -45,7 +41,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (context.root.runtime.blueprint.capabilities.branchless) return;
   if (!context.pendingOutputs?.size) return;
-  let plan = READ_PLANS.get(template);
+  let plan = getHostDerived<'readPlans', GateReadPlan>(template).readPlans;
   if (!plan) {
     const built: GateReadPlan = { occurrences: [], recursive: false };
     const ancestors = new Set<BlueprintNode>();
@@ -90,7 +86,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
     };
     visit(template, '');
     plan = built;
-    READ_PLANS.set(template, plan);
+    getHostDerived<'readPlans', GateReadPlan>(template).readPlans = plan;
   }
   if (plan.recursive) {
     for (const host of context.pendingOutputs)

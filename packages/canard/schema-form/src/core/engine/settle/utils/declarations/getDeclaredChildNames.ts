@@ -1,11 +1,7 @@
 import type { BlueprintNode } from '../../../blueprint';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 
 /** Immutable child-name indexes live only while their analyzed template lives. */
-let DECLARED_NAMES = new WeakMap<BlueprintNode, ReadonlySet<string>>();
-registerEngineDerivedReset(() => {
-  DECLARED_NAMES = new WeakMap<BlueprintNode, ReadonlySet<string>>();
-});
 
 /**
  * Reuse declared child-name membership for writes and projected reads.
@@ -15,10 +11,14 @@ registerEngineDerivedReset(() => {
 export const getDeclaredChildNames = (
   template: BlueprintNode,
 ): ReadonlySet<string> => {
-  let names = DECLARED_NAMES.get(template);
+  let names = getHostDerived<'declaredNames', ReadonlySet<string>>(
+    template,
+  ).declaredNames;
   if (!names) {
     names = new Set(template.childEntries.map((entry) => entry.name));
-    DECLARED_NAMES.set(template, names);
+    getHostDerived<'declaredNames', ReadonlySet<string>>(
+      template,
+    ).declaredNames = names;
   }
   return names;
 };

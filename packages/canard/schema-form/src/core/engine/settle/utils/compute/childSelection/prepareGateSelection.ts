@@ -1,17 +1,13 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Blueprint, BlueprintNode } from '../../../../blueprint';
-import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
+import { getBlueprintDerived } from '../../../../utils/cache/derivedRecords';
 import type { GateSelectionTable } from '../../../types/gateSelectionTable';
 import { getDependencyIndex } from '../../dependencies/getDependencyIndex';
 import { getDirectChildSelectionPlan } from './getDirectChildSelectionPlan';
 import { getGateSelectionTable } from './getGateSelectionTable';
 
 /** Preparation is a one-time blueprint operation, including negative table evidence. */
-let PREPARED = new WeakMap<Blueprint, boolean>();
-registerEngineDerivedReset(() => {
-  PREPARED = new WeakMap<Blueprint, boolean>();
-});
 
 /**
  * Memoize static selection metadata before a mount's load without evaluating gates.
@@ -23,7 +19,9 @@ export const prepareGateSelection = (
   blueprint: Blueprint,
   allowPreparation = true,
 ): boolean => {
-  const known = PREPARED.get(blueprint);
+  const known = getBlueprintDerived<'splitOwnersPrepared', boolean>(
+    blueprint,
+  ).splitOwnersPrepared;
   if (known !== undefined) return known;
   if (!allowPreparation) return false;
   const tables = new Map<BlueprintNode, GateSelectionTable>();
@@ -44,6 +42,8 @@ export const prepareGateSelection = (
   }
   if (tables.size) getDependencyIndex(blueprint, tables);
   const split = tables.size > 0 && getDependencyIndex(blueprint).hasSplitOwners;
-  PREPARED.set(blueprint, split);
+  getBlueprintDerived<'splitOwnersPrepared', boolean>(
+    blueprint,
+  ).splitOwnersPrepared = split;
   return split;
 };

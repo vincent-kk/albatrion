@@ -11,6 +11,7 @@ import * as priming from '../utils/compute/primeHost';
 import * as publication from '../utils/gates/flushPendingGateReads';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
+import { observeHostSlotWrites } from './fixtures/observeHostSlotWrites';
 
 /**
  * Count every runtime entry into the plan function, cache hits included.
@@ -171,7 +172,7 @@ describe('child selection plan lookup runtime counts', () => {
       });
       root.behavior.declareChildren = () => candidates;
       const calls = countPlanCalls();
-      const builds = vi.spyOn(planning.DIRECT_CHILD_SELECTION_PLANS, 'set');
+      const builds = observeHostSlotWrites('directChildSelectionPlan');
       loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       expect(calls.count).toBe(2);
       const mountPlans = builds.mock.calls.filter(

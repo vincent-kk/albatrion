@@ -7,7 +7,7 @@ import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -21,16 +21,6 @@ import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
 /** Compiled exit expressions indexed once per immutable analysis. */
-let EXIT_EXPRESSIONS = new WeakMap<
-  Blueprint,
-  ReadonlyMap<string, BlueprintExpression>
->();
-registerEngineDerivedReset(() => {
-  EXIT_EXPRESSIONS = new WeakMap<
-    Blueprint,
-    ReadonlyMap<string, BlueprintExpression>
-  >();
-});
 
 /**
  * Index authored exit expressions by their declaration and schema address.
@@ -40,7 +30,10 @@ registerEngineDerivedReset(() => {
 const getExitExpressions = (
   blueprint: Blueprint,
 ): ReadonlyMap<string, BlueprintExpression> => {
-  let indexed = EXIT_EXPRESSIONS.get(blueprint);
+  let indexed = getBlueprintDerived<
+    'exitPolicyExpressions',
+    ReadonlyMap<string, BlueprintExpression>
+  >(blueprint).exitPolicyExpressions;
   if (indexed) return indexed;
   indexed = new Map(
     blueprint.expressions
@@ -50,7 +43,10 @@ const getExitExpressions = (
         expression,
       ]),
   );
-  EXIT_EXPRESSIONS.set(blueprint, indexed);
+  getBlueprintDerived<
+    'exitPolicyExpressions',
+    ReadonlyMap<string, BlueprintExpression>
+  >(blueprint).exitPolicyExpressions = indexed;
   return indexed;
 };
 

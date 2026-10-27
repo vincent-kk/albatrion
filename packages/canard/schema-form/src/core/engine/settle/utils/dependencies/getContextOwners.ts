@@ -2,13 +2,10 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 
 /** Context readers are held apart from absolute JSON Pointer dependencies. */
-let OWNERS = new WeakMap<Blueprint, readonly string[]>();
-registerEngineDerivedReset(() => {
-  OWNERS = new WeakMap<Blueprint, readonly string[]>();
-});
+
 /** Shared result for blueprints without context reads. */
 const EMPTY_OWNERS: readonly string[] = Object.freeze([]);
 
@@ -19,11 +16,15 @@ const EMPTY_OWNERS: readonly string[] = Object.freeze([]);
  */
 export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   if (!blueprint.capabilities.hasDependencies) return EMPTY_OWNERS;
-  const cached = OWNERS.get(blueprint);
+  const cached = getBlueprintDerived<'contextOwners', readonly string[]>(
+    blueprint,
+  ).contextOwners;
   if (cached) return cached;
   const ids = blueprint.dependencies[$.Context];
   if (!ids?.length) {
-    OWNERS.set(blueprint, EMPTY_OWNERS);
+    getBlueprintDerived<'contextOwners', readonly string[]>(
+      blueprint,
+    ).contextOwners = EMPTY_OWNERS;
     return EMPTY_OWNERS;
   }
   const owners: string[] = [];
@@ -43,6 +44,8 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
         !owners.includes(declaration.path)
       )
         owners.push(declaration.path);
-  OWNERS.set(blueprint, owners);
+  getBlueprintDerived<'contextOwners', readonly string[]>(
+    blueprint,
+  ).contextOwners = owners;
   return owners;
 };

@@ -5,7 +5,7 @@ import type {
   BlueprintOptions,
   EffectiveSchema,
 } from '../../../../blueprint';
-import { registerEngineDerivedReset } from '../../../../utils/cache/engineModes';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { staticIds } from './staticIds';
 
 /** Runtime merge and conflict verdict of one edge whose declarations are all admitted. */
@@ -19,16 +19,6 @@ interface AdmittedEdgeSchema {
 }
 
 /** Merge results belong to the analyzed child edge; live records are never retained. */
-let ADMITTED_EDGE_SCHEMAS = new WeakMap<
-  BlueprintChildEntry,
-  AdmittedEdgeSchema
->();
-registerEngineDerivedReset(() => {
-  ADMITTED_EDGE_SCHEMAS = new WeakMap<
-    BlueprintChildEntry,
-    AdmittedEdgeSchema
-  >();
-});
 
 /**
  * Read the constant schema and conflict of a child edge whose every declaration is admitted.
@@ -36,6 +26,7 @@ registerEngineDerivedReset(() => {
  * @param entry - Analyzed child edge, all of whose declarations the current pass admitted
  * @param node - Blueprint node of the live child selected for the edge
  * @param isAtomic - Atomic-value predicate the runtime merge passes
+ * @param owner - Immutable parent host that declared this entry
  * @returns The edge's merge result and conflict verdict, or undefined when the child was
  * created from another edge's node and the caller must merge for that node
  */
@@ -43,11 +34,17 @@ export const readAdmittedEdgeSchema = (
   entry: BlueprintChildEntry,
   node: BlueprintNode,
   isAtomic: BlueprintOptions['isAtomic'],
+  owner: BlueprintNode,
 ): AdmittedEdgeSchema | undefined => {
   if (node !== entry.node) return undefined;
-  const cached = ADMITTED_EDGE_SCHEMAS.get(entry);
+  const record = getHostDerived<
+    'admittedEdgeSchemas',
+    WeakMap<BlueprintChildEntry, AdmittedEdgeSchema>
+  >(owner);
+  const entries = (record.admittedEdgeSchemas ??= new WeakMap());
+  const cached = entries.get(entry);
   if (cached && cached.isAtomic === isAtomic) return cached;
-  const schema = mergeEffectiveSchema(entry.node, staticIds(entry), {
+  const schema = mergeEffectiveSchema(entry.node, staticIds(entry, owner), {
     mode: 'runtime',
     isAtomic,
   });
@@ -56,6 +53,6 @@ export const readAdmittedEdgeSchema = (
     conflict: schema.typeConflict,
     isAtomic,
   };
-  ADMITTED_EDGE_SCHEMAS.set(entry, admitted);
+  entries.set(entry, admitted);
   return admitted;
 };

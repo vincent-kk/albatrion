@@ -145,7 +145,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     }
     fullyAdmitted = active === undefined;
     declarations = active ?? entry.declarations;
-    activeIds = ids ?? staticIds(entry);
+    activeIds = ids ?? staticIds(entry, node.blueprintNode);
   } else declarations = entry.declarations;
   if (declarations.length === 0) {
     const priorChild = hasOwnProperty(prior, entry.name)
@@ -287,14 +287,19 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     frame.changed = true;
     entryChanged = true;
   }
-  const ids = activeIds ?? staticIds(entry);
+  const ids = activeIds ?? staticIds(entry, node.blueprintNode);
   if ((!priorChild && !currentChild) || (pending && child === pending))
     supplementSplitOwner(child, context);
   if (context.selectedDeclarationIds.get(child) !== ids)
     context.selectedDeclarationIds.set(child, ids);
   const isAtomic = node.runtime.blueprint?.isAtomic;
   const admittedEdge = fullyAdmitted
-    ? readAdmittedEdgeSchema(entry, child.blueprintNode, isAtomic)
+    ? readAdmittedEdgeSchema(
+        entry,
+        child.blueprintNode,
+        isAtomic,
+        node.blueprintNode,
+      )
     : undefined;
   const effective =
     admittedEdge?.schema ??

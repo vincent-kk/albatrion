@@ -11,7 +11,7 @@ import type {
 } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
-import { registerEngineDerivedReset } from '../../../utils/cache/engineModes';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import type {
   RegistrationSink,
@@ -58,6 +58,9 @@ interface DependencyNode {
   children: Map<string, DependencyNode>;
 }
 
+/** Call-local prefix traversal results; never retained by the static index. */
+export type DependencyPresenceMemo = Map<string, DependencyNode[][]>;
+
 /** Queryable reverse dependencies built once from the blueprint dictionary. */
 class DependencyIndex {
   /** Immutable analysis retained only with its weakly cached index. */
@@ -75,11 +78,6 @@ class DependencyIndex {
   }
   /** Root of the absolute JSON Pointer watch trie. */
   private readonly root: DependencyNode | undefined;
-  /** Ancestor trie steps retained only while their settlement context lives. */
-  private readonly presenceMemos = new WeakMap<
-    object,
-    Map<string, DependencyNode[][]>
-  >();
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
   constructor(blueprint?: Blueprint) {
@@ -403,7 +401,7 @@ class DependencyIndex {
     hostPath: string,
     childSegment: string,
     metrics?: { ownerInsertions: number },
-    settlement?: object,
+    settlement?: { dependencyPresenceMemo?: DependencyPresenceMemo },
   ): {
     owners: Set<string>;
     stateOnly: Set<string>;
@@ -418,10 +416,10 @@ class DependencyIndex {
       return { owners, stateOnly, outerTemplates, directTemplates };
     const changedPath = hostPath + '/' + childSegment;
     const ancestorOwners = new Set<string>();
-    let memo = settlement ? this.presenceMemos.get(settlement) : undefined;
+    let memo = settlement?.dependencyPresenceMemo;
     if (!memo) {
       memo = new Map();
-      if (settlement) this.presenceMemos.set(settlement, memo);
+      if (settlement) settlement.dependencyPresenceMemo = memo;
     }
     const levels = this.presenceLevels(hostPath, memo);
     this.collectPresenceOwners(
@@ -583,10 +581,7 @@ class DependencyIndex {
 }
 
 /** Cached dependency indexes live only while their analyzed blueprint lives. */
-let INDEXES = new WeakMap<Blueprint, DependencyIndex>();
-registerEngineDerivedReset(() => {
-  INDEXES = new WeakMap<Blueprint, DependencyIndex>();
-});
+
 /** Dependency absence is proven independently of branch presence. */
 const EMPTY_INDEX = new DependencyIndex();
 Object.freeze(EMPTY_INDEX);
@@ -606,10 +601,14 @@ export const getDependencyIndex = (
     !blueprint.capabilities.hasExpressions
   )
     return EMPTY_INDEX;
-  let index = INDEXES.get(blueprint);
+  let index = getBlueprintDerived<'dependencyIndex', DependencyIndex>(
+    blueprint,
+  ).dependencyIndex;
   if (!index) {
     index = new DependencyIndex(blueprint);
-    INDEXES.set(blueprint, index);
+    getBlueprintDerived<'dependencyIndex', DependencyIndex>(
+      blueprint,
+    ).dependencyIndex = index;
   }
   if (tables) index.prepareRegistration(tables);
   return index;

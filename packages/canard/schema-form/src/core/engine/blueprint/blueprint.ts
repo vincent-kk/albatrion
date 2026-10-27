@@ -1,6 +1,5 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import { StaticFirstLoadCapability } from './StaticFirstLoadCapability';
 import { buildNodes } from './buildNodes';
 import { collectBlueprintWarnings } from './collectBlueprintWarnings';
 import { compileBlueprintExpressions } from './compileBlueprintExpressions';
@@ -124,6 +123,16 @@ export const blueprint = (
     dependencies: context.dependencies ?? Object.create(null),
     expressions,
   };
+  Object.defineProperty(result, 'staticFirstLoadEligible', {
+    value:
+      context.staticFirstLoad &&
+      context.capabilities.branchless &&
+      !context.capabilities.hasExpressions &&
+      !context.capabilities.hasDerive &&
+      !context.capabilities.hasWatch &&
+      !context.capabilities.hasState &&
+      !context.capabilities.hasDependencies,
+  });
   if (process.env.NODE_ENV !== 'production') {
     Object.freeze(context.capabilities);
     Object.freeze(context.nodes);
@@ -133,17 +142,6 @@ export const blueprint = (
       Object.freeze(expressions);
     Object.freeze(result);
   }
-  const capabilities = result.capabilities;
-  StaticFirstLoadCapability.set(
-    result,
-    context.staticFirstLoad &&
-      capabilities.branchless &&
-      !capabilities.hasExpressions &&
-      !capabilities.hasDerive &&
-      !capabilities.hasWatch &&
-      !capabilities.hasState &&
-      !capabilities.hasDependencies,
-  );
   if (typeof schema === 'object' && options.cache) {
     const entry: BlueprintCacheEntry = {
       blueprint: result,
