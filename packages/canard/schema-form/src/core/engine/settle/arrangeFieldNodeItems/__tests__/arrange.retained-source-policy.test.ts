@@ -10,16 +10,9 @@ import {
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
-it.each([
-  ['on', false],
-  ['off', false],
-  ['verify', false],
-  ['on', true],
-  ['off', true],
-  ['verify', true],
-] as const)(
-  '%s applies the exit policy after conversion, candidate=%s',
-  (mode, candidate) => {
+it.each([[false], [true]] as const)(
+  'applies the exit policy after conversion, candidate=%s',
+  (candidate) => {
     const item: BlueprintSchema = {
       type: 'object',
       controls: { active: '../../show' },
@@ -42,7 +35,7 @@ it.each([
           }
         : {}),
     };
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         open: { type: 'boolean' },
@@ -54,7 +47,7 @@ it.each([
         },
       },
     });
-    runtime.slots = mode;
+
     dispatchMount(root, {
       open: true,
       show: true,

@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { FieldNodeEventType } from '../../record';
@@ -15,7 +14,7 @@ import {
   dispatchWriteInput,
   subscribeFieldNode,
 } from '../../write';
-import { HostLatent } from '../utils/latentStore/HostLatent';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 import { referenceNextExtras } from './fixtures/referenceNextExtras';
 
 describe('single extras comparison observations', () => {
@@ -175,8 +174,6 @@ describe('single extras comparison observations', () => {
   );
 
   it('retains the latent host and extras on a same-value inactive Merge', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root } = createDispatchTree({
       type: 'object',
       properties: { flag: { type: 'boolean' } },
@@ -190,13 +187,13 @@ describe('single extras comparison observations', () => {
       ],
     });
     dispatchMount(root, { flag: false, h: { known: 1, extra: { value: 2 } } });
-    const entry = [...root.runtime.latentRaw].find(
-      ([, value]) => value instanceof HostLatent,
-    );
-    expect(entry).toBeDefined();
-    const [key, previous] = entry!;
+    const previous = readRetainedSlotRaw(root, '/h', 'object') as {
+      extra: unknown;
+    };
     dispatchWriteInput(root, { h: { extra: { value: 2 } } }, WriteOption.Merge);
-    expect(root.runtime.latentRaw.get(key)).toBe(previous);
+    expect(
+      (readRetainedSlotRaw(root, '/h', 'object') as { extra: unknown }).extra,
+    ).toBe(previous.extra);
     dispatchWriteInput(root, { flag: true }, WriteOption.Merge);
     expect(root.emit).toEqual({
       flag: true,

@@ -3,6 +3,7 @@ import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { createChildNode } from '../compute/createChildNode';
 import { applySlotOverlay } from './applySlotOverlay';
+import { getSlotBinding } from './getSlotBinding';
 import { markSlotChange } from './markSlotChange';
 
 /**
@@ -19,9 +20,10 @@ export const createFromSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   overlay: InactiveSlotOverlay,
   context: SettlementContext<Self>,
 ): Self => {
+  const binding = getSlotBinding(host, entry);
   const node = createChildNode(host, entry);
   applySlotOverlay(node, overlay, context);
-  markSlotChange(host, entry, undefined, context);
-  host.inactiveSlotOverlays?.delete(entry);
+  markSlotChange(host, binding, undefined, context);
+  host.inactiveSlotOverlays?.delete(binding);
   return node;
 };

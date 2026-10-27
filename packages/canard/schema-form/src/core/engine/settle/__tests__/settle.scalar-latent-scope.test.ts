@@ -1,7 +1,6 @@
 // filid:contract settle-write
 import { expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { FieldNodeEventType } from '../../record';
 import {
@@ -10,16 +9,21 @@ import {
   subscribeFieldNode,
 } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 const observed = vi.hoisted(() => ({ prunes: 0, fast: [] as boolean[] }));
-vi.mock('../utils/latentStore/pruneLatentRaw', async (load) => {
+vi.mock('../utils/literalStarStore/pruneLiteralStarRaw', async (load) => {
   const actual =
-    await load<typeof import('../utils/latentStore/pruneLatentRaw')>();
+    await load<
+      typeof import('../utils/literalStarStore/pruneLiteralStarRaw')
+    >();
   return {
     ...actual,
-    pruneLatentRaw: (...args: Parameters<typeof actual.pruneLatentRaw>) => {
+    pruneLiteralStarRaw: (
+      ...args: Parameters<typeof actual.pruneLiteralStarRaw>
+    ) => {
       observed.prunes++;
-      return actual.pruneLatentRaw(...args);
+      return actual.pruneLiteralStarRaw(...args);
     },
   };
 });
@@ -61,16 +65,13 @@ function beginObservation() {
 }
 
 it('H4 keeps the scalar fast path when an exited array item owns an unrelated latent value', () => {
-  // These assertions inspect the latent-store baseline directly.
-  pinLatentBaseline();
   const { root, leaf, other, seen } = createScopeTree();
   const retired = getDispatchNode(root, 'other', '0');
   dispatchSetValue(other, []);
   expect(retired.detached).toBe(true);
   dispatchSetValue(retired, 11);
   expect(root.runtime.blueprint.capabilities.branchless).toBe(true);
-  const key = JSON.stringify(['/other/0', 'number']);
-  expect(root.runtime.latentRaw.get(key)).toBe(11);
+  expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBe(11);
   seen.length = 0;
   beginObservation();
 
@@ -79,46 +80,6 @@ it('H4 keeps the scalar fast path when an exited array item owns an unrelated la
   expect(observed.fast).toEqual([true]);
   expect(observed.prunes).toBe(0);
   expect(root.emit).toEqual({ group: { stable: 1 } });
-  expect(root.runtime.latentRaw.get(key)).toBe(11);
-  expect(seen).toEqual(['', '/group', '/group/stable']);
-});
-
-it.each([
-  ['/group/stable', 'string'],
-  ['/group/stable/hidden', 'number'],
-])(
-  'H4 uses the ordinary path and clears covered latent slot %s',
-  (path, kind) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
-    const { root, leaf, seen } = createScopeTree();
-    const key = JSON.stringify([path, kind]);
-    root.runtime.latentRaw.set(key, 99);
-    beginObservation();
-
-    dispatchSetValue(leaf, 1);
-
-    expect(observed.fast).toEqual([false]);
-    expect(observed.prunes).toBe(1);
-    expect(root.runtime.latentRaw.has(key)).toBe(false);
-    expect(root.emit).toEqual({ group: { stable: 1 }, other: [7] });
-    expect(seen).toEqual(['', '/group', '/group/stable']);
-  },
-);
-
-it('H4 keeps the ordinary path for a same-path other-kind slot of an ancestor', () => {
-  // These assertions inspect the latent-store baseline directly.
-  pinLatentBaseline();
-  const { root, leaf, seen } = createScopeTree();
-  const key = JSON.stringify(['/group', 'string']);
-  root.runtime.latentRaw.set(key, 'retained');
-  beginObservation();
-
-  dispatchSetValue(leaf, 1);
-
-  expect(observed.fast).toEqual([false]);
-  expect(observed.prunes).toBe(1);
-  expect(root.runtime.latentRaw.get(key)).toBe('retained');
-  expect(root.emit).toEqual({ group: { stable: 1 }, other: [7] });
+  expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBe(11);
   expect(seen).toEqual(['', '/group', '/group/stable']);
 });

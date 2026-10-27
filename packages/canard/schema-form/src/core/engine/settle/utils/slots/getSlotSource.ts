@@ -1,5 +1,6 @@
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
+import { getSlotBinding } from './getSlotBinding';
 
 /**
  * Resolve a retained child and the patch covering its exact candidate binding.
@@ -13,7 +14,8 @@ export const getSlotSource = <Self extends FieldNodeRecord<Self>>(
   entry: BlueprintChildEntry,
   overlay?: InactiveSlotOverlay,
 ): { source: Self | undefined; overlay: InactiveSlotOverlay | undefined } => {
-  const supplied = overlay?.children?.get(entry);
+  const binding = getSlotBinding(host, entry, overlay);
+  const supplied = overlay?.children?.get(binding);
   if (overlay?.replace && !supplied)
     return { source: undefined, overlay: undefined };
   const live = host?.structure?.[entry.name];
@@ -21,7 +23,7 @@ export const getSlotSource = <Self extends FieldNodeRecord<Self>>(
     source:
       live?.blueprintNode === entry.node
         ? live
-        : host?.inactiveSlots?.get(entry),
-    overlay: supplied ?? host?.inactiveSlotOverlays?.get(entry),
+        : host?.inactiveSlots?.get(binding),
+    overlay: supplied ?? host?.inactiveSlotOverlays?.get(binding),
   };
 };

@@ -37,9 +37,9 @@ export const createNode = (
       globalStateCounts: new Map(),
       globalState: {},
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'),
+      literalStarRaw: new PathKeyedMap('pair'),
       misfitPaths: new PathKeyedSet(),
-      inactiveValuesMemo: new PathKeyedMap<
+      literalStarValuesMemo: new PathKeyedMap<
         readonly { path: string; value: unknown }[]
       >('path'),
     };

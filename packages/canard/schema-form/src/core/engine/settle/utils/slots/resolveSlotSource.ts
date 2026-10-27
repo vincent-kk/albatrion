@@ -1,8 +1,8 @@
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
+import { getSlotPathEntry } from './getSlotPathEntry';
 import { getSlotSource } from './getSlotSource';
 
 /**
@@ -25,19 +25,11 @@ export const resolveSlotSource = <Self extends FieldNodeRecord<Self>>(
   let overlay: InactiveSlotOverlay | undefined;
   for (let depth = 0; depth < names.length; depth++) {
     const name = names[depth];
-    const entries =
-      template.kind === 'array'
-        ? getItemEntries(template, Number(name))
-        : template.childEntries;
     const selected =
       depth === names.length - 1
         ? target
         : (lineage?.[depth + 1] ?? source?.structure?.[name]?.blueprintNode);
-    const entry = entries.find(
-      (entry) =>
-        entry.name === name &&
-        (selected === undefined || entry.node === selected),
-    );
+    const entry = getSlotPathEntry(template, source, overlay, name, selected);
     if (!entry) return { source: undefined, overlay: undefined };
     const child: {
       source: Self | undefined;

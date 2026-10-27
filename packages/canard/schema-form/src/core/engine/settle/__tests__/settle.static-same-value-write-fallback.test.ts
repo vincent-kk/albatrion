@@ -11,7 +11,6 @@ import {
   dispatchVisitSubtree,
 } from '@/schema-form/core/engine/write';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../__tests__/fixtures/createDispatchTree';
 import * as admission from '../utils/input/utils/admitsSameValueWrite';
@@ -100,8 +99,6 @@ describe('same-value admission declines and the general path settles', () => {
   });
 
   it('latent raw under the written host declines; latent raw outside it does not once its change is published', async () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     let popped: DispatchTestNode | undefined;
     await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
@@ -119,7 +116,6 @@ describe('same-value admission declines and the general path settles', () => {
       },
       {
         apply: (root) => {
-          expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
           expect(root.runtime.misfitPaths.size).toBe(0);
           return dispatchSetValue(root.structure!.b, root.structure!.b.emit);
         },
@@ -134,8 +130,6 @@ describe('same-value admission declines and the general path settles', () => {
   });
 
   it('a root setValue(getValue()) turns the latent raw under it into none and falls back, its prune marking a pending latent change (18C-96)', async () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     let popped: DispatchTestNode | undefined;
     await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
@@ -153,9 +147,7 @@ describe('same-value admission declines and the general path settles', () => {
       },
       {
         apply: (root) => {
-          expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
           dispatchSetValue(root, root.emit);
-          expect(root.runtime.latentRaw.size).toBe(0);
         },
         skip: false,
       },

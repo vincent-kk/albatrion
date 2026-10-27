@@ -13,8 +13,6 @@ import {
   dispatchVisitSubtree,
 } from '@/schema-form/core/engine/write';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
-import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import type { ArraySpliceProof } from '../../types/settlement';
@@ -252,8 +250,6 @@ describe('splice admission declines and the general path settles', () => {
   });
 
   it('a detached array and a tree holding its latent write', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     let removed: DispatchTestNode | undefined;
     compareArraySplice(
       {
@@ -285,7 +281,6 @@ describe('splice admission declines and the general path settles', () => {
         },
         {
           apply: (root) => {
-            expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
             return dispatchInsert(root, 0, [0]);
           },
           splice: false,
@@ -475,7 +470,6 @@ describe('the splice admission reads the shared static admission and the tail', 
 
   it('a tail that fails the check declines before application and the same call commits once on the general path', () => {
     // Shipping-path mutation checks exclude the independent verification replay.
-    pinSlotShipping();
     const { candidate } = compareArraySplice(
       { type: 'array', items: { type: 'number' } },
       [1, 2, 3, 4],
@@ -502,7 +496,6 @@ describe('the splice admission reads the shared static admission and the tail', 
 describe('the splice selection proof reads only the tail', () => {
   it('a selection-time proof failure continues in the general selection within the same settlement', () => {
     // Shipping-path call counts exclude the independent verification replay.
-    pinSlotShipping();
     const proof = vi
       .spyOn(selectionProof, 'canReuseSplicedChildren')
       .mockReturnValue(false);

@@ -7,7 +7,6 @@ import {
   resetFieldNodeForm,
 } from '@/schema-form/core/engine';
 
-import { pinLatentBaseline } from '../../__tests__/fixtures/pinLatentBaseline';
 import { FieldNode } from '../runtime/FieldNode';
 import { SetValueOption } from '../type';
 import type { ArrayNode } from '../type';
@@ -296,7 +295,6 @@ describe('detached FieldNode references', () => {
 
   it('26C-12 ignores old detached writes and reset while the same path is live', () => {
     // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree(
       {
         type: 'object',
@@ -319,8 +317,7 @@ describe('detached FieldNode references', () => {
     old.resetSubtree();
     expect(current.raw).toBe('initial');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
-    expect(Reflect.get(runtime, 'latentRaw')).toBeInstanceOf(Map);
-    expect(Reflect.get(runtime, 'latentRaw')).toHaveProperty('size', 0);
+    expect(root.inactiveValues).toEqual([]);
     expect(root.inactiveValues.some((entry) => entry.path === '/target')).toBe(
       false,
     );
@@ -429,7 +426,6 @@ describe('detached FieldNode references', () => {
 
   it('26C-12 ignores Merge through an old detached object while its path is live', () => {
     // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root, runtime } = groupedTree();
     root.setValue({ flag: true, group: { leaf: 'initial' } });
     const old = root.find('/group');
@@ -443,8 +439,7 @@ describe('detached FieldNode references', () => {
     expect(current.raw).toBeUndefined();
     expect(root.find('/group/leaf')?.raw).toBe('initial');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
-    expect(Reflect.get(runtime, 'latentRaw')).toBeInstanceOf(Map);
-    expect(Reflect.get(runtime, 'latentRaw')).toHaveProperty('size', 0);
+    expect(root.inactiveValues).toEqual([]);
     expect(root.inactiveValues.some((entry) => entry.path === '/group')).toBe(
       false,
     );

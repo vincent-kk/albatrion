@@ -1,7 +1,5 @@
 import { expect, it } from 'vitest';
-import { beforeEach } from 'vitest';
 
-import { pinLatentBaseline } from '../../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '../../../../types/value';
 import { dispatchMount, dispatchSetValue } from '../../../../write';
@@ -13,9 +11,6 @@ import { cloneFromSlot } from '../cloneFromSlot';
 import { createSlotValueOverlay } from '../createSlotValueOverlay';
 import { getRetainedChildEntry } from '../getRetainedChildEntry';
 import { materializeInactiveSlotValues } from '../materializeInactiveSlotValues';
-
-// The test constructs the off oracle's sources before applying slot helpers directly.
-beforeEach(() => pinLatentBaseline());
 
 it('matches an inactive merge while cloning only the patched source channels', () => {
   const { root, runtime } = createDispatchTree({
@@ -48,9 +43,10 @@ it('matches an inactive merge while cloning only the patched source channels', (
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   root.inactiveSlots = new Map([[entry, source]]);
   root.inactiveSlotOverlays = new Map([[entry, patch.overlay]]);
-  expect(materializeInactiveSlotValues(root)).toEqual(
-    runtime.inactiveValuesMemo.get(''),
-  );
+  expect(materializeInactiveSlotValues(root)).toEqual([
+    { path: '/group/n', value: 7 },
+    { path: '/group/text', value: 'kept' },
+  ]);
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,

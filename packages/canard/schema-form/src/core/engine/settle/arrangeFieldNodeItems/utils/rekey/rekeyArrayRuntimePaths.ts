@@ -36,12 +36,14 @@ export const rekeyArrayRuntimePaths = <Self>(
     stores.declarations,
     stores.rules,
     stores.misfits,
-  ])
+  ]) {
+    if (!store) continue;
     for (const path of store.pathIndex.tail(
       hostPath,
       preservedPrefixCount + moves.length,
     ))
       unaddressed.add(path);
+  }
   prunePerishedPaths(runtime, unaddressed);
   const changed = moves.filter((move) => move.previous !== move.current);
   const prefix = hostPath + '/';
@@ -86,19 +88,20 @@ export const rekeyArrayRuntimePaths = <Self>(
   }
   const latentChanged = changed.some(
     (move) =>
-      stores.latent.pathIndex.under(move.previous).size > 0 ||
-      stores.metadata.pathIndex.under(move.previous).size > 0,
+      (stores.latent?.pathIndex.under(move.previous).size ?? 0) > 0 ||
+      (stores.metadata?.pathIndex.under(move.previous).size ?? 0) > 0,
   );
-  rekeyPairedPathStore(stores.latent, changed, mapPath);
-  rekeyPairedPathStore(
-    stores.metadata,
-    changed,
-    mapPath,
-    (metadata, path, previous) =>
-      rekeyLatentMetadata(metadata, path, previous, hostPath, runtime),
-  );
+  if (stores.latent) rekeyPairedPathStore(stores.latent, changed, mapPath);
+  if (stores.metadata)
+    rekeyPairedPathStore(
+      stores.metadata,
+      changed,
+      mapPath,
+      (metadata, path, previous) =>
+        rekeyLatentMetadata(metadata, path, previous, hostPath, runtime),
+    );
   rekeyPairedPathStore(stores.declarations, changed, mapPath);
-  if (latentChanged) runtime.latentRawDirty = true;
+  if (latentChanged) runtime.literalStarRawDirty = true;
   rekeyCommittedRules(runtime, changed, mapPath);
 
   const misfitKeys = new Set<string>();
@@ -117,10 +120,12 @@ export const rekeyArrayRuntimePaths = <Self>(
     stores.inactiveMemo,
     stores.inactiveEntries,
   ]) {
+    if (!store) continue;
+
     if (
       store !== stores.misfitsMemo &&
       !latentChanged &&
-      !runtime.latentRawDirty
+      !runtime.literalStarRawDirty
     )
       continue;
     const keys = new Set<string>();

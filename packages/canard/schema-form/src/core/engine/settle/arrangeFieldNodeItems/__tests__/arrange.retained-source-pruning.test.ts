@@ -13,35 +13,22 @@ import {
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
-it.each([
-  ['on', 'clear'],
-  ['off', 'clear'],
-  ['verify', 'clear'],
-  ['on', 'replace'],
-  ['off', 'replace'],
-  ['verify', 'replace'],
-  ['on', 'load'],
-  ['off', 'load'],
-  ['verify', 'load'],
-  ['on', 'reset'],
-  ['off', 'reset'],
-  ['verify', 'reset'],
-] as const)(
-  '%s removes both source representations on %s',
-  (mode, operation) => {
+it.each([['clear'], ['replace'], ['load'], ['reset']] as const)(
+  'removes retained sources on %s',
+  (operation) => {
     const item: BlueprintSchema = {
       type: 'object',
       controls: { active: '../../show' },
       properties: { v: { type: 'string' } },
     };
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         show: { type: 'boolean' },
         list: { type: 'array', prefixItems: [item, item, item] },
       },
     });
-    runtime.slots = mode;
+
     dispatchMount(root, { show: true, list: [{ v: 'old' }] });
     const list = getDispatchNode(root, 'list');
     dispatchSetValue(getDispatchNode(root, 'show'), false);

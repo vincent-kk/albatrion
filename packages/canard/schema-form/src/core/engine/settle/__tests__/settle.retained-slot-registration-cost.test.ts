@@ -1,6 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '../../types/value';
 import { dispatchMount, dispatchSetValue } from '../../write';
@@ -17,7 +16,6 @@ afterEach(() => vi.restoreAllMocks());
 
 it('leaves gate binding to selected entry for both source constructors', () => {
   // Both shipping constructors restore records before selected-entry binding.
-  pinSlotShipping();
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: {

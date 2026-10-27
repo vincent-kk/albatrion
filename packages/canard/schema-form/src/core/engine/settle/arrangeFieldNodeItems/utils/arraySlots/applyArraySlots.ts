@@ -12,17 +12,18 @@ import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDe
 import { getGateRegistry } from '../../../utils/gates/getGateRegistry';
 import { arrayExtras } from '../../../utils/input/arrayExtras';
 import { markWrite } from '../../../utils/input/markWrite';
-import { readRawTree } from '../../../utils/latent/readRawTree';
-import { replayMovedInput } from '../../../utils/latent/replayMovedInput';
-import { getLatentOrder } from '../../../utils/latentStore/getLatentOrder';
-import { indexEnteredLatentKey } from '../../../utils/latentStore/indexEnteredLatentKey';
+import { captureLiteralStarExit } from '../../../utils/literalStar/captureLiteralStarExit';
+import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
+import { getRetainedChildEntry } from '../../../utils/slots/getRetainedChildEntry';
+import { getSlotOrder } from '../../../utils/slots/getSlotOrder';
 import { isSlotEligible } from '../../../utils/slots/isSlotEligible';
+import { markSlotChange } from '../../../utils/slots/markSlotChange';
+import { readSourceTree } from '../../../utils/slots/readSourceTree';
 import { rekeyArraySlotBindings } from '../../../utils/slots/rekeyArraySlotBindings';
 import { rekeySlotWriteAddresses } from '../../../utils/slots/rekeySlotWriteAddresses';
-import { serializeArraySlotSources } from '../../../utils/slots/serializeArraySlotSources';
-import { captureExitedRaw } from '../../../utils/transition/captureExitedRaw';
+import { replayMovedSource } from '../../../utils/slots/replayMovedSource';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from '../rekey/rekeyArrayRuntimePaths';
 import { applyArrayTail } from './applyArrayTail';
@@ -42,9 +43,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): unknown => {
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
-  const serialized =
-    isSlotEligible(host.runtime) &&
-    serializeArraySlotSources(host, plan, context);
+  const slots = isSlotEligible(host.runtime);
   const oldCount = host.itemCount;
   const oldItems = host.structure ?? {};
   // With an item template and no tuple positions, extras or whole raw, only a slot without a live node reads raw.
@@ -119,13 +118,19 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         ? value
         : (rawSlots = readRawSlots(host, context))[from];
     if (from !== undefined && !old && !moved) destinations.set(from, index);
-    if (old && moved)
-      captureExitedRaw(
+    if (old && moved && slots) {
+      const binding = getRetainedChildEntry(host, old.name, old.blueprintNode);
+      if (binding) {
+        markSlotChange(host, binding, old, context);
+        (host.inactiveSlots ??= new Map()).set(binding, old);
+      }
+    } else if (old && moved)
+      captureLiteralStarExit(
         old,
         false,
         context,
         false,
-        getLatentOrder(old.parent, old.name, old.blueprintNode),
+        getSlotOrder(old.parent, old.name, old.blueprintNode),
         undefined,
         true,
       );
@@ -167,13 +172,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       { owned: true },
     );
   }
-  if (isSlotEligible(host.runtime))
-    rekeyArraySlotBindings(host, moves, context);
+  if (slots) rekeyArraySlotBindings(host, moves, context);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
-  if (candidateMoves || serialized)
+  if (candidateMoves)
     (context.rekeyedArrayMoves ??= new Map()).set(host, moves);
-  context.latentDescendantKeys = undefined;
-  context.enteredLatentKeys = undefined;
+  context.literalStarDescendantKeys = undefined;
+  context.enteredLiteralStarKeys = undefined;
 
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
@@ -191,7 +195,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           previous,
           current: descendant.path,
         });
-        if (isSlotEligible(host.runtime)) rekeySlotWriteAddresses(descendant);
+        if (slots) rekeySlotWriteAddresses(descendant);
         context.dirtyPaths.add(descendant.path);
         if (descendant.behavior.strategy === 'branch')
           context.shapeDirtyPaths.add(descendant.path);
@@ -220,7 +224,10 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       whole: false,
       automatic: false,
     };
-    if (host.runtime.latentRaw.pathIndex.under(host.path).size > 0) {
+    if (
+      slots ||
+      (host.runtime.literalStarRaw?.pathIndex.under(host.path).size ?? 0) > 0
+    ) {
       context.distributedInputs.set(host, {
         ...distribution,
         preserveLatent: true,
@@ -229,8 +236,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   }
   for (const { node, value, moved } of created) {
     context.entered.add(node);
-    indexEnteredLatentKey(context, node);
-    if (moved) replayMovedInput(node, value, context);
+    indexEnteredLiteralStarKey(context, node);
+    if (moved) replayMovedSource(node, value, context);
     else markWrite(node, value, context);
   }
   if (context.hasGates)
@@ -260,6 +267,6 @@ const readRawSlots = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   context: SettlementContext<Self>,
 ): readonly unknown[] => {
-  const raw = readRawTree(host, context);
+  const raw = readSourceTree(host, context);
   return isArray(raw) ? raw : [];
 };

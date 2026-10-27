@@ -85,7 +85,6 @@ it('allocates no reused scratch containers and clears only populated work lists'
       scratch.wrongKindHosts,
       scratch.arrayCounts,
       scratch.filledNodes,
-      scratch.latentAutomaticLog,
       scratch.dependencyOwnerPaths,
       scratch.shapeDirtyPaths,
       scratch.explicitRaw,
@@ -93,6 +92,7 @@ it('allocates no reused scratch containers and clears only populated work lists'
       scratch.stateDirtyNodes,
       scratch.originalSchemas,
     ];
+    expect(scratch.literalStarAutomaticLog).toBeUndefined();
     const spies = unused.map((container) => vi.spyOn(container, 'clear'));
     const dirty = vi.spyOn(scratch.dirtyPaths, 'clear');
     const parents = vi.spyOn(scratch.dirtyChildrenByParent, 'clear');

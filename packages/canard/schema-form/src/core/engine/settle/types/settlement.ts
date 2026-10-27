@@ -214,7 +214,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Reused pending occurrences whose sources must remain visible to fills. */
   revived: Set<Self>;
   /** Entered then revived occurrences by latent key, built lazily and invalidated on rename. */
-  enteredLatentKeys?: Map<string, Self[]>;
+  enteredLiteralStarKeys?: Map<string, Self[]>;
   /** Nodes detached from the previous shape during this call. */
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
@@ -294,7 +294,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Whether shape updates belong to reversible automatic transition work. */
   inTransition: boolean;
   /** Previous latent entries changed during transition, indexed once per key. */
-  latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
+  literalStarAutomaticLog?: Map<string, { present: boolean; value: unknown }>;
   /** First source bindings changed by reversible transition work, local to this call. */
   slotAutomaticLog?: Map<
     Self,
@@ -303,9 +303,9 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Caller raw-change membership before restoring each fresh retained clone. */
   slotRestoredRaw?: Map<Self, boolean>;
   /** Proper ancestor paths of current latent keys, rebuilt after map changes. */
-  latentPrefixes?: Set<string>;
+  literalStarPrefixes?: Set<string>;
   /** Latent keys under their own path and each ancestor, built on first path lookup. */
-  latentDescendantKeys?: Map<string, Set<string>>;
+  literalStarDescendantKeys?: Map<string, Set<string>>;
   /** Whether marking is currently applying a transition write. */
   automatic: boolean;
   /** True when the current transition round changed either state channel. */

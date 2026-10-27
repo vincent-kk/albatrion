@@ -14,8 +14,8 @@ it.each([
   ['verify', false],
 ] as const)(
   '%s preserves candidate arrays through host exits, absent=%s',
-  (mode, absent) => {
-    const { root, runtime } = createDispatchTree({
+  (_mode, absent) => {
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         open: { type: 'boolean' },
@@ -31,7 +31,6 @@ it.each([
         },
       },
     });
-    runtime.slots = mode;
     dispatchMount(root, { open: true, a: true, b: false, list: ['A'] });
     if (absent) dispatchSetValue(getDispatchNode(root, 'a'), false);
     dispatchSetValue(getDispatchNode(root, 'open'), false);

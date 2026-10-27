@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { beforeEach } from 'vitest';
 
 import * as blueprint from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
@@ -11,15 +10,14 @@ import {
   dispatchRemove,
 } from '@/schema-form/core/engine/write';
 
-import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import * as proof from '../../utils/compute/childSelection/canReuseArrayChildren';
 import * as reuse from '../../utils/compute/childSelection/reuseArrayChildren';
 import * as ids from '../../utils/compute/childSelection/staticIds';
 import * as registration from '../../utils/dependencies/registerRecalculation';
-import * as rawTree from '../../utils/latent/readRawTree';
 import * as output from '../../utils/output/updateOutput';
+import * as rawTree from '../../utils/slots/readSourceTree';
 import * as general from '../utils/arraySlots/applyArraySlots';
 import * as splicing from '../utils/arraySlots/applyArraySplice';
 import * as tailProof from '../utils/arraySlots/canApplyArrayTail';
@@ -27,7 +25,6 @@ import * as admission from '../utils/arraySlots/prepareArraySplice';
 
 afterEach(() => vi.restoreAllMocks());
 // These internal work bounds measure one shipping tree, excluding oracle replay.
-beforeEach(() => pinSlotShipping());
 
 /** Number items, the measured shape. */
 const NUMBERS: BlueprintSchema = { type: 'array', items: { type: 'number' } };
@@ -111,7 +108,7 @@ const measure = (
     },
   );
   const spies = {
-    readRawTree: vi.spyOn(rawTree, 'readRawTree'),
+    readSourceTree: vi.spyOn(rawTree, 'readSourceTree'),
     canApplyArrayTail: vi.spyOn(tailProof, 'canApplyArrayTail'),
     applyArraySlots: vi.spyOn(general, 'applyArraySlots'),
     updateOutput: vi.spyOn(output, 'updateOutput'),
@@ -141,7 +138,7 @@ describe('an admitted middle remove or insert does tail-sized work', () => {
       expect(large.admitted).toBe(true);
       expect(large.calls).toEqual(small.calls);
       expect(large.registered).toBe(small.registered);
-      expect(large.calls.readRawTree).toBe(0);
+      expect(large.calls.readSourceTree).toBe(0);
       expect(large.calls.canApplyArrayTail).toBe(0);
       expect(large.calls.applyArraySlots).toBe(0);
       expect(small.prefixEntries).toBe(0);
@@ -169,7 +166,7 @@ describe('the general slot path reads the raw tree only when a slot needs it', (
   it('reads nothing for an item-template array and still reads a tuple array', () => {
     const declined = (schema: BlueprintSchema) => {
       vi.spyOn(admission, 'prepareArraySplice').mockReturnValue(undefined);
-      const read = vi.spyOn(rawTree, 'readRawTree');
+      const read = vi.spyOn(rawTree, 'readSourceTree');
       const slots = vi.spyOn(general, 'applyArraySlots');
       const { root } = createDispatchTree(schema);
       dispatchMount(root, [0, 1, 2, 3, 4], WriteOption.Overwrite, {

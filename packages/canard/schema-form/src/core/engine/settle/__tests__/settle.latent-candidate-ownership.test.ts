@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { FieldNodeEventType } from '../../record';
@@ -13,6 +12,7 @@ import {
   subscribeFieldNode,
 } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 describe('candidate-owned latent descendant cleanup', () => {
   it.each([
@@ -31,8 +31,6 @@ describe('candidate-owned latent descendant cleanup', () => {
   }[])(
     '$slot preserves object descendants through $route',
     async ({ slot, route }) => {
-      // These assertions inspect the latent-store baseline directly.
-      pinLatentBaseline();
       const validationInputs: unknown[] = [];
       const validator: Validator = {
         compile: () => (value) => {
@@ -54,7 +52,6 @@ describe('candidate-owned latent descendant cleanup', () => {
       };
       dispatchMount(root, initial);
       const path = slot === 'property' ? '/box/v/x' : '/list/0/x';
-      const key = JSON.stringify([path, 'number']);
       const events: FieldNodeDelivery[] = [];
       subscribeFieldNode(root, (event) => events.push(event));
       if (route === 'absent-at-close')
@@ -63,15 +60,12 @@ describe('candidate-owned latent descendant cleanup', () => {
         dispatchSetValue(getDispatchNode(root, 'open'), false);
       if (route !== 'absent-at-close')
         dispatchSetValue(getDispatchNode(root, 'a'), false);
-      expect(root.runtime.latentRaw.get(key)).toBe(5);
-      const metadata = root.runtime.latentRawMetadata?.get(key);
-      expect(metadata?.path).toBe(path);
+      expect(readRetainedSlotRaw(root, path, 'number')).toBe(5);
       dispatchSetValue(getDispatchNode(root, 'b'), true);
       if (route !== 'direct')
         dispatchSetValue(getDispatchNode(root, 'open'), true);
       dispatchSetValue(getDispatchNode(root, 'b'), false);
-      expect(root.runtime.latentRaw.get(key)).toBe(5);
-      expect(root.runtime.latentRawMetadata?.get(key)).toEqual(metadata);
+      expect(readRetainedSlotRaw(root, path, 'number')).toBe(5);
       const absent = {
         open: true,
         a: false,

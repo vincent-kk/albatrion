@@ -1,9 +1,12 @@
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import { createChildNode } from '../compute/createChildNode';
 import { applySlotOverlay } from './applySlotOverlay';
 import { cloneSlotSubtree } from './cloneSlotSubtree';
+import { getSlotBinding } from './getSlotBinding';
 import { markSlotChange } from './markSlotChange';
+import { restoreTransferredSlotSource } from './restoreTransferredSlotSource';
 
 /**
  * Issue a fresh public lifetime from one retained source candidate.
@@ -19,11 +22,17 @@ export const cloneFromSlot = <Self extends FieldNodeRecord<Self>>(
   source: Self,
   context: SettlementContext<Self>,
 ): Self => {
-  const node = cloneSlotSubtree(host, entry, source, context, true);
-  const overlay = host.inactiveSlotOverlays?.get(entry);
-  if (overlay) applySlotOverlay(node, overlay, context);
-  markSlotChange(host, entry, undefined, context);
-  host.inactiveSlots?.delete(entry);
-  host.inactiveSlotOverlays?.delete(entry);
+  const binding = getSlotBinding(host, entry);
+  const overlay = host.inactiveSlotOverlays?.get(binding);
+  const same = source.blueprintNode === entry.node;
+  const node = same
+    ? cloneSlotSubtree(host, entry, source, context, true)
+    : createChildNode(host, entry);
+  if (same) {
+    if (overlay) applySlotOverlay(node, overlay, context);
+  } else restoreTransferredSlotSource(node, source, overlay, context);
+  markSlotChange(host, binding, undefined, context);
+  host.inactiveSlots?.delete(binding);
+  host.inactiveSlotOverlays?.delete(binding);
   return node;
 };

@@ -1,10 +1,11 @@
 import { expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import * as ownership from '../utils/transition/selectCandidateOwnedLatent';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readInactiveValuesAt } from './fixtures/readInactiveValuesAt';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 it.each([
   { slots: 1, filters: 15 },
@@ -12,8 +13,6 @@ it.each([
 ])(
   'keeps base ownership-selector and filter cost for $slots suppressed single-kind exits with unrelated candidates',
   ({ slots, filters }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root, runtime } = createDispatchTree({
       type: 'object',
       properties: {
@@ -53,23 +52,20 @@ it.each([
       filter.mockRestore();
       selector.mockRestore();
     }
-    expect(selectorCalls).toBe(slots);
+    expect(selectorCalls).toBe(0);
     expect(filterCalls).toBeLessThanOrEqual(filters);
     expect(root.emit).toEqual({
       open: false,
       list: new Array(slots).fill(null),
     });
     expect(root.local).toEqual(root.emit);
-    expect(runtime.latentRaw.size).toBe(slots);
     const inactive = [];
     for (let index = 0; index < slots; index++) {
       const path = '/list/' + index;
-      const key = JSON.stringify([path, 'string']);
-      expect(runtime.latentRaw.get(key)).toBe('kept');
-      expect(runtime.latentRawMetadata?.get(key)?.path).toBe(path);
+      expect(readRetainedSlotRaw(root, path, 'string')).toBe('kept');
       inactive.push({ path, value: 'kept' });
     }
-    expect(runtime.inactiveValuesMemo.get('')).toEqual(inactive);
+    expect(readInactiveValuesAt(root, '')).toEqual(inactive);
     dispatchSetValue(open, true);
     expect(root.emit).toEqual({ open: true, list: values });
   },
@@ -78,8 +74,6 @@ it.each([
 it.each([{ slots: 1 }, { slots: 32 }])(
   'reuses candidate ownership for $slots suppressed candidate-slot exits',
   ({ slots }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root, runtime } = createDispatchTree({
       type: 'object',
       properties: {
@@ -112,18 +106,17 @@ it.each([{ slots: 1 }, { slots: 32 }])(
     } finally {
       selector.mockRestore();
     }
-    expect(selectorCalls).toBe(slots);
+    expect(selectorCalls).toBe(0);
     expect(ownsSources).toBe(true);
     expect(root.emit).toEqual({
       open: false,
       list: new Array(slots).fill(null),
     });
     expect(root.local).toEqual(root.emit);
-    expect(runtime.latentRaw.size).toBe(slots);
     for (let index = 0; index < slots; index++)
-      expect(
-        runtime.latentRaw.get(JSON.stringify(['/list/' + index, 'string'])),
-      ).toBe('kept');
+      expect(readRetainedSlotRaw(root, '/list/' + index, 'string')).toBe(
+        'kept',
+      );
     dispatchSetValue(open, true);
     expect(root.emit).toEqual({ open: true, list: values });
   },

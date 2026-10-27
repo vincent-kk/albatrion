@@ -108,7 +108,6 @@ export const runChildSelectionHistory = (
         diagnostics: root.runtime.diagnostics,
         commit: root.runtime.commitNumber,
         globalState: root.runtime.globalState,
-        latent: root.runtime.latentRaw,
         deliveryOrder: [...(root.runtime.deliveries ?? [])],
         events,
         changes,

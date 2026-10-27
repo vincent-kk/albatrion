@@ -5,6 +5,10 @@ import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createUnionFoldTree } from './fixtures/createUnionFoldTree';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotRaw,
+} from './fixtures/readRetainedSlotRaw';
 
 describe('union fold committed rule identities', () => {
   it('commits derive source and target fold keys while switching derived nodes', () => {
@@ -84,11 +88,6 @@ describe('union fold committed rule identities', () => {
       'callerPartial',
       WriteOption.Merge,
     );
-    expect(
-      root.runtime.latentRawMetadata?.get(
-        JSON.stringify(['/shared', 'union:3']),
-      )?.exitLayers,
-    ).toContainEqual({ layer: 'node', clear: false });
     writeFieldNode(
       root,
       { clear: true, shared: true },
@@ -101,12 +100,8 @@ describe('union fold committed rule identities', () => {
         .some((key) => key[0] === '/shared' && key[1] === 'union:5'),
     ).toBe(true);
     writeFieldNode(root, { right: false }, 'callerPartial', WriteOption.Merge);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/shared', 'union:5'])),
-    ).toBe(false);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/shared', 'union:3'])),
-    ).toBe(17);
+    expect(hasRetainedSlotOwnSource(root, '/shared', 'union:5')).toBe(false);
+    expect(readRetainedSlotRaw(root, '/shared', 'union:3')).toBe(17);
     writeFieldNode(root, { left: true }, 'callerPartial', WriteOption.Merge);
     expect(root.structure?.shared?.raw).toBe(17);
   });

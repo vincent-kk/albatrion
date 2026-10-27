@@ -11,4 +11,4 @@ export const readFieldNodeInactiveValues = <Self extends FieldNodeRecord<Self>>(
     ? materializeInactiveSlotValues(node)
     : node.detached
       ? (node.runtime.detachedReads?.get(node)?.inactiveValues ?? EMPTY_VALUES)
-      : (node.runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES);
+      : (node.runtime.literalStarValuesMemo?.get(node.path) ?? EMPTY_VALUES);

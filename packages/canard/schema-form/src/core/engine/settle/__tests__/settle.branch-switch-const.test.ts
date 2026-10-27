@@ -9,6 +9,7 @@ import * as relocation from '../utils/compute/relocatedGates';
 import * as budget from '../utils/gates/getGateBudgetCap';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { expectPendingExitIndex } from './fixtures/expectPendingExitIndex';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 /** Build ten branches with one independently gated payload each. */
 const branchSchema = (): BlueprintSchema => ({
@@ -150,7 +151,7 @@ describe('branch-switch constant-factor regression records', () => {
       exits,
       local: root.local,
       detached: original.detached,
-      latent: root.runtime.latentRaw.get(JSON.stringify(['/g', 'string'])),
+      latent: readRetainedSlotRaw(root, '/g', 'string'),
       status: root.runtime.diagnostics.status,
     }).toMatchSnapshot();
   });

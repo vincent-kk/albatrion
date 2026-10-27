@@ -1,136 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
 import { SchemaFormError } from '@/schema-form/errors';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
 import { getGateRegistry } from '../../utils/gates/getGateRegistry';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
-import { rekeyArrayRuntimePaths } from '../utils/rekey/rekeyArrayRuntimePaths';
 
 // filid:contract settle-array-rekey
 describe('array path movement', () => {
-  it('35C-02 removes latent slots outside the old plan before new items enter', () => {
-    const { root } = createTestTree({
-      type: 'array',
-      items: { type: 'string' },
-    });
-    const key = JSON.stringify(['/0/hidden', 'string']);
-    root.runtime.latentRaw.set(key, 'obsolete');
-    root.runtime.committedDeclarationIds = new PathKeyedMap('pair', [
-      [key, [1]],
-    ]);
-    root.runtime.misfitPaths.add('/0/hidden');
-    rekeyArrayRuntimePaths(root.runtime, '', []);
-    expect(root.runtime.latentRaw.has(key)).toBe(false);
-    expect(root.runtime.committedDeclarationIds.has(key)).toBe(false);
-    expect(root.runtime.misfitPaths.has('/0/hidden')).toBe(false);
-  });
-  it('35C-02 re-keys every path store in one collision-free pass', () => {
-    const { root } = createTestTree({
-      type: 'array',
-      items: { type: 'string' },
-    });
-    const runtime = root.runtime;
-    const oldLeaf = JSON.stringify(['/1/hidden', 'string']);
-    const newLeaf = JSON.stringify(['/0/hidden', 'string']);
-    const oldRule = JSON.stringify([
-      '/1/hidden',
-      'string',
-      1,
-      '/schema/rule',
-      'target',
-      '/1/target',
-      'string',
-      3,
-    ]);
-    const newRule = JSON.stringify([
-      '/0/hidden',
-      'string',
-      1,
-      '/schema/rule',
-      'target',
-      '/0/target',
-      'string',
-      3,
-    ]);
-    const metadata = {
-      path: '/1/hidden',
-      blueprintNode: root.blueprintNode,
-      order: [1],
-    };
-    const ids = [17];
-    const baseline = { previous: 'value' };
-    runtime.latentRaw.set(oldLeaf, 'secret');
-    runtime.latentRaw.set(JSON.stringify(['/0/old', 'string']), 'removed');
-    runtime.latentRawMetadata = new PathKeyedMap('pair', [[oldLeaf, metadata]]);
-    runtime.committedDeclarationIds = new PathKeyedMap('pair', [
-      [oldLeaf, ids],
-    ]);
-    runtime.committedRuleValues = new PathKeyedMap('rule', [
-      [oldRule, baseline],
-    ]);
-    const ruleRootKeys = runtime.committedRuleValues.pathIndex.under('');
-    runtime.committedRuleKeysBySource = new Map([
-      ['/1/hidden', new Set([oldRule])],
-    ]);
-    runtime.committedRuleKeysByTarget = new Map([
-      ['/1/target', new Set([oldRule])],
-    ]);
-    runtime.misfitPaths.add('/1/hidden');
-    runtime.misfitsMemo = new PathKeyedMap('path', [
-      ['', { commit: 1, paths: ['/1/hidden'] }],
-    ]);
-    runtime.inactiveValuesMemo.set('', [
-      { path: '/1/hidden', value: 'secret' },
-    ]);
-    runtime.inactiveValueEntries = new PathKeyedMap('pair', [
-      [
-        oldLeaf,
-        {
-          value: 'secret',
-          order: [1],
-          entry: { path: '/1/hidden', value: 'secret' },
-        },
-      ],
-    ]);
-
-    rekeyArrayRuntimePaths(runtime, '', [
-      { previous: '/0' },
-      { previous: '/1', current: '/0' },
-    ]);
-    expect(runtime.latentRaw.has(oldLeaf)).toBe(false);
-    expect(runtime.latentRaw.has(JSON.stringify(['/0/old', 'string']))).toBe(
-      false,
-    );
-    expect(runtime.latentRaw.get(newLeaf)).toBe('secret');
-    expect(runtime.latentRawMetadata?.has(oldLeaf)).toBe(false);
-    expect(runtime.latentRawMetadata?.get(newLeaf)).toMatchObject({
-      path: '/0/hidden',
-      order: [0],
-    });
-    expect(runtime.committedDeclarationIds?.has(oldLeaf)).toBe(false);
-    expect(runtime.committedDeclarationIds?.get(newLeaf)).toBe(ids);
-    expect(runtime.committedRuleValues?.has(oldRule)).toBe(false);
-    expect(runtime.committedRuleValues?.get(newRule)).toBe(baseline);
-    expect(runtime.committedRuleValues?.pathIndex.under('')).toBe(ruleRootKeys);
-    expect(runtime.committedRuleKeysBySource?.has('/1/hidden')).toBe(false);
-    expect(runtime.committedRuleKeysBySource?.get('/0/hidden')).toEqual(
-      new Set([newRule]),
-    );
-    expect(runtime.committedRuleKeysByTarget?.has('/1/target')).toBe(false);
-    expect(runtime.committedRuleKeysByTarget?.get('/0/target')).toEqual(
-      new Set([newRule]),
-    );
-    expect(runtime.misfitPaths.has('/1/hidden')).toBe(false);
-    expect(runtime.misfitPaths.has('/0/hidden')).toBe(true);
-    expect(runtime.misfitsMemo?.has('')).toBe(false);
-    expect(runtime.inactiveValuesMemo.has('')).toBe(false);
-    expect(runtime.inactiveValueEntries?.has(oldLeaf)).toBe(false);
-  });
-
   it('NODE-051 moves latent sources and registered gates with a live item', () => {
     const { root } = createTestTree({
       type: 'array',
@@ -153,9 +34,7 @@ describe('array path movement', () => {
       WriteOption.Overwrite,
     );
     const shifted = root.children![1];
-    const oldKey = JSON.stringify(['/1/hidden', 'string']);
-    const newKey = JSON.stringify(['/0/hidden', 'string']);
-    expect(root.runtime.latentRaw.has(oldKey)).toBe(true);
+    expect(hasRetainedSlotOwnSource(root, '/1/hidden', 'string')).toBe(true);
     expect(root.runtime.misfitPaths.has('/1/count')).toBe(true);
     expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toEqual({
       show: true,
@@ -163,8 +42,8 @@ describe('array path movement', () => {
     });
     expect(root.children![0]).toBe(shifted);
     expect(shifted.path).toBe('/0');
-    expect(root.runtime.latentRaw.has(oldKey)).toBe(false);
-    expect(root.runtime.latentRaw.get(newKey)).toBe('secret');
+    expect(hasRetainedSlotOwnSource(root, '/1/hidden', 'string')).toBe(false);
+    expect(readRetainedSlotRaw(root, '/0/hidden', 'string')).toBe('secret');
     expect(root.runtime.misfitPaths.has('/1/count')).toBe(false);
     expect(root.runtime.misfitPaths.has('/0/count')).toBe(true);
     expect(
@@ -191,9 +70,7 @@ describe('array path movement', () => {
     const popped = root.children![1];
     expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBe('b');
     writeFieldNode(popped, 'latent', 'callerReplace', WriteOption.Overwrite);
-    expect(root.runtime.latentRaw.get(JSON.stringify(['/1', 'string']))).toBe(
-      'latent',
-    );
+    expect(readRetainedSlotRaw(root, '/1', 'string')).toBe('latent');
     const removed = root.children![0];
     arrangeFieldNodeItems(root, { kind: 'push', value: 'c' });
     expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe('a');
@@ -201,9 +78,7 @@ describe('array path movement', () => {
     writeFieldNode(removed, 'ignored', 'callerReplace', WriteOption.Overwrite);
     expect(root.runtime.commitNumber).toBe(commit);
     expect(root.local).toEqual(['c']);
-    expect(root.runtime.latentRaw.has(JSON.stringify(['/0', 'string']))).toBe(
-      false,
-    );
+    expect(hasRetainedSlotOwnSource(root, '/0', 'string')).toBe(false);
   });
 
   it('NODE-044 applies a detached array verb through its latent whole-write path', () => {
@@ -233,9 +108,7 @@ describe('array path movement', () => {
     );
     expect(former.detached).toBe(true);
     expect(arrangeFieldNodeItems(former, { kind: 'push', value: 'b' })).toBe(2);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/list', 'array'])),
-    ).toMatchObject({ raw: ['a', 'b'] });
+    expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual(['a', 'b']);
     writeFieldNode(
       root.structure!.show,
       true,

@@ -1,6 +1,5 @@
 import { expect, it, vi } from 'vitest';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '../../types/value';
 import { engineModes } from '../../utils/cache/engineModes';
@@ -10,7 +9,6 @@ import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 
 it('S6 rejects an actual dirtyChildren call returning a consumed child', () => {
   // The injected internal mutation targets one shipping tree's verification clock.
-  pinSlotShipping();
   const previousMode = engineModes.gateSelection;
   const previous = { ...gateSelectionTable };
   const { root } = createDispatchTree({

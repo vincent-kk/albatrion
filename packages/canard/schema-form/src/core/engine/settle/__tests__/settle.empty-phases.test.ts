@@ -104,5 +104,5 @@ it('does not skip gates, rule evaluation or rule commits with actual work', () =
   expect(commit).toHaveBeenCalledTimes(1);
   expect(policy).toHaveBeenCalledTimes(1);
   expect(exit).toHaveBeenCalledTimes(1);
-  expect(snapshot).toHaveBeenCalledTimes(1);
+  expect(snapshot).not.toHaveBeenCalled();
 });

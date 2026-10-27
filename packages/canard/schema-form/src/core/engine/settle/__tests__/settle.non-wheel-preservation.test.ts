@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { FieldNodeEventType } from '../../record';
@@ -16,7 +15,6 @@ describe('H2 non-wheel reference preservation', () => {
     'bounds steady comparison work and avoids whole-value keys beside %i static siblings',
     (count) => {
       // Shipping comparison and key-read counts exclude independent slot replay.
-      pinSlotShipping();
       const properties: Record<string, BlueprintSchema> = {
         kind: { type: 'string', default: 'a' },
       };
@@ -59,7 +57,6 @@ describe('H2 non-wheel reference preservation', () => {
 
   it('keeps unchanged ancestors public values and shape identities after derived restoration', () => {
     // The stateful injection callback increments its captured shipping-tree counter.
-    pinSlotShipping();
     let tick = 10;
     const { root } = createDispatchTree({
       type: 'object',

@@ -29,8 +29,6 @@ export const createTestTree = (
   const analysis = blueprint(schema, options);
   const visits: string[] = [];
   const runtime: FieldNodeRuntime<PlainNode> = {
-    // This fixture pins latent-store inspection tests to their baseline path.
-    slots: 'off',
     deliveries: new Set(),
     blueprint: analysis,
     context: {},
@@ -41,9 +39,9 @@ export const createTestTree = (
     globalStateCounts: new Map(),
     globalState: {},
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
+    literalStarRaw: new PathKeyedMap('pair'),
     misfitPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
+    literalStarValuesMemo: new PathKeyedMap<
       readonly { path: string; value: unknown }[]
     >('path'),
   };

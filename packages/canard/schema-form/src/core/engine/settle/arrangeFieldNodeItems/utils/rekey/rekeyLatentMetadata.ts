@@ -1,7 +1,7 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRuntime } from '../../../../record';
-import { DetachedWriteAddress } from '../../../utils/latentStore/DetachedWriteAddress';
+import { DetachedWriteAddress } from '../../../utils/detached/DetachedWriteAddress';
 
 /**
  * Adjust latent occurrence order together with its moved absolute path.
@@ -14,7 +14,7 @@ import { DetachedWriteAddress } from '../../../utils/latentStore/DetachedWriteAd
  */
 export const rekeyLatentMetadata = <Self>(
   metadata: NonNullable<
-    FieldNodeRuntime<Self>['latentRawMetadata']
+    FieldNodeRuntime<Self>['literalStarRawMetadata']
   > extends Map<string, infer Value>
     ? Value
     : never,

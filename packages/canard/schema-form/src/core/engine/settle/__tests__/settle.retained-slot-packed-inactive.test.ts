@@ -7,8 +7,8 @@ import { getDispatchNode } from './fixtures/getDispatchNode';
 
 it.each(['off', 'on', 'verify'] as const)(
   '%s keeps prior absent-item inputs inside the exiting packed array source',
-  (mode) => {
-    const { root, runtime } = createDispatchTree({
+  () => {
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -23,7 +23,6 @@ it.each(['off', 'on', 'verify'] as const)(
         },
       },
     });
-    runtime.slots = mode;
     const a = [
       { on: false, v: 'first' },
       { on: false, v: 'second' },

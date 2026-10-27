@@ -23,6 +23,6 @@ export const canLoadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   root.raw === undefined &&
   root.undeclaredValues === undefined &&
   !root.runtime.deliveries?.size &&
-  root.runtime.latentRaw.size === 0 &&
+  (root.runtime.literalStarRaw?.size ?? 0) === 0 &&
   root.runtime.globalStateCounts.size === 0 &&
   StaticFirstLoadCapability.has(root.runtime.blueprint);

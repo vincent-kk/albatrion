@@ -1,21 +1,14 @@
-import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { afterEach } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
-import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchMount, dispatchSetValue } from '../../write';
-import * as latent from '../utils/latentStore/setLatentRaw';
-import * as capture from '../utils/transition/captureExitedRaw';
+import * as capture from '../utils/literalStar/captureLiteralStarExit';
+import * as latent from '../utils/literalStarStore/setLiteralStarRaw';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
-const previous = engineModes.slots;
-beforeEach(() => engineModes.setMode('slots', 'on'));
-afterEach(() => {
-  vi.restoreAllMocks();
-  engineModes.setMode('slots', previous);
-});
-
 it('keeps a detached instance in the host without capturing latent raw', () => {
-  const { root, runtime } = createDispatchTree({
+  const { root } = createDispatchTree({
     type: 'object',
     properties: {
       open: { type: 'boolean' },
@@ -24,12 +17,11 @@ it('keeps a detached instance in the host without capturing latent raw', () => {
   });
   dispatchMount(root, { open: true, value: 'held' });
   const old = getDispatchNode(root, 'value');
-  const store = vi.spyOn(latent, 'setLatentRaw');
-  const serialize = vi.spyOn(capture, 'captureExitedRaw');
+  const store = vi.spyOn(latent, 'setLiteralStarRaw');
+  const serialize = vi.spyOn(capture, 'captureLiteralStarExit');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(store).not.toHaveBeenCalled();
   expect(serialize).not.toHaveBeenCalled();
-  expect(runtime.latentRaw.size).toBe(0);
   expect(root.inactiveSlots).toBeInstanceOf(Map);
   expect([...(root.inactiveSlots?.values() ?? [])]).toContain(old);
   expect(old.detached).toBe(true);
@@ -87,19 +79,4 @@ it('retains same-name candidates under separate blueprint child entries', () => 
   expect(getDispatchNode(root, 'value').raw).toBe(7);
 });
 
-it('keeps the latent reference path available when slots are disabled', () => {
-  engineModes.setMode('slots', 'off');
-  const { root, runtime } = createDispatchTree({
-    type: 'object',
-    properties: {
-      open: { type: 'boolean' },
-      value: { type: 'string', controls: { active: '../open' } },
-    },
-  });
-  dispatchMount(root, { open: true, value: 'held' });
-  dispatchSetValue(getDispatchNode(root, 'open'), false);
-  expect(root.inactiveSlots).toBeUndefined();
-  expect(runtime.latentRaw.get(JSON.stringify(['/value', 'string']))).toBe(
-    'held',
-  );
-});
+afterEach(() => vi.restoreAllMocks());

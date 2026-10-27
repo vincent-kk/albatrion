@@ -2,11 +2,12 @@
 
 ## Requirements
 
-- A literal `*` property's inactive publication retains navigation's existing wildcard-query exclusion in on/off/verify. An unread detached host preserves the query result from its final committed view after an external matching branch changes. This is compatibility with an existing inconsistency and does not add public members or alter pointer syntax.
-- Wildcard exclusion ends a public entry's lifetime even when the hidden commit is unread. An unread detached host retains the last committed entry identities already published through an ancestor; later live publication or inactive overlays cannot replace those identities in the old host's view. These requirements apply when the star segment belongs to an ancestor as well as to the immediate host.
-- A form whose blueprint reaches a property named exactly `*` retains the complete latent implementation for this compatibility boundary, including ordinary ancestors, siblings, and packed arrays. Star-free forms use slots. The public surface and pointer syntax remain unchanged, and the pre-existing literal-star behavior requires an owner decision before removing the latent implementation in B4-2.
+- 트리 생성은 일반 비활성 원본을 슬롯·overlay로만 구성하며 슬롯 모드 선택이나 원본 그림자 런타임을 만들지 않는다. 별표 이름의 기존 공표 제외·참조 alias·마지막 커밋 읽기는 별표 호환 경로로 유지한다. 공개 멤버·선언·배달·오류 기대값은 그대로이며 슬롯 자료는 실제 사용하는 호스트에만 지연 할당한다.
 
-- B4-1의 런타임은 설계 Ⅱ의 "떼어진 참조의 읽기는 마지막 커밋으로 고정되고(NODE-044), 재진입 노드는 새 인스턴스이며, 옛 참조의 구독은 발화하지 않는다"를 유지한다. 슬롯 보유는 내부 원본의 소유 방식이며 공개 멤버·프로토타입·판별 합집합·구독 수명을 바꾸지 않는다. 생성 통로는 새 부모·경로·런타임을 결합하고 복제된 노드의 상호작용·오류·배달 기록을 이어받지 않는다(NODE-043·044·060).
+- A literal `*` property's inactive publication retains navigation's existing wildcard-query exclusion in 별표 호환 경로. An unread detached host preserves the query result from its final committed view after an external matching branch changes. This is compatibility with an existing inconsistency and does not add public members or alter pointer syntax.
+- Wildcard exclusion ends a public entry's lifetime even when the hidden commit is unread. An unread detached host retains the last committed entry identities already published through an ancestor; later live publication or inactive overlays cannot replace those identities in the old host's view. These requirements apply when the star segment belongs to an ancestor as well as to the immediate host.
+
+- 런타임은 설계 Ⅱ의 "떼어진 참조의 읽기는 마지막 커밋으로 고정되고(NODE-044), 재진입 노드는 새 인스턴스이며, 옛 참조의 구독은 발화하지 않는다"를 유지한다. 슬롯 보유는 내부 원본의 소유 방식이며 공개 멤버·프로토타입·판별 합집합·구독 수명을 바꾸지 않는다. 생성 통로는 새 부모·경로·런타임을 결합하고 복제된 노드의 상호작용·오류·배달 기록을 이어받지 않는다(NODE-043·044·060).
 - 슬롯의 raw·extras·선언 밖 값과 보유 자손은 엔진의 복제 재진입 입력이다. 런타임 클래스에는 정착·슬롯 선택 알고리즘을 두지 않는다. 배열 itemKey는 새로 발급하며 중첩 호스트는 엔진이 고정 출발점에서 형상을 다시 고른다. 호스트별 지연 보유 자료 이외에 모든 노드의 생성자 할당이나 공개 읽기의 전체 트리 순회를 추가하지 않는다(SETTLE-044·GOAL-029, NODE-053·055).
 
 - 의존 방향의 마지막은 `record < {behaviors 종류, navigation} < validation < derive < settle < write < surface`이다. 이 fractal만 행 선택과 단일 클래스 생성을 함께 안다. 쓰기·상태·검증·구독은 engine의 write 계약, 읽기는 `settle`·`validation`·`navigation`의 진입점에 위임한다(NODE-010·016, LANDING-084).
@@ -21,7 +22,7 @@
 - `fieldNodeFactory`의 수출을 유지하는 이유는 core 수준 시험 기반 도구(makeFieldNodeTree, 시나리오 실행기, createDispatchTree)가 이 생성 통로를 쓰기 때문이다. 제품 소비자는 없으며, 정돈-3에서 시험 도구의 자리와 함께 다시 검토한다.
 - `UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 내부 형이며 surface index가 내보내지 않는다. 자기 index 모양 검증은 부모 core의 시험 구획이 소유하고 surface 내부 시험은 구체 파일을 직접 가져온다.
 
-- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `FieldNode` 타입, 종류별 노드 타입, 가드 열, `InferFieldNode`, 공개 옵션 `SetValueOption`, `fieldNodeFactory`와 `record`가 소유한 `FieldNodeEventType`·`FieldNodeRequestType`을 이름으로 내보낸다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보낸다(SURFACE-056·060, EVENT-073, LANDING-067·158). `fieldNodeFactory(schema: Blueprint, runtimeSeed: FieldNodeRuntimeSeed, validator?: Validator): FieldNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받는다. 경로 색인 저장소 `latentRaw`·`misfitPaths`·`inactiveValuesMemo`는 시드가 주지 않으면 팩토리가 빈 색인 저장소로 만들어, 호출자가 core 내부 클래스를 가져오지 않게 한다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합한다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만든다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않는다. 구현은 생성한 루트를 종류와 무관한 공개 공통 모양(`NodeSurface`)과 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)에 묶어 돌려주므로, 클래스와 공개 형의 멤버 이름·시그니처 불일치는 컴파일 오류가 된다. 컴파일 시점 연결은 이 공통 모양 48개 멤버까지이다. 종류별 판별 합집합과 노드를 돌려주거나 받는 자기 참조 6개(`rootNode`·`parentNode`·`children`·`find`·`findNodes`·`visitSubtree`)는 런타임 시험 `surface.test.ts`(DETAIL 표 대조)가 지킨다.
+- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `FieldNode` 타입, 종류별 노드 타입, 가드 열, `InferFieldNode`, 공개 옵션 `SetValueOption`, `fieldNodeFactory`와 `record`가 소유한 `FieldNodeEventType`·`FieldNodeRequestType`을 이름으로 내보낸다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보낸다(SURFACE-056·060, EVENT-073, LANDING-067·158). `fieldNodeFactory(schema: Blueprint, runtimeSeed: FieldNodeRuntimeSeed, validator?: Validator): FieldNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받는다. 경로 색인 저장소 `misfitPaths`는 시드가 주지 않으면 팩토리가 빈 저장소로 만든다. 일반 비활성 원본·overlay와 읽기 메모는 각 호스트가 필요할 때 소유하며 팩토리는 전역 원본 저장소를 만들지 않는다. 이름이 정확히 `*`인 선언을 포함한 폼에만 `literalStarRaw`·`literalStarValuesMemo` 호환 저장소를 시드에서 받거나 빈 저장소로 만든다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합한다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만든다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않는다. 구현은 생성한 루트를 종류와 무관한 공개 공통 모양(`NodeSurface`)과 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)에 묶어 돌려주므로, 클래스와 공개 형의 멤버 이름·시그니처 불일치는 컴파일 오류가 된다. 컴파일 시점 연결은 이 공통 모양 48개 멤버까지이다. 종류별 판별 합집합과 노드를 돌려주거나 받는 자기 참조 6개(`rootNode`·`parentNode`·`children`·`find`·`findNodes`·`visitSubtree`)는 런타임 시험 `surface.test.ts`(DETAIL 표 대조)가 지킨다.
 - 아래 표의 `getter`는 필드 또는 계산 메모 읽기이며 `method`는 문장 하나의 위임이다. 구현 클래스는 `FieldNodeRecord<FieldNode>`를 구현하고 위임 메서드에서 `FieldNode` 자기 타입을 전달한다. 종류별 생성 표·`InferFieldNode` overload로 단언 없이 좁힌다(NODE-046).
 
 <!-- prettier-ignore -->
@@ -45,7 +46,7 @@
 | `undeclaredValues` | getter | 객체 branch의 선언 밖 키 또는 배열 branch의 청사진 없는 꼬리 자리 값을 받은 순서로 보관하는 상태 칸 | VALUE-002·004, NODE-052, 26C-01 |
 | `value` | getter | 계산된 `local` | VALUE-027 |
 | `outputValue` | getter | 계산된 `emit` | VALUE-027·034 |
-| `inactiveValues` | getter | 슬롯 경로는 호스트의 보유 자료에서 지연 계산한 동결 목록, 기준 경로는 잠복 원본 메모. 떼어지면 마지막 커밋의 내용과 참조를 유지 | VALUE-029, WRITE-087, NODE-044 |
+| `inactiveValues` | getter | 호스트의 보유 슬롯·overlay에서 지연 계산한 동결 목록. 별표 공표 호환 폼은 전용 공표 메모를 읽으며, 떼어지면 마지막 커밋의 내용과 참조를 유지 | VALUE-029, WRITE-087, NODE-044 |
 | `active` | getter | 최종 형상에 있는가. 정착 중 임시 이탈 뒤 재진입한 노드는 같은 인스턴스로 참이고, 최종 이탈해 떼어진 옛 참조는 다시 들어도 거짓이다. NODE-044의 마지막 커밋 고정에서 빠지는 살아 있는 트리의 사실 | LANDING-062, 26C-04, 26C-08 |
 | `visible` | getter | 레코드 `visible`의 로컬 AND 결과. 떼어지면 마지막 커밋 값으로 고정 | (CONTROLS-022·082, NODE-044, 28C-02) |
 | `enabled` | getter | `active && visible`. 살아 있으면 `visible`과 같고 `disabled`와 무관하며 떼어지면 거짓 | (LANDING-066, 26C-08, 28C-02) |

@@ -1,8 +1,8 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
-import { getLatentOrder } from '../latentStore/getLatentOrder';
+import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
+import { getSlotOrder } from './getSlotOrder';
 
 /**
  * Move weak write cells while keeping every detached public path unchanged.
@@ -18,7 +18,7 @@ export const rekeySlotWriteAddresses = <Self extends FieldNodeRecord<Self>>(
     DetachedWriteAddress.retain(source, address, source.runtime);
     for (const child of source.children ?? []) {
       if (child.parent !== source) continue;
-      const childOrder = getLatentOrder(
+      const childOrder = getSlotOrder(
         child.parent,
         child.name,
         child.blueprintNode,
@@ -29,7 +29,7 @@ export const rekeySlotWriteAddresses = <Self extends FieldNodeRecord<Self>>(
       ]);
     }
     for (const [entry, child] of source.inactiveSlots ?? []) {
-      const childOrder = getLatentOrder(
+      const childOrder = getSlotOrder(
         child.parent,
         child.name,
         child.blueprintNode,
@@ -44,7 +44,7 @@ export const rekeySlotWriteAddresses = <Self extends FieldNodeRecord<Self>>(
     move(
       source,
       host.path + '/' + escapeSegment(entry.name),
-      getLatentOrder(host, entry.name, entry.node),
+      getSlotOrder(host, entry.name, entry.node),
     );
   if (
     host.inactiveSlots?.size ||

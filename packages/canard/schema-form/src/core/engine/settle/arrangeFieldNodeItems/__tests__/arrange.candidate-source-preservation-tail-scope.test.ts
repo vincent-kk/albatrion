@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import {
@@ -9,7 +8,7 @@ import {
   dispatchSetValue,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import { HostLatent } from '../../utils/latentStore/HostLatent';
+import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
 it.each([
   { kind: 'string', terminal: true, disabled: false, candidateHost: false },
@@ -39,8 +38,6 @@ it.each([
 ])(
   'keeps base undeclared-tail sources for $kind terminal=$terminal disabled=$disabled candidateHost=$candidateHost',
   ({ kind, terminal, disabled, candidateHost }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const item: BlueprintSchema = {
       ...(kind === 'object'
         ? { type: 'object', properties: { v: { type: 'string' } } }
@@ -99,32 +96,8 @@ it.each([
     dispatchInsert(list, index, replacement);
     const path = '/list/' + index;
     const sourcePath = kind === 'object' && !terminal ? path + '/v' : path;
-    const token = kind === 'object' && !terminal ? 'string' : kind;
     const value = kind === 'object' && !terminal ? 'new' : replacement;
-    const key = JSON.stringify([sourcePath, token]);
-    expect([...runtime.latentRaw]).toEqual([
-      [
-        key,
-        kind === 'array' && !terminal
-          ? new HostLatent(replacement, undefined)
-          : value,
-      ],
-    ]);
-    expect(runtime.latentRawMetadata?.get(key)).toEqual(
-      expect.objectContaining({
-        path: sourcePath,
-        order: kind === 'object' && !terminal ? [1, index, 0] : [1, index],
-      }),
-    );
-    const destination = '/list/' + (index + 1);
-    expect(
-      [...(runtime.latentRawMetadata?.values() ?? [])].filter(
-        (entry) =>
-          entry.path === destination ||
-          entry.path.startsWith(destination + '/'),
-      ),
-    ).toEqual([]);
-    expect(runtime.inactiveValuesMemo.get('')).toEqual([
+    expect(readFieldNodeInactiveValues(root)).toEqual([
       { path: sourcePath, value },
     ]);
     expect(root.emit).toEqual({

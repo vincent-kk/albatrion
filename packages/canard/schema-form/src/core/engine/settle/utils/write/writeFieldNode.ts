@@ -7,6 +7,7 @@ import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBluepri
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
+import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
 import { hasLivePathKind } from '../detached/hasLivePathKind';
 import { assertFieldNodeWritable } from '../dispose/assertFieldNodeWritable';
 import { getGateRegistry } from '../gates/getGateRegistry';
@@ -14,20 +15,17 @@ import { assertVirtualWriteShape } from '../input/assertVirtualWriteShape';
 import { isPlain } from '../input/isPlain';
 import { markWrite } from '../input/markWrite';
 import { prepareWriteEpoch } from '../input/utils/prepareWriteEpoch';
-import { distributeLatentValue } from '../latent/distributeLatentValue';
-import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
-import { getLatentOrder } from '../latentStore/getLatentOrder';
-import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
+import { distributeLiteralStarValue } from '../literalStar/distributeLiteralStarValue';
+import { pruneLiteralStarRaw } from '../literalStarStore/pruneLiteralStarRaw';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
 import { getSettlementScratch } from '../scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
+import { getSlotOrder } from '../slots/getSlotOrder';
 import { isSlotEligible } from '../slots/isSlotEligible';
-import { resolveSlotSource } from '../slots/resolveSlotSource';
+import { prepareSourcePruner } from '../slots/prepareSourcePruner';
 import { writeSlotPath } from '../slots/writeSlotPath';
-import { getSlotShadowSession } from '../verify/getSlotShadowSession';
-import { prepareSlotShadow } from '../verify/prepareSlotShadow';
 import { collectReplacePaths } from './collectReplacePaths';
 import { markWrongKindAncestors } from './markWrongKindAncestors';
 import { releaseWrongKindHosts } from './releaseWrongKindHosts';
@@ -54,15 +52,6 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
 ): void => {
   const root = node.rootNode;
-  if (root.runtime.slots === 'verify' && !getSlotShadowSession(root)?.active)
-    return writeFieldNodeWithShadow(
-      node,
-      input,
-      kind,
-      option,
-      source,
-      writeOrigins,
-    );
   if (source === 'input' && (node.disposed || root.disposed)) return;
   const schema = node.schema.schema;
   const inputType = typeof input;
@@ -73,9 +62,10 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     !root.disposed &&
     root.runtime.blueprint.capabilities.branchless &&
     !root.runtime.blueprint.capabilities.hasDerive &&
-    (root.runtime.latentRaw.size === 0 ||
-      (root.runtime.latentRaw.pathIndex.under(node.path).size === 0 &&
-        root.runtime.latentRaw.pathIndex.intersecting(node.path).size === 0)) &&
+    ((root.runtime.literalStarRaw?.size ?? 0) === 0 ||
+      (root.runtime.literalStarRaw?.pathIndex.under(node.path).size === 0 &&
+        root.runtime.literalStarRaw?.pathIndex.intersecting(node.path).size ===
+          0)) &&
     (kind === 'input' ||
       kind === 'callerReplace' ||
       kind === 'callerPartial') &&
@@ -110,38 +100,30 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
       const lineage = [];
       for (let current: Self | null = node; current; current = current.parent)
         lineage.unshift(current.blueprintNode);
-      const resolved = resolveSlotSource(
+      writeSlotPath(
         root,
         path,
         node.blueprintNode,
+        input,
+        whole,
+        undefined,
         lineage,
       );
-      if (resolved.source || resolved.overlay || !node.runtime.latentRaw.size) {
-        writeSlotPath(
-          root,
-          path,
-          node.blueprintNode,
-          input,
-          whole,
-          undefined,
-          lineage,
-        );
-        return;
-      }
+      return;
     }
-    if (whole) pruneLatentRaw(node.rootNode.runtime, path);
-    distributeLatentValue(
+    if (whole) pruneLiteralStarRaw(node.rootNode.runtime, path);
+    distributeLiteralStarValue(
       node.rootNode.runtime,
       undefined,
       path,
       node.blueprintNode,
       input,
       address?.order ??
-        getLatentOrder(node.parent, node.name, node.blueprintNode),
+        getSlotOrder(node.parent, node.name, node.blueprintNode),
       whole,
       node.parent?.blueprintNode.childEntries ?? [],
     );
-    const metadata = node.runtime.latentRawMetadata?.get(
+    const metadata = node.runtime.literalStarRawMetadata?.get(
       JSON.stringify([path, getBlueprintNodeIdentity(node.blueprintNode)]),
     );
     if (metadata) DetachedWriteAddress.retain(node, metadata, node.runtime);
@@ -173,16 +155,17 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     if (context.hasGates)
       getGateRegistry(context.root.runtime).register(context.root);
     if (!scalarWrite && (replaces || kind === 'load')) {
+      const pruneSources = prepareSourcePruner(node);
       if (batch) {
         for (let index = 0; index < writeOrigins.length; index++) {
           const origin = writeOrigins[index];
           if (origin.source === 'automatic') continue;
-          pruneLatentRaw(node.runtime, origin.path, origin.keys, context);
+          pruneSources(node.runtime, origin.path, origin.keys, context);
           if (origin.fields)
             for (const field of origin.fields)
-              pruneLatentRaw(node.runtime, field, undefined, context);
+              pruneSources(node.runtime, field, undefined, context);
         }
-      } else pruneLatentRaw(node.runtime, node.path, undefined, context);
+      } else pruneSources(node.runtime, node.path, undefined, context);
     }
     if (
       !context.hasGates &&
@@ -200,28 +183,5 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     finishSettlement(context, scratch, scalarWrite);
   } finally {
     releaseSettlementScratch(scratch);
-  }
-};
-
-/** Replay one outer operation while keeping the shipping entry in the kernel. */
-const writeFieldNodeWithShadow = <Self extends FieldNodeRecord<Self>>(
-  node: Self,
-  input: unknown,
-  kind: FieldNodeWriteKind,
-  option: WriteOption,
-  source: FieldNodeWriteKind = kind,
-  writeOrigins?: SettlementContext<Self>['writeOrigins'],
-): void => {
-  const complete = prepareSlotShadow(node, (shadow) =>
-    writeFieldNode(shadow, input, kind, option, source, writeOrigins),
-  );
-  let failure: unknown;
-  try {
-    return writeFieldNode(node, input, kind, option, source, writeOrigins);
-  } catch (error) {
-    failure = error;
-    throw error;
-  } finally {
-    complete?.(failure);
   }
 };

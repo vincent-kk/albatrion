@@ -1,0 +1,22 @@
+{
+  "measuredCommit": "813b32d175736841c3e71e1598c978892ebfbefc",
+  "productSourceCommit": "c632ab5f5",
+  "postMeasurementProductAndToolDiff": [],
+  "validatedJsonArtifacts": 25,
+  "restoredBundleHashesMatch": true,
+  "unchangedPublicSourceFiles": [
+    "src/index.ts",
+    "src/__tests__/publicSurface.test.ts"
+  ],
+  "publicDeclarationsEqual": true,
+  "formattedMarkdown": [
+    "b4-2-results.md",
+    "review body"
+  ],
+  "machineLocalPathsInArtifacts": 0,
+  "formalWindows": 1,
+  "formalRetries": 0,
+  "formalExit": 0,
+  "adoption": false,
+  "reason": "Six individual comparative stages exceed A own width; fixed results preserved without source changes or rerun."
+}

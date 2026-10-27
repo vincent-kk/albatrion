@@ -1,0 +1,62 @@
+{
+  "sourceCommit": "c632ab5f5",
+  "recordedAtHead": "eda3caec925949e578cb6aa23c938dc254b9a0fd",
+  "command": "yarn workspace @canard/schema-form build",
+  "exit": 0,
+  "buildRuntime": "v24.20.0",
+  "yarn": "4.12.0",
+  "outputs": {
+    "index.mjs": {
+      "bytes": 838762,
+      "sha256": "73bc0047684ba7f139ddd6c76f9f7c814df2b5e8f4c5d8da5484191442a7f39e"
+    },
+    "index.node.mjs": {
+      "bytes": 838020,
+      "sha256": "a3aaccbbd7aec673ae419b4b766413cfa38e8a8dfe8cd544db2c1fbfc1911a10"
+    },
+    "index.cjs": {
+      "bytes": 858403,
+      "sha256": "d06bf242a5afe3f2e42d54ef104d7641f68fa177789db4aa4b1c522b4010976f"
+    },
+    "index.d.ts": {
+      "bytes": 3054,
+      "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+    },
+    "agents-hashes.json": {
+      "bytes": 1999,
+      "sha256": "7eeb5a2fc76105b8f237cd1379e9bbaa80686eebbfdc077df263476ff80359fc"
+    }
+  },
+  "checks": [
+    {
+      "name": "index.mjs",
+      "mode": "table",
+      "sourceModel": "retained-slots",
+      "bytes": 838762,
+      "sha256": "73bc0047684ba7f139ddd6c76f9f7c814df2b5e8f4c5d8da5484191442a7f39e",
+      "verifyHelpers": 5,
+      "verifyHelperDeclarationBytes": 3971
+    },
+    {
+      "name": "index.node.mjs",
+      "mode": "table",
+      "sourceModel": "retained-slots",
+      "bytes": 838020,
+      "sha256": "a3aaccbbd7aec673ae419b4b766413cfa38e8a8dfe8cd544db2c1fbfc1911a10",
+      "verifyHelpers": 5,
+      "verifyHelperDeclarationBytes": 3971
+    },
+    {
+      "name": "index.cjs",
+      "mode": "table",
+      "sourceModel": "retained-slots",
+      "bytes": 858403,
+      "sha256": "d06bf242a5afe3f2e42d54ef104d7641f68fa177789db4aa4b1c522b4010976f",
+      "verifyHelpers": 5,
+      "verifyHelperDeclarationBytes": 4087
+    }
+  ],
+  "trackedRuntimeBundleAndAdapterChanges": [],
+  "outputPolicy": "Generated dist bundles, declarations, hashes and runtime adapter copies are ignored build outputs; this separate build record commits their verified identities without adding them to source.",
+  "publicDeclarationsEqualBaseline": true
+}

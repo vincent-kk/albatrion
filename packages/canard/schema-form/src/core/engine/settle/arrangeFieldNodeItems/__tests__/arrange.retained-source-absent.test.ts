@@ -12,21 +12,13 @@ import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
 it.each([
-  ['on', 'insert', 'items'],
-  ['off', 'insert', 'items'],
-  ['verify', 'insert', 'items'],
-  ['on', 'remove', 'items'],
-  ['off', 'remove', 'items'],
-  ['verify', 'remove', 'items'],
-  ['on', 'insert', 'tuple'],
-  ['off', 'insert', 'tuple'],
-  ['verify', 'insert', 'tuple'],
-  ['on', 'remove', 'tuple'],
-  ['off', 'remove', 'tuple'],
-  ['verify', 'remove', 'tuple'],
+  ['insert', 'items'],
+  ['remove', 'items'],
+  ['insert', 'tuple'],
+  ['remove', 'tuple'],
 ] as const)(
-  '%s preserves %s absent %s source slots and frozen hosts',
-  (mode, operation, layout) => {
+  'preserves %s absent %s source slots and frozen hosts',
+  (operation, layout) => {
     const item: BlueprintSchema = {
       type: 'object',
       controls: { active: '../../show', unsetOnInactive: false },
@@ -34,7 +26,7 @@ it.each([
         v: { type: 'string', controls: { unsetOnInactive: false } },
       },
     };
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         show: { type: 'boolean' },
@@ -44,7 +36,7 @@ it.each([
             : { type: 'array', prefixItems: [item, item, item, item] },
       },
     });
-    runtime.slots = mode;
+
     dispatchMount(root, {
       show: true,
       list: [{ v: 'first' }, { v: 'second' }, { v: 'third' }],

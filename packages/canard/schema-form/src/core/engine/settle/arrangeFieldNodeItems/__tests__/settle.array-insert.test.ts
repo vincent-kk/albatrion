@@ -15,6 +15,7 @@ import {
 } from '@/schema-form/core/engine/write';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 import { readFieldNodeDefaultValue } from '../../utils/loadValues/readFieldNodeDefaultValue';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
@@ -315,9 +316,11 @@ describe('array insert', () => {
       expect(
         arrangeFieldNodeItems(former, { kind: 'insert', index: 9, value: 'y' }),
       ).toBe(2);
-      expect(
-        root.runtime.latentRaw.get(JSON.stringify(['/list', 'array'])),
-      ).toMatchObject({ raw: ['a', 'x', 'b'] });
+      expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual([
+        'a',
+        'x',
+        'b',
+      ]);
       writeFieldNode(
         root.structure!.show,
         true,

@@ -1,6 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import * as publication from '../utils/slots/commitSlotChanges';
@@ -11,7 +10,6 @@ afterEach(() => vi.restoreAllMocks());
 
 it('skips source bookkeeping when a plain write changes no inactive source', () => {
   // These call bounds cover the shipping kernel without shadow replay work.
-  pinSlotShipping();
   const { root } = createDispatchTree({
     type: 'object',
     properties: { value: { type: 'string' } },
@@ -29,7 +27,6 @@ it('skips source bookkeeping when a plain write changes no inactive source', () 
 
 it('leaves a fresh active occurrence without an unused inactive item memo', () => {
   // Sparse source bookkeeping is a shipping allocation contract.
-  pinSlotShipping();
   const { root } = createDispatchTree({
     type: 'object',
     properties: { value: { type: 'string' } },

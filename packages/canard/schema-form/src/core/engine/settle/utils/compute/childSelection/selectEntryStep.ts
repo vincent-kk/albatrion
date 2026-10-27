@@ -17,12 +17,12 @@ import { getGateRegistry } from '../../gates/getGateRegistry';
 import { readGateSelectionGroup } from '../../gates/readGateSelectionGroup';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
-import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
+import { indexEnteredLiteralStarKey } from '../../literalStarStore/indexEnteredLiteralStarKey';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
 import { enterSlotClone } from '../../slots/enterSlotClone';
-import { isSlotEligible } from '../../slots/isSlotEligible';
+import { getSlotSource } from '../../slots/getSlotSource';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
@@ -263,15 +263,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       entry.name,
       node.behavior.type === 'array',
     );
-  const latent = context.root.runtime.latentRaw;
-  const slotSource = isSlotEligible(node.runtime)
-    ? node.inactiveSlots?.get(entry)
-    : undefined;
-  const slotOverlay = isSlotEligible(node.runtime)
-    ? node.inactiveSlotOverlays?.get(entry)
-    : undefined;
+  const latent = !priorChild ? context.root.runtime.literalStarRaw : undefined;
+  const slotState =
+    !priorChild && !currentChild ? getSlotSource(node, entry) : undefined;
+  const slotSource = slotState?.source;
+  const slotOverlay = slotState?.overlay;
   const latentKey =
-    latent.size > 0 && !priorChild
+    latent && latent.size > 0 && !priorChild
       ? JSON.stringify([
           node.path + '/' + escapeSegment(entry.name),
           getBlueprintNodeIdentity(entry.node),
@@ -281,8 +279,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     ? Reflect.get(distribution.input, entry.name)
     : distribution?.whole
       ? undefined
-      : latentKey !== undefined && latent.has(latentKey)
-        ? latent.get(latentKey)
+      : latentKey !== undefined && latent?.has(latentKey)
+        ? latent?.get(latentKey)
         : undefined;
   if (
     !priorChild &&
@@ -329,13 +327,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   }
   if (pending && child === pending) {
     context.revived.add(child);
-    indexEnteredLatentKey(context, child);
+    indexEnteredLiteralStarKey(context, child);
   }
   if (context.hasGates) getGateRegistry(child.runtime).register(child);
   let entryChanged = false;
   if (!priorChild && !currentChild && !pending) {
     context.entered.add(child);
-    indexEnteredLatentKey(context, child);
+    indexEnteredLiteralStarKey(context, child);
     if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
     else if (slotSource || slotOverlay)
       enterSlotClone(node, child, entry.name, context);

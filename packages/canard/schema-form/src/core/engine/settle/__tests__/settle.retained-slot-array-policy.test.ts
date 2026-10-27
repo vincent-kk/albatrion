@@ -13,8 +13,8 @@ it.each([
 ])(
   'matches array clearing with inactive=$inactive and candidateOwner=$candidateOwner',
   ({ inactive, candidateOwner }) => {
-    const run = (mode: 'off' | 'on') => {
-      const { root, runtime } = createDispatchTree({
+    const run = () => {
+      const { root } = createDispatchTree({
         type: 'object',
         ...(candidateOwner
           ? {
@@ -50,7 +50,6 @@ it.each([
           },
         },
       });
-      runtime.slots = mode;
       dispatchMount(root, {
         open: true,
         show: true,
@@ -66,6 +65,14 @@ it.each([
         inactive: readFieldNodeInactiveValues(root),
       };
     };
-    expect(run('on')).toEqual(run('off'));
+    const actual = run();
+    const kept = inactive && candidateOwner;
+    expect(actual.closed).toEqual(
+      kept ? [{ path: '/list/0/keep', value: 12 }] : [],
+    );
+    expect(actual.reopened).toEqual({ open: true, show: !inactive });
+    expect(actual.inactive).toEqual(
+      kept ? [{ path: '/list/0/keep', value: 12 }] : [],
+    );
   },
 );

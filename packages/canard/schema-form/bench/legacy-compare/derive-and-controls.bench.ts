@@ -12,7 +12,6 @@ const {
   blueprint,
   fieldNodeFactory,
   loadFieldNodeAtMount,
-  PathKeyedMap,
   PathKeyedSet,
   sameValue,
   SetValueOption,
@@ -100,11 +99,8 @@ function makeTree(kind: Kind, initial: SourceValue) {
   const root = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
+
     misfitPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
   });
   if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
   const rootRecord: TestFieldNode = root;

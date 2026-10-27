@@ -5,7 +5,6 @@ import { indexFieldNodeWarning } from '../../../../record';
 import type { FieldNodeRecord, MisfitRecord } from '../../../../record';
 import type { WriteOption } from '../../../../types/value';
 import { PathKeyedMap } from '../../../../utils/pathIndex/PathKeyedMap';
-import { EMPTY_VALUES } from '../../../utils/detached/emptyDetachedReads';
 
 /** Empty committed projections are shared without a per-load empty output list. */
 const EMPTY_WARNINGS: readonly MisfitRecord[] = Object.freeze([]);
@@ -96,9 +95,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
     size: memo.size,
     mutations: runtime.misfitPaths.mutations,
   };
-  runtime.inactiveValueEntries ??= new PathKeyedMap('pair');
-  runtime.inactiveValuesMemo.set('', EMPTY_VALUES);
-  runtime.latentRawDirty = false;
+  if (runtime.literalStarRaw) runtime.literalStarRawDirty = false;
   runtime.deliveredDiagnostics = runtime.diagnostics;
   runtime.deliveredContext = runtime.context;
   runtime.deliveryAffectedPaths = undefined;

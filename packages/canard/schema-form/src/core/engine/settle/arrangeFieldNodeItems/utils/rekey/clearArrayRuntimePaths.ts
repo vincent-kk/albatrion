@@ -33,7 +33,7 @@ const keysBeneath = (
  * @param hostPath - Array host whose every position perished
  * @param oldCount - Item count before the edit; positions at or beyond it are out of range
  * @param perished - Paths of the live items that perished, each `hostPath/<position>`
- * @returns Nothing; `latentRawDirty` is set exactly when the per-position cleanup would set it
+ * @returns Nothing; `literalStarRawDirty` is set exactly when the per-position cleanup would set it
  */
 export const clearArrayRuntimePaths = <Self>(
   runtime: FieldNodeRuntime<Self>,
@@ -53,8 +53,10 @@ export const clearArrayRuntimePaths = <Self>(
     stores.misfits,
   ];
   const slots = new Set<string>();
-  for (const store of owned)
+  for (const store of owned) {
+    if (!store) continue;
     for (const slot of store.pathIndex.tail(hostPath, 0)) slots.add(slot);
+  }
   if (runtime.warningKeysByPath?.get(hostPath)?.size) {
     const warningKeys = new Set<string>();
     for (let index = 0; index < oldCount; index++)
@@ -75,34 +77,44 @@ export const clearArrayRuntimePaths = <Self>(
     if (
       !perished.has(slot) &&
       inRange(slot) &&
-      (stores.latent.pathIndex.under(slot).size > 0 ||
-        stores.metadata.pathIndex.under(slot).size > 0)
+      ((stores.latent?.pathIndex.under(slot).size ?? 0) > 0 ||
+        (stores.metadata?.pathIndex.under(slot).size ?? 0) > 0)
     )
       latentChanged = true;
-  const inactive = keysBeneath(
-    stores.inactiveMemo.pathIndex,
-    hostPath,
-    (slot) => perished.has(slot) || (!inRange(slot) && slots.has(slot)),
-  );
+  const inactive = stores.inactiveMemo
+    ? keysBeneath(
+        stores.inactiveMemo.pathIndex,
+        hostPath,
+        (slot) => perished.has(slot) || (!inRange(slot) && slots.has(slot)),
+      )
+    : new Set<string>();
   for (const slot of slots) {
-    for (const key of stores.latent.pathIndex.under(slot)) {
-      stores.latent.delete(key);
-      runtime.latentRawDirty = true;
+    for (const key of stores.latent?.pathIndex.under(slot) ?? []) {
+      stores.latent?.delete(key);
+      runtime.literalStarRawDirty = true;
     }
-    for (const store of [stores.metadata, stores.misfits, stores.declarations])
+    for (const store of [
+      stores.metadata,
+      stores.misfits,
+      stores.declarations,
+    ]) {
+      if (!store) continue;
       for (const key of store.pathIndex.under(slot)) store.delete(key);
+    }
     for (const key of stores.rules.pathIndex.under(slot))
       updateCommittedRuleValue(runtime, key, 'delete');
   }
-  for (const key of inactive) stores.inactiveMemo.delete(key);
-  if (latentChanged) runtime.latentRawDirty = true;
+  for (const key of inactive) stores.inactiveMemo?.delete(key);
+  if (latentChanged) runtime.literalStarRawDirty = true;
   if (oldCount === 0) return;
   for (const store of [
     stores.misfitsMemo,
     stores.inactiveMemo,
     stores.inactiveEntries,
   ]) {
-    if (store !== stores.misfitsMemo && !runtime.latentRawDirty) continue;
+    if (!store) continue;
+
+    if (store !== stores.misfitsMemo && !runtime.literalStarRawDirty) continue;
     const keys = keysBeneath(store.pathIndex, hostPath, inRange);
     for (const key of store.pathIndex.intersecting(prefix + '0')) keys.add(key);
     for (const key of keys) store.delete(key);

@@ -10,11 +10,11 @@ import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlue
 import type { SettlementContext } from '../../../types/settlement';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
-import { distributeLatentValue } from '../../latent/distributeLatentValue';
-import { distributeMovedLatentInput } from '../../latent/distributeMovedLatentInput';
-import { getLatentOrder } from '../../latentStore/getLatentOrder';
 import { flushPendingOutput } from '../../output/flushPendingOutput';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
+import { distributeMovedSource } from '../../slots/distributeMovedSource';
+import { getSlotOrder } from '../../slots/getSlotOrder';
+import { writeInactiveSource } from '../../slots/writeInactiveSource';
 import { isSameChildList } from '../../structure/isSameChildList';
 import { canReuseArrayChildren } from './canReuseArrayChildren';
 import { selectTableChildren } from './gateSelection/selectTableChildren';
@@ -250,22 +250,21 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       continue;
     const path = node.path + '/' + escapeSegment(entry.name);
     if (distribution.preserveLatent) {
-      distributeMovedLatentInput(
+      distributeMovedSource(
         context,
         path,
         entry.node,
         Reflect.get(distribution.input, entry.name),
-        getLatentOrder(node, entry.name, entry.node),
+        getSlotOrder(node, entry.name, entry.node),
       );
       continue;
     }
-    distributeLatentValue(
-      node.runtime,
+    writeInactiveSource(
       context,
       path,
       entry.node,
       Reflect.get(distribution.input, entry.name),
-      getLatentOrder(node, entry.name, entry.node),
+      getSlotOrder(node, entry.name, entry.node),
       distribution.whole,
       node.behavior.type === 'array'
         ? getItemEntries(node.blueprintNode, Number(entry.name))

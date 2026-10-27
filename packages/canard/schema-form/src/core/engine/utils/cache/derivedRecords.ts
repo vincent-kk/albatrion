@@ -20,6 +20,8 @@ export interface BlueprintDerived {
 export interface HostDerived {
   wheelPlan?: unknown;
   preparedStaticHost?: unknown;
+  /** Live occurrence source-scope writer selected from its fixed lineage. */
+  sourcePruner?: unknown;
   controlLayerIndex?: unknown;
   childOrderIndex?: unknown;
   watchPaths?: unknown;

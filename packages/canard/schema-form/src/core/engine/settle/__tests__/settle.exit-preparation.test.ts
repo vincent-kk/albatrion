@@ -9,9 +9,11 @@ import { emptyReadonlyMap } from '../../utils/emptyReadonlyMap';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { getControlLayers } from '../utils/controls/getControlLayers';
-import { getLatentOrder } from '../utils/latentStore/getLatentOrder';
+import { getSlotOrder } from '../utils/slots/getSlotOrder';
 import { readUnsetPolicy } from '../utils/transition/readUnsetPolicy';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -70,18 +72,18 @@ describe('exit preparation preserves committed policies and document order', () 
         childEntries: [...entries, entries[0]],
       },
     };
-    expect(getLatentOrder(repeated, 'z', entries[0].node)).toEqual([0]);
+    expect(getSlotOrder(repeated, 'z', entries[0].node)).toEqual([0]);
     const searches = vi.spyOn(Array.prototype, 'findIndex');
     for (let i = 0; i < 4; i++) {
-      expect(getLatentOrder(repeated, 'a', entries[1].node)).toEqual([1]);
-      expect(getLatentOrder(repeated, 'z', entries[0].node)).toEqual([0]);
+      expect(getSlotOrder(repeated, 'a', entries[1].node)).toEqual([1]);
+      expect(getSlotOrder(repeated, 'z', entries[0].node)).toEqual([0]);
     }
     expect(
       searches.mock.contexts.filter(
         (value) => value === repeated.blueprintNode.childEntries,
       ),
     ).toHaveLength(0);
-    expect(getLatentOrder(repeated, '7', entries[0].node)).toEqual([7]);
+    expect(getSlotOrder(repeated, '7', entries[0].node)).toEqual([7]);
   });
 
   it('filters exit-only groups and reads the latest committed selection and value', () => {
@@ -146,7 +148,6 @@ describe('exit preparation preserves committed policies and document order', () 
       WriteOption.Overwrite,
     );
     const branch = root.structure!.branch;
-    const position = getLatentOrder(root, branch.name, branch.blueprintNode);
     const searches = vi.spyOn(Array.prototype, 'findIndex');
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
@@ -154,12 +155,6 @@ describe('exit preparation preserves committed policies and document order', () 
         (value) => value === branch.blueprintNode.childEntries,
       ),
     ).toHaveLength(0);
-    expect(
-      root.runtime.latentRawMetadata?.get('["/branch/z","string"]')?.order,
-    ).toEqual([...position, 0]);
-    expect(
-      root.runtime.latentRawMetadata?.get('["/branch/a","string"]')?.order,
-    ).toEqual([...position, 1]);
   });
 
   it.each(['node', 'fields', 'fragment', 'inherited', 'expression', 'keep'])(
@@ -222,13 +217,11 @@ describe('exit preparation preserves committed policies and document order', () 
         'input',
         WriteOption.Overwrite,
       );
-      expect(root.runtime.latentRaw.has('["/branch/value","string"]')).toBe(
+      expect(hasRetainedSlotOwnSource(root, '/branch/value', 'string')).toBe(
         !clear,
       );
       if (!clear)
-        expect(root.runtime.latentRaw.get('["/branch/value","string"]')).toBe(
-          'V',
-        );
+        expect(readRetainedSlotRaw(root, '/branch/value', 'string')).toBe('V');
       writeFieldNode(
         root.structure!.flag,
         true,

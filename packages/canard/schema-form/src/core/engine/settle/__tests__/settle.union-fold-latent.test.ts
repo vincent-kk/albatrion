@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createUnionFoldTree } from './fixtures/createUnionFoldTree';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 describe('union fold pending exits and retained raw', () => {
   it.each([
@@ -27,8 +27,6 @@ describe('union fold pending exits and retained raw', () => {
   ])(
     'isolates pending exits and restores $from and $to raw independently',
     ({ from, to, first, second, own, other }) => {
-      // These assertions inspect the latent-store baseline directly.
-      pinLatentBaseline();
       const { root } = createUnionFoldTree();
       loadFieldNodeAtMount(
         root,
@@ -42,9 +40,7 @@ describe('union fold pending exits and retained raw', () => {
         WriteOption.Merge,
       );
       expect(root.structure?.shared?.raw).toBeUndefined();
-      expect(root.runtime.latentRaw.get(JSON.stringify(['/shared', own]))).toBe(
-        first,
-      );
+      expect(readRetainedSlotRaw(root, '/shared', own)).toBe(first);
       writeFieldNode(
         root.structure!.shared,
         second,
@@ -58,9 +54,7 @@ describe('union fold pending exits and retained raw', () => {
         WriteOption.Merge,
       );
       expect(root.structure?.shared?.raw).toBe(first);
-      expect(
-        root.runtime.latentRaw.get(JSON.stringify(['/shared', other])),
-      ).toBe(second);
+      expect(readRetainedSlotRaw(root, '/shared', other)).toBe(second);
       writeFieldNode(
         root,
         { [from]: false, [to]: true },
@@ -103,8 +97,6 @@ describe('union fold pending exits and retained raw', () => {
   );
 
   it('permits a detached fold to write latent raw beside a different live union fold', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root } = createUnionFoldTree();
     loadFieldNodeAtMount(
       root,
@@ -121,9 +113,7 @@ describe('union fold pending exits and retained raw', () => {
     expect(detached.detached).toBe(true);
     writeFieldNode(detached, 31, 'callerReplace', WriteOption.Overwrite);
     expect(root.structure?.shared?.raw).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/shared', 'union:3'])),
-    ).toBe(31);
+    expect(readRetainedSlotRaw(root, '/shared', 'union:3')).toBe(31);
     writeFieldNode(
       root,
       { left: true, right: false },

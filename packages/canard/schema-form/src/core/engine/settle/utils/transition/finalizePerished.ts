@@ -68,7 +68,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
     }
   if (perishedPaths) {
     prunePerishedPaths(context.root.runtime, perishedPaths);
-    context.latentDescendantKeys = undefined;
+    context.literalStarDescendantKeys = undefined;
   }
   const resizedHosts = new Map<string, number>();
   for (const [host, previousCount] of context.arrayCounts)
@@ -78,7 +78,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
     }
   if (resizedHosts.size) {
     pruneArrayTailPaths(context.root.runtime, resizedHosts);
-    context.latentDescendantKeys = undefined;
+    context.literalStarDescendantKeys = undefined;
   }
 };
 

@@ -1,23 +1,24 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { WriteOption } from '../../types/value';
 import { dispatchMount, dispatchPush, dispatchSetValue } from '../../write';
+import { captureLiteralStarExit } from '../utils/literalStar/captureLiteralStarExit';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
-import { captureExitedRaw } from '../utils/transition/captureExitedRaw';
 import { selectCandidateOwnedLatent } from '../utils/transition/selectCandidateOwnedLatent';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotRaw,
+} from './fixtures/readRetainedSlotRaw';
 
 afterEach(() => vi.restoreAllMocks());
 
 describe('candidate exit policy ownership', () => {
   it('a terminal sibling clear cannot apply its policy to an object candidate', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root } = createDispatchTree(
       propertySchema(
         { type: 'object', properties: { x: { type: 'number' } } },
@@ -26,19 +27,14 @@ describe('candidate exit policy ownership', () => {
     );
     dispatchMount(root, { a: true, b: false, v: { x: 5 } });
     dispatchSetValue(getDispatchNode(root, 'a'), false);
-    const key = JSON.stringify(['/v/x', 'number']);
-    const metadata = root.runtime.latentRawMetadata?.get(key);
     dispatchSetValue(getDispatchNode(root, 'b'), true);
     dispatchSetValue(getDispatchNode(root, 'b'), false);
-    expect(root.runtime.latentRaw.get(key)).toBe(5);
-    expect(root.runtime.latentRawMetadata?.get(key)).toEqual(metadata);
+    expect(readRetainedSlotRaw(root, '/v/x', 'number')).toBe(5);
     dispatchSetValue(getDispatchNode(root, 'a'), true);
     expect(getDispatchNode(root, 'v').local).toEqual({ x: 5 });
   });
 
   it('array clearing isolates siblings and honors owned latent retain overrides', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root } = createDispatchTree(
       propertySchema(
         { type: 'object', properties: { x: { type: 'number' } } },
@@ -65,24 +61,17 @@ describe('candidate exit policy ownership', () => {
     const array = getDispatchNode(root, 'v');
     dispatchPush(array, { show: true, drop: 11, keep: 12 });
     dispatchSetValue(getDispatchNode(array, '0', 'show'), false);
-    const sibling = JSON.stringify(['/v/x', 'number']);
-    const drop = JSON.stringify(['/v/0/drop', 'number']);
-    const keep = JSON.stringify(['/v/0/keep', 'number']);
-    expect(root.runtime.latentRaw.get(drop)).toBe(11);
-    expect(root.runtime.latentRaw.get(keep)).toBe(12);
-    const retainedMetadata = root.runtime.latentRawMetadata?.get(keep);
+    expect(readRetainedSlotRaw(root, '/v/0/drop', 'number')).toBe(11);
+    expect(readRetainedSlotRaw(root, '/v/0/keep', 'number')).toBe(12);
     dispatchSetValue(getDispatchNode(root, 'b'), false);
-    expect(root.runtime.latentRaw.get(sibling)).toBe(5);
-    expect(root.runtime.latentRaw.has(drop)).toBe(false);
-    expect(root.runtime.latentRaw.get(keep)).toBe(12);
-    expect(root.runtime.latentRawMetadata?.get(keep)).toEqual(retainedMetadata);
+    expect(readRetainedSlotRaw(root, '/v/x', 'number')).toBe(5);
+    expect(hasRetainedSlotOwnSource(root, '/v/0/drop', 'number')).toBe(false);
+    expect(readRetainedSlotRaw(root, '/v/0/keep', 'number')).toBe(12);
   });
 
   it.each([false, true])(
     'shared path/token survives an array candidate exit, clear=%s',
     (clear) => {
-      // These assertions inspect the latent-store baseline directly.
-      pinLatentBaseline();
       const { root } = createDispatchTree(
         propertySchema(
           { type: 'object', properties: { '0': { type: 'number' } } },
@@ -95,12 +84,9 @@ describe('candidate exit policy ownership', () => {
       );
       dispatchMount(root, { a: true, b: false, v: { '0': 5 } });
       dispatchSetValue(getDispatchNode(root, 'a'), false);
-      const key = JSON.stringify(['/v/0', 'number']);
-      const metadata = root.runtime.latentRawMetadata?.get(key);
       dispatchSetValue(getDispatchNode(root, 'b'), true);
       dispatchSetValue(getDispatchNode(root, 'b'), false);
-      expect(root.runtime.latentRaw.get(key)).toBe(5);
-      expect(root.runtime.latentRawMetadata?.get(key)).toEqual(metadata);
+      expect(readRetainedSlotRaw(root, '/v/0', 'number')).toBe(5);
       dispatchSetValue(getDispatchNode(root, 'a'), true);
       expect(getDispatchNode(root, 'v', '0').raw).toBe(5);
       expect(getDispatchNode(root, 'v').local).toEqual({ '0': 5 });
@@ -115,8 +101,6 @@ describe('candidate exit policy ownership', () => {
   ] satisfies readonly { host: 'object' | 'array'; clear: boolean }[])(
     '[control] single-candidate $host clear=$clear skips ownership selection and child-entry traversal',
     ({ host, clear }) => {
-      // These assertions inspect the latent-store baseline directly.
-      pinLatentBaseline();
       const { root } = createDispatchTree({
         type: host,
         ...(host === 'array'
@@ -151,7 +135,7 @@ describe('candidate exit policy ownership', () => {
       const scratch = getSettlementScratch(root.runtime);
       try {
         expect(selectCandidateOwnedLatent(departing)).toBeUndefined();
-        captureExitedRaw(
+        captureLiteralStarExit(
           departing,
           clear,
           createSettlementContext(
@@ -165,7 +149,9 @@ describe('candidate exit policy ownership', () => {
         );
         expect(reads).not.toHaveBeenCalled();
         expect(
-          root.runtime.latentRaw.has(JSON.stringify([child.path, 'array'])),
+          root.runtime.literalStarRaw?.has(
+            JSON.stringify([child.path, 'array']),
+          ),
         ).toBe(!clear);
         expect(root.local).toEqual(host === 'array' ? [[5]] : { v: [5] });
       } finally {

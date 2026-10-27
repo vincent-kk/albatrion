@@ -1,7 +1,7 @@
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { getBlueprintChildIndex } from '../latentStore/getBlueprintChildIndex';
+import { getSlotChildIndex } from './getSlotChildIndex';
 
 /**
  * Resolve the canonical binding of an owned retained child.
@@ -15,10 +15,14 @@ export const getRetainedChildEntry = <Self extends FieldNodeRecord<Self>>(
   name: string,
   template: BlueprintNode,
 ): BlueprintChildEntry | undefined => {
+  for (const binding of host.inactiveSlots?.keys() ?? [])
+    if (binding.name === name && binding.node === template) return binding;
+  for (const binding of host.inactiveSlotOverlays?.keys() ?? [])
+    if (binding.name === name && binding.node === template) return binding;
   if (host.behavior.type === 'array')
     return getItemEntries(host.blueprintNode, Number(name)).find(
       (entry) => entry.node === template,
     );
-  const index = getBlueprintChildIndex(host.blueprintNode, name, template);
+  const index = getSlotChildIndex(host.blueprintNode, name, template);
   return index >= 0 ? host.blueprintNode.childEntries[index] : undefined;
 };

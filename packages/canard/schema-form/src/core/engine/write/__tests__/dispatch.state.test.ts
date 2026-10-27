@@ -7,7 +7,6 @@ import {
   ValidationMode,
 } from '@/schema-form/core/engine/types/state';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
 import { dispatchClearSubtreeState } from '../utils/entry/dispatchClearSubtreeState';
 import { dispatchResetSubtree } from '../utils/entry/dispatchResetSubtree';
@@ -24,7 +23,6 @@ describe('dispatcher state events', () => {
     'keeps immediate %s state writes during reset out of the settlement delta',
     (kind) => {
       // The one-shot callback mutates its captured tree during shipping execution.
-      pinSlotShipping();
       let duringReset: (() => void) | undefined;
       const { root, runtime } = createDispatchTree(
         {

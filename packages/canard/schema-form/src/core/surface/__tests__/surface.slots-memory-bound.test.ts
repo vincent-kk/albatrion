@@ -19,7 +19,7 @@ it('replaces the one visited host slot instead of retaining earlier lifetimes', 
     expect(slots.size).toBe(1);
     const retained: unknown[] = [...slots.values()];
     expect(retained).toHaveLength(1);
-    expect(Reflect.get(tree.root, 'runtime').latentRaw.size).toBe(0);
+    expect(Reflect.get(tree.root, 'runtime').literalStarRaw?.size ?? 0).toBe(0);
     expect(countRetainedSlotNodes(tree.root)).toBeLessThanOrEqual(bound);
     tree.open();
     expect(tree.root.find('/group/leaf')!.value).toBe('kept');

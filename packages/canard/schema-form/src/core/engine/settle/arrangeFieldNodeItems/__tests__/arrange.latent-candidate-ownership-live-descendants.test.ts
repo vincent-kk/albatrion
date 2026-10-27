@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import { FieldNodeEventType } from '../../../record';
@@ -15,6 +14,7 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 
 it.each([
   { operation: 'insert', depth: 1 },
@@ -24,8 +24,6 @@ it.each([
 ] satisfies readonly { operation: 'insert' | 'remove'; depth: 1 | 2 }[])(
   'V3 $operation at depth $depth retains the previously live candidate on switch-back',
   async ({ operation, depth }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const inputs: unknown[] = [];
     const validator: Validator = {
       compile: () => (value) => {
@@ -57,15 +55,11 @@ it.each([
     expect(original.raw).toBe('live');
     root.runtime.disableAutomaticWrites = true;
     const path = `/list/${destination}/` + names.join('/');
-    const stringKey = JSON.stringify([path, 'string']);
     if (operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
     expect(getDispatchNode(list, String(destination), ...names).raw).toBe(37);
-    expect(root.runtime.latentRaw.get(stringKey)).toBe('live');
-    expect(root.runtime.latentRawMetadata?.get(stringKey)).toMatchObject({
-      path,
-      blueprintNode: original.blueprintNode,
-    });
+    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
+
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     expect(getDispatchNode(list, String(destination), ...names).raw).toBe(
       'live',

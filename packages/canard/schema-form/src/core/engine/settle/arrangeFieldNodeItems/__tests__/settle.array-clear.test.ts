@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { beforeEach } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import {
@@ -17,7 +16,6 @@ import {
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
-import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
@@ -31,7 +29,6 @@ import { observePathStores } from './fixtures/observePathStores';
 
 afterEach(() => vi.restoreAllMocks());
 // The fixture counts one shipping tree's bulk cleanup calls and mutations.
-beforeEach(() => pinSlotShipping());
 
 /** Object items whose third field carries the given controls. */
 const itemsWith = (controls: Record<string, unknown>): BlueprintSchema => ({
@@ -220,14 +217,16 @@ const populate = (latentOnly: boolean) => {
     '/other',
   ];
   if (latentOnly) paths.push('/list/1/a');
-  runtime.latentRawMetadata = new PathKeyedMap('pair');
+  runtime.literalStarRaw = new PathKeyedMap('pair');
+  runtime.literalStarValuesMemo = new PathKeyedMap('path');
+  runtime.literalStarRawMetadata = new PathKeyedMap('pair');
   runtime.committedDeclarationIds = new PathKeyedMap('pair');
   runtime.misfitsMemo = new PathKeyedMap('path');
-  runtime.inactiveValueEntries = new PathKeyedMap('pair');
+  runtime.literalStarValueEntries = new PathKeyedMap('pair');
   for (const path of paths) {
     const key = pair(path);
-    runtime.latentRaw.set(key, path);
-    runtime.latentRawMetadata.set(key, {
+    runtime.literalStarRaw.set(key, path);
+    runtime.literalStarRawMetadata.set(key, {
       path,
       blueprintNode: root.blueprintNode,
       order: [],
@@ -235,8 +234,8 @@ const populate = (latentOnly: boolean) => {
     runtime.committedDeclarationIds.set(key, [1]);
     runtime.misfitPaths.add(path);
     runtime.misfitsMemo.set(path, { commit: 0, paths: [path] });
-    runtime.inactiveValuesMemo.set(path, [{ path, value: 1 }]);
-    runtime.inactiveValueEntries.set(key, {
+    runtime.literalStarValuesMemo.set(path, [{ path, value: 1 }]);
+    runtime.literalStarValueEntries.set(key, {
       value: 1,
       order: [],
       entry: { path, value: 1 },
@@ -246,11 +245,11 @@ const populate = (latentOnly: boolean) => {
     indexFieldNodeWarning(runtime, warning, path);
   }
   runtime.misfitsMemo.set('', { commit: 0, paths: [] });
-  runtime.inactiveValuesMemo.set('', []);
+  runtime.literalStarValuesMemo.set('', []);
   updateCommittedRuleValue(runtime, rule('/list/0/a', '/other'), 'set', 1);
   updateCommittedRuleValue(runtime, rule('/other', '/list/5/x'), 'set', 2);
   updateCommittedRuleValue(runtime, rule('/other', '/list/name'), 'set', 3);
-  runtime.latentRawDirty = false;
+  runtime.literalStarRawDirty = false;
   return { runtime, live: new Set(['/list/0', '/list/2']) };
 };
 

@@ -14,8 +14,8 @@ it.each([
   ['verify', true],
 ] as const)(
   '%s preserves aggregate-list lifetimes across host entry, own=%s',
-  (mode, own) => {
-    const { root, runtime } = createDispatchTree({
+  (_mode, own) => {
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         open: { type: 'boolean' },
@@ -29,7 +29,6 @@ it.each([
         },
       },
     });
-    runtime.slots = mode;
     dispatchMount(root, {
       open: true,
       group: { ...(own ? { on: false } : {}), held: 'saved' },
