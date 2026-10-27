@@ -1,0 +1,1293 @@
+{
+  "adopt": false,
+  "gates": {
+    "quality": true,
+    "stages": false,
+    "json": true,
+    "test073": true,
+    "nodeHeap": true
+  },
+  "stageGates": {
+    "latent": {
+      "A": 17.375500000071042,
+      "B": 12.0624999998995,
+      "limit": 8,
+      "met": false,
+      "notWorse": true
+    },
+    "assembleObject": {
+      "A": 9.666999999978998,
+      "B": 6.207999999986669,
+      "limit": 3,
+      "met": false,
+      "notWorse": true
+    },
+    "registerRecalculation": {
+      "A": 12.729000000007318,
+      "B": 15.687500000012733,
+      "limit": 5,
+      "met": false,
+      "notWorse": false
+    },
+    "markCommitDeliveries": {
+      "A": 11.541500000021188,
+      "B": 11.749999999977945,
+      "limit": 6,
+      "met": false,
+      "notWorse": false
+    }
+  },
+  "stages": {
+    "A:switch-oneOf-80": {
+      "latent": 17.375500000071042,
+      "assembleObject": 9.666999999978998,
+      "registerRecalculation": 12.729000000007318,
+      "markCommitDeliveries": 11.541500000021188
+    },
+    "A:switch-payload-12": {
+      "latent": 48.50049999990347,
+      "assembleObject": 35.812499999963165,
+      "registerRecalculation": 19.916500000022097,
+      "markCommitDeliveries": 15.562499999987267
+    },
+    "B:switch-oneOf-80": {
+      "latent": 12.0624999998995,
+      "assembleObject": 6.207999999986669,
+      "registerRecalculation": 15.687500000012733,
+      "markCommitDeliveries": 11.749999999977945
+    },
+    "B:switch-payload-12": {
+      "latent": 30.83399999988501,
+      "assembleObject": 10.499999999979082,
+      "registerRecalculation": 23.75050000000556,
+      "markCommitDeliveries": 13.833000000005313
+    }
+  },
+  "quality": {
+    "kind": "legacy",
+    "ratio": 0.9954362026125,
+    "passed": true,
+    "assessedRows": 18,
+    "rows": [
+      {
+        "id": "single-flat-1000",
+        "ratio": 0.9842981281813574
+      },
+      {
+        "id": "mount-oneOf-80",
+        "ratio": 0.9945797903812701
+      },
+      {
+        "id": "mount-flat-1000",
+        "ratio": 1.0123686568227654
+      },
+      {
+        "id": "mount-nested-d6-f4",
+        "ratio": 0.9882645871091008
+      },
+      {
+        "id": "single-nested-d6-f4",
+        "ratio": 1.0259170184492856
+      },
+      {
+        "id": "switch-oneOf-80",
+        "ratio": 1.0112136128043283
+      },
+      {
+        "id": "bulk-flat-2000",
+        "ratio": 1.0022927941536315
+      },
+      {
+        "id": "bulk-nested-d6-f4",
+        "ratio": 0.9996844479989572
+      },
+      {
+        "id": "switch-nested-oneOf-20",
+        "ratio": 0.9792309670776367
+      },
+      {
+        "id": "switch-siblings-0",
+        "ratio": 0.972676487110469
+      },
+      {
+        "id": "switch-siblings-100",
+        "ratio": 0.981202205986758
+      },
+      {
+        "id": "switch-siblings-1000",
+        "ratio": 0.9922368614389967
+      },
+      {
+        "id": "switch-siblings-4000",
+        "ratio": 1.131104873584095
+      },
+      {
+        "id": "leaf-gate-250",
+        "ratio": 0.9631452947029852
+      },
+      {
+        "id": "leaf-gate-1000",
+        "ratio": 1.1193145656681518
+      },
+      {
+        "id": "leaf-gate-4000",
+        "ratio": 1.0345639830403244
+      },
+      {
+        "id": "leaf-gate-8000",
+        "ratio": 0.9962926148437299
+      },
+      {
+        "id": "switch-payload-12",
+        "ratio": 0.9658924284852569
+      }
+    ],
+    "omittedRows": [
+      {
+        "id": "switch-discriminator-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "switch-if-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "wave-1000",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "single-flat-1000-subscribed",
+        "reason": "No compatible legacy lane"
+      }
+    ]
+  },
+  "heap": [
+    {
+      "runtime": "node",
+      "A": {
+        "bytesPerNode": 1439.3953209358128,
+        "samples": [
+          1890.7610477904418,
+          1452.0615876824636,
+          1431.9520095980804,
+          1439.3953209358128,
+          1440.6974605078983,
+          1438.369926014797,
+          1434.733853229354
+        ]
+      },
+      "B": {
+        "bytesPerNode": 1439.0273945210959,
+        "samples": [
+          1890.7850429914017,
+          1452.367126574685,
+          1432.0719856028795,
+          1439.0273945210959,
+          1440.8590281943611,
+          1437.9732053589282,
+          1434.8314337132574
+        ]
+      },
+      "maximumA": 1890.7610477904418,
+      "passGate": true
+    },
+    {
+      "runtime": "bun",
+      "A": {
+        "bytesPerNode": 2227.5222955408917,
+        "samples": [
+          2226.924215156969,
+          2227.48950209958,
+          2234.7130573885224,
+          2227.5222955408917,
+          2234.733653269346,
+          2226.9874025194963,
+          2234.780643871226
+        ]
+      },
+      "B": {
+        "bytesPerNode": 2234.00299940012,
+        "samples": [
+          2227.104579084183,
+          2234.2695460907817,
+          2234.0389922015597,
+          2234.253349330134,
+          2226.99900019996,
+          2234.00299940012,
+          2233.2023595280943
+        ]
+      },
+      "maximumA": 2234.780643871226,
+      "passGate": true
+    }
+  ],
+  "coverage": [
+    {
+      "lane": "A",
+      "row": "switch-oneOf-80",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 61.0,
+        "getCommittedDeclarationKey": 27.0,
+        "indexLatentDescendant": 9.0,
+        "getLatentPathIndex": 4.0,
+        "PathKeyedMap.set": 22.0,
+        "PathKeyedMap.delete": 12.0
+      }
+    },
+    {
+      "lane": "A",
+      "row": "switch-payload-12",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 232.0,
+        "getCommittedDeclarationKey": 99.0,
+        "indexLatentDescendant": 36.0,
+        "getLatentPathIndex": 13.0,
+        "PathKeyedMap.set": 76.0,
+        "PathKeyedMap.delete": 48.0
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-oneOf-80",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 25.0,
+        "getCommittedDeclarationKey": 36.0,
+        "getLatentPathIndex": 4.0,
+        "PathKeyedMap.set": 22.0,
+        "PathKeyedMap.delete": 12.0
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-payload-12",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 97.0,
+        "getCommittedDeclarationKey": 135.0,
+        "getLatentPathIndex": 13.0,
+        "PathKeyedMap.set": 76.0,
+        "PathKeyedMap.delete": 48.0
+      }
+    }
+  ],
+  "keyCounts": [
+    {
+      "lane": "A",
+      "row": "switch-oneOf-80",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 3,
+          "enterFieldNode": 3,
+          "selectChildren": 3,
+          "transitionSettlement": 10,
+          "captureExitedRaw": 3,
+          "visitFieldNodes.owned": 6,
+          "finalizeExits": 3,
+          "getCommittedDeclarationKey": 3
+        },
+        "parse": {
+          "getLatentPathIndex": 3,
+          "setLatentRaw": 9,
+          "getStoreKeyPaths": 9,
+          "captureLatentDescendants": 3
+        }
+      }
+    },
+    {
+      "lane": "A",
+      "row": "switch-payload-12",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 12,
+          "enterFieldNode": 12,
+          "selectChildren": 12,
+          "transitionSettlement": 37,
+          "captureExitedRaw": 12,
+          "visitFieldNodes.owned": 24,
+          "finalizeExits": 12,
+          "getCommittedDeclarationKey": 12
+        },
+        "parse": {
+          "getLatentPathIndex": 12,
+          "setLatentRaw": 36,
+          "getStoreKeyPaths": 36,
+          "captureLatentDescendants": 12
+        }
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-oneOf-80",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 3,
+          "selectChildren": 3,
+          "transitionSettlement": 10,
+          "visitFieldNodes.owned": 6
+        },
+        "parse": {
+          "captureLatentDescendants": 3
+        }
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-payload-12",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 12,
+          "selectChildren": 12,
+          "transitionSettlement": 37,
+          "visitFieldNodes.owned": 24
+        },
+        "parse": {
+          "captureLatentDescendants": 12
+        }
+      }
+    }
+  ],
+  "test073": [
+    {
+      "row": "single-flat-1000",
+      "comparison": "all",
+      "t": -3.1660950915808996,
+      "df": 1973.2233935098366,
+      "pValue": 0.0015685932008961607,
+      "meanA": 7418.237129239859,
+      "meanB": 7825.978863862842,
+      "percent": 5.496477498890151,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "single-flat-1000",
+      "comparison": "early",
+      "t": -0.750721431264564,
+      "df": 991.8969140252698,
+      "pValue": 0.4529983737084975,
+      "meanA": 7913.275150983193,
+      "meanB": 8046.633374020488,
+      "percent": 1.685246885680769,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-flat-1000",
+      "comparison": "late",
+      "t": -3.71719756594048,
+      "df": 906.4199521610891,
+      "pValue": 0.0002137994754995554,
+      "meanA": 6923.199107496533,
+      "meanB": 7605.324353705182,
+      "percent": 9.85274633326716,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-oneOf-80",
+      "comparison": "all",
+      "t": -3.509054903668049,
+      "df": 1934.8617938097177,
+      "pValue": 0.0004599825473424923,
+      "meanA": 378.8657779286967,
+      "meanB": 385.93581295357427,
+      "percent": 1.8661054750128914,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "mount-oneOf-80",
+      "comparison": "early",
+      "t": -1.2796868627476161,
+      "df": 997.9999378833584,
+      "pValue": 0.20095269056105047,
+      "meanA": 389.7084366073386,
+      "meanB": 392.96745842068503,
+      "percent": 0.83627181431285,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-oneOf-80",
+      "comparison": "late",
+      "t": -3.6072930317648537,
+      "df": 919.1599895843482,
+      "pValue": 0.00032608220453626385,
+      "meanA": 368.0231192500536,
+      "meanB": 378.9041674864651,
+      "percent": 2.9566208390887416,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-flat-1000",
+      "comparison": "all",
+      "t": 1.6768704731844153,
+      "df": 1990.8411489281712,
+      "pValue": 0.09372480424908824,
+      "meanA": 373.1071591942031,
+      "meanB": 368.81764488100123,
+      "percent": -1.1496735475314712,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "mount-flat-1000",
+      "comparison": "early",
+      "t": 1.4890416157634463,
+      "df": 995.8706198738148,
+      "pValue": 0.1367930099140795,
+      "meanA": 371.6918949704382,
+      "meanB": 366.3109657964545,
+      "percent": -1.447685367046181,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-flat-1000",
+      "comparison": "late",
+      "t": 0.8833074848506572,
+      "df": 992.402971511923,
+      "pValue": 0.3772840828890708,
+      "meanA": 374.5224234179676,
+      "meanB": 371.3243239655489,
+      "percent": -0.853914012205792,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "comparison": "all",
+      "t": 0.7889722942058232,
+      "df": 1996.8156521715687,
+      "pValue": 0.43022186286635367,
+      "meanA": 51.86986114937555,
+      "meanB": 51.61198831787133,
+      "percent": -0.49715350261223534,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "comparison": "early",
+      "t": -1.9210217282080422,
+      "df": 997.3724544594712,
+      "pValue": 0.055013771521188755,
+      "meanA": 50.911410701287856,
+      "meanB": 51.78915425351582,
+      "percent": 1.7240605595824965,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "comparison": "late",
+      "t": 3.0041322991476984,
+      "df": 990.1076953432598,
+      "pValue": 0.002730408344062917,
+      "meanA": 52.82831159746326,
+      "meanB": 51.43482238222678,
+      "percent": -2.637769735770623,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "comparison": "all",
+      "t": 1.7128325941261693,
+      "df": 1975.5096605264434,
+      "pValue": 0.08690025414649816,
+      "meanA": 4388.127547157622,
+      "meanB": 4263.2384694557795,
+      "percent": -2.846067630434723,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "comparison": "early",
+      "t": 6.101663657071163,
+      "df": 997.9340886270311,
+      "pValue": 1.499981496216888e-09,
+      "meanA": 5030.160782040283,
+      "meanB": 4360.741265093066,
+      "percent": -13.308113715516134,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "comparison": "late",
+      "t": -4.826256234746824,
+      "df": 992.5650403994606,
+      "pValue": 1.6098745313740528e-06,
+      "meanA": 3746.0943122749527,
+      "meanB": 4165.735673818489,
+      "percent": 11.202103485982274,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-oneOf-80",
+      "comparison": "all",
+      "t": -1.381796471227778,
+      "df": 1996.5891482673687,
+      "pValue": 0.16718878773985735,
+      "meanA": 1817.5260173933884,
+      "meanB": 1845.9430210678374,
+      "percent": 1.5634991412779575,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-oneOf-80",
+      "comparison": "early",
+      "t": -3.2901189961850745,
+      "df": 994.00504385123,
+      "pValue": 0.0010366384110660845,
+      "meanA": 1732.4322386993067,
+      "meanB": 1809.1767694317834,
+      "percent": 4.42987200411924,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-oneOf-80",
+      "comparison": "late",
+      "t": 0.5963041746609314,
+      "df": 995.4969270113328,
+      "pValue": 0.551107607085068,
+      "meanA": 1902.619796087466,
+      "meanB": 1882.7092727038873,
+      "percent": -1.046479355703256,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "bulk-flat-2000",
+      "comparison": "all",
+      "t": -11.180525782230328,
+      "df": 1996.0183201393204,
+      "pValue": 3.427534239417268e-28,
+      "meanA": 480.98023530596856,
+      "meanB": 504.3567309963015,
+      "percent": 4.860178022795947,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "bulk-flat-2000",
+      "comparison": "early",
+      "t": -12.013887914631223,
+      "df": 997.5764357747494,
+      "pValue": 3.7741262779580734e-31,
+      "meanA": 472.584981926721,
+      "meanB": 505.6058466501773,
+      "percent": 6.987286093779521,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "bulk-flat-2000",
+      "comparison": "late",
+      "t": -4.41815520227109,
+      "df": 993.1927200723624,
+      "pValue": 1.1048242735393175e-05,
+      "meanA": 489.3754886852161,
+      "meanB": 503.1076153424248,
+      "percent": 2.8060511763885465,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "comparison": "all",
+      "t": -4.667015164200444,
+      "df": 1996.3007434187366,
+      "pValue": 3.2590856781092586e-06,
+      "meanA": 190.1949375837358,
+      "meanB": 197.23034512498862,
+      "percent": 3.6990508951666445,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "comparison": "early",
+      "t": -1.4596608670924167,
+      "df": 997.9499241424248,
+      "pValue": 0.14469800506401087,
+      "meanA": 191.78359410901032,
+      "meanB": 194.85981814283616,
+      "percent": 1.6040079174224342,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "comparison": "late",
+      "t": -5.1124546603371055,
+      "df": 995.7140415943766,
+      "pValue": 3.812261600992958e-07,
+      "meanA": 188.60628105846075,
+      "meanB": 199.60087210714076,
+      "percent": 5.829387540530595,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-discriminator-80",
+      "comparison": "all",
+      "t": -2.303657708330365,
+      "df": 1997.9965119033466,
+      "pValue": 0.021344069533947182,
+      "meanA": 2428.7076333348045,
+      "meanB": 2476.9396774599422,
+      "percent": 1.985913967705999,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-discriminator-80",
+      "comparison": "early",
+      "t": -1.9067832449886863,
+      "df": 986.3011033767889,
+      "pValue": 0.05683900392928815,
+      "meanA": 2450.796323410681,
+      "meanB": 2510.518758730853,
+      "percent": 2.4368583692445878,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-discriminator-80",
+      "comparison": "late",
+      "t": -1.326030869944708,
+      "df": 978.9538129177444,
+      "pValue": 0.18513877584943683,
+      "meanA": 2406.6189432589217,
+      "meanB": 2443.3605961890353,
+      "percent": 1.5266917528854673,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-if-80",
+      "comparison": "all",
+      "t": -1.6827142852537225,
+      "df": 1997.9719766044734,
+      "pValue": 0.09258665860461901,
+      "meanA": 1432.4108436762992,
+      "meanB": 1447.5082254699764,
+      "percent": 1.0539840479655727,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-if-80",
+      "comparison": "early",
+      "t": 0.894991368339923,
+      "df": 983.8267874445498,
+      "pValue": 0.3710106081231638,
+      "meanA": 1457.263193956995,
+      "meanB": 1447.5420241157183,
+      "percent": -0.6670840162291025,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-if-80",
+      "comparison": "late",
+      "t": -2.809451362971497,
+      "df": 990.262775827133,
+      "pValue": 0.0050603015589806505,
+      "meanA": 1407.558493395604,
+      "meanB": 1447.4744268242382,
+      "percent": 2.835827684314607,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "comparison": "all",
+      "t": -1.156592905330331,
+      "df": 1990.9675628464083,
+      "pValue": 0.24757747722509138,
+      "meanA": 1164.8817188813252,
+      "meanB": 1179.3396511814067,
+      "percent": 1.2411502443326006,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "comparison": "early",
+      "t": -2.2884566815660228,
+      "df": 989.983841601518,
+      "pValue": 0.022320919995059044,
+      "meanA": 1178.0988265553335,
+      "meanB": 1219.1954426117072,
+      "percent": 3.4883844317659563,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "comparison": "late",
+      "t": 0.707864199867352,
+      "df": 997.9289477905761,
+      "pValue": 0.4791948818481594,
+      "meanA": 1151.6646112073163,
+      "meanB": 1139.4838597511084,
+      "percent": -1.0576648216565898,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-0",
+      "comparison": "all",
+      "t": 0.2122798284224949,
+      "df": 1996.8318600376444,
+      "pValue": 0.8319103972872712,
+      "meanA": 5299.050751198557,
+      "meanB": 5274.312020612294,
+      "percent": -0.4668521164977957,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-siblings-0",
+      "comparison": "early",
+      "t": 5.621837263154652,
+      "df": 953.8856152851262,
+      "pValue": 2.480557490531312e-08,
+      "meanA": 5748.548007870234,
+      "meanB": 4821.829513720164,
+      "percent": -16.120914235756857,
+      "regression": true,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-0",
+      "comparison": "late",
+      "t": -5.485368340084464,
+      "df": 925.6912351599267,
+      "pValue": 5.325188967053087e-08,
+      "meanA": 4849.553494526887,
+      "meanB": 5726.7945275044285,
+      "percent": 18.089109316302586,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-100",
+      "comparison": "all",
+      "t": 7.804375961804399,
+      "df": 1906.6003049729618,
+      "pValue": 9.779601823492861e-15,
+      "meanA": 2352.897646898081,
+      "meanB": 2073.102152393337,
+      "percent": -11.891528510541448,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-siblings-100",
+      "comparison": "early",
+      "t": 3.381361217164761,
+      "df": 954.646060993497,
+      "pValue": 0.0007505368724567517,
+      "meanA": 2342.5900567914596,
+      "meanB": 2169.5175818520142,
+      "percent": -7.388082026459841,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-100",
+      "comparison": "late",
+      "t": 7.747673910751654,
+      "df": 942.2620723534865,
+      "pValue": 2.414870992665594e-14,
+      "meanA": 2363.205237004709,
+      "meanB": 1976.6867229346622,
+      "percent": -16.355689637855885,
+      "regression": true,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-1000",
+      "comparison": "all",
+      "t": 20.1812546430638,
+      "df": 1742.8685927118845,
+      "pValue": 1.4547637263660938e-81,
+      "meanA": 400.6656928731449,
+      "meanB": 366.5731503353275,
+      "percent": -8.508974724874053,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-siblings-1000",
+      "comparison": "early",
+      "t": 13.697270397719054,
+      "df": 849.3990908126069,
+      "pValue": 9.914480878481827e-39,
+      "meanA": 400.8447636015676,
+      "meanB": 368.18837587614337,
+      "percent": -8.146891437974247,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-1000",
+      "comparison": "late",
+      "t": 14.83994480797157,
+      "df": 889.2281985427269,
+      "pValue": 1.124962990984108e-44,
+      "meanA": 400.4866221447227,
+      "meanB": 364.9579247945124,
+      "percent": -8.871381810444435,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-4000",
+      "comparison": "all",
+      "t": 22.337671115788595,
+      "df": 1937.5443023508305,
+      "pValue": 1.55546547522818e-98,
+      "meanA": 130.90608952334836,
+      "meanB": 119.69626006282691,
+      "percent": -8.56326050326488,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-siblings-4000",
+      "comparison": "early",
+      "t": 21.87111027378834,
+      "df": 987.257365224801,
+      "pValue": 8.853660550837573e-87,
+      "meanA": 133.38746721625145,
+      "meanB": 121.96918943086585,
+      "percent": -8.560232849218108,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-siblings-4000",
+      "comparison": "late",
+      "t": 13.240071005861179,
+      "df": 955.4414352198802,
+      "pValue": 7.319653780194846e-37,
+      "meanA": 128.42471183044537,
+      "meanB": 117.42333069478792,
+      "percent": -8.566405155872324,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-250",
+      "comparison": "all",
+      "t": -2.842653710362378,
+      "df": 1994.1755357819059,
+      "pValue": 0.004519499749171388,
+      "meanA": 11920.792739450497,
+      "meanB": 12920.527345666873,
+      "percent": 8.38647754446622,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "leaf-gate-250",
+      "comparison": "early",
+      "t": 0.4950304818316243,
+      "df": 997.98974067178,
+      "pValue": 0.6206875708753156,
+      "meanA": 13114.255012405778,
+      "meanB": 12865.488678475202,
+      "percent": -1.8969154839161617,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-250",
+      "comparison": "late",
+      "t": -4.618280167533667,
+      "df": 984.0714420177463,
+      "pValue": 4.382171154573794e-06,
+      "meanA": 10727.330466495197,
+      "meanB": 12975.566012858506,
+      "percent": 20.95801516868758,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-1000",
+      "comparison": "all",
+      "t": 2.2179932687369557,
+      "df": 1978.6636206302962,
+      "pValue": 0.0266684650453264,
+      "meanA": 13152.933872794825,
+      "meanB": 12445.61691039649,
+      "percent": -5.377636421189125,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "leaf-gate-1000",
+      "comparison": "early",
+      "t": 3.41101888441774,
+      "df": 957.450747332434,
+      "pValue": 0.0006742607937067687,
+      "meanA": 14351.462231747788,
+      "meanB": 12929.115832470461,
+      "percent": -9.910811709003864,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-1000",
+      "comparison": "late",
+      "t": -0.016200972727179012,
+      "df": 997.9976223247212,
+      "pValue": 0.9870772975704647,
+      "meanA": 11954.40551384188,
+      "meanB": 11962.117988322498,
+      "percent": 0.06451575088102235,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-4000",
+      "comparison": "all",
+      "t": 4.141456689790142,
+      "df": 1953.731762022253,
+      "pValue": 3.598052689517245e-05,
+      "meanA": 973.4441942349856,
+      "meanB": 942.26434455878,
+      "percent": -3.203044392360821,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "leaf-gate-4000",
+      "comparison": "early",
+      "t": 5.733044406392809,
+      "df": 991.6683120127861,
+      "pValue": 1.308545423443892e-08,
+      "meanA": 1013.1164930982267,
+      "meanB": 950.3618514316197,
+      "percent": -6.194217752264208,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-4000",
+      "comparison": "late",
+      "t": -0.0393831899111297,
+      "df": 965.1841870597032,
+      "pValue": 0.9685930264487881,
+      "meanA": 933.7718953717429,
+      "meanB": 934.16683768594,
+      "percent": 0.04229537386535309,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-8000",
+      "comparison": "all",
+      "t": -3.352329376248378,
+      "df": 1978.488375653985,
+      "pValue": 0.000816438479328626,
+      "meanA": 608.8207626421831,
+      "meanB": 612.8257189363418,
+      "percent": 0.6578218976596384,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "leaf-gate-8000",
+      "comparison": "early",
+      "t": -1.4467036269143356,
+      "df": 997.9901620135546,
+      "pValue": 0.14829394872354862,
+      "meanA": 611.8317458487949,
+      "meanB": 614.1901446430048,
+      "percent": 0.3854652541669168,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "leaf-gate-8000",
+      "comparison": "late",
+      "t": -3.255619836567414,
+      "df": 968.0223833931497,
+      "pValue": 0.0011707047076171683,
+      "meanA": 605.8097794355697,
+      "meanB": 611.4612932296815,
+      "percent": 0.9328858638395277,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "wave-1000",
+      "comparison": "all",
+      "t": -8.79965685720385,
+      "df": 1991.4717288498805,
+      "pValue": 2.913155432138913e-18,
+      "meanA": 489.80904671380614,
+      "meanB": 509.0199232811932,
+      "percent": 3.9221155052719725,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "wave-1000",
+      "comparison": "early",
+      "t": -5.381370569707313,
+      "df": 997.9900911625642,
+      "pValue": 9.213031309858275e-08,
+      "meanA": 490.6608682547996,
+      "meanB": 507.9915765360638,
+      "percent": 3.532115439102923,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "wave-1000",
+      "comparison": "late",
+      "t": -7.148595411388073,
+      "df": 981.5573765469169,
+      "pValue": 1.7099771969691524e-12,
+      "meanA": 488.95722517281195,
+      "meanB": 510.0482700263222,
+      "percent": 4.313474424282426,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "comparison": "all",
+      "t": 1.4329894683498199,
+      "df": 1989.5490064534008,
+      "pValue": 0.1520179583993666,
+      "meanA": 7946.839082134511,
+      "meanB": 7834.116842454662,
+      "percent": -1.41845378413743,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "comparison": "early",
+      "t": -2.2524204610133696,
+      "df": 983.0844143776322,
+      "pValue": 0.02451562620374293,
+      "meanA": 7663.413964432267,
+      "meanB": 7902.204327639004,
+      "percent": 3.1159789137716,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "comparison": "late",
+      "t": 4.0412423851259565,
+      "df": 958.0197830643506,
+      "pValue": 5.743025098599785e-05,
+      "meanA": 8230.264199836754,
+      "meanB": 7766.029357270299,
+      "percent": -5.640582504941493,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-payload-12",
+      "comparison": "all",
+      "t": -9.197113117437189,
+      "df": 1982.3191625055342,
+      "pValue": 9.028010887127434e-20,
+      "meanA": 796.9123579024729,
+      "meanB": 889.3006222313373,
+      "percent": 11.593277907251508,
+      "regression": false,
+      "baselineSamples": 1000,
+      "candidateSamples": 1000
+    },
+    {
+      "row": "switch-payload-12",
+      "comparison": "early",
+      "t": -2.45894670237845,
+      "df": 990.202064144979,
+      "pValue": 0.014104698073214158,
+      "meanA": 788.4909872831812,
+      "meanB": 822.4424186532962,
+      "percent": 4.30587437493708,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    },
+    {
+      "row": "switch-payload-12",
+      "comparison": "late",
+      "t": -10.795297554556408,
+      "df": 997.9496921588069,
+      "pValue": 9.009670137683288e-26,
+      "meanA": 805.3337285217654,
+      "meanB": 956.1588258093789,
+      "percent": 18.728272757737518,
+      "regression": false,
+      "baselineSamples": 500,
+      "candidateSamples": 500
+    }
+  ],
+  "regressions": [],
+  "validated": {
+    "rows": 22,
+    "processes": 440,
+    "legacyRows": 18,
+    "stageProcesses": 12,
+    "stageWrites": 1200
+  },
+  "window": {
+    "started": {
+      "startedAt": "2026-10-27T16:02:36.255Z",
+      "quietSince": "2026-10-27T16:02:41.382Z",
+      "durationSeconds": 5.123033125000001,
+      "heavy": [],
+      "highestCpuPercent": 18.348505212907433
+    },
+    "endedAt": "2026-10-27T16:13:13.734Z",
+    "ended": {
+      "startedAt": "2026-10-27T16:13:13.734Z",
+      "quietSince": "2026-10-27T16:13:18.872Z",
+      "durationSeconds": 5.135015084000001,
+      "heavy": [],
+      "highestCpuPercent": 21.226812037923327
+    },
+    "selectedCompleteWindows": 1,
+    "interruptedCollectionWindows": 1,
+    "artifactCheckerNote": {
+      "reason": "Existing optional-payload registry supports 22 rows, but the post-run checker still asserts exactly 21 rows.",
+      "recordedRows": 22,
+      "recordedProcesses": 440,
+      "timeCollectionCompleted": true,
+      "checkerExit": 1,
+      "replacement": "Independent 22-row protocol and artifact validation in b2-p3-judge.py; no timing rerun."
+    },
+    "callCountFixtureCorrection": {
+      "reason": "The initial oneOf call-count probe passed an unnormalized canonical row to the branch fixture helper; its zero-call result is excluded.",
+      "remedy": "Use the stage setupWrite normalizer for both rows.",
+      "timingSamplesRepeated": 0
+    },
+    "interruptedWindow": {
+      "reason": "AJV8 plugin dist was not built; switch-if-80 A0 failed at module loading.",
+      "collectedRows": 9,
+      "collectedProcesses": 180,
+      "currentTimedSamples": 18000,
+      "discardedForDecision": true,
+      "startedAt": "2026-10-27T15:51:54.851Z",
+      "endedAt": "2026-10-27T15:56:03.581Z",
+      "resumeAuthorization": "Coordinator authorized a new complete collection after fixing environment preparation."
+    },
+    "preflightAttempts": [
+      {
+        "startedAt": "2026-10-27T16:02:36.255Z",
+        "quietSince": "2026-10-27T16:02:41.382Z",
+        "durationSeconds": 5.123033125000001,
+        "heavy": [],
+        "highestCpuPercent": 18.348505212907433
+      }
+    ],
+    "setupFailures": [
+      {
+        "reason": "Copied A/B bundle source directories lacked a node_modules link; first worker failed during module resolution.",
+        "formalSamples": 0,
+        "warmups": 0,
+        "completedRows": 0,
+        "productChanged": false,
+        "remedy": "Linked the measurement root to the existing repository dependencies; no install."
+      }
+    ]
+  },
+  "criterion": "At least three of four oneOf-80 stage costs meet their fixed limit or are no more than half of A; no stage worsens; primary TEST-073 has zero regressions; Node heap passes. Total rows are recorded for B3 cumulative judgement.",
+  "source": {
+    "A": "8d9d885bf",
+    "B": "7253507fd",
+    "runtimeNode": "v26.12.1",
+    "NODE_ENV": "production",
+    "currentSha256": {
+      "A": "92a8c340b5f78f311e7b852b4555119903d4829431804b85f3af4fd66bb305cf",
+      "B": "992ef468f94620c9b5c244e9bdab2c6abeee0b0bb3ae23f22e43add27586b166"
+    },
+    "legacySha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46"
+  }
+}
