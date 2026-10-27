@@ -4,7 +4,7 @@
 
 - A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
 
-- A commit with no entered or exited occurrence, dirty slot owner, latent source, or legacy inactive publication bypasses source-selection and slot-publication helpers. The empty exit set is checked before source eligibility. Active occurrences without an inactive item memo do not acquire an own memo field merely to clear it. Verification still observes every commit through its independent replay hook.
+- A shipping slot commit with no entered or exited occurrence, dirty slot owner, latent source, or legacy inactive publication bypasses source-selection and slot-publication helpers. The empty exit set is checked before source eligibility. Active occurrences without an inactive item memo do not acquire an own memo field merely to clear it. Off and verify keep their source-publication dispatch, and independent replay still observes every verified commit.
 
 - Active clone construction does not allocate a detached write-address cell or compute its document-order array. A real departure captures the current address through the ordinary retained-exit path. Recursive inactive clones still transfer and rebind their address cells, so old references follow array rekeys without mutating frozen reads.
 
