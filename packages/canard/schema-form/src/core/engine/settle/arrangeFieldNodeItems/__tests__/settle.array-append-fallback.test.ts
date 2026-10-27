@@ -10,7 +10,6 @@ import {
   dispatchVisitSubtree,
 } from '@/schema-form/core/engine/write';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import * as tail from '../utils/arraySlots/canApplyArrayTail';
 import { compareArrayAppend } from './fixtures/compareArrayAppend';
@@ -180,8 +179,6 @@ describe('append admission declines and the general path settles', () => {
   });
 
   it('a detached array and a tree holding its latent write', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     let popped: DispatchTestNode | undefined;
     compareArrayAppend(
       {

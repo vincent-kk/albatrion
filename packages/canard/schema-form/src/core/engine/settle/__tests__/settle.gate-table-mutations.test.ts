@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { engineModes } from '../../utils/cache/engineModes';
 import * as visits from '../utils/compute/childSelection/gateSelection/getTableVisitSteps';
 import { selectChildren } from '../utils/compute/childSelection/selectChildren';
@@ -123,8 +122,6 @@ describe('named decision-62 mutation witnesses', () => {
   it.each(['table', 'verify'] as const)(
     'V3 %s retains dormant distributed input without a fault injection',
     (mode) => {
-      // These assertions inspect the latent-store baseline directly.
-      pinLatentBaseline();
       engineModes.setMode('gateSelection', mode);
 
       const { root, context } = gateTableScene();

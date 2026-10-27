@@ -1,7 +1,6 @@
 import { expect, it } from 'vitest';
 
 import type { FormErrorRecord } from '../../../../../errors';
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import { FieldNodeEventType } from '../../../record';
@@ -43,8 +42,6 @@ it.each([
   'branch-to-terminal' | 'terminal-to-branch',
   'insert' | 'remove',
 ][])('%s', async (_name, direction, operation) => {
-  // These assertions inspect the latent-store baseline directly.
-  pinLatentBaseline();
   const terminalSource = direction === 'terminal-to-branch';
   const source: BlueprintSchema = terminalSource
     ? { type: 'object', nullable: true, options: { terminal: true } }
@@ -134,8 +131,6 @@ it.each([
 ] satisfies readonly [string, 'insert' | 'remove'][])(
   '%s',
   async (_name, operation) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const source: BlueprintSchema = {
       type: 'object',
       controls: { active: '../../sourceOn' },

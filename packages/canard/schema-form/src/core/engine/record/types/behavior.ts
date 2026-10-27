@@ -84,5 +84,4 @@ export type FieldNodeFactory<Self> = (
   entry: BlueprintChildEntry | BlueprintNode,
   parent: Self | null,
   runtime: FieldNodeRuntime<Self>,
-  source?: Self,
 ) => Self;

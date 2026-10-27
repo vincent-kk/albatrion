@@ -10,8 +10,6 @@ import {
   dispatchSetValue,
 } from '@/schema-form/core/engine/write';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
-import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
 import * as output from '../../utils/output/updateOutput';
 import { compareArraySplice } from './fixtures/compareArraySplice';
@@ -103,8 +101,6 @@ describe('static middle remove and insert through the splice path match the gene
   });
 
   it('keeps the removed node detached with its reads and sends its later write to latent raw', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     let removed: DispatchTestNode | undefined;
     compareArraySplice(
       OBJECTS,
@@ -206,8 +202,6 @@ describe('a static form skips recomputing renamed tail descendants and loses not
   ])(
     'remove(%s) and insert at the same position calculate no renamed tail item where the general path does',
     (_, index) => {
-      // Shipping-path compute counts exclude the independent verification replay.
-      pinSlotShipping();
       const removals: string[][] = [];
       compareArraySplice(OBJECTS, twelve, [
         recording(removals, (root) => dispatchRemove(root, index)),

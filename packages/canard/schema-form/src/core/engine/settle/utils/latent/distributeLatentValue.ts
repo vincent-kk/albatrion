@@ -13,8 +13,6 @@ import { staticSpec } from '../input/staticSpec';
 import { HostLatent } from '../latentStore/HostLatent';
 import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
 import { setLatentRaw } from '../latentStore/setLatentRaw';
-import { isSlotEligible } from '../slots/isSlotEligible';
-import { writeSlotPath } from '../slots/writeSlotPath';
 import { clearOtherLatentKinds } from './utils/clearOtherLatentKinds';
 import { distributeLatentArrayValue } from './utils/distributeLatentArrayValue';
 
@@ -44,17 +42,6 @@ export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
   automatic = false,
   seen: WeakSet<object> = new WeakSet(),
 ): boolean => {
-  if (isSlotEligible(runtime) && context)
-    return writeSlotPath(
-      context.root,
-      path,
-      template,
-      value,
-      whole,
-      context,
-      undefined,
-      automatic,
-    );
   if (template.kind === 'virtual') return false;
   const key = JSON.stringify([path, getBlueprintNodeIdentity(template)]);
   const log = context?.inTransition ? context.latentAutomaticLog : undefined;

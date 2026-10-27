@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
@@ -16,8 +15,6 @@ import { getDispatchNode } from './fixtures/getDispatchNode';
 it.each(['insert', 'remove'] as const)(
   'V2 %s preserves all candidate stores when destination slots become inactive',
   (operation) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const item: BlueprintSchema = {
       type: 'object',
       controls: {

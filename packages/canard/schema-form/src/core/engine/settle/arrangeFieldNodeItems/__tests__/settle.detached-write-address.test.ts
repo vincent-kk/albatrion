@@ -3,13 +3,9 @@ import { expect, it, vi } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { isArrayNode } from '@/schema-form/core/surface';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
-
 it.each(['insert', 'replace'] as const)(
   'preserves a detached write address after %s without changing frozen reads or delivering',
   async (operation) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {

@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { dispatchMount, dispatchSetValue } from '../../write';
@@ -8,8 +7,6 @@ import { setLatentRaw } from '../utils/latentStore/setLatentRaw';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
 it('removes unreachable stale keys on a degraded candidate exit without suppressed policy writes', () => {
-  // These assertions inspect the latent-store baseline directly.
-  pinLatentBaseline();
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: { tick: { type: 'number' } },
@@ -62,8 +59,6 @@ it('removes unreachable stale keys on a degraded candidate exit without suppress
 });
 
 it('preserves reachable explicit-clear descendants when exit writes are suppressed', () => {
-  // These assertions inspect the latent-store baseline directly.
-  pinLatentBaseline();
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: { a: { type: 'boolean' } },
@@ -110,8 +105,6 @@ it.each([
 ])(
   'removes unreachable $host keys under suppression, clear=$clear metadata=$metadata',
   ({ host, clear, metadata }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const candidate: BlueprintSchema =
       host === 'object'
         ? {

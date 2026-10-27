@@ -9,9 +9,6 @@ import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldN
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { updateOutput } from '../output/updateOutput';
-import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
-import { isSlotEligible } from '../slots/isSlotEligible';
-import { retainExitedSlot } from '../slots/retainExitedSlot';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
 import { captureLatentDescendants } from './captureLatentDescendants';
@@ -92,18 +89,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       node.path.startsWith(scope.path + '/'));
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
-  const retainedSlots = isSlotEligible(context.root.runtime);
-  if (retainedSlots) {
-    for (const node of context.exited)
-      if (!inLoadScope(node) && node.detached)
-        retainExitedSlot(
-          node,
-          context,
-          applyPolicy &&
-            !context.entered.has(node) &&
-            !context.throwingGateExits?.has(node),
-        );
-  } else if (applyPolicy)
+  if (applyPolicy)
     applyExitClearing(
       context,
       (node) =>
@@ -112,7 +98,6 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   for (const node of context.exited)
     if (
       !inLoadScope(node) &&
-      !retainedSlots &&
       node.detached &&
       (context.entered.has(node) ||
         !applyPolicy ||
@@ -153,7 +138,6 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
         );
     }
   const affectedAncestors = new Set<Self>();
-  if (retainedSlots) finalizeRestoredSlotRaw(context);
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.detached) affectedAncestors.add(ancestor);

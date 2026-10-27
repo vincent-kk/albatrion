@@ -114,8 +114,6 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'verify-unit',
-          // Independent slot replay doubles work in the complete BF fixture corpus.
-          testTimeout: 30000,
           setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
@@ -126,7 +124,6 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'verify-render',
-          testTimeout: 30000,
           setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
           environment: 'jsdom',
           include: renderTests,

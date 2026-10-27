@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import { FieldNodeEventType } from '../../../record';
@@ -99,8 +98,6 @@ describe('moving tuple slot-root candidate sources', () => {
     'insert' | 'remove',
     'string' | 'number',
   ][])('%s', async (_name, mode, operation, live) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const validationInputs: unknown[] = [];
     const validator: Validator = {
       compile: () => (value) => {

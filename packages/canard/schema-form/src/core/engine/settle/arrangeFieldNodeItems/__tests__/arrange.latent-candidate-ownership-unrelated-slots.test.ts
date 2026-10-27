@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintSchema } from '../../../blueprint';
@@ -15,8 +14,6 @@ import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeI
 it.each([{ position: 3 }, { position: 4 }])(
   'R2 unused candidate at $position preserves unrelated inactive sources',
   ({ position }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     for (const unused of [false, true]) {
       const last: BlueprintSchema = unused
         ? {

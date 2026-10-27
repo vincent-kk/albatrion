@@ -3,8 +3,6 @@ import { readFieldNodeErrors } from '../../../validation';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
-import { isSlotEligible } from '../slots/isSlotEligible';
-import { materializeInactiveSlotValues } from '../slots/materializeInactiveSlotValues';
 import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
 
 /**
@@ -22,21 +20,13 @@ export const captureDetachedFieldNodeReads = <
   load?: { readonly value: unknown },
 ): void => {
   const runtime = node.runtime;
-  const retainedSlots = isSlotEligible(runtime);
-  if (retainedSlots && runtime.inactiveValueEntries?.size)
-    materializeInactiveSlotValues(node);
   runtime.watchValuesMemo?.delete(node);
   readFieldNodeWatchValues(node, watchSnapshot);
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
     misfit: runtime.misfitPaths.has(node.path),
     misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
-    ...(!retainedSlots
-      ? {
-          inactiveValues:
-            runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
-        }
-      : undefined),
+    inactiveValues: runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
     defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
     visible: node.visible,
     readOnly: node.readOnly,

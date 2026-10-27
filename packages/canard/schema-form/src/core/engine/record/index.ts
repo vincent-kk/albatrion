@@ -1,10 +1,5 @@
 export type { FieldNodeRecord, FieldNodeDelivery } from './types/record';
 export type {
-  InactiveSlotBaseline,
-  InactiveSlotOverlay,
-  InactiveSlotValueMemo,
-} from './types/slots';
-export type {
   Behavior,
   ArrayOperation,
   ArrayArrangePlan,

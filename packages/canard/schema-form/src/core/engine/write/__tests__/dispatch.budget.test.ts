@@ -8,7 +8,6 @@ import {
 } from '@/schema-form/core/engine/record';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
 import { dispatchClearExternalErrors } from '../utils/entry/dispatchClearExternalErrors';
 import { dispatchClearSubtreeState } from '../utils/entry/dispatchClearSubtreeState';
@@ -146,8 +145,6 @@ describe('dispatcher budgets', () => {
   });
 
   it('CONTROLS-079 treats a user callback write as nested feedback', () => {
-    // The callback mutates its captured tree during shipping execution.
-    pinSlotShipping();
     let root: DispatchTestNode | undefined;
     const { root: created, runtime } = createDispatchTree({
       type: 'object',

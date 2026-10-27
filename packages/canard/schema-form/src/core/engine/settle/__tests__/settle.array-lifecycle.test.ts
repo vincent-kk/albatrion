@@ -3,15 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-array-lifecycle
 describe('array settlement lifecycle', () => {
   it('35C-09 and WRITE-036 perish without exit latent or inactive entries', () => {
-    // These assertions inspect the latent-store baseline and its preparation work.
-    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree(
       { type: 'array', items: { type: 'string' } },
       { snapshot: ['a', 'b'] },
@@ -34,8 +31,6 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 captures an inactive array as one host latent and recreates items', () => {
-    // These assertions inspect the latent-store baseline and its preparation work.
-    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -73,8 +68,6 @@ describe('array settlement lifecycle', () => {
   });
 
   it('38C-02 captures raw item trees and folds latent children into one host', () => {
-    // These assertions inspect the latent-store baseline and its preparation work.
-    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -189,8 +182,6 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-09 drops latent and declaration paths below a perished item', () => {
-    // These assertions inspect the latent-store baseline and its preparation work.
-    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree(
       {
         type: 'array',
@@ -428,8 +419,6 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-08 gates out an item as an exit while retaining its array slot', () => {
-    // These assertions inspect the latent-store baseline and its preparation work.
-    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {

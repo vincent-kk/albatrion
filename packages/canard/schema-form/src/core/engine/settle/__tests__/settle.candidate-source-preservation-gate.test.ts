@@ -1,6 +1,5 @@
 import { expect, it } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { dispatchMount, dispatchSetValue } from '../../write';
@@ -27,8 +26,6 @@ it.each([
 ])(
   'retains $value through $keyword gate exit at depth $depth with automatic writes disabled=$disabled',
   ({ value, keyword, depth, disabled }) => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const record = createCandidateSourceRecord(
       depth === 1 ? '../../kind' : '../../../kind',
     );

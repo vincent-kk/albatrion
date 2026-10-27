@@ -1,7 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
-import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
@@ -115,8 +113,6 @@ describe('whole-write epoch scheduling', () => {
   });
 
   it('retains exactly 5461 consumes on the real partial-write bulk path', () => {
-    // Shipping-path consume counts exclude the independent verification replay.
-    pinSlotShipping();
     const { root } = createDispatchTree(nested(6));
     dispatchMount(root, undefined);
     const next = changed(root.emit);
@@ -209,8 +205,6 @@ describe('whole-write epoch scheduling', () => {
   });
 
   it('falls back for latent sources even when replacement prunes them', () => {
-    // These assertions inspect the latent-store baseline directly.
-    pinLatentBaseline();
     const { root } = createDispatchTree(nested(2));
     dispatchMount(root, undefined);
     root.runtime.latentRaw.set(JSON.stringify(['/ghost', 'unknown']), 42);
