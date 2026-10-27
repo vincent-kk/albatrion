@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- Shipping writes enter the settlement kernel directly. Only an outer verify operation dispatches independent replay; nested writes in the active replay session execute the same kernel without replaying twice. Error equivalence and final public comparisons remain in the outer cleanup, and the source modes stay fixed per tree.
+
 - A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
 
 - A shipping slot commit with no entered or exited occurrence, dirty slot owner, latent source, or legacy inactive publication bypasses source-selection and slot-publication helpers. The empty exit set is checked before source eligibility. Active occurrences without an inactive item memo do not acquire an own memo field merely to clear it. Off and verify keep their source-publication dispatch, and independent replay still observes every verified commit.
