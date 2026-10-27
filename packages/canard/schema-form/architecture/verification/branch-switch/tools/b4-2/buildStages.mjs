@@ -71,7 +71,6 @@ const slotStages = [
   'replayMovedSource',
   'writeInactiveSource',
   'pruneInactiveSources',
-  'invalidateDetachedSlotReads',
   'getSlotChildIndex',
   'readSourceTree',
 ];
