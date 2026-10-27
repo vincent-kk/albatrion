@@ -1,0 +1,232 @@
+[
+  {
+    "row": "switch-oneOf-80",
+    "node": "v26.12.1",
+    "unread": {
+      "label": "unread",
+      "analysis": {
+        "reachable": 119212,
+        "strongEdges": 497344,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 362
+      },
+      "survivingHeapIds": [],
+      "hosts": [
+        {
+          "path": "",
+          "slots": 3,
+          "retainedNodes": 3,
+          "heapId": 135355,
+          "retainedNodeHeapIds": [
+            60729,
+            60745,
+            60737
+          ],
+          "bytes": 5416,
+          "shallowBytes": 32
+        }
+      ]
+    },
+    "read": {
+      "label": "read",
+      "analysis": {
+        "reachable": 119475,
+        "strongEdges": 498716,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 362
+      },
+      "survivingHeapIds": [],
+      "hosts": [
+        {
+          "path": "",
+          "slots": 3,
+          "retainedNodes": 3,
+          "heapId": 135355,
+          "retainedNodeHeapIds": [
+            60729,
+            60745,
+            60737
+          ],
+          "bytes": 5736,
+          "shallowBytes": 32
+        }
+      ]
+    },
+    "lifetime": {
+      "writesBeforeSnapshot": 120,
+      "release": "resetSubtree followed by delivery drain and two full GCs",
+      "trackedHeapIds": [
+        135355,
+        60729,
+        60745,
+        60737
+      ],
+      "reset": {
+        "label": "reset",
+        "analysis": {
+          "reachable": 120028,
+          "strongEdges": 501014,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 329
+        },
+        "survivingHeapIds": [
+          135355
+        ],
+        "hosts": []
+      },
+      "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+    },
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+  },
+  {
+    "row": "switch-payload-12",
+    "node": "v26.12.1",
+    "unread": {
+      "label": "unread",
+      "analysis": {
+        "reachable": 153498,
+        "strongEdges": 638229,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 9926
+      },
+      "survivingHeapIds": [],
+      "hosts": [
+        {
+          "path": "",
+          "slots": 12,
+          "retainedNodes": 12,
+          "heapId": 116609,
+          "retainedNodeHeapIds": [
+            78207,
+            78115,
+            78123,
+            78155,
+            78191,
+            78135,
+            78127,
+            78151,
+            78187,
+            78143,
+            78139,
+            78195
+          ],
+          "bytes": 18400,
+          "shallowBytes": 32
+        }
+      ]
+    },
+    "read": {
+      "label": "read",
+      "analysis": {
+        "reachable": 153712,
+        "strongEdges": 639073,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 9926
+      },
+      "survivingHeapIds": [],
+      "hosts": [
+        {
+          "path": "",
+          "slots": 12,
+          "retainedNodes": 12,
+          "heapId": 116609,
+          "retainedNodeHeapIds": [
+            78207,
+            78115,
+            78123,
+            78155,
+            78191,
+            78135,
+            78127,
+            78151,
+            78187,
+            78143,
+            78139,
+            78195
+          ],
+          "bytes": 18976,
+          "shallowBytes": 32
+        }
+      ]
+    },
+    "lifetime": {
+      "writesBeforeSnapshot": 120,
+      "release": "resetSubtree followed by delivery drain and two full GCs",
+      "trackedHeapIds": [
+        116609,
+        78207,
+        78115,
+        78123,
+        78155,
+        78191,
+        78135,
+        78127,
+        78151,
+        78187,
+        78143,
+        78139,
+        78195
+      ],
+      "reset": {
+        "label": "reset",
+        "analysis": {
+          "reachable": 153889,
+          "strongEdges": 638718,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 9890
+        },
+        "survivingHeapIds": [
+          116609,
+          78187
+        ],
+        "hosts": []
+      },
+      "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+    },
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+  },
+  {
+    "row": "switch-siblings-0",
+    "node": "v26.12.1",
+    "unread": {
+      "label": "unread",
+      "analysis": {
+        "reachable": 100600,
+        "strongEdges": 423118,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 125
+      },
+      "survivingHeapIds": [],
+      "hosts": []
+    },
+    "read": {
+      "label": "read",
+      "analysis": {
+        "reachable": 100845,
+        "strongEdges": 424906,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 125
+      },
+      "survivingHeapIds": [],
+      "hosts": []
+    },
+    "lifetime": {
+      "writesBeforeSnapshot": 120,
+      "release": "resetSubtree followed by delivery drain and two full GCs",
+      "trackedHeapIds": [],
+      "reset": {
+        "label": "reset",
+        "analysis": {
+          "reachable": 101499,
+          "strongEdges": 425849,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 48
+        },
+        "survivingHeapIds": [],
+        "hosts": []
+      },
+      "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+    },
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+  }
+]
