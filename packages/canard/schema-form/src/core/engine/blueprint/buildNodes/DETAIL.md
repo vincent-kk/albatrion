@@ -2,8 +2,6 @@
 
 ## Requirements
 
-- Appending a property whose name is exactly `*` records its host in the blueprint owner's weak literal-wildcard reachability fact. Other property names allocate no marker, field, or per-binding index. This fact preserves the existing query interpretation used by inactive-value publication; it does not change authored names or navigation semantics.
-
 - D3b-2에서 무조건 정규화 결과는 host 파생 레코드의 defaultEffectiveSchema 슬롯에 보관한다. 분석 소유자가 builder를 유지하며 별도 DEFAULT_NO_ACTIVE WeakMap을 내보내지 않는다.
 
 - Appending multiple templates for one named property sets the host's optional `hasPropertyCandidates` flag. Single-candidate bindings leave it absent, without a new index or cache; array candidate presence remains represented by the existing candidate lists. This construction-time proof guards candidate-owned exit cleanup (NODE-043, BLUEPRINT-044; 394C-01).
