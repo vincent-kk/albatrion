@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach } from 'vitest';
 
 import * as blueprint from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { dispatchMount, dispatchPush } from '@/schema-form/core/engine/write';
 
+import { pinSlotShipping } from '../../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import * as reuseProof from '../../utils/compute/childSelection/canReuseArrayChildren';
 import * as reuse from '../../utils/compute/childSelection/reuseArrayChildren';
@@ -14,6 +16,8 @@ import * as tailProof from '../utils/arraySlots/canApplyArrayTail';
 import * as admission from '../utils/arraySlots/prepareArrayAppend';
 
 afterEach(() => vi.restoreAllMocks());
+// These internal operation counts describe the shipping tree, excluding replay.
+beforeEach(() => pinSlotShipping());
 
 /** Arrays this long or longer are the prefix-sized ones for both measured counts. */
 const PREFIX_SIZED = 1000;

@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { dispatchMount, dispatchSetValue } from '../../write';
@@ -13,6 +14,8 @@ it.each([
 ] as const)(
   '$label $host clear=$clear removes an unreachable key without metadata',
   ({ host, clear }) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const candidate: BlueprintSchema =
       host === 'array'
         ? {

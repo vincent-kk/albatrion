@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { pinSlotShipping } from '../../../__tests__/fixtures/pinSlotShipping';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchMount, dispatchSetValue } from '../../write';
@@ -32,6 +33,8 @@ it('verify mode compares epoch members against an independent path shadow', () =
 });
 
 it('verify mode rejects a missing actual node generation before computation', () => {
+  // The injected generation mutation targets one shipping tree's invariant check.
+  pinSlotShipping();
   const { root } = createDispatchTree({
     type: 'object',
     properties: { a: { type: 'string' } },

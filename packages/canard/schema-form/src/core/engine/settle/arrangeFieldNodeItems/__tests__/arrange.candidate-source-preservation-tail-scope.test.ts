@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import {
@@ -38,6 +39,8 @@ it.each([
 ])(
   'keeps base undeclared-tail sources for $kind terminal=$terminal disabled=$disabled candidateHost=$candidateHost',
   ({ kind, terminal, disabled, candidateHost }) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const item: BlueprintSchema = {
       ...(kind === 'object'
         ? { type: 'object', properties: { v: { type: 'string' } } }

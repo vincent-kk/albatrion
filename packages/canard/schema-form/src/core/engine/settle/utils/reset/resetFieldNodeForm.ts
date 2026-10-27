@@ -2,6 +2,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
 import { clearTreeMemoStores } from '../../../utils/cache/clearTreeMemoStores';
 import { setLoadValue } from '../loadValues/setLoadValue';
+import { prepareSlotShadow } from '../verify/prepareSlotShadow';
 import { writeFieldNode } from '../write/writeFieldNode';
 import { clearSubtreeState } from './clearSubtreeState';
 
@@ -12,7 +13,7 @@ import { clearSubtreeState } from './clearSubtreeState';
  * @param option - Form reset's automatic-write selection
  * @returns Nothing; one settle call commits the loaded tree
  */
-export const resetFieldNodeForm = <Self extends FieldNodeRecord<Self>>(
+const resetFieldNodeFormBody = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown,
   option: WriteOption,
@@ -25,5 +26,27 @@ export const resetFieldNodeForm = <Self extends FieldNodeRecord<Self>>(
     writeFieldNode(root, value, 'load', option);
   } finally {
     root.runtime.loadSnapshot = nextSnapshot;
+  }
+};
+
+/** Replay resolved inputs only in verification mode, preserving the ordinary entry. */
+export const resetFieldNodeForm = <Self extends FieldNodeRecord<Self>>(
+  root: Self,
+  value: unknown,
+  option: WriteOption,
+): void => {
+  if (root.runtime.slots !== 'verify')
+    return resetFieldNodeFormBody(root, value, option);
+  const complete = prepareSlotShadow(root, (shadow) =>
+    resetFieldNodeForm(shadow, value, option),
+  );
+  let failure: unknown;
+  try {
+    return resetFieldNodeFormBody(root, value, option);
+  } catch (error) {
+    failure = error;
+    throw error;
+  } finally {
+    complete?.(failure);
   }
 };

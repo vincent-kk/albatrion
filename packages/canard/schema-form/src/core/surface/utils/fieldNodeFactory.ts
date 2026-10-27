@@ -3,7 +3,7 @@ import type { PartialBy } from '@aileron/declare';
 import { SLASH_REGEX, TILDE_REGEX } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../errors';
-import { BEHAVIORS } from '../../engine';
+import { BEHAVIORS, engineModes } from '../../engine';
 import { collectBlueprintWarnings, mergeEffectiveSchema } from '../../engine';
 import type {
   Blueprint,
@@ -57,6 +57,7 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'blueprint'
     | 'nodeFactory'
     | 'settlementScratch'
+    | 'slotDirtyHosts'
     | 'chainRoot'
     | 'batchWrites'
     | 'visitBatchEntry'
@@ -78,6 +79,7 @@ const createFieldNode = (
   entry: BlueprintChildEntry | BlueprintNode,
   parent: RuntimeFieldNode | null,
   runtime: FieldNodeRuntime<RuntimeFieldNode>,
+  source?: RuntimeFieldNode,
 ): RuntimeFieldNode => {
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
@@ -86,7 +88,7 @@ const createFieldNode = (
     .replace(SLASH_REGEX, '~1');
   const path = parent ? parent.path + '/' + escapedName : '';
   const depth = parent ? parent.depth + 1 : 0;
-  const row = BEHAVIORS[template.kind]?.[template.strategy];
+  const row = source?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)
     throw new Error(
       `Missing behavior for ${template.kind}/${template.strategy}`,
@@ -103,10 +105,11 @@ const createFieldNode = (
     depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
-      mode: 'runtime',
-      isAtomic: runtime.blueprint?.isAtomic,
-    }),
+    source?.schema ??
+      mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
+        mode: 'runtime',
+        isAtomic: runtime.blueprint?.isAtomic,
+      }),
     {},
   );
 };
@@ -129,6 +132,7 @@ export function fieldNodeFactory(
 ): RuntimeNodeSurface {
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
+    slots: runtimeSeed.slots ?? engineModes.slots,
     latentRaw: runtimeSeed.latentRaw ?? new PathKeyedMap('pair'),
     misfitPaths: runtimeSeed.misfitPaths ?? new PathKeyedSet(),
     inactiveValuesMemo:

@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { dispatchClear, dispatchMount } from '@/schema-form/core/engine/write';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import * as gates from '../../utils/gates/getGateRegistry';
 import * as loadValues from '../../utils/loadValues/getLoadValue';
@@ -50,6 +51,8 @@ const measure = (count: number) => {
 // filid:contract settle-array-clear-cost
 describe('clear cleanup constants', () => {
   it('does not grow host-prefix path-store lookups, re-keying, item load reads or registry lookups with the item count', () => {
+    // This count contract measures the latent-store path-index cleanup implementation.
+    pinLatentBaseline();
     const small = measure(1_000);
     const large = measure(8_000);
     // The perish finalization's prune still asks the one store holding entries elsewhere in the tree once per removed item.

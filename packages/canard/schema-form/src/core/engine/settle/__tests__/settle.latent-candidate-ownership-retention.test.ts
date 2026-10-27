@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { dispatchMount, dispatchSetValue } from '../../write';
@@ -11,6 +12,8 @@ it.each([
 ] as const)(
   '$label supplies explicit retention to owned descendants',
   ({ shared }) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const sibling: BlueprintSchema = shared
       ? {
           type: 'object',

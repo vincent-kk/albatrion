@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { FormErrorCode } from '@/schema-form/errors';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { createItemFoldTree } from '../../__tests__/fixtures/createItemFoldTree';
 import { FieldNodeEventType } from '../../record';
@@ -59,6 +60,8 @@ describe('array item fold selection', () => {
   }[])(
     '$keyword accepts $operation after restoring candidate-owned positions',
     ({ keyword, operation }) => {
+      // These assertions inspect latent restoration and its internal stage records.
+      pinLatentBaseline();
       const { root } = createDispatchTree({
         type: 'object',
         properties: {
@@ -159,6 +162,8 @@ describe('array item fold selection', () => {
   )[])(
     '%s single-candidate distributions never retain candidate-owned positions',
     (keyword) => {
+      // These assertions inspect latent restoration and its internal stage records.
+      pinLatentBaseline();
       const { root } = createDispatchTree({
         type: 'object',
         properties: {

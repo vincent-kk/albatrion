@@ -7,6 +7,7 @@ import {
   resetFieldNodeForm,
 } from '@/schema-form/core/engine';
 
+import { pinLatentBaseline } from '../../__tests__/fixtures/pinLatentBaseline';
 import { FieldNode } from '../runtime/FieldNode';
 import { SetValueOption } from '../type';
 import type { ArrayNode } from '../type';
@@ -294,6 +295,8 @@ describe('detached FieldNode references', () => {
   });
 
   it('26C-12 ignores old detached writes and reset while the same path is live', () => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, runtime } = makeFieldNodeTree(
       {
         type: 'object',
@@ -425,6 +428,8 @@ describe('detached FieldNode references', () => {
   });
 
   it('26C-12 ignores Merge through an old detached object while its path is live', () => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root, runtime } = groupedTree();
     root.setValue({ flag: true, group: { leaf: 'initial' } });
     const old = root.find('/group');

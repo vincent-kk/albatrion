@@ -6,6 +6,7 @@ import {
   createDispatchTree,
 } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
 import { dispatchMount } from '../utils/entry/dispatchMount';
 import { dispatchPush } from '../utils/entry/dispatchPush';
@@ -47,6 +48,7 @@ const closeAndReopen = (
   reopenedSize: number;
   commits: number;
 } => {
+  pinLatentBaseline();
   const { root, runtime } = mountList();
   const before = runtime.commitNumber ?? 0;
   write(root);
@@ -252,6 +254,7 @@ describe('object child first written in the write that closes its ancestor (211C
   const restored = { emit: written, b: true, c: true, x: true };
 
   it('keeps string, object and array children on a whole write that closes the ancestor', () => {
+    pinLatentBaseline();
     const { root, runtime } = mountInfo();
     dispatchSetValue(root, { kind: 'single', info: written });
     expect(runtime.latentRaw.has(latent('/info/b', 'string'))).toBe(true);

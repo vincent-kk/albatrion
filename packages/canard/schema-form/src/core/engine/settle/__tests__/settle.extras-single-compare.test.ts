@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { pinLatentBaseline } from '../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { FieldNodeEventType } from '../../record';
@@ -61,7 +62,7 @@ describe('single extras comparison observations', () => {
       properties: { known: { type: 'number' } },
     });
     dispatchMount(root, { known: 1, first: { value: 2 }, last: 3 });
-      dispatchWriteInput(root, { known: 1, first: { value: 2 }, last: 3 });
+    dispatchWriteInput(root, { known: 1, first: { value: 2 }, last: 3 });
     const changed = vi.fn();
     root.runtime.onChange = changed;
     const delivered: number[] = [];
@@ -74,7 +75,7 @@ describe('single extras comparison observations', () => {
     ]) {
       const previous = root.undeclaredValues;
       const output = root.emit;
-        const revision = root.revisionLedger;
+      const revision = root.revisionLedger;
       const expected = referenceNextExtras(
         previous,
         input,
@@ -174,6 +175,8 @@ describe('single extras comparison observations', () => {
   );
 
   it('retains the latent host and extras on a same-value inactive Merge', () => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const { root } = createDispatchTree({
       type: 'object',
       properties: { flag: { type: 'boolean' } },

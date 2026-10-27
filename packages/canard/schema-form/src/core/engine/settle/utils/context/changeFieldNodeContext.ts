@@ -11,6 +11,7 @@ import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
 import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
+import { prepareSlotShadow } from '../verify/prepareSlotShadow';
 
 /**
  * Settle a changed binding context from the previous committed edge baseline.
@@ -18,7 +19,7 @@ import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
  * @param contextValue - Already merged Form and provider context
  * @returns Nothing; equal values preserve the slot and skip settlement
  */
-export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
+const changeFieldNodeContextBody = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   contextValue: Readonly<Record<string, unknown>>,
 ): void => {
@@ -55,5 +56,26 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
     finishSettlement(context, scratch);
   } finally {
     releaseSettlementScratch(scratch);
+  }
+};
+
+/** Replay resolved inputs only in verification mode, preserving the ordinary entry. */
+export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
+  root: Self,
+  contextValue: Readonly<Record<string, unknown>>,
+): void => {
+  if (root.runtime.slots !== 'verify')
+    return changeFieldNodeContextBody(root, contextValue);
+  const complete = prepareSlotShadow(root, (shadow) =>
+    changeFieldNodeContext(shadow, contextValue),
+  );
+  let failure: unknown;
+  try {
+    return changeFieldNodeContextBody(root, contextValue);
+  } catch (error) {
+    failure = error;
+    throw error;
+  } finally {
+    complete?.(failure);
   }
 };

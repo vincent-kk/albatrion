@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import {
   dispatchInsert,
@@ -11,6 +12,8 @@ import { createCandidateSourceRecord } from '../../__tests__/fixtures/createCand
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 
 it('retains live and latent candidate sources while a slot is parked in an undeclared tail', () => {
+  // These assertions inspect the latent-store baseline directly.
+  pinLatentBaseline();
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: {

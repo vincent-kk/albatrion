@@ -1,5 +1,6 @@
 import { expect, it } from 'vitest';
 
+import { pinLatentBaseline } from '../../../../__tests__/fixtures/pinLatentBaseline';
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
 import {
@@ -13,6 +14,8 @@ import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
 it.each(['insert', 'remove'] as const)(
   'W1 %s preserves candidates beneath an array with one immediate item template',
   (operation) => {
+    // These assertions inspect the latent-store baseline directly.
+    pinLatentBaseline();
     const normal = nestedArray(false);
     const reversed = nestedArray(true);
     const { root, runtime } = createDispatchTree({
