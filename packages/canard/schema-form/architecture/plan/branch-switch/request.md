@@ -79,6 +79,25 @@
 | B4 설계 Ⅱ(Ⅴ, 조건부) | 슬롯 레코드와 수명별 핸들, 여섯 의미 시험, 메모리 상한 | 여섯 시험 초록, 상한 기록 |
 | B5 마감 | 통합 판 재측정(코어 표·React `--equivalent`·B2 힙), 루트 PR, 설계 문서·ADR 반영 | 관문 판정과 Vincent의 수용 |
 
+## B0 장부 뒤 고정한 목표선 (454라운드, 측정 전 고정 — TEST-081)
+
+B0(`../../verification/branch-switch/b0-ledger.md`, 창 2026-10-27 09:28 UTC, 단계 시작 판 b8db53997)의 쓰기당 값이다. 같은 창의 0.16.1이 oneOf-80 43.7 µs, 형제 0 31.2 µs이므로 관문(1.5배)은 쓰기당 약 65.6 µs다.
+
+| 행(쓰기당) | 0.16.1 | 단계 시작 판 | 비고 |
+| --- | --- | --- | --- |
+| switch-oneOf-80 | 43.7 | 261.3 | 세 항: 회귀 floor 169.9, 분기당 0.872, Δ(잎 9+9) +219.3 |
+| switch-siblings-0 | 31.2 | 101.8 | 최소 폼의 바닥 |
+| switch-discriminator-80 | 쌍 없음 | 473.6 | active의 1.81배, 평가 800회·바퀴 2회 |
+| switch-if-80 | 쌍 없음 | 595.9 | active의 2.28배, 평가 640회·바퀴 2회, 평가당 약 0.46 µs(discriminator 0.28) |
+| switch-payload-12 | 108.4 | 480.6 | Δ 항: 나감·들어옴 잎 하나당 약 12 µs(0.16.1은 3.6) |
+
+단계 장부(oneOf-80, 쓰기당 µs): computeNode 103(selectChildren self 36, computeNode self 35, wheelPreparation 8.7, assembleObject 9.1), finalizeExits 55(getControlLayers 15.5/12회, setLatentRaw 11.2/6회, captureExitedRaw 5.7, self 23.9), commitSettlement 46(updateInactiveValuesMemo 18.7, markCommitDeliveries 11.9, self 8.5), registerRecalculation 13.0, everythingElse 17.1, transition 5.0. 할당 약 130 KB/쓰기. 두 번째 바퀴의 원인은 선택 도중 활성 payload가 공표되어 게이트가 읽는 루트 투영 객체의 identity가 라운드 안에서 바뀌는 것(즉시 반영 계약의 귀결)이며, 전체 호스트를 읽는 게이트에서는 Δ>0이면 언제나 일어난다.
+
+- **B1(게이트 통일)의 선:** 같은 창에서 B의 `switch-if-80` ≤ B의 `switch-oneOf-80` × 1.1 + 40 µs(게이트당 guard 0.5 µs), B의 `switch-discriminator-80` ≤ B의 `switch-oneOf-80` × 1.05, 두 행 모두 A 대비 폭 (다) 밖 개선, 쓰기당 평가 수 `if` ≤ 80·`discriminator` ≤ 80(표면 O(1)), 바퀴 1회(속성 단위 읽기로 좁혀진 경우), `switch-oneOf-80`은 폭 밖 악화 없음.
+- **B2(가설마다 PR)의 선:** 겨냥한 단계가 다음 상한 아래로 내려가고 그 행의 총합이 폭 밖으로 준다 — wheelPreparation ≤ 1 µs, getControlLayers 합 ≤ 2 µs, updateInactiveValuesMemo ≤ 3 µs(Δ에만 비례), assembleObject ≤ 3 µs, setLatentRaw+captureExitedRaw ≤ 8 µs, registerRecalculation ≤ 5 µs, markCommitDeliveries ≤ 6 µs, selectChildren self + computeNode self ≤ 25 µs(먼저 세부 장부로 나눈다), everythingElse ≤ 10 µs. 바닥(형제 0) ≤ 40 µs. 상한의 합은 약 63 µs로 관문과 같은 크기다.
+- **B3의 선:** 446C-06 그대로(같은 창의 0.16.1 × 1.5, 1 ms 미만), 세 종류 행에 적용.
+- 회귀 적합의 잔차가 커서(−53~+52 µs) floor·slope는 구조 상수가 아니라 방향 지표로만 쓴다. 목표선은 단계 장부의 값에 둔다.
+
 ## 관문
 
 - oneOf-80 왕복이 0.16.1의 1.5배 안이고 1 ms 아래(446C-06 유지). 같은 형상의 `discriminator` 행도 같은 선. `if` 행은 Ⅰ의 선.
