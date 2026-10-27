@@ -3,6 +3,7 @@ import type { FieldNodeRecord, SettlementScratch } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { commitSettlement } from '../commit/commitSettlement';
 import { effectiveType } from '../commit/effectiveType';
+import { discardStaticHostPreparation } from '../compute/childSelection/utils/discardStaticHostPreparation';
 import { publishStateKeys } from '../compute/publishStateKeys';
 import { captureDeriveBaseline } from '../derivation/captureDeriveBaseline';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
@@ -106,6 +107,8 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
         context.target.runtime.misfitPaths.delete(path);
   commitSettlement(context);
   const failures = context.failures;
+  if (failures?.length || context.pathChanges.length > 0)
+    discardStaticHostPreparation(context);
   if (!failures?.length) return;
   const runtime = context.root.runtime;
   if (runtime.entryDepth && runtime.chainErrors) return;

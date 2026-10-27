@@ -5,8 +5,6 @@ import type { Behavior } from '../../../../record';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
-import { assembleEmptyObject } from './assembleEmptyObject';
-import { getObjectAssemblyOrder } from './getObjectAssemblyOrder';
 
 /** Combine live child projections and undeclared input in stable host order. */
 export const assembleObject: Behavior['assemble'] = (
@@ -174,9 +172,7 @@ export const assembleObject: Behavior['assemble'] = (
     objectKeyCounts.set(result, names.length);
     return result;
   }
-  if (children.length === 0)
-    return assembleEmptyObject(node, children, preferred, extras);
-  const childValues: Record<string, unknown> = Object.create(null);
+  const childValues = new Map<string, unknown>();
   for (const child of children)
     if (
       child !== null &&
@@ -185,47 +181,39 @@ export const assembleObject: Behavior['assemble'] = (
       typeof child.name === 'string' &&
       'emit' in child
     )
-      childValues[child.name] = child.emit;
+      childValues.set(child.name, child.emit);
   const names: string[] = [];
-  const result: Record<string, unknown> = {};
+  const seen = new Set<string>();
+
   for (const name of preferred) {
-    if (hasOwnProperty(result, name)) continue;
-    if (hasOwnProperty(childValues, name)) {
-      if (childValues[name] === undefined) continue;
+    if (childValues.has(name)) {
+      if (childValues.get(name) !== undefined && !seen.has(name)) {
+        names.push(name);
+        seen.add(name);
+      }
+    } else if (extras && hasOwnProperty(extras, name) && !seen.has(name)) {
       names.push(name);
-      writeObjectKey(result, name, childValues[name]);
-    } else if (extras && hasOwnProperty(extras, name)) {
-      names.push(name);
-      writeObjectKey(result, name, Reflect.get(extras, name));
+      seen.add(name);
     }
   }
-  if (children.length) {
-    const order = getObjectAssemblyOrder(node.blueprintNode);
-    const activeNames = Object.keys(childValues)
-      .filter(
-        (name) =>
-          childValues[name] !== undefined &&
-          order.has(name) &&
-          !hasOwnProperty(result, name),
-      )
-      .sort((left, right) => order.get(left)! - order.get(right)!);
-    for (const name of activeNames) {
+  for (const entry of node.blueprintNode.childEntries) {
+    const name = entry.name;
+    if (
+      childValues.has(name) &&
+      childValues.get(name) !== undefined &&
+      !seen.has(name)
+    ) {
       names.push(name);
-      writeObjectKey(result, name, childValues[name]);
+      seen.add(name);
     }
   }
   if (extras)
     for (const name of Object.keys(extras))
-      if (!hasOwnProperty(childValues, name) && !hasOwnProperty(result, name)) {
+      if (!childValues.has(name) && !seen.has(name)) {
         names.push(name);
-        writeObjectKey(result, name, Reflect.get(extras, name));
+        seen.add(name);
       }
-  (node.runtime.objectShapes ??= new WeakMap()).set(node, {
-    children,
-    schema: node.schema,
-    undeclaredValues: node.undeclaredValues,
-    names,
-  });
+
   if (previous !== null && typeof previous === 'object' && !isArray(previous)) {
     const oldNames = Object.keys(previous);
     if (
@@ -234,16 +222,43 @@ export const assembleObject: Behavior['assemble'] = (
     ) {
       let patch: Record<string, unknown> | undefined;
       for (const name of names) {
-        const value = Reflect.get(result, name);
+        const value = childValues.has(name)
+          ? childValues.get(name)
+          : extras
+            ? Reflect.get(extras, name)
+            : undefined;
         if (!Object.is(value, Reflect.get(previous, name))) {
-          patch ??= { ...previous };
+          if (!patch) patch = { ...previous };
           writeObjectKey(patch, name, value);
         }
       }
+      (node.runtime.objectShapes ??= new WeakMap()).set(node, {
+        children,
+        schema: node.schema,
+        undeclaredValues: node.undeclaredValues,
+        names,
+      });
       objectKeyCounts.set(patch ?? previous, names.length);
       return patch ?? previous;
     }
   }
+  const result: Record<string, unknown> = {};
+  for (const name of names)
+    writeObjectKey(
+      result,
+      name,
+      childValues.has(name)
+        ? childValues.get(name)
+        : extras
+          ? Reflect.get(extras, name)
+          : undefined,
+    );
+  (node.runtime.objectShapes ??= new WeakMap()).set(node, {
+    children,
+    schema: node.schema,
+    undeclaredValues: node.undeclaredValues,
+    names,
+  });
   objectKeyCounts.set(result, names.length);
   return result;
 };

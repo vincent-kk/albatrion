@@ -67,6 +67,7 @@ export const selectLiteralTableChildren = <Self extends FieldNodeRecord<Self>>(
     const admitted = active.has(index);
     if (tableStep && (verify || shadow))
       verifyTableGate(frame.node, frame.context, step.gate!, admitted);
+    if (frame.preparedStatic?.entries.has(step.entry.name)) continue;
     if (!listed && !shadow) {
       if (verify) verifyUnvisitedGateStep(frame, step);
       continue;

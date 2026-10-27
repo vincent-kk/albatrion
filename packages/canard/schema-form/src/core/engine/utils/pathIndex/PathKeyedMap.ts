@@ -17,9 +17,9 @@ export class PathKeyedMap<Value> extends Map<string, Value> {
   }
 
   /** Index newly inserted identities; value-only writes do not touch the index. */
-  override set(key: string, value: Value, paths?: readonly string[]): this {
+  override set(key: string, value: Value): this {
     if (!this.has(key))
-      this.pathIndex.add(key, paths ?? getStoreKeyPaths(key, this.mode));
+      this.pathIndex.add(key, getStoreKeyPaths(key, this.mode));
     return super.set(key, value);
   }
 

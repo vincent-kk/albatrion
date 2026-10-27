@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- B2-P3의 path/kind 키는 기존 JSON pair 형식과 바이트 호환을 유지하며 잠복 저장과 committed 선언이 노드별 메모를 공유한다. pair 전용 codec은 JSON 직렬화·해석 호출 없이 경로를 보존하고 rule 키 형식은 유지한다. 키 생성은 최초 사용·rekey에 O(경로 길이), 이후 조회는 O(1)이며 트리별 약한 메모의 노드당 경로·종류·키 참조만 보유한다.
+- B2-P2는 기존 HostDerived 저장소를 불변 template와 live host의 약한 identity 키로 함께 사용한다. wheelPlan·preparedStaticHost는 settle이 구체 형과 무효화를 소유하는 라이브 준비물이고, controlLayerIndex·childOrderIndex는 청사진의 순수 파생 자료다. 노드 고정 필드와 공개 surface는 늘리지 않으며 모드 전환은 기존 저장소 초기화로 함께 버린다.
 
 - 청사진과 컴파일된 식의 생성 고정 사실은 비열거·읽기 전용 속성으로 freeze 전에 정의한다. 기존 열거 관측에는 추가하지 않으며 직접 사실 조회와 모드 변경 뒤의 보존은 유지한다(D3b-2).
 
@@ -138,6 +138,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## Last Updated
 
-2026-10-28. B1 gatePredicate on/off 기준 경로와 출하 기본 설정.
+2026-10-27. B1 gatePredicate on/off 기준 경로와 출하 기본 설정.
 
 계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077, 35C-08).

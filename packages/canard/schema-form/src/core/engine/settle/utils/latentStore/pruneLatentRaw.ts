@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
@@ -37,7 +38,18 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
         );
     return;
   }
-  for (const childPath of childPaths ?? [path])
-    for (const key of [...runtime.latentRaw.pathIndex.under(childPath)])
+  for (const key of runtime.latentRaw.keys()) {
+    const identity: unknown = JSON.parse(key);
+    if (!isArray(identity) || typeof identity[0] !== 'string') continue;
+    if (
+      childPaths
+        ? childPaths.some(
+            (childPath) =>
+              identity[0] === childPath ||
+              identity[0].startsWith(childPath + '/'),
+          )
+        : !path || identity[0] === path || identity[0].startsWith(path + '/')
+    )
       setLatentRaw(runtime, undefined, key, false, undefined);
+  }
 };

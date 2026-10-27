@@ -19,7 +19,8 @@ export const getTableVisitSteps = <Self extends FieldNodeRecord<Self>>(
 ): number[] => {
   const { node, context, prior, next } = frame;
   const required: number[] = [];
-  for (const name of Object.keys(prior)) {
+  const prepared = frame.preparedStatic;
+  for (const name of frame.priorDynamicNames ?? Object.keys(prior)) {
     const index = table.stepIndexByName.get(name);
     if (
       index !== undefined &&
@@ -27,7 +28,8 @@ export const getTableVisitSteps = <Self extends FieldNodeRecord<Self>>(
     )
       required.push(index);
   }
-  for (const name of Object.keys(next)) {
+  for (const name of prepared ? prepared.dynamicNames : Object.keys(next)) {
+    if (!next[name]) continue;
     const index = table.stepIndexByName.get(name);
     if (index !== undefined) required.push(index);
   }
@@ -52,5 +54,5 @@ export const getTableVisitSteps = <Self extends FieldNodeRecord<Self>>(
       if (index !== undefined) required.push(index);
     }
   required.sort((a, b) => a - b);
-  return mergeGateSteps(table.alwaysSteps, required);
+  return mergeGateSteps(prepared?.alwaysSteps ?? table.alwaysSteps, required);
 };

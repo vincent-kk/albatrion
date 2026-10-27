@@ -18,12 +18,15 @@ export interface BlueprintDerived {
 }
 /** Independently filled HostDerived slots; concrete value types stay with their builders. */
 export interface HostDerived {
+  wheelPlan?: unknown;
+  preparedStaticHost?: unknown;
+  controlLayerIndex?: unknown;
+  childOrderIndex?: unknown;
   watchPaths?: unknown;
   deriveChildren?: unknown;
   declaredNames?: unknown;
   declarationIds?: unknown;
   objectChildren?: unknown;
-  objectAssemblyOrder?: unknown;
   readPlans?: unknown;
   staticGateList?: unknown;
   gateSelectionTable?: unknown;

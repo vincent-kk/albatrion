@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-10-27T15:19:00Z",
+  "originalFixedCriteriaVerdict": "fail",
+  "originalJudgementPreserved": "judgement.json",
+  "coordinatorDecision": "editorial adoption of the whole measured bundle, subject to owner re-verification",
+  "changedCriteria": [
+    "targeted stage ledger reduction",
+    "zero primary TEST-073 regressions",
+    "Node heap gate"
+  ],
+  "unchangedFindings": [
+    "oneOf80 outside-width and same-sign criteria failed",
+    "wheelPreparation self 2.834us exceeds 1us goal",
+    "sibling linear term did not shrink",
+    "last-half single-nested regression -18.4506 percent",
+    "Bun median exceeds baseline max by 4.374325 B/node"
+  ],
+  "remainingOwner": "Coordinator records the criterion change in the round ledger, reports it to Vincent, opens the PR and commissions one code review; total performance is assessed cumulatively at B3.",
+  "sourceCaveat": "Static preparation is ineligible only for the canonical siblings fixture with duplicate x/y candidates; it executes for the unique-name oneOf80 fixture. The final product source is restored exactly to measured B. No C performance measurement was made.",
+  "latestDecisionAt": "2026-10-27T15:24:33Z",
+  "latestScope": "Retain the entire measured B=e8c122986; the interim static-only removal request was withdrawn after clarifying that oneOf80 executes the static path."
+}

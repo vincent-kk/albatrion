@@ -1,5 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
-import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
@@ -14,7 +14,10 @@ export const indexEnteredLatentKey = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const index = context.enteredLatentKeys;
   if (!index) return;
-  const key = getCommittedDeclarationKey(node, node.runtime);
+  const key = JSON.stringify([
+    node.path,
+    getBlueprintNodeIdentity(node.blueprintNode),
+  ]);
   const occurrences = index.get(key);
   if (occurrences) occurrences.push(node);
   else index.set(key, [node]);

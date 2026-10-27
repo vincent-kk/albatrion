@@ -2,7 +2,7 @@
 export interface TreeMemoStores<Entry = unknown, Gate = unknown> {
   committedDeclarationKeys?: WeakMap<
     object,
-    { path: string; kind: string; key: string; schemaType?: unknown }
+    { path: string; kind: string; key: string }
   >;
   deriveTargetIds?: WeakMap<object, number>;
   /** State, retained across every reset while old references own their runtime. */

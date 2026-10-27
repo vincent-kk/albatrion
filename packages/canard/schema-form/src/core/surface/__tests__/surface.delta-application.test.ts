@@ -1,6 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
+  type BlueprintSchema,
   PathKeyedMap,
   PathKeyedSet,
   blueprint,
@@ -8,64 +9,82 @@ import {
 
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 
-/** Latent storage sites; pending-exit selection has a separate cost contract. */
-const LATENT_SITE =
-  /(?:latentStore|pathIndex|captureExitedRaw|enterFieldNode|getCommittedDeclarationKey|encodeNodeKey|readNodeKeyPath)/;
+const makeTree = (schema: BlueprintSchema) =>
+  fieldNodeFactory(blueprint(schema), {
+    diagnostics: { status: 'stable' },
+    loadSnapshot: undefined,
+    latentRaw: new PathKeyedMap('pair'),
+    misfitPaths: new PathKeyedSet(),
+    inactiveValuesMemo: new PathKeyedMap<
+      readonly { path: string; value: unknown }[]
+    >('path'),
+  });
 
-afterEach(() => vi.restoreAllMocks());
-
-describe('B2-P3 public setValue latent delta application', () => {
-  it('uses no JSON pair encoding or decoding in latent storage on a cold branch switch', () => {
-    const root = fieldNodeFactory(
-      blueprint({
-        type: 'object',
-        properties: { kind: { type: 'string' } },
-        oneOf: [
-          {
-            controls: { active: "./kind === 'a'" },
-            properties: { a: { type: 'string', default: 'A' } },
-          },
-          {
-            controls: { active: "./kind === 'b'" },
-            properties: { b: { type: 'string', default: 'B' } },
-          },
-        ],
-      }),
-      {
-        diagnostics: { status: 'stable' },
-        loadSnapshot: undefined,
-        latentRaw: new PathKeyedMap('pair'),
-        misfitPaths: new PathKeyedSet(),
-        inactiveValuesMemo: new PathKeyedMap<
-          readonly { path: string; value: unknown }[]
-        >('path'),
+describe('B2-P3 public latent and assembly contracts', () => {
+  it('retains escaped field values across inactivity and ignores stale writes after reentry', () => {
+    const name = 'quoted"/tilde~/\n/😀/\ud800';
+    const path = '/' + name.replace(/~/g, '~0').replace(/\//g, '~1');
+    const root = makeTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        [name]: {
+          type: 'string',
+          controls: { active: '../flag', unsetOnInactive: false },
+        },
       },
-    );
-    root.setValue({ kind: 'a', a: 'edited' });
-    const old = root.find('/a');
-    const stringify = JSON.stringify;
-    const parse = JSON.parse;
-    const calls: string[] = [];
-    const record = () => {
-      const caller = new Error().stack
-        ?.split('\n')
-        .find(
-          (frame) => frame.includes('/src/') && !frame.includes('__tests__'),
-        );
-      if (caller && LATENT_SITE.test(caller)) calls.push(caller);
-    };
-    vi.spyOn(JSON, 'stringify').mockImplementation((...args) => {
-      record();
-      return Reflect.apply(stringify, JSON, args);
     });
-    vi.spyOn(JSON, 'parse').mockImplementation((...args) => {
-      record();
-      return Reflect.apply(parse, JSON, args);
+    root.setValue({ flag: true, [name]: 'edited' });
+    const old = root.find(path)!;
+    root.find('/flag')!.setValue(false);
+    expect(root.find(path)).toBeNull();
+    expect(root.inactiveValues).toEqual([{ path, value: 'edited' }]);
+    root.find('/flag')!.setValue(true);
+    expect(root.find(path)).not.toBe(old);
+    expect(root.find(path)!.value).toBe('edited');
+    expect(root.inactiveValues).toEqual([]);
+    old.setValue('stale write');
+    expect(root.find(path)!.value).toBe('edited');
+  });
+
+  it('preserves preferred, declared and extra order with sparse active children', () => {
+    const root = makeTree({
+      type: 'object',
+      options: { propertyOrder: ['tail', 'tail'] },
+      properties: {
+        a: { type: 'string' },
+        ...Object.fromEntries(
+          Array.from({ length: 240 }, (_, index) => [
+            'gap_' + index,
+            { type: 'string', controls: { active: false } },
+          ]),
+        ),
+        b: { type: 'number' },
+        blocked: { type: 'string' },
+      },
     });
-    root.setValue({ kind: 'b' });
-    root.setValue({ kind: 'a' });
-    expect(root.value).toEqual({ kind: 'a', a: 'A' });
-    expect(root.find('/a')).not.toBe(old);
-    expect(calls).toEqual([]);
+    root.setValue({ extra: 10, b: 2, a: 'A', tail: 9, blocked: undefined });
+    expect(root.value).toEqual({ tail: 9, a: 'A', b: 2, extra: 10 });
+    expect(Object.keys(root.value as object)).toEqual([
+      'tail',
+      'a',
+      'b',
+      'extra',
+    ]);
+    expect(Object.keys(root.outputValue as object)).toEqual([
+      'tail',
+      'a',
+      'b',
+      'extra',
+    ]);
+    root.find('/a')!.setValue('changed');
+    expect(root.value).toEqual({ tail: 9, a: 'changed', b: 2, extra: 10 });
+    expect(Object.keys(root.value as object)).toEqual([
+      'tail',
+      'a',
+      'b',
+      'extra',
+    ]);
+    expect(root.find('/gap_120')).toBeNull();
   });
 });

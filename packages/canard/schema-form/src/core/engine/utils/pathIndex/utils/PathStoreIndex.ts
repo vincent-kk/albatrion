@@ -88,21 +88,6 @@ export class PathStoreIndex {
     this.batchDepth = 0;
   }
 
-  /** Reuse the indexed occurrence path without decoding its pair key again. */
-  pathOf(key: string): string | undefined {
-    return this.pathsByKey.get(key)?.[0]?.path;
-  }
-
-  /** Map-compatible lookup for latent descendants without rebuilding an index. */
-  get(path: string): ReadonlySet<string> | undefined {
-    return this.prefixes.get(path)?.keys;
-  }
-
-  /** Whether a path currently owns any indexed subtree key. */
-  has(path: string): boolean {
-    return this.prefixes.has(path);
-  }
-
   /** Query subtree keys without visiting unrelated entries. */
   under(path: string): ReadonlySet<string> {
     return this.prefixes.get(path)?.keys ?? EMPTY_KEYS;

@@ -1,6 +1,3 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-
-import { CONTROL_KEY } from '../../../constants/controlKey';
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
@@ -30,18 +27,16 @@ export const snapshotExitedPolicies = <Self extends FieldNodeRecord<Self>>(
         if (!runtime.latentRaw.has(key)) return;
         const metadata = runtime.latentRawMetadata?.get(key);
         if (!metadata) return;
-        const exitLayers = getControlLayers(node, emptyReadonlyMap)
-          .filter((group) =>
-            hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive),
-          )
-          .map((group) => ({
+        const exitLayers = getControlLayers(node, emptyReadonlyMap, true).map(
+          (group) => ({
             layer: group.layer,
             clear: readExitLayerPolicy(
               [group],
               runtime.committedRuleValues,
               false,
             ),
-          }));
+          }),
+        );
         const current = { ...metadata, exitLayers };
         DetachedWriteAddress.transfer(metadata, current, runtime);
         runtime.latentRawMetadata?.set(key, current);

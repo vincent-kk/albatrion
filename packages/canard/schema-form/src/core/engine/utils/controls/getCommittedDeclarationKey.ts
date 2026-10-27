@@ -1,5 +1,4 @@
 import type { TreeMemoStores } from '../../types/treeMemoStores';
-import { encodeNodeKey } from '../nodeIdentity/encodeNodeKey';
 import { getBlueprintNodeIdentity } from '../nodeIdentity/getBlueprintNodeIdentity';
 
 /**
@@ -16,25 +15,14 @@ export const getCommittedDeclarationKey = (
   runtime: Pick<TreeMemoStores, 'committedDeclarationKeys'>,
 ): string => {
   const path = node.path;
+  const kind = getBlueprintNodeIdentity(node.blueprintNode);
   const cached = runtime.committedDeclarationKeys?.get(node);
-  const kind =
-    node.blueprintNode.kind === 'union'
-      ? cached !== undefined &&
-        cached.schemaType === node.blueprintNode.schemaType &&
-        cached.kind.startsWith('union:')
-        ? cached.kind
-        : getBlueprintNodeIdentity(node.blueprintNode)
-      : node.blueprintNode.kind;
   if (cached?.path === path && cached.kind === kind) return cached.key;
-  const key = encodeNodeKey(path, kind);
-  const entry: {
-    path: string;
-    kind: string;
-    key: string;
-    schemaType?: unknown;
-  } = { path, kind, key };
-  if (node.blueprintNode.kind === 'union')
-    entry.schemaType = node.blueprintNode.schemaType;
-  (runtime.committedDeclarationKeys ??= new WeakMap()).set(node, entry);
+  const key = JSON.stringify([path, kind]);
+  (runtime.committedDeclarationKeys ??= new WeakMap()).set(node, {
+    path,
+    kind,
+    key,
+  });
   return key;
 };

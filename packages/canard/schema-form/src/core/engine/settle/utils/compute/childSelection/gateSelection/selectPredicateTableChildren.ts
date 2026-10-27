@@ -106,6 +106,7 @@ export const selectPredicateTableChildren = <
     const failedPredicate = throwing?.has(index) === true;
     if (tableStep && !failedPredicate && (verify || shadow))
       verifyTableGate(frame.node, frame.context, step.gate!, admitted);
+    if (frame.preparedStatic?.entries.has(step.entry.name)) continue;
     if (!listed && !shadow) {
       if (verify) verifyUnvisitedGateStep(frame, step);
       continue;

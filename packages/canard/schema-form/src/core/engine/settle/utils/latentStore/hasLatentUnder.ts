@@ -1,26 +1,46 @@
-import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../types/settlement';
-import { getEnteredLatentKeys } from './getEnteredLatentKeys';
+import { isArray } from '@winglet/common-utils/filter';
 
-/** Find a proper latent descendant, excluding sources already owned by live entrants. */
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
+import type { FieldNodeRecord } from '../../../record';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
+
+/**
+ * Find a source below a host across every latent kind (26C-14).
+ * @param context - Settlement with a lazily rebuilt proper-ancestor index
+ * @param path - Host path whose descendants may hold latent sources
+ * @returns Whether a latent descendant can prevent an empty-host fill
+ */
 export const hasLatentUnder = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
 ): boolean => {
-  const keys = context.root.runtime.latentRaw.pathIndex.under(path);
-  if (!keys.size) return false;
-  const entered = getEnteredLatentKeys(context);
-  for (const key of keys) {
-    if (context.root.runtime.latentRaw.pathIndex.pathOf(key) === path) continue;
-    const occurrences = entered.get(key);
-    if (
-      !occurrences?.some(
-        (node) =>
-          !node.detached &&
-          (!node.parent || node.parent.structure?.[node.name] === node),
+  if (!context.latentPrefixes) {
+    const ignored = new Set<string>();
+    for (const node of [...context.entered, ...context.revived])
+      if (
+        !node.detached &&
+        (!node.parent || node.parent.structure?.[node.name] === node)
       )
-    )
-      return true;
+        ignored.add(
+          JSON.stringify([
+            node.path,
+            getBlueprintNodeIdentity(node.blueprintNode),
+          ]),
+        );
+    const prefixes = new Set<string>();
+    for (const key of context.root.runtime.latentRaw.keys()) {
+      if (ignored.has(key)) continue;
+      const identity: unknown = JSON.parse(key);
+      if (!isArray(identity) || typeof identity[0] !== 'string') continue;
+      let ancestor = identity[0];
+      while (ancestor) {
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+        prefixes.add(ancestor);
+      }
+    }
+    context.latentPrefixes = prefixes;
   }
-  return false;
+  return context.latentPrefixes.has(path);
 };

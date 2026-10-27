@@ -1,0 +1,98 @@
+{
+  "kind": "legacy",
+  "ratio": 0.995998052176896,
+  "passed": true,
+  "assessedRows": 18,
+  "rows": [
+    {
+      "id": "single-flat-1000",
+      "ratio": 0.9962630390111239
+    },
+    {
+      "id": "mount-oneOf-80",
+      "ratio": 0.9795098134579645
+    },
+    {
+      "id": "mount-flat-1000",
+      "ratio": 1.0065329185726621
+    },
+    {
+      "id": "mount-nested-d6-f4",
+      "ratio": 1.0015139574341163
+    },
+    {
+      "id": "single-nested-d6-f4",
+      "ratio": 1.1184351297400774
+    },
+    {
+      "id": "switch-oneOf-80",
+      "ratio": 1.067226780094395
+    },
+    {
+      "id": "bulk-flat-2000",
+      "ratio": 0.9851242060988543
+    },
+    {
+      "id": "bulk-nested-d6-f4",
+      "ratio": 0.994482219995185
+    },
+    {
+      "id": "switch-nested-oneOf-20",
+      "ratio": 0.9812254448583655
+    },
+    {
+      "id": "switch-siblings-0",
+      "ratio": 0.9597586206907543
+    },
+    {
+      "id": "switch-siblings-100",
+      "ratio": 0.8820288670627813
+    },
+    {
+      "id": "switch-siblings-1000",
+      "ratio": 1.0101518680221788
+    },
+    {
+      "id": "switch-siblings-4000",
+      "ratio": 0.9957859733507483
+    },
+    {
+      "id": "leaf-gate-250",
+      "ratio": 0.9796428588868251
+    },
+    {
+      "id": "leaf-gate-1000",
+      "ratio": 0.947720646588146
+    },
+    {
+      "id": "leaf-gate-4000",
+      "ratio": 0.9967958515726894
+    },
+    {
+      "id": "leaf-gate-8000",
+      "ratio": 0.9962101310030437
+    },
+    {
+      "id": "switch-payload-12",
+      "ratio": 1.1521757845008387
+    }
+  ],
+  "omittedRows": [
+    {
+      "id": "switch-discriminator-80",
+      "reason": "No compatible legacy lane"
+    },
+    {
+      "id": "switch-if-80",
+      "reason": "No compatible legacy lane"
+    },
+    {
+      "id": "wave-1000",
+      "reason": "No compatible legacy lane"
+    },
+    {
+      "id": "single-flat-1000-subscribed",
+      "reason": "No compatible legacy lane"
+    }
+  ]
+}

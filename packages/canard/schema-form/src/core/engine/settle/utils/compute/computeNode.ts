@@ -1,5 +1,3 @@
-import { HostStaticPartition } from '../../../blueprint';
-import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { GateWheelFrame } from '../../types/gateWheel';
@@ -10,11 +8,11 @@ import { canSkipGateWheel } from '../gates/canSkipGateWheel';
 import { finishGateTableRound } from '../gates/finishGateTableRound';
 import { gateWheelEvaluation } from '../gates/gateWheelEvaluation';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
-import { getGateExpression } from '../gates/getGateExpression';
 import { prepareGateTableRound } from '../gates/prepareGateTableRound';
 import { verifyGateWheelConfirmation } from '../gates/verifyGateWheelConfirmation';
 import { updateOutput } from '../output/updateOutput';
 import { selectChildren } from './childSelection/selectChildren';
+import { discardStaticHostPreparation } from './childSelection/utils/discardStaticHostPreparation';
 import { dirtyChildren } from './dirtyChildren';
 import { preserveReferences } from './preserveReferences';
 import { primeHost } from './primeHost';
@@ -23,8 +21,8 @@ import { scheduleChangedRelocatedGates } from './scheduleChangedRelocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
 import { selectNodeSchema } from './selectNodeSchema';
 import { computeStableNode } from './utils/computeStableNode';
-import { getStaticGateList } from './utils/getStaticGateList';
 import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
+import { prepareHostWheelPlan } from './utils/prepareHostWheelPlan';
 
 /**
  * Finish a dirty subtree with one descent and a bounded host gate wheel.
@@ -161,48 +159,31 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     active: previousActive,
   };
   const prior = node.structure ?? {};
-  const staticList = context.hasGates ? getStaticGateList(node) : undefined;
-  const gates: BlueprintGate[] = staticList ? [...staticList.gates] : [];
-  const seenGates = new Set<BlueprintGate>();
-  const relocated = context.hasGates ? relocatedGates(node) : [];
-  if (context.hasGates) {
-    for (let index = 0; index < relocated.length; index++) {
-      const occurrence = relocated[index];
-      if (
-        !staticList?.seenGates.has(occurrence.gate) &&
-        !seenGates.has(occurrence.gate)
-      ) {
-        seenGates.add(occurrence.gate);
-        gates.push(occurrence.gate);
-      }
-    }
-  }
+  let wheelPlan = context.hasGates ? prepareHostWheelPlan(node) : undefined;
+  let gates = wheelPlan?.gates ?? [];
+  const relocated = wheelPlan?.relocated ?? [];
   if (gates.length > 0) primeHost(node, prior, context, relocated.length > 0);
   const initialDirty = dirtyChildren(node, context);
   for (let index = 0; index < initialDirty.length; index++)
     computeNode(initialDirty[index], context);
   const deferBaseline =
-    gates.length > 0 &&
+    wheelPlan?.baselineEligible === true &&
     context.kind !== 'load' &&
-    node.behavior.type === 'object' &&
-    relocated.length === 0 &&
     !context.distributedInputs.has(node) &&
-    context.pathChanges.length === 0 &&
-    !HostStaticPartition.get(node.blueprintNode).hasGatedOverlays &&
-    gates.every(
-      (gate) =>
-        getGateExpression(node.runtime.blueprint, gate.schemaPath)?.equality,
-    ) &&
-    HostStaticPartition.get(node.blueprintNode).staticEntries.length > 0;
+    context.pathChanges.length === 0;
   if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);
   else if (gates.length > 0 && updateOutput(node, context))
     scheduleRelocatedGates(relocatedGates(node), context);
-  let cap = getHostWheelBudgetCap(
-    node,
-    node.runtime.blueprint,
-    gates,
-    node.runtime,
-  );
+  let cap = wheelPlan
+    ? context.distributedInputs.size > 0 || wheelPlan.cap === undefined
+      ? (wheelPlan.cap = getHostWheelBudgetCap(
+          node,
+          node.runtime.blueprint,
+          gates,
+          node.runtime,
+        ))
+      : wheelPlan.cap
+    : 1;
   let confirmation: GateWheelFrame | undefined;
   let previousPredicate: boolean | undefined;
   let lastStructure = prior;
@@ -274,24 +255,20 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
         context.pendingOutputs?.has(node))
     )
       outputChanged = updateOutput(node, context);
-    const currentRelocated = context.hasGates ? relocatedGates(node) : [];
+    if (wheelPlan) wheelPlan = prepareHostWheelPlan(node, wheelPlan);
+    gates = wheelPlan?.gates ?? gates;
+    const currentRelocated = wheelPlan?.relocated ?? [];
     hasRelocated = currentRelocated.length > 0;
-    for (let index = 0; index < currentRelocated.length; index++) {
-      const occurrence = currentRelocated[index];
-      if (
-        !staticList?.seenGates.has(occurrence.gate) &&
-        !seenGates.has(occurrence.gate)
-      ) {
-        seenGates.add(occurrence.gate);
-        gates.push(occurrence.gate);
-      }
-    }
-    cap = getHostWheelBudgetCap(
-      node,
-      node.runtime.blueprint,
-      gates,
-      node.runtime,
-    );
+    cap = wheelPlan
+      ? context.distributedInputs.size > 0 || wheelPlan.cap === undefined
+        ? (wheelPlan.cap = getHostWheelBudgetCap(
+            node,
+            node.runtime.blueprint,
+            gates,
+            node.runtime,
+          ))
+        : wheelPlan.cap
+      : 1;
     if (outputChanged) scheduleRelocatedGates(currentRelocated, context);
     const publishedChanged =
       !outputChanged &&
@@ -343,13 +320,16 @@ export const computeNode = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const parentFrame = context.gateWheelFrame;
+  let computed = false;
   context.gateWheelFrame = undefined;
   try {
     computeNodeBody(node, context);
     if (node === context.root) flushPresenceTemplates(undefined, context);
+    computed = true;
   } finally {
     context.gateWheelFrame = parentFrame;
     if (node === context.root) {
+      if (!computed) discardStaticHostPreparation(context);
       context.restoreGateSelectionDirty?.();
       context.gateSelectionRounds?.clear();
     }

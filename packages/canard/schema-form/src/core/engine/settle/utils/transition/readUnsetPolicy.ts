@@ -14,7 +14,7 @@ export const readUnsetPolicy = <Self extends FieldNodeRecord<Self>>(
   inherited: boolean,
 ): boolean =>
   readExitLayerPolicy(
-    getControlLayers(node, emptyReadonlyMap),
+    getControlLayers(node, emptyReadonlyMap, true),
     node.runtime.committedRuleValues,
     inherited,
   );
