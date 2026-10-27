@@ -1,5 +1,8 @@
+import { buildBranchFixture } from './helpers/buildBranchFixture.mjs';
+
 /** Canonical scale fixtures mirror benchmark-form/src/fixtures/scale-schemas.ts and fixtures/equivalent/branches.ts. */
 export function buildFixture(row, legacy = false) {
+  if (row.shape === 'branch-switch') return buildBranchFixture(row, legacy);
   if (row.shape === 'nested') {
     const build = (depth) =>
       depth === 0

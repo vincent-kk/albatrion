@@ -11,6 +11,8 @@ export function summarize(rows, results) {
     };
     const statistics = Object.fromEntries(
       Object.entries(minima).map(([engine, values]) => {
+        if (values.every((v) => v === null))
+          return [engine, { ms: null, widthMs: null, minimaMs: values }];
         const sorted = [...values].sort((a, b) => a - b);
         const middle = Math.floor(sorted.length / 2);
         return [
@@ -29,8 +31,12 @@ export function summarize(rows, results) {
     return {
       ...row,
       ...statistics,
-      deltaMs: statistics.current.ms - statistics.legacy.ms,
-      deltaPercent: (statistics.current.ms / statistics.legacy.ms - 1) * 100,
+      deltaMs: row.currentOnly
+        ? null
+        : statistics.current.ms - statistics.legacy.ms,
+      deltaPercent: row.currentOnly
+        ? null
+        : (statistics.current.ms / statistics.legacy.ms - 1) * 100,
     };
   });
   const markdown = [
@@ -38,7 +44,7 @@ export function summarize(rows, results) {
     '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |',
     ...summary.map(
       (r) =>
-        `| ${r.id} | ${r.n} | ${r.legacy.ms.toFixed(4)} | ${r.legacy.widthMs.toFixed(4)} | ${r.current.ms.toFixed(4)} | ${r.current.widthMs.toFixed(4)} | ${r.deltaMs.toFixed(4)} | ${r.deltaPercent.toFixed(2)} |`,
+        `| ${r.id} | ${r.n} | ${r.legacy.ms?.toFixed(4) ?? '해당 없음'} | ${r.legacy.widthMs?.toFixed(4) ?? '—'} | ${r.current.ms.toFixed(4)} | ${r.current.widthMs.toFixed(4)} | ${r.deltaMs?.toFixed(4) ?? '—'} | ${r.deltaPercent?.toFixed(2) ?? '—'} |`,
     ),
   ];
   return { rows: summary, markdown: `${markdown.join('\n')}\n` };
