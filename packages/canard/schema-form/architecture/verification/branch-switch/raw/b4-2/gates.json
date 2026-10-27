@@ -1,0 +1,57 @@
+{
+  "sourceCommit": "c632ab5f5",
+  "checks": {
+    "typecheck": {
+      "command": "yarn workspace @canard/schema-form typecheck",
+      "exit": 0
+    },
+    "lint": {
+      "command": "yarn workspace @canard/schema-form lint",
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0
+    },
+    "build": {
+      "command": "yarn workspace @canard/schema-form build",
+      "exit": 0
+    },
+    "fiveProjects": {
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test --run --maxWorkers=1 --no-file-parallelism",
+      "exit": 0,
+      "files": 928,
+      "passed": 5595,
+      "todo": 1,
+      "failed": 0,
+      "seconds": 634.27
+    },
+    "verify": {
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test:verify --run --maxWorkers=1 --no-file-parallelism",
+      "exit": 0,
+      "files": 695,
+      "passed": 4607,
+      "todo": 1,
+      "failed": 0,
+      "seconds": 483.95
+    }
+  },
+  "delivery": {
+    "scenes": 72,
+    "points": 430,
+    "differences": 0
+  },
+  "mount": {
+    "scenes": 6,
+    "points": 12,
+    "differences": 0
+  },
+  "fca": {
+    "findings": 201,
+    "newFindings": 0,
+    "verdict": "FAIL",
+    "analysisCompleteness": "indeterminate"
+  },
+  "invalidPreliminaryRuns": [
+    "Two initial 4 GiB workers exhausted the heap in complete nested observation fixtures; the required final suite uses the established 8 GiB setting.",
+    "An interrupted verify run closed a shared browser connection in an overlapping preliminary suite; both final complete suites run alone, with no failure suppression."
+  ]
+}

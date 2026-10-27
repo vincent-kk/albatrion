@@ -1,0 +1,16 @@
+{
+  "sourceCommit": "c632ab5f5",
+  "unchangedSourceFiles": [
+    "src/index.ts",
+    "src/__tests__/publicSurface.test.ts"
+  ],
+  "declarations": {
+    "bytes": 3054,
+    "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+  },
+  "baselineDeclarations": {
+    "bytes": 3054,
+    "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+  },
+  "equal": true
+}

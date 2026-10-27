@@ -1,0 +1,4523 @@
+[
+  {
+    "row": "switch-oneOf-80",
+    "A": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.5829999999823485,
+          "min": 1.5410000000031232,
+          "max": 1.7295000000103755,
+          "width": 0.1885000000072523,
+          "processMedians": [
+            1.5410000000031232,
+            1.5829999999823485,
+            1.7295000000103755
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.5829999999823485,
+          "min": 1.5410000000031232,
+          "max": 1.7295000000103755,
+          "width": 0.1885000000072523,
+          "processMedians": [
+            1.5410000000031232,
+            1.5829999999823485,
+            1.7295000000103755
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 206.71999999999997
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 12.520499999993717,
+          "min": 12.458000000009406,
+          "max": 12.958000000026004,
+          "width": 0.5000000000165983,
+          "processMedians": [
+            12.520499999993717,
+            12.458000000009406,
+            12.958000000026004
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.520499999993717,
+          "min": 12.458000000009406,
+          "max": 12.958000000026004,
+          "width": 0.5000000000165983,
+          "processMedians": [
+            12.520499999993717,
+            12.458000000009406,
+            12.958000000026004
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 10230
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 32.626500000048964,
+          "min": 31.480999999985215,
+          "max": 33.39699999997947,
+          "width": 1.9159999999942556,
+          "processMedians": [
+            32.626500000048964,
+            31.480999999985215,
+            33.39699999997947
+          ]
+        },
+        "inclusiveUs": {
+          "median": 98.02049999996143,
+          "min": 96.41599999997652,
+          "max": 102.60399999998526,
+          "width": 6.188000000008742,
+          "processMedians": [
+            98.02049999996143,
+            96.41599999997652,
+            102.60399999998526
+          ]
+        },
+        "calls": 5,
+        "maximumCalls": 5,
+        "allocationBytes": 24691.440000000002
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 2.7504999999621305,
+          "min": 2.749499999993077,
+          "max": 2.958999999975731,
+          "width": 0.20949999998265412,
+          "processMedians": [
+            2.749499999993077,
+            2.7504999999621305,
+            2.958999999975731
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.083499999997912,
+          "min": 7.833000000005086,
+          "max": 8.374500000002172,
+          "width": 0.541499999997086,
+          "processMedians": [
+            7.833000000005086,
+            8.083499999997912,
+            8.374500000002172
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 2.4579999999900792,
+          "min": 2.375000000029104,
+          "max": 2.520500000002812,
+          "width": 0.14549999997370833,
+          "processMedians": [
+            2.375000000029104,
+            2.4579999999900792,
+            2.520500000002812
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.4579999999900792,
+          "min": 2.375000000029104,
+          "max": 2.520500000002812,
+          "width": 0.14549999997370833,
+          "processMedians": [
+            2.375000000029104,
+            2.4579999999900792,
+            2.520500000002812
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1537.84
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 27.91700000000219,
+          "min": 27.56049999999277,
+          "max": 29.165999999946735,
+          "width": 1.6054999999539632,
+          "processMedians": [
+            27.91700000000219,
+            27.56049999999277,
+            29.165999999946735
+          ]
+        },
+        "inclusiveUs": {
+          "median": 53.54149999999436,
+          "min": 52.79200000001083,
+          "max": 56.68749999998113,
+          "width": 3.8954999999702977,
+          "processMedians": [
+            53.54149999999436,
+            52.79200000001083,
+            56.68749999998113
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 15018.32
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 3.9580000000114524,
+          "min": 3.9170000000012806,
+          "max": 4.166499999996631,
+          "width": 0.24949999999535066,
+          "processMedians": [
+            3.9580000000114524,
+            3.9170000000012806,
+            4.166499999996631
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.9580000000114524,
+          "min": 3.9170000000012806,
+          "max": 4.166499999996631,
+          "width": 0.24949999999535066,
+          "processMedians": [
+            3.9580000000114524,
+            3.9170000000012806,
+            4.166499999996631
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 2014.1599999999996
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 19.103999999998678,
+          "min": 19.000500000061038,
+          "max": 19.60500000001275,
+          "width": 0.6044999999517131,
+          "processMedians": [
+            19.000500000061038,
+            19.103999999998678,
+            19.60500000001275
+          ]
+        },
+        "inclusiveUs": {
+          "median": 23.625000000009777,
+          "min": 23.58299999997371,
+          "max": 24.33349999995471,
+          "width": 0.7504999999810025,
+          "processMedians": [
+            23.58299999997371,
+            23.625000000009777,
+            24.33349999995471
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 14106.719999999998
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 1.4160000000345008,
+          "min": 1.416000000006079,
+          "max": 1.5010000000756918,
+          "width": 0.08500000006961272,
+          "processMedians": [
+            1.5010000000756918,
+            1.4160000000345008,
+            1.416000000006079
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.4160000000345008,
+          "min": 1.416000000006079,
+          "max": 1.5010000000756918,
+          "width": 0.08500000006961272,
+          "processMedians": [
+            1.5010000000756918,
+            1.4160000000345008,
+            1.416000000006079
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 682.96
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 7.230000000049586,
+          "min": 7.062500000017735,
+          "max": 7.333500000044069,
+          "width": 0.2710000000263335,
+          "processMedians": [
+            7.062500000017735,
+            7.333500000044069,
+            7.230000000049586
+          ]
+        },
+        "inclusiveUs": {
+          "median": 16.750000000058662,
+          "min": 16.0414999999432,
+          "max": 16.791499999982307,
+          "width": 0.7500000000391083,
+          "processMedians": [
+            16.750000000058662,
+            16.0414999999432,
+            16.791499999982307
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 780.88
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 9.165999999964924,
+          "min": 9.124999999983174,
+          "max": 9.458499999965397,
+          "width": 0.333499999982223,
+          "processMedians": [
+            9.165999999964924,
+            9.124999999983174,
+            9.458499999965397
+          ]
+        },
+        "inclusiveUs": {
+          "median": 9.165999999964924,
+          "min": 9.124999999983174,
+          "max": 9.458499999965397,
+          "width": 0.333499999982223,
+          "processMedians": [
+            9.165999999964924,
+            9.124999999983174,
+            9.458499999965397
+          ]
+        },
+        "calls": 2,
+        "maximumCalls": 2,
+        "allocationBytes": 12711.04
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 9.687500000040927,
+          "min": 9.645499999976437,
+          "max": 9.95749999998452,
+          "width": 0.3120000000080836,
+          "processMedians": [
+            9.687500000040927,
+            9.645499999976437,
+            9.95749999998452
+          ]
+        },
+        "inclusiveUs": {
+          "median": 22.7079999999944,
+          "min": 21.728999999993448,
+          "max": 25.35449999999173,
+          "width": 3.625499999998283,
+          "processMedians": [
+            22.7079999999944,
+            21.728999999993448,
+            25.35449999999173
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 7677.759999999998
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 12.041499999980942,
+          "min": 11.604000000005499,
+          "max": 13.354499999991276,
+          "width": 1.7504999999857773,
+          "processMedians": [
+            12.041499999980942,
+            11.604000000005499,
+            13.354499999991276
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.041499999980942,
+          "min": 11.604000000005499,
+          "max": 13.354499999991276,
+          "width": 1.7504999999857773,
+          "processMedians": [
+            12.041499999980942,
+            11.604000000005499,
+            13.354499999991276
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 8625.039999999999
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 1354.16
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 7.729500000010603,
+          "min": 7.56249999997749,
+          "max": 7.999999999981355,
+          "width": 0.43750000000386535,
+          "processMedians": [
+            7.56249999997749,
+            7.729500000010603,
+            7.999999999981355
+          ]
+        },
+        "inclusiveUs": {
+          "median": 7.729500000010603,
+          "min": 7.56249999997749,
+          "max": 7.999999999981355,
+          "width": 0.43750000000386535,
+          "processMedians": [
+            7.56249999997749,
+            7.729500000010603,
+            7.999999999981355
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 1524.8799999999999
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 0.7090000000289365,
+          "min": 0.7089999999720931,
+          "max": 0.7095000000560958,
+          "width": 0.0005000000840027496,
+          "processMedians": [
+            0.7090000000289365,
+            0.7095000000560958,
+            0.7089999999720931
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.7090000000289365,
+          "min": 0.7089999999720931,
+          "max": 0.7095000000560958,
+          "width": 0.0005000000840027496,
+          "processMedians": [
+            0.7090000000289365,
+            0.7095000000560958,
+            0.7089999999720931
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 0
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 15.957499999871061,
+          "min": 15.686999999985574,
+          "max": 17.083999999925936,
+          "width": 1.3969999999403626,
+          "processMedians": [
+            15.686999999985574,
+            15.957499999871061,
+            17.083999999925936
+          ]
+        },
+        "inclusiveUs": {
+          "median": 15.957499999871061,
+          "min": 15.686999999985574,
+          "max": 17.083999999925936,
+          "width": 1.3969999999403626,
+          "processMedians": [
+            15.686999999985574,
+            15.957499999871061,
+            17.083999999925936
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 7320.399999999999
+      },
+      "enteringNodes": {
+        "inclusiveUs": {
+          "median": 8.124500000008084,
+          "min": 7.978499999978794,
+          "max": 8.394999999950414,
+          "width": 0.4164999999716201,
+          "processMedians": [
+            7.978499999978794,
+            8.124500000008084,
+            8.394999999950414
+          ]
+        }
+      },
+      "latency": {
+        "wrappedUs": {
+          "median": 176.2290000000064,
+          "min": 173.83350000000064,
+          "max": 184.12500000002296,
+          "width": 10.291500000022324,
+          "processMedians": [
+            176.2290000000064,
+            173.83350000000064,
+            184.12500000002296
+          ]
+        },
+        "unwrappedUs": {
+          "median": 162.35399999999345,
+          "min": 155.7705000000169,
+          "max": 163.62499999999613,
+          "width": 7.854499999979225,
+          "processMedians": [
+            162.35399999999345,
+            155.7705000000169,
+            163.62499999999613
+          ]
+        }
+      },
+      "ledgerSumUs": {
+        "median": 176.2290000000064,
+        "min": 173.83350000000064,
+        "max": 184.12500000002296,
+        "width": 10.291500000022324,
+        "processMedians": [
+          176.2290000000064,
+          173.83350000000064,
+          184.12500000002296
+        ]
+      }
+    },
+    "B": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.563000000004422,
+          "min": 1.4999999999645297,
+          "max": 1.8545000000074197,
+          "width": 0.35450000004288995,
+          "processMedians": [
+            1.563000000004422,
+            1.8545000000074197,
+            1.4999999999645297
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.563000000004422,
+          "min": 1.4999999999645297,
+          "max": 1.8545000000074197,
+          "width": 0.35450000004288995,
+          "processMedians": [
+            1.563000000004422,
+            1.8545000000074197,
+            1.4999999999645297
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 226.64
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 12.686999999971249,
+          "min": 12.645500000019183,
+          "max": 13.291999999978543,
+          "width": 0.6464999999593601,
+          "processMedians": [
+            12.686999999971249,
+            13.291999999978543,
+            12.645500000019183
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.686999999971249,
+          "min": 12.645500000019183,
+          "max": 13.291999999978543,
+          "width": 0.6464999999593601,
+          "processMedians": [
+            12.686999999971249,
+            13.291999999978543,
+            12.645500000019183
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 10603.36
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 32.396499999919115,
+          "min": 31.16750000000934,
+          "max": 34.2494999999019,
+          "width": 3.0819999998925596,
+          "processMedians": [
+            32.396499999919115,
+            34.2494999999019,
+            31.16750000000934
+          ]
+        },
+        "inclusiveUs": {
+          "median": 98.66599999995174,
+          "min": 96.70850000000542,
+          "max": 102.12550000005649,
+          "width": 5.417000000051075,
+          "processMedians": [
+            98.66599999995174,
+            102.12550000005649,
+            96.70850000000542
+          ]
+        },
+        "calls": 5,
+        "maximumCalls": 5,
+        "allocationBytes": 24554.08
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 2.7499999999918145,
+          "min": 2.6664999999468364,
+          "max": 2.937499999944748,
+          "width": 0.2709999999979118,
+          "processMedians": [
+            2.7499999999918145,
+            2.937499999944748,
+            2.6664999999468364
+          ]
+        },
+        "inclusiveUs": {
+          "median": 7.875000000012733,
+          "min": 7.812499999971578,
+          "max": 8.291500000041196,
+          "width": 0.4790000000696182,
+          "processMedians": [
+            7.875000000012733,
+            8.291500000041196,
+            7.812499999971578
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 2.417000000008329,
+          "min": 2.395500000005768,
+          "max": 2.520500000002812,
+          "width": 0.12499999999704414,
+          "processMedians": [
+            2.417000000008329,
+            2.520500000002812,
+            2.395500000005768
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.417000000008329,
+          "min": 2.395500000005768,
+          "max": 2.520500000002812,
+          "width": 0.12499999999704414,
+          "processMedians": [
+            2.417000000008329,
+            2.520500000002812,
+            2.395500000005768
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1447.28
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 28.186999999945783,
+          "min": 27.916500000031874,
+          "max": 29.18750000003456,
+          "width": 1.2710000000026866,
+          "processMedians": [
+            28.186999999945783,
+            29.18750000003456,
+            27.916500000031874
+          ]
+        },
+        "inclusiveUs": {
+          "median": 53.874500000006265,
+          "min": 53.85400000000118,
+          "max": 57.16699999999264,
+          "width": 3.3129999999914617,
+          "processMedians": [
+            53.85400000000118,
+            57.16699999999264,
+            53.874500000006265
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 14951.760000000006
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 3.875000000050477,
+          "min": 3.7919999999758147,
+          "max": 4.124999999987722,
+          "width": 0.3330000000119071,
+          "processMedians": [
+            3.875000000050477,
+            4.124999999987722,
+            3.7919999999758147
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.875000000050477,
+          "min": 3.7919999999758147,
+          "max": 4.124999999987722,
+          "width": 0.3330000000119071,
+          "processMedians": [
+            3.875000000050477,
+            4.124999999987722,
+            3.7919999999758147
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 2027.28
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 19.708500000007234,
+          "min": 19.64599999996608,
+          "max": 20.728999999903408,
+          "width": 1.0829999999373285,
+          "processMedians": [
+            19.708500000007234,
+            20.728999999903408,
+            19.64599999996608
+          ]
+        },
+        "inclusiveUs": {
+          "median": 24.270500000000084,
+          "min": 23.91699999998309,
+          "max": 25.396000000029062,
+          "width": 1.4790000000459713,
+          "processMedians": [
+            24.270500000000084,
+            25.396000000029062,
+            23.91699999998309
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 14867.6
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 1.4575000001002536,
+          "min": 1.417000000031976,
+          "max": 1.458499999984042,
+          "width": 0.04149999995206599,
+          "processMedians": [
+            1.4575000001002536,
+            1.458499999984042,
+            1.417000000031976
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.4575000001002536,
+          "min": 1.417000000031976,
+          "max": 1.458499999984042,
+          "width": 0.04149999995206599,
+          "processMedians": [
+            1.4575000001002536,
+            1.458499999984042,
+            1.417000000031976
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 726.96
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 7.167000000066537,
+          "min": 7.103000000000748,
+          "max": 7.561999999950331,
+          "width": 0.45899999994958307,
+          "processMedians": [
+            7.167000000066537,
+            7.561999999950331,
+            7.103000000000748
+          ]
+        },
+        "inclusiveUs": {
+          "median": 16.45700000000261,
+          "min": 15.750500000052625,
+          "max": 16.79150000001073,
+          "width": 1.0409999999581032,
+          "processMedians": [
+            15.750500000052625,
+            16.79150000001073,
+            16.45700000000261
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 853.1199999999999
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 9.041999999965356,
+          "min": 8.562499999982265,
+          "max": 9.458999999992557,
+          "width": 0.8965000000102918,
+          "processMedians": [
+            8.562499999982265,
+            9.041999999965356,
+            9.458999999992557
+          ]
+        },
+        "inclusiveUs": {
+          "median": 9.041999999965356,
+          "min": 8.562499999982265,
+          "max": 9.458999999992557,
+          "width": 0.8965000000102918,
+          "processMedians": [
+            8.562499999982265,
+            9.041999999965356,
+            9.458999999992557
+          ]
+        },
+        "calls": 2,
+        "maximumCalls": 2,
+        "allocationBytes": 12030.08
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 9.375000000005684,
+          "min": 9.249999999980218,
+          "max": 10.041000000001077,
+          "width": 0.7910000000208584,
+          "processMedians": [
+            9.375000000005684,
+            10.041000000001077,
+            9.249999999980218
+          ]
+        },
+        "inclusiveUs": {
+          "median": 22.604500000028338,
+          "min": 21.64600000000405,
+          "max": 22.66700000001265,
+          "width": 1.0210000000085984,
+          "processMedians": [
+            22.604500000028338,
+            22.66700000001265,
+            21.64600000000405
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 7755.200000000001
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 12.000000000000455,
+          "min": 11.187499999977035,
+          "max": 12.124999999997499,
+          "width": 0.9375000000204636,
+          "processMedians": [
+            12.124999999997499,
+            12.000000000000455,
+            11.187499999977035
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.000000000000455,
+          "min": 11.187499999977035,
+          "max": 12.124999999997499,
+          "width": 0.9375000000204636,
+          "processMedians": [
+            12.124999999997499,
+            12.000000000000455,
+            11.187499999977035
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 8855.84
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 1407.2
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 8.020999999985179,
+          "min": 7.8755000000114705,
+          "max": 8.333500000020422,
+          "width": 0.45800000000895125,
+          "processMedians": [
+            8.020999999985179,
+            8.333500000020422,
+            7.8755000000114705
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.020999999985179,
+          "min": 7.8755000000114705,
+          "max": 8.333500000020422,
+          "width": 0.45800000000895125,
+          "processMedians": [
+            8.020999999985179,
+            8.333500000020422,
+            7.8755000000114705
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 1398.5599999999997
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 0.7495000000119489,
+          "min": 0.7090000000289365,
+          "max": 0.7499999999822649,
+          "width": 0.04099999995332837,
+          "processMedians": [
+            0.7090000000289365,
+            0.7499999999822649,
+            0.7495000000119489
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.7495000000119489,
+          "min": 0.7090000000289365,
+          "max": 0.7499999999822649,
+          "width": 0.04099999995332837,
+          "processMedians": [
+            0.7090000000289365,
+            0.7499999999822649,
+            0.7495000000119489
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 0
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 13.813999999968019,
+          "min": 13.583000000068068,
+          "max": 14.97949999995285,
+          "width": 1.3964999998847816,
+          "processMedians": [
+            13.813999999968019,
+            14.97949999995285,
+            13.583000000068068
+          ]
+        },
+        "inclusiveUs": {
+          "median": 13.813999999968019,
+          "min": 13.583000000068068,
+          "max": 14.97949999995285,
+          "width": 1.3964999998847816,
+          "processMedians": [
+            13.813999999968019,
+            14.97949999995285,
+            13.583000000068068
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 5091.999999999998
+      },
+      "enteringNodes": {
+        "inclusiveUs": {
+          "median": 8.479500000078133,
+          "min": 8.332500000022947,
+          "max": 8.770499999997128,
+          "width": 0.43799999997418126,
+          "processMedians": [
+            8.479500000078133,
+            8.770499999997128,
+            8.332500000022947
+          ]
+        }
+      },
+      "latency": {
+        "wrappedUs": {
+          "median": 171.79149999998344,
+          "min": 169.70850000001292,
+          "max": 179.49999999999022,
+          "width": 9.791499999977304,
+          "processMedians": [
+            171.79149999998344,
+            179.49999999999022,
+            169.70850000001292
+          ]
+        },
+        "unwrappedUs": {
+          "median": 155.83300000000122,
+          "min": 152.1665000000212,
+          "max": 160.2709999999945,
+          "width": 8.104499999973314,
+          "processMedians": [
+            155.83300000000122,
+            160.2709999999945,
+            152.1665000000212
+          ]
+        }
+      },
+      "ledgerSumUs": {
+        "median": 171.79149999998344,
+        "min": 169.70850000001292,
+        "max": 179.49999999999022,
+        "width": 9.791499999977304,
+        "processMedians": [
+          171.79149999998344,
+          179.49999999999022,
+          169.70850000001292
+        ]
+      }
+    }
+  },
+  {
+    "row": "switch-payload-12",
+    "A": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.5410000000031232,
+          "min": 1.4170000000035543,
+          "max": 1.5624999999772626,
+          "width": 0.14549999997370833,
+          "processMedians": [
+            1.5410000000031232,
+            1.4170000000035543,
+            1.5624999999772626
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.5410000000031232,
+          "min": 1.4170000000035543,
+          "max": 1.5624999999772626,
+          "width": 0.14549999997370833,
+          "processMedians": [
+            1.5410000000031232,
+            1.4170000000035543,
+            1.5624999999772626
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 247.84
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 18.45850000000837,
+          "min": 18.374999999991815,
+          "max": 18.624499999987165,
+          "width": 0.24949999999535066,
+          "processMedians": [
+            18.624499999987165,
+            18.374999999991815,
+            18.45850000000837
+          ]
+        },
+        "inclusiveUs": {
+          "median": 18.45850000000837,
+          "min": 18.374999999991815,
+          "max": 18.624499999987165,
+          "width": 0.24949999999535066,
+          "processMedians": [
+            18.624499999987165,
+            18.374999999991815,
+            18.45850000000837
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 21055.120000000003
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 46.29300000013359,
+          "min": 44.16550000004804,
+          "max": 46.665000000132295,
+          "width": 2.4995000000842538,
+          "processMedians": [
+            46.665000000132295,
+            44.16550000004804,
+            46.29300000013359
+          ]
+        },
+        "inclusiveUs": {
+          "median": 176.4769999999487,
+          "min": 171.85449999993807,
+          "max": 181.62549999999555,
+          "width": 9.771000000057484,
+          "processMedians": [
+            176.4769999999487,
+            171.85449999993807,
+            181.62549999999555
+          ]
+        },
+        "calls": 14,
+        "maximumCalls": 14,
+        "allocationBytes": 70582.00000000003
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 3.3959999999808588,
+          "min": 3.334000000023707,
+          "max": 3.43750000001819,
+          "width": 0.103499999994483,
+          "processMedians": [
+            3.43750000001819,
+            3.3959999999808588,
+            3.334000000023707
+          ]
+        },
+        "inclusiveUs": {
+          "median": 7.770999999991091,
+          "min": 7.625000000018645,
+          "max": 7.8125,
+          "width": 0.18749999998135536,
+          "processMedians": [
+            7.770999999991091,
+            7.625000000018645,
+            7.8125
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 2.3334999999917727,
+          "min": 2.333000000021457,
+          "max": 2.520500000002812,
+          "width": 0.18749999998135536,
+          "processMedians": [
+            2.333000000021457,
+            2.3334999999917727,
+            2.520500000002812
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.3334999999917727,
+          "min": 2.333000000021457,
+          "max": 2.520500000002812,
+          "width": 0.18749999998135536,
+          "processMedians": [
+            2.333000000021457,
+            2.3334999999917727,
+            2.520500000002812
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1526
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 49.999500000097896,
+          "min": 47.04250000017396,
+          "max": 52.606499999853895,
+          "width": 5.563999999679936,
+          "processMedians": [
+            49.999500000097896,
+            47.04250000017396,
+            52.606499999853895
+          ]
+        },
+        "inclusiveUs": {
+          "median": 115.49999999999727,
+          "min": 112.95849999999064,
+          "max": 122.10400000000732,
+          "width": 9.145500000016682,
+          "processMedians": [
+            115.49999999999727,
+            112.95849999999064,
+            122.10400000000732
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 53596.400000000016
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 7.708500000006779,
+          "min": 7.666000000000395,
+          "max": 7.874999999984311,
+          "width": 0.2089999999839165,
+          "processMedians": [
+            7.874999999984311,
+            7.708500000006779,
+            7.666000000000395
+          ]
+        },
+        "inclusiveUs": {
+          "median": 7.708500000006779,
+          "min": 7.666000000000395,
+          "max": 7.874999999984311,
+          "width": 0.2089999999839165,
+          "processMedians": [
+            7.874999999984311,
+            7.708500000006779,
+            7.666000000000395
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 5298.880000000001
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 35.95649999996908,
+          "min": 34.500500000063994,
+          "max": 39.51899999998432,
+          "width": 5.018499999920323,
+          "processMedians": [
+            35.95649999996908,
+            34.500500000063994,
+            39.51899999998432
+          ]
+        },
+        "inclusiveUs": {
+          "median": 42.20850000001519,
+          "min": 41.18749999997817,
+          "max": 45.250000000010004,
+          "width": 4.062500000031832,
+          "processMedians": [
+            42.20850000001519,
+            41.18749999997817,
+            45.250000000010004
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 52512.64
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 3.4574999998824296,
+          "min": 3.4169999998425737,
+          "max": 3.561500000017759,
+          "width": 0.14450000017518505,
+          "processMedians": [
+            3.4169999998425737,
+            3.561500000017759,
+            3.4574999998824296
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.4574999998824296,
+          "min": 3.4169999998425737,
+          "max": 3.561500000017759,
+          "width": 0.14450000017518505,
+          "processMedians": [
+            3.4169999998425737,
+            3.561500000017759,
+            3.4574999998824296
+          ]
+        },
+        "calls": 24,
+        "maximumCalls": 24,
+        "allocationBytes": 3010.48
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 7.14850000002798,
+          "min": 7.061999999990576,
+          "max": 7.228999999938424,
+          "width": 0.16699999994784775,
+          "processMedians": [
+            7.061999999990576,
+            7.14850000002798,
+            7.228999999938424
+          ]
+        },
+        "inclusiveUs": {
+          "median": 41.707999999971435,
+          "min": 41.04200000011815,
+          "max": 44.084000000026435,
+          "width": 3.0419999999082847,
+          "processMedians": [
+            41.707999999971435,
+            41.04200000011815,
+            44.084000000026435
+          ]
+        },
+        "calls": 15,
+        "maximumCalls": 15,
+        "allocationBytes": 1873.92
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 34.16650000002619,
+          "min": 33.72950000002106,
+          "max": 36.145500000003494,
+          "width": 2.415999999982432,
+          "processMedians": [
+            33.72950000002106,
+            34.16650000002619,
+            36.145500000003494
+          ]
+        },
+        "inclusiveUs": {
+          "median": 34.16650000002619,
+          "min": 33.72950000002106,
+          "max": 36.145500000003494,
+          "width": 2.415999999982432,
+          "processMedians": [
+            33.72950000002106,
+            34.16650000002619,
+            36.145500000003494
+          ]
+        },
+        "calls": 2,
+        "maximumCalls": 2,
+        "allocationBytes": 43121.119999999995
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 14.458499999989272,
+          "min": 13.541500000030737,
+          "max": 14.54200000003425,
+          "width": 1.0005000000035125,
+          "processMedians": [
+            14.458499999989272,
+            13.541500000030737,
+            14.54200000003425
+          ]
+        },
+        "inclusiveUs": {
+          "median": 29.81250000001978,
+          "min": 28.20850000003361,
+          "max": 31.04200000001356,
+          "width": 2.8334999999799493,
+          "processMedians": [
+            29.81250000001978,
+            28.20850000003361,
+            31.04200000001356
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 27008.479999999996
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 15.229000000005044,
+          "min": 14.60399999996298,
+          "max": 15.416000000016084,
+          "width": 0.8120000000531036,
+          "processMedians": [
+            15.416000000016084,
+            14.60399999996298,
+            15.229000000005044
+          ]
+        },
+        "inclusiveUs": {
+          "median": 15.229000000005044,
+          "min": 14.60399999996298,
+          "max": 15.416000000016084,
+          "width": 0.8120000000531036,
+          "processMedians": [
+            15.416000000016084,
+            14.60399999996298,
+            15.229000000005044
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 21288.64
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 5549.36
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 16.041000000058148,
+          "min": 15.938499999919031,
+          "max": 16.249999999871534,
+          "width": 0.31149999995250255,
+          "processMedians": [
+            16.249999999871534,
+            15.938499999919031,
+            16.041000000058148
+          ]
+        },
+        "inclusiveUs": {
+          "median": 16.041000000058148,
+          "min": 15.938499999919031,
+          "max": 16.249999999871534,
+          "width": 0.31149999995250255,
+          "processMedians": [
+            16.249999999871534,
+            15.938499999919031,
+            16.041000000058148
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 8246.560000000001
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 1.914999999939937,
+          "min": 1.8749999999272404,
+          "max": 1.9174999999904685,
+          "width": 0.04250000006322807,
+          "processMedians": [
+            1.9174999999904685,
+            1.8749999999272404,
+            1.914999999939937
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.914999999939937,
+          "min": 1.8749999999272404,
+          "max": 1.9174999999904685,
+          "width": 0.04250000006322807,
+          "processMedians": [
+            1.9174999999904685,
+            1.8749999999272404,
+            1.914999999939937
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 0
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 18.186500000041406,
+          "min": 17.91600000001381,
+          "max": 18.980999999968162,
+          "width": 1.0649999999543525,
+          "processMedians": [
+            17.91600000001381,
+            18.186500000041406,
+            18.980999999968162
+          ]
+        },
+        "inclusiveUs": {
+          "median": 18.186500000041406,
+          "min": 17.91600000001381,
+          "max": 18.980999999968162,
+          "width": 1.0649999999543525,
+          "processMedians": [
+            17.91600000001381,
+            18.186500000041406,
+            18.980999999968162
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 9645.12
+      },
+      "enteringNodes": {
+        "inclusiveUs": {
+          "median": 16.8124999998156,
+          "min": 16.66649999995684,
+          "max": 17.061500000039587,
+          "width": 0.39500000008274583,
+          "processMedians": [
+            17.061500000039587,
+            16.66649999995684,
+            16.8124999998156
+          ]
+        }
+      },
+      "latency": {
+        "wrappedUs": {
+          "median": 283.89549999997143,
+          "min": 275.8959999999888,
+          "max": 296.72949999999787,
+          "width": 20.833500000009053,
+          "processMedians": [
+            283.89549999997143,
+            275.8959999999888,
+            296.72949999999787
+          ]
+        },
+        "unwrappedUs": {
+          "median": 247.14649999998528,
+          "min": 235.6669999999781,
+          "max": 248.7289999999689,
+          "width": 13.061999999990803,
+          "processMedians": [
+            247.14649999998528,
+            235.6669999999781,
+            248.7289999999689
+          ]
+        }
+      },
+      "ledgerSumUs": {
+        "median": 283.89549999997143,
+        "min": 275.8959999999888,
+        "max": 296.72949999999787,
+        "width": 20.833500000009053,
+        "processMedians": [
+          283.89549999997143,
+          275.8959999999888,
+          296.72949999999787
+        ]
+      }
+    },
+    "B": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.5830000000107702,
+          "min": 1.4170000000035543,
+          "max": 1.6455000000235032,
+          "width": 0.22850000001994886,
+          "processMedians": [
+            1.6455000000235032,
+            1.4170000000035543,
+            1.5830000000107702
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.5830000000107702,
+          "min": 1.4170000000035543,
+          "max": 1.6455000000235032,
+          "width": 0.22850000001994886,
+          "processMedians": [
+            1.6455000000235032,
+            1.4170000000035543,
+            1.5830000000107702
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 263.76
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 19.103999999998678,
+          "min": 18.583500000005415,
+          "max": 19.687000000004673,
+          "width": 1.1034999999992579,
+          "processMedians": [
+            19.687000000004673,
+            18.583500000005415,
+            19.103999999998678
+          ]
+        },
+        "inclusiveUs": {
+          "median": 19.103999999998678,
+          "min": 18.583500000005415,
+          "max": 19.687000000004673,
+          "width": 1.1034999999992579,
+          "processMedians": [
+            19.687000000004673,
+            18.583500000005415,
+            19.103999999998678
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 20869.360000000004
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 46.70700000011152,
+          "min": 45.002500000038026,
+          "max": 48.72849999989626,
+          "width": 3.7259999998582316,
+          "processMedians": [
+            48.72849999989626,
+            45.002500000038026,
+            46.70700000011152
+          ]
+        },
+        "inclusiveUs": {
+          "median": 180.83400000006122,
+          "min": 173.7924999999052,
+          "max": 183.16749999988247,
+          "width": 9.374999999977263,
+          "processMedians": [
+            183.16749999988247,
+            173.7924999999052,
+            180.83400000006122
+          ]
+        },
+        "calls": 14,
+        "maximumCalls": 14,
+        "allocationBytes": 70563.19999999992
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 3.5419999999817264,
+          "min": 3.250000000008413,
+          "max": 3.54200000003857,
+          "width": 0.292000000030157,
+          "processMedians": [
+            3.54200000003857,
+            3.250000000008413,
+            3.5419999999817264
+          ]
+        },
+        "inclusiveUs": {
+          "median": 7.749999999987267,
+          "min": 7.417000000003782,
+          "max": 8.041500000018686,
+          "width": 0.6245000000149048,
+          "processMedians": [
+            8.041500000018686,
+            7.417000000003782,
+            7.749999999987267
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 2.3334999999917727,
+          "min": 2.312499999987949,
+          "max": 2.417000000036751,
+          "width": 0.10450000004880167,
+          "processMedians": [
+            2.417000000036751,
+            2.312499999987949,
+            2.3334999999917727
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.3334999999917727,
+          "min": 2.312499999987949,
+          "max": 2.417000000036751,
+          "width": 0.10450000004880167,
+          "processMedians": [
+            2.417000000036751,
+            2.312499999987949,
+            2.3334999999917727
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1344.96
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 51.39449999995804,
+          "min": 47.31200000020408,
+          "max": 51.72699999997121,
+          "width": 4.414999999767133,
+          "processMedians": [
+            51.39449999995804,
+            47.31200000020408,
+            51.72699999997121
+          ]
+        },
+        "inclusiveUs": {
+          "median": 121.16649999998685,
+          "min": 116.95799999998258,
+          "max": 121.99999999998568,
+          "width": 5.0420000000031,
+          "processMedians": [
+            121.16649999998685,
+            116.95799999998258,
+            121.99999999998568
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 54636.96
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 8.041499999990265,
+          "min": 7.437500000008868,
+          "max": 8.5420000000056,
+          "width": 1.104499999996733,
+          "processMedians": [
+            8.5420000000056,
+            7.437500000008868,
+            8.041499999990265
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.041499999990265,
+          "min": 7.437500000008868,
+          "max": 8.5420000000056,
+          "width": 1.104499999996733,
+          "processMedians": [
+            8.5420000000056,
+            7.437500000008868,
+            8.041499999990265
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 5299.2
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 37.252999999850545,
+          "min": 34.77049999986548,
+          "max": 38.499000000172146,
+          "width": 3.728500000306667,
+          "processMedians": [
+            37.252999999850545,
+            34.77049999986548,
+            38.499000000172146
+          ]
+        },
+        "inclusiveUs": {
+          "median": 43.60450000001492,
+          "min": 40.60449999997218,
+          "max": 45.103999999980715,
+          "width": 4.499500000008538,
+          "processMedians": [
+            43.60450000001492,
+            40.60449999997218,
+            45.103999999980715
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 58328.64
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 3.501000000142085,
+          "min": 3.3340000001658154,
+          "max": 3.6240000000304917,
+          "width": 0.2899999998646763,
+          "processMedians": [
+            3.6240000000304917,
+            3.3340000001658154,
+            3.501000000142085
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.501000000142085,
+          "min": 3.3340000001658154,
+          "max": 3.6240000000304917,
+          "width": 0.2899999998646763,
+          "processMedians": [
+            3.6240000000304917,
+            3.3340000001658154,
+            3.501000000142085
+          ]
+        },
+        "calls": 24,
+        "maximumCalls": 24,
+        "allocationBytes": 3032.3199999999997
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 7.1259999999142565,
+          "min": 7.0430000000101245,
+          "max": 7.395500000058064,
+          "width": 0.35250000004793947,
+          "processMedians": [
+            7.395500000058064,
+            7.0430000000101245,
+            7.1259999999142565
+          ]
+        },
+        "inclusiveUs": {
+          "median": 43.812500000029786,
+          "min": 42.81300000005217,
+          "max": 43.978999999950474,
+          "width": 1.165999999898304,
+          "processMedians": [
+            43.812500000029786,
+            42.81300000005217,
+            43.978999999950474
+          ]
+        },
+        "calls": 15,
+        "maximumCalls": 15,
+        "allocationBytes": 1810.88
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 36.18750000001114,
+          "min": 35.708499999969945,
+          "max": 36.20750000001749,
+          "width": 0.49900000004754475,
+          "processMedians": [
+            36.20750000001749,
+            35.708499999969945,
+            36.18750000001114
+          ]
+        },
+        "inclusiveUs": {
+          "median": 36.18750000001114,
+          "min": 35.708499999969945,
+          "max": 36.20750000001749,
+          "width": 0.49900000004754475,
+          "processMedians": [
+            36.20750000001749,
+            35.708499999969945,
+            36.18750000001114
+          ]
+        },
+        "calls": 2,
+        "maximumCalls": 2,
+        "allocationBytes": 43143.520000000004
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 13.917000000020607,
+          "min": 13.895499999989624,
+          "max": 15.99999999996271,
+          "width": 2.1044999999730862,
+          "processMedians": [
+            15.99999999996271,
+            13.895499999989624,
+            13.917000000020607
+          ]
+        },
+        "inclusiveUs": {
+          "median": 30.499499999990576,
+          "min": 29.81249999999136,
+          "max": 31.833000000005995,
+          "width": 2.0205000000146356,
+          "processMedians": [
+            31.833000000005995,
+            29.81249999999136,
+            30.499499999990576
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 27095.839999999997
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 15.458499999994046,
+          "min": 14.687500000007958,
+          "max": 15.958499999982223,
+          "width": 1.270999999974265,
+          "processMedians": [
+            15.958499999982223,
+            14.687500000007958,
+            15.458499999994046
+          ]
+        },
+        "inclusiveUs": {
+          "median": 15.458499999994046,
+          "min": 14.687500000007958,
+          "max": 15.958499999982223,
+          "width": 1.270999999974265,
+          "processMedians": [
+            15.958499999982223,
+            14.687500000007958,
+            15.458499999994046
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 21660.960000000003
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 5390.8
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 16.79249999992294,
+          "min": 16.14650000001916,
+          "max": 17.540999999937412,
+          "width": 1.3944999999182528,
+          "processMedians": [
+            16.79249999992294,
+            16.14650000001916,
+            17.540999999937412
+          ]
+        },
+        "inclusiveUs": {
+          "median": 16.79249999992294,
+          "min": 16.14650000001916,
+          "max": 17.540999999937412,
+          "width": 1.3944999999182528,
+          "processMedians": [
+            16.79249999992294,
+            16.14650000001916,
+            17.540999999937412
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 8004.32
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 1.9374999999399733,
+          "min": 1.874500000013768,
+          "max": 2.0615000000248074,
+          "width": 0.18700000001103945,
+          "processMedians": [
+            1.9374999999399733,
+            1.874500000013768,
+            2.0615000000248074
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.9374999999399733,
+          "min": 1.874500000013768,
+          "max": 2.0615000000248074,
+          "width": 0.18700000001103945,
+          "processMedians": [
+            1.9374999999399733,
+            1.874500000013768,
+            2.0615000000248074
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 0
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 14.999999999929514,
+          "min": 14.936999999974887,
+          "max": 15.31350000007592,
+          "width": 0.37650000010103213,
+          "processMedians": [
+            15.31350000007592,
+            14.936999999974887,
+            14.999999999929514
+          ]
+        },
+        "inclusiveUs": {
+          "median": 14.999999999929514,
+          "min": 14.936999999974887,
+          "max": 15.31350000007592,
+          "width": 0.37650000010103213,
+          "processMedians": [
+            15.31350000007592,
+            14.936999999974887,
+            14.999999999929514
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 5986.080000000001
+      },
+      "enteringNodes": {
+        "inclusiveUs": {
+          "median": 17.56049999988818,
+          "min": 16.87749999996413,
+          "max": 18.353999999902726,
+          "width": 1.4764999999385964,
+          "processMedians": [
+            17.56049999988818,
+            16.87749999996413,
+            18.353999999902726
+          ]
+        }
+      },
+      "latency": {
+        "wrappedUs": {
+          "median": 292.9785000000038,
+          "min": 278.18750000000136,
+          "max": 294.85400000001505,
+          "width": 16.666500000013684,
+          "processMedians": [
+            294.85400000001505,
+            278.18750000000136,
+            292.9785000000038
+          ]
+        },
+        "unwrappedUs": {
+          "median": 250.7500000000107,
+          "min": 237.35450000000924,
+          "max": 251.77049999999213,
+          "width": 14.415999999982887,
+          "processMedians": [
+            251.77049999999213,
+            237.35450000000924,
+            250.7500000000107
+          ]
+        }
+      },
+      "ledgerSumUs": {
+        "median": 292.9785000000038,
+        "min": 278.18750000000136,
+        "max": 294.85400000001505,
+        "width": 16.666500000013684,
+        "processMedians": [
+          294.85400000001505,
+          278.18750000000136,
+          292.9785000000038
+        ]
+      }
+    }
+  },
+  {
+    "row": "switch-siblings-0",
+    "A": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.5000000000071623,
+          "min": 1.4999999999929514,
+          "max": 1.5420000000005984,
+          "width": 0.04200000000764703,
+          "processMedians": [
+            1.5420000000005984,
+            1.4999999999929514,
+            1.5000000000071623
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.5000000000071623,
+          "min": 1.4999999999929514,
+          "max": 1.5420000000005984,
+          "width": 0.04200000000764703,
+          "processMedians": [
+            1.5420000000005984,
+            1.4999999999929514,
+            1.5000000000071623
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 289.5199999999999
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 6.521000000006438,
+          "min": 6.500000000016826,
+          "max": 6.541999999996051,
+          "width": 0.04199999997922532,
+          "processMedians": [
+            6.521000000006438,
+            6.541999999996051,
+            6.500000000016826
+          ]
+        },
+        "inclusiveUs": {
+          "median": 6.521000000006438,
+          "min": 6.500000000016826,
+          "max": 6.541999999996051,
+          "width": 0.04199999997922532,
+          "processMedians": [
+            6.521000000006438,
+            6.541999999996051,
+            6.500000000016826
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 3893.36
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 14.353499999970154,
+          "min": 14.271500000006654,
+          "max": 14.397000000016646,
+          "width": 0.12550000000999262,
+          "processMedians": [
+            14.353499999970154,
+            14.271500000006654,
+            14.397000000016646
+          ]
+        },
+        "inclusiveUs": {
+          "median": 54.26999999998827,
+          "min": 54.12499999999909,
+          "max": 54.43750000000591,
+          "width": 0.3125000000068212,
+          "processMedians": [
+            54.43750000000591,
+            54.26999999998827,
+            54.12499999999909
+          ]
+        },
+        "calls": 4,
+        "maximumCalls": 4,
+        "allocationBytes": 7317.039999999998
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 2.437999999997942,
+          "min": 2.375000000000682,
+          "max": 2.4579999999900792,
+          "width": 0.08299999998939711,
+          "processMedians": [
+            2.4579999999900792,
+            2.375000000000682,
+            2.437999999997942
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.083500000026334,
+          "min": 7.9790000000059536,
+          "max": 8.20800000001043,
+          "width": 0.22900000000447562,
+          "processMedians": [
+            8.20800000001043,
+            7.9790000000059536,
+            8.083500000026334
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 3.250000000008413,
+          "min": 3.2085000000137143,
+          "max": 3.2500000000226237,
+          "width": 0.04150000000890941,
+          "processMedians": [
+            3.2500000000226237,
+            3.250000000008413,
+            3.2085000000137143
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.250000000008413,
+          "min": 3.2085000000137143,
+          "max": 3.2500000000226237,
+          "width": 0.04150000000890941,
+          "processMedians": [
+            3.2500000000226237,
+            3.250000000008413,
+            3.2085000000137143
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 528
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 15.250500000007605,
+          "min": 15.00000000002899,
+          "max": 15.666999999936593,
+          "width": 0.6669999999076026,
+          "processMedians": [
+            15.666999999936593,
+            15.250500000007605,
+            15.00000000002899
+          ]
+        },
+        "inclusiveUs": {
+          "median": 25.95850000000155,
+          "min": 25.249999999999773,
+          "max": 26.042000000003895,
+          "width": 0.7920000000041227,
+          "processMedians": [
+            25.95850000000155,
+            26.042000000003895,
+            25.249999999999773
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 7446.48
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 5.0629999999642905,
+          "min": 5.00049999999419,
+          "max": 5.1670000000143546,
+          "width": 0.1665000000201644,
+          "processMedians": [
+            5.0629999999642905,
+            5.1670000000143546,
+            5.00049999999419
+          ]
+        },
+        "inclusiveUs": {
+          "median": 5.0629999999642905,
+          "min": 5.00049999999419,
+          "max": 5.1670000000143546,
+          "width": 0.1665000000201644,
+          "processMedians": [
+            5.0629999999642905,
+            5.1670000000143546,
+            5.00049999999419
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 746.88
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 1.2499999999704414,
+          "min": 1.2085000000041646,
+          "max": 1.2499999999988631,
+          "width": 0.041499999994698555,
+          "processMedians": [
+            1.2499999999988631,
+            1.2085000000041646,
+            1.2499999999704414
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.2499999999704414,
+          "min": 1.2085000000041646,
+          "max": 1.2499999999988631,
+          "width": 0.041499999994698555,
+          "processMedians": [
+            1.2499999999988631,
+            1.2085000000041646,
+            1.2499999999704414
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 675.84
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 3.749499999983641,
+          "min": 3.707499999975994,
+          "max": 3.896499999967773,
+          "width": 0.18899999999177908,
+          "processMedians": [
+            3.896499999967773,
+            3.749499999983641,
+            3.707499999975994
+          ]
+        },
+        "inclusiveUs": {
+          "median": 6.313000000019997,
+          "min": 6.291999999973541,
+          "max": 6.437499999975671,
+          "width": 0.14550000000213004,
+          "processMedians": [
+            6.437499999975671,
+            6.313000000019997,
+            6.291999999973541
+          ]
+        },
+        "calls": 4,
+        "maximumCalls": 4,
+        "allocationBytes": 427.20000000000005
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 2.5420000000053733,
+          "min": 2.4999999999977263,
+          "max": 2.5420000000053733,
+          "width": 0.04200000000764703,
+          "processMedians": [
+            2.4999999999977263,
+            2.5420000000053733,
+            2.5420000000053733
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.5420000000053733,
+          "min": 2.4999999999977263,
+          "max": 2.5420000000053733,
+          "width": 0.04200000000764703,
+          "processMedians": [
+            2.4999999999977263,
+            2.5420000000053733,
+            2.5420000000053733
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1676.72
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 3.3749999999770353,
+          "min": 3.333999999995285,
+          "max": 3.415999999972996,
+          "width": 0.08199999997771101,
+          "processMedians": [
+            3.3749999999770353,
+            3.415999999972996,
+            3.333999999995285
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.332999999998151,
+          "min": 12.22900000000493,
+          "max": 12.416500000014707,
+          "width": 0.18750000000977707,
+          "processMedians": [
+            12.416500000014707,
+            12.22900000000493,
+            12.332999999998151
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1399.8400000000001
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 8.89599999999291,
+          "min": 8.479499999992868,
+          "max": 8.938000000000557,
+          "width": 0.45850000000768887,
+          "processMedians": [
+            8.938000000000557,
+            8.479499999992868,
+            8.89599999999291
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.89599999999291,
+          "min": 8.479499999992868,
+          "max": 8.938000000000557,
+          "width": 0.45850000000768887,
+          "processMedians": [
+            8.938000000000557,
+            8.479499999992868,
+            8.89599999999291
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 5156.640000000001
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 13.957999999988147,
+          "min": 13.896000000002573,
+          "max": 14.353500000026997,
+          "width": 0.4575000000244245,
+          "processMedians": [
+            14.353500000026997,
+            13.896000000002573,
+            13.957999999988147
+          ]
+        },
+        "inclusiveUs": {
+          "median": 13.957999999988147,
+          "min": 13.896000000002573,
+          "max": 14.353500000026997,
+          "width": 0.4575000000244245,
+          "processMedians": [
+            14.353500000026997,
+            13.896000000002573,
+            13.957999999988147
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 6267.680000000001
+      },
+      "enteringNodes": {
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "latency": {
+        "wrappedUs": {
+          "median": 87.16649999999504,
+          "min": 84.3749999999801,
+          "max": 87.72899999999595,
+          "width": 3.3540000000158443,
+          "processMedians": [
+            87.72899999999595,
+            87.16649999999504,
+            84.3749999999801
+          ]
+        },
+        "unwrappedUs": {
+          "median": 75.24949999998398,
+          "min": 74.06199999998364,
+          "max": 77.41649999999822,
+          "width": 3.354500000014582,
+          "processMedians": [
+            77.41649999999822,
+            74.06199999998364,
+            75.24949999998398
+          ]
+        }
+      },
+      "ledgerSumUs": {
+        "median": 87.16649999999504,
+        "min": 84.3749999999801,
+        "max": 87.72899999999595,
+        "width": 3.3540000000158443,
+        "processMedians": [
+          87.72899999999595,
+          87.16649999999504,
+          84.3749999999801
+        ]
+      }
+    },
+    "B": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.5000000000213731,
+          "min": 1.4999999999929514,
+          "max": 1.5840000000082455,
+          "width": 0.08400000001529406,
+          "processMedians": [
+            1.5840000000082455,
+            1.4999999999929514,
+            1.5000000000213731
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.5000000000213731,
+          "min": 1.4999999999929514,
+          "max": 1.5840000000082455,
+          "width": 0.08400000001529406,
+          "processMedians": [
+            1.5840000000082455,
+            1.4999999999929514,
+            1.5000000000213731
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 233.04000000000002
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 6.687500000012392,
+          "min": 6.584000000003698,
+          "max": 6.72900000000709,
+          "width": 0.14500000000339242,
+          "processMedians": [
+            6.687500000012392,
+            6.584000000003698,
+            6.72900000000709
+          ]
+        },
+        "inclusiveUs": {
+          "median": 6.687500000012392,
+          "min": 6.584000000003698,
+          "max": 6.72900000000709,
+          "width": 0.14500000000339242,
+          "processMedians": [
+            6.687500000012392,
+            6.584000000003698,
+            6.72900000000709
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 4040.8800000000006
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 13.93850000003738,
+          "min": 13.854000000023348,
+          "max": 14.042000000117127,
+          "width": 0.18800000009377982,
+          "processMedians": [
+            13.93850000003738,
+            13.854000000023348,
+            14.042000000117127
+          ]
+        },
+        "inclusiveUs": {
+          "median": 52.208499999991886,
+          "min": 51.60399999996912,
+          "max": 52.436999999997624,
+          "width": 0.8330000000285054,
+          "processMedians": [
+            51.60399999996912,
+            52.208499999991886,
+            52.436999999997624
+          ]
+        },
+        "calls": 4,
+        "maximumCalls": 4,
+        "allocationBytes": 7449.200000000001
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 2.4175000000212776,
+          "min": 2.375000000014893,
+          "max": 2.437500000027626,
+          "width": 0.06250000001273293,
+          "processMedians": [
+            2.375000000014893,
+            2.4175000000212776,
+            2.437500000027626
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.020999999985179,
+          "min": 7.999999999995566,
+          "max": 8.082999999999174,
+          "width": 0.08300000000360797,
+          "processMedians": [
+            8.020999999985179,
+            8.082999999999174,
+            7.999999999995566
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 3.250000000008413,
+          "min": 3.249999999979991,
+          "max": 3.291999999987638,
+          "width": 0.04200000000764703,
+          "processMedians": [
+            3.250000000008413,
+            3.291999999987638,
+            3.249999999979991
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.250000000008413,
+          "min": 3.249999999979991,
+          "max": 3.291999999987638,
+          "width": 0.04200000000764703,
+          "processMedians": [
+            3.250000000008413,
+            3.291999999987638,
+            3.249999999979991
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 529.2
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 15.26999999992995,
+          "min": 14.896500000006085,
+          "max": 15.540999999970495,
+          "width": 0.6444999999644097,
+          "processMedians": [
+            15.26999999992995,
+            14.896500000006085,
+            15.540999999970495
+          ]
+        },
+        "inclusiveUs": {
+          "median": 25.000500000004422,
+          "min": 24.999999999977263,
+          "max": 25.417000000004464,
+          "width": 0.41700000002720117,
+          "processMedians": [
+            24.999999999977263,
+            25.000500000004422,
+            25.417000000004464
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 7260.799999999997
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 5.147000000008006,
+          "min": 4.834000000016658,
+          "max": 5.166500000001406,
+          "width": 0.3324999999847478,
+          "processMedians": [
+            4.834000000016658,
+            5.166500000001406,
+            5.147000000008006
+          ]
+        },
+        "inclusiveUs": {
+          "median": 5.147000000008006,
+          "min": 4.834000000016658,
+          "max": 5.166500000001406,
+          "width": 0.3324999999847478,
+          "processMedians": [
+            4.834000000016658,
+            5.166500000001406,
+            5.147000000008006
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 748.5600000000001
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 1.2499999999988631,
+          "min": 1.2089999999886913,
+          "max": 1.2914999999935617,
+          "width": 0.08250000000487034,
+          "processMedians": [
+            1.2499999999988631,
+            1.2089999999886913,
+            1.2914999999935617
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.2499999999988631,
+          "min": 1.2089999999886913,
+          "max": 1.2914999999935617,
+          "width": 0.08250000000487034,
+          "processMedians": [
+            1.2499999999988631,
+            1.2089999999886913,
+            1.2914999999935617
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 630.4
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 3.6665000000084547,
+          "min": 3.625000000013756,
+          "max": 3.6874999999554348,
+          "width": 0.06249999994167865,
+          "processMedians": [
+            3.6874999999554348,
+            3.6665000000084547,
+            3.625000000013756
+          ]
+        },
+        "inclusiveUs": {
+          "median": 6.332499999970764,
+          "min": 6.208499999985406,
+          "max": 6.3750000000197815,
+          "width": 0.16650000003437526,
+          "processMedians": [
+            6.332499999970764,
+            6.208499999985406,
+            6.3750000000197815
+          ]
+        },
+        "calls": 4,
+        "maximumCalls": 4,
+        "allocationBytes": 384.24
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 2.541000000007898,
+          "min": 2.540999999993687,
+          "max": 2.625000000023192,
+          "width": 0.08400000002950492,
+          "processMedians": [
+            2.540999999993687,
+            2.541000000007898,
+            2.625000000023192
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.541000000007898,
+          "min": 2.540999999993687,
+          "max": 2.625000000023192,
+          "width": 0.08400000002950492,
+          "processMedians": [
+            2.540999999993687,
+            2.541000000007898,
+            2.625000000023192
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1585.52
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 3.2915000000031114,
+          "min": 3.229500000003327,
+          "max": 3.3540000000016335,
+          "width": 0.12449999999830652,
+          "processMedians": [
+            3.2915000000031114,
+            3.229500000003327,
+            3.3540000000016335
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.021000000004278,
+          "min": 11.895999999993023,
+          "max": 12.666499999994585,
+          "width": 0.7705000000015616,
+          "processMedians": [
+            12.021000000004278,
+            11.895999999993023,
+            12.666499999994585
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1569.2
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 8.603999999991174,
+          "min": 8.207999999996218,
+          "max": 9.166499999992084,
+          "width": 0.9584999999958654,
+          "processMedians": [
+            8.603999999991174,
+            8.207999999996218,
+            9.166499999992084
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.603999999991174,
+          "min": 8.207999999996218,
+          "max": 9.166499999992084,
+          "width": 0.9584999999958654,
+          "processMedians": [
+            8.603999999991174,
+            8.207999999996218,
+            9.166499999992084
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 5273.52
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 11.47949999997877,
+          "min": 11.437499999999545,
+          "max": 12.084000000015749,
+          "width": 0.6465000000162036,
+          "processMedians": [
+            11.437499999999545,
+            11.47949999997877,
+            12.084000000015749
+          ]
+        },
+        "inclusiveUs": {
+          "median": 11.47949999997877,
+          "min": 11.437499999999545,
+          "max": 12.084000000015749,
+          "width": 0.6465000000162036,
+          "processMedians": [
+            11.437499999999545,
+            11.47949999997877,
+            12.084000000015749
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 4336.96
+      },
+      "enteringNodes": {
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "latency": {
+        "wrappedUs": {
+          "median": 81.52100000000928,
+          "min": 80.83299999998417,
+          "max": 82.18750000000341,
+          "width": 1.354500000019243,
+          "processMedians": [
+            80.83299999998417,
+            81.52100000000928,
+            82.18750000000341
+          ]
+        },
+        "unwrappedUs": {
+          "median": 72.4375000000066,
+          "min": 68.02100000000166,
+          "max": 72.89600000001428,
+          "width": 4.875000000012619,
+          "processMedians": [
+            72.4375000000066,
+            68.02100000000166,
+            72.89600000001428
+          ]
+        }
+      },
+      "ledgerSumUs": {
+        "median": 81.52100000000928,
+        "min": 80.83299999998417,
+        "max": 82.18750000000341,
+        "width": 1.354500000019243,
+        "processMedians": [
+          80.83299999998417,
+          81.52100000000928,
+          82.18750000000341
+        ]
+      }
+    }
+  }
+]

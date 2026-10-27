@@ -1,0 +1,1939 @@
+{
+  "sourceCommit": "c632ab5f5",
+  "removedPaths": [
+    "src/core/__tests__/fixtures/pinLatentBaseline.ts",
+    "src/core/__tests__/fixtures/pinSlotShipping.ts",
+    "src/core/engine/settle/__tests__/fixtures/createSlotVerifyPair.ts",
+    "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale-policy.test.ts",
+    "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale.test.ts",
+    "src/core/engine/settle/__tests__/settle.retained-slot-shadow.test.ts",
+    "src/core/engine/settle/__tests__/settle.retained-slot-verify-oracle.test.ts",
+    "src/core/engine/settle/types/slotVerification.ts",
+    "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+    "src/core/engine/settle/utils/latent/captureArrayLatent.ts",
+    "src/core/engine/settle/utils/latent/distributeLatentValue.ts",
+    "src/core/engine/settle/utils/latent/distributeMovedLatentInput.ts",
+    "src/core/engine/settle/utils/latent/readAbsentSlotSource.ts",
+    "src/core/engine/settle/utils/latent/readLatentSlotSource.ts",
+    "src/core/engine/settle/utils/latent/readMovedInput.ts",
+    "src/core/engine/settle/utils/latent/readRawTree.ts",
+    "src/core/engine/settle/utils/latent/replayMovedInput.ts",
+    "src/core/engine/settle/utils/latent/restoreLatentState.ts",
+    "src/core/engine/settle/utils/latent/utils/clearOtherLatentKinds.ts",
+    "src/core/engine/settle/utils/latent/utils/distributeLatentArrayValue.ts",
+    "src/core/engine/settle/utils/latentStore/DetachedWriteAddress.ts",
+    "src/core/engine/settle/utils/latentStore/HostLatent.ts",
+    "src/core/engine/settle/utils/latentStore/__tests__/setLatentRaw.test.ts",
+    "src/core/engine/settle/utils/latentStore/captureOwnLatent.ts",
+    "src/core/engine/settle/utils/latentStore/getBlueprintChildIndex.ts",
+    "src/core/engine/settle/utils/latentStore/getEnteredLatentKeys.ts",
+    "src/core/engine/settle/utils/latentStore/getLatentOrder.ts",
+    "src/core/engine/settle/utils/latentStore/getLatentPathIndex.ts",
+    "src/core/engine/settle/utils/latentStore/hasLatentUnder.ts",
+    "src/core/engine/settle/utils/latentStore/indexEnteredLatentKey.ts",
+    "src/core/engine/settle/utils/latentStore/indexLatentDescendant.ts",
+    "src/core/engine/settle/utils/latentStore/pruneLatentRaw.ts",
+    "src/core/engine/settle/utils/latentStore/setLatentRaw.ts",
+    "src/core/engine/settle/utils/slots/applyConvertedExitPolicy.ts",
+    "src/core/engine/settle/utils/slots/preserveConvertedSlotMemos.ts",
+    "src/core/engine/settle/utils/slots/serializeArraySlotSources.ts",
+    "src/core/engine/settle/utils/transition/applyExitClearing.ts",
+    "src/core/engine/settle/utils/transition/captureExitedRaw.ts",
+    "src/core/engine/settle/utils/transition/captureLatentDescendants.ts",
+    "src/core/engine/settle/utils/transition/writeLatentRaw.ts",
+    "src/core/engine/settle/utils/verify/captureSlotShadowObservations.ts",
+    "src/core/engine/settle/utils/verify/compareSlotShadowCommit.ts",
+    "src/core/engine/settle/utils/verify/compareSlotShadowDelivery.ts",
+    "src/core/engine/settle/utils/verify/compareSlotShadowIntrinsic.ts",
+    "src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts",
+    "src/core/engine/settle/utils/verify/compareSlotShadowValue.ts",
+    "src/core/engine/settle/utils/verify/createSlotShadowSession.ts",
+    "src/core/engine/settle/utils/verify/getSlotShadowSession.ts",
+    "src/core/engine/settle/utils/verify/pairSlotShadowNodes.ts",
+    "src/core/engine/settle/utils/verify/prepareSlotShadow.ts",
+    "src/core/engine/settle/utils/verify/rejectSlotShadowDifference.ts",
+    "src/core/engine/settle/utils/verify/slotShadowChannels.ts",
+    "src/core/engine/settle/utils/verify/slotShadowSessions.ts",
+    "src/core/engine/settle/utils/verify/synchronizeSlotShadowInputs.ts",
+    "src/core/engine/write/__tests__/dispatch.batch.test.ts",
+    "src/core/engine/write/__tests__/dispatch.closing-branch.test.ts"
+  ],
+  "movedPaths": {
+    "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts": "src/core/engine/settle/utils/literalStar/updateLiteralStarValues.ts",
+    "src/core/engine/settle/utils/transition/writeLatentRaw.ts": "src/core/engine/settle/utils/literalStar/writeLiteralStarRaw.ts",
+    "src/core/engine/settle/utils/transition/applyExitClearing.ts": "src/core/engine/settle/utils/literalStar/clearLiteralStarExits.ts",
+    "src/core/engine/settle/utils/transition/captureLatentDescendants.ts": "src/core/engine/settle/utils/literalStar/captureLiteralStarDescendants.ts",
+    "src/core/engine/settle/utils/transition/captureExitedRaw.ts": "src/core/engine/settle/utils/literalStar/captureLiteralStarExit.ts",
+    "src/core/engine/settle/utils/latentStore/hasLatentUnder.ts": "src/core/engine/settle/utils/literalStarStore/hasLiteralStarUnder.ts",
+    "src/core/engine/settle/utils/latentStore/getLatentOrder.ts": "src/core/engine/settle/utils/slots/getSlotOrder.ts",
+    "src/core/engine/settle/utils/latentStore/indexEnteredLatentKey.ts": "src/core/engine/settle/utils/literalStarStore/indexEnteredLiteralStarKey.ts",
+    "src/core/engine/settle/utils/latentStore/HostLatent.ts": "src/core/engine/settle/utils/literalStarStore/LiteralStarHostSource.ts",
+    "src/core/engine/settle/utils/latentStore/captureOwnLatent.ts": "src/core/engine/settle/utils/literalStarStore/captureLiteralStarOwnSource.ts",
+    "src/core/engine/settle/utils/latentStore/getLatentPathIndex.ts": "src/core/engine/settle/utils/literalStarStore/getLiteralStarPathIndex.ts",
+    "src/core/engine/settle/utils/latentStore/setLatentRaw.ts": "src/core/engine/settle/utils/literalStarStore/setLiteralStarRaw.ts",
+    "src/core/engine/settle/utils/latentStore/getEnteredLatentKeys.ts": "src/core/engine/settle/utils/literalStarStore/getEnteredLiteralStarKeys.ts",
+    "src/core/engine/settle/utils/latentStore/pruneLatentRaw.ts": "src/core/engine/settle/utils/literalStarStore/pruneLiteralStarRaw.ts",
+    "src/core/engine/settle/utils/latentStore/DetachedWriteAddress.ts": "src/core/engine/settle/utils/detached/DetachedWriteAddress.ts",
+    "src/core/engine/settle/utils/latentStore/indexLatentDescendant.ts": "src/core/engine/settle/utils/literalStarStore/indexLiteralStarDescendant.ts",
+    "src/core/engine/settle/utils/latentStore/getBlueprintChildIndex.ts": "src/core/engine/settle/utils/slots/getSlotChildIndex.ts",
+    "src/core/engine/settle/utils/latent/replayMovedInput.ts": "src/core/engine/settle/utils/slots/replayMovedSource.ts",
+    "src/core/engine/settle/utils/latent/readRawTree.ts": "src/core/engine/settle/utils/slots/readSourceTree.ts",
+    "src/core/engine/settle/utils/latent/readMovedInput.ts": "src/core/engine/settle/utils/literalStar/readLiteralStarMovedInput.ts",
+    "src/core/engine/settle/utils/latent/readAbsentSlotSource.ts": "src/core/engine/settle/utils/slots/readAbsentSlotSource.ts",
+    "src/core/engine/settle/utils/latent/readLatentSlotSource.ts": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+    "src/core/engine/settle/utils/latent/restoreLatentState.ts": "src/core/engine/settle/utils/literalStar/restoreLiteralStarState.ts",
+    "src/core/engine/settle/utils/latent/distributeLatentValue.ts": "src/core/engine/settle/utils/literalStar/distributeLiteralStarValue.ts",
+    "src/core/engine/settle/utils/latent/captureArrayLatent.ts": "src/core/engine/settle/utils/literalStar/captureLiteralStarArraySource.ts",
+    "src/core/engine/settle/utils/latent/distributeMovedLatentInput.ts": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+    "src/core/engine/settle/utils/latent/utils/distributeLatentArrayValue.ts": "src/core/engine/settle/utils/literalStar/utils/distributeLiteralStarArrayValue.ts",
+    "src/core/engine/settle/utils/latent/utils/clearOtherLatentKinds.ts": "src/core/engine/settle/utils/literalStar/utils/clearOtherLiteralStarKinds.ts",
+    "src/core/engine/settle/utils/latentStore/__tests__/setLatentRaw.test.ts": "src/core/engine/settle/utils/literalStarStore/__tests__/setLatentRaw.test.ts"
+  },
+  "symbols": {
+    "captureExitedRaw": "captureLiteralStarExit",
+    "captureLatentDescendants": "captureLiteralStarDescendants",
+    "applyExitClearing": "clearLiteralStarExits",
+    "writeLatentRaw": "writeLiteralStarRaw",
+    "setLatentRaw": "setLiteralStarRaw",
+    "restoreLatentState": "restoreLiteralStarState",
+    "updateInactiveValuesMemo": "updateLiteralStarValues",
+    "getLatentPathIndex": "getLiteralStarPathIndex",
+    "getEnteredLatentKeys": "getEnteredLiteralStarKeys",
+    "indexEnteredLatentKey": "indexEnteredLiteralStarKey",
+    "indexLatentDescendant": "indexLiteralStarDescendant",
+    "HostLatent": "LiteralStarHostSource",
+    "captureOwnLatent": "captureLiteralStarOwnSource",
+    "captureArrayLatent": "captureLiteralStarArraySource",
+    "readLatentSlotSource": "readInactiveSlotSource",
+    "hasLatentUnder": "hasLiteralStarUnder",
+    "distributeLatentValue": "distributeLiteralStarValue",
+    "pruneLatentRaw": "pruneLiteralStarRaw",
+    "distributeMovedLatentInput": "distributeMovedSource",
+    "readMovedInput": "readLiteralStarMovedInput",
+    "replayMovedInput": "replayMovedSource",
+    "getLatentOrder": "getSlotOrder",
+    "getBlueprintChildIndex": "getSlotChildIndex",
+    "LatentRawMetadata": "LiteralStarSourceMetadata",
+    "InactiveValueEntryMemo": "LiteralStarValueEntryMemo",
+    "latentAutomaticLog": "literalStarAutomaticLog",
+    "latentDescendantKeys": "literalStarDescendantKeys",
+    "latentPrefixes": "literalStarPrefixes",
+    "enteredLatentKeys": "enteredLiteralStarKeys",
+    "clearOtherLatentKinds": "clearOtherLiteralStarKinds",
+    "distributeLatentArrayValue": "distributeLiteralStarArrayValue",
+    "readRawTree": "readSourceTree"
+  },
+  "compatibility": {
+    "activation": "Only blueprint.root.containsLiteralStar === true; the entire form preserves the wildcard-publication exception. Ordinary factory creation allocates none of these stores.",
+    "files": [
+      {
+        "path": "src/core/engine/settle/utils/literalStar/captureLiteralStarArraySource.ts",
+        "lines": 60,
+        "bytes": 2329
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/captureLiteralStarDescendants.ts",
+        "lines": 147,
+        "bytes": 5509
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/captureLiteralStarExit.ts",
+        "lines": 142,
+        "bytes": 5471
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/readLiteralStarMovedInput.ts",
+        "lines": 42,
+        "bytes": 1930
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/restoreLiteralStarState.ts",
+        "lines": 59,
+        "bytes": 2217
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/distributeLiteralStarValue.ts",
+        "lines": 177,
+        "bytes": 5702
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/clearLiteralStarExits.ts",
+        "lines": 38,
+        "bytes": 1509
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/updateLiteralStarValues.ts",
+        "lines": 142,
+        "bytes": 5116
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/writeLiteralStarRaw.ts",
+        "lines": 33,
+        "bytes": 1145
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/utils/clearOtherLiteralStarKinds.ts",
+        "lines": 44,
+        "bytes": 1768
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStar/utils/distributeLiteralStarArrayValue.ts",
+        "lines": 71,
+        "bytes": 2628
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/pruneLiteralStarRaw.ts",
+        "lines": 55,
+        "bytes": 2064
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/indexEnteredLiteralStarKey.ts",
+        "lines": 24,
+        "bytes": 967
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/LiteralStarHostSource.ts",
+        "lines": 23,
+        "bytes": 1020
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/getEnteredLiteralStarKeys.ts",
+        "lines": 18,
+        "bytes": 913
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/indexLiteralStarDescendant.ts",
+        "lines": 31,
+        "bytes": 1050
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/setLiteralStarRaw.ts",
+        "lines": 73,
+        "bytes": 3042
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/captureLiteralStarOwnSource.ts",
+        "lines": 25,
+        "bytes": 998
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/getLiteralStarPathIndex.ts",
+        "lines": 25,
+        "bytes": 1043
+      },
+      {
+        "path": "src/core/engine/settle/utils/literalStarStore/hasLiteralStarUnder.ts",
+        "lines": 46,
+        "bytes": 1741
+      }
+    ],
+    "fileCount": 20,
+    "lines": 1275,
+    "bytes": 48162,
+    "sharedGuardedSites": [
+      {
+        "path": "src/core/engine/blueprint/types/node.ts",
+        "line": 136,
+        "code": "readonly containsLiteralStar?: true;"
+      },
+      {
+        "path": "src/core/engine/blueprint/utils/features/markCandidateDescendants.ts",
+        "line": 18,
+        "code": "node.containsLiteralStar"
+      },
+      {
+        "path": "src/core/engine/blueprint/utils/features/markCandidateDescendants.ts",
+        "line": 53,
+        "code": "if (pending[index].containsLiteralStar && !parent.containsLiteralStar) {"
+      },
+      {
+        "path": "src/core/engine/blueprint/utils/features/markCandidateDescendants.ts",
+        "line": 54,
+        "code": "parent.containsLiteralStar = true;"
+      },
+      {
+        "path": "src/core/engine/blueprint/buildNodes/utils/children/appendChildEntries.ts",
+        "line": 29,
+        "code": "if (name === '*') node.containsLiteralStar = true;"
+      },
+      {
+        "path": "src/core/engine/settle/types/pathStores.ts",
+        "line": 5,
+        "code": "/** Indexed literalStarRaw runtime field. */"
+      },
+      {
+        "path": "src/core/engine/settle/types/pathStores.ts",
+        "line": 6,
+        "code": "latent?: NonNullable<FieldNodeRuntime<Self>['literalStarRaw']>;"
+      },
+      {
+        "path": "src/core/engine/settle/types/pathStores.ts",
+        "line": 7,
+        "code": "/** Indexed literalStarRawMetadata runtime field. */"
+      },
+      {
+        "path": "src/core/engine/settle/types/pathStores.ts",
+        "line": 8,
+        "code": "metadata?: NonNullable<FieldNodeRuntime<Self>['literalStarRawMetadata']>;"
+      },
+      {
+        "path": "src/core/engine/settle/types/pathStores.ts",
+        "line": 17,
+        "code": "/** Indexed literalStarValuesMemo runtime field. */"
+      },
+      {
+        "path": "src/core/engine/settle/types/pathStores.ts",
+        "line": 18,
+        "code": "inactiveMemo?: NonNullable<FieldNodeRuntime<Self>['literalStarValuesMemo']>;"
+      },
+      {
+        "path": "src/core/engine/settle/types/pathStores.ts",
+        "line": 19,
+        "code": "/** Indexed literalStarValueEntries runtime field. */"
+      },
+      {
+        "path": "src/core/engine/settle/types/pathStores.ts",
+        "line": 21,
+        "code": "FieldNodeRuntime<Self>['literalStarValueEntries']"
+      },
+      {
+        "path": "src/core/engine/settle/types/settlement.ts",
+        "line": 217,
+        "code": "enteredLiteralStarKeys?: Map<string, Self[]>;"
+      },
+      {
+        "path": "src/core/engine/settle/types/settlement.ts",
+        "line": 297,
+        "code": "literalStarAutomaticLog?: Map<string, { present: boolean; value: unknown }>;"
+      },
+      {
+        "path": "src/core/engine/settle/types/settlement.ts",
+        "line": 306,
+        "code": "literalStarPrefixes?: Set<string>;"
+      },
+      {
+        "path": "src/core/engine/settle/types/settlement.ts",
+        "line": 308,
+        "code": "literalStarDescendantKeys?: Map<string, Set<string>>;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+        "line": 18,
+        "code": "import { distributeLiteralStarValue } from '../literalStar/distributeLiteralStarValue';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+        "line": 19,
+        "code": "import { pruneLiteralStarRaw } from '../literalStarStore/pruneLiteralStarRaw';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+        "line": 65,
+        "code": "((root.runtime.literalStarRaw?.size ?? 0) === 0 ||"
+      },
+      {
+        "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+        "line": 66,
+        "code": "(root.runtime.literalStarRaw?.pathIndex.under(node.path).size === 0 &&"
+      },
+      {
+        "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+        "line": 67,
+        "code": "root.runtime.literalStarRaw?.pathIndex.intersecting(node.path).size ==="
+      },
+      {
+        "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+        "line": 114,
+        "code": "if (whole) pruneLiteralStarRaw(node.rootNode.runtime, path);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+        "line": 115,
+        "code": "distributeLiteralStarValue("
+      },
+      {
+        "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+        "line": 126,
+        "code": "const metadata = node.runtime.literalStarRawMetadata?.get("
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+        "line": 9,
+        "code": "import { updateLiteralStarValues } from '../literalStar/updateLiteralStarValues';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+        "line": 40,
+        "code": "runtime.blueprint.root.containsLiteralStar === true"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+        "line": 244,
+        "code": "runtime.literalStarRawDirty ||"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+        "line": 245,
+        "code": "(runtime.literalStarRaw?.size ?? 0) > 0 ||"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+        "line": 246,
+        "code": "runtime.literalStarValueEntries?.size ||"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+        "line": 247,
+        "code": "(runtime.literalStarValuesMemo?.size ?? 0) > 0"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+        "line": 250,
+        "code": "runtime.literalStarRawDirty = true;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+        "line": 251,
+        "code": "updateLiteralStarValues(context.root);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/snapshotExitedPolicies.ts",
+        "line": 27,
+        "code": "if (!runtime.literalStarRaw?.has(key)) return;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/snapshotExitedPolicies.ts",
+        "line": 28,
+        "code": "const metadata = runtime.literalStarRawMetadata?.get(key);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/snapshotExitedPolicies.ts",
+        "line": 42,
+        "code": "runtime.literalStarRawMetadata?.set(key, current);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/commit/snapshotExitedPolicies.ts",
+        "line": 43,
+        "code": "context.literalStarDescendantKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/distributeAbsentChildInputs.ts",
+        "line": 7,
+        "code": "import { distributeLiteralStarValue } from '../literalStar/distributeLiteralStarValue';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/distributeAbsentChildInputs.ts",
+        "line": 51,
+        "code": "distributeLiteralStarValue("
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+        "line": 71,
+        "code": "context.literalStarDescendantKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+        "line": 81,
+        "code": "context.literalStarDescendantKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/prunePerishedPaths.ts",
+        "line": 35,
+        "code": "runtime.literalStarRawDirty = true;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/withdrawDetachedFills.ts",
+        "line": 5,
+        "code": "import { setLiteralStarRaw } from '../literalStarStore/setLiteralStarRaw';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/withdrawDetachedFills.ts",
+        "line": 33,
+        "code": "for (const [key, previous] of context.literalStarAutomaticLog ?? []) {"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/withdrawDetachedFills.ts",
+        "line": 41,
+        "code": "setLiteralStarRaw("
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 10,
+        "code": "import { captureLiteralStarDescendants } from '../literalStar/captureLiteralStarDescendants';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 11,
+        "code": "import { captureLiteralStarExit } from '../literalStar/captureLiteralStarExit';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 12,
+        "code": "import { clearLiteralStarExits } from '../literalStar/clearLiteralStarExits';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 13,
+        "code": "import { writeLiteralStarRaw } from '../literalStar/writeLiteralStarRaw';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 107,
+        "code": "clearLiteralStarExits("
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 121,
+        "code": "const ownsLatent = captureLiteralStarExit("
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 129,
+        "code": "captureLiteralStarDescendants(context, node, false, false, ownsLatent);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 131,
+        "code": "if ((context.root.runtime.literalStarRaw?.size ?? 0) > 0)"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+        "line": 145,
+        "code": "writeLiteralStarRaw("
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/isMissingRaw.ts",
+        "line": 3,
+        "code": "import { hasLiteralStarUnder } from '../literalStarStore/hasLiteralStarUnder';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/isMissingRaw.ts",
+        "line": 31,
+        "code": "context.root.blueprintNode.containsLiteralStar === true &&"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/isMissingRaw.ts",
+        "line": 32,
+        "code": "hasLiteralStarUnder(context, node.path)"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/restoreSourceB.ts",
+        "line": 5,
+        "code": "import { setLiteralStarRaw } from '../literalStarStore/setLiteralStarRaw';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/restoreSourceB.ts",
+        "line": 33,
+        "code": "for (const [key, previous] of context.literalStarAutomaticLog ?? [])"
+      },
+      {
+        "path": "src/core/engine/settle/utils/transition/restoreSourceB.ts",
+        "line": 34,
+        "code": "setLiteralStarRaw("
+      },
+      {
+        "path": "src/core/engine/settle/utils/detached/readFieldNodeInactiveValues.ts",
+        "line": 14,
+        "code": ": (node.runtime.literalStarValuesMemo?.get(node.path) ?? EMPTY_VALUES);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/detached/captureDetachedFieldNodeReads.ts",
+        "line": 34,
+        "code": "runtime.literalStarValuesMemo?.get(node.path) ?? EMPTY_VALUES,"
+      },
+      {
+        "path": "src/core/engine/settle/utils/settlement/createSettlementContext.ts",
+        "line": 68,
+        "code": "literalStarAutomaticLog: scratch.literalStarAutomaticLog,"
+      },
+      {
+        "path": "src/core/engine/settle/utils/input/markWrite.ts",
+        "line": 7,
+        "code": "import { indexEnteredLiteralStarKey } from '../literalStarStore/indexEnteredLiteralStarKey';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/input/markWrite.ts",
+        "line": 52,
+        "code": "indexEnteredLiteralStarKey(context, node);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+        "line": 13,
+        "code": "latent: runtime.literalStarRaw,"
+      },
+      {
+        "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+        "line": 14,
+        "code": "metadata: runtime.literalStarRaw"
+      },
+      {
+        "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+        "line": 15,
+        "code": "? (runtime.literalStarRawMetadata ??= new PathKeyedMap('pair'))"
+      },
+      {
+        "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+        "line": 21,
+        "code": "inactiveMemo: runtime.literalStarValuesMemo,"
+      },
+      {
+        "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+        "line": 22,
+        "code": "inactiveEntries: runtime.literalStarRaw"
+      },
+      {
+        "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+        "line": 23,
+        "code": "? (runtime.literalStarValueEntries ??= new PathKeyedMap('pair'))"
+      },
+      {
+        "path": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+        "line": 36,
+        "code": "literalStarAutomaticLog:"
+      },
+      {
+        "path": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+        "line": 37,
+        "code": "runtime.blueprint.root.containsLiteralStar === true"
+      },
+      {
+        "path": "src/core/engine/settle/utils/scratch/releaseSettlementScratch.ts",
+        "line": 30,
+        "code": "if (scratch.literalStarAutomaticLog?.size)"
+      },
+      {
+        "path": "src/core/engine/settle/utils/scratch/releaseSettlementScratch.ts",
+        "line": 31,
+        "code": "scratch.literalStarAutomaticLog.clear();"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+        "line": 5,
+        "code": "import { hasLiteralStarUnder } from '../literalStarStore/hasLiteralStarUnder';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+        "line": 70,
+        "code": "if (hasLiteralStarUnder(context, node.path)) {"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+        "line": 71,
+        "code": "if (!context.literalStarAutomaticLog?.size) return true;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+        "line": 72,
+        "code": "for (const [key, value] of context.root.runtime.literalStarRaw ?? []) {"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+        "line": 73,
+        "code": "const previous = context.literalStarAutomaticLog?.get(key);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+        "line": 7,
+        "code": "import { restoreLiteralStarState } from '../literalStar/restoreLiteralStarState';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+        "line": 26,
+        "code": "const latent = context.root.runtime.literalStarRaw;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+        "line": 50,
+        "code": "restoreLiteralStarState(child, own, context);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+        "line": 59,
+        "code": "} else if (host.runtime.blueprint.root.containsLiteralStar === true)"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+        "line": 60,
+        "code": "restoreLiteralStarState(child, own, context);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/primeHost.ts",
+        "line": 12,
+        "code": "import { indexEnteredLiteralStarKey } from '../literalStarStore/indexEnteredLiteralStarKey';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/primeHost.ts",
+        "line": 128,
+        "code": "indexEnteredLiteralStarKey(context, child);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/primeHost.ts",
+        "line": 133,
+        "code": "indexEnteredLiteralStarKey(context, child);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/computeNode.ts",
+        "line": 75,
+        "code": "(node.runtime.literalStarRaw?.size ?? 0) === 0 &&"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/isSlotEligible.ts",
+        "line": 10,
+        "code": "): boolean => runtime.blueprint.root.containsLiteralStar !== true;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/prepareSourcePruner.ts",
+        "line": 24,
+        "code": "node.runtime.blueprint.root.containsLiteralStar !== true &&"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 9,
+        "code": "import { LiteralStarHostSource } from '../literalStarStore/LiteralStarHostSource';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 10,
+        "code": "import { getEnteredLiteralStarKeys } from '../literalStarStore/getEnteredLiteralStarKeys';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 11,
+        "code": "import { getLiteralStarPathIndex } from '../literalStarStore/getLiteralStarPathIndex';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 36,
+        "code": "const own = runtime.literalStarRaw?.get("
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 39,
+        "code": "if (own !== undefined && !(own instanceof LiteralStarHostSource)) return own;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 40,
+        "code": "if (own instanceof LiteralStarHostSource && own.raw !== undefined)"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 45,
+        "code": "const entered = getEnteredLiteralStarKeys(context);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 47,
+        "code": "for (const key of getLiteralStarPathIndex(context).get(path) ?? []) {"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/readInactiveSlotSource.ts",
+        "line": 65,
+        "code": "own instanceof LiteralStarHostSource && isPlain(own.undeclaredValues)"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 14,
+        "code": "import { readLiteralStarMovedInput } from '../literalStar/readLiteralStarMovedInput';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 15,
+        "code": "import { LiteralStarHostSource } from '../literalStarStore/LiteralStarHostSource';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 16,
+        "code": "import { setLiteralStarRaw } from '../literalStarStore/setLiteralStarRaw';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 38,
+        "code": "if (context.root.blueprintNode.containsLiteralStar !== true) {"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 57,
+        "code": "const present = runtime.literalStarRaw?.has(key);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 58,
+        "code": "const input = readLiteralStarMovedInput(context, path, template, composed);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 64,
+        "code": "? context.literalStarAutomaticLog"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 68,
+        "code": "setLiteralStarRaw("
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 111,
+        "code": "setLiteralStarRaw("
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/distributeMovedSource.ts",
+        "line": 116,
+        "code": "new LiteralStarHostSource(raw, extras),"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/replayMovedSource.ts",
+        "line": 4,
+        "code": "import { readLiteralStarMovedInput } from '../literalStar/readLiteralStarMovedInput';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/replayMovedSource.ts",
+        "line": 26,
+        "code": ": readLiteralStarMovedInput("
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/writeInactiveSource.ts",
+        "line": 4,
+        "code": "import { distributeLiteralStarValue } from '../literalStar/distributeLiteralStarValue';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/writeInactiveSource.ts",
+        "line": 29,
+        "code": "context.root.blueprintNode.containsLiteralStar === true"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/writeInactiveSource.ts",
+        "line": 30,
+        "code": "? distributeLiteralStarValue("
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/pruneInactiveSources.ts",
+        "line": 3,
+        "code": "import { pruneLiteralStarRaw } from '../literalStarStore/pruneLiteralStarRaw';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/pruneInactiveSources.ts",
+        "line": 20,
+        "code": "if (runtime.blueprint.root.containsLiteralStar === true) {"
+      },
+      {
+        "path": "src/core/engine/settle/utils/slots/pruneInactiveSources.ts",
+        "line": 21,
+        "code": "pruneLiteralStarRaw(runtime, path, names, context);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+        "line": 20,
+        "code": "import { indexEnteredLiteralStarKey } from '../../literalStarStore/indexEnteredLiteralStarKey';"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+        "line": 266,
+        "code": "const latent = !priorChild ? context.root.runtime.literalStarRaw : undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+        "line": 330,
+        "code": "indexEnteredLiteralStarKey(context, child);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+        "line": 336,
+        "code": "indexEnteredLiteralStarKey(context, child);"
+      },
+      {
+        "path": "src/core/engine/settle/utils/input/utils/prepareWriteEpoch.ts",
+        "line": 26,
+        "code": "(runtime.literalStarRaw?.size ?? 0) ||"
+      },
+      {
+        "path": "src/core/engine/settle/utils/input/utils/prepareWriteEpoch.ts",
+        "line": 27,
+        "code": "runtime.literalStarRawDirty ||"
+      },
+      {
+        "path": "src/core/engine/settle/utils/input/utils/admitsSameValueWrite.ts",
+        "line": 29,
+        "code": "(runtime.literalStarRaw?.pathIndex.under(scope).size ?? 0) > 0 ||"
+      },
+      {
+        "path": "src/core/engine/settle/utils/input/utils/admitsSameValueWrite.ts",
+        "line": 30,
+        "code": "runtime.literalStarRawDirty ||"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+        "line": 12,
+        "code": "import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+        "line": 148,
+        "code": "context.literalStarDescendantKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+        "line": 149,
+        "code": "context.enteredLiteralStarKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+        "line": 163,
+        "code": "indexEnteredLiteralStarKey(context, node);"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts",
+        "line": 16,
+        "code": "import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts",
+        "line": 100,
+        "code": "context.literalStarDescendantKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts",
+        "line": 101,
+        "code": "context.enteredLiteralStarKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts",
+        "line": 142,
+        "code": "indexEnteredLiteralStarKey(context, inserted);"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/admitsStaticArrayTail.ts",
+        "line": 36,
+        "code": "(runtime.literalStarRaw?.size ?? 0) > 0 ||"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/admitsStaticArrayTail.ts",
+        "line": 37,
+        "code": "runtime.literalStarRawDirty ||"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+        "line": 15,
+        "code": "import { captureLiteralStarExit } from '../../../utils/literalStar/captureLiteralStarExit';"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+        "line": 16,
+        "code": "import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+        "line": 128,
+        "code": "captureLiteralStarExit("
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+        "line": 179,
+        "code": "context.literalStarDescendantKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+        "line": 180,
+        "code": "context.enteredLiteralStarKeys = undefined;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+        "line": 229,
+        "code": "(host.runtime.literalStarRaw?.pathIndex.under(host.path).size ?? 0) > 0"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+        "line": 239,
+        "code": "indexEnteredLiteralStarKey(context, node);"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+        "line": 104,
+        "code": "if (latentChanged) runtime.literalStarRawDirty = true;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+        "line": 128,
+        "code": "!runtime.literalStarRawDirty"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+        "line": 36,
+        "code": "* @returns Nothing; `literalStarRawDirty` is set exactly when the per-position cleanup would set it"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+        "line": 94,
+        "code": "runtime.literalStarRawDirty = true;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+        "line": 108,
+        "code": "if (latentChanged) runtime.literalStarRawDirty = true;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+        "line": 117,
+        "code": "if (store !== stores.misfitsMemo && !runtime.literalStarRawDirty) continue;"
+      },
+      {
+        "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyLatentMetadata.ts",
+        "line": 17,
+        "code": "FieldNodeRuntime<Self>['literalStarRawMetadata']"
+      },
+      {
+        "path": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/canLoadStaticFirstTree.ts",
+        "line": 26,
+        "code": "(root.runtime.literalStarRaw?.size ?? 0) === 0 &&"
+      },
+      {
+        "path": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+        "line": 98,
+        "code": "if (runtime.literalStarRaw) runtime.literalStarRawDirty = false;"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 52,
+        "code": "interface LiteralStarSourceMetadata {"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 64,
+        "code": "interface LiteralStarValueEntryMemo {"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 75,
+        "code": "literalStarRaw?: PathKeyedMap<unknown>;"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 77,
+        "code": "literalStarRawDirty?: boolean;"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 78,
+        "code": "/** Latent occurrence shape and document position, keyed like literalStarRaw. */"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 79,
+        "code": "literalStarRawMetadata?: PathKeyedMap<LiteralStarSourceMetadata>;"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 83,
+        "code": "literalStarValuesMemo?: PathKeyedMap<"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 87,
+        "code": "literalStarValueEntries?: PathKeyedMap<LiteralStarValueEntryMemo>;"
+      },
+      {
+        "path": "src/core/engine/record/types/runtime.ts",
+        "line": 187,
+        "code": "literalStarAutomaticLog?: Map<string, { present: boolean; value: unknown }>;"
+      },
+      {
+        "path": "src/core/surface/utils/fieldNodeFactory.ts",
+        "line": 51,
+        "code": "| 'literalStarRaw'"
+      },
+      {
+        "path": "src/core/surface/utils/fieldNodeFactory.ts",
+        "line": 53,
+        "code": "| 'literalStarValuesMemo'"
+      },
+      {
+        "path": "src/core/surface/utils/fieldNodeFactory.ts",
+        "line": 138,
+        "code": "...(analysis.root.containsLiteralStar === true"
+      },
+      {
+        "path": "src/core/surface/utils/fieldNodeFactory.ts",
+        "line": 140,
+        "code": "literalStarRaw:"
+      },
+      {
+        "path": "src/core/surface/utils/fieldNodeFactory.ts",
+        "line": 141,
+        "code": "runtimeSeed.literalStarRaw ?? new PathKeyedMap('pair'),"
+      },
+      {
+        "path": "src/core/surface/utils/fieldNodeFactory.ts",
+        "line": 142,
+        "code": "literalStarValuesMemo:"
+      },
+      {
+        "path": "src/core/surface/utils/fieldNodeFactory.ts",
+        "line": 143,
+        "code": "runtimeSeed.literalStarValuesMemo ?? new PathKeyedMap('path'),"
+      }
+    ],
+    "sizeScope": "Dedicated compatibility implementation only; shared guarded branches and runtime declarations are listed separately, not included in the dedicated byte/line total."
+  },
+  "removedCaptureStoreMemoAndDetachedReadSites": [
+    {
+      "path": "src/core/engine/DETAIL.md",
+      "baselineLine": 5,
+      "removed": "- B4-1은 `engineModes.slots`를 내부 시험·벤치 제어로 두며 출하 기본 `on`, 기준 잠복 저장 경로 `off`, 공개 관측을 대조하는 `verify`를 제공한다. 모드는 트리 생성 전에 고르고 기존 setMode의 파생 메모 초기화와 시험 복구 규칙을 따른다. 공개 package export나 환경 변수는 늘리지 않는다."
+    },
+    {
+      "path": "src/core/engine/record/DETAIL.md",
+      "baselineLine": 14,
+      "removed": "- 떼어진 참조의 쓰기는 정착·커밋을 만들지 않는다. 그 쓰기의 overlay는 다음 재진입 원본에 즉시 사용하지만 살아 있는 호스트의 `inactiveValues`는 다음 커밋 전까지 직전 공표 내용을 유지한다. 읽기 자료는 커밋된 overlay와 아직 공표하지 않은 쓰기를 구분하여 지연 materialize가 이 시점 계약을 앞당기지 않게 한다(NODE-044, VALUE-029·031)."
+    },
+    {
+      "path": "src/core/engine/record/types/runtime.ts",
+      "baselineLine": 75,
+      "removed": "latentRaw: PathKeyedMap<unknown>;"
+    },
+    {
+      "path": "src/core/engine/record/types/runtime.ts",
+      "baselineLine": 77,
+      "removed": "latentRawDirty?: boolean;"
+    },
+    {
+      "path": "src/core/engine/record/types/runtime.ts",
+      "baselineLine": 78,
+      "removed": "/** Latent occurrence shape and document position, keyed like latentRaw. */"
+    },
+    {
+      "path": "src/core/engine/record/types/runtime.ts",
+      "baselineLine": 79,
+      "removed": "latentRawMetadata?: PathKeyedMap<LatentRawMetadata>;"
+    },
+    {
+      "path": "src/core/engine/record/types/runtime.ts",
+      "baselineLine": 83,
+      "removed": "inactiveValuesMemo: PathKeyedMap<readonly { path: string; value: unknown }[]>;"
+    },
+    {
+      "path": "src/core/engine/record/types/runtime.ts",
+      "baselineLine": 215,
+      "removed": "slotVerification?: {"
+    },
+    {
+      "path": "src/core/engine/settle/DETAIL.md",
+      "baselineLine": 24,
+      "removed": "- 이 문서의 잠복 원본은 형상 밖 원본의 의미이다. 물리적인 latentRaw·메타데이터·색인·포착 함수는 off 기준 경로와 B4-1의 명시적 공존 지점에 한정한다. on의 정상 나감은 기존 분리·읽기 고정·게이트/경로 등록 해제 뒤 슬롯 삽입을 하고 captureExitedRaw·setLatentRaw·잠복 메타데이터·색인 등록을 하지 않는다. 중간 나감·같은 정착의 되살림과 진짜 소멸을 기존대로 구분한다."
+    },
+    {
+      "path": "src/core/engine/settle/DETAIL.md",
+      "baselineLine": 26,
+      "removed": "- overlay는 호스트 소유이며 떼어진 인스턴스의 원본·읽기를 수정하지 않는다. 비활성 쓰기·동일 경로 다른 종류 정리·전체 교체의 누락 경로 삭제·배치 교체 범위는 기준 경로와 같다. 아직 방문하지 않은 부재 선언의 입력도 기존 첫 종류 분배를 유지한다. 떼어진 쓰기는 정착을 만들지 않아 그 원본의 즉시 갱신과 다음 커밋의 inactiveValues 공표를 구분한다(VALUE-031, NODE-044, WRITE-007·087)."
+    },
+    {
+      "path": "src/core/engine/settle/DETAIL.md",
+      "baselineLine": 351,
+      "removed": "- 별표 없는 폼의 on 커밋에서 updateInactiveValuesMemo 호출과 나감의 inactiveValues 포착은 0이다. literal-star를 포함한 폼은 서브트리 전체의 기존 잠복 원본과 마지막 커밋 목록을 보존하며 배열은 off의 packed snapshot 우선순위도 유지한다. 첫 읽기 결과는 off의 항목·순서·값·동결과 같고, 영향 없는 호스트 및 항목 참조를 보존하며 읽히지 않은 진입·이탈도 항목 수명에 반영한다. unread detached 읽기는 reset·재배치·후속 생명주기와 독립이다."
+    },
+    {
+      "path": "src/core/engine/settle/DETAIL.md",
+      "baselineLine": 356,
+      "removed": "- verify는 매 커밋의 value·inactiveValues·떼어진 읽기·사건·payload·revision·참조 수명을 대조한다. 복제 원본·비움/보존·overlay·배열 이동의 차이를 검출하고 차이 0만 통과로 센다. 정상 on 경로에 그림자 비용을 넣지 않는다."
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/DETAIL.md",
+      "baselineLine": 10,
+      "removed": "- 두 저장 표현이 공존하는 B4-1에서 필요한 경우에만 영향 슬롯을 기존 잠복 표현으로 일회 변환한 뒤 기존 충돌 없는 재키를 사용할 수 있다. 이 fallback은 배열 이동 범위의 보유 서브트리에 비례하고 일반 분기 전환의 잠복 포착 0 조건에 포함하지 않는다. 사용 여부와 비용을 결과에 밝히며 B4-2에서는 슬롯 이전으로 대체한다. clear·진짜 소멸은 원본을 지우되 옛 참조의 마지막 inactiveValues 읽기는 유지한다."
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/arrangeFieldNodeItems.ts",
+      "baselineLine": 185,
+      "removed": "if (node.runtime.slots !== 'verify')"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/admitsStaticArrayTail.ts",
+      "baselineLine": 36,
+      "removed": "runtime.latentRaw.size > 0 ||"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/admitsStaticArrayTail.ts",
+      "baselineLine": 37,
+      "removed": "runtime.latentRawDirty ||"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "baselineLine": 25,
+      "removed": "import { captureExitedRaw } from '../../../utils/transition/captureExitedRaw';"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "baselineLine": 123,
+      "removed": "captureExitedRaw("
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "baselineLine": 223,
+      "removed": "if (host.runtime.latentRaw.pathIndex.under(host.path).size > 0) {"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "baselineLine": 36,
+      "removed": "* @returns Nothing; `latentRawDirty` is set exactly when the per-position cleanup would set it"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "baselineLine": 90,
+      "removed": "runtime.latentRawDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "baselineLine": 98,
+      "removed": "if (latentChanged) runtime.latentRawDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "baselineLine": 105,
+      "removed": "if (store !== stores.misfitsMemo && !runtime.latentRawDirty) continue;"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "baselineLine": 101,
+      "removed": "if (latentChanged) runtime.latentRawDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "baselineLine": 123,
+      "removed": "!runtime.latentRawDirty"
+    },
+    {
+      "path": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyLatentMetadata.ts",
+      "baselineLine": 17,
+      "removed": "FieldNodeRuntime<Self>['latentRawMetadata']"
+    },
+    {
+      "path": "src/core/engine/settle/loadFieldNodeAtMount/loadFieldNodeAtMount.ts",
+      "baselineLine": 47,
+      "removed": "if (root.runtime.slots !== 'verify')"
+    },
+    {
+      "path": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/canLoadStaticFirstTree.ts",
+      "baselineLine": 26,
+      "removed": "root.runtime.latentRaw.size === 0 &&"
+    },
+    {
+      "path": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "baselineLine": 100,
+      "removed": "runtime.inactiveValuesMemo.set('', EMPTY_VALUES);"
+    },
+    {
+      "path": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "baselineLine": 101,
+      "removed": "runtime.latentRawDirty = false;"
+    },
+    {
+      "path": "src/core/engine/settle/types/pathStores.ts",
+      "baselineLine": 5,
+      "removed": "/** Indexed latentRaw runtime field. */"
+    },
+    {
+      "path": "src/core/engine/settle/types/pathStores.ts",
+      "baselineLine": 6,
+      "removed": "latent: NonNullable<FieldNodeRuntime<Self>['latentRaw']>;"
+    },
+    {
+      "path": "src/core/engine/settle/types/pathStores.ts",
+      "baselineLine": 7,
+      "removed": "/** Indexed latentRawMetadata runtime field. */"
+    },
+    {
+      "path": "src/core/engine/settle/types/pathStores.ts",
+      "baselineLine": 8,
+      "removed": "metadata: NonNullable<FieldNodeRuntime<Self>['latentRawMetadata']>;"
+    },
+    {
+      "path": "src/core/engine/settle/types/pathStores.ts",
+      "baselineLine": 17,
+      "removed": "/** Indexed inactiveValuesMemo runtime field. */"
+    },
+    {
+      "path": "src/core/engine/settle/types/pathStores.ts",
+      "baselineLine": 18,
+      "removed": "inactiveMemo: NonNullable<FieldNodeRuntime<Self>['inactiveValuesMemo']>;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 23,
+      "removed": "import { updateInactiveValuesMemo } from './updateInactiveValuesMemo';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 244,
+      "removed": "runtime.latentRaw.size > 0 &&"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 247,
+      "removed": "runtime.latentRawDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 249,
+      "removed": "runtime.slots !== 'on' ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 252,
+      "removed": "runtime.latentRaw.size > 0 ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 254,
+      "removed": "runtime.latentRawDirty ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 256,
+      "removed": "runtime.inactiveValuesMemo.size > 0"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 258,
+      "removed": "if (!isSlotEligible(runtime)) updateInactiveValuesMemo(context.root);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 261,
+      "removed": "if (!node.detached) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 272,
+      "removed": "if (runtime.latentRawDirty || runtime.inactiveValueEntries?.size) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 273,
+      "removed": "if (runtime.latentRawDirty)"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 275,
+      "removed": "if (!node.detached) node.inactiveValuesDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 276,
+      "removed": "context.root.inactiveValuesDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 280,
+      "removed": "updateInactiveValuesMemo(context.root);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 289,
+      "removed": "if (host) host.inactiveValuesDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "baselineLine": 297,
+      "removed": "if (runtime.slots !== 'on') compareSlotShadowCommit(context.root);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/snapshotExitedPolicies.ts",
+      "baselineLine": 27,
+      "removed": "if (!runtime.latentRaw.has(key)) return;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/snapshotExitedPolicies.ts",
+      "baselineLine": 28,
+      "removed": "const metadata = runtime.latentRawMetadata?.get(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/snapshotExitedPolicies.ts",
+      "baselineLine": 42,
+      "removed": "runtime.latentRawMetadata?.set(key, current);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 27,
+      "removed": "* @returns Nothing; inactiveValuesMemo is updated at this commit boundary"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 29,
+      "removed": "export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>("
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 33,
+      "removed": "if (!runtime.latentRawDirty && runtime.inactiveValuesMemo.has('')) return;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 34,
+      "removed": "const metadata = runtime.latentRawMetadata;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 41,
+      "removed": "for (const [key, source] of runtime.latentRaw) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 92,
+      "removed": "if (!runtime.latentRaw.has(key)) metadata.delete(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 94,
+      "removed": "runtime.latentRawDirty = false;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 95,
+      "removed": "if (changedPaths.length === 0 && runtime.inactiveValuesMemo.has('')) return;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 128,
+      "removed": "const previous = runtime.inactiveValuesMemo.get(host);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 135,
+      "removed": "if (next.length) runtime.inactiveValuesMemo.set(host, Object.freeze(next));"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 136,
+      "removed": "else if (!host) runtime.inactiveValuesMemo.set('', EMPTY_VALUES);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts",
+      "baselineLine": 137,
+      "removed": "else runtime.inactiveValuesMemo.delete(host);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "baselineLine": 266,
+      "removed": "const latent = context.root.runtime.latentRaw;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "baselineLine": 75,
+      "removed": "node.runtime.latentRaw.size === 0 &&"
+    },
+    {
+      "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+      "baselineLine": 8,
+      "removed": "import { restoreLatentState } from '../latent/restoreLatentState';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+      "baselineLine": 26,
+      "removed": "const latent = context.root.runtime.latentRaw;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+      "baselineLine": 50,
+      "removed": "restoreLatentState(child, own, context);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/compute/enterFieldNode.ts",
+      "baselineLine": 59,
+      "removed": "} else restoreLatentState(child, own, context);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+      "baselineLine": 72,
+      "removed": "for (const [key, value] of context.root.runtime.latentRaw) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/context/changeFieldNodeContext.ts",
+      "baselineLine": 67,
+      "removed": "if (root.runtime.slots !== 'verify')"
+    },
+    {
+      "path": "src/core/engine/settle/utils/detached/captureDetachedFieldNodeReads.ts",
+      "baselineLine": 37,
+      "removed": "runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,"
+    },
+    {
+      "path": "src/core/engine/settle/utils/detached/readFieldNodeInactiveValues.ts",
+      "baselineLine": 14,
+      "removed": ": (node.runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/input/utils/admitsSameValueWrite.ts",
+      "baselineLine": 29,
+      "removed": "runtime.latentRaw.pathIndex.under(scope).size > 0 ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/input/utils/admitsSameValueWrite.ts",
+      "baselineLine": 30,
+      "removed": "runtime.latentRawDirty ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/input/utils/prepareWriteEpoch.ts",
+      "baselineLine": 26,
+      "removed": "runtime.latentRaw.size ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/input/utils/prepareWriteEpoch.ts",
+      "baselineLine": 27,
+      "removed": "runtime.latentRawDirty ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/distributeLatentValue.ts",
+      "baselineLine": 131,
+      "removed": "const prior = runtime.latentRaw.get(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/distributeMovedLatentInput.ts",
+      "baselineLine": 39,
+      "removed": "const present = runtime.latentRaw.has(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/readLatentSlotSource.ts",
+      "baselineLine": 34,
+      "removed": "const own = runtime.latentRaw.get("
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/readLatentSlotSource.ts",
+      "baselineLine": 51,
+      "removed": "!node.detached &&"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/readMovedInput.ts",
+      "baselineLine": 26,
+      "removed": "if (!runtime.latentRaw.has(key)) return composed;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/readMovedInput.ts",
+      "baselineLine": 27,
+      "removed": "const own = runtime.latentRaw.get(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/readMovedInput.ts",
+      "baselineLine": 36,
+      "removed": "runtime.latentRawMetadata?.get(key)?.blueprintNode ?? template,"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/readRawTree.ts",
+      "baselineLine": 29,
+      "removed": "!node.detached &&"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/readRawTree.ts",
+      "baselineLine": 30,
+      "removed": "!node.runtime.latentRaw.pathIndex.under(node.path).size"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/readRawTree.ts",
+      "baselineLine": 33,
+      "removed": "if (node.detached) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latent/restoreLatentState.ts",
+      "baselineLine": 16,
+      "removed": "export const restoreLatentState = <Self extends FieldNodeRecord<Self>>("
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/DetachedWriteAddress.ts",
+      "baselineLine": 25,
+      "removed": "const cells = (runtime.detachedWriteAddresses ??= new WeakMap());"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/DetachedWriteAddress.ts",
+      "baselineLine": 47,
+      "removed": "const cells = runtime.detachedWriteAddresses;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/DetachedWriteAddress.ts",
+      "baselineLine": 64,
+      "removed": "const cells = node.runtime.detachedWriteAddresses;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/getLatentPathIndex.ts",
+      "baselineLine": 18,
+      "removed": "for (const key of context.root.runtime.latentRaw.keys()) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/hasLatentUnder.ts",
+      "baselineLine": 23,
+      "removed": "!node.detached &&"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/hasLatentUnder.ts",
+      "baselineLine": 33,
+      "removed": "for (const key of context.root.runtime.latentRaw.keys()) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/indexLatentDescendant.ts",
+      "baselineLine": 6,
+      "removed": "* @param key - Encoded path and kind stored in latentRaw"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/indexLatentDescendant.ts",
+      "baselineLine": 8,
+      "removed": "* @param present - Whether the key is now present in latentRaw"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/pruneLatentRaw.ts",
+      "baselineLine": 46,
+      "removed": "for (const key of runtime.latentRaw.keys()) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts",
+      "baselineLine": 32,
+      "removed": "const latent = runtime.latentRaw;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts",
+      "baselineLine": 42,
+      "removed": "present && template !== undefined && !runtime.latentRawMetadata?.has(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts",
+      "baselineLine": 47,
+      "removed": "const metadata = (runtime.latentRawMetadata ??= new PathKeyedMap('pair'));"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts",
+      "baselineLine": 48,
+      "removed": "runtime.latentRawMetadata = metadata;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts",
+      "baselineLine": 66,
+      "removed": "runtime.latentRawDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+      "baselineLine": 13,
+      "removed": "latent: runtime.latentRaw,"
+    },
+    {
+      "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+      "baselineLine": 14,
+      "removed": "metadata: (runtime.latentRawMetadata ??= new PathKeyedMap('pair')),"
+    },
+    {
+      "path": "src/core/engine/settle/utils/pathStores/getRuntimePathStores.ts",
+      "baselineLine": 19,
+      "removed": "inactiveMemo: runtime.inactiveValuesMemo,"
+    },
+    {
+      "path": "src/core/engine/settle/utils/reset/resetFieldNodeForm.ts",
+      "baselineLine": 38,
+      "removed": "if (root.runtime.slots !== 'verify')"
+    },
+    {
+      "path": "src/core/engine/settle/utils/reset/resetFieldNodeSubtree.ts",
+      "baselineLine": 36,
+      "removed": "if (node.runtime.slots !== 'verify')"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/applyConvertedExitPolicy.ts",
+      "baselineLine": 23,
+      "removed": "!node.runtime.latentRaw.size ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/applyConvertedExitPolicy.ts",
+      "baselineLine": 24,
+      "removed": "!node.runtime.latentRaw.pathIndex.under(node.path).size"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/isSlotEligible.ts",
+      "baselineLine": 11,
+      "removed": "runtime.slots !== 'off' &&"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts",
+      "baselineLine": 21,
+      "removed": "if (!host.detached)"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/retainExitedSlot.ts",
+      "baselineLine": 31,
+      "removed": "const key = node.runtime.latentRaw.size"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/retainExitedSlot.ts",
+      "baselineLine": 39,
+      "removed": "node.runtime.latentRaw.has(key)"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/retainExitedSlot.ts",
+      "baselineLine": 58,
+      "removed": "if (key !== undefined && node.runtime.latentRaw.has(key))"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/serializeArraySlotSources.ts",
+      "baselineLine": 42,
+      "removed": "const incompatible = plan.slots.some((slot, index) => {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/serializeArraySlotSources.ts",
+      "baselineLine": 125,
+      "removed": "const metadata = host.runtime.latentRawMetadata?.get(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/serializeArraySlotSources.ts",
+      "baselineLine": 134,
+      "removed": "host.runtime.latentRawMetadata?.set(key, current);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/slots/serializeArraySlotSources.ts",
+      "baselineLine": 136,
+      "removed": "const classified = host.runtime.latentRawMetadata?.get(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/applyExitClearing.ts",
+      "baselineLine": 4,
+      "removed": "import { captureExitedRaw } from './captureExitedRaw';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/applyExitClearing.ts",
+      "baselineLine": 23,
+      "removed": "if (skip(node) || context.entered.has(node) || !node.detached) continue;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/applyExitClearing.ts",
+      "baselineLine": 25,
+      "removed": "captureExitedRaw("
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/captureExitedRaw.ts",
+      "baselineLine": 31,
+      "removed": "export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>("
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/captureExitedRaw.ts",
+      "baselineLine": 61,
+      "removed": "captureExitedRaw("
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/captureExitedRaw.ts",
+      "baselineLine": 97,
+      "removed": ": captureOwnLatent(node, context.root.runtime.latentRaw.get(key));"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/captureExitedRaw.ts",
+      "baselineLine": 111,
+      "removed": "value: node.runtime.latentRaw.get(key),"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/captureExitedRaw.ts",
+      "baselineLine": 133,
+      "removed": "const metadata = node.runtime.latentRawMetadata?.get(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/captureLatentDescendants.ts",
+      "baselineLine": 88,
+      "removed": "const info = runtime.latentRawMetadata?.get(key);"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "baselineLine": 16,
+      "removed": "import { captureExitedRaw } from './captureExitedRaw';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "baselineLine": 121,
+      "removed": "const ownsLatent = captureExitedRaw("
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "baselineLine": 131,
+      "removed": "if (context.root.runtime.latentRaw.size > 0)"
+    },
+    {
+      "path": "src/core/engine/settle/utils/transition/prunePerishedPaths.ts",
+      "baselineLine": 35,
+      "removed": "runtime.latentRawDirty = true;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/captureSlotShadowObservations.ts",
+      "baselineLine": 7,
+      "removed": "} from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowCommit.ts",
+      "baselineLine": 15,
+      "removed": "if (root.runtime.slots !== 'verify' && root.runtime.slots !== 'off') return;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowCommit.ts",
+      "baselineLine": 17,
+      "removed": "if (root.runtime.slots === 'off') {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowCommit.ts",
+      "baselineLine": 35,
+      "removed": "const accounting = (root.runtime.slotVerification ??= {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowDelivery.ts",
+      "baselineLine": 2,
+      "removed": "import type { SlotShadowSession } from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts",
+      "baselineLine": 7,
+      "removed": "} from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts",
+      "baselineLine": 85,
+      "removed": "node.detached +"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts",
+      "baselineLine": 88,
+      "removed": "const inactive = Reflect.get(node, 'inactiveValues');"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts",
+      "baselineLine": 91,
+      "removed": "Object.isFrozen(observation.values.inactiveValues)"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts",
+      "baselineLine": 93,
+      "removed": "rejectSlotShadowDifference(session, node.path + '.inactiveValues.frozen');"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts",
+      "baselineLine": 94,
+      "removed": "const latent = observation.values.inactiveValues;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowObservations.ts",
+      "baselineLine": 100,
+      "removed": "node.path + '.inactiveValues.' + index + '.frozen',"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/compareSlotShadowValue.ts",
+      "baselineLine": 2,
+      "removed": "import type { SlotShadowSession } from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/createSlotShadowSession.ts",
+      "baselineLine": 4,
+      "removed": "import type { SlotShadowSession } from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/createSlotShadowSession.ts",
+      "baselineLine": 28,
+      "removed": "latentRaw: new PathKeyedMap('pair'),"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/createSlotShadowSession.ts",
+      "baselineLine": 29,
+      "removed": "inactiveValuesMemo: new PathKeyedMap('path'),"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/getSlotShadowSession.ts",
+      "baselineLine": 2,
+      "removed": "import type { SlotShadowSession } from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/pairSlotShadowNodes.ts",
+      "baselineLine": 5,
+      "removed": "} from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/prepareSlotShadow.ts",
+      "baselineLine": 21,
+      "removed": "if (root.runtime.slots !== 'verify') return undefined;"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/rejectSlotShadowDifference.ts",
+      "baselineLine": 2,
+      "removed": "import type { SlotShadowSession } from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/rejectSlotShadowDifference.ts",
+      "baselineLine": 15,
+      "removed": "const accounting = (session.actual.runtime.slotVerification ??= {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/slotShadowChannels.ts",
+      "baselineLine": 7,
+      "removed": "'inactiveValues',"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/synchronizeSlotShadowInputs.ts",
+      "baselineLine": 4,
+      "removed": "import type { SlotShadowSession } from '../../types/slotVerification';"
+    },
+    {
+      "path": "src/core/engine/settle/utils/verify/synchronizeSlotShadowInputs.ts",
+      "baselineLine": 61,
+      "removed": "if (!baseline.detached)"
+    },
+    {
+      "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+      "baselineLine": 57,
+      "removed": "if (root.runtime.slots === 'verify' && !getSlotShadowSession(root)?.active)"
+    },
+    {
+      "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+      "baselineLine": 76,
+      "removed": "(root.runtime.latentRaw.size === 0 ||"
+    },
+    {
+      "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+      "baselineLine": 77,
+      "removed": "(root.runtime.latentRaw.pathIndex.under(node.path).size === 0 &&"
+    },
+    {
+      "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+      "baselineLine": 78,
+      "removed": "root.runtime.latentRaw.pathIndex.intersecting(node.path).size === 0)) &&"
+    },
+    {
+      "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+      "baselineLine": 119,
+      "removed": "if (resolved.source || resolved.overlay || !node.runtime.latentRaw.size) {"
+    },
+    {
+      "path": "src/core/engine/settle/utils/write/writeFieldNode.ts",
+      "baselineLine": 144,
+      "removed": "const metadata = node.runtime.latentRawMetadata?.get("
+    },
+    {
+      "path": "src/core/engine/utils/cache/engineModes.ts",
+      "baselineLine": 24,
+      "removed": "return modes.slots;"
+    },
+    {
+      "path": "src/core/surface/utils/fieldNodeFactory.ts",
+      "baselineLine": 48,
+      "removed": "| 'latentRaw'"
+    },
+    {
+      "path": "src/core/surface/utils/fieldNodeFactory.ts",
+      "baselineLine": 50,
+      "removed": "| 'inactiveValuesMemo'"
+    },
+    {
+      "path": "src/core/surface/utils/fieldNodeFactory.ts",
+      "baselineLine": 135,
+      "removed": "slots: runtimeSeed.slots ?? engineModes.slots,"
+    },
+    {
+      "path": "src/core/surface/utils/fieldNodeFactory.ts",
+      "baselineLine": 136,
+      "removed": "latentRaw: runtimeSeed.latentRaw ?? new PathKeyedMap('pair'),"
+    },
+    {
+      "path": "src/core/surface/utils/fieldNodeFactory.ts",
+      "baselineLine": 138,
+      "removed": "inactiveValuesMemo:"
+    },
+    {
+      "path": "src/core/surface/utils/fieldNodeFactory.ts",
+      "baselineLine": 139,
+      "removed": "runtimeSeed.inactiveValuesMemo ?? new PathKeyedMap('path'),"
+    }
+  ]
+}
