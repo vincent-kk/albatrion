@@ -83,6 +83,12 @@ interface FieldNodeRootRuntimeState {
   inactiveValuesMemo: PathKeyedMap<readonly { path: string; value: unknown }[]>;
   /** Published latent item objects retained across unrelated commits. */
   inactiveValueEntries?: PathKeyedMap<InactiveValueEntryMemo>;
+  /** Existing latent pair keys whose publications need reconsideration. */
+  inactiveValueChanges?: Set<string>;
+  /** Wholesale pruning or path rearrangement requires the full oracle. */
+  inactiveValuesRebuild?: boolean;
+  /** Sort positions of published item objects, without changing their public shape. */
+  inactiveValueOrders?: WeakMap<object, readonly number[]>;
 }
 
 /** Last committed reads retained for one node reference after it exits. */

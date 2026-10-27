@@ -2,6 +2,7 @@
 import { afterAll, expect } from 'vitest';
 
 import { engineModes } from '../../utils/cache/engineModes';
+import { inactiveValuesVerification } from '../utils/commit/verifyInactiveValuesMemo';
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 
@@ -9,13 +10,16 @@ const previousModes = {
   gateSelection: engineModes.gateSelection,
   gateWheel: engineModes.gateWheel,
   deriveShadow: engineModes.deriveShadow,
+  inactiveValues: engineModes.inactiveValues,
 };
 engineModes.setMode('deriveShadow', true);
 engineModes.setMode('gateWheel', 'shadow');
 engineModes.setMode('gateSelection', 'verify');
+engineModes.setMode('inactiveValues', 'verify');
 
 /** Exclude assertions from any earlier file sharing this module instance. */
 const assertionsBefore = { ...gateSelectionTable.assertions };
+const inactiveBefore = { ...inactiveValuesVerification };
 
 afterAll(() => {
   try {
@@ -28,11 +32,21 @@ afterAll(() => {
     if (Object.keys(assertions).length)
       console.log('GATE_TABLE_ASSERTIONS', JSON.stringify(assertions));
     expect(gateWheelEvaluation.nonNoop).toBe(0);
+    const inactive = {
+      comparisons:
+        inactiveValuesVerification.comparisons - inactiveBefore.comparisons,
+      violations:
+        inactiveValuesVerification.violations - inactiveBefore.violations,
+    };
+    expect(inactive.violations).toBe(0);
+    if (inactive.comparisons)
+      console.log('INACTIVE_MEMO_SHADOW', JSON.stringify(inactive));
     if (gateWheelEvaluation.predictions || gateWheelEvaluation.missed)
       console.log('gate-wheel-shadow', JSON.stringify(gateWheelEvaluation));
   } finally {
     engineModes.setMode('gateSelection', previousModes.gateSelection);
     engineModes.setMode('gateWheel', previousModes.gateWheel);
     engineModes.setMode('deriveShadow', previousModes.deriveShadow);
+    engineModes.setMode('inactiveValues', previousModes.inactiveValues);
   }
 });
