@@ -4,9 +4,14 @@ import { buildFixture } from '../fixtures.mjs';
 import { mapLeaves } from './mapLeaves.mjs';
 import { materialize } from './materialize.mjs';
 import { setupBranchOperation } from './setupBranchOperation.mjs';
+import { setupSubscriptionOperation } from './setupSubscriptionOperation.mjs';
 
 /** Prepare a version-specific operation and an untimed value check; all fixture work stays outside timing. */
 export async function setupOperation(row, engine, mod) {
+  if (row.operation === 'subscription') {
+    assert.equal(engine, 'current', 'Subscription rows use the current engine');
+    return setupSubscriptionOperation(row, mod);
+  }
   if (row.shape === 'branch-switch')
     return setupBranchOperation(row, engine, mod);
   const schema = buildFixture(row, engine === 'legacy');

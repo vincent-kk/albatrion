@@ -276,3 +276,51 @@ compute·finalize·commit 안의 하위 함수 비용을 그 문맥별로 읽을
 `reportLedger`는 행·PID·표본·교대·최소값·중앙값·각 표본 self 합을 검증한 뒤
 `summary.json`과 `tables.md`를 만듭니다. 회귀는 N=2·10·40·80·160의 쓰기당 시간에 대한
 최소제곱 `floor + slope × N`이고, Δ항은 `payload12 − oneOf80`입니다.
+
+## B1 소유자 승인 교대 창
+
+`alternate.mjs`는 두 로컬 Node 번들을 A/B로 복사한 뒤 **각 행에서 A0 B0 … A9 B9**를
+새 프로세스로 실행합니다. 기존 paired worker의 fixture·사전 검사·타이머·레거시 교대는
+그대로 공유합니다. 두 번들 경로를 명시하며 dist를 교체하거나 소스를 빌드하지 않습니다.
+행은 canonical 8개, if/discriminator/nested 3개, 형제 4개, gated leaf 4개, 구독 2개입니다.
+구독 wave는 1,000개 배달, subscribed single은 10쓰기·10개 배달을 확인합니다.
+
+```sh
+export B1_BASELINE_NODE=/absolute/baseline/index.node.mjs
+export B1_CANDIDATE_NODE=/absolute/candidate/index.node.mjs
+"$D0_NODE" "$D0_TOOLS/alternate.mjs" \
+  --baseline-bundle="$B1_BASELINE_NODE" --candidate-bundle="$B1_CANDIDATE_NODE" \
+  --runs=10 --warmups=20 --samples=100 --label=b1-alternating \
+  --quiet-since=2026-10-27T00:00:00Z
+```
+
+정식 창은 실제 과거 quiet-since를 받아야 하며 20예열·100표본·역할별 10프로세스로
+고정합니다. 다른 설정의 정식 실행은 거부합니다. `--only`를 쓰는 정식 창에도 품질 행이
+포함되어야 합니다. 100 미만의 표본은 장치 smoke이며 더 작은 짝수 프로세스 수를 허용합니다.
+smoke의 품질도 출력하지만 실패로 중단하지 않으며 수용 증거로 사용하지 않습니다.
+
+대표 시간은 프로세스별 최소값의 중앙입니다. **A는 앞 5개 A, A′는 뒤 5개 A, B는 B 전체
+10개**입니다. 폭 (다)는 `max(|A−A′|, rangeA, rangeA′)`입니다. 개선은 B가 A보다 폭 밖으로
+작고 A′보다도 작은 경우이며 악화는 대칭으로 판정합니다. A′를 별도 창에서 다시 실행하지
+않습니다. TEST-073의 주 비교는 전체 교대 10쌍의 표본별 처리량 `1000/ms`에 대한 Welch
+검정(평균 처리량 −15% 초과와 p<0.05)이고, 앞 5쌍·뒤 5쌍도 별도로 병기합니다. 실행을
+교대하는 것이며 통계 검정을 paired t-test로 바꾸지 않습니다.
+
+품질 행 `single-flat-1000`을 먼저 실행합니다. **B 전체 10개의 최소값 중앙 ÷ A 전체 10개의
+최소값 중앙**이 0.95~1.05 밖이면 `ALTERNATING_WINDOW_INVALID`와 exit 2로 멈추고 다른
+행을 실행하지 않습니다. `results.json`·`quality.json`에는 실패한 제어 행과 원표본도 남습니다.
+무효 창은 판정 불가이며 자동 재시도하지 않습니다. 실행 허용 횟수와 새 창 승인은 소유자가
+결정합니다. 5초 CPU 사전 점검·조용한 창 확보·끝 CPU 표본은 코디네이터의 창 실행기가
+기존 B0 절차대로 수행해야 합니다. 이 CLI의 시간 행 외 힙·단계 장부는 별도 장치로 유지합니다.
+
+각 판의 복사본·해시는 실행 루트 아래 `A/`·`B/`에, 모든 프로세스의 `.stdout`·`.stderr`·
+`.command.json`과 환경·누적 결과는 실행 루트에 남습니다. 창이 중단돼도 원자료를 삭제하거나
+덮어쓰지 않습니다. 아래 검증은 통계 반쪽·품질 경계·잘못된 설정·20자식 후 품질 중단과
+도구 구문을 검사하며 실제 정식 표본은 만들지 않습니다.
+
+```sh
+"$D0_NODE" "$D0_TOOLS/helpers/checkAlternatingDevice.mjs"
+"$D0_NODE" "$D0_TOOLS/alternate.mjs" \
+  --baseline-bundle="$B1_BASELINE_NODE" --candidate-bundle="$B1_CANDIDATE_NODE" \
+  --runs=2 --warmups=2 --samples=3 --label=alternating-smoke
+```
