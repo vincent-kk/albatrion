@@ -4,10 +4,17 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
+import type {
+  GatePredicate,
+  GatePredicateMemo,
+} from '../../types/gatePredicate';
 import type { PresenceQueryCursor } from '../../types/presenceQueryCursor';
 import { getGateExpression } from './getGateExpression';
+import { createGatePredicate } from './predicates/createGatePredicate';
+import { getIfGateReadNames } from './predicates/getIfGateReadNames';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
 
@@ -15,6 +22,10 @@ import type { GateOccurrence } from './type';
 interface RegisteredGateOccurrence extends GateOccurrence {
   /** Absolute paths whose raw or projected changes can alter this decision. */
   watchPaths: readonly string[];
+  /** Runtime predicate bound only to this live occurrence. */
+  readonly predicate: GatePredicate;
+  /** Last successful pure evaluation; a throwing attempt clears it. */
+  memo?: GatePredicateMemo;
 }
 
 /** A node path and its currently live memoized gate occurrences. */
@@ -81,7 +92,10 @@ class GateRegistry {
   private readonly segments = new Map<string, readonly string[]>();
 
   /** Bind exact expression dependencies from this tree's analyzed blueprint. */
-  constructor(private readonly blueprint: Blueprint) {}
+  constructor(
+    private readonly blueprint: Blueprint,
+    private readonly runtime: { blueprint: Blueprint; validator?: unknown },
+  ) {}
 
   /** Resolve each requested host/dependency pair once for this runtime. */
   resolveRead(hostPath: string, dependency: string): string {
@@ -318,9 +332,20 @@ class GateRegistry {
       node.path,
       childHostPath,
     );
+    const watchPaths = this.watchPaths(location);
+    let predicate: GatePredicate | undefined;
+    const runtime = this.runtime;
     const occurrence: RegisteredGateOccurrence = {
       ...location,
-      watchPaths: this.watchPaths(location),
+      watchPaths,
+      /** @returns One evaluator, bound only when this occurrence is actually read. */
+      get predicate() {
+        return (predicate ??= createGatePredicate(
+          runtime,
+          location,
+          watchPaths,
+        ));
+      },
     };
     memo.set(gate, occurrence);
     let entries = this.byLocation.get(occurrence.evaluationHostPath);
@@ -380,7 +405,15 @@ class GateRegistry {
   /** Resolve expression reads once at occurrence registration. */
   private watchPaths(location: GateOccurrence): readonly string[] {
     const gate = location.gate;
-    if (gate.kind === 'if') return [location.hostPath];
+    if (gate.kind === 'if') {
+      const names =
+        engineModes.gatePredicate === 'off'
+          ? undefined
+          : getIfGateReadNames(gate.condition);
+      return names
+        ? names.map((name) => location.hostPath + '/' + escapeSegment(name))
+        : [location.hostPath];
+    }
     if (
       gate.kind === 'discriminator' &&
       gate.condition !== null &&
@@ -491,7 +524,7 @@ export const getGateRegistry = (runtime: {
   if (runtime.blueprint.capabilities.branchless) return EMPTY_REGISTRY;
   let registry = REGISTRIES.get(runtime);
   if (!registry) {
-    registry = new GateRegistry(runtime.blueprint);
+    registry = new GateRegistry(runtime.blueprint, runtime);
     REGISTRIES.set(runtime, registry);
   }
   return registry;

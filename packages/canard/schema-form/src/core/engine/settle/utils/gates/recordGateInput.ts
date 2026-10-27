@@ -16,10 +16,39 @@ export const recordGateInput = <Self extends FieldNodeRecord<Self>>(
   path: string,
   value: unknown,
   kind: GateWheelInput['kind'] = 'value',
+  site?: Omit<GateWheelInput, 'value'>,
 ): void => {
   const frame = context.gateWheelFrame;
   if (!frame) return;
-  recordGateFrameInput(frame, { path, kind, value });
-  if (frame.selectionShadow)
-    recordGateFrameInput(frame.selectionShadow, { path, kind, value });
+  const key = site?.key ?? (kind === 'value' ? path : kind + ':' + path);
+  const previous = frame.inputs.get(key);
+  if (previous) {
+    if (!Object.is(previous.value, value)) frame.consistent = false;
+    if (frame.selectionShadow) {
+      const shadow = frame.selectionShadow.inputs.get(key);
+      if (shadow) {
+        if (!Object.is(shadow.value, value))
+          frame.selectionShadow.consistent = false;
+      } else
+        recordGateFrameInput(frame.selectionShadow, {
+          path,
+          kind,
+          value,
+          key,
+          hostPath: site?.hostPath,
+          name: site?.name,
+        });
+    }
+    return;
+  }
+  const input = {
+    path,
+    kind,
+    value,
+    key,
+    hostPath: site?.hostPath,
+    name: site?.name,
+  };
+  recordGateFrameInput(frame, input);
+  if (frame.selectionShadow) recordGateFrameInput(frame.selectionShadow, input);
 };

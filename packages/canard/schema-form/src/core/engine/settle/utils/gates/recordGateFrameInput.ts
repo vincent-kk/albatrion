@@ -12,7 +12,8 @@ export const recordGateFrameInput = (
 ): void => {
   if (!frame) return;
   const key =
-    input.kind === 'value' ? input.path : `${input.kind}:${input.path}`;
+    input.key ??
+    (input.kind === 'value' ? input.path : `${input.kind}:${input.path}`);
   const previous = frame.inputs.get(key);
   if (previous) {
     if (!Object.is(previous.value, input.value)) frame.consistent = false;

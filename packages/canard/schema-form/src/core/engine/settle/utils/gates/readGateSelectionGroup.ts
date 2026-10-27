@@ -50,12 +50,15 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
     for (const index of indices) {
       const step = round.table.plan.steps[index];
       if (!step.gate || !childGroup.literalsByGate.has(step.gate)) continue;
-      const expression = getGateExpression(
-        node.runtime.blueprint,
-        step.gate.schemaPath,
-      )!;
+      const expression =
+        step.gate.kind === 'discriminator'
+          ? undefined
+          : getGateExpression(node.runtime.blueprint, step.gate.schemaPath);
       verifyGateSelection(
-        admitted.includes(index) === Boolean(expression.evaluate([value])),
+        admitted.includes(index) ===
+          (step.gate.kind === 'discriminator'
+            ? step.gate.condition.values.some((tag) => tag === value)
+            : Boolean(expression!.evaluate([value]))),
         'S1 table step verdict: ' + index,
       );
     }

@@ -4,6 +4,7 @@ import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
+import { evaluateGate } from './evaluateGate';
 import { getGateRegistry } from './getGateRegistry';
 import { readProjectedValue } from './readProjectedValue';
 import { recordGateFrameInput } from './recordGateFrameInput';
@@ -23,6 +24,17 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   value: boolean,
 ): void => {
+  if (
+    context
+      .gateSelectionRounds!.get(node)!
+      .table.predicateGroups.some((group) => group.gate === gate)
+  ) {
+    verifyGateSelection(
+      evaluateGate(gate, context, node, undefined, true) === value,
+      'S1 predicate verdict: ' + gate.schemaPath,
+    );
+    return;
+  }
   if (engineModes.gateSelection === 'verify') {
     const round = context.gateSelectionRounds!.get(node)!;
     const registry = getGateRegistry(node.runtime);

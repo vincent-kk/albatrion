@@ -20,6 +20,8 @@ export interface GateSelectionRound {
   values: Map<string, GateSelectionValue>;
   /** Escaped watched paths fixed at round entry for the dirty observer. */
   watchedPaths: readonly string[];
+  /** Hoisted scalar tag paths whose proven constraint-only schema can become dirty. */
+  stableSchemaPaths: readonly string[];
   /** Whether dirty marks still belong to this round. */
   active: boolean;
 }

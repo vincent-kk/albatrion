@@ -35,6 +35,15 @@ export interface RootGateSelectionGroup {
 
 /** Cached static metadata; no runtime values or selection results are retained. */
 export interface GateSelectionTable {
+  /** Non-literal pure gates whose complete reads are stable baseline terminals. */
+  readonly predicateGroups: readonly {
+    /** Occurrence-bound gate evaluated once before its selected steps apply. */
+    readonly gate: BlueprintGate;
+    /** Candidate indices admitted together by this predicate. */
+    readonly steps: readonly number[];
+    /** Baseline names whose values and presence fully determine this predicate. */
+    readonly watchedNames: readonly string[];
+  }[];
   /** Existing direct-plan eligibility and evaluation order. */
   readonly plan: NonNullable<ReturnType<typeof getDirectChildSelectionPlan>>;
   /** Watched-key groups in first-step order. */

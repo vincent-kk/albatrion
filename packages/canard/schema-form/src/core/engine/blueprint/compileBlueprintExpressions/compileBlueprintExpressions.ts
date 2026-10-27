@@ -109,7 +109,7 @@ export const compileBlueprintExpressions = (
           };
           Object.defineProperty(compiled, 'completeReads', {
             value:
-              context.capabilities.hasDerive &&
+              (context.capabilities.hasDerive || key === 'active') &&
               hasCompleteExpressionReads(source),
           });
           if (process.env.NODE_ENV !== 'production') {

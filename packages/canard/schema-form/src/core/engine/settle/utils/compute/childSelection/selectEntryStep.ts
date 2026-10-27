@@ -14,6 +14,7 @@ import { recordSettlementFailure } from '../../errors/recordSettlementFailure';
 import { evaluateGate } from '../../gates/evaluateGate';
 import { flushPendingGateReads } from '../../gates/flushPendingGateReads';
 import { getGateRegistry } from '../../gates/getGateRegistry';
+import { readGateSelectionGroup } from '../../gates/readGateSelectionGroup';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
 import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
@@ -24,6 +25,8 @@ import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
 import type { DirectChildSelection } from './getDirectChildSelectionPlan';
 import { readAdmittedEdgeSchema } from './readAdmittedEdgeSchema';
 import { staticIds } from './staticIds';
+import type { PreparedDiscriminatorEntry } from './utils/prepareDiscriminatorEntrySelection';
+import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
@@ -56,6 +59,8 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   readonly reuseStatic?: (entry: BlueprintChildEntry) => boolean;
   /** Present only for a table step; its pure recognized expression cannot throw. */
   tableVerdict?: boolean;
+  /** A table predicate failed at its original first evaluation position. */
+  tableThrew?: boolean;
 }
 
 /**
@@ -98,14 +103,31 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   let declarations: BlueprintChildEntry['declarations'];
   let activeIds: readonly number[] | undefined;
   let fullyAdmitted = false;
-  if (step) {
+  let discriminator: PreparedDiscriminatorEntry | undefined;
+  const round = context.gateSelectionRounds?.get(node);
+  const tagGroup =
+    step?.discriminatorSelection && round?.active
+      ? round.table.groups.find((group) => group.watchedName === entry.name)
+      : undefined;
+  if (tagGroup && step?.discriminatorSelection) {
+    discriminator = readDiscriminatorEntrySelection(
+      entry,
+      step.discriminatorSelection,
+      readGateSelectionGroup(node, context, tagGroup),
+      node.runtime.blueprint.isAtomic,
+    );
+    declarations = entry.declarations;
+    activeIds = discriminator.ids;
+  } else if (step && !step.general) {
     const version = context.gateThrowVersion;
     const admitted =
       frame.tableVerdict ??
       (!step.gate || evaluateGate(step.gate, context, node));
     declarations = admitted ? entry.declarations : NO_DECLARATIONS;
     activeIds = admitted ? step.ids : NO_ACTIVE_IDS;
-    threw = !admitted && context.gateThrowVersion !== version;
+    threw =
+      !admitted &&
+      (frame.tableThrew === true || context.gateThrowVersion !== version);
   } else if (context.hasGates) {
     // Allocated at the first rejected declaration; until then every one is admitted.
     let active: (typeof entry.declarations)[number][] | undefined;
@@ -120,14 +142,22 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         gateIndex++
       ) {
         const gate = declaration.gates[gateIndex];
+        const previousDecision = step?.general
+          ? context.gateWheelFrame?.predicateResults?.get(
+              getGateRegistry(node.runtime).locate(node, gate),
+            )
+          : undefined;
         if (
-          !evaluateGate(
-            gate,
-            context,
-            node,
-            gate.schemaPath === declaration.schemaPath + '/controls/active'
-              ? entry.name
-              : undefined,
+          !(
+            previousDecision ??
+            evaluateGate(
+              gate,
+              context,
+              node,
+              gate.schemaPath === declaration.schemaPath + '/controls/active'
+                ? entry.name
+                : undefined,
+            )
           )
         ) {
           admitted = false;
@@ -302,6 +332,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       )
     : undefined;
   const effective =
+    discriminator?.schema ??
     admittedEdge?.schema ??
     mergeEffectiveSchema(
       child.blueprintNode,
