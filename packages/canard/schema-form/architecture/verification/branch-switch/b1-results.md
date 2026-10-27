@@ -253,3 +253,90 @@ Node 상한은 통과하고 Bun B 중앙은 A 중앙보다 +2.734053 B/노드(+0
 속도/메모리 비용은 **if/discriminator가 A보다 개선되고 상대선을 만족했으나 active 부담 해소는 입증되지 않고 A대B canonical 3행의 통계 회귀가 남았으며, Node flat 중앙은 약 3.129 B/노드 증가하되 고정 상한은 통과하고 Bun 중앙은 약 2.734 B/노드 증가했다**는 것입니다. 수용을 주장하지 않고 두 번째 실패를 escalation했습니다. 추가 후보나 원인 분리, 독립 검토 및 PR 처리는 코디네이터 결정이 남아 있습니다.
 
 후보 2 전체 원자료·실행 상태는 같은 루트의 `judgement.json`, `test073-primary.log`, `test073-aprime.log`, `quiet-window.json`, `window-end.json`과 `evidence/`에 있습니다. 기본 장부는 `stages/`, guard/view 진단은 같은 접두사의 `-breakdown/stages`, 9개 시간 가족은 `-A/-B/-Aprime-{canonical,branch,probes}/pair`입니다. 배포 번들은 B의 원본 두 채널로 복원했고 SHA를 재확인했습니다.
+
+## 진단 — 배포 A/B의 교대 실행과 CPU 프로파일
+
+이 절은 코디네이터가 후보 3 여부를 판단하기 위해 승인한 진단이며 정식 수용 수치가 아닙니다. 제품은 `38e405d6b`로 고정했고 추가 코드는 만들지 않았습니다. 앞선 두 정식 창의 TEST-073 실패·미채택 판정도 그대로입니다.
+
+### 빌드 경로와 번들 모양
+
+`yarn build`는 `rolldown -c` 뒤 artifact·types·hashes·typecheck를 실행합니다. 보존한 A와 B 로그 모두 rolldown v1.2.0이며 단계 시작부터 번들 설정·package.json·공통 빌드 보조·yarn.lock은 변하지 않았습니다. 양쪽 Node 채널은 ESM 단일 chunk, minify=false·sourcemap=false이며 외부 import 18문장·공개 export 블록·개발 플래그 배너가 같습니다. A/B의 크기는 750,076/769,011 B이고 출력의 고유 소스 region 표시는 672/681개입니다. region은 비축소 출력에 남은 파일 표식 수이며 별도 보존되지 않은 bundler module-graph 전체 계수와 구별합니다.
+
+독립 진단의 rolldown 재빌드 사본도 직접 읽었습니다. **원시 파일은 출력 위치 때문에 source-region 주석의 경로가 다릅니다. 그 주석 경로만 `src/` 기준으로 정규화하고 사본의 추가 export 한 줄을 제외하면 A/B 각각 정식 Node 번들과 바이트 동일**합니다. 코드·공개 표면의 정규화는 하지 않았습니다. 이 증거는 `build-provenance.json`·`independent-proof.json`과 두 빌드 로그에 있습니다. B0 scratch는 esbuild·제한된 진입점·production define을 사용하므로 배포 dist의 절대 시간과 바꾸어 읽지 않습니다.
+
+### 부하 조건과 실행 범위
+
+원자료는 `/private/tmp/claude-501/perf-runs/20261027T1152-38e405d-diag`입니다. 11:53:09·11:55:19·11:57:37 UTC의 세 차례 점검은 mediaanalysisd CPU 83.42/84.68/83.32%로 차단되어 표본 0개였습니다. 코디네이터가 이 OS 부하를 명시하는 진단 한정 예외를 승인한 뒤 실행했습니다. **최종 실행의 실제 시작·끝 5초 표본은 heavy 0**이었습니다. 앞선 차단 부하가 전체 수집 중 계속되었다고 주장하지 않으며, 승인 범위대로 해석은 비율·순위만 사용합니다.
+
+정본 worker를 수정하지 않고 각 행을 A B A B A B, 각 프로세스 20예열·100표본으로 실행했습니다. 시간 12프로세스 뒤 oneOf80의 CPU 프로파일 6개를 별도로 같은 조건과 `--cpu-prof --cpu-prof-interval=100`으로 수집했습니다. 모두 exit 0입니다. CLI 프로파일에는 적재·사전 검사·예열·확인이 포함되므로 분석은 현재 번들의 `setValue` 아래 call-tree에 속한 self 표본과 그 하위 외부 보조만 분리합니다. 레거시만의 작업·모듈 적재·루트 idle/GC는 제외합니다. 기본 수용 시간·기본 장부에 이 프로파일을 섞지 않았습니다.
+
+### 프로세스별 최소값·중앙값의 상대값
+
+각 행에서 A의 프로세스 최소값 세 개의 중앙을 최소값 기준 1, A의 프로세스 표본 중앙값 세 개의 중앙을 중앙값 기준 1로 놓았습니다. 각 프로세스의 두 통계를 그 기준으로 나누므로 개별 흔들림을 숨기지 않습니다. 원표본은 `.stdout`·`.json`에 보존했고 이 절은 절대 시간으로 채택을 주장하지 않습니다.
+
+| 행 | 순서 | 판/프로세스 PID | 최소 상대값 | 중앙 상대값 |
+| --- | ---: | --- | ---: | ---: |
+| switch-oneOf-80 | 1 | A / 8532 | 1.064 | 1.173 |
+| switch-oneOf-80 | 2 | B / 8558 | 0.540 | 0.745 |
+| switch-oneOf-80 | 3 | A / 8584 | 1.000 | 1.000 |
+| switch-oneOf-80 | 4 | B / 8597 | 0.997 | 0.964 |
+| switch-oneOf-80 | 5 | A / 8610 | 0.901 | 0.815 |
+| switch-oneOf-80 | 6 | B / 8636 | 0.576 | 0.895 |
+| switch-siblings-0 | 1 | A / 8663 | 1.016 | 1.045 |
+| switch-siblings-0 | 2 | B / 8689 | 1.178 | 1.006 |
+| switch-siblings-0 | 3 | A / 8715 | 0.818 | 0.814 |
+| switch-siblings-0 | 4 | B / 8731 | 1.121 | 1.012 |
+| switch-siblings-0 | 5 | A / 8744 | 1.000 | 1.000 |
+| switch-siblings-0 | 6 | B / 8770 | 0.707 | 0.661 |
+
+| 바로 인접한 A/B 쌍 | 반복 | B/A 최소값 | B/A 중앙값 |
+| --- | ---: | ---: | ---: |
+| switch-oneOf-80 | 1 | 0.508 | 0.635 |
+| switch-oneOf-80 | 2 | 0.997 | 0.964 |
+| switch-oneOf-80 | 3 | 0.639 | 1.098 |
+| switch-siblings-0 | 1 | 1.160 | 0.962 |
+| switch-siblings-0 | 2 | 1.370 | 1.243 |
+| switch-siblings-0 | 3 | 0.707 | 0.661 |
+
+oneOf80의 최소 통계 중앙 B/A는 0.576, 중앙 통계 중앙 B/A는 0.895입니다. siblings0는 각각 1.121·1.006이며 인접 쌍의 중앙 비율이 0.661~1.243으로 양쪽 방향에 걸칩니다. 이 변동은 정식 창에서 나타난 고정된 B 추가 부담을 이번 교대 진단에서 재현하지 못했다는 뜻입니다. 이를 B의 개선 입증으로 해석하지 않습니다.
+
+### self 증가 상위 15개
+
+세 프로파일의 평균 self를 비교했습니다. 표의 A/B 모두 **A의 setValue 하위 전체 self=100**을 같은 분모로 쓰며 차이는 그 상대 포인트입니다. A의 `selectTableChildren`는 B의 `selectLiteralTableChildren`와 dispatcher에 대응시켜 단순 이름 이동을 새 비용으로 세지 않았고, 원래 이름 표도 JSON에 남겼습니다. `setValue` 아래 표본 수는 A 512/549/481, B 548/539/532개입니다. 작은 함수의 비율은 적은 표본에서 크게 흔들릴 수 있으므로 순위를 원인 증명으로 바꾸지 않습니다.
+
+| 순위 | 함수 (소스 구획) | A 상대 self | B 상대 self | Δ 포인트 | B/A |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 1 | computeNodeBody (computeNode) | 4.354 | 5.182 | +0.828 | 1.190 |
+| 2 | commitSettlement (commitSettlement) | 2.016 | 2.653 | +0.637 | 1.316 |
+| 3 | captureExitedRaw (captureExitedRaw) | 0.480 | 1.088 | +0.607 | 2.264 |
+| 4 | visitFieldNodes.owned (snapshotExitedPolicies) | 0.374 | 0.978 | +0.604 | 2.616 |
+| 5 | add (DirtyPathSet) | 0.360 | 0.941 | +0.581 | 2.614 |
+| 6 | selectEntryStep (selectEntryStep) | 2.140 | 2.702 | +0.562 | 1.263 |
+| 7 | buildOwners (getControlLayers) | 0.531 | 0.922 | +0.391 | 1.737 |
+| 8 | get path (FieldNode) | 0.221 | 0.601 | +0.380 | 2.714 |
+| 9 | getBlueprintDerived (derivedRecords) | 0.165 | 0.478 | +0.313 | 2.891 |
+| 10 | literalTableSelection (selector + dispatcher) (gateSelection) | 1.893 | 2.204 | +0.310 | 1.164 |
+| 11 | selectRootGateDeclarations (selectRootGateDeclarations) | 0.172 | 0.458 | +0.285 | 2.654 |
+| 12 | supplementSplitOwner (supplementSplitOwner) | 0.108 | 0.367 | +0.259 | 3.392 |
+| 13 | delete (PathKeyedMap) | 0.381 | 0.628 | +0.247 | 1.649 |
+| 14 | visitFieldNodes.owned (finalizeExits) | 0.202 | 0.444 | +0.243 | 2.202 |
+| 15 | readProjectedValue (readProjectedValue) | 0.103 | 0.341 | +0.238 | 3.313 |
+
+이 범위의 전체 self B/A는 0.887입니다. 변화가 여러 기존 함수에 흩어져 있고, 최대 증가도 A 전체 대비 0.828포인트입니다. profiler 자기 시간은 샘플링 가중치에 따른 추정이며 이 진단만으로 개별 함수의 고유 비용이나 열/OS 상태의 전체 인과를 확정하지 않습니다.
+
+### 독립 진단과 나란히 본 결과
+
+코디네이터가 별도로 실행한 진단 산출물도 읽고 가능한 값은 원자료에서 다시 집계했습니다. 재현 스크립트를 추가 실행하지는 않았습니다. 보존 경로는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/349f4da5-0121-4452-a71e-eb7f51d6cb4e/scratchpad/b1diag`입니다.
+
+| 관측 | 이 worker 교대 진단 | 독립 진단 |
+| --- | --- | --- |
+| oneOf80 최소 통계 중앙 B/A | 0.576 (각 3프로세스) | 0.827 (정본 worker 각 6프로세스) |
+| oneOf80 표본 중앙 통계 중앙 B/A | 0.895 | 0.940 (같은 worker 원자료) |
+| oneOf80 전체 표본 평균 B/A | 수용 판정에 사용하지 않음 | 0.979 (같은 worker 원자료) |
+| rolldown 재빌드·현 조건 재현 | 주석 경로 정규화 뒤 A/B 각 원본과 동일 | 재현 각 10프로세스의 중앙 통계 B/A 0.999·최소 통계 1.014 |
+| 함수 호출 계수/쓰기 | 정식 장부상 evaluateGate0·selectChildren1 | 전체 선언 함수 A2283.5/B2284.5, evaluateGate0 |
+| 힙 증가 탐침 | 후보2 정식 B2와 구별 | 코디네이터 보고 두 판 차이 약0.20%; 읽은 alloc.mjs는 heapUsed 증가량 기반 탐침이며 누적 할당 전량 계수가 아님 |
+
+정본 worker 원자료는 `h-{base,head}-*.json`, 10프로세스 재현은 `rpair10.txt`, 호출은 `base.counts.json`·`head.counts.json`에서 확인했습니다. 중앙값·평균·최소값의 집계법을 따로 밝혔으므로 코디네이터의 반올림 요약과 통계를 섞지 않습니다. 계수 차이는 쓰기당 dispatcher 호출 1회에 부합하며, 새 평가·확인 바퀴를 보이는 증거는 없습니다.
+
+독립 검토자는 측정 창 이동을 원인으로 해석했습니다. 이 worker의 교대 진단도 일관된 배포 B 추가 부담을 재현하지 못하여 그 해석을 지지합니다. 그러나 원래 고정한 정식 관문은 실패로 남습니다. 같은 후보의 정식 재측정은 TEST-088에 따른 소유자 승인 사항으로 코디네이터가 처리하며, 승인 전 후보 3 코드나 추가 정식 수치를 만들지 않습니다. 독립 코드 검토 결과와 소유자 결정이 남아 있습니다.
