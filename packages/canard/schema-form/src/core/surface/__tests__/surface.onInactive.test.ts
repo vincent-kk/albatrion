@@ -189,6 +189,7 @@ it('passes the preceding form context when a context change closes the gate', ()
     }),
     {
       context: previous,
+      loadSnapshot: undefined,
       diagnostics: { status: 'stable' },
       misfitPaths: new PathKeyedSet(),
     },
