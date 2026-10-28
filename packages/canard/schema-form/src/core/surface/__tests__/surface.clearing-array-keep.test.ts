@@ -432,23 +432,56 @@ it('drops a write through an inactive candidate transferred between tuple rows o
           {
             type: 'object',
             properties: {
+              kind: { type: 'string' },
               p: { type: 'number', controls: { active: '#/flag' } },
               keep: { type: 'number', controls: { unsetOnInactive: false } },
             },
+            allOf: [
+              {
+                controls: { active: './kind === "text"' },
+                properties: { value: { type: 'string' } },
+              },
+              {
+                controls: { active: './kind === "number"' },
+                properties: { value: { type: 'number' } },
+              },
+            ],
           },
           {
             type: 'object',
             properties: {
+              kind: { type: 'string' },
               p: { type: 'number', controls: { active: '#/flag' } },
               keep: { type: 'number', controls: { unsetOnInactive: false } },
             },
+            allOf: [
+              {
+                controls: { active: './kind === "text"' },
+                properties: { value: { type: 'string' } },
+              },
+              {
+                controls: { active: './kind === "number"' },
+                properties: { value: { type: 'number' } },
+              },
+            ],
           },
           {
             type: 'object',
             properties: {
+              kind: { type: 'string' },
               p: { type: 'number', controls: { active: '#/flag' } },
               keep: { type: 'number', controls: { unsetOnInactive: false } },
             },
+            allOf: [
+              {
+                controls: { active: './kind === "text"' },
+                properties: { value: { type: 'string' } },
+              },
+              {
+                controls: { active: './kind === "number"' },
+                properties: { value: { type: 'number' } },
+              },
+            ],
           },
         ],
       },
