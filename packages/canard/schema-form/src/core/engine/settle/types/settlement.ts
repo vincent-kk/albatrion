@@ -24,6 +24,7 @@ import type { GateSelectionRound } from './gateSelectionRound';
 import type { GateWheelFrame,RelocatedGateReads } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 import type { PresenceQueryCursor } from './presenceQueryCursor';
+import type { CompactedSlotSources } from './slots';
 import type { SplitBucket } from './splitRegistration';
 
 /** Virtual child names indexed by their real sibling's host template and field. */
@@ -298,6 +299,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   >;
   /** Caller raw-change membership before restoring each fresh retained clone. */
   slotRestoredRaw?: Map<Self, boolean>;
+  /** Exit-only plans; private retained clones consume them before this call ends. */
+  compactedSlotSources?: Map<Self, CompactedSlotSources<Self>>;
   /** Whether marking is currently applying a transition write. */
   automatic: boolean;
   /** True when the current transition round changed either state channel. */

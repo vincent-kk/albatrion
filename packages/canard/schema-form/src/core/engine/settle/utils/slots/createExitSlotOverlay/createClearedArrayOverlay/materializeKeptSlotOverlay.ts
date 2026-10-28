@@ -23,13 +23,13 @@ export const materializeKeptSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   source: Self | undefined,
   overlay: InactiveSlotOverlay | undefined,
 ): InactiveSlotOverlay => {
-  if (overlay?.replace) return overlay;
+  const inherited = overlay?.replace ? undefined : source;
   const raw =
-    overlay && hasOwnProperty(overlay, 'raw') ? overlay.raw : source?.raw;
+    overlay && hasOwnProperty(overlay, 'raw') ? overlay.raw : inherited?.raw;
   const undeclaredValues =
     overlay && hasOwnProperty(overlay, 'undeclaredValues')
       ? overlay.undeclaredValues
-      : source?.undeclaredValues;
+      : inherited?.undeclaredValues;
   const children = new Map<BlueprintChildEntry, InactiveSlotOverlay>();
   if (template.strategy === 'branch')
     for (const entry of getSlotEntries(source, overlay, template)) {
@@ -45,7 +45,7 @@ export const materializeKeptSlotOverlay = <Self extends FieldNodeRecord<Self>>(
     raw,
     undeclaredValues,
     ...(template.kind === 'array'
-      ? { itemCount: overlay?.itemCount ?? source?.itemCount ?? 0 }
+      ? { itemCount: overlay?.itemCount ?? inherited?.itemCount ?? 0 }
       : undefined),
     ...(children.size ? { children } : undefined),
   };

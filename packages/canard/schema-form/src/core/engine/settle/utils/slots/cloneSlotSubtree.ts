@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
+import type { CompactedSlotSources } from '../../types/slots';
 import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { getSlotOrder } from './getSlotOrder';
@@ -16,6 +17,7 @@ import { markRestoredSlotRaw } from './markRestoredSlotRaw';
  * @param source - Immutable source occurrence whose raw channels are retained
  * @param context - Entry sets and fixed-baseline recalculation work
  * @param entering - Whether this subtree is entering rather than remaining a candidate
+ * @param compactions - Exit-only rebinding plans; ordinary entry clones omit them
  * @returns A new subtree whose inactive candidates also have newly bound parents
  */
 export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
@@ -24,6 +26,7 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
   source: Self,
   context: SettlementContext<Self>,
   entering: boolean,
+  compactions?: ReadonlyMap<Self, CompactedSlotSources<Self>>,
 ): Self => {
   const node = host.runtime.nodeFactory(entry, host, host.runtime, source);
   if (!entering) {
@@ -56,17 +59,30 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     if (hasOwnProperty(source, 'retainedExitPolicy'))
       node.retainedExitPolicy = source.retainedExitPolicy;
   }
-  if (source.inactiveSlotOverlays?.size)
+  const compaction = compactions?.get(source);
+  if (compaction) {
+    node.itemCount = compaction.itemCount;
+    node.structure = Object.create(null);
+    node.children = [];
+    node.inactiveSlots = new Map();
+    node.inactiveSlotOverlays = new Map(compaction.overlays);
+    for (const [binding, retained] of compaction.sources)
+      node.inactiveSlots.set(
+        binding,
+        cloneSlotSubtree(node, binding, retained, context, false, compactions),
+      );
+  }
+  if (!compaction && source.inactiveSlotOverlays?.size)
     node.inactiveSlotOverlays = new Map(source.inactiveSlotOverlays);
-  if (source.inactiveSlots?.size) {
+  if (!compaction && source.inactiveSlots?.size) {
     node.inactiveSlots = new Map();
     for (const [binding, retained] of source.inactiveSlots)
       node.inactiveSlots.set(
         binding,
-        cloneSlotSubtree(node, binding, retained, context, false),
+        cloneSlotSubtree(node, binding, retained, context, false, compactions),
       );
   }
-  if (source.children && source.structure) {
+  if (!compaction && source.children && source.structure) {
     const structure: Record<string, Self> = Object.create(null);
     const children: Self[] = [];
     for (const child of source.children) {
@@ -77,7 +93,14 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
         child.blueprintNode,
       );
       if (!binding) continue;
-      const copied = cloneSlotSubtree(node, binding, child, context, entering);
+      const copied = cloneSlotSubtree(
+        node,
+        binding,
+        child,
+        context,
+        entering,
+        compactions,
+      );
       structure[binding.name] = copied;
       children.push(copied);
       if (

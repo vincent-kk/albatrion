@@ -14,6 +14,7 @@ type ResolveExit<Self extends FieldNodeRecord<Self>> = (
   applyPolicy: boolean,
   previous?: InactiveSlotOverlay,
   context?: SettlementContext<Self>,
+  sourceContext?: SettlementContext<Self>,
 ) => {
   readonly overlay: InactiveSlotOverlay | undefined;
   readonly hasSource: boolean;
@@ -25,6 +26,7 @@ type ResolveExit<Self extends FieldNodeRecord<Self>> = (
  * @param previous - Existing input patches covering the departing array
  * @param context - Last-live exit inputs, absent for already inactive sources
  * @param resolve - Owner's ordinary object/terminal exit-policy traversal
+ * @param sourceContext - Call-local plan owner, also available for inactive sources
  * @returns A replacement with compacted raw and independently bound child patches
  */
 export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
@@ -32,9 +34,11 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
   previous: InactiveSlotOverlay | undefined,
   context: SettlementContext<Self> | undefined,
   resolve: ResolveExit<Self>,
+  sourceContext = context,
 ): InactiveSlotOverlay => {
   const raw: unknown[] = [];
   const children = new Map<BlueprintChildEntry, InactiveSlotOverlay>();
+  const sources = new Map<BlueprintChildEntry, Self>();
   const entries = getSlotEntries(node, previous);
   let position = 0;
   while (position < entries.length) {
@@ -45,13 +49,20 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
       const entry = entries[position++];
       const child = getSlotSource(node, entry, previous);
       if (!child.source) continue;
-      const result = resolve(child.source, true, true, child.overlay, context);
+      const result = resolve(
+        child.source,
+        true,
+        true,
+        child.overlay,
+        context,
+        sourceContext,
+      );
       if (!result.hasSource) continue;
       const candidates = getItemEntries(node.blueprintNode, raw.length);
-      const target =
-        candidates.find((candidate) => candidate.node === entry.node) ??
-        candidates[0];
-      if (!target) continue;
+      const target = candidates.find(
+        (candidate) => candidate.node === entry.node,
+      ) ?? { ...entry, name: String(raw.length) };
+      sources.set(target, child.source);
       children.set(
         target,
         materializeKeptSlotOverlay(entry.node, child.source, result.overlay),
@@ -62,6 +73,12 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
     } while (position < entries.length && entries[position].name === name);
     if (retained) raw.push(value);
   }
+  if (sourceContext && raw.length)
+    (sourceContext.compactedSlotSources ??= new Map()).set(node, {
+      itemCount: raw.length,
+      sources,
+      overlays: children,
+    });
   return {
     replace: true,
     raw: raw.length ? Object.freeze(raw) : undefined,
