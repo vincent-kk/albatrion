@@ -46,7 +46,7 @@ assert.equal(
       'utf8',
     )
     .trim(),
-  '625930c01710d9b3e9869183976265b03162d272',
+  'df61df184584f9b9629e3dcc348c1ae8178a0dc7',
 );
 assert.equal(
   execFileSync(
@@ -115,7 +115,7 @@ fs.writeFileSync(
   path.join(options.root, 'inputs.json'),
   JSON.stringify(
     {
-      baselineCommit: '625930c01710d9b3e9869183976265b03162d272',
+      baselineCommit: 'df61df184584f9b9629e3dcc348c1ae8178a0dc7',
       candidateCommit: commit,
       files,
       stageBundles,
