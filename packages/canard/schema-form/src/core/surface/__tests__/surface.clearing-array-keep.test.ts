@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
 it.each([false, true])(
   'publishes compacted kept sources and restores inactive=%s sources when their gate opens',
@@ -179,4 +179,54 @@ it('compacts already inactive nested arrays without losing their row-local keep 
   expect(root.find('/list/0/inner')!.children).toHaveLength(1);
   root.find('/list/0/inner/0/ready')!.setValue(true);
   expect(root.find('/list/0/inner/0/keep')!.value).toBe(12);
+});
+
+const buildClearingList = () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: {
+            drop: { type: 'number' },
+            keep: {
+              type: 'number',
+              controls: { unsetOnInactive: false },
+            },
+          },
+        },
+      },
+    },
+  });
+  root.setValue({
+    open: true,
+    list: [{ drop: 1 }, { drop: 2, keep: 12 }, { drop: 3 }, { keep: 24 }],
+  });
+  return root;
+};
+
+it('writes a survivor old reference to the same survivor after compaction', () => {
+  const root = buildClearingList();
+  const oldKeep = root.find('/list/1/keep')!;
+  const lastKeep = root.find('/list/3/keep')!;
+  root.find('/open')!.setValue(false);
+  oldKeep.setValue(13);
+  lastKeep.setValue(25);
+  root.find('/open')!.setValue(true);
+  expect(root.find('/list')!.value).toEqual([{ keep: 13 }, { keep: 25 }]);
+});
+
+it('drops a write addressed at a discarded item after compaction', () => {
+  const root = buildClearingList();
+  const discarded = root.find('/list/0/drop')!;
+  const discardedItem = root.find('/list/2')!;
+  root.find('/open')!.setValue(false);
+  discarded.setValue(99);
+  discardedItem.setValue({ drop: 5, keep: 7 });
+  root.find('/open')!.setValue(true);
+  expect(root.find('/list')!.value).toEqual([{ keep: 12 }, { keep: 24 }]);
 });

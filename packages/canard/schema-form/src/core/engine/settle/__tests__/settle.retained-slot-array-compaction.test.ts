@@ -247,3 +247,106 @@ it.each([
     });
   },
 );
+
+it('rebinds kept item candidates when survivors shift to earlier indices', () => {
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      number: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        allOf: [
+          {
+            controls: { active: '#/number' },
+            items: { type: 'number', controls: { unsetOnInactive: false } },
+          },
+          {
+            controls: { active: '!#/number' },
+            items: {
+              type: 'string',
+              default: 'held',
+              controls: { unsetOnInactive: false },
+            },
+          },
+        ],
+      },
+    },
+  });
+  dispatchMount(root, {
+    open: true,
+    number: true,
+    list: [undefined, undefined, 12],
+  });
+  dispatchSetValue(getDispatchNode(root, 'open'), false);
+  expect(readFieldNodeInactiveValues(root)).toEqual([
+    { path: '/list/0', value: 12 },
+  ]);
+  dispatchSetValue(getDispatchNode(root, 'open'), true);
+  expect(getDispatchNode(root, 'list').itemCount).toBe(1);
+  expect(getDispatchNode(root, 'list', '0').raw).toBe(12);
+  dispatchSetValue(getDispatchNode(root, 'number'), false);
+  expect(getDispatchNode(root, 'list', '0').raw).toBe('held');
+  dispatchSetValue(getDispatchNode(root, 'number'), true);
+  expect(getDispatchNode(root, 'list', '0').raw).toBe(12);
+});
+
+it('keeps an item whose only kept source is an explicitly kept empty array', () => {
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            tags: {
+              type: 'array',
+              items: { type: 'string' },
+              controls: { unsetOnInactive: false },
+            },
+          },
+        },
+      },
+    },
+  });
+  dispatchMount(root, { open: true, list: [{ name: 'a' }, { name: 'b' }] });
+  dispatchSetValue(getDispatchNode(root, 'open'), false);
+  dispatchSetValue(getDispatchNode(root, 'open'), true);
+  expect(getDispatchNode(root, 'list').itemCount).toBe(2);
+  expect(root.emit).toEqual({ open: true, list: [{}, {}] });
+});
+
+it('visits a clearing array without keep declarations once, whatever its item count', () => {
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: { a: { type: 'number' }, b: { type: 'number' } },
+        },
+      },
+    },
+  });
+  dispatchMount(root, {
+    open: true,
+    list: Array.from({ length: 7 }, (_, index) => ({ a: index, b: index })),
+  });
+  const spy = vi.spyOn(policy, 'readSlotExitPolicy');
+  try {
+    dispatchSetValue(getDispatchNode(root, 'open'), false);
+    expect(spy).toHaveBeenCalledTimes(1);
+  } finally {
+    spy.mockRestore();
+  }
+  dispatchSetValue(getDispatchNode(root, 'open'), true);
+  expect(getDispatchNode(root, 'list').itemCount).toBe(0);
+});
