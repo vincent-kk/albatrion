@@ -1,7 +1,7 @@
 {
   "files": {
     "prepare.mjs": "cf5823550f1634c443aecfe582dbec1f16c1e6ca26c2d814cc126546d2af2a82",
-    "window.mjs": "c2129c43a05f8aaf439290c1b78b679e736fa1b59f9710b00ff46ec1f5ebdc18",
+    "window.mjs": "d1d7fea124e4fc98b65d8be7bcbfd7027b40408caa33c5c10e089bebb2b6e008",
     "precheck.mjs": "a1f96d6f6c90f4da47eed042f0d24f7465944988804980ab264d0fabf8f1882f",
     "guard-cost.mjs": "1b005c3d40acfbbbaaf4ae01b8c91352793bfd37f93589a39e222b735a5761fd",
     "retention-bounds.mjs": "9dea5a9f9fce7d58a57f462c2a9a569658d8099f19dc6e1bff3471911f462398",
