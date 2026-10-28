@@ -1,0 +1,26 @@
+{
+  "status": "environment-failure",
+  "completedProcesses": 3,
+  "requiredProcesses": 40,
+  "completedLanes": [
+    "S:0",
+    "B4:0",
+    "B7:0"
+  ],
+  "formalStart": "2026-10-28T13:18:40.481Z",
+  "failedPrecheck": {
+    "startedAt": "2026-10-28T13:18:55.706Z",
+    "quietSince": "2026-10-28T13:19:00.837Z",
+    "excludedAgentPid": 98094,
+    "heavy": [
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 113.85159012941787
+      }
+    ]
+  },
+  "samplesUsedForVerdict": false,
+  "repeated": false,
+  "nextAction": "Coordinator decision requested before any new diagnostic window."
+}
