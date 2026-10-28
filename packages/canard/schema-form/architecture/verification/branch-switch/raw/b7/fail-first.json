@@ -187,5 +187,45 @@
       "skipped": 8
     },
     "node": "v24.20.0"
+  },
+  "candidate6": {
+    "baseline": "ba0db9a426916b02e92a20c13bef6c7a30d7bb62",
+    "executionHead": "a20d0c2a003cad48d7cf363a50f6162bb384be11",
+    "productUnmodified": true,
+    "failingNames": [
+      "drops a write through an inactive candidate carried into a re-entered row once that row is discarded"
+    ],
+    "failed": 1,
+    "passed": 1,
+    "skipped": 9,
+    "failures": [
+      {
+        "expected": [
+          {
+            "keep": 2
+          }
+        ],
+        "received": [
+          {
+            "p": 5,
+            "keep": 2
+          }
+        ]
+      }
+    ],
+    "assertion": "final toEqual after re-entry carries the inactive candidate into a new row, the row is discarded, and the old candidate reference receives setValue(5)",
+    "fixed": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 9
+    },
+    "additionalCharacterization": {
+      "name": "drops a write through an inactive candidate transferred between tuple rows once its destination row is discarded",
+      "passedBeforeFix": true,
+      "passedAfterFix": true,
+      "recreatesTupleRow": true,
+      "note": "restoreTransferredSlotSource has no discard branch; later clearing compaction uses cloneSlotSubtree and its shared discard call."
+    },
+    "node": "v24.20.0"
   }
 }

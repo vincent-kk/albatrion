@@ -403,6 +403,54 @@ B6 병합 뒤 rebase한 `941398ea704ffbba5b46d180c5628445688d2703`에 후보 4 d
 
 사적 나감 복제는 복제 노드마다 원래 노드의 WeakMap 항목 하나를 더하며, 칸 객체 수는 같습니다. 새 영구 색인은 만들지 않고, 배열 이동·재진입 복제·종류 이전에는 이번 연결을 추가하지 않습니다. 후보 5에서 정식 측정 창을 실행하지 않았으며 최종 A/B 입력 준비 뒤 측정 실행기에게 인계합니다.
 
+## 후보 6
+
+### 결함과 수정
+
+검토의 수정 명세 A를 적용했습니다. 제품 기준은 `ba0db9a426916b02e92a20c13bef6c7a30d7bb62`이며 실제 실패 먼저 실행 머리 `a20d0c2a0`은 결과 문서와 raw만 추가해 제품이 같습니다. 시험·계약 커밋은 `4976cb952`, 수정 후 검증 제품은 `7eb383005`입니다.
+
+| 결함 | 처리 | 파일과 시험 |
+| --- | --- | --- |
+| P2: 재진입 복제가 새 행으로 옮긴 비활성 후보의 옛 참조가 행 소멸 뒤 생존 행에 씀 | 버려진 발생 자신의 칸과 그 아래 보유 발생 전체에 소멸 표시를 붙입니다. 자식은 현재 부모가 같은 발생인 경우만, 비활성 슬롯은 보유한 발생을 따라갑니다. | `settle/utils/detached/DetachedWriteAddress.ts`, `settle/utils/slots/cloneSlotSubtree.ts`; `surface.clearing-array-keep.test.ts`의 `drops a write through an inactive candidate carried into a re-entered row once that row is discarded` |
+
+소멸 표시는 버려진 아이템 서브트리의 노드마다 WeakMap 항목 하나를 더하며, 그 서브트리는 같은 정착의 정책 판단이 이미 방문한 범위입니다. 방문은 아이템을 버리는 시점에만 해당 서브트리 크기에 비례하며 생존 아이템이나 일반 잎 쓰기의 순회를 늘리지 않습니다. DETAIL에 이 비용과 비활성 후보의 공유 칸 전파를 먼저 적었습니다.
+
+### 실패 먼저 확인과 추가 이전 경로
+
+명세 A 시험은 수정 전 마지막 `toEqual`에서 기대 `[{ keep: 2 }]` 대신 `[{ p: 5, keep: 2 }]`로 실패했습니다. 함께 실행한 tuple 이전 회귀 시험은 통과하여 1실패·1통과·9건 필터 제외였고 스키마·탐색·import 오류는 없었습니다. 수정 뒤 같은 명령은 2통과·9건 필터 제외입니다. [실패 먼저 기록](raw/b7/fail-first.json)의 `candidate6`에 원본 기준·시험 이름·기대·실제를 적었습니다.
+
+추가 시험 `drops a write through an inactive candidate transferred between tuple rows once its destination row is discarded`는 비활성 후보를 가진 행을 `remove(0)`으로 다른 tuple 청사진에 이전하고 행이 새 발생임을 확인한 뒤, 지움 압축과 옛 후보 쓰기를 검증합니다. 수정 전에도 통과하므로 그 경로의 새 실패 증거라고 주장하지 않습니다. `restoreTransferredSlotSource`에는 자체 버림 분기가 없으며 비활성 원본을 `cloneSlotSubtree`로 옮깁니다. 이후 지움 압축의 버림은 같은 `DetachedWriteAddress.discard`를 사용합니다.
+
+최초 표적 실행은 524통과·1실패였습니다. 기존 `readSourceTree` 시험이 소멸 주소 칸의 내부 경로를 고정했기 때문입니다. 명세 A의 직접 소멸 칸은 새 칸일 때 빈 경로를 쓰므로, 그 기대는 소멸 표시와 공개 참조의 원래 경로 확인으로 조정했습니다. 고정 원본 `[1, 2]`를 읽는 검증은 유지했으며 수정 제품에는 이 시험 조정도 포함됩니다.
+
+### 관문
+
+수정 제품 `7eb383005c77472a241b09ed15b1ae213d49f4b2`에서 `typecheck`, `lint`, 지정 `build`와 development-flag·gate-selection 산출물 검사가 통과했습니다. 표적은 unit 80파일·525사례와 render 1파일·2사례, 합계 81파일·527사례가 통과했습니다. 겉면 11사례, 청사진 keep 플래그, pointerIsolation 5사례와 첫 실제 siblings-0·oneOf-80 쓰기부터 full-parser 0을 확인하는 2사례를 포함합니다.
+
+전체 시험은 build 종료를 확인한 뒤 각 프로젝트를 한 번씩 순차 실행했습니다. Node v24.20.0 기본 힙이며 OOM·힙 재시도·브라우저 연결 종료는 없었고 Storybook은 샤드 없이 통과했습니다. 시험 조정 뒤 lint도 다시 통과했습니다.
+
+| 관문 | 파일 | 통과 | todo | 실패 | 결과 |
+| --- | ---: | ---: | ---: | ---: | --- |
+| unit | 579 | 3855 | 1 | 0 | 통과 |
+| render | 131 | 766 | 0 | 0 | 통과 |
+| react18 | 131 | 766 | 0 | 0 | 통과 |
+| production 프로젝트(`NODE_ENV=test`) | 9 | 20 | 0 | 0 | 통과 |
+| storybook | 100 | 251 | 0 | 0 | 통과 |
+| 다섯 프로젝트 합계 | 950 | 5658 | 1 | 0 | 통과 |
+| verify-unit + verify-render | 715 | 4665 | 1 | 0 | 통과 |
+
+[후보 6 관문과 원본 JSON 해시](raw/b7/candidate6/gates.json). production은 요청된 `test --run --project production`이며 별도 `test:production`의 결과를 주장하지 않습니다. 아래 최종 후보(rebase)의 관문·창은 후보 5 기록으로 보존하며 후보 6의 수치와 합산하지 않습니다.
+
+Node v26.11.1의 고정 배달 장치에서 stage A와 새 제품 B를 대조한 결과는 72장면·430관측점, mount 6장면·12관측점 모두 차이 0이며 차이 장면 목록은 각각 `[]`입니다. A/B 공개 `dist/index.d.ts`는 3,054바이트 동일하고 SHA-256은 `740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6`입니다. A는 이전 인계의 stage archive 빌드를 재사용했으며 A 공개 번들 세 파일의 해시가 이전 불변 입력과 일치함을 확인했습니다. 코퍼스에는 지움 배열 아래 keep 장면이 없어 B7 동작 자체는 별도 계약·겉면·화면 시험으로 확인합니다.
+
+[배달 요약](raw/b7/candidate6/delivery-summary.json), [차이 장면](raw/b7/candidate6/delivery-differences.json), [마운트 요약](raw/b7/candidate6/delivery-mount-summary.json), [마운트 차이](raw/b7/candidate6/delivery-mount-differences.json), [공개 선언](raw/b7/candidate6/public-surface.json).
+
+### 알려진 한계와 인계
+
+재진입한 행 아래로 계속 보유된 비활성 후보의 공유 칸은 이번 소멸 순회가 표시하므로 위 결함은 알려진 한계에 포함하지 않습니다. 지워진 채 먼저 나간 발생이나 그 발생 자신이 재진입한 뒤의 옛 참조처럼 보유 그래프에서 떨어진 칸은 여전히 압축 때 옮기거나 버리지 못하고 마지막 경로에 쓸 수 있습니다. 생존 아이템 0개인 배열에는 압축 계획과 소멸 표시가 없으므로 기존 잠재 쓰기 범위가 유지됩니다.
+
+후보 5의 아래 최종 창은 그 당시 제품만 측정한 증거로 보존합니다. 후보 6은 새 불변 A/B 입력과 무시간 적재까지만 준비하며 CPU 사전 검사·formal-start·정식 창은 측정 담당에게 인계합니다.
+
 ## 최종 후보(rebase)
 
 ### 기준과 충돌 해결
