@@ -3,6 +3,8 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { getStageRoot } from '../window/getStageRoot.mjs';
+
 /** Verify prepared bundle bytes against the manifest, without running a device.
  * @param {string} root External prepared device directory.
  * @returns {object} The verified input manifest; throws on missing or changed bytes.
@@ -16,7 +18,7 @@ export function verifyInputs(root) {
     'Prepare inputs with stage bundle hashes',
   );
   for (const lane of ['A', 'B']) {
-    const stages = root + '-stage-' + lane.toLowerCase() + '/stages/scratch';
+    const stages = getStageRoot(root, lane) + '/stages/scratch';
     for (const [directory, names, expected] of [
       [
         path.join(root, 'bundles', lane),

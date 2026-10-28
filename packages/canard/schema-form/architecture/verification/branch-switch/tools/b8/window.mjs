@@ -7,6 +7,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { buildAlternatingRows } from '../../../design-optimization/tools/helpers/buildAlternatingRows.mjs';
 import { verifyInputs } from '../b4-2/verifyInputs.mjs';
+import { getStageRoot } from '../window/getStageRoot.mjs';
 import { sampleProcessCpu } from './helpers/sampleProcessCpu.mjs';
 import { waitForQuietProcess } from './helpers/waitForQuietProcess.mjs';
 
@@ -160,7 +161,7 @@ if (!quiet.approved) {
     ])
       for (let repeat = 0; repeat < 3; repeat++)
         for (const lane of ['A', 'B']) {
-          const runDir = root + '-stage-' + lane.toLowerCase() + '/stages';
+          const runDir = getStageRoot(root, lane) + '/stages';
           const label = 'stage-' + row + '-' + lane + '-' + repeat;
           await run(label, process.execPath, [
             path.join(here, '../b4-2/stages.mjs'),
@@ -180,7 +181,7 @@ if (!quiet.approved) {
         }
     for (const lane of ['A', 'B']) {
       fs.writeFileSync(
-        root + '-stage-' + lane.toLowerCase() + '/stages/results.json',
+        getStageRoot(root, lane) + '/stages/results.json',
         JSON.stringify({ results: results[lane] }) + '\n',
       );
     }
@@ -201,14 +202,14 @@ if (!quiet.approved) {
           '--warmups=20',
           '--prepared=true',
           '--quiet-since=' + quiet.quietSince,
-          '--run-dir=' + root + '-stage-b/stages',
+          '--run-dir=' + getStageRoot(root, 'B') + '/stages',
         ]);
         supplemental.push(
           JSON.parse(fs.readFileSync(path.join(root, label + '.log'), 'utf8')),
         );
       }
     fs.writeFileSync(
-      root + '-stage-b/stages/supplemental-results.json',
+      getStageRoot(root, 'B') + '/stages/supplemental-results.json',
       JSON.stringify({ results: supplemental }) + '\n',
     );
     for (const lane of ['A', 'B']) {

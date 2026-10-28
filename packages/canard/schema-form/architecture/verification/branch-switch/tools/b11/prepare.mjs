@@ -70,8 +70,8 @@ assert.equal(
   'Commit final product, verification and artifact-check inputs before preparation',
 );
 assert.match(
-  options.root,
-  /\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\.noindex)?$/,
+  options.root.replace(/\.noindex$/, ''),
+  /\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+$/,
 );
 fs.mkdirSync(options.root, { recursive: false });
 fs.symlinkSync(
