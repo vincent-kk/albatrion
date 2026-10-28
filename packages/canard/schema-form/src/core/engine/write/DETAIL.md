@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 중첩 경고 보고는 호출 전 reportingErrors를 복원한다. onError 안의 떼어진 쓰기가 경고를 보고해도 같은 콜백의 살아 있는 쓰기는 WriteInObserver로 거부한다.
+
 - 떼어진 참조의 값 쓰기와 배열 동사는 사슬·배치·updater 평가 전에 무동작으로 끝난다. 개발 모드에서는 `FormWarningCode.DetachedNodeWrite`로 경고하고 운영 모드에서는 침묵한다. push·insert는 동결된 현재 길이를 반환하고 나머지 동사는 undefined를 반환한다. 호스트의 경로 JSON 쓰기만 비활성 원본을 바꾼다(B11).
 
 - 배치 값은 jsonPointer가 해석한 이름만으로 합성하고, 진단 경로 조립과 reset 하위 범위 판정도 같은 경로 소유자의 API에 위임한다.
