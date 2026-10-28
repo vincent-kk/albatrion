@@ -80,7 +80,7 @@ settle의 `settle.commit`, `settle.transition`, `settle.union-fold-latent`, `set
 
 ## 독립 검토와 수정
 
-[독립 검토](reviews/b11-independent-review.md)는 CONDITIONAL PASS(P1 0, P2 5, P3 13)였다. 지정된 P2 5건 및 P3-1·2·5·6·7·8을 수정했다.
+[독립 검토](reviews/pr-b11-candidate-1-claude.md)는 CONDITIONAL PASS(P1 0, P2 5, P3 13)였다. 지정된 P2 5건 및 P3-1·2·5·6·7·8을 수정했다.
 
 | 항목 | 커밋·검증 |
 | --- | --- |
@@ -94,6 +94,8 @@ settle의 `settle.commit`, `settle.transition`, `settle.union-fold-latent`, `set
 경고 시험 `warns exactly once and preserves every value for detached array <verb>`는 각각 push→dispatchPush, insert→dispatchInsert, pop→dispatchPop, remove→dispatchRemove, update→dispatchUpdate, clear→dispatchClear를 검증한다. 해당 가드 하나를 제거하면 그 시험은 경고 호출 0회로 실패한다. 공개 move 동사는 없다. mutation과 red 근거는 원시에 남긴다.
 
 소유자 결정으로 남긴 두 동작은 바꾸지 않고 write DETAIL에 현재 규칙을 기록했다: 폐기되지 않은 detached 노드의 늦은 UI 입력은 개발 경고를 내며, 폐기된 detached 참조의 공개 setValue·배열 동사는 폐기 오류 대신 detached 거부가 먼저 적용된다(UI 입력 채널의 폐기 거부는 무음).
+
+[차분 검토](reviews/pr-b11-candidate-2-claude.md)는 PASS(P1 0, P2 0, P3 후속 4)였다. 후속 P3-A·B·C·D는 지정 문구대로 문서·주석만 수정했다: 초기화의 커밋·배달·public path 불변식을 복원하고, 제거한 주소 상태의 주석을 지우고, 떼어진 쓰기 무효의 현재 규칙과 resetSubtree·상태·오류·요청의 폐기 검사 순서를 명시했다. 표적 5파일 32시험과 재빌드·artifact·typecheck·lint가 통과했다. 검토 사본은 1·2차 후보 이름으로 정리했으며 2차 원문의 기계 경로 접두사 나열만 경로 없는 표현으로 치환했다.
 
 ## 수정 후 최종 관문
 
@@ -181,3 +183,5 @@ Apple M1 Max, 측정 Node 26.12.1, Bun 1.4.4, 빌드·제품 시험 Node 24.20.0
 패키지 범위에서 filid:scan을 PR 이음매에 한 번 실행했다. facts 1,626파일을 추출·수락했고 세 단계의 snapshot hash가 같다. 판정은 FAIL, 분석 완전성은 indeterminate다. 정확한 순환 오류는 FieldProxy → FieldInputSlot → FieldProxy이며 이 서브트리는 기준 df61df184와 차분이 없다. 문서 경로 토큰과 검증 역할의 비정확 근거도 원시에 보존했다. B11 구현과 관계없는 기존 경계·문서 정리는 이 작업에서 수정하지 않았고, 감사 결과를 통과로 바꾸어 기록하지 않았다.
 
 Scan complete: 202 findings
+
+후속 해시 비교(`b24ef25fe` 대비, dist 1,293파일): 런타임 번들 셋과 공개 `index.d.ts`는 동일하고 내부 `.d.ts` TSDoc 세 파일 및 `agents-hashes.json`만 상이하므로, 코디네이터 결정으로 새 창을 생략하고 창 2 판정을 유지한다([해시 원시](raw/b11/followup/dist-comparison.json.gz)).
