@@ -21,7 +21,7 @@
 
 - A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
 
-- Array exit clearing preserves the baseline's narrower keep exception: an array without a candidate ownership scope removes every descendant source, including explicit keep descendants, and re-enters at length zero. Within candidate ownership, only previously inactive keep sources survive; active array descendants are not captured by clearing. Object hosts retain the existing explicit keep exception. This pre-existing inconsistency remains an owner decision.
+- 지움과 함께 나가는 배열은 명시 keep 원본이 있는 아이템만 원래 순서대로 압축 보존한다. 아이템 자신과 살아 있거나 이미 비활성인 자손의 keep에 객체 호스트와 같은 정책을 적용하며 중첩 배열도 재귀한다. 닫힌 동안 inactiveValues는 압축 색인의 kept 원본을 공표하고, 재진입은 압축 배열을 복원하되 조건이 거짓인 keep은 자기 비활성 슬롯에 남긴다. 후보 소유 범위는 결과에 영향을 주지 않으며 keep 자손이 없는 배열은 길이 0이고 객체 호스트의 정책은 유지한다. 추가 아이템 순회는 지움 배열의 나감에만 적용하며 지움 없는 나감과 객체 호스트의 overlay 방문 수는 유지한다.
 
 - 슬롯 경로는 호스트가 나간 인스턴스를 그대로 보유하고 재진입 때 새 인스턴스로 복제한다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"와 "슬롯은 후보 풀이지 직전 형상이 아니다"를 유지한다. 같은 이름·다른 청사진 노드는 독립 원본이며 공개 structure·children에는 활성 형상만 둔다(NODE-043·044·060, SETTLE-044·GOAL-029).
 - 복제는 raw·extras·선언 밖 값과 자손 슬롯을 재귀적으로 보존하고 부모·경로·등록·색인을 새로 결합한다. 상호작용·오류·배달 기록은 이어받지 않으며 배열 itemKey는 새로 발급한다. 비활성 자손도 새 부모로 복제하여 옛 parent 연결이 과거 호스트를 누적 보유하지 않게 한다. 복제된 새 노드의 entered·채움·resetInteraction과 모든 중첩 호스트의 고정 baseline 재선택을 유지한다(NODE-044·053, SETTLE-044, WRITE-007).

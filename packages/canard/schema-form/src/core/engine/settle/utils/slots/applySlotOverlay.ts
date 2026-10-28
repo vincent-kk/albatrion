@@ -6,7 +6,6 @@ import type { SettlementContext } from '../../types/settlement';
 import { markWrite } from '../input/markWrite';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { markRestoredSlotRaw } from './markRestoredSlotRaw';
-import { retainClearedArrayCarriers } from './retainClearedArrayCarriers';
 
 /**
  * Apply a host-owned patch only to a newly issued instance subtree.
@@ -74,8 +73,6 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
     if (live?.blueprintNode === entry.node) continue;
     (node.inactiveSlotOverlays ??= new Map()).set(entry, patch);
   }
-  if (node.behavior.type === 'array' && overlay.itemCount === 0 && !arrayInput)
-    retainClearedArrayCarriers(node, context);
   markRestoredSlotRaw(node, context);
   context.changedNodes.add(node);
   context.dirtyPaths.add(node.path);

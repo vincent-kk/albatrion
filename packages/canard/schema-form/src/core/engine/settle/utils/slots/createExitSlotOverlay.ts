@@ -4,9 +4,9 @@ import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { captureAbsentSlotInputs } from './captureAbsentSlotInputs';
+import { createClearedArrayOverlay } from './createExitSlotOverlay/createClearedArrayOverlay';
 import { expirePackedSlotMemos } from './expirePackedSlotMemos';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
-import { hasSlotCandidateOwner } from './hasSlotCandidateOwner';
 import { hasSlotOverlaySource } from './hasSlotOverlaySource';
 import { readSlotExitPolicy } from './readSlotExitPolicy';
 
@@ -34,7 +34,6 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   applyPolicy: boolean,
   previous?: InactiveSlotOverlay,
   context?: SettlementContext<Self>,
-  activeClear = false,
 ): ExitSlotOverlay => {
   const supplied = context ? captureAbsentSlotInputs(node, context) : undefined;
   if (supplied?.children)
@@ -43,16 +42,17 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       children: new Map([...(previous?.children ?? []), ...supplied.children]),
     };
   const policy = readSlotExitPolicy(node, inherited);
-  const clear = applyPolicy && (activeClear || policy);
-  if (clear && node.behavior.type === 'array' && !hasSlotCandidateOwner(node)) {
-    const overlay = {
-      replace: true,
-      raw: undefined,
-      undeclaredValues: undefined,
-      itemCount: 0,
-    };
+  const clear = applyPolicy && policy;
+  if (clear && node.behavior.type === 'array') {
+    const overlay = createClearedArrayOverlay(
+      node,
+      previous,
+      context,
+      createExitSlotOverlay,
+    );
     if (context) node.retainedSourceOverlay = overlay;
-    return { overlay, hasSource: false, retain: false };
+    const hasSource = overlay.itemCount !== 0;
+    return { overlay, hasSource, retain: hasSource };
   }
   const raw =
     previous && hasOwnProperty(previous, 'raw')
@@ -85,7 +85,6 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       applyPolicy,
       prior,
       context,
-      activeClear || (clear && node.behavior.type === 'array'),
     );
     if (result.hasSource) hasSource = true;
     if (result.overlay !== prior) {
