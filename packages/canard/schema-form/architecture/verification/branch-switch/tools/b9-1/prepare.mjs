@@ -161,6 +161,8 @@ fs.writeFileSync(
           'architecture/verification/branch-switch/tools/b9-0/operation.mjs',
           'architecture/verification/branch-switch/tools/b9-0/buildStages.mjs',
           'architecture/verification/branch-switch/tools/b9-0/instrumentDetails.mjs',
+          'architecture/verification/branch-switch/tools/b4-2/retention.mjs',
+        'architecture/verification/branch-switch/tools/b9-1/helpers/checkRetentionLoad.mjs',
           'architecture/verification/branch-switch/tools/b9-1/window.mjs',
           'architecture/verification/branch-switch/tools/b9-1/helpers/runWindowProcess.mjs',
           'architecture/verification/branch-switch/tools/window/waitForQuietProcess.mjs',

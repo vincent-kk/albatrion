@@ -11,6 +11,7 @@ import { getStageRoot } from '../window/getStageRoot.mjs';
 import { collectThroughputSamples } from './helpers/collectThroughputSamples.mjs';
 import { evaluateGates } from './helpers/evaluateGates.mjs';
 import { median } from './helpers/median.mjs';
+import { readWindowCommandResult } from './helpers/readWindowCommandResult.mjs';
 import { saveEvidence } from './helpers/saveEvidence.mjs';
 import { summarizeStageRows } from './helpers/summarizeStageRows.mjs';
 import { verifyInputs } from './verifyInputs.mjs';
@@ -209,9 +210,13 @@ const judgment = {
 const retention = Object.fromEntries(
   stageRows.map((row) => [
     row,
-    read(path.join(root, 'retention-' + row + '.log')),
+    readWindowCommandResult(root, 'retention-' + row),
   ]),
 );
+judgment.deviceCompleted = Object.values(retention).every(
+  (record) => record.completed,
+);
+judgment.adoptable = judgment.deviceCompleted && gates.passed;
 saveEvidence(
   root,
   output,
@@ -228,13 +233,20 @@ saveEvidence(
     'window-end': read(path.join(root, 'window-end.json')),
     'stage-load-check': read(path.join(root, 'stage-load-check.json')),
     'untimed-load-check': read(path.join(root, 'untimed-load-check.json')),
+    ...(fs.existsSync(path.join(root, 'retention-load-check.json'))
+      ? {
+          'retention-load-check': read(
+            path.join(root, 'retention-load-check.json'),
+          ),
+        }
+      : {}),
   },
   { 'pair-samples': raw, 'stage-samples': { ledgers, details } },
 );
 console.log(
   'B9_1_SUMMARY ' +
     JSON.stringify({
-      passed: gates.passed,
+      passed: judgment.adoptable,
       quality: recomputed.quality.ratio,
       regressions: regressions.length,
       siblingDecision: sibling.decision,

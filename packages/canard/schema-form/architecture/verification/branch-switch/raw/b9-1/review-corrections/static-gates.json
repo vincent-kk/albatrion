@@ -1,0 +1,84 @@
+{
+  "productCommit": "1c329eb22",
+  "node": "v26.11.1",
+  "projects": {
+    "unit": {
+      "success": true,
+      "numTotalTests": 3904,
+      "numPassedTests": 3903,
+      "numFailedTests": 0,
+      "numTodoTests": 1
+    },
+    "render": {
+      "success": true,
+      "numTotalTests": 766,
+      "numPassedTests": 766,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    "storybook": {
+      "success": true,
+      "numTotalTests": 251,
+      "numPassedTests": 251,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    "react18": {
+      "success": true,
+      "numTotalTests": 766,
+      "numPassedTests": 766,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    "production": {
+      "success": true,
+      "numTotalTests": 21,
+      "numPassedTests": 21,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    "verify": {
+      "success": true,
+      "numTotalTests": 4714,
+      "numPassedTests": 4713,
+      "numFailedTests": 0,
+      "numTodoTests": 1
+    },
+    "production-extra-env-failed": {
+      "success": false,
+      "numTotalTests": 21,
+      "numPassedTests": 19,
+      "numFailedTests": 2,
+      "numTodoTests": 0
+    },
+    "production-extra-env-old-source": {
+      "success": false,
+      "numTotalTests": 5,
+      "numPassedTests": 3,
+      "numFailedTests": 2,
+      "numTodoTests": 0
+    }
+  },
+  "isolationAndFirstWrite": [
+    {
+      "file": "src/__tests__/pointerIsolation.test.ts",
+      "cases": 6,
+      "failed": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.pointer-path-work.test.ts",
+      "cases": 4,
+      "failed": 0
+    }
+  ],
+  "delivery": {
+    "scenes": 79,
+    "phases": 429,
+    "differences": 0
+  },
+  "declarations": {
+    "differences": 0,
+    "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+  },
+  "productionScope": "Configured test --run --project production: 21/21. Extra NODE_ENV=production has two identical failures on old and new sources; retained separately."
+}

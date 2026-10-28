@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 import { digest, json } from '../b9-0/files.mjs';
 import { getStageRoot } from '../window/getStageRoot.mjs';
+import { checkRetentionLoad } from './helpers/checkRetentionLoad.mjs';
 import { verifyInputs } from './verifyInputs.mjs';
 
 const root = path.resolve(process.argv[2]);
@@ -55,3 +56,4 @@ json(path.join(root, 'stage-load-check.json'), {
 console.log(
   'B9_1_UNTIMED_LOAD_OK public=A44+B44 stage-bundles=9 legacy-oneOf=120',
 );
+checkRetentionLoad(root);

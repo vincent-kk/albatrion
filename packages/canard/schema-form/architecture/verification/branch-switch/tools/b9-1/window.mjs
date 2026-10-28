@@ -37,6 +37,13 @@ const smoke = JSON.parse(
 assert.equal(smoke.timed, false);
 assert.equal(smoke.results.length, 9);
 assert.equal(smoke.inputsSha256, digest(path.join(root, 'inputs.json')).sha256);
+const retentionSmoke = JSON.parse(
+  fs.readFileSync(path.join(root, 'retention-load-check.json'), 'utf8'),
+);
+assert.equal(retentionSmoke.code, 0);
+assert.equal(retentionSmoke.formal, false);
+assert.equal(retentionSmoke.row, 'switch-siblings-1000');
+assert.equal(retentionSmoke.inputsSha256, smoke.inputsSha256);
 assert.ok(
   !fs.existsSync(path.join(root, 'formal-start.json')),
   'Never repeat a formal device',
