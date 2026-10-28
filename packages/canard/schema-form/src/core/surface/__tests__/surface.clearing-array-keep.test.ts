@@ -2,6 +2,8 @@ import { expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
+import { isArrayNode } from '../utils/guards';
+
 it.each([false, true])(
   'publishes compacted kept sources and restores inactive=%s sources when their gate opens',
   (inactive) => {
@@ -369,4 +371,101 @@ it('keeps original row references on their rows when an already inactive list co
   expect(root.find('/section/list')!.value).toEqual([
     { keep: 13, tags: [{ keep: 3 }] },
   ]);
+});
+
+it('drops a write through an inactive candidate carried into a re-entered row once that row is discarded', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      show: { type: 'boolean' },
+      flag: { type: 'boolean' },
+      section: {
+        type: 'object',
+        controls: { active: '#/open', unsetOnInactive: true },
+        properties: {
+          list: {
+            type: 'array',
+            controls: { active: '#/show' },
+            items: {
+              type: 'object',
+              properties: {
+                p: { type: 'number', controls: { active: '#/flag' } },
+                keep: {
+                  type: 'number',
+                  controls: { unsetOnInactive: false },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  root.setValue({
+    open: true,
+    show: true,
+    flag: true,
+    section: { list: [{ p: 1 }, { keep: 2 }] },
+  });
+  const carried = root.find('/section/list/0/p')!;
+  root.find('/flag')!.setValue(false);
+  root.find('/show')!.setValue(false);
+  root.find('/show')!.setValue(true);
+  root.find('/open')!.setValue(false);
+  carried.setValue(5);
+  root.find('/open')!.setValue(true);
+  root.find('/flag')!.setValue(true);
+  expect(root.find('/section/list')!.value).toEqual([{ keep: 2 }]);
+});
+
+it('drops a write through an inactive candidate transferred between tuple rows once its destination row is discarded', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      flag: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        prefixItems: [
+          {
+            type: 'object',
+            properties: {
+              p: { type: 'number', controls: { active: '#/flag' } },
+              keep: { type: 'number', controls: { unsetOnInactive: false } },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              p: { type: 'number', controls: { active: '#/flag' } },
+              keep: { type: 'number', controls: { unsetOnInactive: false } },
+            },
+          },
+          {
+            type: 'object',
+            properties: {
+              p: { type: 'number', controls: { active: '#/flag' } },
+              keep: { type: 'number', controls: { unsetOnInactive: false } },
+            },
+          },
+        ],
+      },
+    },
+  });
+  root.setValue({ open: true, flag: true, list: [{}, { p: 1 }, { keep: 2 }] });
+  const originalRow = root.find('/list/1')!;
+  const carried = root.find('/list/1/p')!;
+  root.find('/flag')!.setValue(false);
+  const list = root.find('/list')!;
+  expect(isArrayNode(list)).toBe(true);
+  if (!isArrayNode(list)) throw new Error('Expected the tuple array');
+  list.remove(0);
+  expect(root.find('/list/0')).not.toBe(originalRow);
+  root.find('/open')!.setValue(false);
+  carried.setValue(5);
+  root.find('/open')!.setValue(true);
+  root.find('/flag')!.setValue(true);
+  expect(root.find('/list')!.value).toEqual([{ keep: 2 }]);
 });
