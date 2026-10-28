@@ -22,11 +22,7 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   exit: Self,
   context: SettlementContext<Self>,
 ): void => {
-  if (
-    context.entered.has(node) ||
-    isReplacedLivePath(context, exit.path) ||
-    hasExplicitInactiveValue(node, context)
-  )
+  if (context.entered.has(node) || isReplacedLivePath(context, exit.path))
     return;
   let outer = exit;
   for (
@@ -35,6 +31,7 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
     ancestor = ancestor.parent
   )
     outer = ancestor;
+  if (hasExplicitInactiveValue(node, outer, context)) return;
   if (
     outer !== exit &&
     (context.entered.has(outer) || context.throwingGateExits?.has(outer))
