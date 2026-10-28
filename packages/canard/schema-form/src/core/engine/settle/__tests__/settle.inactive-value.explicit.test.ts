@@ -2,12 +2,13 @@ import { expect, it, vi } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
+import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '../../types/value';
-import { dispatchWriteInput } from '../../write';
+import { dispatchSetValue, dispatchWriteInput } from '../../write';
 
 it('treats a form input merge like a caller merge', () => {
   const resolver = vi.fn(() => 'resolved');
-  const { root } = makeFieldNodeTree({
+  const { root } = createDispatchTree({
     type: 'object',
     properties: {
       open: { type: 'boolean' },
@@ -20,11 +21,11 @@ it('treats a form input merge like a caller merge', () => {
       },
     },
   });
-  root.setValue({ open: true, group: { x: 'before' } });
+  dispatchSetValue(root, { open: true, group: { x: 'before' } });
   dispatchWriteInput(root, { open: false, group: {} }, WriteOption.Merge);
   expect(resolver).toHaveBeenCalledTimes(1);
-  root.find('/open')!.setValue(true);
-  expect(root.find('/group/x')!.value).toBe('resolved');
+  dispatchSetValue(root.structure!.open, true);
+  expect(root.structure!.group.structure!.x.local).toBe('resolved');
 });
 
 it('treats a received key below a batched merge as a whole input', () => {
