@@ -277,12 +277,18 @@ export async function buildStages(packageDir, outputDir, modulesDir) {
         ),
     )
     .map(([, name]) => name);
+  const absentSupplementalStages = inputs.has(
+    'src/core/engine/settle/utils/detached/DetachedWriteAddress.ts',
+  )
+    ? []
+    : ['DetachedWriteAddress.retain'];
   for (const mode of ['wrapped', 'supplemental']) {
     const manifest = manifests[mode];
     for (const name of mode === 'wrapped' ? ledgerNames : stageNames) {
       const found = manifest.filter((item) => item.name === name);
       if (
         absentDeviceStages.includes(name) ||
+        absentSupplementalStages.includes(name) ||
         (slotStages.includes(name) &&
           ![...inputs.keys()].some(
             (file) => path.basename(file) === name + '.ts',
@@ -305,6 +311,7 @@ export async function buildStages(packageDir, outputDir, modulesDir) {
         inputs: Object.fromEntries([...inputs].sort()),
         canonicalNames,
         absentDeviceStages,
+        absentSupplementalStages,
         expectedStages: {
           wrapped: ledgerNames.filter(
             (name) => !absentDeviceStages.includes(name),
@@ -312,6 +319,7 @@ export async function buildStages(packageDir, outputDir, modulesDir) {
           supplemental: stageNames.filter(
             (name) =>
               !absentDeviceStages.includes(name) &&
+              !absentSupplementalStages.includes(name) &&
               (!slotStages.includes(name) ||
                 [...inputs.keys()].some(
                   (file) => path.basename(file) === name + '.ts',

@@ -236,12 +236,10 @@ fs.writeFileSync(
   path.join(output, 'process-samples.json.gz'),
   gzipSync(JSON.stringify(raw), { level: 9 }),
 );
-const checks = fs
-  .readdirSync(path.join(root, 'cpu-prechecks'))
-  .map((file) => ({
-    process: file,
-    ...read(path.join(root, 'cpu-prechecks', file)),
-  }));
+const checks = fs.readdirSync(path.join(root, 'cpu-prechecks')).map((file) => ({
+  process: file,
+  ...read(path.join(root, 'cpu-prechecks', file)),
+}));
 assert.equal(checks.length, 180);
 assert.ok(checks.every((check) => check.approved));
 fs.writeFileSync(

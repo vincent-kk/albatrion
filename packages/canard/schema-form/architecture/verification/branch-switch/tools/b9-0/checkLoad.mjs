@@ -49,4 +49,7 @@ json(path.join(root, 'untimed-load-check.json'), {
   plugin: inputs.plugin,
   results,
 });
-console.log('B9_0_UNTIMED_LOAD_OK bundles=7 rows=6 operations=84');
+const operations = results
+  .flatMap((result) => result.rows)
+  .reduce((sum, row) => sum + row.operations, 0);
+console.log('B9_0_UNTIMED_LOAD_OK bundles=7 rows=6 operations=' + operations);

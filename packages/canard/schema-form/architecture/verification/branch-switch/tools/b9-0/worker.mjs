@@ -9,6 +9,7 @@ import { stageNames as baseStageNames } from '../b6/buildStages.mjs';
 import { setupWrite } from './operation.mjs';
 import { rows } from './rows.mjs';
 import { createUntimedRecorder } from './untimedRecorder.mjs';
+import { yieldBeforeSample } from './yieldBeforeSample.mjs';
 
 process.env.NODE_ENV = 'production';
 const [root, rowId, pass, repeatText] = process.argv.slice(2);
@@ -114,6 +115,7 @@ if (smoke) {
   for (let index = -20; index < 100; index++) {
     const offset = (index + 20 + repeat) % modes.length;
     for (const mode of [...modes.slice(offset), ...modes.slice(0, offset)]) {
+      await yieldBeforeSample();
       recorder.reset();
       recorder.enabled = ['wrapped', 'supplemental', 'gap'].includes(mode);
       const start = performance.now();

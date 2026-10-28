@@ -1,6 +1,6 @@
 # B9-0 측정 계약
 
-제품 기준은 `699cbd733`입니다. 제품 소스를 수정하지 않으며 `buildStages.mjs`는 B6 장치를 복제한 scratch builder입니다. `wrapped` 번들의 바이트와 선언 manifest가 B6와 같음을 준비 단계에서 단언합니다. 새 함수와 영역 타이머는 `supplemental`에만 추가하며 `gap`은 별도 경계 진단, `diagnostic`은 시계 없는 캐시·콜백 진단입니다. source 진입점을 esbuild scratch 입력으로 읽고 제품 hook을 추가하지 않습니다.
+제품 기준은 `4d0fa4a12`입니다. 제품 소스를 수정하지 않으며 `buildStages.mjs`는 B6 장치를 복제한 scratch builder입니다. `wrapped` 번들의 바이트와 선언 manifest가 B6와 같음을 준비 단계에서 단언합니다. 새 함수와 영역 타이머는 `supplemental`에만 추가하며 `gap`은 별도 경계 진단, `diagnostic`은 시계 없는 캐시·콜백 진단입니다. source 진입점을 esbuild scratch 입력으로 읽고 제품 hook을 추가하지 않습니다.
 
 `rows.mjs`의 여섯 행은 모든 장치가 공유합니다. 기존 setupWrite가 oneOf의 형제 수를 보존하지 않으므로 `operation.mjs`가 `fixtures.mjs`의 oneOf 형상을 직접 구성합니다. payload-12만 기존 branch-switch 형상을 사용합니다. 모든 시간 단위는 쓰기 한 번이며 구성·마운트·값 검사·legacy 정착 대기를 current 시간에 넣지 않습니다. legacy만 과거 비동기 정착을 타이밍에 포함합니다. siblings의 legacy는 분기 기본값 x/y가 바뀌고 current는 기존 값을 유지한다는 기존 차이를 그대로 검사하며 legacy는 창 품질에만 씁니다.
 
@@ -14,7 +14,7 @@ yarn workspace @canard/schema-form build
 # 필요한 @winglet workspace dist 및 AJV8 plugin dist를 지정 build로 준비합니다.
 yarn workspace @canard/schema-form-ajv8-plugin build
 node "$B9_TOOLS/checkTools.mjs"
-node "$B9_TOOLS/prepare.mjs" "$B9_RUN" 699cbd733
+node "$B9_TOOLS/prepare.mjs" "$B9_RUN" 4d0fa4a12
 yarn workspace @canard/schema-form build
 node "$B9_TOOLS/verifyBuild.mjs" "$B9_RUN"
 node "$B9_TOOLS/staticPreparation.mjs" "$B9_RUN"
@@ -35,3 +35,7 @@ gap의 `beforeSettlementUs`는 setValue 호출 직전부터 `writeFieldNode` 함
 원시 표본과 CPU 관측은 gzip JSON으로 보존하며 summary가 프로세스 수·표본 수·self 보존·불변 번들 해시를 다시 검사합니다. 결과의 절대 시간에는 계측 오버헤드가 포함됩니다. leaf 기울기는 payload-12와 oneOf-80의 차이를 추가 들고 나는 잎 18개로, 형제 기울기는 각 행 차이를 형제 수 차이로 나눕니다. 개선량은 제품 변경 실측이 아니라 해당 비용의 제거 가능성에 대한 진단입니다.
 
 도구 검증은 `checkTools.mjs`, 저장소 ESLint, `yarn exec tsc --allowJs --checkJs --noEmit --skipLibCheck --target es2023 --module nodenext --moduleResolution nodenext --types node <tools/b9-0/*.mjs>`와 Prettier를 사용합니다. raw 공개 파일에는 기계 로컬 경로를 남기지 않습니다.
+
+## B11 뒤 재개
+
+기준은 B11 병합 머리입니다. B11에서 제거한 `DetachedWriteAddress.retain`은 supplemental manifest의 `absentSupplementalStages`에 명시하며 0회 호출과 구별합니다. 중지된 첫 창은 legacy 101번째 배치에서 가드 상한 100을 넘어 완료 프로세스 0/180으로 끝났습니다. 원래 러너는 microtask만 양보해 macrotask 초기화를 막았습니다. `yieldBeforeSample.mjs`가 canonical measurePair와 같은 타이밍 밖 `setTimeout(0)` 경계를 복원하며, 120회 가드 검사는 수정 전 실패·수정 후 통과합니다. 새 smoke 뒤 코디네이터에게 창 허가를 질문하고 허가 뒤에만 새 창을 엽니다.

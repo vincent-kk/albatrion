@@ -7,6 +7,7 @@ import { ledgerNames as previousLedger } from '../b6/buildStages.mjs';
 import { ledgerNames, stageNames } from './buildStages.mjs';
 import { instrumentDetails } from './instrumentDetails.mjs';
 import { rows } from './rows.mjs';
+import { yieldBeforeSample } from './yieldBeforeSample.mjs';
 
 assert.deepEqual(ledgerNames, previousLedger);
 assert.equal(rows.length, 6);
@@ -36,6 +37,17 @@ const callback = instrumentDetails(
   'diagnostic',
 );
 assert.ok(callback.contents.includes('staticReuserCalls++'));
+// The legacy bundle resets its batch guard on a macrotask, beyond Promise jobs.
+let batches = 0;
+for (let sample = 0; sample < 120; sample++) {
+  await yieldBeforeSample();
+  if (batches === 0)
+    setTimeout(() => {
+      batches = 0;
+    }, 0);
+  assert.ok(++batches <= 100, 'Legacy macro-turn batch guard');
+  for (let job = 0; job < 8; job++) await Promise.resolve();
+}
 execFileSync(
   process.execPath,
   [fileURLToPath(new URL('../window/checkQuietProcess.mjs', import.meta.url))],
