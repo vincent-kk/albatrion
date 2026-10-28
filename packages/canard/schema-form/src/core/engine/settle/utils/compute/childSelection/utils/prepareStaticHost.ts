@@ -1,7 +1,11 @@
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { HostStaticPartition } from '../../../../../blueprint';
-import type { Blueprint, BlueprintNode } from '../../../../../blueprint';
+import type {
+  Blueprint,
+  BlueprintChildEntry,
+  BlueprintNode,
+} from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
 import { getHostDerived } from '../../../../../utils/cache/derivedRecords';
 import { engineModes } from '../../../../../utils/cache/engineModes';
@@ -18,6 +22,13 @@ export interface PreparedStaticHost<Self> {
   readonly path: string;
   readonly baseline: Record<string, Self>;
   readonly entries: ReadonlyMap<string, StaticShapeEntry>;
+  /** Ungated child list, constructed once with the fixed baseline. */
+  readonly baselineChildren: readonly Self[];
+  /** Dynamic candidates retain blueprint author order even without a direct plan. */
+  readonly dynamicEntries: readonly BlueprintChildEntry[];
+  /** Last ordinary shape and child list, never mutated by an in-progress selection. */
+  selectedStructure: Record<string, Self>;
+  selectedChildren: readonly Self[];
   /** Previous dynamic names are used only for cleanup, not to admit children. */
   dynamicNames: readonly string[];
   /** Unsupported always-visited steps remain in authored order. */
@@ -26,7 +37,7 @@ export interface PreparedStaticHost<Self> {
 
 /**
  * Validate a fixed static baseline once per eligible live object-host lifetime.
- * @param node - Host with a direct, unique-name plan and immutable templates
+ * @param node - Host with a unique static partition and immutable templates
  * @param prior - Previously published structure used only as occurrence witnesses
  * @param context - Load, distribution and path changes invalidate the witnesses
  * @param hasRelocated - Relocated gates force the original selection path
@@ -78,7 +89,6 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
     'directChildSelectionPlan',
     ReturnType<typeof getDirectChildSelectionPlan>
   >(node.blueprintNode).directChildSelectionPlan;
-  if (!plan) return undefined;
   const shape = staticShape(
     node.blueprintNode,
     node.runtime.blueprint.isAtomic,
@@ -118,12 +128,18 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
     path: node.path,
     baseline,
     entries,
+    baselineChildren: Object.values(baseline),
+    dynamicEntries: node.blueprintNode.childEntries.filter(
+      (entry) => !entries.has(entry.name),
+    ),
+    selectedStructure: prior,
+    selectedChildren: node.children ?? [],
     dynamicNames: Object.keys(prior).filter((name) => !entries.has(name)),
     alwaysSteps: (
       getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
         node.blueprintNode,
       ).gateSelectionTable?.alwaysSteps ?? []
-    ).filter((index) => !entries.has(plan.steps[index].entry.name)),
+    ).filter((index) => plan && !entries.has(plan.steps[index].entry.name)),
   };
   record.preparedStaticHost = prepared;
   (context.preparedStaticHosts ??= new Set()).add(node);

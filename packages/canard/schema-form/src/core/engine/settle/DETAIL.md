@@ -37,7 +37,8 @@
 - 비용 모델: 슬롯 삽입은 엔트리당 평균 O(1), 분리·레지스트리 제거는 기존 이탈 서브트리 비용, 복제는 실제 보유 서브트리 크기, dirty 전파는 영향 호스트와 부모 깊이에 비례한다. 첫 읽기는 열거 원본 수와 정렬 비용이며 변화 없는 반복 읽기는 O(1)이다. 커밋에서 전체 잠복 목록·동결 배열을 복사하지 않는다. 보유량은 방문한 엔트리 M과 값 깊이 K, 실제 overlay와 읽은 목록에 비례하며 전역 역사 journal을 두지 않는다.
 - B2-P2 바퀴 계획은 live host identity와 청사진·relocation 목록 identity로 묶는다. 최초 O(G)의 목록·식 자격·예산 준비 뒤 반복 읽기는 O(1)이며, 새 relocation 등록/제거 때만 목록을 갱신한다. 같은 바퀴에서 이미 발견한 게이트는 기존 예산 의미대로 유지한다. 청사진 교체·rebuild·호스트 재진입은 새 키이며 게이트 값·판정은 계획에 저장하지 않는다.
 - B2-P2 나감 계층은 template별 선언·fields 대상·조각 소유를 최초에 색인하고 unsetOnInactive 후보만 읽는다. 선택 ID와 committed rule value는 매번 현재 기록을 사용하여 node→fields→fragment 우선순위와 keep 우선을 유지한다. 선언이 없는 나감은 O(1), 정책이 있는 나감은 관련 정책 수에 비례하며 루트 선언 전체를 재방문하지 않는다. 자식 문서 위치는 template별 최초 O(E) 색인 뒤 조상당 O(1) 조회한다.
-- B2-P2 정적 준비물은 게이트·overlay·relocation이 없는 고유 객체 엔트리의 schema·ID·소유·경로 증인을 live host당 최초 O(S)로 검증한다(SETTLE-052). 준비된 정적 baseline은 청사진의 항상 활성인 성질이며 이전 동적 선택이 아니다. 동적 엔트리는 매 정착 고정 baseline에서 원래 순서로 선택한다(SETTLE-044·GOAL-029·BLUEPRINT-007). 이전 structure·children·값은 변경하지 않으며 전체 형상 공표의 O(S+K) 복사·조립 비용은 유지한다.
+- 정적 준비물은 게이트·overlay·relocation이 없는 고유 객체 엔트리의 schema·ID·소유·경로 증인을 live host당 최초 O(S)로 검증한다(SETTLE-052). 자격은 고유 정적 분할에만 걸리며 직접 선택 계획이 null인 동명 분기 호스트도 준비한다. 준비된 정적 baseline은 청사진의 항상 활성인 성질이며 이전 동적 선택이 아니다. 동적 엔트리는 매 정착 고정 baseline에서 원래 순서로 선택한다(SETTLE-044·GOAL-029·BLUEPRINT-007).
+- 준비된 선택은 정적 baseline과 동적 엔트리 K개의 임시 view를 사용한다. 게이트가 중간 형상을 열거해야 할 때만 전체 키를 합성하며, 선택이 끝나면 일반 자체 속성 structure를 공표한다. 동적 이름·순서·노드가 직전 선택과 같으면 직전 structure·children을 그대로 재사용하여 전체 복사·열거·자식 목록 비교를 생략한다. 구성원이 달라지면 O(S+K) 새 형상과 목록을 만든다. 이전 structure·children·값은 변경하지 않는다. 준비물 보유량은 O(S+K)의 baseline·목록·직전 선택 참조이고, 정착 중 임시 동적 view는 O(K)다. 조립과 필요한 중간 게이트 공표 비용은 유지한다.
 - load·reset·rebuild·호스트 재진입·배열 재배치/경로 변경·분배 입력·relocated 게이트·실패 시 정적 준비물을 폐기하거나 일반 경로로 후퇴한다. 새 호스트는 새 약한 키이며 경로/청사진 identity 변경도 증인을 무효화한다. verify만 독립 정적 증인 재검사와 손상 거부를 수행하고 출하 경로는 반복 witness·ID 재공표를 생략한다. 보유 비용은 준비된 gated host당 O(S) 정적 참조와 O(G) wheel metadata다.
 
 - B1의 게이트는 발생별 `reads`와 `evaluate(inputs)` 계약을 공유한다. `active`의 컴파일 의존, `discriminator`의 태그 프로퍼티, `if`의 완전한 정적 읽기 증거 또는 전체 호스트 읽기를 바인딩하며, 입력이 더러워지면 해당 호스트의 모든 게이트를 원래 순서로 판정한다(BLUEPRINT-007·055). 역색인으로 개별 게이트를 생략하지 않는다. 형상은 매 정착의 무게이트 baseline에서 계산한다(SETTLE-044·GOAL-029).
@@ -750,6 +751,11 @@
 - 이탈 참조의 defaultValue 포착도 준비된 주소 문법을 사용하되 현재 loadSnapshot을 순회합니다. 분기 없는 경로는 해당 runtime의 구체 주소 캐시를 사용합니다.
 - runtime 캐시의 소유자·256개 상한·모드 세대, watch의 현재/이전 스키마 선택과 멤버십, 슬롯 주소 재키와 현재 lineage 선택을 각 소유 시험으로 확인합니다.
 - watch 문법 계획은 값이나 스키마 선택을 저장하지 않습니다. 기존 노드/커밋 값 메모의 증인은 매번 읽은 현재 스키마·watch identity·경로를 확인하고, context가 계속 없을 때만 해당 커밋의 빈 context 객체를 재사용합니다. 다음 커밋과 다른 노드는 독립 객체를 사용합니다.
+
+### settle-b9-sibling-preparation — 동명 분기의 정적 준비와 구성원 재사용
+
+- 직접 계획이 null인 형제 1,000 호스트의 반복 전환은 정적 재사용 콜백 0회이고, 구성원 변화가 없으면 전체 structure 복사와 자식 목록 비교 0회다. 이전 자식 배열과 structure 참조·키 순서를 유지하며 같은 이름 분기의 선언 전환은 계속 계산한다.
+- 구성원 변화가 있는 전환은 이전 structure·children을 변경하지 않는다. load·분배 입력·경로 변화·실패·relocation 후퇴와 verify 증인 손상 거부를 유지한다.
 
 ## Boundary Exemptions
 

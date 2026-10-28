@@ -1,5 +1,6 @@
-import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -44,12 +45,13 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       node,
       prepared.dynamicNames,
     );
-    node.structure = Object.assign(Object.create(null), prepared.baseline);
-    const children = Object.values(node.structure!);
+    if (prepared.selectedStructure === prior)
+      prepared.selectedChildren = node.children ?? [];
+    node.structure = prepared.baseline;
     node.children = captureFieldNodeChange(
       node,
       'children',
-      isSameChildList(node.children, children) ? node.children : children,
+      prepared.baselineChildren,
     );
     return;
   }
