@@ -73,7 +73,29 @@ for (const packageDir of [baseline, candidate]) {
   const controlsType = checker.getNonNullableType(
     checker.getTypeOfSymbolAtLocation(controls, source),
   );
+  const inactiveValue = checker.getPropertyOfType(
+    controlsType,
+    'inactiveValue',
+  );
+  const inactiveValueType = inactiveValue
+    ? checker.getTypeOfSymbolAtLocation(inactiveValue, source)
+    : undefined;
+  if (inactiveValueType) {
+    assert.ok(inactiveValueType.isUnion());
+    assert.equal(
+      inactiveValueType.types.filter((type) => type.getCallSignatures().length)
+        .length,
+      1,
+    );
+  }
   members.push({
+    inactiveValueType: inactiveValueType
+      ? checker.typeToString(
+          inactiveValueType,
+          source,
+          ts.TypeFormatFlags.NoTruncation,
+        )
+      : null,
     node: checker
       .getPropertiesOfType(node)
       .map((symbol) => symbol.name)

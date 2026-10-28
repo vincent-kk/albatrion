@@ -15,6 +15,6 @@ node packages/canard/schema-form/architecture/verification/branch-switch/tools/b
 
 prepare는 B11 장치에 선택적 baseline-commit을 전달합니다. B11의 기본 기준은 유지합니다. window는 B11의 22행·레인별 10프로세스·20예열/100표본·legacy quality, B8의 개별 PID 30%/3초 평균·5초 간격·최대 120초 시작 지연, 정식 마커 중복 거부를 그대로 사용합니다. 스모크를 통과한 뒤 정식 시작하고 창 중에는 시험·빌드·다른 창을 실행하지 않습니다.
 
-기존 배달 코퍼스는 두 머리의 모든 기존 관측점을 그대로 비교합니다. 새 기능을 작성할 수 없는 기준 머리에 대하여 B12 장면 여섯은 후보의 공개 계약으로 별도 단언하며 summary의 extensionScenes/extensionPhases에 기록합니다. 각 장면은 before·exit-after-drain·reentry-after-drain의 값·inactiveValues·실제 사건을 보존합니다. 기존 비교의 관측 수와 차이 수는 이 확장 수와 구분합니다.
+기존 배달 코퍼스는 두 머리의 모든 기존 관측점을 그대로 비교합니다. 새 기능을 작성할 수 없는 기준 머리에 대하여 B12 장면 일곱은 후보의 공개 계약으로 별도 단언하며 summary의 extensionScenes/extensionPhases에 기록합니다. 각 장면은 before·exit-after-drain·reentry-after-drain의 값·inactiveValues·실제 사건을 보존합니다. 재키 장면도 추가하여 7장면·21관측점을 단언합니다. 기존 비교의 관측 수와 차이 수는 이 확장 수와 구분합니다.
 
-선언 장치는 분산 d.ts의 재수출을 따라 공개 이름 94→97, 새 타입 셋, 경고 멤버 둘, 노드 멤버 onInactive와 controls 키 inactiveValue를 확인합니다. 릴리스 전 선언 차분 0 면제는 차분의 생략이 아닙니다.
+선언 장치는 분산 d.ts의 재수출을 따라 공개 이름 94→97, 새 타입 셋, 경고 멤버 둘, 노드 멤버 onInactive와 controls 키 inactiveValue와 리터럴·호출 시그니처가 살아 있는 키 형도 확인합니다. 릴리스 전 선언 차분 0 면제는 차분의 생략이 아닙니다.
