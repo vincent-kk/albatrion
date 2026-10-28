@@ -20,7 +20,6 @@ import { getSlotSource } from './getSlotSource';
  * @param whole - Whether absent descendants lose their previous sources
  * @param automatic - Whether this write is an automatic fill
  * @param seen - Invocation-local recursion guard shared by nested distribution
- * @param retainedArrayInput - Publish packed exit arrays through their kept descendants
  * @returns Interpreted patch and whether a terminal descendant has a projected emit
  */
 export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
@@ -31,7 +30,6 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   whole: boolean,
   automatic = false,
   seen: WeakSet<object> = new WeakSet(),
-  retainedArrayInput = false,
 ): { overlay: InactiveSlotOverlay; wrote: boolean } => {
   if (template.kind === 'virtual') return { overlay: {}, wrote: false };
   if (template.strategy === 'terminal') {
@@ -49,7 +47,7 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   }
   if (
     template.kind === 'array' &&
-    (template.hasCandidateDescendants || retainedArrayInput) &&
+    template.hasCandidateDescendants &&
     isArray(input)
   ) {
     if (seen.has(input)) return { overlay: { replace: true }, wrote: false };
@@ -68,11 +66,10 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
         whole,
         automatic,
         seen,
-        retainedArrayInput,
       );
       children.set(entry, child.overlay);
       if (child.wrote) wrote = true;
-      if (!retainedArrayInput) raw[index] = undefined;
+      raw[index] = undefined;
     }
     seen.delete(input);
     return {
@@ -81,7 +78,6 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
         raw: Object.freeze(raw),
         itemCount: input.length,
         children,
-        ...(retainedArrayInput ? { packedArrayInput: true } : undefined),
       },
       wrote,
     };
@@ -122,7 +118,6 @@ export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
       whole,
       automatic,
       seen,
-      retainedArrayInput,
     );
     children.set(entry, child.overlay);
     if (child.wrote) wrote = true;

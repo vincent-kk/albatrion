@@ -117,6 +117,83 @@ it('keeps clearing arrays without keep descendants empty on re-entry', () => {
   expect(root.emit).toEqual({ open: true });
 });
 
+it('preserves each kept candidate kind inside a compacted survivor', () => {
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      number: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          allOf: [
+            {
+              controls: { active: '#/number' },
+              properties: {
+                keep: { type: 'number', controls: { unsetOnInactive: false } },
+              },
+            },
+            {
+              controls: { active: '!#/number' },
+              properties: {
+                keep: {
+                  type: 'string',
+                  default: 'held',
+                  controls: { unsetOnInactive: false },
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
+  });
+  dispatchMount(root, { open: true, number: true, list: [{ keep: 12 }] });
+  dispatchSetValue(getDispatchNode(root, 'number'), false);
+  dispatchSetValue(getDispatchNode(root, 'open'), false);
+  dispatchSetValue(getDispatchNode(root, 'open'), true);
+  expect(getDispatchNode(root, 'list', '0', 'keep').raw).toBe('held');
+  dispatchSetValue(getDispatchNode(root, 'number'), true);
+  expect(getDispatchNode(root, 'list', '0', 'keep').raw).toBe(12);
+});
+
+it('preserves kept scalar item candidates at the same compacted index', () => {
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      number: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        allOf: [
+          {
+            controls: { active: '#/number' },
+            items: { type: 'number', controls: { unsetOnInactive: false } },
+          },
+          {
+            controls: { active: '!#/number' },
+            items: {
+              type: 'string',
+              default: 'held',
+              controls: { unsetOnInactive: false },
+            },
+          },
+        ],
+      },
+    },
+  });
+  dispatchMount(root, { open: true, number: true, list: [12] });
+  dispatchSetValue(getDispatchNode(root, 'number'), false);
+  dispatchSetValue(getDispatchNode(root, 'open'), false);
+  dispatchSetValue(getDispatchNode(root, 'open'), true);
+  expect(getDispatchNode(root, 'list', '0').raw).toBe('held');
+  dispatchSetValue(getDispatchNode(root, 'number'), true);
+  expect(getDispatchNode(root, 'list', '0').raw).toBe(12);
+});
+
 it.each([
   { kind: 'object' as const, clear: true, visits: 3 },
   { kind: 'array' as const, clear: false, visits: 7 },

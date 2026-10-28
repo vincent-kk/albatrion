@@ -22,6 +22,7 @@
 - A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
 
 - 지움과 함께 나가는 배열은 명시 keep 원본이 있는 아이템만 원래 순서대로 압축 보존한다. 아이템 자신과 살아 있거나 이미 비활성인 자손의 keep에 객체 호스트와 같은 정책을 적용하며 중첩 배열도 재귀한다. 닫힌 동안 inactiveValues는 압축 색인의 kept 원본을 공표하고, 재진입은 압축 배열을 복원하되 조건이 거짓인 keep은 자기 비활성 슬롯에 남긴다. 후보 소유 범위는 결과에 영향을 주지 않으며 keep 자손이 없는 배열은 길이 0이고 객체 호스트의 정책은 유지한다. 추가 아이템 순회는 지움 배열의 나감에만 적용하며 지움 없는 나감과 객체 호스트의 overlay 방문 수는 유지한다.
+- 압축 raw는 배열 재생성의 길이와 입력 값이며 공표는 kept 자손의 패치로 한다. 패치는 옛 아이템 주소에 의존하지 않는 채널 사본이며 후보별 선언 결합을 유지한다. 같은 이름의 종류별 원본을 첫 후보에 재해석하지 않으며, 보유 공간은 압축 raw와 kept 서브트리의 패치 수에 비례한다.
 
 - 슬롯 경로는 호스트가 나간 인스턴스를 그대로 보유하고 재진입 때 새 인스턴스로 복제한다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"와 "슬롯은 후보 풀이지 직전 형상이 아니다"를 유지한다. 같은 이름·다른 청사진 노드는 독립 원본이며 공개 structure·children에는 활성 형상만 둔다(NODE-043·044·060, SETTLE-044·GOAL-029).
 - 복제는 raw·extras·선언 밖 값과 자손 슬롯을 재귀적으로 보존하고 부모·경로·등록·색인을 새로 결합한다. 상호작용·오류·배달 기록은 이어받지 않으며 배열 itemKey는 새로 발급한다. 비활성 자손도 새 부모로 복제하여 옛 parent 연결이 과거 호스트를 누적 보유하지 않게 한다. 복제된 새 노드의 entered·채움·resetInteraction과 모든 중첩 호스트의 고정 baseline 재선택을 유지한다(NODE-044·053, SETTLE-044, WRITE-007).
@@ -325,6 +326,10 @@
 ### settle-slot-entry — 새 수명의 복제와 재선택
 
 - source 채널·extras·선언 밖 값과 후보별 원본을 복원하되 모든 재진입 참조와 배열 nonce는 새 값이다. 중첩 게이트 입력이 비활성 동안 바뀌어도 고정 baseline에서 선택하며 옛 형상을 후보 밖의 힌트로 쓰지 않는다. 보존 원본이 없음인 새 노드는 기존 채움·상호작용 초기화를 받는다.
+
+### settle-slot-clearing-array-keep — keep 아이템의 압축 복원
+
+- 살아 있거나 이미 비활성인 keep, 아이템 자신의 스칼라 keep, 중첩 배열, 후보 소유 범위와 같은 이름의 여러 종류 원본을 압축 색인에서 보존한다. keep이 없는 아이템은 제거하며, 재진입 뒤 조건이 거짓인 keep은 자기 슬롯에 남고 조건이 참이 되면 복원한다. 객체 지움과 지움 없는 배열의 overlay 방문 수는 각각 기존과 같다.
 
 ### settle-slot-overlays — 비활성 쓰기와 범위
 
@@ -802,4 +807,4 @@
 
 ## Last Updated
 
-2026-10-28
+2026-10-28. B7 지움 배열 keep 원본의 압축 복원·후보 결합 보존·비활성 공표와 비용.
