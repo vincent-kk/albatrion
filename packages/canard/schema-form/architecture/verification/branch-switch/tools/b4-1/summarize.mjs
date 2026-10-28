@@ -8,6 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { buildAlternatingRows } from '../../../design-optimization/tools/helpers/buildAlternatingRows.mjs';
 import { summarizeAlternating } from '../../../design-optimization/tools/helpers/summarizeAlternating.mjs';
 import { stageNames as originalStages } from '../../../design-optimization/tools/profile/branch-switch/buildBundle.mjs';
+import { getStageRoot } from '../window/getStageRoot.mjs';
 import { ledgerNames, stageNames } from './buildStages.mjs';
 import { verifyInputs } from './verifyInputs.mjs';
 
@@ -180,9 +181,9 @@ for (const row of [
   const ledgers = Object.fromEntries(
     ['A', 'B'].map((lane) => [
       lane,
-      read(
-        root + '-stage-' + lane.toLowerCase() + '/stages/results.json',
-      ).results.filter((record) => record.row === row),
+      read(getStageRoot(root, lane) + '/stages/results.json').results.filter(
+        (record) => record.row === row,
+      ),
     ]),
   );
   const measured = {};
@@ -314,7 +315,7 @@ for (const row of [
 }
 assert.equal(new Set(stagePids).size, 18, 'Fresh stage worker processes');
 const supplementalRaw = read(
-  root + '-stage-b/stages/supplemental-results.json',
+  getStageRoot(root, 'B') + '/stages/supplemental-results.json',
 );
 assert.equal(supplementalRaw.results.length, 9);
 const supplementalPids = supplementalRaw.results.map((record) => record.pid);
@@ -463,10 +464,7 @@ const judgment = {
   timerSites: Object.fromEntries(
     ['A', 'B'].map((lane) => {
       const manifest = read(
-        root +
-          '-stage-' +
-          lane.toLowerCase() +
-          '/stages/scratch/instrumentation.json',
+        getStageRoot(root, lane) + '/stages/scratch/instrumentation.json',
       );
       assert.deepEqual(
         manifest.stages.map((stage) => stage.name).sort(),
@@ -513,12 +511,7 @@ for (const [name, data] of Object.entries({
   'stage-inputs.json': Object.fromEntries(
     ['A', 'B'].map((lane) => [
       lane,
-      read(
-        root +
-          '-stage-' +
-          lane.toLowerCase() +
-          '/stages/scratch/instrumentation.json',
-      ),
+      read(getStageRoot(root, lane) + '/stages/scratch/instrumentation.json'),
     ]),
   ),
   'window.json': {

@@ -7,6 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { getStageRoot } from '../window/getStageRoot.mjs';
 import { buildStages } from './buildStages.mjs';
 
 const options = Object.fromEntries(
@@ -65,7 +66,7 @@ assert.equal(
   'Commit final product, verification and artifact-check inputs before preparation',
 );
 assert.match(
-  options.root,
+  options.root.replace(/\.noindex$/, ''),
   /\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+$/,
 );
 fs.mkdirSync(options.root, { recursive: false });
@@ -92,7 +93,7 @@ for (const [lane, source] of [
   }
   const scratch = await buildStages(
     source,
-    options.root + '-stage-' + lane.toLowerCase() + '/stages',
+    getStageRoot(options.root, lane) + '/stages',
     path.join(repository, 'node_modules'),
   );
   stageBundles[lane] = {};

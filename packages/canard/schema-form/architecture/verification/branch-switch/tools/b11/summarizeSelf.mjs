@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { getStageRoot } from '../window/getStageRoot.mjs';
+
 /** Median with no changes to the sample order retained in the raw file. */
 const median = (values) => {
   const sorted = values.toSorted((a, b) => a - b);
@@ -21,8 +23,7 @@ const summarize = (values) => ({
 const root = path.resolve(process.argv[2]);
 const lanes = {};
 for (const lane of ['A', 'B']) {
-  const file =
-    root + '-stage-' + lane.toLowerCase() + '/stages/supplemental-results.json';
+  const file = getStageRoot(root, lane) + '/stages/supplemental-results.json';
   lanes[lane] = JSON.parse(fs.readFileSync(file, 'utf8')).results;
   assert.equal(lanes[lane].length, 9);
   for (const record of lanes[lane]) {

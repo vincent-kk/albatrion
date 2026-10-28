@@ -134,6 +134,8 @@ export interface BlueprintNode {
   readonly hasCandidateDescendants?: boolean;
   /** A template strictly below this one, or a control addressing its children, declares a possible explicit `unsetOnInactive` keep. */
   readonly hasKeepDescendants?: boolean;
+  /** Some own or parent-addressed declaration can provide a retained exit value. */
+  readonly hasInactiveValue?: boolean;
   /**
    * First repeated item candidate, retained for single-candidate consumers.
    * First candidate; paths that distinguish folds use the candidate list (itemCandidates / prefixItemCandidates / getItemEntries).

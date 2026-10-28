@@ -121,6 +121,10 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   root: Self;
   /** Emitted root reference from the preceding committed shape. */
   previousEmit: unknown;
+  /** Successful exit results, retained only for this settlement and applied after source capture. */
+  inactiveValueOverrides?: Map<Self, unknown>;
+  /** First pre-move address per moved node, built once by an exit resolver. */
+  inactivePathOrigins?: Map<Self, string>;
   /** Binding context from the preceding committed shape. */
   previousContext?: Readonly<Record<string, unknown>>;
   /** Original caller target, excluded from refresh targets. */

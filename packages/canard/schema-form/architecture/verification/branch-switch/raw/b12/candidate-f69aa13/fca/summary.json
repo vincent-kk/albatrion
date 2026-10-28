@@ -1,0 +1,13 @@
+{
+  "result": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "snapshotHash": "afe3f9b5dd7d624a2c43c3b8cdea30d5e9929af3addf953ba432b532d0c3efbb",
+  "uniqueFindings": 202,
+  "scopeSource": "default",
+  "coveredFacts": 1644,
+  "canonicalError": "circular-dependency: FieldProxy -> FieldInputSlot -> FieldProxy",
+  "existingCycleSubtreeUnchanged": true,
+  "newFindingsInChangedCode": 0,
+  "changedDocumentExistingFinding": "src/DETAIL.md: existing #/ pointer-token diagnostic",
+  "baselineReference": "raw/b11/fca/summary.json"
+}

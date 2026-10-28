@@ -2,6 +2,9 @@
 
 ## Requirements
 
+
+- B12 인스턴스별 `inactiveListeners`는 선택적 Map(node → Set)으로 보유하며 재진입 복제에 넘기지 않습니다. 선택적 `resolvingInactiveValue` 표시는 동기 resolver 실행 동안만 참이며 노드 고정 칸을 추가하지 않습니다.
+
 - 노드 이름의 표기는 formatSegment가 소유하며 이미 보유한 escapedName은 appendFormattedSegment로 주소에 결합해 중복 이스케이프 할당을 피한다. 원문 이름의 일반 조립은 appendSegment가 소유하며 예약 이름의 퍼센트 표기를 유지한다.
 
 - 떼어진 참조의 쓰기는 정착·커밋·배달을 만들지 않으며 원래 떼어진 인스턴스의 읽기도 바꾸지 않는다. 쓰기 직후의 보유 슬롯·overlay 원본은 새 값을 가지지만 살아 있는 호스트의 inactiveValues는 직전 커밋 목록을 유지한다. 다음 살아 있는 커밋이 변경된 호스트와 조상의 materialization을 무효화하며, 같은 값·항목 참조와 떼어진 호스트의 고정된 읽기는 보존한다(NODE-044, VALUE-031, WRITE-087).

@@ -88,7 +88,8 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
         : node.undeclaredValues;
   let hasSource =
     !clear &&
-    (raw !== undefined ||
+    (context?.inactiveValueOverrides?.has(node) ||
+      raw !== undefined ||
       extras !== undefined ||
       node.behavior.type === 'array');
   let children: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;

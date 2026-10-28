@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- B12 `inactiveValue`는 노드·fields·조각 controls 모두에서 허용하는 열 번째 자식 제어 키입니다. 문자열은 리터럴이며 식 목록에 포함하지 않습니다.
+
 - 데이터·스키마 경로는 jsonPointer 조립 API로 이름을 인코딩한다. 배열 반복 경로만 Wildcard 심볼을 쓰고, $ref는 표준 RFC 포인터 이름으로 탐색한다.
 
 

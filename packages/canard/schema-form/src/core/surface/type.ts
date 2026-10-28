@@ -1,4 +1,5 @@
 import type { BlueprintSchema, NodeStrategy, SchemaTypeName } from '../engine';
+import type { InactiveValueResolver } from '../engine';
 import type { FieldNodeListener } from '../engine';
 import type { FieldNodeRuntime } from '../engine';
 import type { FieldNodeEventType, FieldNodeRequestType } from '../engine';
@@ -132,6 +133,8 @@ export interface NodeSurface<
   validate(): Promise<readonly ValidationIssue[]>;
   /** Subscribe to future event deliveries. */
   subscribe(listener: FieldNodeListener): () => void;
+  /** Resolve the retained value synchronously at this instance's normal keep-policy gate exit; returns cleanup. */
+  onInactive(listener: InactiveValueResolver<unknown>): () => void;
   /** Read the accumulated delivery revision for selected event bits. */
   revision(mask?: FieldNodeEventType): number;
   /** Request one renderer action. */

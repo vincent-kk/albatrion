@@ -23,6 +23,26 @@ export type InjectToContext<Schema> = {
   context: Dictionary;
 };
 
+/** Exit resolver inputs; every value and schema is read from the preceding commit. */
+export type InactiveValueContext = InjectToContext<
+  Readonly<Record<string, unknown>> | boolean
+>;
+
+/**
+ * Compute a retained value without performing public writes.
+ * @typeParam V - Previous committed value and returned retained value
+ * @param value - This occurrence's value from the preceding commit
+ * @param context - Preceding paths, schemas, parent/root values and form context
+ * @returns Replacement retained value; undefined preserves the existing source
+ */
+export type InactiveValueResolver<V = unknown> = (
+  value: V,
+  context: InactiveValueContext,
+) => V | undefined;
+
+/** Literal retained value or its synchronous exit resolver. */
+export type InactiveValue<V = unknown> = V | InactiveValueResolver<V>;
+
 /** Control keys of a `controls.fields` entry and of a fragment (allOf, then, else, oneOf or anyOf branch). */
 export type ChildSchemaControls = {
   /** Existence gate: a boolean or an expression; an inactive node leaves the shape and the output (default: true). */
@@ -43,6 +63,14 @@ export type ChildSchemaControls = {
   resetInteraction?: boolean | string;
   /** Exit policy: clears the value when the node leaves the shape; a boolean or an expression (default: keep). */
   unsetOnInactive?: boolean | string;
+  /** Literal (string, number, boolean, null, object or array) or the shared `InactiveValueResolver`; an inline function is typed by the resolver signature. */
+  inactiveValue?:
+    | InactiveValueResolver<unknown>
+    | string
+    | number
+    | boolean
+    | null
+    | object;
 };
 
 /** Specificity layer of a control declaration: the node itself, a parent `controls.fields` entry, or a fragment. */

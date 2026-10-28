@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- B12 작성 제어 키 검증은 node·fields·fragment의 `inactiveValue`를 공통 resolver 리터럴 합집합으로 허용하며 식 제어 키 목록에는 넣지 않습니다.
+
 - 형 파일은 네 칸에 있습니다. `schema/`는 `jsonSchema`·`value`·`injectTo`, `field/`는 `fieldInput`·`fieldRenderer`·`inferFieldInputSchema`, `error/`는 `error`, `rolled/`는 공개 `Roll` 형 `fieldRenderer`·`jsonSchema`를 둡니다.
 - 공개 `Roll` 형 열여덟은 `rolled/`에서 `Rolled` 접두사로 정의됩니다: `RolledFieldRendererProps`, 스키마 형 열여섯(`RolledBooleanSchema`·`RolledNumberSchema`·`RolledStringSchema`·`RolledArraySchema`·`RolledObjectSchema`와 각각의 `NonNullable`·`Nullable` 짝, `RolledNullSchema`), `RolledInferJSONSchema`.
 - 진입점은 네 칸의 형과 `ShowError`를 이름 목록으로 내보냅니다. 루트 `src/index.ts`는 `Rolled*` 형을 `RolledNumberSchema as NumberSchema`처럼 공개 이름으로 바꿔 재수출합니다.

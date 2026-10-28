@@ -31,6 +31,9 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   for (const subscriptions of runtime.listeners?.values() ?? [])
     subscriptions.clear();
   runtime.listeners?.clear();
+  for (const subscriptions of runtime.inactiveListeners?.values() ?? [])
+    subscriptions.clear();
+  runtime.inactiveListeners?.clear();
   clearTreeMemoStores(runtime);
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationPendingTargets = undefined;

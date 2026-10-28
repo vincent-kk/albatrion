@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- B12는 engine이 소유한 `InactiveValue`·`InactiveValueResolver`·`InactiveValueContext`를 이름으로 재수출하고 surface의 `onInactive`를 노드 공개 계약으로 조합합니다. 구현은 각 소유 경계에 남깁니다.
+
 - D3b-1에서 관찰 fixture는 옮겨진 실제 runtime target-ID 메모를 읽고 모드는 engineModes.setMode를 거쳐 변경한다. 관찰 실행은 이전 설정을 finally에서 복원하며 별도 ID 생산자나 전역 대체 registry를 만들지 않는다.
 
 - 검증 전용 관찰 session은 실제 engine module과 그 module의 기존 producer WeakMap을 읽기만 하는 reader, graph-local codec 및 실제로 생성·보존한 객체를 함께 결속한다. 제품 소스·공개 표면·사건·기존 기대값을 변경하지 않으며 관찰 사본의 readonly footer만 허용한다.

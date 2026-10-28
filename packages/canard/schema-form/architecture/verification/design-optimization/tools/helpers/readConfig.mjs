@@ -54,7 +54,7 @@ export function readConfig(argv, toolsURL) {
   );
   if (
     !/^\/private\/tmp\/claude-501\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\/(?:pair|stages))?$/.test(
-      runDir,
+      runDir.replace(/\.noindex(?=\/(?:pair|stages)$|$)/, ''),
     )
   )
     throw new Error(

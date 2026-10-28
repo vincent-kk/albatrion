@@ -1,6 +1,7 @@
 import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { deliverChainRecords } from './deliverChainRecords';
+import { refuseInactiveResolverWrite } from './refuseInactiveResolverWrite';
 
 /**
  * Refuse writes through a frozen lifetime before opening a public entry chain.
@@ -12,6 +13,7 @@ export const refuseDetachedWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
   if (!node.detached) return false;
+  if (refuseInactiveResolverWrite(node)) return true;
   if (process.env.NODE_ENV !== 'production')
     deliverChainRecords(
       node.runtime,

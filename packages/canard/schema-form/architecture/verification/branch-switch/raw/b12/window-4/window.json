@@ -1,0 +1,370 @@
+{
+  "start": {
+    "startedAt": "2026-10-28T21:25:01.585Z",
+    "quietSince": "2026-10-28T21:25:04.717Z",
+    "durationSeconds": 3.127605375,
+    "heavy": [],
+    "processCount": 956,
+    "zeroCpuRowsOmitted": 909,
+    "processes": [
+      {
+        "pid": 819,
+        "name": "duetexpertd",
+        "cpuPercent": 15.986671592160185
+      },
+      {
+        "pid": 92977,
+        "name": "2.1.312",
+        "cpuPercent": 13.42880413740961
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.0749352049789955
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 5.435468341336789
+      },
+      {
+        "pid": 91625,
+        "name": "Orca",
+        "cpuPercent": 2.8776008865880334
+      },
+      {
+        "pid": 440,
+        "name": "loginwindow",
+        "cpuPercent": 2.2381340229076603
+      },
+      {
+        "pid": 81469,
+        "name": "codex",
+        "cpuPercent": 2.2381340229022078
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 2.2381340228931204
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 1.9184005910574773
+      },
+      {
+        "pid": 553,
+        "name": "com.apple.DriverKit-AppleBCMWLAN",
+        "cpuPercent": 1.9184005910574773
+      },
+      {
+        "pid": 88692,
+        "name": "spotlightknowledged.updater",
+        "cpuPercent": 1.598667159216382
+      },
+      {
+        "pid": 417,
+        "name": "dasd",
+        "cpuPercent": 0.9592002955287386
+      },
+      {
+        "pid": 378,
+        "name": "configd",
+        "cpuPercent": 0.6394668636894607
+      },
+      {
+        "pid": 645,
+        "name": "BiomeAgent",
+        "cpuPercent": 0.6394668636876433
+      },
+      {
+        "pid": 92110,
+        "name": "orca-terminal-host",
+        "cpuPercent": 0.6394668636867346
+      },
+      {
+        "pid": 626,
+        "name": "wifip2pd",
+        "cpuPercent": 0.6394668636862801
+      },
+      {
+        "pid": 364,
+        "name": "logd",
+        "cpuPercent": 0.6394668636858258
+      },
+      {
+        "pid": 429,
+        "name": "bluetoothd",
+        "cpuPercent": 0.6394668636858258
+      },
+      {
+        "pid": 430,
+        "name": "notifyd",
+        "cpuPercent": 0.6394668636858258
+      },
+      {
+        "pid": 485,
+        "name": "clocksyncd",
+        "cpuPercent": 0.6394668636858258
+      },
+      {
+        "pid": 493,
+        "name": "airportd",
+        "cpuPercent": 0.6394668636858258
+      },
+      {
+        "pid": 728,
+        "name": "corespotlightd",
+        "cpuPercent": 0.6394668636858258
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 0.639466863671286
+      },
+      {
+        "pid": 588,
+        "name": "gamepolicyd",
+        "cpuPercent": 0.31973343184654784
+      },
+      {
+        "pid": 623,
+        "name": "distnoted",
+        "cpuPercent": 0.3197334318433673
+      },
+      {
+        "pid": 845,
+        "name": "WiFiAgent",
+        "cpuPercent": 0.3197334318433673
+      },
+      {
+        "pid": 482,
+        "name": "lsd",
+        "cpuPercent": 0.3197334318432537
+      },
+      {
+        "pid": 540,
+        "name": "WirelessRadioManagerd",
+        "cpuPercent": 0.3197334318432537
+      },
+      {
+        "pid": 17520,
+        "name": "node",
+        "cpuPercent": 0.31973343184320396
+      },
+      {
+        "pid": 671,
+        "name": "bird",
+        "cpuPercent": 0.31973343184319686
+      },
+      {
+        "pid": 687,
+        "name": "filecoordinationd",
+        "cpuPercent": 0.31973343184314007
+      },
+      {
+        "pid": 1229,
+        "name": "ShortcutsViewService",
+        "cpuPercent": 0.31973343184314007
+      },
+      {
+        "pid": 380,
+        "name": "powerd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 397,
+        "name": "diskarbitrationd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 406,
+        "name": "opendirectoryd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 439,
+        "name": "cfprefsd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 506,
+        "name": "mDNSResponder",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 625,
+        "name": "cfprefsd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 642,
+        "name": "containermanagerd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 651,
+        "name": "MenuBarAgent",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 654,
+        "name": "Finder",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 659,
+        "name": "trustd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 717,
+        "name": "sharingd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 741,
+        "name": "hybridsearchd",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 820,
+        "name": "BetterTouchTool",
+        "cpuPercent": 0.3197334318429129
+      },
+      {
+        "pid": 369,
+        "name": "fseventsd",
+        "cpuPercent": 0.319733431835643
+      },
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 0.3197334317920236
+      }
+    ]
+  },
+  "end": {
+    "startedAt": "2026-10-28T22:00:28.702Z",
+    "quietSince": "2026-10-28T22:00:31.806Z",
+    "durationSeconds": 3.10295100000035,
+    "processCount": 956,
+    "zeroCpuRowsOmitted": 934,
+    "processes": [
+      {
+        "pid": 81469,
+        "name": "codex",
+        "cpuPercent": 17.402788506808605
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 7.090024947212351
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.445477224709189
+      },
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 6.12320336358218
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 4.834107918605169
+      },
+      {
+        "pid": 17558,
+        "name": "node",
+        "cpuPercent": 1.9336431674233818
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 1.93364316742155
+      },
+      {
+        "pid": 45361,
+        "name": "mdworker_shared",
+        "cpuPercent": 1.2890954449488727
+      },
+      {
+        "pid": 92977,
+        "name": "2.1.312",
+        "cpuPercent": 1.2890954449477001
+      },
+      {
+        "pid": 378,
+        "name": "configd",
+        "cpuPercent": 0.6445477224738501
+      },
+      {
+        "pid": 553,
+        "name": "com.apple.DriverKit-AppleBCMWLAN",
+        "cpuPercent": 0.6445477224738501
+      },
+      {
+        "pid": 91625,
+        "name": "Orca",
+        "cpuPercent": 0.6445477224738501
+      },
+      {
+        "pid": 93163,
+        "name": "node",
+        "cpuPercent": 0.322273861237383
+      },
+      {
+        "pid": 1300,
+        "name": "distnoted",
+        "cpuPercent": 0.32227386123721125
+      },
+      {
+        "pid": 91762,
+        "name": "Orca Helper",
+        "cpuPercent": 0.322273861237154
+      },
+      {
+        "pid": 429,
+        "name": "bluetoothd",
+        "cpuPercent": 0.32227386123692503
+      },
+      {
+        "pid": 485,
+        "name": "clocksyncd",
+        "cpuPercent": 0.32227386123692503
+      },
+      {
+        "pid": 493,
+        "name": "airportd",
+        "cpuPercent": 0.32227386123692503
+      },
+      {
+        "pid": 513,
+        "name": "syspolicyd",
+        "cpuPercent": 0.32227386123692503
+      },
+      {
+        "pid": 741,
+        "name": "hybridsearchd",
+        "cpuPercent": 0.32227386123692503
+      },
+      {
+        "pid": 815,
+        "name": "deleted",
+        "cpuPercent": 0.32227386123692503
+      },
+      {
+        "pid": 369,
+        "name": "fseventsd",
+        "cpuPercent": 0.32227386122959734
+      }
+    ]
+  },
+  "formal": {
+    "startedAt": "2026-10-28T21:25:04.718Z",
+    "quietSince": "2026-10-28T21:25:04.717Z"
+  }
+}

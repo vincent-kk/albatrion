@@ -10,6 +10,7 @@ BlueprintGate,
 BlueprintSchemaType,
 EffectiveSchema
 } from '../../blueprint';
+import type { InactiveValueResolver } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
 import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind,WriteOption } from '../../types/value';
@@ -237,6 +238,10 @@ export interface FieldNodeRuntime<Self>
   rebuiltReferenceSchemaPaths?: readonly string[];
   /** Per-node subscribers, allocated only for a subscribed tree. */
   listeners?: Map<unknown, Set<(event: FieldNodeDelivery) => void>>;
+  /** Instance-bound exit resolvers; allocated only for registered nodes. */
+  inactiveListeners?: Map<unknown, Set<InactiveValueResolver<unknown>>>;
+  /** True only while a synchronous exit resolver is executing. */
+  resolvingInactiveValue?: boolean;
   /** Subscriber currently producing a delivery callback. */
   currentListener?: (event: FieldNodeDelivery) => void;
   /** Feedback producers already stopped at this chain's wave budget. */

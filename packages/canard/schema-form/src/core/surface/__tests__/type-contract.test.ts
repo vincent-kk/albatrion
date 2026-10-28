@@ -68,6 +68,7 @@ type PublicKeys =
   | 'clearExternalErrors'
   | 'request'
   | 'subscribe'
+  | 'onInactive'
   | 'revision'
   | 'validate'
   | 'batch'
