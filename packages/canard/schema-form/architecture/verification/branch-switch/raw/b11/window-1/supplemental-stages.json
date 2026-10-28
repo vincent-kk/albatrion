@@ -1,0 +1,6578 @@
+[
+  {
+    "row": "switch-oneOf-80",
+    "role": "B",
+    "adoption": false,
+    "stages": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.7710000001898152,
+          "min": 1.708000000235188,
+          "max": 1.8954999998186395,
+          "width": 0.18749999958345143,
+          "processMedians": [
+            1.8954999998186395,
+            1.7710000001898152,
+            1.708000000235188
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.7710000001898152,
+          "min": 1.708000000235188,
+          "max": 1.8954999998186395,
+          "width": 0.18749999958345143,
+          "processMedians": [
+            1.8954999998186395,
+            1.7710000001898152,
+            1.708000000235188
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 285.36
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 12.874999999894499,
+          "min": 12.082999999847743,
+          "max": 12.917000000015832,
+          "width": 0.8340000001680892,
+          "processMedians": [
+            12.874999999894499,
+            12.917000000015832,
+            12.082999999847743
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.874999999894499,
+          "min": 12.082999999847743,
+          "max": 12.917000000015832,
+          "width": 0.8340000001680892,
+          "processMedians": [
+            12.874999999894499,
+            12.917000000015832,
+            12.082999999847743
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 9819.279999999993
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 34.26950000107354,
+          "min": 32.93750000057116,
+          "max": 36.93599999996877,
+          "width": 3.998499999397609,
+          "processMedians": [
+            34.26950000107354,
+            36.93599999996877,
+            32.93750000057116
+          ]
+        },
+        "inclusiveUs": {
+          "median": 110.58449999995901,
+          "min": 104.39649999989342,
+          "max": 114.60350000038488,
+          "width": 10.207000000491462,
+          "processMedians": [
+            110.58449999995901,
+            114.60350000038488,
+            104.39649999989342
+          ]
+        },
+        "calls": 5,
+        "maximumCalls": 5,
+        "allocationBytes": 25174.720000000012
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 2.833000000237007,
+          "min": 2.7089999994132086,
+          "max": 2.9164999998556596,
+          "width": 0.20750000044245098,
+          "processMedians": [
+            2.9164999998556596,
+            2.833000000237007,
+            2.7089999994132086
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.062500000050932,
+          "min": 7.854500000121334,
+          "max": 8.436999999958061,
+          "width": 0.5824999998367275,
+          "processMedians": [
+            8.436999999958061,
+            8.062500000050932,
+            7.854500000121334
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 2.457999999933236,
+          "min": 2.375000000029104,
+          "max": 2.541999999721156,
+          "width": 0.16699999969205237,
+          "processMedians": [
+            2.541999999721156,
+            2.457999999933236,
+            2.375000000029104
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.457999999933236,
+          "min": 2.375000000029104,
+          "max": 2.541999999721156,
+          "width": 0.16699999969205237,
+          "processMedians": [
+            2.541999999721156,
+            2.457999999933236,
+            2.375000000029104
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1478.3200000000002
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 29.93800000081137,
+          "min": 29.103500000019267,
+          "max": 30.439000000797023,
+          "width": 1.3355000007777562,
+          "processMedians": [
+            29.93800000081137,
+            30.439000000797023,
+            29.103500000019267
+          ]
+        },
+        "inclusiveUs": {
+          "median": 63.10399999983929,
+          "min": 61.10399999988658,
+          "max": 64.812499999789,
+          "width": 3.708499999902415,
+          "processMedians": [
+            63.10399999983929,
+            64.812499999789,
+            61.10399999988658
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 15932.08
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 3.9584999999533466,
+          "min": 3.9374999998926796,
+          "max": 3.9999999999054126,
+          "width": 0.06250000001273293,
+          "processMedians": [
+            3.9584999999533466,
+            3.9999999999054126,
+            3.9374999998926796
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.9584999999533466,
+          "min": 3.9374999998926796,
+          "max": 3.9999999999054126,
+          "width": 0.06250000001273293,
+          "processMedians": [
+            3.9584999999533466,
+            3.9999999999054126,
+            3.9374999998926796
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 2121.6800000000003
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 10.83500000049753,
+          "min": 10.353999999779262,
+          "max": 10.957999999845924,
+          "width": 0.6040000000666623,
+          "processMedians": [
+            10.83500000049753,
+            10.957999999845924,
+            10.353999999779262
+          ]
+        },
+        "inclusiveUs": {
+          "median": 29.10399999996116,
+          "min": 28.187500000058208,
+          "max": 29.45850000014616,
+          "width": 1.2710000000879518,
+          "processMedians": [
+            29.45850000014616,
+            29.10399999996116,
+            28.187500000058208
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 6579.439999999999
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 1.4159999996081751,
+          "min": 1.3744999996561091,
+          "max": 1.5009999997346313,
+          "width": 0.12650000007852213,
+          "processMedians": [
+            1.4159999996081751,
+            1.5009999997346313,
+            1.3744999996561091
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.4159999996081751,
+          "min": 1.3744999996561091,
+          "max": 1.5009999997346313,
+          "width": 0.12650000007852213,
+          "processMedians": [
+            1.4159999996081751,
+            1.5009999997346313,
+            1.3744999996561091
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 821.76
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 7.480499999473977,
+          "min": 7.20799999976407,
+          "max": 7.542500000454311,
+          "width": 0.334500000690241,
+          "processMedians": [
+            7.542500000454311,
+            7.480499999473977,
+            7.20799999976407
+          ]
+        },
+        "inclusiveUs": {
+          "median": 16.145999999935157,
+          "min": 15.646000000060667,
+          "max": 16.312499999685315,
+          "width": 0.6664999996246479,
+          "processMedians": [
+            16.312499999685315,
+            16.145999999935157,
+            15.646000000060667
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 827.36
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 9.271499999840671,
+          "min": 8.813000000145621,
+          "max": 9.437499999876309,
+          "width": 0.6244999997306877,
+          "processMedians": [
+            9.437499999876309,
+            9.271499999840671,
+            8.813000000145621
+          ]
+        },
+        "inclusiveUs": {
+          "median": 9.271499999840671,
+          "min": 8.813000000145621,
+          "max": 9.437499999876309,
+          "width": 0.6244999997306877,
+          "processMedians": [
+            9.437499999876309,
+            9.271499999840671,
+            8.813000000145621
+          ]
+        },
+        "calls": 2,
+        "maximumCalls": 2,
+        "allocationBytes": 12274.479999999998
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 5.832000000282278,
+          "min": 5.625000000691216,
+          "max": 5.8549999996557744,
+          "width": 0.22999999896455847,
+          "processMedians": [
+            5.8549999996557744,
+            5.832000000282278,
+            5.625000000691216
+          ]
+        },
+        "inclusiveUs": {
+          "median": 29.45899999986068,
+          "min": 27.833500000042477,
+          "max": 30.541500000026645,
+          "width": 2.7079999999841675,
+          "processMedians": [
+            30.541500000026645,
+            29.45899999986068,
+            27.833500000042477
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 2616.2400000000002
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 11.645499999985987,
+          "min": 11.187000000063563,
+          "max": 12.958500000195272,
+          "width": 1.7715000001317094,
+          "processMedians": [
+            11.645499999985987,
+            12.958500000195272,
+            11.187000000063563
+          ]
+        },
+        "inclusiveUs": {
+          "median": 11.645499999985987,
+          "min": 11.187000000063563,
+          "max": 12.958500000195272,
+          "width": 1.7715000001317094,
+          "processMedians": [
+            11.645499999985987,
+            12.958500000195272,
+            11.187000000063563
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 8719.36
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 2.333499999849664,
+          "min": 2.3330000003625173,
+          "max": 2.3745000000872096,
+          "width": 0.041499999724692316,
+          "processMedians": [
+            2.3745000000872096,
+            2.3330000003625173,
+            2.333499999849664
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.333499999849664,
+          "min": 2.3330000003625173,
+          "max": 2.3745000000872096,
+          "width": 0.041499999724692316,
+          "processMedians": [
+            2.3745000000872096,
+            2.3330000003625173,
+            2.333499999849664
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 1409.84
+      },
+      "applyConvertedExitPolicy": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "applySlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "captureAbsentSlotInputs": {
+        "selfUs": {
+          "median": 0.41599999985919567,
+          "min": 0.41599999985919567,
+          "max": 0.4169999997429841,
+          "width": 0.000999999883788405,
+          "processMedians": [
+            0.41599999985919567,
+            0.4169999997429841,
+            0.41599999985919567
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.41599999985919567,
+          "min": 0.41599999985919567,
+          "max": 0.4169999997429841,
+          "width": 0.000999999883788405,
+          "processMedians": [
+            0.41599999985919567,
+            0.4169999997429841,
+            0.41599999985919567
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 90.4
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 2.9369999999744323,
+          "min": 2.8744999992795783,
+          "max": 2.9380000000855944,
+          "width": 0.06350000080601603,
+          "processMedians": [
+            2.9369999999744323,
+            2.9380000000855944,
+            2.8744999992795783
+          ]
+        },
+        "inclusiveUs": {
+          "median": 13.04250000043794,
+          "min": 12.750499999810927,
+          "max": 13.165999999955602,
+          "width": 0.41550000014467514,
+          "processMedians": [
+            13.165999999955602,
+            13.04250000043794,
+            12.750499999810927
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 130.72
+      },
+      "cloneSlotSubtree": {
+        "selfUs": {
+          "median": 3.999000000248998,
+          "min": 3.8529999999354914,
+          "max": 4.063999999289081,
+          "width": 0.21099999935358937,
+          "processMedians": [
+            3.999000000248998,
+            4.063999999289081,
+            3.8529999999354914
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.291499999813823,
+          "min": 7.9790000002049055,
+          "max": 8.35400000005393,
+          "width": 0.3749999998490239,
+          "processMedians": [
+            8.35400000005393,
+            8.291499999813823,
+            7.9790000002049055
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 377.6
+      },
+      "collectHostSlotValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "collectSlotSourceValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "commitSlotChanges": {
+        "selfUs": {
+          "median": 5.812999999761814,
+          "min": 5.582999999887761,
+          "max": 5.915999999842825,
+          "width": 0.3329999999550637,
+          "processMedians": [
+            5.915999999842825,
+            5.812999999761814,
+            5.582999999887761
+          ]
+        },
+        "inclusiveUs": {
+          "median": 9.666499999866573,
+          "min": 9.291999999959444,
+          "max": 9.750000000167347,
+          "width": 0.4580000002079032,
+          "processMedians": [
+            9.666499999866573,
+            9.750000000167347,
+            9.291999999959444
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 2692.3200000000006
+      },
+      "compareSlotOrder": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createExitSlotOverlay": {
+        "selfUs": {
+          "median": 2.74949999970886,
+          "min": 2.708499999698688,
+          "max": 2.7499999998781277,
+          "width": 0.04150000017943967,
+          "processMedians": [
+            2.708499999698688,
+            2.7499999998781277,
+            2.74949999970886
+          ]
+        },
+        "inclusiveUs": {
+          "median": 5.437000000256376,
+          "min": 5.375999999841952,
+          "max": 5.604000000175802,
+          "width": 0.22800000033385004,
+          "processMedians": [
+            5.437000000256376,
+            5.604000000175802,
+            5.375999999841952
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 1591.52
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createSlotValueOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 0.7499999996980478,
+          "min": 0.7499999996980478,
+          "max": 0.7499999996980478,
+          "width": 0,
+          "processMedians": [
+            0.7499999996980478,
+            0.7499999996980478,
+            0.7499999996980478
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.7499999996980478,
+          "min": 0.7499999996980478,
+          "max": 0.7499999996980478,
+          "width": 0,
+          "processMedians": [
+            0.7499999996980478,
+            0.7499999996980478,
+            0.7499999996980478
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 0
+      },
+      "expireOccupiedSlotMemos": {
+        "selfUs": {
+          "median": 0.2919999999448919,
+          "min": 0.2919999997175182,
+          "max": 0.2920000001722656,
+          "width": 4.547473508864641e-10,
+          "processMedians": [
+            0.2920000001722656,
+            0.2919999999448919,
+            0.2919999997175182
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.2919999999448919,
+          "min": 0.2919999997175182,
+          "max": 0.2920000001722656,
+          "width": 4.547473508864641e-10,
+          "processMedians": [
+            0.2920000001722656,
+            0.2919999999448919,
+            0.2919999997175182
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 0
+      },
+      "expirePackedSlotMemos": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "finalizeRestoredSlotRaw": {
+        "selfUs": {
+          "median": 0.6249999996725819,
+          "min": 0.5839999998897838,
+          "max": 0.6249999996725819,
+          "width": 0.04099999978279811,
+          "processMedians": [
+            0.6249999996725819,
+            0.5839999998897838,
+            0.6249999996725819
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.6249999996725819,
+          "min": 0.5839999998897838,
+          "max": 0.6249999996725819,
+          "width": 0.04099999978279811,
+          "processMedians": [
+            0.6249999996725819,
+            0.5839999998897838,
+            0.6249999996725819
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 787.84
+      },
+      "getRetainedChildEntry": {
+        "selfUs": {
+          "median": 1.7085000001770823,
+          "min": 1.6660000001138542,
+          "max": 1.7285000003539608,
+          "width": 0.0625000002401066,
+          "processMedians": [
+            1.7085000001770823,
+            1.7285000003539608,
+            1.6660000001138542
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.292000000124972,
+          "min": 2.2089999997660925,
+          "max": 2.3744999994050886,
+          "width": 0.1654999996389961,
+          "processMedians": [
+            2.292000000124972,
+            2.3744999994050886,
+            2.2089999997660925
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 901.12
+      },
+      "getSlotEntries": {
+        "selfUs": {
+          "median": 1.0620000000471919,
+          "min": 1.0419999998703133,
+          "max": 1.0829999996531114,
+          "width": 0.04099999978279811,
+          "processMedians": [
+            1.0620000000471919,
+            1.0829999996531114,
+            1.0419999998703133
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.0620000000471919,
+          "min": 1.0419999998703133,
+          "max": 1.0829999996531114,
+          "width": 0.04099999978279811,
+          "processMedians": [
+            1.0620000000471919,
+            1.0829999996531114,
+            1.0419999998703133
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 2272.32
+      },
+      "getSlotEntryPosition": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotSource": {
+        "selfUs": {
+          "median": 1.4999999998508429,
+          "min": 1.4580000006390037,
+          "max": 1.5839999996387633,
+          "width": 0.12599999899975955,
+          "processMedians": [
+            1.5839999996387633,
+            1.4580000006390037,
+            1.4999999998508429
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.000500000121974,
+          "min": 1.9795000000613072,
+          "max": 2.1240000000943837,
+          "width": 0.1445000000330765,
+          "processMedians": [
+            2.1240000000943837,
+            1.9795000000613072,
+            2.000500000121974
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 129.52
+      },
+      "hasAdditionalInactiveSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "hasSlotCandidateOwner": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "hasSlotOverlaySource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "isSlotEligible": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markRestoredSlotRaw": {
+        "selfUs": {
+          "median": 1.8124999999145075,
+          "min": 1.7490000002453598,
+          "max": 1.833500000202548,
+          "width": 0.08449999995718827,
+          "processMedians": [
+            1.833500000202548,
+            1.8124999999145075,
+            1.7490000002453598
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.8124999999145075,
+          "min": 1.7490000002453598,
+          "max": 1.833500000202548,
+          "width": 0.08449999995718827,
+          "processMedians": [
+            1.833500000202548,
+            1.8124999999145075,
+            1.7490000002453598
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 391.28000000000003
+      },
+      "markSlotChange": {
+        "selfUs": {
+          "median": 2.5429999998323183,
+          "min": 2.500000000509317,
+          "max": 2.645499999744061,
+          "width": 0.14549999923474388,
+          "processMedians": [
+            2.645499999744061,
+            2.5429999998323183,
+            2.500000000509317
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.5429999998323183,
+          "min": 2.500000000509317,
+          "max": 2.645499999744061,
+          "width": 0.14549999923474388,
+          "processMedians": [
+            2.645499999744061,
+            2.5429999998323183,
+            2.500000000509317
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 1029.92
+      },
+      "materializeInactiveSlotValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "preserveConvertedSlotMemos": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "preserveSlotValueMemos": {
+        "selfUs": {
+          "median": 1.5420000001995504,
+          "min": 1.541000000315762,
+          "max": 1.5420000006542978,
+          "width": 0.0010000003385357559,
+          "processMedians": [
+            1.541000000315762,
+            1.5420000006542978,
+            1.5420000001995504
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.5840000000698637,
+          "min": 2.583000000413449,
+          "max": 2.6259999995090766,
+          "width": 0.04299999909562757,
+          "processMedians": [
+            2.5840000000698637,
+            2.6259999995090766,
+            2.583000000413449
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 234.95999999999998
+      },
+      "pruneArraySlotTail": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "pruneSlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readSlotExitPolicy": {
+        "selfUs": {
+          "median": 1.5399999999772263,
+          "min": 1.4595000002373126,
+          "max": 1.541999999744803,
+          "width": 0.08249999950749043,
+          "processMedians": [
+            1.5399999999772263,
+            1.541999999744803,
+            1.4595000002373126
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.250000000003638,
+          "min": 2.1669999998721323,
+          "max": 2.3749999995743565,
+          "width": 0.20799999970222416,
+          "processMedians": [
+            2.250000000003638,
+            2.3749999995743565,
+            2.1669999998721323
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 3065.5200000000004
+      },
+      "readSlotRawTree": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readSlotValueEntry": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "rekeyArraySlotBindings": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "rekeySlotWriteAddresses": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "resolveSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreSlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "retainClearedArrayCarriers": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "retainExitedSlot": {
+        "selfUs": {
+          "median": 4.501999999547479,
+          "min": 4.331500000489541,
+          "max": 4.5209999996131955,
+          "width": 0.18949999912365456,
+          "processMedians": [
+            4.5209999996131955,
+            4.501999999547479,
+            4.331500000489541
+          ]
+        },
+        "inclusiveUs": {
+          "median": 14.374999999972715,
+          "min": 13.854499999979453,
+          "max": 14.437499999985448,
+          "width": 0.5830000000059954,
+          "processMedians": [
+            14.437499999985448,
+            14.374999999972715,
+            13.854499999979453
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 578.8
+      },
+      "serializeArraySlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateSlotChildIndex": {
+        "selfUs": {
+          "median": 0.8749999997235136,
+          "min": 0.8339999999407155,
+          "max": 0.9574999994583777,
+          "width": 0.12349999951766222,
+          "processMedians": [
+            0.8749999997235136,
+            0.9574999994583777,
+            0.8339999999407155
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.8749999997235136,
+          "min": 0.8339999999407155,
+          "max": 0.9574999994583777,
+          "width": 0.12349999951766222,
+          "processMedians": [
+            0.8749999997235136,
+            0.9574999994583777,
+            0.8339999999407155
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 0
+      },
+      "writeSlotPath": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "prepareSourcePruner": {
+        "selfUs": {
+          "median": 0.2500000000509317,
+          "min": 0.2500000000509317,
+          "max": 0.2500000000509317,
+          "width": 0,
+          "processMedians": [
+            0.2500000000509317,
+            0.2500000000509317,
+            0.2500000000509317
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.2500000000509317,
+          "min": 0.2500000000509317,
+          "max": 0.2500000000509317,
+          "width": 0,
+          "processMedians": [
+            0.2500000000509317,
+            0.2500000000509317,
+            0.2500000000509317
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "getSlotBinding": {
+        "selfUs": {
+          "median": 0.8749999997235136,
+          "min": 0.8749999994961399,
+          "max": 0.9169999998448475,
+          "width": 0.042000000348707545,
+          "processMedians": [
+            0.8749999994961399,
+            0.9169999998448475,
+            0.8749999997235136
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.8749999997235136,
+          "min": 0.8749999994961399,
+          "max": 0.9169999998448475,
+          "width": 0.042000000348707545,
+          "processMedians": [
+            0.8749999994961399,
+            0.9169999998448475,
+            0.8749999997235136
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 0
+      },
+      "getSlotPathEntry": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreTransferredSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "replayTransferredSlotInput": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readInactiveSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "distributeMovedSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotOrder": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readAbsentSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "replayMovedSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "writeInactiveSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "pruneInactiveSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotChildIndex": {
+        "selfUs": {
+          "median": 0.5840000003445311,
+          "min": 0.5824999998367275,
+          "max": 0.6244999997306877,
+          "width": 0.041999999893960194,
+          "processMedians": [
+            0.5840000003445311,
+            0.6244999997306877,
+            0.5824999998367275
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.5840000003445311,
+          "min": 0.5824999998367275,
+          "max": 0.6244999997306877,
+          "width": 0.041999999893960194,
+          "processMedians": [
+            0.5840000003445311,
+            0.6244999997306877,
+            0.5824999998367275
+          ]
+        },
+        "calls": 3,
+        "maximumCalls": 3,
+        "allocationBytes": 0
+      },
+      "readSourceTree": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 14.832500000466098,
+          "min": 13.832999999522144,
+          "max": 15.146500000355445,
+          "width": 1.3135000008333009,
+          "processMedians": [
+            15.146500000355445,
+            14.832500000466098,
+            13.832999999522144
+          ]
+        },
+        "inclusiveUs": {
+          "median": 14.832500000466098,
+          "min": 13.832999999522144,
+          "max": 15.146500000355445,
+          "width": 1.3135000008333009,
+          "processMedians": [
+            15.146500000355445,
+            14.832500000466098,
+            13.832999999522144
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 5004.959999999998
+      }
+    },
+    "latency": {
+      "wrappedUs": {
+        "median": 196.81250000007822,
+        "min": 187.62500000002547,
+        "max": 202.99999999997453,
+        "width": 15.374999999949068,
+        "processMedians": [
+          196.81250000007822,
+          202.99999999997453,
+          187.62500000002547
+        ]
+      },
+      "unwrappedUs": {
+        "median": 156.10449999985576,
+        "min": 152.14599999990241,
+        "max": 160.27050000002419,
+        "width": 8.12450000012177,
+        "processMedians": [
+          160.27050000002419,
+          156.10449999985576,
+          152.14599999990241
+        ]
+      }
+    },
+    "method": "Supplemental full-helper timers; includes timer overhead, excluded from every adoption gate"
+  },
+  {
+    "row": "switch-payload-12",
+    "role": "B",
+    "adoption": false,
+    "stages": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.7915000000812142,
+          "min": 1.6669999999976426,
+          "max": 1.8544999998084677,
+          "width": 0.1874999998108251,
+          "processMedians": [
+            1.6669999999976426,
+            1.7915000000812142,
+            1.8544999998084677
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.7915000000812142,
+          "min": 1.6669999999976426,
+          "max": 1.8544999998084677,
+          "width": 0.1874999998108251,
+          "processMedians": [
+            1.6669999999976426,
+            1.7915000000812142,
+            1.8544999998084677
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 242.64000000000001
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 18.416500000057567,
+          "min": 18.33349999992606,
+          "max": 19.625499999847307,
+          "width": 1.291999999921245,
+          "processMedians": [
+            18.33349999992606,
+            19.625499999847307,
+            18.416500000057567
+          ]
+        },
+        "inclusiveUs": {
+          "median": 18.416500000057567,
+          "min": 18.33349999992606,
+          "max": 19.625499999847307,
+          "width": 1.291999999921245,
+          "processMedians": [
+            18.33349999992606,
+            19.625499999847307,
+            18.416500000057567
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 20548.319999999996
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 51.2080000005426,
+          "min": 50.332999999000094,
+          "max": 52.043000000594475,
+          "width": 1.7100000015943806,
+          "processMedians": [
+            50.332999999000094,
+            51.2080000005426,
+            52.043000000594475
+          ]
+        },
+        "inclusiveUs": {
+          "median": 203.62599999998565,
+          "min": 193.08449999994082,
+          "max": 204.1045000005397,
+          "width": 11.020000000598884,
+          "processMedians": [
+            193.08449999994082,
+            204.1045000005397,
+            203.62599999998565
+          ]
+        },
+        "calls": 14,
+        "maximumCalls": 14,
+        "allocationBytes": 71184.64
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 3.3745000002909364,
+          "min": 3.166999999393738,
+          "max": 3.4785000002557354,
+          "width": 0.31150000086199725,
+          "processMedians": [
+            3.166999999393738,
+            3.4785000002557354,
+            3.3745000002909364
+          ]
+        },
+        "inclusiveUs": {
+          "median": 7.791500000166707,
+          "min": 7.395500000029642,
+          "max": 8.291499999813823,
+          "width": 0.8959999997841805,
+          "processMedians": [
+            7.395500000029642,
+            8.291499999813823,
+            7.791500000166707
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 2.4160000002666493,
+          "min": 2.375000000029104,
+          "max": 2.5000000000545697,
+          "width": 0.12500000002546585,
+          "processMedians": [
+            2.4160000002666493,
+            2.5000000000545697,
+            2.375000000029104
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.4160000002666493,
+          "min": 2.375000000029104,
+          "max": 2.5000000000545697,
+          "width": 0.12500000002546585,
+          "processMedians": [
+            2.4160000002666493,
+            2.5000000000545697,
+            2.375000000029104
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1354.88
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 53.72650000185786,
+          "min": 52.25449999988996,
+          "max": 53.87299999983952,
+          "width": 1.618499999949563,
+          "processMedians": [
+            52.25449999988996,
+            53.87299999983952,
+            53.72650000185786
+          ]
+        },
+        "inclusiveUs": {
+          "median": 139.83299999995324,
+          "min": 132.56200000000717,
+          "max": 140.35400000011578,
+          "width": 7.792000000108601,
+          "processMedians": [
+            132.56200000000717,
+            139.83299999995324,
+            140.35400000011578
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 54838
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 7.938000000194734,
+          "min": 7.85400000017944,
+          "max": 8.020499999929598,
+          "width": 0.16649999975015817,
+          "processMedians": [
+            7.938000000194734,
+            7.85400000017944,
+            8.020499999929598
+          ]
+        },
+        "inclusiveUs": {
+          "median": 7.938000000194734,
+          "min": 7.85400000017944,
+          "max": 8.020499999929598,
+          "width": 0.16649999975015817,
+          "processMedians": [
+            7.938000000194734,
+            7.85400000017944,
+            8.020499999929598
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 5403.5199999999995
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 18.23000000013053,
+          "min": 17.499500000440094,
+          "max": 19.188500001064313,
+          "width": 1.689000000624219,
+          "processMedians": [
+            17.499500000440094,
+            18.23000000013053,
+            19.188500001064313
+          ]
+        },
+        "inclusiveUs": {
+          "median": 50.75000000010732,
+          "min": 45.79149999972287,
+          "max": 51.562500000045475,
+          "width": 5.771000000322601,
+          "processMedians": [
+            45.79149999972287,
+            50.75000000010732,
+            51.562500000045475
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 22403.279999999995
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 2.5410000000647415,
+          "min": 2.4599999990186916,
+          "max": 2.6475000004211324,
+          "width": 0.18750000140244083,
+          "processMedians": [
+            2.4599999990186916,
+            2.6475000004211324,
+            2.5410000000647415
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.5410000000647415,
+          "min": 2.4599999990186916,
+          "max": 2.6475000004211324,
+          "width": 0.18750000140244083,
+          "processMedians": [
+            2.4599999990186916,
+            2.6475000004211324,
+            2.5410000000647415
+          ]
+        },
+        "calls": 24,
+        "maximumCalls": 24,
+        "allocationBytes": 3139.2
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 6.58550000048308,
+          "min": 6.561499999861553,
+          "max": 6.976999999551481,
+          "width": 0.4154999996899278,
+          "processMedians": [
+            6.561499999861553,
+            6.58550000048308,
+            6.976999999551481
+          ]
+        },
+        "inclusiveUs": {
+          "median": 42.477000000189946,
+          "min": 40.83199999945464,
+          "max": 44.43799999899056,
+          "width": 3.605999999535925,
+          "processMedians": [
+            40.83199999945464,
+            42.477000000189946,
+            44.43799999899056
+          ]
+        },
+        "calls": 15,
+        "maximumCalls": 15,
+        "allocationBytes": 1782.96
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 34.91749999966487,
+          "min": 34.062500000118234,
+          "max": 37.29099999986829,
+          "width": 3.2284999997500563,
+          "processMedians": [
+            34.062500000118234,
+            34.91749999966487,
+            37.29099999986829
+          ]
+        },
+        "inclusiveUs": {
+          "median": 34.91749999966487,
+          "min": 34.062500000118234,
+          "max": 37.29099999986829,
+          "width": 3.2284999997500563,
+          "processMedians": [
+            34.062500000118234,
+            34.91749999966487,
+            37.29099999986829
+          ]
+        },
+        "calls": 2,
+        "maximumCalls": 2,
+        "allocationBytes": 43922.16
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 9.583000000020547,
+          "min": 9.354000000030283,
+          "max": 9.60399999985384,
+          "width": 0.24999999982355803,
+          "processMedians": [
+            9.354000000030283,
+            9.583000000020547,
+            9.60399999985384
+          ]
+        },
+        "inclusiveUs": {
+          "median": 43.646000000080676,
+          "min": 41.85449999999946,
+          "max": 43.895999999904234,
+          "width": 2.0414999999047723,
+          "processMedians": [
+            41.85449999999946,
+            43.646000000080676,
+            43.895999999904234
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 9014.720000000001
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 15.604499999881227,
+          "min": 15.166499999850203,
+          "max": 16.20849999994789,
+          "width": 1.042000000097687,
+          "processMedians": [
+            15.166499999850203,
+            15.604499999881227,
+            16.20849999994789
+          ]
+        },
+        "inclusiveUs": {
+          "median": 15.604499999881227,
+          "min": 15.166499999850203,
+          "max": 16.20849999994789,
+          "width": 1.042000000097687,
+          "processMedians": [
+            15.166499999850203,
+            15.604499999881227,
+            16.20849999994789
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 21408.559999999994
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 2.229499999430118,
+          "min": 2.209499999480613,
+          "max": 2.2905000007540366,
+          "width": 0.08100000127342355,
+          "processMedians": [
+            2.229499999430118,
+            2.2905000007540366,
+            2.209499999480613
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.229499999430118,
+          "min": 2.209499999480613,
+          "max": 2.2905000007540366,
+          "width": 0.08100000127342355,
+          "processMedians": [
+            2.229499999430118,
+            2.2905000007540366,
+            2.209499999480613
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 5444.4
+      },
+      "applyConvertedExitPolicy": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "applySlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "captureAbsentSlotInputs": {
+        "selfUs": {
+          "median": 0.6259999993289966,
+          "min": 0.6239999993340462,
+          "max": 0.6260000000111177,
+          "width": 0.0020000006770715117,
+          "processMedians": [
+            0.6260000000111177,
+            0.6239999993340462,
+            0.6259999993289966
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.6259999993289966,
+          "min": 0.6239999993340462,
+          "max": 0.6260000000111177,
+          "width": 0.0020000006770715117,
+          "processMedians": [
+            0.6260000000111177,
+            0.6239999993340462,
+            0.6259999993289966
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 340.8
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 5.9365000013258395,
+          "min": 5.91899999949419,
+          "max": 6.085999998731495,
+          "width": 0.16699999923730502,
+          "processMedians": [
+            5.91899999949419,
+            6.085999998731495,
+            5.9365000013258395
+          ]
+        },
+        "inclusiveUs": {
+          "median": 26.165999999193446,
+          "min": 25.68550000023606,
+          "max": 27.332500000056825,
+          "width": 1.646999999820764,
+          "processMedians": [
+            25.68550000023606,
+            26.165999999193446,
+            27.332500000056825
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 585.6
+      },
+      "cloneSlotSubtree": {
+        "selfUs": {
+          "median": 7.770999999365813,
+          "min": 7.272000000057233,
+          "max": 7.915999999340784,
+          "width": 0.643999999283551,
+          "processMedians": [
+            7.272000000057233,
+            7.770999999365813,
+            7.915999999340784
+          ]
+        },
+        "inclusiveUs": {
+          "median": 14.667500000086875,
+          "min": 14.22799999977542,
+          "max": 15.061500000001615,
+          "width": 0.833500000226195,
+          "processMedians": [
+            14.22799999977542,
+            14.667500000086875,
+            15.061500000001615
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 2504.56
+      },
+      "collectHostSlotValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "collectSlotSourceValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "commitSlotChanges": {
+        "selfUs": {
+          "median": 10.229000001118038,
+          "min": 9.60249999957341,
+          "max": 10.333999998692889,
+          "width": 0.7314999991194782,
+          "processMedians": [
+            9.60249999957341,
+            10.333999998692889,
+            10.229000001118038
+          ]
+        },
+        "inclusiveUs": {
+          "median": 16.708500000049753,
+          "min": 15.520500000093307,
+          "max": 17.062500000065484,
+          "width": 1.5419999999721767,
+          "processMedians": [
+            15.520500000093307,
+            16.708500000049753,
+            17.062500000065484
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 8220.48
+      },
+      "compareSlotOrder": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createExitSlotOverlay": {
+        "selfUs": {
+          "median": 4.246999999850232,
+          "min": 3.876000001127977,
+          "max": 4.482499999539868,
+          "width": 0.6064999984118913,
+          "processMedians": [
+            3.876000001127977,
+            4.482499999539868,
+            4.246999999850232
+          ]
+        },
+        "inclusiveUs": {
+          "median": 9.958999999071239,
+          "min": 8.8330000003225,
+          "max": 9.97900000061236,
+          "width": 1.1460000002898596,
+          "processMedians": [
+            8.8330000003225,
+            9.958999999071239,
+            9.97900000061236
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 6284.72
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createSlotValueOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 1.123999999890657,
+          "min": 1.0859999993044767,
+          "max": 1.127500000393411,
+          "width": 0.04150000108893437,
+          "processMedians": [
+            1.127500000393411,
+            1.123999999890657,
+            1.0859999993044767
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.123999999890657,
+          "min": 1.0859999993044767,
+          "max": 1.127500000393411,
+          "width": 0.04150000108893437,
+          "processMedians": [
+            1.127500000393411,
+            1.123999999890657,
+            1.0859999993044767
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 0
+      },
+      "expireOccupiedSlotMemos": {
+        "selfUs": {
+          "median": 0.542999999197491,
+          "min": 0.5420000006779446,
+          "max": 0.5429999994248647,
+          "width": 0.0009999987469200278,
+          "processMedians": [
+            0.5420000006779446,
+            0.5429999994248647,
+            0.542999999197491
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.542999999197491,
+          "min": 0.5420000006779446,
+          "max": 0.5429999994248647,
+          "width": 0.0009999987469200278,
+          "processMedians": [
+            0.5420000006779446,
+            0.5429999994248647,
+            0.542999999197491
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 0
+      },
+      "expirePackedSlotMemos": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "finalizeRestoredSlotRaw": {
+        "selfUs": {
+          "median": 0.3960000001370645,
+          "min": 0.33400000029359944,
+          "max": 0.41650000002846355,
+          "width": 0.0824999997348641,
+          "processMedians": [
+            0.33400000029359944,
+            0.3960000001370645,
+            0.41650000002846355
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.3960000001370645,
+          "min": 0.33400000029359944,
+          "max": 0.41650000002846355,
+          "width": 0.0824999997348641,
+          "processMedians": [
+            0.33400000029359944,
+            0.3960000001370645,
+            0.41650000002846355
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 2783.8399999999997
+      },
+      "getRetainedChildEntry": {
+        "selfUs": {
+          "median": 3.044000000727465,
+          "min": 3.042500000447035,
+          "max": 3.3969999999499123,
+          "width": 0.35449999950287747,
+          "processMedians": [
+            3.042500000447035,
+            3.044000000727465,
+            3.3969999999499123
+          ]
+        },
+        "inclusiveUs": {
+          "median": 4.936500000439992,
+          "min": 4.873500000030617,
+          "max": 5.416999999397376,
+          "width": 0.5434999993667589,
+          "processMedians": [
+            4.936500000439992,
+            4.873500000030617,
+            5.416999999397376
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 5585.68
+      },
+      "getSlotEntries": {
+        "selfUs": {
+          "median": 1.1474999998881685,
+          "min": 1.146000000062486,
+          "max": 1.1655000000700966,
+          "width": 0.01950000000761065,
+          "processMedians": [
+            1.1474999998881685,
+            1.1655000000700966,
+            1.146000000062486
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.1474999998881685,
+          "min": 1.146000000062486,
+          "max": 1.1655000000700966,
+          "width": 0.01950000000761065,
+          "processMedians": [
+            1.1474999998881685,
+            1.1655000000700966,
+            1.146000000062486
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 9043.68
+      },
+      "getSlotEntryPosition": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotSource": {
+        "selfUs": {
+          "median": 2.710500000830507,
+          "min": 2.481000000898348,
+          "max": 2.7480000010200456,
+          "width": 0.26700000012169767,
+          "processMedians": [
+            2.481000000898348,
+            2.7480000010200456,
+            2.710500000830507
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.6044999997102423,
+          "min": 3.292499998906351,
+          "max": 3.6869999994451064,
+          "width": 0.39450000053875556,
+          "processMedians": [
+            3.292499998906351,
+            3.6869999994451064,
+            3.6044999997102423
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 767.76
+      },
+      "hasAdditionalInactiveSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "hasSlotCandidateOwner": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "hasSlotOverlaySource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "isSlotEligible": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markRestoredSlotRaw": {
+        "selfUs": {
+          "median": 4.414500000393673,
+          "min": 4.3320000002040615,
+          "max": 4.435999999941487,
+          "width": 0.10399999973742524,
+          "processMedians": [
+            4.435999999941487,
+            4.414500000393673,
+            4.3320000002040615
+          ]
+        },
+        "inclusiveUs": {
+          "median": 4.414500000393673,
+          "min": 4.3320000002040615,
+          "max": 4.435999999941487,
+          "width": 0.10399999973742524,
+          "processMedians": [
+            4.435999999941487,
+            4.414500000393673,
+            4.3320000002040615
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 2125.52
+      },
+      "markSlotChange": {
+        "selfUs": {
+          "median": 6.249499999285035,
+          "min": 6.084500000724802,
+          "max": 6.542500000250584,
+          "width": 0.4579999995257822,
+          "processMedians": [
+            6.084500000724802,
+            6.249499999285035,
+            6.542500000250584
+          ]
+        },
+        "inclusiveUs": {
+          "median": 6.249499999285035,
+          "min": 6.084500000724802,
+          "max": 6.542500000250584,
+          "width": 0.4579999995257822,
+          "processMedians": [
+            6.084500000724802,
+            6.249499999285035,
+            6.542500000250584
+          ]
+        },
+        "calls": 24,
+        "maximumCalls": 24,
+        "allocationBytes": 4997.04
+      },
+      "materializeInactiveSlotValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "preserveConvertedSlotMemos": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "preserveSlotValueMemos": {
+        "selfUs": {
+          "median": 2.66900000019632,
+          "min": 2.6239999992867524,
+          "max": 3.108499999370906,
+          "width": 0.4845000000841537,
+          "processMedians": [
+            2.66900000019632,
+            3.108499999370906,
+            2.6239999992867524
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.894999999602078,
+          "min": 3.7900000004356116,
+          "max": 4.293999999617881,
+          "width": 0.5039999991822697,
+          "processMedians": [
+            3.894999999602078,
+            4.293999999617881,
+            3.7900000004356116
+          ]
+        },
+        "calls": 24,
+        "maximumCalls": 24,
+        "allocationBytes": 1042.32
+      },
+      "pruneArraySlotTail": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "pruneSlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readSlotExitPolicy": {
+        "selfUs": {
+          "median": 3.122499998880812,
+          "min": 3.041500000108499,
+          "max": 3.2120000005306792,
+          "width": 0.17050000042218016,
+          "processMedians": [
+            3.041500000108499,
+            3.2120000005306792,
+            3.122499998880812
+          ]
+        },
+        "inclusiveUs": {
+          "median": 4.5819999993454985,
+          "min": 4.455999999663618,
+          "max": 4.916999999977634,
+          "width": 0.4610000003140158,
+          "processMedians": [
+            4.455999999663618,
+            4.916999999977634,
+            4.5819999993454985
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 11738.960000000001
+      },
+      "readSlotRawTree": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readSlotValueEntry": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "rekeyArraySlotBindings": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "rekeySlotWriteAddresses": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "resolveSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreSlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "retainClearedArrayCarriers": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "retainExitedSlot": {
+        "selfUs": {
+          "median": 8.146000000806453,
+          "min": 7.796000000780623,
+          "max": 8.188999999674706,
+          "width": 0.39299999889408355,
+          "processMedians": [
+            7.796000000780623,
+            8.146000000806453,
+            8.188999999674706
+          ]
+        },
+        "inclusiveUs": {
+          "median": 26.750500000161992,
+          "min": 24.769999999989523,
+          "max": 27.87500000044929,
+          "width": 3.1050000004597678,
+          "processMedians": [
+            24.769999999989523,
+            26.750500000161992,
+            27.87500000044929
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 2927.6800000000003
+      },
+      "serializeArraySlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateSlotChildIndex": {
+        "selfUs": {
+          "median": 1.5005000009296054,
+          "min": 1.4194999989740609,
+          "max": 1.5390000007755589,
+          "width": 0.119500001801498,
+          "processMedians": [
+            1.5005000009296054,
+            1.5390000007755589,
+            1.4194999989740609
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.5005000009296054,
+          "min": 1.4194999989740609,
+          "max": 1.5390000007755589,
+          "width": 0.119500001801498,
+          "processMedians": [
+            1.5005000009296054,
+            1.5390000007755589,
+            1.4194999989740609
+          ]
+        },
+        "calls": 24,
+        "maximumCalls": 24,
+        "allocationBytes": 0
+      },
+      "writeSlotPath": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "prepareSourcePruner": {
+        "selfUs": {
+          "median": 0.2500000000509317,
+          "min": 0.2500000000509317,
+          "max": 0.2500000000509317,
+          "width": 0,
+          "processMedians": [
+            0.2500000000509317,
+            0.2500000000509317,
+            0.2500000000509317
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.2500000000509317,
+          "min": 0.2500000000509317,
+          "max": 0.2500000000509317,
+          "width": 0,
+          "processMedians": [
+            0.2500000000509317,
+            0.2500000000509317,
+            0.2500000000509317
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "getSlotBinding": {
+        "selfUs": {
+          "median": 1.6670000002250163,
+          "min": 1.540499998782252,
+          "max": 1.7050000014933175,
+          "width": 0.16450000271106546,
+          "processMedians": [
+            1.540499998782252,
+            1.6670000002250163,
+            1.7050000014933175
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.6670000002250163,
+          "min": 1.540499998782252,
+          "max": 1.7050000014933175,
+          "width": 0.16450000271106546,
+          "processMedians": [
+            1.540499998782252,
+            1.6670000002250163,
+            1.7050000014933175
+          ]
+        },
+        "calls": 24,
+        "maximumCalls": 24,
+        "allocationBytes": 0
+      },
+      "getSlotPathEntry": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreTransferredSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "replayTransferredSlotInput": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readInactiveSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "distributeMovedSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotOrder": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readAbsentSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "replayMovedSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "writeInactiveSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "pruneInactiveSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotChildIndex": {
+        "selfUs": {
+          "median": 1.7515000004095782,
+          "min": 1.7084999999497086,
+          "max": 1.8965000001571752,
+          "width": 0.18800000020746666,
+          "processMedians": [
+            1.7515000004095782,
+            1.7084999999497086,
+            1.8965000001571752
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.7515000004095782,
+          "min": 1.7084999999497086,
+          "max": 1.8965000001571752,
+          "width": 0.18800000020746666,
+          "processMedians": [
+            1.7515000004095782,
+            1.7084999999497086,
+            1.8965000001571752
+          ]
+        },
+        "calls": 12,
+        "maximumCalls": 12,
+        "allocationBytes": 0
+      },
+      "readSourceTree": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 15.66699999989396,
+          "min": 15.56200000050012,
+          "max": 15.814499999805776,
+          "width": 0.25249999930565536,
+          "processMedians": [
+            15.56200000050012,
+            15.814499999805776,
+            15.66699999989396
+          ]
+        },
+        "inclusiveUs": {
+          "median": 15.66699999989396,
+          "min": 15.56200000050012,
+          "max": 15.814499999805776,
+          "width": 0.25249999930565536,
+          "processMedians": [
+            15.56200000050012,
+            15.814499999805776,
+            15.66699999989396
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 5837.999999999999
+      }
+    },
+    "latency": {
+      "wrappedUs": {
+        "median": 335.72899999990113,
+        "min": 309.91649999987203,
+        "max": 337.31250000005275,
+        "width": 27.39600000018072,
+        "processMedians": [
+          309.91649999987203,
+          335.72899999990113,
+          337.31250000005275
+        ]
+      },
+      "unwrappedUs": {
+        "median": 249.4165000000521,
+        "min": 238.04150000000845,
+        "max": 249.45849999994607,
+        "width": 11.416999999937616,
+        "processMedians": [
+          238.04150000000845,
+          249.4165000000521,
+          249.45849999994607
+        ]
+      }
+    },
+    "method": "Supplemental full-helper timers; includes timer overhead, excluded from every adoption gate"
+  },
+  {
+    "row": "switch-siblings-0",
+    "role": "B",
+    "adoption": false,
+    "stages": {
+      "markWrite": {
+        "selfUs": {
+          "median": 1.8340000001444423,
+          "min": 1.7499999999017746,
+          "max": 1.875000000154614,
+          "width": 0.12500000025283953,
+          "processMedians": [
+            1.8340000001444423,
+            1.875000000154614,
+            1.7499999999017746
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.8340000001444423,
+          "min": 1.7499999999017746,
+          "max": 1.875000000154614,
+          "width": 0.12500000025283953,
+          "processMedians": [
+            1.8340000001444423,
+            1.875000000154614,
+            1.7499999999017746
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 232.79999999999998
+      },
+      "registerRecalculation": {
+        "selfUs": {
+          "median": 6.728999999722873,
+          "min": 6.540999999970154,
+          "max": 6.729499999892141,
+          "width": 0.18849999992198718,
+          "processMedians": [
+            6.728999999722873,
+            6.729499999892141,
+            6.540999999970154
+          ]
+        },
+        "inclusiveUs": {
+          "median": 6.728999999722873,
+          "min": 6.540999999970154,
+          "max": 6.729499999892141,
+          "width": 0.18849999992198718,
+          "processMedians": [
+            6.728999999722873,
+            6.729499999892141,
+            6.540999999970154
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 3711.28
+      },
+      "computeNode": {
+        "selfUs": {
+          "median": 14.376500000707892,
+          "min": 14.041500000075757,
+          "max": 14.625500000192915,
+          "width": 0.5840000001171575,
+          "processMedians": [
+            14.376500000707892,
+            14.625500000192915,
+            14.041500000075757
+          ]
+        },
+        "inclusiveUs": {
+          "median": 54.60349999975733,
+          "min": 53.62449999961427,
+          "max": 56.37449999994715,
+          "width": 2.750000000332875,
+          "processMedians": [
+            54.60349999975733,
+            56.37449999994715,
+            53.62449999961427
+          ]
+        },
+        "calls": 4,
+        "maximumCalls": 4,
+        "allocationBytes": 7161.6
+      },
+      "wheelPreparation": {
+        "selfUs": {
+          "median": 2.457999999933236,
+          "min": 2.4159999995845283,
+          "max": 2.541000000292115,
+          "width": 0.12500000070758688,
+          "processMedians": [
+            2.4159999995845283,
+            2.541000000292115,
+            2.457999999933236
+          ]
+        },
+        "inclusiveUs": {
+          "median": 8.18699999990713,
+          "min": 8.083500000111599,
+          "max": 8.438000000069223,
+          "width": 0.3544999999576248,
+          "processMedians": [
+            8.18699999990713,
+            8.438000000069223,
+            8.083500000111599
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "primeHost": {
+        "selfUs": {
+          "median": 3.2919999998739513,
+          "min": 3.229500000088592,
+          "max": 3.375000000005457,
+          "width": 0.1454999999168649,
+          "processMedians": [
+            3.2919999998739513,
+            3.375000000005457,
+            3.229500000088592
+          ]
+        },
+        "inclusiveUs": {
+          "median": 3.2919999998739513,
+          "min": 3.229500000088592,
+          "max": 3.375000000005457,
+          "width": 0.1454999999168649,
+          "processMedians": [
+            3.2919999998739513,
+            3.375000000005457,
+            3.229500000088592
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 547.36
+      },
+      "selectChildren": {
+        "selfUs": {
+          "median": 15.665999999555424,
+          "min": 14.625500000420288,
+          "max": 15.854499999932159,
+          "width": 1.2289999995118706,
+          "processMedians": [
+            15.665999999555424,
+            15.854499999932159,
+            14.625500000420288
+          ]
+        },
+        "inclusiveUs": {
+          "median": 26.54149999989386,
+          "min": 25.416499999664666,
+          "max": 27.187500000081855,
+          "width": 1.7710000004171889,
+          "processMedians": [
+            26.54149999989386,
+            27.187500000081855,
+            25.416499999664666
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 7409.919999999999
+      },
+      "evaluateGate": {
+        "selfUs": {
+          "median": 5.249500000672924,
+          "min": 5.021999999598847,
+          "max": 5.3755000005821785,
+          "width": 0.3535000009833311,
+          "processMedians": [
+            5.249500000672924,
+            5.3755000005821785,
+            5.021999999598847
+          ]
+        },
+        "inclusiveUs": {
+          "median": 5.249500000672924,
+          "min": 5.021999999598847,
+          "max": 5.3755000005821785,
+          "width": 0.3535000009833311,
+          "processMedians": [
+            5.249500000672924,
+            5.3755000005821785,
+            5.021999999598847
+          ]
+        },
+        "calls": 6,
+        "maximumCalls": 6,
+        "allocationBytes": 739.84
+      },
+      "runDeriveRounds": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "transitionSettlement": {
+        "selfUs": {
+          "median": 1.291999999921245,
+          "min": 1.2909999995827093,
+          "max": 1.291999999921245,
+          "width": 0.0010000003385357559,
+          "processMedians": [
+            1.2909999995827093,
+            1.291999999921245,
+            1.291999999921245
+          ]
+        },
+        "inclusiveUs": {
+          "median": 1.291999999921245,
+          "min": 1.2909999995827093,
+          "max": 1.291999999921245,
+          "width": 0.0010000003385357559,
+          "processMedians": [
+            1.2909999995827093,
+            1.291999999921245,
+            1.291999999921245
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 770.0000000000001
+      },
+      "finalizeExits": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getControlLayers": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "captureExitedRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "setLatentRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateOutput": {
+        "selfUs": {
+          "median": 3.7919999995210674,
+          "min": 3.790999999637279,
+          "max": 3.916000000344866,
+          "width": 0.12500000070758688,
+          "processMedians": [
+            3.7919999995210674,
+            3.916000000344866,
+            3.790999999637279
+          ]
+        },
+        "inclusiveUs": {
+          "median": 6.373999999595981,
+          "min": 6.3330000004953035,
+          "max": 6.70799999988958,
+          "width": 0.37499999939427653,
+          "processMedians": [
+            6.3330000004953035,
+            6.70799999988958,
+            6.373999999595981
+          ]
+        },
+        "calls": 4,
+        "maximumCalls": 4,
+        "allocationBytes": 442.64
+      },
+      "assembleObject": {
+        "selfUs": {
+          "median": 2.54199999994853,
+          "min": 2.5410000000647415,
+          "max": 2.7079999999841675,
+          "width": 0.16699999991942605,
+          "processMedians": [
+            2.5410000000647415,
+            2.7079999999841675,
+            2.54199999994853
+          ]
+        },
+        "inclusiveUs": {
+          "median": 2.54199999994853,
+          "min": 2.5410000000647415,
+          "max": 2.7079999999841675,
+          "width": 0.16699999991942605,
+          "processMedians": [
+            2.5410000000647415,
+            2.7079999999841675,
+            2.54199999994853
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1812.32
+      },
+      "commitSettlement": {
+        "selfUs": {
+          "median": 3.125000000181899,
+          "min": 3.1249999997271516,
+          "max": 3.2090000004245667,
+          "width": 0.08400000069741509,
+          "processMedians": [
+            3.125000000181899,
+            3.2090000004245667,
+            3.1249999997271516
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.166999999863037,
+          "min": 12.083000000075117,
+          "max": 12.250000000221917,
+          "width": 0.16700000014679972,
+          "processMedians": [
+            12.250000000221917,
+            12.166999999863037,
+            12.083000000075117
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 1408.64
+      },
+      "updateInactiveValuesMemo": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markCommitDeliveries": {
+        "selfUs": {
+          "median": 9.000000000014552,
+          "min": 9.000000000014552,
+          "max": 9.166999999933978,
+          "width": 0.16699999991942605,
+          "processMedians": [
+            9.166999999933978,
+            9.000000000014552,
+            9.000000000014552
+          ]
+        },
+        "inclusiveUs": {
+          "median": 9.000000000014552,
+          "min": 9.000000000014552,
+          "max": 9.166999999933978,
+          "width": 0.16699999991942605,
+          "processMedians": [
+            9.166999999933978,
+            9.000000000014552,
+            9.000000000014552
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 5334.079999999998
+      },
+      "createChildNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreLatentState": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFieldNode": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "applyConvertedExitPolicy": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "applySlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "captureAbsentSlotInputs": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "cloneFromSlot": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "cloneSlotSubtree": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "collectHostSlotValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "collectSlotSourceValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "commitSlotChanges": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "compareSlotOrder": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createExitSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createFromSlotOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "createSlotValueOverlay": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "enterSlotClone": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "expireOccupiedSlotMemos": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "expirePackedSlotMemos": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "finalizeRestoredSlotRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getRetainedChildEntry": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotEntries": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotEntryPosition": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "hasAdditionalInactiveSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "hasSlotCandidateOwner": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "hasSlotOverlaySource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "isSlotEligible": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markRestoredSlotRaw": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "markSlotChange": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "materializeInactiveSlotValues": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "preserveConvertedSlotMemos": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "preserveSlotValueMemos": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "pruneArraySlotTail": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "pruneSlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readSlotExitPolicy": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readSlotRawTree": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readSlotValueEntry": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "rekeyArraySlotBindings": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "rekeySlotWriteAddresses": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "resolveSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreSlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "retainClearedArrayCarriers": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "retainExitedSlot": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "serializeArraySlotSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "updateSlotChildIndex": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "writeSlotPath": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "prepareSourcePruner": {
+        "selfUs": {
+          "median": 0.2500000000509317,
+          "min": 0.2500000000509317,
+          "max": 0.2500000000509317,
+          "width": 0,
+          "processMedians": [
+            0.2500000000509317,
+            0.2500000000509317,
+            0.2500000000509317
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0.2500000000509317,
+          "min": 0.2500000000509317,
+          "max": 0.2500000000509317,
+          "width": 0,
+          "processMedians": [
+            0.2500000000509317,
+            0.2500000000509317,
+            0.2500000000509317
+          ]
+        },
+        "calls": 1,
+        "maximumCalls": 1,
+        "allocationBytes": 0
+      },
+      "getSlotBinding": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotPathEntry": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "restoreTransferredSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "replayTransferredSlotInput": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readInactiveSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "distributeMovedSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotOrder": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readAbsentSlotSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "replayMovedSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "writeInactiveSource": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "pruneInactiveSources": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "getSlotChildIndex": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "readSourceTree": {
+        "selfUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "inclusiveUs": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "width": 0,
+          "processMedians": [
+            0,
+            0,
+            0
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 0,
+        "allocationBytes": 0
+      },
+      "everythingElse": {
+        "selfUs": {
+          "median": 12.332999999898675,
+          "min": 11.852499999804422,
+          "max": 12.457499999982247,
+          "width": 0.6050000001778244,
+          "processMedians": [
+            12.332999999898675,
+            12.457499999982247,
+            11.852499999804422
+          ]
+        },
+        "inclusiveUs": {
+          "median": 12.332999999898675,
+          "min": 11.852499999804422,
+          "max": 12.457499999982247,
+          "width": 0.6050000001778244,
+          "processMedians": [
+            12.332999999898675,
+            12.457499999982247,
+            11.852499999804422
+          ]
+        },
+        "calls": 0,
+        "maximumCalls": 1,
+        "allocationBytes": 4325.6
+      }
+    },
+    "latency": {
+      "wrappedUs": {
+        "median": 83.14550000000054,
+        "min": 82.77050000015151,
+        "max": 87.31300000022202,
+        "width": 4.542500000070504,
+        "processMedians": [
+          83.14550000000054,
+          87.31300000022202,
+          82.77050000015151
+        ]
+      },
+      "unwrappedUs": {
+        "median": 73.06249999987813,
+        "min": 72.10449999979573,
+        "max": 74.02099999990241,
+        "width": 1.91650000010668,
+        "processMedians": [
+          73.06249999987813,
+          74.02099999990241,
+          72.10449999979573
+        ]
+      }
+    },
+    "method": "Supplemental full-helper timers; includes timer overhead, excluded from every adoption gate"
+  }
+]

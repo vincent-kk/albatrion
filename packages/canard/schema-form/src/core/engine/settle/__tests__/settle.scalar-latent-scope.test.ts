@@ -48,14 +48,14 @@ function beginObservation() {
   observed.fast.length = 0;
 }
 
-it('H4 keeps the scalar fast path when an exited array item owns an unrelated latent value', () => {
+it('H4 keeps the scalar fast path after an ignored exited-item write', () => {
   const { root, leaf, other, seen } = createScopeTree();
   const retired = getDispatchNode(root, 'other', '0');
   dispatchSetValue(other, []);
   expect(retired.detached).toBe(true);
   dispatchSetValue(retired, 11);
   expect(root.runtime.blueprint.capabilities.branchless).toBe(true);
-  expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBe(11);
+  expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBeUndefined();
   seen.length = 0;
   beginObservation();
 
@@ -63,6 +63,6 @@ it('H4 keeps the scalar fast path when an exited array item owns an unrelated la
 
   expect(observed.fast).toEqual([true]);
   expect(root.emit).toEqual({ group: { stable: 1 } });
-  expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBe(11);
+  expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBeUndefined();
   expect(seen).toEqual(['', '/group', '/group/stable']);
 });

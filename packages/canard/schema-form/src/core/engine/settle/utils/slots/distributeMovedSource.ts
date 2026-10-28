@@ -1,4 +1,3 @@
-
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -30,7 +29,6 @@ export const distributeMovedSource = <Self extends FieldNodeRecord<Self>>(
     composed,
     false,
     context,
-    undefined,
     false,
     true,
   );

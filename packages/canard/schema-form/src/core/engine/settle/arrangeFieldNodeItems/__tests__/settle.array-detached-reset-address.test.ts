@@ -6,7 +6,7 @@ import { isArrayNode, reloadFieldNodeForm } from '@/schema-form/core/surface';
 import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 
 it.each(['subtree', 'form'] as const)(
-  'preserves a rekeyed old reference address through %s reset',
+  'ignores a rekeyed old reference through %s reset',
   (reset) => {
     const { root } = makeFieldNodeTree({
       type: 'object',
@@ -40,11 +40,15 @@ it.each(['subtree', 'form'] as const)(
     else reloadFieldNodeForm(root, { sibling: 'b', items: [{ flag: false }] });
     reference.setValue('x');
     expect(reference.path).toBe('/items/1/gated');
-    expect(readRetainedSlotRaw(root, '/items/0/gated', 'string')).toBe('x');
+    expect(readRetainedSlotRaw(root, '/items/0/gated', 'string')).toBe(
+      reset === 'subtree' ? 'second' : undefined,
+    );
     expect(
       readRetainedSlotRaw(root, '/items/1/gated', 'string'),
     ).toBeUndefined();
     root.find('/items/0/flag')!.setValue(true);
-    expect(root.find('/items/0/gated')!.value).toBe('x');
+    expect(root.find('/items/0/gated')!.value).toBe(
+      reset === 'subtree' ? 'second' : undefined,
+    );
   },
 );

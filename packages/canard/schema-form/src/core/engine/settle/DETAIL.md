@@ -4,12 +4,12 @@
 
 - 경로의 해석·조립·부모 계산·하위 포함 판정은 jsonPointer API를 사용한다. 의존성·watch 색인은 파싱된 이름과 연산자 심볼을 구별하며 한 탐색에서 같은 경로를 반복 분할하지 않는다. 슬롯 주소는 이름만 허용한다.
 
-- 예약 이름을 가진 속성도 호스트 슬롯과 overlay 하나의 원본 모델을 사용한다. packed 배열의 떼어진 자손 쓰기는 마지막 patch 값을 복원하며, 지움 객체 아래 명시 keep 자손은 일반 슬롯 정책대로 보존한다.
+- 예약 이름을 가진 속성도 호스트 슬롯과 overlay 하나의 원본 모델을 사용한다. packed 배열은 호스트 JSON 쓰기의 마지막 patch 값을 복원하며, 지움 객체 아래 명시 keep 자손은 일반 슬롯 정책대로 보존한다.
 
-- 떼어진 참조의 쓰기는 정착·커밋·배달을 만들지 않으며 원래 떼어진 인스턴스의 읽기도 바꾸지 않는다. 쓰기 직후의 보유 슬롯·overlay 원본은 새 값을 가지지만 살아 있는 호스트의 inactiveValues는 직전 커밋 목록을 유지한다. 다음 살아 있는 커밋이 변경된 호스트와 조상의 materialization을 무효화하며, 같은 값·항목 참조와 떼어진 호스트의 고정된 읽기는 보존한다(NODE-044, VALUE-031, WRITE-087).
+- 떼어진 참조의 쓰기는 정착·커밋·배달과 슬롯·overlay 갱신을 만들지 않고 마지막 커밋 읽기를 유지한다. 비활성 값은 살아 있는 호스트의 경로 JSON 쓰기로만 바꾸며 다음 커밋에서 inactiveValues로 공표한다(B11).
 
-- 일반 원본의 유일한 모델은 호스트 보유 슬롯과 overlay다. off 기준 경로·verify 원본 그림자·잠복 직렬화·잠복 색인·커밋 전체 비활성 메모 재구성은 없다. 일반 배열 이동은 잠복 변환 없이 원본 슬롯·overlay·쓰기 주소를 함께 이전한다.
-- 슬롯이나 보유 가능한 엔트리가 없는 호스트는 최초 준비 때 슬롯 없는 실행 경로를 고른다. 이 증명은 불변 청사진의 선언과 종류별 조상만 읽으며, 배열 호스트나 배열 자손은 떼어진 자리 쓰기가 원본을 만들 수 있으므로 항상 일반 지움을 유지한다. 반복 쓰기에는 슬롯 적격 검사·overlay 조회·플래그 읽기를 더하지 않으며 소스 범위 증명은 발생의 불변 청사진과 종류별 계보에만 의존하므로 같은 발생을 유지하는 load/reset과 같은 청사진의 재키에서는 재사용한다. rebuild·새 발생·다른 청사진의 배열 재생성은 새 캐시를 사용하고, 모드 변경은 기존 derived-record 세대와 함께 캐시를 버린다. 복제 노드의 커밋 표시는 생성 노드와 같은 변경 기준을 사용하여 중복 등록을 하지 않는다. 슬롯 삽입 평균 O(1), 복제 O(보유 서브트리), 첫 읽기 O(열거 원본과 정렬), 반복 읽기 O(1), 보유량은 방문 엔트리 M·실제 값 깊이 K·overlay·읽은 목록에 비례한다.
+- 일반 원본의 유일한 모델은 호스트 보유 슬롯과 overlay다. off 기준 경로·verify 원본 그림자·잠복 직렬화·잠복 색인·커밋 전체 비활성 메모 재구성은 없다. 일반 배열 이동은 잠복 변환 없이 원본 슬롯·overlay를 함께 이전한다.
+- 슬롯이나 보유 가능한 엔트리가 없는 호스트는 최초 준비 때 슬롯 없는 실행 경로를 고른다. 이 증명은 불변 청사진의 선언과 종류별 조상만 읽으며, 배열 호스트나 배열 자손은 경로 JSON 쓰기가 원본을 만들 수 있으므로 항상 일반 지움을 유지한다. 반복 쓰기에는 슬롯 적격 검사·overlay 조회·플래그 읽기를 더하지 않으며 소스 범위 증명은 발생의 불변 청사진과 종류별 계보에만 의존하므로 같은 발생을 유지하는 load/reset과 같은 청사진의 재키에서는 재사용한다. rebuild·새 발생·다른 청사진의 배열 재생성은 새 캐시를 사용하고, 모드 변경은 기존 derived-record 세대와 함께 캐시를 버린다. 복제 노드의 커밋 표시는 생성 노드와 같은 변경 기준을 사용하여 중복 등록을 하지 않는다. 슬롯 삽입 평균 O(1), 복제 O(보유 서브트리), 첫 읽기 O(열거 원본과 정렬), 반복 읽기 O(1), 보유량은 방문 엔트리 M·실제 값 깊이 K·overlay·읽은 목록에 비례한다.
 
 - Gate registration of newly active clones belongs to the selected-entry phase, as it does for blueprint-created occurrences. Recursive clone construction restores source channels and entry marks without eagerly registering the same occurrences a second time; selection and gate queries bind them before use. The common registration cost remains in the enclosing selection stage for both source representations.
 
@@ -18,9 +18,8 @@
 - A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
 
 
-- A compaction rebinds surviving items' write-address cells the way an array move does: each survivor directly under a compacted array receives a cell at its new index and shares it with its private clone, so a detached write lands on the same survivor after re-entry. Items that do not survive receive a discarded cell; a write addressed at them, or at a descendant of them, has no effect and never lands on the item that now occupies that index. A detached occurrence honors a discard marker anywhere in its parent chain, whether it resolves through its own cell or through the nearest captured ancestor's cell. A private exit clone links every source occurrence to its clone's cell, so a later compaction of an already inactive array inside that clone moves or discards the original references with their clones. A discard marks every cell retained beneath the discarded item, including an inactive candidate that a re-entry clone carried into it, so an old reference to that candidate is dropped even though its parent chain predates the re-entry. Each discard walks the discarded item's retained subtree once, and a nested clearing array that already discarded its items is walked again by an enclosing discard, following children owned by each occurrence and its inactive slots, and adds at most one WeakMap entry per visited occurrence; it runs only when a clearing array discards an item, and its work is bounded by that subtree, which can include items of a nested clearing array without kept descendants that policy evaluation skips. Array verbs on a discarded occurrence read its frozen source channels, without resolving the discarded path against another survivor. A clearing array with zero surviving items marks every discarded item subtree too, including the no-keep-declaration fast path, so detached writes cannot recreate its latent values. Zero-length arrays can hide latent patches from public values, so this discard enforces retained-state consistency even when public observations are unchanged. A cell that the retained graph no longer reaches, such as an occurrence that exited fully cleared or an old reference to an occurrence that itself re-entered (excluding inactive candidates carried beneath it), is neither moved nor discarded by a compaction, as with an array move; a write through it uses its last recorded path.
+- 떼어진 참조의 쓰기는 아무 효과가 없다. 값·overlay·현재 인스턴스를 바꾸지 않으며 개발 모드 전용 경고를 낸다. 배열 압축은 kept 아이템과 원본 overlay만 옮긴다(B11).
 
-- Active clone construction does not allocate a detached write-address cell or compute its document-order array. A real departure captures the current address through the ordinary retained-exit path. Recursive inactive clones still transfer and rebind their address cells, so old references follow array rekeys without mutating frozen reads.
 
 - A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
 
@@ -32,7 +31,7 @@
 
 - 슬롯 경로는 호스트가 나간 인스턴스를 그대로 보유하고 재진입 때 새 인스턴스로 복제한다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"와 "슬롯은 후보 풀이지 직전 형상이 아니다"를 유지한다. 같은 이름·다른 청사진 노드는 독립 원본이며 공개 structure·children에는 활성 형상만 둔다(NODE-043·044·060, SETTLE-044·GOAL-029).
 - 복제는 raw·extras·선언 밖 값과 자손 슬롯을 재귀적으로 보존하고 부모·경로·등록·색인을 새로 결합한다. 상호작용·오류·배달 기록은 이어받지 않으며 배열 itemKey는 새로 발급한다. 비활성 자손도 새 부모로 복제하여 옛 parent 연결이 과거 호스트를 누적 보유하지 않게 한다. 복제된 새 노드의 entered·채움·resetInteraction과 모든 중첩 호스트의 고정 baseline 재선택을 유지한다(NODE-044·053, SETTLE-044, WRITE-007).
-- overlay는 호스트 소유이며 떼어진 인스턴스의 원본·읽기를 수정하지 않는다. 비활성 쓰기는 작성 주소의 선언 발생에 결합하고, 동일 주소의 다른 종류 원본은 쓰기 범위에 따라 정리한다. 전체 교체는 누락된 하위 원본을 지우며 배치는 각 쓰기 출처의 교체 범위만 지운다. 아직 방문하지 않은 부재 선언의 입력도 청사진 문서 순서의 첫 종류에 분배한다. 떼어진 쓰기는 정착 없이 원본 overlay를 즉시 갱신하지만 살아 있는 호스트의 inactiveValues는 다음 커밋까지 직전 공표 내용과 참조를 유지한다(VALUE-031, NODE-044, WRITE-007·087).
+- overlay는 호스트 소유이며 떼어진 인스턴스의 원본·읽기를 수정하지 않는다. 비활성 쓰기는 작성 주소의 선언 발생에 결합하고, 동일 주소의 다른 종류 원본은 쓰기 범위에 따라 정리한다. 전체 교체는 누락된 하위 원본을 지우며 배치는 각 쓰기 출처의 교체 범위만 지운다. 아직 방문하지 않은 부재 선언의 입력도 청사진 문서 순서의 첫 종류에 분배한다. 떼어진 참조는 overlay를 바꾸지 않으며 살아 있는 호스트의 JSON 쓰기만 비활성 경로 원본을 바꾼다(VALUE-031, NODE-044, WRITE-007·087).
 - 나감 비움은 overlay의 지움 표식이다. clear 호스트 아래 명시 keep 자손이 있으면 호스트 슬롯을 보유하되 own raw·extras와 보존하지 않는 자손을 제외하고 keep 원본만 남긴다. 보존할 자손이 전혀 없으면 슬롯을 만들지 않는다. 식·가드 실패의 나감은 비우지 않고, 자동 쓰기 억제·Source B·채움 철회도 같은 원본을 남긴다(WRITE-034, ERROR-125, SETTLE-001).
 - inactiveValues는 호스트별 첫 읽기에만 materialize하며 다음 공표 변경까지 같은 동결 배열을 반환한다. 보유 원본을 문서 순서로 열거하고 동일 경로에서는 첫 종류만 공표하며, 값이 같으면 항목 객체와 배열 참조를 재사용한다. 배열 원본은 보유한 원본 트리와 overlay를 합성해 읽는다. 떼어진 호스트는 자신이 보유한 자손 슬롯에서 마지막 커밋 목록을 읽으므로 나감 때 목록을 포착하거나 전역 원본을 걷지 않는다. 영향 없는 호스트는 dirty로 만들지 않고, 재진입·재이탈한 항목의 과거 객체를 되살리지 않는다.
 - 비용 모델: 슬롯 삽입은 엔트리당 평균 O(1), 분리·레지스트리 제거는 기존 이탈 서브트리 비용, 복제는 실제 보유 서브트리 크기, dirty 전파는 영향 호스트와 부모 깊이에 비례한다. 첫 읽기는 열거 원본 수와 정렬 비용이며 변화 없는 반복 읽기는 O(1)이다. 커밋에서 전체 잠복 목록·동결 배열을 복사하지 않는다. 보유량은 방문한 엔트리 M과 값 깊이 K, 실제 overlay와 읽은 목록에 비례하며 전역 역사 journal을 두지 않는다.
@@ -56,7 +55,7 @@
 
 - D3b-2의 분석·호스트 파생 builder는 공통 두 레코드의 자기 슬롯만 지연 채운다. DependencyIndex에는 정적 색인만 두며 presenceLevels의 호출 한정 메모는 SettlementContext의 지연 Map이다. context를 재사용하지 않아 다음 정착으로 남지 않으며 staticShape의 entries·byEntry는 서로 독립 지연이다. child entry별 두 색인은 선언 부모 host 슬롯의 저장소로 동일성을 보존한다. staticIds와 readAdmittedEdgeSchema는 모두 첫 사용에 만드는 WeakMap이며 caller는 선언 부모 BlueprintNode를 명시 인수로 넘겨 형제 N개당 저장소 하나씩을 공유한다. 두 저장소를 같은 WeakMap으로 두는 이유는 staticIds 분리 실험에서 확인한 JSC Map의 항목당 비용을 같은 entry 키의 둘째 저장소에서도 피하려는 것이며 다른 슬롯의 저장 모양은 바꾸지 않는다(D3b-2b).
 
-- D3b-1에서 모드 읽기는 공통 engineModes, 변경은 setMode를 거친다. 파생 메모는 실제 모드 변경 때 재생성하며 생성 사실을 잃지 않는다. 라이브 호스트 예산과 떼어진 주소 셀은 runtime의 지연 WeakMap을 쓴다. 폼 전체 reset·폐기는 재계산 가능한 트리 메모만 비우고 부분 reset은 비우지 않는다. 주소 셀은 상태 예외로 reset 뒤에도 유지하여 재키된 옛 참조의 쓰기 목적지를 보존한다. 이 초기화는 커밋·배달 순서·public path의 고정 읽기를 바꾸지 않는다(SURFACE-065, NODE-044).
+- D3b-1에서 모드 읽기는 공통 engineModes, 변경은 setMode를 거친다. 파생 메모는 실제 모드 변경 때 재생성하며 생성 사실을 잃지 않는다. 라이브 호스트 예산은 runtime의 지연 WeakMap을 쓴다. 폼 전체 reset·폐기는 재계산 가능한 트리 메모만 비우고 부분 reset은 비우지 않는다. 이 초기화는 커밋·배달 순서·public path의 고정 읽기를 바꾸지 않는다(SURFACE-065, NODE-044).
 
 - D2-P1의 쓰기 세대 경로는 정적 첫 로드 자격 청사진의 살아 있는 branch에 대한 독립적인 callerReplace/input 전체 쓰기만 허용한다. 게이트·식·파생·감시·가상·재귀, load·automatic·partial·batch·visit, 잠복 원본·미확정 잠복 변경·misfit이 있으면 기존 DirtyPathSet 경로를 쓴다. 판정은 청사진 증거와 고정 수의 런타임 읽기로 하며 쓰기 전에 전체 트리를 걷지 않는다(SETTLE-017·047, TEST-080 D2-P1).
 - 허용된 표시에서 `node.writeEpoch === context.writeEpoch`는 이번 계산의 아직 소비하지 않은 dirty 구성원임을 뜻한다. 바뀌지 않은 잎을 건너뛰는 기존 규칙과 raw·분배 입력·changedRaw·writtenInputs 기록은 유지한다. branch의 기존 sameShape 증명이 하나라도 실패하면, 이미 표식한 writtenInputs를 원래 삽입 순서로 DirtyPathSet에 재생하고 이후 모두 일반 경로로 후퇴한다. 배열 개수·키 집합·extras·잘못된 종류 변화는 이 후퇴에 포함된다. 정착 세대가 안전 정수 범위를 넘으면 처음부터 일반 경로다.
@@ -211,11 +210,11 @@
 
 - 의존 색인의 정적 owner/watch/node·split host 문법은 구성 때 보유하고 동적 질의는 root.runtime 소유의 bounded 문법 캐시를 사용합니다. presence 질의도 runtime 소유자를 전달합니다. 문법 배열은 현재 owner·노드·슬롯 원본 조회 결과를 보유하지 않습니다.
 - watch 멤버십은 살아 있는 경로와 준비된 세그먼트를 함께 보유하여 제거 때 재해석하지 않습니다. 유효 watch 목록은 현재 또는 요청된 snapshot 스키마에서 매번 선택하며 목록 자체를 메모하지 않습니다. state 의존 문법은 실제 호스트 identity·현재 hostPath·authored dependency 키로만 재사용하고 재키 때 다시 묶습니다. 현재 emit/context와 이전 snapshot 값은 매번 읽고 어느 계획에도 보유하지 않습니다.
-- 슬롯 쓰기와 조회는 같은 runtime/address의 문법 배열만 재사용하며 현재 source·overlay·종류·lineage를 매번 풉니다. 떼어진 주소 셀의 identity만으로 주소를 고정하지 않습니다. dirty 자식 색인은 정본 encoded 이름을 그대로 보유하여 디코드·재인코드 왕복을 하지 않고 raw 연산자 마디는 거부합니다.
+- 슬롯 쓰기와 조회는 같은 runtime/address의 문법 배열만 재사용하며 현재 source·overlay·종류·lineage를 매번 풉니다. 슬롯 identity만으로 주소를 고정하지 않습니다. dirty 자식 색인은 정본 encoded 이름을 그대로 보유하여 디코드·재인코드 왕복을 하지 않고 raw 연산자 마디는 거부합니다.
 
 - 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
 
-- 분리된 참조의 `path`와 나머지 읽기는 마지막 커밋 값으로 고정한다. 쓰기만 그 참조가 붙든 잠복 occurrence의 현재 주소와 종류로 해석하며, 배열 재키는 값의 메타데이터와 주소 셀을 함께 옮긴다. 같은 현재 주소·종류가 살아 있으면 쓰기는 무효과이고, 전체 교체로 잠복 값이 지워져도 셀의 마지막 주소는 유지하여 이후 쓰기가 그 자리에 잠복 원본을 다시 만들 수 있다. 개별 항목 없이 조상 배열 원본에 접힌 자손은 그 조상의 주소와 상대 경로로 해석한다. 주소 셀은 노드와 메타데이터를 약한 키로만 연결하여 공개 노드·런타임 필드를 늘리지 않는다. 직접 참조의 주소 조회와 메타데이터 교체·재키의 연결 비용은 O(1), 접힌 자손의 주소 조회는 조상 깊이에 비례하며 일반 살아 있는 쓰기에는 조회를 추가하지 않는다(NODE-044, VALUE-031, 446C-07 (가)).
+- 분리된 참조의 path와 읽기는 마지막 커밋으로 고정되고 쓰기는 무동작이다. 재진입은 새 인스턴스를 만들며 소비한 슬롯과 overlay를 삭제한다. 옛 인스턴스는 현재 트리의 보유 그래프에 남지 않는다(NODE-044, B11).
 
 - H1의 후속은 기존 relocation 조회의 증명을 선택·priming에 전달하여 자격 확인용 추가 순회·filter를 만들지 않는다. priming의 새 baseline이 원래 prior와 다르고 아직 presence 전이가 없을 때만 선택이 그 구조 맵을 직접 갱신하며, presence 비교의 이전 맵은 원래 prior로 유지하고 첫 정체성 전이 뒤에는 사본 경로로 돌아간다. 고정 출발점 지연 공표와 같은 라운드 출력 재조립 생략은 모든 게이트가 정적 equality 증명을 가진 경우로 제한한다. 그 밖의 식과 overlay는 기존 공표 순서를 유지한다. dirty 자식 조회는 기존 dirtyChildrenByParent 색인을 유지하고 preserveReferences는 H2까지 바꾸지 않는다(코디네이터의 H1 1차 측정 후 결정).
 
@@ -294,7 +293,7 @@
 - 짧아진 통째 쓰기·`remove`·`pop`·`clear`·로드로 없어진 아이템과 자손은 나감이 아닌 소멸 집합으로 보낸다. 커밋에서는 NODE-044대로 떼어 마지막 커밋 읽기를 얼리고 `active`·`enabled`를 거짓으로 하되 나감 정책·비움·잠복 포착·억제 비트·원본 B 나감 기록은 적용하지 않으며 그 경로의 저장소 항목은 버린다. 게이트로 꺼진 아이템은 나감 정책과 잠복 원본을 적용하고 색인 자리를 남겨 종류별 빈자리로 방출한다(NODE-044, WRITE-036, VALUE-034, 35C-08·09, 실행 ADR D5).
 - 최종 형상에서 사라진 중간 채움은 자손의 자동 쓰기와 잠복 원본 변경까지 회수한다. 채움이나 좁혀진 유효 목록으로 원래 입력을 재해석한 쓰기가 게이트를 바꿀 때만 다음 전이 라운드를 세고, 각 노드는 한 정착에서 채움을 최대 한 번 받으며 같은 게이트의 재반전은 새 라운드를 만들지 않는다. 호스트 바퀴 초과는 전이 중에도 즉시 독립된 예산 초과로 처리하며 전이 상한은 `게이트 가진 조각 수 + 노드 게이트 수 + 1`이다(SETTLE-003·005·011·017·022·029·041, WRITE-098·099, 26C-11).
 - 상한 초과 시 Source-B 되돌림 기록은 채움·`derived`·`injectTo`·`unsetValue`의 지움·나감 비움의 이전 `raw`·`undeclaredValues`·분배 값을 보관한다. 파생 쓰기를 먼저 되돌리고 중간 채움을 철회하며 채움 노드를 `writtenInputs`에서도 제거하여 원본 B에는 쓰기 경계의 정적 해석만 남긴다. 그 원본으로 형상을 한 번 더 계산하며 또 초과하면 마지막 활성 집합을 고정한다. 객체 자식의 생김·빠짐은 형상 재계산으로 판정한다. 자동 쓰기가 배열 아이템을 만들거나 없애면 구조 로그에 호스트, 직전 순서의 아이템 노드 목록, 직전 `itemCount`와 `undeclaredValues`를 적고 자동 쓰기 로그와 함께 뒤에서부터 되돌린다. 되돌린 아이템은 커밋 형상에 든 적이 없어 생김이나 채움 대상이 아니며 `nextItemKey`는 되감지 않는다. 터미널 배열은 구조 로그 없이 이전 호스트 `raw`만 기록한다(SETTLE-011, WRITE-036·099, TEST-069, 35C-05·12).
-- 구조 계획 적용은 옛 자리와 새 자리의 템플릿이 같은 선언(`items` 또는 같은 `prefixItems[i]`)일 때만 새 자리의 옛 노드를 재사용하고, 템플릿이 다르면 새 자리 템플릿의 새 노드(새 키)를 만들며 옛 노드는 소멸시킨다. 새 자리 종류의 보유 슬롯·overlay 원본이 있으면 생김 입력보다 먼저 재생하고, 없으면 옛 자리의 합성 값을 생김 입력으로 넘긴다(41C-01, NODE-043·051; 394C-01). 그 밖에는 청사진이 있는 새 자리에 새 키의 노드를 만들고, 청사진 없는 자리는 `undeclaredValues`에 두며 빠진 노드는 소멸시킨다. 자리 이동으로 청사진 유무가 바뀌면 값도 노드와 `undeclaredValues` 사이를 옮기고, 옮긴 아이템과 자손의 이름·이스케이프 이름·경로를 정착 전에 고친다. 살아남은 슬롯 바인딩과 overlay는 충돌 없이 새 자리로 직접 옮기며, 보유 원본의 동결된 옛 경로는 바꾸지 않고 떼어진 쓰기 주소만 갱신한다. `committedDeclarationIds`, 규칙 기준값과 두 색인, `misfitPaths`는 새 경로로 옮기고 `misfitsMemo`의 영향 경로를 무효화한다. 비활성 값은 변경된 슬롯 호스트와 조상의 다음 커밋에서 읽기 메모를 무효화한다. 게이트 색인은 경로에서 계산한 자리 L과 `watchPaths`를 함께 고치도록 이름 변경 전에 하위 트리를 제거하고 변경 후 다시 등록한다. 바뀐 노드와 자손의 `(previous, current)` 경로 사실을 작업 칸에 모으며 정착 중에는 경로가 고정된다(NODE-004·051·052, EVENT-068, 35C-02, 실행 ADR D4).
+- 구조 계획 적용은 옛 자리와 새 자리의 템플릿이 같은 선언(`items` 또는 같은 `prefixItems[i]`)일 때만 새 자리의 옛 노드를 재사용하고, 템플릿이 다르면 새 자리 템플릿의 새 노드(새 키)를 만들며 옛 노드는 소멸시킨다. 새 자리 종류의 보유 슬롯·overlay 원본이 있으면 생김 입력보다 먼저 재생하고, 없으면 옛 자리의 합성 값을 생김 입력으로 넘긴다(41C-01, NODE-043·051; 394C-01). 그 밖에는 청사진이 있는 새 자리에 새 키의 노드를 만들고, 청사진 없는 자리는 `undeclaredValues`에 두며 빠진 노드는 소멸시킨다. 자리 이동으로 청사진 유무가 바뀌면 값도 노드와 `undeclaredValues` 사이를 옮기고, 옮긴 아이템과 자손의 이름·이스케이프 이름·경로를 정착 전에 고친다. 살아남은 슬롯 바인딩과 overlay는 충돌 없이 새 자리로 직접 옮기며, 보유 원본의 동결된 옛 경로는 바꾸지 않는다. `committedDeclarationIds`, 규칙 기준값과 두 색인, `misfitPaths`는 새 경로로 옮기고 `misfitsMemo`의 영향 경로를 무효화한다. 비활성 값은 변경된 슬롯 호스트와 조상의 다음 커밋에서 읽기 메모를 무효화한다. 게이트 색인은 경로에서 계산한 자리 L과 `watchPaths`를 함께 고치도록 이름 변경 전에 하위 트리를 제거하고 변경 후 다시 등록한다. 바뀐 노드와 자손의 `(previous, current)` 경로 사실을 작업 칸에 모으며 정착 중에는 경로가 고정된다(NODE-004·051·052, EVENT-068, 35C-02, 실행 ADR D4).
 - 아이템을 만들거나 없애는 쓰기는 호스트 경로의 로드 스냅숏 배열 자리를 청사진 없는 꼬리까지 센 `itemCount` 길이로 맞춘다. 구조 연산의 새 자리에는 생성 값 `v`를, 비구조 쓰기의 새 자리에는 `undefined`를 넣고 없어진 자리는 자르며, 호스트 경로에 배열이 없으면 `undefined` 자리의 배열을 만든다. 값을 다시 싣지 않는 자리 작업은 O(배열 길이)이고 아이템 변화가 없는 `update`는 키·스냅숏 자리를 유지한다(WRITE-085·095·099, NODE-052, 35C-03·06, 실행 ADR D4).
 - `diagnostics`는 `{ status: 'stable' | 'degraded', cause?: 'budget' | 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict', exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion', iterations?: number, commit?: number }`이다. 파생 상한 25를 넘기면 `degraded`와 첫 실패의 `cause`(선행 실패가 없으면 `'budget'`)·`exceededBudget: 'derive'`·`iterations: 25`로 원본 B를 커밋한다. 모든 칸은 `commit`의 커밋을 설명하며 최초 손상 커밋을 유지하고 폼 수준 로드에서만 `stable`로 초기화한다(ERROR-070·130–133·190·195·204, SETTLE-011·013·017, 26C-02).
 - 재귀 발생에서 같은 청사진 템플릿이 자신의 `raw`·`undeclaredValues`·분배 입력·잠복 자손·살아 있는 자손 어디에도 원본이 없는 조상과 다시 만나 계속 확장하려 하면 더 만들지 않고 `recursion`으로 기록한다. 명시 원본의 유한 깊이는 이 판정으로 잘리지 않는다(TEST-067 (c′), ERROR-190).
@@ -335,6 +334,8 @@
 
 ### settle-slot-entry — 새 수명의 복제와 재선택
 
+- 복제를 마친 엔트리의 슬롯과 overlay를 호스트에서 삭제하고, 활성 수명은 과거 인스턴스를 보유하지 않는다(B11).
+
 - source 채널·extras·선언 밖 값과 후보별 원본을 복원하되 모든 재진입 참조와 배열 nonce는 새 값이다. 중첩 게이트 입력이 비활성 동안 바뀌어도 고정 baseline에서 선택하며 옛 형상을 후보 밖의 힌트로 쓰지 않는다. 보존 원본이 없음인 새 노드는 기존 채움·상호작용 초기화를 받는다.
 
 ### settle-slot-clearing-array-keep — keep 아이템의 압축 복원
@@ -371,9 +372,9 @@
 
 - 입력이 바뀌는 세 쓰기에서 80개의 순수 active·if 발생마다 마운트 때 준비한 같은 호출 객체와 배열만 사용하며 호출 뒤 view를 보유하지 않는다. 던짐이나 누락 검증기로 성공 메모가 없으면 재사용 버퍼의 읽기 참조도 비운다. 등록 getter는 발생별로 새 함수를 만들지 않고, 리터럴 active의 round는 전체 호스트 view를 만들지 않으며 빈 스키마 경로 목록을 공유한다.
 
-### settle-detached-address — 분리된 참조의 현재 쓰기 주소
+### settle-detached-address — 분리된 참조의 쓰기 무효
 
-- remove·insert의 일반 경로와 정적 splice에서 잠복 occurrence가 재키되면, 분리된 참조의 읽기는 바뀌지 않고 이후 쓰기는 이동한 주소에 닿는다. 전체 교체가 잠복 값을 지운 뒤에도 마지막 주소에서 새 잠복 원본을 만들며, 같은 현재 주소·종류가 살아 있으면 쓰지 않는다. 분리된 쓰기는 정착·사건·revision을 만들지 않는다(NODE-044, VALUE-031, 446C-07 (가)).
+- remove·insert와 압축·재진입·reset 전후에 떼어진 참조의 쓰기는 항상 무효다. 원본과 공표·새 인스턴스 및 revision을 바꾸지 않는다(B11).
 
 ### settle-host-static-partition — 게이트 호스트의 정적 형제 재사용
 

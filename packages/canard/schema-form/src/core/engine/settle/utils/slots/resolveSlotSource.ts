@@ -9,14 +9,12 @@ import { getSlotSource } from './getSlotSource';
  * @param root - Current tree root
  * @param path - Absolute source address
  * @param target - Exact kind requested at the final position
- * @param lineage - Optional old-reference blueprint chain for ancestor kinds
  * @returns Retained or live occurrence and its owner-held patch
  */
 export const resolveSlotSource = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
   target: BlueprintNode,
-  lineage?: readonly BlueprintNode[],
 ): { source: Self | undefined; overlay: InactiveSlotOverlay | undefined } => {
   const names = getSlotPathNames(root.runtime, path);
   if (names === undefined) return { source: undefined, overlay: undefined };
@@ -28,7 +26,7 @@ export const resolveSlotSource = <Self extends FieldNodeRecord<Self>>(
     const selected =
       depth === names.length - 1
         ? target
-        : (lineage?.[depth + 1] ?? source?.structure?.[name]?.blueprintNode);
+        : source?.structure?.[name]?.blueprintNode;
     const entry = getSlotPathEntry(template, source, overlay, name, selected);
     if (!entry) return { source: undefined, overlay: undefined };
     const child: {

@@ -455,6 +455,14 @@ formRef.current?.findNode('/profile')?.visitSubtree((node) => {
 
 ---
 
+### 떼어진 노드 참조
+
+활성 트리를 떠난 노드 참조의 읽기는 마지막 커밋 값으로 고정되고 구독은 발화하지 않습니다. 이 참조의 `setValue`와 배열 동사(`push`, `pop`, `insert`, `remove`, `update`, `clear`)는 동결 값, 보유 원본, overlay, 이후 활성 인스턴스를 바꾸지 않습니다. 개발 모드에서는 `FormWarningCode.DetachedNodeWrite`로 경고하며 운영 번들은 침묵합니다. `push`와 `insert`는 동결된 배열 길이를, 나머지 배열 동사는 `undefined`를 반환합니다.
+
+비활성 값은 살아 있는 루트나 호스트의 `setValue` JSON에 해당 경로를 담아 씁니다. 이 쓰기는 비활성 노드를 생성하지 않고 보유 overlay와 `inactiveValues`를 갱신합니다. 재진입은 새 노드를 만들고 해당 엔트리의 보유 슬롯과 overlay를 소비합니다.
+
+마이그레이션: 비활성을 건너는 노드 참조는 재진입 뒤 `find`로 다시 얻으십시오. 비활성 값은 살아 있는 호스트의 `setValue` JSON으로 쓰십시오. `find`는 활성 노드가 없는 모든 경로에서 기존과 같이 `null`을 반환합니다.
+
 ## FieldInput 시스템
 
 ### FieldInputDefinition

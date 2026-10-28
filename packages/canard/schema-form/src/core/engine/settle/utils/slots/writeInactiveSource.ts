@@ -1,4 +1,4 @@
-import type { BlueprintChildEntry,BlueprintNode } from '../../../blueprint';
+import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { writeSlotPath } from './writeSlotPath';
@@ -25,13 +25,4 @@ export const writeInactiveSource = <Self extends FieldNodeRecord<Self>>(
   _siblings: readonly BlueprintChildEntry[],
   automatic = false,
 ): boolean =>
-  writeSlotPath(
-    context.root,
-    path,
-    template,
-    value,
-    whole,
-    context,
-    undefined,
-    automatic,
-  );
+  writeSlotPath(context.root, path, template, value, whole, context, automatic);

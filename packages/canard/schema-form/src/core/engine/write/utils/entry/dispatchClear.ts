@@ -5,6 +5,7 @@ import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { isBatchMarking } from '../chain/isBatchMarking';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
+import { refuseDetachedWrite } from '../report/refuseDetachedWrite';
 
 /** Array operation that empties the array. */
 const CLEAR_OPERATION: ArrayOperation = { kind: 'clear' };
@@ -18,6 +19,7 @@ const CLEAR_OPERATION: ArrayOperation = { kind: 'clear' };
 export const dispatchClear = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): unknown => {
+  if (refuseDetachedWrite(node)) return;
   if (!enterFieldNodeChain(node)) return;
   try {
     return isBatchMarking(node)

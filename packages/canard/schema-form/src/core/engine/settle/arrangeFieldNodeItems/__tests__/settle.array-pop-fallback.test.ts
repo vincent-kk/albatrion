@@ -199,7 +199,7 @@ describe('pop admission declines and the general path settles', () => {
     );
   });
 
-  it('a detached array and a tree holding its latent write', () => {
+  it('a detached array write is inert and the next live operation is admitted', () => {
     let popped: DispatchTestNode | undefined;
     compareArrayPop(
       {
@@ -221,7 +221,7 @@ describe('pop admission declines and the general path settles', () => {
           apply: (root) => {
             return dispatchPop(root);
           },
-          pop: false,
+          pop: true,
         },
       ],
     );

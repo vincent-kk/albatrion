@@ -1,16 +1,13 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { FieldNodeWriteKind,WriteOption } from '../../../types/value';
+import type { FieldNodeWriteKind, WriteOption } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
-import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
-import { hasLivePathKind } from '../detached/hasLivePathKind';
 import { assertFieldNodeWritable } from '../dispose/assertFieldNodeWritable';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { assertVirtualWriteShape } from '../input/assertVirtualWriteShape';
-import { isPlain } from '../input/isPlain';
 import { markWrite } from '../input/markWrite';
 import { prepareWriteEpoch } from '../input/utils/prepareWriteEpoch';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
@@ -19,16 +16,15 @@ import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
 import { prepareSourcePruner } from '../slots/prepareSourcePruner';
-import { writeSlotPath } from '../slots/writeSlotPath';
 import { collectReplacePaths } from './collectReplacePaths';
 import { markWrongKindAncestors } from './markWrongKindAncestors';
 import { releaseWrongKindHosts } from './releaseWrongKindHosts';
 
 /**
- * Apply a live write or an own-kind detached latent write (26C-14).
+ * Apply a live write; detached lifetimes have no write effect.
  * A multi-write batch arrives as one root write whose replacement scope is the union of
  * its origins' paths, not the root (191C-01).
- * @param node - Live target or detached reference in a tree with a node factory
+ * @param node - Live target in a tree with a node factory
  * @param input - Caller-owned value interpreted first under static types
  * @param kind - Input origin retained for warning and transition semantics
  * @param option - Caller flags whose automatic-write bits override the form default
@@ -45,13 +41,13 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   source: FieldNodeWriteKind = kind,
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
 ): void => {
+  if (node.detached) return;
   const root = node.rootNode;
   if (source === 'input' && (node.disposed || root.disposed)) return;
   const schema = node.schema.schema;
   const inputType = typeof input;
   const scalarWrite =
     node.parent !== null &&
-    !node.detached &&
     !node.disposed &&
     !root.disposed &&
     root.runtime.blueprint.capabilities.branchless &&
@@ -77,29 +73,6 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
       kind !== 'automatic'
     )
       assertVirtualWriteShape(node, input);
-  }
-  if (!scalarWrite && node.detached) {
-    const address = DetachedWriteAddress.read(node);
-    if (address?.discarded) return;
-    const path = address?.path ?? node.path;
-    if (hasLivePathKind(node, path)) return;
-    const whole =
-      kind !== 'callerPartial' ||
-      !isPlain(input) ||
-      node.behavior.strategy !== 'branch';
-      const lineage = [];
-      for (let current: Self | null = node; current; current = current.parent)
-        lineage.unshift(current.blueprintNode);
-      writeSlotPath(
-        root,
-        path,
-        node.blueprintNode,
-        input,
-        whole,
-        undefined,
-        lineage,
-      );
-    return;
   }
   const scratch = getSettlementScratch(root.runtime);
   const replaces = scalarWrite

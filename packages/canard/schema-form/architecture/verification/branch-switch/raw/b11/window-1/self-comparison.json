@@ -1,0 +1,161 @@
+{
+  "method": "Full-helper supplemental timers, median of three process medians; timer overhead included; diagnostic only",
+  "rows": [
+    {
+      "row": "switch-oneOf-80",
+      "stage": "finalizeExits",
+      "A": {
+        "median": 10.540999999875567,
+        "min": 10.521000000380809,
+        "max": 11.16600000023027,
+        "processMedians": [
+          10.540999999875567,
+          11.16600000023027,
+          10.521000000380809
+        ]
+      },
+      "B": {
+        "median": 10.83500000049753,
+        "min": 10.353999999779262,
+        "max": 10.957999999845924,
+        "processMedians": [
+          10.83500000049753,
+          10.957999999845924,
+          10.353999999779262
+        ]
+      },
+      "deltaUs": 0.2940000006219634,
+      "percent": 2.7891091986095624
+    },
+    {
+      "row": "switch-oneOf-80",
+      "stage": "cloneFromSlot",
+      "A": {
+        "median": 3.0409999997118575,
+        "min": 2.957000000151311,
+        "max": 3.0840000006264745,
+        "processMedians": [
+          2.957000000151311,
+          3.0840000006264745,
+          3.0409999997118575
+        ]
+      },
+      "B": {
+        "median": 2.9369999999744323,
+        "min": 2.8744999992795783,
+        "max": 2.9380000000855944,
+        "processMedians": [
+          2.9369999999744323,
+          2.9380000000855944,
+          2.8744999992795783
+        ]
+      },
+      "deltaUs": -0.10399999973742524,
+      "percent": -3.41992764706608
+    },
+    {
+      "row": "switch-payload-12",
+      "stage": "finalizeExits",
+      "A": {
+        "median": 18.583999999691514,
+        "min": 17.4584999997478,
+        "max": 18.68749999925967,
+        "processMedians": [
+          17.4584999997478,
+          18.68749999925967,
+          18.583999999691514
+        ]
+      },
+      "B": {
+        "median": 18.23000000013053,
+        "min": 17.499500000440094,
+        "max": 19.188500001064313,
+        "processMedians": [
+          17.499500000440094,
+          18.23000000013053,
+          19.188500001064313
+        ]
+      },
+      "deltaUs": -0.35399999956098327,
+      "percent": -1.9048643971527095
+    },
+    {
+      "row": "switch-payload-12",
+      "stage": "cloneFromSlot",
+      "A": {
+        "median": 5.789500001128545,
+        "min": 5.789499999991676,
+        "max": 6.503499999098494,
+        "processMedians": [
+          5.789500001128545,
+          6.503499999098494,
+          5.789499999991676
+        ]
+      },
+      "B": {
+        "median": 5.9365000013258395,
+        "min": 5.91899999949419,
+        "max": 6.085999998731495,
+        "processMedians": [
+          5.91899999949419,
+          6.085999998731495,
+          5.9365000013258395
+        ]
+      },
+      "deltaUs": 0.14700000019729487,
+      "percent": 2.5390793707339188
+    },
+    {
+      "row": "switch-siblings-0",
+      "stage": "finalizeExits",
+      "A": {
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "processMedians": [
+          0,
+          0,
+          0
+        ]
+      },
+      "B": {
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "processMedians": [
+          0,
+          0,
+          0
+        ]
+      },
+      "deltaUs": 0,
+      "percent": null
+    },
+    {
+      "row": "switch-siblings-0",
+      "stage": "cloneFromSlot",
+      "A": {
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "processMedians": [
+          0,
+          0,
+          0
+        ]
+      },
+      "B": {
+        "median": 0,
+        "min": 0,
+        "max": 0,
+        "processMedians": [
+          0,
+          0,
+          0
+        ]
+      },
+      "deltaUs": 0,
+      "percent": null
+    }
+  ]
+}

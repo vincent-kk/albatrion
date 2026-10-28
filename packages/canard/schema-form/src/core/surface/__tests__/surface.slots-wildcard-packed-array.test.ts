@@ -42,14 +42,11 @@ for (const childInactive of [false, true])
     expect(Object.isFrozen(entry.value)).toBe(true);
     star.setValue({ x: 'patched' });
     root.find('/tick')!.setValue(1);
-    expect(root.inactiveValues).toEqual([
-      { path: '/group', value },
-      { path: '/group/0/%2A/x', value: 'patched' },
-    ]);
+    expect(root.inactiveValues).toEqual([{ path: '/group', value }]);
     expect(root.inactiveValues[0]).toBe(entry);
     root.find('/open')!.setValue(true);
     root.find('/xOpen')!.setValue(true);
     expect(root.find('/group')!.value).toEqual([
-      { '*': { x: 'patched' }, plain: 'plain' },
+      { '*': { x: 'held' }, plain: 'plain' },
     ]);
   });

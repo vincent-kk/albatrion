@@ -12,6 +12,7 @@ it('replaces the one visited host slot instead of retaining earlier lifetimes', 
   if (!(tree.root instanceof FieldNode)) throw new Error('Expected runtime');
   const bound = countRetainedSlotNodes(tree.root);
   for (let index = 0; index < 64; index++) {
+    const previous = tree.root.find('/group')!;
     tree.close();
     const slots: unknown = Reflect.get(tree.root, 'inactiveSlots');
     expect(slots).toBeInstanceOf(Map);
@@ -21,8 +22,15 @@ it('replaces the one visited host slot instead of retaining earlier lifetimes', 
     expect(retained).toHaveLength(1);
     expect(countRetainedSlotNodes(tree.root)).toBeLessThanOrEqual(bound);
     tree.open();
+    expect(tree.root.find('/group')).not.toBe(previous);
+    expect(slots.size).toBe(0);
+    const overlays: unknown = Reflect.get(tree.root, 'inactiveSlotOverlays');
+    if (overlays instanceof Map) expect(overlays.size).toBe(0);
+    expect(
+      tree.root.inactiveValues.some((entry) => entry.path === '/group'),
+    ).toBe(false);
     expect(tree.root.find('/group/leaf')!.value).toBe('kept');
-    expect(countRetainedSlotNodes(tree.root)).toBeLessThanOrEqual(bound);
+    expect(countRetainedSlotNodes(tree.root)).toBe(bound);
   }
 });
 

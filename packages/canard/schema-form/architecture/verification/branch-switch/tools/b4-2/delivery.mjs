@@ -384,22 +384,6 @@ for (const spec of [
   await drain();
   compare('after-drain');
   if (spec.op === 'exit') {
-    const old = [a, b].map((state) =>
-      state.held.find(
-        (node) => node.detached && node.blueprintNode.kind === 'number',
-      ),
-    );
-    if (!spec.fixture && old[0] && old[1]) {
-      for (const [index, state] of [a, b].entries())
-        state.M.writeFieldNodeInput(
-          old[index],
-          9001,
-          state.M.SetValueOption.Overwrite,
-        );
-      compare('detached-write');
-      await drain();
-      compare('detached-write-after-drain');
-    }
     for (const state of [a, b]) {
       state.M.writeFieldNodeInput(
         state.root.find('/flag'),
@@ -454,7 +438,7 @@ const report = {
     'all revision bits',
     'node lifetimes, parent and child references',
     'committed declarations and rules',
-    'detached reads/writes',
+    'detached reads',
     'legacy raw entries still used by candidate',
   ],
 };

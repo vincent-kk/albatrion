@@ -7,6 +7,7 @@ import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { isBatchMarking } from '../chain/isBatchMarking';
 import { readBatchValue } from '../chain/readBatchValue';
+import { refuseDetachedWrite } from '../report/refuseDetachedWrite';
 
 /**
  * Commit a public value write or mark it within the current batch.
@@ -22,6 +23,7 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
   option: WriteOption = WriteOption.Overwrite,
   source?: 'input',
 ): void => {
+  if (refuseDetachedWrite(node)) return;
   if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
   if (!enterFieldNodeChain(node)) return;
   try {

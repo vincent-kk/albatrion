@@ -5,8 +5,8 @@ import { isArrayNode } from '@/schema-form/core/surface';
 
 import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 
-// 446C-07 (가): A detached field write must follow its surviving item to the new index.
-it('keeps a detached field write with its surviving array item after remove(0)', () => {
+// Detached writes preserve the retained source across array index movement.
+it('ignores a detached field write after its surviving array item moves', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
@@ -57,9 +57,9 @@ it('keeps a detached field write with its surviving array item after remove(0)',
     movedSurvivor: root.find('/items/1/gated')!.value,
     absentTail: root.find('/items/2'),
   }).toEqual({
-    retainedAfterWrite: { moved: 'x', former: undefined },
+    retainedAfterWrite: { moved: 'third', former: undefined },
     firstSurvivor: 'second',
-    movedSurvivor: 'x',
+    movedSurvivor: 'third',
     absentTail: null,
   });
 });

@@ -315,7 +315,7 @@ describe('settle transitions and loads', () => {
     expect(root.structure?.appeared?.raw).toBe('A');
   });
 
-  it('NODE-044 detached write changes only the latent raw for its path and kind', () => {
+  it('NODE-044 detached write leaves every source unchanged', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -334,9 +334,9 @@ describe('settle transitions and loads', () => {
     writeFieldNode(former, 'new', 'input', WriteOption.Overwrite);
     expect(former.raw).toBe('old');
     expect(root.runtime.commitNumber).toBe(commit);
-    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('new');
+    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('old');
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.secret?.raw).toBe('new');
+    expect(root.structure?.secret?.raw).toBe('old');
   });
 
   it('WRITE-082 fills a host from controls.default before default and distributes through interpret', () => {

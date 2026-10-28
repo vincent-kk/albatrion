@@ -23,7 +23,7 @@ it('materializes nested slot values in document order with frozen stable referen
   tree.leaf.setValue('overlay');
   expect(tree.root.inactiveValues).toBe(inactive);
   tree.close();
-  expect(tree.root.inactiveValues).not.toBe(inactive);
+  expect(tree.root.inactiveValues).toBe(inactive);
   expect(tree.group.inactiveValues).toBe(activeHost);
   expect(inactive[1]).toEqual({ path: '/group/leaf', value: 'kept' });
 });
@@ -39,7 +39,7 @@ it('keeps unread detached slot reads independent of later writes and re-entry', 
   ]);
   const frozen = tree.group.inactiveValues;
   expect(tree.root.find('/group')!.inactiveValues).toEqual([
-    { path: '/group/held', value: 'overlay' },
+    { path: '/group/held', value: 'hidden' },
   ]);
   tree.root.resetSubtree();
   expect(tree.group.inactiveValues).toBe(frozen);

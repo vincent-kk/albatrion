@@ -249,7 +249,7 @@ describe('splice admission declines and the general path settles', () => {
     );
   });
 
-  it('a detached array and a tree holding its latent write', () => {
+  it('a detached array write is inert and the next live operation is admitted', () => {
     let removed: DispatchTestNode | undefined;
     compareArraySplice(
       {
@@ -283,7 +283,7 @@ describe('splice admission declines and the general path settles', () => {
           apply: (root) => {
             return dispatchInsert(root, 0, [0]);
           },
-          splice: false,
+          splice: true,
         },
       ],
     );

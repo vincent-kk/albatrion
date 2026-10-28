@@ -5,11 +5,6 @@ export interface TreeMemoStores<Entry = unknown, Gate = unknown> {
     { path: string; kind: string; key: string }
   >;
   deriveTargetIds?: WeakMap<object, number>;
-  /** State, retained across every reset while old references own their runtime. */
-  detachedWriteAddresses?: WeakMap<
-    object,
-    { path: string; order: readonly number[]; discarded?: true }
-  >;
   arrayShapes?: WeakMap<
     object,
     {

@@ -100,7 +100,7 @@ describe('static middle remove and insert through the splice path match the gene
     ]);
   });
 
-  it('keeps the removed node detached with its reads and sends its later write to latent raw', () => {
+  it('keeps the removed node detached with frozen reads and ignores its later write', () => {
     let removed: DispatchTestNode | undefined;
     compareArraySplice(
       OBJECTS,
@@ -134,7 +134,7 @@ describe('static middle remove and insert through the splice path match the gene
           },
           splice: false,
         },
-        insert(0, { name: 'z' }, false),
+        insert(0, { name: 'z' }, true),
       ],
     );
   });

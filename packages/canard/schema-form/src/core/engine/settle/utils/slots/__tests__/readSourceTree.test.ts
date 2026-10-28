@@ -4,7 +4,6 @@ import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatc
 import { WriteOption } from '../../../../types/value';
 import { dispatchMount, dispatchSetValue } from '../../../../write';
 import { getDispatchNode } from '../../../__tests__/fixtures/getDispatchNode';
-import { DetachedWriteAddress } from '../../detached/DetachedWriteAddress';
 import { getSettlementScratch } from '../../scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../../settlement/createSettlementContext';
@@ -50,9 +49,6 @@ it('reads a discarded candidate descendant from its frozen source instead of a c
   dispatchSetValue(getDispatchNode(root, 'object'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(oldTags.path).toBe('/list/0/tags');
-  expect(DetachedWriteAddress.read(oldTags)).toMatchObject({
-    discarded: true,
-  });
   const scratch = getSettlementScratch(runtime);
   const context = createSettlementContext(
     root,

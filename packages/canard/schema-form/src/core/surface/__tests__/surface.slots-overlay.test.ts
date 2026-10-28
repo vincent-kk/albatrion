@@ -3,11 +3,12 @@ import { expect, it } from 'vitest';
 import { SetValueOption } from '../type';
 import { createRetainedSlotTree } from './fixtures/createRetainedSlotTree';
 
-it('applies a detached leaf overlay at clone without changing its frozen source', () => {
+it('applies a host JSON overlay at clone while ignoring the old leaf write', () => {
   const tree = createRetainedSlotTree();
   tree.close();
   expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
-  tree.leaf.setValue('overlay');
+  tree.leaf.setValue('ignored');
+  tree.root.setValue({ group: { leaf: 'overlay' } }, SetValueOption.Merge);
   expect(tree.leaf.raw).toBe('kept');
   tree.open();
   expect(tree.root.find('/group/leaf')!.raw).toBe('overlay');
@@ -16,11 +17,12 @@ it('applies a detached leaf overlay at clone without changing its frozen source'
   });
 });
 
-it('clears absent slot descendants on whole replacement through an old host', () => {
+it('clears absent slot descendants on whole replacement through a live host', () => {
   const tree = createRetainedSlotTree();
   tree.close();
   expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
-  tree.group.setValue({ leaf: 'replacement' });
+  tree.group.setValue({ leaf: 'ignored' });
+  tree.root.setValue({ open: false, group: { leaf: 'replacement' } });
   tree.open();
   expect(tree.root.find('/group/leaf')!.raw).toBe('replacement');
   expect(tree.root.find('/group')!.undeclaredValues).toBeUndefined();
@@ -32,7 +34,8 @@ it('merges a host overlay while retaining unwritten descendants and extras', () 
   const tree = createRetainedSlotTree();
   tree.close();
   expect(Reflect.get(tree.root, 'inactiveSlots')).toBeInstanceOf(Map);
-  tree.group.setValue({ leaf: 'merged' }, SetValueOption.Merge);
+  tree.group.setValue({ leaf: 'ignored' }, SetValueOption.Merge);
+  tree.root.setValue({ group: { leaf: 'merged' } }, SetValueOption.Merge);
   tree.open();
   expect(tree.root.find('/group/leaf')!.raw).toBe('merged');
   expect(tree.root.find('/group/list/0')!.value).toEqual({ text: 'first' });
@@ -81,5 +84,5 @@ it('ignores an old reference write while the same kind has a live lifetime', () 
   tree.close();
   tree.leaf.setValue('latest absent source');
   tree.open();
-  expect(tree.root.find('/group/leaf')!.raw).toBe('latest absent source');
+  expect(tree.root.find('/group/leaf')!.raw).toBe('kept');
 });
