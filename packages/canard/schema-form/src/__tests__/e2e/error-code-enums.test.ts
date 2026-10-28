@@ -19,6 +19,9 @@ describe('root error and warning code enums', () => {
     );
     expect(FormWarningCode.Misfit).toBe('SCHEMA_FORM_WARNING.MISFIT');
     expect(Object.keys(FormErrorCode)).toHaveLength(42);
-    expect(Object.keys(FormWarningCode)).toHaveLength(17);
+    expect(FormWarningCode.DetachedNodeWrite).toBe(
+      'SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE',
+    );
+    expect(Object.keys(FormWarningCode)).toHaveLength(18);
   });
 });
