@@ -5,6 +5,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
  * @param baseline - Fixed null-prototype structure whose occurrences stay active
  * @param current - Round-entry view; the fixed baseline has no dynamic members
  * @param names - Previous dynamic names, used only to preserve the round-entry shape
+ * @param dynamic - Caller-owned dynamic target, retained for own-key publication order
  * @returns A private view; enumeration materializes keys in ordinary object order.
  * The caller publishes an ordinary structure before ending selection. No prior shape is mutated.
  */
@@ -12,8 +13,8 @@ export const createPreparedSelectionStructure = <Self>(
   baseline: Record<string, Self>,
   current: Record<string, Self> | null | undefined,
   names: readonly string[],
+  dynamic: Record<string, Self>,
 ): Record<string, Self> => {
-  const dynamic: Record<string, Self> = Object.create(baseline);
   if (current && current !== baseline)
     for (const name of names)
       if (hasOwnProperty(current, name)) dynamic[name] = current[name];

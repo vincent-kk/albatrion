@@ -3,14 +3,15 @@ import type { FieldNodeRecord } from '../../../../record';
 /**
  * Limit unchanged required membership to the final children that entered this settlement.
  * @param host - Object host with its final schema and prior delivered schema witness
- * @param entered - Settlement-owned entering occurrences, including discarded candidates
+ * @param entered - This host's entering occurrences, grouped once by the commit caller
  * @returns Existing children when required may differ or an explicit prior-schema witness
  * points at the current schema, otherwise only final entering children.
- * The returned temporary subset costs O(entered); existing child arrays remain unchanged.
+ * Filtering costs O(entered), with stable property-order sorting for multiple results;
+ * existing child arrays remain unchanged.
  */
 export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
   host: Self,
-  entered: ReadonlySet<Self>,
+  entered: readonly Self[],
 ): readonly Self[] => {
   const schema = host.schema.schema;
   const previousSchema = (host.deliveryPreviousSchema ?? host.schema).schema;
@@ -31,5 +32,21 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
       host.structure?.[child.name] === child
     )
       children.push(child);
+  if (children.length > 1)
+    children.sort((left, right) => {
+      const leftIndex = Number(left.name) >>> 0;
+      const rightIndex = Number(right.name) >>> 0;
+      const leftInteger =
+        leftIndex !== 0xffffffff && String(leftIndex) === left.name;
+      const rightInteger =
+        rightIndex !== 0xffffffff && String(rightIndex) === right.name;
+      return leftInteger
+        ? rightInteger
+          ? leftIndex - rightIndex
+          : -1
+        : rightInteger
+          ? 1
+          : 0;
+    });
   return children;
 };

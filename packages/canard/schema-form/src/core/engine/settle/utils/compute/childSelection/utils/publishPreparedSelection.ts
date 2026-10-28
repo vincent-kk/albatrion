@@ -12,7 +12,7 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
   frame: ChildSelectionFrame<Self>,
 ): readonly Self[] => {
   const prepared = frame.preparedStatic!;
-  const names = Object.keys(Object.fromEntries(frame.seen));
+  const names = Object.keys(frame.preparedDynamic!);
   const same =
     names.length === prepared.dynamicNames.length &&
     names.every(

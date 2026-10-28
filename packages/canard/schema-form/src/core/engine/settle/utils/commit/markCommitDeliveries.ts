@@ -26,6 +26,8 @@ import { readSettlementSource } from './utils/readSettlementSource';
 
 /** Candidates without a watch declaration share the same immutable empty value. */
 const EMPTY_WATCH_VALUES: readonly unknown[] = Object.freeze([]);
+/** Hosts without arrivals share an immutable empty candidate list. */
+const NO_ENTERED = Object.freeze([]);
 
 /**
  * Mark one committed delivery set and advance its per-bit revision ledgers.
@@ -70,6 +72,14 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       }
     }
     const candidates = new Set<unknown>();
+    const enteredByParent = new Map<Self, Self[]>();
+    for (const child of context.entered) {
+      const parent = child.parent;
+      if (!parent) continue;
+      const children = enteredByParent.get(parent);
+      if (children) children.push(child);
+      else enteredByParent.set(parent, [child]);
+    }
     for (const host of context.changedNodes) {
       if (
         host.detached ||
@@ -85,7 +95,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         continue;
       const schema = host.schema.schema;
       const required = typeof schema === 'object' ? schema.required : undefined;
-      const children = getRequiredChildren(host, context.entered);
+      const children = getRequiredChildren(
+        host,
+        enteredByParent.get(host) ?? NO_ENTERED,
+      );
       for (let index = 0; index < children.length; index++) {
         const child = children[index];
         if (child.parent !== host || child.blueprintNode.kind === 'virtual')

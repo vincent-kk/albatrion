@@ -41,6 +41,8 @@ const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
 export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Static occurrences already present in the fixed private baseline. */
   readonly preparedStatic?: PreparedStaticHost<Self>;
+  /** Dynamic own entries in actual creation order, excluding rejected admissions. */
+  readonly preparedDynamic?: Record<string, Self>;
   /** Original dynamic membership is retained solely for exit comparison. */
   readonly priorDynamicNames?: readonly string[];
   /** Host whose current structure is selected. */

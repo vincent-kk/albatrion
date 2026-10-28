@@ -1,10 +1,16 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { FieldNodeEventType } from '../../record';
 import { WriteOption } from '../../types/value';
 import * as declarationKeys from '../../utils/controls/getCommittedDeclarationKey';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
+import * as requiredChildren from '../utils/commit/utils/getRequiredChildren';
 import { getControlLayers } from '../utils/controls/getControlLayers';
+import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
+import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { readDefault } from '../utils/transition/readDefault';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
@@ -107,4 +113,56 @@ it('sets required on newly entering children when the required array is retained
   expect(root.structure!.a.required).toBe(true);
   writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
   expect(root.structure!.b.required).toBe(true);
+});
+
+it('passes only each host own entering children to the required subset', () => {
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      left: { type: 'object', properties: { a: { type: 'string' } } },
+      right: { type: 'object', properties: { b: { type: 'string' } } },
+    },
+  });
+  loadFieldNodeAtMount(root, { left: {}, right: {} }, WriteOption.Overwrite);
+  const { left, right } = root.structure!;
+  const scratch = getSettlementScratch(root.runtime);
+  const context = createSettlementContext(root, 'callerReplace', 0, scratch);
+  context.changedNodes.add(left).add(right);
+  context.entered.add(left.structure!.a).add(right.structure!.b);
+  left.deliveryChanges |= FieldNodeEventType.UpdateChildren;
+  right.deliveryChanges |= FieldNodeEventType.UpdateChildren;
+  const subsets = vi.spyOn(requiredChildren, 'getRequiredChildren');
+  try {
+    markCommitDeliveries(context);
+    expect(subsets.mock.calls.find(([host]) => host === left)?.[1]).toEqual([
+      left.structure!.a,
+    ]);
+    expect(subsets.mock.calls.find(([host]) => host === right)?.[1]).toEqual([
+      right.structure!.b,
+    ]);
+  } finally {
+    releaseSettlementScratch(scratch);
+  }
+});
+
+it('orders entering required children by canonical integer keys then stable insertion', () => {
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      b: { type: 'string' },
+      '10': { type: 'string' },
+      '2': { type: 'string' },
+      '01': { type: 'string' },
+      '4294967295': { type: 'string' },
+    },
+  });
+  loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
+  const entering = ['b', '10', '2', '01', '4294967295'].map(
+    (name) => root.structure![name],
+  );
+  expect(
+    requiredChildren
+      .getRequiredChildren(root, entering)
+      .map((child) => child.name),
+  ).toEqual(['2', '10', 'b', '01', '4294967295']);
 });

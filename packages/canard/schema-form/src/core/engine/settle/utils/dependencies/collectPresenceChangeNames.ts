@@ -14,6 +14,7 @@ import type { PreparedStaticHost } from '../compute/childSelection/utils/prepare
  * @param context - Settlement-local membership witnesses and host lifecycle changes
  * @returns Escaped names in departure/replacement order followed by arrival order.
  * Unproven, nullified, or entering/departing hosts retain the original full scans.
+ * The bounded path advances this host's settlement witness to the current structure.
  */
 export const collectPresenceChangeNames = <Self extends FieldNodeRecord<Self>>(
   host: Self,

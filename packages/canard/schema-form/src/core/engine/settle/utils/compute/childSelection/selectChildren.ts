@@ -157,11 +157,15 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           hasRelocated,
         )
       : undefined;
+  const dynamic: Record<string, Self> | undefined = prepared
+    ? Object.create(prepared.baseline)
+    : undefined;
   const next: Record<string, Self> = prepared
     ? createPreparedSelectionStructure(
         prepared.baseline,
         current,
         prepared.dynamicNames,
+        dynamic!,
       )
     : reuse && current
       ? current
@@ -174,7 +178,6 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       if (Number(name) >= node.itemCount) delete next[name];
     }
   }
-  node.structure = next;
   reuse ??= createStaticEntryReuser(
     node,
     prior,
@@ -211,6 +214,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   const flushReads = immediate && (!direct || context.kind === 'load');
   const frame: ChildSelectionFrame<Self> = {
     preparedStatic: prepared,
+    preparedDynamic: dynamic,
     priorDynamicNames: prepared
       ? context.preparedStaticPriorNames?.get(node)
       : undefined,
@@ -226,20 +230,24 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     flushReads,
     reuseStatic: reuse,
   };
-  const round = direct && context.gateSelectionRounds?.get(node);
-  if (round?.active) selectTableChildren(frame, round);
-  else {
-    for (let entryIndex = 0; entryIndex < count; entryIndex++) {
-      const step = direct?.steps[entryIndex];
-      const entry = step ? step.entry : entries[entryIndex];
-      if (reuse?.(entry)) continue;
-      selectEntryStep(entry, step, frame);
+  let selectedChildren: readonly Self[] | undefined;
+  try {
+    node.structure = next;
+    const round = direct && context.gateSelectionRounds?.get(node);
+    if (round?.active) selectTableChildren(frame, round);
+    else {
+      for (let entryIndex = 0; entryIndex < count; entryIndex++) {
+        const step = direct?.steps[entryIndex];
+        const entry = step ? step.entry : entries[entryIndex];
+        if (reuse?.(entry)) continue;
+        selectEntryStep(entry, step, frame);
+      }
     }
+    selectedChildren = prepared ? publishPreparedSelection(frame) : undefined;
+  } finally {
+    if (prepared && node.structure === next)
+      node.structure = prepared.selectedStructure;
   }
-  changed = frame.changed;
-  const selectedChildren = prepared
-    ? publishPreparedSelection(frame)
-    : undefined;
   changed = frame.changed;
   const flushed = flushPendingOutput(node, context, selectedChildren);
   if (publication) publication.flushed = flushed;

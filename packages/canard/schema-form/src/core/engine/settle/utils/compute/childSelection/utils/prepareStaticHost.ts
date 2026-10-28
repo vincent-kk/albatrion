@@ -133,7 +133,8 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
       (entry) => !entries.has(entry.name),
     ),
     selectedStructure: prior,
-    selectedChildren: node.children ?? [],
+    selectedChildren:
+      node.structure === prior ? (node.children ?? []) : Object.values(prior),
     dynamicNames: Object.keys(prior).filter((name) => !entries.has(name)),
     alwaysSteps: (
       getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
