@@ -6,6 +6,32 @@ import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree'
 import { WriteOption } from '../../types/value';
 import { dispatchSetValue, dispatchWriteInput } from '../../write';
 
+it('keeps whole coverage when a later empty merge shares its batch', () => {
+  const resolver = vi.fn(() => 'resolved');
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      group: {
+        type: 'object',
+        controls: { active: '../open' },
+        properties: {
+          x: { type: 'string', controls: { inactiveValue: resolver } },
+        },
+      },
+    },
+  });
+  root.setValue({ open: true, group: { x: 'before' } });
+  root.batch(() => {
+    root.find('/group')!.setValue({});
+    root.find('/group')!.setValue({}, WriteOption.Merge);
+    root.find('/open')!.setValue(false);
+  });
+  expect(resolver).not.toHaveBeenCalled();
+  root.find('/open')!.setValue(true);
+  expect(root.find('/group/x')!.value).toBeUndefined();
+});
+
 it('treats a form input merge like a caller merge', () => {
   const resolver = vi.fn(() => 'resolved');
   const { root } = createDispatchTree({
