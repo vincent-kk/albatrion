@@ -120,7 +120,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 - `types/controls.ts`의 `ControlKey`는 노드 `controls` 키의 합집합이고, `constants/controlKey.ts`의 `CONTROL_KEY`는 키 이름을 값으로 가진 상수 객체이다. 두 방향 모두 `ControlKey`와 같아지도록 형으로 묶여 있어서, `Reflect.get`이나 `hasOwnProperty`로 제어 키를 읽는 곳은 이 상수를 거친다. 여러 자식 모듈이 같은 값 집합을 쓰는 합집합 형은 정본을 하나만 둔다. 해당하는 형은 `types/strategy.ts`의 `NodeStrategy`(`'branch' | 'terminal'`), `types/controls.ts`의 `DeclarationLayer`(`'node' | 'fields' | 'fragment'`), `types/value.ts`의 `FieldNodeWriteKind`, record 런타임 형의 `SettlementFailureCause`·`SettlementBudget`·`SettlementEntryApi`·`MisfitSource`, blueprint의 `EffectiveSchemaMode`(`'static' | 'runtime'`)이다. 값 집합이 서로 다른 범위·모드 합집합(blueprint 선언의 `scope`, 커밋 규칙 키 정리의 `scope`, 경로 색인 저장소의 `mode`)은 각자의 자리에 둔다. `constants/schemaGroup.ts`의 `SCHEMA_GROUP`은 스키마의 폼 전용 그룹 키워드(`controls`, `options`, `presentation`)를 값으로 가진 상수 객체이다. `constants`는 engine의 자식 모듈들이 함께 쓰는 상수 compartment(organ)이다.
 - `__tests__/validation-guard-integration.test.ts`는 validation과 write 두 자식 계약을 함께 검증하는 engine 통합 시험이다.
 - `__tests__/blueprint.branchless-differential.test.ts`는 같은 스키마를 branchless 분석과 일반 분석으로 각각 실행해 관측 결과가 같은지 비교하는 engine 통합 시험이다. 일반 분석을 강제하려면 blueprint 내부의 capability 수집 단위(`blueprint/buildNodes/utils/declarations/collectSchemaCapabilities`)를 `vi.mock` 경로로 바꿔야 한다. 이 단위는 blueprint index로 나가지 않으며, 스키마 입력만으로는 같은 스키마의 일반 분석을 만들어 낼 수 없다. 부모 수준의 시험 도구가 자식 내부에 닿는 B8 사례로 선언하고, 정돈-3에서 시험 도구의 자리와 함께 다시 검토한다.
-- 다음 일곱 시험은 `helpers/jsonPointer`의 내부 모듈 하나를 `vi.mock`으로 감싸 호출 수를 센다. 호출 수는 jsonPointer index로 나가지 않는 내부 함수의 일이고, 감싸기는 import 간선을 만들지 않으므로 파일마다 하나의 내부 모듈만 선언한다. 패턴이 아니라 파일 목록이며, 여기에 없는 시험은 같은 방식으로 내부를 감쌀 수 없다.
+- 다음 여덟 시험은 `helpers/jsonPointer`의 내부 모듈 하나를 `vi.mock`으로 감싸 호출 수를 센다. 호출 수는 jsonPointer index로 나가지 않는 내부 함수의 일이고, 감싸기는 import 간선을 만들지 않으므로 파일마다 하나의 내부 모듈만 선언한다. 패턴이 아니라 파일 목록이며, 여기에 없는 시험은 같은 방식으로 내부를 감쌀 수 없다.
   - `utils/paths/__tests__/pointerSyntaxCache.test.ts`: 런타임 문법 캐시의 적중이 `utils/parsePointerSegments`를 다시 부르지 않음을 센다.
   - `settle/__tests__/settle.pointer-path-work.test.ts`: mount 뒤 첫 실제 쓰기가 `utils/parsePointerSegments`를 부르지 않음을 센다.
   - `settle/__tests__/settle.pointer-slot-work.test.ts`: 슬롯 경로 작업이 `utils/parsePointerSegments`를 부르지 않음을 센다.
@@ -128,6 +128,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
   - `settle/utils/dependencies/__tests__/getDependencyIndex.live-paths.test.ts`: 살아 있는 배열 경로의 확장이 `utils/parsePointerSegments`를 부르지 않음을 센다.
   - `settle/utils/dependencies/__tests__/getDependencyIndex.pointer-work.test.ts`: 의존 색인의 조회와 캐시 재충전이 부르는 `utils/parsePointerSegments` 횟수를 센다.
   - `blueprint/__tests__/blueprint.owned-inline-path-work.test.ts`: 자식 생산자의 이름 이스케이프 횟수를 `utils/formatSegment` 감싸기로 센다.
+  - `settle/utils/gates/__tests__/getGateBudgetCap.pointer-work.test.ts`: 같은 gate의 예산 분류가 `utils/parsePointerSegments`를 한 번만 부르고 준비된 예산을 재사용함을 센다.
 
 ## Acceptance Criteria
 

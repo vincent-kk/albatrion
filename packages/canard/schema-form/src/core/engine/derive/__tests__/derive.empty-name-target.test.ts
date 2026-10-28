@@ -19,3 +19,22 @@ it('targets an empty-name child from a oneOf fragment and preserves its object h
   expect(root.find('/')!.value).toBe('updated');
   expect(root.value).toEqual({ source: 'updated', '': 'updated' });
 });
+
+it('reapplies a fields rule when its empty-name child declares a watch dependency', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    controls: {
+      fields: [{ targets: [''], controls: { derived: '"derived"' } }],
+    },
+    properties: {
+      source: { type: 'string' },
+      '': { type: 'string', controls: { watch: ['../source'] } },
+    },
+  });
+  root.setValue({ source: 'initial' });
+  expect(root.find('/')!.value).toBe('derived');
+  root.find('/')!.setValue('manual');
+  expect(root.find('/')!.value).toBe('manual');
+  root.find('/source')!.setValue('updated');
+  expect(root.value).toEqual({ source: 'updated', '': 'derived' });
+});

@@ -56,3 +56,85 @@ it.each([false, true])(
     expect(DetachedWriteAddress.read(child)).toMatchObject({ discarded: true });
   },
 );
+
+it('drops latent writes below a cleared inner array of a kept outer item', () => {
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      kept: {
+        type: 'number',
+        controls: { active: '#/open', unsetOnInactive: false },
+      },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: {
+            keep: { type: 'number', controls: { unsetOnInactive: false } },
+            inner: {
+              type: 'array',
+              items: { type: 'object', properties: { x: { type: 'number' } } },
+            },
+          },
+        },
+      },
+    },
+  });
+  dispatchMount(root, {
+    open: true,
+    kept: 7,
+    list: [{ keep: 1, inner: [{ x: 2 }] }],
+  });
+  const old = getDispatchNode(root, 'list', '0', 'inner', '0', 'x');
+  const kept = getDispatchNode(root, 'kept');
+  dispatchSetValue(getDispatchNode(root, 'open'), false);
+  const writer = vi.spyOn(slotWriter, 'writeSlotPath');
+  dispatchSetValue(kept, 8);
+  expect(writer).toHaveBeenCalledTimes(1);
+  writer.mockClear();
+  dispatchSetValue(old, 9);
+  expect(writer).not.toHaveBeenCalled();
+  expect(DetachedWriteAddress.read(old)).toMatchObject({ discarded: true });
+});
+
+it('drops latent writes through an already inactive zero-survivor descendant', () => {
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      show: { type: 'boolean' },
+      kept: {
+        type: 'number',
+        controls: { active: '#/open', unsetOnInactive: false },
+      },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: {
+            drop: { type: 'number' },
+            keep: {
+              type: 'number',
+              controls: { active: '#/show', unsetOnInactive: false },
+            },
+          },
+        },
+      },
+    },
+  });
+  dispatchMount(root, { open: true, show: true, kept: 7, list: [{ drop: 1 }] });
+  const old = getDispatchNode(root, 'list', '0', 'keep');
+  const kept = getDispatchNode(root, 'kept');
+  dispatchSetValue(getDispatchNode(root, 'show'), false);
+  dispatchSetValue(getDispatchNode(root, 'open'), false);
+  const writer = vi.spyOn(slotWriter, 'writeSlotPath');
+  dispatchSetValue(kept, 8);
+  expect(writer).toHaveBeenCalledTimes(1);
+  writer.mockClear();
+  dispatchSetValue(old, 5);
+  expect(writer).not.toHaveBeenCalled();
+  expect(DetachedWriteAddress.read(old)).toMatchObject({ discarded: true });
+});

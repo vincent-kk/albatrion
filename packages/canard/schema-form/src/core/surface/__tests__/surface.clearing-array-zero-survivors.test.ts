@@ -51,3 +51,72 @@ it.each([
     expect(list.value).toEqual([{ drop: 2 }]);
   },
 );
+
+it('drops writes below a zero-survivor inner array of a kept outer item', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: {
+            keep: { type: 'number', controls: { unsetOnInactive: false } },
+            inner: {
+              type: 'array',
+              items: { type: 'object', properties: { x: { type: 'number' } } },
+            },
+          },
+        },
+      },
+    },
+  });
+  root.setValue({ open: true, list: [{ keep: 1, inner: [{ x: 2 }] }] });
+  const old = root.find('/list/0/inner/0/x')!;
+  expect(old.value).toBe(2);
+  root.find('/open')!.setValue(false);
+  const before = root.inactiveValues;
+  old.setValue(9);
+  expect(root.inactiveValues).toEqual(before);
+  root.find('/open')!.setValue(true);
+  expect(root.find('/list/0/keep')!.value).toBe(1);
+  expect(root.find('/list/0/inner/0/x')).toBeNull();
+  expect(JSON.stringify(root.find('/list')!.value)).not.toContain('9');
+});
+
+it('drops writes through an already inactive keep candidate of a zero-survivor array', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      show: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: {
+            drop: { type: 'number' },
+            keep: {
+              type: 'number',
+              controls: { active: '#/show', unsetOnInactive: false },
+            },
+          },
+        },
+      },
+    },
+  });
+  root.setValue({ open: true, show: true, list: [{ drop: 1 }] });
+  const old = root.find('/list/0/keep')!;
+  expect(old.value).toBeUndefined();
+  root.find('/show')!.setValue(false);
+  root.find('/open')!.setValue(false);
+  const before = root.inactiveValues;
+  old.setValue(5);
+  expect(root.inactiveValues).toEqual(before);
+  root.find('/open')!.setValue(true);
+  root.find('/show')!.setValue(true);
+  expect(root.find('/list')!.value).toEqual([]);
+});
