@@ -13,12 +13,11 @@ import { markSlotChange } from './markSlotChange';
 /**
  * Write an absent address through its nearest live slot owner.
  * @param root - Current tree, whose retained sources remain immutable
- * @param path - Current write address, independent of an old reference's path
+ * @param path - Current write address
  * @param target - Exact kind selected for the addressed occurrence
  * @param input - Caller input interpreted only at the target
  * @param whole - Whether the target's missing descendants are replaced
  * @param context - Optional automatic-write rollback scope
- * @param lineage - Old reference's blueprint chain, when its ancestors disambiguate kinds
  * @param automatic - Whether projected child writes preserve wrong-kind ancestor raw
  * @param preserveCandidates - Structural replay keeps other kinds at the same address
  * @returns Whether a terminal descendant has a projected value
@@ -30,7 +29,6 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
   input: unknown,
   whole: boolean,
   context?: SettlementContext<Self>,
-  lineage?: readonly BlueprintNode[],
   automatic = false,
   preserveCandidates = false,
 ): boolean => {
@@ -44,7 +42,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
       template.kind === 'array'
         ? getItemEntries(template, Number(name))
         : template.childEntries;
-    const selected = depth === names.length - 1 ? target : lineage?.[depth + 1];
+    const selected = depth === names.length - 1 ? target : undefined;
     const requested = getSlotPathEntry(
       template,
       host,
@@ -89,8 +87,7 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
         template.kind === 'array'
           ? getItemEntries(template, Number(name))
           : template.childEntries;
-      const selected =
-        index === names.length - 1 ? target : lineage?.[index + 1];
+      const selected = index === names.length - 1 ? target : undefined;
       const requested = getSlotPathEntry(
         template,
         source,
