@@ -13,6 +13,7 @@ import {
   invoke,
   scenes,
 } from '../../../perf-optimization/first-batch/c-d/c-common.mjs';
+import { runInactiveValueScenes } from '../b12/runInactiveValueScenes.mjs';
 
 // Reuse the first-batch C fixture corpus and public observer for the two storage models.
 process.env.NODE_ENV = 'production';
@@ -424,7 +425,13 @@ fs.writeFileSync(
   path.join(values.output, 'differences.json'),
   JSON.stringify(differences, null, 2) + '\n',
 );
+const inactiveValueScenes = await runInactiveValueScenes(engines[1].M);
 const report = {
+  extensionScenes: inactiveValueScenes,
+  extensionPhases: inactiveValueScenes.reduce(
+    (sum, row) => sum + row.phases.length,
+    0,
+  ),
   kind: 'B4-C-public-delivery',
   engines: engines.map(({ variant, sha256 }) => ({ variant, sha256 })),
   rows,
@@ -451,6 +458,8 @@ console.log(
     scenes: rows.length,
     phases: report.phases,
     differences: differences.length,
+    extensionScenes: inactiveValueScenes.length,
+    extensionPhases: report.extensionPhases,
   }),
 );
 if (differences.length) process.exitCode = 1;

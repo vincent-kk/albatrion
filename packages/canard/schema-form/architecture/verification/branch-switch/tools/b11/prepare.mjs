@@ -11,14 +11,15 @@ import { buildStages } from '../b6/buildStages.mjs';
 
 const options = Object.fromEntries(
   process.argv.slice(2).map((arg) => {
-    const match = /^--(baseline|root|candidate-commit)=(.+)$/.exec(arg);
+    const match =
+      /^--(baseline|root|candidate-commit|baseline-commit)=(.+)$/.exec(arg);
     assert.ok(
       match,
       'Expected --baseline=<archived package> and --root=<external directory>',
     );
     return [
       match[1],
-      match[1] === 'candidate-commit' ? match[2] : path.resolve(match[2]),
+      match[1].endsWith('-commit') ? match[2] : path.resolve(match[2]),
     ];
   }),
 );
@@ -28,6 +29,9 @@ assert.equal(
   26,
   'Node 26 preparation runtime',
 );
+const baselineCommit =
+  options['baseline-commit'] ?? 'df61df184584f9b9629e3dcc348c1ae8178a0dc7';
+assert.match(baselineCommit, /^[a-f0-9]{40}$/);
 const candidate = fileURLToPath(new URL('../../../../../', import.meta.url));
 const repository = path.resolve(candidate, '../../..');
 const commit = execFileSync('git', ['rev-parse', 'HEAD'], {
@@ -46,7 +50,7 @@ assert.equal(
       'utf8',
     )
     .trim(),
-  'df61df184584f9b9629e3dcc348c1ae8178a0dc7',
+  baselineCommit,
 );
 assert.equal(
   execFileSync(
@@ -115,7 +119,7 @@ fs.writeFileSync(
   path.join(options.root, 'inputs.json'),
   JSON.stringify(
     {
-      baselineCommit: 'df61df184584f9b9629e3dcc348c1ae8178a0dc7',
+      baselineCommit,
       candidateCommit: commit,
       files,
       stageBundles,
