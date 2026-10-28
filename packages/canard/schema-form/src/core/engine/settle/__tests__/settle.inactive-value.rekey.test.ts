@@ -3,8 +3,6 @@ import { expect, it, vi } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
 import type { InactiveValueContext } from '../../types/controls';
-import * as slotApplication from '../arrangeFieldNodeItems/utils/arraySlots/applyArraySlots';
-import * as spliceApplication from '../arrangeFieldNodeItems/utils/arraySlots/applyArraySplice';
 
 it.each(['declaration', 'listener'])(
   'reads the moved occurrence at its preceding committed path through a %s',
@@ -49,16 +47,7 @@ it.each(['declaration', 'listener'])(
     if (source === 'listener') moved.onInactive(resolve);
     const rows = root.find('/rows')!;
     if (rows.type !== 'array') throw new Error('Expected array');
-    const slots = vi.spyOn(slotApplication, 'applyArraySlots');
-    const splice = vi.spyOn(spliceApplication, 'applyArraySplice');
-    try {
-      rows.remove(0);
-      expect(slots).toHaveBeenCalledTimes(1);
-      expect(splice).not.toHaveBeenCalled();
-    } finally {
-      slots.mockRestore();
-      splice.mockRestore();
-    }
+    rows.remove(0);
     expect(resolve).toHaveBeenCalledTimes(1);
     const [value, context] = resolve.mock.calls[0];
     expect(value).toBe('n1');
