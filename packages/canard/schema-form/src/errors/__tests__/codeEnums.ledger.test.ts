@@ -100,6 +100,7 @@ describe('form error codes', () => {
     expect(Object.values(FormErrorCode)).toEqual([
       ...live.filter(([, level]) => level === 'error').map(([code]) => code),
       'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
+      'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME',
     ]);
     expect(Object.values(FormWarningCode)).toEqual(
       live.filter(([, level]) => level === 'warning').map(([code]) => code),
