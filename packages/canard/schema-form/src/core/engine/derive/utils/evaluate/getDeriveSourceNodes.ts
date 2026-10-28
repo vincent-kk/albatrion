@@ -1,6 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { parsePointer } from '@/schema-form/helpers/jsonPointer';
+import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { DeriveState } from '../../types/state';
@@ -20,7 +20,7 @@ export const getDeriveSourceNodes = <Self extends FieldNodeRecord<Self>>(
   const seen = new Set<Self>();
   for (const path of state.sourcePaths) {
     let node: Self | undefined = root;
-    for (const encoded of parsePointer(path).segments) {
+    for (const encoded of parsePointerSegments(path)) {
       const name = encoded;
       if (typeof name !== 'string') return [];
       const children: Record<string, Self> | null = node?.structure ?? null;

@@ -1,4 +1,4 @@
-import type { BlueprintNode } from '../../../blueprint';
+import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import type { DeclarationLayer } from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { prepareControlLayers } from './prepareControlLayers';
@@ -16,6 +16,7 @@ export interface ControlTarget<Self> {
   readonly parent: Self | null;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
+    readonly blueprint?: Blueprint;
     committedDeclarationKeys?: WeakMap<
       object,
       { path: string; kind: string; key: string }
@@ -64,6 +65,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         parent.blueprintNode,
         node.blueprintNode,
         node.name,
+        node.runtime,
       )
     : undefined;
   const inherited = exitOnly ? addressed?.exit : addressed?.all;

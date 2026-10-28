@@ -21,6 +21,8 @@
 
 ## API Contracts
 
+- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
+
 - `setValue`는 독립 비트 `Overwrite`와 `Merge`가 함께 오면 updater 실행과 쓰기 표시 전에 `INVALID_WRITE_OPTION`으로 거부한다. 오류는 기존 사슬 보고·throw 통로로 전달하며 검사 비용은 고정 비트 연산이다(LANDING-141).
 
 ### 이름 붙은 진입점

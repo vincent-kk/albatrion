@@ -1,7 +1,6 @@
 import { expect, it } from 'vitest';
 
 import { bindPointerTemplate } from '../bindPointerTemplate';
-import { normalizeValidationDataPath } from '../normalizeValidationDataPath';
 import { parsePointer } from '../parsePointer';
 import { parseStandardPointer } from '../parseStandardPointer';
 import { readFormattedPointerSegment } from '../readPointerSegment';
@@ -39,9 +38,9 @@ it('reuses a formatted name without decoding and escaping it again', () => {
   expect(readFormattedPointerSegment('/a/', -1)).toBe('');
 });
 
-it('keeps the validator slash-only root alias separate from empty-name form and RFC pointers', () => {
-  expect(normalizeValidationDataPath('/')).toBe('');
+it('keeps slash and fragment-slash as empty names in both grammars', () => {
   expect(parsePointer('/').segments).toEqual(['']);
   expect(parseStandardPointer('/')).toEqual(['']);
-  expect(normalizeValidationDataPath('/%2A')).toBe('/%2A');
+  expect(parsePointer('#/').segments).toEqual(['']);
+  expect(parseStandardPointer('#/')).toEqual(['']);
 });

@@ -36,3 +36,20 @@ export const readPointerSegment = (
   const segment = readFormattedPointerSegment(path, index);
   return segment === undefined ? undefined : parseSegment(segment);
 };
+
+/** Reuse a canonical encoded name token without a decode/format round trip. */
+export const readFormattedNameSegment = (
+  path: string,
+  index: number,
+): string | undefined => {
+  const segment = readFormattedPointerSegment(path, index);
+  switch (segment) {
+    case '*':
+    case '..':
+    case '.':
+    case '@':
+      return undefined;
+    default:
+      return segment;
+  }
+};

@@ -1,9 +1,10 @@
-import { appendSegment, parsePointer } from '@/schema-form/helpers/jsonPointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getSlotEntries } from './getSlotEntries';
+import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
@@ -25,9 +26,8 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
       pruneSlotSources(root, appendSegment(path, name), undefined, context);
     return;
   }
-  const parts = parsePointer(path).segments;
-  if (!parts.every((segment): segment is string => typeof segment === 'string'))
-    return;
+  const parts = getSlotPathNames(root.runtime, path);
+  if (parts === undefined) return;
   const clear = (host: Self): void => {
     const entries = new Set<BlueprintChildEntry>(host.inactiveSlots?.keys());
     for (const entry of host.inactiveSlotOverlays?.keys() ?? [])

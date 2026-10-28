@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { parsePointer } from '@/schema-form/helpers/jsonPointer';
+import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import { sameValue } from '../../../utils/compute/sameValue';
 import { getLoadValue } from './getLoadValue';
@@ -19,7 +19,7 @@ export const setLoadValue = (
 ): unknown => {
   if (sameValue(getLoadValue(snapshot, path), value)) return snapshot;
   if (!path) return value;
-  const segments = parsePointer(path).segments;
+  const segments = parsePointerSegments(path);
   if (
     !segments.every((segment): segment is string => typeof segment === 'string')
   )

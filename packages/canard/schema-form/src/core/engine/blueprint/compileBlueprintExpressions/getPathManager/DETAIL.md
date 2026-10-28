@@ -2,7 +2,7 @@
 
 ## Requirements
 
-표현식 등록에서는 fragment 접두사만 제거하고 절대 루트의 슬래시를 유지합니다. 빈 문자열로 정규화하면 상대 현재 위치와 구별할 수 없어 정착 중 투영을 읽는 순서가 바뀌므로 stripFragment의 normalizeRoot=false 모드를 사용합니다.
+표현식 등록에서 `/`와 `#/`는 빈 이름 자식이고 `#`는 절대 루트입니다. 상대 빈 문자열과 절대 루트를 구별해야 하므로 stripFragment의 preserveAbsoluteRoot 모드로 단독 `#`를 보존하고 다른 선행 fragment 표시만 제거합니다. 이 소유자 결정은 값 조회 순서나 최초 등록 순서를 바꾸지 않습니다.
 
 - fragment 정규화는 jsonPointer의 stripFragment에 위임하며 최초 등록 순서를 보존한다.
 
@@ -10,7 +10,7 @@
 
 ## API Contracts
 
-- set과 findIndex는 선두 fragment 표시를 제거한 동일한 경로를 사용한다.
+- set과 findIndex는 단독 절대 루트 표시를 보존하고 다른 선두 fragment를 제거한 동일한 경로를 사용한다.
 - get은 수집한 배열을 제공하며, 소비자는 반환된 배열을 직접 변경하지 않는다.
 - 등록하지 않은 경로의 인덱스는 -1이다. factory를 호출할 때마다 독립된 등록 목록을 새로 만든다.
 

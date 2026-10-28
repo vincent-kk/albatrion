@@ -21,11 +21,11 @@ export const getPathManager = (): PathManager => {
   return {
     get: () => paths,
     set: (path: string) => {
-      path = stripFragment(path, false);
+      path = stripFragment(path, true);
       if (!paths.includes(path)) paths.push(path);
     },
     findIndex: (path: string) => {
-      path = stripFragment(path, false);
+      path = stripFragment(path, true);
       return paths.indexOf(path);
     },
   };

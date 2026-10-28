@@ -2,7 +2,6 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
   isDescendantPath,
-  normalizeValidationDataPath,
   parsePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -49,7 +48,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < issues.length; index++) {
     const issue = issues[index];
     if (isOffUnionBranchIssue(issue, runtime.blueprint, activeIds)) continue;
-    const path = normalizeValidationDataPath(issue.dataPath);
+    const path = issue.dataPath;
     let node = root;
     if (path) {
       const parsed = parsePointer(path);

@@ -1,5 +1,3 @@
-import { parsePointer } from '@/schema-form/helpers/jsonPointer';
-
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -8,6 +6,7 @@ import type { SettlementContext } from '../../types/settlement';
 import { createSlotValueOverlay } from './createSlotValueOverlay';
 import { getSlotBinding } from './getSlotBinding';
 import { getSlotPathEntry } from './getSlotPathEntry';
+import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
@@ -35,9 +34,8 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
   automatic = false,
   preserveCandidates = false,
 ): boolean => {
-  const names = parsePointer(path).segments;
-  if (!names.every((segment): segment is string => typeof segment === 'string'))
-    return false;
+  const names = getSlotPathNames(root.runtime, path);
+  if (names === undefined) return false;
   let host = root;
   for (let depth = 0; depth < names.length; depth++) {
     const template = host.blueprintNode;

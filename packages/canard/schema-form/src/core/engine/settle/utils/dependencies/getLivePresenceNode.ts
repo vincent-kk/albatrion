@@ -1,8 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { parsePointer } from '@/schema-form/helpers/jsonPointer';
-
 import type { FieldNodeRecord } from '../../../record';
+import { getDependencyIndex } from './getDependencyIndex';
 
 /**
  * Resolve a bound presence owner through literal, escaped child names.
@@ -15,7 +14,11 @@ export const getLivePresenceNode = <Self extends FieldNodeRecord<Self>>(
   path: string,
 ): Self | undefined => {
   let live: Self | undefined = root;
-  for (const segment of parsePointer(path).segments) {
+  const segments = getDependencyIndex(root.runtime.blueprint).pathSegments(
+    path,
+    root.runtime,
+  );
+  for (const segment of segments) {
     const name = segment;
     if (typeof name !== 'string') return undefined;
     live =

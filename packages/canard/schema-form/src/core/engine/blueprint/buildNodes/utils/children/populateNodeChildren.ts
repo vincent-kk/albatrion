@@ -4,7 +4,7 @@ import {
   PointerOperator,
   appendSegment,
   joinPointer,
-  parsePointer,
+  parsePointerSegments,
   rebasePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -266,7 +266,7 @@ export const populateNodeChildren = (
       context,
       itemInputs,
       joinPointer([
-        ...parsePointer(node.path).segments,
+        ...parsePointerSegments(node.path),
         PointerOperator.Wildcard,
       ]),
     );

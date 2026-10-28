@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
   PointerOperator,
-  parsePointer,
+  parsePointerSegments,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -21,7 +21,7 @@ export const readDeriveDependency = <Self extends FieldNodeRecord<Self>>(
   dependency: string,
 ): unknown => {
   const path = resolveDependencyPath(hostPath, dependency);
-  const segments = parsePointer(path).segments;
+  const segments = parsePointerSegments(path);
   if (segments[0] === PointerOperator.Context) return root.runtime.context;
   let value: unknown = root.emit;
   for (const encoded of segments) {

@@ -1,6 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '../../../record';
+import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { flushPendingOutput } from '../output/flushPendingOutput';
@@ -36,7 +37,9 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
   let value = projectedEmission(node, context);
   if (!path) return value;
   let atNode = true;
-  const segments = getGateRegistry(node.runtime).pathSegments(path);
+  const segments = node.runtime.blueprint.capabilities.branchless
+    ? getCachedPointerSegments(node.runtime, path)
+    : getGateRegistry(node.runtime).pathSegments(path);
   for (let index = 0; index < segments.length; index++) {
     const name = segments[index];
     if (typeof name !== 'string') return undefined;

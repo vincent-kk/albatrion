@@ -1,21 +1,19 @@
 import { JSONPointer as $ } from '../constants/JSONPointer';
 
 /**
- * Strips the fragment from the path and normalizes root representations.
+ * Strip the fragment prefix while retaining empty-name path segments.
  * @param path - The path to strip the fragment from.
  * @note Use string literal type to execute faster.
- * @note `#`, `#/`, `/` alone are treated as root and normalized to `''`.
+ * @param preserveAbsoluteRoot - Keep `#` when a dependency registry needs its absolute origin.
+ * @note Only `#` is the fragment root; `/` and `#/` address an empty name.
  * @returns The normalized path without the fragment.
  */
-export const stripFragment = (path: string, normalizeRoot = true): string =>
-  !normalizeRoot
-    ? path[0] === $.Fragment
-      ? path.slice(1)
-      : path
-    : path[0] === $.Fragment
-      ? path[2] !== undefined
-        ? path.slice(1)
-        : $.Root
-      : path === $.Separator
-        ? $.Root
-        : path;
+export const stripFragment = (
+  path: string,
+  preserveAbsoluteRoot = false,
+): string =>
+  path[0] === $.Fragment
+    ? preserveAbsoluteRoot && path.length === 1
+      ? path
+      : path.slice(1)
+    : path;

@@ -118,7 +118,7 @@ describe('pointer grammar', () => {
     expect(resolvePointer('/a', '../../../child')).toBe('/child');
     expect(resolvePointer('/a', '#/branch/%2A')).toBe('/branch/%2A');
     expect(resolvePointer('/a', '@')).toBe('@');
-    expect(resolvePointer('/a', '/')).toBe('');
+    expect(resolvePointer('/a', '/')).toBe('/');
   });
 
   it('reads one segment without losing literal or operator identity', () => {
@@ -152,11 +152,15 @@ describe('pointer grammar', () => {
     expect(parseSegment('*')).toBe(PointerOperator.Wildcard);
   });
 
-  it('preserves absolute root spelling when only removing a fragment prefix', () => {
+  it('preserves empty names and the absolute root marker for dependencies', () => {
     expect(stripFragment('#/', false)).toBe('/');
     expect(stripFragment('/', false)).toBe('/');
-    expect(stripFragment('#/')).toBe('');
-    expect(resolvePointer('/host', stripFragment('#/', false))).toBe('');
+    expect(stripFragment('#/')).toBe('/');
+    expect(resolvePointer('/host', stripFragment('#/', false))).toBe('/');
+    expect(stripFragment('#', true)).toBe('#');
+    expect(resolvePointer('/host', stripFragment('#', true))).toBe('');
+    expect(resolvePointer('/', 'child')).toBe('//child');
+    expect(resolvePointer('/host', '/')).toBe('/');
     expect(resolvePointer('/host', '')).toBe('/host');
   });
 });

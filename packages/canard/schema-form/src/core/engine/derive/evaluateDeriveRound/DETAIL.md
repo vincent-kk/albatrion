@@ -11,6 +11,8 @@
 
 ## API Contracts
 
+- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
+
 - 규칙 발생 키는 원천과 대상의 union fold를 포함한 토큰을 사용한다. 문서 전순서의 같은 이름 간선은 살아 있는 원천의 청사진 노드 객체와 동일한 간선을 고르며, 같은 `union` 분류의 다른 fold를 대신 고르지 않는다. 비union 키와 규칙 종류·선언 층 순위는 그대로이다(BLUEPRINT-043, FRAGMENT-049, 389C-02, 390C-01).
 
 - `index.ts`는 `evaluateDeriveRound<Self>(root: FieldNodeRecord<Self>, state: DeriveState<Self>): DeriveRoundDecision<Self>`를 이름으로 내보낸다. 부모 derive의 진입점이 이를 다시 내보내고, settle의 파생 라운드 실행기가 쓴다(SETTLE-004·017).

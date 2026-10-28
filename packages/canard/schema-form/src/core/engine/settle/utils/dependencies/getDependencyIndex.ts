@@ -5,8 +5,8 @@ import {
   hasPointerOperator,
   isDescendantPath,
   joinPointer,
-  parsePointer,
   parsePointerSegment,
+  parsePointerSegments,
   readPointerSegment,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -20,6 +20,7 @@ import type {
 import { getDeriveRuleTable } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
+import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import type {
   RegistrationSink,
@@ -79,6 +80,26 @@ class DependencyIndex {
   readonly splitOwners = new Map<string, SplitOwner>();
   /** Injection is idempotent even when no table owner qualifies. */
   private registrationPrepared = false;
+  /** Finite authored syntax; query misses belong only to the querying runtime. */
+  private readonly preparedSegments = new Map<
+    string,
+    readonly PointerSegment[]
+  >();
+
+  /**
+   * Read prepared syntax without retaining dynamic addresses on the blueprint.
+   * @param path - Authored or concrete absolute pointer to decode
+   * @param runtime - Optional owner for bounded concrete syntax reuse
+   * @returns The retained readonly array, or unretained syntax for a cold caller
+   */
+  pathSegments(path: string, runtime?: object): readonly PointerSegment[] {
+    return (
+      this.preparedSegments.get(path) ??
+      (runtime
+        ? getCachedPointerSegments(runtime, path)
+        : parsePointerSegments(path))
+    );
+  }
 
   /** Whether this analysis has any injected, exclusively table-owned path. */
   get hasSplitOwners(): boolean {
@@ -93,6 +114,27 @@ class DependencyIndex {
     this.root = undefined;
     if (!blueprint) return;
     this.root = { owners: [], ownerPaths: new Set(), children: new Map() };
+    for (const node of blueprint.nodes) {
+      if (!this.preparedSegments.has(node.path))
+        this.preparedSegments.set(node.path, parsePointerSegments(node.path));
+      if (!this.preparedSegments.has(node.schemaPath))
+        this.preparedSegments.set(
+          node.schemaPath,
+          parsePointerSegments(node.schemaPath),
+        );
+      for (const declaration of node.declarations) {
+        if (!this.preparedSegments.has(declaration.path))
+          this.preparedSegments.set(
+            declaration.path,
+            parsePointerSegments(declaration.path),
+          );
+        if (!this.preparedSegments.has(declaration.schemaPath))
+          this.preparedSegments.set(
+            declaration.schemaPath,
+            parsePointerSegments(declaration.schemaPath),
+          );
+      }
+    }
     getContextOwners(blueprint);
     const dependencies = Object.entries(blueprint.dependencies);
     if (dependencies.length === 0 && blueprint.expressions.length === 0) return;
@@ -216,6 +258,8 @@ class DependencyIndex {
       }
       node.splitBuckets = [];
       for (const [hostPath, ranksByName] of grouped) {
+        if (!this.preparedSegments.has(hostPath))
+          this.preparedSegments.set(hostPath, parsePointerSegments(hostPath));
         const runs: { ranks: number[]; firstRank: number; id: number }[] = [];
         const runByName = new Map<string, number>();
         let previous = -1;
@@ -278,7 +322,11 @@ class DependencyIndex {
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
         const paths = hasPointerOperator(path, PointerOperator.Wildcard)
-          ? expandTemplatePaths(root, path)
+          ? expandTemplatePaths(
+              root,
+              path,
+              this.pathSegments(path, root.runtime),
+            )
           : [path];
         events.push({
           rank,
@@ -293,7 +341,7 @@ class DependencyIndex {
       }
       for (const bucket of node.splitBuckets ?? []) {
         let host: Self | undefined = root;
-        for (const segment of parsePointer(bucket.hostPath).segments)
+        for (const segment of this.pathSegments(bucket.hostPath))
           if (typeof segment === 'string') host = host?.structure?.[segment];
           else {
             host = undefined;
@@ -340,7 +388,7 @@ class DependencyIndex {
     };
     let current = [this.root];
     collect(this.root);
-    for (const segment of parsePointer(changedPath).segments) {
+    for (const segment of this.pathSegments(changedPath, root.runtime)) {
       if (typeof segment !== 'string') return;
 
       const next = this.presenceChildren(current, segment);
@@ -375,13 +423,17 @@ class DependencyIndex {
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
         if (hasPointerOperator(path, PointerOperator.Wildcard))
-          for (const expanded of expandTemplatePaths(root, path))
+          for (const expanded of expandTemplatePaths(
+            root,
+            path,
+            this.pathSegments(path, root.runtime),
+          ))
             owners.add(expanded);
         else owners.add(path);
       }
     };
     collect(rootIndex);
-    for (const segment of parsePointer(changedPath).segments) {
+    for (const segment of this.pathSegments(changedPath, root.runtime)) {
       if (typeof segment !== 'string') return [...owners];
 
       const next: DependencyNode[] = [];
@@ -413,6 +465,7 @@ class DependencyIndex {
    * @param childSegment - Escaped name of that child
    * @param metrics - Optional record-mode insertion counter
    * @param settlement - Call identity isolating the ancestor-step memo
+   * @param runtime - Optional root runtime owning bounded dynamic syntax
    * @returns Bound owners, state-only owners and unbound templates for each query phase
    */
   affectedByPresence(
@@ -420,6 +473,7 @@ class DependencyIndex {
     childSegment: string,
     metrics?: { ownerInsertions: number },
     settlement?: { dependencyPresenceMemo?: DependencyPresenceMemo },
+    runtime?: object,
   ): {
     owners: Set<string>;
     stateOnly: Set<string>;
@@ -436,6 +490,7 @@ class DependencyIndex {
     if (typeof childName !== 'string')
       return { owners, stateOnly, outerTemplates, directTemplates };
     const changedPath = appendSegment(hostPath, childName);
+    const changedSegments = this.pathSegments(changedPath, runtime);
     const ancestorOwners = new Set<string>();
     let memo = settlement?.dependencyPresenceMemo;
     if (!memo) {
@@ -446,6 +501,7 @@ class DependencyIndex {
     this.collectPresenceOwners(
       levels.flat(),
       changedPath,
+      changedSegments,
       ancestorOwners,
       outerTemplates,
       metrics,
@@ -453,7 +509,7 @@ class DependencyIndex {
     for (const owner of ancestorOwners)
       if (isDescendantPath(owner, hostPath)) stateOnly.add(owner);
       else owners.add(owner);
-    const depth = parsePointer(hostPath).segments.length + 1;
+    const depth = this.pathSegments(hostPath, runtime).length + 1;
     const reached = levels.length === depth ? levels[levels.length - 1] : [];
     const pending = this.presenceChildren(reached, childName);
     const direct = new Set<string>();
@@ -468,6 +524,7 @@ class DependencyIndex {
       this.collectPresenceOwners(
         subtree,
         changedPath,
+        changedSegments,
         direct,
         directTemplates,
         metrics,
@@ -526,6 +583,7 @@ class DependencyIndex {
   private collectPresenceOwners(
     nodes: readonly DependencyNode[],
     changedPath: string,
+    changedSegments: readonly PointerSegment[],
     owners: Set<string>,
     templates: Set<string>,
     metrics?: { ownerInsertions: number },
@@ -536,7 +594,12 @@ class DependencyIndex {
         if (
           entry.watched &&
           !entry.watched.some((watched) =>
-            intersectsWatchedPath(watched, changedPath),
+            intersectsWatchedPath(
+              watched,
+              changedPath,
+              this.pathSegments(watched),
+              changedSegments,
+            ),
           )
         )
           continue;
@@ -552,8 +615,16 @@ class DependencyIndex {
 
   /** Insert one exact watched location into the pointer trie. */
   private add(watchedPath: string, owner: string): void {
-    const ownerParts = parsePointer(owner).segments;
-    const watchedParts = parsePointer(watchedPath).segments;
+    let ownerParts = this.preparedSegments.get(owner);
+    if (!ownerParts) {
+      ownerParts = parsePointerSegments(owner);
+      this.preparedSegments.set(owner, ownerParts);
+    }
+    let watchedParts = this.preparedSegments.get(watchedPath);
+    if (!watchedParts) {
+      watchedParts = parsePointerSegments(watchedPath);
+      this.preparedSegments.set(watchedPath, watchedParts);
+    }
     let indexedParts = watchedParts;
     const originalWatchedPath = watchedPath;
     for (let index = 0; index < ownerParts.length; index++) {

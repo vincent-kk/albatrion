@@ -196,7 +196,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       if (hasWatch) {
         if (watched.length) {
           const index = (runtime.deliveryWatchIndex ??=
-            createWatchDeliveryIndex<Self>());
+            createWatchDeliveryIndex<Self>(runtime));
           index.update(node, getWatchDeliveryPaths(node));
         } else runtime.deliveryWatchIndex?.remove(node);
       }

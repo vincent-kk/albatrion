@@ -1,12 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import {
-  PointerOperator,
-  parsePointer,
-} from '@/schema-form/helpers/jsonPointer';
+import { PointerOperator } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
+import { getStateDependencyPlan } from './getStateDependencyPlan';
 
 /** Emission and context retained before a settlement changes the live tree. */
 export interface EmissionSnapshot {
@@ -22,6 +19,8 @@ export interface EmissionSnapshot {
  * @param hostPath - Occurrence path that anchors relative dependencies
  * @param dependency - Authored pointer or context token
  * @param snapshot - Optional preceding commit when a node is detaching
+ * @param owner - Actual host binding the syntax; defaults to the runtime for direct calls
+ * @param absentContext - Existing same-node/commit empty context identity, when still selected
  * @returns The emitted value, context, or undefined for an absent path
  */
 export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
@@ -29,11 +28,21 @@ export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
   hostPath: string,
   dependency: string,
   snapshot?: EmissionSnapshot,
+  owner: object = root.runtime,
+  absentContext?: object,
 ): unknown => {
-  const path = resolveDependencyPath(hostPath, dependency);
-  const segments = parsePointer(path).segments;
+  const { segments } = getStateDependencyPlan(
+    root.runtime,
+    hostPath,
+    dependency,
+    owner,
+  );
   if (segments[0] === PointerOperator.Context)
-    return (snapshot ? snapshot.context : root.runtime.context) ?? {};
+    return (
+      (snapshot ? snapshot.context : root.runtime.context) ??
+      absentContext ??
+      {}
+    );
   let value: unknown = snapshot ? snapshot.emit : root.emit;
   for (const encoded of segments) {
     if (value === null || typeof value !== 'object') return undefined;

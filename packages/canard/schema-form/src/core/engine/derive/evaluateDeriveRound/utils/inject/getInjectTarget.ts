@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
   PointerOperator,
-  parsePointer,
+  parsePointerSegments,
 } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../../blueprint';
@@ -19,7 +19,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
 ) => {
-  const segments = parsePointer(path).segments;
+  const segments = parsePointerSegments(path);
   if (segments[0] === PointerOperator.Context) return undefined;
   let template = root.blueprintNode;
   let live: Self | undefined = root;

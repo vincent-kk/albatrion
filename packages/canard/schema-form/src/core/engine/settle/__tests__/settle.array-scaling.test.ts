@@ -276,7 +276,7 @@ describe('44C-01 array settlement scaling', () => {
             reader: {
               type: 'string',
               controls: {
-                active: '(@).observe((#/)) && (#/)?.first?.value === "entered"',
+                active: '(@).observe((#)) && (#)?.first?.value === "entered"',
               },
             },
           },

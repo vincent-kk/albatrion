@@ -4,7 +4,6 @@ import {
   PointerOperator,
   appendSegment,
   isDescendantPath,
-  parsePointer,
   readPointerSegment,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -114,7 +113,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
       if (local && host.raw === undefined) continue;
       if (read === host.path) flushPendingOutput(host, context);
       else if (isDescendantPath(read, host.path)) {
-        const name = parsePointer(read.slice(host.path.length + 1)).segments[0];
+        const name = readPointerSegment(read.slice(host.path.length + 1), 0);
         if (typeof name !== 'string') continue;
         if (
           host.raw !== undefined ||

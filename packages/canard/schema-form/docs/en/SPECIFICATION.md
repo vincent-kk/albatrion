@@ -822,6 +822,8 @@ Segments are interpreted in this order:
 
 `#` is a fragment prefix only at the beginning of a path; an interior `#` segment is an ordinary name. Node paths, inactive-value paths, and reported error paths use the literal percent form for reserved names, so `node.find('/branch/%2A')` addresses the child named `*`, while `/branch/*` remains a wildcard.
 
+The root pointer is the empty string or `#`; `/` and `#/` each address the root's empty-string key. Validator paths and fieldInputMap keys follow the same rule.
+
 Known limit: property names exactly equal to `%2A`, `%2E`, `%2E%2E`, or `%40` cannot be addressed by a string path. Percent-containing names other than those exact four spellings follow rule 3.
 
 Standard RFC 6901 pointers from validators and `$ref` are interpreted without these operators. An AJV path `/*` refers to the property named `*`; standard fragment pointers (`#/...`) percent-decode every segment.

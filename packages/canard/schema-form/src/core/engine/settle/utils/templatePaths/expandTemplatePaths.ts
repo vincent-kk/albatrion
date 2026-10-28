@@ -2,27 +2,31 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
   PointerOperator,
+  type PointerSegment,
   appendSegment,
   hasPointerOperator,
-  parsePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
 
 /**
  * Expand a template owner address over the currently live array positions.
  * A star segment expands only under a host with a repeating item blueprint.
  * @param root - Live tree whose array item counts determine wildcard positions
  * @param templatePath - Absolute declaration path with optional array segments
+ * @param preparedSegments - Authored syntax retained by the dependency index
  * @returns Real owner paths, including a gated-out final item slot
  */
 export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   templatePath: string,
+  preparedSegments?: readonly PointerSegment[],
 ): string[] => {
   if (!hasPointerOperator(templatePath, PointerOperator.Wildcard))
     return [templatePath];
-  const segments = parsePointer(templatePath).segments;
+  const segments =
+    preparedSegments ?? getCachedPointerSegments(root.runtime, templatePath);
   const paths: string[] = [];
   const pending: { node: Self | undefined; depth: number; path: string }[] = [
     { node: root, depth: 0, path: '' },

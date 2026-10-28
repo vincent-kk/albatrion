@@ -1,7 +1,6 @@
 import {
-  formatSegment,
   getChildPointer,
-  readPointerSegment,
+  readFormattedNameSegment,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -151,11 +150,11 @@ export class DirtyPathSet extends Set<string> {
     while (parent !== anchor.hostPath) {
       const child = getChildPointer(anchor.hostPath, parent);
       if (child === undefined) break;
-      const segment = readPointerSegment(child, -1);
-      if (typeof segment !== 'string') break;
+      const segment = readFormattedNameSegment(child, -1);
+      if (segment === undefined) break;
       let children = this.childrenByParent.get(parent);
       if (!children) this.childrenByParent.set(parent, (children = new Map()));
-      children.set(anchor.key, formatSegment(segment));
+      children.set(anchor.key, segment);
       parent = child;
     }
   }
@@ -200,15 +199,15 @@ export class DirtyPathSet extends Set<string> {
       while (current && !linked.has(current)) {
         linked.add(current);
         const parent = resolvePointer(current, '..');
-        const segment = readPointerSegment(current, -1);
-        if (typeof segment !== 'string') break;
+        const segment = readFormattedNameSegment(current, -1);
+        if (segment === undefined) break;
         super.add(parent);
         let children = this.childrenByParent.get(parent);
         if (!children) {
           children = new Map();
           this.childrenByParent.set(parent, children);
         }
-        children.set(current, formatSegment(segment));
+        children.set(current, segment);
         current = parent;
       }
     }
@@ -222,15 +221,15 @@ export class DirtyPathSet extends Set<string> {
         super.add(current);
         if (!current) break;
         const parent = resolvePointer(current, '..');
-        const segment = readPointerSegment(current, -1);
-        if (typeof segment !== 'string') break;
+        const segment = readFormattedNameSegment(current, -1);
+        if (segment === undefined) break;
         let children = this.childrenByParent.get(parent);
         if (!children) {
           children = new Map();
           this.childrenByParent.set(parent, children);
         }
         if (children.has(current)) children.delete(current);
-        children.set(current, formatSegment(segment));
+        children.set(current, segment);
         current = parent;
       }
       return this;
@@ -240,14 +239,14 @@ export class DirtyPathSet extends Set<string> {
     while (parent !== path) {
       const child = getChildPointer(path, parent);
       if (child === undefined) break;
-      const segment = readPointerSegment(child, -1);
-      if (typeof segment !== 'string') break;
+      const segment = readFormattedNameSegment(child, -1);
+      if (segment === undefined) break;
       let children = this.childrenByParent.get(parent);
       if (!children) {
         children = new Map();
         this.childrenByParent.set(parent, children);
       }
-      children.set(path, formatSegment(segment));
+      children.set(path, segment);
       parent = child;
     }
     return this;

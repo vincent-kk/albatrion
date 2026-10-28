@@ -1,6 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { appendSegment, parsePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendSegment,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
@@ -60,7 +63,7 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       draft = slots;
       continue;
     }
-    const segments = parsePointer(host.path).segments;
+    const segments = parsePointerSegments(host.path);
     if (
       !segments.every(
         (segment): segment is string => typeof segment === 'string',

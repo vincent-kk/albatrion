@@ -132,7 +132,13 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
                 value = Boolean(
                   expression.evaluate(
                     expression.dependencies.map((dependency) =>
-                      readStateDependency(root, group.host.path, dependency),
+                      readStateDependency(
+                        root,
+                        group.host.path,
+                        dependency,
+                        undefined,
+                        group.host,
+                      ),
                     ),
                   ),
                 );

@@ -1,7 +1,4 @@
-import {
-  parsePointer,
-  resolvePointer,
-} from '@/schema-form/helpers/jsonPointer';
+import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
@@ -143,7 +140,10 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           'S3 removed a non-split owner: ' + path,
         );
         let node: Self | undefined = context.root;
-        for (const segment of parsePointer(path).segments) {
+        for (const segment of dependencies.pathSegments(
+          path,
+          context.root.runtime,
+        )) {
           if (typeof segment !== 'string') {
             node = undefined;
             break;

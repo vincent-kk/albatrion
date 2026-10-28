@@ -4,11 +4,12 @@ import {
 } from '../constants/PointerOperator';
 import { joinPointer } from './joinPointer';
 import { parsePointer } from './parsePointer';
+import { parsePointerSegments } from './parsePointerSegments';
 
 /** Resolve authored form steps, saturating parent climbs at the root. */
 export const resolvePointer = (basePath: string, pointer: string): string => {
   if (pointer === '@') return '@';
-  if (pointer === '#' || pointer === '/' || pointer === '#/') return '';
+  if (pointer === '#') return '';
   if (pointer === '..') {
     const end = basePath.lastIndexOf('/');
     return end > 0 ? basePath.slice(0, end) : '';
@@ -19,7 +20,7 @@ export const resolvePointer = (basePath: string, pointer: string): string => {
   const parsed = parsePointer(pointer);
   const resolved: PointerSegment[] = parsed.absolute
     ? []
-    : [...parsePointer(basePath === '/' ? '' : basePath).segments];
+    : [...parsePointerSegments(basePath)];
   for (let index = 0; index < parsed.segments.length; index++) {
     const segment = parsed.segments[index];
     if (segment === PointerOperator.Parent) resolved.pop();

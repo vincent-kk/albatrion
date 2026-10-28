@@ -2,7 +2,7 @@ import { isAbsolutePath } from '@/schema-form/helpers/jsonPointer';
 import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
 import {
   appendSegment,
-  parsePointer,
+  parsePointerSegments,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -16,6 +16,7 @@ import type {
   GatePredicateMemo,
 } from '../../types/gatePredicate';
 import type { PresenceQueryCursor } from '../../types/presenceQueryCursor';
+import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getGateExpression } from './getGateExpression';
 import { createGatePredicate } from './predicates/createGatePredicate';
 import { getIfGateReadNames } from './predicates/getIfGateReadNames';
@@ -121,6 +122,9 @@ class GateRegistry {
   private readonly resolvedReads = new Map<string, Map<string, string>>();
   /** Decoded pointers contain no live shape or projected value. */
   private readonly segments = new Map<string, readonly PointerSegment[]>();
+  /** One callback per registry binds occurrence syntax without per-registration closures. */
+  private readonly readSegments = (path: string): readonly PointerSegment[] =>
+    this.pathSegments(path);
 
   /** Bind exact expression dependencies from this tree's analyzed blueprint. */
   constructor(
@@ -147,7 +151,10 @@ class GateRegistry {
   pathSegments(path: string): readonly PointerSegment[] {
     let segments = this.segments.get(path);
     if (!segments) {
-      segments = decodePointerSegments(path);
+      segments = getDependencyIndex(this.blueprint).pathSegments(
+        path,
+        this.runtime,
+      );
       this.segments.set(path, segments);
     }
     return segments;
@@ -377,6 +384,7 @@ class GateRegistry {
       node.blueprintNode.path,
       node.path,
       childHostPath,
+      this.readSegments,
     );
     const watchPaths = this.watchPaths(location);
     const occurrence = new RegisteredGateOccurrence(
@@ -543,7 +551,7 @@ type GateRegistryView = Pick<
 >;
 /** Decode only pointer syntax; no lookup result can survive a shape change. */
 const decodePointerSegments = (path: string): readonly PointerSegment[] =>
-  parsePointer(path).segments;
+  parsePointerSegments(path);
 /** No per-runtime maps, weak maps or live path registrations for branchless graphs. */
 const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   hasRegisteredPathKind: () => undefined,

@@ -1,19 +1,23 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { PointerOperator } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  isAbsolutePointer,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import { getFieldNodePath } from './utils/getFieldNodePath';
 
 /** Resolve every current-shape match in path order, retaining each instance once. */
 export const findNodes = <Self extends FieldNodeRecord<Self>>(
   origin: Self,
   pointer?: string | readonly string[] | null,
 ): readonly Self[] => {
-  const path = getFieldNodePath(pointer);
-  let cursors: Self[] = [path.absolute ? origin.rootNode : origin];
+  const input = pointer ?? '';
+  const segments = parsePointerSegments(input);
+  let cursors: Self[] = [isAbsolutePointer(input) ? origin.rootNode : origin];
 
-  for (const token of path.segments) {
+  for (const token of segments) {
     const next: Self[] = [];
     if (token === PointerOperator.Context) return [];
     for (const cursor of cursors) {

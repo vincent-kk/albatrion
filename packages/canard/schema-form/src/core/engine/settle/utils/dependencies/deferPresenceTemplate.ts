@@ -2,13 +2,13 @@ import {
   PointerOperator,
   isDescendantPath,
   joinPointer,
-  parsePointer,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { PendingPresenceTemplate } from '../../types/pendingPresenceTemplate';
 import type { SettlementContext } from '../../types/settlement';
+import { getDependencyIndex } from './getDependencyIndex';
 
 /**
  * Park one unbound reader and schedule its static host without expanding it.
@@ -30,7 +30,9 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
   const key = kind + '\u0000' + template;
   const entry = pending.get(key);
   if (!entry) {
-    const segments = parsePointer(template).segments;
+    const segments = getDependencyIndex(
+      context.root.runtime.blueprint,
+    ).pathSegments(template, context.root.runtime);
     const wildcard = segments.indexOf(PointerOperator.Wildcard);
     const host = joinPointer(
       segments.slice(0, wildcard < 0 ? undefined : wildcard),

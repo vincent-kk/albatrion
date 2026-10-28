@@ -34,14 +34,14 @@
 
 - 외부 검증기가 만든 dataPath는 parseStandardPointer로 해석하여 예약 이름도 리터럴 속성으로 라우팅합니다. 소비자에게 제공하는 경로는 이름을 formatSegment로 조립한 확장 경로이며 같은 이름을 node.find로 다시 찾을 수 있습니다.
 
-- 검증기 dataPath의 슬래시 하나는 기존 루트 별칭이며 폼 경로 문법의 빈 이름 멤버와 다릅니다. 이 예외는 jsonPointer의 normalizeValidationDataPath가 소유하고 issue의 원래 표기와 배열 참조는 유지합니다.
+- 검증기 dataPath는 RFC 이름으로 해석하며 `/`와 `#/`는 빈 이름 자식입니다. 루트는 빈 문자열과 `#`이고 검증 전용 별칭은 없습니다. 빈 이름 자식이 없으면 루트에 잘못 배정하지 않습니다. 바뀌지 않은 이슈의 배열·항목 참조는 유지합니다.
 
 - 소멸한 노드의 `errors`는 떼어질 때 갈무리한 마지막 오류 배열을 같은 참조로 돌려준다. 활성 검증 맵과 외부 오류 맵에서는 그 노드를 제거하며, 옛 참조는 살아 있는 트리의 새 오류를 읽지 않는다(NODE-044, 35C-09).
 
 - 검증 요청이 필요한 가장 바깥 진입에서는 요청을 한 번 만들고, 마이크로태스크에서 최신 커밋 번호 하나만 실행한다. 늦게 도착한 결과는 버리고, 최신 결과만 넘겨받은 콜백을 통해 별도 파동으로 보낸다. `validate()`와 제출은 새 스냅숏을 다시 판정한다(EVENT-031·032·046, VALIDATE-006·007·049).
 - 라우팅은 판정을 바꾸지 않는다. 모든 issue를 순서대로 라우팅 목록에 보존하고, 폼 수준 `globalErrors`는 루트 외부 오류를 앞에, 그 검증 목록을 뒤에 둔다. 루트 외부 오류나 라우팅 목록이 바뀔 때만 합친 배열을 갱신하며, 반복해서 읽으면 같은 참조를 반환한다. 루트가 아닌 노드의 명령형 외부 오류는 해당 노드의 `errors`에만 남는다(SURFACE-053, VALIDATE-043, 79C-01).
 - 검증(하위 대상과 명시적 `validate()` 포함)의 새 결과가 직전 결과와 깊이 같으면(길이와 순서, 항목의 모든 필드) 직전 배열의 항목 객체로 배정한다. 배정이 실제로 바뀐 노드(분기 전환, 항목 삭제 뒤 같은 경로에 온 다른 노드)만 `UpdateError`를 받고, 배정이 같은 노드는 직전 `errors` 배열을 같은 참조로 유지한다. 라우팅 목록 참조가 같으므로 `globalErrors`도 같은 참조이고, `UpdateGlobalError`를 보내지 않아 `onValidate`도 호출하지 않는다. 명시적 `validate()`는 그 목록으로 끝난다. 직전 결과는 루트 런타임의 `validationResult`이며, 대상과 관계없이 배정할 때마다 기록하고 reset만 비운다. 직전 결과가 없으면 빈 결과도 발행한다. 외부 오류는 이 비교와 관계없이 유지된다(EVENT-046, GOAL-011, LANDING-210, SURFACE-053, 207C-01).
-- 정규화된 `dataPath`(`'/'`도 루트 `''`)가 가리키는, 형상 안의 노드에 검증 issue를 배정한다. `required`는 빠진 자식 경로로 배정되고, `rejectedKey`는 그 키를 가진 호스트가 받는다. 터미널 아래 경로는 터미널이 받고, 형상 밖 경로의 오류는 주인이 없는 오류가 된다(VALIDATE-043 (1)–(4), FRAGMENT-020·053).
+- 표준 이름으로 해석한 `dataPath`가 가리키는, 형상 안의 노드에 검증 issue를 배정한다. `required`는 빠진 자식 경로로 배정되고, `rejectedKey`는 그 키를 가진 호스트가 받는다. 터미널 아래 경로는 터미널이 받고, 형상 밖 경로의 오류는 주인이 없는 오류가 된다(VALIDATE-043 (1)–(4), FRAGMENT-020·053).
 - 표시에서는 꺼진 `oneOf`·`anyOf` 분기의 issue만 청사진 조각 표와 `schemaPath`로 걸러 낸다. 분기를 가려낼 수 없으면 거르지 않으며, `allOf`, `if`, `controls.active`는 이 필터의 대상이 아니다. union 호스트의 형 오류는 호스트에 둔다. 검증 판정과 폼 수준 목록은 그대로 유지한다(VALIDATE-043 (5)–(6), VALIDATE-051).
 - 검증기가 없고 모드가 `None`이 아니면 트리마다 `VALIDATOR_MISSING`을 한 번 경고하고, `if` 조각을 끄고 `CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR`를 한 번 경고한다. 전체 컴파일 실패는 로드마다 `VALIDATOR_COMPILE_FAILED` 하나를 첫 검증이나 `validate()`에서 드러내며, 노드 `errors`에는 넣지 않는다. 같은 `$id`를 등록하다 충돌이 나서 컴파일에 실패한 경우에는 `VALIDATOR_COMPILE_FAILED`나 `GUARD_FAILED`의 `details`에 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다. 실행 중 throw는 `VALIDATOR_THREW`로 `validate()`를 거부하거나 `OnChange`에서 한 번 보고한 뒤 싱크로 보내며, 미처리 거부로 남기지 않는다(ERROR-146–157, ERROR-019·039·201, VALIDATE-042, 31C-03).
 - 검증기가 없고 모드가 `None`이 아니면 트리마다 `VALIDATOR_MISSING`을 한 번 경고하고, `if` 조각을 끄고 `CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR`를 한 번 경고한다. 전체 컴파일 실패는 로드마다 `VALIDATOR_COMPILE_FAILED` 하나를 첫 검증이나 `validate()`에서 드러내며, 노드 `errors`에는 넣지 않는다. `OnChange`의 첫 실패는 보고기에 이어 싱크로도 보내고, 명시적 `validate()`는 거부하기 전에 `surface: 'rejected'`로 보고한다. 같은 `$id`를 등록하다 충돌이 나서 컴파일에 실패한 경우에는 `VALIDATOR_COMPILE_FAILED`나 `GUARD_FAILED`의 `details`에 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다. 실행 중 throw는 `VALIDATOR_THREW`로 `validate()`를 거부하거나 `OnChange`에서 한 번 보고한 뒤 싱크로 보내며, 미처리 거부로 남기지 않는다(ERROR-146–157, ERROR-019·022·039·155·201, VALIDATE-042, 31C-03).

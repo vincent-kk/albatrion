@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { parsePointer } from '@/schema-form/helpers/jsonPointer';
+import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
@@ -20,7 +20,7 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   let value = root.local;
   for (const write of writes) {
-    const names = parsePointer(write.node.path).segments;
+    const names = parsePointerSegments(write.node.path);
     if (
       !names.every((segment): segment is string => typeof segment === 'string')
     )

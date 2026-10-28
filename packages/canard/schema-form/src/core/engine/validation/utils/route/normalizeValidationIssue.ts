@@ -1,7 +1,6 @@
 import {
+  isAbsolutePointer,
   joinPointer,
-  normalizeValidationDataPath,
-  parsePointer,
   parseStandardPointer,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -11,12 +10,8 @@ import type { ValidationIssue } from '../../types/issue';
 export const normalizeValidationIssue = (
   issue: ValidationIssue,
 ): ValidationIssue => {
-  if (issue.dataPath !== '' && !parsePointer(issue.dataPath).absolute)
-    return issue;
-  const normalizedDataPath = normalizeValidationDataPath(issue.dataPath);
-  const dataPath = normalizedDataPath
-    ? joinPointer(parseStandardPointer(normalizedDataPath))
-    : issue.dataPath;
+  if (issue.dataPath !== '' && !isAbsolutePointer(issue.dataPath)) return issue;
+  const dataPath = joinPointer(parseStandardPointer(issue.dataPath));
   const schemaPath = issue.schemaPath
     ? (issue.schemaPath[0] === '#' ? '#' : '') +
       joinPointer(parseStandardPointer(issue.schemaPath))

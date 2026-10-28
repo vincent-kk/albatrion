@@ -91,6 +91,10 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## API Contracts
 
+- 정적 작성 경로의 세그먼트는 유한한 청사진 색인 준비가 소유합니다. 구체 runtime 주소의 순수 문법은 기존 HostDerived의 pointerSegments 슬롯에서 root.runtime을 키로 최대 256개를 FIFO 보유하며 hit에는 배열·wrapper를 만들지 않습니다. 정적 색인은 질의 miss로 확장하지 않습니다. 새로운 주소와 퇴출 주소는 첫 fill을 허용하고 실제 모드 변경은 기존 derived-record 세대와 함께 캐시를 초기화합니다. 같은 occurrence의 load/reset과 새 runtime/rebuild는 기존 소유 수명대로 구별합니다.
+
+- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
+
 - `(path, kind)` 식별에서 kind는 union의 fold를 포함한다. 공유 토큰 보조는 union에 `union:<fold mask>`, 나머지에 기존 kind를 돌려준다. union 청사진은 정규화된 schemaType 목록을 항상 가지며, mask는 그 목록에서 number/integer를 합치고 null 장식을 제외해 호출마다 계산한다. fold 보조와 토큰 보조는 blueprint·settle·derive의 가장 낮은 공통 소유자인 engine의 `utils/nodeIdentity` organ에 두고 필요한 칸만 구조 형으로 받는다. 자식 모듈은 조상 organ의 구체 파일을 직접 가져오며 이 보조는 자식 모듈의 형을 가져오지 않는다. 청사진 저장 필드는 늘리지 않으며 비용은 호출마다 최대 7개 형 이름을 OR하는 상수 작업이고 토큰 캐시는 보관하지 않는다(BLUEPRINT-043, NODE-043, 389C-02, 390C-01).
 
 ### 진입점 이름

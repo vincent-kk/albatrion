@@ -6,16 +6,16 @@ import { JSON_POINTER_PATH_REGEX } from '../regex';
  * JSON Pointer Path Expression Boundary Test
  *
  * Usage Guidelines:
- * 1. Use #/ for root references (recommended)
+ * 1. Use #/ as an absolute path prefix
  * 2. / alone is treated as division operator
  * 3. /propertyName is an absolute path (property name required)
- * 4. #/ is a valid root reference
+ * 4. #/ is a valid absolute path prefix
  * 5. All non-JavaScript variable characters act as path separators
  *
  * Division operator handling:
  * - "a / b" → / is division operator
  * - "/property" → absolute path
- * - "#/" → root reference
+ * - "#/" → absolute path prefix
  */
 describe('JSON_POINTER_REGEX 경계선 테스트', () => {
   // PathManager 목업

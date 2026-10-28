@@ -3,7 +3,6 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import {
   appendSegment,
   formatSegment,
-  parsePointer,
   parsePointerSegment,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -15,6 +14,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { deferPresenceTemplate } from './deferPresenceTemplate';
 import { evaluatedPresenceAfter } from './evaluatedPresenceAfter';
 import { getDependencyIndex } from './getDependencyIndex';
+import { getLivePresenceNode } from './getLivePresenceNode';
 import { publishPresenceOwner } from './publishPresenceOwner';
 import { registerProjectionChanges } from './registerProjectionChanges';
 
@@ -84,6 +84,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
       name,
       context.presenceMetrics,
       context,
+      context.root.runtime,
     );
     for (const owner of affected.owners) {
       owners.add(owner);
@@ -120,17 +121,8 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   const features = getFeatureNodeIndex(context.root.runtime.blueprint);
   for (const owner of stateOnly) {
     if (owners.has(owner)) continue;
-    let live: Self | undefined = context.root;
-    for (const segment of parsePointer(owner).segments) {
-      const name = segment;
-      if (typeof name !== 'string') break;
-      live =
-        live?.structure && hasOwnProperty(live.structure, name)
-          ? live.structure[name]
-          : undefined;
-      if (!live) break;
-    }
-    if (!live || live.detached) continue;
+    const live = getLivePresenceNode(context.root, owner);
+    if (!live) continue;
     if (
       features.stateKeyNodes.has(live.blueprintNode.id) ||
       (live.parent &&

@@ -1,16 +1,21 @@
-import { appendSegment, parsePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  type PointerSegment,
+  appendSegment,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
 
 /**
  * List every schema location that directly declares the child holding one declaration.
  * A location D owns a declaration path c when c continues D with `/properties/` or
  * `/prefixItems/`, or with `/items` or `/additionalItems` at the end or followed by `/`.
  * @param schemaPath - Authored declaration path of a child, such as `#/allOf/0/items`
+ * @param segments - Prepared declaration syntax; cold callers may omit it
  * @returns Candidate owner paths, shortest first; a fragment owns the child when its path is listed
  */
 export const getFragmentOwnerPaths = (
   schemaPath: string,
+  segments: readonly PointerSegment[] = parsePointerSegments(schemaPath),
 ): readonly string[] => {
-  const segments = parsePointer(schemaPath).segments;
   const owners: string[] = [];
   let prefix = '#';
   for (let index = 0; index < segments.length; index++) {
