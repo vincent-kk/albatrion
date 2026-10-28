@@ -230,3 +230,39 @@ it('drops a write addressed at a discarded item after compaction', () => {
   root.find('/open')!.setValue(true);
   expect(root.find('/list')!.value).toEqual([{ keep: 12 }, { keep: 24 }]);
 });
+
+it('drops a write through an already inactive descendant of a discarded item', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      show: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: {
+            drop: { type: 'number' },
+            keep: {
+              type: 'number',
+              controls: { active: '#/show', unsetOnInactive: false },
+            },
+          },
+        },
+      },
+    },
+  });
+  root.setValue({
+    open: true,
+    show: true,
+    list: [{ drop: 1 }, { drop: 2, keep: 12 }, { drop: 3 }, { keep: 24 }],
+  });
+  const emptyKeep = root.find('/list/0/keep')!;
+  root.find('/show')!.setValue(false);
+  root.find('/open')!.setValue(false);
+  emptyKeep.setValue(5);
+  root.find('/open')!.setValue(true);
+  root.find('/show')!.setValue(true);
+  expect(root.find('/list')!.value).toEqual([{ keep: 12 }, { keep: 24 }]);
+});

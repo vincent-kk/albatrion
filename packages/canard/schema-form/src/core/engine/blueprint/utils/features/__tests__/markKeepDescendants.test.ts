@@ -89,5 +89,9 @@ describe('explicit keep declarations below a template', () => {
       },
     });
     expect(analysis.root.hasKeepDescendants).toBe(true);
+    expect(
+      analysis.root.childEntries.find((entry) => entry.name === 'children')!
+        .node.hasKeepDescendants,
+    ).toBe(true);
   });
 });
