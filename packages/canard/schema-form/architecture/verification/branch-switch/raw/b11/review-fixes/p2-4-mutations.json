@@ -1,0 +1,38 @@
+[
+  {
+    "verb": "push",
+    "guard": "dispatchPush",
+    "failedWithoutGuard": true,
+    "reason": "warning called zero times"
+  },
+  {
+    "verb": "insert",
+    "guard": "dispatchInsert",
+    "failedWithoutGuard": true,
+    "reason": "warning called zero times"
+  },
+  {
+    "verb": "pop",
+    "guard": "dispatchPop",
+    "failedWithoutGuard": true,
+    "reason": "warning called zero times"
+  },
+  {
+    "verb": "remove",
+    "guard": "dispatchRemove",
+    "failedWithoutGuard": true,
+    "reason": "warning called zero times"
+  },
+  {
+    "verb": "update",
+    "guard": "dispatchUpdate",
+    "failedWithoutGuard": true,
+    "reason": "warning called zero times"
+  },
+  {
+    "verb": "clear",
+    "guard": "dispatchClear",
+    "failedWithoutGuard": true,
+    "reason": "warning called zero times"
+  }
+]

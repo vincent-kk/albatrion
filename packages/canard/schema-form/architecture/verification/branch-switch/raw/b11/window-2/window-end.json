@@ -1,0 +1,4759 @@
+{
+  "endedAt": "2026-10-28T18:00:35.440Z",
+  "invalid": false,
+  "processes": {
+    "startedAt": "2026-10-28T18:00:35.440Z",
+    "quietSince": "2026-10-28T18:00:38.567Z",
+    "durationSeconds": 3.1251476659998296,
+    "requestedDurationMs": 3000,
+    "rows": [
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.399697594345242
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 5.439742955175995
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 4.479788316006747
+      },
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 4.479788316006747
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 4.1598034363127665
+      },
+      {
+        "pid": 726,
+        "name": "chronod",
+        "cpuPercent": 2.879863917449539
+      },
+      {
+        "pid": 17558,
+        "name": "node",
+        "cpuPercent": 2.239894158012468
+      },
+      {
+        "pid": 92977,
+        "name": "2.1.312",
+        "cpuPercent": 1.9199092782948421
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 1.5999243985863105
+      },
+      {
+        "pid": 553,
+        "name": "com.apple.DriverKit-AppleBCMWLAN",
+        "cpuPercent": 0.9599546391546967
+      },
+      {
+        "pid": 493,
+        "name": "airportd",
+        "cpuPercent": 0.6399697594388896
+      },
+      {
+        "pid": 87362,
+        "name": "codex",
+        "cpuPercent": 0.6399697594325235
+      },
+      {
+        "pid": 63609,
+        "name": "mdworker_shared",
+        "cpuPercent": 0.6399697594321966
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 0.6399697594316139
+      },
+      {
+        "pid": 485,
+        "name": "clocksyncd",
+        "cpuPercent": 0.6399697594316139
+      },
+      {
+        "pid": 642,
+        "name": "containermanagerd",
+        "cpuPercent": 0.6399697594316139
+      },
+      {
+        "pid": 394,
+        "name": "mds",
+        "cpuPercent": 0.31998487972308265
+      },
+      {
+        "pid": 440,
+        "name": "loginwindow",
+        "cpuPercent": 0.31998487972308265
+      },
+      {
+        "pid": 413,
+        "name": "locationd",
+        "cpuPercent": 0.3199848797176259
+      },
+      {
+        "pid": 397,
+        "name": "diskarbitrationd",
+        "cpuPercent": 0.31998487971671646
+      },
+      {
+        "pid": 812,
+        "name": "extensionkitservice",
+        "cpuPercent": 0.31998487971671646
+      },
+      {
+        "pid": 1215,
+        "name": "1Password",
+        "cpuPercent": 0.31998487971671646
+      },
+      {
+        "pid": 1231,
+        "name": "1Password-Crash-Handler",
+        "cpuPercent": 0.3199848797160344
+      },
+      {
+        "pid": 364,
+        "name": "logd",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 378,
+        "name": "configd",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 380,
+        "name": "powerd",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 429,
+        "name": "bluetoothd",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 430,
+        "name": "notifyd",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 625,
+        "name": "cfprefsd",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 631,
+        "name": "UserEventAgent",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 651,
+        "name": "MenuBarAgent",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 689,
+        "name": "fileproviderd",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 745,
+        "name": "NotificationCenter",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 820,
+        "name": "BetterTouchTool",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 91625,
+        "name": "Orca",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 92110,
+        "name": "orca-terminal-host",
+        "cpuPercent": 0.31998487971580697
+      },
+      {
+        "pid": 369,
+        "name": "fseventsd",
+        "cpuPercent": 0.3199848797085314
+      },
+      {
+        "pid": 366,
+        "name": "smd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 367,
+        "name": "UserEventAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 370,
+        "name": "mediaremoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 372,
+        "name": "uarpd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 374,
+        "name": "systemstats",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 376,
+        "name": "accessoryupdaterd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 377,
+        "name": "uarpassetmanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 379,
+        "name": "endpointsecurityd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 381,
+        "name": "IOMFB_bics_daemon",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 383,
+        "name": "amfid",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 385,
+        "name": "remoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 387,
+        "name": "keybagd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 388,
+        "name": "softwareupdated",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 389,
+        "name": "corespeechd_system",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 391,
+        "name": "watchdogd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 395,
+        "name": "iconservicesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 396,
+        "name": "kernelmanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 400,
+        "name": "coreduetd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 401,
+        "name": "syslogd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 403,
+        "name": "thermalmonitord",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 404,
+        "name": "contextstored",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 405,
+        "name": "xprotectd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 406,
+        "name": "opendirectoryd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 407,
+        "name": "apsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 408,
+        "name": "launchservicesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 409,
+        "name": "timed",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 410,
+        "name": "usbmuxd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 411,
+        "name": "securityd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 414,
+        "name": "nesessionmanager",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 416,
+        "name": "autofsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 417,
+        "name": "dasd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 418,
+        "name": "corerepaird",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 420,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 421,
+        "name": "AppleCredentialManagerDaemon",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 423,
+        "name": "logind",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 424,
+        "name": "revisiond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 425,
+        "name": "KernelEventAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 426,
+        "name": "peakpowermanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 427,
+        "name": "usermanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 431,
+        "name": "sandboxd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 432,
+        "name": "corebrightnessd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 433,
+        "name": "com.apple.cmio.registerassistantservice",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 434,
+        "name": "aslmanager",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 435,
+        "name": "logd_helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 437,
+        "name": "tccd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 438,
+        "name": "dirhelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 439,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 453,
+        "name": "powerexperienced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 463,
+        "name": "coreservicesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 464,
+        "name": "securityd_system",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 471,
+        "name": "backupd-helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 472,
+        "name": "PowerUIAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 473,
+        "name": "trustd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 482,
+        "name": "lsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 494,
+        "name": "containermanagerd_system",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 495,
+        "name": "analyticsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 496,
+        "name": "mobileassetd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 498,
+        "name": "nehelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 500,
+        "name": "liquiddetectiond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 501,
+        "name": "symptomsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 502,
+        "name": "authd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 503,
+        "name": "apfsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 504,
+        "name": "nsurlsessiond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 506,
+        "name": "mDNSResponder",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 507,
+        "name": "hidd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 508,
+        "name": "biomed",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 509,
+        "name": "accessoryd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 510,
+        "name": "socketfilterfw",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 513,
+        "name": "syspolicyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 514,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 524,
+        "name": "cryptexd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 526,
+        "name": "mDNSResponderHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 527,
+        "name": "biometrickitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 528,
+        "name": "com.apple.geod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 529,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 530,
+        "name": "sysextd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 531,
+        "name": "cloudd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 532,
+        "name": "backupd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 533,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 534,
+        "name": "systemstatusd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 535,
+        "name": "secinitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 536,
+        "name": "eligibilityd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 537,
+        "name": "com.apple.CodeSigningHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 539,
+        "name": "storagekitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 540,
+        "name": "WirelessRadioManagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 541,
+        "name": "secinitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 542,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 543,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 544,
+        "name": "findmybeaconingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 545,
+        "name": "trustd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 546,
+        "name": "com.apple.cmio.videodriverkithostextension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 547,
+        "name": "appleh13camerad",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 548,
+        "name": "backgroundtaskmanagementd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 549,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 550,
+        "name": "containermanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 551,
+        "name": "fskitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 552,
+        "name": "com.apple.DriverKit-IOUserDockChannelSerial",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 554,
+        "name": "com.apple.AppleUserHIDDrivers",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 556,
+        "name": "com.apple.MobileAsset.DownloadService.Builtin",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 557,
+        "name": "softwareupdated",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 558,
+        "name": "mobileactivationd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 560,
+        "name": "colorsync.displayservices",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 561,
+        "name": "searchpartyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 563,
+        "name": "countryd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 564,
+        "name": "cameracaptured",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 565,
+        "name": "UVCAssistant",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 566,
+        "name": "suhelperd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 567,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 568,
+        "name": "coreaudiod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 569,
+        "name": "PerfPowerTelemetryClientRegistrationService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 570,
+        "name": "triald_system",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 572,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 573,
+        "name": "com.apple.ColorSyncXPCAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 574,
+        "name": "colorsyncd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 578,
+        "name": "com.apple.audio.DriverHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 581,
+        "name": "Core Audio Driver (WaveLinkVirtualAudio.driver)",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 582,
+        "name": "AudioComponentRegistrar",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 587,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 588,
+        "name": "gamepolicyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 590,
+        "name": "appleeventsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 593,
+        "name": "audioanalyticsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 594,
+        "name": "AppleDeviceQueryService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 597,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 598,
+        "name": "BTLEServer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 599,
+        "name": "modelmanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 600,
+        "name": "ospredictiond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 601,
+        "name": "writeconfig",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 602,
+        "name": "com.apple.geod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 603,
+        "name": "secinitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 604,
+        "name": "bootinstalld",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 605,
+        "name": "ViewBridgeAuxiliary",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 606,
+        "name": "modelcatalogd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 607,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 609,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 612,
+        "name": "trustd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 613,
+        "name": "containermanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 614,
+        "name": "coreauthd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 617,
+        "name": "com.apple.hiservices-xpcservice",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 618,
+        "name": "GSSCred",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 623,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 624,
+        "name": "com.apple.ifdreader",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 626,
+        "name": "wifip2pd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 627,
+        "name": "applekeystored",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 628,
+        "name": "corekdld",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 629,
+        "name": "secd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 630,
+        "name": "TrustedPeersHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 632,
+        "name": "gamecontrollerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 633,
+        "name": "deviceconfigurationd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 634,
+        "name": "seld",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 635,
+        "name": "accessoryaccessd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 638,
+        "name": "neagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 639,
+        "name": "CoreServicesUIAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 640,
+        "name": "universalaccessd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 641,
+        "name": "pboard",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 643,
+        "name": "WindowManager",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 644,
+        "name": "lsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 645,
+        "name": "BiomeAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 646,
+        "name": "WiFiCloudAssetsXPCService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 647,
+        "name": "tccd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 648,
+        "name": "talagentd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 649,
+        "name": "Dock",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 652,
+        "name": "SystemUIServer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 653,
+        "name": "secinitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 654,
+        "name": "Finder",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 655,
+        "name": "linkd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 656,
+        "name": "WallpaperAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 659,
+        "name": "trustd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 661,
+        "name": "VDCAssistant",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 662,
+        "name": "AccessibilityVisualsAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 663,
+        "name": "csnameddatad",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 664,
+        "name": "usernoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 665,
+        "name": "dmd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 666,
+        "name": "QuickLookUIService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 667,
+        "name": "com.apple.quicklook.ThumbnailsAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 668,
+        "name": "com.apple.hiservices-xpcservice",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 669,
+        "name": "axassetsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 670,
+        "name": "AccessibilityUIServer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 671,
+        "name": "bird",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 672,
+        "name": "sharedfilelistd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 673,
+        "name": "AirPlayXPCHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 674,
+        "name": "automountd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 675,
+        "name": "useractivityd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 676,
+        "name": "com.apple.dock.extra",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 677,
+        "name": "iconservicesagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 678,
+        "name": "com.apple.dock.external.extra.arm64",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 679,
+        "name": "com.apple.dock.external.extra.arm64",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 680,
+        "name": "rapportd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 681,
+        "name": "cloudd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 683,
+        "name": "CommCenter",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 684,
+        "name": "audiomxd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 685,
+        "name": "APFSUserAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 687,
+        "name": "filecoordinationd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 688,
+        "name": "nsurlsessiond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 690,
+        "name": "lockoutagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 691,
+        "name": "systemsoundserverd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 692,
+        "name": "Siri AI",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 693,
+        "name": "pkd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 694,
+        "name": "AMPDeviceDiscoveryAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 695,
+        "name": "com.apple.CMExtensionBroker",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 696,
+        "name": "ContinuityCaptureAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 697,
+        "name": "ViewBridgeAuxiliary",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 698,
+        "name": "fontd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 699,
+        "name": "sociallayerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 700,
+        "name": "suggestd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 701,
+        "name": "replayd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 702,
+        "name": "callservicesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 703,
+        "name": "wallpaperexportd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 704,
+        "name": "fontworker",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 706,
+        "name": "WallpaperAerialsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 707,
+        "name": "WallpaperImageExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 708,
+        "name": "usernotificationsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 709,
+        "name": "ScreenTimeSettingsAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 710,
+        "name": "wifianalyticsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 711,
+        "name": "AudioComponentRegistrar",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 713,
+        "name": "audioaccessoryd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 714,
+        "name": "intelligentroutingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 715,
+        "name": "liveactivitiesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 716,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 717,
+        "name": "sharingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 718,
+        "name": "ContextStoreAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 719,
+        "name": "MobileDeviceUpdater",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 721,
+        "name": "identityservicesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 722,
+        "name": "networkserviceproxy",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 723,
+        "name": "imagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 724,
+        "name": "syncdefaultsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 725,
+        "name": "mobiletimerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 727,
+        "name": "ReportCrash",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 728,
+        "name": "corespotlightd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 729,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 730,
+        "name": "LoginUserService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 731,
+        "name": "parsecd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 732,
+        "name": "CoreLocationAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 733,
+        "name": "replicatord",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 734,
+        "name": "CampoRemoteService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 735,
+        "name": "agentstored",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 736,
+        "name": "usbpowerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 739,
+        "name": "accountsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 740,
+        "name": "filederivatived",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 741,
+        "name": "hybridsearchd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 743,
+        "name": "localizationswitcherd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 744,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 747,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 748,
+        "name": "heard",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 749,
+        "name": "corespeechd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 751,
+        "name": "routined",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 755,
+        "name": "imklaunchagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 757,
+        "name": "icdd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 758,
+        "name": "appplaceholdersyncd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 759,
+        "name": "watchman",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 760,
+        "name": "askpermissiond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 762,
+        "name": "mobilerepaird",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 763,
+        "name": "ManagedSettingsAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 764,
+        "name": "AirPlayUIAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 765,
+        "name": "knowledge-agent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 767,
+        "name": "diagnostics_agent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 768,
+        "name": "TextInputMenuAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 770,
+        "name": "amsaccountsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 772,
+        "name": "ctkahp",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 773,
+        "name": "com.apple.CloudDocs.iCloudDriveFileProvider",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 774,
+        "name": "pbs",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 775,
+        "name": "findmydeviced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 776,
+        "name": "photolibraryd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 777,
+        "name": "donotdisturbd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 778,
+        "name": "ctkd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 779,
+        "name": "Google Drive",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 781,
+        "name": "coreauthd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 782,
+        "name": "transparencyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 783,
+        "name": "ctkd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 784,
+        "name": "ScopedBookmarkAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 785,
+        "name": "akd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 786,
+        "name": "TextInputSwitcher",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 787,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 789,
+        "name": "findmylocateagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 790,
+        "name": "com.apple.geod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 791,
+        "name": "triald",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 792,
+        "name": "itunescloudd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 794,
+        "name": "StatusKitAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 795,
+        "name": "UIKitSystem",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 796,
+        "name": "AppSSOAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 797,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 798,
+        "name": "deviceinterfaced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 800,
+        "name": "MTLCompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 801,
+        "name": "AppSSODaemon",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 802,
+        "name": "kernelmanager_helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 803,
+        "name": "CursorUIViewService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 805,
+        "name": "PAH_Extension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 806,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 808,
+        "name": "KIM_Extension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 810,
+        "name": "usbaudiod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 811,
+        "name": "CalendarWidgetExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 815,
+        "name": "deleted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 816,
+        "name": "commerce",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 817,
+        "name": "WeatherWidget",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 818,
+        "name": "followupd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 819,
+        "name": "duetexpertd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 821,
+        "name": "milod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 822,
+        "name": "nearbyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 824,
+        "name": "BatteriesAvocadoWidgetExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 825,
+        "name": "contactsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 826,
+        "name": "calaccessd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 827,
+        "name": "homed",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 828,
+        "name": "CategoriesService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 829,
+        "name": "AppIntentsLiveEntityService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 830,
+        "name": "assistantd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 831,
+        "name": "siriactionsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 832,
+        "name": "MTLAssetUpgraderD",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 833,
+        "name": "swcd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 834,
+        "name": "MENotificationAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 835,
+        "name": "BackgroundTaskManagementAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 836,
+        "name": "siriknowledged",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 838,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 839,
+        "name": "assessmentagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 840,
+        "name": "ContainerMetadataExtractor",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 841,
+        "name": "Magnet",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 842,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 843,
+        "name": "familycircled",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 844,
+        "name": "PopClip",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 845,
+        "name": "WiFiAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 847,
+        "name": "Alfred",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 848,
+        "name": "generativeexperiencesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 849,
+        "name": "intelligenceflowd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 850,
+        "name": "communicationtrustd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 851,
+        "name": "IMDPersistenceAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 852,
+        "name": "CMFSyncAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 853,
+        "name": "ScreenTimeAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 854,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 855,
+        "name": "BetterTouchToolAppleScriptRunner",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 856,
+        "name": "BetterTouchToolAppleScriptRunner2",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 857,
+        "name": "BetterTouchToolAppleScriptRunner3",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 858,
+        "name": "BetterTouchToolAppleScriptRunner4",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 859,
+        "name": "BetterTouchToolShellScriptRunner",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 860,
+        "name": "storekitagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 861,
+        "name": "Dropover",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 863,
+        "name": "ContextService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 864,
+        "name": "SoftwareUpdateNotificationManager",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 865,
+        "name": "FindMyMacd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 867,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 876,
+        "name": "localspeechrecognition",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 879,
+        "name": "swtransparencyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 880,
+        "name": "assistant_cdmd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 881,
+        "name": "Shortcuts Events",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 882,
+        "name": "FeatureAccessAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 883,
+        "name": "TrialArchivingService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 884,
+        "name": "AppleSpell",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 885,
+        "name": "osanalyticshelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 886,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 887,
+        "name": "intelligencecontextd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 888,
+        "name": "frauddefensed",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 889,
+        "name": "appleaccountd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 891,
+        "name": "com.apple.AmbientDisplayAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 892,
+        "name": "speechmaintenanced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 894,
+        "name": "ProtectedCloudKeySyncing",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 895,
+        "name": "spindump",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 896,
+        "name": "com.apple.ColorSyncXPCAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 897,
+        "name": "spindump_agent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 898,
+        "name": "SubmitDiagInfo",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 900,
+        "name": "crashpad_handler",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 901,
+        "name": "keyboardservicesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 904,
+        "name": "loginitemregisterd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 905,
+        "name": "FamilyControlsAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 907,
+        "name": "adid",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 909,
+        "name": "maild",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 910,
+        "name": "webprivacyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 912,
+        "name": "CVMServer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 914,
+        "name": "sirittsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 915,
+        "name": "com.apple.accessibility.mediaaccessibilityd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 916,
+        "name": "siriappintentsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 917,
+        "name": "IOUserBluetoothSerialDriver",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 921,
+        "name": "BTTRelaunch",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 923,
+        "name": "DeviceConfigurationAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 932,
+        "name": "RecordWidgetExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 933,
+        "name": "deleted_helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 935,
+        "name": "StocksWidget",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 936,
+        "name": "extensionkitservice",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 937,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 940,
+        "name": "PopClipEventMonitor",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 942,
+        "name": "universalAccessAuthWarn",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 943,
+        "name": "JournalWidgetsSecure",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 944,
+        "name": "JournalWidgets",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 945,
+        "name": "WeatherIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 946,
+        "name": "HomeWidget",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 948,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 949,
+        "name": "HomeEnergyWidgetsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 950,
+        "name": "PodcastsWidget",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 952,
+        "name": "ScreenTimeWidgetExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 953,
+        "name": "WorldClockWidget",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 954,
+        "name": "FindMyWidgetItems",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 955,
+        "name": "FindMyWidgetPeople",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 956,
+        "name": "ScreenTimeWidgetIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 957,
+        "name": "HomeWidgetIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 958,
+        "name": "com.apple.MobileSoftwareUpdate.CleanupPreparePathService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 959,
+        "name": "VoiceMemosSettingsWidgetExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 960,
+        "name": "coresymbolicationd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 961,
+        "name": "searchpartyuseragent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 962,
+        "name": "lockdownmoded",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 963,
+        "name": "MobileTimerIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 967,
+        "name": "com.apple.FaceTime.FTConversationService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 968,
+        "name": "translationd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 969,
+        "name": "findmydevice-user-agent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 971,
+        "name": "avconferenced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 972,
+        "name": "mediaremoteagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 973,
+        "name": "CoreThreadCommissionerServiced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 976,
+        "name": "AudioConverterService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 977,
+        "name": "AudioConverterHardenedService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 978,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 979,
+        "name": "ReportCrash",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 982,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 983,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 984,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 987,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 989,
+        "name": "captiveagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 990,
+        "name": "UniversalControl",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 993,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 994,
+        "name": "SidecarRelay",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 996,
+        "name": "photoanalysisd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 998,
+        "name": "rtcreportingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1000,
+        "name": "AssetCacheLocatorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1001,
+        "name": "aned",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1002,
+        "name": "financed",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1003,
+        "name": "mdbulkimport",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1004,
+        "name": "AssetCache",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1005,
+        "name": "privatecloudcomputed",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1009,
+        "name": "amsengagementd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1010,
+        "name": "UsageTrackingAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1011,
+        "name": "cloudtelemetryd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1012,
+        "name": "bluetoothuserd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1013,
+        "name": "mlhostd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1015,
+        "name": "cdpd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1016,
+        "name": "SafariBookmarksSyncAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1017,
+        "name": "SafariLaunchAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1018,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1023,
+        "name": "mapssyncd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1024,
+        "name": "BTLEServerAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1025,
+        "name": "UARPAssetManagerServiceiCloud",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1026,
+        "name": "com.apple.sbd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1027,
+        "name": "UARPAssetManagerServiceMobileAsset",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1029,
+        "name": "cloudphotod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1030,
+        "name": "AssetCacheTetheratorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1032,
+        "name": "TrialArchivingService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1033,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1036,
+        "name": "com.apple.Safari.History",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1038,
+        "name": "cksharingmanagementd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1046,
+        "name": "bash",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1057,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1058,
+        "name": "mmaintenanced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1059,
+        "name": "MauiAUSP",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1060,
+        "name": "analyticsagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1061,
+        "name": "WardaSynthesizer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1062,
+        "name": "visualintelligenced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1063,
+        "name": "jetpackassetd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1064,
+        "name": "SiriAUSP",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1065,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1066,
+        "name": "UARPUpdaterServiceDisplay",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1067,
+        "name": "UARPUpdaterServiceUSBPD",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1068,
+        "name": "UARPUpdaterServiceLegacyAudio",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1069,
+        "name": "UARPUpdaterServiceHID",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1070,
+        "name": "UARPUpdaterServiceAFU",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1072,
+        "name": "aneuserd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1073,
+        "name": "recentsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1074,
+        "name": "MacinTalkAUSP",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1075,
+        "name": "KonaSynthesizer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1080,
+        "name": "AssetCacheLocatorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1085,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1087,
+        "name": "postersyncd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1088,
+        "name": "localspeechrecognition",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1089,
+        "name": "localspeechrecognition",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1090,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1091,
+        "name": "IDSBlastDoorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1092,
+        "name": "UnknownSendersBlastDoorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1093,
+        "name": "AUCrashHandlerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1094,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1095,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1096,
+        "name": "textunderstandingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1097,
+        "name": "peopled",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1098,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1099,
+        "name": "siriinferenced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1100,
+        "name": "WiFiCloudAssetsXPCService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1102,
+        "name": "textcontextd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1103,
+        "name": "MessagesBlastDoorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1105,
+        "name": "Messages Assistant Extension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1106,
+        "name": "com.apple.StreamingUnzipService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1107,
+        "name": "ModelCatalogAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1108,
+        "name": "TGOnDeviceInferenceProviderService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1109,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1110,
+        "name": "com.apple.tonelibraryd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1113,
+        "name": "ThunderboltAccessoryUpdaterService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1114,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1115,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1116,
+        "name": "StandaloneHIDAudService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1118,
+        "name": "gamecontrolleragentd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1120,
+        "name": "symptomsd-diag",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1121,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1123,
+        "name": "DiskUnmountWatcher",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1125,
+        "name": "eu.exelban.Stats.SMC.Helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1127,
+        "name": "XProtectPluginService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1129,
+        "name": "nfcd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1130,
+        "name": "geodMachServiceBridge",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1131,
+        "name": "intelligencetasksd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1132,
+        "name": "amsondevicestoraged",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1133,
+        "name": "NFStorageServer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1134,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1136,
+        "name": "installd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1137,
+        "name": "system_installd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1138,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1139,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1140,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1142,
+        "name": "appstoreagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1143,
+        "name": "SAExtensionOrchestrator",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1144,
+        "name": "assetsubscriptiond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1145,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1146,
+        "name": "sysmond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1147,
+        "name": "voicebankingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1149,
+        "name": "StocksKitService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1150,
+        "name": "passd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1152,
+        "name": "XProtectBridgeService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1155,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1158,
+        "name": "systemstats",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1162,
+        "name": "BiomeSELFIngestor",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1163,
+        "name": "BatterySettingsIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1165,
+        "name": "IFTranscriptSELFIngestor",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1166,
+        "name": "GMSSELFIngestor",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1167,
+        "name": "fudHelperAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1168,
+        "name": "diagnosticextensionsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1170,
+        "name": "IFTelemetrySELFIngestor",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1171,
+        "name": "installcoordinationd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1172,
+        "name": "com.apple.MobileInstallationHelperService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1173,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1174,
+        "name": "backgroundassets.user",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1175,
+        "name": "fairplayd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1176,
+        "name": "appstored",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1177,
+        "name": "com.apple.AppStoreDaemon.StorePrivilegedODRService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1178,
+        "name": "promotedcontentd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1179,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1180,
+        "name": "AppleIntelligenceReportingSELFIngestor",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1181,
+        "name": "MTLCompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1183,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1184,
+        "name": "fairplaydeviceidentityd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1188,
+        "name": "com.apple.StreamingUnzipService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1222,
+        "name": "chrome_crashpad_handler",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1223,
+        "name": "1Password Helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1224,
+        "name": "1Password Helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1225,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1226,
+        "name": "CredentialProviderExtensionHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1227,
+        "name": "2BUA8C4S2C.com.1password.browser-helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1228,
+        "name": "iCloudNotificationAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1229,
+        "name": "ShortcutsViewService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1230,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1232,
+        "name": "AppPredictionIntentsHelperService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1242,
+        "name": "mdworker",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1243,
+        "name": "CalendarIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1244,
+        "name": "SafariLinkExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1245,
+        "name": "MessagesActionExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1275,
+        "name": "progressd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1276,
+        "name": "Keychain Circle Notification",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1278,
+        "name": "CloudKeychainProxy",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1284,
+        "name": "SiriSuggestionsBookkeepingService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1286,
+        "name": "tipsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1295,
+        "name": "pkd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1296,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1297,
+        "name": "containermanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1298,
+        "name": "WallpaperSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1299,
+        "name": "appinstalld",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1300,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1303,
+        "name": "AccountsUISettingsAppIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1305,
+        "name": "GameControllerSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1306,
+        "name": "NotificationsSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1307,
+        "name": "PlaceholderSettingsSearchTermsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1308,
+        "name": "FamilyIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1309,
+        "name": "SiriSetupSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1311,
+        "name": "managedappdistributiond",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1312,
+        "name": "DesktopSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1314,
+        "name": "SpotlightSettingsIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1316,
+        "name": "fpassetmanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1317,
+        "name": "ClassKitAppIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1318,
+        "name": "DateTimeIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1319,
+        "name": "MouseIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1320,
+        "name": "TimeMachineSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1321,
+        "name": "AppleAccountIntents_macOS",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1322,
+        "name": "ControlCenterSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1323,
+        "name": "TrackpadIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1324,
+        "name": "CDsAndDvDsSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1325,
+        "name": "KeyboardSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1326,
+        "name": "BiometricsAndPasswordSettingsAppIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1327,
+        "name": "CrashReporterSupportHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1328,
+        "name": "AccessibilitySettingsSearchExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1331,
+        "name": "com.apple.AppStoreDaemon.StorePrivilegedTaskService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1334,
+        "name": "remotemanagementd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1335,
+        "name": "trustd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1337,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1338,
+        "name": "SecuritySubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1339,
+        "name": "InteractiveLegacyProfilesSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1340,
+        "name": "ScreenSharingSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1343,
+        "name": "LegacyProfilesSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1345,
+        "name": "PasscodeSettingsSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1347,
+        "name": "DiskManagementSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1348,
+        "name": "ManagedPreferencesSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1349,
+        "name": "SoftwareUpdateSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1350,
+        "name": "MigrationSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1351,
+        "name": "systemmigrationd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1352,
+        "name": "iconservicesagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1353,
+        "name": "DeviceConfigurationSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1354,
+        "name": "ManagedAppsSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1355,
+        "name": "NetworkExtensionSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1356,
+        "name": "ManagementTestSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1357,
+        "name": "ManagedConfigurationFilesSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1358,
+        "name": "ProfilesSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1359,
+        "name": "AssetCacheSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1360,
+        "name": "PasswordSettingsAppIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1361,
+        "name": "AssetCacheManagerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1362,
+        "name": "ExtensibleSSOSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1363,
+        "name": "StartupDiskWidgetExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1365,
+        "name": "BluetoothSettingsAppIntentsWidgetExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1367,
+        "name": "InternationalSettingsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1369,
+        "name": "SoftwareUpdateSettingsExtensionIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1370,
+        "name": "GameCenterSettingsSearchExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1372,
+        "name": "DoNotDisturbAppIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1373,
+        "name": "PrefPaneSearchIntent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1374,
+        "name": "ClassroomDeviceExpert",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1377,
+        "name": "WiFiMacSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1378,
+        "name": "VpnSettingsIntents",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1380,
+        "name": "StorageSettingsIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1381,
+        "name": "ScreenTimeAppIntentsExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1404,
+        "name": "managedappdistributionagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1408,
+        "name": "devicecheckd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1409,
+        "name": "ndoagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1410,
+        "name": "locationaccessstored",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1411,
+        "name": "geoanalyticsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1415,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1421,
+        "name": "intelligenceplatformd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1423,
+        "name": "seputil",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1424,
+        "name": "online-auth-agent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1425,
+        "name": "feedbackd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1426,
+        "name": "adprivacyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1429,
+        "name": "homeeventsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1431,
+        "name": "weatherd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1433,
+        "name": "keychainsharingmessagingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1437,
+        "name": "managedcorespotlightd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1440,
+        "name": "dataaccessd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1441,
+        "name": "proactived",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1446,
+        "name": "dbtelemetryd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1452,
+        "name": "ValidUpdater",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1453,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1454,
+        "name": "businessservicesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1455,
+        "name": "MessagesBlastDoorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1459,
+        "name": "filevaultd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1460,
+        "name": "AuthenticationServicesAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1463,
+        "name": "PasswordBreachAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1466,
+        "name": "appleaccounttransparencyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1467,
+        "name": "CallHistorySyncHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1468,
+        "name": "imageplaygroundd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1469,
+        "name": "com.apple.Safari.SafeBrowsing.Service",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1479,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1480,
+        "name": "stickersd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1481,
+        "name": "inputanalyticsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1484,
+        "name": "facetimemessagestored",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1485,
+        "name": "RemoteManagementAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1486,
+        "name": "SafariConfigurationSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1487,
+        "name": "SecuritySubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1489,
+        "name": "InteractiveLegacyProfilesSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1490,
+        "name": "ScreenSharingSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1493,
+        "name": "LegacyProfilesSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1494,
+        "name": "PasscodeSettingsSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1495,
+        "name": "AccountSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1496,
+        "name": "DeviceConfigurationSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1497,
+        "name": "ManagedAppsSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1498,
+        "name": "NetworkExtensionSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1499,
+        "name": "ManagementTestSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1500,
+        "name": "ASConfigurationSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1502,
+        "name": "ManagedSettingsSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1503,
+        "name": "ExtensibleSSOSubscriber",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1509,
+        "name": "AppleIntelligenceReportingProcessingService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1515,
+        "name": "MTLCompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1518,
+        "name": "ASPCarryLog",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1526,
+        "name": "com.apple.geod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1527,
+        "name": "secinitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1528,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1529,
+        "name": "trustd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1531,
+        "name": "containermanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1533,
+        "name": "proactiveeventtrackerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1535,
+        "name": "microstackshot",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1537,
+        "name": "PCCAgentClientExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1539,
+        "name": "tzd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1540,
+        "name": "XProtectUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1543,
+        "name": "sysdiagnosed",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1546,
+        "name": "ecosystemd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1547,
+        "name": "GamePolicyAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1549,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1551,
+        "name": "media-indexer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1552,
+        "name": "AMPLibraryAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1553,
+        "name": "PodcastContentService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1554,
+        "name": "com.apple.BKAgentService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1555,
+        "name": "AMPArtworkAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 1558,
+        "name": "EAUpdaterService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 3034,
+        "name": "spotlightknowledged.importer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 3504,
+        "name": "fskit_agent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 3528,
+        "name": "com.apple.fskit.msdos",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 3529,
+        "name": "fskit_helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 3937,
+        "name": "XprotectService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 4310,
+        "name": "GeminiAppLauncher",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 4387,
+        "name": "crashpad_handler",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 4882,
+        "name": "naturallanguaged",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 5873,
+        "name": "colorsync.useragent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 6992,
+        "name": "UnknownSendersBlastDoorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 6993,
+        "name": "ANECompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 7109,
+        "name": "ciphermld",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 7110,
+        "name": "lskdd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 7112,
+        "name": "EscrowSecurityAlert",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 13259,
+        "name": "remindd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 13318,
+        "name": "IntelligencePlatformComputeService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 14176,
+        "name": "ioupsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 17347,
+        "name": "contentlinkingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 18389,
+        "name": "UserNotificationCenter",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 18403,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 19419,
+        "name": "DockHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 19420,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 20087,
+        "name": "diagnosticservicesd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 20321,
+        "name": "FPCKService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 20850,
+        "name": "PerfPowerServices",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 22443,
+        "name": "betaenrollmentagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 22444,
+        "name": "betaenrollmentd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 23871,
+        "name": "mlruntimed",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 26740,
+        "name": "com.apple.StreamingUnzipService.privileged",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 26744,
+        "name": "SUCoreHelperService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 27303,
+        "name": "LegacyImporterHost",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 27304,
+        "name": "LegacyImporterHost",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 27305,
+        "name": "LegacyImporterHost",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 27306,
+        "name": "LegacyImporterHost",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 27307,
+        "name": "CGPDFService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 27308,
+        "name": "CGPDFService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 27309,
+        "name": "CGPDFService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 27310,
+        "name": "CGPDFService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 28338,
+        "name": "nsattributedstringagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 28341,
+        "name": "com.apple.accessibility.mediaaccessibilityd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 28357,
+        "name": "nsattributedstringagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 28624,
+        "name": "com.apple.photos.ImageConversionService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 35360,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 37548,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 37552,
+        "name": "Orca",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 39162,
+        "name": "MTLCompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40008,
+        "name": "com.apple.SafariPlatformSupport.Helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40009,
+        "name": "CredentialProviderExtensionHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40273,
+        "name": "package_script_service",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40410,
+        "name": "crashpad_handler",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40453,
+        "name": "crashpad_handler",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40454,
+        "name": "Google Drive",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40456,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40457,
+        "name": "com.apple.WebKit.GPU",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40458,
+        "name": "com.apple.WebKit.WebContent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40459,
+        "name": "mscamerad-xpc",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40460,
+        "name": "com.apple.WebKit.Networking",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40467,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40569,
+        "name": "DFSFileProviderExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40621,
+        "name": "FinderSyncExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 40637,
+        "name": "ptpcamerad",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 42396,
+        "name": "CategoriesService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 42397,
+        "name": "ContextService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 43363,
+        "name": "studentd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 43365,
+        "name": "com.apple.CloudPhotosConfiguration",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 43370,
+        "name": "guidedbrowsingd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 44179,
+        "name": "installerauthagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 44180,
+        "name": "NRDUpdated",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 45816,
+        "name": "XProtectPluginService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 46379,
+        "name": "shazameventsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 46385,
+        "name": "netbiosd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 47964,
+        "name": "Flow macOS Widget",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 48327,
+        "name": "com.apple.MobileSoftwareUpdate.UpdateBrainService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 49420,
+        "name": "com.apple.ColorSyncXPCAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 49421,
+        "name": "MTLCompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 54142,
+        "name": "homeenergyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 58276,
+        "name": "CredentialProviderExtensionHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 59097,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 61228,
+        "name": "icloudmailagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 61318,
+        "name": "com.apple.WebKit.GPU",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 61322,
+        "name": "com.apple.WebKit.Networking",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 61341,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 61342,
+        "name": "reversetemplated",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 61488,
+        "name": "com.apple.mail.SpotlightIndexExtension",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 63668,
+        "name": "STExtractionService.privileged",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 65789,
+        "name": "wifivelocityd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 69973,
+        "name": "com.apple.WebKit.WebContent.EnhancedSecurity",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70156,
+        "name": "Managed Background Assets Helper Service",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70162,
+        "name": "griddatad",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70181,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70211,
+        "name": "containermanagerd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70212,
+        "name": "XProtect",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70227,
+        "name": "XProtect",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70228,
+        "name": "dprivacyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70243,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70308,
+        "name": "metrickitd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70349,
+        "name": "mdworker",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70355,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70356,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70371,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70375,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70376,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70377,
+        "name": "dprivacyd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70378,
+        "name": "IMAutomaticHistoryDeletionAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70451,
+        "name": "ANEStorageMaintainer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70452,
+        "name": "ANEStorageMaintainer",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70453,
+        "name": "distnoted",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70469,
+        "name": "Developer Widget",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70471,
+        "name": "cfprefsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70580,
+        "name": "contactsdonationagent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 70581,
+        "name": "avatarsd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 71088,
+        "name": "MTLCompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 71133,
+        "name": "messagesescrowd",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 71134,
+        "name": "IMTranscoderAgent",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 71151,
+        "name": "com.apple.audio.SandboxHelper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 71152,
+        "name": "MessagesBlastDoorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 71154,
+        "name": "UnknownSendersBlastDoorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 73376,
+        "name": "com.apple.CoreSimulator.CoreSimulatorService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 73390,
+        "name": "VTDecoderXPCService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 73391,
+        "name": "coreautha",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 73392,
+        "name": "simdiskimaged",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 73393,
+        "name": "SimLaunchHost.arm64",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 73394,
+        "name": "diskimagescontroller",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 73395,
+        "name": "diskimagesiod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 73907,
+        "name": "diskimagesiod",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 74260,
+        "name": "SimulatorTrampoline",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 77753,
+        "name": "PowerChime",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 77764,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83283,
+        "name": "MDRemoteServiceSupport",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83734,
+        "name": "LegacyImporterHost",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83735,
+        "name": "LegacyImporterHost",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83736,
+        "name": "LegacyImporterHost",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83737,
+        "name": "LegacyImporterHost",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83738,
+        "name": "CGPDFService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83739,
+        "name": "CGPDFService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83740,
+        "name": "CGPDFService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 83741,
+        "name": "CGPDFService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 86434,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 86703,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 86744,
+        "name": "TGOnDeviceInferenceProviderService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 86773,
+        "name": "GenerativeExperiencesSafetyInferenceProvider",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87508,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88138,
+        "name": "mediaanalysisd-access",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88153,
+        "name": "VTDecoderXPCService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88197,
+        "name": "VTEncoderXPCService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88692,
+        "name": "spotlightknowledged.updater",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88730,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 91294,
+        "name": "seserviced",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 91656,
+        "name": "chrome_crashpad_handler",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 91663,
+        "name": "Orca Helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 91666,
+        "name": "Orca Helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 91684,
+        "name": "SetStoreUpdateService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 91740,
+        "name": "Orca Helper (Renderer)",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 91762,
+        "name": "Orca Helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 91887,
+        "name": "MTLCompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 92458,
+        "name": "caffeinate",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 92720,
+        "name": "com.apple.SafariPlatformSupport.Helper",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 92887,
+        "name": "MTLCompilerService",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 99665,
+        "name": "ReportSystemMemory",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 99768,
+        "name": "crashpad_handler",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 92813,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 17520,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 17557,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 17569,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 92703,
+        "name": "login",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 92747,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 92978,
+        "name": "caffeinate",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93163,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93164,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93165,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93184,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93185,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93249,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93250,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93261,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93262,
+        "name": "context7-mcp",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93263,
+        "name": "server-brave-search",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93354,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 93376,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87291,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87309,
+        "name": "<defunct>",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87126,
+        "name": "login",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87163,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87893,
+        "name": "node_repl",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87895,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87963,
+        "name": "server-brave-search",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87964,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87965,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87966,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87967,
+        "name": "context7-mcp",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87969,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88019,
+        "name": "node_repl",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88371,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88436,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 88614,
+        "name": "codex-code-mode-host",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87162,
+        "name": "login",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87165,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 87266,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96142,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96002,
+        "name": "login",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96033,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96328,
+        "name": "codex",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96937,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96939,
+        "name": "node_repl",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96990,
+        "name": "server-brave-search",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97000,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97012,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97013,
+        "name": "context7-mcp",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97016,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97018,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97071,
+        "name": "node_repl",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97389,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97433,
+        "name": "node",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 97643,
+        "name": "codex-code-mode-host",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96031,
+        "name": "login",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96034,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96159,
+        "name": "zsh",
+        "cpuPercent": 0
+      },
+      {
+        "pid": 96177,
+        "name": "<defunct>",
+        "cpuPercent": 0
+      }
+    ],
+    "before": "  PID  PPID  %CPU      TIME COMM\n    1     0   0.1  53:33.00 launchd\n  364     1   0.0  26:40.47 logd\n  366     1   0.0   0:00.86 smd\n  367     1   0.0   0:44.83 UserEventAgent\n  369     1   0.1  36:04.42 fseventsd\n  370     1   0.0   0:11.59 mediaremoted\n  372     1   0.0   0:00.20 uarpd\n  374     1   0.0   0:31.38 systemstats\n  376     1   0.0   0:02.87 accessoryupdaterd\n  377     1   0.0   0:00.07 uarpassetmanagerd\n  378     1   0.2  12:42.77 configd\n  379     1   0.0   0:00.07 endpointsecurityd\n  380     1   0.0   2:47.94 powerd\n  381     1   0.0   0:00.65 IOMFB_bics_daemon\n  383     1   0.0   0:05.52 amfid\n  385     1   0.0   0:00.34 remoted\n  387     1   0.0   0:00.43 keybagd\n  388     1   0.0   0:00.30 softwareupdated\n  389     1   0.0   0:00.03 corespeechd_system\n  391     1   0.0   0:08.93 watchdogd\n  394     1   0.0 193:05.64 mds\n  395     1   0.0   0:00.99 iconservicesd\n  396     1   0.0   0:01.47 kernelmanagerd\n  397     1   0.0   3:35.54 diskarbitrationd\n  400     1   0.0   0:23.63 coreduetd\n  401     1   0.0   0:23.36 syslogd\n  403     1   0.0   0:43.67 thermalmonitord\n  404     1   0.0  18:13.04 contextstored\n  405     1   0.0   0:02.68 xprotectd\n  406     1   0.0   8:43.06 opendirectoryd\n  407     1   0.0   0:40.44 apsd\n  408     1   0.0  48:18.77 launchservicesd\n  409     1   0.0   0:02.33 timed\n  410     1   0.0   0:01.13 usbmuxd\n  411     1   0.0   2:44.14 securityd\n  413     1   0.0   5:04.78 locationd\n  414     1   0.0   0:01.83 nesessionmanager\n  416     1   0.0   0:00.05 autofsd\n  417     1   0.0   7:15.42 dasd\n  418     1   0.0   0:00.04 corerepaird\n  420     1   0.0   1:06.32 distnoted\n  421     1   0.0   0:00.21 AppleCredentialManagerDaemon\n  423     1   0.0   0:00.39 logind\n  424     1   0.0   0:00.45 revisiond\n  425     1   0.0   0:00.03 KernelEventAgent\n  426     1   0.0   0:00.55 peakpowermanagerd\n  427     1   0.0   0:05.66 usermanagerd\n  429     1   0.1  25:14.70 bluetoothd\n  430     1   0.0  12:35.04 notifyd\n  431     1   0.0   0:06.59 sandboxd\n  432     1   0.0   2:48.87 corebrightnessd\n  433     1   0.0   0:00.57 com.apple.cmio.registerassistantservice\n  434     1   0.0   0:00.10 aslmanager\n  435     1   0.0   0:02.67 logd_helper\n  436     1   1.7 262:38.07 WindowServer\n  437     1   0.0   1:44.50 tccd\n  438     1   0.0   0:00.22 dirhelper\n  439     1   0.0   5:28.65 cfprefsd\n  440     1   0.0  53:57.60 loginwindow\n  441     1   0.0 127:05.24 runningboardd\n  453     1   0.0   0:00.07 powerexperienced\n  463     1   0.0   0:18.88 coreservicesd\n  464     1   0.0   0:01.33 securityd_system\n  471     1   0.0   0:06.80 backupd-helper\n  472     1   0.0   0:00.99 PowerUIAgent\n  473     1   0.0   9:53.48 trustd\n  482     1   0.0   0:23.21 lsd\n  485     1   0.2  12:32.40 clocksyncd\n  493     1   0.0  21:24.62 airportd\n  494     1   0.0   2:50.51 containermanagerd_system\n  495     1   0.0   1:43.46 analyticsd\n  496     1   0.0  13:50.12 mobileassetd\n  498     1   0.0   0:09.93 nehelper\n  500     1   0.0   0:00.15 liquiddetectiond\n  501     1   0.0   2:52.74 symptomsd\n  502     1   0.0   0:05.19 authd\n  503     1   0.0   0:00.27 apfsd\n  504     1   0.0   4:47.97 nsurlsessiond\n  506     1   0.0   6:52.20 mDNSResponder\n  507     1   0.0   0:00.24 hidd\n  508     1   0.0   0:49.42 biomed\n  509     1   0.0   0:00.18 accessoryd\n  510     1   0.0   0:16.46 socketfilterfw\n  513     1   0.0  16:03.69 syspolicyd\n  514     1   0.0   0:10.19 distnoted\n  515     1   0.0 259:58.69 mds_stores\n  524     1   0.0   0:00.03 cryptexd\n  526     1   0.0   0:09.77 mDNSResponderHelper\n  527     1   0.0   0:00.72 biometrickitd\n  528     1   0.0   0:11.05 com.apple.geod\n  529     1   0.0   0:08.39 distnoted\n  530     1   0.0   0:01.17 sysextd\n  531     1   0.0   0:03.44 cloudd\n  532     1   0.0   0:11.67 backupd\n  533     1   0.0   0:08.72 distnoted\n  534     1   0.0   0:00.08 systemstatusd\n  535     1   0.0   0:00.06 secinitd\n  536     1   0.0   0:25.86 eligibilityd\n  537     1   0.0   2:13.70 com.apple.CodeSigningHelper\n  539     1   0.0   1:11.32 storagekitd\n  540     1   0.0   0:25.31 WirelessRadioManagerd\n  541     1   0.0   0:00.07 secinitd\n  542     1   0.0   0:00.07 cfprefsd\n  543     1   0.0   0:08.67 distnoted\n  544     1   0.0   0:00.08 findmybeaconingd\n  545     1   0.0   0:01.76 trustd\n  546     1   0.0   0:00.14 com.apple.cmio.videodriverkithostextension\n  547     1   0.0   0:16.38 appleh13camerad\n  548     1   0.0   0:07.52 backgroundtaskmanagementd\n  549     1   0.0   0:08.54 distnoted\n  550     1   0.0   0:00.07 containermanagerd\n  551     1   0.0   0:00.46 fskitd\n  552     1   0.0   0:00.01 com.apple.DriverKit-IOUserDockChannelSerial\n  553     1   0.3  40:19.41 com.apple.DriverKit-AppleBCMWLAN\n  554     1   0.0   8:51.18 com.apple.AppleUserHIDDrivers\n  556     1   0.0   0:40.53 com.apple.MobileAsset.DownloadService.Builtin\n  557     1   0.0   0:30.94 softwareupdated\n  558     1   0.0   0:00.38 mobileactivationd\n  560     1   0.0   0:00.12 colorsync.displayservices\n  561     1   0.0   3:16.06 searchpartyd\n  563     1   0.0   0:00.09 countryd\n  564     1   0.0   0:00.13 cameracaptured\n  565     1   0.0   0:04.65 UVCAssistant\n  566     1   0.0   0:00.50 suhelperd\n  567     1   0.0   0:08.33 distnoted\n  568     1   0.0   2:47.95 coreaudiod\n  569     1   0.0   0:00.42 PerfPowerTelemetryClientRegistrationService\n  570     1   0.0   0:42.63 triald_system\n  572     1   0.0   0:08.16 distnoted\n  573     1   0.0   0:00.02 com.apple.ColorSyncXPCAgent\n  574     1   0.0   0:00.10 colorsyncd\n  578     1   0.0   0:00.01 com.apple.audio.DriverHelper\n  581     1   0.0   0:03.61 Core Audio Driver (WaveLinkVirtualAudio.driver)\n  582     1   0.0   0:00.06 AudioComponentRegistrar\n  587     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  588     1   0.0   7:50.69 gamepolicyd\n  590     1   0.0   0:00.85 appleeventsd\n  593     1   0.0   1:55.02 audioanalyticsd\n  594     1   0.0   0:00.03 AppleDeviceQueryService\n  597     1   0.0   0:08.13 distnoted\n  598     1   0.0   0:03.18 BTLEServer\n  599     1   0.0  11:58.94 modelmanagerd\n  600     1   0.0   0:05.93 ospredictiond\n  601     1   0.0   0:00.02 writeconfig\n  602     1   0.0   0:07.53 com.apple.geod\n  603     1   0.0   0:00.07 secinitd\n  604     1   0.0   0:00.05 bootinstalld\n  605     1   0.0   0:15.60 ViewBridgeAuxiliary\n  606     1   0.0  19:36.35 modelcatalogd\n  607     1   0.0   0:00.06 cfprefsd\n  609     1   0.0   0:00.08 SetStoreUpdateService\n  612     1   0.0   0:00.37 trustd\n  613     1   0.0   0:00.07 containermanagerd\n  614     1   0.0   0:04.81 coreauthd\n  617     1   0.0   0:02.67 com.apple.hiservices-xpcservice\n  618     1   0.0   0:00.15 GSSCred\n  623     1   0.0   1:44.48 distnoted\n  624     1   0.0   0:00.38 com.apple.ifdreader\n  625     1   0.0  15:53.10 cfprefsd\n  626     1   0.0   0:57.88 wifip2pd\n  627     1   0.0   0:00.13 applekeystored\n  628     1   0.0   0:00.09 corekdld\n  629     1   0.0   0:46.01 secd\n  630     1   0.0   0:02.72 TrustedPeersHelper\n  631     1   0.0   3:21.68 UserEventAgent\n  632     1   0.0   0:10.22 gamecontrollerd\n  633     1   0.0   0:00.09 deviceconfigurationd\n  634     1   0.0   0:00.38 seld\n  635     1   0.0   0:00.12 accessoryaccessd\n  638     1   0.0   0:01.52 neagent\n  639     1   0.0   1:00.02 CoreServicesUIAgent\n  640     1   0.0   0:34.26 universalaccessd\n  641     1   0.0   0:15.62 pboard\n  642     1   0.0   5:02.17 containermanagerd\n  643     1   0.0   1:28.07 WindowManager\n  644     1   0.0   2:00.58 lsd\n  645     1   0.0   6:47.76 BiomeAgent\n  646     1   0.0   0:00.02 WiFiCloudAssetsXPCService\n  647     1   0.0   1:15.32 tccd\n  648     1   0.0   0:33.57 talagentd\n  649     1   0.0   2:47.45 Dock\n  650     1   0.6  41:47.64 ControlCenter\n  651     1   0.0   7:03.51 MenuBarAgent\n  652     1   0.0   0:29.67 SystemUIServer\n  653     1   0.0   0:12.73 secinitd\n  654     1   0.0  16:05.86 Finder\n  655     1   0.0   1:08.39 linkd\n  656     1   0.0   0:31.64 WallpaperAgent\n  659     1   0.0   8:04.34 trustd\n  661     1   0.0   0:00.16 VDCAssistant\n  662     1   0.0   0:26.17 AccessibilityVisualsAgent\n  663     1   0.0   0:00.02 csnameddatad\n  664     1   0.0   0:06.61 usernoted\n  665     1   0.0   0:00.89 dmd\n  666     1   0.0   0:26.87 QuickLookUIService\n  667     1   0.0   0:10.89 com.apple.quicklook.ThumbnailsAgent\n  668     1   0.0   0:07.06 com.apple.hiservices-xpcservice\n  669     1   0.0   0:25.69 axassetsd\n  670     1   0.0   0:25.98 AccessibilityUIServer\n  671     1   0.0   0:10.37 bird\n  672     1   0.0   0:01.44 sharedfilelistd\n  673     1   0.0   0:02.40 AirPlayXPCHelper\n  674     1   0.0   0:00.08 automountd\n  675     1   0.0   0:15.33 useractivityd\n  676     1   0.0   0:23.59 com.apple.dock.extra\n  677     1   0.0   0:12.50 iconservicesagent\n  678     1   0.0   0:22.40 com.apple.dock.external.extra.arm64\n  679     1   0.0   0:43.75 com.apple.dock.external.extra.arm64\n  680     1   0.0   9:30.85 rapportd\n  681     1   0.0   2:49.71 cloudd\n  683     1   0.0   0:35.36 CommCenter\n  684     1   0.0   0:02.78 audiomxd\n  685     1   0.0   0:00.09 APFSUserAgent\n  687     1   0.0   0:42.71 filecoordinationd\n  688     1   0.0   0:54.96 nsurlsessiond\n  689     1   0.0   3:55.56 fileproviderd\n  690     1   0.0   1:53.88 lockoutagent\n  691     1   0.0   0:01.89 systemsoundserverd\n  692     1   0.0   5:01.64 Siri AI\n  693     1   0.0   0:08.96 pkd\n  694     1   0.0   0:01.01 AMPDeviceDiscoveryAgent\n  695     1   0.0   0:08.68 com.apple.CMExtensionBroker\n  696     1   0.0   1:11.82 ContinuityCaptureAgent\n  697     1   0.0   0:21.27 ViewBridgeAuxiliary\n  698     1   0.0   1:17.43 fontd\n  699     1   0.0   0:00.25 sociallayerd\n  700     1   0.0   5:37.15 suggestd\n  701     1   0.0   0:05.73 replayd\n  702     1   0.0   4:01.82 callservicesd\n  703     1   0.0   0:19.85 wallpaperexportd\n  704     1   0.0   0:02.78 fontworker\n  706     1   0.0  22:51.02 WallpaperAerialsExtension\n  707     1   0.0   0:09.76 WallpaperImageExtension\n  708     1   0.0   0:03.93 usernotificationsd\n  709     1   0.0   0:02.54 ScreenTimeSettingsAgent\n  710     1   0.0   0:05.84 wifianalyticsd\n  711     1   0.0   0:00.35 AudioComponentRegistrar\n  713     1   0.0   0:14.94 audioaccessoryd\n  714     1   0.0   0:02.74 intelligentroutingd\n  715     1   0.0   0:00.30 liveactivitiesd\n  716     1   0.0   0:07.65 distnoted\n  717     1   0.0  17:28.96 sharingd\n  718     1   0.0   1:45.83 ContextStoreAgent\n  719     1   0.0   0:25.48 MobileDeviceUpdater\n  721     1   0.0   1:20.70 identityservicesd\n  722     1   0.0   0:43.18 networkserviceproxy\n  723     1   0.0   0:13.10 imagent\n  724     1   0.0   0:09.45 syncdefaultsd\n  725     1   0.0   0:08.04 mobiletimerd\n  726     1   0.1  58:18.83 chronod\n  727     1   0.0   0:00.10 ReportCrash\n  728     1   0.0  19:30.51 corespotlightd\n  729     1   0.0   0:00.05 SetStoreUpdateService\n  730     1   0.0   0:00.01 LoginUserService\n  731     1   0.0   0:04.07 parsecd\n  732     1   0.0   0:28.34 CoreLocationAgent\n  733     1   0.0   0:28.16 replicatord\n  734     1   0.0   0:26.43 CampoRemoteService\n  735     1   0.0   0:00.33 agentstored\n  736     1   0.0   0:00.14 usbpowerd\n  739     1   0.0   0:28.78 accountsd\n  740     1   0.0   0:03.25 filederivatived\n  741     1   0.0  15:28.10 hybridsearchd\n  743     1   0.0   0:00.66 localizationswitcherd\n  744     1   0.0   0:00.15 SetStoreUpdateService\n  745     1   0.0   8:36.98 NotificationCenter\n  747     1   0.0   0:00.08 SetStoreUpdateService\n  748     1   0.0   0:03.78 heard\n  749     1   0.0   0:01.38 corespeechd\n  751     1   0.0   0:05.54 routined\n  755     1   0.0   0:00.89 imklaunchagent\n  757     1   0.0   0:00.89 icdd\n  758     1   0.0   0:07.44 appplaceholdersyncd\n  759     1   0.0   0:23.33 watchman\n  760     1   0.0   0:04.95 askpermissiond\n  762     1   0.0   0:00.07 mobilerepaird\n  763     1   0.0   0:00.28 ManagedSettingsAgent\n  764     1   0.0   0:23.92 AirPlayUIAgent\n  765     1   0.0   0:16.65 knowledge-agent\n  767     1   0.0   2:25.18 diagnostics_agent\n  768     1   0.0   0:30.48 TextInputMenuAgent\n  770     1   0.0   0:10.70 amsaccountsd\n  772     1   0.0   0:00.18 ctkahp\n  773     1   0.0   0:00.81 com.apple.CloudDocs.iCloudDriveFileProvider\n  774     1   0.0   0:01.36 pbs\n  775     1   0.0   0:00.19 findmydeviced\n  776     1   0.0   2:01.39 photolibraryd\n  777     1   0.0   0:08.11 donotdisturbd\n  778     1   0.0   0:03.44 ctkd\n  779     1   0.0   0:00.21 Google Drive\n  781     1   0.0   0:03.04 coreauthd\n  782     1   0.0   0:10.98 transparencyd\n  783     1   0.0   0:00.05 ctkd\n  784     1   0.0   0:01.35 ScopedBookmarkAgent\n  785     1   0.0   0:11.20 akd\n  786     1   0.0   0:24.36 TextInputSwitcher\n  787     1   0.0   0:00.03 SetStoreUpdateService\n  789     1   0.0   0:01.55 findmylocateagent\n  790     1   0.0   0:08.95 com.apple.geod\n  791     1   0.0   0:44.15 triald\n  792     1   0.0   0:03.96 itunescloudd\n  794     1   0.0   0:07.12 StatusKitAgent\n  795     1   0.0   5:44.49 UIKitSystem\n  796     1   0.0   0:27.30 AppSSOAgent\n  797     1   0.0   0:00.06 SetStoreUpdateService\n  798     1   0.0   0:00.02 deviceinterfaced\n  800     1   0.0   0:02.52 MTLCompilerService\n  801     1   0.0   0:24.69 AppSSODaemon\n  802     1   0.0   0:01.04 kernelmanager_helper\n  803     1   0.0   2:00.78 CursorUIViewService\n  805     1   0.0   0:30.06 PAH_Extension\n  806     1   0.0   0:00.03 SetStoreUpdateService\n  808     1   0.0   1:47.52 KIM_Extension\n  810     1   0.0   5:49.78 usbaudiod\n  811     1   0.0   0:06.37 CalendarWidgetExtension\n  812     1   0.0   2:38.91 extensionkitservice\n  815     1   0.0   3:50.85 deleted\n  816     1   0.0   0:01.15 commerce\n  817     1   0.0   0:34.99 WeatherWidget\n  818     1   0.0   0:00.49 followupd\n  819     1   0.0  20:16.04 duetexpertd\n  820     1   0.0  25:36.41 BetterTouchTool\n  821     1   0.0   0:00.44 milod\n  822     1   0.0   9:06.08 nearbyd\n  824     1   0.0   0:32.77 BatteriesAvocadoWidgetExtension\n  825     1   0.0   1:46.55 contactsd\n  826     1   0.0   0:13.17 calaccessd\n  827     1   0.0   1:00.92 homed\n  828     1   0.0   0:07.03 CategoriesService\n  829     1   0.0   0:00.15 AppIntentsLiveEntityService\n  830     1   0.0   0:14.81 assistantd\n  831     1   0.0   4:25.83 siriactionsd\n  832     1   0.0   0:05.92 MTLAssetUpgraderD\n  833     1   0.0   0:30.07 swcd\n  834     1   0.0   0:00.79 MENotificationAgent\n  835     1   0.0   0:25.10 BackgroundTaskManagementAgent\n  836     1   0.0   0:30.50 siriknowledged\n  837     1   0.0 104:00.09 WidgetsExtension\n  838     1   0.0   0:00.04 SetStoreUpdateService\n  839     1   0.0   0:00.05 assessmentagent\n  840     1   0.0   0:01.35 ContainerMetadataExtractor\n  841     1   0.0   7:52.16 Magnet\n  842     1   0.0   0:00.13 SetStoreUpdateService\n  843     1   0.0   0:03.74 familycircled\n  844     1   0.0  20:04.76 PopClip\n  845     1   0.0   1:26.10 WiFiAgent\n  847     1   0.0   1:06.63 Alfred\n  848     1   0.0   1:09.26 generativeexperiencesd\n  849     1   0.0   0:02.41 intelligenceflowd\n  850     1   0.0   0:01.62 communicationtrustd\n  851     1   0.0   0:12.30 IMDPersistenceAgent\n  852     1   0.0   0:05.49 CMFSyncAgent\n  853     1   0.0   0:02.86 ScreenTimeAgent\n  854     1   0.0   0:00.04 SetStoreUpdateService\n  855     1   0.0   0:00.01 BetterTouchToolAppleScriptRunner\n  856     1   0.0   0:00.01 BetterTouchToolAppleScriptRunner2\n  857     1   0.0   0:00.01 BetterTouchToolAppleScriptRunner3\n  858     1   0.0   0:00.01 BetterTouchToolAppleScriptRunner4\n  859     1   0.0   0:00.01 BetterTouchToolShellScriptRunner\n  860     1   0.0   0:01.83 storekitagent\n  861     1   0.0   0:38.07 Dropover\n  863     1   0.0   0:08.22 ContextService\n  864     1   0.0   0:26.07 SoftwareUpdateNotificationManager\n  865     1   0.0   0:00.01 FindMyMacd\n  867     1   0.0   0:00.04 SetStoreUpdateService\n  876     1   0.0   0:00.17 localspeechrecognition\n  879     1   0.0   0:01.43 swtransparencyd\n  880     1   0.0   0:00.29 assistant_cdmd\n  881     1   0.0   0:26.49 Shortcuts Events\n  882     1   0.0   0:01.24 FeatureAccessAgent\n  883     1   0.0   0:00.55 TrialArchivingService\n  884     1   0.0   0:04.01 AppleSpell\n  885     1   0.0   0:06.69 osanalyticshelper\n  886     1   0.0   0:00.07 SetStoreUpdateService\n  887     1   0.0   0:00.40 intelligencecontextd\n  888     1   0.0   0:08.92 frauddefensed\n  889     1   0.0   0:01.47 appleaccountd\n  891     1   0.0   0:12.62 com.apple.AmbientDisplayAgent\n  892     1   0.0   0:00.47 speechmaintenanced\n  894     1   0.0   0:00.43 ProtectedCloudKeySyncing\n  895     1   0.0   5:43.75 spindump\n  896     1   0.0   0:00.01 com.apple.ColorSyncXPCAgent\n  897     1   0.0   0:00.03 spindump_agent\n  898     1   0.0   0:01.91 SubmitDiagInfo\n  900     1   0.0   0:00.23 crashpad_handler\n  901     1   0.0   0:00.46 keyboardservicesd\n  904     1   0.0   0:00.03 loginitemregisterd\n  905     1   0.0   0:00.06 FamilyControlsAgent\n  907     1   0.0   0:05.08 adid\n  909     1   0.0   0:01.10 maild\n  910     1   0.0   0:01.26 webprivacyd\n  912     1   0.0   0:00.04 CVMServer\n  914     1   0.0   0:01.28 sirittsd\n  915     1   0.0   0:01.08 com.apple.accessibility.mediaaccessibilityd\n  916     1   0.0   0:00.09 siriappintentsd\n  917     1   0.0   0:00.01 IOUserBluetoothSerialDriver\n  921     1   0.0   0:31.84 BTTRelaunch\n  923     1   0.0   0:00.20 DeviceConfigurationAgent\n  932     1   0.0   0:00.06 RecordWidgetExtension\n  933     1   0.0   0:32.50 deleted_helper\n  935     1   0.0   0:20.72 StocksWidget\n  936     1   0.0   0:00.03 extensionkitservice\n  937     1   0.0   0:00.03 SetStoreUpdateService\n  940   844   0.0   0:26.77 PopClipEventMonitor\n  942     1   0.0   0:30.45 universalAccessAuthWarn\n  943     1   0.0   0:20.86 JournalWidgetsSecure\n  944     1   0.0   0:20.57 JournalWidgets\n  945     1   0.0   0:00.05 WeatherIntents\n  946     1   0.0   0:34.07 HomeWidget\n  948     1   0.0   0:00.06 SetStoreUpdateService\n  949     1   0.0   0:35.89 HomeEnergyWidgetsExtension\n  950     1   0.0   0:22.05 PodcastsWidget\n  952     1   0.0   0:00.06 ScreenTimeWidgetExtension\n  953     1   0.0   0:21.50 WorldClockWidget\n  954     1   0.0   0:00.07 FindMyWidgetItems\n  955     1   0.0   0:00.06 FindMyWidgetPeople\n  956     1   0.0   0:00.09 ScreenTimeWidgetIntentsExtension\n  957     1   0.0   0:00.09 HomeWidgetIntentsExtension\n  958     1   0.0   0:00.18 com.apple.MobileSoftwareUpdate.CleanupPreparePathService\n  959     1   0.0   0:00.04 VoiceMemosSettingsWidgetExtension\n  960     1   0.0   0:06.50 coresymbolicationd\n  961     1   0.0   0:38.42 searchpartyuseragent\n  962     1   0.0   0:01.66 lockdownmoded\n  963     1   0.0   0:00.05 MobileTimerIntents\n  967     1   0.0   0:00.10 com.apple.FaceTime.FTConversationService\n  968     1   0.0   0:02.46 translationd\n  969     1   0.0   0:01.24 findmydevice-user-agent\n  971     1   0.0   0:00.79 avconferenced\n  972     1   0.0   0:00.23 mediaremoteagent\n  973     1   0.0   0:00.05 CoreThreadCommissionerServiced\n  976     1   0.0   0:00.04 AudioConverterService\n  977     1   0.0   0:00.05 AudioConverterHardenedService\n  978     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  979     1   0.0   0:00.06 ReportCrash\n  982     1   0.0   0:00.04 com.apple.audio.SandboxHelper\n  983     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  984     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  987     1   0.0   0:00.06 SetStoreUpdateService\n  989     1   0.0   0:00.26 captiveagent\n  990     1   0.0   1:45.13 UniversalControl\n  993     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  994     1   0.0   0:33.05 SidecarRelay\n  996     1   0.0   1:13.76 photoanalysisd\n  998     1   0.0   0:03.32 rtcreportingd\n 1000     1   0.0   0:00.66 AssetCacheLocatorService\n 1001     1   0.0  18:53.74 aned\n 1002     1   0.0   0:05.53 financed\n 1003     1   0.0   0:18.45 mdbulkimport\n 1004     1   0.0   0:00.26 AssetCache\n 1005     1   0.0   0:01.13 privatecloudcomputed\n 1009     1   0.0   0:22.86 amsengagementd\n 1010     1   0.0   0:42.27 UsageTrackingAgent\n 1011     1   0.0   0:03.27 cloudtelemetryd\n 1012     1   0.0   0:01.26 bluetoothuserd\n 1013     1   0.0   0:08.18 mlhostd\n 1015     1   0.0   0:00.80 cdpd\n 1016     1   0.0   0:25.87 SafariBookmarksSyncAgent\n 1017     1   0.0   0:00.16 SafariLaunchAgent\n 1018     1   0.0   0:07.67 distnoted\n 1023     1   0.0   0:00.51 mapssyncd\n 1024     1   0.0   0:00.21 BTLEServerAgent\n 1025     1   0.0   0:00.16 UARPAssetManagerServiceiCloud\n 1026     1   0.0   0:01.00 com.apple.sbd\n 1027     1   0.0   0:00.16 UARPAssetManagerServiceMobileAsset\n 1029     1   0.0   0:08.88 cloudphotod\n 1030     1   0.0   0:00.14 AssetCacheTetheratorService\n 1032     1   0.0   0:00.13 TrialArchivingService\n 1033     1   0.0   0:01.60 SetStoreUpdateService\n 1036     1   0.0   0:00.23 com.apple.Safari.History\n 1038     1   0.0   0:00.24 cksharingmanagementd\n 1046     1   0.0   0:00.01 bash\n 1056  1046   2.6 192:55.39 Stats\n 1057     1   0.0   0:00.04 com.apple.audio.SandboxHelper\n 1058     1   0.0   0:00.51 mmaintenanced\n 1059     1   0.0   0:00.08 MauiAUSP\n 1060     1   0.0   0:02.23 analyticsagent\n 1061     1   0.0   0:00.08 WardaSynthesizer\n 1062     1   0.0   0:00.29 visualintelligenced\n 1063     1   0.0   0:05.29 jetpackassetd\n 1064     1   0.0   0:00.14 SiriAUSP\n 1065     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n 1066     1   0.0   0:00.73 UARPUpdaterServiceDisplay\n 1067     1   0.0   0:02.77 UARPUpdaterServiceUSBPD\n 1068     1   0.0   0:00.05 UARPUpdaterServiceLegacyAudio\n 1069     1   0.0   0:00.04 UARPUpdaterServiceHID\n 1070     1   0.0   0:00.03 UARPUpdaterServiceAFU\n 1072     1   0.0   0:00.18 aneuserd\n 1073     1   0.0   0:00.49 recentsd\n 1074     1   0.0   0:00.09 MacinTalkAUSP\n 1075     1   0.0   0:00.14 KonaSynthesizer\n 1080     1   0.0   0:00.38 AssetCacheLocatorService\n 1085     1   0.0   0:00.19 SetStoreUpdateService\n 1087     1   0.0   0:06.76 postersyncd\n 1088     1   0.0   0:00.08 localspeechrecognition\n 1089     1   0.0   0:00.17 localspeechrecognition\n 1090     1   0.0   0:00.04 SetStoreUpdateService\n 1091     1   0.0   0:00.15 IDSBlastDoorService\n 1092     1   0.0   0:00.14 UnknownSendersBlastDoorService\n 1093     1   0.0   0:00.10 AUCrashHandlerService\n 1094     1   0.0   0:07.63 distnoted\n 1095     1   0.0   0:00.38 SetStoreUpdateService\n 1096     1   0.0  15:29.58 textunderstandingd\n 1097     1   0.0   0:03.94 peopled\n 1098     1   0.0   0:31.20 SetStoreUpdateService\n 1099     1   0.0   0:03.62 siriinferenced\n 1100     1   0.0   0:00.02 WiFiCloudAssetsXPCService\n 1102     1   0.0   0:00.17 textcontextd\n 1103     1   0.0   0:00.20 MessagesBlastDoorService\n 1105     1   0.0   0:06.24 Messages Assistant Extension\n 1106     1   0.0   0:04.96 com.apple.StreamingUnzipService\n 1107     1   0.0   0:13.14 ModelCatalogAgent\n 1108     1   0.0  82:45.82 TGOnDeviceInferenceProviderService\n 1109     1   0.0   0:07.32 distnoted\n 1110     1   0.0   0:00.03 com.apple.tonelibraryd\n 1113     1   0.0   0:00.22 ThunderboltAccessoryUpdaterService\n 1114     1   0.0   0:00.07 com.apple.audio.SandboxHelper\n 1115     1   0.0   0:00.04 com.apple.audio.SandboxHelper\n 1116     1   0.0   0:00.41 StandaloneHIDAudService\n 1118     1   0.0   0:09.90 gamecontrolleragentd\n 1120     1   0.0   0:00.37 symptomsd-diag\n 1121     1   0.0   0:00.14 SetStoreUpdateService\n 1123     1   0.0   0:00.04 DiskUnmountWatcher\n 1125     1   0.0   0:32.32 eu.exelban.Stats.SMC.Helper\n 1127     1   0.0   0:08.48 XProtectPluginService\n 1129     1   0.0   0:00.86 nfcd\n 1130     1   0.0   0:00.22 geodMachServiceBridge\n 1131     1   0.0   0:00.21 intelligencetasksd\n 1132     1   0.0   0:12.80 amsondevicestoraged\n 1133     1   0.0   0:00.02 NFStorageServer\n 1134     1   0.0   0:07.55 distnoted\n 1136     1   0.0   6:41.53 installd\n 1137     1   0.0   0:02.74 system_installd\n 1138     1   0.0   0:00.02 com.apple.audio.SandboxHelper\n 1139     1   0.0   0:00.04 com.apple.audio.SandboxHelper\n 1140     1   0.0   0:00.05 com.apple.audio.SandboxHelper\n 1142     1   0.0   1:28.02 appstoreagent\n 1143     1   0.0   0:00.13 SAExtensionOrchestrator\n 1144     1   0.0   0:13.12 assetsubscriptiond\n 1145     1   0.0   0:00.07 com.apple.audio.SandboxHelper\n 1146     1   0.0   1:55.31 sysmond\n 1147     1   0.0   0:00.45 voicebankingd\n 1149     1   0.0   0:00.23 StocksKitService\n 1150     1   0.0   0:02.23 passd\n 1152     1   0.0   0:02.88 XProtectBridgeService\n 1155     1   0.0   0:03.51 SetStoreUpdateService\n 1158   374   0.0   0:00.66 systemstats\n 1162     1   0.0   0:00.07 BiomeSELFIngestor\n 1163     1   0.0   0:00.62 BatterySettingsIntentsExtension\n 1165     1   0.0   0:00.06 IFTranscriptSELFIngestor\n 1166     1   0.0   0:00.35 GMSSELFIngestor\n 1167     1   0.0   0:00.03 fudHelperAgent\n 1168     1   0.0   0:00.29 diagnosticextensionsd\n 1170     1   0.0   0:00.04 IFTelemetrySELFIngestor\n 1171     1   0.0   0:01.27 installcoordinationd\n 1172     1   0.0   0:02.55 com.apple.MobileInstallationHelperService\n 1173     1   0.0   0:07.80 distnoted\n 1174     1   0.0   0:00.07 backgroundassets.user\n 1175     1   0.0   0:00.17 fairplayd\n 1176     1   0.0   0:06.22 appstored\n 1177     1   0.0   0:00.04 com.apple.AppStoreDaemon.StorePrivilegedODRService\n 1178     1   0.0   0:02.78 promotedcontentd\n 1179     1   0.0   0:00.32 SetStoreUpdateService\n 1180     1   0.0   0:00.53 AppleIntelligenceReportingSELFIngestor\n 1181     1   0.0   0:00.22 MTLCompilerService\n 1183     1   0.0   0:02.43 SetStoreUpdateService\n 1184     1   0.0   0:01.70 fairplaydeviceidentityd\n 1188     1   0.0   0:03.31 com.apple.StreamingUnzipService\n 1215     1   0.0   3:04.82 1Password\n 1222     1   0.0   0:00.02 chrome_crashpad_handler\n 1223  1215   0.0   0:23.61 1Password Helper\n 1224  1215   0.0   0:08.24 1Password Helper\n 1225     1   0.0   0:00.04 SetStoreUpdateService\n 1226     1   0.0   0:00.62 CredentialProviderExtensionHelper\n 1227     1   0.0   0:25.48 2BUA8C4S2C.com.1password.browser-helper\n 1228     1   0.0   0:01.47 iCloudNotificationAgent\n 1229     1   0.0   0:25.52 ShortcutsViewService\n 1230     1   0.0   0:01.90 SetStoreUpdateService\n 1231  1215   0.0   0:40.09 1Password-Crash-Handler\n 1232     1   0.0   0:07.45 AppPredictionIntentsHelperService\n 1242     1   0.0   0:23.11 mdworker\n 1243     1   0.0   0:00.07 CalendarIntentsExtension\n 1244     1   0.0   0:00.08 SafariLinkExtension\n 1245     1   0.0   0:00.12 MessagesActionExtension\n 1275     1   0.0   0:00.36 progressd\n 1276     1   0.0   0:25.39 Keychain Circle Notification\n 1278     1   0.0   0:00.14 CloudKeychainProxy\n 1284     1   0.0   0:00.33 SiriSuggestionsBookkeepingService\n 1286     1   0.0   0:03.71 tipsd\n 1295     1   0.0   0:00.18 pkd\n 1296     1   0.0   0:00.09 cfprefsd\n 1297     1   0.0   0:00.09 containermanagerd\n 1298     1   0.0   0:00.26 WallpaperSettingsIntents\n 1299     1   0.0   0:15.39 appinstalld\n 1300     1   0.0   0:07.85 distnoted\n 1303     1   0.0   0:00.32 AccountsUISettingsAppIntents\n 1305     1   0.0   0:00.10 GameControllerSettingsIntents\n 1306     1   0.0   0:01.65 NotificationsSettingsIntents\n 1307     1   0.0   0:04.63 PlaceholderSettingsSearchTermsIntents\n 1308     1   0.0   0:00.38 FamilyIntents\n 1309     1   0.0   0:01.88 SiriSetupSettingsIntents\n 1311     1   0.0   0:02.10 managedappdistributiond\n 1312     1   0.0   0:01.31 DesktopSettingsIntents\n 1314     1   0.0   0:00.20 SpotlightSettingsIntentsExtension\n 1316     1   0.0   0:00.36 fpassetmanagerd\n 1317     1   0.0   0:00.11 ClassKitAppIntents\n 1318     1   0.0   0:00.53 DateTimeIntentsExtension\n 1319     1   0.0   0:12.30 MouseIntentsExtension\n 1320     1   0.0   0:00.21 TimeMachineSettingsIntents\n 1321     1   0.0   0:00.53 AppleAccountIntents_macOS\n 1322     1   0.0   0:01.23 ControlCenterSettingsIntents\n 1323     1   0.0   0:01.06 TrackpadIntentsExtension\n 1324     1   0.0   0:00.10 CDsAndDvDsSettingsIntents\n 1325     1   0.0   0:00.82 KeyboardSettingsIntents\n 1326     1   0.0   0:00.21 BiometricsAndPasswordSettingsAppIntentsExtension\n 1327     1   0.0   0:00.03 CrashReporterSupportHelper\n 1328     1   0.0   0:06.96 AccessibilitySettingsSearchExtension\n 1331     1   0.0   0:00.05 com.apple.AppStoreDaemon.StorePrivilegedTaskService\n 1334     1   0.0   0:00.25 remotemanagementd\n 1335     1   0.0   0:01.33 trustd\n 1337     1   0.0   0:07.61 distnoted\n 1338     1   0.0   0:00.08 SecuritySubscriber\n 1339     1   0.0   0:00.08 InteractiveLegacyProfilesSubscriber\n 1340     1   0.0   0:00.09 ScreenSharingSubscriber\n 1343     1   0.0   0:00.08 LegacyProfilesSubscriber\n 1345     1   0.0   0:00.08 PasscodeSettingsSubscriber\n 1347     1   0.0   0:00.07 DiskManagementSubscriber\n 1348     1   0.0   0:00.09 ManagedPreferencesSubscriber\n 1349     1   0.0   0:00.09 SoftwareUpdateSubscriber\n 1350     1   0.0   0:00.11 MigrationSubscriber\n 1351     1   0.0   0:00.21 systemmigrationd\n 1352     1   0.0   0:00.07 iconservicesagent\n 1353     1   0.0   0:00.09 DeviceConfigurationSubscriber\n 1354     1   0.0   0:00.09 ManagedAppsSubscriber\n 1355     1   0.0   0:00.11 NetworkExtensionSubscriber\n 1356     1   0.0   0:00.07 ManagementTestSubscriber\n 1357     1   0.0   0:00.08 ManagedConfigurationFilesSubscriber\n 1358     1   0.0   0:00.13 ProfilesSettingsIntents\n 1359     1   0.0   0:00.09 AssetCacheSubscriber\n 1360     1   0.0   0:00.16 PasswordSettingsAppIntentsExtension\n 1361     1   0.0   0:00.08 AssetCacheManagerService\n 1362     1   0.0   0:00.08 ExtensibleSSOSubscriber\n 1363     1   0.0   0:00.13 StartupDiskWidgetExtension\n 1365     1   0.0   0:00.37 BluetoothSettingsAppIntentsWidgetExtension\n 1367     1   0.0   0:00.23 InternationalSettingsExtension\n 1369     1   0.0   0:00.15 SoftwareUpdateSettingsExtensionIntents\n 1370     1   0.0   0:00.15 GameCenterSettingsSearchExtension\n 1372     1   0.0   0:00.26 DoNotDisturbAppIntents\n 1373     1   0.0   0:00.14 PrefPaneSearchIntent\n 1374     1   0.0   0:00.13 ClassroomDeviceExpert\n 1377     1   0.0   0:00.37 WiFiMacSettingsIntents\n 1378     1   0.0   0:00.14 VpnSettingsIntents\n 1380     1   0.0   0:00.13 StorageSettingsIntentsExtension\n 1381     1   0.0   0:00.30 ScreenTimeAppIntentsExtension\n 1404     1   0.0   0:02.09 managedappdistributionagent\n 1408     1   0.0   0:00.76 devicecheckd\n 1409     1   0.0   0:00.99 ndoagent\n 1410     1   0.0   0:00.47 locationaccessstored\n 1411     1   0.0   0:00.53 geoanalyticsd\n 1415     1   0.0   0:00.07 com.apple.audio.SandboxHelper\n 1421     1   0.0   0:00.55 intelligenceplatformd\n 1423     1   0.0   0:00.13 seputil\n 1424     1   0.0   0:00.21 online-auth-agent\n 1425     1   0.0   0:00.26 feedbackd\n 1426     1   0.0   0:01.24 adprivacyd\n 1429     1   0.0   0:00.19 homeeventsd\n 1431     1   0.0   0:00.30 weatherd\n 1433     1   0.0   0:00.21 keychainsharingmessagingd\n 1437     1   0.0   0:08.74 managedcorespotlightd\n 1440     1   0.0   1:09.87 dataaccessd\n 1441     1   0.0   0:03.59 proactived\n 1446     1   0.0   0:03.67 dbtelemetryd\n 1452     1   0.0   0:08.55 ValidUpdater\n 1453     1   0.0   0:00.08 SetStoreUpdateService\n 1454     1   0.0   0:01.80 businessservicesd\n 1455     1   0.0   0:00.16 MessagesBlastDoorService\n 1459     1   0.0   0:02.12 filevaultd\n 1460     1   0.0   0:02.90 AuthenticationServicesAgent\n 1463     1   0.0   0:05.75 PasswordBreachAgent\n 1466     1   0.0   0:00.21 appleaccounttransparencyd\n 1467     1   0.0   0:02.59 CallHistorySyncHelper\n 1468     1   0.0   0:00.27 imageplaygroundd\n 1469     1   0.0   1:22.37 com.apple.Safari.SafeBrowsing.Service\n 1479     1   0.0   0:01.37 SetStoreUpdateService\n 1480     1   0.0   0:00.56 stickersd\n 1481     1   0.0   0:00.60 inputanalyticsd\n 1484     1   0.0   0:02.79 facetimemessagestored\n 1485     1   0.0   0:00.24 RemoteManagementAgent\n 1486     1   0.0   0:00.09 SafariConfigurationSubscriber\n 1487     1   0.0   0:00.08 SecuritySubscriber\n 1489     1   0.0   0:00.07 InteractiveLegacyProfilesSubscriber\n 1490     1   0.0   0:00.08 ScreenSharingSubscriber\n 1493     1   0.0   0:00.08 LegacyProfilesSubscriber\n 1494     1   0.0   0:00.08 PasscodeSettingsSubscriber\n 1495     1   0.0   0:00.14 AccountSubscriber\n 1496     1   0.0   0:00.09 DeviceConfigurationSubscriber\n 1497     1   0.0   0:00.08 ManagedAppsSubscriber\n 1498     1   0.0   0:00.12 NetworkExtensionSubscriber\n 1499     1   0.0   0:00.08 ManagementTestSubscriber\n 1500     1   0.0   0:00.09 ASConfigurationSubscriber\n 1502     1   0.0   0:00.09 ManagedSettingsSubscriber\n 1503     1   0.0   0:00.08 ExtensibleSSOSubscriber\n 1509     1   0.0   0:33.06 AppleIntelligenceReportingProcessingService\n 1515     1   0.0   0:00.63 MTLCompilerService\n 1518     1   0.0   0:00.11 ASPCarryLog\n 1526     1   0.0   0:06.86 com.apple.geod\n 1527     1   0.0   0:00.09 secinitd\n 1528     1   0.0   0:00.14 cfprefsd\n 1529     1   0.0   0:00.56 trustd\n 1531     1   0.0   0:00.11 containermanagerd\n 1533     1   0.0   0:00.72 proactiveeventtrackerd\n 1535     1   0.0   0:00.03 microstackshot\n 1537     1   0.0   0:00.17 PCCAgentClientExtension\n 1539     1   0.0   0:00.24 tzd\n 1540     1   0.0   0:00.12 XProtectUpdateService\n 1543     1   0.0   0:00.04 sysdiagnosed\n 1546     1   0.0   0:00.27 ecosystemd\n 1547     1   0.0   0:31.46 GamePolicyAgent\n 1549     1   0.0   0:07.65 distnoted\n 1551     1   0.0   0:00.49 media-indexer\n 1552     1   0.0   0:04.09 AMPLibraryAgent\n 1553     1   0.0   0:00.06 PodcastContentService\n 1554     1   0.0   0:00.12 com.apple.BKAgentService\n 1555     1   0.0   0:00.48 AMPArtworkAgent\n 1558     1   0.0   0:00.10 EAUpdaterService\n 3034     1   0.0   0:01.91 spotlightknowledged.importer\n 3504     1   0.0   0:00.56 fskit_agent\n 3528     1   0.0   0:00.03 com.apple.fskit.msdos\n 3529     1   0.0   0:00.02 fskit_helper\n 3937     1   0.0   2:22.25 XprotectService\n 4310     1   0.0   0:24.28 GeminiAppLauncher\n 4387     1   0.0   0:00.21 crashpad_handler\n 4882     1   0.0   0:02.24 naturallanguaged\n 5873     1   0.0   0:00.06 colorsync.useragent\n 6992     1   0.0   0:00.07 UnknownSendersBlastDoorService\n 6993     1   0.0   2:32.85 ANECompilerService\n 7109     1   0.0   0:33.39 ciphermld\n 7110     1   0.0   0:04.79 lskdd\n 7112     1   0.0   0:00.21 EscrowSecurityAlert\n13259     1   0.0   0:00.77 remindd\n13318     1   0.0   0:14.82 IntelligencePlatformComputeService\n14176     1   0.0   0:00.02 ioupsd\n17347     1   0.0   3:29.44 contentlinkingd\n18389     1   0.0   0:43.38 UserNotificationCenter\n18403     1   0.0   0:00.03 SetStoreUpdateService\n19419     1   0.0   0:43.95 DockHelper\n19420     1   0.0   0:00.03 SetStoreUpdateService\n20087     1   0.0   0:00.44 diagnosticservicesd\n20321     1   0.0   0:39.01 FPCKService\n20850     1   0.8   1:59.44 PerfPowerServices\n22159 87362   0.0   0:00.41 node\n22443     1   0.0   0:00.96 betaenrollmentagent\n22444     1   0.0   0:00.09 betaenrollmentd\n23871     1   0.0   0:00.08 mlruntimed\n26740     1   0.0   1:01.86 com.apple.StreamingUnzipService.privileged\n26744     1   0.0   0:04.00 SUCoreHelperService\n27303     1   0.0   0:00.34 LegacyImporterHost\n27304     1   0.0   0:00.33 LegacyImporterHost\n27305     1   0.0   0:00.34 LegacyImporterHost\n27306     1   0.0   0:00.33 LegacyImporterHost\n27307     1   0.0   0:00.48 CGPDFService\n27308     1   0.0   0:00.40 CGPDFService\n27309     1   0.0   0:00.63 CGPDFService\n27310     1   0.0   0:00.72 CGPDFService\n28338     1   0.0   0:01.06 nsattributedstringagent\n28341     1   0.0   0:00.05 com.apple.accessibility.mediaaccessibilityd\n28357     1   0.0   0:20.34 nsattributedstringagent\n28624     1   0.0   0:05.66 com.apple.photos.ImageConversionService\n35360     1   0.0   0:00.09 SetStoreUpdateService\n37548 92977   0.0   0:00.01 zsh\n37552 37548   0.0   0:00.36 Orca\n39162     1   0.0   0:07.72 MTLCompilerService\n40008     1   0.0   0:34.50 com.apple.SafariPlatformSupport.Helper\n40009     1   0.0   0:00.21 CredentialProviderExtensionHelper\n40273     1   0.0   0:00.04 package_script_service\n40410     1   0.0   0:00.01 crashpad_handler\n40453     1   0.0   0:00.01 crashpad_handler\n40454   779   0.0   0:01.57 Google Drive\n40456     1   0.0   0:00.03 SetStoreUpdateService\n40457     1   0.0   0:00.17 com.apple.WebKit.GPU\n40458     1   0.0   0:00.51 com.apple.WebKit.WebContent\n40459     1   0.0   0:00.01 mscamerad-xpc\n40460     1   0.0   0:00.07 com.apple.WebKit.Networking\n40467     1   0.0   0:00.02 com.apple.audio.SandboxHelper\n40569     1   0.0   0:00.13 DFSFileProviderExtension\n40621     1   0.0   0:00.23 FinderSyncExtension\n40637     1   0.0   0:00.07 ptpcamerad\n42396     1   0.0   0:00.04 CategoriesService\n42397     1   0.0   0:00.05 ContextService\n43363     1   0.0   0:21.29 studentd\n43365     1   0.0   0:00.90 com.apple.CloudPhotosConfiguration\n43370     1   0.0   0:00.05 guidedbrowsingd\n44179     1   0.0   0:00.03 installerauthagent\n44180     1   0.0   0:00.05 NRDUpdated\n45816     1   0.0   0:08.10 XProtectPluginService\n46379     1   0.0   0:01.48 shazameventsd\n46385     1   0.0   0:00.32 netbiosd\n47964     1   0.0   0:00.19 Flow macOS Widget\n48327     1   0.0  14:16.50 com.apple.MobileSoftwareUpdate.UpdateBrainService\n49420     1   0.0   0:00.02 com.apple.ColorSyncXPCAgent\n49421     1   0.0   0:00.10 MTLCompilerService\n54142     1   0.0   0:00.74 homeenergyd\n58276     1   0.0   0:00.19 CredentialProviderExtensionHelper\n59097     1   0.0   0:00.12 SetStoreUpdateService\n61228     1   0.0   0:22.48 icloudmailagent\n61318     1   0.0   0:22.14 com.apple.WebKit.GPU\n61322     1   0.0   0:25.85 com.apple.WebKit.Networking\n61341     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n61342     1   0.0   3:41.71 reversetemplated\n61488     1   0.0   0:01.59 com.apple.mail.SpotlightIndexExtension\n63609     1   0.0   0:00.21 mdworker_shared\n63668     1   0.0   3:00.95 STExtractionService.privileged\n63697     1   0.0   0:00.12 mdworker_shared\n64415 22159   0.0   0:00.00 ps\n65789     1   0.0   0:00.73 wifivelocityd\n65922     1   0.0  82:16.58 mediaanalysisd\n69973     1   0.0   0:00.17 com.apple.WebKit.WebContent.EnhancedSecurity\n70156     1   0.0   0:00.12 Managed Background Assets Helper Service\n70162     1   0.0   0:00.05 griddatad\n70181     1   0.0   0:00.12 cfprefsd\n70211     1   0.0   0:00.10 containermanagerd\n70212     1   0.0   0:00.13 XProtect\n70227     1   0.0   0:00.24 XProtect\n70228     1   0.0   0:00.65 dprivacyd\n70243     1   0.0   0:00.09 cfprefsd\n70308     1   0.0   0:00.14 metrickitd\n70349     1   0.0   0:00.18 mdworker\n70355     1   0.0   0:00.10 cfprefsd\n70356     1   0.0   0:00.09 cfprefsd\n70371     1   0.0   0:00.09 cfprefsd\n70375     1   0.0   0:00.09 cfprefsd\n70376     1   0.0   0:00.08 cfprefsd\n70377     1   0.0   0:00.16 dprivacyd\n70378     1   0.0   0:00.20 IMAutomaticHistoryDeletionAgent\n70451     1   0.0   0:00.31 ANEStorageMaintainer\n70452     1   0.0   0:00.03 ANEStorageMaintainer\n70453     1   0.0   0:07.30 distnoted\n70469     1   0.0   0:00.11 Developer Widget\n70471     1   0.0   0:00.05 cfprefsd\n70580     1   0.0   0:05.70 contactsdonationagent\n70581     1   0.0   0:00.34 avatarsd\n71088     1   0.0   0:00.14 MTLCompilerService\n71133     1   0.0   0:00.05 messagesescrowd\n71134     1   0.0   0:00.18 IMTranscoderAgent\n71151     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n71152     1   0.0   0:00.06 MessagesBlastDoorService\n71154     1   0.0   0:00.12 UnknownSendersBlastDoorService\n73376     1   0.0   0:07.45 com.apple.CoreSimulator.CoreSimulatorService\n73390     1   0.0  10:59.31 VTDecoderXPCService\n73391     1   0.0   0:25.03 coreautha\n73392     1   0.0   0:30.79 simdiskimaged\n73393     1   0.0   0:00.04 SimLaunchHost.arm64\n73394     1   0.0   0:00.04 diskimagescontroller\n73395     1   0.0   0:46.15 diskimagesiod\n73907     1   0.0   0:50.40 diskimagesiod\n74260     1   0.0   0:06.65 SimulatorTrampoline\n77753     1   0.0   0:18.08 PowerChime\n77764     1   0.0   0:00.05 SetStoreUpdateService\n83283     1   0.0   0:00.06 MDRemoteServiceSupport\n83734     1   0.0   0:00.51 LegacyImporterHost\n83735     1   0.0   0:00.52 LegacyImporterHost\n83736     1   0.0   0:00.48 LegacyImporterHost\n83737     1   0.0   0:00.46 LegacyImporterHost\n83738     1   0.0   0:01.01 CGPDFService\n83739     1   0.0   0:00.74 CGPDFService\n83740     1   0.0   0:00.96 CGPDFService\n83741     1   0.0   0:00.98 CGPDFService\n86434     1   0.0   0:00.05 SetStoreUpdateService\n86703     1   0.0   0:00.30 SetStoreUpdateService\n86744     1   0.0  22:43.31 TGOnDeviceInferenceProviderService\n86773     1   0.0   4:57.38 GenerativeExperiencesSafetyInferenceProvider\n87508     1   0.0   0:00.03 SetStoreUpdateService\n88138     1   0.0   0:04.47 mediaanalysisd-access\n88153     1   0.0   0:03.53 VTDecoderXPCService\n88197     1   0.0   0:03.69 VTEncoderXPCService\n88692     1   0.0   7:53.11 spotlightknowledged.updater\n88730     1   0.0   0:04.10 SetStoreUpdateService\n91294     1   0.0   0:00.24 seserviced\n91625     1   0.6   5:26.10 Orca\n91656     1   0.0   0:00.01 chrome_crashpad_handler\n91663 91625   0.0  13:04.80 Orca Helper\n91666 91625   0.0   0:01.42 Orca Helper\n91684     1   0.0   0:00.05 SetStoreUpdateService\n91740 91625   0.0  19:13.24 Orca Helper (Renderer)\n91762 91625   0.0   0:19.92 Orca Helper\n91887     1   0.0   0:00.31 MTLCompilerService\n92110     1   0.8   2:07.15 orca-terminal-host\n92458 91625   0.0   0:00.00 caffeinate\n92720     1   0.0   0:05.97 com.apple.SafariPlatformSupport.Helper\n92887     1   0.0   0:00.19 MTLCompilerService\n99665     1   0.0   0:00.08 ReportSystemMemory\n99768     1   0.0   0:00.17 crashpad_handler\n92813 92747   0.0   0:00.02 zsh\n17520 92977   0.0   0:01.08 node\n17557 17520   0.0   0:00.75 node\n17558 17520   0.1   1:37.41 node\n17569 17558   0.0   0:00.39 node\n92703 92110   0.0   0:00.05 login\n92747 92703   0.0   0:00.19 zsh\n92977 92747   0.5  15:06.83 2.1.312\n92978 92977   0.0   0:00.03 caffeinate\n93163 92977   0.0   0:42.38 node\n93164 92977   0.0   0:00.46 node\n93165 92977   0.0   0:00.41 node\n93184 92977   0.0   0:00.39 node\n93185 92977   0.0   0:00.38 node\n93249 92977   0.0   0:00.38 node\n93250 92977   0.0   0:00.39 node\n93261 92977   0.0   0:00.39 node\n93262 92977   0.0   0:02.47 context7-mcp\n93263 92977   0.0   0:02.50 server-brave-search\n93354 93263   0.0   0:00.44 node\n93376 93262   0.0   0:00.45 node\n87291 87163   0.0   0:00.01 zsh\n87309 87291   0.0   0:00.00 <defunct>\n87126 92110   0.0   0:00.05 login\n87163 87126   0.0   0:00.17 zsh\n87362 87163   1.4   3:35.35 codex\n87893 87362   0.0   0:00.10 node_repl\n87895 87362   0.0   0:00.17 node\n87963 87362   0.0   0:01.58 server-brave-search\n87964 87362   0.0   0:00.27 node\n87965 87362   0.0   0:00.25 node\n87966 87362   0.0   0:00.25 node\n87967 87362   0.0   0:01.58 context7-mcp\n87969 87362   0.0   0:12.13 node\n88019 87895   0.0   0:00.21 node_repl\n88371 87967   0.0   0:00.49 node\n88436 87963   0.0   0:00.23 node\n88614 87362   0.0   0:01.69 codex-code-mode-host\n87162 92110   0.0   0:00.04 login\n87165 87162   0.0   0:00.23 zsh\n87266 87165   0.0   0:00.01 zsh\n96142 96034   0.0   0:00.01 zsh\n96002 92110   0.0   0:00.05 login\n96033 96002   0.0   0:00.31 zsh\n96328 96033   0.0   1:22.83 codex\n96937 96328   0.0   0:00.05 node\n96939 96328   0.0   0:00.11 node_repl\n96990 96328   0.0   0:01.49 server-brave-search\n97000 96328   0.0   0:00.31 node\n97012 96328   0.0   0:00.33 node\n97013 96328   0.0   0:01.63 context7-mcp\n97016 96328   0.0   0:00.32 node\n97018 96328   0.0   0:00.33 node\n97071 96937   0.0   0:00.22 node_repl\n97389 97013   0.0   0:00.53 node\n97433 96990   0.0   0:00.32 node\n97643 96328   0.0   0:00.49 codex-code-mode-host\n96031 92110   0.0   0:00.05 login\n96034 96031   0.0   0:00.24 zsh\n96159 96033   0.0   0:00.01 zsh\n96177 96159   0.0   0:00.00 <defunct>\n",
+    "after": "  PID  PPID  %CPU      TIME COMM\n    1     0   0.1  53:33.02 launchd\n  364     1   0.1  26:40.48 logd\n  366     1   0.0   0:00.86 smd\n  367     1   0.0   0:44.83 UserEventAgent\n  369     1   0.0  36:04.43 fseventsd\n  370     1   0.0   0:11.59 mediaremoted\n  372     1   0.0   0:00.20 uarpd\n  374     1   0.1   0:31.38 systemstats\n  376     1   0.0   0:02.87 accessoryupdaterd\n  377     1   0.0   0:00.07 uarpassetmanagerd\n  378     1   0.4  12:42.78 configd\n  379     1   0.0   0:00.07 endpointsecurityd\n  380     1   0.0   2:47.95 powerd\n  381     1   0.0   0:00.65 IOMFB_bics_daemon\n  383     1   0.0   0:05.52 amfid\n  385     1   0.0   0:00.34 remoted\n  387     1   0.0   0:00.43 keybagd\n  388     1   0.0   0:00.30 softwareupdated\n  389     1   0.0   0:00.03 corespeechd_system\n  391     1   0.1   0:08.93 watchdogd\n  394     1   0.0 193:05.65 mds\n  395     1   0.0   0:00.99 iconservicesd\n  396     1   0.0   0:01.47 kernelmanagerd\n  397     1   0.0   3:35.55 diskarbitrationd\n  400     1   0.0   0:23.63 coreduetd\n  401     1   0.0   0:23.36 syslogd\n  403     1   0.0   0:43.67 thermalmonitord\n  404     1   0.0  18:13.04 contextstored\n  405     1   0.0   0:02.68 xprotectd\n  406     1   0.0   8:43.06 opendirectoryd\n  407     1   0.0   0:40.44 apsd\n  408     1   0.0  48:18.77 launchservicesd\n  409     1   0.0   0:02.33 timed\n  410     1   0.0   0:01.13 usbmuxd\n  411     1   0.0   2:44.14 securityd\n  413     1   0.9   5:04.79 locationd\n  414     1   0.0   0:01.83 nesessionmanager\n  416     1   0.0   0:00.05 autofsd\n  417     1   0.0   7:15.42 dasd\n  418     1   0.0   0:00.04 corerepaird\n  420     1   0.0   1:06.32 distnoted\n  421     1   0.0   0:00.21 AppleCredentialManagerDaemon\n  423     1   0.0   0:00.39 logind\n  424     1   0.0   0:00.45 revisiond\n  425     1   0.0   0:00.03 KernelEventAgent\n  426     1   0.0   0:00.55 peakpowermanagerd\n  427     1   0.0   0:05.66 usermanagerd\n  429     1   0.2  25:14.71 bluetoothd\n  430     1   0.0  12:35.05 notifyd\n  431     1   0.0   0:06.59 sandboxd\n  432     1   0.0   2:48.87 corebrightnessd\n  433     1   0.0   0:00.57 com.apple.cmio.registerassistantservice\n  434     1   0.0   0:00.10 aslmanager\n  435     1   0.0   0:02.67 logd_helper\n  436     1   2.6 262:38.21 WindowServer\n  437     1   0.0   1:44.50 tccd\n  438     1   0.0   0:00.22 dirhelper\n  439     1   0.0   5:28.65 cfprefsd\n  440     1   0.1  53:57.61 loginwindow\n  441     1   0.0 127:05.37 runningboardd\n  453     1   0.0   0:00.07 powerexperienced\n  463     1   0.0   0:18.88 coreservicesd\n  464     1   0.0   0:01.33 securityd_system\n  471     1   0.0   0:06.80 backupd-helper\n  472     1   0.0   0:00.99 PowerUIAgent\n  473     1   0.0   9:53.48 trustd\n  482     1   0.0   0:23.21 lsd\n  485     1   0.4  12:32.42 clocksyncd\n  493     1   0.5  21:24.64 airportd\n  494     1   0.0   2:50.51 containermanagerd_system\n  495     1   0.0   1:43.46 analyticsd\n  496     1   0.0  13:50.12 mobileassetd\n  498     1   0.0   0:09.93 nehelper\n  500     1   0.0   0:00.15 liquiddetectiond\n  501     1   0.0   2:52.74 symptomsd\n  502     1   0.0   0:05.19 authd\n  503     1   0.0   0:00.27 apfsd\n  504     1   0.0   4:47.97 nsurlsessiond\n  506     1   0.0   6:52.20 mDNSResponder\n  507     1   0.0   0:00.24 hidd\n  508     1   0.0   0:49.42 biomed\n  509     1   0.0   0:00.18 accessoryd\n  510     1   0.0   0:16.46 socketfilterfw\n  513     1   0.0  16:03.69 syspolicyd\n  514     1   0.0   0:10.19 distnoted\n  515     1   0.0 259:58.83 mds_stores\n  524     1   0.0   0:00.03 cryptexd\n  526     1   0.0   0:09.77 mDNSResponderHelper\n  527     1   0.0   0:00.72 biometrickitd\n  528     1   0.0   0:11.05 com.apple.geod\n  529     1   0.0   0:08.39 distnoted\n  530     1   0.0   0:01.17 sysextd\n  531     1   0.0   0:03.44 cloudd\n  532     1   0.0   0:11.67 backupd\n  533     1   0.0   0:08.72 distnoted\n  534     1   0.0   0:00.08 systemstatusd\n  535     1   0.0   0:00.06 secinitd\n  536     1   0.0   0:25.86 eligibilityd\n  537     1   0.0   2:13.70 com.apple.CodeSigningHelper\n  539     1   0.0   1:11.32 storagekitd\n  540     1   0.0   0:25.31 WirelessRadioManagerd\n  541     1   0.0   0:00.07 secinitd\n  542     1   0.0   0:00.07 cfprefsd\n  543     1   0.0   0:08.67 distnoted\n  544     1   0.0   0:00.08 findmybeaconingd\n  545     1   0.0   0:01.76 trustd\n  546     1   0.0   0:00.14 com.apple.cmio.videodriverkithostextension\n  547     1   0.0   0:16.38 appleh13camerad\n  548     1   0.0   0:07.52 backgroundtaskmanagementd\n  549     1   0.0   0:08.54 distnoted\n  550     1   0.0   0:00.07 containermanagerd\n  551     1   0.0   0:00.46 fskitd\n  552     1   0.0   0:00.01 com.apple.DriverKit-IOUserDockChannelSerial\n  553     1   0.6  40:19.44 com.apple.DriverKit-AppleBCMWLAN\n  554     1   0.0   8:51.18 com.apple.AppleUserHIDDrivers\n  556     1   0.0   0:40.53 com.apple.MobileAsset.DownloadService.Builtin\n  557     1   0.0   0:30.94 softwareupdated\n  558     1   0.0   0:00.38 mobileactivationd\n  560     1   0.0   0:00.12 colorsync.displayservices\n  561     1   0.0   3:16.06 searchpartyd\n  563     1   0.0   0:00.09 countryd\n  564     1   0.0   0:00.13 cameracaptured\n  565     1   0.0   0:04.65 UVCAssistant\n  566     1   0.0   0:00.50 suhelperd\n  567     1   0.0   0:08.33 distnoted\n  568     1   0.0   2:47.95 coreaudiod\n  569     1   0.0   0:00.42 PerfPowerTelemetryClientRegistrationService\n  570     1   0.0   0:42.63 triald_system\n  572     1   0.0   0:08.16 distnoted\n  573     1   0.0   0:00.02 com.apple.ColorSyncXPCAgent\n  574     1   0.0   0:00.10 colorsyncd\n  578     1   0.0   0:00.01 com.apple.audio.DriverHelper\n  581     1   0.0   0:03.61 Core Audio Driver (WaveLinkVirtualAudio.driver)\n  582     1   0.0   0:00.06 AudioComponentRegistrar\n  587     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  588     1   0.0   7:50.69 gamepolicyd\n  590     1   0.0   0:00.85 appleeventsd\n  593     1   0.0   1:55.02 audioanalyticsd\n  594     1   0.0   0:00.03 AppleDeviceQueryService\n  597     1   0.0   0:08.13 distnoted\n  598     1   0.0   0:03.18 BTLEServer\n  599     1   0.0  11:58.94 modelmanagerd\n  600     1   0.0   0:05.93 ospredictiond\n  601     1   0.0   0:00.02 writeconfig\n  602     1   0.0   0:07.53 com.apple.geod\n  603     1   0.0   0:00.07 secinitd\n  604     1   0.0   0:00.05 bootinstalld\n  605     1   0.0   0:15.60 ViewBridgeAuxiliary\n  606     1   0.0  19:36.35 modelcatalogd\n  607     1   0.0   0:00.06 cfprefsd\n  609     1   0.0   0:00.08 SetStoreUpdateService\n  612     1   0.0   0:00.37 trustd\n  613     1   0.0   0:00.07 containermanagerd\n  614     1   0.0   0:04.81 coreauthd\n  617     1   0.0   0:02.67 com.apple.hiservices-xpcservice\n  618     1   0.0   0:00.15 GSSCred\n  623     1   0.0   1:44.48 distnoted\n  624     1   0.0   0:00.38 com.apple.ifdreader\n  625     1   0.0  15:53.11 cfprefsd\n  626     1   0.0   0:57.88 wifip2pd\n  627     1   0.0   0:00.13 applekeystored\n  628     1   0.0   0:00.09 corekdld\n  629     1   0.0   0:46.01 secd\n  630     1   0.0   0:02.72 TrustedPeersHelper\n  631     1   0.0   3:21.69 UserEventAgent\n  632     1   0.0   0:10.22 gamecontrollerd\n  633     1   0.0   0:00.09 deviceconfigurationd\n  634     1   0.0   0:00.38 seld\n  635     1   0.0   0:00.12 accessoryaccessd\n  638     1   0.0   0:01.52 neagent\n  639     1   0.0   1:00.02 CoreServicesUIAgent\n  640     1   0.0   0:34.26 universalaccessd\n  641     1   0.0   0:15.62 pboard\n  642     1   0.0   5:02.19 containermanagerd\n  643     1   0.0   1:28.07 WindowManager\n  644     1   0.0   2:00.58 lsd\n  645     1   0.0   6:47.76 BiomeAgent\n  646     1   0.0   0:00.02 WiFiCloudAssetsXPCService\n  647     1   0.0   1:15.32 tccd\n  648     1   0.0   0:33.57 talagentd\n  649     1   0.0   2:47.45 Dock\n  650     1   0.9  41:47.69 ControlCenter\n  651     1   0.0   7:03.52 MenuBarAgent\n  652     1   0.0   0:29.67 SystemUIServer\n  653     1   0.0   0:12.73 secinitd\n  654     1   0.0  16:05.86 Finder\n  655     1   0.0   1:08.39 linkd\n  656     1   0.0   0:31.64 WallpaperAgent\n  659     1   0.0   8:04.34 trustd\n  661     1   0.0   0:00.16 VDCAssistant\n  662     1   0.0   0:26.17 AccessibilityVisualsAgent\n  663     1   0.0   0:00.02 csnameddatad\n  664     1   0.0   0:06.61 usernoted\n  665     1   0.0   0:00.89 dmd\n  666     1   0.0   0:26.87 QuickLookUIService\n  667     1   0.0   0:10.89 com.apple.quicklook.ThumbnailsAgent\n  668     1   0.0   0:07.06 com.apple.hiservices-xpcservice\n  669     1   0.0   0:25.69 axassetsd\n  670     1   0.0   0:25.98 AccessibilityUIServer\n  671     1   0.0   0:10.37 bird\n  672     1   0.0   0:01.44 sharedfilelistd\n  673     1   0.0   0:02.40 AirPlayXPCHelper\n  674     1   0.0   0:00.08 automountd\n  675     1   0.0   0:15.33 useractivityd\n  676     1   0.0   0:23.59 com.apple.dock.extra\n  677     1   0.0   0:12.50 iconservicesagent\n  678     1   0.0   0:22.40 com.apple.dock.external.extra.arm64\n  679     1   0.0   0:43.75 com.apple.dock.external.extra.arm64\n  680     1   0.0   9:30.85 rapportd\n  681     1   0.0   2:49.71 cloudd\n  683     1   0.0   0:35.36 CommCenter\n  684     1   0.0   0:02.78 audiomxd\n  685     1   0.0   0:00.09 APFSUserAgent\n  687     1   0.0   0:42.71 filecoordinationd\n  688     1   0.0   0:54.96 nsurlsessiond\n  689     1   0.0   3:55.57 fileproviderd\n  690     1   0.0   1:53.88 lockoutagent\n  691     1   0.0   0:01.89 systemsoundserverd\n  692     1   0.0   5:01.64 Siri AI\n  693     1   0.0   0:08.96 pkd\n  694     1   0.0   0:01.01 AMPDeviceDiscoveryAgent\n  695     1   0.0   0:08.68 com.apple.CMExtensionBroker\n  696     1   0.0   1:11.82 ContinuityCaptureAgent\n  697     1   0.0   0:21.27 ViewBridgeAuxiliary\n  698     1   0.0   1:17.43 fontd\n  699     1   0.0   0:00.25 sociallayerd\n  700     1   0.0   5:37.15 suggestd\n  701     1   0.0   0:05.73 replayd\n  702     1   0.0   4:01.82 callservicesd\n  703     1   0.0   0:19.85 wallpaperexportd\n  704     1   0.0   0:02.78 fontworker\n  706     1   0.0  22:51.02 WallpaperAerialsExtension\n  707     1   0.0   0:09.76 WallpaperImageExtension\n  708     1   0.0   0:03.93 usernotificationsd\n  709     1   0.0   0:02.54 ScreenTimeSettingsAgent\n  710     1   0.0   0:05.84 wifianalyticsd\n  711     1   0.0   0:00.35 AudioComponentRegistrar\n  713     1   0.0   0:14.94 audioaccessoryd\n  714     1   0.0   0:02.74 intelligentroutingd\n  715     1   0.0   0:00.30 liveactivitiesd\n  716     1   0.0   0:07.65 distnoted\n  717     1   0.0  17:28.96 sharingd\n  718     1   0.0   1:45.83 ContextStoreAgent\n  719     1   0.0   0:25.48 MobileDeviceUpdater\n  721     1   0.0   1:20.70 identityservicesd\n  722     1   0.0   0:43.18 networkserviceproxy\n  723     1   0.0   0:13.10 imagent\n  724     1   0.0   0:09.45 syncdefaultsd\n  725     1   0.0   0:08.04 mobiletimerd\n  726     1   0.0  58:18.92 chronod\n  727     1   0.0   0:00.10 ReportCrash\n  728     1   0.0  19:30.51 corespotlightd\n  729     1   0.0   0:00.05 SetStoreUpdateService\n  730     1   0.0   0:00.01 LoginUserService\n  731     1   0.0   0:04.07 parsecd\n  732     1   0.0   0:28.34 CoreLocationAgent\n  733     1   0.0   0:28.16 replicatord\n  734     1   0.0   0:26.43 CampoRemoteService\n  735     1   0.0   0:00.33 agentstored\n  736     1   0.0   0:00.14 usbpowerd\n  739     1   0.0   0:28.78 accountsd\n  740     1   0.0   0:03.25 filederivatived\n  741     1   0.0  15:28.10 hybridsearchd\n  743     1   0.0   0:00.66 localizationswitcherd\n  744     1   0.0   0:00.15 SetStoreUpdateService\n  745     1   0.0   8:36.99 NotificationCenter\n  747     1   0.0   0:00.08 SetStoreUpdateService\n  748     1   0.0   0:03.78 heard\n  749     1   0.0   0:01.38 corespeechd\n  751     1   0.0   0:05.54 routined\n  755     1   0.0   0:00.89 imklaunchagent\n  757     1   0.0   0:00.89 icdd\n  758     1   0.0   0:07.44 appplaceholdersyncd\n  759     1   0.0   0:23.33 watchman\n  760     1   0.0   0:04.95 askpermissiond\n  762     1   0.0   0:00.07 mobilerepaird\n  763     1   0.0   0:00.28 ManagedSettingsAgent\n  764     1   0.0   0:23.92 AirPlayUIAgent\n  765     1   0.0   0:16.65 knowledge-agent\n  767     1   0.0   2:25.18 diagnostics_agent\n  768     1   0.0   0:30.48 TextInputMenuAgent\n  770     1   0.0   0:10.70 amsaccountsd\n  772     1   0.0   0:00.18 ctkahp\n  773     1   0.0   0:00.81 com.apple.CloudDocs.iCloudDriveFileProvider\n  774     1   0.0   0:01.36 pbs\n  775     1   0.0   0:00.19 findmydeviced\n  776     1   0.0   2:01.39 photolibraryd\n  777     1   0.0   0:08.11 donotdisturbd\n  778     1   0.0   0:03.44 ctkd\n  779     1   0.0   0:00.21 Google Drive\n  781     1   0.0   0:03.04 coreauthd\n  782     1   0.0   0:10.98 transparencyd\n  783     1   0.0   0:00.05 ctkd\n  784     1   0.0   0:01.35 ScopedBookmarkAgent\n  785     1   0.0   0:11.20 akd\n  786     1   0.0   0:24.36 TextInputSwitcher\n  787     1   0.0   0:00.03 SetStoreUpdateService\n  789     1   0.0   0:01.55 findmylocateagent\n  790     1   0.0   0:08.95 com.apple.geod\n  791     1   0.0   0:44.15 triald\n  792     1   0.0   0:03.96 itunescloudd\n  794     1   0.0   0:07.12 StatusKitAgent\n  795     1   0.0   5:44.49 UIKitSystem\n  796     1   0.0   0:27.30 AppSSOAgent\n  797     1   0.0   0:00.06 SetStoreUpdateService\n  798     1   0.0   0:00.02 deviceinterfaced\n  800     1   0.0   0:02.52 MTLCompilerService\n  801     1   0.0   0:24.69 AppSSODaemon\n  802     1   0.0   0:01.04 kernelmanager_helper\n  803     1   0.0   2:00.78 CursorUIViewService\n  805     1   0.0   0:30.06 PAH_Extension\n  806     1   0.0   0:00.03 SetStoreUpdateService\n  808     1   0.0   1:47.52 KIM_Extension\n  810     1   0.0   5:49.78 usbaudiod\n  811     1   0.0   0:06.37 CalendarWidgetExtension\n  812     1   0.0   2:38.92 extensionkitservice\n  815     1   0.0   3:50.85 deleted\n  816     1   0.0   0:01.15 commerce\n  817     1   0.0   0:34.99 WeatherWidget\n  818     1   0.0   0:00.49 followupd\n  819     1   0.0  20:16.04 duetexpertd\n  820     1   0.0  25:36.42 BetterTouchTool\n  821     1   0.0   0:00.44 milod\n  822     1   0.0   9:06.08 nearbyd\n  824     1   0.0   0:32.77 BatteriesAvocadoWidgetExtension\n  825     1   0.0   1:46.55 contactsd\n  826     1   0.0   0:13.17 calaccessd\n  827     1   0.0   1:00.92 homed\n  828     1   0.0   0:07.03 CategoriesService\n  829     1   0.0   0:00.15 AppIntentsLiveEntityService\n  830     1   0.0   0:14.81 assistantd\n  831     1   0.0   4:25.83 siriactionsd\n  832     1   0.0   0:05.92 MTLAssetUpgraderD\n  833     1   0.0   0:30.07 swcd\n  834     1   0.0   0:00.79 MENotificationAgent\n  835     1   0.0   0:25.10 BackgroundTaskManagementAgent\n  836     1   0.0   0:30.50 siriknowledged\n  837     1   0.0 104:00.26 WidgetsExtension\n  838     1   0.0   0:00.04 SetStoreUpdateService\n  839     1   0.0   0:00.05 assessmentagent\n  840     1   0.0   0:01.35 ContainerMetadataExtractor\n  841     1   0.0   7:52.16 Magnet\n  842     1   0.0   0:00.13 SetStoreUpdateService\n  843     1   0.0   0:03.74 familycircled\n  844     1   0.0  20:04.76 PopClip\n  845     1   0.0   1:26.10 WiFiAgent\n  847     1   0.0   1:06.63 Alfred\n  848     1   0.0   1:09.26 generativeexperiencesd\n  849     1   0.0   0:02.41 intelligenceflowd\n  850     1   0.0   0:01.62 communicationtrustd\n  851     1   0.0   0:12.30 IMDPersistenceAgent\n  852     1   0.0   0:05.49 CMFSyncAgent\n  853     1   0.0   0:02.86 ScreenTimeAgent\n  854     1   0.0   0:00.04 SetStoreUpdateService\n  855     1   0.0   0:00.01 BetterTouchToolAppleScriptRunner\n  856     1   0.0   0:00.01 BetterTouchToolAppleScriptRunner2\n  857     1   0.0   0:00.01 BetterTouchToolAppleScriptRunner3\n  858     1   0.0   0:00.01 BetterTouchToolAppleScriptRunner4\n  859     1   0.0   0:00.01 BetterTouchToolShellScriptRunner\n  860     1   0.0   0:01.83 storekitagent\n  861     1   0.0   0:38.07 Dropover\n  863     1   0.0   0:08.22 ContextService\n  864     1   0.0   0:26.07 SoftwareUpdateNotificationManager\n  865     1   0.0   0:00.01 FindMyMacd\n  867     1   0.0   0:00.04 SetStoreUpdateService\n  876     1   0.0   0:00.17 localspeechrecognition\n  879     1   0.0   0:01.43 swtransparencyd\n  880     1   0.0   0:00.29 assistant_cdmd\n  881     1   0.0   0:26.49 Shortcuts Events\n  882     1   0.0   0:01.24 FeatureAccessAgent\n  883     1   0.0   0:00.55 TrialArchivingService\n  884     1   0.0   0:04.01 AppleSpell\n  885     1   0.0   0:06.69 osanalyticshelper\n  886     1   0.0   0:00.07 SetStoreUpdateService\n  887     1   0.0   0:00.40 intelligencecontextd\n  888     1   0.0   0:08.92 frauddefensed\n  889     1   0.0   0:01.47 appleaccountd\n  891     1   0.0   0:12.62 com.apple.AmbientDisplayAgent\n  892     1   0.0   0:00.47 speechmaintenanced\n  894     1   0.0   0:00.43 ProtectedCloudKeySyncing\n  895     1   0.0   5:43.75 spindump\n  896     1   0.0   0:00.01 com.apple.ColorSyncXPCAgent\n  897     1   0.0   0:00.03 spindump_agent\n  898     1   0.0   0:01.91 SubmitDiagInfo\n  900     1   0.0   0:00.23 crashpad_handler\n  901     1   0.0   0:00.46 keyboardservicesd\n  904     1   0.0   0:00.03 loginitemregisterd\n  905     1   0.0   0:00.06 FamilyControlsAgent\n  907     1   0.0   0:05.08 adid\n  909     1   0.0   0:01.10 maild\n  910     1   0.0   0:01.26 webprivacyd\n  912     1   0.0   0:00.04 CVMServer\n  914     1   0.0   0:01.28 sirittsd\n  915     1   0.0   0:01.08 com.apple.accessibility.mediaaccessibilityd\n  916     1   0.0   0:00.09 siriappintentsd\n  917     1   0.0   0:00.01 IOUserBluetoothSerialDriver\n  921     1   0.0   0:31.84 BTTRelaunch\n  923     1   0.0   0:00.20 DeviceConfigurationAgent\n  932     1   0.0   0:00.06 RecordWidgetExtension\n  933     1   0.0   0:32.50 deleted_helper\n  935     1   0.0   0:20.72 StocksWidget\n  936     1   0.0   0:00.03 extensionkitservice\n  937     1   0.0   0:00.03 SetStoreUpdateService\n  940   844   0.0   0:26.77 PopClipEventMonitor\n  942     1   0.0   0:30.45 universalAccessAuthWarn\n  943     1   0.0   0:20.86 JournalWidgetsSecure\n  944     1   0.0   0:20.57 JournalWidgets\n  945     1   0.0   0:00.05 WeatherIntents\n  946     1   0.0   0:34.07 HomeWidget\n  948     1   0.0   0:00.06 SetStoreUpdateService\n  949     1   0.0   0:35.89 HomeEnergyWidgetsExtension\n  950     1   0.0   0:22.05 PodcastsWidget\n  952     1   0.0   0:00.06 ScreenTimeWidgetExtension\n  953     1   0.0   0:21.50 WorldClockWidget\n  954     1   0.0   0:00.07 FindMyWidgetItems\n  955     1   0.0   0:00.06 FindMyWidgetPeople\n  956     1   0.0   0:00.09 ScreenTimeWidgetIntentsExtension\n  957     1   0.0   0:00.09 HomeWidgetIntentsExtension\n  958     1   0.0   0:00.18 com.apple.MobileSoftwareUpdate.CleanupPreparePathService\n  959     1   0.0   0:00.04 VoiceMemosSettingsWidgetExtension\n  960     1   0.0   0:06.50 coresymbolicationd\n  961     1   0.0   0:38.42 searchpartyuseragent\n  962     1   0.0   0:01.66 lockdownmoded\n  963     1   0.0   0:00.05 MobileTimerIntents\n  967     1   0.0   0:00.10 com.apple.FaceTime.FTConversationService\n  968     1   0.0   0:02.46 translationd\n  969     1   0.0   0:01.24 findmydevice-user-agent\n  971     1   0.0   0:00.79 avconferenced\n  972     1   0.0   0:00.23 mediaremoteagent\n  973     1   0.0   0:00.05 CoreThreadCommissionerServiced\n  976     1   0.0   0:00.04 AudioConverterService\n  977     1   0.0   0:00.05 AudioConverterHardenedService\n  978     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  979     1   0.0   0:00.06 ReportCrash\n  982     1   0.0   0:00.04 com.apple.audio.SandboxHelper\n  983     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  984     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  987     1   0.0   0:00.06 SetStoreUpdateService\n  989     1   0.0   0:00.26 captiveagent\n  990     1   0.0   1:45.13 UniversalControl\n  993     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n  994     1   0.0   0:33.05 SidecarRelay\n  996     1   0.0   1:13.76 photoanalysisd\n  998     1   0.0   0:03.32 rtcreportingd\n 1000     1   0.0   0:00.66 AssetCacheLocatorService\n 1001     1   0.0  18:53.74 aned\n 1002     1   0.0   0:05.53 financed\n 1003     1   0.0   0:18.45 mdbulkimport\n 1004     1   0.0   0:00.26 AssetCache\n 1005     1   0.0   0:01.13 privatecloudcomputed\n 1009     1   0.0   0:22.86 amsengagementd\n 1010     1   0.0   0:42.27 UsageTrackingAgent\n 1011     1   0.0   0:03.27 cloudtelemetryd\n 1012     1   0.0   0:01.26 bluetoothuserd\n 1013     1   0.0   0:08.18 mlhostd\n 1015     1   0.0   0:00.80 cdpd\n 1016     1   0.0   0:25.87 SafariBookmarksSyncAgent\n 1017     1   0.0   0:00.16 SafariLaunchAgent\n 1018     1   0.0   0:07.67 distnoted\n 1023     1   0.0   0:00.51 mapssyncd\n 1024     1   0.0   0:00.21 BTLEServerAgent\n 1025     1   0.0   0:00.16 UARPAssetManagerServiceiCloud\n 1026     1   0.0   0:01.00 com.apple.sbd\n 1027     1   0.0   0:00.16 UARPAssetManagerServiceMobileAsset\n 1029     1   0.0   0:08.88 cloudphotod\n 1030     1   0.0   0:00.14 AssetCacheTetheratorService\n 1032     1   0.0   0:00.13 TrialArchivingService\n 1033     1   0.0   0:01.60 SetStoreUpdateService\n 1036     1   0.0   0:00.23 com.apple.Safari.History\n 1038     1   0.0   0:00.24 cksharingmanagementd\n 1046     1   0.0   0:00.01 bash\n 1056  1046   4.9 192:55.59 Stats\n 1057     1   0.0   0:00.04 com.apple.audio.SandboxHelper\n 1058     1   0.0   0:00.51 mmaintenanced\n 1059     1   0.0   0:00.08 MauiAUSP\n 1060     1   0.0   0:02.23 analyticsagent\n 1061     1   0.0   0:00.08 WardaSynthesizer\n 1062     1   0.0   0:00.29 visualintelligenced\n 1063     1   0.0   0:05.29 jetpackassetd\n 1064     1   0.0   0:00.14 SiriAUSP\n 1065     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n 1066     1   0.0   0:00.73 UARPUpdaterServiceDisplay\n 1067     1   0.0   0:02.77 UARPUpdaterServiceUSBPD\n 1068     1   0.0   0:00.05 UARPUpdaterServiceLegacyAudio\n 1069     1   0.0   0:00.04 UARPUpdaterServiceHID\n 1070     1   0.0   0:00.03 UARPUpdaterServiceAFU\n 1072     1   0.0   0:00.18 aneuserd\n 1073     1   0.0   0:00.49 recentsd\n 1074     1   0.0   0:00.09 MacinTalkAUSP\n 1075     1   0.0   0:00.14 KonaSynthesizer\n 1080     1   0.0   0:00.38 AssetCacheLocatorService\n 1085     1   0.0   0:00.19 SetStoreUpdateService\n 1087     1   0.0   0:06.76 postersyncd\n 1088     1   0.0   0:00.08 localspeechrecognition\n 1089     1   0.0   0:00.17 localspeechrecognition\n 1090     1   0.0   0:00.04 SetStoreUpdateService\n 1091     1   0.0   0:00.15 IDSBlastDoorService\n 1092     1   0.0   0:00.14 UnknownSendersBlastDoorService\n 1093     1   0.0   0:00.10 AUCrashHandlerService\n 1094     1   0.0   0:07.63 distnoted\n 1095     1   0.0   0:00.38 SetStoreUpdateService\n 1096     1   0.0  15:29.58 textunderstandingd\n 1097     1   0.0   0:03.94 peopled\n 1098     1   0.0   0:31.20 SetStoreUpdateService\n 1099     1   0.0   0:03.62 siriinferenced\n 1100     1   0.0   0:00.02 WiFiCloudAssetsXPCService\n 1102     1   0.0   0:00.17 textcontextd\n 1103     1   0.0   0:00.20 MessagesBlastDoorService\n 1105     1   0.0   0:06.24 Messages Assistant Extension\n 1106     1   0.0   0:04.96 com.apple.StreamingUnzipService\n 1107     1   0.0   0:13.14 ModelCatalogAgent\n 1108     1   0.0  82:45.82 TGOnDeviceInferenceProviderService\n 1109     1   0.0   0:07.32 distnoted\n 1110     1   0.0   0:00.03 com.apple.tonelibraryd\n 1113     1   0.0   0:00.22 ThunderboltAccessoryUpdaterService\n 1114     1   0.0   0:00.07 com.apple.audio.SandboxHelper\n 1115     1   0.0   0:00.04 com.apple.audio.SandboxHelper\n 1116     1   0.0   0:00.41 StandaloneHIDAudService\n 1118     1   0.0   0:09.90 gamecontrolleragentd\n 1120     1   0.0   0:00.37 symptomsd-diag\n 1121     1   0.0   0:00.14 SetStoreUpdateService\n 1123     1   0.0   0:00.04 DiskUnmountWatcher\n 1125     1   0.0   0:32.32 eu.exelban.Stats.SMC.Helper\n 1127     1   0.0   0:08.48 XProtectPluginService\n 1129     1   0.0   0:00.86 nfcd\n 1130     1   0.0   0:00.22 geodMachServiceBridge\n 1131     1   0.0   0:00.21 intelligencetasksd\n 1132     1   0.0   0:12.80 amsondevicestoraged\n 1133     1   0.0   0:00.02 NFStorageServer\n 1134     1   0.0   0:07.55 distnoted\n 1136     1   0.0   6:41.53 installd\n 1137     1   0.0   0:02.74 system_installd\n 1138     1   0.0   0:00.02 com.apple.audio.SandboxHelper\n 1139     1   0.0   0:00.04 com.apple.audio.SandboxHelper\n 1140     1   0.0   0:00.05 com.apple.audio.SandboxHelper\n 1142     1   0.0   1:28.02 appstoreagent\n 1143     1   0.0   0:00.13 SAExtensionOrchestrator\n 1144     1   0.0   0:13.12 assetsubscriptiond\n 1145     1   0.0   0:00.07 com.apple.audio.SandboxHelper\n 1146     1   0.0   1:55.31 sysmond\n 1147     1   0.0   0:00.45 voicebankingd\n 1149     1   0.0   0:00.23 StocksKitService\n 1150     1   0.0   0:02.23 passd\n 1152     1   0.0   0:02.88 XProtectBridgeService\n 1155     1   0.0   0:03.51 SetStoreUpdateService\n 1158   374   0.0   0:00.66 systemstats\n 1162     1   0.0   0:00.07 BiomeSELFIngestor\n 1163     1   0.0   0:00.62 BatterySettingsIntentsExtension\n 1165     1   0.0   0:00.06 IFTranscriptSELFIngestor\n 1166     1   0.0   0:00.35 GMSSELFIngestor\n 1167     1   0.0   0:00.03 fudHelperAgent\n 1168     1   0.0   0:00.29 diagnosticextensionsd\n 1170     1   0.0   0:00.04 IFTelemetrySELFIngestor\n 1171     1   0.0   0:01.27 installcoordinationd\n 1172     1   0.0   0:02.55 com.apple.MobileInstallationHelperService\n 1173     1   0.0   0:07.80 distnoted\n 1174     1   0.0   0:00.07 backgroundassets.user\n 1175     1   0.0   0:00.17 fairplayd\n 1176     1   0.0   0:06.22 appstored\n 1177     1   0.0   0:00.04 com.apple.AppStoreDaemon.StorePrivilegedODRService\n 1178     1   0.0   0:02.78 promotedcontentd\n 1179     1   0.0   0:00.32 SetStoreUpdateService\n 1180     1   0.0   0:00.53 AppleIntelligenceReportingSELFIngestor\n 1181     1   0.0   0:00.22 MTLCompilerService\n 1183     1   0.0   0:02.43 SetStoreUpdateService\n 1184     1   0.0   0:01.70 fairplaydeviceidentityd\n 1188     1   0.0   0:03.31 com.apple.StreamingUnzipService\n 1215     1   0.0   3:04.83 1Password\n 1222     1   0.0   0:00.02 chrome_crashpad_handler\n 1223  1215   0.0   0:23.61 1Password Helper\n 1224  1215   0.0   0:08.24 1Password Helper\n 1225     1   0.0   0:00.04 SetStoreUpdateService\n 1226     1   0.0   0:00.62 CredentialProviderExtensionHelper\n 1227     1   0.0   0:25.48 2BUA8C4S2C.com.1password.browser-helper\n 1228     1   0.0   0:01.47 iCloudNotificationAgent\n 1229     1   0.0   0:25.52 ShortcutsViewService\n 1230     1   0.0   0:01.90 SetStoreUpdateService\n 1231  1215   0.0   0:40.10 1Password-Crash-Handler\n 1232     1   0.0   0:07.45 AppPredictionIntentsHelperService\n 1242     1   0.0   0:23.11 mdworker\n 1243     1   0.0   0:00.07 CalendarIntentsExtension\n 1244     1   0.0   0:00.08 SafariLinkExtension\n 1245     1   0.0   0:00.12 MessagesActionExtension\n 1275     1   0.0   0:00.36 progressd\n 1276     1   0.0   0:25.39 Keychain Circle Notification\n 1278     1   0.0   0:00.14 CloudKeychainProxy\n 1284     1   0.0   0:00.33 SiriSuggestionsBookkeepingService\n 1286     1   0.0   0:03.71 tipsd\n 1295     1   0.0   0:00.18 pkd\n 1296     1   0.0   0:00.09 cfprefsd\n 1297     1   0.0   0:00.09 containermanagerd\n 1298     1   0.0   0:00.26 WallpaperSettingsIntents\n 1299     1   0.0   0:15.39 appinstalld\n 1300     1   0.0   0:07.85 distnoted\n 1303     1   0.0   0:00.32 AccountsUISettingsAppIntents\n 1305     1   0.0   0:00.10 GameControllerSettingsIntents\n 1306     1   0.0   0:01.65 NotificationsSettingsIntents\n 1307     1   0.0   0:04.63 PlaceholderSettingsSearchTermsIntents\n 1308     1   0.0   0:00.38 FamilyIntents\n 1309     1   0.0   0:01.88 SiriSetupSettingsIntents\n 1311     1   0.0   0:02.10 managedappdistributiond\n 1312     1   0.0   0:01.31 DesktopSettingsIntents\n 1314     1   0.0   0:00.20 SpotlightSettingsIntentsExtension\n 1316     1   0.0   0:00.36 fpassetmanagerd\n 1317     1   0.0   0:00.11 ClassKitAppIntents\n 1318     1   0.0   0:00.53 DateTimeIntentsExtension\n 1319     1   0.0   0:12.30 MouseIntentsExtension\n 1320     1   0.0   0:00.21 TimeMachineSettingsIntents\n 1321     1   0.0   0:00.53 AppleAccountIntents_macOS\n 1322     1   0.0   0:01.23 ControlCenterSettingsIntents\n 1323     1   0.0   0:01.06 TrackpadIntentsExtension\n 1324     1   0.0   0:00.10 CDsAndDvDsSettingsIntents\n 1325     1   0.0   0:00.82 KeyboardSettingsIntents\n 1326     1   0.0   0:00.21 BiometricsAndPasswordSettingsAppIntentsExtension\n 1327     1   0.0   0:00.03 CrashReporterSupportHelper\n 1328     1   0.0   0:06.96 AccessibilitySettingsSearchExtension\n 1331     1   0.0   0:00.05 com.apple.AppStoreDaemon.StorePrivilegedTaskService\n 1334     1   0.0   0:00.25 remotemanagementd\n 1335     1   0.0   0:01.33 trustd\n 1337     1   0.0   0:07.61 distnoted\n 1338     1   0.0   0:00.08 SecuritySubscriber\n 1339     1   0.0   0:00.08 InteractiveLegacyProfilesSubscriber\n 1340     1   0.0   0:00.09 ScreenSharingSubscriber\n 1343     1   0.0   0:00.08 LegacyProfilesSubscriber\n 1345     1   0.0   0:00.08 PasscodeSettingsSubscriber\n 1347     1   0.0   0:00.07 DiskManagementSubscriber\n 1348     1   0.0   0:00.09 ManagedPreferencesSubscriber\n 1349     1   0.0   0:00.09 SoftwareUpdateSubscriber\n 1350     1   0.0   0:00.11 MigrationSubscriber\n 1351     1   0.0   0:00.21 systemmigrationd\n 1352     1   0.0   0:00.07 iconservicesagent\n 1353     1   0.0   0:00.09 DeviceConfigurationSubscriber\n 1354     1   0.0   0:00.09 ManagedAppsSubscriber\n 1355     1   0.0   0:00.11 NetworkExtensionSubscriber\n 1356     1   0.0   0:00.07 ManagementTestSubscriber\n 1357     1   0.0   0:00.08 ManagedConfigurationFilesSubscriber\n 1358     1   0.0   0:00.13 ProfilesSettingsIntents\n 1359     1   0.0   0:00.09 AssetCacheSubscriber\n 1360     1   0.0   0:00.16 PasswordSettingsAppIntentsExtension\n 1361     1   0.0   0:00.08 AssetCacheManagerService\n 1362     1   0.0   0:00.08 ExtensibleSSOSubscriber\n 1363     1   0.0   0:00.13 StartupDiskWidgetExtension\n 1365     1   0.0   0:00.37 BluetoothSettingsAppIntentsWidgetExtension\n 1367     1   0.0   0:00.23 InternationalSettingsExtension\n 1369     1   0.0   0:00.15 SoftwareUpdateSettingsExtensionIntents\n 1370     1   0.0   0:00.15 GameCenterSettingsSearchExtension\n 1372     1   0.0   0:00.26 DoNotDisturbAppIntents\n 1373     1   0.0   0:00.14 PrefPaneSearchIntent\n 1374     1   0.0   0:00.13 ClassroomDeviceExpert\n 1377     1   0.0   0:00.37 WiFiMacSettingsIntents\n 1378     1   0.0   0:00.14 VpnSettingsIntents\n 1380     1   0.0   0:00.13 StorageSettingsIntentsExtension\n 1381     1   0.0   0:00.30 ScreenTimeAppIntentsExtension\n 1404     1   0.0   0:02.09 managedappdistributionagent\n 1408     1   0.0   0:00.76 devicecheckd\n 1409     1   0.0   0:00.99 ndoagent\n 1410     1   0.0   0:00.47 locationaccessstored\n 1411     1   0.0   0:00.53 geoanalyticsd\n 1415     1   0.0   0:00.07 com.apple.audio.SandboxHelper\n 1421     1   0.0   0:00.55 intelligenceplatformd\n 1423     1   0.0   0:00.13 seputil\n 1424     1   0.0   0:00.21 online-auth-agent\n 1425     1   0.0   0:00.26 feedbackd\n 1426     1   0.0   0:01.24 adprivacyd\n 1429     1   0.0   0:00.19 homeeventsd\n 1431     1   0.0   0:00.30 weatherd\n 1433     1   0.0   0:00.21 keychainsharingmessagingd\n 1437     1   0.0   0:08.74 managedcorespotlightd\n 1440     1   0.0   1:09.87 dataaccessd\n 1441     1   0.0   0:03.59 proactived\n 1446     1   0.0   0:03.67 dbtelemetryd\n 1452     1   0.0   0:08.55 ValidUpdater\n 1453     1   0.0   0:00.08 SetStoreUpdateService\n 1454     1   0.0   0:01.80 businessservicesd\n 1455     1   0.0   0:00.16 MessagesBlastDoorService\n 1459     1   0.0   0:02.12 filevaultd\n 1460     1   0.0   0:02.90 AuthenticationServicesAgent\n 1463     1   0.0   0:05.75 PasswordBreachAgent\n 1466     1   0.0   0:00.21 appleaccounttransparencyd\n 1467     1   0.0   0:02.59 CallHistorySyncHelper\n 1468     1   0.0   0:00.27 imageplaygroundd\n 1469     1   0.0   1:22.37 com.apple.Safari.SafeBrowsing.Service\n 1479     1   0.0   0:01.37 SetStoreUpdateService\n 1480     1   0.0   0:00.56 stickersd\n 1481     1   0.0   0:00.60 inputanalyticsd\n 1484     1   0.0   0:02.79 facetimemessagestored\n 1485     1   0.0   0:00.24 RemoteManagementAgent\n 1486     1   0.0   0:00.09 SafariConfigurationSubscriber\n 1487     1   0.0   0:00.08 SecuritySubscriber\n 1489     1   0.0   0:00.07 InteractiveLegacyProfilesSubscriber\n 1490     1   0.0   0:00.08 ScreenSharingSubscriber\n 1493     1   0.0   0:00.08 LegacyProfilesSubscriber\n 1494     1   0.0   0:00.08 PasscodeSettingsSubscriber\n 1495     1   0.0   0:00.14 AccountSubscriber\n 1496     1   0.0   0:00.09 DeviceConfigurationSubscriber\n 1497     1   0.0   0:00.08 ManagedAppsSubscriber\n 1498     1   0.0   0:00.12 NetworkExtensionSubscriber\n 1499     1   0.0   0:00.08 ManagementTestSubscriber\n 1500     1   0.0   0:00.09 ASConfigurationSubscriber\n 1502     1   0.0   0:00.09 ManagedSettingsSubscriber\n 1503     1   0.0   0:00.08 ExtensibleSSOSubscriber\n 1509     1   0.0   0:33.06 AppleIntelligenceReportingProcessingService\n 1515     1   0.0   0:00.63 MTLCompilerService\n 1518     1   0.0   0:00.11 ASPCarryLog\n 1526     1   0.0   0:06.86 com.apple.geod\n 1527     1   0.0   0:00.09 secinitd\n 1528     1   0.0   0:00.14 cfprefsd\n 1529     1   0.0   0:00.56 trustd\n 1531     1   0.0   0:00.11 containermanagerd\n 1533     1   0.0   0:00.72 proactiveeventtrackerd\n 1535     1   0.0   0:00.03 microstackshot\n 1537     1   0.0   0:00.17 PCCAgentClientExtension\n 1539     1   0.0   0:00.24 tzd\n 1540     1   0.0   0:00.12 XProtectUpdateService\n 1543     1   0.0   0:00.04 sysdiagnosed\n 1546     1   0.0   0:00.27 ecosystemd\n 1547     1   0.0   0:31.46 GamePolicyAgent\n 1549     1   0.0   0:07.65 distnoted\n 1551     1   0.0   0:00.49 media-indexer\n 1552     1   0.0   0:04.09 AMPLibraryAgent\n 1553     1   0.0   0:00.06 PodcastContentService\n 1554     1   0.0   0:00.12 com.apple.BKAgentService\n 1555     1   0.0   0:00.48 AMPArtworkAgent\n 1558     1   0.0   0:00.10 EAUpdaterService\n 3034     1   0.0   0:01.91 spotlightknowledged.importer\n 3504     1   0.0   0:00.56 fskit_agent\n 3528     1   0.0   0:00.03 com.apple.fskit.msdos\n 3529     1   0.0   0:00.02 fskit_helper\n 3937     1   0.0   2:22.25 XprotectService\n 4310     1   0.0   0:24.28 GeminiAppLauncher\n 4387     1   0.0   0:00.21 crashpad_handler\n 4882     1   0.0   0:02.24 naturallanguaged\n 5873     1   0.0   0:00.06 colorsync.useragent\n 6992     1   0.0   0:00.07 UnknownSendersBlastDoorService\n 6993     1   0.0   2:32.85 ANECompilerService\n 7109     1   0.0   0:33.39 ciphermld\n 7110     1   0.0   0:04.79 lskdd\n 7112     1   0.0   0:00.21 EscrowSecurityAlert\n13259     1   0.0   0:00.77 remindd\n13318     1   0.0   0:14.82 IntelligencePlatformComputeService\n14176     1   0.0   0:00.02 ioupsd\n17347     1   0.0   3:29.44 contentlinkingd\n18389     1   0.0   0:43.38 UserNotificationCenter\n18403     1   0.0   0:00.03 SetStoreUpdateService\n19419     1   0.0   0:43.95 DockHelper\n19420     1   0.0   0:00.03 SetStoreUpdateService\n20087     1   0.0   0:00.44 diagnosticservicesd\n20321     1   0.0   0:39.01 FPCKService\n20850     1   0.0   1:59.44 PerfPowerServices\n22159 87362   0.0   0:00.42 node\n22443     1   0.0   0:00.96 betaenrollmentagent\n22444     1   0.0   0:00.09 betaenrollmentd\n23871     1   0.0   0:00.08 mlruntimed\n26740     1   0.0   1:01.86 com.apple.StreamingUnzipService.privileged\n26744     1   0.0   0:04.00 SUCoreHelperService\n27303     1   0.0   0:00.34 LegacyImporterHost\n27304     1   0.0   0:00.33 LegacyImporterHost\n27305     1   0.0   0:00.34 LegacyImporterHost\n27306     1   0.0   0:00.33 LegacyImporterHost\n27307     1   0.0   0:00.48 CGPDFService\n27308     1   0.0   0:00.40 CGPDFService\n27309     1   0.0   0:00.63 CGPDFService\n27310     1   0.0   0:00.72 CGPDFService\n28338     1   0.0   0:01.06 nsattributedstringagent\n28341     1   0.0   0:00.05 com.apple.accessibility.mediaaccessibilityd\n28357     1   0.0   0:20.34 nsattributedstringagent\n28624     1   0.0   0:05.66 com.apple.photos.ImageConversionService\n35360     1   0.0   0:00.09 SetStoreUpdateService\n37548 92977   0.0   0:00.01 zsh\n37552 37548   0.0   0:00.36 Orca\n39162     1   0.0   0:07.72 MTLCompilerService\n40008     1   0.0   0:34.50 com.apple.SafariPlatformSupport.Helper\n40009     1   0.0   0:00.21 CredentialProviderExtensionHelper\n40273     1   0.0   0:00.04 package_script_service\n40410     1   0.0   0:00.01 crashpad_handler\n40453     1   0.0   0:00.01 crashpad_handler\n40454   779   0.0   0:01.57 Google Drive\n40456     1   0.0   0:00.03 SetStoreUpdateService\n40457     1   0.0   0:00.17 com.apple.WebKit.GPU\n40458     1   0.0   0:00.51 com.apple.WebKit.WebContent\n40459     1   0.0   0:00.01 mscamerad-xpc\n40460     1   0.0   0:00.07 com.apple.WebKit.Networking\n40467     1   0.0   0:00.02 com.apple.audio.SandboxHelper\n40569     1   0.0   0:00.13 DFSFileProviderExtension\n40621     1   0.0   0:00.23 FinderSyncExtension\n40637     1   0.0   0:00.07 ptpcamerad\n42396     1   0.0   0:00.04 CategoriesService\n42397     1   0.0   0:00.05 ContextService\n43363     1   0.0   0:21.29 studentd\n43365     1   0.0   0:00.90 com.apple.CloudPhotosConfiguration\n43370     1   0.0   0:00.05 guidedbrowsingd\n44179     1   0.0   0:00.03 installerauthagent\n44180     1   0.0   0:00.05 NRDUpdated\n45816     1   0.0   0:08.10 XProtectPluginService\n46379     1   0.0   0:01.48 shazameventsd\n46385     1   0.0   0:00.32 netbiosd\n47964     1   0.0   0:00.19 Flow macOS Widget\n48327     1   0.0  14:16.50 com.apple.MobileSoftwareUpdate.UpdateBrainService\n49420     1   0.0   0:00.02 com.apple.ColorSyncXPCAgent\n49421     1   0.0   0:00.10 MTLCompilerService\n54142     1   0.0   0:00.74 homeenergyd\n58276     1   0.0   0:00.19 CredentialProviderExtensionHelper\n59097     1   0.0   0:00.12 SetStoreUpdateService\n61228     1   0.0   0:22.48 icloudmailagent\n61318     1   0.0   0:22.14 com.apple.WebKit.GPU\n61322     1   0.0   0:25.85 com.apple.WebKit.Networking\n61341     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n61342     1   0.0   3:41.71 reversetemplated\n61488     1   0.0   0:01.59 com.apple.mail.SpotlightIndexExtension\n63609     1   0.0   0:00.23 mdworker_shared\n63668     1   0.0   3:00.95 STExtractionService.privileged\n64445 22159   0.0   0:00.01 ps\n65789     1   0.0   0:00.73 wifivelocityd\n65922     1   0.0  82:16.58 mediaanalysisd\n69973     1   0.0   0:00.17 com.apple.WebKit.WebContent.EnhancedSecurity\n70156     1   0.0   0:00.12 Managed Background Assets Helper Service\n70162     1   0.0   0:00.05 griddatad\n70181     1   0.0   0:00.12 cfprefsd\n70211     1   0.0   0:00.10 containermanagerd\n70212     1   0.0   0:00.13 XProtect\n70227     1   0.0   0:00.24 XProtect\n70228     1   0.0   0:00.65 dprivacyd\n70243     1   0.0   0:00.09 cfprefsd\n70308     1   0.0   0:00.14 metrickitd\n70349     1   0.0   0:00.18 mdworker\n70355     1   0.0   0:00.10 cfprefsd\n70356     1   0.0   0:00.09 cfprefsd\n70371     1   0.0   0:00.09 cfprefsd\n70375     1   0.0   0:00.09 cfprefsd\n70376     1   0.0   0:00.08 cfprefsd\n70377     1   0.0   0:00.16 dprivacyd\n70378     1   0.0   0:00.20 IMAutomaticHistoryDeletionAgent\n70451     1   0.0   0:00.31 ANEStorageMaintainer\n70452     1   0.0   0:00.03 ANEStorageMaintainer\n70453     1   0.0   0:07.30 distnoted\n70469     1   0.0   0:00.11 Developer Widget\n70471     1   0.0   0:00.05 cfprefsd\n70580     1   0.0   0:05.70 contactsdonationagent\n70581     1   0.0   0:00.34 avatarsd\n71088     1   0.0   0:00.14 MTLCompilerService\n71133     1   0.0   0:00.05 messagesescrowd\n71134     1   0.0   0:00.18 IMTranscoderAgent\n71151     1   0.0   0:00.03 com.apple.audio.SandboxHelper\n71152     1   0.0   0:00.06 MessagesBlastDoorService\n71154     1   0.0   0:00.12 UnknownSendersBlastDoorService\n73376     1   0.0   0:07.45 com.apple.CoreSimulator.CoreSimulatorService\n73390     1   0.0  10:59.31 VTDecoderXPCService\n73391     1   0.0   0:25.03 coreautha\n73392     1   0.0   0:30.79 simdiskimaged\n73393     1   0.0   0:00.04 SimLaunchHost.arm64\n73394     1   0.0   0:00.04 diskimagescontroller\n73395     1   0.0   0:46.15 diskimagesiod\n73907     1   0.0   0:50.40 diskimagesiod\n74260     1   0.0   0:06.65 SimulatorTrampoline\n77753     1   0.0   0:18.08 PowerChime\n77764     1   0.0   0:00.05 SetStoreUpdateService\n83283     1   0.0   0:00.06 MDRemoteServiceSupport\n83734     1   0.0   0:00.51 LegacyImporterHost\n83735     1   0.0   0:00.52 LegacyImporterHost\n83736     1   0.0   0:00.48 LegacyImporterHost\n83737     1   0.0   0:00.46 LegacyImporterHost\n83738     1   0.0   0:01.01 CGPDFService\n83739     1   0.0   0:00.74 CGPDFService\n83740     1   0.0   0:00.96 CGPDFService\n83741     1   0.0   0:00.98 CGPDFService\n86434     1   0.0   0:00.05 SetStoreUpdateService\n86703     1   0.0   0:00.30 SetStoreUpdateService\n86744     1   0.0  22:43.31 TGOnDeviceInferenceProviderService\n86773     1   0.0   4:57.38 GenerativeExperiencesSafetyInferenceProvider\n87508     1   0.0   0:00.03 SetStoreUpdateService\n88138     1   0.0   0:04.47 mediaanalysisd-access\n88153     1   0.0   0:03.53 VTDecoderXPCService\n88197     1   0.0   0:03.69 VTEncoderXPCService\n88692     1   0.0   7:53.11 spotlightknowledged.updater\n88730     1   0.0   0:04.10 SetStoreUpdateService\n91294     1   0.0   0:00.24 seserviced\n91625     1   0.1   5:26.11 Orca\n91656     1   0.0   0:00.01 chrome_crashpad_handler\n91663 91625   0.0  13:04.80 Orca Helper\n91666 91625   0.0   0:01.42 Orca Helper\n91684     1   0.0   0:00.05 SetStoreUpdateService\n91740 91625   0.0  19:13.24 Orca Helper (Renderer)\n91762 91625   0.0   0:19.92 Orca Helper\n91887     1   0.0   0:00.31 MTLCompilerService\n92110     1   0.0   2:07.16 orca-terminal-host\n92458 91625   0.0   0:00.00 caffeinate\n92720     1   0.0   0:05.97 com.apple.SafariPlatformSupport.Helper\n92887     1   0.0   0:00.19 MTLCompilerService\n99665     1   0.0   0:00.08 ReportSystemMemory\n99768     1   0.0   0:00.17 crashpad_handler\n92813 92747   0.0   0:00.02 zsh\n17520 92977   0.0   0:01.08 node\n17557 17520   0.0   0:00.75 node\n17558 17520   0.0   1:37.48 node\n17569 17558   0.0   0:00.39 node\n92703 92110   0.0   0:00.05 login\n92747 92703   0.0   0:00.19 zsh\n92977 92747   6.2  15:06.89 2.1.312\n92978 92977   0.0   0:00.03 caffeinate\n93163 92977   0.0   0:42.38 node\n93164 92977   0.0   0:00.46 node\n93165 92977   0.0   0:00.41 node\n93184 92977   0.0   0:00.39 node\n93185 92977   0.0   0:00.38 node\n93249 92977   0.0   0:00.38 node\n93250 92977   0.0   0:00.39 node\n93261 92977   0.0   0:00.39 node\n93262 92977   0.0   0:02.47 context7-mcp\n93263 92977   0.0   0:02.50 server-brave-search\n93354 93263   0.0   0:00.44 node\n93376 93262   0.0   0:00.45 node\n87291 87163   0.0   0:00.01 zsh\n87309 87291   0.0   0:00.00 <defunct>\n87126 92110   0.0   0:00.05 login\n87163 87126   0.0   0:00.17 zsh\n87362 87163   0.8   3:35.37 codex\n87893 87362   0.0   0:00.10 node_repl\n87895 87362   0.0   0:00.17 node\n87963 87362   0.0   0:01.58 server-brave-search\n87964 87362   0.0   0:00.27 node\n87965 87362   0.0   0:00.25 node\n87966 87362   0.0   0:00.25 node\n87967 87362   0.0   0:01.58 context7-mcp\n87969 87362   0.0   0:12.13 node\n88019 87895   0.0   0:00.21 node_repl\n88371 87967   0.0   0:00.49 node\n88436 87963   0.0   0:00.23 node\n88614 87362   0.0   0:01.69 codex-code-mode-host\n87162 92110   0.0   0:00.04 login\n87165 87162   0.0   0:00.23 zsh\n87266 87165   0.0   0:00.01 zsh\n96142 96034   0.0   0:00.01 zsh\n96002 92110   0.0   0:00.05 login\n96033 96002   0.0   0:00.31 zsh\n96328 96033   0.0   1:22.83 codex\n96937 96328   0.0   0:00.05 node\n96939 96328   0.0   0:00.11 node_repl\n96990 96328   0.0   0:01.49 server-brave-search\n97000 96328   0.0   0:00.31 node\n97012 96328   0.0   0:00.33 node\n97013 96328   0.0   0:01.63 context7-mcp\n97016 96328   0.0   0:00.32 node\n97018 96328   0.0   0:00.33 node\n97071 96937   0.0   0:00.22 node_repl\n97389 97013   0.0   0:00.53 node\n97433 96990   0.0   0:00.32 node\n97643 96328   0.0   0:00.49 codex-code-mode-host\n96031 92110   0.0   0:00.05 login\n96034 96031   0.0   0:00.24 zsh\n96159 96033   0.0   0:00.01 zsh\n96177 96159   0.0   0:00.00 <defunct>\n"
+  }
+}
