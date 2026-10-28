@@ -97,23 +97,31 @@ describe('prepared canonical pointer work', () => {
     }
   });
 
-  it('performs no full parsing from the first actual oneOf-80 write', () => {
-    const parsers = observeParsers();
-    const { root } = createDispatchTree(createFixedBranchSchema(80));
-    dispatchMount(root, undefined, undefined, { deferValidation: true });
-    expect(parsers.decoder.mock.calls.length).toBeGreaterThan(0);
-    const kind = root.structure!.kind;
-    for (const index of [79, 0, 79, 0, 79, 0]) {
-      parsers.wrapper.mockClear();
-      parsers.decoder.mockClear();
-      dispatchSetValue(kind, `kind_${index}`);
-      expect(root.emit).toMatchObject({
-        kind: `kind_${index}`,
-        [`payload_${index}_a`]: `a_${index}`,
-      });
-      expect(root.structure!.kind).toBe(kind);
-      expect(parsers.wrapper).not.toHaveBeenCalled();
-      expect(parsers.decoder).not.toHaveBeenCalled();
-    }
-  });
+  it.each([false, true])(
+    'performs no full parsing from the first actual oneOf-80 write with diagnostics=%s',
+    (diagnostics) => {
+      const parsers = observeParsers();
+      const { root } = createDispatchTree(
+        createFixedBranchSchema(80),
+        undefined,
+        undefined,
+        diagnostics ? { hasConsumer: () => true, report: () => {} } : undefined,
+      );
+      dispatchMount(root, undefined, undefined, { deferValidation: true });
+      expect(parsers.decoder.mock.calls.length).toBeGreaterThan(0);
+      const kind = root.structure!.kind;
+      for (const index of [79, 0, 79, 0, 79, 0]) {
+        parsers.wrapper.mockClear();
+        parsers.decoder.mockClear();
+        dispatchSetValue(kind, `kind_${index}`);
+        expect(root.emit).toMatchObject({
+          kind: `kind_${index}`,
+          [`payload_${index}_a`]: `a_${index}`,
+        });
+        expect(root.structure!.kind).toBe(kind);
+        expect(parsers.wrapper).not.toHaveBeenCalled();
+        expect(parsers.decoder).not.toHaveBeenCalled();
+      }
+    },
+  );
 });

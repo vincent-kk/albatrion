@@ -162,7 +162,7 @@ class DependencyIndex {
         for (const rule of rules.byDeclaration.get(declaration.id) ?? []) {
           if (
             rule.kind !== 'derived' ||
-            !(rule.targetName || rule.targetItems)
+            (rule.targetName === undefined && !rule.targetItems)
           )
             continue;
           const targetPath = rule.targetItems

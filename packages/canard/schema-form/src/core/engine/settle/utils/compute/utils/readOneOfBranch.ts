@@ -1,6 +1,6 @@
 import {
-  joinPointer,
-  parsePointerSegments,
+  type PointerSegment,
+  joinPointerWithPrefixOf,
 } from '@/schema-form/helpers/jsonPointer';
 
 /** Branch positions are plain decimal array indexes. */
@@ -17,10 +17,13 @@ interface OneOfBranch {
 /**
  * Find the innermost `oneOf` branch that a declaration's schema path crosses.
  * @param schemaPath - Authored schema location of a declaration; an absolute extended pointer, with or without the leading `#`.
+ * @param segments - Prepared decoded syntax for schemaPath, owned by its blueprint.
  * @returns The `oneOf` array location, written with the same leading `#` as the input, and the branch position; undefined when the path crosses no `oneOf` branch.
  */
-export const readOneOfBranch = (schemaPath: string): OneOfBranch | undefined => {
-  const segments = parsePointerSegments(schemaPath);
+export const readOneOfBranch = (
+  schemaPath: string,
+  segments: readonly PointerSegment[],
+): OneOfBranch | undefined => {
   for (let index = segments.length - 2; index >= 0; index--) {
     const position = segments[index + 1];
     if (
@@ -29,9 +32,10 @@ export const readOneOfBranch = (schemaPath: string): OneOfBranch | undefined => 
       BRANCH_POSITION.test(position)
     )
       return {
-        oneOfPath:
-          (schemaPath[0] === '#' ? '#' : '') +
-          joinPointer(segments.slice(0, index + 1)),
+        oneOfPath: joinPointerWithPrefixOf(
+          schemaPath,
+          segments.slice(0, index + 1),
+        ),
         position,
       };
   }

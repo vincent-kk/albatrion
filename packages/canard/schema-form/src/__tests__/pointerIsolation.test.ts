@@ -163,7 +163,9 @@ function findViolations(
         (ts.isNewExpression(node) &&
           ts.isIdentifier(node.expression) &&
           node.expression.text === 'RegExp')) &&
-      /\\?\/\(?(oneOf|anyOf|allOf|properties|items)\b/.test(node.getText(source))
+      /\\?\/\(?(oneOf|anyOf|allOf|properties|items)\b/.test(
+        node.getText(source),
+      )
     )
       record(node, 'pointer structure expression');
     if (ts.isBinaryExpression(node)) {
@@ -182,13 +184,19 @@ function findViolations(
       if (
         equality &&
         literal &&
-        ['*', '..', '.', '@', '/'].includes(literal.text) &&
+        ['*', '..', '.', '@', '/', '#'].includes(literal.text) &&
         /(?:path|pointer|segment|token|dependency|watched)/i.test(
           operand.getText(source),
         )
       )
         record(node, 'raw literal operator comparison');
 
+      if (
+        node.operatorToken.kind === ts.SyntaxKind.PlusToken &&
+        ((ts.isStringLiteralLike(node.left) && node.left.text === '#') ||
+          (ts.isStringLiteralLike(node.right) && node.right.text === '#'))
+      )
+        record(node, 'fragment prefix concatenation');
       const left = node.left.getText(source);
       const right = node.right.getText(source);
       if (
@@ -207,7 +215,9 @@ function findViolations(
         node.operatorToken.kind === ts.SyntaxKind.PlusToken &&
         ((ts.isStringLiteralLike(node.right) &&
           node.right.text.startsWith('/') &&
-          /path|pointer|suffix|prefix|appendSegment|appendFormattedSegment|joinPointer/i.test(left)) ||
+          /path|pointer|suffix|prefix|appendSegment|appendFormattedSegment|joinPointer/i.test(
+            left,
+          )) ||
           (ts.isStringLiteralLike(node.left) &&
             node.left.text === '/' &&
             /path|pointer|segment|encoded|name|index/i.test(right)))
@@ -273,7 +283,26 @@ it('rejects separator construction after a centralized builder result', () => {
     join(sourceRoot, 'pointer-probe.ts'),
     "const match = address.startsWith(appendSegment(base, name) + '/');",
   );
-  expect(violations.some((finding) => finding.includes('pointer concatenation'))).toBe(true);
+  expect(
+    violations.some((finding) => finding.includes('pointer concatenation')),
+  ).toBe(true);
+});
+
+it('rejects raw fragment comparison and prefix construction', () => {
+  const violations = findViolations(
+    join(sourceRoot, 'pointer-probe.ts'),
+    "const fragment = pointer[0] === '#'; const result = '#' + joinPointer(parts);",
+  );
+  expect(
+    violations.some((finding) =>
+      finding.includes('raw literal operator comparison'),
+    ),
+  ).toBe(true);
+  expect(
+    violations.some((finding) =>
+      finding.includes('fragment prefix concatenation'),
+    ),
+  ).toBe(true);
 });
 
 it('rejects template, prefix, lone-separator and structure-expression path handling', () => {
