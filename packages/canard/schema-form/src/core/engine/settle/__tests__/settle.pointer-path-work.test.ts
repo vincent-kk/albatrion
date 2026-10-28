@@ -63,6 +63,24 @@ const observeParsers = () => {
 
 // filid:contract settle-static-pointer-work
 describe('prepared canonical pointer work', () => {
+  it('does not parse ungated declarations for diagnostics in a branchless form', () => {
+    const parsers = observeParsers();
+    const { root } = createDispatchTree(
+      {
+        type: 'object',
+        properties: { value: { type: 'number' } },
+      },
+      undefined,
+      undefined,
+      { hasConsumer: () => true, report: () => {} },
+    );
+    dispatchMount(root, { value: 1 }, undefined, { deferValidation: true });
+    parsers.decoder.mockClear();
+    dispatchSetValue(root.structure!.value, 2);
+    expect(root.emit).toEqual({ value: 2 });
+    expect(parsers.decoder).not.toHaveBeenCalled();
+  });
+
   it('performs no full parsing from the first actual siblings-0 write', () => {
     const parsers = observeParsers();
     const { root } = createDispatchTree({
