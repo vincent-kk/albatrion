@@ -3,7 +3,7 @@
 ## Requirements
 
 - 폐기되지 않은 떼어진 노드의 늦은 UI 입력도 값 쓰기와 같이 무효이며 개발 모드 경고를 낸다.
-- 폐기되면서 떼어진 참조의 공개 setValue와 배열 동사는 detached 거부가 폐기 검사보다 먼저 적용되어 DisposedNodeWrite를 던지는 대신 무동작과 개발 경고로 끝나며, UI 입력 채널의 폐기 거부는 무음이다.
+- 폐기되면서 떼어진 참조의 공개 setValue와 배열 동사는 detached 거부가 폐기 검사보다 먼저 적용되어 DisposedNodeWrite를 던지는 대신 무동작과 개발 경고로 끝나며, UI 입력 채널의 폐기 거부는 무음이다. resetSubtree도 detached 검사가 폐기 검사보다 먼저 적용되어 경고 없이 무동작으로 끝나며, 상태·오류·요청 명령은 폐기 검사를 먼저 적용해 DisposedNodeWrite를 던진다.
 
 - 중첩 경고 보고는 호출 전 reportingErrors를 복원한다. onError 안의 떼어진 쓰기가 경고를 보고해도 같은 콜백의 살아 있는 쓰기는 WriteInObserver로 거부한다.
 

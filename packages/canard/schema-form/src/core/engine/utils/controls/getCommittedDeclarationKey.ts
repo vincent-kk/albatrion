@@ -4,7 +4,7 @@ import { getBlueprintNodeIdentity } from '../nodeIdentity/getBlueprintNodeIdenti
 /**
  * Reuse the exact path/fold-inclusive-kind pair identity until an occurrence is reindexed.
  * @param node - Declaration target with an absolute path and immutable fold-inclusive kind
- * @param runtime - Root owner of this occurrence memo or retained address state
+ * @param runtime - Root owner of this occurrence memo
  * @returns JSON pair key compatible with committed path-store moves
  */
 export const getCommittedDeclarationKey = (

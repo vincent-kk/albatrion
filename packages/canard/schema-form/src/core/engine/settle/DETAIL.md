@@ -55,7 +55,7 @@
 
 - D3b-2의 분석·호스트 파생 builder는 공통 두 레코드의 자기 슬롯만 지연 채운다. DependencyIndex에는 정적 색인만 두며 presenceLevels의 호출 한정 메모는 SettlementContext의 지연 Map이다. context를 재사용하지 않아 다음 정착으로 남지 않으며 staticShape의 entries·byEntry는 서로 독립 지연이다. child entry별 두 색인은 선언 부모 host 슬롯의 저장소로 동일성을 보존한다. staticIds와 readAdmittedEdgeSchema는 모두 첫 사용에 만드는 WeakMap이며 caller는 선언 부모 BlueprintNode를 명시 인수로 넘겨 형제 N개당 저장소 하나씩을 공유한다. 두 저장소를 같은 WeakMap으로 두는 이유는 staticIds 분리 실험에서 확인한 JSC Map의 항목당 비용을 같은 entry 키의 둘째 저장소에서도 피하려는 것이며 다른 슬롯의 저장 모양은 바꾸지 않는다(D3b-2b).
 
-- 모드 읽기는 공통 engineModes, 변경은 setMode를 거친다. 파생 메모는 실제 모드 변경 때 재생성하며 생성 사실을 잃지 않는다. 라이브 호스트 예산은 runtime의 지연 WeakMap을 쓴다. 폼 전체 reset·폐기는 재계산 가능한 트리 메모만 비우고 부분 reset은 비우지 않는다. 이 초기화는 떼어진 참조의 고정 읽기를 보존한다(SURFACE-065, NODE-044, B11).
+- D3b-1에서 모드 읽기는 공통 engineModes, 변경은 setMode를 거친다. 파생 메모는 실제 모드 변경 때 재생성하며 생성 사실을 잃지 않는다. 라이브 호스트 예산은 runtime의 지연 WeakMap을 쓴다. 폼 전체 reset·폐기는 재계산 가능한 트리 메모만 비우고 부분 reset은 비우지 않는다. 이 초기화는 커밋·배달 순서·public path의 고정 읽기를 바꾸지 않는다(SURFACE-065, NODE-044).
 
 - D2-P1의 쓰기 세대 경로는 정적 첫 로드 자격 청사진의 살아 있는 branch에 대한 독립적인 callerReplace/input 전체 쓰기만 허용한다. 게이트·식·파생·감시·가상·재귀, load·automatic·partial·batch·visit, 잠복 원본·미확정 잠복 변경·misfit이 있으면 기존 DirtyPathSet 경로를 쓴다. 판정은 청사진 증거와 고정 수의 런타임 읽기로 하며 쓰기 전에 전체 트리를 걷지 않는다(SETTLE-017·047, TEST-080 D2-P1).
 - 허용된 표시에서 `node.writeEpoch === context.writeEpoch`는 이번 계산의 아직 소비하지 않은 dirty 구성원임을 뜻한다. 바뀌지 않은 잎을 건너뛰는 기존 규칙과 raw·분배 입력·changedRaw·writtenInputs 기록은 유지한다. branch의 기존 sameShape 증명이 하나라도 실패하면, 이미 표식한 writtenInputs를 원래 삽입 순서로 DirtyPathSet에 재생하고 이후 모두 일반 경로로 후퇴한다. 배열 개수·키 집합·extras·잘못된 종류 변화는 이 후퇴에 포함된다. 정착 세대가 안전 정수 범위를 넘으면 처음부터 일반 경로다.
