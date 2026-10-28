@@ -208,3 +208,65 @@ legacy 품질비는 호환 레인 18행의 B10/A10 중앙비 **0.999368226**입�
 ## 인계
 
 독립 antigravity 검토와 PR 생성은 코디네이터가 수행합니다. 측정 머리는 B6 병합 전 `2406a34d9`이고, B6 병합 후 지정 stage에 rebase한 뒤의 SHA는 아직 없습니다. rebase 뒤 관문은 다시 실행하며 공식 A/B 창은 반복하지 않습니다.
+
+## 후보 2
+
+독립 검토(판정 FAIL)의 결함 10건을 모두 반영한 후보입니다. 제품 변경이 있으므로 후보 1의 측정 표는 이 후보에 적용되지 않으며, 후보 2의 측정은 별도 측정 실행기가 새 창에서 수행합니다.
+
+### 규칙과 비용
+
+**정적 keep 선언 플래그.** 청사진 노드의 선택 필드 `hasKeepDescendants`는 `unsetOnInactive`가 리터럴 true가 아닌 선언(false 또는 표현식)이 템플릿 아래에 있거나, 템플릿의 조각 범위 controls와 `controls.fields`가 자식에게 그런 선언을 하면 참입니다. 청사진 구축의 `markCandidateDescendants` 바로 뒤에서 `markKeepDescendants`가 선언을 한 번 훑어 표시하고, 선언이 하나라도 있을 때만 후보 도달성과 같은 구축 전용 역방향 그래프로 조상에 전파합니다. 선언이 없는 그래프는 할당이 없고 필드도 남지 않습니다. 지움 배열의 나감은 이 플래그가 없으면 아이템을 방문하지 않고 슬롯 전체를 버리므로, keep 선언이 없는 배열의 방문 수는 아이템 수와 무관하게 배열 하나이며 변경 전과 같습니다. 호출 수 시험은 7개 아이템 배열의 `readSlotExitPolicy` 호출을 1회로 고정합니다(검토 시점에는 22회).
+
+**쓰기 주소 규칙.** 압축 배열 바로 아래의 생존 아이템은 배열 이동과 같은 장치(`DetachedWriteAddress.retain`)로 새 색인의 칸을 얻고 그 칸을 사적 복제본과 공유합니다. 따라서 닫힌 동안 옛 참조에 쓴 값은 재진입 뒤 같은 생존 아이템에 닿습니다. 생존하지 못한 아이템에는 `DetachedWriteAddress.discard`로 소멸 칸을 두고, 그 아이템과 자손에 대한 옛 참조 쓰기는 `writeFieldNode`에서 효과 없이 반환합니다. 이 소멸 표시는 생존 아이템이 하나라도 있어 압축 계획이 만들어지는 배열에 적용됩니다. 모든 아이템이 소멸해 슬롯이 통째로 버려지는 배열은 압축 계획이 없으며 기존 동작을 따릅니다.
+
+**비용 문장.** keep 선언이 있는 지움 배열의 나감은 아이템 서브트리의 노드 수에 비례해 방문하고, 최종 나감에서는 압축 배열을 품은 나간 최상위 서브트리 전체를 사적으로 복제합니다(보유 서브트리를 통째로 유지하는 슬롯 모델의 기준선이며 B7이 도입한 것이 아닙니다). 복제 비용과 보유 메모리는 그 서브트리의 노드 수에 비례하고, 압축 배열 아래의 overlay 실체화된 raw에는 생존 아이템만 담깁니다. 재진입의 보존 자리 이름 조회는 별표 호환 경로와 공유하는 분배 기록 `retainedItemNames`의 배열 순회이므로 생존 아이템 n개의 복원 비용은 n의 제곱에 비례합니다. 집합으로 바꾸면 별표 호환 경로의 형식까지 바뀌므로 제거하지 않았습니다. keep 선언이 없는 배열, 지움 없는 나감, 객체 호스트의 방문과 할당은 변경 전과 같습니다.
+
+### 검토 결함의 처리
+
+| 결함 | 처리 | 파일과 시험 |
+| --- | --- | --- |
+| 1 (P1) 압축 뒤 옛 참조 쓰기가 다른 아이템에 떨어짐 | 생존 아이템은 새 색인의 칸으로 옮기고 소멸 아이템의 쓰기는 무효로 함 | `cloneSlotSubtree.ts`, `DetachedWriteAddress.ts`, `writeFieldNode.ts`, `createClearedArrayOverlay.ts`; `surface.clearing-array-keep.test.ts`의 `writes a survivor old reference to the same survivor after compaction`, `drops a write addressed at a discarded item after compaction` |
+| 2 (P2) 지움 배열이 모든 아이템 서브트리를 방문함 | 정적 플래그로 keep 선언 없는 배열은 방문 생략 | `markKeepDescendants.ts`, `readKeepDeclarations.ts`, `isKeepControls.ts`, `collectTemplateParents.ts`, `createExitSlotOverlay.ts`; `markKeepDescendants.test.ts`, `visits a clearing array without keep declarations once, whatever its item count` |
+| 3 (P2) 사적 복제가 서술보다 넓음 | 코드는 유지하고 settle `DETAIL.md`와 비용 문장을 실제 동작에 맞춤 | `settle/DETAIL.md` |
+| 4 (P2) 비어 있는 keep 배열 자손만으로 아이템이 남음 | 그 배열이 명시 keep(`unsetOnInactive: false`)이므로 남는 것이 정책에 맞음. 지우는 배열은 아이템이 없으면 원본이 아님을 확인 | `keeps an item whose only kept source is an explicitly kept empty array` |
+| 5 (P2) 도우미가 함수 이름 디렉터리에 있음 | 두 도우미를 `utils/slots/`의 평평한 파일로 이동 | `createClearedArrayOverlay.ts`, `materializeKeptSlotOverlay.ts` |
+| 6 (P2) 후보 종류와 색인 이동 시험 없음 | 생존 아이템이 색인 2에서 0으로 이동하는 후보 소유 배열 시험 추가 | `rebinds kept item candidates when survivors shift to earlier indices` |
+| 7 (P3) 비활성 후보에 활성 나감 입력을 넘김 | 활성 구조의 아이템에만 `context`를 넘김 | `createClearedArrayOverlay.ts` |
+| 8 (P3) 실패 먼저 기록의 이름 불일치 | `passingControls`를 실제 시험 제목으로 고치고 기준에 대입하지 않은 시험 파일을 기록 | `raw/b7/fail-first.json` |
+| 9 (P3) 배달 비교가 B7을 관측하지 못함 | 고정 장치(72장면·430관측점, 마운트 6장면·12관측점)에 지움 배열 아래 keep 장면이 없으므로 차이 목록이 비어 있는 것은 B7 동작에 대한 증거가 아닙니다. 알려진 공백으로 기록하며 이 PR에서 장치 코퍼스는 바꾸지 않습니다. | 이 절 |
+| 10 (P3) 시험의 fixture 가져오기 방식 | 형제 시험과 같은 `@/schema-form/core/__tests__/makeFieldNodeTree` 별칭 사용. `retainedItemNames`의 제곱 비용은 비용 문장에 명시 | `surface.clearing-array-keep.test.ts` |
+
+결함 4의 확인 결과: 비어 있는 branch 배열의 raw는 정의되지 않은 상태입니다. 그럼에도 명시 keep 배열이 아이템을 남기는 것은 기준선이 객체 호스트에서 쓰는 규칙(지우지 않는 배열은 원본으로 센다)을 그대로 따른 결과이며, 지우는 배열은 아이템이 없으면 원본이 아니므로 keep 선언 없는 배열의 길이는 0입니다. 검토 문서가 말한 `{ tags: [] }` 대신 실제 재진입 값은 아이템 `{}`이고, 길이는 원래 아이템 수입니다.
+
+### 실패 먼저 확인
+
+후보 1의 머리 `fae1785dc`의 제품 코드에 후보 2의 시험을 대입했을 때 실패한 시험은 다음과 같습니다.
+
+- `writes a survivor old reference to the same survivor after compaction`
+- `drops a write addressed at a discarded item after compaction`
+- `visits a clearing array without keep declarations once, whatever its item count` (호출 22회)
+- `marks the array when an item descendant declares unsetOnInactive false`
+- `marks the array when an item descendant declares an expression`
+- `marks the array when the item itself declares a keep`
+- `marks a host whose controls.fields address a child with a keep`
+- `marks every ancestor on the path to the declaration`
+- `marks a recursive template that reaches a keep`
+
+`rebinds kept item candidates when survivors shift to earlier indices`와 `keeps an item whose only kept source is an explicitly kept empty array`는 `fae1785dc`에서도 통과합니다. 두 시험은 실행된 적 없는 경로와 올바른 기존 동작을 고정하는 특성 시험입니다. 재귀 템플릿 시험은 처음 고정 입력이 스키마 오류(`RECURSIVE_SHAPE_UNBOUNDED`)였으므로 입력을 고친 뒤 플래그 계산 호출을 끈 상태에서 다시 대입해 실패를 확인했고 호출을 복원했습니다.
+
+### 관문
+
+코디네이터의 일정 변경에 따라 이 후보에서는 `typecheck`, `lint`, 표적 시험만 실행했습니다. 전체 다섯 프로젝트, Storybook 샤드, `build`, `test:verify`, 공개 선언 차분, 배달 비교는 B6 병합 뒤 rebase한 최종 후보에서 한 번 실행하며 이 절에는 아직 결과가 없습니다. 전체 유닛 한 번은 기본 힙에서 V8 힙 부족으로 종료되었으므로, 전체 실행에는 힙을 늘려야 합니다.
+
+| 관문 | 결과 |
+| --- | --- |
+| typecheck | 통과 |
+| lint | 통과 |
+| 표적 유닛 시험(settle의 슬롯·배열·후보·나감·비활성·재진입, 겉면의 압축 시험과 분리 참조 시험, 배열 이동의 보존 정책, 청사진 전체, 슬롯·쓰기·분리 organ의 시험) | 182파일·1309사례 통과 |
+| 화면 시험 `clearing-array-keep` (render, react18) | 2파일·4사례 통과 |
+
+### 측정
+
+| 항목 | 값 |
+| --- | --- |
+| 후보 2 A/B 창 | 측정 실행기가 기록 |

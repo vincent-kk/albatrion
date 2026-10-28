@@ -16,9 +16,9 @@
   ],
   "reason": "Kept sources are discarded or re-entry has no items; same-name candidate kinds must keep their own source channels.",
   "passingControls": [
-    "array without keep descendants has zero items",
-    "object clearing exit visits 3 overlays and restores keep",
-    "nonclearing array exit visits 7 overlays and restores all items"
+    "keeps clearing arrays without keep descendants empty on re-entry",
+    "preserves overlay visits for object exits with clear=true",
+    "preserves overlay visits for array exits with clear=false"
   ],
   "fixedContractCases": 18,
   "renderCases": 4,
@@ -37,5 +37,32 @@
     "failedCase": "compacts already inactive nested arrays without losing their row-local keep policies",
     "red": true,
     "restored": true
+  },
+  "notSubstitutedOnBaseline": {
+    "reason": "Recorded only against the intermediate implementation 869ab553c or the final implementation; not substituted onto 0b9337cd9.",
+    "files": [
+      "src/core/surface/__tests__/surface.clearing-array-keep.test.ts",
+      "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.retained-source-policy.test.ts",
+      "src/__tests__/e2e/clearing-array-keep.test.tsx"
+    ]
+  },
+  "candidate2": {
+    "baseline": "fae1785dc",
+    "failingNames": [
+      "writes a survivor old reference to the same survivor after compaction",
+      "drops a write addressed at a discarded item after compaction",
+      "visits a clearing array without keep declarations once, whatever its item count",
+      "marks the array when an item descendant declares unsetOnInactive false",
+      "marks the array when an item descendant declares an expression",
+      "marks the array when the item itself declares a keep",
+      "marks a host whose controls.fields address a child with a keep",
+      "marks every ancestor on the path to the declaration",
+      "marks a recursive template that reaches a keep"
+    ],
+    "passingCharacterizations": [
+      "rebinds kept item candidates when survivors shift to earlier indices",
+      "keeps an item whose only kept source is an explicitly kept empty array"
+    ],
+    "recursiveFixtureNote": "Verified by disabling the flag computation after correcting the fixture."
   }
 }
