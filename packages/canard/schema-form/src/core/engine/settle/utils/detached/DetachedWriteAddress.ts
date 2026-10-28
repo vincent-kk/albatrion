@@ -74,7 +74,8 @@ export class DetachedWriteAddress {
   /**
    * Resolve a detached write, including descendants folded into an array source.
    * @param node - Detached occurrence with its original parent chain and path
-   * @returns Its cell, an address relative to a captured ancestor, or undefined
+   * @returns Its cell, an address relative to a captured ancestor, or undefined;
+   * marked discarded when the occurrence or any ancestor did not survive a compaction
    */
   static read<Self extends FieldNodeRecord<Self>>(
     node: Self,
@@ -82,7 +83,12 @@ export class DetachedWriteAddress {
     const cells = node.runtime.detachedWriteAddresses;
     if (!cells) return undefined;
     const own = cells.get(node);
-    if (own) return own;
+    if (own) {
+      if (own.discarded) return own;
+      for (let parent = node.parent; parent; parent = parent.parent)
+        if (cells.get(parent)?.discarded) return { ...own, discarded: true };
+      return own;
+    }
     for (let parent = node.parent; parent; parent = parent.parent) {
       const ancestor = cells.get(parent);
       if (!ancestor) continue;

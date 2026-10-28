@@ -15,22 +15,25 @@ import { resolveSlotSource } from './resolveSlotSource';
 
 /**
  * Compose one live item's raw tree with sources retained at gated-out paths.
- * @param node - Live item or descendant whose source channels are read
+ * @param node - Live or detached occurrence whose source channels are read
  * @param context - Settlement containing retained sources beneath the item
  * @returns Raw tree, retaining every array slot; undefined for an empty-source
- * object or leaf
+ * object or leaf; discarded occurrences use their frozen source channels
  */
 export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown => {
   if (node.detached) {
+    const address = DetachedWriteAddress.read(node);
+    if (address?.discarded)
+      return readSlotRawTree(node.blueprintNode, node, undefined);
     const lineage = [];
     for (let current: Self | null = node; current; current = current.parent)
       lineage.unshift(current.blueprintNode);
     const resolved = resolveSlotSource(
       context.root,
-      DetachedWriteAddress.read(node)?.path ?? node.path,
+      address?.path ?? node.path,
       node.blueprintNode,
       lineage,
     );
