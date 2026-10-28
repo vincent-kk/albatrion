@@ -1,0 +1,18 @@
+{
+  "index.mjs": {
+    "bytes": 811087,
+    "sha256": "cd0b65ef4951d2af2b0f32f864cff3cc1fae0a38feade907f53f41e783171262"
+  },
+  "index.node.mjs": {
+    "bytes": 810327,
+    "sha256": "940ebbe8c5e03990feafc91e95dae8719289ea55313ed7d001aa3e97b44af6a1"
+  },
+  "index.cjs": {
+    "bytes": 828133,
+    "sha256": "c293ed28b89b5f0887d5e1474a1a604c3ca24be484e39be2581326c55ce7a036"
+  },
+  "index.d.ts": {
+    "bytes": 3054,
+    "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+  }
+}

@@ -5,9 +5,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { waitForQuietProcess } from '../window/helpers/waitForQuietProcess.mjs';
 import { runMountWorker } from './helpers/runMountWorker.mjs';
 import { verifyMountInputs } from './helpers/verifyMountInputs.mjs';
-import { waitForQuietProcess } from './helpers/waitForQuietProcess.mjs';
 
 const options = {};
 for (const arg of process.argv.slice(2)) {
