@@ -1,4 +1,8 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  hasPointerOperator,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { WriteOption } from '../../../types/value';
@@ -32,7 +36,9 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   );
   context.entryApi = 'setContext';
   const owners = getContextOwners(root.runtime.blueprint);
-  context.contextOwners = owners.some((owner) => owner.includes('/*'))
+  context.contextOwners = owners.some((owner) =>
+    hasPointerOperator(owner, PointerOperator.Wildcard),
+  )
     ? owners.flatMap((owner) => expandTemplatePaths(root, owner))
     : owners;
   root.runtime.context = contextValue;
@@ -42,12 +48,10 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
     for (const owner of context.contextOwners) {
       context.dirtyPaths.add(owner);
       context.dependencyOwnerPaths.add(owner);
-      context.shapeDirtyPaths.add(
-        owner.slice(0, owner.lastIndexOf($.Separator)),
-      );
+      context.shapeDirtyPaths.add(resolvePointer(owner, '..'));
       let ancestor = owner;
       while (ancestor) {
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+        ancestor = resolvePointer(ancestor, '..');
         context.dirtyPaths.add(ancestor);
       }
     }

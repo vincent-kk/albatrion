@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../../record';
 import type {
   ArrayAppendProof,
@@ -23,7 +25,7 @@ export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
   proof: ArrayAppendProof<Self>,
 ): boolean => {
   const name = String(proof.count);
-  const path = node.path + '/' + name;
+  const path = appendSegment(node.path, name);
   const child = prior[name];
   const dirty = context.dirtyChildrenByParent.get(node.path);
   return (

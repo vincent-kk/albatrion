@@ -2,6 +2,10 @@
 
 ## Requirements
 
+표현식 등록에서는 fragment 접두사만 제거하고 절대 루트의 슬래시를 유지합니다. 빈 문자열로 정규화하면 상대 현재 위치와 구별할 수 없어 정착 중 투영을 읽는 순서가 바뀌므로 stripFragment의 normalizeRoot=false 모드를 사용합니다.
+
+- fragment 정규화는 jsonPointer의 stripFragment에 위임하며 최초 등록 순서를 보존한다.
+
 표현식에서 수집한 의존성 경로의 중복을 제거하면서 최초 등록 순서를 보존한다. 컴파일러를 옮기는 과정에서 기존 경로 문법이나 해석 기준을 바꾸지 않는다.
 
 ## API Contracts
@@ -19,4 +23,4 @@
 
 ## Last Updated
 
-2026-09-27
+2026-10-28

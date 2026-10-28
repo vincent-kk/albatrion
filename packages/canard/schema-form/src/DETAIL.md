@@ -16,6 +16,8 @@
 
 ### 경계 검증과 시험 도우미
 
+- `__tests__/pointerIsolation.test.ts`는 제품 소스의 경로 분할·조립·이스케이프·원문 연산자 비교를 검사하며 jsonPointer 소유 경계만 허용한다.
+
 - `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 92개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증한다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽는다.
 - `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미이다. 제품 트리나 패키지 공개 표면에 속하지 않는다. vitest 벤치는 재는 대상 fractal의 벤치 칸(지금은 `core/__benchmarks__`)에 있어 이 도우미를 상위 방향으로 열린 경로로 가져온다. src 밖의 `bench/legacy-compare/`(레거시 비교 독립 스크립트)·`bench/scripts/`(진단 스크립트)와 aileron 벤치마크의 find 대상 데이터·`loadCoreBenchmark`는 측정 도구라서 이 파일을 경로로 가져온다.
 - `__tests__/helpersErrorIndex.test.ts`는 자식 error 관문의 이름을 검증한다.
@@ -118,4 +120,4 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 ## Last Updated
 
-계약 기준: LANDING-067·170·205·207·208, WRITE-083, VALUE-027·034; 정돈-2(2026-10-14).
+2026-10-28

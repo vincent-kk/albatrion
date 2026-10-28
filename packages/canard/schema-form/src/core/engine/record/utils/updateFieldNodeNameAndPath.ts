@@ -1,4 +1,7 @@
-import { SLASH_REGEX, TILDE_REGEX } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendFormattedSegment,
+  formatSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../types/record';
 import { captureFieldNodeChange } from './captureFieldNodeChange';
@@ -13,11 +16,13 @@ export const updateFieldNodeNameAndPath = <
 ): void => {
   node.parent = parent;
   node.name = name;
-  node.escapedName = name.replace(TILDE_REGEX, '~0').replace(SLASH_REGEX, '~1');
+  node.escapedName = formatSegment(name);
   node.path = captureFieldNodeChange(
     node,
     'path',
-    parent === null ? '' : parent.path + '/' + node.escapedName,
+    parent === null
+      ? ''
+      : appendFormattedSegment(parent.path, node.escapedName),
   );
   node.depth = parent === null ? 0 : parent.depth + 1;
 };

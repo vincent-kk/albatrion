@@ -1,4 +1,7 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, SchemaFragment } from '../../../blueprint';
 import type { ValidationIssue } from '../../types/issue';
@@ -25,7 +28,8 @@ export const isOffUnionBranchIssue = (
   const matches = blueprint.fragments.filter(
     (fragment) =>
       issue.schemaPath === fragment.schemaPath ||
-      issue.schemaPath?.startsWith(fragment.schemaPath + '/'),
+      (issue.schemaPath !== undefined &&
+        isDescendantPath(issue.schemaPath, fragment.schemaPath)),
   );
   if (!matches.length) return false;
   const longest = Math.max(
@@ -57,15 +61,12 @@ export const isOffUnionBranchIssue = (
   if (candidates.length !== 1) return false;
   const owner = candidates[0];
   if (!owner.gates.length) return false;
-  const unionPath = owner.schemaPath.slice(
-    0,
-    owner.schemaPath.lastIndexOf($.Separator),
-  );
+  const unionPath = resolvePointer(owner.schemaPath, '..');
   const siblings = blueprint.fragments.filter(
     (fragment) =>
       fragment.id !== owner.id &&
       NUMERIC_KEY.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
-      fragment.schemaPath.startsWith(unionPath + '/'),
+      isDescendantPath(fragment.schemaPath, unionPath),
   );
   const isActive = (fragment: SchemaFragment): boolean =>
     fragment.declares.some((id) => activeIds.has(id)) ||

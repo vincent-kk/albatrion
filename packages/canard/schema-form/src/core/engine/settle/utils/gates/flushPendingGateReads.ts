@@ -1,7 +1,12 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  appendSegment,
+  isDescendantPath,
+  parsePointer,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -58,12 +63,16 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
             node,
             suffix,
             childSuffix:
-              gate.schemaPath === node.schemaPath + '/controls/active'
+              gate.schemaPath ===
+              appendSegment(
+                appendSegment(node.schemaPath, 'controls'),
+                'active',
+              )
                 ? suffix
                 : undefined,
           });
       for (const entry of node.childEntries) {
-        const childSuffix = suffix + '/' + escapeSegment(entry.name);
+        const childSuffix = appendSegment(suffix, entry.name);
         for (const declaration of entry.declarations)
           for (const gate of declaration.gates)
             built.occurrences.push({
@@ -71,7 +80,11 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
               node,
               suffix,
               childSuffix:
-                gate.schemaPath === declaration.schemaPath + '/controls/active'
+                gate.schemaPath ===
+                appendSegment(
+                  appendSegment(declaration.schemaPath, 'controls'),
+                  'active',
+                )
                   ? childSuffix
                   : undefined,
             });
@@ -79,9 +92,9 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
       }
       for (const [index, item] of (node.prefixItems ?? []).entries())
         for (const candidate of node.prefixItemCandidates?.[index] ?? [item])
-          visit(candidate, suffix + '/' + index);
+          visit(candidate, appendSegment(suffix, index));
       for (const item of node.itemCandidates ?? (node.item ? [node.item] : []))
-        visit(item, suffix + '/' + (node.prefixItems?.length ?? 0));
+        visit(item, appendSegment(suffix, node.prefixItems?.length ?? 0));
       ancestors.delete(node);
     };
     visit(template, '');
@@ -94,16 +107,15 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   const flushRead = (read: string): void => {
-    if (read === $.Context) return;
-    const local = read === path || read.startsWith(path + '/');
+    if (readPointerSegment(read, 0) === PointerOperator.Context) return;
+    const local = read === path || isDescendantPath(read, path);
     for (const host of context.pendingOutputs ?? []) {
       // A read inside the entry walks the entry node that the host holds before its subtree gates run.
       if (local && host.raw === undefined) continue;
       if (read === host.path) flushPendingOutput(host, context);
-      else if (read.startsWith(host.path + '/')) {
-        const name = unescapeSegment(
-          read.slice(host.path.length + 1).split($.Separator)[0],
-        );
+      else if (isDescendantPath(read, host.path)) {
+        const name = parsePointer(read.slice(host.path.length + 1)).segments[0];
+        if (typeof name !== 'string') continue;
         if (
           host.raw !== undefined ||
           !host.structure ||

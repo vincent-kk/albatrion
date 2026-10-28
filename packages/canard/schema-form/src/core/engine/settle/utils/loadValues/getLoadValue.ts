@@ -1,6 +1,4 @@
-import { unescapeSegment } from '@winglet/json/pointer';
-
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { parsePointer } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Read one node's immutable load source from the root snapshot.
@@ -11,9 +9,10 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 export const getLoadValue = (snapshot: unknown, path: string): unknown => {
   if (!path) return snapshot;
   let value = snapshot;
-  for (const encoded of path.slice(1).split($.Separator)) {
+  for (const encoded of parsePointer(path).segments) {
     if (value === null || typeof value !== 'object') return undefined;
-    value = Reflect.get(value, unescapeSegment(encoded));
+    if (typeof encoded !== 'string') return undefined;
+    value = Reflect.get(value, encoded);
   }
   return value;
 };

@@ -1,6 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendSegment,
+  readFormattedPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type {
   AnalysisContext,
@@ -62,13 +65,18 @@ export const collectDeclarations = (
   if (
     schema.controls?.active !== undefined &&
     !gates.some(
-      (gate) => gate.schemaPath === input.schemaPath + '/controls/active',
+      (gate) =>
+        gate.schemaPath ===
+        appendSegment(appendSegment(input.schemaPath, 'controls'), 'active'),
     )
   )
     gates.push(
       createBlueprintGate({
         kind: 'active',
-        schemaPath: input.schemaPath + '/controls/active',
+        schemaPath: appendSegment(
+          appendSegment(input.schemaPath, 'controls'),
+          'active',
+        ),
         hostPath: path,
         condition: schema.controls.active,
       }),
@@ -90,7 +98,7 @@ export const collectDeclarations = (
   input.fragment?.children.push(fragment.id);
   const declaration: PropertyDeclaration = {
     id: context.declarationId++,
-    name: path.slice(path.lastIndexOf($.Separator) + 1),
+    name: readFormattedPointerSegment(path, -1) ?? '',
     path,
     schemaPath: input.schemaPath,
     schema: input.schema,
@@ -177,10 +185,9 @@ export const collectDeclarations = (
       const child = values[index];
       if (child === undefined || child === false) continue;
       const childPath =
-        input.schemaPath +
-        '/' +
-        keyword +
-        (keyword === 'then' || keyword === 'else' ? '' : '/' + index);
+        keyword === 'then' || keyword === 'else'
+          ? appendSegment(input.schemaPath, keyword)
+          : appendSegment(appendSegment(input.schemaPath, keyword), index);
       const nestedGates = [...gates];
       const discriminator = discriminators?.get(childPath);
       if (discriminator)
@@ -196,7 +203,7 @@ export const collectDeclarations = (
         nestedGates.push(
           createBlueprintGate({
             kind: 'if',
-            schemaPath: input.schemaPath + '/if',
+            schemaPath: appendSegment(input.schemaPath, 'if'),
             hostPath: path,
             condition: schema.if,
             negated: keyword === 'else',

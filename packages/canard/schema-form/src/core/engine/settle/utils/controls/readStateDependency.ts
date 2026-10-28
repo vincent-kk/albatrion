@@ -1,7 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  parsePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
@@ -29,12 +31,14 @@ export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
   snapshot?: EmissionSnapshot,
 ): unknown => {
   const path = resolveDependencyPath(hostPath, dependency);
-  if (path === $.Context)
+  const segments = parsePointer(path).segments;
+  if (segments[0] === PointerOperator.Context)
     return (snapshot ? snapshot.context : root.runtime.context) ?? {};
   let value: unknown = snapshot ? snapshot.emit : root.emit;
-  for (const encoded of path.split($.Separator).slice(1)) {
+  for (const encoded of segments) {
     if (value === null || typeof value !== 'object') return undefined;
-    const name = unescapeSegment(encoded);
+    const name = encoded;
+    if (typeof name !== 'string') return undefined;
     if (!hasOwnProperty(value, name)) return undefined;
     value = Reflect.get(value, name);
   }

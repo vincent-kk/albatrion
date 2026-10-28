@@ -30,6 +30,7 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
       const structure: Record<string, Self> | null | undefined =
         hostNode?.structure;
       const name = segments[index];
+      if (typeof name !== 'string') return undefined;
       hostNode =
         structure && hasOwnProperty(structure, name)
           ? structure[name]

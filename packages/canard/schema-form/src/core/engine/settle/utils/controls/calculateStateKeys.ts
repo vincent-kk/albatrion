@@ -1,4 +1,7 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  appendSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
@@ -114,7 +117,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
         let value: boolean | undefined;
         if (typeof literal === 'boolean') value = literal;
         else if (typeof literal === 'string') {
-          const schemaPath = group.schemaPath + '/' + key;
+          const schemaPath = appendSegment(group.schemaPath, key);
           const cacheKey = JSON.stringify([group.host.path, schemaPath]);
           if (evaluated.has(cacheKey)) value = evaluated.get(cacheKey);
           else {

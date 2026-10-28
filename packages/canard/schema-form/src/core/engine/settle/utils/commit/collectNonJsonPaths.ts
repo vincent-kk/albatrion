@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SLASH_REGEX, TILDE_REGEX } from '@/schema-form/helpers/jsonPointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Find nested values a JSON round trip cannot preserve inside a whole value.
@@ -44,7 +44,7 @@ export const collectNonJsonPaths = (value: unknown, path: string): string[] => {
       for (let index = current.length - 1; index >= 0; index--)
         pending.push({
           value: current[index],
-          path: currentPath + '/' + index,
+          path: appendSegment(currentPath, index),
         });
     } else {
       const keys = Object.keys(current);
@@ -52,10 +52,7 @@ export const collectNonJsonPaths = (value: unknown, path: string): string[] => {
         const key = keys[index];
         pending.push({
           value: Reflect.get(current, key),
-          path:
-            currentPath +
-            '/' +
-            key.replace(TILDE_REGEX, '~0').replace(SLASH_REGEX, '~1'),
+          path: appendSegment(currentPath, key),
         });
       }
     }

@@ -1,4 +1,8 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  PointerOperator,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
@@ -39,7 +43,10 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
               (rule) =>
                 rule.kind === 'derived' &&
                 rule.targetName &&
-                rule.watchDependencies.includes($.Context),
+                rule.watchDependencies.some(
+                  (path) =>
+                    readPointerSegment(path, 0) === PointerOperator.Context,
+                ),
             )) &&
         !owners.includes(declaration.path)
       )

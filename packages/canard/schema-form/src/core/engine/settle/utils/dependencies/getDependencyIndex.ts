@@ -1,7 +1,15 @@
-import { isTruthy } from '@winglet/common-utils/filter';
-import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
-
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  type PointerSegment,
+  appendSegment,
+  hasPointerOperator,
+  isDescendantPath,
+  joinPointer,
+  parsePointer,
+  parsePointerSegment,
+  readPointerSegment,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type {
   Blueprint,
@@ -55,7 +63,7 @@ interface DependencyNode {
   /** Reused membership index preserves linear registration and owner order. */
   ownerPaths: Set<string>;
   /** Next escaped JSON Pointer segments. */
-  children: Map<string, DependencyNode>;
+  children: Map<PointerSegment, DependencyNode>;
 }
 
 /** Call-local prefix traversal results; never retained by the static index. */
@@ -101,7 +109,8 @@ class DependencyIndex {
         const declaration = declarations.get(id);
         if (!declaration) continue;
         const watched = resolveDependencyPath(declaration.path, dependency);
-        if (watched === $.Context) continue;
+        if (readPointerSegment(watched, 0) === PointerOperator.Context)
+          continue;
         this.ordinaryOwners.add(declaration.path);
         this.add(watched, declaration.path);
       }
@@ -110,11 +119,10 @@ class DependencyIndex {
       for (const declaration of node.declarations)
         for (const rule of rules.byDeclaration.get(declaration.id) ?? []) {
           if (rule.kind !== 'derived' || !rule.targetName) continue;
-          const targetPath =
-            declaration.path + '/' + escapeSegment(rule.targetName);
+          const targetPath = appendSegment(declaration.path, rule.targetName);
           for (const watch of rule.watchDependencies) {
             const watched = resolveDependencyPath(targetPath, watch);
-            if (watched !== $.Context) {
+            if (readPointerSegment(watched, 0) !== PointerOperator.Context) {
               this.ordinaryOwners.add(declaration.path);
               this.add(watched, declaration.path);
             }
@@ -127,7 +135,8 @@ class DependencyIndex {
           if (!expression) continue;
           for (const dependency of expression.dependencies) {
             const watched = resolveDependencyPath(gate.hostPath, dependency);
-            if (watched === $.Context) continue;
+            if (readPointerSegment(watched, 0) === PointerOperator.Context)
+              continue;
             this.add(watched, declaration.path);
           }
         }
@@ -152,22 +161,24 @@ class DependencyIndex {
           if (
             !expression?.dependencies.some(
               (dependency) =>
-                resolveDependencyPath(gate.hostPath, dependency) !== $.Context,
+                readPointerSegment(
+                  resolveDependencyPath(gate.hostPath, dependency),
+                  0,
+                ) !== PointerOperator.Context,
             )
           )
             continue;
           let hostPath: string | undefined;
           for (const [host, table] of tables) {
-            const name = unescapeSegment(
-              declaration.path.slice(declaration.path.lastIndexOf('/') + 1),
-            );
+            const name = readPointerSegment(declaration.path, -1);
+            if (typeof name !== 'string') continue;
             const stepIndex = table.stepIndexByName.get(name);
             if (
               stepIndex !== undefined &&
               table.tableSteps.has(stepIndex) &&
               table.plan.steps[stepIndex].gate === gate &&
-              declaration.path === host.path + '/' + escapeSegment(name) &&
-              !declaration.path.includes('/*')
+              declaration.path === appendSegment(host.path, name) &&
+              !hasPointerOperator(declaration.path, PointerOperator.Wildcard)
             ) {
               hostPath = host.path;
               break;
@@ -199,10 +210,9 @@ class DependencyIndex {
         }
         let names = grouped.get(host);
         if (!names) grouped.set(host, (names = new Map()));
-        names.set(
-          unescapeSegment(entry.path.slice(entry.path.lastIndexOf('/') + 1)),
-          rank,
-        );
+        const name = readPointerSegment(entry.path, -1);
+        if (typeof name !== 'string') continue;
+        names.set(name, rank);
       }
       node.splitBuckets = [];
       for (const [hostPath, ranksByName] of grouped) {
@@ -216,7 +226,7 @@ class DependencyIndex {
             !foreign && between < rank;
             between++
           )
-            if (!node.owners[between].path.startsWith(hostPath + '/'))
+            if (!isDescendantPath(node.owners[between].path, hostPath))
               foreign = true;
           if (foreign) {
             const id = runNumbers.get(hostPath) ?? 0;
@@ -236,7 +246,7 @@ class DependencyIndex {
         };
         node.splitBuckets.push(bucket);
         for (const [name, rank] of ranksByName)
-          this.splitOwners.set(hostPath + '/' + escapeSegment(name), {
+          this.splitOwners.set(appendSegment(hostPath, name), {
             bucket,
             rank,
             run: runByName.get(name)!,
@@ -267,7 +277,7 @@ class DependencyIndex {
         const path = entry.bindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
-        const paths = path.includes('/*')
+        const paths = hasPointerOperator(path, PointerOperator.Wildcard)
           ? expandTemplatePaths(root, path)
           : [path];
         events.push({
@@ -283,15 +293,19 @@ class DependencyIndex {
       }
       for (const bucket of node.splitBuckets ?? []) {
         let host: Self | undefined = root;
-        for (const segment of bucket.hostPath.split('/').slice(1))
-          host = host?.structure?.[unescapeSegment(segment)];
+        for (const segment of parsePointer(bucket.hostPath).segments)
+          if (typeof segment === 'string') host = host?.structure?.[segment];
+          else {
+            host = undefined;
+            break;
+          }
         const living: { path: string; rank: number }[] = [];
         if (host?.structure)
           for (const name of Object.keys(host.structure)) {
             const rank = bucket.ranksByName.get(name);
             if (rank !== undefined)
               living.push({
-                path: bucket.hostPath + '/' + escapeSegment(name),
+                path: appendSegment(bucket.hostPath, name),
                 rank,
               });
           }
@@ -326,7 +340,9 @@ class DependencyIndex {
     };
     let current = [this.root];
     collect(this.root);
-    for (const segment of changedPath.split($.Separator).filter(isTruthy)) {
+    for (const segment of parsePointer(changedPath).segments) {
+      if (typeof segment !== 'string') return;
+
       const next = this.presenceChildren(current, segment);
       if (!next.length) return;
       current = next;
@@ -358,20 +374,22 @@ class DependencyIndex {
         const path = entry.bindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
-        if (path.includes('/*'))
+        if (hasPointerOperator(path, PointerOperator.Wildcard))
           for (const expanded of expandTemplatePaths(root, path))
             owners.add(expanded);
         else owners.add(path);
       }
     };
     collect(rootIndex);
-    for (const segment of changedPath.split($.Separator).filter(isTruthy)) {
+    for (const segment of parsePointer(changedPath).segments) {
+      if (typeof segment !== 'string') return [...owners];
+
       const next: DependencyNode[] = [];
       for (const node of current) {
         const exact = node.children.get(segment);
         if (exact) next.push(exact);
         if (isCanonicalArrayIndex(segment)) {
-          const wildcard = node.children.get($.Wildcard);
+          const wildcard = node.children.get(PointerOperator.Wildcard);
           if (wildcard) next.push(wildcard);
         }
       }
@@ -414,7 +432,10 @@ class DependencyIndex {
     const directTemplates = new Set<string>();
     if (!this.root)
       return { owners, stateOnly, outerTemplates, directTemplates };
-    const changedPath = hostPath + '/' + childSegment;
+    const childName = parsePointerSegment(childSegment);
+    if (typeof childName !== 'string')
+      return { owners, stateOnly, outerTemplates, directTemplates };
+    const changedPath = appendSegment(hostPath, childName);
     const ancestorOwners = new Set<string>();
     let memo = settlement?.dependencyPresenceMemo;
     if (!memo) {
@@ -430,11 +451,11 @@ class DependencyIndex {
       metrics,
     );
     for (const owner of ancestorOwners)
-      if (owner.startsWith(hostPath + '/')) stateOnly.add(owner);
+      if (isDescendantPath(owner, hostPath)) stateOnly.add(owner);
       else owners.add(owner);
-    const depth = hostPath ? hostPath.split($.Separator).length : 1;
+    const depth = parsePointer(hostPath).segments.length + 1;
     const reached = levels.length === depth ? levels[levels.length - 1] : [];
-    const pending = this.presenceChildren(reached, childSegment);
+    const pending = this.presenceChildren(reached, childName);
     const direct = new Set<string>();
     const subtree: DependencyNode[] = [];
     while (pending.length) {
@@ -452,7 +473,7 @@ class DependencyIndex {
         metrics,
       );
     for (const owner of direct)
-      if (owner !== changedPath && !owner.startsWith(changedPath + '/'))
+      if (owner !== changedPath && !isDescendantPath(owner, changedPath))
         owners.add(owner);
     return { owners, stateOnly, outerTemplates, directTemplates };
   }
@@ -472,13 +493,13 @@ class DependencyIndex {
     let levels: DependencyNode[][];
     if (!path) levels = [[this.root!]];
     else {
-      const cut = path.lastIndexOf($.Separator);
-      const parent = this.presenceLevels(path.slice(0, cut), memo);
+      const parent = this.presenceLevels(resolvePointer(path, '..'), memo);
       const last = parent[parent.length - 1];
+      const name = readPointerSegment(path, -1);
       levels =
-        last.length === 0
+        last.length === 0 || typeof name !== 'string'
           ? parent
-          : [...parent, this.presenceChildren(last, path.slice(cut + 1))];
+          : [...parent, this.presenceChildren(last, name)];
     }
     memo.set(path, levels);
     return levels;
@@ -494,7 +515,7 @@ class DependencyIndex {
       const exact = node.children.get(segment);
       if (exact) next.push(exact);
       const wildcard = isCanonicalArrayIndex(segment)
-        ? node.children.get($.Wildcard)
+        ? node.children.get(PointerOperator.Wildcard)
         : undefined;
       if (wildcard) next.push(wildcard);
     }
@@ -522,7 +543,8 @@ class DependencyIndex {
         const path = entry.bindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
-        if (path.includes('/*')) templates.add(path);
+        if (hasPointerOperator(path, PointerOperator.Wildcard))
+          templates.add(path);
         else owners.add(path);
       }
     if (metrics) metrics.ownerInsertions += owners.size - sizeBefore;
@@ -530,25 +552,26 @@ class DependencyIndex {
 
   /** Insert one exact watched location into the pointer trie. */
   private add(watchedPath: string, owner: string): void {
-    const ownerParts = owner.split($.Separator);
-    const watchedParts = watchedPath.split($.Separator);
+    const ownerParts = parsePointer(owner).segments;
+    const watchedParts = parsePointer(watchedPath).segments;
+    let indexedParts = watchedParts;
     const originalWatchedPath = watchedPath;
-    // A fixed read of another item depends on that array host's whole subtree.
-    for (let index = 1; index < ownerParts.length; index++) {
+    for (let index = 0; index < ownerParts.length; index++) {
       if (
-        ownerParts[index] === $.Wildcard &&
-        watchedParts[index] !== $.Wildcard &&
+        ownerParts[index] === PointerOperator.Wildcard &&
+        watchedParts[index] !== PointerOperator.Wildcard &&
         ownerParts
-          .slice(1, index)
-          .every((part, position) => part === watchedParts[position + 1]) &&
-        watchedParts[index]
+          .slice(0, index)
+          .every((part, position) => part === watchedParts[position]) &&
+        watchedParts[index] !== undefined
       ) {
-        watchedPath = ownerParts.slice(0, index).join($.Separator);
+        indexedParts = ownerParts.slice(0, index);
+        watchedPath = joinPointer(indexedParts);
         break;
       }
     }
     let current = this.root!;
-    for (const segment of watchedPath.split($.Separator).filter(isTruthy)) {
+    for (const segment of indexedParts) {
       let child = current.children.get(segment);
       if (!child) {
         child = { owners: [], ownerPaths: new Set(), children: new Map() };
@@ -556,14 +579,14 @@ class DependencyIndex {
       }
       current = child;
     }
-    const indexedParts = watchedPath.split($.Separator);
     if (!current.ownerPaths.has(owner)) {
       current.ownerPaths.add(owner);
       current.owners.push({
         path: owner,
         bindable: ownerParts.every(
           (part, index) =>
-            part !== $.Wildcard || indexedParts[index] === $.Wildcard,
+            part !== PointerOperator.Wildcard ||
+            indexedParts[index] === PointerOperator.Wildcard,
         ),
         ...(watchedPath !== originalWatchedPath
           ? { watched: [originalWatchedPath] }

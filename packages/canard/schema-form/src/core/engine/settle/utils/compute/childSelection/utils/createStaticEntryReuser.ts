@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../../../blueprint';
 import { HostStaticPartition } from '../../../../../blueprint';
@@ -74,7 +75,7 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
       !child ||
       child.parent !== node ||
       child.name !== entry.name ||
-      child.path !== node.path + '/' + escapeSegment(entry.name) ||
+      child.path !== appendSegment(node.path, entry.name) ||
       child.blueprintNode !== entry.node ||
       child.schema !== selected.schema ||
       !child.active ||

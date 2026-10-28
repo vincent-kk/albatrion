@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -30,7 +32,7 @@ export const readAbsentSlotSource = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): unknown => {
   const name = String(index);
-  const path = host.path + '/' + name;
+  const path = appendSegment(host.path, name);
   const distribution = getChildDistribution(host, name, context, path);
   if (
     distribution &&

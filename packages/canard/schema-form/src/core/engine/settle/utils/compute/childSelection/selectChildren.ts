@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { HostStaticPartition, getItemEntries } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
@@ -248,7 +249,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       )
     )
       continue;
-    const path = node.path + '/' + escapeSegment(entry.name);
+    const path = appendSegment(node.path, entry.name);
     if (distribution.preserveLatent) {
       distributeMovedSource(
         context,

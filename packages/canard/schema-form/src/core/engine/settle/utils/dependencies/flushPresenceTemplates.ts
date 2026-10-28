@@ -1,5 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
+
+import {
+  isDescendantPath,
+  parsePointer,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -32,7 +37,7 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       const deepest = entry.deepest;
       const excluded =
         deepest !== null &&
-        ((deepest === '' ? owner !== '' : owner.startsWith(deepest + '/')) ||
+        ((deepest === '' ? owner !== '' : isDescendantPath(owner, deepest)) ||
           (entry.kind === 'direct' && owner === deepest));
       if (
         !excluded &&
@@ -45,9 +50,9 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       if (!excluded) {
         context.dirtyPaths.add(owner);
         context.dependencyOwnerPaths.add(owner);
-        context.shapeDirtyPaths.add(owner.slice(0, owner.lastIndexOf('/')));
+        context.shapeDirtyPaths.add(resolvePointer(owner, '..'));
         for (let ancestor = owner; ancestor; ) {
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+          ancestor = resolvePointer(ancestor, '..');
           context.dirtyPaths.add(ancestor);
         }
         marked = true;
@@ -55,8 +60,9 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       }
       if (entry.kind !== 'outer') continue;
       let live: Self | undefined = context.root;
-      for (const segment of owner ? owner.slice(1).split('/') : []) {
-        const name = unescapeSegment(segment);
+      for (const segment of parsePointer(owner).segments) {
+        const name = segment;
+        if (typeof name !== 'string') break;
         live =
           live?.structure && hasOwnProperty(live.structure, name)
             ? live.structure[name]

@@ -7,11 +7,15 @@ import { JSONPointer as $ } from '../constants/JSONPointer';
  * @note `#`, `#/`, `/` alone are treated as root and normalized to `''`.
  * @returns The normalized path without the fragment.
  */
-export const stripFragment = (path: string): string =>
-  path[0] === $.Fragment
-    ? path[2] !== undefined
+export const stripFragment = (path: string, normalizeRoot = true): string =>
+  !normalizeRoot
+    ? path[0] === $.Fragment
       ? path.slice(1)
-      : $.Root
-    : path === $.Separator
-      ? $.Root
-      : path;
+      : path
+    : path[0] === $.Fragment
+      ? path[2] !== undefined
+        ? path.slice(1)
+        : $.Root
+      : path === $.Separator
+        ? $.Root
+        : path;

@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -46,7 +46,7 @@ export const collectHostSlotValues = <Self extends FieldNodeRecord<Self>>(
       entry.node,
       source,
       overlay,
-      host.path + '/' + escapeSegment(entry.name),
+      appendSegment(host.path, entry.name),
       childOrder,
       counterpart,
       values,

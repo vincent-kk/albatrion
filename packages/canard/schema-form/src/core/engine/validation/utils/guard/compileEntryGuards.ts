@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { stripFragment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
 import type { Validator } from '../../types/validator';
@@ -28,9 +28,7 @@ export const compileEntryGuards = (
   }
   for (const gate of gates) {
     if (gate.kind !== 'if') continue;
-    const pointer = gate.schemaPath.startsWith($.Fragment)
-      ? gate.schemaPath.slice(1)
-      : gate.schemaPath;
+    const pointer = stripFragment(gate.schemaPath);
     if (entry.guards.has(pointer)) continue;
     try {
       entry.guards.set(pointer, {

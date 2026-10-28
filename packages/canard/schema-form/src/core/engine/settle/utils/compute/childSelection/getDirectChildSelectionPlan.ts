@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type {
   Blueprint,
   BlueprintChildEntry,
@@ -134,7 +136,11 @@ export const getDirectChildSelectionPlan = (
         (engineModes.gatePredicate === 'off' && gate.kind !== 'active') ||
         gate.appliesWhen?.length ||
         gate.hostPath !== host.path ||
-        gate.schemaPath === declaration.schemaPath + '/controls/active' ||
+        gate.schemaPath ===
+          appendSegment(
+            appendSegment(declaration.schemaPath, 'controls'),
+            'active',
+          ) ||
         (gate.kind === 'active' &&
           (!expression ||
             (expression.dependencies.length !== 1 &&

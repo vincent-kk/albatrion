@@ -1,12 +1,16 @@
 import {
+  appendSegment,
+  isDescendantPath,
+} from '@/schema-form/helpers/jsonPointer';
+
+import {
   FormErrorCode,
   FormWarningCode,
   SchemaFormError,
 } from '../../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
-import { captureFieldNodeChange } from '../../../record';
+import { captureFieldNodeChange, indexFieldNodeWarning } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import { indexFieldNodeWarning } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { evaluateGate } from '../gates/evaluateGate';
@@ -37,7 +41,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
       if (
         !match ||
         !declaration.gates.some((gate) =>
-          gate.schemaPath.startsWith(match[1] + '/' + match[2] + '/'),
+          isDescendantPath(gate.schemaPath, appendSegment(match[1], match[2])),
         )
       )
         continue;

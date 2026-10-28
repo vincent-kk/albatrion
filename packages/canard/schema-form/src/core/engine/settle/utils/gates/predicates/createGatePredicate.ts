@@ -1,6 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintGate } from '../../../../blueprint';
 import { engineModes } from '../../../../utils/cache/engineModes';
@@ -38,7 +41,12 @@ export const createGatePredicate = (
   const inputReads = referenceDiscriminator ? [occurrence.hostPath] : reads;
   for (let index = 0; index < inputReads.length; index++) {
     const path = inputReads[index];
-    const kind = path === $.Context ? 'context' : names ? 'property' : 'value';
+    const kind =
+      readPointerSegment(path, 0) === PointerOperator.Context
+        ? 'context'
+        : names
+          ? 'property'
+          : 'value';
     inputs.push({
       path,
       kind,
@@ -68,7 +76,10 @@ export const createGatePredicate = (
     memoizable:
       engineModes.gatePredicate !== 'off' &&
       (gate.kind !== 'active' ||
-        (expression?.completeReads === true && !reads.includes($.Context))),
+        (expression?.completeReads === true &&
+          !reads.some(
+            (path) => readPointerSegment(path, 0) === PointerOperator.Context,
+          ))),
     evaluate: (input) => {
       if (gate.kind === 'if') {
         guard ??= readFieldNodeGuard(runtime, gate);

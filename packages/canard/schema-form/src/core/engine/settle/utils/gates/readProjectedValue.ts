@@ -39,6 +39,7 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
   const segments = getGateRegistry(node.runtime).pathSegments(path);
   for (let index = 0; index < segments.length; index++) {
     const name = segments[index];
+    if (typeof name !== 'string') return undefined;
     if (
       node.behavior.strategy === 'branch' &&
       node.raw !== undefined &&

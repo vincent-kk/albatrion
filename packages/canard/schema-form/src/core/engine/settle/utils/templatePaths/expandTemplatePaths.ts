@@ -1,7 +1,11 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  appendSegment,
+  hasPointerOperator,
+  parsePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 
@@ -16,8 +20,9 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   templatePath: string,
 ): string[] => {
-  if (!templatePath.includes('/*')) return [templatePath];
-  const segments = templatePath.split($.Separator).slice(1);
+  if (!hasPointerOperator(templatePath, PointerOperator.Wildcard))
+    return [templatePath];
+  const segments = parsePointer(templatePath).segments;
   const paths: string[] = [];
   const pending: { node: Self | undefined; depth: number; path: string }[] = [
     { node: root, depth: 0, path: '' },
@@ -32,7 +37,10 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
     }
     if (!node) continue;
     const segment = segments[depth];
-    if (segment === $.Wildcard && node.blueprintNode.item !== undefined) {
+    if (
+      segment === PointerOperator.Wildcard &&
+      node.blueprintNode.item !== undefined
+    ) {
       for (let index = node.itemCount - 1; index >= 0; index--) {
         const name = String(index);
         const child = node.structure?.[name];
@@ -40,12 +48,13 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
           pending.push({
             node: child,
             depth: depth + 1,
-            path: path + '/' + name,
+            path: appendSegment(path, name),
           });
       }
       continue;
     }
-    const name = unescapeSegment(segment);
+    const name = segment;
+    if (typeof name !== 'string') continue;
     const structure = node.structure;
     const child =
       structure && hasOwnProperty(structure, name)
@@ -55,7 +64,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
       pending.push({
         node: child,
         depth: depth + 1,
-        path: path + '/' + segment,
+        path: appendSegment(path, name),
       });
   }
   return paths;

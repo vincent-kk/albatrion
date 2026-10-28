@@ -2,9 +2,9 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 
 import type { FieldInputMap } from '@/schema-form/types';
 
-import { INCLUDE_WILDCARD_REGEX } from '../constants/regex';
 import type { NormalizedFieldInputDefinition } from '../type';
 import { fieldInputTestFnFactory } from './fieldInputTestFnFactory';
+import { hasWildcardPath } from './hasWildcardPath';
 import { pathExactMatchFnFactory } from './pathExactMatchFnFactory';
 import { withFieldInputErrorBoundary } from './withFieldInputErrorBoundary';
 
@@ -22,7 +22,7 @@ export const normalizeFieldInputMap = (
   for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
     const Component = fieldInputMap[k];
     if (!isReactComponent(Component)) continue;
-    if (INCLUDE_WILDCARD_REGEX.test(k))
+    if (hasWildcardPath(k))
       result.push({
         test: fieldInputTestFnFactory(k),
         Component: withFieldInputErrorBoundary(Component),

@@ -1,6 +1,6 @@
 import type { Fn } from '@aileron/declare';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { stripFragment } from '@/schema-form/helpers/jsonPointer';
 
 /** Ordered dependency paths local to one compilation pass. */
 export interface PathManager {
@@ -21,11 +21,11 @@ export const getPathManager = (): PathManager => {
   return {
     get: () => paths,
     set: (path: string) => {
-      if (path[0] === $.Fragment) path = path.slice(1);
+      path = stripFragment(path, false);
       if (!paths.includes(path)) paths.push(path);
     },
     findIndex: (path: string) => {
-      if (path[0] === $.Fragment) path = path.slice(1);
+      path = stripFragment(path, false);
       return paths.indexOf(path);
     },
   };

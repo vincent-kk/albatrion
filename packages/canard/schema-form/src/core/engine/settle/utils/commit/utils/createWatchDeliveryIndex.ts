@@ -1,6 +1,8 @@
-import { isTruthy } from '@winglet/common-utils/filter';
-
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  type PointerSegment,
+  parsePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRuntime } from '../../../../record';
 
@@ -9,7 +11,7 @@ interface WatchPathNode {
   /** Watchers bound to this exact resolved path. */
   watchers: Set<unknown>;
   /** Child segments leading to deeper watched paths. */
-  children: Map<string, WatchPathNode>;
+  children: Map<PointerSegment, WatchPathNode>;
 }
 
 /** Keep only live effective watch edges, including the separate context slot. */
@@ -41,12 +43,13 @@ class WatchDeliveryIndex {
     this.pathsByNode.set(node, unique);
     this.allNodes.add(node);
     for (const path of unique) {
-      if (path === $.Context) {
+      const segments = parsePointer(path).segments;
+      if (segments[0] === PointerOperator.Context) {
         this.contextNodes.add(node);
         continue;
       }
       let current = this.root;
-      for (const segment of path.split($.Separator).filter(isTruthy)) {
+      for (const segment of segments) {
         let child = current.children.get(segment);
         if (!child) {
           child = { watchers: new Set(), children: new Map() };
@@ -66,8 +69,8 @@ class WatchDeliveryIndex {
     this.allNodes.delete(node);
     this.contextNodes.delete(node);
     for (const path of paths) {
-      if (path === $.Context) continue;
-      const segments = path.split($.Separator).filter(isTruthy);
+      const segments = parsePointer(path).segments;
+      if (segments[0] === PointerOperator.Context) continue;
       const parents: WatchPathNode[] = [this.root];
       for (const segment of segments) {
         const child = parents[parents.length - 1].children.get(segment);
@@ -88,7 +91,7 @@ class WatchDeliveryIndex {
   affected(path: string, candidates: Set<unknown>): void {
     let current: WatchPathNode | undefined = this.root;
     for (const watcher of current.watchers) candidates.add(watcher);
-    for (const segment of path.split($.Separator).filter(isTruthy)) {
+    for (const segment of parsePointer(path).segments) {
       current = current.children.get(segment);
       if (!current) return;
       for (const watcher of current.watchers) candidates.add(watcher);

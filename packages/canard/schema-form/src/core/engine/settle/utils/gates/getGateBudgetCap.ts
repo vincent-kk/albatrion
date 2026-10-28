@@ -1,3 +1,5 @@
+import { appendSegment, parsePointer } from '@/schema-form/helpers/jsonPointer';
+
 import type {
   Blueprint,
   BlueprintGate,
@@ -38,14 +40,23 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
         add(gate, 'fragment:' + declaration.fragmentId);
     for (const gate of declaration.gates) {
       if (gate.kind !== 'active') continue;
+      const segments = parsePointer(gate.schemaPath).segments;
       if (
-        gate.schemaPath.includes('/controls/fields/') &&
-        gate.schemaPath.endsWith('/controls/active')
+        segments.some(
+          (segment, index) =>
+            segment === 'controls' && segments[index + 1] === 'fields',
+        ) &&
+        segments[segments.length - 2] === 'controls' &&
+        segments[segments.length - 1] === 'active'
       )
         add(gate, 'node:' + gate.schemaPath);
       else if (
         declaration.scope === 'node' &&
-        gate.schemaPath === declaration.schemaPath + '/controls/active'
+        gate.schemaPath ===
+          appendSegment(
+            appendSegment(declaration.schemaPath, 'controls'),
+            'active',
+          )
       )
         add(gate, 'node:' + gate.schemaPath);
     }

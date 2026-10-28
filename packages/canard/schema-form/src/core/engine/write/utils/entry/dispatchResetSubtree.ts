@@ -1,3 +1,5 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import { resetFieldNodeSubtree } from '../../../settle';
 import { WriteOption } from '../../../types/value';
@@ -20,7 +22,7 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   if (runtime.batchWrites)
     runtime.batchWrites = runtime.batchWrites.filter(
       (write) =>
-        write.node !== node && !write.node.path.startsWith(node.path + '/'),
+        write.node !== node && !isDescendantPath(write.node.path, node.path),
     );
   (runtime.validationTargets ??= new Set()).add(node);
   try {

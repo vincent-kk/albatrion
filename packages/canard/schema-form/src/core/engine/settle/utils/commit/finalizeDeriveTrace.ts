@@ -1,7 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { parsePointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -23,8 +22,12 @@ export const finalizeDeriveTrace = <Self extends FieldNodeRecord<Self>>(
       let exists = live.get(entry.targetPath);
       if (exists === undefined) {
         let node: Self | undefined = context.root;
-        for (const encoded of entry.targetPath.split($.Separator).slice(1)) {
-          const name = unescapeSegment(encoded);
+        for (const encoded of parsePointer(entry.targetPath).segments) {
+          const name = encoded;
+          if (typeof name !== 'string') {
+            node = undefined;
+            break;
+          }
           const children: Record<string, Self> | null = node?.structure ?? null;
           node =
             children && hasOwnProperty(children, name)

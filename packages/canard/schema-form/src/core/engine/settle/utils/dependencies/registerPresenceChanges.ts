@@ -1,5 +1,12 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
+
+import {
+  appendSegment,
+  formatSegment,
+  parsePointer,
+  parsePointerSegment,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -12,7 +19,7 @@ import { publishPresenceOwner } from './publishPresenceOwner';
 import { registerProjectionChanges } from './registerProjectionChanges';
 
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
-const parentOf = (path: string): string => path.slice(0, path.lastIndexOf('/'));
+const parentOf = (path: string): string => resolvePointer(path, '..');
 
 /**
  * Register child identity or projected emission changes in their existing host wheel.
@@ -32,9 +39,9 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   const names: string[] = [];
   for (const name in previous)
     if (!hasOwnProperty(structure, name) || previous[name] !== structure[name])
-      names.push(escapeSegment(name));
+      names.push(formatSegment(name));
   for (const name in structure)
-    if (!hasOwnProperty(previous, name)) names.push(escapeSegment(name));
+    if (!hasOwnProperty(previous, name)) names.push(formatSegment(name));
   registerProjectionChanges(host, names, context);
   if (names.length === 0) return false;
 
@@ -48,8 +55,9 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   const stateOnly = new Set<string>();
   let marked = false;
   for (const name of names) {
-    const path = host.path + '/' + name;
-    const rawName = unescapeSegment(name);
+    const rawName = parsePointerSegment(name);
+    if (typeof rawName !== 'string') continue;
+    const path = appendSegment(host.path, rawName);
     const child = hasOwnProperty(structure, rawName)
       ? structure[rawName]
       : undefined;
@@ -113,8 +121,9 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   for (const owner of stateOnly) {
     if (owners.has(owner)) continue;
     let live: Self | undefined = context.root;
-    for (const segment of owner ? owner.slice(1).split('/') : []) {
-      const name = unescapeSegment(segment);
+    for (const segment of parsePointer(owner).segments) {
+      const name = segment;
+      if (typeof name !== 'string') break;
       live =
         live?.structure && hasOwnProperty(live.structure, name)
           ? live.structure[name]

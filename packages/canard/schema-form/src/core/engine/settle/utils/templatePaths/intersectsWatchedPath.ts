@@ -1,3 +1,8 @@
+import {
+  PointerOperator,
+  parsePointer,
+} from '@/schema-form/helpers/jsonPointer';
+
 import { isCanonicalArrayIndex } from './isCanonicalArrayIndex';
 
 /**
@@ -11,14 +16,21 @@ export const intersectsWatchedPath = (
   path: string,
 ): boolean => {
   if (watched === '' || path === '') return true;
-  const left = watched.split('/');
-  const right = path.split('/');
+  const left = parsePointer(watched).segments;
+  const right = parsePointer(path).segments;
   const length = Math.min(left.length, right.length);
-  for (let index = 1; index < length; index++)
+  for (let index = 0; index < length; index++) {
+    const leftSegment = left[index];
+    const rightSegment = right[index];
     if (
-      left[index] !== right[index] &&
-      !(left[index] === '*' && isCanonicalArrayIndex(right[index]))
+      leftSegment !== rightSegment &&
+      !(
+        leftSegment === PointerOperator.Wildcard &&
+        typeof rightSegment === 'string' &&
+        isCanonicalArrayIndex(rightSegment)
+      )
     )
       return false;
+  }
   return true;
 };

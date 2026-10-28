@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
@@ -98,7 +100,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           if (selected.length)
             groups.push({
               controls,
-              schemaPath: declaration.schemaPath + '/controls',
+              schemaPath: appendSegment(declaration.schemaPath, 'controls'),
               layer: 'fragment',
               targetName: entry.name,
               targetDeclarationIds: selected.map((child) => child.id),
@@ -108,7 +110,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
       } else if (hasOwnRules)
         groups.push({
           controls,
-          schemaPath: declaration.schemaPath + '/controls',
+          schemaPath: appendSegment(declaration.schemaPath, 'controls'),
           layer: 'node',
           targetNodes: [node],
         });
@@ -136,11 +138,16 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
             if (targets.length)
               groups.push({
                 controls: itemControls,
-                schemaPath:
-                  declaration.schemaPath +
-                  '/controls/fields/' +
-                  index +
-                  '/controls',
+                schemaPath: appendSegment(
+                  appendSegment(
+                    appendSegment(
+                      appendSegment(declaration.schemaPath, 'controls'),
+                      'fields',
+                    ),
+                    index,
+                  ),
+                  'controls',
+                ),
                 layer: 'fields',
                 targetName: name,
                 targetNodes: targets.map((target) => target.node),
@@ -151,7 +158,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         for (const kind of RULE_KEYS) {
           const literal: unknown = Reflect.get(group.controls, kind);
           if (literal === undefined) continue;
-          const schemaPath = group.schemaPath + '/' + kind;
+          const schemaPath = appendSegment(group.schemaPath, kind);
           const expression = getControlExpression(
             blueprint,
             declaration.id,

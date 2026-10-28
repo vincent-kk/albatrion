@@ -1,4 +1,7 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import {
+  appendSegment,
+  isDescendantPath,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -16,11 +19,11 @@ export const restoreSlotSources = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   for (const [host, bindings] of context.slotAutomaticLog ?? [])
     for (const [entry, previous] of bindings) {
-      const path = host.path + '/' + escapeSegment(entry.name);
+      const path = appendSegment(host.path, entry.name);
       if (
         scope !== undefined &&
         path !== scope &&
-        !path.startsWith(scope + '/')
+        !isDescendantPath(path, scope)
       )
         continue;
       markSlotChange(host, entry);

@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 진단 위치는 jsonPointer의 appendSegment로 조립해 예약 이름과 구분자를 가진 속성도 다시 탐색할 수 있게 한다.
+
 관심 있는 진단 소비자에게 청사진의 인라인 종단 예약 키 경고를 수집해 전달한다.
 
 ## API Contracts
@@ -18,4 +20,4 @@
 
 ## Last Updated
 
-정돈-3 blueprint 재구성(2026-10-15)
+2026-10-28

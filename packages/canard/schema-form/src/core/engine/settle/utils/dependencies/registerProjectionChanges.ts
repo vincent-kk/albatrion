@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { formatSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -20,7 +20,7 @@ export const registerProjectionChanges = <Self extends FieldNodeRecord<Self>>(
   for (const [child, previous] of baselines) {
     if (host.structure?.[child.name] !== child) continue;
     if (child.schema !== previous.schema && child.emit !== previous.emit) {
-      const name = escapeSegment(child.name);
+      const name = formatSegment(child.name);
       if (!names.includes(name)) names.push(name);
     }
     previous.schema = child.schema;

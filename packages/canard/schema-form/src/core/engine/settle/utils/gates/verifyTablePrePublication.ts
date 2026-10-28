@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -19,7 +19,7 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   entry: BlueprintChildEntry,
 ): void => {
-  const path = node.path + '/' + escapeSegment(entry.name);
+  const path = appendSegment(node.path, entry.name);
   const pending = [...context.pendingOutputs!];
   const changed = [...context.changedNodes];
   flushPendingGateReads(entry.node, path, context);

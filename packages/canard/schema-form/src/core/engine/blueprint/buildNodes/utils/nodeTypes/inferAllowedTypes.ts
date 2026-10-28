@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { FormErrorCode } from '../../../../../../errors';
 import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -78,7 +80,10 @@ export const inferAllowedTypes = (
       const branches = part.schema[keyword];
       if (!isArray(branches)) continue;
       branches.forEach((branch, index) => {
-        const path = part.schemaPath + '/' + keyword + '/' + index;
+        const path = appendSegment(
+          appendSegment(part.schemaPath, keyword),
+          index,
+        );
         if (
           branch?.controls?.active !== undefined ||
           context.discriminatorBranches?.has(path)

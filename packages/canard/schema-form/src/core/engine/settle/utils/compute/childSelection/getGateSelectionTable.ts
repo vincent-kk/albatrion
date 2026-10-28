@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
   Blueprint,
@@ -67,7 +67,7 @@ export const getGateSelectionTable = (
   const watchedNames = new Map<string, string>();
   for (const entry of plan.baseline)
     if (entry.node.strategy === 'terminal')
-      watchedNames.set(host.path + '/' + escapeSegment(entry.name), entry.name);
+      watchedNames.set(appendSegment(host.path, entry.name), entry.name);
   const groups = new Map<string, MutableGateSelectionGroup>();
   const alwaysSteps: number[] = [];
   const stableSchemaNames: string[] = [];
@@ -93,7 +93,7 @@ export const getGateSelectionTable = (
     const watchedName =
       gate?.kind === 'discriminator'
         ? watchedNames.get(
-            host.path + '/' + escapeSegment(gate.condition.propertyName),
+            appendSegment(host.path, gate.condition.propertyName),
           )
         : equality && expression
           ? watchedNames.get(
@@ -116,7 +116,7 @@ export const getGateSelectionTable = (
       ifReads.every(
         (name): name is string =>
           name !== undefined &&
-          watchedNames.has(host.path + '/' + escapeSegment(name)),
+          watchedNames.has(appendSegment(host.path, name)),
       )
     ) {
       let group = predicateGroups.get(gate);

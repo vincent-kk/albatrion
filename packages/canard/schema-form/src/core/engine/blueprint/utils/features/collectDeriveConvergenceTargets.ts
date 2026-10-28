@@ -1,11 +1,14 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { escapeSegment } from '@winglet/json/pointer';
 
 import {
-  JSONPointer as $,
-  getAbsolutePath,
-  stripFragment,
-} from '../../../../../helpers/jsonPointer';
+  PointerOperator,
+  appendSegment,
+  hasPointerOperator,
+  isDescendantPath,
+  readPointerSegment,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { Blueprint, BlueprintExpression } from '../../types/blueprint';
 import type { PropertyDeclaration } from '../../types/node';
@@ -18,27 +21,15 @@ import { CompleteExpressionReads } from '../expressions/CompleteExpressionReads'
  * @returns Absolute pointer with fragment and root spellings normalized
  */
 const resolveRead = (host: string, dependency: string): string =>
-  stripFragment(
-    getAbsolutePath(
-      host,
-      dependency[0] === $.Separator ||
-        dependency[0] === $.Fragment ||
-        dependency[0] === $.Current
-        ? dependency
-        : './' + dependency,
-    ),
-  );
+  resolvePointer(host, dependency);
 
 /**
- * Detect a `*` segment without splitting the pointer into an array.
- * @param path - Blueprint node pointer
- * @returns True when one segment is exactly `*`
+ * Detect parsed wildcard operators in a blueprint pointer.
+ * @param path - Authored blueprint node pointer
+ * @returns True when a segment is the wildcard operator
  */
 const hasWildcardSegment = (path: string): boolean =>
-  path === $.Wildcard ||
-  path.startsWith('*/') ||
-  path.endsWith('/*') ||
-  path.includes('/*/');
+  hasPointerOperator(path, PointerOperator.Wildcard);
 
 /**
  * Prove which static terminal writes cannot create a rule or gate edge.
@@ -64,7 +55,7 @@ export const collectDeriveConvergenceTargets = (
       hosts.add(node.path);
     for (let child = 0; child < node.childEntries.length; child++) {
       const entry = node.childEntries[child];
-      if (entry.node.path !== node.path + '/' + escapeSegment(entry.name))
+      if (entry.node.path !== appendSegment(node.path, entry.name))
         return undefined;
     }
     for (
@@ -97,7 +88,8 @@ export const collectDeriveConvergenceTargets = (
       dependency++
     ) {
       const path = expression.dependencies[dependency];
-      if (path === $.Context) return undefined;
+      if (readPointerSegment(path, 0) === PointerOperator.Context)
+        return undefined;
       const read = resolveRead(expression.hostPath, path);
       if (!read || hosts.has(read)) return undefined;
       reads.add(read);
@@ -106,7 +98,8 @@ export const collectDeriveConvergenceTargets = (
   const dependencies = Object.keys(blueprint.dependencies);
   for (let index = 0; index < dependencies.length; index++) {
     const dependency = dependencies[index];
-    if (dependency === $.Context) return undefined;
+    if (readPointerSegment(dependency, 0) === PointerOperator.Context)
+      return undefined;
     const owners = blueprint.dependencies[dependency];
     for (let owner = 0; owner < owners.length; owner++) {
       const declaration = declarations.get(owners[owner]);
@@ -140,12 +133,12 @@ export const collectDeriveConvergenceTargets = (
             const targets = fields[child].targets;
             if (!isArray(targets)) return undefined;
             for (let target = 0; target < targets.length; target++) {
-              const targetPath =
-                node.path + '/' + escapeSegment(targets[target]);
+              const targetPath = appendSegment(node.path, targets[target]);
               for (let watch = 0; watch < paths.length; watch++) {
                 if (
                   typeof paths[watch] !== 'string' ||
-                  paths[watch] === $.Context
+                  readPointerSegment(paths[watch], 0) ===
+                    PointerOperator.Context
                 )
                   return undefined;
                 reads.add(resolveRead(targetPath, paths[watch]));
@@ -181,8 +174,8 @@ export const collectDeriveConvergenceTargets = (
       if (
         !path ||
         path === node.path ||
-        path.startsWith(node.path + '/') ||
-        node.path.startsWith(path + '/')
+        isDescendantPath(path, node.path) ||
+        isDescendantPath(node.path, path)
       ) {
         terminal = false;
         break;

@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 파생 원천·대상 경로는 jsonPointer에서 한 번 파싱한 이름으로 탐색하며 연산자 심볼은 속성 이름으로 소비하지 않는다. 로드 범위 포함 검사는 isDescendantPath를 사용한다.
+
 - D3b-2의 규칙 표는 blueprint.deriveRuleTable, 감시 경로와 자식 위치는 host.watchPaths·deriveChildren의 지연 슬롯에 둔다. builder와 규칙 순서는 유지하고 공통 저장소는 derive를 import하지 않는다.
 
 - D3b-1의 규칙 target ID 메모는 호출자가 넘긴 root runtime에 지연 생성한다. nextTargetId는 기존 프로세스 전역 단조 발급을 유지하며 reset으로 되감지 않는다. 폼 전체 reset·폐기에서 target 메모를 해제하고 부분 reset은 유지한다. 선언 키도 같은 runtime의 별도 WeakMap에 두며 규칙 키의 직렬화와 소비 순서는 보존한다(SURFACE-065).
@@ -90,4 +92,4 @@
 
 ## Last Updated
 
-2026-10-16; 배열 조각 derive 대상과 선형 초기화 후보 수집(CONTROLS-077, 377C-01).
+2026-10-28

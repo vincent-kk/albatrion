@@ -1,4 +1,4 @@
-import { unescapeSegment } from '@winglet/json/pointer';
+import { parsePointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -19,7 +19,9 @@ export const resolveSlotSource = <Self extends FieldNodeRecord<Self>>(
   target: BlueprintNode,
   lineage?: readonly BlueprintNode[],
 ): { source: Self | undefined; overlay: InactiveSlotOverlay | undefined } => {
-  const names = path.split('/').slice(1).map(unescapeSegment);
+  const names = parsePointer(path).segments;
+  if (!names.every((segment): segment is string => typeof segment === 'string'))
+    return { source: undefined, overlay: undefined };
   let template = root.blueprintNode;
   let source: Self | undefined = root;
   let overlay: InactiveSlotOverlay | undefined;

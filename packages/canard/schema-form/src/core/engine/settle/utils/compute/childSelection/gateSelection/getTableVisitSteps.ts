@@ -1,4 +1,4 @@
-import { unescapeSegment } from '@winglet/json/pointer';
+import { readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../../../record';
 import { getBlueprintNodeIdentity } from '../../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -34,7 +34,9 @@ export const getTableVisitSteps = <Self extends FieldNodeRecord<Self>>(
     if (index !== undefined) required.push(index);
   }
   for (const path of context.pendingExitPaths?.get(node.path)?.keys() ?? []) {
-    const name = unescapeSegment(path.slice(path.lastIndexOf('/') + 1));
+    const name = readPointerSegment(path, -1);
+    if (typeof name !== 'string')
+      throw new TypeError('Expected a named node path');
     const index = table.stepIndexByName.get(name);
     if (
       index !== undefined &&

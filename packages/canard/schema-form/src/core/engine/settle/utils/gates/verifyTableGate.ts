@@ -1,4 +1,4 @@
-import { unescapeSegment } from '@winglet/json/pointer';
+import { readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -39,7 +39,9 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
     const round = context.gateSelectionRounds!.get(node)!;
     const registry = getGateRegistry(node.runtime);
     const path = registry.locate(node, gate).watchPaths[0];
-    const name = unescapeSegment(path.slice(path.lastIndexOf('/') + 1));
+    const name = readPointerSegment(path, -1);
+    if (typeof name !== 'string')
+      throw new TypeError('Expected a named node path');
     const cached = round.values.get(name)!;
     const pending = [...(context.pendingOutputs ?? [])];
     const changed = [...context.changedNodes];

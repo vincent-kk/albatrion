@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
+
+import { parsePointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 
@@ -14,8 +15,9 @@ export const getLivePresenceNode = <Self extends FieldNodeRecord<Self>>(
   path: string,
 ): Self | undefined => {
   let live: Self | undefined = root;
-  for (const segment of path ? path.slice(1).split('/') : []) {
-    const name = unescapeSegment(segment);
+  for (const segment of parsePointer(path).segments) {
+    const name = segment;
+    if (typeof name !== 'string') return undefined;
     live =
       live?.structure && hasOwnProperty(live.structure, name)
         ? live.structure[name]

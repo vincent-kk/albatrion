@@ -1,15 +1,14 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
-  JSONPointer as $,
-  ESCAPED_SLASH_REGEX,
-  ESCAPED_TILDE_REGEX,
+  isDescendantPath,
+  normalizeValidationDataPath,
+  parsePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
-import { normalizeIssueDataPath } from './normalizeIssueDataPath';
 import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';
 
 /** Identify a record owned by this tree without an unchecked type assertion. */
@@ -44,27 +43,29 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
         activeIds.add(ids[index]);
   }
   const inScope = (node: Self): boolean =>
-    node === target || node.path.startsWith(target.path + '/');
+    node === target || isDescendantPath(node.path, target.path);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
   for (let index = 0; index < issues.length; index++) {
     const issue = issues[index];
     if (isOffUnionBranchIssue(issue, runtime.blueprint, activeIds)) continue;
-    const path = normalizeIssueDataPath(issue.dataPath);
+    const path = normalizeValidationDataPath(issue.dataPath);
     let node = root;
     if (path) {
-      if (!path.startsWith($.Separator)) continue;
-      const segments = path.slice(1).split($.Separator);
+      const parsed = parsePointer(path);
+      if (!parsed.absolute) continue;
+      const segments = parsed.segments;
       for (
         let segmentIndex = 0;
         segmentIndex < segments.length;
         segmentIndex++
       ) {
-        const encoded = segments[segmentIndex];
+        const key = segments[segmentIndex];
+        if (typeof key !== 'string') {
+          node = root;
+          break;
+        }
         if (node.structure === null) break;
-        const key = encoded
-          .replace(ESCAPED_SLASH_REGEX, $.Separator)
-          .replace(ESCAPED_TILDE_REGEX, '~');
         if (!hasOwnProperty(node.structure, key)) {
           node = root;
           break;

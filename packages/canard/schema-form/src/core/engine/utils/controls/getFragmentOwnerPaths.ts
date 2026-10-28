@@ -1,21 +1,4 @@
-/** Keywords whose next segment names a directly declared child. */
-const NAMED_CHILD_MARKERS = ['/properties/', '/prefixItems/'] as const;
-
-/** Keywords whose own subschema declares the directly declared array item. */
-const ITEM_MARKERS = ['/items', '/additionalItems'] as const;
-
-/** Whether a keyword ending at `end` closes the path or is followed by a segment. */
-const endsSegment = (schemaPath: string, end: number): boolean =>
-  end === schemaPath.length || schemaPath[end] === '/';
-
-/** Whether a direct-child keyword of the declaring schema begins at `start`. */
-const isChildMarkerAt = (schemaPath: string, start: number): boolean =>
-  NAMED_CHILD_MARKERS.some((marker) => schemaPath.startsWith(marker, start)) ||
-  ITEM_MARKERS.some(
-    (marker) =>
-      schemaPath.startsWith(marker, start) &&
-      endsSegment(schemaPath, start + marker.length),
-  );
+import { appendSegment, parsePointer } from '@/schema-form/helpers/jsonPointer';
 
 /**
  * List every schema location that directly declares the child holding one declaration.
@@ -27,13 +10,20 @@ const isChildMarkerAt = (schemaPath: string, start: number): boolean =>
 export const getFragmentOwnerPaths = (
   schemaPath: string,
 ): readonly string[] => {
+  const segments = parsePointer(schemaPath).segments;
   const owners: string[] = [];
-  for (
-    let start = schemaPath.indexOf('/');
-    start !== -1;
-    start = schemaPath.indexOf('/', start + 1)
-  )
-    if (isChildMarkerAt(schemaPath, start))
-      owners.push(schemaPath.slice(0, start));
+  let prefix = '#';
+  for (let index = 0; index < segments.length; index++) {
+    const name = segments[index];
+    if (typeof name !== 'string') continue;
+    if (
+      name === 'items' ||
+      name === 'additionalItems' ||
+      ((name === 'properties' || name === 'prefixItems') &&
+        index + 1 < segments.length)
+    )
+      owners.push(prefix);
+    prefix = appendSegment(prefix, name);
+  }
   return owners;
 };
