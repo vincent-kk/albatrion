@@ -48,7 +48,6 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   const inputType = typeof input;
   const scalarWrite =
     node.parent !== null &&
-    !node.detached &&
     !node.disposed &&
     !root.disposed &&
     root.runtime.blueprint.capabilities.branchless &&

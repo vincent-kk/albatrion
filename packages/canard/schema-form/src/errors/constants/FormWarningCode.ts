@@ -41,7 +41,7 @@ export const FormWarningCode = {
   Misfit: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.Misfit}`,
   /** Class: warning record; when: a schema dialect differs from the selected validator dialect. */
   DialectMismatch: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DialectMismatch}`,
-  /** Raised when a write is attempted through a detached node reference; the write has no effect. */
+  /** Class: warning record; when: a write is attempted through a detached node reference; the write has no effect. */
   DetachedNodeWrite: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DetachedNodeWrite}`,
 } as const;
 

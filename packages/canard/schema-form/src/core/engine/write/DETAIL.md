@@ -2,6 +2,9 @@
 
 ## Requirements
 
+- 폐기되지 않은 떼어진 노드의 늦은 UI 입력도 값 쓰기와 같이 무효이며 개발 모드 경고를 낸다.
+- 폐기되면서 떼어진 참조의 공개 setValue와 배열 동사는 detached 거부가 폐기 검사보다 먼저 적용되어 DisposedNodeWrite를 던지는 대신 무동작과 개발 경고로 끝나며, UI 입력 채널의 폐기 거부는 무음이다.
+
 - 중첩 경고 보고는 호출 전 reportingErrors를 복원한다. onError 안의 떼어진 쓰기가 경고를 보고해도 같은 콜백의 살아 있는 쓰기는 WriteInObserver로 거부한다.
 
 - 떼어진 참조의 값 쓰기와 배열 동사는 사슬·배치·updater 평가 전에 무동작으로 끝난다. 개발 모드에서는 `FormWarningCode.DetachedNodeWrite`로 경고하고 운영 모드에서는 침묵한다. push·insert는 동결된 현재 길이를 반환하고 나머지 동사는 undefined를 반환한다. 호스트의 경로 JSON 쓰기만 비활성 원본을 바꾼다(B11).

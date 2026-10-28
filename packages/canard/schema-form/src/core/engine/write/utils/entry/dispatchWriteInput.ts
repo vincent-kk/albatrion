@@ -14,7 +14,7 @@ const DIRTY_STATE_PATCH = { [FieldNodeState.Dirty]: true };
  * @param node - Input occurrence, including a retired late callback target
  * @param value - Input value or updater evaluated at the call site
  * @param option - Replacement, merge, and automatic-write flags
- * @returns Nothing; retired input writes are silently discarded
+ * @returns Nothing; disposed input callbacks are silently discarded, while detached callbacks follow the development warning rule
  */
 export const dispatchWriteInput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
