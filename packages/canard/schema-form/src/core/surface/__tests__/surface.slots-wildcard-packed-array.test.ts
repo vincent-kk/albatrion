@@ -44,10 +44,12 @@ for (const childInactive of [false, true])
     root.find('/tick')!.setValue(1);
     expect(root.inactiveValues).toEqual([
       { path: '/group', value },
-      { path: '/group/0/*/x', value: 'patched' },
+      { path: '/group/0/%2A/x', value: 'patched' },
     ]);
     expect(root.inactiveValues[0]).toBe(entry);
     root.find('/open')!.setValue(true);
     root.find('/xOpen')!.setValue(true);
-    expect(root.find('/group')!.value).toEqual(value);
+    expect(root.find('/group')!.value).toEqual([
+      { '*': { x: 'patched' }, plain: 'plain' },
+    ]);
   });

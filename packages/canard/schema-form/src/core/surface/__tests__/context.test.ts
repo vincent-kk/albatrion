@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '@/schema-form/core/engine';
-import { PathKeyedMap } from '@/schema-form/core/engine';
-import { PathKeyedSet } from '@/schema-form/core/engine';
+import { PathKeyedSet, blueprint } from '@/schema-form/core/engine';
 
 import { setContext } from '../runtime/setContext';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
@@ -23,11 +21,8 @@ describe('FieldNode context', () => {
         context: initial,
         diagnostics: { status: 'stable' },
         loadSnapshot: undefined,
-        literalStarRaw: new PathKeyedMap('pair'),
+
         misfitPaths: new PathKeyedSet(),
-        literalStarValuesMemo: new PathKeyedMap<
-          readonly { path: string; value: unknown }[]
-        >('path'),
       },
     );
     root.setValue({ child: 'value' });

@@ -1,4 +1,4 @@
-import { expect, it, vi } from 'vitest';
+import { expect, it } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
@@ -11,7 +11,6 @@ import {
   dispatchValidate,
   subscribeFieldNode,
 } from '../../write';
-import { selectCandidateOwnedLatent } from '../utils/transition/selectCandidateOwnedLatent';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import { readRetainedSlotEntry } from './fixtures/readRetainedSlotRaw';
 import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
@@ -86,30 +85,4 @@ it('V1 independent nested exit preserves a source shared with an enclosing sibli
   await dispatchValidate(root);
   expect(inputs.at(-1)).toEqual(expected);
   expect(root.runtime.loadSnapshot).toEqual(initial);
-});
-
-it('[control] V1 single-candidate graph does not walk enclosing parents', () => {
-  const { root } = createDispatchTree({
-    type: 'object',
-    properties: {
-      box: { type: 'object', properties: { v: { type: 'number' } } },
-    },
-  });
-  dispatchMount(root, { box: { v: 1 } });
-  const reads = vi.fn();
-  const parent = new Proxy(getDispatchNode(root, 'box'), {
-    get(target, property, receiver) {
-      if (property === 'parent') reads();
-      return Reflect.get(target, property, receiver);
-    },
-  });
-  const node = new Proxy(getDispatchNode(root, 'box', 'v'), {
-    get(target, property, receiver) {
-      return property === 'parent'
-        ? parent
-        : Reflect.get(target, property, receiver);
-    },
-  });
-  expect(selectCandidateOwnedLatent(node)).toBeUndefined();
-  expect(reads).not.toHaveBeenCalled();
 });

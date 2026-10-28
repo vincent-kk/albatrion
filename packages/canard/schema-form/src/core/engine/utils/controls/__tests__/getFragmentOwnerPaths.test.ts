@@ -40,4 +40,10 @@ describe('getFragmentOwnerPaths', () => {
       '#/allOf/0/properties/properties',
     ]);
   });
+
+  it('preserves ordinary percent names in internally formatted schema paths', () => {
+    expect(
+      getFragmentOwnerPaths('#/properties/rate%20/properties/%2A'),
+    ).toEqual(['#', '#/properties/rate%20']);
+  });
 });

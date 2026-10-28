@@ -36,7 +36,7 @@ for (const scenario of ['retained', 'input-only', 'replace'] as const)
       SetValueOption.Merge,
     );
     expect(root.inactiveValues).toEqual([
-      { path: '/group/*/x', value: 'overlay' },
+      { path: '/group/%2A/x', value: 'overlay' },
       { path: '/group/plain', value: 'patched' },
     ]);
     if (scenario === 'replace')
@@ -132,7 +132,7 @@ it('preserves document order for a detached deep ordinary write containing a sta
   expect(root.inactiveValues).toEqual([
     { path: '/group/first', value: 'first' },
     { path: '/group/middle', value: 'middle' },
-    { path: '/group/nested/*/x', value: 'patched' },
+    { path: '/group/nested/%2A/x', value: 'patched' },
     { path: '/group/nested/plain', value: 'deep plain' },
   ]);
   root.find('/open')!.setValue(true);

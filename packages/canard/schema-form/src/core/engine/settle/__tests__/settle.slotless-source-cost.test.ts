@@ -3,7 +3,6 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import * as overlays from '../utils/slots/applySlotOverlay';
-import * as eligibility from '../utils/slots/isSlotEligible';
 import * as pruning from '../utils/slots/pruneSlotSources';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
@@ -24,7 +23,6 @@ it('prepares a unique-kind terminal write without slot checks, overlay lookups o
   dispatchMount(root, undefined);
   const target = getDispatchNode(root, 'type');
   dispatchSetValue(target, 'b');
-  const eligible = vi.spyOn(eligibility, 'isSlotEligible');
   const prune = vi.spyOn(pruning, 'pruneSlotSources');
   const apply = vi.spyOn(overlays, 'applySlotOverlay');
   const lookup = vi.fn(() => undefined);
@@ -33,7 +31,6 @@ it('prepares a unique-kind terminal write without slot checks, overlay lookups o
     get: lookup,
   });
   dispatchSetValue(target, 'a');
-  expect(eligible).not.toHaveBeenCalled();
   expect(prune).not.toHaveBeenCalled();
   expect(apply).not.toHaveBeenCalled();
   expect(lookup).not.toHaveBeenCalled();

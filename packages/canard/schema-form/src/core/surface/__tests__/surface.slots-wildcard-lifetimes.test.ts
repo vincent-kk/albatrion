@@ -6,7 +6,7 @@ import { SetValueOption } from '../type';
 
 {
   for (const readHidden of [true, false])
-    it(`renews a wildcard entry after a ${readHidden ? 'read' : 'unread'} hidden commit`, () => {
+    it(`retains a literal-star entry after a ${readHidden ? 'read' : 'unread'} unrelated commit`, () => {
       const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
@@ -33,22 +33,22 @@ import { SetValueOption } from '../type';
         '*': { x: 'held' },
       });
       const first = root.inactiveValues;
-      const entry = first.find((item) => item.path === '/*/x')!;
-      expect(entry).toEqual({ path: '/*/x', value: 'held' });
+      const entry = first.find((item) => item.path === '/%2A/x')!;
+      expect(entry).toEqual({ path: '/%2A/x', value: 'held' });
       expect(Object.isFrozen(first)).toBe(true);
       expect(Object.isFrozen(entry)).toBe(true);
       root.find('/tick')!.setValue(1);
       expect(root.inactiveValues).toBe(first);
       root.find('/otherOpen')!.setValue(true);
       if (readHidden)
-        expect(root.inactiveValues.some((item) => item.path === '/*/x')).toBe(
-          false,
+        expect(root.inactiveValues.some((item) => item.path === '/%2A/x')).toBe(
+          true,
         );
       root.find('/otherOpen')!.setValue(false);
-      const next = root.inactiveValues.find((item) => item.path === '/*/x')!;
+      const next = root.inactiveValues.find((item) => item.path === '/%2A/x')!;
       expect(next).toEqual(entry);
-      expect(next).not.toBe(entry);
-      expect(first).toEqual([{ path: '/*/x', value: 'held' }]);
+      expect(next).toBe(entry);
+      expect(first).toEqual([{ path: '/%2A/x', value: 'held' }]);
       expect(root.inactiveValues).toBe(root.inactiveValues);
     });
 
@@ -81,24 +81,24 @@ import { SetValueOption } from '../type';
     });
     const host = root.children!.find((node) => node.name === '*')!;
     root.find('/xOpen')!.setValue(false);
-    const entry = root.inactiveValues.find((item) => item.path === '/*/x')!;
+    const entry = root.inactiveValues.find((item) => item.path === '/%2A/x')!;
     root.find('/starOpen')!.setValue(false);
     root.setValue({ '*': { x: 'overlay' } }, SetValueOption.Merge);
-    expect(root.inactiveValues.find((item) => item.path === '/*/x')).toEqual({
-      path: '/*/x',
+    expect(root.inactiveValues.find((item) => item.path === '/%2A/x')).toEqual({
+      path: '/%2A/x',
       value: 'overlay',
     });
     root.find('/otherOpen')!.setValue(true);
-    expect(root.inactiveValues.some((item) => item.path === '/*/x')).toBe(
-      false,
+    expect(root.inactiveValues.some((item) => item.path === '/%2A/x')).toBe(
+      true,
     );
-    expect(host.inactiveValues).toEqual([{ path: '/*/x', value: 'held' }]);
-    expect(host.inactiveValues[0]).toBe(entry);
+    expect(host.inactiveValues).toEqual([{ path: '/%2A/x', value: 'held' }]);
+    expect(host.inactiveValues[0]).not.toBe(entry);
     expect(host.inactiveValues).toBe(host.inactiveValues);
     expect(Object.isFrozen(host.inactiveValues[0])).toBe(true);
   });
 
-  it(`preserves ancestor-star entry identity in an unread detached descendant`, () => {
+  it(`preserves ancestor-star entry value in an unread detached descendant`, () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -127,20 +127,20 @@ import { SetValueOption } from '../type';
     const host = star.children!.find((node) => node.name === 'group')!;
     root.find('/xOpen')!.setValue(false);
     const entry = root.inactiveValues.find(
-      (item) => item.path === '/*/group/x',
+      (item) => item.path === '/%2A/group/x',
     )!;
     root.find('/groupOpen')!.setValue(false);
     root.setValue({ '*': { group: { x: 'overlay' } } }, SetValueOption.Merge);
     expect(
-      root.inactiveValues.find((item) => item.path === '/*/group/x'),
-    ).toEqual({ path: '/*/group/x', value: 'overlay' });
+      root.inactiveValues.find((item) => item.path === '/%2A/group/x'),
+    ).toEqual({ path: '/%2A/group/x', value: 'overlay' });
     expect(host.inactiveValues).toEqual([
-      { path: '/*/group/x', value: 'held' },
+      { path: '/%2A/group/x', value: 'held' },
     ]);
-    expect(host.inactiveValues[0]).toBe(entry);
+    expect(host.inactiveValues[0]).not.toBe(entry);
   });
 
-  it(`keeps an unread detached host's entry when live wildcard visibility starts a new lifetime`, () => {
+  it(`keeps an unread detached host's entry across unrelated wildcard matches`, () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -169,17 +169,17 @@ import { SetValueOption } from '../type';
     });
     const host = root.children!.find((node) => node.name === '*')!;
     root.find('/xOpen')!.setValue(false);
-    const entry = root.inactiveValues.find((item) => item.path === '/*/x')!;
+    const entry = root.inactiveValues.find((item) => item.path === '/%2A/x')!;
     root.find('/starOpen')!.setValue(false);
     root.find('/otherOpen')!.setValue(true);
-    expect(root.inactiveValues.some((item) => item.path === '/*/x')).toBe(
-      false,
+    expect(root.inactiveValues.some((item) => item.path === '/%2A/x')).toBe(
+      true,
     );
     root.find('/otherOpen')!.setValue(false);
-    const next = root.inactiveValues.find((item) => item.path === '/*/x')!;
-    expect(host.inactiveValues).toEqual([{ path: '/*/x', value: 'held' }]);
+    const next = root.inactiveValues.find((item) => item.path === '/%2A/x')!;
+    expect(host.inactiveValues).toEqual([{ path: '/%2A/x', value: 'held' }]);
     expect(host.inactiveValues[0]).toBe(entry);
     expect(next).toEqual(entry);
-    expect(next).not.toBe(entry);
+    expect(next).toBe(entry);
   });
 }

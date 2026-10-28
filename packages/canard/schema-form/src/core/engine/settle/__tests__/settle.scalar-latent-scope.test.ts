@@ -11,22 +11,7 @@ import {
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
-const observed = vi.hoisted(() => ({ prunes: 0, fast: [] as boolean[] }));
-vi.mock('../utils/literalStarStore/pruneLiteralStarRaw', async (load) => {
-  const actual =
-    await load<
-      typeof import('../utils/literalStarStore/pruneLiteralStarRaw')
-    >();
-  return {
-    ...actual,
-    pruneLiteralStarRaw: (
-      ...args: Parameters<typeof actual.pruneLiteralStarRaw>
-    ) => {
-      observed.prunes++;
-      return actual.pruneLiteralStarRaw(...args);
-    },
-  };
-});
+const observed = vi.hoisted(() => ({ fast: [] as boolean[] }));
 vi.mock('../utils/settlement/finishSettlement', async (load) => {
   const actual =
     await load<typeof import('../utils/settlement/finishSettlement')>();
@@ -60,7 +45,6 @@ function createScopeTree() {
 }
 
 function beginObservation() {
-  observed.prunes = 0;
   observed.fast.length = 0;
 }
 
@@ -78,7 +62,6 @@ it('H4 keeps the scalar fast path when an exited array item owns an unrelated la
   dispatchSetValue(leaf, 1);
 
   expect(observed.fast).toEqual([true]);
-  expect(observed.prunes).toBe(0);
   expect(root.emit).toEqual({ group: { stable: 1 } });
   expect(readRetainedSlotRaw(root, '/other/0', 'number')).toBe(11);
   expect(seen).toEqual(['', '/group', '/group/stable']);

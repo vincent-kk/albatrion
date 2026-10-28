@@ -1,10 +1,7 @@
-import { afterEach } from 'vitest';
-import { expect, it, vi } from 'vitest';
+import { afterEach, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../write';
-import * as capture from '../utils/literalStar/captureLiteralStarExit';
-import * as latent from '../utils/literalStarStore/setLiteralStarRaw';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
 it('keeps a detached instance in the host without capturing latent raw', () => {
@@ -17,11 +14,7 @@ it('keeps a detached instance in the host without capturing latent raw', () => {
   });
   dispatchMount(root, { open: true, value: 'held' });
   const old = getDispatchNode(root, 'value');
-  const store = vi.spyOn(latent, 'setLiteralStarRaw');
-  const serialize = vi.spyOn(capture, 'captureLiteralStarExit');
   dispatchSetValue(getDispatchNode(root, 'open'), false);
-  expect(store).not.toHaveBeenCalled();
-  expect(serialize).not.toHaveBeenCalled();
   expect(root.inactiveSlots).toBeInstanceOf(Map);
   expect([...(root.inactiveSlots?.values() ?? [])]).toContain(old);
   expect(old.detached).toBe(true);
