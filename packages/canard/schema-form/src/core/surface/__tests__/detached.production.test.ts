@@ -11,11 +11,13 @@ it('keeps detached writes inert and silent in each production runtime bundle', (
     import path from 'node:path';
     import { pathToFileURL } from 'node:url';
     const bundle = process.argv[1];
-    const target = path.resolve('dist/.detached-production-' + process.pid + '.mjs');
+    const commonjs = bundle.endsWith('.cjs');
+    const target = path.resolve('dist/.detached-production-' + process.pid + (commonjs ? '.cjs' : '.mjs'));
     try {
       const source = fs.readFileSync(bundle, 'utf8');
-      fs.writeFileSync(target, source + '\\nexport { blueprint, fieldNodeFactory, mountFieldNode, PathKeyedSet };\\n');
-      const M = await import(pathToFileURL(target));
+      fs.writeFileSync(target, source + (commonjs ? '\\nObject.assign(module.exports, { blueprint, fieldNodeFactory, mountFieldNode, PathKeyedSet });\\n' : '\\nexport { blueprint, fieldNodeFactory, mountFieldNode, PathKeyedSet };\\n'));
+      const loaded = await import(pathToFileURL(target));
+      const M = commonjs ? loaded.default : loaded;
       const warnings = [];
       console.warn = (...args) => warnings.push(args);
       const root = M.fieldNodeFactory(M.blueprint({
@@ -40,7 +42,7 @@ it('keeps detached writes inert and silent in each production runtime bundle', (
       console.log('B11_PRODUCTION_INERT_SILENT');
     } finally { fs.rmSync(target, { force: true }); }
   `;
-  for (const bundle of ['index.mjs', 'index.node.mjs']) {
+  for (const bundle of ['index.mjs', 'index.node.mjs', 'index.cjs']) {
     const output = execFileSync(
       process.execPath,
       ['--input-type=module', '--eval', script, `dist/${bundle}`],
