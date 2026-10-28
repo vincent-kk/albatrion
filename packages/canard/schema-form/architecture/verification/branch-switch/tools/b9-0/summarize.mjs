@@ -4,6 +4,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 
+import {
+  stageNames as baseStageNames,
+  ledgerNames,
+} from '../b6/buildStages.mjs';
 import { digest, json, read, verifyInputs } from './files.mjs';
 import { rows } from './rows.mjs';
 
@@ -120,6 +124,66 @@ for (const row of rows) {
       stages: summarizeMetrics(records, 'stages'),
       scoped: summarizeMetrics(records, 'scoped'),
     };
+    const timed = pass === 'ledger' ? 'wrapped' : pass;
+    const overheadUs = records.map(
+      (record) =>
+        median(record.samples[timed]) - median(record.samples.unwrapped),
+    );
+    const pairsPerWrite = records.map((record) =>
+      median(
+        record.stages.map((sample) =>
+          Object.entries(sample)
+            .filter(([name]) => name !== 'everythingElse')
+            .reduce((sum, [, metric]) => sum + metric.calls, 0),
+        ),
+      ),
+    );
+    const perPairUs = overheadUs.map(
+      (value, index) => value / pairsPerWrite[index],
+    );
+    byPass[pass].timerCost = {
+      overheadUs: stats(overheadUs),
+      pairsPerWrite: stats(pairsPerWrite),
+      perPairUs: stats(perPairUs),
+      note: 'average enter/exit cost from the paired same-process unwrapped lane; deeper stacks cost more under the scoped recorder',
+    };
+    for (const entries of [byPass[pass].stages, byPass[pass].scoped])
+      for (const [name, entry] of Object.entries(entries)) {
+        if (name === 'everythingElse') continue;
+        entry.overheadEstimateUs =
+          entry.calls.medianUs * byPass[pass].timerCost.perPairUs.medianUs;
+        entry.selfNetUs = entry.self.medianUs - entry.overheadEstimateUs;
+      }
+    if (pass === 'supplemental')
+      byPass[pass].ledgerEquivalent = Object.fromEntries(
+        ['computeNode', 'finalizeExits'].map((owner) => [
+          owner,
+          stats(
+            records.map((record) =>
+              median(
+                record.stages.map(
+                  (sample, index) =>
+                    (sample[owner]?.selfUs ?? 0) +
+                    Object.entries(record.scoped[index])
+                      .filter(
+                        ([key]) =>
+                          key.startsWith(owner + '/') &&
+                          !ledgerNames.includes(key.slice(owner.length + 1)),
+                      )
+                      .reduce(
+                        (sum, [key, metric]) =>
+                          sum +
+                          (baseStageNames.includes(key.slice(owner.length + 1))
+                            ? metric.inclusiveUs
+                            : metric.selfUs),
+                        0,
+                      ),
+                ),
+              ),
+            ),
+          ),
+        ]),
+      );
     if (pass === 'gap')
       byPass[pass].gap = Object.fromEntries(
         ['beforeSettlementUs', 'deliveryUs', 'subscriberWaveUs'].map((key) => [
@@ -181,6 +245,10 @@ const slope = (from, to, divisor) => {
           .map((name) => [
             name,
             {
+              selfNetUs:
+                ((b.stages[name]?.selfNetUs ?? 0) -
+                  (a.stages[name]?.selfNetUs ?? 0)) /
+                divisor,
               selfUs:
                 ((b.stages[name]?.self.medianUs ?? 0) -
                   (a.stages[name]?.self.medianUs ?? 0)) /
@@ -217,12 +285,46 @@ summary.slopes.prepared250to1000 = slope(
   750,
 );
 summary.slopes.perLeaf = slope('switch-oneOf-80', 'switch-payload-12', 18);
+summary.rowStageGap = {};
+for (const row of rows) {
+  const L = summary.rows[row.id].ledger,
+    G = summary.rows[row.id].gap;
+  const R = raw.results.filter(
+    (record) => record.row === row.id && record.pass === 'ledger',
+  );
+  const pairedGapUs = stats(
+    R.map(
+      (record) => median(record.samples.dist) - median(record.samples.wrapped),
+    ),
+  );
+  const buildDifferenceUs = L.overhead.distMinusUnwrapped.medianUs;
+  const timerOverheadUs = L.overhead.wrappedMinusUnwrapped.medianUs;
+  summary.rowStageGap[row.id] = {
+    rowUs: L.totals.dist.medianUs,
+    stageWrappedUs: L.totals.wrapped.medianUs,
+    pairedGapUs,
+    buildDifferenceUs,
+    timerOverheadUs,
+    inWindowResidualUs:
+      pairedGapUs.medianUs - (buildDifferenceUs - timerOverheadUs),
+    outsideNamedStages: {
+      everythingElseUs: G.stages.everythingElse.self.medianUs,
+      beforeSettlementUs: G.gap.beforeSettlementUs.medianUs,
+      writeFieldNodeSelfUs: G.stages.writeFieldNode?.self.medianUs ?? 0,
+      deliveryInclusiveUs: G.gap.deliveryUs.medianUs,
+      chainExitUntimedUs:
+        G.stages.everythingElse.self.medianUs -
+        G.gap.beforeSettlementUs.medianUs,
+    },
+  };
+}
 const portable = (value) => {
   if (typeof value === 'string')
     return value
       .replaceAll(root, '<run>')
       .replace(/\/Users\/[^\n]+/g, '<local-process-path>')
-      .replace(/\/private\/tmp\/[^\n]+/g, '<local-process-path>');
+      .replace(/\/private\/tmp\/[^\n]+/g, '<local-process-path>')
+      .replace(/\/(?:private\/)?var\/folders\/[^\n]+/g, '<local-process-path>');
   if (Array.isArray(value)) return value.map(portable);
   if (value && typeof value === 'object')
     return Object.fromEntries(
@@ -263,8 +365,12 @@ json(
   path.join(output, 'evidence-hashes.json'),
   Object.fromEntries(
     fs
-      .readdirSync(output)
-      .filter((file) => file !== 'evidence-hashes.json')
+      .readdirSync(output, { recursive: true, encoding: 'utf8' })
+      .filter(
+        (file) =>
+          file !== 'evidence-hashes.json' &&
+          fs.statSync(path.join(output, file)).isFile(),
+      )
       .map((file) => [file, digest(path.join(output, file))]),
   ),
 );

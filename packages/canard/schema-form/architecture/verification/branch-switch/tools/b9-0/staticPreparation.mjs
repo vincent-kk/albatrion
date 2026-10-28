@@ -52,10 +52,10 @@ for (const row of [
     });
   }
 }
+json(path.join(root, 'static-preparation.json'), { timed: false, records });
 assert.equal(records[0].staticEntries, 4);
 assert.equal(records[1].staticEntries, 1001);
 assert.equal(records[0].directChildSelectionPlan, null);
 assert.equal(records[1].preparedStaticHost, false);
 assert.equal(records[3].preparedStaticHost, true);
-json(path.join(root, 'static-preparation.json'), { timed: false, records });
 console.log('B9_0_STATIC_PREPARATION_OK ' + JSON.stringify(records));
