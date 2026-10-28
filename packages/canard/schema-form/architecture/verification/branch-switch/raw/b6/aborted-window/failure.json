@@ -1,0 +1,19 @@
+{
+  "verdict": "indeterminate",
+  "environmentFailure": true,
+  "startedAt": "2026-10-28T04:17:42.676Z",
+  "endedAt": "2026-10-28T04:21:37.639Z",
+  "cause": {
+    "code": "MODULE_NOT_FOUND",
+    "dependency": "@canard/schema-form-ajv8-plugin",
+    "missingEntry": "dist/default/index.cjs",
+    "failedRow": "switch-if-80",
+    "failedLane": "A"
+  },
+  "completedRows": 9,
+  "successfulProcesses": 180,
+  "failedProcesses": 1,
+  "formalRetry": false,
+  "sourcePartialSha256": "25948dae6f3302336dffdd6b42d60221e45f748e1e2524d98736a46fe35ce909",
+  "portableMetadata": "Only machine-specific location strings are replaced; sample values and recorded row statistics are unchanged."
+}

@@ -809,13 +809,22 @@ node.find('./childField'); // Relative path from current node
 | ------ | ----------------- | --------------------------------- |
 | `..`   | Parent navigation | controls expressions, node.find() |
 | `.`    | Current node      | controls expressions, node.find() |
-| `*`    | Wildcard          | FieldInputMap only                |
+| `*`    | Wildcard          | node.find(), FieldInputMap        |
 | `@`    | Context reference | controls expressions only         |
 
 ### Escape Rules
 
-- `~0` → `~`
-- `~1` → `/`
+Segments are interpreted in this order:
+
+1. A segment exactly equal to `*`, `..`, `.`, or `@` is an operator (wildcard, parent, current, or context).
+2. A segment exactly equal to `%2A`, `%2E%2E`, `%2E`, or `%40` is the literal property name `*`, `..`, `.`, or `@`, respectively.
+3. Every other segment decodes only `~1` → `/` and `~0` → `~`. Ordinary names containing `%`, such as `rate%20`, remain unchanged.
+
+`#` is a fragment prefix only at the beginning of a path; an interior `#` segment is an ordinary name. Node paths, inactive-value paths, and reported error paths use the literal percent form for reserved names, so `node.find('/branch/%2A')` addresses the child named `*`, while `/branch/*` remains a wildcard.
+
+Known limit: property names exactly equal to `%2A`, `%2E`, `%2E%2E`, or `%40` cannot be addressed by a string path. Percent-containing names other than those exact four spellings follow rule 3.
+
+Standard RFC 6901 pointers from validators and `$ref` are interpreted without these operators. An AJV path `/*` refers to the property named `*`; standard fragment pointers (`#/...`) percent-decode every segment.
 
 ```typescript
 // Field name with special characters: "field/with~special"
