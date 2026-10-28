@@ -52,7 +52,7 @@ for (const variant of ['baseline', 'candidate']) {
 }
 const prepare = async (engine, spec) => {
   const { M } = engine;
-  const { schema, input } = fixture(spec);
+  const { schema, input } = spec.fixture ?? fixture(spec);
   const deliveries = [];
   const held = [],
     known = new WeakSet();
@@ -96,6 +96,20 @@ const prepare = async (engine, spec) => {
     }
     await drain();
     assert.equal(root.inactiveValues.length, spec.C - 1);
+  }
+  if (spec.fixture) {
+    assert.equal(root.find('/h').blueprintNode.hasKeepDescendants, true);
+    if (spec.host === 'candidate-array')
+      assert.equal(root.blueprintNode.hasPropertyCandidates, true);
+    if (spec.inactive) {
+      M.writeFieldNodeInput(
+        root.find('/show'),
+        false,
+        M.SetValueOption.Overwrite,
+      );
+      await drain();
+      assert.equal(root.inactiveValues.length, 2);
+    }
   }
   const subscribe = () => {
     for (const node of allNodes(root))
@@ -182,9 +196,135 @@ const priorities = [
   ...extra,
   id: 'overlap-F4-C16-exit-' + extra.label,
 }));
+const keepScenes = ['object', 'array', 'candidate-array'].flatMap((host) =>
+  [false, true].map((inactive) => {
+    const item = {
+      type: 'object',
+      properties: {
+        drop: { type: 'number' },
+        keep: {
+          type: 'number',
+          controls: { active: '#/show', unsetOnInactive: false },
+        },
+      },
+    };
+    const items = [
+      { drop: 1 },
+      { drop: 2, keep: 12 },
+      { drop: 3 },
+      { keep: 24 },
+    ];
+    const h = {
+      type: host === 'object' ? 'object' : 'array',
+      controls: { active: '#/flag', unsetOnInactive: true },
+      ...(host === 'object'
+        ? {
+            properties: Object.fromEntries(
+              items.map((_, index) => ['k' + index, item]),
+            ),
+          }
+        : { items: item }),
+    };
+    const kept =
+      host === 'object'
+        ? { k1: { keep: 12 }, k3: { keep: 24 } }
+        : [{ keep: 12 }, { keep: 24 }];
+    return {
+      id: `clearing-keep-${host}-${inactive ? 'inactive' : 'live'}`,
+      kind: 'clearing-keep',
+      host,
+      inactive,
+      C: 4,
+      op: 'exit',
+      fixture: {
+        schema: {
+          type: 'object',
+          properties: {
+            flag: { type: 'boolean' },
+            show: { type: 'boolean' },
+            ...(host === 'candidate-array'
+              ? { alternate: { type: 'boolean' } }
+              : { h }),
+          },
+          ...(host === 'candidate-array'
+            ? {
+                allOf: [
+                  { controls: { active: './flag' }, properties: { h } },
+                  {
+                    controls: { active: './alternate' },
+                    properties: {
+                      h: {
+                        type: 'object',
+                        properties: { other: { type: 'string' } },
+                      },
+                    },
+                  },
+                ],
+              }
+            : {}),
+        },
+        input: {
+          flag: true,
+          show: true,
+          ...(host === 'candidate-array' ? { alternate: false } : {}),
+          h:
+            host === 'object'
+              ? Object.fromEntries(
+                  items.map((value, index) => ['k' + index, value]),
+                )
+              : items,
+        },
+      },
+      expectedInactive: [
+        { path: `/h/${host === 'object' ? 'k1' : '0'}/keep`, value: 12 },
+        { path: `/h/${host === 'object' ? 'k3' : '1'}/keep`, value: 24 },
+      ],
+      expectedReentry: inactive ? (host === 'object' ? {} : [{}, {}]) : kept,
+      expectedRestored: kept,
+    };
+  }),
+);
+const literalStarScene = {
+  id: 'literal-star-oneOf-live-sibling',
+  kind: 'literal-star',
+  C: 2,
+  op: 'exit',
+  fixture: {
+    schema: {
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        h: {
+          type: 'object',
+          properties: { sibling: { type: 'string' } },
+          oneOf: [
+            {
+              controls: { active: '../flag' },
+              properties: {
+                '*': { type: 'string', controls: { unsetOnInactive: false } },
+              },
+            },
+            {
+              controls: { active: '!../flag' },
+              properties: { replacement: { type: 'number', default: 7 } },
+            },
+          ],
+        },
+      },
+    },
+    input: { flag: true, h: { sibling: 'live', '*': 'held' } },
+  },
+  expectedInactive: [{ path: '/h/%2A', value: 'held' }],
+  expectedReentry: { sibling: 'live', '*': 'held' },
+};
 const rows = [],
   differences = [];
-for (const spec of [...scenes(), ...priorities]) {
+for (const spec of [
+  ...scenes(),
+  ...priorities,
+  ...keepScenes,
+  literalStarScene,
+]) {
   const [a, b] = await Promise.all(
     engines.map((engine) => prepare(engine, spec)),
   );
@@ -195,10 +335,45 @@ for (const spec of [...scenes(), ...priorities]) {
     const same = isDeepStrictEqual(left, right);
     assert.equal('latentRaw' in b.root.runtime, false);
     assert.equal('literalStarRaw' in b.root.runtime, false);
+    if (spec.fixture) {
+      for (const state of [a, b]) {
+        if (phase === 'after-drain' || phase === 'second-exit-after-drain')
+          assert.deepEqual(
+            state.root.inactiveValues,
+            spec.expectedInactive,
+            spec.id + ':' + phase,
+          );
+        if (phase === 'reentry-after-drain') {
+          assert.deepEqual(
+            state.root.find('/h').value,
+            spec.expectedReentry,
+            spec.id,
+          );
+          assert.deepEqual(
+            state.root.inactiveValues,
+            spec.inactive ? spec.expectedInactive : [],
+            spec.id,
+          );
+        }
+        if (phase === 'keep-gate-open-after-drain') {
+          assert.deepEqual(
+            state.root.find('/h').value,
+            spec.expectedRestored,
+            spec.id,
+          );
+          assert.deepEqual(state.root.inactiveValues, [], spec.id);
+        }
+        if (spec.kind === 'literal-star')
+          assert.equal(state.root.find('/h/sibling').value, 'live');
+      }
+    }
     phases.push({
       phase,
       same,
       deliveries: left.deliveries.length,
+      ...(spec.fixture
+        ? { values: left.values, inactiveValues: left.inactiveValues }
+        : {}),
     });
     if (!same) differences.push({ scene: spec.id, phase, left, right });
   };
@@ -214,7 +389,7 @@ for (const spec of [...scenes(), ...priorities]) {
         (node) => node.detached && node.blueprintNode.kind === 'number',
       ),
     );
-    if (old[0] && old[1]) {
+    if (!spec.fixture && old[0] && old[1]) {
       for (const [index, state] of [a, b].entries())
         state.M.writeFieldNodeInput(
           old[index],
@@ -236,6 +411,19 @@ for (const spec of [...scenes(), ...priorities]) {
     compare('reentry');
     await drain();
     compare('reentry-after-drain');
+    if (spec.kind === 'clearing-keep') {
+      for (const state of [a, b]) {
+        state.M.writeFieldNodeInput(
+          state.root.find('/show'),
+          true,
+          state.M.SetValueOption.Overwrite,
+        );
+        state.subscribe();
+      }
+      compare('keep-gate-open');
+      await drain();
+      compare('keep-gate-open-after-drain');
+    }
     for (const state of [a, b])
       state.M.writeFieldNodeInput(
         state.root.find('/flag'),
