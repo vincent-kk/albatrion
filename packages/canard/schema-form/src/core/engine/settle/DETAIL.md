@@ -41,6 +41,8 @@
 - 준비된 선택은 정적 baseline과 동적 엔트리 K개의 임시 view를 사용한다. 게이트가 중간 형상을 열거해야 할 때만 전체 키를 합성하며, 선택이 끝나면 일반 자체 속성 structure를 공표한다. 동적 이름·순서·노드가 직전 선택과 같으면 직전 structure·children을 그대로 재사용하여 전체 복사·열거·자식 목록 비교를 생략한다. 구성원이 달라지면 O(S+K) 새 형상과 목록을 만든다. 이전 structure·children·값은 변경하지 않는다. 준비물 보유량은 O(S+K)의 baseline·목록·직전 선택 참조이고, 정착 중 임시 동적 view는 O(K)다. 조립과 필요한 중간 게이트 공표 비용은 유지한다.
 - load·reset·rebuild·호스트 재진입·배열 재배치/경로 변경·분배 입력·relocated 게이트·실패 시 정적 준비물을 폐기하거나 일반 경로로 후퇴한다. 새 호스트는 새 약한 키이며 경로/청사진 identity 변경도 증인을 무효화한다. verify만 독립 정적 증인 재검사와 손상 거부를 수행하고 출하 경로는 반복 witness·ID 재공표를 생략한다. 보유 비용은 준비된 gated host당 O(S) 정적 참조와 O(G) wheel metadata다.
 
+- 준비된 객체 호스트의 존재 변화는 정착 중 보관한 직전 동적 이름과 현재 선택의 동적 이름에서 비교한다. 이전 이름의 교체·이탈을 먼저, 현재 이름의 진입을 다음으로, 투영 변화 이름을 마지막으로 등록하여 전체 형상 순회의 순서와 같다. 정적 증인이 유지되는 형제 전환은 S개의 키를 열거하지 않는다. 정착별 호스트 스냅숏은 O(H+K) 참조를 보관하고 정착 뒤 버리며, 비교 비용은 동적 후보와 투영 기준선의 수에 비례한다.
+- 선언 밖 키와 extras는 원래 structure 순회에도 자식 이름으로 들어가지 않는다. 분배 입력으로 선언이 생기거나 준비물을 무효화한 경우, null 원본 호스트, 호스트 자신의 진입·재진입·퇴장·소멸, 이전 형상의 증인을 확인할 수 없는 경우에는 해당 호스트만 원래 전체 키·투영 비교로 후퇴한다. 복제 재진입은 이전 인스턴스의 정적 증인을 물려받지 않는다. 포착된 투영 기준선은 생략하지 않는다.
 - B1의 게이트는 발생별 `reads`와 `evaluate(inputs)` 계약을 공유한다. `active`의 컴파일 의존, `discriminator`의 태그 프로퍼티, `if`의 완전한 정적 읽기 증거 또는 전체 호스트 읽기를 바인딩하며, 입력이 더러워지면 해당 호스트의 모든 게이트를 원래 순서로 판정한다(BLUEPRINT-007·055). 역색인으로 개별 게이트를 생략하지 않는다. 형상은 매 정착의 무게이트 baseline에서 계산한다(SETTLE-044·GOAL-029).
 - `if`·`discriminator`는 호스트 투영 객체와 extras의 두 identity가 같은 구간에서 하나의 전체 입력 view를 공유한다. 앞선 진입·퇴장·스키마 변화가 투영을 새로 공표하면 뒤 게이트부터 새 view를 사용한다. 전체 호스트를 읽는 불투명 조건의 일관성 실패와 추가 확인 라운드는 유지한다. 라운드 최초 snapshot 고정은 즉시 반영 계약에 어긋나므로 허용하지 않는다(SETTLE-020·050).
 - `if` 읽기의 화이트리스트는 객체 수준의 `type: object`, `properties`, `required`, `dependentRequired`, `allOf`·`anyOf`·`oneOf`·`not`이다. 프로퍼티 값 제약은 `type`, `const`, `enum`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `multipleOf`, `minLength`, `maxLength`, `pattern`만 허용하며 같은 논리 조합을 재귀 검사한다. 논리 조합 안이라도 `$ref`, `patternProperties`, `additionalProperties`, `propertyNames`, `unevaluated*`, 중첩 `if`·`then`·`else`, 알 수 없는 키워드가 있으면 전체 호스트 읽기로 후퇴한다. 정적으로 알려진 속성의 값·존재와 extras 우선순위를 메모와 증인 기록에 포함하며 guard에는 항상 현재 전체 view를 전달한다. 분석은 guard를 실행하지 않는다.
@@ -756,6 +758,10 @@
 
 - 직접 계획이 null인 형제 1,000 호스트의 반복 전환은 정적 재사용 콜백 0회이고, 구성원 변화가 없으면 전체 structure 복사와 자식 목록 비교 0회다. 이전 자식 배열과 structure 참조·키 순서를 유지하며 같은 이름 분기의 선언 전환은 계속 계산한다.
 - 구성원 변화가 있는 전환은 이전 structure·children을 변경하지 않는다. load·분배 입력·경로 변화·실패·relocation 후퇴와 verify 증인 손상 거부를 유지한다.
+
+### settle-b9-presence-delta — 준비된 형제의 존재 변화 비교
+
+- 형제 1,000개의 정상 전환은 이전 structure의 키 열거 0회이며 기존 존재·가시성 기대값과 등록 순서를 유지한다. null 원본·분배 입력·호스트 재진입·증인 불일치에는 해당 호스트의 원래 비교를 유지한다.
 
 ## Boundary Exemptions
 

@@ -41,6 +41,10 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const prepared = prepareStaticHost(node, prior, context, hasRelocated);
   if (prepared) {
+    (context.presenceSelections ??= new Map()).set(node, {
+      structure: prior,
+      names: prepared.dynamicNames,
+    });
     (context.preparedStaticPriorNames ??= new Map()).set(
       node,
       prepared.dynamicNames,

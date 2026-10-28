@@ -2,7 +2,6 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
   appendSegment,
-  formatSegment,
   parsePointerSegment,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -11,6 +10,7 @@ import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { collectPresenceChangeNames } from './collectPresenceChangeNames';
 import { deferPresenceTemplate } from './deferPresenceTemplate';
 import { evaluatedPresenceAfter } from './evaluatedPresenceAfter';
 import { getDependencyIndex } from './getDependencyIndex';
@@ -36,12 +36,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   if (!context.hasGates) return false;
   if (context.presenceMetrics) context.presenceMetrics.calls++;
   const structure = host.structure ?? {};
-  const names: string[] = [];
-  for (const name in previous)
-    if (!hasOwnProperty(structure, name) || previous[name] !== structure[name])
-      names.push(formatSegment(name));
-  for (const name in structure)
-    if (!hasOwnProperty(previous, name)) names.push(formatSegment(name));
+  const names = collectPresenceChangeNames(host, previous, context);
   registerProjectionChanges(host, names, context);
   if (names.length === 0) return false;
 
