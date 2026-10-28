@@ -9,8 +9,8 @@ import type { FieldNodeWriteKind } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 
 /**
- * Read the last caller origin covering one explicit input position.
- * @param context - Call-ordered batch origins or a single caller write
+ * Read caller coverage at one explicit input position: a whole batch scope first, then the last covering origin.
+ * @param context - Batch replace paths and call-ordered origins, or a single caller write
  * @param inputPath - Canonical address of this JSON position
  * @returns Coverage at this position: callerPartial covers only supplied keys, callerReplace covers omitted descendants, automatic never counts, and undefined lies outside every caller origin
  */

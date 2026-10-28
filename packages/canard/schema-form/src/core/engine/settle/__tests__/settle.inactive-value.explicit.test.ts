@@ -4,7 +4,43 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { WriteOption } from '../../types/value';
-import { dispatchSetValue, dispatchWriteInput } from '../../write';
+import {
+  dispatchBatch,
+  dispatchFinishInput,
+  dispatchSetValue,
+  dispatchWriteInput,
+} from '../../write';
+
+it('keeps caller whole coverage after a later automatic write in its batch', () => {
+  const resolver = vi.fn(() => 'resolved');
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      group: {
+        type: 'object',
+        controls: { active: '../open' },
+        properties: {
+          x: {
+            type: 'string',
+            options: { trim: true },
+            controls: { inactiveValue: resolver },
+          },
+        },
+      },
+    },
+  });
+  dispatchSetValue(root, { open: true, group: { x: 'before' } });
+  const x = root.structure!.group.structure!.x;
+  dispatchBatch(root, () => {
+    dispatchSetValue(x, ' caller ');
+    dispatchFinishInput(x);
+    dispatchSetValue(root.structure!.open, false);
+  });
+  expect(resolver).not.toHaveBeenCalled();
+  dispatchSetValue(root.structure!.open, true);
+  expect(root.structure!.group.structure!.x.local).toBe('caller');
+});
 
 it('keeps whole coverage when a later empty merge shares its batch', () => {
   const resolver = vi.fn(() => 'resolved');
