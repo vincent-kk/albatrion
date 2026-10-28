@@ -289,7 +289,13 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     }[]
   >;
   /** Reindexed node and descendant paths, without event delivery. */
-  pathChanges: { node: Self; previous: string; current: string }[];
+  pathChanges: {
+    node: Self;
+    previous: string;
+    current: string;
+    /** Schema before this move, used with the first previous address by exit resolvers. */
+    previousSchema?: EffectiveSchema;
+  }[];
   /** Nodes whose missing input received a default during this call. */
   filledNodes: Set<Self>;
   /** Whether shape updates belong to reversible automatic transition work. */

@@ -37,8 +37,8 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   const inputs = getInactiveValueContext(node, context);
   const value = getLoadValue(
     context.previousEmit,
-    node.path,
-    getSlotPathNames(node.runtime, node.path),
+    inputs.dataPath,
+    getSlotPathNames(node.runtime, inputs.dataPath),
   );
   const listeners = node.runtime.inactiveListeners?.get(node);
   let result: unknown;

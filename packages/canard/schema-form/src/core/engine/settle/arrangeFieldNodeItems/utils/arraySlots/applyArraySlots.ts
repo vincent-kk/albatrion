@@ -176,6 +176,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       item,
       (descendant) => {
         const previous = descendant.path;
+        const previousSchema =
+          context.originalSchemas.get(previous) ?? descendant.schema;
         updateFieldNodeNameAndPath(
           descendant,
           descendant === item ? name : descendant.name,
@@ -185,6 +187,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           node: descendant,
           previous,
           current: descendant.path,
+          previousSchema,
         });
         if (
           descendant.inactiveSlots?.size ||

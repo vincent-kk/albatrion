@@ -148,7 +148,13 @@ export interface SettlementScratch<Self> {
   /** First array length observed in this settlement for snapshot alignment. */
   arrayCounts: Map<Self, number>;
   /** Paths changed before settlement, retained for later UpdatePath delivery. */
-  pathChanges: { node: Self; previous: string; current: string }[];
+  pathChanges: {
+    node: Self;
+    previous: string;
+    current: string;
+    /** Schema before this move, used with the first previous address by exit resolvers. */
+    previousSchema?: EffectiveSchema;
+  }[];
   /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;
   /** Paths scheduled for recalculation. */

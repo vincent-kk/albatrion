@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- B12 재키와 퇴장이 같은 정착에서 겹치면 resolver의 value·dataPath·parentValue와 스키마는 그 인스턴스의 직전 커밋 주소로 읽습니다. 결과 overlay의 작성 주소는 현재 보존 위치이며 이전 스냅샷 주소와 구분합니다. 최초 pathChanges의 previous가 직전 커밋 주소이고 재키가 없는 노드는 현재 주소를 사용합니다.
+
 - B12 resolver는 자동 쓰기가 허용되는 정상 보존 gate exit에서만 실행합니다. load/reset 범위·throwingGateExits·entered-only 퇴장과 자동 쓰기 억제·실패/예산 억제에서는 호출하지 않습니다. 다중 콜백은 등록 순서로 모두 실행하고 마지막 non-undefined를 채택하며 하나라도 던지면 해당 노드의 override 전체를 취소합니다.
 
 - B12 보존하는 게이트 퇴장에서만 `inactiveValue`와 `onInactive`를 직전 커밋 값·스키마·폼 context로 동기 실행합니다. 콜백 non-undefined 결과가 선언보다 우선하고 모두 undefined면 선언을 적용합니다. retain 뒤 restored raw 전 경로 JSON whole replace로 overlay를 쓰며 조상 다음 자손이 적용됩니다. clear 퇴장·dispose·아이템 삭제·재진입 소멸은 실행하지 않습니다. 실행 중 쓰기는 무시되며 예외는 정착 실패로 기록하고 기존 보존값을 유지합니다. 선언과 등록이 없는 노드는 해석 함수를 호출하지 않습니다.
