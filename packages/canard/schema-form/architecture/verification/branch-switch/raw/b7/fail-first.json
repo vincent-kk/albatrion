@@ -64,5 +64,50 @@
       "keeps an item whose only kept source is an explicitly kept empty array"
     ],
     "recursiveFixtureNote": "Verified by disabling the flag computation after correcting the fixture."
+  },
+  "candidate3": {
+    "baseline": "54cae86ca",
+    "productUnmodified": true,
+    "failingNames": [
+      "drops a write through an already inactive descendant of a discarded item",
+      "reads a discarded candidate descendant from its frozen source instead of a compacted survivor"
+    ],
+    "failures": [
+      {
+        "expected": [
+          {
+            "keep": 12
+          },
+          {
+            "keep": 24
+          }
+        ],
+        "received": [
+          {
+            "keep": 5
+          },
+          {
+            "keep": 24
+          }
+        ]
+      },
+      {
+        "expected": [
+          1,
+          2
+        ],
+        "received": []
+      }
+    ],
+    "recursiveItemEdgeMutation": {
+      "file": "src/core/engine/blueprint/utils/features/collectTemplateParents.ts",
+      "change": "omit item and itemCandidates reverse-edge registration",
+      "failingName": "marks a recursive template that reaches a keep",
+      "assertion": "children template hasKeepDescendants is true",
+      "received": "undefined",
+      "red": true,
+      "restored": true,
+      "greenAfterRestore": true
+    }
   }
 }
