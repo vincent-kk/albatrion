@@ -23,7 +23,8 @@ export const deliverChainRecords = (
     if (!reporter?.hasConsumer()) {
       if (
         process.env.NODE_ENV !== 'production' &&
-        record.code === FormWarningCode.NonJsonWholeValue
+        (record.code === FormWarningCode.NonJsonWholeValue ||
+          record.code === FormWarningCode.DetachedNodeWrite)
       )
         console.warn(record.code, record.message, record.details);
       continue;

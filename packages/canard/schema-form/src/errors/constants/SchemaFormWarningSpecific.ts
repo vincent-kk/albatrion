@@ -17,4 +17,5 @@ export const SchemaFormWarningSpecific = {
   FormTypeTestInvalid: 'FORM_TYPE_TEST_INVALID',
   Misfit: 'MISFIT',
   DialectMismatch: 'DIALECT_MISMATCH',
+  DetachedNodeWrite: 'DETACHED_NODE_WRITE',
 } as const;

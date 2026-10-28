@@ -1,6 +1,6 @@
+import { assembleCodeGroup } from '../utils/assembleCodeGroup';
 import { FormWarningGroup } from './FormWarningGroup';
 import { SchemaFormWarningSpecific } from './SchemaFormWarningSpecific';
-import { assembleCodeGroup } from '../utils/assembleCodeGroup';
 
 /**
  * Every warning code the package reports, in ledger order (ERROR-164 and its supplements).
@@ -41,6 +41,8 @@ export const FormWarningCode = {
   Misfit: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.Misfit}`,
   /** Class: warning record; when: a schema dialect differs from the selected validator dialect. */
   DialectMismatch: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DialectMismatch}`,
+  /** Raised when a write is attempted through a detached node reference; the write has no effect. */
+  DetachedNodeWrite: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DetachedNodeWrite}`,
 } as const;
 
 /** Closed union of the warning code values. */

@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- `FormWarningCode.DetachedNodeWrite`는 떼어진 노드 참조의 쓰기가 무효임을 개발 모드에서 알리는 전용 경고다. 운영 모드에서는 보고하지 않는다(B11).
+
 도메인 오류는 공통 오류 구조와 타입 판별 가능성을 제공합니다. 새 엔진의 `onError` 코드 enum과 기록·보고기 형도 이 fractal의 데이터 계약입니다(ERROR-013·017·031·164, LANDING-084).
 
 ## API Contracts
