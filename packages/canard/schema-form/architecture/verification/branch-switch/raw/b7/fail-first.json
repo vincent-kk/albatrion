@@ -109,5 +109,43 @@
       "restored": true,
       "greenAfterRestore": true
     }
+  },
+  "candidate4": {
+    "baseline": "057dea82d",
+    "productUnmodified": true,
+    "failingNames": [
+      "drops a write through a descendant of an already inactive object inside a discarded item"
+    ],
+    "failed": 1,
+    "skipped": 7,
+    "failures": [
+      {
+        "expected": [
+          {
+            "group": {
+              "keep": 12
+            }
+          },
+          {
+            "group": {
+              "keep": 24
+            }
+          }
+        ],
+        "received": [
+          {
+            "group": {
+              "keep": 5
+            }
+          },
+          {
+            "group": {
+              "keep": 24
+            }
+          }
+        ]
+      }
+    ],
+    "assertion": "final list value after group exits before clearing list and an old descendant receives setValue(5)"
   }
 }
