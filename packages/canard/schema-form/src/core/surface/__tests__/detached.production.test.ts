@@ -1,10 +1,9 @@
 import { execFileSync } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
 import { expect, it } from 'vitest';
 
 // filid:contract surface-detached
 it('keeps detached writes inert and silent in each production runtime bundle', () => {
-  const packageRoot = fileURLToPath(new URL('../../../../', import.meta.url));
+  const packageRoot = process.cwd();
   const script = `
     import assert from 'node:assert/strict';
     import fs from 'node:fs';
