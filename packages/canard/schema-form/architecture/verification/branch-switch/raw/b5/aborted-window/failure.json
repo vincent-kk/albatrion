@@ -1,0 +1,21 @@
+{
+  "verdict": "indeterminate",
+  "environmentFailure": true,
+  "rule": "458C-03",
+  "startedAt": "2026-10-28T11:04:33.874Z",
+  "endedAt": "2026-10-28T11:13:15Z",
+  "cause": {
+    "code": "EACCES",
+    "operation": "copy E lane public bundle onto the package dist entry",
+    "failedLane": "E"
+  },
+  "completedBeforeFailure": [
+    "alternate",
+    "stage-ledger",
+    "heap-node-S",
+    "heap-bun-S",
+    "react-S"
+  ],
+  "formalRetryOfThisWindow": false,
+  "samplesMergedIntoReplacement": false
+}
