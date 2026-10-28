@@ -1,6 +1,6 @@
+import { getChildPointer, readPointerSegment, rebasePointer } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FormErrorRecord } from '../../../../../../errors';
 import type { FieldNodeRuntime } from '../../../../record';
@@ -9,7 +9,6 @@ import { getRuntimePathStores } from '../../../utils/pathStores/getRuntimePathSt
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
 import type { ArrayPathMove } from '../../types/pathMoves';
 import { rekeyCommittedRules } from './rekeyCommittedRules';
-import { rekeyLatentMetadata } from './rekeyLatentMetadata';
 import { rekeyPairedPathStore } from './rekeyPairedPathStore';
 
 export type { ArrayPathMove } from '../../types/pathMoves';
@@ -30,13 +29,7 @@ export const rekeyArrayRuntimePaths = <Self>(
 ): void => {
   const stores = getRuntimePathStores(runtime);
   const unaddressed = new Set<string>();
-  for (const store of [
-    stores.latent,
-    stores.metadata,
-    stores.declarations,
-    stores.rules,
-    stores.misfits,
-  ]) {
+  for (const store of [stores.declarations, stores.rules, stores.misfits]) {
     if (!store) continue;
     for (const path of store.pathIndex.tail(
       hostPath,
@@ -46,20 +39,18 @@ export const rekeyArrayRuntimePaths = <Self>(
   }
   prunePerishedPaths(runtime, unaddressed);
   const changed = moves.filter((move) => move.previous !== move.current);
-  const prefix = hostPath + '/';
   const moveByPath = new Map(
     moves.map((move) => [move.previous, move.current]),
   );
   const mapPath = (path: string): string | undefined => {
-    if (!path.startsWith(prefix)) return path;
-    const slash = path.indexOf($.Separator, prefix.length);
-    const itemPath = slash < 0 ? path : path.slice(0, slash);
-    const position = Number(itemPath.slice(prefix.length));
+    const itemPath = getChildPointer(path, hostPath);
+    if (itemPath === undefined) return path;
+    const position = Number(readPointerSegment(itemPath, -1));
     if (position >= 0 && position < preservedPrefixCount) return path;
     const destination = moveByPath.get(itemPath);
     return destination === undefined
       ? undefined
-      : destination + path.slice(itemPath.length);
+      : rebasePointer(path, itemPath, destination);
   };
   const warningKeys = new Set<string>();
   for (const move of changed)
@@ -86,22 +77,7 @@ export const rekeyArrayRuntimePaths = <Self>(
     if (move.remembered) (runtime.warningKeys ??= new Set()).add(move.key);
     indexFieldNodeWarning(runtime, move.key, move.path, move.record);
   }
-  const latentChanged = changed.some(
-    (move) =>
-      (stores.latent?.pathIndex.under(move.previous).size ?? 0) > 0 ||
-      (stores.metadata?.pathIndex.under(move.previous).size ?? 0) > 0,
-  );
-  if (stores.latent) rekeyPairedPathStore(stores.latent, changed, mapPath);
-  if (stores.metadata)
-    rekeyPairedPathStore(
-      stores.metadata,
-      changed,
-      mapPath,
-      (metadata, path, previous) =>
-        rekeyLatentMetadata(metadata, path, previous, hostPath, runtime),
-    );
   rekeyPairedPathStore(stores.declarations, changed, mapPath);
-  if (latentChanged) runtime.literalStarRawDirty = true;
   rekeyCommittedRules(runtime, changed, mapPath);
 
   const misfitKeys = new Set<string>();
@@ -115,19 +91,9 @@ export const rekeyArrayRuntimePaths = <Self>(
   }
   stores.misfits.replacePaths(misfits);
 
-  for (const store of [
-    stores.misfitsMemo,
-    stores.inactiveMemo,
-    stores.inactiveEntries,
-  ]) {
+  for (const store of [stores.misfitsMemo]) {
     if (!store) continue;
 
-    if (
-      store !== stores.misfitsMemo &&
-      !latentChanged &&
-      !runtime.literalStarRawDirty
-    )
-      continue;
     const keys = new Set<string>();
     for (const move of changed)
       for (const key of store.pathIndex.intersecting(move.previous))

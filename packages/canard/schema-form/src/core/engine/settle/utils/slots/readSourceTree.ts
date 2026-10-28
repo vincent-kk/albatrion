@@ -1,13 +1,13 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
 import { isPlain } from '../input/isPlain';
-import { isSlotEligible } from './isSlotEligible';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
 import { readInactiveSlotSource } from './readInactiveSlotSource';
 import { readSlotRawTree } from './readSlotRawTree';
@@ -24,7 +24,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown => {
-  if (isSlotEligible(node.runtime) && node.detached) {
+  if (node.detached) {
     const lineage = [];
     for (let current: Self | null = node; current; current = current.parent)
       lineage.unshift(current.blueprintNode);
@@ -74,7 +74,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
       ? readSourceTree(child, context)
       : readInactiveSlotSource(
           context,
-          node.path + '/' + escapeSegment(entry.name),
+          appendSegment(node.path, entry.name),
           entry.node,
         );
     if (source === undefined) continue;

@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 import { fieldNodeFactory } from '@/schema-form/core/surface';
 
@@ -17,11 +16,8 @@ const createSurfaceTree = (schema: BlueprintSchema) =>
     context: {},
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    literalStarRaw: new PathKeyedMap('pair'),
+
     misfitPaths: new PathKeyedSet(),
-    literalStarValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
   });
 
 // filid:contract settle-state-keys

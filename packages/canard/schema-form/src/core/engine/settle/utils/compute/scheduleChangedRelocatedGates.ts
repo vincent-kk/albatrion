@@ -1,4 +1,7 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  PointerOperator,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -26,7 +29,7 @@ export const scheduleChangedRelocatedGates = <
     for (let index = 0; index < recorded.paths.length; index++) {
       const path = recorded.paths[index];
       const value =
-        path === $.Context
+        readPointerSegment(path, 0) === PointerOperator.Context
           ? context.root.runtime.context
           : readProjectedValue(context, path);
       if (!Object.is(value, recorded.values[index])) {

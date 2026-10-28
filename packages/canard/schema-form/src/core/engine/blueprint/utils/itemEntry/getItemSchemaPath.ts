@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { BlueprintNode } from '../../types/node';
 
 /**
@@ -26,10 +28,16 @@ export const getItemSchemaPath = (
     if (prefix) {
       if (isArray(schema.prefixItems) && index < schema.prefixItems.length) {
         child = schema.prefixItems[index];
-        path = declaration.schemaPath + '/prefixItems/' + index;
+        path = appendSegment(
+          appendSegment(declaration.schemaPath, 'prefixItems'),
+          index,
+        );
       } else if (isArray(schema.items) && index < schema.items.length) {
         child = schema.items[index];
-        path = declaration.schemaPath + '/items/' + index;
+        path = appendSegment(
+          appendSegment(declaration.schemaPath, 'items'),
+          index,
+        );
       }
     } else {
       if (
@@ -38,7 +46,7 @@ export const getItemSchemaPath = (
         !isArray(schema.items)
       ) {
         child = schema.items;
-        path = declaration.schemaPath + '/items';
+        path = appendSegment(declaration.schemaPath, 'items');
       }
       if (
         isArray(schema.items) &&
@@ -48,7 +56,7 @@ export const getItemSchemaPath = (
         !isArray(schema.additionalItems)
       ) {
         child = schema.additionalItems;
-        path = declaration.schemaPath + '/additionalItems';
+        path = appendSegment(declaration.schemaPath, 'additionalItems');
       }
     }
     if (!path) continue;

@@ -1,12 +1,11 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { isDescendantPath, resolvePointer } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
-import type { FieldNodeRecord, MisfitRecord } from '../../../record';
+import type { FieldNodeRecord,MisfitRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
-import { updateLiteralStarValues } from '../literalStar/updateLiteralStarValues';
 import { commitSlotChanges } from '../slots/commitSlotChanges';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
@@ -17,8 +16,8 @@ import { finalizeDeriveTrace } from './finalizeDeriveTrace';
 import { isMisfit } from './isMisfit';
 import { markCommitDeliveries } from './markCommitDeliveries';
 import { receivedType } from './receivedType';
-import { snapshotExitedPolicies } from './snapshotExitedPolicies';
 import { readSettlementSource } from './utils/readSettlementSource';
+
 
 /** Shared frozen empty list for inactive and misfit projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
@@ -35,11 +34,6 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = context.root.runtime;
   const development = process.env.NODE_ENV !== 'production';
-  if (
-    context.exited.size > 0 &&
-    runtime.blueprint.root.containsLiteralStar === true
-  )
-    snapshotExitedPolicies(context);
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)
     commitExitPolicyValues(context);
@@ -78,9 +72,8 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
-  const loadPrefix = loadScope ? loadScope.path + '/' : '';
   for (const path of context.changedRaw) {
-    if (loadScope && (path === loadScope.path || path.startsWith(loadPrefix)))
+    if (loadScope && (path === loadScope.path || isDescendantPath(path, loadScope.path)))
       continue;
     if (readSettlementSource(context, path, true) !== 'input')
       refreshTargets.add(path);
@@ -227,7 +220,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
             byAncestor.set(ancestor, paths);
           }
           paths.push(path);
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+          ancestor = resolvePointer(ancestor, '..');
         }
       }
       for (const [ancestor, paths] of byAncestor)
@@ -240,17 +233,6 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     };
   }
   runtime.misfitsMemo = misfitsMemo;
-  if (
-    runtime.literalStarRawDirty ||
-    (runtime.literalStarRaw?.size ?? 0) > 0 ||
-    runtime.literalStarValueEntries?.size ||
-    (runtime.literalStarValuesMemo?.size ?? 0) > 0
-  ) {
-    if (context.entered.size > 0 || context.exited.size > 0)
-      runtime.literalStarRawDirty = true;
-    updateLiteralStarValues(context.root);
-    return;
-  }
   for (const node of context.entered)
     if (!node.detached) {
       if (node.inactiveValueMemo !== undefined)

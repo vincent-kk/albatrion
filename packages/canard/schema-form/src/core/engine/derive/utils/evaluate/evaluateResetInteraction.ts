@@ -1,3 +1,5 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type {
@@ -78,7 +80,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
           const load =
             state.loadScope &&
             (node.path === state.loadScope.path ||
-              node.path.startsWith(state.loadScope.path + '/'));
+              isDescendantPath(node.path, state.loadScope.path));
           if (
             !current ||
             !(

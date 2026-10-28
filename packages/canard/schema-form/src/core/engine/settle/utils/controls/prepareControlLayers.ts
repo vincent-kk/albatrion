@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
@@ -49,7 +51,7 @@ export const prepareControlLayers = (
     const group: PreparedControlLayer = {
       layer: declaration.scope === 'node' ? 'node' : 'fragment',
       declarationId: declaration.id,
-      schemaPath: declaration.schemaPath + '/controls',
+      schemaPath: appendSegment(declaration.schemaPath, 'controls'),
       controls,
       order: order++,
     };
@@ -76,8 +78,16 @@ export const prepareControlLayers = (
       const field: PreparedControlLayer = {
         layer: 'fields',
         declarationId: declaration.id,
-        schemaPath:
-          declaration.schemaPath + '/controls/fields/' + index + '/controls',
+        schemaPath: appendSegment(
+          appendSegment(
+            appendSegment(
+              appendSegment(declaration.schemaPath, 'controls'),
+              'fields',
+            ),
+            index,
+          ),
+          'controls',
+        ),
         controls: itemControls,
         order: order++,
       };

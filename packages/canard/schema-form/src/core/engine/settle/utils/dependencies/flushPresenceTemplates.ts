@@ -1,11 +1,15 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
+import {
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
 import { evaluatedPresenceAfter } from './evaluatedPresenceAfter';
+import { getDependencyIndex } from './getDependencyIndex';
+import { getLivePresenceNode } from './getLivePresenceNode';
 import { publishPresenceOwner } from './publishPresenceOwner';
 
 /**
@@ -23,16 +27,21 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
   let found = false;
   let marked = false;
   const features = getFeatureNodeIndex(context.root.runtime.blueprint);
+  const dependencies = getDependencyIndex(context.root.runtime.blueprint);
   for (const [key, entry] of pending) {
     if (host !== undefined && entry.host !== host.path) continue;
     found = true;
     pending.delete(key);
-    for (const owner of expandTemplatePaths(context.root, entry.template)) {
+    for (const owner of expandTemplatePaths(
+      context.root,
+      entry.template,
+      dependencies.pathSegments(entry.template, context.root.runtime),
+    )) {
       if (context.presenceMetrics) context.presenceMetrics.ownerInsertions++;
       const deepest = entry.deepest;
       const excluded =
         deepest !== null &&
-        ((deepest === '' ? owner !== '' : owner.startsWith(deepest + '/')) ||
+        ((deepest === '' ? owner !== '' : isDescendantPath(owner, deepest)) ||
           (entry.kind === 'direct' && owner === deepest));
       if (
         !excluded &&
@@ -45,25 +54,17 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       if (!excluded) {
         context.dirtyPaths.add(owner);
         context.dependencyOwnerPaths.add(owner);
-        context.shapeDirtyPaths.add(owner.slice(0, owner.lastIndexOf('/')));
+        context.shapeDirtyPaths.add(resolvePointer(owner, '..'));
         for (let ancestor = owner; ancestor; ) {
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+          ancestor = resolvePointer(ancestor, '..');
           context.dirtyPaths.add(ancestor);
         }
         marked = true;
         continue;
       }
       if (entry.kind !== 'outer') continue;
-      let live: Self | undefined = context.root;
-      for (const segment of owner ? owner.slice(1).split('/') : []) {
-        const name = unescapeSegment(segment);
-        live =
-          live?.structure && hasOwnProperty(live.structure, name)
-            ? live.structure[name]
-            : undefined;
-        if (!live) break;
-      }
-      if (!live || live.detached) continue;
+      const live = getLivePresenceNode(context.root, owner);
+      if (!live) continue;
       if (
         features.stateKeyNodes.has(live.blueprintNode.id) ||
         (live.parent &&

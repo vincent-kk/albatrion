@@ -87,7 +87,7 @@ describe('validation execution', () => {
 
   it('VALIDATE-043 FRAGMENT-053 routes root and child issues without altering the verdict', async () => {
     const issues = [
-      { dataPath: '/', message: 'root' },
+      { dataPath: '', message: 'root' },
       { dataPath: '/name', message: 'child' },
     ];
     const validator: Validator = {

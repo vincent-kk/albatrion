@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '@/schema-form/core/engine/blueprint';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 
 import { FieldNodeEventType } from '../constants/FieldNodeEventType';
@@ -47,11 +46,8 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
       globalStateCounts: new Map(),
       globalState: {},
       loadSnapshot: undefined,
-      literalStarRaw: new PathKeyedMap('pair'),
+
       misfitPaths: new PathKeyedSet(),
-      literalStarValuesMemo: new PathKeyedMap<
-        readonly { path: string; value: unknown }[]
-      >('path'),
     },
     blueprintNode,
     parent: null,

@@ -1,7 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendSegment,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
@@ -61,8 +63,13 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       draft = slots;
       continue;
     }
-    const encoded = host.path.slice(1).split($.Separator);
-    const segments = encoded.map(unescapeSegment);
+    const segments = parsePointerSegments(host.path);
+    if (
+      !segments.every(
+        (segment): segment is string => typeof segment === 'string',
+      )
+    )
+      continue;
     let probe: unknown = draft;
     let byName = false;
     for (const segment of segments) {
@@ -84,7 +91,7 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
     let parentPath = '';
     for (let index = 0; index < segments.length - 1; index++) {
       const segment = segments[index];
-      parentPath += '/' + encoded[index];
+      parentPath = appendSegment(parentPath, segments[index]);
       const child = draftCopy(Reflect.get(parent, segment), parentPath);
       if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
       Reflect.set(parent, segment, child);

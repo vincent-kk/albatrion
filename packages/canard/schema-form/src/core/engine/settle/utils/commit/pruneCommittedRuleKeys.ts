@@ -1,3 +1,4 @@
+import { readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRuntime } from '../../../record';
@@ -21,7 +22,7 @@ export const pruneCommittedRuleKeys = <Self>(
       if (
         !isArray(parts) ||
         typeof parts[3] !== 'string' ||
-        !parts[3].endsWith('/unsetOnInactive')
+        readPointerSegment(parts[3], -1) !== 'unsetOnInactive'
       )
         continue;
     }

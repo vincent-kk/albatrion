@@ -1,4 +1,7 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  readPointerSegment,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { NumericPathIndex } from './utils/NumericPathIndex';
 import { isCanonicalArraySlot } from './utils/isCanonicalArraySlot';
@@ -9,7 +12,7 @@ interface PathPrefix {
   path: string;
   /** Parent reference avoids slicing on every key deletion or insertion. */
   parent?: PathPrefix;
-  /** Last escaped segment, classified once when this prefix is constructed. */
+  /** Last decoded name, classified once when this prefix is constructed. */
   segment: string;
   /** Whether the segment addresses a canonical safe-integer array slot. */
   numeric: boolean;
@@ -103,7 +106,7 @@ export class PathStoreIndex {
     const keys = new Set(this.under(path));
     let ancestor = path;
     while (ancestor) {
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+      ancestor = resolvePointer(ancestor, '..');
       for (const key of this.prefixes.get(ancestor)?.exact ?? []) keys.add(key);
     }
     return keys;
@@ -119,12 +122,14 @@ export class PathStoreIndex {
     while (!parent) {
       missing.push(cursor);
       if (!cursor) break;
-      cursor = cursor.slice(0, cursor.lastIndexOf($.Separator));
+      cursor = resolvePointer(cursor, '..');
       parent = this.prefixes.get(cursor);
     }
     for (let i = missing.length - 1; i >= 0; i--) {
       const current = missing[i];
-      const segment = current.slice(current.lastIndexOf($.Separator) + 1);
+      const segment = readPointerSegment(current, -1) ?? '';
+      if (typeof segment !== 'string')
+        throw new TypeError('Expected a named store path');
       const prefix: PathPrefix = {
         path: current,
         parent,

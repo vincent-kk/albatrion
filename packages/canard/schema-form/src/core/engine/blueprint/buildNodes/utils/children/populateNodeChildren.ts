@@ -1,5 +1,12 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import {
+  PointerOperator,
+  appendSegment,
+  joinPointer,
+  parsePointerSegments,
+  rebasePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
 import type {
@@ -11,6 +18,7 @@ import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
 import { appendChildEntries } from './appendChildEntries';
+import { assertAddressableName } from './assertAddressableName';
 import { populateVirtualNodes } from './populateVirtualNodes';
 
 /**
@@ -49,10 +57,15 @@ export const populateNodeChildren = (
         fragment: context.fragments[declaration.fragmentId],
         role: 'declaration' as const,
       };
+      const propertiesPath = appendSegment(
+        declaration.schemaPath,
+        'properties',
+      );
       const properties = Object.entries(schema.properties);
       for (let index = 0; index < properties.length; index++) {
         const [name, child] = properties[index];
-        const escapedName = escapeSegment(name);
+        assertAddressableName(context, declaration.schemaPath, name);
+        const path = appendSegment(node.path, name);
         const input: SchemaInput = {
           context: base.context,
           gates: base.gates,
@@ -61,11 +74,10 @@ export const populateNodeChildren = (
           fragment: base.fragment,
           role: base.role,
           schema: child,
-          schemaPath: declaration.schemaPath + '/properties/' + escapedName,
+          schemaPath: rebasePointer(path, node.path, propertiesPath),
           order: [...declaration.order, 0, index],
         };
         input.gates = [];
-        const path = node.path + '/' + escapedName;
         appendChildEntries(
           node,
           name,
@@ -80,10 +92,7 @@ export const populateNodeChildren = (
       return;
     }
   }
-  const properties = new Map<
-    string,
-    { escapedName: string; path: string; inputs: SchemaInput[] }
-  >();
+  const properties = new Map<string, { path: string; inputs: SchemaInput[] }>();
   const itemInputs: SchemaInput[] = [];
   const tuples = new Map<number, SchemaInput[]>();
   const fieldControls = node.declarations.flatMap((owner) =>
@@ -98,11 +107,19 @@ export const populateNodeChildren = (
             ? undefined
             : createBlueprintGate({
                 kind: 'active' as const,
-                schemaPath:
-                  owner.schemaPath +
-                  '/controls/fields/' +
-                  index +
-                  '/controls/active',
+                schemaPath: appendSegment(
+                  appendSegment(
+                    appendSegment(
+                      appendSegment(
+                        appendSegment(owner.schemaPath, 'controls'),
+                        'fields',
+                      ),
+                      index,
+                    ),
+                    'controls',
+                  ),
+                  'active',
+                ),
                 hostPath: node.path,
                 condition: entry.controls.active,
                 ...(owner.gates.length ? { appliesWhen: owner.gates } : {}),
@@ -133,14 +150,17 @@ export const populateNodeChildren = (
       typeof schema.properties === 'object'
     )
       Object.entries(schema.properties).forEach(([name, child], index) => {
+        assertAddressableName(context, declaration.schemaPath, name);
         const existing = properties.get(name);
-        const escapedName = existing
-          ? existing.escapedName
-          : escapeSegment(name);
+        const path = existing?.path ?? appendSegment(node.path, name);
         const input: SchemaInput = {
           ...base,
           schema: child,
-          schemaPath: declaration.schemaPath + '/properties/' + escapedName,
+          schemaPath: rebasePointer(
+            path,
+            node.path,
+            appendSegment(declaration.schemaPath, 'properties'),
+          ),
           order: [...declaration.order, 0, index],
         };
         const entryGates = fieldControls
@@ -153,8 +173,7 @@ export const populateNodeChildren = (
         if (existing) existing.inputs.push(input);
         else
           properties.set(name, {
-            escapedName,
-            path: node.path + '/' + escapedName,
+            path,
             inputs: [input],
           });
         const discriminatorIndex = input.gates.findIndex(
@@ -184,12 +203,13 @@ export const populateNodeChildren = (
         const input: SchemaInput = {
           ...base,
           schema: child,
-          schemaPath:
-            declaration.schemaPath +
-            '/' +
-            (schema.prefixItems ? 'prefixItems' : 'items') +
-            '/' +
+          schemaPath: appendSegment(
+            appendSegment(
+              declaration.schemaPath,
+              schema.prefixItems ? 'prefixItems' : 'items',
+            ),
             index,
+          ),
           order: [...declaration.order, 0, index],
         };
         const existing = tuples.get(index);
@@ -211,7 +231,7 @@ export const populateNodeChildren = (
       itemInputs.push({
         ...base,
         schema: schema.items,
-        schemaPath: declaration.schemaPath + '/items',
+        schemaPath: appendSegment(declaration.schemaPath, 'items'),
         order: [...declaration.order, 0, 0],
       });
     }
@@ -227,7 +247,7 @@ export const populateNodeChildren = (
       itemInputs.push({
         ...base,
         schema: additionalItems,
-        schemaPath: declaration.schemaPath + '/additionalItems',
+        schemaPath: appendSegment(declaration.schemaPath, 'additionalItems'),
         order: [...declaration.order, 0, schema.items.length],
       });
   }
@@ -245,7 +265,14 @@ export const populateNodeChildren = (
     );
   }
   if (itemInputs.length) {
-    const candidates = build(context, itemInputs, node.path + '/*');
+    const candidates = build(
+      context,
+      itemInputs,
+      joinPointer([
+        ...parsePointerSegments(node.path),
+        PointerOperator.Wildcard,
+      ]),
+    );
     node.item = candidates[0];
     if (candidates.length > 1) {
       node.itemCandidates = candidates;
@@ -256,7 +283,7 @@ export const populateNodeChildren = (
     const candidates = [...tuples]
       .sort(([a], [b]) => a - b)
       .map(([index, inputs]) =>
-        build(context, inputs, node.path + '/' + index),
+        build(context, inputs, appendSegment(node.path, index)),
       );
     node.prefixItems = candidates.map((items) => items[0]);
     if (candidates.some((items) => items.length > 1)) {

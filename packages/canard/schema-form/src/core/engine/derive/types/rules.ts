@@ -18,8 +18,10 @@ export interface DeriveRule {
   readonly schemaPath: string;
   /** Declaration layer that chooses the addressed value target. */
   readonly layer: DeclarationLayer;
-  /** Direct child name for a scoped rule; absent for a node's own control. */
+  /** Direct child name for a scoped rule; absent for a node's own control and for an item template. */
   readonly targetName?: string;
+  /** True when the rule addresses every repeated array item rather than a named child. */
+  readonly targetItems?: boolean;
   /** Direct child declarations contributed by this fragment. */
   readonly targetDeclarationIds?: readonly number[];
   /** Read paths that trigger this rule, with watch paths only for derived. */

@@ -1,4 +1,4 @@
-import type { MutableNode, SchemaInput } from '../../../types/analysis';
+import type { MutableNode,SchemaInput } from '../../../types/analysis';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
 
 /**
@@ -26,7 +26,6 @@ export const appendChildEntries = (
   declarationInputs: ReadonlyMap<number, number>,
 ): void => {
   if (children.length > 1) node.hasPropertyCandidates = true;
-  if (name === '*') node.containsLiteralStar = true;
   const entries = node.childEntries;
   for (let childIndex = 0; childIndex < children.length; childIndex++) {
     const child = children[childIndex];

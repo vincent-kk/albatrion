@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Distribution, FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -20,10 +20,7 @@ export const getChildDistribution = <Self extends FieldNodeRecord<Self>>(
 ): Distribution | undefined => {
   if (
     context.replacePaths !== undefined &&
-    !isWithinReplacePaths(
-      context,
-      path ?? host.path + '/' + escapeSegment(name),
-    )
+    !isWithinReplacePaths(context, path ?? appendSegment(host.path, name))
   )
     return undefined;
   const distribution = context.distributedInputs.get(host);

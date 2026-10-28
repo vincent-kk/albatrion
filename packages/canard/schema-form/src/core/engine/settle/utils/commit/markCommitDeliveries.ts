@@ -1,6 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import {
@@ -39,7 +42,6 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   try {
     const refreshTargets = runtime.refreshTargets;
     const loadScope = context.kind === 'load' ? context.loadScope : undefined;
-    const loadPrefix = loadScope ? loadScope.path + '/' : '';
     const automaticNodes = new Set<Self>();
     for (let index = 0; index < context.automaticLog.length; index++)
       automaticNodes.add(context.automaticLog[index].node);
@@ -61,7 +63,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       for (const path of affectedPaths) {
         let ancestor = path;
         while (ancestor) {
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+          ancestor = resolvePointer(ancestor, '..');
           if (!context.changedRaw.has(ancestor)) affectedPaths.delete(ancestor);
         }
       }
@@ -194,7 +196,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       if (hasWatch) {
         if (watched.length) {
           const index = (runtime.deliveryWatchIndex ??=
-            createWatchDeliveryIndex<Self>());
+            createWatchDeliveryIndex<Self>(runtime));
           index.update(node, getWatchDeliveryPaths(node));
         } else runtime.deliveryWatchIndex?.remove(node);
       }
@@ -343,7 +345,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           );
         }
       }
-      if (loadScope && (node === loadScope || node.path.startsWith(loadPrefix)))
+      if (
+        loadScope &&
+        (node === loadScope || isDescendantPath(node.path, loadScope.path))
+      )
         mark(node, FieldNodeEventType.RequestRefresh);
       else if (refreshTargets?.has(node.path))
         mark(node, FieldNodeEventType.RequestRefresh);

@@ -1,51 +1,61 @@
-# jsonPointer contract
+# jsonPointer 계약
 
 ## Requirements
 
-schema-form의 경로 문자열은 RFC 6901의 루트, 구분자, fragment 표기에 더해 폼 탐색용 현재, 부모, 와일드카드, 컨텍스트 심볼을 함께 쓴다. 이 모듈은 경로를 문자열 수준에서 판별, 결합, 정규화하며, 필드 노드를 탐색하거나 포인터가 가리키는 값을 읽지 않는다.
-
-`stripFragment`는 폼 내부의 루트 표기에 맞추려고 슬래시 한 글자도 빈 문자열로 정규화한다. RFC 6901에서는 슬래시 한 글자가 빈 이름의 멤버를 가리키며, 이 동작은 그와 의도적으로 다르다.
+경로 문자열 해석과 조립의 정본은 이 fractal입니다. 제품 소비처는 경로를 직접 분할·결합하거나 tilde escape를 풀거나 문자열 연산자를 비교하지 않습니다. `JSONPointer`의 공개 상수 값은 유지합니다.
 
 ## API Contracts
 
-`isAbsolutePath`·`isRelativePath`·`joinSegment`는 내부 경로 보조 함수이며 이 fractal의 index가 내보내지 않는다. `utils/__tests__`는 `isAbsolutePath`·`isRelativePath` 구현 파일을 직접 검증하고, `joinSegment`는 현재 소비자도 테스트도 없다.
+`readFormattedNameSegment`는 정본으로 조립된 주소에서 이름 마디의 원래 encoded 표기를 반환합니다. 정확한 raw `*`, `..`, `.`, `@`는 undefined로 거부하고 퍼센트 리터럴·tilde 표기·중간 hash·빈 이름·보통 퍼센트 마디는 그대로 보존합니다. 디코드하거나 다시 형식화하지 않으며 이미 정본인 이름을 보유하는 색인의 추가 문자열 생성을 피합니다.
 
-`JSONPointer.Index`는 `Wildcard`와 같은 값을 가지지만 폐기 예정인 별칭이다. 새로 쓸 때는 `Wildcard`를 고른다.
+`parsePointerSegments`는 결과 객체 없이 디코드된 세그먼트 배열만 돌려주는 정본입니다. 보통 상대 배열은 원본을 재사용하고 실제 변환이나 fragment 제거 때만 사본 하나를 만듭니다. `isAbsolutePointer`는 완전한 포인터의 절대 여부를 배열 없이 읽으며 단독 `#`와 배열 첫 원소 `#`도 포함합니다. 기존 `isAbsolutePath`의 slash 접두사 판정과 단독 fragment 동작은 유지합니다. `parsePointer`는 같은 세그먼트 정본을 감싸 차가운 소비처의 기존 결과 객체를 제공합니다. 경로 문법 캐시는 살아 있는 조회 결과를 보유하지 않고 기존 청사진·runtime·호스트 소유자가 관리합니다.
 
-`isAbsolutePath`는 슬래시로 시작하는 문자열과, “#/a/b”처럼 해시 다음에 슬래시가 오는 URI fragment 형식의 문자열만 참으로 판별한다. `isRelativePath`는 현재 또는 부모 표식 바로 뒤에 슬래시가 오는 문자열만 참으로 판별한다. 두 함수 모두 나머지 문자열이 포인터 문법에 맞는지는 검증하지 않는다.
+`parsePointer`는 문자열 또는 세그먼트 배열을 받아 절대 여부와 디코드한 이름/고유 심볼 세그먼트를 돌려줍니다. 정확히 `*`, `..`, `.`, `@`인 세그먼트는 연산자이고 정확히 `%2A`, `%2E%2E`, `%2E`, `%40`이면 해당 리터럴 이름입니다. 나머지는 `~1`→`/`, `~0`→`~`만 풉니다. 보통 `%` 이름은 바뀌지 않습니다. 문자열은 한 번 split한 배열을 제자리에서 디코드하며, `~`나 `%`가 없는 이름은 원문을 그대로 반환합니다. 배열 입력은 호출자의 배열을 변경하지 않습니다. 보통 이름만 가진 상대 배열은 기존 배열을 재사용하고 실제 변환이나 fragment 제거가 필요할 때만 사본 하나를 만듭니다.
 
-`getAbsolutePath(basePath, currentPath)`는 절대 경로와 URI fragment 입력을 그대로 반환한다. 현재 표식으로 시작하면 기준 경로에 덧붙이고, 연속된 부모 표식으로 시작하면 그 수만큼 기준 경로에서 올라가되 루트보다 위로는 올라가지 않는다. 그 밖의 문자열은 그대로 반환한다. fragment 입력을 넘기기 전에 `stripFragment`를 호출할 필요는 없다.
+선행 `#`만 fragment 접두사이며 중간 `#`는 이름입니다. 배열은 첫 원소가 `#`일 때만 절대 경로입니다. 문자열 `#`는 절대 루트이고 빈 문자열은 현재 위치이며, `/`와 `#/`는 기존 탐색대로 빈 이름 한 마디를 갖습니다.
 
-`stripFragment`는 해시로 시작하는 경로에서 해시를 제거한다. 해시만 있는 입력, 해시와 슬래시만 있는 입력, 슬래시만 있는 입력은 빈 루트 문자열로 정규화한다. `joinSegment`는 기준 경로의 기본값을 빈 루트로 두고, 비어 있지 않은 문자열이나 숫자 세그먼트 앞에는 구분자를 붙인다. 빈 문자열 세그먼트에서는 기준 경로를 그대로 돌려준다.
+`parseStandardPointer`는 RFC 6901 이름만 반환하여 `/*`의 별표를 리터럴로 읽습니다. fragment는 percent decoding 후 tilde decoding하며 일반 문자열 포인터의 `%`는 유지합니다. 루트가 아닌 입력은 `/` 또는 `#/`로 시작해야 하며 잘못된 접두사는 기존 참조 오류의 `INVALID_POINTER_TYPE` 원인을 유지합니다. 검증 이슈와 `$ref` 소비처는 이 표준 해석을 사용합니다.
 
-- `JSONPointerPrefix`는 `JSONPointer` 기호에 구분자를 붙인 두 글자 접두사 세 개(`Fragment`는 해시와 슬래시, `Parent`는 부모 표식과 슬래시, `Current`는 현재 표식과 슬래시)로 이루어져 있으며 `JSONPointer`에서 조립한다. 이 fractal의 index가 이름으로 내보내지만 패키지 공개 진입점은 내보내지 않는다. 경로 토큰을 비교하고 분해하는 engine 코드는 리터럴 대신 이 상수 두 개를 쓴다. 정규식 안의 토큰은 그대로 둔다.
-- 세그먼트 이스케이프 정규식 넷(`ESCAPED_SLASH_REGEX`는 `~1`, `ESCAPED_TILDE_REGEX`는 `~0`, `TILDE_REGEX`는 `~`, `SLASH_REGEX`는 `/`)은 `constants/regex.ts`에 있고 이 fractal의 index가 이름으로 내보낸다. 패키지 공개 진입점은 내보내지 않는다. 모두 `g` 플래그를 가지므로 `lastIndex`를 되돌리는 `replace`에만 쓴다. 세그먼트를 이스케이프하거나 풀어 쓰는 engine·surface 코드는 정규식을 새로 쓰지 않고 이 상수를 가져온다.
-- `JSONPointer` 상수 객체는 `constants/JSONPointer.ts`에 있다. 뿌리에는 문서, 진입점, 타입 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
+`formatSegment`는 이름의 tilde와 slash를 winglet pointer-escape로 이스케이프하며 정확한 예약 이름 넷만 퍼센트 표기로 만듭니다. 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 이름은 형식화한 경로가 다시 예약 이름으로 읽히므로 왕복하지 않으며, `isReservedPercentName`이 그 넷을 판정합니다. 청사진은 이 이름의 속성을 만들 때 거부합니다.
+
+`appendSegment`는 부모 경로에 이름 하나를 조립합니다. `joinPointer`는 디코드된 이름과 연산자 세그먼트로 절대 경로를 만듭니다. `isDescendantPath`는 세그먼트 경계의 엄격한 하위 경로만 판정합니다. `resolvePointer`는 기준 경로에 상대 연산자를 적용하고 루트 위의 부모 이동은 루트에 머물며 fragment를 제거합니다. 끝의 빈 이름은 직전 세그먼트가 연산자일 때만(`./`, `../`) 버리며 이름 뒤(`a/`)에서는 빈 이름 자식으로 보존합니다. 단독 컨텍스트는 `@`로 유지합니다. 단독 `/`와 `#/`는 빈 이름 자식이며 빈 문자열 기준 경로만 루트입니다.
+
+`stripFragment`는 선행 fragment 문자만 제거합니다. `/`는 그대로이고 `#/`도 `/`가 되어 빈 이름 주소를 보존합니다. 단독 `#`는 빈 루트로 바뀌며, 식 의존 등록에서 절대 루트와 상대 빈 주소를 구별해야 할 때는 preserveAbsoluteRoot 인수를 true로 주어 `#`를 보존합니다. `isCanonicalPath`는 노드 경로가 쓰는 정본 형식, 곧 slash로 시작하는 주소만 참으로 판정하며 fragment 접두사 주소와 빈 문자열은 거짓입니다. `isAbsolutePath`는 기존 slash 접두사 판정이며 complete-pointer 술어는 `isAbsolutePointer`입니다. 검증기 dataPath는 표준 이름으로 해석하고 별도의 slash 루트 정규화를 두지 않습니다.
+
+색인과 배열 재키의 기존 할당 수를 유지하기 위해 `readPointerSegment`는 지정 위치(음수는 끝에서 센 위치)의 마디 하나만 해석하고, `getChildPointer`는 조상 바로 아래 자식까지의 접두 경로를 반환합니다. `rebasePointer`는 이미 판정한 접두 경로를 교체하며 접미부를 재파싱하지 않습니다. 이 연산들도 경로 문법의 소유 경계 안에 둡니다.
+
+청사진 선언이 이미 형식화한 이름 표기를 보유할 때는 `readFormattedPointerSegment`가 같은 위치의 원문 마디만 읽어 디코드·재인코드 비용을 피합니다. 디코드된 이름을 소비하는 탐색은 계속 `readPointerSegment`를 사용합니다.
+
+`hasPointerOperator`는 배열을 만들지 않고 정확한 원문 세그먼트 경계에서 고유 심볼 연산자의 존재를 판정합니다. 디코드된 리터럴 이름과 혼동하지 않으며 의존 색인의 기존 부분 문자열 검사를 대체합니다.
+
+`parsePointerSegment`는 이미 분리된 마디에 세 줄 규칙만 적용합니다. 주소 접두사를 해석하지 않으므로 빈 이름과 `#` 이름을 보존하며 dirty-child 색인의 기존 할당 수를 유지합니다.
+
+노드가 공표할 escapedName을 이미 형식화한 생성·재키 통로는 `appendFormattedSegment`로 그 결과를 재사용합니다. 이름을 두 번 이스케이프하거나 두 문자열을 만들지 않으며, 원문 이름을 받는 일반 통로는 계속 `appendSegment`를 사용합니다.
+
+`bindPointerTemplate`는 정확한 와일드카드 마디만 대응하는 발생 경로 마디로 바꿉니다. 기존 선형 문자열 스캔과 조각 결합을 경계 안으로 옮기며 split·map 배열을 추가하지 않습니다. 퍼센트 리터럴과 별표를 포함한 보통 이름은 바인딩하지 않습니다.
 
 ## Acceptance Criteria
 
-### pointer-symbols — 확장 심볼 경계
+### pointer-symbols — 이름과 연산자
 
-- 루트, fragment, 구분자 표기와 현재, 부모, 와일드카드, 컨텍스트 확장 심볼의 값이 유지된다.
-- 폐기 예정인 Index 별칭은 Wildcard와 같은 값을 유지하며, 새로 쓸 때의 기준은 Wildcard다.
+- 네 연산자는 고유 심볼이며 정확한 퍼센트 표기만 리터럴 예약 이름으로 읽습니다.
+- 보통 퍼센트 이름과 tilde escaping의 의미가 유지됩니다.
 
-### pointer-classification — 경로 접두사 판별
+### pointer-standard — 외부 표준 포인터
 
-- 절대 경로 판별은 슬래시, 또는 URI fragment의 해시와 슬래시 접두사만 인식한다.
-- 상대 경로 판별은 현재 또는 부모 표식 뒤에 구분자가 있는 경우만 인식한다.
+- 연산자를 만들지 않고 fragment의 전체 세그먼트를 퍼센트 디코드합니다.
+- `/*`는 이름 `*`이며 `/`는 빈 이름입니다.
 
-### pointer-resolution — 상대 경로 결합
+### pointer-build — 주소 조립
 
-- 절대 경로와 URI fragment 입력은 바꾸지 않고 그대로 반환한다.
-- 현재 경로는 기준 경로에 결합하고, 부모 경로가 반복되면 루트에서 멈춘다.
-- 인식하지 않는 상대 형식은 입력을 그대로 반환한다.
+- 예약 이름과 tilde/slash 이름은 형식화 후 확장 파싱으로 왕복합니다.
+- 이름 조립과 엄격한 하위 경로 검사가 단일 구현을 사용합니다.
 
-### pointer-normalization — fragment와 루트 표기
+### pointer-resolution — 상대 경로
 
-- 해시 접두사가 있는 비루트 경로는 해시만 제거한다.
-- 해시만 있는 경우, 해시와 슬래시, 슬래시만 있는 경우는 빈 루트로 정규화한다. 슬래시만 있는 입력의 정규화는 RFC 6901과 다른 폼 내부 규칙이다.
-- 빈 세그먼트를 결합하면 기준 경로가 유지되고, 다른 세그먼트는 구분자 뒤에 붙는다.
+- 현재·부모·절대·fragment 경로를 같은 문법으로 해석합니다.
+- 루트 위로 이동하지 않으며 단독 컨텍스트를 보존합니다.
 
 ## Last Updated
 
-2026-09-27 — 경로 판별·상대 결합·폼 전용 루트 정규화의 현재 계약 명시; 정돈-2(2026-10-14).
+2026-10-28

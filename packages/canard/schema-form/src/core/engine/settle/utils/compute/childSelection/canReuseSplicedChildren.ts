@@ -1,3 +1,5 @@
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import type {
@@ -55,7 +57,7 @@ export const canReuseSplicedChildren = <Self extends FieldNodeRecord<Self>>(
       child.blueprintNode !== entry.node ||
       child.name !== entry.name ||
       child.parent !== node ||
-      child.path !== node.path + '/' + entry.name ||
+      child.path !== appendSegment(node.path, entry.name) ||
       child.schema !== schema ||
       !child.active ||
       child.detached ||

@@ -2,10 +2,9 @@
 
 ## Requirements
 
-- 트리 생성은 일반 비활성 원본을 슬롯·overlay로만 구성하며 슬롯 모드 선택이나 원본 그림자 런타임을 만들지 않는다. 별표 이름의 기존 공표 제외·참조 alias·마지막 커밋 읽기는 별표 호환 경로로 유지한다. 공개 멤버·선언·배달·오류 기대값은 그대로이며 슬롯 자료는 실제 사용하는 호스트에만 지연 할당한다.
+- 이름이 정확히 `*`인 속성도 일반 슬롯 공표·수명·복원·keep 규칙을 따른다. 비활성 주소는 `/%2A` 세그먼트를 쓰며 다른 살아 있는 형제의 wildcard 매치로 숨겨지지 않는다. 떼어진 참조는 자기 마지막 커밋 읽기를 보존하고 공표 항목 참조는 일반 슬롯의 값 재사용 규칙을 따른다.
 
-- A literal `*` property's inactive publication retains navigation's existing wildcard-query exclusion in 별표 호환 경로. An unread detached host preserves the query result from its final committed view after an external matching branch changes. This is compatibility with an existing inconsistency and does not add public members or alter pointer syntax.
-- Wildcard exclusion ends a public entry's lifetime even when the hidden commit is unread. An unread detached host retains the last committed entry identities already published through an ancestor; later live publication or inactive overlays cannot replace those identities in the old host's view. These requirements apply when the star segment belongs to an ancestor as well as to the immediate host.
+- 트리 생성은 일반 비활성 원본을 슬롯·overlay로만 구성하며 슬롯 모드 선택이나 원본 그림자 런타임을 만들지 않는다. 공개 멤버·선언은 유지하며 슬롯 자료는 실제 사용하는 호스트에만 지연 할당한다.
 
 - 런타임은 설계 Ⅱ의 "떼어진 참조의 읽기는 마지막 커밋으로 고정되고(NODE-044), 재진입 노드는 새 인스턴스이며, 옛 참조의 구독은 발화하지 않는다"를 유지한다. 슬롯 보유는 내부 원본의 소유 방식이며 공개 멤버·프로토타입·판별 합집합·구독 수명을 바꾸지 않는다. 생성 통로는 새 부모·경로·런타임을 결합하고 복제된 노드의 상호작용·오류·배달 기록을 이어받지 않는다(NODE-043·044·060).
 - 슬롯의 raw·extras·선언 밖 값과 보유 자손은 엔진의 복제 재진입 입력이다. 런타임 클래스에는 정착·슬롯 선택 알고리즘을 두지 않는다. 배열 itemKey는 새로 발급하며 중첩 호스트는 엔진이 고정 출발점에서 형상을 다시 고른다. 호스트별 지연 보유 자료 이외에 모든 노드의 생성자 할당이나 공개 읽기의 전체 트리 순회를 추가하지 않는다(SETTLE-044·GOAL-029, NODE-053·055).
@@ -22,7 +21,7 @@
 - `fieldNodeFactory`의 수출을 유지하는 이유는 core 수준 시험 기반 도구(makeFieldNodeTree, 시나리오 실행기, createDispatchTree)가 이 생성 통로를 쓰기 때문이다. 제품 소비자는 없으며, 정돈-3에서 시험 도구의 자리와 함께 다시 검토한다.
 - `UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 내부 형이며 surface index가 내보내지 않는다. 자기 index 모양 검증은 부모 core의 시험 구획이 소유하고 surface 내부 시험은 구체 파일을 직접 가져온다.
 
-- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `FieldNode` 타입, 종류별 노드 타입, 가드 열, `InferFieldNode`, 공개 옵션 `SetValueOption`, `fieldNodeFactory`와 `record`가 소유한 `FieldNodeEventType`·`FieldNodeRequestType`을 이름으로 내보낸다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보낸다(SURFACE-056·060, EVENT-073, LANDING-067·158). `fieldNodeFactory(schema: Blueprint, runtimeSeed: FieldNodeRuntimeSeed, validator?: Validator): FieldNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받는다. 경로 색인 저장소 `misfitPaths`는 시드가 주지 않으면 팩토리가 빈 저장소로 만든다. 일반 비활성 원본·overlay와 읽기 메모는 각 호스트가 필요할 때 소유하며 팩토리는 전역 원본 저장소를 만들지 않는다. 이름이 정확히 `*`인 선언을 포함한 폼에만 `literalStarRaw`·`literalStarValuesMemo` 호환 저장소를 시드에서 받거나 빈 저장소로 만든다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합한다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만든다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않는다. 구현은 생성한 루트를 종류와 무관한 공개 공통 모양(`NodeSurface`)과 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)에 묶어 돌려주므로, 클래스와 공개 형의 멤버 이름·시그니처 불일치는 컴파일 오류가 된다. 컴파일 시점 연결은 이 공통 모양 48개 멤버까지이다. 종류별 판별 합집합과 노드를 돌려주거나 받는 자기 참조 6개(`rootNode`·`parentNode`·`children`·`find`·`findNodes`·`visitSubtree`)는 런타임 시험 `surface.test.ts`(DETAIL 표 대조)가 지킨다.
+- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `FieldNode` 타입, 종류별 노드 타입, 가드 열, `InferFieldNode`, 공개 옵션 `SetValueOption`, `fieldNodeFactory`와 `record`가 소유한 `FieldNodeEventType`·`FieldNodeRequestType`을 이름으로 내보낸다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보낸다(SURFACE-056·060, EVENT-073, LANDING-067·158). `fieldNodeFactory(schema: Blueprint, runtimeSeed: FieldNodeRuntimeSeed, validator?: Validator): FieldNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받는다. 경로 색인 저장소 `misfitPaths`는 시드가 주지 않으면 팩토리가 빈 저장소로 만든다. 일반 비활성 원본·overlay와 읽기 메모는 각 호스트가 필요할 때 소유하며 팩토리는 전역 원본 저장소를 만들지 않는다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합한다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만든다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않는다. 구현은 생성한 루트를 종류와 무관한 공개 공통 모양(`NodeSurface`)과 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)에 묶어 돌려주므로, 클래스와 공개 형의 멤버 이름·시그니처 불일치는 컴파일 오류가 된다. 컴파일 시점 연결은 이 공통 모양 48개 멤버까지이다. 종류별 판별 합집합과 노드를 돌려주거나 받는 자기 참조 6개(`rootNode`·`parentNode`·`children`·`find`·`findNodes`·`visitSubtree`)는 런타임 시험 `surface.test.ts`(DETAIL 표 대조)가 지킨다.
 - 아래 표의 `getter`는 필드 또는 계산 메모 읽기이며 `method`는 문장 하나의 위임이다. 구현 클래스는 `FieldNodeRecord<FieldNode>`를 구현하고 위임 메서드에서 `FieldNode` 자기 타입을 전달한다. 종류별 생성 표·`InferFieldNode` overload로 단언 없이 좁힌다(NODE-046).
 
 <!-- prettier-ignore -->
@@ -46,7 +45,7 @@
 | `undeclaredValues` | getter | 객체 branch의 선언 밖 키 또는 배열 branch의 청사진 없는 꼬리 자리 값을 받은 순서로 보관하는 상태 칸 | VALUE-002·004, NODE-052, 26C-01 |
 | `value` | getter | 계산된 `local` | VALUE-027 |
 | `outputValue` | getter | 계산된 `emit` | VALUE-027·034 |
-| `inactiveValues` | getter | 호스트의 보유 슬롯·overlay에서 지연 계산한 동결 목록. 별표 공표 호환 폼은 전용 공표 메모를 읽으며, 떼어지면 마지막 커밋의 내용과 참조를 유지 | VALUE-029, WRITE-087, NODE-044 |
+| `inactiveValues` | getter | 호스트의 보유 슬롯·overlay에서 지연 계산한 동결 목록. 떼어지면 마지막 커밋의 내용과 참조를 유지 | VALUE-029, WRITE-087, NODE-044 |
 | `active` | getter | 최종 형상에 있는가. 정착 중 임시 이탈 뒤 재진입한 노드는 같은 인스턴스로 참이고, 최종 이탈해 떼어진 옛 참조는 다시 들어도 거짓이다. NODE-044의 마지막 커밋 고정에서 빠지는 살아 있는 트리의 사실 | LANDING-062, 26C-04, 26C-08 |
 | `visible` | getter | 레코드 `visible`의 로컬 AND 결과. 떼어지면 마지막 커밋 값으로 고정 | (CONTROLS-022·082, NODE-044, 28C-02) |
 | `enabled` | getter | `active && visible`. 살아 있으면 `visible`과 같고 `disabled`와 무관하며 떼어지면 거짓 | (LANDING-066, 26C-08, 28C-02) |
@@ -99,17 +98,17 @@
 
 통로의 몸은 `engine/write/`의 진입 함수가 소유한다. `surface/index.ts`의 겉면은 공개 `FieldNode` 형을 받는 이름 있는 함수이며, `core/index.ts`가 와일드카드 없이 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않는다. 각 함수의 문서 주석은 `binding-only; not exported from src/index.ts`를 명시한다(69C-01, LANDING-064, 실행 ADR D2).
 
-| 함수                                                          | 계약                                                                                                                                                                      | 원장                      |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| `buildFieldNodeTree(props)`                                   | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않는다                                                                                                           | 70C-01, VALIDATE-010      |
-| `mountFieldNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받는다                                                                                                                   | 69C-01·05, LANDING-041    |
+| 함수                                                          | 계약                                                                                                                                                                  | 원장                      |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `buildFieldNodeTree(props)`                                   | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않는다                                                                                                         | 70C-01, VALIDATE-010      |
+| `mountFieldNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받는다                                                                                                                 | 69C-01·05, LANDING-041    |
 | `reloadFieldNodeForm(root, value, option?)`                   | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비운다. 선택적 자동 쓰기 비트는 그 로드에만 적용된다 | WRITE-015·043·045, 69C-03 |
-| `adoptFieldNodeTree(previousRoot, nextRoot)`                  | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기한다                                                                                                    | 69C-02·03, WRITE-046      |
-| `writeFieldNodeInput(node, value, option)`                    | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별한다                                                                                                        | REACT-009·010, 69C-01     |
-| `finishFieldNodeInput(node)`                                  | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용한다                                                                                                  | WRITE-083, 69C-01         |
-| `readFieldNodeInteractionReset(node)`                         | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽는다                                                                                                                 | REACT-024, 69C-02         |
-| `observeFieldNodeReports(root, deliver)`                      | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원한다                                                                                            | ERROR-113, 69C-01         |
-| `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려준다                                                                                 | REACT-033, 69C-01         |
+| `adoptFieldNodeTree(previousRoot, nextRoot)`                  | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기한다                                                                                                  | 69C-02·03, WRITE-046      |
+| `writeFieldNodeInput(node, value, option)`                    | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별한다                                                                                                      | REACT-009·010, 69C-01     |
+| `finishFieldNodeInput(node)`                                  | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용한다                                                                                                | WRITE-083, 69C-01         |
+| `readFieldNodeInteractionReset(node)`                         | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽는다                                                                                                               | REACT-024, 69C-02         |
+| `observeFieldNodeReports(root, deliver)`                      | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원한다                                                                                          | ERROR-113, 69C-01         |
+| `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려준다                                                                               | REACT-033, 69C-01         |
 
 - 위계: `runtime/`은 공개 노드 표면 뒤에서 움직이는 런타임 객체의 칸이다. 일부러 하나만 둔 클래스라 복수형 역할 이름 classes 대신 주제 이름을 쓴다. 이 칸에는 런타임 노드 클래스 `FieldNode`(`runtime/FieldNode.ts`)와, 런타임 노드 객체에만 작용하는 `requireRuntimeFieldNode`·`setContext`가 있다. `utils/`에는 바인딩 통로(`utils/binding/`)·가드(`guards.ts`)·생성 통로(`fieldNodeFactory.ts`)가 남는다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
 
@@ -158,4 +157,4 @@
 
 ## Last Updated
 
-계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024, 정돈-1(2026-10-14); 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02).
+2026-10-28

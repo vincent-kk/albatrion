@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -23,7 +23,7 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
     while (true) {
       paths.add(path);
       if (!path) break;
-      path = path.slice(0, path.lastIndexOf($.Separator));
+      path = resolvePointer(path, '..');
     }
   }
   for (const node of context.entered) {

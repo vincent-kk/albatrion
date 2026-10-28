@@ -1,0 +1,37 @@
+{
+  "kind": "B4-public-mount-delivery",
+  "rows": [
+    {
+      "id": "static-first-unobserved",
+      "same": true,
+      "phases": 2
+    },
+    {
+      "id": "static-first-revision",
+      "same": true,
+      "phases": 2
+    },
+    {
+      "id": "static-first-listener",
+      "same": true,
+      "phases": 2
+    },
+    {
+      "id": "generic-unobserved",
+      "same": true,
+      "phases": 2
+    },
+    {
+      "id": "generic-revision",
+      "same": true,
+      "phases": 2
+    },
+    {
+      "id": "generic-listener",
+      "same": true,
+      "phases": 2
+    }
+  ],
+  "phases": 12,
+  "differences": 0
+}

@@ -1,7 +1,7 @@
 import { StaticFirstLoadCapability } from '../../../blueprint';
-import type { FieldNodeRecord, SettlementScratch } from '../../../record';
-import { WriteOption } from '../../../types/value';
+import type { FieldNodeRecord,SettlementScratch } from '../../../record';
 import type { FieldNodeWriteKind } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { prepareGateSelection } from '../compute/childSelection/prepareGateSelection';
 import { getVirtualReferenceIndex } from '../compute/getVirtualReferenceIndex';
@@ -65,7 +65,6 @@ export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
     pathChanges: scratch.pathChanges,
     filledNodes: scratch.filledNodes,
     inTransition: false,
-    literalStarAutomaticLog: scratch.literalStarAutomaticLog,
     automatic: false,
     automaticChanged: false,
     dirtyPaths: scratch.dirtyPaths,

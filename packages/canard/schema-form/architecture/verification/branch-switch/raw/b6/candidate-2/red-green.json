@@ -1,0 +1,66 @@
+{
+  "source": "isolated package copies; the working candidate was never reverted",
+  "canonicalBeforeCache": {
+    "failed": 2,
+    "wrapperCalls": {
+      "siblings0": 5,
+      "oneOf80": 16
+    }
+  },
+  "dependencyBeforeCache": {
+    "failed": 1,
+    "wrapperCalls": 12
+  },
+  "watchBeforeCache": {
+    "failed": 4,
+    "passed": 1,
+    "causes": [
+      "same-commit emission replacement",
+      "membership removal decoding",
+      "same-node watch schema replacement",
+      "prior snapshot then current emission"
+    ]
+  },
+  "absentContextBeforeCorrection": {
+    "failed": 1,
+    "cause": "shared global fallback identity"
+  },
+  "publicBeforeSlash": {
+    "failed": 2,
+    "passed": 1,
+    "causes": [
+      "empty-name input was not mapped",
+      "slash issue attached to ordinary root"
+    ]
+  },
+  "green": {
+    "focused": {
+      "files": 15,
+      "passed": 182
+    },
+    "publicRenderReact18": {
+      "files": 2,
+      "passed": 6
+    },
+    "canonicalFirstActualWrite": {
+      "files": 1,
+      "passed": 2,
+      "wrapperCalls": 0,
+      "fullDecoderCalls": 0,
+      "writesPerScene": 6
+    },
+    "importAndRootLocation": {
+      "files": 2,
+      "passed": 24
+    },
+    "rootWatchFixture": {
+      "files": 1,
+      "passed": 10
+    }
+  },
+  "limits": [
+    "The counter proves the two canonical scenes from the first post-mount write, not every possible path.",
+    "Single-segment reads and permitted new/evicted syntax fills are separate costs.",
+    "Source object counts are not measured V8 heap allocations."
+  ]
+}

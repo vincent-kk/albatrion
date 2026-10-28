@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -20,7 +21,7 @@ export const verifyUnvisitedGateStep = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const { node, context, prior, next } = frame;
   const { entry } = step;
-  const path = node.path + '/' + escapeSegment(entry.name);
+  const path = appendSegment(node.path, entry.name);
   verifyGateSelection(
     !hasOwnProperty(prior, entry.name) ||
       prior[entry.name].blueprintNode !== entry.node,

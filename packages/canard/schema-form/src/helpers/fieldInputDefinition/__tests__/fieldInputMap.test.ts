@@ -1223,7 +1223,7 @@ describe('normalizeFieldInputMap', () => {
   });
 
   describe('엣지 케이스', () => {
-    test('루트 경로', () => {
+    test('루트와 빈 이름 경로', () => {
       const inputMap: FieldInputMap = {
         '/': TestStringComponent,
         '#': TestNumberComponent,
@@ -1238,7 +1238,7 @@ describe('normalizeFieldInputMap', () => {
         result[0].test({
           schemaType: 'string',
           misfit: false,
-          path: '',
+          path: '/',
           type: 'string',
           nullable: false,
           required: true,
@@ -1262,7 +1262,7 @@ describe('normalizeFieldInputMap', () => {
         result[2].test({
           schemaType: 'string',
           misfit: false,
-          path: '',
+          path: '/',
           type: 'string',
           nullable: false,
           required: false,

@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
@@ -88,7 +89,7 @@ export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
       entry.node,
       child.source,
       child.overlay,
-      path + '/' + escapeSegment(entry.name),
+      appendSegment(path, entry.name),
       [...order, getSlotEntryPosition(template, entry)],
       live?.structure?.[entry.name],
       values,

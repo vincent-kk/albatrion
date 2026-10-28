@@ -1,0 +1,16 @@
+{
+  "productFiles": 71,
+  "testFixtureFiles": 39,
+  "detailFiles": 10,
+  "totalFiles": 120,
+  "sharedGuardedSites": 168,
+  "sharedFiles": 47,
+  "deletedProductFiles": 27,
+  "deletedProductLines": 1564,
+  "deletedDeviceDirectoryProductFiles": 20,
+  "deletedDeviceDirectoryProductLines": 1275,
+  "removedDeviceTestCases": 16,
+  "publicExpectationCasesChanged": 11,
+  "unitFilesPassed": 30,
+  "unitTestsPassed": 166
+}

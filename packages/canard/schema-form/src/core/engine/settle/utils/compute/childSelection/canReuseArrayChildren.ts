@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
@@ -79,7 +81,7 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
       child.blueprintNode !== entry.node ||
       child.name !== entry.name ||
       child.parent !== node ||
-      child.path !== node.path + '/' + entry.name ||
+      child.path !== appendSegment(node.path, entry.name) ||
       child.schema !== schema ||
       !child.active ||
       child.detached ||

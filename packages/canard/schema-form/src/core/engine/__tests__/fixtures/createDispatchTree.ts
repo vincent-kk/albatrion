@@ -1,11 +1,10 @@
-import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { FieldNodeRecord } from '@/schema-form/core/engine/record';
 import type { Validator } from '@/schema-form/core/engine/validation';
 import { fieldNodeFactory } from '@/schema-form/core/surface';
 import type { FormErrorReporter } from '@/schema-form/errors';
 
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 
 /** Test view of the record created by the public tree factory. */
@@ -39,11 +38,8 @@ export const createDispatchTree = (
       errorReporter,
       diagnostics: { status: 'stable' },
       loadSnapshot: snapshot,
-      literalStarRaw: new PathKeyedMap('pair'),
+
       misfitPaths: new PathKeyedSet(),
-      literalStarValuesMemo: new PathKeyedMap<
-        readonly { path: string; value: unknown }[]
-      >('path'),
     },
     validator,
   );

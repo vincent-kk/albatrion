@@ -1,4 +1,8 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  getChildPointer,
+  readFormattedNameSegment,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { engineModes } from '../../../utils/cache/engineModes';
 import type {
@@ -142,19 +146,16 @@ export class DirtyPathSet extends Set<string> {
 
   /** Insert a non-member key into each strict host ancestor using escaped segments. */
   private insertSplitAnchor(anchor: SplitAnchor): void {
-    let start = 1;
-    while (start <= anchor.hostPath.length) {
-      const slash = anchor.hostPath.indexOf('/', start);
-      const parent = anchor.hostPath.slice(0, start - 1);
-      const name = anchor.hostPath.slice(
-        start,
-        slash < 0 ? anchor.hostPath.length : slash,
-      );
+    let parent = '';
+    while (parent !== anchor.hostPath) {
+      const child = getChildPointer(anchor.hostPath, parent);
+      if (child === undefined) break;
+      const segment = readFormattedNameSegment(child, -1);
+      if (segment === undefined) break;
       let children = this.childrenByParent.get(parent);
       if (!children) this.childrenByParent.set(parent, (children = new Map()));
-      children.set(anchor.key, name);
-      if (slash < 0) break;
-      start = slash + 1;
+      children.set(anchor.key, segment);
+      parent = child;
     }
   }
 
@@ -172,15 +173,14 @@ export class DirtyPathSet extends Set<string> {
     }
     state.released.set(owner.rank, path);
     if (!anchor || --anchor.count !== 0) return;
-    let start = 1;
-    while (start <= anchor.hostPath.length) {
-      const slash = anchor.hostPath.indexOf('/', start);
-      const parent = anchor.hostPath.slice(0, start - 1);
+    let parent = '';
+    while (parent !== anchor.hostPath) {
+      const child = getChildPointer(anchor.hostPath, parent);
+      if (child === undefined) break;
       const children = this.childrenByParent.get(parent);
       children?.delete(anchor.key);
       if (children?.size === 0) this.childrenByParent.delete(parent);
-      if (slash < 0) break;
-      start = slash + 1;
+      parent = child;
     }
   }
 
@@ -198,15 +198,16 @@ export class DirtyPathSet extends Set<string> {
       let current = path;
       while (current && !linked.has(current)) {
         linked.add(current);
-        const slash = current.lastIndexOf($.Separator);
-        const parent = current.slice(0, slash);
+        const parent = resolvePointer(current, '..');
+        const segment = readFormattedNameSegment(current, -1);
+        if (segment === undefined) break;
         super.add(parent);
         let children = this.childrenByParent.get(parent);
         if (!children) {
           children = new Map();
           this.childrenByParent.set(parent, children);
         }
-        children.set(current, current.slice(slash + 1));
+        children.set(current, segment);
         current = parent;
       }
     }
@@ -219,34 +220,34 @@ export class DirtyPathSet extends Set<string> {
       while (!this.has(current)) {
         super.add(current);
         if (!current) break;
-        const slash = current.lastIndexOf($.Separator);
-        const parent = current.slice(0, slash);
+        const parent = resolvePointer(current, '..');
+        const segment = readFormattedNameSegment(current, -1);
+        if (segment === undefined) break;
         let children = this.childrenByParent.get(parent);
         if (!children) {
           children = new Map();
           this.childrenByParent.set(parent, children);
         }
         if (children.has(current)) children.delete(current);
-        children.set(current, current.slice(slash + 1));
+        children.set(current, segment);
         current = parent;
       }
       return this;
     }
     super.add(path);
-    let start = 1;
-    while (start <= path.length) {
-      const slash = path.indexOf($.Separator, start);
-      const end = slash < 0 ? path.length : slash;
-      const parent = path.slice(0, start - 1);
-      const name = path.slice(start, end);
+    let parent = '';
+    while (parent !== path) {
+      const child = getChildPointer(path, parent);
+      if (child === undefined) break;
+      const segment = readFormattedNameSegment(child, -1);
+      if (segment === undefined) break;
       let children = this.childrenByParent.get(parent);
       if (!children) {
         children = new Map();
         this.childrenByParent.set(parent, children);
       }
-      children.set(path, name);
-      if (slash < 0) break;
-      start = slash + 1;
+      children.set(path, segment);
+      parent = child;
     }
     return this;
   }
@@ -255,7 +256,7 @@ export class DirtyPathSet extends Set<string> {
     if (!super.delete(path)) return false;
     if (this.postOrder) {
       if (path) {
-        const parent = path.slice(0, path.lastIndexOf($.Separator));
+        const parent = resolvePointer(path, '..');
         const children = this.childrenByParent.get(parent);
         children?.delete(path);
         if (children?.size === 0) this.childrenByParent.delete(parent);
@@ -263,15 +264,14 @@ export class DirtyPathSet extends Set<string> {
       return true;
     }
     if (this.splitOwners) this.releaseSplitMember(path);
-    let start = 1;
-    while (start <= path.length) {
-      const slash = path.indexOf($.Separator, start);
-      const parent = path.slice(0, start - 1);
+    let parent = '';
+    while (parent !== path) {
+      const child = getChildPointer(path, parent);
+      if (child === undefined) break;
       const children = this.childrenByParent.get(parent);
       children?.delete(path);
       if (children?.size === 0) this.childrenByParent.delete(parent);
-      if (slash < 0) break;
-      start = slash + 1;
+      parent = child;
     }
     return true;
   }

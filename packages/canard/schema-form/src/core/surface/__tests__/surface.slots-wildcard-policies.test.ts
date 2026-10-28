@@ -36,10 +36,14 @@ import { SetValueOption } from '../type';
       });
       root.find('/starOpen')!.setValue(false);
       root.find('/open')!.setValue(false);
-      expect(root.inactiveValues).toEqual([]);
+      expect(root.inactiveValues).toEqual(
+        keep ? [{ path: '/group/%2A/x', value: 'held' }] : [],
+      );
       root.find('/open')!.setValue(true);
       root.find('/starOpen')!.setValue(true);
-      expect(root.find('/group')!.value).toEqual({});
+      expect(root.find('/group')!.value).toEqual(
+        keep ? { '*': { x: 'held' } } : {},
+      );
     });
 
   it(`resets mixed sources while retaining an unread detached parent's wildcard entry`, () => {
@@ -75,7 +79,7 @@ import { SetValueOption } from '../type';
     const group = root.find('/group')!;
     root.find('/xOpen')!.setValue(false);
     const entry = root.inactiveValues.find(
-      (item) => item.path === '/group/*/x',
+      (item) => item.path === '/group/%2A/x',
     )!;
     root.find('/open')!.setValue(false);
     root.setValue({ group: { '*': { x: 'overlay' } } }, SetValueOption.Merge);
@@ -83,7 +87,7 @@ import { SetValueOption } from '../type';
     expect(root.value).toEqual(snapshot);
     expect(root.inactiveValues).toEqual([]);
     expect(group.inactiveValues).toEqual([
-      { path: '/group/*/x', value: 'loaded' },
+      { path: '/group/%2A/x', value: 'loaded' },
     ]);
     expect(group.inactiveValues[0]).toBe(entry);
   });

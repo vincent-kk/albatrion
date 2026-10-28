@@ -1,3 +1,8 @@
+import {
+  appendSegment,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -30,13 +35,14 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
     overlay?: InactiveSlotOverlay;
   }[] = [];
   for (const entry of entries) {
-    const previous = host.path + '/' + entry.name;
+    const previous = appendSegment(host.path, entry.name);
     if (!destinations.has(previous)) continue;
     const current = destinations.get(previous);
     if (current === previous) continue;
-    const name = current?.slice(current.lastIndexOf('/') + 1);
+    const name =
+      current === undefined ? undefined : readPointerSegment(current, -1);
     const target =
-      name === undefined
+      typeof name !== 'string'
         ? undefined
         : (getItemEntries(host.blueprintNode, Number(name)).find(
             (candidate) => candidate.node === entry.node,

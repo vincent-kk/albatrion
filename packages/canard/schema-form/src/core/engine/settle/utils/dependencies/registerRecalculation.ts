@@ -1,6 +1,4 @@
-import { unescapeSegment } from '@winglet/json/pointer';
-
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
@@ -75,9 +73,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           else if (kind === 'split')
             (context.splitMarks ??= new Map()).set(path, epoch);
           context.shapeDirtyPaths.add(
-            kind === 'host'
-              ? path
-              : path.slice(0, path.lastIndexOf($.Separator)),
+            kind === 'host' ? path : resolvePointer(path, '..'),
           );
         },
       });
@@ -89,9 +85,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       )) {
         context.dirtyPaths.add(declarationPath);
         context.dependencyOwnerPaths.add(declarationPath);
-        context.shapeDirtyPaths.add(
-          declarationPath.slice(0, declarationPath.lastIndexOf($.Separator)),
-        );
+        context.shapeDirtyPaths.add(resolvePointer(declarationPath, '..'));
       }
   }
   const expanded = new Set<string>();
@@ -99,7 +93,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     let ancestor = path;
     while (ancestor && !expanded.has(ancestor)) {
       expanded.add(ancestor);
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+      ancestor = resolvePointer(ancestor, '..');
       context.dirtyPaths.add(ancestor);
     }
   }
@@ -107,7 +101,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     const changedAncestors = new Set<string>();
     for (const changed of context.changedRaw)
       for (let prefix = changed; prefix; ) {
-        prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
+        prefix = resolvePointer(prefix, '..');
         if (changedAncestors.has(prefix)) break;
         changedAncestors.add(prefix);
       }
@@ -123,9 +117,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           changedAncestors,
         )
       )
-        context.shapeDirtyPaths.add(
-          path.slice(0, path.lastIndexOf($.Separator)),
-        );
+        context.shapeDirtyPaths.add(resolvePointer(path, '..'));
     }
   }
   if (shadow) {
@@ -148,8 +140,16 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           'S3 removed a non-split owner: ' + path,
         );
         let node: Self | undefined = context.root;
-        for (const segment of path.split('/').slice(1))
-          node = node?.structure?.[unescapeSegment(segment)];
+        for (const segment of dependencies.pathSegments(
+          path,
+          context.root.runtime,
+        )) {
+          if (typeof segment !== 'string') {
+            node = undefined;
+            break;
+          }
+          node = node?.structure?.[segment];
+        }
         verifyGateSelection(!node, 'S3 removed a living split owner: ' + path);
       }
   }

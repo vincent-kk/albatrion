@@ -1,17 +1,16 @@
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
-import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type {
   Blueprint,
   BlueprintOptions,
   BlueprintSchema,
 } from '@/schema-form/core/engine/blueprint';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { FieldNodeRuntime } from '@/schema-form/core/engine/record';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 import type { Validator } from '@/schema-form/core/engine/validation';
 
-import { createPlainNode } from './createPlainNode';
 import type { PlainNode } from './createPlainNode';
+import { createPlainNode } from './createPlainNode';
 
 /**
  * Compose one analyzed schema and a plain-record factory for settlement tests.
@@ -39,11 +38,8 @@ export const createTestTree = (
     globalStateCounts: new Map(),
     globalState: {},
     loadSnapshot: undefined,
-    literalStarRaw: new PathKeyedMap('pair'),
+
     misfitPaths: new PathKeyedSet(),
-    literalStarValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
   };
   beforeRoot(analysis);
   return {

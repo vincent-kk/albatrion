@@ -1,10 +1,10 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { FieldNodeRecord, UnionSpec } from '../../../record';
+import type { FieldNodeRecord,UnionSpec } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
-import { indexEnteredLiteralStarKey } from '../literalStarStore/indexEnteredLiteralStarKey';
 import { pruneInactiveSources } from '../slots/pruneInactiveSources';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
@@ -15,6 +15,7 @@ import { staticSpec } from './staticSpec';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
 import { restoreWriteEpochPaths } from './utils/restoreWriteEpochPaths';
+
 
 /** Default of `changedValue`: the caller has not interpreted this node's input. */
 const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
@@ -49,7 +50,6 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     assertVirtualWriteShape(node, input);
   if (context.loadScope) {
     context.entered.add(node);
-    indexEnteredLiteralStarKey(context, node);
   }
   if (context.kind === 'load') context.changedNodes.add(node);
   if (context.kind === 'load' && node.behavior.strategy === 'branch')
@@ -125,7 +125,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       !isMerge &&
       (context.replacePaths === undefined ||
         context.replacePaths.some(
-          (path) => node.path === path || node.path.startsWith(path + '/'),
+          (path) => node.path === path || isDescendantPath(node.path, path),
         ));
     nextRaw = isMerge ? node.raw : undefined;
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);

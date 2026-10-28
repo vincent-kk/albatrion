@@ -2,12 +2,16 @@
 
 ## Requirements
 
+- 주입 대상 주소는 jsonPointer 파싱 이름으로 탐색하고 연산자 심볼을 거부한다. 객체의 리터럴 별표 이름은 배열 아이템 템플릿으로 확장하지 않는다.
+
 - 배열 injectTo 경로는 살아 있는 아이템의 청사진을 우선하고, 부재 자리에는 작성 순서의 첫 후보와 전체 형제 후보를 사용한다. 잠복 쓰기 키는 기존 fold 정체 토큰을 유지한다(390C-01, 391C-01).
 
 - 한 파생 라운드에서 `unsetValue`, `derived`, `injectTo` 규칙의 에지를 판정하고, 대상마다 승자 하나만 남긴 쓰기 후보와 소비할 에지, 개발 모드 기록 항목을 `DeriveRoundDecision`으로 돌려준다. 원본은 바꾸지 않는다(SETTLE-004·028·048·049, ERROR-159).
 - 의존은 부모 derive의 `utils/rules/`·`utils/evaluate/`·`types/`와, `blueprint`·`record` 진입점, engine organ의 `sameValue`·경로 해석, `@/schema-form/helpers/jsonPointer`로만 향한다. 상호작용 초기화 판정은 가져오지 않는다(NODE-016).
 
 ## API Contracts
+
+- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
 
 - 규칙 발생 키는 원천과 대상의 union fold를 포함한 토큰을 사용한다. 문서 전순서의 같은 이름 간선은 살아 있는 원천의 청사진 노드 객체와 동일한 간선을 고르며, 같은 `union` 분류의 다른 fold를 대신 고르지 않는다. 비union 키와 규칙 종류·선언 층 순위는 그대로이다(BLUEPRINT-043, FRAGMENT-049, 389C-02, 390C-01).
 
@@ -60,4 +64,4 @@ unsetValue는 한 스키마 아이템·옛 튜플·추가 아이템·prefixItems
 
 ## Last Updated
 
-정돈-3 derive 재구성(2026-10-15).
+2026-10-28

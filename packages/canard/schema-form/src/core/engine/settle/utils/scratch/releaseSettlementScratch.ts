@@ -27,8 +27,6 @@ export const releaseSettlementScratch = <Self>(
   if (scratch.arrayCounts.size) scratch.arrayCounts.clear();
   if (scratch.pathChanges.length) scratch.pathChanges.length = 0;
   if (scratch.filledNodes.size) scratch.filledNodes.clear();
-  if (scratch.literalStarAutomaticLog?.size)
-    scratch.literalStarAutomaticLog.clear();
   scratch.dirtyPaths.clear();
   if (scratch.dependencyOwnerPaths.size) scratch.dependencyOwnerPaths.clear();
   if (scratch.shapeDirtyPaths.size) scratch.shapeDirtyPaths.clear();

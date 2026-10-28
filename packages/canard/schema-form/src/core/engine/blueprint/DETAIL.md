@@ -2,7 +2,8 @@
 
 ## Requirements
 
-- `containsLiteralStar` is an optional true Boolean on templates whose finite subtree reaches a property named exactly `*`. Named bindings record the direct fact and the existing reverse-edge work list propagates it through shared and recursive templates. Star-free templates acquire no field or additional graph traversal. Settlement uses the root fact to retain the complete latent implementation for literal-star-bearing forms without evaluating values or changing authored names.
+- 수렴 증명은 파싱된 연산자 심볼로 문맥·와일드카드를 구별하고, 리터럴 예약 이름의 경로를 일반 속성으로 취급한다.
+
 
 - B2-P2는 무조건 활성인 고유 nonvirtual 자식의 기존 정적 분할과 작성 순서를 가진 기존 직접 선택 계획을 함께 소비한다(SETTLE-052). 최초 O(E) 준비 뒤 identity를 재사용하며 청사진 파생 자료에는 값·라이브 노드·게이트 결과를 저장하지 않는다. 정적 baseline의 실제 occurrence 증인은 settle이 소유한다.
 
@@ -160,7 +161,7 @@
 
 ### gate-evaluation-location — L의 정적 계산
 
-- `BlueprintGate.evaluationReads`는 `#`·`(/)`의 절대 루트, `/p`·`#/p`의 절대 `p`, `@` 제외, 상대 오름 횟수를 청사진 단위 사례로 검증한다. 유한한 재귀 템플릿의 동일한 게이트는 정적 목록 하나를 공유하고, 발생별 L은 정착에서 서로 다르게 계산한다(SETTLE-045, 26C-04·07).
+- `BlueprintGate.evaluationReads`는 `#`의 절대 루트, `(/)`의 빈 이름 자식, `/p`·`#/p`의 절대 `p`, `@` 제외, 상대 오름 횟수를 청사진 단위 사례로 검증한다. 유한한 재귀 템플릿의 동일한 게이트는 정적 목록 하나를 공유하고, 발생별 L은 정착에서 서로 다르게 계산한다(SETTLE-045, 26C-04·07).
 
 ### diagnostics — 닫힌 목록과 수집
 
@@ -173,6 +174,10 @@
 ### array-slots — 아이템 자리
 
 - 같은 템플릿과 색인의 자리 항목은 같은 참조이고, 선언 경로는 템플릿 경로를 유지하며, 청사진이 없는 자리에는 항목이 없다. 옛 표기에서 스키마 객체인 `additionalItems`는 꼬리 자리의 템플릿이 되고, `false`·`true`·없음은 청사진이 없는 꼬리다(NODE-009·052, WRITE-022, 35C-04·08, 36C-02).
+
+### blueprint-property-addresses — 속성 이름의 경로 왕복
+
+- 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 객체 속성 이름은 평면 객체와 게이트 분기 모두에서 속성 이름과 규칙을 담은 `UNKNOWN_JSON_SCHEMA`로 거부된다. 이름이 `*`, `.`, `..`, `@`이거나 `%2a`, `100%`처럼 정확한 네 표기와 다른 이름은 계속 받아들인다.
 
 ### feature-index-item-fragment — 아이템 조각의 상태 키 색인
 
@@ -215,6 +220,6 @@
 
 ## Last Updated
 
-2026-10-27. B1 게이트 정적 읽기 증거의 소유권과 비용. 준비된 적재 선택의 정적 ID 배열 재사용과 owned-inline 계수.
+2026-10-28
 
 2026-10-13. 계약 기준: 211C-01, REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline. 비용 기록: 105라운드 자식 열거, 106라운드 선언 수집, 참조·controls·hint 봉투 가드와 형 목록 predicate; 정돈-2(2026-10-14). 정돈-3 blueprint 재구성(2026-10-15). 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077).

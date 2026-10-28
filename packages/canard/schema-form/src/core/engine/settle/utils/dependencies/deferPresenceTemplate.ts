@@ -1,6 +1,14 @@
+import {
+  PointerOperator,
+  isDescendantPath,
+  joinPointer,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { PendingPresenceTemplate } from '../../types/pendingPresenceTemplate';
 import type { SettlementContext } from '../../types/settlement';
+import { getDependencyIndex } from './getDependencyIndex';
 
 /**
  * Park one unbound reader and schedule its static host without expanding it.
@@ -22,12 +30,18 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
   const key = kind + '\u0000' + template;
   const entry = pending.get(key);
   if (!entry) {
-    const host = template.slice(0, template.indexOf('/*'));
+    const segments = getDependencyIndex(
+      context.root.runtime.blueprint,
+    ).pathSegments(template, context.root.runtime);
+    const wildcard = segments.indexOf(PointerOperator.Wildcard);
+    const host = joinPointer(
+      segments.slice(0, wildcard < 0 ? undefined : wildcard),
+    );
     pending.set(key, { template, kind, deepest: origin, host, stamp });
     context.dirtyPaths.add(host);
     context.shapeDirtyPaths.add(host);
     for (let ancestor = host; ancestor; ) {
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      ancestor = resolvePointer(ancestor, '..');
       context.dirtyPaths.add(ancestor);
     }
     return true;
@@ -37,9 +51,9 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
   if (
     deepest !== null &&
     deepest !== origin &&
-    !(origin === '' || deepest.startsWith(origin + '/'))
+    !(origin === '' || isDescendantPath(deepest, origin))
   )
     entry.deepest =
-      deepest === '' || origin.startsWith(deepest + '/') ? origin : null;
+      deepest === '' || isDescendantPath(origin, deepest) ? origin : null;
   return false;
 };

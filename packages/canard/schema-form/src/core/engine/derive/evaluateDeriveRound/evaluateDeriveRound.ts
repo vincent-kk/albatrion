@@ -1,3 +1,5 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../record';
 import { sameValue } from '../../utils/compute/sameValue';
 import { getBlueprintNodeIdentity } from '../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -93,7 +95,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
             Boolean(
               state.loadScope &&
                 (node.path === state.loadScope.path ||
-                  node.path.startsWith(state.loadScope.path + '/')),
+                  isDescendantPath(node.path, state.loadScope.path)),
             );
           const appeared =
             !consumed &&
@@ -104,7 +106,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
             if (
               state.loadScope &&
               node.path !== state.loadScope.path &&
-              !node.path.startsWith(state.loadScope.path + '/')
+              !isDescendantPath(node.path, state.loadScope.path)
             )
               continue;
             if (!appeared && (!priorExists || sameValue(prior, current)))

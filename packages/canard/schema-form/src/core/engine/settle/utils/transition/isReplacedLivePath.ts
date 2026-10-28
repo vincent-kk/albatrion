@@ -1,3 +1,5 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -15,14 +17,14 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   const scope = context.replaceScope;
   const withinScope =
     scope !== undefined &&
-    (!scope.path || path === scope.path || path.startsWith(scope.path + '/'));
+    (!scope.path || path === scope.path || isDescendantPath(path, scope.path));
   const withinVirtual =
     context.virtualReplacePaths?.some(
-      (replaced) => path === replaced || path.startsWith(replaced + '/'),
+      (replaced) => path === replaced || isDescendantPath(path, replaced),
     ) ?? false;
   const withinBatch =
     context.replacePaths?.some(
-      (replaced) => path === replaced || path.startsWith(replaced + '/'),
+      (replaced) => path === replaced || isDescendantPath(path, replaced),
     ) ?? false;
   if (!withinScope && !withinVirtual && !withinBatch) return false;
   const live = find(context.root, path);

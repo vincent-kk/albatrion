@@ -1,6 +1,8 @@
-import { isTruthy } from '@winglet/common-utils/filter';
-
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  type PointerSegment,
+  joinPointer,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate } from '../../../blueprint';
 import { bindTemplatePath } from '../templatePaths/bindTemplatePath';
@@ -20,6 +22,9 @@ export const resolveGateOccurrence = (
   templatePath: string,
   occurrencePath: string,
   childHostPath?: string,
+  readSegments: (
+    path: string,
+  ) => readonly PointerSegment[] = parsePointerSegments,
 ): GateOccurrence => {
   const hostPath = bindGateHostPath(
     gate,
@@ -27,15 +32,15 @@ export const resolveGateOccurrence = (
     occurrencePath,
     childHostPath,
   );
-  let common = hostPath.split($.Separator).filter(isTruthy);
+  let common = readSegments(hostPath);
   for (const read of gate.evaluationReads) {
     if (typeof read === 'number') {
       common = common.slice(0, Math.max(0, common.length - read));
       continue;
     }
-    const target = bindTemplatePath(read, childHostPath ?? occurrencePath)
-      .split($.Separator)
-      .filter(isTruthy);
+    const target = readSegments(
+      bindTemplatePath(read, childHostPath ?? occurrencePath),
+    );
     let index = 0;
     while (
       index < common.length &&
@@ -48,6 +53,6 @@ export const resolveGateOccurrence = (
   return {
     gate,
     hostPath,
-    evaluationHostPath: common.length ? '/' + common.join($.Separator) : '',
+    evaluationHostPath: joinPointer(common),
   };
 };

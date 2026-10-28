@@ -1,9 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
-import { escapeSegment } from '@winglet/json/pointer';
 
 import { FormErrorCode } from '@/schema-form/errors';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import {
   EMPTY_INTERSECTION,
   intersectEnum,
@@ -45,7 +45,7 @@ export const readDiscriminatorBranches = (
   if (typeof propertyName !== 'string' || !propertyName.length)
     return throwBlueprintError(
       FormErrorCode.InvalidControlShape,
-      schemaPath + '/controls/discriminator',
+      appendSegment(appendSegment(schemaPath, 'controls'), 'discriminator'),
       {
         group: SCHEMA_GROUP.controls,
         key: 'discriminator',
@@ -59,7 +59,10 @@ export const readDiscriminatorBranches = (
     const previousValues: unknown[] = [];
     for (let index = 0; index < host[keyword].length; index++) {
       const branch = host[keyword][index];
-      const branchPath = schemaPath + '/' + keyword + '/' + index;
+      const branchPath = appendSegment(
+        appendSegment(schemaPath, keyword),
+        index,
+      );
       const parts = collectStaticSchemas(context, branch, branchPath);
       let branchTypes: ReturnType<typeof readAllowedTypes>;
       for (const part of parts)
@@ -75,8 +78,10 @@ export const readDiscriminatorBranches = (
           propertyName
         ];
         if (property === undefined) continue;
-        const propertyPath =
-          part.schemaPath + '/properties/' + escapeSegment(propertyName);
+        const propertyPath = appendSegment(
+          appendSegment(part.schemaPath, 'properties'),
+          propertyName,
+        );
         const types = inferAllowedTypes(context, property, propertyPath, true);
         if (types) mask = foldAllowedTypes(types);
         for (const tag of collectStaticSchemas(

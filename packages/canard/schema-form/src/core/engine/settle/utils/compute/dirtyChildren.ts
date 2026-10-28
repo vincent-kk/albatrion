@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
+
+import { parsePointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
@@ -22,7 +23,8 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
   for (const encoded of context.dirtyChildrenByParent
     .get(node.path)
     ?.values() ?? []) {
-    const name = unescapeSegment(encoded);
+    const name = parsePointerSegment(encoded);
+    if (typeof name !== 'string') continue;
     const child =
       node.structure && hasOwnProperty(node.structure, name)
         ? node.structure[name]

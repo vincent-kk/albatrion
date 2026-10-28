@@ -1,6 +1,10 @@
-import { getValue } from '@winglet/json/pointer';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  joinPointer,
+  parseStandardPointer,
+  stripFragment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -20,7 +24,7 @@ export const resolveReference = (
   reference: string,
   schemaPath: string,
 ): { schema: BlueprintSchema; schemaPath: string } => {
-  if (!reference.startsWith($.Fragment))
+  if (stripFragment(reference) === reference)
     return throwBlueprintError(
       FormErrorCode.UnknownJsonSchema,
       schemaPath,
@@ -33,8 +37,18 @@ export const resolveReference = (
   let pointer: string;
   let schema: unknown;
   try {
-    pointer = decodeURIComponent(reference.slice(1));
-    schema = getValue(context.schema, pointer);
+    const names = parseStandardPointer(reference);
+    pointer = joinPointer(names);
+    schema = context.schema;
+    for (const name of names) {
+      if (schema === null || typeof schema !== 'object') {
+        schema = undefined;
+        break;
+      }
+      schema = hasOwnProperty(schema, name)
+        ? Reflect.get(schema, name)
+        : undefined;
+    }
   } catch (cause) {
     return throwBlueprintError(
       FormErrorCode.UnknownJsonSchema,

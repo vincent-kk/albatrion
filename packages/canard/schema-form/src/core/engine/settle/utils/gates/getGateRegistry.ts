@@ -1,6 +1,10 @@
-import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
-
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { isAbsolutePath } from '@/schema-form/helpers/jsonPointer';
+import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendSegment,
+  parsePointerSegments,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -12,6 +16,7 @@ import type {
   GatePredicateMemo,
 } from '../../types/gatePredicate';
 import type { PresenceQueryCursor } from '../../types/presenceQueryCursor';
+import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 import { getGateExpression } from './getGateExpression';
 import { createGatePredicate } from './predicates/createGatePredicate';
 import { getIfGateReadNames } from './predicates/getIfGateReadNames';
@@ -116,7 +121,10 @@ class GateRegistry {
   /** Absolute reads shared by gates that ask the same pointer at one host. */
   private readonly resolvedReads = new Map<string, Map<string, string>>();
   /** Decoded pointers contain no live shape or projected value. */
-  private readonly segments = new Map<string, readonly string[]>();
+  private readonly segments = new Map<string, readonly PointerSegment[]>();
+  /** One callback per registry binds occurrence syntax without per-registration closures. */
+  private readonly readSegments = (path: string): readonly PointerSegment[] =>
+    this.pathSegments(path);
 
   /** Bind exact expression dependencies from this tree's analyzed blueprint. */
   constructor(
@@ -140,10 +148,13 @@ class GateRegistry {
   }
 
   /** Decode an actually read absolute pointer once; callers still walk the live tree. */
-  pathSegments(path: string): readonly string[] {
+  pathSegments(path: string): readonly PointerSegment[] {
     let segments = this.segments.get(path);
     if (!segments) {
-      segments = decodePointerSegments(path);
+      segments = getDependencyIndex(this.blueprint).pathSegments(
+        path,
+        this.runtime,
+      );
       this.segments.set(path, segments);
     }
     return segments;
@@ -170,7 +181,11 @@ class GateRegistry {
           node,
           gate,
           memo,
-          gate.schemaPath === node.blueprintNode.schemaPath + '/controls/active'
+          gate.schemaPath ===
+            appendSegment(
+              appendSegment(node.blueprintNode.schemaPath, 'controls'),
+              'active',
+            )
             ? node.path
             : undefined,
         );
@@ -183,12 +198,18 @@ class GateRegistry {
       }
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates)
-          if (gate.schemaPath === declaration.schemaPath + '/controls/active')
+          if (
+            gate.schemaPath ===
+            appendSegment(
+              appendSegment(declaration.schemaPath, 'controls'),
+              'active',
+            )
+          )
             this.add(
               node,
               gate,
               edgeMemo,
-              node.path + '/' + escapeSegment(entry.name),
+              appendSegment(node.path, entry.name),
             );
           else this.add(node, gate, memo);
     }
@@ -322,9 +343,9 @@ class GateRegistry {
       const watched = index.log[cursor.index];
       if (!index.exact.has(watched)) continue;
       if (changed.has(watched) || prefixes.has(watched)) return true;
-      if (watched.startsWith($.Separator))
+      if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
+          prefix = resolvePointer(prefix, '..');
           if (changed.has(prefix)) return true;
         }
     }
@@ -363,6 +384,7 @@ class GateRegistry {
       node.blueprintNode.path,
       node.path,
       childHostPath,
+      this.readSegments,
     );
     const watchPaths = this.watchPaths(location);
     const occurrence = new RegisteredGateOccurrence(
@@ -422,9 +444,9 @@ class GateRegistry {
       }
       if (by > 0 && !index.exact.has(watched)) index.log.push(watched);
       bumpWatchCount(index.exact, watched, by);
-      if (watched.startsWith($.Separator))
+      if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
+          prefix = resolvePointer(prefix, '..');
           bumpWatchCount(index.strictPrefixes, prefix, by);
         }
     }
@@ -443,7 +465,7 @@ class GateRegistry {
           ? undefined
           : getIfGateReadNames(gate.condition, this.blueprint);
       return names
-        ? names.map((name) => location.hostPath + '/' + escapeSegment(name))
+        ? names.map((name) => appendSegment(location.hostPath, name))
         : [location.hostPath];
     }
     if (
@@ -453,9 +475,7 @@ class GateRegistry {
       'propertyName' in gate.condition &&
       typeof gate.condition.propertyName === 'string'
     )
-      return [
-        location.hostPath + '/' + escapeSegment(gate.condition.propertyName),
-      ];
+      return [appendSegment(location.hostPath, gate.condition.propertyName)];
     const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression
       ? expression.dependencies.map((dependency) => {
@@ -479,9 +499,9 @@ class GateRegistry {
         changedAncestors.has(watched)
       )
         return true;
-      if (watched.startsWith($.Separator))
+      if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
+          prefix = resolvePointer(prefix, '..');
           if (changedRaw.has(prefix)) return true;
         }
     }
@@ -530,12 +550,8 @@ type GateRegistryView = Pick<
   | 'occurrenceCount'
 >;
 /** Decode only pointer syntax; no lookup result can survive a shape change. */
-const decodePointerSegments = (path: string): readonly string[] => {
-  const segments = path.slice(1).split($.Separator);
-  for (let index = 0; index < segments.length; index++)
-    segments[index] = unescapeSegment(segments[index]);
-  return segments;
-};
+const decodePointerSegments = (path: string): readonly PointerSegment[] =>
+  parsePointerSegments(path);
 /** No per-runtime maps, weak maps or live path registrations for branchless graphs. */
 const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   hasRegisteredPathKind: () => undefined,

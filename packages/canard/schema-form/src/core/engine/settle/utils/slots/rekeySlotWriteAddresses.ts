@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
@@ -23,7 +23,7 @@ export const rekeySlotWriteAddresses = <Self extends FieldNodeRecord<Self>>(
         child.name,
         child.blueprintNode,
       );
-      move(child, path + '/' + child.escapedName, [
+      move(child, appendSegment(path, child.name), [
         ...order,
         ...childOrder.slice(source.depth),
       ]);
@@ -34,7 +34,7 @@ export const rekeySlotWriteAddresses = <Self extends FieldNodeRecord<Self>>(
         child.name,
         child.blueprintNode,
       );
-      move(child, path + '/' + escapeSegment(entry.name), [
+      move(child, appendSegment(path, entry.name), [
         ...order,
         ...childOrder.slice(source.depth),
       ]);
@@ -43,7 +43,7 @@ export const rekeySlotWriteAddresses = <Self extends FieldNodeRecord<Self>>(
   for (const [entry, source] of host.inactiveSlots ?? [])
     move(
       source,
-      host.path + '/' + escapeSegment(entry.name),
+      appendSegment(host.path, entry.name),
       getSlotOrder(host, entry.name, entry.node),
     );
   if (

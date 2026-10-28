@@ -1,4 +1,4 @@
-import type { FieldNodeRuntime, SettlementScratch } from '../../../record';
+import type { FieldNodeRuntime,SettlementScratch } from '../../../record';
 import { DirtyPathSet } from './DirtyPathSet';
 
 /**
@@ -33,10 +33,6 @@ export const getSettlementScratch = <Self>(
           arrayCounts: new Map<Self, number>(),
           pathChanges: [],
           filledNodes: new Set<Self>(),
-          literalStarAutomaticLog:
-            runtime.blueprint.root.containsLiteralStar === true
-              ? new Map<string, { present: boolean; value: unknown }>()
-              : undefined,
           dirtyPaths: new DirtyPathSet(dirtyChildrenByParent),
           dirtyChildrenByParent,
           dependencyOwnerPaths: new Set<string>(),

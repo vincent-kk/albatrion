@@ -2,7 +2,8 @@
 
 ## Requirements
 
-- A child binding named exactly `*` sets its host template's `containsLiteralStar` fact. Other names, including star prefixes and escaped slashes, do not set the fact. The blueprint owner propagates this static Boolean through the completed finite graph; no query result, runtime reference, or public value belongs to it.
+- 데이터·스키마 경로는 jsonPointer 조립 API로 이름을 인코딩한다. 배열 반복 경로만 Wildcard 심볼을 쓰고, $ref는 표준 RFC 포인터 이름으로 탐색한다.
+
 
 - D3b-2에서 무조건 정규화 결과는 host 파생 레코드의 defaultEffectiveSchema 슬롯에 보관한다. 분석 소유자가 builder를 유지하며 별도 DEFAULT_NO_ACTIVE WeakMap을 내보내지 않는다.
 
@@ -12,7 +13,7 @@
 
 - 선언 수집에서 packed gates/order를 복사할 때는 native slice를 사용한다. fragment와 declaration의 배열은 계속 각자 소유하고, 값, 순서, ID, DFS, 진단, capability는 같다. 속도 비용은 같은 원소 수에 비례하는 native 복사이며, 입력과 fragment를 iterator로 순회하던 일은 없어진다. 메모리 비용은 호출마다 기존의 네 배열과 원소 참조 수를 그대로 유지하고, 추가로 보유하는 자료는 없다(batch2 2-declaration-slice).
 
-- 자식 이름의 escapeSegment는 이름마다 한 번 만든 값을 schemaPath와 data path에 재사용한다. 무게이트 경로는 지역 문자열 하나를 사용하고, 일반 집계는 기존 properties Map의 값에 escapedName, path, inputs를 같은 필드 순서로 보관한다. 공개 두 경로, template key의 바이트, 자식·기여·게이트 순서는 같다. 속도 비용은 이름 길이에 비례하는 escape 한 번이며, 반복되는 기여와 뒤쪽 build 순회에서 다시 escape하던 일이 없어진다. 메모리 비용은 빠른 경로에서 지역 문자열 하나, 일반 경로에서 이름마다 일시 기록 하나와 문자열 참조다. 소속 배열의 소유와 동결은 유지하며, 새로 보유하는 색인, 캐시, 공개 필드는 없다(107라운드 3-path-strings).
+- 자식 이름의 formatSegment는 이름마다 한 번 만든 값을 schemaPath와 data path에 재사용한다. 무게이트 경로는 지역 문자열 하나를 사용하고, 일반 집계는 기존 properties Map에 이미 인코딩한 경로와 입력을 보관하고 그 접미부를 스키마 경로에 재사용한다. 예약 이름은 퍼센트 표기를 사용하며, 그 밖의 경로와 자식·기여·게이트 순서는 같다. 속도 비용은 이름 길이에 비례하는 escape 한 번이며, 반복되는 기여와 뒤쪽 build 순회에서 다시 escape하던 일이 없어진다. 메모리 비용은 빠른 경로에서 지역 문자열 하나, 일반 경로에서 이름마다 일시 기록 하나와 문자열 참조다. 소속 배열의 소유와 동결은 유지하며, 새로 보유하는 색인, 캐시, 공개 필드는 없다(107라운드 3-path-strings).
 
 - 무게이트 자식 빠른 경로의 입력은 기존 순서인 context, gates, inherited, hostPath, fragment, role, schema, schemaPath, order의 literal로 만든다. 실제 자식 build, binding, 독립된 소속 배열 생산은 그대로다. 속도 비용은 고정 필드를 직접 읽고 쓰는 것이며, 자식마다 base spread로 범용 키를 복사하던 일이 없어진다. 메모리 비용은 기존의 부모별 base, 자식별 입력·배열, 공개 경로 두 개를 유지하며 새로 보유하는 자료는 없다(107라운드 2-child-input-literal).
 
@@ -38,6 +39,10 @@
 
 ## API Contracts
 
+- 객체 속성 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`이면 청사진 구축이 `UNKNOWN_JSON_SCHEMA`로 거부한다. 이 이름의 경로는 왕복하면 예약 연산자 이름(`*`, `.`, `..`, `@`)으로 읽혀 값 적재·비활성 값·검증 배정이 다른 속성을 가리키기 때문이다. 오류는 속성 이름과 규칙을 메시지에 싣고 `properties` 아래 해당 이름의 작성 위치를 `schemaPath`로 가진다. 진단 코드는 공개 `FormErrorCode`의 기존 값을 쓰며 새 코드를 만들지 않는다.
+
+- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
+
 - 같은 종류의 그룹 판정은 engine 공통 fold 보조를 소비한다. 이 보조는 schemaType을 읽는 런타임 식별과 같은 비트 의미를 소유하므로 빌드와 정착이 number/integer·nullable·형 나열 순서를 동일하게 접는다. 청사진 노드에는 새 필드를 보관하지 않는다(BLUEPRINT-043, 389C-02, 390C-01).
 
 - 옛 표기 `items: [...]`는 자리별 `prefixItems` 템플릿으로 컴파일한다. 같은 선언의 `additionalItems`가 스키마 객체이면 그 꼬리 자리의 아이템 템플릿(`item`)으로 컴파일한다. `additionalItems`가 `false`나 `true`이거나 없으면 꼬리는 청사진이 없는 자리다. 꼬리가 닫혔는지는 검증기가 판단할 일이라 청사진은 모형으로 두지 않는다. 기존 `items` 튜플 컴파일과 그 시험은 그대로다(NODE-052, SCHEMA-001, 36C-02).
@@ -62,4 +67,4 @@
 
 ## Last Updated
 
-정돈-3 blueprint 재구성(2026-10-15)
+2026-10-28

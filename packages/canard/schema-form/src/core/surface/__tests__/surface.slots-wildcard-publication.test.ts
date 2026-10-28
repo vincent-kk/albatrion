@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-it('preserves the wildcard query exclusion for an inactive literal star field', () => {
+it('publishes an inactive literal star field through the ordinary slot rule', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
@@ -13,8 +13,8 @@ it('preserves the wildcard query exclusion for an inactive literal star field', 
   root.setValue({ open: true, '*': 'retained' });
   const empty = root.inactiveValues;
   root.find('/open')!.setValue(false);
-  expect(root.inactiveValues).toEqual([]);
-  expect(root.inactiveValues).toBe(empty);
+  expect(root.inactiveValues).toEqual([{ path: '/%2A', value: 'retained' }]);
+  expect(root.inactiveValues).not.toBe(empty);
 });
 
 it('preserves an unread publication when a fresh external wildcard match enters', () => {
@@ -39,7 +39,7 @@ it('preserves an unread publication when a fresh external wildcard match enters'
   root.setValue({ xOpen: false, otherOpen: false, '*': { x: 'held' } });
   root.find('/otherOpen')!.setValue(true);
   const star = root.children!.find((node) => node.name === '*')!;
-  expect(star.inactiveValues).toEqual([]);
+  expect(star.inactiveValues).toEqual([{ path: '/%2A/x', value: 'held' }]);
 });
 
 it('keeps an unread detached host query result when its live wildcard match later leaves', () => {
@@ -74,6 +74,6 @@ it('keeps an unread detached host query result when its live wildcard match late
   root.find('/xOpen')!.setValue(false);
   root.find('/starOpen')!.setValue(false);
   root.find('/otherOpen')!.setValue(false);
-  expect(held.inactiveValues).toEqual([]);
+  expect(held.inactiveValues).toEqual([{ path: '/%2A/x', value: 'held' }]);
   expect(held.inactiveValues).toBe(held.inactiveValues);
 });

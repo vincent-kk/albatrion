@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
@@ -38,8 +38,8 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     node.runtime.blueprint,
   );
   if (!table) return;
-  const watchedPaths = table.watchedNames.map(
-    (name) => node.path + '/' + escapeSegment(name),
+  const watchedPaths = table.watchedNames.map((name) =>
+    appendSegment(node.path, name),
   );
   if (watchedPaths.some((path) => context.dirtyPaths.has(path))) return;
   (context.gateSelectionRounds ??= new Map()).set(node, {
@@ -48,9 +48,7 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     values: new Map(),
     watchedPaths,
     stableSchemaPaths: table.stableSchemaNames.length
-      ? table.stableSchemaNames.map(
-          (name) => node.path + '/' + escapeSegment(name),
-        )
+      ? table.stableSchemaNames.map((name) => appendSegment(node.path, name))
       : NO_SCHEMA_PATHS,
     active: true,
   });

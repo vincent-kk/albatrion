@@ -1,8 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markWrite } from '../input/markWrite';
-import { readLiteralStarMovedInput } from '../literalStar/readLiteralStarMovedInput';
-import { isSlotEligible } from './isSlotEligible';
 import { replayTransferredSlotInput } from './replayTransferredSlotInput';
 
 /**
@@ -17,20 +15,8 @@ export const replayMovedSource = <Self extends FieldNodeRecord<Self>>(
   composed: unknown,
   context: SettlementContext<Self>,
 ): void => {
-  const slots = isSlotEligible(node.runtime);
-  if (slots && replayTransferredSlotInput(node, context)) return;
-  markWrite(
-    node,
-    slots
-      ? composed
-      : readLiteralStarMovedInput(
-          context,
-          node.path,
-          node.blueprintNode,
-          composed,
-        ),
-    context,
-  );
+  if (replayTransferredSlotInput(node, context)) return;
+  markWrite(node, composed, context);
   const distribution = context.distributedInputs.get(node);
   if (distribution)
     context.distributedInputs.set(node, {

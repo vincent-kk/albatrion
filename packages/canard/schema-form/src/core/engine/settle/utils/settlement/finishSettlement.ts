@@ -1,3 +1,5 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -102,7 +104,7 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
       if (
         !context.target.path ||
         path === context.target.path ||
-        path.startsWith(context.target.path + '/')
+        isDescendantPath(path, context.target.path)
       )
         context.target.runtime.misfitPaths.delete(path);
   commitSettlement(context);

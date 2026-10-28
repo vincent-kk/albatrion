@@ -1,11 +1,7 @@
-import { isArray } from '@winglet/common-utils/filter';
-
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { setLiteralStarRaw } from '../literalStarStore/setLiteralStarRaw';
 import { restoreSlotSources } from '../slots/restoreSlotSources';
 import { restoreArrayStructure } from './restoreArrayStructure';
-
 /**
  * Withdraw automatic writes throughout every finally detached filled subtree.
  * @param context - Settlement with original node and latent source logs
@@ -29,25 +25,6 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
         context.distributedInputs.set(entry.node, entry.previousDistributed);
       else context.distributedInputs.delete(entry.node);
       context.changedRaw.delete(entry.node.path);
-    }
-    for (const [key, previous] of context.literalStarAutomaticLog ?? []) {
-      const identity: unknown = JSON.parse(key);
-      if (
-        !isArray(identity) ||
-        typeof identity[0] !== 'string' ||
-        (identity[0] !== node.path && !identity[0].startsWith(node.path + '/'))
-      )
-        continue;
-      setLiteralStarRaw(
-        context.root.runtime,
-        undefined,
-        key,
-        previous.present,
-        previous.value,
-        undefined,
-        undefined,
-        context,
-      );
     }
     context.writtenInputs.delete(node);
   }

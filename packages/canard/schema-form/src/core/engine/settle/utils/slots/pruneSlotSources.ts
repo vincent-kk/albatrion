@@ -1,9 +1,10 @@
-import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getSlotEntries } from './getSlotEntries';
+import { getSlotPathNames } from './getSlotPathNames';
 import { getSlotSource } from './getSlotSource';
 import { markSlotChange } from './markSlotChange';
 
@@ -22,15 +23,11 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (names) {
     for (const name of names)
-      pruneSlotSources(
-        root,
-        path + '/' + escapeSegment(name),
-        undefined,
-        context,
-      );
+      pruneSlotSources(root, appendSegment(path, name), undefined, context);
     return;
   }
-  const parts = path ? path.split('/').slice(1).map(unescapeSegment) : [];
+  const parts = getSlotPathNames(root.runtime, path);
+  if (parts === undefined) return;
   const clear = (host: Self): void => {
     const entries = new Set<BlueprintChildEntry>(host.inactiveSlots?.keys());
     for (const entry of host.inactiveSlotOverlays?.keys() ?? [])

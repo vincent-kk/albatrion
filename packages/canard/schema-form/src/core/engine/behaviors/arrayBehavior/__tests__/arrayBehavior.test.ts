@@ -3,15 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { BEHAVIORS } from '@/schema-form/core/engine/behaviors/behaviors';
-import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintNode } from '@/schema-form/core/engine/blueprint';
-import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type {
   ArrayOperation,
   Behavior,
   FieldNodeRecord,
 } from '@/schema-form/core/engine/record';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 import { SchemaFormError } from '@/schema-form/errors';
 
@@ -33,11 +32,8 @@ const makeRecord = (
     globalStateCounts: new Map(),
     globalState: {},
     loadSnapshot: undefined,
-    literalStarRaw: new PathKeyedMap('pair'),
+
     misfitPaths: new PathKeyedSet(),
-    literalStarValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
   },
   blueprintNode: template,
   parent: null,

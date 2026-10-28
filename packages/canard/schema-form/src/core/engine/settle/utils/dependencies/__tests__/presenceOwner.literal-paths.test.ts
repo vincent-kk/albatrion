@@ -1,5 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { DispatchTestNode } from '../../../../__tests__/fixtures/createDispatchTree';
 import { getDispatchNode } from '../../../__tests__/fixtures/getDispatchNode';
 import { mountPresenceTree } from '../../../__tests__/helpers/mountPresenceTree';
@@ -38,9 +40,15 @@ it.each(['.', '..', '*'])(
     context.presenceRoundStarts = new Map([[live, 20]]);
     context.stateDirtyNodes.clear();
     expect
-      .soft(evaluatedPresenceAfter('/' + name + '/leaf', 10, context))
+      .soft(
+        evaluatedPresenceAfter(
+          appendSegment(appendSegment('', name), 'leaf'),
+          10,
+          context,
+        ),
+      )
       .toBe(true);
-    publishPresenceOwner('/' + name, context);
+    publishPresenceOwner(appendSegment('', name), context);
     expect(context.stateDirtyNodes.has(live)).toBe(true);
     expect([...context.stateDirtyNodes]).toEqual([live]);
   },

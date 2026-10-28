@@ -2,6 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '../../../record';
+import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from './getGateRegistry';
 
@@ -24,12 +25,15 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
   else {
     hostNode = context.root;
     const segments = hostPath
-      ? getGateRegistry(context.root.runtime).pathSegments(hostPath)
+      ? context.root.runtime.blueprint.capabilities.branchless
+        ? getCachedPointerSegments(context.root.runtime, hostPath)
+        : getGateRegistry(context.root.runtime).pathSegments(hostPath)
       : [];
     for (let index = 0; index < segments.length; index++) {
       const structure: Record<string, Self> | null | undefined =
         hostNode?.structure;
       const name = segments[index];
+      if (typeof name !== 'string') return undefined;
       hostNode =
         structure && hasOwnProperty(structure, name)
           ? structure[name]

@@ -1,11 +1,11 @@
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
 
-import { FormErrorCode, SchemaFormError } from '../../../../../../errors';
-import { mergeEffectiveSchema } from '../../../../blueprint';
+import { FormErrorCode,SchemaFormError } from '../../../../../../errors';
 import type { BlueprintChildEntry } from '../../../../blueprint';
-import { captureFieldNodeChange } from '../../../../record';
+import { mergeEffectiveSchema } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { captureFieldNodeChange } from '../../../../record';
 import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
 import { captureProjectionBaseline } from '../../dependencies/captureProjectionBaseline';
@@ -17,7 +17,6 @@ import { getGateRegistry } from '../../gates/getGateRegistry';
 import { readGateSelectionGroup } from '../../gates/readGateSelectionGroup';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
-import { indexEnteredLiteralStarKey } from '../../literalStarStore/indexEnteredLiteralStarKey';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
@@ -105,7 +104,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   if (flushReads && context.pendingOutputs?.size)
     flushPendingGateReads(
       entry.node,
-      node.path + '/' + escapeSegment(entry.name),
+      appendSegment(node.path, entry.name),
       context,
     );
   let threw = false;
@@ -165,7 +164,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
               gate,
               context,
               node,
-              gate.schemaPath === declaration.schemaPath + '/controls/active'
+              gate.schemaPath === appendSegment(appendSegment(declaration.schemaPath, 'controls'), 'active')
                 ? entry.name
                 : undefined,
             )
@@ -197,11 +196,11 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         ? priorChild
         : !context.pendingExitPaths
               ?.get(node.path)
-              ?.has(node.path + '/' + escapeSegment(entry.name))
+              ?.has(appendSegment(node.path, entry.name))
           ? undefined
           : context.pendingExits.get(
               JSON.stringify([
-                node.path + '/' + escapeSegment(entry.name),
+                appendSegment(node.path, entry.name),
                 getBlueprintNodeIdentity(entry.node),
               ]),
             );
@@ -231,12 +230,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     context.throwingGateExits?.delete(retained);
   if (seen.has(entry.name)) {
     if (seen.get(entry.name) !== entry.node) {
+      const path = appendSegment(node.path, entry.name);
       recordSettlementFailure(
         context,
         new SchemaFormError(
           FormErrorCode.SharedNodeConflict,
-          `Active declarations conflict at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` },
+          `Active declarations conflict at ${path}`,
+          { path },
         ),
         'sharedConflict',
       );
@@ -263,25 +263,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       entry.name,
       node.behavior.type === 'array',
     );
-  const latent = !priorChild ? context.root.runtime.literalStarRaw : undefined;
   const slotState =
     !priorChild && !currentChild ? getSlotSource(node, entry) : undefined;
   const slotSource = slotState?.source;
   const slotOverlay = slotState?.overlay;
-  const latentKey =
-    latent && latent.size > 0 && !priorChild
-      ? JSON.stringify([
-          node.path + '/' + escapeSegment(entry.name),
-          getBlueprintNodeIdentity(entry.node),
-        ])
-      : undefined;
   const input = ownsInput
     ? Reflect.get(distribution.input, entry.name)
-    : distribution?.whole
-      ? undefined
-      : latentKey !== undefined && latent?.has(latentKey)
-        ? latent?.get(latentKey)
-        : undefined;
+    : undefined;
   if (
     !priorChild &&
     !currentChild &&
@@ -290,12 +278,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     hasRecursiveExpansion(node, entry.node, input, context)
   ) {
     if (!context.exceededBudget) {
+      const path = appendSegment(node.path, entry.name);
       recordSettlementFailure(
         context,
         new SchemaFormError(
           FormErrorCode.RecursiveShapeDiverged,
-          `Recursive shape diverged at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` },
+          `Recursive shape diverged at ${path}`,
+          { path },
         ),
         'budget',
       );
@@ -306,7 +295,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   const key =
     context.pendingExits.size > 0
       ? JSON.stringify([
-          node.path + '/' + escapeSegment(entry.name),
+          appendSegment(node.path, entry.name),
           getBlueprintNodeIdentity(entry.node),
         ])
       : undefined;
@@ -322,18 +311,17 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         : createChildNode(node, entry));
   context.perished.delete(child);
   if (key !== undefined && context.pendingExits.delete(key)) {
-    const path = node.path + '/' + escapeSegment(entry.name);
+    const path = appendSegment(node.path, entry.name);
     updatePendingExitIndex(context, path, -1);
   }
   if (pending && child === pending) {
     context.revived.add(child);
-    indexEnteredLiteralStarKey(context, child);
   }
   if (context.hasGates) getGateRegistry(child.runtime).register(child);
   let entryChanged = false;
   if (!priorChild && !currentChild && !pending) {
     context.entered.add(child);
-    indexEnteredLiteralStarKey(context, child);
+
     if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
     else if (slotSource || slotOverlay)
       enterSlotClone(node, child, entry.name, context);

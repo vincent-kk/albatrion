@@ -1,15 +1,15 @@
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
+import type { ArrayArrangePlan,FieldNodeRecord } from '../../../../record';
 import { captureFieldNodeChange } from '../../../../record';
-import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../../../utils/gates/getGateRegistry';
 import { markWrite } from '../../../utils/input/markWrite';
-import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
 import { readInactiveSlotSource } from '../../../utils/slots/readInactiveSlotSource';
@@ -69,7 +69,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
         : removedEntry
           ? readInactiveSlotSource(
               context,
-              host.path + '/' + removedIndex,
+              appendSegment(host.path, removedIndex),
               removedEntry.node,
             )
           : oldExtras[removedIndex - templateCount];
@@ -106,13 +106,13 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   for (let index = prefixCount; index < oldCount; index++) {
     const key = String(index);
     const item = items[key];
-    if (length) moves.push({ previous: host.path + '/' + index });
+    if (length) moves.push({ previous: appendSegment(host.path, index) });
     if (!item) continue;
     context.perished.add(item);
     // Equals the item's load-path walk: its path is the host's plus this position,
     // and the load snapshot is not replaced before the end of this application.
     const load =
-      !item.detached && item.path === host.path + '/' + key
+      !item.detached && item.path === appendSegment(host.path, key)
         ? { value: readPositionLoadValue(snapshot, key) }
         : undefined;
     visitFieldNodes(
@@ -145,8 +145,6 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
     if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
     rekeyArrayRuntimePaths(host.runtime, host.path, moves, prefixCount);
   }
-  context.literalStarDescendantKeys = undefined;
-  context.enteredLiteralStarKeys = undefined;
 
   host.itemCount = length;
   host.raw = undefined;
@@ -160,7 +158,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   context.shapeDirtyPaths.add(host.path);
   for (const { node, value } of created) {
     context.entered.add(node);
-    indexEnteredLiteralStarKey(context, node);
+
     markWrite(node, value, context);
   }
   if (context.hasGates)

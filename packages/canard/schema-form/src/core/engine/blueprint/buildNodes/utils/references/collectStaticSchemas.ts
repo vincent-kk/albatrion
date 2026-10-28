@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema } from '../../../types/schema';
 import { resolveReference } from './resolveReference';
@@ -51,7 +53,7 @@ export const collectStaticSchemas = (
           ...collectStaticSchemas(
             context,
             part,
-            schemaPath + '/allOf/' + index,
+            appendSegment(appendSegment(schemaPath, 'allOf'), index),
             stack,
             cycle,
           ),

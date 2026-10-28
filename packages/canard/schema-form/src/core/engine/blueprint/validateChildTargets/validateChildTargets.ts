@@ -1,3 +1,5 @@
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { FormErrorCode } from '../../../../errors';
 import type { AnalysisContext } from '../types/analysis';
 import { readSchemaObject } from '../utils/analyze/readSchemaObject';
@@ -39,7 +41,13 @@ export const validateChildTargets = (context: AnalysisContext): void => {
             )
               throwBlueprintError(
                 FormErrorCode.ChildrenTargetNotFound,
-                declaration.schemaPath + '/controls/fields/' + index,
+                appendSegment(
+                  appendSegment(
+                    appendSegment(declaration.schemaPath, 'controls'),
+                    'fields',
+                  ),
+                  index,
+                ),
                 { target },
                 context.options,
               );

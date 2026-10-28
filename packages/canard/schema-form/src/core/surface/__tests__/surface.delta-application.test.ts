@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   type BlueprintSchema,
-  PathKeyedMap,
   PathKeyedSet,
   blueprint,
 } from '@/schema-form/core/engine';
@@ -13,11 +12,8 @@ const makeTree = (schema: BlueprintSchema) =>
   fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    literalStarRaw: new PathKeyedMap('pair'),
+
     misfitPaths: new PathKeyedSet(),
-    literalStarValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
   });
 
 describe('B2-P3 public latent and assembly contracts', () => {

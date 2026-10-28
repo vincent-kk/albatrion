@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
@@ -163,7 +165,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           'string'
       )
         continue;
-      const schemaPath = group.schemaPath + '/unsetOnInactive';
+      const schemaPath = appendSegment(group.schemaPath, 'unsetOnInactive');
       const key = getExitPolicyKey(group);
       if (evaluated.has(key)) continue;
       evaluated.add(key);
@@ -179,7 +181,13 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           Boolean(
             expression.evaluate(
               expression.dependencies.map((dependency) =>
-                readStateDependency(context.root, group.host.path, dependency),
+                readStateDependency(
+                  context.root,
+                  group.host.path,
+                  dependency,
+                  undefined,
+                  group.host,
+                ),
               ),
             ),
           ),

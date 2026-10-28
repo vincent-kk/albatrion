@@ -1,19 +1,19 @@
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { visitFieldNodes } from '../../../../navigation';
-import {
-  captureFieldNodeChange,
-  updateFieldNodeNameAndPath,
-} from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
+import {
+captureFieldNodeChange,
+updateFieldNodeNameAndPath,
+} from '../../../../record';
 import type {
-  ArraySpliceProof,
-  SettlementContext,
+ArraySpliceProof,
+SettlementContext,
 } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
 import { markWrite } from '../../../utils/input/markWrite';
-import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
@@ -59,21 +59,21 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       nextSnapshot[position + 1] = oldSnapshot[position];
       children.push(previous[position]);
       moves.push({
-        previous: host.path + '/' + position,
-        current: host.path + '/' + (position + 1),
+        previous: appendSegment(host.path, position),
+        current: appendSegment(host.path, (position + 1)),
       });
     }
     for (let position = count; position > index; position--)
       items[String(position)] = items[String(position - 1)];
     items[String(index)] = inserted;
   } else {
-    moves.push({ previous: host.path + '/' + index });
+    moves.push({ previous: appendSegment(host.path, index) });
     for (let position = index + 1; position < count; position++) {
       nextSnapshot[position - 1] = oldSnapshot[position];
       children.push(previous[position]);
       moves.push({
-        previous: host.path + '/' + position,
-        current: host.path + '/' + (position - 1),
+        previous: appendSegment(host.path, position),
+        current: appendSegment(host.path, (position - 1)),
       });
       items[String(position - 1)] = items[String(position)];
     }
@@ -97,8 +97,6 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
     prunePerishedPaths(host.runtime, new Set([removedItem.path]));
   }
   rekeyArrayRuntimePaths(host.runtime, host.path, moves, index);
-  context.literalStarDescendantKeys = undefined;
-  context.enteredLiteralStarKeys = undefined;
 
   for (
     let position = inserted ? index + 1 : index;
@@ -139,7 +137,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
   context.shapeDirtyPaths.add(host.path);
   if (inserted) {
     context.entered.add(inserted);
-    indexEnteredLiteralStarKey(context, inserted);
+
     markWrite(inserted, value, context);
   }
   host.runtime.loadSnapshot = setLoadValue(

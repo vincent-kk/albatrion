@@ -1,10 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
-import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getChildDistribution } from '../input/getChildDistribution';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { markWrite } from '../input/markWrite';
-import { restoreLiteralStarState } from '../literalStar/restoreLiteralStarState';
 import { replayMovedSource } from '../slots/replayMovedSource';
 
 /**
@@ -23,15 +21,6 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const distribution = getChildDistribution(host, name, context, child.path);
-  const latent = context.root.runtime.literalStarRaw;
-  const key =
-    (latent?.size ?? 0) > 0
-      ? JSON.stringify([
-          child.path,
-          getBlueprintNodeIdentity(child.blueprintNode),
-        ])
-      : undefined;
-  const own = key === undefined ? undefined : latent?.get(key);
   const write =
     distribution &&
     hasDistributedChildInput(
@@ -46,8 +35,6 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
       context,
     );
   else if (write || distribution?.whole) {
-    if (write && !distribution.whole && key !== undefined && latent?.has(key))
-      restoreLiteralStarState(child, own, context);
     const value = write ? Reflect.get(distribution.input, name) : undefined;
     if (distribution.automatic) {
       context.automatic = true;
@@ -56,9 +43,7 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
     }
     markWrite(child, value, context);
     if (distribution.automatic) context.automatic = false;
-  } else if (host.runtime.blueprint.root.containsLiteralStar === true)
-    restoreLiteralStarState(child, own, context);
-  else if (child.behavior.strategy === 'terminal')
+  } else if (child.behavior.strategy === 'terminal')
     markWrite(child, undefined, context);
   else {
     context.dirtyPaths.add(child.path);
