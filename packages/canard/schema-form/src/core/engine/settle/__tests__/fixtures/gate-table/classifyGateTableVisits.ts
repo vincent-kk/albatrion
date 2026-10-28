@@ -69,6 +69,8 @@ export const classifyGateTableVisits = () => {
     },
     /** Preserve the classified source positions after all settlements have finished. */
     complete: () => {
+      computing.mockClear();
+      creating.mockClear();
       if (current) histories.push(current);
       else throw new Error('Missing gate table fixture tree');
     },
