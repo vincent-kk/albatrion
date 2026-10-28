@@ -1,47 +1,22 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
-import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
 import { getHostDerived } from '../../utils/cache/derivedRecords';
-import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { selectChildren } from '../utils/compute/childSelection/selectChildren';
 import type { ChildSelectionFrame } from '../utils/compute/childSelection/selectEntryStep';
 import * as selection from '../utils/compute/childSelection/selectEntryStep';
 import { createPreparedSelectionStructure } from '../utils/compute/childSelection/utils/createPreparedSelectionStructure';
 import { prepareStaticHost } from '../utils/compute/childSelection/utils/prepareStaticHost';
-import type { PreparedStaticHost } from '../utils/compute/childSelection/utils/prepareStaticHost';
 import { publishPreparedSelection } from '../utils/compute/childSelection/utils/publishPreparedSelection';
-import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
-import { createSettlementContext } from '../utils/settlement/createSettlementContext';
-import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { createPreparedPublicationFixture } from './helpers/createPreparedPublicationFixture';
 
 afterEach(() => vi.restoreAllMocks());
 
-const fixture = () => {
-  const { root } = createTestTree({
-    type: 'object',
-    properties: { kind: { type: 'boolean', default: false } },
-    oneOf: [false, true].map((kind) => ({
-      controls: { active: `./kind === ${kind}` },
-      properties: { x: { type: 'string' } },
-    })),
-  });
-  loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.kind, true, 'input', WriteOption.Overwrite);
-  const prepared = getHostDerived<
-    'preparedStaticHost',
-    PreparedStaticHost<PlainNode>
-  >(root).preparedStaticHost!;
-  const scratch = getSettlementScratch(root.runtime);
-  const context = createSettlementContext(root, 'callerReplace', 0, scratch);
-  return { root, prepared, scratch, context };
-};
-
 // filid:contract settle-b9-prepared-publication
 it('does not publish an admitted name whose recursive candidate never entered the view', () => {
-  const { root, prepared, scratch, context } = fixture();
+  const { root, prepared, scratch, context } =
+    createPreparedPublicationFixture();
   const prior = root.structure!;
   const dynamic: Record<string, PlainNode> = Object.create(prepared.baseline);
   const next = createPreparedSelectionStructure(
@@ -75,7 +50,7 @@ it('does not publish an admitted name whose recursive candidate never entered th
 });
 
 it('restores the finalized shape when a prepared selection throws', () => {
-  const { root, scratch, context } = fixture();
+  const { root, scratch, context } = createPreparedPublicationFixture();
   const prior = root.structure!;
   vi.spyOn(selection, 'selectEntryStep').mockImplementation(() => {
     throw new Error('selection failure');
@@ -94,7 +69,7 @@ it('restores the finalized shape when a prepared selection throws', () => {
 });
 
 it('captures the prior full child list when preparation follows a general prime', () => {
-  const { root, scratch, context } = fixture();
+  const { root, scratch, context } = createPreparedPublicationFixture();
   const prior = root.structure!;
   const children = root.children!;
   delete getHostDerived(root).preparedStaticHost;
