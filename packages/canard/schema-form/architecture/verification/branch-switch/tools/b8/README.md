@@ -1,5 +1,9 @@
 # B8 mount 단계 장부 장치
 
+## 환경 실패 뒤 승인된 시작 지연
+
+코디네이터가 두 macOS 데몬의 일시 부하로 중단된 창을 보존한 뒤 추가 복구 창 한 번을 승인했습니다. 이 창부터 프로세스 시작 전 CPU를 3초 평균으로 관측합니다. 자체 agent와 관측기 PID를 제외한 외부 PID가 하나라도 30%를 넘으면 표본을 시작하지 않고 5초 쉬어 다시 관측하며, 최대 120초 안에 조용해지지 않을 때만 환경 실패입니다. 이 대기는 시작 지연이며 완료된 프로세스나 표본을 재실행하지 않습니다. 관측 시도·대기 횟수·PID 이름·최대 CPU를 외부 원시와 휴대 가능한 요약에 남깁니다. canonical Node 자식은 타이머 바깥의 preload로 같은 규칙을 적용하고 Bun 자식은 부모가 확인합니다. `checkQuietProcess.mjs`는 가짜 시계로 복구·자체 PID 제외·120초 상한을 확인합니다. 중단된 두 창의 5초 평균·즉시 중단 규칙은 환경 실패 기록에만 보존합니다.
+
 Planning method: `seiri:write-plan` 기본 방법. 편집 범위는 이 디렉터리의 신규 진단 도구에 한정됩니다. 제품·시험·배포물·결과 문서는 부모 작업자가 소유합니다.
 
 ## 계획과 경계
@@ -37,7 +41,7 @@ node "$B8_TOOLS/prepareMountLedger.mjs" --root="$B8_MOUNT_RUN" \
 node "$B8_TOOLS/mountLedger.mjs" --root="$B8_MOUNT_RUN" --smoke
 ```
 
-부모가 조용한 창을 확보한 뒤 다음을 한 번 실행합니다. `B8_AGENT_PID`는 제외할 실행자 에이전트 프로세스 PID입니다. CPU 검사는 각 표본 프로세스 직전에 5초간 수행하며, 외부 프로세스 1개가 30%를 초과하면 중단합니다. 에이전트 PID와 관측기 자신의 PID만 제외하고 CPU 합계 기준으로 바꾸지 않습니다. 기존 `sampleWindow`와 같이 관측 구간 양끝에 모두 존재한 프로세스의 누적 CPU 차이를 사용합니다.
+부모가 조용한 창을 확보한 뒤 다음을 한 번 실행합니다. `B8_AGENT_PID`는 제외할 실행자 에이전트 프로세스 PID입니다. CPU 검사는 각 표본 프로세스 직전에 3초 평균으로 수행하며, 외부 PID 하나라도 30%를 넘으면 5초 간격으로 시작을 최대 120초 지연합니다. 그 안에 조용해지면 해당 프로세스를 한 번 시작하고, 상한을 넘으면 환경 실패로 중단합니다. 에이전트 PID와 관측기 자신의 PID만 제외하고 CPU 합계 기준으로 바꾸지 않습니다. 기존 `sampleWindow`와 같이 관측 구간 양끝에 모두 존재한 프로세스의 누적 CPU 차이를 사용합니다.
 
 ```sh
 node "$B8_TOOLS/mountLedger.mjs" --root="$B8_MOUNT_RUN" --authorized --agent-pid="$B8_AGENT_PID"
@@ -47,3 +51,19 @@ node "$B8_TOOLS/summarizeMountLedger.mjs" --root="$B8_MOUNT_RUN"
 `formal-start.json` 이후 재실행은 거부합니다. 원시·입력 해시·실패 기록을 보존합니다. 요약의 `minimumUs`는 기존 B3/B5와 같은 프로세스 최소값들의 중앙값이고, `medianUs`는 프로세스 중앙값들의 중앙값입니다. 범위·폭은 프로세스 중앙값 기준입니다. 단계 장부는 self 중앙값이며 개별 중앙값의 합은 총합 중앙값과 같지 않습니다. `scopedStages.detailed["gateBudgetPreparation/parsePointerSegments"]`는 예산 색인 안의 파서 self와 호출 수를 제공합니다. 무시간 `pointers` 키는 `[함수, 직접 호출자, 가장 가까운 비파서 경계, 입력 경로]`의 JSON 배열 문자열입니다. source에 없던 단계는 manifest의 `absent`에 명시되고, 존재하지만 호출되지 않은 단계와 구분합니다.
 
 phase delta는 계측 오버헤드를 포함한 진단이며 비계측 총시간의 정확한 분해나 과거 서로 다른 창의 최소값 차이와 동일시하지 않습니다. 새로운 공통 창의 head 차이와 계약·호출 수를 함께 보고 부모가 비용의 정당성을 판정합니다. 최종 A/B 및 채택 관문은 부모의 `prepare.mjs`/`window.mjs`가 담당합니다.
+
+## B8 canonical A/B
+
+A는 `c4d442c44` stage의 빌드된 archive이며 `BASELINE_COMMIT`은 그 전체 SHA를 담습니다. B는 커밋된 최종 후보입니다. 기존 B6 단계 builder·무시간 적재 검사·요약기를 재사용합니다. `prepare.mjs`는 두 직접 진입 선언 파일을 해시로 보존하고, 분산 d.ts의 재수출을 따라 공개 이름 전체를 비교하여 `FormErrorCode.ReservedPropertyName` 한 멤버만 허용합니다. 직접 `dist/index.d.ts`는 재수출 목록이므로 바이트가 그대로일 수 있습니다. 합성 관문은 `checkWindowTools.mjs`로 확인합니다.
+
+```sh
+node "$B8_TOOLS/checkWindowTools.mjs"
+node "$B8_TOOLS/prepare.mjs" --baseline="$B8_BASELINE_PACKAGE" --root="$B8_RUN" --candidate-commit="$B8_CANDIDATE_COMMIT"
+node packages/canard/schema-form/architecture/verification/branch-switch/tools/b6/checkLoad.mjs "$B8_RUN"
+node packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/delivery.mjs --baseline="$B8_RUN/bundles/A/index.node.mjs" --candidate="$B8_RUN/bundles/B/index.node.mjs" --output="$B8_RUN/delivery"
+node packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/mountDelivery.mjs "$B8_RUN/delivery"
+node "$B8_TOOLS/window.mjs" "$B8_RUN" --authorized --agent-pid="$B8_AGENT_PID"
+node packages/canard/schema-form/architecture/verification/branch-switch/tools/b6/summarize.mjs "$B8_RUN" "$B8_RUN/summary"
+```
+
+배달은 79장면·491관측점, mount 배달은 6장면·12관측점이며 차이는 0이어야 합니다. 창은 22행·역할별10프로세스·20예열/100표본·legacy 품질입니다. 최초 및 각 Node 자식의 3초 CPU 평균에서 명시한 자체 agent를 제외한 개별 PID가 30%를 초과하면 5초 간격으로 최대 120초 시작을 지연하며 CPU 합계는 기록만 합니다. Bun 자식도 시작 전에 같은 정책을 부모가 적용합니다. `formal-start.json` 이후 재실행하지 않습니다. TEST-073 주판정 회귀 0, oneOf-80·siblings-0 단계 총합의 A 폭 이내, Node 힙 B 중앙값≤A 최대를 판정하며 mount-oneOf-80와 네 head mount 장부는 표적 진단입니다.

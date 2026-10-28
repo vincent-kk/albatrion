@@ -3,11 +3,12 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { buildAlternatingRows } from '../../../design-optimization/tools/helpers/buildAlternatingRows.mjs';
-import { sampleWindow } from '../../../design-optimization/tools/profile/branch-switch/sampleWindow.mjs';
 import { verifyInputs } from '../b4-2/verifyInputs.mjs';
+import { sampleProcessCpu } from './helpers/sampleProcessCpu.mjs';
+import { waitForQuietProcess } from './helpers/waitForQuietProcess.mjs';
 
 assert.equal(Number(process.versions.node.split('.')[0]), 26);
 assert.equal(
@@ -43,12 +44,37 @@ const run = async (
   cwd = repository,
   invalidAllowed = false,
 ) => {
+  if (executable !== process.execPath) {
+    const beforeChild = await waitForQuietProcess({ agentPid });
+    fs.writeFileSync(
+      path.join(root, 'quiet-' + label + '.json'),
+      JSON.stringify(beforeChild, null, 2) + '\n',
+    );
+    assert.equal(
+      beforeChild.approved,
+      true,
+      'External CPU quiet before child start',
+    );
+  }
   const startedAt = new Date().toISOString();
   const logfile = fs.openSync(path.join(root, label + '.log'), 'w');
   const errors = fs.openSync(path.join(root, label + '.stderr.log'), 'w');
   const child = spawn(executable, args, {
     cwd,
-    env: { ...process.env, NODE_ENV: 'production' },
+    env: {
+      ...process.env,
+      NODE_ENV: 'production',
+      B8_QUIET_ROOT: path.join(root, 'cpu-prechecks'),
+      B8_QUIET_AGENT_PID: String(agentPid),
+      NODE_OPTIONS:
+        executable === process.execPath
+          ? (
+              (process.env.NODE_OPTIONS ?? '') +
+              ' --import=' +
+              pathToFileURL(path.join(here, 'quietWorkerPreload.mjs')).href
+            ).trim()
+          : process.env.NODE_OPTIONS,
+    },
     stdio: ['ignore', logfile, errors],
   });
   const code = await new Promise((resolve, reject) => {
@@ -79,20 +105,15 @@ const run = async (
   );
   return code;
 };
-const quiet = await sampleWindow();
-quiet.excludedAgentPid = agentPid;
-quiet.excludedAgent = quiet.rows.filter((row) => row.pid === agentPid);
-quiet.rows = quiet.rows.filter((row) => row.pid !== agentPid);
-quiet.externalCpuPercent = quiet.rows.reduce(
-  (sum, row) => sum + row.cpuPercent,
-  0,
-);
-quiet.heavy = quiet.rows.filter((row) => row.cpuPercent > 30);
+const quiet = await waitForQuietProcess({ agentPid });
+quiet.externalCpuPercent = quiet.rows
+  .filter((row) => row.pid !== agentPid)
+  .reduce((sum, row) => sum + row.cpuPercent, 0);
 fs.writeFileSync(
   path.join(root, 'quiet-window.json'),
   JSON.stringify(quiet, null, 2) + '\n',
 );
-if (quiet.heavy.length) {
+if (!quiet.approved) {
   console.log(
     'B8_PREFLIGHT_HEAVY_ZERO_FORMAL_SAMPLES ' + JSON.stringify(quiet.heavy),
   );
@@ -234,7 +255,7 @@ if (quiet.heavy.length) {
         {
           endedAt: new Date().toISOString(),
           invalid,
-          processes: await sampleWindow(),
+          processes: await sampleProcessCpu(3000),
         },
         null,
         2,

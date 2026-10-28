@@ -5,9 +5,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { sampleWindow } from '../../../design-optimization/tools/profile/branch-switch/sampleWindow.mjs';
 import { runMountWorker } from './helpers/runMountWorker.mjs';
 import { verifyMountInputs } from './helpers/verifyMountInputs.mjs';
+import { waitForQuietProcess } from './helpers/waitForQuietProcess.mjs';
 
 const options = {};
 for (const arg of process.argv.slice(2)) {
@@ -94,19 +94,17 @@ if (options.worker) {
           ...lanes.slice(0, repeat % lanes.length),
         ];
         for (const lane of order) {
-          const quiet = await sampleWindow();
-          quiet.excludedAgentPid = Number(options['agent-pid']);
-          quiet.heavy = quiet.rows.filter(
-            (row) => row.pid !== quiet.excludedAgentPid && row.cpuPercent > 30,
-          );
+          const quiet = await waitForQuietProcess({
+            agentPid: Number(options['agent-pid']),
+          });
           fs.writeFileSync(
             path.join(root, `quiet-${repeat}-${lane}.json`),
             JSON.stringify(quiet, null, 2) + '\n',
           );
           assert.equal(
-            quiet.heavy.length,
-            0,
-            'Per-process CPU exceeds 30%; preserve window without retry',
+            quiet.approved,
+            true,
+            'Per-process CPU stayed heavy for 120 seconds; preserve window without retry',
           );
           if (repeat === 0 && records.length === 0)
             fs.writeFileSync(
