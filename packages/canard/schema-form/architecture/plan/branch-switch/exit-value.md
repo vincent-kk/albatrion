@@ -32,7 +32,7 @@ B11(`detached-references.md`)이 떼어진 참조의 쓰기를 무효로 만들�
 
 - `inactiveValue`: 그 키를 쓴 선언이 나갈 때만 함수 호출 한 번(리터럴이면 호출 없음)과 `writeSlotPath` 한 번. 키가 없는 스키마는 나감마다 속성 검사 하나.
 - `onInactive`: 등록이 있는 노드에만 Set 하나, 나가는 서브트리 방문에서 Map 조회 하나. 등록이 없으면 변화 없음.
-- 공개 선언: `FieldNode.onInactive` 멤버 하나, `InactiveValueResolver`·`InactiveValueContext` 형 둘, `controls.inactiveValue` 키 하나, `FormWarningCode` 멤버 둘(함수 중 쓰기, `inactiveValue`와 참인 `unsetOnInactive`의 동거). 릴리스 전이라 선언 차분 0 관문은 적용하지 않되 차분을 기록한다.
+- 공개 선언: `FieldNode.onInactive` 멤버 하나, 형 셋(`InactiveValue<V> = V | InactiveValueResolver<V>`, `InactiveValueResolver<V> = (value: V, context: InactiveValueContext) => V | undefined`, `InactiveValueContext`; 키 이름은 값이 본질이고 함수는 계산 변형이라 `inactiveValue`를 유지하며 `setValue(value | updater)`가 같은 이중 모양의 선례다), `controls.inactiveValue` 키 하나, `FormWarningCode` 멤버 둘(함수 중 쓰기, `inactiveValue`와 참인 `unsetOnInactive`의 동거). 릴리스 전이라 선언 차분 0 관문은 적용하지 않되 차분을 기록한다.
 
 ## 지키는 것
 
