@@ -7,6 +7,7 @@ import type {
   BlueprintOptions,
 } from '../types/blueprint';
 import { readSchemaObject } from '../utils/analyze/readSchemaObject';
+import { collectInactiveValueWarnings } from './utils/collectInactiveValueWarnings';
 import { collectInlineTerminalWarnings } from './utils/collectInlineTerminalWarnings';
 import { endsWithBranchIndex } from './utils/endsWithBranchIndex';
 
@@ -56,6 +57,7 @@ export const collectBlueprintWarnings = (
     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);
     for (const declaration of node.declarations) {
       const schema = readSchemaObject(declaration.schema);
+      collectInactiveValueWarnings(schema.controls, declaration.schemaPath, emit);
       const warning = (
         code: FormWarningCode,
         details: Record<string, unknown> = {},

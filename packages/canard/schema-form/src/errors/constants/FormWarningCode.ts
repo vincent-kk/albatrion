@@ -43,6 +43,8 @@ export const FormWarningCode = {
   DialectMismatch: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DialectMismatch}`,
   /** Class: warning record; when: a write is attempted through a detached node reference; the write has no effect. */
   DetachedNodeWrite: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DetachedNodeWrite}`,
+  /** Class: warning record; when: one control layer declares inactiveValue together with literal true unsetOnInactive. */
+  InactiveValueWithUnsetOnInactive: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.InactiveValueWithUnsetOnInactive}`,
 } as const;
 
 /** Closed union of the warning code values. */

@@ -115,6 +115,7 @@ const CHILD_CONTROL_KEY_SET = {
   unsetValue: true,
   resetInteraction: true,
   unsetOnInactive: true,
+  inactiveValue: true,
 } satisfies Record<keyof ChildSchemaControls, true>;
 /** Node-owned controls add declarations and cross-node injection. */
 const CONTROL_KEY_SET = {
