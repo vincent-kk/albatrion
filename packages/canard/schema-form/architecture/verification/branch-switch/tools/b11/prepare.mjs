@@ -8,6 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { buildStages } from '../b6/buildStages.mjs';
+import { getStageRoot } from '../window/getStageRoot.mjs';
 
 const options = Object.fromEntries(
   process.argv.slice(2).map((arg) => {
@@ -70,7 +71,7 @@ assert.equal(
 );
 assert.match(
   options.root,
-  /\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+$/,
+  /\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\.noindex)?$/,
 );
 fs.mkdirSync(options.root, { recursive: false });
 fs.symlinkSync(
@@ -96,7 +97,7 @@ for (const [lane, source] of [
   }
   const scratch = await buildStages(
     source,
-    options.root + '-stage-' + lane.toLowerCase() + '/stages',
+    getStageRoot(options.root, lane) + '/stages',
     path.join(repository, 'node_modules'),
   );
   stageBundles[lane] = {};

@@ -26,5 +26,5 @@ fs.writeFileSync(
 assert.equal(
   quiet.approved,
   true,
-  'External CPU stayed above 30% for the 120-second start-delay allowance',
+  'External CPU stayed above 30% for the start-delay allowance (ordinary 120 seconds; Spotlight 600 seconds)',
 );
