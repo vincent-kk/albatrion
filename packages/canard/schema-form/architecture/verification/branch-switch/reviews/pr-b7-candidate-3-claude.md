@@ -56,7 +56,7 @@
 
 ## 수정 명세
 
-작업자에게 줄 제약을 먼저 적습니다. `yarn`은 Bash 호출 하나에 단독으로 실행해야 합니다. 파이프, `;`, 파일 리디렉션, 환경 변수 접두사(`NODE_OPTIONS=… yarn`)를 붙이지 않습니다. 디렉터리는 `cd` 대신 `yarn --cwd /Users/Vincent/Workspace/albatrion/branch-switch-b7`로 넘깁니다.
+작업자에게 줄 제약을 먼저 적습니다. `yarn`은 Bash 호출 하나에 단독으로 실행해야 합니다. 파이프, `;`, 파일 리디렉션, 환경 변수 접두사(환경 변수 접두사)를 붙이지 않습니다. 디렉터리는 `cd` 대신 `yarn --cwd <worktree>`로 넘깁니다.
 
 ### 수정 1 — 조상 분기에서도 더 위의 소멸 표시를 존중합니다(새 결함 1)
 
@@ -139,9 +139,9 @@
 6. 수정 뒤 검증 명령은 다음과 같습니다. 각각 단독 Bash 호출로 실행합니다.
 
    ```sh
-   yarn --cwd /Users/Vincent/Workspace/albatrion/branch-switch-b7 workspace @canard/schema-form typecheck
-   yarn --cwd /Users/Vincent/Workspace/albatrion/branch-switch-b7 workspace @canard/schema-form lint
-   yarn --cwd /Users/Vincent/Workspace/albatrion/branch-switch-b7 workspace @canard/schema-form test --run --project unit src/core/surface/__tests__/surface.clearing-array-keep.test.ts src/core/surface/__tests__/detached.test.ts src/core/engine/settle/utils/slots/ src/core/engine/settle/arrangeFieldNodeItems/ src/core/engine/settle/__tests__/settle.retained-slot
+   yarn --cwd <worktree> workspace @canard/schema-form typecheck
+   yarn --cwd <worktree> workspace @canard/schema-form lint
+   yarn --cwd <worktree> workspace @canard/schema-form test --run --project unit src/core/surface/__tests__/surface.clearing-array-keep.test.ts src/core/surface/__tests__/detached.test.ts src/core/engine/settle/utils/slots/ src/core/engine/settle/arrangeFieldNodeItems/ src/core/engine/settle/__tests__/settle.retained-slot
    ```
 
    기본 힙이 부족하면 환경 변수 접두사를 붙이지 말고 보고합니다.

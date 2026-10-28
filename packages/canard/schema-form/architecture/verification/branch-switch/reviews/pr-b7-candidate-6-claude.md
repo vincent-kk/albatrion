@@ -110,7 +110,7 @@
 작업자에게 줄 제약을 먼저 적습니다.
 
 - `yarn`은 Bash 호출 하나에 단독으로 실행합니다. 파이프, `;`, 파일 리디렉션, 환경 변수 접두사를 붙이지 않습니다.
-- 디렉터리는 `cd` 대신 `yarn --cwd /Users/Vincent/Workspace/albatrion/branch-switch-b7`로 넘깁니다.
+- 디렉터리는 `cd` 대신 `yarn --cwd <worktree>`로 넘깁니다.
 - 측정 창이 끝난 뒤에만 실행합니다.
 - 제품 코드(`src`의 시험 아닌 파일)는 바꾸지 않습니다.
 
@@ -152,8 +152,8 @@
 5. **검증 명령.** 각각 단독 Bash 호출로 실행합니다.
 
    ```sh
-   yarn --cwd /Users/Vincent/Workspace/albatrion/branch-switch-b7 workspace @canard/schema-form test --run --project unit src/core/surface/__tests__/surface.clearing-array-keep.test.ts
-   yarn --cwd /Users/Vincent/Workspace/albatrion/branch-switch-b7 workspace @canard/schema-form lint
+   yarn --cwd <worktree> workspace @canard/schema-form test --run --project unit src/core/surface/__tests__/surface.clearing-array-keep.test.ts
+   yarn --cwd <worktree> workspace @canard/schema-form lint
    ```
 
 ### P3-1 수정 B — 대안, 이름과 기록만 바로잡습니다
