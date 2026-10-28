@@ -7,8 +7,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { buildAlternatingRows } from '../../../design-optimization/tools/helpers/buildAlternatingRows.mjs';
 import { verifyInputs } from '../b4-2/verifyInputs.mjs';
-import { sampleProcessCpu } from '../b8/helpers/sampleProcessCpu.mjs';
-import { waitForQuietProcess } from '../b8/helpers/waitForQuietProcess.mjs';
+import { sampleProcessCpu } from '../window/helpers/sampleProcessCpu.mjs';
+import { waitForQuietProcess } from '../window/helpers/waitForQuietProcess.mjs';
 
 assert.equal(Number(process.versions.node.split('.')[0]), 26);
 assert.equal(
@@ -71,7 +71,7 @@ const run = async (
           ? (
               (process.env.NODE_OPTIONS ?? '') +
               ' --import=' +
-              pathToFileURL(path.join(here, '../b8/quietWorkerPreload.mjs'))
+              pathToFileURL(path.join(here, '../window/quietWorkerPreload.mjs'))
                 .href
             ).trim()
           : process.env.NODE_OPTIONS,
