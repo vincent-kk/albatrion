@@ -2,7 +2,7 @@
 
 ## 판정 범위
 
-비교 기준은 단계 커밋 `0b9337cd9b7372211883a727fead7f76c8220b4f`입니다. 이 문서는 코드·시험·문서의 증거와 단일 A/B 창의 판정을 구분합니다. 후보 1의 고정 판정은 **채택 조건 미충족**이며 채택하지 않습니다. 후보 2는 쓰기 경로 파싱과 wrapper 할당을 제거하도록 준비합니다. 제품 관측·검증은 통과했지만 형제 0 단계 장부 합계가 A 자체 폭을 넘어 성능 관문이 미달했습니다.
+비교 기준은 단계 커밋 `0b9337cd9b7372211883a727fead7f76c8220b4f`입니다. 이 문서는 코드·시험·문서의 증거와 단일 A/B 창의 판정을 구분합니다. 후보 1의 고정 판정은 **채택 조건 미충족**이며 채택하지 않습니다. 후보 1은 제품 관측·검증을 통과했지만 형제 0 단계 장부 합계가 A 자체 폭을 넘었습니다. 후보 2는 쓰기 경로 파싱과 wrapper를 제거한 구현·검증·불변 입력 준비까지 완료했으며 정식 측정과 채택 판정은 다음 담당자에게 인계합니다.
 
 ## 출하하는 세 줄 규칙
 
@@ -22,10 +22,10 @@
 | 리터럴 이름과 연산자 | `formatSegment`, `PointerOperator`, `PointerSegment` |
 | 조립 | `appendSegment`, `appendFormattedSegment`, `joinPointer` |
 | 경로 관계와 해석 | `isDescendantPath`, `resolvePointer`, `stripFragment`, `isAbsolutePath` |
-| 기존 할당 수를 지키는 부분 읽기·바인딩 | `readPointerSegment`, `readFormattedPointerSegment`, `getChildPointer`, `rebasePointer`, `hasPointerOperator`, `bindPointerTemplate` |
-| 검증 경계의 기존 루트 별칭 | `normalizeValidationDataPath` |
+| 부분 읽기·바인딩 | `readPointerSegment`, `readFormattedPointerSegment`, `readFormattedNameSegment`, `getChildPointer`, `rebasePointer`, `hasPointerOperator`, `bindPointerTemplate` |
+| wrapper 없는 세그먼트·절대 여부 | `parsePointerSegments`, `isAbsolutePointer` |
 
-네 escape 정규식과 쓰이지 않는 `JSONPointerPrefix`의 외부 수출을 제거했습니다. tilde escaping은 winglet pointer-escape 구현을 재사용합니다. 내부에서 만든 스키마 경로는 확장 파서로 읽고, 외부 `$ref`와 AJV 경로만 표준 fragment 디코딩을 사용합니다. 검증기 이슈는 필요한 경우에만 새 경로 표기의 사본으로 바꾸며 일반 이슈 배열과 항목 참조는 유지합니다.
+네 escape 정규식과 쓰이지 않는 `JSONPointerPrefix`의 외부 수출을 제거했습니다. tilde escaping은 winglet pointer-escape 구현을 재사용합니다. 내부에서 만든 스키마 경로는 확장 파서로 읽고, 외부 `$ref`와 AJV 경로만 표준 fragment 디코딩을 사용합니다. 검증기 이슈는 필요한 경우에만 새 경로 표기의 사본으로 바꾸며 일반 이슈 배열과 항목 참조는 유지합니다. 후보 2는 검증 전용 slash 루트 별칭을 제거합니다.
 
 ## 이관 범위와 정적 격리
 
@@ -167,14 +167,60 @@ navigation의 비어 있지 않은 문자열 입력은 기존도 결과 객체 1
 
 ## 후보 2 — 쓰기 경로 파싱과 wrapper 제거
 
-코디네이터가 후보 1을 채택하지 않고 후보 2를 지시했습니다. 정적 경로는 청사진·색인 구성 또는 캐시 채움 때 파싱하고 쓰기당 파싱 0을 호출 수 시험으로 고정합니다. 뜨거운 경로는 세그먼트 배열 전용 API와 절대 경로 술어를 사용하며 보통 배열 입력의 사본 0을 유지합니다. B7 창이 끝날 때까지 전체 관문·빌드·새 측정은 보류합니다. 후보 2의 검증과 측정은 아직 수행하지 않았습니다.
+코디네이터가 후보 1을 채택하지 않고 후보 2를 지시했습니다. 정적 경로는 청사진·색인 구성 또는 캐시 채움 때 파싱하고 canonical 두 장면의 반복 쓰기에서 full-pointer 파싱 0을 호출 수 시험으로 고정합니다. 뜨거운 경로는 세그먼트 배열 전용 API와 절대 경로 술어를 사용하며 보통 배열 입력의 사본 0을 유지합니다. B7 창 종료 뒤 코드 검증과 입력 준비를 진행하며, 정식 후보 2 측정과 채택 판정은 코디네이터가 지정하는 다음 담당자에게 인계합니다. 여기서는 정식 창을 시작하지 않습니다.
 
-## 알려진 비일관과 인계
+### 구현한 비용 경계
 
-폼 경로의 `/`는 빈 이름 멤버이며 검증기 dataPath의 `/`는 기존 루트 별칭입니다. 두 해석은 각각 파서 fractal의 명시적 계약으로 보존하며 이번 B6에서 통일하지 않습니다.
+- `parsePointerSegments`는 문자열의 split 배열을 제자리 디코드하고, 변환 없는 상대 배열은 그대로 돌려줍니다. `parsePointer` 결과 객체는 absolute와 segments가 모두 필요한 차가운 경계에 남깁니다.
+- DependencyIndex는 작성된 node·declaration·watch·split host 경로를 구성 시 준비합니다. query의 미등록 주소는 청사진에 추가하지 않습니다. 현재 owner·structure·배열 길이·rank 순서는 조회마다 읽습니다.
+- 구체 주소 캐시는 기존 HostDerived의 root.runtime 슬롯에 있고 256개 FIFO 상한을 가집니다. 새 주소와 퇴출 주소는 최초 채움에서만 디코드하며, 모드 변경은 기존 파생 레코드 세대를 함께 교체합니다.
+- GateRegistry는 기존 주소 캐시와 DependencyIndex의 정적 배열을 연결합니다. 게이트 발생 등록은 레지스트리별 callback 하나로 syntax를 읽습니다. 선행 출력 검사에서 첫 마디만 필요한 곳은 단일 마디 API를 사용합니다.
+- watch/state 계획은 실제 host identity·현재 hostPath·작성 dependency별 path와 segments만 보유합니다. 현재 또는 명시한 이전 snapshot의 스키마·emit·context는 매 호출 읽습니다. 멤버십 제거는 등록 시 보유한 segments를 사용합니다. context가 없을 때 기존 노드/커밋 값 메모의 빈 객체 identity를 보존합니다.
+- 슬롯은 주소 문법만 공유합니다. 같은 경로의 다른 blueprint·lineage·source·overlay는 조회마다 선택하고, 배열 재키 뒤에는 이전 참조의 이동된 쓰기 주소를 사용합니다. DirtyPathSet은 이미 형식화된 이름을 다시 디코드/형식화하지 않고 canonical 이름 마디를 직접 읽습니다.
+
+호출 계층상 markWrite는 DirtyPathSet의 이름 읽기, registerRecalculation은 의존 색인 조회, computeNode는 presence/dependency 조회와 게이트 선행 출력, selectChildren은 발생 등록과 슬롯 조회 경로를 소비합니다. watch/state 변경은 주로 커밋 영역입니다. 이것은 변경된 호출 위치의 설명이며, 실행 전에는 self 시간의 개선 원인이나 실제 V8 할당 수를 주장하지 않습니다.
+
+준비·보유 비용은 정적 색인의 작성 경로와 전체 마디 수, 실제 host의 방문한 dependency 수, 현재 watch 에지 수에 비례합니다. runtime의 역사 주소는 256개로 제한됩니다. 값·현재 형상·선택된 노드·슬롯 원본을 syntax 캐시에 저장하지 않습니다.
+
+### 변경 전 실패와 후보 2의 통과 증거
+
+작업 트리를 되돌리지 않고 외부의 격리된 소스 사본으로 변경 전 검사를 실행했습니다. canonical 형제/oneOf 첫 쓰기는 각각 wrapper 5회/16회, 의존 색인 반복 질의는 12회로 실패했습니다. 기존 watch 구현은 같은 커밋의 값·스키마 교체, 멤버십 제거의 파싱과 snapshot 뒤 현재 값 선택 네 건이 실패했고 배열 재키 한 건은 기존에도 통과했습니다. 전역 빈 context 객체를 공유하던 중간 구현도 노드/커밋별 identity 검증에서 실패했습니다. 슬래시 변경 전 공개 Form 세 건은 빈 이름 입력 매핑과 일반 루트 오류 배정 두 건이 실패하고 hash 루트 매핑 한 건은 통과했습니다.
+
+후보 2의 파서·격리·캐시·의존 색인·watch·슬롯 집중 검증은 15파일/182건, 공개 Form의 React 19/18 검증은 2파일/6건이 통과했습니다. canonical 형제 0과 oneOf 80은 각각 mount 뒤 첫 실제 쓰기를 포함한 여섯 번의 전환에서 wrapper와 실제 full-pointer decoder 호출이 모두 0입니다. 앞선 쓰기로 캐시를 준비하지 않았고, spy의 positive control도 확인했습니다. 단일 마디 읽기와 허용된 새 주소/퇴출 주소의 채움은 이 수치에서 별도 비용입니다.
+
+첫 집중 실행에서 oneOf의 schema 소유 판정과 이탈 defaultValue 포착에 전체 파싱이 남은 것을 호출 스택으로 확인했습니다. 작성된 schema 경로도 정적 색인에 준비하고, 이탈 defaultValue는 준비된 문법으로 현재 loadSnapshot을 읽도록 고친 뒤 같은 검사가 통과했습니다. 빈 context 시험은 실제 runtime 기본 context와 없는 context를 구별해 검증합니다. `raw/b6/candidate-2/red-green.json`에 관측과 한계를 기록했습니다.
+
+공개 Form 시험은 루트 진입점을 검증하는 기존 D7 e2e 구획에 둡니다. 중앙 decoder의 실제 내부 모듈을 spy하는 검증은 제공된 FCA 검증 코드 예외를 적용해 import 모델의 D/S1에서 제외하며, 제품의 같은 직접 접근과 자기·조상 index U 접근을 거부하는 단언은 유지합니다.
+
+### 전체 관문과 입력 준비
+
+후보 2 제품 커밋은 `be49b6c6777d46ce1cd39a10950d4af09725f8b5`입니다. typecheck·lint·build가 통과했고 Node 네 프로젝트는 841파일/5,408건 통과·기존 TODO 1건, verify는 707파일/4,668건 통과·기존 TODO 1건입니다. 공개 진입점 차분은 0이며, 생성 공개 선언은 기준과 같은 3,054바이트와 SHA-256 `740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6`입니다.
+
+Storybook의 단일 실행 네 번은 각각 92·94·89·91파일 뒤 orchestrator WebSocket 연결 종료로 중단됐습니다. 진단에서 Chromium 부모 프로세스는 정상 종료했지만 연결 종료의 근본 원인은 확정하지 못했으며 이 실행들은 성공 증거에서 제외합니다. 격리·시험 기대·기능 모드를 유지하고 Node 26.11.1에서 표준 shard 1/2와 2/2를 순차 실행했습니다. 각각 50파일/124건과 50파일/127건이 통과했고 두 파일 집합의 교집합 0, 합집합과 원본 Storybook 100파일의 일치를 단언했습니다. 다섯 프로젝트 합계는 941파일/5,659건 통과·기존 TODO 1건입니다.
+
+첫 네 프로젝트 실행은 예전 루트 별칭 fixture와 검증 코드 내부 접근을 막던 import 모델 때문에 3파일/7건이 실패했습니다. 해당 위치를 앞 절의 계약대로 고친 뒤 전체를 다시 실행한 결과만 위 최종 집계에 사용합니다. 실패·진단 로그는 외부 인계에 보존합니다.
+
+Node 26.11.1·Bun 1.4.4·Apple M1 Max arm64에서 A/B 공개 번들과 wrapped·unwrapped·supplemental 단계 번들을 고정하고 모든 길이와 해시를 재검증했습니다. AJV8의 실제 resolve 산출물 해시를 확인한 무시간 적재는 A 22행/44동작·B 22행/44동작·legacy 18행/36동작 모두 통과했습니다. 워밍업과 정식 표본에 포함하지 않습니다. 같은 불변 번들의 배달 비교는 72장면/430관측점 차이 0, 마운트는 6장면/12관측점 차이 0입니다.
+
+`raw/b6/candidate-2/`에는 실행 검사, red/green, 정적 격리, FCA, 준비 입력 해시, 무시간 적재와 배달·마운트 원시를 보존했습니다. 원시의 기계 로컬 위치 메타데이터만 휴대 가능한 표기로 바꿨고, 실제 외부 inputs.json의 원본 해시는 readiness에 남겼습니다. 런타임 번들은 외부 준비 디렉터리에 있으며 소스 커밋에 포함하지 않았습니다. `formal-start`·CPU 사전 검사·정식 시간·단계·힙·품질 판정은 아직 없습니다.
+
+### 정식 측정 — 인계 후 작성
+
+이 절은 다음 측정 담당자가 새 입력의 해시 확인, CPU 사전 검사, 일회성 formal-start, 22행 원시와 단계·힙 요약 뒤 작성합니다. 후보 1의 실패 창을 후보 2 표본에 합치지 않습니다. 후보 2의 성능과 채택 여부는 아직 판정하지 않았습니다.
+
+## 소유자 결정 — 슬래시 하나의 공개 뜻
+
+후보 2의 소유자 추가 결정으로 루트는 빈 문자열과 `#` 둘뿐입니다. `/`와 `#/`는 두 파서 모두 빈 이름 자식이며 검증 전용 루트 별칭은 제거합니다.
+
+| 공개 입력 | 기존 → 후보 2 |
+| --- | --- |
+| fieldInputMap `/` 및 루트처럼 쓰던 `#/` | 루트 매칭 → 빈 이름 자식만 매칭 |
+| 검증기 dataPath `/` | 루트 issue → 빈 이름 자식 issue; 그 자식이 없으면 루트에 배정하지 않음 |
+
+`node.find('/')`와 `node.find('#/')`는 이미 빈 이름을 가리키므로 그대로입니다. fieldInputMap `#`는 일반 폼의 루트입니다. `validation.run.test.ts`의 의도한 루트 issue fixture를 `/`에서 빈 문자열로 바꿨고, `fieldInputMap.test.ts`의 기존 네 키 조합에서 `/`와 `#/`는 빈 이름 주소로 검증하도록 수정했습니다. `blueprint.gate-location.test.ts`도 `#`는 루트, `(/)`는 빈 이름 자식의 evaluationReads로 구별합니다. 사촌 게이트 관측의 `(#/)` 한 식과 나감 배달의 루트 watch 세 정의는 `#`로 옮겼으며 나머지 값·순서·배달 기대는 유지했습니다. regex boundary 9파일은 후보 추출 기대를 유지하고 `#/`의 주석만 절대 경로 접두사로 정정했습니다. 세 공개 회귀는 `src/__tests__/e2e/pointer.empty-name.test.tsx`에서 React 19/18 모두 통과했습니다.
 
 ## 이번 변경과 무관한 기존 finding
 
-FCA 점검은 canonical 위반 2건으로 FAIL이며 분석 상태는 indeterminate입니다. 이번 변경과 무관한 기존 finding은 바꾸지 않은 FieldProxy/FieldInputSlot의 순환과 기존 getAbsolutePointer 시험의 58건 cap 초과입니다. 이를 이번 변경에서 고치거나 불확정을 통과로 바꾸지 않았습니다. 전체 199 findings 중 173건은 문서 계약 진단이며 분석 범위와 상태는 `raw/b6/fca-summary.json`에 기록했습니다.
+FCA 점검은 canonical 위반 2건으로 FAIL이며 분석 상태는 indeterminate입니다. 이번 변경과 무관한 기존 finding은 바꾸지 않은 FieldProxy/FieldInputSlot의 순환과 기존 getAbsolutePointer 시험의 58건 cap 초과입니다. 이를 이번 변경에서 고치거나 불확정을 통과로 바꾸지 않았습니다. 후보 1은 199 findings·173 문서 진단을 `raw/b6/fca-summary.json`에 보존했습니다. 후보 2는 기본 source-extension 범위의 1,605파일 facts를 갱신하고 세 검사 snapshot의 동일성을 확인했습니다. 204 findings·178 문서 진단이며 증가 다섯 건은 새 루트/빈 이름 계약의 `#/` 표기를 파일 참조로 해석하는 문서 검사 결과입니다. 전체 finding과 진단의 nextAction은 `raw/b6/candidate-2/fca-summary.json`에 보존했습니다.
 
 독립 antigravity 검토와 PR 작성·통합은 푸시 후 코디네이터가 수행합니다.
