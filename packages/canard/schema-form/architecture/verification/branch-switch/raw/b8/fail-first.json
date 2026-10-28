@@ -1,0 +1,47 @@
+{
+  "base": "c4d442c44",
+  "product": "7e7475544",
+  "failFirst": [
+    {
+      "case": "oneOf-80 diagnostics=true first write decoder",
+      "before": 4,
+      "after": 0,
+      "positiveControl": 1
+    },
+    {
+      "case": "pointer isolation raw fragment syntax",
+      "beforeViolations": 3,
+      "afterViolations": 0
+    },
+    {
+      "case": "empty-name oneOf derived target",
+      "before": {
+        "source": "initial"
+      },
+      "expectedAfter": {
+        "source": "initial",
+        "": "initial"
+      }
+    },
+    {
+      "case": "reserved percent spelling diagnostic",
+      "before": "JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA",
+      "after": "JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME",
+      "failingCases": 5
+    },
+    {
+      "case": "zero-survivor latent writes with keep declarations=false/true",
+      "beforeWriterCallsPerCase": 2,
+      "afterWriterCallsPerCase": 0,
+      "positiveControlWriterCalls": 1,
+      "cases": 2
+    },
+    {
+      "case": "oneOf-80 gate budget pointer classification",
+      "beforeDecoderCalls": 560,
+      "afterDecoderCalls": 80,
+      "transitionCap": 81,
+      "cachedRepeatDecoderCalls": 0
+    }
+  ]
+}

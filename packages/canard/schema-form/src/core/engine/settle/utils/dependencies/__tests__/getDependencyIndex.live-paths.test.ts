@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { parsePointer } from '@/schema-form/helpers/jsonPointer';
 
 import { dispatchSetValue } from '../../../../write';
 import { getDispatchNode } from '../../../__tests__/fixtures/getDispatchNode';
@@ -49,6 +50,9 @@ it('expands retained template syntax against the current array in document order
   );
   const index = getDependencyIndex(root.runtime.blueprint);
   const template = index.pathSegments('/rows/*/reader');
+  decoder.mockClear();
+  parsePointer('/positive-control');
+  expect(decoder).toHaveBeenCalledTimes(1);
   decoder.mockClear();
   expect(
     index.affected('/flag', root).filter((path) => path.endsWith('/reader')),

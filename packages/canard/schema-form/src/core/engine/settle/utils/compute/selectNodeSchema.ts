@@ -14,6 +14,7 @@ import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { evaluateGate } from '../gates/evaluateGate';
+import { getGateRegistry } from '../gates/getGateRegistry';
 import { selectRootGateDeclarations } from './childSelection/gateSelection/selectRootGateDeclarations';
 import { readOneOfBranch } from './utils/readOneOfBranch';
 
@@ -35,7 +36,10 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   if (node.runtime.errorReporter?.hasConsumer()) {
     const branches = new Map<string, number[]>();
     for (const declaration of active) {
-      const crossed = readOneOfBranch(declaration.schemaPath);
+      const crossed = readOneOfBranch(
+        declaration.schemaPath,
+        getGateRegistry(node.runtime).pathSegments(declaration.schemaPath),
+      );
       if (
         !crossed ||
         !declaration.gates.some((gate) =>

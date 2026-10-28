@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
-  joinPointer,
+  joinPointerWithPrefixOf,
   parseStandardPointer,
   stripFragment,
 } from '@/schema-form/helpers/jsonPointer';
@@ -38,7 +38,7 @@ export const resolveReference = (
   let schema: unknown;
   try {
     const names = parseStandardPointer(reference);
-    pointer = joinPointer(names);
+    pointer = joinPointerWithPrefixOf(reference, names);
     schema = context.schema;
     for (const name of names) {
       if (schema === null || typeof schema !== 'object') {
@@ -68,5 +68,5 @@ export const resolveReference = (
       { reference, guidance: 'The reference must identify a schema.' },
       context.options,
     );
-  return { schema, schemaPath: '#' + pointer };
+  return { schema, schemaPath: pointer };
 };

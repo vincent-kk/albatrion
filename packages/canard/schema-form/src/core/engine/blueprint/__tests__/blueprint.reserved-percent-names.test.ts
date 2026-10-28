@@ -12,7 +12,7 @@ describe('property names equal to a reserved percent spelling', () => {
         blueprint({ type: 'object', properties: { [name]: { type: 'string' } } }),
       ).toThrow(
         expect.objectContaining({
-          code: FormErrorCode.UnknownJsonSchema,
+          code: FormErrorCode.ReservedPropertyName,
           message: expect.stringContaining(`"${name}"`),
         }),
       );
@@ -33,7 +33,7 @@ describe('property names equal to a reserved percent spelling', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        code: FormErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.ReservedPropertyName,
         message: expect.stringContaining('reserved operator name'),
       }),
     );

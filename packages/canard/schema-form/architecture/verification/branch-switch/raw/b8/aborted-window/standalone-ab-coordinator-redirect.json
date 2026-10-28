@@ -1,0 +1,9 @@
+{
+  "reason": "Coordinator authorized a fresh mount-then-AB continuous window after the mount environment failure; this standalone AB had started five seconds before that instruction arrived.",
+  "terminatedBenchmarkPids": [
+    30819,
+    34438
+  ],
+  "usedForVerdict": false,
+  "restartedWithoutAuthorization": false
+}

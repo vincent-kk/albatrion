@@ -13,7 +13,7 @@ import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintEr
  * @param declarationSchemaPath - Authored location of the schema that declares `properties`.
  * @param name - Property name as authored; any string is valid input.
  * @returns Nothing when the name is addressable.
- * @throws A `FormErrorCode.UnknownJsonSchema` schema error naming the property and the rule when the name is exactly `%2A`, `%2E`, `%2E%2E` or `%40`.
+ * @throws A `FormErrorCode.ReservedPropertyName` schema error naming the property and the rule when the name is exactly `%2A`, `%2E`, `%2E%2E` or `%40`.
  */
 export const assertAddressableName = (
   context: AnalysisContext,
@@ -22,7 +22,7 @@ export const assertAddressableName = (
 ): void => {
   if (!isReservedPercentName(name)) return;
   throwBlueprintError(
-    FormErrorCode.UnknownJsonSchema,
+    FormErrorCode.ReservedPropertyName,
     appendSegment(appendSegment(declarationSchemaPath, 'properties'), name),
     {
       property: name,

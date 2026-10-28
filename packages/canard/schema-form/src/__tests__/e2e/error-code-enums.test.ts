@@ -14,8 +14,11 @@ describe('root error and warning code enums', () => {
     expect(FormErrorCode.SchemaValidationFailed).toBe(
       'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
     );
+    expect(FormErrorCode.ReservedPropertyName).toBe(
+      'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME',
+    );
     expect(FormWarningCode.Misfit).toBe('SCHEMA_FORM_WARNING.MISFIT');
-    expect(Object.keys(FormErrorCode)).toHaveLength(41);
+    expect(Object.keys(FormErrorCode)).toHaveLength(42);
     expect(Object.keys(FormWarningCode)).toHaveLength(17);
   });
 });

@@ -824,7 +824,7 @@ Segments are interpreted in this order:
 
 The root pointer is the empty string or `#`; `/` and `#/` each address the root's empty-string key. Validator paths and fieldInputMap keys follow the same rule.
 
-Known limit: property names exactly equal to `%2A`, `%2E`, `%2E%2E`, or `%40` are not supported. Their path would read back as the reserved operator name (`*`, `.`, `..`, `@`), which would misdirect value loading, inactive values, and validation routing, so building the form rejects the schema with `FormErrorCode.UnknownJsonSchema`; the error names the property and this rule. Percent-containing names other than those exact four spellings follow rule 3.
+Known limit: property names exactly equal to `%2A`, `%2E`, `%2E%2E`, or `%40` are not supported. Their path would read back as the reserved operator name (`*`, `.`, `..`, `@`), which would misdirect value loading, inactive values, and validation routing, so building the form rejects the schema with `FormErrorCode.ReservedPropertyName`; the error names the property and this rule. Percent-containing names other than those exact four spellings follow rule 3.
 
 Standard RFC 6901 pointers from validators and `$ref` are interpreted without these operators. An AJV path `/*` refers to the property named `*`; standard fragment pointers (`#/...`) percent-decode every segment.
 
@@ -961,6 +961,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | Constant | `error.code` value | When | Note |
 | --- | --- | --- | --- |
 | `FormErrorCode.UnknownJsonSchema` | `'JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA'` | schema analysis cannot determine a supported shape |  |
+| `FormErrorCode.ReservedPropertyName` | `'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME'` | a property name is exactly `%2A`, `%2E`, `%2E%2E`, or `%40` | `details.property` names the rejected property. |
 | `FormErrorCode.UnexpectedArraySchema` | `'JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA'` | schema analysis finds an invalid array declaration |  |
 | `FormErrorCode.AllOfTypeRedefinition` | `'JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION'` | static allOf types have an empty intersection |  |
 | `FormErrorCode.ConflictingConstValues` | `'JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES'` | static allOf constants conflict |  |

@@ -1,0 +1,15 @@
+{
+  "rootExportNamesBefore": 94,
+  "rootExportNamesAfter": 94,
+  "directEntryBytesIdentical": true,
+  "directEntrySha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+  "addedPublicMember": {
+    "name": "FormErrorCode.ReservedPropertyName",
+    "type": "\"JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME\""
+  },
+  "otherResolvedPublicChanges": 0,
+  "definitionFile": "dist/errors/constants/FormErrorCode.d.ts",
+  "beforeMembers": 41,
+  "afterMembers": 42,
+  "note": "The generated entry re-exports split declarations; the semantic comparison follows all 94 root exports, and removes only the single approved member before requiring equality."
+}

@@ -13,6 +13,7 @@ export { isReservedPercentName } from './utils/isReservedPercentName';
 export { appendSegment } from './utils/appendSegment';
 export { appendFormattedSegment } from './utils/appendFormattedSegment';
 export { joinPointer } from './utils/joinPointer';
+export { joinPointerWithPrefixOf } from './utils/joinPointerWithPrefixOf';
 export { isDescendantPath } from './utils/isDescendantPath';
 export { resolvePointer } from './utils/resolvePointer';
 export { readPointerSegment } from './utils/readPointerSegment';

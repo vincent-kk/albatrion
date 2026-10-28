@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+`joinPointerWithPrefixOf`는 참고 주소의 선행 fragment 여부를 보존하여 디코드된 마디를 조립합니다. fragment 판정과 접두 조립도 이 fractal이 소유하며 소비자는 원문 `#`를 직접 비교하거나 결합하지 않습니다.
+
 `readFormattedNameSegment`는 정본으로 조립된 주소에서 이름 마디의 원래 encoded 표기를 반환합니다. 정확한 raw `*`, `..`, `.`, `@`는 undefined로 거부하고 퍼센트 리터럴·tilde 표기·중간 hash·빈 이름·보통 퍼센트 마디는 그대로 보존합니다. 디코드하거나 다시 형식화하지 않으며 이미 정본인 이름을 보유하는 색인의 추가 문자열 생성을 피합니다.
 
 `parsePointerSegments`는 결과 객체 없이 디코드된 세그먼트 배열만 돌려주는 정본입니다. 보통 상대 배열은 원본을 재사용하고 실제 변환이나 fragment 제거 때만 사본 하나를 만듭니다. `isAbsolutePointer`는 완전한 포인터의 절대 여부를 배열 없이 읽으며 단독 `#`와 배열 첫 원소 `#`도 포함합니다. 기존 `isAbsolutePath`의 slash 접두사 판정과 단독 fragment 동작은 유지합니다. `parsePointer`는 같은 세그먼트 정본을 감싸 차가운 소비처의 기존 결과 객체를 제공합니다. 경로 문법 캐시는 살아 있는 조회 결과를 보유하지 않고 기존 청사진·runtime·호스트 소유자가 관리합니다.

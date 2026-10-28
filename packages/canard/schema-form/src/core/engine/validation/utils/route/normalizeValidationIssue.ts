@@ -1,6 +1,7 @@
 import {
   isAbsolutePointer,
   joinPointer,
+  joinPointerWithPrefixOf,
   parseStandardPointer,
 } from '@/schema-form/helpers/jsonPointer';
 
@@ -17,9 +18,11 @@ const rewritePointer = (
   keepFragment: boolean,
 ): string | undefined => {
   if (pointer !== '' && !isAbsolutePointer(pointer)) return undefined;
-  const prefix = keepFragment && pointer[0] === '#' ? '#' : '';
   try {
-    return prefix + joinPointer(parseStandardPointer(pointer));
+    const segments = parseStandardPointer(pointer);
+    return keepFragment
+      ? joinPointerWithPrefixOf(pointer, segments)
+      : joinPointer(segments);
   } catch {
     return undefined;
   }
