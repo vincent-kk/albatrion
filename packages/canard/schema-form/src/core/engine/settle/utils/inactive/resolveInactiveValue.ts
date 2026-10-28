@@ -21,16 +21,25 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   exit: Self,
   context: SettlementContext<Self>,
 ): void => {
-  if (context.entered.has(node) || isReplacedLivePath(context, exit.path)) return;
+  if (context.entered.has(node) || isReplacedLivePath(context, exit.path))
+    return;
   const lineage: Self[] = [];
-  for (let ancestor: Self | null = node; ancestor && ancestor !== exit.parent; ancestor = ancestor.parent)
+  for (
+    let ancestor: Self | null = node;
+    ancestor && ancestor !== exit.parent;
+    ancestor = ancestor.parent
+  )
     lineage.push(ancestor);
   let clear = readDepartingAncestorPolicy(context, exit);
   for (let index = lineage.length - 1; index >= 0; index--)
     clear = readSlotExitPolicy(lineage[index], clear);
   if (clear) return;
   const inputs = getInactiveValueContext(node, context);
-  const value = getLoadValue(context.previousEmit, node.path, getSlotPathNames(node.runtime, node.path));
+  const value = getLoadValue(
+    context.previousEmit,
+    node.path,
+    getSlotPathNames(node.runtime, node.path),
+  );
   const listeners = node.runtime.inactiveListeners?.get(node);
   let result: unknown;
   let failed = false;
@@ -38,15 +47,30 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   if (listeners?.size)
     for (const listener of [...listeners]) {
       if (!listeners.has(listener)) continue;
-      const resolved = callInactiveValueResolver(node, listener, value, inputs, context, ordinal++);
+      const resolved = callInactiveValueResolver(
+        node,
+        listener,
+        value,
+        inputs,
+        context,
+        ordinal++,
+      );
       failed ||= resolved.failed;
       if (resolved.value !== undefined) result = resolved.value;
     }
   if (failed) return;
   if (result === undefined) {
-    const resolved = callInactiveValueResolver(node, readInactiveValueDeclaration(node), value, inputs, context, ordinal);
+    const resolved = callInactiveValueResolver(
+      node,
+      readInactiveValueDeclaration(node),
+      value,
+      inputs,
+      context,
+      ordinal,
+    );
     if (resolved.failed) return;
     result = resolved.value;
   }
-  if (result !== undefined) (context.inactiveValueOverrides ??= new Map()).set(node, result);
+  if (result !== undefined)
+    (context.inactiveValueOverrides ??= new Map()).set(node, result);
 };

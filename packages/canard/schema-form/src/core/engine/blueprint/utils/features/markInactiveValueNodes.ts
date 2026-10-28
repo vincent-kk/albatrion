@@ -25,7 +25,13 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
           if (!field || typeof field !== 'object') continue;
           const group: unknown = Reflect.get(field, 'controls');
           const targets: unknown = Reflect.get(field, 'targets');
-          if (!group || typeof group !== 'object' || !hasOwnProperty(group, 'inactiveValue') || !isArray(targets)) continue;
+          if (
+            !group ||
+            typeof group !== 'object' ||
+            !hasOwnProperty(group, 'inactiveValue') ||
+            !isArray(targets)
+          )
+            continue;
           for (const entry of node.childEntries)
             if (targets.includes(entry.name)) mark(entry.node);
         }
@@ -36,9 +42,14 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
         ...(node.prefixItemCandidates?.flat() ?? node.prefixItems ?? []),
       ];
       for (const child of children)
-        if (child.declarations.some((candidate) =>
-          getFragmentOwnerPaths(candidate.schemaPath).includes(declaration.schemaPath),
-        )) mark(child);
+        if (
+          child.declarations.some((candidate) =>
+            getFragmentOwnerPaths(candidate.schemaPath).includes(
+              declaration.schemaPath,
+            ),
+          )
+        )
+          mark(child);
     }
 };
 
@@ -48,5 +59,8 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
  * @returns Nothing; repeated parent bindings share the same true fact
  */
 const mark = (node: BlueprintNode): void => {
-  Object.defineProperty(node, 'hasInactiveValue', { value: true, configurable: true });
+  Object.defineProperty(node, 'hasInactiveValue', {
+    value: true,
+    configurable: true,
+  });
 };

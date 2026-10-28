@@ -22,7 +22,7 @@
 
 - `__tests__/pointerIsolation.test.ts`는 제품 소스의 경로 분할·조립(`+` 결합과 템플릿 리터럴 포함)·이스케이프·원문 연산자 비교·`/` 접두 검사와 비교·경로 구조 정규식을 검사하며 jsonPointer 소유 경계만 허용한다.
 
-- `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 92개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증한다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽는다.
+- `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 97개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증한다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽는다.
 - `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미이다. 제품 트리나 패키지 공개 표면에 속하지 않는다. vitest 벤치는 재는 대상 fractal의 벤치 칸(지금은 `core/__benchmarks__`)에 있어 이 도우미를 상위 방향으로 열린 경로로 가져온다. src 밖의 `bench/legacy-compare/`(레거시 비교 독립 스크립트)·`bench/scripts/`(진단 스크립트)와 aileron 벤치마크의 find 대상 데이터·`loadCoreBenchmark`는 측정 도구라서 이 파일을 경로로 가져온다.
 - `__tests__/helpersErrorIndex.test.ts`는 자식 error 관문의 이름을 검증한다.
 - `__tests__/Form.label.test.tsx`는 Form 관문이 조립한 `Form.Label`·`Form.Input` 정적 멤버로 label 규약을 검증한다. 관문의 조립 모양을 쓰는 시험이므로 Form 안이 아니라 부모 시험 구획에 둔다. 공개 진입점의 이주 형 검증은 D7 migration 구획에서 루트 index를 소비한다.

@@ -1,7 +1,7 @@
 import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import { refuseInactiveResolverWrite } from './refuseInactiveResolverWrite';
 import { deliverChainRecords } from './deliverChainRecords';
+import { refuseInactiveResolverWrite } from './refuseInactiveResolverWrite';
 
 /**
  * Refuse writes through a frozen lifetime before opening a public entry chain.

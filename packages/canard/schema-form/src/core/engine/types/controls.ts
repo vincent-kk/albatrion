@@ -24,7 +24,9 @@ export type InjectToContext<Schema> = {
 };
 
 /** Exit resolver inputs; every value and schema is read from the preceding commit. */
-export type InactiveValueContext = InjectToContext<Readonly<Record<string, unknown>> | boolean>;
+export type InactiveValueContext = InjectToContext<
+  Readonly<Record<string, unknown>> | boolean
+>;
 
 /**
  * Compute a retained value without performing public writes.
@@ -33,7 +35,10 @@ export type InactiveValueContext = InjectToContext<Readonly<Record<string, unkno
  * @param context - Preceding paths, schemas, parent/root values and form context
  * @returns Replacement retained value; undefined preserves the existing source
  */
-export type InactiveValueResolver<V = unknown> = (value: V, context: InactiveValueContext) => V | undefined;
+export type InactiveValueResolver<V = unknown> = (
+  value: V,
+  context: InactiveValueContext,
+) => V | undefined;
 
 /** Literal retained value or its synchronous exit resolver. */
 export type InactiveValue<V = unknown> = V | InactiveValueResolver<V>;

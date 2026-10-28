@@ -13,12 +13,19 @@ export const refuseInactiveResolverWrite = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (!node.runtime.resolvingInactiveValue) return false;
   if (process.env.NODE_ENV !== 'production')
-    deliverChainRecords(node.runtime, [{
-      level: 'warning',
-      code: FormWarningCode.WriteInInactiveResolver,
-      message: 'A write inside an inactive value resolver has no effect',
-      path: node.path,
-      details: { path: node.path },
-    }], undefined, false);
+    deliverChainRecords(
+      node.runtime,
+      [
+        {
+          level: 'warning',
+          code: FormWarningCode.WriteInInactiveResolver,
+          message: 'A write inside an inactive value resolver has no effect',
+          path: node.path,
+          details: { path: node.path },
+        },
+      ],
+      undefined,
+      false,
+    );
   return true;
 };

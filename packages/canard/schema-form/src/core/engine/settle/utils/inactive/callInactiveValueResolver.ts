@@ -29,11 +29,16 @@ export const callInactiveValueResolver = <Self extends FieldNodeRecord<Self>>(
   try {
     return { value: resolver(value, inputs), failed: false };
   } catch (cause) {
-    recordSettlementFailure(context, new SchemaFormError(
-      FormErrorCode.ExpressionThrew,
-      `Inactive value resolver failed at ${node.path}`,
-      { path: node.path, schemaPath: node.blueprintNode.schemaPath, cause },
-    ), 'expression', [node.path, 'inactiveValue', ordinal].join('\u0000'));
+    recordSettlementFailure(
+      context,
+      new SchemaFormError(
+        FormErrorCode.ExpressionThrew,
+        `Inactive value resolver failed at ${node.path}`,
+        { path: node.path, schemaPath: node.blueprintNode.schemaPath, cause },
+      ),
+      'expression',
+      [node.path, 'inactiveValue', ordinal].join('\u0000'),
+    );
     return { value: undefined, failed: true };
   } finally {
     runtime.resolvingInactiveValue = previous;

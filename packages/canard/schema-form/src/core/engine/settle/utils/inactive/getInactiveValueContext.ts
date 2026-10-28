@@ -19,11 +19,22 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
   return {
     dataPath: node.path,
     schemaPath: node.blueprintNode.schemaPath,
-    jsonSchema: context.originalSchemas.get(node.path)?.schema ?? node.schema.schema,
-    parentValue: parent ? getLoadValue(context.previousEmit, parent.path, getSlotPathNames(node.runtime, parent.path)) : null,
-    parentJSONSchema: parent ? context.originalSchemas.get(parent.path)?.schema ?? parent.schema.schema : null,
+    jsonSchema:
+      context.originalSchemas.get(node.path)?.schema ?? node.schema.schema,
+    parentValue: parent
+      ? getLoadValue(
+          context.previousEmit,
+          parent.path,
+          getSlotPathNames(node.runtime, parent.path),
+        )
+      : null,
+    parentJSONSchema: parent
+      ? (context.originalSchemas.get(parent.path)?.schema ??
+        parent.schema.schema)
+      : null,
     rootValue: context.previousEmit,
-    rootJSONSchema: context.originalSchemas.get(root.path)?.schema ?? root.schema.schema,
+    rootJSONSchema:
+      context.originalSchemas.get(root.path)?.schema ?? root.schema.schema,
     context: context.previousContext ?? {},
   };
 };

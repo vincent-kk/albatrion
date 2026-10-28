@@ -36,7 +36,10 @@ export const collectInactiveValueWarnings = (
     if (!field || typeof field !== 'object') continue;
     collectInactiveValueWarnings(
       Reflect.get(field, 'controls'),
-      appendSegment(appendSegment(appendSegment(schemaPath, 'controls'), 'fields'), index),
+      appendSegment(
+        appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
+        index,
+      ),
       emit,
     );
   }

@@ -22,6 +22,12 @@ describe('root error and warning code enums', () => {
     expect(FormWarningCode.DetachedNodeWrite).toBe(
       'SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE',
     );
-    expect(Object.keys(FormWarningCode)).toHaveLength(18);
+    expect(FormWarningCode.InactiveValueWithUnsetOnInactive).toBe(
+      'SCHEMA_FORM_WARNING.INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE',
+    );
+    expect(FormWarningCode.WriteInInactiveResolver).toBe(
+      'SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER',
+    );
+    expect(Object.keys(FormWarningCode)).toHaveLength(20);
   });
 });

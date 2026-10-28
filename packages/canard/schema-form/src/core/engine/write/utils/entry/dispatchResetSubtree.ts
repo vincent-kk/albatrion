@@ -3,10 +3,10 @@ import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 import type { FieldNodeRecord } from '../../../record';
 import { resetFieldNodeSubtree } from '../../../settle';
 import { WriteOption } from '../../../types/value';
-import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 
 /**
  * Reload one subtree immediately, including when a batch is open.

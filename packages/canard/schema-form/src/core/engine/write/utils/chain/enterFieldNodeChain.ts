@@ -1,7 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
-import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
+import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 import { openVisitBatch } from './openVisitBatch';
 import { refuseListenerFeedback } from './refuseListenerFeedback';
 import { startFieldNodeChain } from './startFieldNodeChain';

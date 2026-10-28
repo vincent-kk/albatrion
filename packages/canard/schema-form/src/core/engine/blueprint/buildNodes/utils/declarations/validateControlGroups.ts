@@ -58,7 +58,12 @@ export const validateControlGroups = (
         );
   }
   const controls = record.controls;
-  if (controls && typeof controls === 'object' && hasOwnProperty(controls, 'inactiveValue')) context.hasInactiveValues = true;
+  if (
+    controls &&
+    typeof controls === 'object' &&
+    hasOwnProperty(controls, 'inactiveValue')
+  )
+    context.hasInactiveValues = true;
   if (
     controls?.injectTo !== undefined &&
     typeof controls.injectTo !== 'function'

@@ -1,19 +1,19 @@
 import type { SchemaFormError } from '../../../../errors';
 import type {
-BlueprintChildEntry,
-BlueprintNode,
-EffectiveSchema,
+  BlueprintChildEntry,
+  BlueprintNode,
+  EffectiveSchema,
 } from '../../blueprint';
-import type { DeriveState,DeriveTraceEntry } from '../../derive';
+import type { DeriveState, DeriveTraceEntry } from '../../derive';
 import type {
-ArrayArrangePlan,
-Distribution,
-FieldNodeRecord,
-InactiveSlotBaseline,
-SettlementBudget,
-SettlementEntryApi,
-SettlementFailureCause,
-SettlementScratch,
+  ArrayArrangePlan,
+  Distribution,
+  FieldNodeRecord,
+  InactiveSlotBaseline,
+  SettlementBudget,
+  SettlementEntryApi,
+  SettlementFailureCause,
+  SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
 import type { DependencyPresenceMemo } from '../utils/dependencies/getDependencyIndex';
@@ -21,7 +21,7 @@ import type { GateHostView } from '../utils/gates/readGateHostView';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import type { GateSelectionRound } from './gateSelectionRound';
-import type { GateWheelFrame,RelocatedGateReads } from './gateWheel';
+import type { GateWheelFrame, RelocatedGateReads } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 import type { PresenceQueryCursor } from './presenceQueryCursor';
 import type { CompactedSlotSources } from './slots';

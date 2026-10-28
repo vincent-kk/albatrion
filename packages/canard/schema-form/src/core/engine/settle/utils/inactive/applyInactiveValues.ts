@@ -12,7 +12,9 @@ export const applyInactiveValues = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.inactiveValueOverrides) return;
-  const overrides = [...context.inactiveValueOverrides].sort(([left], [right]) => left.depth - right.depth);
+  const overrides = [...context.inactiveValueOverrides].sort(
+    ([left], [right]) => left.depth - right.depth,
+  );
   for (const [node, value] of overrides) {
     const path = getInactiveValuePath(node, context);
     if (path === undefined) continue;

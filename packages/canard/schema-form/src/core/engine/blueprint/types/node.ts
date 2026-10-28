@@ -1,8 +1,8 @@
 import type { NodeStrategy } from '../../types/strategy';
 import type {
-BlueprintNodeKind,
-BlueprintSchema,
-BlueprintSchemaType,
+  BlueprintNodeKind,
+  BlueprintSchema,
+  BlueprintSchemaType,
 } from './schema';
 
 /** Location and ownership metadata shared by every declarative gate. */

@@ -465,6 +465,14 @@ Write inactive values by including their paths in a live root or host's `setValu
 
 Migration: obtain node references again with `find` after re-entry; write inactive values through a live host's `setValue` JSON. `find` keeps returning `null` for every path without an active node.
 
+### Resolving a Node's Exit Value
+
+`node.onInactive(listener): () => void` registers a synchronous resolver for that node instance and returns an unsubscribe function. It runs once immediately before a retained gate exit, with the preceding commit's value and `InactiveValueContext`. It does not run for form unmount/disposal, array item deletion, or an old instance consumed during re-entry. Register again on a new instance after re-entry.
+
+Listeners run in registration order; the last non-`undefined` result wins. A defined listener result skips `controls.inactiveValue`; when all listeners return `undefined`, the declaration applies. A thrown listener cancels that node's entire override and records a settlement failure while preserving its original retained source. Exceptions do not prevent the exit from committing. `setValue`, array operations, `batch` and `resetSubtree` inside a resolver are ignored; development builds report `FormWarningCode.WriteInInactiveResolver` and production bundles remain silent.
+
+Migration: move cleanup writes to the component's own node to `controls.inactiveValue` or `node.onInactive`; both take the same `(value, context) => next` resolver.
+
 ## FieldInput System
 
 ### FieldInputDefinition
@@ -617,17 +625,24 @@ const formInputMap = {
     unsetValue: boolean | string;        // Clears the value when it turns from false to true
     resetInteraction: boolean | string;  // Clears dirty/touched when it turns from false to true
     unsetOnInactive: boolean | string;   // Drops the retained value when the node leaves the shape
-    fields: { targets: string[]; controls: { /* first nine keys */ } }[];
+    fields: { targets: string[]; controls: { /* first nine keys plus inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // Pushes values to other nodes whenever this node's value changes
+    inactiveValue: literal | ((value, ctx) => next); // Retained value when leaving the shape
     discriminator: string;               // oneOf/anyOf host: branch tag property
     watch: string[];                     // Value subscription (array of paths)
   }
 }
 ```
 
-The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
+The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), the first nine keys (`active` through `unsetOnInactive`) and `inactiveValue` are allowed; any of the other four throws.
 
 The closed list applies inside `controls` and `options`. Outside the three groups, the top-level keys of 0.16 (`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, the `&`-prefixed keys, `injectTo`, `terminal`, `virtual`, `placeholder`, `errorMessages`, `propertyKeys`) are not read at all: 1.0.0 ignores them with no error or warning. There is no alias and no warning for them by design, so a schema migrated from 0.16 must move each key itself (see Migration (1.0.0) in the README).
+
+### Retained Value at Exit
+
+`controls.inactiveValue` accepts a literal (including strings, `false`, `0`, `null`, objects and arrays) or an `InactiveValueResolver<V>`. Strings are never compiled as expressions. The resolver has the same `(value, context) => next` signature as `node.onInactive(listener)` and the same context fields as `injectTo`: `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, and form `context`. Every value and schema comes from the preceding commit; `undefined` leaves the retained source unchanged. No dependencies are tracked.
+
+Only normal retained gate exits with automatic writes enabled run these resolvers. Automatic-write suppression, failed or budget-limited settlement, load/reset scope, throwing gates and instances entered only within the same settlement skip them. A true `unsetOnInactive` policy skips them, and declaring both on the same layer reports `FormWarningCode.InactiveValueWithUnsetOnInactive`. Node controls take precedence over fields controls, which take precedence over fragment controls. A descendant result overwrites its path inside an ancestor result. Results use the existing inactive JSON write rules: undeclared keys remain extras, wrong-kind values remain retained, and re-entry consumes the overlay.
 
 ### Nested Controls
 

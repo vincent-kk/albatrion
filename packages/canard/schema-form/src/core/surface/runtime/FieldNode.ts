@@ -21,9 +21,9 @@ import {
   dispatchUpdate,
   dispatchValidate,
   dispatchVisitSubtree,
+  onInactiveFieldNode,
   readFieldNodeRevision,
   subscribeFieldNode,
-  onInactiveFieldNode,
 } from '../../engine';
 import type { InactiveValueResolver } from '../../engine';
 import type { FieldNodeListener } from '../../engine';

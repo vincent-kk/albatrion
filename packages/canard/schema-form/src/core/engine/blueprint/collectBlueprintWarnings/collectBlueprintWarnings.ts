@@ -57,7 +57,11 @@ export const collectBlueprintWarnings = (
     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);
     for (const declaration of node.declarations) {
       const schema = readSchemaObject(declaration.schema);
-      collectInactiveValueWarnings(schema.controls, declaration.schemaPath, emit);
+      collectInactiveValueWarnings(
+        schema.controls,
+        declaration.schemaPath,
+        emit,
+      );
       const warning = (
         code: FormWarningCode,
         details: Record<string, unknown> = {},

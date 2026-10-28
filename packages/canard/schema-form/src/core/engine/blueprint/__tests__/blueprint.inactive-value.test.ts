@@ -43,35 +43,44 @@ it('warns once for each same-layer literal clear and inactiveValue pair', () => 
       controls: {
         inactiveValue: null,
         unsetOnInactive: true,
-        fields: [{
-          targets: ['value'],
-          controls: { inactiveValue: 0, unsetOnInactive: true },
-        }],
+        fields: [
+          {
+            targets: ['value'],
+            controls: { inactiveValue: 0, unsetOnInactive: true },
+          },
+        ],
       },
       allOf: [{ controls: { inactiveValue: false, unsetOnInactive: true } }],
     },
     { collect },
   );
-  expect(collect.mock.calls.map(([record]) => [record.code, record.schemaPath]))
-    .toEqual([
-      [FormWarningCode.InactiveValueWithUnsetOnInactive, '#/controls'],
-      [FormWarningCode.InactiveValueWithUnsetOnInactive, '#/controls/fields/0/controls'],
-      [FormWarningCode.InactiveValueWithUnsetOnInactive, '#/allOf/0/controls'],
-    ]);
+  expect(
+    collect.mock.calls.map(([record]) => [record.code, record.schemaPath]),
+  ).toEqual([
+    [FormWarningCode.InactiveValueWithUnsetOnInactive, '#/controls'],
+    [
+      FormWarningCode.InactiveValueWithUnsetOnInactive,
+      '#/controls/fields/0/controls',
+    ],
+    [FormWarningCode.InactiveValueWithUnsetOnInactive, '#/allOf/0/controls'],
+  ]);
 });
 
 it('does not warn for an expression clear or a clear on another layer', () => {
   const collect = vi.fn();
-  blueprint({
-    type: 'object',
-    properties: {
-      value: { type: 'string', controls: { inactiveValue: 'held' } },
+  blueprint(
+    {
+      type: 'object',
+      properties: {
+        value: { type: 'string', controls: { inactiveValue: 'held' } },
+      },
+      controls: {
+        inactiveValue: null,
+        unsetOnInactive: 'true',
+        fields: [{ targets: ['value'], controls: { unsetOnInactive: true } }],
+      },
     },
-    controls: {
-      inactiveValue: null,
-      unsetOnInactive: 'true',
-      fields: [{ targets: ['value'], controls: { unsetOnInactive: true } }],
-    },
-  }, { collect });
+    { collect },
+  );
   expect(collect).not.toHaveBeenCalled();
 });

@@ -42,12 +42,18 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     const rekeyed =
       context.rekeyedArrayMoves &&
       isRekeyedDestination(node, context.rekeyedArrayMoves);
-    const resolveExit = applyPolicy && !rekeyed && !inLoadScope(node) &&
-      !context.entered.has(node) && !context.throwingGateExits?.has(node);
     visitFieldNodes(
       node,
       (departing) => {
-        if (resolveExit && (departing.blueprintNode.hasInactiveValue || departing.runtime.inactiveListeners?.has(departing)))
+        if (
+          (departing.blueprintNode.hasInactiveValue ||
+            departing.runtime.inactiveListeners?.has(departing)) &&
+          applyPolicy &&
+          !rekeyed &&
+          !inLoadScope(node) &&
+          !context.entered.has(node) &&
+          !context.throwingGateExits?.has(node)
+        )
           resolveInactiveValue(departing, node, context);
         if (!departing.runtime.detachedReads?.has(departing))
           captureDetachedFieldNodeReads(departing, {
@@ -101,7 +107,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           !context.entered.has(node) &&
           !context.throwingGateExits?.has(node),
       );
-  applyInactiveValues(context);
+  if (context.inactiveValueOverrides) applyInactiveValues(context);
   const affectedAncestors = new Set<Self>();
   finalizeRestoredSlotRaw(context);
   for (const node of context.exited)

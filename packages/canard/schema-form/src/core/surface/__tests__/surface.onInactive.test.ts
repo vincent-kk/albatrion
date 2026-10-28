@@ -1,10 +1,15 @@
 import { expect, it, vi } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { PathKeyedSet, blueprint } from '@/schema-form/core/engine';
+
+import { setContext } from '../runtime/setContext';
+import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 
 it('calls an instance listener once while still attached and restores its result', () => {
   const { root } = makeFieldNodeTree({
-    type: 'object', properties: {
+    type: 'object',
+    properties: {
       open: { type: 'boolean' },
       value: { type: 'string', controls: { active: '../open' } },
     },
@@ -29,7 +34,8 @@ it('calls an instance listener once while still attached and restores its result
 
 it('unsubscribes a listener and deduplicates the same registration', () => {
   const { root } = makeFieldNodeTree({
-    type: 'object', properties: {
+    type: 'object',
+    properties: {
       open: { type: 'boolean' },
       value: { type: 'string', controls: { active: '../open' } },
     },
@@ -49,9 +55,13 @@ it('unsubscribes a listener and deduplicates the same registration', () => {
 it('uses a non-undefined listener result instead of invoking the declaration', () => {
   const declared = vi.fn(() => 'declared');
   const { root } = makeFieldNodeTree({
-    type: 'object', properties: {
+    type: 'object',
+    properties: {
       open: { type: 'boolean' },
-      value: { type: 'string', controls: { active: '../open', inactiveValue: declared } },
+      value: {
+        type: 'string',
+        controls: { active: '../open', inactiveValue: declared },
+      },
     },
   });
   root.setValue({ open: true, value: 'before' });
@@ -64,9 +74,13 @@ it('uses a non-undefined listener result instead of invoking the declaration', (
 it('falls back to the declaration when all listeners return undefined', () => {
   const declared = vi.fn(() => 'declared');
   const { root } = makeFieldNodeTree({
-    type: 'object', properties: {
+    type: 'object',
+    properties: {
       open: { type: 'boolean' },
-      value: { type: 'string', controls: { active: '../open', inactiveValue: declared } },
+      value: {
+        type: 'string',
+        controls: { active: '../open', inactiveValue: declared },
+      },
     },
   });
   root.setValue({ open: true, value: 'before' });
@@ -77,7 +91,10 @@ it('falls back to the declaration when all listeners return undefined', () => {
 });
 
 it('does not call a listener for array removal or clear', () => {
-  const { root } = makeFieldNodeTree({ type: 'array', items: { type: 'string' } });
+  const { root } = makeFieldNodeTree({
+    type: 'array',
+    items: { type: 'string' },
+  });
   if (root.type !== 'array') throw new Error('Expected array');
   root.setValue(['first', 'second']);
   const listener = vi.fn();
@@ -90,9 +107,13 @@ it('does not call a listener for array removal or clear', () => {
 
 it('does not call a listener for a clear-policy gate exit', () => {
   const { root } = makeFieldNodeTree({
-    type: 'object', properties: {
+    type: 'object',
+    properties: {
       open: { type: 'boolean' },
-      value: { type: 'string', controls: { active: '../open', unsetOnInactive: true } },
+      value: {
+        type: 'string',
+        controls: { active: '../open', unsetOnInactive: true },
+      },
     },
   });
   root.setValue({ open: true, value: 'before' });
@@ -105,7 +126,8 @@ it('does not call a listener for a clear-policy gate exit', () => {
 
 it('calls every listener in registration order and keeps the last defined result', () => {
   const { root } = makeFieldNodeTree({
-    type: 'object', properties: {
+    type: 'object',
+    properties: {
       open: { type: 'boolean' },
       value: { type: 'string', controls: { active: '../open' } },
     },
@@ -113,9 +135,18 @@ it('calls every listener in registration order and keeps the last defined result
   root.setValue({ open: true, value: 'before' });
   const order: number[] = [];
   const value = root.find('/value')!;
-  value.onInactive(() => { order.push(1); return 'first'; });
-  value.onInactive(() => { order.push(2); return 'last'; });
-  value.onInactive(() => { order.push(3); return undefined; });
+  value.onInactive(() => {
+    order.push(1);
+    return 'first';
+  });
+  value.onInactive(() => {
+    order.push(2);
+    return 'last';
+  });
+  value.onInactive(() => {
+    order.push(3);
+    return undefined;
+  });
   root.find('/open')!.setValue(false);
   expect(order).toEqual([1, 2, 3]);
   expect(root.inactiveValues).toEqual([{ path: '/value', value: 'last' }]);
@@ -124,19 +155,53 @@ it('calls every listener in registration order and keeps the last defined result
 it('cancels the entire override after a listener throws and still calls the others', () => {
   const declared = vi.fn(() => 'declared');
   const { root } = makeFieldNodeTree({
-    type: 'object', properties: {
+    type: 'object',
+    properties: {
       open: { type: 'boolean' },
-      value: { type: 'string', controls: { active: '../open', inactiveValue: declared } },
+      value: {
+        type: 'string',
+        controls: { active: '../open', inactiveValue: declared },
+      },
     },
   });
   root.setValue({ open: true, value: 'before' });
   const afterThrow = vi.fn(() => 'last');
   const value = root.find('/value')!;
   value.onInactive(() => 'first');
-  value.onInactive(() => { throw new Error('failed listener'); });
+  value.onInactive(() => {
+    throw new Error('failed listener');
+  });
   value.onInactive(afterThrow);
   expect(() => root.find('/open')!.setValue(false)).toThrow();
   expect(afterThrow).toHaveBeenCalledTimes(1);
   expect(declared).not.toHaveBeenCalled();
   expect(root.inactiveValues).toEqual([{ path: '/value', value: 'before' }]);
+});
+
+it('passes the preceding form context when a context change closes the gate', () => {
+  const previous = { open: true, label: 'previous' };
+  const root = fieldNodeFactory(
+    blueprint({
+      type: 'object',
+      properties: {
+        value: { type: 'string', controls: { active: '@.open' } },
+      },
+    }),
+    {
+      context: previous,
+      diagnostics: { status: 'stable' },
+      misfitPaths: new PathKeyedSet(),
+    },
+  );
+  root.setValue({ value: 'before' });
+  const listener = vi.fn((value, context) => {
+    expect(value).toBe('before');
+    expect(context.context).toBe(previous);
+    expect(context.rootValue).toEqual({ value: 'before' });
+    return 'after';
+  });
+  root.find('/value')!.onInactive(listener);
+  setContext(root, { open: false, label: 'next' });
+  expect(listener).toHaveBeenCalledTimes(1);
+  expect(root.inactiveValues).toEqual([{ path: '/value', value: 'after' }]);
 });
