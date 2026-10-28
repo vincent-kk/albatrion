@@ -147,5 +147,45 @@
       }
     ],
     "assertion": "final list value after group exits before clearing list and an old descendant receives setValue(5)"
+  },
+  "candidate5": {
+    "baseline": "941398ea704ffbba5b46d180c5628445688d2703",
+    "productUnmodified": true,
+    "failingNames": [
+      "keeps original row references on their rows when an already inactive list compacts under a clearing ancestor"
+    ],
+    "failed": 1,
+    "skipped": 8,
+    "failures": [
+      {
+        "expected": [
+          {
+            "keep": 13,
+            "tags": [
+              {
+                "keep": 3
+              }
+            ]
+          }
+        ],
+        "received": [
+          {
+            "drop": 5,
+            "keep": 12,
+            "tags": [
+              {
+                "keep": 3
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "assertion": "final list value after an inherited-policy list exits privately before its clearing section; old discarded and survivor references receive 5 and 13",
+    "fixed": {
+      "passed": 1,
+      "skipped": 8
+    },
+    "node": "v24.20.0"
   }
 }

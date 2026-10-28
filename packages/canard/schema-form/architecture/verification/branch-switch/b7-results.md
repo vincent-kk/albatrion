@@ -1,6 +1,6 @@
 # B7 — 지움 배열의 keep 아이템 압축 복원
 
-**공식 A/B 창은 B6 병합 전 머리 `2406a34d9`와 기준 `0b9337cd9`로 1회 기록했습니다. B7 고정 관문은 통과입니다. 고정 장치 원판정은 채택 조건 미충족이며, 채택은 코디네이터가 결정합니다. B6 rebase 뒤 SHA와 그 뒤 관문은 아직 없습니다.**
+**공식 A/B 창은 B6 병합 전 머리 `2406a34d9`와 기준 `0b9337cd9`로 1회 기록했습니다. B7 고정 관문은 통과입니다. 고정 장치 원판정은 채택 조건 미충족이며, 채택은 코디네이터가 결정합니다. 이 문단의 창은 후보 1 기록이며, B6 rebase 뒤 검증은 아래 최종 후보(rebase) 절에 별도로 기록했습니다.**
 
 ## 계약과 구현
 
@@ -375,3 +375,101 @@ yarn workspace @canard/schema-form test --run --project render --project react18
 ### 알려진 한계와 인계
 
 생존 아이템에서 지워진 채 먼저 나간 자손의 칸이 재배치되지 않는 한계와 생존 아이템 0개인 배열의 잠재 쓰기 범위는 후보 3의 기록을 따릅니다. 추가 조상 검사는 분리 참조의 읽기·쓰기에서만 수행하며 깊이에 비례하는 WeakMap 조회를 더합니다. 경로·순서는 가장 가까운 포착 조상의 칸을 기준으로 유지하고 상주 색인이나 보유 객체를 추가하지 않습니다. 이 후보에서는 성능을 측정하지 않습니다.
+
+## 후보 5
+
+B6 병합 뒤 rebase한 `941398ea704ffbba5b46d180c5628445688d2703`에 후보 4 delta 재검토의 두 지적을 반영합니다. 후보 1–4의 기록은 유지합니다. 앞선 rebase 머리의 전체 관문은 참고 증거로만 보존하며, 최종 관문은 이 수정이 들어간 제품에 대해 아래 최종 후보(rebase) 절에 기록합니다.
+
+### 델타 재검토 결함의 처리
+
+| 결함 | 처리 | 파일과 시험 |
+| --- | --- | --- |
+| 1 (P2) 사적 나감 복제본의 원래 행에 칸이 없어 나중 압축이 옛 참조를 옮기거나 버리지 못함 | 사적 나감 계획이 전달된 복제에서는 모든 원래 발생을 복제본의 쓰기 칸에 연결합니다. 재진입 복제와 종류 이전은 계획을 전달하지 않으므로 그 비용과 동작은 유지합니다. | `settle/utils/slots/cloneSlotSubtree.ts`; `surface.clearing-array-keep.test.ts`의 `keeps original row references on their rows when an already inactive list compacts under a clearing ancestor` |
+| 2 (P3) 보유 그래프에서 떨어진 칸에도 소멸 보장을 약속한 문서 | 코디네이터 결정대로 코드 범위를 늘리지 않고 DETAIL의 보장 범위와 아래 알려진 한계를 명시합니다. | `settle/DETAIL.md`의 쓰기 칸·압축 계약 |
+
+### 실패 먼저 확인
+
+제품 `941398ea7`을 수정하지 않은 상태에서 지정 시험이 마지막 `toEqual`로 실패했습니다(1실패·8건 필터 제외). 목록은 먼저 Form 기본값을 상속해 비활성화되지만 그 안의 `tags` 압축 때문에 사적으로 복제됩니다. 이후 지우는 `section`이 닫힐 때 버려진 행의 `drop` 옛 참조에 5, 생존 행의 `keep` 옛 참조에 13을 쓰면 기대값 `[{ keep: 13, tags: [{ keep: 3 }] }]` 대신 `[{ drop: 5, keep: 12, tags: [{ keep: 3 }] }]`였습니다. 스키마·import·탐색 오류가 아닙니다.
+
+조건 한 줄과 영어 TSDoc만 수정한 뒤 같은 시험이 통과했습니다(1통과·8건 필터 제외). DETAIL과 시험은 `87473ec6b`, 제품 수정은 `dd1462e50`으로 분리했습니다. [실패 먼저 기록](raw/b7/fail-first.json)의 `candidate5`에 기준 SHA·이름·기대값·받은 값을 담았습니다.
+
+### 관문
+
+지정된 슬롯·배열·분리 참조·겉면 압축·청사진 표적은 78파일·516사례가 통과했습니다. 실패 먼저와 수정 후 표적은 Node v24.20.0 기본 힙이며 힙 부족이나 재시도는 없었습니다. typecheck·lint 및 수정 후 전체 관문은 아래 최종 후보(rebase) 절에서 별도로 집계합니다. B6에서 삭제된 시험 경로 때문에 후보 4의 파일·사례 수와 같다고 가정하지 않습니다.
+
+### 알려진 한계와 인계
+
+지워진 채 먼저 나간 후보나 재진입 전에 잡은 옛 참조처럼 보유 그래프에서 떨어진 칸은, 버려진 색인에서도 소멸 표시를 받지 못하며 압축 뒤 그 색인을 차지한 생존 행에 쓸 수 있습니다. 배열 이동에도 같은 한계가 있습니다. 생존 아이템 0개인 배열에는 압축 계획과 소멸 표시가 없으므로 기존 잠재 쓰기 범위도 유지합니다.
+
+사적 나감 복제는 복제 노드마다 원래 노드의 WeakMap 항목 하나를 더하며, 칸 객체 수는 같습니다. 새 영구 색인은 만들지 않고, 배열 이동·재진입 복제·종류 이전에는 이번 연결을 추가하지 않습니다. 후보 5에서 정식 측정 창을 실행하지 않았으며 최종 A/B 입력 준비 뒤 측정 실행기에게 인계합니다.
+
+## 최종 후보(rebase)
+
+### 기준과 충돌 해결
+
+- 비교 기준 A: B6 병합 stage `687c1d92402f1fd689c17afc6e0842861345d8c6`.
+- rebase 직후 머리: `941398ea704ffbba5b46d180c5628445688d2703`.
+- 후보 5 수정 후 최종 검증 제품 B: `dd1462e501056da76c329a1c722b856cfb7a551c`.
+- 기존 B7 15개 커밋을 순서대로 rebase했으며 squash하지 않았습니다. 후보 1–4의 수치·결함·알려진 한계 기록은 유지하고 승인된 후보 5의 시험·계약 커밋과 제품 수정 커밋을 추가했습니다. 후보 5 지시 수신 전에 완료된 `941398ea7` 전체 관문은 참고 증거로만 분리했고 아래 수치는 수정 후 제품에서 새로 한 번씩 실행한 결과입니다. 이 절의 전체 관문을 후보 1의 이전 측정 창과 합치지 않습니다.
+- 충돌 파일은 `settle/DETAIL.md`, `settle/arrangeFieldNodeItems/DETAIL.md`, `settle/types/settlement.ts`, `blueprint/types/node.ts`, `settle/utils/slots/readSourceTree.ts`입니다(앞 경로는 `src/core/engine/` 기준). B6의 경로 경계와 슬롯 단일 원본 계약을 유지하고 B7의 압축·keep 선언·소멸 원본 읽기를 결합했습니다. 삭제된 `literalStarPrefixes`, `literalStarDescendantKeys`, `containsLiteralStar`는 되살리지 않았습니다.
+- `DetachedWriteAddress.ts`의 압축 생존자 이동과 부모 사슬 소멸 검사는 유지합니다. `cloneSlotSubtree.ts`는 승인된 후보 5의 조건 한 줄과 영어 TSDoc을 고쳐 사적 나감 복제의 모든 원본을 복제본 칸에 연결합니다. `writeSlotPath.ts`는 B6의 `getSlotPathNames`를 사용하고 잘못된 슬롯 주소를 거절합니다. 충돌 해결과 명시적으로 승인된 후보 5 범위 외 제품·시험 변경은 없습니다.
+
+### 표적 확인과 전체 관문
+
+후보 5의 실패 먼저·수정 후 같은 시험과 78파일·516사례 표적을 먼저 확인했습니다. 최종 전체 unit에서 `clearing-array-keep` 겉면 9사례, 경로 격리 검사 5사례, `settle.pointer-path-work`의 siblings-0·oneOf-80 첫 실제 쓰기부터 full-parser 호출 0을 확인하는 2사례가 전부 초록입니다.
+
+최종 제품에서 전체 시험은 프로젝트별로 한 번씩 순차 실행했습니다. 시험·typecheck·lint·build는 Node v24.20.0 기본 힙이며 힙 부족·힙 재시도·브라우저 연결 종료가 없었고 Storybook은 샤드 없이 한 번에 완료했습니다. build의 번들·선언 생성 뒤 마지막 typecheck 프로세스 종료 확인 직전에 unit을 시작한 짧은 겹침은 있었고, 해당 build의 exit 0을 이후 확인했습니다. 다른 시험 프로젝트는 겹치지 않았습니다. 설치는 하지 않았으며 배달과 측정 입력 준비는 Node v26.11.1, Bun 1.4.4 환경을 사용합니다.
+
+| 관문 | 파일 | 통과 | todo | 실패 | 결과 |
+| --- | ---: | ---: | ---: | ---: | --- |
+| unit | 579 | 3853 | 1 | 0 | 통과 |
+| render | 131 | 766 | 0 | 0 | 통과 |
+| react18 | 131 | 766 | 0 | 0 | 통과 |
+| production 프로젝트(`NODE_ENV=test`) | 9 | 20 | 0 | 0 | 통과 |
+| storybook | 100 | 251 | 0 | 0 | 통과 |
+| 다섯 프로젝트 합계 | 950 | 5656 | 1 | 0 | 통과 |
+| verify-unit + verify-render | 715 | 4663 | 1 | 0 | 통과 |
+
+`typecheck`, `lint`, 지정 `build`와 그 안의 development-flag·gate-selection 산출물 검사가 통과했습니다. 표의 production은 요청된 `test --run --project production` 호출입니다. 이 명령은 `NODE_ENV=test`로 실행되므로 B6 후보 3 인계에 기록된 `NODE_ENV=production`의 freeze 상한 실패를 해소했다는 증거로 쓰지 않습니다. 별도 `test:production`은 실행하지 않았습니다.
+
+재현 명령은 저장소 루트 기준입니다. 각 프로젝트 종료를 확인한 뒤 다음 프로젝트를 실행했습니다.
+
+```sh
+yarn workspace @canard/schema-form typecheck
+yarn workspace @canard/schema-form lint
+yarn workspace @canard/schema-form build
+yarn workspace @canard/schema-form test --run --project unit
+yarn workspace @canard/schema-form test --run --project render
+yarn workspace @canard/schema-form test --run --project react18
+yarn workspace @canard/schema-form test --run --project production
+yarn workspace @canard/schema-form test --run --project storybook
+yarn workspace @canard/schema-form test:verify --run
+```
+
+[관문 요약과 원본 JSON 해시](raw/b7/final/gates.json).
+
+### 전후 배달과 공개 겉면
+
+A는 stage SHA의 별도 archive에서 지정 build를 실행했습니다. A/B 공개 `dist/index.d.ts`는 3,054바이트 동일하며 SHA-256은 `740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6`입니다.
+
+- B4-2 고정 장치: 72장면·430관측점, 차이 0건.
+- 차이가 난 장면 이름: 없음 (`[]`).
+- 마운트 장치: 6장면·12관측점, 차이 0건. 차이 장면 이름도 없음 (`[]`).
+- 코퍼스에는 지움 배열 아래 keep 장면이 없습니다. 따라서 차이 0은 기존 배달 보존의 증거이며 B7 압축 계약은 위 표적·겉면·화면 시험으로 확인합니다.
+- 후보 5 이전 배달 장치 첫 호출은 외부 scratch의 의존성 링크가 없어 모듈 적재 중 중단됐고 관측하지 못했습니다. 링크를 추가한 뒤 같은 A/B 입력으로 완료했으며 도구 로직·코퍼스는 바꾸지 않았습니다. 불완전 호출과 후보 5 이전 배달은 위 최종 성공 관측 수에 합치지 않았습니다. 후보 5 배달은 수정 후 B로 새로 실행했습니다.
+
+[배달 요약](raw/b7/final/delivery-summary.json), [차이 목록](raw/b7/final/delivery-differences.json), [마운트 요약](raw/b7/final/delivery-mount-summary.json), [마운트 차이](raw/b7/final/delivery-mount-differences.json), [공개 겉면](raw/b7/final/public-surface.json).
+
+### 최종 창 — 인계 후 작성
+
+최종 rebase 후보의 CPU 사전 검사·정식 A/B 창·formal-start는 실행하지 않았습니다. 위 후보 1의 창이나 다른 B6 창을 이 후보의 측정으로 재사용하지 않습니다. 다음 담당자가 고정 입력과 무시간 적재 확인이 담긴 최종 인계를 받아 독점 창 승인 뒤 한 번만 실행합니다.
+
+| 항목 | 값 |
+| --- | --- |
+| 최종 A/B 측정 SHA·입력 해시 | 인계 후 작성 |
+| 5초 프로세스별 CPU 사전 검사·정식 창 UTC 시작/종료 | 미실행, 인계 후 작성 |
+| legacy 품질비·22행 표·TEST-073 주판정 | 미측정, 인계 후 작성 |
+| oneOf-80·siblings-0 장부 A/B/자체 폭/상한 | 미측정, 인계 후 작성 |
+| Node/Bun 힙 7표본·retention·단계 진단·채택 원판정 | 미측정, 인계 후 작성 |
+
+다음 담당자는 이 절에 실제 수치와 판정을 기록하고 새 창의 원본 요약을 `raw/b7/final/`에 추가합니다. 후보 1–5의 기록은 수정하지 않습니다. 생존 아이템에서 이미 지워진 자손의 쓰기 칸 재배치 한계와 생존 아이템 0개인 배열의 잠재 쓰기 범위는 후보 3–5의 알려진 한계를 유지합니다. 독립 검토·PR 생성·통합은 코디네이터 소유입니다.
