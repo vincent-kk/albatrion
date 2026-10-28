@@ -10,6 +10,7 @@ BlueprintGate,
 BlueprintSchemaType,
 EffectiveSchema
 } from '../../blueprint';
+import type { InactiveValueResolver } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
 import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind,WriteOption } from '../../types/value';
