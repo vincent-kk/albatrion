@@ -61,7 +61,7 @@ describe('array path movement', () => {
     expect(shifted.structure!.hidden.local).toBe('secret');
   });
 
-  it('NODE-044 lets a popped reference write latent but ignores a removed occupied path', () => {
+  it('NODE-044 ignores writes through popped and removed references', () => {
     const { root } = createTestTree({
       type: 'array',
       items: { type: 'string' },
@@ -70,7 +70,7 @@ describe('array path movement', () => {
     const popped = root.children![1];
     expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBe('b');
     writeFieldNode(popped, 'latent', 'callerReplace', WriteOption.Overwrite);
-    expect(readRetainedSlotRaw(root, '/1', 'string')).toBe('latent');
+    expect(readRetainedSlotRaw(root, '/1', 'string')).toBeUndefined();
     const removed = root.children![0];
     arrangeFieldNodeItems(root, { kind: 'push', value: 'c' });
     expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe('a');
@@ -81,7 +81,7 @@ describe('array path movement', () => {
     expect(hasRetainedSlotOwnSource(root, '/0', 'string')).toBe(false);
   });
 
-  it('NODE-044 applies a detached array verb through its latent whole-write path', () => {
+  it('NODE-044 ignores a detached array verb', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -107,19 +107,19 @@ describe('array path movement', () => {
       WriteOption.Overwrite,
     );
     expect(former.detached).toBe(true);
-    expect(arrangeFieldNodeItems(former, { kind: 'push', value: 'b' })).toBe(2);
-    expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual(['a', 'b']);
+    expect(arrangeFieldNodeItems(former, { kind: 'push', value: 'b' })).toBe(1);
+    expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual(['a']);
     writeFieldNode(
       root.structure!.show,
       true,
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.structure!.list.local).toEqual(['a', 'b']);
+    expect(root.structure!.list.local).toEqual(['a']);
     const commit = root.runtime.commitNumber;
     arrangeFieldNodeItems(former, { kind: 'push', value: 'ignored' });
     expect(root.runtime.commitNumber).toBe(commit);
-    expect(root.structure!.list.local).toEqual(['a', 'b']);
+    expect(root.structure!.list.local).toEqual(['a']);
   });
 
   it('58C-01 GOAL-073 retains the single budget error and does not reuse a spent key', () => {

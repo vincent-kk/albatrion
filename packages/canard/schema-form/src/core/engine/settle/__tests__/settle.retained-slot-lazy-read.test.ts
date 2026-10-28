@@ -22,7 +22,7 @@ it('commits a slot exit without rebuilding inactive lists or capturing their rea
   ]);
 });
 
-it('publishes detached overlays only at the next live commit', () => {
+it('never publishes a detached-reference overlay', () => {
   const { root, runtime } = createDispatchTree({
     type: 'object',
     properties: {
@@ -41,9 +41,9 @@ it('publishes detached overlays only at the next live commit', () => {
   expect(reads.readFieldNodeInactiveValues(root)).toBe(published);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   expect(reads.readFieldNodeInactiveValues(root)).toEqual([
-    { path: '/value', value: 'overlay' },
+    { path: '/value', value: 'held' },
   ]);
-  expect(reads.readFieldNodeInactiveValues(root)).not.toBe(published);
+  expect(reads.readFieldNodeInactiveValues(root)).toBe(published);
   expect(published).toEqual([{ path: '/value', value: 'held' }]);
 });
 

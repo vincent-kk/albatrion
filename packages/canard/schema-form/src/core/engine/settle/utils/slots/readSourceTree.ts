@@ -6,43 +6,24 @@ import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { getItemEntries } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
 import { isPlain } from '../input/isPlain';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
 import { readInactiveSlotSource } from './readInactiveSlotSource';
 import { readSlotRawTree } from './readSlotRawTree';
-import { resolveSlotSource } from './resolveSlotSource';
 
 /**
  * Compose one live item's raw tree with sources retained at gated-out paths.
  * @param node - Live or detached occurrence whose source channels are read
  * @param context - Settlement containing retained sources beneath the item
  * @returns Raw tree, retaining every array slot; undefined for an empty-source
- * object or leaf; discarded occurrences use their frozen source channels
+ * object or leaf; detached occurrences use their frozen source channels
  */
 export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown => {
-  if (node.detached) {
-    const address = DetachedWriteAddress.read(node);
-    if (address?.discarded)
-      return readSlotRawTree(node.blueprintNode, node, undefined);
-    const lineage = [];
-    for (let current: Self | null = node; current; current = current.parent)
-      lineage.unshift(current.blueprintNode);
-    const resolved = resolveSlotSource(
-      context.root,
-      address?.path ?? node.path,
-      node.blueprintNode,
-      lineage,
-    );
-    return readSlotRawTree(
-      node.blueprintNode,
-      resolved.source ?? node,
-      resolved.overlay,
-    );
-  }
+  if (node.detached)
+    return readSlotRawTree(node.blueprintNode, node, undefined);
   if (node.raw !== undefined || node.behavior.strategy === 'terminal')
     return node.raw;
   if (node.behavior.type === 'array') {

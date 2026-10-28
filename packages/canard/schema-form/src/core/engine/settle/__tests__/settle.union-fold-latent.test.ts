@@ -96,7 +96,7 @@ describe('union fold pending exits and retained raw', () => {
     },
   );
 
-  it('permits a detached fold to write latent raw beside a different live union fold', () => {
+  it('ignores a detached fold write beside a different live union fold', () => {
     const { root } = createUnionFoldTree();
     loadFieldNodeAtMount(
       root,
@@ -113,13 +113,13 @@ describe('union fold pending exits and retained raw', () => {
     expect(detached.detached).toBe(true);
     writeFieldNode(detached, 31, 'callerReplace', WriteOption.Overwrite);
     expect(root.structure?.shared?.raw).toBeUndefined();
-    expect(readRetainedSlotRaw(root, '/shared', 'union:3')).toBe(31);
+    expect(readRetainedSlotRaw(root, '/shared', 'union:3')).toBe(17);
     writeFieldNode(
       root,
       { left: true, right: false },
       'callerPartial',
       WriteOption.Merge,
     );
-    expect(root.structure?.shared?.raw).toBe(31);
+    expect(root.structure?.shared?.raw).toBe(17);
   });
 });

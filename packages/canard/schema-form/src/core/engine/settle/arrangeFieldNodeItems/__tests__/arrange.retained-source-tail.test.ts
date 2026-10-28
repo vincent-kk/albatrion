@@ -48,6 +48,6 @@ it('retains every candidate through an undeclared tail and old writes', () => {
   dispatchRemove(list, 0);
   expect(getDispatchNode(list, '1', 'v').local).toBe('kept');
   dispatchSetValue(getDispatchNode(root, 'number'), true);
-  expect(getDispatchNode(list, '1', 'v').local).toBe(81);
+  expect(getDispatchNode(list, '1', 'v').local).toBe(37);
   expect(oldNumber.local).toBe(37);
 });

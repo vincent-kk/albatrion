@@ -1,10 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
 import { dispatchMount, dispatchRemove, dispatchSetValue } from '../../write';
-import { DetachedWriteAddress } from '../utils/detached/DetachedWriteAddress';
 import { getSlotPathNames } from '../utils/slots/getSlotPathNames';
 import { resolveSlotSource } from '../utils/slots/resolveSlotSource';
 import { writeSlotPath } from '../utils/slots/writeSlotPath';
@@ -119,14 +117,10 @@ describe('slot syntax caches without source caching', () => {
     const rows = getDispatchNode(root, 'rows');
     const old = getDispatchNode(rows, '1', 'value');
     dispatchSetValue(getDispatchNode(rows, '1', 'kind'), 'number');
-    const address = DetachedWriteAddress.read(old);
-    expect(address?.path).toBe('/rows/1/value');
-    getSlotPathNames(root.runtime, address!.path);
+    getSlotPathNames(root.runtime, '/rows/0/value');
     dispatchRemove(rows, 0);
-    expect(DetachedWriteAddress.read(old)).toBe(address);
-    expect(address?.path).toBe('/rows/0/value');
     expect(old.path).toBe('/rows/1/value');
-    const currentPath = address!.path;
+    const currentPath = '/rows/0/value';
     expect(resolveSlotSource(root, currentPath, old.blueprintNode).source).toBe(
       old,
     );

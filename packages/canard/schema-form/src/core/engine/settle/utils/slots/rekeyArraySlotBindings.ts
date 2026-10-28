@@ -8,7 +8,6 @@ import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { markSlotChange } from './markSlotChange';
-import { rekeySlotWriteAddresses } from './rekeySlotWriteAddresses';
 
 /**
  * Move retained item bindings, including foreign declarations, in two phases without path collisions.
@@ -59,5 +58,10 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
     if (source) (host.inactiveSlots ??= new Map()).set(entry, source);
     if (overlay) (host.inactiveSlotOverlays ??= new Map()).set(entry, overlay);
   }
-  rekeySlotWriteAddresses(host);
+  if (
+    host.inactiveSlots?.size ||
+    host.inactiveSlotOverlays?.size ||
+    host.inactiveSlotChildren?.size
+  )
+    (host.runtime.slotDirtyHosts ??= new Set()).add(host);
 };

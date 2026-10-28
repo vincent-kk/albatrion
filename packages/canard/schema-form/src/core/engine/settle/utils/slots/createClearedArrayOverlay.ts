@@ -4,8 +4,8 @@ import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getSlotEntries } from './getSlotEntries';
 import { getSlotSource } from './getSlotSource';
-import { readSlotRawTree } from './readSlotRawTree';
 import { materializeKeptSlotOverlay } from './materializeKeptSlotOverlay';
+import { readSlotRawTree } from './readSlotRawTree';
 
 /** Recursive exit resolver supplied by the owner to keep dependencies acyclic. */
 type ResolveExit<Self extends FieldNodeRecord<Self>> = (
@@ -39,7 +39,6 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
   const raw: unknown[] = [];
   const children = new Map<BlueprintChildEntry, InactiveSlotOverlay>();
   const sources = new Map<BlueprintChildEntry, Self>();
-  const discarded: Self[] = [];
   const entries = getSlotEntries(node, previous);
   let position = 0;
   while (position < entries.length) {
@@ -58,10 +57,7 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
         node.structure?.[entry.name] === child.source ? context : undefined,
         sourceContext,
       );
-      if (!result.hasSource) {
-        discarded.push(child.source);
-        continue;
-      }
+      if (!result.hasSource) continue;
       const candidates = getItemEntries(node.blueprintNode, raw.length);
       const target = candidates.find(
         (candidate) => candidate.node === entry.node,
@@ -82,7 +78,6 @@ export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
       itemCount: raw.length,
       sources,
       overlays: children,
-      discarded,
     });
   return {
     replace: true,

@@ -211,7 +211,7 @@ const buildClearingList = () => {
   return root;
 };
 
-it('writes a survivor old reference to the same survivor after compaction', () => {
+it('ignores survivor old-reference writes after compaction', () => {
   const root = buildClearingList();
   const oldKeep = root.find('/list/1/keep')!;
   const lastKeep = root.find('/list/3/keep')!;
@@ -219,7 +219,7 @@ it('writes a survivor old reference to the same survivor after compaction', () =
   oldKeep.setValue(13);
   lastKeep.setValue(25);
   root.find('/open')!.setValue(true);
-  expect(root.find('/list')!.value).toEqual([{ keep: 13 }, { keep: 25 }]);
+  expect(root.find('/list')!.value).toEqual([{ keep: 12 }, { keep: 24 }]);
 });
 
 it('drops a write addressed at a discarded item after compaction', () => {
@@ -314,7 +314,7 @@ it('drops a write through a descendant of an already inactive object inside a di
   ]);
 });
 
-it('keeps original row references on their rows when an already inactive list compacts under a clearing ancestor', () => {
+it('ignores original row-reference writes when an inactive list compacts', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
@@ -369,7 +369,7 @@ it('keeps original row references on their rows when an already inactive list co
   root.find('/show')!.setValue(true);
   root.find('/open')!.setValue(true);
   expect(root.find('/section/list')!.value).toEqual([
-    { keep: 13, tags: [{ keep: 3 }] },
+    { keep: 12, tags: [{ keep: 3 }] },
   ]);
 });
 

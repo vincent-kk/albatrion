@@ -8,7 +8,7 @@
 
 - 일반 비활성 원본은 호스트의 보유 슬롯·overlay만 소유하며 트리 단위 잠복 저장소·메타데이터·비활성 목록 메모는 두지 않는다. 슬롯이 생길 수 없는 호스트는 준비 때 결정하며 반복 쓰기에서 적격 검사·overlay 조회·기능 플래그 읽기를 하지 않는다.
 
-- Detached write-address cells belong to departed occurrences. A fresh active clone has no cell until an actual exit captures its current path and order; an inactive clone keeps the existing transfer and rebind rules. This avoids allocating transient address objects and order arrays for active re-entry without changing old references' write destinations.
+- 떼어진 참조에는 쓰기 목적지 상태가 없고, 재진입 복제는 과거 수명의 쓰기를 받지 않는다(B11).
 
 - 배열이 나가는 쓰기에서 처음 받은 아이템의 입력 patch는 지연된 packed-array 원본의 일부이며 독립 비활성 잎 항목이 아니다. 선택적 overlay 표식은 이 입력 patch와 나중의 독립 옛 참조 쓰기를 구별해 비활성 열거를 맞춘다. 표식은 실제 overlay에만 붙고 노드의 고정 필드나 공개 계약을 늘리지 않으며 복제·정책 patch에서도 같은 원본 의미를 유지한다.
 
@@ -19,7 +19,7 @@
 - `unsetOnInactive`가 참인 호스트도 명시 보존 자손이 있으면 슬롯으로 보유한다. 호스트 자신의 raw·extras와 보존 지시가 없는 자손 원본은 overlay의 지움 표식으로 제외하고, 명시 `unsetOnInactive: false` 자손의 원본을 유지한다. 보존할 자손이 하나도 없으면 슬롯을 만들지 않는다. 지움 표식은 원래 떼어진 인스턴스를 변경하지 않으며 재진입 때 없음인 원본에 적용되는 기존 채움 규칙을 유지한다(WRITE-034, NODE-044, 설계 Ⅱ 정책 상속 정정).
 - 호스트당 보유 슬롯은 실제 방문한 엔트리 수 M 이하이고 재귀 보유 깊이는 실제 값 깊이 K까지이다. 보유 공간은 슬롯 아래의 실제 원본 서브트리와 overlay에 비례하며, 정적 청사진 전체나 방문하지 않은 재귀 가지를 실체화하지 않는다. load·reset·rebuild는 해당 범위의 슬롯·overlay를 버리고, 배열 위치 이동은 원본 보존·주소 이동 계약을 유지한다. 고정된 읽기 자료의 수명은 옛 참조의 수명에 묶는다(NODE-053·055·060).
 
-- D3b-1의 노드 키 메모는 root runtime의 지연 WeakMap 칸으로 소유한다. 선언 키·derive target ID·객체/배열 안정 형상·호스트 예산·배열 선언 count/result는 트리마다 독립이며 폼 전체 reset과 폐기에서 해제하고 부분 reset에서는 유지한다. 떼어진 쓰기 주소 셀은 재계산 메모가 아닌 상태이므로 같은 runtime을 재사용하는 폼 reset을 포함한 어떤 reset에서도 해제하지 않는다. 살아 있는 옛 참조가 runtime을 계속 소유하여 기존 약한 키 수명을 보존한다. nextTargetId 단조 카운터와 이미 runtime 키인 등록소는 유지한다. 노드 칸은 늘리지 않으며 비용은 실제 사용하는 트리당 최대 일곱 지연 WeakMap이다(SURFACE-065, NODE-044·045).
+- D3b-1의 노드 키 메모는 root runtime의 지연 WeakMap 칸으로 소유한다. 선언 키·derive target ID·객체/배열 안정 형상·호스트 예산·배열 선언 count/result는 트리마다 독립이며 폼 전체 reset과 폐기에서 해제하고 부분 reset에서는 유지한다. nextTargetId 단조 카운터와 이미 runtime 키인 등록소는 유지한다. 노드 칸은 늘리지 않으며 비용은 실제 사용하는 트리당 최대 여섯 지연 WeakMap이다(SURFACE-065, NODE-044·045).
 
 - D2-P1의 선택적 `writeEpoch` 숫자는 노드와 트리 runtime의 정착 작업 기록이며 공개 상태나 revision이 아니다. settle이 자격 경로에서만 할당·비교·소비하고 record는 실행하지 않는다. 논리 보유 비용은 자격 경로에 도달한 노드당 8바이트와 트리당 8바이트이며, 실제 객체 확장·정렬 비용은 엔진마다 다르다. class의 고정 필드 순서와 공개 surface에는 추가하지 않는다(TEST-080 D2-P1, NODE-045·060).
 

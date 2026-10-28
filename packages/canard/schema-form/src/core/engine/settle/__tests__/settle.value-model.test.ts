@@ -579,7 +579,7 @@ describe('per-node branch sources', () => {
     expect(sourceAt(root, '/secret', 'string')).toBe('new');
   });
 
-  it('26C-14 OPEN-1 replaces other-kind latents for an absent path write', () => {
+  it('26C-14 OPEN-1 ignores an absent old reference without replacing other-kind sources', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -628,9 +628,9 @@ describe('per-node branch sources', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(readRetainedSlotRaw(root, '/item', 'string')).toBe('late');
-    expect(hasRetainedSlotOwnSource(root, '/item', 'object')).toBe(false);
-    expect(hasRetainedSlotOwnSource(root, '/item/leaf', 'string')).toBe(false);
+    expect(readRetainedSlotRaw(root, '/item', 'string')).toBeUndefined();
+    expect(sourceAt(root, '/item/leaf', 'string')).toBe('new');
+    expect(detachedString.raw).toBe('old');
   });
 
   it('26C-14 OPEN-2 clears a wrong-kind latent host for emitting leaf input', () => {

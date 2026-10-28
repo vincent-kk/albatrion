@@ -42,7 +42,7 @@ it('moves packed inactive arrays without publishing their internal leaves', () =
   expect(list.local).toEqual([[], ['one', 'two'], ['three']]);
 });
 
-it('moves old descendant write addresses after an array has already re-entered', () => {
+it('ignores old descendant writes after an array has already re-entered', () => {
   const item: BlueprintSchema = {
     type: 'array',
     controls: { active: '../../show' },
@@ -65,9 +65,7 @@ it('moves old descendant write addresses after an array has already re-entered',
   dispatchInsert(list, 0, []);
   dispatchSetValue(old, 'after move');
   dispatchSetValue(getDispatchNode(root, 'show'), true);
-  expect(readFieldNodeInactiveValues(root)).toEqual([
-    { path: '/list/0/0', value: 'after move' },
-  ]);
+  expect(readFieldNodeInactiveValues(root)).toEqual([]);
   expect(getDispatchNode(list, '1', '0').local).toBe('first');
   expect(old.local).toBe('first');
 });

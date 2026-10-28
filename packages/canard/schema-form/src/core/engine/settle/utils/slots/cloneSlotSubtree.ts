@@ -4,9 +4,7 @@ import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import type { CompactedSlotSources } from '../../types/slots';
-import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
-import { getSlotOrder } from './getSlotOrder';
 import { hasAdditionalInactiveSources } from './hasAdditionalInactiveSources';
 import { markRestoredSlotRaw } from './markRestoredSlotRaw';
 
@@ -17,7 +15,7 @@ import { markRestoredSlotRaw } from './markRestoredSlotRaw';
  * @param source - Immutable source occurrence whose raw channels are retained
  * @param context - Entry sets and fixed-baseline recalculation work
  * @param entering - Whether this subtree is entering rather than remaining a candidate
- * @param compactions - Exit-only rebinding plans; ordinary entry clones and kind transfers omit them. Every source occurrence of an exit clone shares its clone's detached write address, so a later compaction of the clone also moves or drops the original references
+ * @param compactions - Exit-only rebinding plans; ordinary entry clones and kind transfers omit them
  * @returns A new subtree whose inactive candidates also have newly bound parents
  */
 export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
@@ -29,15 +27,6 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
   compactions?: ReadonlyMap<Self, CompactedSlotSources<Self>>,
 ): Self => {
   const node = host.runtime.nodeFactory(entry, host, host.runtime, source);
-  if (!entering) {
-    const address = {
-      path: node.path,
-      order: getSlotOrder(host, entry.name, entry.node),
-    };
-    DetachedWriteAddress.transfer(source, address, node.runtime);
-    if (compactions) DetachedWriteAddress.retain(source, address, node.runtime);
-    DetachedWriteAddress.retain(node, address, node.runtime);
-  }
   node.raw = source.raw;
   node.undeclaredValues = source.undeclaredValues;
   node.itemCount = source.itemCount;
@@ -67,8 +56,6 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     node.children = [];
     node.inactiveSlots = new Map();
     node.inactiveSlotOverlays = new Map(compaction.overlays);
-    for (const discarded of compaction.discarded)
-      DetachedWriteAddress.discard(discarded);
     for (const [binding, retained] of compaction.sources)
       node.inactiveSlots.set(
         binding,

@@ -41,12 +41,12 @@ const DETACHED_VERBS: readonly [
   unknown,
   readonly string[],
 ][] = [
-  ['push', (node) => node.push('z'), 3, ['a', 'b', 'z']],
-  ['pop', (node) => node.pop(), 'b', ['a']],
-  ['remove', (node) => node.remove(0), 'a', ['b']],
-  ['insert', (node) => node.insert(1, 'z'), 3, ['a', 'z', 'b']],
-  ['update', (node) => node.update(0, 'q'), 'q', ['q', 'b']],
-  ['clear', (node) => node.clear(), undefined, []],
+  ['push', (node) => node.push('z'), 2, ['a', 'b']],
+  ['pop', (node) => node.pop(), undefined, ['a', 'b']],
+  ['remove', (node) => node.remove(0), undefined, ['a', 'b']],
+  ['insert', (node) => node.insert(1, 'z'), 2, ['a', 'b']],
+  ['update', (node) => node.update(0, 'q'), undefined, ['a', 'b']],
+  ['clear', (node) => node.clear(), undefined, ['a', 'b']],
 ];
 
 // filid:contract surface-detached
@@ -96,7 +96,7 @@ describe('detached FieldNode references', () => {
       },
     });
 
-  it('detaches every descendant and writes latent raw without settling', () => {
+  it('detaches every descendant and ignores its writes without settling', () => {
     const { root, runtime } = groupedTree();
     root.setValue({ flag: true, group: { leaf: 'before' } });
     const group = root.find('/group');
@@ -110,11 +110,11 @@ describe('detached FieldNode references', () => {
     leaf.setValue('x');
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     root.find('/flag')?.setValue(true);
-    expect(root.find('/group/leaf')?.value).toBe('x');
+    expect(root.find('/group/leaf')?.value).toBe('before');
     expect(root.find('/group/leaf')).not.toBe(leaf);
   });
 
-  it('replaces a detached group without retaining its older child latent raw', () => {
+  it('ignores a detached group replacement and retains its older child source', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -139,11 +139,15 @@ describe('detached FieldNode references', () => {
     root.find('/flag')?.setValue(false);
     group.setValue({ enabled: true, leaf: 'z' });
     root.find('/flag')?.setValue(true);
-    expect(root.find('/group')?.value).toEqual({ enabled: true, leaf: 'z' });
-    expect(root.find('/group/leaf')?.value).toBe('z');
+    expect(root.find('/group')?.value).toEqual({ enabled: false });
+    expect(root.find('/group/leaf')).toBeNull();
+    expect(root.inactiveValues).toContainEqual({
+      path: '/group/leaf',
+      value: 'old latent',
+    });
   });
 
-  it('re-enters a detached whole-replaced object with its new leaf value', () => {
+  it('ignores whole replacement through a detached object', () => {
     const { root } = groupedTree();
     root.setValue({ flag: true, group: { leaf: 'before' } });
     const group = root.find('/group');
@@ -153,10 +157,10 @@ describe('detached FieldNode references', () => {
     leaf.setValue('older latent');
     group.setValue({ leaf: 'z' });
     root.find('/flag')?.setValue(true);
-    expect(root.find('/group')?.value).toEqual({ leaf: 'z' });
+    expect(root.find('/group')?.value).toEqual({ leaf: 'before' });
   });
 
-  it('merges object keys into detached latent raw and replaces touched child sources', () => {
+  it('ignores Merge through a detached object and preserves every source', () => {
     const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -184,13 +188,12 @@ describe('detached FieldNode references', () => {
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     root.find('/flag')?.setValue(true);
     expect(root.find('/group')?.value).toEqual({
-      leaf: 'merged',
-      other: 'retained other',
-      extra: 'E',
+      leaf: 'before',
+      other: 'before',
     });
   });
 
-  it('replaces detached latent raw for Merge with a non-object input', () => {
+  it('ignores non-object Merge through a detached reference', () => {
     const { root } = groupedTree();
     root.setValue({ flag: true, group: { leaf: 'before' } });
     const group = root.find('/group');
@@ -200,8 +203,8 @@ describe('detached FieldNode references', () => {
     leaf.setValue('older latent');
     group.setValue('replaced', SetValueOption.Merge);
     root.find('/flag')?.setValue(true);
-    expect(root.find('/group')?.raw).toBe('replaced');
-    expect(root.find('/group/leaf')?.raw).toBeUndefined();
+    expect(root.find('/group')?.raw).toBeUndefined();
+    expect(root.find('/group/leaf')?.raw).toBe('before');
   });
 
   it('reads live diagnostics through a detached reference', () => {
@@ -326,10 +329,10 @@ describe('detached FieldNode references', () => {
     current.setValue('from second reference');
     old.setValue('y');
     root.find('/flag')?.setValue(true);
-    expect(root.find('/target')?.raw).toBe('y');
+    expect(root.find('/target')?.raw).toBe('initial');
   });
 
-  it('26C-12 NODE-044 sends a detached write inside a batch to the latent source, never to the live node at its path', () => {
+  it('26C-12 NODE-044 ignores a detached write inside a batch across every lifetime', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -353,11 +356,11 @@ describe('detached FieldNode references', () => {
       old.setValue('y');
     });
     root.find('/flag')?.setValue(true);
-    expect(root.find('/target')?.raw).toBe('y');
+    expect(root.find('/target')?.raw).toBe('initial');
   });
 
   for (const [verb, call, result, latent] of DETACHED_VERBS)
-    it(`26C-12 NODE-044 sends a detached ${verb} inside a batch to the latent source, never to the live array at its path`, () => {
+    it(`26C-12 NODE-044 ignores a detached ${verb} inside a batch across every lifetime`, () => {
       const { root, old, current } = detachedList();
       let events = 0;
       root.subscribe((event) => {

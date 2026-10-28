@@ -2,7 +2,6 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { dispatchMount, dispatchSetValue } from '../../write';
-import { DetachedWriteAddress } from '../utils/detached/DetachedWriteAddress';
 import * as slotWriter from '../utils/slots/writeSlotPath';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 
@@ -47,13 +46,11 @@ it.each([false, true])(
     dispatchSetValue(getDispatchNode(root, 'open'), false);
     const writer = vi.spyOn(slotWriter, 'writeSlotPath');
     dispatchSetValue(kept, 3);
-    expect(writer).toHaveBeenCalledTimes(1);
+    expect(writer).not.toHaveBeenCalled();
     writer.mockClear();
     dispatchSetValue(child, 99);
     dispatchSetValue(item, { drop: 100 });
     expect(writer).not.toHaveBeenCalled();
-    expect(DetachedWriteAddress.read(item)).toMatchObject({ discarded: true });
-    expect(DetachedWriteAddress.read(child)).toMatchObject({ discarded: true });
   },
 );
 
@@ -92,11 +89,10 @@ it('drops latent writes below a cleared inner array of a kept outer item', () =>
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   const writer = vi.spyOn(slotWriter, 'writeSlotPath');
   dispatchSetValue(kept, 8);
-  expect(writer).toHaveBeenCalledTimes(1);
+  expect(writer).not.toHaveBeenCalled();
   writer.mockClear();
   dispatchSetValue(old, 9);
   expect(writer).not.toHaveBeenCalled();
-  expect(DetachedWriteAddress.read(old)).toMatchObject({ discarded: true });
 });
 
 it('drops latent writes through an already inactive zero-survivor descendant', () => {
@@ -132,9 +128,8 @@ it('drops latent writes through an already inactive zero-survivor descendant', (
   dispatchSetValue(getDispatchNode(root, 'open'), false);
   const writer = vi.spyOn(slotWriter, 'writeSlotPath');
   dispatchSetValue(kept, 8);
-  expect(writer).toHaveBeenCalledTimes(1);
+  expect(writer).not.toHaveBeenCalled();
   writer.mockClear();
   dispatchSetValue(old, 5);
   expect(writer).not.toHaveBeenCalled();
-  expect(DetachedWriteAddress.read(old)).toMatchObject({ discarded: true });
 });

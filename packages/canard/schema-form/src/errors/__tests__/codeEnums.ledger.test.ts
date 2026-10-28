@@ -102,8 +102,9 @@ describe('form error codes', () => {
       'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
       'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME',
     ]);
-    expect(Object.values(FormWarningCode)).toEqual(
-      live.filter(([, level]) => level === 'warning').map(([code]) => code),
-    );
+    expect(Object.values(FormWarningCode)).toEqual([
+      ...live.filter(([, level]) => level === 'warning').map(([code]) => code),
+      'SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE',
+    ]);
   });
 });

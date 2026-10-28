@@ -1,12 +1,10 @@
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
 import { isReplacedLivePath } from '../transition/isReplacedLivePath';
 import { readDepartingAncestorPolicy } from '../transition/readDepartingAncestorPolicy';
 import { cloneSlotSubtree } from './cloneSlotSubtree';
 import { createExitSlotOverlay } from './createExitSlotOverlay';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
-import { getSlotOrder } from './getSlotOrder';
 import { markSlotChange } from './markSlotChange';
 
 /**
@@ -25,14 +23,6 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
   if (!host) return;
   const entry = getRetainedChildEntry(host, node.name, node.blueprintNode);
   if (!entry) return;
-  DetachedWriteAddress.retain(
-    node,
-    {
-      path: node.path,
-      order: getSlotOrder(host, node.name, node.blueprintNode),
-    },
-    node.runtime,
-  );
   if (isReplacedLivePath(context, node.path)) {
     markSlotChange(host, entry, undefined, context);
     host.inactiveSlots?.delete(entry);

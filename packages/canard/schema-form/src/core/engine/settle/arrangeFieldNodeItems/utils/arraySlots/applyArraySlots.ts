@@ -1,10 +1,18 @@
-import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
-import type { ArrayArrangePlan,Distribution,FieldNodeRecord } from '../../../../record';
-import { captureFieldNodeChange,updateFieldNodeNameAndPath } from '../../../../record';
+import type {
+  ArrayArrangePlan,
+  Distribution,
+  FieldNodeRecord,
+} from '../../../../record';
+import {
+  captureFieldNodeChange,
+  updateFieldNodeNameAndPath,
+} from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
@@ -17,7 +25,6 @@ import { getRetainedChildEntry } from '../../../utils/slots/getRetainedChildEntr
 import { markSlotChange } from '../../../utils/slots/markSlotChange';
 import { readSourceTree } from '../../../utils/slots/readSourceTree';
 import { rekeyArraySlotBindings } from '../../../utils/slots/rekeyArraySlotBindings';
-import { rekeySlotWriteAddresses } from '../../../utils/slots/rekeySlotWriteAddresses';
 import { replayMovedSource } from '../../../utils/slots/replayMovedSource';
 import type { ArrayPathMove } from '../rekey/rekeyArrayRuntimePaths';
 import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
@@ -140,7 +147,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     const current = destinations.get(index);
     moves.push({
       previous: appendSegment(host.path, index),
-      current: current === undefined ? undefined : appendSegment(host.path, current),
+      current:
+        current === undefined ? undefined : appendSegment(host.path, current),
     });
     if (!item || reused.has(item)) continue;
     context.perished.add(item);
@@ -178,7 +186,12 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           previous,
           current: descendant.path,
         });
-        rekeySlotWriteAddresses(descendant);
+        if (
+          descendant.inactiveSlots?.size ||
+          descendant.inactiveSlotOverlays?.size ||
+          descendant.inactiveSlotChildren?.size
+        )
+          (descendant.runtime.slotDirtyHosts ??= new Set()).add(descendant);
         context.dirtyPaths.add(descendant.path);
         if (descendant.behavior.strategy === 'branch')
           context.shapeDirtyPaths.add(descendant.path);

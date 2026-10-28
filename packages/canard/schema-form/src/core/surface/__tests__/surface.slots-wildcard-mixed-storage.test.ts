@@ -60,7 +60,7 @@ for (const scenario of ['retained', 'input-only', 'replace'] as const)
     }
   });
 
-it('restores a detached star write when its ordinary parent is cloned', () => {
+it('ignores a detached star write when its ordinary parent is cloned', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
@@ -85,7 +85,7 @@ it('restores a detached star write when its ordinary parent is cloned', () => {
   star.setValue({ x: 'detached write' });
   root.find('/open')!.setValue(true);
   expect(root.find('/group')!.value).toEqual({
-    '*': { x: 'detached write' },
+    '*': { x: 'original' },
     plain: 'plain',
   });
   expect(star.value).toEqual({ x: 'original' });
@@ -93,7 +93,7 @@ it('restores a detached star write when its ordinary parent is cloned', () => {
   expect(root.find('/group')).not.toBe(group);
 });
 
-it('preserves document order for a detached deep ordinary write containing a star', () => {
+it('ignores a detached deep write containing a star and preserves document order', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
@@ -132,12 +132,12 @@ it('preserves document order for a detached deep ordinary write containing a sta
   expect(root.inactiveValues).toEqual([
     { path: '/group/first', value: 'first' },
     { path: '/group/middle', value: 'middle' },
-    { path: '/group/nested/%2A/x', value: 'patched' },
+    { path: '/group/nested/%2A/x', value: 'original' },
     { path: '/group/nested/plain', value: 'deep plain' },
   ]);
   root.find('/open')!.setValue(true);
   expect(root.find('/group/nested')!.value).toEqual({
-    '*': { x: 'patched' },
+    '*': { x: 'original' },
     plain: 'deep plain',
   });
 });

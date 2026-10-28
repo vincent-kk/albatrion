@@ -97,7 +97,7 @@ describe('SURFACE-062 visitSubtree order and range', () => {
     expect(collectPaths(target)).toEqual(['/target', '/target/inner']);
   });
 
-  it('sends a write in a detached subtree to the latent source, never to the live node at its path', () => {
+  it('ignores writes from a detached subtree visit', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -125,7 +125,7 @@ describe('SURFACE-062 visitSubtree order and range', () => {
     root.find('/flag')?.setValue(false);
     writeInner('y');
     root.find('/flag')?.setValue(true);
-    expect(root.find('/target/inner')?.value).toBe('y');
+    expect(root.find('/target/inner')?.value).toBe('v');
   });
 
   it('visits a node reached again through a virtual group only once', () => {

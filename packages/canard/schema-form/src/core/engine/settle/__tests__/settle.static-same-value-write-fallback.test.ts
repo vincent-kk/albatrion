@@ -98,7 +98,7 @@ describe('same-value admission declines and the general path settles', () => {
     ]);
   });
 
-  it('latent raw under the written host declines; latent raw outside it does not once its change is published', async () => {
+  it('ignored detached writes create no latent source and permit subsequent same-value admission', async () => {
     let popped: DispatchTestNode | undefined;
     await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
@@ -124,12 +124,12 @@ describe('same-value admission declines and the general path settles', () => {
       {
         apply: (root) =>
           dispatchSetValue(root.structure!.a, { v: 1 }, WriteOption.Merge),
-        skip: false,
+        skip: true,
       },
     ]);
   });
 
-  it('a root setValue(getValue()) turns the latent raw under it into none and falls back, its prune marking a pending latent change (18C-96)', async () => {
+  it('a root same-value write is admitted after an ignored detached write', async () => {
     let popped: DispatchTestNode | undefined;
     await compareSameValueWrite(SCOPED, SCOPED_INPUT, [
       {
@@ -149,7 +149,7 @@ describe('same-value admission declines and the general path settles', () => {
         apply: (root) => {
           dispatchSetValue(root, root.emit);
         },
-        skip: false,
+        skip: true,
       },
     ]);
   });

@@ -58,7 +58,7 @@ it.each([['insert'], ['remove']] as const)(
     dispatchSetValue(getDispatchNode(root, 'show'), true);
     expect(
       getDispatchNode(getDispatchNode(list, String(destination)), 'v').local,
-    ).toBe(33);
+    ).toBe(index ? 22 : 11);
     expect(old.local).toBe(index ? 22 : 11);
     expect(readFieldNodeInactiveValues(old)).toBe(frozen);
   },

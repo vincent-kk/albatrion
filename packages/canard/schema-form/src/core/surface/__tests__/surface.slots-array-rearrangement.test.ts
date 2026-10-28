@@ -42,17 +42,15 @@ it('preserves inactive sources at their moved paths while freezing a perished ho
   expect(first.inactiveValues).toBe(frozen);
 });
 
-it('carries inactive overlays and old-reference write addresses through removal', () => {
+it('preserves inactive sources and ignores old-reference writes through removal', () => {
   const { root, secondHeld } = createArraySlotTree();
   secondHeld.setValue('before move');
   root.remove(0);
   expect(secondHeld.path).toBe('/1/held');
   secondHeld.setValue('after move');
-  expect(root.inactiveValues).toEqual([
-    { path: '/0/held', value: 'before move' },
-  ]);
+  expect(root.inactiveValues).toEqual([{ path: '/0/held', value: 'second' }]);
   root.find('/0/enabled')!.setValue(true);
-  expect(root.find('/0/held')!.value).toBe('after move');
+  expect(root.find('/0/held')!.value).toBe('second');
   expect(secondHeld.value).toBe('second');
 });
 
