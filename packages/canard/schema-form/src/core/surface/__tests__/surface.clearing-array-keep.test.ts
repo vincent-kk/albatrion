@@ -266,3 +266,48 @@ it('drops a write through an already inactive descendant of a discarded item', (
   root.find('/show')!.setValue(true);
   expect(root.find('/list')!.value).toEqual([{ keep: 12 }, { keep: 24 }]);
 });
+
+it('drops a write through a descendant of an already inactive object inside a discarded item', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      show: { type: 'boolean' },
+      list: {
+        type: 'array',
+        controls: { active: '#/open', unsetOnInactive: true },
+        items: {
+          type: 'object',
+          properties: {
+            drop: { type: 'number' },
+            group: {
+              type: 'object',
+              controls: { active: '#/show', unsetOnInactive: false },
+              properties: { keep: { type: 'number' } },
+            },
+          },
+        },
+      },
+    },
+  });
+  root.setValue({
+    open: true,
+    show: true,
+    list: [
+      { drop: 1 },
+      { drop: 2, group: { keep: 12 } },
+      { drop: 3 },
+      { group: { keep: 24 } },
+    ],
+  });
+  const emptyKeep = root.find('/list/0/group/keep')!;
+  root.find('/show')!.setValue(false);
+  root.find('/open')!.setValue(false);
+  emptyKeep.setValue(5);
+  root.find('/open')!.setValue(true);
+  root.find('/show')!.setValue(true);
+  expect(root.find('/list')!.value).toEqual([
+    { group: { keep: 12 } },
+    { group: { keep: 24 } },
+  ]);
+});
