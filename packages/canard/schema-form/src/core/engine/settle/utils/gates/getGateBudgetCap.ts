@@ -28,6 +28,7 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
   if (cached) return cached;
   const decisionsByGate = new Map<BlueprintGate, Set<string>>();
   const decisions = new Set<string>();
+  const fieldControls = new Map<BlueprintGate, boolean>();
   const add = (gate: BlueprintGate, key: string): void => {
     let keys = decisionsByGate.get(gate);
     if (!keys) {
@@ -43,16 +44,19 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
         add(gate, 'fragment:' + declaration.fragmentId);
     for (const gate of declaration.gates) {
       if (gate.kind !== 'active') continue;
-      const segments = parsePointerSegments(gate.schemaPath);
-      if (
-        segments.some(
-          (segment, index) =>
-            segment === 'controls' && segments[index + 1] === 'fields',
-        ) &&
-        segments[segments.length - 2] === 'controls' &&
-        segments[segments.length - 1] === 'active'
-      )
-        add(gate, 'node:' + gate.schemaPath);
+      let fieldControl = fieldControls.get(gate);
+      if (fieldControl === undefined) {
+        const segments = parsePointerSegments(gate.schemaPath);
+        fieldControl =
+          segments[segments.length - 2] === 'controls' &&
+          segments[segments.length - 1] === 'active' &&
+          segments.some(
+            (segment, index) =>
+              segment === 'controls' && segments[index + 1] === 'fields',
+          );
+        fieldControls.set(gate, fieldControl);
+      }
+      if (fieldControl) add(gate, 'node:' + gate.schemaPath);
       else if (
         declaration.scope === 'node' &&
         gate.schemaPath ===
