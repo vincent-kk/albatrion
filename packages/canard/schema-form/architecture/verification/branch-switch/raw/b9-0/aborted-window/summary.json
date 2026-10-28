@@ -1,0 +1,14 @@
+{
+  "classification": "device failure; superseded by B11 resume dispatch",
+  "base": "699cbd733",
+  "startedAt": "2026-10-28T15:14:43.910Z",
+  "endedAt": "2026-10-28T15:15:03.686Z",
+  "completedProcesses": 0,
+  "firstProcess": "switch-oneOf-80-ledger-0",
+  "error": "INFINITE_LOOP_DETECTED",
+  "batchCount": 101,
+  "guardLimit": 100,
+  "cause": "Runner yielded Promise jobs without a macrotask; legacy resets the batch guard on a macrotask.",
+  "correction": "Untimed setTimeout(0) boundary restored before each sample; guard limit and legacy bundle unchanged.",
+  "samplesUsedInResults": false
+}
