@@ -10,6 +10,8 @@ import { assembleCodeGroup } from '../utils/assembleCodeGroup';
  * Keys are the bare code in PascalCase; values are the group-qualified strings errors and records carry.
  */
 export const FormErrorCode = {
+  /** Class: JSONSchemaError; when: a property name is exactly `%2A`, `%2E`, `%2E%2E`, or `%40` and cannot round-trip through a form pointer. */
+  ReservedPropertyName: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.ReservedPropertyName}`,
   /** Class: JSONSchemaError; when: schema analysis cannot determine a supported shape. */
   UnknownJsonSchema: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.UnknownJsonSchema}`,
   /** Class: JSONSchemaError; when: schema analysis finds an invalid array declaration. */

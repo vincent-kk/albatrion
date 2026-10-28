@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- `ReservedPropertyName`은 속성 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 청사진을 `JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME`으로 거부합니다. `details.property`와 작성 위치가 원인을 가리키며 기존 `UnknownJsonSchema`와 코드로 구별됩니다. 소유자가 승인한 공개 enum 멤버 하나의 확장이며 오류 생성의 시간·메모리 비용은 기존과 같습니다.
+
 - `FormErrorReason`·`FormErrorDetails`는 코드별 상세의 내부 형이며 errors index가 내보내지 않습니다. 외부 오류 관측은 진입점의 `FormErrorRecord` 계약을 사용하고, 코드별 상세 형의 계약은 이 fractal의 `__tests__`가 `type.ts`를 직접 읽어 검증합니다.
 
 - 오류 코드·메시지·상세 맥락을 보관하고 `name`은 클래스가 속한 upper snake case 그룹 상수로 설정합니다.

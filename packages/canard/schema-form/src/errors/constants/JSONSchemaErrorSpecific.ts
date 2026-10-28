@@ -1,5 +1,7 @@
 /** Internal bare specifics for the JSONSchemaError group, in ledger order. */
 export const JSONSchemaErrorSpecific = {
+  /** Property names reserved by literal operator percent spellings. */
+  ReservedPropertyName: 'RESERVED_PROPERTY_NAME',
   UnknownJsonSchema: 'UNKNOWN_JSON_SCHEMA',
   UnexpectedArraySchema: 'UNEXPECTED_ARRAY_SCHEMA',
   AllOfTypeRedefinition: 'ALL_OF_TYPE_REDEFINITION',
