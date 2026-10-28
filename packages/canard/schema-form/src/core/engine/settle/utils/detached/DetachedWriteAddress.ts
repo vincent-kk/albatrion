@@ -92,11 +92,14 @@ export class DetachedWriteAddress {
     for (let parent = node.parent; parent; parent = parent.parent) {
       const ancestor = cells.get(parent);
       if (!ancestor) continue;
+      let discarded = ancestor.discarded === true;
+      for (let above = parent.parent; above && !discarded; above = above.parent)
+        if (cells.get(above)?.discarded) discarded = true;
       const order = getSlotOrder(node.parent, node.name, node.blueprintNode);
       return {
         path: ancestor.path + node.path.slice(parent.path.length),
         order: [...ancestor.order, ...order.slice(ancestor.order.length)],
-        ...(ancestor.discarded ? { discarded: true as const } : undefined),
+        ...(discarded ? { discarded: true as const } : undefined),
       };
     }
     return undefined;
