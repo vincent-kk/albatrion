@@ -18,73 +18,83 @@ afterEach(() => {
 });
 
 // filid:contract settle-b9-sibling-preparation
-it.each(['table', 'verify'] as const)('reuses static siblings and the unchanged child shape without full-list work (%s)', (mode) => {
-  engineModes.setMode('gateSelection', mode);
-  const { root } = createTestTree({
-    type: 'object',
-    properties: {
-      type: { type: 'string', default: 'a' },
-      ...Object.fromEntries(
-        Array.from({ length: 1000 }, (_, index) => [
-          `pad_${index}`,
-          { type: 'number', default: index },
-        ]),
-      ),
-    },
-    oneOf: ['a', 'b'].map((value) => ({
-      controls: { active: `./type === "${value}"` },
+it.each(['table', 'verify'] as const)(
+  'reuses static siblings and the unchanged child shape without full-list work (%s)',
+  (mode) => {
+    engineModes.setMode('gateSelection', mode);
+    const { root } = createTestTree({
+      type: 'object',
       properties: {
-        x: { type: 'string', default: value },
-        y: { type: 'string', default: value },
+        type: { type: 'string', default: 'a' },
+        ...Object.fromEntries(
+          Array.from({ length: 1000 }, (_, index) => [
+            `pad_${index}`,
+            { type: 'number', default: index },
+          ]),
+        ),
       },
-    })),
-  });
-  loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
-  writeFieldNode(root.structure!.type, 'b', 'input', WriteOption.Overwrite);
-  expect(
-    getHostDerived(root.blueprintNode).directChildSelectionPlan,
-  ).toBeNull();
-  const structure = root.structure!;
-  const children = root.children;
-  const names = Object.keys(structure);
-  const original = reuser.createStaticEntryReuser;
-  let callbacks = 0;
-  vi.spyOn(reuser, 'createStaticEntryReuser').mockImplementation((...args) => {
-    const reuse = original(...args);
-    return reuse
-      ? (entry) => {
-          callbacks++;
-          return reuse(entry);
-        }
-      : undefined;
-  });
-  const comparisons = vi.spyOn(childLists, 'isSameChildList');
-  const copies = vi.spyOn(Object, 'assign');
-  const values = Object.values;
-  let fullEnumerations = 0;
-  vi.spyOn(Object, 'values').mockImplementation((object) => {
-    if (object === root.structure) fullEnumerations++;
-    return values(object);
-  });
-  writeFieldNode(root.structure!.type, 'a', 'input', WriteOption.Overwrite);
-  const work = {
-    callbacks,
-    comparisons: comparisons.mock.calls.length,
-    copies: copies.mock.calls.length,
-    fullEnumerations,
-  };
-  vi.restoreAllMocks();
-  expect(work).toEqual({
-    callbacks: 0,
-    comparisons: 0,
-    copies: 0,
-    fullEnumerations: 0,
-  });
-  expect(root.structure).toBe(structure);
-  expect(root.children).toBe(children);
-  expect(Object.keys(structure)).toEqual(names);
-  expect(root.local).toMatchObject({ type: 'a', x: 'a', y: 'a', pad_999: 999 });
-});
+      oneOf: ['a', 'b'].map((value) => ({
+        controls: { active: `./type === "${value}"` },
+        properties: {
+          x: { type: 'string', default: value },
+          y: { type: 'string', default: value },
+        },
+      })),
+    });
+    loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
+    writeFieldNode(root.structure!.type, 'b', 'input', WriteOption.Overwrite);
+    expect(
+      getHostDerived(root.blueprintNode).directChildSelectionPlan,
+    ).toBeNull();
+    const structure = root.structure!;
+    const children = root.children;
+    const names = Object.keys(structure);
+    const original = reuser.createStaticEntryReuser;
+    let callbacks = 0;
+    vi.spyOn(reuser, 'createStaticEntryReuser').mockImplementation(
+      (...args) => {
+        const reuse = original(...args);
+        return reuse
+          ? (entry) => {
+              callbacks++;
+              return reuse(entry);
+            }
+          : undefined;
+      },
+    );
+    const comparisons = vi.spyOn(childLists, 'isSameChildList');
+    const copies = vi.spyOn(Object, 'assign');
+    const values = Object.values;
+    let fullEnumerations = 0;
+    vi.spyOn(Object, 'values').mockImplementation((object) => {
+      if (object === root.structure) fullEnumerations++;
+      return values(object);
+    });
+    writeFieldNode(root.structure!.type, 'a', 'input', WriteOption.Overwrite);
+    const work = {
+      callbacks,
+      comparisons: comparisons.mock.calls.length,
+      copies: copies.mock.calls.length,
+      fullEnumerations,
+    };
+    vi.restoreAllMocks();
+    expect(work).toEqual({
+      callbacks: 0,
+      comparisons: 0,
+      copies: 0,
+      fullEnumerations: 0,
+    });
+    expect(root.structure).toBe(structure);
+    expect(root.children).toBe(children);
+    expect(Object.keys(structure)).toEqual(names);
+    expect(root.local).toMatchObject({
+      type: 'a',
+      x: 'a',
+      y: 'a',
+      pad_999: 999,
+    });
+  },
+);
 
 it('publishes ordinary shapes in numeric-key order with reserved static names', () => {
   const { root } = createTestTree({

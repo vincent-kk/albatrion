@@ -13,7 +13,7 @@ export const createPreparedSelectionStructure = <Self>(
   current: Record<string, Self> | null | undefined,
   names: readonly string[],
 ): Record<string, Self> => {
-  const dynamic = Object.create(baseline) as Record<string, Self>;
+  const dynamic: Record<string, Self> = Object.create(baseline);
   if (current && current !== baseline)
     for (const name of names)
       if (hasOwnProperty(current, name)) dynamic[name] = current[name];
