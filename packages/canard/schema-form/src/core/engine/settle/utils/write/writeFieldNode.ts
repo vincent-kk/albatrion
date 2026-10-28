@@ -1,9 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { WriteOption } from '../../../types/value';
-import type { FieldNodeWriteKind } from '../../../types/value';
-import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { FieldNodeWriteKind,WriteOption } from '../../../types/value';
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
@@ -15,15 +13,11 @@ import { assertVirtualWriteShape } from '../input/assertVirtualWriteShape';
 import { isPlain } from '../input/isPlain';
 import { markWrite } from '../input/markWrite';
 import { prepareWriteEpoch } from '../input/utils/prepareWriteEpoch';
-import { distributeLiteralStarValue } from '../literalStar/distributeLiteralStarValue';
-import { pruneLiteralStarRaw } from '../literalStarStore/pruneLiteralStarRaw';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
 import { getSettlementScratch } from '../scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
-import { getSlotOrder } from '../slots/getSlotOrder';
-import { isSlotEligible } from '../slots/isSlotEligible';
 import { prepareSourcePruner } from '../slots/prepareSourcePruner';
 import { writeSlotPath } from '../slots/writeSlotPath';
 import { collectReplacePaths } from './collectReplacePaths';
@@ -62,10 +56,6 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
     !root.disposed &&
     root.runtime.blueprint.capabilities.branchless &&
     !root.runtime.blueprint.capabilities.hasDerive &&
-    ((root.runtime.literalStarRaw?.size ?? 0) === 0 ||
-      (root.runtime.literalStarRaw?.pathIndex.under(node.path).size === 0 &&
-        root.runtime.literalStarRaw?.pathIndex.intersecting(node.path).size ===
-          0)) &&
     (kind === 'input' ||
       kind === 'callerReplace' ||
       kind === 'callerPartial') &&
@@ -96,7 +86,6 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
       kind !== 'callerPartial' ||
       !isPlain(input) ||
       node.behavior.strategy !== 'branch';
-    if (isSlotEligible(node.runtime)) {
       const lineage = [];
       for (let current: Self | null = node; current; current = current.parent)
         lineage.unshift(current.blueprintNode);
@@ -109,24 +98,6 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
         undefined,
         lineage,
       );
-      return;
-    }
-    if (whole) pruneLiteralStarRaw(node.rootNode.runtime, path);
-    distributeLiteralStarValue(
-      node.rootNode.runtime,
-      undefined,
-      path,
-      node.blueprintNode,
-      input,
-      address?.order ??
-        getSlotOrder(node.parent, node.name, node.blueprintNode),
-      whole,
-      node.parent?.blueprintNode.childEntries ?? [],
-    );
-    const metadata = node.runtime.literalStarRawMetadata?.get(
-      JSON.stringify([path, getBlueprintNodeIdentity(node.blueprintNode)]),
-    );
-    if (metadata) DetachedWriteAddress.retain(node, metadata, node.runtime);
     return;
   }
   const scratch = getSettlementScratch(root.runtime);

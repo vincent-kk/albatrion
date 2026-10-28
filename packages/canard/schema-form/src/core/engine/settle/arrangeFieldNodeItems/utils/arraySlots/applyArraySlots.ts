@@ -1,31 +1,26 @@
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntries } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
-import { captureFieldNodeChange } from '../../../../record';
-import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
-import type { Distribution } from '../../../../record';
-import { updateFieldNodeNameAndPath } from '../../../../record';
+import type { ArrayArrangePlan,Distribution,FieldNodeRecord } from '../../../../record';
+import { captureFieldNodeChange,updateFieldNodeNameAndPath } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../../../utils/gates/getGateRegistry';
 import { arrayExtras } from '../../../utils/input/arrayExtras';
 import { markWrite } from '../../../utils/input/markWrite';
-import { captureLiteralStarExit } from '../../../utils/literalStar/captureLiteralStarExit';
-import { indexEnteredLiteralStarKey } from '../../../utils/literalStarStore/indexEnteredLiteralStarKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
 import { getRetainedChildEntry } from '../../../utils/slots/getRetainedChildEntry';
-import { getSlotOrder } from '../../../utils/slots/getSlotOrder';
-import { isSlotEligible } from '../../../utils/slots/isSlotEligible';
 import { markSlotChange } from '../../../utils/slots/markSlotChange';
 import { readSourceTree } from '../../../utils/slots/readSourceTree';
 import { rekeyArraySlotBindings } from '../../../utils/slots/rekeyArraySlotBindings';
 import { rekeySlotWriteAddresses } from '../../../utils/slots/rekeySlotWriteAddresses';
 import { replayMovedSource } from '../../../utils/slots/replayMovedSource';
-import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from '../rekey/rekeyArrayRuntimePaths';
+import { rekeyArrayRuntimePaths } from '../rekey/rekeyArrayRuntimePaths';
 import { applyArrayTail } from './applyArrayTail';
 import { canApplyArrayTail } from './canApplyArrayTail';
 
@@ -43,7 +38,6 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): unknown => {
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
-  const slots = isSlotEligible(host.runtime);
   const oldCount = host.itemCount;
   const oldItems = host.structure ?? {};
   // With an item template and no tuple positions, extras or whole raw, only a slot without a live node reads raw.
@@ -118,22 +112,13 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
         ? value
         : (rawSlots = readRawSlots(host, context))[from];
     if (from !== undefined && !old && !moved) destinations.set(from, index);
-    if (old && moved && slots) {
+    if (old && moved) {
       const binding = getRetainedChildEntry(host, old.name, old.blueprintNode);
       if (binding) {
         markSlotChange(host, binding, old, context);
         (host.inactiveSlots ??= new Map()).set(binding, old);
       }
-    } else if (old && moved)
-      captureLiteralStarExit(
-        old,
-        false,
-        context,
-        false,
-        getSlotOrder(old.parent, old.name, old.blueprintNode),
-        undefined,
-        true,
-      );
+    }
     if (!entry) continue;
     if (candidates.length > 1) {
       nextRaw[index] = source;
@@ -154,8 +139,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     const item = oldItems[String(index)];
     const current = destinations.get(index);
     moves.push({
-      previous: host.path + '/' + index,
-      current: current === undefined ? undefined : host.path + '/' + current,
+      previous: appendSegment(host.path, index),
+      current: current === undefined ? undefined : appendSegment(host.path, current),
     });
     if (!item || reused.has(item)) continue;
     context.perished.add(item);
@@ -172,12 +157,10 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       { owned: true },
     );
   }
-  if (slots) rekeyArraySlotBindings(host, moves, context);
+  rekeyArraySlotBindings(host, moves, context);
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
   if (candidateMoves)
     (context.rekeyedArrayMoves ??= new Map()).set(host, moves);
-  context.literalStarDescendantKeys = undefined;
-  context.enteredLiteralStarKeys = undefined;
 
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
@@ -195,7 +178,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
           previous,
           current: descendant.path,
         });
-        if (slots) rekeySlotWriteAddresses(descendant);
+        rekeySlotWriteAddresses(descendant);
         context.dirtyPaths.add(descendant.path);
         if (descendant.behavior.strategy === 'branch')
           context.shapeDirtyPaths.add(descendant.path);
@@ -224,19 +207,14 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       whole: false,
       automatic: false,
     };
-    if (
-      slots ||
-      (host.runtime.literalStarRaw?.pathIndex.under(host.path).size ?? 0) > 0
-    ) {
-      context.distributedInputs.set(host, {
-        ...distribution,
-        preserveLatent: true,
-      });
-    } else context.distributedInputs.set(host, distribution);
+    context.distributedInputs.set(host, {
+      ...distribution,
+      preserveLatent: true,
+    });
   }
   for (const { node, value, moved } of created) {
     context.entered.add(node);
-    indexEnteredLiteralStarKey(context, node);
+
     if (moved) replayMovedSource(node, value, context);
     else markWrite(node, value, context);
   }

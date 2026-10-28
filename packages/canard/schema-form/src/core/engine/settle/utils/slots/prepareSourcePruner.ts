@@ -20,9 +20,7 @@ export const prepareSourcePruner = <Self extends FieldNodeRecord<Self>>(
     node,
   );
   if (derived.sourcePruner) return derived.sourcePruner;
-  let unique =
-    node.runtime.blueprint.root.containsLiteralStar !== true &&
-    !hasRetainableDescendants(node.blueprintNode, new WeakSet());
+  let unique = !hasRetainableDescendants(node.blueprintNode, new WeakSet());
   for (
     let current: Self | null = node;
     unique && current?.parent;

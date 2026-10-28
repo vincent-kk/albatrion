@@ -1,15 +1,14 @@
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
 
 import { mergeEffectiveSchema } from '../../../blueprint';
-import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { captureProjectionBaseline } from '../dependencies/captureProjectionBaseline';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { indexEnteredLiteralStarKey } from '../literalStarStore/indexEnteredLiteralStarKey';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { cloneFromSlot } from '../slots/cloneFromSlot';
 import { createFromSlotOverlay } from '../slots/createFromSlotOverlay';
@@ -101,7 +100,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       context.pendingExits.size === 0
         ? undefined
         : JSON.stringify([
-            node.path + '/' + escapeSegment(entry.name),
+            appendSegment(node.path, entry.name),
             getBlueprintNodeIdentity(entry.node),
           ]);
     const pending =
@@ -120,17 +119,16 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
           : createChildNode(node, entry));
     context.perished.delete(child);
     if (key !== undefined && context.pendingExits.delete(key)) {
-      const path = node.path + '/' + escapeSegment(entry.name);
+      const path = appendSegment(node.path, entry.name);
       updatePendingExitIndex(context, path, -1);
     }
     if (pending && child === pending) {
       context.revived.add(child);
-      indexEnteredLiteralStarKey(context, child);
     }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.entered.add(child);
-      indexEnteredLiteralStarKey(context, child);
+
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
       else if (slotSource || slotOverlay)
         enterSlotClone(node, child, entry.name, context);

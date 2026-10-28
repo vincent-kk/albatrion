@@ -1,8 +1,8 @@
 import type { NodeStrategy } from '../../types/strategy';
 import type {
-  BlueprintNodeKind,
-  BlueprintSchema,
-  BlueprintSchemaType,
+BlueprintNodeKind,
+BlueprintSchema,
+BlueprintSchemaType,
 } from './schema';
 
 /** Location and ownership metadata shared by every declarative gate. */
@@ -132,8 +132,6 @@ export interface BlueprintNode {
   readonly hasPropertyCandidates?: boolean;
   /** A reachable host, including this one, binds multiple slot candidates. */
   readonly hasCandidateDescendants?: boolean;
-  /** A finite reachable template binds a property named exactly star. */
-  readonly containsLiteralStar?: true;
   /**
    * First repeated item candidate, retained for single-candidate consumers.
    * First candidate; paths that distinguish folds use the candidate list (itemCandidates / prefixItemCandidates / getItemEntries).

@@ -2,7 +2,11 @@
 
 ## Requirements
 
-- 슬롯 보유와 복제 재진입만 일반 원본 모델로 사용한다. `engineModes.slots`와 off 기준 경로·verify 그림자는 없으며 공개 package export·환경 변수·배달 계약은 바꾸지 않는다. 이름이 정확히 `*`인 선언을 포함한 폼만 별표 공표 호환 저장을 사용한다. 호환 저장의 호출·줄 수·바이트는 일반 슬롯과 구별해 보고한다.
+- 내부에서 조립한 스키마 경로의 퍼센트 이름은 확장 파서로 보존합니다. 표준 RFC fragment 디코딩은 외부 `$ref`와 검증기 경로의 입력 경계에만 적용합니다.
+
+- 공유 경로 해석은 jsonPointer의 resolvePointer에 위임하며, 스키마 소유 위치는 표준 포인터의 이름 세그먼트로 판정한다.
+
+- 슬롯 보유와 복제 재진입만 일반 원본 모델로 사용한다. `engineModes.slots`와 off 기준 경로·verify 그림자는 없으며 공개 package export·환경 변수·배달 계약은 바꾸지 않는다.
 - 설계 Ⅱ의 "나간 노드의 공개 인스턴스는 지금처럼 떼어진 채로 남지만, 호스트가 그 인스턴스를 비활성 슬롯으로 보유한다"를 구현한다. 슬롯은 상태의 위치이며 형상의 시작점이 아니다. NODE-043·044·060, SETTLE-044·GOAL-029, BLUEPRINT-007, ERROR-125와 표시→계산→전이→커밋→배달의 순서를 유지한다. core는 app을 가져오지 않고 슬롯 형은 record, 전이·복제·원본·읽기는 settle, 클래스 생성 결합은 surface가 소유한다.
 - 비용은 나감의 슬롯 삽입 O(1)과 기존 분리·등록 해제, 진입의 실제 복제 서브트리 크기, 첫 inactiveValues 읽기의 보유 원본 수와 문서 순서 정렬에 비례한다. 정상 슬롯 나감의 잠복 직렬화·메타데이터·색인 등록과 커밋의 비활성 목록 전수 재구성은 0이다. 보유 공간은 호스트당 실제 방문한 엔트리 M개 이하와 값 깊이 K의 원본·overlay이며, 고정 노드 생성자 필드나 방문하지 않은 재귀 실체화는 늘리지 않는다. host별 슬롯 수·실제 보유 바이트와 Node/Bun 힙을 따로 보고한다.
 - B2-P2는 기존 HostDerived 저장소를 불변 template와 live host의 약한 identity 키로 함께 사용한다. wheelPlan·preparedStaticHost는 settle이 구체 형과 무효화를 소유하는 라이브 준비물이고, controlLayerIndex·childOrderIndex는 청사진의 순수 파생 자료다. 노드 고정 필드와 공개 surface는 늘리지 않으며 모드 전환은 기존 저장소 초기화로 함께 버린다.
@@ -115,6 +119,10 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## Acceptance Criteria
 
+### literal-star-controls — 예약 이름 속성의 일반 제어
+
+- 객체의 별표 이름은 fields 파생 대상과 injectTo의 퍼센트 주소로 하나의 속성만 선택하며, watch는 와일드카드 템플릿으로 확장하지 않는다.
+
 ### engine-slot-modes — 기준 경로와 그림자
 
 - on/off는 값·비활성 목록·떼어진 읽기·사건·payload·revision·노드 수명 대응이 같다. verify는 매 커밋의 두 경로 결과를 대조하고 차이를 거부하며, test:verify 전체가 이를 실행한다. 복제 원본 손상 음성 시험이 차이를 검출한다. 공개 겉면·기존 기대값 변경과 배달 비교 차이는 0이다.
@@ -145,6 +153,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## Last Updated
 
-2026-10-27. B1 gatePredicate on/off 기준 경로와 출하 기본 설정.
+2026-10-28
 
 계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077, 35C-08).

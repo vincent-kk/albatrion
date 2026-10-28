@@ -1,9 +1,9 @@
-import type { BlueprintNode, EffectiveSchema } from '../../../blueprint';
+import type { BlueprintNode,EffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import type { SettlementContext } from '../../types/settlement';
-import { hasLiteralStarUnder } from '../literalStarStore/hasLiteralStarUnder';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
+
 
 /** Only the cycle verdict outlives the one-time graph traversal. */
 
@@ -67,15 +67,6 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
     (node.raw !== undefined || node.undeclaredValues !== undefined)
   )
     return true;
-  if (hasLiteralStarUnder(context, node.path)) {
-    if (!context.literalStarAutomaticLog?.size) return true;
-    for (const [key, value] of context.root.runtime.literalStarRaw ?? []) {
-      const previous = context.literalStarAutomaticLog?.get(key);
-      if ((previous && !previous.present) || value === undefined) continue;
-      const path: string = JSON.parse(key)[0];
-      if (path.startsWith(node.path + '/')) return true;
-    }
-  }
   const children = node.children;
   for (let index = 0; children && index < children.length; index++)
     if (hasOriginalInput(children[index], context)) return true;

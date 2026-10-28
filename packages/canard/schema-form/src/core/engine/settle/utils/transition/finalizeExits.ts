@@ -1,20 +1,14 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import { visitFieldNodes } from '../../../navigation';
-import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import { captureFieldNodeChange } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { captureLiteralStarDescendants } from '../literalStar/captureLiteralStarDescendants';
-import { captureLiteralStarExit } from '../literalStar/captureLiteralStarExit';
-import { clearLiteralStarExits } from '../literalStar/clearLiteralStarExits';
-import { writeLiteralStarRaw } from '../literalStar/writeLiteralStarRaw';
 import { updateOutput } from '../output/updateOutput';
 import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
-import { getSlotOrder } from '../slots/getSlotOrder';
-import { isSlotEligible } from '../slots/isSlotEligible';
 import { retainExitedSlot } from '../slots/retainExitedSlot';
 import { finalizePerished } from './finalizePerished';
 import { isRekeyedDestination } from './utils/isRekeyedDestination';
@@ -69,7 +63,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           }
           paths.add(path);
           if (!ancestor) break;
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+          ancestor = resolvePointer(ancestor, '..');
         }
       }
     }
@@ -79,7 +73,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       while (true) {
         misfitIndex.get(ancestor)?.delete(path);
         if (!ancestor) break;
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+        ancestor = resolvePointer(ancestor, '..');
       }
     }
   }
@@ -89,71 +83,20 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     scope !== undefined &&
     (!scope.path ||
       node.path === scope.path ||
-      node.path.startsWith(scope.path + '/'));
+      isDescendantPath(node.path, scope.path));
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
-  const retainedSlots = isSlotEligible(context.root.runtime);
-  if (retainedSlots) {
-    for (const node of context.exited)
-      if (!inLoadScope(node) && node.detached)
-        retainExitedSlot(
-          node,
-          context,
-          applyPolicy &&
-            !context.entered.has(node) &&
-            !context.throwingGateExits?.has(node),
-        );
-  } else if (applyPolicy)
-    clearLiteralStarExits(
-      context,
-      (node) =>
-        inLoadScope(node) || context.throwingGateExits?.has(node) === true,
-    );
   for (const node of context.exited)
-    if (
-      !inLoadScope(node) &&
-      !retainedSlots &&
-      node.detached &&
-      (context.entered.has(node) ||
-        !applyPolicy ||
-        context.throwingGateExits?.has(node))
-    ) {
-      const ownsLatent = captureLiteralStarExit(
+    if (!inLoadScope(node) && node.detached)
+      retainExitedSlot(
         node,
-        false,
         context,
-        false,
-        getSlotOrder(node.parent, node.name, node.blueprintNode),
+        applyPolicy &&
+          !context.entered.has(node) &&
+          !context.throwingGateExits?.has(node),
       );
-      if (ownsLatent)
-        captureLiteralStarDescendants(context, node, false, false, ownsLatent);
-    }
-  if ((context.root.runtime.literalStarRaw?.size ?? 0) > 0)
-    for (const node of [...context.entered, ...context.revived]) {
-      if (node.detached) continue;
-      let live = true;
-      for (
-        let current: Self | null = node;
-        current?.parent;
-        current = current.parent
-      )
-        if (current.parent.structure?.[current.name] !== current) {
-          live = false;
-          break;
-        }
-      if (live)
-        writeLiteralStarRaw(
-          context,
-          JSON.stringify([
-            node.path,
-            getBlueprintNodeIdentity(node.blueprintNode),
-          ]),
-          false,
-          undefined,
-        );
-    }
   const affectedAncestors = new Set<Self>();
-  if (retainedSlots) finalizeRestoredSlotRaw(context);
+  finalizeRestoredSlotRaw(context);
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.detached) affectedAncestors.add(ancestor);

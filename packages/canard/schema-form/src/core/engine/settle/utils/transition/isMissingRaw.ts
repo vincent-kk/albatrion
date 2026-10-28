@@ -1,6 +1,6 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { hasLiteralStarUnder } from '../literalStarStore/hasLiteralStarUnder';
 import { hasSlotOverlaySource } from '../slots/hasSlotOverlaySource';
 
 /**
@@ -19,18 +19,12 @@ export const isMissingRaw = <Self extends FieldNodeRecord<Self>>(
     return false;
   for (const overlay of node.inactiveSlotOverlays?.values() ?? [])
     if (hasSlotOverlaySource(overlay)) return false;
-  const prefix = node.path + '/';
   for (const pending of context.pendingExits.values())
     if (
-      pending.path.startsWith(prefix) &&
+      isDescendantPath(pending.path, node.path) &&
       pending.raw !== undefined &&
       !context.filledNodes.has(pending)
     )
       return false;
-  if (
-    context.root.blueprintNode.containsLiteralStar === true &&
-    hasLiteralStarUnder(context, node.path)
-  )
-    return false;
   return (node.children ?? []).every((child) => isMissingRaw(child, context));
 };

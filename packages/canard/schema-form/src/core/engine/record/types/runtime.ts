@@ -1,20 +1,18 @@
 import type {
-  FormErrorRecord,
-  FormErrorReporter,
-  FormWarningCode,
+FormErrorRecord,
+FormErrorReporter,
+FormWarningCode,
 } from '../../../../errors';
 import type {
-  Blueprint,
-  BlueprintChildEntry,
-  BlueprintGate,
-  BlueprintNode,
-  BlueprintSchemaType,
-  EffectiveSchema,
+Blueprint,
+BlueprintChildEntry,
+BlueprintGate,
+BlueprintSchemaType,
+EffectiveSchema
 } from '../../blueprint';
-import type { DeclarationLayer } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
 import type { TreeMemoStores } from '../../types/treeMemoStores';
-import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
+import type { FieldNodeWriteKind,WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import type { FieldNodeFactory } from './behavior';
@@ -48,43 +46,12 @@ interface FieldNodeDiagnostics {
   commit?: number;
 }
 
-/** Classification, document position, and retained exit decisions of a latent occurrence. */
-interface LiteralStarSourceMetadata {
-  readonly path: string;
-  readonly blueprintNode: BlueprintNode;
-  readonly order: readonly number[];
-  /** Last-live explicit exit decisions retained after rule baselines are pruned. */
-  readonly exitLayers?: readonly {
-    readonly layer: DeclarationLayer;
-    readonly clear: boolean;
-  }[];
-}
-
-/** Last published item and sort position for one enumerable latent occurrence. */
-interface LiteralStarValueEntryMemo {
-  readonly value: unknown;
-  readonly order: readonly number[];
-  readonly entry: Readonly<{ path: string; value: unknown }>;
-}
-
 /** Root-owned settlement data reached through a record's runtime. */
 interface FieldNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
-  /** Per-kind latent leaf raw or a host's own frozen raw and undeclared values. */
-  literalStarRaw?: PathKeyedMap<unknown>;
-  /** Whether latent sources changed since the last inactive-value publication. */
-  literalStarRawDirty?: boolean;
-  /** Latent occurrence shape and document position, keyed like literalStarRaw. */
-  literalStarRawMetadata?: PathKeyedMap<LiteralStarSourceMetadata>;
   /** Current paths whose raw values miss their effective types. */
   misfitPaths: PathKeyedSet;
-  /** Commit-scoped inactive value lists keyed by node path. */
-  literalStarValuesMemo?: PathKeyedMap<
-    readonly { path: string; value: unknown }[]
-  >;
-  /** Published latent item objects retained across unrelated commits. */
-  literalStarValueEntries?: PathKeyedMap<LiteralStarValueEntryMemo>;
 }
 
 /** Last committed reads retained for one node reference after it exits. */
@@ -183,8 +150,6 @@ export interface SettlementScratch<Self> {
   pathChanges: { node: Self; previous: string; current: string }[];
   /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;
-  /** Previous values of latent entries touched in a transition. */
-  literalStarAutomaticLog?: Map<string, { present: boolean; value: unknown }>;
   /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
   /** Dirty descendant paths and their direct child names by ancestor. */

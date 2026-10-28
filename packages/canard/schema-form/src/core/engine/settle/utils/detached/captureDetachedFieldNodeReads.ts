@@ -1,10 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
 import { readFieldNodeErrors } from '../../../validation';
-import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
+import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
-import { isSlotEligible } from '../slots/isSlotEligible';
-import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
+import { EMPTY_PATHS } from './emptyDetachedReads';
 
 /**
  * Retain the last committed reads before an exiting node's live path is cleared.
@@ -21,19 +20,12 @@ export const captureDetachedFieldNodeReads = <
   load?: { readonly value: unknown },
 ): void => {
   const runtime = node.runtime;
-  const retainedSlots = isSlotEligible(runtime);
   runtime.watchValuesMemo?.delete(node);
   readFieldNodeWatchValues(node, watchSnapshot);
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
     misfit: runtime.misfitPaths.has(node.path),
     misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
-    ...(!retainedSlots
-      ? {
-          inactiveValues:
-            runtime.literalStarValuesMemo?.get(node.path) ?? EMPTY_VALUES,
-        }
-      : undefined),
     defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
     visible: node.visible,
     readOnly: node.readOnly,

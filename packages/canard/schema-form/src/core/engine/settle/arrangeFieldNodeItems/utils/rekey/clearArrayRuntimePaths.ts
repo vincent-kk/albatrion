@@ -1,3 +1,4 @@
+import { appendSegment, readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRuntime } from '../../../../record';
@@ -27,31 +28,24 @@ const keysBeneath = (
 /**
  * Remove every path-store entry beneath an emptied host in one pass over its indexed positions.
  * The result equals pruning the perished item paths and then re-keying every old position as perished:
- * the five owned stores lose all entries beneath any numeric slot, the inactive memo loses the perished and out-of-range slots,
+ * the owned stores lose all entries beneath any numeric slot,
  * warnings under old and out-of-range slots are dropped, and the memo stores lose old slots and the host's ancestor entries.
  * @param runtime - Tree-owned stores and their persistent path indexes
  * @param hostPath - Array host whose every position perished
  * @param oldCount - Item count before the edit; positions at or beyond it are out of range
- * @param perished - Paths of the live items that perished, each `hostPath/<position>`
- * @returns Nothing; `literalStarRawDirty` is set exactly when the per-position cleanup would set it
+ * @param _perished - Paths of the live items that perished, each `hostPath/<position>`
+ * @returns Nothing; affected stores and memo entries are removed
  */
 export const clearArrayRuntimePaths = <Self>(
   runtime: FieldNodeRuntime<Self>,
   hostPath: string,
   oldCount: number,
-  perished: ReadonlySet<string>,
+  _perished: ReadonlySet<string>,
 ): void => {
   const stores = getRuntimePathStores(runtime);
-  const prefix = hostPath + '/';
   const inRange = (slot: string) =>
-    Number(slot.slice(prefix.length)) < oldCount;
-  const owned = [
-    stores.latent,
-    stores.metadata,
-    stores.declarations,
-    stores.rules,
-    stores.misfits,
-  ];
+    Number(readPointerSegment(slot, -1)) < oldCount;
+  const owned = [stores.declarations, stores.rules, stores.misfits];
   const slots = new Set<string>();
   for (const store of owned) {
     if (!store) continue;
@@ -60,7 +54,7 @@ export const clearArrayRuntimePaths = <Self>(
   if (runtime.warningKeysByPath?.get(hostPath)?.size) {
     const warningKeys = new Set<string>();
     for (let index = 0; index < oldCount; index++)
-      for (const key of runtime.warningKeysByPath.get(prefix + index) ?? [])
+      for (const key of runtime.warningKeysByPath.get(appendSegment(hostPath, index)) ?? [])
         warningKeys.add(key);
     for (const slot of slots)
       if (!inRange(slot))
@@ -72,51 +66,20 @@ export const clearArrayRuntimePaths = <Self>(
         indexFieldNodeWarning(runtime, key, parts[1], undefined, true);
     }
   }
-  let latentChanged = false;
-  for (const slot of slots)
-    if (
-      !perished.has(slot) &&
-      inRange(slot) &&
-      ((stores.latent?.pathIndex.under(slot).size ?? 0) > 0 ||
-        (stores.metadata?.pathIndex.under(slot).size ?? 0) > 0)
-    )
-      latentChanged = true;
-  const inactive = stores.inactiveMemo
-    ? keysBeneath(
-        stores.inactiveMemo.pathIndex,
-        hostPath,
-        (slot) => perished.has(slot) || (!inRange(slot) && slots.has(slot)),
-      )
-    : new Set<string>();
   for (const slot of slots) {
-    for (const key of stores.latent?.pathIndex.under(slot) ?? []) {
-      stores.latent?.delete(key);
-      runtime.literalStarRawDirty = true;
-    }
-    for (const store of [
-      stores.metadata,
-      stores.misfits,
-      stores.declarations,
-    ]) {
+    for (const store of [stores.misfits, stores.declarations]) {
       if (!store) continue;
       for (const key of store.pathIndex.under(slot)) store.delete(key);
     }
     for (const key of stores.rules.pathIndex.under(slot))
       updateCommittedRuleValue(runtime, key, 'delete');
   }
-  for (const key of inactive) stores.inactiveMemo?.delete(key);
-  if (latentChanged) runtime.literalStarRawDirty = true;
   if (oldCount === 0) return;
-  for (const store of [
-    stores.misfitsMemo,
-    stores.inactiveMemo,
-    stores.inactiveEntries,
-  ]) {
+  for (const store of [stores.misfitsMemo]) {
     if (!store) continue;
 
-    if (store !== stores.misfitsMemo && !runtime.literalStarRawDirty) continue;
     const keys = keysBeneath(store.pathIndex, hostPath, inRange);
-    for (const key of store.pathIndex.intersecting(prefix + '0')) keys.add(key);
+    for (const key of store.pathIndex.intersecting(appendSegment(hostPath, 0))) keys.add(key);
     for (const key of keys) store.delete(key);
   }
 };

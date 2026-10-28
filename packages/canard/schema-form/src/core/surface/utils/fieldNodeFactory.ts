@@ -1,25 +1,29 @@
 import type { PartialBy } from '@aileron/declare';
 
-import { SLASH_REGEX, TILDE_REGEX } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendFormattedSegment,
+  formatSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../errors';
-import {
-  BEHAVIORS,
-  collectBlueprintWarnings,
-  mergeEffectiveSchema,
-} from '../../engine';
 import type {
+  Behavior,
   Blueprint,
   BlueprintChildEntry,
   BlueprintNode,
   BlueprintSchema,
+  FieldNodeRuntime,
+  Validator,
 } from '../../engine';
-import { createFormErrorRecord } from '../../engine';
-import type { Behavior, FieldNodeRuntime } from '../../engine';
-import { PathKeyedMap } from '../../engine';
-import { PathKeyedSet } from '../../engine';
-import { compileEntryGuards, readValidationEntry } from '../../engine';
-import type { Validator } from '../../engine';
+import {
+  BEHAVIORS,
+  PathKeyedSet,
+  collectBlueprintWarnings,
+  compileEntryGuards,
+  createFormErrorRecord,
+  mergeEffectiveSchema,
+  readValidationEntry,
+} from '../../engine';
 import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import type {
   ArrayNode,
@@ -47,11 +51,7 @@ type RuntimeArrayVerbs = Pick<
 >;
 
 /** Runtime fields the factory fills when the seed omits them: path-indexed stores and an empty context. */
-type SeededRuntimeFields =
-  | 'literalStarRaw'
-  | 'misfitPaths'
-  | 'literalStarValuesMemo'
-  | 'context';
+type SeededRuntimeFields = 'misfitPaths' | 'context';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
 export type FieldNodeRuntimeSeed = PartialBy<
@@ -86,10 +86,8 @@ const createFieldNode = (
 ): RuntimeFieldNode => {
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
-  const escapedName = name
-    .replace(TILDE_REGEX, '~0')
-    .replace(SLASH_REGEX, '~1');
-  const path = parent ? parent.path + '/' + escapedName : '';
+  const escapedName = formatSegment(name);
+  const path = parent ? appendFormattedSegment(parent.path, escapedName) : '';
   const depth = parent ? parent.depth + 1 : 0;
   const row = source?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)
@@ -135,14 +133,6 @@ export function fieldNodeFactory(
 ): RuntimeNodeSurface {
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
-    ...(analysis.root.containsLiteralStar === true
-      ? {
-          literalStarRaw:
-            runtimeSeed.literalStarRaw ?? new PathKeyedMap('pair'),
-          literalStarValuesMemo:
-            runtimeSeed.literalStarValuesMemo ?? new PathKeyedMap('path'),
-        }
-      : {}),
     misfitPaths: runtimeSeed.misfitPaths ?? new PathKeyedSet(),
     globalStateCounts: new Map(),
     globalState: {},

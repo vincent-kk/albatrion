@@ -1,19 +1,19 @@
 import type { SchemaFormError } from '../../../../errors';
 import type {
-  BlueprintChildEntry,
-  BlueprintNode,
-  EffectiveSchema,
+BlueprintChildEntry,
+BlueprintNode,
+EffectiveSchema,
 } from '../../blueprint';
-import type { DeriveState, DeriveTraceEntry } from '../../derive';
+import type { DeriveState,DeriveTraceEntry } from '../../derive';
 import type {
-  ArrayArrangePlan,
-  Distribution,
-  FieldNodeRecord,
-  InactiveSlotBaseline,
-  SettlementBudget,
-  SettlementEntryApi,
-  SettlementFailureCause,
-  SettlementScratch,
+ArrayArrangePlan,
+Distribution,
+FieldNodeRecord,
+InactiveSlotBaseline,
+SettlementBudget,
+SettlementEntryApi,
+SettlementFailureCause,
+SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
 import type { DependencyPresenceMemo } from '../utils/dependencies/getDependencyIndex';
@@ -21,7 +21,7 @@ import type { GateHostView } from '../utils/gates/readGateHostView';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import type { GateSelectionRound } from './gateSelectionRound';
-import type { GateWheelFrame, RelocatedGateReads } from './gateWheel';
+import type { GateWheelFrame,RelocatedGateReads } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 import type { PresenceQueryCursor } from './presenceQueryCursor';
 import type { SplitBucket } from './splitRegistration';
@@ -213,8 +213,6 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   entered: Set<Self>;
   /** Reused pending occurrences whose sources must remain visible to fills. */
   revived: Set<Self>;
-  /** Entered then revived occurrences by latent key, built lazily and invalidated on rename. */
-  enteredLiteralStarKeys?: Map<string, Self[]>;
   /** Nodes detached from the previous shape during this call. */
   exited: Set<Self>;
   /** Nodes absent in a middle round and eligible for same-instance reentry. */
@@ -293,8 +291,6 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   filledNodes: Set<Self>;
   /** Whether shape updates belong to reversible automatic transition work. */
   inTransition: boolean;
-  /** Previous latent entries changed during transition, indexed once per key. */
-  literalStarAutomaticLog?: Map<string, { present: boolean; value: unknown }>;
   /** First source bindings changed by reversible transition work, local to this call. */
   slotAutomaticLog?: Map<
     Self,
@@ -302,10 +298,6 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   >;
   /** Caller raw-change membership before restoring each fresh retained clone. */
   slotRestoredRaw?: Map<Self, boolean>;
-  /** Proper ancestor paths of current latent keys, rebuilt after map changes. */
-  literalStarPrefixes?: Set<string>;
-  /** Latent keys under their own path and each ancestor, built on first path lookup. */
-  literalStarDescendantKeys?: Map<string, Set<string>>;
   /** Whether marking is currently applying a transition write. */
   automatic: boolean;
   /** True when the current transition round changed either state channel. */

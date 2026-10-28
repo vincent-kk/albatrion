@@ -72,7 +72,6 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     !context.suppressAutomaticWrites &&
     !context.hasGates &&
     context.writtenInputs.get(node) === undefined &&
-    (node.runtime.literalStarRaw?.size ?? 0) === 0 &&
     hasIndependentLeafDefaults(node.runtime.blueprint)
   )
     context.initialOutputs = [];
