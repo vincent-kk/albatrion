@@ -77,11 +77,9 @@ quiet.externalCpuPercent = quiet.rows.reduce(
   (total, row) => total + row.cpuPercent,
   0,
 );
-if (quiet.externalCpuPercent > 30)
-  quiet.heavy.push({
-    name: 'aggregate external CPU',
-    cpuPercent: quiet.externalCpuPercent,
-  });
+for (const row of quiet.rows)
+  if (row.cpuPercent > 30 && !quiet.heavy.some((h) => h.name === row.name))
+    quiet.heavy.push({ name: row.name, cpuPercent: row.cpuPercent });
 fs.writeFileSync(
   path.join(root, 'quiet-window.json'),
   JSON.stringify(quiet, null, 2) + '\n',
