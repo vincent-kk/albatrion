@@ -18,6 +18,7 @@ import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
 import { appendChildEntries } from './appendChildEntries';
+import { assertAddressableName } from './assertAddressableName';
 import { populateVirtualNodes } from './populateVirtualNodes';
 
 /**
@@ -63,6 +64,7 @@ export const populateNodeChildren = (
       const properties = Object.entries(schema.properties);
       for (let index = 0; index < properties.length; index++) {
         const [name, child] = properties[index];
+        assertAddressableName(context, declaration.schemaPath, name);
         const path = appendSegment(node.path, name);
         const input: SchemaInput = {
           context: base.context,
@@ -148,6 +150,7 @@ export const populateNodeChildren = (
       typeof schema.properties === 'object'
     )
       Object.entries(schema.properties).forEach(([name, child], index) => {
+        assertAddressableName(context, declaration.schemaPath, name);
         const existing = properties.get(name);
         const path = existing?.path ?? appendSegment(node.path, name);
         const input: SchemaInput = {

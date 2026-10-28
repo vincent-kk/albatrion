@@ -1,7 +1,7 @@
 import { BaseError } from '@winglet/common-utils/error';
 import { unescapeSegment } from '@winglet/json/pointer-escape';
 
-/** Preserve the existing local-reference failure code at the parser boundary. */
+/** Raised when a non-root pointer string lacks a `/` or `#/` prefix; carries the code INVALID_POINTER_TYPE. */
 class PointerSyntaxError extends BaseError {
   constructor(pointer: string) {
     super(
@@ -13,7 +13,12 @@ class PointerSyntaxError extends BaseError {
   }
 }
 
-/** RFC 6901 producers supply names, including tokens used as form operators. */
+/**
+ * Split an RFC 6901 pointer produced outside the form, such as a validator path or a schema reference, into plain names.
+ * @param pointer - The empty string or `#` for the root, otherwise a string starting with `/` or `#/`. Segments of a `#/` fragment are percent-decoded before `~` decoding; segments of a plain string are not.
+ * @returns Decoded names only; `*`, `..`, `.` and `@` stay ordinary names.
+ * @throws PointerSyntaxError (code INVALID_POINTER_TYPE) when a non-root string starts with neither `/` nor `#/`; URIError when a fragment segment holds a malformed percent escape.
+ */
 export const parseStandardPointer = (pointer: string): readonly string[] => {
   if (pointer === '' || pointer === '#') return [];
   const fragment = pointer[0] === '#';

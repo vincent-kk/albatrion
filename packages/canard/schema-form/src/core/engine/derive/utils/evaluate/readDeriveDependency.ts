@@ -24,9 +24,8 @@ export const readDeriveDependency = <Self extends FieldNodeRecord<Self>>(
   const segments = parsePointerSegments(path);
   if (segments[0] === PointerOperator.Context) return root.runtime.context;
   let value: unknown = root.emit;
-  for (const encoded of segments) {
+  for (const name of segments) {
     if (value === null || typeof value !== 'object') return undefined;
-    const name = encoded;
     if (typeof name !== 'string') return undefined;
     if (!hasOwnProperty(value, name)) return undefined;
     value = Reflect.get(value, name);

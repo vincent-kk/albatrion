@@ -5,8 +5,12 @@ import {
   type PointerSegment,
 } from '../constants/PointerOperator';
 
-/** Apply the ordered segment rules without changing ordinary percent names. */
-export const parseSegment = (token: string): PointerSegment => {
+/**
+ * Apply the three segment rules to one already split token.
+ * @param token - One raw segment between slashes; the empty string and `#` are ordinary names here.
+ * @returns A PointerOperator for exactly `*`, `..`, `.` or `@`; the literal name for exactly `%2A`, `%2E%2E`, `%2E` or `%40`; otherwise the token with `~1` and `~0` decoded. A token without `~` is returned unchanged.
+ */
+export const parsePointerSegment = (token: string): PointerSegment => {
   switch (token) {
     case '*':
       return PointerOperator.Wildcard;

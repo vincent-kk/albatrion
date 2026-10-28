@@ -230,12 +230,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     context.throwingGateExits?.delete(retained);
   if (seen.has(entry.name)) {
     if (seen.get(entry.name) !== entry.node) {
+      const path = appendSegment(node.path, entry.name);
       recordSettlementFailure(
         context,
         new SchemaFormError(
           FormErrorCode.SharedNodeConflict,
-          `Active declarations conflict at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` },
+          `Active declarations conflict at ${path}`,
+          { path },
         ),
         'sharedConflict',
       );
@@ -277,12 +278,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     hasRecursiveExpansion(node, entry.node, input, context)
   ) {
     if (!context.exceededBudget) {
+      const path = appendSegment(node.path, entry.name);
       recordSettlementFailure(
         context,
         new SchemaFormError(
           FormErrorCode.RecursiveShapeDiverged,
-          `Recursive shape diverged at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` },
+          `Recursive shape diverged at ${path}`,
+          { path },
         ),
         'budget',
       );

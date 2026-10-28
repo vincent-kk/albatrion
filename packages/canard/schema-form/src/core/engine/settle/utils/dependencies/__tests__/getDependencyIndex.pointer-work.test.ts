@@ -1,7 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import * as pointer from '@/schema-form/helpers/jsonPointer';
-import * as grammar from '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments';
 
 import { createTestTree } from '../../../../__tests__/fixtures/createTestTree';
 import { WriteOption } from '../../../../types/value';
@@ -10,6 +9,25 @@ import { loadFieldNodeAtMount } from '../../../loadFieldNodeAtMount';
 import { getGateSelectionTable } from '../../compute/childSelection/getGateSelectionTable';
 import { getDependencyIndex } from '../getDependencyIndex';
 import { getLivePresenceNode } from '../getLivePresenceNode';
+
+/** Counts every full-pointer decode, including the jsonPointer fractal's own callers. */
+const decoder = vi.hoisted(() => vi.fn());
+
+vi.mock(
+  '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments',
+  async (importOriginal) => {
+    const original = await importOriginal<{
+      parsePointerSegments: (pointer: string | readonly string[]) => unknown;
+    }>();
+    return {
+      ...original,
+      parsePointerSegments: (pointer: string | readonly string[]) => {
+        decoder(pointer);
+        return original.parsePointerSegments(pointer);
+      },
+    };
+  },
+);
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -32,7 +50,7 @@ it('reuses authored arrays across affected, presence and exact live queries', ()
   );
   const index = getDependencyIndex(blueprint);
   const wrapper = vi.spyOn(pointer, 'parsePointer');
-  const decoder = vi.spyOn(grammar, 'parsePointerSegments');
+  decoder.mockClear();
   pointer.parsePointer('/positive-control');
   expect(wrapper).toHaveBeenCalledTimes(1);
   expect(decoder).toHaveBeenCalledTimes(1);
@@ -75,7 +93,7 @@ it('retains split host syntax while querying the current table owners', () => {
   );
   expect(index.hasSplitOwners).toBe(true);
   const hostSegments = index.pathSegments('');
-  const decoder = vi.spyOn(grammar, 'parsePointerSegments');
+  decoder.mockClear();
   const owners: string[] = [];
   index.affectedForRegistration('/kind', root, {
     hit: () => [],
@@ -92,7 +110,7 @@ it('keeps dynamic query misses runtime-owned and bounded without growing static 
   const index = getDependencyIndex(blueprint);
   const authored = index.pathSegments('/reader');
   const first = index.pathSegments('/history/0', root.runtime);
-  const decoder = vi.spyOn(grammar, 'parsePointerSegments');
+  decoder.mockClear();
   index.affected('/history/0', root);
   expect(index.pathSegments('/history/0', root.runtime)).toBe(first);
   expect(decoder).not.toHaveBeenCalled();
@@ -116,7 +134,7 @@ it('isolates presence syntax by runtime and leaves ownerless misses unretained',
   const runtime = {};
   index.affectedByPresence('/history', '0', undefined, {}, root.runtime);
   const first = index.pathSegments('/history/0', root.runtime);
-  const decoder = vi.spyOn(grammar, 'parsePointerSegments');
+  decoder.mockClear();
   index.affectedByPresence('/history', '0', undefined, {}, root.runtime);
   expect(decoder).not.toHaveBeenCalled();
   index.affectedByPresence('/history', '0', undefined, {}, runtime);

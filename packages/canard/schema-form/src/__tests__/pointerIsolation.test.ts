@@ -15,7 +15,8 @@ const sourceRoot = resolve(fileURLToPath(new URL('../', import.meta.url)));
  */
 function walkFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    if (entry.name === '__legacy__' || entry.name === '__tests__') return [];
+    if (['__legacy__', '__tests__', '__benchmarks__'].includes(entry.name))
+      return [];
     const file = join(directory, entry.name);
     return entry.isDirectory()
       ? walkFiles(file)
@@ -102,6 +103,15 @@ function findViolations(
       )
         record(node, `pointer ${method}`);
       if (
+        ['startsWith', 'endsWith', 'includes'].includes(method) &&
+        argument &&
+        separator(argument) &&
+        /path|pointer|segment|name|reference/i.test(
+          node.expression.expression.getText(source),
+        )
+      )
+        record(node, `pointer ${method}`);
+      if (
         ['includes', 'startsWith', 'endsWith', 'indexOf'].includes(method) &&
         argument &&
         ts.isStringLiteralLike(argument) &&
@@ -134,6 +144,28 @@ function findViolations(
         )
     )
       record(node, 'dynamic pointer escape implementation');
+    if (ts.isTemplateExpression(node)) {
+      let before = node.head.text;
+      for (const span of node.templateSpans) {
+        const after = span.literal.text;
+        if (
+          (before.endsWith('/') || after.startsWith('/')) &&
+          /path|pointer|name|segment|encoded|index/i.test(
+            span.expression.getText(source),
+          )
+        )
+          record(span, 'pointer template concatenation');
+        before = after;
+      }
+    }
+    if (
+      (node.kind === ts.SyntaxKind.RegularExpressionLiteral ||
+        (ts.isNewExpression(node) &&
+          ts.isIdentifier(node.expression) &&
+          node.expression.text === 'RegExp')) &&
+      /\\?\/\(?(oneOf|anyOf|allOf|properties|items)\b/.test(node.getText(source))
+    )
+      record(node, 'pointer structure expression');
     if (ts.isBinaryExpression(node)) {
       const equality = [
         ts.SyntaxKind.EqualsEqualsToken,
@@ -150,7 +182,7 @@ function findViolations(
       if (
         equality &&
         literal &&
-        ['*', '..', '.', '@'].includes(literal.text) &&
+        ['*', '..', '.', '@', '/'].includes(literal.text) &&
         /(?:path|pointer|segment|token|dependency|watched)/i.test(
           operand.getText(source),
         )
@@ -160,6 +192,18 @@ function findViolations(
       const left = node.left.getText(source);
       const right = node.right.getText(source);
       if (
+        node.operatorToken.kind === ts.SyntaxKind.PlusToken &&
+        ((separator(node.left) &&
+          /path|pointer|segment|encoded|name|index|key|base|parent|prefix|host|owner/i.test(
+            right,
+          )) ||
+          (separator(node.right) &&
+            /path|pointer|segment|encoded|name|index|key|base|parent|prefix|host|owner/i.test(
+              left,
+            )))
+      )
+        record(node, 'pointer concatenation');
+      else if (
         node.operatorToken.kind === ts.SyntaxKind.PlusToken &&
         ((ts.isStringLiteralLike(node.right) &&
           node.right.text.startsWith('/') &&
@@ -230,4 +274,36 @@ it('rejects separator construction after a centralized builder result', () => {
     "const match = address.startsWith(appendSegment(base, name) + '/');",
   );
   expect(violations.some((finding) => finding.includes('pointer concatenation'))).toBe(true);
+});
+
+it('rejects template, prefix, lone-separator and structure-expression path handling', () => {
+  const violations = findViolations(
+    join(sourceRoot, 'pointer-probe.ts'),
+    [
+      'const joined = `${node.path}/${entry.name}`;',
+      "const absolute = dataPath.startsWith('/');",
+      "const same = path === '/';",
+      "const built = base + '/' + key;",
+      'const branch = /^(.*\\/oneOf)\\/(\\d+)/.exec(schemaPath);',
+    ].join('\n'),
+  );
+  for (const rule of [
+    'pointer template concatenation',
+    'pointer startsWith',
+    'raw literal operator comparison',
+    'pointer concatenation',
+    'pointer structure expression',
+  ])
+    expect(violations.some((finding) => finding.includes(rule))).toBe(true);
+});
+
+it('keeps ordinary template text and unrelated slashes out of the findings', () => {
+  const violations = findViolations(
+    join(sourceRoot, 'pointer-probe.ts'),
+    [
+      'const label = `Missing behavior for ${template.kind}/${template.strategy}`;',
+      "const url = 'https://example.test' + suffix;",
+    ].join('\n'),
+  );
+  expect(violations).toEqual([]);
 });

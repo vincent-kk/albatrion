@@ -44,9 +44,8 @@ export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
       {}
     );
   let value: unknown = snapshot ? snapshot.emit : root.emit;
-  for (const encoded of segments) {
+  for (const name of segments) {
     if (value === null || typeof value !== 'object') return undefined;
-    const name = encoded;
     if (typeof name !== 'string') return undefined;
     if (!hasOwnProperty(value, name)) return undefined;
     value = Reflect.get(value, name);

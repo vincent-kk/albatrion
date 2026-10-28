@@ -8,7 +8,7 @@ import { hasPointerOperator } from '../hasPointerOperator';
 import { isDescendantPath } from '../isDescendantPath';
 import { joinPointer } from '../joinPointer';
 import { parsePointer } from '../parsePointer';
-import { parseSegment } from '../parseSegment';
+import { parsePointerSegment } from '../parsePointerSegment';
 import { parseStandardPointer } from '../parseStandardPointer';
 import { readPointerSegment } from '../readPointerSegment';
 import { rebasePointer } from '../rebasePointer';
@@ -146,10 +146,10 @@ describe('pointer grammar', () => {
   });
 
   it('preserves empty and hash names when the input is already one segment', () => {
-    expect(parseSegment('')).toBe('');
-    expect(parseSegment('#')).toBe('#');
-    expect(parseSegment('%2A')).toBe('*');
-    expect(parseSegment('*')).toBe(PointerOperator.Wildcard);
+    expect(parsePointerSegment('')).toBe('');
+    expect(parsePointerSegment('#')).toBe('#');
+    expect(parsePointerSegment('%2A')).toBe('*');
+    expect(parsePointerSegment('*')).toBe(PointerOperator.Wildcard);
   });
 
   it('preserves empty names and the absolute root marker for dependencies', () => {

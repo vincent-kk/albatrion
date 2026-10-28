@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import * as pointer from '@/schema-form/helpers/jsonPointer';
-import * as segmentGrammar from '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
@@ -20,6 +19,25 @@ import { readStateDependency } from '../utils/controls/readStateDependency';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
+
+/** Counts every full-pointer decode, including the jsonPointer fractal's own callers. */
+const decoder = vi.hoisted(() => vi.fn());
+
+vi.mock(
+  '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments',
+  async (importOriginal) => {
+    const original = await importOriginal<{
+      parsePointerSegments: (pointer: string | readonly string[]) => unknown;
+    }>();
+    return {
+      ...original,
+      parsePointerSegments: (pointer: string | readonly string[]) => {
+        decoder(pointer);
+        return original.parsePointerSegments(pointer);
+      },
+    };
+  },
+);
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -40,7 +58,7 @@ describe('watch dependency syntax ownership', () => {
     const watcher = root.structure!.watcher;
     const resolve = vi.spyOn(dependencyPaths, 'resolveDependencyPath');
     const wrapper = vi.spyOn(pointer, 'parsePointer');
-    const decoder = vi.spyOn(segmentGrammar, 'parsePointerSegments');
+    decoder.mockClear();
     pointer.parsePointer('/positive-control');
     expect(wrapper).toHaveBeenCalledTimes(1);
     expect(decoder).toHaveBeenCalledTimes(1);
@@ -130,7 +148,7 @@ describe('watch dependency syntax ownership', () => {
     for (let slot = 0; slot < 257; slot++)
       getCachedPointerSegments(runtime, `/unseen/${slot}`);
     const wrapper = vi.spyOn(pointer, 'parsePointer');
-    const decoder = vi.spyOn(segmentGrammar, 'parsePointerSegments');
+    decoder.mockClear();
     index.remove(watcher);
     expect(wrapper).not.toHaveBeenCalled();
     expect(decoder).not.toHaveBeenCalled();

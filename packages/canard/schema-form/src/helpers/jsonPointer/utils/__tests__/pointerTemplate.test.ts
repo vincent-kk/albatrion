@@ -3,7 +3,7 @@ import { expect, it } from 'vitest';
 import { bindPointerTemplate } from '../bindPointerTemplate';
 import { parsePointer } from '../parsePointer';
 import { parseStandardPointer } from '../parseStandardPointer';
-import { readFormattedPointerSegment } from '../readPointerSegment';
+import { readFormattedPointerSegment } from '../readFormattedPointerSegment';
 
 it('binds only complete wildcard segments and keeps the existing encoded suffix', () => {
   expect(bindPointerTemplate('/rows/*/value', '/rows/2/value')).toBe(

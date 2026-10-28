@@ -17,10 +17,10 @@ export const getLoadValue = (
 ): unknown => {
   if (!path) return snapshot;
   let value = snapshot;
-  for (const encoded of segments ?? parsePointerSegments(path)) {
+  for (const name of segments ?? parsePointerSegments(path)) {
     if (value === null || typeof value !== 'object') return undefined;
-    if (typeof encoded !== 'string') return undefined;
-    value = Reflect.get(value, encoded);
+    if (typeof name !== 'string') return undefined;
+    value = Reflect.get(value, name);
   }
   return value;
 };

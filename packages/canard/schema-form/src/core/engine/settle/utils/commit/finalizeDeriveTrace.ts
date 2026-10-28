@@ -22,8 +22,7 @@ export const finalizeDeriveTrace = <Self extends FieldNodeRecord<Self>>(
       let exists = live.get(entry.targetPath);
       if (exists === undefined) {
         let node: Self | undefined = context.root;
-        for (const encoded of parsePointerSegments(entry.targetPath)) {
-          const name = encoded;
+        for (const name of parsePointerSegments(entry.targetPath)) {
           if (typeof name !== 'string') {
             node = undefined;
             break;

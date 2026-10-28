@@ -1,6 +1,11 @@
 import { PointerOperator } from '../constants/PointerOperator';
 
-/** Check operator identity at segment boundaries without a split array or token substrings. */
+/**
+ * Detect an operator segment without splitting the address.
+ * @param path - Canonical address, searched at segment boundaries only.
+ * @param operator - One of the four PointerOperator symbols.
+ * @returns True when a segment is exactly that operator's raw token. The percent spelling of a literal name never matches.
+ */
 export const hasPointerOperator = (
   path: string,
   operator: PointerOperator,

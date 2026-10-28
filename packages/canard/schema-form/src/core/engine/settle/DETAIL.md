@@ -125,7 +125,7 @@
 - 배열 재사용 경로(canReuseArrayChildren의 append, pop, splice)는 표시 자리를 거치지 않는다. 그 있음 변화는 raw 쓰기라 registerRecalculation이 덮는다. 재사용 라운드 뒤 새 자식은 다음 라운드에 첫째 자리에서 표시된다.
 - 스키마 변화가 없는 쓰기의 추가 작업은 라운드마다 presenceHosts 조회 하나와, 형상 dirty가 아닌 branch마다 정수 비교 하나다. 게이트 문맥에서 유지 자식의 유효 스키마가 처음 바뀌기 직전에 호스트·자식별 스키마와 방출 참조를 호출 로컬 기준값으로 포착하고 호스트를 표시한다. 기존 있음 등록 지점마다 같은 자식의 두 참조가 모두 기준값과 다를 때만 이름을 더하며 비교 뒤 기준값을 현재 값으로 갱신한다. 켜진 overlay 호스트의 무관한 쓰기도 ungated 기준 스키마를 거치므로 포착과 라운드별 비교 비용이 들지만 최종 방출이 같으면 독자를 추가 등록하지 않는다. changedRaw와 겹치는 등록은 제외하지 않는다. 게이트 없는 문맥은 포착과 있음 등록에서 즉시 돌아오며, 누적 있음 접두는 새 경로에 대해서만 추가한다. 조상 질의는 이미 형상 dirty인 자리에서는 집합 조회로 끝나고, load 범위 위의 조상도 필요한 경우 질의한다(GOAL-011).
 - 유효 스키마 변화로 방출만 바뀐 유지 자식도 있음 등록 이름에 더한다(SETTLE-020·021·045, CONTROLS-080). 옮긴 게이트가 마지막 평가에서 읽은 경로와 값을 정착마다 기록한다. 로드가 아닌 쓰기에서 라운드 중 사전 공표로 출력 참조가 바뀌었지만 라운드 끝 갱신이 이를 보고하지 않으면, 기록된 경로를 다시 읽어 Object.is로 값이 달라진 게이트만 L부터 선언 호스트까지 기존 바퀴 안에서 다시 계산한다(SETTLE-045). 아직 평가되지 않은 게이트는 다시 예약하지 않으며 추가 라운드도 기존 바퀴 예산에 센다.
-- `*` 조각은 청사진이 반복 아이템 템플릿을 선언한 호스트 아래에서만 펼쳐지고, 그 밖에서는 문자 그대로의 속성 이름이다.
+- `*` 조각은 청사진이 반복 아이템 템플릿을 선언한 호스트 아래에서만 펼쳐지고, 그 밖에서는 문자 그대로의 속성 이름이다. 의존 색인은 파생 규칙의 `targetItems` 표지에서만 와일드카드 연산자 경로를 만들며, 이름이 `*`인 객체 속성의 규칙은 `%2A` 경로로 등록한다.
 
 - The first owned child is identified directly from selected declarations, the previous commit's selection fallback, and declaration child owner paths, while full policy-layer collection and evaluation, priority, and previous-commit exit semantics remain unchanged (CONTROLS-077·CONTROLS-073(7)·WRITE-032·NODE-044; same-layer keep wins).
 

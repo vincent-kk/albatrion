@@ -1,9 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { stripFragment } from '@/schema-form/helpers/jsonPointer';
 import {
   joinPointer,
   parseStandardPointer,
+  stripFragment,
 } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
@@ -24,7 +24,7 @@ export const resolveReference = (
   reference: string,
   schemaPath: string,
 ): { schema: BlueprintSchema; schemaPath: string } => {
-  if (!(stripFragment(reference, false) !== reference))
+  if (stripFragment(reference) === reference)
     return throwBlueprintError(
       FormErrorCode.UnknownJsonSchema,
       schemaPath,

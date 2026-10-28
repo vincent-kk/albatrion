@@ -1,13 +1,31 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as pointer from '@/schema-form/helpers/jsonPointer';
-import * as segmentGrammar from '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
+
+/** Counts every full-pointer decode, including the jsonPointer fractal's own callers. */
+const decoder = vi.hoisted(() => vi.fn());
+
+vi.mock(
+  '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments',
+  async (importOriginal) => {
+    const original = await importOriginal<{
+      parsePointerSegments: (pointer: string | readonly string[]) => unknown;
+    }>();
+    return {
+      ...original,
+      parsePointerSegments: (pointer: string | readonly string[]) => {
+        decoder(pointer);
+        return original.parsePointerSegments(pointer);
+      },
+    };
+  },
+);
 
 const previousModes = {
   gatePredicate: engineModes.gatePredicate,
@@ -34,7 +52,7 @@ afterEach(() => {
 /** Observe both entry points so renaming a parser cannot manufacture zero work. */
 const observeParsers = () => {
   const wrapper = vi.spyOn(pointer, 'parsePointer');
-  const decoder = vi.spyOn(segmentGrammar, 'parsePointerSegments');
+  decoder.mockClear();
   pointer.parsePointer('/positive-control');
   expect(wrapper).toHaveBeenCalledTimes(1);
   expect(decoder).toHaveBeenCalledTimes(1);

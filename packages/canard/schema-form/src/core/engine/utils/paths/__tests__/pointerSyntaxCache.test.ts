@@ -1,24 +1,42 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
-import * as segmentGrammar from '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments';
 
 import { getHostDerived } from '../../cache/derivedRecords';
 import { engineModes } from '../../cache/engineModes';
 import { getCachedPointerSegments } from '../getCachedPointerSegments';
+
+/** Counts every full-pointer decode, including the jsonPointer fractal's own callers. */
+const decoder = vi.hoisted(() => vi.fn());
+
+vi.mock(
+  '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments',
+  async (importOriginal) => {
+    const original = await importOriginal<{
+      parsePointerSegments: (pointer: string | readonly string[]) => unknown;
+    }>();
+    return {
+      ...original,
+      parsePointerSegments: (pointer: string | readonly string[]) => {
+        decoder(pointer);
+        return original.parsePointerSegments(pointer);
+      },
+    };
+  },
+);
 
 afterEach(() => vi.restoreAllMocks());
 
 describe('runtime pointer syntax ownership', () => {
   it('reuses one decoded array on a hit and keeps reserved literals distinct', () => {
     const runtime = {};
-    const decode = vi.spyOn(segmentGrammar, 'parsePointerSegments');
+    decoder.mockClear();
     const first = getCachedPointerSegments(runtime, '/%2A');
     expect(first).toEqual(['*']);
-    expect(decode).toHaveBeenCalledTimes(1);
-    decode.mockClear();
+    expect(decoder).toHaveBeenCalledTimes(1);
+    decoder.mockClear();
     expect(getCachedPointerSegments(runtime, '/%2A')).toBe(first);
-    expect(decode).not.toHaveBeenCalled();
+    expect(decoder).not.toHaveBeenCalled();
     expect(getCachedPointerSegments(runtime, '/*')).not.toEqual(first);
   });
 
@@ -33,12 +51,12 @@ describe('runtime pointer syntax ownership', () => {
     >(runtime).pointerSegments!;
     expect(cache.size).toBe(256);
     expect(cache.has('/name0')).toBe(false);
-    const decode = vi.spyOn(segmentGrammar, 'parsePointerSegments');
+    decoder.mockClear();
     const retained = getCachedPointerSegments(runtime, '/name256');
     expect(getCachedPointerSegments(runtime, '/name256')).toBe(retained);
-    expect(decode).not.toHaveBeenCalled();
+    expect(decoder).not.toHaveBeenCalled();
     expect(getCachedPointerSegments(runtime, '/name0')).not.toBe(first);
-    expect(decode).toHaveBeenCalledTimes(1);
+    expect(decoder).toHaveBeenCalledTimes(1);
     expect(cache.size).toBe(256);
     expect(cache.has('/name1')).toBe(false);
   });

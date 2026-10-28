@@ -42,7 +42,7 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
             ?.some(
               (rule) =>
                 rule.kind === 'derived' &&
-                rule.targetName &&
+                (rule.targetName || rule.targetItems) &&
                 rule.watchDependencies.some(
                   (path) =>
                     readPointerSegment(path, 0) === PointerOperator.Context,

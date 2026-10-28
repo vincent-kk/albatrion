@@ -38,10 +38,24 @@ interface RuleGroup {
   readonly layer: DeriveRule['layer'];
   /** Target name for a parent-scoped rule. */
   readonly targetName?: string;
+  /** Whether the rule addresses the repeated array item template. */
+  readonly targetItems?: boolean;
   /** Fragment child declarations that must still be selected. */
   readonly targetDeclarationIds?: readonly number[];
   /** Same-name target templates whose watches can extend a derived expression. */
   readonly targetNodes: readonly BlueprintNode[];
+}
+
+/** One direct child or the repeated item template a fragment rule may address. */
+interface FragmentTarget {
+  /** Property name or tuple position; absent for the item template. */
+  readonly name?: string;
+  /** Set only for the repeated array item template. */
+  readonly items?: true;
+  /** Child template node. */
+  readonly node: BlueprintNode;
+  /** Declarations the child template carries. */
+  readonly declarations: BlueprintNode['declarations'];
 }
 
 /**
@@ -73,8 +87,8 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         Reflect.get(controls, CONTROL_KEY.resetInteraction) !== undefined ||
         Reflect.get(controls, CONTROL_KEY.injectTo) !== undefined;
       if (hasOwnRules && declaration.scope === 'fragment') {
-        // Tuple positions bind by index, apart from the repeated item template (`*`).
-        const targets = [
+        // Tuple positions bind by index, apart from the repeated item template.
+        const targets: FragmentTarget[] = [
           ...node.childEntries,
           ...(node.prefixItems ?? []).flatMap((first, index) =>
             (node.prefixItemCandidates?.[index] ?? [first]).map((item) => ({
@@ -85,7 +99,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           ),
           ...(node.itemCandidates ?? (node.item ? [node.item] : [])).map(
             (item) => ({
-              name: '*',
+              items: true as const,
               node: item,
               declarations: item.declarations,
             }),
@@ -103,6 +117,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
               schemaPath: appendSegment(declaration.schemaPath, 'controls'),
               layer: 'fragment',
               targetName: entry.name,
+              targetItems: entry.items,
               targetDeclarationIds: selected.map((child) => child.id),
               targetNodes: [entry.node],
             });
@@ -182,6 +197,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
             schemaPath,
             layer: group.layer,
             targetName: group.targetName,
+            targetItems: group.targetItems,
             targetDeclarationIds: group.targetDeclarationIds,
             dependencies,
             watchDependencies,

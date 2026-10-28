@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import * as segmentGrammar from '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments';
 
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
@@ -10,6 +9,25 @@ import { getSlotPathNames } from '../utils/slots/getSlotPathNames';
 import { resolveSlotSource } from '../utils/slots/resolveSlotSource';
 import { writeSlotPath } from '../utils/slots/writeSlotPath';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+
+/** Counts every full-pointer decode, including the jsonPointer fractal's own callers. */
+const decoder = vi.hoisted(() => vi.fn());
+
+vi.mock(
+  '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments',
+  async (importOriginal) => {
+    const original = await importOriginal<{
+      parsePointerSegments: (pointer: string | readonly string[]) => unknown;
+    }>();
+    return {
+      ...original,
+      parsePointerSegments: (pointer: string | readonly string[]) => {
+        decoder(pointer);
+        return original.parsePointerSegments(pointer);
+      },
+    };
+  },
+);
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -39,7 +57,7 @@ const candidateSchema: BlueprintSchema = {
 // filid:contract settle-static-pointer-work
 describe('slot syntax caches without source caching', () => {
   it('shares literal names while rejecting operator addresses', () => {
-    const decoder = vi.spyOn(segmentGrammar, 'parsePointerSegments');
+    decoder.mockClear();
     const runtime = {};
     const path = '/%2A/%2E%2E/%2E/%40/';
     const names = getSlotPathNames(runtime, path);
@@ -65,7 +83,7 @@ describe('slot syntax caches without source caching', () => {
       number,
     );
     const before = resolveSlotSource(root, '/value', text.blueprintNode);
-    const decoder = vi.spyOn(segmentGrammar, 'parsePointerSegments');
+    decoder.mockClear();
     expect(
       writeSlotPath(root, '/value', text.blueprintNode, 'patched', true),
     ).toBe(true);
@@ -112,7 +130,7 @@ describe('slot syntax caches without source caching', () => {
     expect(resolveSlotSource(root, currentPath, old.blueprintNode).source).toBe(
       old,
     );
-    const decoder = vi.spyOn(segmentGrammar, 'parsePointerSegments');
+    decoder.mockClear();
     expect(
       writeSlotPath(root, currentPath, old.blueprintNode, 'moved', true),
     ).toBe(true);

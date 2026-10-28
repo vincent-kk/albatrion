@@ -25,9 +25,8 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   let live: Self | undefined = root;
   let siblings = template.childEntries;
   const order: number[] = [];
-  for (const encoded of segments) {
+  for (const name of segments) {
     if (template.strategy !== 'branch') return undefined;
-    const name = encoded;
     if (typeof name !== 'string') return undefined;
     siblings = template.childEntries;
     const index = Number(name);

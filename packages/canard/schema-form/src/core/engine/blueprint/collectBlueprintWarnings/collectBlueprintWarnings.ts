@@ -8,6 +8,7 @@ import type {
 } from '../types/blueprint';
 import { readSchemaObject } from '../utils/analyze/readSchemaObject';
 import { collectInlineTerminalWarnings } from './utils/collectInlineTerminalWarnings';
+import { endsWithBranchIndex } from './utils/endsWithBranchIndex';
 
 /** Dependency keywords the form ignores on any declaration. */
 const IGNORED_DEPENDENCY_KEYWORDS = ['dependentSchemas', 'dependencies'];
@@ -23,11 +24,11 @@ const ALL_OF_IGNORED_KEYWORDS = [
   'contains',
 ];
 
-/** A schema path ending in an `allOf` branch index. */
-const ALL_OF_BRANCH_PATH = /\/allOf\/\d+$/;
+/** Keyword whose branch index ends an `allOf` branch schema path. */
+const ALL_OF_KEYWORDS = ['allOf'];
 
-/** A schema path ending in a `oneOf` or `anyOf` branch index. */
-const UNION_BRANCH_PATH = /\/(oneOf|anyOf)\/\d+$/;
+/** Keywords whose branch index ends a `oneOf` or `anyOf` branch schema path. */
+const UNION_KEYWORDS = ['oneOf', 'anyOf'];
 
 /**
  * Collect advisory records only when a consumer explicitly requests diagnostics.
@@ -70,7 +71,7 @@ export const collectBlueprintWarnings = (
           warning(FormWarningCode.DependentSchemasIgnoredForForm, {
             keyword,
           });
-      if (ALL_OF_BRANCH_PATH.test(declaration.schemaPath))
+      if (endsWithBranchIndex(declaration.schemaPath, ALL_OF_KEYWORDS))
         for (const keyword of ALL_OF_IGNORED_KEYWORDS)
           if (schema[keyword] !== undefined)
             warning(FormWarningCode.AllOfKeywordIgnoredForForm, {
@@ -84,7 +85,7 @@ export const collectBlueprintWarnings = (
           schema.controls?.disabled !== undefined)
       )
         warning(FormWarningCode.LockOnNonTerminalObject);
-      if (UNION_BRANCH_PATH.test(declaration.schemaPath)) {
+      if (endsWithBranchIndex(declaration.schemaPath, UNION_KEYWORDS)) {
         if (schema.if !== undefined && schema.else !== false)
           warning(FormWarningCode.IfWithoutElseFalse);
         if (

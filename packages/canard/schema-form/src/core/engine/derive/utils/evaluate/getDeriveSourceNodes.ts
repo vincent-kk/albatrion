@@ -20,9 +20,11 @@ export const getDeriveSourceNodes = <Self extends FieldNodeRecord<Self>>(
   const seen = new Set<Self>();
   for (const path of state.sourcePaths) {
     let node: Self | undefined = root;
-    for (const encoded of parsePointerSegments(path)) {
-      const name = encoded;
-      if (typeof name !== 'string') return [];
+    for (const name of parsePointerSegments(path)) {
+      if (typeof name !== 'string') {
+        node = undefined;
+        break;
+      }
       const children: Record<string, Self> | null = node?.structure ?? null;
       node =
         children && hasOwnProperty(children, name) ? children[name] : undefined;

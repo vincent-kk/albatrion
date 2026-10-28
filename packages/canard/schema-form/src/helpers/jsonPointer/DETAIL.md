@@ -16,11 +16,11 @@
 
 `parseStandardPointer`는 RFC 6901 이름만 반환하여 `/*`의 별표를 리터럴로 읽습니다. fragment는 percent decoding 후 tilde decoding하며 일반 문자열 포인터의 `%`는 유지합니다. 루트가 아닌 입력은 `/` 또는 `#/`로 시작해야 하며 잘못된 접두사는 기존 참조 오류의 `INVALID_POINTER_TYPE` 원인을 유지합니다. 검증 이슈와 `$ref` 소비처는 이 표준 해석을 사용합니다.
 
-`formatSegment`는 이름의 tilde와 slash를 winglet pointer-escape로 이스케이프하며 정확한 예약 이름 넷만 퍼센트 표기로 만듭니다. 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 이름 자체는 문자열 경로로 주소화할 수 없는 알려진 한계입니다.
+`formatSegment`는 이름의 tilde와 slash를 winglet pointer-escape로 이스케이프하며 정확한 예약 이름 넷만 퍼센트 표기로 만듭니다. 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 이름은 형식화한 경로가 다시 예약 이름으로 읽히므로 왕복하지 않으며, `isReservedPercentName`이 그 넷을 판정합니다. 청사진은 이 이름의 속성을 만들 때 거부합니다.
 
-`appendSegment`는 부모 경로에 이름 하나를 조립합니다. `joinPointer`는 디코드된 이름과 연산자 세그먼트로 절대 경로를 만듭니다. `isDescendantPath`는 세그먼트 경계의 엄격한 하위 경로만 판정합니다. `resolvePointer`는 기준 경로에 상대 연산자를 적용하고 루트 위의 부모 이동은 루트에 머물며 fragment를 제거합니다. 단독 컨텍스트는 `@`로 유지합니다. 단독 `/`와 `#/`는 빈 이름 자식이며 빈 문자열 기준 경로만 루트입니다.
+`appendSegment`는 부모 경로에 이름 하나를 조립합니다. `joinPointer`는 디코드된 이름과 연산자 세그먼트로 절대 경로를 만듭니다. `isDescendantPath`는 세그먼트 경계의 엄격한 하위 경로만 판정합니다. `resolvePointer`는 기준 경로에 상대 연산자를 적용하고 루트 위의 부모 이동은 루트에 머물며 fragment를 제거합니다. 끝의 빈 이름은 직전 세그먼트가 연산자일 때만(`./`, `../`) 버리며 이름 뒤(`a/`)에서는 빈 이름 자식으로 보존합니다. 단독 컨텍스트는 `@`로 유지합니다. 단독 `/`와 `#/`는 빈 이름 자식이며 빈 문자열 기준 경로만 루트입니다.
 
-`stripFragment`는 선행 fragment 문자만 제거합니다. `/`는 그대로이고 `#/`도 `/`가 되어 빈 이름 주소를 보존합니다. 단독 `#`는 빈 루트로 바뀌며, 식 의존 등록에서 절대 루트와 상대 빈 주소를 구별해야 할 때는 preserveAbsoluteRoot 인수를 true로 주어 `#`를 보존합니다. `isAbsolutePath`는 기존 slash 접두사 판정이며 complete-pointer 술어는 `isAbsolutePointer`입니다. 검증기 dataPath는 표준 이름으로 해석하고 별도의 slash 루트 정규화를 두지 않습니다.
+`stripFragment`는 선행 fragment 문자만 제거합니다. `/`는 그대로이고 `#/`도 `/`가 되어 빈 이름 주소를 보존합니다. 단독 `#`는 빈 루트로 바뀌며, 식 의존 등록에서 절대 루트와 상대 빈 주소를 구별해야 할 때는 preserveAbsoluteRoot 인수를 true로 주어 `#`를 보존합니다. `isCanonicalPath`는 노드 경로가 쓰는 정본 형식, 곧 slash로 시작하는 주소만 참으로 판정하며 fragment 접두사 주소와 빈 문자열은 거짓입니다. `isAbsolutePath`는 기존 slash 접두사 판정이며 complete-pointer 술어는 `isAbsolutePointer`입니다. 검증기 dataPath는 표준 이름으로 해석하고 별도의 slash 루트 정규화를 두지 않습니다.
 
 색인과 배열 재키의 기존 할당 수를 유지하기 위해 `readPointerSegment`는 지정 위치(음수는 끝에서 센 위치)의 마디 하나만 해석하고, `getChildPointer`는 조상 바로 아래 자식까지의 접두 경로를 반환합니다. `rebasePointer`는 이미 판정한 접두 경로를 교체하며 접미부를 재파싱하지 않습니다. 이 연산들도 경로 문법의 소유 경계 안에 둡니다.
 

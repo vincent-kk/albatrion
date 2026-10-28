@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { readFormattedNameSegment } from '../readPointerSegment';
+import { readFormattedNameSegment } from '../readFormattedNameSegment';
 
 describe('canonical formatted name segments', () => {
   it.each(['*', '..', '.', '@'])('rejects raw operator %s', (operator) => {

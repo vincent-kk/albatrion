@@ -1,6 +1,11 @@
 import { isDescendantPath } from './isDescendantPath';
 
-/** Keep just the direct child's address when path descends from this ancestor. */
+/**
+ * Find the ancestor's direct child on the way to a descendant address.
+ * @param path - Canonical address to shorten.
+ * @param ancestorPath - Canonical ancestor address; the empty string is the root.
+ * @returns The direct child address (path itself when it already is one), or undefined when path is not a strict descendant of the ancestor.
+ */
 export const getChildPointer = (
   path: string,
   ancestorPath: string,

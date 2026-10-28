@@ -20,15 +20,14 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
   rule: DeriveRule,
   state: DeriveState<Self>,
 ): readonly Self[] => {
-  if (!rule.targetName) return [source];
+  if (!rule.targetName && !rule.targetItems) return [source];
   const children = source.structure;
   // A repeated array template addresses every live item; declaration selection filters below.
-  const targets =
-    rule.targetName === '*' && source.blueprintNode.kind === 'array'
-      ? (source.children ?? NO_TARGETS)
-      : children && hasOwnProperty(children, rule.targetName)
-        ? [children[rule.targetName]]
-        : NO_TARGETS;
+  const targets = rule.targetItems
+    ? (source.children ?? NO_TARGETS)
+    : children && rule.targetName && hasOwnProperty(children, rule.targetName)
+      ? [children[rule.targetName]]
+      : NO_TARGETS;
   return targets.filter(
     (target) =>
       !target.detached &&

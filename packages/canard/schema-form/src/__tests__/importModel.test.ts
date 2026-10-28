@@ -6,7 +6,6 @@
  * B1: organs do not import their owner's direct child fractals, subject to B7.
  * Index retention: exported names have product consumers outside their owner's subtree (stated, not asserted here).
  * D7: public-API tests under __tests__/e2e, scenarios and migration may read the root index.
- * Verification compartments may inspect concrete internals across D/S1 boundaries; U still applies.
  * O and deeper non-lineage index re-exports are outside these assertions.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
@@ -159,15 +158,6 @@ function classifyImport(
     /^index\.tsx?$/.test(basename(target)) && dirname(target) === targetOwner;
 
   if (isWithin(importerOwner, targetOwner)) return ownIndex ? 'U' : undefined;
-  if (
-    !ownIndex &&
-    relative(sourceRoot, importer)
-      .split(sep)
-      .some((segment) =>
-        ['__tests__', '__benchmarks__', 'fixtures'].includes(segment),
-      )
-  )
-    return undefined;
   if (!isWithin(targetOwner, importerOwner)) return ownIndex ? undefined : 'S1';
 
   let gateway = targetOwner;
@@ -179,26 +169,6 @@ function classifyImport(
     if (fractals.has(directory)) gateway = directory;
   return ownIndex && dirname(target) === gateway ? undefined : 'D';
 }
-
-it('permits concrete verification probes while rejecting the same product edge and ancestor barrel', () => {
-  const owner = join(sourceRoot, 'core/engine');
-  const pointer = join(sourceRoot, 'helpers/jsonPointer');
-  const fractals = new Set([sourceRoot, owner, pointer]);
-  const target = join(pointer, 'utils/parsePointerSegments.ts');
-  expect(
-    classifyImport(join(owner, '__tests__/probe.test.ts'), target, fractals),
-  ).toBeUndefined();
-  expect(classifyImport(join(owner, 'utils/probe.ts'), target, fractals)).toBe(
-    'S1',
-  );
-  expect(
-    classifyImport(
-      join(owner, '__tests__/probe.test.ts'),
-      join(sourceRoot, 'index.ts'),
-      fractals,
-    ),
-  ).toBe('U');
-});
 
 it('keeps U outside D7, D and S1 import-model edges at zero', () => {
   const files = walkFiles(sourceRoot);

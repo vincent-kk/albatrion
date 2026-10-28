@@ -8,7 +8,7 @@
 
 - D3b-1의 규칙 target ID 메모는 호출자가 넘긴 root runtime에 지연 생성한다. nextTargetId는 기존 프로세스 전역 단조 발급을 유지하며 reset으로 되감지 않는다. 폼 전체 reset·폐기에서 target 메모를 해제하고 부분 reset은 유지한다. 선언 키도 같은 runtime의 별도 WeakMap에 두며 규칙 키의 직렬화와 소비 순서는 보존한다(SURFACE-065).
 
-- 배열 조각 규칙 표는 반복 템플릿과 prefixItems 자리의 후보마다 대상 행과 해당 `targetDeclarationIds`를 만든다. 조각 기능 색인도 전체 후보 소유를 이름별로 합치며, 실제 대상은 현재 선택된 선언으로 제한한다(377C-01, 389C-03, 391C-01).
+- 배열 조각 규칙 표는 반복 템플릿과 prefixItems 자리의 후보마다 대상 행과 해당 `targetDeclarationIds`를 만든다. 조각 기능 색인도 전체 후보 소유를 이름별로 합치며, 실제 대상은 현재 선택된 선언으로 제한한다(377C-01, 389C-03, 391C-01). 반복 아이템 템플릿 행은 이름이 아니라 `targetItems` 표지로 구별하므로 이름이 `*`인 객체 속성의 행과 섞이지 않는다.
 
 - `derive`는 완성된 형상에 걸린 규칙을 판정한다. 쓰기 적용, 재계산, 파생 라운드 셈, 원본 B 복원, 커밋은 settle이 맡는다(LANDING-063·083, SETTLE-004·011·017, NODE-016).
 - derive는 engine의 자식 fractal(`engine/derive`)로, settle과는 형제 관계다. 의존은 `blueprint`·`record`의 진입점과, engine organ의 순수 `sameValue`·경로 해석·선언 층 해석, `@/schema-form/helpers/jsonPointer`로만 향한다. settle의 어느 파일도(`settle/types/`, `settle/index.ts`, 쓰기·전이·커밋·파생 라운드 실행 organ) `import type`으로도 가져오지 않는다(NODE-016·045, SETTLE-043, CONTROLS-080).

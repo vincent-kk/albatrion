@@ -1,6 +1,10 @@
 import { isAbsolutePath } from './isAbsolutePath';
 
-/** Match the complete parsed pointer, including fragment roots and array prefixes. */
+/**
+ * Decide whether an address is absolute without parsing it.
+ * @param pointer - An address string, or an array of raw segments.
+ * @returns True for `#`, a string starting with `/` or `#/`, or an array whose first element is `#`.
+ */
 export const isAbsolutePointer = (
   pointer: string | readonly string[],
 ): boolean =>

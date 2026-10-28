@@ -6,21 +6,21 @@ export { stripFragment } from './utils/stripFragment';
 export { parsePointer } from './utils/parsePointer';
 export { parsePointerSegments } from './utils/parsePointerSegments';
 export { isAbsolutePointer } from './utils/isAbsolutePointer';
-export { parseSegment as parsePointerSegment } from './utils/parseSegment';
+export { parsePointerSegment } from './utils/parsePointerSegment';
 export { parseStandardPointer } from './utils/parseStandardPointer';
 export { formatSegment } from './utils/formatSegment';
+export { isReservedPercentName } from './utils/isReservedPercentName';
 export { appendSegment } from './utils/appendSegment';
 export { appendFormattedSegment } from './utils/appendFormattedSegment';
 export { joinPointer } from './utils/joinPointer';
 export { isDescendantPath } from './utils/isDescendantPath';
 export { resolvePointer } from './utils/resolvePointer';
-export {
-  readPointerSegment,
-  readFormattedPointerSegment,
-  readFormattedNameSegment,
-} from './utils/readPointerSegment';
+export { readPointerSegment } from './utils/readPointerSegment';
+export { readFormattedPointerSegment } from './utils/readFormattedPointerSegment';
+export { readFormattedNameSegment } from './utils/readFormattedNameSegment';
 export { getChildPointer } from './utils/getChildPointer';
 export { rebasePointer } from './utils/rebasePointer';
 export { hasPointerOperator } from './utils/hasPointerOperator';
 export { bindPointerTemplate } from './utils/bindPointerTemplate';
 export { isAbsolutePath } from './utils/isAbsolutePath';
+export { isCanonicalPath } from './utils/isCanonicalPath';

@@ -186,16 +186,17 @@ describe('derive rule table under the shared owner rule', () => {
     ).toHaveLength(12);
     expect(
       JSON.parse(tableOf(EDGE_SCHEMAS[2][1], false)).rules.map(
-        (rule: { kind: string; targetName?: string }) => [
+        (rule: { kind: string; targetName?: string; targetItems?: boolean }) => [
           rule.kind,
           rule.targetName,
+          rule.targetItems,
         ],
       ),
     ).toEqual([
-      ['derived', '*'],
-      ['unsetValue', '0'],
-      ['unsetValue', '*'],
-      ['resetInteraction', '0'],
+      ['derived', undefined, true],
+      ['unsetValue', '0', undefined],
+      ['unsetValue', undefined, true],
+      ['resetInteraction', '0', undefined],
     ]);
     expect(JSON.parse(tableOf(EDGE_SCHEMAS[2][1], true)).rules).toHaveLength(2);
   });

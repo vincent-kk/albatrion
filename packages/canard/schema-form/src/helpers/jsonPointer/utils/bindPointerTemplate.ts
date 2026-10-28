@@ -1,7 +1,12 @@
 import { PointerOperator } from '../constants/PointerOperator';
 import { hasPointerOperator } from './hasPointerOperator';
 
-/** Bind canonical array-template addresses without allocating segment arrays. */
+/**
+ * Replace each wildcard segment of a template address with the matching segment of a concrete occurrence.
+ * @param templatePath - Canonical template address that may contain exact `*` segments.
+ * @param occurrencePath - Concrete address aligned segment by segment with the template.
+ * @returns The same template string when it has no wildcard or the occurrence is shorter than the wildcard's depth; otherwise the bound address.
+ */
 export const bindPointerTemplate = (
   templatePath: string,
   occurrencePath: string,

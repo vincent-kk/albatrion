@@ -1,12 +1,30 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import * as grammar from '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments';
 
 import { dispatchSetValue } from '../../../../write';
 import { getDispatchNode } from '../../../__tests__/fixtures/getDispatchNode';
 import { mountPresenceTree } from '../../../__tests__/helpers/mountPresenceTree';
 import { getDependencyIndex } from '../getDependencyIndex';
 import { getLivePresenceNode } from '../getLivePresenceNode';
+
+/** Counts every full-pointer decode, including the jsonPointer fractal's own callers. */
+const decoder = vi.hoisted(() => vi.fn());
+
+vi.mock(
+  '@/schema-form/helpers/jsonPointer/utils/parsePointerSegments',
+  async (importOriginal) => {
+    const original = await importOriginal<{
+      parsePointerSegments: (pointer: string | readonly string[]) => unknown;
+    }>();
+    return {
+      ...original,
+      parsePointerSegments: (pointer: string | readonly string[]) => {
+        decoder(pointer);
+        return original.parsePointerSegments(pointer);
+      },
+    };
+  },
+);
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -31,7 +49,7 @@ it('expands retained template syntax against the current array in document order
   );
   const index = getDependencyIndex(root.runtime.blueprint);
   const template = index.pathSegments('/rows/*/reader');
-  const decoder = vi.spyOn(grammar, 'parsePointerSegments');
+  decoder.mockClear();
   expect(
     index.affected('/flag', root).filter((path) => path.endsWith('/reader')),
   ).toEqual(['/rows/0/reader', '/rows/1/reader']);
@@ -85,7 +103,7 @@ it('reuses folded watched arrays while keeping concrete presence intersections e
   const index = getDependencyIndex(root.runtime.blueprint);
   for (const path of ['/rows/0', '/rows/0/active', '/rows/1', '/rows/1/active'])
     index.pathSegments(path, root.runtime);
-  const decoder = vi.spyOn(grammar, 'parsePointerSegments');
+  decoder.mockClear();
   for (let repeat = 0; repeat < 2; repeat++) {
     expect(
       index.affectedByPresence('/rows/0', 'active', undefined, {}, root.runtime)

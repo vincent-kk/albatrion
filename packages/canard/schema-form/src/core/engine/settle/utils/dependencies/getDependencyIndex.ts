@@ -160,8 +160,17 @@ class DependencyIndex {
     for (const node of blueprint.nodes)
       for (const declaration of node.declarations)
         for (const rule of rules.byDeclaration.get(declaration.id) ?? []) {
-          if (rule.kind !== 'derived' || !rule.targetName) continue;
-          const targetPath = appendSegment(declaration.path, rule.targetName);
+          if (
+            rule.kind !== 'derived' ||
+            !(rule.targetName || rule.targetItems)
+          )
+            continue;
+          const targetPath = rule.targetItems
+            ? joinPointer([
+                ...(this.preparedSegments.get(declaration.path) ?? []),
+                PointerOperator.Wildcard,
+              ])
+            : appendSegment(declaration.path, rule.targetName ?? '');
           for (const watch of rule.watchDependencies) {
             const watched = resolveDependencyPath(targetPath, watch);
             if (readPointerSegment(watched, 0) !== PointerOperator.Context) {
