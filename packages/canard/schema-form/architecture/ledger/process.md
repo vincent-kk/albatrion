@@ -82,6 +82,7 @@
 | PROCESS-074 | 가지 PR의 스쿼시 병합과 끝난 가지·worktree의 정리(451라운드) — 병합은 `gh pr merge --squash --delete-branch --match-head-commit`, 제목은 PR 제목·본문은 독립 검토 판정과 수용 조건, 병합된 PR과 폐기 가설의 가지·worktree는 지우고 남기는 가지는 8단계·단계·진행 중·보류(D2-P5)뿐, 완료 보고는 표로, 세 판 비교표(0.16.1·단계 시작·단계 끝)는 D4가 구해 단계 루트 PR 본문에 | 현행 | 소유자 답(`reviews/round-451-owner-answers.md:7-8`, `reviews/round-451-owner-answers.md:11-12`), 편집자 결정(451라운드, `reviews/round-451-closing.md` 451C-01·04·05) |
 | PROCESS-075 | 분기 전환 단계의 에이전트 배정(453라운드) — PROCESS-069와 `AGENT-POLICY.md` 그대로 적용(Fable 오케스트레이터는 설계·판단·원장·커밋만, 구현·게이트·측정·PR은 codex, 독립 검토는 antigravity, 읽기·추적 보조는 Claude 하위 에이전트, 동시 워커 둘, 전체 시험·측정은 하나씩), 코디네이터 대기 규칙 PROCESS-073 유지 | 현행 | 소유자 답(`reviews/round-453-owner-answers.md:9`), 편집자 결정(453라운드, `reviews/round-453-closing.md` 453C-05) |
 | PROCESS-076 | PR 본문·결과 문서·커밋 메시지의 기계 로컬 경로 금지(457라운드, 소유자 지적) — 문서는 그 자체로 읽혀야 하며 `/private/tmp` 같은 경로를 인용하지 않음, 판정이 기대는 측정 요약은 `verification/branch-switch/raw/<가설>/`에, 독립 검토 판정은 `verification/branch-switch/reviews/`에 커밋해 저장소 경로로 인용, 전체 표본 원자료는 기계에 남고 존재만 한 줄, 이미 병합된 커밋의 경로는 이력 불변으로 두고 이 결정이 대체 경로를 밝힘 | 현행 | 소유자 답(`reviews/round-457-owner-answers.md:10`), 편집자 결정(457라운드, `reviews/round-457-closing.md` 457C-05) |
+| PROCESS-077 | 핀의 범위와 코디네이터 판정의 규율(459라운드) — add-only 핀은 구현을 직접 단언하는 기존 시험에만 허용하고 공개 동작 시험을 덮지 않음(B4-1의 핀 77파일이 공개 계약 결함 둘을 가렸던 과대), 공개 동작의 기준은 전후 배달 비교이며 그림자는 핀 아래 시나리오를 보지 못함, 코디네이터는 시험의 단언을 읽은 뒤 판정(떼어진 쓰기의 "즉시 공표" 지시와 "셋째 결함"은 오판으로 정정: 공표는 커밋에서, 두 시험은 내부 저장소만 단언), 측정 기준(형제 관문 3배 같은 수치 상한)은 창 전에 고정 | 현행 | 편집자 결정(459라운드, `reviews/round-459-closing.md` 459C-02) |
 
 ## 항목
 
@@ -1104,6 +1105,7 @@
   > 소유자(451라운드, 생존 신호의 처리): "생존신고로 계속 컨텍스트 낭비를 하는거 아닌가? 이게 정식 사용법이야?" (`reviews/round-451-owner-answers.md:9`)
   > 소유자(451라운드, 에이전트 정책의 수정): "이전에도 비슷한 지적을 했는데 고쳐지지 않았다. 에이전트 정책에 혹시 기록이 있나? 그걸 수정하던가 하라" (`reviews/round-451-owner-answers.md:10`)
   > 편집자 결정(458C-03): "【추론】 B4-1의 첫 정식 창은 9/22행(180프로세스) 뒤 `switch-if-80`의 A0에서 AJV8 플러그인의 로컬 dist(`dist/default/index.cjs`)가 없어 MODULE_NOT_FOUND로 멈췄다(B2-P3 때와 같은 원인). 이것은 측정의 흐트러짐이 아니라 환경 준비 실패이므로 수집된 행은 판정에 쓰지 않고 "중단 창"으로 한 줄 기록하며, 플러그인을 빌드하고 A/B 사본에서 22행 44동작의 무계측 적재 점검을 통과시킨 뒤 같은 고정 구성으로 새 창을 한 번만 연다(재측정이 아니라 준비 뒤의 최초 정식 수집, TEST-095의 "재시도 없음"과 어긋나지 않음). 후보 2의 창은 시작 전 5초 CPU 검사에서 macOS XProtect(61 %)에 세 번 걸려 표본 0으로 보류되었고 2분 간격의 네 번째 검사 뒤 열렸다; 정식 표본이 0이면 보류는 재시도가 아니다. 플러그인 dist 빌드와 44동작 적재 점검은 모든 창의 사전 점검에 넣는다. 보유량 측정에서 "reset 뒤 1노드 잔존"으로 보였던 것은 독립 `writeHeapSnapshot` 사이의 숫자 ID 재사용(read의 FieldNode가 reset에서는 AllocationSite가 지배하는 일반 Object)이었으므로 개별 노드의 ID 추적 회수 수는 판정 불가로 두고, 호스트당 슬롯 수·바이트와 reset 뒤 슬롯 호스트 0은 단일 스냅샷 관측으로 유지한다." (`reviews/round-458-closing.md:12`)
+  > 편집자 결정(459C-02): "【추론】 B4-2가 B4-1의 add-only `slots = off` 핀 77파일을 회수하자 핀이 가리고 있던 슬롯 경로의 공개 계약 결함 둘이 드러났다: (a) `settle.value-model`의 OPEN-4 — 같은 이름·다른 kind의 비활성 원본이 있으면 호스트 default가 재진입 raw를 덮지 못해야 하는데 슬롯 경로는 default를 냈다; (b) `settle.candidate-source-preservation-inactive-write` — 비활성 쓰기의 미선언 tail·extras가 보존되어야 하는데 지워졌다. 둘 다 단언은 그대로 두고 슬롯 경로를 고쳤다(수정 전 실패 9행 보존). 454C-03·458C-02가 허용한 핀은 "잠복 구현을 고정하는 기존 시험"에 한한 것이었으므로 공개 동작 시험까지 덮은 것은 범위 과대였고, 그림자(verify)가 둘을 못 잡은 까닭도 그 시나리오가 핀 아래에서 off로만 돌았기 때문이다. 코디네이터의 오판 둘도 정정한다: 떼어진 참조의 쓰기를 "즉시 `inactiveValues`에 공표"하라 한 것은 배달 장치 62지점(off·on 모두 커밋까지 늦춤)과 어긋난 착오였고, 그 근거로 든 두 시험(`settle.array-detached-reference`, `settle.array-detached-reset-address`)은 쓰기 직후 잠복 저장소(내부)만 단언할 뿐 공개 시점을 단언하지 않았다(워커의 6행 재현으로 확인). 계약은 "공표는 커밋에서, 배치 밖 떼어진 쓰기도 off 경로와 같은 시점"이며 그 잠복 단언은 슬롯 overlay 단언으로 옮겼다. 규칙: 핀은 구현을 직접 단언하는 시험에만, 공개 동작의 기준은 전후 배달 비교이고, 코디네이터는 시험의 단언을 읽은 뒤에 판정한다." (`reviews/round-459-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-451-closing.md:10`(정본), `reviews/round-451-owner-answers.md:9-10`, `AGENT-POLICY.md`
 - 닫은 사람: 소유자 답(`reviews/round-451-owner-answers.md:9-10`), 편집자 결정(451라운드, `reviews/round-451-closing.md` 451C-02)
@@ -1149,3 +1151,15 @@
 - 닫은 사람: 소유자 답(`reviews/round-457-owner-answers.md:10`), 편집자 결정(457라운드, `reviews/round-457-closing.md` 457C-05)
 - 라운드: 457
 - 까닭: `reviews/round-457-owner-answers.md:10`
+
+### PROCESS-077 핀의 범위와 코디네이터 판정의 규율(459라운드) — add-only 핀은 구현을 직접 단언하는 기존 시험에만 허용하고 공개 동작 시험을 덮지 않음(B4-1의 핀 77파일이 공개 계약 결함 둘을 가렸던 과대), 공개 동작의 기준은 전후 배달 비교이며 그림자는 핀 아래 시나리오를 보지 못함, 코디네이터는 시험의 단언을 읽은 뒤 판정(떼어진 쓰기의 "즉시 공표" 지시와 "셋째 결함"은 오판으로 정정: 공표는 커밋에서, 두 시험은 내부 저장소만 단언), 측정 기준(형제 관문 3배 같은 수치 상한)은 창 전에 고정
+
+- 결정:
+  > 【추론】 B4-2가 B4-1의 add-only `slots = off` 핀 77파일을 회수하자 핀이 가리고 있던 슬롯 경로의 공개 계약 결함 둘이 드러났다: (a) `settle.value-model`의 OPEN-4 — 같은 이름·다른 kind의 비활성 원본이 있으면 호스트 default가 재진입 raw를 덮지 못해야 하는데 슬롯 경로는 default를 냈다; (b) `settle.candidate-source-preservation-inactive-write` — 비활성 쓰기의 미선언 tail·extras가 보존되어야 하는데 지워졌다. 둘 다 단언은 그대로 두고 슬롯 경로를 고쳤다(수정 전 실패 9행 보존). 454C-03·458C-02가 허용한 핀은 "잠복 구현을 고정하는 기존 시험"에 한한 것이었으므로 공개 동작 시험까지 덮은 것은 범위 과대였고, 그림자(verify)가 둘을 못 잡은 까닭도 그 시나리오가 핀 아래에서 off로만 돌았기 때문이다. 코디네이터의 오판 둘도 정정한다: 떼어진 참조의 쓰기를 "즉시 `inactiveValues`에 공표"하라 한 것은 배달 장치 62지점(off·on 모두 커밋까지 늦춤)과 어긋난 착오였고, 그 근거로 든 두 시험(`settle.array-detached-reference`, `settle.array-detached-reset-address`)은 쓰기 직후 잠복 저장소(내부)만 단언할 뿐 공개 시점을 단언하지 않았다(워커의 6행 재현으로 확인). 계약은 "공표는 커밋에서, 배치 밖 떼어진 쓰기도 off 경로와 같은 시점"이며 그 잠복 단언은 슬롯 overlay 단언으로 옮겼다. 규칙: 핀은 구현을 직접 단언하는 시험에만, 공개 동작의 기준은 전후 배달 비교이고, 코디네이터는 시험의 단언을 읽은 뒤에 판정한다.
+- 보충:
+  > 소유자(458라운드, 롱턴 자율 진행): "너의 작업 제외, 모두 꺼줄게. 이제 네가 파워조절을 하면서 진행하도록 해. \n끊기지 않게 목표한 작업을 모두 진행하도록." (`reviews/round-458-owner-answers.md:8`)
+- 상태: 현행
+- 출처: `reviews/round-459-closing.md:10`(정본), `reviews/round-458-owner-answers.md:8`, `verification/branch-switch/b4-2-results.md`
+- 닫은 사람: 편집자 결정(459라운드, `reviews/round-459-closing.md` 459C-02)
+- 라운드: 459
+- 까닭: `reviews/round-459-closing.md:10`
