@@ -1,4 +1,4 @@
-import { waitForQuietProcess } from '../../../b8/helpers/waitForQuietProcess.mjs';
+import { waitForQuietProcess } from '../../waitForQuietProcess.mjs';
 
 /**
  * Observe a synthetic workload against the shared start-delay policy.
