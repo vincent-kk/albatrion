@@ -1,0 +1,183 @@
+{
+  "productCommit": "6e585c4d6",
+  "node": "v26.11.1",
+  "projects": {
+    "unit": {
+      "success": true,
+      "numTotalTests": 3893,
+      "numPassedTests": 3892,
+      "numFailedTests": 0,
+      "numTodoTests": 1,
+      "numTotalTestSuites": 1170,
+      "numFailedTestSuites": 0,
+      "failures": []
+    },
+    "render": {
+      "success": true,
+      "numTotalTests": 766,
+      "numPassedTests": 766,
+      "numFailedTests": 0,
+      "numTodoTests": 0,
+      "numTotalTestSuites": 215,
+      "numFailedTestSuites": 0,
+      "failures": []
+    },
+    "storybook": {
+      "success": true,
+      "numTotalTests": 251,
+      "numPassedTests": 251,
+      "numFailedTests": 0,
+      "numTodoTests": 0,
+      "numTotalTestSuites": 100,
+      "numFailedTestSuites": 0,
+      "failures": []
+    },
+    "react18": {
+      "success": true,
+      "numTotalTests": 766,
+      "numPassedTests": 766,
+      "numFailedTests": 0,
+      "numTodoTests": 0,
+      "numTotalTestSuites": 215,
+      "numFailedTestSuites": 0,
+      "failures": []
+    },
+    "production": {
+      "success": true,
+      "numTotalTests": 21,
+      "numPassedTests": 21,
+      "numFailedTests": 0,
+      "numTodoTests": 0,
+      "numTotalTestSuites": 13,
+      "numFailedTestSuites": 0,
+      "failures": []
+    },
+    "verify": {
+      "success": true,
+      "numTotalTests": 4703,
+      "numPassedTests": 4702,
+      "numFailedTests": 0,
+      "numTodoTests": 1,
+      "numTotalTestSuites": 1392,
+      "numFailedTestSuites": 0,
+      "failures": []
+    },
+    "verify-initial": {
+      "success": false,
+      "numTotalTests": 4703,
+      "numPassedTests": 4701,
+      "numFailedTests": 1,
+      "numTodoTests": 1,
+      "numTotalTestSuites": 1392,
+      "numFailedTestSuites": 2,
+      "failures": [
+        {
+          "case": "external error propagation timing (188C-01 record) clears fields holding root issues one call at a time in linear time",
+          "message": "AssertionError: expected 67.47845900000016 to be less than 40"
+        }
+      ]
+    },
+    "verify-timing-isolated": {
+      "success": true,
+      "numTotalTests": 2,
+      "numPassedTests": 2,
+      "numFailedTests": 0,
+      "numTodoTests": 0,
+      "numTotalTestSuites": 2,
+      "numFailedTestSuites": 0,
+      "failures": []
+    },
+    "unit-before-required-fix": {
+      "success": false,
+      "numTotalTests": 3893,
+      "numPassedTests": 3891,
+      "numFailedTests": 1,
+      "numTodoTests": 1,
+      "numTotalTestSuites": 1170,
+      "numFailedTestSuites": 2,
+      "failures": [
+        {
+          "case": "commit source visit characterization visits a required-only child after global candidates and before the root extra",
+          "message": "AssertionError: expected [ '', '/b' ] to deeply equal [ '', '/b', '/a' ]"
+        }
+      ]
+    }
+  },
+  "isolationAndFirstWrite": [
+    {
+      "file": "src/__tests__/pointerIsolation.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "keeps pointer parsing and construction inside helpers/jsonPointer",
+          "status": "passed"
+        },
+        {
+          "name": "rejects literal and constructed tilde decoders outside the pointer owner",
+          "status": "passed"
+        },
+        {
+          "name": "rejects separator construction after a centralized builder result",
+          "status": "passed"
+        },
+        {
+          "name": "rejects raw fragment comparison and prefix construction",
+          "status": "passed"
+        },
+        {
+          "name": "rejects template, prefix, lone-separator and structure-expression path handling",
+          "status": "passed"
+        },
+        {
+          "name": "keeps ordinary template text and unrelated slashes out of the findings",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.pointer-path-work.test.ts",
+      "status": "passed",
+      "cases": [
+        {
+          "name": "does not parse ungated declarations for diagnostics in a branchless form",
+          "status": "passed"
+        },
+        {
+          "name": "performs no full parsing from the first actual siblings-0 write",
+          "status": "passed"
+        },
+        {
+          "name": "performs no full parsing from the first actual oneOf-80 write with diagnostics=false",
+          "status": "passed"
+        },
+        {
+          "name": "performs no full parsing from the first actual oneOf-80 write with diagnostics=true",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "declarations": {
+    "equal": true,
+    "differences": 0,
+    "A": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+    "B": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+  },
+  "remaining": [
+    "window-tool validation and preparation",
+    "untimed smoke",
+    "authorized A/B window",
+    "heap and TEST-073 gates",
+    "independent review",
+    "push and PR body finalization"
+  ],
+  "lint": {
+    "exitCode": 0,
+    "scope": "final product source"
+  },
+  "delivery": {
+    "scenes": 79,
+    "phases": 429,
+    "differences": 0
+  }
+}
