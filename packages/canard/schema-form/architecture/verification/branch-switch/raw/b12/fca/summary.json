@@ -1,0 +1,18 @@
+{
+  "candidate": "652ddf6eede10a1852f9b568444b935712fc0dc0",
+  "status": "indeterminate",
+  "certainty": "indeterminate",
+  "snapshotHash": "ff3a4d276c73d9687152709926134baf1aa5cfa994572a8182af4f1e01944872",
+  "facts": {
+    "exact": 1649,
+    "scope": "default",
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "unsupported": 173
+  },
+  "findings": 202,
+  "baselineFindings": 202,
+  "newFindings": 0,
+  "removedFindings": 0
+}

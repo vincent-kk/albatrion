@@ -1,0 +1,12 @@
+{
+  "candidate": "f69aa13883cd22f64f02eca17235da87e2057ec5",
+  "startedAt": "2026-10-28T19:12:46.518Z",
+  "stoppedAt": "2026-10-28T19:17:10Z",
+  "reason": "Rekeyed exit resolver read n0 instead of the moved n1 previous snapshot",
+  "classification": "candidate-invalid",
+  "environmentFailure": false,
+  "runnerExitCode": 143,
+  "coordinatorAuthorizedStop": true,
+  "adoptionJudgment": null,
+  "partialJsonFiles": 127
+}
