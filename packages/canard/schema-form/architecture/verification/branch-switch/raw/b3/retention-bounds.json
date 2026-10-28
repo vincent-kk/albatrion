@@ -1,0 +1,96 @@
+{
+  "untimed": true,
+  "method": "Separate untimed traversal of the identical 120-write fixture; K=slot count, M=maximum retained subtree node count, actual<=K*M; snapshot byte measurements not rerun",
+  "rows": [
+    {
+      "row": "switch-oneOf-80",
+      "writes": 120,
+      "hosts": [
+        {
+          "path": "",
+          "K": 3,
+          "M": 1,
+          "KM": 3,
+          "retainedNodes": 3,
+          "sourceNodeCounts": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "row": "switch-discriminator-80",
+      "writes": 120,
+      "hosts": [
+        {
+          "path": "",
+          "K": 3,
+          "M": 1,
+          "KM": 3,
+          "retainedNodes": 3,
+          "sourceNodeCounts": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "row": "switch-if-80",
+      "writes": 120,
+      "hosts": [
+        {
+          "path": "",
+          "K": 3,
+          "M": 1,
+          "KM": 3,
+          "retainedNodes": 3,
+          "sourceNodeCounts": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "writes": 120,
+      "hosts": [
+        {
+          "path": "/outer/inner",
+          "K": 3,
+          "M": 1,
+          "KM": 3,
+          "retainedNodes": 3,
+          "sourceNodeCounts": [1, 1, 1]
+        }
+      ]
+    },
+    {
+      "row": "switch-siblings-0",
+      "writes": 120,
+      "hosts": []
+    },
+    {
+      "row": "switch-siblings-100",
+      "writes": 120,
+      "hosts": []
+    },
+    {
+      "row": "switch-siblings-1000",
+      "writes": 120,
+      "hosts": []
+    },
+    {
+      "row": "switch-siblings-4000",
+      "writes": 120,
+      "hosts": []
+    },
+    {
+      "row": "switch-payload-12",
+      "writes": 120,
+      "hosts": [
+        {
+          "path": "",
+          "K": 12,
+          "M": 1,
+          "KM": 12,
+          "retainedNodes": 12,
+          "sourceNodeCounts": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        }
+      ]
+    }
+  ]
+}

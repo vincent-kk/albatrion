@@ -1,0 +1,173 @@
+{
+  "timestamp": "2026-10-28T00:01:14.813Z",
+  "commit": "95853ae5f",
+  "node": "v26.12.1",
+  "react": "19.2.6",
+  "cpu": "Apple M1 Max",
+  "os": "Darwin 27.0.0 arm64",
+  "warmup": 10,
+  "count": 100,
+  "mode": "render",
+  "legacyVersion": "0.16.1",
+  "coreBundleDigests": {
+    "legacy": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46",
+    "workspace": "73bc0047684ba7f139ddd6c76f9f7c814df2b5e8f4c5d8da5484191442a7f39e"
+  },
+  "updateSettlement": "microtasks -> immediate/message -> timer(0) -> immediate/message",
+  "updateFloor": "separate empty barrier after each settled interaction; net is signed subtraction",
+  "rows": [
+    {
+      "fixture": "oneOf-20",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 5.4754164999999375,
+        "p99": 5.91279099999997
+      },
+      "new": {
+        "median": 5.172875000000204,
+        "p99": 5.608083000000079
+      },
+      "ratio": 0.9447454819190947,
+      "p99Ratio": 0.9484662995867953,
+      "throughputDrop": -4.132262071086812,
+      "p": 1.9130235522761197e-5,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "update-sync",
+      "old": {
+        "median": 0.521563000000242,
+        "p99": 0.8794579999998859
+      },
+      "new": {
+        "median": 3.9716675000000805,
+        "p99": 4.916541000000052
+      },
+      "ratio": 7.614933382924474,
+      "p99Ratio": 5.590421600577503,
+      "throughputDrop": 86.6656830713224,
+      "p": 8.944907855400059e-70,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "update-settled",
+      "old": {
+        "median": 6.5096669999998085,
+        "p99": 7.696708000000399
+      },
+      "new": {
+        "median": 6.592854500000385,
+        "p99": 7.59795800000029
+      },
+      "ratio": 1.0127790714948366,
+      "p99Ratio": 0.9871698393650761,
+      "throughputDrop": 2.7218832141099103,
+      "p": 0.02342713977280691,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "update-idle-floor",
+      "old": {
+        "median": 2.6017500000002656,
+        "p99": 2.6581249999999272
+      },
+      "new": {
+        "median": 2.6011459999999715,
+        "p99": 2.664249999999811
+      },
+      "ratio": 0.9997678485633539,
+      "p99Ratio": 1.0023042558193778,
+      "throughputDrop": -0.962619526062114,
+      "p": 0.6817894475877649,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "update-settled-net",
+      "old": {
+        "median": 3.8876665000004778,
+        "p99": 5.492997999999943
+      },
+      "new": {
+        "median": 4.021813000000293,
+        "p99": 5.476999999999862
+      },
+      "ratio": 1.0345056604006024,
+      "p99Ratio": 0.9970875649326504,
+      "throughputDrop": 5.289782415664224,
+      "p": 0.021661160175782238,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 3.302059999994981,
+        "p99": 3.583581999999751
+      },
+      "new": {
+        "median": 3.3310275000105776,
+        "p99": 3.7432079999989583
+      },
+      "ratio": 1.0087725541073271,
+      "p99Ratio": 1.044543699571886,
+      "throughputDrop": 3.3207700771023863,
+      "p": 0.007678724158306055,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "profiler-update",
+      "old": {
+        "median": 2.562164499996925,
+        "p99": 3.1561929999952554
+      },
+      "new": {
+        "median": 2.091770499996983,
+        "p99": 2.581341999997221
+      },
+      "ratio": 0.8164075725815003,
+      "p99Ratio": 0.8178657008621151,
+      "throughputDrop": -19.916745781841794,
+      "p": 4.842051079665074e-13,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "commits-mount",
+      "old": {
+        "median": 3,
+        "p99": 3
+      },
+      "new": {
+        "median": 2,
+        "p99": 2
+      },
+      "ratio": 0.6666666666666666,
+      "p99Ratio": 0.6666666666666666,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "commits-update",
+      "old": {
+        "median": 6,
+        "p99": 6
+      },
+      "new": {
+        "median": 2,
+        "p99": 2
+      },
+      "ratio": 0.3333333333333333,
+      "p99Ratio": 0.3333333333333333,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    }
+  ]
+}

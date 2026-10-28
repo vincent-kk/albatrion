@@ -1,0 +1,30 @@
+{
+  "qualityPassed": true,
+  "gates": {
+    "oneOf80": "FAIL",
+    "discriminator80": "FAIL",
+    "if80": "FAIL",
+    "siblings1000": "FAIL",
+    "otherCanonicalTEST073": "PASS",
+    "nodeHeap": "FAIL",
+    "removedStageCalls": "PASS"
+  },
+  "oneOfRatio": 4.139520954007874,
+  "oneOfRoundTripMs": 0.30408299999999144,
+  "discriminatorRoundTripMs": 0.24518699999998717,
+  "ifRoundTripMs": 0.3934579999999812,
+  "ifLimitRoundTripMs": 0.30880008999999153,
+  "guardUs": 0.029481812500000704,
+  "siblingsRatio": 21.23831682202834,
+  "otherRowsRegressions": [],
+  "all22Regressions": [],
+  "nodeStartMedian": 1439.0977804439112,
+  "nodeEndMedian": 1440.3455308938212,
+  "nodeStartMax": 1889.5436912617477,
+  "mappingMismatches": 13,
+  "thresholdsFixedBeforeWindow": {
+    "siblingMultiple": 3,
+    "legacyRoles": "A primary; B supplemental",
+    "stagesProcesses": 24
+  }
+}

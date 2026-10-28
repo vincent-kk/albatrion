@@ -1,0 +1,2098 @@
+{
+  "switch-oneOf-80": {
+    "S": {
+      "metrics": {
+        "markWrite": {
+          "selfUs": 4.20749999994996,
+          "selfUsProcessMedians": [
+            4.20749999994996, 4.166999999966947, 4.499999999978854
+          ],
+          "selfUsWidth": 0.3330000000119071,
+          "inclusiveUs": 4.20749999994996,
+          "inclusiveUsProcessMedians": [
+            4.20749999994996, 4.166999999966947, 4.499999999978854
+          ],
+          "inclusiveUsWidth": 0.3330000000119071,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "registerRecalculation": {
+          "selfUs": 12.562000000002627,
+          "selfUsProcessMedians": [
+            12.458000000037828, 12.562000000002627, 13.791499999996404
+          ],
+          "selfUsWidth": 1.3334999999585762,
+          "inclusiveUs": 12.562000000002627,
+          "inclusiveUsProcessMedians": [
+            12.458000000037828, 12.562000000002627, 13.791499999996404
+          ],
+          "inclusiveUsWidth": 1.3334999999585762,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "primeHost": {
+          "selfUs": 2.8125000000045475,
+          "selfUsProcessMedians": [
+            2.7915000000291457, 2.8125000000045475, 3.021000000018148
+          ],
+          "selfUsWidth": 0.2294999999890024,
+          "inclusiveUs": 2.8125000000045475,
+          "inclusiveUsProcessMedians": [
+            2.7915000000291457, 2.8125000000045475, 3.021000000018148
+          ],
+          "inclusiveUsWidth": 0.2294999999890024,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateOutput": {
+          "selfUs": 6.896000000011782,
+          "selfUsProcessMedians": [
+            6.896000000011782, 6.7710000000147375, 7.1245000000317305
+          ],
+          "selfUsWidth": 0.353500000016993,
+          "inclusiveUs": 16.187000000002172,
+          "inclusiveUsProcessMedians": [
+            16.187000000002172, 15.207499999974061, 16.354000000035285
+          ],
+          "inclusiveUsWidth": 1.1465000000612235,
+          "calls": 6.0,
+          "callsProcessMedians": [6.0, 6.0, 6.0],
+          "callsWidth": 0.0,
+          "maxCalls": 6
+        },
+        "computeNode": {
+          "selfUs": 33.438000000018064,
+          "selfUsProcessMedians": [
+            32.87299999996662, 33.438000000018064, 36.16650000003574
+          ],
+          "selfUsWidth": 3.293500000069116,
+          "inclusiveUs": 108.9795000000322,
+          "inclusiveUsProcessMedians": [
+            108.08200000005286, 108.9795000000322, 117.04100000002882
+          ],
+          "inclusiveUsWidth": 8.958999999975958,
+          "calls": 5.0,
+          "callsProcessMedians": [5.0, 5.0, 5.0],
+          "callsWidth": 0.0,
+          "maxCalls": 5
+        },
+        "wheelPreparation": {
+          "selfUs": 8.667500000058226,
+          "selfUsProcessMedians": [
+            8.667500000029804, 8.667500000058226, 8.958999999975958
+          ],
+          "selfUsWidth": 0.2914999999461543,
+          "inclusiveUs": 14.125499999977364,
+          "inclusiveUsProcessMedians": [
+            14.125499999977364, 14.124999999978627, 14.875000000017735
+          ],
+          "inclusiveUsWidth": 0.7500000000391083,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "createChildNode": {
+          "selfUs": 3.8129999999512165,
+          "selfUsProcessMedians": [
+            3.792000000032658, 3.8129999999512165, 3.9165000000309647
+          ],
+          "selfUsWidth": 0.12449999999830652,
+          "inclusiveUs": 3.8129999999512165,
+          "inclusiveUsProcessMedians": [
+            3.792000000032658, 3.8129999999512165, 3.9165000000309647
+          ],
+          "inclusiveUsWidth": 0.12449999999830652,
+          "calls": 3.0,
+          "callsProcessMedians": [3.0, 3.0, 3.0],
+          "callsWidth": 0.0,
+          "maxCalls": 3
+        },
+        "enterFieldNode": {
+          "selfUs": 3.4159999999587853,
+          "selfUsProcessMedians": [
+            3.3544999999719494, 3.4159999999587853, 3.43750000001819
+          ],
+          "selfUsWidth": 0.08300000004624053,
+          "inclusiveUs": 6.166499999977759,
+          "inclusiveUsProcessMedians": [
+            6.10400000002187, 6.166499999977759, 6.33349999998245
+          ],
+          "inclusiveUsWidth": 0.22949999996058068,
+          "calls": 3.0,
+          "callsProcessMedians": [3.0, 3.0, 3.0],
+          "callsWidth": 0.0,
+          "maxCalls": 3
+        },
+        "assembleObject": {
+          "selfUs": 9.187000000025591,
+          "selfUsProcessMedians": [
+            9.187000000025591, 8.396000000033155, 9.457999999995081
+          ],
+          "selfUsWidth": 1.0619999999619267,
+          "inclusiveUs": 9.187000000025591,
+          "inclusiveUsProcessMedians": [
+            9.187000000025591, 8.396000000033155, 9.457999999995081
+          ],
+          "inclusiveUsWidth": 1.0619999999619267,
+          "calls": 2.0,
+          "callsProcessMedians": [2.0, 2.0, 2.0],
+          "callsWidth": 0.0,
+          "maxCalls": 2
+        },
+        "selectChildren": {
+          "selfUs": 31.458000000014863,
+          "selfUsProcessMedians": [
+            31.04099999995924, 31.458000000014863, 33.66449999998622
+          ],
+          "selfUsWidth": 2.6235000000269793,
+          "inclusiveUs": 58.33350000000337,
+          "inclusiveUsProcessMedians": [
+            58.33350000000337, 58.12449999999103, 61.83350000000587
+          ],
+          "inclusiveUsWidth": 3.7090000000148393,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "transitionSettlement": {
+          "selfUs": 5.0420000000031,
+          "selfUsProcessMedians": [
+            4.9579999999878055, 5.0420000000031, 5.2914999999700285
+          ],
+          "selfUsWidth": 0.333499999982223,
+          "inclusiveUs": 5.0420000000031,
+          "inclusiveUsProcessMedians": [
+            4.9579999999878055, 5.0420000000031, 5.2914999999700285
+          ],
+          "inclusiveUsWidth": 0.333499999982223,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "getControlLayers": {
+          "selfUs": 13.520500000026914,
+          "selfUsProcessMedians": [
+            13.520500000026914, 13.437500000037517, 13.583000000011225
+          ],
+          "selfUsWidth": 0.14549999997370833,
+          "inclusiveUs": 13.520500000026914,
+          "inclusiveUsProcessMedians": [
+            13.520500000026914, 13.437500000037517, 13.583000000011225
+          ],
+          "inclusiveUsWidth": 0.14549999997370833,
+          "calls": 12.0,
+          "callsProcessMedians": [12.0, 12.0, 12.0],
+          "callsWidth": 0.0,
+          "maxCalls": 12
+        },
+        "setLatentRaw": {
+          "selfUs": 11.18700000000672,
+          "selfUsProcessMedians": [
+            11.166500000030055, 11.18700000000672, 12.37399999996569
+          ],
+          "selfUsWidth": 1.207499999935635,
+          "inclusiveUs": 11.18700000000672,
+          "inclusiveUsProcessMedians": [
+            11.166500000030055, 11.18700000000672, 12.37399999996569
+          ],
+          "inclusiveUsWidth": 1.207499999935635,
+          "calls": 6.0,
+          "callsProcessMedians": [6.0, 6.0, 6.0],
+          "callsWidth": 0.0,
+          "maxCalls": 6
+        },
+        "captureExitedRaw": {
+          "selfUs": 5.833999999907746,
+          "selfUsProcessMedians": [
+            5.77049999992596, 5.833999999907746, 6.26900000003161
+          ],
+          "selfUsWidth": 0.49850000010565054,
+          "inclusiveUs": 18.49949999999012,
+          "inclusiveUsProcessMedians": [
+            18.375000000020236, 18.49949999999012, 20.459499999986974
+          ],
+          "inclusiveUsWidth": 2.084499999966738,
+          "calls": 3.0,
+          "callsProcessMedians": [3.0, 3.0, 3.0],
+          "callsWidth": 0.0,
+          "maxCalls": 3
+        },
+        "finalizeExits": {
+          "selfUs": 22.794000000033066,
+          "selfUsProcessMedians": [
+            22.794000000033066, 22.18849999997019, 23.875499999917338
+          ],
+          "selfUsWidth": 1.6869999999471474,
+          "inclusiveUs": 53.645999999986316,
+          "inclusiveUsProcessMedians": [
+            52.77049999997985, 53.645999999986316, 59.41649999996912
+          ],
+          "inclusiveUsWidth": 6.645999999989272,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "markCommitDeliveries": {
+          "selfUs": 11.020999999971082,
+          "selfUsProcessMedians": [
+            11.020999999971082, 10.624999999976126, 12.270999999998367
+          ],
+          "selfUsWidth": 1.6460000000222408,
+          "inclusiveUs": 11.020999999971082,
+          "inclusiveUsProcessMedians": [
+            11.020999999971082, 10.624999999976126, 12.270999999998367
+          ],
+          "inclusiveUsWidth": 1.6460000000222408,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateInactiveValuesMemo": {
+          "selfUs": 18.291999999973996,
+          "selfUsProcessMedians": [
+            18.291499999975258, 18.291999999973996, 19.47899999998981
+          ],
+          "selfUsWidth": 1.187500000014552,
+          "inclusiveUs": 18.291999999973996,
+          "inclusiveUsProcessMedians": [
+            18.291499999975258, 18.291999999973996, 19.47899999998981
+          ],
+          "inclusiveUsWidth": 1.187500000014552,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "commitSettlement": {
+          "selfUs": 8.417500000007294,
+          "selfUsProcessMedians": [
+            8.417500000007294, 8.39650000000347, 8.770000000055234
+          ],
+          "selfUsWidth": 0.373500000051763,
+          "inclusiveUs": 42.85349999997834,
+          "inclusiveUsProcessMedians": [
+            42.85349999997834, 41.91650000001346, 47.64549999998735
+          ],
+          "inclusiveUsWidth": 5.728999999973894,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "everythingElse": {
+          "selfUs": 16.93849999998065,
+          "selfUsProcessMedians": [
+            16.93849999998065, 16.770500000006905, 18.061999999986256
+          ],
+          "selfUsWidth": 1.2914999999793508,
+          "inclusiveUs": 16.93849999998065,
+          "inclusiveUsProcessMedians": [
+            16.93849999998065, 16.770500000006905, 18.061999999986256
+          ],
+          "inclusiveUsWidth": 1.2914999999793508,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        }
+      },
+      "wrappedMedianUs": 238.1460000000004,
+      "wrappedProcessMediansUs": [
+        237.35399999998208, 238.1460000000004, 259.62550000002693
+      ],
+      "unwrappedMedianUs": 221.29150000003506,
+      "unwrappedProcessMediansUs": [
+        221.29150000003506, 219.8749999999734, 237.8334999999936
+      ],
+      "pids": [9068, 9085, 9089]
+    },
+    "E": {
+      "metrics": {
+        "markWrite": {
+          "selfUs": 1.5420000000005984,
+          "selfUsProcessMedians": [
+            1.5840000000082455, 1.5420000000005984, 1.5204999999980373
+          ],
+          "selfUsWidth": 0.06350000001020817,
+          "inclusiveUs": 1.5420000000005984,
+          "inclusiveUsProcessMedians": [
+            1.5840000000082455, 1.5420000000005984, 1.5204999999980373
+          ],
+          "inclusiveUsWidth": 0.06350000001020817,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "registerRecalculation": {
+          "selfUs": 12.687499999998408,
+          "selfUsProcessMedians": [
+            12.665999999995847, 12.979499999971722, 12.687499999998408
+          ],
+          "selfUsWidth": 0.31349999997587474,
+          "inclusiveUs": 12.687499999998408,
+          "inclusiveUsProcessMedians": [
+            12.665999999995847, 12.979499999971722, 12.687499999998408
+          ],
+          "inclusiveUsWidth": 0.31349999997587474,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "primeHost": {
+          "selfUs": 2.4579999999900792,
+          "selfUsProcessMedians": [
+            2.417000000008329, 2.4579999999900792, 2.4579999999900792
+          ],
+          "selfUsWidth": 0.04099999998175008,
+          "inclusiveUs": 2.4579999999900792,
+          "inclusiveUsProcessMedians": [
+            2.417000000008329, 2.4579999999900792, 2.4579999999900792
+          ],
+          "inclusiveUsWidth": 0.04099999998175008,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateOutput": {
+          "selfUs": 7.416000000006306,
+          "selfUsProcessMedians": [
+            7.416000000006306, 7.437499999980446, 7.2079999999346
+          ],
+          "selfUsWidth": 0.2295000000458458,
+          "inclusiveUs": 15.645000000063192,
+          "inclusiveUsProcessMedians": [
+            15.645000000063192, 15.041500000080532, 16.20849999994789
+          ],
+          "inclusiveUsWidth": 1.1669999998673575,
+          "calls": 6.0,
+          "callsProcessMedians": [6.0, 6.0, 6.0],
+          "callsWidth": 0.0,
+          "maxCalls": 6
+        },
+        "computeNode": {
+          "selfUs": 32.103999999975485,
+          "selfUsProcessMedians": [
+            32.103999999975485, 33.18599999997218, 31.959499999999252
+          ],
+          "selfUsWidth": 1.2264999999729298,
+          "inclusiveUs": 98.35400000008576,
+          "inclusiveUsProcessMedians": [
+            97.99949999998603, 99.41550000004895, 98.35400000008576
+          ],
+          "inclusiveUsWidth": 1.4160000000629225,
+          "calls": 5.0,
+          "callsProcessMedians": [5.0, 5.0, 5.0],
+          "callsWidth": 0.0,
+          "maxCalls": 5
+        },
+        "wheelPreparation": {
+          "selfUs": 2.8124999999761258,
+          "selfUsProcessMedians": [
+            2.8124999999761258, 2.8750000000172804, 2.645999999998594
+          ],
+          "selfUsWidth": 0.22900000001868648,
+          "inclusiveUs": 8.167000000014468,
+          "inclusiveUsProcessMedians": [
+            8.249999999975444, 8.167000000014468, 7.875000000012733
+          ],
+          "inclusiveUsWidth": 0.3749999999627107,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "cloneFromSlot": {
+          "selfUs": 8.041999999989002,
+          "selfUsProcessMedians": [
+            7.8755000000114705, 8.041999999989002, 8.062999999992826
+          ],
+          "selfUsWidth": 0.18749999998135536,
+          "inclusiveUs": 8.041999999989002,
+          "inclusiveUsProcessMedians": [
+            7.8755000000114705, 8.041999999989002, 8.062999999992826
+          ],
+          "inclusiveUsWidth": 0.18749999998135536,
+          "calls": 3.0,
+          "callsProcessMedians": [3.0, 3.0, 3.0],
+          "callsWidth": 0.0,
+          "maxCalls": 3
+        },
+        "enterSlotClone": {
+          "selfUs": 0.7499999999822649,
+          "selfUsProcessMedians": [
+            0.7089999999720931, 0.7499999999822649, 0.7499999999822649
+          ],
+          "selfUsWidth": 0.04100000001017179,
+          "inclusiveUs": 0.7499999999822649,
+          "inclusiveUsProcessMedians": [
+            0.7089999999720931, 0.7499999999822649, 0.7499999999822649
+          ],
+          "inclusiveUsWidth": 0.04100000001017179,
+          "calls": 3.0,
+          "callsProcessMedians": [3.0, 3.0, 3.0],
+          "callsWidth": 0.0,
+          "maxCalls": 3
+        },
+        "assembleObject": {
+          "selfUs": 8.853500000043368,
+          "selfUsProcessMedians": [
+            8.853500000043368, 7.666000000000395, 8.915999999999258
+          ],
+          "selfUsWidth": 1.2499999999988631,
+          "inclusiveUs": 8.853500000043368,
+          "inclusiveUsProcessMedians": [
+            8.853500000043368, 7.666000000000395, 8.915999999999258
+          ],
+          "inclusiveUsWidth": 1.2499999999988631,
+          "calls": 2.0,
+          "callsProcessMedians": [2.0, 2.0, 2.0],
+          "callsWidth": 0.0,
+          "maxCalls": 2
+        },
+        "selectChildren": {
+          "selfUs": 28.51900000001706,
+          "selfUsProcessMedians": [
+            29.1644999999221, 28.51900000001706, 28.1249999998181
+          ],
+          "selfUsWidth": 1.039500000103999,
+          "inclusiveUs": 53.6664999999914,
+          "inclusiveUsProcessMedians": [
+            53.6664999999914, 53.479000000010046, 54.54200000002629
+          ],
+          "inclusiveUsWidth": 1.0630000000162454,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "transitionSettlement": {
+          "selfUs": 3.9170000000012806,
+          "selfUsProcessMedians": [
+            3.9170000000012806, 4.124999999987722, 3.8954999999702977
+          ],
+          "selfUsWidth": 0.2295000000174241,
+          "inclusiveUs": 3.9170000000012806,
+          "inclusiveUsProcessMedians": [
+            3.9170000000012806, 4.124999999987722, 3.8954999999702977
+          ],
+          "inclusiveUsWidth": 0.2295000000174241,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "getControlLayers": {
+          "selfUs": 1.4374999999802185,
+          "selfUsProcessMedians": [
+            1.4374999999802185, 1.5405000000043856, 1.4175000000307136
+          ],
+          "selfUsWidth": 0.12299999997367195,
+          "inclusiveUs": 1.4374999999802185,
+          "inclusiveUsProcessMedians": [
+            1.4374999999802185, 1.5405000000043856, 1.4175000000307136
+          ],
+          "inclusiveUsWidth": 0.12299999997367195,
+          "calls": 6.0,
+          "callsProcessMedians": [6.0, 6.0, 6.0],
+          "callsWidth": 0.0,
+          "maxCalls": 6
+        },
+        "finalizeExits": {
+          "selfUs": 20.354499999967857,
+          "selfUsProcessMedians": [
+            20.354499999967857, 20.584000000042124, 19.8335000000327
+          ],
+          "selfUsWidth": 0.7505000000094242,
+          "inclusiveUs": 25.08349999999382,
+          "inclusiveUsProcessMedians": [
+            25.08349999999382, 25.249500000001035, 24.124999999997954
+          ],
+          "inclusiveUsWidth": 1.1245000000030814,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "markCommitDeliveries": {
+          "selfUs": 11.58399999999915,
+          "selfUsProcessMedians": [
+            11.58399999999915, 11.645999999984724, 11.479000000008455
+          ],
+          "selfUsWidth": 0.16699999997626946,
+          "inclusiveUs": 11.58399999999915,
+          "inclusiveUsProcessMedians": [
+            11.58399999999915, 11.645999999984724, 11.479000000008455
+          ],
+          "inclusiveUsWidth": 0.16699999997626946,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "commitSettlement": {
+          "selfUs": 9.458999999992557,
+          "selfUsProcessMedians": [
+            9.458999999992557, 9.687499999984084, 9.249999999980218
+          ],
+          "selfUsWidth": 0.43750000000386535,
+          "inclusiveUs": 22.06249999997567,
+          "inclusiveUsProcessMedians": [
+            22.249999999985448, 22.06249999997567, 21.457999999995536
+          ],
+          "inclusiveUsWidth": 0.7919999999899119,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "everythingElse": {
+          "selfUs": 13.686999999947602,
+          "selfUsProcessMedians": [
+            13.686999999947602, 13.709000000034166, 13.583500000038384
+          ],
+          "selfUsWidth": 0.12549999999578176,
+          "inclusiveUs": 13.686999999947602,
+          "inclusiveUsProcessMedians": [
+            13.686999999947602, 13.709000000034166, 13.583500000038384
+          ],
+          "inclusiveUsWidth": 0.12549999999578176,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        }
+      },
+      "wrappedMedianUs": 172.4375000000009,
+      "wrappedProcessMediansUs": [
+        172.4375000000009, 174.54200000000242, 171.1249999999893
+      ],
+      "unwrappedMedianUs": 154.5625000000257,
+      "unwrappedProcessMediansUs": [
+        154.5625000000257, 155.56250000000205, 152.31249999999363
+      ],
+      "pids": [9083, 9087, 9104]
+    }
+  },
+  "switch-payload-12": {
+    "S": {
+      "metrics": {
+        "markWrite": {
+          "selfUs": 7.104500000025382,
+          "selfUsProcessMedians": [
+            7.291500000064843, 6.499999999903139, 7.104500000025382
+          ],
+          "selfUsWidth": 0.7915000001617045,
+          "inclusiveUs": 7.104500000025382,
+          "inclusiveUsProcessMedians": [
+            7.291500000064843, 6.499999999903139, 7.104500000025382
+          ],
+          "inclusiveUsWidth": 0.7915000001617045,
+          "calls": 13.0,
+          "callsProcessMedians": [13.0, 13.0, 13.0],
+          "callsWidth": 0.0,
+          "maxCalls": 13
+        },
+        "registerRecalculation": {
+          "selfUs": 19.645500000024185,
+          "selfUsProcessMedians": [
+            19.645500000024185, 19.68750000000341, 19.166999999981726
+          ],
+          "selfUsWidth": 0.5205000000216842,
+          "inclusiveUs": 19.645500000024185,
+          "inclusiveUsProcessMedians": [
+            19.645500000024185, 19.68750000000341, 19.166999999981726
+          ],
+          "inclusiveUsWidth": 0.5205000000216842,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "primeHost": {
+          "selfUs": 2.708500000011327,
+          "selfUsProcessMedians": [
+            2.708500000011327, 2.7079999999841675, 2.8124999999761258
+          ],
+          "selfUsWidth": 0.10449999999195825,
+          "inclusiveUs": 2.708500000011327,
+          "inclusiveUsProcessMedians": [
+            2.708500000011327, 2.7079999999841675, 2.8124999999761258
+          ],
+          "inclusiveUsWidth": 0.10449999999195825,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateOutput": {
+          "selfUs": 6.832499999973152,
+          "selfUsProcessMedians": [
+            6.832499999973152, 6.479999999953634, 6.936499999881107
+          ],
+          "selfUsWidth": 0.45649999992747325,
+          "inclusiveUs": 41.58449999988534,
+          "inclusiveUsProcessMedians": [
+            40.35399999995093, 44.60349999996538, 41.58449999988534
+          ],
+          "inclusiveUsWidth": 4.24950000001445,
+          "calls": 15.0,
+          "callsProcessMedians": [15.0, 15.0, 15.0],
+          "callsWidth": 0.0,
+          "maxCalls": 15
+        },
+        "computeNode": {
+          "selfUs": 46.33150000006481,
+          "selfUsProcessMedians": [
+            46.33150000006481, 46.125999999929945, 48.855499999945096
+          ],
+          "selfUsWidth": 2.7295000000151504,
+          "inclusiveUs": 194.3950000000143,
+          "inclusiveUsProcessMedians": [
+            190.66549999999438, 194.3950000000143, 195.1859999999499
+          ],
+          "inclusiveUsWidth": 4.520499999955518,
+          "calls": 14.0,
+          "callsProcessMedians": [14.0, 14.0, 14.0],
+          "callsWidth": 0.0,
+          "maxCalls": 14
+        },
+        "wheelPreparation": {
+          "selfUs": 9.666000000009944,
+          "selfUsProcessMedians": [
+            9.687000000013768, 9.666000000009944, 9.540999999956057
+          ],
+          "selfUsWidth": 0.14600000005771108,
+          "inclusiveUs": 14.458499999989272,
+          "inclusiveUsProcessMedians": [
+            14.35449999996763, 14.60449999999014, 14.458499999989272
+          ],
+          "inclusiveUsWidth": 0.25000000002251,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "createChildNode": {
+          "selfUs": 5.083500000040431,
+          "selfUsProcessMedians": [
+            5.083500000040431, 5.083499999926744, 5.352500000128657
+          ],
+          "selfUsWidth": 0.2690000002019133,
+          "inclusiveUs": 5.083500000040431,
+          "inclusiveUsProcessMedians": [
+            5.083500000040431, 5.083499999926744, 5.352500000128657
+          ],
+          "inclusiveUsWidth": 0.2690000002019133,
+          "calls": 12.0,
+          "callsProcessMedians": [12.0, 12.0, 12.0],
+          "callsWidth": 0.0,
+          "maxCalls": 12
+        },
+        "enterFieldNode": {
+          "selfUs": 6.376500000015994,
+          "selfUsProcessMedians": [
+            6.376500000015994, 6.2704999999994016, 6.581499999981588
+          ],
+          "selfUsWidth": 0.31099999998218664,
+          "inclusiveUs": 12.64549999996234,
+          "inclusiveUsProcessMedians": [
+            12.68950000002178, 12.64549999996234, 12.561500000003889
+          ],
+          "inclusiveUsWidth": 0.12800000001789158,
+          "calls": 12.0,
+          "callsProcessMedians": [12.0, 12.0, 12.0],
+          "callsWidth": 0.0,
+          "maxCalls": 12
+        },
+        "assembleObject": {
+          "selfUs": 34.58349999999655,
+          "selfUsProcessMedians": [
+            33.14600000001633, 37.14600000003543, 34.58349999999655
+          ],
+          "selfUsWidth": 4.000000000019099,
+          "inclusiveUs": 34.58349999999655,
+          "inclusiveUsProcessMedians": [
+            33.14600000001633, 37.14600000003543, 34.58349999999655
+          ],
+          "inclusiveUsWidth": 4.000000000019099,
+          "calls": 2.0,
+          "callsProcessMedians": [2.0, 2.0, 2.0],
+          "callsWidth": 0.0,
+          "maxCalls": 2
+        },
+        "selectChildren": {
+          "selfUs": 58.707999999853655,
+          "selfUsProcessMedians": [
+            58.707999999853655, 57.10400000003801, 59.147500000108266
+          ],
+          "selfUsWidth": 2.043500000070253,
+          "inclusiveUs": 124.12500000002069,
+          "inclusiveUsProcessMedians": [
+            120.66649999999868, 129.60399999997207, 124.12500000002069
+          ],
+          "inclusiveUsWidth": 8.937499999973397,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "transitionSettlement": {
+          "selfUs": 8.020499999986441,
+          "selfUsProcessMedians": [
+            8.083499999997912, 8.020499999986441, 7.520499999998265
+          ],
+          "selfUsWidth": 0.5629999999996471,
+          "inclusiveUs": 8.020499999986441,
+          "inclusiveUsProcessMedians": [
+            8.083499999997912, 8.020499999986441, 7.520499999998265
+          ],
+          "inclusiveUsWidth": 0.5629999999996471,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "getControlLayers": {
+          "selfUs": 46.91749999980743,
+          "selfUsProcessMedians": [
+            47.93749999984698, 46.14350000005629, 46.91749999980743
+          ],
+          "selfUsWidth": 1.7939999997906853,
+          "inclusiveUs": 46.91749999980743,
+          "inclusiveUsProcessMedians": [
+            47.93749999984698, 46.14350000005629, 46.91749999980743
+          ],
+          "inclusiveUsWidth": 1.7939999997906853,
+          "calls": 48.0,
+          "callsProcessMedians": [48.0, 48.0, 48.0],
+          "callsWidth": 0.0,
+          "maxCalls": 48
+        },
+        "setLatentRaw": {
+          "selfUs": 37.230499999964195,
+          "selfUsProcessMedians": [
+            36.08149999999455, 37.66499999991879, 37.230499999964195
+          ],
+          "selfUsWidth": 1.5834999999242427,
+          "inclusiveUs": 37.230499999964195,
+          "inclusiveUsProcessMedians": [
+            36.08149999999455, 37.66499999991879, 37.230499999964195
+          ],
+          "inclusiveUsWidth": 1.5834999999242427,
+          "calls": 24.0,
+          "callsProcessMedians": [24.0, 24.0, 24.0],
+          "callsWidth": 0.0,
+          "maxCalls": 24
+        },
+        "captureExitedRaw": {
+          "selfUs": 13.396499999998923,
+          "selfUsProcessMedians": [
+            12.85399999997594, 13.396499999998923, 14.605000000130985
+          ],
+          "selfUsWidth": 1.7510000001550452,
+          "inclusiveUs": 55.29300000003445,
+          "inclusiveUsProcessMedians": [
+            54.58200000001057, 55.29300000003445, 56.2085000000252
+          ],
+          "inclusiveUsWidth": 1.6265000000146301,
+          "calls": 12.0,
+          "callsProcessMedians": [12.0, 12.0, 12.0],
+          "callsWidth": 0.0,
+          "maxCalls": 12
+        },
+        "finalizeExits": {
+          "selfUs": 103.9380000001131,
+          "selfUsProcessMedians": [
+            112.87700000008272, 94.24599999996985, 103.9380000001131
+          ],
+          "selfUsWidth": 18.631000000112863,
+          "inclusiveUs": 192.18749999998863,
+          "inclusiveUsProcessMedians": [
+            192.18749999998863, 193.1250000000091, 191.79149999999368
+          ],
+          "inclusiveUsWidth": 1.3335000000154196,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "markCommitDeliveries": {
+          "selfUs": 15.125000000011823,
+          "selfUsProcessMedians": [
+            15.125000000011823, 14.874999999960892, 15.541500000011865
+          ],
+          "selfUsWidth": 0.6665000000509735,
+          "inclusiveUs": 15.125000000011823,
+          "inclusiveUsProcessMedians": [
+            15.125000000011823, 14.874999999960892, 15.541500000011865
+          ],
+          "inclusiveUsWidth": 0.6665000000509735,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateInactiveValuesMemo": {
+          "selfUs": 44.04149999999163,
+          "selfUsProcessMedians": [
+            45.1255000000117, 42.18749999998295, 44.04149999999163
+          ],
+          "selfUsWidth": 2.938000000028751,
+          "inclusiveUs": 44.04149999999163,
+          "inclusiveUsProcessMedians": [
+            45.1255000000117, 42.18749999998295, 44.04149999999163
+          ],
+          "inclusiveUsWidth": 2.938000000028751,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "commitSettlement": {
+          "selfUs": 17.64599999998495,
+          "selfUsProcessMedians": [
+            17.103999999989128, 17.64599999998495, 18.041999999979907
+          ],
+          "selfUsWidth": 0.9379999999907795,
+          "inclusiveUs": 91.45849999998745,
+          "inclusiveUsProcessMedians": [
+            91.45849999998745, 88.4994999999833, 93.81249999998431
+          ],
+          "inclusiveUsWidth": 5.313000000001011,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "everythingElse": {
+          "selfUs": 23.291499999999132,
+          "selfUsProcessMedians": [
+            23.291499999999132, 23.521000000016556, 22.625499999946896
+          ],
+          "selfUsWidth": 0.89550000006966,
+          "inclusiveUs": 23.291499999999132,
+          "inclusiveUsProcessMedians": [
+            23.291499999999132, 23.521000000016556, 22.625499999946896
+          ],
+          "inclusiveUsWidth": 0.89550000006966,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        }
+      },
+      "wrappedMedianUs": 504.37550000000897,
+      "wrappedProcessMediansUs": [
+        504.37550000000897, 495.16700000000924, 504.68749999998863
+      ],
+      "unwrappedMedianUs": 448.95850000000337,
+      "unwrappedProcessMediansUs": [
+        452.8750000000059, 448.95850000000337, 446.31249999997635
+      ],
+      "pids": [9106, 9123, 9153]
+    },
+    "E": {
+      "metrics": {
+        "markWrite": {
+          "selfUs": 1.5000000000213731,
+          "selfUsProcessMedians": [
+            1.5000000000213731, 1.5204999999980373, 1.5000000000213731
+          ],
+          "selfUsWidth": 0.020499999976664185,
+          "inclusiveUs": 1.5000000000213731,
+          "inclusiveUsProcessMedians": [
+            1.5000000000213731, 1.5204999999980373, 1.5000000000213731
+          ],
+          "inclusiveUsWidth": 0.020499999976664185,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "registerRecalculation": {
+          "selfUs": 18.583000000006678,
+          "selfUsProcessMedians": [
+            18.437499999976126, 18.583000000006678, 19.22899999999572
+          ],
+          "selfUsWidth": 0.791500000019596,
+          "inclusiveUs": 18.583000000006678,
+          "inclusiveUsProcessMedians": [
+            18.437499999976126, 18.583000000006678, 19.22899999999572
+          ],
+          "inclusiveUsWidth": 0.791500000019596,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "primeHost": {
+          "selfUs": 2.3749999999722604,
+          "selfUsProcessMedians": [
+            2.2914999999841257, 2.3960000000045056, 2.3749999999722604
+          ],
+          "selfUsWidth": 0.10450000002037996,
+          "inclusiveUs": 2.3749999999722604,
+          "inclusiveUsProcessMedians": [
+            2.2914999999841257, 2.3960000000045056, 2.3749999999722604
+          ],
+          "inclusiveUsWidth": 0.10450000002037996,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateOutput": {
+          "selfUs": 7.0194999999557695,
+          "selfUsProcessMedians": [
+            6.89599999998336, 7.353000000023258, 7.0194999999557695
+          ],
+          "selfUsWidth": 0.4570000000398977,
+          "inclusiveUs": 43.85450000003743,
+          "inclusiveUsProcessMedians": [
+            42.584999999974116, 43.85450000003743, 43.895500000047605
+          ],
+          "inclusiveUsWidth": 1.310500000073489,
+          "calls": 15.0,
+          "callsProcessMedians": [15.0, 15.0, 15.0],
+          "callsWidth": 0.0,
+          "maxCalls": 15
+        },
+        "computeNode": {
+          "selfUs": 45.6664999999532,
+          "selfUsProcessMedians": [
+            45.4564999998297, 45.6664999999532, 47.18650000003777
+          ],
+          "selfUsWidth": 1.730000000208065,
+          "inclusiveUs": 176.2929999999585,
+          "inclusiveUsProcessMedians": [
+            176.2929999999585, 176.04049999997073, 177.85400000005325
+          ],
+          "inclusiveUsWidth": 1.813500000082513,
+          "calls": 14.0,
+          "callsProcessMedians": [14.0, 14.0, 14.0],
+          "callsWidth": 0.0,
+          "maxCalls": 14
+        },
+        "wheelPreparation": {
+          "selfUs": 3.25100000003431,
+          "selfUsProcessMedians": [
+            3.3745000000067193, 3.25100000003431, 3.2504999999218853
+          ],
+          "selfUsWidth": 0.12400000008483403,
+          "inclusiveUs": 7.604500000013559,
+          "inclusiveUsProcessMedians": [
+            7.604500000013559, 7.749999999987267, 7.458999999983007
+          ],
+          "inclusiveUsWidth": 0.2910000000042601,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "cloneFromSlot": {
+          "selfUs": 16.27249999984315,
+          "selfUsProcessMedians": [
+            16.43799999990847, 16.27249999984315, 16.228000000012344
+          ],
+          "selfUsWidth": 0.2099999998961266,
+          "inclusiveUs": 16.27249999984315,
+          "inclusiveUsProcessMedians": [
+            16.43799999990847, 16.27249999984315, 16.228000000012344
+          ],
+          "inclusiveUsWidth": 0.2099999998961266,
+          "calls": 12.0,
+          "callsProcessMedians": [12.0, 12.0, 12.0],
+          "callsWidth": 0.0,
+          "maxCalls": 12
+        },
+        "enterSlotClone": {
+          "selfUs": 1.8740000000718737,
+          "selfUsProcessMedians": [
+            1.8740000000718737, 1.875000000069349, 1.8120000000578784
+          ],
+          "selfUsWidth": 0.06300000001147055,
+          "inclusiveUs": 1.8740000000718737,
+          "inclusiveUsProcessMedians": [
+            1.8740000000718737, 1.875000000069349, 1.8120000000578784
+          ],
+          "inclusiveUsWidth": 0.06300000001147055,
+          "calls": 12.0,
+          "callsProcessMedians": [12.0, 12.0, 12.0],
+          "callsWidth": 0.0,
+          "maxCalls": 12
+        },
+        "assembleObject": {
+          "selfUs": 36.103999999994585,
+          "selfUsProcessMedians": [
+            36.103999999994585, 36.41699999997172, 36.01999999997929
+          ],
+          "selfUsWidth": 0.3969999999924312,
+          "inclusiveUs": 36.103999999994585,
+          "inclusiveUsProcessMedians": [
+            36.103999999994585, 36.41699999997172, 36.01999999997929
+          ],
+          "inclusiveUsWidth": 0.3969999999924312,
+          "calls": 2.0,
+          "callsProcessMedians": [2.0, 2.0, 2.0],
+          "callsWidth": 0.0,
+          "maxCalls": 2
+        },
+        "selectChildren": {
+          "selfUs": 48.747500000160926,
+          "selfUsProcessMedians": [
+            48.747500000160926, 48.561000000006516, 49.91750000002071
+          ],
+          "selfUsWidth": 1.3565000000141936,
+          "inclusiveUs": 116.75000000002456,
+          "inclusiveUsProcessMedians": [
+            116.75000000002456, 116.62499999997067, 119.27049999999895
+          ],
+          "inclusiveUsWidth": 2.645500000028278,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "transitionSettlement": {
+          "selfUs": 7.833500000032245,
+          "selfUsProcessMedians": [
+            7.833500000032245, 7.854000000008909, 7.7080000000364635
+          ],
+          "selfUsWidth": 0.14599999997244595,
+          "inclusiveUs": 7.833500000032245,
+          "inclusiveUsProcessMedians": [
+            7.833500000032245, 7.854000000008909, 7.7080000000364635
+          ],
+          "inclusiveUsWidth": 0.14599999997244595,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "getControlLayers": {
+          "selfUs": 3.4160000000440505,
+          "selfUsProcessMedians": [
+            3.4160000000440505, 3.4790000001123644, 3.3145000001013614
+          ],
+          "selfUsWidth": 0.16450000001100307,
+          "inclusiveUs": 3.4160000000440505,
+          "inclusiveUsProcessMedians": [
+            3.4160000000440505, 3.4790000001123644, 3.3145000001013614
+          ],
+          "inclusiveUsWidth": 0.16450000001100307,
+          "calls": 24.0,
+          "callsProcessMedians": [24.0, 24.0, 24.0],
+          "callsWidth": 0.0,
+          "maxCalls": 24
+        },
+        "finalizeExits": {
+          "selfUs": 35.856499999823654,
+          "selfUsProcessMedians": [
+            35.563499999994974, 35.856499999823654, 36.04200000003743
+          ],
+          "selfUsWidth": 0.47850000004245885,
+          "inclusiveUs": 42.45850000000928,
+          "inclusiveUsProcessMedians": [
+            41.66650000001937, 42.45850000000928, 42.49949999999103
+          ],
+          "inclusiveUsWidth": 0.832999999971662,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "markCommitDeliveries": {
+          "selfUs": 15.14550000001691,
+          "selfUsProcessMedians": [
+            14.91699999999696, 15.292000000016515, 15.14550000001691
+          ],
+          "selfUsWidth": 0.37500000001955414,
+          "inclusiveUs": 15.14550000001691,
+          "inclusiveUsProcessMedians": [
+            14.91699999999696, 15.292000000016515, 15.14550000001691
+          ],
+          "inclusiveUsWidth": 0.37500000001955414,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "commitSettlement": {
+          "selfUs": 14.54150000000709,
+          "selfUsProcessMedians": [
+            13.937500000054115, 14.54200000003425, 14.54150000000709
+          ],
+          "selfUsWidth": 0.6044999999801348,
+          "inclusiveUs": 29.70849999999814,
+          "inclusiveUsProcessMedians": [
+            29.270499999995536, 30.291499999975713, 29.70849999999814
+          ],
+          "inclusiveUsWidth": 1.0209999999801767,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "everythingElse": {
+          "selfUs": 15.270999999955848,
+          "selfUsProcessMedians": [
+            14.854499999984228, 15.395499999982576, 15.270999999955848
+          ],
+          "selfUsWidth": 0.5409999999983484,
+          "inclusiveUs": 15.270999999955848,
+          "inclusiveUsProcessMedians": [
+            14.854499999984228, 15.395499999982576, 15.270999999955848
+          ],
+          "inclusiveUsWidth": 0.5409999999983484,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        }
+      },
+      "wrappedMedianUs": 281.5625000000068,
+      "wrappedProcessMediansUs": [
+        276.75000000002115, 288.8540000000148, 281.5625000000068
+      ],
+      "unwrappedMedianUs": 245.66649999999868,
+      "unwrappedProcessMediansUs": [
+        237.83349999996517, 245.66649999999868, 247.83350000001292
+      ],
+      "pids": [9108, 9125, 9156]
+    }
+  },
+  "switch-siblings-0": {
+    "S": {
+      "metrics": {
+        "markWrite": {
+          "selfUs": 1.4999999999929514,
+          "selfUsProcessMedians": [
+            1.4999999999929514, 1.4999999999929514, 1.5829999999823485
+          ],
+          "selfUsWidth": 0.08299999998939711,
+          "inclusiveUs": 1.4999999999929514,
+          "inclusiveUsProcessMedians": [
+            1.4999999999929514, 1.4999999999929514, 1.5829999999823485
+          ],
+          "inclusiveUsWidth": 0.08299999998939711,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "registerRecalculation": {
+          "selfUs": 6.72899999999288,
+          "selfUsProcessMedians": [
+            6.6880000000111295, 6.72899999999288, 6.874999999979536
+          ],
+          "selfUsWidth": 0.18699999996840688,
+          "inclusiveUs": 6.72899999999288,
+          "inclusiveUsProcessMedians": [
+            6.6880000000111295, 6.72899999999288, 6.874999999979536
+          ],
+          "inclusiveUsWidth": 0.18699999996840688,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "primeHost": {
+          "selfUs": 2.8749999999888587,
+          "selfUsProcessMedians": [
+            2.8749999999888587, 2.7500000000060254, 2.916499999997768
+          ],
+          "selfUsWidth": 0.1664999999917427,
+          "inclusiveUs": 2.8749999999888587,
+          "inclusiveUsProcessMedians": [
+            2.8749999999888587, 2.7500000000060254, 2.916499999997768
+          ],
+          "inclusiveUsWidth": 0.1664999999917427,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateOutput": {
+          "selfUs": 3.750499999995327,
+          "selfUsProcessMedians": [
+            3.748999999999114, 3.750499999995327, 3.832999999957565
+          ],
+          "selfUsWidth": 0.08399999995845064,
+          "inclusiveUs": 6.312500000021259,
+          "inclusiveUsProcessMedians": [
+            6.312500000007049, 6.312500000021259, 6.332999999926869
+          ],
+          "inclusiveUsWidth": 0.020499999919820766,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "computeNode": {
+          "selfUs": 14.312000000003877,
+          "selfUsProcessMedians": [
+            13.978500000007443, 14.312000000003877, 14.58400000009874
+          ],
+          "selfUsWidth": 0.6055000000912969,
+          "inclusiveUs": 54.041499999982534,
+          "inclusiveUsProcessMedians": [
+            53.62549999999544, 54.041499999982534, 55.1875000000166
+          ],
+          "inclusiveUsWidth": 1.5620000000211576,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "wheelPreparation": {
+          "selfUs": 3.4165000000001555,
+          "selfUsProcessMedians": [
+            3.4165000000001555, 3.3129999999914617, 3.5415000000114105
+          ],
+          "selfUsWidth": 0.22850000001994886,
+          "inclusiveUs": 8.791500000000951,
+          "inclusiveUsProcessMedians": [
+            8.791500000000951, 8.541499999992652, 9.042000000022199
+          ],
+          "inclusiveUsWidth": 0.5005000000295468,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "evaluateGate": {
+          "selfUs": 5.188999999973021,
+          "selfUsProcessMedians": [
+            4.957500000003279, 5.209000000022002, 5.188999999973021
+          ],
+          "selfUsWidth": 0.25150000001872286,
+          "inclusiveUs": 5.188999999973021,
+          "inclusiveUsProcessMedians": [
+            4.957500000003279, 5.209000000022002, 5.188999999973021
+          ],
+          "inclusiveUsWidth": 0.25150000001872286,
+          "calls": 6.0,
+          "callsProcessMedians": [6.0, 6.0, 6.0],
+          "callsWidth": 0.0,
+          "maxCalls": 6
+        },
+        "assembleObject": {
+          "selfUs": 2.541499999978214,
+          "selfUsProcessMedians": [
+            2.5415000000066357, 2.4999999999977263, 2.541499999978214
+          ],
+          "selfUsWidth": 0.04150000000890941,
+          "inclusiveUs": 2.541499999978214,
+          "inclusiveUsProcessMedians": [
+            2.5415000000066357, 2.4999999999977263, 2.541499999978214
+          ],
+          "inclusiveUsWidth": 0.04150000000890941,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "selectChildren": {
+          "selfUs": 14.707000000001358,
+          "selfUsProcessMedians": [
+            14.334000000005176, 14.707000000001358, 14.833000000066932
+          ],
+          "selfUsWidth": 0.4990000000617556,
+          "inclusiveUs": 25.83300000003419,
+          "inclusiveUsProcessMedians": [
+            25.18750000001546, 25.875499999997942, 25.83300000003419
+          ],
+          "inclusiveUsWidth": 0.6879999999824804,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "transitionSettlement": {
+          "selfUs": 1.2499999999988631,
+          "selfUsProcessMedians": [
+            1.2499999999988631, 1.2499999999988631, 1.2500000000272848
+          ],
+          "selfUsWidth": 2.8421709430404007e-11,
+          "inclusiveUs": 1.2499999999988631,
+          "inclusiveUsProcessMedians": [
+            1.2499999999988631, 1.2499999999988631, 1.2500000000272848
+          ],
+          "inclusiveUsWidth": 2.8421709430404007e-11,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "markCommitDeliveries": {
+          "selfUs": 8.95849999997722,
+          "selfUsProcessMedians": [
+            8.958499999991432, 8.58299999998735, 8.95849999997722
+          ],
+          "selfUsWidth": 0.3755000000040809,
+          "inclusiveUs": 8.95849999997722,
+          "inclusiveUsProcessMedians": [
+            8.958499999991432, 8.58299999998735, 8.95849999997722
+          ],
+          "inclusiveUsWidth": 0.3755000000040809,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateInactiveValuesMemo": {
+          "selfUs": 0.20800000001486296,
+          "selfUsProcessMedians": [
+            0.20800000001486296, 0.20800000001486296, 0.20800000004328467
+          ],
+          "selfUsWidth": 2.8421709430404007e-11,
+          "inclusiveUs": 0.20800000001486296,
+          "inclusiveUsProcessMedians": [
+            0.20800000001486296, 0.20800000001486296, 0.20800000004328467
+          ],
+          "inclusiveUsWidth": 2.8421709430404007e-11,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "commitSettlement": {
+          "selfUs": 3.3540000000158443,
+          "selfUsProcessMedians": [
+            3.33299999999781, 3.3540000000158443, 3.4789999999986776
+          ],
+          "selfUsWidth": 0.14600000000086766,
+          "inclusiveUs": 12.459000000006881,
+          "inclusiveUsProcessMedians": [
+            12.459000000006881, 12.354000000001975, 12.563000000000102
+          ],
+          "inclusiveUsWidth": 0.20899999999812735,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "everythingElse": {
+          "selfUs": 12.228499999977771,
+          "selfUsProcessMedians": [
+            11.833000000009974, 12.228499999977771, 12.64600000001792
+          ],
+          "selfUsWidth": 0.8130000000079463,
+          "inclusiveUs": 12.228499999977771,
+          "inclusiveUsProcessMedians": [
+            11.833000000009974, 12.228499999977771, 12.64600000001792
+          ],
+          "inclusiveUsWidth": 0.8130000000079463,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        }
+      },
+      "wrappedMedianUs": 84.66650000001152,
+      "wrappedProcessMediansUs": [
+        84.66650000001152, 82.95800000000497, 85.08300000002578
+      ],
+      "unwrappedMedianUs": 71.79200000000208,
+      "unwrappedProcessMediansUs": [
+        71.79200000000208, 70.79149999999856, 74.87499999999159
+      ],
+      "pids": [9158, 9175, 9179]
+    },
+    "E": {
+      "metrics": {
+        "markWrite": {
+          "selfUs": 1.5420000000005984,
+          "selfUsProcessMedians": [
+            1.5420000000005984, 1.54149999998765, 1.5829999999823485
+          ],
+          "selfUsWidth": 0.041499999994698555,
+          "inclusiveUs": 1.5420000000005984,
+          "inclusiveUsProcessMedians": [
+            1.5420000000005984, 1.54149999998765, 1.5829999999823485
+          ],
+          "inclusiveUsWidth": 0.041499999994698555,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "registerRecalculation": {
+          "selfUs": 6.854500000002872,
+          "selfUsProcessMedians": [
+            6.854500000002872, 6.791999999990139, 6.875000000007958
+          ],
+          "selfUsWidth": 0.08300000001781882,
+          "inclusiveUs": 6.854500000002872,
+          "inclusiveUsProcessMedians": [
+            6.854500000002872, 6.791999999990139, 6.875000000007958
+          ],
+          "inclusiveUsWidth": 0.08300000001781882,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "primeHost": {
+          "selfUs": 3.354500000000371,
+          "selfUsProcessMedians": [
+            3.291999999987638, 3.354500000000371, 3.354500000014582
+          ],
+          "selfUsWidth": 0.06250000002694378,
+          "inclusiveUs": 3.354500000000371,
+          "inclusiveUsProcessMedians": [
+            3.291999999987638, 3.354500000000371, 3.354500000014582
+          ],
+          "inclusiveUsWidth": 0.06250000002694378,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateOutput": {
+          "selfUs": 3.812999999993849,
+          "selfUsProcessMedians": [
+            3.708500000001891, 3.812999999993849, 3.8734999999974207
+          ],
+          "selfUsWidth": 0.16499999999552983,
+          "inclusiveUs": 6.521000000020649,
+          "inclusiveUsProcessMedians": [
+            6.3119999999941, 6.521000000020649, 6.562999999971453
+          ],
+          "inclusiveUsWidth": 0.2509999999773527,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "computeNode": {
+          "selfUs": 14.707000000015569,
+          "selfUsProcessMedians": [
+            14.061999999995578, 14.707000000015569, 14.875000000003524
+          ],
+          "selfUsWidth": 0.8130000000079463,
+          "inclusiveUs": 54.58249999998088,
+          "inclusiveUsProcessMedians": [
+            52.20799999999315, 54.58249999998088, 55.0825000000259
+          ],
+          "inclusiveUsWidth": 2.8745000000327536,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "wheelPreparation": {
+          "selfUs": 2.4999999999835154,
+          "selfUsProcessMedians": [
+            2.416000000010854, 2.4999999999977263, 2.4999999999835154
+          ],
+          "selfUsWidth": 0.08399999998687235,
+          "inclusiveUs": 8.291500000026986,
+          "inclusiveUsProcessMedians": [
+            8.16650000000152, 8.291500000026986, 8.416499999981397
+          ],
+          "inclusiveUsWidth": 0.24999999997987743,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "evaluateGate": {
+          "selfUs": 5.103999999988673,
+          "selfUsProcessMedians": [
+            4.833000000033394, 5.103999999988673, 5.625500000022043
+          ],
+          "selfUsWidth": 0.7924999999886495,
+          "inclusiveUs": 5.103999999988673,
+          "inclusiveUsProcessMedians": [
+            4.833000000033394, 5.103999999988673, 5.625500000022043
+          ],
+          "inclusiveUsWidth": 0.7924999999886495,
+          "calls": 6.0,
+          "callsProcessMedians": [6.0, 6.0, 6.0],
+          "callsWidth": 0.0,
+          "maxCalls": 6
+        },
+        "assembleObject": {
+          "selfUs": 2.6249999999947704,
+          "selfUsProcessMedians": [
+            2.541000000007898, 2.6249999999947704, 2.666499999975258
+          ],
+          "selfUsWidth": 0.12549999996736005,
+          "inclusiveUs": 2.6249999999947704,
+          "inclusiveUsProcessMedians": [
+            2.541000000007898, 2.6249999999947704, 2.666499999975258
+          ],
+          "inclusiveUsWidth": 0.12549999996736005,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "selectChildren": {
+          "selfUs": 15.500000000002956,
+          "selfUsProcessMedians": [
+            14.999999999943725, 15.500000000002956, 15.834000000026549
+          ],
+          "selfUsWidth": 0.834000000082824,
+          "inclusiveUs": 26.14549999999838,
+          "inclusiveUsProcessMedians": [
+            24.895999999998253, 26.14549999999838, 26.541999999992072
+          ],
+          "inclusiveUsWidth": 1.645999999993819,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "transitionSettlement": {
+          "selfUs": 1.2499999999988631,
+          "selfUsProcessMedians": [
+            1.2499999999988631, 1.2499999999988631, 1.290999999994824
+          ],
+          "selfUsWidth": 0.040999999995960934,
+          "inclusiveUs": 1.2499999999988631,
+          "inclusiveUsProcessMedians": [
+            1.2499999999988631, 1.2499999999988631, 1.290999999994824
+          ],
+          "inclusiveUsWidth": 0.040999999995960934,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "markCommitDeliveries": {
+          "selfUs": 9.124999999997385,
+          "selfUsProcessMedians": [
+            9.124999999997385, 7.97949999999048, 9.791500000005726
+          ],
+          "selfUsWidth": 1.8120000000152459,
+          "inclusiveUs": 9.124999999997385,
+          "inclusiveUsProcessMedians": [
+            9.124999999997385, 7.97949999999048, 9.791500000005726
+          ],
+          "inclusiveUsWidth": 1.8120000000152459,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "commitSettlement": {
+          "selfUs": 3.3330000000262316,
+          "selfUsProcessMedians": [
+            3.2509999999632555, 3.3330000000262316, 3.4999999999740794
+          ],
+          "selfUsWidth": 0.2490000000108239,
+          "inclusiveUs": 12.312499999993065,
+          "inclusiveUsProcessMedians": [
+            12.312499999993065, 11.583000000015886, 13.27099999998893
+          ],
+          "inclusiveUsWidth": 1.6879999999730444,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "everythingElse": {
+          "selfUs": 11.478500000009717,
+          "selfUsProcessMedians": [
+            11.457499999991683, 11.583499999986202, 11.478500000009717
+          ],
+          "selfUsWidth": 0.12599999999451938,
+          "inclusiveUs": 11.478500000009717,
+          "inclusiveUsProcessMedians": [
+            11.457499999991683, 11.583499999986202, 11.478500000009717
+          ],
+          "inclusiveUsWidth": 0.12599999999451938,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        }
+      },
+      "wrappedMedianUs": 84.97950000001708,
+      "wrappedProcessMediansUs": [
+        82.31299999999919, 84.97950000001708, 86.02050000000361
+      ],
+      "unwrappedMedianUs": 72.4584999999962,
+      "unwrappedProcessMediansUs": [
+        72.4584999999962, 70.97900000000834, 76.2914999999964
+      ],
+      "pids": [9173, 9177, 9181]
+    }
+  },
+  "switch-siblings-1000": {
+    "S": {
+      "metrics": {
+        "markWrite": {
+          "selfUs": 2.395999999976084,
+          "selfUsProcessMedians": [
+            2.208999999993466, 2.8750000000172804, 2.395999999976084
+          ],
+          "selfUsWidth": 0.6660000000238142,
+          "inclusiveUs": 2.395999999976084,
+          "inclusiveUsProcessMedians": [
+            2.208999999993466, 2.8750000000172804, 2.395999999976084
+          ],
+          "inclusiveUsWidth": 0.6660000000238142,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "registerRecalculation": {
+          "selfUs": 9.000000000014552,
+          "selfUsProcessMedians": [
+            8.771499999966181, 9.874999999993861, 9.000000000014552
+          ],
+          "selfUsWidth": 1.1035000000276796,
+          "inclusiveUs": 9.000000000014552,
+          "inclusiveUsProcessMedians": [
+            8.771499999966181, 9.874999999993861, 9.000000000014552
+          ],
+          "inclusiveUsWidth": 1.1035000000276796,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "primeHost": {
+          "selfUs": 655.2709999999706,
+          "selfUsProcessMedians": [
+            655.2709999999706, 667.4375000000055, 640.4789999999707
+          ],
+          "selfUsWidth": 26.958500000034746,
+          "inclusiveUs": 655.2709999999706,
+          "inclusiveUsProcessMedians": [
+            655.2709999999706, 667.4375000000055, 640.4789999999707
+          ],
+          "inclusiveUsWidth": 26.958500000034746,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateOutput": {
+          "selfUs": 6.792499999903612,
+          "selfUsProcessMedians": [
+            6.728000000009615, 7.770499999907088, 6.792499999903612
+          ],
+          "selfUsWidth": 1.0424999998974727,
+          "inclusiveUs": 262.1254999999678,
+          "inclusiveUsProcessMedians": [
+            262.1254999999678, 266.43699999999626, 261.041500000033
+          ],
+          "inclusiveUsWidth": 5.395499999963249,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "computeNode": {
+          "selfUs": 299.43799999995235,
+          "selfUsProcessMedians": [
+            298.56099999989283, 303.70749999985946, 299.43799999995235
+          ],
+          "selfUsWidth": 5.146499999966636,
+          "inclusiveUs": 1936.3334999999893,
+          "inclusiveUsProcessMedians": [
+            1936.3334999999893, 1969.645499999956, 1915.6660000000443
+          ],
+          "inclusiveUsWidth": 53.979499999911695,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "wheelPreparation": {
+          "selfUs": 5.792000000042208,
+          "selfUsProcessMedians": [
+            5.792000000042208, 6.5199999999663305, 5.708999999967546
+          ],
+          "selfUsWidth": 0.8109999999987849,
+          "inclusiveUs": 666.4165000000253,
+          "inclusiveUsProcessMedians": [
+            666.4165000000253, 679.1460000000029, 648.8330000000246
+          ],
+          "inclusiveUsWidth": 30.312999999978274,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "evaluateGate": {
+          "selfUs": 6.52049999999349,
+          "selfUsProcessMedians": [
+            6.374999999962938, 7.520999999997002, 6.52049999999349
+          ],
+          "selfUsWidth": 1.1460000000340642,
+          "inclusiveUs": 6.52049999999349,
+          "inclusiveUsProcessMedians": [
+            6.374999999962938, 7.520999999997002, 6.52049999999349
+          ],
+          "inclusiveUsWidth": 1.1460000000340642,
+          "calls": 6.0,
+          "callsProcessMedians": [6.0, 6.0, 6.0],
+          "callsWidth": 0.0,
+          "maxCalls": 6
+        },
+        "assembleObject": {
+          "selfUs": 254.854000000023,
+          "selfUsProcessMedians": [
+            254.854000000023, 258.6459999999704, 253.68750000001228
+          ],
+          "selfUsWidth": 4.958499999958121,
+          "inclusiveUs": 254.854000000023,
+          "inclusiveUsProcessMedians": [
+            254.854000000023, 258.6459999999704, 253.68750000001228
+          ],
+          "inclusiveUsWidth": 4.958499999958121,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "selectChildren": {
+          "selfUs": 691.7094999999449,
+          "selfUsProcessMedians": [
+            691.7094999999449, 702.7705000000992, 690.1239999999689
+          ],
+          "selfUsWidth": 12.646500000130345,
+          "inclusiveUs": 958.6255000000392,
+          "inclusiveUsProcessMedians": [
+            958.6255000000392, 974.9165000000346, 955.7909999999765
+          ],
+          "inclusiveUsWidth": 19.125500000058082,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "transitionSettlement": {
+          "selfUs": 1.6669999999976426,
+          "selfUsProcessMedians": [
+            1.6669999999976426, 1.9789999999488828, 1.6660000000001673
+          ],
+          "selfUsWidth": 0.3129999999487154,
+          "inclusiveUs": 1.6669999999976426,
+          "inclusiveUsProcessMedians": [
+            1.6669999999976426, 1.9789999999488828, 1.6660000000001673
+          ],
+          "inclusiveUsWidth": 0.3129999999487154,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "markCommitDeliveries": {
+          "selfUs": 22.45850000002747,
+          "selfUsProcessMedians": [
+            22.395999999957894, 23.91699999998309, 22.45850000002747
+          ],
+          "selfUsWidth": 1.5210000000251966,
+          "inclusiveUs": 22.45850000002747,
+          "inclusiveUsProcessMedians": [
+            22.395999999957894, 23.91699999998309, 22.45850000002747
+          ],
+          "inclusiveUsWidth": 1.5210000000251966,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateInactiveValuesMemo": {
+          "selfUs": 0.2919999999448919,
+          "selfUsProcessMedians": [
+            0.2919999999448919, 0.3330000000687505, 0.2919999999448919
+          ],
+          "selfUsWidth": 0.041000000123858626,
+          "inclusiveUs": 0.2919999999448919,
+          "inclusiveUsProcessMedians": [
+            0.2919999999448919, 0.3330000000687505, 0.2919999999448919
+          ],
+          "inclusiveUsWidth": 0.041000000123858626,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "commitSettlement": {
+          "selfUs": 77.374500000019,
+          "selfUsProcessMedians": [
+            77.374500000019, 80.95899999995027, 77.08299999990231
+          ],
+          "selfUsWidth": 3.876000000047952,
+          "inclusiveUs": 100.458500000002,
+          "inclusiveUsProcessMedians": [
+            99.95850000001383, 105.83350000001701, 100.458500000002
+          ],
+          "inclusiveUsWidth": 5.875000000003183,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "everythingElse": {
+          "selfUs": 18.041500000038013,
+          "selfUsProcessMedians": [
+            17.874500000118587, 21.604500000023563, 18.041500000038013
+          ],
+          "selfUsWidth": 3.729999999904976,
+          "inclusiveUs": 18.041500000038013,
+          "inclusiveUsProcessMedians": [
+            17.874500000118587, 21.604500000023563, 18.041500000038013
+          ],
+          "inclusiveUsWidth": 3.729999999904976,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        }
+      },
+      "wrappedMedianUs": 2060.333500000013,
+      "wrappedProcessMediansUs": [
+        2060.333500000013, 2103.3330000000205, 2036.5625000000023
+      ],
+      "unwrappedMedianUs": 2039.8750000000234,
+      "unwrappedProcessMediansUs": [
+        2028.2290000000103, 2085.020499999928, 2039.8750000000234
+      ],
+      "pids": [9196, 9226, 9243]
+    },
+    "E": {
+      "metrics": {
+        "markWrite": {
+          "selfUs": 1.8750000000409273,
+          "selfUsProcessMedians": [
+            1.9790000000057262, 1.8750000000409273, 1.7705000000205473
+          ],
+          "selfUsWidth": 0.20849999998517887,
+          "inclusiveUs": 1.8750000000409273,
+          "inclusiveUsProcessMedians": [
+            1.9790000000057262, 1.8750000000409273, 1.7705000000205473
+          ],
+          "inclusiveUsWidth": 0.20849999998517887,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "registerRecalculation": {
+          "selfUs": 9.083499999917422,
+          "selfUsProcessMedians": [
+            10.083000000008724, 9.021000000018375, 9.083499999917422
+          ],
+          "selfUsWidth": 1.0619999999903484,
+          "inclusiveUs": 9.083499999917422,
+          "inclusiveUsProcessMedians": [
+            10.083000000008724, 9.021000000018375, 9.083499999917422
+          ],
+          "inclusiveUsWidth": 1.0619999999903484,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "primeHost": {
+          "selfUs": 651.5834999999583,
+          "selfUsProcessMedians": [
+            661.5210000000502, 651.5834999999583, 648.3124999999461
+          ],
+          "selfUsWidth": 13.208500000104095,
+          "inclusiveUs": 651.5834999999583,
+          "inclusiveUsProcessMedians": [
+            661.5210000000502, 651.5834999999583, 648.3124999999461
+          ],
+          "inclusiveUsWidth": 13.208500000104095,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "updateOutput": {
+          "selfUs": 7.207500000106393,
+          "selfUsProcessMedians": [
+            7.456499999989319, 6.854999999973188, 7.207500000106393
+          ],
+          "selfUsWidth": 0.6015000000161308,
+          "inclusiveUs": 268.1880000000092,
+          "inclusiveUsProcessMedians": [
+            273.9174999999818, 265.2915000000462, 268.1880000000092
+          ],
+          "inclusiveUsWidth": 8.62599999993563,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "computeNode": {
+          "selfUs": 300.62400000002754,
+          "selfUsProcessMedians": [
+            307.83550000001014, 298.87500000012324, 300.62400000002754
+          ],
+          "selfUsWidth": 8.960499999886906,
+          "inclusiveUs": 1943.3544999998844,
+          "inclusiveUsProcessMedians": [
+            1992.623999999978, 1926.416500000073, 1943.3544999998844
+          ],
+          "inclusiveUsWidth": 66.20749999990494,
+          "calls": 4.0,
+          "callsProcessMedians": [4.0, 4.0, 4.0],
+          "callsWidth": 0.0,
+          "maxCalls": 4
+        },
+        "wheelPreparation": {
+          "selfUs": 4.207999999891854,
+          "selfUsProcessMedians": [
+            4.583500000023832, 4.207999999891854, 4.020499999967342
+          ],
+          "selfUsWidth": 0.5630000000564905,
+          "inclusiveUs": 659.6875000000182,
+          "inclusiveUsProcessMedians": [
+            670.4164999999875, 659.6875000000182, 657.9580000000078
+          ],
+          "inclusiveUsWidth": 12.458499999979722,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "evaluateGate": {
+          "selfUs": 6.687999999883232,
+          "selfUsProcessMedians": [
+            7.418000000029679, 6.687999999883232, 6.582000000037169
+          ],
+          "selfUsWidth": 0.8359999999925094,
+          "inclusiveUs": 6.687999999883232,
+          "inclusiveUsProcessMedians": [
+            7.418000000029679, 6.687999999883232, 6.582000000037169
+          ],
+          "inclusiveUsWidth": 0.8359999999925094,
+          "calls": 6.0,
+          "callsProcessMedians": [6.0, 6.0, 6.0],
+          "callsWidth": 0.0,
+          "maxCalls": 6
+        },
+        "assembleObject": {
+          "selfUs": 260.5000000000359,
+          "selfUsProcessMedians": [
+            265.9379999999487, 258.02049999998644, 260.5000000000359
+          ],
+          "selfUsWidth": 7.917499999962274,
+          "inclusiveUs": 260.5000000000359,
+          "inclusiveUsProcessMedians": [
+            265.9379999999487, 258.02049999998644, 260.5000000000359
+          ],
+          "inclusiveUsWidth": 7.917499999962274,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "selectChildren": {
+          "selfUs": 697.1875000000409,
+          "selfUsProcessMedians": [
+            713.8114999998777, 685.0830000000201, 697.1875000000409
+          ],
+          "selfUsWidth": 28.728499999857604,
+          "inclusiveUs": 969.2290000000412,
+          "inclusiveUsProcessMedians": [
+            991.4375000000177, 955.8954999999969, 969.2290000000412
+          ],
+          "inclusiveUsWidth": 35.542000000020835,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "transitionSettlement": {
+          "selfUs": 1.8539999999802603,
+          "selfUsProcessMedians": [
+            1.854000000008682, 1.8539999999802603, 1.6249999999899956
+          ],
+          "selfUsWidth": 0.22900000001868648,
+          "inclusiveUs": 1.8539999999802603,
+          "inclusiveUsProcessMedians": [
+            1.854000000008682, 1.8539999999802603, 1.6249999999899956
+          ],
+          "inclusiveUsWidth": 0.22900000001868648,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "markCommitDeliveries": {
+          "selfUs": 22.728999999998223,
+          "selfUsProcessMedians": [
+            23.18749999994907, 22.728999999998223, 22.41649999996298
+          ],
+          "selfUsWidth": 0.7709999999860884,
+          "inclusiveUs": 22.728999999998223,
+          "inclusiveUsProcessMedians": [
+            23.18749999994907, 22.728999999998223, 22.41649999996298
+          ],
+          "inclusiveUsWidth": 0.7709999999860884,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "commitSettlement": {
+          "selfUs": 76.87449999997398,
+          "selfUsProcessMedians": [
+            79.18749999993224, 76.87449999997398, 76.02099999996881
+          ],
+          "selfUsWidth": 3.1664999999634347,
+          "inclusiveUs": 100.93699999998762,
+          "inclusiveUsProcessMedians": [
+            102.75000000001455, 100.93699999998762, 98.0415000000221
+          ],
+          "inclusiveUsWidth": 4.708499999992455,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        },
+        "everythingElse": {
+          "selfUs": 17.563000000052398,
+          "selfUsProcessMedians": [
+            18.45900000000711, 17.499499999985346, 17.563000000052398
+          ],
+          "selfUsWidth": 0.9595000000217624,
+          "inclusiveUs": 17.563000000052398,
+          "inclusiveUsProcessMedians": [
+            18.45900000000711, 17.499499999985346, 17.563000000052398
+          ],
+          "inclusiveUsWidth": 0.9595000000217624,
+          "calls": 1.0,
+          "callsProcessMedians": [1.0, 1.0, 1.0],
+          "callsWidth": 0.0,
+          "maxCalls": 1
+        }
+      },
+      "wrappedMedianUs": 2070.666499999959,
+      "wrappedProcessMediansUs": [
+        2122.8545000000167, 2051.2919999999895, 2070.666499999959
+      ],
+      "unwrappedMedianUs": 2045.4169999999863,
+      "unwrappedProcessMediansUs": [
+        2073.874999999987, 2009.7710000000006, 2045.4169999999863
+      ],
+      "pids": [9211, 9228, 9274]
+    }
+  }
+}

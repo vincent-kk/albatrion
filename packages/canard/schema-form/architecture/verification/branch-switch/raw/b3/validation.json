@@ -1,0 +1,12 @@
+{
+  "rows": 22,
+  "pairProcesses": 440,
+  "stageProcesses": 24,
+  "pairSamplesPerLaneProcess": 100,
+  "warmups": 20,
+  "stageSamples": 100,
+  "immutableBundleHashesVerified": true,
+  "stageSelfSumVerified": true,
+  "PIDAndOrderVerified": true,
+  "repositoryProductChange": false
+}
