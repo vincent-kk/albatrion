@@ -21,6 +21,9 @@ const verifyOnlyTests = [
   'src/core/engine/settle/__tests__/settle.gate-table-wheel-characterization.test.ts',
 ];
 
+/** Built-bundle tests run only in the production project after a build. */
+const bundleTests = ['src/core/surface/__tests__/detached.production.test.ts'];
+
 const resolvePackage = createRequire(import.meta.url).resolve;
 const react18Aliases = [
   'react/jsx-runtime',
@@ -60,7 +63,12 @@ export default defineConfig({
           ],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: [...renderTests, ...verifyOnlyTests, 'src/__legacy__/**'],
+          exclude: [
+            ...renderTests,
+            ...verifyOnlyTests,
+            ...bundleTests,
+            'src/__legacy__/**',
+          ],
         },
       },
       {
@@ -154,7 +162,7 @@ export default defineConfig({
           ],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: [...renderTests, 'src/__legacy__/**'],
+          exclude: [...renderTests, ...bundleTests, 'src/__legacy__/**'],
         },
       },
       {
@@ -180,7 +188,7 @@ export default defineConfig({
           transformMode: { ssr: [/\.ts$/], web: [/\.tsx$/] },
           include: [
             'src/core/engine/blueprint/**/__tests__/*.owned-inline*.test.{ts,tsx}',
-            'src/core/surface/__tests__/detached.production.test.ts',
+            ...bundleTests,
           ],
           provide: { reactMajor: '19' },
         },
