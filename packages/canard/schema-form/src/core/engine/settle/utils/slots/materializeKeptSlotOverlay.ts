@@ -3,13 +3,13 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type {
   BlueprintChildEntry,
   BlueprintNode,
-} from '../../../../../blueprint';
+} from '../../../blueprint';
 import type {
   FieldNodeRecord,
   InactiveSlotOverlay,
-} from '../../../../../record';
-import { getSlotEntries } from '../../getSlotEntries';
-import { getSlotSource } from '../../getSlotSource';
+} from '../../../record';
+import { getSlotEntries } from './getSlotEntries';
+import { getSlotSource } from './getSlotSource';
 
 /**
  * Detach a kept candidate's channels from its old array position without reinterpreting them.

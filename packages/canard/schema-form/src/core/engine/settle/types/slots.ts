@@ -9,6 +9,8 @@ export interface CompactedSlotSources<Self extends FieldNodeRecord<Self>> {
   readonly sources: ReadonlyMap<BlueprintChildEntry, Self>;
   /** Complete kept channels at those same new bindings. */
   readonly overlays: ReadonlyMap<BlueprintChildEntry, InactiveSlotOverlay>;
+  /** Original item sources that do not survive; their detached writes have no destination. */
+  readonly discarded: readonly Self[];
 }
 
 /** One materialized item and its blueprint position before path de-duplication. */

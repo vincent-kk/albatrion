@@ -132,6 +132,8 @@ export interface BlueprintNode {
   readonly hasPropertyCandidates?: boolean;
   /** A reachable host, including this one, binds multiple slot candidates. */
   readonly hasCandidateDescendants?: boolean;
+  /** A template strictly below this one, or a control addressing its children, declares a possible explicit `unsetOnInactive` keep. */
+  readonly hasKeepDescendants?: boolean;
   /**
    * First repeated item candidate, retained for single-candidate consumers.
    * First candidate; paths that distinguish folds use the candidate list (itemCandidates / prefixItemCandidates / getItemEntries).

@@ -17,7 +17,7 @@ import { markRestoredSlotRaw } from './markRestoredSlotRaw';
  * @param source - Immutable source occurrence whose raw channels are retained
  * @param context - Entry sets and fixed-baseline recalculation work
  * @param entering - Whether this subtree is entering rather than remaining a candidate
- * @param compactions - Exit-only rebinding plans; ordinary entry clones omit them
+ * @param compactions - Exit-only rebinding plans; ordinary entry clones omit them. Survivors and discarded items directly under a compacted array also move or drop their detached write addresses
  * @returns A new subtree whose inactive candidates also have newly bound parents
  */
 export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
@@ -35,6 +35,8 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
       order: getSlotOrder(host, entry.name, entry.node),
     };
     DetachedWriteAddress.transfer(source, address, node.runtime);
+    if (source.parent && compactions?.has(source.parent))
+      DetachedWriteAddress.retain(source, address, node.runtime);
     DetachedWriteAddress.retain(node, address, node.runtime);
   }
   node.raw = source.raw;
@@ -66,6 +68,8 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     node.children = [];
     node.inactiveSlots = new Map();
     node.inactiveSlotOverlays = new Map(compaction.overlays);
+    for (const discarded of compaction.discarded)
+      DetachedWriteAddress.discard(discarded, node.runtime);
     for (const [binding, retained] of compaction.sources)
       node.inactiveSlots.set(
         binding,

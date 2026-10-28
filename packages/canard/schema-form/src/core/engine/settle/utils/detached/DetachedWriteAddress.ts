@@ -6,6 +6,8 @@ import { getSlotOrder } from '../slots/getSlotOrder';
 interface Address {
   path: string;
   order: readonly number[];
+  /** Set once the occurrence's slot was discarded; a write addressed at it has no destination. */
+  discarded?: true;
 }
 
 /** Tree-owned weak identity links; retained address state survives every reset. */
@@ -54,6 +56,22 @@ export class DetachedWriteAddress {
   }
 
   /**
+   * Mark an occurrence, and every descendant resolved through it, as having no write destination.
+   * @param node - Captured occurrence whose slot did not survive its host's compaction
+   * @param runtime - Root owner shared by the node and its latent metadata
+   * @returns Nothing; later writes through any reference to it are dropped
+   */
+  static discard(
+    node: object,
+    runtime: Pick<TreeMemoStores, 'detachedWriteAddresses'>,
+  ): void {
+    const cells = (runtime.detachedWriteAddresses ??= new WeakMap());
+    const address = cells.get(node) ?? { path: '', order: [] };
+    address.discarded = true;
+    cells.set(node, address);
+  }
+
+  /**
    * Resolve a detached write, including descendants folded into an array source.
    * @param node - Detached occurrence with its original parent chain and path
    * @returns Its cell, an address relative to a captured ancestor, or undefined
@@ -72,6 +90,7 @@ export class DetachedWriteAddress {
       return {
         path: ancestor.path + node.path.slice(parent.path.length),
         order: [...ancestor.order, ...order.slice(ancestor.order.length)],
+        ...(ancestor.discarded ? { discarded: true as const } : undefined),
       };
     }
     return undefined;
