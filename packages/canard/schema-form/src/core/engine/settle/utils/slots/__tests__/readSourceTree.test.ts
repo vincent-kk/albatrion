@@ -49,8 +49,8 @@ it('reads a discarded candidate descendant from its frozen source instead of a c
   const oldTags = getDispatchNode(root, 'list', '0', 'tags');
   dispatchSetValue(getDispatchNode(root, 'object'), false);
   dispatchSetValue(getDispatchNode(root, 'open'), false);
+  expect(oldTags.path).toBe('/list/0/tags');
   expect(DetachedWriteAddress.read(oldTags)).toMatchObject({
-    path: '/list/0/tags',
     discarded: true,
   });
   const scratch = getSettlementScratch(runtime);

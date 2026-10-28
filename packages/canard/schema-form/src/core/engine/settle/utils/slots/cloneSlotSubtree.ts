@@ -68,7 +68,7 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
     node.inactiveSlots = new Map();
     node.inactiveSlotOverlays = new Map(compaction.overlays);
     for (const discarded of compaction.discarded)
-      DetachedWriteAddress.discard(discarded, node.runtime);
+      DetachedWriteAddress.discard(discarded);
     for (const [binding, retained] of compaction.sources)
       node.inactiveSlots.set(
         binding,

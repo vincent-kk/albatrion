@@ -56,19 +56,19 @@ export class DetachedWriteAddress {
   }
 
   /**
-   * Mark an occurrence, and every descendant resolved through it, as having no write destination.
+   * Mark an occurrence and every occurrence retained beneath it as having no write destination.
    * @param node - Captured occurrence whose slot did not survive its host's compaction
-   * @param runtime - Root owner shared by the node and its latent metadata
-   * @returns Nothing; later writes through any reference to it are dropped
+   * @returns Nothing; later writes through any reference that shares one of these cells, or resolves through one, are dropped
    */
-  static discard(
-    node: object,
-    runtime: Pick<TreeMemoStores, 'detachedWriteAddresses'>,
-  ): void {
-    const cells = (runtime.detachedWriteAddresses ??= new WeakMap());
+  static discard<Self extends FieldNodeRecord<Self>>(node: Self): void {
+    const cells = (node.runtime.detachedWriteAddresses ??= new WeakMap());
     const address = cells.get(node) ?? { path: '', order: [] };
     address.discarded = true;
     cells.set(node, address);
+    for (const child of node.children ?? [])
+      if (child.parent === node) DetachedWriteAddress.discard(child);
+    for (const retained of node.inactiveSlots?.values() ?? [])
+      DetachedWriteAddress.discard(retained);
   }
 
   /**
