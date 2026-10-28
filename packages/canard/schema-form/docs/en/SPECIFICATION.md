@@ -457,6 +457,14 @@ formRef.current?.findNode('/profile')?.visitSubtree((node) => {
 
 ---
 
+### Detached node references
+
+A node that leaves the active tree keeps its last committed reads. Its subscriptions do not fire. Calling `setValue` or an array operation (`push`, `pop`, `insert`, `remove`, `update`, `clear`) through that reference has no effect on its frozen value, retained values, overlays, or a later active instance. Development mode reports `FormWarningCode.DetachedNodeWrite`; production bundles stay silent. `push` and `insert` return the frozen array length; the other array operations return `undefined`.
+
+Write inactive values by including their paths in a live root or host's `setValue` JSON. These writes update retained overlays and `inactiveValues` without creating inactive nodes. Re-entry creates a fresh node and consumes that entry's retained slot and overlay.
+
+Migration: obtain node references again with `find` after re-entry; write inactive values through a live host's `setValue` JSON. `find` keeps returning `null` for every path without an active node.
+
 ## FieldInput System
 
 ### FieldInputDefinition
