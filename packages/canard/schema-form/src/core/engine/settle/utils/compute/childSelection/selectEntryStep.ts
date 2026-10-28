@@ -55,7 +55,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   readonly computeChild: (child: Self) => void;
   /** Whether entry changes queue host projection before later gates. */
   readonly immediate: boolean;
-  /** Ordered mutable structure published by this selection call. */
+  /** Ordered mutable target; prepared selection inherits static entries while host reads use a view. */
   readonly next: Record<string, Self>;
   /** First admitted blueprint identity for each authored name. */
   readonly seen: Map<string, BlueprintChildEntry['node']>;

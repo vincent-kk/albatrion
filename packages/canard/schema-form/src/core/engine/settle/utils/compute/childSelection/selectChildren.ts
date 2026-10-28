@@ -171,6 +171,8 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       ? current
       : { ...current };
   if (!prepared && next !== current) Object.setPrototypeOf(next, null);
+  // Mutate the private target directly; node.structure keeps the own-key gate view.
+  const selectionTarget = dynamic ?? next;
   if (node.behavior.type === 'array') {
     const names = Object.keys(next);
     for (let index = 0; index < names.length; index++) {
@@ -223,7 +225,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     prior,
     computeChild,
     immediate,
-    next,
+    next: selectionTarget,
     seen,
     inactiveEntries,
     changed,
@@ -254,7 +256,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < inactiveEntries.length; index++) {
     const entry = inactiveEntries[index];
     if (
-      next[entry.name] ||
+      selectionTarget[entry.name] ||
       seen.has(entry.name) ||
       (context.kind !== 'load' && hasOwnProperty(prior, entry.name))
     )

@@ -6,7 +6,7 @@ import type { FieldNodeRecord } from '../../../../record';
  * @param entered - This host's entering occurrences, grouped once by the commit caller
  * @returns Existing children when required may differ or an explicit prior-schema witness
  * points at the current schema, otherwise only final entering children.
- * Filtering costs O(entered), with stable property-order sorting for multiple results;
+ * Filtering costs O(entered); multiple results sort only when integer names need ordering.
  * existing child arrays remain unchanged.
  */
 export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
@@ -32,7 +32,15 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
       host.structure?.[child.name] === child
     )
       children.push(child);
-  if (children.length > 1)
+  if (
+    children.length > 1 &&
+    children.some((child) => {
+      const first = child.name.charCodeAt(0);
+      if (first < 48 || first > 57) return false;
+      const index = Number(child.name) >>> 0;
+      return index !== 0xffffffff && String(index) === child.name;
+    })
+  )
     children.sort((left, right) => {
       const leftIndex = Number(left.name) >>> 0;
       const rightIndex = Number(right.name) >>> 0;

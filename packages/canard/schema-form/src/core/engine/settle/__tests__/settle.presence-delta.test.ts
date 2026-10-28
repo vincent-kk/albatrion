@@ -198,6 +198,8 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
   const counts = observePresenceChangeNames();
   try {
     collectPresenceChangeNames(root, structure, context);
+    const previous = Object.assign(Object.create(null), structure);
+    delete previous.kind;
     const lifecycle: ('entered' | 'exited' | 'perished' | 'revived')[] = [
       'entered',
       'exited',
@@ -205,18 +207,47 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
       'revived',
     ];
     for (const kind of lifecycle) {
+      context.presenceSelections.set(root, {
+        structure: previous,
+        names: prepared.dynamicNames,
+      });
       context[kind].add(root);
-      collectPresenceChangeNames(root, structure, context);
+      expect(collectPresenceChangeNames(root, previous, context)).toEqual([
+        'kind',
+      ]);
       context[kind].delete(root);
       expect(counts[kind]).toBeGreaterThan(0);
     }
     const raw = root.raw;
+    context.presenceSelections.set(root, {
+      structure: previous,
+      names: prepared.dynamicNames,
+    });
     root.raw = null;
-    collectPresenceChangeNames(root, structure, context);
+    expect(collectPresenceChangeNames(root, previous, context)).toEqual([
+      'kind',
+    ]);
     root.raw = raw;
-    collectPresenceChangeNames(root, { ...structure }, context);
+    context.presenceSelections.set(root, {
+      structure,
+      names: prepared.dynamicNames,
+    });
+    expect(collectPresenceChangeNames(root, previous, context)).toEqual([
+      'kind',
+    ]);
+    context.presenceSelections.set(root, {
+      structure: previous,
+      names: prepared.dynamicNames,
+    });
+    context.preparedStaticHosts.delete(root);
+    expect(collectPresenceChangeNames(root, previous, context)).toEqual([
+      'kind',
+    ]);
+    context.preparedStaticHosts.add(root);
     delete derived.preparedStaticHost;
-    collectPresenceChangeNames(root, structure, context);
+    expect(collectPresenceChangeNames(root, previous, context)).toEqual([
+      'kind',
+    ]);
     derived.preparedStaticHost = prepared;
     expect(counts.null).toBeGreaterThan(0);
     expect(counts.mismatch).toBeGreaterThan(0);

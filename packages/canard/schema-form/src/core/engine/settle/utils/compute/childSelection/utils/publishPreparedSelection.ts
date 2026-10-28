@@ -21,7 +21,11 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
         frame.next[name] === prepared.selectedStructure[name],
     );
   if (!same) {
-    prepared.selectedStructure = Object.assign(Object.create(null), frame.next);
+    prepared.selectedStructure = Object.assign(
+      Object.create(null),
+      prepared.baseline,
+      frame.preparedDynamic,
+    );
     prepared.selectedChildren = Object.values(prepared.selectedStructure);
     frame.changed = true;
   }
