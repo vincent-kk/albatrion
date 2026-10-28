@@ -3,6 +3,7 @@ import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 import type { FieldNodeRecord } from '../../../record';
 import { resetFieldNodeSubtree } from '../../../settle';
 import { WriteOption } from '../../../types/value';
+import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -17,7 +18,10 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   option: WriteOption = WriteOption.Overwrite,
 ): void => {
-  if (node.detached) return;
+  if (node.detached) {
+    refuseInactiveResolverWrite(node);
+    return;
+  }
   if (!enterFieldNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   if (runtime.batchWrites)

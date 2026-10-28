@@ -45,6 +45,8 @@ export const FormWarningCode = {
   DetachedNodeWrite: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DetachedNodeWrite}`,
   /** Class: warning record; when: one control layer declares inactiveValue together with literal true unsetOnInactive. */
   InactiveValueWithUnsetOnInactive: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.InactiveValueWithUnsetOnInactive}`,
+  /** Class: warning record; when: a public value, array, batch or reset write is attempted inside an inactive resolver. */
+  WriteInInactiveResolver: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.WriteInInactiveResolver}`,
 } as const;
 
 /** Closed union of the warning code values. */

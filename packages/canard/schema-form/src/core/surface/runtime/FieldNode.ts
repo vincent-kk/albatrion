@@ -374,7 +374,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   /** Resolve the retained value synchronously at this instance's normal keep-policy gate exit; returns cleanup. */
   onInactive(listener: InactiveValueResolver<unknown>) {
-    return onInactiveFieldNode(this, listener);
+    return onInactiveFieldNode<FieldNode>(this, listener);
   }
   /** Read the accumulated delivery revision for selected event bits. */
   revision(mask?: FieldNodeEventType) {
