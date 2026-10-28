@@ -119,6 +119,47 @@ it.each(['declaration', 'listener'])(
   },
 );
 
+it('does not recursively report a refused write from the error reporter', () => {
+  const ownerless = vi.spyOn(console, 'error').mockImplementation(() => {});
+  let attempt = (): void => {};
+  const report = vi.fn(() => attempt());
+  const { root } = makeFieldNodeTree(
+    {
+      type: 'object',
+      properties: {
+        open: { type: 'boolean' },
+        stable: { type: 'string' },
+        value: {
+          type: 'string',
+          controls: {
+            active: '../open',
+            inactiveValue: () => {
+              attempt();
+              return 'retained';
+            },
+          },
+        },
+      },
+    },
+    { errorReporter: { hasConsumer: () => true, report } },
+  );
+  root.setValue({ open: true, stable: 'before', value: 'before' });
+  attempt = () => root.find('/stable')!.setValue('illegal');
+  try {
+    root.find('/open')!.setValue(false);
+    expect(report).toHaveBeenCalledTimes(1);
+    expect(report).toHaveBeenCalledWith(
+      expect.objectContaining({
+        code: FormWarningCode.WriteInInactiveResolver,
+      }),
+    );
+    expect(ownerless).not.toHaveBeenCalled();
+    expect(root.find('/stable')!.value).toBe('before');
+  } finally {
+    ownerless.mockRestore();
+  }
+});
+
 it('restores normal writes after resolver completion', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',

@@ -7,6 +7,34 @@ import { WriteOption } from '../../types/value';
 import { dispatchMount, onInactiveFieldNode } from '../../write';
 import { disposeFieldNodeTree } from '../utils/dispose/disposeFieldNodeTree';
 
+it('does not resolve a descendant whose clearing ancestor exits in a later wheel', () => {
+  const resolver = vi.fn(() => 'X');
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      flag: { type: 'boolean' },
+      open: { type: 'boolean', controls: { derived: '../flag' } },
+      group: {
+        type: 'object',
+        controls: { active: '../open', unsetOnInactive: true },
+        properties: {
+          x: {
+            type: 'string',
+            controls: { active: '#/flag', inactiveValue: resolver },
+          },
+        },
+      },
+    },
+  });
+  root.setValue({ flag: true, open: true, group: { x: 'before' } });
+  root.find('/flag')!.setValue(false);
+  expect(root.find('/group')).toBeNull();
+  expect(resolver).not.toHaveBeenCalled();
+  expect(root.inactiveValues).toEqual([]);
+  root.find('/flag')!.setValue(true);
+  expect(root.find('/group/x')!.value).toBeUndefined();
+});
+
 it('does not call exit functions when the form is disposed', () => {
   const resolver = vi.fn(() => 'after');
   const listener = vi.fn(() => 'listener');
@@ -19,6 +47,27 @@ it('does not call exit functions when the form is disposed', () => {
   disposeFieldNodeTree(root);
   expect(resolver).not.toHaveBeenCalled();
   expect(listener).not.toHaveBeenCalled();
+});
+
+it('retains a wrong-kind result and reports its misfit on re-entry', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      value: {
+        type: 'string',
+        controls: { active: '../open', inactiveValue: { invalid: true } },
+      },
+    },
+  });
+  root.setValue({ open: true, value: 'before' });
+  root.find('/open')!.setValue(false);
+  expect(root.inactiveValues).toEqual([
+    { path: '/value', value: { invalid: true } },
+  ]);
+  root.find('/open')!.setValue(true);
+  expect(root.find('/value')!.value).toEqual({ invalid: true });
+  expect(root.find('/value')!.misfit).toBe(true);
 });
 
 it('preserves a declared array result and restores its length and values', () => {

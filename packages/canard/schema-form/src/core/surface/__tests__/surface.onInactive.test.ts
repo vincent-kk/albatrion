@@ -124,6 +124,26 @@ it('does not call a listener for a clear-policy gate exit', () => {
   expect(root.inactiveValues).toEqual([]);
 });
 
+it('keeps a newer registration when an old cleanup runs again', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      value: { type: 'string', controls: { active: '../open' } },
+    },
+  });
+  root.setValue({ open: true, value: 'before' });
+  const value = root.find('/value')!;
+  const cleanup = value.onInactive(() => 'old');
+  cleanup();
+  const listener = vi.fn(() => 'new');
+  value.onInactive(listener);
+  cleanup();
+  root.find('/open')!.setValue(false);
+  expect(listener).toHaveBeenCalledTimes(1);
+  expect(root.inactiveValues).toEqual([{ path: '/value', value: 'new' }]);
+});
+
 it('calls every listener in registration order and keeps the last defined result', () => {
   const { root } = makeFieldNodeTree({
     type: 'object',

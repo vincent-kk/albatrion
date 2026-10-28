@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 import type { MutableNode } from '../../types/analysis';
 import type { BlueprintNode } from '../../types/node';
@@ -17,7 +18,7 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
       if (typeof schema !== 'object') continue;
       const controls: unknown = schema.controls;
       if (!controls || typeof controls !== 'object') continue;
-      const own = hasOwnProperty(controls, 'inactiveValue');
+      const own = hasOwnProperty(controls, CONTROL_KEY.inactiveValue);
       if (own && declaration.scope === 'node') mark(node);
       const fields: unknown = Reflect.get(controls, 'fields');
       if (isArray(fields))
@@ -28,7 +29,7 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
           if (
             !group ||
             typeof group !== 'object' ||
-            !hasOwnProperty(group, 'inactiveValue') ||
+            !hasOwnProperty(group, CONTROL_KEY.inactiveValue) ||
             !isArray(targets)
           )
             continue;

@@ -63,8 +63,14 @@ export type ChildSchemaControls = {
   resetInteraction?: boolean | string;
   /** Exit policy: clears the value when the node leaves the shape; a boolean or an expression (default: keep). */
   unsetOnInactive?: boolean | string;
-  /** Literal or synchronous resolver for the retained value at a normal keep-policy gate exit. */
-  inactiveValue?: InactiveValue<unknown>;
+  /** Literal (string, number, boolean, null, object or array) or the shared `InactiveValueResolver`; an inline function is typed by the resolver signature. */
+  inactiveValue?:
+    | InactiveValueResolver<unknown>
+    | string
+    | number
+    | boolean
+    | null
+    | object;
 };
 
 /** Specificity layer of a control declaration: the node itself, a parent `controls.fields` entry, or a fragment. */

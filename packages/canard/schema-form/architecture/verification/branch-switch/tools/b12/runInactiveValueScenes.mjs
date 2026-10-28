@@ -9,7 +9,7 @@ import {
 /**
  * Observe new B12 contracts which the stage head cannot author yet.
  * @param {object} M Candidate bundle with the delivery runner's test-only exports.
- * @returns {Promise<object[]>} Six asserted scenes with exit and re-entry deliveries.
+ * @returns {Promise<object[]>} Asserted scenes with exit and re-entry deliveries.
  */
 export async function runInactiveValueScenes(M) {
   const rows = [];
@@ -129,5 +129,74 @@ export async function runInactiveValueScenes(M) {
       diagnostics: encode(diagnostics),
     });
   }
+  const calls = [],
+    events = [];
+  const root = M.fieldNodeFactory(
+    M.blueprint({
+      type: 'object',
+      properties: {
+        rows: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              on: { type: 'boolean' },
+              note: {
+                type: 'string',
+                controls: {
+                  active: '../../0/on === true',
+                  inactiveValue: (value, context) => {
+                    calls.push([value, context.dataPath, context.parentValue]);
+                    return value + '-exit';
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    }),
+    { diagnostics: { status: 'stable' }, misfitPaths: new M.PathKeyedSet() },
+  );
+  M.mountFieldNode(
+    root,
+    {
+      rows: [
+        { on: true, note: 'n0' },
+        { on: false, note: 'n1' },
+      ],
+    },
+    M.SetValueOption.Overwrite,
+  );
+  for (const node of allNodes(root))
+    node.subscribe((event) =>
+      events.push({ path: node.path, event: encode(event) }),
+    );
+  const phases = [];
+  const observe = (phase) =>
+    phases.push({
+      phase,
+      value: encode(root.value),
+      inactiveValues: encode(root.inactiveValues),
+      events: structuredClone(events),
+    });
+  observe('before');
+  root.find('/rows').remove(0);
+  await drain();
+  observe('moved-exit-after-drain');
+  assert.deepEqual(calls, [['n1', '/rows/1/note', { on: false, note: 'n1' }]]);
+  assert.deepEqual(root.inactiveValues, [
+    { path: '/rows/0/note', value: 'n1-exit' },
+  ]);
+  root.find('/rows/0/on').setValue(true);
+  await drain();
+  observe('reentry-after-drain');
+  assert.equal(root.find('/rows/0/note').value, 'n1-exit');
+  rows.push({
+    id: 'b12-moved-exit',
+    stageHeadSupportsContract: false,
+    phases,
+    calls,
+  });
   return rows;
 }

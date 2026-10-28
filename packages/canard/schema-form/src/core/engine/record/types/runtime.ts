@@ -1,19 +1,18 @@
 import type {
-  FormErrorRecord,
-  FormErrorReporter,
-  FormWarningCode,
+FormErrorRecord,
+FormErrorReporter,
+FormWarningCode,
 } from '../../../../errors';
 import type {
-  Blueprint,
-  BlueprintChildEntry,
-  BlueprintGate,
-  BlueprintSchemaType,
-  EffectiveSchema,
+Blueprint,
+BlueprintChildEntry,
+BlueprintGate,
+BlueprintSchemaType,
+EffectiveSchema
 } from '../../blueprint';
-import type { InactiveValueResolver } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
 import type { TreeMemoStores } from '../../types/treeMemoStores';
-import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
+import type { FieldNodeWriteKind,WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import type { FieldNodeFactory } from './behavior';
@@ -152,8 +151,6 @@ export interface SettlementScratch<Self> {
     node: Self;
     previous: string;
     current: string;
-    /** Schema before this move, used with the first previous address by exit resolvers. */
-    previousSchema?: EffectiveSchema;
   }[];
   /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;

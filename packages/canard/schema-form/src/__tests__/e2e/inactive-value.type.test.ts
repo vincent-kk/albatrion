@@ -8,6 +8,20 @@ import type {
   JSONSchema,
 } from '../../index';
 
+it('types an inline declaration resolver with the shared interface', () => {
+  const schema: JSONSchema = {
+    type: 'string',
+    controls: {
+      inactiveValue: (value, context) => {
+        expectTypeOf(value).toEqualTypeOf<unknown>();
+        expectTypeOf(context).toEqualTypeOf<InactiveValueContext>();
+        return context.dataPath;
+      },
+    },
+  };
+  expectTypeOf(schema).toMatchTypeOf<JSONSchema>();
+});
+
 it('exports one resolver interface for declarations and node listeners', () => {
   expectTypeOf<InactiveValue<string>>().toEqualTypeOf<
     string | InactiveValueResolver<string>

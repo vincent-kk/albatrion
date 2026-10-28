@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- `controls.inactiveValue`는 리터럴 종류와 resolver 함수의 합집합을 유지하여 인라인 함수의 두 매개변수에 공통 resolver 문맥 형을 제공합니다.
+
 - B12는 공개 이름 `InactiveValue<V>`·`InactiveValueResolver<V>`·`InactiveValueContext`와 노드의 `onInactive`를 추가합니다. 보존값 리터럴·함수와 인스턴스 콜백이 같은 직전 커밋 인터페이스를 공유합니다. 공개 이름은 97개이며 코드 enum에는 전용 경고 둘을 더합니다.
 
 - `index.ts`가 이 패키지의 공개 표면이다. 소비자는 이 진입점이 이름으로 내보낸 심볼만 사용하며, 하위 모듈 파일을 직접 참조하지 않는다.

@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import { getControlLayers } from '../controls/getControlLayers';
@@ -23,9 +24,9 @@ export const readInactiveValueDeclaration = <
       const group = groups[index];
       if (
         group.layer === layer &&
-        hasOwnProperty(group.controls, 'inactiveValue')
+        hasOwnProperty(group.controls, CONTROL_KEY.inactiveValue)
       )
-        return Reflect.get(group.controls, 'inactiveValue');
+        return Reflect.get(group.controls, CONTROL_KEY.inactiveValue);
     }
   return undefined;
 };

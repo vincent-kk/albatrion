@@ -7,6 +7,7 @@ import { isReplacedLivePath } from '../transition/isReplacedLivePath';
 import { readDepartingAncestorPolicy } from '../transition/readDepartingAncestorPolicy';
 import { callInactiveValueResolver } from './callInactiveValueResolver';
 import { getInactiveValueContext } from './getInactiveValueContext';
+import { hasExplicitInactiveValue } from './hasExplicitInactiveValue';
 import { readInactiveValueDeclaration } from './readInactiveValueDeclaration';
 
 /**
@@ -21,16 +22,32 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
   exit: Self,
   context: SettlementContext<Self>,
 ): void => {
-  if (context.entered.has(node) || isReplacedLivePath(context, exit.path))
+  if (
+    context.entered.has(node) ||
+    isReplacedLivePath(context, exit.path) ||
+    hasExplicitInactiveValue(node, context)
+  )
+    return;
+  let outer = exit;
+  for (
+    let ancestor = exit.parent;
+    ancestor?.parent && ancestor.parent.structure?.[ancestor.name] !== ancestor;
+    ancestor = ancestor.parent
+  )
+    outer = ancestor;
+  if (
+    outer !== exit &&
+    (context.entered.has(outer) || context.throwingGateExits?.has(outer))
+  )
     return;
   const lineage: Self[] = [];
   for (
     let ancestor: Self | null = node;
-    ancestor && ancestor !== exit.parent;
+    ancestor && ancestor !== outer.parent;
     ancestor = ancestor.parent
   )
     lineage.push(ancestor);
-  let clear = readDepartingAncestorPolicy(context, exit);
+  let clear = readDepartingAncestorPolicy(context, outer);
   for (let index = lineage.length - 1; index >= 0; index--)
     clear = readSlotExitPolicy(lineage[index], clear);
   if (clear) return;

@@ -2,7 +2,6 @@
 
 ## Requirements
 
-- B12의 재키 기록은 선택적 previousSchema 참조를 함께 보관하여 resolver가 같은 인스턴스의 직전 커밋 스키마를 읽게 합니다. 새 노드 고정 칸은 없으며 기존 호출 내 pathChanges 항목당 스키마 참조 하나가 추가됩니다.
 
 - B12 인스턴스별 `inactiveListeners`는 선택적 Map(node → Set)으로 보유하며 재진입 복제에 넘기지 않습니다. 선택적 `resolvingInactiveValue` 표시는 동기 resolver 실행 동안만 참이며 노드 고정 칸을 추가하지 않습니다.
 

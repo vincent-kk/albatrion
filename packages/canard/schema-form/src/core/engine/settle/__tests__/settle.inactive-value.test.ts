@@ -64,13 +64,38 @@ it('resolves a function from the preceding committed value and full context', ()
     },
   });
   root.setValue({ open: true, group: { value: 'before' } });
-  root.setValue({ open: false, group: { value: 'written during exit' } });
+  root.find('/open')!.setValue(false);
   expect(resolver).toHaveBeenCalledTimes(1);
   expect(root.inactiveValues).toEqual([
     { path: '/group/value', value: 'after' },
   ]);
   root.find('/open')!.setValue(true);
   expect(root.find('/group/value')!.value).toBe('after');
+});
+
+it('prefers an explicit closing value and resolves only an exit without one', () => {
+  const resolver = vi.fn(() => 'declared');
+  const listener = vi.fn(() => 'listener');
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      value: {
+        type: 'string',
+        controls: { active: '../open', inactiveValue: resolver },
+      },
+    },
+  });
+  root.setValue({ open: true, value: 'before' });
+  root.find('/value')!.onInactive(listener);
+  root.setValue({ open: false, value: 'explicit' });
+  expect(resolver).not.toHaveBeenCalled();
+  expect(listener).not.toHaveBeenCalled();
+  expect(root.inactiveValues).toEqual([{ path: '/value', value: 'explicit' }]);
+  root.find('/open')!.setValue(true);
+  root.find('/open')!.setValue(false);
+  expect(resolver).toHaveBeenCalledTimes(1);
+  expect(root.inactiveValues).toEqual([{ path: '/value', value: 'declared' }]);
 });
 
 it('preserves the retained source when the resolver returns undefined', () => {

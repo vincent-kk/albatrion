@@ -21,6 +21,7 @@ export const onInactiveFieldNode = <Self extends FieldNodeRecord<Self>>(
   listeners.set(node, subscriptions);
   return () => {
     subscriptions.delete(listener);
-    if (!subscriptions.size) listeners.delete(node);
+    if (!subscriptions.size && listeners.get(node) === subscriptions)
+      listeners.delete(node);
   };
 };

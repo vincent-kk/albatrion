@@ -1,19 +1,19 @@
 import type { SchemaFormError } from '../../../../errors';
 import type {
-  BlueprintChildEntry,
-  BlueprintNode,
-  EffectiveSchema,
+BlueprintChildEntry,
+BlueprintNode,
+EffectiveSchema,
 } from '../../blueprint';
-import type { DeriveState, DeriveTraceEntry } from '../../derive';
+import type { DeriveState,DeriveTraceEntry } from '../../derive';
 import type {
-  ArrayArrangePlan,
-  Distribution,
-  FieldNodeRecord,
-  InactiveSlotBaseline,
-  SettlementBudget,
-  SettlementEntryApi,
-  SettlementFailureCause,
-  SettlementScratch,
+ArrayArrangePlan,
+Distribution,
+FieldNodeRecord,
+InactiveSlotBaseline,
+SettlementBudget,
+SettlementEntryApi,
+SettlementFailureCause,
+SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
 import type { DependencyPresenceMemo } from '../utils/dependencies/getDependencyIndex';
@@ -21,7 +21,7 @@ import type { GateHostView } from '../utils/gates/readGateHostView';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import type { GateSelectionRound } from './gateSelectionRound';
-import type { GateWheelFrame, RelocatedGateReads } from './gateWheel';
+import type { GateWheelFrame,RelocatedGateReads } from './gateWheel';
 import type { PendingPresenceTemplate } from './pendingPresenceTemplate';
 import type { PresenceQueryCursor } from './presenceQueryCursor';
 import type { CompactedSlotSources } from './slots';
@@ -123,6 +123,8 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   previousEmit: unknown;
   /** Successful exit results, retained only for this settlement and applied after source capture. */
   inactiveValueOverrides?: Map<Self, unknown>;
+  /** First pre-move address per moved node, built once by an exit resolver. */
+  inactivePathOrigins?: Map<Self, string>;
   /** Binding context from the preceding committed shape. */
   previousContext?: Readonly<Record<string, unknown>>;
   /** Original caller target, excluded from refresh targets. */
@@ -293,8 +295,6 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
     node: Self;
     previous: string;
     current: string;
-    /** Schema before this move, used with the first previous address by exit resolvers. */
-    previousSchema?: EffectiveSchema;
   }[];
   /** Nodes whose missing input received a default during this call. */
   filledNodes: Set<Self>;

@@ -1,16 +1,15 @@
-import { isArray } from '@winglet/common-utils/filter';
-
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+import { isArray } from '@winglet/common-utils/filter';
 
 import { visitFieldNodes } from '../../../../navigation';
 import type { FieldNodeRecord } from '../../../../record';
 import {
-  captureFieldNodeChange,
-  updateFieldNodeNameAndPath,
+captureFieldNodeChange,
+updateFieldNodeNameAndPath,
 } from '../../../../record';
 import type {
-  ArraySpliceProof,
-  SettlementContext,
+ArraySpliceProof,
+SettlementContext,
 } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
@@ -61,7 +60,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       children.push(previous[position]);
       moves.push({
         previous: appendSegment(host.path, position),
-        current: appendSegment(host.path, position + 1),
+        current: appendSegment(host.path, (position + 1)),
       });
     }
     for (let position = count; position > index; position--)
@@ -74,7 +73,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       children.push(previous[position]);
       moves.push({
         previous: appendSegment(host.path, position),
-        current: appendSegment(host.path, position - 1),
+        current: appendSegment(host.path, (position - 1)),
       });
       items[String(position - 1)] = items[String(position)];
     }
@@ -110,8 +109,6 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       item,
       (descendant) => {
         const former = descendant.path;
-        const previousSchema =
-          context.originalSchemas.get(former) ?? descendant.schema;
         updateFieldNodeNameAndPath(
           descendant,
           descendant === item ? name : descendant.name,
@@ -121,7 +118,6 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
           node: descendant,
           previous: former,
           current: descendant.path,
-          previousSchema,
         });
         // Not marked dirty: the static admission leaves no gate or expression that could read a position.
         context.changedNodes.add(descendant);

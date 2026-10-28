@@ -4,6 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { BlueprintDiagnostic } from '../../types/blueprint';
 
 /**
@@ -20,7 +21,7 @@ export const collectInactiveValueWarnings = (
 ): void => {
   if (!controls || typeof controls !== 'object' || isArray(controls)) return;
   if (
-    hasOwnProperty(controls, 'inactiveValue') &&
+    hasOwnProperty(controls, CONTROL_KEY.inactiveValue) &&
     Reflect.get(controls, 'unsetOnInactive') === true
   )
     emit({

@@ -16,18 +16,16 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
 ): InactiveValueContext => {
   const parent = node.parent;
   const root = context.root;
-  const previous = context.pathChanges.find((change) => change.node === node);
-  const parentPrevious =
-    parent && context.pathChanges.find((change) => change.node === parent);
-  const path = previous?.previous ?? node.path;
-  const parentPath = parentPrevious?.previous ?? parent?.path ?? '';
+  const origins = context.pathChanges.length
+    ? readPathOrigins(context)
+    : undefined;
+  const path = origins?.get(node) ?? node.path;
+  const parentPath = parent ? (origins?.get(parent) ?? parent.path) : '';
   return {
     dataPath: path,
     schemaPath: node.blueprintNode.schemaPath,
     jsonSchema:
-      previous?.previousSchema?.schema ??
-      context.originalSchemas.get(node.path)?.schema ??
-      node.schema.schema,
+      context.originalSchemas.get(node.path)?.schema ?? node.schema.schema,
     parentValue: parent
       ? getLoadValue(
           context.previousEmit,
@@ -36,8 +34,7 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
         )
       : null,
     parentJSONSchema: parent
-      ? (parentPrevious?.previousSchema?.schema ??
-        context.originalSchemas.get(parent.path)?.schema ??
+      ? (context.originalSchemas.get(parent.path)?.schema ??
         parent.schema.schema)
       : null,
     rootValue: context.previousEmit,
@@ -45,4 +42,19 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
       context.originalSchemas.get(root.path)?.schema ?? root.schema.schema,
     context: context.previousContext ?? {},
   };
+};
+
+/**
+ * Index previous addresses once for configured exits in a moving settlement.
+ * @param context - Call-local move log
+ * @returns First committed address per moved occurrence
+ */
+const readPathOrigins = <Self extends FieldNodeRecord<Self>>(
+  context: SettlementContext<Self>,
+): Map<Self, string> => {
+  if (context.inactivePathOrigins) return context.inactivePathOrigins;
+  const origins = new Map<Self, string>();
+  for (const change of context.pathChanges)
+    if (!origins.has(change.node)) origins.set(change.node, change.previous);
+  return (context.inactivePathOrigins = origins);
 };

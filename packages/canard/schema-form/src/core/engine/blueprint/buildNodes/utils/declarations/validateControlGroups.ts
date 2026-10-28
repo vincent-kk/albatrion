@@ -4,6 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
+import { CONTROL_KEY } from '../../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
 import type {
   ChildSchemaControls,
@@ -61,7 +62,7 @@ export const validateControlGroups = (
   if (
     controls &&
     typeof controls === 'object' &&
-    hasOwnProperty(controls, 'inactiveValue')
+    hasOwnProperty(controls, CONTROL_KEY.inactiveValue)
   )
     context.hasInactiveValues = true;
   if (

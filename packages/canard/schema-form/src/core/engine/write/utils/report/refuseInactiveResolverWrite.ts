@@ -12,6 +12,7 @@ export const refuseInactiveResolverWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
   if (!node.runtime.resolvingInactiveValue) return false;
+  if (node.runtime.reportingErrors) return true;
   if (process.env.NODE_ENV !== 'production')
     deliverChainRecords(
       node.runtime,
