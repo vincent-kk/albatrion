@@ -6,6 +6,31 @@ import { isArrayNode } from '../utils/guards';
 
 afterEach(() => vi.restoreAllMocks());
 
+it('keeps a live batch write when an old detached host is reset', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      group: {
+        type: 'object',
+        controls: { active: '../open' },
+        properties: { x: { type: 'string' } },
+      },
+    },
+  });
+  root.setValue({ open: true, group: { x: 'a' } });
+  const old = root.find('/group')!;
+  root.find('/open')!.setValue(false);
+  root.find('/open')!.setValue(true);
+  const targets = Reflect.get(root, 'runtime').validationTargets;
+  root.batch(() => {
+    root.find('/group/x')!.setValue('b');
+    old.resetSubtree();
+    expect(Reflect.get(root, 'runtime').validationTargets).toBe(targets);
+  });
+  expect(root.find('/group/x')!.value).toBe('b');
+});
+
 // filid:contract surface-detached
 it('leaves frozen reads, overlay, and inactive publication unchanged through detached writes', () => {
   const { root } = makeFieldNodeTree({

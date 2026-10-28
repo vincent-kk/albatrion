@@ -17,6 +17,7 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   option: WriteOption = WriteOption.Overwrite,
 ): void => {
+  if (node.detached) return;
   if (!enterFieldNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   if (runtime.batchWrites)
