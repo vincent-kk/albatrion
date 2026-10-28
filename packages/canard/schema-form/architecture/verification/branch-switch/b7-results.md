@@ -413,17 +413,19 @@ B6 병합 뒤 rebase한 `941398ea704ffbba5b46d180c5628445688d2703`에 후보 4 d
 | --- | --- | --- |
 | P2: 재진입 복제가 새 행으로 옮긴 비활성 후보의 옛 참조가 행 소멸 뒤 생존 행에 씀 | 버려진 발생 자신의 칸과 그 아래 보유 발생 전체에 소멸 표시를 붙입니다. 자식은 현재 부모가 같은 발생인 경우만, 비활성 슬롯은 보유한 발생을 따라갑니다. | `settle/utils/detached/DetachedWriteAddress.ts`, `settle/utils/slots/cloneSlotSubtree.ts`; `surface.clearing-array-keep.test.ts`의 `drops a write through an inactive candidate carried into a re-entered row once that row is discarded` |
 
-소멸 표시는 버려진 아이템 서브트리의 노드마다 WeakMap 항목 하나를 더하며, 그 서브트리는 같은 정착의 정책 판단이 이미 방문한 범위입니다. 방문은 아이템을 버리는 시점에만 해당 서브트리 크기에 비례하며 생존 아이템이나 일반 잎 쓰기의 순회를 늘리지 않습니다. DETAIL에 이 비용과 비활성 후보의 공유 칸 전파를 먼저 적었습니다.
+소멸 표시는 방문한 발생마다 WeakMap 항목을 최대 하나 더합니다. 순회 범위는 버려진 아이템이 보유한 서브트리 전체이며, 정책 판단이 건너뛰는 keep 없는 중첩 지움 배열의 아이템도 포함합니다. 방문은 아이템을 버리는 시점에만 해당 서브트리 크기에 비례하며 생존 아이템이나 일반 잎 쓰기의 순회를 늘리지 않습니다. DETAIL에 이 비용과 비활성 후보의 공유 칸 전파를 먼저 적었습니다.
 
 ### 실패 먼저 확인과 추가 이전 경로
 
-명세 A 시험은 수정 전 마지막 `toEqual`에서 기대 `[{ keep: 2 }]` 대신 `[{ p: 5, keep: 2 }]`로 실패했습니다. 함께 실행한 tuple 이전 회귀 시험은 통과하여 1실패·1통과·9건 필터 제외였고 스키마·탐색·import 오류는 없었습니다. 수정 뒤 같은 명령은 2통과·9건 필터 제외입니다. [실패 먼저 기록](raw/b7/fail-first.json)의 `candidate6`에 원본 기준·시험 이름·기대·실제를 적었습니다.
+명세 A 시험은 수정 전 마지막 `toEqual`에서 기대 `[{ keep: 2 }]` 대신 `[{ p: 5, keep: 2 }]`로 실패했습니다. 함께 실행한 당시 tuple 시험은 후보 이름이 없어 행 이전 경로에 닿지 않았으며, 통과하여 1실패·1통과·9건 필터 제외였고 스키마·탐색·import 오류는 없었습니다. 수정 뒤 같은 명령은 2통과·9건 필터 제외입니다. [실패 먼저 기록](raw/b7/fail-first.json)의 `candidate6`에 원본 기준·시험 이름·기대·실제를 적었습니다.
 
-추가 시험 `drops a write through an inactive candidate transferred between tuple rows once its destination row is discarded`는 비활성 후보를 가진 행을 `remove(0)`으로 다른 tuple 청사진에 이전하고 행이 새 발생임을 확인한 뒤, 지움 압축과 옛 후보 쓰기를 검증합니다. 수정 전에도 통과하므로 그 경로의 새 실패 증거라고 주장하지 않습니다. `restoreTransferredSlotSource`에는 자체 버림 분기가 없으며 비활성 원본을 `cloneSlotSubtree`로 옮깁니다. 이후 지움 압축의 버림은 같은 `DetachedWriteAddress.discard`를 사용합니다.
+추가 시험 `drops a write through an inactive candidate transferred between tuple rows once its destination row is discarded`는 세 tuple 행 각각에 `allOf`의 `value` 후보 이름을 두어 `remove(0)`이 옛 행을 다른 tuple 청사진으로 이전하도록 강화했습니다. 행이 새 발생임을 확인한 뒤 지움 압축과 옛 후보 쓰기의 최종 값 `[{ keep: 2 }]`를 검증하며, 현재 제품 `502a1d4d9`에서 통과했습니다. `remove(0)` 직전 초기화한 임시 spy로 `restoreTransferredSlotSource`가 6회 호출됨을 확인한 뒤 spy·로그·임시 assertion을 모두 제거했습니다. 후보 이름이 없었던 원래 시험의 수정 전 통과는 실제 이전 경로의 증거가 아니며, 강화한 시험은 수정 전 제품에서 실행하지 않았으므로 실패 먼저 시험이 아닌 현재 제품의 회귀 검증입니다. `restoreTransferredSlotSource`에는 자체 버림 분기가 없으며 비활성 원본을 `cloneSlotSubtree`로 옮깁니다. 이후 지움 압축의 버림은 같은 `DetachedWriteAddress.discard`를 사용합니다.
 
 최초 표적 실행은 524통과·1실패였습니다. 기존 `readSourceTree` 시험이 소멸 주소 칸의 내부 경로를 고정했기 때문입니다. 명세 A의 직접 소멸 칸은 새 칸일 때 빈 경로를 쓰므로, 그 기대는 소멸 표시와 공개 참조의 원래 경로 확인으로 조정했습니다. 고정 원본 `[1, 2]`를 읽는 검증은 유지했으며 수정 제품에는 이 시험 조정도 포함됩니다.
 
 ### 관문
+
+최종 검토 보완에서는 시험과 문서만 바꾸어 제품 `502a1d4d9`를 유지했습니다. 임시 도달 확인을 제거한 최종 표적 실행은 unit 23파일·81사례·실패 0이며, 겉면 11사례, settle의 retained-slot·pointer-slot·detached 주소, 슬롯 도우미와 `readSourceTree`를 포함합니다. 패키지 `typecheck`와 `lint`도 종료 코드 0으로 통과했습니다. [실패 먼저 기록](raw/b7/fail-first.json)의 `candidate6.reviewFollowup`에 실행 명령과 결과를 기록했습니다. 제품의 실행 시간·메모리 비용은 바뀌지 않으며 전체 프로젝트·build·측정은 재실행하지 않았습니다. 아래 전체 관문과 `502a1d4d9` 최종 측정 창은 기존 증거를 유지합니다.
 
 수정 제품 `7eb383005c77472a241b09ed15b1ae213d49f4b2`에서 `typecheck`, `lint`, 지정 `build`와 development-flag·gate-selection 산출물 검사가 통과했습니다. 표적은 unit 80파일·525사례와 render 1파일·2사례, 합계 81파일·527사례가 통과했습니다. 겉면 11사례, 청사진 keep 플래그, pointerIsolation 5사례와 첫 실제 siblings-0·oneOf-80 쓰기부터 full-parser 0을 확인하는 2사례를 포함합니다.
 

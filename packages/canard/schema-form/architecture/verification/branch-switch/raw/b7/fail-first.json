@@ -221,11 +221,71 @@
     },
     "additionalCharacterization": {
       "name": "drops a write through an inactive candidate transferred between tuple rows once its destination row is discarded",
-      "passedBeforeFix": true,
-      "passedAfterFix": true,
-      "recreatesTupleRow": true,
-      "note": "restoreTransferredSlotSource has no discard branch; later clearing compaction uses cloneSlotSubtree and its shared discard call."
+      "originalScenario": {
+        "passedBeforeFix": true,
+        "passedAfterFix": true,
+        "recreatesTupleRow": true,
+        "note": "The original tuple had no multi-candidate slot, so applyArraySlots recreated the row without transferring the old candidate. Its old path lay past the only compacted survivor; this pass did not cover restoreTransferredSlotSource.",
+        "transfersCandidate": false
+      },
+      "strengthenedScenario": {
+        "candidateName": "value",
+        "allOfCandidatesPerTupleRow": 2,
+        "productHead": "502a1d4d9",
+        "executionHead": "aa0945e8ae457cf31ba53c6f55b908b38adebd28",
+        "productUnmodified": true,
+        "baselineExecuted": false,
+        "passedBeforeFix": null,
+        "passedOnCurrentProduct": true,
+        "isFailFirstEvidence": false,
+        "recreatesTupleRow": true,
+        "transfersCandidate": true,
+        "expected": [
+          {
+            "keep": 2
+          }
+        ],
+        "received": [
+          {
+            "keep": 2
+          }
+        ],
+        "reachConfirmation": {
+          "function": "restoreTransferredSlotSource",
+          "callsDuringRemove": 6,
+          "method": "Temporary Vitest module spy cleared immediately before remove(0); a called assertion and count confirmed execution.",
+          "temporaryInstrumentationRemoved": true
+        },
+        "note": "The strengthened tuple supplies allOf value candidates in every row and passes on the current product. It was not run on the pre-fix product and is regression coverage, not fail-first evidence."
+      }
     },
-    "node": "v24.20.0"
+    "node": "v24.20.0",
+    "reviewFollowup": {
+      "productHead": "502a1d4d9",
+      "productUnmodified": true,
+      "node": "v24.20.0",
+      "gates": [
+        {
+          "command": "yarn workspace @canard/schema-form test --run --project unit src/core/surface/__tests__/surface.clearing-array-keep.test.ts settle.retained-slot settle.pointer-slot-work settle.detached array-detached utils/slots/__tests__",
+          "files": 23,
+          "passed": 81,
+          "failed": 0,
+          "skipped": 0,
+          "exitCode": 0
+        },
+        {
+          "command": "yarn workspace @canard/schema-form typecheck",
+          "exitCode": 0
+        },
+        {
+          "command": "yarn workspace @canard/schema-form lint",
+          "exitCode": 0
+        }
+      ],
+      "fullProjectsRerun": false,
+      "buildRerun": false,
+      "measurementRerun": false,
+      "note": "Only the regression test and documentation changed; the full gates and measurement window for product head 502a1d4d9 remain the existing evidence."
+    }
   }
 }
