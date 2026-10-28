@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
@@ -57,6 +58,7 @@ export const validateControlGroups = (
         );
   }
   const controls = record.controls;
+  if (controls && typeof controls === 'object' && hasOwnProperty(controls, 'inactiveValue')) context.hasInactiveValues = true;
   if (
     controls?.injectTo !== undefined &&
     typeof controls.injectTo !== 'function'

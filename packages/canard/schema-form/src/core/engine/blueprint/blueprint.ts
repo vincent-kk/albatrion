@@ -12,6 +12,7 @@ import type {
 import type { BlueprintSchema } from './types/schema';
 import { replayBlueprintDiagnostics } from './utils/diagnostics/replayBlueprintDiagnostics';
 import { markCandidateDescendants } from './utils/features/markCandidateDescendants';
+import { markInactiveValueNodes } from './utils/features/markInactiveValueNodes';
 import { markKeepDescendants } from './utils/features/markKeepDescendants';
 import { validateChildTargets } from './validateChildTargets';
 import { validateShape } from './validateShape';
@@ -87,6 +88,7 @@ export const blueprint = (
   if (context.hasChildTargets) validateChildTargets(context);
   markCandidateDescendants(context.nodes);
   markKeepDescendants(context.nodes);
+  if (context.hasInactiveValues) markInactiveValueNodes(context.nodes);
   const expressions =
     context.capabilities.hasExpressions || context.capabilities.hasWatch
       ? compileBlueprintExpressions(context)

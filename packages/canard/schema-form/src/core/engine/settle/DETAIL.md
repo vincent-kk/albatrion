@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- B12 resolver는 자동 쓰기가 허용되는 정상 보존 gate exit에서만 실행합니다. load/reset 범위·throwingGateExits·entered-only 퇴장과 자동 쓰기 억제·실패/예산 억제에서는 호출하지 않습니다. 다중 콜백은 등록 순서로 모두 실행하고 마지막 non-undefined를 채택하며 하나라도 던지면 해당 노드의 override 전체를 취소합니다.
+
+- B12 보존하는 게이트 퇴장에서만 `inactiveValue`와 `onInactive`를 직전 커밋 값·스키마·폼 context로 동기 실행합니다. 콜백 non-undefined 결과가 선언보다 우선하고 모두 undefined면 선언을 적용합니다. retain 뒤 restored raw 전 경로 JSON whole replace로 overlay를 쓰며 조상 다음 자손이 적용됩니다. clear 퇴장·dispose·아이템 삭제·재진입 소멸은 실행하지 않습니다. 실행 중 쓰기는 무시되며 예외는 정착 실패로 기록하고 기존 보존값을 유지합니다. 선언과 등록이 없는 노드는 해석 함수를 호출하지 않습니다.
+
 - 경로의 해석·조립·부모 계산·하위 포함 판정은 jsonPointer API를 사용한다. 의존성·watch 색인은 파싱된 이름과 연산자 심볼을 구별하며 한 탐색에서 같은 경로를 반복 분할하지 않는다. 슬롯 주소는 이름만 허용한다.
 
 - 예약 이름을 가진 속성도 호스트 슬롯과 overlay 하나의 원본 모델을 사용한다. packed 배열은 호스트 JSON 쓰기의 마지막 patch 값을 복원하며, 지움 객체 아래 명시 keep 자손은 일반 슬롯 정책대로 보존한다.
