@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- B12 resolver는 자동 쓰기가 허용되는 정상 보존 gate exit에서만 실행합니다. load/reset 범위·throwingGateExits·entered-only 퇴장과 자동 쓰기 억제·실패/예산 억제에서는 호출하지 않습니다. 다중 콜백은 등록 순서로 모두 실행하고 마지막 non-undefined를 채택하며 하나라도 던지면 해당 노드의 override 전체를 취소합니다.
+
+- B12 `onInactive` 등록은 인스턴스별 Map/Set이며 해제 함수를 반환합니다. resolver 실행 중 setValue·배열 동사·batch·resetSubtree는 진입 전에 무시하고 개발 모드에서만 `WriteInInactiveResolver` 경고를 보고합니다. 정착·배달·콜백 실행을 중첩하지 않습니다.
+
 - 폐기되지 않은 떼어진 노드의 늦은 UI 입력도 값 쓰기와 같이 무효이며 개발 모드 경고를 낸다.
 - 폐기되면서 떼어진 참조의 공개 setValue와 배열 동사는 detached 거부가 폐기 검사보다 먼저 적용되어 DisposedNodeWrite를 던지는 대신 무동작과 개발 경고로 끝나며, UI 입력 채널의 폐기 거부는 무음이다. resetSubtree도 detached 검사가 폐기 검사보다 먼저 적용되어 경고 없이 무동작으로 끝나며, 상태·오류·요청 명령은 폐기 검사를 먼저 적용해 DisposedNodeWrite를 던진다.
 

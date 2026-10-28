@@ -23,7 +23,9 @@ import {
   dispatchVisitSubtree,
   readFieldNodeRevision,
   subscribeFieldNode,
+  onInactiveFieldNode,
 } from '../../engine';
+import type { InactiveValueResolver } from '../../engine';
 import type { FieldNodeListener } from '../../engine';
 import { find, findNodes } from '../../engine';
 import { EMPTY_REVISION_LEDGER } from '../../engine';
@@ -369,6 +371,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   /** Subscribe to future event deliveries. */
   subscribe(listener: FieldNodeListener) {
     return subscribeFieldNode<FieldNode>(this, listener);
+  }
+  /** Resolve the retained value synchronously at this instance's normal keep-policy gate exit; returns cleanup. */
+  onInactive(listener: InactiveValueResolver<unknown>) {
+    return onInactiveFieldNode(this, listener);
   }
   /** Read the accumulated delivery revision for selected event bits. */
   revision(mask?: FieldNodeEventType) {

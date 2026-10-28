@@ -27,6 +27,7 @@ export {
   readFieldNodeInteractionReset,
   readFieldNodeRevision,
   subscribeFieldNode,
+  onInactiveFieldNode,
 } from './write';
 export {
   blueprint,
