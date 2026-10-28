@@ -311,3 +311,62 @@ it('drops a write through a descendant of an already inactive object inside a di
     { group: { keep: 24 } },
   ]);
 });
+
+it('keeps original row references on their rows when an already inactive list compacts under a clearing ancestor', () => {
+  const { root } = makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      open: { type: 'boolean' },
+      show: { type: 'boolean' },
+      section: {
+        type: 'object',
+        controls: { active: '#/show', unsetOnInactive: true },
+        properties: {
+          list: {
+            type: 'array',
+            controls: { active: '#/open' },
+            items: {
+              type: 'object',
+              properties: {
+                drop: { type: 'number' },
+                keep: {
+                  type: 'number',
+                  controls: { unsetOnInactive: false },
+                },
+                tags: {
+                  type: 'array',
+                  controls: { unsetOnInactive: true },
+                  items: {
+                    type: 'object',
+                    properties: {
+                      keep: {
+                        type: 'number',
+                        controls: { unsetOnInactive: false },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  root.setValue({
+    open: true,
+    show: true,
+    section: { list: [{ drop: 1 }, { keep: 12, tags: [{ keep: 3 }] }] },
+  });
+  const discardedDrop = root.find('/section/list/0/drop')!;
+  const survivorKeep = root.find('/section/list/1/keep')!;
+  root.find('/open')!.setValue(false);
+  root.find('/show')!.setValue(false);
+  discardedDrop.setValue(5);
+  survivorKeep.setValue(13);
+  root.find('/show')!.setValue(true);
+  root.find('/open')!.setValue(true);
+  expect(root.find('/section/list')!.value).toEqual([
+    { keep: 13, tags: [{ keep: 3 }] },
+  ]);
+});
