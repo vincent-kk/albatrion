@@ -1,6 +1,7 @@
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import type { DeclarationLayer } from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import { getStaticDeclarationIds } from '../../../utils/controls/getStaticDeclarationIds';
 import { prepareControlLayers } from './prepareControlLayers';
 import { prepareParentControlLayers } from './prepareParentControlLayers';
 
@@ -72,6 +73,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   if (!own.length && !inherited?.length) return [];
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
+    getStaticDeclarationIds(current) ??
     current.runtime.committedDeclarationIds?.get(
       getCommittedDeclarationKey(current, current.runtime),
     ) ??
