@@ -8,7 +8,7 @@ export interface TreeMemoStores<Entry = unknown, Gate = unknown> {
   /** State, retained across every reset while old references own their runtime. */
   detachedWriteAddresses?: WeakMap<
     object,
-    { path: string; order: readonly number[] }
+    { path: string; order: readonly number[]; discarded?: true }
   >;
   arrayShapes?: WeakMap<
     object,

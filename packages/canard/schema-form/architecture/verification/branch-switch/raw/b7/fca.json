@@ -1,0 +1,47 @@
+{
+  "sourceCommit": "2406a34d9",
+  "snapshotHash": "e94cabe0cf6f21d8a7fce5c778877113bcc8b5db067965ca75e5fb60b5a8d861",
+  "verdict": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "findings": 202,
+  "findingsOnChangedPaths": [],
+  "errors": [
+    {
+      "ruleId": "circular-dependency",
+      "severity": "error",
+      "message": "Dependency cycle: src/components/FieldProxy -> src/components/FieldProxy/components/FieldInputSlot -> src/components/FieldProxy",
+      "path": "src/components/FieldProxy",
+      "certainty": "exact",
+      "suggestion": "Break the cycle: move what both sides share into a unit they both import, or invert one edge behind an interface."
+    },
+    {
+      "ruleId": "test-record-case-cap",
+      "path": "src/helpers/jsonPointer/utils/__tests__/getAbsolutePointer.test.ts",
+      "severity": "error",
+      "message": "test-record has 58 semantic cases; the per-file cap is 32.",
+      "certainty": "exact",
+      "suggestion": "Split the test file by behavior so each file stays within 32 cases, or merge cases that verify the same behavior."
+    }
+  ],
+  "diagnosticCodes": [
+    "detail-document-contract"
+  ],
+  "facts": {
+    "coveredFiles": 1606,
+    "exact": 1606,
+    "scopeSource": "default"
+  },
+  "verification": {
+    "specFiles": 14,
+    "testRecordFiles": 680,
+    "changedFileCases": [
+      2,
+      8,
+      4,
+      2,
+      4
+    ],
+    "allChangedCounts": "exact"
+  },
+  "note": "Unrelated existing case caps and document references remain findings; no clean FCA pass is claimed."
+}

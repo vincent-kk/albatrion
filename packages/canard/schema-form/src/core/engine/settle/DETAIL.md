@@ -17,11 +17,18 @@
 
 - A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
 
+
+- A compaction rebinds surviving items' write-address cells the way an array move does: each survivor directly under a compacted array receives a cell at its new index and shares it with its private clone, so a detached write lands on the same survivor after re-entry. Items that do not survive receive a discarded cell; a write addressed at them, or at a descendant of them, has no effect and never lands on the item that now occupies that index. A detached occurrence honors a discard marker anywhere in its parent chain, whether it resolves through its own cell or through the nearest captured ancestor's cell. A private exit clone links every source occurrence to its clone's cell, so a later compaction of an already inactive array inside that clone moves or discards the original references with their clones. A discard marks every cell retained beneath the discarded item, including an inactive candidate that a re-entry clone carried into it, so an old reference to that candidate is dropped even though its parent chain predates the re-entry. Discard walks the discarded item's retained subtree once, following children owned by each occurrence and its inactive slots, and adds at most one WeakMap entry per visited occurrence; it runs only when a compaction discards an item, and its work is bounded by that subtree, which can include items of a nested clearing array without kept descendants that policy evaluation skips. Array verbs on a discarded occurrence read its frozen source channels, without resolving the discarded path against another survivor. Discard markers apply only when at least one item survives and creates a compaction plan; zero-survivor arrays retain latent writes at their original paths. A cell that the retained graph no longer reaches, such as an occurrence that exited fully cleared or an old reference to an occurrence that itself re-entered (excluding inactive candidates carried beneath it), is neither moved nor discarded by a compaction, as with an array move; a write through it uses its last recorded path.
+
 - Active clone construction does not allocate a detached write-address cell or compute its document-order array. A real departure captures the current address through the ordinary retained-exit path. Recursive inactive clones still transfer and rebind their address cells, so old references follow array rekeys without mutating frozen reads.
 
 - A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
 
-- Array exit clearing preserves the baseline's narrower keep exception: an array without a candidate ownership scope removes every descendant source, including explicit keep descendants, and re-enters at length zero. Within candidate ownership, only previously inactive keep sources survive; active array descendants are not captured by clearing. Object hosts retain the existing explicit keep exception. This pre-existing inconsistency remains an owner decision.
+
+
+- 지움과 함께 나가는 배열은 명시 keep 원본이 있는 아이템만 원래 순서대로 압축 보존한다. 아이템 자신과 살아 있거나 이미 비활성인 자손의 keep에 객체 호스트와 같은 정책을 적용하며 중첩 배열도 재귀한다. 닫힌 동안 inactiveValues는 압축 색인의 kept 원본을 공표하고, 재진입은 압축 배열을 복원하되 조건이 거짓인 keep은 자기 비활성 슬롯에 남긴다. 후보 소유 범위는 결과에 영향을 주지 않는다. 아이템 서브트리가 명시 keep 선언(`unsetOnInactive`가 리터럴 true가 아닌 선언)을 갖는지는 청사진이 만든 정적 사실 `hasKeepDescendants`로 읽는다. 선언이 없는 지움 배열은 아이템을 방문하지 않고 슬롯 전체를 버리며 길이 0으로 재진입하고, 방문 수는 아이템 수와 무관하게 배열 하나이다. 선언이 있는 지움 배열만 아이템 서브트리를 방문하므로 그 비용은 아이템 서브트리의 노드 수에 비례한다. 지움 없는 나감과 배열 자손이 없는 객체 호스트는 압축 경로를 타지 않으므로 아이템 방문이 더해지지 않고, 배열 자손을 품은 객체 호스트는 그 배열이 선언을 가질 때만 아이템을 방문한다. 비어 있어도 명시 keep인 배열 자손은 원본으로 세므로, 그 배열만 가진 아이템도 압축 뒤 남는다.
+- 압축 raw는 배열 재생성의 길이와 입력 값이며 공표는 kept 자손의 패치로 한다. 패치는 옛 아이템 주소에 의존하지 않는 채널 사본이며 후보별 선언 결합을 유지한다. 같은 이름의 종류별 원본을 첫 후보에 재해석하지 않으며, 보유 공간은 압축 raw와 kept 서브트리의 패치 수에 비례한다.
+- 지움 배열이 실제 keep 아이템을 보존하면 그 정착에만 압축 원본 계획을 만든다. 최종 나감에서는 압축 배열을 품은 나간 최상위 서브트리를 통째로 보유하는 슬롯 모델의 기준선을 따르며, 사적 복제는 그 서브트리 전체를 새 그래프로 복제하고 압축 배열 아래에는 생존 아이템만 새 색인으로 결합한다. 겹쳐 쓰는 overlay의 실체화된 raw에는 생존 아이템만 담긴다. 복제 비용은 나간 최상위 서브트리의 노드 수에 비례하고 보유 메모리도 그 크기에 비례한다. 공표와 재진입은 이 그래프를 사용하여 옛 참조의 메모를 바꾸지 않고 이미 비활성인 keep의 마지막 정책도 유지한다. 다른 튜플 청사진은 배열 이동과 같은 foreign binding으로 보존한다. 원본 계획은 정착 뒤 남기지 않으며 keep 선언이 없는 배열·지움 없는 나감·일반 객체 나감에는 이 복제를 수행하지 않는다. 재진입의 보존 자리 이름 조회는 공유 분배 기록의 배열 순회라서, 생존 아이템 n개인 압축 배열의 복원 비용은 n의 제곱에 비례한다.
 
 - 슬롯 경로는 호스트가 나간 인스턴스를 그대로 보유하고 재진입 때 새 인스턴스로 복제한다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"와 "슬롯은 후보 풀이지 직전 형상이 아니다"를 유지한다. 같은 이름·다른 청사진 노드는 독립 원본이며 공개 structure·children에는 활성 형상만 둔다(NODE-043·044·060, SETTLE-044·GOAL-029).
 - 복제는 raw·extras·선언 밖 값과 자손 슬롯을 재귀적으로 보존하고 부모·경로·등록·색인을 새로 결합한다. 상호작용·오류·배달 기록은 이어받지 않으며 배열 itemKey는 새로 발급한다. 비활성 자손도 새 부모로 복제하여 옛 parent 연결이 과거 호스트를 누적 보유하지 않게 한다. 복제된 새 노드의 entered·채움·resetInteraction과 모든 중첩 호스트의 고정 baseline 재선택을 유지한다(NODE-044·053, SETTLE-044, WRITE-007).
@@ -325,6 +332,10 @@
 ### settle-slot-entry — 새 수명의 복제와 재선택
 
 - source 채널·extras·선언 밖 값과 후보별 원본을 복원하되 모든 재진입 참조와 배열 nonce는 새 값이다. 중첩 게이트 입력이 비활성 동안 바뀌어도 고정 baseline에서 선택하며 옛 형상을 후보 밖의 힌트로 쓰지 않는다. 보존 원본이 없음인 새 노드는 기존 채움·상호작용 초기화를 받는다.
+
+### settle-slot-clearing-array-keep — keep 아이템의 압축 복원
+
+- 살아 있거나 이미 비활성인 keep, 아이템 자신의 스칼라 keep, 중첩 배열, 후보 소유 범위와 같은 이름의 여러 종류 원본을 압축 색인에서 보존한다. 후보 종류가 있는 생존 아이템이 앞 색인으로 옮겨져도 새 색인의 후보 결합으로 다시 묶는다. keep이 없는 아이템은 제거하며, 재진입 뒤 조건이 거짓인 keep은 자기 슬롯에 남고 조건이 참이 되면 복원한다. keep 선언이 없는 지움 배열은 아이템 수와 무관하게 배열 하나만 방문하고, 객체 지움과 지움 없는 배열은 압축 경로의 추가 방문이 없다. 압축 뒤 생존 아이템의 옛 참조 쓰기는 압축된 새 색인의 같은 아이템에 닿고, 생존하지 못한 아이템의 옛 참조 쓰기는 효과가 없다.
 
 ### settle-slot-overlays — 비활성 쓰기와 범위
 
@@ -802,4 +813,4 @@
 
 ## Last Updated
 
-2026-10-28
+2026-10-28. B7 지움 배열 keep 원본의 압축 복원·후보 결합 보존·비활성 공표와 비용.

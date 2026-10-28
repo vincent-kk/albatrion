@@ -6,6 +6,8 @@ import { getSlotOrder } from '../slots/getSlotOrder';
 interface Address {
   path: string;
   order: readonly number[];
+  /** Set once the occurrence's slot was discarded; a write addressed at it has no destination. */
+  discarded?: true;
 }
 
 /** Tree-owned weak identity links; retained address state survives every reset. */
@@ -54,9 +56,26 @@ export class DetachedWriteAddress {
   }
 
   /**
+   * Mark an occurrence and every occurrence retained beneath it as having no write destination.
+   * @param node - Captured occurrence whose slot did not survive its host's compaction
+   * @returns Nothing; later writes through any reference that shares one of these cells, or resolves through one, are dropped
+   */
+  static discard<Self extends FieldNodeRecord<Self>>(node: Self): void {
+    const cells = (node.runtime.detachedWriteAddresses ??= new WeakMap());
+    const address = cells.get(node) ?? { path: '', order: [] };
+    address.discarded = true;
+    cells.set(node, address);
+    for (const child of node.children ?? [])
+      if (child.parent === node) DetachedWriteAddress.discard(child);
+    for (const retained of node.inactiveSlots?.values() ?? [])
+      DetachedWriteAddress.discard(retained);
+  }
+
+  /**
    * Resolve a detached write, including descendants folded into an array source.
    * @param node - Detached occurrence with its original parent chain and path
-   * @returns Its cell, an address relative to a captured ancestor, or undefined
+   * @returns Its cell, an address relative to a captured ancestor, or undefined;
+   * marked discarded when the occurrence or any ancestor did not survive a compaction
    */
   static read<Self extends FieldNodeRecord<Self>>(
     node: Self,
@@ -64,14 +83,23 @@ export class DetachedWriteAddress {
     const cells = node.runtime.detachedWriteAddresses;
     if (!cells) return undefined;
     const own = cells.get(node);
-    if (own) return own;
+    if (own) {
+      if (own.discarded) return own;
+      for (let parent = node.parent; parent; parent = parent.parent)
+        if (cells.get(parent)?.discarded) return { ...own, discarded: true };
+      return own;
+    }
     for (let parent = node.parent; parent; parent = parent.parent) {
       const ancestor = cells.get(parent);
       if (!ancestor) continue;
+      let discarded = ancestor.discarded === true;
+      for (let above = parent.parent; above && !discarded; above = above.parent)
+        if (cells.get(above)?.discarded) discarded = true;
       const order = getSlotOrder(node.parent, node.name, node.blueprintNode);
       return {
         path: ancestor.path + node.path.slice(parent.path.length),
         order: [...ancestor.order, ...order.slice(ancestor.order.length)],
+        ...(discarded ? { discarded: true as const } : undefined),
       };
     }
     return undefined;

@@ -11,7 +11,7 @@ it.each([
   { inactive: false, candidateOwner: true },
   { inactive: true, candidateOwner: true },
 ])(
-  'matches array clearing with inactive=$inactive and candidateOwner=$candidateOwner',
+  'restores kept array items with inactive=$inactive and candidateOwner=$candidateOwner',
   ({ inactive, candidateOwner }) => {
     const run = () => {
       const { root } = createDispatchTree({
@@ -66,13 +66,14 @@ it.each([
       };
     };
     const actual = run();
-    const kept = inactive && candidateOwner;
-    expect(actual.closed).toEqual(
-      kept ? [{ path: '/list/0/keep', value: 12 }] : [],
-    );
-    expect(actual.reopened).toEqual({ open: true, show: !inactive });
+    expect(actual.closed).toEqual([{ path: '/list/0/keep', value: 12 }]);
+    expect(actual.reopened).toEqual({
+      open: true,
+      show: !inactive,
+      list: [inactive ? {} : { keep: 12 }],
+    });
     expect(actual.inactive).toEqual(
-      kept ? [{ path: '/list/0/keep', value: 12 }] : [],
+      inactive ? [{ path: '/list/0/keep', value: 12 }] : [],
     );
   },
 );

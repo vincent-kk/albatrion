@@ -3,6 +3,7 @@ import type { SettlementContext } from '../../types/settlement';
 import { DetachedWriteAddress } from '../detached/DetachedWriteAddress';
 import { isReplacedLivePath } from '../transition/isReplacedLivePath';
 import { readDepartingAncestorPolicy } from '../transition/readDepartingAncestorPolicy';
+import { cloneSlotSubtree } from './cloneSlotSubtree';
 import { createExitSlotOverlay } from './createExitSlotOverlay';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
 import { getSlotOrder } from './getSlotOrder';
@@ -52,7 +53,17 @@ export const retainExitedSlot = <Self extends FieldNodeRecord<Self>>(
     host.inactiveSlotOverlays?.delete(entry);
     return;
   }
-  (host.inactiveSlots ??= new Map()).set(entry, node);
+  const source = result.compacted
+    ? cloneSlotSubtree(
+        host,
+        entry,
+        node,
+        context,
+        false,
+        context.compactedSlotSources,
+      )
+    : node;
+  (host.inactiveSlots ??= new Map()).set(entry, source);
   if (result.overlay)
     (host.inactiveSlotOverlays ??= new Map()).set(entry, result.overlay);
   else host.inactiveSlotOverlays?.delete(entry);

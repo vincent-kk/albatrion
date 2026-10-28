@@ -57,9 +57,12 @@ it.each([[false], [true]] as const)(
     dispatchSetValue(getDispatchNode(root, 'show'), false);
     dispatchInsert(list, 0, {});
     dispatchSetValue(getDispatchNode(root, 'open'), false);
-    expect(readFieldNodeInactiveValues(root)).toEqual([]);
+    const kept = [{ path: '/list/0/keep', value: 'held' }];
+    expect(readFieldNodeInactiveValues(root)).toEqual(kept);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
-    expect(getDispatchNode(root, 'list').local).toEqual([]);
-    expect(readFieldNodeInactiveValues(root)).toEqual([]);
+    expect(getDispatchNode(root, 'list').itemCount).toBe(1);
+    expect(readFieldNodeInactiveValues(root)).toEqual(kept);
+    dispatchSetValue(getDispatchNode(root, 'show'), true);
+    expect(getDispatchNode(root, 'list').local).toEqual([{ keep: 'held' }]);
   },
 );

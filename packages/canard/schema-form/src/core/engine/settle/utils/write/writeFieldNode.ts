@@ -80,6 +80,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   }
   if (!scalarWrite && node.detached) {
     const address = DetachedWriteAddress.read(node);
+    if (address?.discarded) return;
     const path = address?.path ?? node.path;
     if (hasLivePathKind(node, path)) return;
     const whole =

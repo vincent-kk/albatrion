@@ -1,0 +1,58 @@
+{
+  "beforeHandoff": [
+    {
+      "startedAt": "2026-10-28T05:32:46.234Z",
+      "topProcess": "mediaanalysisd",
+      "cpuPercent": 106.6407,
+      "approved": false
+    },
+    {
+      "startedAt": "2026-10-28T05:35:00.882Z",
+      "topProcess": "mediaanalysisd",
+      "cpuPercent": 89.267,
+      "approved": false
+    },
+    {
+      "startedAt": "2026-10-28T05:37:05.975Z",
+      "topProcess": "mediaanalysisd",
+      "cpuPercent": 96.1008,
+      "approved": false
+    },
+    {
+      "startedAt": "2026-10-28T05:39:11.286Z",
+      "topProcess": "mediaanalysisd",
+      "cpuPercent": 94.3448,
+      "approved": false
+    },
+    {
+      "startedAt": "2026-10-28T05:41:16.646Z",
+      "topProcess": "mds",
+      "cpuPercent": 55.8106,
+      "approved": false
+    },
+    {
+      "startedAt": "2026-10-28T05:43:22.002Z",
+      "topProcess": "mds",
+      "cpuPercent": 54.6955,
+      "approved": false
+    }
+  ],
+  "thisWindow": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-10-28T05:50:06.438Z",
+      "topProcess": "WindowServer",
+      "cpuPercent": 33.80142224750804,
+      "approved": false
+    },
+    {
+      "attempt": 2,
+      "startedAt": "2026-10-28T05:52:30.335Z",
+      "topProcess": "Google Chrome Helper (Aperitif Renderer)",
+      "cpuPercent": 24.25466636680284,
+      "approved": true
+    }
+  ],
+  "formalStart": "2026-10-28T05:53:11.721Z",
+  "windowEnd": "2026-10-28T06:02:21.050Z"
+}

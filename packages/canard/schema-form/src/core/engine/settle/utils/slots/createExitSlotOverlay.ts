@@ -4,9 +4,9 @@ import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { captureAbsentSlotInputs } from './captureAbsentSlotInputs';
+import { createClearedArrayOverlay } from './createClearedArrayOverlay';
 import { expirePackedSlotMemos } from './expirePackedSlotMemos';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
-import { hasSlotCandidateOwner } from './hasSlotCandidateOwner';
 import { hasSlotOverlaySource } from './hasSlotOverlaySource';
 import { readSlotExitPolicy } from './readSlotExitPolicy';
 
@@ -18,6 +18,8 @@ interface ExitSlotOverlay {
   readonly hasSource: boolean;
   /** Whether this instance can remain a slot, including empty kept occurrences. */
   readonly retain: boolean;
+  /** Whether a nested clearing array requires a privately rebound source graph. */
+  readonly compacted?: boolean;
 }
 
 /**
@@ -26,6 +28,8 @@ interface ExitSlotOverlay {
  * @param inherited - Last-live ancestor policy at this source position
  * @param applyPolicy - Whether this exit may perform automatic source clearing
  * @param previous - Existing patch over this source, if a parent already owns one
+ * @param context - Active exit inputs, omitted for already inactive descendants
+ * @param sourceContext - Exit plan owner, also shared with already inactive descendants
  * @returns A patch and retention decision; no raw, extras, or public reads are mutated
  */
 export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
@@ -34,7 +38,7 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   applyPolicy: boolean,
   previous?: InactiveSlotOverlay,
   context?: SettlementContext<Self>,
-  activeClear = false,
+  sourceContext = context,
 ): ExitSlotOverlay => {
   const supplied = context ? captureAbsentSlotInputs(node, context) : undefined;
   if (supplied?.children)
@@ -43,8 +47,12 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       children: new Map([...(previous?.children ?? []), ...supplied.children]),
     };
   const policy = readSlotExitPolicy(node, inherited);
-  const clear = applyPolicy && (activeClear || policy);
-  if (clear && node.behavior.type === 'array' && !hasSlotCandidateOwner(node)) {
+  const clear = applyPolicy && policy;
+  if (
+    clear &&
+    node.behavior.type === 'array' &&
+    !node.blueprintNode.hasKeepDescendants
+  ) {
     const overlay = {
       replace: true,
       raw: undefined,
@@ -53,6 +61,18 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
     };
     if (context) node.retainedSourceOverlay = overlay;
     return { overlay, hasSource: false, retain: false };
+  }
+  if (clear && node.behavior.type === 'array') {
+    const overlay = createClearedArrayOverlay(
+      node,
+      previous,
+      context,
+      createExitSlotOverlay,
+      sourceContext,
+    );
+    if (context) node.retainedSourceOverlay = overlay;
+    const hasSource = overlay.itemCount !== 0;
+    return { overlay, hasSource, retain: hasSource, compacted: hasSource };
   }
   const raw =
     previous && hasOwnProperty(previous, 'raw')
@@ -72,6 +92,7 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       extras !== undefined ||
       node.behavior.type === 'array');
   let children: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;
+  let compacted = false;
   const visited: BlueprintChildEntry[] = [];
   for (const child of node.children ?? []) {
     if (child.parent !== node) continue;
@@ -85,9 +106,10 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       applyPolicy,
       prior,
       context,
-      activeClear || (clear && node.behavior.type === 'array'),
+      sourceContext,
     );
     if (result.hasSource) hasSource = true;
+    if (result.compacted) compacted = true;
     if (result.overlay !== prior) {
       children ??= new Map(previous?.children);
       if (result.overlay) children.set(entry, result.overlay);
@@ -99,8 +121,16 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
     visited.push(entry);
     const prior =
       previous?.children?.get(entry) ?? node.inactiveSlotOverlays?.get(entry);
-    const result = createExitSlotOverlay(child, clear, applyPolicy, prior);
+    const result = createExitSlotOverlay(
+      child,
+      clear,
+      applyPolicy,
+      prior,
+      undefined,
+      sourceContext,
+    );
     if (result.hasSource) hasSource = true;
+    if (result.compacted) compacted = true;
     if (result.overlay !== previous?.children?.get(entry)) {
       children ??= new Map(previous?.children);
       if (result.overlay) children.set(entry, result.overlay);
@@ -131,5 +161,5 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   if (context) node.retainedSourceOverlay = overlay;
   if (!clear && node.behavior.type === 'array' && node.raw === undefined)
     expirePackedSlotMemos(node, overlay);
-  return { overlay, hasSource, retain: !clear || hasSource };
+  return { overlay, hasSource, retain: !clear || hasSource, compacted };
 };
