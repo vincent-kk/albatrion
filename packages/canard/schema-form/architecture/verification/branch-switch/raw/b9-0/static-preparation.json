@@ -1,0 +1,67 @@
+{
+  "timed": false,
+  "records": [
+    {
+      "row": "siblings-3",
+      "afterWrite": 1,
+      "staticEntries": 4,
+      "gated": true,
+      "hasGatedOverlays": false,
+      "directChildSelectionPlan": null,
+      "preparedStaticHost": false,
+      "staticReuserCallbacksPerWrite": [
+        10,
+        10,
+        10
+      ]
+    },
+    {
+      "row": "siblings-1000",
+      "afterWrite": 1,
+      "staticEntries": 1001,
+      "gated": true,
+      "hasGatedOverlays": false,
+      "directChildSelectionPlan": null,
+      "preparedStaticHost": false,
+      "staticReuserCallbacksPerWrite": [
+        2004,
+        2004,
+        2004
+      ]
+    },
+    {
+      "row": "oneOf-80",
+      "afterWrite": 1,
+      "staticEntries": 2,
+      "gated": true,
+      "hasGatedOverlays": false,
+      "directChildSelectionPlan": {
+        "steps": 242,
+        "baseline": 2
+      },
+      "preparedStaticHost": true,
+      "staticReuserCallbacksPerWrite": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "row": "oneOf-80-siblings-1000",
+      "afterWrite": 1,
+      "staticEntries": 1002,
+      "gated": true,
+      "hasGatedOverlays": false,
+      "directChildSelectionPlan": {
+        "steps": 1242,
+        "baseline": 1002
+      },
+      "preparedStaticHost": true,
+      "staticReuserCallbacksPerWrite": [
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

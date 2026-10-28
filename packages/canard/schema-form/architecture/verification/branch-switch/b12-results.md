@@ -147,3 +147,7 @@ self는 보조 타이머를 포함한 진단값이며 개선 요구 관문이 �
 - P3-29: 예행 명령은 아래에 기록합니다. 잘못된 suffix에 대한 오류 matcher 강화와 예행 자체의 추가 경로 사례는 후속으로 남깁니다.
 
 `node packages/canard/schema-form/architecture/verification/branch-switch/tools/window/preflight.mjs <준비된 .noindex 루트>`는 정식 마커가 없는 준비 루트에서 창 전에 실행하는 비정식 예행입니다. 별도 -preflight.noindex 디렉터리의 실제 alternate CLI를 1행·1프로세스·예열1·표본1로 실행하며 공용 경로 해석과 profile context도 확인합니다.
+
+## 단계 머리 병합
+
+PR #489 충돌 해소를 위해 단계 머리 `cd4e3b78b9eff68369099f333d820782060ec165`를 병합했습니다. 도구 다섯 충돌을 해결하면서 이동한 공용 CPU 관측기 import 한 곳도 수정했습니다. 일반120초·Spotlight600초·.noindex stage 경로와 단계의 공용 preload를 함께 보존했습니다. 제품 소스·빌드 설정은 기존 후보와 동일합니다. 다시 build·typecheck를 통과했고 ESM·Node ESM·CJS의 SHA-256 세 개와 루트 d.ts 해시는 측정 후보652ddf6ee와 모두 같습니다. 공용 가상 시계·B9-0·B4-2·B6 합성 검사 및 변경 MJS26개의 문법·상대 import 검사가 통과했습니다. 기존 전체 제품 관문과 정식 창 결과를 재사용하며 새 정식 창은 실행하지 않았습니다. [병합 검증](raw/b12/merge-stage/)에 근거를 보존했습니다.

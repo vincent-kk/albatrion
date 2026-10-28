@@ -23,7 +23,7 @@ B5의 단계 장부(`../../verification/branch-switch/raw/b5/stages.json`, 단�
 | H1 | primeHost, selectChildren(형제) | 분할이 유일하면(`gated`, gated overlay 없음, `staticEntries.length > 0`) 직접 계획이 null이어도 준비물을 만든다. 준비물은 정적 엔트리의 노드 참조와 선언 ID(청사진 상수)와 동적 엔트리 목록(저작 순서)을 들고, primeHost와 selectChildren은 동적 목록만 돌며 정적 엔트리는 `prepared.entries.has`로 재사용한다(지금 준비된 경로가 그렇다). verify 모드의 증인 재확인(GOAL-029)과 load·distributedInputs·pathChanges·failures·relocated의 무효화는 그대로. 구성원 Δ(들어옴·나감)가 없으면 이전 children 배열을 유지하고 `Object.assign`·`Object.values`·`isSameChildList`를 생략한다. |
 | H2 | assembleObject | 메모 키를 effective schema identity가 아니라 `getStaticChoices(schema).propertyOrder`와 children identity로 바꾸고, 재계산된 자식(Δ)만 덧붙인다. 구성원이 바뀌면 활성 A개로 구성한다. |
 | H3 | computeNode, updateOutput | 참조 보존 판정을 깊은 `sameValue`와 `children.every` 대신 정착이 이미 아는 Δ 집합으로 한다. computeNode self의 내부 분할이 미확인이므로 B9-0의 하위 타이머 뒤에 확정한다. |
-| H4 | commitSettlement, markCommitDeliveries | 정적 자식의 선언 ID는 청사진 상수이므로 `selectedDeclarationIds`에 기록하지 않고 `derive`·`readDefault`·`getControlLayers`의 조회가 준비물에서 읽게 한다. required 배열의 identity가 같으면 required 루프를 생략하고, 아니면 들어온 자식만 계산한다. |
+| H4 | commitSettlement, markCommitDeliveries | 정적 자식의 선언 ID는 청사진 상수이므로 `selectedDeclarationIds`에 기록하지 않고 `derive`·`readDefault`·`getControlLayers`의 조회가 준비물에서 읽게 한다. required 배열의 identity가 같으면 기존 자식의 required 순회를 건너뛰고 들어온 자식만 계산하며, identity가 다르면 기존 자식도 다시 계산한다(분기 전환으로 기존 자식의 required가 바뀌는 공개 동작을 놓치지 않기 위함; B9-1 워커의 물음에 463라운드 코디네이터가 승인). |
 | H5 | 들어옴·나감 상수(oneOf) | 나감 키를 경로 문자열 대신 노드 identity로(`request.md` Ⅲ의 제안), 게이트가 없는 잎의 레지스트리 등록 빠른 길(Map·spread 할당 없음), finalizeExits 고정분의 주인을 B9-0에서 확인한 뒤 제거(misfit 색인은 나간 서브트리 아래로 한정). |
 | H6 | selectNodeSchema | 활성 선언 ID는 표의 버킷이 정하므로 버킷별 effective schema 메모로 루트 선언 D개의 순회를 없앤다. |
 | H7 | registerRecalculation | 표 단계의 게이트를 호스트 소유자 하나로 등록해 `/kind` 변경의 소유자가 G개가 아니라 하나가 되게 한다. BLUEPRINT-007은 평가를 정하는 규칙이지 등록 방식을 정하지 않는다. S3 shadow 경로의 동등을 확인한다. |
@@ -66,6 +66,19 @@ B5의 단계 장부(`../../verification/branch-switch/raw/b5/stages.json`, 단�
 | B10 | 이정표 재측정: 세 레인(0.16.1 / 단계 시작 `0eb03ff3b` / 설계 Ⅲ 끝)과 여섯 관문, B5와 같은 창 | 관문 판정. 1.5배 미달이 예상되므로 마감 판정(설계 Ⅳ 착수 또는 "대규모 개편 없는 상한"으로 기록)은 소유자가 정한다 |
 
 B9-1·B9-2·B9-3은 각각 하나의 PR이며 순서는 형제(B9-1) 먼저다. 어느 PR이든 겨냥한 행이 폭 안이면 "개선 없음"으로 적고 되돌린다(`verification.md` PR 관문). 구현은 codex, 창은 인계 파일을 받은 측정 담당, 독립 검토는 claude 검증 에이전트(460C-05).
+
+## B9-0 뒤의 정정(463라운드, #488)
+
+B9-0(`../../verification/branch-switch/b9-0-results.md`, 창 180/180, legacy 품질비 1.033 통과)의 하위 타이머가 위 모델과 비용 모델을 다음과 같이 고친다. 이 창은 같은 단계에서 B5보다 1.3~5.2배 느리게 돌았고(동결된 0.16.1 레인 포함), 그래서 절대 µs는 B5 단위로 환산해 읽는다. 원인은 진단으로 닫혔다: B9-0 러너가 0.16.1 레인의 배치 가드를 초기화하려고 표본마다 `setTimeout(0)`으로 1 ms 이상 잠들었고, B5·B11의 장부 루프는 잠들지 않는다; 비용은 레인·번들·패스가 아니라 그 프로세스가 지금까지 잠든 횟수를 따라 오르며(같은 unwrapped 번들의 중앙값이 4레인 장부에서 약 2배, 최솟값은 일치; 네 레인이 10프로세스 모두에서 함께 오르내림), Spotlight 부하(B9-0 157 %, B11 창 2 0.3 %, 폭과의 상관 −0.03)와 제품 머리(0.16.1 레인은 같은 소스 해시)는 원인이 아니다. 기제는 낮은 duty cycle이 코어의 성능 상태를 낮춘다는 가설(중간 확신). 고침: 양보는 `node:timers/promises`의 `setImmediate()`로 한다(0.16.1 가드는 네이티브 setImmediate로 초기화되므로 잠들지 않고도 충족). B9-1은 이 고침을 먼저 넣고 행당 프로세스 하나의 파일럿에서 중앙값/최솟값 비가 1.2~1.4로 돌아오는지 확인한 뒤 창을 연다.
+
+- **H1은 유지(원인 확인, 예산은 하한 경계).** 형제 호스트는 동명 선언으로 직접 계획이 `null`이라 준비물이 없고 쓰기당 재사용 콜백 2,004회(정적 준비물 직접 진단: siblings-1000 staticEntries 1,001·plan null·준비물 없음, oneOf-80 plan 있음·준비물 있음·콜백 0). 일반/준비 경로의 primeHost+selectChildren 기울기 차는 이번 창 1,246 µs, B5 단위 환산 약 1,009 µs로 예상 하한 1,100의 경계다. 준비된 경로에도 형제당 1.3 µs(assembleObject 0.647, primeHost 0.344, selectChildren 0.101)가 남고, 1,000 형제에서 primeHost 352.7·selectChildren 197.5 µs라 B9-1의 관문(≤ 50·≤ 60)은 H1의 "구성원 Δ가 없으면 children 배열 유지" 절이 형제 전환에 실제로 걸릴 때만 닿는다. B9-1은 그 절의 적용을 먼저 확인한다.
+- **H3은 뒤집힘(형제), 약화(oneOf) → H8로 대체.** 참조 보존 판정(`sameValue`·`children.every`)의 형제 1,000 증가분은 net 약 12 µs(B5 단위 약 9)뿐이고 oneOf-80은 0.3 µs다. computeNode 선형항의 주인은 `registerPresenceChanges`(net 약 378 µs; 전체 키 순회 두 번과 투영 기준선 루프)다. **H8**: 존재 변화 이름을 전체 키 순회가 아니라 정착이 이미 아는 Δ 집합에서 끌어낸다(B5 단위 약 286 µs/1,000 형제; 설계 Ⅲ의 H3 예산이 실제로 있던 자리). H3은 형제를 가진 oneOf 호스트에만 축소해 남긴다(supplemental, 약 106 µs/1,000).
+- **H5는 축소.** misfit 색인(net −0.5 µs)은 고정분 13.6 µs의 주인이 아니고 쓰기 주소 장치는 B11이 이미 뗐다. 남는 것은 나감 키의 노드 identity와 게이트 없는 잎의 레지스트리 빠른 길(미측정)이며 고정분의 주인은 열린 문제다(capture/visit 6.4/2.8, retain 9.7, overlay 5.0, 루트 residual 19.0 µs net).
+- **H6은 뒤로.** 선언 선택·병합의 scoped net은 이번 창 6.5 µs, B5 단위 약 2.0(raw 2.8) µs로 예상 3~8 아래라 B9-3의 꼬리로 보낸다.
+- **종합 예상은 거둔다.** siblings-1000 250~400 µs(기울기 0.2~0.4)는 H1의 Δ 절, H2(준비된 assembleObject 두 호출 0.647 µs/형제), H8이 함께 들어야 닿으며, B9-1 뒤에 다시 적는다. oneOf-80 120~145 µs는 H2·H7 중심으로 B9-2 뒤에 다시 본다.
+- **관문은 같은 창 안의 상대값으로.** 이 하네스의 프로세스 중앙값 대 최솟값 폭(1.2~3.3배)과 B5 대비 느려짐이 설명되거나 고쳐지기 전에는 B5 µs로 적은 절대 관문을 판정하지 않고, 각 PR의 A/B를 같은 창에서 재어 폭 (다)와 단계 장부의 상대 개선으로 판정한다. 하네스 진단은 B9-1 착수 전에 닫는다.
+
+정정된 단계: **B9-1 = H1(Δ 절 포함) + H8 + H4(형제)**, 관문은 siblings-1000이 폭 (다) 밖 개선과 단계 장부에서 primeHost·selectChildren·registerPresenceChanges·commitSettlement의 상대 감소(절대값은 기록); **B9-2 = H2 + 축소 H3**; **B9-3 = H5(축소) + H7 + H6(꼬리)**; B10은 그대로. B2-P2 결과 문서의 "분할이 정적 목록을 비운다"는 서술은 B9-0이 덧붙인 정정 문단으로 바로잡혔다.
 
 ## 확인되지 않은 것(B9-0이 닫는다)
 

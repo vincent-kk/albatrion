@@ -8,8 +8,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { buildAlternatingRows } from '../../../design-optimization/tools/helpers/buildAlternatingRows.mjs';
 import { verifyInputs } from '../b4-2/verifyInputs.mjs';
 import { getStageRoot } from '../window/getStageRoot.mjs';
-import { sampleProcessCpu } from './helpers/sampleProcessCpu.mjs';
-import { waitForQuietProcess } from './helpers/waitForQuietProcess.mjs';
+import { sampleProcessCpu } from '../window/helpers/sampleProcessCpu.mjs';
+import { waitForQuietProcess } from '../window/waitForQuietProcess.mjs';
 
 assert.equal(Number(process.versions.node.split('.')[0]), 26);
 assert.equal(

@@ -1,0 +1,121 @@
+{
+  "base": "4d0fa4a12d5a9062a83c705076f2928e600d671c",
+  "head": "33bc6d64f1a62066fd0781f14c6000334ed756c4",
+  "node": "v26.11.1",
+  "config": {
+    "runs": 10,
+    "warmups": 20,
+    "samples": 100,
+    "quality": "legacy"
+  },
+  "rows": [
+    {
+      "id": "switch-oneOf-80",
+      "operation": "switch",
+      "shape": "oneOf",
+      "n": 80
+    },
+    {
+      "id": "switch-payload-12",
+      "operation": "switch",
+      "shape": "branch-switch",
+      "gate": "active",
+      "n": 80,
+      "payload": 12
+    },
+    {
+      "id": "switch-siblings-0",
+      "operation": "switch",
+      "shape": "siblings",
+      "siblings": 0,
+      "n": 0
+    },
+    {
+      "id": "switch-siblings-1000",
+      "operation": "switch",
+      "shape": "siblings",
+      "siblings": 1000,
+      "n": 0
+    },
+    {
+      "id": "switch-oneOf-80-siblings-250",
+      "operation": "switch",
+      "shape": "oneOf",
+      "n": 80,
+      "siblings": 250
+    },
+    {
+      "id": "switch-oneOf-80-siblings-1000",
+      "operation": "switch",
+      "shape": "oneOf",
+      "n": 80,
+      "siblings": 1000
+    }
+  ],
+  "files": {
+    "dist/index.mjs": {
+      "bytes": 811087,
+      "sha256": "cd0b65ef4951d2af2b0f32f864cff3cc1fae0a38feade907f53f41e783171262"
+    },
+    "dist/index.node.mjs": {
+      "bytes": 810327,
+      "sha256": "940ebbe8c5e03990feafc91e95dae8719289ea55313ed7d001aa3e97b44af6a1"
+    },
+    "dist/index.cjs": {
+      "bytes": 828133,
+      "sha256": "c293ed28b89b5f0887d5e1474a1a604c3ca24be484e39be2581326c55ce7a036"
+    },
+    "dist/index.d.ts": {
+      "bytes": 3054,
+      "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+    },
+    "stages/scratch/wrapped.mjs": {
+      "bytes": 817252,
+      "sha256": "ef0f00683a0354f442ab448e90dd438615202c501c6e37e568d652e99f4a7f92"
+    },
+    "stages/scratch/supplemental.mjs": {
+      "bytes": 828586,
+      "sha256": "e6adb796cf74098156a528cb7b86436b431a5283a148d0b8cf5024e67dc16560"
+    },
+    "stages/scratch/gap.mjs": {
+      "bytes": 818003,
+      "sha256": "88f0c9ac18ed5e6c83d5f2662ddd28184ff0a3c75f2ececb14f15278b08164d6"
+    },
+    "stages/scratch/diagnostic.mjs": {
+      "bytes": 810832,
+      "sha256": "5cd9e393f2d1e53e35763ff0b2df3cbb93e9084250b7c00e6ff91972976a94ae"
+    },
+    "stages/scratch/unwrapped.mjs": {
+      "bytes": 810740,
+      "sha256": "05667410784bb8103b21af79ae9333699a6701286b0424d10d2f51d7e4fafdc6"
+    },
+    "stages/scratch/instrumentation.json": {
+      "bytes": 122146,
+      "sha256": "2e927f85ece3a6839fdc124476d2ed1ee9511e02b78708bb3736633a0688ed8c"
+    },
+    "engines/dist.mjs": {
+      "bytes": 810375,
+      "sha256": "81add47693b81c29e4f0dc6ce45d6d3bd1378f35359c5a29a8f617c3d89f5ec6"
+    },
+    "engines/legacy.mjs": {
+      "bytes": 260073,
+      "sha256": "5a4a38480969155d87c3a5a9a9750ecc7c904bf44d1fbfc37b62f816623303cf"
+    }
+  },
+  "legacy": {
+    "version": "0.16.1",
+    "sha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46"
+  },
+  "plugin": {
+    "entry": "index.cjs",
+    "bytes": 537,
+    "sha256": "d830dc6a2a541238f0ead894e3d22b59fe27e7f1dccc1590c29b9191d5bdde79"
+  },
+  "comparativeBundleIdenticalToB6": true,
+  "environment": {
+    "cpu": "Apple M1 Max",
+    "arch": "arm64",
+    "os": "27.0.0"
+  },
+  "preparedAt": "2026-10-28T18:22:54.343Z"
+}
