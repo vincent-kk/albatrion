@@ -127,6 +127,7 @@ const report = {
   changed,
   nodeMembers,
   controlKeys,
+  inactiveValueTypes: members.map((member) => member.inactiveValueType),
   warningMembers: [
     'InactiveValueWithUnsetOnInactive',
     'WriteInInactiveResolver',
