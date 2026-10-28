@@ -1,10 +1,54 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { FormWarningCode } from '@/schema-form/errors';
 
 import { isArrayNode } from '../utils/guards';
 
 afterEach(() => vi.restoreAllMocks());
+
+it.each(['push', 'insert', 'pop', 'remove', 'update', 'clear'] as const)(
+  'warns exactly once and preserves every value for detached array %s',
+  (verb) => {
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        open: { type: 'boolean' },
+        list: {
+          type: 'array',
+          items: { type: 'string' },
+          controls: { active: '../open' },
+        },
+      },
+    });
+    root.setValue({ open: true, list: ['a'] });
+    const old = root.find('/list');
+    if (!old || !isArrayNode(old)) throw new Error('Expected array');
+    root.find('/open')!.setValue(false);
+    const inactive = root.inactiveValues;
+    const warning = vi
+      .spyOn(console, 'warn')
+      .mockImplementation(() => undefined);
+    const operations = {
+      push: () => old.push('z'),
+      insert: () => old.insert(0, 'z'),
+      pop: () => old.pop(),
+      remove: () => old.remove(0),
+      update: () => old.update(0, 'z'),
+      clear: () => old.clear(),
+    };
+    operations[verb]();
+    expect(warning).toHaveBeenCalledExactlyOnceWith(
+      FormWarningCode.DetachedNodeWrite,
+      expect.any(String),
+      { path: '/list' },
+    );
+    expect(old.value).toEqual(['a']);
+    expect(root.inactiveValues).toBe(inactive);
+    root.find('/open')!.setValue(true);
+    expect(root.find('/list')!.value).toEqual(['a']);
+  },
+);
 
 it('keeps a live batch write when an old detached host is reset', () => {
   const { root } = makeFieldNodeTree({
