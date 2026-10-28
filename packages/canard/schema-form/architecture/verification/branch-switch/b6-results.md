@@ -312,3 +312,48 @@ Node 노드당 힙은 A 중앙 1,439.0146 B/node, A 최대 1,898.0524, B 중앙 
 FCA 점검은 canonical 위반 2건으로 FAIL이며 분석 상태는 indeterminate입니다. 이번 변경과 무관한 기존 finding은 바꾸지 않은 FieldProxy/FieldInputSlot의 순환과 기존 getAbsolutePointer 시험의 58건 cap 초과입니다. 이를 이번 변경에서 고치거나 불확정을 통과로 바꾸지 않았습니다. 후보 1은 199 findings·173 문서 진단을 `raw/b6/fca-summary.json`에 보존했습니다. 후보 2는 기본 source-extension 범위의 1,605파일 facts를 갱신하고 세 검사 snapshot의 동일성을 확인했습니다. 204 findings·178 문서 진단이며 증가 다섯 건은 새 루트/빈 이름 계약의 `#/` 표기를 파일 참조로 해석하는 문서 검사 결과입니다. 전체 finding과 진단의 nextAction은 `raw/b6/candidate-2/fca-summary.json`에 보존했습니다.
 
 독립 antigravity 검토와 PR 작성·통합은 푸시 후 코디네이터가 수행합니다.
+
+## 후보 3 — 독립 검토 지적 반영
+
+후보 2의 독립 검토(판정 FAIL)가 낸 결함 여덟 건을 반영했습니다. 후보 1과 2 절은 고치지 않았고, 아래 철회 두 건이 그 절의 낡은 서술을 대신합니다. 측정 도구 `tools/b6/window.mjs`의 사전 검사는 프로세스별 CPU 30 %만 판정하도록 정정했고(외부 CPU 합계 분기 제거), 별도 커밋으로 남겼습니다.
+
+### 철회하는 서술
+
+- 후보 2 절의 "중앙 decoder의 실제 내부 모듈을 spy하는 검증은 … import 모델의 D/S1에서 제외한다"는 서술은 철회합니다. import 모델에는 검증 구획 예외가 없고 `importModel.test.ts`와 `src/DETAIL.md`는 변경 전 규칙으로 돌아갔습니다.
+- "이번 변경과 무관한 기존 finding"의 getAbsolutePointer 시험 cap 초과 분류는 철회합니다. 이번 변경이 그 코드를 소비처 없는 코드로 만들었으므로 파일과 시험을 지웠습니다.
+
+### 변경 전 실패 시험
+
+후보 2 제품 커밋 `be49b6c67`의 소스에 후보 3의 시험만 얹어 실행했습니다(17건 실패, 1파일 적재 실패).
+
+- `importModel.test.ts` — keeps U outside D7, D and S1 import-model edges at zero: 변경 전 규칙에서 U 85(전부 D7)·S1 6.
+- `pointerIsolation.test.ts` — keeps pointer parsing and construction inside helpers/jsonPointer: 확장 패턴이 12건을 찾음.
+- `blueprint.reserved-percent-names.test.ts` — 예약 퍼센트 이름 `%2A`, `%2E`, `%2E%2E`, `%40`과 게이트 분기 안의 이름 5건.
+- `validation.route.malformed-paths.test.ts` — keyword 이름·외부 문서 참조·잘못된 퍼센트 이스케이프 schemaPath 3건과 잘못된 퍼센트 dataPath 1건.
+- `getDependencyIndex.template-targets.test.ts` — registers a fragment-derived array item watch under the wildcard operator.
+- `derive.item-folds.test.ts`, `derive.rule-table-owner-paths.test.ts` — 아이템 템플릿 행이 이름 `*` 대신 `targetItems`로 표시됨.
+- `pointerResolution.test.ts` — `./a/`, `a/`, `../a/`의 마지막 빈 이름.
+- `reservedPercentName.test.ts` — `isReservedPercentName` 부재로 적재 실패.
+
+이름이 `*`인 객체 속성이 `%2A`로 등록되는 `getDependencyIndex.template-targets.test.ts`의 둘째 시험과 비throw 검증의 비포인터 dataPath 시험은 변경 전에도 통과하며 회귀 보호용입니다.
+
+### 지적별 해결
+
+1. **검증 구획 일괄 예외 [P1]** — 예외 분기와 예외 고정 시험을 지우고 `src/DETAIL.md` 문장을 되돌렸습니다. 여섯 시험(`pointerSyntaxCache`, `getDependencyIndex.live-paths`, `getDependencyIndex.pointer-work`, `settle.pointer-path-work`, `settle.pointer-slot-work`, `settle.pointer-watch-work`)은 `vi.hoisted` 계수기와 `vi.mock`으로 `parsePointerSegments`를 감싸 세며 import 간선이 없습니다. 일곱 파일(위 여섯과 `blueprint.owned-inline-path-work.test.ts`)은 `core/engine/DETAIL.md`에 파일마다 한 줄씩 선언했습니다. 시험의 자리는 옮기지 않았습니다. 모두 소비 쪽 fractal의 동작(캐시 적중, 첫 쓰기의 파서 호출 0)을 세는 시험입니다.
+2. **배열 아이템 템플릿 대상 경로** — 규칙 표가 아이템 템플릿 행을 `targetItems`로 표시하고, 의존 색인은 그 표지에서 와일드카드 연산자 경로를 만들며 이름이 `*`인 속성은 `%2A`로 등록합니다. `buildFeatureNodeIndex`의 상태 키 색인에 남은 `*` 표지는 배열 호스트에서만 읽고 배열은 이름 자식을 갖지 않으므로 이름과 겹치지 않아 바꾸지 않았습니다.
+3. **검증기 경로 파싱의 throw** — `normalizeValidationIssue`가 비포인터와 잘못된 퍼센트 이스케이프를 던지지 않고 원문으로 두며, dataPath가 해석되지 않으면 주인이 없는 오류로 남습니다. 시험 `validation.route.malformed-paths.test.ts`.
+4. **격리 시험의 틈** — 템플릿 리터럴, `startsWith`·`endsWith`·`includes`의 구분자 인수, 구분자 단독 `+` 결합, `/` 비교, 경로 구조 정규식을 추가했습니다. 제품에서 `selectEntryStep.ts` 두 곳, `propagateExternalErrorsToRoot.ts`(새 `isCanonicalPath`), `selectNodeSchema.ts`(`readOneOfBranch`), `collectBlueprintWarnings.ts`(`endsWithBranchIndex`), `resolveReference.ts` 이중 부정을 옮겼습니다. 시험은 `__benchmarks__`를 검증 구획으로 건너뜁니다.
+5. **소비처를 잃은 파일** — `getAbsolutePath`, `isRelativePath`, `joinSegment`, `utils/index.ts`와 두 시험을 지웠습니다. 제품·문서·시험의 해당 이름 검색 결과는 0입니다.
+6. **알려진 한계** — 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 속성은 청사진 구축에서 `FormErrorCode.UnknownJsonSchema`로 거부하며 메시지에 속성 이름과 규칙을 싣습니다. 공개 선언 차분 0을 지키려고 새 코드를 만들지 않고 기존 코드를 썼습니다. 영한 SPECIFICATION과 `jsonPointer`·`buildNodes` DETAIL에 적었습니다.
+7. **TSDoc** — 지적한 열아홉 파일과 `PointerOperator` 멤버, 새 함수에 목적·`@param`·`@returns`·실패 조건을 영어로 적었습니다.
+8. **사소한 정합성** — `resolvePointer`는 연산자 바로 뒤의 빈 이름만 버립니다. `getDeriveSourceNodes`는 연산자가 든 경로만 건너뜁니다. `readPointerSegment.ts`를 함수당 파일로 나누고 `parseSegment`를 `parsePointerSegment`로 바꿨으며 `resolveReference`의 중복 import, `encoded` 변수명, 이력 어휘를 고쳤습니다. 후보 1 절의 창 시작 시각 1밀리초 차이는 후보 1 절이라 고치지 않았습니다.
+
+### 확인한 관문
+
+typecheck·lint·build 통과. Node 네 프로젝트(unit 3,824·render 764·react18 764·storybook 251건, Storybook은 샤드 없이 한 번에)와 verify 4,632건이 통과했고 `dist/index.d.ts`의 SHA-256 `740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6`은 기준과 같습니다. 배달 비교는 72장면/430관측점, mount 비교는 6장면/12관측점이며 차이 0입니다.
+
+관문 밖의 관찰 두 가지입니다. production 프로젝트의 `blueprint.owned-inline-counts` oneOf-20(117 > 111)은 기준 `0b9337cd9`와 후보 2에서도 같은 값으로 실패합니다. `settle.dirty-consume-modes`는 B1 커밋 이후 gate-table 분류기가 spy 호출 기록을 쌓아 Node 24 워커의 힙을 넘겼고, 기록을 관찰마다 비우는 두 줄로 고쳤습니다(별도 test 커밋).
+
+### 정식 측정 — 인계 후 작성
+
+후보 3의 측정 표는 비어 있습니다. 측정 담당이 새 입력의 해시 확인, 사전 검사, 일회성 formal-start, 22행 원시와 단계·힙 요약을 `raw/b6/candidate-3/`에 둔 뒤 이 절을 채웁니다. 후보 3의 성능과 채택 여부는 아직 판정하지 않았습니다.
