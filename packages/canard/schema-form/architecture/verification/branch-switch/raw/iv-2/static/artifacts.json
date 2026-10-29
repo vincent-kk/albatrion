@@ -1,0 +1,45 @@
+{
+  "baselineCommit": "fdfa0f3a70da6a3a3ada1bc6d66933b2902ba270",
+  "productCommit": "f81d1038c",
+  "verificationCommit": "c70c4adfb",
+  "publicDeclarationDifferenceBytes": 0,
+  "diagnosticSourceInputsExact": 731,
+  "files": {
+    "A": {
+      "index.mjs": {
+        "bytes": 830373,
+        "sha256": "29e3da0c6355acbb55a178e73ec91bc0aca569e81afa24ddc997ee06992465ba"
+      },
+      "index.node.mjs": {
+        "bytes": 829595,
+        "sha256": "1338654cf550e06c762b51da6e17b7910952ebee60e2408a2911900af3d39617"
+      },
+      "index.cjs": {
+        "bytes": 847915,
+        "sha256": "68a0652a54d626e4484736b2fba2b7880b81aa703bb2e89e67cd1c16c1561940"
+      },
+      "index.d.ts": {
+        "bytes": 3129,
+        "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+      }
+    },
+    "B": {
+      "index.mjs": {
+        "bytes": 844956,
+        "sha256": "d8bf987ddf82aa05323a1f3149d93290f42f6f97319fb7976e3aab1c63db27a5"
+      },
+      "index.node.mjs": {
+        "bytes": 844178,
+        "sha256": "0f402b98d3e0b4a2257be79ac7ce01233256ef2585f9f9e014a71ac92da00542"
+      },
+      "index.cjs": {
+        "bytes": 862498,
+        "sha256": "e522b5d41b2ee27b714728d1debe99601bdf522b66748138292a6349e64eaaf1"
+      },
+      "index.d.ts": {
+        "bytes": 3129,
+        "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+      }
+    }
+  }
+}

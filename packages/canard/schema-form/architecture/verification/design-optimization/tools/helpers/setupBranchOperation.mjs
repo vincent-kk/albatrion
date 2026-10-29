@@ -16,7 +16,7 @@ export async function setupBranchOperation(row, engine, mod, options = {}) {
       new URL('../../../../../package.json', import.meta.url),
     );
     const plugin = await import(
-      pathToFileURL(require.resolve('@canard/schema-form-ajv8-plugin'))
+      pathToFileURL(require.resolve('@canard/schema-form-ajv8-plugin')).href
     );
     mod.registerPlugin?.(plugin.plugin);
     validator = plugin.plugin.validator;

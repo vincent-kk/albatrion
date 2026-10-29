@@ -1,0 +1,44 @@
+{
+  "baselineCommit": "fdfa0f3a70da6a3a3ada1bc6d66933b2902ba270",
+  "productCommit": "81e4b05a2",
+  "publicDeclarationDifferenceBytes": 0,
+  "files": {
+    "A": {
+      "index.mjs": {
+        "bytes": 830373,
+        "sha256": "29e3da0c6355acbb55a178e73ec91bc0aca569e81afa24ddc997ee06992465ba"
+      },
+      "index.node.mjs": {
+        "bytes": 829595,
+        "sha256": "1338654cf550e06c762b51da6e17b7910952ebee60e2408a2911900af3d39617"
+      },
+      "index.cjs": {
+        "bytes": 847915,
+        "sha256": "68a0652a54d626e4484736b2fba2b7880b81aa703bb2e89e67cd1c16c1561940"
+      },
+      "index.d.ts": {
+        "bytes": 3129,
+        "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+      }
+    },
+    "B": {
+      "index.mjs": {
+        "bytes": 847024,
+        "sha256": "86c21cbec70fd5598102085a1f9a11878fbf0c04e4e25a258b7215224a180f25"
+      },
+      "index.node.mjs": {
+        "bytes": 846246,
+        "sha256": "4150335dd8f0802e87c7fb0722a0d08b74e398aec69ebbcc0152cd48d2d888d4"
+      },
+      "index.cjs": {
+        "bytes": 864597,
+        "sha256": "cce7dcc766525b2330f2e8b52fa66b8ca0d400df936fa9fecafff98a442e14cd"
+      },
+      "index.d.ts": {
+        "bytes": 3129,
+        "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+      }
+    }
+  },
+  "diagnosticSourceInputs": 732
+}
