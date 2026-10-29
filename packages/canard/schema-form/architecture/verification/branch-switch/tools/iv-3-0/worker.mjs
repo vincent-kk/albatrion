@@ -20,11 +20,17 @@ if (mode === 'smoke') {
   const warmups = mode === 'rehearse' ? 1 : 2000;
   const blocks = await runBlocks(operation, switches, warmups);
   fs.writeFileSync(
-    path.join(root, 'raw.noindex', row + '-' + intervalText, 'wall.json'),
+    path.join(
+      root,
+      'raw.noindex',
+      row + '-' + (mode === 'plain' ? 'plain' : intervalText),
+      'wall.json',
+    ),
     JSON.stringify(
       {
         row,
         intervalUs: Number(intervalText),
+        collector: mode !== 'plain',
         switches,
         warmups,
         writesPerSwitch: operation.writes,

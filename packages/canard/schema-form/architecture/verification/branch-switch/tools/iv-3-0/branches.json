@@ -1,9 +1,10 @@
 {
   "notes": [
-    "Hand-authored from design-iv.md; exact names only, ambiguous/native/unmapped frames remain OTHER.",
-    "finalizeExits is A because its own work is exit lifetime; callers never inherit a callee's samples.",
-    "A-removable counts FieldNode, cloneSlotSubtree and getRetainedChildEntry only. Overlay Map copying in cloneSlotSubtree is included once; native Map frames cannot be assigned without evidence.",
-    "B-descriptor is an upper bound on the named machinery's self time, not proof that descriptor application eliminates all of it."
+    "Hand-authored from design-iv.md and candidate-1 coordinator decisions; exact names only, unmapped frames remain OTHER.",
+    "A primary sum is the constructor, cloneSlotSubtree recursion (including overlay Map copying in the same self frame, counted once) and getRetainedChildEntry search. A extended sum additionally includes createFieldNode and getSlotChildIndex.",
+    "B decision sum omits unmapped helper self time and the three non-replaceable gate-evaluation functions; it is not an upper bound.",
+    "V8 attribution retains inlined JavaScript frame names in the independent probe; Map builtin work is charged to its calling JavaScript self frame in that probe.",
+    "Removed eight absent names: nodeFactory, finalizePendingExitLoop, finalizeRetainLoop, finalizeAncestorCollection, finalizeAncestorOutput, publishChildren, prepareChildSelection, removeNode"
   ],
   "groups": {
     "A": [
@@ -11,21 +12,21 @@
       "createFieldNode",
       "createChildNode",
       "fieldNodeFactory",
-      "nodeFactory",
       "cloneSlotSubtree",
       "cloneFromSlot",
       "enterSlotClone",
       "retainExitedSlot",
       "createExitSlotOverlay",
       "finalizeExits",
-      "finalizePendingExitLoop",
-      "finalizeRetainLoop",
-      "finalizeAncestorCollection",
-      "finalizeAncestorOutput",
       "finalizeRestoredSlotRaw",
       "captureDetachedFieldNodeReads",
       "FieldNodeRevisionLedger",
-      "getRetainedChildEntry"
+      "getRetainedChildEntry",
+      "finalizePerished",
+      "withdrawDetachedFills",
+      "isRekeyedDestination",
+      "detachPerishedNode",
+      "getSlotChildIndex"
     ],
     "B": [
       "selectChildren",
@@ -36,8 +37,6 @@
       "selectRootGateDeclarations",
       "publishPreparedSelection",
       "createPreparedSelectionStructure",
-      "publishChildren",
-      "prepareChildSelection",
       "computeNode",
       "registerRecalculation",
       "getDependencyIndex",
@@ -54,7 +53,8 @@
       "computeRootGateSelection",
       "getGateSelectionTable",
       "primeHost",
-      "registerPresenceChanges"
+      "registerPresenceChanges",
+      "transitionSettlement"
     ],
     "C": [
       "writeFieldNode",
@@ -68,15 +68,14 @@
       "runDeliveryWaves",
       "deliverWave",
       "flushQueuedEvents",
-      "transitionSettlement",
       "publishStateKeys"
     ],
     "GC": ["(garbage collector)"]
   },
   "scoped": [
     {
-      "source": "GateRegistry.ts",
-      "names": ["register", "remove", "removePath", "removeNode"],
+      "source": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "names": ["register", "remove", "removePath"],
       "group": "A"
     }
   ],
@@ -91,8 +90,6 @@
       "selectRootGateDeclarations",
       "publishPreparedSelection",
       "createPreparedSelectionStructure",
-      "publishChildren",
-      "prepareChildSelection",
       "computeNode",
       "registerRecalculation",
       "getDependencyIndex",
@@ -100,9 +97,6 @@
       "commitSettlement",
       "assembleObject",
       "updateOutput",
-      "evaluateGate",
-      "evaluateGateValue",
-      "readGateSelectionGroup",
       "prepareGateTableRound",
       "finishGateTableRound",
       "canSkipGateWheel",
@@ -111,5 +105,54 @@
       "primeHost",
       "registerPresenceChanges"
     ]
+  },
+  "decisionAExtended": [
+    "FieldNode",
+    "cloneSlotSubtree",
+    "getRetainedChildEntry",
+    "createFieldNode",
+    "getSlotChildIndex"
+  ],
+  "frameLocations": [
+    {
+      "url": "prepared/engine.mjs",
+      "line": 15324,
+      "name": "(anonymous)",
+      "source": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "group": "A",
+      "evidence": "finalizeExits passes this departing-node closure to visitFieldNodes; captures detached reads and marks the departing node detached",
+      "anchor": "visitFieldNodes(node, (departing) => {"
+    },
+    {
+      "url": "prepared/engine.mjs",
+      "line": 15315,
+      "name": "inLoadScope",
+      "source": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "group": "A",
+      "evidence": "finalizeExits local predicate prevents load-scope nodes from being retained or receiving automatic exit policies",
+      "anchor": "const inLoadScope = (node) =>"
+    }
+  ],
+  "nonReplaceableGateEvaluation": {
+    "names": ["evaluateGate", "evaluateGateValue", "readGateSelectionGroup"],
+    "group": "B",
+    "decision": "excluded",
+    "reason": "These functions compute the next bucket that keys a descriptor; the descriptor cannot replace gate evaluation."
+  },
+  "familyEvidence": {
+    "createChildNode": "Allocates and enters a child node; node lifetime A.",
+    "enterSlotClone": "Initializes a newly cloned public node on slot re-entry; node lifetime A.",
+    "prepareGateTableRound": "Prepares the literal table and bucket view for a switch round; switch machinery B.",
+    "finishGateTableRound": "Closes table-round bookkeeping; switch machinery B.",
+    "canSkipGateWheel": "Chooses the control-flow path for a switch round; switch machinery B.",
+    "computeRootGateSelection": "Selects root gate declarations; selectChildren family B.",
+    "getGateSelectionTable": "Reads/prepares the table used by child selection; switch machinery B.",
+    "primeHost": "Prepares a host for child selection; switch machinery B.",
+    "registerPresenceChanges": "Collects presence changes of selected children; switch machinery B.",
+    "createPreparedSelectionStructure": "Creates the ordered child structure published by publishPreparedSelection; switch machinery B.",
+    "startFieldNodeChain": "Opens the runtime write chain; fixed write cost C.",
+    "flushQueuedEvents": "Flushes queued event delivery after the write chain; fixed delivery cost C.",
+    "publishStateKeys": "Publishes settlement state keys for all writes; settlement fixed cost C.",
+    "transitionSettlement": "Runs transition rounds for entered nodes and gates; switch machinery B, not the fixed write floor."
   }
 }

@@ -56,9 +56,24 @@ for (const name of fs.readdirSync(root).sort()) {
   const wall = JSON.parse(
     fs.readFileSync(path.join(directory, 'wall.json'), 'utf8'),
   );
-  assert.deepEqual(attributeSamples(profile, wall, mapping, bundle), table);
+  const plainWall = JSON.parse(
+    fs.readFileSync(path.join(root, wall.row + '-plain/wall.json'), 'utf8'),
+  );
+  assert.deepEqual(
+    attributeSamples(profile, wall, mapping, bundle, plainWall),
+    table,
+  );
   tables.push(table);
 }
+tables.sort(
+  (a, b) =>
+    outcome.results.findIndex(
+      (entry) => entry.row === a.row && entry.interval === a.intervalUs,
+    ) -
+    outcome.results.findIndex(
+      (entry) => entry.row === b.row && entry.interval === b.intervalUs,
+    ),
+);
 for (const [relative, hash] of Object.entries(inputs.hashes)) {
   const file = path.resolve(here, '../../../../../../../..', relative);
   assert.equal(

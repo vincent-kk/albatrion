@@ -2,7 +2,12 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
-/** Hash canonical sources, fixture/tool dependencies and built runtime bytes using repository-relative keys. */
+/**
+ * Hash canonical inputs without sampling product execution.
+ * @param {string} repoDir Absolute repository root containing built workspace dependencies.
+ * @returns SHA-256 digests keyed by repository-relative source, tool and runtime paths.
+ * @throws For unreadable inputs or missing designated build outputs.
+ */
 export function hashInputs(repoDir) {
   const packagePath = 'packages/canard/schema-form/';
   const pending = [

@@ -5,7 +5,13 @@ import { materialize } from '../../../../design-optimization/tools/helpers/mater
 import { setupWrite } from '../../b9-0/operation.mjs';
 import { rows } from '../../b9-0/rows.mjs';
 
-/** Build one canonical form; return a round trip or one leaf write with untimed checks. */
+/**
+ * Build one canonical form and expose its synchronous operation plus untimed check.
+ * @param {string} rowId One of the three diagnostic fixture IDs.
+ * @param {any} engine Plain production engine with private form-build and mount fixture exports.
+ * @returns OneOf round trip, siblings write or flat leaf write with writes-per-operation metadata.
+ * @throws If a fixture, required leaf or expected output is missing or inconsistent.
+ */
 export async function setupOperation(rowId, engine) {
   if (rowId !== 'single-flat-1000') {
     const row = rows.find((entry) => entry.id === rowId);

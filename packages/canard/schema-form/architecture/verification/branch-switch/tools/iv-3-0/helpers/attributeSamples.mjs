@@ -1,7 +1,19 @@
 import assert from 'node:assert/strict';
 
-/** Attribute sampled leaves in measured spans only; nominal sample weights are never normalized to wall time. */
-export function attributeSamples(profile, wall, mapping, bundle) {
+import { summarizePeriods } from './summarizePeriods.mjs';
+import { summarizeWall } from './summarizeWall.mjs';
+
+/**
+ * Attribute measured leaf samples with next-sample timeDeltas; never normalize to wall time.
+ * @param {any} profile Parsed CpuProfile with aligned samples, timeDeltas and monotonic startTime.
+ * @param {any} wall Measured blocks and operation counts from the same process.
+ * @param {any} mapping Hand-reviewed exact-name, source and frame-location branch rules.
+ * @param {string} bundle Exact prepared engine bytes whose region markers identify source modules.
+ * @param {any} [plainWall] Separate collector-free worker with identical operation counts and fixture.
+ * @returns Weighted bottom-up self tables, decisions, period diagnostics and mean-wall reconciliation.
+ * @throws For invalid sample lengths/counts, unaligned clocks, missing nodes or absent product frames.
+ */
+export function attributeSamples(profile, wall, mapping, bundle, plainWall) {
   assert.equal(profile.samples.length, profile.timeDeltas.length);
   assert.equal(
     wall.blocks.reduce((sum, block) => sum + block.switches, 0),
@@ -20,7 +32,9 @@ export function attributeSamples(profile, wall, mapping, bundle) {
     blockIndex = 0,
     selected = 0,
     excluded = 0,
-    deltaUs = 0;
+    activeWeightUs = 0,
+    excludedWeightUs = 0;
+  const periods = [];
   for (let index = 0; index < profile.samples.length; index++) {
     timestamp += profile.timeDeltas[index];
     while (
@@ -30,12 +44,15 @@ export function attributeSamples(profile, wall, mapping, bundle) {
       blockIndex++;
     const block = wall.blocks[blockIndex];
     if (!block || timestamp < block.startUs) continue;
+    const weightUs = profile.timeDeltas[index + 1] ?? profile.timeDeltas[index];
+    periods.push(weightUs);
     selected++;
     const node = nodes.get(profile.samples[index]);
     assert.ok(node);
     const frame = node.callFrame;
     if (['(program)', '(idle)'].includes(frame.functionName)) {
       excluded++;
+      excludedWeightUs += weightUs;
       continue;
     }
     const key = JSON.stringify([
@@ -52,11 +69,11 @@ export function attributeSamples(profile, wall, mapping, bundle) {
           ? (sourceAtLine[frame.lineNumber] ?? '')
           : '',
       samples: 0,
-      deltaUs: 0,
+      weightUs: 0,
     };
     entry.samples++;
-    entry.deltaUs += profile.timeDeltas[index];
-    deltaUs += profile.timeDeltas[index];
+    entry.weightUs += weightUs;
+    activeWeightUs += weightUs;
     functions.set(key, entry);
   }
   assert.ok(selected > 0, 'No samples align with measured monotonic spans');
@@ -65,9 +82,17 @@ export function attributeSamples(profile, wall, mapping, bundle) {
     .map((entry) => {
       const scoped = mapping.scoped.find(
         (rule) =>
-          entry.source.endsWith(rule.source) && rule.names.includes(entry.name),
+          entry.source === rule.source && rule.names.includes(entry.name),
+      );
+      const location = mapping.frameLocations.find(
+        (rule) =>
+          rule.url === entry.url &&
+          rule.line === entry.line &&
+          rule.name === entry.name &&
+          rule.source === entry.source,
       );
       const group =
+        location?.group ??
         scoped?.group ??
         Object.entries(mapping.groups).find(([, names]) =>
           names.includes(entry.name),
@@ -76,11 +101,17 @@ export function attributeSamples(profile, wall, mapping, bundle) {
       return {
         ...entry,
         group,
-        selfUsPerSwitch: (entry.samples * wall.intervalUs) / wall.switches,
-        percent: active ? (entry.samples / active) * 100 : 0,
+        selfUsPerSwitch: entry.weightUs / wall.switches,
+        nominalSelfUsPerSwitch:
+          (entry.samples * wall.intervalUs) / wall.switches,
+        percent: activeWeightUs ? (entry.weightUs / activeWeightUs) * 100 : 0,
       };
     })
-    .sort((a, b) => b.samples - a.samples || a.name.localeCompare(b.name));
+    .sort((a, b) => b.weightUs - a.weightUs || a.name.localeCompare(b.name));
+  assert.ok(
+    table.some((entry) => entry.url === 'prepared/engine.mjs'),
+    'No product frames attributed',
+  );
   const groups = ['A', 'B', 'C', 'GC', 'OTHER'].map((group) => ({
     group,
     selfUsPerSwitch: table
@@ -90,12 +121,18 @@ export function attributeSamples(profile, wall, mapping, bundle) {
       .filter((entry) => entry.group === group)
       .reduce((sum, entry) => sum + entry.percent, 0),
   }));
-  const blockUs = wall.blocks
-    .map((block) => (block.endUs - block.startUs) / block.switches)
-    .sort((a, b) => a - b);
-  const medianUs =
-    (blockUs[(blockUs.length - 1) >> 1] + blockUs[blockUs.length >> 1]) / 2;
-  const selfUs = (active * wall.intervalUs) / wall.switches;
+  const { wallMeanUs, wallMedianUs: medianUs } = summarizeWall(wall);
+  const selfUs = activeWeightUs / wall.switches;
+  const plain = plainWall ? summarizeWall(plainWall) : null;
+  if (plainWall) {
+    for (const key of ['row', 'switches', 'warmups', 'writesPerSwitch', 'node'])
+      assert.equal(wall[key], plainWall[key], 'Matching plain setting: ' + key);
+    assert.notEqual(
+      wall.pid,
+      plainWall.pid,
+      'Plain and profiler require independent processes',
+    );
+  }
   const decisions = Object.fromEntries(
     Object.entries(mapping.decisions).map(([group, names]) => [
       group,
@@ -110,20 +147,30 @@ export function attributeSamples(profile, wall, mapping, bundle) {
     writesPerSwitch: wall.writesPerSwitch,
     intervalUs: wall.intervalUs,
     wallMedianUs: medianUs,
-    wallMeanUs:
-      wall.blocks.reduce((sum, block) => sum + block.endUs - block.startUs, 0) /
-      wall.switches,
+    wallMeanUs,
+    plain,
+    collectorOverheadRatioMean: plain ? wallMeanUs / plain.wallMeanUs : null,
+    collectorOverheadRatioMedian: plain ? medianUs / plain.wallMedianUs : null,
     selfUsPerSwitch: selfUs,
-    reconciliationRatio: selfUs / medianUs,
-    reconciled: Math.abs(selfUs / medianUs - 1) <= 0.15,
+    reconciliationRatio: selfUs / wallMeanUs,
+    medianRatio: selfUs / medianUs,
+    reconciled: Math.abs(selfUs / wallMeanUs - 1) <= 0.15,
     selectedSamples: selected,
     activeSamples: active,
     excludedSamples: excluded,
-    excludedPercent: (excluded / selected) * 100,
-    deltaUsPerSwitch: deltaUs / wall.switches,
+    activeWeightUs,
+    excludedWeightUs,
+    excludedPercent:
+      (excludedWeightUs / (activeWeightUs + excludedWeightUs)) * 100,
+    nominalSelfUsPerSwitch: (active * wall.intervalUs) / wall.switches,
+    measuredPeriodUs: (activeWeightUs + excludedWeightUs) / selected,
+    periods: summarizePeriods(periods),
     table,
     top40: table.slice(0, 40),
     groups,
     decisions,
+    decisionAExtendedUs: table
+      .filter((entry) => mapping.decisionAExtended.includes(entry.name))
+      .reduce((sum, entry) => sum + entry.selfUsPerSwitch, 0),
   };
 }

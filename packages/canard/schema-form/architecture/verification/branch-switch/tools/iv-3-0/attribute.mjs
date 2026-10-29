@@ -23,7 +23,13 @@ const bundle = fs.readFileSync(
   path.join(directory, '../../engine.mjs'),
   'utf8',
 );
-const summary = attributeSamples(profile, wall, mapping, bundle);
+const plainWall = JSON.parse(
+  fs.readFileSync(
+    path.join(directory, '../' + wall.row + '-plain/wall.json'),
+    'utf8',
+  ),
+);
+const summary = attributeSamples(profile, wall, mapping, bundle, plainWall);
 fs.writeFileSync(
   path.join(directory, 'tables.json'),
   JSON.stringify(summary, null, 2) + '\n',

@@ -1,6 +1,13 @@
 import { setImmediate } from 'node:timers/promises';
 
-/** Runtime owns the monotonic clock; retain exact 100-operation spans and yield outside clocks every 500. */
+/**
+ * Runtime owns the monotonic clock; preserve block spans and yield outside clocks every 500 operations.
+ * @param {any} operation Prepared synchronous run callback and untimed correctness check.
+ * @param {number} switches Positive operation count; production supplies 20,000, rehearsal supplies one.
+ * @param {number} warmups Untimed operation count before observation; production supplies 2,000.
+ * @returns Monotonic microsecond spans and operation counts for each at-most-100-operation block.
+ * @throws If the supplied operation or its correctness check fails.
+ */
 export async function runBlocks(operation, switches, warmups) {
   for (let index = 0; index < warmups; index++) {
     operation.run();

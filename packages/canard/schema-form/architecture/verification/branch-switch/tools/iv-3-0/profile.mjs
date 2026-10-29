@@ -8,12 +8,13 @@ import { fileURLToPath } from 'node:url';
 
 import { waitForQuietProcess } from '../window/waitForQuietProcess.mjs';
 import { hashInputs } from './helpers/hashInputs.mjs';
+import { runPlain } from './helpers/runPlain.mjs';
 import { sanitizeProfile } from './helpers/sanitizeProfile.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoDir = path.resolve(here, '../../../../../../../..');
 const [mode, rootArgument, authorization, pidArgument] = process.argv.slice(2);
-const root = path.resolve(rootArgument);
+const root = fs.realpathSync(path.resolve(rootArgument));
 assert.ok(root.endsWith('.noindex') && !root.startsWith(repoDir + '/'));
 const inputs = JSON.parse(
   fs.readFileSync(path.join(root, 'inputs.json'), 'utf8'),
@@ -52,6 +53,12 @@ if (mode === 'smoke') {
       .passed,
     true,
   );
+  console.log(
+    'IV_3_0_REHEARSAL_PERIOD ' +
+      JSON.stringify(
+        JSON.parse(fs.readFileSync(path.join(root, 'rehearsal.json'), 'utf8')),
+      ),
+  );
   assert.ok(
     !fs.existsSync(path.join(root, 'started.json')),
     'Never auto-retry a diagnostic root',
@@ -66,6 +73,13 @@ if (mode === 'smoke') {
   let failure = null;
   const results = [];
   for (const row of rows) {
+    failure = await runPlain(
+      root,
+      row,
+      agentPid,
+      path.join(here, 'worker.mjs'),
+    );
+    if (failure) break;
     for (const interval of [50, 25]) {
       const directory = path.join(root, 'raw.noindex', row + '-' + interval);
       fs.mkdirSync(directory);
@@ -122,7 +136,19 @@ if (mode === 'smoke') {
         [path.join(here, 'attribute.mjs'), directory],
         { encoding: 'utf8' },
       );
-      assert.equal(attributed.status, 0, attributed.stderr);
+      if (attributed.status !== 0) {
+        fs.writeFileSync(
+          path.join(directory, 'attribute.stderr'),
+          attributed.stderr ?? '',
+        );
+        failure = {
+          kind: 'attribution-failure',
+          row,
+          interval,
+          status: attributed.status,
+        };
+        break;
+      }
       console.log(attributed.stdout.trim());
       const tables = JSON.parse(
         fs.readFileSync(path.join(directory, 'tables.json'), 'utf8'),
@@ -156,6 +182,7 @@ if (mode === 'smoke') {
         completed: !failure,
         failure,
         results,
+        rootNormalizationChanged: root !== path.resolve(rootArgument),
         endedAt: new Date().toISOString(),
       },
       null,

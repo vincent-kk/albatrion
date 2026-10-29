@@ -1,7 +1,14 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-/** Preserve call-frame identity while replacing absolute file URLs with portable input addresses. */
+/**
+ * Replace absolute frame URLs in place with portable addresses while retaining function/line identity.
+ * @param {any} profile Parsed CpuProfile whose nodes and callFrame URLs will be mutated.
+ * @param {string} repoDir Canonical absolute repository root.
+ * @param {string} root Canonical absolute prepared root, resolved through filesystem aliases.
+ * @returns The same profile object with repository/prepared/external portable URLs.
+ * @throws If a malformed file URL cannot be decoded.
+ */
 export function sanitizeProfile(profile, repoDir, root) {
   for (const node of profile.nodes) {
     const url = node.callFrame.url;
