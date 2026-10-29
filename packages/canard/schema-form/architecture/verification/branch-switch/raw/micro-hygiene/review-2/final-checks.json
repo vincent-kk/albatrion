@@ -1,0 +1,48 @@
+{
+  "sourceHead": "a03a1f7a5b77e245b519b0bcf4106df24dbc33a3",
+  "measuredCandidate": "870fe268900da5b69ade2ef28dac146a1b3d05cb",
+  "build": {
+    "exit": 0,
+    "includes": [
+      "artifact checks",
+      "declarations",
+      "agents hashes",
+      "typecheck"
+    ]
+  },
+  "targeted": {
+    "exit": 0,
+    "files": 49,
+    "passed": 315,
+    "newCases": 5
+  },
+  "lint": {
+    "exit": 0
+  },
+  "artifacts": {
+    "index.mjs": {
+      "bytes": 855127,
+      "sha256": "4e495ad404d24ad327c6ab4a97c61501fdcc895660a0a1afaaa9b82437628999",
+      "unchangedFromMeasuredCandidate": true
+    },
+    "index.node.mjs": {
+      "bytes": 854349,
+      "sha256": "83aba1a8471d533413cc65bf2d5508f6489ff46c75653c61dc52ac0a2998516f",
+      "unchangedFromMeasuredCandidate": true
+    },
+    "index.cjs": {
+      "bytes": 875949,
+      "sha256": "abdb64159feaa6e0d4e040e27c898a52d476966c255ebe2c21502543eff17f0a",
+      "unchangedFromMeasuredCandidate": true
+    },
+    "index.d.ts": {
+      "bytes": 3129,
+      "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
+      "unchangedFromMeasuredCandidate": true
+    }
+  },
+  "dictionaryDefaultArgumentsRemoved": 2,
+  "dictionaryDefinition": "Dictionary<T = any> = Record<string, T>",
+  "measurementWindowRerun": false,
+  "window2JudgmentUnchanged": "gate rejected; borderline; owner decision pending"
+}

@@ -625,6 +625,16 @@ Bun B 중앙값은 A 최댓값보다 **4.670865827 bytes/node(약 0.208%)** 큽�
 
 [행·폭·품질](raw/micro-hygiene/candidate-2-window/rows.json), [원래 최종 판정](raw/micro-hygiene/candidate-2-window/judgment.json), [전체 표본](raw/micro-hygiene/candidate-2-window/pair-samples.json.gz), [176개 worker의 stdout·stderr·영수증](raw/micro-hygiene/candidate-2-window/worker-records.json.gz), [CPU 사전 검사](raw/micro-hygiene/candidate-2-window/cpu-prechecks.json.gz), [힙 14표본/런타임](raw/micro-hygiene/candidate-2-window/heap.json), [로그·종료 영수증](raw/micro-hygiene/candidate-2-window/logs-and-receipts.json.gz)를 보존했습니다.
 
+## 후보 2 재검토 후속 — 바이트 중립 교정
+
+후보 2 델타의 독립 검토는 conditional PASS(P1 0·P2 0·P3 5)이며 [전문](reviews/pr-micro-hygiene-candidate-2-claude.md)을 별도로 보존했습니다. 검토 시점에는 창 2 결과가 없었으므로 해당 검토의 창 통과 조건은 실제 미채택 결과로 열려 있습니다. 재검토 조건을 충족했다고 표현하지 않습니다.
+
+P3-A의 일괄 교체 주석 한 곳을 대상 검사로 옮겼습니다. P3-B의 실제 입력 구분과 P3-C의 남은 루트 표기 목록은 각 항목에 기록했습니다. P3-D는 공개 splice·pop과 내부 꼬리 경계의 보호 5사례, 항상 Set으로 바꾼 변이의 예상 실패·정확한 복구를 확인했습니다. 최초 `setValue`의 경로 가정 실패와 내부 rekey의 두 번째 prune 호출을 반영한 시험 보강도 [원시](raw/micro-hygiene/review-2/p3d-checks.json.gz)에 남겼습니다. P3-E는 `readAllowedTypes`의 주석 한 곳을 실제 인덱스 검사로 고치고, 정리 커밋이 새로 만든 문서 주석 뒤 빈 줄 **75개만** 제거했습니다. 기준→후보 2 변경 제품 파일 범위에서 빈 줄은 **97→22**이며 원래 22개는 유지했습니다(후보 1→2 델타만 세면 84→9). [위치별 집계](raw/micro-hygiene/review-2/comment-gaps.json)를 보존합니다. 소유자 리뷰의 `Dictionary<any>` 두 곳은 기본 인수 생략으로 정리했습니다.
+
+후속 제품 머리 `a03a1f7a5`에서 Node 26.12.1로 build와 artifact checks·typecheck·lint 및 **표적 49파일 315건(새 시험 5사례 포함)**을 통과했습니다. 세 런타임 번들은 **855,127 / 854,349 / 875,949바이트**이며 각 SHA-256도 창 2 후보와 완전히 같습니다. 공개 `index.d.ts`도 3,129바이트·같은 SHA-256입니다. [최종 로그](raw/micro-hygiene/review-2/final-logs.json.gz)와 [정확한 바이트·해시 확인](raw/micro-hygiene/review-2/final-checks.json)을 남겼습니다. 이 바이트 중립 교정 때문에 측정 창을 다시 열지 않았으며 이전 창의 실패 판정을 유지합니다.
+
+**소유자 결정 후속**은 루트 빈 문자열 코드 치환(P3-C), 엔진 동결 태그 다섯 곳의 불필요한 검사 제거(P3-B), 빈 블록·자기 재대입·`void` 접두·생성 이름 정리(P3-E), 공개 pop이 1개만 지워 도달하지 않는 `applyArrayTail`의 65개 이상 Set 분기를 항상 배열로 단순화할지 여부(P3-D)입니다. 이들은 런타임 바이트를 바꾸므로 이번 교정에서는 실행하지 않았습니다. 창 2의 미채택·되돌림/병합/재측정 결정도 그대로 남아 있습니다.
+
 ## 후속 항목 — 추가 strict-production의 기존 문제
 
 브리프의 다섯 프로젝트에 없던 `NODE_ENV=production` 강제 경로는 기준 `1c3655a10`과 후보에서 같은 두 건이 실패했습니다. 조정자 승인으로 설정과 기존 상한을 이 PR에서 고치거나 낮추지 않았으며 다음을 별도로 남깁니다.
