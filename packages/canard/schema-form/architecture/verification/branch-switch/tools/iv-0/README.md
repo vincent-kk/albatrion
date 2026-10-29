@@ -43,3 +43,5 @@ yarn workspace @canard/schema-form lint
 ```
 
 제품 typecheck와 배포 산출물 검사는 지정 `yarn workspace @canard/schema-form build`에 포함됩니다. 후처리는 원시 표본만 읽으며 숫자·표본 수·레인 순서·PID 독립성·self 보존과 불변 입력을 재검증합니다. 공개 원시는 로컬 경로를 가리고 CPU 관측을 상위 10개 프로세스의 이름·비율로 축소합니다.
+
+창의 시간 도구를 고정한 뒤 진단만 수정했다면 새 진단 root를 준비해 시계 없는 진단만 다시 실행합니다. 과거 시간 root의 live 도구 해시는 현재 코드와 다르므로 `summarize`를 다시 실행하지 않고, 이미 공개한 압축 원시는 `checkResults.mjs`로 재검산합니다. `publishDiagnostics.mjs`, `publishTimings.mjs`, `renderReport.mjs`는 `--check`로 공개 파일의 결정적 재생성을 확인합니다. 시간 root와 후속 진단 root는 `raw/iv-0/provenance.json`에 분리합니다.

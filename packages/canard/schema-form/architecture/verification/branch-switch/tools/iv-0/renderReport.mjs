@@ -424,7 +424,7 @@ if (fs.existsSync(path.join(raw, 'fca/summary.json'))) {
     '',
     `패키지 전체 FCA 감사는 facts ${audit.facts.exact}/${audit.facts.covered} exact, 동일 snapshot에서 findings ${audit.findingCount}건(오류 ${audit.severities.error}·경고 ${audit.severities.warning}·정보 ${audit.severities.info})으로 ${audit.verdict}입니다. 분석은 indeterminate를 포함합니다. 확정 오류는 기존 FieldProxy↔FieldInputSlot 순환이며 제품 소스·모듈 문서·FCA 설정은 기준 머리와 같습니다. architecture는 기존 ignore 정책의 대상입니다. 측정 전용 범위를 지켜 이 기존 문제를 함께 수정하지 않았습니다. [감사 근거](raw/iv-0/fca/summary.json)를 보존했습니다.`,
     '',
-    '독립 검토는 [후보 1](reviews/pr-iv-0-candidate-1-claude.md)의 P2 세 건을 수정한 뒤 [후보 2](reviews/pr-iv-0-candidate-2-claude.md)에서 P1/P2 0, PASS with P3로 확인했습니다. 배달 frame 방어와 parentRound 보존의 후속 P3는 시간 원시를 먼저 공개한 뒤 별도 커밋과 시계 없는 진단으로 확인합니다. 시간 창을 다시 열지 않습니다.',
+    '독립 검토는 [후보 1](reviews/pr-iv-0-candidate-1-claude.md)의 P2 세 건을 수정한 뒤 [후보 2](reviews/pr-iv-0-candidate-2-claude.md)에서 P1/P2 0, PASS with P3로 확인했습니다. 배달 frame 방어와 parentRound 보존의 후속 P3는 시간 원시를 먼저 공개한 뒤 e19c70a33에서 별도 수정하고 새 시계 없는 진단으로 확인했습니다. useful 27/175와 배달 할당 208/208이 유지됐고 시간 수치·표본은 그대로입니다. [후속 검증](raw/iv-0/post-review-diagnostics/verification.json)을 보존했으며 시간 창은 다시 열지 않았습니다.',
     '',
   );
 }

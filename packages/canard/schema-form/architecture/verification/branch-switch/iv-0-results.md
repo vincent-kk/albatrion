@@ -513,11 +513,12 @@ node packages/canard/schema-form/architecture/verification/branch-switch/tools/i
 | --- | --- | --- |
 | 창 1 — 환경 실패와 부분 표본 보존 | 20261029T0330-4b7abf5-iv-0.noindex | 4b7abf5de |
 | 창 2 — 정식 시간 및 후보 2 진단 | 20261029T0410-098cd76-iv-0-window2.noindex | 098cd76c6 |
+| 후속 P3 — 시계 없는 진단 전용 | 20261029T0500-e19c70a-iv-0-diagnostics.noindex | e19c70a33 |
 
-첫 창의 6프로세스 부분 표본은 새 창 판정에서 제외했습니다. 창 2의 시간·후보 2 진단은 같은 root에서 생성했습니다. 후속 P3 검증은 새 진단 root에서 시계 없이만 수행하고 그 식별자를 추가합니다.
+첫 창의 6프로세스 부분 표본은 새 창 판정에서 제외했습니다. 창 2의 시간·후보 2 진단은 같은 root에서 생성했습니다. 후속 P3는 별도 진단 root에서만 실행해 useful 27/175, 행 배달 할당 208/208, 코퍼스 배달 할당 175/175를 재확인했습니다. 요약의 parentRound는 보존된 원시에서 재투영했으며 시간 수치와 표본은 바뀌지 않았습니다.
 
 ## FCA 감사와 독립 검토
 
 패키지 전체 FCA 감사는 facts 1662/1662 exact, 동일 snapshot에서 findings 202건(오류 1·경고 200·정보 1)으로 FAIL입니다. 분석은 indeterminate를 포함합니다. 확정 오류는 기존 FieldProxy↔FieldInputSlot 순환이며 제품 소스·모듈 문서·FCA 설정은 기준 머리와 같습니다. architecture는 기존 ignore 정책의 대상입니다. 측정 전용 범위를 지켜 이 기존 문제를 함께 수정하지 않았습니다. [감사 근거](raw/iv-0/fca/summary.json)를 보존했습니다.
 
-독립 검토는 [후보 1](reviews/pr-iv-0-candidate-1-claude.md)의 P2 세 건을 수정한 뒤 [후보 2](reviews/pr-iv-0-candidate-2-claude.md)에서 P1/P2 0, PASS with P3로 확인했습니다. 배달 frame 방어와 parentRound 보존의 후속 P3는 시간 원시를 먼저 공개한 뒤 별도 커밋과 시계 없는 진단으로 확인합니다. 시간 창을 다시 열지 않습니다.
+독립 검토는 [후보 1](reviews/pr-iv-0-candidate-1-claude.md)의 P2 세 건을 수정한 뒤 [후보 2](reviews/pr-iv-0-candidate-2-claude.md)에서 P1/P2 0, PASS with P3로 확인했습니다. 배달 frame 방어와 parentRound 보존의 후속 P3는 시간 원시를 먼저 공개한 뒤 e19c70a33에서 별도 수정하고 새 시계 없는 진단으로 확인했습니다. useful 27/175와 배달 할당 208/208이 유지됐고 시간 수치·표본은 그대로입니다. [후속 검증](raw/iv-0/post-review-diagnostics/verification.json)을 보존했으며 시간 창은 다시 열지 않았습니다.
