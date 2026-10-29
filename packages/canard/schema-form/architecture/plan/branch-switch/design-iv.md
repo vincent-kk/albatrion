@@ -241,3 +241,29 @@ no-op 쓰기 약 21~23 µs는 모든 쓰기 행(가중치 3,000~5,000)에 걸려
 2. **선택지 다(NODE-060 재개, 공개 노드 객체의 재사용)는 닫힌다.** 재진입의 새 공개 객체 발급은 수명 주기를 안정시키는 장치로서 유지한다. Ⅳ-4에서도 이 선택지는 다시 열지 않는다.
 3. **회귀 방지가 1순위다.** 갈래 A·B의 모든 PR은 설계 Ⅱ 여섯 의미 시험·B11 64회 도달 노드 고정·`find` 새 인스턴스·React identity·배달 코퍼스 0·TEST-073 0·verify 그림자 대조(갈래 B)를 실패 우선으로 두고, 독립 검토는 "관측 동작 변경 0"을 P1 기준으로 본다. 보호 행의 폭 밖 퇴보는 한 건이라도 그 커밋을 되돌린다.
 4. **순서.** 미시 위생 PR(`micro-hygiene.md`) 병합 → Ⅳ-3-0 프로파일 → 갈래 A·B. 프로파일 전에는 계획과 코드 수정만 하고 측정은 열지 않는다. 미시 위생 PR이 엔진 전반을 건드리므로 갈래 A·B의 코드 수정은 그 병합 머리 위에서 시작하고, 그 전에는 좁은 형태(분기 자식만 본체 분리)의 타당성 분석과 상세 설계만 한다.
+
+### 갈래 A의 타당성 분석(2026-10-29, 읽기 전용 코드 추적, 측정 아님)
+
+결정 "가" 직후, 코드 수정 없이 갈래 A의 좁은 형태를 추적했다. 결론은 **"좁은 형태로만 가능하되, 기대 이득은 위 초안의 추정보다 훨씬 작고 회귀 위험은 크다"**이며, 그 근거로 갈래 A는 갈래 B 뒤로 미루고 Ⅳ-3-0의 프로파일 수치가 조건을 만족할 때만 착수한다.
+
+**이득이 작은 이유.** 소유자가 지키기로 한 "재진입은 새 공개 객체, 새 배달 상태, 새 revision, 새 상호작용 상태"가 바로 재진입이 "처음부터 하는 일"이라, 본체를 보존해도 사라지지 않는다. 코드 구조로 추정한 Ⅳ-0 비용 주인의 변화는 다음과 같다.
+
+| 주인(oneOf-80, µs) | 본체 보존 뒤 |
+| --- | --- |
+| cloneFromSlot 9.3 | 생성자(필드 약 45개)·중첩 슬롯 재귀 복제·overlay Map 복사·선형 탐색은 사라지고, applySlotOverlay·슬롯 삭제·entered/changedNodes/dirtyPaths 처리·새 itemKey는 남으며, 껍데기 할당·옛 껍데기로의 필드 약 20개 이동·본체 필드 초기화가 새로 생긴다. 순감소 약 30~50 % |
+| retainExitedSlot 5.2 | 거의 그대로(압축 복제만 사라지며 oneOf-80에는 없음) |
+| createExitSlotOverlay 3.4 | 그대로(B12 나감 정책) |
+| 들어온 노드 3개의 등록 | 그대로(게이트 레지스트리는 나갈 때 remove, 들어올 때 register) |
+| revision ledger·배달 첫 회·커밋 | 그대로(새 껍데기는 revision을 처음부터 센다) |
+
+예상 순이득은 **oneOf-80 왕복당 약 3~6 µs(전체 약 160의 2~4 %)**이고 siblings-0은 0이다. 초안의 −15~−25 %는 철회한다.
+
+**가능하되 지켜야 하는 다섯 조건.** 엔진의 `.children` 읽기 173곳(67파일)을 엔진 전용 이름으로 바꾸기(분리되지 않은 호스트는 공개 객체이자 레코드라 같은 이름을 엔진과 소비자가 함께 읽는다); `find`·`findNodes`·`visitSubtree`·`parentNode`와 리스너 조회에서 레코드 → 공개 노드 사상(`useLiveNode`의 `root.find(path) === node` 비교가 본체를 받으면 살아 있는 분기 노드가 모두 죽은 것으로 보인다); 떼어진 껍데기는 나갈 때가 아니라 **재진입 직전에** 끊으며 그때 고정 읽기 사본(지금은 복제 덕에 공짜로 고정되는 약 20개 getter: value, raw, path, children, inactiveValues, watchValues 등)을 옮기기; 본체의 배달·pending·revision·상호작용 필드 초기화; 보유 계수기(`countRetainedSlotNodes`)와 시험을 레코드 기준으로 고치기(지금 시험은 껍데기를 만나면 적게 세어 64회 관문이 거짓 통과한다).
+
+**키의 귀속.** `runtime.listeners`·`inactiveListeners`·`detachedReads`·떼어질 때의 watchValues 메모는 **껍데기**가 키여야 한다(본체가 키이면 옛 구독이 새 수명에서 발화하고, 두 번째 나감에서 고정 읽기 포착을 건너뛰며, 옛 `onInactive`가 다시 불린다). 게이트 레지스트리·settlement 컨텍스트의 집합·wheelPlan·경로 키 구조는 본체가 키여도 된다.
+
+**할 수 없는 변형.** "들어오는 자식에게만 새 객체를 주고 보존된 자손 객체를 그 아래 다시 매다는" 안은 옛 leaf 참조를 되살려 NODE-044·B11을 어기고(선택지 다에 해당), parent를 다시 쓰는 것은 NODE-064가 금한 "떼어진 인스턴스를 고치는 일"이며, 공유만 하는 안은 NODE-064가 기각한 사슬(도달 노드 7·15·23·39·55)이다.
+
+**회귀 위험 열 가지(각각 잡는 시험).** detached 의미의 이분(껍데기 무효 / 본체 보관; `.detached` 90곳 분류, 쓰기 거부는 껍데기에서; `detached.test.ts`, `visitSubtree.test.ts`); children 캐시 낡음(`find('/group/leaf')`가 옛 leaf; 기존 시험은 값만 보므로 참조 단언 추가); 보유 계수기 거짓 통과; detachedReads 키(두 번째 나감 포착 건너뜀; `detached.test.ts` "across re-entry"); B12·구독 리스너 재발화(`surface.onInactive.test.ts`); 본체 초기화 누락(`commitGlobalState`의 deliveryInitialized 전제; `slots-interaction-reset.test.ts`); inactiveValues 비고정(옛 껍데기가 본체 overlay Map을 읽음; 끊을 때 구체화; `detached.test.ts:272`); watchValues 비고정(새 시험 필요); 경로 낡음(`rekeyArraySlotBindings` 뒤 path 재조정과 배달 초기화 순서; 본체가 두 군데 매달리는 `child.parent !== source` 필터); itemKey 순서(`settle.array-write.test.ts`). 확인 못 한 가설 둘: 외부 오류 재구성(`propagateExternalErrorsToRoot`)보다 먼저 재진입해도 차이가 없는가; 게이트 레지스트리의 byNode·byEdge 메모를 보관 중 남겨 다시 써도 안전한가.
+
+**결정 규칙(갈래 A의 착수 조건).** Ⅳ-3-0 프로파일에서 갈래 A가 없애는 함수들(노드 생성자·`cloneSlotSubtree` 재귀·overlay Map 복사·`getRetainedChildEntry` 탐색)의 self 합이 **oneOf-80 왕복당 15 µs 이상**일 때만 착수하고, 그 미만이면 갈래 A는 "분석으로 닫힘"으로 기록한다. 그 전까지 갈래 B가 Ⅳ-3의 주된 갈래다. 갈래 B도 같은 규칙을 따른다: 서술자가 대신하는 함수들의 self 합이 siblings-0 전환당 15 µs 이상일 때만 착수한다.
