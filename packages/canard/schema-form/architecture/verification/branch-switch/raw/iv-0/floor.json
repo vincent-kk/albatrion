@@ -1,0 +1,381 @@
+[
+  {
+    "row": "switch-siblings-0",
+    "variant": "noop",
+    "totalUs": 30.250000000023647,
+    "baselineUs": 24.416499999915686,
+    "perCallUs": 0.6312500000376531,
+    "stages": {
+      "markWrite": {
+        "selfUs": 1.9580000002861198,
+        "calls": 1,
+        "selfNetUs": 1.3746500002753237
+      },
+      "registerRecalculation": {
+        "selfUs": 2.334000000018932,
+        "calls": 1,
+        "selfNetUs": 1.7496500001243476
+      },
+      "updateOutput": {
+        "selfUs": 2.333499999849664,
+        "calls": 2,
+        "selfNetUs": 1.166799999828072
+      },
+      "computeNode": {
+        "selfUs": 4.271499999504158,
+        "calls": 2,
+        "selfNetUs": 3.104799999482566
+      },
+      "assembleObject": {
+        "selfUs": 0.8749999997235136,
+        "calls": 1,
+        "selfNetUs": 0.25064999992991943
+      },
+      "transitionSettlement": {
+        "selfUs": 1.1669999998957792,
+        "calls": 1,
+        "selfNetUs": 0.5416500002183966
+      },
+      "markCommitDeliveries": {
+        "selfUs": 3.9170000000012806,
+        "calls": 1,
+        "selfNetUs": 3.312150000215297
+      },
+      "commitSettlement": {
+        "selfUs": 1.7910000003666937,
+        "calls": 1,
+        "selfNetUs": 1.2076500003558976
+      },
+      "everythingElse": {
+        "selfUs": 10.916500000121232,
+        "calls": 1,
+        "selfNetUs": 10.916500000121232
+      }
+    }
+  },
+  {
+    "row": "switch-siblings-0",
+    "variant": "leaf",
+    "totalUs": 40.39549999993142,
+    "baselineUs": 33.99999999987813,
+    "perCallUs": 0.6395500000053289,
+    "stages": {
+      "markWrite": {
+        "selfUs": 2.416999999923064,
+        "calls": 1,
+        "selfNetUs": 1.7774499999177351
+      },
+      "registerRecalculation": {
+        "selfUs": 4.667000000154076,
+        "calls": 1,
+        "selfNetUs": 4.027450000148747
+      },
+      "updateOutput": {
+        "selfUs": 3.124999999499778,
+        "calls": 2,
+        "selfNetUs": 1.84589999948912
+      },
+      "computeNode": {
+        "selfUs": 4.582999999911408,
+        "calls": 2,
+        "selfNetUs": 3.30389999990075
+      },
+      "assembleObject": {
+        "selfUs": 1.291999999921245,
+        "calls": 1,
+        "selfNetUs": 0.6524499999159161
+      },
+      "transitionSettlement": {
+        "selfUs": 1.334000000042579,
+        "calls": 1,
+        "selfNetUs": 0.6944499998098763
+      },
+      "markCommitDeliveries": {
+        "selfUs": 7.083000000193351,
+        "calls": 1,
+        "selfNetUs": 6.422449999899982
+      },
+      "commitSettlement": {
+        "selfUs": 2.1669999996447586,
+        "calls": 1,
+        "selfNetUs": 1.5274499996394297
+      },
+      "everythingElse": {
+        "selfUs": 12.499999999363354,
+        "calls": 1,
+        "selfNetUs": 12.499999999363354
+      }
+    }
+  },
+  {
+    "row": "switch-siblings-0",
+    "variant": "switch",
+    "totalUs": 101.14599999997154,
+    "baselineUs": 87.14599999984785,
+    "perCallUs": 0.5923695651923164,
+    "stages": {
+      "markWrite": {
+        "selfUs": 2.5625000000673026,
+        "calls": 1,
+        "selfNetUs": 1.9836956522221558
+      },
+      "registerRecalculation": {
+        "selfUs": 7.667000000310509,
+        "calls": 1,
+        "selfNetUs": 7.025695652225256
+      },
+      "primeHost": {
+        "selfUs": 1.4580000001842564,
+        "calls": 1,
+        "selfNetUs": 0.8791956523391096
+      },
+      "updateOutput": {
+        "selfUs": 5.167000000028565,
+        "calls": 4,
+        "selfNetUs": 2.7887826091480985
+      },
+      "computeNode": {
+        "selfUs": 18.12600000062048,
+        "calls": 4,
+        "selfNetUs": 15.810782609239892
+      },
+      "wheelPreparation": {
+        "selfUs": 3.2910000002175366,
+        "calls": 1,
+        "selfNetUs": 2.71219565237239
+      },
+      "evaluateGate": {
+        "selfUs": 7.646999999906257,
+        "calls": 6,
+        "selfNetUs": 4.069673912473935
+      },
+      "assembleObject": {
+        "selfUs": 3.2919999998739513,
+        "calls": 1,
+        "selfNetUs": 2.6161304348356085
+      },
+      "selectChildren": {
+        "selfUs": 19.332500000246,
+        "calls": 1,
+        "selfNetUs": 18.753695652400854
+      },
+      "transitionSettlement": {
+        "selfUs": 1.5829999997549749,
+        "calls": 1,
+        "selfNetUs": 0.9211956520056961
+      },
+      "markCommitDeliveries": {
+        "selfUs": 10.374999999839929,
+        "calls": 1,
+        "selfNetUs": 9.77519565216149
+      },
+      "commitSettlement": {
+        "selfUs": 3.6250000002837623,
+        "calls": 1,
+        "selfNetUs": 2.923000000276696
+      },
+      "everythingElse": {
+        "selfUs": 14.95799999997871,
+        "calls": 1,
+        "selfNetUs": 14.95799999997871
+      }
+    }
+  },
+  {
+    "row": "switch-oneOf-80",
+    "variant": "noop",
+    "totalUs": 32.58300000015879,
+    "baselineUs": 25.687500000003638,
+    "perCallUs": 0.6895500000155153,
+    "stages": {
+      "markWrite": {
+        "selfUs": 1.8329999998059066,
+        "calls": 1,
+        "selfNetUs": 1.1434499997903913
+      },
+      "registerRecalculation": {
+        "selfUs": 3.7089999996169354,
+        "calls": 1,
+        "selfNetUs": 3.01944999960142
+      },
+      "updateOutput": {
+        "selfUs": 2.3540000001958106,
+        "calls": 2,
+        "selfNetUs": 0.9539000002405373
+      },
+      "computeNode": {
+        "selfUs": 4.375000000209184,
+        "calls": 2,
+        "selfNetUs": 2.9749000002539105
+      },
+      "assembleObject": {
+        "selfUs": 0.9169999998448475,
+        "calls": 1,
+        "selfNetUs": 0.21694999986721086
+      },
+      "transitionSettlement": {
+        "selfUs": 1.1670000003505265,
+        "calls": 1,
+        "selfNetUs": 0.47744999988026393
+      },
+      "markCommitDeliveries": {
+        "selfUs": 4.042000000026746,
+        "calls": 1,
+        "selfNetUs": 3.352450000011231
+      },
+      "commitSettlement": {
+        "selfUs": 1.791999999568361,
+        "calls": 1,
+        "selfNetUs": 1.0919499995907245
+      },
+      "everythingElse": {
+        "selfUs": 11.20800000012423,
+        "calls": 1,
+        "selfNetUs": 11.20800000012423
+      }
+    }
+  },
+  {
+    "row": "switch-oneOf-80",
+    "variant": "leaf",
+    "totalUs": 46.41700000001947,
+    "baselineUs": 40.25000000001455,
+    "perCallUs": 0.6250500000078318,
+    "stages": {
+      "markWrite": {
+        "selfUs": 2.167000000099506,
+        "calls": 1,
+        "selfNetUs": 1.5582999999651292
+      },
+      "registerRecalculation": {
+        "selfUs": 10.311999999885302,
+        "calls": 1,
+        "selfNetUs": 9.745299999872259
+      },
+      "updateOutput": {
+        "selfUs": 3.1254999998964195,
+        "calls": 2,
+        "selfNetUs": 1.8753999998807558
+      },
+      "computeNode": {
+        "selfUs": 4.874499999914406,
+        "calls": 2,
+        "selfNetUs": 3.666299999531475
+      },
+      "assembleObject": {
+        "selfUs": 1.291999999921245,
+        "calls": 1,
+        "selfNetUs": 0.6833000002416156
+      },
+      "transitionSettlement": {
+        "selfUs": 1.334000000042579,
+        "calls": 1,
+        "selfNetUs": 0.7291499998245854
+      },
+      "markCommitDeliveries": {
+        "selfUs": 7.166999999981272,
+        "calls": 1,
+        "selfNetUs": 6.600299999968229
+      },
+      "commitSettlement": {
+        "selfUs": 2.146000000038839,
+        "calls": 1,
+        "selfNetUs": 1.558300000192503
+      },
+      "everythingElse": {
+        "selfUs": 12.833500000169806,
+        "calls": 1,
+        "selfNetUs": 12.833500000169806
+      }
+    }
+  },
+  {
+    "row": "switch-oneOf-80",
+    "variant": "switch",
+    "totalUs": 218.45849999976963,
+    "baselineUs": 192.43749999986903,
+    "perCallUs": 0.7653235294088411,
+    "stages": {
+      "markWrite": {
+        "selfUs": 2.8334999999515276,
+        "calls": 1,
+        "selfNetUs": 2.062044117598602
+      },
+      "registerRecalculation": {
+        "selfUs": 16.04200000019773,
+        "calls": 1,
+        "selfNetUs": 15.270544117844807
+      },
+      "primeHost": {
+        "selfUs": 1.833000000260654,
+        "calls": 1,
+        "selfNetUs": 1.0676764708518127
+      },
+      "updateOutput": {
+        "selfUs": 10.228999999071675,
+        "calls": 6,
+        "selfNetUs": 5.637058822618629
+      },
+      "computeNode": {
+        "selfUs": 42.856000000256245,
+        "calls": 5,
+        "selfNetUs": 39.02938235321204
+      },
+      "wheelPreparation": {
+        "selfUs": 3.9784999996754777,
+        "calls": 1,
+        "selfNetUs": 3.2070441173225523
+      },
+      "cloneFromSlot": {
+        "selfUs": 9.957999999869571,
+        "calls": 3,
+        "selfNetUs": 7.643632352810795
+      },
+      "enterSlotClone": {
+        "selfUs": 0.9580000000823929,
+        "calls": 3,
+        "selfNetUs": -1.3563676469763832
+      },
+      "assembleObject": {
+        "selfUs": 10.333500000115237,
+        "calls": 2,
+        "selfNetUs": 8.790588235409386
+      },
+      "selectChildren": {
+        "selfUs": 38.29099999916252,
+        "calls": 1,
+        "selfNetUs": 37.525676469753684
+      },
+      "transitionSettlement": {
+        "selfUs": 5.104000000073938,
+        "calls": 1,
+        "selfNetUs": 4.332544117721013
+      },
+      "getControlLayers": {
+        "selfUs": 2.000500000121974,
+        "calls": 6,
+        "selfNetUs": -2.5709411766670467
+      },
+      "finalizeExits": {
+        "selfUs": 21.729499999992186,
+        "calls": 1,
+        "selfNetUs": 20.964176470583343
+      },
+      "markCommitDeliveries": {
+        "selfUs": 17.124500000136322,
+        "calls": 1,
+        "selfNetUs": 16.353044117783398
+      },
+      "commitSettlement": {
+        "selfUs": 11.374999999816282,
+        "calls": 1,
+        "selfNetUs": 10.609676470407441
+      },
+      "everythingElse": {
+        "selfUs": 19.584499999382388,
+        "calls": 1,
+        "selfNetUs": 19.584499999382388
+      }
+    }
+  }
+]
