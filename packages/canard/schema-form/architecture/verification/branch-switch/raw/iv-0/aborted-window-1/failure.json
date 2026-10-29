@@ -1,0 +1,80 @@
+{
+  "classification": "458C-03 environment failure",
+  "partialProcesses": 6,
+  "partialCurrentSamples": 600,
+  "partialLegacySamples": 600,
+  "started": {
+    "startedAt": "2026-10-29T03:50:57.670Z",
+    "quietSince": "2026-10-29T03:50:57.669Z"
+  },
+  "ended": {
+    "endedAt": "2026-10-29T03:53:21.496Z",
+    "completed": false,
+    "invalid": false,
+    "processes": [
+      {
+        "name": "mediaanalysisd",
+        "cpuPercent": 92.7361760954779
+      },
+      {
+        "name": "WindowServer",
+        "cpuPercent": 5.736258315193762
+      },
+      {
+        "name": "Stats",
+        "cpuPercent": 5.736258315193762
+      },
+      {
+        "name": "analyticsd",
+        "cpuPercent": 5.736258315184252
+      },
+      {
+        "name": "mds_stores",
+        "cpuPercent": 4.461534245124941
+      },
+      {
+        "name": "signpost_reporter",
+        "cpuPercent": 4.142853227633267
+      },
+      {
+        "name": "2.1.312",
+        "cpuPercent": 3.5054911926168004
+      },
+      {
+        "name": "ControlCenter",
+        "cpuPercent": 2.549448140079676
+      },
+      {
+        "name": "mdworker_shared",
+        "cpuPercent": 2.23076712257174
+      },
+      {
+        "name": "node",
+        "cpuPercent": 2.2307671225715278
+      }
+    ]
+  },
+  "productInputsUnchanged": true,
+  "node": "v26.11.1",
+  "toolVerification": "Historical tool hashes retained; current review edits are not the original timing inputs.",
+  "command": {
+    "executable": "<home>/.nvm/versions/node/v26.11.1/bin/node",
+    "args": [
+      "<home>/Workspace/albatrion/branch-switch-iv-0/packages/canard/schema-form/architecture/verification/design-optimization/tools/alternate.mjs",
+      "--baseline-bundle=<scratch>/claude-501/perf-runs/20261029T0330-4b7abf5-iv-0.noindex/bundles/A/index.node.mjs",
+      "--candidate-bundle=<scratch>/claude-501/perf-runs/20261029T0330-4b7abf5-iv-0.noindex/bundles/B/index.node.mjs",
+      "--quality=legacy",
+      "--runs=10",
+      "--warmups=20",
+      "--samples=100",
+      "--quiet-since=2026-10-29T03:50:57.669Z",
+      "--only=single-flat-1000,mount-oneOf-80,mount-flat-1000,mount-nested-d6-f4,single-nested-d6-f4,switch-oneOf-80,bulk-flat-2000,bulk-nested-d6-f4,switch-discriminator-80,switch-if-80,switch-nested-oneOf-20,switch-siblings-0,switch-siblings-100,switch-siblings-1000,switch-siblings-4000,leaf-gate-250,leaf-gate-1000,leaf-gate-4000,leaf-gate-8000,wave-1000,single-flat-1000-subscribed,switch-payload-12",
+      "--run-dir=<scratch>/claude-501/perf-runs/20261029T0330-4b7abf5-iv-0.noindex/pair"
+    ],
+    "cwd": "<home>/Workspace/albatrion/branch-switch-iv-0",
+    "startedAt": "2026-10-29T03:50:57.672Z",
+    "endedAt": "2026-10-29T03:53:21.494Z",
+    "code": 1
+  },
+  "error": "node:internal/modules/run_main:111\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: single-flat-1000/A: node:internal/modules/run_main:111\n    triggerUncaughtException(\n    ^\n\nAssertionError [ERR_ASSERTION]: External CPU stayed above 30% for the start-delay allowance (ordinary 120 seconds; Spotlight 600 seconds)\n\nfalse !== true\n\n    at file://<home>/Workspace/albatrion/branch-switch-iv-0/packages/canard/schema-form/architecture/verification/branch-switch/tools/window/quietWorkerPreload.mjs:26:8 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v26.11.1\n\n\n1 !== 0\n\n    at measure (file://<home>/Workspace/albatrion/branch-switch-iv-0/packages/canard/schema-form/architecture/verification/design-optimization/tools/helpers/runAlternatingParent.mjs:91:10)\n    at file://<home>/Workspace/albatrion/branch-switch-iv-0/packages/canard/schema-form/architecture/verification/design-optimization/tools/helpers/runAlternatingParent.mjs:151:28\n    at executeAlternatingRows (file://<home>/Workspace/albatrion/branch-switch-iv-0/packages/canard/schema-form/architecture/verification/design-optimization/tools/helpers/executeAlternatingRows.mjs:10:29)\n    at runAlternatingParent (file://<home>/Workspace/albatrion/branch-switch-iv-0/packages/canard/schema-form/architecture/verification/design-optimization/tools/helpers/runAlternatingParent.mjs:148:16)\n    at file://<home>/Workspace/albatrion/branch-switch-iv-0/packages/canard/schema-form/architecture/verification/design-optimization/tools/alternate.mjs:48:22 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 1,\n  expected: 0,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v26.11.1\n"
+}
