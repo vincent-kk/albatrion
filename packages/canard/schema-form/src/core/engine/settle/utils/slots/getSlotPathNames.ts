@@ -2,6 +2,7 @@ import type { Optional } from '@aileron/declare';
 
 import type { Blueprint } from '../../../blueprint';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
+import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 
 /**
@@ -18,11 +19,5 @@ export const getSlotPathNames = (
     runtime.blueprint && !runtime.blueprint.capabilities.branchless
       ? getDependencyIndex(runtime.blueprint).pathSegments(path, runtime)
       : getCachedPointerSegments(runtime, path);
-  return ((values: typeof segments): values is readonly string[] => {
-    for (let index = 0, length = values.length; index < length; index++)
-      if (index in values && typeof values[index] !== 'string') return false;
-    return true;
-  })(segments)
-    ? segments
-    : undefined;
+  return isNamedPointerSegments(segments) ? segments : undefined;
 };

@@ -52,6 +52,7 @@ const SCHEMA_SINGLE_KEYWORDS = [
  * @param emit - Root-local diagnostic consumer with duplicate suppression
  * @returns Nothing; visits schema positions only, leaving literal data opaque
  */
+
 export const collectInlineTerminalWarnings = (
   node: BlueprintNode,
   emit: (diagnostic: BlueprintDiagnostic) => void,
@@ -104,19 +105,14 @@ export const collectInlineTerminalWarnings = (
             ancestors,
           });
     /* eslint-enable @typescript-eslint/consistent-type-assertions */
-    for (const keyword of SCHEMA_LIST_KEYWORDS)
-      if (isArray(record[keyword]))
-        (() => {
+    for (const keyword of SCHEMA_LIST_KEYWORDS) {
+      if (isArray(record[keyword])) {
+        {
           const items = record[keyword];
-          iterate: for (
-            let position = 0, count = items.length;
-            position < count;
-            position++
-          ) {
-            if (!(position in items)) continue;
-            const item = items[position];
-            const child: BlueprintSchema = item;
-            const index: number = position;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const child: BlueprintSchema = items[index];
+
             {
               void pending.push({
                 schema: child,
@@ -127,48 +123,40 @@ export const collectInlineTerminalWarnings = (
                 root: false,
                 ancestors,
               });
-              continue iterate;
             }
           }
-        })();
+        }
+      }
+    }
     for (const keyword of SCHEMA_SINGLE_KEYWORDS) {
       const child = record[keyword];
-      if (isArray(child))
-        (() => {
-          const items = child;
-          iterate: for (
-            let position = 0, count = items.length;
-            position < count;
-            position++
-          ) {
-            if (!(position in items)) continue;
-            const value = items[position];
-            const item: BlueprintSchema = value;
-            const index: number = position;
-            {
-              void pending.push({
-                schema: item,
-                schemaPath: appendSegment(
-                  appendSegment(entry.schemaPath, keyword),
-                  index,
-                ),
-                root: false,
-                ancestors,
-              });
-              continue iterate;
-            }
+
+      if (isArray(child)) {
+        for (let index = 0, count = child.length; index < count; index++) {
+          if (!(index in child)) continue;
+          const item: BlueprintSchema = child[index];
+
+          {
+            void pending.push({
+              schema: item,
+              schemaPath: appendSegment(
+                appendSegment(entry.schemaPath, keyword),
+                index,
+              ),
+              root: false,
+              ancestors,
+            });
           }
-        })();
-      else if (
-        typeof child === 'boolean' ||
-        (child && typeof child === 'object')
-      )
-        pending.push({
-          schema: child,
-          schemaPath: appendSegment(entry.schemaPath, keyword),
-          root: false,
-          ancestors,
-        });
+        }
+      } else {
+        if (typeof child === 'boolean' || (child && typeof child === 'object'))
+          pending.push({
+            schema: child,
+            schemaPath: appendSegment(entry.schemaPath, keyword),
+            root: false,
+            ancestors,
+          });
+      }
     }
   }
   if (keys.length)

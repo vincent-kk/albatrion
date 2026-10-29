@@ -22,6 +22,7 @@ import { inferAllowedTypes } from './inferAllowedTypes';
  * @param declarations - Contributions ordered independently of JSON key order
  * @returns One static group, or same-fold groups for dynamically declared variants
  */
+
 export const resolveNodeTypes = (
   context: AnalysisContext,
   declarations: readonly PropertyDeclaration[],
@@ -36,15 +37,16 @@ export const resolveNodeTypes = (
         (declaration) =>
           declaration.context === 'conjunction' && !declaration.gates.length,
       );
-  const staticOwner = (() => {
-    const items = fixed;
-    for (let index = 0, count = items.length; index < count; index++) {
-      if (!(index in items)) continue;
-      const declaration = items[index];
-      if (declaration.role === 'declaration') return true;
+  let staticOwner = false;
+  for (let index = 0, count = fixed.length; index < count; index++) {
+    const declaration = fixed[index];
+
+    if (declaration.role === 'declaration') {
+      staticOwner = true;
+      break;
     }
-    return false;
-  })();
+  }
+
   if (staticOwner) {
     let allowed: Optional<readonly SchemaTypeName[]>;
     for (const declaration of fixed) {
@@ -127,23 +129,25 @@ export const resolveNodeTypes = (
       group.declarations.push(declaration);
     } else groups.set(mask, { allowed, declarations: [declaration] });
   }
+
   return mapArray([...groups.values()], (group) => ({
     ...group,
-    declarations: filterArray(
-      declarations,
-      (declaration) =>
-        group.declarations.includes(declaration) ||
-        (declaration.role === 'overlay' &&
-          (() => {
-            const items = group.declarations;
-            for (let index = 0, count = items.length; index < count; index++) {
-              if (!(index in items)) continue;
-              const owner = items[index];
-              if (context.declarationOwners?.get(declaration.id) === owner.id)
-                return true;
+    declarations: filterArray(declarations, (declaration) => {
+      let matchesEither = group.declarations.includes(declaration);
+      if (!matchesEither) {
+        let matches = declaration.role === 'overlay';
+        if (matches) {
+          matches = false;
+          for (const owner of group.declarations) {
+            if (context.declarationOwners?.get(declaration.id) === owner.id) {
+              matches = true;
+              break;
             }
-            return false;
-          })()),
-    ),
+          }
+        }
+        matchesEither = matches;
+      }
+      return matchesEither;
+    }),
   }));
 };

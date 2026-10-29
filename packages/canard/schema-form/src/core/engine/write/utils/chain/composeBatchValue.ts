@@ -4,6 +4,7 @@ import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
+import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { replaceAtPath } from './utils/replaceAtPath';
 
 /**
@@ -21,14 +22,7 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   let value = root.local;
   for (const write of writes) {
     const names = parsePointerSegments(write.node.path);
-    if (
-      !((values: typeof names): values is readonly string[] => {
-        for (let index = 0, length = values.length; index < length; index++)
-          if (index in values && typeof values[index] !== 'string')
-            return false;
-        return true;
-      })(names)
-    )
+    if (!isNamedPointerSegments(names))
       throw new TypeError('Expected a named node path');
     const fields =
       write.node.behavior.type === 'virtual'

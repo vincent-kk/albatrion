@@ -23,6 +23,7 @@ export interface CalculatedSnapshot<Self> {
  * @param context - Changed-node set to trim after a no-op calculation
  * @returns Nothing; restores only equal calculated references
  */
+
 export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   previous: CalculatedSnapshot<Self>,
@@ -36,23 +37,21 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
     previous.children !== node.children &&
     previous.children &&
     node.children &&
-    previous.children.length === node.children.length &&
-    (() => {
-      const items = previous.children;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const child = items[position];
-        const index = position;
-        if (!(child === node.children?.[index])) return false;
+    previous.children.length === node.children.length
+  ) {
+    let unchanged = true;
+    for (let index = 0; index < previous.children.length; index++)
+      if (previous.children[index] !== node.children?.[index]) {
+        unchanged = false;
+        break;
       }
-      return true;
-    })()
-  )
-    node.children = captureFieldNodeChange(node, 'children', previous.children);
+    if (unchanged)
+      node.children = captureFieldNodeChange(
+        node,
+        'children',
+        previous.children,
+      );
+  }
   if (
     node.local === previous.local &&
     node.emit === previous.emit &&

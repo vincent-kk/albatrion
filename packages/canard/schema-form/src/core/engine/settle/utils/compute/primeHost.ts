@@ -35,6 +35,7 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
  * @param hasRelocated - Wheel's already collected relocation evidence
  * @returns Nothing; the host now exposes the fixed baseline shape
  */
+
 export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   prior: Dictionary<Self>,
@@ -92,20 +93,16 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   );
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
-    if (
-      baseline[entry.name] ||
-      (!direct &&
-        !(() => {
-          const items = entry.declarations;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const declaration = items[index];
-            if (declaration.gates.length === 0) return true;
-          }
-          return false;
-        })())
-    )
-      continue;
+    if (baseline[entry.name]) continue;
+    if (!direct) {
+      let hasUngatedDeclaration = false;
+      for (const declaration of entry.declarations)
+        if (declaration.gates.length === 0) {
+          hasUngatedDeclaration = true;
+          break;
+        }
+      if (!hasUngatedDeclaration) continue;
+    }
     if (reuse?.(entry)) continue;
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]

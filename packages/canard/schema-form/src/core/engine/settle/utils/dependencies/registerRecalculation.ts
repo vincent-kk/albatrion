@@ -19,6 +19,7 @@ import { getDependencyIndex } from './getDependencyIndex';
  * @param context - Marked write with its changed raw paths
  * @returns Nothing; extends its bounded dirty path set
  */
+
 export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
@@ -125,21 +126,25 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
         context.shapeDirtyPaths.add(resolvePointer(path, $.Parent));
     }
   }
+
   if (shadow) {
     shadow.registering = false;
-    verifyGateSelection(
-      context.shapeDirtyPaths.size === shadow.shape.size &&
-        (() => {
-          const items = [...shadow.shape];
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const path = items[index];
-            if (!context.shapeDirtyPaths.has(path)) return false;
+    let matches = context.shapeDirtyPaths.size === shadow.shape.size;
+    if (matches) {
+      matches = true;
+      {
+        const items = [...shadow.shape];
+        for (let index = 0, count = items.length; index < count; index++) {
+          const path = items[index];
+
+          if (!context.shapeDirtyPaths.has(path)) {
+            matches = false;
+            break;
           }
-          return true;
-        })(),
-      'S3 shape dirty differs after registration',
-    );
+        }
+      }
+    }
+    verifyGateSelection(matches, 'S3 shape dirty differs after registration');
     for (const path of context.dirtyPaths)
       verifyGateSelection(
         shadow.dirty.has(path),

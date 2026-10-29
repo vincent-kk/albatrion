@@ -7,6 +7,7 @@ import {
 
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
+import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { isCanonicalArrayIndex } from '../templatePaths/isCanonicalArrayIndex';
 import { getLoadValue } from './getLoadValue';
 import { setLoadValue } from './setLoadValue';
@@ -64,15 +65,7 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const segments = parsePointerSegments(host.path);
-    if (
-      !((values: typeof segments): values is readonly string[] => {
-        for (let index = 0, length = values.length; index < length; index++)
-          if (index in values && typeof values[index] !== 'string')
-            return false;
-        return true;
-      })(segments)
-    )
-      continue;
+    if (!isNamedPointerSegments(segments)) continue;
     let probe: unknown = draft;
     let byName = false;
     for (const segment of segments) {

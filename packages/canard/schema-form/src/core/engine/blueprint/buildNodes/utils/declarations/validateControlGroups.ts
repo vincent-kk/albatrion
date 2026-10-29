@@ -26,6 +26,7 @@ const CONTROL_GROUPS = [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const;
  * @param fragment - Whether controls are scoped to a fragment's direct children
  * @returns Nothing; malformed extension declarations throw a schema error
  */
+
 export const validateControlGroups = (
   context: AnalysisContext,
   schema: BlueprintSchema,
@@ -75,6 +76,7 @@ export const validateControlGroups = (
       { group: SCHEMA_GROUP.controls, key: 'injectTo', expected: 'function' },
       context.options,
     );
+
   if (controls?.fields !== undefined) {
     if (!isArray(controls.fields))
       throwBlueprintError(
@@ -83,53 +85,60 @@ export const validateControlGroups = (
         { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
-    (() => {
+    {
       const values = controls.fields;
-      for (
-        let position = 0, limit = values.length;
-        position < limit;
-        position++
-      ) {
-        if (!(position in values)) continue;
-        const item = values[position];
-        const entry: any = item;
-        const index: number = position;
+      for (let index = 0, limit = values.length; index < limit; index++) {
+        if (!(index in values)) continue;
+        const entry: any = values[index];
+
         {
           const path = appendSegment(
             appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
             index,
           );
-          if (
-            !entry ||
-            typeof entry !== 'object' ||
-            (() => {
+          let matchesEither = !entry || typeof entry !== 'object';
+          if (!matchesEither) {
+            matchesEither = false;
+            {
               const items = Object.keys(entry);
               for (
                 let index = 0, count = items.length;
                 index < count;
                 index++
               ) {
-                if (!(index in items)) continue;
                 const key = items[index];
-                if (key !== 'targets' && key !== 'controls') return true;
+
+                if (key !== 'targets' && key !== 'controls') {
+                  matchesEither = true;
+                  break;
+                }
               }
-              return false;
-            })() ||
-            !isArray(entry.targets) ||
-            (() => {
+            }
+          }
+          let matchesEither2 = matchesEither || !isArray(entry.targets);
+          if (!matchesEither2) {
+            matchesEither2 = false;
+            {
               const items = entry.targets;
               for (
                 let index = 0, count = items.length;
                 index < count;
                 index++
               ) {
-                if (!(index in items)) continue;
+                if (!(index in items)) {
+                  continue;
+                }
+
                 const name: unknown = items[index];
-                if (typeof name !== 'string') return true;
+
+                if (typeof name !== 'string') {
+                  matchesEither2 = true;
+                  break;
+                }
               }
-              return false;
-            })()
-          )
+            }
+          }
+          if (matchesEither2) {
             throwBlueprintError(
               FormErrorCode.InvalidControlShape,
               path,
@@ -140,6 +149,7 @@ export const validateControlGroups = (
               },
               context.options,
             );
+          }
           validateControlGroups(
             context,
             { controls: entry.controls },
@@ -148,7 +158,7 @@ export const validateControlGroups = (
           );
         }
       }
-    })();
+    }
   }
 };
 

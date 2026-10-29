@@ -18,6 +18,7 @@ const NO_VISITING: readonly string[] = Object.freeze([]);
  * @param cycle - Optional observer of a reference or allOf path re-entry
  * @returns Ordered schema locations: body, reference target, ungated allOf
  */
+
 export const collectStaticSchemas = (
   context: AnalysisContext,
   schema: BlueprintSchema,
@@ -44,18 +45,14 @@ export const collectStaticSchemas = (
       ),
     );
   }
-  if (isArray(schema.allOf))
-    (() => {
+
+  if (isArray(schema.allOf)) {
+    {
       const items = schema.allOf;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const item = items[position];
-        const part = item;
-        const index = position;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const part = items[index];
+
         {
           const controls =
             typeof part === 'object' && part !== null
@@ -73,6 +70,7 @@ export const collectStaticSchemas = (
             );
         }
       }
-    })();
+    }
+  }
   return result;
 };

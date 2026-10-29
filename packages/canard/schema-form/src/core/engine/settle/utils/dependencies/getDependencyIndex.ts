@@ -213,33 +213,37 @@ class DependencyIndex {
     this.registrationPrepared = true;
     const candidates = new Map<string, string>();
     const plain = new Set(this.ordinaryOwners);
-    for (const node of this.blueprint.nodes)
-      for (const declaration of node.declarations)
+    for (const node of this.blueprint.nodes) {
+      for (const declaration of node.declarations) {
         for (const gate of declaration.gates) {
           const expression = getGateExpression(this.blueprint, gate.schemaPath);
-          if (
-            !(() => {
-              const items = expression?.dependencies;
-              if (items == null) return undefined;
+          let hasMatch2: Optional<boolean> = undefined;
+          {
+            const items = expression?.dependencies;
+            if (items != null) {
+              hasMatch2 = false;
               for (
                 let index = 0, count = items.length;
                 index < count;
                 index++
               ) {
-                if (!(index in items)) continue;
                 const dependency = items[index];
+
                 if (
                   readPointerSegment(
                     resolveDependencyPath(gate.hostPath, dependency),
                     0,
                   ) !== PointerOperator.Context
-                )
-                  return true;
+                ) {
+                  hasMatch2 = true;
+                  break;
+                }
               }
-              return false;
-            })()
-          )
+            }
+          }
+          if (!hasMatch2) {
             continue;
+          }
           let hostPath: Optional<string>;
           for (const [host, table] of tables) {
             const name = readPointerSegment(declaration.path, -1);
@@ -259,6 +263,8 @@ class DependencyIndex {
           if (hostPath === undefined) plain.add(declaration.path);
           else candidates.set(declaration.path, hostPath);
         }
+      }
+    }
     const pending = this.root ? [this.root] : [];
     const allNodes: DependencyNode[] = [];
     while (pending.length) {
@@ -619,29 +625,24 @@ class DependencyIndex {
     metrics?: { ownerInsertions: number },
   ): void {
     const sizeBefore = owners.size;
-    for (const node of nodes)
+    for (const node of nodes) {
       for (const entry of node.owners) {
-        if (
-          entry.watched &&
-          !(() => {
-            const items = entry.watched;
-            for (let index = 0, count = items.length; index < count; index++) {
-              if (!(index in items)) continue;
-              const watched = items[index];
-              if (
-                intersectsWatchedPath(
-                  watched,
-                  changedPath,
-                  this.pathSegments(watched),
-                  changedSegments,
-                )
+        if (entry.watched) {
+          let intersects = false;
+          for (const watched of entry.watched)
+            if (
+              intersectsWatchedPath(
+                watched,
+                changedPath,
+                this.pathSegments(watched),
+                changedSegments,
               )
-                return true;
+            ) {
+              intersects = true;
+              break;
             }
-            return false;
-          })()
-        )
-          continue;
+          if (!intersects) continue;
+        }
         const path = entry.bindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
@@ -649,6 +650,7 @@ class DependencyIndex {
           templates.add(path);
         else owners.add(path);
       }
+    }
     if (metrics) metrics.ownerInsertions += owners.size - sizeBefore;
   }
 
@@ -667,21 +669,28 @@ class DependencyIndex {
     let indexedParts = watchedParts;
     const originalWatchedPath = watchedPath;
     for (let index = 0; index < ownerParts.length; index++) {
-      if (
+      let matches =
         ownerParts[index] === PointerOperator.Wildcard &&
-        watchedParts[index] !== PointerOperator.Wildcard &&
-        (() => {
+        watchedParts[index] !== PointerOperator.Wildcard;
+      if (matches) {
+        matches = true;
+        {
           const items = ownerParts.slice(0, index);
-          for (let cursor = 0, count = items.length; cursor < count; cursor++) {
-            if (!(cursor in items)) continue;
-            const part = items[cursor];
-            const position = cursor;
-            if (!(part === watchedParts[position])) return false;
+          for (
+            let position = 0, count = items.length;
+            position < count;
+            position++
+          ) {
+            const part = items[position];
+
+            if (!(part === watchedParts[position])) {
+              matches = false;
+              break;
+            }
           }
-          return true;
-        })() &&
-        watchedParts[index] !== undefined
-      ) {
+        }
+      }
+      if (matches && watchedParts[index] !== undefined) {
         indexedParts = ownerParts.slice(0, index);
         watchedPath = joinPointer(indexedParts);
         break;
@@ -696,30 +705,26 @@ class DependencyIndex {
       }
       current = child;
     }
+
     if (!current.ownerPaths.has(owner)) {
       current.ownerPaths.add(owner);
+      let allMatch = true;
+      for (let index = 0, count = ownerParts.length; index < count; index++) {
+        const part = ownerParts[index];
+
+        if (
+          !(
+            part !== PointerOperator.Wildcard ||
+            indexedParts[index] === PointerOperator.Wildcard
+          )
+        ) {
+          allMatch = false;
+          break;
+        }
+      }
       current.owners.push({
         path: owner,
-        bindable: (() => {
-          const items = ownerParts;
-          for (
-            let position = 0, count = items.length;
-            position < count;
-            position++
-          ) {
-            if (!(position in items)) continue;
-            const part = items[position];
-            const index = position;
-            if (
-              !(
-                part !== PointerOperator.Wildcard ||
-                indexedParts[index] === PointerOperator.Wildcard
-              )
-            )
-              return false;
-          }
-          return true;
-        })(),
+        bindable: allMatch,
         ...(watchedPath !== originalWatchedPath
           ? { watched: [originalWatchedPath] }
           : {}),

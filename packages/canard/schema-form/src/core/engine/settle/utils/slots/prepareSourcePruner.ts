@@ -59,6 +59,7 @@ export const prepareSourcePruner = <Self extends FieldNodeRecord<Self>>(
 };
 
 /** Prove source-free descendants from the finite template graph without reading live slots. */
+
 const hasRetainableDescendants = (
   template: BlueprintNode,
   visited: WeakSet<BlueprintNode>,
@@ -72,36 +73,31 @@ const hasRetainableDescendants = (
   )
     return true;
   for (const entry of template.childEntries) {
-    if (
-      !(() => {
-        const items = entry.declarations;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const declaration = items[index];
-          if (declaration.gates.length === 0) return true;
-        }
-        return false;
-      })() ||
-      hasRetainableDescendants(entry.node, visited)
-    )
+    let hasMatch = false;
+    for (const declaration of entry.declarations) {
+      if (declaration.gates.length === 0) {
+        hasMatch = true;
+        break;
+      }
+    }
+    if (!hasMatch || hasRetainableDescendants(entry.node, visited)) {
       return true;
+    }
   }
   for (const child of [
     ...(template.prefixItems ?? []),
     ...(template.item ? [template.item] : []),
-  ])
-    if (
-      !(() => {
-        const items = child.declarations;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const declaration = items[index];
-          if (declaration.gates.length === 0) return true;
-        }
-        return false;
-      })() ||
-      hasRetainableDescendants(child, visited)
-    )
+  ]) {
+    let hasMatch2 = false;
+    for (const declaration of child.declarations) {
+      if (declaration.gates.length === 0) {
+        hasMatch2 = true;
+        break;
+      }
+    }
+    if (!hasMatch2 || hasRetainableDescendants(child, visited)) {
       return true;
+    }
+  }
   return false;
 };

@@ -9,6 +9,7 @@ import type {
  * @param host - Direct template host binding every discriminator to this tag
  * @returns Whether schema reselection cannot transform this watched scalar value
  */
+
 export const isStableDiscriminatorEntry = (
   entry: BlueprintChildEntry,
   host: BlueprintNode,
@@ -21,27 +22,23 @@ export const isStableDiscriminatorEntry = (
     type === 'object' ||
     type === 'array' ||
     declarations.length < 2 ||
-    entry.node.declarations.length !== declarations.length ||
-    !(() => {
-      const items = declarations;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const declaration = items[index];
-        if (declaration.gates.length === 0) return true;
-      }
-      return false;
-    })() ||
-    !(() => {
-      const items = declarations;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const declaration = items[index];
-        if (declaration.gates.length > 0) return true;
-      }
-      return false;
-    })()
+    entry.node.declarations.length !== declarations.length
   )
     return false;
+  let hasUngated = false;
+  for (const declaration of declarations)
+    if (declaration.gates.length === 0) {
+      hasUngated = true;
+      break;
+    }
+  if (!hasUngated) return false;
+  let hasGated = false;
+  for (const declaration of declarations)
+    if (declaration.gates.length > 0) {
+      hasGated = true;
+      break;
+    }
+  if (!hasGated) return false;
   for (let index = 0; index < declarations.length; index++) {
     const declaration = declarations[index];
     const schema = declaration.schema;
@@ -60,31 +57,29 @@ export const isStableDiscriminatorEntry = (
         !(key === 'default' && declaration.gates.length === 0)
       )
         return false;
-    for (const gate of declaration.gates)
+    for (const gate of declaration.gates) {
       if (
         gate.kind !== 'discriminator' ||
         gate.hostPath !== host.path ||
         gate.appliesWhen?.length ||
-        gate.condition.propertyName !== entry.name ||
-        !(() => {
-          const items = gate.condition.values;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const value = items[index];
-            if (
-              !(
-                value === null ||
-                typeof value === 'string' ||
-                typeof value === 'boolean' ||
-                (typeof value === 'number' && Number.isFinite(value))
-              )
-            )
-              return false;
-          }
-          return true;
-        })()
+        gate.condition.propertyName !== entry.name
       )
         return false;
+      const values = gate.condition.values;
+      for (let index = 0, count = values.length; index < count; index++) {
+        if (!(index in values)) continue;
+        const value = values[index];
+        if (
+          !(
+            value === null ||
+            typeof value === 'string' ||
+            typeof value === 'boolean' ||
+            (typeof value === 'number' && Number.isFinite(value))
+          )
+        )
+          return false;
+      }
+    }
   }
   return true;
 };

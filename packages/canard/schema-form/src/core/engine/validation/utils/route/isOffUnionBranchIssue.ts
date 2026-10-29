@@ -25,6 +25,7 @@ const NUMERIC_KEY = /^\d+$/;
  * @param activeIds - Committed declaration identities collected once per routing pass.
  * @returns True only when attribution is unique and a sibling is active.
  */
+
 export const isOffUnionBranchIssue = (
   issue: ValidationIssue,
   blueprint: Blueprint,
@@ -57,18 +58,18 @@ export const isOffUnionBranchIssue = (
       visited.add(id);
       pending.push(...blueprint.fragments[id].children);
     }
-    if (
-      (() => {
-        const items = owners;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const owner = items[index];
-          if (visited.has(owner.id)) return true;
-        }
-        return false;
-      })()
-    )
+    let hasMatch = false;
+    for (let index = 0, count = owners.length; index < count; index++) {
+      const owner = owners[index];
+
+      if (visited.has(owner.id)) {
+        hasMatch = true;
+        break;
+      }
+    }
+    if (hasMatch) {
       branches.push(fragment);
+    }
   }
   if (!branches.length) return false;
   const nearest = Math.max(
@@ -89,35 +90,38 @@ export const isOffUnionBranchIssue = (
       NUMERIC_KEY.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
       isDescendantPath(fragment.schemaPath, unionPath),
   );
-  const isActive = (fragment: SchemaFragment): boolean =>
-    (() => {
-      const items = fragment.declares;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const id = items[index];
-        if (activeIds.has(id)) return true;
+
+  const isActive = (fragment: SchemaFragment): boolean => {
+    let hasMatch2 = false;
+    for (const id of fragment.declares) {
+      if (activeIds.has(id)) {
+        hasMatch2 = true;
+        break;
       }
-      return false;
-    })() ||
-    (() => {
-      const items = fragment.overlays;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const id = items[index];
-        if (activeIds.has(id)) return true;
+    }
+    let matchesEither = hasMatch2;
+    if (!matchesEither) {
+      matchesEither = false;
+      for (const id of fragment.overlays) {
+        if (activeIds.has(id)) {
+          matchesEither = true;
+          break;
+        }
       }
-      return false;
-    })();
-  return (
-    !isActive(owner) &&
-    (() => {
-      const items = siblings;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const item = items[index];
-        if (isActive(item)) return true;
+    }
+    return matchesEither;
+  };
+  let matches2 = !isActive(owner);
+  if (matches2) {
+    matches2 = false;
+    for (let index = 0, count = siblings.length; index < count; index++) {
+      const item = siblings[index];
+
+      if (isActive(item)) {
+        matches2 = true;
+        break;
       }
-      return false;
-    })()
-  );
+    }
+  }
+  return matches2;
 };

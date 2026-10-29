@@ -39,6 +39,7 @@ const UNION_KEYWORDS = ['oneOf', 'anyOf'];
  * @param collect - Requested collector; absent consumers cause no warning traversal
  * @returns Nothing; each code/location/discriminating-key occurrence is delivered once
  */
+
 export const collectBlueprintWarnings = (
   blueprint: Blueprint,
   collect: BlueprintOptions['collect'],
@@ -116,36 +117,42 @@ export const collectBlueprintWarnings = (
         const allowed: readonly unknown[] = isArray(tag.schemaType)
           ? tag.schemaType
           : [tag.schemaType];
-        if (
-          (() => {
-            const items = descriptor.values;
-            for (let index = 0, count = items.length; index < count; index++) {
-              if (!(index in items)) continue;
-              const value = items[index];
-              if (
-                value === null
-                  ? !tag.nullable
-                  : !allowed.includes(
-                      isArray(value)
-                        ? 'array'
-                        : typeof value === 'number' &&
-                            Number.isInteger(value) &&
-                            allowed.includes('integer')
-                          ? 'integer'
-                          : typeof value,
-                    )
-              )
-                return true;
+        let hasMatch = false;
+        {
+          const items = descriptor.values;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) {
+              continue;
             }
-            return false;
-          })()
-        )
+
+            const value = items[index];
+
+            if (
+              value === null
+                ? !tag.nullable
+                : !allowed.includes(
+                    isArray(value)
+                      ? 'array'
+                      : typeof value === 'number' &&
+                          Number.isInteger(value) &&
+                          allowed.includes('integer')
+                        ? 'integer'
+                        : typeof value,
+                  )
+            ) {
+              hasMatch = true;
+              break;
+            }
+          }
+        }
+        if (hasMatch) {
           emit({
             code: FormWarningCode.DiscriminatorBranchUnreachable,
             level: 'warning',
             schemaPath: gate.schemaPath,
             details: { propertyName: descriptor.propertyName },
           });
+        }
       }
     }
   }

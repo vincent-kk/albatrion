@@ -3,6 +3,7 @@ import { type ChangeEvent, useMemo } from 'react';
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
 import type { Nullable } from '@aileron/declare';
 
 import type {
@@ -13,6 +14,7 @@ import type {
 import type { EnumLabelsContext } from './type';
 
 /** Render a select for a string enum node. */
+
 export const FieldInputStringEnum = ({
   path,
   name,
@@ -50,21 +52,26 @@ export const FieldInputStringEnum = ({
     if (defaultValue === null) return '' + null;
     return defaultValue;
   }, [defaultValue]);
-  const outOfDomainValue =
-    defaultValue === undefined
-      ? ''
-      : defaultValue !== null &&
-          !(() => {
-            const items = enumOptions;
-            for (let index = 0, count = items.length; index < count; index++) {
-              if (!(index in items)) continue;
-              const option = items[index];
-              if (option.value === '' + defaultValue) return true;
-            }
-            return false;
-          })()
-        ? '' + defaultValue
-        : undefined;
+  let outOfDomainValue: Optional<string>;
+  if (defaultValue === undefined) {
+    outOfDomainValue = '';
+  } else {
+    let matches = defaultValue !== null;
+    if (matches) {
+      let hasMatch = false;
+      for (let index = 0, count = enumOptions.length; index < count; index++) {
+        const option = enumOptions[index];
+
+        if (option.value === '' + defaultValue) {
+          hasMatch = true;
+          break;
+        }
+      }
+      matches = !hasMatch;
+    }
+    outOfDomainValue = matches ? '' + defaultValue : undefined;
+  }
+
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
     const rawValue = enumOptions.find(
       (option) => option.value === event.target.value,

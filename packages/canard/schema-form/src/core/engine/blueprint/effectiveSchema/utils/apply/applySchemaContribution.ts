@@ -68,7 +68,6 @@ export const applySchemaContribution = (
         : [];
       const required = [...earlier];
       for (let index = 0, length = value.length; index < length; index++) {
-        if (!(index in value)) continue;
         const entry = value[index];
         if (earlier.indexOf(entry) === -1 && value.indexOf(entry) === index)
           required.push(entry);

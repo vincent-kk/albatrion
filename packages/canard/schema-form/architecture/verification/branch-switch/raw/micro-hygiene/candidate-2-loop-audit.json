@@ -1,0 +1,295 @@
+{
+  "totals": {
+    "before": {
+      "iife": 137,
+      "iteration": 0,
+      "in": 204,
+      "iterationLabels": 16
+    },
+    "after": {
+      "iife": 0,
+      "iteration": 0,
+      "in": 87,
+      "iterationLabels": 0
+    }
+  },
+  "removedIifes": 137,
+  "removedInChecks": 117,
+  "retainedNumericHasProperty": [
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 223,
+      "expression": "index in tuple"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 64,
+      "expression": "index in fields"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 80,
+      "expression": "index in fields"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 152,
+      "expression": "position in values"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 91,
+      "expression": "index in values"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 128,
+      "expression": "index in items"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 100,
+      "expression": "index in branches"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts",
+      "line": 53,
+      "expression": "index in items"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 124,
+      "expression": "index in items"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 113,
+      "expression": "index in items"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 136,
+      "expression": "index in child"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 64,
+      "expression": "index in values"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/controls/hasKeepFields.ts",
+      "line": 18,
+      "expression": "index in fields"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemEntries.ts",
+      "line": 27,
+      "expression": "index in entries"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "line": 42,
+      "expression": "index in values"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/effectiveType.ts",
+      "line": 44,
+      "expression": "index in values"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 209,
+      "expression": "index in values"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "line": 70,
+      "expression": "index in values"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "line": 55,
+      "expression": "index in values"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 38,
+      "expression": "index in value"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 56,
+      "expression": "index in value"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 65,
+      "expression": "index in required"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "line": 65,
+      "expression": "index in items"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 34,
+      "expression": "index in source"
+    },
+    {
+      "file": "src/core/engine/validation/utils/read/readFieldNodeErrors.ts",
+      "line": 29,
+      "expression": "index in items"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx",
+      "line": 63,
+      "expression": "index in prev"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 33,
+      "expression": "index in authored"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldMap.ts",
+      "line": 27,
+      "expression": "index in ChildFields"
+    }
+  ],
+  "grep132Explanation": "Added-line grep matched 131 zero-argument invoked arrows and the mandatory useMemo callback in useChildFieldMap; six additional parameterized type-predicate arrows were also removed. All 137 invoked arrows are gone; the useMemo callback is retained.",
+  "verification": {
+    "typecheck": 0,
+    "lint": 0,
+    "targeted": {
+      "files": 82,
+      "passed": 720,
+      "todo": 1
+    }
+  },
+  "typeUtilities": {
+    "counts": {
+      "Optional": 13
+    },
+    "total": 13,
+    "sites": [
+      {
+        "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+        "line": 76,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/canApplyArrayTail.ts",
+        "line": 18,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+        "line": 100,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/controls/readLatentExitPolicy.ts",
+        "line": 20,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+        "line": 56,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+        "line": 39,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+        "line": 220,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+        "line": 166,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+        "line": 35,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/inactive/readExplicitWriteKind.ts",
+        "line": 27,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/transition/isReplacedLivePath.ts",
+        "line": 38,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/settle/utils/transition/isReplacedLivePath.ts",
+        "line": 22,
+        "utility": "Optional"
+      },
+      {
+        "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+        "line": 44,
+        "utility": "Optional"
+      }
+    ],
+    "kept": [
+      {
+        "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+        "line": 181,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+        "line": 189,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/engine/record/constants/emptyRevisionLedger.ts",
+        "line": 2,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/engine/record/types/record.ts",
+        "line": 25,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/engine/record/types/record.ts",
+        "line": 23,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/engine/record/types/record.ts",
+        "line": 105,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/engine/record/types/runtime.ts",
+        "line": 197,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/engine/record/utils/FieldNodeRevisionLedger.ts",
+        "line": 19,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+        "line": 112,
+        "reason": "Record key is not string"
+      },
+      {
+        "file": "src/core/surface/runtime/FieldNode.ts",
+        "line": 83,
+        "reason": "Record key is not string"
+      }
+    ]
+  }
+}

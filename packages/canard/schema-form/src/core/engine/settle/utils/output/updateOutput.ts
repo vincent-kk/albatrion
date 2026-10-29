@@ -15,6 +15,7 @@ import { keepsChildEmissions } from './utils/keepsChildEmissions';
  * @param recalculated - Direct children recomputed with an unchanged host shape
  * @returns Whether either calculated value changed
  */
+
 export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
@@ -57,29 +58,29 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   if (appending && hint?.incremental) append.assembled = assembled;
   if (truncating && hint?.incremental) pop.assembled = assembled;
   const previousLocal = node.local;
-  const same = hint?.incremental
-    ? node.behavior.type === 'object' &&
+  let same = false;
+  if (hint?.incremental) {
+    if (
+      node.behavior.type === 'object' &&
       previousLocal !== null &&
       typeof previousLocal === 'object' &&
       assembled !== null &&
       typeof assembled === 'object' &&
-      (() => {
-        const items = recalculated;
-        if (items == null) return undefined;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const child = items[index];
-          if (
-            !sameValue(
-              Reflect.get(previousLocal, child.name),
-              Reflect.get(assembled, child.name),
-            )
+      recalculated
+    ) {
+      same = true;
+      for (const child of recalculated)
+        if (
+          !sameValue(
+            Reflect.get(previousLocal, child.name),
+            Reflect.get(assembled, child.name),
           )
-            return false;
+        ) {
+          same = false;
+          break;
         }
-        return true;
-      })()
-    : sameValue(node.local, assembled);
+    }
+  } else same = sameValue(node.local, assembled);
   let local = same ? node.local : assembled;
   const baseline = node.deliveryPreviousLocal;
   const revisit =

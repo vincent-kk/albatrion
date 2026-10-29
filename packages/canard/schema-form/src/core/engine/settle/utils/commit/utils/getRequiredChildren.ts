@@ -9,6 +9,7 @@ import type { FieldNodeRecord } from '../../../../record';
  * Filtering costs O(entered); multiple results sort only when integer names need ordering.
  * existing child arrays remain unchanged.
  */
+
 export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   entered: readonly Self[],
@@ -32,34 +33,34 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
       host.structure?.[child.name] === child
     )
       children.push(child);
-  if (
-    children.length > 1 &&
-    (() => {
-      const items = children;
-      iterate: for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const item = items[position];
-        const child = item;
+  let matches = children.length > 1;
+  if (matches) {
+    matches = false;
+    for (
+      let position = 0, count = children.length;
+      position < count;
+      position++
+    ) {
+      const child = children[position];
+
+      {
+        const first = child.name.charCodeAt(0);
+
+        if (first < 48 || first > 57) {
+          continue;
+        }
+
+        const index = Number(child.name) >>> 0;
         {
-          const first = child.name.charCodeAt(0);
-          if (first < 48 || first > 57) {
-            continue iterate;
-          }
-          const index = Number(child.name) >>> 0;
-          {
-            if (index !== 0xffffffff && String(index) === child.name)
-              return true;
-            continue iterate;
+          if (index !== 0xffffffff && String(index) === child.name) {
+            matches = true;
+            break;
           }
         }
       }
-      return false;
-    })()
-  )
+    }
+  }
+  if (matches) {
     children.sort((left, right) => {
       const leftIndex = Number(left.name) >>> 0;
       const rightIndex = Number(right.name) >>> 0;
@@ -75,5 +76,6 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
           ? 1
           : 0;
     });
+  }
   return children;
 };

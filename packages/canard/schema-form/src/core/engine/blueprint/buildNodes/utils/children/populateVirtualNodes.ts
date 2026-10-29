@@ -24,6 +24,7 @@ import { resolveNodeStrategy } from '../nodeTypes/resolveNodeStrategy';
  * @param host - Completed real-property host whose virtual groups are being bound
  * @returns Nothing; appends stable virtual child edges to the host
  */
+
 export const populateVirtualNodes = (
   context: AnalysisContext,
   host: MutableNode,
@@ -56,82 +57,80 @@ export const populateVirtualNodes = (
         name,
       );
       const fields = schema.fields;
-      if (
-        !isArray(fields) ||
-        (() => {
-          const items = fields;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const field = items[index];
-            if (typeof field !== 'string') return true;
+      let matchesEither = !isArray(fields);
+      if (!matchesEither) {
+        matchesEither = false;
+        for (let index = 0, count = fields.length; index < count; index++) {
+          if (!(index in fields)) {
+            continue;
           }
-          return false;
-        })() ||
-        (() => {
-          const items = fields;
-          for (
-            let position = 0, count = items.length;
-            position < count;
-            position++
-          ) {
-            if (!(position in items)) continue;
-            const field = items[position];
-            const index = position;
-            if (fields.indexOf(field) !== index) return true;
+
+          const field = fields[index];
+
+          if (typeof field !== 'string') {
+            matchesEither = true;
+            break;
           }
-          return false;
-        })()
-      )
+        }
+      }
+      let matchesEither2 = matchesEither;
+      if (!matchesEither2) {
+        matchesEither2 = false;
+        for (let index = 0, count = fields.length; index < count; index++) {
+          if (!(index in fields)) {
+            continue;
+          }
+
+          const field = fields[index];
+
+          if (fields.indexOf(field) !== index) {
+            matchesEither2 = true;
+            break;
+          }
+        }
+      }
+      if (matchesEither2) {
         throwBlueprintError(
           FormErrorCode.VirtualFieldsNotValid,
           schemaPath,
           { fields },
           context.options,
         );
-      for (const field of fields)
-        if (
-          !(() => {
-            const items = host.childEntries;
-            for (let index = 0, count = items.length; index < count; index++) {
-              if (!(index in items)) continue;
-              const edge = items[index];
-              if (edge.name === field && edge.node.kind !== 'virtual')
-                return true;
-            }
-            return false;
-          })()
-        )
+      }
+      for (const field of fields) {
+        let hasMatch = false;
+        for (const edge of host.childEntries) {
+          if (edge.name === field && edge.node.kind !== 'virtual') {
+            hasMatch = true;
+            break;
+          }
+        }
+        if (!hasMatch) {
           throwBlueprintError(
             FormErrorCode.VirtualFieldsNotInProperties,
             schemaPath,
             { field },
             context.options,
           );
+        }
+      }
       const group = groups.get(name);
-      if (
-        group &&
-        (group.fields.length !== fields.length ||
-          (() => {
-            const items = group.fields;
-            for (
-              let position = 0, count = items.length;
-              position < count;
-              position++
-            ) {
-              if (!(position in items)) continue;
-              const field = items[position];
-              const index = position;
-              if (field !== fields[index]) return true;
+      if (group) {
+        let mismatched = group.fields.length !== fields.length;
+        if (!mismatched)
+          for (let index = 0; index < group.fields.length; index++)
+            if (group.fields[index] !== fields[index]) {
+              mismatched = true;
+              break;
             }
-            return false;
-          })())
-      )
-        throwBlueprintError(
-          FormErrorCode.VirtualFieldsMismatch,
-          schemaPath,
-          { name, fields, previous: group.fields },
-          context.options,
-        );
+        if (mismatched)
+          throwBlueprintError(
+            FormErrorCode.VirtualFieldsMismatch,
+            schemaPath,
+            { name, fields, previous: group.fields },
+            context.options,
+          );
+      }
       const declarations = collectDeclarations(
         context,
         {

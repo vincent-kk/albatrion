@@ -16,27 +16,32 @@ import type { SettlementContext } from '../../types/settlement';
  * @param inputPath - Canonical address of this JSON position
  * @returns Coverage at this position: callerPartial covers only supplied keys, callerReplace covers omitted descendants, automatic never counts, and undefined lies outside every caller origin
  */
+
 export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   inputPath: string,
 ): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
-  if (!origins) return context.kind;
   // Batch replacement paths retain earlier whole writes after later merges.
-  if (
-    (() => {
-      const items = context.replacePaths;
-      if (items == null) return undefined;
+  if (!origins) return context.kind;
+  let hasMatch: Optional<boolean> = undefined;
+  {
+    const items = context.replacePaths;
+    if (items != null) {
+      hasMatch = false;
       for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
         const path = items[index];
-        if (inputPath === path || isDescendantPath(inputPath, path))
-          return true;
+
+        if (inputPath === path || isDescendantPath(inputPath, path)) {
+          hasMatch = true;
+          break;
+        }
       }
-      return false;
-    })()
-  )
+    }
+  }
+  if (hasMatch) {
     return 'callerReplace';
+  }
   for (let index = origins.length - 1; index >= 0; index--) {
     const origin = origins[index];
     const path =

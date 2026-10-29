@@ -12,8 +12,9 @@ import type { BlueprintNode } from '../../types/node';
  * @param nodes - Completed templates, before publication and freezing
  * @returns Nothing; only templates potentially addressed by inactiveValue are marked
  */
+
 export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
-  for (const node of nodes)
+  for (const node of nodes) {
     for (const declaration of node.declarations) {
       const schema = declaration.schema;
       if (typeof schema !== 'object') continue;
@@ -43,25 +44,24 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
         ...(node.itemCandidates ?? (node.item ? [node.item] : [])),
         ...(node.prefixItemCandidates?.flat() ?? node.prefixItems ?? []),
       ];
-      for (const child of children)
-        if (
-          (() => {
-            const items = child.declarations;
-            for (let index = 0, count = items.length; index < count; index++) {
-              if (!(index in items)) continue;
-              const candidate = items[index];
-              if (
-                getFragmentOwnerPaths(candidate.schemaPath).includes(
-                  declaration.schemaPath,
-                )
-              )
-                return true;
-            }
-            return false;
-          })()
-        )
+      for (const child of children) {
+        let hasMatch = false;
+        for (const candidate of child.declarations) {
+          if (
+            getFragmentOwnerPaths(candidate.schemaPath).includes(
+              declaration.schemaPath,
+            )
+          ) {
+            hasMatch = true;
+            break;
+          }
+        }
+        if (hasMatch) {
           mark(child);
+        }
+      }
     }
+  }
 };
 
 /**

@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   FormErrorCode,
   FormWarningCode,
@@ -24,6 +26,7 @@ import { recordGateInput } from './recordGateInput';
  * @param edgeName - Direct child whose own active gate is being evaluated
  * @returns Whether the condition currently admits its declaration
  */
+
 const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   context: SettlementContext<Self>,
@@ -31,20 +34,24 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   edgeName?: string,
   reference = false,
 ): boolean => {
-  if (
-    (() => {
-      const items = gate.appliesWhen;
-      if (items == null) return undefined;
+  let hasMatch: Optional<boolean> = undefined;
+  {
+    const items = gate.appliesWhen;
+    if (items != null) {
+      hasMatch = false;
       for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
         const parentGate = items[index];
-        if (!evaluateGate(parentGate, context, owner, undefined, reference))
-          return true;
+
+        if (!evaluateGate(parentGate, context, owner, undefined, reference)) {
+          hasMatch = true;
+          break;
+        }
       }
-      return false;
-    })()
-  )
+    }
+  }
+  if (hasMatch) {
     return false;
+  }
   const registry = getGateRegistry(owner.runtime);
   const occurrence = registry.locate(owner, gate, edgeName);
   const hostPath = occurrence.hostPath;
@@ -158,21 +165,26 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
       gate.kind === 'if'
         ? FormErrorCode.GuardFailed
         : FormErrorCode.ExpressionThrew;
-    const repeated = (() => {
+    let repeated: Optional<boolean> = undefined;
+    {
       const items = context.failures;
-      if (items == null) return undefined;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const error = items[index];
-        if (
-          error.code === code &&
-          error.details.path === hostPath &&
-          error.details.schemaPath === gate.schemaPath
-        )
-          return true;
+      if (items != null) {
+        repeated = false;
+        for (let index = 0, count = items.length; index < count; index++) {
+          const error = items[index];
+
+          if (
+            error.code === code &&
+            error.details.path === hostPath &&
+            error.details.schemaPath === gate.schemaPath
+          ) {
+            repeated = true;
+            break;
+          }
+        }
       }
-      return false;
-    })();
+    }
+
     const failure =
       runtime.mountingGuardPass || repeated
         ? undefined

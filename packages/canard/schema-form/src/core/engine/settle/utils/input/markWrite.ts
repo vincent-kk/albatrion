@@ -35,6 +35,7 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its raw by the distribution's skip test; omitted, the input is interpreted and compared here
  * @returns Nothing; only this node's own state channels are stored here
  */
+
 export const markWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
@@ -97,6 +98,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   let extras: unknown;
   let whole: boolean;
   let countChanged = false;
+
   if (node.behavior.type === 'array') {
     const previousItemCount = node.itemCount;
     if (context.automatic)
@@ -115,30 +117,30 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     whole = true;
     if (isMerge && node !== context.replaceScope)
       pruneInactiveSources(node.runtime, node.path, undefined, context);
-  } else if (!isPlain(value)) {
-    nextRaw = value;
-    extras = undefined;
-    whole = true;
-    if (isMerge && node !== context.replaceScope)
-      pruneInactiveSources(node.runtime, node.path, undefined, context);
   } else {
-    const declared = getDeclaredChildNames(node.blueprintNode);
-    whole =
-      !isMerge &&
-      (context.replacePaths === undefined ||
-        (() => {
-          const items = context.replacePaths;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const path = items[index];
-            if (node.path === path || isDescendantPath(node.path, path))
-              return true;
-          }
-          return false;
-        })());
-    nextRaw = isMerge ? node.raw : undefined;
-    if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
-    extras = nextExtras(node.undeclaredValues, value, declared, isMerge);
+    if (!isPlain(value)) {
+      nextRaw = value;
+      extras = undefined;
+      whole = true;
+      if (isMerge && node !== context.replaceScope)
+        pruneInactiveSources(node.runtime, node.path, undefined, context);
+    } else {
+      const declared = getDeclaredChildNames(node.blueprintNode);
+      whole = false;
+      if (!isMerge) {
+        const replacePaths = context.replacePaths;
+        if (replacePaths === undefined) whole = true;
+        else
+          for (const path of replacePaths)
+            if (node.path === path || isDescendantPath(node.path, path)) {
+              whole = true;
+              break;
+            }
+      }
+      nextRaw = isMerge ? node.raw : undefined;
+      if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
+      extras = nextExtras(node.undeclaredValues, value, declared, isMerge);
+    }
   }
   const rawChanged = !sameValue(node.raw, nextRaw);
   const extrasChanged = node.undeclaredValues !== extras;

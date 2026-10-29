@@ -19,6 +19,7 @@ import { verifyGateSelection } from './verifyGateSelection';
  * @param group - Root or child group bound to the same baseline terminal name
  * @returns The watched primitive or reference exactly as projected at this site
  */
+
 export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
@@ -39,6 +40,7 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
         ? registry.occurrenceCount(node.path)
         : 0,
   });
+
   if (engineModes.gateSelection === 'verify') {
     const childGroup = round.table.groups.find(
       (candidate) => candidate.watchedName === group.watchedName,
@@ -54,23 +56,30 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
         step.gate.kind === 'discriminator'
           ? undefined
           : getGateExpression(node.runtime.blueprint, step.gate.schemaPath);
+      let selectedResult: boolean;
+      if (step.gate.kind === 'discriminator') {
+        let hasMatch = false;
+        {
+          const items = step.gate.condition.values;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) {
+              continue;
+            }
+
+            const tag = items[index];
+
+            if (tag === value) {
+              hasMatch = true;
+              break;
+            }
+          }
+        }
+        selectedResult = hasMatch;
+      } else {
+        selectedResult = Boolean(expression!.evaluate([value]));
+      }
       verifyGateSelection(
-        (admitted.indexOf(index) !== -1) ===
-          (step.gate.kind === 'discriminator'
-            ? (() => {
-                const items = step.gate.condition.values;
-                for (
-                  let index = 0, count = items.length;
-                  index < count;
-                  index++
-                ) {
-                  if (!(index in items)) continue;
-                  const tag = items[index];
-                  if (tag === value) return true;
-                }
-                return false;
-              })()
-            : Boolean(expression!.evaluate([value]))),
+        (admitted.indexOf(index) !== -1) === selectedResult,
         'S1 table step verdict: ' + index,
       );
     }

@@ -20,6 +20,7 @@ import { getIfGateReadNames } from './getIfGateReadNames';
  * @param reads - Complete absolute value paths used by this occurrence
  * @returns Predicate with stable witness keys and one lazy validator binding
  */
+
 export const createGatePredicate = (
   runtime: { blueprint: Blueprint; validator?: unknown },
   occurrence: GateOccurrence,
@@ -68,25 +69,33 @@ export const createGatePredicate = (
       kind: 'extra',
       key: 'extra:' + occurrence.hostPath,
     });
+  let matches = engineModes.gatePredicate !== 'off';
+  if (matches) {
+    let matchesEither = gate.kind !== 'active';
+    if (!matchesEither) {
+      let matches2 = expression?.completeReads === true;
+      if (matches2) {
+        let hasMatch = false;
+        for (let index = 0, count = reads.length; index < count; index++) {
+          const path = reads[index];
+
+          if (readPointerSegment(path, 0) === PointerOperator.Context) {
+            hasMatch = true;
+            break;
+          }
+        }
+        matches2 = !hasMatch;
+      }
+      matchesEither = matches2;
+    }
+    matches = matchesEither;
+  }
   return {
     reads,
     names,
     inputs,
     arguments: { values: new Array<unknown>(inputs.length), view: undefined },
-    memoizable:
-      engineModes.gatePredicate !== 'off' &&
-      (gate.kind !== 'active' ||
-        (expression?.completeReads === true &&
-          !(() => {
-            const items = reads;
-            for (let index = 0, count = items.length; index < count; index++) {
-              if (!(index in items)) continue;
-              const path = items[index];
-              if (readPointerSegment(path, 0) === PointerOperator.Context)
-                return true;
-            }
-            return false;
-          })())),
+    memoizable: matches,
     evaluate: (input) => {
       if (gate.kind === 'if') {
         guard ??= readFieldNodeGuard(runtime, gate);

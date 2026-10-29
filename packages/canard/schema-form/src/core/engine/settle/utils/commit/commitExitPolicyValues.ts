@@ -58,6 +58,7 @@ const getExitExpressions = (
  * @param context - Final shape and its bounded set of calculated hosts
  * @returns Nothing; committed rule values and any deferred failure are updated
  */
+
 export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
@@ -103,42 +104,37 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       const controls: unknown = Reflect.get(schema, SCHEMA_GROUP.controls);
       if (!controls || typeof controls !== 'object' || isArray(controls))
         continue;
+
       if (
         declaration.scope === 'fragment' &&
         typeof Reflect.get(controls, CONTROL_KEY.unsetOnInactive) === 'string'
-      )
+      ) {
         for (const child of source.children ?? []) {
           const childSelected =
             context.selectedDeclarationIds.get(child) ??
             child.runtime.committedDeclarationIds?.get(
               getCommittedDeclarationKey(child, child.runtime),
             );
-          if (
-            !(() => {
-              const items = child.blueprintNode.declarations;
-              for (
-                let index = 0, count = items.length;
-                index < count;
-                index++
-              ) {
-                if (!(index in items)) continue;
-                const childDeclaration = items[index];
-                if (
-                  (!childSelected ||
-                    childSelected.indexOf(childDeclaration.id) !== -1) &&
-                  getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
-                    declaration.schemaPath,
-                  ) !== -1
-                )
-                  return true;
-              }
-              return false;
-            })()
-          )
+          let hasMatch = false;
+          for (const childDeclaration of child.blueprintNode.declarations) {
+            if (
+              (!childSelected ||
+                childSelected.indexOf(childDeclaration.id) !== -1) &&
+              getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
+                declaration.schemaPath,
+              ) !== -1
+            ) {
+              hasMatch = true;
+              break;
+            }
+          }
+          if (!hasMatch) {
             continue;
+          }
           candidates.add(child);
           break;
         }
+      }
       const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (!isArray(fields)) continue;
       for (const item of fields) {

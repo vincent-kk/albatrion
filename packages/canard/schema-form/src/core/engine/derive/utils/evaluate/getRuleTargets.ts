@@ -16,6 +16,7 @@ const NO_TARGETS: readonly never[] = Object.freeze([]);
  * @param state - Active declaration IDs for the current complete tree
  * @returns Every current matching item or named child whose declaration is selected
  */
+
 export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
   source: Self,
   rule: DeriveRule,
@@ -31,21 +32,13 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
         hasOwnProperty(children, rule.targetName)
       ? [children[rule.targetName]]
       : NO_TARGETS;
-  return filterArray(
-    targets,
-    (target) =>
-      !target.detached &&
-      (rule.layer !== 'fragment' ||
-        !rule.targetDeclarationIds ||
-        (() => {
-          const items = rule.targetDeclarationIds;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const id = items[index];
-            if (getSelectedDeclarationIds(target, state).indexOf(id) !== -1)
-              return true;
-          }
-          return false;
-        })()),
-  );
+
+  return filterArray(targets, (target) => {
+    if (target.detached) return false;
+    if (rule.layer !== 'fragment' || !rule.targetDeclarationIds) return true;
+    for (const id of rule.targetDeclarationIds)
+      if (getSelectedDeclarationIds(target, state).indexOf(id) !== -1)
+        return true;
+    return false;
+  });
 };

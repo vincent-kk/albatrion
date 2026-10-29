@@ -14,6 +14,7 @@ import { DirtyPathSet } from '../scratch/DirtyPathSet';
  * @param context - Absolute dirty paths for this write
  * @returns Each live direct child on a dirty path once
  */
+
 export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
@@ -46,28 +47,27 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
     engineModes.gateSelection === 'verify'
       ? context.registrationShadow
       : undefined;
+
   if (shadow) {
     const expected = dirtyChildren(node, {
       ...context,
       registrationShadow: undefined,
       dirtyChildrenByParent: shadow.dirty.childrenByParent,
     });
+    let matches = children.length === expected.length;
+    if (matches) {
+      matches = true;
+      for (let index = 0, count = children.length; index < count; index++) {
+        const child = children[index];
+
+        if (!(child === expected[index])) {
+          matches = false;
+          break;
+        }
+      }
+    }
     verifyGateSelection(
-      children.length === expected.length &&
-        (() => {
-          const items = children;
-          for (
-            let position = 0, count = items.length;
-            position < count;
-            position++
-          ) {
-            if (!(position in items)) continue;
-            const child = items[position];
-            const index = position;
-            if (!(child === expected[index])) return false;
-          }
-          return true;
-        })(),
+      matches,
       'S3 dirtyChildren members/order differ at: ' + node.path,
     );
   }

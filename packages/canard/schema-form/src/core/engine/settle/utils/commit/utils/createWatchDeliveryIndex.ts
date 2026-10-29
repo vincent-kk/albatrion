@@ -47,42 +47,30 @@ class WatchDeliveryIndex {
   /** Replace one node's effective watch paths in the live index. */
   update(node: unknown, paths: readonly string[]): void {
     const previous = this.pathsByNode.get(node);
-    if (
-      previous?.length === paths.length &&
-      (() => {
-        const items = previous;
-        for (
-          let position = 0, count = items.length;
-          position < count;
-          position++
-        ) {
-          if (!(position in items)) continue;
-          const entry = items[position];
-          const index = position;
-          if (!(entry.path === paths[index])) return false;
+    if (previous?.length === paths.length) {
+      let unchanged = true;
+      for (let index = 0; index < previous.length; index++)
+        if (previous[index].path !== paths[index]) {
+          unchanged = false;
+          break;
         }
-        return true;
-      })()
-    )
-      return;
+      if (unchanged) return;
+    }
     this.remove(node);
     const unique: WatchPathMembership[] = [];
-    for (const path of paths)
-      if (
-        !(() => {
-          const items = unique;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const entry = items[index];
-            if (entry.path === path) return true;
-          }
-          return false;
-        })()
-      )
+    for (const path of paths) {
+      let present = false;
+      for (const entry of unique)
+        if (entry.path === path) {
+          present = true;
+          break;
+        }
+      if (!present)
         unique.push({
           path,
           segments: getCachedPointerSegments(this.runtime, path),
         });
+    }
     if (unique.length === 0) return;
     this.pathsByNode.set(node, unique);
     this.allNodes.add(node);

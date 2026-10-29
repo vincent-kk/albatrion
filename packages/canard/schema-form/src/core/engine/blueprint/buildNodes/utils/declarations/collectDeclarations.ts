@@ -41,6 +41,7 @@ const FRAGMENT_KEYWORDS = [
  * @param result - Owner's ordered sink; omitted calls allocate their own array
  * @returns The sink after expansion, with finite reference cycles cut at re-entry
  */
+
 export const collectDeclarations = (
   context: AnalysisContext,
   input: SchemaInput,
@@ -62,22 +63,23 @@ export const collectDeclarations = (
   if (input.gates.length || input.context === 'declaration')
     context.capabilities.branchless = false;
   const gates: BlueprintGate[] = input.gates.slice();
-  if (
-    schema.controls?.active !== undefined &&
-    !(() => {
-      const items = gates;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const gate = items[index];
-        if (
-          gate.schemaPath ===
-          appendSegment(appendSegment(input.schemaPath, 'controls'), 'active')
-        )
-          return true;
+  let matches = schema.controls?.active !== undefined;
+  if (matches) {
+    let hasMatch = false;
+    for (let index = 0, count = gates.length; index < count; index++) {
+      const gate = gates[index];
+
+      if (
+        gate.schemaPath ===
+        appendSegment(appendSegment(input.schemaPath, 'controls'), 'active')
+      ) {
+        hasMatch = true;
+        break;
       }
-      return false;
-    })()
-  )
+    }
+    matches = !hasMatch;
+  }
+  if (matches) {
     gates.push(
       createBlueprintGate({
         kind: 'active',
@@ -89,6 +91,7 @@ export const collectDeclarations = (
         condition: schema.controls.active,
       }),
     );
+  }
   const fragment: MutableFragment = {
     id: context.fragments.length,
     hostPath: path,

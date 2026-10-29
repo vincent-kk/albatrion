@@ -1,6 +1,6 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
-import type { Nullable } from '@aileron/declare';
+import type { Nullable, Optional } from '@aileron/declare';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
@@ -90,15 +90,7 @@ export const getGateSelectionTable = (
       ? getGateExpression(blueprint, gate.schemaPath)
       : undefined;
     const equality =
-      gate?.kind === 'discriminator' &&
-      ((
-        values: typeof gate.condition.values,
-      ): values is readonly GateSelectionLiteral[] => {
-        for (let index = 0, length = values.length; index < length; index++)
-          if (index in values && !isGateSelectionLiteral(values[index]))
-            return false;
-        return true;
-      })(gate.condition.values)
+      gate?.kind === 'discriminator' && isGateLiteralList(gate.condition.values)
         ? { literals: gate.condition.values }
         : expression?.equality;
     const watchedName =
@@ -124,18 +116,7 @@ export const getGateSelectionTable = (
     if (
       gate &&
       ifReads &&
-      ((names: NonNullable<typeof ifReads>): names is readonly string[] => {
-        for (let index = 0, length = names.length; index < length; index++) {
-          if (!(index in names)) continue;
-          const name = names[index];
-          if (
-            name === undefined ||
-            !watchedNames.has(appendSegment(host.path, name))
-          )
-            return false;
-        }
-        return true;
-      })(ifReads)
+      hasOnlyWatchedReadNames(ifReads, watchedNames, host.path)
     ) {
       let group = predicateGroups.get(gate);
       if (!group) {
@@ -216,3 +197,31 @@ export const getGateSelectionTable = (
   ).gateSelectionTable = table;
   return table;
 };
+
+/** Narrow borrowed literal tags without visiting sparse slots.
+ * @param values Authored discriminator values.
+ * @returns Whether every present tag has strict Map-key semantics.
+ */
+function isGateLiteralList(
+  values: readonly unknown[],
+): values is readonly GateSelectionLiteral[] {
+  for (let index = 0, length = values.length; index < length; index++)
+    if (index in values && !isGateSelectionLiteral(values[index])) return false;
+  return true;
+}
+/** Prove every generated read resolves to a watched terminal.
+ * @param names Dense compiled read names, including unresolved entries.
+ * @param watched Existing terminal path index.
+ * @param hostPath Host used to resolve authored names.
+ * @returns Whether the existing names can be retained as complete watched reads.
+ */
+function hasOnlyWatchedReadNames(
+  names: readonly Optional<string>[],
+  watched: ReadonlyMap<string, string>,
+  hostPath: string,
+): names is readonly string[] {
+  for (const name of names)
+    if (name === undefined || !watched.has(appendSegment(hostPath, name)))
+      return false;
+  return true;
+}

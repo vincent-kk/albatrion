@@ -8,33 +8,30 @@ import type { ChildSelectionFrame } from '../selectEntryStep';
  * @returns The finalized child list, reusing its prior reference when membership is unchanged.
  * New membership allocates a complete shape and list; intermediate views never escape selection.
  */
+
 export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
   frame: ChildSelectionFrame<Self>,
 ): readonly Self[] => {
   const prepared = frame.preparedStatic!;
   const names = Object.keys(frame.preparedDynamic!);
-  const same =
-    names.length === prepared.dynamicNames.length &&
-    (() => {
-      const items = names;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const name = items[position];
-        const index = position;
-        if (
-          !(
-            name === prepared.dynamicNames[index] &&
-            frame.next[name] === prepared.selectedStructure[name]
-          )
+  let same = names.length === prepared.dynamicNames.length;
+  if (same) {
+    same = true;
+    for (let index = 0, count = names.length; index < count; index++) {
+      const name = names[index];
+
+      if (
+        !(
+          name === prepared.dynamicNames[index] &&
+          frame.next[name] === prepared.selectedStructure[name]
         )
-          return false;
+      ) {
+        same = false;
+        break;
       }
-      return true;
-    })();
+    }
+  }
+
   if (!same) {
     prepared.selectedStructure = Object.assign(
       Object.create(null),

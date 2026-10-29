@@ -12,12 +12,14 @@ import { FieldInputString } from '../FieldInputString';
 import { readUnionDisplay } from './utils/readUnionDisplay';
 
 /** Wrap the string fallback with a local draft interpreted only against live union types. */
+
 export const FieldInputUnion = (props: FieldInputProps) => {
   const { node, value, nullable, schemaType, jsonSchema, misfit } = props;
   const display = useMemo(
     () => readUnionDisplay(value, nullable),
     [value, nullable],
   );
+
   const effectiveTypes = useMemo(() => {
     const authored = isArray(schemaType) ? schemaType : [schemaType];
     const type = jsonSchema.type;
@@ -26,43 +28,31 @@ export const FieldInputUnion = (props: FieldInputProps) => {
       : type === undefined
         ? authored
         : [type];
-    return (() => {
-      const items = authored;
-      const result: Array<(typeof items)[number]> = [];
-      iterate: for (
-        let index = 0, count = items.length;
-        index < count;
-        index++
-      ) {
-        if (!(index in items)) continue;
-        const item = items[index];
-        const kind = item;
-        {
-          if (effective.includes(kind)) result.push(item);
-          continue iterate;
-        }
-      }
-      return result;
-    })();
+    const result: Array<(typeof authored)[number]> = [];
+    for (let index = 0, count = authored.length; index < count; index++)
+      if (index in authored && effective.includes(authored[index]))
+        result.push(authored[index]);
+    return result;
   }, [schemaType, jsonSchema]);
   const effectiveKey = effectiveTypes.join(',');
-  const editable =
-    !display.structured &&
-    (() => {
-      const items = effectiveTypes;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const kind = items[index];
-        if (
-          kind === 'string' ||
-          kind === 'number' ||
-          kind === 'integer' ||
-          kind === 'boolean'
-        )
-          return true;
+  let editable = !display.structured;
+  if (editable) {
+    editable = false;
+    for (let index = 0, count = effectiveTypes.length; index < count; index++) {
+      const kind = effectiveTypes[index];
+
+      if (
+        kind === 'string' ||
+        kind === 'number' ||
+        kind === 'integer' ||
+        kind === 'boolean'
+      ) {
+        editable = true;
+        break;
       }
-      return false;
-    })();
+    }
+  }
+
   const [text, setText] = useState(display.text);
   const draft = useRef<Optional<string>>(undefined);
   const composing = useRef(false);

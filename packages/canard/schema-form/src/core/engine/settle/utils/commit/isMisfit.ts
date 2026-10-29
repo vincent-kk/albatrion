@@ -20,7 +20,6 @@ export const isMisfit = (
   if (value === null) return !nullable;
   const kinds = typeof effective === 'string' ? [effective] : effective;
   for (let index = 0, length = kinds.length; index < length; index++) {
-    if (!(index in kinds)) continue;
     switch (kinds[index]) {
       case 'string':
         if (typeof value === 'string') return false;

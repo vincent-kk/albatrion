@@ -10,6 +10,7 @@ import { hasSlotOverlaySource } from '../slots/hasSlotOverlaySource';
  * @param context - Settlement whose latent-prefix index covers all kinds
  * @returns Whether a default may populate this occurrence
  */
+
 export const isMissingRaw = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
@@ -27,13 +28,15 @@ export const isMissingRaw = <Self extends FieldNodeRecord<Self>>(
       !context.filledNodes.has(pending)
     )
       return false;
-  return (() => {
+  {
     const items = node.children ?? [];
     for (let index = 0, count = items.length; index < count; index++) {
-      if (!(index in items)) continue;
       const child = items[index];
-      if (!isMissingRaw(child, context)) return false;
+
+      if (!isMissingRaw(child, context)) {
+        return false;
+      }
     }
-    return true;
-  })();
+  }
+  return true;
 };

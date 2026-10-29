@@ -24,6 +24,7 @@ import { runDeliveryWaves } from './runDeliveryWaves';
  * @param failure - Caught settlement or user callback failure, if present
  * @returns Nothing; the chain may throw its single failure or aggregate
  */
+
 export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   failure?: unknown,
@@ -45,20 +46,21 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   const occurrences = runtime.chainOccurrences ?? [];
   const pending: FormErrorRecord[] = [];
   const warnings = runtime.pendingWarningRecords;
+
   if (warnings?.size) {
     for (const [key, record] of warnings) {
-      if (
-        !(() => {
-          const items = occurrences;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const item = items[index];
-            if (item.kind === 'record' && item.record === record) return true;
-          }
-          return false;
-        })()
-      )
+      let hasMatch = false;
+      for (let index = 0, count = occurrences.length; index < count; index++) {
+        const item = occurrences[index];
+
+        if (item.kind === 'record' && item.record === record) {
+          hasMatch = true;
+          break;
+        }
+      }
+      if (!hasMatch) {
         pending.push(record);
+      }
       if (!runtime.warningKeys?.has(key)) {
         const parts: unknown = JSON.parse(key.startsWith('[') ? key : 'null');
         const path = isArray(parts) ? parts[1] : undefined;
@@ -74,20 +76,21 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     warnings.clear();
   }
   const guardRecords = runtime.guardFailureRecords;
+
   if (guardRecords?.size) {
     for (const [key, record] of guardRecords) {
-      if (
-        !(() => {
-          const items = occurrences;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const item = items[index];
-            if (item.kind === 'record' && item.record === record) return true;
-          }
-          return false;
-        })()
-      )
+      let hasMatch2 = false;
+      for (let index = 0, count = occurrences.length; index < count; index++) {
+        const item = occurrences[index];
+
+        if (item.kind === 'record' && item.record === record) {
+          hasMatch2 = true;
+          break;
+        }
+      }
+      if (!hasMatch2) {
         pending.push(record);
+      }
       (runtime.reportedGuardFailures ??= new Set()).add(key);
     }
     guardRecords.clear();

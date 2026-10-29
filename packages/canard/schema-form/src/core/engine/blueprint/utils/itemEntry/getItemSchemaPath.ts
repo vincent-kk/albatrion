@@ -13,6 +13,7 @@ import type { BlueprintNode } from '../../types/node';
  * @param node - Selected item template, possibly reused from another host
  * @returns Authored schema path for this array binding
  */
+
 export const getItemSchemaPath = (
   template: BlueprintNode,
   index: number,
@@ -64,18 +65,16 @@ export const getItemSchemaPath = (
     }
     if (!path) continue;
     fallback ??= path;
-    if (
-      (() => {
-        const items = node.declarations;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const candidate = items[index];
-          if (candidate.schema === child) return true;
-        }
-        return false;
-      })()
-    )
+    let hasMatch = false;
+    for (const candidate of node.declarations) {
+      if (candidate.schema === child) {
+        hasMatch = true;
+        break;
+      }
+    }
+    if (hasMatch) {
       return path;
+    }
   }
   return fallback ?? node.schemaPath;
 };

@@ -15,6 +15,7 @@ import { getGateSelectionTable } from './getGateSelectionTable';
  * @param allowPreparation - False for a generic load; only already-prepared metadata may be consumed there
  * @returns Whether the injected registration index contains split owners
  */
+
 export const prepareGateSelection = (
   blueprint: Blueprint,
   allowPreparation = true,
@@ -27,60 +28,20 @@ export const prepareGateSelection = (
   const tables = new Map<BlueprintNode, GateSelectionTable>();
   for (const host of blueprint.nodes) {
     const schema = host.declarations[0]?.schema;
-    if (
-      typeof schema !== 'object' ||
-      schema === null ||
-      !(
-        (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
-        (isArray(schema.anyOf) && schema.anyOf.length > 1) ||
-        (isArray(schema.allOf) &&
-          schema.allOf.length > 1 &&
-          (() => {
-            const collection = host.childEntries;
-            for (
-              let cursor = 0, end = collection.length;
-              cursor < end;
-              cursor++
-            ) {
-              if (!(cursor in collection)) continue;
-              const entry = collection[cursor];
-              if (
-                (() => {
-                  const values = entry.declarations;
-                  for (
-                    let position = 0, limit = values.length;
-                    position < limit;
-                    position++
-                  ) {
-                    if (!(position in values)) continue;
-                    const declaration = values[position];
-                    if (
-                      (() => {
-                        const items = declaration.gates;
-                        for (
-                          let index = 0, count = items.length;
-                          index < count;
-                          index++
-                        ) {
-                          if (!(index in items)) continue;
-                          const gate = items[index];
-                          if (gate.kind === 'if') return true;
-                        }
-                        return false;
-                      })()
-                    )
-                      return true;
-                  }
-                  return false;
-                })()
-              )
-                return true;
+    if (typeof schema !== 'object' || schema === null) continue;
+    let eligible =
+      (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
+      (isArray(schema.anyOf) && schema.anyOf.length > 1);
+    if (!eligible && isArray(schema.allOf) && schema.allOf.length > 1) {
+      conditionalGate: for (const entry of host.childEntries)
+        for (const declaration of entry.declarations)
+          for (const gate of declaration.gates)
+            if (gate.kind === 'if') {
+              eligible = true;
+              break conditionalGate;
             }
-            return false;
-          })())
-      )
-    )
-      continue;
+    }
+    if (!eligible) continue;
     getDirectChildSelectionPlan(host, blueprint, true);
     const table = getGateSelectionTable(host, blueprint);
     if (table) tables.set(host, table);

@@ -26,6 +26,7 @@ export interface DiscriminatorEntrySelection {
  * @param entry - Candidate accepted by isStableDiscriminatorEntry
  * @returns Shared baseline, authored tag buckets, and empty lazy schema preparation
  */
+
 export const prepareDiscriminatorEntrySelection = (
   entry: BlueprintChildEntry,
 ): DiscriminatorEntrySelection => {
@@ -41,41 +42,26 @@ export const prepareDiscriminatorEntrySelection = (
     if (first.kind !== 'discriminator') continue;
     for (let tag = 0; tag < first.condition.values.length; tag++) {
       const value = first.condition.values[tag];
-      if (
-        first.condition.values.indexOf(value) !== tag ||
-        !(() => {
-          const collection = declaration.gates;
-          for (
-            let position = 0, limit = collection.length;
-            position < limit;
-            position++
-          ) {
-            if (!(position in collection)) continue;
-            const gate = collection[position];
-            if (
-              !(
-                gate.kind === 'discriminator' &&
-                (() => {
-                  const items = gate.condition.values;
-                  for (
-                    let index = 0, count = items.length;
-                    index < count;
-                    index++
-                  ) {
-                    if (!(index in items)) continue;
-                    const candidate = items[index];
-                    if (candidate === value) return true;
-                  }
-                  return false;
-                })()
-              )
-            )
-              return false;
+      if (first.condition.values.indexOf(value) !== tag) continue;
+      let admitted = true;
+      for (const gate of declaration.gates) {
+        if (gate.kind !== 'discriminator') {
+          admitted = false;
+          break;
+        }
+        let matches = false;
+        const values = gate.condition.values;
+        for (let index = 0, count = values.length; index < count; index++)
+          if (index in values && values[index] === value) {
+            matches = true;
+            break;
           }
-          return true;
-        })()
-      )
-        continue;
+        if (!matches) {
+          admitted = false;
+          break;
+        }
+      }
+      if (!admitted) continue;
       const bucket = buckets.get(value);
       if (bucket) bucket.push(index);
       else buckets.set(value, [index]);

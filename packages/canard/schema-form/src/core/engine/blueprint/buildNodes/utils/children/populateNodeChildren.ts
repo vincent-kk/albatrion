@@ -36,6 +36,7 @@ import { populateVirtualNodes } from './populateVirtualNodes';
  * @param build - Owner's recursive template constructor
  * @returns Nothing; fills the template's construction-only child lists
  */
+
 export const populateNodeChildren = (
   context: AnalysisContext,
   node: MutableNode,
@@ -151,22 +152,17 @@ export const populateNodeChildren = (
       fragment: context.fragments[declaration.fragmentId],
       role: 'declaration' as const,
     };
+
     if (
       node.kind === 'object' &&
       schema.properties &&
       typeof schema.properties === 'object'
-    )
-      (() => {
+    ) {
+      {
         const items = Object.entries(schema.properties);
-        for (
-          let position = 0, count = items.length;
-          position < count;
-          position++
-        ) {
-          if (!(position in items)) continue;
-          const item = items[position];
-          const [name, child] = item;
-          const index = position;
+        for (let index = 0, count = items.length; index < count; index++) {
+          const [name, child] = items[index];
+
           {
             assertAddressableName(context, declaration.schemaPath, name);
             const existing = properties.get(name);
@@ -209,7 +205,8 @@ export const populateNodeChildren = (
               });
           }
         }
-      })();
+      }
+    }
     if (node.kind !== 'array') continue;
     const tuple =
       schema.prefixItems ?? (isArray(schema.items) ? schema.items : undefined);
@@ -220,37 +217,31 @@ export const populateNodeChildren = (
         { prefixItems: schema.prefixItems },
         context.options,
       );
-    if (tuple)
-      (() => {
-        const values = tuple;
-        for (
-          let position = 0, count = values.length;
-          position < count;
-          position++
-        ) {
-          if (!(position in values)) continue;
-          const item = values[position];
-          const child: SchemaInput['schema'] = item;
-          const index: number = position;
-          {
-            const input: SchemaInput = {
-              ...base,
-              schema: child,
-              schemaPath: appendSegment(
-                appendSegment(
-                  declaration.schemaPath,
-                  schema.prefixItems ? 'prefixItems' : 'items',
-                ),
-                index,
+
+    if (tuple) {
+      for (let index = 0, count = tuple.length; index < count; index++) {
+        if (!(index in tuple)) continue;
+        const child: SchemaInput['schema'] = tuple[index];
+
+        {
+          const input: SchemaInput = {
+            ...base,
+            schema: child,
+            schemaPath: appendSegment(
+              appendSegment(
+                declaration.schemaPath,
+                schema.prefixItems ? 'prefixItems' : 'items',
               ),
-              order: [...declaration.order, 0, index],
-            };
-            const existing = tuples.get(index);
-            if (existing) existing.push(input);
-            else tuples.set(index, [input]);
-          }
+              index,
+            ),
+            order: [...declaration.order, 0, index],
+          };
+          const existing = tuples.get(index);
+          if (existing) existing.push(input);
+          else tuples.set(index, [input]);
         }
-      })();
+      }
+    }
     if (
       schema.items !== undefined &&
       typeof schema.items !== 'boolean' &&
@@ -314,6 +305,7 @@ export const populateNodeChildren = (
       context.staticFirstLoad = false;
     }
   }
+
   if (tuples.size) {
     const candidates = mapArray(
       [...tuples].sort(([a], [b]) => a - b),
@@ -321,17 +313,16 @@ export const populateNodeChildren = (
         build(context, inputs, appendSegment(node.path, index)),
     );
     node.prefixItems = mapArray(candidates, (items) => items[0]);
-    if (
-      (() => {
-        const values = candidates;
-        for (let index = 0, count = values.length; index < count; index++) {
-          if (!(index in values)) continue;
-          const items = values[index];
-          if (items.length > 1) return true;
-        }
-        return false;
-      })()
-    ) {
+    let hasMatch = false;
+    for (let index = 0, count = candidates.length; index < count; index++) {
+      const items = candidates[index];
+
+      if (items.length > 1) {
+        hasMatch = true;
+        break;
+      }
+    }
+    if (hasMatch) {
       node.prefixItemCandidates = candidates;
       context.staticFirstLoad = false;
     }

@@ -18,30 +18,29 @@ import { verifyGateSelection } from './verifyGateSelection';
  * @param value - Bucket verdict recorded in the original evaluation order
  * @returns Nothing; positional S2 checks throw on the first violation
  */
+
 export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   gate: BlueprintGate,
   value: boolean,
 ): void => {
-  if (
-    (() => {
-      const items =
-        context.gateSelectionRounds!.get(node)!.table.predicateGroups;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const group = items[index];
-        if (group.gate === gate) return true;
-      }
-      return false;
-    })()
-  ) {
+  let hasMatch = false;
+  for (const group of context.gateSelectionRounds!.get(node)!.table
+    .predicateGroups) {
+    if (group.gate === gate) {
+      hasMatch = true;
+      break;
+    }
+  }
+  if (hasMatch) {
     verifyGateSelection(
       evaluateGate(gate, context, node, undefined, true) === value,
       'S1 predicate verdict: ' + gate.schemaPath,
     );
     return;
   }
+
   if (engineModes.gateSelection === 'verify') {
     const round = context.gateSelectionRounds!.get(node)!;
     const registry = getGateRegistry(node.runtime);
@@ -57,32 +56,32 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
       Object.is(cached.value, read),
       'S2 positional value: ' + path,
     );
-    verifyGateSelection(
-      pending.length === (context.pendingOutputs?.size ?? 0) &&
-        (() => {
-          const items = pending;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const entry = items[index];
-            if (!context.pendingOutputs!.has(entry)) return false;
-          }
-          return true;
-        })(),
-      'S2 pendingOutputs changed: ' + path,
-    );
-    verifyGateSelection(
-      changed.length === context.changedNodes.size &&
-        (() => {
-          const items = changed;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const entry = items[index];
-            if (!context.changedNodes.has(entry)) return false;
-          }
-          return true;
-        })(),
-      'S2 read published output: ' + path,
-    );
+    let matches = pending.length === (context.pendingOutputs?.size ?? 0);
+    if (matches) {
+      matches = true;
+      for (let index = 0, count = pending.length; index < count; index++) {
+        const entry = pending[index];
+
+        if (!context.pendingOutputs!.has(entry)) {
+          matches = false;
+          break;
+        }
+      }
+    }
+    verifyGateSelection(matches, 'S2 pendingOutputs changed: ' + path);
+    let matches2 = changed.length === context.changedNodes.size;
+    if (matches2) {
+      matches2 = true;
+      for (let index = 0, count = changed.length; index < count; index++) {
+        const entry = changed[index];
+
+        if (!context.changedNodes.has(entry)) {
+          matches2 = false;
+          break;
+        }
+      }
+    }
+    verifyGateSelection(matches2, 'S2 read published output: ' + path);
     verifyGateSelection(
       !context.dirtyPaths.has(path),
       'S2 watched path dirty: ' + path,

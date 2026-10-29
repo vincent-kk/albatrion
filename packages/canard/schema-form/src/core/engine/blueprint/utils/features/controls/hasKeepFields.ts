@@ -9,24 +9,20 @@ import { isKeepControls } from '../isKeepControls';
  * @param controls - Authored controls value of one declaration
  * @returns True when a field entry's own controls pass the keep test
  */
+
 export const hasKeepFields = (controls: unknown): boolean => {
   if (controls === null || typeof controls !== 'object') return false;
   const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
-  return (
-    isArray(fields) &&
-    (() => {
-      const items = fields;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const field: unknown = items[index];
-        if (
-          field !== null &&
-          typeof field === 'object' &&
-          isKeepControls(Reflect.get(field, SCHEMA_GROUP.controls))
-        )
-          return true;
-      }
-      return false;
-    })()
-  );
+  if (!isArray(fields)) return false;
+  for (let index = 0, count = fields.length; index < count; index++) {
+    if (!(index in fields)) continue;
+    const field: unknown = fields[index];
+    if (
+      field !== null &&
+      typeof field === 'object' &&
+      isKeepControls(Reflect.get(field, SCHEMA_GROUP.controls))
+    )
+      return true;
+  }
+  return false;
 };

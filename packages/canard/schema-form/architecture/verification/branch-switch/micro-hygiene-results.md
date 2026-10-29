@@ -219,6 +219,21 @@
 
 첫 전체 unit의 세 실패는 후속 정적 교정으로 보존했습니다. binding organ은 array 유틸리티 import를 허용하지 않아 같은 for-loop로 바꿨습니다. P-08 계수 fixture는 기존 includes와 문자열 연산 계수를 유지하면서 배열 indexOf 계수를 더했고, 모든 크기에서 실제 work > 0도 추가했습니다(32/64/128/256, 배율 2). 식 색인 시험은 기존 native find/map 계수를 유지해 둘 다 0임을 확인하고 common-utils map의 실제 입력을 세어 최초 색인 생성 1회를 확인합니다. 시험을 삭제하거나 단언을 줄이지 않았으며 수정 뒤 기존 실패 **3파일·17건**이 통과했습니다. 이 교정은 해당 원래 항목 커밋으로 합칩니다.
 
+
+### 독립 검토 P2-1에 따른 반복 정리
+
+후보 1의 크기 비용은 다음과 같습니다. 즉시 실행 함수는 호출마다 함수 호출을 더하고 `in` 검사는 방문 원소마다 실행됩니다. 검토의 추가 줄 grep 132개는 실제 인수 없는 IIFE **131개**와 필요한 `useMemo` 콜백 한 줄을 함께 센 값입니다. 그 밖의 형 술어용 인수 있는 IIFE **6개**도 있었습니다. 후보 2에서는 **137개 모두**를 보통 반복문·결과 변수 또는 정적 이름을 가진 형 술어로 옮겼습니다. 파서의 밀집 세그먼트 형 술어는 엔진 내부 한 파일을 세 호출자가 공유하며 패키지 공개 내보내기는 늘리지 않습니다. 필수 hook 콜백은 유지합니다.
+
+| 번들 | 기준 바이트 | 후보 1 바이트 | 증가 |
+| --- | ---: | ---: | ---: |
+| `index.mjs` | 830373 | 861528 | +31155 (3.75%) |
+| `index.node.mjs` | 829595 | 860750 | +31155 (3.76%) |
+| `index.cjs` | 847915 | 882316 | +34401 (4.06%) |
+
+전체 제품 AST의 `in`은 **204→87(117개 제거)**, 반복용 labeled continue는 **16→0**, prototype 반복은 계속 **0**입니다. 밀집인 엔진 작성 배열에서 불필요한 검사를 없애고 callback 값/색인 별칭과 결과 별칭을 합쳤습니다. 내부 불변 메타데이터는 직접 순회하고, 쓰기 도중 바뀔 수 있는 배열은 최초 길이와 수신 배열을 보존합니다. 임시 filter 결과 배열의 소유·순서와 기존 반환 참조는 유지하고 새 상주 컨테이너는 없습니다. 후보 2의 세 번들 바이트는 최종 build 뒤 같은 표에 추가하며, 시간과 Node/Bun 힙 비용은 승인된 짧은 창으로 판단합니다. 창 1은 중단되어 이 비용의 채택 근거가 아닙니다.
+
+[반복 감사 원시](raw/micro-hygiene/candidate-2-loop-audit.json)는 남은 숫자 `in` 28곳을 모두 열거합니다. 작성/외부 입력의 tuple·virtual fields·controls.fields/targets·schema.allOf/branches·enum/literal 값·작성 type·required/dependentRequired·외부 오류·checkbox prev·union authored·공개 `ChildFields` 인수의 구멍은 계속 건너뜁니다. 기존 item-entry 캐시의 sparse 존재 검사, 스냅숏의 실제 구멍 보존 검사도 유지합니다. `Object.keys`, 이전 discriminator 값의 push 배열, 렌더의 생성된 옵션/표시 배열에서는 검사를 없앴습니다. 새로 작성한 로컬 선택 형 13개는 기존 Optional 유틸리티로 표기했습니다. typecheck·lint·표적 **82파일 720건(기존 todo 1)**을 통과했으며 [로그](raw/micro-hygiene/candidate-2-loop-checks.json.gz)를 보존했습니다.
+
 ## 항목 6 — 형 유틸리티
 
 **521지점**을 치환했습니다: `Record<string, T>` → Dictionary **101개**, Optional **284개**, Nullable **122개**, Optional<Nullable> **13개**, Nullish **1개**입니다. 문자열 아닌 Record 키와 기존 조건부·mapped type의 분배·modifier 의미가 달라지는 조합은 유지했습니다. 대응하는 Required/Partial/IsNullable/Roll의 추가 수기 동등 조합은 이 제품 범위에서 발견하지 못했으며, 이미 사용하는 유틸리티는 유지했습니다. [항목 6 위치](raw/micro-hygiene/item-6.json)를 보존합니다.

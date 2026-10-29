@@ -26,6 +26,7 @@ const CHILD_FIELD_ERROR_EVENTS =
   FieldNodeEventType.UpdateError;
 
 /** Read direct-child issues and visibility, resubscribing when children or paths change. */
+
 export const useChildFieldErrors = (
   node: FieldNode,
   disabled?: boolean,
@@ -62,6 +63,7 @@ export const useChildFieldErrors = (
     [node],
   );
   const revision = useSyncExternalStore(subscribe, snapshot, snapshot);
+
   return useMemo(() => {
     const current = node.children ?? [];
     const errorMatrix = mapArray(current, (child) =>
@@ -76,18 +78,23 @@ export const useChildFieldErrors = (
     );
     const formattedError =
       formattedErrors.find((message) => message != null) ?? null;
-    const showError =
-      !disabled &&
-      (checkShowError(node.state) ||
-        (() => {
-          const items = showErrors;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const item = items[index];
-            if (item) return true;
+    let showError = !disabled;
+    if (showError) {
+      let matchesEither = checkShowError(node.state);
+      if (!matchesEither) {
+        matchesEither = false;
+        for (let index = 0, count = showErrors.length; index < count; index++) {
+          const item = showErrors[index];
+
+          if (item) {
+            matchesEither = true;
+            break;
           }
-          return false;
-        })());
+        }
+      }
+      showError = matchesEither;
+    }
+
     return {
       errorMessage: showError ? formattedError : null,
       showError,

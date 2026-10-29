@@ -32,6 +32,7 @@ const UNION_KEYWORDS = ['oneOf', 'anyOf'] as const;
  * @param schemaPath - Authored host location
  * @returns Branch-location descriptors; branches lacking tags remain ungated
  */
+
 export const readDiscriminatorBranches = (
   context: AnalysisContext,
   schema: BlueprintSchema,
@@ -72,19 +73,24 @@ export const readDiscriminatorBranches = (
           branchTypes,
           readAllowedTypes(part.schema, part.schemaPath, context.options),
         );
-      if (
-        (() => {
-          const items = branchTypes;
-          if (items == null) return undefined;
+      let allMatch: Optional<boolean> = undefined;
+      {
+        const items = branchTypes;
+        if (items != null) {
+          allMatch = true;
           for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
             const type = items[index];
-            if (!(type === 'null')) return false;
+
+            if (!(type === 'null')) {
+              allMatch = false;
+              break;
+            }
           }
-          return true;
-        })()
-      )
+        }
+      }
+      if (allMatch) {
         continue;
+      }
       let values: Optional<readonly unknown[]>;
       let mask: Optional<number>;
       for (const part of parts) {
@@ -137,42 +143,43 @@ export const readDiscriminatorBranches = (
           { propertyName, reason: 'kind' },
           context.options,
         );
-      if (
-        (() => {
-          const collection = values;
-          for (
-            let position = 0, limit = collection.length;
-            position < limit;
-            position++
-          ) {
-            if (!(position in collection)) continue;
-            const value = collection[position];
-            if (
-              (() => {
-                const items = previousValues;
-                for (
-                  let index = 0, count = items.length;
-                  index < count;
-                  index++
-                ) {
-                  if (!(index in items)) continue;
-                  const previous = items[index];
-                  if (equals(previous, value)) return true;
-                }
-                return false;
-              })()
-            )
-              return true;
+      let hasMatch = false;
+      for (
+        let position = 0, limit = values.length;
+        position < limit;
+        position++
+      ) {
+        if (!(position in values)) {
+          continue;
+        }
+
+        const value = values[position];
+        let hasMatch2 = false;
+        for (
+          let index = 0, count = previousValues.length;
+          index < count;
+          index++
+        ) {
+          const previous = previousValues[index];
+
+          if (equals(previous, value)) {
+            hasMatch2 = true;
+            break;
           }
-          return false;
-        })()
-      )
+        }
+        if (hasMatch2) {
+          hasMatch = true;
+          break;
+        }
+      }
+      if (hasMatch) {
         return throwBlueprintError(
           FormErrorCode.DiscriminatorMismatch,
           branchPath,
           { propertyName, reason: 'overlap' },
           context.options,
         );
+      }
       previousMask = mask ?? previousMask;
       previousValues.push(...values);
       result.set(

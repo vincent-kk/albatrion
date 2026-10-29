@@ -24,6 +24,7 @@ export interface HostWheelPlan {
  * @param previous - This wheel's accumulated gates, retained across late relocation
  * @returns Stable plan, with no gate-list enumeration on an unchanged occurrence
  */
+
 export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   previous?: HostWheelPlan,
@@ -53,31 +54,32 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
     gates = collected;
   }
   const partition = HostStaticPartition.get(node.blueprintNode);
+  let matches =
+    gates.length > 0 &&
+    node.behavior.type === 'object' &&
+    relocated.length === 0 &&
+    !partition.hasGatedOverlays &&
+    partition.staticEntries.length > 0;
+  if (matches) {
+    matches = true;
+    for (let index = 0, count = gates.length; index < count; index++) {
+      const gate = gates[index];
+
+      if (
+        !getGateExpression(node.runtime.blueprint, gate.schemaPath)?.equality
+      ) {
+        matches = false;
+        break;
+      }
+    }
+  }
   const plan: HostWheelPlan = {
     blueprint: node.runtime.blueprint,
     path: node.path,
     itemCount: node.itemCount,
     relocated,
     gates,
-    baselineEligible:
-      gates.length > 0 &&
-      node.behavior.type === 'object' &&
-      relocated.length === 0 &&
-      !partition.hasGatedOverlays &&
-      partition.staticEntries.length > 0 &&
-      (() => {
-        const items = gates;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const gate = items[index];
-          if (
-            !getGateExpression(node.runtime.blueprint, gate.schemaPath)
-                ?.equality
-          )
-            return false;
-        }
-        return true;
-      })(),
+    baselineEligible: matches,
   };
   if (!previous) record.wheelPlan = plan;
   return plan;

@@ -35,6 +35,7 @@ const BRANCH_KEYWORDS = ['oneOf', 'anyOf'] as const;
  * @param isBranch - Preserve top for a branch without type or nested branches
  * @returns Ordered allowed types, top for an unconstrained overlay, or empty for a cut recursive branch
  */
+
 export const inferAllowedTypes = (
   context: AnalysisContext,
   schema: BlueprintSchema,
@@ -52,19 +53,24 @@ export const inferAllowedTypes = (
     NO_VISITING,
     cycle,
   );
-  if (
-    (isBranch && cycle?.found) ||
-    (() => {
-      const items = parts;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const part = items[index];
-        if (visiting.includes(part.schemaPath)) return true;
+  const previousResult = isBranch && cycle?.found;
+  let matchesEither: boolean;
+  if (!previousResult) {
+    matchesEither = false;
+    for (let index = 0, count = parts.length; index < count; index++) {
+      const part = parts[index];
+
+      if (visiting.includes(part.schemaPath)) {
+        matchesEither = true;
+        break;
       }
-      return false;
-    })()
-  )
+    }
+  } else {
+    matchesEither = previousResult;
+  }
+  if (matchesEither) {
     return NO_TYPES;
+  }
   const stack = [...visiting, ...mapArray(parts, (part) => part.schemaPath)];
   let allowed: Optional<readonly SchemaTypeName[]>;
   for (const part of parts) {
@@ -90,53 +96,45 @@ export const inferAllowedTypes = (
       if (typeof part.schema === 'boolean') continue;
       const branches = part.schema[keyword];
       if (!isArray(branches)) continue;
-      (() => {
-        const items = branches;
-        iterate: for (
-          let position = 0, count = items.length;
-          position < count;
-          position++
-        ) {
-          if (!(position in items)) continue;
-          const item = items[position];
-          const branch = item;
-          const index = position;
-          {
-            const path = appendSegment(
-              appendSegment(part.schemaPath, keyword),
-              index,
-            );
-            if (
-              branch?.controls?.active !== undefined ||
-              context.discriminatorBranches?.has(path)
-            ) {
-              continue iterate;
-            }
-            hasKeywordBranch = true;
-            const types = inferAllowedTypes(
-              context,
-              branch,
-              path,
-              true,
-              stack,
-              true,
-            );
-            if (!types) {
-              void throwBlueprintError(
-                FormErrorCode.UnknownJsonSchema,
-                path,
-                {
-                  guidance:
-                    'Specify type explicitly for an unconstrained branch.',
-                },
-                context.options,
-              );
-              continue iterate;
-            }
-            if (types.length) groups.push(types);
+      for (let index = 0, count = branches.length; index < count; index++) {
+        if (!(index in branches)) continue;
+        const branch = branches[index];
+
+        {
+          const path = appendSegment(
+            appendSegment(part.schemaPath, keyword),
+            index,
+          );
+          if (
+            branch?.controls?.active !== undefined ||
+            context.discriminatorBranches?.has(path)
+          ) {
+            continue;
           }
+          hasKeywordBranch = true;
+          const types = inferAllowedTypes(
+            context,
+            branch,
+            path,
+            true,
+            stack,
+            true,
+          );
+          if (!types) {
+            void throwBlueprintError(
+              FormErrorCode.UnknownJsonSchema,
+              path,
+              {
+                guidance:
+                  'Specify type explicitly for an unconstrained branch.',
+              },
+              context.options,
+            );
+            continue;
+          }
+          if (types.length) groups.push(types);
         }
-      })();
+      }
     }
     if (hasKeywordBranch) {
       hasUngatedBranch = true;

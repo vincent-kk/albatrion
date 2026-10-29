@@ -17,6 +17,7 @@ import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintEr
  * @param declarations - Authored contributions in total order
  * @returns A stable terminal/branch strategy, or throws on inconsistent cases
  */
+
 export const resolveNodeStrategy = (
   context: AnalysisContext,
   kind: BlueprintNodeKind,
@@ -48,13 +49,11 @@ export const resolveNodeStrategy = (
     return terminal ? 'terminal' : 'branch';
   }
   const root: StrategyCase = { children: new Map(), hasDeclaration: false };
-  (() => {
+  {
     const items = relevant;
-    for (let position = 0, count = items.length; position < count; position++) {
-      if (!(position in items)) continue;
-      const item = items[position];
-      const declaration = item;
-      const index = position;
+    for (let index = 0, count = items.length; index < count; index++) {
+      const declaration = items[index];
+
       {
         let current = root;
         for (const gate of declaration.gates) {
@@ -81,7 +80,7 @@ export const resolveNodeStrategy = (
         current.schemaPath = declaration.schemaPath;
       }
     }
-  })();
+  }
   let strategy: Optional<boolean>;
   const pending = [root];
   while (pending.length) {

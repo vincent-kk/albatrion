@@ -9,6 +9,7 @@ import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
 
 /** Combine live child projections and undeclared input in stable host order. */
+
 export const assembleObject: Behavior['assemble'] = (
   node,
   children,
@@ -186,7 +187,6 @@ export const assembleObject: Behavior['assemble'] = (
       childValues.set(child.name, child.emit);
   const names: string[] = [];
   const seen = new Set<string>();
-
   for (const name of preferred) {
     if (childValues.has(name)) {
       if (childValues.get(name) !== undefined && !seen.has(name)) {
@@ -218,23 +218,19 @@ export const assembleObject: Behavior['assemble'] = (
 
   if (previous !== null && typeof previous === 'object' && !isArray(previous)) {
     const oldNames = Object.keys(previous);
-    if (
-      names.length === oldNames.length &&
-      (() => {
-        const items = names;
-        for (
-          let position = 0, count = items.length;
-          position < count;
-          position++
-        ) {
-          if (!(position in items)) continue;
-          const name = items[position];
-          const index = position;
-          if (!(name === oldNames[index])) return false;
+    let matches = names.length === oldNames.length;
+    if (matches) {
+      matches = true;
+      for (let index = 0, count = names.length; index < count; index++) {
+        const name = names[index];
+
+        if (!(name === oldNames[index])) {
+          matches = false;
+          break;
         }
-        return true;
-      })()
-    ) {
+      }
+    }
+    if (matches) {
       let patch: Optional<Dictionary<unknown>>;
       for (const name of names) {
         const value = childValues.has(name)

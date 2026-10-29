@@ -13,6 +13,7 @@ import { getDependencyIndex } from '../dependencies/getDependencyIndex';
  * @param context - Changed raw paths, entered nodes, and selected declarations
  * @returns Live source addresses for this non-load derive round
  */
+
 export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): ReadonlySet<string> => {
@@ -37,25 +38,16 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
     const previous = node.runtime.committedDeclarationIds?.get(
       JSON.stringify([node.path, getBlueprintNodeIdentity(node.blueprintNode)]),
     );
-    if (
-      !previous ||
-      previous.length !== ids.length ||
-      (() => {
-        const items = previous;
-        for (
-          let position = 0, count = items.length;
-          position < count;
-          position++
-        ) {
-          if (!(position in items)) continue;
-          const id = items[position];
-          const index = position;
-          if (id !== ids[index]) return true;
+    let matchesEither = !previous || previous.length !== ids.length;
+    if (previous && previous.length === ids.length)
+      for (let index = 0; index < previous.length; index++)
+        if (previous[index] !== ids[index]) {
+          matchesEither = true;
+          break;
         }
-        return false;
-      })()
-    )
+    if (matchesEither) {
       paths.add(node.path);
+    }
   }
   return paths;
 };

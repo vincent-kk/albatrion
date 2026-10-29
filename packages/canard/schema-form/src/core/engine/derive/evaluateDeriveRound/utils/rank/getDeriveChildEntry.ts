@@ -10,6 +10,7 @@ import { getHostDerived } from '../../../../utils/cache/derivedRecords';
  * @param template - Optional live blueprint node for a same-name declaration
  * @returns First matching edge and its document position
  */
+
 export const getDeriveChildEntry = (
   parent: BlueprintNode,
   name: string,
@@ -19,22 +20,25 @@ export const getDeriveChildEntry = (
     'deriveChildren',
     ReadonlyMap<string, readonly number[]>
   >(parent).deriveChildren;
+
   if (!index) {
     const built = new Map<string, number[]>();
-    (() => {
+    {
       const items = parent.childEntries;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const item = items[index];
-        const entry = item;
-        const position = index;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        const entry = items[position];
+
         {
           const positions = built.get(entry.name) ?? [];
           positions.push(position);
           built.set(entry.name, positions);
         }
       }
-    })();
+    }
     index = built;
     getHostDerived<'deriveChildren', ReadonlyMap<string, readonly number[]>>(
       parent,

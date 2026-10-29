@@ -35,7 +35,6 @@ export const staticSpec = (
   if (cached) return cached;
   const kinds: Exclude<SchemaTypeName, 'null'>[] = [];
   for (let index = 0, length = schemaType.length; index < length; index++) {
-    if (!(index in schemaType)) continue;
     const kind = schemaType[index];
     if (kind !== 'null') kinds.push(kind);
   }

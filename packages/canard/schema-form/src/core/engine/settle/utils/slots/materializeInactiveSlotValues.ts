@@ -10,6 +10,7 @@ import { getSlotOrder } from './getSlotOrder';
  * @param host - Live or detached reference that owns its source graph and memo
  * @returns The previous array when its public item sequence is unchanged
  */
+
 export const materializeInactiveSlotValues = <
   Self extends FieldNodeRecord<Self>,
 >(
@@ -39,24 +40,15 @@ export const materializeInactiveSlotValues = <
   const next = [...chosen.values()];
   const previous = host.inactiveValuesCache;
   host.inactiveValuesDirty = false;
-  if (
-    previous?.length === next.length &&
-    (() => {
-      const items = previous;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const entry = items[position];
-        const index = position;
-        if (!(entry === next[index])) return false;
+  if (previous?.length === next.length) {
+    let unchanged = true;
+    for (let index = 0; index < previous.length; index++)
+      if (previous[index] !== next[index]) {
+        unchanged = false;
+        break;
       }
-      return true;
-    })()
-  )
-    return previous;
+    if (unchanged) return previous;
+  }
   return (host.inactiveValuesCache = next.length
     ? Object.freeze(next)
     : EMPTY_VALUES);

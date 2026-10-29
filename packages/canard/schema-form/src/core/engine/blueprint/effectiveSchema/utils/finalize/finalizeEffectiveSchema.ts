@@ -1,8 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type { EffectiveSchema } from '../../../types/effectiveSchema';
 import type { BlueprintNode } from '../../../types/node';
+import type { SchemaTypeName } from '../../../types/schema';
 import type { EffectiveSchemaState } from '../../types/state';
 import { freezeEffectiveSchema } from './freezeEffectiveSchema';
 
@@ -13,6 +16,7 @@ import { freezeEffectiveSchema } from './freezeEffectiveSchema';
  * @returns A public frozen schema in a development-protected envelope; static type identity survives when not narrowed or in conflict, and static nullable stays on conflict, and an
  * empty type intersection is reported by `typeConflict` instead of an enum. A virtual node's schema carries the internal type `virtual`.
  */
+
 export const finalizeEffectiveSchema = (
   state: EffectiveSchemaState,
   node: BlueprintNode,
@@ -31,40 +35,24 @@ export const finalizeEffectiveSchema = (
       ownedSchemaValues.add(clauses);
     }
   }
-  const types = (() => {
-    const items = state.allowedTypes;
-    if (items == null) return undefined;
-    const result: Array<(typeof items)[number]> = [];
-    iterate: for (let index = 0, count = items.length; index < count; index++) {
-      if (!(index in items)) continue;
-      const item = items[index];
-      const type = item;
-      {
-        if (type !== 'null') result.push(item);
-        continue iterate;
-      }
-    }
-    return result;
-  })();
+  let types: Optional<SchemaTypeName[]>;
+  if (state.allowedTypes) {
+    types = [];
+    for (const type of state.allowedTypes)
+      if (type !== 'null') types.push(type);
+  }
   const staticTypes = isArray(node.schemaType)
     ? node.schemaType
     : [node.schemaType];
-  const unchanged =
-    types?.length === staticTypes.length &&
-    (() => {
-      const items = types;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const type = items[position];
-        const index = position;
-        if (!(type === staticTypes[index])) return false;
+  let unchanged = false;
+  if (types?.length === staticTypes.length) {
+    unchanged = true;
+    for (let index = 0; index < types.length; index++)
+      if (types[index] !== staticTypes[index]) {
+        unchanged = false;
+        break;
       }
-      return true;
-    })();
+  }
   schema.type =
     node.kind === 'virtual'
       ? 'virtual'

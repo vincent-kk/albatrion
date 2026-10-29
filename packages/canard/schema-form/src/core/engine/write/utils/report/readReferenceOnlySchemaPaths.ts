@@ -15,6 +15,7 @@ const NO_PATHS: readonly string[] = Object.freeze([]);
  * @param next - Authored schema of the newly built root
  * @returns Changed schema pointers, or empty when JSON data also differs
  */
+
 export const readReferenceOnlySchemaPaths = (
   previous: unknown,
   next: unknown,
@@ -57,19 +58,21 @@ export const readReferenceOnlySchemaPaths = (
     seen.set(left, seenRight);
     const leftKeys = Object.keys(left);
     const rightKeys = Object.keys(right);
-    if (
-      leftKeys.length !== rightKeys.length ||
-      (() => {
-        const items = leftKeys;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const key = items[index];
-          if (!hasOwnProperty(right, key)) return true;
+    let matchesEither = leftKeys.length !== rightKeys.length;
+    if (!matchesEither) {
+      matchesEither = false;
+      for (let index = 0, count = leftKeys.length; index < count; index++) {
+        const key = leftKeys[index];
+
+        if (!hasOwnProperty(right, key)) {
+          matchesEither = true;
+          break;
         }
-        return false;
-      })()
-    )
+      }
+    }
+    if (matchesEither) {
       return NO_PATHS;
+    }
     for (let index = leftKeys.length - 1; index >= 0; index -= 1) {
       const key = leftKeys[index];
       pending.push({

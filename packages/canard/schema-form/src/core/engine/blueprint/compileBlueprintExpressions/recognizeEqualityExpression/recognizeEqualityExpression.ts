@@ -13,6 +13,7 @@ import { scanEqualityTokens } from './utils/scanEqualityTokens';
  * @param dependencies - Compiler's ordered list, which must match fresh substitution
  * @returns Literal evidence or undefined; never compiles or invokes authored code
  */
+
 export const recognizeEqualityExpression = (
   source: string,
   dependencies: readonly string[],
@@ -20,25 +21,22 @@ export const recognizeEqualityExpression = (
   const manager = getPathManager();
   const substituted = substituteDependencyPaths(manager, source);
   const paths = manager.get();
-  if (
-    paths.length !== 1 ||
-    paths.length !== dependencies.length ||
-    (() => {
-      const items = paths;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const path = items[position];
-        const index = position;
-        if (path !== dependencies[index]) return true;
+  let matchesEither =
+    paths.length !== 1 || paths.length !== dependencies.length;
+  if (!matchesEither) {
+    matchesEither = false;
+    for (let index = 0, count = paths.length; index < count; index++) {
+      const path = paths[index];
+
+      if (path !== dependencies[index]) {
+        matchesEither = true;
+        break;
       }
-      return false;
-    })()
-  )
+    }
+  }
+  if (matchesEither) {
     return;
+  }
   const tokens = scanEqualityTokens(substituted);
   if (!tokens) return;
   const tree = parseEqualityTree(tokens);

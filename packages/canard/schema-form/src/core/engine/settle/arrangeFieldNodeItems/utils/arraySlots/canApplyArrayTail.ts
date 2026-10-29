@@ -1,5 +1,7 @@
 import { minLite } from '@winglet/common-utils/math';
 
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntry } from '../../../../blueprint';
 import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
 
@@ -9,25 +11,34 @@ import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
  * @param plan - Slot proposal with a retained prefix and optional value tail
  * @returns Whether only the tail needs construction or retirement
  */
+
 export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
 ): boolean => {
   const template = host.blueprintNode;
-  if (
-    (template.itemCandidates?.length ?? 0) > 1 ||
-    (() => {
+  let matchesEither: Optional<boolean> =
+    (template.itemCandidates?.length ?? 0) > 1;
+  if (!matchesEither) {
+    matchesEither = undefined;
+    {
       const items = template.prefixItemCandidates;
-      if (items == null) return undefined;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const candidates = items[index];
-        if (candidates.length > 1) return true;
+      if (items != null) {
+        matchesEither = false;
+        for (let index = 0, count = items.length; index < count; index++) {
+          const candidates = items[index];
+
+          if (candidates.length > 1) {
+            matchesEither = true;
+            break;
+          }
+        }
       }
-      return false;
-    })()
-  )
+    }
+  }
+  if (matchesEither) {
     return false;
+  }
   if (host.raw !== undefined || host.itemCount === plan.slots.length)
     return false;
   const prefixCount = minLite(host.itemCount, plan.slots.length);

@@ -1,6 +1,8 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { writeFieldNode } from '../../../settle';
@@ -14,6 +16,7 @@ import { composeBatchValue } from './composeBatchValue';
  * @param root - Tree owning marked writes
  * @returns Nothing; settlement failures stay on the current chain
  */
+
 export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
@@ -31,27 +34,31 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     writes.length === 1 &&
     (option & WriteOption.Merge) === WriteOption.Merge &&
     !(option & WriteOption.Replace);
-  const source = (() => {
-    const items = writes;
-    for (let index = 0, count = items.length; index < count; index++) {
-      if (!(index in items)) continue;
-      const write = items[index];
-      if (!(write.source === 'input')) return false;
+  let allMatch = true;
+  for (let index = 0, count = writes.length; index < count; index++) {
+    const write = writes[index];
+
+    if (!(write.source === 'input')) {
+      allMatch = false;
+      break;
     }
-    return true;
-  })()
-    ? 'input'
-    : (() => {
-          const items = writes;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const write = items[index];
-            if (!(write.source === 'automatic')) return false;
-          }
-          return true;
-        })()
-      ? 'automatic'
-      : undefined;
+  }
+  let source: Optional<'input' | 'automatic'>;
+  if (allMatch) {
+    source = 'input';
+  } else {
+    let allMatch2 = true;
+    for (let index = 0, count = writes.length; index < count; index++) {
+      const write = writes[index];
+
+      if (!(write.source === 'automatic')) {
+        allMatch2 = false;
+        break;
+      }
+    }
+    source = allMatch2 ? 'automatic' : undefined;
+  }
+
   const origins = mapArray(
     writes,
     (

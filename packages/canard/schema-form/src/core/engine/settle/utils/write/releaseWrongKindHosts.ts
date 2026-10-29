@@ -9,6 +9,7 @@ import { isPlain } from '../input/isPlain';
  * @param context - Settlement with candidate hosts and calculated children
  * @returns Nothing; cleared hosts are recomputed before the explicit source snapshot
  */
+
 export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
@@ -21,18 +22,21 @@ export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
     for (const host of hosts) {
       if (host.detached || host.raw === undefined || isPlain(host.raw))
         continue;
-      if (
-        !(() => {
-          const items = host.children ?? [];
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const child = items[index];
-            if (child.emit !== undefined) return true;
+      let hasMatch = false;
+      {
+        const items = host.children ?? [];
+        for (let index = 0, count = items.length; index < count; index++) {
+          const child = items[index];
+
+          if (child.emit !== undefined) {
+            hasMatch = true;
+            break;
           }
-          return false;
-        })()
-      )
+        }
+      }
+      if (!hasMatch) {
         continue;
+      }
       host.raw = undefined;
       context.changedRaw.add(host.path);
       context.changedNodes.add(host);

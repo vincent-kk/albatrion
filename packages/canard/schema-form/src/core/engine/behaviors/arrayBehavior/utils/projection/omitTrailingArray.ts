@@ -8,6 +8,7 @@ import { getArrayItemTemplate } from '../value/getArrayItemTemplate';
  * @param node - Branch host for detecting item holes; absent for terminal raw
  * @returns Original array when unchanged, otherwise a memoized copied prefix
  */
+
 export const omitTrailingArray = <Self>(
   value: readonly unknown[],
   node?: FieldNodeRecord<Self>,
@@ -42,24 +43,15 @@ export const omitTrailingArray = <Self>(
   }
   if (end === value.length) return value;
   const cached = trimmedArrays.get(value);
-  if (
-    cached?.end === end &&
-    (() => {
-      const items = cached.result;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const item = items[position];
-        const index = position;
-        if (!Object.is(item, value[index])) return false;
+  if (cached?.end === end) {
+    let unchanged = true;
+    for (let index = 0; index < cached.result.length; index++)
+      if (!Object.is(cached.result[index], value[index])) {
+        unchanged = false;
+        break;
       }
-      return true;
-    })()
-  )
-    return cached.result;
+    if (unchanged) return cached.result;
+  }
   const result = value.slice(0, end);
   trimmedArrays.set(value, { end, result });
   return result;

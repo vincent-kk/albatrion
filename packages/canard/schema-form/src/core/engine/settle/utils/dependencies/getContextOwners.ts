@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   PointerOperator,
@@ -18,6 +20,7 @@ const EMPTY_OWNERS: readonly string[] = Object.freeze([]);
  * @param blueprint - Immutable analysis supplying declaration IDs and reads
  * @returns Memoized owner paths to recalculate when context changes
  */
+
 export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   if (!blueprint.capabilities.hasDependencies) return EMPTY_OWNERS;
   const cached = getBlueprintDerived<'contextOwners', readonly string[]>(
@@ -33,45 +36,49 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   }
   const owners: string[] = [];
   const rules = getDeriveRuleTable(blueprint);
-  for (const node of blueprint.nodes)
-    for (const declaration of node.declarations)
-      if (
-        (ids.indexOf(declaration.id) !== -1 ||
-          (() => {
-            const values = rules.byDeclaration.get(declaration.id);
-            if (values == null) return undefined;
+  for (const node of blueprint.nodes) {
+    for (const declaration of node.declarations) {
+      let matchesEither: Optional<boolean> = ids.indexOf(declaration.id) !== -1;
+      if (!matchesEither) {
+        matchesEither = undefined;
+        {
+          const values = rules.byDeclaration.get(declaration.id);
+          if (values != null) {
+            matchesEither = false;
             for (
               let position = 0, limit = values.length;
               position < limit;
               position++
             ) {
-              if (!(position in values)) continue;
               const rule = values[position];
-              if (
+              const previousResult =
                 rule.kind === 'derived' &&
-                (rule.targetName !== undefined || rule.targetItems) &&
-                (() => {
-                  const items = rule.watchDependencies;
-                  for (
-                    let index = 0, count = items.length;
-                    index < count;
-                    index++
-                  ) {
-                    if (!(index in items)) continue;
-                    const path = items[index];
-                    if (readPointerSegment(path, 0) === PointerOperator.Context)
-                      return true;
+                (rule.targetName !== undefined || rule.targetItems);
+              let matches: Optional<boolean>;
+              if (previousResult) {
+                matches = false;
+                for (const path of rule.watchDependencies) {
+                  if (readPointerSegment(path, 0) === PointerOperator.Context) {
+                    matches = true;
+                    break;
                   }
-                  return false;
-                })()
-              )
-                return true;
+                }
+              } else {
+                matches = previousResult;
+              }
+              if (matches) {
+                matchesEither = true;
+                break;
+              }
             }
-            return false;
-          })()) &&
-        owners.indexOf(declaration.path) === -1
-      )
+          }
+        }
+      }
+      if (matchesEither && owners.indexOf(declaration.path) === -1) {
         owners.push(declaration.path);
+      }
+    }
+  }
   getBlueprintDerived<'contextOwners', readonly string[]>(
     blueprint,
   ).contextOwners = owners;

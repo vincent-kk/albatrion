@@ -14,6 +14,7 @@ import { verifyGateSelection } from './verifyGateSelection';
  * @param entry - Table step whose inherited gate reads that baseline terminal
  * @returns Nothing; checks both ordered sets and throws if publication has an effect
  */
+
 export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
@@ -25,37 +26,29 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   flushPendingGateReads(entry.node, path, context);
   const afterPending = [...(context.pendingOutputs ?? [])];
   const afterChanged = [...context.changedNodes];
-  verifyGateSelection(
-    pending.length === afterPending.length &&
-      (() => {
-        const items = pending;
-        for (
-          let position = 0, count = items.length;
-          position < count;
-          position++
-        ) {
-          if (!(position in items)) continue;
-          const host = items[position];
-          const index = position;
-          if (!(host === afterPending[index])) return false;
-        }
-        return true;
-      })() &&
-      changed.length === afterChanged.length &&
-      (() => {
-        const items = changed;
-        for (
-          let position = 0, count = items.length;
-          position < count;
-          position++
-        ) {
-          if (!(position in items)) continue;
-          const host = items[position];
-          const index = position;
-          if (!(host === afterChanged[index])) return false;
-        }
-        return true;
-      })(),
-    'S2 table pre-publication: ' + path,
-  );
+  let matches = pending.length === afterPending.length;
+  if (matches) {
+    matches = true;
+    for (let index = 0, count = pending.length; index < count; index++) {
+      const host = pending[index];
+
+      if (!(host === afterPending[index])) {
+        matches = false;
+        break;
+      }
+    }
+  }
+  let matches2 = matches && changed.length === afterChanged.length;
+  if (matches2) {
+    matches2 = true;
+    for (let index = 0, count = changed.length; index < count; index++) {
+      const host = changed[index];
+
+      if (!(host === afterChanged[index])) {
+        matches2 = false;
+        break;
+      }
+    }
+  }
+  verifyGateSelection(matches2, 'S2 table pre-publication: ' + path);
 };

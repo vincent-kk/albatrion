@@ -11,6 +11,7 @@ import { throwBlueprintError } from '../../utils/diagnostics/throwBlueprintError
  * @param active - Traversal-owned set of nodes on the current eager path
  * @returns Nothing; updates traversal sets or throws for an unbounded cycle
  */
+
 export const visitShape = (
   context: AnalysisContext,
   node: BlueprintNode,
@@ -31,20 +32,18 @@ export const visitShape = (
       context.options,
     );
   active.add(node);
-  for (const edge of node.childEntries)
-    if (
-      (() => {
-        const items = edge.declarations;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const declaration = items[index];
-          if (declaration.role === 'declaration' && !declaration.gates.length)
-            return true;
-        }
-        return false;
-      })()
-    )
+  for (const edge of node.childEntries) {
+    let hasMatch = false;
+    for (const declaration of edge.declarations) {
+      if (declaration.role === 'declaration' && !declaration.gates.length) {
+        hasMatch = true;
+        break;
+      }
+    }
+    if (hasMatch) {
       visitShape(context, edge.node, complete, active);
+    }
+  }
   active.delete(node);
   complete.add(node);
 };

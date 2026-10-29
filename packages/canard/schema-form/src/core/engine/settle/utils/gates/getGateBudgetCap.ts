@@ -21,6 +21,7 @@ interface GateBudgetIndex {
 /** One finite decision index per immutable analysis and one ceiling per live host. */
 
 /** Map evaluated gates to their owning fragments or node-gate entries. */
+
 const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
   const cached = getBlueprintDerived<'gateBudgetIndex', GateBudgetIndex>(
     blueprint,
@@ -38,6 +39,7 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
     keys.add(key);
     decisions.add(key);
   };
+
   const collect = (declaration: PropertyDeclaration): void => {
     if (declaration.scope === 'fragment' && declaration.gates.length > 0)
       for (const gate of declaration.gates)
@@ -45,26 +47,24 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
     for (const gate of declaration.gates) {
       if (gate.kind !== 'active') continue;
       let fieldControl = fieldControls.get(gate);
+
       if (fieldControl === undefined) {
         const segments = parsePointerSegments(gate.schemaPath);
-        fieldControl =
+        let matches =
           segments[segments.length - 2] === 'controls' &&
-          segments[segments.length - 1] === 'active' &&
-          (() => {
-            const items = segments;
-            for (
-              let position = 0, count = items.length;
-              position < count;
-              position++
-            ) {
-              if (!(position in items)) continue;
-              const segment = items[position];
-              const index = position;
-              if (segment === 'controls' && segments[index + 1] === 'fields')
-                return true;
+          segments[segments.length - 1] === 'active';
+        if (matches) {
+          matches = false;
+          for (let index = 0, count = segments.length; index < count; index++) {
+            const segment = segments[index];
+
+            if (segment === 'controls' && segments[index + 1] === 'fields') {
+              matches = true;
+              break;
             }
-            return false;
-          })();
+          }
+        }
+        fieldControl = matches;
         fieldControls.set(gate, fieldControl);
       }
       if (fieldControl) add(gate, 'node:' + gate.schemaPath);
@@ -96,6 +96,7 @@ export const getTransitionBudgetCap = (blueprint: Blueprint): number =>
   blueprint.capabilities.branchless ? 1 : getIndex(blueprint).transitionCap;
 
 /** Reuse one host ceiling until its relocated gate list changes. */
+
 export const getHostWheelBudgetCap = (
   host: object,
   blueprint: Blueprint,
@@ -104,25 +105,15 @@ export const getHostWheelBudgetCap = (
 ): number => {
   if (blueprint.capabilities.branchless) return 1;
   const cached = runtime.hostBudgetCaps?.get(host);
-  if (
-    cached &&
-    cached.gates.length === gates.length &&
-    (() => {
-      const items = cached.gates;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const gate = items[position];
-        const index = position;
-        if (!(gate === gates[index])) return false;
+  if (cached && cached.gates.length === gates.length) {
+    let unchanged = true;
+    for (let index = 0; index < cached.gates.length; index++)
+      if (cached.gates[index] !== gates[index]) {
+        unchanged = false;
+        break;
       }
-      return true;
-    })()
-  )
-    return cached.cap;
+    if (unchanged) return cached.cap;
+  }
   const index = getIndex(blueprint);
   const decisions = new Set<string>();
   for (const gate of gates)

@@ -25,6 +25,7 @@ import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
  * @param contextValue - Already merged Form and provider context
  * @returns Nothing; equal values preserve the slot and skip settlement
  */
+
 export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   contextValue: Readonly<Dictionary<unknown>>,
@@ -39,15 +40,16 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   );
   context.entryApi = 'setContext';
   const owners = getContextOwners(root.runtime.blueprint);
-  context.contextOwners = (() => {
-    const items = owners;
-    for (let index = 0, count = items.length; index < count; index++) {
-      if (!(index in items)) continue;
-      const owner = items[index];
-      if (hasPointerOperator(owner, PointerOperator.Wildcard)) return true;
+  let hasMatch = false;
+  for (let index = 0, count = owners.length; index < count; index++) {
+    const owner = owners[index];
+
+    if (hasPointerOperator(owner, PointerOperator.Wildcard)) {
+      hasMatch = true;
+      break;
     }
-    return false;
-  })()
+  }
+  context.contextOwners = hasMatch
     ? owners.flatMap((owner) => expandTemplatePaths(root, owner))
     : owners;
   root.runtime.context = contextValue;

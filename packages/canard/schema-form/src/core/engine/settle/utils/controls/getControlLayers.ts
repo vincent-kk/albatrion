@@ -1,4 +1,4 @@
-import type { Nullable } from '@aileron/declare';
+import type { Nullable, Optional } from '@aileron/declare';
 
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import type { DeclarationLayer } from '../../../types/controls';
@@ -49,6 +49,7 @@ export interface ControlLayer<Self> {
  * @param exitOnly - Restrict candidates to authored unsetOnInactive policies
  * @returns Active control groups without evaluating gates or expressions
  */
+
 export const getControlLayers = <Self extends ControlTarget<Self>>(
   node: Self,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
@@ -95,19 +96,23 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const parentIds = selected(parent);
   for (const group of inherited) {
     if (parentIds.indexOf(group.declarationId) === -1) continue;
-    if (
-      group.ownerIds &&
-      !(() => {
-        const items = group.ownerIds;
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const id = items[index];
-          if (nodeIds.indexOf(id) !== -1) return true;
+    const previousResult = group.ownerIds;
+    let matches: Optional<boolean>;
+    if (previousResult) {
+      let hasMatch = false;
+      for (const id of group.ownerIds) {
+        if (nodeIds.indexOf(id) !== -1) {
+          hasMatch = true;
+          break;
         }
-        return false;
-      })()
-    )
+      }
+      matches = !hasMatch;
+    } else {
+      matches = previousResult;
+    }
+    if (matches) {
       continue;
+    }
     groups.push({
       layer: group.layer,
       declarationId: group.declarationId,

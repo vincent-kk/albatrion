@@ -7,6 +7,7 @@ import { verifyGateSelection } from '../../gates/verifyGateSelection';
  * @param context - Verify-only marked write after ancestor registration
  * @returns Nothing; a mismatch throws before computation consumes either view
  */
+
 export const verifyWriteEpoch = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
@@ -19,17 +20,23 @@ export const verifyWriteEpoch = <Self extends FieldNodeRecord<Self>>(
     if (node.writeEpoch === context.writeEpoch) actual.add(node.path);
     if (node.children) for (const child of node.children) pending.push(child);
   }
-  verifyGateSelection(
-    actual.size === shadow.size &&
-      (() => {
-        const items = [...shadow];
-        for (let index = 0, count = items.length; index < count; index++) {
-          if (!(index in items)) continue;
-          const path = items[index];
-          if (!actual.has(path)) return false;
+  let matches = actual.size === shadow.size;
+  if (matches) {
+    matches = true;
+    {
+      const items = [...shadow];
+      for (let index = 0, count = items.length; index < count; index++) {
+        const path = items[index];
+
+        if (!actual.has(path)) {
+          matches = false;
+          break;
         }
-        return true;
-      })(),
+      }
+    }
+  }
+  verifyGateSelection(
+    matches,
     'S7 write epoch members differ from the general path',
   );
 };

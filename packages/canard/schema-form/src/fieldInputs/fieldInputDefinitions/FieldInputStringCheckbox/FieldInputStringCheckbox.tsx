@@ -11,6 +11,7 @@ import type { FieldInputPropsWithSchema } from '@/schema-form/types';
 import type { CheckboxLabelsContext, StringCheckboxJSONSchema } from './type';
 
 /** Render a checkbox per enum choice of a string-array node. */
+
 export const FieldInputStringCheckbox = ({
   path,
   name,
@@ -44,36 +45,26 @@ export const FieldInputStringCheckbox = ({
     [context, jsonSchema, alias],
   );
   const selected = isArray(defaultValue) ? defaultValue : [];
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
     const rawValue = checkboxOptions.find(
       (option) => option.value === value,
     )?.rawValue;
     if (rawValue === undefined) return;
-    if (checked) onChange((prev) => [...(isArray(prev) ? prev : []), rawValue]);
-    else
-      onChange((prev) =>
-        isArray(prev)
-          ? (() => {
-              const items = prev;
-              const result: Array<(typeof items)[number]> = [];
-              iterate: for (
-                let index = 0, count = items.length;
-                index < count;
-                index++
-              ) {
-                if (!(index in items)) continue;
-                const item = items[index];
-                const option = item;
-                {
-                  if (option !== rawValue) result.push(item);
-                  continue iterate;
-                }
-              }
-              return result;
-            })()
-          : [],
-      );
+
+    if (checked) {
+      onChange((prev) => [...(isArray(prev) ? prev : []), rawValue]);
+    } else {
+      onChange((prev) => {
+        if (!isArray(prev)) return [];
+        const result: Array<(typeof prev)[number]> = [];
+        for (let index = 0, count = prev.length; index < count; index++)
+          if (index in prev && prev[index] !== rawValue)
+            result.push(prev[index]);
+        return result;
+      });
+    }
   });
   return (
     <div

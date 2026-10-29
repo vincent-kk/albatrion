@@ -34,101 +34,41 @@ export class HostStaticPartition {
         ambiguous = true;
       names.set(entry.name, 1);
     }
+
     const staticEntries = ambiguous
       ? []
-      : filterArray(
-          host.childEntries,
-          (entry) =>
-            entry.declarations.length > 0 &&
-            (() => {
-              const items = entry.declarations;
-              for (
-                let index = 0, count = items.length;
-                index < count;
-                index++
-              ) {
-                if (!(index in items)) continue;
-                const declaration = items[index];
-                if (declaration.gates.length) return false;
-              }
-              return true;
-            })() &&
-            (() => {
-              const items = entry.node.declarations;
-              for (
-                let index = 0, count = items.length;
-                index < count;
-                index++
-              ) {
-                if (!(index in items)) continue;
-                const declaration = items[index];
-                if (declaration.gates.length) return false;
-              }
-              return true;
-            })(),
-        );
-    const partition = {
-      hasGatedOverlays: (() => {
-        const values = host.childEntries;
-        iterate: for (
-          let position = 0, limit = values.length;
-          position < limit;
-          position++
-        ) {
-          if (!(position in values)) continue;
-          const item = values[position];
-          const entry = item;
-          {
-            const declarations = entry.node.declarations;
-            {
-              if (
-                (() => {
-                  const items = declarations;
-                  for (
-                    let index = 0, count = items.length;
-                    index < count;
-                    index++
-                  ) {
-                    if (!(index in items)) continue;
-                    const declaration = items[index];
-                    if (declaration.gates.length === 0) return true;
-                  }
-                  return false;
-                })() &&
-                (() => {
-                  const items = declarations;
-                  for (
-                    let index = 0, count = items.length;
-                    index < count;
-                    index++
-                  ) {
-                    if (!(index in items)) continue;
-                    const declaration = items[index];
-                    if (declaration.gates.length > 0) return true;
-                  }
-                  return false;
-                })()
-              )
-                return true;
-              continue iterate;
-            }
-          }
+      : filterArray(host.childEntries, (entry) => {
+          if (entry.declarations.length === 0) return false;
+          for (const declaration of entry.declarations)
+            if (declaration.gates.length) return false;
+          for (const declaration of entry.node.declarations)
+            if (declaration.gates.length) return false;
+          return true;
+        });
+    let hasGatedOverlays = false;
+    for (const entry of host.childEntries) {
+      let hasUngated = false;
+      for (const declaration of entry.node.declarations)
+        if (declaration.gates.length === 0) {
+          hasUngated = true;
+          break;
         }
-        return false;
-      })(),
-      gated:
-        staticEntries.length !== host.childEntries.length ||
-        (() => {
-          const items = host.declarations;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const declaration = items[index];
-            if (declaration.gates.length > 0) return true;
-          }
-          return false;
-        })(),
-      staticEntries,
-    };
+      if (!hasUngated) continue;
+      for (const declaration of entry.node.declarations)
+        if (declaration.gates.length > 0) {
+          hasGatedOverlays = true;
+          break;
+        }
+      if (hasGatedOverlays) break;
+    }
+    let gated = staticEntries.length !== host.childEntries.length;
+    if (!gated)
+      for (const declaration of host.declarations)
+        if (declaration.gates.length > 0) {
+          gated = true;
+          break;
+        }
+    const partition = { hasGatedOverlays, gated, staticEntries };
     getHostDerived<'staticPartition', Partition>(host).staticPartition =
       partition;
     return partition;

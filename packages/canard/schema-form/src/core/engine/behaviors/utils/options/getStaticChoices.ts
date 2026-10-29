@@ -40,7 +40,6 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
       index < length;
       index++
     ) {
-      if (!(index in propertyOrder)) continue;
       const key = propertyOrder[index];
       if (typeof key === 'string') orderedKeys.push(key);
     }

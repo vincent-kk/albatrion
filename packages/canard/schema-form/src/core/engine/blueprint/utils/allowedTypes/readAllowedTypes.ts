@@ -57,22 +57,22 @@ const TYPE_NAMES: readonly unknown[] = [
 function isAllowedTypeList(
   values: readonly unknown[],
 ): values is readonly SchemaTypeName[] {
-  return (
-    !!values.length &&
-    !(() => {
-      const items = values;
-      for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const value = items[position];
-        const index = position;
-        if (!TYPE_NAMES.includes(value) || values.indexOf(value) !== index)
-          return true;
+  let matches = !!values.length;
+  if (matches) {
+    let hasMatch = false;
+    for (let index = 0, count = values.length; index < count; index++) {
+      if (!(index in values)) {
+        continue;
       }
-      return false;
-    })()
-  );
+
+      const value = values[index];
+
+      if (!TYPE_NAMES.includes(value) || values.indexOf(value) !== index) {
+        hasMatch = true;
+        break;
+      }
+    }
+    matches = !hasMatch;
+  }
+  return matches;
 }

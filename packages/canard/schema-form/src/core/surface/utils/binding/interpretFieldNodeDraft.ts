@@ -11,6 +11,7 @@ import type { FieldNode } from '../../type';
  * @param draft - Uncommitted input; undefined is the clearing value
  * @returns Interpreted value and whether it belongs to the effective restriction
  */
+
 export const interpretFieldNodeDraft = (
   node: FieldNode,
   draft: unknown,
@@ -28,26 +29,32 @@ export const interpretFieldNodeDraft = (
       : [type];
   const kinds: Exclude<SchemaTypeName, 'null'>[] = [];
   for (let index = 0, length = authored.length; index < length; index++) {
-    if (!(index in authored)) continue;
     const kind = authored[index];
     if (kind !== undefined && kind !== 'null' && effective.indexOf(kind) !== -1)
       kinds.push(kind);
   }
   const value = interpret(draft, { kinds, mask: 0, nullable: node.nullable });
+  let matchesEither = value === undefined;
+  if (!matchesEither) {
+    let selectedResult: boolean;
+    if (value === null) {
+      selectedResult = node.nullable;
+    } else {
+      let hasMatch = false;
+      for (let index = 0, count = kinds.length; index < count; index++) {
+        const kind = kinds[index];
+
+        if (isMember(value, kind)) {
+          hasMatch = true;
+          break;
+        }
+      }
+      selectedResult = hasMatch;
+    }
+    matchesEither = selectedResult;
+  }
   return {
     value,
-    isMember:
-      value === undefined ||
-      (value === null
-        ? node.nullable
-        : (() => {
-            const items = kinds;
-            for (let index = 0, count = items.length; index < count; index++) {
-              if (!(index in items)) continue;
-              const kind = items[index];
-              if (isMember(value, kind)) return true;
-            }
-            return false;
-          })()),
+    isMember: matchesEither,
   };
 };

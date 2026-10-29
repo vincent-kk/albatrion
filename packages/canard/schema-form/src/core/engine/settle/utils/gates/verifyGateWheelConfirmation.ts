@@ -8,6 +8,7 @@ import { gateWheelEvaluation } from './gateWheelEvaluation';
  * @param changed - Whether schema, children or output changed during confirmation
  * @returns Nothing; throws on any disproved prediction and records proof counts
  */
+
 export const verifyGateWheelConfirmation = (
   expected: GateWheelFrame,
   actual: GateWheelFrame,
@@ -15,37 +16,29 @@ export const verifyGateWheelConfirmation = (
 ): void => {
   const before = expected.evaluations!;
   const after = actual.evaluations!;
-  if (
-    changed ||
-    before.length !== after.length ||
-    (() => {
-      const items = before;
-      iterate: for (
-        let position = 0, count = items.length;
-        position < count;
-        position++
-      ) {
-        if (!(position in items)) continue;
-        const item = items[position];
-        const entry = item;
-        const index = position;
+  let matchesEither = changed || before.length !== after.length;
+  if (!matchesEither) {
+    matchesEither = false;
+    for (let index = 0, count = before.length; index < count; index++) {
+      const entry = before[index];
+
+      {
+        const next = after[index];
         {
-          const next = after[index];
-          {
-            if (
-              entry.gate !== next.gate ||
-              entry.path !== next.path ||
-              entry.edgeName !== next.edgeName ||
-              entry.value !== next.value
-            )
-              return true;
-            continue iterate;
+          if (
+            entry.gate !== next.gate ||
+            entry.path !== next.path ||
+            entry.edgeName !== next.edgeName ||
+            entry.value !== next.value
+          ) {
+            matchesEither = true;
+            break;
           }
         }
       }
-      return false;
-    })()
-  ) {
+    }
+  }
+  if (matchesEither) {
     gateWheelEvaluation.nonNoop++;
     throw new Error('Gate wheel predicate predicted a non-no-op confirmation');
   }

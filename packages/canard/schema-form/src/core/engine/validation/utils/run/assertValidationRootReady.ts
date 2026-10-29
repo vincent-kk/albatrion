@@ -16,6 +16,7 @@ const DUPLICATE_SCHEMA_ID_MESSAGE = /already exists|duplicate/i;
  * @returns Shared compiled validator, or null if none was selected.
  * @throws FormErrorCode.ValidatorCompileFailed while the previous tree is still untouched.
  */
+
 export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): Nullable<ValidateFunction> => {
@@ -31,20 +32,17 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
     typeof authoredRoot.$id === 'string'
       ? authoredRoot.$id
       : undefined;
-  const duplicate =
+  let duplicate =
     !!id &&
     entry.failure instanceof Error &&
-    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message) &&
-    (() => {
+    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message);
+  if (duplicate) {
+    duplicate = false;
+    {
       const items = [...recentReleaseList(validator).counts];
-      iterate: for (
-        let index = 0, limit = items.length;
-        index < limit;
-        index++
-      ) {
-        if (!(index in items)) continue;
-        const item = items[index];
-        const [other, count] = item;
+      for (let index = 0, limit = items.length; index < limit; index++) {
+        const [other, count] = items[index];
+
         {
           if (
             other !== authoredRoot &&
@@ -52,13 +50,15 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
             typeof other === 'object' &&
             other !== null &&
             other.$id === id
-          )
-            return true;
-          continue iterate;
+          ) {
+            duplicate = true;
+            break;
+          }
         }
       }
-      return false;
-    })();
+    }
+  }
+
   throw new SchemaFormError(
     FormErrorCode.ValidatorCompileFailed,
     'Whole-schema validation could not be compiled',

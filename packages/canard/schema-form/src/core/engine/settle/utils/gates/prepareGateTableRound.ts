@@ -21,6 +21,7 @@ const NO_SCHEMA_PATHS: readonly string[] = Object.freeze([]);
  * @param round - Current host wheel counter, scoped to this computation
  * @returns Nothing; absence from the map means the complete round uses full evaluation
  */
+
 export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
@@ -49,18 +50,18 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   const watchedPaths = mapArray(table.watchedNames, (name) =>
     appendSegment(node.path, name),
   );
-  if (
-    (() => {
-      const items = watchedPaths;
-      for (let index = 0, count = items.length; index < count; index++) {
-        if (!(index in items)) continue;
-        const path = items[index];
-        if (context.dirtyPaths.has(path)) return true;
-      }
-      return false;
-    })()
-  )
+  let hasMatch = false;
+  for (let index = 0, count = watchedPaths.length; index < count; index++) {
+    const path = watchedPaths[index];
+
+    if (context.dirtyPaths.has(path)) {
+      hasMatch = true;
+      break;
+    }
+  }
+  if (hasMatch) {
     return;
+  }
   (context.gateSelectionRounds ??= new Map()).set(node, {
     round,
     table,
