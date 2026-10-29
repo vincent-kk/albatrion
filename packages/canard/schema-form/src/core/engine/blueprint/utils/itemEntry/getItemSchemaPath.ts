@@ -16,9 +16,10 @@ export const getItemSchemaPath = (
   index: number,
   node: BlueprintNode,
 ): string => {
-  const prefix =
-    template.prefixItemCandidates?.[index]?.includes(node) ??
-    template.prefixItems?.[index] === node;
+  const candidates = template.prefixItemCandidates?.[index];
+  const prefix = candidates
+    ? candidates.indexOf(node) !== -1
+    : template.prefixItems?.[index] === node;
   let fallback: string | undefined;
   for (const declaration of template.declarations) {
     const schema = declaration.schema;

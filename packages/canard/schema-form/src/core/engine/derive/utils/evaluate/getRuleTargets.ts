@@ -35,8 +35,8 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
       !target.detached &&
       (rule.layer !== 'fragment' ||
         !rule.targetDeclarationIds ||
-        rule.targetDeclarationIds.some((id) =>
-          getSelectedDeclarationIds(target, state).includes(id),
+        rule.targetDeclarationIds.some(
+          (id) => getSelectedDeclarationIds(target, state).indexOf(id) !== -1,
         )),
   );
 };

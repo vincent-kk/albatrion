@@ -55,7 +55,7 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
           ? undefined
           : getGateExpression(node.runtime.blueprint, step.gate.schemaPath);
       verifyGateSelection(
-        admitted.includes(index) ===
+        (admitted.indexOf(index) !== -1) ===
           (step.gate.kind === 'discriminator'
             ? step.gate.condition.values.some((tag) => tag === value)
             : Boolean(expression!.evaluate([value]))),

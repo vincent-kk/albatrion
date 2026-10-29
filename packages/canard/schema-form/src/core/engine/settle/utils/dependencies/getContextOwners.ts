@@ -36,7 +36,7 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   for (const node of blueprint.nodes)
     for (const declaration of node.declarations)
       if (
-        (ids.includes(declaration.id) ||
+        (ids.indexOf(declaration.id) !== -1 ||
           rules.byDeclaration
             .get(declaration.id)
             ?.some(
@@ -48,7 +48,7 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
                     readPointerSegment(path, 0) === PointerOperator.Context,
                 ),
             )) &&
-        !owners.includes(declaration.path)
+        owners.indexOf(declaration.path) === -1
       )
         owners.push(declaration.path);
   getBlueprintDerived<'contextOwners', readonly string[]>(

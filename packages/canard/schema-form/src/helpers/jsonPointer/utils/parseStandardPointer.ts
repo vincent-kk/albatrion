@@ -29,8 +29,8 @@ export const parseStandardPointer = (pointer: string): readonly string[] => {
   const segments = pointer.slice(fragment ? 2 : 1).split($.Separator);
   for (let index = 0; index < segments.length; index++) {
     let name = segments[index];
-    if (fragment && name.includes('%')) name = decodeURIComponent(name);
-    segments[index] = name.includes('~') ? unescapeSegment(name) : name;
+    if (fragment && name.indexOf('%') !== -1) name = decodeURIComponent(name);
+    segments[index] = name.indexOf('~') !== -1 ? unescapeSegment(name) : name;
   }
   return segments;
 };

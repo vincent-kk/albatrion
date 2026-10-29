@@ -21,7 +21,7 @@ export const registerProjectionChanges = <Self extends FieldNodeRecord<Self>>(
     if (host.structure?.[child.name] !== child) continue;
     if (child.schema !== previous.schema && child.emit !== previous.emit) {
       const name = formatSegment(child.name);
-      if (!names.includes(name)) names.push(name);
+      if (names.indexOf(name) === -1) names.push(name);
     }
     previous.schema = child.schema;
     previous.emit = child.emit;

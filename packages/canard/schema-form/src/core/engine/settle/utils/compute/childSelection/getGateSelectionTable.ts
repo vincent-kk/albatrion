@@ -177,7 +177,7 @@ export const getGateSelectionTable = (
   const roundWatchedNames = orderedGroups.map((group) => group.watchedName);
   for (const group of predicateGroups.values())
     for (const name of group.watchedNames)
-      if (!roundWatchedNames.includes(name)) roundWatchedNames.push(name);
+      if (roundWatchedNames.indexOf(name) === -1) roundWatchedNames.push(name);
   const root = computeRootGateSelection(host, blueprint, orderedGroups);
   const table: GateSelectionTable = {
     watchedNames: roundWatchedNames,

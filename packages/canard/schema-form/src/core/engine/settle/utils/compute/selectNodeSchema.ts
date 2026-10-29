@@ -52,7 +52,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
         continue;
       const branch = Number(crossed.position);
       const selected = branches.get(crossed.oneOfPath) ?? [];
-      if (!selected.includes(branch)) selected.push(branch);
+      if (selected.indexOf(branch) === -1) selected.push(branch);
       branches.set(crossed.oneOfPath, selected);
     }
     for (const [schemaPath, selected] of branches) {

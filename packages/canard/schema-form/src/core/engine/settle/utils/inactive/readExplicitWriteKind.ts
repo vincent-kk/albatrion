@@ -38,7 +38,8 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
       const child = getChildPointer(inputPath, path);
       const name =
         child === undefined ? undefined : readPointerSegment(child, -1);
-      if (typeof name !== 'string' || !origin.keys.includes(name)) continue;
+      if (typeof name !== 'string' || origin.keys.indexOf(name) === -1)
+        continue;
     }
     if (origin.source === 'automatic') return 'automatic';
     if (!origin.keys) return 'callerReplace';

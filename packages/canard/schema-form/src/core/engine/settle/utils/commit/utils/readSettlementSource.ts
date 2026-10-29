@@ -27,7 +27,8 @@ export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
       const child = getChildPointer(path, origin.path);
       const name =
         child === undefined ? undefined : readPointerSegment(child, -1);
-      if (typeof name !== 'string' || !origin.keys.includes(name)) continue;
+      if (typeof name !== 'string' || origin.keys.indexOf(name) === -1)
+        continue;
     }
     if (path === origin.path || isDescendantPath(path, origin.path))
       return !exact || path === origin.path ? origin.source : undefined;

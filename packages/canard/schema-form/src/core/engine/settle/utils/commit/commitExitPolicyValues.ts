@@ -37,14 +37,14 @@ const getExitExpressions = (
     ReadonlyMap<string, BlueprintExpression>
   >(blueprint).exitPolicyExpressions;
   if (indexed) return indexed;
-  indexed = new Map(
-    blueprint.expressions
-      .filter((expression) => expression.key === 'unsetOnInactive')
-      .map((expression) => [
+  const entries = new Map<string, BlueprintExpression>();
+  for (const expression of blueprint.expressions)
+    if (expression.key === 'unsetOnInactive')
+      entries.set(
         JSON.stringify([expression.declarationId, expression.schemaPath]),
         expression,
-      ]),
-  );
+      );
+  indexed = entries;
   getBlueprintDerived<
     'exitPolicyExpressions',
     ReadonlyMap<string, BlueprintExpression>
@@ -96,7 +96,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       context.selectedDeclarationIds.get(source) ??
       source.runtime.committedDeclarationIds?.get(sourceKey);
     for (const declaration of source.blueprintNode.declarations) {
-      if (selected && !selected.includes(declaration.id)) continue;
+      if (selected && selected.indexOf(declaration.id) === -1) continue;
       const schema = declaration.schema;
       if (!schema || typeof schema !== 'object') continue;
       const controls: unknown = Reflect.get(schema, SCHEMA_GROUP.controls);
@@ -116,10 +116,10 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
             !child.blueprintNode.declarations.some(
               (childDeclaration) =>
                 (!childSelected ||
-                  childSelected.includes(childDeclaration.id)) &&
-                getFragmentOwnerPaths(childDeclaration.schemaPath).includes(
+                  childSelected.indexOf(childDeclaration.id) !== -1) &&
+                getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
                   declaration.schemaPath,
-                ),
+                ) !== -1,
             )
           )
             continue;

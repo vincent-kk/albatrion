@@ -13,6 +13,6 @@ export const hasWildcardPath = (path: string): boolean => {
   return (
     parsed.absolute &&
     parsed.segments[parsed.segments.length - 1] !== '' &&
-    parsed.segments.includes(PointerOperator.Wildcard)
+    parsed.segments.indexOf(PointerOperator.Wildcard) !== -1
   );
 };

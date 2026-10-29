@@ -24,7 +24,7 @@ export const getChildDistribution = <Self extends FieldNodeRecord<Self>>(
   )
     return undefined;
   const distribution = context.distributedInputs.get(host);
-  return distribution?.retainedItemNames?.includes(name)
+  return (distribution?.retainedItemNames?.indexOf(name) ?? -1) !== -1
     ? undefined
     : distribution;
 };

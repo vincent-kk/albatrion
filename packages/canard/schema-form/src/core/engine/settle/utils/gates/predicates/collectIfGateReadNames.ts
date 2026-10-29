@@ -38,7 +38,7 @@ export const collectIfGateReadNames = (
         return false;
     } else if (key === 'not') {
       if (!collectIfGateReadNames(value, names, property)) return false;
-    } else if (property && VALUE_KEYWORDS.includes(key)) {
+    } else if (property && VALUE_KEYWORDS.indexOf(key) !== -1) {
       continue;
     } else if (key === 'type') {
       if (value !== 'object') return false;
@@ -46,13 +46,14 @@ export const collectIfGateReadNames = (
       if (!value || typeof value !== 'object' || isArray(value)) return false;
       for (const [name, condition] of Object.entries(value)) {
         if (!collectIfGateReadNames(condition, names, true)) return false;
-        if (!property && !names.includes(name)) names.push(name);
+        if (!property && names.indexOf(name) === -1) names.push(name);
       }
     } else if (key === 'required') {
       if (!isArray(value) || value.some((name) => typeof name !== 'string'))
         return false;
       if (!property)
-        for (const name of value) if (!names.includes(name)) names.push(name);
+        for (const name of value)
+          if (names.indexOf(name) === -1) names.push(name);
     } else if (key === 'dependentRequired') {
       if (!value || typeof value !== 'object' || isArray(value)) return false;
       for (const [name, required] of Object.entries(value)) {
@@ -62,9 +63,9 @@ export const collectIfGateReadNames = (
         )
           return false;
         if (!property) {
-          if (!names.includes(name)) names.push(name);
+          if (names.indexOf(name) === -1) names.push(name);
           for (const entry of required)
-            if (!names.includes(entry)) names.push(entry);
+            if (names.indexOf(entry) === -1) names.push(entry);
         }
       }
     } else return false;

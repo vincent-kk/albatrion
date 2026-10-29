@@ -38,7 +38,7 @@ export const mergeSchemaContributions = (
     conflictingConst: false,
     conflictingType: false,
     allowedTypes:
-      staticTypes && node.nullable && !staticTypes.includes('null')
+      staticTypes && node.nullable && staticTypes.indexOf('null') === -1
         ? [...staticTypes, 'null']
         : staticTypes,
   };

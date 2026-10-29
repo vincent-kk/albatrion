@@ -104,7 +104,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         const child = children[index];
         if (child.parent !== host || child.blueprintNode.kind === 'virtual')
           continue;
-        const next = isArray(required) && required.includes(child.name);
+        const next = isArray(required) && required.indexOf(child.name) !== -1;
         if (child.required === next) continue;
         child.required = next;
         candidates.add(child);

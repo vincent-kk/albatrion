@@ -30,6 +30,6 @@ export const parsePointerSegment = (token: string): PointerSegment => {
     case '%40':
       return $.Context;
     default:
-      return token.includes('~') ? unescapeSegment(token) : token;
+      return token.indexOf('~') !== -1 ? unescapeSegment(token) : token;
   }
 };

@@ -106,10 +106,11 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           ),
         ];
         for (const entry of targets) {
-          const selected = entry.declarations.filter((child) =>
-            getFragmentOwnerPaths(child.schemaPath).includes(
-              declaration.schemaPath,
-            ),
+          const selected = entry.declarations.filter(
+            (child) =>
+              getFragmentOwnerPaths(child.schemaPath).indexOf(
+                declaration.schemaPath,
+              ) !== -1,
           );
           if (selected.length)
             groups.push({
@@ -187,9 +188,10 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           if (kind === 'derived')
             for (const targetNode of group.targetNodes)
               for (const watch of getWatchPaths(targetNode)) {
-                if (!watchDependencies.includes(watch))
+                if (watchDependencies.indexOf(watch) === -1)
                   watchDependencies.push(watch);
-                if (!dependencies.includes(watch)) dependencies.push(watch);
+                if (dependencies.indexOf(watch) === -1)
+                  dependencies.push(watch);
               }
           const rule: DeriveRule = {
             declarationId: declaration.id,

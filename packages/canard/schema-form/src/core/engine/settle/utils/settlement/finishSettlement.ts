@@ -89,14 +89,14 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
             pop.host.itemCount === pop.count - 1
           ? pop.host
           : undefined;
-    const resized = [...context.arrayCounts]
-      .filter(
-        ([host, previousCount]) =>
-          host !== aligned &&
-          !host.detached &&
-          host.itemCount !== previousCount,
+    const resized: Self[] = [];
+    for (const [host, previousCount] of context.arrayCounts)
+      if (
+        host !== aligned &&
+        !host.detached &&
+        host.itemCount !== previousCount
       )
-      .map(([host]) => host);
+        resized.push(host);
     alignArraySnapshotSlots(resized);
   }
   if (context.kind === 'load')

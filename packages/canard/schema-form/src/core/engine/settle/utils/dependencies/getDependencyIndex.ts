@@ -678,7 +678,10 @@ class DependencyIndex {
         (candidate) => candidate.path === owner,
       )!;
       if (watchedPath === originalWatchedPath) delete entry.watched;
-      else if (entry.watched && !entry.watched.includes(originalWatchedPath))
+      else if (
+        entry.watched &&
+        entry.watched.indexOf(originalWatchedPath) === -1
+      )
         entry.watched.push(originalWatchedPath);
     }
   }

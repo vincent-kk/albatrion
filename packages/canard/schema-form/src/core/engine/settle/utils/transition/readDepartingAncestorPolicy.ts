@@ -26,7 +26,9 @@ export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
       const selected =
         context.selectedDeclarationIds.get(group.host) ??
         context.root.runtime.committedDeclarationIds?.get(key);
-      return !selected?.includes(group.declarationId);
+      return (
+        selected === undefined || selected.indexOf(group.declarationId) === -1
+      );
     });
     if (departed.length)
       return readExitLayerPolicy(

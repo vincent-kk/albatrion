@@ -81,7 +81,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const nodeIds = selected(node);
   const groups: ControlLayer<Self>[] = [];
   for (const group of own)
-    if (nodeIds.includes(group.declarationId))
+    if (nodeIds.indexOf(group.declarationId) !== -1)
       groups.push({
         layer: group.layer,
         declarationId: group.declarationId,
@@ -92,8 +92,11 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   if (!parent || !inherited?.length) return groups;
   const parentIds = selected(parent);
   for (const group of inherited) {
-    if (!parentIds.includes(group.declarationId)) continue;
-    if (group.ownerIds && !group.ownerIds.some((id) => nodeIds.includes(id)))
+    if (parentIds.indexOf(group.declarationId) === -1) continue;
+    if (
+      group.ownerIds &&
+      !group.ownerIds.some((id) => nodeIds.indexOf(id) !== -1)
+    )
       continue;
     groups.push({
       layer: group.layer,
