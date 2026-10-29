@@ -1,0 +1,80 @@
+{
+  "scan": {
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "dabc8b5fd93ec78a6c05752309a73385a67528cb6d87d020cf2a68cfcf7d7570",
+      "adapterIds": [
+        "ecmascript"
+      ],
+      "totalNodes": 375,
+      "depth": 9,
+      "nodesByType": {
+        "organ": 295,
+        "fractal": 80
+      },
+      "violationCount": 201,
+      "certainty": "indeterminate",
+      "filesOutsideFactsScope": 0
+    },
+    "diagnosticCodes": {
+      "detail-document-contract": 176,
+      "intent-document-contract": 1
+    }
+  },
+  "validate": {
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "dabc8b5fd93ec78a6c05752309a73385a67528cb6d87d020cf2a68cfcf7d7570",
+      "mode": "project",
+      "scopes": [
+        "documents",
+        "nodes",
+        "entry-points",
+        "boundaries",
+        "dag",
+        "verification"
+      ],
+      "findingCount": 202,
+      "passed": 2994,
+      "failed": 12,
+      "skipped": 1
+    },
+    "diagnosticCodes": {
+      "detail-document-contract": 176,
+      "intent-document-contract": 1
+    }
+  },
+  "verification": {
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "dabc8b5fd93ec78a6c05752309a73385a67528cb6d87d020cf2a68cfcf7d7570",
+      "fileCount": 735,
+      "specDocument": {
+        "fileCount": 14,
+        "knownCaseCount": 3,
+        "caseCap": 15
+      },
+      "testRecord": {
+        "fileCount": 721,
+        "knownCaseCount": 4427,
+        "caseCap": 32
+      },
+      "fragmentationCount": 0,
+      "violationCount": 21,
+      "certainty": "indeterminate"
+    },
+    "diagnosticCodes": {
+      "detail-document-contract": 176,
+      "intent-document-contract": 1
+    }
+  },
+  "facts": {
+    "exact": 1664,
+    "covered": 1664,
+    "unresolved": 0,
+    "scope": "default adapter source scope"
+  },
+  "findingThreshold": 202,
+  "verdict": "FAIL",
+  "analysisCompleteness": "indeterminate"
+}

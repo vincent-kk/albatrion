@@ -23,6 +23,15 @@ inputs.microHygiene = {
   regressionsAllowed: 0,
   exchangeMaximumUs: 0,
   improvementRequired: false,
+  shortWindow: {
+    processesPerLane: 4,
+    baselineHalfProcesses: 2,
+    warmups: 20,
+    samples: 100,
+    pilot: false,
+    stages: false,
+    retention: false,
+  },
   stageReductions:
     'reported with unchanged IV-1 judgeStage; not a hygiene adoption condition',
   excluded: [

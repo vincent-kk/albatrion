@@ -468,13 +468,13 @@
 
 후보 1의 크기 비용은 다음과 같습니다. 즉시 실행 함수는 호출마다 함수 호출을 더하고 `in` 검사는 방문 원소마다 실행됩니다. 검토의 추가 줄 grep 132개는 실제 인수 없는 IIFE **131개**와 필요한 `useMemo` 콜백 한 줄을 함께 센 값입니다. 그 밖의 형 술어용 인수 있는 IIFE **6개**도 있었습니다. 후보 2에서는 **137개 모두**를 보통 반복문·결과 변수 또는 정적 이름을 가진 형 술어로 옮겼습니다. 파서의 밀집 세그먼트 형 술어는 엔진 내부 한 파일을 세 호출자가 공유하며 패키지 공개 내보내기는 늘리지 않습니다. 필수 hook 콜백은 유지합니다.
 
-| 번들 | 기준 바이트 | 후보 1 바이트 | 증가 |
-| --- | ---: | ---: | ---: |
-| `index.mjs` | 830373 | 861528 | +31155 (3.75%) |
-| `index.node.mjs` | 829595 | 860750 | +31155 (3.76%) |
-| `index.cjs` | 847915 | 882316 | +34401 (4.06%) |
+| 번들 | 기준 바이트 | 후보 1 | 후보 2 | 후보 2 − 기준 |
+| --- | ---: | ---: | ---: | ---: |
+| `index.mjs` | 830373 | 861528 | 855127 | +24754 (2.98%) |
+| `index.node.mjs` | 829595 | 860750 | 854349 | +24754 (2.98%) |
+| `index.cjs` | 847915 | 882316 | 875949 | +28034 (3.31%) |
 
-전체 제품 AST의 `in`은 **204→87(117개 제거)**, 반복용 labeled continue는 **16→0**, prototype 반복은 계속 **0**입니다. 밀집인 엔진 작성 배열에서 불필요한 검사를 없애고 callback 값/색인 별칭과 결과 별칭을 합쳤습니다. 내부 불변 메타데이터는 직접 순회하고, 쓰기 도중 바뀔 수 있는 배열은 최초 길이와 수신 배열을 보존합니다. 임시 filter 결과 배열의 소유·순서와 기존 반환 참조는 유지하고 새 상주 컨테이너는 없습니다. 후보 2의 세 번들 바이트는 최종 build 뒤 같은 표에 추가하며, 시간과 Node/Bun 힙 비용은 승인된 짧은 창으로 판단합니다. 창 1은 중단되어 이 비용의 채택 근거가 아닙니다.
+반복 정리 머리의 제품 AST `in`은 **204→87(117개 제거)**, 반복용 labeled continue는 **16→0**, prototype 반복은 계속 **0**입니다. 밀집인 엔진 작성 배열에서 불필요한 검사를 없애고 callback 값/색인 별칭과 결과 별칭을 합쳤습니다. 내부 불변 메타데이터는 직접 순회하고, 쓰기 도중 바뀔 수 있는 배열은 최초 길이와 수신 배열을 보존합니다. 임시 filter 결과 배열의 소유·순서와 기존 반환 참조는 유지하고 새 상주 컨테이너는 없습니다. 후보 2는 후보 1보다 ESM 두 파일이 각각 6,401바이트, CJS가 6,367바이트 작습니다. 기준보다 남는 바이트 증가와 시간/Node·Bun 힙 비용은 승인된 짧은 창으로 판단합니다. 창 1은 중단되어 이 비용의 채택 근거가 아닙니다.
 
 [반복 감사 원시](raw/micro-hygiene/candidate-2-loop-audit.json)는 남은 숫자 `in` 28곳을 모두 열거합니다. 작성/외부 입력의 tuple·virtual fields·controls.fields/targets·schema.allOf/branches·enum/literal 값·작성 type·required/dependentRequired·외부 오류·checkbox prev·union authored·공개 `ChildFields` 인수의 구멍은 계속 건너뜁니다. 기존 item-entry 캐시의 sparse 존재 검사, 스냅숏의 실제 구멍 보존 검사도 유지합니다. `Object.keys`, 이전 discriminator 값의 push 배열, 렌더의 생성된 옵션/표시 배열에서는 검사를 없앴습니다. 새로 작성한 로컬 선택 형 13개는 기존 Optional 유틸리티로 표기했습니다. typecheck·lint·표적 **82파일 720건(기존 todo 1)**을 통과했으며 [로그](raw/micro-hygiene/candidate-2-loop-checks.json.gz)를 보존했습니다.
 
@@ -486,7 +486,7 @@
 
 공개 97이름 스냅숏에서 네 함수의 null union 표기만 Nullable 표기로 바뀌었습니다: registerPlugin, useFieldNodeSubscribe, useFieldNodeTracker, useFormSubmit. 같은 제네릭 동등 증명으로 확인한 뒤 그 네 문자열만 정확히 갱신했으며, 이름 수·형/값 종류·검사 강도·사례 수는 유지했습니다. 초기 시험은 이 네 표기 때문에 실패했고 수정 뒤 공개/수입/표면 형/할당 시험 **4파일·15건**, typecheck·lint를 통과했습니다. 최종 build의 공개 `index.d.ts`는 **3,129바이트·차이 0**, SHA-256 `ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d`입니다. 그 파일이 재수출하는 선언 그래프 전체 **1,306파일**을 비교했습니다. **194파일**의 바이트가 달라졌으나 증명한 네 기본 유틸리티와 그 중첩 조합의 named/inline import를 원래 형으로 펼치고 union의 괄호·순서와 import/주석 표기를 정규화한 AST 차이는 **0**입니다. 원래 제네릭 매개변수·modifier·조건부 형·멤버·함수 시그니처는 그대로 비교했습니다. [선언 동등 결과](raw/micro-hygiene/declaration-equivalence.json)와 [194파일의 A/B 선언 원시](raw/micro-hygiene/declaration-diff.json.gz), [제네릭 증명](raw/micro-hygiene/utility-equivalence.ts)을 보존합니다.
 
-## 최종 정적 관문
+## 후보 1 정적 관문
 
 최종 제품 머리는 `082c3995a`이며 Node 26.12.1·Bun 1.4.4입니다. 지정 build와 artifact checks·typecheck·lint, 다음 다섯 프로젝트를 각각 종료 0 확인 후 순차 실행하고 verify를 통과했습니다. 이전 머리의 unit 실패 3건과 교정 후 표적 증거도 보존했습니다. 8 GiB·maxWorkers 4를 사용했고 기존 todo 한 건은 유지했습니다.
 
@@ -505,6 +505,26 @@ FCA facts **1,663/1,663 exact**, 세 검사 동일 snapshot `c517ae013f9e50b5e4a
 
 기준 archive의 첫 build는 package-local 의존 연결이 없어 AJV 6을 읽었습니다. 설치 없이 기존 workspace node_modules를 연결한 뒤 통과했고, 기준과 후보의 최종 build는 같은 Node 26으로 맞췄습니다. 추가 의존 설치나 제품 범위 밖 수정은 없습니다.
 
+
+## 후보 2 최종 정적 관문
+
+제품 머리는 `86251d017`이며 이후 장치·증거 커밋도 같은 제품 바이트를 사용합니다. Node 26.12.1·Bun 1.4.4에서 build와 artifact checks(20.59초), typecheck·lint, 다섯 프로젝트를 순차 실행하고 각 종료 0을 확인한 뒤 verify를 통과했습니다. 다섯 프로젝트는 브리프의 원래 기본 환경(`NODE_ENV=test`)이며 `production`은 프로젝트 이름입니다. 그 프로젝트의 detached/resolver 번들 검사는 세 빌드를 실제 production 자식 프로세스에서 확인합니다.
+
+| 프로젝트 | 파일 | 통과 사례 | todo | 초 |
+| --- | ---: | ---: | ---: | ---: |
+| unit | 601 | 3975 | 1 | 97.58 |
+| render | 132 | 768 | 0 | 62.01 |
+| storybook | 100 | 251 | 0 | 36.54 |
+| react18 | 132 | 768 | 0 | 59.43 |
+| production | 10 | 21 | 0 | 3.06 |
+| verify | 738 | 4787 | 1 | 165.77 |
+
+레거시 격리 **2,376파일**, 배달 **79장면 429단계 + B12 7장면 21단계 차이 0**입니다. 배달의 첫 적재는 외부 출력 폴더에 기존 node_modules 연결이 없어 실패했고, 설치 없이 기존 의존 연결을 만든 뒤 완료했습니다. 장치의 네 프로세스 opt-in·기본 열 프로세스 유지·선언 도달성 검사는 **14건 통과**입니다. [정적 로그·해시](raw/micro-hygiene/candidate-2-static/artifacts.json)에 원래 실패와 교정도 남겼습니다.
+
+공개 `index.d.ts`는 여전히 **3,129바이트·바이트 차이 0**입니다. 전체 선언은 **1,306→1,307파일**, A/B 바이트가 다른 파일은 **197개**입니다. 증명한 유틸리티를 펼친 뒤 기존 1,306파일 중 차이는 명시적으로 승인된 내부 두 시그니처뿐입니다: `clearArrayRuntimePaths`의 미사용 인수 제거, `prunePerishedPaths`의 고유 배열 입력 허용. 추가 한 파일은 파서의 밀집 세그먼트 술어입니다. 패키지 exports가 계속 루트 하나임을 검사하고, index에서 import·재수출·import type으로 도달하는 **308파일의 주소와 정규화 AST 차이가 모두 0**임을 확인했습니다. 도구는 다른 내부 차이/삭제/추가를 허용하지 않습니다. [전체 선언 원시와 공개 동등 증거](raw/micro-hygiene/candidate-2-static/declaration-equivalence.json)를 보존합니다.
+
+FCA facts **1,664/1,664 exact**, 세 검사 동일 snapshot `dabc8b5fd93ec78a6c05752309a73385a67528cb6d87d020cf2a68cfcf7d7570`, findings **202건**으로 상한을 유지합니다. 전체 FAIL·분석 indeterminate도 그대로 기록합니다. [FCA 원시](raw/micro-hygiene/candidate-2-static/fca/summary.json)를 보존했습니다. 후속 항목 3의 Set/배열 구분에 쓰는 O(1) `size in paths` 한 곳 때문에 최종 전체 `in`은 88개이며, 원소마다 실행하던 밀집 검사 117개 제거와 숫자 HasProperty 유지 목록은 달라지지 않습니다.
+
 ## 측정 장치와 창
 
 측정 후보는 `8d7d1a87e`이며 제품 바이트는 정적 관문의 `082c3995a`와 같습니다. `tools/iv-2/window.mjs` 계열의 공개 행과 힙 장치를 재사용하며, Ⅳ-1의 `summarize.mjs`·`weightedExchange.mjs`·`judgeStage.mjs` 판정은 유지합니다. Ⅳ-2 전용 할당·exit self·cold 지연 생성 추가항은 이 정리에 해당하지 않으므로 별도 어댑터에서 제외했습니다. 최종 판정은 미시 위생 계획에 따라 모든 행의 폭 밖 퇴보 0과 가중 교환비 ≤ 0이며, 교환비 0도 허용합니다.
@@ -517,3 +537,15 @@ FCA facts **1,663/1,663 exact**, 세 검사 동일 snapshot `c517ae013f9e50b5e4a
 조정자의 별도 승인을 받은 pilot 한 번은 **22행·행당 한 프로세스·20/100·종료 0**입니다. 행별 median/min 비율의 중앙값은 current **1.3474188821**, legacy **1.2143182973**이며 current가 요구 범위 1.2–1.4에 들었습니다. CPU precheck **25/25 승인·지연 25회**를 보존했습니다. 순간 부하는 quiet gate의 지연 대상이며 거절된 측정 표본을 재실행한 것이 아닙니다. 모든 관측에서 이름별 최대 CPU 상위 10개는 duetexpertd 64.19%, WindowServer 61.65%, Google Chrome Helper (Aperitif Renderer) 30.07%, KakaoTalk 21.20%, 2.1.312 18.65%, Google Chrome 18.17%, codex 16.68%, Orca Helper (Renderer) 15.58%, Stats 11.03%, BetterTouchTool 10.67%입니다. [pilot 전체 행·표본](raw/micro-hygiene/preflight/pilot-samples.json.gz), [요약](raw/micro-hygiene/preflight/pilot-summary.json), [CPU 상위 10개와 지연](raw/micro-hygiene/preflight/pilot-cpu-prechecks.json.gz), [사전 검사 로그](raw/micro-hygiene/preflight/logs.json.gz)를 남겼습니다.
 
 창 1은 pilot 범위를 보고한 뒤 별도 승인을 받아 시작했으나 **소유자 지시로 중단, 기계 사용 중이라 quiet gate 대기가 길어짐, 판정 없음**입니다. 정식 marker는 `2026-10-29T14:09:50.510Z`, finally 종료는 `2026-10-29T14:41:38.584Z`입니다. 공개 종료 0 프로세스 **282/440**, SIGINT 중단 1개이며 stage·Node/Bun 힙·retention은 실행하지 못했습니다. 따라서 가중 교환비·폭 밖 퇴보 목록·힙 관문은 미판정이며 부분 표본으로 완료 판정을 만들지 않습니다. dist를 복원하고 입력 해시를 재확인했습니다. **항목 5 정리로 대체됨**이며 자동 재실행하지 않았습니다. [중단 기록과 부분 원시](raw/micro-hygiene/candidate-1-partial/cancellation.json)에 공개 stdout·stderr·영수증, CPU 상위 10개와 지연, 러너 로그를 보존했습니다.
+
+
+### 후보 2 — 짧은 창(4프로세스)
+
+소유자가 짧은 창을 지시했고 조정자는 홀수 1/2 분할을 거절하여 레인당 **4프로세스**로 확정했습니다. 원래 요약기의 A 2개 / A-prime 2개 / B 4개, 같은 median·range·폭·판정식을 유지합니다. 명시적 short-window 옵션만 formal 4를 허용하고 기본 10은 그대로입니다. 새 준비 루트에서 untimed smoke와 실제 CLI 한 worker의 1/1 예행 뒤 한 번 실행하며 pilot·stage 장부·retention은 생략하고 Node/Bun 힙은 포함합니다. 판정은 아직 없습니다.
+
+## 후속 항목 — 추가 strict-production의 기존 문제
+
+브리프의 다섯 프로젝트에 없던 `NODE_ENV=production` 강제 경로는 기준 `1c3655a10`과 후보에서 같은 두 건이 실패했습니다. 조정자 승인으로 설정과 기존 상한을 이 PR에서 고치거나 낮추지 않았으며 다음을 별도로 남깁니다.
+
+- 오래된 `transformMode` 옵션이 현재 Vitest에서 적용되지 않아 `node:child_process`를 web 처리합니다. 임시 기준 config에서 현재 `testTransformMode`와 glob을 쓰면 이 실패는 해결됩니다.
+- 실제 production의 oneOf-20 distinct freeze는 기준/후보 모두 **117**, 기존 상한은 **111**입니다. 원인과 비용을 별도 검증해야 하며 이 PR에서는 111을 올리지 않았습니다.

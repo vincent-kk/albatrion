@@ -38,7 +38,8 @@ const args = [
   '--lane=B',
   '--samples=1',
   '--warmups=1',
-  '--runs=2',
+  process.argv[3] === '--short-window' ? '--runs=4' : '--runs=2',
+  ...(process.argv[3] === '--short-window' ? ['--short-window=true'] : []),
   '--quality=legacy',
   '--repeat=0',
   '--run-dir=' + runDir,
@@ -69,6 +70,7 @@ assert.ok(!fs.existsSync(path.join(root, 'formal-start.json')));
 json(path.join(root, 'rehearsal.json'), {
   formal: false,
   workers: 1,
+  shortWindow: process.argv[3] === '--short-window',
   warmups: 1,
   samples: 1,
   code: result.status,
