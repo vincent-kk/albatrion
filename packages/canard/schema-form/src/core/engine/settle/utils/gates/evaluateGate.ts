@@ -33,22 +33,26 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   edgeName?: string,
   reference = false,
 ): boolean => {
-  let hasMatch: Optional<boolean> = undefined;
-  {
-    const items = gate.appliesWhen;
-    if (items != null) {
-      hasMatch = false;
-      for (let index = 0, count = items.length; index < count; index++) {
-        const parentGate = items[index];
+  let hasRejectedPrerequisite: Optional<boolean> = undefined;
 
-        if (!evaluateGate(parentGate, context, owner, undefined, reference)) {
-          hasMatch = true;
-          break;
-        }
+  const prerequisiteGates = gate.appliesWhen;
+  if (prerequisiteGates != null) {
+    hasRejectedPrerequisite = false;
+    for (
+      let index = 0, count = prerequisiteGates.length;
+      index < count;
+      index++
+    ) {
+      const parentGate = prerequisiteGates[index];
+
+      if (!evaluateGate(parentGate, context, owner, undefined, reference)) {
+        hasRejectedPrerequisite = true;
+        break;
       }
     }
   }
-  if (hasMatch) {
+
+  if (hasRejectedPrerequisite) {
     return false;
   }
   const registry = getGateRegistry(owner.runtime);
@@ -165,21 +169,20 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
         ? FormErrorCode.GuardFailed
         : FormErrorCode.ExpressionThrew;
     let repeated: Optional<boolean> = undefined;
-    {
-      const items = context.failures;
-      if (items != null) {
-        repeated = false;
-        for (let index = 0, count = items.length; index < count; index++) {
-          const error = items[index];
 
-          if (
-            error.code === code &&
-            error.details.path === hostPath &&
-            error.details.schemaPath === gate.schemaPath
-          ) {
-            repeated = true;
-            break;
-          }
+    const gateFailures = context.failures;
+    if (gateFailures != null) {
+      repeated = false;
+      for (let index = 0, count = gateFailures.length; index < count; index++) {
+        const error = gateFailures[index];
+
+        if (
+          error.code === code &&
+          error.details.path === hostPath &&
+          error.details.schemaPath === gate.schemaPath
+        ) {
+          repeated = true;
+          break;
         }
       }
     }

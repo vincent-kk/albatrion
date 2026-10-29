@@ -57,19 +57,18 @@ export const readReferenceOnlySchemaPaths = (
     seen.set(left, seenRight);
     const leftKeys = Object.keys(left);
     const rightKeys = Object.keys(right);
-    let matchesEither = leftKeys.length !== rightKeys.length;
-    if (!matchesEither) {
-      matchesEither = false;
+    let haveDifferentKeys = leftKeys.length !== rightKeys.length;
+    if (!haveDifferentKeys) {
       for (let index = 0, count = leftKeys.length; index < count; index++) {
         const key = leftKeys[index];
 
         if (!hasOwnProperty(right, key)) {
-          matchesEither = true;
+          haveDifferentKeys = true;
           break;
         }
       }
     }
-    if (matchesEither) {
+    if (haveDifferentKeys) {
       return NO_PATHS;
     }
     for (let index = leftKeys.length - 1; index >= 0; index -= 1) {

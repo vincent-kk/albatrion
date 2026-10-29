@@ -49,16 +49,16 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   const watchedPaths = mapArray(table.watchedNames, (name) =>
     appendSegment(node.path, name),
   );
-  let hasMatch = false;
+  let hasDirtyWatchedPath = false;
   for (let index = 0, count = watchedPaths.length; index < count; index++) {
     const path = watchedPaths[index];
 
     if (context.dirtyPaths.has(path)) {
-      hasMatch = true;
+      hasDirtyWatchedPath = true;
       break;
     }
   }
-  if (hasMatch) {
+  if (hasDirtyWatchedPath) {
     return;
   }
   (context.gateSelectionRounds ??= new Map()).set(node, {

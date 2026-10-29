@@ -42,20 +42,17 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
     ) {
       const child = children[position];
 
-      {
-        const first = child.name.charCodeAt(0);
+      const first = child.name.charCodeAt(0);
 
-        if (first < 48 || first > 57) {
-          continue;
-        }
+      if (first < 48 || first > 57) {
+        continue;
+      }
 
-        const index = Number(child.name) >>> 0;
-        {
-          if (index !== 0xffffffff && String(index) === child.name) {
-            matches = true;
-            break;
-          }
-        }
+      const index = Number(child.name) >>> 0;
+
+      if (index !== 0xffffffff && String(index) === child.name) {
+        matches = true;
+        break;
       }
     }
   }

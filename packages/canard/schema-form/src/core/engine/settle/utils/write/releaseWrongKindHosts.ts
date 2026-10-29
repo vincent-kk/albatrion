@@ -21,19 +21,19 @@ export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
     for (const host of hosts) {
       if (host.detached || host.raw === undefined || isPlain(host.raw))
         continue;
-      let hasMatch = false;
-      {
-        const items = host.children ?? [];
-        for (let index = 0, count = items.length; index < count; index++) {
-          const child = items[index];
+      let hasEmittedChild = false;
 
-          if (child.emit !== undefined) {
-            hasMatch = true;
-            break;
-          }
+      const hostChildren = host.children ?? [];
+      for (let index = 0, count = hostChildren.length; index < count; index++) {
+        const child = hostChildren[index];
+
+        if (child.emit !== undefined) {
+          hasEmittedChild = true;
+          break;
         }
       }
-      if (!hasMatch) {
+
+      if (!hasEmittedChild) {
         continue;
       }
       host.raw = undefined;

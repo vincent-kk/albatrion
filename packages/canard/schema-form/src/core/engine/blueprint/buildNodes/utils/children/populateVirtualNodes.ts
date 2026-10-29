@@ -56,9 +56,8 @@ export const populateVirtualNodes = (
         name,
       );
       const fields = schema.fields;
-      let matchesEither = !isArray(fields);
-      if (!matchesEither) {
-        matchesEither = false;
+      let hasInvalidFieldNames = !isArray(fields);
+      if (!hasInvalidFieldNames) {
         for (let index = 0, count = fields.length; index < count; index++) {
           if (!(index in fields)) {
             continue;
@@ -67,14 +66,13 @@ export const populateVirtualNodes = (
           const field = fields[index];
 
           if (typeof field !== 'string') {
-            matchesEither = true;
+            hasInvalidFieldNames = true;
             break;
           }
         }
       }
-      let matchesEither2 = matchesEither;
-      if (!matchesEither2) {
-        matchesEither2 = false;
+      let hasInvalidVirtualFields = hasInvalidFieldNames;
+      if (!hasInvalidVirtualFields) {
         for (let index = 0, count = fields.length; index < count; index++) {
           if (!(index in fields)) {
             continue;
@@ -83,12 +81,12 @@ export const populateVirtualNodes = (
           const field = fields[index];
 
           if (fields.indexOf(field) !== index) {
-            matchesEither2 = true;
+            hasInvalidVirtualFields = true;
             break;
           }
         }
       }
-      if (matchesEither2) {
+      if (hasInvalidVirtualFields) {
         throwBlueprintError(
           FormErrorCode.VirtualFieldsNotValid,
           schemaPath,
@@ -97,14 +95,14 @@ export const populateVirtualNodes = (
         );
       }
       for (const field of fields) {
-        let hasMatch = false;
+        let hasRealProperty = false;
         for (const edge of host.childEntries) {
           if (edge.name === field && edge.node.kind !== 'virtual') {
-            hasMatch = true;
+            hasRealProperty = true;
             break;
           }
         }
-        if (!hasMatch) {
+        if (!hasRealProperty) {
           throwBlueprintError(
             FormErrorCode.VirtualFieldsNotInProperties,
             schemaPath,

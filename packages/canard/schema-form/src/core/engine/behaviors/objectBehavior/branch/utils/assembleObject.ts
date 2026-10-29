@@ -219,7 +219,6 @@ export const assembleObject: Behavior['assemble'] = (
     const oldNames = Object.keys(previous);
     let matches = names.length === oldNames.length;
     if (matches) {
-      matches = true;
       for (let index = 0, count = names.length; index < count; index++) {
         const name = names[index];
 

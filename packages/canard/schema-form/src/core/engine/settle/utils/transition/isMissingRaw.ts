@@ -27,15 +27,15 @@ export const isMissingRaw = <Self extends FieldNodeRecord<Self>>(
       !context.filledNodes.has(pending)
     )
       return false;
-  {
-    const items = node.children ?? [];
-    for (let index = 0, count = items.length; index < count; index++) {
-      const child = items[index];
 
-      if (!isMissingRaw(child, context)) {
-        return false;
-      }
+  const childrenToCheck = node.children ?? [];
+  for (let index = 0, count = childrenToCheck.length; index < count; index++) {
+    const child = childrenToCheck[index];
+
+    if (!isMissingRaw(child, context)) {
+      return false;
     }
   }
+
   return true;
 };

@@ -33,27 +33,27 @@ export const interpretFieldNodeDraft = (
       kinds.push(kind);
   }
   const value = interpret(draft, { kinds, mask: 0, nullable: node.nullable });
-  let matchesEither = value === undefined;
-  if (!matchesEither) {
+  let isInterpretedMember = value === undefined;
+  if (!isInterpretedMember) {
     let selectedResult: boolean;
     if (value === null) {
       selectedResult = node.nullable;
     } else {
-      let hasMatch = false;
+      let matchesAllowedKind = false;
       for (let index = 0, count = kinds.length; index < count; index++) {
         const kind = kinds[index];
 
         if (isMember(value, kind)) {
-          hasMatch = true;
+          matchesAllowedKind = true;
           break;
         }
       }
-      selectedResult = hasMatch;
+      selectedResult = matchesAllowedKind;
     }
-    matchesEither = selectedResult;
+    isInterpretedMember = selectedResult;
   }
   return {
     value,
-    isMember: matchesEither,
+    isMember: isInterpretedMember,
   };
 };

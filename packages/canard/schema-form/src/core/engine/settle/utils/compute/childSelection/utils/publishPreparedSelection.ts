@@ -15,7 +15,6 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
   const names = Object.keys(frame.preparedDynamic!);
   let same = names.length === prepared.dynamicNames.length;
   if (same) {
-    same = true;
     for (let index = 0, count = names.length; index < count; index++) {
       const name = names[index];
 

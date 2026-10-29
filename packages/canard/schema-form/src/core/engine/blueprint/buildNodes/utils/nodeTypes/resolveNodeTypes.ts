@@ -132,8 +132,8 @@ export const resolveNodeTypes = (
   return mapArray([...groups.values()], (group) => ({
     ...group,
     declarations: filterArray(declarations, (declaration) => {
-      let matchesEither = group.declarations.includes(declaration);
-      if (!matchesEither) {
+      let containsDeclaration = group.declarations.includes(declaration);
+      if (!containsDeclaration) {
         let matches = declaration.role === 'overlay';
         if (matches) {
           matches = false;
@@ -144,9 +144,9 @@ export const resolveNodeTypes = (
             }
           }
         }
-        matchesEither = matches;
+        containsDeclaration = matches;
       }
-      return matchesEither;
+      return containsDeclaration;
     }),
   }));
 };

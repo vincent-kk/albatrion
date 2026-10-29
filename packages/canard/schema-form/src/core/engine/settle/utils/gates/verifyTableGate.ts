@@ -24,15 +24,15 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   value: boolean,
 ): void => {
-  let hasMatch = false;
+  let isPredicateGate = false;
   for (const group of context.gateSelectionRounds!.get(node)!.table
     .predicateGroups) {
     if (group.gate === gate) {
-      hasMatch = true;
+      isPredicateGate = true;
       break;
     }
   }
-  if (hasMatch) {
+  if (isPredicateGate) {
     verifyGateSelection(
       evaluateGate(gate, context, node, undefined, true) === value,
       'S1 predicate verdict: ' + gate.schemaPath,
@@ -57,7 +57,6 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
     );
     let matches = pending.length === (context.pendingOutputs?.size ?? 0);
     if (matches) {
-      matches = true;
       for (let index = 0, count = pending.length; index < count; index++) {
         const entry = pending[index];
 
@@ -70,7 +69,6 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
     verifyGateSelection(matches, 'S2 pendingOutputs changed: ' + path);
     let matches2 = changed.length === context.changedNodes.size;
     if (matches2) {
-      matches2 = true;
       for (let index = 0, count = changed.length; index < count; index++) {
         const entry = changed[index];
 

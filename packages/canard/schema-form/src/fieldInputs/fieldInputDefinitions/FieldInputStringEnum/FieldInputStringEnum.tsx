@@ -57,16 +57,16 @@ export const FieldInputStringEnum = ({
   } else {
     let matches = defaultValue !== null;
     if (matches) {
-      let hasMatch = false;
+      let hasMatchingOption = false;
       for (let index = 0, count = enumOptions.length; index < count; index++) {
         const option = enumOptions[index];
 
         if (option.value === '' + defaultValue) {
-          hasMatch = true;
+          hasMatchingOption = true;
           break;
         }
       }
-      matches = !hasMatch;
+      matches = !hasMatchingOption;
     }
     outOfDomainValue = matches ? '' + defaultValue : undefined;
   }

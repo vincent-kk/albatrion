@@ -48,38 +48,38 @@ export const resolveNodeStrategy = (
     return terminal ? 'terminal' : 'branch';
   }
   const root: StrategyCase = { children: new Map(), hasDeclaration: false };
-  {
-    const items = relevant;
-    for (let index = 0, count = items.length; index < count; index++) {
-      const declaration = items[index];
 
-      {
-        let current = root;
-        for (const gate of declaration.gates) {
-          const key = JSON.stringify([
-            gate.kind,
-            gate.schemaPath,
-            gate.hostPath,
-            gate.negated,
-          ]);
-          let child = current.children.get(key);
-          if (!child) {
-            child = { children: new Map(), hasDeclaration: false };
-            current.children.set(key, child);
-          }
-          current = child;
-        }
-        const explicit = readSchemaObject(declaration.schema).options?.terminal;
-        const renderer = context.options.isTerminal?.(declaration.schema);
-        if (explicit !== undefined)
-          current.explicit = { index, value: explicit };
-        if (renderer !== undefined)
-          current.renderer = { index, value: renderer };
-        current.hasDeclaration ||= declaration.role === 'declaration';
-        current.schemaPath = declaration.schemaPath;
+  const relevantDeclarations = relevant;
+  for (
+    let index = 0, count = relevantDeclarations.length;
+    index < count;
+    index++
+  ) {
+    const declaration = relevantDeclarations[index];
+
+    let current = root;
+    for (const gate of declaration.gates) {
+      const key = JSON.stringify([
+        gate.kind,
+        gate.schemaPath,
+        gate.hostPath,
+        gate.negated,
+      ]);
+      let child = current.children.get(key);
+      if (!child) {
+        child = { children: new Map(), hasDeclaration: false };
+        current.children.set(key, child);
       }
+      current = child;
     }
+    const explicit = readSchemaObject(declaration.schema).options?.terminal;
+    const renderer = context.options.isTerminal?.(declaration.schema);
+    if (explicit !== undefined) current.explicit = { index, value: explicit };
+    if (renderer !== undefined) current.renderer = { index, value: renderer };
+    current.hasDeclaration ||= declaration.role === 'declaration';
+    current.schemaPath = declaration.schemaPath;
   }
+
   let strategy: Optional<boolean>;
   const pending = [root];
   while (pending.length) {

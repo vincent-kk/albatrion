@@ -17,19 +17,20 @@ export const readLatentExitPolicy = (
 ): boolean => {
   for (const layer of EXIT_LAYERS) {
     let matching: Optional<{ layer: DeclarationLayer; clear: boolean }[]>;
-    {
-      const items = decisions;
-      if (items != null) {
-        const result: Array<(typeof items)[number]> = [];
-        for (let index = 0, count = items.length; index < count; index++) {
-          const decision = items[index];
 
-          {
-            if (decision.layer === layer) result.push(decision);
-          }
-        }
-        matching = result;
+    const layerDecisions = decisions;
+    if (layerDecisions != null) {
+      const result: Array<(typeof layerDecisions)[number]> = [];
+      for (
+        let index = 0, count = layerDecisions.length;
+        index < count;
+        index++
+      ) {
+        const decision = layerDecisions[index];
+
+        if (decision.layer === layer) result.push(decision);
       }
+      matching = result;
     }
 
     if (matching?.length) {

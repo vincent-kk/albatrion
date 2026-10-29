@@ -52,22 +52,22 @@ export const inferAllowedTypes = (
     NO_VISITING,
     cycle,
   );
-  const previousResult = isBranch && cycle?.found;
-  let matchesEither: boolean;
-  if (!previousResult) {
-    matchesEither = false;
+  const hasBranchCycle = isBranch && cycle?.found;
+  let hasTypeCycle: boolean;
+  if (!hasBranchCycle) {
+    hasTypeCycle = false;
     for (let index = 0, count = parts.length; index < count; index++) {
       const part = parts[index];
 
       if (visiting.includes(part.schemaPath)) {
-        matchesEither = true;
+        hasTypeCycle = true;
         break;
       }
     }
   } else {
-    matchesEither = previousResult;
+    hasTypeCycle = hasBranchCycle;
   }
-  if (matchesEither) {
+  if (hasTypeCycle) {
     return NO_TYPES;
   }
   const stack = [...visiting, ...mapArray(parts, (part) => part.schemaPath)];
@@ -99,40 +99,37 @@ export const inferAllowedTypes = (
         if (!(index in branches)) continue;
         const branch = branches[index];
 
-        {
-          const path = appendSegment(
-            appendSegment(part.schemaPath, keyword),
-            index,
-          );
-          if (
-            branch?.controls?.active !== undefined ||
-            context.discriminatorBranches?.has(path)
-          ) {
-            continue;
-          }
-          hasKeywordBranch = true;
-          const types = inferAllowedTypes(
-            context,
-            branch,
-            path,
-            true,
-            stack,
-            true,
-          );
-          if (!types) {
-            void throwBlueprintError(
-              FormErrorCode.UnknownJsonSchema,
-              path,
-              {
-                guidance:
-                  'Specify type explicitly for an unconstrained branch.',
-              },
-              context.options,
-            );
-            continue;
-          }
-          if (types.length) groups.push(types);
+        const path = appendSegment(
+          appendSegment(part.schemaPath, keyword),
+          index,
+        );
+        if (
+          branch?.controls?.active !== undefined ||
+          context.discriminatorBranches?.has(path)
+        ) {
+          continue;
         }
+        hasKeywordBranch = true;
+        const types = inferAllowedTypes(
+          context,
+          branch,
+          path,
+          true,
+          stack,
+          true,
+        );
+        if (!types) {
+          void throwBlueprintError(
+            FormErrorCode.UnknownJsonSchema,
+            path,
+            {
+              guidance: 'Specify type explicitly for an unconstrained branch.',
+            },
+            context.options,
+          );
+          continue;
+        }
+        if (types.length) groups.push(types);
       }
     }
     if (hasKeywordBranch) {

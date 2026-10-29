@@ -55,7 +55,6 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
     });
     let matches = children.length === expected.length;
     if (matches) {
-      matches = true;
       for (let index = 0, count = children.length; index < count; index++) {
         const child = children[index];
 

@@ -217,31 +217,31 @@ class DependencyIndex {
       for (const declaration of node.declarations) {
         for (const gate of declaration.gates) {
           const expression = getGateExpression(this.blueprint, gate.schemaPath);
-          let hasMatch2: Optional<boolean> = undefined;
-          {
-            const items = expression?.dependencies;
-            if (items != null) {
-              hasMatch2 = false;
-              for (
-                let index = 0, count = items.length;
-                index < count;
-                index++
-              ) {
-                const dependency = items[index];
+          let hasNonContextDependency: Optional<boolean> = undefined;
 
-                if (
-                  readPointerSegment(
-                    resolveDependencyPath(gate.hostPath, dependency),
-                    0,
-                  ) !== PointerOperator.Context
-                ) {
-                  hasMatch2 = true;
-                  break;
-                }
+          const expressionDependencies = expression?.dependencies;
+          if (expressionDependencies != null) {
+            hasNonContextDependency = false;
+            for (
+              let index = 0, count = expressionDependencies.length;
+              index < count;
+              index++
+            ) {
+              const dependency = expressionDependencies[index];
+
+              if (
+                readPointerSegment(
+                  resolveDependencyPath(gate.hostPath, dependency),
+                  0,
+                ) !== PointerOperator.Context
+              ) {
+                hasNonContextDependency = true;
+                break;
               }
             }
           }
-          if (!hasMatch2) {
+
+          if (!hasNonContextDependency) {
             continue;
           }
           let hostPath: Optional<string>;
@@ -673,20 +673,17 @@ class DependencyIndex {
         ownerParts[index] === PointerOperator.Wildcard &&
         watchedParts[index] !== PointerOperator.Wildcard;
       if (matches) {
-        matches = true;
-        {
-          const items = ownerParts.slice(0, index);
-          for (
-            let position = 0, count = items.length;
-            position < count;
-            position++
-          ) {
-            const part = items[position];
+        const ownerPrefix = ownerParts.slice(0, index);
+        for (
+          let position = 0, count = ownerPrefix.length;
+          position < count;
+          position++
+        ) {
+          const part = ownerPrefix[position];
 
-            if (!(part === watchedParts[position])) {
-              matches = false;
-              break;
-            }
+          if (!(part === watchedParts[position])) {
+            matches = false;
+            break;
           }
         }
       }

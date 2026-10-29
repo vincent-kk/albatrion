@@ -16,26 +16,29 @@ export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
 ): boolean => {
   const template = host.blueprintNode;
-  let matchesEither: Optional<boolean> =
+  let hasMultipleItemCandidates: Optional<boolean> =
     (template.itemCandidates?.length ?? 0) > 1;
-  if (!matchesEither) {
-    matchesEither = undefined;
-    {
-      const items = template.prefixItemCandidates;
-      if (items != null) {
-        matchesEither = false;
-        for (let index = 0, count = items.length; index < count; index++) {
-          const candidates = items[index];
+  if (!hasMultipleItemCandidates) {
+    hasMultipleItemCandidates = undefined;
 
-          if (candidates.length > 1) {
-            matchesEither = true;
-            break;
-          }
+    const prefixCandidates = template.prefixItemCandidates;
+    if (prefixCandidates != null) {
+      hasMultipleItemCandidates = false;
+      for (
+        let index = 0, count = prefixCandidates.length;
+        index < count;
+        index++
+      ) {
+        const candidates = prefixCandidates[index];
+
+        if (candidates.length > 1) {
+          hasMultipleItemCandidates = true;
+          break;
         }
       }
     }
   }
-  if (matchesEither) {
+  if (hasMultipleItemCandidates) {
     return false;
   }
   if (host.raw !== undefined || host.itemCount === plan.slots.length)

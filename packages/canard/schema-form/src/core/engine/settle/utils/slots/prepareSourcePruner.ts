@@ -72,14 +72,14 @@ const hasRetainableDescendants = (
   )
     return true;
   for (const entry of template.childEntries) {
-    let hasMatch = false;
+    let hasUnconditionalDeclaration = false;
     for (const declaration of entry.declarations) {
       if (declaration.gates.length === 0) {
-        hasMatch = true;
+        hasUnconditionalDeclaration = true;
         break;
       }
     }
-    if (!hasMatch || hasRetainableDescendants(entry.node, visited)) {
+    if (!hasUnconditionalDeclaration || hasRetainableDescendants(entry.node, visited)) {
       return true;
     }
   }
@@ -87,14 +87,14 @@ const hasRetainableDescendants = (
     ...(template.prefixItems ?? []),
     ...(template.item ? [template.item] : []),
   ]) {
-    let hasMatch2 = false;
+    let hasUnconditionalDeclaration = false;
     for (const declaration of child.declarations) {
       if (declaration.gates.length === 0) {
-        hasMatch2 = true;
+        hasUnconditionalDeclaration = true;
         break;
       }
     }
-    if (!hasMatch2 || hasRetainableDescendants(child, visited)) {
+    if (!hasUnconditionalDeclaration || hasRetainableDescendants(child, visited)) {
       return true;
     }
   }

@@ -73,20 +73,24 @@ export const readDiscriminatorBranches = (
           readAllowedTypes(part.schema, part.schemaPath, context.options),
         );
       let allMatch: Optional<boolean> = undefined;
-      {
-        const items = branchTypes;
-        if (items != null) {
-          allMatch = true;
-          for (let index = 0, count = items.length; index < count; index++) {
-            const type = items[index];
 
-            if (!(type === 'null')) {
-              allMatch = false;
-              break;
-            }
+      const branchTypeNames = branchTypes;
+      if (branchTypeNames != null) {
+        allMatch = true;
+        for (
+          let index = 0, count = branchTypeNames.length;
+          index < count;
+          index++
+        ) {
+          const type = branchTypeNames[index];
+
+          if (!(type === 'null')) {
+            allMatch = false;
+            break;
           }
         }
       }
+
       if (allMatch) {
         continue;
       }
@@ -142,7 +146,7 @@ export const readDiscriminatorBranches = (
           { propertyName, reason: 'kind' },
           context.options,
         );
-      let hasMatch = false;
+      let hasOverlappingTag = false;
       for (
         let position = 0, limit = values.length;
         position < limit;
@@ -153,7 +157,7 @@ export const readDiscriminatorBranches = (
         }
 
         const value = values[position];
-        let hasMatch2 = false;
+        let matchesPreviousTag = false;
         for (
           let index = 0, count = previousValues.length;
           index < count;
@@ -162,16 +166,16 @@ export const readDiscriminatorBranches = (
           const previous = previousValues[index];
 
           if (equals(previous, value)) {
-            hasMatch2 = true;
+            matchesPreviousTag = true;
             break;
           }
         }
-        if (hasMatch2) {
-          hasMatch = true;
+        if (matchesPreviousTag) {
+          hasOverlappingTag = true;
           break;
         }
       }
-      if (hasMatch) {
+      if (hasOverlappingTag) {
         return throwBlueprintError(
           FormErrorCode.DiscriminatorMismatch,
           branchPath,

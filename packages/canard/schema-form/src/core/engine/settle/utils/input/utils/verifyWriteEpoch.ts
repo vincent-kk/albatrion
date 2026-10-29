@@ -21,16 +21,13 @@ export const verifyWriteEpoch = <Self extends FieldNodeRecord<Self>>(
   }
   let matches = actual.size === shadow.size;
   if (matches) {
-    matches = true;
-    {
-      const items = [...shadow];
-      for (let index = 0, count = items.length; index < count; index++) {
-        const path = items[index];
+    const shadowEntries = [...shadow];
+    for (let index = 0, count = shadowEntries.length; index < count; index++) {
+      const path = shadowEntries[index];
 
-        if (!actual.has(path)) {
-          matches = false;
-          break;
-        }
+      if (!actual.has(path)) {
+        matches = false;
+        break;
       }
     }
   }

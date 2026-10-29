@@ -34,41 +34,42 @@ export const validateChildTargets = (context: AnalysisContext): void => {
           );
         discriminator = controls.discriminator;
       }
-      {
-        const values = controls?.fields;
-        if (values != null) {
-          for (let index = 0, limit = values.length; index < limit; index++) {
-            if (!(index in values)) continue;
-            const entry: { targets: string[] } = values[index];
 
-            {
-              for (const target of entry.targets) {
-                let matchesEither = node.strategy === 'terminal';
-                if (!matchesEither) {
-                  let hasMatch = false;
-                  for (const edge of node.childEntries) {
-                    if (edge.name === target) {
-                      hasMatch = true;
-                      break;
-                    }
-                  }
-                  matchesEither = !hasMatch;
-                }
-                if (matchesEither) {
-                  throwBlueprintError(
-                    FormErrorCode.ChildrenTargetNotFound,
-                    appendSegment(
-                      appendSegment(
-                        appendSegment(declaration.schemaPath, 'controls'),
-                        'fields',
-                      ),
-                      index,
-                    ),
-                    { target },
-                    context.options,
-                  );
+      const controlFields = controls?.fields;
+      if (controlFields != null) {
+        for (
+          let index = 0, limit = controlFields.length;
+          index < limit;
+          index++
+        ) {
+          if (!(index in controlFields)) continue;
+          const entry: { targets: string[] } = controlFields[index];
+
+          for (const target of entry.targets) {
+            let hasMissingTarget = node.strategy === 'terminal';
+            if (!hasMissingTarget) {
+              let hasNamedChild = false;
+              for (const edge of node.childEntries) {
+                if (edge.name === target) {
+                  hasNamedChild = true;
+                  break;
                 }
               }
+              hasMissingTarget = !hasNamedChild;
+            }
+            if (hasMissingTarget) {
+              throwBlueprintError(
+                FormErrorCode.ChildrenTargetNotFound,
+                appendSegment(
+                  appendSegment(
+                    appendSegment(declaration.schemaPath, 'controls'),
+                    'fields',
+                  ),
+                  index,
+                ),
+                { target },
+                context.options,
+              );
             }
           }
         }

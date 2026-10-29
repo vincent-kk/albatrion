@@ -84,79 +84,62 @@ export const validateControlGroups = (
         { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
-    {
-      const values = controls.fields;
-      for (let index = 0, limit = values.length; index < limit; index++) {
-        if (!(index in values)) continue;
-        const entry: any = values[index];
 
-        {
-          const path = appendSegment(
-            appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
-            index,
-          );
-          let matchesEither = !entry || typeof entry !== 'object';
-          if (!matchesEither) {
-            matchesEither = false;
-            {
-              const items = Object.keys(entry);
-              for (
-                let index = 0, count = items.length;
-                index < count;
-                index++
-              ) {
-                const key = items[index];
+    const controlFields = controls.fields;
+    for (let index = 0, limit = controlFields.length; index < limit; index++) {
+      if (!(index in controlFields)) continue;
+      const entry: any = controlFields[index];
 
-                if (key !== 'targets' && key !== 'controls') {
-                  matchesEither = true;
-                  break;
-                }
-              }
-            }
+      const path = appendSegment(
+        appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
+        index,
+      );
+      let hasInvalidFieldEntry = !entry || typeof entry !== 'object';
+      if (!hasInvalidFieldEntry) {
+        const entryKeys = Object.keys(entry);
+        for (let index = 0, count = entryKeys.length; index < count; index++) {
+          const key = entryKeys[index];
+
+          if (key !== 'targets' && key !== 'controls') {
+            hasInvalidFieldEntry = true;
+            break;
           }
-          let matchesEither2 = matchesEither || !isArray(entry.targets);
-          if (!matchesEither2) {
-            matchesEither2 = false;
-            {
-              const items = entry.targets;
-              for (
-                let index = 0, count = items.length;
-                index < count;
-                index++
-              ) {
-                if (!(index in items)) {
-                  continue;
-                }
-
-                const name: unknown = items[index];
-
-                if (typeof name !== 'string') {
-                  matchesEither2 = true;
-                  break;
-                }
-              }
-            }
-          }
-          if (matchesEither2) {
-            throwBlueprintError(
-              FormErrorCode.InvalidControlShape,
-              path,
-              {
-                group: SCHEMA_GROUP.controls,
-                key: 'fields',
-                expected: '{ targets: string[], controls? }',
-              },
-              context.options,
-            );
-          }
-          validateControlGroups(
-            context,
-            { controls: entry.controls },
-            path,
-            true,
-          );
         }
       }
+      let hasInvalidFieldTargets =
+        hasInvalidFieldEntry || !isArray(entry.targets);
+      if (!hasInvalidFieldTargets) {
+        const fieldTargets = entry.targets;
+        for (
+          let index = 0, count = fieldTargets.length;
+          index < count;
+          index++
+        ) {
+          if (!(index in fieldTargets)) {
+            continue;
+          }
+
+          const name: unknown = fieldTargets[index];
+
+          if (typeof name !== 'string') {
+            hasInvalidFieldTargets = true;
+            break;
+          }
+        }
+      }
+      if (hasInvalidFieldTargets) {
+        throwBlueprintError(
+          FormErrorCode.InvalidControlShape,
+          path,
+          {
+            group: SCHEMA_GROUP.controls,
+            key: 'fields',
+            expected: '{ targets: string[], controls? }',
+          },
+          context.options,
+        );
+      }
+      validateControlGroups(context, { controls: entry.controls }, path, true);
     }
   }
 };

@@ -64,14 +64,14 @@ export const getItemSchemaPath = (
     }
     if (!path) continue;
     fallback ??= path;
-    let hasMatch = false;
+    let declaresItemSchema = false;
     for (const candidate of node.declarations) {
       if (candidate.schema === child) {
-        hasMatch = true;
+        declaresItemSchema = true;
         break;
       }
     }
-    if (hasMatch) {
+    if (declaresItemSchema) {
       return path;
     }
   }

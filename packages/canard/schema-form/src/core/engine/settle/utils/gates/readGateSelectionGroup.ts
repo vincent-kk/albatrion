@@ -57,23 +57,27 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
           : getGateExpression(node.runtime.blueprint, step.gate.schemaPath);
       let selectedResult: boolean;
       if (step.gate.kind === 'discriminator') {
-        let hasMatch = false;
-        {
-          const items = step.gate.condition.values;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) {
-              continue;
-            }
+        let matchesDiscriminatorTag = false;
 
-            const tag = items[index];
+        const discriminatorValues = step.gate.condition.values;
+        for (
+          let index = 0, count = discriminatorValues.length;
+          index < count;
+          index++
+        ) {
+          if (!(index in discriminatorValues)) {
+            continue;
+          }
 
-            if (tag === value) {
-              hasMatch = true;
-              break;
-            }
+          const tag = discriminatorValues[index];
+
+          if (tag === value) {
+            matchesDiscriminatorTag = true;
+            break;
           }
         }
-        selectedResult = hasMatch;
+
+        selectedResult = matchesDiscriminatorTag;
       } else {
         selectedResult = Boolean(expression!.evaluate([value]));
       }

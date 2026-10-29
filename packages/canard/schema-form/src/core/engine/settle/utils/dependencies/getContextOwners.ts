@@ -37,43 +37,43 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   const rules = getDeriveRuleTable(blueprint);
   for (const node of blueprint.nodes) {
     for (const declaration of node.declarations) {
-      let matchesEither: Optional<boolean> = ids.indexOf(declaration.id) !== -1;
-      if (!matchesEither) {
-        matchesEither = undefined;
-        {
-          const values = rules.byDeclaration.get(declaration.id);
-          if (values != null) {
-            matchesEither = false;
-            for (
-              let position = 0, limit = values.length;
-              position < limit;
-              position++
-            ) {
-              const rule = values[position];
-              const previousResult =
-                rule.kind === 'derived' &&
-                (rule.targetName !== undefined || rule.targetItems);
-              let matches: Optional<boolean>;
-              if (previousResult) {
-                matches = false;
-                for (const path of rule.watchDependencies) {
-                  if (readPointerSegment(path, 0) === PointerOperator.Context) {
-                    matches = true;
-                    break;
-                  }
+      let dependsOnContext: Optional<boolean> =
+        ids.indexOf(declaration.id) !== -1;
+      if (!dependsOnContext) {
+        dependsOnContext = undefined;
+
+        const declarationRules = rules.byDeclaration.get(declaration.id);
+        if (declarationRules != null) {
+          dependsOnContext = false;
+          for (
+            let position = 0, limit = declarationRules.length;
+            position < limit;
+            position++
+          ) {
+            const rule = declarationRules[position];
+            const hasTargetedDerivation =
+              rule.kind === 'derived' &&
+              (rule.targetName !== undefined || rule.targetItems);
+            let matches: Optional<boolean>;
+            if (hasTargetedDerivation) {
+              matches = false;
+              for (const path of rule.watchDependencies) {
+                if (readPointerSegment(path, 0) === PointerOperator.Context) {
+                  matches = true;
+                  break;
                 }
-              } else {
-                matches = previousResult;
               }
-              if (matches) {
-                matchesEither = true;
-                break;
-              }
+            } else {
+              matches = hasTargetedDerivation;
+            }
+            if (matches) {
+              dependsOnContext = true;
+              break;
             }
           }
         }
       }
-      if (matchesEither && owners.indexOf(declaration.path) === -1) {
+      if (dependsOnContext && owners.indexOf(declaration.path) === -1) {
         owners.push(declaration.path);
       }
     }

@@ -37,23 +37,20 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
     DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message);
   if (duplicate) {
     duplicate = false;
-    {
-      const items = [...recentReleaseList(validator).counts];
-      for (let index = 0, limit = items.length; index < limit; index++) {
-        const [other, count] = items[index];
 
-        {
-          if (
-            other !== authoredRoot &&
-            count > 0 &&
-            typeof other === 'object' &&
-            other !== null &&
-            other.$id === id
-          ) {
-            duplicate = true;
-            break;
-          }
-        }
+    const releasedRoots = [...recentReleaseList(validator).counts];
+    for (let index = 0, limit = releasedRoots.length; index < limit; index++) {
+      const [other, count] = releasedRoots[index];
+
+      if (
+        other !== authoredRoot &&
+        count > 0 &&
+        typeof other === 'object' &&
+        other !== null &&
+        other.$id === id
+      ) {
+        duplicate = true;
+        break;
       }
     }
   }

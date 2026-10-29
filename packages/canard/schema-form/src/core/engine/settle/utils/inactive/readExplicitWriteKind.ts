@@ -23,22 +23,26 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   const origins = context.writeOrigins;
   if (!origins) return context.kind;
   // Batch replacement paths retain earlier whole writes after later merges.
-  let hasMatch: Optional<boolean> = undefined;
-  {
-    const items = context.replacePaths;
-    if (items != null) {
-      hasMatch = false;
-      for (let index = 0, count = items.length; index < count; index++) {
-        const path = items[index];
+  let matchesReplacementPath: Optional<boolean> = undefined;
 
-        if (inputPath === path || isDescendantPath(inputPath, path)) {
-          hasMatch = true;
-          break;
-        }
+  const replacementPaths = context.replacePaths;
+  if (replacementPaths != null) {
+    matchesReplacementPath = false;
+    for (
+      let index = 0, count = replacementPaths.length;
+      index < count;
+      index++
+    ) {
+      const path = replacementPaths[index];
+
+      if (inputPath === path || isDescendantPath(inputPath, path)) {
+        matchesReplacementPath = true;
+        break;
       }
     }
   }
-  if (hasMatch) {
+
+  if (matchesReplacementPath) {
     return 'callerReplace';
   }
   for (let index = origins.length - 1; index >= 0; index--) {

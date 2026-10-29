@@ -79,19 +79,18 @@ export const useChildFieldErrors = (
       formattedErrors.find((message) => message != null) ?? null;
     let showError = !disabled;
     if (showError) {
-      let matchesEither = checkShowError(node.state);
-      if (!matchesEither) {
-        matchesEither = false;
+      let shouldShowError = checkShowError(node.state);
+      if (!shouldShowError) {
         for (let index = 0, count = showErrors.length; index < count; index++) {
           const item = showErrors[index];
 
           if (item) {
-            matchesEither = true;
+            shouldShowError = true;
             break;
           }
         }
       }
-      showError = matchesEither;
+      showError = shouldShowError;
     }
 
     return {

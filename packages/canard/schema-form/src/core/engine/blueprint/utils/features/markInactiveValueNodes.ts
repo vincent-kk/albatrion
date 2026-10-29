@@ -44,18 +44,18 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
         ...(node.prefixItemCandidates?.flat() ?? node.prefixItems ?? []),
       ];
       for (const child of children) {
-        let hasMatch = false;
+        let belongsToInactiveFragment = false;
         for (const candidate of child.declarations) {
           if (
             getFragmentOwnerPaths(candidate.schemaPath).includes(
               declaration.schemaPath,
             )
           ) {
-            hasMatch = true;
+            belongsToInactiveFragment = true;
             break;
           }
         }
-        if (hasMatch) {
+        if (belongsToInactiveFragment) {
           mark(child);
         }
       }

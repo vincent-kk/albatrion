@@ -59,7 +59,7 @@ function isAllowedTypeList(
 ): values is readonly SchemaTypeName[] {
   let matches = !!values.length;
   if (matches) {
-    let hasMatch = false;
+    let hasInvalidTypeName = false;
     for (let index = 0, count = values.length; index < count; index++) {
       if (!(index in values)) {
         continue;
@@ -68,11 +68,11 @@ function isAllowedTypeList(
       const value = values[index];
 
       if (!TYPE_NAMES.includes(value) || values.indexOf(value) !== index) {
-        hasMatch = true;
+        hasInvalidTypeName = true;
         break;
       }
     }
-    matches = !hasMatch;
+    matches = !hasInvalidTypeName;
   }
   return matches;
 }

@@ -27,7 +27,6 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   const afterChanged = [...context.changedNodes];
   let matches = pending.length === afterPending.length;
   if (matches) {
-    matches = true;
     for (let index = 0, count = pending.length; index < count; index++) {
       const host = pending[index];
 
@@ -39,7 +38,6 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   }
   let matches2 = matches && changed.length === afterChanged.length;
   if (matches2) {
-    matches2 = true;
     for (let index = 0, count = changed.length; index < count; index++) {
       const host = changed[index];
 

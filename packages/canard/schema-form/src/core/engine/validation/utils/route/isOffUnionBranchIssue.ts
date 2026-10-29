@@ -57,16 +57,16 @@ export const isOffUnionBranchIssue = (
       visited.add(id);
       pending.push(...blueprint.fragments[id].children);
     }
-    let hasMatch = false;
+    let containsIssueOwner = false;
     for (let index = 0, count = owners.length; index < count; index++) {
       const owner = owners[index];
 
       if (visited.has(owner.id)) {
-        hasMatch = true;
+        containsIssueOwner = true;
         break;
       }
     }
-    if (hasMatch) {
+    if (containsIssueOwner) {
       branches.push(fragment);
     }
   }
@@ -91,24 +91,23 @@ export const isOffUnionBranchIssue = (
   );
 
   const isActive = (fragment: SchemaFragment): boolean => {
-    let hasMatch2 = false;
+    let hasActiveDeclaration = false;
     for (const id of fragment.declares) {
       if (activeIds.has(id)) {
-        hasMatch2 = true;
+        hasActiveDeclaration = true;
         break;
       }
     }
-    let matchesEither = hasMatch2;
-    if (!matchesEither) {
-      matchesEither = false;
+    let isActiveFragment = hasActiveDeclaration;
+    if (!isActiveFragment) {
       for (const id of fragment.overlays) {
         if (activeIds.has(id)) {
-          matchesEither = true;
+          isActiveFragment = true;
           break;
         }
       }
     }
-    return matchesEither;
+    return isActiveFragment;
   };
   let matches2 = !isActive(owner);
   if (matches2) {

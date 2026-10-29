@@ -60,7 +60,6 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
     !partition.hasGatedOverlays &&
     partition.staticEntries.length > 0;
   if (matches) {
-    matches = true;
     for (let index = 0, count = gates.length; index < count; index++) {
       const gate = gates[index];
 

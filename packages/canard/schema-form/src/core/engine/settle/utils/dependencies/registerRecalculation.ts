@@ -130,16 +130,17 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     shadow.registering = false;
     let matches = context.shapeDirtyPaths.size === shadow.shape.size;
     if (matches) {
-      matches = true;
-      {
-        const items = [...shadow.shape];
-        for (let index = 0, count = items.length; index < count; index++) {
-          const path = items[index];
+      const shadowShapeEntries = [...shadow.shape];
+      for (
+        let index = 0, count = shadowShapeEntries.length;
+        index < count;
+        index++
+      ) {
+        const path = shadowShapeEntries[index];
 
-          if (!context.shapeDirtyPaths.has(path)) {
-            matches = false;
-            break;
-          }
+        if (!context.shapeDirtyPaths.has(path)) {
+          matches = false;
+          break;
         }
       }
     }

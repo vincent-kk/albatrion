@@ -116,35 +116,39 @@ export const collectBlueprintWarnings = (
         const allowed: readonly unknown[] = isArray(tag.schemaType)
           ? tag.schemaType
           : [tag.schemaType];
-        let hasMatch = false;
-        {
-          const items = descriptor.values;
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) {
-              continue;
-            }
+        let hasInvalidDiscriminatorTag = false;
 
-            const value = items[index];
+        const discriminatorValues = descriptor.values;
+        for (
+          let index = 0, count = discriminatorValues.length;
+          index < count;
+          index++
+        ) {
+          if (!(index in discriminatorValues)) {
+            continue;
+          }
 
-            if (
-              value === null
-                ? !tag.nullable
-                : !allowed.includes(
-                    isArray(value)
-                      ? 'array'
-                      : typeof value === 'number' &&
-                          Number.isInteger(value) &&
-                          allowed.includes('integer')
-                        ? 'integer'
-                        : typeof value,
-                  )
-            ) {
-              hasMatch = true;
-              break;
-            }
+          const value = discriminatorValues[index];
+
+          if (
+            value === null
+              ? !tag.nullable
+              : !allowed.includes(
+                  isArray(value)
+                    ? 'array'
+                    : typeof value === 'number' &&
+                        Number.isInteger(value) &&
+                        allowed.includes('integer')
+                      ? 'integer'
+                      : typeof value,
+                )
+          ) {
+            hasInvalidDiscriminatorTag = true;
+            break;
           }
         }
-        if (hasMatch) {
+
+        if (hasInvalidDiscriminatorTag) {
           emit({
             code: FormWarningCode.DiscriminatorBranchUnreachable,
             level: 'warning',

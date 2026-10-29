@@ -64,7 +64,7 @@ export const collectDeclarations = (
   const gates: BlueprintGate[] = input.gates.slice();
   let matches = schema.controls?.active !== undefined;
   if (matches) {
-    let hasMatch = false;
+    let hasInvalidSchemaType = false;
     for (let index = 0, count = gates.length; index < count; index++) {
       const gate = gates[index];
 
@@ -72,11 +72,11 @@ export const collectDeclarations = (
         gate.schemaPath ===
         appendSegment(appendSegment(input.schemaPath, 'controls'), 'active')
       ) {
-        hasMatch = true;
+        hasInvalidSchemaType = true;
         break;
       }
     }
-    matches = !hasMatch;
+    matches = !hasInvalidSchemaType;
   }
   if (matches) {
     gates.push(

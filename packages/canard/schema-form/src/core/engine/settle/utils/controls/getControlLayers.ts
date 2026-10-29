@@ -95,19 +95,19 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const parentIds = selected(parent);
   for (const group of inherited) {
     if (parentIds.indexOf(group.declarationId) === -1) continue;
-    const previousResult = group.ownerIds;
+    const ownerIds = group.ownerIds;
     let matches: Optional<boolean>;
-    if (previousResult) {
-      let hasMatch = false;
+    if (ownerIds) {
+      let hasSelectedOwner = false;
       for (const id of group.ownerIds) {
         if (nodeIds.indexOf(id) !== -1) {
-          hasMatch = true;
+          hasSelectedOwner = true;
           break;
         }
       }
-      matches = !hasMatch;
+      matches = !hasSelectedOwner;
     } else {
-      matches = previousResult;
+      matches = ownerIds;
     }
     if (matches) {
       continue;

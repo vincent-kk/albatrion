@@ -106,24 +106,24 @@ export const collectInlineTerminalWarnings = (
     /* eslint-enable @typescript-eslint/consistent-type-assertions */
     for (const keyword of SCHEMA_LIST_KEYWORDS) {
       if (isArray(record[keyword])) {
-        {
-          const items = record[keyword];
-          for (let index = 0, count = items.length; index < count; index++) {
-            if (!(index in items)) continue;
-            const child: BlueprintSchema = items[index];
+        const keywordSchemas = record[keyword];
+        for (
+          let index = 0, count = keywordSchemas.length;
+          index < count;
+          index++
+        ) {
+          if (!(index in keywordSchemas)) continue;
+          const child: BlueprintSchema = keywordSchemas[index];
 
-            {
-              void pending.push({
-                schema: child,
-                schemaPath: appendSegment(
-                  appendSegment(entry.schemaPath, keyword),
-                  index,
-                ),
-                root: false,
-                ancestors,
-              });
-            }
-          }
+          pending.push({
+            schema: child,
+            schemaPath: appendSegment(
+              appendSegment(entry.schemaPath, keyword),
+              index,
+            ),
+            root: false,
+            ancestors,
+          });
         }
       }
     }
@@ -135,17 +135,15 @@ export const collectInlineTerminalWarnings = (
           if (!(index in child)) continue;
           const item: BlueprintSchema = child[index];
 
-          {
-            void pending.push({
-              schema: item,
-              schemaPath: appendSegment(
-                appendSegment(entry.schemaPath, keyword),
-                index,
-              ),
-              root: false,
-              ancestors,
-            });
-          }
+          pending.push({
+            schema: item,
+            schemaPath: appendSegment(
+              appendSegment(entry.schemaPath, keyword),
+              index,
+            ),
+            root: false,
+            ancestors,
+          });
         }
       } else {
         if (typeof child === 'boolean' || (child && typeof child === 'object'))

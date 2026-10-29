@@ -114,7 +114,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
             child.runtime.committedDeclarationIds?.get(
               getCommittedDeclarationKey(child, child.runtime),
             );
-          let hasMatch = false;
+          let belongsToExitingFragment = false;
           for (const childDeclaration of child.blueprintNode.declarations) {
             if (
               (!childSelected ||
@@ -123,11 +123,11 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
                 declaration.schemaPath,
               ) !== -1
             ) {
-              hasMatch = true;
+              belongsToExitingFragment = true;
               break;
             }
           }
-          if (!hasMatch) {
+          if (!belongsToExitingFragment) {
             continue;
           }
           candidates.add(child);

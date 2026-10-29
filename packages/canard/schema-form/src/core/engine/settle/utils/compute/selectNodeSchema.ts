@@ -107,16 +107,16 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   }
 
   if (node.parent === null) {
-    let hasMatch2 = false;
+    let hasActiveDeclaration = false;
     for (let index = 0, count = active.length; index < count; index++) {
       const declaration = active[index];
 
       if (declaration.role === 'declaration') {
-        hasMatch2 = true;
+        hasActiveDeclaration = true;
         break;
       }
     }
-    node.active = captureFieldNodeChange(node, 'active', hasMatch2);
+    node.active = captureFieldNodeChange(node, 'active', hasActiveDeclaration);
   }
   if (node.schema === effective) return false;
   node.schema = captureFieldNodeChange(node, 'schema', effective);

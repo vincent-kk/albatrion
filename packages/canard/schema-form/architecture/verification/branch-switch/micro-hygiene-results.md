@@ -529,6 +529,14 @@
 
 후보 2 재검토 P3-B에 따라 감사의 다섯 곳(`collectBlueprintWarnings`, `getGateSelectionTable`, `isStableDiscriminatorEntry`, `prepareDiscriminatorEntrySelection`, `readGateSelectionGroup`)은 **판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요**로 교정했습니다. `readDiscriminatorBranches`가 spread 후 동결한 배열은 구멍을 undefined로 채웁니다. 이 다섯 검사는 바이트 중립 범위에서 그대로 두며 제거는 소유자 결정 후속입니다. `effectiveType`의 입력은 이 태그가 아닌 `node.schema.schema.type`이므로 **작성 입력(스키마 type 목록), 검사 유지**입니다. 조정자가 코드 근거에 따른 이 구분을 승인했으며 두 함수의 매개변수 주석도 실제 입력에 맞췄습니다.
 
+### 소유자 후속 — 변환 잔재 정리
+
+제품 AST에서 독립된 중첩 블록 **45개**, boolean 값이 이미 분기로 정해진 중복 재대입 **20개**, 값이 버려지는 문장 자리의 `void pending.push` **2개**를 제거했습니다. 지역 바인딩 **80개**(생성된 조건/결과 이름 53개·배열 수신 별칭 27개)는 역할을 말하는 이름으로 바꿨습니다. 검토의 블록 47개라는 텍스트 집계와 달리 현재 머리에서 실제 독립 블록은 45개였으며 그 45개는 모두 제거했습니다. 원래 분기·반복문·함수의 필요한 본문 블록은 이 집계에 포함하지 않습니다. `matchesEither2`·`hasMatch2`·`previousResult` 형태의 생성 이름은 남지 않습니다.
+
+범위가 충돌하지 않는 독립 블록만 같은 위치에서 펴고, 재대입 20개는 TypeScript checker가 boolean임을 확인한 뒤 삭제했습니다. 나머지 표현식·수신 배열·최초 길이·조건과 조기 종료의 순서를 옮기지 않았습니다. 두 void는 ExpressionStatement이므로 반환값을 바꾸지 않습니다. 변경 54파일의 식별자 **10,712개**가 원래 같은 변수/인수 선언으로 해석되는지 컴파일러 두 프로그램으로 비교하여 모두 같았습니다(의도한 지역 이름 변경과 제거한 재대입의 좌변은 정규화). 이 검사는 블록을 편 뒤의 가림·앞선 읽기 해석 변화도 검출합니다. typecheck를 통과했으며 최종 전체 관문은 아래에 별도로 기록합니다.
+
+[변경 전 AST](raw/micro-hygiene/owner-cleanups/loop-cleanup-before.json.gz), [각 정리·이름의 위치](raw/micro-hygiene/owner-cleanups/loop-cleanup-audit.json), [바인딩 동등 검사](raw/micro-hygiene/owner-cleanups/binding-equivalence.json)를 보존했습니다. 이 범위에서 불확실해 남긴 독립 블록·중복 재대입·생성 이름은 없습니다. 기존 희소 입력 검사와 관측 순서는 유지합니다. 변환 잔재 후속은 **결정됨: 적용**입니다.
+
 ## 항목 6 — 형 유틸리티
 
 Dictionary의 기본 인수는 any이므로 `Dictionary<any>`는 쓰지 않습니다. 소유자 리뷰에 따라 중복 기본 형 인수 2곳을 `Dictionary`로 줄였고 `Dictionary<unknown>`은 유지합니다.
@@ -659,7 +667,7 @@ P3-A의 일괄 교체 주석 한 곳을 대상 검사로 옮겼습니다. P3-B�
 
 후속 소유자 결정 `msg_686dc576c0d7`으로 `applyArrayTail`의 Set 분기 **1곳을 제거**했습니다. 이 단계는 앞선 바이트 중립 교정과 달리 런타임을 바꾸므로 다시 build/artifact checks·typecheck·lint·표적 **49파일 315건**을 통과했습니다. 새 직접 호출 시험은 이전 Set 분기에서 **1실패/4통과**, 항상 배열 구현에서 전부 통과합니다. 세 번들은 **854,977 / 854,199 / 875,765바이트**로 측정 후보보다 **−150 / −150 / −184바이트**이며 위 비용 표의 `리뷰 후` 열에 반영했습니다. [후속 검사·해시](raw/micro-hygiene/review-2/owner-array-checks.json)와 [실패/통과 로그](raw/micro-hygiene/review-2/owner-array-logs.json.gz)를 보존합니다. 이 최종 런타임은 새 측정 창을 열지 않았습니다(소유자 결정, 공개 의미 동일). 창 2의 숫자는 원래 측정 후보 `870fe2689`의 미채택 기록으로 남으며 리뷰 후 런타임의 새 측정 결과로 사용하지 않습니다.
 
-**소유자 결정 후속**은 루트 빈 문자열 코드 치환(P3-C), 엔진 동결 태그 다섯 곳의 불필요한 검사 제거(P3-B), 빈 블록·자기 재대입·`void` 접두·생성 이름 정리(P3-E)입니다. 이들은 런타임 바이트를 바꾸므로 이번 교정에서는 실행하지 않았습니다. **결정됨: 제거** — `applyArrayTail`의 도달 불가 Set 분기는 후속 소유자 지시로 삭제하고 항상 문자열 배열만 지연 생성합니다. 함수 계약과 DETAIL에 호출자 상한 1·미래 다중 제거 동사에서의 재검토 조건을 적었고 직접 65개 제거 시험도 배열/순서를 검증하도록 갱신했습니다. `pruneArrayTailPaths`·`finalizePerished`·`rekeyArrayRuntimePaths`는 여전히 Set을 전달하므로 `prunePerishedPaths`의 Set/배열 시그니처는 유지합니다. 창 2의 미채택·되돌림/병합/재측정 결정도 그대로 남아 있습니다.
+**소유자 결정 후속**은 엔진 동결 태그 다섯 곳의 불필요한 검사 제거(P3-B)입니다. 루트 빈 문자열 통일(P3-C)과 변환 잔재 정리(P3-E)는 후속 소유자 지시로 **결정됨: 적용**이며 위 각 항목에 실제 치환·제외·정리 근거를 기록했습니다. 이들은 런타임 바이트를 바꾸므로 이번 교정에서는 실행하지 않았습니다. **결정됨: 제거** — `applyArrayTail`의 도달 불가 Set 분기는 후속 소유자 지시로 삭제하고 항상 문자열 배열만 지연 생성합니다. 함수 계약과 DETAIL에 호출자 상한 1·미래 다중 제거 동사에서의 재검토 조건을 적었고 직접 65개 제거 시험도 배열/순서를 검증하도록 갱신했습니다. `pruneArrayTailPaths`·`finalizePerished`·`rekeyArrayRuntimePaths`는 여전히 Set을 전달하므로 `prunePerishedPaths`의 Set/배열 시그니처는 유지합니다. 창 2의 미채택·되돌림/병합/재측정 결정도 그대로 남아 있습니다.
 
 ## 후속 항목 — 추가 strict-production의 기존 문제
 

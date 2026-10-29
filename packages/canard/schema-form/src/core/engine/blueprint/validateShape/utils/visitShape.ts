@@ -32,14 +32,14 @@ export const visitShape = (
     );
   active.add(node);
   for (const edge of node.childEntries) {
-    let hasMatch = false;
+    let hasUnconditionalDeclaration = false;
     for (const declaration of edge.declarations) {
       if (declaration.role === 'declaration' && !declaration.gates.length) {
-        hasMatch = true;
+        hasUnconditionalDeclaration = true;
         break;
       }
     }
-    if (hasMatch) {
+    if (hasUnconditionalDeclaration) {
       visitShape(context, edge.node, complete, active);
     }
   }

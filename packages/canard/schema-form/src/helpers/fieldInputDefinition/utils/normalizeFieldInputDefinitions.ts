@@ -85,18 +85,15 @@ const fieldInputTestFnFactory = (
     for (let index = 0, count = keys.length; index < count; index++) {
       const key = keys[index];
 
-      {
-        const reference: unknown = test[key],
-          subject: unknown = hint[key];
-        {
-          if (
-            !(isArray(reference)
-              ? reference.includes(subject)
-              : reference === subject)
-          ) {
-            return false;
-          }
-        }
+      const reference: unknown = test[key],
+        subject: unknown = hint[key];
+
+      if (
+        !(isArray(reference)
+          ? reference.includes(subject)
+          : reference === subject)
+      ) {
+        return false;
       }
     }
     return true;

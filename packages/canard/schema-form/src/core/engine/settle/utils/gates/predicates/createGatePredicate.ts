@@ -70,24 +70,24 @@ export const createGatePredicate = (
     });
   let matches = engineModes.gatePredicate !== 'off';
   if (matches) {
-    let matchesEither = gate.kind !== 'active';
-    if (!matchesEither) {
+    let allowsMemoization = gate.kind !== 'active';
+    if (!allowsMemoization) {
       let matches2 = expression?.completeReads === true;
       if (matches2) {
-        let hasMatch = false;
+        let readsContext = false;
         for (let index = 0, count = reads.length; index < count; index++) {
           const path = reads[index];
 
           if (readPointerSegment(path, 0) === PointerOperator.Context) {
-            hasMatch = true;
+            readsContext = true;
             break;
           }
         }
-        matches2 = !hasMatch;
+        matches2 = !readsContext;
       }
-      matchesEither = matches2;
+      allowsMemoization = matches2;
     }
-    matches = matchesEither;
+    matches = allowsMemoization;
   }
   return {
     reads,
