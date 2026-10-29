@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-29T16:31:53.984Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "WindowServer",
+      "cpuPercent": 13.132560329495563
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 7.687352388051403
+    },
+    {
+      "name": "Orca Helper",
+      "cpuPercent": 7.367046038500709
+    },
+    {
+      "name": "Orca Helper (Renderer)",
+      "cpuPercent": 7.0467396889937115
+    },
+    {
+      "name": "mds_stores",
+      "cpuPercent": 6.406126990023416
+    },
+    {
+      "name": "2.1.312",
+      "cpuPercent": 2.8827571455047103
+    },
+    {
+      "name": "bluetoothd",
+      "cpuPercent": 1.9218380970055677
+    },
+    {
+      "name": "com.apple.geod",
+      "cpuPercent": 1.9218380970001059
+    },
+    {
+      "name": "node",
+      "cpuPercent": 1.9218380969982851
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.601531747505854
+    }
+  ]
+}

@@ -457,7 +457,7 @@
 
 항목 2 뒤 제품 prototype 반복 **229 → 0**입니다. 최초 기준은 239개였고 항목 2에서 10개를 제거했습니다. 남은 229개는 생성한 밀집 메타데이터의 map/filter를 common-utils로, 단락 조건·반환값·희소 입력은 for-loop로 옮겼습니다. 소스의 주석·TSDoc 예제와 동결 레거시는 바꾸지 않았습니다. `setLoadValue.ts`의 세그먼트는 parsePointerSegments의 split/채움 결과이고 `flushBatchWrites.ts`의 batchWrites는 push로만 모은 배열이므로 두 for...of 순회는 모두 밀집 입력을 방문합니다. 이 두 곳에는 건너뛸 구멍이 없습니다. [항목 5 원시](raw/micro-hygiene/item-5.json)에 위치와 변환 방식을 남겼습니다.
 
-순회마다 receiver와 최초 length를 한 번 읽고 희소 입력은 `index in array`로 원래 HasProperty를 보존합니다. 빈 자리만 건너뛰고 명시 undefined는 방문합니다. some/every는 원래 조건 자리에서 단락하며, forEach의 콜백 반환은 순회를 중단하지 않습니다. 콜백은 모두 arrow였고 lexical this를 그대로 유지했습니다. optional 배열의 부재, filter 결과 순서, type predicate의 축소는 보존했으며 형 단언을 추가하지 않았습니다. short-circuit 표현식 안의 순회는 즉시 실행 arrow로 평가 위치를 유지합니다. 새 상주 구조나 공개 이름은 없습니다.
+순회마다 receiver와 최초 length를 한 번 읽고 희소 입력은 `index in array`로 원래 HasProperty를 보존합니다. 빈 자리만 건너뛰고 명시 undefined는 방문합니다. some/every는 원래 조건 자리에서 단락하며, forEach의 콜백 반환은 순회를 중단하지 않습니다. 콜백은 모두 arrow였고 lexical this를 그대로 유지했습니다. optional 배열의 부재, filter 결과 순서, type predicate의 축소는 보존했으며 형 단언을 추가하지 않았습니다. 후보 2에서는 short-circuit 표현식의 조건과 순서를 명시적 분기·결과 변수로 유지하며 즉시 실행 arrow는 제거했습니다. 새 상주 구조나 공개 이름은 없습니다.
 
 표적 포인터·유효 스키마·파생·배열·게이트·배달·입력 정의·행 동작 시험 **82파일·720건(기존 todo 1)**과 typecheck·lint 및 렌더 표적 **24파일·71건**을 통과했습니다. 첫 타입/린트 검사는 type predicate 및 bool callback 문맥 차이를 검출했고, 같은 의미의 명시적 순회·predicate로 보존한 뒤 통과했습니다. 콜백 반환을 변환할 때 중괄호 없는 조건의 범위가 달라질 수 있음을 코드 점검에서 확인하여 각 반환 치환을 블록으로 묶은 뒤 표적 시험을 실행했습니다.
 
@@ -484,7 +484,7 @@
 
 실제 공통 유틸리티 선언을 import한 TypeScript 제네릭 동등 증명 **7개·진단 0**으로 Dictionary/Nullable/Optional/중첩/Nullish 및 함수·중첩 Ref 모양을 검증했습니다. Nullable이라는 기존 boolean 제네릭 매개변수와 겹친 surface 파일은 `NullableValue` import alias를 사용합니다. [형 증명 결과](raw/micro-hygiene/utility-equivalence.json)와 [타입 제거 결과](raw/micro-hygiene/type-erasure.json)에서 수정한 **259개 제품 파일의 transpile JavaScript 바이트가 항목 5와 모두 동일**합니다. 한 파일의 기존 import 순서·괄호는 보존하여 형 정리의 런타임 변경을 막았습니다.
 
-공개 97이름 스냅숏에서 네 함수의 null union 표기만 Nullable 표기로 바뀌었습니다: registerPlugin, useFieldNodeSubscribe, useFieldNodeTracker, useFormSubmit. 같은 제네릭 동등 증명으로 확인한 뒤 그 네 문자열만 정확히 갱신했으며, 이름 수·형/값 종류·검사 강도·사례 수는 유지했습니다. 초기 시험은 이 네 표기 때문에 실패했고 수정 뒤 공개/수입/표면 형/할당 시험 **4파일·15건**, typecheck·lint를 통과했습니다. 최종 build의 공개 `index.d.ts`는 **3,129바이트·차이 0**, SHA-256 `ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d`입니다. 그 파일이 재수출하는 선언 그래프 전체 **1,306파일**을 비교했습니다. **194파일**의 바이트가 달라졌으나 증명한 네 기본 유틸리티와 그 중첩 조합의 named/inline import를 원래 형으로 펼치고 union의 괄호·순서와 import/주석 표기를 정규화한 AST 차이는 **0**입니다. 원래 제네릭 매개변수·modifier·조건부 형·멤버·함수 시그니처는 그대로 비교했습니다. [선언 동등 결과](raw/micro-hygiene/declaration-equivalence.json)와 [194파일의 A/B 선언 원시](raw/micro-hygiene/declaration-diff.json.gz), [제네릭 증명](raw/micro-hygiene/utility-equivalence.ts)을 보존합니다.
+공개 97이름 스냅숏에서 네 함수의 null union 표기만 Nullable 표기로 바뀌었습니다: registerPlugin, useFieldNodeSubscribe, useFieldNodeTracker, useFormSubmit. 같은 제네릭 동등 증명으로 확인한 뒤 그 네 문자열만 정확히 갱신했으며, 이름 수·형/값 종류·검사 강도·사례 수는 유지했습니다. 초기 시험은 이 네 표기 때문에 실패했고 수정 뒤 공개/수입/표면 형/할당 시험 **4파일·15건**, typecheck·lint를 통과했습니다. 후보 1 build의 공개 `index.d.ts`는 **3,129바이트·차이 0**, SHA-256 `ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d`입니다. 그 파일이 재수출하는 선언 그래프 전체 **1,306파일**을 비교했습니다. **194파일**의 바이트가 달라졌으나 증명한 네 기본 유틸리티와 그 중첩 조합의 named/inline import를 원래 형으로 펼치고 union의 괄호·순서와 import/주석 표기를 정규화한 AST 차이는 **0**입니다. 원래 제네릭 매개변수·modifier·조건부 형·멤버·함수 시그니처는 그대로 비교했습니다. [선언 동등 결과](raw/micro-hygiene/declaration-equivalence.json)와 [194파일의 A/B 선언 원시](raw/micro-hygiene/declaration-diff.json.gz), [제네릭 증명](raw/micro-hygiene/utility-equivalence.ts)을 보존합니다.
 
 ## 후보 1 정적 관문
 
@@ -527,7 +527,7 @@ FCA facts **1,664/1,664 exact**, 세 검사 동일 snapshot `dabc8b5fd93ec78a6c0
 
 ## 측정 장치와 창
 
-측정 후보는 `8d7d1a87e`이며 제품 바이트는 정적 관문의 `082c3995a`와 같습니다. `tools/iv-2/window.mjs` 계열의 공개 행과 힙 장치를 재사용하며, Ⅳ-1의 `summarize.mjs`·`weightedExchange.mjs`·`judgeStage.mjs` 판정은 유지합니다. Ⅳ-2 전용 할당·exit self·cold 지연 생성 추가항은 이 정리에 해당하지 않으므로 별도 어댑터에서 제외했습니다. 최종 판정은 미시 위생 계획에 따라 모든 행의 폭 밖 퇴보 0과 가중 교환비 ≤ 0이며, 교환비 0도 허용합니다.
+창 1의 측정 후보는 `8d7d1a87e`이며 제품 바이트는 정적 관문의 `082c3995a`와 같습니다. `tools/iv-2/window.mjs` 계열의 공개 행과 힙 장치를 재사용하며, Ⅳ-1의 `summarize.mjs`·`weightedExchange.mjs`·`judgeStage.mjs` 판정은 유지합니다. Ⅳ-2 전용 할당·exit self·cold 지연 생성 추가항은 이 정리에 해당하지 않으므로 별도 어댑터에서 제외했습니다. 최종 판정은 미시 위생 계획에 따라 모든 행의 폭 밖 퇴보 0과 가중 교환비 ≤ 0이며, 교환비 0도 허용합니다.
 
 
 ### 사전 검사와 pilot
@@ -541,7 +541,60 @@ FCA facts **1,664/1,664 exact**, 세 검사 동일 snapshot `dabc8b5fd93ec78a6c0
 
 ### 후보 2 — 짧은 창(4프로세스)
 
-소유자가 짧은 창을 지시했고 조정자는 홀수 1/2 분할을 거절하여 레인당 **4프로세스**로 확정했습니다. 원래 요약기의 A 2개 / A-prime 2개 / B 4개, 같은 median·range·폭·판정식을 유지합니다. 명시적 short-window 옵션만 formal 4를 허용하고 기본 10은 그대로입니다. 새 준비 루트에서 untimed smoke와 실제 CLI 한 worker의 1/1 예행 뒤 한 번 실행하며 pilot·stage 장부·retention은 생략하고 Node/Bun 힙은 포함합니다. 판정은 아직 없습니다.
+소유자가 짧은 창을 지시했고 조정자는 홀수 1/2 분할을 거절하여 레인당 **4프로세스**로 확정했습니다. 후보는 `870fe268900da5b69ade2ef28dac146a1b3d05cb`이며 원래 요약기의 A 2개 / A-prime 2개 / B 4개, 같은 median·range·폭·판정식을 유지했습니다. 명시적 short-window 옵션만 formal 4를 허용하고 기본 10은 그대로입니다. 새 준비 루트에서 untimed smoke와 실제 CLI 한 worker의 1/1 예행을 통과한 뒤 한 번 실행했습니다. pilot·stage 장부·retention은 생략하고 Node/Bun 힙을 포함했습니다.
+
+정식 시작은 `2026-10-29T16:19:01.724Z`, 종료는 `2026-10-29T16:31:53.984Z`로 **12분 52.260초**입니다. 공개 **176/176프로세스**와 Node/Bun A/B 힙 네 자식이 모두 종료 0이며 입력 해시와 dist 복원을 확인했습니다. legacy 품질비 중앙값은 **0.996321962550**(18행), TEST-073 전체 비교의 퇴보는 **0건**입니다. 예행을 포함한 CPU 사전 검사 179개가 승인되었고 지연 6회를 보존했습니다. CPU 기록은 각 관측의 이름별 상위 10개와 모든 지연을 포함합니다.
+
+**관문 기준 미채택, 경계선, 소유자 결정 대기**입니다. 가중 교환비는 **−500.724999995 µs(−0.109105530%)**로 개선 방향이지만 `switch-payload-12` 한 행이 폭 밖 퇴보이고 Bun 힙이 기준 최대를 넘습니다. 두 실패를 전체 교환비로 상쇄하지 않으며 원래 판정을 그대로 보존합니다.
+
+행 표의 A·A-prime·B는 프로세스별 최소의 중앙값, 폭은 원래 A 두 절반의 range와 중앙값 차이 중 최댓값입니다. 시간 열은 **µs/표본**이며 마지막 열은 기존 eventsPerSample로 나눈 뒤 세션 가중치를 곱한 **가중 µs 기여**입니다. 폭 안 행은 기여 0입니다.
+
+| 행 | A | A-prime | B | 폭 | 판정 | 가중 기여 |
+| --- | ---: | ---: | ---: | ---: | --- | ---: |
+| `single-flat-1000` | 58.791500 | 56.271000 | 57.187500 | 2.520500 | 폭 안 | 0.000000 |
+| `mount-oneOf-80` | 2335.188000 | 2258.228500 | 2342.271000 | 96.042000 | 폭 안 | 0.000000 |
+| `mount-flat-1000` | 2164.458500 | 2165.312500 | 2131.958000 | 163.791000 | 폭 안 | 0.000000 |
+| `mount-nested-d6-f4` | 16377.896000 | 16412.958000 | 16453.312500 | 352.292000 | 폭 안 | 0.000000 |
+| `single-nested-d6-f4` | 110.979500 | 111.083500 | 111.104500 | 2.625000 | 폭 안 | 0.000000 |
+| `switch-oneOf-80` | 165.958000 | 159.770500 | 155.458000 | 6.187500 | 개선 | -525.000000 |
+| `bulk-flat-2000` | 1756.646000 | 1836.166500 | 1779.458000 | 108.583000 | 폭 안 | 0.000000 |
+| `bulk-nested-d6-f4` | 4066.479500 | 4072.374500 | 3968.458500 | 61.041000 | 개선 | -490.105000 |
+| `switch-discriminator-80` | 152.020500 | 148.562500 | 150.583000 | 14.791000 | 폭 안 | 0.000000 |
+| `switch-if-80` | 285.854500 | 276.708500 | 277.687500 | 11.875000 | 폭 안 | 0.000000 |
+| `switch-nested-oneOf-20` | 301.167000 | 289.958500 | 293.083000 | 21.250000 | 폭 안 | 0.000000 |
+| `switch-siblings-0` | 59.729000 | 59.292000 | 60.125000 | 4.292000 | 폭 안 | 0.000000 |
+| `switch-siblings-100` | 78.000000 | 77.958500 | 78.979500 | 7.083000 | 폭 안 | 0.000000 |
+| `switch-siblings-1000` | 313.229500 | 313.604500 | 314.499500 | 16.125000 | 폭 안 | 0.000000 |
+| `switch-siblings-4000` | 2701.958000 | 2679.396000 | 2678.854000 | 47.708000 | 폭 안 | 0.000000 |
+| `leaf-gate-250` | 23.291500 | 21.917000 | 22.479000 | 2.083000 | 폭 안 | 0.000000 |
+| `leaf-gate-1000` | 22.041500 | 23.958500 | 22.229000 | 1.917000 | 폭 안 | 0.000000 |
+| `leaf-gate-4000` | 741.041500 | 788.375500 | 736.791500 | 104.833000 | 폭 안 | 0.000000 |
+| `leaf-gate-8000` | 1580.500500 | 1635.021000 | 1561.604000 | 121.792000 | 폭 안 | 0.000000 |
+| `wave-1000` | 1654.812500 | 1644.291500 | 1651.166500 | 17.041000 | 폭 안 | 0.000000 |
+| `single-flat-1000-subscribed` | 66.667000 | 67.208500 | 66.979000 | 3.834000 | 폭 안 | 0.000000 |
+| `switch-payload-12` | 356.083000 | 363.250000 | 373.229000 | 17.084000 | 퇴보 | 514.380000 |
+
+개선 행은 `switch-oneOf-80`(가중 −525.000 µs), `bulk-nested-d6-f4`(−490.105 µs)이며 `switch-payload-12`는 +514.380 µs입니다. 나머지 19행은 폭 안입니다. 이 한 번의 짧은 창에서 얻은 수치이며 속도 개선 약속으로 확대하지 않습니다.
+
+`switch-payload-12`는 A **356.083**, A-prime **363.250**, B **373.229**, 폭 **17.084 µs**입니다. B는 A+폭 373.167을 **0.062 µs(약 0.017%)** 넘었습니다. 문턱을 넘었으므로 퇴보 판정을 유지합니다. 개별 행 legacy 비는 1.001602958213입니다.
+
+| 힙(bytes/node, 각 7표본) | A 중앙값 | A 최댓값 | B 중앙값 | 판정 |
+| --- | ---: | ---: | ---: | --- |
+| node | 1439.312137572 | 1896.884623075 | 1438.792241552 | 통과 |
+| bun | 2248.278744251 | 2248.563487303 | 2253.234353129 | 실패 |
+
+Bun B 중앙값은 A 최댓값보다 **4.670865827 bytes/node(약 0.208%)** 큽니다. Node 통과와 구분하여 Bun 실패를 그대로 기록합니다.
+
+#### 원인 후보와 소유자 결정
+
+원인 추정은 코드 경로에 근거한 다음 두 후보이며 인과를 확정하지 않습니다. 장면은 `buildBranchRows.mjs`의 80분기·payload 12개이며 `setupBranchOperation.mjs`가 kind 잎을 두 번 씁니다.
+
+- 항목 5(`af3e2e1d3` 및 정리 `b50f06050`)는 `settle/utils/compute/childSelection/selectEntryStep.ts`의 활성 선언 ID map과 `utils/publishPreparedSelection.ts`의 동적 자식 순서/참조 비교를 각각 common-utils map과 인덱스 반복으로 바꿨습니다. `selectChildren`에서 쓰는 이 경로는 payload 멤버 수에 비례한 반복과 연결되며, 생성 코드와 JIT 비용이 달라질 후보입니다. 번들 증가도 관측했지만 그 사실만으로 이 행의 원인이라 판단하지 않습니다.
+- 항목 3(`ecef006f4`)은 `settle/utils/compute/dirtyChildren.ts`의 예약 자식 64개 이하에서 Set membership을 반환 배열 indexOf로 바꿨습니다. `computeNode.ts`가 재계산할 자식을 찾을 때 이 함수를 사용하므로 payload에 관련된 다른 비용 후보입니다. 이 장면에서 그 분기가 실행된 횟수와 실제 길이를 분리 계측하지 않았으므로 영향은 미확정입니다. 64개 경로의 최악 비교 상한 4,096과 기존 0/0/1 할당 시험은 그대로입니다.
+
+이 창은 여섯 항목을 함께 비교했으며 항목별 제거 비교나 프로파일은 실행하지 않았습니다. 조정자의 후속 지시로 **되돌림·재측정을 하지 않고** 이 결과를 PR 리뷰에 제출합니다. 소유자 결정 항목은 **(가) 그대로 병합, (나) 항목 5 전체 되돌림 뒤 정적 관문, (다) 10프로세스 창 재실행**입니다. 어느 선택도 이 문서 작성 시 실행하지 않았습니다. 창 2는 미채택이며 후보 1 검토의 conditional PASS를 이 후보의 새 검토 판정으로 사용하지 않습니다.
+
+[행·폭·품질](raw/micro-hygiene/candidate-2-window/rows.json), [원래 최종 판정](raw/micro-hygiene/candidate-2-window/judgment.json), [전체 표본](raw/micro-hygiene/candidate-2-window/pair-samples.json.gz), [176개 worker의 stdout·stderr·영수증](raw/micro-hygiene/candidate-2-window/worker-records.json.gz), [CPU 사전 검사](raw/micro-hygiene/candidate-2-window/cpu-prechecks.json.gz), [힙 14표본/런타임](raw/micro-hygiene/candidate-2-window/heap.json), [로그·종료 영수증](raw/micro-hygiene/candidate-2-window/logs-and-receipts.json.gz)를 보존했습니다.
 
 ## 후속 항목 — 추가 strict-production의 기존 문제
 
