@@ -1,5 +1,6 @@
 // Recomputes every archived table from the portable raw profile and the exact hashed product build.
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -7,10 +8,18 @@ import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 
 import { attributeSamples } from './helpers/attributeSamples.mjs';
+import { collectStackTimes } from './helpers/collectStackTimes.mjs';
+import { deriveInterpretation } from './helpers/deriveInterpretation.mjs';
+import { hashInputs } from './helpers/hashInputs.mjs';
 import { renderReport } from './helpers/renderReport.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '../../raw/iv-3-0');
+const repoDir = path.resolve(here, '../../../../../../../..');
+const ledgerFile = path.join(root, 'reanalysis.json');
+const ledger = fs.existsSync(ledgerFile)
+  ? JSON.parse(fs.readFileSync(ledgerFile, 'utf8'))
+  : null;
 const inputs = JSON.parse(
   fs.readFileSync(path.join(root, 'inputs.json'), 'utf8'),
 );
@@ -30,6 +39,7 @@ assert.equal(
   inputs.engineSha256,
 );
 const tables = [];
+const stackTimes = {};
 for (const name of fs.readdirSync(root).sort()) {
   const directory = path.join(root, name);
   if (!fs.statSync(directory).isDirectory()) continue;
@@ -64,6 +74,7 @@ for (const name of fs.readdirSync(root).sort()) {
     table,
   );
   tables.push(table);
+  stackTimes[wall.row] = collectStackTimes(profile, wall, mapping, bundle);
 }
 tables.sort(
   (a, b) =>
@@ -76,15 +87,98 @@ tables.sort(
 );
 for (const [relative, hash] of Object.entries(inputs.hashes)) {
   const file = path.resolve(here, '../../../../../../../..', relative);
+  const reinterpretedTool =
+    ledger &&
+    relative.startsWith(
+      'packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-3-0/',
+    );
+  const bytes = reinterpretedTool
+    ? execFileSync('git', ['show', inputs.head + ':' + relative], {
+        cwd: repoDir,
+      })
+    : fs.readFileSync(file);
   assert.equal(
-    createHash('sha256').update(fs.readFileSync(file)).digest('hex'),
+    createHash('sha256').update(bytes).digest('hex'),
     hash,
     relative,
   );
 }
+let interpretation;
+if (ledger) {
+  assert.deepEqual(
+    Object.fromEntries(
+      Object.entries(hashInputs(repoDir)).filter(([relative]) =>
+        relative.startsWith(
+          'packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-3-0/',
+        ),
+      ),
+    ),
+    ledger.interpretationTools,
+  );
+  for (const [relative, digest] of Object.entries(
+    ledger.measurementArtifacts,
+  )) {
+    assert.equal(
+      createHash('sha256')
+        .update(fs.readFileSync(path.join(root, relative)))
+        .digest('hex'),
+      digest,
+    );
+    const original = execFileSync(
+      'git',
+      [
+        'show',
+        ledger.originalResultHead +
+          ':packages/canard/schema-form/architecture/verification/branch-switch/raw/iv-3-0/' +
+          relative,
+      ],
+      { cwd: repoDir },
+    );
+    assert.equal(createHash('sha256').update(original).digest('hex'), digest);
+  }
+  for (const [relative, digest] of Object.entries(ledger.baselineInputs))
+    assert.equal(
+      createHash('sha256')
+        .update(fs.readFileSync(path.join(repoDir, relative)))
+        .digest('hex'),
+      digest,
+    );
+  const windowRaw = JSON.parse(
+    gunzipSync(
+      fs.readFileSync(
+        path.resolve(
+          here,
+          '../../raw/micro-hygiene/candidate-2-window/pair-samples.json.gz',
+        ),
+      ),
+    ).toString(),
+  );
+  const iv2Raw = JSON.parse(
+    gunzipSync(
+      fs.readFileSync(
+        path.resolve(here, '../../raw/iv-2/candidate-1/pair-samples.json.gz'),
+      ),
+    ).toString(),
+  );
+  interpretation = deriveInterpretation(tables, stackTimes, windowRaw, iv2Raw);
+  const fcaFile = path.join(root, 'fca/summary.json');
+  interpretation.filid = fs.existsSync(fcaFile)
+    ? JSON.parse(fs.readFileSync(fcaFile, 'utf8'))
+    : null;
+  assert.deepEqual(
+    interpretation,
+    JSON.parse(fs.readFileSync(path.join(root, 'interpretation.json'), 'utf8')),
+  );
+  assert.ok(
+    Math.abs(
+      tables.find((table) => table.row === 'switch-siblings-0').decisions.B -
+        4.12505,
+    ) < 1e-8,
+  );
+}
 assert.equal(
   fs.readFileSync(path.resolve(here, '../../iv-3-0-results.md'), 'utf8'),
-  renderReport(inputs, outcome, tables),
+  renderReport(inputs, outcome, tables, interpretation),
 );
 assert.ok(
   outcome.completed

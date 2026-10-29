@@ -25,3 +25,5 @@ node packages/canard/schema-form/architecture/verification/branch-switch/tools/i
 준비 root는 실제 경로로 정규화하며 경로가 달라졌다는 사실만 결과에 적습니다. 준비할 때 제품 소스가 기준과 같은지, dist 수정 시각이 모든 제품 소스보다 늦은지, 수기 프레임 주소의 근거가 맞는지 검사합니다. 귀속 실패도 명시적 중단 결과와 원시를 남깁니다. 후보 1의 계약 변경 승인은 코디네이터의 수정 디스패치에 근거하며 실제 프로파일 허가는 별도로 기다립니다.
 
 검증은 `checkTools.mjs`, 도구 `--allowJs --checkJs`·ESLint·Prettier, 패키지 build·lint입니다. 원시 게시 뒤 `checkResults.mjs`는 입력 해시, 경로 제거, 원시에서의 전체 표 재생성과 결과 문서의 결정적 재생성을 검사합니다. 노출되는 CPU 관측은 상위 10개 프로세스 이름·비율뿐입니다.
+
+결과 검토 뒤의 매핑 수정은 `reanalyze.mjs`로 사후 재계산합니다. 원래 `inputs.json`과 프로파일·벽시계·정숙 관측은 바꾸지 않고 원래 결과 커밋의 바이트와 대조합니다. 측정 도구는 측정 머리의 Git blob으로 당시 해시를 검증하고, 현재 해석 도구와 척도 비교용 창 원시는 `reanalysis.json`의 별도 해시로 검증합니다. `checkResults.mjs`는 두 원장을 함께 검산합니다. 다시 샘플링하지 않은 이유와 척도·바닥의 추정 경계는 결과의 해석 절에 기록합니다.

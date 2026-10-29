@@ -38,6 +38,7 @@
       "publishPreparedSelection",
       "createPreparedSelectionStructure",
       "computeNode",
+      "computeNodeBody",
       "registerRecalculation",
       "getDependencyIndex",
       "markCommitDeliveries",
@@ -91,6 +92,7 @@
       "publishPreparedSelection",
       "createPreparedSelectionStructure",
       "computeNode",
+      "computeNodeBody",
       "registerRecalculation",
       "getDependencyIndex",
       "markCommitDeliveries",
@@ -117,10 +119,10 @@
     {
       "url": "prepared/engine.mjs",
       "line": 15324,
-      "name": "(anonymous)",
+      "name": "visitFieldNodes.owned",
       "source": "src/core/engine/settle/utils/transition/finalizeExits.ts",
       "group": "A",
-      "evidence": "finalizeExits passes this departing-node closure to visitFieldNodes; captures detached reads and marks the departing node detached",
+      "evidence": "finalizeExits passes this departing-node closure to visitFieldNodes; captures detached reads and marks the departing node detached; the committed V8 profile infers visitFieldNodes.owned, so URL, bundle line and source identify this closure independently of the inferred name",
       "anchor": "visitFieldNodes(node, (departing) => {"
     },
     {
@@ -154,6 +156,7 @@
     "flushQueuedEvents": "Flushes queued event delivery after the write chain; fixed delivery cost C.",
     "publishStateKeys": "Publishes settlement state keys for all writes; settlement fixed cost C.",
     "transitionSettlement": "Runs transition rounds for entered nodes and gates; switch machinery B, not the fixed write floor.",
-    "getSlotChildIndex": "Slot child-order lookup used by getRetainedChildEntry and by slot ordering/pruning; node lifetime A, over-approximates the A-removable share."
+    "getSlotChildIndex": "Slot child-order lookup used by getRetainedChildEntry and by slot ordering/pruning; node lifetime A, over-approximates the A-removable share.",
+    "computeNodeBody": "Body of computeNode (computeNode.ts:36-311): wheel and round control flow; computeNode is a frame-restoring wrapper. Switch machinery B."
   }
 }

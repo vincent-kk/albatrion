@@ -95,7 +95,7 @@
       "source": "src/core/engine/settle/utils/compute/computeNode.ts",
       "samples": 783,
       "weightUs": 61858,
-      "group": "OTHER",
+      "group": "B",
       "selfUsPerSwitch": 3.0929,
       "nominalSelfUsPerSwitch": 1.9575,
       "percent": 3.146998477324446
@@ -539,7 +539,7 @@
       "source": "src/core/engine/settle/utils/transition/finalizeExits.ts",
       "samples": 143,
       "weightUs": 11167,
-      "group": "OTHER",
+      "group": "A",
       "selfUsPerSwitch": 0.55835,
       "nominalSelfUsPerSwitch": 0.3575,
       "percent": 0.5681162015629683
@@ -3037,7 +3037,7 @@
       "source": "src/core/engine/settle/utils/compute/computeNode.ts",
       "samples": 783,
       "weightUs": 61858,
-      "group": "OTHER",
+      "group": "B",
       "selfUsPerSwitch": 3.0929,
       "nominalSelfUsPerSwitch": 1.9575,
       "percent": 3.146998477324446
@@ -3466,13 +3466,13 @@
   "groups": [
     {
       "group": "A",
-      "selfUsPerSwitch": 9.650549999999999,
-      "percent": 9.819349528062155
+      "selfUsPerSwitch": 10.2089,
+      "percent": 10.387465729625122
     },
     {
       "group": "B",
-      "selfUsPerSwitch": 23.258900000000004,
-      "percent": 23.665725656905032
+      "selfUsPerSwitch": 26.351800000000004,
+      "percent": 26.812724134229477
     },
     {
       "group": "C",
@@ -3486,13 +3486,13 @@
     },
     {
       "group": "OTHER",
-      "selfUsPerSwitch": 48.81655000000002,
-      "percent": 49.67040916881651
+      "selfUsPerSwitch": 45.165300000000016,
+      "percent": 45.9552944899291
     }
   ],
   "decisions": {
     "A": 0.48134999999999994,
-    "B": 21.202350000000003
+    "B": 24.295250000000003
   },
   "nonReplaceableGateEvaluationUs": 0.1384,
   "decisionAExtendedUs": 0.8948

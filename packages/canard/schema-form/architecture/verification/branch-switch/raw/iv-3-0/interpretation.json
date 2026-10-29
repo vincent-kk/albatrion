@@ -1,0 +1,163 @@
+{
+  "method": "Post-hoc remapping of unchanged committed profiles; no new sampling",
+  "scales": [
+    {
+      "row": "switch-oneOf-80",
+      "windowUs": 155.45799999995324,
+      "iv2Us": 162.37499999988358,
+      "plainMedianUs": 71.49000000000001,
+      "plainMeanUs": 86.2657,
+      "windowOverPlainMedian": 2.1745418939705305,
+      "iv2OverPlainMedian": 2.2712966848493994,
+      "thresholdSharePercent": 9.648908386834073
+    },
+    {
+      "row": "switch-siblings-0",
+      "windowUs": 60.124999999970896,
+      "iv2Us": 58.04099999977552,
+      "plainMedianUs": 13.725000000000001,
+      "plainMeanUs": 14.5018,
+      "windowOverPlainMedian": 4.380692167575292,
+      "iv2OverPlainMedian": 4.228852459000038,
+      "thresholdSharePercent": 24.948024948037023
+    },
+    {
+      "row": "single-flat-1000",
+      "windowUs": 5.718750000005457,
+      "iv2Us": 5.7000000000243745,
+      "plainMedianUs": 4.265,
+      "plainMeanUs": 4.44855,
+      "windowOverPlainMedian": 1.3408558030493452,
+      "iv2OverPlainMedian": 1.3364595545191968,
+      "thresholdSharePercent": 262.2950819669628
+    }
+  ],
+  "bReadings": [
+    {
+      "label": "수정 전 self 합",
+      "profileUs": 3.451450000000001,
+      "sharePercent": 22.13021204018954,
+      "windowScaleUs": 13.30578998915752
+    },
+    {
+      "label": "computeNodeBody 포함 self 합",
+      "profileUs": 4.125050000000001,
+      "sharePercent": 26.44924051525702,
+      "windowScaleUs": 15.902605859790587
+    },
+    {
+      "label": "포함 시간(쓰기 바닥 포함·게이트/수명 제외)",
+      "profileUs": 10.973999999999666,
+      "sharePercent": 70.3637447823473,
+      "windowScaleUs": 42.306201550365834
+    },
+    {
+      "label": "귀속 가능한 추정(self에서 잎 쓰기 바닥 제외)",
+      "profileUs": 1.8415500000000007,
+      "sharePercent": 11.80775963221575,
+      "windowScaleUs": 7.099415478866283
+    }
+  ],
+  "floorEstimateUs": 2.2835,
+  "floorEstimateSource": "Original single-flat B self before computeNodeBody remap; different fixture, not a causal subtraction or measured siblings no-op",
+  "a": {
+    "profileUs": 0.48134999999999994,
+    "sharePercent": 0.4897693805361059,
+    "windowScaleUs": 0.7613856835935905
+  },
+  "dependencies": [
+    {
+      "row": "switch-oneOf-80",
+      "selfUs": 7.275449999999999,
+      "allNamedFramesUs": 7.3614999999999995
+    },
+    {
+      "row": "switch-siblings-0",
+      "selfUs": 0.00755,
+      "allNamedFramesUs": 0.07575
+    },
+    {
+      "row": "single-flat-1000",
+      "selfUs": 0,
+      "allNamedFramesUs": 0
+    }
+  ],
+  "dependencyNames": [
+    "affectedByPresence",
+    "collect",
+    "pathSegments",
+    "emit",
+    "affectedForRegistration"
+  ],
+  "dependencyFrames": [
+    {
+      "name": "affectedByPresence",
+      "line": 5674
+    },
+    {
+      "name": "collect",
+      "line": 5561
+    },
+    {
+      "name": "pathSegments",
+      "line": 5395
+    },
+    {
+      "name": "emit",
+      "line": 5610
+    },
+    {
+      "name": "affectedForRegistration",
+      "line": 5557
+    }
+  ],
+  "dependencyFrameEvidence": "Five source-qualified frames used by the independent results review; two other local callbacks are also named emit (bundle lines 5571 and 5601) and are reported separately in allNamedFramesUs",
+  "stackTimes": {
+    "switch-oneOf-80": {
+      "bInclusiveUs": 54.56585000000344,
+      "finalizeExitsInclusiveUs": 10.79759999999971,
+      "cloneFromSlotInclusiveUs": 3.7632999999999917,
+      "registryRegisterInclusiveUs": 7.348099999999879
+    },
+    "switch-siblings-0": {
+      "bInclusiveUs": 10.973999999999666,
+      "finalizeExitsInclusiveUs": 0,
+      "cloneFromSlotInclusiveUs": 0,
+      "registryRegisterInclusiveUs": 0.11435
+    },
+    "single-flat-1000": {
+      "bInclusiveUs": 3.2798499999999904,
+      "finalizeExitsInclusiveUs": 0,
+      "cloneFromSlotInclusiveUs": 0,
+      "registryRegisterInclusiveUs": 0
+    }
+  },
+  "filid": {
+    "findings": 202,
+    "structuralFindings": 202,
+    "verificationFindings": 21,
+    "threshold": 202,
+    "thresholdMet": true,
+    "verdict": "FAIL",
+    "certainty": "indeterminate",
+    "snapshotHash": "4ebb0305984946ed334250fe9da43012c6b31a97804474a6a662bf4bb49aba02",
+    "auditRuns": 1,
+    "phases": [
+      "scan",
+      "validate",
+      "verification"
+    ],
+    "diagnostics": 177,
+    "facts": {
+      "covered": 1665,
+      "exact": 1665,
+      "unsupported": 173
+    },
+    "sourceArtifacts": {
+      "scan": "0c8b0bf6875a9c5a5c41ff6f6341798ffcfff7bc6236517ec1095198f247d079",
+      "validate": "dbe3a2754551bfc36c47ebb9c97fab66b6cae24bd31019fb42b1c8061b5e3f83",
+      "verification": "618ea80d28dbfabd57b0814f2bd1662e4ff944352b0a4f1d837312a8b01e71b8"
+    },
+    "scope": "schema-form package; repository config; default adapter source facts scope"
+  }
+}

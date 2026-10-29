@@ -88,7 +88,6 @@ export function attributeSamples(profile, wall, mapping, bundle, plainWall) {
         (rule) =>
           rule.url === entry.url &&
           rule.line === entry.line &&
-          rule.name === entry.name &&
           rule.source === entry.source,
       );
       const group =

@@ -373,7 +373,7 @@
       "source": "src/core/engine/settle/utils/compute/computeNode.ts",
       "samples": 8,
       "weightUs": 638,
-      "group": "OTHER",
+      "group": "B",
       "selfUsPerSwitch": 0.0319,
       "nominalSelfUsPerSwitch": 0.02,
       "percent": 0.6672662999142386
@@ -1299,7 +1299,7 @@
       "source": "src/core/engine/settle/utils/compute/computeNode.ts",
       "samples": 8,
       "weightUs": 638,
-      "group": "OTHER",
+      "group": "B",
       "selfUsPerSwitch": 0.0319,
       "nominalSelfUsPerSwitch": 0.02,
       "percent": 0.6672662999142386
@@ -1457,8 +1457,8 @@
     },
     {
       "group": "B",
-      "selfUsPerSwitch": 2.2835,
-      "percent": 47.76497165687033
+      "selfUsPerSwitch": 2.3154,
+      "percent": 48.43223795678457
     },
     {
       "group": "C",
@@ -1472,13 +1472,13 @@
     },
     {
       "group": "OTHER",
-      "selfUsPerSwitch": 1.657049999999999,
-      "percent": 34.66124207752004
+      "selfUsPerSwitch": 1.625149999999999,
+      "percent": 33.993975777605804
     }
   ],
   "decisions": {
     "A": 0,
-    "B": 2.2835
+    "B": 2.3154
   },
   "nonReplaceableGateEvaluationUs": 0,
   "decisionAExtendedUs": 0

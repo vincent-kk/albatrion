@@ -38,11 +38,11 @@ switch-oneOf-80/50: 간격 p10/p50/p90 76/79/82 µs; 0 간격 0개; 반복 대�
 
 | 갈래 | self µs/동작 | % |
 | --- | ---: | ---: |
-| A | 9.651 | 9.82 |
-| B | 23.259 | 23.67 |
+| A | 10.209 | 10.39 |
+| B | 26.352 | 26.81 |
 | C | 2.164 | 2.20 |
 | GC | 14.390 | 14.64 |
-| OTHER | 48.817 | 49.67 |
+| OTHER | 45.165 | 45.96 |
 
 | 함수 (번들 줄, 원본 모듈) | 갈래 | self µs/동작 | % | 표본 |
 | --- | --- | ---: | ---: | ---: |
@@ -50,7 +50,7 @@ switch-oneOf-80/50: 간격 p10/p50/p90 76/79/82 µs; 0 간격 0개; 반복 대�
 | assembleObject (9149, src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts) | B | 4.987 | 5.07 | 1260 |
 | register (6701, src/core/engine/settle/utils/gates/getGateRegistry.ts) | A | 4.748 | 4.83 | 1196 |
 | affectedByPresence (5674, src/core/engine/settle/utils/dependencies/getDependencyIndex.ts) | OTHER | 3.151 | 3.21 | 797 |
-| computeNodeBody (12005, src/core/engine/settle/utils/compute/computeNode.ts) | OTHER | 3.093 | 3.15 | 783 |
+| computeNodeBody (12005, src/core/engine/settle/utils/compute/computeNode.ts) | B | 3.093 | 3.15 | 783 |
 | getHostDerived (1175, src/core/engine/utils/cache/derivedRecords.ts) | OTHER | 2.474 | 2.52 | 629 |
 | markCommitDeliveries (13756, src/core/engine/settle/utils/commit/markCommitDeliveries.ts) | B | 2.422 | 2.46 | 611 |
 | registerPresenceChanges (6994, src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts) | B | 2.059 | 2.10 | 517 |
@@ -94,7 +94,6 @@ OTHER 전체:
 | 함수 (URL:줄) | self µs/동작 |
 | --- | ---: |
 | affectedByPresence (prepared/engine.mjs:5674) | 3.151 |
-| computeNodeBody (prepared/engine.mjs:12005) | 3.093 |
 | getHostDerived (prepared/engine.mjs:1175) | 2.474 |
 | collect (prepared/engine.mjs:5561) | 1.931 |
 | selectEffectiveDeclarations (prepared/engine.mjs:1703) | 1.829 |
@@ -117,7 +116,6 @@ OTHER 전체:
 | set (prepared/engine.mjs:12821) | 0.603 |
 | captureFieldNodeChange (prepared/engine.mjs:7617) | 0.601 |
 | supplementSplitOwner (prepared/engine.mjs:10277) | 0.568 |
-| visitFieldNodes.owned (prepared/engine.mjs:15324) | 0.558 |
 | add (prepared/engine.mjs:6813) | 0.548 |
 | affectedForRegistration (prepared/engine.mjs:5557) | 0.530 |
 | sameValue (prepared/engine.mjs:4692) | 0.520 |
@@ -293,15 +291,15 @@ switch-siblings-0/50: 간격 p10/p50/p90 76/79/82 µs; 0 간격 0개; 반복 대
 | 갈래 | self µs/동작 | % |
 | --- | ---: | ---: |
 | A | 0.206 | 1.32 |
-| B | 3.961 | 25.40 |
+| B | 4.635 | 29.72 |
 | C | 0.859 | 5.51 |
 | GC | 0.654 | 4.19 |
-| OTHER | 9.916 | 63.58 |
+| OTHER | 9.242 | 59.26 |
 
 | 함수 (번들 줄, 원본 모듈) | 갈래 | self µs/동작 | % | 표본 |
 | --- | --- | ---: | ---: | ---: |
 | hasOwnProperty (3, packages/winglet/common-utils/dist/libs/hasOwnProperty.mjs) | OTHER | 1.571 | 10.07 | 399 |
-| computeNodeBody (12005, src/core/engine/settle/utils/compute/computeNode.ts) | OTHER | 0.674 | 4.32 | 170 |
+| computeNodeBody (12005, src/core/engine/settle/utils/compute/computeNode.ts) | B | 0.674 | 4.32 | 170 |
 | selectEntryStep (10997, src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts) | B | 0.673 | 4.32 | 171 |
 | (garbage collector) (0, V8) | GC | 0.654 | 4.19 | 148 |
 | assembleObject (9149, src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts) | B | 0.645 | 4.14 | 163 |
@@ -348,7 +346,6 @@ OTHER 전체:
 | 함수 (URL:줄) | self µs/동작 |
 | --- | ---: |
 | hasOwnProperty (packages/winglet/common-utils/dist/libs/hasOwnProperty.mjs:3) | 1.571 |
-| computeNodeBody (prepared/engine.mjs:12005) | 0.674 |
 | mergeEffectiveSchema (prepared/engine.mjs:1738) | 0.394 |
 | readFormattedPointerSegment (prepared/engine.mjs:1066) | 0.349 |
 | advanceFieldNodeRevision (prepared/engine.mjs:7522) | 0.307 |
@@ -493,10 +490,10 @@ single-flat-1000/50: 간격 p10/p50/p90 76/79/82 µs; 0 간격 0개; 반복 대�
 | 갈래 | self µs/동작 | % |
 | --- | ---: | ---: |
 | A | 0.036 | 0.74 |
-| B | 2.284 | 47.76 |
+| B | 2.315 | 48.43 |
 | C | 0.630 | 13.17 |
 | GC | 0.175 | 3.66 |
-| OTHER | 1.657 | 34.66 |
+| OTHER | 1.625 | 33.99 |
 
 | 함수 (번들 줄, 원본 모듈) | 갈래 | self µs/동작 | % | 표본 |
 | --- | --- | ---: | ---: | ---: |
@@ -527,7 +524,7 @@ single-flat-1000/50: 간격 p10/p50/p90 76/79/82 µs; 0 간격 0개; 반복 대�
 | (anonymous) (14035, src/core/engine/settle/utils/commit/commitSettlement.ts) | OTHER | 0.041 | 0.85 | 10 |
 | FieldNodeRevisionLedger (7446, src/core/engine/record/utils/FieldNodeRevisionLedger.ts) | A | 0.036 | 0.74 | 9 |
 | dirtyChildren (7318, src/core/engine/settle/utils/compute/dirtyChildren.ts) | OTHER | 0.035 | 0.74 | 9 |
-| computeNodeBody (12005, src/core/engine/settle/utils/compute/computeNode.ts) | OTHER | 0.032 | 0.67 | 8 |
+| computeNodeBody (12005, src/core/engine/settle/utils/compute/computeNode.ts) | B | 0.032 | 0.67 | 8 |
 | parsePointerSegment (921, src/helpers/jsonPointer/utils/parsePointerSegment.ts) | OTHER | 0.032 | 0.66 | 8 |
 | computeNode (12178, src/core/engine/settle/utils/compute/computeNode.ts) | B | 0.028 | 0.58 | 7 |
 | readFormattedPointerSegment (1066, src/helpers/jsonPointer/utils/readFormattedPointerSegment.ts) | OTHER | 0.028 | 0.58 | 7 |
@@ -562,7 +559,6 @@ OTHER 전체:
 | isTreeNode (prepared/engine.mjs:13816) | 0.043 |
 | (anonymous) (prepared/engine.mjs:14035) | 0.041 |
 | dirtyChildren (prepared/engine.mjs:7318) | 0.035 |
-| computeNodeBody (prepared/engine.mjs:12005) | 0.032 |
 | parsePointerSegment (prepared/engine.mjs:921) | 0.032 |
 | readFormattedPointerSegment (prepared/engine.mjs:1066) | 0.028 |
 | runBlocks (packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-3-0/helpers/runBlocks.mjs:11) | 0.027 |
@@ -608,13 +604,13 @@ OTHER 전체:
 
 ## 15 µs 착수 조건
 
-- A의 계약상 네 작업 self 합(왕복): 0.481 µs; 15 µs 미만. 분석으로 닫힘.
+- A의 계약상 네 작업 self 합(왕복): 0.481 µs; 프로파일 척도 15 µs 미만. 갈래 A 닫힘.
   A 확장 합(createFieldNode·getSlotChildIndex 포함)은 0.895 µs이며 주 판정을 대체하지 않습니다. getSlotChildIndex는 슬롯 순서·정리 함수 네 곳에서도 불리므로 이 확장 합은 A가 없애는 몫보다 클 수 있습니다.
   게이트 평가(서술자 열쇠 계산, B 결정 합 제외)는 0.138 µs입니다.
-- B의 서술자가 대신하는 함수 self 합(보조 함수 제외, 한 전환): 3.451 µs; 15 µs 미만. 착수 조건 미충족.
+- B 계약 함수 self 합(쓰기 바닥 포함·보조 함수 제외, 한 전환): 4.125 µs; 프로파일 척도 15 µs 미만. 갈래 B 미착수(경계선, 소유자 확정 대기); 아래 척도 절에서 해석합니다.
   게이트 평가(서술자 열쇠 계산, B 결정 합 제외)는 0.428 µs입니다.
 
-oneOf 왕복 갈래 A 9.82%, B 23.67%를 20% 선과 비교합니다. 둘 다 20% 미만이라는 폐기 조건에는 해당하지 않습니다.
+oneOf 왕복 갈래 A 10.39%, B 26.81%를 20% 선과 비교합니다. 둘 다 20% 미만이라는 폐기 조건에는 해당하지 않습니다.
 
 계약상 네 작업은 생성자, cloneSlotSubtree 재귀, overlay Map 복사, getRetainedChildEntry 탐색입니다. overlay Map 복사는 cloneSlotSubtree self에 들어 있으므로 두 번 더하지 않습니다. 확장 합은 createFieldNode와 getSlotChildIndex self를 추가합니다. B 수치는 매핑되지 않은 JavaScript 보조 함수를 뺀 합입니다. 독립 합성 탐침에서는 V8이 인라인된 JavaScript 함수를 자기 이름으로 귀속하고 Map 같은 내장 함수 시간은 호출한 JavaScript self에 귀속했습니다. 실제 행은 보고된 프레임 그대로 기록합니다. 매핑 근거와 나감 클로저의 URL·줄은 branches.json에 있습니다.
 
@@ -646,3 +642,68 @@ oneOf 왕복 갈래 A 9.82%, B 23.67%를 20% 선과 비교합니다. 둘 다 20%
 | switch-oneOf-80 | 157.146 | 71.490 | 0.4549 |
 | switch-siblings-0 | 56.708 | 13.725 | 0.2420 |
 | single-flat-1000 | 5.681 | 4.265 | 0.7507 |
+
+## 척도와 사후 재계산
+
+측정 원시와 당시 입력 해시는 바꾸지 않고 매핑·해석만 사후 재계산했습니다. 재측정으로 판정 척도가 움직이는 일을 피하면서 해시 규율을 지키기 위해 측정 해시는 원래 커밋의 입력과, 새 해석 도구·창 원시 해시는 별도 reanalysis.json 원장과 각각 대조합니다.
+
+판정 환산은 같은 제품을 잰 미시 위생 후보 2의 B 레인(프로세스 최소의 중앙값)을 기준으로 합니다. Ⅳ-2 후보 1의 A 레인(앞 절반)은 참고 열입니다. 아래 값은 원시 프로세스의 100표본 최솟값들에서 다시 계산했고 single-flat의 10쓰기 표본은 1쓰기 단위로 나눴습니다.
+
+| 행 | 같은 제품 창 B µs | Ⅳ-2 A 참고 µs | 프로파일 별도 plain 중앙/평균 µs | 창/plain 중앙 | Ⅳ-2 A/plain 중앙 | 15 µs/창 % |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| switch-oneOf-80 | 155.458000 | 162.375000 | 71.490 / 86.266 | 2.175 | 2.271 | 9.65 |
+| switch-siblings-0 | 60.125000 | 58.041000 | 13.725 / 14.502 | 4.381 | 4.229 | 24.95 |
+| single-flat-1000 | 5.718750 | 5.700000 | 4.265 / 4.449 | 1.341 | 1.336 | 262.30 |
+
+창은 프로세스당 예열 20회·100표본, 프로파일은 2,000예열·20,000동작입니다. 같은 제품·같은 Node에서도 속도 비가 달라지므로 측정 상태의 척도를 구분합니다. JIT 단계 상승 등 예열 효과는 원인 가설이며 확인된 인과는 아닙니다. Ⅳ-0 단계 몫과 이번 프로파일의 단계 몫은 대체로 5%포인트 안에서 맞았다는 독립 검토를 근거로 몫을 창 척도로 옮겨 참고하되, 그 오차를 개선 증거로 바꾸지 않습니다.
+
+### B의 세 읽기와 쓰기 바닥
+
+| 읽기 | 프로파일 µs/쓰기 | 활성 self 몫 % | 같은 제품 창 척도 µs |
+| --- | ---: | ---: | ---: |
+| 수정 전 self 합 | 3.451450 | 22.13 | 13.306 |
+| computeNodeBody 포함 self 합 | 4.125050 | 26.45 | 15.903 |
+| 포함 시간(쓰기 바닥 포함·게이트/수명 제외) | 10.974000 | 70.36 | 42.306 |
+| 귀속 가능한 추정(self에서 잎 쓰기 바닥 제외) | 1.841550 | 11.81 | 7.099 |
+
+쓰기 바닥 추정 2.283500 µs는 전환이 없는 single-flat-1000의 수정 전 B self입니다. 이 바닥은 서술자가 대신할 수 없는 모든 쓰기의 계산·조립·출력·커밋을 포함합니다. computeNodeBody 포함 siblings B 4.125050 µs에서 이를 빼면 귀속 가능한 추정은 1.841550 µs, 창 척도 7.099 µs입니다. 다른 fixture를 뺀 추정이며 siblings-0 자체의 no-op을 잰 값이나 인과적 절감량이 아닙니다. 포함 시간은 하위 보조 함수와 쓰기 바닥을 포함한 진단 괄호이며 서술자만의 절감량으로 판정하지 않습니다.
+
+getDependencyIndex 자체는 캐시 접근 함수입니다. 실제 의존 색인 메서드는 계약의 열거 self 합 밖이므로 B 결정 수치에서 제외하고 별도로 기록합니다. 이름이 같은 메서드는 원본 모듈로 한정했습니다.
+
+| 의존 색인 메서드 self(affectedByPresence·collect·pathSegments·emit·affectedForRegistration) | 핵심 5프레임 µs/동작 | 동명 보조 emit 포함 µs/동작 | B 결정 포함 |
+| --- | ---: | ---: | --- |
+| switch-oneOf-80 | 7.275450 | 7.361500 | 제외 — 캐시 접근과 실제 색인 메서드의 경계 |
+| switch-siblings-0 | 0.007550 | 0.075750 | 제외 — 캐시 접근과 실제 색인 메서드의 경계 |
+| single-flat-1000 | 0.000000 | 0.000000 | 제외 — 캐시 접근과 실제 색인 메서드의 경계 |
+
+독립 검토의 의존 색인 7.28 µs는 원본 모듈·번들 줄로 식별한 핵심 다섯 프레임입니다. 같은 모듈의 두 로컬 콜백도 emit으로 추론되므로 그들을 더한 7.3615 µs를 별도로 보존합니다. 포함 시간의 쓰기 바닥에는 advanceFieldNodeRevision에서 만드는 revision ledger를 포함하며, 노드 복제·나감·레지스트리·게이트 평가는 제외합니다.
+
+### 결정과 관측 경계
+
+갈래 A는 닫힘: 주 합 0.481 µs(몫 0.49%, 창 척도 약 0.76 µs)로 어떤 읽기에서도 15 µs에 미치지 못합니다. overlay Map 복사 줄과 cloneSlotSubtree의 자식 재귀 줄의 표본은 0입니다.
+
+갈래 B는 미착수: 귀속 가능한 몫(computeNodeBody 포함 B에서 쓰기 바닥을 뺀 값)은 창 척도로 7.10 µs로 15 µs 미만이고, 쓰기 바닥까지 포함하는 가장 너그러운 self 읽기에서만 창 척도 약 15.9 µs로 선에 걸칩니다. 경계선이므로 소유자 확정 대기로 표시합니다.
+
+15 µs 선을 프로파일 µs로 읽을지 창의 몫으로 옮겨 읽을지는 소유자의 확정 사항입니다. 이전 결과의 단순한 B 미충족 문장을 착수 판정으로 쓰지 않습니다. 포함 시간은 쓰기 바닥과 보조 작업까지 포함하므로 위 self 경계 판정과 구분합니다.
+
+FieldNode 생성자는 46표본, cloneSlotSubtree는 60표본이며 각각 self가 존재합니다. 0표본은 Map 복사·자식 재귀 줄에 한정합니다. cloneSlotSubtree self의 대부분은 A 뒤에도 남는 진입 기록이고 getRetainedChildEntry는 나감 경로에서 불리므로 주 합은 이 fixture에서 제거 가능한 몫을 과하게 잡는 값입니다.
+
+siblings-0에서 A 0.206 µs 중 register 약 0.099 µs는 이미 등록된 노드의 조기 반환입니다. 범위 규칙은 이를 새 정체성 등록과 가르지 않으며 매핑은 바꾸지 않았습니다.
+
+### 다음 설계 단서
+
+| 주인 | oneOf 왕복 µs 또는 별도 행 | 해석 |
+| --- | ---: | --- |
+| OTHER 상위: 의존 색인 메서드 | 7.275 | B 결정 밖의 실제 색인 작업 |
+| OTHER 상위: getHostDerived | 2.474 | 파생 레코드 접근 |
+| OTHER 상위: selectEffectiveDeclarations | 1.829 | 유효 선언 선택 |
+| GC | 14.390 | 노드 수명 몫으로 나눌 수 없음 |
+| 게이트 레지스트리 register | 4.748 | 독립 줄 단위 검토: 두 WeakMap 삽입 61%; 재등록 제거는 미확인 |
+| 나감 경로 finalizeExits 포함 | 10.798 | 하위 self와 중복되므로 더하지 않음 |
+| siblings-0 hasOwnProperty | 1.571 | 한 전환 기준 |
+
+사후 매핑에서 computeNodeBody와 나감 클로저가 이동하므로 원래 OTHER 49.7%와 수정 뒤 OTHER 비율은 다릅니다. 단서의 절대 self는 동일 원시에서 유지됩니다.
+
+## FCA 검증
+
+filid:scan 한 번의 구조 findings 202개로 기준 202 이하입니다. 판정 FAIL, 분석 완전성 indeterminate; 기존 findings·진단을 통과로 바꾸지 않았습니다.

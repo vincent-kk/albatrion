@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 import { attributeSamples } from './helpers/attributeSamples.mjs';
+import { collectStackTimes } from './helpers/collectStackTimes.mjs';
 import { renderReport } from './helpers/renderReport.mjs';
 import { sanitizeProfile } from './helpers/sanitizeProfile.mjs';
 import { summarizePeriods } from './helpers/summarizePeriods.mjs';
@@ -142,6 +143,23 @@ assert.equal(
   'A',
 );
 const movedLocation = structuredClone(locationProfile);
+const inferredLocation = structuredClone(locationProfile);
+inferredLocation.nodes[1].callFrame.functionName = 'visitFieldNodes.owned';
+assert.equal(
+  attributeSamples(inferredLocation, wall, mapping, locationBundle).table.find(
+    (entry) => entry.name === 'visitFieldNodes.owned',
+  ).group,
+  'A',
+);
+const bodyProfile = structuredClone(profile);
+bodyProfile.nodes[5].callFrame.functionName = 'computeNodeBody';
+const bodyTable = attributeSamples(
+  bodyProfile,
+  wall,
+  mapping,
+  '//#region src/example.ts\nconst x = 1;',
+);
+assert.equal(bodyTable.decisions.B, summary.decisions.B + 80);
 movedLocation.nodes[1].callFrame.lineNumber--;
 assert.equal(
   attributeSamples(movedLocation, wall, mapping, locationBundle).table.find(
@@ -179,6 +197,62 @@ for (let index = 1; index < reportLines.length; index++)
 assert.equal(summary.nonReplaceableGateEvaluationUs, 0);
 assert.match(report, /표본 \d+개/);
 const wrongCount = structuredClone(wall);
+const stackProfile = {
+  startTime: 0,
+  nodes: [
+    {
+      id: 0,
+      callFrame: { functionName: '(root)', url: '', lineNumber: 0 },
+      children: [1],
+    },
+    {
+      id: 1,
+      callFrame: {
+        functionName: 'computeNodeBody',
+        url: 'prepared/engine.mjs',
+        lineNumber: 1,
+      },
+      children: [2],
+    },
+    {
+      id: 2,
+      callFrame: {
+        functionName: 'helper',
+        url: 'prepared/engine.mjs',
+        lineNumber: 1,
+      },
+    },
+    {
+      id: 3,
+      callFrame: {
+        functionName: '(garbage collector)',
+        url: '',
+        lineNumber: 0,
+      },
+    },
+  ],
+  samples: [2, 1, 3],
+  timeDeltas: [10, 20, 30],
+};
+assert.equal(
+  collectStackTimes(
+    stackProfile,
+    { switches: 1, blocks: [{ startUs: 0, endUs: 100 }] },
+    mapping,
+    '',
+  ).bInclusiveUs,
+  50,
+);
+stackProfile.nodes[2].callFrame.functionName = 'cloneSlotSubtree';
+assert.equal(
+  collectStackTimes(
+    stackProfile,
+    { switches: 1, blocks: [{ startUs: 0, endUs: 100 }] },
+    mapping,
+    '',
+  ).bInclusiveUs,
+  30,
+);
 wrongCount.switches++;
 assert.throws(() => attributeSamples(profile, wrongCount, mapping, ''));
 const drifted = structuredClone(profile);

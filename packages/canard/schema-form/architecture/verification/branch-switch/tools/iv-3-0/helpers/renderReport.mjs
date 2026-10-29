@@ -1,12 +1,15 @@
+import { renderInterpretation } from './renderInterpretation.mjs';
+
 /**
  * Render the diagnostic verdict from preserved weighted self and collector-free controls.
  * @param {any} inputs Immutable provenance including product head and root-normalization flag.
  * @param {any} outcome Completion/failure and all attempt receipts from the runner.
  * @param {any[]} tables Recomputed per-row self tables, including failed reconciliation attempts.
+ * @param {any} [interpretation] Optional post-hoc regime/decision interpretation with its own hash ledger.
  * @returns Deterministic Markdown with branch decisions, sampling diagnostics and explicit fixed-cost owners.
  * @throws If a supplied table lacks the required parser fields.
  */
-export function renderReport(inputs, outcome, tables) {
+export function renderReport(inputs, outcome, tables, interpretation) {
   const lines = [
     '# Ⅳ-3-0 — 분기 전환의 함수 단위 샘플링 귀속',
     '',
@@ -95,12 +98,12 @@ export function renderReport(inputs, outcome, tables) {
     [
       'switch-siblings-0',
       'B',
-      'B의 서술자가 대신하는 함수 self 합(보조 함수 제외, 한 전환)',
+      'B 계약 함수 self 합(쓰기 바닥 포함·보조 함수 제외, 한 전환)',
     ],
   ]) {
     const table = tables.filter((entry) => entry.row === row).at(-1);
     lines.push(
-      `- ${label}: ${table ? table.decisions[group].toFixed(3) + ' µs; 15 µs ' + (table.decisions[group] >= 15 ? '이상' : '미만') : '미관측'}. ${outcome.completed ? (table.decisions[group] >= 15 ? '착수 조건 충족' : group === 'A' ? '분석으로 닫힘' : '착수 조건 미충족') : '중단 기록이므로 판정 보류'}.`,
+      `- ${label}: ${table ? table.decisions[group].toFixed(3) + ' µs; 프로파일 척도 15 µs ' + (table.decisions[group] >= 15 ? '이상' : '미만') : '미관측'}. ${outcome.completed ? (group === 'A' ? '갈래 A 닫힘' : '갈래 B 미착수(경계선, 소유자 확정 대기); 아래 척도 절에서 해석합니다') : '중단 기록이므로 판정 보류'}.`,
     );
     if (table && group === 'A')
       lines.push(
@@ -168,5 +171,9 @@ export function renderReport(inputs, outcome, tables) {
         JSON.stringify(outcome.failure) +
         '`. 코디네이터의 결정을 기다립니다.',
     );
-  return lines.join('\n') + '\n';
+  return (
+    lines.join('\n') +
+    '\n' +
+    (interpretation ? renderInterpretation(interpretation, tables) : '')
+  );
 }
