@@ -17,7 +17,7 @@ export const bindPointerTemplate = (
   let templateStart = 0;
   let occurrenceStart = 0;
   let copiedThrough = 0;
-  let bound = $.Root;
+  let bound: string = $.Root;
   while (templateStart < templatePath.length) {
     const templateSlash = templatePath.indexOf($.Separator, templateStart + 1);
     const templateEnd = templateSlash < 0 ? templatePath.length : templateSlash;

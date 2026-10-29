@@ -11,7 +11,7 @@ import { formatSegment } from './formatSegment';
  * @returns The empty string for no segments, otherwise a `/`-prefixed address with each name formatted by formatSegment and each operator written as its raw token.
  */
 export const joinPointer = (segments: readonly PointerSegment[]): string => {
-  let path = $.Root;
+  let path: string = $.Root;
   for (const segment of segments) {
     const token =
       typeof segment === 'string'
