@@ -1,0 +1,61 @@
+{
+  "approved": true,
+  "policy": {
+    "averageMs": 3000,
+    "retryDelayMs": 5000,
+    "maxWaitMs": 120000,
+    "spotlightMaxWaitMs": 600000,
+    "maximumExternalCpuPercent": 30
+  },
+  "waitCount": 0,
+  "waitedMs": 3137.727999999999,
+  "ordinaryWaitedMs": 0,
+  "attempts": [
+    {
+      "startedAt": "2026-10-29T19:04:27.931Z",
+      "durationSeconds": 3.1364544590000003,
+      "top10": [
+        {
+          "name": "WindowServer",
+          "cpuPercent": 7.3331209812271485
+        },
+        {
+          "name": "Stats",
+          "cpuPercent": 6.376626940232821
+        },
+        {
+          "name": "WidgetsExtension",
+          "cpuPercent": 5.101301552163059
+        },
+        {
+          "name": "Orca Helper",
+          "cpuPercent": 4.782470205158305
+        },
+        {
+          "name": "runningboardd",
+          "cpuPercent": 3.8259761641512915
+        },
+        {
+          "name": "chronod",
+          "cpuPercent": 2.869482123069972
+        },
+        {
+          "name": "Orca Helper (Renderer)",
+          "cpuPercent": 2.5506507760833417
+        },
+        {
+          "name": "codex",
+          "cpuPercent": 2.2318194290736035
+        },
+        {
+          "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+          "cpuPercent": 1.5941567350518622
+        },
+        {
+          "name": "ControlCenter",
+          "cpuPercent": 1.5941567350437065
+        }
+      ]
+    }
+  ]
+}
