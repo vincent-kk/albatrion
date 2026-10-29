@@ -1,4 +1,7 @@
-import { isCanonicalPath } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  isCanonicalPath,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { find } from '../../../../navigation';
 import { FieldNodeEventType } from '../../../../record';
@@ -67,7 +70,7 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   }
   const resolved = new Map<string, string>();
   const canonical = (dataPath: string): string => {
-    if (dataPath === '' || isCanonical(dataPath)) return dataPath;
+    if (dataPath === $.Root || isCanonical(dataPath)) return dataPath;
     let path = resolved.get(dataPath);
     if (path === undefined) {
       path = find(root, dataPath)?.path ?? dataPath;

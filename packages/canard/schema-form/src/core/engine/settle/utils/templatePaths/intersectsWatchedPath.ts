@@ -1,6 +1,7 @@
 import { minLite } from '@winglet/common-utils/math';
 
 import {
+  JSONPointer as $,
   PointerOperator,
   type PointerSegment,
   parsePointerSegments,
@@ -22,7 +23,7 @@ export const intersectsWatchedPath = (
   watchedSegments?: readonly PointerSegment[],
   pathSegments?: readonly PointerSegment[],
 ): boolean => {
-  if (watched === '' || path === '') return true;
+  if (watched === $.Root || path === $.Root) return true;
   const left = watchedSegments ?? parsePointerSegments(watched);
   const right = pathSegments ?? parsePointerSegments(path);
   const length = minLite(left.length, right.length);

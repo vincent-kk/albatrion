@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Optional } from '@aileron/declare';
 
 import {
+  JSONPointer as $,
   isDescendantPath,
   parsePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -78,7 +79,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
         }
         node = child;
       }
-      if (node === root && path !== '') continue;
+      if (node === root && path !== $.Root) continue;
     }
     if (issue.rejectedKey) {
       while (node.parent && node.structure === null) node = node.parent;
