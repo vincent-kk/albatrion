@@ -4,7 +4,7 @@
 
 ## 준비와 실행
 
-`B9_BASELINE`은 기준 소스를 보관한 패키지 디렉터리이며 그 저장소 루트의 `BASELINE_COMMIT`은 정확한 기준 SHA입니다. 기준의 지정 빌드 출력을 함께 보관합니다. `B9_RUN`은 아직 존재하지 않는 `.noindex` 외부 실행 디렉터리이고 단계와 비정식 예행도 각각 `.noindex` 형제로 만듭니다. `B9_AGENT_PID`는 자체 실행 에이전트 PID입니다. Node 26을 사용하고 새 설치를 하지 않습니다.
+`B9_BASELINE`은 기준 소스를 보관한 패키지 디렉터리이며 그 저장소 루트의 `BASELINE_COMMIT`은 정확한 기준 SHA입니다. 기준의 지정 빌드 출력을 함께 보관합니다. `--baseline-commit=<40자리 SHA>`를 생략하면 원래 기준 `3104b0d9b`를 유지합니다. B12 병합 후의 창은 승인된 단계 머리 `1da3485d3`의 전체 SHA를 명시하고, 기록 파일과 일치할 때만 준비합니다. `B9_RUN`은 아직 존재하지 않는 `.noindex` 외부 실행 디렉터리이고 단계와 비정식 예행도 각각 `.noindex` 형제로 만듭니다. `B9_AGENT_PID`는 자체 실행 에이전트 PID입니다. Node 26을 사용하고 새 설치를 하지 않습니다.
 
 ```sh
 B9_TOOLS=packages/canard/schema-form/architecture/verification/branch-switch/tools/b9-1

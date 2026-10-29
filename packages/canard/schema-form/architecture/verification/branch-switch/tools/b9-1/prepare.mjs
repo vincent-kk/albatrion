@@ -14,18 +14,22 @@ import { getStageRoot } from '../window/getStageRoot.mjs';
 
 const options = Object.fromEntries(
   process.argv.slice(2).map((arg) => {
-    const match = /^--(baseline|root|candidate-commit)=(.+)$/.exec(arg);
+    const match =
+      /^--(baseline|root|candidate-commit|baseline-commit)=(.+)$/.exec(arg);
     assert.ok(
       match,
       'Expected --baseline=<archived package> and --root=<external directory>',
     );
     return [
       match[1],
-      match[1] === 'candidate-commit' ? match[2] : path.resolve(match[2]),
+      match[1].endsWith('-commit') ? match[2] : path.resolve(match[2]),
     ];
   }),
 );
 assert.ok(options.baseline && options.root && options['candidate-commit']);
+const baselineCommit =
+  options['baseline-commit'] ?? '3104b0d9baebfb2a7218242be812eafd769b6753';
+assert.match(baselineCommit, /^[a-f0-9]{40}$/, 'Exact baseline commit SHA');
 assert.equal(
   Number(process.versions.node.split('.')[0]),
   26,
@@ -49,7 +53,7 @@ assert.equal(
       'utf8',
     )
     .trim(),
-  '3104b0d9baebfb2a7218242be812eafd769b6753',
+  baselineCommit,
 );
 assert.equal(
   execFileSync(
@@ -148,7 +152,7 @@ fs.writeFileSync(
   path.join(options.root, 'inputs.json'),
   JSON.stringify(
     {
-      baselineCommit: '3104b0d9baebfb2a7218242be812eafd769b6753',
+      baselineCommit,
       candidateCommit: commit,
       files,
       stageBundles,
@@ -168,6 +172,8 @@ fs.writeFileSync(
           'architecture/verification/branch-switch/tools/b9-1/helpers/compactProcessRows.mjs',
           'architecture/verification/branch-switch/tools/window/waitForQuietProcess.mjs',
           'architecture/verification/branch-switch/tools/window/getStageRoot.mjs',
+          'architecture/verification/branch-switch/tools/window/quietWorkerPreload.mjs',
+          'architecture/verification/branch-switch/tools/window/helpers/sampleProcessCpu.mjs',
           'architecture/verification/branch-switch/tools/b8/quietWorkerPreload.mjs',
           'architecture/verification/branch-switch/tools/b8/helpers/waitForQuietProcess.mjs',
           'architecture/verification/branch-switch/tools/b8/helpers/sampleProcessCpu.mjs',
