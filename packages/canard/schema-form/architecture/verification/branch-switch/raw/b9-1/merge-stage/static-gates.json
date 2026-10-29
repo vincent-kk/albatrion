@@ -1,0 +1,91 @@
+{
+  "candidateCommit": "04147e96b16aaeb74f0963c79c424f1581b53b35",
+  "baselineCommit": "1da3485d3c0c778a23cd101cd16a279c574ce644",
+  "sourceTree": "4d69dd09f6e1c2ef8fcee56ddc86d7644249fede",
+  "projects": [
+    {
+      "name": "lint",
+      "exitCode": 0
+    },
+    {
+      "name": "unit",
+      "exitCode": 0,
+      "success": true,
+      "numTotalTests": 3972,
+      "numPassedTests": 3971,
+      "numFailedTests": 0,
+      "numTodoTests": 1
+    },
+    {
+      "name": "render",
+      "exitCode": 0,
+      "success": true,
+      "numTotalTests": 768,
+      "numPassedTests": 768,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    {
+      "name": "storybook",
+      "exitCode": 0,
+      "success": true,
+      "numTotalTests": 251,
+      "numPassedTests": 251,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    {
+      "name": "react18",
+      "exitCode": 0,
+      "success": true,
+      "numTotalTests": 768,
+      "numPassedTests": 768,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    {
+      "name": "production",
+      "exitCode": 0,
+      "success": true,
+      "numTotalTests": 21,
+      "numPassedTests": 21,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    {
+      "name": "verify",
+      "exitCode": 0,
+      "success": true,
+      "numTotalTests": 4784,
+      "numPassedTests": 4783,
+      "numFailedTests": 0,
+      "numTodoTests": 1
+    }
+  ],
+  "isolationAndFirstWrite": [
+    {
+      "file": "src/__tests__/pointerIsolation.test.ts",
+      "cases": 6,
+      "failed": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.pointer-path-work.test.ts",
+      "cases": 4,
+      "failed": 0
+    }
+  ],
+  "declarations": {
+    "differences": 0,
+    "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+  },
+  "delivery": {
+    "phases": 429,
+    "differences": 0,
+    "extensionPhases": 21,
+    "scenes": 79,
+    "extensionScenes": 7
+  },
+  "buildExitCodes": [0, 0],
+  "distUnchangedByConflictResolution": true,
+  "toolsLintExit": 0
+}

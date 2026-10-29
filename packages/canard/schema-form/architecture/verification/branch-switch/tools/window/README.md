@@ -8,8 +8,10 @@ B12의 준비 루트는 `.noindex`로 끝나야 합니다. bundles·pair·delive
 
 `checkQuietProcess.mjs`는 가상 시계로 일반·Spotlight·혼합 부하와 복구를 확인하며 OS 대기나 성능 표본을 실행하지 않습니다.
 
-B8에서 이동한 공용 장치이며 B8·B9-0·B11·B12가 같은 정책을 사용합니다. `helpers/sampleProcessCpu.mjs`는 누적 CPU 카운터의 3초 차이를 관측하고 관측기 자신을 제외합니다. `waitForQuietProcess.mjs`가 정책 정본이며 `helpers/waitForQuietProcess.mjs`는 기존 주소를 위한 재수출입니다.
+B8에서 이동한 공용 장치이며 B8·B9-0·B9-1·B11·B12가 같은 정책을 사용합니다. `helpers/sampleProcessCpu.mjs`는 누적 CPU 카운터의 3초 차이를 관측하고 관측기 자신을 제외합니다. `waitForQuietProcess.mjs`가 정책 정본이며 `helpers/waitForQuietProcess.mjs`는 기존 주소를 위한 재수출입니다.
 
 `quietWorkerPreload.mjs`는 기존 `B8_QUIET_ROOT`·`B8_QUIET_AGENT_PID`를 유지합니다. Node 자식의 `--import`로 적재하면 benchmark 모듈과 타이머 시작 전에 점검하며 PID별 JSON 증거를 남깁니다.
 
 합성 검사: `node packages/canard/schema-form/architecture/verification/branch-switch/tools/window/checkQuietProcess.mjs`. 복구·자기 PID 제외·3초 관측·5초 지연·일반 120초와 Spotlight 600초를 실제 OS 대기 없이 확인합니다.
+
+기존 B8의 관측기·대기 함수·preload 주소는 이 공용 구현을 재수출하거나 적재하는 호환 주소입니다. B9-1의 합성 정책 사례와 B12의 3초 관측·5초 지연 사례를 함께 유지합니다.

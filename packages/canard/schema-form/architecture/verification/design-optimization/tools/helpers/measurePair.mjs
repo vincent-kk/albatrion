@@ -1,5 +1,5 @@
 import { performance } from 'node:perf_hooks';
-import { setTimeout } from 'node:timers/promises';
+import { setImmediate } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
 
 import { setupOperation } from './setupOperation.mjs';
@@ -25,7 +25,7 @@ export async function measurePair(row, config, engines, repeat) {
         : ['legacy', 'current'];
     if (i >= 0) orders.push(order.join(','));
     for (const engine of order) {
-      await setTimeout(0);
+      await setImmediate();
       await import(pathToFileURL(engines[engine].destination));
       const start = performance.now();
       const result = prepared[engine].run();

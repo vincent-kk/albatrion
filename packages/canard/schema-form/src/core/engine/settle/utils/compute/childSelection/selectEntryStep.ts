@@ -41,6 +41,8 @@ const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
 export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Static occurrences already present in the fixed private baseline. */
   readonly preparedStatic?: PreparedStaticHost<Self>;
+  /** Dynamic own entries in actual creation order, excluding rejected admissions. */
+  readonly preparedDynamic?: Record<string, Self>;
   /** Original dynamic membership is retained solely for exit comparison. */
   readonly priorDynamicNames?: readonly string[];
   /** Host whose current structure is selected. */
@@ -53,7 +55,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   readonly computeChild: (child: Self) => void;
   /** Whether entry changes queue host projection before later gates. */
   readonly immediate: boolean;
-  /** Ordered mutable structure published by this selection call. */
+  /** Ordered mutable target; prepared selection inherits static entries while host reads use a view. */
   readonly next: Record<string, Self>;
   /** First admitted blueprint identity for each authored name. */
   readonly seen: Map<string, BlueprintChildEntry['node']>;

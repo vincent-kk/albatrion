@@ -38,7 +38,7 @@ gap의 `beforeSettlementUs`는 setValue 호출 직전부터 `writeFieldNode` 함
 
 ## B11 뒤 재개
 
-기준은 B11 병합 머리입니다. B11에서 제거한 `DetachedWriteAddress.retain`은 supplemental manifest의 `absentSupplementalStages`에 명시하며 0회 호출과 구별합니다. 중지된 첫 창은 legacy 101번째 배치에서 가드 상한 100을 넘어 완료 프로세스 0/180으로 끝났습니다. 원래 러너는 microtask만 양보해 macrotask 초기화를 막았습니다. `yieldBeforeSample.mjs`가 canonical measurePair와 같은 타이밍 밖 `setTimeout(0)` 경계를 복원하며, 120회 가드 검사는 수정 전 실패·수정 후 통과합니다. 새 smoke 뒤 코디네이터에게 창 허가를 질문하고 허가 뒤에만 새 창을 엽니다.
+기준은 B11 병합 머리입니다. B11에서 제거한 `DetachedWriteAddress.retain`은 supplemental manifest의 `absentSupplementalStages`에 명시하며 0회 호출과 구별합니다. `yieldBeforeSample.mjs`와 공용 `measurePair`는 타이밍 밖 `setImmediate()` 경계에서 legacy 가드의 매크로태스크 초기화를 허용하며, 표본 사이에 잠들지 않습니다. 합성 가드도 실제 legacy와 같은 immediate 초기화를 사용합니다. 양보 장치가 바뀌면 120회 무시간 legacy 스모크와 22행·행당 한 프로세스·20예열/100표본 파일럿을 먼저 실행하고 중앙값/최솟값 비를 기록합니다. 새 smoke 뒤 코디네이터에게 창 허가를 질문하고 허가 뒤에만 새 창을 엽니다. 이 장치는 제품 런타임 바이트나 제품 보유량을 바꾸지 않습니다.
 
 B5의 단계 러너는 wrapped/unwrapped 두 레인을 macrotask 양보 없이 번갈아 실행하지만 이번 ledger 러너는 0.16.1을 포함한 네 레인을 유지하고 매 표본 밖에서 양보합니다. timed bundle 바이트는 같아도 GC와 inter-sample 상태는 다르므로 모든 기울기·분할·오버헤드는 이번 창 내부에서 구하고 B5 절대값 비교는 cross-harness로 표시합니다.
 

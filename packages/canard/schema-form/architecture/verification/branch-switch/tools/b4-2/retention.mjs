@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { writeHeapSnapshot } from 'node:v8';
 
 import { buildBranchRows } from '../../../design-optimization/tools/helpers/buildBranchRows.mjs';
+import { buildRows } from '../../../design-optimization/tools/helpers/buildRows.mjs';
 import { setupWrite } from '../../../design-optimization/tools/profile/branch-switch/setupWrite.mjs';
 import { HeapGraph } from '../../../perf-optimization/first-batch/c-d/heap-graph.mjs';
 
@@ -18,8 +19,11 @@ const options = Object.fromEntries(
     return [match[1], match[2]];
   }),
 );
-const row = buildBranchRows().find((row) => row.id === options.row);
-assert.ok(row && globalThis.gc);
+const row = [...buildBranchRows(), ...buildRows(true)].find(
+  (row) => row.id === options.row,
+);
+assert.ok(row, 'Known retention fixture: ' + options.row);
+assert.ok(globalThis.gc, 'Run the retention device with --expose-gc');
 const module = await import(pathToFileURL(path.resolve(options.bundle)));
 let root;
 const operation = await setupWrite(row, {

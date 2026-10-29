@@ -1,0 +1,355 @@
+{
+  "node": "v26.11.1",
+  "warmups": 20,
+  "samples": 100,
+  "processes": 22,
+  "sourceSha256": "940ebbe8c5e03990feafc91e95dae8719289ea55313ed7d001aa3e97b44af6a1",
+  "legacySha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46",
+  "rows": [
+    {
+      "row": "single-flat-1000",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.5007919999999899,
+          "medianMs": 0.5321040000000039,
+          "ratio": 1.0625249604626563
+        },
+        "current": {
+          "minMs": 0.05525000000000091,
+          "medianMs": 0.0784995000000066,
+          "ratio": 1.4208054298643495
+        }
+      }
+    },
+    {
+      "row": "mount-oneOf-80",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.3387920000000122,
+          "medianMs": 0.42329099999997766,
+          "ratio": 1.2494126189519303
+        },
+        "current": {
+          "minMs": 2.2409999999999854,
+          "medianMs": 2.5899374999999907,
+          "ratio": 1.1557061579651975
+        }
+      }
+    },
+    {
+      "row": "mount-flat-1000",
+      "lanes": {
+        "legacy": {
+          "minMs": 2.0356669999999895,
+          "medianMs": 2.1468545000000177,
+          "ratio": 1.0546196897626325
+        },
+        "current": {
+          "minMs": 2.1154999999999973,
+          "medianMs": 2.343729499999995,
+          "ratio": 1.107884424485936
+        }
+      }
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "lanes": {
+        "legacy": {
+          "minMs": 6.655957999999828,
+          "medianMs": 9.565186999999924,
+          "ratio": 1.4370864419517326
+        },
+        "current": {
+          "minMs": 16.631459000000177,
+          "medianMs": 18.22172949999998,
+          "ratio": 1.0956182196642992
+        }
+      }
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.020166000000017448,
+          "medianMs": 0.028979499999991276,
+          "ratio": 1.437047505700992
+        },
+        "current": {
+          "minMs": 0.11533400000001848,
+          "medianMs": 0.14629149999998958,
+          "ratio": 1.2684160785194838
+        }
+      }
+    },
+    {
+      "row": "switch-oneOf-80",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.043457999999986896,
+          "medianMs": 0.06602100000000632,
+          "ratio": 1.519190942980032
+        },
+        "current": {
+          "minMs": 0.16562500000000568,
+          "medianMs": 0.26756300000000977,
+          "ratio": 1.6154747169811356
+        }
+      }
+    },
+    {
+      "row": "bulk-flat-2000",
+      "lanes": {
+        "legacy": {
+          "minMs": 1.4353750000000218,
+          "medianMs": 1.5790624999999636,
+          "ratio": 1.1001045023077172
+        },
+        "current": {
+          "minMs": 1.882541999999944,
+          "medianMs": 2.0618334999999206,
+          "ratio": 1.0952390438035284
+        }
+      }
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "lanes": {
+        "legacy": {
+          "minMs": 3.4812080000001515,
+          "medianMs": 3.974125000000072,
+          "ratio": 1.1415936651874576
+        },
+        "current": {
+          "minMs": 3.984042000000045,
+          "medianMs": 5.100896000000091,
+          "ratio": 1.2803318840514315
+        }
+      }
+    },
+    {
+      "row": "switch-discriminator-80",
+      "lanes": {
+        "current": {
+          "minMs": 0.1414169999999899,
+          "medianMs": 0.2457084999999921,
+          "ratio": 1.7374749853271505
+        }
+      }
+    },
+    {
+      "row": "switch-if-80",
+      "lanes": {
+        "current": {
+          "minMs": 0.28408300000000963,
+          "medianMs": 0.3694794999999971,
+          "ratio": 1.3006040488166646
+        }
+      }
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.03587500000000432,
+          "medianMs": 0.05475049999999726,
+          "ratio": 1.5261463414631544
+        },
+        "current": {
+          "minMs": 0.3173749999999984,
+          "medianMs": 0.4338120000000032,
+          "ratio": 1.3668751476959602
+        }
+      }
+    },
+    {
+      "row": "switch-siblings-0",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.016708999999991647,
+          "medianMs": 0.02943700000000149,
+          "ratio": 1.761745167276091
+        },
+        "current": {
+          "minMs": 0.05924999999999159,
+          "medianMs": 0.08837500000001342,
+          "ratio": 1.4915611814350374
+        }
+      }
+    },
+    {
+      "row": "switch-siblings-100",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.10962499999999409,
+          "medianMs": 0.13304150000000448,
+          "ratio": 1.2136054732042112
+        },
+        "current": {
+          "minMs": 0.18966700000001424,
+          "medianMs": 0.2358755000000059,
+          "ratio": 1.243629624552443
+        }
+      }
+    },
+    {
+      "row": "switch-siblings-1000",
+      "lanes": {
+        "legacy": {
+          "minMs": 2.428625000000011,
+          "medianMs": 2.584854000000064,
+          "ratio": 1.0643281692315827
+        },
+        "current": {
+          "minMs": 2.0141249999999786,
+          "medianMs": 2.1611880000000383,
+          "ratio": 1.073015825730807
+        }
+      }
+    },
+    {
+      "row": "switch-siblings-4000",
+      "lanes": {
+        "legacy": {
+          "minMs": 7.701583000000028,
+          "medianMs": 7.923812999999882,
+          "ratio": 1.0288551068007517
+        },
+        "current": {
+          "minMs": 6.453583999999864,
+          "medianMs": 6.757291999999893,
+          "ratio": 1.047060362118171
+        }
+      }
+    },
+    {
+      "row": "leaf-gate-250",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.07066699999998605,
+          "medianMs": 0.092646000000002,
+          "ratio": 1.3110221178204862
+        },
+        "current": {
+          "minMs": 0.021500000000003183,
+          "medianMs": 0.029416500000010615,
+          "ratio": 1.3682093023258726
+        }
+      }
+    },
+    {
+      "row": "leaf-gate-1000",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.4936670000000163,
+          "medianMs": 0.5394995000000051,
+          "ratio": 1.0928409231323692
+        },
+        "current": {
+          "minMs": 0.02304199999997536,
+          "medianMs": 0.04622950000000969,
+          "ratio": 2.0063145560306888
+        }
+      }
+    },
+    {
+      "row": "leaf-gate-4000",
+      "lanes": {
+        "legacy": {
+          "minMs": 2.438625000000002,
+          "medianMs": 2.501125000000002,
+          "ratio": 1.025629196780973
+        },
+        "current": {
+          "minMs": 0.7414169999999558,
+          "medianMs": 0.7671665000000019,
+          "ratio": 1.0347301181387094
+        }
+      }
+    },
+    {
+      "row": "leaf-gate-8000",
+      "lanes": {
+        "legacy": {
+          "minMs": 5.11262499999998,
+          "medianMs": 5.383833500000037,
+          "ratio": 1.0530468203711514
+        },
+        "current": {
+          "minMs": 1.5604169999999158,
+          "medianMs": 1.6431880000000092,
+          "ratio": 1.0530441542229403
+        }
+      }
+    },
+    {
+      "row": "wave-1000",
+      "lanes": {
+        "current": {
+          "minMs": 1.6448749999999563,
+          "medianMs": 1.7383119999999792,
+          "ratio": 1.0568049243863669
+        }
+      }
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "lanes": {
+        "current": {
+          "minMs": 0.063083000000006,
+          "medianMs": 0.09454150000000539,
+          "ratio": 1.4986842731004613
+        }
+      }
+    },
+    {
+      "row": "switch-payload-12",
+      "lanes": {
+        "legacy": {
+          "minMs": 0.17279200000001538,
+          "medianMs": 0.18924999999998704,
+          "ratio": 1.0952474651602515
+        },
+        "current": {
+          "minMs": 0.3508749999999736,
+          "medianMs": 0.42010400000000914,
+          "ratio": 1.1973038831493856
+        }
+      }
+    }
+  ],
+  "base": "3104b0d9baebfb2a7218242be812eafd769b6753",
+  "aboveOnePointFive": [
+    {
+      "row": "switch-oneOf-80",
+      "lane": "legacy",
+      "ratio": 1.519190942980032
+    },
+    {
+      "row": "switch-oneOf-80",
+      "lane": "current",
+      "ratio": 1.6154747169811356
+    },
+    {
+      "row": "switch-discriminator-80",
+      "lane": "current",
+      "ratio": 1.7374749853271505
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "lane": "legacy",
+      "ratio": 1.5261463414631544
+    },
+    {
+      "row": "switch-siblings-0",
+      "lane": "legacy",
+      "ratio": 1.761745167276091
+    },
+    {
+      "row": "leaf-gate-1000",
+      "lane": "current",
+      "ratio": 2.0063145560306888
+    }
+  ],
+  "verdict": "harness-adopted-by-coordinator-without-rerun",
+  "coordinatorDecision": "Long-row ratios support removing the systematic sleeping-loop slowdown; the six lanes above 1.5 are accepted as short-row GC/jitter width. Formal gates retain ten process minima medians."
+}

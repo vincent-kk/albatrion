@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-28T22:47:28.649Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "launchd",
+      "cpuPercent": 16.96069313060475
+    },
+    {
+      "name": "mds_stores",
+      "cpuPercent": 6.080248480743846
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 5.760235402858978
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 4.800196169087955
+    },
+    {
+      "name": "2.1.312",
+      "cpuPercent": 3.5201438572938155
+    },
+    {
+      "name": "node",
+      "cpuPercent": 1.9200784676166274
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.6000653896862833
+    },
+    {
+      "name": "mdworker_shared",
+      "cpuPercent": 1.600065389680462
+    },
+    {
+      "name": "com.apple.DriverKit-AppleBCMWLAN",
+      "cpuPercent": 0.9600392338146805
+    },
+    {
+      "name": "configd",
+      "cpuPercent": 0.6400261558716028
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "window": "window-1",
+    "observations": 495,
+    "beforeBytes": 266675639,
+    "afterBytes": 880495,
+    "gzipBytes": 80335
+  },
+  {
+    "window": "window-2",
+    "observations": 495,
+    "beforeBytes": 261622549,
+    "afterBytes": 865060,
+    "gzipBytes": 77865
+  },
+  {
+    "window": "window-3",
+    "observations": 495,
+    "beforeBytes": 266212672,
+    "afterBytes": 880393,
+    "gzipBytes": 81052
+  }
+]

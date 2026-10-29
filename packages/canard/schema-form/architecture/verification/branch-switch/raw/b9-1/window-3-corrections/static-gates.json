@@ -1,0 +1,82 @@
+{
+  "productCommit": "a3e955b733808fd025bed583ef0067d662a0fddd",
+  "node": "v26.11.1",
+  "projects": {
+    "unit": {
+      "success": true,
+      "numTotalTests": 3906,
+      "numPassedTests": 3905,
+      "numFailedTests": 0,
+      "numTodoTests": 1
+    },
+    "render": {
+      "success": true,
+      "numTotalTests": 766,
+      "numPassedTests": 766,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    "storybook": {
+      "success": true,
+      "numTotalTests": 251,
+      "numPassedTests": 251,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    "react18": {
+      "success": true,
+      "numTotalTests": 766,
+      "numPassedTests": 766,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    "production": {
+      "success": true,
+      "numTotalTests": 21,
+      "numPassedTests": 21,
+      "numFailedTests": 0,
+      "numTodoTests": 0
+    },
+    "verify": {
+      "success": true,
+      "numTotalTests": 4716,
+      "numPassedTests": 4715,
+      "numFailedTests": 0,
+      "numTodoTests": 1
+    }
+  },
+  "isolationAndFirstWrite": [
+    {
+      "file": "src/__tests__/pointerIsolation.test.ts",
+      "cases": 6,
+      "failed": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.pointer-path-work.test.ts",
+      "cases": 4,
+      "failed": 0
+    }
+  ],
+  "delivery": {
+    "scenes": 79,
+    "phases": 429,
+    "differences": 0
+  },
+  "declarations": {
+    "differences": 0,
+    "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+  },
+  "build": {
+    "command": "yarn workspace @canard/schema-form build",
+    "exitCode": 0,
+    "sourceTree": "b042d993a797747b722130e9cb5485e1426dd28e",
+    "bundles": {
+      "index.mjs": "c14acfbd3dac89c07e1ee70ecde95669830c6a68b84042cf6e558fc232701655",
+      "index.node.mjs": "4fda8d096a9c64980af633978cb4a497d361f3d6f342ca45fb2adf60d680e23d",
+      "index.cjs": "59039ab5292b9bc73f989a359def12afe30f9bf1aa8876705a9f220f14d4a963"
+    }
+  },
+  "lint": {
+    "exitCode": 0
+  }
+}

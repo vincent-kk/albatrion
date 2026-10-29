@@ -1,2 +1,2 @@
-// Compatibility address for existing devices; the shared window policy is canonical.
-export { waitForQuietProcess } from '../../window/waitForQuietProcess.mjs';
+// Compatibility address; all devices share the current window policy.
+export { waitForQuietProcess } from '../waitForQuietProcess.mjs';

@@ -1,0 +1,42 @@
+[
+  {
+    "guard": "witness?.structure === previous",
+    "exitCode": 1,
+    "detected": true
+  },
+  {
+    "guard": "prepared?.selectedStructure === structure",
+    "exitCode": 1,
+    "detected": true
+  },
+  {
+    "guard": "context.preparedStaticHosts?.has(host)",
+    "exitCode": 1,
+    "detected": true
+  },
+  {
+    "guard": "host.raw !== null",
+    "exitCode": 1,
+    "detected": true
+  },
+  {
+    "guard": "!context.entered.has(host)",
+    "exitCode": 1,
+    "detected": true
+  },
+  {
+    "guard": "!context.exited.has(host)",
+    "exitCode": 1,
+    "detected": true
+  },
+  {
+    "guard": "!context.perished.has(host)",
+    "exitCode": 1,
+    "detected": true
+  },
+  {
+    "guard": "!context.revived.has(host)",
+    "exitCode": 1,
+    "detected": true
+  }
+]

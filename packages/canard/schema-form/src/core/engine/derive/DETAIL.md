@@ -3,6 +3,7 @@
 ## Requirements
 
 - 파생 원천·대상 경로는 jsonPointer에서 한 번 파싱한 이름으로 탐색하며 연산자 심볼은 속성 이름으로 소비하지 않는다. 로드 범위 포함 검사는 isDescendantPath를 사용한다.
+- 현재 선택 맵에 없는 정적 자식의 선언 ID는 engine의 공통 구조 조회로 준비물에서 읽은 뒤 마지막 커밋으로 후퇴한다. 준비물의 부모·경로·청사진·자식 증인이 일치할 때만 상수 ID 배열을 재사용하며, settle의 타입이나 실행 organ을 import하지 않는다. O(1) 조회이며 추가 ID 배열이나 영구 색인을 보유하지 않는다.
 
 - D3b-2의 규칙 표는 blueprint.deriveRuleTable, 감시 경로와 자식 위치는 host.watchPaths·deriveChildren의 지연 슬롯에 둔다. builder와 규칙 순서는 유지하고 공통 저장소는 derive를 import하지 않는다.
 
@@ -47,6 +48,10 @@
 - 자식 fractal `evaluateDeriveRound`가 라운드 판정과 그 전용 보조(`utils/rank`, `utils/inject`, `utils/writes`)를 소유한다. derive의 `utils/rules/`는 규칙 표와 규칙 키·watch 경로를, `utils/evaluate/`는 상호작용 초기화 판정과 두 판정이 함께 쓰는 기준점·식 평가·선택 선언 보조를, `constants/`는 라운드 상한을, `types/`는 판정 형을 소유한다. 상호작용 초기화 판정과 규칙 표 생성은 전용 파일이 하나뿐이라 fractal로 올리지 않는다.
 
 ## Acceptance Criteria
+
+### derive-static-prepared-ids — 준비된 정적 선언 조회
+
+- 현재 선택에 없는 정적 자식은 준비물의 ID를 읽어 커밋 경로 조회를 생략한다. 현재 선택이 있으면 그 선택이 우선하며 준비물 증인이 없거나 다르면 기존 커밋·저작 선언 후퇴를 유지한다.
 
 ### derive-failures — 오류 목록과 발생 식별자
 
@@ -96,4 +101,4 @@
 
 ## Last Updated
 
-2026-10-28
+2026-10-29. B9-1 준비된 정적 선언 ID의 우선순위와 후퇴.

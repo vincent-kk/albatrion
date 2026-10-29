@@ -24,8 +24,10 @@ import { reuseArrayChildren } from './reuseArrayChildren';
 import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
 import { staticShape } from './staticShape';
+import { createPreparedSelectionStructure } from './utils/createPreparedSelectionStructure';
 import { createStaticEntryReuser } from './utils/createStaticEntryReuser';
 import { prepareStaticHost } from './utils/prepareStaticHost';
+import { publishPreparedSelection } from './utils/publishPreparedSelection';
 
 /**
  * Select all declared direct children in authored order for one host round.
@@ -155,9 +157,22 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           hasRelocated,
         )
       : undefined;
-  const next: Record<string, Self> =
-    reuse && current ? current : { ...current };
-  if (next !== current) Object.setPrototypeOf(next, null);
+  const dynamic: Record<string, Self> | undefined = prepared
+    ? Object.create(prepared.baseline)
+    : undefined;
+  const next: Record<string, Self> = prepared
+    ? createPreparedSelectionStructure(
+        prepared.baseline,
+        current,
+        prepared.dynamicNames,
+        dynamic!,
+      )
+    : reuse && current
+      ? current
+      : { ...current };
+  if (!prepared && next !== current) Object.setPrototypeOf(next, null);
+  // Mutate the private target directly; node.structure keeps the own-key gate view.
+  const selectionTarget = dynamic ?? next;
   if (node.behavior.type === 'array') {
     const names = Object.keys(next);
     for (let index = 0; index < names.length; index++) {
@@ -165,7 +180,6 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       if (Number(name) >= node.itemCount) delete next[name];
     }
   }
-  node.structure = next;
   reuse ??= createStaticEntryReuser(
     node,
     prior,
@@ -197,11 +211,12 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       : cached;
   const entries = direct
     ? node.blueprintNode.childEntries
-    : node.behavior.declareChildren(node);
+    : (prepared?.dynamicEntries ?? node.behavior.declareChildren(node));
   const count = direct ? direct.steps.length : entries.length;
   const flushReads = immediate && (!direct || context.kind === 'load');
   const frame: ChildSelectionFrame<Self> = {
     preparedStatic: prepared,
+    preparedDynamic: dynamic,
     priorDynamicNames: prepared
       ? context.preparedStaticPriorNames?.get(node)
       : undefined,
@@ -210,30 +225,38 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     prior,
     computeChild,
     immediate,
-    next,
+    next: selectionTarget,
     seen,
     inactiveEntries,
     changed,
     flushReads,
     reuseStatic: reuse,
   };
-  const round = direct && context.gateSelectionRounds?.get(node);
-  if (round?.active) selectTableChildren(frame, round);
-  else {
-    for (let entryIndex = 0; entryIndex < count; entryIndex++) {
-      const step = direct?.steps[entryIndex];
-      const entry = step ? step.entry : entries[entryIndex];
-      if (reuse?.(entry)) continue;
-      selectEntryStep(entry, step, frame);
+  let selectedChildren: readonly Self[] | undefined;
+  try {
+    node.structure = next;
+    const round = direct && context.gateSelectionRounds?.get(node);
+    if (round?.active) selectTableChildren(frame, round);
+    else {
+      for (let entryIndex = 0; entryIndex < count; entryIndex++) {
+        const step = direct?.steps[entryIndex];
+        const entry = step ? step.entry : entries[entryIndex];
+        if (reuse?.(entry)) continue;
+        selectEntryStep(entry, step, frame);
+      }
     }
+    selectedChildren = prepared ? publishPreparedSelection(frame) : undefined;
+  } finally {
+    if (prepared && node.structure === next)
+      node.structure = prepared.selectedStructure;
   }
   changed = frame.changed;
-  const flushed = flushPendingOutput(node, context);
+  const flushed = flushPendingOutput(node, context, selectedChildren);
   if (publication) publication.flushed = flushed;
   for (let index = 0; index < inactiveEntries.length; index++) {
     const entry = inactiveEntries[index];
     if (
-      next[entry.name] ||
+      selectionTarget[entry.name] ||
       seen.has(entry.name) ||
       (context.kind !== 'load' && hasOwnProperty(prior, entry.name))
     )
@@ -277,7 +300,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < priorNames.length; index++) {
     const name = priorNames[index];
     const child = prior[name];
-    if (next[name] !== child) {
+    if (node.structure![name] !== child) {
       if (context.hasGates) (context.presenceHosts ??= new Set()).add(node);
       if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
         context.perished.add(child);
@@ -292,11 +315,11 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       }
     }
   }
+  if (prepared) {
+    if (changed) context.changedNodes.add(node);
+    return changed;
+  }
   const nextChildren = flushed ? (node.children ?? []) : Object.values(next);
-  if (prepared)
-    prepared.dynamicNames = [...seen.keys()].filter(
-      (name) => !prepared.entries.has(name),
-    );
   const published = node.children;
   const sameAsBefore = isSameChildList(before, nextChildren);
   if (!sameAsBefore) changed = true;

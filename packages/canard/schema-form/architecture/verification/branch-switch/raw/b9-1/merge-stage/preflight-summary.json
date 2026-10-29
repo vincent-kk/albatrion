@@ -1,0 +1,10 @@
+{
+  "formal": false,
+  "row": "single-flat-1000",
+  "workers": 1,
+  "warmups": 1,
+  "samples": 1,
+  "pid": 53287,
+  "status": 0,
+  "formalMarkerCreated": false
+}

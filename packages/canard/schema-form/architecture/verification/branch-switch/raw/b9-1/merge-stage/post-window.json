@@ -1,0 +1,14 @@
+{
+  "distSha256": {
+    "index.d.ts": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
+    "index.mjs": "29e3da0c6355acbb55a178e73ec91bc0aca569e81afa24ddc997ee06992465ba",
+    "index.node.mjs": "1338654cf550e06c762b51da6e17b7910952ebee60e2408a2911900af3d39617",
+    "index.cjs": "68a0652a54d626e4484736b2fba2b7880b81aa703bb2e89e67cd1c16c1561940"
+  },
+  "allFourDistHashesRestored": true,
+  "sourceTree": "4d69dd09f6e1c2ef8fcee56ddc86d7644249fede",
+  "formalRuns": 1,
+  "windowProcessExitCode": 0,
+  "adoptionGatesPassed": 6,
+  "adoptionGatesTotal": 6
+}
