@@ -1,0 +1,1214 @@
+{
+  "exitJudgment": {
+    "row": "switch-oneOf-80",
+    "lanes": {
+      "A": {
+        "finalizeExits": {
+          "selfUs": {
+            "median": 5.228500000384884,
+            "min": 5.001000000675049,
+            "max": 5.292000000054031,
+            "processMedians": [
+              5.001000000675049,
+              5.292000000054031,
+              5.228500000384884
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "finalizePendingExitLoop": {
+          "selfUs": {
+            "median": 4.374999999527063,
+            "min": 4.333499999347623,
+            "max": 4.436500000792876,
+            "processMedians": [
+              4.436500000792876,
+              4.374999999527063,
+              4.333499999347623
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "captureDetachedFieldNodeReads": {
+          "selfUs": {
+            "median": 5.08399999989706,
+            "min": 5.041499999833832,
+            "max": 5.229500000041298,
+            "processMedians": [
+              5.229500000041298,
+              5.08399999989706,
+              5.041499999833832
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "visitFieldNodes": {
+          "selfUs": {
+            "median": 4.3735000001561275,
+            "min": 4.2709999997896375,
+            "max": 4.37499999998181,
+            "processMedians": [
+              4.37499999998181,
+              4.2709999997896375,
+              4.3735000001561275
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "retainExitedSlot": {
+          "selfUs": {
+            "median": 7.167000000890766,
+            "min": 6.938000000445754,
+            "max": 7.417500000201471,
+            "processMedians": [
+              7.417500000201471,
+              7.167000000890766,
+              6.938000000445754
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "createExitSlotOverlay": {
+          "selfUs": {
+            "median": 5.375000000640284,
+            "min": 5.248999999594162,
+            "max": 5.377000001089982,
+            "processMedians": [
+              5.375000000640284,
+              5.377000001089982,
+              5.248999999594162
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "readSlotExitPolicy": {
+          "selfUs": {
+            "median": 3.771499999857042,
+            "min": 3.7505000002511224,
+            "max": 3.830999999991036,
+            "processMedians": [
+              3.7505000002511224,
+              3.771499999857042,
+              3.830999999991036
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "finalizeRetainLoop": {
+          "selfUs": {
+            "median": 2.00000000018008,
+            "min": 1.999999999497959,
+            "max": 2.0009999998364947,
+            "processMedians": [
+              2.00000000018008,
+              2.0009999998364947,
+              1.999999999497959
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "B": {
+        "finalizeExits": {
+          "selfUs": {
+            "median": 5.459999999857246,
+            "min": 5.334499999435138,
+            "max": 5.479000000150336,
+            "processMedians": [
+              5.334499999435138,
+              5.459999999857246,
+              5.479000000150336
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "finalizePendingExitLoop": {
+          "selfUs": {
+            "median": 4.292500000019572,
+            "min": 4.250999999840133,
+            "max": 4.312000000027183,
+            "processMedians": [
+              4.292500000019572,
+              4.312000000027183,
+              4.250999999840133
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "captureDetachedFieldNodeReads": {
+          "selfUs": {
+            "median": 5.3129999998873245,
+            "min": 5.083500000182539,
+            "max": 5.374999999958163,
+            "processMedians": [
+              5.374999999958163,
+              5.3129999998873245,
+              5.083500000182539
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "visitFieldNodes": {
+          "selfUs": {
+            "median": 4.417499999590291,
+            "min": 4.206999999723848,
+            "max": 4.499999999325155,
+            "processMedians": [
+              4.417499999590291,
+              4.499999999325155,
+              4.206999999723848
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "retainExitedSlot": {
+          "selfUs": {
+            "median": 6.981499999028529,
+            "min": 6.895000000213258,
+            "max": 7.186999999703403,
+            "processMedians": [
+              6.981499999028529,
+              7.186999999703403,
+              6.895000000213258
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "createExitSlotOverlay": {
+          "selfUs": {
+            "median": 4.958500000157073,
+            "min": 4.812499999616193,
+            "max": 5.146999999169566,
+            "processMedians": [
+              4.958500000157073,
+              5.146999999169566,
+              4.812499999616193
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "readSlotExitPolicy": {
+          "selfUs": {
+            "median": 3.8334999992457597,
+            "min": 3.791999999748441,
+            "max": 4.000499999847307,
+            "processMedians": [
+              3.791999999748441,
+              4.000499999847307,
+              3.8334999992457597
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "finalizeRetainLoop": {
+          "selfUs": {
+            "median": 2.084000000195374,
+            "min": 2.0010000005186157,
+            "max": 2.2499999997762643,
+            "processMedians": [
+              2.084000000195374,
+              2.2499999997762643,
+              2.0010000005186157
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    "reductions": [
+      {
+        "name": "finalizeExits",
+        "A": 5.228500000384884,
+        "B": 5.459999999857246,
+        "widthUs": 0.29099999937898247,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 1,
+        "callsB": 1
+      },
+      {
+        "name": "finalizePendingExitLoop",
+        "A": 4.374999999527063,
+        "B": 4.292500000019572,
+        "widthUs": 0.10300000144525256,
+        "criterion": "decrease",
+        "passed": true,
+        "callsA": 1,
+        "callsB": 1
+      },
+      {
+        "name": "captureDetachedFieldNodeReads",
+        "A": 5.08399999989706,
+        "B": 5.3129999998873245,
+        "widthUs": 0.18800000020746666,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "visitFieldNodes",
+        "A": 4.3735000001561275,
+        "B": 4.417499999590291,
+        "widthUs": 0.10400000019217259,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "retainExitedSlot",
+        "A": 7.167000000890766,
+        "B": 6.981499999028529,
+        "widthUs": 0.479499999755717,
+        "criterion": "decrease",
+        "passed": true,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "createExitSlotOverlay",
+        "A": 5.375000000640284,
+        "B": 4.958500000157073,
+        "widthUs": 0.12800000149582047,
+        "criterion": "decrease",
+        "passed": true,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "readSlotExitPolicy",
+        "A": 3.771499999857042,
+        "B": 3.8334999992457597,
+        "widthUs": 0.08049999973991362,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "finalizeRetainLoop",
+        "A": 2.00000000018008,
+        "B": 2.084000000195374,
+        "widthUs": 0.0010000003385357559,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 1,
+        "callsB": 1
+      }
+    ],
+    "passed": false
+  },
+  "protectedStages": [
+    {
+      "row": "single-nested-d6-f4",
+      "A": {
+        "median": 43.72900000021218,
+        "min": 40.66649999981564,
+        "max": 43.89549999996234,
+        "processMedians": [
+          43.72900000021218,
+          40.66649999981564,
+          43.89549999996234
+        ]
+      },
+      "B": {
+        "median": 44.29149999987203,
+        "min": 44.062499999881766,
+        "max": 44.35399999988476,
+        "processMedians": [
+          44.29149999987203,
+          44.062499999881766,
+          44.35399999988476
+        ]
+      },
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-1000",
+      "A": {
+        "median": 388.5835000000952,
+        "min": 383.97900000018126,
+        "max": 412.3540000000503,
+        "processMedians": [
+          383.97900000018126,
+          412.3540000000503,
+          388.5835000000952
+        ]
+      },
+      "B": {
+        "median": 388.8334999999188,
+        "min": 384.6875000001546,
+        "max": 410.4789999998957,
+        "processMedians": [
+          388.8334999999188,
+          384.6875000001546,
+          410.4789999998957
+        ]
+      },
+      "passed": true
+    },
+    {
+      "row": "switch-payload-12",
+      "A": {
+        "median": 294.72950000013043,
+        "min": 290.1244999998198,
+        "max": 297.60399999986475,
+        "processMedians": [
+          294.72950000013043,
+          290.1244999998198,
+          297.60399999986475
+        ]
+      },
+      "B": {
+        "median": 303.02099999994425,
+        "min": 300.6039999997938,
+        "max": 337.4585000001389,
+        "processMedians": [
+          300.6039999997938,
+          337.4585000001389,
+          303.02099999994425
+        ]
+      },
+      "passed": false
+    }
+  ],
+  "targeted": [
+    {
+      "row": "switch-oneOf-80",
+      "decision": "unproven",
+      "reductions": [
+        {
+          "name": "computeNode",
+          "A": 41.22900000015761,
+          "B": 36.95749999997133,
+          "widthUs": 0.8945000004132453,
+          "criterion": "decrease",
+          "passed": true,
+          "callsA": 5,
+          "callsB": 5
+        },
+        {
+          "name": "selectChildren",
+          "A": 35.52100000001701,
+          "B": 36.623999999847,
+          "widthUs": 1.6239999999925203,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "markCommitDeliveries",
+          "A": 16.583000000082393,
+          "B": 17.082999999956883,
+          "widthUs": 1.6874999998890416,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "registerRecalculation",
+          "A": 15.645500000118773,
+          "B": 15.437499999961801,
+          "widthUs": 0.5004999998163839,
+          "criterion": "decrease",
+          "passed": true,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "commitSettlement",
+          "A": 10.937000000012631,
+          "B": 10.896500000171727,
+          "widthUs": 0.41549999991730147,
+          "criterion": "decrease",
+          "passed": true,
+          "callsA": 1,
+          "callsB": 1
+        }
+      ],
+      "passed": false
+    },
+    {
+      "row": "switch-siblings-0",
+      "decision": "unproven",
+      "reductions": [
+        {
+          "name": "computeNode",
+          "A": 17.313000000285683,
+          "B": 16.93650000015623,
+          "widthUs": 0.9590000004209287,
+          "criterion": "decrease",
+          "passed": true,
+          "callsA": 4,
+          "callsB": 4
+        },
+        {
+          "name": "selectChildren",
+          "A": 19.04100000001563,
+          "B": 19.667500000196014,
+          "widthUs": 0.6240000004709145,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "markCommitDeliveries",
+          "A": 10.041999999884865,
+          "B": 10.895500000060565,
+          "widthUs": 0.2289999997628911,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "registerRecalculation",
+          "A": 7.709000000204469,
+          "B": 7.957999999916865,
+          "widthUs": 0.35399999978835694,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "commitSettlement",
+          "A": 3.457999999909589,
+          "B": 3.478999999970256,
+          "widthUs": 0.12500000002546585,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        }
+      ],
+      "passed": false
+    }
+  ],
+  "protectedRows": [
+    {
+      "row": "single-flat-1000",
+      "decision": "unproven",
+      "A": 0.057000000000243745,
+      "Aprime": 0.05625000000009095,
+      "B": 0.060208500000044296,
+      "width": 0.004499999999552529,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "mount-oneOf-80",
+      "decision": "unproven",
+      "A": 2.36850000000004,
+      "Aprime": 2.2537500000003092,
+      "B": 2.2701665000001867,
+      "width": 0.18624999999974534,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "mount-flat-1000",
+      "decision": "unproven",
+      "A": 2.1399169999999685,
+      "Aprime": 2.1377919999999904,
+      "B": 2.154520999999704,
+      "width": 0.042709000000286323,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "decision": "unproven",
+      "A": 16.375,
+      "Aprime": 16.280125000000226,
+      "B": 16.429083500000615,
+      "width": 0.6622919999999795,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "decision": "unproven",
+      "A": 0.11329100000011749,
+      "Aprime": 0.11366700000007768,
+      "B": 0.11477100000001883,
+      "width": 0.0072079999999914435,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "bulk-flat-2000",
+      "decision": "unproven",
+      "A": 1.789042000000336,
+      "Aprime": 1.7734159999999974,
+      "B": 1.7922085000000152,
+      "width": 0.1462509999996655,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "decision": "unproven",
+      "A": 3.99316699999963,
+      "Aprime": 3.9791660000000775,
+      "B": 4.103853999999956,
+      "width": 0.11516699999992852,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-discriminator-80",
+      "decision": "unproven",
+      "A": 0.14770799999996598,
+      "Aprime": 0.15108299999974406,
+      "B": 0.14895799999999326,
+      "width": 0.011084000000209926,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-if-80",
+      "decision": "unproven",
+      "A": 0.2741249999999127,
+      "Aprime": 0.2719999999999345,
+      "B": 0.2824580000001333,
+      "width": 0.01020799999969313,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "decision": "unproven",
+      "A": 0.2819169999997939,
+      "Aprime": 0.2928750000000946,
+      "B": 0.30818699999986165,
+      "width": 0.041040999999950145,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-100",
+      "decision": "unproven",
+      "A": 0.07708299999967494,
+      "Aprime": 0.07600000000002183,
+      "B": 0.08185450000019046,
+      "width": 0.009708999999929802,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-1000",
+      "decision": "unproven",
+      "A": 0.3154580000000351,
+      "Aprime": 0.3146670000000995,
+      "B": 0.31766650000008667,
+      "width": 0.022083000000293396,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-4000",
+      "decision": "unproven",
+      "A": 2.667791999999281,
+      "Aprime": 2.666957999999795,
+      "B": 2.661938000000191,
+      "width": 0.16608300000007148,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-250",
+      "decision": "unproven",
+      "A": 0.022249999999985448,
+      "Aprime": 0.02320800000006784,
+      "B": 0.024708000000146058,
+      "width": 0.0025430000009691867,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-1000",
+      "decision": "unproven",
+      "A": 0.02187499999990905,
+      "Aprime": 0.02250000000003638,
+      "B": 0.0241870000002109,
+      "width": 0.002542000000630651,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-4000",
+      "decision": "unproven",
+      "A": 0.7378750000002583,
+      "Aprime": 0.7347500000000764,
+      "B": 0.7342289999999139,
+      "width": 0.033708999999817024,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-8000",
+      "decision": "unproven",
+      "A": 1.5647079999998823,
+      "Aprime": 1.5681250000002365,
+      "B": 1.5652915000000576,
+      "width": 0.027959000000009837,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "wave-1000",
+      "decision": "unproven",
+      "A": 1.6706250000002,
+      "Aprime": 1.6758750000003602,
+      "B": 1.6723959999999352,
+      "width": 0.04570700000022043,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "decision": "regressed",
+      "A": 0.06587499999977808,
+      "Aprime": 0.0660000000002583,
+      "B": 0.07145799999989322,
+      "width": 0.005208000000038737,
+      "verdict": "regressed",
+      "passed": false
+    },
+    {
+      "row": "switch-payload-12",
+      "decision": "unproven",
+      "A": 0.3518340000000535,
+      "Aprime": 0.36391699999967386,
+      "B": 0.36306249999984175,
+      "width": 0.014791999999943073,
+      "verdict": "in-width",
+      "passed": true
+    }
+  ],
+  "weightedExchange": {
+    "totalUs": 2791.5000000575674,
+    "weightedAUs": 454858.8029999028,
+    "relativePercent": 0.6137069309524089,
+    "rows": [
+      {
+        "row": "single-flat-1000",
+        "weight": 3000,
+        "eventsPerSample": 10,
+        "basis": "Frequent typing without subscribers.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 5.7000000000243745,
+        "BUs": 6.02085000000443,
+        "rawDeltaUs": 0.32084999998005514,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 17100.000000073123,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "mount-oneOf-80",
+        "weight": 1,
+        "eventsPerSample": 1,
+        "basis": "One branch form mount per session.",
+        "mount": true,
+        "decision": "unproven",
+        "AUs": 2368.50000000004,
+        "BUs": 2270.1665000001867,
+        "rawDeltaUs": -98.3334999998533,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 2368.50000000004,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "mount-flat-1000",
+        "weight": 1,
+        "eventsPerSample": 1,
+        "basis": "One flat form mount per session.",
+        "mount": true,
+        "decision": "unproven",
+        "AUs": 2139.9169999999685,
+        "BUs": 2154.520999999704,
+        "rawDeltaUs": 14.603999999735606,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 2139.9169999999685,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "mount-nested-d6-f4",
+        "weight": 1,
+        "eventsPerSample": 1,
+        "basis": "One nested form mount per session.",
+        "mount": true,
+        "decision": "unproven",
+        "AUs": 16375,
+        "BUs": 16429.083500000615,
+        "rawDeltaUs": 54.08350000061546,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 16375,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "single-nested-d6-f4",
+        "weight": 3000,
+        "eventsPerSample": 10,
+        "basis": "Frequent typing in nested forms.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 11.32910000001175,
+        "BUs": 11.477100000001883,
+        "rawDeltaUs": 0.1479999999901338,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 33987.30000003525,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-oneOf-80",
+        "weight": 100,
+        "eventsPerSample": 2,
+        "basis": "A user changes a branch selector.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 81.18749999994179,
+        "BUs": 81.0937499999227,
+        "rawDeltaUs": -0.09375000001909939,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 8118.749999994179,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "bulk-flat-2000",
+        "weight": 5,
+        "eventsPerSample": 1,
+        "basis": "Programmatic bulk setValue or reset is rare.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 1789.042000000336,
+        "BUs": 1792.2085000000152,
+        "rawDeltaUs": 3.1664999996792176,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 8945.21000000168,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "bulk-nested-d6-f4",
+        "weight": 5,
+        "eventsPerSample": 1,
+        "basis": "Programmatic nested bulk setValue or reset is rare.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 3993.16699999963,
+        "BUs": 4103.853999999956,
+        "rawDeltaUs": 110.6870000003255,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 19965.83499999815,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-discriminator-80",
+        "weight": 60,
+        "eventsPerSample": 2,
+        "basis": "Tagged branch transitions are less frequent.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 73.85399999998299,
+        "BUs": 74.47899999999663,
+        "rawDeltaUs": 0.6250000000136424,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 4431.239999998979,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-if-80",
+        "weight": 150,
+        "eventsPerSample": 2,
+        "basis": "Checkbox and selector changes commonly reveal if-then sections.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 137.06249999995634,
+        "BUs": 141.22900000006666,
+        "rawDeltaUs": 4.166500000110318,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 20559.37499999345,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-nested-oneOf-20",
+        "weight": 40,
+        "eventsPerSample": 2,
+        "basis": "A nested branch selector changes.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 140.95849999989696,
+        "BUs": 154.09349999993083,
+        "rawDeltaUs": 13.13500000003387,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 5638.339999995878,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-siblings-0",
+        "weight": 100,
+        "eventsPerSample": 1,
+        "basis": "A branch selector changes without passive siblings.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 58.04099999977552,
+        "BUs": 60.250000000223736,
+        "rawDeltaUs": 2.2090000004482135,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 5804.099999977552,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-siblings-100",
+        "weight": 60,
+        "eventsPerSample": 1,
+        "basis": "Transitions with moderate passive siblings are less frequent.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 77.08299999967494,
+        "BUs": 81.85450000019046,
+        "rawDeltaUs": 4.771500000515516,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 4624.979999980496,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-siblings-1000",
+        "weight": 15,
+        "eventsPerSample": 1,
+        "basis": "Transitions with one thousand siblings are exceptional.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 315.4580000000351,
+        "BUs": 317.66650000008667,
+        "rawDeltaUs": 2.208500000051572,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 4731.8700000005265,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-siblings-4000",
+        "weight": 3,
+        "eventsPerSample": 1,
+        "basis": "Transitions with four thousand siblings are extreme.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 2667.791999999281,
+        "BUs": 2661.938000000191,
+        "rawDeltaUs": -5.853999999089865,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 8003.375999997843,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "leaf-gate-250",
+        "weight": 1500,
+        "eventsPerSample": 1,
+        "basis": "Common leaf edits near a modest gate set.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 22.249999999985448,
+        "BUs": 24.708000000146058,
+        "rawDeltaUs": 2.4580000001606095,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 33374.99999997817,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "leaf-gate-1000",
+        "weight": 500,
+        "eventsPerSample": 1,
+        "basis": "Leaf edits with a larger gate set occur less often.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 21.87499999990905,
+        "BUs": 24.1870000002109,
+        "rawDeltaUs": 2.3120000003018504,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 10937.499999954525,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "leaf-gate-4000",
+        "weight": 100,
+        "eventsPerSample": 1,
+        "basis": "Very large gate forms are uncommon.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 737.8750000002583,
+        "BUs": 734.2289999999139,
+        "rawDeltaUs": -3.6460000003444293,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 73787.50000002583,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "leaf-gate-8000",
+        "weight": 30,
+        "eventsPerSample": 1,
+        "basis": "Extreme gate counts are rare.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 1564.7079999998823,
+        "BUs": 1565.2915000000576,
+        "rawDeltaUs": 0.5835000001752633,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 46941.23999999647,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "wave-1000",
+        "weight": 50,
+        "eventsPerSample": 1,
+        "basis": "One write reaching one thousand subscribers is rare.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 1670.6250000002,
+        "BUs": 1672.3959999999352,
+        "rawDeltaUs": 1.7709999997350678,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 83531.25000001001,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "single-flat-1000-subscribed",
+        "weight": 5000,
+        "eventsPerSample": 10,
+        "basis": "Typing with subscribers is the most frequent input event.",
+        "mount": false,
+        "decision": "regressed",
+        "AUs": 6.587499999977808,
+        "BUs": 7.145799999989322,
+        "rawDeltaUs": 0.5583000000115135,
+        "deltaUs": 0.5583000000115135,
+        "contributionUs": 2791.5000000575674,
+        "weightedAUs": 32937.49999988904,
+        "verdict": "regressed",
+        "passed": false
+      },
+      {
+        "row": "switch-payload-12",
+        "weight": 60,
+        "eventsPerSample": 2,
+        "basis": "Large payload branch transitions are less frequent.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 175.91700000002675,
+        "BUs": 181.53124999992087,
+        "rawDeltaUs": 5.6142499998941275,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 10555.020000001605,
+        "verdict": "in-width",
+        "passed": true
+      }
+    ],
+    "passed": false,
+    "method": "A is the first A-half representative; within-width deltas are zero before weighting. Mount regressions require a strictly negative exchange; write regressions are never exchanged."
+  },
+  "regressions": [],
+  "validated": {
+    "rows": 22,
+    "pairProcesses": 440,
+    "ledgerProcesses": 30,
+    "supplementalProcesses": 30,
+    "exitDetailProcesses": 6,
+    "coldFirstWriteSamplesPerLaneAndShape": 100,
+    "coldFirstWriteWarmups": 0,
+    "warmups": 20,
+    "samples": 100
+  },
+  "method": "Unchanged B9-1 public A/B timing and IV-1 judgment functions; IV-2 adds five one-write stage rows, root-host owner reductions, exit detail reductions and three protective stage totals. Cold first-write differences are charged separately under coordinator msg_0799e247ae05. Sub-2us stages use A process width; write regressions cannot be exchanged.",
+  "deviceCompleted": true,
+  "adoptable": false
+}
