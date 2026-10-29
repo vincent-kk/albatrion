@@ -7,6 +7,8 @@ import { captureFieldNodeChange } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { applyInactiveValues } from '../inactive/applyInactiveValues';
+import { resolveInactiveValue } from '../inactive/resolveInactiveValue';
 import { updateOutput } from '../output/updateOutput';
 import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
 import { retainExitedSlot } from '../slots/retainExitedSlot';
@@ -22,6 +24,14 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
 export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  const scope = context.kind === 'load' ? context.loadScope : undefined;
+  const inLoadScope = (node: Self): boolean =>
+    scope !== undefined &&
+    (!scope.path ||
+      node.path === scope.path ||
+      isDescendantPath(node.path, scope.path));
+  const applyPolicy =
+    !context.suppressAutomaticWrites && !context.exceededBudget;
   finalizePerished(context);
   let misfitIndex: Map<string, Set<string>> | undefined;
   for (const node of context.pendingExits.values()) {
@@ -35,6 +45,16 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     visitFieldNodes(
       node,
       (departing) => {
+        if (
+          (departing.blueprintNode.hasInactiveValue ||
+            departing.runtime.inactiveListeners?.has(departing)) &&
+          applyPolicy &&
+          !rekeyed &&
+          !inLoadScope(node) &&
+          !context.entered.has(node) &&
+          !context.throwingGateExits?.has(node)
+        )
+          resolveInactiveValue(departing, node, context);
         if (!departing.runtime.detachedReads?.has(departing))
           captureDetachedFieldNodeReads(departing, {
             emit: context.previousEmit,
@@ -78,14 +98,6 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     }
   }
   withdrawDetachedFills(context);
-  const scope = context.kind === 'load' ? context.loadScope : undefined;
-  const inLoadScope = (node: Self): boolean =>
-    scope !== undefined &&
-    (!scope.path ||
-      node.path === scope.path ||
-      isDescendantPath(node.path, scope.path));
-  const applyPolicy =
-    !context.suppressAutomaticWrites && !context.exceededBudget;
   for (const node of context.exited)
     if (!inLoadScope(node) && node.detached)
       retainExitedSlot(
@@ -95,6 +107,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           !context.entered.has(node) &&
           !context.throwingGateExits?.has(node),
       );
+  if (context.inactiveValueOverrides) applyInactiveValues(context);
   const affectedAncestors = new Set<Self>();
   finalizeRestoredSlotRaw(context);
   for (const node of context.exited)

@@ -35,6 +35,9 @@ export type {
 } from './helpers/virtualization';
 
 export {
+  type InactiveValue,
+  type InactiveValueResolver,
+  type InactiveValueContext,
   type FieldNode,
   type InferFieldNode,
   type ArrayNode,

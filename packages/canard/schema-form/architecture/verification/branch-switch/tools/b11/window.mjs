@@ -8,7 +8,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { buildAlternatingRows } from '../../../design-optimization/tools/helpers/buildAlternatingRows.mjs';
 import { verifyInputs } from '../b4-2/verifyInputs.mjs';
 import { sampleProcessCpu } from '../window/helpers/sampleProcessCpu.mjs';
-import { waitForQuietProcess } from '../window/helpers/waitForQuietProcess.mjs';
+import { getStageRoot } from '../window/getStageRoot.mjs';
+import { waitForQuietProcess } from '../window/waitForQuietProcess.mjs';
 
 assert.equal(Number(process.versions.node.split('.')[0]), 26);
 assert.equal(
@@ -161,7 +162,7 @@ if (!quiet.approved) {
     ])
       for (let repeat = 0; repeat < 3; repeat++)
         for (const lane of ['A', 'B']) {
-          const runDir = root + '-stage-' + lane.toLowerCase() + '/stages';
+          const runDir = getStageRoot(root, lane) + '/stages';
           const label = 'stage-' + row + '-' + lane + '-' + repeat;
           await run(label, process.execPath, [
             path.join(here, '../b4-2/stages.mjs'),
@@ -181,7 +182,7 @@ if (!quiet.approved) {
         }
     for (const lane of ['A', 'B']) {
       fs.writeFileSync(
-        root + '-stage-' + lane.toLowerCase() + '/stages/results.json',
+        getStageRoot(root, lane) + '/stages/results.json',
         JSON.stringify({ results: results[lane] }) + '\n',
       );
     }
@@ -203,7 +204,7 @@ if (!quiet.approved) {
             '--warmups=20',
             '--prepared=true',
             '--quiet-since=' + quiet.quietSince,
-            '--run-dir=' + root + '-stage-' + lane.toLowerCase() + '/stages',
+            '--run-dir=' + getStageRoot(root, lane) + '/stages',
           ]);
           supplemental.push(
             JSON.parse(
@@ -212,10 +213,7 @@ if (!quiet.approved) {
           );
         }
       fs.writeFileSync(
-        root +
-          '-stage-' +
-          lane.toLowerCase() +
-          '/stages/supplemental-results.json',
+        getStageRoot(root, lane) + '/stages/supplemental-results.json',
         JSON.stringify({ results: supplemental }) + '\n',
       );
     }

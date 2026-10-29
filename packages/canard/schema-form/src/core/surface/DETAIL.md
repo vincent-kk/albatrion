@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- `onInactive`의 해제 함수는 반복 호출해도 뒤에 등록한 리스너를 해제하지 않습니다.
+
+- B12 공개 `onInactive(listener): () => void`는 subscribe 옆의 인스턴스 수명 등록 통로입니다. 공통 resolver 인자로 직전 커밋을 읽고 반환값으로 보존값을 정하며 새 재진입 인스턴스에는 재등록합니다.
+
 - 떼어진 참조의 setValue와 배열 동사는 값·overlay·inactiveValues에 효과가 없고 재진입 뒤의 새 인스턴스에도 닿지 않는다. 개발 모드 경고만 낸다. find는 비활성 선언 경로와 미선언 경로 모두 null을 유지한다. 재진입은 슬롯과 overlay를 소비하며 옛 인스턴스를 트리에 보유하지 않는다(B11).
 
 - 이름이 정확히 `*`인 속성도 일반 슬롯 공표·수명·복원·keep 규칙을 따른다. 비활성 주소는 `/%2A` 세그먼트를 쓰며 다른 살아 있는 형제의 wildcard 매치로 숨겨지지 않는다. 떼어진 참조는 자기 마지막 커밋 읽기를 보존하고 공표 항목 참조는 일반 슬롯의 값 재사용 규칙을 따른다.
@@ -71,6 +75,7 @@
 | `clear()` | method | 같은 구조 진입; 동기적으로 `void` 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
 | `resetSubtree(option?)` | method | `dispatch.dispatchResetSubtree` | WRITE-085, SETTLE-049, LANDING-064 |
 | `request(kind: FieldNodeRequestType)` | method | `dispatch.dispatchRequest`; `Focus`·`Select`·`Refresh`·`Remount` 가운데 하나 | EVENT-063·073, SURFACE-058 |
+| `onInactive(listener)` | method | `dispatch.onInactiveFieldNode`; instance-bound resolver registration | B12 |
 | `subscribe(listener)` | method | `dispatch.subscribeFieldNode`; 해지 함수 반환 | EVENT-001·011, LANDING-064 |
 | `revision(mask?)` | method | `dispatch.readFieldNodeRevision`; 비트별 배달 원장의 합 | EVENT-001·007, REACT-006 |
 | `validate()` | method | `dispatch.dispatchValidate`; 새 판정 Promise 반환 | VALIDATE-049, LANDING-064 |

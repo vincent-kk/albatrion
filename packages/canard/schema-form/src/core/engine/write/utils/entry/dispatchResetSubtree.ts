@@ -6,6 +6,7 @@ import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 
 /**
  * Reload one subtree immediately, including when a batch is open.
@@ -17,7 +18,10 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   option: WriteOption = WriteOption.Overwrite,
 ): void => {
-  if (node.detached) return;
+  if (node.detached) {
+    refuseInactiveResolverWrite(node);
+    return;
+  }
   if (!enterFieldNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   if (runtime.batchWrites)

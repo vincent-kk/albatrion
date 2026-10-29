@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import { observeQuietProcess } from './checkQuietProcess/utils/observeQuietProcess.mjs';
 import { getStageRoot } from './getStageRoot.mjs';
+import { waitForQuietProcess } from './helpers/waitForQuietProcess.mjs';
 
 const ordinary = await observeQuietProcess(() => [
   { pid: 1, name: 'daemon', cpuPercent: 50 },
@@ -51,3 +52,49 @@ assert.equal(getStageRoot('/device/run', 'B'), '/device/run-stage-b');
 console.log(
   'WINDOW_QUIET_PROCESS_OK ordinary=120000 spotlight=600000 mixed=120000 legacy-paths=preserved',
 );
+
+let time = 0;
+const durations = [],
+  pauses = [];
+const intervalRecovered = await waitForQuietProcess({
+  agentPid: 99,
+  now: () => time,
+  pause: async (ms) => {
+    pauses.push(ms);
+    time += ms;
+  },
+  sample: async (ms) => {
+    durations.push(ms);
+    time += ms;
+    return {
+      rows: [
+        { pid: 99, name: 'own-agent', cpuPercent: 200 },
+        { pid: 2, name: 'daemon', cpuPercent: durations.length === 1 ? 51 : 5 },
+      ],
+    };
+  },
+});
+assert.equal(intervalRecovered.approved, true);
+assert.equal(intervalRecovered.waitCount, 1);
+assert.deepEqual(durations, [3000, 3000]);
+assert.deepEqual(pauses, [5000]);
+assert.equal(intervalRecovered.attempts[0].heavy[0].name, 'daemon');
+assert.equal(intervalRecovered.attempts[1].heavy.length, 0);
+
+time = 0;
+const failed = await waitForQuietProcess({
+  agentPid: 99,
+  now: () => time,
+  pause: async (ms) => {
+    time += ms;
+  },
+  sample: async (ms) => {
+    time += ms;
+    return { rows: [{ pid: 2, name: 'daemon', cpuPercent: 51 }] };
+  },
+});
+assert.equal(failed.approved, false);
+assert.equal(time, 120000);
+assert.ok(failed.attempts.length > 1);
+assert.equal(failed.waitedMs, 120000);
+console.log('B8_QUIET_PROCESS_OK');

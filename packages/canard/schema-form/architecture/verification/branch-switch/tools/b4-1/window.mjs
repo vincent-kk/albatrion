@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { buildAlternatingRows } from '../../../design-optimization/tools/helpers/buildAlternatingRows.mjs';
 import { sampleWindow } from '../../../design-optimization/tools/profile/branch-switch/sampleWindow.mjs';
+import { getStageRoot } from '../window/getStageRoot.mjs';
 import { verifyInputs } from './verifyInputs.mjs';
 
 assert.equal(Number(process.versions.node.split('.')[0]), 26);
@@ -119,7 +120,7 @@ if (quiet.heavy.length) {
     ])
       for (let repeat = 0; repeat < 3; repeat++)
         for (const lane of ['A', 'B']) {
-          const runDir = root + '-stage-' + lane.toLowerCase() + '/stages';
+          const runDir = getStageRoot(root, lane) + '/stages';
           const label = 'stage-' + row + '-' + lane + '-' + repeat;
           await run(label, process.execPath, [
             path.join(here, 'stages.mjs'),
@@ -139,7 +140,7 @@ if (quiet.heavy.length) {
         }
     for (const lane of ['A', 'B']) {
       fs.writeFileSync(
-        root + '-stage-' + lane.toLowerCase() + '/stages/results.json',
+        getStageRoot(root, lane) + '/stages/results.json',
         JSON.stringify({ results: results[lane] }) + '\n',
       );
     }
@@ -160,14 +161,14 @@ if (quiet.heavy.length) {
           '--warmups=20',
           '--prepared=true',
           '--quiet-since=' + quiet.quietSince,
-          '--run-dir=' + root + '-stage-b/stages',
+          '--run-dir=' + getStageRoot(root, 'B') + '/stages',
         ]);
         supplemental.push(
           JSON.parse(fs.readFileSync(path.join(root, label + '.log'), 'utf8')),
         );
       }
     fs.writeFileSync(
-      root + '-stage-b/stages/supplemental-results.json',
+      getStageRoot(root, 'B') + '/stages/supplemental-results.json',
       JSON.stringify({ results: supplemental }) + '\n',
     );
     for (const lane of ['A', 'B']) {
@@ -209,7 +210,7 @@ if (quiet.heavy.length) {
     await run('wildcard-cost', process.execPath, [
       '--expose-gc',
       path.join(here, 'wildcardCost.mjs'),
-      root + '-stage-b/stages/scratch/wrapped.mjs',
+      getStageRoot(root, 'B') + '/stages/scratch/wrapped.mjs',
       path.join(root, 'wildcard-cost'),
     ]);
   } finally {

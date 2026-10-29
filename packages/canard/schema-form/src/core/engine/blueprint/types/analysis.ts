@@ -42,6 +42,8 @@ export interface SchemaInput {
 export interface AnalysisContext {
   /** Monotonic declaration evidence requiring child-target validation; never published. */
   hasChildTargets: boolean;
+  /** Authored inactiveValue presence; absent graphs skip resolver metadata preparation. */
+  hasInactiveValues?: true;
   /** Literal/default and finite-shape evidence, independent of branchless evidence. */
   staticFirstLoad: boolean;
   /** Monotonic evidence that construction hit a template still being built. */

@@ -1,8 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
+import { CONTROL_KEY } from '../../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
 import type {
   ChildSchemaControls,
@@ -57,6 +59,12 @@ export const validateControlGroups = (
         );
   }
   const controls = record.controls;
+  if (
+    controls &&
+    typeof controls === 'object' &&
+    hasOwnProperty(controls, CONTROL_KEY.inactiveValue)
+  )
+    context.hasInactiveValues = true;
   if (
     controls?.injectTo !== undefined &&
     typeof controls.injectTo !== 'function'
@@ -115,6 +123,7 @@ const CHILD_CONTROL_KEY_SET = {
   unsetValue: true,
   resetInteraction: true,
   unsetOnInactive: true,
+  inactiveValue: true,
 } satisfies Record<keyof ChildSchemaControls, true>;
 /** Node-owned controls add declarations and cross-node injection. */
 const CONTROL_KEY_SET = {

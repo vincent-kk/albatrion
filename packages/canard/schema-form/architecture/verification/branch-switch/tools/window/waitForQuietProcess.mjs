@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { performance } from 'node:perf_hooks';
 import { setTimeout } from 'node:timers/promises';
 
-import { sampleProcessCpu } from '../b8/helpers/sampleProcessCpu.mjs';
+import { sampleProcessCpu } from './helpers/sampleProcessCpu.mjs';
 
 /**
  * Wait before measurement, with independent ordinary and Spotlight allowances.

@@ -24,7 +24,8 @@ export const deliverChainRecords = (
       if (
         process.env.NODE_ENV !== 'production' &&
         (record.code === FormWarningCode.NonJsonWholeValue ||
-          record.code === FormWarningCode.DetachedNodeWrite)
+          record.code === FormWarningCode.DetachedNodeWrite ||
+          record.code === FormWarningCode.WriteInInactiveResolver)
       )
         console.warn(record.code, record.message, record.details);
       continue;

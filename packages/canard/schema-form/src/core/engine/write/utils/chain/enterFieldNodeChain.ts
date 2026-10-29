@@ -1,6 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
+import { refuseInactiveResolverWrite } from '../report/refuseInactiveResolverWrite';
 import { openVisitBatch } from './openVisitBatch';
 import { refuseListenerFeedback } from './refuseListenerFeedback';
 import { startFieldNodeChain } from './startFieldNodeChain';
@@ -15,6 +16,7 @@ import { startFieldNodeChain } from './startFieldNodeChain';
 export const enterFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
+  if (refuseInactiveResolverWrite(node)) return false;
   assertFieldNodeWritable(node);
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);

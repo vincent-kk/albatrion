@@ -457,11 +457,19 @@ formRef.current?.findNode('/profile')?.visitSubtree((node) => {
 
 ### 떼어진 노드 참조
 
-활성 트리를 떠난 노드 참조의 읽기는 마지막 커밋 값으로 고정되고 구독은 발화하지 않습니다. 이 참조의 `setValue`와 배열 동사(`push`, `pop`, `insert`, `remove`, `update`, `clear`)는 동결 값, 보유 원본, overlay, 이후 활성 인스턴스를 바꾸지 않습니다. 개발 모드에서는 `FormWarningCode.DetachedNodeWrite`로 경고하며 운영 번들은 침묵합니다. `push`와 `insert`는 동결된 배열 길이를, 나머지 배열 동사는 `undefined`를 반환합니다.
+활성 트리를 떠난 노드 참조의 읽기는 마지막 커밋 값으로 고정되고 구독은 발화하지 않습니다. 이 참조의 `setValue`와 배열 동사(`push`, `pop`, `insert`, `remove`, `update`, `clear`)는 동결 값, 보유 원본, overlay, 이후 활성 인스턴스를 바꾸지 않습니다. 개발 모드에서는 `FormWarningCode.DetachedNodeWrite`로 경고하며 운영 번들은 침묵합니다. 거부 대상은 이 네 쓰기 계열이며 상태·외부 오류·request·검증 명령은 기존 동작을 유지합니다. `push`와 `insert`는 동결된 배열 길이를, 나머지 배열 동사는 `undefined`를 반환합니다.
 
 비활성 값은 살아 있는 루트나 호스트의 `setValue` JSON에 해당 경로를 담아 씁니다. 이 쓰기는 비활성 노드를 생성하지 않고 보유 overlay와 `inactiveValues`를 갱신합니다. 재진입은 새 노드를 만들고 해당 엔트리의 보유 슬롯과 overlay를 소비합니다.
 
 마이그레이션: 비활성을 건너는 노드 참조는 재진입 뒤 `find`로 다시 얻으십시오. 비활성 값은 살아 있는 호스트의 `setValue` JSON으로 쓰십시오. `find`는 활성 노드가 없는 모든 경로에서 기존과 같이 `null`을 반환합니다.
+
+### 노드의 나감 보존값
+
+`node.onInactive(listener): () => void`는 그 노드 인스턴스에 동기 resolver를 등록하고 해제 함수를 반환합니다. 보존하는 게이트 나감 직전에 직전 커밋 값과 `InactiveValueContext`로 한 번 호출합니다. 폼 언마운트·dispose, 배열 아이템 삭제, 재진입에서 소멸하는 옛 인스턴스에서는 호출하지 않습니다. 재진입의 새 인스턴스에는 다시 등록하십시오.
+
+콜백은 등록 순서대로 모두 실행하고 마지막 `undefined` 아닌 결과를 채택합니다. 결과가 있으면 `controls.inactiveValue`를 실행하지 않고, 모두 `undefined`면 선언을 적용합니다. 어느 콜백이든 던지면 그 노드의 override 전체를 취소하고 원래 보존값을 유지하며 정착 실패로 기록합니다. 나감의 커밋은 완료합니다. 나감을 일으킨 쓰기는 실패한 식과 같이 `FormErrorCode.ExpressionThrew`를 `onError`에 보고한 뒤 던집니다. resolver 안의 `setValue`, 배열 동사, `batch`, `resetSubtree`는 무시합니다. 개발 모드에서는 `FormWarningCode.WriteInInactiveResolver`로 경고하며 운영 번들은 침묵합니다. 거부 대상은 이 네 쓰기 계열이며 상태·외부 오류·request·검증 명령은 기존 동작을 유지합니다.
+
+마이그레이션: cleanup에서 자기 노드에 쓰던 패턴은 `controls.inactiveValue` 또는 `node.onInactive`로 옮기십시오. 둘은 같은 `(value, context) => next` 인터페이스입니다.
 
 ## FieldInput 시스템
 
@@ -615,17 +623,24 @@ const formInputMap = {
     unsetValue: boolean | string;        // false에서 true로 바뀌면 값을 비움
     resetInteraction: boolean | string;  // false에서 true로 바뀌면 dirty/touched를 비움
     unsetOnInactive: boolean | string;   // 노드가 형상을 떠날 때 유지된 값을 버림
-    fields: { targets: string[]; controls: { /* 앞의 아홉 키 */ } }[];
+    fields: { targets: string[]; controls: { /* 앞의 아홉 키와 inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // 이 노드의 값이 바뀔 때마다 다른 노드로 값을 밀어 넣기
+    inactiveValue: literal | ((value, ctx) => next); // 형상을 떠날 때 보존할 값
     discriminator: string;               // oneOf/anyOf 호스트: 분기 태그 속성
     watch: string[];                     // 값 구독 (경로 배열)
   }
 }
 ```
 
-키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용되며, 나머지 네 키는 던집니다.
+키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)와 `inactiveValue`를 허용하며, 나머지 네 키는 던집니다.
 
 닫힌 목록은 `controls`와 `options` 안에만 적용됩니다. 세 묶음 밖에 있는 0.16의 최상위 키(`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, `&` 접두어 키, `injectTo`, `terminal`, `virtual`, `placeholder`, `errorMessages`, `propertyKeys`)는 아예 읽지 않으므로, 1.0.0은 이들을 오류도 경고도 없이 무시합니다. 별칭도 경고도 두지 않는 것은 의도된 설계이므로, 0.16에서 옮겨 오는 스키마는 키마다 직접 옮겨야 합니다(README의 마이그레이션 (1.0.0) 절 참고).
+
+### 나갈 때 보존하는 값
+
+`controls.inactiveValue`에는 문자열·`false`·`0`·`null`·객체·배열 등의 리터럴이나 `InactiveValueResolver<V>` 함수를 씁니다. 문자열을 식으로 컴파일하지 않습니다. `node.onInactive(listener)`와 같은 `(value, context) => next` 인터페이스이며, `context`의 필드는 `injectTo`와 같은 `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, 폼 `context`입니다. 값과 스키마는 모두 직전 커밋에서 읽고 `undefined` 반환은 기존 보존값을 유지합니다. 의존 추적은 없습니다. 나감을 일으킨 쓰기가 JSON에 해당 경로의 값을 명시하면 그 값이 우선하며 두 resolver를 실행하지 않습니다. 나가는 서브트리 안의 조상을 whole 입력으로 명시하면 생략된 자손도 덮으며 merge 입력은 명시된 키만 덮습니다. 폼 입력의 merge도 같은 규칙을 따릅니다. 여러 쓰기를 묶은 batch의 merge는 얕으므로 명시된 키는 그 서브트리를 whole로 교체합니다. 명시 덮임은 batch 전체의 합집합이며 뒤의 빈 merge나 부분 merge는 앞선 whole 덮임을 거두지 않습니다. 뒤의 자동 쓰기도 앞선 caller whole 덮임을 거두지 않습니다. 나가는 서브트리 자체가 생략되면 resolver를 실행합니다. 배열 이동 뒤 값과 `dataPath`는 직전 커밋 주소를 사용하고 결과는 현재 주소에 보존합니다.
+
+자동 쓰기가 허용된 정상 보존 게이트 나감에서만 실행합니다. 자동 쓰기 억제·실패/예산 억제·load/reset 범위·실패한 게이트·같은 정착에서만 진입했던 인스턴스의 나감에서는 실행하지 않습니다. `unsetOnInactive`가 참인 나감은 건너뛰며 같은 층에 두 키를 함께 선언하면 `FormWarningCode.InactiveValueWithUnsetOnInactive`로 경고합니다. node → fields → fragment 순으로 가장 가까운 선언 층을 적용하고, 자손 결과는 조상 결과 안의 해당 경로를 덮습니다. 결과는 기존 비활성 JSON 쓰기 규칙을 따르므로 선언 밖 키는 extras로, 형이 맞지 않는 값은 원본으로 보존하고 재진입 때 overlay를 소비합니다.
 
 ### 중첩 controls
 

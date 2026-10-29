@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { buildAlternatingRows } from '../../../design-optimization/tools/helpers/buildAlternatingRows.mjs';
 import { summarizeAlternating } from '../../../design-optimization/tools/helpers/summarizeAlternating.mjs';
 import { ledgerNames, stageNames } from '../b4-2/buildStages.mjs';
+import { getStageRoot } from '../window/getStageRoot.mjs';
 import { buildStages } from './buildStages.mjs';
 
 const tools = path.dirname(fileURLToPath(import.meta.url));
@@ -48,8 +49,7 @@ for (const lane of ['A', 'B']) {
     'supplemental.mjs',
     'instrumentation.json',
   ]) {
-    const file =
-      root + '-stage-' + lane.toLowerCase() + '/stages/scratch/' + name;
+    const file = getStageRoot(root, lane) + '/stages/scratch/' + name;
     fs.mkdirSync(path.dirname(file), { recursive: true });
     const included = (name) => lane === 'A' || !retired.includes(name);
     fs.writeFileSync(
@@ -119,7 +119,7 @@ const raw = {
 };
 const rowNames = ['switch-oneOf-80', 'switch-payload-12', 'switch-siblings-0'];
 for (const lane of ['A', 'B'])
-  json(root + '-stage-' + lane.toLowerCase() + '/stages/results.json', {
+  json(getStageRoot(root, lane) + '/stages/results.json', {
     results: rowNames.flatMap((row) =>
       Array.from({ length: 3 }, (_, repeat) => ({
         row,
@@ -148,13 +148,16 @@ for (const lane of ['A', 'B'])
     ),
   });
 const supplemental = JSON.parse(
-  fs.readFileSync(root + '-stage-b/stages/results.json'),
+  fs.readFileSync(getStageRoot(root, 'B') + '/stages/results.json'),
 );
 for (const record of supplemental.results) {
   record.pass = 'supplemental';
   record.pid += 1000;
 }
-json(root + '-stage-b/stages/supplemental-results.json', supplemental);
+json(
+  getStageRoot(root, 'B') + '/stages/supplemental-results.json',
+  supplemental,
+);
 for (const runtime of ['node', 'bun'])
   for (const lane of ['A', 'B'])
     json(path.join(root, `heap-${runtime}-${lane}.log`), {
@@ -168,7 +171,7 @@ for (const name of ['quiet-window', 'window-end', 'formal-start'])
     name === 'window-end' ? { processes: {} } : {},
   );
 const writeRaw = () => json(path.join(root, 'pair/results.json'), raw);
-const stageFile = root + '-stage-b/stages/results.json';
+const stageFile = getStageRoot(root, 'B') + '/stages/results.json';
 const originalStage = fs.readFileSync(stageFile);
 const run = () =>
   spawnSync(
