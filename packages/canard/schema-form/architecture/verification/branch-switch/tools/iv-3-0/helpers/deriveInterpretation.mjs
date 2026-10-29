@@ -79,6 +79,10 @@ export function deriveInterpretation(tables, stackTimes, windowRaw, iv2Raw) {
     flat.table
       .filter((entry) => entry.name === 'computeNodeBody')
       .reduce((sum, entry) => sum + entry.selfUsPerSwitch, 0);
+  const sameBasisProfileUs = Math.max(
+    0,
+    siblings.decisions.B - flat.decisions.B,
+  );
   const bReadings = [
     { label: '수정 전 self 합', profileUs: siblings.decisions.B - bodyUs },
     { label: 'computeNodeBody 포함 self 합', profileUs: siblings.decisions.B },
@@ -137,6 +141,13 @@ export function deriveInterpretation(tables, stackTimes, windowRaw, iv2Raw) {
     scales,
     bReadings,
     floorEstimateUs,
+    sameBasisFloor: {
+      floorUs: flat.decisions.B,
+      profileUs: sameBasisProfileUs,
+      sharePercent: (sameBasisProfileUs / siblings.selfUsPerSwitch) * 100,
+      windowScaleUs:
+        (sameBasisProfileUs / siblings.selfUsPerSwitch) * siblingWindow,
+    },
     floorEstimateSource:
       'Original single-flat B self before computeNodeBody remap; different fixture, not a causal subtraction or measured siblings no-op',
     a: {

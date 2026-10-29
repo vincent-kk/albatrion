@@ -59,6 +59,12 @@
     }
   ],
   "floorEstimateUs": 2.2835,
+  "sameBasisFloor": {
+    "floorUs": 2.3154,
+    "profileUs": 1.8096500000000009,
+    "sharePercent": 11.603221318150055,
+    "windowScaleUs": 6.976436817534344
+  },
   "floorEstimateSource": "Original single-flat B self before computeNodeBody remap; different fixture, not a causal subtraction or measured siblings no-op",
   "a": {
     "profileUs": 0.48134999999999994,

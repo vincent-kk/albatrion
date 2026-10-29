@@ -1,0 +1,28 @@
+{
+  "method": "Independent file copy in an empty Git repository; both historical commit objects absent; no measurement or FCA rerun",
+  "absentCommits": [
+    "5d8078a3049283a06f3b116cedff99141643ca4c",
+    "15adb339aa8635b9d07440aadfc70e27569ce3f0"
+  ],
+  "commands": [
+    "checkResults.mjs",
+    "reanalyze.mjs",
+    "checkResults.mjs"
+  ],
+  "exitCodes": [
+    0,
+    0,
+    0
+  ],
+  "byteIdentical": true,
+  "outputs": {
+    "packages/canard/schema-form/architecture/verification/branch-switch/iv-3-0-results.md": "c4611cd6cdfaa3cb59da3252bb55b07a93ab11792822294a93c518adb1413eaa",
+    "packages/canard/schema-form/architecture/verification/branch-switch/raw/iv-3-0/interpretation.json": "211a7746fa91922d203ad2fa872a23d7818a8ac6e79750a08496c9be10fa39ed",
+    "packages/canard/schema-form/architecture/verification/branch-switch/raw/iv-3-0/reanalysis.json": "6a57143e1cf3a90716528e3fb6ca99eea0e9213666e46dd759f6f7396bbc533d",
+    "packages/canard/schema-form/architecture/verification/branch-switch/raw/iv-3-0/switch-oneOf-80-50/tables.json": "0143e5e79e5012faf77f10fba0d4f75f4998336a84605c8e94fb785419d803b0",
+    "packages/canard/schema-form/architecture/verification/branch-switch/raw/iv-3-0/switch-siblings-0-50/tables.json": "a7ce98fc9c79d7b2eca6a0969830f44710746fb6ecbd6d72f2a3b15c57b9254f",
+    "packages/canard/schema-form/architecture/verification/branch-switch/raw/iv-3-0/single-flat-1000-50/tables.json": "d75e13df2fbb9c0f0b811df759cae68c01f34aee853466f7cc34d8bc75f126a8"
+  },
+  "node": "v24.20.0",
+  "snapshotFiles": 39
+}

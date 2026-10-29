@@ -1,6 +1,5 @@
 // Recomputes every archived table from the portable raw profile and the exact hashed product build.
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,6 +10,8 @@ import { attributeSamples } from './helpers/attributeSamples.mjs';
 import { collectStackTimes } from './helpers/collectStackTimes.mjs';
 import { deriveInterpretation } from './helpers/deriveInterpretation.mjs';
 import { hashInputs } from './helpers/hashInputs.mjs';
+import { readSnapshotBytes } from './helpers/readSnapshotBytes.mjs';
+import { readSnapshotSet } from './helpers/readSnapshotSet.mjs';
 import { renderReport } from './helpers/renderReport.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -19,6 +20,12 @@ const repoDir = path.resolve(here, '../../../../../../../..');
 const ledgerFile = path.join(root, 'reanalysis.json');
 const ledger = fs.existsSync(ledgerFile)
   ? JSON.parse(fs.readFileSync(ledgerFile, 'utf8'))
+  : null;
+const measurementSnapshot = ledger
+  ? readSnapshotSet(root, 'measurement-tools.json')
+  : null;
+const observationSnapshot = ledger
+  ? readSnapshotSet(root, 'original-observations.json')
   : null;
 const inputs = JSON.parse(
   fs.readFileSync(path.join(root, 'inputs.json'), 'utf8'),
@@ -93,9 +100,7 @@ for (const [relative, hash] of Object.entries(inputs.hashes)) {
       'packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-3-0/',
     );
   const bytes = reinterpretedTool
-    ? execFileSync('git', ['show', inputs.head + ':' + relative], {
-        cwd: repoDir,
-      })
+    ? readSnapshotBytes(measurementSnapshot, relative)
     : fs.readFileSync(file);
   assert.equal(
     createHash('sha256').update(bytes).digest('hex'),
@@ -124,18 +129,18 @@ if (ledger) {
         .digest('hex'),
       digest,
     );
-    const original = execFileSync(
-      'git',
-      [
-        'show',
-        ledger.originalResultHead +
-          ':packages/canard/schema-form/architecture/verification/branch-switch/raw/iv-3-0/' +
-          relative,
-      ],
-      { cwd: repoDir },
-    );
+    const original = readSnapshotBytes(observationSnapshot, relative);
     assert.equal(createHash('sha256').update(original).digest('hex'), digest);
   }
+  assert.equal(measurementSnapshot.sourceCommit, inputs.head);
+  assert.equal(observationSnapshot.sourceCommit, ledger.originalResultHead);
+  for (const [relative, digest] of Object.entries(ledger.snapshotInputs))
+    assert.equal(
+      createHash('sha256')
+        .update(fs.readFileSync(path.join(root, relative)))
+        .digest('hex'),
+      digest,
+    );
   for (const [relative, digest] of Object.entries(ledger.baselineInputs))
     assert.equal(
       createHash('sha256')

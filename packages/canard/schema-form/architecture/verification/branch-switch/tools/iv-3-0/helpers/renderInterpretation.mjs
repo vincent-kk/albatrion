@@ -1,3 +1,4 @@
+// Decision prose is specific to the IV-3-0 observations collected on 2026-10-29 UTC; do not reuse with other data.
 /**
  * Explain scale-dependent decisions without replacing observed self with an optimization promise.
  * @param {any} analysis Raw-derived regime comparisons and stack brackets.
@@ -14,7 +15,7 @@ export function renderInterpretation(analysis, tables) {
     '',
     '## 척도와 사후 재계산',
     '',
-    '측정 원시와 당시 입력 해시는 바꾸지 않고 매핑·해석만 사후 재계산했습니다. 재측정으로 판정 척도가 움직이는 일을 피하면서 해시 규율을 지키기 위해 측정 해시는 원래 커밋의 입력과, 새 해석 도구·창 원시 해시는 별도 reanalysis.json 원장과 각각 대조합니다.',
+    '측정 원시와 당시 입력 해시는 바꾸지 않고 매핑·해석만 사후 재계산했습니다. 재측정으로 판정 척도가 움직이는 일을 피하면서 해시 규율을 지키기 위해 측정 도구 19개와 원래 관측 20개의 바이트를 snapshots에 보존했습니다. 파일별 SHA-256과 출처 커밋 SHA를 원장에 기록하며 재검산은 커밋 이력 대신 그 스냅샷과 새 해석 도구·창 원시 해시를 대조합니다. squash 병합 뒤 원래 두 커밋이 없는 사본에서도 표·원장·문서의 바이트 동일 재생성을 확인했습니다.',
     '',
     '판정 환산은 같은 제품을 잰 미시 위생 후보 2의 B 레인(프로세스 최소의 중앙값)을 기준으로 합니다. Ⅳ-2 후보 1의 A 레인(앞 절반)은 참고 열입니다. 아래 값은 원시 프로세스의 100표본 최솟값들에서 다시 계산했고 single-flat의 10쓰기 표본은 1쓰기 단위로 나눴습니다.',
     '',
@@ -39,8 +40,13 @@ export function renderInterpretation(analysis, tables) {
       `| ${reading.label} | ${reading.profileUs.toFixed(6)} | ${reading.sharePercent.toFixed(2)} | ${reading.windowScaleUs.toFixed(3)} |`,
     );
   lines.push(
+    `| 동일 기준 바닥 차감(양쪽 computeNodeBody 포함) | ${analysis.sameBasisFloor.profileUs.toFixed(6)} | ${analysis.sameBasisFloor.sharePercent.toFixed(2)} | ${analysis.sameBasisFloor.windowScaleUs.toFixed(3)} |`,
+  );
+  lines.push(
     '',
     `쓰기 바닥 추정 ${analysis.floorEstimateUs.toFixed(6)} µs는 전환이 없는 single-flat-1000의 수정 전 B self입니다. 이 바닥은 서술자가 대신할 수 없는 모든 쓰기의 계산·조립·출력·커밋을 포함합니다. computeNodeBody 포함 siblings B ${contract.profileUs.toFixed(6)} µs에서 이를 빼면 귀속 가능한 추정은 ${attributable.profileUs.toFixed(6)} µs, 창 척도 ${attributable.windowScaleUs.toFixed(3)} µs입니다. 다른 fixture를 뺀 추정이며 siblings-0 자체의 no-op을 잰 값이나 인과적 절감량이 아닙니다. 포함 시간은 하위 보조 함수와 쓰기 바닥을 포함한 진단 괄호이며 서술자만의 절감량으로 판정하지 않습니다.`,
+    '',
+    `같은 기준으로 비교할 때는 flat의 computeNodeBody도 바닥에 포함하므로 바닥은 ${analysis.sameBasisFloor.floorUs.toFixed(6)} µs입니다. 이 값을 빼면 ${analysis.sameBasisFloor.profileUs.toFixed(6)} µs, 창 척도 ${analysis.sameBasisFloor.windowScaleUs.toFixed(6)} µs이며 15 µs 미만이라는 결론은 같습니다.`,
     '',
     'getDependencyIndex 자체는 캐시 접근 함수입니다. 실제 의존 색인 메서드는 계약의 열거 self 합 밖이므로 B 결정 수치에서 제외하고 별도로 기록합니다. 이름이 같은 메서드는 원본 모듈로 한정했습니다.',
     '',
@@ -59,7 +65,7 @@ export function renderInterpretation(analysis, tables) {
     '',
     '### 결정과 관측 경계',
     '',
-    `갈래 A는 닫힘: 주 합 ${a.profileUs.toFixed(3)} µs(몫 ${a.sharePercent.toFixed(2)}%, 창 척도 약 ${a.windowScaleUs.toFixed(2)} µs)로 어떤 읽기에서도 15 µs에 미치지 못합니다. overlay Map 복사 줄과 cloneSlotSubtree의 자식 재귀 줄의 표본은 0입니다.`,
+    `갈래 A는 닫힘: 주 합 ${a.profileUs.toFixed(3)} µs(몫 ${a.sharePercent.toFixed(2)}%, 창 척도 약 ${a.windowScaleUs.toFixed(2)} µs)로 어떤 읽기에서도 15 µs에 미치지 못합니다. 레지스트리 재등록까지 없앤다는 미확인 가설에서만 창 척도 약 18 µs이며, 현재 닫힘 판정에는 이 가설을 넣지 않습니다. overlay Map 복사 줄과 cloneSlotSubtree의 자식 재귀 줄의 표본은 0입니다.`,
     '',
     `갈래 B는 미착수: 귀속 가능한 몫(computeNodeBody 포함 B에서 쓰기 바닥을 뺀 값)은 창 척도로 ${attributable.windowScaleUs.toFixed(2)} µs로 15 µs 미만이고, 쓰기 바닥까지 포함하는 가장 너그러운 self 읽기에서만 창 척도 약 ${contract.windowScaleUs.toFixed(1)} µs로 선에 걸칩니다. 경계선이므로 소유자 확정 대기로 표시합니다.`,
     '',

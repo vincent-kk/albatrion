@@ -26,4 +26,4 @@ node packages/canard/schema-form/architecture/verification/branch-switch/tools/i
 
 검증은 `checkTools.mjs`, 도구 `--allowJs --checkJs`·ESLint·Prettier, 패키지 build·lint입니다. 원시 게시 뒤 `checkResults.mjs`는 입력 해시, 경로 제거, 원시에서의 전체 표 재생성과 결과 문서의 결정적 재생성을 검사합니다. 노출되는 CPU 관측은 상위 10개 프로세스 이름·비율뿐입니다.
 
-결과 검토 뒤의 매핑 수정은 `reanalyze.mjs`로 사후 재계산합니다. 원래 `inputs.json`과 프로파일·벽시계·정숙 관측은 바꾸지 않고 원래 결과 커밋의 바이트와 대조합니다. 측정 도구는 측정 머리의 Git blob으로 당시 해시를 검증하고, 현재 해석 도구와 척도 비교용 창 원시는 `reanalysis.json`의 별도 해시로 검증합니다. `checkResults.mjs`는 두 원장을 함께 검산합니다. 다시 샘플링하지 않은 이유와 척도·바닥의 추정 경계는 결과의 해석 절에 기록합니다.
+결과 검토 뒤의 매핑 수정은 `reanalyze.mjs`로 사후 재계산합니다. 원래 `inputs.json`과 프로파일·벽시계·정숙 관측은 바꾸지 않습니다. 측정 도구 19개와 원래 관측 20개의 바이트는 `raw/iv-3-0/snapshots/`에 base64로 보존하고 파일별 SHA-256과 출처 커밋 SHA를 적었습니다. 측정 해시는 스냅샷 바이트로, 현재 해석 도구와 척도 비교용 창 원시는 `reanalysis.json`의 별도 해시로 검증합니다. `checkResults.mjs`는 두 원장을 함께 검산하며 Git 이력이나 과거 브랜치·태그를 요구하지 않습니다. 병합 뒤에는 지정 build 산출물을 준비하고 같은 `checkResults.mjs`·`reanalyze.mjs` 명령을 실행하면 되며 squash로 원래 커밋이 사라져도 스냅샷으로 재생성됩니다. 다시 샘플링하지 않은 이유와 척도·바닥의 추정 경계는 결과의 해석 절에 기록합니다.

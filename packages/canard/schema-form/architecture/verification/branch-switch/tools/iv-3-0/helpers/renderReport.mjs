@@ -1,3 +1,4 @@
+// Decision prose is specific to the IV-3-0 observations collected on 2026-10-29 UTC; do not reuse with other data.
 import { renderInterpretation } from './renderInterpretation.mjs';
 
 /**

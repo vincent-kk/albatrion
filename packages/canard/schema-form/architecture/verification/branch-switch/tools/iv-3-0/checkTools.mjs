@@ -4,6 +4,7 @@ import fs from 'node:fs';
 
 import { attributeSamples } from './helpers/attributeSamples.mjs';
 import { collectStackTimes } from './helpers/collectStackTimes.mjs';
+import { readSnapshotBytes } from './helpers/readSnapshotBytes.mjs';
 import { renderReport } from './helpers/renderReport.mjs';
 import { sanitizeProfile } from './helpers/sanitizeProfile.mjs';
 import { summarizePeriods } from './helpers/summarizePeriods.mjs';
@@ -282,4 +283,24 @@ assert.deepEqual(
     'external/external.mjs',
   ],
 );
+const snapshot = {
+  sourceCommit: 'fixture',
+  files: {
+    'source.mjs': {
+      sourceCommit: 'fixture',
+      encoding: 'base64',
+      data: 'YWJj',
+      sha256:
+        'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',
+    },
+  },
+};
+assert.equal(readSnapshotBytes(snapshot, 'source.mjs').toString(), 'abc');
+assert.throws(() => readSnapshotBytes(snapshot, 'missing.mjs'));
+const alteredSnapshot = structuredClone(snapshot);
+alteredSnapshot.files['source.mjs'].data = 'YWJk';
+assert.throws(() => readSnapshotBytes(alteredSnapshot, 'source.mjs'));
+alteredSnapshot.files['source.mjs'].data = 'YWJj';
+alteredSnapshot.files['source.mjs'].sourceCommit = 'other';
+assert.throws(() => readSnapshotBytes(alteredSnapshot, 'source.mjs'));
 console.log('IV_3_0_TOOLS_OK');

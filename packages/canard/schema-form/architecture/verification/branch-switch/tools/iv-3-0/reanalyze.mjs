@@ -1,6 +1,5 @@
 // Post-hoc regeneration only: immutable observation hashes and current interpretation-tool hashes have separate ledgers.
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,6 +10,8 @@ import { attributeSamples } from './helpers/attributeSamples.mjs';
 import { collectStackTimes } from './helpers/collectStackTimes.mjs';
 import { deriveInterpretation } from './helpers/deriveInterpretation.mjs';
 import { hashInputs } from './helpers/hashInputs.mjs';
+import { readSnapshotBytes } from './helpers/readSnapshotBytes.mjs';
+import { readSnapshotSet } from './helpers/readSnapshotSet.mjs';
 import { renderReport } from './helpers/renderReport.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -33,11 +34,12 @@ const bundle =
 const prefix =
   'packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-3-0/';
 const current = hashInputs(repoDir);
+const measurementSnapshot = readSnapshotSet(root, 'measurement-tools.json');
+const observationSnapshot = readSnapshotSet(root, 'original-observations.json');
+assert.equal(measurementSnapshot.sourceCommit, inputs.head);
 for (const [relative, digest] of Object.entries(inputs.hashes)) {
   const observedBytes = relative.startsWith(prefix)
-    ? execFileSync('git', ['show', inputs.head + ':' + relative], {
-        cwd: repoDir,
-      })
+    ? readSnapshotBytes(measurementSnapshot, relative)
     : fs.readFileSync(path.join(repoDir, relative));
   assert.equal(
     createHash('sha256').update(observedBytes).digest('hex'),
@@ -75,7 +77,11 @@ for (const record of outcome.results) {
 }
 for (const directory of fs.readdirSync(root)) {
   const absolute = path.join(root, directory);
-  if (!fs.statSync(absolute).isDirectory() || directory === 'fca') continue;
+  if (
+    !fs.statSync(absolute).isDirectory() ||
+    ['fca', 'snapshots'].includes(directory)
+  )
+    continue;
   for (const file of fs
     .readdirSync(absolute)
     .filter((name) => name !== 'tables.json'))
@@ -94,15 +100,7 @@ for (const file of [
     .update(fs.readFileSync(path.join(root, file)))
     .digest('hex');
 for (const [relative, digest] of Object.entries(artifacts)) {
-  const original = execFileSync(
-    'git',
-    [
-      'show',
-      '15adb339a:packages/canard/schema-form/architecture/verification/branch-switch/raw/iv-3-0/' +
-        relative,
-    ],
-    { cwd: repoDir },
-  );
+  const original = readSnapshotBytes(observationSnapshot, relative);
   assert.equal(
     createHash('sha256').update(original).digest('hex'),
     digest,
@@ -138,8 +136,21 @@ const ledger = {
   method:
     'Post-hoc remapping; original measurement inputs and profile/wall bytes unchanged; no rerun',
   measurementHead: inputs.head,
-  originalResultHead: '15adb339a',
-  coordinatorDecision: 'msg_4707c0b707ab',
+  originalResultHead: observationSnapshot.sourceCommit,
+  coordinatorDecision:
+    'Results candidate-1 review decisions (2026-10-30); post-hoc ledger approved',
+  snapshotInputs: Object.fromEntries(
+    [
+      'measurement-tools.json',
+      'original-observations.json',
+      'manifest.json',
+    ].map((name) => [
+      'snapshots/' + name,
+      createHash('sha256')
+        .update(fs.readFileSync(path.join(root, 'snapshots', name)))
+        .digest('hex'),
+    ]),
+  ),
   measurementArtifacts: artifacts,
   interpretationTools: Object.fromEntries(
     Object.entries(current).filter(([relative]) => relative.startsWith(prefix)),
