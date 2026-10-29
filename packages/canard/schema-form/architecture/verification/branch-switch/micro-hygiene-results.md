@@ -455,7 +455,7 @@
 
 ## 항목 5 — 배열 반복
 
-항목 2 뒤 제품 prototype 반복 **229 → 0**입니다. 최초 기준은 239개였고 항목 2에서 10개를 제거했습니다. 남은 229개는 생성한 밀집 메타데이터의 map/filter를 common-utils로, 단락 조건·반환값·희소 입력은 for-loop로 옮겼습니다. 소스의 주석·TSDoc 예제와 동결 레거시는 바꾸지 않았습니다. [항목 5 원시](raw/micro-hygiene/item-5.json)에 위치와 변환 방식을 남겼습니다.
+항목 2 뒤 제품 prototype 반복 **229 → 0**입니다. 최초 기준은 239개였고 항목 2에서 10개를 제거했습니다. 남은 229개는 생성한 밀집 메타데이터의 map/filter를 common-utils로, 단락 조건·반환값·희소 입력은 for-loop로 옮겼습니다. 소스의 주석·TSDoc 예제와 동결 레거시는 바꾸지 않았습니다. `setLoadValue.ts`의 세그먼트는 parsePointerSegments의 split/채움 결과이고 `flushBatchWrites.ts`의 batchWrites는 push로만 모은 배열이므로 두 for...of 순회는 모두 밀집 입력을 방문합니다. 이 두 곳에는 건너뛸 구멍이 없습니다. [항목 5 원시](raw/micro-hygiene/item-5.json)에 위치와 변환 방식을 남겼습니다.
 
 순회마다 receiver와 최초 length를 한 번 읽고 희소 입력은 `index in array`로 원래 HasProperty를 보존합니다. 빈 자리만 건너뛰고 명시 undefined는 방문합니다. some/every는 원래 조건 자리에서 단락하며, forEach의 콜백 반환은 순회를 중단하지 않습니다. 콜백은 모두 arrow였고 lexical this를 그대로 유지했습니다. optional 배열의 부재, filter 결과 순서, type predicate의 축소는 보존했으며 형 단언을 추가하지 않았습니다. short-circuit 표현식 안의 순회는 즉시 실행 arrow로 평가 위치를 유지합니다. 새 상주 구조나 공개 이름은 없습니다.
 
