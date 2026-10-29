@@ -12,8 +12,6 @@ import { publishRootExternalErrors } from './publishRootExternalErrors';
 
 /** Shared empty list for a node whose external entry was removed. */
 const NO_ISSUES: readonly ValidationIssue[] = [];
-/** Bound once at load; the per-issue path check runs once per root issue on every clear. */
-const isCanonical = isCanonicalPath;
 
 /**
  * Accept only records of this tree from the pending set.
@@ -70,7 +68,7 @@ export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   }
   const resolved = new Map<string, string>();
   const canonical = (dataPath: string): string => {
-    if (dataPath === $.Root || isCanonical(dataPath)) return dataPath;
+    if (dataPath === $.Root || isCanonicalPath(dataPath)) return dataPath;
     let path = resolved.get(dataPath);
     if (path === undefined) {
       path = find(root, dataPath)?.path ?? dataPath;
