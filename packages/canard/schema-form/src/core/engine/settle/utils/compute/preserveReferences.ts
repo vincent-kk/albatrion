@@ -23,7 +23,6 @@ export interface CalculatedSnapshot<Self> {
  * @param context - Changed-node set to trim after a no-op calculation
  * @returns Nothing; restores only equal calculated references
  */
-
 export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   previous: CalculatedSnapshot<Self>,

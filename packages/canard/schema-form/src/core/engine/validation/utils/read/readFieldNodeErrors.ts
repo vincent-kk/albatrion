@@ -11,7 +11,6 @@ const EMPTY_ISSUES: readonly ValidationIssue[] = Object.freeze([]);
  * @param node - Occurrence whose current errors are requested.
  * @returns Stable ordered issues until either source changes.
  */
-
 export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly ValidationIssue[] => {

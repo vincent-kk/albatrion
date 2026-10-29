@@ -12,7 +12,6 @@ import { FieldInputString } from '../FieldInputString';
 import { readUnionDisplay } from './utils/readUnionDisplay';
 
 /** Wrap the string fallback with a local draft interpreted only against live union types. */
-
 export const FieldInputUnion = (props: FieldInputProps) => {
   const { node, value, nullable, schemaType, jsonSchema, misfit } = props;
   const display = useMemo(

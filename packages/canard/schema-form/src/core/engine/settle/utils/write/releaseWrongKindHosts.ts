@@ -9,7 +9,6 @@ import { isPlain } from '../input/isPlain';
  * @param context - Settlement with candidate hosts and calculated children
  * @returns Nothing; cleared hosts are recomputed before the explicit source snapshot
  */
-
 export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {

@@ -26,7 +26,6 @@ export interface DiscriminatorEntrySelection {
  * @param entry - Candidate accepted by isStableDiscriminatorEntry
  * @returns Shared baseline, authored tag buckets, and empty lazy schema preparation
  */
-
 export const prepareDiscriminatorEntrySelection = (
   entry: BlueprintChildEntry,
 ): DiscriminatorEntrySelection => {

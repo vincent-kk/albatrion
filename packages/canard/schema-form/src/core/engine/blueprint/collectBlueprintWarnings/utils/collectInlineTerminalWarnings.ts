@@ -52,7 +52,6 @@ const SCHEMA_SINGLE_KEYWORDS = [
  * @param emit - Root-local diagnostic consumer with duplicate suppression
  * @returns Nothing; visits schema positions only, leaving literal data opaque
  */
-
 export const collectInlineTerminalWarnings = (
   node: BlueprintNode,
   emit: (diagnostic: BlueprintDiagnostic) => void,

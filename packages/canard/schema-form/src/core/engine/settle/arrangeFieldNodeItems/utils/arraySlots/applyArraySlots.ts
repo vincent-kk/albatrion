@@ -41,7 +41,6 @@ import { canApplyArrayTail } from './canApplyArrayTail';
  * @param context - One settlement's entered, perished, and changed-path facts
  * @returns Last committed value of a removed position, if requested
  */
-
 export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,

@@ -18,7 +18,6 @@ const NO_VISITING: readonly string[] = Object.freeze([]);
  * @param cycle - Optional observer of a reference or allOf path re-entry
  * @returns Ordered schema locations: body, reference target, ungated allOf
  */
-
 export const collectStaticSchemas = (
   context: AnalysisContext,
   schema: BlueprintSchema,

@@ -9,7 +9,6 @@ import type {
  * @param host - Direct template host binding every discriminator to this tag
  * @returns Whether schema reselection cannot transform this watched scalar value
  */
-
 export const isStableDiscriminatorEntry = (
   entry: BlueprintChildEntry,
   host: BlueprintNode,

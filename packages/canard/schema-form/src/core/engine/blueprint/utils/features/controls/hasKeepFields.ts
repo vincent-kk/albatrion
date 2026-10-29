@@ -9,7 +9,6 @@ import { isKeepControls } from '../isKeepControls';
  * @param controls - Authored controls value of one declaration
  * @returns True when a field entry's own controls pass the keep test
  */
-
 export const hasKeepFields = (controls: unknown): boolean => {
   if (controls === null || typeof controls !== 'object') return false;
   const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);

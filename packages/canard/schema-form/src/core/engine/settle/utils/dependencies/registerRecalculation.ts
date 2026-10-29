@@ -19,7 +19,6 @@ import { getDependencyIndex } from './getDependencyIndex';
  * @param context - Marked write with its changed raw paths
  * @returns Nothing; extends its bounded dirty path set
  */
-
 export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {

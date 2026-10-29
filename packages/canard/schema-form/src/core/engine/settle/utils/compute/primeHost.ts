@@ -35,7 +35,6 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
  * @param hasRelocated - Wheel's already collected relocation evidence
  * @returns Nothing; the host now exposes the fixed baseline shape
  */
-
 export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   prior: Dictionary<Self>,

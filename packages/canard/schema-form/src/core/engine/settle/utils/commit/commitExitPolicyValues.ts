@@ -58,7 +58,6 @@ const getExitExpressions = (
  * @param context - Final shape and its bounded set of calculated hosts
  * @returns Nothing; committed rule values and any deferred failure are updated
  */
-
 export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {

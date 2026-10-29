@@ -9,7 +9,6 @@ import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
 
 /** Combine live child projections and undeclared input in stable host order. */
-
 export const assembleObject: Behavior['assemble'] = (
   node,
   children,

@@ -13,7 +13,6 @@ import { getDependencyIndex } from '../dependencies/getDependencyIndex';
  * @param context - Changed raw paths, entered nodes, and selected declarations
  * @returns Live source addresses for this non-load derive round
  */
-
 export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): ReadonlySet<string> => {

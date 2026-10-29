@@ -26,7 +26,6 @@ const CHILD_FIELD_ERROR_EVENTS =
   FieldNodeEventType.UpdateError;
 
 /** Read direct-child issues and visibility, resubscribing when children or paths change. */
-
 export const useChildFieldErrors = (
   node: FieldNode,
   disabled?: boolean,

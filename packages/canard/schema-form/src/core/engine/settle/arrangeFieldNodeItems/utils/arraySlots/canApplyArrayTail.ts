@@ -11,7 +11,6 @@ import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
  * @param plan - Slot proposal with a retained prefix and optional value tail
  * @returns Whether only the tail needs construction or retirement
  */
-
 export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,

@@ -12,7 +12,6 @@ import { throwBlueprintError } from '../utils/diagnostics/throwBlueprintError';
  * @param context - Completed finite graph and authored diagnostics context
  * @returns Nothing; reports nonexistent targets even when their declarations are gated
  */
-
 export const validateChildTargets = (context: AnalysisContext): void => {
   for (const node of context.nodes) {
     let discriminator: Optional<string>;

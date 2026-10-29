@@ -15,7 +15,6 @@ const NO_PATHS: readonly string[] = Object.freeze([]);
  * @param next - Authored schema of the newly built root
  * @returns Changed schema pointers, or empty when JSON data also differs
  */
-
 export const readReferenceOnlySchemaPaths = (
   previous: unknown,
   next: unknown,

@@ -39,7 +39,6 @@ const UNION_KEYWORDS = ['oneOf', 'anyOf'];
  * @param collect - Requested collector; absent consumers cause no warning traversal
  * @returns Nothing; each code/location/discriminating-key occurrence is delivered once
  */
-
 export const collectBlueprintWarnings = (
   blueprint: Blueprint,
   collect: BlueprintOptions['collect'],

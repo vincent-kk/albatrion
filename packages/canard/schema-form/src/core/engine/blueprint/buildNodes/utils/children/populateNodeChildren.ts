@@ -36,7 +36,6 @@ import { populateVirtualNodes } from './populateVirtualNodes';
  * @param build - Owner's recursive template constructor
  * @returns Nothing; fills the template's construction-only child lists
  */
-
 export const populateNodeChildren = (
   context: AnalysisContext,
   node: MutableNode,

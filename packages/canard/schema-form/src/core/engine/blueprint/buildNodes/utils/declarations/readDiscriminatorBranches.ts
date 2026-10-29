@@ -32,7 +32,6 @@ const UNION_KEYWORDS = ['oneOf', 'anyOf'] as const;
  * @param schemaPath - Authored host location
  * @returns Branch-location descriptors; branches lacking tags remain ungated
  */
-
 export const readDiscriminatorBranches = (
   context: AnalysisContext,
   schema: BlueprintSchema,

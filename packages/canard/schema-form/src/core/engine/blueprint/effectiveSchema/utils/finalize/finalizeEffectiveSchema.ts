@@ -16,7 +16,6 @@ import { freezeEffectiveSchema } from './freezeEffectiveSchema';
  * @returns A public frozen schema in a development-protected envelope; static type identity survives when not narrowed or in conflict, and static nullable stays on conflict, and an
  * empty type intersection is reported by `typeConflict` instead of an enum. A virtual node's schema carries the internal type `virtual`.
  */
-
 export const finalizeEffectiveSchema = (
   state: EffectiveSchemaState,
   node: BlueprintNode,

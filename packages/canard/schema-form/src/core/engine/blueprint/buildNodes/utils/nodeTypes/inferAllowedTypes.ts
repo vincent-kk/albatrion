@@ -35,7 +35,6 @@ const BRANCH_KEYWORDS = ['oneOf', 'anyOf'] as const;
  * @param isBranch - Preserve top for a branch without type or nested branches
  * @returns Ordered allowed types, top for an unconstrained overlay, or empty for a cut recursive branch
  */
-
 export const inferAllowedTypes = (
   context: AnalysisContext,
   schema: BlueprintSchema,

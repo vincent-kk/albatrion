@@ -35,7 +35,6 @@ const testKeys = [
 const testKeySet: ReadonlySet<string> = new Set(testKeys);
 
 /** Normalize definitions in priority order, warning once for invalid object-test keys. */
-
 export const normalizeFieldInputDefinitions = (
   definitions?: FieldInputDefinition[],
 ): NormalizedFieldInputDefinition[] => {

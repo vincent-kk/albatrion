@@ -17,7 +17,6 @@ import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintEr
  * @param declarations - Authored contributions in total order
  * @returns A stable terminal/branch strategy, or throws on inconsistent cases
  */
-
 export const resolveNodeStrategy = (
   context: AnalysisContext,
   kind: BlueprintNodeKind,

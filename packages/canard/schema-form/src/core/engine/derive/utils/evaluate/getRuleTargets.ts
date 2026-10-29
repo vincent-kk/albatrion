@@ -16,7 +16,6 @@ const NO_TARGETS: readonly never[] = Object.freeze([]);
  * @param state - Active declaration IDs for the current complete tree
  * @returns Every current matching item or named child whose declaration is selected
  */
-
 export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
   source: Self,
   rule: DeriveRule,

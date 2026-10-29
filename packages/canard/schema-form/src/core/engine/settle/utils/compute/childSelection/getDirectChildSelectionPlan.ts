@@ -56,7 +56,6 @@ interface DirectChildSelectionPlan {
  * @param prepare - True during mount preparation or a non-load selection visiting candidates
  * @returns Ordered metadata, or null when the general selector remains necessary
  */
-
 export const getDirectChildSelectionPlan = (
   host: BlueprintNode,
   blueprint: Blueprint,

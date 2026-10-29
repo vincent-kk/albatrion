@@ -41,7 +41,6 @@ const FRAGMENT_KEYWORDS = [
  * @param result - Owner's ordered sink; omitted calls allocate their own array
  * @returns The sink after expansion, with finite reference cycles cut at re-entry
  */
-
 export const collectDeclarations = (
   context: AnalysisContext,
   input: SchemaInput,

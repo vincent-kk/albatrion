@@ -51,7 +51,7 @@ const TYPE_NAMES: readonly unknown[] = [
 
 /**
  * Narrow indexed type entries through the authored list's existing validation.
- * @param values - Raw list; sparse slots retain some's skip behavior
+ * @param values - Raw list; the indexed check skips sparse slots
  * @returns Whether indexed validation accepts the list before its iterator is copied
  */
 function isAllowedTypeList(

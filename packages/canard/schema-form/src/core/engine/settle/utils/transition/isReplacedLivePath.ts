@@ -12,7 +12,6 @@ import type { SettlementContext } from '../../types/settlement';
  * @param path - Absolute path of an exiting occurrence
  * @returns True when the path lies in a replaced scope and a live node holds it
  */
-
 export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,

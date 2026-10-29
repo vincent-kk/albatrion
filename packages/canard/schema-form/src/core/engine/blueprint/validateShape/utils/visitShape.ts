@@ -11,7 +11,6 @@ import { throwBlueprintError } from '../../utils/diagnostics/throwBlueprintError
  * @param active - Traversal-owned set of nodes on the current eager path
  * @returns Nothing; updates traversal sets or throws for an unbounded cycle
  */
-
 export const visitShape = (
   context: AnalysisContext,
   node: BlueprintNode,

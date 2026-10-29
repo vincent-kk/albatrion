@@ -12,7 +12,6 @@ import type { BlueprintNode } from '../../types/node';
  * @param nodes - Completed templates, before publication and freezing
  * @returns Nothing; only templates potentially addressed by inactiveValue are marked
  */
-
 export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
   for (const node of nodes) {
     for (const declaration of node.declarations) {

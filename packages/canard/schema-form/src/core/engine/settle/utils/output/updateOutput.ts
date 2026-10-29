@@ -15,7 +15,6 @@ import { keepsChildEmissions } from './utils/keepsChildEmissions';
  * @param recalculated - Direct children recomputed with an unchanged host shape
  * @returns Whether either calculated value changed
  */
-
 export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,

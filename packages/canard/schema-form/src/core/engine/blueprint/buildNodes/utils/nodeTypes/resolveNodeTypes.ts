@@ -22,7 +22,6 @@ import { inferAllowedTypes } from './inferAllowedTypes';
  * @param declarations - Contributions ordered independently of JSON key order
  * @returns One static group, or same-fold groups for dynamically declared variants
  */
-
 export const resolveNodeTypes = (
   context: AnalysisContext,
   declarations: readonly PropertyDeclaration[],

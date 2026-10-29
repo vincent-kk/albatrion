@@ -35,7 +35,6 @@ const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
  * @param changedValue - A leaf's input already interpreted under the static spec and proven unequal to its raw by the distribution's skip test; omitted, the input is interpreted and compared here
  * @returns Nothing; only this node's own state channels are stored here
  */
-
 export const markWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,

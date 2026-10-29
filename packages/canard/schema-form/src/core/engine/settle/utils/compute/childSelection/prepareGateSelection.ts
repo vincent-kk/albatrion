@@ -15,7 +15,6 @@ import { getGateSelectionTable } from './getGateSelectionTable';
  * @param allowPreparation - False for a generic load; only already-prepared metadata may be consumed there
  * @returns Whether the injected registration index contains split owners
  */
-
 export const prepareGateSelection = (
   blueprint: Blueprint,
   allowPreparation = true,

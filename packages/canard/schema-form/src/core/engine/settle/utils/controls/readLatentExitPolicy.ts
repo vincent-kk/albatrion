@@ -11,7 +11,6 @@ const EXIT_LAYERS = ['node', 'fields', 'fragment'] as const;
  * @param inherited - Policy from the next departing ancestor or Form
  * @returns The nearest layer's unanimous clear, or inherited when undeclared
  */
-
 export const readLatentExitPolicy = (
   decisions: Optional<readonly { layer: DeclarationLayer; clear: boolean }[]>,
   inherited: boolean,

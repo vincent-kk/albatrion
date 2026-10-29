@@ -10,7 +10,6 @@ import { getHostDerived } from '../../../../utils/cache/derivedRecords';
  * @param template - Optional live blueprint node for a same-name declaration
  * @returns First matching edge and its document position
  */
-
 export const getDeriveChildEntry = (
   parent: BlueprintNode,
   name: string,

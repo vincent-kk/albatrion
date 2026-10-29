@@ -29,7 +29,6 @@ import { readOneOfBranch } from './utils/readOneOfBranch';
  * @param context - Projection and deferred failure for this settlement
  * @returns Whether the effective schema reference changed
  */
-
 export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,

@@ -21,7 +21,6 @@ interface GateBudgetIndex {
 /** One finite decision index per immutable analysis and one ceiling per live host. */
 
 /** Map evaluated gates to their owning fragments or node-gate entries. */
-
 const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
   const cached = getBlueprintDerived<'gateBudgetIndex', GateBudgetIndex>(
     blueprint,
@@ -96,7 +95,6 @@ export const getTransitionBudgetCap = (blueprint: Blueprint): number =>
   blueprint.capabilities.branchless ? 1 : getIndex(blueprint).transitionCap;
 
 /** Reuse one host ceiling until its relocated gate list changes. */
-
 export const getHostWheelBudgetCap = (
   host: object,
   blueprint: Blueprint,

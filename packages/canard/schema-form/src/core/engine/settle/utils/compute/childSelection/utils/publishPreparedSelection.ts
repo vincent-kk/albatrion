@@ -8,7 +8,6 @@ import type { ChildSelectionFrame } from '../selectEntryStep';
  * @returns The finalized child list, reusing its prior reference when membership is unchanged.
  * New membership allocates a complete shape and list; intermediate views never escape selection.
  */
-
 export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
   frame: ChildSelectionFrame<Self>,
 ): readonly Self[] => {

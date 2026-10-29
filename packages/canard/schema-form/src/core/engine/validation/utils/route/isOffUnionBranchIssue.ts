@@ -25,7 +25,6 @@ const NUMERIC_KEY = /^\d+$/;
  * @param activeIds - Committed declaration identities collected once per routing pass.
  * @returns True only when attribution is unique and a sibling is active.
  */
-
 export const isOffUnionBranchIssue = (
   issue: ValidationIssue,
   blueprint: Blueprint,

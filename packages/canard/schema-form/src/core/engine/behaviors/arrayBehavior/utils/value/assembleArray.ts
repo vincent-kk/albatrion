@@ -36,7 +36,6 @@ const rememberShape = <Self>(
  * @param hint - Reports whether only the recalculated slots were compared; an `append` count from a valid append proof patches only that slot into one copy of the previous local, and a `truncate` count from a valid pop proof keeps that many leading slots of the previous local in one copy
  * @returns Local array, reusing its prior reference when elements are identical
  */
-
 export const assembleArray: Behavior['assemble'] = (
   node,
   children,

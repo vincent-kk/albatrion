@@ -8,7 +8,6 @@ import { gateWheelEvaluation } from './gateWheelEvaluation';
  * @param changed - Whether schema, children or output changed during confirmation
  * @returns Nothing; throws on any disproved prediction and records proof counts
  */
-
 export const verifyGateWheelConfirmation = (
   expected: GateWheelFrame,
   actual: GateWheelFrame,

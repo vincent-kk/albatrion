@@ -13,7 +13,6 @@ import type { BlueprintNode } from '../../types/node';
  * @param node - Selected item template, possibly reused from another host
  * @returns Authored schema path for this array binding
  */
-
 export const getItemSchemaPath = (
   template: BlueprintNode,
   index: number,

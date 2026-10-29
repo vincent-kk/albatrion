@@ -9,7 +9,6 @@ import type { FieldNodeRecord } from '../../../../record';
  * Filtering costs O(entered); multiple results sort only when integer names need ordering.
  * existing child arrays remain unchanged.
  */
-
 export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   entered: readonly Self[],

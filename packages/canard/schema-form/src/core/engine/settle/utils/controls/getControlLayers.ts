@@ -49,7 +49,6 @@ export interface ControlLayer<Self> {
  * @param exitOnly - Restrict candidates to authored unsetOnInactive policies
  * @returns Active control groups without evaluating gates or expressions
  */
-
 export const getControlLayers = <Self extends ControlTarget<Self>>(
   node: Self,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,

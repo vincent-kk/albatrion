@@ -11,7 +11,6 @@ import type { FieldInputPropsWithSchema } from '@/schema-form/types';
 import type { CheckboxLabelsContext, StringCheckboxJSONSchema } from './type';
 
 /** Render a checkbox per enum choice of a string-array node. */
-
 export const FieldInputStringCheckbox = ({
   path,
   name,

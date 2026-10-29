@@ -16,7 +16,6 @@ import type { SettlementContext } from '../../types/settlement';
  * @param inputPath - Canonical address of this JSON position
  * @returns Coverage at this position: callerPartial covers only supplied keys, callerReplace covers omitted descendants, automatic never counts, and undefined lies outside every caller origin
  */
-
 export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   inputPath: string,

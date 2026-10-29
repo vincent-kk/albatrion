@@ -14,7 +14,6 @@ import { verifyGateSelection } from './verifyGateSelection';
  * @param entry - Table step whose inherited gate reads that baseline terminal
  * @returns Nothing; checks both ordered sets and throws if publication has an effect
  */
-
 export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,

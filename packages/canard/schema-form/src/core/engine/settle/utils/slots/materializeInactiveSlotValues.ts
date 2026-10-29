@@ -10,7 +10,6 @@ import { getSlotOrder } from './getSlotOrder';
  * @param host - Live or detached reference that owns its source graph and memo
  * @returns The previous array when its public item sequence is unchanged
  */
-
 export const materializeInactiveSlotValues = <
   Self extends FieldNodeRecord<Self>,
 >(

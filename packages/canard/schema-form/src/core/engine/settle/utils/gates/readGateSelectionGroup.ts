@@ -19,7 +19,6 @@ import { verifyGateSelection } from './verifyGateSelection';
  * @param group - Root or child group bound to the same baseline terminal name
  * @returns The watched primitive or reference exactly as projected at this site
  */
-
 export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,

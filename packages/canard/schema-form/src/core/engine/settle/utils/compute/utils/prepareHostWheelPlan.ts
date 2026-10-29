@@ -24,7 +24,6 @@ export interface HostWheelPlan {
  * @param previous - This wheel's accumulated gates, retained across late relocation
  * @returns Stable plan, with no gate-list enumeration on an unchanged occurrence
  */
-
 export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   previous?: HostWheelPlan,

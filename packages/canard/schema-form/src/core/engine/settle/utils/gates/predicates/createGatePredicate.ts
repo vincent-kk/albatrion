@@ -20,7 +20,6 @@ import { getIfGateReadNames } from './getIfGateReadNames';
  * @param reads - Complete absolute value paths used by this occurrence
  * @returns Predicate with stable witness keys and one lazy validator binding
  */
-
 export const createGatePredicate = (
   runtime: { blueprint: Blueprint; validator?: unknown },
   occurrence: GateOccurrence,

@@ -18,7 +18,6 @@ import { verifyGateSelection } from './verifyGateSelection';
  * @param value - Bucket verdict recorded in the original evaluation order
  * @returns Nothing; positional S2 checks throw on the first violation
  */
-
 export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,

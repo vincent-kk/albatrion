@@ -24,7 +24,6 @@ import { runDeliveryWaves } from './runDeliveryWaves';
  * @param failure - Caught settlement or user callback failure, if present
  * @returns Nothing; the chain may throw its single failure or aggregate
  */
-
 export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   failure?: unknown,

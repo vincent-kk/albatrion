@@ -13,7 +13,6 @@ import { scanEqualityTokens } from './utils/scanEqualityTokens';
  * @param dependencies - Compiler's ordered list, which must match fresh substitution
  * @returns Literal evidence or undefined; never compiles or invokes authored code
  */
-
 export const recognizeEqualityExpression = (
   source: string,
   dependencies: readonly string[],

@@ -11,7 +11,6 @@ import type { FieldNode } from '../../type';
  * @param draft - Uncommitted input; undefined is the clearing value
  * @returns Interpreted value and whether it belongs to the effective restriction
  */
-
 export const interpretFieldNodeDraft = (
   node: FieldNode,
   draft: unknown,

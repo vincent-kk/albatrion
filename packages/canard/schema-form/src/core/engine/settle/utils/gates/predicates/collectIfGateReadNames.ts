@@ -22,7 +22,6 @@ const VALUE_KEYWORDS = [
  * @param property - Whether constraints apply to one already-recorded value
  * @returns True only when every keyword has a complete, conservative read proof
  */
-
 export const collectIfGateReadNames = (
   schema: unknown,
   names: string[],

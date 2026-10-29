@@ -59,7 +59,6 @@ export const prepareSourcePruner = <Self extends FieldNodeRecord<Self>>(
 };
 
 /** Prove source-free descendants from the finite template graph without reading live slots. */
-
 const hasRetainableDescendants = (
   template: BlueprintNode,
   visited: WeakSet<BlueprintNode>,

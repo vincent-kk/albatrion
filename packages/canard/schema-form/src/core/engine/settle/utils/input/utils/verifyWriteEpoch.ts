@@ -7,7 +7,6 @@ import { verifyGateSelection } from '../../gates/verifyGateSelection';
  * @param context - Verify-only marked write after ancestor registration
  * @returns Nothing; a mismatch throws before computation consumes either view
  */
-
 export const verifyWriteEpoch = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {

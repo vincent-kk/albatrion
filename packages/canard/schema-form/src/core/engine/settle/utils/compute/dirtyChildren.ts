@@ -14,7 +14,6 @@ import { DirtyPathSet } from '../scratch/DirtyPathSet';
  * @param context - Absolute dirty paths for this write
  * @returns Each live direct child on a dirty path once
  */
-
 export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,

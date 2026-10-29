@@ -16,7 +16,6 @@ import { composeBatchValue } from './composeBatchValue';
  * @param root - Tree owning marked writes
  * @returns Nothing; settlement failures stay on the current chain
  */
-
 export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {

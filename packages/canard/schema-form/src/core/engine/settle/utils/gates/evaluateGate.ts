@@ -26,7 +26,6 @@ import { recordGateInput } from './recordGateInput';
  * @param edgeName - Direct child whose own active gate is being evaluated
  * @returns Whether the condition currently admits its declaration
  */
-
 const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   context: SettlementContext<Self>,

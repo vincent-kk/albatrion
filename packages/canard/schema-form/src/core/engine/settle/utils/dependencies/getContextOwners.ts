@@ -20,7 +20,6 @@ const EMPTY_OWNERS: readonly string[] = Object.freeze([]);
  * @param blueprint - Immutable analysis supplying declaration IDs and reads
  * @returns Memoized owner paths to recalculate when context changes
  */
-
 export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   if (!blueprint.capabilities.hasDependencies) return EMPTY_OWNERS;
   const cached = getBlueprintDerived<'contextOwners', readonly string[]>(

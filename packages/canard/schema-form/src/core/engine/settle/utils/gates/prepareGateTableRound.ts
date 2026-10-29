@@ -21,7 +21,6 @@ const NO_SCHEMA_PATHS: readonly string[] = Object.freeze([]);
  * @param round - Current host wheel counter, scoped to this computation
  * @returns Nothing; absence from the map means the complete round uses full evaluation
  */
-
 export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,

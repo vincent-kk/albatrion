@@ -4,7 +4,6 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Dictionary } from '@aileron/declare';
 
 /** Compare authored values in key order, preserving identity of non-JSON atoms. */
-
 export const isSameSchema = (left: unknown, right: unknown): boolean => {
   if (Object.is(left, right)) return true;
   if (!left || !right || typeof left !== 'object' || typeof right !== 'object')

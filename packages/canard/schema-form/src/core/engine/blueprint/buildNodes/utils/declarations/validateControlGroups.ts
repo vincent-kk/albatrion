@@ -26,7 +26,6 @@ const CONTROL_GROUPS = [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const;
  * @param fragment - Whether controls are scoped to a fragment's direct children
  * @returns Nothing; malformed extension declarations throw a schema error
  */
-
 export const validateControlGroups = (
   context: AnalysisContext,
   schema: BlueprintSchema,

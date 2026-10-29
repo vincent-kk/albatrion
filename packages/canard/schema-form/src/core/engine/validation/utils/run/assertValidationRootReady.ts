@@ -16,7 +16,6 @@ const DUPLICATE_SCHEMA_ID_MESSAGE = /already exists|duplicate/i;
  * @returns Shared compiled validator, or null if none was selected.
  * @throws FormErrorCode.ValidatorCompileFailed while the previous tree is still untouched.
  */
-
 export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): Nullable<ValidateFunction> => {

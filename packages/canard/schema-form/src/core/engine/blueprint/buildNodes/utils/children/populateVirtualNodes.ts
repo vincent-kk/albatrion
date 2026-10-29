@@ -24,7 +24,6 @@ import { resolveNodeStrategy } from '../nodeTypes/resolveNodeStrategy';
  * @param host - Completed real-property host whose virtual groups are being bound
  * @returns Nothing; appends stable virtual child edges to the host
  */
-
 export const populateVirtualNodes = (
   context: AnalysisContext,
   host: MutableNode,
