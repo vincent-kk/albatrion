@@ -1,8 +1,8 @@
-import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { visitFieldNodes } from '../../../../navigation';
 import type { FieldNodeRecord } from '../../../../record';
@@ -63,7 +63,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       children.push(previous[position]);
       moves.push({
         previous: appendSegment(host.path, position),
-        current: appendSegment(host.path, (position + 1)),
+        current: appendSegment(host.path, position + 1),
       });
     }
     for (let position = count; position > index; position--)
@@ -76,7 +76,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       children.push(previous[position]);
       moves.push({
         previous: appendSegment(host.path, position),
-        current: appendSegment(host.path, (position - 1)),
+        current: appendSegment(host.path, position - 1),
       });
       items[String(position - 1)] = items[String(position)];
     }
@@ -97,7 +97,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
       },
       { owned: true },
     );
-    prunePerishedPaths(host.runtime, new Set([removedItem.path]));
+    prunePerishedPaths(host.runtime, [removedItem.path]);
   }
   rekeyArrayRuntimePaths(host.runtime, host.path, moves, index);
 

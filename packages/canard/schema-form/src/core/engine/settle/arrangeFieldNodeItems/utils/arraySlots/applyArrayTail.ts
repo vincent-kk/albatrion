@@ -106,7 +106,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   }
 
   const moves: ArrayPathMove[] = [];
-  let perishedPaths: Optional<Set<string>>;
+  let perishedPaths: Optional<Set<string> | string[]>;
   for (let index = prefixCount; index < oldCount; index++) {
     const key = String(index);
     const item = items[key];
@@ -135,16 +135,14 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       },
       { owned: true },
     );
-    (perishedPaths ??= new Set()).add(item.path);
+    if (length) {
+      perishedPaths ??= oldCount - prefixCount <= 64 ? [] : new Set<string>();
+      if (isArray(perishedPaths)) perishedPaths.push(item.path);
+      else perishedPaths.add(item.path);
+    }
     delete items[String(index)];
   }
-  if (!length)
-    clearArrayRuntimePaths(
-      host.runtime,
-      host.path,
-      oldCount,
-      perishedPaths ?? new Set(),
-    );
+  if (!length) clearArrayRuntimePaths(host.runtime, host.path, oldCount);
   else {
     if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
     rekeyArrayRuntimePaths(host.runtime, host.path, moves, prefixCount);

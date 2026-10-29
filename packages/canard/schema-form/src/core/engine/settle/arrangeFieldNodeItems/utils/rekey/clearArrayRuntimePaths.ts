@@ -1,5 +1,9 @@
-import { appendSegment, readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
+
+import {
+  appendSegment,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRuntime } from '../../../../record';
 import { indexFieldNodeWarning } from '../../../../record';
@@ -33,14 +37,12 @@ const keysBeneath = (
  * @param runtime - Tree-owned stores and their persistent path indexes
  * @param hostPath - Array host whose every position perished
  * @param oldCount - Item count before the edit; positions at or beyond it are out of range
- * @param _perished - Paths of the live items that perished, each `hostPath/<position>`
  * @returns Nothing; affected stores and memo entries are removed
  */
 export const clearArrayRuntimePaths = <Self>(
   runtime: FieldNodeRuntime<Self>,
   hostPath: string,
   oldCount: number,
-  _perished: ReadonlySet<string>,
 ): void => {
   const stores = getRuntimePathStores(runtime);
   const inRange = (slot: string) =>
@@ -54,7 +56,9 @@ export const clearArrayRuntimePaths = <Self>(
   if (runtime.warningKeysByPath?.get(hostPath)?.size) {
     const warningKeys = new Set<string>();
     for (let index = 0; index < oldCount; index++)
-      for (const key of runtime.warningKeysByPath.get(appendSegment(hostPath, index)) ?? [])
+      for (const key of runtime.warningKeysByPath.get(
+        appendSegment(hostPath, index),
+      ) ?? [])
         warningKeys.add(key);
     for (const slot of slots)
       if (!inRange(slot))
@@ -79,7 +83,8 @@ export const clearArrayRuntimePaths = <Self>(
     if (!store) continue;
 
     const keys = keysBeneath(store.pathIndex, hostPath, inRange);
-    for (const key of store.pathIndex.intersecting(appendSegment(hostPath, 0))) keys.add(key);
+    for (const key of store.pathIndex.intersecting(appendSegment(hostPath, 0)))
+      keys.add(key);
     for (const key of keys) store.delete(key);
   }
 };

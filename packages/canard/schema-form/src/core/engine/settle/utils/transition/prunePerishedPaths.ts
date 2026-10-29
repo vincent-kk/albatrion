@@ -8,14 +8,14 @@ import { getRuntimePathStores } from '../pathStores/getRuntimePathStores';
 /**
  * Drop only entries indexed beneath perished item roots.
  * @param runtime - Tree-owned stores and their persistent path indexes
- * @param paths - Removed item roots, including latent descendants
+ * @param paths - Unique removed roots, including latent descendants; splice passes one root
  * @returns Nothing; unrelated entries and baselines retain their identity
  */
 export const prunePerishedPaths = <Self>(
   runtime: FieldNodeRuntime<Self>,
-  paths: ReadonlySet<string>,
+  paths: ReadonlySet<string> | readonly string[],
 ): void => {
-  if (paths.size === 0) return;
+  if ('size' in paths ? paths.size === 0 : paths.length === 0) return;
   const stores = getRuntimePathStores(runtime);
   const warningKeys = new Set<string>();
   if (runtime.warningKeysByPath?.size)

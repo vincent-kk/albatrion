@@ -12,8 +12,14 @@
       "line": 175,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 178,
+      "owner": "assembleObject",
+      "binding": "childValues",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `children` · `preferred` · `node.blueprintNode.childEntries`에 비례"
     },
     {
       "id": 2,
@@ -21,8 +27,14 @@
       "line": 186,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 189,
+      "owner": "assembleObject",
+      "binding": "seen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `preferred` · `node.blueprintNode.childEntries` · `Object.keys(extras)`에 비례"
     },
     {
       "id": 3,
@@ -30,8 +42,14 @@
       "line": 66,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 66,
+      "owner": "blueprint",
+      "binding": "templates",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 청사진 작성 중 재방문하는 schema identity별 template 수"
     },
     {
       "id": 4,
@@ -39,8 +57,14 @@
       "line": 67,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 67,
+      "owner": "blueprint",
+      "binding": "constructing",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 재귀 작성 중 활성 schema identity와 구성 프레임 수"
     },
     {
       "id": 5,
@@ -48,8 +72,14 @@
       "line": 68,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 68,
+      "owner": "blueprint",
+      "binding": "declarationInputs",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 작성되는 declaration input identity 수"
     },
     {
       "id": 6,
@@ -57,8 +87,14 @@
       "line": 95,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 102,
+      "owner": "populateNodeChildren",
+      "binding": "properties",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < count` · `node.declarations` · `properties`에 비례"
     },
     {
       "id": 7,
@@ -66,8 +102,14 @@
       "line": 97,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 104,
+      "owner": "populateNodeChildren",
+      "binding": "tuples",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < count` · `node.declarations`에 비례"
     },
     {
       "id": 8,
@@ -75,8 +117,14 @@
       "line": 29,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 32,
+      "owner": "populateVirtualNodes",
+      "binding": "groups",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `Object.entries(virtual)` · `host.declarations` · `groups`에 비례"
     },
     {
       "id": 9,
@@ -84,8 +132,14 @@
       "line": 134,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 145,
+      "owner": "collectDeclarations",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; collectDeclarations가 방문하는 schema contribution의 고유 키 수"
     },
     {
       "id": 10,
@@ -93,8 +147,14 @@
       "line": 140,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 151,
+      "owner": "collectDeclarations",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; collectDeclarations가 따라가는 참조/기여 경로 수"
     },
     {
       "id": 11,
@@ -102,8 +162,14 @@
       "line": 40,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 43,
+      "owner": "readDiscriminatorBranches",
+      "binding": "result",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < host[keyword].length` · `UNION_KEYWORDS`에 비례"
     },
     {
       "id": 12,
@@ -111,8 +177,14 @@
       "line": 44,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 51,
+      "owner": "resolveNodeStrategy",
+      "binding": "children",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; terminal 전략 트리의 gate-prefix 가지 수"
     },
     {
       "id": 13,
@@ -120,8 +192,14 @@
       "line": 56,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 68,
+      "owner": "resolveNodeStrategy",
+      "binding": "children",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; terminal 전략 트리에서 새 gate-prefix마다 생기는 자식 키 수"
     },
     {
       "id": 14,
@@ -129,8 +207,14 @@
       "line": 85,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 101,
+      "owner": "resolveNodeTypes",
+      "binding": "groups",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `filterArray( declarations, (item) => item.role === 'declaration', )`에 비례"
     },
     {
       "id": 15,
@@ -138,8 +222,14 @@
       "line": 45,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 48,
+      "owner": "collectBlueprintWarnings",
+      "binding": "seen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `seen.has(key)`에서 다루는 고유 키 수"
     },
     {
       "id": 16,
@@ -147,8 +237,14 @@
       "line": 26,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 26,
+      "owner": "compileBlueprintExpressions",
+      "binding": "visited",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `declarationIndex < declarations.length` · `nodeIndex < context.nodes.length`에 비례"
     },
     {
       "id": 17,
@@ -210,8 +306,14 @@
       "line": 54,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 58,
+      "owner": "callback@57",
+      "binding": "paths",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `getFragmentOwnerPaths(declaration.schemaPath)` · `child.node.declarations`에 비례"
     },
     {
       "id": 24,
@@ -219,8 +321,14 @@
       "line": 44,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 46,
+      "owner": "collectDeriveConvergenceTargets",
+      "binding": "declarations",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `declaration < node.declarations.length` · `index < nodes.length` · `owner < owners.length`에 비례"
     },
     {
       "id": 25,
@@ -228,8 +336,14 @@
       "line": 45,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 47,
+      "owner": "collectDeriveConvergenceTargets",
+      "binding": "hosts",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < nodes.length` · `dependency < expression.dependencies.length` · `index < expressions.length`에 비례"
     },
     {
       "id": 26,
@@ -237,8 +351,14 @@
       "line": 71,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 73,
+      "owner": "collectDeriveConvergenceTargets",
+      "binding": "reads",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `dependency < expression.dependencies.length` · `index < expressions.length` · `owner < owners.length`에 비례"
     },
     {
       "id": 27,
@@ -246,8 +366,14 @@
       "line": 75,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 77,
+      "owner": "collectDeriveConvergenceTargets",
+      "binding": "gateExpressions",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < expressions.length` · `gateIndex < entry.gates.length` · `declaration < node.declarations.length`에 비례"
     },
     {
       "id": 28,
@@ -264,8 +390,14 @@
       "line": 12,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 12,
+      "owner": "collectTemplateParents",
+      "binding": "parents",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `node.childEntries` · `nodes` · `node.itemCandidates ?? (node.item ? [node.item] : [])`에 비례"
     },
     {
       "id": 30,
@@ -273,8 +405,14 @@
       "line": 11,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 11,
+      "owner": "validateShape",
+      "binding": "complete",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.nodes`에 비례"
     },
     {
       "id": 31,
@@ -282,8 +420,14 @@
       "line": 12,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 12,
+      "owner": "validateShape",
+      "binding": "active",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.nodes`에 비례"
     },
     {
       "id": 32,
@@ -291,8 +435,14 @@
       "line": 52,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 54,
+      "owner": "evaluateDeriveRound",
+      "binding": "winners",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `evaluated.writes` · `targets` · `table.byDeclaration.get(id) ?? []`에 비례"
     },
     {
       "id": 33,
@@ -300,8 +450,14 @@
       "line": 54,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 56,
+      "owner": "evaluateDeriveRound",
+      "binding": "traceWinners",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `evaluated.writes` · `targets` · `table.byDeclaration.get(id) ?? []`에 비례"
     },
     {
       "id": 34,
@@ -309,8 +465,14 @@
       "line": 55,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 57,
+      "owner": "evaluateDeriveRound",
+      "binding": "evaluatedExpressions",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `targets` · `table.byDeclaration.get(id) ?? []` · `selected`에 비례"
     },
     {
       "id": 35,
@@ -327,8 +489,14 @@
       "line": 19,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 19,
+      "owner": "addActiveRuleKey",
+      "binding": "sourceKeys",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; derive source별 활성 rule key 수; 같은 DeriveState 안에서 재사용"
     },
     {
       "id": 37,
@@ -336,8 +504,14 @@
       "line": 35,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 37,
+      "owner": "evaluateResetInteraction",
+      "binding": "resetNodes",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `getRuleTargets(node, rule, state)` · `table.byDeclaration.get(id) ?? []` · `selected`에 비례"
     },
     {
       "id": 38,
@@ -345,8 +519,14 @@
       "line": 37,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 39,
+      "owner": "evaluateResetInteraction",
+      "binding": "evaluatedExpressions",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `getRuleTargets(node, rule, state)` · `table.byDeclaration.get(id) ?? []` · `selected`에 비례"
     },
     {
       "id": 39,
@@ -354,8 +534,14 @@
       "line": 20,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 22,
+      "owner": "getDeriveSourceNodes",
+      "binding": "seen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `state.sourcePaths`에 비례"
     },
     {
       "id": 40,
@@ -372,8 +558,14 @@
       "line": 19,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 19,
+      "owner": "visitFieldNodes",
+      "binding": "seen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `pending.length > 0`에 비례"
     },
     {
       "id": 42,
@@ -381,8 +573,14 @@
       "line": 27,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 27,
+      "owner": "advanceFieldNodeRevision",
+      "binding": "byMask",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 한 commit의 revision ledger transition mask 수; 마감까지 get/set 재사용"
     },
     {
       "id": 43,
@@ -390,8 +588,14 @@
       "line": 70,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 70,
+      "owner": "captureFieldNodeChange",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 한 delivery chain에서 영향을 받은 고유 path 수"
     },
     {
       "id": 44,
@@ -453,8 +657,14 @@
       "line": 76,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 78,
+      "owner": "applyArraySlots",
+      "binding": "reused",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < plan.slots.length` · `index < oldCount` · `Object.entries(nextItems)`에 비례"
     },
     {
       "id": 51,
@@ -462,8 +672,14 @@
       "line": 79,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 81,
+      "owner": "applyArraySlots",
+      "binding": "destinations",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < plan.slots.length` · `index < oldCount`에 비례"
     },
     {
       "id": 52,
@@ -480,8 +696,14 @@
       "line": 171,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 184,
+      "owner": "applyArraySlots",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 옮겨 보존하는 inactive slot binding 수"
     },
     {
       "id": 54,
@@ -498,8 +720,14 @@
       "line": 97,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "배열로 바꿈",
+      "reason": "prunePerishedPaths는 size와 순회만 사용; 원래 생성자 인수 배열을 그대로 전달해 Set 1개만 제거",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 100,
+      "owner": "applyArraySplice",
+      "binding": "applyArraySplice",
+      "accessPattern": "단일 순회",
+      "sizeBound": "정확히 1; `[removedItem.path]`는 한 삭제 item의 주소"
     },
     {
       "id": 56,
@@ -507,8 +735,14 @@
       "line": 134,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "배열로 바꿈",
+      "reason": "삭제 index마다 고유 item.path를 한 번 수집; 조회/중복 탐색 없음. 빈 결과는 수집도 생략",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 138,
+      "owner": "applyArrayTail",
+      "binding": "perishedPaths",
+      "accessPattern": "단일 순회",
+      "sizeBound": "배열 경로 ≤64: `oldCount - prefixCount <= 64`; 초과는 기존 Set"
     },
     {
       "id": 57,
@@ -516,8 +750,14 @@
       "line": 142,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "미사용 인수 제거",
+      "reason": "clearArrayRuntimePaths는 _perished를 읽지 않음; 인수와 그 Set을 제거해 배열도 할당하지 않음",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 146,
+      "owner": "applyArrayTail",
+      "binding": "perishedPaths",
+      "accessPattern": "단일 순회(방문 0)",
+      "sizeBound": "정확히 0; 미사용 clear 인수의 빈 fallback Set"
     },
     {
       "id": 58,
@@ -525,8 +765,14 @@
       "line": 22,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 22,
+      "owner": "keysBeneath",
+      "binding": "keys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index.under(slot)` · `[...index.tail(hostPath, 0)]`에 비례"
     },
     {
       "id": 59,
@@ -534,8 +780,14 @@
       "line": 49,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 49,
+      "owner": "clearArrayRuntimePaths",
+      "binding": "slots",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `store.pathIndex.tail(hostPath, 0)` · `owned` · `slots`에 비례"
     },
     {
       "id": 60,
@@ -543,8 +795,14 @@
       "line": 55,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 55,
+      "owner": "clearArrayRuntimePaths",
+      "binding": "warningKeys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `runtime.warningKeysByPath.get(appendSegment(hostPath, index)) ?? []` · `index < oldCount` · `runtime.warningKeysByPath.get(slot) ?? []`에 비례"
     },
     {
       "id": 61,
@@ -552,8 +810,14 @@
       "line": 31,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 41,
+      "owner": "rekeyArrayRuntimePaths",
+      "binding": "unaddressed",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `store.pathIndex.tail( hostPath, preservedPrefixCount + moves.length, )` · `[stores.declarations, stores.rules, stores.misfits]` · `[stores.misfits, stores.declarations]`에 비례"
     },
     {
       "id": 62,
@@ -561,8 +825,14 @@
       "line": 42,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 52,
+      "owner": "rekeyArrayRuntimePaths",
+      "binding": "moveByPath",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `mapArray(moves, (move) => [move.previous, move.current])`에 비례"
     },
     {
       "id": 63,
@@ -570,8 +840,14 @@
       "line": 55,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 65,
+      "owner": "rekeyArrayRuntimePaths",
+      "binding": "warningKeys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `runtime.warningKeysByPath?.get(move.previous) ?? []` · `changed` · `warningKeys`에 비례"
     },
     {
       "id": 64,
@@ -588,8 +864,14 @@
       "line": 83,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 93,
+      "owner": "rekeyArrayRuntimePaths",
+      "binding": "misfitKeys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `stores.misfits.pathIndex.under(move.previous)` · `changed` · `misfitKeys`에 비례"
     },
     {
       "id": 66,
@@ -597,8 +879,14 @@
       "line": 97,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 107,
+      "owner": "rekeyArrayRuntimePaths",
+      "binding": "keys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `store.pathIndex.intersecting(move.previous)` · `changed` · `[stores.misfitsMemo]`에 비례"
     },
     {
       "id": 67,
@@ -606,8 +894,14 @@
       "line": 21,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 23,
+      "owner": "rekeyCommittedRules",
+      "binding": "keys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `rules.pathIndex.under(move.previous)` · `moves` · `keys`에 비례"
     },
     {
       "id": 68,
@@ -615,8 +909,14 @@
       "line": 21,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 23,
+      "owner": "rekeyPairedPathStore",
+      "binding": "keys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `store.pathIndex.under(move.previous)` · `moves` · `keys`에 비례"
     },
     {
       "id": 69,
@@ -633,8 +933,14 @@
       "line": 76,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 81,
+      "owner": "finishStaticFirstLoad",
+      "binding": "byAncestor",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ancestor` · `index < paths.length` · `byAncestor`에 비례"
     },
     {
       "id": 71,
@@ -651,8 +957,14 @@
       "line": 135,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 137,
+      "owner": "loadStaticFirstTree",
+      "binding": "deltas",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `state`에 비례"
     },
     {
       "id": 73,
@@ -669,8 +981,14 @@
       "line": 82,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 84,
+      "owner": "commitExitPolicyValues",
+      "binding": "candidates",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.stateDirtyNodes` · `source.children ?? []` · `source.blueprintNode.declarations`에 비례"
     },
     {
       "id": 75,
@@ -678,8 +996,14 @@
       "line": 155,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 164,
+      "owner": "commitExitPolicyValues",
+      "binding": "evaluated",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `getControlLayers( node, context.selectedDeclarationIds, )` · `candidates`에 비례"
     },
     {
       "id": 76,
@@ -687,8 +1011,14 @@
       "line": 24,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 26,
+      "owner": "commitGlobalState",
+      "binding": "deltas",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `node.interactionState` · `changedKeys` · `Object.entries(previous)`에 비례"
     },
     {
       "id": 77,
@@ -696,8 +1026,14 @@
       "line": 25,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 27,
+      "owner": "commitGlobalState",
+      "binding": "departing",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `departing.has(node)`에서 다루는 고유 키 수"
     },
     {
       "id": 78,
@@ -705,8 +1041,14 @@
       "line": 41,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 43,
+      "owner": "commitGlobalState",
+      "binding": "loadNodes",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `loadNodes.has(node)`에서 다루는 고유 키 수"
     },
     {
       "id": 79,
@@ -714,8 +1056,14 @@
       "line": 72,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 77,
+      "owner": "commitSettlement",
+      "binding": "<inline>",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 마감에서 누적하는 오류/경고 식별 키 수; 중복 제거 필요"
     },
     {
       "id": 80,
@@ -723,8 +1071,14 @@
       "line": 105,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 113,
+      "owner": "callback@92",
+      "binding": "warningTasks",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; commit warning task의 고유 schema/path 키 수"
     },
     {
       "id": 81,
@@ -741,8 +1095,14 @@
       "line": 212,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 220,
+      "owner": "commitSettlement",
+      "binding": "byAncestor",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ancestor` · `index < allPaths.length` · `byAncestor`에 비례"
     },
     {
       "id": 83,
@@ -759,8 +1119,14 @@
       "line": 17,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 19,
+      "owner": "finalizeDeriveTrace",
+      "binding": "live",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < round.length` · `context.traceRounds`에 비례"
     },
     {
       "id": 85,
@@ -777,8 +1143,14 @@
       "line": 48,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 51,
+      "owner": "markCommitDeliveries",
+      "binding": "automaticNodes",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < context.automaticLog.length`에 비례"
     },
     {
       "id": 87,
@@ -786,8 +1158,14 @@
       "line": 55,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 58,
+      "owner": "markCommitDeliveries",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; delivery affected path의 고유 주소 수"
     },
     {
       "id": 88,
@@ -795,8 +1173,14 @@
       "line": 74,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 77,
+      "owner": "markCommitDeliveries",
+      "binding": "candidates",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < children.length` · `context.changedNodes` · `context.pathChanges`에 비례"
     },
     {
       "id": 89,
@@ -804,8 +1188,14 @@
       "line": 75,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 78,
+      "owner": "markCommitDeliveries",
+      "binding": "enteredByParent",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.entered` · `context.changedNodes`에 비례"
     },
     {
       "id": 90,
@@ -813,8 +1203,14 @@
       "line": 390,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 393,
+      "owner": "markCommitDeliveries",
+      "binding": "seenDeparting",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `departing.length`에 비례"
     },
     {
       "id": 91,
@@ -930,8 +1326,14 @@
       "line": 26,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 26,
+      "owner": "computeRootGateSelection",
+      "binding": "groupByGate",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `group.literalsByGate.keys()` · `groups` · `index < host.declarations.length`에 비례"
     },
     {
       "id": 104,
@@ -939,8 +1341,14 @@
       "line": 31,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 31,
+      "owner": "computeRootGateSelection",
+      "binding": "rootGroups",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < host.declarations.length`에 비례"
     },
     {
       "id": 105,
@@ -957,8 +1365,14 @@
       "line": 27,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 29,
+      "owner": "selectLiteralTableChildren",
+      "binding": "active",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `bucket` · `groupIndex < table.groups.length && table.groups[groupIndex].firstStepIndex <= index` · `verify || shadow ? fullIndex < table.plan.steps.length : cursor < selected.length || groupIndex`에 비례"
     },
     {
       "id": 107,
@@ -966,8 +1380,14 @@
       "line": 31,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 33,
+      "owner": "selectPredicateTableChildren",
+      "binding": "active",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `bucket` · `groupIndex < table.groups.length && table.groups[groupIndex].firstStepIndex <= index` · `verify || shadow ? fullIndex < table.plan.steps.length : cursor < selected.length || groupIndex`에 비례"
     },
     {
       "id": 108,
@@ -975,8 +1395,14 @@
       "line": 96,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 98,
+      "owner": "selectPredicateTableChildren",
+      "binding": "firstThrow",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `verify || shadow ? fullIndex < table.plan.steps.length : cursor < selected.length || groupIndex`에 비례"
     },
     {
       "id": 109,
@@ -984,8 +1410,14 @@
       "line": 97,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 99,
+      "owner": "selectPredicateTableChildren",
+      "binding": "throwing",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `verify || shadow ? fullIndex < table.plan.steps.length : cursor < selected.length || groupIndex`에 비례"
     },
     {
       "id": 110,
@@ -993,8 +1425,14 @@
       "line": 36,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 40,
+      "owner": "selectRootGateDeclarations",
+      "binding": "admitted",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `selected` · `index < node.blueprintNode.declarations.length`에 비례"
     },
     {
       "id": 111,
@@ -1002,8 +1440,14 @@
       "line": 67,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 71,
+      "owner": "getGateSelectionTable",
+      "binding": "watchedNames",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `plan.baseline` · `index < plan.steps.length` · `names`에 비례"
     },
     {
       "id": 112,
@@ -1011,8 +1455,14 @@
       "line": 71,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 75,
+      "owner": "getGateSelectionTable",
+      "binding": "groups",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < plan.steps.length`에 비례"
     },
     {
       "id": 113,
@@ -1038,8 +1488,14 @@
       "line": 76,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 80,
+      "owner": "getGateSelectionTable",
+      "binding": "predicateGroups",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < plan.steps.length` · `predicateGroups` · `predicateGroups.values()`에 비례"
     },
     {
       "id": 116,
@@ -1074,8 +1530,14 @@
       "line": 27,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 28,
+      "owner": "prepareGateSelection",
+      "binding": "tables",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `blueprint.nodes` · `declaration.gates` · `node.declarations`에 비례"
     },
     {
       "id": 120,
@@ -1083,8 +1545,14 @@
       "line": 140,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 142,
+      "owner": "selectChildren",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 선택에서 방문한 presence/entry path 수"
     },
     {
       "id": 121,
@@ -1092,8 +1560,14 @@
       "line": 192,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 194,
+      "owner": "selectChildren",
+      "binding": "seen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < inactiveEntries.length`에 비례"
     },
     {
       "id": 122,
@@ -1101,8 +1575,14 @@
       "line": 304,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 306,
+      "owner": "selectChildren",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 선택에서 보류/변경하는 entry path 수"
     },
     {
       "id": 123,
@@ -1110,8 +1590,14 @@
       "line": 210,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 218,
+      "owner": "selectEntryStep",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 현재 선택의 entered/changed path 수"
     },
     {
       "id": 124,
@@ -1119,8 +1605,14 @@
       "line": 223,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 231,
+      "owner": "selectEntryStep",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 선택에서 deferred/exit membership으로 재사용하는 node/path 수"
     },
     {
       "id": 125,
@@ -1128,8 +1620,14 @@
       "line": 255,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 263,
+      "owner": "selectEntryStep",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 현재 선택의 dirty/presence path 수"
     },
     {
       "id": 126,
@@ -1137,8 +1635,14 @@
       "line": 402,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 410,
+      "owner": "selectEntryStep",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 선택에서 마감까지 참조하는 gate/exit membership 수"
     },
     {
       "id": 127,
@@ -1155,8 +1659,14 @@
       "line": 92,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 97,
+      "owner": "callback@66",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 정적 entry 재사용 중 마감에 전달하는 변화 membership 수"
     },
     {
       "id": 129,
@@ -1173,8 +1683,14 @@
       "line": 78,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 82,
+      "owner": "prepareStaticHost",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 정적 host 준비 중 소유하는 후보 node/path 수"
     },
     {
       "id": 131,
@@ -1191,8 +1707,14 @@
       "line": 122,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 126,
+      "owner": "prepareStaticHost",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 정적 host 준비의 후보 membership 수"
     },
     {
       "id": 133,
@@ -1200,8 +1722,14 @@
       "line": 146,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 152,
+      "owner": "prepareStaticHost",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 정적 host 준비에서 마감까지 유지하는 후보 membership 수"
     },
     {
       "id": 134,
@@ -1209,8 +1737,14 @@
       "line": 50,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 52,
+      "owner": "computeNodeBody",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; node 계산의 부모/자식 기준 snapshot 키 수"
     },
     {
       "id": 135,
@@ -1218,8 +1752,14 @@
       "line": 57,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 59,
+      "owner": "computeNodeBody",
+      "binding": "computes",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; presenceMetrics.computes의 계산 node 수"
     },
     {
       "id": 136,
@@ -1227,8 +1767,14 @@
       "line": 126,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 128,
+      "owner": "computeNodeBody",
+      "binding": "computed",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `recalculated` · `index < candidates.length` · `!wheel && (context.presenceRegistrations ?? 0) !== registrations`에 비례"
     },
     {
       "id": 137,
@@ -1236,8 +1782,14 @@
       "line": 173,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 175,
+      "owner": "computeNodeBody",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; node 계산 중 exit/presence 상태로 재사용하는 node/path 수"
     },
     {
       "id": 138,
@@ -1245,8 +1797,14 @@
       "line": 197,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 199,
+      "owner": "computeNodeBody",
+      "binding": "inputs",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; gate wheel frame의 관측 input/gate 키 수"
     },
     {
       "id": 139,
@@ -1254,8 +1812,14 @@
       "line": 210,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 212,
+      "owner": "computeNodeBody",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; node wheel에서 참조하는 원래 계산 snapshot 키 수"
     },
     {
       "id": 140,
@@ -1263,8 +1827,14 @@
       "line": 22,
       "kind": "new Set",
       "category": "다",
-      "decision": "64개 이하: 반환 배열 재사용; 초과: 기존 Set 유지",
-      "reason": "부모별 예약 맵 size≤64를 런타임에서 증명; 반환 children 배열의 순서·identity 사용"
+      "decision": "배열로 바꿈",
+      "reason": "기존 반환 children 배열을 재사용; 명시적 작은 상한이 중첩 비교를 제한함. 소유자 리뷰 대상",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 24,
+      "owner": "dirtyChildren",
+      "binding": "seen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "배열 경로 ≤64, 최악 4096회 identity 비교; 65 이상은 기존 Set"
     },
     {
       "id": 141,
@@ -1290,8 +1860,14 @@
       "line": 100,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 101,
+      "owner": "hasRecursiveExpansion",
+      "binding": "cyclic",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 재귀 확장 탐색에서 방문하는 node와 순환 후보 수"
     },
     {
       "id": 144,
@@ -1299,8 +1875,14 @@
       "line": 100,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 101,
+      "owner": "hasRecursiveExpansion",
+      "binding": "cyclic",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 재귀 확장의 마감 내 순환 후보 node 수"
     },
     {
       "id": 145,
@@ -1308,8 +1890,14 @@
       "line": 44,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 47,
+      "owner": "primeHost",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; primeHost가 재사용하는 원래 host/schema snapshot 수"
     },
     {
       "id": 146,
@@ -1317,8 +1905,14 @@
       "line": 48,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 51,
+      "owner": "primeHost",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; primeHost가 재사용하는 자식/출력 snapshot 수"
     },
     {
       "id": 147,
@@ -1326,8 +1920,14 @@
       "line": 37,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 47,
+      "owner": "selectNodeSchema",
+      "binding": "branches",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `active` · `branches`에 비례"
     },
     {
       "id": 148,
@@ -1353,8 +1953,14 @@
       "line": 47,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 48,
+      "owner": "prepareHostWheelPlan",
+      "binding": "seen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `gates` · `relocated`에 비례"
     },
     {
       "id": 151,
@@ -1362,8 +1968,14 @@
       "line": 84,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 88,
+      "owner": "calculateStateKeys",
+      "binding": "candidates",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `stateDirtyNodes` · `source.children` · `candidates`에 비례"
     },
     {
       "id": 152,
@@ -1371,8 +1983,14 @@
       "line": 98,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 102,
+      "owner": "calculateStateKeys",
+      "binding": "evaluated",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `KEY_NAMES` · `getControlLayers(node, selectedDeclarationIds)` · `candidates`에 비례"
     },
     {
       "id": 153,
@@ -1434,8 +2052,14 @@
       "line": 19,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 19,
+      "owner": "captureProjectionBaseline",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; projection baseline의 고유 live node 수"
     },
     {
       "id": 160,
@@ -1443,8 +2067,14 @@
       "line": 21,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 21,
+      "owner": "captureProjectionBaseline",
+      "binding": "children",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `children.has(child)`에서 다루는 고유 키 수"
     },
     {
       "id": 161,
@@ -1452,8 +2082,14 @@
       "line": 24,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 24,
+      "owner": "captureProjectionBaseline",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; projection baseline 마감까지 참조하는 변화 path 수"
     },
     {
       "id": 162,
@@ -1461,8 +2097,14 @@
       "line": 29,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 32,
+      "owner": "deferPresenceTemplate",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; presenceTemplates의 kind/template 키 수"
     },
     {
       "id": 163,
@@ -1515,8 +2157,14 @@
       "line": 141,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 146,
+      "owner": "callback@117",
+      "binding": "declarations",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `blueprint.nodes.flatMap((node) => mapArray( node.declarations, (declaration): [number, Property` · `ids` · `dependencies`에 비례"
     },
     {
       "id": 169,
@@ -1524,8 +2172,14 @@
       "line": 206,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 214,
+      "owner": "prepareRegistration",
+      "binding": "candidates",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `declaration.gates` · `node.declarations` · `this.blueprint.nodes`에 비례"
     },
     {
       "id": 170,
@@ -1533,8 +2187,14 @@
       "line": 207,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 215,
+      "owner": "prepareRegistration",
+      "binding": "plain",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `this.ordinaryOwners` · `declaration.gates` · `node.declarations`에 비례"
     },
     {
       "id": 171,
@@ -1542,8 +2202,14 @@
       "line": 249,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 276,
+      "owner": "prepareRegistration",
+      "binding": "runNumbers",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ranksByName` · `grouped`에 비례"
     },
     {
       "id": 172,
@@ -1551,8 +2217,14 @@
       "line": 253,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 280,
+      "owner": "prepareRegistration",
+      "binding": "grouped",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `rank < node.owners.length` · `grouped`에 비례"
     },
     {
       "id": 173,
@@ -1569,8 +2241,14 @@
       "line": 273,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 300,
+      "owner": "prepareRegistration",
+      "binding": "runByName",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ranksByName` · `grouped`에 비례"
     },
     {
       "id": 175,
@@ -1578,8 +2256,14 @@
       "line": 324,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 351,
+      "owner": "affectedForRegistration",
+      "binding": "emitted",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `paths` · `node.plainOwners ?? mapArray(node.owners, (entry, rank) => ({ entry, rank }))` · `living`에 비례"
     },
     {
       "id": 176,
@@ -1587,8 +2271,14 @@
       "line": 325,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 352,
+      "owner": "affectedForRegistration",
+      "binding": "hostsEmitted",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `node.splitBuckets ?? []`에 비례"
     },
     {
       "id": 177,
@@ -1596,8 +2286,14 @@
       "line": 427,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 454,
+      "owner": "affected",
+      "binding": "owners",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `expandTemplatePaths( root, path, this.pathSegments(path, root.runtime), )` · `node.owners` · `this.pathSegments(changedPath, root.runtime)`에 비례"
     },
     {
       "id": 178,
@@ -1605,8 +2301,14 @@
       "line": 492,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 519,
+      "owner": "affectedByPresence",
+      "binding": "owners",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ancestorOwners` · `direct`에 비례"
     },
     {
       "id": 179,
@@ -1614,8 +2316,14 @@
       "line": 493,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 520,
+      "owner": "affectedByPresence",
+      "binding": "stateOnly",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ancestorOwners`에 비례"
     },
     {
       "id": 180,
@@ -1623,8 +2331,14 @@
       "line": 494,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 521,
+      "owner": "affectedByPresence",
+      "binding": "outerTemplates",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `node.owners` · `nodes`에 비례"
     },
     {
       "id": 181,
@@ -1632,8 +2346,14 @@
       "line": 495,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 522,
+      "owner": "affectedByPresence",
+      "binding": "directTemplates",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `node.owners` · `nodes`에 비례"
     },
     {
       "id": 182,
@@ -1641,8 +2361,14 @@
       "line": 503,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 530,
+      "owner": "affectedByPresence",
+      "binding": "ancestorOwners",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ancestorOwners` · `node.owners` · `nodes`에 비례"
     },
     {
       "id": 183,
@@ -1650,8 +2376,14 @@
       "line": 506,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 533,
+      "owner": "affectedByPresence",
+      "binding": "memo",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; presenceLevels가 해석하는 고유 경로 및 ancestor 수"
     },
     {
       "id": 184,
@@ -1659,8 +2391,14 @@
       "line": 524,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 551,
+      "owner": "affectedByPresence",
+      "binding": "direct",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `direct` · `node.owners` · `nodes`에 비례"
     },
     {
       "id": 185,
@@ -1686,8 +2424,14 @@
       "line": 43,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 47,
+      "owner": "registerPresenceChanges",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; changedPresence의 고유 변경 path 수"
     },
     {
       "id": 188,
@@ -1695,8 +2439,14 @@
       "line": 44,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 48,
+      "owner": "registerPresenceChanges",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; presencePrefixes의 고유 prefix 수"
     },
     {
       "id": 189,
@@ -1704,8 +2454,14 @@
       "line": 48,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 52,
+      "owner": "registerPresenceChanges",
+      "binding": "owners",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `affected.owners` · `names` · `owners`에 비례"
     },
     {
       "id": 190,
@@ -1713,8 +2469,14 @@
       "line": 49,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 53,
+      "owner": "registerPresenceChanges",
+      "binding": "ownerStamps",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `affected.owners` · `names` · `owners`에 비례"
     },
     {
       "id": 191,
@@ -1722,8 +2484,14 @@
       "line": 50,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 54,
+      "owner": "registerPresenceChanges",
+      "binding": "stateOnly",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `affected.stateOnly` · `names` · `stateOnly`에 비례"
     },
     {
       "id": 192,
@@ -1731,8 +2499,14 @@
       "line": 140,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 144,
+      "owner": "registerPresenceChanges",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; presenceQueryCursors의 ancestor별 cursor 수"
     },
     {
       "id": 193,
@@ -1740,8 +2514,14 @@
       "line": 65,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 71,
+      "owner": "callback@70",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 등록 검증 shadow의 원래 gate/dependency 값 키 수"
     },
     {
       "id": 194,
@@ -1749,8 +2529,14 @@
       "line": 74,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 80,
+      "owner": "callback@76",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 등록 검증 shadow의 owner/schema 키 수"
     },
     {
       "id": 195,
@@ -1758,8 +2544,14 @@
       "line": 91,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 97,
+      "owner": "registerRecalculation",
+      "binding": "expanded",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ancestor && !expanded.has(ancestor)` · `context.dirtyPaths`에 비례"
     },
     {
       "id": 196,
@@ -1767,8 +2559,14 @@
       "line": 101,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 107,
+      "owner": "registerRecalculation",
+      "binding": "changedAncestors",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `prefix` · `context.changedRaw` · `context.dirtyPaths`에 비례"
     },
     {
       "id": 197,
@@ -1776,8 +2574,14 @@
       "line": 30,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 30,
+      "owner": "supplementSplitOwner",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; split owner 보강에서 참조하는 baseline 키 수"
     },
     {
       "id": 198,
@@ -1785,8 +2589,14 @@
       "line": 16,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 20,
+      "owner": "collectDeriveSourcePaths",
+      "binding": "paths",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.contextOwners ?? []` · `dependencies.affected(changed, context.root)` · `context.changedRaw`에 비례"
     },
     {
       "id": 199,
@@ -1794,8 +2604,14 @@
       "line": 20,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 22,
+      "owner": "getDeriveState",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; DeriveState의 이전/현재 rule 평가 키 수"
     },
     {
       "id": 200,
@@ -1803,8 +2619,14 @@
       "line": 21,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 23,
+      "owner": "getDeriveState",
+      "binding": "consumedRuleValues",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; DeriveState.consumedRuleValues의 rule-target 키 수"
     },
     {
       "id": 201,
@@ -1812,8 +2634,14 @@
       "line": 22,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 24,
+      "owner": "getDeriveState",
+      "binding": "activeRuleKeys",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; DeriveState.activeRuleKeys의 활성 rule 키 수"
     },
     {
       "id": 202,
@@ -1821,8 +2649,14 @@
       "line": 23,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 25,
+      "owner": "getDeriveState",
+      "binding": "activeRuleKeysBySource",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; DeriveState.activeRuleKeysBySource의 source/rule 키 수"
     },
     {
       "id": 203,
@@ -1830,8 +2664,14 @@
       "line": 24,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 26,
+      "owner": "getDeriveState",
+      "binding": "activeUnsetTargets",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; DeriveState.activeUnsetTargets의 target 키 수"
     },
     {
       "id": 204,
@@ -1839,8 +2679,14 @@
       "line": 25,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 27,
+      "owner": "getDeriveState",
+      "binding": "appliedRanks",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; DeriveState.appliedRanks의 target/rank 키 수"
     },
     {
       "id": 205,
@@ -1848,8 +2694,14 @@
       "line": 26,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 28,
+      "owner": "getDeriveState",
+      "binding": "visitedSourcePaths",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; DeriveState.visitedSourcePaths의 고유 방문 source 주소 수"
     },
     {
       "id": 206,
@@ -1857,8 +2709,14 @@
       "line": 24,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 24,
+      "owner": "recordSettlementFailure",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; failureKeys에 들어오는 고유 실패 identity 수"
     },
     {
       "id": 207,
@@ -1866,8 +2724,14 @@
       "line": 84,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 98,
+      "owner": "evaluateGateValue",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 한 gate round에 관측한 dependency/input 키 수"
     },
     {
       "id": 208,
@@ -1911,8 +2775,14 @@
       "line": 228,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 256,
+      "owner": "evaluateGate",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; gate 평가에서 마감까지 참조하는 식/입력 키 수"
     },
     {
       "id": 213,
@@ -1920,8 +2790,14 @@
       "line": 51,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 51,
+      "owner": "flushPendingGateReads",
+      "binding": "ancestors",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `ancestors.has(node)`에서 다루는 고유 키 수"
     },
     {
       "id": 214,
@@ -1938,8 +2814,14 @@
       "line": 30,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 31,
+      "owner": "getIndex",
+      "binding": "decisions",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; `decisions.add(key)`에서 다루는 고유 키 수"
     },
     {
       "id": 216,
@@ -1947,8 +2829,14 @@
       "line": 31,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 32,
+      "owner": "getIndex",
+      "binding": "fieldControls",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `declaration.gates`에 비례"
     },
     {
       "id": 217,
@@ -1965,8 +2853,14 @@
       "line": 103,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 118,
+      "owner": "getHostWheelBudgetCap",
+      "binding": "decisions",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index.decisionsByGate.get(gate) ?? []` · `gates`에 비례"
     },
     {
       "id": 219,
@@ -2127,8 +3021,14 @@
       "line": 45,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 65,
+      "owner": "prepareGateTableRound",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; gateSelectionRounds의 live host round 수"
     },
     {
       "id": 237,
@@ -2136,8 +3036,14 @@
       "line": 48,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 68,
+      "owner": "prepareGateTableRound",
+      "binding": "values",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; gate round.values의 gate/step별 평가 결과 수"
     },
     {
       "id": 238,
@@ -2145,8 +3051,14 @@
       "line": 58,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 80,
+      "owner": "prepareGateTableRound",
+      "binding": "inputs",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; selectionShadow.inputs의 gate/owner/input 키 수"
     },
     {
       "id": 239,
@@ -2154,8 +3066,14 @@
       "line": 32,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 34,
+      "owner": "readGateHostView",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; gateHostViews의 projected host path 수"
     },
     {
       "id": 240,
@@ -2163,8 +3081,14 @@
       "line": 47,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 49,
+      "owner": "readGateSelectionGroup",
+      "binding": "indices",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `bucket` · `childGroup.buckets.values()` · `indices`에 비례"
     },
     {
       "id": 241,
@@ -2172,8 +3096,14 @@
       "line": 25,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 25,
+      "owner": "watchSplitRegistration",
+      "binding": "dirty",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; split registration shadow의 dirty path 수"
     },
     {
       "id": 242,
@@ -2181,8 +3111,14 @@
       "line": 26,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 26,
+      "owner": "watchSplitRegistration",
+      "binding": "shape",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; split registration shadow의 고유 shape path 수"
     },
     {
       "id": 243,
@@ -2190,8 +3126,14 @@
       "line": 27,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 27,
+      "owner": "watchSplitRegistration",
+      "binding": "owners",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; split registration shadow의 고유 owner path 수"
     },
     {
       "id": 244,
@@ -2199,8 +3141,14 @@
       "line": 56,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 56,
+      "owner": "readPathOrigins",
+      "binding": "origins",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.pathChanges`에 비례"
     },
     {
       "id": 245,
@@ -2208,8 +3156,14 @@
       "line": 89,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 91,
+      "owner": "resolveInactiveValue",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; inactive resolver의 owner/path origin 키 수"
     },
     {
       "id": 246,
@@ -2217,8 +3171,14 @@
       "line": 62,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 64,
+      "owner": "interpretFieldNodeInput",
+      "binding": "bindings",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `template.childEntries`에 비례"
     },
     {
       "id": 247,
@@ -2226,8 +3186,14 @@
       "line": 15,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 16,
+      "owner": "verifyWriteEpoch",
+      "binding": "actual",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.dirtyPaths` · `index < count`에 비례"
     },
     {
       "id": 248,
@@ -2235,8 +3201,14 @@
       "line": 15,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 15,
+      "owner": "watchWriteEpoch",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; writeEpochShadow의 dirty parent/child path 키 수"
     },
     {
       "id": 249,
@@ -2244,8 +3216,14 @@
       "line": 25,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 26,
+      "owner": "alignArraySnapshotSlots",
+      "binding": "copies",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `copies.get(source)`에서 다루는 고유 키 수"
     },
     {
       "id": 250,
@@ -2253,8 +3231,14 @@
       "line": 26,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 27,
+      "owner": "alignArraySnapshotSlots",
+      "binding": "draftContainers",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `hosts`에 비례"
     },
     {
       "id": 251,
@@ -2262,8 +3246,14 @@
       "line": 27,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 28,
+      "owner": "alignArraySnapshotSlots",
+      "binding": "holey",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `hosts` · `index < segments.length - 1`에 비례"
     },
     {
       "id": 252,
@@ -2271,8 +3261,14 @@
       "line": 43,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 44,
+      "owner": "draftCopy",
+      "binding": "byPath",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `byPath?.get(path)`에서 다루는 고유 키 수"
     },
     {
       "id": 253,
@@ -2280,8 +3276,14 @@
       "line": 13,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 13,
+      "owner": "clearSubtreeState",
+      "binding": "visited",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `visited.has(current)`에서 다루는 고유 키 수"
     },
     {
       "id": 254,
@@ -2307,8 +3309,14 @@
       "line": 91,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 96,
+      "owner": "callback@95",
+      "binding": "excluded",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 한 split run의 definition.ranks 원소 수와 excluded rank 수"
     },
     {
       "id": 257,
@@ -2316,8 +3324,14 @@
       "line": 92,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 97,
+      "owner": "callback@95",
+      "binding": "released",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 한 split run에서 release된 rank/path 수"
     },
     {
       "id": 258,
@@ -2325,8 +3339,14 @@
       "line": 96,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 101,
+      "owner": "planSplitAnchors",
+      "binding": "living",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `liveRanks` · `state.released` · `run < bucket.runs.length`에 비례"
     },
     {
       "id": 259,
@@ -2334,8 +3354,14 @@
       "line": 156,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 161,
+      "owner": "insertSplitAnchor",
+      "binding": "children",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `parent !== anchor.hostPath`에 비례"
     },
     {
       "id": 260,
@@ -2343,8 +3369,14 @@
       "line": 196,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 201,
+      "owner": "beginPostOrder",
+      "binding": "linked",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `current && !linked.has(current)` · `this`에 비례"
     },
     {
       "id": 261,
@@ -2352,8 +3384,14 @@
       "line": 207,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 212,
+      "owner": "beginPostOrder",
+      "binding": "children",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `current && !linked.has(current)` · `this`에 비례"
     },
     {
       "id": 262,
@@ -2361,8 +3399,14 @@
       "line": 228,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 233,
+      "owner": "add",
+      "binding": "children",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `!this.has(current)`에 비례"
     },
     {
       "id": 263,
@@ -2370,8 +3414,14 @@
       "line": 246,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 251,
+      "owner": "add",
+      "binding": "children",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `parent !== path`에 비례"
     },
     {
       "id": 264,
@@ -2559,8 +3609,14 @@
       "line": 29,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 32,
+      "owner": "updatePendingExitIndex",
+      "binding": "children",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `children.get(path)`에서 다루는 고유 키 수"
     },
     {
       "id": 285,
@@ -2640,8 +3696,14 @@
       "line": 22,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 22,
+      "owner": "collectHostSlotValues",
+      "binding": "entries",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `host.inactiveSlots?.keys()` · `host.inactiveSlotOverlays?.keys() ?? []` · `host.inactiveSlotBaselines?.keys() ?? []`에 비례"
     },
     {
       "id": 294,
@@ -2649,8 +3711,14 @@
       "line": 27,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 27,
+      "owner": "collectHostSlotValues",
+      "binding": "active",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `entries` · `host.inactiveSlotChildren?.values() ?? []`에 비례"
     },
     {
       "id": 295,
@@ -2658,8 +3726,14 @@
       "line": 16,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 18,
+      "owner": "commitSlotChanges",
+      "binding": "visited",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `current` · `hosts`에 비례"
     },
     {
       "id": 296,
@@ -2667,8 +3741,14 @@
       "line": 29,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 31,
+      "owner": "commitSlotChanges",
+      "binding": "bindings",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `host.inactiveSlots?.keys()` · `host.inactiveSlotOverlays?.keys() ?? []` · `hosts`에 비례"
     },
     {
       "id": 297,
@@ -2694,8 +3774,14 @@
       "line": 77,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 79,
+      "owner": "createClearedArrayOverlay",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; clear overlay에서 보유한 고유 slot/entry 수"
     },
     {
       "id": 300,
@@ -2775,8 +3861,14 @@
       "line": 19,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 21,
+      "owner": "getSlotEntries",
+      "binding": "entries",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `host?.children ?? []` · `host?.inactiveSlots?.keys() ?? []` · `host?.inactiveSlotOverlays?.keys() ?? []`에 비례"
     },
     {
       "id": 309,
@@ -2784,8 +3876,14 @@
       "line": 14,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 14,
+      "owner": "markRestoredSlotRaw",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; slotRestoredRaw가 기억하는 restored live node 수"
     },
     {
       "id": 310,
@@ -2793,8 +3891,14 @@
       "line": 19,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 19,
+      "owner": "markSlotChange",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; slotAutomaticLog의 host와 slot binding 수"
     },
     {
       "id": 311,
@@ -2802,8 +3906,14 @@
       "line": 21,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 21,
+      "owner": "markSlotChange",
+      "binding": "bindings",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `bindings.has(entry)`에서 다루는 고유 키 수"
     },
     {
       "id": 312,
@@ -2838,8 +3948,14 @@
       "line": 35,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 36,
+      "owner": "materializeInactiveSlotValues",
+      "binding": "chosen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `values`에 비례"
     },
     {
       "id": 316,
@@ -2856,8 +3972,14 @@
       "line": 23,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 23,
+      "owner": "pruneArraySlotTail",
+      "binding": "entries",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `host.inactiveSlots?.keys()` · `host.inactiveSlotOverlays?.keys() ?? []` · `entries`에 비례"
     },
     {
       "id": 318,
@@ -2865,8 +3987,14 @@
       "line": 32,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 34,
+      "owner": "clear",
+      "binding": "entries",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `host.inactiveSlots?.keys()` · `host.inactiveSlotOverlays?.keys() ?? []` · `entries`에 비례"
     },
     {
       "id": 319,
@@ -2883,8 +4011,14 @@
       "line": 63,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 65,
+      "owner": "visit",
+      "binding": "entries",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `host.inactiveSlots?.keys()` · `host.inactiveSlotOverlays?.keys() ?? []` · `entries`에 비례"
     },
     {
       "id": 321,
@@ -2901,8 +4035,14 @@
       "line": 24,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 26,
+      "owner": "rekeyArraySlotBindings",
+      "binding": "entries",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `host.inactiveSlots?.keys()` · `host.inactiveSlotOverlays?.keys() ?? []` · `entries`에 비례"
     },
     {
       "id": 323,
@@ -2910,8 +4050,14 @@
       "line": 28,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 30,
+      "owner": "rekeyArraySlotBindings",
+      "binding": "destinations",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `mapArray(moves, (move) => [move.previous, move.current])` · `entries`에 비례"
     },
     {
       "id": 324,
@@ -3027,8 +4173,14 @@
       "line": 21,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 23,
+      "owner": "collectFillDescendants",
+      "binding": "firstEvaluations",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < count`에 비례"
     },
     {
       "id": 337,
@@ -3036,8 +4188,14 @@
       "line": 75,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 80,
+      "owner": "finalizeExits",
+      "binding": "misfitIndex",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.pendingExits.values()` · `context.root.runtime.misfitPaths` · `[...(misfitIndex.get(node.path) ?? [])]`에 비례"
     },
     {
       "id": 338,
@@ -3045,8 +4203,14 @@
       "line": 81,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 86,
+      "owner": "finalizeExits",
+      "binding": "paths",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.root.runtime.misfitPaths` · `context.pendingExits.values()`에 비례"
     },
     {
       "id": 339,
@@ -3054,8 +4218,14 @@
       "line": 111,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 116,
+      "owner": "finalizeExits",
+      "binding": "affectedAncestors",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `ancestor` · `context.exited` · `[...affectedAncestors].sort( (left, right) => right.path.length - left.path.length, )`에 비례"
     },
     {
       "id": 340,
@@ -3063,8 +4233,14 @@
       "line": 28,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 30,
+      "owner": "finalizePerished",
+      "binding": "perishing",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.perished` · `pendingExits` · `current`에 비례"
     },
     {
       "id": 341,
@@ -3072,8 +4248,14 @@
       "line": 49,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 51,
+      "owner": "finalizePerished",
+      "binding": "perishedPaths",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 한 마감의 소멸 item path 수; 겹친 출처 중복 제거 필요"
     },
     {
       "id": 342,
@@ -3081,8 +4263,14 @@
       "line": 71,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 73,
+      "owner": "finalizePerished",
+      "binding": "resizedHosts",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `context.arrayCounts`에 비례"
     },
     {
       "id": 343,
@@ -3090,8 +4278,14 @@
       "line": 26,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 26,
+      "owner": "pruneArrayTailPaths",
+      "binding": "removed",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `store.pathIndex.tail(host, count)` · `[stores.declarations, stores.misfits, stores.rules]` · `hosts`에 비례"
     },
     {
       "id": 344,
@@ -3099,8 +4293,14 @@
       "line": 20,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 20,
+      "owner": "prunePerishedPaths",
+      "binding": "warningKeys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `runtime.warningKeysByPath.get(path) ?? []` · `paths` · `warningKeys`에 비례"
     },
     {
       "id": 345,
@@ -3108,8 +4308,14 @@
       "line": 26,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 28,
+      "owner": "restoreArrayStructure",
+      "binding": "prior",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `previousItems` · `host.children ?? []` · `index >= 0`에 비례"
     },
     {
       "id": 346,
@@ -3117,8 +4323,14 @@
       "line": 45,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 47,
+      "owner": "transitionSettlement",
+      "binding": "filled",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < entered.length` · `depth < enteredByDepth.length`에 비례"
     },
     {
       "id": 347,
@@ -3126,8 +4338,14 @@
       "line": 46,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 48,
+      "owner": "transitionSettlement",
+      "binding": "filledNodes",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < entered.length` · `depth < enteredByDepth.length`에 비례"
     },
     {
       "id": 348,
@@ -3135,8 +4353,14 @@
       "line": 120,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 122,
+      "owner": "transitionSettlement",
+      "binding": "fillHosts",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < entered.length` · `depth < enteredByDepth.length` · `ancestor`에 비례"
     },
     {
       "id": 349,
@@ -3144,8 +4368,14 @@
       "line": 121,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 123,
+      "owner": "transitionSettlement",
+      "binding": "fillAncestors",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < entered.length` · `depth < enteredByDepth.length` · `logIndex < context.arrayStructureLog.length`에 비례"
     },
     {
       "id": 350,
@@ -3153,8 +4383,14 @@
       "line": 153,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 155,
+      "owner": "transitionSettlement",
+      "binding": "newArrayHosts",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < count`에 비례"
     },
     {
       "id": 351,
@@ -3225,8 +4461,14 @@
       "line": 106,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 111,
+      "owner": "intersecting",
+      "binding": "keys",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `this.under(path)` · `this.prefixes.get(ancestor)?.exact ?? []` · `ancestor`에 비례"
     },
     {
       "id": 359,
@@ -3333,8 +4575,14 @@
       "line": 45,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 47,
+      "owner": "createValidatorCopy",
+      "binding": "seen",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `[[authored, copy]]` · `Object.entries(current.source)`에 비례"
     },
     {
       "id": 371,
@@ -3360,8 +4608,14 @@
       "line": 45,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 54,
+      "owner": "isOffUnionBranchIssue",
+      "binding": "visited",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `blueprint.fragments` · `index < count`에 비례"
     },
     {
       "id": 374,
@@ -3369,8 +4623,14 @@
       "line": 35,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 37,
+      "owner": "routeValidationIssues",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; validation route의 노드별 이전 오류 snapshot 수"
     },
     {
       "id": 375,
@@ -3387,8 +4647,14 @@
       "line": 39,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 41,
+      "owner": "routeValidationIssues",
+      "binding": "activeIds",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < ids.length` · `runtime.committedDeclarationIds.values()` · `index < issues.length`에 비례"
     },
     {
       "id": 377,
@@ -3396,8 +4662,14 @@
       "line": 88,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 90,
+      "owner": "routeValidationIssues",
+      "binding": "changed",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `candidates` · `changed`에 비례"
     },
     {
       "id": 378,
@@ -3405,8 +4677,14 @@
       "line": 89,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 91,
+      "owner": "routeValidationIssues",
+      "binding": "candidates",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `before.keys()` · `next.keys()` · `candidates`에 비례"
     },
     {
       "id": 379,
@@ -3468,8 +4746,14 @@
       "line": 42,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 42,
+      "owner": "deliverWave",
+      "binding": "siblingIndexes",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `siblingIndexes.get(parent)`에서 다루는 고유 키 수"
     },
     {
       "id": 386,
@@ -3477,8 +4761,14 @@
       "line": 60,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 60,
+      "owner": "deliverWave",
+      "binding": "passed",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; runtime adoption 연쇄가 지나가는 runtime 수; 초기 1 이후 add 가능"
     },
     {
       "id": 387,
@@ -3486,8 +4776,14 @@
       "line": 31,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 32,
+      "owner": "exitFieldNodeChain",
+      "binding": "passed",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `raised` · `passed` · `isFieldNodeChainRoot<Self>(active.runtime.adoptedRoot)`에 비례"
     },
     {
       "id": 388,
@@ -3504,8 +4800,14 @@
       "line": 139,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "상한 불명",
+      "reason": "수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 154,
+      "owner": "exitFieldNodeChain",
+      "binding": "raised",
+      "accessPattern": "단일 순회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `raised` · `isFieldNodeChainRoot<Self>(active.runtime.adoptedRoot)`에 비례"
     },
     {
       "id": 390,
@@ -3513,8 +4815,14 @@
       "line": 50,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 50,
+      "owner": "flushQueuedEvents",
+      "binding": "owners",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; queued event flush의 runtime adoption 연쇄 길이; 초기 1 이후 add 가능"
     },
     {
       "id": 391,
@@ -3567,8 +4875,14 @@
       "line": 36,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 38,
+      "owner": "compareDocumentOrder",
+      "binding": "positions",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `(parent.children ?? []).entries()`에 비례"
     },
     {
       "id": 397,
@@ -3576,8 +4890,14 @@
       "line": 27,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 27,
+      "owner": "dispatchClearSubtreeState",
+      "binding": "deltas",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `changedKeys` · `Object.entries(previous)` · `Object.entries(next)`에 비례"
     },
     {
       "id": 398,
@@ -3639,8 +4959,14 @@
       "line": 33,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 33,
+      "owner": "dispatchSetState",
+      "binding": "deltas",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `changedKeys` · `Object.entries(previous)` · `Object.entries(next)`에 비례"
     },
     {
       "id": 405,
@@ -3648,8 +4974,14 @@
       "line": 31,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 31,
+      "owner": "dispatchSetSubtreeState",
+      "binding": "deltas",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `changedKeys` · `Object.entries(previous)` · `Object.entries(next)`에 비례"
     },
     {
       "id": 406,
@@ -3666,8 +4998,14 @@
       "line": 52,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 52,
+      "owner": "rebuildRootExternalErrors",
+      "binding": "placed",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `at < list.length` · `index < nodes.length` · `index < current.length`에 비례"
     },
     {
       "id": 408,
@@ -3675,8 +5013,14 @@
       "line": 53,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 53,
+      "owner": "rebuildRootExternalErrors",
+      "binding": "retired",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `at < previous.length` · `index < nodes.length` · `index < current.length`에 비례"
     },
     {
       "id": 409,
@@ -3684,8 +5028,14 @@
       "line": 54,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 54,
+      "owner": "rebuildRootExternalErrors",
+      "binding": "paths",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < nodes.length` · `index < current.length`에 비례"
     },
     {
       "id": 410,
@@ -3693,8 +5043,14 @@
       "line": 68,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 68,
+      "owner": "rebuildRootExternalErrors",
+      "binding": "resolved",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `resolved.get(dataPath)`에서 다루는 고유 키 수"
     },
     {
       "id": 411,
@@ -3702,8 +5058,14 @@
       "line": 79,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 79,
+      "owner": "rebuildRootExternalErrors",
+      "binding": "present",
+      "accessPattern": "중첩 비교",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `index < current.length` · `at < list.length` · `index < nodes.length`에 비례"
     },
     {
       "id": 412,
@@ -3765,8 +5127,14 @@
       "line": 29,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 31,
+      "owner": "collectChainRecords",
+      "binding": "created",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 고유 엔트리 수는 `occurrences`에 비례"
     },
     {
       "id": 419,
@@ -3774,8 +5142,14 @@
       "line": 26,
       "kind": "new Map",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 27,
+      "owner": "readReferenceOnlySchemaPaths",
+      "binding": "seen",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; `seen.get(left)`에서 다루는 고유 키 수"
     },
     {
       "id": 420,
@@ -3783,8 +5157,14 @@
       "line": 55,
       "kind": "new Set",
       "category": "다",
-      "decision": "유지",
-      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+      "decision": "Set·Map 유지",
+      "reason": "기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함",
+      "anchorCommit": "b50f06050",
+      "lineAtAnchor": 56,
+      "owner": "readReferenceOnlySchemaPaths",
+      "binding": "<inline>",
+      "accessPattern": "반복 멤버십 조회",
+      "sizeBound": "상한 불명; 참조 동등 검사에서 한 왼쪽 객체와 비교하는 오른쪽 객체 수"
     },
     {
       "id": 421,
@@ -3804,5 +5184,12 @@
       "decision": "유지",
       "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
     }
-  ]
+  ],
+  "selectionPolicy": "Bounded small repeated membership may use arrays; unbounded nested comparisons and reused indexes remain Set/Map. Size bound and access pattern are both required.",
+  "selectionPolicyCounts": {
+    "Set·Map 유지": 174,
+    "미사용 인수 제거": 1,
+    "배열로 바꿈": 3,
+    "상한 불명": 52
+  }
 }
