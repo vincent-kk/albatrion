@@ -275,7 +275,7 @@
 | 51 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts:81` · `destinations` | 반복 멤버십 조회 | 상한 불명; 고유 엔트리 수는 `index < plan.slots.length` · `index < oldCount`에 비례 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 53 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts:184` · `<inline>` | 반복 멤버십 조회 | 상한 불명; 옮겨 보존하는 inactive slot binding 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 55 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts:100` · `applyArraySplice` | 단일 순회 | 정확히 1; `[removedItem.path]`는 한 삭제 item의 주소 | 배열로 바꿈: prunePerishedPaths는 size와 순회만 사용; 원래 생성자 인수 배열을 그대로 전달해 Set 1개만 제거 |
-| 56 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts:138` · `perishedPaths` | 단일 순회 | 배열 경로 ≤64: `oldCount - prefixCount <= 64`; 초과는 기존 Set | 배열로 바꿈: 삭제 index마다 고유 item.path를 한 번 수집; 조회/중복 탐색 없음. 빈 결과는 수집도 생략 |
+| 56 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts:138` · `perishedPaths` | 단일 순회 | 배열 경로 ≤64: `oldCount - prefixCount <= 64`; 초과는 기존 Set | 배열로 바꿈: 삭제 index마다 고유 item.path를 한 번 수집; 조회/중복 탐색 없음. 빈 결과는 수집도 생략  공개 동사에서 pop은 항상 1개만 제거하며 65개 이상 Set 분기는 공개 경로에서 도달 불가; 항상 배열로 단순화할지는 소유자 결정 |
 | 57 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts:146` · `perishedPaths` | 단일 순회(방문 0) | 정확히 0; 미사용 clear 인수의 빈 fallback Set | 미사용 인수 제거: clearArrayRuntimePaths는 _perished를 읽지 않음; 인수와 그 Set을 제거해 배열도 할당하지 않음 |
 | 58 | `src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts:22` · `keys` | 단일 순회 | 상한 불명; 고유 엔트리 수는 `index.under(slot)` · `[...index.tail(hostPath, 0)]`에 비례 | 상한 불명: 수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함 |
 | 59 | `src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts:49` · `slots` | 단일 순회 | 상한 불명; 고유 엔트리 수는 `store.pathIndex.tail(hostPath, 0)` · `owned` · `slots`에 비례 | 상한 불명: 수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함 |
@@ -504,6 +504,8 @@
 후보 2 재검토 P3-B에 따라 감사의 다섯 곳(`collectBlueprintWarnings`, `getGateSelectionTable`, `isStableDiscriminatorEntry`, `prepareDiscriminatorEntrySelection`, `readGateSelectionGroup`)은 **판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요**로 교정했습니다. `readDiscriminatorBranches`가 spread 후 동결한 배열은 구멍을 undefined로 채웁니다. 이 다섯 검사는 바이트 중립 범위에서 그대로 두며 제거는 소유자 결정 후속입니다. `effectiveType`의 입력은 이 태그가 아닌 `node.schema.schema.type`이므로 **작성 입력(스키마 type 목록), 검사 유지**입니다. 조정자가 코드 근거에 따른 이 구분을 승인했으며 두 함수의 매개변수 주석도 실제 입력에 맞췄습니다.
 
 ## 항목 6 — 형 유틸리티
+
+Dictionary의 기본 인수는 any이므로 `Dictionary<any>`는 쓰지 않습니다. 소유자 리뷰에 따라 중복 기본 형 인수 2곳을 `Dictionary`로 줄였고 `Dictionary<unknown>`은 유지합니다.
 
 **521지점**을 치환했습니다: `Record<string, T>` → Dictionary **101개**, Optional **284개**, Nullable **122개**, Optional<Nullable> **13개**, Nullish **1개**입니다. 문자열 아닌 Record 키와 기존 조건부·mapped type의 분배·modifier 의미가 달라지는 조합은 유지했습니다. 대응하는 Required/Partial/IsNullable/Roll의 추가 수기 동등 조합은 이 제품 범위에서 발견하지 못했으며, 이미 사용하는 유틸리티는 유지했습니다. [항목 6 위치](raw/micro-hygiene/item-6.json)를 보존합니다.
 

@@ -9,6 +9,6 @@ import type { BlueprintSchema } from '../../types/schema';
  */
 export const readSchemaObject = (
   schema: BlueprintSchema,
-): Readonly<Dictionary<any>> & {
+): Readonly<Dictionary> & {
   properties?: Readonly<Dictionary<BlueprintSchema>>;
 } => (typeof schema === 'boolean' ? {} : schema);
