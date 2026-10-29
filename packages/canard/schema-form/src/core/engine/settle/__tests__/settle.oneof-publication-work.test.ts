@@ -20,10 +20,16 @@ it('publishes a membership-changing oneOf-80 selection without enumerating the p
   let viewWrites = 0;
   let comparingPresence = false;
   const collect = presence.collectPresenceChangeNames;
-  vi.spyOn(presence, 'collectPresenceChangeNames').mockImplementation((...args) => {
-    comparingPresence = true;
-    try { return collect(...args); } finally { comparingPresence = false; }
-  });
+  vi.spyOn(presence, 'collectPresenceChangeNames').mockImplementation(
+    (...args) => {
+      comparingPresence = true;
+      try {
+        return collect(...args);
+      } finally {
+        comparingPresence = false;
+      }
+    },
+  );
   root.structure = new Proxy(root.structure!, {
     ownKeys(target) {
       if (comparingPresence) priorScans++;
@@ -38,10 +44,10 @@ it('publishes a membership-changing oneOf-80 selection without enumerating the p
           viewScans++;
           return Reflect.ownKeys(target);
         },
-      set(target, name, value) {
-        viewWrites++;
-        return Reflect.set(target, name, value);
-      },
+        set(target, name, value) {
+          viewWrites++;
+          return Reflect.set(target, name, value);
+        },
       }),
   );
   dispatchSetValue(kind, 'kind_79');

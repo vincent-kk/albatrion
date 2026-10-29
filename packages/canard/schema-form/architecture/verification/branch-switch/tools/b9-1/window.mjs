@@ -9,6 +9,7 @@ import { sampleProcessCpu } from '../b8/helpers/sampleProcessCpu.mjs';
 import { digest } from '../b9-0/files.mjs';
 import { getStageRoot } from '../window/getStageRoot.mjs';
 import { waitForQuietProcess } from '../window/waitForQuietProcess.mjs';
+import { compactProcessRows } from './helpers/compactProcessRows.mjs';
 import { runWindowProcess } from './helpers/runWindowProcess.mjs';
 import { verifyInputs } from './verifyInputs.mjs';
 
@@ -203,7 +204,7 @@ if (!quiet.approved) {
         {
           endedAt: new Date().toISOString(),
           invalid,
-          processes: await sampleProcessCpu(3000),
+          processes: compactProcessRows(await sampleProcessCpu(3000)),
         },
         null,
         2,

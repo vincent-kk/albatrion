@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 
 import { createStageRecords } from './fixtures/createStageRecords.mjs';
+import { compactProcessRows } from './helpers/compactProcessRows.mjs';
 import { evaluateGates } from './helpers/evaluateGates.mjs';
 import { portableEvidence } from './helpers/portableEvidence.mjs';
 import { summarizeStageRows } from './helpers/summarizeStageRows.mjs';
@@ -60,4 +61,17 @@ assert.throws(() =>
 );
 const homePath = ['', 'Users', 'Example', 'workspace'].join('/');
 assert.equal(portableEvidence({ file: homePath }).file, '<home>/workspace');
+const processSummary = compactProcessRows({
+  rows: Array.from({ length: 12 }, (_, pid) => ({
+    pid,
+    name: 'process-' + pid,
+    cpuPercent: 100 - pid,
+  })),
+  before: 'private process table',
+  after: 'private process table',
+});
+assert.equal(processSummary.length, 10);
+assert.deepEqual(Object.keys(processSummary[0]), ['name', 'cpuPercent']);
+assert.deepEqual(processSummary[0], { name: 'process-0', cpuPercent: 100 });
+assert.ok(!JSON.stringify(processSummary).includes('private'));
 console.log('B9_1_TOOLS_OK');

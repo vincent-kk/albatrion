@@ -1,0 +1,65 @@
+{
+  "measuredCandidate": "88ba096e8",
+  "correctedProduct": "a3e955b73",
+  "row": "switch-oneOf-80",
+  "unit": "raw instrumented self microseconds per write",
+  "total": {
+    "Amedian": 204.50000000005275,
+    "Amax": 204.81299999983094,
+    "Bmedian": 216.41700000009223
+  },
+  "stages": [
+    {
+      "name": "primeHost",
+      "A": 3.041500000108499,
+      "B": 1.708000000235188
+    },
+    {
+      "name": "selectChildren",
+      "A": 33.79150000023401,
+      "B": 41.604500000858025
+    },
+    {
+      "name": "markCommitDeliveries",
+      "A": 14.625500000192915,
+      "B": 16.79199999989578
+    },
+    {
+      "name": "computeNode",
+      "A": 39.668499999606865,
+      "B": 41.16699999940465
+    },
+    {
+      "name": "commitSettlement",
+      "A": 10.832999999820458,
+      "B": 10.917000000063126
+    },
+    {
+      "name": "assembleObject",
+      "A": 10.458500000140702,
+      "B": 10.020499999882304
+    }
+  ],
+  "supplementalPresence": {
+    "A": 13.75000000007276,
+    "B": 13.895499999989624
+  },
+  "callCounts": {
+    "privateViewEnumeration": {
+      "before": 1,
+      "after": 0
+    },
+    "privateViewWrites": {
+      "before": 3,
+      "after": 0
+    },
+    "nonintegerRequiredSort": {
+      "before": 1,
+      "after": 0
+    },
+    "presencePreviousEnumeration": {
+      "after": 0
+    }
+  },
+  "interpretation": "Independent per-stage medians do not sum to the row median; counts identify redundant work in the dominant increasing phases. Timing acceptance remains pending window3."
+}
