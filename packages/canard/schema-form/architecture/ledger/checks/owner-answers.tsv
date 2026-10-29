@@ -675,3 +675,6 @@ reviews/round-462-owner-answers.md:19	462	B12 이름의 통일	"메소드 이름
 reviews/round-462-owner-answers.md:20	462	B12 인터페이스 통일 채택	"좋아 inactiveValue 랑 onInactive 가 동일한 함수 인터페이스를 쓰도록 해. 그거면 난 이견 없어." (2026-10-29, 원장 세션)
 reviews/round-462-owner-answers.md:21	462	B12 키 이름 유지	"오케이 그럼 이렇게 이후 작업 이어서 진행하도록." (2026-10-29, 원장 세션)
 reviews/round-462-owner-answers.md:22	462	워커 깨우기 규칙	"codex 뿐만 아니라 agy 나 cursor 도 동일할거같은데. claude 도 그럴거같고.\n롱턴작업에서 이렇게 메시지 누락으로 전달이 안되면 곤란하니까 항상 한번 더 깨우도록 기록해줘. \n\nrm -rf /Users/Vincent/Workspace/albatrion/branch-switch-b0 이건 실행했어" (2026-10-29, 원장 세션)
+reviews/round-463-owner-answers.md:7	463	oneOf의 몫	"oneOf 쪽이 생각만큼 안줄어드는건가?" (2026-10-29, 원장 세션)
+reviews/round-463-owner-answers.md:8	463	설계 Ⅲ 마감과 설계 Ⅳ 착수	"좋아 설계3은 이걸로 문제가 없다면 병합. 이후 설계4로 넘어가서 oneOf를 본격적으로 공략해보자" (2026-10-29, 원장 세션)
+reviews/round-463-owner-answers.md:9	463	설계 Ⅳ 채택과 목표선	"작업 마무리하고 깨끗한 브랜치 환경에서 설계4를 진행하자. 설계4가 제안한 이론상 바닥을 수용한다. 그정도면 충분하다" (2026-10-29, 원장 세션)
