@@ -74,10 +74,11 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   runtime.misfitRecords = records ? Object.freeze(records) : EMPTY_WARNINGS;
   const memo = (runtime.misfitsMemo ??= new PathKeyedMap('path'));
   memo.clear();
-  if (!runtime.misfitPaths.size) memo.set('', { commit, paths: EMPTY_PATHS });
+  if (!runtime.misfitPaths.size)
+    memo.set($.Root, { commit, paths: EMPTY_PATHS });
   else {
     const paths = [...runtime.misfitPaths].sort();
-    memo.set('', { commit, paths: Object.freeze(paths) });
+    memo.set($.Root, { commit, paths: Object.freeze(paths) });
     const byAncestor = new Map<string, string[]>();
     for (let index = 0; index < paths.length; index++) {
       const path = paths[index];

@@ -1,6 +1,7 @@
 import type { Nullable, PartialBy } from '@aileron/declare';
 
 import {
+  JSONPointer as $,
   appendFormattedSegment,
   formatSegment,
 } from '@/schema-form/helpers/jsonPointer';
@@ -87,7 +88,9 @@ const createFieldNode = (
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
   const escapedName = formatSegment(name);
-  const path = parent ? appendFormattedSegment(parent.path, escapedName) : '';
+  const path = parent
+    ? appendFormattedSegment(parent.path, escapedName)
+    : $.Root;
   const depth = parent ? parent.depth + 1 : 0;
   const row = source?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)

@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Nullable } from '@aileron/declare';
 
 import {
+  JSONPointer as $,
   PointerOperator,
   isAbsolutePointer,
   parsePointerSegments,
@@ -15,7 +16,7 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
   origin: Self,
   pointer?: Nullable<string | readonly string[]>,
 ): readonly Self[] => {
-  const input = pointer ?? '';
+  const input = pointer ?? $.Root;
   const segments = parsePointerSegments(input);
   let cursors: Self[] = [isAbsolutePointer(input) ? origin.rootNode : origin];
 

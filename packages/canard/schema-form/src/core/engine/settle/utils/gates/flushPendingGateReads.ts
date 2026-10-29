@@ -1,6 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
+  JSONPointer as $,
   PointerOperator,
   appendSegment,
   isDescendantPath,
@@ -96,7 +97,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
         visit(item, appendSegment(suffix, node.prefixItems?.length ?? 0));
       ancestors.delete(node);
     };
-    visit(template, '');
+    visit(template, $.Root);
     plan = built;
     getHostDerived<'readPlans', GateReadPlan>(template).readPlans = plan;
   }

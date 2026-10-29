@@ -206,17 +206,17 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     built.size !== misfitsMemo.size
   ) {
     if (runtime.misfitPaths.size === 0) {
-      const empty = misfitsMemo.get('');
+      const empty = misfitsMemo.get($.Root);
       if (misfitsMemo.size === 1 && empty?.paths.length === 0)
         empty.commit = commit;
       else {
         misfitsMemo.clear();
-        misfitsMemo.set('', { commit, paths: EMPTY_PATHS });
+        misfitsMemo.set($.Root, { commit, paths: EMPTY_PATHS });
       }
     } else {
       misfitsMemo.clear();
       const allPaths = [...runtime.misfitPaths].sort();
-      misfitsMemo.set('', { commit, paths: Object.freeze(allPaths) });
+      misfitsMemo.set($.Root, { commit, paths: Object.freeze(allPaths) });
       const byAncestor = new Map<string, string[]>();
       for (let index = 0; index < allPaths.length; index++) {
         const path = allPaths[index];

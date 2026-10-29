@@ -44,7 +44,9 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       const deepest = entry.deepest;
       const excluded =
         deepest !== null &&
-        ((deepest === '' ? owner !== '' : isDescendantPath(owner, deepest)) ||
+        ((deepest === $.Root
+          ? owner !== $.Root
+          : isDescendantPath(owner, deepest)) ||
           (entry.kind === 'direct' && owner === deepest));
       if (
         !excluded &&

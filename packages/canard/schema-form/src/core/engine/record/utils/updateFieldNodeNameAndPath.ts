@@ -1,6 +1,7 @@
 import type { Nullable } from '@aileron/declare';
 
 import {
+  JSONPointer as $,
   appendFormattedSegment,
   formatSegment,
 } from '@/schema-form/helpers/jsonPointer';
@@ -23,7 +24,7 @@ export const updateFieldNodeNameAndPath = <
     node,
     'path',
     parent === null
-      ? ''
+      ? $.Root
       : appendFormattedSegment(parent.path, node.escapedName),
   );
   node.depth = parent === null ? 0 : parent.depth + 1;

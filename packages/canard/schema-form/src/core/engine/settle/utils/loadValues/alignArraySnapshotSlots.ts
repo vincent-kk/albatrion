@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import {
+  JSONPointer as $,
   appendSegment,
   parsePointerSegments,
 } from '@/schema-form/helpers/jsonPointer';
@@ -82,9 +83,9 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       draft = setLoadValue(draft, host.path, slots);
       continue;
     }
-    let parent = draftCopy(draft, '');
+    let parent = draftCopy(draft, $.Root);
     draft = parent;
-    let parentPath = '';
+    let parentPath: string = $.Root;
     for (let index = 0; index < segments.length - 1; index++) {
       const segment = segments[index];
       parentPath = appendSegment(parentPath, segments[index]);

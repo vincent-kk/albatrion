@@ -139,7 +139,7 @@ export class PathStoreIndex {
         path: current,
         parent,
         segment,
-        numeric: current !== '' && isCanonicalArraySlot(segment),
+        numeric: current !== $.Root && isCanonicalArraySlot(segment),
         keys: new Set(),
         exact: new Set(),
       };

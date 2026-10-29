@@ -102,7 +102,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
 
   for (const owner of owners) {
     if (
-      (owner !== '' && parentOf(owner) === host.path) ||
+      (owner !== $.Root && parentOf(owner) === host.path) ||
       evaluatedPresenceAfter(owner, ownerStamps.get(owner)!, context)
     ) {
       publishPresenceOwner(owner, context);

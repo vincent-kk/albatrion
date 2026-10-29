@@ -38,6 +38,28 @@
 
 독립 검토 P3-1에서 엔진 7파일의 루트 리터럴 9개를 추가로 상수화했습니다(두 루트 비교와 blueprint의 두 루트 인수를 포함). 최초 107개와 합쳐 총 **116개**이며, 빈 이름 세그먼트는 계속 별도 문법으로 유지합니다.
 
+소유자 후속 결정으로 루트 주소 뜻의 빈 문자열 **32곳·19파일**을 추가로 `$.Root`로 통일했습니다. 기존 116곳을 합쳐 총 **148곳**입니다. 재검토의 16파일 목록을 출발점으로 core 전체를 다시 훑었으며, 유지 지점은 아래처럼 주소가 아닌 빈 문자열 **15줄**입니다. [각 치환·유지 근거](raw/micro-hygiene/owner-cleanups/root-pointer-audit.json)를 보존했습니다. `NumericPathIndex`의 접두는 십진 숫자 누산기이므로 재검토 목록에 있었더라도 루트 포인터로 바꾸지 않았습니다.
+
+| 유지 위치 | 주소가 아닌 이유 |
+| --- | --- |
+| `src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts:49` | 진단 키의 없는 keyword/property 이름 자리 |
+| `src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityNumber.ts:19` | trim 결과의 공백/빈 토큰 검사 |
+| `src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/scanEqualityTokens.ts:19` | trim 결과의 공백/빈 토큰 검사 |
+| `src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityString.ts:29` | 파싱할 문자열 값의 초기 누산기 |
+| `src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/utils/substituteDependencyPaths.ts:23` | 뒤 세미콜론 삭제의 빈 치환 문자열 |
+| `src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts:111` | 빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분 |
+| `src/core/engine/settle/utils/gates/bindGateHostPath.ts:22` | 기존 occurrencePath에 붙이는 비어 있는 상대 접미사 |
+| `src/core/engine/settle/utils/derivation/runDeriveRounds.ts:77` | 없는 targetPath를 진단 중복 키에서 표시하는 빈 자리; 루트 주소로 해석하지 않음 |
+| `src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:181` | 빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분 |
+| `src/core/engine/behaviors/utils/options/isOmittedEmpty.ts:33` | 사용자 값의 빈 문자열 판정 |
+| `src/core/engine/behaviors/utils/slots/projectEmpty.ts:10` | 사용자 값의 빈 문자열 판정 |
+| `src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts:135` | 빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분 |
+| `src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts:58` | 십진 radix의 숫자 문자열 접두 누산기이며 JSON Pointer가 아님 |
+| `src/core/surface/utils/fieldNodeFactory.ts:86` | 빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분 |
+| `src/core/surface/utils/fieldNodeFactory.ts:155` | 진단 키의 없는 keyword/property 이름 자리 |
+
+이전의 루트 표기 후속은 **결정됨: 적용**이며 위 제외 목록만 유지합니다. mutable 경로 누산기의 기존 string 형은 명시적 형 주석으로 보존했습니다.
+
 첫 표적 시험은 workspace `@winglet/json` dist 부재로 7파일 적재가 실패했습니다. 설치 없이 지정된 common-utils와 json build로 준비했고, 수정 전후 동일한 포인터 시험 **8파일·96건**, 수정 뒤 패키지 typecheck·lint를 통과했습니다. lint의 첫 실행도 미준비 json-schema·react-utils dist 때문에 실패했으며 지정 build 뒤 통과했습니다. 상수의 literal 형으로 좁아진 조립 변수는 `string` 주석으로 원래 형을 유지합니다.
 
 ## 항목 2 — 고빈도 membership과 체인

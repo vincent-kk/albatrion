@@ -1,0 +1,285 @@
+{
+  "baseline": "bcca1b3c1624f4b2f582a249664f0d80f4170863",
+  "replaced": 32,
+  "files": 19,
+  "sites": [
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "lineAtBaseline": 18,
+      "count": 1,
+      "before": "const input = pointer ?? '';"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "lineAtBaseline": 85,
+      "count": 1,
+      "before": "let parent = draftCopy(draft, '');"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "lineAtBaseline": 87,
+      "count": 1,
+      "before": "let parentPath = '';"
+    },
+    {
+      "file": "src/core/surface/utils/fieldNodeFactory.ts",
+      "lineAtBaseline": 90,
+      "count": 1,
+      "before": "const path = parent ? appendFormattedSegment(parent.path, escapedName) : '';"
+    },
+    {
+      "file": "src/core/engine/record/utils/updateFieldNodeNameAndPath.ts",
+      "lineAtBaseline": 26,
+      "count": 1,
+      "before": "? ''"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "lineAtBaseline": 86,
+      "count": 1,
+      "before": "'',"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "lineAtBaseline": 87,
+      "count": 1,
+      "before": "'',"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "lineAtBaseline": 93,
+      "count": 1,
+      "before": "JSON.stringify([code, '']),"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "lineAtBaseline": 142,
+      "count": 1,
+      "before": "numeric: current !== '' && isCanonicalArraySlot(segment),"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/loadFieldNodeAtMount.ts",
+      "lineAtBaseline": 21,
+      "count": 1,
+      "before": "const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/restoreSourceB.ts",
+      "lineAtBaseline": 37,
+      "count": 1,
+      "before": "context.dirtyPaths.add('');"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/restoreSourceB.ts",
+      "lineAtBaseline": 38,
+      "count": 1,
+      "before": "context.shapeDirtyPaths.add('');"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "lineAtBaseline": 77,
+      "count": 1,
+      "before": "if (!runtime.misfitPaths.size) memo.set('', { commit, paths: EMPTY_PATHS });"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "lineAtBaseline": 80,
+      "count": 1,
+      "before": "memo.set('', { commit, paths: Object.freeze(paths) });"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "lineAtBaseline": 154,
+      "count": 1,
+      "before": "let parent = '';"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "lineAtBaseline": 181,
+      "count": 1,
+      "before": "let parent = '';"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "lineAtBaseline": 243,
+      "count": 1,
+      "before": "let parent = '';"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "lineAtBaseline": 272,
+      "count": 1,
+      "before": "let parent = '';"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/flushPendingGateReads.ts",
+      "lineAtBaseline": 99,
+      "count": 1,
+      "before": "visit(template, '');"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "lineAtBaseline": 105,
+      "count": 1,
+      "before": "(owner !== '' && parentOf(owner) === host.path) ||"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/flushPresenceTemplates.ts",
+      "lineAtBaseline": 47,
+      "count": 2,
+      "before": "((deepest === '' ? owner !== '' : isDescendantPath(owner, deepest)) ||"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/deferPresenceTemplate.ts",
+      "lineAtBaseline": 57,
+      "count": 1,
+      "before": "!(origin === '' || isDescendantPath(deepest, origin))"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/deferPresenceTemplate.ts",
+      "lineAtBaseline": 60,
+      "count": 1,
+      "before": "deepest === '' || isDescendantPath(origin, deepest) ? origin : null;"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "lineAtBaseline": 209,
+      "count": 1,
+      "before": "const empty = misfitsMemo.get('');"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "lineAtBaseline": 214,
+      "count": 1,
+      "before": "misfitsMemo.set('', { commit, paths: EMPTY_PATHS });"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "lineAtBaseline": 219,
+      "count": 1,
+      "before": "misfitsMemo.set('', { commit, paths: Object.freeze(allPaths) });"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/getInactiveValueContext.ts",
+      "lineAtBaseline": 23,
+      "count": 1,
+      "before": "const parentPath = parent ? (origins?.get(parent) ?? parent.path) : '';"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "lineAtBaseline": 448,
+      "count": 1,
+      "before": "if (watched === '') {"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "lineAtBaseline": 504,
+      "count": 1,
+      "before": "watched === '' ||"
+    },
+    {
+      "file": "src/core/engine/settle/utils/reset/resetFieldNodeForm.ts",
+      "lineAtBaseline": 21,
+      "count": 1,
+      "before": "const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/getInactiveValuePath.ts",
+      "lineAtBaseline": 26,
+      "count": 1,
+      "before": "let path = '';"
+    }
+  ],
+  "kept": [
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 49,
+      "text": "const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;",
+      "reason": "진단 키의 없는 keyword/property 이름 자리"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityNumber.ts",
+      "line": 19,
+      "text": "while (index < source.length && source[index].trim() === '') index++;",
+      "reason": "trim 결과의 공백/빈 토큰 검사"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/scanEqualityTokens.ts",
+      "line": 19,
+      "text": "if (character.trim() === '') {",
+      "reason": "trim 결과의 공백/빈 토큰 검사"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityString.ts",
+      "line": 29,
+      "text": "let value = '';",
+      "reason": "파싱할 문자열 값의 초기 누산기"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/utils/substituteDependencyPaths.ts",
+      "line": 23,
+      "text": ".replace(TRAILING_SEMICOLON, '');",
+      "reason": "뒤 세미콜론 삭제의 빈 치환 문자열"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 111,
+      "text": "name: readFormattedPointerSegment(path, -1) ?? '',",
+      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/bindGateHostPath.ts",
+      "line": 22,
+      "text": "? ''",
+      "reason": "기존 occurrencePath에 붙이는 비어 있는 상대 접미사"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/runDeriveRounds.ts",
+      "line": 77,
+      "text": "failure.targetPath ?? '',",
+      "reason": "없는 targetPath를 진단 중복 키에서 표시하는 빈 자리; 루트 주소로 해석하지 않음"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 181,
+      "text": ": appendSegment(declaration.path, rule.targetName ?? '');",
+      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분"
+    },
+    {
+      "file": "src/core/engine/behaviors/utils/options/isOmittedEmpty.ts",
+      "line": 33,
+      "text": "if (value === '') return true;",
+      "reason": "사용자 값의 빈 문자열 판정"
+    },
+    {
+      "file": "src/core/engine/behaviors/utils/slots/projectEmpty.ts",
+      "line": 10,
+      "text": "local === '' ||",
+      "reason": "사용자 값의 빈 문자열 판정"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 135,
+      "text": "const segment = readPointerSegment(current, -1) ?? '';",
+      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts",
+      "line": 58,
+      "text": "const pending = [{ node: root, prefix: '' }];",
+      "reason": "십진 radix의 숫자 문자열 접두 누산기이며 JSON Pointer가 아님"
+    },
+    {
+      "file": "src/core/surface/utils/fieldNodeFactory.ts",
+      "line": 86,
+      "text": "const name = 'node' in entry ? entry.name : '';",
+      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분"
+    },
+    {
+      "file": "src/core/surface/utils/fieldNodeFactory.ts",
+      "line": 155,
+      "text": "diagnostic.details.keyword ?? diagnostic.details.propertyName ?? '',",
+      "reason": "진단 키의 없는 keyword/property 이름 자리"
+    }
+  ]
+}

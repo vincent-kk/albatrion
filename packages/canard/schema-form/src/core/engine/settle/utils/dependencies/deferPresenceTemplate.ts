@@ -54,9 +54,9 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
   if (
     deepest !== null &&
     deepest !== origin &&
-    !(origin === '' || isDescendantPath(deepest, origin))
+    !(origin === $.Root || isDescendantPath(deepest, origin))
   )
     entry.deepest =
-      deepest === '' || isDescendantPath(origin, deepest) ? origin : null;
+      deepest === $.Root || isDescendantPath(origin, deepest) ? origin : null;
   return false;
 };

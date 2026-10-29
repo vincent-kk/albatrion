@@ -445,7 +445,7 @@ class GateRegistry {
     by: 1 | -1,
   ): void {
     for (const watched of occurrence.watchPaths) {
-      if (watched === '') {
+      if (watched === $.Root) {
         index.root += by;
         continue;
       }
@@ -501,7 +501,7 @@ class GateRegistry {
     if (changedRaw.size === 0) return false;
     for (const watched of occurrence.watchPaths) {
       if (
-        watched === '' ||
+        watched === $.Root ||
         changedRaw.has(watched) ||
         changedAncestors.has(watched)
       )

@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
@@ -83,14 +85,14 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       const record = dedupeWarningRecord(
         (next.warningKeys ??= new Set()),
         code,
-        '',
-        '',
+        $.Root,
+        $.Root,
         () => 'Form reset rebuilt the schema by reference',
         { details: { schemaPaths: paths } },
       );
       if (record) {
         (next.pendingWarningRecords ??= new Map()).set(
-          JSON.stringify([code, '']),
+          JSON.stringify([code, $.Root]),
           record,
         );
         next.chainOccurrences?.push({ kind: 'record', record });

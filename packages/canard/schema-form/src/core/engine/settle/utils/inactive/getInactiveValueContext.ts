@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { InactiveValueContext } from '../../../types/controls';
 import type { SettlementContext } from '../../types/settlement';
@@ -20,7 +22,7 @@ export const getInactiveValueContext = <Self extends FieldNodeRecord<Self>>(
     ? readPathOrigins(context)
     : undefined;
   const path = origins?.get(node) ?? node.path;
-  const parentPath = parent ? (origins?.get(parent) ?? parent.path) : '';
+  const parentPath = parent ? (origins?.get(parent) ?? parent.path) : $.Root;
   return {
     dataPath: path,
     schemaPath: node.blueprintNode.schemaPath,
