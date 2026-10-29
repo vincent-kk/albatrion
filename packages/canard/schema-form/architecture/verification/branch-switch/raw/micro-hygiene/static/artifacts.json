@@ -1,0 +1,87 @@
+{
+  "productCommit": "082c3995a",
+  "baselineCommit": "1c3655a10",
+  "node": "26.12.1",
+  "bun": "1.4.4",
+  "projects": [
+    {
+      "project": "unit",
+      "files": 601,
+      "cases": 3975,
+      "todo": 1,
+      "seconds": 98.69,
+      "exit": 0
+    },
+    {
+      "project": "render",
+      "files": 132,
+      "cases": 768,
+      "todo": 0,
+      "seconds": 61.36,
+      "exit": 0
+    },
+    {
+      "project": "storybook",
+      "files": 100,
+      "cases": 251,
+      "todo": 0,
+      "seconds": 35.63,
+      "exit": 0
+    },
+    {
+      "project": "react18",
+      "files": 132,
+      "cases": 768,
+      "todo": 0,
+      "seconds": 61.54,
+      "exit": 0
+    },
+    {
+      "project": "production",
+      "files": 10,
+      "cases": 21,
+      "todo": 0,
+      "seconds": 3.07,
+      "exit": 0
+    },
+    {
+      "project": "verify",
+      "files": 738,
+      "cases": 4787,
+      "todo": 1,
+      "seconds": 173.42,
+      "exit": 0
+    }
+  ],
+  "products": {
+    "index.mjs": {
+      "bytes": 861528,
+      "sha256": "e847e0cddb144a388ef4bb81dd2ce77b11f6de4be61b7fa113ebc718dd349797"
+    },
+    "index.node.mjs": {
+      "bytes": 860750,
+      "sha256": "e8238657609c0bc6868164633fc4d04340936379e035b0e5e2120beef93ce5a4"
+    },
+    "index.cjs": {
+      "bytes": 882316,
+      "sha256": "cf8a2e4aa8ad8215f084eab571c4efb724801767be45d2dbc7aa0dc1500b4b0f"
+    },
+    "index.d.ts": {
+      "bytes": 3129,
+      "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+    }
+  },
+  "delivery": {
+    "scenes": 79,
+    "phases": 429,
+    "extensionScenes": 7,
+    "extensionPhases": 21,
+    "differences": 0
+  },
+  "isolation": {
+    "files": 2375,
+    "passed": true
+  },
+  "fcaFindings": 202,
+  "fcaVerdict": "FAIL; analysis indeterminate; threshold satisfied"
+}

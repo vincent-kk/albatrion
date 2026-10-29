@@ -225,12 +225,27 @@
 
 실제 공통 유틸리티 선언을 import한 TypeScript 제네릭 동등 증명 **7개·진단 0**으로 Dictionary/Nullable/Optional/중첩/Nullish 및 함수·중첩 Ref 모양을 검증했습니다. Nullable이라는 기존 boolean 제네릭 매개변수와 겹친 surface 파일은 `NullableValue` import alias를 사용합니다. [형 증명 결과](raw/micro-hygiene/utility-equivalence.json)와 [타입 제거 결과](raw/micro-hygiene/type-erasure.json)에서 수정한 **259개 제품 파일의 transpile JavaScript 바이트가 항목 5와 모두 동일**합니다. 한 파일의 기존 import 순서·괄호는 보존하여 형 정리의 런타임 변경을 막았습니다.
 
-공개 97이름 스냅숏에서 네 함수의 null union 표기만 Nullable 표기로 바뀌었습니다: registerPlugin, useFieldNodeSubscribe, useFieldNodeTracker, useFormSubmit. 같은 제네릭 동등 증명으로 확인한 뒤 그 네 문자열만 정확히 갱신했으며, 이름 수·형/값 종류·검사 강도·사례 수는 유지했습니다. 초기 시험은 이 네 표기 때문에 실패했고 수정 뒤 공개/수입/표면 형/할당 시험 **4파일·15건**, typecheck·lint를 통과했습니다. 공개 `index.d.ts`의 실제 diff와 최종 의미 동등 검사는 최종 build 뒤 아래에 기록합니다.
+공개 97이름 스냅숏에서 네 함수의 null union 표기만 Nullable 표기로 바뀌었습니다: registerPlugin, useFieldNodeSubscribe, useFieldNodeTracker, useFormSubmit. 같은 제네릭 동등 증명으로 확인한 뒤 그 네 문자열만 정확히 갱신했으며, 이름 수·형/값 종류·검사 강도·사례 수는 유지했습니다. 초기 시험은 이 네 표기 때문에 실패했고 수정 뒤 공개/수입/표면 형/할당 시험 **4파일·15건**, typecheck·lint를 통과했습니다. 최종 build의 공개 `index.d.ts`는 **3,129바이트·차이 0**, SHA-256 `ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d`입니다. 그 파일이 재수출하는 선언 그래프 전체 **1,306파일**을 비교했습니다. **194파일**의 바이트가 달라졌으나 증명한 네 기본 유틸리티와 그 중첩 조합의 named/inline import를 원래 형으로 펼치고 union의 괄호·순서와 import/주석 표기를 정규화한 AST 차이는 **0**입니다. 원래 제네릭 매개변수·modifier·조건부 형·멤버·함수 시그니처는 그대로 비교했습니다. [선언 동등 결과](raw/micro-hygiene/declaration-equivalence.json)와 [194파일의 A/B 선언 원시](raw/micro-hygiene/declaration-diff.json.gz), [제네릭 증명](raw/micro-hygiene/utility-equivalence.ts)을 보존합니다.
 
 ## 최종 정적 관문
 
-미실행입니다.
+최종 제품 머리는 `082c3995a`이며 Node 26.12.1·Bun 1.4.4입니다. 지정 build와 artifact checks·typecheck·lint, 다음 다섯 프로젝트를 각각 종료 0 확인 후 순차 실행하고 verify를 통과했습니다. 이전 머리의 unit 실패 3건과 교정 후 표적 증거도 보존했습니다. 8 GiB·maxWorkers 4를 사용했고 기존 todo 한 건은 유지했습니다.
+
+| 프로젝트 | 파일 | 통과 사례 | todo | 초 |
+| --- | ---: | ---: | ---: | ---: |
+| unit | 601 | 3975 | 1 | 98.69 |
+| render | 132 | 768 | 0 | 61.36 |
+| storybook | 100 | 251 | 0 | 35.63 |
+| react18 | 132 | 768 | 0 | 61.54 |
+| production | 10 | 21 | 0 | 3.07 |
+| verify | 738 | 4787 | 1 | 173.42 |
+
+레거시 격리 **2,375파일**, 배달 **79장면·429단계 + B12 7장면·21단계 차이 0**입니다. 공개 index.d.ts와 전체 선언 그래프의 동등 기록은 항목 6에 있습니다. [정적 로그·제품 해시](raw/micro-hygiene/static/artifacts.json)를 보존했습니다. build 산출물은 기존처럼 비추적 파일이며 소스 커밋에 넣지 않았습니다.
+
+FCA facts **1,663/1,663 exact**, 세 검사 동일 snapshot `c517ae013f9e50b5e4a0229c06566bc90865f3bd285cadc859b78a9b68f7862a`, full validation **202건(오류 1·경고 200·정보 1)**으로 상한을 유지했습니다. 기존 cycle·문서 findings에 따른 전체 판정 FAIL과 분석 indeterminate는 보존하며, 상한 통과를 FCA 전체 통과로 표현하지 않습니다. [FCA 전체 원시와 요약](raw/micro-hygiene/fca/summary.json)을 보존했습니다.
+
+기준 archive의 첫 build는 package-local 의존 연결이 없어 AJV 6을 읽었습니다. 설치 없이 기존 workspace node_modules를 연결한 뒤 통과했고, 기준과 후보의 최종 build는 같은 Node 26으로 맞췄습니다. 추가 의존 설치나 제품 범위 밖 수정은 없습니다.
 
 ## 측정 장치와 창
 
-미실행입니다. `tools/iv-2/window.mjs` 계열의 공개 행과 힙 장치를 재사용하며, Ⅳ-1의 `summarize.mjs`·`weightedExchange.mjs`·`judgeStage.mjs` 판정은 유지합니다. Ⅳ-2 전용 할당·exit self·cold 지연 생성 추가항은 이 정리에 해당하지 않으므로 별도 어댑터에서 제외할 예정입니다. 최종 판정은 미시 위생 계획에 따라 모든 행의 폭 밖 퇴보 0과 가중 교환비 ≤ 0이며, 교환비 0도 허용합니다.
+미실행입니다. `tools/iv-2/window.mjs` 계열의 공개 행과 힙 장치를 재사용하며, Ⅳ-1의 `summarize.mjs`·`weightedExchange.mjs`·`judgeStage.mjs` 판정은 유지합니다. Ⅳ-2 전용 할당·exit self·cold 지연 생성 추가항은 이 정리에 해당하지 않으므로 별도 어댑터에서 제외했습니다. 최종 판정은 미시 위생 계획에 따라 모든 행의 폭 밖 퇴보 0과 가중 교환비 ≤ 0이며, 교환비 0도 허용합니다.
