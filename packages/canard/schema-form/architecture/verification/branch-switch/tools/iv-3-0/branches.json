@@ -1,7 +1,7 @@
 {
   "notes": [
     "Hand-authored from design-iv.md and candidate-1 coordinator decisions; exact names only, unmapped frames remain OTHER.",
-    "A primary sum is the constructor, cloneSlotSubtree recursion (including overlay Map copying in the same self frame, counted once) and getRetainedChildEntry search. A extended sum additionally includes createFieldNode and getSlotChildIndex.",
+    "A primary sum is the constructor, cloneSlotSubtree recursion (including overlay Map copying in the same self frame, counted once) and getRetainedChildEntry search. A extended sum additionally includes createFieldNode and getSlotChildIndex. getSlotChildIndex also serves four slot-ordering/pruning callers, so the extended sum can exceed the A-removable share.",
     "B decision sum omits unmapped helper self time and the three non-replaceable gate-evaluation functions; it is not an upper bound.",
     "V8 attribution retains inlined JavaScript frame names in the independent probe; Map builtin work is charged to its calling JavaScript self frame in that probe.",
     "Removed eight absent names: nodeFactory, finalizePendingExitLoop, finalizeRetainLoop, finalizeAncestorCollection, finalizeAncestorOutput, publishChildren, prepareChildSelection, removeNode"
@@ -153,6 +153,7 @@
     "startFieldNodeChain": "Opens the runtime write chain; fixed write cost C.",
     "flushQueuedEvents": "Flushes queued event delivery after the write chain; fixed delivery cost C.",
     "publishStateKeys": "Publishes settlement state keys for all writes; settlement fixed cost C.",
-    "transitionSettlement": "Runs transition rounds for entered nodes and gates; switch machinery B, not the fixed write floor."
+    "transitionSettlement": "Runs transition rounds for entered nodes and gates; switch machinery B, not the fixed write floor.",
+    "getSlotChildIndex": "Slot child-order lookup used by getRetainedChildEntry and by slot ordering/pruning; node lifetime A, over-approximates the A-removable share."
   }
 }

@@ -169,6 +169,11 @@ export function attributeSamples(profile, wall, mapping, bundle, plainWall) {
     top40: table.slice(0, 40),
     groups,
     decisions,
+    nonReplaceableGateEvaluationUs: table
+      .filter((entry) =>
+        mapping.nonReplaceableGateEvaluation.names.includes(entry.name),
+      )
+      .reduce((sum, entry) => sum + entry.selfUsPerSwitch, 0),
     decisionAExtendedUs: table
       .filter((entry) => mapping.decisionAExtended.includes(entry.name))
       .reduce((sum, entry) => sum + entry.selfUsPerSwitch, 0),

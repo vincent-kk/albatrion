@@ -168,6 +168,16 @@ assert.match(report, /self\/평균/);
 assert.match(report, /수집\/plain/);
 assert.match(report, /unknown \(OTHER/);
 assert.match(report, /보조 함수를 뺀 합/);
+const reportLines = report.split('\n');
+for (let index = 1; index < reportLines.length; index++)
+  if (/^\| ---:? /.test(reportLines[index]))
+    assert.equal(
+      reportLines[index].split('|').length,
+      reportLines[index - 1].split('|').length,
+      'Markdown table columns match',
+    );
+assert.equal(summary.nonReplaceableGateEvaluationUs, 0);
+assert.match(report, /표본 \d+개/);
 const wrongCount = structuredClone(wall);
 wrongCount.switches++;
 assert.throws(() => attributeSamples(profile, wrongCount, mapping, ''));

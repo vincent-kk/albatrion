@@ -29,7 +29,7 @@ export function renderReport(inputs, outcome, tables) {
     '## 교차 확인',
     '',
     '| 행 / 요청 간격 µs | 수집 벽시계 평균 µs | 중앙값 µs | self µs | self/평균 | self/중앙값 | ±15% | nominal self µs | program·idle 가중 % |',
-    '| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | ---: | ---: |',
+    '| --- | ---: | ---: | ---: | ---: | ---: | --- | ---: | ---: |',
   ];
   for (const table of tables)
     lines.push(
@@ -68,12 +68,12 @@ export function renderReport(inputs, outcome, tables) {
       );
     lines.push(
       '',
-      '| 함수 (번들 줄, 원본 모듈) | 갈래 | self µs/동작 | % |',
-      '| --- | --- | ---: | ---: |',
+      '| 함수 (번들 줄, 원본 모듈) | 갈래 | self µs/동작 | % | 표본 |',
+      '| --- | --- | ---: | ---: | ---: |',
     );
     for (const entry of table.top40)
       lines.push(
-        `| ${entry.name.replaceAll('|', '\\|')} (${entry.line}, ${entry.source || entry.url || 'V8'}) | ${entry.group} | ${entry.selfUsPerSwitch.toFixed(3)} | ${entry.percent.toFixed(2)} |`,
+        `| ${entry.name.replaceAll('|', '\\|')} (${entry.line}, ${entry.source || entry.url || 'V8'}) | ${entry.group} | ${entry.selfUsPerSwitch.toFixed(3)} | ${entry.percent.toFixed(2)} | ${entry.samples} |`,
       );
     lines.push(
       '',
@@ -104,20 +104,11 @@ export function renderReport(inputs, outcome, tables) {
     );
     if (table && group === 'A')
       lines.push(
-        `  A 확장 합(createFieldNode·getSlotChildIndex 포함)은 ${table.decisionAExtendedUs.toFixed(3)} µs이며 주 판정을 대체하지 않습니다.`,
+        `  A 확장 합(createFieldNode·getSlotChildIndex 포함)은 ${table.decisionAExtendedUs.toFixed(3)} µs이며 주 판정을 대체하지 않습니다. getSlotChildIndex는 슬롯 순서·정리 함수 네 곳에서도 불리므로 이 확장 합은 A가 없애는 몫보다 클 수 있습니다.`,
       );
     if (table)
       lines.push(
-        `  게이트 평가(서술자 열쇠 계산, B 결정 합 제외)는 ${table.table
-          .filter((entry) =>
-            [
-              'evaluateGate',
-              'evaluateGateValue',
-              'readGateSelectionGroup',
-            ].includes(entry.name),
-          )
-          .reduce((sum, entry) => sum + entry.selfUsPerSwitch, 0)
-          .toFixed(3)} µs입니다.`,
+        `  게이트 평가(서술자 열쇠 계산, B 결정 합 제외)는 ${table.nonReplaceableGateEvaluationUs.toFixed(3)} µs입니다.`,
       );
   }
   const oneOf = tables
@@ -147,7 +138,7 @@ export function renderReport(inputs, outcome, tables) {
       ...flat.table.filter((entry) => entry.group === 'OTHER').slice(0, 5),
     ])
       lines.push(
-        `- ${entry.name} (${entry.group}, ${entry.url}:${entry.line}): ${entry.selfUsPerSwitch.toFixed(3)} µs/잎 쓰기.`,
+        `- ${entry.name} (${entry.group}, ${entry.url}:${entry.line}): ${entry.selfUsPerSwitch.toFixed(3)} µs/잎 쓰기, 표본 ${entry.samples}개.`,
       );
   else lines.push('미관측입니다.');
   lines.push(

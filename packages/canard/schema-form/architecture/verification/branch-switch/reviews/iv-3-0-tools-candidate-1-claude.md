@@ -1,6 +1,6 @@
 # Ⅳ-3-0 프로파일 도구 독립 검토 판정
 
-검토 범위는 `510962d63..30f901de6`(커밋 `30f901de6`, 16개 파일)입니다. 아래에서 `tools/iv-3-0/`는 `packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-3-0/`를, `src/`는 `packages/canard/schema-form/src/`를, 번들은 작업 트리의 `packages/canard/schema-form/dist/index.node.mjs`를 뜻합니다. 작업 트리의 파일은 하나도 수정하지 않았습니다. 정식 프로파일, build, 시험은 돌리지 않았고, 정적 읽기와 `node --check`, 새 파일에 한정한 Prettier·ESLint·`checkJs`, 그리고 스크래치 디렉터리에서 1초 안팎의 합성 탐침만 실행했습니다.
+검토 범위는 `510962d63..30f901de6`(커밋 `30f901de6`, 16개 파일)입니다. 아래에서 `tools/iv-3-0/`는 `packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-3-0/`를, `src/`는 `packages/canard/schema-form/src/`를, 번들은 작업 트리의 `packages/canard/schema-form/dist/index.node.mjs`를 뜻합니다. 작업 트리의 파일은 하나도 수정하지 않았습니다. 정식 프로파일, build, 시험은 돌리지 않았고, 정적 읽기와 `node --check`, 새 파일에 한정한 Prettier·ESLint·`checkJs`, 그리고 스크래치 디렉터리에서 1초 안팎의 합성 탐침만 실행했습니다. 저장소 사본은 기계 경로 세 곳을 자리표시자로 바꾸고 Prettier로 표를 정렬한 것 외에는 원본과 같습니다.
 
 ## 판정
 
