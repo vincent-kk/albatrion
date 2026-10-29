@@ -13,6 +13,29 @@
 - `resolvePointer.ts`의 `segment === ''`는 빈 이름이고 루트 토큰과 다른 문법 역할이므로 유지합니다.
 - 엔진 식 토크나이저의 `.` 및 오류 코드에서 namespace를 자르는 `.`는 포인터가 아닙니다. 템플릿 문자열에 든 스키마 키워드·주소 예제·진단 문장은 보존합니다.
 
+후보 2 재검토 P3-C에서 확인한 **엔진 경로 키·dirty 집합·경로 색인 루트의 빈 문자열 약 30곳은 후속 정리(소유자 결정)**로 유지합니다. 앞의 총 116개는 실제 치환 수이며 엔진의 모든 루트 표기 완료를 뜻하지 않습니다. 판정이 열거한 위치는 다음과 같습니다(이 후속 과제에서 코드는 바꾸지 않았습니다).
+
+| 엔진 내부 위치 | 판정이 지목한 줄 |
+| --- | --- |
+| `settle/utils/transition/restoreSourceB.ts` | 37–38 |
+| `settle/utils/dependencies/deferPresenceTemplate.ts` | 57, 60 |
+| `settle/utils/dependencies/flushPresenceTemplates.ts` | 47(두 곳) |
+| `settle/utils/dependencies/registerPresenceChanges.ts` | 105 |
+| `settle/utils/gates/getGateRegistry.ts` | 448, 504 |
+| `settle/utils/gates/flushPendingGateReads.ts` | 99 |
+| `settle/utils/loadValues/alignArraySnapshotSlots.ts` | 85, 87 |
+| `settle/utils/scratch/DirtyPathSet.ts` | 154, 181, 243, 272 |
+| `settle/utils/inactive/getInactiveValuePath.ts` | 26 |
+| `settle/utils/inactive/getInactiveValueContext.ts` | 23 |
+| `settle/loadFieldNodeAtMount/loadFieldNodeAtMount.ts` | 21 |
+| `settle/utils/reset/resetFieldNodeForm.ts` | 21 |
+| `utils/pathIndex/utils/PathStoreIndex.ts` | 142 |
+| `utils/pathIndex/utils/utils/NumericPathIndex.ts` | 58 |
+| `navigation/utils/query/findNodes.ts` | 18 |
+| `surface/utils/fieldNodeFactory.ts`(core 내부) | 90 |
+
+줄 번호는 재검토 후보 기준입니다. 빈 이름·값·문자열 연결의 빈 문자열과 구분하여 소유자가 변경 범위를 결정합니다.
+
 독립 검토 P3-1에서 엔진 7파일의 루트 리터럴 9개를 추가로 상수화했습니다(두 루트 비교와 blueprint의 두 루트 인수를 포함). 최초 107개와 합쳐 총 **116개**이며, 빈 이름 세그먼트는 계속 별도 문법으로 유지합니다.
 
 첫 표적 시험은 workspace `@winglet/json` dist 부재로 7파일 적재가 실패했습니다. 설치 없이 지정된 common-utils와 json build로 준비했고, 수정 전후 동일한 포인터 시험 **8파일·96건**, 수정 뒤 패키지 typecheck·lint를 통과했습니다. lint의 첫 실행도 미준비 json-schema·react-utils dist 때문에 실패했으며 지정 build 뒤 통과했습니다. 상수의 literal 형으로 좁아진 조립 변수는 `string` 주석으로 원래 형을 유지합니다.
