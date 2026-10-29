@@ -4,6 +4,9 @@ import { JSONPointer as $ } from '../constants/JSONPointer';
 import type { PointerSegment } from '../constants/PointerOperator';
 import { parsePointerSegment } from './parsePointerSegment';
 
+/** Encoded fragment-root prefix shared by every call in this module. */
+const FRAGMENT_PREFIX = $.Fragment + $.Separator;
+
 const EMPTY_SEGMENTS: readonly PointerSegment[] = Object.freeze([]);
 
 /**
@@ -28,7 +31,7 @@ export const parsePointerSegments = (
     }
     return segments ?? pointer;
   }
-  const offset = pointer.startsWith($.Fragment + $.Separator)
+  const offset = pointer.startsWith(FRAGMENT_PREFIX)
     ? 2
     : pointer[0] === $.Separator
       ? 1

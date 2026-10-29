@@ -4,6 +4,9 @@ import type { Optional } from '@aileron/declare';
 
 import { JSONPointer as $ } from '../constants/JSONPointer';
 
+/** Encoded fragment-root prefix shared by every call in this module. */
+const FRAGMENT_PREFIX = $.Fragment + $.Separator;
+
 /**
  * Read one encoded segment without constructing a split array.
  * @param path - Canonical address, with an optional `/` or `#/` prefix.
@@ -15,7 +18,7 @@ export const readFormattedPointerSegment = (
   index: number,
 ): Optional<string> => {
   if (path === $.Root || path === $.Fragment) return undefined;
-  const offset = path.startsWith($.Fragment + $.Separator)
+  const offset = path.startsWith(FRAGMENT_PREFIX)
     ? 2
     : path[0] === $.Separator
       ? 1
