@@ -1,0 +1,16 @@
+{
+  "originalComparator": "One reachable file-level difference retained in declaration-equivalence.json; not reported as zero",
+  "file": "helpers/jsonPointer/constants/JSONPointer.d.ts",
+  "exactAddedInternalDeclaration": "export declare const FragmentPrefix: \"#/\";",
+  "existingJSONPointerNormalizedUnchanged": true,
+  "noOtherDeclarationReferences": true,
+  "noWildcardOrNamespaceReexports": true,
+  "importingFiles": [
+    "helpers/jsonPointer/index.d.ts"
+  ],
+  "publicIndexBytes": 3129,
+  "publicIndexBytesIdentical": true,
+  "packageExportsIdentical": true,
+  "publicContractUnchanged": true,
+  "rawChangedFiles": 199
+}

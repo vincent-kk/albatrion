@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { stripFragment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
@@ -15,7 +17,7 @@ import { isValidator } from './isValidator';
 export const readFieldNodeGuard = (
   runtime: { blueprint: Blueprint; validator?: unknown },
   gate: BlueprintGate,
-): GuardFunction | undefined => {
+): Optional<GuardFunction> => {
   const validator = runtime.validator;
   if (!isValidator(validator)) return undefined;
   const root = runtime.blueprint.schema;

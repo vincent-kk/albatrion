@@ -1,7 +1,9 @@
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import type { EqualityLiteralRead } from './types';
 
 /** Allowed single-character escapes; unknown identity escapes are rejected. */
-const SIMPLE_ESCAPES: Readonly<Record<string, string>> = {
+const SIMPLE_ESCAPES: Readonly<Dictionary<string>> = {
   '\\': '\\',
   "'": "'",
   '"': '"',
@@ -22,7 +24,7 @@ const SIMPLE_ESCAPES: Readonly<Record<string, string>> = {
 export const readEqualityString = (
   source: string,
   start: number,
-): EqualityLiteralRead | undefined => {
+): Optional<EqualityLiteralRead> => {
   const quote = source[start];
   let value = '';
   let index = start + 1;

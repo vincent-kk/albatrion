@@ -1,3 +1,5 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import { getBlueprintDerived } from '../../../../utils/cache/derivedRecords';
 import { collectIfGateReadNames } from './collectIfGateReadNames';
 
@@ -13,13 +15,13 @@ const EMPTY_NAMES: readonly string[] = Object.freeze([]);
 export const getIfGateReadNames = (
   condition: unknown,
   blueprint?: object,
-): readonly string[] | undefined => {
+): Optional<readonly string[]> => {
   if (typeof condition === 'boolean') return EMPTY_NAMES;
   if (!condition || typeof condition !== 'object') return undefined;
   const record = blueprint
     ? getBlueprintDerived<
         'ifGateReadNames',
-        Map<object, readonly string[] | null>
+        Map<object, Nullable<readonly string[]>>
       >(blueprint)
     : undefined;
   const memo = record ? (record.ifGateReadNames ??= new Map()) : undefined;

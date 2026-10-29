@@ -17,8 +17,8 @@ export const watchGateSelectionDirty = <Self extends FieldNodeRecord<Self>>(
     for (const round of context.gateSelectionRounds?.values() ?? [])
       if (round.active)
         verifyGateSelection(
-          !round.watchedPaths.includes(path) ||
-            round.stableSchemaPaths.includes(path),
+          round.watchedPaths.indexOf(path) === -1 ||
+            round.stableSchemaPaths.indexOf(path) !== -1,
           'S2 watched path became dirty: ' + path,
         );
     return add.call(this, path);

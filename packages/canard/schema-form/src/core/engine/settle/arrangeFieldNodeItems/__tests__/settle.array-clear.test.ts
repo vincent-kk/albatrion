@@ -244,7 +244,7 @@ describe('host-prefix path-store cleanup against per-position prune and re-key',
     const candidate = populate(latentOnly);
     const oracle = populate(latentOnly);
     const live = oldCount === 1 ? new Set(['/list/0']) : candidate.live;
-    clearArrayRuntimePaths(candidate.runtime, '/list', oldCount, live);
+    clearArrayRuntimePaths(candidate.runtime, '/list', oldCount);
     prunePerishedPaths(oracle.runtime, live);
     rekeyArrayRuntimePaths(
       oracle.runtime,

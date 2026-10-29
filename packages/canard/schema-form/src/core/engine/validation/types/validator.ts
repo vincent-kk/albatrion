@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { BlueprintSchema } from '../../blueprint';
 import type { ValidationIssue } from './issue';
 
@@ -15,10 +17,9 @@ export type GuardFunction = (value: unknown) => boolean;
  */
 export type ValidateFunction<Value = unknown> = (
   data: Value,
-) =>
-  | Promise<readonly ValidationIssue[] | null>
-  | readonly ValidationIssue[]
-  | null;
+) => Nullable<
+  Promise<Nullable<readonly ValidationIssue[]>> | readonly ValidationIssue[]
+>;
 
 /**
  * Compiles validation and synchronous guards for one engine-owned schema copy.

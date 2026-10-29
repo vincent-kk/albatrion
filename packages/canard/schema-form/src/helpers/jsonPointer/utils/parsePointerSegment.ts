@@ -1,5 +1,6 @@
 import { unescapeSegment } from '@winglet/json/pointer-escape';
 
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import {
   PointerOperator,
   type PointerSegment,
@@ -12,23 +13,23 @@ import {
  */
 export const parsePointerSegment = (token: string): PointerSegment => {
   switch (token) {
-    case '*':
+    case $.Wildcard:
       return PointerOperator.Wildcard;
-    case '..':
+    case $.Parent:
       return PointerOperator.Parent;
-    case '.':
+    case $.Current:
       return PointerOperator.Current;
-    case '@':
+    case $.Context:
       return PointerOperator.Context;
     case '%2A':
-      return '*';
+      return $.Wildcard;
     case '%2E%2E':
-      return '..';
+      return $.Parent;
     case '%2E':
-      return '.';
+      return $.Current;
     case '%40':
-      return '@';
+      return $.Context;
     default:
-      return token.includes('~') ? unescapeSegment(token) : token;
+      return token.indexOf('~') !== -1 ? unescapeSegment(token) : token;
   }
 };

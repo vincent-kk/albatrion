@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../blueprint';
@@ -28,11 +30,11 @@ import { readSlotValueEntry } from './readSlotValueEntry';
  */
 export const collectSlotSourceValues = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
-  source: Self | undefined,
-  overlay: InactiveSlotOverlay | undefined,
+  source: Optional<Self>,
+  overlay: Optional<InactiveSlotOverlay>,
   path: string,
   order: readonly number[],
-  live: Self | undefined,
+  live: Optional<Self>,
   values: InactiveSlotCandidate[],
   patchOnly = false,
 ): void => {

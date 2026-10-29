@@ -2,6 +2,8 @@
 
 ## Requirements
 
+fragment-root 접두사는 constants 구획의 단일 `FragmentPrefix` 상수로 만들고 내부 파서들이 공유합니다. 기존 JSONPointer 객체의 키·값과 공개 진입점은 늘리지 않으며, 동일한 접두 비교를 호출마다 다시 조립하지 않습니다.
+
 경로 문자열 해석과 조립의 정본은 이 fractal입니다. 제품 소비처는 경로를 직접 분할·결합하거나 tilde escape를 풀거나 문자열 연산자를 비교하지 않습니다. `JSONPointer`의 공개 상수 값은 유지합니다.
 
 ## API Contracts
@@ -60,4 +62,4 @@
 
 ## Last Updated
 
-2026-10-28
+2026-10-30

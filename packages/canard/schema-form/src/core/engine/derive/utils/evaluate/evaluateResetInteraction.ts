@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -35,9 +37,9 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
   const resetNodes = new Set<Self>();
   const trace: DeriveTraceEntry[] = [];
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
-  let failures:
-    | DeriveResetInteractionDecision<Self>['failures'][number][]
-    | undefined;
+  let failures: Optional<
+    DeriveResetInteractionDecision<Self>['failures'][number][]
+  >;
   while (pending.length) {
     const node = pending.pop();
     if (!node || node.detached) continue;

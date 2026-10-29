@@ -1,4 +1,7 @@
-import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FormErrorRecord } from '../../../../errors';
 import type { FieldNodeRuntime } from '../types/runtime';
@@ -41,6 +44,6 @@ export const indexFieldNodeWarning = <Self>(
       keys.add(key);
     }
     if (!ancestor) break;
-    ancestor = resolvePointer(ancestor, '..');
+    ancestor = resolvePointer(ancestor, $.Parent);
   }
 };

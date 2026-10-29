@@ -1,4 +1,9 @@
-import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
@@ -73,7 +78,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           else if (kind === 'split')
             (context.splitMarks ??= new Map()).set(path, epoch);
           context.shapeDirtyPaths.add(
-            kind === 'host' ? path : resolvePointer(path, '..'),
+            kind === 'host' ? path : resolvePointer(path, $.Parent),
           );
         },
       });
@@ -85,7 +90,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       )) {
         context.dirtyPaths.add(declarationPath);
         context.dependencyOwnerPaths.add(declarationPath);
-        context.shapeDirtyPaths.add(resolvePointer(declarationPath, '..'));
+        context.shapeDirtyPaths.add(resolvePointer(declarationPath, $.Parent));
       }
   }
   const expanded = new Set<string>();
@@ -93,7 +98,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     let ancestor = path;
     while (ancestor && !expanded.has(ancestor)) {
       expanded.add(ancestor);
-      ancestor = resolvePointer(ancestor, '..');
+      ancestor = resolvePointer(ancestor, $.Parent);
       context.dirtyPaths.add(ancestor);
     }
   }
@@ -101,7 +106,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     const changedAncestors = new Set<string>();
     for (const changed of context.changedRaw)
       for (let prefix = changed; prefix; ) {
-        prefix = resolvePointer(prefix, '..');
+        prefix = resolvePointer(prefix, $.Parent);
         if (changedAncestors.has(prefix)) break;
         changedAncestors.add(prefix);
       }
@@ -117,16 +122,29 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           changedAncestors,
         )
       )
-        context.shapeDirtyPaths.add(resolvePointer(path, '..'));
+        context.shapeDirtyPaths.add(resolvePointer(path, $.Parent));
     }
   }
+
   if (shadow) {
     shadow.registering = false;
-    verifyGateSelection(
-      context.shapeDirtyPaths.size === shadow.shape.size &&
-        [...shadow.shape].every((path) => context.shapeDirtyPaths.has(path)),
-      'S3 shape dirty differs after registration',
-    );
+    let matches = context.shapeDirtyPaths.size === shadow.shape.size;
+    if (matches) {
+      const shadowShapeEntries = [...shadow.shape];
+      for (
+        let index = 0, count = shadowShapeEntries.length;
+        index < count;
+        index++
+      ) {
+        const path = shadowShapeEntries[index];
+
+        if (!context.shapeDirtyPaths.has(path)) {
+          matches = false;
+          break;
+        }
+      }
+    }
+    verifyGateSelection(matches, 'S3 shape dirty differs after registration');
     for (const path of context.dirtyPaths)
       verifyGateSelection(
         shadow.dirty.has(path),
@@ -139,7 +157,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           !!owner && !!context.splitHitEpochs?.has(owner.bucket),
           'S3 removed a non-split owner: ' + path,
         );
-        let node: Self | undefined = context.root;
+        let node: Optional<Self> = context.root;
         for (const segment of dependencies.pathSegments(
           path,
           context.root.runtime,

@@ -1,7 +1,13 @@
-import { isDescendantPath, resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
-import type { FieldNodeRecord,MisfitRecord } from '../../../record';
+import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
@@ -17,7 +23,6 @@ import { isMisfit } from './isMisfit';
 import { markCommitDeliveries } from './markCommitDeliveries';
 import { receivedType } from './receivedType';
 import { readSettlementSource } from './utils/readSettlementSource';
-
 
 /** Shared frozen empty list for inactive and misfit projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
@@ -73,14 +78,17 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   refreshTargets.clear();
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
   for (const path of context.changedRaw) {
-    if (loadScope && (path === loadScope.path || isDescendantPath(path, loadScope.path)))
+    if (
+      loadScope &&
+      (path === loadScope.path || isDescendantPath(path, loadScope.path))
+    )
       continue;
     if (readSettlementSource(context, path, true) !== 'input')
       refreshTargets.add(path);
   }
   runtime.refreshTargets = refreshTargets;
-  let warnings: MisfitRecord[] | undefined;
-  let warningTasks: Map<Self, () => void> | undefined;
+  let warnings: Optional<MisfitRecord[]>;
+  let warningTasks: Optional<Map<Self, () => void>>;
   markCommitDeliveries(context, (node) => {
     if (!context.changedNodes.has(node) || node.detached) return;
     const schemaType = node.schemaType;
@@ -198,17 +206,17 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     built.size !== misfitsMemo.size
   ) {
     if (runtime.misfitPaths.size === 0) {
-      const empty = misfitsMemo.get('');
+      const empty = misfitsMemo.get($.Root);
       if (misfitsMemo.size === 1 && empty?.paths.length === 0)
         empty.commit = commit;
       else {
         misfitsMemo.clear();
-        misfitsMemo.set('', { commit, paths: EMPTY_PATHS });
+        misfitsMemo.set($.Root, { commit, paths: EMPTY_PATHS });
       }
     } else {
       misfitsMemo.clear();
       const allPaths = [...runtime.misfitPaths].sort();
-      misfitsMemo.set('', { commit, paths: Object.freeze(allPaths) });
+      misfitsMemo.set($.Root, { commit, paths: Object.freeze(allPaths) });
       const byAncestor = new Map<string, string[]>();
       for (let index = 0; index < allPaths.length; index++) {
         const path = allPaths[index];
@@ -220,7 +228,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
             byAncestor.set(ancestor, paths);
           }
           paths.push(path);
-          ancestor = resolvePointer(ancestor, '..');
+          ancestor = resolvePointer(ancestor, $.Parent);
         }
       }
       for (const [ancestor, paths] of byAncestor)

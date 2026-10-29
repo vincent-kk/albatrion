@@ -1,6 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { maxLite } from '@winglet/common-utils/math';
+
+import type { Dictionary } from '@aileron/declare';
 
 import {
+  JSONPointer as $,
   appendSegment,
   parsePointerSegment,
   resolvePointer,
@@ -19,7 +23,7 @@ import { publishPresenceOwner } from './publishPresenceOwner';
 import { registerProjectionChanges } from './registerProjectionChanges';
 
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
-const parentOf = (path: string): string => resolvePointer(path, '..');
+const parentOf = (path: string): string => resolvePointer(path, $.Parent);
 
 /**
  * Register child identity or projected emission changes in their existing host wheel.
@@ -30,7 +34,7 @@ const parentOf = (path: string): string => resolvePointer(path, '..');
  */
 export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   host: Self,
-  previous: Readonly<Record<string, Self>>,
+  previous: Readonly<Dictionary<Self>>,
   context: SettlementContext<Self>,
 ): boolean => {
   if (!context.hasGates) return false;
@@ -83,7 +87,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     );
     for (const owner of affected.owners) {
       owners.add(owner);
-      ownerStamps.set(owner, Math.max(ownerStamps.get(owner) ?? 0, stamp));
+      ownerStamps.set(owner, maxLite(ownerStamps.get(owner) ?? 0, stamp));
     }
     for (const owner of affected.stateOnly) stateOnly.add(owner);
     for (const template of affected.outerTemplates)
@@ -98,7 +102,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
 
   for (const owner of owners) {
     if (
-      (owner !== '' && parentOf(owner) === host.path) ||
+      (owner !== $.Root && parentOf(owner) === host.path) ||
       evaluatedPresenceAfter(owner, ownerStamps.get(owner)!, context)
     ) {
       publishPresenceOwner(owner, context);

@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getSlotPathEntry } from './getSlotPathEntry';
@@ -15,12 +17,12 @@ export const resolveSlotSource = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
   target: BlueprintNode,
-): { source: Self | undefined; overlay: InactiveSlotOverlay | undefined } => {
+): { source: Optional<Self>; overlay: Optional<InactiveSlotOverlay> } => {
   const names = getSlotPathNames(root.runtime, path);
   if (names === undefined) return { source: undefined, overlay: undefined };
   let template = root.blueprintNode;
-  let source: Self | undefined = root;
-  let overlay: InactiveSlotOverlay | undefined;
+  let source: Optional<Self> = root;
+  let overlay: Optional<InactiveSlotOverlay>;
   for (let depth = 0; depth < names.length; depth++) {
     const name = names[depth];
     const selected =
@@ -30,8 +32,8 @@ export const resolveSlotSource = <Self extends FieldNodeRecord<Self>>(
     const entry = getSlotPathEntry(template, source, overlay, name, selected);
     if (!entry) return { source: undefined, overlay: undefined };
     const child: {
-      source: Self | undefined;
-      overlay: InactiveSlotOverlay | undefined;
+      source: Optional<Self>;
+      overlay: Optional<InactiveSlotOverlay>;
     } = getSlotSource(source, entry, overlay);
     source = child.source;
     overlay = child.overlay;

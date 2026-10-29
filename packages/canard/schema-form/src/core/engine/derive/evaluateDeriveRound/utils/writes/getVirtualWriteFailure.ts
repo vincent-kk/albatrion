@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintNode } from '../../../../blueprint';
 import type { DeriveRoundDecision } from '../../../types/decisions';
 
@@ -18,7 +20,7 @@ export const getVirtualWriteFailure = (
   targetPath: string,
   template: BlueprintNode,
   value: unknown,
-): DeriveRoundDecision<unknown>['failures'][number] | undefined => {
+): Optional<DeriveRoundDecision<unknown>['failures'][number]> => {
   if (
     template.kind !== 'virtual' ||
     value === undefined ||

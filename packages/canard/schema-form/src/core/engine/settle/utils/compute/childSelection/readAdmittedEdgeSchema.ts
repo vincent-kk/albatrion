@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { mergeEffectiveSchema } from '../../../../blueprint';
 import type {
   BlueprintChildEntry,
@@ -35,7 +37,7 @@ export const readAdmittedEdgeSchema = (
   node: BlueprintNode,
   isAtomic: BlueprintOptions['isAtomic'],
   owner: BlueprintNode,
-): AdmittedEdgeSchema | undefined => {
+): Optional<AdmittedEdgeSchema> => {
   if (node !== entry.node) return undefined;
   const record = getHostDerived<
     'admittedEdgeSchemas',

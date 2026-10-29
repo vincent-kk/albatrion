@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -66,8 +68,8 @@ export const writeSlotPath = <Self extends FieldNodeRecord<Self>>(
     let wrote = false;
     const patch = (
       template: BlueprintNode,
-      source: Self | undefined,
-      previous: InactiveSlotOverlay | undefined,
+      source: Optional<Self>,
+      previous: Optional<InactiveSlotOverlay>,
       index: number,
     ): InactiveSlotOverlay => {
       if (index === names.length) {

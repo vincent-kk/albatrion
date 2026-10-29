@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { FormWarningCode } from '../../../../errors';
 import type {
   Blueprint,
@@ -64,7 +66,7 @@ export const collectBlueprintWarnings = (
       );
       const warning = (
         code: FormWarningCode,
-        details: Record<string, unknown> = {},
+        details: Dictionary<unknown> = {},
       ): void =>
         emit({
           code,
@@ -114,8 +116,17 @@ export const collectBlueprintWarnings = (
         const allowed: readonly unknown[] = isArray(tag.schemaType)
           ? tag.schemaType
           : [tag.schemaType];
-        if (
-          descriptor.values.some((value) =>
+        let hasInvalidDiscriminatorTag = false;
+
+        const discriminatorValues = descriptor.values;
+        for (
+          let index = 0, count = discriminatorValues.length;
+          index < count;
+          index++
+        ) {
+          const value = discriminatorValues[index];
+
+          if (
             value === null
               ? !tag.nullable
               : !allowed.includes(
@@ -126,15 +137,21 @@ export const collectBlueprintWarnings = (
                         allowed.includes('integer')
                       ? 'integer'
                       : typeof value,
-                ),
-          )
-        )
+                )
+          ) {
+            hasInvalidDiscriminatorTag = true;
+            break;
+          }
+        }
+
+        if (hasInvalidDiscriminatorTag) {
           emit({
             code: FormWarningCode.DiscriminatorBranchUnreachable,
             level: 'warning',
             schemaPath: gate.schemaPath,
             details: { propertyName: descriptor.propertyName },
           });
+        }
       }
     }
   }

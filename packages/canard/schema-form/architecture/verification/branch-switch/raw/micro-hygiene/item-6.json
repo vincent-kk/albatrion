@@ -1,0 +1,2669 @@
+{
+  "counts": {
+    "Optional": 284,
+    "Nullable": 122,
+    "Dictionary": 101,
+    "Optional<Nullable>": 13,
+    "Nullish": 1
+  },
+  "total": 521,
+  "sites": [
+    {
+      "file": "src/app/cache/type.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/app/cache/utils/BlueprintCacheStore.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/app/plugin/utils/PluginManager.ts",
+      "line": 99,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/app/plugin/utils/PluginManager.ts",
+      "line": 95,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/app/plugin/utils/PluginManager.ts",
+      "line": 84,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/app/plugin/utils/PluginManager.ts",
+      "line": 75,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/app/plugin/utils/PluginManager.ts",
+      "line": 59,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/app/plugin/utils/registerPlugin.ts",
+      "line": 198,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/components/FieldProxy/components/DeferredFieldProxy/DeferredFieldProxy.tsx",
+      "line": 66,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/components/FieldProxy/components/DeferredFieldProxy/DeferredFieldProxy.tsx",
+      "line": 40,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx",
+      "line": 91,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/components/FieldInputSlotWrapper.tsx",
+      "line": 29,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/components/FieldInputSlotWrapper.tsx",
+      "line": 28,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/components/FieldInputSlotWrapper.tsx",
+      "line": 26,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/components/FieldInputSlotWrapper.tsx",
+      "line": 24,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/components/FieldInputSlotWrapper.tsx",
+      "line": 23,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/hooks/useFieldInputControl.ts",
+      "line": 131,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/hooks/useFieldInputControl.ts",
+      "line": 130,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/type.ts",
+      "line": 18,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/components/Form/components/FormCore/types/handle.ts",
+      "line": 38,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/components/Form/components/FormCore/utils/createChildren.ts",
+      "line": 17,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/components/Form/components/FormCore/utils/submitForm.ts",
+      "line": 10,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/projection/omitEmptyArray.ts",
+      "line": 8,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/value/assembleArray.ts",
+      "line": 111,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/value/getArrayItemTemplate.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 258,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 236,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 236,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 163,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 118,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 69,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 69,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 28,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 28,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/behaviors/utils/parse/utils/number/parseNumber.ts",
+      "line": 8,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 106,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 48,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 87,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 86,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 58,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 82,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 67,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 43,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferLiteralTypes.ts",
+      "line": 21,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 83,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 101,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 47,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 67,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/createDynamicFunction.ts",
+      "line": 24,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/types/dynamicFunction.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/types/dynamicFunction.ts",
+      "line": 16,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/types/dynamicFunction.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/types/dynamicFunction.ts",
+      "line": 10,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/parseEqualityTree.ts",
+      "line": 10,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityNumber.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityString.ts",
+      "line": 4,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityString.ts",
+      "line": 25,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/scanEqualityTokens.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/types/state.ts",
+      "line": 10,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/types/state.ts",
+      "line": 20,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applyConstraintKeywords.ts",
+      "line": 45,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applyConstraintKeywords.ts",
+      "line": 136,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/ensureEffectiveSchemaCache.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/isObjectRecord.ts",
+      "line": 8,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/mergeSchemaContributions.ts",
+      "line": 29,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/mergeSingleStaticContribution.ts",
+      "line": 25,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts",
+      "line": 27,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/analysis.ts",
+      "line": 65,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/analysis.ts",
+      "line": 65,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/analysis.ts",
+      "line": 58,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/blueprint.ts",
+      "line": 20,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/blueprint.ts",
+      "line": 55,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/blueprint.ts",
+      "line": 71,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/blueprint.ts",
+      "line": 110,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/node.ts",
+      "line": 122,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/schema.ts",
+      "line": 5,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 11,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 10,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 20,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/analyze/readSchemaObject.ts",
+      "line": 11,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/analyze/readSchemaObject.ts",
+      "line": 10,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/diagnostics/throwBlueprintError.ts",
+      "line": 23,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/diagnostics/throwBlueprintError.ts",
+      "line": 18,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/DeriveConvergenceTargets.ts",
+      "line": 46,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/DeriveConvergenceTargets.ts",
+      "line": 43,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/DeriveConvergenceTargets.ts",
+      "line": 33,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/DeriveConvergenceTargets.ts",
+      "line": 29,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/DeriveConvergenceTargets.ts",
+      "line": 19,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/DeriveConvergenceTargets.ts",
+      "line": 17,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 15,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 62,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 41,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markCandidateDescendants.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markKeepDescendants.ts",
+      "line": 11,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemEntry.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemSchemaPath.ts",
+      "line": 28,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemSchemaPath.ts",
+      "line": 23,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 56,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/inject/getInjectTarget.ts",
+      "line": 48,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/inject/getInjectTarget.ts",
+      "line": 48,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/inject/getInjectTarget.ts",
+      "line": 25,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveSourceOrder.ts",
+      "line": 16,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveSourceOrder.ts",
+      "line": 13,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/writes/getVirtualWriteFailure.ts",
+      "line": 21,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/evaluateResetInteraction.ts",
+      "line": 39,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getDeriveSourceNodes.ts",
+      "line": 28,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getDeriveSourceNodes.ts",
+      "line": 28,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getDeriveSourceNodes.ts",
+      "line": 22,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/find.ts",
+      "line": 8,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/find.ts",
+      "line": 7,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 14,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/record/types/behavior.ts",
+      "line": 66,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/record/types/behavior.ts",
+      "line": 85,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 114,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 77,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 57,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 55,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 55,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 53,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 35,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/record/types/runtime.ts",
+      "line": 343,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/record/types/runtime.ts",
+      "line": 204,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/record/types/runtime.ts",
+      "line": 185,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/record/types/slots.ts",
+      "line": 38,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/record/types/slots.ts",
+      "line": 36,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/record/utils/publishGlobalStateDeltas.ts",
+      "line": 10,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/record/utils/publishGlobalStateDeltas.ts",
+      "line": 10,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/record/utils/updateFieldNodeNameAndPath.ts",
+      "line": 15,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 73,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts",
+      "line": 41,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 107,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 54,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/prepareArrayAppend.ts",
+      "line": 22,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/prepareArrayPop.ts",
+      "line": 19,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/prepareArraySplice.ts",
+      "line": 27,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 70,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 53,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyCommittedRules.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyPairedPathStore.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "line": 35,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/getStaticObjectEntries.ts",
+      "line": 19,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 33,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 70,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 69,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/readStaticFirstWarning.ts",
+      "line": 17,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/types/gatePredicate.ts",
+      "line": 8,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/types/gatePredicate.ts",
+      "line": 24,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/types/gateWheel.ts",
+      "line": 48,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/types/gateWheel.ts",
+      "line": 38,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/types/pendingPresenceTemplate.ts",
+      "line": 8,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/types/settlement.ts",
+      "line": 59,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/types/settlement.ts",
+      "line": 79,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/types/settlement.ts",
+      "line": 103,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/types/settlement.ts",
+      "line": 214,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/types/settlement.ts",
+      "line": 137,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/types/settlement.ts",
+      "line": 120,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitGlobalState.ts",
+      "line": 34,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 89,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 88,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/effectiveType.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/finalizeDeriveTrace.ts",
+      "line": 30,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/finalizeDeriveTrace.ts",
+      "line": 30,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/finalizeDeriveTrace.ts",
+      "line": 24,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/isMisfit.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 150,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 54,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 132,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/readSettlementSource.ts",
+      "line": 22,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseAppendedChild.ts",
+      "line": 24,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseArrayChildren.ts",
+      "line": 30,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseSplicedChildren.ts",
+      "line": 27,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseTruncatedChildren.ts",
+      "line": 20,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 34,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 33,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 32,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectRootGateDeclarations.ts",
+      "line": 21,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 29,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 200,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 191,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 165,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 129,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 122,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 64,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 61,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 212,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 187,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 64,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 59,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 56,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/readAdmittedEdgeSchema.ts",
+      "line": 38,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/reuseArrayChildren.ts",
+      "line": 20,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 235,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 163,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 160,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 160,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 119,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 48,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 61,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 55,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 47,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 148,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 147,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 118,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 116,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 94,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/staticShape.ts",
+      "line": 23,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/staticShape.ts",
+      "line": 44,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/staticShape.ts",
+      "line": 39,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 17,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 16,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 14,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 14,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 13,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 35,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 31,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 29,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 32,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 25,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 143,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 101,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 53,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 50,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 194,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 187,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 186,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 122,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 46,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 30,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 28,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 23,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 18,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 15,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+      "line": 108,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+      "line": 106,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/preserveReferences.ts",
+      "line": 11,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 62,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 38,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/utils/readOneOfBranch.ts",
+      "line": 26,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/context/changeFieldNodeContext.ts",
+      "line": 28,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 119,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 102,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 100,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 17,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/preparedControlLayers.ts",
+      "line": 38,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readExitLayerPolicy.ts",
+      "line": 23,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readFieldNodeWatchValues.ts",
+      "line": 67,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readLatentExitPolicy.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readStateDependency.ts",
+      "line": 13,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/collectPresenceChangeNames.ts",
+      "line": 21,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/flushPresenceTemplates.ts",
+      "line": 23,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 46,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 371,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 241,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 112,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getLivePresenceNode.ts",
+      "line": 16,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getLivePresenceNode.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 35,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 153,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/gateSelectionTable.ts",
+      "line": 6,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateExpression.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 169,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/getIfGateReadNames.ts",
+      "line": 22,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/getIfGateReadNames.ts",
+      "line": 16,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 36,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateHostView.ts",
+      "line": 15,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateHostView.ts",
+      "line": 48,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateProjectedExtra.ts",
+      "line": 44,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateProjectedExtra.ts",
+      "line": 33,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateProjectedExtra.ts",
+      "line": 33,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateProjectedExtra.ts",
+      "line": 23,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/recordGateFrameInput.ts",
+      "line": 10,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/getInactiveValuePath.ts",
+      "line": 19,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/getInactiveValuePath.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/hasExplicitInactiveValue.ts",
+      "line": 26,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/readExplicitWriteKind.ts",
+      "line": 20,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/resolveInactiveValue.ts",
+      "line": 42,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/arrayExtras.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/getChildDistribution.ts",
+      "line": 20,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/hasDistributedChildInput.ts",
+      "line": 17,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/interpretFieldNodeInput.ts",
+      "line": 69,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/interpretFieldNodeInput.ts",
+      "line": 69,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/interpretFieldNodeInput.ts",
+      "line": 43,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/isPlain.ts",
+      "line": 4,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/markWrite.ts",
+      "line": 186,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/nextExtras.ts",
+      "line": 20,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/nextExtras.ts",
+      "line": 16,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/staticSpec.ts",
+      "line": 19,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 105,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts",
+      "line": 26,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts",
+      "line": 22,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 76,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/collectSlotSourceValues.ts",
+      "line": 35,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/collectSlotSourceValues.ts",
+      "line": 32,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/collectSlotSourceValues.ts",
+      "line": 31,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/commitSlotChanges.ts",
+      "line": 40,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 19,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 35,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 34,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 16,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 95,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createSlotValueOverlay.ts",
+      "line": 29,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createSlotValueOverlay.ts",
+      "line": 28,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/expireOccupiedSlotMemos.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/expireOccupiedSlotMemos.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/expireOccupiedSlotMemos.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/expirePackedSlotMemos.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/expirePackedSlotMemos.ts",
+      "line": 17,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/expirePackedSlotMemos.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getRetainedChildEntry.ts",
+      "line": 17,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotBinding.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotEntries.ts",
+      "line": 17,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotEntries.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotOrder.ts",
+      "line": 13,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathEntry.ts",
+      "line": 24,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathEntry.ts",
+      "line": 21,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathEntry.ts",
+      "line": 20,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathNames.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotSource.ts",
+      "line": 16,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotSource.ts",
+      "line": 16,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotSource.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/hasAdditionalInactiveSources.ts",
+      "line": 17,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/materializeKeptSlotOverlay.ts",
+      "line": 24,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/materializeKeptSlotOverlay.ts",
+      "line": 23,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/prepareSourcePruner.ts",
+      "line": 25,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/preserveSlotValueMemos.ts",
+      "line": 17,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/preserveSlotValueMemos.ts",
+      "line": 16,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/preserveSlotValueMemos.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/preserveSlotValueMemos.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 45,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 44,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/readSlotRawTree.ts",
+      "line": 71,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/readSlotRawTree.ts",
+      "line": 21,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/readSlotValueEntry.ts",
+      "line": 15,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/readSlotValueEntry.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/readSourceTree.ts",
+      "line": 50,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/resolveSlotSource.ts",
+      "line": 34,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/resolveSlotSource.ts",
+      "line": 33,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/resolveSlotSource.ts",
+      "line": 23,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/resolveSlotSource.ts",
+      "line": 22,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/resolveSlotSource.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/resolveSlotSource.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/restoreTransferredSlotSource.ts",
+      "line": 24,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/restoreTransferredSlotSource.ts",
+      "line": 23,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/writeSlotPath.ts",
+      "line": 70,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/writeSlotPath.ts",
+      "line": 69,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/structure/isSameChildList.ts",
+      "line": 8,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/templatePaths/expandTemplatePaths.ts",
+      "line": 31,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/collectFillDescendants.ts",
+      "line": 20,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/collectFillDescendants.ts",
+      "line": 19,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "line": 39,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 29,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 25,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 92,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 91,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/restoreArrayStructure.ts",
+      "line": 41,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/restoreArrayStructure.ts",
+      "line": 22,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 50,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 49,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 48,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 47,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/utils/isRekeyedDestination.ts",
+      "line": 14,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/withdrawDetachedFills.ts",
+      "line": 19,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/types/controls.ts",
+      "line": 17,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/types/controls.ts",
+      "line": 28,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/types/controls.ts",
+      "line": 41,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/types/controls.ts",
+      "line": 68,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/types/jsonSchema.ts",
+      "line": 52,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/types/jsonSchema.ts",
+      "line": 50,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/types/value.ts",
+      "line": 53,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/types/value.ts",
+      "line": 51,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/utils/controls/getControlExpression.ts",
+      "line": 28,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/utils/controls/getStaticDeclarationIds.ts",
+      "line": 28,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/utils/controls/getStaticDeclarationIds.ts",
+      "line": 19,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/utils/controls/getStaticDeclarationIds.ts",
+      "line": 14,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/utils/nodeIdentity/foldAllowedTypes.ts",
+      "line": 8,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 63,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 48,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/utils/writeObjectKey.ts",
+      "line": 3,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/validation/types/issue.ts",
+      "line": 14,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/validation/types/validator.ts",
+      "line": 19,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/validation/types/validator.ts",
+      "line": 19,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/validation/utils/cache/readValidationEntry.ts",
+      "line": 64,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 44,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/validation/utils/guard/readFieldNodeGuard.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/validation/utils/read/readFieldNodeErrors.ts",
+      "line": 21,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/normalizeValidationIssue.ts",
+      "line": 19,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/retainEqualValidationIssues.ts",
+      "line": 28,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 37,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/assertValidationRootReady.ts",
+      "line": 19,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/runFieldNodeValidation.ts",
+      "line": 22,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/runFieldNodeValidation.ts",
+      "line": 17,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/readBatchValue.ts",
+      "line": 19,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/utils/compareDocumentOrder.ts",
+      "line": 20,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/utils/compareDocumentOrder.ts",
+      "line": 18,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchContextChange.ts",
+      "line": 15,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchValidate.ts",
+      "line": 38,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/collectChainRecords.ts",
+      "line": 27,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/collectChainRecords.ts",
+      "line": 25,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/createFormErrorRecord.ts",
+      "line": 26,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/createFormErrorRecord.ts",
+      "line": 38,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/createFormErrorRecord.ts",
+      "line": 45,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/dedupeWarningRecord.ts",
+      "line": 23,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 291,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 288,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 216,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 109,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 108,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 108,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 103,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 91,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 90,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 89,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 88,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 87,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 86,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 67,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 66,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 65,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 65,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 64,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 56,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/runtime/setContext.ts",
+      "line": 13,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 42,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 119,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 119,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 95,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 94,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 94,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 89,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 65,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 156,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 163,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 170,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 177,
+      "utility": "Nullish"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 192,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 192,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 185,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 185,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 204,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 202,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 200,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 233,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 225,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 241,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 253,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 286,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 276,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 271,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 315,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/core/surface/utils/binding/buildFieldNodeTree.ts",
+      "line": 21,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/core/surface/utils/fieldNodeFactory.ts",
+      "line": 83,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/errors/utils/assembleCodeGroup.ts",
+      "line": 11,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputArray/components/ArrayItems.tsx",
+      "line": 66,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputArray/utils/fillArraySlot.ts",
+      "line": 11,
+      "utility": "Optional<Nullable>"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputBoolean/FieldInputBoolean.tsx",
+      "line": 18,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputDateFormat/type.ts",
+      "line": 21,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputNumber/FieldInputNumber.tsx",
+      "line": 21,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx",
+      "line": 26,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringEnum/FieldInputStringEnum.tsx",
+      "line": 28,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringRadio/FieldInputStringRadio.tsx",
+      "line": 35,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringRadio/FieldInputStringRadio.tsx",
+      "line": 28,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 65,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/getChildPointer.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/parsePointerSegments.ts",
+      "line": 18,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/readFormattedNameSegment.ts",
+      "line": 13,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/readFormattedPointerSegment.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/readPointerSegment.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/schemaIdentity/utils/isRenderTerminal.ts",
+      "line": 9,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/schemaIdentity/utils/isSameSchema.ts",
+      "line": 33,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/helpers/schemaIdentity/utils/isSameSchema.ts",
+      "line": 32,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/helpers/schemaIntersection/utils/intersectConst.ts",
+      "line": 14,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/schemaIntersection/utils/intersectEnum.ts",
+      "line": 20,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/schemaIntersection/utils/intersectMaximum.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/schemaIntersection/utils/intersectMinimum.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/schemaIntersection/utils/intersectMultipleOf.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/schemaIntersection/utils/validateRange.ts",
+      "line": 12,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 197,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 196,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 151,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 79,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 67,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 60,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 57,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 45,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/helpers/virtualization/resolveVirtualizationOptions/resolveVirtualizationOptions.ts",
+      "line": 23,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/helpers/virtualization/resolveVirtualizationOptions/resolveVirtualizationOptions.ts",
+      "line": 22,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/helpers/virtualization/resolveVirtualizationOptions/type.ts",
+      "line": 100,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/hooks/fieldNode/useFieldNode.ts",
+      "line": 12,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/hooks/fieldNode/useFieldNodeSubscribe.ts",
+      "line": 51,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/hooks/fieldNode/useFieldNodeTracker.ts",
+      "line": 38,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/hooks/form/useFormSubmit.ts",
+      "line": 44,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/providers/FormErrorContext/components/FormErrorContext.ts",
+      "line": 6,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/providers/FormErrorContext/components/FormErrorPathContext.ts",
+      "line": 4,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/providers/FormErrorContext/utils/createFormErrorService.ts",
+      "line": 48,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/providers/RootNodeContext/components/RootBindingContext.ts",
+      "line": 6,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/providers/RootNodeContext/components/RootNodeContextProvider.tsx",
+      "line": 94,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/providers/RootNodeContext/utils/applyFormErrors.ts",
+      "line": 17,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/providers/RootNodeContext/utils/applyFormErrors.ts",
+      "line": 16,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/providers/VirtualizationContext/components/VirtualizationContext.ts",
+      "line": 7,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/types/error/error.ts",
+      "line": 38,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 80,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 78,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 76,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 72,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 70,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 68,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 66,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 140,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 139,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 138,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 136,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/field/fieldInput.ts",
+      "line": 156,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/schema/injectTo.ts",
+      "line": 161,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/types/schema/injectTo.ts",
+      "line": 144,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/types/schema/jsonSchema.ts",
+      "line": 58,
+      "utility": "Optional"
+    },
+    {
+      "file": "src/types/schema/jsonSchema.ts",
+      "line": 29,
+      "utility": "Nullable"
+    },
+    {
+      "file": "src/types/schema/jsonSchema.ts",
+      "line": 177,
+      "utility": "Dictionary"
+    },
+    {
+      "file": "src/types/schema/jsonSchema.ts",
+      "line": 190,
+      "utility": "Dictionary"
+    }
+  ],
+  "kept": [
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 167,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 175,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/engine/record/constants/emptyRevisionLedger.ts",
+      "line": 2,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 23,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 21,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 103,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/engine/record/types/runtime.ts",
+      "line": 195,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/engine/record/utils/FieldNodeRevisionLedger.ts",
+      "line": 19,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 110,
+      "reason": "Record key is not string"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 81,
+      "reason": "Record key is not string"
+    }
+  ]
+}

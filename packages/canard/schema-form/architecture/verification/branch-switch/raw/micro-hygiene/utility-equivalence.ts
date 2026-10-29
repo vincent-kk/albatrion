@@ -1,0 +1,10 @@
+import type { Dictionary, Nullable, Nullish, Optional } from '@aileron/declare';
+type Equal<Left, Right> = (<Value>() => Value extends Left ? 1 : 2) extends (<Value>() => Value extends Right ? 1 : 2) ? true : false;
+type Assert<Value extends true> = Value;
+export type DictionaryProof<Value> = Assert<Equal<Dictionary<Value>, Record<string, Value>>>;
+export type NullableProof<Value> = Assert<Equal<Nullable<Value>, Value | null>>;
+export type OptionalProof<Value> = Assert<Equal<Optional<Value>, Value | undefined>>;
+export type BothProof<Value> = Assert<Equal<Optional<Nullable<Value>>, Value | null | undefined>>;
+export type NullishProof = Assert<Equal<Nullish, null | undefined>>;
+export type PluginProof<Value> = Assert<Equal<(value: Value | null) => void, (value: Nullable<Value>) => void>>;
+export type NestedReferenceProof<Value> = Assert<Equal<{current: Value | null}, {current: Nullable<Value>}>>;

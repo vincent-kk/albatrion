@@ -13,13 +13,23 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
 ): readonly Self[] => {
   const prepared = frame.preparedStatic!;
   const names = Object.keys(frame.preparedDynamic!);
-  const same =
-    names.length === prepared.dynamicNames.length &&
-    names.every(
-      (name, index) =>
-        name === prepared.dynamicNames[index] &&
-        frame.next[name] === prepared.selectedStructure[name],
-    );
+  let same = names.length === prepared.dynamicNames.length;
+  if (same) {
+    for (let index = 0, count = names.length; index < count; index++) {
+      const name = names[index];
+
+      if (
+        !(
+          name === prepared.dynamicNames[index] &&
+          frame.next[name] === prepared.selectedStructure[name]
+        )
+      ) {
+        same = false;
+        break;
+      }
+    }
+  }
+
   if (!same) {
     prepared.selectedStructure = Object.assign(
       Object.create(null),

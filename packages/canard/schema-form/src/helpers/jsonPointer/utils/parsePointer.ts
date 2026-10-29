@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import type { PointerSegment } from '../constants/PointerOperator';
 import { isAbsolutePointer } from './isAbsolutePointer';
 import { parsePointerSegments } from './parsePointerSegments';
@@ -12,11 +13,11 @@ export interface ParsedPointer {
 
 const RELATIVE_EMPTY: ParsedPointer = Object.freeze({
   absolute: false,
-  segments: parsePointerSegments(''),
+  segments: parsePointerSegments($.Root),
 });
 const ABSOLUTE_EMPTY: ParsedPointer = Object.freeze({
   absolute: true,
-  segments: parsePointerSegments('#'),
+  segments: parsePointerSegments($.Fragment),
 });
 
 /**
@@ -27,8 +28,8 @@ const ABSOLUTE_EMPTY: ParsedPointer = Object.freeze({
 export const parsePointer = (
   pointer: string | readonly string[],
 ): ParsedPointer => {
-  if (pointer === '') return RELATIVE_EMPTY;
-  if (pointer === '#') return ABSOLUTE_EMPTY;
+  if (pointer === $.Root) return RELATIVE_EMPTY;
+  if (pointer === $.Fragment) return ABSOLUTE_EMPTY;
   return {
     absolute: isAbsolutePointer(pointer),
     segments: parsePointerSegments(pointer),

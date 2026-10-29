@@ -31,7 +31,7 @@ export const applySlotOverlay = <Self extends FieldNodeRecord<Self>>(
     if (overlay.children?.size) {
       const names: string[] = [];
       for (const entry of overlay.children.keys())
-        if (!names.includes(entry.name)) names.push(entry.name);
+        if (names.indexOf(entry.name) === -1) names.push(entry.name);
       const distribution = context.distributedInputs.get(node);
       if (distribution)
         context.distributedInputs.set(node, {

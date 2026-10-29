@@ -1,9 +1,9 @@
+import type { Optional } from '@aileron/declare';
+
 import type { Blueprint } from '../../../blueprint';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
+import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
-
-const isName = (segment: unknown): segment is string =>
-  typeof segment === 'string';
 
 /**
  * Read the decoded names of a slot address, sharing its syntax with the dependency index.
@@ -14,10 +14,10 @@ const isName = (segment: unknown): segment is string =>
 export const getSlotPathNames = (
   runtime: { readonly blueprint?: Blueprint },
   path: string,
-): readonly string[] | undefined => {
+): Optional<readonly string[]> => {
   const segments =
     runtime.blueprint && !runtime.blueprint.capabilities.branchless
       ? getDependencyIndex(runtime.blueprint).pathSegments(path, runtime)
       : getCachedPointerSegments(runtime, path);
-  return segments.every(isName) ? segments : undefined;
+  return isNamedPointerSegments(segments) ? segments : undefined;
 };

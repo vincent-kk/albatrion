@@ -1,4 +1,4 @@
-import type { Dictionary, Fn, Nullish } from '@aileron/declare';
+import type { Dictionary, Fn, Nullable, Nullish } from '@aileron/declare';
 
 import type { JSONSchema, JSONSchemaWithVirtual } from './jsonSchema';
 
@@ -141,7 +141,7 @@ export type InjectHandlerContext<
    * ctx.parentValue // null
    * ```
    */
-  parentValue: ParentValue | null;
+  parentValue: Nullable<ParentValue>;
 
   /**
    * The JSON Schema definition of the parent node.
@@ -158,7 +158,7 @@ export type InjectHandlerContext<
    * ctx.parentJSONSchema // null
    * ```
    */
-  parentJSONSchema: JSONSchema | JSONSchemaWithVirtual | null;
+  parentJSONSchema: Nullable<JSONSchema | JSONSchemaWithVirtual>;
 
   /**
    * The complete value of the root form node.

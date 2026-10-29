@@ -1,4 +1,7 @@
+import type { Dictionary } from '@aileron/declare';
+
 import {
+  JSONPointer as $,
   PointerOperator,
   hasPointerOperator,
   resolvePointer,
@@ -24,7 +27,7 @@ import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
  */
 export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  contextValue: Readonly<Record<string, unknown>>,
+  contextValue: Readonly<Dictionary<unknown>>,
 ): void => {
   if (sameValue(root.runtime.context, contextValue)) return;
   const scratch = getSettlementScratch(root.runtime);
@@ -36,9 +39,16 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   );
   context.entryApi = 'setContext';
   const owners = getContextOwners(root.runtime.blueprint);
-  context.contextOwners = owners.some((owner) =>
-    hasPointerOperator(owner, PointerOperator.Wildcard),
-  )
+  let hasContextOwner = false;
+  for (let index = 0, count = owners.length; index < count; index++) {
+    const owner = owners[index];
+
+    if (hasPointerOperator(owner, PointerOperator.Wildcard)) {
+      hasContextOwner = true;
+      break;
+    }
+  }
+  context.contextOwners = hasContextOwner
     ? owners.flatMap((owner) => expandTemplatePaths(root, owner))
     : owners;
   root.runtime.context = contextValue;
@@ -48,10 +58,10 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
     for (const owner of context.contextOwners) {
       context.dirtyPaths.add(owner);
       context.dependencyOwnerPaths.add(owner);
-      context.shapeDirtyPaths.add(resolvePointer(owner, '..'));
+      context.shapeDirtyPaths.add(resolvePointer(owner, $.Parent));
       let ancestor = owner;
       while (ancestor) {
-        ancestor = resolvePointer(ancestor, '..');
+        ancestor = resolvePointer(ancestor, $.Parent);
         context.dirtyPaths.add(ancestor);
       }
     }

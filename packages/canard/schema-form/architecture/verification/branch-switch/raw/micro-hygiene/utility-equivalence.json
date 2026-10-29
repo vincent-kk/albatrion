@@ -1,0 +1,12 @@
+{
+  "genericProofs": 7,
+  "diagnostics": 0,
+  "utilities": [
+    "Dictionary",
+    "Nullable",
+    "Optional",
+    "Optional<Nullable>",
+    "Nullish"
+  ],
+  "snapshotReason": "Only four public callable type spellings changed; underlying null unions are identical"
+}

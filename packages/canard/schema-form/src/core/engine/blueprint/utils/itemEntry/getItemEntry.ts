@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 import { getItemEntries } from './getItemEntries';
 
@@ -11,4 +13,4 @@ import { getItemEntries } from './getItemEntries';
 export const getItemEntry = (
   template: BlueprintNode,
   index: number,
-): BlueprintChildEntry | undefined => getItemEntries(template, index)[0];
+): Optional<BlueprintChildEntry> => getItemEntries(template, index)[0];

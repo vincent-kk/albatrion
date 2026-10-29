@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { FormWarningCode } from '../../../../../../errors';
 import type { FieldNodeRecord, MisfitRecord } from '../../../../record';
 import { conversionCandidates } from '../../../utils/commit/conversionCandidates';
@@ -14,7 +16,7 @@ import { receivedType } from '../../../utils/commit/receivedType';
 export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   automatic: boolean,
-): MisfitRecord | undefined => {
+): Optional<MisfitRecord> => {
   const schemaType = node.schemaType;
   const effective = effectiveType(node);
   // Only a virtual node lacks a JSON type, and it never misfits.

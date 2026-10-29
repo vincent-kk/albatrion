@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
+
 /**
  * Append a segment that formatSegment already produced, avoiding a second escape.
  * @param parentPath - Canonical parent address; the empty string is the root.
@@ -7,4 +9,4 @@
 export const appendFormattedSegment = (
   parentPath: string,
   formattedName: string,
-): string => parentPath + '/' + formattedName;
+): string => parentPath + $.Separator + formattedName;

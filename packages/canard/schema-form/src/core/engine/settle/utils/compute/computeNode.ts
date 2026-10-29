@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { GateWheelFrame } from '../../types/gateWheel';
@@ -119,7 +121,7 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
     for (let index = 0; index < recalculated.length; index++)
       computeNode(recalculated[index], context);
     let wheel = context.shapeDirtyPaths.has(node.path);
-    let computed: Set<Self> | undefined;
+    let computed: Optional<Set<Self>>;
     while (!wheel && (context.presenceRegistrations ?? 0) !== registrations) {
       if (context.presenceMetrics) context.presenceMetrics.ancestorRechecks++;
       registrations = context.presenceRegistrations ?? 0;
@@ -183,15 +185,15 @@ const computeNodeBody = <Self extends FieldNodeRecord<Self>>(
         ))
       : wheelPlan.cap
     : 1;
-  let confirmation: GateWheelFrame | undefined;
-  let previousPredicate: boolean | undefined;
+  let confirmation: Optional<GateWheelFrame>;
+  let previousPredicate: Optional<boolean>;
   let lastStructure = prior;
   let registered = false;
   let hasRelocated = relocated.length > 0;
   for (let round = 0; round < cap; round++) {
     const roundLocal = node.local;
     const roundEmit = node.emit;
-    const frame: GateWheelFrame | undefined =
+    const frame: Optional<GateWheelFrame> =
       gates.length > 0 && context.kind !== 'load'
         ? {
             inputs: new Map(),

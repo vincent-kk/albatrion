@@ -1,3 +1,5 @@
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import { getHostDerived } from '../cache/derivedRecords';
 
 /**
@@ -11,12 +13,12 @@ export const getStaticDeclarationIds = <
     readonly name: string;
     readonly path: string;
     readonly blueprintNode: object;
-    readonly parent: Self | null;
+    readonly parent: Nullable<Self>;
     readonly runtime: { readonly blueprint?: object };
   },
 >(
   node: Self,
-): readonly number[] | undefined => {
+): Optional<readonly number[]> => {
   const parent = node.parent;
   if (!parent) return undefined;
   const prepared = getHostDerived<
@@ -25,7 +27,7 @@ export const getStaticDeclarationIds = <
       readonly blueprint: object;
       readonly template: object;
       readonly path: string;
-      readonly baseline: Readonly<Record<string, Self>>;
+      readonly baseline: Readonly<Dictionary<Self>>;
       readonly entries: ReadonlyMap<
         string,
         { readonly ids: readonly number[] }

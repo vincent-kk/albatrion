@@ -2,6 +2,8 @@ import { type ChangeEvent, useLayoutEffect, useRef } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldInputProps } from '@/schema-form/types';
 
 /** Render a boolean node as a checkbox; a non-boolean value shows as indeterminate. */
@@ -15,7 +17,7 @@ export const FieldInputBoolean = ({
   onChange,
   style,
   className,
-}: FieldInputProps<boolean | null>) => {
+}: FieldInputProps<Nullable<boolean>>) => {
   const ref = useRef<HTMLInputElement>(null);
   useLayoutEffect(() => {
     if (ref.current) ref.current.indeterminate = typeof value !== 'boolean';

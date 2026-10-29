@@ -1,3 +1,5 @@
+import { minLite } from '@winglet/common-utils/math';
+
 import type { DeriveWrite } from '../../../types/decisions';
 import { KIND_RANK } from './kindRank';
 
@@ -13,7 +15,7 @@ export const compareDeriveWrites = <Self>(
 ): number => {
   const kind = KIND_RANK[left.kind] - KIND_RANK[right.kind];
   if (kind) return kind;
-  const limit = Math.min(left.sourceOrder.length, right.sourceOrder.length);
+  const limit = minLite(left.sourceOrder.length, right.sourceOrder.length);
   for (let index = 0; index < limit; index++) {
     const difference = left.sourceOrder[index] - right.sourceOrder[index];
     if (difference) return difference;

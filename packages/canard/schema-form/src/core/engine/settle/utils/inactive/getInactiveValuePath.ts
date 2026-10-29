@@ -1,4 +1,9 @@
-import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+import type { Nullable, Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  appendSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -12,16 +17,16 @@ import type { SettlementContext } from '../../types/settlement';
 export const getInactiveValuePath = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-): string | undefined => {
+): Optional<string> => {
   if (!context.compactedSlotSources?.size) return node.path;
   const lineage: Self[] = [];
   for (
-    let current: Self | null = node;
+    let current: Nullable<Self> = node;
     current?.parent;
     current = current.parent
   )
     lineage.push(current);
-  let path = '';
+  let path: string = $.Root;
   for (let index = lineage.length - 1; index >= 0; index--) {
     const child = lineage[index];
     const compaction =

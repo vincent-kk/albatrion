@@ -1,0 +1,1387 @@
+{
+  "before": 229,
+  "after": 0,
+  "changedSites": 229,
+  "remaining": [],
+  "lowered": [
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/projection/omitTrailingArray.ts",
+      "line": 47,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/value/assembleArray.ts",
+      "line": 178,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 221,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/behaviors/utils/options/getStaticChoices.ts",
+      "line": 43,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 289,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 288,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 283,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 166,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 166,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 99,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 84,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 70,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 60,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 59,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 67,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 128,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 127,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 73,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 98,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 94,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 57,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 54,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferLiteralTypes.ts",
+      "line": 59,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 24,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 21,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 115,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 117,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 121,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 90,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 49,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 31,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 27,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 118,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 60,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 60,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/recognizeEqualityExpression.ts",
+      "line": 26,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "line": 40,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/mergeEffectiveSchema.ts",
+      "line": 47,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/mergeHintGroup.ts",
+      "line": 27,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 60,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 57,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 52,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 51,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 37,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 43,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 40,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 53,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 44,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 38,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/controls/hasKeepFields.ts",
+      "line": 17,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "line": 47,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "line": 41,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemSchemaPath.ts",
+      "line": 65,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "line": 40,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateShape/utils/visitShape.ts",
+      "line": 36,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/evaluateScopedExpression.ts",
+      "line": 37,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getRuleTargets.ts",
+      "line": 33,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getRuleTargets.ts",
+      "line": 38,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getSelectedDeclarationIds.ts",
+      "line": 21,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 169,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 151,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 122,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 109,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 100,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 94,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 110,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 101,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 96,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/canApplyArrayTail.ts",
+      "line": 19,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 43,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 41,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 183,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 116,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 56,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 50,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectRootGateDeclarations.ts",
+      "line": 46,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 79,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 78,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 77,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 177,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 109,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "line": 40,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "line": 39,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "line": 38,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 184,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 56,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "line": 53,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "line": 26,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "line": 25,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "line": 49,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "line": 46,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 139,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 138,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 132,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/publishPreparedSelection.ts",
+      "line": 18,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/readDiscriminatorEntrySelection.ts",
+      "line": 32,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/dirtyChildren.ts",
+      "line": 57,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/preserveReferences.ts",
+      "line": 38,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 96,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 100,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 82,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 78,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 45,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 33,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 34,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/utils/prepareHostWheelPlan.ts",
+      "line": 68,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/context/changeFieldNodeContext.ts",
+      "line": 40,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 134,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 98,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/prepareControlLayers.ts",
+      "line": 112,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/prepareParentControlLayers.ts",
+      "line": 48,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readLatentExitPolicy.ts",
+      "line": 18,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/declarations/getDeclaredChildNames.ts",
+      "line": 18,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "line": 46,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "line": 40,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 667,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 644,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 606,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 373,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 330,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 214,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 144,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 130,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts",
+      "line": 43,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 154,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 35,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 53,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 99,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 484,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 471,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 62,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 52,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 36,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/createGatePredicate.ts",
+      "line": 80,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 51,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 44,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 41,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "line": 60,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTableGate.ts",
+      "line": 60,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTableGate.ts",
+      "line": 55,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTableGate.ts",
+      "line": 28,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTablePrePublication.ts",
+      "line": 32,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTablePrePublication.ts",
+      "line": 30,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/readExplicitWriteKind.ts",
+      "line": 25,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/markWrite.ts",
+      "line": 127,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/utils/verifyWriteEpoch.ts",
+      "line": 24,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/output/updateOutput.ts",
+      "line": 66,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 91,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts",
+      "line": 33,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathEntry.ts",
+      "line": 38,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathEntry.ts",
+      "line": 26,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts",
+      "line": 44,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/prepareSourcePruner.ts",
+      "line": 86,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/prepareSourcePruner.ts",
+      "line": 74,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 29,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isMissingRaw.ts",
+      "line": 29,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isReplacedLivePath.ts",
+      "line": 26,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isReplacedLivePath.ts",
+      "line": 22,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/readDepartingAncestorPolicy.ts",
+      "line": 21,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/settle/utils/write/releaseWrongKindHosts.ts",
+      "line": 24,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/utils/controls/getControlExpression.ts",
+      "line": 33,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 42,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/validation/utils/read/readFieldNodeErrors.ts",
+      "line": 24,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 74,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 73,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 66,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 59,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 57,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 53,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 39,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 37,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 29,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 74,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 51,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "line": 40,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "line": 37,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "line": 35,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/markBatchArrayOperation.ts",
+      "line": 41,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/readBatchValue.ts",
+      "line": 29,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchResetSubtree.ts",
+      "line": 28,
+      "kind": "filter",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts",
+      "line": 62,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/surface/utils/binding/interpretFieldNodeDraft.ts",
+      "line": 40,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/core/surface/utils/binding/interpretFieldNodeDraft.ts",
+      "line": 29,
+      "kind": "filter",
+      "method": "direct for loop; binding organ keeps existing dependency contract"
+    },
+    {
+      "file": "src/errors/utils/assembleCodeGroup.ts",
+      "line": 15,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/errors/utils/getCodeSpecific.ts",
+      "line": 22,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringEnum/FieldInputStringEnum.tsx",
+      "line": 55,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 32,
+      "kind": "some",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/helpers/schemaIdentity/utils/isSameSchema.ts",
+      "line": 22,
+      "kind": "every",
+      "method": "short-circuit for loop; HasProperty and captured length"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 70,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 67,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 66,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 58,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 45,
+      "kind": "map",
+      "method": "common-utils dense metadata array"
+    },
+    {
+      "file": "src/app/plugin/utils/formatRegisterPluginError.ts",
+      "line": 76,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 197,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 151,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 86,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 83,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 42,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts",
+      "line": 48,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 114,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 100,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applySchemaContribution.ts",
+      "line": 71,
+      "kind": "filter",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "line": 34,
+      "kind": "filter",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 43,
+      "kind": "some",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "line": 35,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveChildEntry.ts",
+      "line": 24,
+      "kind": "forEach",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/isMisfit.ts",
+      "line": 20,
+      "kind": "some",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/getRequiredChildren.ts",
+      "line": 37,
+      "kind": "some",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readLatentExitPolicy.ts",
+      "line": 17,
+      "kind": "filter",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyGateWheelConfirmation.ts",
+      "line": 21,
+      "kind": "some",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/staticSpec.ts",
+      "line": 34,
+      "kind": "filter",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 68,
+      "kind": "some",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/assertValidationRootReady.ts",
+      "line": 36,
+      "kind": "some",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx",
+      "line": 55,
+      "kind": "filter",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 27,
+      "kind": "filter",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 54,
+      "kind": "filter",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 80,
+      "kind": "every",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 78,
+      "kind": "filter",
+      "method": "for loop; captured length, HasProperty, early exit"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 72,
+      "kind": "some",
+      "method": "for loop; captured length, HasProperty, early exit"
+    }
+  ],
+  "manualSites": [
+    {
+      "file": "src/core/engine/settle/utils/commit/effectiveType.ts",
+      "line": 18,
+      "kind": "every",
+      "text": "candidate.every(isTypeName)"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 116,
+      "kind": "every",
+      "text": "ifReads.every( (name): name is string => name !== undefined && watchedNames.has(appendSegment(host.path, name)), )"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 91,
+      "kind": "every",
+      "text": "gate.condition.values.every(isGateSelectionLiteral)"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 68,
+      "kind": "every",
+      "text": "segments.every( (segment): segment is string => typeof segment === 'string', )"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/setLoadValue.ts",
+      "line": 24,
+      "kind": "every",
+      "text": "segments.every((segment): segment is string => typeof segment === 'string')"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathNames.ts",
+      "line": 22,
+      "kind": "every",
+      "text": "segments.every(isName)"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/composeBatchValue.ts",
+      "line": 25,
+      "kind": "every",
+      "text": "names.every((segment): segment is string => typeof segment === 'string')"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "kind": "reduce"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldMap.ts",
+      "kind": "reduce"
+    }
+  ],
+  "semantics": [
+    "capture receiver once and initial length",
+    "HasProperty for sparse inputs; explicit undefined still visited",
+    "short-circuit at original callback return",
+    "forEach callback return ignored; lexical arrow this retained",
+    "type predicate narrowing preserved without assertions",
+    "common-utils map/filter only for dense generated metadata"
+  ]
+}

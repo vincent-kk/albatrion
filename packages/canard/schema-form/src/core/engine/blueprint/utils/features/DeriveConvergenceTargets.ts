@@ -1,3 +1,5 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import type { Blueprint } from '../../types/blueprint';
 import { collectDeriveConvergenceTargets } from './collectDeriveConvergenceTargets';
@@ -14,11 +16,12 @@ export class DeriveConvergenceTargets {
    */
   static set(
     blueprint: Blueprint,
-    targets: ReadonlySet<string> | undefined,
+    targets: Optional<ReadonlySet<string>>,
   ): void {
-    getBlueprintDerived<'deriveConvergenceTargets', ReadonlySet<string> | null>(
-      blueprint,
-    ).deriveConvergenceTargets = targets ?? null;
+    getBlueprintDerived<
+      'deriveConvergenceTargets',
+      Nullable<ReadonlySet<string>>
+    >(blueprint).deriveConvergenceTargets = targets ?? null;
   }
 
   /**
@@ -26,11 +29,11 @@ export class DeriveConvergenceTargets {
    * @param blueprint - Immutable analysis used by the current form
    * @returns Proven paths, or undefined for conservative fallback
    */
-  static get(blueprint: Blueprint): ReadonlySet<string> | undefined {
+  static get(blueprint: Blueprint): Optional<ReadonlySet<string>> {
     return (
       getBlueprintDerived<
         'deriveConvergenceTargets',
-        ReadonlySet<string> | null
+        Nullable<ReadonlySet<string>>
       >(blueprint).deriveConvergenceTargets ?? undefined
     );
   }
@@ -40,10 +43,10 @@ export class DeriveConvergenceTargets {
    * @param blueprint - Immutable analysis shared by forms of the same schema
    * @returns Proven paths, or undefined for conservative fallback
    */
-  static getOrCollect(blueprint: Blueprint): ReadonlySet<string> | undefined {
+  static getOrCollect(blueprint: Blueprint): Optional<ReadonlySet<string>> {
     const cached = getBlueprintDerived<
       'deriveConvergenceTargets',
-      ReadonlySet<string> | null
+      Nullable<ReadonlySet<string>>
     >(blueprint).deriveConvergenceTargets;
     if (cached !== undefined) return cached ?? undefined;
     const targets = collectDeriveConvergenceTargets(blueprint);

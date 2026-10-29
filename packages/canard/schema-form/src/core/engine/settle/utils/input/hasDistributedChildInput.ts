@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { isPlain } from './isPlain';
 
 /**
@@ -14,7 +16,7 @@ export const hasDistributedChildInput = (
   input: unknown,
   name: string,
   arrayHost: boolean,
-): input is Record<string, unknown> | unknown[] => {
+): input is Dictionary<unknown> | unknown[] => {
   if (isArray(input)) {
     if (!arrayHost) return false;
     const index = Number(name);

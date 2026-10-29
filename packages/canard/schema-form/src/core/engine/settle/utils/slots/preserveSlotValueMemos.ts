@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getSlotEntries } from './getSlotEntries';
 import { getSlotSource } from './getSlotSource';
@@ -11,10 +13,10 @@ import { getSlotSource } from './getSlotSource';
  * @returns Nothing; value equality is still checked when each memo is read
  */
 export const preserveSlotValueMemos = <Self extends FieldNodeRecord<Self>>(
-  previous: Self | undefined,
-  previousOverlay: InactiveSlotOverlay | undefined,
-  current: Self | undefined,
-  overlay: InactiveSlotOverlay | undefined,
+  previous: Optional<Self>,
+  previousOverlay: Optional<InactiveSlotOverlay>,
+  current: Optional<Self>,
+  overlay: Optional<InactiveSlotOverlay>,
 ): void => {
   if (!current && !overlay) return;
   const memo = previous?.inactiveValueMemo ?? previousOverlay?.valueMemo;

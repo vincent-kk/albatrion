@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { getSlotChildIndex } from './getSlotChildIndex';
@@ -10,7 +12,7 @@ import { getSlotChildIndex } from './getSlotChildIndex';
  * @returns Root-to-leaf document positions for this occurrence
  */
 export const getSlotOrder = <Self extends FieldNodeRecord<Self>>(
-  parent: Self | null,
+  parent: Nullable<Self>,
   name: string,
   template: BlueprintNode,
 ): readonly number[] => {

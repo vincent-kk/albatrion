@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import {
   PointerOperator,
   type PointerSegment,
@@ -10,19 +11,19 @@ import { formatSegment } from './formatSegment';
  * @returns The empty string for no segments, otherwise a `/`-prefixed address with each name formatted by formatSegment and each operator written as its raw token.
  */
 export const joinPointer = (segments: readonly PointerSegment[]): string => {
-  let path = '';
+  let path: string = $.Root;
   for (const segment of segments) {
     const token =
       typeof segment === 'string'
         ? formatSegment(segment)
         : segment === PointerOperator.Wildcard
-          ? '*'
+          ? $.Wildcard
           : segment === PointerOperator.Parent
-            ? '..'
+            ? $.Parent
             : segment === PointerOperator.Current
-              ? '.'
-              : '@';
-    path += '/' + token;
+              ? $.Current
+              : $.Context;
+    path += $.Separator + token;
   }
   return path;
 };

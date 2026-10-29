@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { MutableNode } from '../../types/analysis';
 import { collectTemplateParents } from './collectTemplateParents';
 import { readKeepDeclarations } from './readKeepDeclarations';
@@ -8,7 +10,7 @@ import { readKeepDeclarations } from './readKeepDeclarations';
  * @returns Nothing; graphs without a keep declaration allocate no reverse graph
  */
 export const markKeepDescendants = (nodes: readonly MutableNode[]): void => {
-  let pending: MutableNode[] | undefined;
+  let pending: Optional<MutableNode[]>;
   for (const node of nodes) {
     const { own, child } = readKeepDeclarations(node.declarations);
     if (child) node.hasKeepDescendants = true;

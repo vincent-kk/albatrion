@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -12,9 +14,9 @@ import { getSlotChildIndex } from './getSlotChildIndex';
  * @returns Unique canonical entries, without expanding unvisited recursive templates
  */
 export const getSlotEntries = <Self extends FieldNodeRecord<Self>>(
-  host: Self | undefined,
+  host: Optional<Self>,
   overlay?: InactiveSlotOverlay,
-  template: BlueprintNode | undefined = host?.blueprintNode,
+  template: Optional<BlueprintNode> = host?.blueprintNode,
 ): readonly BlueprintChildEntry[] => {
   const entries = new Set<BlueprintChildEntry>();
   if (!overlay?.replace)

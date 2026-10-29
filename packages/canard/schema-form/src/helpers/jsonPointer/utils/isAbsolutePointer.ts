@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import { isAbsolutePath } from './isAbsolutePath';
 
 /**
@@ -9,5 +10,5 @@ export const isAbsolutePointer = (
   pointer: string | readonly string[],
 ): boolean =>
   typeof pointer === 'string'
-    ? pointer === '#' || isAbsolutePath(pointer)
-    : pointer[0] === '#';
+    ? pointer === $.Fragment || isAbsolutePath(pointer)
+    : pointer[0] === $.Fragment;

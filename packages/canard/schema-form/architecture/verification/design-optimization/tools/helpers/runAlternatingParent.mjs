@@ -63,6 +63,7 @@ function measure(config, row, lane, repeat) {
     `--quality=${config.quality ?? 'branchless'}`,
     `--repeat=${repeat}`,
     `--run-dir=${config.runDir}`,
+    ...(config.shortWindow ? ['--short-window=true'] : []),
   ];
   const start = new Date().toISOString();
   const child = spawnSync(process.execPath, args, {

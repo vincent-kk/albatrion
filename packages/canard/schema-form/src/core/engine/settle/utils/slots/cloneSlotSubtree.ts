@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -73,7 +75,7 @@ export const cloneSlotSubtree = <Self extends FieldNodeRecord<Self>>(
       );
   }
   if (!compaction && source.children && source.structure) {
-    const structure: Record<string, Self> = Object.create(null);
+    const structure: Dictionary<Self> = Object.create(null);
     const children: Self[] = [];
     for (const child of source.children) {
       if (child.parent !== source) continue;

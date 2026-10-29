@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getSlotBinding } from './getSlotBinding';
@@ -10,10 +12,10 @@ import { getSlotBinding } from './getSlotBinding';
  * @returns Source and patch without interpreting or modifying either
  */
 export const getSlotSource = <Self extends FieldNodeRecord<Self>>(
-  host: Self | undefined,
+  host: Optional<Self>,
   entry: BlueprintChildEntry,
   overlay?: InactiveSlotOverlay,
-): { source: Self | undefined; overlay: InactiveSlotOverlay | undefined } => {
+): { source: Optional<Self>; overlay: Optional<InactiveSlotOverlay> } => {
   const binding = getSlotBinding(host, entry, overlay);
   const supplied = overlay?.children?.get(binding);
   if (overlay?.replace && !supplied)

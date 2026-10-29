@@ -1,3 +1,6 @@
+import type { Optional } from '@aileron/declare';
+
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import { isDescendantPath } from './isDescendantPath';
 
 /**
@@ -9,8 +12,8 @@ import { isDescendantPath } from './isDescendantPath';
 export const getChildPointer = (
   path: string,
   ancestorPath: string,
-): string | undefined => {
+): Optional<string> => {
   if (!isDescendantPath(path, ancestorPath)) return undefined;
-  const end = path.indexOf('/', ancestorPath.length + 1);
+  const end = path.indexOf($.Separator, ancestorPath.length + 1);
   return end < 0 ? path : path.slice(0, end);
 };

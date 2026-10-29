@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntries } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getSlotEntries } from './getSlotEntries';
@@ -11,11 +13,11 @@ import { getSlotSource } from './getSlotSource';
  */
 export const expirePackedSlotMemos = <Self extends FieldNodeRecord<Self>>(
   source: Self,
-  overlay: InactiveSlotOverlay | undefined,
+  overlay: Optional<InactiveSlotOverlay>,
 ): void => {
   const clear = (
-    node: Self | undefined,
-    patch: InactiveSlotOverlay | undefined,
+    node: Optional<Self>,
+    patch: Optional<InactiveSlotOverlay>,
   ): void => {
     if (node) node.inactiveValueMemo = undefined;
     if (patch) patch.valueMemo = undefined;

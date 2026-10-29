@@ -1,4 +1,7 @@
+import { maxLite } from '@winglet/common-utils/math';
+
 import {
+  JSONPointer as $,
   PointerOperator,
   isDescendantPath,
   joinPointer,
@@ -41,19 +44,19 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
     context.dirtyPaths.add(host);
     context.shapeDirtyPaths.add(host);
     for (let ancestor = host; ancestor; ) {
-      ancestor = resolvePointer(ancestor, '..');
+      ancestor = resolvePointer(ancestor, $.Parent);
       context.dirtyPaths.add(ancestor);
     }
     return true;
   }
-  entry.stamp = Math.max(entry.stamp, stamp);
+  entry.stamp = maxLite(entry.stamp, stamp);
   const deepest = entry.deepest;
   if (
     deepest !== null &&
     deepest !== origin &&
-    !(origin === '' || isDescendantPath(deepest, origin))
+    !(origin === $.Root || isDescendantPath(deepest, origin))
   )
     entry.deepest =
-      deepest === '' || isDescendantPath(origin, deepest) ? origin : null;
+      deepest === $.Root || isDescendantPath(origin, deepest) ? origin : null;
   return false;
 };

@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { mergeEffectiveSchema } from '../../../blueprint';
@@ -35,7 +37,7 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
  */
 export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   context: SettlementContext<Self>,
   hasRelocated = true,
 ): void => {
@@ -59,7 +61,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     );
     return;
   }
-  const baseline: Record<string, Self> = {};
+  const baseline: Dictionary<Self> = {};
   Object.setPrototypeOf(baseline, null);
   const cached =
     node.behavior.type === 'object'
@@ -90,14 +92,16 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   );
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
-    if (
-      baseline[entry.name] ||
-      (!direct &&
-        !entry.declarations.some(
-          (declaration) => declaration.gates.length === 0,
-        ))
-    )
-      continue;
+    if (baseline[entry.name]) continue;
+    if (!direct) {
+      let hasUngatedDeclaration = false;
+      for (const declaration of entry.declarations)
+        if (declaration.gates.length === 0) {
+          hasUngatedDeclaration = true;
+          break;
+        }
+      if (!hasUngatedDeclaration) continue;
+    }
     if (reuse?.(entry)) continue;
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]

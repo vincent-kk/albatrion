@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
@@ -34,8 +36,8 @@ export const restoreSourceB = <Self extends FieldNodeRecord<Self>>(
   context.selectedDeclarationIds.clear();
   context.changedRaw.clear();
   for (const path of explicitRaw) context.changedRaw.add(path);
-  context.dirtyPaths.add('');
-  context.shapeDirtyPaths.add('');
+  context.dirtyPaths.add($.Root);
+  context.shapeDirtyPaths.add($.Root);
   registerRecalculation(context);
   computeNode(context.root, context);
 };

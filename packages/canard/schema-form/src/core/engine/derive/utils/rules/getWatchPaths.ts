@@ -29,7 +29,7 @@ export const getWatchPaths = (node: BlueprintNode): readonly string[] => {
         ? Reflect.get(controls, CONTROL_KEY.watch)
         : undefined;
     for (const path of isArray(watch) ? watch : [])
-      if (typeof path === 'string' && !watches.includes(path))
+      if (typeof path === 'string' && watches.indexOf(path) === -1)
         watches.push(path);
   }
   getHostDerived<'watchPaths', readonly string[]>(node).watchPaths = watches;

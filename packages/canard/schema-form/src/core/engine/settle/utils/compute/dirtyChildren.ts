@@ -19,17 +19,16 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): Self[] => {
   const children: Self[] = [];
-  const seen = new Set<Self>();
-  for (const encoded of context.dirtyChildrenByParent
-    .get(node.path)
-    ?.values() ?? []) {
+  const scheduled = context.dirtyChildrenByParent.get(node.path);
+  const seen = scheduled && scheduled.size > 64 ? new Set<Self>() : undefined;
+  for (const encoded of scheduled?.values() ?? []) {
     const name = parsePointerSegment(encoded);
     if (typeof name !== 'string') continue;
     const child =
       node.structure && hasOwnProperty(node.structure, name)
         ? node.structure[name]
         : undefined;
-    if (child && !seen.has(child)) {
+    if (child && !(seen ? seen.has(child) : children.indexOf(child) !== -1)) {
       if (
         engineModes.gateSelection === 'verify' &&
         context.dirtyPaths instanceof DirtyPathSet &&
@@ -39,7 +38,7 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
           context.dirtyPaths.has(child.path),
           'S6 dirtyChildren returned a consumed child: ' + child.path,
         );
-      seen.add(child);
+      seen?.add(child);
       children.push(child);
     }
   }
@@ -47,15 +46,26 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
     engineModes.gateSelection === 'verify'
       ? context.registrationShadow
       : undefined;
+
   if (shadow) {
     const expected = dirtyChildren(node, {
       ...context,
       registrationShadow: undefined,
       dirtyChildrenByParent: shadow.dirty.childrenByParent,
     });
+    let matches = children.length === expected.length;
+    if (matches) {
+      for (let index = 0, count = children.length; index < count; index++) {
+        const child = children[index];
+
+        if (!(child === expected[index])) {
+          matches = false;
+          break;
+        }
+      }
+    }
     verifyGateSelection(
-      children.length === expected.length &&
-        children.every((child, index) => child === expected[index]),
+      matches,
       'S3 dirtyChildren members/order differ at: ' + node.path,
     );
   }

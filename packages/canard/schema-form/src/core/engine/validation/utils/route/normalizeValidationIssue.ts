@@ -1,4 +1,7 @@
+import type { Optional } from '@aileron/declare';
+
 import {
+  JSONPointer as $,
   isAbsolutePointer,
   joinPointer,
   joinPointerWithPrefixOf,
@@ -16,8 +19,8 @@ import type { ValidationIssue } from '../../types/issue';
 const rewritePointer = (
   pointer: string,
   keepFragment: boolean,
-): string | undefined => {
-  if (pointer !== '' && !isAbsolutePointer(pointer)) return undefined;
+): Optional<string> => {
+  if (pointer !== $.Root && !isAbsolutePointer(pointer)) return undefined;
   try {
     const segments = parseStandardPointer(pointer);
     return keepFragment

@@ -1,6 +1,6 @@
 import type { CSSProperties, ComponentType } from 'react';
 
-import type { Dictionary, Fn } from '@aileron/declare';
+import type { Dictionary, Fn, Optional } from '@aileron/declare';
 
 import type { ChildField } from '@/schema-form/components/FieldProxy';
 import type {
@@ -63,21 +63,21 @@ export interface FieldInputProps<
   /** Values of the paths listed in the schema's `controls.watch`, in order */
   watchValues: WatchValues;
   /** Default value of FieldInput Component */
-  defaultValue: Value | undefined;
+  defaultValue: Optional<Value>;
   /** Current value; the input owns its draft. An empty field is undefined. */
-  value: Value | undefined;
+  value: Optional<Value>;
   /** Publish the input draft; an empty field publishes undefined, and null is published only when the input explicitly publishes null (REACT-027). */
-  onChange: SetStateFnWithOptions<Value | undefined>;
+  onChange: SetStateFnWithOptions<Optional<Value>>;
   /** onFileAttach handler of FieldInput Component */
-  onFileAttach: Fn<[file: File | File[] | undefined]>;
+  onFileAttach: Fn<[file: Optional<File | File[]>]>;
   /** Child FieldInput Components of this FieldInput Component */
   ChildFields: ChildField[];
   /** Placeholder text for input fields */
-  placeholder: string | undefined;
+  placeholder: Optional<string>;
   /** CSS class name for styling */
-  className: string | undefined;
+  className: Optional<string>;
   /** Style of FieldInput Component */
-  style: CSSProperties | undefined;
+  style: Optional<CSSProperties>;
   /** UserDefinedContext passed to Form */
   context: Context;
   /** Additional properties can be freely defined */
@@ -133,11 +133,11 @@ export interface UnknownFieldInputProps {
   defaultValue: any;
   value: any;
   onChange: SetStateFnWithOptions<any>;
-  onFileAttach: Fn<[file: File | File[] | undefined]>;
+  onFileAttach: Fn<[file: Optional<File | File[]>]>;
   ChildFields: ChildField<any>[];
-  placeholder: string | undefined;
-  className: string | undefined;
-  style: CSSProperties | undefined;
+  placeholder: Optional<string>;
+  className: Optional<string>;
+  style: Optional<CSSProperties>;
   context: any;
   [alt: string]: any;
 }
@@ -153,7 +153,7 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   defaultValue?: Value;
   value?: Value;
   onChange?: SetStateFnWithOptions<Value>;
-  onFileAttach?: Fn<[file: File | File[] | undefined]>;
+  onFileAttach?: Fn<[file: Optional<File | File[]>]>;
   FieldRenderer?: ComponentType<FieldRendererProps>;
   className?: string;
   style?: CSSProperties;

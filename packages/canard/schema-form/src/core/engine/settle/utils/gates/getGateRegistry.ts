@@ -1,4 +1,11 @@
-import { isAbsolutePath } from '@/schema-form/helpers/jsonPointer';
+import { map as mapArray } from '@winglet/common-utils/array';
+
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  isAbsolutePath,
+} from '@/schema-form/helpers/jsonPointer';
 import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
 import {
   appendSegment,
@@ -161,7 +168,7 @@ class GateRegistry {
   }
 
   /** Compare a path and kind in the current indexed shape, if indexed. */
-  hasRegisteredPathKind(path: string, kind: string): boolean | undefined {
+  hasRegisteredPathKind(path: string, kind: string): Optional<boolean> {
     if (this.byPath.size === 0) return undefined;
     return this.byPath.get(path)?.kind === kind;
   }
@@ -345,7 +352,7 @@ class GateRegistry {
       if (changed.has(watched) || prefixes.has(watched)) return true;
       if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = resolvePointer(prefix, '..');
+          prefix = resolvePointer(prefix, $.Parent);
           if (changed.has(prefix)) return true;
         }
     }
@@ -438,7 +445,7 @@ class GateRegistry {
     by: 1 | -1,
   ): void {
     for (const watched of occurrence.watchPaths) {
-      if (watched === '') {
+      if (watched === $.Root) {
         index.root += by;
         continue;
       }
@@ -446,7 +453,7 @@ class GateRegistry {
       bumpWatchCount(index.exact, watched, by);
       if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = resolvePointer(prefix, '..');
+          prefix = resolvePointer(prefix, $.Parent);
           bumpWatchCount(index.strictPrefixes, prefix, by);
         }
     }
@@ -465,7 +472,7 @@ class GateRegistry {
           ? undefined
           : getIfGateReadNames(gate.condition, this.blueprint);
       return names
-        ? names.map((name) => appendSegment(location.hostPath, name))
+        ? mapArray(names, (name) => appendSegment(location.hostPath, name))
         : [location.hostPath];
     }
     if (
@@ -478,7 +485,7 @@ class GateRegistry {
       return [appendSegment(location.hostPath, gate.condition.propertyName)];
     const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression
-      ? expression.dependencies.map((dependency) => {
+      ? mapArray(expression.dependencies, (dependency) => {
           const path = this.resolveRead(location.hostPath, dependency);
           return path;
         })
@@ -494,14 +501,14 @@ class GateRegistry {
     if (changedRaw.size === 0) return false;
     for (const watched of occurrence.watchPaths) {
       if (
-        watched === '' ||
+        watched === $.Root ||
         changedRaw.has(watched) ||
         changedAncestors.has(watched)
       )
         return true;
       if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = resolvePointer(prefix, '..');
+          prefix = resolvePointer(prefix, $.Parent);
           if (changedRaw.has(prefix)) return true;
         }
     }

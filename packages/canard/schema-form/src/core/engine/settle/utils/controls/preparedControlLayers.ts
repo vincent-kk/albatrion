@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintNode } from '../../../blueprint';
 import type { ControlLayer } from './getControlLayers';
 
@@ -35,6 +37,6 @@ export interface PreparedControlIndex {
   /** Lazily combined sparse parent groups, keyed only by immutable target facts. */
   targets?: WeakMap<
     BlueprintNode,
-    Map<string | undefined, PreparedControlGroups>
+    Map<Optional<string>, PreparedControlGroups>
   >;
 }

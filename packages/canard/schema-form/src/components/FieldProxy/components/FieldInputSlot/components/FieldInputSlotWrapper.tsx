@@ -8,6 +8,8 @@ import {
   useSnapshot,
 } from '@winglet/react-utils/hook';
 
+import type { Nullable, Optional } from '@aileron/declare';
+
 import type { FieldNode } from '@/schema-form/core';
 import { withFieldInputErrorBoundary } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
@@ -20,13 +22,11 @@ import type { FieldProxyProps } from '../../../type';
 import { FieldInputSlot } from '../FieldInputSlot';
 
 export const FieldInputSlotWrapper = (
-  node: FieldNode | null,
-  overrideOnChangeRef: RefObject<ChildFieldProps['onChange']> | undefined,
-  overrideOnFileAttachRef:
-    | RefObject<ChildFieldProps['onFileAttach']>
-    | undefined,
-  overrideFieldInputPropsRef: RefObject<OverridableFieldInputProps> | undefined,
-  OverridePreferredFieldInput: ComponentType<FieldInputProps> | undefined,
+  node: Nullable<FieldNode>,
+  overrideOnChangeRef: Optional<RefObject<ChildFieldProps['onChange']>>,
+  overrideOnFileAttachRef: Optional<RefObject<ChildFieldProps['onFileAttach']>>,
+  overrideFieldInputPropsRef: Optional<RefObject<OverridableFieldInputProps>>,
+  OverridePreferredFieldInput: Optional<ComponentType<FieldInputProps>>,
   NodeProxy: ComponentType<FieldProxyProps>,
 ): ComponentType<ChildFieldProps> => {
   if (!node) return NULL_FUNCTION;

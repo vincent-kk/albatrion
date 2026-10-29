@@ -1,3 +1,7 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
+import type { Nullable } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -31,24 +35,41 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     node.behavior.type !== 'object'
   )
     return;
-  for (let ancestor: Self | null = node; ancestor; ancestor = ancestor.parent)
+  for (
+    let ancestor: Nullable<Self> = node;
+    ancestor;
+    ancestor = ancestor.parent
+  )
     if (ancestor.raw !== undefined) return;
   const table = getGateSelectionTable(
     node.blueprintNode,
     node.runtime.blueprint,
   );
   if (!table) return;
-  const watchedPaths = table.watchedNames.map((name) =>
+  const watchedPaths = mapArray(table.watchedNames, (name) =>
     appendSegment(node.path, name),
   );
-  if (watchedPaths.some((path) => context.dirtyPaths.has(path))) return;
+  let hasDirtyWatchedPath = false;
+  for (let index = 0, count = watchedPaths.length; index < count; index++) {
+    const path = watchedPaths[index];
+
+    if (context.dirtyPaths.has(path)) {
+      hasDirtyWatchedPath = true;
+      break;
+    }
+  }
+  if (hasDirtyWatchedPath) {
+    return;
+  }
   (context.gateSelectionRounds ??= new Map()).set(node, {
     round,
     table,
     values: new Map(),
     watchedPaths,
     stableSchemaPaths: table.stableSchemaNames.length
-      ? table.stableSchemaNames.map((name) => appendSegment(node.path, name))
+      ? mapArray(table.stableSchemaNames, (name) =>
+          appendSegment(node.path, name),
+        )
       : NO_SCHEMA_PATHS,
     active: true,
   });

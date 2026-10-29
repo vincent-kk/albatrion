@@ -1,3 +1,5 @@
+import { filter as filterArray } from '@winglet/common-utils/array';
+
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -25,7 +27,8 @@ export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   if (!enterFieldNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   if (runtime.batchWrites)
-    runtime.batchWrites = runtime.batchWrites.filter(
+    runtime.batchWrites = filterArray(
+      runtime.batchWrites,
       (write) =>
         write.node !== node && !isDescendantPath(write.node.path, node.path),
     );

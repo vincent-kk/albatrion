@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../record';
@@ -53,7 +55,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
   const trace: DeriveTraceEntry[] = [];
   const traceWinners = new Map<string, number>();
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
-  let failures: DeriveRoundDecision<Self>['failures'][number][] | undefined;
+  let failures: Optional<DeriveRoundDecision<Self>['failures'][number][]>;
   if (!state.sourcePaths) {
     state.activeRuleKeys.clear();
     state.activeRuleKeysBySource.clear();
@@ -74,9 +76,9 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
     for (const id of selected)
       for (const rule of table.byDeclaration.get(id) ?? []) {
         if (rule.kind === 'resetInteraction') continue;
-        for (const target of rule.kind === 'injectTo'
-          ? [node]
-          : getRuleTargets(node, rule, state)) {
+        const targets: readonly Self[] =
+          rule.kind === 'injectTo' ? [node] : getRuleTargets(node, rule, state);
+        for (const target of targets) {
           const key = getDeriveRuleKey(
             node.path,
             getBlueprintNodeIdentity(node.blueprintNode),
@@ -142,20 +144,23 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
           try {
             if (rule.kind === 'derived') {
               const watchDependencies = getWatchPaths(target.blueprintNode);
-              current = [
-                ...(rule.expression?.dependencies.map((dependency) =>
-                  readDeriveDependency(root, node.path, dependency),
-                ) ?? []),
-                ...watchDependencies
-                  .filter(
-                    (dependency) =>
-                      target !== node ||
-                      !rule.expression?.dependencies.includes(dependency),
-                  )
-                  .map((dependency) =>
+              const dependencies: unknown[] = [];
+              const expressionDependencies = rule.expression?.dependencies;
+              if (expressionDependencies)
+                for (const dependency of expressionDependencies)
+                  dependencies.push(
+                    readDeriveDependency(root, node.path, dependency),
+                  );
+              for (const dependency of watchDependencies)
+                if (
+                  target !== node ||
+                  !expressionDependencies ||
+                  expressionDependencies.indexOf(dependency) === -1
+                )
+                  dependencies.push(
                     readDeriveDependency(root, target.path, dependency),
-                  ),
-              ];
+                  );
+              current = dependencies;
               if (appeared || (priorExists && !sameValue(prior, current))) {
                 const evaluated = evaluateScopedExpression(
                   root,

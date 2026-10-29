@@ -1,5 +1,7 @@
 import { minLite } from '@winglet/common-utils/math';
 
+import type { Optional } from '@aileron/declare';
+
 /**
  * Select the stricter upper bound without modifying either declaration.
  * @param baseMax - Earlier optional maximum
@@ -9,7 +11,7 @@ import { minLite } from '@winglet/common-utils/math';
 export const intersectMaximum = (
   baseMax?: number,
   sourceMax?: number,
-): number | undefined => {
+): Optional<number> => {
   if (baseMax === undefined) return sourceMax;
   if (sourceMax === undefined) return baseMax;
   return minLite(baseMax, sourceMax);

@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   getChildPointer,
   isDescendantPath,
@@ -17,16 +19,32 @@ import type { SettlementContext } from '../../types/settlement';
 export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   inputPath: string,
-): FieldNodeWriteKind | undefined => {
+): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
   if (!origins) return context.kind;
   // Batch replacement paths retain earlier whole writes after later merges.
-  if (
-    context.replacePaths?.some(
-      (path) => inputPath === path || isDescendantPath(inputPath, path),
-    )
-  )
+  let matchesReplacementPath: Optional<boolean> = undefined;
+
+  const replacementPaths = context.replacePaths;
+  if (replacementPaths != null) {
+    matchesReplacementPath = false;
+    for (
+      let index = 0, count = replacementPaths.length;
+      index < count;
+      index++
+    ) {
+      const path = replacementPaths[index];
+
+      if (inputPath === path || isDescendantPath(inputPath, path)) {
+        matchesReplacementPath = true;
+        break;
+      }
+    }
+  }
+
+  if (matchesReplacementPath) {
     return 'callerReplace';
+  }
   for (let index = origins.length - 1; index >= 0; index--) {
     const origin = origins[index];
     const path =
@@ -38,7 +56,8 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
       const child = getChildPointer(inputPath, path);
       const name =
         child === undefined ? undefined : readPointerSegment(child, -1);
-      if (typeof name !== 'string' || !origin.keys.includes(name)) continue;
+      if (typeof name !== 'string' || origin.keys.indexOf(name) === -1)
+        continue;
     }
     if (origin.source === 'automatic') return 'automatic';
     if (!origin.keys) return 'callerReplace';

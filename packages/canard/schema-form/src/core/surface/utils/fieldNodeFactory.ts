@@ -1,6 +1,7 @@
-import type { PartialBy } from '@aileron/declare';
+import type { Nullable, PartialBy } from '@aileron/declare';
 
 import {
+  JSONPointer as $,
   appendFormattedSegment,
   formatSegment,
 } from '@/schema-form/helpers/jsonPointer';
@@ -80,14 +81,16 @@ export type FieldNodeRuntimeSeed = PartialBy<
 /** Create one record from a bound child or the root template. */
 const createFieldNode = (
   entry: BlueprintChildEntry | BlueprintNode,
-  parent: RuntimeFieldNode | null,
+  parent: Nullable<RuntimeFieldNode>,
   runtime: FieldNodeRuntime<RuntimeFieldNode>,
   source?: RuntimeFieldNode,
 ): RuntimeFieldNode => {
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
   const escapedName = formatSegment(name);
-  const path = parent ? appendFormattedSegment(parent.path, escapedName) : '';
+  const path = parent
+    ? appendFormattedSegment(parent.path, escapedName)
+    : $.Root;
   const depth = parent ? parent.depth + 1 : 0;
   const row = source?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)

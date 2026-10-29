@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../record';
 import type { WriteOption } from '../../types/value';
 import { prepareGateSelection } from '../utils/compute/childSelection/prepareGateSelection';
@@ -18,7 +20,7 @@ export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
   value: unknown,
   option: WriteOption,
 ): void => {
-  const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
+  const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, $.Root, value);
   root.runtime.diagnostics = { status: 'stable' };
   const previousTransitions = root.runtime.revisionTransitions;
   try {

@@ -1,13 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type {
-  BlueprintChildEntry,
-  BlueprintNode,
-} from '../../../blueprint';
-import type {
-  FieldNodeRecord,
-  InactiveSlotOverlay,
-} from '../../../record';
+import type { Optional } from '@aileron/declare';
+
+import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
+import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getSlotEntries } from './getSlotEntries';
 import { getSlotSource } from './getSlotSource';
 
@@ -20,8 +16,8 @@ import { getSlotSource } from './getSlotSource';
  */
 export const materializeKeptSlotOverlay = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
-  source: Self | undefined,
-  overlay: InactiveSlotOverlay | undefined,
+  source: Optional<Self>,
+  overlay: Optional<InactiveSlotOverlay>,
 ): InactiveSlotOverlay => {
   const inherited = overlay?.replace ? undefined : source;
   const raw =

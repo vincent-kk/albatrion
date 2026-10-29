@@ -39,6 +39,7 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
         ? registry.occurrenceCount(node.path)
         : 0,
   });
+
   if (engineModes.gateSelection === 'verify') {
     const childGroup = round.table.groups.find(
       (candidate) => candidate.watchedName === group.watchedName,
@@ -54,11 +55,30 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
         step.gate.kind === 'discriminator'
           ? undefined
           : getGateExpression(node.runtime.blueprint, step.gate.schemaPath);
+      let selectedResult: boolean;
+      if (step.gate.kind === 'discriminator') {
+        let matchesDiscriminatorTag = false;
+
+        const discriminatorValues = step.gate.condition.values;
+        for (
+          let index = 0, count = discriminatorValues.length;
+          index < count;
+          index++
+        ) {
+          const tag = discriminatorValues[index];
+
+          if (tag === value) {
+            matchesDiscriminatorTag = true;
+            break;
+          }
+        }
+
+        selectedResult = matchesDiscriminatorTag;
+      } else {
+        selectedResult = Boolean(expression!.evaluate([value]));
+      }
       verifyGateSelection(
-        admitted.includes(index) ===
-          (step.gate.kind === 'discriminator'
-            ? step.gate.condition.values.some((tag) => tag === value)
-            : Boolean(expression!.evaluate([value]))),
+        (admitted.indexOf(index) !== -1) === selectedResult,
         'S1 table step verdict: ' + index,
       );
     }

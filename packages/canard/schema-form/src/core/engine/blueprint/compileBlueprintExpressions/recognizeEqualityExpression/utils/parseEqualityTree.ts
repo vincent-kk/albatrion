@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { EqualityToken, EqualityTree } from './types';
 
 /**
@@ -7,7 +9,7 @@ import type { EqualityToken, EqualityTree } from './types';
  */
 export const parseEqualityTree = (
   tokens: readonly EqualityToken[],
-): EqualityTree | undefined => {
+): Optional<EqualityTree> => {
   const values: EqualityTree[] = [];
   const operators: ('===' | '||' | '(')[] = [];
   let expectsPrimary = true;

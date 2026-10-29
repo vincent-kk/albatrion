@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode, JSONSchemaError } from '@/schema-form/errors';
 
 import type { PathManager } from '../getPathManager';
@@ -21,7 +23,7 @@ import { substituteDependencyPaths } from './utils/substituteDependencyPaths';
 export const createDynamicFunction: CreateDynamicFunction = (
   pathManager: PathManager,
   fieldName: string,
-  expression: string | undefined,
+  expression: Optional<string>,
   coerceToBoolean: boolean = false,
 ) => {
   if (typeof expression !== 'string') return;

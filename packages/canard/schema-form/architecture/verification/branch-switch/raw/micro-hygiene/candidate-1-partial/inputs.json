@@ -1,0 +1,271 @@
+{
+  "baselineCommit": "1c3655a10b3f32cc74437094f48987a63771390a",
+  "candidateCommit": "8d7d1a87e9000fc42d256e66221216bd782c5f1b",
+  "files": {
+    "A": {
+      "index.node.mjs": {
+        "bytes": 829595,
+        "sha256": "1338654cf550e06c762b51da6e17b7910952ebee60e2408a2911900af3d39617"
+      },
+      "index.mjs": {
+        "bytes": 830373,
+        "sha256": "29e3da0c6355acbb55a178e73ec91bc0aca569e81afa24ddc997ee06992465ba"
+      },
+      "index.d.ts": {
+        "bytes": 3129,
+        "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+      }
+    },
+    "B": {
+      "index.node.mjs": {
+        "bytes": 860750,
+        "sha256": "e8238657609c0bc6868164633fc4d04340936379e035b0e5e2120beef93ce5a4"
+      },
+      "index.mjs": {
+        "bytes": 861528,
+        "sha256": "e847e0cddb144a388ef4bb81dd2ce77b11f6de4be61b7fa113ebc718dd349797"
+      },
+      "index.d.ts": {
+        "bytes": 3129,
+        "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+      }
+    }
+  },
+  "stageBundles": {
+    "A": {
+      "wrapped.mjs": {
+        "bytes": 838732,
+        "sha256": "412328673668988b344572eb2501e7ed3f04e301e90be0d615e1173a02f59a67"
+      },
+      "unwrapped.mjs": {
+        "bytes": 832150,
+        "sha256": "46466868dfe148b3bffcc96fbb0720fbd260dad4eb62450f8b0cf0d13a80e105"
+      },
+      "supplemental.mjs": {
+        "bytes": 850056,
+        "sha256": "0cba9ef98790bddc50d395297f69839d73cfce8069eb255f5c1371ed8326ea45"
+      },
+      "instrumentation.json": {
+        "bytes": 124590,
+        "sha256": "30de81ba0a83cbcdd8a4ed020d178ad5e36fc4b50139441202ac0b8c4648a73f"
+      }
+    },
+    "B": {
+      "wrapped.mjs": {
+        "bytes": 882694,
+        "sha256": "539896b2a721dd977ba161a85cee778fed3f5f087266481eee139734b9b2cde9"
+      },
+      "unwrapped.mjs": {
+        "bytes": 876020,
+        "sha256": "dc120eb25921d6b6cb8998556c450d43c7ed33f3069fab9c6290d915a5e55d48"
+      },
+      "supplemental.mjs": {
+        "bytes": 894146,
+        "sha256": "3e4a6b0561339befbaa7b13b8afae6aac467941f16c691e54cc34d9c5ae59f65"
+      },
+      "instrumentation.json": {
+        "bytes": 124590,
+        "sha256": "a8f14b25666b4b0141284942dbc60e31333318d900e69437c97a03b749566424"
+      }
+    }
+  },
+  "stageEngines": {
+    "A": {
+      "current.mjs": {
+        "bytes": 829737,
+        "sha256": "5f70e6c324f10f0ae75f5d5708a90feabbdfbd97b4cbd559372ab9dfa081291d"
+      },
+      "dist.mjs": {
+        "bytes": 829737,
+        "sha256": "5f70e6c324f10f0ae75f5d5708a90feabbdfbd97b4cbd559372ab9dfa081291d"
+      },
+      "legacy.mjs": {
+        "bytes": 260073,
+        "sha256": "5a4a38480969155d87c3a5a9a9750ecc7c904bf44d1fbfc37b62f816623303cf"
+      }
+    },
+    "B": {
+      "current.mjs": {
+        "bytes": 860892,
+        "sha256": "90949798553b959f9cf2edbd43eaccfcf41fd9f76f773eec760985f504dd9d22"
+      },
+      "dist.mjs": {
+        "bytes": 860892,
+        "sha256": "90949798553b959f9cf2edbd43eaccfcf41fd9f76f773eec760985f504dd9d22"
+      },
+      "legacy.mjs": {
+        "bytes": 260073,
+        "sha256": "5a4a38480969155d87c3a5a9a9750ecc7c904bf44d1fbfc37b62f816623303cf"
+      }
+    }
+  },
+  "tools": {
+    "architecture/verification/design-optimization/tools/helpers/measurePair.mjs": {
+      "bytes": 1669,
+      "sha256": "52d18d0d2c0c3e2323b327be07e216e1e3d5e1157689222b85def2ac768674bc"
+    },
+    "architecture/verification/branch-switch/tools/b9-0/yieldBeforeSample.mjs": {
+      "bytes": 199,
+      "sha256": "d81962492dd7abcd697be6a28aeabb69b46b175eebc68644c312b35a9872c225"
+    },
+    "architecture/verification/branch-switch/tools/b9-0/worker.mjs": {
+      "bytes": 5362,
+      "sha256": "96c1c234d419dc021294a87b3d83b031d4157a692a5e735f37e99c9708636f50"
+    },
+    "architecture/verification/branch-switch/tools/b9-0/operation.mjs": {
+      "bytes": 1815,
+      "sha256": "c16f046eae8743f5d4933e7f5b33a2178299698ea8c5a3c03de327d3b6297d42"
+    },
+    "architecture/verification/branch-switch/tools/b9-0/buildStages.mjs": {
+      "bytes": 11809,
+      "sha256": "d5d8e7a33cfa1e04e46191d8fe0a00f7002a87ac93e6e101357d47539b9b0419"
+    },
+    "architecture/verification/branch-switch/tools/b9-0/instrumentDetails.mjs": {
+      "bytes": 3358,
+      "sha256": "a94e7f010086e08d0c52031510abe2b514963636cb23933d92b626a8fc366ac9"
+    },
+    "architecture/verification/branch-switch/tools/b4-2/retention.mjs": {
+      "bytes": 5235,
+      "sha256": "35424e97298a4909b0e64592122cf19cb9568744cf8fe6096e8a6653e081ca58"
+    },
+    "architecture/verification/branch-switch/tools/b9-1/helpers/checkRetentionLoad.mjs": {
+      "bytes": 1888,
+      "sha256": "216015faaa72fd81ad909243844c6fdc05371e1b6a1007b1c9d0cb9fc0a983d3"
+    },
+    "architecture/verification/branch-switch/tools/b9-1/window.mjs": {
+      "bytes": 7101,
+      "sha256": "45010939bcca060e4b4ece174bd4a284d77e5be4cac38c04d4d4603d9eb731ed"
+    },
+    "architecture/verification/branch-switch/tools/b9-1/helpers/runWindowProcess.mjs": {
+      "bytes": 2296,
+      "sha256": "e0d8c37623758c5797bc415cedadf27c44c000e9020d897361f74bef41e0c042"
+    },
+    "architecture/verification/branch-switch/tools/b9-1/helpers/compactProcessRows.mjs": {
+      "bytes": 237,
+      "sha256": "6d3b147972ddf966605ae3945b3152265799f4b785459ef465dc374f5a8501ca"
+    },
+    "architecture/verification/branch-switch/tools/window/waitForQuietProcess.mjs": {
+      "bytes": 2147,
+      "sha256": "d9bcdaf42b321f545b779f643fff3a70a86793017242cd1e8ee78d90c4bbb51b"
+    },
+    "architecture/verification/branch-switch/tools/window/getStageRoot.mjs": {
+      "bytes": 460,
+      "sha256": "03ee204590f462a1af494e2bc786550a3eec57d2c3b96c6ec3a9ceff622e4527"
+    },
+    "architecture/verification/branch-switch/tools/window/quietWorkerPreload.mjs": {
+      "bytes": 935,
+      "sha256": "42df681022a6958d993c4d8dfdff43064e20bf65af8ce6b040c6e0ef6a391a4d"
+    },
+    "architecture/verification/branch-switch/tools/window/helpers/sampleProcessCpu.mjs": {
+      "bytes": 1558,
+      "sha256": "de628fa0f0c6d8e5156ae90f6d48f4e9f4e2b9a91b582fa7627ca3ce186bdb86"
+    },
+    "architecture/verification/branch-switch/tools/b8/quietWorkerPreload.mjs": {
+      "bytes": 134,
+      "sha256": "bdc486de5f2b84e30bda958655e5ff4b792d84d9421c5116c2cda0b883997e23"
+    },
+    "architecture/verification/branch-switch/tools/b8/helpers/waitForQuietProcess.mjs": {
+      "bytes": 162,
+      "sha256": "10d6e93d2cc9ef031fd3e94b38b9c85652ff3d1418dc3e96314283f9c9172174"
+    },
+    "architecture/verification/branch-switch/tools/b8/helpers/sampleProcessCpu.mjs": {
+      "bytes": 158,
+      "sha256": "8b79f69d1aa11f411ce49b0e3ae4897021c17896ad897a4a6fd1c1ec9d3dc9a7"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/checkDeclarations.mjs": {
+      "bytes": 2643,
+      "sha256": "aac4a8cadde63a37686d1762f6e85348c64d41c912a999c76cc52502c64bc7f2"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/checkLoad.mjs": {
+      "bytes": 527,
+      "sha256": "3c30a75eabe5730aa3ce60b759e84af6f818d4625026632abd92777dedf9b2c3"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/judgeMicroHygiene.mjs": {
+      "bytes": 968,
+      "sha256": "fb17af34c6ccef5974be499453726790eaf3e82dd0055779ca746a724f5c9d4c"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/pilot.mjs": {
+      "bytes": 1762,
+      "sha256": "b563bdb677c59720f5c180886304deb25ae5268faf14be9401bbde4f700f2087"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/prepare.mjs": {
+      "bytes": 2406,
+      "sha256": "e10091bb5af66c31cfd85ea8ee509f17a308a494d0330cd99ba27aff869b8e3a"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/rehearse.mjs": {
+      "bytes": 2399,
+      "sha256": "93f8a9f7921937e4f4cbc4af13637802ef4826eb5be9308bbc959a5461992d5c"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/summarize.mjs": {
+      "bytes": 7936,
+      "sha256": "922e74a2a104473b12a71a0e1c33c37cb2c45c8f76b0eb323fdb99d35e45afd4"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/verifyInputs.mjs": {
+      "bytes": 372,
+      "sha256": "5ffaf1ee5011ee7a372198e8d2241dfa48c7a464262907d3088d4e391d737a34"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/window.mjs": {
+      "bytes": 5993,
+      "sha256": "9148365ad13a2c6f2a2b30b7f908f15629ab02fa5e53dbe6fb46265ee0a7e64c"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/helpers/normalizeDeclaration.mjs": {
+      "bytes": 1787,
+      "sha256": "efa21bdb8e481e8c88a5e969692402f7e2ce49361e63a942e609e6a97492238f"
+    },
+    "architecture/verification/branch-switch/tools/micro-hygiene/helpers/normalizeDeclarationNode.mjs": {
+      "bytes": 3662,
+      "sha256": "3acade096dff4c910fd1b47c6afeff0d5b2fda825b69829acb6a20da52ed5ca4"
+    },
+    "architecture/verification/branch-switch/tools/iv-1/summarize.mjs": {
+      "bytes": 9163,
+      "sha256": "85cd31ddf0ee96ea7956cd20e4cad7ca1acf2e844394fe5b25262d2807cf0501"
+    },
+    "architecture/verification/branch-switch/tools/iv-1/weightedExchange.mjs": {
+      "bytes": 2389,
+      "sha256": "b43e4d0f31b18f7203bd2334b976c1d20e6add1e1f1acb3cf59e9162b161d013"
+    },
+    "architecture/verification/branch-switch/tools/iv-1/judgeStage.mjs": {
+      "bytes": 723,
+      "sha256": "1c96db01190c4f473bcdfb9474ef76203a2d9ea0563be19082195628a5707e10"
+    },
+    "architecture/verification/branch-switch/tools/iv-2/worker.mjs": {
+      "bytes": 4079,
+      "sha256": "f2194e4de11747ff0658a3b20e40e465cd03f5ba655ef283c0c47c3c5e545282"
+    },
+    "architecture/verification/branch-switch/tools/iv-2/rows.mjs": {
+      "bytes": 422,
+      "sha256": "6a3e17eaa824f6bb6a4bb0666f658deb58676985f5bd7b558b5e197eeb699b15"
+    },
+    "architecture/verification/branch-switch/tools/window/eventWeights.json": {
+      "bytes": 2959,
+      "sha256": "00ba440a6ac9baba4d3fd5b0aa4883aaa7911e8361eb052d6849f6ba42815b5a"
+    }
+  },
+  "preparedAt": "2026-10-29T13:58:46.656Z",
+  "environment": {
+    "node": "v26.12.1",
+    "bun": "1.4.4",
+    "cpu": "Apple M1 Max",
+    "arch": "arm64",
+    "release": "27.0.0"
+  },
+  "stages": [
+    "switch-oneOf-80",
+    "switch-payload-12",
+    "switch-siblings-0",
+    "switch-siblings-1000"
+  ],
+  "enteringGroup": "inclusive outermost factory, child creation, entry, restore, recursive clone and overlay calls",
+  "microHygiene": {
+    "regressionsAllowed": 0,
+    "exchangeMaximumUs": 0,
+    "improvementRequired": false,
+    "stageReductions": "reported with unchanged IV-1 judgeStage; not a hygiene adoption condition",
+    "excluded": [
+      "IV-2 allocation diagnostics",
+      "exit-only self attribution",
+      "cold lazy-scope cost",
+      "wide-bucket allocation history"
+    ]
+  }
+}

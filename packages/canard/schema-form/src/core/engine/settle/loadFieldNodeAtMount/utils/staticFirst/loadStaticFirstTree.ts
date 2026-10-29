@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { publishGlobalStateDeltas } from '../../../../record';
 import type { FieldNodeRecord, MisfitRecord } from '../../../../record';
@@ -30,7 +32,7 @@ interface Frame<Self> {
   entries: readonly BlueprintChildEntry[];
   required: readonly unknown[];
   order: number;
-  children: Self[] | undefined;
+  children: Optional<Self[]>;
 }
 /** Empty shape/required lists share immutable storage. */
 const EMPTY = Object.freeze([]);
@@ -66,8 +68,8 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
       children: undefined,
     },
   ];
-  let deltas: Map<string, number> | undefined;
-  let warnings: { order: number; warning: MisfitRecord }[] | undefined;
+  let deltas: Optional<Map<string, number>>;
+  let warnings: Optional<{ order: number; warning: MisfitRecord }[]>;
   let order = 0;
   while (stack.length) {
     const frame = stack[stack.length - 1];

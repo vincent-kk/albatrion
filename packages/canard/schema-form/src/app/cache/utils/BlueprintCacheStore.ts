@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintCacheEntries, CacheDomain } from '../type';
 
 /** WeakMap-compatible adapter preserving the immutable domain entry-list contract. */
@@ -12,7 +14,7 @@ export class BlueprintCacheStore extends WeakMap<
   }
 
   /** Read the current predicate variants without building on a miss. */
-  override get(key: object): BlueprintCacheEntries | undefined {
+  override get(key: object): Optional<BlueprintCacheEntries> {
     return this.domain.peek(key)?.value;
   }
 

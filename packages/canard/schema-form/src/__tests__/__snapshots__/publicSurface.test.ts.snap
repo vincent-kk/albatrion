@@ -116,10 +116,10 @@ isUnhandledError	value	(error: unknown) => error is UnhandledError
 isUnionNode	value	(node: FieldNode) => node is UnionNode
 isValidationError	value	(error: unknown) => error is ValidationError
 isVirtualNode	value	(node: FieldNode) => node is VirtualNode
-registerPlugin	value	(plugin: SchemaFormPlugin | null) => void
+registerPlugin	value	(plugin: Nullable<SchemaFormPlugin>) => void
 useChildFieldErrors	value	(node: FieldNode, disabled?: boolean | undefined) => { errorMessage: ReactNode; showError: boolean; formattedError: ReactNode; showErrors: boolean[]; formattedErrors: ReactNode[]; errorMatrix: (readonly ValidationIssue<unknown>[])[]; }
 useChildFieldMap	value	<Value extends Dictionary>(ChildFields: ChildField[]) => ChildFieldMap<Required<Value>>
-useFieldNodeSubscribe	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Node | null, listener: FieldNodeListener, options?: FieldNodeSubscribeOptions<Node> | undefined) => void
-useFieldNodeTracker	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Node | null, tracking?: number) => number
-useFormSubmit	value	<Schema extends JSONSchema, Value extends AllowedValue = InferValueType<Schema>>(ref: RefObject<FormHandle<Schema, Value> | null>) => { submit: () => Promise<void | undefined>; pending: boolean | undefined; }"
+useFieldNodeSubscribe	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullable<Node>, listener: FieldNodeListener, options?: FieldNodeSubscribeOptions<Node> | undefined) => void
+useFieldNodeTracker	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Nullable<Node>, tracking?: number) => number
+useFormSubmit	value	<Schema extends JSONSchema, Value extends AllowedValue = InferValueType<Schema>>(ref: RefObject<Nullable<FormHandle<Schema, Value>>>) => { submit: () => Promise<void | undefined>; pending: boolean | undefined; }"
 `;

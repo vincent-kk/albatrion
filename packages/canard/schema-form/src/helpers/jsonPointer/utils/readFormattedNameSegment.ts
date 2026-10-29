@@ -1,3 +1,6 @@
+import type { Optional } from '@aileron/declare';
+
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import { readFormattedPointerSegment } from './readFormattedPointerSegment';
 
 /**
@@ -9,13 +12,13 @@ import { readFormattedPointerSegment } from './readFormattedPointerSegment';
 export const readFormattedNameSegment = (
   path: string,
   index: number,
-): string | undefined => {
+): Optional<string> => {
   const segment = readFormattedPointerSegment(path, index);
   switch (segment) {
-    case '*':
-    case '..':
-    case '.':
-    case '@':
+    case $.Wildcard:
+    case $.Parent:
+    case $.Current:
+    case $.Context:
       return undefined;
     default:
       return segment;

@@ -1,3 +1,5 @@
+import type { Dictionary, Nullable } from '@aileron/declare';
+
 import type { SchemaFormError } from '../../../../errors';
 import type {
   BlueprintChildEntry,
@@ -56,7 +58,7 @@ export interface ArrayAppendProof<Self extends FieldNodeRecord<Self>> {
   /** Host local before the push, an array of `count` slots. */
   local: unknown;
   /** Children array published by the tail application. */
-  children?: readonly Self[] | null;
+  children?: Nullable<readonly Self[]>;
   /** Root load snapshot published by the tail application. */
   snapshot?: unknown;
   /** First local assembled through the append hint. */
@@ -76,7 +78,7 @@ export interface ArrayPopProof<Self extends FieldNodeRecord<Self>> {
   /** Host local before the pop, an array of `count` slots. */
   local: unknown;
   /** Children array published by the tail application. */
-  children?: readonly Self[] | null;
+  children?: Nullable<readonly Self[]>;
   /** Root load snapshot published by the tail application. */
   snapshot?: unknown;
   /** First local assembled through the truncate hint. */
@@ -100,7 +102,7 @@ export interface ArraySpliceProof<Self extends FieldNodeRecord<Self>> {
   /** Proposal reporting the removed value or the new length; an insert's only slot carries its value. */
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>;
   /** Children array published by the splice application. */
-  children?: readonly Self[] | null;
+  children?: Nullable<readonly Self[]>;
   /** Length of the settlement's path-change list after the splice application renamed the tail. */
   pathChanges?: number;
   /** Cleared when a selection-time check fails; selection then uses the general path. */
@@ -117,7 +119,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   presenceSelections?: Map<
     Self,
     {
-      readonly structure: Readonly<Record<string, Self>>;
+      readonly structure: Readonly<Dictionary<Self>>;
       readonly names: readonly string[];
     }
   >;
@@ -134,7 +136,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** First pre-move address per moved node, built once by an exit resolver. */
   inactivePathOrigins?: Map<Self, string>;
   /** Binding context from the preceding committed shape. */
-  previousContext?: Readonly<Record<string, unknown>>;
+  previousContext?: Readonly<Dictionary<unknown>>;
   /** Original caller target, excluded from refresh targets. */
   target: Self;
   /** Entry origin retained for later transition rules. */
@@ -211,7 +213,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** First-load postorder awaiting independent leaf fill before its only assembly. */
   initialOutputs?: Self[];
   /** Cached reverse references, absent for a blueprint without virtual nodes. */
-  virtualReferenceIndex: VirtualReferenceIndex | null;
+  virtualReferenceIndex: Nullable<VirtualReferenceIndex>;
   /** Call-local suppression after explicit bits override the form default. */
   suppressAutomaticWrites: boolean;
   /** Load boundary whose current shape begins a new appearance lifetime. */

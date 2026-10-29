@@ -1,4 +1,7 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
+
+import type { Dictionary, Optional } from '@aileron/declare';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
@@ -11,7 +14,7 @@ import type {
 } from '../../types/blueprint';
 
 /** Local control groups whose declared values can differ from the default keys. */
-const hasStateKeys = (controls: unknown): controls is Record<string, unknown> =>
+const hasStateKeys = (controls: unknown): controls is Dictionary<unknown> =>
   controls !== null &&
   typeof controls === 'object' &&
   !isArray(controls) &&
@@ -35,13 +38,14 @@ export const buildFeatureNodeIndex = (
     const children = [
       ...node.childEntries,
       ...(node.prefixItems ?? []).flatMap((item, index) =>
-        (node.prefixItemCandidates?.[index] ?? [item]).map((child) => ({
+        mapArray(node.prefixItemCandidates?.[index] ?? [item], (child) => ({
           name: String(index),
           node: child,
           declarations: child.declarations,
         })),
       ),
-      ...(node.itemCandidates ?? (node.item ? [node.item] : [])).map(
+      ...mapArray(
+        node.itemCandidates ?? (node.item ? [node.item] : []),
         (item) => ({
           name: $.Wildcard,
           node: item,
@@ -50,14 +54,14 @@ export const buildFeatureNodeIndex = (
       ),
     ];
     const buildOwners = () =>
-      children.map((child) => {
+      mapArray(children, (child) => {
         const paths = new Set<string>();
         for (const declaration of child.node.declarations)
           for (const path of getFragmentOwnerPaths(declaration.schemaPath))
             paths.add(path);
         return paths;
       });
-    let owners: readonly ReadonlySet<string>[] | undefined;
+    let owners: Optional<readonly ReadonlySet<string>[]>;
     for (const declaration of node.declarations) {
       if (declaration.validationOnly || typeof declaration.schema !== 'object')
         continue;

@@ -1,3 +1,7 @@
+import { filter as filterArray } from '@winglet/common-utils/array';
+
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { HostStaticPartition } from '../../../../../blueprint';
@@ -20,14 +24,14 @@ export interface PreparedStaticHost<Self> {
   readonly blueprint: Blueprint;
   readonly template: BlueprintNode;
   readonly path: string;
-  readonly baseline: Record<string, Self>;
+  readonly baseline: Dictionary<Self>;
   readonly entries: ReadonlyMap<string, StaticShapeEntry>;
   /** Ungated child list, constructed once with the fixed baseline. */
   readonly baselineChildren: readonly Self[];
   /** Dynamic candidates retain blueprint author order even without a direct plan. */
   readonly dynamicEntries: readonly BlueprintChildEntry[];
   /** Last ordinary shape and child list, never mutated by an in-progress selection. */
-  selectedStructure: Record<string, Self>;
+  selectedStructure: Dictionary<Self>;
   selectedChildren: readonly Self[];
   /** Previous dynamic names are used only for cleanup, not to admit children. */
   dynamicNames: readonly string[];
@@ -45,10 +49,10 @@ export interface PreparedStaticHost<Self> {
  */
 export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   context: SettlementContext<Self>,
   hasRelocated: boolean,
-): PreparedStaticHost<Self> | undefined => {
+): Optional<PreparedStaticHost<Self>> => {
   const record = getHostDerived<'preparedStaticHost', PreparedStaticHost<Self>>(
     node,
   );
@@ -96,7 +100,7 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
   );
   if (!shape || shape.length !== partition.staticEntries.length)
     return undefined;
-  const baseline: Record<string, Self> = Object.create(null);
+  const baseline: Dictionary<Self> = Object.create(null);
   const entries = new Map<string, StaticShapeEntry>();
   for (const selected of shape) {
     const { entry, schema } = selected;
@@ -129,18 +133,20 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
     baseline,
     entries,
     baselineChildren: Object.values(baseline),
-    dynamicEntries: node.blueprintNode.childEntries.filter(
+    dynamicEntries: filterArray(
+      node.blueprintNode.childEntries,
       (entry) => !entries.has(entry.name),
     ),
     selectedStructure: prior,
     selectedChildren:
       node.structure === prior ? (node.children ?? []) : Object.values(prior),
-    dynamicNames: Object.keys(prior).filter((name) => !entries.has(name)),
-    alwaysSteps: (
-      getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
+    dynamicNames: filterArray(Object.keys(prior), (name) => !entries.has(name)),
+    alwaysSteps: filterArray(
+      getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(
         node.blueprintNode,
-      ).gateSelectionTable?.alwaysSteps ?? []
-    ).filter((index) => plan && !entries.has(plan.steps[index].entry.name)),
+      ).gateSelectionTable?.alwaysSteps ?? [],
+      (index) => Boolean(plan && !entries.has(plan.steps[index].entry.name)),
+    ),
   };
   record.preparedStaticHost = prepared;
   (context.preparedStaticHosts ??= new Set()).add(node);

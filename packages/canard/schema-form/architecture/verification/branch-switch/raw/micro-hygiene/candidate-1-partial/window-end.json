@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-29T14:41:38.584Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "Cursor Helper (Renderer)",
+      "cpuPercent": 74.08881020990715
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 40.63943176068574
+    },
+    {
+      "name": "Cursor",
+      "cpuPercent": 23.75843702933698
+    },
+    {
+      "name": "networkserviceproxy",
+      "cpuPercent": 9.065719392773405
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 9.065719392743862
+    },
+    {
+      "name": "loginwindow",
+      "cpuPercent": 8.75310837924999
+    },
+    {
+      "name": "Cursor Helper",
+      "cpuPercent": 7.502664325053936
+    },
+    {
+      "name": "Magnet",
+      "cpuPercent": 7.190053311510532
+    },
+    {
+      "name": "runningboardd",
+      "cpuPercent": 7.190053311496316
+    },
+    {
+      "name": "MenuBarAgent",
+      "cpuPercent": 6.877442297966904
+    }
+  ]
+}

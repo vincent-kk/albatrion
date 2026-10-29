@@ -1,3 +1,5 @@
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import type {
   BlueprintNode,
   BlueprintSchemaType,
@@ -53,7 +55,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   readonly behavior: Behavior<FieldNode>;
   readonly runtime: FieldNodeRuntime<FieldNode>;
   readonly blueprintNode: BlueprintNode;
-  parent: FieldNode | null;
+  parent: Nullable<FieldNode>;
   private readonly root: FieldNode;
   private storedName: string;
   private storedEscapedName: string;
@@ -61,10 +63,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   private storedDepth: number;
   private storedRequired: boolean;
   private readonly storedNullable: boolean;
-  private readonly storedSchemaType: BlueprintSchemaType | undefined;
-  structure: Record<string, FieldNode> | null;
-  private storedChildren: readonly FieldNode[] | null;
-  itemKey: number | null;
+  private readonly storedSchemaType: Optional<BlueprintSchemaType>;
+  structure: Nullable<Dictionary<FieldNode>>;
+  private storedChildren: Nullable<readonly FieldNode[]>;
+  itemKey: Nullable<number>;
   itemCount: number;
   nextItemKey: number;
   private storedRaw: unknown;
@@ -83,12 +85,12 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   deliveryChanges: number;
   deliveryPreviousLocal: unknown;
   deliveryPreviousEmit: unknown;
-  deliveryPreviousPath: string | undefined;
-  deliveryPreviousChildren: readonly FieldNode[] | null | undefined;
-  deliveryPreviousComputed: number | undefined;
-  deliveryPreviousSchema: EffectiveSchema | undefined;
-  deliveryPreviousState: NodeStateFlags | undefined;
-  deliveryWatchValues: readonly unknown[] | undefined;
+  deliveryPreviousPath: Optional<string>;
+  deliveryPreviousChildren: Optional<Nullable<readonly FieldNode[]>>;
+  deliveryPreviousComputed: Optional<number>;
+  deliveryPreviousSchema: Optional<EffectiveSchema>;
+  deliveryPreviousState: Optional<NodeStateFlags>;
+  deliveryWatchValues: Optional<readonly unknown[]>;
   pendingDelivery: FieldNodeRecord<FieldNode>['pendingDelivery'];
   pendingRevision: number;
   pendingNonSettleDelivery: FieldNodeRecord<FieldNode>['pendingNonSettleDelivery'];
@@ -100,13 +102,13 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     behavior: Behavior<FieldNode>,
     runtime: FieldNodeRuntime<FieldNode>,
     blueprintNode: BlueprintNode,
-    parent: FieldNode | null,
+    parent: Nullable<FieldNode>,
     name: string,
     escapedName: string,
     path: string,
     depth: number,
-    structure: Record<string, FieldNode> | null,
-    children: readonly FieldNode[] | null,
+    structure: Nullable<Dictionary<FieldNode>>,
+    children: Nullable<readonly FieldNode[]>,
     schema: EffectiveSchema,
     state: FieldNodeRecord<FieldNode>['interactionState'],
   ) {
@@ -213,7 +215,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get children() {
     return this.storedChildren;
   }
-  set children(value: readonly FieldNode[] | null) {
+  set children(value: Nullable<readonly FieldNode[]>) {
     this.storedChildren = value;
   }
   get raw() {
@@ -285,10 +287,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get defaultValue() {
     return readFieldNodeDefaultValue<FieldNode>(this);
   }
-  find(pointer?: string | readonly string[] | null) {
+  find(pointer?: Nullable<string | readonly string[]>) {
     return find<FieldNode>(this, pointer);
   }
-  findNodes(pointer?: string | readonly string[] | null) {
+  findNodes(pointer?: Nullable<string | readonly string[]>) {
     return findNodes<FieldNode>(this, pointer);
   }
   /** Visit this occurrence and its current-shape subtree in preorder; writes settle once at the end. */

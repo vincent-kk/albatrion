@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { getDependencyIndex } from './getDependencyIndex';
 
@@ -12,8 +14,8 @@ import { getDependencyIndex } from './getDependencyIndex';
 export const getLivePresenceNode = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
-): Self | undefined => {
-  let live: Self | undefined = root;
+): Optional<Self> => {
+  let live: Optional<Self> = root;
   const segments = getDependencyIndex(root.runtime.blueprint).pathSegments(
     path,
     root.runtime,

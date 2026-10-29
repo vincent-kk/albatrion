@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -10,7 +12,7 @@ import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBluepri
  * @returns The exact stored binding, otherwise the requested declaration
  */
 export const getSlotBinding = <Self extends FieldNodeRecord<Self>>(
-  host: Self | undefined,
+  host: Optional<Self>,
   entry: BlueprintChildEntry,
   overlay?: InactiveSlotOverlay,
 ): BlueprintChildEntry => {

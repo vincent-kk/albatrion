@@ -1,6 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import {
+  JSONPointer as $,
   PointerOperator,
   type PointerSegment,
   appendSegment,
@@ -28,8 +31,8 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
   const segments =
     preparedSegments ?? getCachedPointerSegments(root.runtime, templatePath);
   const paths: string[] = [];
-  const pending: { node: Self | undefined; depth: number; path: string }[] = [
-    { node: root, depth: 0, path: '' },
+  const pending: { node: Optional<Self>; depth: number; path: string }[] = [
+    { node: root, depth: 0, path: $.Root },
   ];
   while (pending.length) {
     const current = pending.pop();

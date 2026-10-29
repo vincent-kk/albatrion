@@ -68,18 +68,33 @@ export const createGatePredicate = (
       kind: 'extra',
       key: 'extra:' + occurrence.hostPath,
     });
+  let matches = engineModes.gatePredicate !== 'off';
+  if (matches) {
+    let allowsMemoization = gate.kind !== 'active';
+    if (!allowsMemoization) {
+      let matches2 = expression?.completeReads === true;
+      if (matches2) {
+        let readsContext = false;
+        for (let index = 0, count = reads.length; index < count; index++) {
+          const path = reads[index];
+
+          if (readPointerSegment(path, 0) === PointerOperator.Context) {
+            readsContext = true;
+            break;
+          }
+        }
+        matches2 = !readsContext;
+      }
+      allowsMemoization = matches2;
+    }
+    matches = allowsMemoization;
+  }
   return {
     reads,
     names,
     inputs,
     arguments: { values: new Array<unknown>(inputs.length), view: undefined },
-    memoizable:
-      engineModes.gatePredicate !== 'off' &&
-      (gate.kind !== 'active' ||
-        (expression?.completeReads === true &&
-          !reads.some(
-            (path) => readPointerSegment(path, 0) === PointerOperator.Context,
-          ))),
+    memoizable: matches,
     evaluate: (input) => {
       if (gate.kind === 'if') {
         guard ??= readFieldNodeGuard(runtime, gate);

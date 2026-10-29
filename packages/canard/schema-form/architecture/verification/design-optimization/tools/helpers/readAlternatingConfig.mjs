@@ -8,6 +8,11 @@ export function readAlternatingConfig(argv) {
   const flags = {};
   const common = [];
   for (const argument of argv) {
+    if (argument === '--short-window=true') {
+      assert.ok(!flags.shortWindow, 'Duplicate short-window');
+      flags.shortWindow = true;
+      continue;
+    }
     const quality = /^--quality=(branchless|legacy)$/.exec(argument);
     if (quality) {
       assert.ok(!flags.quality, 'Duplicate quality');
@@ -30,9 +35,13 @@ export function readAlternatingConfig(argv) {
   const formal = config.samples >= 100;
   if (formal)
     assert.ok(
-      config.samples === 100 && config.warmups === 20 && config.runs === 10,
-      'Formal alternating windows require 20 warmups, 100 samples, 10 processes per role',
+      config.samples === 100 &&
+        config.warmups === 20 &&
+        config.runs === (flags.shortWindow ? 4 : 10),
+      'Formal alternating windows require 20/100 and 10 processes per role, or the explicit four-process short window',
     );
+  if (flags.shortWindow)
+    assert.equal(config.runs, 4, 'Short windows use four processes');
   if (config.worker) assert.ok(['A', 'B'].includes(flags.lane), 'Worker lane');
   else
     for (const name of ['baseline-bundle', 'candidate-bundle'])

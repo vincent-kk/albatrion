@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   PointerOperator,
   parsePointer,
   resolvePointer,
@@ -20,7 +21,7 @@ export const collectGateEvaluationReads = (
     const path = match[0];
     const parsed = parsePointer(path);
     if (parsed.segments[0] === PointerOperator.Context) continue;
-    if (parsed.absolute) reads.push(resolvePointer('', path));
+    if (parsed.absolute) reads.push(resolvePointer($.Root, path));
     else {
       let levels = 0;
       for (const segment of parsed.segments) {

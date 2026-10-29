@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 
@@ -12,7 +14,7 @@ import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 export const getGateExpression = (
   blueprint: Blueprint,
   schemaPath: string,
-): BlueprintExpression | undefined => {
+): Optional<BlueprintExpression> => {
   if (blueprint.capabilities.branchless) return undefined;
   let expressions = getBlueprintDerived<
     'gateExpressions',

@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { isMisfit } from '../commit/isMisfit';
 import { getRetainedChildEntry } from './getRetainedChildEntry';
@@ -14,7 +16,7 @@ export const hasAdditionalInactiveSources = <
   Self extends FieldNodeRecord<Self>,
 >(
   source: Self,
-  overlay: InactiveSlotOverlay | undefined = source.retainedSourceOverlay,
+  overlay: Optional<InactiveSlotOverlay> = source.retainedSourceOverlay,
 ): boolean => {
   const own = overlay && hasOwnProperty(overlay, 'raw');
   const raw = own ? overlay.raw : overlay?.replace ? undefined : source.raw;

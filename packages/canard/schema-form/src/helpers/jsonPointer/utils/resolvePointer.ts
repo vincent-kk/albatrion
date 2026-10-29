@@ -1,3 +1,4 @@
+import { JSONPointer as $, FragmentPrefix } from '../constants/JSONPointer';
 import {
   PointerOperator,
   type PointerSegment,
@@ -13,15 +14,15 @@ import { parsePointerSegments } from './parsePointerSegments';
  * @returns A canonical address, with `@` returned unchanged. A parent step above the root stays at the root, and a trailing empty name is dropped only directly after an operator (`./`, `../`).
  */
 export const resolvePointer = (basePath: string, pointer: string): string => {
-  if (pointer === '@') return '@';
-  if (pointer === '#') return '';
-  if (pointer === '..') {
-    const end = basePath.lastIndexOf('/');
-    return end > 0 ? basePath.slice(0, end) : '';
+  if (pointer === $.Context) return $.Context;
+  if (pointer === $.Fragment) return $.Root;
+  if (pointer === $.Parent) {
+    const end = basePath.lastIndexOf($.Separator);
+    return end > 0 ? basePath.slice(0, end) : $.Root;
   }
-  if (pointer === '.') return basePath;
-  if (pointer[0] === '/') return pointer;
-  if (pointer.startsWith('#/')) return pointer.slice(1);
+  if (pointer === $.Current) return basePath;
+  if (pointer[0] === $.Separator) return pointer;
+  if (pointer.startsWith(FragmentPrefix)) return pointer.slice(1);
   const parsed = parsePointer(pointer);
   const resolved: PointerSegment[] = parsed.absolute
     ? []

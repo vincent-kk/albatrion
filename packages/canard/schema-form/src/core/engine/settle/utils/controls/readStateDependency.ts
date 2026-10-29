@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { PointerOperator } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -10,7 +12,7 @@ export interface EmissionSnapshot {
   /** Previously emitted root value. */
   readonly emit: unknown;
   /** Previously bound context object. */
-  readonly context?: Readonly<Record<string, unknown>>;
+  readonly context?: Readonly<Dictionary<unknown>>;
 }
 
 /**

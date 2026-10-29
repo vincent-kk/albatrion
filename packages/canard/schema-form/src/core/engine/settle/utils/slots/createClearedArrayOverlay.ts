@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -16,7 +18,7 @@ type ResolveExit<Self extends FieldNodeRecord<Self>> = (
   context?: SettlementContext<Self>,
   sourceContext?: SettlementContext<Self>,
 ) => {
-  readonly overlay: InactiveSlotOverlay | undefined;
+  readonly overlay: Optional<InactiveSlotOverlay>;
   readonly hasSource: boolean;
 };
 
@@ -31,8 +33,8 @@ type ResolveExit<Self extends FieldNodeRecord<Self>> = (
  */
 export const createClearedArrayOverlay = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  previous: InactiveSlotOverlay | undefined,
-  context: SettlementContext<Self> | undefined,
+  previous: Optional<InactiveSlotOverlay>,
+  context: Optional<SettlementContext<Self>>,
   resolve: ResolveExit<Self>,
   sourceContext = context,
 ): InactiveSlotOverlay => {

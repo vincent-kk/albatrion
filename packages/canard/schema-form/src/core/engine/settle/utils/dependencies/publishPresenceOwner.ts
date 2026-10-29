@@ -1,4 +1,7 @@
-import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -15,7 +18,7 @@ export const publishPresenceOwner = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   context.dependencyOwnerPaths.add(owner);
-  context.shapeDirtyPaths.add(resolvePointer(owner, '..'));
+  context.shapeDirtyPaths.add(resolvePointer(owner, $.Parent));
   const live = getLivePresenceNode(context.root, owner);
   if (live) context.stateDirtyNodes.add(live);
 };

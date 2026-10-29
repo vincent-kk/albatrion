@@ -1,9 +1,13 @@
-import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
+import { minLite } from '@winglet/common-utils/math';
+
+import type { Dictionary, Optional } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntry } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
-import type { ArrayArrangePlan,FieldNodeRecord } from '../../../../record';
+import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
 import { captureFieldNodeChange } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
@@ -34,6 +38,7 @@ const readPositionLoadValue = (hostValue: unknown, key: string): unknown =>
  * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
  * A perished item's detached defaultValue is filled from the host's load value by position (NODE-044 reads unchanged).
  * An empty result (clear, or a pop of the only item) removes the host's path-store entries by host prefix instead of per-position re-keying.
+ * Callers collecting perishedPaths remove at most one tail slot (append/pop); reassess its structure if multi-slot callers are added.
  * @param host - Live branch array with no whole raw override
  * @param plan - Proposal accepted by canApplyArrayTail, prepareArrayAppend or prepareArrayPop; appended slots carry values and retained prefix slots are never read
  * @param context - Settlement receiving the same lifecycle and dirty facts as a full plan
@@ -48,8 +53,8 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   const oldCount = host.itemCount;
   const length = offset + plan.slots.length;
-  const prefixCount = Math.min(oldCount, length);
-  const items: Record<string, Self> = host.structure ?? Object.create(null);
+  const prefixCount = minLite(oldCount, length);
+  const items: Dictionary<Self> = host.structure ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const oldExtras = isArray(host.undeclaredValues) ? host.undeclaredValues : [];
@@ -102,7 +107,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   }
 
   const moves: ArrayPathMove[] = [];
-  let perishedPaths: Set<string> | undefined;
+  let perishedPaths: Optional<string[]>;
   for (let index = prefixCount; index < oldCount; index++) {
     const key = String(index);
     const item = items[key];
@@ -131,16 +136,10 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       },
       { owned: true },
     );
-    (perishedPaths ??= new Set()).add(item.path);
+    if (length) (perishedPaths ??= []).push(item.path);
     delete items[String(index)];
   }
-  if (!length)
-    clearArrayRuntimePaths(
-      host.runtime,
-      host.path,
-      oldCount,
-      perishedPaths ?? new Set(),
-    );
+  if (!length) clearArrayRuntimePaths(host.runtime, host.path, oldCount);
   else {
     if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
     rekeyArrayRuntimePaths(host.runtime, host.path, moves, prefixCount);

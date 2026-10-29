@@ -1,5 +1,7 @@
 import { equals } from '@winglet/common-utils/object';
 
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
 
@@ -25,7 +27,7 @@ export const retainEqualValidationIssues = <Self extends FieldNodeRecord<Self>>(
  * @returns True when the lengths match and every item deep-equals.
  */
 const isEqualVerdict = (
-  previous: readonly unknown[] | undefined,
+  previous: Optional<readonly unknown[]>,
   next: readonly ValidationIssue[],
 ): previous is readonly ValidationIssue[] => {
   if (previous === undefined || previous.length !== next.length) return false;

@@ -79,10 +79,10 @@ export const blueprint = (
         gates: [],
         order: [],
         inherited: false,
-        hostPath: '',
+        hostPath: $.Root,
       },
     ],
-    '',
+    $.Root,
   );
   if (context.hasTemplateRecursion) validateShape(context);
   if (context.hasChildTargets) validateChildTargets(context);

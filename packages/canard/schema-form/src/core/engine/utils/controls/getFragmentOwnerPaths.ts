@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   type PointerSegment,
   appendSegment,
   parsePointerSegments,
@@ -17,7 +18,7 @@ export const getFragmentOwnerPaths = (
   segments: readonly PointerSegment[] = parsePointerSegments(schemaPath),
 ): readonly string[] => {
   const owners: string[] = [];
-  let prefix = '#';
+  let prefix: string = $.Fragment;
   for (let index = 0; index < segments.length; index++) {
     const name = segments[index];
     if (typeof name !== 'string') continue;

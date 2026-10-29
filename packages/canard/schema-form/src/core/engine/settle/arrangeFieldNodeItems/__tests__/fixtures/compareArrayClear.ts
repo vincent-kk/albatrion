@@ -87,9 +87,12 @@ export const compareArrayClear = (
     const departed = new Set<DispatchTestNode>();
     const cleanup = vi.spyOn(bulk, 'clearArrayRuntimePaths');
     const reads = vi.spyOn(detached, 'captureDetachedFieldNodeReads');
+    // Oracle roots come from the live host before the public write.
+    let perishedRootPaths: readonly string[] = [];
     if (oracle) {
-      cleanup.mockImplementation((runtime, hostPath, oldCount, perished) => {
-        prunePerishedPaths(runtime, perished);
+      cleanup.mockImplementation((runtime, hostPath, oldCount) => {
+        expect(hostPath).toBe(select(root).path);
+        prunePerishedPaths(runtime, perishedRootPaths);
         rekeyArrayRuntimePaths(
           runtime,
           hostPath,
@@ -106,7 +109,9 @@ export const compareArrayClear = (
         delivered.length = 0;
         cleanup.mockClear();
         const host = select(root);
-        const former = subtreesOf(host.children ?? []);
+        const formerItems = host.children ?? [];
+        const former = subtreesOf(formerItems);
+        perishedRootPaths = formerItems.map((node) => node.path);
         let result: unknown;
         try {
           result = step.apply(root);

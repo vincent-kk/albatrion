@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
 import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type {
@@ -22,7 +24,7 @@ export const mergeSingleStaticContribution = (
   node: BlueprintNode,
   declarations: readonly PropertyDeclaration[],
   options: EffectiveSchemaOptions,
-): EffectiveSchema | undefined => {
+): Optional<EffectiveSchema> => {
   if (
     options.mode !== 'static' ||
     options.isAtomic !== undefined ||

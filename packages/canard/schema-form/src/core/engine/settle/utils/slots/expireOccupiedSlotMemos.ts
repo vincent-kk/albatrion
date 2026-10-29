@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { getSlotEntries } from './getSlotEntries';
 import { getSlotSource } from './getSlotSource';
@@ -10,9 +12,9 @@ import { getSlotSource } from './getSlotSource';
  * @returns Nothing; frozen previously returned arrays retain their own entries
  */
 export const expireOccupiedSlotMemos = <Self extends FieldNodeRecord<Self>>(
-  source: Self | undefined,
-  overlay: InactiveSlotOverlay | undefined,
-  live: Self | undefined,
+  source: Optional<Self>,
+  overlay: Optional<InactiveSlotOverlay>,
+  live: Optional<Self>,
 ): void => {
   if (!live) return;
   if (source) source.inactiveValueMemo = undefined;

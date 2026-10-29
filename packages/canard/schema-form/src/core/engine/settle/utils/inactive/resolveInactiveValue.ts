@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getLoadValue } from '../loadValues/getLoadValue';
@@ -39,7 +41,7 @@ export const resolveInactiveValue = <Self extends FieldNodeRecord<Self>>(
     return;
   const lineage: Self[] = [];
   for (
-    let ancestor: Self | null = node;
+    let ancestor: Nullable<Self> = node;
     ancestor && ancestor !== outer.parent;
     ancestor = ancestor.parent
   )

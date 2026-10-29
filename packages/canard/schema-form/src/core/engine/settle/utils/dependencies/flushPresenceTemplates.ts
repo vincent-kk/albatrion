@@ -1,4 +1,7 @@
+import type { Optional } from '@aileron/declare';
+
 import {
+  JSONPointer as $,
   isDescendantPath,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -19,7 +22,7 @@ import { publishPresenceOwner } from './publishPresenceOwner';
  * @returns Whether an entry was consumed; registrations advance only for marked owners
  */
 export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
-  host: Self | undefined,
+  host: Optional<Self>,
   context: SettlementContext<Self>,
 ): boolean => {
   const pending = context.presenceTemplates;
@@ -41,7 +44,9 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       const deepest = entry.deepest;
       const excluded =
         deepest !== null &&
-        ((deepest === '' ? owner !== '' : isDescendantPath(owner, deepest)) ||
+        ((deepest === $.Root
+          ? owner !== $.Root
+          : isDescendantPath(owner, deepest)) ||
           (entry.kind === 'direct' && owner === deepest));
       if (
         !excluded &&
@@ -54,9 +59,9 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       if (!excluded) {
         context.dirtyPaths.add(owner);
         context.dependencyOwnerPaths.add(owner);
-        context.shapeDirtyPaths.add(resolvePointer(owner, '..'));
+        context.shapeDirtyPaths.add(resolvePointer(owner, $.Parent));
         for (let ancestor = owner; ancestor; ) {
-          ancestor = resolvePointer(ancestor, '..');
+          ancestor = resolvePointer(ancestor, $.Parent);
           context.dirtyPaths.add(ancestor);
         }
         marked = true;

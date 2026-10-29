@@ -1,3 +1,5 @@
+import { maxLite } from '@winglet/common-utils/math';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { DeriveConvergenceTargets } from '../../../blueprint';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../../derive';
@@ -119,7 +121,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
         applyDeriveWrite(write, context);
         state.appliedRanks.set(
           write.targetPath,
-          Math.max(state.appliedRanks.get(write.targetPath) ?? 0, write.rank),
+          maxLite(state.appliedRanks.get(write.targetPath) ?? 0, write.rank),
         );
       }
       context.automatic = false;

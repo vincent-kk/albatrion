@@ -1,8 +1,10 @@
+import type { Optional } from '@aileron/declare';
+
 import type { NodeStrategy } from '../../types/strategy';
 import type {
-BlueprintNodeKind,
-BlueprintSchema,
-BlueprintSchemaType,
+  BlueprintNodeKind,
+  BlueprintSchema,
+  BlueprintSchemaType,
 } from './schema';
 
 /** Location and ownership metadata shared by every declarative gate. */
@@ -119,7 +121,7 @@ export interface BlueprintNode {
   /** Stable dispatch kind independent of gate state. */
   readonly kind: BlueprintNodeKind;
   /** Static accepted JSON type restriction, with null represented by nullable; undefined on virtual nodes, which have no JSON type. */
-  readonly schemaType: BlueprintSchemaType | undefined;
+  readonly schemaType: Optional<BlueprintSchemaType>;
   /** Whether the static accepted set contains null. */
   readonly nullable: boolean;
   /** Fixed branch or terminal strategy. */

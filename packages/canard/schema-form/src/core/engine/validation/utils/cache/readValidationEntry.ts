@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintSchema } from '../../../blueprint';
 import type {
   GuardFunction,
@@ -61,7 +63,7 @@ export const readValidationEntry = (
   list.recent.push(authoredRoot);
   if (list.recent.length > 8) evictValidationRoot(validator, list.recent[0]);
   const copy = createValidatorCopy(authoredRoot);
-  let validate: ValidateFunction | undefined;
+  let validate: Optional<ValidateFunction>;
   let failure: unknown;
   try {
     validate = validator.compile(copy);

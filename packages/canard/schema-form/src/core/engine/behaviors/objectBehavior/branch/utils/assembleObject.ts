@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import type { Behavior } from '../../../../record';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
@@ -25,7 +27,7 @@ export const assembleObject: Behavior['assemble'] = (
     typeof previous === 'object' &&
     objectKeyCounts.get(previous) === stable.names.length
   ) {
-    let patch: Record<string, unknown> | undefined;
+    let patch: Optional<Dictionary<unknown>>;
     let sameKeys = true;
     for (const child of recalculated) {
       if (
@@ -66,7 +68,7 @@ export const assembleObject: Behavior['assemble'] = (
     typeof previous === 'object' &&
     !isArray(previous)
   ) {
-    let patch: Record<string, unknown> | undefined;
+    let patch: Optional<Dictionary<unknown>>;
     let sameKeys = true;
     const oldNames = Object.keys(previous);
     if (oldNames.length !== stable.names.length) sameKeys = false;
@@ -115,7 +117,7 @@ export const assembleObject: Behavior['assemble'] = (
     preferred.length === 0 &&
     entries.length === children.length
   ) {
-    const result: Record<string, unknown> = {};
+    const result: Dictionary<unknown> = {};
     const names: string[] = [];
     let aligned = true;
     for (let index = 0; index < children.length; index++) {
@@ -160,7 +162,7 @@ export const assembleObject: Behavior['assemble'] = (
     extras
   ) {
     const names = Object.keys(extras);
-    const result: Record<string, unknown> = {};
+    const result: Dictionary<unknown> = {};
     for (const name of names)
       writeObjectKey(result, name, Reflect.get(extras, name));
     (node.runtime.objectShapes ??= new WeakMap()).set(node, {
@@ -184,7 +186,6 @@ export const assembleObject: Behavior['assemble'] = (
       childValues.set(child.name, child.emit);
   const names: string[] = [];
   const seen = new Set<string>();
-
   for (const name of preferred) {
     if (childValues.has(name)) {
       if (childValues.get(name) !== undefined && !seen.has(name)) {
@@ -216,11 +217,19 @@ export const assembleObject: Behavior['assemble'] = (
 
   if (previous !== null && typeof previous === 'object' && !isArray(previous)) {
     const oldNames = Object.keys(previous);
-    if (
-      names.length === oldNames.length &&
-      names.every((name, index) => name === oldNames[index])
-    ) {
-      let patch: Record<string, unknown> | undefined;
+    let matches = names.length === oldNames.length;
+    if (matches) {
+      for (let index = 0, count = names.length; index < count; index++) {
+        const name = names[index];
+
+        if (!(name === oldNames[index])) {
+          matches = false;
+          break;
+        }
+      }
+    }
+    if (matches) {
+      let patch: Optional<Dictionary<unknown>>;
       for (const name of names) {
         const value = childValues.has(name)
           ? childValues.get(name)
@@ -242,7 +251,7 @@ export const assembleObject: Behavior['assemble'] = (
       return patch ?? previous;
     }
   }
-  const result: Record<string, unknown> = {};
+  const result: Dictionary<unknown> = {};
   for (const name of names)
     writeObjectKey(
       result,

@@ -2,6 +2,8 @@ import type { ComponentType } from 'react';
 
 import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   FormErrorRenderer,
   FormFieldRenderer,
@@ -56,7 +58,7 @@ export class PluginManager {
     return PluginManager.__renderKit__.FormErrorRenderer;
   }
 
-  static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {
+  static appendRenderKit(renderKit: Optional<Partial<RenderKit>>) {
     if (!renderKit) return;
     PluginManager.__renderKit__ = {
       ...PluginManager.__renderKit__,
@@ -72,7 +74,7 @@ export class PluginManager {
   }
 
   static appendFieldInputDefinitions(
-    fieldInputDefinitions: FieldInputDefinition[] | undefined,
+    fieldInputDefinitions: Optional<FieldInputDefinition[]>,
   ) {
     if (!fieldInputDefinitions) return;
     PluginManager.__fieldInputDefinitions__ = [
@@ -81,7 +83,7 @@ export class PluginManager {
     ];
   }
 
-  private static __validator__: ValidatorPlugin | undefined;
+  private static __validator__: Optional<ValidatorPlugin>;
 
   private static __formatError__: FormatError = formatValidationError;
 
@@ -92,11 +94,11 @@ export class PluginManager {
     return PluginManager.__formatError__;
   }
 
-  static appendValidator(validator: ValidatorPlugin | undefined) {
+  static appendValidator(validator: Optional<ValidatorPlugin>) {
     if (!validator) return;
     PluginManager.__validator__ = validator;
   }
-  static appendFormatError(formatError: FormatError | undefined) {
+  static appendFormatError(formatError: Optional<FormatError>) {
     if (!formatError) return;
     PluginManager.__formatError__ = formatError;
   }

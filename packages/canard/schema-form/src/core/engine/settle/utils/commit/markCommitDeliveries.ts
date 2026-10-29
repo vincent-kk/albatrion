@@ -1,6 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import {
+  JSONPointer as $,
   isDescendantPath,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -50,7 +53,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       automaticNodes.add(context.automaticLog[index].node);
     const watchIndex = runtime.deliveryWatchIndex;
     const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
-    let affectedPaths: Set<string> | undefined;
+    let affectedPaths: Optional<Set<string>>;
     if (watchIndex?.allNodes.size) {
       affectedPaths = runtime.deliveryAffectedPaths ?? new Set<string>();
       for (const node of context.entered) affectedPaths.add(node.path);
@@ -66,7 +69,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       for (const path of affectedPaths) {
         let ancestor = path;
         while (ancestor) {
-          ancestor = resolvePointer(ancestor, '..');
+          ancestor = resolvePointer(ancestor, $.Parent);
           if (!context.changedRaw.has(ancestor)) affectedPaths.delete(ancestor);
         }
       }
@@ -103,7 +106,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
         const child = children[index];
         if (child.parent !== host || child.blueprintNode.kind === 'virtual')
           continue;
-        const next = isArray(required) && required.includes(child.name);
+        const next = isArray(required) && required.indexOf(child.name) !== -1;
         if (child.required === next) continue;
         child.required = next;
         candidates.add(child);
@@ -146,7 +149,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     const globalState = commitGlobalState(context);
     const { departing: globalDeparting, loadNodes } = globalState;
     const { entered, changedNodes, stateDirtyNodes } = context;
-    const sources: readonly (ReadonlySet<unknown> | undefined)[] = [
+    const sources: readonly Optional<ReadonlySet<unknown>>[] = [
       globalDeparting,
       entered,
       changedNodes,

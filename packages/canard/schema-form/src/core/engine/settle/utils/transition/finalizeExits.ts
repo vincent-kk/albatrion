@@ -1,4 +1,9 @@
-import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import { visitFieldNodes } from '../../../navigation';
@@ -33,7 +38,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
   finalizePerished(context);
-  let misfitIndex: Map<string, Set<string>> | undefined;
+  let misfitIndex: Optional<Map<string, Set<string>>>;
   for (const node of context.pendingExits.values()) {
     if (node.detached) continue;
     const parent = node.parent;
@@ -83,7 +88,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           }
           paths.add(path);
           if (!ancestor) break;
-          ancestor = resolvePointer(ancestor, '..');
+          ancestor = resolvePointer(ancestor, $.Parent);
         }
       }
     }
@@ -93,7 +98,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       while (true) {
         misfitIndex.get(ancestor)?.delete(path);
         if (!ancestor) break;
-        ancestor = resolvePointer(ancestor, '..');
+        ancestor = resolvePointer(ancestor, $.Parent);
       }
     }
   }

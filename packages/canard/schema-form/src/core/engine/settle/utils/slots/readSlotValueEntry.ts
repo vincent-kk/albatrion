@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 
@@ -11,8 +13,8 @@ import { sameValue } from '../../../utils/compute/sameValue';
  * @returns Frozen item with stable value and item references between changes
  */
 export const readSlotValueEntry = <Self extends FieldNodeRecord<Self>>(
-  source: Self | undefined,
-  overlay: InactiveSlotOverlay | undefined,
+  source: Optional<Self>,
+  overlay: Optional<InactiveSlotOverlay>,
   path: string,
   value: unknown,
   composed = false,
