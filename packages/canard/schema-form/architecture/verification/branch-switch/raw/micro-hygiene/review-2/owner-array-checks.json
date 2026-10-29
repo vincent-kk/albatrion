@@ -1,0 +1,50 @@
+{
+  "ownerDecision": "msg_686dc576c0d7",
+  "removedSetBranches": 1,
+  "publicCollectedRootBound": 1,
+  "directInternalBoundaryCases": "64 and65 roots, both ordered arrays",
+  "expectedRed": {
+    "failed": 1,
+    "passed": 4,
+    "assertion": "65-root result must be Array"
+  },
+  "build": {
+    "exit": 0,
+    "includesTypecheck": true,
+    "artifactChecks": true
+  },
+  "targeted": {
+    "exit": 0,
+    "files": 49,
+    "passed": 315
+  },
+  "lint": {
+    "exit": 0
+  },
+  "artifacts": {
+    "index.mjs": {
+      "bytes": 854977,
+      "sha256": "a9881ceb506285ac38466bdfd122c69eb228e7749c85bdd75a67db23eef82838",
+      "deltaFromMeasuredCandidate": -150
+    },
+    "index.node.mjs": {
+      "bytes": 854199,
+      "sha256": "b73da694caed26a48959e3a6880bcdf7299357125b5c136a1234c12ee9092826",
+      "deltaFromMeasuredCandidate": -150
+    },
+    "index.cjs": {
+      "bytes": 875765,
+      "sha256": "bcfb2810667e3be2f5efad41ecb7be152397be0b73cf0a62dbc95c3ae6f998fa",
+      "deltaFromMeasuredCandidate": -184
+    }
+  },
+  "pruneSignatureUnchanged": true,
+  "otherSetCallers": [
+    "pruneArrayTailPaths",
+    "finalizePerished",
+    "rekeyArrayRuntimePaths"
+  ],
+  "measurementRerun": false,
+  "reason": "Owner-authorized semantic-preserving simplification; measured candidate rejection remains historical evidence",
+  "sourceSha256": "3094ec0849f8a531f72fbfe5d918be6b90fc80540a2a7a6d83b48386a15bb8e7"
+}

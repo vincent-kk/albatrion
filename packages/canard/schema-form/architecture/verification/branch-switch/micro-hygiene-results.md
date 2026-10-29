@@ -231,9 +231,9 @@
 
 분류 단위의 임시는 청사진 작성·정착·사슬 마감 한 호출의 수명이며, 그 안의 보조 함수 사이에서 재사용하는 인덱스도 포함합니다. 값의 재활용과 많은 읽기/쓰기는 유지하고, 상한 없는 배열 대체의 중첩 비교는 피합니다. `dirtyChildren`의 기존 64 경로는 최악 4,096회로 제한되므로 소유자 기준의 상한 없는 폭증과 다르다는 조정자 판정에 따라 유지합니다. 경계 시험 0/0/1과 순서·중복 검사는 바꾸지 않았으며 해당 행은 소유자 리뷰 대상으로 표시합니다.
 
-추가 정리는 **3지점**입니다: ID 55는 고정 1개인 splice 루트 인수 배열을 그대로 쓰고, ID 56은 고유 tail 경로를 실제 삭제 후보 64개 이하에서 배열로 수집하며 초과는 Set을 유지합니다. ID 57은 읽히지 않는 clear 인수와 빈 fallback Set을 제거합니다. 따라서 초기 1지점에 더해 총 **4지점**이며, core의 정적 생성식은 **422→420**입니다. 작은 tail의 Set 한 개를 최대 64칸 배열 한 개로 바꾸고, splice는 기존 한 칸 인수 배열을 재사용합니다. 새로운 상주 자료는 없습니다. 기존 clear의 세 oracle 비교는 사용하지 않는 네 번째 인수만 제거하고 모든 단언을 유지합니다. 추가 정리의 첫 검사에서 oracle fixture가 그 인수에 의존해 7건이 실패했습니다. fixture는 공개 쓰기 직전 실제 item 루트 경로를 직접 잡아 이전 방식의 prune/re-key를 수행하도록 고쳤고 host 경로 단언도 추가했습니다. 교정 뒤 기존 **50파일 327건**, typecheck·lint가 통과했으며 실패와 교정 로그를 함께 보존했습니다. 작은 tail의 컨테이너 분기는 삭제 항목마다 O(1)이며, 최종 시간/힙 비용은 짧은 창에서 판단합니다.
+추가 정리는 **3지점**입니다: ID 55는 고정 1개인 splice 루트 인수 배열을 그대로 쓰고, ID 56은 소유자 결정으로 항상 배열을 쓰며 공개 수집 호출자 상한은 1입니다(append 제거 0개·pop 제거 1개, clear 수집 생략). ID 57은 읽히지 않는 clear 인수와 빈 fallback Set을 제거합니다. 따라서 초기 1지점에 더해 총 **4지점**이며, core의 정적 생성식은 **422→419**입니다(측정 후보는 420). 작은 tail의 Set 분기를 없애 지연 생성 배열만 쓰고, splice는 기존 한 칸 인수 배열을 재사용합니다. 새로운 상주 자료는 없습니다. 기존 clear의 세 oracle 비교는 사용하지 않는 네 번째 인수만 제거하고 모든 단언을 유지합니다. 추가 정리의 첫 검사에서 oracle fixture가 그 인수에 의존해 7건이 실패했습니다. fixture는 공개 쓰기 직전 실제 item 루트 경로를 직접 잡아 이전 방식의 prune/re-key를 수행하도록 고쳤고 host 경로 단언도 추가했습니다. 교정 뒤 기존 **50파일 327건**, typecheck·lint가 통과했으며 실패와 교정 로그를 함께 보존했습니다. 작은 tail의 컨테이너 분기는 삭제 항목마다 O(1)이며, 최종 시간/힙 비용은 짧은 창에서 판단합니다.
 
-재검토 P3-D 보호 시험은 실제 공개 splice의 singleton 한 건, 공개 pop의 N=3/65 두 건, 직접 `applyArrayTail`을 호출한 제거 64/65개 경계 두 건의 **5사례**입니다. 각 경로의 실제 호출과 prune 인수·순서를 확인하고 scratch를 finally에서 해제합니다. 처음 제안된 `setValue(65→1/66→1)`는 꼬리 적용 호출 0으로 실패하여 지시대로 중단·질문했고, 승인된 공개 pop/내부 경계 방식으로 바꿨습니다. 64개 분기를 항상 `new Set<string>()`으로 되돌린 변이는 배열 단언 실패를 검출했으며 제품 소스를 바이트 그대로 복구했습니다. 일반 값 교체와 구조 동사를 같은 경로라고 가정하지 않습니다. 공개 동사로는 pop이 항상 1개만 제거하므로 `applyArrayTail`의 65개 이상 Set 분기는 공개 경로에서 도달 불가입니다. 항상 배열로 단순화할지는 소유자 결정 후속이며 이번 과제에서는 코드를 바꾸지 않았습니다.
+재검토 P3-D 보호 시험은 실제 공개 splice의 singleton 한 건, 공개 pop의 N=3/65 두 건, 직접 `applyArrayTail`을 호출한 제거 64/65개 경계 두 건의 **5사례**입니다. 각 경로의 실제 호출과 prune 인수·순서를 확인하고 scratch를 finally에서 해제합니다. 처음 제안된 `setValue(65→1/66→1)`는 꼬리 적용 호출 0으로 실패하여 지시대로 중단·질문했고, 승인된 공개 pop/내부 경계 방식으로 바꿨습니다. 64개 분기를 항상 `new Set<string>()`으로 되돌린 변이는 배열 단언 실패를 검출했으며 제품 소스를 바이트 그대로 복구했습니다. 일반 값 교체와 구조 동사를 같은 경로라고 가정하지 않습니다. 공개 동사로는 pop이 항상 1개만 제거하므로 `applyArrayTail`의 65개 이상 Set 분기는 공개 경로에서 도달 불가입니다. 후속 소유자 결정으로 이 Set 분기를 제거했습니다. 아래 재검토 후속의 최신 상태를 따릅니다.
 
 아래 230행은 각각 실제 접근·입력 차원·판단을 기록합니다. 위치는 반복 정리 머리 `b50f06050`의 줄을 가리키고 ID는 최초 기준과 같습니다. `반복 멤버십`/`중첩 비교`는 배열로 대체했을 때 키 검색을 기존 질의마다 추가하게 되는 경우를 구분하며, 수집만 하더라도 Set의 중복 제거를 배열에서 공짜로 보지 않습니다. 여러 함수에 전달되는 문맥 인덱스의 크기는 해당 마감 입력의 고유 키 수로 셉니다. 정적 심볼·프로퍼티·인수 추적은 완전한 호출 그래프를 주장하지 않으며, 남은 불확실성이나 입력 상한 미증명은 유지 판단입니다. [230행 원시](raw/micro-hygiene/temporary-set-map-access.json)와 [관측한 연산·호출상대](raw/micro-hygiene/temporary-set-map-operations.json.gz)를 함께 남깁니다.
 
@@ -277,7 +277,7 @@
 | 51 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts:81` · `destinations` | 반복 멤버십 조회 | 상한 불명; 고유 엔트리 수는 `index < plan.slots.length` · `index < oldCount`에 비례 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 53 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts:184` · `<inline>` | 반복 멤버십 조회 | 상한 불명; 옮겨 보존하는 inactive slot binding 수 | Set·Map 유지: 기존 인덱스의 재조회/갱신을 보존; 배열 대체는 키마다 선형 검색을 더함 |
 | 55 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts:100` · `applyArraySplice` | 단일 순회 | 정확히 1; `[removedItem.path]`는 한 삭제 item의 주소 | 배열로 바꿈: prunePerishedPaths는 size와 순회만 사용; 원래 생성자 인수 배열을 그대로 전달해 Set 1개만 제거 |
-| 56 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts:138` · `perishedPaths` | 단일 순회 | 배열 경로 ≤64: `oldCount - prefixCount <= 64`; 초과는 기존 Set | 배열로 바꿈: 삭제 index마다 고유 item.path를 한 번 수집; 조회/중복 탐색 없음. 빈 결과는 수집도 생략  공개 동사에서 pop은 항상 1개만 제거하며 65개 이상 Set 분기는 공개 경로에서 도달 불가; 항상 배열로 단순화할지는 소유자 결정 |
+| 56 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts:134` · `perishedPaths` | 단일 순회 | 공개 호출자 상한 1: append는 제거 0개, pop은 제거 1개; clear는 경로 수집 생략 | 항상 배열(소유자 결정, 호출자 상한 1); 임시 Set 분기 제거. 다중 제거 호출자를 추가할 때 자료구조 재검토 |
 | 57 | `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts:146` · `perishedPaths` | 단일 순회(방문 0) | 정확히 0; 미사용 clear 인수의 빈 fallback Set | 미사용 인수 제거: clearArrayRuntimePaths는 _perished를 읽지 않음; 인수와 그 Set을 제거해 배열도 할당하지 않음 |
 | 58 | `src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts:22` · `keys` | 단일 순회 | 상한 불명; 고유 엔트리 수는 `index.under(slot)` · `[...index.tail(hostPath, 0)]`에 비례 | 상한 불명: 수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함 |
 | 59 | `src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts:49` · `slots` | 단일 순회 | 상한 불명; 고유 엔트리 수는 `store.pathIndex.tail(hostPath, 0)` · `owned` · `slots`에 비례 | 상한 불명: 수집/순회는 한 작업 안이지만 임의 입력 크기와 중복 제거 비용의 작은 상한을 증명하지 못함 |
@@ -493,11 +493,11 @@
 
 후보 1의 크기 비용은 다음과 같습니다. 즉시 실행 함수는 호출마다 함수 호출을 더하고 `in` 검사는 방문 원소마다 실행됩니다. 검토의 추가 줄 grep 132개는 실제 인수 없는 IIFE **131개**와 필요한 `useMemo` 콜백 한 줄을 함께 센 값입니다. 그 밖의 형 술어용 인수 있는 IIFE **6개**도 있었습니다. 후보 2에서는 **137개 모두**를 보통 반복문·결과 변수 또는 정적 이름을 가진 형 술어로 옮겼습니다. 파서의 밀집 세그먼트 형 술어는 엔진 내부 한 파일을 세 호출자가 공유하며 패키지 공개 내보내기는 늘리지 않습니다. 필수 hook 콜백은 유지합니다.
 
-| 번들 | 기준 바이트 | 후보 1 | 후보 2 | 후보 2 − 기준 |
-| --- | ---: | ---: | ---: | ---: |
-| `index.mjs` | 830373 | 861528 | 855127 | +24754 (2.98%) |
-| `index.node.mjs` | 829595 | 860750 | 854349 | +24754 (2.98%) |
-| `index.cjs` | 847915 | 882316 | 875949 | +28034 (3.31%) |
+| 번들 | 기준 바이트 | 후보 1 | 후보 2(측정) | 리뷰 후 | 리뷰 후 − 기준 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `index.mjs` | 830373 | 861528 | 855127 | 854977 | +24604 (2.96%) |
+| `index.node.mjs` | 829595 | 860750 | 854349 | 854199 | +24604 (2.97%) |
+| `index.cjs` | 847915 | 882316 | 875949 | 875765 | +27850 (3.28%) |
 
 반복 정리 머리의 제품 AST `in`은 **204→87(117개 제거)**, 반복용 labeled continue는 **16→0**, prototype 반복은 계속 **0**입니다. 밀집인 엔진 작성 배열에서 불필요한 검사를 없애고 callback 값/색인 별칭과 결과 별칭을 합쳤습니다. 내부 불변 메타데이터는 직접 순회하고, 쓰기 도중 바뀔 수 있는 배열은 최초 길이와 수신 배열을 보존합니다. 임시 filter 결과 배열의 소유·순서와 기존 반환 참조는 유지하고 새 상주 컨테이너는 없습니다. 후보 2는 후보 1보다 ESM 두 파일이 각각 6,401바이트, CJS가 6,367바이트 작습니다. 기준보다 남는 바이트 증가와 시간/Node·Bun 힙 비용은 승인된 짧은 창으로 판단합니다. 창 1은 중단되어 이 비용의 채택 근거가 아닙니다.
 
@@ -625,7 +625,7 @@ Bun B 중앙값은 A 최댓값보다 **4.670865827 bytes/node(약 0.208%)** 큽�
 
 [행·폭·품질](raw/micro-hygiene/candidate-2-window/rows.json), [원래 최종 판정](raw/micro-hygiene/candidate-2-window/judgment.json), [전체 표본](raw/micro-hygiene/candidate-2-window/pair-samples.json.gz), [176개 worker의 stdout·stderr·영수증](raw/micro-hygiene/candidate-2-window/worker-records.json.gz), [CPU 사전 검사](raw/micro-hygiene/candidate-2-window/cpu-prechecks.json.gz), [힙 14표본/런타임](raw/micro-hygiene/candidate-2-window/heap.json), [로그·종료 영수증](raw/micro-hygiene/candidate-2-window/logs-and-receipts.json.gz)를 보존했습니다.
 
-## 후보 2 재검토 후속 — 바이트 중립 교정
+## 후보 2 재검토 후속
 
 후보 2 델타의 독립 검토는 conditional PASS(P1 0·P2 0·P3 5)이며 [전문](reviews/pr-micro-hygiene-candidate-2-claude.md)을 별도로 보존했습니다. 검토 시점에는 창 2 결과가 없었으므로 해당 검토의 창 통과 조건은 실제 미채택 결과로 열려 있습니다. 재검토 조건을 충족했다고 표현하지 않습니다.
 
@@ -633,7 +633,9 @@ P3-A의 일괄 교체 주석 한 곳을 대상 검사로 옮겼습니다. P3-B�
 
 후속 제품 머리 `a03a1f7a5`에서 Node 26.12.1로 build와 artifact checks·typecheck·lint 및 **표적 49파일 315건(새 시험 5사례 포함)**을 통과했습니다. 세 런타임 번들은 **855,127 / 854,349 / 875,949바이트**이며 각 SHA-256도 창 2 후보와 완전히 같습니다. 공개 `index.d.ts`도 3,129바이트·같은 SHA-256입니다. [최종 로그](raw/micro-hygiene/review-2/final-logs.json.gz)와 [정확한 바이트·해시 확인](raw/micro-hygiene/review-2/final-checks.json)을 남겼습니다. 이 바이트 중립 교정 때문에 측정 창을 다시 열지 않았으며 이전 창의 실패 판정을 유지합니다.
 
-**소유자 결정 후속**은 루트 빈 문자열 코드 치환(P3-C), 엔진 동결 태그 다섯 곳의 불필요한 검사 제거(P3-B), 빈 블록·자기 재대입·`void` 접두·생성 이름 정리(P3-E), 공개 pop이 1개만 지워 도달하지 않는 `applyArrayTail`의 65개 이상 Set 분기를 항상 배열로 단순화할지 여부(P3-D)입니다. 이들은 런타임 바이트를 바꾸므로 이번 교정에서는 실행하지 않았습니다. 창 2의 미채택·되돌림/병합/재측정 결정도 그대로 남아 있습니다.
+후속 소유자 결정 `msg_686dc576c0d7`으로 `applyArrayTail`의 Set 분기 **1곳을 제거**했습니다. 이 단계는 앞선 바이트 중립 교정과 달리 런타임을 바꾸므로 다시 build/artifact checks·typecheck·lint·표적 **49파일 315건**을 통과했습니다. 새 직접 호출 시험은 이전 Set 분기에서 **1실패/4통과**, 항상 배열 구현에서 전부 통과합니다. 세 번들은 **854,977 / 854,199 / 875,765바이트**로 측정 후보보다 **−150 / −150 / −184바이트**이며 위 비용 표의 `리뷰 후` 열에 반영했습니다. [후속 검사·해시](raw/micro-hygiene/review-2/owner-array-checks.json)와 [실패/통과 로그](raw/micro-hygiene/review-2/owner-array-logs.json.gz)를 보존합니다. 이 최종 런타임은 새 측정 창을 열지 않았습니다(소유자 결정, 공개 의미 동일). 창 2의 숫자는 원래 측정 후보 `870fe2689`의 미채택 기록으로 남으며 리뷰 후 런타임의 새 측정 결과로 사용하지 않습니다.
+
+**소유자 결정 후속**은 루트 빈 문자열 코드 치환(P3-C), 엔진 동결 태그 다섯 곳의 불필요한 검사 제거(P3-B), 빈 블록·자기 재대입·`void` 접두·생성 이름 정리(P3-E)입니다. 이들은 런타임 바이트를 바꾸므로 이번 교정에서는 실행하지 않았습니다. **결정됨: 제거** — `applyArrayTail`의 도달 불가 Set 분기는 후속 소유자 지시로 삭제하고 항상 문자열 배열만 지연 생성합니다. 함수 계약과 DETAIL에 호출자 상한 1·미래 다중 제거 동사에서의 재검토 조건을 적었고 직접 65개 제거 시험도 배열/순서를 검증하도록 갱신했습니다. `pruneArrayTailPaths`·`finalizePerished`·`rekeyArrayRuntimePaths`는 여전히 Set을 전달하므로 `prunePerishedPaths`의 Set/배열 시그니처는 유지합니다. 창 2의 미채택·되돌림/병합/재측정 결정도 그대로 남아 있습니다.
 
 ## 후속 항목 — 추가 strict-production의 기존 문제
 

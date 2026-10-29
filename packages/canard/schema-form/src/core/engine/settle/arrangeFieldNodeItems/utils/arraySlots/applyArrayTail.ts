@@ -38,6 +38,7 @@ const readPositionLoadValue = (hostValue: unknown, key: string): unknown =>
  * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
  * A perished item's detached defaultValue is filled from the host's load value by position (NODE-044 reads unchanged).
  * An empty result (clear, or a pop of the only item) removes the host's path-store entries by host prefix instead of per-position re-keying.
+ * Callers collecting perishedPaths remove at most one tail slot (append/pop); reassess its structure if multi-slot callers are added.
  * @param host - Live branch array with no whole raw override
  * @param plan - Proposal accepted by canApplyArrayTail, prepareArrayAppend or prepareArrayPop; appended slots carry values and retained prefix slots are never read
  * @param context - Settlement receiving the same lifecycle and dirty facts as a full plan
@@ -106,7 +107,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   }
 
   const moves: ArrayPathMove[] = [];
-  let perishedPaths: Optional<Set<string> | string[]>;
+  let perishedPaths: Optional<string[]>;
   for (let index = prefixCount; index < oldCount; index++) {
     const key = String(index);
     const item = items[key];
@@ -135,11 +136,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       },
       { owned: true },
     );
-    if (length) {
-      perishedPaths ??= oldCount - prefixCount <= 64 ? [] : new Set<string>();
-      if (isArray(perishedPaths)) perishedPaths.push(item.path);
-      else perishedPaths.add(item.path);
-    }
+    if (length) (perishedPaths ??= []).push(item.path);
     delete items[String(index)];
   }
   if (!length) clearArrayRuntimePaths(host.runtime, host.path, oldCount);

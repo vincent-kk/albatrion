@@ -98,10 +98,10 @@ it('passes 64 removed tail roots as an ordered array', () => {
   );
 });
 
-it('retains Set membership for 65 removed tail roots', () => {
+it('passes 65 removed tail roots as an ordered array', () => {
   const paths = truncateTail(66);
-  expect(paths).toBeInstanceOf(Set);
-  expect([...paths]).toEqual(
+  expect(isArray(paths)).toBe(true);
+  expect(paths).toEqual(
     Array.from({ length: 65 }, (_, index) => `/${index + 1}`),
   );
 });

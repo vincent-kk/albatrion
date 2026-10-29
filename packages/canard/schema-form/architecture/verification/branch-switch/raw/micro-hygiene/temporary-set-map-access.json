@@ -1371,9 +1371,9 @@
     "binding": "perishedPaths",
     "kind": "new Set",
     "accessPattern": "단일 순회",
-    "sizeBound": "배열 경로 ≤64: `oldCount - prefixCount <= 64`; 초과는 기존 Set",
+    "sizeBound": "공개 호출자 상한 1: append는 제거 0개, pop은 제거 1개; clear는 경로 수집 생략",
     "decision": "배열로 바꿈",
-    "reason": "삭제 index마다 고유 item.path를 한 번 수집; 조회/중복 탐색 없음. 빈 결과는 수집도 생략",
+    "reason": "항상 배열(소유자 결정, 호출자 상한 1); 임시 Set 분기 제거. 다중 제거 호출자를 추가할 때 자료구조 재검토",
     "operationEvidence": [
       {
         "method": "pass:prunePerishedPaths",
@@ -1406,7 +1406,7 @@
         "line": 37
       }
     ],
-    "publicReachability": "공개 동사에서 pop은 항상 1개만 제거하며 65개 이상 Set 분기는 공개 경로에서 도달 불가; 항상 배열로 단순화할지는 소유자 결정"
+    "publicReachability": "결정됨: 도달 불가 Set 분기 제거; 직접 내부 다중 제거도 배열과 경로 순서를 보존"
   },
   {
     "id": 57,
