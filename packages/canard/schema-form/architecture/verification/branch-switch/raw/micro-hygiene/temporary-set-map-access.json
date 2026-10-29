@@ -1405,7 +1405,8 @@
         "file": "src/core/engine/settle/utils/transition/prunePerishedPaths.ts",
         "line": 37
       }
-    ]
+    ],
+    "publicReachability": "공개 동사에서 pop은 항상 1개만 제거하며 65개 이상 Set 분기는 공개 경로에서 도달 불가; 항상 배열로 단순화할지는 소유자 결정"
   },
   {
     "id": 57,
