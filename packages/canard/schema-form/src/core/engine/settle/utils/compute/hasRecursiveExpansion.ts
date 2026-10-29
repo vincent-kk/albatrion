@@ -1,9 +1,10 @@
-import type { BlueprintNode,EffectiveSchema } from '../../../blueprint';
+import type { Nullable, Optional } from '@aileron/declare';
+
+import type { BlueprintNode, EffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import type { SettlementContext } from '../../types/settlement';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
-
 
 /** Only the cycle verdict outlives the one-time graph traversal. */
 
@@ -103,9 +104,9 @@ export const hasRecursiveExpansion = <Self extends FieldNodeRecord<Self>>(
     ).recursiveExpansion = cyclic;
   }
   if (!cyclic) return false;
-  let relativeSpan: number | undefined;
+  let relativeSpan: Optional<number>;
   const depth = parent.depth + 1;
-  let ancestor: Self | null = parent;
+  let ancestor: Nullable<Self> = parent;
   while (ancestor) {
     if (
       ancestor.blueprintNode === template &&

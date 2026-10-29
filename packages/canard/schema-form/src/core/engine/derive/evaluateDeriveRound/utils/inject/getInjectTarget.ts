@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import {
   PointerOperator,
   parsePointerSegments,
@@ -22,7 +24,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   const segments = parsePointerSegments(path);
   if (segments[0] === PointerOperator.Context) return undefined;
   let template = root.blueprintNode;
-  let live: Self | undefined = root;
+  let live: Optional<Self> = root;
   let siblings = template.childEntries;
   const order: number[] = [];
   for (const name of segments) {
@@ -45,7 +47,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
       : getDeriveChildEntry(template, name);
     if (!found) return undefined;
     order.push(found.position);
-    const structure: Record<string, Self> | null = live?.structure ?? null;
+    const structure: Nullable<Dictionary<Self>> = live?.structure ?? null;
     live =
       structure && hasOwnProperty(structure, name)
         ? structure[name]

@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import {
   BIT_FLAG_00,
   BIT_FLAG_01,
@@ -35,7 +37,7 @@ export type { ValidationIssue } from '@/schema-form/core';
 export interface JSONSchemaError<SourceError = unknown>
   extends ValidationIssue<SourceError> {
   /** Renderer keyword parameters accept validator-specific values. */
-  details?: Record<string, any>;
+  details?: Dictionary<any>;
   /**
    * Internal management property for array item errors.
    * @note This value is automatically managed and overwritten by the system.

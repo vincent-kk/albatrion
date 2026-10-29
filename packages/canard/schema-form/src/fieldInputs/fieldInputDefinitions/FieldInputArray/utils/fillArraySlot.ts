@@ -1,5 +1,7 @@
 import { maxLite } from '@winglet/common-utils/math';
 
+import type { Nullable, Optional } from '@aileron/declare';
+
 /**
  * Build the array that results from writing one empty slot.
  * @param current - Raw array value; `null` or `undefined` count as empty.
@@ -8,7 +10,7 @@ import { maxLite } from '@winglet/common-utils/math';
  * @returns A new array; existing items keep their positions and references.
  */
 export const fillArraySlot = (
-  current: readonly unknown[] | null | undefined,
+  current: Optional<Nullable<readonly unknown[]>>,
   index: number,
   value: unknown,
 ): unknown[] =>

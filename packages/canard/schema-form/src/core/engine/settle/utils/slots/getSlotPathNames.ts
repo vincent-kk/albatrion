@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { Blueprint } from '../../../blueprint';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
 import { getDependencyIndex } from '../dependencies/getDependencyIndex';
@@ -11,7 +13,7 @@ import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 export const getSlotPathNames = (
   runtime: { readonly blueprint?: Blueprint },
   path: string,
-): readonly string[] | undefined => {
+): Optional<readonly string[]> => {
   const segments =
     runtime.blueprint && !runtime.blueprint.capabilities.branchless
       ? getDependencyIndex(runtime.blueprint).pathSegments(path, runtime)

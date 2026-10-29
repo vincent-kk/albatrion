@@ -1,5 +1,7 @@
 import { filter as filterArray } from '@winglet/common-utils/array';
 
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -17,11 +19,11 @@ import { getSlotEntries } from './getSlotEntries';
  */
 export const getSlotPathEntry = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
-  source: Self | undefined,
-  overlay: InactiveSlotOverlay | undefined,
+  source: Optional<Self>,
+  overlay: Optional<InactiveSlotOverlay>,
   name: string,
   selected?: BlueprintNode,
-): BlueprintChildEntry | undefined => {
+): Optional<BlueprintChildEntry> => {
   const declared =
     template.kind === 'array'
       ? getItemEntries(template, Number(name))

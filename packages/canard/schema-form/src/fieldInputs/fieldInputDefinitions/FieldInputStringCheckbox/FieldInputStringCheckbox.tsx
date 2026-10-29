@@ -4,6 +4,8 @@ import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldInputPropsWithSchema } from '@/schema-form/types';
 
 import type { CheckboxLabelsContext, StringCheckboxJSONSchema } from './type';
@@ -23,7 +25,7 @@ export const FieldInputStringCheckbox = ({
   style,
   className,
 }: FieldInputPropsWithSchema<
-  (string | null)[],
+  Nullable<string>[],
   StringCheckboxJSONSchema,
   CheckboxLabelsContext
 >) => {

@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintSchemaType } from '../../../blueprint';
 
 /**
@@ -11,7 +13,7 @@ import type { BlueprintSchemaType } from '../../../blueprint';
  */
 export const isMisfit = (
   value: unknown,
-  effective: BlueprintSchemaType | undefined,
+  effective: Optional<BlueprintSchemaType>,
   nullable: boolean,
 ): boolean => {
   if (value === undefined || effective === undefined) return false;

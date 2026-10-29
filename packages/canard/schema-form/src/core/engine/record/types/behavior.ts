@@ -1,3 +1,5 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import type {
   BlueprintChildEntry,
   BlueprintNode,
@@ -61,9 +63,7 @@ export interface Behavior<Self = unknown> {
     local: unknown,
   ): unknown;
   /** Return a completed input string, or undefined when there is no write. */
-  finishInput<Node extends Self>(
-    node: FieldNodeRecord<Node>,
-  ): string | undefined;
+  finishInput<Node extends Self>(node: FieldNodeRecord<Node>): Optional<string>;
   /** Describe children to be created by the caller. */
   declareChildren<Node extends Self>(
     node: FieldNodeRecord<Node>,
@@ -82,7 +82,7 @@ export interface Behavior<Self = unknown> {
 /** Per-tree creation callback supplied by the composition root. */
 export type FieldNodeFactory<Self> = (
   entry: BlueprintChildEntry | BlueprintNode,
-  parent: Self | null,
+  parent: Nullable<Self>,
   runtime: FieldNodeRuntime<Self>,
   source?: Self,
 ) => Self;

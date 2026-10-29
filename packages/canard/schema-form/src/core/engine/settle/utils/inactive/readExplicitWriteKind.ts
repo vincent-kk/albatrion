@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   getChildPointer,
   isDescendantPath,
@@ -17,7 +19,7 @@ import type { SettlementContext } from '../../types/settlement';
 export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   inputPath: string,
-): FieldNodeWriteKind | undefined => {
+): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
   if (!origins) return context.kind;
   // Batch replacement paths retain earlier whole writes after later merges.

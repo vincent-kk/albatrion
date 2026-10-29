@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintNode } from '../../types/node';
@@ -20,12 +22,12 @@ export const getItemSchemaPath = (
   const prefix = candidates
     ? candidates.indexOf(node) !== -1
     : template.prefixItems?.[index] === node;
-  let fallback: string | undefined;
+  let fallback: Optional<string>;
   for (const declaration of template.declarations) {
     const schema = declaration.schema;
     if (typeof schema !== 'object') continue;
     let child: unknown;
-    let path: string | undefined;
+    let path: Optional<string>;
     if (prefix) {
       if (isArray(schema.prefixItems) && index < schema.prefixItems.length) {
         child = schema.prefixItems[index];

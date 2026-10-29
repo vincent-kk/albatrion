@@ -1,5 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   readPointerSegment,
@@ -45,7 +47,7 @@ export class PathStoreIndex {
     this.pathsByKey.set(key, own);
     for (const prefix of own) {
       prefix.exact.add(key);
-      let ancestor: PathPrefix | undefined = prefix;
+      let ancestor: Optional<PathPrefix> = prefix;
       while (ancestor) {
         ancestor.keys.add(key);
         ancestor = ancestor.parent;
@@ -60,7 +62,7 @@ export class PathStoreIndex {
     this.pathsByKey.delete(key);
     for (const prefix of paths) {
       prefix.exact.delete(key);
-      let ancestor: PathPrefix | undefined = prefix;
+      let ancestor: Optional<PathPrefix> = prefix;
       while (ancestor) {
         ancestor.keys.delete(key);
         if (!ancestor.keys.size) {

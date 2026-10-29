@@ -1,5 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintNode } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
 import { engineModes } from '../../../../../utils/cache/engineModes';
@@ -18,7 +20,7 @@ import { readGateBucket } from './readGateBucket';
 export const selectRootGateDeclarations = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-): BlueprintNode['declarations'][number][] | undefined => {
+): Optional<BlueprintNode['declarations'][number][]> => {
   const round = context.gateSelectionRounds?.get(node);
   const root = round?.active ? round.table.root : undefined;
   if (!round || !root) return undefined;

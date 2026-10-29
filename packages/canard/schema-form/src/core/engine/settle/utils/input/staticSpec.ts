@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { UnionSpec } from '../../../record';
 import { scalarSpecs, unionSpecs } from '../../../utils/cache/valueMemos';
@@ -16,7 +18,7 @@ const NO_KIND_SPECS: readonly UnionSpec[] = [
  * @returns Non-null candidate list and nullable marker for a behavior row
  */
 export const staticSpec = (
-  schemaType: BlueprintSchemaType | undefined,
+  schemaType: Optional<BlueprintSchemaType>,
   nullable: boolean,
 ): UnionSpec => {
   const index = nullable ? 1 : 0;

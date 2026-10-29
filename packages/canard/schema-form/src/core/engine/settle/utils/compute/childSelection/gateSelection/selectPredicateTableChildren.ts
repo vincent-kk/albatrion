@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../../../record';
 import { engineModes } from '../../../../../utils/cache/engineModes';
 import type { GateSelectionRound } from '../../../../types/gateSelectionRound';
@@ -29,9 +31,9 @@ export const selectPredicateTableChildren = <
   const reuse = frame.reuseStatic;
   let selected = getTableVisitSteps(frame, table);
   const active = new Set<number>();
-  let throwing: Set<number> | undefined;
-  let firstThrow: Set<number> | undefined;
-  let predicateSteps: readonly number[] | undefined;
+  let throwing: Optional<Set<number>>;
+  let firstThrow: Optional<Set<number>>;
+  let predicateSteps: Optional<readonly number[]>;
   let predicateCursor = 0;
   const verify = engineModes.gateSelection === 'verify';
   const shadow = engineModes.gateWheel === 'shadow';

@@ -1,3 +1,5 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -22,11 +24,11 @@ const OWNED = { owned: true } as const;
 export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  let perishedPaths: Set<string> | undefined;
+  let perishedPaths: Optional<Set<string>>;
   const registry = getGateRegistry(context.root.runtime);
   const pendingExits = context.pendingExits;
   const perishing = pendingExits.size ? new Set<Self>() : undefined;
-  let rekeyed: { previous: string; current?: string } | undefined;
+  let rekeyed: Optional<{ previous: string; current?: string }>;
   const detach = (departing: Self): void =>
     detachPerishedNode(departing, context, rekeyed);
   for (const node of context.perished) {
@@ -88,8 +90,8 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
 const findPerishedAncestor = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   perishing: ReadonlySet<Self>,
-): Self | undefined => {
-  for (let current: Self | null = node; current; current = current.parent)
+): Optional<Self> => {
+  for (let current: Nullable<Self> = node; current; current = current.parent)
     if (perishing.has(current)) return current;
   return undefined;
 };

@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
@@ -23,7 +25,7 @@ export const hasExplicitInactiveValue = <Self extends FieldNodeRecord<Self>>(
   )
     return false;
   const lineage: Self[] = [];
-  let ancestor: Self | null = node;
+  let ancestor: Nullable<Self> = node;
   for (; ancestor && ancestor !== context.target; ancestor = ancestor.parent)
     lineage.push(ancestor);
   if (!ancestor) return false;

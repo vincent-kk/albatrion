@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   resolvePointer,
@@ -150,7 +152,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           !!owner && !!context.splitHitEpochs?.has(owner.bucket),
           'S3 removed a non-split owner: ' + path,
         );
-        let node: Self | undefined = context.root;
+        let node: Optional<Self> = context.root;
         for (const segment of dependencies.pathSegments(
           path,
           context.root.runtime,

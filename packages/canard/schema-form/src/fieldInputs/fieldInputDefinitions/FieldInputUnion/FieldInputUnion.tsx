@@ -3,6 +3,8 @@ import { type ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
+
 import { interpretFieldNodeDraft } from '@/schema-form/core';
 import type { FieldInputProps } from '@/schema-form/types';
 
@@ -62,7 +64,7 @@ export const FieldInputUnion = (props: FieldInputProps) => {
       return false;
     })();
   const [text, setText] = useState(display.text);
-  const draft = useRef<string | undefined>(undefined);
+  const draft = useRef<Optional<string>>(undefined);
   const composing = useRef(false);
   const publish = useHandle((next: string) => {
     if (composing.current || !editable || props.readOnly || props.disabled)

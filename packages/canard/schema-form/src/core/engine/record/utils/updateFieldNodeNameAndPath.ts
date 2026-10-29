@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import {
   appendFormattedSegment,
   formatSegment,
@@ -12,7 +14,7 @@ export const updateFieldNodeNameAndPath = <
 >(
   node: FieldNodeRecord<Self>,
   name: string,
-  parent: Self | null,
+  parent: Nullable<Self>,
 ): void => {
   node.parent = parent;
   node.name = name;

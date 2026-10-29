@@ -1,6 +1,8 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { CONTROL_KEY } from '../../../constants/controlKey';
@@ -12,7 +14,7 @@ import type {
 } from '../../types/blueprint';
 
 /** Local control groups whose declared values can differ from the default keys. */
-const hasStateKeys = (controls: unknown): controls is Record<string, unknown> =>
+const hasStateKeys = (controls: unknown): controls is Dictionary<unknown> =>
   controls !== null &&
   typeof controls === 'object' &&
   !isArray(controls) &&
@@ -59,7 +61,7 @@ export const buildFeatureNodeIndex = (
             paths.add(path);
         return paths;
       });
-    let owners: readonly ReadonlySet<string>[] | undefined;
+    let owners: Optional<readonly ReadonlySet<string>[]>;
     for (const declaration of node.declarations) {
       if (declaration.validationOnly || typeof declaration.schema !== 'object')
         continue;

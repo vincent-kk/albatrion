@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FormErrorSurface } from '@/schema-form/errors';
 
 import {
@@ -22,9 +24,9 @@ import { readFormErrorCode } from './readFormErrorCode';
 export const collectChainRecords = (
   pending: FormErrorRecord[],
   occurrences: NonNullable<FieldNodeRuntime<unknown>['chainOccurrences']>,
-  aggregate: SchemaFormError | undefined,
+  aggregate: Optional<SchemaFormError>,
   surface: Exclude<FormErrorSurface, 'rejected'>,
-  reported: ReadonlySet<string> | undefined,
+  reported: Optional<ReadonlySet<string>>,
 ): void => {
   const created = new Set<FormErrorRecord>();
   for (const occurrence of occurrences) {

@@ -1,3 +1,5 @@
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import type {
   BlueprintChildEntry,
   BlueprintNode,
@@ -32,7 +34,7 @@ export interface FieldNodeRecord<Self> {
   /** Immutable analysis template for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Current structural parent, absent only at the root. */
-  parent: Self | null;
+  parent: Nullable<Self>;
   /** Live root, including when this node has detached. */
   rootNode: Self;
   /** Unescaped name within the parent. */
@@ -50,11 +52,11 @@ export interface FieldNodeRecord<Self> {
   /** Whether the fixed type permits null. */
   readonly nullable: boolean;
   /** Stable JSON type restriction retained from blueprint analysis; undefined on virtual nodes. */
-  readonly schemaType: BlueprintSchemaType | undefined;
+  readonly schemaType: Optional<BlueprintSchemaType>;
   /** Direct children in the last committed shape, keyed by their names. */
-  structure: Record<string, Self> | null;
+  structure: Nullable<Dictionary<Self>>;
   /** Stored public child array for the last committed shape. */
-  children: readonly Self[] | null;
+  children: Nullable<readonly Self[]>;
   /** Previously active occurrences retained by their exact blueprint binding. */
   inactiveSlots?: Map<BlueprintChildEntry, Self>;
   /** Immutable missing-child inputs and source exclusions at this occurrence's exit. */
@@ -74,7 +76,7 @@ export interface FieldNodeRecord<Self> {
   /** Last-live explicit keep/clear decision; an own undefined means inheritance. */
   retainedExitPolicy?: boolean;
   /** Creation-order nonce for an array item, absent on other nodes. */
-  itemKey: number | null;
+  itemKey: Nullable<number>;
   /** Number of array host positions, including positions without templates. */
   itemCount: number;
   /** Next creation-order nonce owned by an array host. */
@@ -111,7 +113,7 @@ export interface FieldNodeRecord<Self> {
   /** Address before this commit's first rekey. */
   deliveryPreviousPath?: string;
   /** Child identity collection before the first shape change. */
-  deliveryPreviousChildren?: readonly Self[] | null;
+  deliveryPreviousChildren?: Nullable<readonly Self[]>;
   /** Packed active/visible/readOnly/disabled values before their first change. */
   deliveryPreviousComputed?: number;
   /** Effective schema identity before this commit's first schema change. */

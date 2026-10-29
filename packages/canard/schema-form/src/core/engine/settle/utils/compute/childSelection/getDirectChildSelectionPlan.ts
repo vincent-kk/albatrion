@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
@@ -26,7 +28,7 @@ export interface DirectChildSelection {
   /** Original edge retained for creation and inactive-exit handling. */
   readonly entry: BlueprintChildEntry;
   /** Inherited host gate, absent for an ungated declaration. */
-  readonly gate: BlueprintGate | undefined;
+  readonly gate: Optional<BlueprintGate>;
   /** Stable declaration-ID list for an admitted edge. */
   readonly ids: readonly number[];
 }
@@ -58,10 +60,10 @@ export const getDirectChildSelectionPlan = (
   host: BlueprintNode,
   blueprint: Blueprint,
   prepare: boolean,
-): DirectChildSelectionPlan | null => {
+): Nullable<DirectChildSelectionPlan> => {
   const cached = getHostDerived<
     'directChildSelectionPlan',
-    DirectChildSelectionPlan | null
+    Nullable<DirectChildSelectionPlan>
   >(host).directChildSelectionPlan;
   if (cached !== undefined) return cached;
   if (!prepare) return null;
@@ -119,14 +121,15 @@ export const getDirectChildSelectionPlan = (
         })())
     )
   ) {
-    getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
-      host,
-    ).directChildSelectionPlan = null;
+    getHostDerived<
+      'directChildSelectionPlan',
+      Nullable<DirectChildSelectionPlan>
+    >(host).directChildSelectionPlan = null;
     return null;
   }
   const steps: DirectChildSelection[] = [];
   const baseline: BlueprintChildEntry[] = [];
-  const names: Record<string, true> = Object.create(null);
+  const names: Dictionary<true> = Object.create(null);
   for (let index = 0; index < host.childEntries.length; index++) {
     const entry = host.childEntries[index];
     const declarations = entry.declarations;
@@ -162,7 +165,7 @@ export const getDirectChildSelectionPlan = (
     ) {
       getHostDerived<
         'directChildSelectionPlan',
-        DirectChildSelectionPlan | null
+        Nullable<DirectChildSelectionPlan>
       >(host).directChildSelectionPlan = null;
       return null;
     }
@@ -188,7 +191,7 @@ export const getDirectChildSelectionPlan = (
       ) {
         getHostDerived<
           'directChildSelectionPlan',
-          DirectChildSelectionPlan | null
+          Nullable<DirectChildSelectionPlan>
         >(host).directChildSelectionPlan = null;
         return null;
       }
@@ -197,8 +200,9 @@ export const getDirectChildSelectionPlan = (
     steps.push({ entry, gate, ids: [declaration.id] });
   }
   const plan = { steps, baseline };
-  getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
-    host,
-  ).directChildSelectionPlan = plan;
+  getHostDerived<
+    'directChildSelectionPlan',
+    Nullable<DirectChildSelectionPlan>
+  >(host).directChildSelectionPlan = plan;
   return plan;
 };

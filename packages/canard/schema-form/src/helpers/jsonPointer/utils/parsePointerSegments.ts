@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { JSONPointer as $ } from '../constants/JSONPointer';
 import type { PointerSegment } from '../constants/PointerOperator';
 import { parsePointerSegment } from './parsePointerSegment';
@@ -15,7 +17,7 @@ export const parsePointerSegments = (
   if (pointer === $.Root || pointer === $.Fragment) return EMPTY_SEGMENTS;
   if (typeof pointer !== 'string') {
     const offset = pointer[0] === $.Fragment ? 1 : 0;
-    let segments: PointerSegment[] | undefined = offset
+    let segments: Optional<PointerSegment[]> = offset
       ? pointer.slice(offset)
       : undefined;
     for (let index = offset; index < pointer.length; index++) {

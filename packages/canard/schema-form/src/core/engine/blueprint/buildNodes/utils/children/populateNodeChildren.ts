@@ -4,6 +4,8 @@ import {
 } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
 import {
   PointerOperator,
   appendSegment,
@@ -103,7 +105,7 @@ export const populateNodeChildren = (
     mapArray(
       readSchemaObject(owner.schema).controls?.fields ?? [],
       (
-        entry: { targets: string[]; controls?: Record<string, unknown> },
+        entry: { targets: string[]; controls?: Dictionary<unknown> },
         index: number,
       ) => ({
         entry,

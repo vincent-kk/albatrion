@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 
@@ -10,7 +12,7 @@ import type { FieldNodeRecord } from '../../../record';
  */
 export const effectiveType = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-): BlueprintSchemaType | undefined => {
+): Optional<BlueprintSchemaType> => {
   const schema = node.schema.schema;
   const candidate =
     typeof schema === 'object' && schema !== null ? schema.type : undefined;

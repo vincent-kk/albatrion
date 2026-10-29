@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../../record';
 
 /**
@@ -11,7 +13,7 @@ export const isRekeyedDestination = <Self extends FieldNodeRecord<Self>>(
   moves: ReadonlyMap<Self, unknown>,
 ): boolean => {
   for (
-    let current: Self | null = node;
+    let current: Nullable<Self> = node;
     current?.parent;
     current = current.parent
   ) {

@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -14,7 +16,7 @@ export const getRetainedChildEntry = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   name: string,
   template: BlueprintNode,
-): BlueprintChildEntry | undefined => {
+): Optional<BlueprintChildEntry> => {
   for (const binding of host.inactiveSlots?.keys() ?? [])
     if (binding.name === name && binding.node === template) return binding;
   for (const binding of host.inactiveSlotOverlays?.keys() ?? [])

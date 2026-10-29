@@ -1,5 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   isAbsolutePath,
@@ -166,7 +168,7 @@ class GateRegistry {
   }
 
   /** Compare a path and kind in the current indexed shape, if indexed. */
-  hasRegisteredPathKind(path: string, kind: string): boolean | undefined {
+  hasRegisteredPathKind(path: string, kind: string): Optional<boolean> {
     if (this.byPath.size === 0) return undefined;
     return this.byPath.get(path)?.kind === kind;
   }

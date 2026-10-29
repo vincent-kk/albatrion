@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { expireOccupiedSlotMemos } from './expireOccupiedSlotMemos';
 import { preserveSlotValueMemos } from './preserveSlotValueMemos';
@@ -37,7 +39,11 @@ export const commitSlotChanges = <Self extends FieldNodeRecord<Self>>(
         );
       }
     }
-    for (let current: Self | null = host; current; current = current.parent) {
+    for (
+      let current: Nullable<Self> = host;
+      current;
+      current = current.parent
+    ) {
       const parent = current.parent;
       if (parent && !parent.detached)
         updateSlotChildIndex(parent, current.name);

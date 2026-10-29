@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import type { DeclarationLayer } from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
@@ -14,7 +16,7 @@ export interface ControlTarget<Self> {
   /** Static declarations for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Direct parent whose groups may address this occurrence. */
-  readonly parent: Self | null;
+  readonly parent: Nullable<Self>;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
     readonly blueprint?: Blueprint;

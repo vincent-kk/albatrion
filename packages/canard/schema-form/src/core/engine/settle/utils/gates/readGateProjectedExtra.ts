@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
 import type { SettlementContext } from '../../types/settlement';
@@ -20,7 +22,7 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
   raw: unknown,
   owner?: Self,
 ): unknown => {
-  let hostNode: Self | undefined;
+  let hostNode: Optional<Self>;
   if (hostPath === owner?.path) hostNode = owner;
   else {
     hostNode = context.root;
@@ -30,7 +32,7 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
         : getGateRegistry(context.root.runtime).pathSegments(hostPath)
       : [];
     for (let index = 0; index < segments.length; index++) {
-      const structure: Record<string, Self> | null | undefined =
+      const structure: Optional<Nullable<Dictionary<Self>>> =
         hostNode?.structure;
       const name = segments[index];
       if (typeof name !== 'string') return undefined;
@@ -41,7 +43,7 @@ export const readGateProjectedExtra = <Self extends FieldNodeRecord<Self>>(
     }
   }
   for (
-    let ancestor: Self | null | undefined = hostNode;
+    let ancestor: Optional<Nullable<Self>> = hostNode;
     ancestor;
     ancestor = ancestor.parent
   )

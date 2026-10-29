@@ -1,5 +1,7 @@
 import { maxLite } from '@winglet/common-utils/math';
 
+import type { Optional } from '@aileron/declare';
+
 import { JSONPointer as $ } from '../constants/JSONPointer';
 
 /**
@@ -11,7 +13,7 @@ import { JSONPointer as $ } from '../constants/JSONPointer';
 export const readFormattedPointerSegment = (
   path: string,
   index: number,
-): string | undefined => {
+): Optional<string> => {
   if (path === $.Root || path === $.Fragment) return undefined;
   const offset = path.startsWith($.Fragment + $.Separator)
     ? 2

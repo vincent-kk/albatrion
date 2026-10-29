@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintSchema } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
@@ -64,7 +66,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     !witness.snapshot &&
     witness.contextAbsent &&
     selectedContext == null;
-  let next: unknown[] | undefined = reusable ? undefined : [];
+  let next: Optional<unknown[]> = reusable ? undefined : [];
   for (let index = 0; index < paths.length; index++) {
     const path: unknown = paths[index];
     const previous = reuseAbsentContext ? memo!.values[index] : undefined;

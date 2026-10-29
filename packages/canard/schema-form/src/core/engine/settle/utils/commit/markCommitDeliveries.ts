@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -51,7 +53,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       automaticNodes.add(context.automaticLog[index].node);
     const watchIndex = runtime.deliveryWatchIndex;
     const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
-    let affectedPaths: Set<string> | undefined;
+    let affectedPaths: Optional<Set<string>>;
     if (watchIndex?.allNodes.size) {
       affectedPaths = runtime.deliveryAffectedPaths ?? new Set<string>();
       for (const node of context.entered) affectedPaths.add(node.path);
@@ -147,7 +149,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     const globalState = commitGlobalState(context);
     const { departing: globalDeparting, loadNodes } = globalState;
     const { entered, changedNodes, stateDirtyNodes } = context;
-    const sources: readonly (ReadonlySet<unknown> | undefined)[] = [
+    const sources: readonly Optional<ReadonlySet<unknown>>[] = [
       globalDeparting,
       entered,
       changedNodes,

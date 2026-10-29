@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintChildEntry } from '../../blueprint';
 
 /** Last materialized item, shared only while its inactive lifetime continues. */
@@ -33,7 +35,7 @@ export interface InactiveSlotBaseline<Self> {
   /** Previously active child whose own inactive descendants were already published. */
   readonly active?: Self;
   /** Instance visible to the preceding inactive-value publication. */
-  readonly source: Self | undefined;
+  readonly source: Optional<Self>;
   /** Patch visible before the first unpublished mutation of this binding. */
-  readonly overlay: InactiveSlotOverlay | undefined;
+  readonly overlay: Optional<InactiveSlotOverlay>;
 }

@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import { getItemEntry } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
@@ -17,7 +19,7 @@ import { staticIds } from './staticIds';
 export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   computeChild: (child: Self) => void,
 ): void => {
   const append = context.arrayAppend;

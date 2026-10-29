@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../blueprint';
@@ -47,7 +49,7 @@ export const readSourceTree = <Self extends FieldNodeRecord<Self>>(
     }
     return slots;
   }
-  const value: Record<string, unknown> = isPlain(node.undeclaredValues)
+  const value: Dictionary<unknown> = isPlain(node.undeclaredValues)
     ? { ...node.undeclaredValues }
     : {};
   let found = Object.keys(value).length > 0;

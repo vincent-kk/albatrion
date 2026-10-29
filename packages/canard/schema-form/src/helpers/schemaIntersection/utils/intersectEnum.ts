@@ -4,6 +4,8 @@ import {
 } from '@winglet/common-utils/array';
 import { equals } from '@winglet/common-utils/object';
 
+import type { Optional } from '@aileron/declare';
+
 import { EMPTY_INTERSECTION } from './constant';
 
 /**
@@ -17,7 +19,7 @@ export const intersectEnum = <T>(
   baseEnum?: readonly T[],
   sourceEnum?: readonly T[],
   deepEqual?: boolean,
-): readonly T[] | undefined | typeof EMPTY_INTERSECTION => {
+): Optional<readonly T[] | typeof EMPTY_INTERSECTION> => {
   if (!baseEnum) return sourceEnum;
   if (!sourceEnum) return baseEnum;
   const values = deepEqual

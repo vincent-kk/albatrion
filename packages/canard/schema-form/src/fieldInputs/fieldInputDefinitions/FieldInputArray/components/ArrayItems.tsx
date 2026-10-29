@@ -7,6 +7,8 @@ import {
   useRef,
 } from 'react';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { fillArraySlot } from '../utils/fillArraySlot';
@@ -63,7 +65,7 @@ export const ArrayItems = memo(function ArrayItems({
     [node],
   );
   const container = useRef<HTMLDivElement>(null);
-  const focusRow = useRef<number | null>(null);
+  const focusRow = useRef<Nullable<number>>(null);
   /** Write a slot position as input, then let the commit that mounts its row take focus. */
   const handleSlotWrite = useCallback(
     (index: number, value: unknown) => {

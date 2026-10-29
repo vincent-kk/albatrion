@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -21,13 +23,13 @@ export const finalizeDeriveTrace = <Self extends FieldNodeRecord<Self>>(
       if (entry.result !== 'applied') continue;
       let exists = live.get(entry.targetPath);
       if (exists === undefined) {
-        let node: Self | undefined = context.root;
+        let node: Optional<Self> = context.root;
         for (const name of parsePointerSegments(entry.targetPath)) {
           if (typeof name !== 'string') {
             node = undefined;
             break;
           }
-          const children: Record<string, Self> | null = node?.structure ?? null;
+          const children: Nullable<Dictionary<Self>> = node?.structure ?? null;
           node =
             children && hasOwnProperty(children, name)
               ? children[name]

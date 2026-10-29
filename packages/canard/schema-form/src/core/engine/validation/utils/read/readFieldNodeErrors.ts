@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
 
@@ -18,7 +20,7 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
   const external = runtime.nodeErrors?.get(node);
   const validation = runtime.validationErrors?.get(node);
   const isIssues = (
-    items: readonly unknown[] | undefined,
+    items: Optional<readonly unknown[]>,
   ): items is readonly ValidationIssue[] =>
     !!items &&
     (() => {

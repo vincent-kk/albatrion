@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -20,8 +22,8 @@ export const restoreTransferredSlotSource = <
   Self extends FieldNodeRecord<Self>,
 >(
   node: Self,
-  source: Self | undefined,
-  overlay: InactiveSlotOverlay | undefined,
+  source: Optional<Self>,
+  overlay: Optional<InactiveSlotOverlay>,
   context: SettlementContext<Self>,
 ): void => {
   const template = source?.blueprintNode ?? node.blueprintNode;

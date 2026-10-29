@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { MutableNode } from '../../types/analysis';
 import { collectTemplateParents } from './collectTemplateParents';
 
@@ -9,7 +11,7 @@ import { collectTemplateParents } from './collectTemplateParents';
 export const markCandidateDescendants = (
   nodes: readonly MutableNode[],
 ): void => {
-  let pending: MutableNode[] | undefined;
+  let pending: Optional<MutableNode[]>;
   for (const node of nodes)
     if (
       node.hasPropertyCandidates ||

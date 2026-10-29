@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   resolvePointer,
@@ -36,7 +38,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
   finalizePerished(context);
-  let misfitIndex: Map<string, Set<string>> | undefined;
+  let misfitIndex: Optional<Map<string, Set<string>>>;
   for (const node of context.pendingExits.values()) {
     if (node.detached) continue;
     const parent = node.parent;

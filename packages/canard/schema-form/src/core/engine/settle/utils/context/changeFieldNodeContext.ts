@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   PointerOperator,
@@ -25,7 +27,7 @@ import { expandTemplatePaths } from '../templatePaths/expandTemplatePaths';
  */
 export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  contextValue: Readonly<Record<string, unknown>>,
+  contextValue: Readonly<Dictionary<unknown>>,
 ): void => {
   if (sameValue(root.runtime.context, contextValue)) return;
   const scratch = getSettlementScratch(root.runtime);

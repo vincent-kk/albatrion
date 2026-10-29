@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   type PointerSegment,
   joinPointerWithPrefixOf,
@@ -23,7 +25,7 @@ interface OneOfBranch {
 export const readOneOfBranch = (
   schemaPath: string,
   segments: readonly PointerSegment[],
-): OneOfBranch | undefined => {
+): Optional<OneOfBranch> => {
   for (let index = segments.length - 2; index >= 0; index--) {
     const position = segments[index + 1];
     if (

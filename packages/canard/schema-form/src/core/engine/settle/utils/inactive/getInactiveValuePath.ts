@@ -1,3 +1,5 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -12,11 +14,11 @@ import type { SettlementContext } from '../../types/settlement';
 export const getInactiveValuePath = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-): string | undefined => {
+): Optional<string> => {
   if (!context.compactedSlotSources?.size) return node.path;
   const lineage: Self[] = [];
   for (
-    let current: Self | null = node;
+    let current: Nullable<Self> = node;
     current?.parent;
     current = current.parent
   )

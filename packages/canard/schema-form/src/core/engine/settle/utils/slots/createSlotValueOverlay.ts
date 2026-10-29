@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
@@ -25,8 +27,8 @@ import { getSlotSource } from './getSlotSource';
 export const createSlotValueOverlay = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
   input: unknown,
-  source: Self | undefined,
-  previous: InactiveSlotOverlay | undefined,
+  source: Optional<Self>,
+  previous: Optional<InactiveSlotOverlay>,
   whole: boolean,
   automatic = false,
   seen: WeakSet<object> = new WeakSet(),

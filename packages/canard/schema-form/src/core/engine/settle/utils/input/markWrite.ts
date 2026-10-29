@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord, UnionSpec } from '../../../record';
@@ -183,7 +185,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     )
       ? Reflect.get(value, name)
       : undefined;
-    let childSpec: UnionSpec | undefined;
+    let childSpec: Optional<UnionSpec>;
     let interpreted: unknown = UNINTERPRETED;
     if (sameShape && child.behavior.strategy !== 'branch') {
       childSpec = staticSpec(child.schemaType, child.nullable);

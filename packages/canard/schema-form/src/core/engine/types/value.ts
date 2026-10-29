@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import {
   BIT_FLAG_00,
@@ -48,9 +48,9 @@ export interface ResetOptions<Value = unknown> {
   /** Whether to check the default value first when preferLatest is true */
   checkDefaultValueFirst?: boolean;
   /** Explicit input value with highest priority - overrides all other values */
-  inputValue?: Value | null;
+  inputValue?: Nullable<Value>;
   /** Fallback value used in the default value calculation logic */
-  fallbackValue?: Value | null;
+  fallbackValue?: Nullable<Value>;
 }
 
 /** Origin of a write before calculation and transition phases. */

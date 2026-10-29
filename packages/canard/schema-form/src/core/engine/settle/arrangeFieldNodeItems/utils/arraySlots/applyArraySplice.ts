@@ -1,15 +1,18 @@
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
+
 import { visitFieldNodes } from '../../../../navigation';
 import type { FieldNodeRecord } from '../../../../record';
 import {
-captureFieldNodeChange,
-updateFieldNodeNameAndPath,
+  captureFieldNodeChange,
+  updateFieldNodeNameAndPath,
 } from '../../../../record';
 import type {
-ArraySpliceProof,
-SettlementContext,
+  ArraySpliceProof,
+  SettlementContext,
 } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
@@ -38,7 +41,7 @@ export const applyArraySplice = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   const { count, index, entry } = proof;
   const length = entry ? count + 1 : count - 1;
-  const items: Record<string, Self> = host.structure ?? Object.create(null);
+  const items: Dictionary<Self> = host.structure ?? Object.create(null);
   const previous = host.children ?? [];
   const removedItem = entry ? undefined : items[String(index)];
   const removed = removedItem?.local;

@@ -1,5 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   getChildPointer,
@@ -102,7 +104,7 @@ export class DirtyPathSet extends Set<string> {
     for (let run = 0; run < bucket.runs.length; run++) {
       const definition = bucket.runs[run];
       const state = states[run];
-      let rank: number | undefined;
+      let rank: Optional<number>;
       let count = 0;
       const represented: string[] = [];
       if (first) {

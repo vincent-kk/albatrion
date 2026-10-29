@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
@@ -45,7 +47,7 @@ export const populateVirtualNodes = (
       );
     for (const [name, value] of Object.entries(virtual)) {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Virtual entries are authored values read before shape validation; callables and primitives reach the fields check, so a guard would narrow what is accepted.
-      const schema = readSchemaObject(value as Record<string, unknown>);
+      const schema = readSchemaObject(value as Dictionary<unknown>);
       const schemaPath = appendSegment(
         appendSegment(
           appendSegment(declaration.schemaPath, 'options'),

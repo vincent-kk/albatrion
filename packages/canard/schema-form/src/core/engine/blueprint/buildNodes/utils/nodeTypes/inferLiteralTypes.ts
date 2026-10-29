@@ -2,6 +2,8 @@ import { filter as filterArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode } from '../../../../../../errors';
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema, SchemaTypeName } from '../../../types/schema';
@@ -18,7 +20,7 @@ export const inferLiteralTypes = (
   context: AnalysisContext,
   parts: readonly { schema: BlueprintSchema; schemaPath: string }[],
   schemaPath: string,
-): readonly SchemaTypeName[] | undefined => {
+): Optional<readonly SchemaTypeName[]> => {
   const values: unknown[] = [];
   let hasLiteral = false;
   for (const part of parts) {

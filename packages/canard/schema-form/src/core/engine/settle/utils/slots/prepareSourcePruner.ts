@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
@@ -22,7 +24,7 @@ export const prepareSourcePruner = <Self extends FieldNodeRecord<Self>>(
   if (derived.sourcePruner) return derived.sourcePruner;
   let unique = !hasRetainableDescendants(node.blueprintNode, new WeakSet());
   for (
-    let current: Self | null = node;
+    let current: Nullable<Self> = node;
     unique && current?.parent;
     current = current.parent
   ) {

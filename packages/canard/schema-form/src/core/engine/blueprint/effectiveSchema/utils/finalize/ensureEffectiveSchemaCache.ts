@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import type {
   EffectiveSchema,
@@ -15,7 +17,7 @@ import type { BlueprintNode } from '../../../types/node';
  * @returns The partition's mutable result map; inserts a partition when absent.
  */
 export const ensureEffectiveSchemaCache = (
-  memo: EffectiveSchemaMemo | undefined,
+  memo: Optional<EffectiveSchemaMemo>,
   node: BlueprintNode,
   options: EffectiveSchemaOptions,
 ): Map<string, EffectiveSchema> => {

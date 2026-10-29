@@ -1,5 +1,7 @@
 import { filter as filterArray } from '@winglet/common-utils/array';
 
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode } from '../../../../../../errors';
 import type { NodeStrategy } from '../../../../types/strategy';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -80,7 +82,7 @@ export const resolveNodeStrategy = (
       }
     }
   })();
-  let strategy: boolean | undefined;
+  let strategy: Optional<boolean>;
   const pending = [root];
   while (pending.length) {
     const current = pending.pop()!;

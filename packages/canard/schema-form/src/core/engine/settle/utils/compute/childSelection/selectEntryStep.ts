@@ -1,6 +1,8 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../../errors';
@@ -44,7 +46,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Static occurrences already present in the fixed private baseline. */
   readonly preparedStatic?: PreparedStaticHost<Self>;
   /** Dynamic own entries in actual creation order, excluding rejected admissions. */
-  readonly preparedDynamic?: Record<string, Self>;
+  readonly preparedDynamic?: Dictionary<Self>;
   /** Original dynamic membership is retained solely for exit comparison. */
   readonly priorDynamicNames?: readonly string[];
   /** Host whose current structure is selected. */
@@ -52,13 +54,13 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   /** Settlement effects, dirty paths, failures, latent state and gate evidence. */
   readonly context: SettlementContext<Self>;
   /** Shape retained before the host wheel's ungated start. */
-  readonly prior: Record<string, Self>;
+  readonly prior: Dictionary<Self>;
   /** Recursive computation called immediately for a dirty admitted child. */
   readonly computeChild: (child: Self) => void;
   /** Whether entry changes queue host projection before later gates. */
   readonly immediate: boolean;
   /** Ordered mutable target; prepared selection inherits static entries while host reads use a view. */
-  readonly next: Record<string, Self>;
+  readonly next: Dictionary<Self>;
   /** First admitted blueprint identity for each authored name. */
   readonly seen: Map<string, BlueprintChildEntry['node']>;
   /** Rejected entries collected for the unchanged latent-distribution pass. */
@@ -91,7 +93,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
  */
 export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   entry: BlueprintChildEntry,
-  step: DirectChildSelection | undefined,
+  step: Optional<DirectChildSelection>,
   frame: ChildSelectionFrame<Self>,
 ): void => {
   const {
@@ -113,9 +115,9 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     );
   let threw = false;
   let declarations: BlueprintChildEntry['declarations'];
-  let activeIds: readonly number[] | undefined;
+  let activeIds: Optional<readonly number[]>;
   let fullyAdmitted = false;
-  let discriminator: PreparedDiscriminatorEntry | undefined;
+  let discriminator: Optional<PreparedDiscriminatorEntry>;
   if (step?.discriminatorSelection) {
     const round = context.gateSelectionRounds?.get(node);
     const tagGroup = round?.active
@@ -144,8 +146,8 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       (frame.tableThrew === true || context.gateThrowVersion !== version);
   } else if (context.hasGates) {
     // Allocated at the first rejected declaration; until then every one is admitted.
-    let active: (typeof entry.declarations)[number][] | undefined;
-    let ids: number[] | undefined;
+    let active: Optional<(typeof entry.declarations)[number][]>;
+    let ids: Optional<number[]>;
     for (let index = 0; index < entry.declarations.length; index++) {
       const declaration = entry.declarations[index];
       const version = context.gateThrowVersion;

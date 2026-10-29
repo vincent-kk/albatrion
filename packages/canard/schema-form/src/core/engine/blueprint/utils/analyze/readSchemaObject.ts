@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import type { BlueprintSchema } from '../../types/schema';
 
 /**
@@ -7,6 +9,6 @@ import type { BlueprintSchema } from '../../types/schema';
  */
 export const readSchemaObject = (
   schema: BlueprintSchema,
-): Readonly<Record<string, any>> & {
-  properties?: Readonly<Record<string, BlueprintSchema>>;
+): Readonly<Dictionary<any>> & {
+  properties?: Readonly<Dictionary<BlueprintSchema>>;
 } => (typeof schema === 'boolean' ? {} : schema);

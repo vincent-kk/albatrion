@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   resolvePointer,
@@ -32,7 +34,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   else delete runtime.settlementTrace;
   runtime.refreshTargets ??= new Set();
   runtime.refreshTargets.clear();
-  const records: MisfitRecord[] | undefined = warnings ? [] : undefined;
+  const records: Optional<MisfitRecord[]> = warnings ? [] : undefined;
   if (warnings) {
     warnings.sort((left, right) => left.order - right.order);
     for (let index = 0; index < warnings.length; index++) {

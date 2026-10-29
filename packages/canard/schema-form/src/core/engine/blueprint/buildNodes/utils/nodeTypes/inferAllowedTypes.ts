@@ -1,6 +1,8 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
@@ -40,7 +42,7 @@ export const inferAllowedTypes = (
   allowTop = false,
   visiting: readonly string[] = NO_VISITING,
   isBranch = false,
-): readonly SchemaTypeName[] | undefined => {
+): Optional<readonly SchemaTypeName[]> => {
   if (visiting.includes(schemaPath)) return NO_TYPES;
   const cycle = isBranch ? { found: false } : undefined;
   const parts = collectStaticSchemas(
@@ -64,7 +66,7 @@ export const inferAllowedTypes = (
   )
     return NO_TYPES;
   const stack = [...visiting, ...mapArray(parts, (part) => part.schemaPath)];
-  let allowed: readonly SchemaTypeName[] | undefined;
+  let allowed: Optional<readonly SchemaTypeName[]>;
   for (const part of parts) {
     allowed = intersectAllowedTypes(
       allowed,
@@ -79,7 +81,7 @@ export const inferAllowedTypes = (
       );
   }
   if (allowed) return allowed;
-  let inferred: readonly SchemaTypeName[] | undefined;
+  let inferred: Optional<readonly SchemaTypeName[]>;
   let hasUngatedBranch = false;
   for (const keyword of BRANCH_KEYWORDS) {
     const groups: (readonly SchemaTypeName[])[] = [];

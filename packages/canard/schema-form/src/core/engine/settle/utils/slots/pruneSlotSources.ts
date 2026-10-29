@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
@@ -41,8 +43,8 @@ export const pruneSlotSources = <Self extends FieldNodeRecord<Self>>(
         clear(child);
   };
   const patch = (
-    source: Self | undefined,
-    overlay: InactiveSlotOverlay | undefined,
+    source: Optional<Self>,
+    overlay: Optional<InactiveSlotOverlay>,
     position: number,
   ): InactiveSlotOverlay => {
     if (position === parts.length) return { replace: true };

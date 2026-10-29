@@ -4,6 +4,8 @@ import {
 } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   getChildPointer,
   readPointerSegment,
@@ -50,7 +52,7 @@ export const rekeyArrayRuntimePaths = <Self>(
   const moveByPath = new Map(
     mapArray(moves, (move) => [move.previous, move.current]),
   );
-  const mapPath = (path: string): string | undefined => {
+  const mapPath = (path: string): Optional<string> => {
     const itemPath = getChildPointer(path, hostPath);
     if (itemPath === undefined) return path;
     const position = Number(readPointerSegment(itemPath, -1));
@@ -67,7 +69,7 @@ export const rekeyArrayRuntimePaths = <Self>(
   const warningMoves: {
     key: string;
     path: string;
-    record: FormErrorRecord | undefined;
+    record: Optional<FormErrorRecord>;
     remembered: boolean;
   }[] = [];
   for (const key of warningKeys) {

@@ -1,19 +1,21 @@
+import type { Dictionary } from '@aileron/declare';
+
 import type {
-FormErrorRecord,
-FormErrorReporter,
-FormWarningCode,
+  FormErrorRecord,
+  FormErrorReporter,
+  FormWarningCode,
 } from '../../../../errors';
 import type {
-Blueprint,
-BlueprintChildEntry,
-BlueprintGate,
-BlueprintSchemaType,
-EffectiveSchema
+  Blueprint,
+  BlueprintChildEntry,
+  BlueprintGate,
+  BlueprintSchemaType,
+  EffectiveSchema,
 } from '../../blueprint';
 import type { InactiveValueResolver } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
 import type { TreeMemoStores } from '../../types/treeMemoStores';
-import type { FieldNodeWriteKind,WriteOption } from '../../types/value';
+import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import type { FieldNodeFactory } from './behavior';
@@ -182,7 +184,7 @@ export interface FieldNodeRuntime<Self>
   /** Number of current-shape nodes with a truthy value for each state key. */
   globalStateCounts: Map<string, number>;
   /** Stable aggregate of keys whose count is positive. */
-  globalState: Readonly<Record<string, true>>;
+  globalState: Readonly<Dictionary<true>>;
   /** Pending events consumed by the later dispatcher. */
   deliveries?: Set<Self>;
   /** Nodes with revision bits marked before the commit visitor reaches them. */
@@ -201,7 +203,7 @@ export interface FieldNodeRuntime<Self>
   /** Last diagnostics reference observed by delivery marking. */
   deliveredDiagnostics?: FieldNodeDiagnostics;
   /** Context reference last observed by delivery marking. */
-  deliveredContext?: Readonly<Record<string, unknown>>;
+  deliveredContext?: Readonly<Dictionary<unknown>>;
   /** Public entry depth consumed by the later dispatcher. */
   entryDepth?: number;
   /** Feedback waves already produced by the current outer entry. */
@@ -340,7 +342,7 @@ export interface FieldNodeRuntime<Self>
   /** Issue references each non-root node last contributed to the root list; adoption fills it from the handed-over lists. */
   externalContributions?: Map<unknown, readonly { dataPath: string }[]>;
   /** Form context shared by every occurrence and expression in this tree; the factory supplies an empty object when none is given. */
-  context: Readonly<Record<string, unknown>>;
+  context: Readonly<Dictionary<unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */
   committedRuleValues?: PathKeyedMap<unknown>;
   /** Committed rule keys indexed by their source path for bounded pruning. */

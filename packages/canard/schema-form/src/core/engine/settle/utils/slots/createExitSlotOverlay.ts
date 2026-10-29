@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
@@ -13,7 +15,7 @@ import { readSlotExitPolicy } from './readSlotExitPolicy';
 /** Source-preservation result for one recursively resolved exit policy. */
 interface ExitSlotOverlay {
   /** Patch that excludes cleared channels without changing the old instance. */
-  readonly overlay: InactiveSlotOverlay | undefined;
+  readonly overlay: Optional<InactiveSlotOverlay>;
   /** Whether this host has a kept own channel or a kept descendant source. */
   readonly hasSource: boolean;
   /** Whether this instance can remain a slot, including empty kept occurrences. */
@@ -92,7 +94,7 @@ export const createExitSlotOverlay = <Self extends FieldNodeRecord<Self>>(
       raw !== undefined ||
       extras !== undefined ||
       node.behavior.type === 'array');
-  let children: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;
+  let children: Optional<Map<BlueprintChildEntry, InactiveSlotOverlay>>;
   let compacted = false;
   const visited: BlueprintChildEntry[] = [];
   for (const child of node.children ?? []) {

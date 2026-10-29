@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -18,7 +20,7 @@ import { getSlotSource } from './getSlotSource';
  */
 export const readSlotRawTree = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
-  source: Self | undefined,
+  source: Optional<Self>,
   overlay?: InactiveSlotOverlay,
 ): unknown => {
   const raw =
@@ -68,7 +70,7 @@ export const readSlotRawTree = <Self extends FieldNodeRecord<Self>>(
     }
     return value;
   }
-  const value: Record<string, unknown> = isPlain(extras) ? { ...extras } : {};
+  const value: Dictionary<unknown> = isPlain(extras) ? { ...extras } : {};
   let found = Object.keys(value).length > 0;
   for (const entry of getSlotEntries(source, overlay, template)) {
     if (hasOwnProperty(value, entry.name)) continue;

@@ -1,4 +1,4 @@
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
 /**
  * Arguments the derive round passes to an authored `injectTo` handler (getInjectToContext).
@@ -14,7 +14,7 @@ export type InjectToContext<Schema> = {
   /** Emitted value of the parent, or null at the root. */
   parentValue: unknown;
   /** Effective schema of the parent, or null at the root. */
-  parentJSONSchema: Schema | null;
+  parentJSONSchema: Nullable<Schema>;
   /** Emitted value of the root in this round. */
   rootValue: unknown;
   /** Effective schema of the root. */
@@ -25,7 +25,7 @@ export type InjectToContext<Schema> = {
 
 /** Exit resolver inputs; every value and schema is read from the preceding commit. */
 export type InactiveValueContext = InjectToContext<
-  Readonly<Record<string, unknown>> | boolean
+  Readonly<Dictionary<unknown>> | boolean
 >;
 
 /**
@@ -38,7 +38,7 @@ export type InactiveValueContext = InjectToContext<
 export type InactiveValueResolver<V = unknown> = (
   value: V,
   context: InactiveValueContext,
-) => V | undefined;
+) => Optional<V>;
 
 /** Literal retained value or its synchronous exit resolver. */
 export type InactiveValue<V = unknown> = V | InactiveValueResolver<V>;
@@ -64,13 +64,9 @@ export type ChildSchemaControls = {
   /** Exit policy: clears the value when the node leaves the shape; a boolean or an expression (default: keep). */
   unsetOnInactive?: boolean | string;
   /** Literal (string, number, boolean, null, object or array) or the shared `InactiveValueResolver`; an inline function is typed by the resolver signature. */
-  inactiveValue?:
-    | InactiveValueResolver<unknown>
-    | string
-    | number
-    | boolean
-    | null
-    | object;
+  inactiveValue?: Nullable<
+    InactiveValueResolver<unknown> | string | number | boolean | object
+  >;
 };
 
 /** Specificity layer of a control declaration: the node itself, a parent `controls.fields` entry, or a fragment. */

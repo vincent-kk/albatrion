@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { EffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
@@ -8,7 +10,7 @@ import type { SettlementContext } from '../../types/settlement';
 export interface CalculatedSnapshot<Self> {
   local: unknown;
   emit: unknown;
-  children: readonly Self[] | null;
+  children: Nullable<readonly Self[]>;
   schema: EffectiveSchema;
   active: boolean;
 }

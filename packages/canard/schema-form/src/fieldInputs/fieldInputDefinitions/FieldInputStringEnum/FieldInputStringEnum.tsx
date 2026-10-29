@@ -3,6 +3,8 @@ import { type ChangeEvent, useMemo } from 'react';
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
+import type { Nullable } from '@aileron/declare';
+
 import type {
   FieldInputPropsWithSchema,
   StringSchema,
@@ -25,7 +27,7 @@ export const FieldInputStringEnum = ({
   style,
   className,
 }: FieldInputPropsWithSchema<
-  string | null,
+  Nullable<string>,
   StringSchema,
   EnumLabelsContext
 >) => {

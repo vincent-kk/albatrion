@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { FormWarningCode } from '../../../../errors';
 import type {
   Blueprint,
@@ -64,7 +66,7 @@ export const collectBlueprintWarnings = (
       );
       const warning = (
         code: FormWarningCode,
-        details: Record<string, unknown> = {},
+        details: Dictionary<unknown> = {},
       ): void =>
         emit({
           code,

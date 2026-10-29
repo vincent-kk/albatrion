@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../record';
@@ -53,7 +55,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
   const trace: DeriveTraceEntry[] = [];
   const traceWinners = new Map<string, number>();
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
-  let failures: DeriveRoundDecision<Self>['failures'][number][] | undefined;
+  let failures: Optional<DeriveRoundDecision<Self>['failures'][number][]>;
   if (!state.sourcePaths) {
     state.activeRuleKeys.clear();
     state.activeRuleKeysBySource.clear();

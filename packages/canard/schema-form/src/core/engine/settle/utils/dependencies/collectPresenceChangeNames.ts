@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { formatSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -18,7 +20,7 @@ import type { PreparedStaticHost } from '../compute/childSelection/utils/prepare
  */
 export const collectPresenceChangeNames = <Self extends FieldNodeRecord<Self>>(
   host: Self,
-  previous: Readonly<Record<string, Self>>,
+  previous: Readonly<Dictionary<Self>>,
   context: SettlementContext<Self>,
 ): string[] => {
   const structure = host.structure ?? {};

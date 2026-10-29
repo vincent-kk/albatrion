@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -20,7 +22,7 @@ import { publishPresenceOwner } from './publishPresenceOwner';
  * @returns Whether an entry was consumed; registrations advance only for marked owners
  */
 export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
-  host: Self | undefined,
+  host: Optional<Self>,
   context: SettlementContext<Self>,
 ): boolean => {
   const pending = context.presenceTemplates;

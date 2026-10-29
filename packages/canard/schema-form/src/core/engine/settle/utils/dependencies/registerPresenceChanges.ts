@@ -1,6 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { maxLite } from '@winglet/common-utils/math';
 
+import type { Dictionary } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   appendSegment,
@@ -32,7 +34,7 @@ const parentOf = (path: string): string => resolvePointer(path, $.Parent);
  */
 export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   host: Self,
-  previous: Readonly<Record<string, Self>>,
+  previous: Readonly<Dictionary<Self>>,
   context: SettlementContext<Self>,
 ): boolean => {
   if (!context.hasGates) return false;

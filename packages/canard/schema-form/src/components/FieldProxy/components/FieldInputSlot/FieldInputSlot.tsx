@@ -3,6 +3,8 @@ import { memo, useCallback, useRef } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
+
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import {
   FieldNodeEventType,
@@ -88,7 +90,7 @@ export const FieldInputSlot = memo(
       [accepts, rootReadOnly, rootDisabled, node, onChangeRef],
     );
     const handleFileAttach = useCallback(
-      (files: File | File[] | undefined) => {
+      (files: Optional<File | File[]>) => {
         if (!accepts()) return;
         if (onFileAttachRef.current) return onFileAttachRef.current(files);
         if (files === undefined) attachedFilesMap.delete(node.path);

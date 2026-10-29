@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 /**
  * Stage only dynamic own entries while exposing the immutable baseline to gate reads.
  * @param baseline - Fixed null-prototype structure whose occurrences stay active
@@ -10,11 +12,11 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
  * The caller publishes an ordinary structure before ending selection. No prior shape is mutated.
  */
 export const createPreparedSelectionStructure = <Self>(
-  baseline: Record<string, Self>,
-  current: Record<string, Self> | null | undefined,
+  baseline: Dictionary<Self>,
+  current: Optional<Nullable<Dictionary<Self>>>,
   names: readonly string[],
-  dynamic: Record<string, Self>,
-): Record<string, Self> => {
+  dynamic: Dictionary<Self>,
+): Dictionary<Self> => {
   if (current && current !== baseline)
     for (const name of names)
       if (hasOwnProperty(current, name)) dynamic[name] = current[name];

@@ -1,6 +1,8 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../../../blueprint';
@@ -26,13 +28,13 @@ import type { StaticShapeMemo } from '../staticShape';
  */
 export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   context: SettlementContext<Self>,
-  next: Record<string, Self>,
+  next: Dictionary<Self>,
   computeChild?: (child: Self) => void,
   immediate = false,
   hasRelocated = true,
-): ((entry: BlueprintChildEntry) => boolean) | undefined => {
+): Optional<(entry: BlueprintChildEntry) => boolean> => {
   if (
     node.behavior.type !== 'object' ||
     context.kind === 'load' ||

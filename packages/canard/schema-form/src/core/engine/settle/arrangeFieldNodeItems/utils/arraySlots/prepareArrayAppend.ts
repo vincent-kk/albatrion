@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { ArrayOperation, FieldNodeRecord } from '../../../../record';
 import type { ArrayAppendProof } from '../../../types/settlement';
@@ -19,7 +21,7 @@ const LENGTH_RESULT = { source: 'length' } as const;
 export const prepareArrayAppend = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
-): ArrayAppendProof<Self> | undefined => {
+): Optional<ArrayAppendProof<Self>> => {
   const count = node.itemCount;
   if (
     operation.kind !== 'push' &&

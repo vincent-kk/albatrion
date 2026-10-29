@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 /**
  * Hide an item-less projected array while preserving nonempty identity.
  * @param value - Array after optional suffix trimming
@@ -5,4 +7,4 @@
  */
 export const omitEmptyArray = (
   value: readonly unknown[],
-): readonly unknown[] | undefined => (value.length === 0 ? undefined : value);
+): Optional<readonly unknown[]> => (value.length === 0 ? undefined : value);

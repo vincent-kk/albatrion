@@ -1,5 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { composeBatchValue } from './composeBatchValue';
 
@@ -16,7 +18,7 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
   const virtual = node.behavior.type === 'virtual' ? node : undefined;
   const names: string[] = [];
   for (
-    let cursor: Self | null = virtual ? node.parent : node;
+    let cursor: Nullable<Self> = virtual ? node.parent : node;
     cursor && cursor !== root;
     cursor = cursor.parent
   )

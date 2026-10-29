@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { minLite } from '@winglet/common-utils/math';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
@@ -27,7 +29,7 @@ const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
 ): boolean => {
   const append = context.arrayAppend;
   if (append?.host === node && append.valid) {

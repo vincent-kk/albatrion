@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   getChildPointer,
   isDescendantPath,
@@ -19,7 +21,7 @@ export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
   exact = false,
-): FieldNodeWriteKind | undefined => {
+): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
   for (let index = (origins?.length ?? 0) - 1; index >= 0; index--) {
     const origin = origins![index];

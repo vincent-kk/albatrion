@@ -1,13 +1,12 @@
+import type { Optional } from '@aileron/declare';
+
 /**
  * Encode a kind set independently of integer restrictions and nullable decoration.
  * @param types - Closed JSON type name, readonly type list, or undefined for no type
  * @returns A stable bit mask used for same-kind grouping and containment
  */
 export const foldAllowedTypes = (
-  types:
-    | keyof typeof TYPE_MASK
-    | readonly (keyof typeof TYPE_MASK)[]
-    | undefined,
+  types: Optional<keyof typeof TYPE_MASK | readonly (keyof typeof TYPE_MASK)[]>,
 ): number => {
   const allowed = typeof types === 'string' ? [types] : (types ?? []);
   let mask = 0;

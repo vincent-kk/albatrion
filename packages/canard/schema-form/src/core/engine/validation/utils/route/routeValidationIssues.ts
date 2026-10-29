@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   isDescendantPath,
   parsePointer,
@@ -34,7 +36,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   const before =
     runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
   const next = new Map<unknown, readonly unknown[]>(before);
-  let activeIds: Set<number> | undefined;
+  let activeIds: Optional<Set<number>>;
   if (issues.length > 0 && runtime.committedDeclarationIds?.size) {
     activeIds = new Set<number>();
     for (const ids of runtime.committedDeclarationIds.values())

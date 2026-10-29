@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   PointerOperator,
   appendSegment,
@@ -38,7 +40,7 @@ const hasWildcardSegment = (path: string): boolean =>
  */
 export const collectDeriveConvergenceTargets = (
   blueprint: Blueprint,
-): ReadonlySet<string> | undefined => {
+): Optional<ReadonlySet<string>> => {
   if (!blueprint.capabilities.hasDerive) return undefined;
   const nodes = blueprint.nodes;
   const declarations = new Map<number, PropertyDeclaration>();

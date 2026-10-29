@@ -2,6 +2,8 @@ import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode } from '@/schema-form/errors';
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import {
@@ -55,7 +57,7 @@ export const readDiscriminatorBranches = (
     );
   for (const keyword of UNION_KEYWORDS) {
     if (!isArray(host[keyword])) continue;
-    let previousMask: number | undefined;
+    let previousMask: Optional<number>;
     const previousValues: unknown[] = [];
     for (let index = 0; index < host[keyword].length; index++) {
       const branch = host[keyword][index];
@@ -83,8 +85,8 @@ export const readDiscriminatorBranches = (
         })()
       )
         continue;
-      let values: readonly unknown[] | undefined;
-      let mask: number | undefined;
+      let values: Optional<readonly unknown[]>;
+      let mask: Optional<number>;
       for (const part of parts) {
         const property = readSchemaObject(part.schema).properties?.[
           propertyName

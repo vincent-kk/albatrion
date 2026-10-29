@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { BEHAVIORS } from '../../../behaviors';
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
@@ -40,7 +42,7 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
   seen.add(value);
   try {
     if (template.kind === 'array' && isArray(value)) {
-      let copy: unknown[] | undefined;
+      let copy: Optional<unknown[]>;
       for (let index = 0; index < value.length; index++) {
         const item = live?.structure?.[String(index)];
         const candidates = getItemEntries(template, index);
@@ -66,7 +68,7 @@ export const interpretFieldNodeInput = <Self extends FieldNodeRecord<Self>>(
           template,
         ).objectChildren = children = bindings;
       }
-      let copy: Record<string, unknown> | undefined;
+      let copy: Optional<Dictionary<unknown>>;
       for (const name of Object.keys(value)) {
         const item = live?.structure?.[name];
         const child = item?.blueprintNode ?? children.get(name);

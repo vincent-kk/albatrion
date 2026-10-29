@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { readEqualityNumber } from './readEqualityNumber';
 import { readEqualityString } from './readEqualityString';
 import type { EqualityToken } from './types';
@@ -9,7 +11,7 @@ import type { EqualityToken } from './types';
  */
 export const scanEqualityTokens = (
   source: string,
-): EqualityToken[] | undefined => {
+): Optional<EqualityToken[]> => {
   const tokens: EqualityToken[] = [];
   let index = 0;
   while (index < source.length) {

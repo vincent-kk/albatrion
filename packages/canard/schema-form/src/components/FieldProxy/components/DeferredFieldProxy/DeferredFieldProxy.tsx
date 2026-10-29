@@ -1,5 +1,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
+import type { Nullable } from '@aileron/declare';
+
 import { FieldNodeEventType, FieldNodeRequestType } from '@/schema-form/core';
 import { useFieldNodeSubscribe } from '@/schema-form/hooks';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
@@ -37,7 +39,7 @@ export const DeferredFieldProxy = ({
   const node = proxyProps.node;
   const [revealed, setRevealed] = useState(() => manager.hasRevealed(node));
   const pendingEventsRef = useRef(0);
-  const placeholderRef = useRef<Element | null>(null);
+  const placeholderRef = useRef<Nullable<Element>>(null);
 
   useFieldNodeTracker(node, DEFERRED_TRACKING_EVENTS);
 
@@ -63,7 +65,7 @@ export const DeferredFieldProxy = ({
   }, [revealed, manager, node]);
 
   const handlePlaceholder = useCallback(
-    (element: HTMLDivElement | null) => {
+    (element: Nullable<HTMLDivElement>) => {
       const previous = placeholderRef.current;
       if (previous !== null) manager.unregister(previous);
       placeholderRef.current = element;

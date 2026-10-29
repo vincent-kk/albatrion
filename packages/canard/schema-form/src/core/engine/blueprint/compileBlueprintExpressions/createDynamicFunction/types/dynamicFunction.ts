@@ -1,4 +1,4 @@
-import type { Fn } from '@aileron/declare';
+import type { Fn, Optional } from '@aileron/declare';
 
 import type { PathManager } from '../../getPathManager';
 
@@ -7,15 +7,15 @@ export interface CreateDynamicFunction {
   (
     pathManager: PathManager,
     fieldName: string,
-    rawExpression: string | undefined,
+    rawExpression: Optional<string>,
     coerceToBoolean: true,
-  ): DynamicFunction<boolean> | undefined;
+  ): Optional<DynamicFunction<boolean>>;
   <ReturnType = any>(
     pathManager: PathManager,
     fieldName: string,
-    rawExpression: string | undefined,
+    rawExpression: Optional<string>,
     coerceToBoolean?: false,
-  ): DynamicFunction<ReturnType> | undefined;
+  ): Optional<DynamicFunction<ReturnType>>;
 }
 
 /** Compiled expression using dependencies in registration order. */

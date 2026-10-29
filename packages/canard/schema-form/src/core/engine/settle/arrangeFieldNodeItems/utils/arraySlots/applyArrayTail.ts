@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { minLite } from '@winglet/common-utils/math';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntry } from '../../../../blueprint';
@@ -51,7 +53,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const oldCount = host.itemCount;
   const length = offset + plan.slots.length;
   const prefixCount = minLite(oldCount, length);
-  const items: Record<string, Self> = host.structure ?? Object.create(null);
+  const items: Dictionary<Self> = host.structure ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const oldExtras = isArray(host.undeclaredValues) ? host.undeclaredValues : [];
@@ -104,7 +106,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   }
 
   const moves: ArrayPathMove[] = [];
-  let perishedPaths: Set<string> | undefined;
+  let perishedPaths: Optional<Set<string>>;
   for (let index = prefixCount; index < oldCount; index++) {
     const key = String(index);
     const item = items[key];

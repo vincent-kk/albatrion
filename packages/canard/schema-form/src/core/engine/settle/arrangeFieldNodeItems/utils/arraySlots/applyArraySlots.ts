@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../../blueprint';
@@ -70,7 +72,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   if (context.hasGates)
     for (const item of host.children ?? []) registry.remove(item);
 
-  const nextItems: Record<string, Self> = Object.create(null);
+  const nextItems: Dictionary<Self> = Object.create(null);
   const nextRaw: unknown[] = [];
   const nextSnapshot: unknown[] = [];
   const reused = new Set<Self>();

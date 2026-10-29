@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { PointerSegment } from '../constants/PointerOperator';
 import { parsePointerSegment } from './parsePointerSegment';
 import { readFormattedPointerSegment } from './readFormattedPointerSegment';
@@ -11,7 +13,7 @@ import { readFormattedPointerSegment } from './readFormattedPointerSegment';
 export const readPointerSegment = (
   path: string,
   index: number,
-): PointerSegment | undefined => {
+): Optional<PointerSegment> => {
   const segment = readFormattedPointerSegment(path, index);
   return segment === undefined ? undefined : parsePointerSegment(segment);
 };

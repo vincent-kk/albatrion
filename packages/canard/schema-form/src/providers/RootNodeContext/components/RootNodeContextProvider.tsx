@@ -11,6 +11,8 @@ import {
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
+
 import { blueprintCacheDomain } from '@/schema-form/app/cache';
 import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
@@ -90,10 +92,13 @@ export const RootNodeContextProvider = ({
     reporter.root = load.root;
     reporter.pendingLoad = () => flushRootLoad(load, true);
   }
-  const pending = useRef<
-    | { props: RootLoadProps; option: Parameters<RootBinding['reset']>[0] }
-    | undefined
-  >(undefined);
+  const pending =
+    useRef<
+      Optional<{
+        props: RootLoadProps;
+        option: Parameters<RootBinding['reset']>[0];
+      }>
+    >(undefined);
   const [, schedule] = useState(0);
   const reset = useHandle(
     (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {

@@ -1,4 +1,4 @@
-import type { PartialBy } from '@aileron/declare';
+import type { Nullable, PartialBy } from '@aileron/declare';
 
 import {
   appendFormattedSegment,
@@ -80,7 +80,7 @@ export type FieldNodeRuntimeSeed = PartialBy<
 /** Create one record from a bound child or the root template. */
 const createFieldNode = (
   entry: BlueprintChildEntry | BlueprintNode,
-  parent: RuntimeFieldNode | null,
+  parent: Nullable<RuntimeFieldNode>,
   runtime: FieldNodeRuntime<RuntimeFieldNode>,
   source?: RuntimeFieldNode,
 ): RuntimeFieldNode => {

@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   PointerOperator,
   type PointerSegment,
@@ -129,7 +131,7 @@ class WatchDeliveryIndex {
 
   /** Add watchers whose paths contain or descend from a changed path. */
   affected(path: string, candidates: Set<unknown>): void {
-    let current: WatchPathNode | undefined = this.root;
+    let current: Optional<WatchPathNode> = this.root;
     for (const watcher of current.watchers) candidates.add(watcher);
     for (const segment of getCachedPointerSegments(this.runtime, path)) {
       current = current.children.get(segment);

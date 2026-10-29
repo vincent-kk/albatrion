@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintOptions } from '../../types/blueprint';
 import type { BlueprintSchema, SchemaTypeName } from '../../types/schema';
@@ -17,7 +19,7 @@ export const readAllowedTypes = (
   schema: BlueprintSchema,
   schemaPath: string,
   options?: BlueprintOptions,
-): readonly SchemaTypeName[] | undefined => {
+): Optional<readonly SchemaTypeName[]> => {
   if (typeof schema === 'boolean' || schema.type === undefined)
     return undefined;
   const values = isArray(schema.type) ? schema.type : [schema.type];

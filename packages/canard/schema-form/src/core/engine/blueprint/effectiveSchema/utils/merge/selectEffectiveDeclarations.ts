@@ -1,5 +1,7 @@
 import { minLite } from '@winglet/common-utils/math';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintNode, PropertyDeclaration } from '../../../types/node';
 
 /**
@@ -24,7 +26,7 @@ export const selectEffectiveDeclarations = (
     return selected.sort(compareDeclarations);
   }
   const selected: PropertyDeclaration[] = [];
-  let declaration: PropertyDeclaration | undefined;
+  let declaration: Optional<PropertyDeclaration>;
   let declarationCount = 0;
   for (const entry of node.declarations) {
     if (

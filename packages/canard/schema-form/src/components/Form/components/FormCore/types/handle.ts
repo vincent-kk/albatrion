@@ -1,6 +1,6 @@
 import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import type {
   FieldNode,
@@ -35,7 +35,7 @@ export interface FormHandle<
   >;
   /** Invalidate this schema's cached analysis and rebuild with reset's load options. */
   rebuild: FormHandle<Schema, Value>['reset'];
-  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  findNode: Fn<[path: FieldNode['path']], Nullable<FieldNode>>;
   findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
   getState: Fn<[], FieldNode['globalState']>;
   setState: Fn<[state: FieldNode['state']]>;

@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -44,10 +46,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
   const cap = getTransitionCap(context.root.runtime.blueprint);
   const filled = context.hasGates ? new Set<string>() : undefined;
   const filledNodes = context.hasGates ? undefined : new Set<Self>();
-  let fillHosts: Set<Self> | undefined;
-  let fillAncestors: Map<Self, number> | undefined;
-  let newArrayHosts: Set<Self> | undefined;
-  let descendantsByDepth: Self[][] | undefined;
+  let fillHosts: Optional<Set<Self>>;
+  let fillAncestors: Optional<Map<Self, number>>;
+  let newArrayHosts: Optional<Set<Self>>;
+  let descendantsByDepth: Optional<Self[][]>;
   let appearances: Iterator<Self>;
   let appearanceCount = 0;
   let rounds = 0;

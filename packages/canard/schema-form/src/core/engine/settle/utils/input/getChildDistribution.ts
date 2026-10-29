@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { Distribution, FieldNodeRecord } from '../../../record';
@@ -17,7 +19,7 @@ export const getChildDistribution = <Self extends FieldNodeRecord<Self>>(
   name: string,
   context: SettlementContext<Self>,
   path?: string,
-): Distribution | undefined => {
+): Optional<Distribution> => {
   if (
     context.replacePaths !== undefined &&
     !isWithinReplacePaths(context, path ?? appendSegment(host.path, name))

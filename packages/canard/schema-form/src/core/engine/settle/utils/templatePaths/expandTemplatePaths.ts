@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   PointerOperator,
   type PointerSegment,
@@ -28,7 +30,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
   const segments =
     preparedSegments ?? getCachedPointerSegments(root.runtime, templatePath);
   const paths: string[] = [];
-  const pending: { node: Self | undefined; depth: number; path: string }[] = [
+  const pending: { node: Optional<Self>; depth: number; path: string }[] = [
     { node: root, depth: 0, path: '' },
   ];
   while (pending.length) {

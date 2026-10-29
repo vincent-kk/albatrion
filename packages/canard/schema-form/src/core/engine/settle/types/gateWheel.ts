@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintGate } from '../../blueprint';
 
 /** Reads of one relocated gate occurrence at its latest evaluation in this settlement. */
@@ -35,7 +37,7 @@ export interface GateWheelFrame {
   /** Registered gate count at the beginning of this host wheel. */
   gateCount: number;
   /** Settlement gate exception version at the beginning of this host wheel. */
-  throwVersion: number | undefined;
+  throwVersion: Optional<number>;
   /** Independent full-evaluation inputs for table selection's verify mode. */
   selectionShadow?: Pick<GateWheelFrame, 'inputs' | 'consistent'>;
   /** Actual evaluation sequence retained only for shadow confirmation. */
@@ -45,7 +47,7 @@ export interface GateWheelFrame {
     /** Live occurrence path of the owner that evaluated the condition. */
     path: string;
     /** Direct child selected by a node gate, absent for a host gate. */
-    edgeName: string | undefined;
+    edgeName: Optional<string>;
     /** Actual boolean result to compare with the confirmation wheel. */
     value: boolean;
   }[];

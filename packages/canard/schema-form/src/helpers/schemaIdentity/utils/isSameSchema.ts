@@ -1,6 +1,8 @@
 import { isArray, isPlainObject } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 /** Compare authored values in key order, preserving identity of non-JSON atoms. */
 export const isSameSchema = (left: unknown, right: unknown): boolean => {
   if (Object.is(left, right)) return true;
@@ -29,8 +31,8 @@ export const isSameSchema = (left: unknown, right: unknown): boolean => {
         !(
           key === otherKeys[index] &&
           isSameSchema(
-            (left as Record<string, unknown>)[key],
-            (right as Record<string, unknown>)[key],
+            (left as Dictionary<unknown>)[key],
+            (right as Dictionary<unknown>)[key],
           )
         )
       )

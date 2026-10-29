@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { HostStaticPartition, getItemEntries } from '../../../../blueprint';
@@ -45,7 +47,7 @@ import { publishPreparedSelection } from './utils/publishPreparedSelection';
 export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   computeChild: (child: Self) => void,
   immediate: boolean,
   hasRelocated = true,
@@ -116,7 +118,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   }
   if (node.behavior.type === 'virtual') {
     const before = node.children ?? [];
-    const next: Record<string, Self> = Object.create(null);
+    const next: Dictionary<Self> = Object.create(null);
     const children: Self[] = [];
     const fields = node.blueprintNode.fields;
     for (let index = 0; fields && index < fields.length; index++) {
@@ -157,10 +159,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           hasRelocated,
         )
       : undefined;
-  const dynamic: Record<string, Self> | undefined = prepared
+  const dynamic: Optional<Dictionary<Self>> = prepared
     ? Object.create(prepared.baseline)
     : undefined;
-  const next: Record<string, Self> = prepared
+  const next: Dictionary<Self> = prepared
     ? createPreparedSelectionStructure(
         prepared.baseline,
         current,
@@ -232,7 +234,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     flushReads,
     reuseStatic: reuse,
   };
-  let selectedChildren: readonly Self[] | undefined;
+  let selectedChildren: Optional<readonly Self[]>;
   try {
     node.structure = next;
     const round = direct && context.gateSelectionRounds?.get(node);

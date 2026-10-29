@@ -1,5 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
+import type { Nullable } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -33,7 +35,11 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     node.behavior.type !== 'object'
   )
     return;
-  for (let ancestor: Self | null = node; ancestor; ancestor = ancestor.parent)
+  for (
+    let ancestor: Nullable<Self> = node;
+    ancestor;
+    ancestor = ancestor.parent
+  )
     if (ancestor.raw !== undefined) return;
   const table = getGateSelectionTable(
     node.blueprintNode,

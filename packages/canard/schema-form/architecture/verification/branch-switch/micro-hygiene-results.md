@@ -219,9 +219,13 @@
 
 첫 전체 unit의 세 실패는 후속 정적 교정으로 보존했습니다. binding organ은 array 유틸리티 import를 허용하지 않아 같은 for-loop로 바꿨습니다. P-08 계수 fixture는 기존 includes와 문자열 연산 계수를 유지하면서 배열 indexOf 계수를 더했고, 모든 크기에서 실제 work > 0도 추가했습니다(32/64/128/256, 배율 2). 식 색인 시험은 기존 native find/map 계수를 유지해 둘 다 0임을 확인하고 common-utils map의 실제 입력을 세어 최초 색인 생성 1회를 확인합니다. 시험을 삭제하거나 단언을 줄이지 않았으며 수정 뒤 기존 실패 **3파일·17건**이 통과했습니다. 이 교정은 해당 원래 항목 커밋으로 합칩니다.
 
-## 항목 6
+## 항목 6 — 형 유틸리티
 
-진행 중입니다.
+**521지점**을 치환했습니다: `Record<string, T>` → Dictionary **101개**, Optional **284개**, Nullable **122개**, Optional<Nullable> **13개**, Nullish **1개**입니다. 문자열 아닌 Record 키와 기존 조건부·mapped type의 분배·modifier 의미가 달라지는 조합은 유지했습니다. 대응하는 Required/Partial/IsNullable/Roll의 추가 수기 동등 조합은 이 제품 범위에서 발견하지 못했으며, 이미 사용하는 유틸리티는 유지했습니다. [항목 6 위치](raw/micro-hygiene/item-6.json)를 보존합니다.
+
+실제 공통 유틸리티 선언을 import한 TypeScript 제네릭 동등 증명 **7개·진단 0**으로 Dictionary/Nullable/Optional/중첩/Nullish 및 함수·중첩 Ref 모양을 검증했습니다. Nullable이라는 기존 boolean 제네릭 매개변수와 겹친 surface 파일은 `NullableValue` import alias를 사용합니다. [형 증명 결과](raw/micro-hygiene/utility-equivalence.json)와 [타입 제거 결과](raw/micro-hygiene/type-erasure.json)에서 수정한 **259개 제품 파일의 transpile JavaScript 바이트가 항목 5와 모두 동일**합니다. 한 파일의 기존 import 순서·괄호는 보존하여 형 정리의 런타임 변경을 막았습니다.
+
+공개 97이름 스냅숏에서 네 함수의 null union 표기만 Nullable 표기로 바뀌었습니다: registerPlugin, useFieldNodeSubscribe, useFieldNodeTracker, useFormSubmit. 같은 제네릭 동등 증명으로 확인한 뒤 그 네 문자열만 정확히 갱신했으며, 이름 수·형/값 종류·검사 강도·사례 수는 유지했습니다. 초기 시험은 이 네 표기 때문에 실패했고 수정 뒤 공개/수입/표면 형/할당 시험 **4파일·15건**, typecheck·lint를 통과했습니다. 공개 `index.d.ts`의 실제 diff와 최종 의미 동등 검사는 최종 build 뒤 아래에 기록합니다.
 
 ## 최종 정적 관문
 

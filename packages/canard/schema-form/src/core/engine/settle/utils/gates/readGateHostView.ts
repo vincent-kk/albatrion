@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { readGateProjectedExtra } from './readGateProjectedExtra';
@@ -12,7 +14,7 @@ export interface GateHostView {
   /** Extras identity, including absence beneath blocking raw ancestors. */
   readonly extra: unknown;
   /** Complete current input; never reused after either source identity changes. */
-  readonly value: Record<string, unknown>;
+  readonly value: Dictionary<unknown>;
 }
 
 /**
@@ -45,7 +47,7 @@ export const readGateHostView = <Self extends FieldNodeRecord<Self>>(
     extra !== null && typeof extra === 'object' && !isArray(extra)
       ? extra
       : undefined;
-  const value: Record<string, unknown> = { ...host, ...extras };
+  const value: Dictionary<unknown> = { ...host, ...extras };
   const view = { projected, extra, value };
   views.set(hostPath, view);
   return view;

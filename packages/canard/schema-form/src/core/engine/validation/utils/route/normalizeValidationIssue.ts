@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   isAbsolutePointer,
   joinPointer,
@@ -16,7 +18,7 @@ import type { ValidationIssue } from '../../types/issue';
 const rewritePointer = (
   pointer: string,
   keepFragment: boolean,
-): string | undefined => {
+): Optional<string> => {
   if (pointer !== '' && !isAbsolutePointer(pointer)) return undefined;
   try {
     const segments = parseStandardPointer(pointer);

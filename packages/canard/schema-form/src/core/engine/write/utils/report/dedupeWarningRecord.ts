@@ -1,4 +1,4 @@
-import type { OmitPartial } from '@aileron/declare';
+import type { OmitPartial, Optional } from '@aileron/declare';
 
 import type { FormErrorRecord, FormRecordCode } from '../../../../../errors';
 import { createFormErrorRecord } from './createFormErrorRecord';
@@ -20,7 +20,7 @@ export const dedupeWarningRecord = (
   discriminator: unknown,
   format: () => string,
   fields?: OmitPartial<FormErrorRecord, 'code' | 'level' | 'message'>,
-): FormErrorRecord | undefined => {
+): Optional<FormErrorRecord> => {
   const key = JSON.stringify([code, location, discriminator]);
   if (keys.has(key)) return undefined;
   keys.add(key);

@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidateFunction } from '../../types/validator';
@@ -16,7 +18,7 @@ const DUPLICATE_SCHEMA_ID_MESSAGE = /already exists|duplicate/i;
  */
 export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-): ValidateFunction | null => {
+): Nullable<ValidateFunction> => {
   const root = node.rootNode;
   const validator = root.runtime.validator;
   if (!isValidator(validator)) return null;

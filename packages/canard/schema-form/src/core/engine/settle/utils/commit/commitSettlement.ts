@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   isDescendantPath,
@@ -85,8 +87,8 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       refreshTargets.add(path);
   }
   runtime.refreshTargets = refreshTargets;
-  let warnings: MisfitRecord[] | undefined;
-  let warningTasks: Map<Self, () => void> | undefined;
+  let warnings: Optional<MisfitRecord[]>;
+  let warningTasks: Optional<Map<Self, () => void>>;
   markCommitDeliveries(context, (node) => {
     if (!context.changedNodes.has(node) || node.detached) return;
     const schemaType = node.schemaType;

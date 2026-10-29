@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { GateWheelFrame, GateWheelInput } from '../../types/gateWheel';
 
 /**
@@ -7,7 +9,7 @@ import type { GateWheelFrame, GateWheelInput } from '../../types/gateWheel';
  * @returns Nothing; stores the first input and marks differing repeats inconsistent
  */
 export const recordGateFrameInput = (
-  frame: Pick<GateWheelFrame, 'inputs' | 'consistent'> | undefined,
+  frame: Optional<Pick<GateWheelFrame, 'inputs' | 'consistent'>>,
   input: GateWheelInput,
 ): void => {
   if (!frame) return;

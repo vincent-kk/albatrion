@@ -7,7 +7,7 @@ import {
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import type { FormHandle } from '@/schema-form/components/Form';
 import type {
@@ -41,7 +41,7 @@ export const useFormSubmit = <
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
-  ref: RefObject<FormHandle<Schema, Value> | null>,
+  ref: RefObject<Nullable<FormHandle<Schema, Value>>>,
 ) => {
   const [subscribe, getSnapshot] = useMemo(
     () => [

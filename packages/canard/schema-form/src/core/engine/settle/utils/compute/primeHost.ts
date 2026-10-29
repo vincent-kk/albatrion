@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { mergeEffectiveSchema } from '../../../blueprint';
@@ -35,7 +37,7 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
  */
 export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   context: SettlementContext<Self>,
   hasRelocated = true,
 ): void => {
@@ -59,7 +61,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     );
     return;
   }
-  const baseline: Record<string, Self> = {};
+  const baseline: Dictionary<Self> = {};
   Object.setPrototypeOf(baseline, null);
   const cached =
     node.behavior.type === 'object'

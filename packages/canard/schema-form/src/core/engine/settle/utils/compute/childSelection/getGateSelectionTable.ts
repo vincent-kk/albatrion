@@ -1,5 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
+import type { Nullable } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
@@ -53,15 +55,15 @@ const isGateSelectionLiteral = (
 export const getGateSelectionTable = (
   host: BlueprintNode,
   blueprint: Blueprint,
-): GateSelectionTable | null => {
+): Nullable<GateSelectionTable> => {
   const cached = getHostDerived<
     'gateSelectionTable',
-    GateSelectionTable | null
+    Nullable<GateSelectionTable>
   >(host).gateSelectionTable;
   if (cached !== undefined) return cached;
   const plan = getDirectChildSelectionPlan(host, blueprint, true);
   if (!plan) {
-    getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
+    getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(
       host,
     ).gateSelectionTable = null;
     return null;
@@ -184,7 +186,7 @@ export const getGateSelectionTable = (
     }
   alwaysSteps.sort((left, right) => left - right);
   if (groups.size === 0 && predicateGroups.size === 0) {
-    getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
+    getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(
       host,
     ).gateSelectionTable = null;
     return null;
@@ -209,7 +211,7 @@ export const getGateSelectionTable = (
     tableSteps,
     ...(root ? { root } : {}),
   };
-  getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
+  getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(
     host,
   ).gateSelectionTable = table;
   return table;

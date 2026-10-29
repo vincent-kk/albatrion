@@ -16,7 +16,7 @@ import type {
   NullableStringSchema as WingletNullableStringSchema,
 } from '@winglet/json-schema';
 
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
 
 import type { SchemaControls } from '@/schema-form/core';
 
@@ -26,7 +26,9 @@ import type { VirtualNodeValue } from './value';
 /** Binding presentation payload; core treats these fields as opaque data. */
 export type SchemaPresentation = {
   /** Custom React component for input rendering */
-  FieldInput?: ComponentType<FieldInputProps<any, any, any, any, any>> | null;
+  FieldInput?: Nullable<
+    ComponentType<FieldInputProps<any, any, any, any, any>>
+  >;
   /** Props passed to FieldInput component */
   FieldInputProps?: {
     /** Placeholder text for input fields */
@@ -55,7 +57,7 @@ export type SchemaPresentation = {
   inputType?: string;
   /** Custom error messages per validation rule */
   errorMessages?: {
-    [key: string]: string | Dictionary<string> | undefined;
+    [key: string]: Optional<string | Dictionary<string>>;
     default?: string | Dictionary<string>;
   };
 } & { [key: string]: unknown };
@@ -174,7 +176,7 @@ export type NonNullableObjectSchema<Options extends Dictionary = object> =
         /** Key order of the emitted object value, ahead of declaration order; it does not change the on-screen order */
         propertyOrder?: readonly string[];
         /** Virtual field groups by name; each gathers sibling properties into one virtual node */
-        virtual?: Record<string, VirtualFieldGroup>;
+        virtual?: Dictionary<VirtualFieldGroup>;
       };
     };
 /** Nullable object schema (type: ['object', 'null']) */
@@ -187,7 +189,7 @@ export type NullableObjectSchema<Options extends Dictionary = object> =
         /** Key order of the emitted object value, ahead of declaration order; it does not change the on-screen order */
         propertyOrder?: readonly string[];
         /** Virtual field groups by name; each gathers sibling properties into one virtual node */
-        virtual?: Record<string, VirtualFieldGroup>;
+        virtual?: Dictionary<VirtualFieldGroup>;
       };
     };
 

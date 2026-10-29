@@ -3,6 +3,8 @@ import {
   map as mapArray,
 } from '@winglet/common-utils/array';
 
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode } from '../../../../../../errors';
 import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -44,7 +46,7 @@ export const resolveNodeTypes = (
     return false;
   })();
   if (staticOwner) {
-    let allowed: readonly SchemaTypeName[] | undefined;
+    let allowed: Optional<readonly SchemaTypeName[]>;
     for (const declaration of fixed) {
       allowed = intersectAllowedTypes(
         allowed,
@@ -98,7 +100,7 @@ export const resolveNodeTypes = (
     number,
     { allowed: readonly SchemaTypeName[]; declarations: PropertyDeclaration[] }
   >();
-  let ungatedMask: number | undefined;
+  let ungatedMask: Optional<number>;
   for (const declaration of filterArray(
     declarations,
     (item) => item.role === 'declaration',

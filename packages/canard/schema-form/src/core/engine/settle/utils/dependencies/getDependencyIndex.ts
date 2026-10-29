@@ -1,5 +1,7 @@
 import { map as mapArray } from '@winglet/common-utils/array';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
   PointerOperator,
@@ -43,7 +45,7 @@ const NO_OWNERS: readonly string[] = Object.freeze([]);
 /** Minimal injected evidence keeps dependency analysis independent of compute. */
 interface RegistrationTable {
   readonly plan: {
-    readonly steps: readonly { readonly gate: BlueprintGate | undefined }[];
+    readonly steps: readonly { readonly gate: Optional<BlueprintGate> }[];
   };
   readonly stepIndexByName: ReadonlyMap<string, number>;
   readonly tableSteps: ReadonlySet<number>;
@@ -109,7 +111,7 @@ class DependencyIndex {
     return this.splitOwners.size > 0;
   }
   /** Root of the absolute JSON Pointer watch trie. */
-  private readonly root: DependencyNode | undefined;
+  private readonly root: Optional<DependencyNode>;
 
   /** Build absolute watch paths from authored reverse dependency IDs. */
   constructor(blueprint?: Blueprint) {
@@ -238,7 +240,7 @@ class DependencyIndex {
             })()
           )
             continue;
-          let hostPath: string | undefined;
+          let hostPath: Optional<string>;
           for (const [host, table] of tables) {
             const name = readPointerSegment(declaration.path, -1);
             if (typeof name !== 'string') continue;
@@ -368,7 +370,7 @@ class DependencyIndex {
         });
       }
       for (const bucket of node.splitBuckets ?? []) {
-        let host: Self | undefined = root;
+        let host: Optional<Self> = root;
         for (const segment of this.pathSegments(bucket.hostPath))
           if (typeof segment === 'string') host = host?.structure?.[segment];
           else {

@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Nullable } from '@aileron/declare';
+
 import {
   PointerOperator,
   isAbsolutePointer,
@@ -11,7 +13,7 @@ import type { FieldNodeRecord } from '../../../record';
 /** Resolve every current-shape match in path order, retaining each instance once. */
 export const findNodes = <Self extends FieldNodeRecord<Self>>(
   origin: Self,
-  pointer?: string | readonly string[] | null,
+  pointer?: Nullable<string | readonly string[]>,
 ): readonly Self[] => {
   const input = pointer ?? '';
   const segments = parsePointerSegments(input);
