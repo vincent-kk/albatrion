@@ -248,4 +248,13 @@ FCA facts **1,663/1,663 exact**, 세 검사 동일 snapshot `c517ae013f9e50b5e4a
 
 ## 측정 장치와 창
 
-미실행입니다. `tools/iv-2/window.mjs` 계열의 공개 행과 힙 장치를 재사용하며, Ⅳ-1의 `summarize.mjs`·`weightedExchange.mjs`·`judgeStage.mjs` 판정은 유지합니다. Ⅳ-2 전용 할당·exit self·cold 지연 생성 추가항은 이 정리에 해당하지 않으므로 별도 어댑터에서 제외했습니다. 최종 판정은 미시 위생 계획에 따라 모든 행의 폭 밖 퇴보 0과 가중 교환비 ≤ 0이며, 교환비 0도 허용합니다.
+측정 후보는 `8d7d1a87e`이며 제품 바이트는 정적 관문의 `082c3995a`와 같습니다. `tools/iv-2/window.mjs` 계열의 공개 행과 힙 장치를 재사용하며, Ⅳ-1의 `summarize.mjs`·`weightedExchange.mjs`·`judgeStage.mjs` 판정은 유지합니다. Ⅳ-2 전용 할당·exit self·cold 지연 생성 추가항은 이 정리에 해당하지 않으므로 별도 어댑터에서 제외했습니다. 최종 판정은 미시 위생 계획에 따라 모든 행의 폭 밖 퇴보 0과 가중 교환비 ≤ 0이며, 교환비 0도 허용합니다.
+
+
+### 사전 검사와 pilot
+
+같은 Node 26으로 준비한 A/B 불변 bundle과 stage bundle의 해시를 고정했습니다. untimed smoke는 공개 A44/B44·legacy36, stage 9모드, siblings-1000 retention 적재를 통과했습니다. 실제 `alternate.mjs` worker CLI dry run은 single-flat-1000 한 행·한 프로세스·warmup 1/sample 1로 성공했고 formal marker를 만들지 않았습니다.
+
+조정자의 별도 승인을 받은 pilot 한 번은 **22행·행당 한 프로세스·20/100·종료 0**입니다. 행별 median/min 비율의 중앙값은 current **1.3474188821**, legacy **1.2143182973**이며 current가 요구 범위 1.2–1.4에 들었습니다. CPU precheck **25/25 승인·지연 25회**를 보존했습니다. 순간 부하는 quiet gate의 지연 대상이며 거절된 측정 표본을 재실행한 것이 아닙니다. 모든 관측에서 이름별 최대 CPU 상위 10개는 duetexpertd 64.19%, WindowServer 61.65%, Google Chrome Helper (Aperitif Renderer) 30.07%, KakaoTalk 21.20%, 2.1.312 18.65%, Google Chrome 18.17%, codex 16.68%, Orca Helper (Renderer) 15.58%, Stats 11.03%, BetterTouchTool 10.67%입니다. [pilot 전체 행·표본](raw/micro-hygiene/preflight/pilot-samples.json.gz), [요약](raw/micro-hygiene/preflight/pilot-summary.json), [CPU 상위 10개와 지연](raw/micro-hygiene/preflight/pilot-cpu-prechecks.json.gz), [사전 검사 로그](raw/micro-hygiene/preflight/logs.json.gz)를 남겼습니다.
+
+창 1은 pilot 범위를 보고한 뒤 별도 승인을 받아 시작했으나 **소유자 지시로 중단, 기계 사용 중이라 quiet gate 대기가 길어짐, 판정 없음**입니다. 정식 marker는 `2026-10-29T14:09:50.510Z`, finally 종료는 `2026-10-29T14:41:38.584Z`입니다. 공개 종료 0 프로세스 **282/440**, SIGINT 중단 1개이며 stage·Node/Bun 힙·retention은 실행하지 못했습니다. 따라서 가중 교환비·폭 밖 퇴보 목록·힙 관문은 미판정이며 부분 표본으로 완료 판정을 만들지 않습니다. dist를 복원하고 입력 해시를 재확인했습니다. **항목 5 정리로 대체됨**이며 자동 재실행하지 않았습니다. [중단 기록과 부분 원시](raw/micro-hygiene/candidate-1-partial/cancellation.json)에 공개 stdout·stderr·영수증, CPU 상위 10개와 지연, 러너 로그를 보존했습니다.
