@@ -1,0 +1,177 @@
+{
+  "timed": false,
+  "rows": [
+    {
+      "row": "single-flat-1000",
+      "writes": 40,
+      "wheelHosts": {
+        "": 40
+      },
+      "local": 0
+    },
+    {
+      "row": "mount-oneOf-80",
+      "writes": 0,
+      "wheelHosts": {},
+      "local": 0
+    },
+    {
+      "row": "mount-flat-1000",
+      "writes": 0,
+      "wheelHosts": {},
+      "local": 0
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "writes": 0,
+      "wheelHosts": {},
+      "local": 0
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "writes": 40,
+      "wheelHosts": {
+        "/n0/n0/n0/n0/n0": 16,
+        "/n0/n0/n0/n0/n1": 16,
+        "/n0/n0/n0/n0/n2": 8
+      },
+      "local": 40
+    },
+    {
+      "row": "switch-oneOf-80",
+      "writes": 8,
+      "wheelHosts": {
+        "": 8
+      },
+      "local": 0
+    },
+    {
+      "row": "bulk-flat-2000",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "switch-discriminator-80",
+      "writes": 8,
+      "wheelHosts": {
+        "": 8
+      },
+      "local": 0
+    },
+    {
+      "row": "switch-if-80",
+      "writes": 8,
+      "wheelHosts": {
+        "": 8
+      },
+      "local": 0
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "writes": 8,
+      "wheelHosts": {
+        "/outer/inner": 8
+      },
+      "local": 8
+    },
+    {
+      "row": "switch-siblings-0",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "switch-siblings-100",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "switch-siblings-1000",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "switch-siblings-4000",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "leaf-gate-250",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "leaf-gate-1000",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "leaf-gate-4000",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "leaf-gate-8000",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "wave-1000",
+      "writes": 4,
+      "wheelHosts": {
+        "": 4
+      },
+      "local": 0
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "writes": 40,
+      "wheelHosts": {
+        "": 40
+      },
+      "local": 0
+    },
+    {
+      "row": "switch-payload-12",
+      "writes": 8,
+      "wheelHosts": {
+        "": 8
+      },
+      "local": 0
+    }
+  ]
+}

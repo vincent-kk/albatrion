@@ -1,0 +1,90 @@
+[
+  {
+    "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+    "phase": "build",
+    "args": [
+      "build"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793259512.410008
+  },
+  {
+    "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+    "phase": "unit",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "unit",
+      "--maxWorkers=4"
+    ],
+    "exit": 0,
+    "nodeOptions": "--max-old-space-size=8192",
+    "endedAt": 1793259615.5302851
+  },
+  {
+    "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+    "phase": "render",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "render"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793259676.320587
+  },
+  {
+    "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+    "phase": "storybook",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "storybook"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793259714.418367
+  },
+  {
+    "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+    "phase": "react18",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "react18"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793259775.178433
+  },
+  {
+    "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+    "phase": "production",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "production"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793259780.356364
+  },
+  {
+    "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+    "phase": "verify",
+    "args": [
+      "test:verify",
+      "--run",
+      "--maxWorkers=4"
+    ],
+    "exit": 0,
+    "nodeOptions": "--max-old-space-size=8192",
+    "endedAt": 1793259945.866247
+  }
+]
