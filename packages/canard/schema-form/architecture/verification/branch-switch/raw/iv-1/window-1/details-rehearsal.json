@@ -1,0 +1,71 @@
+{
+  "row": "single-nested-d6-f4",
+  "pass": "ledger",
+  "repeat": 0,
+  "pid": 70588,
+  "node": "v26.12.1",
+  "warmups": 1,
+  "sampleCount": 1,
+  "samples": {
+    "dist": [
+      160.6249999999818
+    ],
+    "unwrapped": [
+      187.5
+    ],
+    "wrapped": [
+      179.41700000000083
+    ],
+    "legacy": [
+      38.70799999998553
+    ]
+  },
+  "stages": [
+    {
+      "markWrite": {
+        "inclusiveUs": 9.000000000014552,
+        "selfUs": 9.000000000014552,
+        "calls": 1
+      },
+      "registerRecalculation": {
+        "inclusiveUs": 6.1249999999972715,
+        "selfUs": 6.1249999999972715,
+        "calls": 1
+      },
+      "updateOutput": {
+        "inclusiveUs": 34.8329999999919,
+        "selfUs": 29.333000000065113,
+        "calls": 7
+      },
+      "assembleObject": {
+        "inclusiveUs": 5.499999999926786,
+        "selfUs": 5.499999999926786,
+        "calls": 6
+      },
+      "computeNode": {
+        "inclusiveUs": 20.20900000002257,
+        "selfUs": 10.292999999990116,
+        "calls": 1
+      },
+      "markCommitDeliveries": {
+        "inclusiveUs": 51.33299999999963,
+        "selfUs": 51.33299999999963,
+        "calls": 1
+      },
+      "commitSettlement": {
+        "inclusiveUs": 57.12499999998499,
+        "selfUs": 5.791999999985364,
+        "calls": 1
+      },
+      "everythingElse": {
+        "selfUs": 62.041000000021995,
+        "inclusiveUs": 62.041000000021995,
+        "calls": 1
+      }
+    }
+  ],
+  "scoped": [
+    {}
+  ],
+  "gaps": []
+}

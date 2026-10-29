@@ -1,0 +1,5 @@
+{
+  "probe": "write-epoch",
+  "initialAttempt": "Stopped the single worker while Vitest formatted a cyclic node identity mismatch; no result claimed. Replaced identity assertion display with a boolean identity expression and reran successfully.",
+  "finalProbeCount": 13
+}

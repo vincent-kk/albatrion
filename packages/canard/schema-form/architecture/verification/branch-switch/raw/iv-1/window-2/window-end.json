@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-29T08:29:27.008Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "mds_stores",
+      "cpuPercent": 6.395455475316993
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 6.07568270148716
+    },
+    {
+      "name": "WidgetsExtension",
+      "cpuPercent": 5.436137154001995
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 4.796591606516828
+    },
+    {
+      "name": "2.1.312",
+      "cpuPercent": 3.837273285172746
+    },
+    {
+      "name": "runningboardd",
+      "cpuPercent": 3.837273285143663
+    },
+    {
+      "name": "chronod",
+      "cpuPercent": 2.8779549638868303
+    },
+    {
+      "name": "Finder",
+      "cpuPercent": 1.918636642586373
+    },
+    {
+      "name": "node",
+      "cpuPercent": 1.918636642586373
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.5988638688292482
+    }
+  ]
+}
