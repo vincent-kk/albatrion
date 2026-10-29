@@ -1,0 +1,3808 @@
+{
+  "scope": "baseline 1c3655a10; product src/core; AST constructor expressions, not matching lines",
+  "counts": {
+    "다": 230,
+    "가": 170,
+    "나": 22
+  },
+  "rows": [
+    {
+      "id": 1,
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 175,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 2,
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 186,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 3,
+      "file": "src/core/engine/blueprint/blueprint.ts",
+      "line": 66,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 4,
+      "file": "src/core/engine/blueprint/blueprint.ts",
+      "line": 67,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 5,
+      "file": "src/core/engine/blueprint/blueprint.ts",
+      "line": 68,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 6,
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 95,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 7,
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 97,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 8,
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 29,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 9,
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 134,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 10,
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 140,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 11,
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 40,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 12,
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 44,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 13,
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 56,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 14,
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 85,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 15,
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 45,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 16,
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/compileBlueprintExpressions.ts",
+      "line": 26,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 17,
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/ensureEffectiveSchemaCache.ts",
+      "line": 32,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 18,
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 28,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 19,
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 30,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 20,
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 31,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 21,
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 32,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 22,
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 34,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 23,
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 54,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 24,
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 44,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 25,
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 45,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 26,
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 71,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 27,
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 75,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 28,
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 167,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 29,
+      "file": "src/core/engine/blueprint/utils/features/collectTemplateParents.ts",
+      "line": 12,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 30,
+      "file": "src/core/engine/blueprint/validateShape/validateShape.ts",
+      "line": 11,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 31,
+      "file": "src/core/engine/blueprint/validateShape/validateShape.ts",
+      "line": 12,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 32,
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 52,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 33,
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 54,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 34,
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 55,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 35,
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveChildEntry.ts",
+      "line": 23,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 36,
+      "file": "src/core/engine/derive/utils/evaluate/addActiveRuleKey.ts",
+      "line": 19,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 37,
+      "file": "src/core/engine/derive/utils/evaluate/evaluateResetInteraction.ts",
+      "line": 35,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 38,
+      "file": "src/core/engine/derive/utils/evaluate/evaluateResetInteraction.ts",
+      "line": 37,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 39,
+      "file": "src/core/engine/derive/utils/evaluate/getDeriveSourceNodes.ts",
+      "line": 20,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 40,
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 73,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 41,
+      "file": "src/core/engine/navigation/utils/visit/visitFieldNodes.ts",
+      "line": 19,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 42,
+      "file": "src/core/engine/record/utils/advanceFieldNodeRevision.ts",
+      "line": 27,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 43,
+      "file": "src/core/engine/record/utils/captureFieldNodeChange.ts",
+      "line": 70,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 44,
+      "file": "src/core/engine/record/utils/indexFieldNodeWarning.ts",
+      "line": 26,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 45,
+      "file": "src/core/engine/record/utils/indexFieldNodeWarning.ts",
+      "line": 30,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 46,
+      "file": "src/core/engine/record/utils/indexFieldNodeWarning.ts",
+      "line": 40,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 47,
+      "file": "src/core/engine/record/utils/markFieldNodeEvent.ts",
+      "line": 18,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 48,
+      "file": "src/core/engine/record/utils/markFieldNodeEvent.ts",
+      "line": 32,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 49,
+      "file": "src/core/engine/record/utils/publishGlobalStateDeltas.ts",
+      "line": 25,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 50,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 76,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 51,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 79,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 52,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 126,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 53,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 171,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 54,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 194,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 55,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts",
+      "line": 97,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 56,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 134,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 57,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 142,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 58,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "line": 22,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 59,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "line": 49,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 60,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "line": 55,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 61,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 31,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 62,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 42,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 63,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 55,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 64,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 77,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 65,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 83,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 66,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 97,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 67,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyCommittedRules.ts",
+      "line": 21,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 68,
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyPairedPathStore.ts",
+      "line": 21,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 69,
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "line": 30,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 70,
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "line": 76,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 71,
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 54,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 72,
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 135,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 73,
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 40,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 74,
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 82,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 75,
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 155,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 76,
+      "file": "src/core/engine/settle/utils/commit/commitGlobalState.ts",
+      "line": 24,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 77,
+      "file": "src/core/engine/settle/utils/commit/commitGlobalState.ts",
+      "line": 25,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 78,
+      "file": "src/core/engine/settle/utils/commit/commitGlobalState.ts",
+      "line": 41,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 79,
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 72,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 80,
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 105,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 81,
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 173,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 82,
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 212,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 83,
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 245,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 84,
+      "file": "src/core/engine/settle/utils/commit/finalizeDeriveTrace.ts",
+      "line": 17,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 85,
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 43,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 86,
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 48,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 87,
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 55,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 88,
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 74,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 89,
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 75,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 90,
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 390,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 91,
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 407,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 92,
+      "file": "src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts",
+      "line": 42,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 93,
+      "file": "src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts",
+      "line": 43,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 94,
+      "file": "src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts",
+      "line": 49,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 95,
+      "file": "src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts",
+      "line": 50,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 96,
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 28,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 97,
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 30,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 98,
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 32,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 99,
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 38,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 100,
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 39,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 101,
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 73,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 102,
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 73,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 103,
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/computeRootGateSelection.ts",
+      "line": 26,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 104,
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/computeRootGateSelection.ts",
+      "line": 31,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 105,
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/computeRootGateSelection.ts",
+      "line": 52,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 106,
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectLiteralTableChildren.ts",
+      "line": 27,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 107,
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 31,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 108,
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 96,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 109,
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 97,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 110,
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectRootGateDeclarations.ts",
+      "line": 36,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 111,
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 67,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 112,
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 71,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 113,
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 74,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 114,
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 75,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 115,
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 76,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 116,
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 141,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 117,
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 142,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 118,
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 148,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 119,
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "line": 27,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 120,
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 140,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 121,
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 192,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 122,
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 304,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 123,
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 210,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 124,
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 223,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 125,
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 255,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 126,
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 402,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 127,
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 56,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 128,
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 92,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 129,
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "line": 33,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 130,
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 78,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 131,
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 100,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 132,
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 122,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 133,
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 146,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 134,
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 50,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 135,
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 57,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 136,
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 126,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 137,
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 173,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 138,
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 197,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 139,
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 210,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 140,
+      "file": "src/core/engine/settle/utils/compute/dirtyChildren.ts",
+      "line": 22,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "64개 이하: 반환 배열 재사용; 초과: 기존 Set 유지",
+      "reason": "부모별 예약 맵 size≤64를 런타임에서 증명; 반환 children 배열의 순서·identity 사용"
+    },
+    {
+      "id": 141,
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 33,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 142,
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 41,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 143,
+      "file": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+      "line": 100,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 144,
+      "file": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+      "line": 100,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 145,
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 44,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 146,
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 48,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 147,
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 37,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 148,
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 63,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 149,
+      "file": "src/core/engine/settle/utils/compute/utils/getStaticGateList.ts",
+      "line": 31,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 150,
+      "file": "src/core/engine/settle/utils/compute/utils/prepareHostWheelPlan.ts",
+      "line": 47,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 151,
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 84,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 152,
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 98,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 153,
+      "file": "src/core/engine/settle/utils/controls/getStateDependencyPlan.ts",
+      "line": 44,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 154,
+      "file": "src/core/engine/settle/utils/controls/prepareControlLayers.ts",
+      "line": 37,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 155,
+      "file": "src/core/engine/settle/utils/controls/prepareControlLayers.ts",
+      "line": 38,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 156,
+      "file": "src/core/engine/settle/utils/controls/prepareFragmentOwners.ts",
+      "line": 18,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 157,
+      "file": "src/core/engine/settle/utils/controls/prepareParentControlLayers.ts",
+      "line": 37,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 158,
+      "file": "src/core/engine/settle/utils/declarations/getDeclaredChildNames.ts",
+      "line": 18,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 159,
+      "file": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts",
+      "line": 19,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 160,
+      "file": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts",
+      "line": 21,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 161,
+      "file": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts",
+      "line": 24,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 162,
+      "file": "src/core/engine/settle/utils/dependencies/deferPresenceTemplate.ts",
+      "line": 29,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 163,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 78,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 164,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 80,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 165,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 84,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 166,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 116,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 167,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 116,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 168,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 141,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 169,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 206,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 170,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 207,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 171,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 249,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 172,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 253,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 173,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 263,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 174,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 273,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 175,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 324,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 176,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 325,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 177,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 427,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 178,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 492,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 179,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 493,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 180,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 494,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 181,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 495,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 182,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 503,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 183,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 506,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 184,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 524,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 185,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 657,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 186,
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 657,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 187,
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 43,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 188,
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 44,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 189,
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 48,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 190,
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 49,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 191,
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 50,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 192,
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 140,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 193,
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 65,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 194,
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 74,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 195,
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 91,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 196,
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 101,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 197,
+      "file": "src/core/engine/settle/utils/dependencies/supplementSplitOwner.ts",
+      "line": 30,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 198,
+      "file": "src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts",
+      "line": 16,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 199,
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 20,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 200,
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 21,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 201,
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 22,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 202,
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 23,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 203,
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 24,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 204,
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 25,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 205,
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 26,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 206,
+      "file": "src/core/engine/settle/utils/errors/recordSettlementFailure.ts",
+      "line": 24,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 207,
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 84,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 208,
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 96,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 209,
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 109,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 210,
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 126,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 211,
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 185,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 212,
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 228,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 213,
+      "file": "src/core/engine/settle/utils/gates/flushPendingGateReads.ts",
+      "line": 51,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 214,
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 29,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 215,
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 30,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 216,
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 31,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 217,
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 35,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 218,
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 103,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 219,
+      "file": "src/core/engine/settle/utils/gates/getGateExpression.ts",
+      "line": 22,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 220,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 96,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 221,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 108,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 222,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 110,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 223,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 115,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 224,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 117,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 225,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 122,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 226,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 124,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 227,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 139,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 228,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 173,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 229,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 174,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 230,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 196,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 231,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 317,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 232,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 318,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 233,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 398,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 234,
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 405,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 235,
+      "file": "src/core/engine/settle/utils/gates/predicates/getIfGateReadNames.ts",
+      "line": 25,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 236,
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 45,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 237,
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 48,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 238,
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 58,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 239,
+      "file": "src/core/engine/settle/utils/gates/readGateHostView.ts",
+      "line": 32,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 240,
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "line": 47,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 241,
+      "file": "src/core/engine/settle/utils/gates/watchSplitRegistration.ts",
+      "line": 25,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 242,
+      "file": "src/core/engine/settle/utils/gates/watchSplitRegistration.ts",
+      "line": 26,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 243,
+      "file": "src/core/engine/settle/utils/gates/watchSplitRegistration.ts",
+      "line": 27,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 244,
+      "file": "src/core/engine/settle/utils/inactive/getInactiveValueContext.ts",
+      "line": 56,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 245,
+      "file": "src/core/engine/settle/utils/inactive/resolveInactiveValue.ts",
+      "line": 89,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 246,
+      "file": "src/core/engine/settle/utils/input/interpretFieldNodeInput.ts",
+      "line": 62,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 247,
+      "file": "src/core/engine/settle/utils/input/utils/verifyWriteEpoch.ts",
+      "line": 15,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 248,
+      "file": "src/core/engine/settle/utils/input/utils/watchWriteEpoch.ts",
+      "line": 15,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 249,
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 25,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 250,
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 26,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 251,
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 27,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 252,
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 43,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 253,
+      "file": "src/core/engine/settle/utils/reset/clearSubtreeState.ts",
+      "line": 13,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 254,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 42,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 255,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 44,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 256,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 91,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 257,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 92,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 258,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 96,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 259,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 156,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 260,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 196,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 261,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 207,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 262,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 228,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 263,
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 246,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 264,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 16,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 265,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 22,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 266,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 23,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 267,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 24,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 268,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 25,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 269,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 26,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 270,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 27,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 271,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 28,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 272,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 29,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 273,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 30,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 274,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 33,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 275,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 35,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 276,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 38,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 277,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 39,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 278,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 40,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 279,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 41,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 280,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 42,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 281,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 43,
+      "kind": "new Set",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 282,
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 44,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 283,
+      "file": "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts",
+      "line": 21,
+      "kind": "new Map",
+      "category": "나",
+      "decision": "유지",
+      "reason": "기존 SettlementScratch/DirtyPathSet의 지워서 재사용하는 컨테이너"
+    },
+    {
+      "id": 284,
+      "file": "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts",
+      "line": 29,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 285,
+      "file": "src/core/engine/settle/utils/slots/applySlotOverlay.ts",
+      "line": 74,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 286,
+      "file": "src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts",
+      "line": 32,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 287,
+      "file": "src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts",
+      "line": 58,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 288,
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 57,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 289,
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 58,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 290,
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 66,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 291,
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 68,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 292,
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 101,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 293,
+      "file": "src/core/engine/settle/utils/slots/collectHostSlotValues.ts",
+      "line": 22,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 294,
+      "file": "src/core/engine/settle/utils/slots/collectHostSlotValues.ts",
+      "line": 27,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 295,
+      "file": "src/core/engine/settle/utils/slots/commitSlotChanges.ts",
+      "line": 16,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 296,
+      "file": "src/core/engine/settle/utils/slots/commitSlotChanges.ts",
+      "line": 29,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 297,
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 40,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 298,
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 41,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 299,
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 77,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 300,
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 47,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 301,
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 115,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 302,
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 136,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 303,
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 147,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 304,
+      "file": "src/core/engine/settle/utils/slots/createSlotValueOverlay.ts",
+      "line": 56,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 305,
+      "file": "src/core/engine/settle/utils/slots/createSlotValueOverlay.ts",
+      "line": 107,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 306,
+      "file": "src/core/engine/settle/utils/slots/getSlotChildIndex.ts",
+      "line": 22,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 307,
+      "file": "src/core/engine/settle/utils/slots/getSlotChildIndex.ts",
+      "line": 26,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 308,
+      "file": "src/core/engine/settle/utils/slots/getSlotEntries.ts",
+      "line": 19,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 309,
+      "file": "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts",
+      "line": 14,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 310,
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 19,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 311,
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 21,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 312,
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 28,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 313,
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 41,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 314,
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 49,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 315,
+      "file": "src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts",
+      "line": 35,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 316,
+      "file": "src/core/engine/settle/utils/slots/materializeKeptSlotOverlay.ts",
+      "line": 33,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 317,
+      "file": "src/core/engine/settle/utils/slots/pruneArraySlotTail.ts",
+      "line": 23,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 318,
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 32,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 319,
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 49,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 320,
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 63,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 321,
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 73,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 322,
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 24,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 323,
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 28,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 324,
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 58,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 325,
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 59,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 326,
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 66,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 327,
+      "file": "src/core/engine/settle/utils/slots/restoreSlotSources.ts",
+      "line": 31,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 328,
+      "file": "src/core/engine/settle/utils/slots/restoreSlotSources.ts",
+      "line": 34,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 329,
+      "file": "src/core/engine/settle/utils/slots/restoreTransferredSlotSource.ts",
+      "line": 32,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 330,
+      "file": "src/core/engine/settle/utils/slots/restoreTransferredSlotSource.ts",
+      "line": 37,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 331,
+      "file": "src/core/engine/settle/utils/slots/retainExitedSlot.ts",
+      "line": 56,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 332,
+      "file": "src/core/engine/settle/utils/slots/retainExitedSlot.ts",
+      "line": 58,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 333,
+      "file": "src/core/engine/settle/utils/slots/updateSlotChildIndex.ts",
+      "line": 21,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 334,
+      "file": "src/core/engine/settle/utils/slots/writeSlotPath.ts",
+      "line": 101,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 335,
+      "file": "src/core/engine/settle/utils/slots/writeSlotPath.ts",
+      "line": 122,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 336,
+      "file": "src/core/engine/settle/utils/transition/collectFillDescendants.ts",
+      "line": 21,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 337,
+      "file": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "line": 75,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 338,
+      "file": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "line": 81,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 339,
+      "file": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "line": 111,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 340,
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 28,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 341,
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 49,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 342,
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 71,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 343,
+      "file": "src/core/engine/settle/utils/transition/pruneArrayTailPaths.ts",
+      "line": 26,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 344,
+      "file": "src/core/engine/settle/utils/transition/prunePerishedPaths.ts",
+      "line": 20,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 345,
+      "file": "src/core/engine/settle/utils/transition/restoreArrayStructure.ts",
+      "line": 26,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 346,
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 45,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 347,
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 46,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 348,
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 120,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 349,
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 121,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 350,
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 153,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 351,
+      "file": "src/core/engine/utils/cache/valueMemos.ts",
+      "line": 18,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 352,
+      "file": "src/core/engine/utils/cache/valueMemos.ts",
+      "line": 19,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 353,
+      "file": "src/core/engine/utils/controls/getControlExpression.ts",
+      "line": 32,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 354,
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 28,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 355,
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 30,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 356,
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 32,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 357,
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 34,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 358,
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 106,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 359,
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 138,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 360,
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 139,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 361,
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 164,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 362,
+      "file": "src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts",
+      "line": 9,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 363,
+      "file": "src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts",
+      "line": 19,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 364,
+      "file": "src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts",
+      "line": 26,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 365,
+      "file": "src/core/engine/utils/paths/getCachedPointerSegments.ts",
+      "line": 22,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 366,
+      "file": "src/core/engine/validation/utils/cache/readValidationEntry.ts",
+      "line": 73,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 367,
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 7,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 368,
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 23,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 369,
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 33,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 370,
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 45,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 371,
+      "file": "src/core/engine/validation/utils/lifetime/recentReleaseList.ts",
+      "line": 23,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 372,
+      "file": "src/core/engine/validation/utils/read/readFieldNodeErrors.ts",
+      "line": 42,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 373,
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 45,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 374,
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 35,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 375,
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 36,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 376,
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 39,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 377,
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 88,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 378,
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 89,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 379,
+      "file": "src/core/engine/validation/utils/run/requestFieldNodeValidation.ts",
+      "line": 27,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 380,
+      "file": "src/core/engine/validation/utils/run/requestFieldNodeValidation.ts",
+      "line": 36,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 381,
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "line": 48,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 382,
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "line": 53,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 383,
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "line": 84,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 384,
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "line": 92,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 385,
+      "file": "src/core/engine/write/utils/chain/deliverWave.ts",
+      "line": 42,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 386,
+      "file": "src/core/engine/write/utils/chain/deliverWave.ts",
+      "line": 60,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 387,
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 31,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 388,
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 79,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 389,
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 139,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 390,
+      "file": "src/core/engine/write/utils/chain/flushQueuedEvents.ts",
+      "line": 50,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 391,
+      "file": "src/core/engine/write/utils/chain/queueNonSettleEvent.ts",
+      "line": 17,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 392,
+      "file": "src/core/engine/write/utils/chain/refuseListenerFeedback.ts",
+      "line": 19,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 393,
+      "file": "src/core/engine/write/utils/chain/restoreAdoptedExternalErrors.ts",
+      "line": 21,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 394,
+      "file": "src/core/engine/write/utils/chain/restoreAdoptedExternalErrors.ts",
+      "line": 23,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 395,
+      "file": "src/core/engine/write/utils/chain/runDeliveryWaves.ts",
+      "line": 23,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 396,
+      "file": "src/core/engine/write/utils/chain/utils/compareDocumentOrder.ts",
+      "line": 36,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 397,
+      "file": "src/core/engine/write/utils/entry/dispatchClearSubtreeState.ts",
+      "line": 27,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 398,
+      "file": "src/core/engine/write/utils/entry/dispatchMount.ts",
+      "line": 36,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 399,
+      "file": "src/core/engine/write/utils/entry/dispatchMount.ts",
+      "line": 52,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 400,
+      "file": "src/core/engine/write/utils/entry/dispatchMount.ts",
+      "line": 58,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 401,
+      "file": "src/core/engine/write/utils/entry/dispatchResetForm.ts",
+      "line": 27,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 402,
+      "file": "src/core/engine/write/utils/entry/dispatchResetSubtree.ts",
+      "line": 32,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 403,
+      "file": "src/core/engine/write/utils/entry/dispatchSetExternalErrors.ts",
+      "line": 28,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 404,
+      "file": "src/core/engine/write/utils/entry/dispatchSetState.ts",
+      "line": 33,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 405,
+      "file": "src/core/engine/write/utils/entry/dispatchSetSubtreeState.ts",
+      "line": 31,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 406,
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 51,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 407,
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 52,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 408,
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 53,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 409,
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 54,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 410,
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 68,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 411,
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 79,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 412,
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 105,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 413,
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 125,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 414,
+      "file": "src/core/engine/write/utils/read/onInactiveFieldNode.ts",
+      "line": 18,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 415,
+      "file": "src/core/engine/write/utils/read/onInactiveFieldNode.ts",
+      "line": 19,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 416,
+      "file": "src/core/engine/write/utils/read/subscribeFieldNode.ts",
+      "line": 18,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 417,
+      "file": "src/core/engine/write/utils/read/subscribeFieldNode.ts",
+      "line": 19,
+      "kind": "new Set",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 418,
+      "file": "src/core/engine/write/utils/report/collectChainRecords.ts",
+      "line": 29,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 419,
+      "file": "src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts",
+      "line": 26,
+      "kind": "new Map",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 420,
+      "file": "src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts",
+      "line": 55,
+      "kind": "new Set",
+      "category": "다",
+      "decision": "유지",
+      "reason": "엔트리/게이트/노드/경로/기록 수에 비례하며 제품 상한 10,000 미만을 증명하지 못함"
+    },
+    {
+      "id": 421,
+      "file": "src/core/surface/utils/fieldNodeFactory.ts",
+      "line": 137,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    },
+    {
+      "id": 422,
+      "file": "src/core/surface/utils/fieldNodeFactory.ts",
+      "line": 153,
+      "kind": "new Map",
+      "category": "가",
+      "decision": "유지",
+      "reason": "청사진/런타임/반환 스냅숏 소유권: 호출 밖에서 관측하거나 재사용하는 자료"
+    }
+  ]
+}

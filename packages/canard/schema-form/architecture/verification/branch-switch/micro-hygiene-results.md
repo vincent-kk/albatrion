@@ -25,7 +25,183 @@
 
 표적 포인터·유효 스키마·파생·배열·나감·배달 시험 **44파일·436건**, 패키지 typecheck·lint를 통과했습니다. 추가 세 지점에서도 typecheck·lint를 재확인했습니다.
 
-## 항목 3–6
+## 항목 3 — Set/Map 수명과 작은 dirty 후보
+
+기준 제품 `src/core`의 생성식은 **422개**입니다. 문자열 검색의 행 수 대신 각 AST `new Set`/`new Map`을 셉니다. **(가) 상주/호출 밖으로 보존하는 자료 170개, (나) 기존 정착 scratch 22개, (다) 호출 한정 자료 230개**로 분류했습니다. 상주 여부는 값 자체가 보존되는지로 판단하며, 임시 Map의 값만 최종 결과로 넘어가는 경우 Map 자체는 (다)입니다. 조건부 캐시는 한 경로라도 보존될 수 있으면 (가)로 두어 교체 대상에서 제외했습니다. 생성식별 ID·파일·행·분류·판단은 [전체 분류 원시](raw/micro-hygiene/set-map-classification.json)에 보존했습니다.
+
+**(다) 1지점**인 `dirtyChildren`의 membership은 실제 부모 예약 맵 크기가 **64개 이하**일 때 기존 반환 배열을 재사용합니다. 새 상주 구조나 보조 배열은 없습니다. 결과 개수는 예약 엔트리 수 이하이므로 비교는 최대 64×64이며 10,000에 훨씬 못 미치는 상한을 런타임에서 증명합니다. 65개 이상은 기존 Set을 유지하여 큰 입력의 선형 방문·중복 제거를 보존합니다. 나머지 임시 자료는 임의 스키마·엔트리·게이트·노드·경로·기록 수의 제품 상한을 증명하지 못하거나 반복 조회/반환 자료의 소유 계약을 유지해야 하므로 그대로 두었습니다. 생성식의 정적 총수는 422개 그대로지만 작은 호출의 Set 생성은 1 → 0입니다.
+
+새 특성화 시험은 수정 전 1개·64개 후보에서 Set 생성 1회로 실패했고, 수정 뒤 1/64/65 경계의 생성 0/0/1과 역순·중복 identity 순서를 확인했습니다. 표적 배열·게이트·할당 시험 **38파일·297건**, typecheck·lint를 통과했습니다. 시험 삭제·약화는 없습니다.
+
+Ⅳ-2는 쓰기당 Map/Set을 97 → 37로 줄여도 oneOf-80·siblings-0 시간이 폭 안이었습니다. 이 정리도 전환 속도를 약속하지 않으며 작은 잎 쓰기의 누적 비용은 최종 가중 창으로 판단합니다.
+
+파일별 분류 표입니다. 각 열은 해당 생성식의 수입니다.
+
+| 파일 | (가) | (나) | (다) |
+| --- | ---: | ---: | ---: |
+| `src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts` | 0 | 0 | 2 |
+| `src/core/engine/blueprint/blueprint.ts` | 0 | 0 | 3 |
+| `src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts` | 0 | 0 | 2 |
+| `src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts` | 0 | 0 | 1 |
+| `src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts` | 0 | 0 | 2 |
+| `src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts` | 0 | 0 | 1 |
+| `src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts` | 0 | 0 | 2 |
+| `src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts` | 0 | 0 | 1 |
+| `src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts` | 0 | 0 | 1 |
+| `src/core/engine/blueprint/compileBlueprintExpressions/compileBlueprintExpressions.ts` | 0 | 0 | 1 |
+| `src/core/engine/blueprint/effectiveSchema/utils/finalize/ensureEffectiveSchemaCache.ts` | 1 | 0 | 0 |
+| `src/core/engine/blueprint/utils/features/HostStaticPartition.ts` | 1 | 0 | 0 |
+| `src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts` | 4 | 0 | 1 |
+| `src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts` | 1 | 0 | 4 |
+| `src/core/engine/blueprint/utils/features/collectTemplateParents.ts` | 0 | 0 | 1 |
+| `src/core/engine/blueprint/validateShape/validateShape.ts` | 0 | 0 | 2 |
+| `src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts` | 0 | 0 | 3 |
+| `src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveChildEntry.ts` | 1 | 0 | 0 |
+| `src/core/engine/derive/utils/evaluate/addActiveRuleKey.ts` | 0 | 0 | 1 |
+| `src/core/engine/derive/utils/evaluate/evaluateResetInteraction.ts` | 0 | 0 | 2 |
+| `src/core/engine/derive/utils/evaluate/getDeriveSourceNodes.ts` | 0 | 0 | 1 |
+| `src/core/engine/derive/utils/rules/getDeriveRuleTable.ts` | 1 | 0 | 0 |
+| `src/core/engine/navigation/utils/visit/visitFieldNodes.ts` | 0 | 0 | 1 |
+| `src/core/engine/record/utils/advanceFieldNodeRevision.ts` | 0 | 0 | 1 |
+| `src/core/engine/record/utils/captureFieldNodeChange.ts` | 0 | 0 | 1 |
+| `src/core/engine/record/utils/indexFieldNodeWarning.ts` | 3 | 0 | 0 |
+| `src/core/engine/record/utils/markFieldNodeEvent.ts` | 2 | 0 | 0 |
+| `src/core/engine/record/utils/publishGlobalStateDeltas.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts` | 2 | 0 | 3 |
+| `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts` | 0 | 0 | 2 |
+| `src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts` | 1 | 0 | 5 |
+| `src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyCommittedRules.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyPairedPathStore.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts` | 1 | 0 | 1 |
+| `src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts` | 1 | 0 | 1 |
+| `src/core/engine/settle/utils/commit/commitExitPolicyValues.ts` | 1 | 0 | 2 |
+| `src/core/engine/settle/utils/commit/commitGlobalState.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/utils/commit/commitSettlement.ts` | 2 | 0 | 3 |
+| `src/core/engine/settle/utils/commit/finalizeDeriveTrace.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/commit/markCommitDeliveries.ts` | 2 | 0 | 5 |
+| `src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts` | 4 | 0 | 0 |
+| `src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts` | 7 | 0 | 0 |
+| `src/core/engine/settle/utils/compute/childSelection/gateSelection/computeRootGateSelection.ts` | 1 | 0 | 2 |
+| `src/core/engine/settle/utils/compute/childSelection/gateSelection/selectLiteralTableChildren.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/utils/compute/childSelection/gateSelection/selectRootGateDeclarations.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts` | 5 | 0 | 3 |
+| `src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/compute/childSelection/selectChildren.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts` | 0 | 0 | 4 |
+| `src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts` | 1 | 0 | 1 |
+| `src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts` | 1 | 0 | 3 |
+| `src/core/engine/settle/utils/compute/computeNode.ts` | 0 | 0 | 6 |
+| `src/core/engine/settle/utils/compute/dirtyChildren.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts` | 0 | 0 | 2 |
+| `src/core/engine/settle/utils/compute/primeHost.ts` | 0 | 0 | 2 |
+| `src/core/engine/settle/utils/compute/selectNodeSchema.ts` | 1 | 0 | 1 |
+| `src/core/engine/settle/utils/compute/utils/getStaticGateList.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/compute/utils/prepareHostWheelPlan.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/controls/calculateStateKeys.ts` | 0 | 0 | 2 |
+| `src/core/engine/settle/utils/controls/getStateDependencyPlan.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/controls/prepareControlLayers.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/controls/prepareFragmentOwners.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/controls/prepareParentControlLayers.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/declarations/getDeclaredChildNames.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/utils/dependencies/deferPresenceTemplate.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/dependencies/getDependencyIndex.ts` | 8 | 0 | 16 |
+| `src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts` | 0 | 0 | 6 |
+| `src/core/engine/settle/utils/dependencies/registerRecalculation.ts` | 0 | 0 | 4 |
+| `src/core/engine/settle/utils/dependencies/supplementSplitOwner.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/derivation/getDeriveState.ts` | 0 | 0 | 7 |
+| `src/core/engine/settle/utils/errors/recordSettlementFailure.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/gates/evaluateGate.ts` | 4 | 0 | 2 |
+| `src/core/engine/settle/utils/gates/flushPendingGateReads.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/gates/getGateBudgetCap.ts` | 2 | 0 | 3 |
+| `src/core/engine/settle/utils/gates/getGateExpression.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/gates/getGateRegistry.ts` | 15 | 0 | 0 |
+| `src/core/engine/settle/utils/gates/predicates/getIfGateReadNames.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/gates/prepareGateTableRound.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/utils/gates/readGateHostView.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/gates/readGateSelectionGroup.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/gates/watchSplitRegistration.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/utils/inactive/getInactiveValueContext.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/inactive/resolveInactiveValue.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/input/interpretFieldNodeInput.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/input/utils/verifyWriteEpoch.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/input/utils/watchWriteEpoch.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts` | 0 | 0 | 4 |
+| `src/core/engine/settle/utils/reset/clearSubtreeState.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/scratch/DirtyPathSet.ts` | 0 | 2 | 8 |
+| `src/core/engine/settle/utils/scratch/getSettlementScratch.ts` | 0 | 19 | 0 |
+| `src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts` | 0 | 1 | 1 |
+| `src/core/engine/settle/utils/slots/applySlotOverlay.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/cloneSlotSubtree.ts` | 5 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/collectHostSlotValues.ts` | 0 | 0 | 2 |
+| `src/core/engine/settle/utils/slots/commitSlotChanges.ts` | 0 | 0 | 2 |
+| `src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts` | 2 | 0 | 1 |
+| `src/core/engine/settle/utils/slots/createExitSlotOverlay.ts` | 4 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/createSlotValueOverlay.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/getSlotChildIndex.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/getSlotEntries.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/slots/markSlotChange.ts` | 3 | 0 | 2 |
+| `src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/slots/materializeKeptSlotOverlay.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/pruneArraySlotTail.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/slots/pruneSlotSources.ts` | 2 | 0 | 2 |
+| `src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts` | 3 | 0 | 2 |
+| `src/core/engine/settle/utils/slots/restoreSlotSources.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/restoreTransferredSlotSource.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/retainExitedSlot.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/updateSlotChildIndex.ts` | 1 | 0 | 0 |
+| `src/core/engine/settle/utils/slots/writeSlotPath.ts` | 2 | 0 | 0 |
+| `src/core/engine/settle/utils/transition/collectFillDescendants.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/transition/finalizeExits.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/utils/transition/finalizePerished.ts` | 0 | 0 | 3 |
+| `src/core/engine/settle/utils/transition/pruneArrayTailPaths.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/transition/prunePerishedPaths.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/transition/restoreArrayStructure.ts` | 0 | 0 | 1 |
+| `src/core/engine/settle/utils/transition/transitionSettlement.ts` | 0 | 0 | 5 |
+| `src/core/engine/utils/cache/valueMemos.ts` | 2 | 0 | 0 |
+| `src/core/engine/utils/controls/getControlExpression.ts` | 1 | 0 | 0 |
+| `src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts` | 7 | 0 | 1 |
+| `src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts` | 3 | 0 | 0 |
+| `src/core/engine/utils/paths/getCachedPointerSegments.ts` | 1 | 0 | 0 |
+| `src/core/engine/validation/utils/cache/readValidationEntry.ts` | 1 | 0 | 0 |
+| `src/core/engine/validation/utils/copy/createValidatorCopy.ts` | 3 | 0 | 1 |
+| `src/core/engine/validation/utils/lifetime/recentReleaseList.ts` | 1 | 0 | 0 |
+| `src/core/engine/validation/utils/read/readFieldNodeErrors.ts` | 1 | 0 | 0 |
+| `src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts` | 0 | 0 | 1 |
+| `src/core/engine/validation/utils/route/routeValidationIssues.ts` | 1 | 0 | 4 |
+| `src/core/engine/validation/utils/run/requestFieldNodeValidation.ts` | 2 | 0 | 0 |
+| `src/core/engine/write/utils/chain/adoptFieldNodeChain.ts` | 4 | 0 | 0 |
+| `src/core/engine/write/utils/chain/deliverWave.ts` | 0 | 0 | 2 |
+| `src/core/engine/write/utils/chain/exitFieldNodeChain.ts` | 1 | 0 | 2 |
+| `src/core/engine/write/utils/chain/flushQueuedEvents.ts` | 0 | 0 | 1 |
+| `src/core/engine/write/utils/chain/queueNonSettleEvent.ts` | 1 | 0 | 0 |
+| `src/core/engine/write/utils/chain/refuseListenerFeedback.ts` | 1 | 0 | 0 |
+| `src/core/engine/write/utils/chain/restoreAdoptedExternalErrors.ts` | 2 | 0 | 0 |
+| `src/core/engine/write/utils/chain/runDeliveryWaves.ts` | 1 | 0 | 0 |
+| `src/core/engine/write/utils/chain/utils/compareDocumentOrder.ts` | 0 | 0 | 1 |
+| `src/core/engine/write/utils/entry/dispatchClearSubtreeState.ts` | 0 | 0 | 1 |
+| `src/core/engine/write/utils/entry/dispatchMount.ts` | 3 | 0 | 0 |
+| `src/core/engine/write/utils/entry/dispatchResetForm.ts` | 1 | 0 | 0 |
+| `src/core/engine/write/utils/entry/dispatchResetSubtree.ts` | 1 | 0 | 0 |
+| `src/core/engine/write/utils/entry/dispatchSetExternalErrors.ts` | 1 | 0 | 0 |
+| `src/core/engine/write/utils/entry/dispatchSetState.ts` | 0 | 0 | 1 |
+| `src/core/engine/write/utils/entry/dispatchSetSubtreeState.ts` | 0 | 0 | 1 |
+| `src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts` | 3 | 0 | 5 |
+| `src/core/engine/write/utils/read/onInactiveFieldNode.ts` | 2 | 0 | 0 |
+| `src/core/engine/write/utils/read/subscribeFieldNode.ts` | 2 | 0 | 0 |
+| `src/core/engine/write/utils/report/collectChainRecords.ts` | 0 | 0 | 1 |
+| `src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts` | 0 | 0 | 2 |
+| `src/core/surface/utils/fieldNodeFactory.ts` | 2 | 0 | 0 |
+
+## 항목 4–6
 
 진행 중입니다.
 
