@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import type { BlueprintNode } from '../../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../../record';
 import { engineModes } from '../../../../../utils/cache/engineModes';
@@ -43,5 +45,5 @@ export const selectRootGateDeclarations = <Self extends FieldNodeRecord<Self>>(
       if (gate) verifyTableGate(node, context, gate, admitted.has(index));
     }
   }
-  return selected.map((index) => node.blueprintNode.declarations[index]);
+  return mapArray(selected, (index) => node.blueprintNode.declarations[index]);
 };

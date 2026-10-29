@@ -21,13 +21,23 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
     items: readonly unknown[] | undefined,
   ): items is readonly ValidationIssue[] =>
     !!items &&
-    items.every(
-      (item) =>
-        item !== null &&
-        typeof item === 'object' &&
-        'dataPath' in item &&
-        typeof item.dataPath === 'string',
-    );
+    (() => {
+      const values = items;
+      for (let index = 0, count = values.length; index < count; index++) {
+        if (!(index in values)) continue;
+        const item = values[index];
+        if (
+          !(
+            item !== null &&
+            typeof item === 'object' &&
+            'dataPath' in item &&
+            typeof item.dataPath === 'string'
+          )
+        )
+          return false;
+      }
+      return true;
+    })();
   if (!isIssues(external))
     return isIssues(validation) ? validation : EMPTY_ISSUES;
   if (!isIssues(validation)) return external;

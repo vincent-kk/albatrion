@@ -16,7 +16,16 @@ export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const template = host.blueprintNode;
   if (
     (template.itemCandidates?.length ?? 0) > 1 ||
-    template.prefixItemCandidates?.some((candidates) => candidates.length > 1)
+    (() => {
+      const items = template.prefixItemCandidates;
+      if (items == null) return undefined;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const candidates = items[index];
+        if (candidates.length > 1) return true;
+      }
+      return false;
+    })()
   )
     return false;
   if (host.raw !== undefined || host.itemCount === plan.slots.length)

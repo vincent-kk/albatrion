@@ -1,3 +1,4 @@
+import { filter as filterArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -56,7 +57,10 @@ export const inferLiteralTypes = (
       );
     if (!types.includes(type)) types.push(type);
   }
-  if (types.filter((type) => type !== 'null').length === 1 && types.length > 0)
+  if (
+    filterArray(types, (type) => type !== 'null').length === 1 &&
+    types.length > 0
+  )
     return types;
   if (types.length === 1 && types[0] === 'null') return types;
   return throwBlueprintError(

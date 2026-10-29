@@ -25,9 +25,16 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
   value: boolean,
 ): void => {
   if (
-    context
-      .gateSelectionRounds!.get(node)!
-      .table.predicateGroups.some((group) => group.gate === gate)
+    (() => {
+      const items =
+        context.gateSelectionRounds!.get(node)!.table.predicateGroups;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const group = items[index];
+        if (group.gate === gate) return true;
+      }
+      return false;
+    })()
   ) {
     verifyGateSelection(
       evaluateGate(gate, context, node, undefined, true) === value,
@@ -52,12 +59,28 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
     );
     verifyGateSelection(
       pending.length === (context.pendingOutputs?.size ?? 0) &&
-        pending.every((entry) => context.pendingOutputs!.has(entry)),
+        (() => {
+          const items = pending;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const entry = items[index];
+            if (!context.pendingOutputs!.has(entry)) return false;
+          }
+          return true;
+        })(),
       'S2 pendingOutputs changed: ' + path,
     );
     verifyGateSelection(
       changed.length === context.changedNodes.size &&
-        changed.every((entry) => context.changedNodes.has(entry)),
+        (() => {
+          const items = changed;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const entry = items[index];
+            if (!context.changedNodes.has(entry)) return false;
+          }
+          return true;
+        })(),
       'S2 read published output: ' + path,
     );
     verifyGateSelection(

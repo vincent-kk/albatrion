@@ -44,7 +44,20 @@ export const omitTrailingArray = <Self>(
   const cached = trimmedArrays.get(value);
   if (
     cached?.end === end &&
-    cached.result.every((item, index) => Object.is(item, value[index]))
+    (() => {
+      const items = cached.result;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const item = items[position];
+        const index = position;
+        if (!Object.is(item, value[index])) return false;
+      }
+      return true;
+    })()
   )
     return cached.result;
   const result = value.slice(0, end);

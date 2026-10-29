@@ -1,4 +1,9 @@
 import {
+  filter as filterArray,
+  map as mapArray,
+} from '@winglet/common-utils/array';
+
+import {
   appendSegment,
   isDescendantPath,
 } from '@/schema-form/helpers/jsonPointer';
@@ -30,8 +35,16 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   const active =
     selectRootGateDeclarations(node, context) ??
-    node.blueprintNode.declarations.filter((declaration) =>
-      declaration.gates.every((gate) => evaluateGate(gate, context, node)),
+    filterArray(node.blueprintNode.declarations, (declaration) =>
+      (() => {
+        const items = declaration.gates;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const gate = items[index];
+          if (!evaluateGate(gate, context, node)) return false;
+        }
+        return true;
+      })(),
     );
   if (node.runtime.errorReporter?.hasConsumer()) {
     const branches = new Map<string, number[]>();
@@ -42,12 +55,21 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
       );
       if (
         !crossed ||
-        !declaration.gates.some((gate) =>
-          isDescendantPath(
-            gate.schemaPath,
-            appendSegment(crossed.oneOfPath, crossed.position),
-          ),
-        )
+        !(() => {
+          const items = declaration.gates;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const gate = items[index];
+            if (
+              isDescendantPath(
+                gate.schemaPath,
+                appendSegment(crossed.oneOfPath, crossed.position),
+              )
+            )
+              return true;
+          }
+          return false;
+        })()
       )
         continue;
       const branch = Number(crossed.position);
@@ -75,11 +97,11 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   }
   context.selectedDeclarationIds.set(
     node,
-    active.map((declaration) => declaration.id),
+    mapArray(active, (declaration) => declaration.id),
   );
   const effective = mergeEffectiveSchema(
     node.blueprintNode,
-    active.map((declaration) => declaration.id),
+    mapArray(active, (declaration) => declaration.id),
     { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic },
   );
   if (effective.typeConflict) {
@@ -97,7 +119,15 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
     node.active = captureFieldNodeChange(
       node,
       'active',
-      active.some((declaration) => declaration.role === 'declaration'),
+      (() => {
+        const items = active;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const declaration = items[index];
+          if (declaration.role === 'declaration') return true;
+        }
+        return false;
+      })(),
     );
   if (node.schema === effective) return false;
   node.schema = captureFieldNodeChange(node, 'schema', effective);

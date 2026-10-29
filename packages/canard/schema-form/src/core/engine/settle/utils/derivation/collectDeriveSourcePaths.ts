@@ -40,7 +40,20 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
     if (
       !previous ||
       previous.length !== ids.length ||
-      previous.some((id, index) => id !== ids[index])
+      (() => {
+        const items = previous;
+        for (
+          let position = 0, count = items.length;
+          position < count;
+          position++
+        ) {
+          if (!(position in items)) continue;
+          const id = items[position];
+          const index = position;
+          if (id !== ids[index]) return true;
+        }
+        return false;
+      })()
     )
       paths.add(node.path);
   }

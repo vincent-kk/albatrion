@@ -83,32 +83,72 @@ export const validateControlGroups = (
         { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
-    controls.fields.forEach((entry: any, index: number) => {
-      const path = appendSegment(
-        appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
-        index,
-      );
-      if (
-        !entry ||
-        typeof entry !== 'object' ||
-        Object.keys(entry).some(
-          (key) => key !== 'targets' && key !== 'controls',
-        ) ||
-        !isArray(entry.targets) ||
-        entry.targets.some((name: unknown) => typeof name !== 'string')
-      )
-        throwBlueprintError(
-          FormErrorCode.InvalidControlShape,
-          path,
-          {
-            group: SCHEMA_GROUP.controls,
-            key: 'fields',
-            expected: '{ targets: string[], controls? }',
-          },
-          context.options,
-        );
-      validateControlGroups(context, { controls: entry.controls }, path, true);
-    });
+    (() => {
+      const values = controls.fields;
+      for (
+        let position = 0, limit = values.length;
+        position < limit;
+        position++
+      ) {
+        if (!(position in values)) continue;
+        const item = values[position];
+        const entry: any = item;
+        const index: number = position;
+        {
+          const path = appendSegment(
+            appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
+            index,
+          );
+          if (
+            !entry ||
+            typeof entry !== 'object' ||
+            (() => {
+              const items = Object.keys(entry);
+              for (
+                let index = 0, count = items.length;
+                index < count;
+                index++
+              ) {
+                if (!(index in items)) continue;
+                const key = items[index];
+                if (key !== 'targets' && key !== 'controls') return true;
+              }
+              return false;
+            })() ||
+            !isArray(entry.targets) ||
+            (() => {
+              const items = entry.targets;
+              for (
+                let index = 0, count = items.length;
+                index < count;
+                index++
+              ) {
+                if (!(index in items)) continue;
+                const name: unknown = items[index];
+                if (typeof name !== 'string') return true;
+              }
+              return false;
+            })()
+          )
+            throwBlueprintError(
+              FormErrorCode.InvalidControlShape,
+              path,
+              {
+                group: SCHEMA_GROUP.controls,
+                key: 'fields',
+                expected: '{ targets: string[], controls? }',
+              },
+              context.options,
+            );
+          validateControlGroups(
+            context,
+            { controls: entry.controls },
+            path,
+            true,
+          );
+        }
+      }
+    })();
   }
 };
 

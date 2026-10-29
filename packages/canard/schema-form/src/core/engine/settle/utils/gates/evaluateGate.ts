@@ -32,10 +32,17 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   reference = false,
 ): boolean => {
   if (
-    gate.appliesWhen?.some(
-      (parentGate) =>
-        !evaluateGate(parentGate, context, owner, undefined, reference),
-    )
+    (() => {
+      const items = gate.appliesWhen;
+      if (items == null) return undefined;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const parentGate = items[index];
+        if (!evaluateGate(parentGate, context, owner, undefined, reference))
+          return true;
+      }
+      return false;
+    })()
   )
     return false;
   const registry = getGateRegistry(owner.runtime);
@@ -151,12 +158,21 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
       gate.kind === 'if'
         ? FormErrorCode.GuardFailed
         : FormErrorCode.ExpressionThrew;
-    const repeated = context.failures?.some(
-      (error) =>
-        error.code === code &&
-        error.details.path === hostPath &&
-        error.details.schemaPath === gate.schemaPath,
-    );
+    const repeated = (() => {
+      const items = context.failures;
+      if (items == null) return undefined;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const error = items[index];
+        if (
+          error.code === code &&
+          error.details.path === hostPath &&
+          error.details.schemaPath === gate.schemaPath
+        )
+          return true;
+      }
+      return false;
+    })();
     const failure =
       runtime.mountingGuardPass || repeated
         ? undefined

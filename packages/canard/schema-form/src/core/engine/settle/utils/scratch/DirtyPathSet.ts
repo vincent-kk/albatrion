@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import {
   JSONPointer as $,
   getChildPointer,
@@ -88,7 +90,7 @@ export class DirtyPathSet extends Set<string> {
     let states = this.splitRuns.get(bucket);
     const first = !states;
     if (!states) {
-      states = bucket.runs.map(() => ({
+      states = mapArray(bucket.runs, () => ({
         excluded: new Set(),
         released: new Map(),
       }));

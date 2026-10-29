@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import {
   JSONPointer as $,
   isAbsolutePath,
@@ -468,7 +470,7 @@ class GateRegistry {
           ? undefined
           : getIfGateReadNames(gate.condition, this.blueprint);
       return names
-        ? names.map((name) => appendSegment(location.hostPath, name))
+        ? mapArray(names, (name) => appendSegment(location.hostPath, name))
         : [location.hostPath];
     }
     if (
@@ -481,7 +483,7 @@ class GateRegistry {
       return [appendSegment(location.hostPath, gate.condition.propertyName)];
     const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression
-      ? expression.dependencies.map((dependency) => {
+      ? mapArray(expression.dependencies, (dependency) => {
           const path = this.resolveRead(location.hostPath, dependency);
           return path;
         })

@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import type { FieldNodeRecord } from '../../../record';
 import { composeBatchValue } from './composeBatchValue';
 
@@ -26,7 +28,7 @@ export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
         ? Reflect.get(value, name)
         : undefined;
   if (!virtual) return value;
-  return (virtual.blueprintNode.fields ?? []).map((field) =>
+  return mapArray(virtual.blueprintNode.fields ?? [], (field) =>
     value !== null && typeof value === 'object'
       ? Reflect.get(value, field)
       : undefined,

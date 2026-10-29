@@ -74,11 +74,49 @@ export const getDirectChildSelectionPlan = (
       (isArray(schema.anyOf) && schema.anyOf.length > 1) ||
       (isArray(schema.allOf) &&
         schema.allOf.length > 1 &&
-        host.childEntries.some((entry) =>
-          entry.declarations.some((declaration) =>
-            declaration.gates.some((gate) => gate.kind === 'if'),
-          ),
-        ))
+        (() => {
+          const collection = host.childEntries;
+          for (
+            let cursor = 0, end = collection.length;
+            cursor < end;
+            cursor++
+          ) {
+            if (!(cursor in collection)) continue;
+            const entry = collection[cursor];
+            if (
+              (() => {
+                const values = entry.declarations;
+                for (
+                  let position = 0, limit = values.length;
+                  position < limit;
+                  position++
+                ) {
+                  if (!(position in values)) continue;
+                  const declaration = values[position];
+                  if (
+                    (() => {
+                      const items = declaration.gates;
+                      for (
+                        let index = 0, count = items.length;
+                        index < count;
+                        index++
+                      ) {
+                        if (!(index in items)) continue;
+                        const gate = items[index];
+                        if (gate.kind === 'if') return true;
+                      }
+                      return false;
+                    })()
+                  )
+                    return true;
+                }
+                return false;
+              })()
+            )
+              return true;
+          }
+          return false;
+        })())
     )
   ) {
     getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(

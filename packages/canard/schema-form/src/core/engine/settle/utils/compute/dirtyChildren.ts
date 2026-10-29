@@ -54,7 +54,20 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
     });
     verifyGateSelection(
       children.length === expected.length &&
-        children.every((child, index) => child === expected[index]),
+        (() => {
+          const items = children;
+          for (
+            let position = 0, count = items.length;
+            position < count;
+            position++
+          ) {
+            if (!(position in items)) continue;
+            const child = items[position];
+            const index = position;
+            if (!(child === expected[index])) return false;
+          }
+          return true;
+        })(),
       'S3 dirtyChildren members/order differ at: ' + node.path,
     );
   }

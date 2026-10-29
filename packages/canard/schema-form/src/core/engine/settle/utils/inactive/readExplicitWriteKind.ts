@@ -22,9 +22,17 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   if (!origins) return context.kind;
   // Batch replacement paths retain earlier whole writes after later merges.
   if (
-    context.replacePaths?.some(
-      (path) => inputPath === path || isDescendantPath(inputPath, path),
-    )
+    (() => {
+      const items = context.replacePaths;
+      if (items == null) return undefined;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const path = items[index];
+        if (inputPath === path || isDescendantPath(inputPath, path))
+          return true;
+      }
+      return false;
+    })()
   )
     return 'callerReplace';
   for (let index = origins.length - 1; index >= 0; index--) {

@@ -175,7 +175,20 @@ export const assembleArray: Behavior['assemble'] = (
   rememberShape(node, children);
   if (
     previous?.length === result.length &&
-    result.every((value, index) => Object.is(value, previous[index]))
+    (() => {
+      const items = result;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const value = items[position];
+        const index = position;
+        if (!Object.is(value, previous[index])) return false;
+      }
+      return true;
+    })()
   )
     return previous;
   return result;

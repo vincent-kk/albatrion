@@ -21,7 +21,15 @@ export const verifyWriteEpoch = <Self extends FieldNodeRecord<Self>>(
   }
   verifyGateSelection(
     actual.size === shadow.size &&
-      [...shadow].every((path) => actual.has(path)),
+      (() => {
+        const items = [...shadow];
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const path = items[index];
+          if (!actual.has(path)) return false;
+        }
+        return true;
+      })(),
     'S7 write epoch members differ from the general path',
   );
 };

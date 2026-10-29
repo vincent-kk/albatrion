@@ -31,9 +31,12 @@ export const staticSpec = (
   }
   const cached = unionSpecs[index].get(schemaType);
   if (cached) return cached;
-  const kinds = schemaType.filter(
-    (kind): kind is Exclude<SchemaTypeName, 'null'> => kind !== 'null',
-  );
+  const kinds: Exclude<SchemaTypeName, 'null'>[] = [];
+  for (let index = 0, length = schemaType.length; index < length; index++) {
+    if (!(index in schemaType)) continue;
+    const kind = schemaType[index];
+    if (kind !== 'null') kinds.push(kind);
+  }
   const spec: UnionSpec = {
     kinds: kinds.length === 1 ? kinds[0] : kinds,
     mask: 0,

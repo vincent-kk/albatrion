@@ -93,9 +93,15 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
     if (
       baseline[entry.name] ||
       (!direct &&
-        !entry.declarations.some(
-          (declaration) => declaration.gates.length === 0,
-        ))
+        !(() => {
+          const items = entry.declarations;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const declaration = items[index];
+            if (declaration.gates.length === 0) return true;
+          }
+          return false;
+        })())
     )
       continue;
     if (reuse?.(entry)) continue;

@@ -48,9 +48,15 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   if (warnings?.size) {
     for (const [key, record] of warnings) {
       if (
-        !occurrences.some(
-          (item) => item.kind === 'record' && item.record === record,
-        )
+        !(() => {
+          const items = occurrences;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const item = items[index];
+            if (item.kind === 'record' && item.record === record) return true;
+          }
+          return false;
+        })()
       )
         pending.push(record);
       if (!runtime.warningKeys?.has(key)) {
@@ -71,9 +77,15 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   if (guardRecords?.size) {
     for (const [key, record] of guardRecords) {
       if (
-        !occurrences.some(
-          (item) => item.kind === 'record' && item.record === record,
-        )
+        !(() => {
+          const items = occurrences;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const item = items[index];
+            if (item.kind === 'record' && item.record === record) return true;
+          }
+          return false;
+        })()
       )
         pending.push(record);
       (runtime.reportedGuardFailures ??= new Set()).add(key);

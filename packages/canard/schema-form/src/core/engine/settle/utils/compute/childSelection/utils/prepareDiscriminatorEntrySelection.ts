@@ -43,11 +43,37 @@ export const prepareDiscriminatorEntrySelection = (
       const value = first.condition.values[tag];
       if (
         first.condition.values.indexOf(value) !== tag ||
-        !declaration.gates.every(
-          (gate) =>
-            gate.kind === 'discriminator' &&
-            gate.condition.values.some((candidate) => candidate === value),
-        )
+        !(() => {
+          const collection = declaration.gates;
+          for (
+            let position = 0, limit = collection.length;
+            position < limit;
+            position++
+          ) {
+            if (!(position in collection)) continue;
+            const gate = collection[position];
+            if (
+              !(
+                gate.kind === 'discriminator' &&
+                (() => {
+                  const items = gate.condition.values;
+                  for (
+                    let index = 0, count = items.length;
+                    index < count;
+                    index++
+                  ) {
+                    if (!(index in items)) continue;
+                    const candidate = items[index];
+                    if (candidate === value) return true;
+                  }
+                  return false;
+                })()
+              )
+            )
+              return false;
+          }
+          return true;
+        })()
       )
         continue;
       const bucket = buckets.get(value);

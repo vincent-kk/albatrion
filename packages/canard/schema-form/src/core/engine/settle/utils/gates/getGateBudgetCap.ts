@@ -50,10 +50,21 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
         fieldControl =
           segments[segments.length - 2] === 'controls' &&
           segments[segments.length - 1] === 'active' &&
-          segments.some(
-            (segment, index) =>
-              segment === 'controls' && segments[index + 1] === 'fields',
-          );
+          (() => {
+            const items = segments;
+            for (
+              let position = 0, count = items.length;
+              position < count;
+              position++
+            ) {
+              if (!(position in items)) continue;
+              const segment = items[position];
+              const index = position;
+              if (segment === 'controls' && segments[index + 1] === 'fields')
+                return true;
+            }
+            return false;
+          })();
         fieldControls.set(gate, fieldControl);
       }
       if (fieldControl) add(gate, 'node:' + gate.schemaPath);
@@ -96,7 +107,20 @@ export const getHostWheelBudgetCap = (
   if (
     cached &&
     cached.gates.length === gates.length &&
-    cached.gates.every((gate, index) => gate === gates[index])
+    (() => {
+      const items = cached.gates;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const gate = items[position];
+        const index = position;
+        if (!(gate === gates[index])) return false;
+      }
+      return true;
+    })()
   )
     return cached.cap;
   const index = getIndex(blueprint);

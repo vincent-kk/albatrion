@@ -35,7 +35,20 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
     previous.children &&
     node.children &&
     previous.children.length === node.children.length &&
-    previous.children.every((child, index) => child === node.children?.[index])
+    (() => {
+      const items = previous.children;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const child = items[position];
+        const index = position;
+        if (!(child === node.children?.[index])) return false;
+      }
+      return true;
+    })()
   )
     node.children = captureFieldNodeChange(node, 'children', previous.children);
   if (

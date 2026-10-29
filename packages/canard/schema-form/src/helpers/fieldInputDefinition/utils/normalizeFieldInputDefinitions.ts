@@ -51,7 +51,24 @@ export const normalizeFieldInputDefinitions = (
     )
       continue;
     if (!isFunction(test)) {
-      const invalid = Object.keys(test).filter((key) => !testKeySet.has(key));
+      const invalid = (() => {
+        const items = Object.keys(test);
+        const result: Array<(typeof items)[number]> = [];
+        iterate: for (
+          let index = 0, count = items.length;
+          index < count;
+          index++
+        ) {
+          if (!(index in items)) continue;
+          const item = items[index];
+          const key = item;
+          {
+            if (!testKeySet.has(key)) result.push(item);
+            continue iterate;
+          }
+        }
+        return result;
+      })();
       const types: readonly unknown[] = isArray(test.type)
         ? test.type
         : [test.type];
@@ -75,13 +92,45 @@ export const normalizeFieldInputDefinitions = (
 const fieldInputTestFnFactory = (
   test: FieldInputTestObject,
 ): FieldInputTestFn => {
-  const keys = testKeys.filter((key) => hasOwnProperty(test, key));
+  const keys = (() => {
+    const items = testKeys;
+    const result: Array<(typeof items)[number]> = [];
+    iterate: for (let index = 0, count = items.length; index < count; index++) {
+      if (!(index in items)) continue;
+      const item = items[index];
+      const key = item;
+      {
+        if (hasOwnProperty(test, key)) result.push(item);
+        continue iterate;
+      }
+    }
+    return result;
+  })();
   return (hint) =>
-    keys.every((key) => {
-      const reference: unknown = test[key],
-        subject: unknown = hint[key];
-      return isArray(reference)
-        ? reference.includes(subject)
-        : reference === subject;
-    });
+    (() => {
+      const items = keys;
+      iterate: for (
+        let index = 0, count = items.length;
+        index < count;
+        index++
+      ) {
+        if (!(index in items)) continue;
+        const item = items[index];
+        const key = item;
+        {
+          const reference: unknown = test[key],
+            subject: unknown = hint[key];
+          {
+            if (
+              !(isArray(reference)
+                ? reference.includes(subject)
+                : reference === subject)
+            )
+              return false;
+            continue iterate;
+          }
+        }
+      }
+      return true;
+    })();
 };

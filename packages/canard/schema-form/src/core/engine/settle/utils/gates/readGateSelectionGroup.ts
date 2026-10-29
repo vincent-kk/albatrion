@@ -57,7 +57,19 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
       verifyGateSelection(
         (admitted.indexOf(index) !== -1) ===
           (step.gate.kind === 'discriminator'
-            ? step.gate.condition.values.some((tag) => tag === value)
+            ? (() => {
+                const items = step.gate.condition.values;
+                for (
+                  let index = 0, count = items.length;
+                  index < count;
+                  index++
+                ) {
+                  if (!(index in items)) continue;
+                  const tag = items[index];
+                  if (tag === value) return true;
+                }
+                return false;
+              })()
             : Boolean(expression!.evaluate([value]))),
         'S1 table step verdict: ' + index,
       );

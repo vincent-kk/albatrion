@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
@@ -87,7 +89,14 @@ export const getGateSelectionTable = (
       : undefined;
     const equality =
       gate?.kind === 'discriminator' &&
-      gate.condition.values.every(isGateSelectionLiteral)
+      ((
+        values: typeof gate.condition.values,
+      ): values is readonly GateSelectionLiteral[] => {
+        for (let index = 0, length = values.length; index < length; index++)
+          if (index in values && !isGateSelectionLiteral(values[index]))
+            return false;
+        return true;
+      })(gate.condition.values)
         ? { literals: gate.condition.values }
         : expression?.equality;
     const watchedName =
@@ -106,18 +115,25 @@ export const getGateSelectionTable = (
         : engineModes.gatePredicate !== 'off' &&
             expression?.completeReads &&
             !equality
-          ? expression.dependencies.map((dependency) =>
+          ? mapArray(expression.dependencies, (dependency) =>
               watchedNames.get(resolveDependencyPath(host.path, dependency)),
             )
           : undefined;
     if (
       gate &&
       ifReads &&
-      ifReads.every(
-        (name): name is string =>
-          name !== undefined &&
-          watchedNames.has(appendSegment(host.path, name)),
-      )
+      ((names: NonNullable<typeof ifReads>): names is readonly string[] => {
+        for (let index = 0, length = names.length; index < length; index++) {
+          if (!(index in names)) continue;
+          const name = names[index];
+          if (
+            name === undefined ||
+            !watchedNames.has(appendSegment(host.path, name))
+          )
+            return false;
+        }
+        return true;
+      })(ifReads)
     ) {
       let group = predicateGroups.get(gate);
       if (!group) {
@@ -174,7 +190,10 @@ export const getGateSelectionTable = (
     return null;
   }
   const orderedGroups = [...groups.values()];
-  const roundWatchedNames = orderedGroups.map((group) => group.watchedName);
+  const roundWatchedNames = mapArray(
+    orderedGroups,
+    (group) => group.watchedName,
+  );
   for (const group of predicateGroups.values())
     for (const name of group.watchedNames)
       if (roundWatchedNames.indexOf(name) === -1) roundWatchedNames.push(name);

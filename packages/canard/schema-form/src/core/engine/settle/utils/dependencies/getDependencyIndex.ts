@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import {
   JSONPointer as $,
   PointerOperator,
@@ -141,10 +143,13 @@ class DependencyIndex {
     if (dependencies.length === 0 && blueprint.expressions.length === 0) return;
     const declarations = new Map<number, PropertyDeclaration>(
       blueprint.nodes.flatMap((node) =>
-        node.declarations.map((declaration): [number, PropertyDeclaration] => [
-          declaration.id,
-          declaration,
-        ]),
+        mapArray(
+          node.declarations,
+          (declaration): [number, PropertyDeclaration] => [
+            declaration.id,
+            declaration,
+          ],
+        ),
       ),
     );
     for (const [dependency, ids] of dependencies)
@@ -211,13 +216,26 @@ class DependencyIndex {
         for (const gate of declaration.gates) {
           const expression = getGateExpression(this.blueprint, gate.schemaPath);
           if (
-            !expression?.dependencies.some(
-              (dependency) =>
-                readPointerSegment(
-                  resolveDependencyPath(gate.hostPath, dependency),
-                  0,
-                ) !== PointerOperator.Context,
-            )
+            !(() => {
+              const items = expression?.dependencies;
+              if (items == null) return undefined;
+              for (
+                let index = 0, count = items.length;
+                index < count;
+                index++
+              ) {
+                if (!(index in items)) continue;
+                const dependency = items[index];
+                if (
+                  readPointerSegment(
+                    resolveDependencyPath(gate.hostPath, dependency),
+                    0,
+                  ) !== PointerOperator.Context
+                )
+                  return true;
+              }
+              return false;
+            })()
           )
             continue;
           let hostPath: string | undefined;
@@ -327,7 +345,7 @@ class DependencyIndex {
     const collect = (node: DependencyNode): void => {
       const events: { rank: number; emit: () => void }[] = [];
       for (const { rank, entry } of node.plainOwners ??
-        node.owners.map((entry, rank) => ({ entry, rank }))) {
+        mapArray(node.owners, (entry, rank) => ({ entry, rank }))) {
         const path = entry.bindable
           ? bindTemplatePath(entry.path, changedPath)
           : entry.path;
@@ -370,7 +388,7 @@ class DependencyIndex {
         living.sort((left, right) => left.rank - right.rank);
         for (const anchor of sink.hit(
           bucket,
-          living.map((entry) => entry.rank),
+          mapArray(living, (entry) => entry.rank),
         ))
           events.push({ rank: anchor.rank, emit: anchor.insert });
         events.push({
@@ -603,14 +621,23 @@ class DependencyIndex {
       for (const entry of node.owners) {
         if (
           entry.watched &&
-          !entry.watched.some((watched) =>
-            intersectsWatchedPath(
-              watched,
-              changedPath,
-              this.pathSegments(watched),
-              changedSegments,
-            ),
-          )
+          !(() => {
+            const items = entry.watched;
+            for (let index = 0, count = items.length; index < count; index++) {
+              if (!(index in items)) continue;
+              const watched = items[index];
+              if (
+                intersectsWatchedPath(
+                  watched,
+                  changedPath,
+                  this.pathSegments(watched),
+                  changedSegments,
+                )
+              )
+                return true;
+            }
+            return false;
+          })()
         )
           continue;
         const path = entry.bindable
@@ -641,9 +668,16 @@ class DependencyIndex {
       if (
         ownerParts[index] === PointerOperator.Wildcard &&
         watchedParts[index] !== PointerOperator.Wildcard &&
-        ownerParts
-          .slice(0, index)
-          .every((part, position) => part === watchedParts[position]) &&
+        (() => {
+          const items = ownerParts.slice(0, index);
+          for (let cursor = 0, count = items.length; cursor < count; cursor++) {
+            if (!(cursor in items)) continue;
+            const part = items[cursor];
+            const position = cursor;
+            if (!(part === watchedParts[position])) return false;
+          }
+          return true;
+        })() &&
         watchedParts[index] !== undefined
       ) {
         indexedParts = ownerParts.slice(0, index);
@@ -664,11 +698,26 @@ class DependencyIndex {
       current.ownerPaths.add(owner);
       current.owners.push({
         path: owner,
-        bindable: ownerParts.every(
-          (part, index) =>
-            part !== PointerOperator.Wildcard ||
-            indexedParts[index] === PointerOperator.Wildcard,
-        ),
+        bindable: (() => {
+          const items = ownerParts;
+          for (
+            let position = 0, count = items.length;
+            position < count;
+            position++
+          ) {
+            if (!(position in items)) continue;
+            const part = items[position];
+            const index = position;
+            if (
+              !(
+                part !== PointerOperator.Wildcard ||
+                indexedParts[index] === PointerOperator.Wildcard
+              )
+            )
+              return false;
+          }
+          return true;
+        })(),
         ...(watchedPath !== originalWatchedPath
           ? { watched: [originalWatchedPath] }
           : {}),

@@ -1,3 +1,5 @@
+import { filter as filterArray } from '@winglet/common-utils/array';
+
 import { FormErrorCode } from '../../../../../../errors';
 import type { NodeStrategy } from '../../../../types/strategy';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -18,10 +20,12 @@ export const resolveNodeStrategy = (
   kind: BlueprintNodeKind,
   declarations: readonly PropertyDeclaration[],
 ): NodeStrategy => {
-  const count = declarations.filter(
+  const count = filterArray(
+    declarations,
     (declaration) => declaration.role === 'declaration',
   ).length;
-  const relevant = declarations.filter(
+  const relevant = filterArray(
+    declarations,
     (declaration) =>
       !declaration.validationOnly &&
       (declaration.context === 'conjunction' ||
@@ -42,29 +46,40 @@ export const resolveNodeStrategy = (
     return terminal ? 'terminal' : 'branch';
   }
   const root: StrategyCase = { children: new Map(), hasDeclaration: false };
-  relevant.forEach((declaration, index) => {
-    let current = root;
-    for (const gate of declaration.gates) {
-      const key = JSON.stringify([
-        gate.kind,
-        gate.schemaPath,
-        gate.hostPath,
-        gate.negated,
-      ]);
-      let child = current.children.get(key);
-      if (!child) {
-        child = { children: new Map(), hasDeclaration: false };
-        current.children.set(key, child);
+  (() => {
+    const items = relevant;
+    for (let position = 0, count = items.length; position < count; position++) {
+      if (!(position in items)) continue;
+      const item = items[position];
+      const declaration = item;
+      const index = position;
+      {
+        let current = root;
+        for (const gate of declaration.gates) {
+          const key = JSON.stringify([
+            gate.kind,
+            gate.schemaPath,
+            gate.hostPath,
+            gate.negated,
+          ]);
+          let child = current.children.get(key);
+          if (!child) {
+            child = { children: new Map(), hasDeclaration: false };
+            current.children.set(key, child);
+          }
+          current = child;
+        }
+        const explicit = readSchemaObject(declaration.schema).options?.terminal;
+        const renderer = context.options.isTerminal?.(declaration.schema);
+        if (explicit !== undefined)
+          current.explicit = { index, value: explicit };
+        if (renderer !== undefined)
+          current.renderer = { index, value: renderer };
+        current.hasDeclaration ||= declaration.role === 'declaration';
+        current.schemaPath = declaration.schemaPath;
       }
-      current = child;
     }
-    const explicit = readSchemaObject(declaration.schema).options?.terminal;
-    const renderer = context.options.isTerminal?.(declaration.schema);
-    if (explicit !== undefined) current.explicit = { index, value: explicit };
-    if (renderer !== undefined) current.renderer = { index, value: renderer };
-    current.hasDeclaration ||= declaration.role === 'declaration';
-    current.schemaPath = declaration.schemaPath;
-  });
+  })();
   let strategy: boolean | undefined;
   const pending = [root];
   while (pending.length) {

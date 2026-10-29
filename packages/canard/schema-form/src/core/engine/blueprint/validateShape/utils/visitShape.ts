@@ -33,10 +33,16 @@ export const visitShape = (
   active.add(node);
   for (const edge of node.childEntries)
     if (
-      edge.declarations.some(
-        (declaration) =>
-          declaration.role === 'declaration' && !declaration.gates.length,
-      )
+      (() => {
+        const items = edge.declarations;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const declaration = items[index];
+          if (declaration.role === 'declaration' && !declaration.gates.length)
+            return true;
+        }
+        return false;
+      })()
     )
       visitShape(context, edge.node, complete, active);
   active.delete(node);

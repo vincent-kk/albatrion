@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
@@ -53,7 +54,9 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
   ).staticShape!;
   let entries = memo.byEntry;
   if (!entries) {
-    entries = new Map(shape.map((selected) => [selected.entry, selected]));
+    entries = new Map(
+      mapArray(shape, (selected) => [selected.entry, selected]),
+    );
     memo.byEntry = entries;
   }
   const registered = context.presenceRegistrations;

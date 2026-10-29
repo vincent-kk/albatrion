@@ -1,3 +1,5 @@
+import { filter as filterArray } from '@winglet/common-utils/array';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { HostStaticPartition } from '../../../../../blueprint';
@@ -129,18 +131,20 @@ export const prepareStaticHost = <Self extends FieldNodeRecord<Self>>(
     baseline,
     entries,
     baselineChildren: Object.values(baseline),
-    dynamicEntries: node.blueprintNode.childEntries.filter(
+    dynamicEntries: filterArray(
+      node.blueprintNode.childEntries,
       (entry) => !entries.has(entry.name),
     ),
     selectedStructure: prior,
     selectedChildren:
       node.structure === prior ? (node.children ?? []) : Object.values(prior),
-    dynamicNames: Object.keys(prior).filter((name) => !entries.has(name)),
-    alwaysSteps: (
+    dynamicNames: filterArray(Object.keys(prior), (name) => !entries.has(name)),
+    alwaysSteps: filterArray(
       getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
         node.blueprintNode,
-      ).gateSelectionTable?.alwaysSteps ?? []
-    ).filter((index) => plan && !entries.has(plan.steps[index].entry.name)),
+      ).gateSelectionTable?.alwaysSteps ?? [],
+      (index) => Boolean(plan && !entries.has(plan.steps[index].entry.name)),
+    ),
   };
   record.preparedStaticHost = prepared;
   (context.preparedStaticHosts ??= new Set()).add(node);

@@ -218,7 +218,20 @@ export const assembleObject: Behavior['assemble'] = (
     const oldNames = Object.keys(previous);
     if (
       names.length === oldNames.length &&
-      names.every((name, index) => name === oldNames[index])
+      (() => {
+        const items = names;
+        for (
+          let position = 0, count = items.length;
+          position < count;
+          position++
+        ) {
+          if (!(position in items)) continue;
+          const name = items[position];
+          const index = position;
+          if (!(name === oldNames[index])) return false;
+        }
+        return true;
+      })()
     ) {
       let patch: Record<string, unknown> | undefined;
       for (const name of names) {

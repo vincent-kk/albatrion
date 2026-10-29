@@ -33,14 +33,30 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
     !!id &&
     entry.failure instanceof Error &&
     DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message) &&
-    [...recentReleaseList(validator).counts].some(
-      ([other, count]) =>
-        other !== authoredRoot &&
-        count > 0 &&
-        typeof other === 'object' &&
-        other !== null &&
-        other.$id === id,
-    );
+    (() => {
+      const items = [...recentReleaseList(validator).counts];
+      iterate: for (
+        let index = 0, limit = items.length;
+        index < limit;
+        index++
+      ) {
+        if (!(index in items)) continue;
+        const item = items[index];
+        const [other, count] = item;
+        {
+          if (
+            other !== authoredRoot &&
+            count > 0 &&
+            typeof other === 'object' &&
+            other !== null &&
+            other.$id === id
+          )
+            return true;
+          continue iterate;
+        }
+      }
+      return false;
+    })();
   throw new SchemaFormError(
     FormErrorCode.ValidatorCompileFailed,
     'Whole-schema validation could not be compiled',

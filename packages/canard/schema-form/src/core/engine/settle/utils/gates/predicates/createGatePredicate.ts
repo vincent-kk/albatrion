@@ -77,9 +77,16 @@ export const createGatePredicate = (
       engineModes.gatePredicate !== 'off' &&
       (gate.kind !== 'active' ||
         (expression?.completeReads === true &&
-          !reads.some(
-            (path) => readPointerSegment(path, 0) === PointerOperator.Context,
-          ))),
+          !(() => {
+            const items = reads;
+            for (let index = 0, count = items.length; index < count; index++) {
+              if (!(index in items)) continue;
+              const path = items[index];
+              if (readPointerSegment(path, 0) === PointerOperator.Context)
+                return true;
+            }
+            return false;
+          })())),
     evaluate: (input) => {
       if (gate.kind === 'if') {
         guard ??= readFieldNodeGuard(runtime, gate);

@@ -5,6 +5,7 @@ import {
   useSyncExternalStore,
 } from 'react';
 
+import { map as mapArray } from '@winglet/common-utils/array';
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
 import {
@@ -42,7 +43,7 @@ export const useChildFieldErrors = (
   const subscribe = useCallback(
     (update: () => void) => {
       if (disabled) return NOOP_FUNCTION;
-      const unsubscribes = [node, ...(children ?? [])].map((child) =>
+      const unsubscribes = mapArray([node, ...(children ?? [])], (child) =>
         child.subscribe(({ type }) => {
           if (type & CHILD_FIELD_ERROR_EVENTS) update();
         }),
@@ -55,25 +56,38 @@ export const useChildFieldErrors = (
   );
   const snapshot = useCallback(
     () =>
-      [node, ...(node.children ?? [])]
-        .map((child) => child.revision(CHILD_FIELD_ERROR_EVENTS))
-        .join(':'),
+      mapArray([node, ...(node.children ?? [])], (child) =>
+        child.revision(CHILD_FIELD_ERROR_EVENTS),
+      ).join(':'),
     [node],
   );
   const revision = useSyncExternalStore(subscribe, snapshot, snapshot);
   return useMemo(() => {
     const current = node.children ?? [];
-    const errorMatrix = current.map((child) => (disabled ? [] : child.errors));
-    const formattedErrors = errorMatrix.map((errors, index) =>
+    const errorMatrix = mapArray(current, (child) =>
+      disabled ? [] : child.errors,
+    );
+    const formattedErrors = mapArray(errorMatrix, (errors, index) =>
       errors.length ? formatError(errors[0], current[index], context) : null,
     );
-    const showErrors = current.map(
+    const showErrors = mapArray(
+      current,
       (child) => !disabled && checkShowError(child.state),
     );
     const formattedError =
       formattedErrors.find((message) => message != null) ?? null;
     const showError =
-      !disabled && (checkShowError(node.state) || showErrors.some(Boolean));
+      !disabled &&
+      (checkShowError(node.state) ||
+        (() => {
+          const items = showErrors;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const item = items[index];
+            if (item) return true;
+          }
+          return false;
+        })());
     return {
       errorMessage: showError ? formattedError : null,
       showError,

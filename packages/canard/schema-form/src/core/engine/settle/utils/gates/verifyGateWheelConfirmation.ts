@@ -18,15 +18,33 @@ export const verifyGateWheelConfirmation = (
   if (
     changed ||
     before.length !== after.length ||
-    before.some((entry, index) => {
-      const next = after[index];
-      return (
-        entry.gate !== next.gate ||
-        entry.path !== next.path ||
-        entry.edgeName !== next.edgeName ||
-        entry.value !== next.value
-      );
-    })
+    (() => {
+      const items = before;
+      iterate: for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const item = items[position];
+        const entry = item;
+        const index = position;
+        {
+          const next = after[index];
+          {
+            if (
+              entry.gate !== next.gate ||
+              entry.path !== next.path ||
+              entry.edgeName !== next.edgeName ||
+              entry.value !== next.value
+            )
+              return true;
+            continue iterate;
+          }
+        }
+      }
+      return false;
+    })()
   ) {
     gateWheelEvaluation.nonNoop++;
     throw new Error('Gate wheel predicate predicted a non-no-op confirmation');

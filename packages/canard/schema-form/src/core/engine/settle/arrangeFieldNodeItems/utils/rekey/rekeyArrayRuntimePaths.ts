@@ -1,6 +1,14 @@
-import { getChildPointer, readPointerSegment, rebasePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  filter as filterArray,
+  map as mapArray,
+} from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
+import {
+  getChildPointer,
+  readPointerSegment,
+  rebasePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FormErrorRecord } from '../../../../../../errors';
 import type { FieldNodeRuntime } from '../../../../record';
@@ -38,9 +46,9 @@ export const rekeyArrayRuntimePaths = <Self>(
       unaddressed.add(path);
   }
   prunePerishedPaths(runtime, unaddressed);
-  const changed = moves.filter((move) => move.previous !== move.current);
+  const changed = filterArray(moves, (move) => move.previous !== move.current);
   const moveByPath = new Map(
-    moves.map((move) => [move.previous, move.current]),
+    mapArray(moves, (move) => [move.previous, move.current]),
   );
   const mapPath = (path: string): string | undefined => {
     const itemPath = getChildPointer(path, hostPath);

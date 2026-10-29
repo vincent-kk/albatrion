@@ -41,7 +41,20 @@ export const materializeInactiveSlotValues = <
   host.inactiveValuesDirty = false;
   if (
     previous?.length === next.length &&
-    previous.every((entry, index) => entry === next[index])
+    (() => {
+      const items = previous;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const entry = items[position];
+        const index = position;
+        if (!(entry === next[index])) return false;
+      }
+      return true;
+    })()
   )
     return previous;
   return (host.inactiveValuesCache = next.length

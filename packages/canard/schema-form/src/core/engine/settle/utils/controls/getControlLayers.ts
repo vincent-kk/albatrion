@@ -95,7 +95,15 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
     if (parentIds.indexOf(group.declarationId) === -1) continue;
     if (
       group.ownerIds &&
-      !group.ownerIds.some((id) => nodeIds.indexOf(id) !== -1)
+      !(() => {
+        const items = group.ownerIds;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const id = items[index];
+          if (nodeIds.indexOf(id) !== -1) return true;
+        }
+        return false;
+      })()
     )
       continue;
     groups.push({

@@ -1,7 +1,8 @@
-import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { FieldNodeRecord,UnionSpec } from '../../../record';
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
+import type { FieldNodeRecord, UnionSpec } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
@@ -15,7 +16,6 @@ import { staticSpec } from './staticSpec';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
 import { restoreWriteEpochPaths } from './utils/restoreWriteEpochPaths';
-
 
 /** Default of `changedValue`: the caller has not interpreted this node's input. */
 const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
@@ -124,9 +124,16 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     whole =
       !isMerge &&
       (context.replacePaths === undefined ||
-        context.replacePaths.some(
-          (path) => node.path === path || isDescendantPath(node.path, path),
-        ));
+        (() => {
+          const items = context.replacePaths;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const path = items[index];
+            if (node.path === path || isDescendantPath(node.path, path))
+              return true;
+          }
+          return false;
+        })());
     nextRaw = isMerge ? node.raw : undefined;
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
     extras = nextExtras(node.undeclaredValues, value, declared, isMerge);

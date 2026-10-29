@@ -62,7 +62,17 @@ export const getItemSchemaPath = (
     }
     if (!path) continue;
     fallback ??= path;
-    if (node.declarations.some((candidate) => candidate.schema === child))
+    if (
+      (() => {
+        const items = node.declarations;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const candidate = items[index];
+          if (candidate.schema === child) return true;
+        }
+        return false;
+      })()
+    )
       return path;
   }
   return fallback ?? node.schemaPath;

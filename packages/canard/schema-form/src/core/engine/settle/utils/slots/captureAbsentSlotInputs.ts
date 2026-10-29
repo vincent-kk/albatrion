@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntries } from '../../../blueprint';
@@ -30,7 +31,7 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
     ...(overlay.children
       ? {
           children: new Map(
-            [...overlay.children].map(([entry, child]) => [
+            mapArray([...overlay.children], ([entry, child]) => [
               entry,
               packed(child),
             ]),

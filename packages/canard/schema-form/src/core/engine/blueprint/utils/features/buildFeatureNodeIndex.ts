@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
@@ -35,13 +36,14 @@ export const buildFeatureNodeIndex = (
     const children = [
       ...node.childEntries,
       ...(node.prefixItems ?? []).flatMap((item, index) =>
-        (node.prefixItemCandidates?.[index] ?? [item]).map((child) => ({
+        mapArray(node.prefixItemCandidates?.[index] ?? [item], (child) => ({
           name: String(index),
           node: child,
           declarations: child.declarations,
         })),
       ),
-      ...(node.itemCandidates ?? (node.item ? [node.item] : [])).map(
+      ...mapArray(
+        node.itemCandidates ?? (node.item ? [node.item] : []),
         (item) => ({
           name: $.Wildcard,
           node: item,
@@ -50,7 +52,7 @@ export const buildFeatureNodeIndex = (
       ),
     ];
     const buildOwners = () =>
-      children.map((child) => {
+      mapArray(children, (child) => {
         const paths = new Set<string>();
         for (const declaration of child.node.declarations)
           for (const path of getFragmentOwnerPaths(declaration.schemaPath))

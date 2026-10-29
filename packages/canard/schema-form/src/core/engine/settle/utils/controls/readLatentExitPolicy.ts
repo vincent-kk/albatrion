@@ -14,8 +14,35 @@ export const readLatentExitPolicy = (
   inherited: boolean,
 ): boolean => {
   for (const layer of EXIT_LAYERS) {
-    const matching = decisions?.filter((decision) => decision.layer === layer);
-    if (matching?.length) return matching.every((decision) => decision.clear);
+    const matching = (() => {
+      const items = decisions;
+      if (items == null) return undefined;
+      const result: Array<(typeof items)[number]> = [];
+      iterate: for (
+        let index = 0, count = items.length;
+        index < count;
+        index++
+      ) {
+        if (!(index in items)) continue;
+        const item = items[index];
+        const decision = item;
+        {
+          if (decision.layer === layer) result.push(item);
+          continue iterate;
+        }
+      }
+      return result;
+    })();
+    if (matching?.length)
+      return (() => {
+        const items = matching;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const decision = items[index];
+          if (!decision.clear) return false;
+        }
+        return true;
+      })();
   }
   return inherited;
 };

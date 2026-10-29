@@ -127,7 +127,15 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     shadow.registering = false;
     verifyGateSelection(
       context.shapeDirtyPaths.size === shadow.shape.size &&
-        [...shadow.shape].every((path) => context.shapeDirtyPaths.has(path)),
+        (() => {
+          const items = [...shadow.shape];
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const path = items[index];
+            if (!context.shapeDirtyPaths.has(path)) return false;
+          }
+          return true;
+        })(),
       'S3 shape dirty differs after registration',
     );
     for (const path of context.dirtyPaths)

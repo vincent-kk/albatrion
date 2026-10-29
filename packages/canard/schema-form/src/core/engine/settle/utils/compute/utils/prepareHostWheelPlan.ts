@@ -65,11 +65,19 @@ export const prepareHostWheelPlan = <Self extends FieldNodeRecord<Self>>(
       relocated.length === 0 &&
       !partition.hasGatedOverlays &&
       partition.staticEntries.length > 0 &&
-      gates.every((gate) =>
-        Boolean(
-          getGateExpression(node.runtime.blueprint, gate.schemaPath)?.equality,
-        ),
-      ),
+      (() => {
+        const items = gates;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const gate = items[index];
+          if (
+            !getGateExpression(node.runtime.blueprint, gate.schemaPath)
+                ?.equality
+          )
+            return false;
+        }
+        return true;
+      })(),
   };
   if (!previous) record.wheelPlan = plan;
   return plan;

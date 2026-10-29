@@ -27,9 +27,35 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   const afterChanged = [...context.changedNodes];
   verifyGateSelection(
     pending.length === afterPending.length &&
-      pending.every((host, index) => host === afterPending[index]) &&
+      (() => {
+        const items = pending;
+        for (
+          let position = 0, count = items.length;
+          position < count;
+          position++
+        ) {
+          if (!(position in items)) continue;
+          const host = items[position];
+          const index = position;
+          if (!(host === afterPending[index])) return false;
+        }
+        return true;
+      })() &&
       changed.length === afterChanged.length &&
-      changed.every((host, index) => host === afterChanged[index]),
+      (() => {
+        const items = changed;
+        for (
+          let position = 0, count = items.length;
+          position < count;
+          position++
+        ) {
+          if (!(position in items)) continue;
+          const host = items[position];
+          const index = position;
+          if (!(host === afterChanged[index])) return false;
+        }
+        return true;
+      })(),
     'S2 table pre-publication: ' + path,
   );
 };

@@ -19,13 +19,27 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
     scope !== undefined &&
     (!scope.path || path === scope.path || isDescendantPath(path, scope.path));
   const withinVirtual =
-    context.virtualReplacePaths?.some(
-      (replaced) => path === replaced || isDescendantPath(path, replaced),
-    ) ?? false;
+    (() => {
+      const items = context.virtualReplacePaths;
+      if (items == null) return undefined;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const replaced = items[index];
+        if (path === replaced || isDescendantPath(path, replaced)) return true;
+      }
+      return false;
+    })() ?? false;
   const withinBatch =
-    context.replacePaths?.some(
-      (replaced) => path === replaced || isDescendantPath(path, replaced),
-    ) ?? false;
+    (() => {
+      const items = context.replacePaths;
+      if (items == null) return undefined;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const replaced = items[index];
+        if (path === replaced || isDescendantPath(path, replaced)) return true;
+      }
+      return false;
+    })() ?? false;
   if (!withinScope && !withinVirtual && !withinBatch) return false;
   const live = find(context.root, path);
   return live !== null && !live.detached;

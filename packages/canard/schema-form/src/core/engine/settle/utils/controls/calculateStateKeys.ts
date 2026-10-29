@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import {
   JSONPointer as $,
   appendSegment,
@@ -131,7 +133,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
               try {
                 value = Boolean(
                   expression.evaluate(
-                    expression.dependencies.map((dependency) =>
+                    mapArray(expression.dependencies, (dependency) =>
                       readStateDependency(
                         root,
                         group.host.path,

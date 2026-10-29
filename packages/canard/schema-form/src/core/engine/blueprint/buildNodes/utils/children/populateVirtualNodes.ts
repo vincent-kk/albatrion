@@ -56,8 +56,29 @@ export const populateVirtualNodes = (
       const fields = schema.fields;
       if (
         !isArray(fields) ||
-        fields.some((field) => typeof field !== 'string') ||
-        fields.some((field, index) => fields.indexOf(field) !== index)
+        (() => {
+          const items = fields;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const field = items[index];
+            if (typeof field !== 'string') return true;
+          }
+          return false;
+        })() ||
+        (() => {
+          const items = fields;
+          for (
+            let position = 0, count = items.length;
+            position < count;
+            position++
+          ) {
+            if (!(position in items)) continue;
+            const field = items[position];
+            const index = position;
+            if (fields.indexOf(field) !== index) return true;
+          }
+          return false;
+        })()
       )
         throwBlueprintError(
           FormErrorCode.VirtualFieldsNotValid,
@@ -67,9 +88,16 @@ export const populateVirtualNodes = (
         );
       for (const field of fields)
         if (
-          !host.childEntries.some(
-            (edge) => edge.name === field && edge.node.kind !== 'virtual',
-          )
+          !(() => {
+            const items = host.childEntries;
+            for (let index = 0, count = items.length; index < count; index++) {
+              if (!(index in items)) continue;
+              const edge = items[index];
+              if (edge.name === field && edge.node.kind !== 'virtual')
+                return true;
+            }
+            return false;
+          })()
         )
           throwBlueprintError(
             FormErrorCode.VirtualFieldsNotInProperties,
@@ -81,7 +109,20 @@ export const populateVirtualNodes = (
       if (
         group &&
         (group.fields.length !== fields.length ||
-          group.fields.some((field, index) => field !== fields[index]))
+          (() => {
+            const items = group.fields;
+            for (
+              let position = 0, count = items.length;
+              position < count;
+              position++
+            ) {
+              if (!(position in items)) continue;
+              const field = items[position];
+              const index = position;
+              if (field !== fields[index]) return true;
+            }
+            return false;
+          })())
       )
         throwBlueprintError(
           FormErrorCode.VirtualFieldsMismatch,

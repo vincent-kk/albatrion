@@ -23,7 +23,20 @@ export const recognizeEqualityExpression = (
   if (
     paths.length !== 1 ||
     paths.length !== dependencies.length ||
-    paths.some((path, index) => path !== dependencies[index])
+    (() => {
+      const items = paths;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const path = items[position];
+        const index = position;
+        if (path !== dependencies[index]) return true;
+      }
+      return false;
+    })()
   )
     return;
   const tokens = scanEqualityTokens(substituted);

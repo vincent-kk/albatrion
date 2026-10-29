@@ -52,7 +52,15 @@ export const FieldInputStringEnum = ({
     defaultValue === undefined
       ? ''
       : defaultValue !== null &&
-          !enumOptions.some((option) => option.value === '' + defaultValue)
+          !(() => {
+            const items = enumOptions;
+            for (let index = 0, count = items.length; index < count; index++) {
+              if (!(index in items)) continue;
+              const option = items[index];
+              if (option.value === '' + defaultValue) return true;
+            }
+            return false;
+          })()
         ? '' + defaultValue
         : undefined;
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {

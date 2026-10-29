@@ -59,7 +59,15 @@ export const readReferenceOnlySchemaPaths = (
     const rightKeys = Object.keys(right);
     if (
       leftKeys.length !== rightKeys.length ||
-      leftKeys.some((key) => !hasOwnProperty(right, key))
+      (() => {
+        const items = leftKeys;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const key = items[index];
+          if (!hasOwnProperty(right, key)) return true;
+        }
+        return false;
+      })()
     )
       return NO_PATHS;
     for (let index = leftKeys.length - 1; index >= 0; index -= 1) {

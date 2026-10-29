@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -38,17 +40,30 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     node.runtime.blueprint,
   );
   if (!table) return;
-  const watchedPaths = table.watchedNames.map((name) =>
+  const watchedPaths = mapArray(table.watchedNames, (name) =>
     appendSegment(node.path, name),
   );
-  if (watchedPaths.some((path) => context.dirtyPaths.has(path))) return;
+  if (
+    (() => {
+      const items = watchedPaths;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const path = items[index];
+        if (context.dirtyPaths.has(path)) return true;
+      }
+      return false;
+    })()
+  )
+    return;
   (context.gateSelectionRounds ??= new Map()).set(node, {
     round,
     table,
     values: new Map(),
     watchedPaths,
     stableSchemaPaths: table.stableSchemaNames.length
-      ? table.stableSchemaNames.map((name) => appendSegment(node.path, name))
+      ? mapArray(table.stableSchemaNames, (name) =>
+          appendSegment(node.path, name),
+        )
       : NO_SCHEMA_PATHS,
     active: true,
   });

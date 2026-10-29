@@ -1,3 +1,5 @@
+import { filter as filterArray } from '@winglet/common-utils/array';
+
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
 
@@ -34,27 +36,97 @@ export class HostStaticPartition {
     }
     const staticEntries = ambiguous
       ? []
-      : host.childEntries.filter(
+      : filterArray(
+          host.childEntries,
           (entry) =>
             entry.declarations.length > 0 &&
-            entry.declarations.every(
-              (declaration) => !declaration.gates.length,
-            ) &&
-            entry.node.declarations.every(
-              (declaration) => !declaration.gates.length,
-            ),
+            (() => {
+              const items = entry.declarations;
+              for (
+                let index = 0, count = items.length;
+                index < count;
+                index++
+              ) {
+                if (!(index in items)) continue;
+                const declaration = items[index];
+                if (declaration.gates.length) return false;
+              }
+              return true;
+            })() &&
+            (() => {
+              const items = entry.node.declarations;
+              for (
+                let index = 0, count = items.length;
+                index < count;
+                index++
+              ) {
+                if (!(index in items)) continue;
+                const declaration = items[index];
+                if (declaration.gates.length) return false;
+              }
+              return true;
+            })(),
         );
     const partition = {
-      hasGatedOverlays: host.childEntries.some((entry) => {
-        const declarations = entry.node.declarations;
-        return (
-          declarations.some((declaration) => declaration.gates.length === 0) &&
-          declarations.some((declaration) => declaration.gates.length > 0)
-        );
-      }),
+      hasGatedOverlays: (() => {
+        const values = host.childEntries;
+        iterate: for (
+          let position = 0, limit = values.length;
+          position < limit;
+          position++
+        ) {
+          if (!(position in values)) continue;
+          const item = values[position];
+          const entry = item;
+          {
+            const declarations = entry.node.declarations;
+            {
+              if (
+                (() => {
+                  const items = declarations;
+                  for (
+                    let index = 0, count = items.length;
+                    index < count;
+                    index++
+                  ) {
+                    if (!(index in items)) continue;
+                    const declaration = items[index];
+                    if (declaration.gates.length === 0) return true;
+                  }
+                  return false;
+                })() &&
+                (() => {
+                  const items = declarations;
+                  for (
+                    let index = 0, count = items.length;
+                    index < count;
+                    index++
+                  ) {
+                    if (!(index in items)) continue;
+                    const declaration = items[index];
+                    if (declaration.gates.length > 0) return true;
+                  }
+                  return false;
+                })()
+              )
+                return true;
+              continue iterate;
+            }
+          }
+        }
+        return false;
+      })(),
       gated:
         staticEntries.length !== host.childEntries.length ||
-        host.declarations.some((declaration) => declaration.gates.length > 0),
+        (() => {
+          const items = host.declarations;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const declaration = items[index];
+            if (declaration.gates.length > 0) return true;
+          }
+          return false;
+        })(),
       staticEntries,
     };
     getHostDerived<'staticPartition', Partition>(host).staticPartition =

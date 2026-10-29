@@ -115,19 +115,28 @@ export const collectBlueprintWarnings = (
           ? tag.schemaType
           : [tag.schemaType];
         if (
-          descriptor.values.some((value) =>
-            value === null
-              ? !tag.nullable
-              : !allowed.includes(
-                  isArray(value)
-                    ? 'array'
-                    : typeof value === 'number' &&
-                        Number.isInteger(value) &&
-                        allowed.includes('integer')
-                      ? 'integer'
-                      : typeof value,
-                ),
-          )
+          (() => {
+            const items = descriptor.values;
+            for (let index = 0, count = items.length; index < count; index++) {
+              if (!(index in items)) continue;
+              const value = items[index];
+              if (
+                value === null
+                  ? !tag.nullable
+                  : !allowed.includes(
+                      isArray(value)
+                        ? 'array'
+                        : typeof value === 'number' &&
+                            Number.isInteger(value) &&
+                            allowed.includes('integer')
+                          ? 'integer'
+                          : typeof value,
+                    )
+              )
+                return true;
+            }
+            return false;
+          })()
         )
           emit({
             code: FormWarningCode.DiscriminatorBranchUnreachable,

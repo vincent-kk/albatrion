@@ -24,18 +24,43 @@ export const FieldInputUnion = (props: FieldInputProps) => {
       : type === undefined
         ? authored
         : [type];
-    return authored.filter((kind) => effective.includes(kind));
+    return (() => {
+      const items = authored;
+      const result: Array<(typeof items)[number]> = [];
+      iterate: for (
+        let index = 0, count = items.length;
+        index < count;
+        index++
+      ) {
+        if (!(index in items)) continue;
+        const item = items[index];
+        const kind = item;
+        {
+          if (effective.includes(kind)) result.push(item);
+          continue iterate;
+        }
+      }
+      return result;
+    })();
   }, [schemaType, jsonSchema]);
   const effectiveKey = effectiveTypes.join(',');
   const editable =
     !display.structured &&
-    effectiveTypes.some(
-      (kind) =>
-        kind === 'string' ||
-        kind === 'number' ||
-        kind === 'integer' ||
-        kind === 'boolean',
-    );
+    (() => {
+      const items = effectiveTypes;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const kind = items[index];
+        if (
+          kind === 'string' ||
+          kind === 'number' ||
+          kind === 'integer' ||
+          kind === 'boolean'
+        )
+          return true;
+      }
+      return false;
+    })();
   const [text, setText] = useState(display.text);
   const draft = useRef<string | undefined>(undefined);
   const composing = useRef(false);

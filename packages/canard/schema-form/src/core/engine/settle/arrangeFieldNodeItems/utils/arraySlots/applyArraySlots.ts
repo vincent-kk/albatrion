@@ -93,21 +93,45 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       from !== undefined &&
       candidateMoves &&
       (candidates.length > 1 ||
-        candidates.some(
-          (candidate) => candidate.node.hasCandidateDescendants,
-        ) ||
+        (() => {
+          const items = candidates;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const candidate = items[index];
+            if (candidate.node.hasCandidateDescendants) return true;
+          }
+          return false;
+        })() ||
         (sourceCandidates !== undefined &&
           (sourceCandidates.length > 1 ||
-            sourceCandidates.some(
-              (candidate) => candidate.node.hasCandidateDescendants,
-            ))));
+            (() => {
+              const items = sourceCandidates;
+              for (
+                let index = 0, count = items.length;
+                index < count;
+                index++
+              ) {
+                if (!(index in items)) continue;
+                const candidate = items[index];
+                if (candidate.node.hasCandidateDescendants) return true;
+              }
+              return false;
+            })())));
     if (from !== undefined && moved) destinations.set(from, index);
     const entry = candidates[0];
     if (!entry && !moved) continue;
     const old = from === undefined ? undefined : oldItems[String(from)];
     if (
       old &&
-      candidates.some((candidate) => old.blueprintNode === candidate.node)
+      (() => {
+        const items = candidates;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const candidate = items[index];
+          if (old.blueprintNode === candidate.node) return true;
+        }
+        return false;
+      })()
     ) {
       nextItems[String(index)] = old;
       reused.add(old);

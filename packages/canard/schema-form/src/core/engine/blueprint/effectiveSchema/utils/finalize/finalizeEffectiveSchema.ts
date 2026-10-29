@@ -31,13 +31,40 @@ export const finalizeEffectiveSchema = (
       ownedSchemaValues.add(clauses);
     }
   }
-  const types = state.allowedTypes?.filter((type) => type !== 'null');
+  const types = (() => {
+    const items = state.allowedTypes;
+    if (items == null) return undefined;
+    const result: Array<(typeof items)[number]> = [];
+    iterate: for (let index = 0, count = items.length; index < count; index++) {
+      if (!(index in items)) continue;
+      const item = items[index];
+      const type = item;
+      {
+        if (type !== 'null') result.push(item);
+        continue iterate;
+      }
+    }
+    return result;
+  })();
   const staticTypes = isArray(node.schemaType)
     ? node.schemaType
     : [node.schemaType];
   const unchanged =
     types?.length === staticTypes.length &&
-    types.every((type, index) => type === staticTypes[index]);
+    (() => {
+      const items = types;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const type = items[position];
+        const index = position;
+        if (!(type === staticTypes[index])) return false;
+      }
+      return true;
+    })();
   schema.type =
     node.kind === 'virtual'
       ? 'virtual'

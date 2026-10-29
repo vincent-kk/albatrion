@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { find } from '../../../navigation';
@@ -20,10 +21,8 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   const writes = runtime.batchWrites ?? [];
   runtime.batchWrites = undefined;
   if (!writes.length) return;
-  const option = writes.reduce(
-    (flags, write) => flags | write.option,
-    WriteOption.None,
-  );
+  let option = WriteOption.None;
+  for (const write of writes) option |= write.option;
   const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
   if (!target) return;
   const input =
@@ -32,12 +31,29 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     writes.length === 1 &&
     (option & WriteOption.Merge) === WriteOption.Merge &&
     !(option & WriteOption.Replace);
-  const source = writes.every((write) => write.source === 'input')
+  const source = (() => {
+    const items = writes;
+    for (let index = 0, count = items.length; index < count; index++) {
+      if (!(index in items)) continue;
+      const write = items[index];
+      if (!(write.source === 'input')) return false;
+    }
+    return true;
+  })()
     ? 'input'
-    : writes.every((write) => write.source === 'automatic')
+    : (() => {
+          const items = writes;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const write = items[index];
+            if (!(write.source === 'automatic')) return false;
+          }
+          return true;
+        })()
       ? 'automatic'
       : undefined;
-  const origins = writes.map(
+  const origins = mapArray(
+    writes,
     (
       write,
     ): {

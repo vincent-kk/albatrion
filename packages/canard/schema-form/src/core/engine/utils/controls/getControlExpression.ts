@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import type { ControlKey } from '../../types/controls';
 import { getBlueprintDerived } from '../cache/derivedRecords';
 
@@ -30,7 +32,7 @@ export const getControlExpression = <
   >(blueprint).controlExpressions;
   if (!expressions) {
     expressions = new Map(
-      blueprint.expressions.map((expression, index) => [
+      mapArray(blueprint.expressions, (expression, index) => [
         JSON.stringify([
           expression.declarationId,
           expression.schemaPath,

@@ -33,7 +33,15 @@ export const collectIfGateReadNames = (
     if (key === 'allOf' || key === 'anyOf' || key === 'oneOf') {
       if (
         !isArray(value) ||
-        !value.every((entry) => collectIfGateReadNames(entry, names, property))
+        !(() => {
+          const items = value;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const entry = items[index];
+            if (!collectIfGateReadNames(entry, names, property)) return false;
+          }
+          return true;
+        })()
       )
         return false;
     } else if (key === 'not') {
@@ -49,7 +57,18 @@ export const collectIfGateReadNames = (
         if (!property && names.indexOf(name) === -1) names.push(name);
       }
     } else if (key === 'required') {
-      if (!isArray(value) || value.some((name) => typeof name !== 'string'))
+      if (
+        !isArray(value) ||
+        (() => {
+          const items = value;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const name = items[index];
+            if (typeof name !== 'string') return true;
+          }
+          return false;
+        })()
+      )
         return false;
       if (!property)
         for (const name of value)
@@ -59,7 +78,15 @@ export const collectIfGateReadNames = (
       for (const [name, required] of Object.entries(value)) {
         if (
           !isArray(required) ||
-          required.some((entry) => typeof entry !== 'string')
+          (() => {
+            const items = required;
+            for (let index = 0, count = items.length; index < count; index++) {
+              if (!(index in items)) continue;
+              const entry = items[index];
+              if (typeof entry !== 'string') return true;
+            }
+            return false;
+          })()
         )
           return false;
         if (!property) {

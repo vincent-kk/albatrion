@@ -22,8 +22,24 @@ export const isStableDiscriminatorEntry = (
     type === 'array' ||
     declarations.length < 2 ||
     entry.node.declarations.length !== declarations.length ||
-    !declarations.some((declaration) => declaration.gates.length === 0) ||
-    !declarations.some((declaration) => declaration.gates.length > 0)
+    !(() => {
+      const items = declarations;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const declaration = items[index];
+        if (declaration.gates.length === 0) return true;
+      }
+      return false;
+    })() ||
+    !(() => {
+      const items = declarations;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const declaration = items[index];
+        if (declaration.gates.length > 0) return true;
+      }
+      return false;
+    })()
   )
     return false;
   for (let index = 0; index < declarations.length; index++) {
@@ -50,13 +66,23 @@ export const isStableDiscriminatorEntry = (
         gate.hostPath !== host.path ||
         gate.appliesWhen?.length ||
         gate.condition.propertyName !== entry.name ||
-        !gate.condition.values.every(
-          (value) =>
-            value === null ||
-            typeof value === 'string' ||
-            typeof value === 'boolean' ||
-            (typeof value === 'number' && Number.isFinite(value)),
-        )
+        !(() => {
+          const items = gate.condition.values;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const value = items[index];
+            if (
+              !(
+                value === null ||
+                typeof value === 'string' ||
+                typeof value === 'boolean' ||
+                (typeof value === 'number' && Number.isFinite(value))
+              )
+            )
+              return false;
+          }
+          return true;
+        })()
       )
         return false;
   }

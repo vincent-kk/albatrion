@@ -14,11 +14,19 @@ export const hasKeepFields = (controls: unknown): boolean => {
   const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
   return (
     isArray(fields) &&
-    fields.some(
-      (field: unknown) =>
-        field !== null &&
-        typeof field === 'object' &&
-        isKeepControls(Reflect.get(field, SCHEMA_GROUP.controls)),
-    )
+    (() => {
+      const items = fields;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const field: unknown = items[index];
+        if (
+          field !== null &&
+          typeof field === 'object' &&
+          isKeepControls(Reflect.get(field, SCHEMA_GROUP.controls))
+        )
+          return true;
+      }
+      return false;
+    })()
   );
 };

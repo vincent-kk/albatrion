@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import {
   JSONPointer as $,
   readPointerSegment,
@@ -39,7 +41,7 @@ export class PathStoreIndex {
   /** Add a new key using decoded paths; ancestors share cached prefix objects. */
   add(key: string, paths: readonly string[]): void {
     if (this.pathsByKey.has(key)) return;
-    const own = paths.map((path) => this.getPrefix(path));
+    const own = mapArray(paths, (path) => this.getPrefix(path));
     this.pathsByKey.set(key, own);
     for (const prefix of own) {
       prefix.exact.add(key);

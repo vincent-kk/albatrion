@@ -19,12 +19,23 @@ export const isSameSchema = (left: unknown, right: unknown): boolean => {
   const keys = Object.keys(left);
   const otherKeys = Object.keys(right);
   if (keys.length !== otherKeys.length) return false;
-  return keys.every(
-    (key, index) =>
-      key === otherKeys[index] &&
-      isSameSchema(
-        (left as Record<string, unknown>)[key],
-        (right as Record<string, unknown>)[key],
-      ),
-  );
+  return (() => {
+    const items = keys;
+    for (let position = 0, count = items.length; position < count; position++) {
+      if (!(position in items)) continue;
+      const key = items[position];
+      const index = position;
+      if (
+        !(
+          key === otherKeys[index] &&
+          isSameSchema(
+            (left as Record<string, unknown>)[key],
+            (right as Record<string, unknown>)[key],
+          )
+        )
+      )
+        return false;
+    }
+    return true;
+  })();
 };

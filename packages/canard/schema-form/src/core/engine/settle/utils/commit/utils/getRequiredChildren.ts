@@ -34,12 +34,31 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
       children.push(child);
   if (
     children.length > 1 &&
-    children.some((child) => {
-      const first = child.name.charCodeAt(0);
-      if (first < 48 || first > 57) return false;
-      const index = Number(child.name) >>> 0;
-      return index !== 0xffffffff && String(index) === child.name;
-    })
+    (() => {
+      const items = children;
+      iterate: for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const item = items[position];
+        const child = item;
+        {
+          const first = child.name.charCodeAt(0);
+          if (first < 48 || first > 57) {
+            continue iterate;
+          }
+          const index = Number(child.name) >>> 0;
+          {
+            if (index !== 0xffffffff && String(index) === child.name)
+              return true;
+            continue iterate;
+          }
+        }
+      }
+      return false;
+    })()
   )
     children.sort((left, right) => {
       const leftIndex = Number(left.name) >>> 0;

@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -38,17 +39,26 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
         }
       if (!own || declaration.scope === 'node') continue;
       const children = [
-        ...node.childEntries.map((entry) => entry.node),
+        ...mapArray(node.childEntries, (entry) => entry.node),
         ...(node.itemCandidates ?? (node.item ? [node.item] : [])),
         ...(node.prefixItemCandidates?.flat() ?? node.prefixItems ?? []),
       ];
       for (const child of children)
         if (
-          child.declarations.some((candidate) =>
-            getFragmentOwnerPaths(candidate.schemaPath).includes(
-              declaration.schemaPath,
-            ),
-          )
+          (() => {
+            const items = child.declarations;
+            for (let index = 0, count = items.length; index < count; index++) {
+              if (!(index in items)) continue;
+              const candidate = items[index];
+              if (
+                getFragmentOwnerPaths(candidate.schemaPath).includes(
+                  declaration.schemaPath,
+                )
+              )
+                return true;
+            }
+            return false;
+          })()
         )
           mark(child);
     }

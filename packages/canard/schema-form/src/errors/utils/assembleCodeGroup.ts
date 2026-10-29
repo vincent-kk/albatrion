@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 /**
  * Assemble a group's codes without widening its keys or literal values.
  * @param group - Group preceding the dot separator.
@@ -12,7 +14,7 @@ export const assembleCodeGroup = <
   specifics: Specifics,
 ) =>
   Object.fromEntries(
-    Object.entries(specifics).map(([key, specific]) => [
+    mapArray(Object.entries(specifics), ([key, specific]) => [
       key,
       `${group}.${specific}`,
     ]),

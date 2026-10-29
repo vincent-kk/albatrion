@@ -48,11 +48,29 @@ export const FieldInputStringCheckbox = ({
       (option) => option.value === value,
     )?.rawValue;
     if (rawValue === undefined) return;
-    if (checked)
-      onChange((prev) => [...(isArray(prev) ? prev : []), rawValue]);
+    if (checked) onChange((prev) => [...(isArray(prev) ? prev : []), rawValue]);
     else
       onChange((prev) =>
-        isArray(prev) ? prev.filter((option) => option !== rawValue) : [],
+        isArray(prev)
+          ? (() => {
+              const items = prev;
+              const result: Array<(typeof items)[number]> = [];
+              iterate: for (
+                let index = 0, count = items.length;
+                index < count;
+                index++
+              ) {
+                if (!(index in items)) continue;
+                const item = items[index];
+                const option = item;
+                {
+                  if (option !== rawValue) result.push(item);
+                  continue iterate;
+                }
+              }
+              return result;
+            })()
+          : [],
       );
   });
   return (

@@ -63,12 +63,22 @@ export const updateOutput = <Self extends FieldNodeRecord<Self>>(
       typeof previousLocal === 'object' &&
       assembled !== null &&
       typeof assembled === 'object' &&
-      recalculated?.every((child) =>
-        sameValue(
-          Reflect.get(previousLocal, child.name),
-          Reflect.get(assembled, child.name),
-        ),
-      )
+      (() => {
+        const items = recalculated;
+        if (items == null) return undefined;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const child = items[index];
+          if (
+            !sameValue(
+              Reflect.get(previousLocal, child.name),
+              Reflect.get(assembled, child.name),
+            )
+          )
+            return false;
+        }
+        return true;
+      })()
     : sameValue(node.local, assembled);
   let local = same ? node.local : assembled;
   const baseline = node.deliveryPreviousLocal;

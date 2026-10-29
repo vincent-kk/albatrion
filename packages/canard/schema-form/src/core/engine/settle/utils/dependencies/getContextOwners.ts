@@ -37,17 +37,38 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
     for (const declaration of node.declarations)
       if (
         (ids.indexOf(declaration.id) !== -1 ||
-          rules.byDeclaration
-            .get(declaration.id)
-            ?.some(
-              (rule) =>
+          (() => {
+            const values = rules.byDeclaration.get(declaration.id);
+            if (values == null) return undefined;
+            for (
+              let position = 0, limit = values.length;
+              position < limit;
+              position++
+            ) {
+              if (!(position in values)) continue;
+              const rule = values[position];
+              if (
                 rule.kind === 'derived' &&
                 (rule.targetName !== undefined || rule.targetItems) &&
-                rule.watchDependencies.some(
-                  (path) =>
-                    readPointerSegment(path, 0) === PointerOperator.Context,
-                ),
-            )) &&
+                (() => {
+                  const items = rule.watchDependencies;
+                  for (
+                    let index = 0, count = items.length;
+                    index < count;
+                    index++
+                  ) {
+                    if (!(index in items)) continue;
+                    const path = items[index];
+                    if (readPointerSegment(path, 0) === PointerOperator.Context)
+                      return true;
+                  }
+                  return false;
+                })()
+              )
+                return true;
+            }
+            return false;
+          })()) &&
         owners.indexOf(declaration.path) === -1
       )
         owners.push(declaration.path);

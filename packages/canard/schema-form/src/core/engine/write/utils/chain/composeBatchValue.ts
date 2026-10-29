@@ -22,7 +22,12 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   for (const write of writes) {
     const names = parsePointerSegments(write.node.path);
     if (
-      !names.every((segment): segment is string => typeof segment === 'string')
+      !((values: typeof names): values is readonly string[] => {
+        for (let index = 0, length = values.length; index < length; index++)
+          if (index in values && typeof values[index] !== 'string')
+            return false;
+        return true;
+      })(names)
     )
       throw new TypeError('Expected a named node path');
     const fields =

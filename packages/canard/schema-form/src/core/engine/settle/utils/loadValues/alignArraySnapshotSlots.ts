@@ -65,9 +65,12 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
     }
     const segments = parsePointerSegments(host.path);
     if (
-      !segments.every(
-        (segment): segment is string => typeof segment === 'string',
-      )
+      !((values: typeof segments): values is readonly string[] => {
+        for (let index = 0, length = values.length; index < length; index++)
+          if (index in values && typeof values[index] !== 'string')
+            return false;
+        return true;
+      })(segments)
     )
       continue;
     let probe: unknown = draft;

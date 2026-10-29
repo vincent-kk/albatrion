@@ -1,7 +1,9 @@
-import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+import { map as mapArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { FormErrorCode,SchemaFormError } from '../../../../../../errors';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
+import { FormErrorCode, SchemaFormError } from '../../../../../../errors';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { mergeEffectiveSchema } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
@@ -166,7 +168,11 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
               gate,
               context,
               node,
-              gate.schemaPath === appendSegment(appendSegment(declaration.schemaPath, 'controls'), 'active')
+              gate.schemaPath ===
+                appendSegment(
+                  appendSegment(declaration.schemaPath, 'controls'),
+                  'active',
+                )
                 ? entry.name
                 : undefined,
             )
@@ -181,7 +187,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         ids?.push(declaration.id);
       } else {
         active ??= entry.declarations.slice(0, index);
-        ids ??= active.map((kept) => kept.id);
+        ids ??= mapArray(active, (kept) => kept.id);
         if (context.gateThrowVersion !== version) threw = true;
       }
     }

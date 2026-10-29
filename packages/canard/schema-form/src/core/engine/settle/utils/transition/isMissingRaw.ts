@@ -1,4 +1,5 @@
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { hasSlotOverlaySource } from '../slots/hasSlotOverlaySource';
@@ -26,5 +27,13 @@ export const isMissingRaw = <Self extends FieldNodeRecord<Self>>(
       !context.filledNodes.has(pending)
     )
       return false;
-  return (node.children ?? []).every((child) => isMissingRaw(child, context));
+  return (() => {
+    const items = node.children ?? [];
+    for (let index = 0, count = items.length; index < count; index++) {
+      if (!(index in items)) continue;
+      const child = items[index];
+      if (!isMissingRaw(child, context)) return false;
+    }
+    return true;
+  })();
 };

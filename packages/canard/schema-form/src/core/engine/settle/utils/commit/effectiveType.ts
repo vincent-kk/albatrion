@@ -15,7 +15,16 @@ export const effectiveType = <Self extends FieldNodeRecord<Self>>(
   const candidate =
     typeof schema === 'object' && schema !== null ? schema.type : undefined;
   if (typeof candidate === 'string' && isTypeName(candidate)) return candidate;
-  if (isArray(candidate) && candidate.every(isTypeName)) return candidate;
+  if (
+    isArray(candidate) &&
+    ((values: typeof candidate): values is SchemaTypeName[] => {
+      for (let index = 0, length = values.length; index < length; index++)
+        if (index in values && !isTypeName(values[index])) return false;
+      return true;
+    })(candidate)
+  )
+    return candidate;
+
   return node.schemaType;
 };
 

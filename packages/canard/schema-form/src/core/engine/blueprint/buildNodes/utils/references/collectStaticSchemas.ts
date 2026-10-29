@@ -45,19 +45,34 @@ export const collectStaticSchemas = (
     );
   }
   if (isArray(schema.allOf))
-    schema.allOf.forEach((part, index) => {
-      const controls =
-        typeof part === 'object' && part !== null ? part.controls : undefined;
-      if (controls?.active === undefined)
-        result.push(
-          ...collectStaticSchemas(
-            context,
-            part,
-            appendSegment(appendSegment(schemaPath, 'allOf'), index),
-            stack,
-            cycle,
-          ),
-        );
-    });
+    (() => {
+      const items = schema.allOf;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const item = items[position];
+        const part = item;
+        const index = position;
+        {
+          const controls =
+            typeof part === 'object' && part !== null
+              ? part.controls
+              : undefined;
+          if (controls?.active === undefined)
+            result.push(
+              ...collectStaticSchemas(
+                context,
+                part,
+                appendSegment(appendSegment(schemaPath, 'allOf'), index),
+                stack,
+                cycle,
+              ),
+            );
+        }
+      }
+    })();
   return result;
 };

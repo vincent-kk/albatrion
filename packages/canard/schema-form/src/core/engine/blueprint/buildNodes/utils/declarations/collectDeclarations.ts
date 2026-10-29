@@ -64,11 +64,19 @@ export const collectDeclarations = (
   const gates: BlueprintGate[] = input.gates.slice();
   if (
     schema.controls?.active !== undefined &&
-    !gates.some(
-      (gate) =>
-        gate.schemaPath ===
-        appendSegment(appendSegment(input.schemaPath, 'controls'), 'active'),
-    )
+    !(() => {
+      const items = gates;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const gate = items[index];
+        if (
+          gate.schemaPath ===
+          appendSegment(appendSegment(input.schemaPath, 'controls'), 'active')
+        )
+          return true;
+      }
+      return false;
+    })()
   )
     gates.push(
       createBlueprintGate({

@@ -37,9 +37,15 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   );
   context.entryApi = 'setContext';
   const owners = getContextOwners(root.runtime.blueprint);
-  context.contextOwners = owners.some((owner) =>
-    hasPointerOperator(owner, PointerOperator.Wildcard),
-  )
+  context.contextOwners = (() => {
+    const items = owners;
+    for (let index = 0, count = items.length; index < count; index++) {
+      if (!(index in items)) continue;
+      const owner = items[index];
+      if (hasPointerOperator(owner, PointerOperator.Wildcard)) return true;
+    }
+    return false;
+  })()
     ? owners.flatMap((owner) => expandTemplatePaths(root, owner))
     : owners;
   root.runtime.context = contextValue;

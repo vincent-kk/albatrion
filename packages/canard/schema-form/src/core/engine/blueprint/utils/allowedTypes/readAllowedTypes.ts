@@ -57,9 +57,20 @@ function isAllowedTypeList(
 ): values is readonly SchemaTypeName[] {
   return (
     !!values.length &&
-    !values.some(
-      (value, index) =>
-        !TYPE_NAMES.includes(value) || values.indexOf(value) !== index,
-    )
+    !(() => {
+      const items = values;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const value = items[position];
+        const index = position;
+        if (!TYPE_NAMES.includes(value) || values.indexOf(value) !== index)
+          return true;
+      }
+      return false;
+    })()
   );
 }

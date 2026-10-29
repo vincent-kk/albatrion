@@ -1,3 +1,8 @@
+import {
+  filter as filterArray,
+  map as mapArray,
+} from '@winglet/common-utils/array';
+
 import { FormErrorCode } from '../../../../../../errors';
 import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -24,13 +29,20 @@ export const resolveNodeTypes = (
 }[] => {
   const fixed = context.capabilities.branchless
     ? declarations
-    : declarations.filter(
+    : filterArray(
+        declarations,
         (declaration) =>
           declaration.context === 'conjunction' && !declaration.gates.length,
       );
-  const staticOwner = fixed.some(
-    (declaration) => declaration.role === 'declaration',
-  );
+  const staticOwner = (() => {
+    const items = fixed;
+    for (let index = 0, count = items.length; index < count; index++) {
+      if (!(index in items)) continue;
+      const declaration = items[index];
+      if (declaration.role === 'declaration') return true;
+    }
+    return false;
+  })();
   if (staticOwner) {
     let allowed: readonly SchemaTypeName[] | undefined;
     for (const declaration of fixed) {
@@ -46,7 +58,7 @@ export const resolveNodeTypes = (
         return throwBlueprintError(
           FormErrorCode.AllOfTypeRedefinition,
           declaration.schemaPath,
-          { declarations: fixed.map((item) => item.schemaPath) },
+          { declarations: mapArray(fixed, (item) => item.schemaPath) },
           context.options,
         );
     }
@@ -87,7 +99,8 @@ export const resolveNodeTypes = (
     { allowed: readonly SchemaTypeName[]; declarations: PropertyDeclaration[] }
   >();
   let ungatedMask: number | undefined;
-  for (const declaration of declarations.filter(
+  for (const declaration of filterArray(
+    declarations,
     (item) => item.role === 'declaration',
   )) {
     const allowed = inferAllowedTypes(
@@ -112,16 +125,23 @@ export const resolveNodeTypes = (
       group.declarations.push(declaration);
     } else groups.set(mask, { allowed, declarations: [declaration] });
   }
-  return [...groups.values()].map((group) => ({
+  return mapArray([...groups.values()], (group) => ({
     ...group,
-    declarations: declarations.filter(
+    declarations: filterArray(
+      declarations,
       (declaration) =>
         group.declarations.includes(declaration) ||
         (declaration.role === 'overlay' &&
-          group.declarations.some(
-            (owner) =>
-              context.declarationOwners?.get(declaration.id) === owner.id,
-          )),
+          (() => {
+            const items = group.declarations;
+            for (let index = 0, count = items.length; index < count; index++) {
+              if (!(index in items)) continue;
+              const owner = items[index];
+              if (context.declarationOwners?.get(declaration.id) === owner.id)
+                return true;
+            }
+            return false;
+          })()),
     ),
   }));
 };

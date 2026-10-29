@@ -15,11 +15,26 @@ export const publishPreparedSelection = <Self extends FieldNodeRecord<Self>>(
   const names = Object.keys(frame.preparedDynamic!);
   const same =
     names.length === prepared.dynamicNames.length &&
-    names.every(
-      (name, index) =>
-        name === prepared.dynamicNames[index] &&
-        frame.next[name] === prepared.selectedStructure[name],
-    );
+    (() => {
+      const items = names;
+      for (
+        let position = 0, count = items.length;
+        position < count;
+        position++
+      ) {
+        if (!(position in items)) continue;
+        const name = items[position];
+        const index = position;
+        if (
+          !(
+            name === prepared.dynamicNames[index] &&
+            frame.next[name] === prepared.selectedStructure[name]
+          )
+        )
+          return false;
+      }
+      return true;
+    })();
   if (!same) {
     prepared.selectedStructure = Object.assign(
       Object.create(null),

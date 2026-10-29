@@ -71,9 +71,15 @@ const hasRetainableDescendants = (
     return true;
   for (const entry of template.childEntries) {
     if (
-      !entry.declarations.some(
-        (declaration) => declaration.gates.length === 0,
-      ) ||
+      !(() => {
+        const items = entry.declarations;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const declaration = items[index];
+          if (declaration.gates.length === 0) return true;
+        }
+        return false;
+      })() ||
       hasRetainableDescendants(entry.node, visited)
     )
       return true;
@@ -83,9 +89,15 @@ const hasRetainableDescendants = (
     ...(template.item ? [template.item] : []),
   ])
     if (
-      !child.declarations.some(
-        (declaration) => declaration.gates.length === 0,
-      ) ||
+      !(() => {
+        const items = child.declarations;
+        for (let index = 0, count = items.length; index < count; index++) {
+          if (!(index in items)) continue;
+          const declaration = items[index];
+          if (declaration.gates.length === 0) return true;
+        }
+        return false;
+      })() ||
       hasRetainableDescendants(child, visited)
     )
       return true;

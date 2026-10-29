@@ -70,7 +70,19 @@ export const readDiscriminatorBranches = (
           branchTypes,
           readAllowedTypes(part.schema, part.schemaPath, context.options),
         );
-      if (branchTypes?.every((type) => type === 'null')) continue;
+      if (
+        (() => {
+          const items = branchTypes;
+          if (items == null) return undefined;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const type = items[index];
+            if (!(type === 'null')) return false;
+          }
+          return true;
+        })()
+      )
+        continue;
       let values: readonly unknown[] | undefined;
       let mask: number | undefined;
       for (const part of parts) {
@@ -124,9 +136,34 @@ export const readDiscriminatorBranches = (
           context.options,
         );
       if (
-        values.some((value) =>
-          previousValues.some((previous) => equals(previous, value)),
-        )
+        (() => {
+          const collection = values;
+          for (
+            let position = 0, limit = collection.length;
+            position < limit;
+            position++
+          ) {
+            if (!(position in collection)) continue;
+            const value = collection[position];
+            if (
+              (() => {
+                const items = previousValues;
+                for (
+                  let index = 0, count = items.length;
+                  index < count;
+                  index++
+                ) {
+                  if (!(index in items)) continue;
+                  const previous = items[index];
+                  if (equals(previous, value)) return true;
+                }
+                return false;
+              })()
+            )
+              return true;
+          }
+          return false;
+        })()
       )
         return throwBlueprintError(
           FormErrorCode.DiscriminatorMismatch,

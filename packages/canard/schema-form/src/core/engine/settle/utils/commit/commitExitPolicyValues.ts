@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -113,14 +114,26 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
               getCommittedDeclarationKey(child, child.runtime),
             );
           if (
-            !child.blueprintNode.declarations.some(
-              (childDeclaration) =>
-                (!childSelected ||
-                  childSelected.indexOf(childDeclaration.id) !== -1) &&
-                getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
-                  declaration.schemaPath,
-                ) !== -1,
-            )
+            !(() => {
+              const items = child.blueprintNode.declarations;
+              for (
+                let index = 0, count = items.length;
+                index < count;
+                index++
+              ) {
+                if (!(index in items)) continue;
+                const childDeclaration = items[index];
+                if (
+                  (!childSelected ||
+                    childSelected.indexOf(childDeclaration.id) !== -1) &&
+                  getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
+                    declaration.schemaPath,
+                  ) !== -1
+                )
+                  return true;
+              }
+              return false;
+            })()
           )
             continue;
           candidates.add(child);
@@ -180,7 +193,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           'set',
           Boolean(
             expression.evaluate(
-              expression.dependencies.map((dependency) =>
+              mapArray(expression.dependencies, (dependency) =>
                 readStateDependency(
                   context.root,
                   group.host.path,

@@ -32,27 +32,51 @@ export const validateChildTargets = (context: AnalysisContext): void => {
           );
         discriminator = controls.discriminator;
       }
-      controls?.fields?.forEach(
-        (entry: { targets: string[] }, index: number) => {
-          for (const target of entry.targets)
-            if (
-              node.strategy === 'terminal' ||
-              !node.childEntries.some((edge) => edge.name === target)
-            )
-              throwBlueprintError(
-                FormErrorCode.ChildrenTargetNotFound,
-                appendSegment(
+      (() => {
+        const values = controls?.fields;
+        if (values == null) return undefined;
+        for (
+          let position = 0, limit = values.length;
+          position < limit;
+          position++
+        ) {
+          if (!(position in values)) continue;
+          const item = values[position];
+          const entry: { targets: string[] } = item;
+          const index: number = position;
+          {
+            for (const target of entry.targets)
+              if (
+                node.strategy === 'terminal' ||
+                !(() => {
+                  const items = node.childEntries;
+                  for (
+                    let index = 0, count = items.length;
+                    index < count;
+                    index++
+                  ) {
+                    if (!(index in items)) continue;
+                    const edge = items[index];
+                    if (edge.name === target) return true;
+                  }
+                  return false;
+                })()
+              )
+                throwBlueprintError(
+                  FormErrorCode.ChildrenTargetNotFound,
                   appendSegment(
-                    appendSegment(declaration.schemaPath, 'controls'),
-                    'fields',
+                    appendSegment(
+                      appendSegment(declaration.schemaPath, 'controls'),
+                      'fields',
+                    ),
+                    index,
                   ),
-                  index,
-                ),
-                { target },
-                context.options,
-              );
-        },
-      );
+                  { target },
+                  context.options,
+                );
+          }
+        }
+      })();
     }
   }
 };

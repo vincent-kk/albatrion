@@ -47,13 +47,36 @@ class WatchDeliveryIndex {
     const previous = this.pathsByNode.get(node);
     if (
       previous?.length === paths.length &&
-      previous.every((entry, index) => entry.path === paths[index])
+      (() => {
+        const items = previous;
+        for (
+          let position = 0, count = items.length;
+          position < count;
+          position++
+        ) {
+          if (!(position in items)) continue;
+          const entry = items[position];
+          const index = position;
+          if (!(entry.path === paths[index])) return false;
+        }
+        return true;
+      })()
     )
       return;
     this.remove(node);
     const unique: WatchPathMembership[] = [];
     for (const path of paths)
-      if (!unique.some((entry) => entry.path === path))
+      if (
+        !(() => {
+          const items = unique;
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const entry = items[index];
+            if (entry.path === path) return true;
+          }
+          return false;
+        })()
+      )
         unique.push({
           path,
           segments: getCachedPointerSegments(this.runtime, path),

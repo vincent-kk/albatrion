@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
@@ -51,10 +52,18 @@ export const inferAllowedTypes = (
   );
   if (
     (isBranch && cycle?.found) ||
-    parts.some((part) => visiting.includes(part.schemaPath))
+    (() => {
+      const items = parts;
+      for (let index = 0, count = items.length; index < count; index++) {
+        if (!(index in items)) continue;
+        const part = items[index];
+        if (visiting.includes(part.schemaPath)) return true;
+      }
+      return false;
+    })()
   )
     return NO_TYPES;
-  const stack = [...visiting, ...parts.map((part) => part.schemaPath)];
+  const stack = [...visiting, ...mapArray(parts, (part) => part.schemaPath)];
   let allowed: readonly SchemaTypeName[] | undefined;
   for (const part of parts) {
     allowed = intersectAllowedTypes(
@@ -79,36 +88,53 @@ export const inferAllowedTypes = (
       if (typeof part.schema === 'boolean') continue;
       const branches = part.schema[keyword];
       if (!isArray(branches)) continue;
-      branches.forEach((branch, index) => {
-        const path = appendSegment(
-          appendSegment(part.schemaPath, keyword),
-          index,
-        );
-        if (
-          branch?.controls?.active !== undefined ||
-          context.discriminatorBranches?.has(path)
-        )
-          return;
-        hasKeywordBranch = true;
-        const types = inferAllowedTypes(
-          context,
-          branch,
-          path,
-          true,
-          stack,
-          true,
-        );
-        if (!types)
-          return throwBlueprintError(
-            FormErrorCode.UnknownJsonSchema,
-            path,
-            {
-              guidance: 'Specify type explicitly for an unconstrained branch.',
-            },
-            context.options,
-          );
-        if (types.length) groups.push(types);
-      });
+      (() => {
+        const items = branches;
+        iterate: for (
+          let position = 0, count = items.length;
+          position < count;
+          position++
+        ) {
+          if (!(position in items)) continue;
+          const item = items[position];
+          const branch = item;
+          const index = position;
+          {
+            const path = appendSegment(
+              appendSegment(part.schemaPath, keyword),
+              index,
+            );
+            if (
+              branch?.controls?.active !== undefined ||
+              context.discriminatorBranches?.has(path)
+            ) {
+              continue iterate;
+            }
+            hasKeywordBranch = true;
+            const types = inferAllowedTypes(
+              context,
+              branch,
+              path,
+              true,
+              stack,
+              true,
+            );
+            if (!types) {
+              void throwBlueprintError(
+                FormErrorCode.UnknownJsonSchema,
+                path,
+                {
+                  guidance:
+                    'Specify type explicitly for an unconstrained branch.',
+                },
+                context.options,
+              );
+              continue iterate;
+            }
+            if (types.length) groups.push(types);
+          }
+        }
+      })();
     }
     if (hasKeywordBranch) {
       hasUngatedBranch = true;

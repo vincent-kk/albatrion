@@ -21,7 +21,17 @@ export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
     for (const host of hosts) {
       if (host.detached || host.raw === undefined || isPlain(host.raw))
         continue;
-      if (!(host.children ?? []).some((child) => child.emit !== undefined))
+      if (
+        !(() => {
+          const items = host.children ?? [];
+          for (let index = 0, count = items.length; index < count; index++) {
+            if (!(index in items)) continue;
+            const child = items[index];
+            if (child.emit !== undefined) return true;
+          }
+          return false;
+        })()
+      )
         continue;
       host.raw = undefined;
       context.changedRaw.add(host.path);
