@@ -22,8 +22,8 @@ export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   inputPath: string,
 ): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
-  // Batch replacement paths retain earlier whole writes after later merges.
   if (!origins) return context.kind;
+  // Batch replacement paths retain earlier whole writes after later merges.
   let hasMatch: Optional<boolean> = undefined;
   {
     const items = context.replacePaths;
