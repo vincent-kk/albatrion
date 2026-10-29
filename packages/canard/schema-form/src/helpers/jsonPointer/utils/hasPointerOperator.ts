@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import { PointerOperator } from '../constants/PointerOperator';
 
 /**
@@ -12,21 +13,21 @@ export const hasPointerOperator = (
 ): boolean => {
   const token =
     operator === PointerOperator.Wildcard
-      ? '*'
+      ? $.Wildcard
       : operator === PointerOperator.Parent
-        ? '..'
+        ? $.Parent
         : operator === PointerOperator.Current
-          ? '.'
+          ? $.Current
           : operator === PointerOperator.Context
-            ? '@'
+            ? $.Context
             : undefined;
   if (token === undefined) return false;
   let start = path.indexOf(token);
   while (start >= 0) {
     const end = start + token.length;
     if (
-      (start === 0 || path[start - 1] === '/') &&
-      (end === path.length || path[end] === '/')
+      (start === 0 || path[start - 1] === $.Separator) &&
+      (end === path.length || path[end] === $.Separator)
     )
       return true;
     start = path.indexOf(token, end);

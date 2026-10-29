@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   PointerOperator,
   hasPointerOperator,
   resolvePointer,
@@ -48,10 +49,10 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
     for (const owner of context.contextOwners) {
       context.dirtyPaths.add(owner);
       context.dependencyOwnerPaths.add(owner);
-      context.shapeDirtyPaths.add(resolvePointer(owner, '..'));
+      context.shapeDirtyPaths.add(resolvePointer(owner, $.Parent));
       let ancestor = owner;
       while (ancestor) {
-        ancestor = resolvePointer(ancestor, '..');
+        ancestor = resolvePointer(ancestor, $.Parent);
         context.dirtyPaths.add(ancestor);
       }
     }

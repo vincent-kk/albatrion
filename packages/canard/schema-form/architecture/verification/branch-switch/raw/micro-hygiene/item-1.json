@@ -1,0 +1,150 @@
+[
+  {
+    "file": "src/core/engine/record/utils/indexFieldNodeWarning.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/compute/scheduleRelocatedGates.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/context/changeFieldNodeContext.ts",
+    "count": 2
+  },
+  {
+    "file": "src/core/engine/settle/utils/dependencies/deferPresenceTemplate.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/dependencies/evaluatedPresenceAfter.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/dependencies/flushPresenceTemplates.ts",
+    "count": 2
+  },
+  {
+    "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/dependencies/publishPresenceOwner.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+    "count": 5
+  },
+  {
+    "file": "src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+    "count": 3
+  },
+  {
+    "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+    "count": 3
+  },
+  {
+    "file": "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+    "count": 2
+  },
+  {
+    "file": "src/core/engine/utils/controls/getFragmentOwnerPaths.ts",
+    "count": 1
+  },
+  {
+    "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+    "count": 2
+  },
+  {
+    "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+    "count": 1
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/appendFormattedSegment.ts",
+    "count": 1
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/bindPointerTemplate.ts",
+    "count": 4
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/formatSegment.ts",
+    "count": 4
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/getChildPointer.ts",
+    "count": 1
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/hasPointerOperator.ts",
+    "count": 6
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/isAbsolutePointer.ts",
+    "count": 2
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/isDescendantPath.ts",
+    "count": 1
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/joinPointer.ts",
+    "count": 6
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/joinPointerWithPrefixOf.ts",
+    "count": 3
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/parsePointer.ts",
+    "count": 4
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/parsePointerSegment.ts",
+    "count": 8
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/parsePointerSegments.ts",
+    "count": 6
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/parseStandardPointer.ts",
+    "count": 6
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/readFormattedNameSegment.ts",
+    "count": 4
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/readFormattedPointerSegment.ts",
+    "count": 8
+  },
+  {
+    "file": "src/helpers/jsonPointer/utils/resolvePointer.ts",
+    "count": 10
+  }
+]

@@ -1,4 +1,7 @@
-import { isAbsolutePath } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  isAbsolutePath,
+} from '@/schema-form/helpers/jsonPointer';
 import type { PointerSegment } from '@/schema-form/helpers/jsonPointer';
 import {
   appendSegment,
@@ -345,7 +348,7 @@ class GateRegistry {
       if (changed.has(watched) || prefixes.has(watched)) return true;
       if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = resolvePointer(prefix, '..');
+          prefix = resolvePointer(prefix, $.Parent);
           if (changed.has(prefix)) return true;
         }
     }
@@ -446,7 +449,7 @@ class GateRegistry {
       bumpWatchCount(index.exact, watched, by);
       if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = resolvePointer(prefix, '..');
+          prefix = resolvePointer(prefix, $.Parent);
           bumpWatchCount(index.strictPrefixes, prefix, by);
         }
     }
@@ -501,7 +504,7 @@ class GateRegistry {
         return true;
       if (isAbsolutePath(watched))
         for (let prefix = watched; prefix; ) {
-          prefix = resolvePointer(prefix, '..');
+          prefix = resolvePointer(prefix, $.Parent);
           if (changedRaw.has(prefix)) return true;
         }
     }

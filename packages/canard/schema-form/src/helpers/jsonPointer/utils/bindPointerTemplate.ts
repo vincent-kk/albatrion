@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import { PointerOperator } from '../constants/PointerOperator';
 import { hasPointerOperator } from './hasPointerOperator';
 
@@ -16,16 +17,19 @@ export const bindPointerTemplate = (
   let templateStart = 0;
   let occurrenceStart = 0;
   let copiedThrough = 0;
-  let bound = '';
+  let bound = $.Root;
   while (templateStart < templatePath.length) {
-    const templateSlash = templatePath.indexOf('/', templateStart + 1);
+    const templateSlash = templatePath.indexOf($.Separator, templateStart + 1);
     const templateEnd = templateSlash < 0 ? templatePath.length : templateSlash;
-    const occurrenceSlash = occurrencePath.indexOf('/', occurrenceStart + 1);
+    const occurrenceSlash = occurrencePath.indexOf(
+      $.Separator,
+      occurrenceStart + 1,
+    );
     const occurrenceEnd =
       occurrenceSlash < 0 ? occurrencePath.length : occurrenceSlash;
     if (
       templateEnd === templateStart + 2 &&
-      templatePath[templateStart + 1] === '*' &&
+      templatePath[templateStart + 1] === $.Wildcard &&
       occurrenceStart < occurrencePath.length
     ) {
       bound += templatePath.slice(copiedThrough, templateStart + 1);

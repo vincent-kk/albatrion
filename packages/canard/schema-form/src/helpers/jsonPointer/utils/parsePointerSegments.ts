@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import type { PointerSegment } from '../constants/PointerOperator';
 import { parsePointerSegment } from './parsePointerSegment';
 
@@ -11,9 +12,9 @@ const EMPTY_SEGMENTS: readonly PointerSegment[] = Object.freeze([]);
 export const parsePointerSegments = (
   pointer: string | readonly string[],
 ): readonly PointerSegment[] => {
-  if (pointer === '' || pointer === '#') return EMPTY_SEGMENTS;
+  if (pointer === $.Root || pointer === $.Fragment) return EMPTY_SEGMENTS;
   if (typeof pointer !== 'string') {
-    const offset = pointer[0] === '#' ? 1 : 0;
+    const offset = pointer[0] === $.Fragment ? 1 : 0;
     let segments: PointerSegment[] | undefined = offset
       ? pointer.slice(offset)
       : undefined;
@@ -25,8 +26,12 @@ export const parsePointerSegments = (
     }
     return segments ?? pointer;
   }
-  const offset = pointer.startsWith('#/') ? 2 : pointer[0] === '/' ? 1 : 0;
-  const names = (offset ? pointer.slice(offset) : pointer).split('/');
+  const offset = pointer.startsWith($.Fragment + $.Separator)
+    ? 2
+    : pointer[0] === $.Separator
+      ? 1
+      : 0;
+  const names = (offset ? pointer.slice(offset) : pointer).split($.Separator);
   const segments: PointerSegment[] = names;
   for (let index = 0; index < names.length; index++)
     segments[index] = parsePointerSegment(names[index]);

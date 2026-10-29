@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import { readFormattedPointerSegment } from './readFormattedPointerSegment';
 
 /**
@@ -12,10 +13,10 @@ export const readFormattedNameSegment = (
 ): string | undefined => {
   const segment = readFormattedPointerSegment(path, index);
   switch (segment) {
-    case '*':
-    case '..':
-    case '.':
-    case '@':
+    case $.Wildcard:
+    case $.Parent:
+    case $.Current:
+    case $.Context:
       return undefined;
     default:
       return segment;

@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   getChildPointer,
   readFormattedNameSegment,
   resolvePointer,
@@ -198,7 +199,7 @@ export class DirtyPathSet extends Set<string> {
       let current = path;
       while (current && !linked.has(current)) {
         linked.add(current);
-        const parent = resolvePointer(current, '..');
+        const parent = resolvePointer(current, $.Parent);
         const segment = readFormattedNameSegment(current, -1);
         if (segment === undefined) break;
         super.add(parent);
@@ -220,7 +221,7 @@ export class DirtyPathSet extends Set<string> {
       while (!this.has(current)) {
         super.add(current);
         if (!current) break;
-        const parent = resolvePointer(current, '..');
+        const parent = resolvePointer(current, $.Parent);
         const segment = readFormattedNameSegment(current, -1);
         if (segment === undefined) break;
         let children = this.childrenByParent.get(parent);
@@ -256,7 +257,7 @@ export class DirtyPathSet extends Set<string> {
     if (!super.delete(path)) return false;
     if (this.postOrder) {
       if (path) {
-        const parent = resolvePointer(path, '..');
+        const parent = resolvePointer(path, $.Parent);
         const children = this.childrenByParent.get(parent);
         children?.delete(path);
         if (children?.size === 0) this.childrenByParent.delete(parent);

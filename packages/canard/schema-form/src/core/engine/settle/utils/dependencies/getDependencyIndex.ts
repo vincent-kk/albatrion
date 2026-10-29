@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   PointerOperator,
   type PointerSegment,
   appendSegment,
@@ -559,7 +560,7 @@ class DependencyIndex {
     let levels: DependencyNode[][];
     if (!path) levels = [[this.root!]];
     else {
-      const parent = this.presenceLevels(resolvePointer(path, '..'), memo);
+      const parent = this.presenceLevels(resolvePointer(path, $.Parent), memo);
       const last = parent[parent.length - 1];
       const name = readPointerSegment(path, -1);
       levels =

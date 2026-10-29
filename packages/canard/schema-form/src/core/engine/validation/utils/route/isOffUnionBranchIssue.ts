@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   isDescendantPath,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -61,7 +62,7 @@ export const isOffUnionBranchIssue = (
   if (candidates.length !== 1) return false;
   const owner = candidates[0];
   if (!owner.gates.length) return false;
-  const unionPath = resolvePointer(owner.schemaPath, '..');
+  const unionPath = resolvePointer(owner.schemaPath, $.Parent);
   const siblings = blueprint.fragments.filter(
     (fragment) =>
       fragment.id !== owner.id &&

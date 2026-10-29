@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   PointerOperator,
   isDescendantPath,
   joinPointer,
@@ -41,7 +42,7 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
     context.dirtyPaths.add(host);
     context.shapeDirtyPaths.add(host);
     for (let ancestor = host; ancestor; ) {
-      ancestor = resolvePointer(ancestor, '..');
+      ancestor = resolvePointer(ancestor, $.Parent);
       context.dirtyPaths.add(ancestor);
     }
     return true;

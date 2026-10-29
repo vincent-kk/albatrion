@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   readPointerSegment,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -106,7 +107,7 @@ export class PathStoreIndex {
     const keys = new Set(this.under(path));
     let ancestor = path;
     while (ancestor) {
-      ancestor = resolvePointer(ancestor, '..');
+      ancestor = resolvePointer(ancestor, $.Parent);
       for (const key of this.prefixes.get(ancestor)?.exact ?? []) keys.add(key);
     }
     return keys;
@@ -122,7 +123,7 @@ export class PathStoreIndex {
     while (!parent) {
       missing.push(cursor);
       if (!cursor) break;
-      cursor = resolvePointer(cursor, '..');
+      cursor = resolvePointer(cursor, $.Parent);
       parent = this.prefixes.get(cursor);
     }
     for (let i = missing.length - 1; i >= 0; i--) {

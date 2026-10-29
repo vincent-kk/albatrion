@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import { isDescendantPath } from './isDescendantPath';
 
 /**
@@ -11,6 +12,6 @@ export const getChildPointer = (
   ancestorPath: string,
 ): string | undefined => {
   if (!isDescendantPath(path, ancestorPath)) return undefined;
-  const end = path.indexOf('/', ancestorPath.length + 1);
+  const end = path.indexOf($.Separator, ancestorPath.length + 1);
   return end < 0 ? path : path.slice(0, end);
 };

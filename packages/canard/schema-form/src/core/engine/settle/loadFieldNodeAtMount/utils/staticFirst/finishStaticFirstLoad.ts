@@ -1,7 +1,10 @@
-import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../../errors';
-import type { FieldNodeRecord,MisfitRecord } from '../../../../record';
+import type { FieldNodeRecord, MisfitRecord } from '../../../../record';
 import { indexFieldNodeWarning } from '../../../../record';
 import type { WriteOption } from '../../../../types/value';
 import { PathKeyedMap } from '../../../../utils/pathIndex/PathKeyedMap';
@@ -84,7 +87,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
           byAncestor.set(ancestor, children);
         }
         children.push(path);
-        ancestor = resolvePointer(ancestor, '..');
+        ancestor = resolvePointer(ancestor, $.Parent);
       }
     }
     for (const [ancestor, children] of byAncestor)

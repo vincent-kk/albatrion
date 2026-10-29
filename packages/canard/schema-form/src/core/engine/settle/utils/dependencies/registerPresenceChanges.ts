@@ -1,6 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
+  JSONPointer as $,
   appendSegment,
   parsePointerSegment,
   resolvePointer,
@@ -19,7 +20,7 @@ import { publishPresenceOwner } from './publishPresenceOwner';
 import { registerProjectionChanges } from './registerProjectionChanges';
 
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
-const parentOf = (path: string): string => resolvePointer(path, '..');
+const parentOf = (path: string): string => resolvePointer(path, $.Parent);
 
 /**
  * Register child identity or projected emission changes in their existing host wheel.

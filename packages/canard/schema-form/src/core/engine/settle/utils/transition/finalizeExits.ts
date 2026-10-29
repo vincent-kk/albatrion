@@ -1,4 +1,7 @@
-import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import { visitFieldNodes } from '../../../navigation';
@@ -83,7 +86,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           }
           paths.add(path);
           if (!ancestor) break;
-          ancestor = resolvePointer(ancestor, '..');
+          ancestor = resolvePointer(ancestor, $.Parent);
         }
       }
     }
@@ -93,7 +96,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       while (true) {
         misfitIndex.get(ancestor)?.delete(path);
         if (!ancestor) break;
-        ancestor = resolvePointer(ancestor, '..');
+        ancestor = resolvePointer(ancestor, $.Parent);
       }
     }
   }

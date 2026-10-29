@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
+
 /**
  * Decide whether one canonical address lies strictly below another, without allocating a prefix.
  * @param path - Canonical address to test.
@@ -6,5 +8,5 @@
  */
 export const isDescendantPath = (path: string, ancestorPath: string): boolean =>
   path.length > ancestorPath.length &&
-  path[ancestorPath.length] === '/' &&
+  path[ancestorPath.length] === $.Separator &&
   path.startsWith(ancestorPath);

@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import {
+  JSONPointer as $,
   isDescendantPath,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -66,7 +67,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       for (const path of affectedPaths) {
         let ancestor = path;
         while (ancestor) {
-          ancestor = resolvePointer(ancestor, '..');
+          ancestor = resolvePointer(ancestor, $.Parent);
           if (!context.changedRaw.has(ancestor)) affectedPaths.delete(ancestor);
         }
       }

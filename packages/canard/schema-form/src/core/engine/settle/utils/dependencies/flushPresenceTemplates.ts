@@ -1,4 +1,5 @@
 import {
+  JSONPointer as $,
   isDescendantPath,
   resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
@@ -54,9 +55,9 @@ export const flushPresenceTemplates = <Self extends FieldNodeRecord<Self>>(
       if (!excluded) {
         context.dirtyPaths.add(owner);
         context.dependencyOwnerPaths.add(owner);
-        context.shapeDirtyPaths.add(resolvePointer(owner, '..'));
+        context.shapeDirtyPaths.add(resolvePointer(owner, $.Parent));
         for (let ancestor = owner; ancestor; ) {
-          ancestor = resolvePointer(ancestor, '..');
+          ancestor = resolvePointer(ancestor, $.Parent);
           context.dirtyPaths.add(ancestor);
         }
         marked = true;

@@ -1,3 +1,4 @@
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import type { PointerSegment } from '../constants/PointerOperator';
 import { joinPointer } from './joinPointer';
 
@@ -10,4 +11,5 @@ import { joinPointer } from './joinPointer';
 export const joinPointerWithPrefixOf = (
   reference: string,
   segments: readonly PointerSegment[],
-): string => (reference[0] === '#' ? '#' : '') + joinPointer(segments);
+): string =>
+  (reference[0] === $.Fragment ? $.Fragment : $.Root) + joinPointer(segments);

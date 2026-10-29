@@ -1,7 +1,11 @@
-import { isDescendantPath, resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
-import type { FieldNodeRecord,MisfitRecord } from '../../../record';
+import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
@@ -17,7 +21,6 @@ import { isMisfit } from './isMisfit';
 import { markCommitDeliveries } from './markCommitDeliveries';
 import { receivedType } from './receivedType';
 import { readSettlementSource } from './utils/readSettlementSource';
-
 
 /** Shared frozen empty list for inactive and misfit projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
@@ -73,7 +76,10 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   refreshTargets.clear();
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
   for (const path of context.changedRaw) {
-    if (loadScope && (path === loadScope.path || isDescendantPath(path, loadScope.path)))
+    if (
+      loadScope &&
+      (path === loadScope.path || isDescendantPath(path, loadScope.path))
+    )
       continue;
     if (readSettlementSource(context, path, true) !== 'input')
       refreshTargets.add(path);
@@ -220,7 +226,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
             byAncestor.set(ancestor, paths);
           }
           paths.push(path);
-          ancestor = resolvePointer(ancestor, '..');
+          ancestor = resolvePointer(ancestor, $.Parent);
         }
       }
       for (const [ancestor, paths] of byAncestor)

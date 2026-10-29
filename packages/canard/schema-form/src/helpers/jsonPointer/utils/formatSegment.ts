@@ -1,5 +1,7 @@
 import { escapeSegment } from '@winglet/json/pointer-escape';
 
+import { JSONPointer as $ } from '../constants/JSONPointer';
+
 /**
  * Encode a decoded name as one address segment.
  * @param name - Decoded property name; any string is valid.
@@ -7,13 +9,13 @@ import { escapeSegment } from '@winglet/json/pointer-escape';
  */
 export const formatSegment = (name: string): string => {
   switch (name) {
-    case '*':
+    case $.Wildcard:
       return '%2A';
-    case '..':
+    case $.Parent:
       return '%2E%2E';
-    case '.':
+    case $.Current:
       return '%2E';
-    case '@':
+    case $.Context:
       return '%40';
     default:
       return escapeSegment(name);

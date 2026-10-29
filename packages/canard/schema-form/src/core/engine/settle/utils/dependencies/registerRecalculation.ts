@@ -1,4 +1,7 @@
-import { resolvePointer } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
@@ -73,7 +76,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           else if (kind === 'split')
             (context.splitMarks ??= new Map()).set(path, epoch);
           context.shapeDirtyPaths.add(
-            kind === 'host' ? path : resolvePointer(path, '..'),
+            kind === 'host' ? path : resolvePointer(path, $.Parent),
           );
         },
       });
@@ -85,7 +88,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       )) {
         context.dirtyPaths.add(declarationPath);
         context.dependencyOwnerPaths.add(declarationPath);
-        context.shapeDirtyPaths.add(resolvePointer(declarationPath, '..'));
+        context.shapeDirtyPaths.add(resolvePointer(declarationPath, $.Parent));
       }
   }
   const expanded = new Set<string>();
@@ -93,7 +96,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     let ancestor = path;
     while (ancestor && !expanded.has(ancestor)) {
       expanded.add(ancestor);
-      ancestor = resolvePointer(ancestor, '..');
+      ancestor = resolvePointer(ancestor, $.Parent);
       context.dirtyPaths.add(ancestor);
     }
   }
@@ -101,7 +104,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     const changedAncestors = new Set<string>();
     for (const changed of context.changedRaw)
       for (let prefix = changed; prefix; ) {
-        prefix = resolvePointer(prefix, '..');
+        prefix = resolvePointer(prefix, $.Parent);
         if (changedAncestors.has(prefix)) break;
         changedAncestors.add(prefix);
       }
@@ -117,7 +120,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           changedAncestors,
         )
       )
-        context.shapeDirtyPaths.add(resolvePointer(path, '..'));
+        context.shapeDirtyPaths.add(resolvePointer(path, $.Parent));
     }
   }
   if (shadow) {
