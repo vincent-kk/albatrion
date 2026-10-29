@@ -65,7 +65,7 @@ export function renderInterpretation(analysis, tables) {
     '',
     '### 결정과 관측 경계',
     '',
-    `갈래 A는 닫힘: 주 합 ${a.profileUs.toFixed(3)} µs(몫 ${a.sharePercent.toFixed(2)}%, 창 척도 약 ${a.windowScaleUs.toFixed(2)} µs)로 어떤 읽기에서도 15 µs에 미치지 못합니다. 레지스트리 재등록까지 없앤다는 미확인 가설에서만 창 척도 약 18 µs이며, 현재 닫힘 판정에는 이 가설을 넣지 않습니다. overlay Map 복사 줄과 cloneSlotSubtree의 자식 재귀 줄의 표본은 0입니다.`,
+    `갈래 A는 닫힘: 주 합 ${a.profileUs.toFixed(3)} µs(몫 ${a.sharePercent.toFixed(2)}%, 창 척도 약 ${a.windowScaleUs.toFixed(2)} µs)로 확인된 어떤 읽기에서도 15 µs에 미치지 못합니다. 레지스트리 재등록까지 없앤다는 미확인 가설에서만 창 척도 약 18 µs이며, 현재 닫힘 판정에는 이 가설을 넣지 않습니다. overlay Map 복사 줄과 cloneSlotSubtree의 자식 재귀 줄의 표본은 0입니다.`,
     '',
     `갈래 B는 미착수: 귀속 가능한 몫(computeNodeBody 포함 B에서 쓰기 바닥을 뺀 값)은 창 척도로 ${attributable.windowScaleUs.toFixed(2)} µs로 15 µs 미만이고, 쓰기 바닥까지 포함하는 가장 너그러운 self 읽기에서만 창 척도 약 ${contract.windowScaleUs.toFixed(1)} µs로 선에 걸칩니다. 경계선이므로 소유자 확정 대기로 표시합니다.`,
     '',
