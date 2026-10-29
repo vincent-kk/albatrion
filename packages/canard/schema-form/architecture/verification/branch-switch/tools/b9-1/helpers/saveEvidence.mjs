@@ -3,6 +3,7 @@ import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 
 import { json } from '../../b9-0/files.mjs';
+import { compactQuietCheck } from './compactQuietCheck.mjs';
 import { portableEvidence } from './portableEvidence.mjs';
 
 /** Save portable summaries and complete compressed samples after the only measurement window. */
@@ -19,10 +20,12 @@ export function saveEvidence(root, output, reports, samples) {
   const prechecks = fs
     .readdirSync(checks)
     .filter((name) => name.endsWith('.json'))
-    .map((name) => ({
-      name,
-      ...JSON.parse(fs.readFileSync(path.join(checks, name), 'utf8')),
-    }));
+    .map((name) =>
+      compactQuietCheck({
+        name,
+        ...JSON.parse(fs.readFileSync(path.join(checks, name), 'utf8')),
+      }),
+    );
   fs.writeFileSync(
     path.join(output, 'cpu-prechecks.json.gz'),
     gzipSync(JSON.stringify(portableEvidence(prechecks)) + '\n'),

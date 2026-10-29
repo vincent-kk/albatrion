@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import { createStageRecords } from './fixtures/createStageRecords.mjs';
 import { compactProcessRows } from './helpers/compactProcessRows.mjs';
+import { compactQuietCheck } from './helpers/compactQuietCheck.mjs';
 import { evaluateGates } from './helpers/evaluateGates.mjs';
 import { portableEvidence } from './helpers/portableEvidence.mjs';
 import { summarizeStageRows } from './helpers/summarizeStageRows.mjs';
@@ -74,4 +75,34 @@ assert.equal(processSummary.length, 10);
 assert.deepEqual(Object.keys(processSummary[0]), ['name', 'cpuPercent']);
 assert.deepEqual(processSummary[0], { name: 'process-0', cpuPercent: 100 });
 assert.ok(!JSON.stringify(processSummary).includes('private'));
+const quietSummary = compactQuietCheck({
+  name: 'worker.json',
+  pid: 7,
+  approved: true,
+  waitCount: 0,
+  waitedMs: 3000,
+  rows: Array.from({ length: 12 }, (_, pid) => ({
+    pid,
+    name: 'process-' + pid,
+    cpuPercent: 100 - pid,
+  })),
+  before: 'full installed application inventory',
+  after: 'full installed application inventory',
+  attempts: [
+    {
+      rows: [{ pid: 8, name: 'heavy', cpuPercent: 31 }],
+      before: 'full installed application inventory',
+    },
+  ],
+});
+assert.equal(quietSummary.approved, true);
+assert.equal(quietSummary.rows.length, 10);
+assert.equal(quietSummary.waitedMs, 3000);
+assert.deepEqual(Object.keys(quietSummary.attempts[0].rows[0]), [
+  'name',
+  'cpuPercent',
+]);
+assert.ok(
+  !JSON.stringify(quietSummary).includes('installed application inventory'),
+);
 console.log('B9_1_TOOLS_OK');

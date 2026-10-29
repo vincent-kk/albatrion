@@ -244,6 +244,15 @@ it('reaches every full-scan fallback with a previously prepared host', () => {
       'kind',
     ]);
     context.preparedStaticHosts.add(root);
+    derived.preparedStaticHost = { ...prepared, selectedStructure: previous };
+    context.presenceSelections.set(root, {
+      structure: previous,
+      names: prepared.dynamicNames,
+    });
+    expect(collectPresenceChangeNames(root, previous, context)).toEqual([
+      'kind',
+    ]);
+    derived.preparedStaticHost = prepared;
     delete derived.preparedStaticHost;
     expect(collectPresenceChangeNames(root, previous, context)).toEqual([
       'kind',
