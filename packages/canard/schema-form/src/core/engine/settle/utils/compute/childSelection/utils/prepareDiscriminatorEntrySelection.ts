@@ -51,7 +51,7 @@ export const prepareDiscriminatorEntrySelection = (
         let matches = false;
         const values = gate.condition.values;
         for (let index = 0, count = values.length; index < count; index++)
-          if (index in values && values[index] === value) {
+          if (values[index] === value) {
             matches = true;
             break;
           }

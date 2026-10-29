@@ -66,7 +66,6 @@ export const isStableDiscriminatorEntry = (
         return false;
       const values = gate.condition.values;
       for (let index = 0, count = values.length; index < count; index++) {
-        if (!(index in values)) continue;
         const value = values[index];
         if (
           !(

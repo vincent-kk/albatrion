@@ -517,17 +517,17 @@
 
 후보 1의 크기 비용은 다음과 같습니다. 즉시 실행 함수는 호출마다 함수 호출을 더하고 `in` 검사는 방문 원소마다 실행됩니다. 검토의 추가 줄 grep 132개는 실제 인수 없는 IIFE **131개**와 필요한 `useMemo` 콜백 한 줄을 함께 센 값입니다. 그 밖의 형 술어용 인수 있는 IIFE **6개**도 있었습니다. 후보 2에서는 **137개 모두**를 보통 반복문·결과 변수 또는 정적 이름을 가진 형 술어로 옮겼습니다. 파서의 밀집 세그먼트 형 술어는 엔진 내부 한 파일을 세 호출자가 공유하며 패키지 공개 내보내기는 늘리지 않습니다. 필수 hook 콜백은 유지합니다.
 
-| 번들 | 기준 바이트 | 후보 1 | 후보 2(측정) | 리뷰 후 | 리뷰 후 2 | 리뷰 후 2 − 기준 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `index.mjs` | 830373 | 861528 | 855127 | 854977 | 856639 | +26266 (3.16%) |
-| `index.node.mjs` | 829595 | 860750 | 854349 | 854199 | 855861 | +26266 (3.17%) |
-| `index.cjs` | 847915 | 882316 | 875949 | 875765 | 877427 | +29512 (3.48%) |
+| 번들 | 기준 바이트 | 후보 1 | 후보 2(측정) | 리뷰 후 | 리뷰 후 2 | 리뷰 후 3 | 리뷰 후 3 − 기준 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `index.mjs` | 830373 | 861528 | 855127 | 854977 | 856639 | 856443 | +26070 (3.14%) |
+| `index.node.mjs` | 829595 | 860750 | 854349 | 854199 | 855861 | 855665 | +26070 (3.14%) |
+| `index.cjs` | 847915 | 882316 | 875949 | 875765 | 877427 | 877231 | +29316 (3.46%) |
 
 반복 정리 머리의 제품 AST `in`은 **204→87(117개 제거)**, 반복용 labeled continue는 **16→0**, prototype 반복은 계속 **0**입니다. 밀집인 엔진 작성 배열에서 불필요한 검사를 없애고 callback 값/색인 별칭과 결과 별칭을 합쳤습니다. 내부 불변 메타데이터는 직접 순회하고, 쓰기 도중 바뀔 수 있는 배열은 최초 길이와 수신 배열을 보존합니다. 임시 filter 결과 배열의 소유·순서와 기존 반환 참조는 유지하고 새 상주 컨테이너는 없습니다. 후보 2는 후보 1보다 ESM 두 파일이 각각 6,401바이트, CJS가 6,367바이트 작습니다. 기준보다 남는 바이트 증가와 시간/Node·Bun 힙 비용은 승인된 짧은 창으로 판단합니다. 창 1은 중단되어 이 비용의 채택 근거가 아닙니다.
 
-[반복 감사 원시](raw/micro-hygiene/candidate-2-loop-audit.json)는 남은 숫자 `in` 28곳을 모두 열거합니다. 작성/외부 입력의 tuple·virtual fields·controls.fields/targets·schema.allOf/branches·enum/literal 값·작성 type·required/dependentRequired·외부 오류·checkbox prev·union authored·공개 `ChildFields` 인수의 구멍은 계속 건너뜁니다. 기존 item-entry 캐시의 sparse 존재 검사, 스냅숏의 실제 구멍 보존 검사도 유지합니다. `Object.keys`, 이전 discriminator 값의 push 배열, 렌더의 생성된 옵션/표시 배열에서는 검사를 없앴습니다. 새로 작성한 로컬 선택 형 13개는 기존 Optional 유틸리티로 표기했습니다. typecheck·lint·표적 **82파일 720건(기존 todo 1)**을 통과했으며 [로그](raw/micro-hygiene/candidate-2-loop-checks.json.gz)를 보존했습니다.
+[반복 감사 원시](raw/micro-hygiene/candidate-2-loop-audit.json)는 현재 남은 숫자 `in` **23곳**을 모두 열거합니다(후보 2의 28곳에서 소유자 결정의 동결 태그 5곳을 제거). 작성/외부 입력의 tuple·virtual fields·controls.fields/targets·schema.allOf/branches·enum/literal 값·작성 type·required/dependentRequired·외부 오류·checkbox prev·union authored·공개 `ChildFields` 인수의 구멍은 계속 건너뜁니다. 기존 item-entry 캐시의 sparse 존재 검사, 스냅숏의 실제 구멍 보존 검사도 유지합니다. `Object.keys`, 이전 discriminator 값의 push 배열, 렌더의 생성된 옵션/표시 배열에서는 검사를 없앴습니다. 새로 작성한 로컬 선택 형 13개는 기존 Optional 유틸리티로 표기했습니다. typecheck·lint·표적 **82파일 720건(기존 todo 1)**을 통과했으며 [로그](raw/micro-hygiene/candidate-2-loop-checks.json.gz)를 보존했습니다.
 
-후보 2 재검토 P3-B에 따라 감사의 다섯 곳(`collectBlueprintWarnings`, `getGateSelectionTable`, `isStableDiscriminatorEntry`, `prepareDiscriminatorEntrySelection`, `readGateSelectionGroup`)은 **판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요**로 교정했습니다. `readDiscriminatorBranches`가 spread 후 동결한 배열은 구멍을 undefined로 채웁니다. 이 다섯 검사는 바이트 중립 범위에서 그대로 두며 제거는 소유자 결정 후속입니다. `effectiveType`의 입력은 이 태그가 아닌 `node.schema.schema.type`이므로 **작성 입력(스키마 type 목록), 검사 유지**입니다. 조정자가 코드 근거에 따른 이 구분을 승인했으며 두 함수의 매개변수 주석도 실제 입력에 맞췄습니다.
+후보 2 재검토 P3-B에 따라 감사의 다섯 곳(`collectBlueprintWarnings`, `getGateSelectionTable`, `isStableDiscriminatorEntry`, `prepareDiscriminatorEntrySelection`, `readGateSelectionGroup`)은 **판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요**로 교정했습니다. `readDiscriminatorBranches`가 spread 후 동결한 배열은 구멍을 undefined로 채웁니다. 이 다섯 검사는 당시 바이트 중립 범위에서는 유지했으며, 후속 소유자 결정으로 **결정됨: 제거**입니다. 펼침·동결 뒤의 실제 원소만 같은 순서로 읽으므로 평가·단락 결과는 같습니다. `effectiveType`의 입력은 이 태그가 아닌 `node.schema.schema.type`이므로 **작성 입력(스키마 type 목록), 검사 유지**입니다. 조정자가 코드 근거에 따른 이 구분을 승인했으며 두 함수의 매개변수 주석도 실제 입력에 맞췄습니다.
 
 ### 소유자 후속 — 변환 잔재 정리
 
@@ -584,7 +584,7 @@ FCA facts **1,663/1,663 exact**, 세 검사 동일 snapshot `c517ae013f9e50b5e4a
 
 공개 `index.d.ts`는 여전히 **3,129바이트·바이트 차이 0**입니다. 전체 선언은 **1,306→1,307파일**, A/B 바이트가 다른 파일은 **197개**입니다. 증명한 유틸리티를 펼친 뒤 기존 1,306파일 중 차이는 명시적으로 승인된 내부 두 시그니처뿐입니다: `clearArrayRuntimePaths`의 미사용 인수 제거, `prunePerishedPaths`의 고유 배열 입력 허용. 추가 한 파일은 파서의 밀집 세그먼트 술어입니다. 패키지 exports가 계속 루트 하나임을 검사하고, index에서 import·재수출·import type으로 도달하는 **308파일의 주소와 정규화 AST 차이가 모두 0**임을 확인했습니다. 도구는 다른 내부 차이/삭제/추가를 허용하지 않습니다. [전체 선언 원시와 공개 동등 증거](raw/micro-hygiene/candidate-2-static/declaration-equivalence.json)를 보존합니다.
 
-FCA facts **1,664/1,664 exact**, 세 검사 동일 snapshot `dabc8b5fd93ec78a6c05752309a73385a67528cb6d87d020cf2a68cfcf7d7570`, findings **202건**으로 상한을 유지합니다. 전체 FAIL·분석 indeterminate도 그대로 기록합니다. [FCA 원시](raw/micro-hygiene/candidate-2-static/fca/summary.json)를 보존했습니다. 후속 항목 3의 Set/배열 구분에 쓰는 O(1) `size in paths` 한 곳 때문에 최종 전체 `in`은 88개이며, 원소마다 실행하던 밀집 검사 117개 제거와 숫자 HasProperty 유지 목록은 달라지지 않습니다.
+FCA facts **1,664/1,664 exact**, 세 검사 동일 snapshot `dabc8b5fd93ec78a6c05752309a73385a67528cb6d87d020cf2a68cfcf7d7570`, findings **202건**으로 상한을 유지합니다. 전체 FAIL·분석 indeterminate도 그대로 기록합니다. [FCA 원시](raw/micro-hygiene/candidate-2-static/fca/summary.json)를 보존했습니다. 후속 항목 3의 Set/배열 구분에 쓰는 O(1) `size in paths` 한 곳 때문에 그 후보의 전체 `in`은 88개였으며, 원소마다 실행하던 밀집 검사 117개 제거와 숫자 HasProperty 유지 목록은 달라지지 않습니다.
 
 ## 측정 장치와 창
 
@@ -667,7 +667,7 @@ P3-A의 일괄 교체 주석 한 곳을 대상 검사로 옮겼습니다. P3-B�
 
 후속 소유자 결정 `msg_686dc576c0d7`으로 `applyArrayTail`의 Set 분기 **1곳을 제거**했습니다. 이 단계는 앞선 바이트 중립 교정과 달리 런타임을 바꾸므로 다시 build/artifact checks·typecheck·lint·표적 **49파일 315건**을 통과했습니다. 새 직접 호출 시험은 이전 Set 분기에서 **1실패/4통과**, 항상 배열 구현에서 전부 통과합니다. 세 번들은 **854,977 / 854,199 / 875,765바이트**로 측정 후보보다 **−150 / −150 / −184바이트**이며 위 비용 표의 `리뷰 후` 열에 반영했습니다. [후속 검사·해시](raw/micro-hygiene/review-2/owner-array-checks.json)와 [실패/통과 로그](raw/micro-hygiene/review-2/owner-array-logs.json.gz)를 보존합니다. 이 최종 런타임은 새 측정 창을 열지 않았습니다(소유자 결정, 공개 의미 동일). 창 2의 숫자는 원래 측정 후보 `870fe2689`의 미채택 기록으로 남으며 리뷰 후 런타임의 새 측정 결과로 사용하지 않습니다.
 
-**소유자 결정 후속**은 엔진 동결 태그 다섯 곳의 불필요한 검사 제거(P3-B)입니다. 루트 빈 문자열 통일(P3-C)과 변환 잔재 정리(P3-E)는 후속 소유자 지시로 **결정됨: 적용**이며 위 각 항목에 실제 치환·제외·정리 근거를 기록했습니다. 이들은 런타임 바이트를 바꾸므로 이번 교정에서는 실행하지 않았습니다. **결정됨: 제거** — `applyArrayTail`의 도달 불가 Set 분기는 후속 소유자 지시로 삭제하고 항상 문자열 배열만 지연 생성합니다. 함수 계약과 DETAIL에 호출자 상한 1·미래 다중 제거 동사에서의 재검토 조건을 적었고 직접 65개 제거 시험도 배열/순서를 검증하도록 갱신했습니다. `pruneArrayTailPaths`·`finalizePerished`·`rekeyArrayRuntimePaths`는 여전히 Set을 전달하므로 `prunePerishedPaths`의 Set/배열 시그니처는 유지합니다. 창 2의 미채택·되돌림/병합/재측정 결정도 그대로 남아 있습니다.
+엔진 동결 태그 다섯 곳의 불필요한 검사 제거(P3-B)는 후속 소유자 지시로 **결정됨: 제거**입니다. 이로써 이 검토의 남은 코드 후속도 모두 결정대로 처리했습니다. 루트 빈 문자열 통일(P3-C)과 변환 잔재 정리(P3-E)는 후속 소유자 지시로 **결정됨: 적용**이며 위 각 항목에 실제 치환·제외·정리 근거를 기록했습니다. 이들은 런타임 바이트를 바꾸므로 이번 교정에서는 실행하지 않았습니다. **결정됨: 제거** — `applyArrayTail`의 도달 불가 Set 분기는 후속 소유자 지시로 삭제하고 항상 문자열 배열만 지연 생성합니다. 함수 계약과 DETAIL에 호출자 상한 1·미래 다중 제거 동사에서의 재검토 조건을 적었고 직접 65개 제거 시험도 배열/순서를 검증하도록 갱신했습니다. `pruneArrayTailPaths`·`finalizePerished`·`rekeyArrayRuntimePaths`는 여전히 Set을 전달하므로 `prunePerishedPaths`의 Set/배열 시그니처는 유지합니다. 창 2의 미채택·되돌림/병합/재측정 결정도 그대로 남아 있습니다.
 
 ## 소유자 후속 2건·접두 상수 — 최종 전체 정적 관문
 
@@ -689,6 +689,40 @@ Node 26.12.1에서 build/artifact checks·내장 typecheck·lint를 통과한 �
 공개 `index.d.ts`는 **3,129바이트·같은 SHA-256**이고 패키지 exports도 같습니다. 전체 선언 1,306→1,307파일 중 바이트 차이는 **199파일**이며 정규화 차이는 기존 내부 두 시그니처와 `helpers/jsonPointer/constants/JSONPointer.d.ts`의 새 상수 선언입니다. 원래 파일 단위 비교기는 도달 파일 하나의 추가 선언을 검출하여 실패했고 그 결과·A/B 원시를 숨기지 않았습니다. 별도 검사로 추가 선언이 정확히 literal 형 `FragmentPrefix: "#/"` 하나인지, 그 선언을 제외한 기존 JSONPointer 객체가 정규화 동일한지, 다른 선언에서의 참조와 wildcard/namespace 재수출이 없는지, 두 진입점이 그 이름을 내보내지 않는지 확인했습니다. 도달한 유일한 import/re-export도 기존 JSONPointer binding만 지정합니다. 따라서 파일 단위 차이를 0으로 바꾸지 않고 **공개 계약 불변과 내부 상수 추가**로 기록합니다. [정확한 추가 선언 검증](raw/micro-hygiene/owner-cleanups/static/fragment-prefix-contract.json)과 [원래 파일 단위 차이](raw/micro-hygiene/owner-cleanups/static/declaration-equivalence.json)를 보존했습니다.
 
 FCA facts **1,665/1,665 exact**, 세 검사 동일 snapshot `1d879f6558f64007c980e4b358a21e710d06109d13a51786b4301b043906348e`, findings **202건**으로 상한을 유지합니다. 기존 전체 **FAIL·indeterminate**는 그대로입니다. 첫 203번째 finding은 새 DETAIL에 중복해서 적은 fragment literal을 파일 경로로 읽는 문서 진단이었습니다. 불필요한 값 중복 표기를 지운 뒤 문서 영향 검사만 다시 확인했고 두 결과를 [FCA 원시](raw/micro-hygiene/owner-cleanups/fca/summary.json)에 남겼습니다. 제품을 바꾸거나 전체 시험을 반복한 교정은 아닙니다.
+
+## 마지막 소유자 결정 — 동결 태그 검사 5곳 제거
+
+P3-B의 동결 판별자 태그 다섯 곳은 **결정됨: 제거**입니다. `readDiscriminatorBranches`가 spread로 구멍을 undefined로 채운 뒤 동결한 배열만 읽으므로 수신 배열·길이·원소 읽기와 단락 순서는 같습니다. 경고 수집기, gate literal 목록, 안정 판별자 항목, 판별자 선택 준비, gate 선택 그룹의 구멍 검사 한 개씩만 제거했습니다. `effectiveType`은 작성 schema.type 목록이므로 원래 검사를 그대로 유지했습니다.
+
+남은 숫자 HasProperty 검사는 **28→23곳**입니다. 외부 입력·작성 목록과 기존 희소 캐시/스냅숏을 위한 현재 위치는 아래와 같고 [각 제거·유지 지점](raw/micro-hygiene/dense-tags/audit.json) 및 갱신한 [반복 감사](raw/micro-hygiene/candidate-2-loop-audit.json)에 기록합니다.
+
+| 유지 위치 | 검사 |
+| --- | --- |
+| `src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts:222` | `index in tuple` |
+| `src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts:62` | `index in fields` |
+| `src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts:77` | `index in fields` |
+| `src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts:155` | `position in values` |
+| `src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts:90` | `index in controlFields` |
+| `src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts:118` | `index in fieldTargets` |
+| `src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts:99` | `index in branches` |
+| `src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts:51` | `index in allOfSchemas` |
+| `src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts:115` | `index in keywordSchemas` |
+| `src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts:135` | `index in child` |
+| `src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts:64` | `index in values` |
+| `src/core/engine/blueprint/utils/features/controls/hasKeepFields.ts:17` | `index in fields` |
+| `src/core/engine/blueprint/utils/itemEntry/getItemEntries.ts:27` | `index in entries` |
+| `src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts:45` | `index in controlFields` |
+| `src/core/engine/settle/utils/commit/effectiveType.ts:44` | `index in values` |
+| `src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts:37` | `index in value` |
+| `src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts:55` | `index in value` |
+| `src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts:64` | `index in required` |
+| `src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts:35` | `index in source` |
+| `src/core/engine/validation/utils/read/readFieldNodeErrors.ts:28` | `index in items` |
+| `src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx:62` | `index in prev` |
+| `src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx:32` | `index in authored` |
+| `src/hooks/fieldNode/useChildFieldMap.ts:27` | `index in ChildFields` |
+
+소유자 지시에 따라 **가벼운 검증만** 실행했습니다: build 한 번(artifact checks·내장 typecheck 포함), lint, 관련 표적 **6파일 47건**이 모두 종료 0입니다. 세 번들의 `리뷰 후 3` 바이트는 **856,443 / 855,665 / 877,231**로 직전보다 각각 **196바이트 감소**했습니다. 공개 index.d.ts도 3,129바이트·동일 SHA-256입니다. [로그](raw/micro-hygiene/dense-tags/logs.json.gz)와 [검사·제품/소스 해시](raw/micro-hygiene/dense-tags/checks.json)를 보존합니다. FCA·다섯 프로젝트 전체·verify·격리·배달·측정 창은 다시 실행하지 않았습니다. 앞 절의 전체 관문과 창 2 숫자는 각각 당시 제품의 증거로 유지하며, 새 측정 판정을 만들지 않습니다.
 
 ## 후속 항목 — 추가 strict-production의 기존 문제
 

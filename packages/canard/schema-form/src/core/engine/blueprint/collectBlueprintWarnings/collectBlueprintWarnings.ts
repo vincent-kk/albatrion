@@ -124,10 +124,6 @@ export const collectBlueprintWarnings = (
           index < count;
           index++
         ) {
-          if (!(index in discriminatorValues)) {
-            continue;
-          }
-
           const value = discriminatorValues[index];
 
           if (

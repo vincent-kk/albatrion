@@ -200,13 +200,13 @@ export const getGateSelectionTable = (
 
 /** Narrow the dense discriminator tags copied during blueprint construction.
  * @param values Dense frozen discriminator tags copied at blueprint time.
- * @returns Whether every present tag has strict Map-key semantics.
+ * @returns Whether every tag has strict Map-key semantics.
  */
 function isGateLiteralList(
   values: readonly unknown[],
 ): values is readonly GateSelectionLiteral[] {
   for (let index = 0, length = values.length; index < length; index++)
-    if (index in values && !isGateSelectionLiteral(values[index])) return false;
+    if (!isGateSelectionLiteral(values[index])) return false;
   return true;
 }
 /** Prove every generated read resolves to a watched terminal.

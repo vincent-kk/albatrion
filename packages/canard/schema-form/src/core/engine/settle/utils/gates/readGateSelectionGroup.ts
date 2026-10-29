@@ -65,10 +65,6 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
           index < count;
           index++
         ) {
-          if (!(index in discriminatorValues)) {
-            continue;
-          }
-
           const tag = discriminatorValues[index];
 
           if (tag === value) {
