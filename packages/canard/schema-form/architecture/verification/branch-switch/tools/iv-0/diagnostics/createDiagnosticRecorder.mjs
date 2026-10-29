@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+
 import { classifyClosure } from './classifyClosure.mjs';
 import { collectDependencyEdges } from './collectDependencyEdges.mjs';
 import { compareNodes } from './compareNodes.mjs';
@@ -79,7 +81,13 @@ export function createDiagnosticRecorder(engine) {
       pendingDelivery = { row: rows.at(-1), root: frame.root };
     },
     chainExit() {
-      if (!recorder.enabled || frames.length > 0 || !pendingDelivery)
+      if (
+        !recorder.enabled ||
+        frames.length > 0 ||
+        !pendingDelivery ||
+        pendingDelivery.row.label !== recorder.label ||
+        pendingDelivery.row.deliveryAllocations !== undefined
+      )
         return false;
       const { row, root } = pendingDelivery;
       frames.push({
@@ -106,6 +114,7 @@ export function createDiagnosticRecorder(engine) {
     chainExitEnd(token) {
       if (!token || !frames.at(-1)?.delivery) return;
       const frame = frames.pop();
+      assert.equal(frame.row.deliveryAllocations, undefined);
       frame.row.deliveryAllocations = frame.allocations;
       frame.row.deliveryContexts = frame.contexts;
       frame.row.deliveryScratchNew = frame.scratchNew;

@@ -93,6 +93,7 @@ export function summarizeDiagnostics(evidence, labels) {
         host: round.host,
         computeId: round.computeId,
         round: round.round,
+        parentRound: round.parentRound,
         changeSetSize: round.changeSetSize,
         openedNext: round.openedNext,
         flags: round.flags,
