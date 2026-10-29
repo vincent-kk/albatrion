@@ -195,91 +195,106 @@
       "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
       "line": 49,
       "text": "const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;",
-      "reason": "진단 키의 없는 keyword/property 이름 자리"
+      "reason": "진단 키의 없는 keyword/property 이름 자리",
+      "lineAtInitialAudit": 49
     },
     {
       "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityNumber.ts",
       "line": 19,
       "text": "while (index < source.length && source[index].trim() === '') index++;",
-      "reason": "trim 결과의 공백/빈 토큰 검사"
+      "reason": "trim 결과의 공백/빈 토큰 검사",
+      "lineAtInitialAudit": 19
     },
     {
       "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/scanEqualityTokens.ts",
       "line": 19,
       "text": "if (character.trim() === '') {",
-      "reason": "trim 결과의 공백/빈 토큰 검사"
+      "reason": "trim 결과의 공백/빈 토큰 검사",
+      "lineAtInitialAudit": 19
     },
     {
       "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityString.ts",
       "line": 29,
       "text": "let value = '';",
-      "reason": "파싱할 문자열 값의 초기 누산기"
+      "reason": "파싱할 문자열 값의 초기 누산기",
+      "lineAtInitialAudit": 29
     },
     {
       "file": "src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/utils/substituteDependencyPaths.ts",
       "line": 23,
       "text": ".replace(TRAILING_SEMICOLON, '');",
-      "reason": "뒤 세미콜론 삭제의 빈 치환 문자열"
+      "reason": "뒤 세미콜론 삭제의 빈 치환 문자열",
+      "lineAtInitialAudit": 23
     },
     {
       "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
       "line": 111,
       "text": "name: readFormattedPointerSegment(path, -1) ?? '',",
-      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분"
+      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분",
+      "lineAtInitialAudit": 111
     },
     {
       "file": "src/core/engine/settle/utils/gates/bindGateHostPath.ts",
       "line": 22,
       "text": "? ''",
-      "reason": "기존 occurrencePath에 붙이는 비어 있는 상대 접미사"
+      "reason": "기존 occurrencePath에 붙이는 비어 있는 상대 접미사",
+      "lineAtInitialAudit": 22
     },
     {
       "file": "src/core/engine/settle/utils/derivation/runDeriveRounds.ts",
       "line": 77,
       "text": "failure.targetPath ?? '',",
-      "reason": "없는 targetPath를 진단 중복 키에서 표시하는 빈 자리; 루트 주소로 해석하지 않음"
+      "reason": "없는 targetPath를 진단 중복 키에서 표시하는 빈 자리; 루트 주소로 해석하지 않음",
+      "lineAtInitialAudit": 77
     },
     {
       "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
       "line": 181,
       "text": ": appendSegment(declaration.path, rule.targetName ?? '');",
-      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분"
+      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분",
+      "lineAtInitialAudit": 181
     },
     {
       "file": "src/core/engine/behaviors/utils/options/isOmittedEmpty.ts",
       "line": 33,
       "text": "if (value === '') return true;",
-      "reason": "사용자 값의 빈 문자열 판정"
+      "reason": "사용자 값의 빈 문자열 판정",
+      "lineAtInitialAudit": 33
     },
     {
       "file": "src/core/engine/behaviors/utils/slots/projectEmpty.ts",
       "line": 10,
       "text": "local === '' ||",
-      "reason": "사용자 값의 빈 문자열 판정"
+      "reason": "사용자 값의 빈 문자열 판정",
+      "lineAtInitialAudit": 10
     },
     {
       "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
       "line": 135,
       "text": "const segment = readPointerSegment(current, -1) ?? '';",
-      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분"
+      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분",
+      "lineAtInitialAudit": 135
     },
     {
       "file": "src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts",
       "line": 58,
       "text": "const pending = [{ node: root, prefix: '' }];",
-      "reason": "십진 radix의 숫자 문자열 접두 누산기이며 JSON Pointer가 아님"
+      "reason": "십진 radix의 숫자 문자열 접두 누산기이며 JSON Pointer가 아님",
+      "lineAtInitialAudit": 58
     },
     {
       "file": "src/core/surface/utils/fieldNodeFactory.ts",
-      "line": 86,
+      "line": 89,
       "text": "const name = 'node' in entry ? entry.name : '';",
-      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분"
+      "reason": "빈 이름 세그먼트 또는 루트 노드의 이름; 주소와 구분",
+      "lineAtInitialAudit": 86
     },
     {
       "file": "src/core/surface/utils/fieldNodeFactory.ts",
-      "line": 155,
+      "line": 160,
       "text": "diagnostic.details.keyword ?? diagnostic.details.propertyName ?? '',",
-      "reason": "진단 키의 없는 keyword/property 이름 자리"
+      "reason": "진단 키의 없는 keyword/property 이름 자리",
+      "lineAtInitialAudit": 155
     }
   ]
 }
