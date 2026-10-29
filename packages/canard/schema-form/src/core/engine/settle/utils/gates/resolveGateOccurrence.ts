@@ -1,3 +1,5 @@
+import { maxLite } from '@winglet/common-utils/math';
+
 import {
   type PointerSegment,
   joinPointer,
@@ -35,7 +37,7 @@ export const resolveGateOccurrence = (
   let common = readSegments(hostPath);
   for (const read of gate.evaluationReads) {
     if (typeof read === 'number') {
-      common = common.slice(0, Math.max(0, common.length - read));
+      common = common.slice(0, maxLite(0, common.length - read));
       continue;
     }
     const target = readSegments(

@@ -1,3 +1,5 @@
+import { minLite } from '@winglet/common-utils/math';
+
 import { getItemEntry } from '../../../../blueprint';
 import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
 
@@ -19,7 +21,7 @@ export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
     return false;
   if (host.raw !== undefined || host.itemCount === plan.slots.length)
     return false;
-  const prefixCount = Math.min(host.itemCount, plan.slots.length);
+  const prefixCount = minLite(host.itemCount, plan.slots.length);
   for (let index = 0; index < prefixCount; index++) {
     const slot = plan.slots[index];
     if (!('from' in slot) || slot.from !== index) return false;

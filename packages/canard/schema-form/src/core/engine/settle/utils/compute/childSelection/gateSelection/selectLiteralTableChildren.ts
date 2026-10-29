@@ -1,3 +1,5 @@
+import { minLite } from '@winglet/common-utils/math';
+
 import type { FieldNodeRecord } from '../../../../../record';
 import { engineModes } from '../../../../../utils/cache/engineModes';
 import type { GateSelectionRound } from '../../../../types/gateSelectionRound';
@@ -38,7 +40,7 @@ export const selectLiteralTableChildren = <Self extends FieldNodeRecord<Self>>(
     const index =
       verify || shadow
         ? fullIndex++
-        : Math.min(
+        : minLite(
             selected[cursor] ?? Infinity,
             table.groups[groupIndex]?.firstStepIndex ?? Infinity,
           );

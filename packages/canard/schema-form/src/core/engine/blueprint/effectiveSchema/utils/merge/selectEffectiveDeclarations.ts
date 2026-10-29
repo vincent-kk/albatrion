@@ -1,3 +1,5 @@
+import { minLite } from '@winglet/common-utils/math';
+
 import type { BlueprintNode, PropertyDeclaration } from '../../../types/node';
 
 /**
@@ -51,7 +53,7 @@ function compareDeclarations(
   left: PropertyDeclaration,
   right: PropertyDeclaration,
 ): number {
-  const length = Math.min(left.order.length, right.order.length);
+  const length = minLite(left.order.length, right.order.length);
   for (let index = 0; index < length; index++) {
     const difference = left.order[index] - right.order[index];
     if (difference) return difference;

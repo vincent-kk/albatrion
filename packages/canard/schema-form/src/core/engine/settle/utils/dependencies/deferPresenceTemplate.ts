@@ -1,3 +1,5 @@
+import { maxLite } from '@winglet/common-utils/math';
+
 import {
   JSONPointer as $,
   PointerOperator,
@@ -47,7 +49,7 @@ export const deferPresenceTemplate = <Self extends FieldNodeRecord<Self>>(
     }
     return true;
   }
-  entry.stamp = Math.max(entry.stamp, stamp);
+  entry.stamp = maxLite(entry.stamp, stamp);
   const deepest = entry.deepest;
   if (
     deepest !== null &&

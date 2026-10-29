@@ -1,9 +1,11 @@
-import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
+import { minLite } from '@winglet/common-utils/math';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntry } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
-import type { ArrayArrangePlan,FieldNodeRecord } from '../../../../record';
+import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
 import { captureFieldNodeChange } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
@@ -48,7 +50,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   const oldCount = host.itemCount;
   const length = offset + plan.slots.length;
-  const prefixCount = Math.min(oldCount, length);
+  const prefixCount = minLite(oldCount, length);
   const items: Record<string, Self> = host.structure ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];

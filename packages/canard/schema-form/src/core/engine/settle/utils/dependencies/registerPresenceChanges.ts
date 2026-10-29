@@ -1,4 +1,5 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+import { maxLite } from '@winglet/common-utils/math';
 
 import {
   JSONPointer as $,
@@ -84,7 +85,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
     );
     for (const owner of affected.owners) {
       owners.add(owner);
-      ownerStamps.set(owner, Math.max(ownerStamps.get(owner) ?? 0, stamp));
+      ownerStamps.set(owner, maxLite(ownerStamps.get(owner) ?? 0, stamp));
     }
     for (const owner of affected.stateOnly) stateOnly.add(owner);
     for (const template of affected.outerTemplates)

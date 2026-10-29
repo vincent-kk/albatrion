@@ -1,3 +1,5 @@
+import { maxLite } from '@winglet/common-utils/math';
+
 import { JSONPointer as $ } from '../constants/JSONPointer';
 
 /**
@@ -23,7 +25,7 @@ export const readFormattedPointerSegment = (
       end = path.lastIndexOf($.Separator, end - 1);
       if (end < offset) return undefined;
     }
-    start = Math.max(offset, path.lastIndexOf($.Separator, end - 1) + 1);
+    start = maxLite(offset, path.lastIndexOf($.Separator, end - 1) + 1);
   } else {
     for (let position = 0; position < index; position++) {
       start = path.indexOf($.Separator, start);

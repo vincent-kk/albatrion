@@ -201,7 +201,15 @@
 | `src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts` | 0 | 0 | 2 |
 | `src/core/surface/utils/fieldNodeFactory.ts` | 2 | 0 | 0 |
 
-## 항목 4–6
+## 항목 4 — 두 피연산자 비교
+
+제품 Math 호출 **18 → 4**, **14개**를 `@winglet/common-utils/math`의 `minLite`/`maxLite`로 바꿨습니다. 배열 길이·위치·파생 순위·논리 시각처럼 엔진이 만드는 수를 비교하며, 슬롯 배열 길이는 기존 Array.from의 ToLength 관측을 유지합니다. `NaN` 또는 부호 있는 0을 공개 결과로 내보내는 일반 수 비교로 범위를 넓히지 않았습니다.
+
+유지한 네 곳은 [항목 4 원시](raw/micro-hygiene/item-4.json)에 열거했습니다. predicate table의 세 피연산자 Math.min과 검증 경로의 spread Math.max 두 곳은 대상이 아닙니다. ArrayItems의 작성 minItems는 NaN일 수 있어 `Math.min(NaN, finite)`와 minLite의 차이로 추가 빈 행이 생기는 것을 막기 위해 유지했습니다.
+
+패키지 typecheck·lint와 포인터·파생·배열·게이트 표적 시험 **52파일·446건**을 통과했습니다.
+
+## 항목 5–6
 
 진행 중입니다.
 

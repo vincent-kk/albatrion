@@ -1,3 +1,5 @@
+import { maxLite } from '@winglet/common-utils/math';
+
 /**
  * Build the array that results from writing one empty slot.
  * @param current - Raw array value; `null` or `undefined` count as empty.
@@ -11,6 +13,6 @@ export const fillArraySlot = (
   value: unknown,
 ): unknown[] =>
   Array.from(
-    { length: Math.max(current?.length ?? 0, index + 1) },
+    { length: maxLite(current?.length ?? 0, index + 1) },
     (_, position) => (position === index ? value : current?.[position]),
   );
