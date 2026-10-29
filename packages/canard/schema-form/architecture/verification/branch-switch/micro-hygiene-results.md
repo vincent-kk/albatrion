@@ -60,6 +60,8 @@
 
 이전의 루트 표기 후속은 **결정됨: 적용**이며 위 제외 목록만 유지합니다. mutable 경로 누산기의 기존 string 형은 명시적 형 주석으로 보존했습니다.
 
+추가 소유자 결정으로 P3-3의 세 모듈 상수는 **세 모듈 상수 → constants의 단일 `FragmentPrefix` 상수**로 모았습니다. `JSONPointer.Fragment`와 `JSONPointer.Separator`를 이어 만든 `#/` literal이며 JSONPointer 객체의 멤버나 두 공개 진입점에는 추가하지 않았습니다. 기존 내부 세 파서가 직접 가져옵니다.
+
 첫 표적 시험은 workspace `@winglet/json` dist 부재로 7파일 적재가 실패했습니다. 설치 없이 지정된 common-utils와 json build로 준비했고, 수정 전후 동일한 포인터 시험 **8파일·96건**, 수정 뒤 패키지 typecheck·lint를 통과했습니다. lint의 첫 실행도 미준비 json-schema·react-utils dist 때문에 실패했으며 지정 build 뒤 통과했습니다. 상수의 literal 형으로 좁아진 조립 변수는 `string` 주석으로 원래 형을 유지합니다.
 
 ## 항목 2 — 고빈도 membership과 체인

@@ -2,10 +2,7 @@ import { maxLite } from '@winglet/common-utils/math';
 
 import type { Optional } from '@aileron/declare';
 
-import { JSONPointer as $ } from '../constants/JSONPointer';
-
-/** Encoded fragment-root prefix shared by every call in this module. */
-const FRAGMENT_PREFIX = $.Fragment + $.Separator;
+import { JSONPointer as $, FragmentPrefix } from '../constants/JSONPointer';
 
 /**
  * Read one encoded segment without constructing a split array.
@@ -18,7 +15,7 @@ export const readFormattedPointerSegment = (
   index: number,
 ): Optional<string> => {
   if (path === $.Root || path === $.Fragment) return undefined;
-  const offset = path.startsWith(FRAGMENT_PREFIX)
+  const offset = path.startsWith(FragmentPrefix)
     ? 2
     : path[0] === $.Separator
       ? 1

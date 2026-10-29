@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '../constants/JSONPointer';
+import { JSONPointer as $, FragmentPrefix } from '../constants/JSONPointer';
 import {
   PointerOperator,
   type PointerSegment,
@@ -6,9 +6,6 @@ import {
 import { joinPointer } from './joinPointer';
 import { parsePointer } from './parsePointer';
 import { parsePointerSegments } from './parsePointerSegments';
-
-/** Encoded fragment-root prefix shared by every call in this module. */
-const FRAGMENT_PREFIX = $.Fragment + $.Separator;
 
 /**
  * Resolve an authored dependency or reference address against its host node.
@@ -25,7 +22,7 @@ export const resolvePointer = (basePath: string, pointer: string): string => {
   }
   if (pointer === $.Current) return basePath;
   if (pointer[0] === $.Separator) return pointer;
-  if (pointer.startsWith(FRAGMENT_PREFIX)) return pointer.slice(1);
+  if (pointer.startsWith(FragmentPrefix)) return pointer.slice(1);
   const parsed = parsePointer(pointer);
   const resolved: PointerSegment[] = parsed.absolute
     ? []
