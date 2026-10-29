@@ -198,8 +198,8 @@ export const getGateSelectionTable = (
   return table;
 };
 
-/** Narrow borrowed literal tags without visiting sparse slots.
- * @param values Authored discriminator values.
+/** Narrow the dense discriminator tags copied during blueprint construction.
+ * @param values Dense frozen discriminator tags copied at blueprint time.
  * @returns Whether every present tag has strict Map-key semantics.
  */
 function isGateLiteralList(

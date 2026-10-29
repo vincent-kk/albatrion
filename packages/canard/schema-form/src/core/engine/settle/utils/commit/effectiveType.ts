@@ -36,7 +36,7 @@ function isTypeName(value: unknown): value is SchemaTypeName {
 }
 
 /** Validate authored type names while retaining sparse-list membership semantics.
- * @param values Borrowed authored list.
+ * @param values Borrowed effective-schema type list; indexed validation skips sparse slots.
  * @returns Whether each present slot names an accepted schema type.
  */
 function isTypeNameList(values: unknown[]): values is SchemaTypeName[] {

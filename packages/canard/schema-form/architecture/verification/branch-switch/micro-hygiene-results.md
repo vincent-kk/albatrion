@@ -478,6 +478,8 @@
 
 [반복 감사 원시](raw/micro-hygiene/candidate-2-loop-audit.json)는 남은 숫자 `in` 28곳을 모두 열거합니다. 작성/외부 입력의 tuple·virtual fields·controls.fields/targets·schema.allOf/branches·enum/literal 값·작성 type·required/dependentRequired·외부 오류·checkbox prev·union authored·공개 `ChildFields` 인수의 구멍은 계속 건너뜁니다. 기존 item-entry 캐시의 sparse 존재 검사, 스냅숏의 실제 구멍 보존 검사도 유지합니다. `Object.keys`, 이전 discriminator 값의 push 배열, 렌더의 생성된 옵션/표시 배열에서는 검사를 없앴습니다. 새로 작성한 로컬 선택 형 13개는 기존 Optional 유틸리티로 표기했습니다. typecheck·lint·표적 **82파일 720건(기존 todo 1)**을 통과했으며 [로그](raw/micro-hygiene/candidate-2-loop-checks.json.gz)를 보존했습니다.
 
+후보 2 재검토 P3-B에 따라 감사의 다섯 곳(`collectBlueprintWarnings`, `getGateSelectionTable`, `isStableDiscriminatorEntry`, `prepareDiscriminatorEntrySelection`, `readGateSelectionGroup`)은 **판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요**로 교정했습니다. `readDiscriminatorBranches`가 spread 후 동결한 배열은 구멍을 undefined로 채웁니다. 이 다섯 검사는 바이트 중립 범위에서 그대로 두며 제거는 소유자 결정 후속입니다. `effectiveType`의 입력은 이 태그가 아닌 `node.schema.schema.type`이므로 **작성 입력(스키마 type 목록), 검사 유지**입니다. 조정자가 코드 근거에 따른 이 구분을 승인했으며 두 함수의 매개변수 주석도 실제 입력에 맞췄습니다.
+
 ## 항목 6 — 형 유틸리티
 
 **521지점**을 치환했습니다: `Record<string, T>` → Dictionary **101개**, Optional **284개**, Nullable **122개**, Optional<Nullable> **13개**, Nullish **1개**입니다. 문자열 아닌 Record 키와 기존 조건부·mapped type의 분배·modifier 의미가 달라지는 조합은 유지했습니다. 대응하는 Required/Partial/IsNullable/Roll의 추가 수기 동등 조합은 이 제품 범위에서 발견하지 못했으며, 이미 사용하는 유틸리티는 유지했습니다. [항목 6 위치](raw/micro-hygiene/item-6.json)를 보존합니다.

@@ -59,7 +59,8 @@
     {
       "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
       "line": 124,
-      "expression": "index in items"
+      "expression": "index in items",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요"
     },
     {
       "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
@@ -94,22 +95,26 @@
     {
       "file": "src/core/engine/settle/utils/commit/effectiveType.ts",
       "line": 44,
-      "expression": "index in values"
+      "expression": "index in values",
+      "classification": "작성 입력(스키마 type 목록), 검사 유지"
     },
     {
       "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
       "line": 209,
-      "expression": "index in values"
+      "expression": "index in values",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요"
     },
     {
       "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
       "line": 70,
-      "expression": "index in values"
+      "expression": "index in values",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요"
     },
     {
       "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
       "line": 55,
-      "expression": "index in values"
+      "expression": "index in values",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요"
     },
     {
       "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
@@ -129,7 +134,8 @@
     {
       "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
       "line": 65,
-      "expression": "index in items"
+      "expression": "index in items",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요"
     },
     {
       "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
