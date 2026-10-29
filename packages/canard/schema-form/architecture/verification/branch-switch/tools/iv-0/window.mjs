@@ -24,6 +24,12 @@ assert.equal(smoke.timed, false);
 assert.equal(smoke.inputsSha256, digest(path.join(root, 'inputs.json')).sha256);
 assert.equal(read(path.join(root, 'rehearsal.json')).code, 0);
 assert.equal(read(path.join(root, 'pilot-summary.json')).processes, 22);
+assert.equal(
+  read(path.join(root, 'pilot-summary.json')).currentInExpectedRange,
+  true,
+);
+assert.equal(read(path.join(root, 'details-rehearsal.json')).warmups, 1);
+assert.equal(read(path.join(root, 'details-rehearsal.json')).sampleCount, 1);
 assert.ok(!fs.existsSync(path.join(root, 'formal-start.json')));
 const here = path.dirname(fileURLToPath(import.meta.url));
 const packageDir = path.resolve(here, '../../../../..');

@@ -88,7 +88,9 @@ export function instrumentSource(source, file, mode) {
     if (mode === 'diagnostics') {
       if (
         ts.isNewExpression(node) &&
-        ['Map', 'Set'].includes(node.expression.getText(tree))
+        ['Map', 'Set', 'PathKeyedMap', 'PathKeyedSet'].includes(
+          node.expression.getText(tree),
+        )
       ) {
         const kind = node.expression.getText(tree);
         edits.push([
@@ -105,6 +107,17 @@ export function instrumentSource(source, file, mode) {
         ]);
         edits.push([node.body.end - 1, '}finally{globalThis.__iv.end();}']);
         sites.push({ name: 'writeBoundary', file });
+      }
+      if (name === 'exitFieldNodeChain') {
+        edits.push([
+          node.body.getStart(tree) + 1,
+          'const __ivExit=globalThis.__iv.chainExit();try{',
+        ]);
+        edits.push([
+          node.body.end - 1,
+          '}finally{globalThis.__iv.chainExitEnd(__ivExit);}',
+        ]);
+        sites.push({ name: 'chainExitBoundary', file });
       }
       if (name === 'computeNode') {
         edits.push([

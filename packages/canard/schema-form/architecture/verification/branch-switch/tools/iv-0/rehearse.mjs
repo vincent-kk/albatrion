@@ -72,4 +72,30 @@ json(path.join(root, 'rehearsal.json'), {
   samples: 1,
   code: result.status,
 });
+const details = spawnSync(
+  process.execPath,
+  [
+    fileURLToPath(new URL('./worker.mjs', import.meta.url)),
+    root,
+    'switch-oneOf-80',
+    'switch',
+    '0',
+    '1',
+    '1',
+  ],
+  {
+    cwd: repository,
+    encoding: 'utf8',
+    env: { ...process.env, NODE_ENV: 'production' },
+  },
+);
+fs.writeFileSync(
+  path.join(root, 'details-rehearsal.stderr'),
+  details.stderr ?? '',
+);
+assert.equal(details.status, 0, details.stderr);
+const detailRecord = JSON.parse(details.stdout);
+assert.equal(detailRecord.warmups, 1);
+assert.equal(detailRecord.sampleCount, 1);
+json(path.join(root, 'details-rehearsal.json'), detailRecord);
 console.log('IV_0_REHEARSAL_OK workers=1 warmups=1 samples=1 marker=false');

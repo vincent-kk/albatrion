@@ -28,6 +28,7 @@ const repository = path.resolve(packageDir, '../../..');
 const prefix = path.relative(repository, packageDir);
 const startCommit = '0eb03ff3bb54bf06af95271d157aefece1b9bf32';
 const stageHead = execFileSync('git', ['rev-parse', 'b026bd04f'], {
+  cwd: repository,
   encoding: 'utf8',
 }).trim();
 assert.equal(
@@ -41,14 +42,14 @@ assert.equal(
       prefix + '/package.json',
       prefix + '/rolldown.config.mjs',
     ],
-    { encoding: 'utf8' },
+    { cwd: repository, encoding: 'utf8' },
   ),
   '',
 );
 const sourceEntries = execFileSync(
   'git',
   ['ls-tree', '-rz', startCommit, '--', prefix + '/src'],
-  { encoding: 'utf8' },
+  { cwd: repository, encoding: 'utf8' },
 )
   .split('\0')
   .filter(Boolean);
@@ -56,6 +57,7 @@ const archivedFiles = sourceEntries.map((entry) =>
   path.join(start, entry.split('\t')[1].slice(prefix.length + 1)),
 );
 const archivedBlobs = execFileSync('git', ['hash-object', '--stdin-paths'], {
+  cwd: repository,
   input: archivedFiles.join('\n') + '\n',
   encoding: 'utf8',
 })
@@ -103,6 +105,12 @@ for (const [lane, source] of [
     'index.d.ts',
   ]) {
     fs.copyFileSync(path.join(source, 'dist', name), path.join(target, name));
+    if (lane === 'A')
+      assert.deepEqual(
+        digest(path.join(target, name)),
+        startingHashes.files.S[name],
+        'Stage start equals B5 S: ' + name,
+      );
     files['bundles/' + lane + '/' + name] = digest(path.join(target, name));
   }
   const stageRoot = getStageRoot(root, lane);

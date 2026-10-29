@@ -12,6 +12,7 @@ export function createDiagnosticRecorder(engine) {
   const frames = [],
     rows = [],
     edgeCache = new WeakMap();
+  let pendingDelivery;
   const recorder = {
     enabled: false,
     label: '',
@@ -61,6 +62,7 @@ export function createDiagnosticRecorder(engine) {
         target: frame.target,
         hosts,
         edges: [...edges, ...frame.injections],
+        owners: frame.dependencyOwners ?? [],
       });
       const { before, root, roundFrames, computeStack, ...record } = frame;
       rows.push({
@@ -74,6 +76,41 @@ export function createDiagnosticRecorder(engine) {
         emptyRounds: frame.rounds.filter((round) => round.changeSetSize === 0)
           .length,
       });
+      pendingDelivery = { row: rows.at(-1), root: frame.root };
+    },
+    chainExit() {
+      if (!recorder.enabled || frames.length > 0 || !pendingDelivery)
+        return false;
+      const { row, root } = pendingDelivery;
+      frames.push({
+        delivery: true,
+        row,
+        root,
+        target: row.target,
+        kind: row.kind,
+        label: row.label,
+        before: snapshotNodes(root),
+        contexts: 0,
+        scratchNew: 0,
+        scratchReused: 0,
+        allocations: {},
+        computes: {},
+        computeStack: [],
+        computeNonce: 0,
+        rounds: [],
+        roundFrames: new Map(),
+        injections: [],
+      });
+      return true;
+    },
+    chainExitEnd(token) {
+      if (!token || !frames.at(-1)?.delivery) return;
+      const frame = frames.pop();
+      frame.row.deliveryAllocations = frame.allocations;
+      frame.row.deliveryContexts = frame.contexts;
+      frame.row.deliveryScratchNew = frame.scratchNew;
+      frame.row.deliveryScratchReused = frame.scratchReused;
+      pendingDelivery = undefined;
     },
     context(context) {
       if (!recorder.enabled) return;
@@ -116,10 +153,15 @@ export function createDiagnosticRecorder(engine) {
       );
       if (previous) previous.openedNext = true;
       frame.roundFrames.set(node, snapshotNodes(node));
+      const open = frame.rounds.findLast(
+        (entry) =>
+          entry.changeSetSize === undefined && entry.computeId !== computeId,
+      );
       frame.rounds.push({
         host: node.path,
         computeId,
         round,
+        parentRound: open ? frame.rounds.indexOf(open) : null,
         openedNext: false,
         dirtyBefore: context.dirtyPaths.size,
       });

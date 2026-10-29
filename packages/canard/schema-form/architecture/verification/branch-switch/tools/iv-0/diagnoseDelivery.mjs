@@ -63,4 +63,16 @@ const report = JSON.parse(
 );
 assert.equal(report.rows.length, 79);
 assert.equal(report.differences, 0);
+const diagnostics = JSON.parse(
+  fs.readFileSync(path.join(root, 'delivery-diagnostics.json'), 'utf8'),
+);
+assert.ok(
+  diagnostics.rows.every(
+    (row) =>
+      row.deliveryAllocations?.[
+        'src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set'
+      ] >= 1,
+  ),
+  'Every corpus write includes chain-exit allocations',
+);
 console.log('IV_0_DELIVERY_DIAGNOSTICS_OK scenes=79 differences=0');

@@ -60,18 +60,31 @@ export function collectDependencyEdges(root, engine) {
             target: engine.appendSegment(declaration.path, name),
             kind: 'required',
           });
-      for (const gate of declaration.gates)
-        for (const read of gate.evaluationReads) {
-          const source =
-            typeof read === 'string'
-              ? read
-              : engine.resolveDependencyPath(gate.hostPath, '../'.repeat(read));
+      for (const gate of declaration.gates) {
+        if (gate.kind === 'if')
           edges.push({
-            source,
+            source: gate.hostPath,
+            target: declaration.path,
+            kind: 'gate-if-host',
+          });
+        if (gate.kind === 'discriminator')
+          edges.push({
+            source: engine.appendSegment(
+              gate.hostPath,
+              gate.condition.propertyName,
+            ),
+            target: declaration.path,
+            kind: 'gate-discriminator',
+          });
+        for (const read of gate.evaluationReads) {
+          if (typeof read !== 'string') continue;
+          edges.push({
+            source: read,
             target: declaration.path,
             kind: 'gate-' + gate.kind,
           });
         }
+      }
     }
   for (const rule of engine.getDeriveRuleTable(blueprint).rules)
     if (rule.kind === 'injectTo')

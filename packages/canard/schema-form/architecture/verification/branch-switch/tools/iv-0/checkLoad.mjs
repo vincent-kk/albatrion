@@ -9,6 +9,7 @@ import { digest, json } from '../b9-0/files.mjs';
 import { createUntimedRecorder } from '../b9-0/untimedRecorder.mjs';
 import { getStageRoot } from '../window/getStageRoot.mjs';
 import { installDisabledHooks } from './diagnostics/installDisabledHooks.mjs';
+import { setupFloorOperation } from './timing/setupFloorOperation.mjs';
 import { verifyInputs } from './verifyInputs.mjs';
 
 process.env.NODE_ENV = 'production';
@@ -46,6 +47,26 @@ for (const [lane, engineName, file] of [
     observations.push({ lane, row: row.id, operations: 2, passed: true });
   }
 }
+const floorObservations = [];
+for (const [mode, file] of [
+  ['plain', path.join(root, 'diagnostics/plain.mjs')],
+  ['details', path.join(root, 'diagnostics/details.mjs')],
+  [
+    'unwrapped',
+    path.join(getStageRoot(root, 'B'), 'stages/scratch/unwrapped.mjs'),
+  ],
+  ['wrapped', path.join(getStageRoot(root, 'B'), 'stages/scratch/wrapped.mjs')],
+]) {
+  Reflect.set(globalThis, '__b0', createUntimedRecorder());
+  const engine = await import(pathToFileURL(file).href);
+  for (const row of ['switch-siblings-0', 'switch-oneOf-80'])
+    for (const variant of ['noop', 'leaf', 'switch']) {
+      const operation = await setupFloorOperation(row, variant, engine);
+      operation.write();
+      operation.check();
+      floorObservations.push({ row, mode, variant, passed: true });
+    }
+}
 const stageResults = [];
 for (const lane of ['A', 'B'])
   for (const mode of [
@@ -73,6 +94,7 @@ json(path.join(root, 'load-check.json'), {
   timed: false,
   inputsSha256: digest(path.join(root, 'inputs.json')).sha256,
   observations,
+  floorObservations,
   stageResults,
 });
 console.log('IV_0_UNTIMED_LOAD_OK rows=22 stage-bundles=6 legacy-oneOf=120');

@@ -18,6 +18,8 @@ export function installDisabledHooks(target) {
       'roundEnd',
       'inject',
       'settled',
+      'chainExit',
+      'chainExitEnd',
     ].map((name) => [name, noop]),
   );
   target.__b0 = { enter: noop, exit: noop, enterCreation: noop };

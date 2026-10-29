@@ -112,11 +112,39 @@ export async function buildDiagnostics(packageDir, output) {
     'hostRoundEnd',
     'settledBoundary',
     'injectTarget',
+    'chainExitBoundary',
   ])
     assert.equal(
       modes.diagnostics.sites.filter((site) => site.name === name).length,
       1,
       name,
+    );
+  for (const name of [
+    'writeFieldNode',
+    'createSettlementContext',
+    'getSettlementScratch',
+    'releaseSettlementScratch',
+    'finishSettlement',
+    'startFieldNodeChain',
+    'enterFieldNodeChain',
+    'exitFieldNodeChain',
+    'runDeliveryWaves',
+    'deliverWave',
+    'flushQueuedEvents',
+    'publishStateKeys',
+    'createClearedArrayOverlay',
+    'readExitLayerPolicy',
+    'captureFieldNodeChange',
+    'finalizePendingExitLoop',
+    'finalizeRetainLoop',
+    'finalizeAncestorCollection',
+    'finalizeAncestorOutput',
+    'registryRemoval',
+  ])
+    assert.equal(
+      modes.details.sites.filter((site) => site.name === name).length,
+      1,
+      'One detail timer: ' + name,
     );
   const manifest = { inputs, modes };
   fs.writeFileSync(

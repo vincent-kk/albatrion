@@ -8,9 +8,10 @@ import { getStageRoot } from '../window/getStageRoot.mjs';
 /**
  * Recheck every frozen runtime and tool before or after a measurement window.
  * @param {string} root - Prepared IV-0 .noindex directory
+ * @param {boolean} verifyTools - False only when archiving historical inputs after review edits
  * @returns Verified input manifest
  */
-export function verifyInputs(root) {
+export function verifyInputs(root, verifyTools = true) {
   const inputs = read(path.join(root, 'inputs.json'));
   const packageDir = fileURLToPath(new URL('../../../../../', import.meta.url));
   assert.equal(inputs.node, process.version);
@@ -32,7 +33,8 @@ export function verifyInputs(root) {
       : path.join(root, file);
     assert.deepEqual(digest(location), hash, file);
   }
-  for (const [file, hash] of Object.entries(inputs.tools))
-    assert.deepEqual(digest(path.join(packageDir, file)), hash, file);
+  if (verifyTools)
+    for (const [file, hash] of Object.entries(inputs.tools))
+      assert.deepEqual(digest(path.join(packageDir, file)), hash, file);
   return inputs;
 }

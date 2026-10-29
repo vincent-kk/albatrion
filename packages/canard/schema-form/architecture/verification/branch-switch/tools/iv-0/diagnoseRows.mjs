@@ -35,6 +35,13 @@ for (const row of buildAlternatingRows(true)) {
   }
   recorder.enabled = false;
   const observed = recorder.rows.filter((entry) => entry.label === row.id);
+  for (const entry of observed.filter((entry) => entry.kind !== 'load'))
+    assert.ok(
+      entry.deliveryAllocations?.[
+        'src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set'
+      ] >= 1,
+      'Delivery allocation boundary: ' + row.id,
+    );
   if (row.operation !== 'mount')
     assert.ok(observed.length, row.id + ': observed settlement');
   rowSummaries.push({
@@ -56,4 +63,9 @@ json(path.join(root, 'row-diagnostics.json'), {
   rowSummaries,
   rows: recorder.rows,
 });
-console.log('IV_0_ROW_DIAGNOSTICS_OK rows=22 writes=' + recorder.rows.length);
+console.log(
+  'IV_0_ROW_DIAGNOSTICS_OK rows=22 settlements=' +
+    recorder.rows.length +
+    ' writes=' +
+    recorder.rows.filter((row) => row.kind !== 'load').length,
+);
