@@ -40,6 +40,8 @@
 
 소유자 후속 결정으로 루트 주소 뜻의 빈 문자열 **32곳·19파일**을 추가로 `$.Root`로 통일했습니다. 기존 116곳을 합쳐 총 **148곳**입니다. 재검토의 16파일 목록을 출발점으로 core 전체를 다시 훑었으며, 유지 지점은 아래처럼 주소가 아닌 빈 문자열 **15줄**입니다. [각 치환·유지 근거](raw/micro-hygiene/owner-cleanups/root-pointer-audit.json)를 보존했습니다. `NumericPathIndex`의 접두는 십진 숫자 누산기이므로 재검토 목록에 있었더라도 루트 포인터로 바꾸지 않았습니다.
 
+병합 전 최종 머리의 전체 시험에서 `src/core/__tests__/global-errors.timing.test.ts`의 "one call at a time" 사례가 실패했습니다(4n 측정 40.7 ms, 상한 40 ms). 커밋별 측정으로 P3-1 커밋(`070286bef`)의 `propagateExternalErrorsToRoot.ts` 한 곳이 원인이었습니다. 루트 issue마다 실행되는 `canonical` 클로저의 비교 대상이 `''`에서 `$.Root`로 바뀌면서, 시험 하네스(vite-node)에서는 import 바인딩 읽기가 live binding getter 호출이 되어 4n 측정이 25.0 ms에서 41.1 ms로 늘었습니다. 번들에서는 같은 모듈 안의 속성 읽기라 차이가 없으므로 소유자 결정으로 제품 코드는 그대로 두고 시험을 고쳤습니다. 원래 시험은 필드 수와 issue 수를 함께 4배로 늘려 4n 작업량이 16배가 되는데도 "선형" 비율 8을 요구했고, 기준 머리에서도 비율 11.4로 잡음 하한(5 ms × 8) 덕에만 통과하던 시험이었습니다. 188C-01이 약속한 것은 "진입당 한 번 재구성, 루트 목록 길이에 선형"이므로 필드 수를 100으로 고정하고 issue 수만 4배로 늘리도록 바꿨습니다. 최종 머리의 측정은 batch 0.27 → 0.32 ms(비율 1.2), 한 번씩 3.43 → 10.78 ms(비율 3.1)입니다.
+
 | 유지 위치 | 주소가 아닌 이유 |
 | --- | --- |
 | `src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts:49` | 진단 키의 없는 keyword/property 이름 자리 |
