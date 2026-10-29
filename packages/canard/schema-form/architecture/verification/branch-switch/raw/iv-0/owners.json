@@ -1,0 +1,518 @@
+[
+  {
+    "row": "switch-siblings-0",
+    "totalUs": 135.35400000000664,
+    "baselineUs": 87.14599999984785,
+    "perCallUs": 0.6444256756809852,
+    "stages": {
+      "startFieldNodeChain": {
+        "selfUs": 0.5419999997684499,
+        "calls": 1,
+        "selfNetUs": -0.09454729753100322
+      },
+      "enterFieldNodeChain": {
+        "selfUs": 1.7079999997804407,
+        "calls": 1,
+        "selfNetUs": 1.0565405403188355
+      },
+      "getSettlementScratch": {
+        "selfUs": 0.3749999996216502,
+        "calls": 1,
+        "selfNetUs": -0.2764594598399551
+      },
+      "createSettlementContext": {
+        "selfUs": 1.7920000000231084,
+        "calls": 1,
+        "selfNetUs": 1.1470743241728554
+      },
+      "prepareSourcePruner": {
+        "selfUs": 0.3329999999550637,
+        "calls": 1,
+        "selfNetUs": -0.3114256757259215
+      },
+      "sameValue": {
+        "selfUs": 3.68849999995291,
+        "calls": 10,
+        "selfNetUs": -2.7357567569074366
+      },
+      "markWrite": {
+        "selfUs": 2.7709999999387946,
+        "calls": 1,
+        "selfNetUs": 2.1265743242578097
+      },
+      "registerRecalculation": {
+        "selfUs": 7.8960000000734,
+        "calls": 1,
+        "selfNetUs": 7.259452702773947
+      },
+      "captureFieldNodeChange": {
+        "selfUs": 4.0420000007088674,
+        "calls": 17,
+        "selfNetUs": -6.912736487062855
+      },
+      "primeHost": {
+        "selfUs": 1.7499999999017746,
+        "calls": 1,
+        "selfNetUs": 1.1055743246755367
+      },
+      "updateOutput": {
+        "selfUs": 7.206999999652908,
+        "calls": 4,
+        "selfNetUs": 4.660810810455095
+      },
+      "computeNode": {
+        "selfUs": 16.646500000661035,
+        "calls": 4,
+        "selfNetUs": 14.040662162814614
+      },
+      "prepareGateTableRound": {
+        "selfUs": 0.7500000001527951,
+        "calls": 1,
+        "selfNetUs": 0.11345270285334197
+      },
+      "evaluateGate": {
+        "selfUs": 8.019999999532956,
+        "calls": 6,
+        "selfNetUs": 4.200716215736238
+      },
+      "selectEffectiveDeclarations": {
+        "selfUs": 2.3949999999786087,
+        "calls": 3,
+        "selfNetUs": 0.4827229727689464
+      },
+      "mergeEffectiveSchema": {
+        "selfUs": 3.2485000001543085,
+        "calls": 3,
+        "selfNetUs": 1.316121621486574
+      },
+      "selectNodeSchema": {
+        "selfUs": 3.416999999899417,
+        "calls": 1,
+        "selfNetUs": 2.771074324847497
+      },
+      "assembleObject": {
+        "selfUs": 3.3749999997780833,
+        "calls": 1,
+        "selfNetUs": 2.7235405407712254
+      },
+      "selectChildren": {
+        "selfUs": 20.167499999615757,
+        "calls": 1,
+        "selfNetUs": 19.51604054015415
+      },
+      "registerPresenceChanges": {
+        "selfUs": 2.167000000099506,
+        "calls": 1,
+        "selfNetUs": 1.5155405406379008
+      },
+      "finishGateTableRound": {
+        "selfUs": 0.27049999994233076,
+        "calls": 1,
+        "selfNetUs": -0.38095945951927457
+      },
+      "canSkipGateWheel": {
+        "selfUs": 1.333499999873311,
+        "calls": 1,
+        "selfNetUs": 0.6885743244778053
+      },
+      "preserveReferences": {
+        "selfUs": 0.8329999998295534,
+        "calls": 1,
+        "selfNetUs": 0.18857432414856823
+      },
+      "withdrawDetachedFills": {
+        "selfUs": 0.3329999999550637,
+        "calls": 1,
+        "selfNetUs": -0.3114256757259215
+      },
+      "transitionSettlement": {
+        "selfUs": 2.04200000007404,
+        "calls": 1,
+        "selfNetUs": 1.390540540612435
+      },
+      "publishStateKeys": {
+        "selfUs": 0.45799999998052954,
+        "calls": 1,
+        "selfNetUs": -0.18642567570045565
+      },
+      "markCommitDeliveries": {
+        "selfUs": 10.562500000332875,
+        "calls": 1,
+        "selfNetUs": 9.91104054087127
+      },
+      "commitSettlement": {
+        "selfUs": 3.9790000000721193,
+        "calls": 1,
+        "selfNetUs": 3.327540540610514
+      },
+      "finishSettlement": {
+        "selfUs": 2.5825000000168075,
+        "calls": 1,
+        "selfNetUs": 1.9310405405552022
+      },
+      "releaseSettlementScratch": {
+        "selfUs": 2.04200000007404,
+        "calls": 1,
+        "selfNetUs": 1.405452702774587
+      },
+      "writeFieldNode": {
+        "selfUs": 5.917499999895881,
+        "calls": 1,
+        "selfNetUs": 5.266040540434275
+      },
+      "runDeliveryWaves": {
+        "selfUs": 0.3749999996216502,
+        "calls": 1,
+        "selfNetUs": -0.269425676059335
+      },
+      "flushQueuedEvents": {
+        "selfUs": 0.7914999998774874,
+        "calls": 1,
+        "selfNetUs": 0.1405405403577763
+      },
+      "exitFieldNodeChain": {
+        "selfUs": 3.5419999996975093,
+        "calls": 1,
+        "selfNetUs": 2.890540540235904
+      },
+      "everythingElse": {
+        "selfUs": 2.6660000000902073,
+        "calls": 1,
+        "selfNetUs": 2.6660000000902073
+      }
+    }
+  },
+  {
+    "row": "switch-oneOf-80",
+    "totalUs": 315.3749999999036,
+    "baselineUs": 196.75050000000738,
+    "perCallUs": 0.6847348066289594,
+    "stages": {
+      "startFieldNodeChain": {
+        "selfUs": 0.5830000000059954,
+        "calls": 1,
+        "selfNetUs": -0.0898950279494497
+      },
+      "enterFieldNodeChain": {
+        "selfUs": 1.9580000002861198,
+        "calls": 1,
+        "selfNetUs": 1.3026160223861407
+      },
+      "getSettlementScratch": {
+        "selfUs": 0.37500000007639755,
+        "calls": 1,
+        "selfNetUs": -0.29789502787904754
+      },
+      "createSettlementContext": {
+        "selfUs": 2.2910000000138098,
+        "calls": 1,
+        "selfNetUs": 1.6356160221138307
+      },
+      "prepareSourcePruner": {
+        "selfUs": 0.3749999996216502,
+        "calls": 1,
+        "selfNetUs": -0.3398950280003814
+      },
+      "sameValue": {
+        "selfUs": 5.229000000099404,
+        "calls": 15,
+        "selfNetUs": -5.042022099334986
+      },
+      "markWrite": {
+        "selfUs": 3.1879999996817787,
+        "calls": 1,
+        "selfNetUs": 2.5032651930528194
+      },
+      "registerRecalculation": {
+        "selfUs": 16.47899999989022,
+        "calls": 1,
+        "selfNetUs": 15.823616021990242
+      },
+      "captureFieldNodeChange": {
+        "selfUs": 5.502500001057342,
+        "calls": 23,
+        "selfNetUs": -10.246400551408723
+      },
+      "primeHost": {
+        "selfUs": 2.103999999917505,
+        "calls": 1,
+        "selfNetUs": 1.4281160223535008
+      },
+      "updateOutput": {
+        "selfUs": 12.624500000811167,
+        "calls": 6,
+        "selfNetUs": 8.376629835258417
+      },
+      "computeNode": {
+        "selfUs": 20.72950000047058,
+        "calls": 5,
+        "selfNetUs": 17.452580110970686
+      },
+      "prepareGateTableRound": {
+        "selfUs": 1.6665000000557484,
+        "calls": 1,
+        "selfNetUs": 0.981765193426789
+      },
+      "selectEffectiveDeclarations": {
+        "selfUs": 5.395499999849562,
+        "calls": 4,
+        "selfNetUs": 2.773964088249646
+      },
+      "mergeEffectiveSchema": {
+        "selfUs": 4.666499999302687,
+        "calls": 4,
+        "selfNetUs": 2.0159198895374413
+      },
+      "selectNodeSchema": {
+        "selfUs": 6.645500000104221,
+        "calls": 1,
+        "selfNetUs": 5.9901160222042416
+      },
+      "getSlotBinding": {
+        "selfUs": 1.4175000001159788,
+        "calls": 6,
+        "selfNetUs": -2.6924088392560863
+      },
+      "getSlotSource": {
+        "selfUs": 2.208000000564425,
+        "calls": 3,
+        "selfNetUs": 0.16034806655866496
+      },
+      "createFieldNode": {
+        "selfUs": 3.208000000086031,
+        "calls": 3,
+        "selfNetUs": 1.231314917477898
+      },
+      "markRestoredSlotRaw": {
+        "selfUs": 2.5425000001177978,
+        "calls": 3,
+        "selfNetUs": 0.4882955802309197
+      },
+      "cloneSlotSubtree": {
+        "selfUs": 7.062499999619831,
+        "calls": 3,
+        "selfNetUs": 5.096348065919894
+      },
+      "markSlotChange": {
+        "selfUs": 3.2294999998612184,
+        "calls": 6,
+        "selfNetUs": -0.877908838891881
+      },
+      "cloneFromSlot": {
+        "selfUs": 4.666500000439555,
+        "calls": 3,
+        "selfNetUs": 2.5218149175734603
+      },
+      "enterSlotClone": {
+        "selfUs": 0.9160000001884328,
+        "calls": 3,
+        "selfNetUs": -1.1787044195393492
+      },
+      "assembleObject": {
+        "selfUs": 10.437499999852662,
+        "calls": 2,
+        "selfNetUs": 9.126732044052703
+      },
+      "selectChildren": {
+        "selfUs": 37.89549999987685,
+        "calls": 1,
+        "selfNetUs": 37.24011602197687
+      },
+      "registerPresenceChanges": {
+        "selfUs": 14.979000000039377,
+        "calls": 1,
+        "selfNetUs": 14.323616022139399
+      },
+      "finishGateTableRound": {
+        "selfUs": 0.5830000000059954,
+        "calls": 1,
+        "selfNetUs": -0.0898950279494497
+      },
+      "canSkipGateWheel": {
+        "selfUs": 2.33299999990777,
+        "calls": 1,
+        "selfNetUs": 1.6482651932788106
+      },
+      "preserveReferences": {
+        "selfUs": 1.2089999995623657,
+        "calls": 1,
+        "selfNetUs": 0.5361049725164153
+      },
+      "withdrawDetachedFills": {
+        "selfUs": 0.666000000137501,
+        "calls": 2,
+        "selfNetUs": -0.7034696131204177
+      },
+      "transitionSettlement": {
+        "selfUs": 5.624999999781721,
+        "calls": 1,
+        "selfNetUs": 4.9402651931527615
+      },
+      "publishStateKeys": {
+        "selfUs": 0.45849999992242374,
+        "calls": 1,
+        "selfNetUs": -0.21489502774754188
+      },
+      "finalizePerished": {
+        "selfUs": 0.875000000178261,
+        "calls": 1,
+        "selfNetUs": 0.16010497255622935
+      },
+      "captureDetachedFieldNodeReads": {
+        "selfUs": 5.208999999922526,
+        "calls": 3,
+        "selfNetUs": 3.2428480662225887
+      },
+      "visitFieldNodes": {
+        "selfUs": 4.27049999962037,
+        "calls": 3,
+        "selfNetUs": 2.2828480661452453
+      },
+      "registryRemoval": {
+        "selfUs": 2.2499999997762643,
+        "calls": 3,
+        "selfNetUs": 0.1957955801167599
+      },
+      "finalizePendingExitLoop": {
+        "selfUs": 4.561499999681473,
+        "calls": 1,
+        "selfNetUs": 3.8767651930525138
+      },
+      "getSlotChildIndex": {
+        "selfUs": 1.3750000000527507,
+        "calls": 3,
+        "selfNetUs": -0.7212044201828349
+      },
+      "getRetainedChildEntry": {
+        "selfUs": 2.834500000517437,
+        "calls": 3,
+        "selfNetUs": 0.7177955801630787
+      },
+      "getControlLayers": {
+        "selfUs": 2.7294999995319813,
+        "calls": 6,
+        "selfNetUs": -1.3789088402417748
+      },
+      "captureAbsentSlotInputs": {
+        "selfUs": 0.9999999997489795,
+        "calls": 3,
+        "selfNetUs": -1.0547044198524191
+      },
+      "readExitLayerPolicy": {
+        "selfUs": 1.9599999995989492,
+        "calls": 6,
+        "selfNetUs": -2.148408840174807
+      },
+      "readSlotExitPolicy": {
+        "selfUs": 3.750999999965643,
+        "calls": 3,
+        "selfNetUs": 1.659348066753093
+      },
+      "createExitSlotOverlay": {
+        "selfUs": 5.334499999889886,
+        "calls": 3,
+        "selfNetUs": 3.3683480661899488
+      },
+      "retainExitedSlot": {
+        "selfUs": 7.20699999919816,
+        "calls": 3,
+        "selfNetUs": 5.152795579311283
+      },
+      "finalizeRetainLoop": {
+        "selfUs": 2.0839999999680003,
+        "calls": 1,
+        "selfNetUs": 1.399265193339041
+      },
+      "finalizeRestoredSlotRaw": {
+        "selfUs": 0.8330000000569271,
+        "calls": 1,
+        "selfNetUs": 0.13661602237414994
+      },
+      "finalizeAncestorCollection": {
+        "selfUs": 0.6664999998520216,
+        "calls": 1,
+        "selfNetUs": -0.04789502782811583
+      },
+      "finalizeAncestorOutput": {
+        "selfUs": 1.0420000003250607,
+        "calls": 1,
+        "selfNetUs": 0.3572651936961013
+      },
+      "finalizeExits": {
+        "selfUs": 5.604500000117696,
+        "calls": 1,
+        "selfNetUs": 4.889604972495665
+      },
+      "markCommitDeliveries": {
+        "selfUs": 16.83350000007522,
+        "calls": 1,
+        "selfNetUs": 16.17811602217524
+      },
+      "preserveSlotValueMemos": {
+        "selfUs": 2.7485000002798188,
+        "calls": 6,
+        "selfNetUs": -1.3599088394939374
+      },
+      "updateSlotChildIndex": {
+        "selfUs": 1.4994999994542013,
+        "calls": 6,
+        "selfNetUs": -2.608908840319555
+      },
+      "getSlotEntries": {
+        "selfUs": 1.6675000001669105,
+        "calls": 3,
+        "selfNetUs": -0.4287044198413015
+      },
+      "expireOccupiedSlotMemos": {
+        "selfUs": 0.6239999993340462,
+        "calls": 3,
+        "selfNetUs": -1.430204420552832
+      },
+      "commitSlotChanges": {
+        "selfUs": 8.164000000078886,
+        "calls": 1,
+        "selfNetUs": 7.508616022178907
+      },
+      "commitSettlement": {
+        "selfUs": 8.229000000028464,
+        "calls": 1,
+        "selfNetUs": 7.573616022128484
+      },
+      "finishSettlement": {
+        "selfUs": 4.019999999854917,
+        "calls": 1,
+        "selfNetUs": 3.364616021954938
+      },
+      "releaseSettlementScratch": {
+        "selfUs": 2.5000000000545697,
+        "calls": 1,
+        "selfNetUs": 1.8446160221545906
+      },
+      "writeFieldNode": {
+        "selfUs": 7.8129999997145205,
+        "calls": 1,
+        "selfNetUs": 7.157616021814541
+      },
+      "runDeliveryWaves": {
+        "selfUs": 0.416000000313943,
+        "calls": 1,
+        "selfNetUs": -0.25689502764150207
+      },
+      "flushQueuedEvents": {
+        "selfUs": 0.9170000002995948,
+        "calls": 1,
+        "selfNetUs": 0.2616160223996158
+      },
+      "exitFieldNodeChain": {
+        "selfUs": 4.666000000042914,
+        "calls": 1,
+        "selfNetUs": 4.010616022142934
+      },
+      "everythingElse": {
+        "selfUs": 3.5625000002710294,
+        "calls": 1,
+        "selfNetUs": 3.5625000002710294
+      }
+    }
+  }
+]
