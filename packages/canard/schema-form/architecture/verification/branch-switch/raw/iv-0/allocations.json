@@ -1,0 +1,1501 @@
+{
+  "timed": false,
+  "rows": [
+    {
+      "label": "single-flat-1000",
+      "writes": 40,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 5,
+        "sets": 11,
+        "wheel": 2,
+        "commit": 6,
+        "delivery": 4,
+        "other": 4
+      }
+    },
+    {
+      "label": "mount-oneOf-80",
+      "writes": 0,
+      "contexts": null,
+      "scratchNew": null,
+      "scratchReused": null,
+      "allocations": null
+    },
+    {
+      "label": "mount-flat-1000",
+      "writes": 0,
+      "contexts": null,
+      "scratchNew": null,
+      "scratchReused": null,
+      "allocations": null
+    },
+    {
+      "label": "mount-nested-d6-f4",
+      "writes": 0,
+      "contexts": null,
+      "scratchNew": null,
+      "scratchReused": null,
+      "allocations": null
+    },
+    {
+      "label": "single-nested-d6-f4",
+      "writes": 40,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 11,
+        "sets": 16,
+        "wheel": 7,
+        "commit": 6,
+        "delivery": 4,
+        "other": 10
+      }
+    },
+    {
+      "label": "switch-oneOf-80",
+      "writes": 8,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 29,
+        "sets": 68,
+        "wheel": 69,
+        "commit": 6,
+        "delivery": 4,
+        "other": 18
+      }
+    },
+    {
+      "label": "bulk-flat-2000",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 4,
+        "sets": 9,
+        "wheel": 0,
+        "commit": 6,
+        "delivery": 4,
+        "other": 3
+      }
+    },
+    {
+      "label": "bulk-nested-d6-f4",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 4,
+        "sets": 9,
+        "wheel": 0,
+        "commit": 6,
+        "delivery": 4,
+        "other": 3
+      }
+    },
+    {
+      "label": "switch-discriminator-80",
+      "writes": 8,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 31,
+        "sets": 58,
+        "wheel": 55,
+        "commit": 6,
+        "delivery": 4,
+        "other": 24
+      }
+    },
+    {
+      "label": "switch-if-80",
+      "writes": 8,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 32,
+        "sets": 55,
+        "wheel": 54,
+        "commit": 6,
+        "delivery": 4,
+        "other": 23
+      }
+    },
+    {
+      "label": "switch-nested-oneOf-20",
+      "writes": 8,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 45,
+        "sets": 88,
+        "wheel": 97,
+        "commit": 6,
+        "delivery": 4,
+        "other": 26
+      }
+    },
+    {
+      "label": "switch-siblings-0",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 15,
+        "sets": 19,
+        "wheel": 17,
+        "commit": 6,
+        "delivery": 4,
+        "other": 7
+      }
+    },
+    {
+      "label": "switch-siblings-100",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 15,
+        "sets": 19,
+        "wheel": 17,
+        "commit": 6,
+        "delivery": 4,
+        "other": 7
+      }
+    },
+    {
+      "label": "switch-siblings-1000",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 15,
+        "sets": 19,
+        "wheel": 17,
+        "commit": 6,
+        "delivery": 4,
+        "other": 7
+      }
+    },
+    {
+      "label": "switch-siblings-4000",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 15,
+        "sets": 19,
+        "wheel": 17,
+        "commit": 6,
+        "delivery": 4,
+        "other": 7
+      }
+    },
+    {
+      "label": "leaf-gate-250",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 6,
+        "sets": 13,
+        "wheel": 5,
+        "commit": 6,
+        "delivery": 4,
+        "other": 4
+      }
+    },
+    {
+      "label": "leaf-gate-1000",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 6,
+        "sets": 13,
+        "wheel": 5,
+        "commit": 6,
+        "delivery": 4,
+        "other": 4
+      }
+    },
+    {
+      "label": "leaf-gate-4000",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 6,
+        "sets": 13,
+        "wheel": 5,
+        "commit": 6,
+        "delivery": 4,
+        "other": 4
+      }
+    },
+    {
+      "label": "leaf-gate-8000",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 6,
+        "sets": 13,
+        "wheel": 5,
+        "commit": 6,
+        "delivery": 4,
+        "other": 4
+      }
+    },
+    {
+      "label": "wave-1000",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 4,
+        "sets": 1009,
+        "wheel": 0,
+        "commit": 6,
+        "delivery": 1006,
+        "other": 1
+      }
+    },
+    {
+      "label": "single-flat-1000-subscribed",
+      "writes": 40,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 4,
+        "sets": 13,
+        "wheel": 2,
+        "commit": 6,
+        "delivery": 7,
+        "other": 2
+      }
+    },
+    {
+      "label": "switch-payload-12",
+      "writes": 8,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 47,
+        "sets": 185,
+        "wheel": 195,
+        "commit": 6,
+        "delivery": 4,
+        "other": 27
+      }
+    }
+  ],
+  "corpus": [
+    {
+      "label": "plain-F1-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 34,
+        "sets": 133,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 18
+      }
+    },
+    {
+      "label": "plain-F1-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "plain-F4-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 146,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 25
+      }
+    },
+    {
+      "label": "plain-F4-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "plain-F16-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 147,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "plain-F16-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "plain-F64-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 154,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 33
+      }
+    },
+    {
+      "label": "plain-F64-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "plain-F4-C4-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 34,
+        "sets": 69,
+        "wheel": 61,
+        "commit": 8,
+        "delivery": 10,
+        "other": 20
+      }
+    },
+    {
+      "label": "plain-F4-C4-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "plain-F4-C64-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 458,
+        "wheel": 421,
+        "commit": 8,
+        "delivery": 10,
+        "other": 49
+      }
+    },
+    {
+      "label": "plain-F4-C64-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "plain-F4-C256-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 1706,
+        "wheel": 1573,
+        "commit": 8,
+        "delivery": 10,
+        "other": 145
+      }
+    },
+    {
+      "label": "plain-F4-C256-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "latent-F1-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 64,
+        "sets": 156,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 67
+      }
+    },
+    {
+      "label": "latent-F1-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 34,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 11,
+        "other": 11
+      }
+    },
+    {
+      "label": "latent-F4-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 57,
+        "sets": 156,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 60
+      }
+    },
+    {
+      "label": "latent-F4-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 34,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 11,
+        "other": 11
+      }
+    },
+    {
+      "label": "latent-F16-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 56,
+        "sets": 156,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 59
+      }
+    },
+    {
+      "label": "latent-F16-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 34,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 11,
+        "other": 11
+      }
+    },
+    {
+      "label": "latent-F64-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 48,
+        "sets": 156,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 51
+      }
+    },
+    {
+      "label": "latent-F64-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 34,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 11,
+        "other": 11
+      }
+    },
+    {
+      "label": "latent-F4-C4-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 38,
+        "sets": 72,
+        "wheel": 61,
+        "commit": 8,
+        "delivery": 10,
+        "other": 29
+      }
+    },
+    {
+      "label": "latent-F4-C4-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 34,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 11,
+        "other": 11
+      }
+    },
+    {
+      "label": "latent-F4-C64-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 129,
+        "sets": 492,
+        "wheel": 421,
+        "commit": 8,
+        "delivery": 10,
+        "other": 180
+      }
+    },
+    {
+      "label": "latent-F4-C64-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 34,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 11,
+        "other": 11
+      }
+    },
+    {
+      "label": "latent-F4-C256-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 417,
+        "sets": 1836,
+        "wheel": 1573,
+        "commit": 8,
+        "delivery": 10,
+        "other": 660
+      }
+    },
+    {
+      "label": "latent-F4-C256-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 34,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 11,
+        "other": 11
+      }
+    },
+    {
+      "label": "items-F1-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 27,
+        "sets": 136,
+        "wheel": 136,
+        "commit": 8,
+        "delivery": 10,
+        "other": 10
+      }
+    },
+    {
+      "label": "items-F1-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "items-F4-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 157,
+        "wheel": 136,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "items-F4-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "items-F16-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 157,
+        "wheel": 136,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "items-F16-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "items-F64-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 157,
+        "wheel": 136,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "items-F64-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "items-F4-C4-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 73,
+        "wheel": 64,
+        "commit": 8,
+        "delivery": 10,
+        "other": 14
+      }
+    },
+    {
+      "label": "items-F4-C4-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "items-F4-C64-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 493,
+        "wheel": 424,
+        "commit": 8,
+        "delivery": 10,
+        "other": 74
+      }
+    },
+    {
+      "label": "items-F4-C64-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "items-F4-C256-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 1837,
+        "wheel": 1576,
+        "commit": 8,
+        "delivery": 10,
+        "other": 266
+      }
+    },
+    {
+      "label": "items-F4-C256-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "prefixItems-F1-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 27,
+        "sets": 136,
+        "wheel": 136,
+        "commit": 8,
+        "delivery": 10,
+        "other": 10
+      }
+    },
+    {
+      "label": "prefixItems-F1-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "prefixItems-F4-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 157,
+        "wheel": 136,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "prefixItems-F4-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "prefixItems-F16-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 157,
+        "wheel": 136,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "prefixItems-F16-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "prefixItems-F64-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 157,
+        "wheel": 136,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "prefixItems-F64-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "prefixItems-F4-C4-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 73,
+        "wheel": 64,
+        "commit": 8,
+        "delivery": 10,
+        "other": 14
+      }
+    },
+    {
+      "label": "prefixItems-F4-C4-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "prefixItems-F4-C64-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 493,
+        "wheel": 424,
+        "commit": 8,
+        "delivery": 10,
+        "other": 74
+      }
+    },
+    {
+      "label": "prefixItems-F4-C64-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "prefixItems-F4-C256-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 28,
+        "sets": 1837,
+        "wheel": 1576,
+        "commit": 8,
+        "delivery": 10,
+        "other": 266
+      }
+    },
+    {
+      "label": "prefixItems-F4-C256-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 16,
+        "sets": 32,
+        "wheel": 23,
+        "commit": 8,
+        "delivery": 12,
+        "other": 5
+      }
+    },
+    {
+      "label": "overlap-F4-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 147,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "overlap-F4-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "overlap-F16-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 147,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "overlap-F16-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "overlap-F64-C16-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 154,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 33
+      }
+    },
+    {
+      "label": "overlap-F64-C16-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "overlap-F4-C4-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 34,
+        "sets": 69,
+        "wheel": 61,
+        "commit": 8,
+        "delivery": 10,
+        "other": 20
+      }
+    },
+    {
+      "label": "overlap-F4-C4-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "overlap-F4-C64-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 459,
+        "wheel": 421,
+        "commit": 8,
+        "delivery": 10,
+        "other": 50
+      }
+    },
+    {
+      "label": "overlap-F4-C64-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "overlap-F4-C256-exit",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 1707,
+        "wheel": 1573,
+        "commit": 8,
+        "delivery": 10,
+        "other": 146
+      }
+    },
+    {
+      "label": "overlap-F4-C256-control",
+      "writes": 1,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 22,
+        "sets": 35,
+        "wheel": 26,
+        "commit": 8,
+        "delivery": 12,
+        "other": 11
+      }
+    },
+    {
+      "label": "overlap-F4-C16-exit-reverse-same-layer",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 147,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "overlap-F4-C16-exit-fields-clear",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 146,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 25
+      }
+    },
+    {
+      "label": "overlap-F4-C16-exit-node-keep",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 147,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 26
+      }
+    },
+    {
+      "label": "overlap-F4-C16-exit-node-clear",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35,
+        "sets": 146,
+        "wheel": 133,
+        "commit": 8,
+        "delivery": 10,
+        "other": 25
+      }
+    },
+    {
+      "label": "clearing-keep-object-live",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 27.5,
+        "sets": 37,
+        "wheel": 24,
+        "commit": 6,
+        "delivery": 8,
+        "other": 25
+      }
+    },
+    {
+      "label": "clearing-keep-object-inactive",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 43,
+        "sets": 57,
+        "wheel": 56,
+        "commit": 6,
+        "delivery": 9,
+        "other": 33.5
+      }
+    },
+    {
+      "label": "clearing-keep-array-live",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35.5,
+        "sets": 42,
+        "wheel": 24,
+        "commit": 6,
+        "delivery": 8,
+        "other": 33
+      }
+    },
+    {
+      "label": "clearing-keep-array-inactive",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 39.5,
+        "sets": 52,
+        "wheel": 40,
+        "commit": 6,
+        "delivery": 9,
+        "other": 37
+      }
+    },
+    {
+      "label": "clearing-keep-candidate-array-live",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 35.5,
+        "sets": 44,
+        "wheel": 24,
+        "commit": 6,
+        "delivery": 8,
+        "other": 34
+      }
+    },
+    {
+      "label": "clearing-keep-candidate-array-inactive",
+      "writes": 4,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 39.5,
+        "sets": 53,
+        "wheel": 40,
+        "commit": 6,
+        "delivery": 9,
+        "other": 38
+      }
+    },
+    {
+      "label": "literal-star-oneOf-live-sibling",
+      "writes": 3,
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "maps": 45,
+        "sets": 83,
+        "wheel": 85,
+        "commit": 6,
+        "delivery": 10,
+        "other": 27
+      }
+    }
+  ]
+}
