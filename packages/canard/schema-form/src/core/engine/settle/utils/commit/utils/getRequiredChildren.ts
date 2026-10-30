@@ -32,15 +32,31 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
       host.structure?.[child.name] === child
     )
       children.push(child);
-  if (
-    children.length > 1 &&
-    children.some((child) => {
+  let matches = children.length > 1;
+  if (matches) {
+    matches = false;
+    for (
+      let position = 0, count = children.length;
+      position < count;
+      position++
+    ) {
+      const child = children[position];
+
       const first = child.name.charCodeAt(0);
-      if (first < 48 || first > 57) return false;
+
+      if (first < 48 || first > 57) {
+        continue;
+      }
+
       const index = Number(child.name) >>> 0;
-      return index !== 0xffffffff && String(index) === child.name;
-    })
-  )
+
+      if (index !== 0xffffffff && String(index) === child.name) {
+        matches = true;
+        break;
+      }
+    }
+  }
+  if (matches) {
     children.sort((left, right) => {
       const leftIndex = Number(left.name) >>> 0;
       const rightIndex = Number(right.name) >>> 0;
@@ -56,5 +72,6 @@ export const getRequiredChildren = <Self extends FieldNodeRecord<Self>>(
           ? 1
           : 0;
     });
+  }
   return children;
 };

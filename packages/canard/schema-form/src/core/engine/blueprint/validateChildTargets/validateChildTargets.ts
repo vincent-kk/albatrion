@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../errors';
@@ -12,7 +14,7 @@ import { throwBlueprintError } from '../utils/diagnostics/throwBlueprintError';
  */
 export const validateChildTargets = (context: AnalysisContext): void => {
   for (const node of context.nodes) {
-    let discriminator: string | undefined;
+    let discriminator: Optional<string>;
     for (const declaration of node.declarations) {
       const controls = readSchemaObject(declaration.schema).controls;
       if (controls?.discriminator !== undefined) {
@@ -32,13 +34,30 @@ export const validateChildTargets = (context: AnalysisContext): void => {
           );
         discriminator = controls.discriminator;
       }
-      controls?.fields?.forEach(
-        (entry: { targets: string[] }, index: number) => {
-          for (const target of entry.targets)
-            if (
-              node.strategy === 'terminal' ||
-              !node.childEntries.some((edge) => edge.name === target)
-            )
+
+      const controlFields = controls?.fields;
+      if (controlFields != null) {
+        for (
+          let index = 0, limit = controlFields.length;
+          index < limit;
+          index++
+        ) {
+          if (!(index in controlFields)) continue;
+          const entry: { targets: string[] } = controlFields[index];
+
+          for (const target of entry.targets) {
+            let hasMissingTarget = node.strategy === 'terminal';
+            if (!hasMissingTarget) {
+              let hasNamedChild = false;
+              for (const edge of node.childEntries) {
+                if (edge.name === target) {
+                  hasNamedChild = true;
+                  break;
+                }
+              }
+              hasMissingTarget = !hasNamedChild;
+            }
+            if (hasMissingTarget) {
               throwBlueprintError(
                 FormErrorCode.ChildrenTargetNotFound,
                 appendSegment(
@@ -51,8 +70,10 @@ export const validateChildTargets = (context: AnalysisContext): void => {
                 { target },
                 context.options,
               );
-        },
-      );
+            }
+          }
+        }
+      }
     }
   }
 };

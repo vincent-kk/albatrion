@@ -1,3 +1,5 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import type { DeclarationLayer } from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
@@ -14,7 +16,7 @@ export interface ControlTarget<Self> {
   /** Static declarations for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Direct parent whose groups may address this occurrence. */
-  readonly parent: Self | null;
+  readonly parent: Nullable<Self>;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
     readonly blueprint?: Blueprint;
@@ -93,11 +95,23 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const parentIds = selected(parent);
   for (const group of inherited) {
     if (parentIds.indexOf(group.declarationId) === -1) continue;
-    if (
-      group.ownerIds &&
-      !group.ownerIds.some((id) => nodeIds.indexOf(id) !== -1)
-    )
+    const ownerIds = group.ownerIds;
+    let matches: Optional<boolean>;
+    if (ownerIds) {
+      let hasSelectedOwner = false;
+      for (const id of group.ownerIds) {
+        if (nodeIds.indexOf(id) !== -1) {
+          hasSelectedOwner = true;
+          break;
+        }
+      }
+      matches = !hasSelectedOwner;
+    } else {
+      matches = ownerIds;
+    }
+    if (matches) {
       continue;
+    }
     groups.push({
       layer: group.layer,
       declarationId: group.declarationId,

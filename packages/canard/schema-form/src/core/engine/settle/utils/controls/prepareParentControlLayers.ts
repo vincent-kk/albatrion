@@ -1,3 +1,4 @@
+import { filter as filterArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
@@ -45,7 +46,7 @@ export const prepareParentControlLayers = (
   groups.sort((left, right) => left.order - right.order);
   const prepared = {
     all: groups,
-    exit: groups.filter((group) =>
+    exit: filterArray(groups, (group) =>
       hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive),
     ),
   };

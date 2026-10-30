@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import type { FieldNodeRecord } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getStaticDeclarationIds } from '../../../utils/controls/getStaticDeclarationIds';
@@ -18,4 +20,4 @@ export const getSelectedDeclarationIds = <Self extends FieldNodeRecord<Self>>(
   node.runtime.committedDeclarationIds?.get(
     getCommittedDeclarationKey(node, node.runtime),
   ) ??
-  node.blueprintNode.declarations.map((declaration) => declaration.id);
+  mapArray(node.blueprintNode.declarations, (declaration) => declaration.id);

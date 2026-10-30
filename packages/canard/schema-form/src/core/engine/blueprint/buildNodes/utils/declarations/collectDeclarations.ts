@@ -62,14 +62,23 @@ export const collectDeclarations = (
   if (input.gates.length || input.context === 'declaration')
     context.capabilities.branchless = false;
   const gates: BlueprintGate[] = input.gates.slice();
-  if (
-    schema.controls?.active !== undefined &&
-    !gates.some(
-      (gate) =>
+  let matches = schema.controls?.active !== undefined;
+  if (matches) {
+    let hasInvalidSchemaType = false;
+    for (let index = 0, count = gates.length; index < count; index++) {
+      const gate = gates[index];
+
+      if (
         gate.schemaPath ===
-        appendSegment(appendSegment(input.schemaPath, 'controls'), 'active'),
-    )
-  )
+        appendSegment(appendSegment(input.schemaPath, 'controls'), 'active')
+      ) {
+        hasInvalidSchemaType = true;
+        break;
+      }
+    }
+    matches = !hasInvalidSchemaType;
+  }
+  if (matches) {
     gates.push(
       createBlueprintGate({
         kind: 'active',
@@ -81,6 +90,7 @@ export const collectDeclarations = (
         condition: schema.controls.active,
       }),
     );
+  }
   const fragment: MutableFragment = {
     id: context.fragments.length,
     hostPath: path,

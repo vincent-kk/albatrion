@@ -1,3 +1,4 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -12,7 +13,7 @@ import type { BlueprintNode } from '../../types/node';
  * @returns Nothing; only templates potentially addressed by inactiveValue are marked
  */
 export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
-  for (const node of nodes)
+  for (const node of nodes) {
     for (const declaration of node.declarations) {
       const schema = declaration.schema;
       if (typeof schema !== 'object') continue;
@@ -38,20 +39,28 @@ export const markInactiveValueNodes = (nodes: readonly MutableNode[]): void => {
         }
       if (!own || declaration.scope === 'node') continue;
       const children = [
-        ...node.childEntries.map((entry) => entry.node),
+        ...mapArray(node.childEntries, (entry) => entry.node),
         ...(node.itemCandidates ?? (node.item ? [node.item] : [])),
         ...(node.prefixItemCandidates?.flat() ?? node.prefixItems ?? []),
       ];
-      for (const child of children)
-        if (
-          child.declarations.some((candidate) =>
+      for (const child of children) {
+        let belongsToInactiveFragment = false;
+        for (const candidate of child.declarations) {
+          if (
             getFragmentOwnerPaths(candidate.schemaPath).includes(
               declaration.schemaPath,
-            ),
-          )
-        )
+            )
+          ) {
+            belongsToInactiveFragment = true;
+            break;
+          }
+        }
+        if (belongsToInactiveFragment) {
           mark(child);
+        }
+      }
     }
+  }
 };
 
 /**

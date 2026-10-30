@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { EffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
@@ -8,7 +10,7 @@ import type { SettlementContext } from '../../types/settlement';
 export interface CalculatedSnapshot<Self> {
   local: unknown;
   emit: unknown;
-  children: readonly Self[] | null;
+  children: Nullable<readonly Self[]>;
   schema: EffectiveSchema;
   active: boolean;
 }
@@ -34,10 +36,21 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
     previous.children !== node.children &&
     previous.children &&
     node.children &&
-    previous.children.length === node.children.length &&
-    previous.children.every((child, index) => child === node.children?.[index])
-  )
-    node.children = captureFieldNodeChange(node, 'children', previous.children);
+    previous.children.length === node.children.length
+  ) {
+    let unchanged = true;
+    for (let index = 0; index < previous.children.length; index++)
+      if (previous.children[index] !== node.children?.[index]) {
+        unchanged = false;
+        break;
+      }
+    if (unchanged)
+      node.children = captureFieldNodeChange(
+        node,
+        'children',
+        previous.children,
+      );
+  }
   if (
     node.local === previous.local &&
     node.emit === previous.emit &&

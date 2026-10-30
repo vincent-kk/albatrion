@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import { mergeEffectiveSchema } from '../../../../../blueprint';
 import type {
   BlueprintChildEntry,
@@ -29,7 +31,8 @@ export const readDiscriminatorEntrySelection = (
   const bucket = selection.buckets.get(value) ?? EMPTY_BUCKET;
   const cached = selection.prepared.get(bucket);
   if (cached) return cached;
-  const ids = mergeGateSteps(selection.baseline, bucket).map(
+  const ids = mapArray(
+    mergeGateSteps(selection.baseline, bucket),
     (index) => entry.declarations[index].id,
   );
   const schema = mergeEffectiveSchema(entry.node, ids, {

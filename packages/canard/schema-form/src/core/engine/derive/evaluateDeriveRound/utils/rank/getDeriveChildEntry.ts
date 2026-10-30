@@ -19,13 +19,23 @@ export const getDeriveChildEntry = (
     'deriveChildren',
     ReadonlyMap<string, readonly number[]>
   >(parent).deriveChildren;
+
   if (!index) {
     const built = new Map<string, number[]>();
-    parent.childEntries.forEach((entry, position) => {
+
+    const childEntries = parent.childEntries;
+    for (
+      let position = 0, count = childEntries.length;
+      position < count;
+      position++
+    ) {
+      const entry = childEntries[position];
+
       const positions = built.get(entry.name) ?? [];
       positions.push(position);
       built.set(entry.name, positions);
-    });
+    }
+
     index = built;
     getHostDerived<'deriveChildren', ReadonlyMap<string, readonly number[]>>(
       parent,

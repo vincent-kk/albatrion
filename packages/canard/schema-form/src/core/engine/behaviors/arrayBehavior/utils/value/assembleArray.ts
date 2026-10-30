@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type { Behavior, FieldNodeRecord } from '../../../../record';
 import { getArrayItemTemplate } from './getArrayItemTemplate';
 import { holeValue } from './holeValue';
@@ -108,7 +110,7 @@ export const assembleArray: Behavior['assemble'] = (
     stable.raw === node.raw &&
     stable.itemCount === node.itemCount
   ) {
-    let patch: unknown[] | undefined;
+    let patch: Optional<unknown[]>;
     let valid = true;
     for (const child of recalculated) {
       if (
@@ -173,10 +175,14 @@ export const assembleArray: Behavior['assemble'] = (
     );
   }
   rememberShape(node, children);
-  if (
-    previous?.length === result.length &&
-    result.every((value, index) => Object.is(value, previous[index]))
-  )
-    return previous;
+  if (previous?.length === result.length) {
+    let unchanged = true;
+    for (let index = 0; index < result.length; index++)
+      if (!Object.is(result[index], previous[index])) {
+        unchanged = false;
+        break;
+      }
+    if (unchanged) return previous;
+  }
   return result;
 };

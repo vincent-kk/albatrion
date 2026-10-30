@@ -46,15 +46,26 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
     engineModes.gateSelection === 'verify'
       ? context.registrationShadow
       : undefined;
+
   if (shadow) {
     const expected = dirtyChildren(node, {
       ...context,
       registrationShadow: undefined,
       dirtyChildrenByParent: shadow.dirty.childrenByParent,
     });
+    let matches = children.length === expected.length;
+    if (matches) {
+      for (let index = 0, count = children.length; index < count; index++) {
+        const child = children[index];
+
+        if (!(child === expected[index])) {
+          matches = false;
+          break;
+        }
+      }
+    }
     verifyGateSelection(
-      children.length === expected.length &&
-        children.every((child, index) => child === expected[index]),
+      matches,
       'S3 dirtyChildren members/order differ at: ' + node.path,
     );
   }

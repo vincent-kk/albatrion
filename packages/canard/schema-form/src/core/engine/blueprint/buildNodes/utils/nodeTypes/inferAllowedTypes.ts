@@ -1,4 +1,7 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
+
+import type { Optional } from '@aileron/declare';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
@@ -39,7 +42,7 @@ export const inferAllowedTypes = (
   allowTop = false,
   visiting: readonly string[] = NO_VISITING,
   isBranch = false,
-): readonly SchemaTypeName[] | undefined => {
+): Optional<readonly SchemaTypeName[]> => {
   if (visiting.includes(schemaPath)) return NO_TYPES;
   const cycle = isBranch ? { found: false } : undefined;
   const parts = collectStaticSchemas(
@@ -49,13 +52,26 @@ export const inferAllowedTypes = (
     NO_VISITING,
     cycle,
   );
-  if (
-    (isBranch && cycle?.found) ||
-    parts.some((part) => visiting.includes(part.schemaPath))
-  )
+  const hasBranchCycle = isBranch && cycle?.found;
+  let hasTypeCycle: boolean;
+  if (!hasBranchCycle) {
+    hasTypeCycle = false;
+    for (let index = 0, count = parts.length; index < count; index++) {
+      const part = parts[index];
+
+      if (visiting.includes(part.schemaPath)) {
+        hasTypeCycle = true;
+        break;
+      }
+    }
+  } else {
+    hasTypeCycle = hasBranchCycle;
+  }
+  if (hasTypeCycle) {
     return NO_TYPES;
-  const stack = [...visiting, ...parts.map((part) => part.schemaPath)];
-  let allowed: readonly SchemaTypeName[] | undefined;
+  }
+  const stack = [...visiting, ...mapArray(parts, (part) => part.schemaPath)];
+  let allowed: Optional<readonly SchemaTypeName[]>;
   for (const part of parts) {
     allowed = intersectAllowedTypes(
       allowed,
@@ -70,7 +86,7 @@ export const inferAllowedTypes = (
       );
   }
   if (allowed) return allowed;
-  let inferred: readonly SchemaTypeName[] | undefined;
+  let inferred: Optional<readonly SchemaTypeName[]>;
   let hasUngatedBranch = false;
   for (const keyword of BRANCH_KEYWORDS) {
     const groups: (readonly SchemaTypeName[])[] = [];
@@ -79,7 +95,10 @@ export const inferAllowedTypes = (
       if (typeof part.schema === 'boolean') continue;
       const branches = part.schema[keyword];
       if (!isArray(branches)) continue;
-      branches.forEach((branch, index) => {
+      for (let index = 0, count = branches.length; index < count; index++) {
+        if (!(index in branches)) continue;
+        const branch = branches[index];
+
         const path = appendSegment(
           appendSegment(part.schemaPath, keyword),
           index,
@@ -87,8 +106,9 @@ export const inferAllowedTypes = (
         if (
           branch?.controls?.active !== undefined ||
           context.discriminatorBranches?.has(path)
-        )
-          return;
+        ) {
+          continue;
+        }
         hasKeywordBranch = true;
         const types = inferAllowedTypes(
           context,
@@ -98,8 +118,8 @@ export const inferAllowedTypes = (
           stack,
           true,
         );
-        if (!types)
-          return throwBlueprintError(
+        if (!types) {
+          void throwBlueprintError(
             FormErrorCode.UnknownJsonSchema,
             path,
             {
@@ -107,8 +127,10 @@ export const inferAllowedTypes = (
             },
             context.options,
           );
+          continue;
+        }
         if (types.length) groups.push(types);
-      });
+      }
     }
     if (hasKeywordBranch) {
       hasUngatedBranch = true;

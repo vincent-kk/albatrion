@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
@@ -26,7 +28,7 @@ export interface DirectChildSelection {
   /** Original edge retained for creation and inactive-exit handling. */
   readonly entry: BlueprintChildEntry;
   /** Inherited host gate, absent for an ungated declaration. */
-  readonly gate: BlueprintGate | undefined;
+  readonly gate: Optional<BlueprintGate>;
   /** Stable declaration-ID list for an admitted edge. */
   readonly ids: readonly number[];
 }
@@ -58,37 +60,39 @@ export const getDirectChildSelectionPlan = (
   host: BlueprintNode,
   blueprint: Blueprint,
   prepare: boolean,
-): DirectChildSelectionPlan | null => {
+): Nullable<DirectChildSelectionPlan> => {
   const cached = getHostDerived<
     'directChildSelectionPlan',
-    DirectChildSelectionPlan | null
+    Nullable<DirectChildSelectionPlan>
   >(host).directChildSelectionPlan;
   if (cached !== undefined) return cached;
   if (!prepare) return null;
   const schema = host.declarations[0]?.schema;
-  if (
-    typeof schema !== 'object' ||
-    schema === null ||
-    !(
+  let eligible = false;
+  if (typeof schema === 'object' && schema !== null) {
+    eligible =
       (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
-      (isArray(schema.anyOf) && schema.anyOf.length > 1) ||
-      (isArray(schema.allOf) &&
-        schema.allOf.length > 1 &&
-        host.childEntries.some((entry) =>
-          entry.declarations.some((declaration) =>
-            declaration.gates.some((gate) => gate.kind === 'if'),
-          ),
-        ))
-    )
-  ) {
-    getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
-      host,
-    ).directChildSelectionPlan = null;
+      (isArray(schema.anyOf) && schema.anyOf.length > 1);
+    if (!eligible && isArray(schema.allOf) && schema.allOf.length > 1) {
+      conditionalGate: for (const entry of host.childEntries)
+        for (const declaration of entry.declarations)
+          for (const gate of declaration.gates)
+            if (gate.kind === 'if') {
+              eligible = true;
+              break conditionalGate;
+            }
+    }
+  }
+  if (!eligible) {
+    getHostDerived<
+      'directChildSelectionPlan',
+      Nullable<DirectChildSelectionPlan>
+    >(host).directChildSelectionPlan = null;
     return null;
   }
   const steps: DirectChildSelection[] = [];
   const baseline: BlueprintChildEntry[] = [];
-  const names: Record<string, true> = Object.create(null);
+  const names: Dictionary<true> = Object.create(null);
   for (let index = 0; index < host.childEntries.length; index++) {
     const entry = host.childEntries[index];
     const declarations = entry.declarations;
@@ -124,7 +128,7 @@ export const getDirectChildSelectionPlan = (
     ) {
       getHostDerived<
         'directChildSelectionPlan',
-        DirectChildSelectionPlan | null
+        Nullable<DirectChildSelectionPlan>
       >(host).directChildSelectionPlan = null;
       return null;
     }
@@ -150,7 +154,7 @@ export const getDirectChildSelectionPlan = (
       ) {
         getHostDerived<
           'directChildSelectionPlan',
-          DirectChildSelectionPlan | null
+          Nullable<DirectChildSelectionPlan>
         >(host).directChildSelectionPlan = null;
         return null;
       }
@@ -159,8 +163,9 @@ export const getDirectChildSelectionPlan = (
     steps.push({ entry, gate, ids: [declaration.id] });
   }
   const plan = { steps, baseline };
-  getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
-    host,
-  ).directChildSelectionPlan = plan;
+  getHostDerived<
+    'directChildSelectionPlan',
+    Nullable<DirectChildSelectionPlan>
+  >(host).directChildSelectionPlan = plan;
   return plan;
 };

@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import {
   appendSegment,
   readPointerSegment,
@@ -26,7 +28,7 @@ export const rekeyArraySlotBindings = <Self extends FieldNodeRecord<Self>>(
     entries.add(entry);
   if (!entries.size) return;
   const destinations = new Map(
-    moves.map((move) => [move.previous, move.current]),
+    mapArray(moves, (move) => [move.previous, move.current]),
   );
   const pending: {
     entry: BlueprintChildEntry;
