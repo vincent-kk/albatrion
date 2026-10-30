@@ -6,6 +6,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 
 import cases from '../../fixtures/input-responsiveness/cases.json';
+import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
 import { observeCpu } from './helpers/observeCpu';
 import { prepareBundles } from './helpers/prepareBundles';
 import { readAncestorPids } from './helpers/readAncestorPids';
@@ -60,16 +61,7 @@ export async function runInteractions(args: string[]) {
     options.stage === 'ir-1'
       ? options.suite === 'backfill'
         ? ['mount-flat-500-on', 'mount-array-1000-on']
-        : [
-            ...cases.filter((id) => id.startsWith('mount-')),
-            'replace-200-while-typing',
-            'switch-oneOf-20',
-            'replace-200-while-typing-virtualized',
-            'switch-oneOf-20-virtualized',
-            'type-flat-500',
-            'validation-flat-500-nonburst',
-            'validation-flat-500-burst',
-          ]
+        : ir1Cases
       : cases;
   const smoke = options.action === 'smoke';
   const selected = options.fixture
