@@ -10,7 +10,7 @@ export async function setupProbeOperation(rowId, engine) {
       operation: 'switch',
       shape: 'siblings',
       siblings: 4000,
-      n: 0,
+      n: 4000,
     },
     engine,
   );
