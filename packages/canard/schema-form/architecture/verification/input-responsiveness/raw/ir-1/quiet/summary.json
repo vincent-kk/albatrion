@@ -1,0 +1,1362 @@
+[
+  {
+    "id": "replace-200-while-typing",
+    "lane": "L",
+    "count": 10,
+    "processing": {
+      "median": 0.45000001788139343,
+      "p95": 1.600000023841858,
+      "observations": 40,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 56,
+      "p95": 56,
+      "observations": 40,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 0.25,
+      "p95": 1.199999988079071,
+      "observations": 100,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 100,
+    "longestFrame": 55.90000003576279,
+    "longFrameCount": 4,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 14.699999988079071,
+        "p95": 15.5
+      },
+      "eagerPaintedMs": {
+        "median": 14.700000017881393,
+        "p95": 17.100000023841858
+      },
+      "allRevealedMs": {
+        "median": 14.700000017881393,
+        "p95": 17.100000023841858
+      },
+      "eagerNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "allNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 1,
+        "p95": 1
+      }
+    }
+  },
+  {
+    "id": "replace-200-while-typing",
+    "lane": "E0",
+    "count": 10,
+    "processing": {
+      "median": 0.625,
+      "p95": 4.399999976158142,
+      "observations": 34,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 64,
+      "p95": 64,
+      "observations": 34,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 0.45000000298023224,
+      "p95": 4.099999964237213,
+      "observations": 100,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 100,
+    "longestFrame": 61.60000002384186,
+    "longFrameCount": 10,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 27.69999998807907,
+        "p95": 29.600000023841858
+      },
+      "eagerPaintedMs": {
+        "median": 27.650000005960464,
+        "p95": 29.5
+      },
+      "allRevealedMs": {
+        "median": 27.650000005960464,
+        "p95": 29.5
+      },
+      "eagerNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "allNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 1,
+        "p95": 1
+      }
+    }
+  },
+  {
+    "id": "replace-200-while-typing",
+    "lane": "A",
+    "count": 10,
+    "processing": {
+      "median": 0.6000000089406967,
+      "p95": 0.8999999761581421,
+      "observations": 17,
+      "observedSamples": 8
+    },
+    "total": {
+      "median": 64,
+      "p95": 64,
+      "observations": 17,
+      "observedSamples": 8
+    },
+    "handler": {
+      "median": 0.45000000298023224,
+      "p95": 4,
+      "observations": 100,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 100,
+    "longestFrame": 62.299999952316284,
+    "longFrameCount": 10,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 16.900000005960464,
+        "p95": 18.19999998807907
+      },
+      "eagerPaintedMs": {
+        "median": 16.899999976158142,
+        "p95": 18.100000023841858
+      },
+      "allRevealedMs": {
+        "median": 16.899999976158142,
+        "p95": 18.100000023841858
+      },
+      "eagerNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "allNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 1,
+        "p95": 1
+      }
+    }
+  },
+  {
+    "id": "replace-200-while-typing",
+    "lane": "AB",
+    "count": 10,
+    "processing": {
+      "median": 0.7000000029802322,
+      "p95": 3.5,
+      "observations": 32,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 64,
+      "p95": 72,
+      "observations": 32,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 0.4750000089406967,
+      "p95": 4.099999964237213,
+      "observations": 100,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 100,
+    "longestFrame": 64.80000001192093,
+    "longFrameCount": 10,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 16.599999994039536,
+        "p95": 18.799999952316284
+      },
+      "eagerPaintedMs": {
+        "median": 16.5,
+        "p95": 18.69999998807907
+      },
+      "allRevealedMs": {
+        "median": 16.5,
+        "p95": 18.69999998807907
+      },
+      "eagerNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "allNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 1,
+        "p95": 1
+      }
+    }
+  },
+  {
+    "id": "replace-200-while-typing-virtualized",
+    "lane": "L",
+    "count": 10,
+    "processing": {
+      "median": 0.42500001192092896,
+      "p95": 1.600000023841858,
+      "observations": 28,
+      "observedSamples": 8
+    },
+    "total": {
+      "median": 24,
+      "p95": 32,
+      "observations": 28,
+      "observedSamples": 8
+    },
+    "handler": {
+      "median": 0.30000001192092896,
+      "p95": 1.199999988079071,
+      "observations": 100,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 100,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 14.550000011920929,
+        "p95": 17.19999998807907
+      },
+      "eagerPaintedMs": {
+        "median": 14.600000023841858,
+        "p95": 17.099999964237213
+      },
+      "allRevealedMs": {
+        "median": 14.600000023841858,
+        "p95": 17.099999964237213
+      },
+      "eagerNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "allNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 1,
+        "p95": 1
+      }
+    }
+  },
+  {
+    "id": "replace-200-while-typing-virtualized",
+    "lane": "E0",
+    "count": 10,
+    "processing": {
+      "median": 0.574999988079071,
+      "p95": 3.5,
+      "observations": 31,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 32,
+      "p95": 32,
+      "observations": 31,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 0.45000001788139343,
+      "p95": 4,
+      "observations": 100,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 100,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 27.700000047683716,
+        "p95": 28
+      },
+      "eagerPaintedMs": {
+        "median": 27.599999994039536,
+        "p95": 28
+      },
+      "allRevealedMs": {
+        "median": 27.599999994039536,
+        "p95": 28
+      },
+      "eagerNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "allNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 1,
+        "p95": 1
+      }
+    }
+  },
+  {
+    "id": "replace-200-while-typing-virtualized",
+    "lane": "A",
+    "count": 10,
+    "processing": {
+      "median": 0.6749999970197678,
+      "p95": 4.200000047683716,
+      "observations": 24,
+      "observedSamples": 8
+    },
+    "total": {
+      "median": 32,
+      "p95": 32,
+      "observations": 24,
+      "observedSamples": 8
+    },
+    "handler": {
+      "median": 0.5,
+      "p95": 4,
+      "observations": 100,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 100,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 16.599999964237213,
+        "p95": 18
+      },
+      "eagerPaintedMs": {
+        "median": 16.5,
+        "p95": 18
+      },
+      "allRevealedMs": {
+        "median": 16.5,
+        "p95": 18
+      },
+      "eagerNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "allNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 1,
+        "p95": 1
+      }
+    }
+  },
+  {
+    "id": "replace-200-while-typing-virtualized",
+    "lane": "AB",
+    "count": 10,
+    "processing": {
+      "median": 0.6000000238418579,
+      "p95": 4.400000035762787,
+      "observations": 34,
+      "observedSamples": 9
+    },
+    "total": {
+      "median": 24,
+      "p95": 32,
+      "observations": 34,
+      "observedSamples": 9
+    },
+    "handler": {
+      "median": 0.40000003576278687,
+      "p95": 4,
+      "observations": 100,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 100,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 16.549999982118607,
+        "p95": 17.69999998807907
+      },
+      "eagerPaintedMs": {
+        "median": 16.649999976158142,
+        "p95": 17.69999998807907
+      },
+      "allRevealedMs": {
+        "median": 16.649999976158142,
+        "p95": 17.69999998807907
+      },
+      "eagerNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "allNodes": {
+        "median": 14,
+        "p95": 14
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 1,
+        "p95": 1
+      }
+    }
+  },
+  {
+    "id": "type-flat-500",
+    "lane": "L",
+    "count": 10,
+    "processing": {
+      "median": 1.0999999940395355,
+      "p95": 2.800000011920929,
+      "observations": 60,
+      "observedSamples": 8
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 60,
+      "observedSamples": 8
+    },
+    "handler": {
+      "median": 0.6000000238418579,
+      "p95": 1,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 200,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 98.59999999403954,
+        "p95": 103.80000001192093
+      },
+      "eagerPaintedMs": {
+        "median": 98.25,
+        "p95": 103.39999997615814
+      },
+      "allRevealedMs": {
+        "median": 98.25,
+        "p95": 103.39999997615814
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "type-flat-500",
+    "lane": "E0",
+    "count": 10,
+    "processing": {
+      "median": 0.8749999850988388,
+      "p95": 4.799999952316284,
+      "observations": 72,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 72,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 0.44999998807907104,
+      "p95": 1,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 200,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 84.2000000178814,
+        "p95": 85.59999996423721
+      },
+      "eagerPaintedMs": {
+        "median": 84,
+        "p95": 85.39999997615814
+      },
+      "allRevealedMs": {
+        "median": 84,
+        "p95": 85.39999997615814
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "type-flat-500",
+    "lane": "A",
+    "count": 10,
+    "processing": {
+      "median": 0.800000011920929,
+      "p95": 4.700000047683716,
+      "observations": 90,
+      "observedSamples": 9
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 90,
+      "observedSamples": 9
+    },
+    "handler": {
+      "median": 0.45000001788139343,
+      "p95": 1.100000023841858,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 200,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 84.2999999821186,
+        "p95": 85.5
+      },
+      "eagerPaintedMs": {
+        "median": 84,
+        "p95": 85.20000004768372
+      },
+      "allRevealedMs": {
+        "median": 84,
+        "p95": 85.20000004768372
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "type-flat-500",
+    "lane": "AB",
+    "count": 10,
+    "processing": {
+      "median": 0.8999999910593033,
+      "p95": 4.700000047683716,
+      "observations": 47,
+      "observedSamples": 8
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 47,
+      "observedSamples": 8
+    },
+    "handler": {
+      "median": 0.45000001788139343,
+      "p95": 1,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": null,
+      "p95": null,
+      "observations": 0,
+      "observedSamples": 0
+    },
+    "undelivered": 200,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 84.40000000596046,
+        "p95": 88.09999996423721
+      },
+      "eagerPaintedMs": {
+        "median": 84.19999998807907,
+        "p95": 87.89999997615814
+      },
+      "allRevealedMs": {
+        "median": 84.19999998807907,
+        "p95": 87.89999997615814
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "validation-flat-500-nonburst",
+    "lane": "L",
+    "count": 10,
+    "processing": {
+      "median": 4.625,
+      "p95": 6.5,
+      "observations": 67,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 67,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 1.5999999791383743,
+      "p95": 2.5,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": 7.075000017881393,
+      "p95": 9.5,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "undelivered": 0,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 101.9500000178814,
+        "p95": 107.19999998807907
+      },
+      "eagerPaintedMs": {
+        "median": 101.4500000178814,
+        "p95": 106.80000001192093
+      },
+      "allRevealedMs": {
+        "median": 101.4500000178814,
+        "p95": 106.80000001192093
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "validation-flat-500-nonburst",
+    "lane": "E0",
+    "count": 10,
+    "processing": {
+      "median": 6.200000002980232,
+      "p95": 10.299999952316284,
+      "observations": 89,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 89,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 2.449999988079071,
+      "p95": 4.299999952316284,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": 2,
+      "p95": 3.699999988079071,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "undelivered": 0,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 89.84999996423721,
+        "p95": 92.30000001192093
+      },
+      "eagerPaintedMs": {
+        "median": 89.59999996423721,
+        "p95": 92
+      },
+      "allRevealedMs": {
+        "median": 89.59999996423721,
+        "p95": 92
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "validation-flat-500-nonburst",
+    "lane": "A",
+    "count": 10,
+    "processing": {
+      "median": 6.225000008940697,
+      "p95": 9.600000023841858,
+      "observations": 87,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 87,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 2.574999988079071,
+      "p95": 4.5,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": 2.0750000178813934,
+      "p95": 3.800000011920929,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "undelivered": 0,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 88.90000000596046,
+        "p95": 90.10000002384186
+      },
+      "eagerPaintedMs": {
+        "median": 88.59999999403954,
+        "p95": 89.80000001192093
+      },
+      "allRevealedMs": {
+        "median": 88.59999999403954,
+        "p95": 89.80000001192093
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "validation-flat-500-nonburst",
+    "lane": "AB",
+    "count": 10,
+    "processing": {
+      "median": 6.249999970197678,
+      "p95": 8.199999988079071,
+      "observations": 83,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 83,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 2.5499999970197678,
+      "p95": 4.300000011920929,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": 2.0499999970197678,
+      "p95": 3.800000011920929,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "undelivered": 0,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 88.65000003576279,
+        "p95": 89.59999996423721
+      },
+      "eagerPaintedMs": {
+        "median": 88.40000000596046,
+        "p95": 89.39999997615814
+      },
+      "allRevealedMs": {
+        "median": 88.40000000596046,
+        "p95": 89.39999997615814
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "validation-flat-500-burst",
+    "lane": "L",
+    "count": 10,
+    "processing": {
+      "median": 1,
+      "p95": 2.699999988079071,
+      "observations": 58,
+      "observedSamples": 9
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 58,
+      "observedSamples": 9
+    },
+    "handler": {
+      "median": 0.6000000238418579,
+      "p95": 1,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": 4.800000011920929,
+      "p95": 9.800000011920929,
+      "observations": 18,
+      "observedSamples": 8
+    },
+    "undelivered": 182,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 101.80000004172325,
+        "p95": 105.09999996423721
+      },
+      "eagerPaintedMs": {
+        "median": 101.40000000596046,
+        "p95": 104.69999998807907
+      },
+      "allRevealedMs": {
+        "median": 101.40000000596046,
+        "p95": 104.69999998807907
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "validation-flat-500-burst",
+    "lane": "E0",
+    "count": 10,
+    "processing": {
+      "median": 1.2249999791383743,
+      "p95": 5.400000035762787,
+      "observations": 77,
+      "observedSamples": 10
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 77,
+      "observedSamples": 10
+    },
+    "handler": {
+      "median": 0.8499999940395355,
+      "p95": 1.4000000357627869,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": 0.699999988079071,
+      "p95": 1.100000023841858,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "undelivered": 0,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 89,
+        "p95": 94.69999998807907
+      },
+      "eagerPaintedMs": {
+        "median": 88.75,
+        "p95": 94.40000003576279
+      },
+      "allRevealedMs": {
+        "median": 88.75,
+        "p95": 94.40000003576279
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "validation-flat-500-burst",
+    "lane": "A",
+    "count": 10,
+    "processing": {
+      "median": 1.2750000059604645,
+      "p95": 4.800000011920929,
+      "observations": 51,
+      "observedSamples": 8
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 51,
+      "observedSamples": 8
+    },
+    "handler": {
+      "median": 0.8499999940395355,
+      "p95": 1.5,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": 0.699999988079071,
+      "p95": 1.199999988079071,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "undelivered": 0,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 88.50000002980232,
+        "p95": 89.90000003576279
+      },
+      "eagerPaintedMs": {
+        "median": 88.30000001192093,
+        "p95": 89.60000002384186
+      },
+      "allRevealedMs": {
+        "median": 88.30000001192093,
+        "p95": 89.60000002384186
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  },
+  {
+    "id": "validation-flat-500-burst",
+    "lane": "AB",
+    "count": 10,
+    "processing": {
+      "median": 1.2999999523162842,
+      "p95": 5,
+      "observations": 57,
+      "observedSamples": 7
+    },
+    "total": {
+      "median": 16,
+      "p95": 16,
+      "observations": 57,
+      "observedSamples": 7
+    },
+    "handler": {
+      "median": 0.8499999940395355,
+      "p95": 1.4000000357627869,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "validation": {
+      "median": 0.6000000238418579,
+      "p95": 1.100000023841858,
+      "observations": 200,
+      "observedSamples": 10
+    },
+    "undelivered": 0,
+    "longestFrame": 0,
+    "longFrameCount": 0,
+    "eventSupported": true,
+    "frameSupported": true,
+    "mount": {
+      "wallMs": {
+        "median": 88.84999999403954,
+        "p95": 90
+      },
+      "eagerPaintedMs": {
+        "median": 88.60000002384186,
+        "p95": 89.80000001192093
+      },
+      "allRevealedMs": {
+        "median": 88.60000002384186,
+        "p95": 89.80000001192093
+      },
+      "eagerNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "allNodes": {
+        "median": 1504,
+        "p95": 1504
+      },
+      "eagerDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "allDeferred": {
+        "median": 0,
+        "p95": 0
+      },
+      "inputs": {
+        "median": 500,
+        "p95": 500
+      }
+    }
+  }
+]

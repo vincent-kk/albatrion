@@ -1,0 +1,16 @@
+[
+  {
+    "lane": "A",
+    "fixture": "switch-oneOf-20",
+    "compileSchemaMs": 0,
+    "compileSchemaUnderReadFieldNodeGuardMs": 0,
+    "stacks": []
+  },
+  {
+    "lane": "AB",
+    "fixture": "switch-oneOf-20",
+    "compileSchemaMs": 0,
+    "compileSchemaUnderReadFieldNodeGuardMs": 0,
+    "stacks": []
+  }
+]

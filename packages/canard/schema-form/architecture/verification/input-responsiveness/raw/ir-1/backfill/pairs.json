@@ -1,0 +1,2900 @@
+[
+  {
+    "id": "mount-flat-500-on",
+    "lane": "L",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 0,
+    "ratioMedian": 1,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 1,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 2,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 3,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 4,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 5,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 6,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 7,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 8,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 9,
+        "difference": 0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "L",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": 0,
+    "ratioMedian": 1,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 1,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 2,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 3,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 4,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 5,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 6,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 7,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 8,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 9,
+        "difference": 0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "L",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 0,
+    "ratioMedian": 1,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 1,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 2,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 3,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 4,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 5,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 6,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 7,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 8,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 9,
+        "difference": 0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "L",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "L",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "L",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "L",
+    "metric": "longestFrame",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "E0",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 33.19999998807907,
+    "ratioMedian": 1.1988073394768115,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 32.80000001192093,
+        "ratio": 1.1960549910913554
+      },
+      {
+        "index": 1,
+        "difference": 30.099999964237213,
+        "ratio": 1.1707317071026768
+      },
+      {
+        "index": 2,
+        "difference": 41.5,
+        "ratio": 1.2489502098867975
+      },
+      {
+        "index": 3,
+        "difference": 33.59999996423721,
+        "ratio": 1.2015596878622674
+      },
+      {
+        "index": 4,
+        "difference": 28.19999998807907,
+        "ratio": 1.1608670849182052
+      },
+      {
+        "index": 5,
+        "difference": 38.69999998807907,
+        "ratio": 1.2362637361737643
+      },
+      {
+        "index": 6,
+        "difference": 40.199999928474426,
+        "ratio": 1.2408627916109078
+      },
+      {
+        "index": 7,
+        "difference": 27.80000001192093,
+        "ratio": 1.1607865818749032
+      },
+      {
+        "index": 8,
+        "difference": 39.3999999165535,
+        "ratio": 1.2392228288108467
+      },
+      {
+        "index": 9,
+        "difference": -105.79999995231628,
+        "ratio": 0.4002267575588663
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "E0",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": 32.45000001788139,
+    "ratioMedian": 2.071092897360442,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 32.60000002384186,
+        "ratio": 2.0688524597980935
+      },
+      {
+        "index": 1,
+        "difference": 31.400000035762787,
+        "ratio": 2.0161812317149006
+      },
+      {
+        "index": 2,
+        "difference": 34.30000001192093,
+        "ratio": 2.147157189662053
+      },
+      {
+        "index": 3,
+        "difference": 31.69999998807907,
+        "ratio": 2.067340067367096
+      },
+      {
+        "index": 4,
+        "difference": 32.30000001192093,
+        "ratio": 2.0253968257752675
+      },
+      {
+        "index": 5,
+        "difference": 32.799999952316284,
+        "ratio": 2.0933333317438763
+      },
+      {
+        "index": 6,
+        "difference": 33.799999952316284,
+        "ratio": 2.122923585566236
+      },
+      {
+        "index": 7,
+        "difference": 32.200000047683716,
+        "ratio": 2.0733333349227907
+      },
+      {
+        "index": 8,
+        "difference": 33.199999928474426,
+        "ratio": 2.092105259520319
+      },
+      {
+        "index": 9,
+        "difference": 29.700000047683716,
+        "ratio": 1.886567165602499
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "E0",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 32.650000005960464,
+    "ratioMedian": 1.1922776408532396,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 31.500000059604645,
+        "ratio": 1.184318315178462
+      },
+      {
+        "index": 1,
+        "difference": 25.600000023841858,
+        "ratio": 1.1321631390057685
+      },
+      {
+        "index": 2,
+        "difference": 42.80000001192093,
+        "ratio": 1.2532544379403605
+      },
+      {
+        "index": 3,
+        "difference": 33.799999952316284,
+        "ratio": 1.200236966528017
+      },
+      {
+        "index": 4,
+        "difference": 17.69999998807907,
+        "ratio": 1.0940488841083964
+      },
+      {
+        "index": 5,
+        "difference": 38.799999952316284,
+        "ratio": 1.233734939471785
+      },
+      {
+        "index": 6,
+        "difference": 56.59999996423721,
+        "ratio": 1.3381123055683715
+      },
+      {
+        "index": 7,
+        "difference": 16.099999964237213,
+        "ratio": 1.0866989766295265
+      },
+      {
+        "index": 8,
+        "difference": 36.59999996423721,
+        "ratio": 1.2155477029544621
+      },
+      {
+        "index": 9,
+        "difference": 15.900000035762787,
+        "ratio": 1.088975937531189
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "E0",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "E0",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "E0",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "E0",
+    "metric": "longestFrame",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "A",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 6.64999994635582,
+    "ratioMedian": 1.0393112236178332,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 10.599999964237213,
+        "ratio": 1.063359234689073
+      },
+      {
+        "index": 1,
+        "difference": -4.300000011920929,
+        "ratio": 0.9756097560315928
+      },
+      {
+        "index": 2,
+        "difference": -127.50000005960464,
+        "ratio": 0.23515296926734316
+      },
+      {
+        "index": 3,
+        "difference": 7.899999976158142,
+        "ratio": 1.0473905217559873
+      },
+      {
+        "index": 4,
+        "difference": -135.4000000357628,
+        "ratio": 0.22760981159979932
+      },
+      {
+        "index": 5,
+        "difference": 12.800000011920929,
+        "ratio": 1.0781440782111684
+      },
+      {
+        "index": 6,
+        "difference": 9.199999928474426,
+        "ratio": 1.055122827600378
+      },
+      {
+        "index": 7,
+        "difference": 5.399999916553497,
+        "ratio": 1.0312319254796793
+      },
+      {
+        "index": 8,
+        "difference": 14.399999976158142,
+        "ratio": 1.0874316938189987
+      },
+      {
+        "index": 9,
+        "difference": -6.300000011920929,
+        "ratio": 0.9642857142133082
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "A",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": 1.649999976158142,
+    "ratioMedian": 1.054905868511338,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 3.800000011920929,
+        "ratio": 1.1245901643252763
+      },
+      {
+        "index": 1,
+        "difference": 0.5000000596046448,
+        "ratio": 1.0161812317149008
+      },
+      {
+        "index": 2,
+        "difference": 1.6999999284744263,
+        "ratio": 1.0568561848308058
+      },
+      {
+        "index": 3,
+        "difference": 5.199999988079071,
+        "ratio": 1.175084174753072
+      },
+      {
+        "index": 4,
+        "difference": 0.699999988079071,
+        "ratio": 1.02222222184378
+      },
+      {
+        "index": 5,
+        "difference": 1.600000023841858,
+        "ratio": 1.053333334128062
+      },
+      {
+        "index": 6,
+        "difference": 1.6999999284744263,
+        "ratio": 1.056478402894614
+      },
+      {
+        "index": 7,
+        "difference": 1.399999976158142,
+        "ratio": 1.0466666658719381
+      },
+      {
+        "index": 8,
+        "difference": 2.399999976158142,
+        "ratio": 1.0789473675439067
+      },
+      {
+        "index": 9,
+        "difference": -1.699999988079071,
+        "ratio": 0.9492537316991322
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "A",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 7.3499999940395355,
+    "ratioMedian": 1.041725156764001,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 9.200000047683716,
+        "ratio": 1.0538326509594336
+      },
+      {
+        "index": 1,
+        "difference": -19.399999976158142,
+        "ratio": 0.899845121438554
+      },
+      {
+        "index": 2,
+        "difference": 2.5,
+        "ratio": 1.014792899408284
+      },
+      {
+        "index": 3,
+        "difference": 24.799999952316284,
+        "ratio": 1.1469194309867587
+      },
+      {
+        "index": 4,
+        "difference": -16.100000023841858,
+        "ratio": 0.9144527097510008
+      },
+      {
+        "index": 5,
+        "difference": 12.800000011920929,
+        "ratio": 1.0771084338067525
+      },
+      {
+        "index": 6,
+        "difference": 10.999999940395355,
+        "ratio": 1.0657108717923856
+      },
+      {
+        "index": 7,
+        "difference": 5.499999940395355,
+        "ratio": 1.029617662568568
+      },
+      {
+        "index": 8,
+        "difference": 25.30000001192093,
+        "ratio": 1.1489988222034435
+      },
+      {
+        "index": 9,
+        "difference": -6.300000011920929,
+        "ratio": 0.9647453832549457
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "A",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "A",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "A",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "A",
+    "metric": "longestFrame",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "AB",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 1,
+    "ratioMedian": 1.0058810827651055,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -127.39999997615814,
+        "ratio": 0.23849372404614297
+      },
+      {
+        "index": 1,
+        "difference": -10.500000059604645,
+        "ratio": 0.9404424273460315
+      },
+      {
+        "index": 2,
+        "difference": 1.199999988079071,
+        "ratio": 1.007198560214372
+      },
+      {
+        "index": 3,
+        "difference": 8.200000047683716,
+        "ratio": 1.0491901622571693
+      },
+      {
+        "index": 4,
+        "difference": 0.800000011920929,
+        "ratio": 1.0045636053158387
+      },
+      {
+        "index": 5,
+        "difference": 4.600000023841858,
+        "ratio": 1.028083028226539
+      },
+      {
+        "index": 6,
+        "difference": 5.399999916553497,
+        "ratio": 1.0323547029083069
+      },
+      {
+        "index": 7,
+        "difference": 0.09999996423721313,
+        "ratio": 1.0005783687924612
+      },
+      {
+        "index": 8,
+        "difference": 3.4999999403953552,
+        "ratio": 1.0212507585876263
+      },
+      {
+        "index": 9,
+        "difference": -2.199999988079071,
+        "ratio": 0.9875283447370952
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "AB",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": 1.649999976158142,
+    "ratioMedian": 1.0548577876014562,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 1.5,
+        "ratio": 1.0491803278688525
+      },
+      {
+        "index": 1,
+        "difference": 1,
+        "ratio": 1.0323624595718959
+      },
+      {
+        "index": 2,
+        "difference": 1.899999976158142,
+        "ratio": 1.0635451496282806
+      },
+      {
+        "index": 3,
+        "difference": 1.5,
+        "ratio": 1.0505050505253222
+      },
+      {
+        "index": 4,
+        "difference": 3.800000011920929,
+        "ratio": 1.1206349210133628
+      },
+      {
+        "index": 5,
+        "difference": 0.6000000238418579,
+        "ratio": 1.0200000007947285
+      },
+      {
+        "index": 6,
+        "difference": 3.299999952316284,
+        "ratio": 1.1096345498239997
+      },
+      {
+        "index": 7,
+        "difference": 1.800000011920929,
+        "ratio": 1.0600000003973642
+      },
+      {
+        "index": 8,
+        "difference": 1.7999999523162842,
+        "ratio": 1.0592105246775905
+      },
+      {
+        "index": 9,
+        "difference": -2.100000023841858,
+        "ratio": 0.9373134321241237
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "AB",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 0.9000000059604645,
+    "ratioMedian": 1.005279504852863,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 1.100000023841858,
+        "ratio": 1.006436512720862
+      },
+      {
+        "index": 1,
+        "difference": -25.5,
+        "ratio": 0.8683531233785785
+      },
+      {
+        "index": 2,
+        "difference": 2.600000023841858,
+        "ratio": 1.0153846155256914
+      },
+      {
+        "index": 3,
+        "difference": 23,
+        "ratio": 1.1362559241609935
+      },
+      {
+        "index": 4,
+        "difference": -11.300000011920929,
+        "ratio": 0.9399574919626106
+      },
+      {
+        "index": 5,
+        "difference": 9.199999988079071,
+        "ratio": 1.055421686675175
+      },
+      {
+        "index": 6,
+        "difference": 7.099999964237213,
+        "ratio": 1.0424133809003608
+      },
+      {
+        "index": 7,
+        "difference": -10.5,
+        "ratio": 0.9434571890290585
+      },
+      {
+        "index": 8,
+        "difference": 0.699999988079071,
+        "ratio": 1.004122496984864
+      },
+      {
+        "index": 9,
+        "difference": -3.800000011920929,
+        "ratio": 0.9787353105082572
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "AB",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "AB",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "AB",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "AB",
+    "metric": "longestFrame",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B10",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 129.5499999821186,
+    "ratioMedian": 1.7766798346317194,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 133.0999999642372,
+        "ratio": 1.7955768078586563
+      },
+      {
+        "index": 1,
+        "difference": 125.19999998807907,
+        "ratio": 1.7101531479274723
+      },
+      {
+        "index": 2,
+        "difference": 134.29999995231628,
+        "ratio": 1.8056388717090608
+      },
+      {
+        "index": 3,
+        "difference": 129.80000001192093,
+        "ratio": 1.778644271272964
+      },
+      {
+        "index": 4,
+        "difference": 128.39999997615814,
+        "ratio": 1.7324586421416233
+      },
+      {
+        "index": 5,
+        "difference": 138.0999999642372,
+        "ratio": 1.8431013428216525
+      },
+      {
+        "index": 6,
+        "difference": 129.29999995231628,
+        "ratio": 1.774715397990475
+      },
+      {
+        "index": 7,
+        "difference": 127.80000001192093,
+        "ratio": 1.7391555811769037
+      },
+      {
+        "index": 8,
+        "difference": 133.69999998807907,
+        "ratio": 1.8117789917994562
+      },
+      {
+        "index": 9,
+        "difference": 128.19999998807907,
+        "ratio": 1.7267573696451606
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B10",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": 1.899999976158142,
+    "ratioMedian": 1.062894736008679,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 1,
+        "ratio": 1.0327868852459017
+      },
+      {
+        "index": 1,
+        "difference": 2.200000047683716,
+        "ratio": 1.071197412601333
+      },
+      {
+        "index": 2,
+        "difference": 2,
+        "ratio": 1.066889632027018
+      },
+      {
+        "index": 3,
+        "difference": 2.0000000596046448,
+        "ratio": 1.0673400693739865
+      },
+      {
+        "index": 4,
+        "difference": 2.399999976158142,
+        "ratio": 1.0761904754335918
+      },
+      {
+        "index": 5,
+        "difference": 1.7999999523162842,
+        "ratio": 1.0599999984105428
+      },
+      {
+        "index": 6,
+        "difference": 1.399999976158142,
+        "ratio": 1.0465116270780472
+      },
+      {
+        "index": 7,
+        "difference": 1,
+        "ratio": 1.0333333333333334
+      },
+      {
+        "index": 8,
+        "difference": 2,
+        "ratio": 1.0657894736068152
+      },
+      {
+        "index": 9,
+        "difference": -1.9000000357627869,
+        "ratio": 0.9432835810220064
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B10",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 130.15000000596046,
+    "ratioMedian": 1.770524564774536,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 130.30000001192093,
+        "ratio": 1.7624341722065464
+      },
+      {
+        "index": 1,
+        "difference": 109.90000003576279,
+        "ratio": 1.5673722253098936
+      },
+      {
+        "index": 2,
+        "difference": 134.5,
+        "ratio": 1.7958579881656804
+      },
+      {
+        "index": 3,
+        "difference": 130,
+        "ratio": 1.770142180040398
+      },
+      {
+        "index": 4,
+        "difference": 117.69999998807907,
+        "ratio": 1.6253985121973136
+      },
+      {
+        "index": 5,
+        "difference": 138.0999999642372,
+        "ratio": 1.831927710627935
+      },
+      {
+        "index": 6,
+        "difference": 129.5999999642372,
+        "ratio": 1.774193548008064
+      },
+      {
+        "index": 7,
+        "difference": 117.19999998807907,
+        "ratio": 1.6311254709638376
+      },
+      {
+        "index": 8,
+        "difference": 130.9000000357628,
+        "ratio": 1.770906949508674
+      },
+      {
+        "index": 9,
+        "difference": 139.0999999642372,
+        "ratio": 1.7783995521741267
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B10",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B10",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B10",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B10",
+    "metric": "longestFrame",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B50",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 229.8499999642372,
+    "ratioMedian": 2.3755309806627602,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 229.0999999642372,
+        "ratio": 2.369396293771146
+      },
+      {
+        "index": 1,
+        "difference": 216.30000001192093,
+        "ratio": 2.226885989774789
+      },
+      {
+        "index": 2,
+        "difference": 232.8999999165535,
+        "ratio": 2.3971205749846045
+      },
+      {
+        "index": 3,
+        "difference": 233.10000002384186,
+        "ratio": 2.3983203361758316
+      },
+      {
+        "index": 4,
+        "difference": 222.29999995231628,
+        "ratio": 2.268111807970332
+      },
+      {
+        "index": 5,
+        "difference": 239.19999998807907,
+        "ratio": 2.460317460138405
+      },
+      {
+        "index": 6,
+        "difference": 230.5999999642372,
+        "ratio": 2.381665667554374
+      },
+      {
+        "index": 7,
+        "difference": 225.69999992847443,
+        "ratio": 2.3053788310109335
+      },
+      {
+        "index": 8,
+        "difference": 239.5999999642372,
+        "ratio": 2.4547662410131665
+      },
+      {
+        "index": 9,
+        "difference": 219.19999998807907,
+        "ratio": 2.242630385587901
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B50",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": 1.6499999463558197,
+    "ratioMedian": 1.05498394242354,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 0.699999988079071,
+        "ratio": 1.022950819281281
+      },
+      {
+        "index": 1,
+        "difference": 0.800000011920929,
+        "ratio": 1.0258899680433073
+      },
+      {
+        "index": 2,
+        "difference": 1.4999999403953552,
+        "ratio": 1.0501672220267972
+      },
+      {
+        "index": 3,
+        "difference": 1.9000000357627869,
+        "ratio": 1.0639730652028756
+      },
+      {
+        "index": 4,
+        "difference": -0.10000002384185791,
+        "ratio": 0.9968253960685124
+      },
+      {
+        "index": 5,
+        "difference": 3.400000035762787,
+        "ratio": 1.1133333345254262
+      },
+      {
+        "index": 6,
+        "difference": 1.7999999523162842,
+        "ratio": 1.0598006628202832
+      },
+      {
+        "index": 7,
+        "difference": 3.099999964237213,
+        "ratio": 1.1033333321412404
+      },
+      {
+        "index": 8,
+        "difference": 2.199999988079071,
+        "ratio": 1.072368420575361
+      },
+      {
+        "index": 9,
+        "difference": 0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B50",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 239.09999999403954,
+    "ratioMedian": 2.4084799930348995,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 236.9000000357628,
+        "ratio": 2.38619075523003
+      },
+      {
+        "index": 1,
+        "difference": 214.5,
+        "ratio": 2.1073825504037225
+      },
+      {
+        "index": 2,
+        "difference": 241.80000001192093,
+        "ratio": 2.430769230839769
+      },
+      {
+        "index": 3,
+        "difference": 245.4000000357628,
+        "ratio": 2.4537914693035083
+      },
+      {
+        "index": 4,
+        "difference": 221.89999997615814,
+        "ratio": 2.1790648246026234
+      },
+      {
+        "index": 5,
+        "difference": 248.30000001192093,
+        "ratio": 2.4957831326019333
+      },
+      {
+        "index": 6,
+        "difference": 241.29999995231628,
+        "ratio": 2.44145758602608
+      },
+      {
+        "index": 7,
+        "difference": 224.29999995231628,
+        "ratio": 2.207862142674857
+      },
+      {
+        "index": 8,
+        "difference": 245.9000000357628,
+        "ratio": 2.4481743228415738
+      },
+      {
+        "index": 9,
+        "difference": 231.0999999642372,
+        "ratio": 2.2932288750959917
+      }
+    ]
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B50",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B50",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B50",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-flat-500-on",
+    "lane": "B50",
+    "metric": "longestFrame",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "L",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 0,
+    "ratioMedian": 1,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 1,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 2,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 3,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 4,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 5,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 6,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 7,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 8,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 9,
+        "difference": 0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "L",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": 0,
+    "ratioMedian": 1,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 1,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 2,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 3,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 4,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 5,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 6,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 7,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 8,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 9,
+        "difference": 0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "L",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 0,
+    "ratioMedian": 1,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 1,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 2,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 3,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 4,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 5,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 6,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 7,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 8,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 9,
+        "difference": 0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "L",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "L",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "L",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "L",
+    "metric": "longestFrame",
+    "count": 10,
+    "differenceMedian": 0,
+    "ratioMedian": 1,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 1,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 2,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 3,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 4,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 5,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 6,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 7,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 8,
+        "difference": 0,
+        "ratio": 1
+      },
+      {
+        "index": 9,
+        "difference": 0,
+        "ratio": 1
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "E0",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": -23.80000004172325,
+    "ratioMedian": 0.9508325419249041,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 21.400000035762787,
+        "ratio": 1.0602647142718051
+      },
+      {
+        "index": 1,
+        "difference": 56.499999940395355,
+        "ratio": 1.1605569762280574
+      },
+      {
+        "index": 2,
+        "difference": 119.59999996423721,
+        "ratio": 1.3475733797034304
+      },
+      {
+        "index": 3,
+        "difference": -19.700000047683716,
+        "ratio": 0.9590606815342236
+      },
+      {
+        "index": 4,
+        "difference": -132.79999995231628,
+        "ratio": 0.7146540611106157
+      },
+      {
+        "index": 5,
+        "difference": -8.099999964237213,
+        "ratio": 0.9839699189312366
+      },
+      {
+        "index": 6,
+        "difference": -27.900000035762787,
+        "ratio": 0.9426044023155845
+      },
+      {
+        "index": 7,
+        "difference": -295.9000000357628,
+        "ratio": 0.2196729956617484
+      },
+      {
+        "index": 8,
+        "difference": -277.5,
+        "ratio": 0.23342541436464087
+      },
+      {
+        "index": 9,
+        "difference": -267.80000001192093,
+        "ratio": 0.23898834900623747
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "E0",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": -5.25,
+    "ratioMedian": 0.9323564332588536,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -6.399999976158142,
+        "ratio": 0.9186785263389127
+      },
+      {
+        "index": 1,
+        "difference": -5.800000011920929,
+        "ratio": 0.9258312018822878
+      },
+      {
+        "index": 2,
+        "difference": -3.800000011920929,
+        "ratio": 0.9506493504945334
+      },
+      {
+        "index": 3,
+        "difference": -6,
+        "ratio": 0.9240506329113924
+      },
+      {
+        "index": 4,
+        "difference": -6.599999964237213,
+        "ratio": 0.9171894609131193
+      },
+      {
+        "index": 5,
+        "difference": -4.399999976158142,
+        "ratio": 0.9429312584332359
+      },
+      {
+        "index": 6,
+        "difference": -9.5,
+        "ratio": 0.8834355828220859
+      },
+      {
+        "index": 7,
+        "difference": -4.699999988079071,
+        "ratio": 0.9388816646354194
+      },
+      {
+        "index": 8,
+        "difference": -3,
+        "ratio": 0.9606299212536834
+      },
+      {
+        "index": 9,
+        "difference": -4.500000059604645,
+        "ratio": 0.9422336321240211
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "E0",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": -17.299999982118607,
+    "ratioMedian": 0.9640874263569073,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -3.899999976158142,
+        "ratio": 0.9917355372401883
+      },
+      {
+        "index": 1,
+        "difference": 30.999999940395355,
+        "ratio": 1.0650167783968547
+      },
+      {
+        "index": 2,
+        "difference": -2.199999988079071,
+        "ratio": 0.9953429297455756
+      },
+      {
+        "index": 3,
+        "difference": -25.500000059604645,
+        "ratio": 0.9482968368671143
+      },
+      {
+        "index": 4,
+        "difference": -12.299999952316284,
+        "ratio": 0.9741542341816926
+      },
+      {
+        "index": 5,
+        "difference": -8,
+        "ratio": 0.9844145723751915
+      },
+      {
+        "index": 6,
+        "difference": -27.599999964237213,
+        "ratio": 0.944118242628934
+      },
+      {
+        "index": 7,
+        "difference": -42.799999952316284,
+        "ratio": 0.9151298830926766
+      },
+      {
+        "index": 8,
+        "difference": -25.100000023841858,
+        "ratio": 0.9485444853972357
+      },
+      {
+        "index": 9,
+        "difference": -22.30000001192093,
+        "ratio": 0.9540206185321218
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "E0",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "E0",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "E0",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "E0",
+    "metric": "longestFrame",
+    "count": 10,
+    "differenceMedian": 7.650000035762787,
+    "ratioMedian": 1.1253132468437277,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 6.699999988079071,
+        "ratio": 1.1085899512054063
+      },
+      {
+        "index": 1,
+        "difference": 7.200000047683716,
+        "ratio": 1.1178396080507036
+      },
+      {
+        "index": 2,
+        "difference": 9.100000023841858,
+        "ratio": 1.1519198669025694
+      },
+      {
+        "index": 3,
+        "difference": 6.899999976158142,
+        "ratio": 1.1114701126360527
+      },
+      {
+        "index": 4,
+        "difference": 6.599999964237213,
+        "ratio": 1.1054313092927082
+      },
+      {
+        "index": 5,
+        "difference": 8.800000011920929,
+        "ratio": 1.146666666865349
+      },
+      {
+        "index": 6,
+        "difference": 3.100000023841858,
+        "ratio": 1.048589342057408
+      },
+      {
+        "index": 7,
+        "difference": 8.499999940395355,
+        "ratio": 1.1423785583518629
+      },
+      {
+        "index": 8,
+        "difference": 9.400000035762787,
+        "ratio": 1.1571906361748867
+      },
+      {
+        "index": 9,
+        "difference": 8.100000023841858,
+        "ratio": 1.1327868856367518
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "A",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": -15.700000017881393,
+    "ratioMedian": 0.9638187125927902,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 17.300000071525574,
+        "ratio": 1.048718671003289
+      },
+      {
+        "index": 1,
+        "difference": -9.900000035762787,
+        "ratio": 0.9718670075738657
+      },
+      {
+        "index": 2,
+        "difference": 156.0999999642372,
+        "ratio": 1.453647195447316
+      },
+      {
+        "index": 3,
+        "difference": -104.6000000834465,
+        "ratio": 0.782626766265417
+      },
+      {
+        "index": 4,
+        "difference": -124.19999998807907,
+        "ratio": 0.7331327890106539
+      },
+      {
+        "index": 5,
+        "difference": -157,
+        "ratio": 0.689293489023756
+      },
+      {
+        "index": 6,
+        "difference": -21.5,
+        "ratio": 0.9557704176117147
+      },
+      {
+        "index": 7,
+        "difference": 83.40000003576279,
+        "ratio": 1.2199367089619848
+      },
+      {
+        "index": 8,
+        "difference": -26,
+        "ratio": 0.9281767955801105
+      },
+      {
+        "index": 9,
+        "difference": 101.89999997615814,
+        "ratio": 1.2895709007269176
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "A",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": -17.849999994039536,
+    "ratioMedian": 0.7701336160486554,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -18.599999964237213,
+        "ratio": 0.7636594667464471
+      },
+      {
+        "index": 1,
+        "difference": -18.099999964237213,
+        "ratio": 0.7685421999105319
+      },
+      {
+        "index": 2,
+        "difference": -17.19999998807907,
+        "ratio": 0.7766233767781939
+      },
+      {
+        "index": 3,
+        "difference": -19.19999998807907,
+        "ratio": 0.7569620254673536
+      },
+      {
+        "index": 4,
+        "difference": -18.69999998807907,
+        "ratio": 0.7653701381320442
+      },
+      {
+        "index": 5,
+        "difference": -17.600000023841858,
+        "ratio": 0.7717250321867788
+      },
+      {
+        "index": 6,
+        "difference": -21.19999998807907,
+        "ratio": 0.739877300759766
+      },
+      {
+        "index": 7,
+        "difference": -15.299999952316284,
+        "ratio": 0.8010403126520175
+      },
+      {
+        "index": 8,
+        "difference": -14.699999988079071,
+        "ratio": 0.8070866142994911
+      },
+      {
+        "index": 9,
+        "difference": -17.200000047683716,
+        "ratio": 0.7792041073198018
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "A",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": -16.349999964237213,
+    "ratioMedian": 0.9661174016029754,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -16.499999940395355,
+        "ratio": 0.9650349651595063
+      },
+      {
+        "index": 1,
+        "difference": 1.199999988079071,
+        "ratio": 1.002516778498425
+      },
+      {
+        "index": 2,
+        "difference": 35.60000002384186,
+        "ratio": 1.0753598645758649
+      },
+      {
+        "index": 3,
+        "difference": -33.500000059604645,
+        "ratio": 0.9320762367064765
+      },
+      {
+        "index": 4,
+        "difference": -1.5,
+        "ratio": 0.9968480773270116
+      },
+      {
+        "index": 5,
+        "difference": -10,
+        "ratio": 0.9805182154689893
+      },
+      {
+        "index": 6,
+        "difference": -16.19999998807907,
+        "ratio": 0.9671998380464445
+      },
+      {
+        "index": 7,
+        "difference": -32.8999999165535,
+        "ratio": 0.9347610550869238
+      },
+      {
+        "index": 8,
+        "difference": -18.600000023841858,
+        "ratio": 0.9618696186482425
+      },
+      {
+        "index": 9,
+        "difference": -23.5,
+        "ratio": 0.9515463917525773
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "A",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "A",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "A",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "A",
+    "metric": "longestFrame",
+    "count": 10,
+    "differenceMedian": -5.499999970197678,
+    "ratioMedian": 0.9095683518262505,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -5.699999988079071,
+        "ratio": 0.9076175042272228
+      },
+      {
+        "index": 1,
+        "difference": -6.099999964237213,
+        "ratio": 0.9001636666479929
+      },
+      {
+        "index": 2,
+        "difference": -5.299999952316284,
+        "ratio": 0.9115191994252783
+      },
+      {
+        "index": 3,
+        "difference": -6.000000059604645,
+        "ratio": 0.9030694659751513
+      },
+      {
+        "index": 4,
+        "difference": -6.699999988079071,
+        "ratio": 0.892971246237583
+      },
+      {
+        "index": 5,
+        "difference": -4.300000011920929,
+        "ratio": 0.9283333331346512
+      },
+      {
+        "index": 6,
+        "difference": -7.400000035762787,
+        "ratio": 0.8840125386460798
+      },
+      {
+        "index": 7,
+        "difference": -2.1000000834465027,
+        "ratio": 0.964824119233347
+      },
+      {
+        "index": 8,
+        "difference": -2.1999999284744263,
+        "ratio": 0.9632107035078816
+      },
+      {
+        "index": 9,
+        "difference": -4.600000023841858,
+        "ratio": 0.9245901635435761
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "AB",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 309.2999999821186,
+    "ratioMedian": 1.8789428813602875,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 789.5000000596046,
+        "ratio": 3.2233173757789824
+      },
+      {
+        "index": 1,
+        "difference": 311,
+        "ratio": 1.8837737992850065
+      },
+      {
+        "index": 2,
+        "difference": 313.5,
+        "ratio": 1.91107236262214
+      },
+      {
+        "index": 3,
+        "difference": 178.09999990463257,
+        "ratio": 1.3701163754924854
+      },
+      {
+        "index": 4,
+        "difference": 200.9000000357628,
+        "ratio": 1.4316716803739893
+      },
+      {
+        "index": 5,
+        "difference": 650.7999999523163,
+        "ratio": 2.287947753684866
+      },
+      {
+        "index": 6,
+        "difference": 660.2999999523163,
+        "ratio": 2.3583624766918954
+      },
+      {
+        "index": 7,
+        "difference": 283.69999998807907,
+        "ratio": 1.7481540084309013
+      },
+      {
+        "index": 8,
+        "difference": 302.5,
+        "ratio": 1.8356353591160222
+      },
+      {
+        "index": 9,
+        "difference": 307.5999999642372,
+        "ratio": 1.8741119634355685
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "AB",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": -7.350000023841858,
+    "ratioMedian": 0.9053108073534,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -6.199999988079071,
+        "ratio": 0.9212198222488157
+      },
+      {
+        "index": 1,
+        "difference": -7.099999964237213,
+        "ratio": 0.9092071615688038
+      },
+      {
+        "index": 2,
+        "difference": -8.899999976158142,
+        "ratio": 0.884415584725219
+      },
+      {
+        "index": 3,
+        "difference": -7.600000023841858,
+        "ratio": 0.9037974680526347
+      },
+      {
+        "index": 4,
+        "difference": -9.799999952316284,
+        "ratio": 0.8770388964393715
+      },
+      {
+        "index": 5,
+        "difference": -7.100000023841858,
+        "ratio": 0.9079118025726809
+      },
+      {
+        "index": 6,
+        "difference": -10.100000023841858,
+        "ratio": 0.8760736193393637
+      },
+      {
+        "index": 7,
+        "difference": -3.399999976158142,
+        "ratio": 0.9557867363171356
+      },
+      {
+        "index": 8,
+        "difference": -7.100000023841858,
+        "ratio": 0.9068241466541653
+      },
+      {
+        "index": 9,
+        "difference": -7.600000023841858,
+        "ratio": 0.9024390241289756
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "AB",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 667.7499999701977,
+    "ratioMedian": 2.372639073747855,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 686.0000000596046,
+        "ratio": 2.453697817533934
+      },
+      {
+        "index": 1,
+        "difference": 684.1999999880791,
+        "ratio": 2.4349832214156306
+      },
+      {
+        "index": 2,
+        "difference": 670.0000000596046,
+        "ratio": 2.41828958529513
+      },
+      {
+        "index": 3,
+        "difference": 664.2999999523163,
+        "ratio": 2.3469180857422756
+      },
+      {
+        "index": 4,
+        "difference": 674.7000000476837,
+        "ratio": 2.417734818410349
+      },
+      {
+        "index": 5,
+        "difference": 655.1999999880791,
+        "ratio": 2.276446522448593
+      },
+      {
+        "index": 6,
+        "difference": 666.5,
+        "ratio": 2.3494634542056563
+      },
+      {
+        "index": 7,
+        "difference": 656.1000000238419,
+        "ratio": 2.301011302966248
+      },
+      {
+        "index": 8,
+        "difference": 668.9999999403954,
+        "ratio": 2.3714637144814397
+      },
+      {
+        "index": 9,
+        "difference": 666.3000000119209,
+        "ratio": 2.37381443301427
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "AB",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "AB",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "AB",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "AB",
+    "metric": "longestFrame",
+    "count": 10,
+    "differenceMedian": -7.300000011920929,
+    "ratioMedian": 0.8797374335804168,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -6.600000023841858,
+        "ratio": 0.8930307937582329
+      },
+      {
+        "index": 1,
+        "difference": -6.199999988079071,
+        "ratio": 0.8985270050456952
+      },
+      {
+        "index": 2,
+        "difference": -8,
+        "ratio": 0.8664440734026007
+      },
+      {
+        "index": 3,
+        "difference": -9.200000047683716,
+        "ratio": 0.8513731818680387
+      },
+      {
+        "index": 4,
+        "difference": -10.500000059604645,
+        "ratio": 0.8322683697187602
+      },
+      {
+        "index": 5,
+        "difference": -6.099999964237213,
+        "ratio": 0.8983333339293798
+      },
+      {
+        "index": 6,
+        "difference": -11,
+        "ratio": 0.8275862069287669
+      },
+      {
+        "index": 7,
+        "difference": -3.400000035762787,
+        "ratio": 0.9430485756608521
+      },
+      {
+        "index": 8,
+        "difference": -0.7999999523162842,
+        "ratio": 0.9866220743653145
+      },
+      {
+        "index": 9,
+        "difference": -9.199999988079071,
+        "ratio": 0.8491803280642776
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B10",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 423.0499999821186,
+    "ratioMedian": 2.185280497707069,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 405.9000000357628,
+        "ratio": 2.1430582936542995
+      },
+      {
+        "index": 1,
+        "difference": 433.49999994039536,
+        "ratio": 2.2318840576764414
+      },
+      {
+        "index": 2,
+        "difference": 432,
+        "ratio": 2.2554489972974943
+      },
+      {
+        "index": 3,
+        "difference": 1221.9999999403954,
+        "ratio": 3.5394846214033735
+      },
+      {
+        "index": 4,
+        "difference": 315.50000005960464,
+        "ratio": 1.6779114741636598
+      },
+      {
+        "index": 5,
+        "difference": 280.69999998807907,
+        "ratio": 1.555511577244126
+      },
+      {
+        "index": 6,
+        "difference": 1261.1000000238419,
+        "ratio": 3.594322155856796
+      },
+      {
+        "index": 7,
+        "difference": 413.10000002384186,
+        "ratio": 2.089398734274337
+      },
+      {
+        "index": 8,
+        "difference": 426.5,
+        "ratio": 2.1781767955801103
+      },
+      {
+        "index": 9,
+        "difference": 419.5999999642372,
+        "ratio": 2.192384199834027
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B10",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": -8.599999964237213,
+    "ratioMedian": 0.8891042745180556,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -8.800000011920929,
+        "ratio": 0.888182973147981
+      },
+      {
+        "index": 1,
+        "difference": -8.599999964237213,
+        "ratio": 0.8900255758881302
+      },
+      {
+        "index": 2,
+        "difference": -7,
+        "ratio": 0.9090909090909091
+      },
+      {
+        "index": 3,
+        "difference": -9.5,
+        "ratio": 0.879746835443038
+      },
+      {
+        "index": 4,
+        "difference": -9.799999952316284,
+        "ratio": 0.8770388964393715
+      },
+      {
+        "index": 5,
+        "difference": -6.699999988079071,
+        "ratio": 0.9130998704798027
+      },
+      {
+        "index": 6,
+        "difference": -11.399999976158142,
+        "ratio": 0.8601226996790412
+      },
+      {
+        "index": 7,
+        "difference": -7.899999976158142,
+        "ratio": 0.897269181032413
+      },
+      {
+        "index": 8,
+        "difference": -8.599999964237213,
+        "ratio": 0.8871391080632202
+      },
+      {
+        "index": 9,
+        "difference": -8.5,
+        "ratio": 0.8908857510128656
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B10",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 1221.1499999761581,
+    "ratioMedian": 3.5268437297681157,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 1242.4000000357628,
+        "ratio": 3.6327611784245235
+      },
+      {
+        "index": 1,
+        "difference": 1226,
+        "ratio": 3.571308724767927
+      },
+      {
+        "index": 2,
+        "difference": 1220.300000011921,
+        "ratio": 3.58319221014714
+      },
+      {
+        "index": 3,
+        "difference": 1221.9999999403954,
+        "ratio": 3.4776966744165643
+      },
+      {
+        "index": 4,
+        "difference": 1223.8000000715256,
+        "ratio": 3.571548644952377
+      },
+      {
+        "index": 5,
+        "difference": 1179.800000011921,
+        "ratio": 3.298460938991859
+      },
+      {
+        "index": 6,
+        "difference": 1264.0000000596046,
+        "ratio": 3.5592225149233068
+      },
+      {
+        "index": 7,
+        "difference": 1216.2000000476837,
+        "ratio": 3.411659726675948
+      },
+      {
+        "index": 8,
+        "difference": 1216.800000011921,
+        "ratio": 3.4944649446129246
+      },
+      {
+        "index": 9,
+        "difference": 1206.300000011921,
+        "ratio": 3.4872164948699402
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B10",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B10",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B10",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B10",
+    "metric": "longestFrame",
+    "count": 10,
+    "differenceMedian": -8.399999976158142,
+    "ratioMedian": 0.8610616953082096,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -2.600000023841858,
+        "ratio": 0.9578606154887488
+      },
+      {
+        "index": 1,
+        "difference": -8.599999964237213,
+        "ratio": 0.8592471363458113
+      },
+      {
+        "index": 2,
+        "difference": -6.199999988079071,
+        "ratio": 0.8964941570860293
+      },
+      {
+        "index": 3,
+        "difference": -10.200000047683716,
+        "ratio": 0.8352180930243835
+      },
+      {
+        "index": 4,
+        "difference": -11.000000059604645,
+        "ratio": 0.8242811492745179
+      },
+      {
+        "index": 5,
+        "difference": -7.300000011920929,
+        "ratio": 0.8783333331346512
+      },
+      {
+        "index": 6,
+        "difference": -12,
+        "ratio": 0.8119122257404731
+      },
+      {
+        "index": 7,
+        "difference": -7.100000083446503,
+        "ratio": 0.8810720254978965
+      },
+      {
+        "index": 8,
+        "difference": -8.199999988079071,
+        "ratio": 0.862876254270608
+      },
+      {
+        "index": 9,
+        "difference": -9.700000047683716,
+        "ratio": 0.8409836057756768
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B50",
+    "metric": "wallMs",
+    "count": 10,
+    "differenceMedian": 27.44999995827675,
+    "ratioMedian": 1.0561493752661044,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 143.6000000834465,
+        "ratio": 1.4043931289718634
+      },
+      {
+        "index": 1,
+        "difference": -115.19999998807907,
+        "ratio": 0.6726342711668896
+      },
+      {
+        "index": 2,
+        "difference": -117.90000003576279,
+        "ratio": 0.6573670443836275
+      },
+      {
+        "index": 3,
+        "difference": 139.0999999642372,
+        "ratio": 1.2890689940782487
+      },
+      {
+        "index": 4,
+        "difference": 114.80000001192093,
+        "ratio": 1.2466695316239838
+      },
+      {
+        "index": 5,
+        "difference": 8.199999988079071,
+        "ratio": 1.0162279833522376
+      },
+      {
+        "index": 6,
+        "difference": 46.699999928474426,
+        "ratio": 1.096070767179971
+      },
+      {
+        "index": 7,
+        "difference": -172.39999997615814,
+        "ratio": 0.5453586498376111
+      },
+      {
+        "index": 8,
+        "difference": -137.4000000357628,
+        "ratio": 0.620441988851484
+      },
+      {
+        "index": 9,
+        "difference": 171.69999992847443,
+        "ratio": 1.4879227050611679
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B50",
+    "metric": "eagerPaintedMs",
+    "count": 10,
+    "differenceMedian": -7.550000011920929,
+    "ratioMedian": 0.9013845227894912,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -11.499999940395355,
+        "ratio": 0.8538754772282428
+      },
+      {
+        "index": 1,
+        "difference": -5.199999988079071,
+        "ratio": 0.9335038364594404
+      },
+      {
+        "index": 2,
+        "difference": -6,
+        "ratio": 0.922077922077922
+      },
+      {
+        "index": 3,
+        "difference": -9.599999964237213,
+        "ratio": 0.8784810131109213
+      },
+      {
+        "index": 4,
+        "difference": -8.600000023841858,
+        "ratio": 0.8920953572756816
+      },
+      {
+        "index": 5,
+        "difference": -6.300000011920929,
+        "ratio": 0.9182879376138423
+      },
+      {
+        "index": 6,
+        "difference": -12,
+        "ratio": 0.852760736196319
+      },
+      {
+        "index": 7,
+        "difference": -7.800000011920929,
+        "ratio": 0.8985695706847956
+      },
+      {
+        "index": 8,
+        "difference": -7.300000011920929,
+        "ratio": 0.9041994748941868
+      },
+      {
+        "index": 9,
+        "difference": -6.300000071525574,
+        "ratio": 0.9191270851266581
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B50",
+    "metric": "allRevealedMs",
+    "count": 10,
+    "differenceMedian": 278.84999999403954,
+    "ratioMedian": 1.5815171044453358,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": 273.00000005960464,
+        "ratio": 1.578512396849751
+      },
+      {
+        "index": 1,
+        "difference": 278.69999998807907,
+        "ratio": 1.5845218120409208
+      },
+      {
+        "index": 2,
+        "difference": 279,
+        "ratio": 1.5906011854658786
+      },
+      {
+        "index": 3,
+        "difference": 364.39999997615814,
+        "ratio": 1.7388483372687087
+      },
+      {
+        "index": 4,
+        "difference": 352.39999997615814,
+        "ratio": 1.7404916999239606
+      },
+      {
+        "index": 5,
+        "difference": 246.5,
+        "ratio": 1.4802259886894122
+      },
+      {
+        "index": 6,
+        "difference": 274.19999998807907,
+        "ratio": 1.5551731119686483
+      },
+      {
+        "index": 7,
+        "difference": 271.30000001192093,
+        "ratio": 1.5379734285892792
+      },
+      {
+        "index": 8,
+        "difference": 280.5,
+        "ratio": 1.5750307502934504
+      },
+      {
+        "index": 9,
+        "difference": 285.0999999642372,
+        "ratio": 1.587835051472654
+      }
+    ]
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B50",
+    "metric": "processingP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B50",
+    "metric": "handlerP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B50",
+    "metric": "validationP95",
+    "count": 0,
+    "differenceMedian": null,
+    "ratioMedian": null,
+    "pairs": []
+  },
+  {
+    "id": "mount-array-1000-on",
+    "lane": "B50",
+    "metric": "longestFrame",
+    "count": 10,
+    "differenceMedian": -7.700000017881393,
+    "ratioMedian": 0.8727322401407638,
+    "pairs": [
+      {
+        "index": 0,
+        "difference": -9.299999952316284,
+        "ratio": 0.8492706652493822
+      },
+      {
+        "index": 1,
+        "difference": -5.099999964237213,
+        "ratio": 0.9165302787688654
+      },
+      {
+        "index": 2,
+        "difference": -7.5,
+        "ratio": 0.8747913188149381
+      },
+      {
+        "index": 3,
+        "difference": -9.300000011920929,
+        "ratio": 0.8497576735614242
+      },
+      {
+        "index": 4,
+        "difference": -8.300000011920929,
+        "ratio": 0.8674121404351471
+      },
+      {
+        "index": 5,
+        "difference": -7.600000023841858,
+        "ratio": 0.873333332935969
+      },
+      {
+        "index": 6,
+        "difference": -10.600000023841858,
+        "ratio": 0.8338557990303876
+      },
+      {
+        "index": 7,
+        "difference": -7.300000011920929,
+        "ratio": 0.8777219429465619
+      },
+      {
+        "index": 8,
+        "difference": -6.899999976158142,
+        "ratio": 0.8846153849220717
+      },
+      {
+        "index": 9,
+        "difference": -7.800000011920929,
+        "ratio": 0.8721311473455585
+      }
+    ]
+  }
+]

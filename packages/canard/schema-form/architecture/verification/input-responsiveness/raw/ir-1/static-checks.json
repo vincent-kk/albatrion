@@ -1,0 +1,65 @@
+{
+  "sourceHead": "4c035445b",
+  "checks": [
+    {
+      "package": "schema-form",
+      "command": "unit",
+      "evidence": "609 files; 4013 passed; 1 todo"
+    },
+    {
+      "package": "schema-form",
+      "command": "build",
+      "evidence": "IR1_STABLE_BUILD_OK; includes typecheck and artifact verification"
+    },
+    {
+      "package": "schema-form",
+      "command": "lint",
+      "evidence": "IR1_STABLE_LINT_OK"
+    },
+    {
+      "package": "schema-form",
+      "command": "render/react18 virtualization/deferred/commands",
+      "evidence": "12 files; 58 passed"
+    },
+    {
+      "package": "schema-form",
+      "command": "unit selection/budget",
+      "evidence": "2 files; 12 passed"
+    },
+    {
+      "package": "schema-form",
+      "command": "render/react18 Form lifecycle",
+      "evidence": "2 files; 20 passed; LANDING-036 unchanged"
+    },
+    {
+      "package": "schema-form-ajv8-plugin",
+      "command": "unit",
+      "evidence": "21 files; 334 passed"
+    },
+    {
+      "package": "schema-form-ajv8-plugin",
+      "command": "build",
+      "evidence": "passed; includes typecheck"
+    },
+    {
+      "package": "schema-form-ajv8-plugin",
+      "command": "lint",
+      "evidence": "passed"
+    },
+    {
+      "package": "benchmark-form",
+      "command": "typecheck:browser",
+      "evidence": "passed"
+    },
+    {
+      "package": "benchmark-form",
+      "command": "lint",
+      "evidence": "passed"
+    },
+    {
+      "package": "schema-form",
+      "command": "public declaration comparison",
+      "evidence": "byte-for-byte diff 0 against stage base product build"
+    }
+  ]
+}
