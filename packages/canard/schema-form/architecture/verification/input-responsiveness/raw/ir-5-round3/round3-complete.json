@@ -1,0 +1,1738 @@
+{
+  "smoke": false,
+  "startedAt": "2026-10-30T21:23:32.273Z",
+  "endedAt": "2026-10-30T21:26:06.784Z",
+  "mode": "paired-relative-authorized-round3",
+  "warmup": 3,
+  "count": 10,
+  "chromium": "145.0.7632.6",
+  "inputs": {
+    "stage": "IR-5 round3 final",
+    "preparedAt": "2026-10-30T20:27:00.396Z",
+    "lanes": [
+      "E4",
+      "E5"
+    ],
+    "bundles": {
+      "E4": {
+        "commit": "be1a7986756bc326757d0d2055bd92010917ca7d",
+        "toolCommit": "7c91c45ee4a28d33d7ef96ce02221998a1354ee4",
+        "product": {
+          "sha256": "8de2fa64279e22af44bd368d1a68661082cd1feed3df8e2c3137f0536025a110",
+          "bytes": 857338
+        },
+        "browser": {
+          "sha256": "ee76aa887efa44f789bb2dd456d25b8b4c095b77e5ff0982efcb009f2ff81361",
+          "bytes": 1822346
+        }
+      },
+      "E5": {
+        "commit": "f7ab4800e1d4c11ec0138faec822ca64b3deaeef",
+        "toolCommit": "f7ab4800e1d4c11ec0138faec822ca64b3deaeef",
+        "product": {
+          "sha256": "26266aad8a72b5876ace3b1c47e9c501d83d7ac2b13c7d32bea4e1c40e16350d",
+          "bytes": 858166
+        },
+        "browser": {
+          "sha256": "c1c2272a7803f34ffcd82a3471f64c162948ae29d82d1033c66e8f28c6ec0532",
+          "bytes": 1823349
+        }
+      }
+    },
+    "viewport": {
+      "width": 900,
+      "height": 700
+    },
+    "productionReact": true,
+    "versions": {
+      "node": "v26.12.1",
+      "react": "19.2.6",
+      "playwright": "1.58.0",
+      "esbuild": "0.25.9",
+      "ajv": "8.17.1"
+    },
+    "environment": {
+      "cpu": "Apple M1 Max",
+      "logicalCpus": 10,
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "27.0.0",
+      "memoryGiB": 64
+    },
+    "reusedE4": "Same immutable E4 product/browser bytes as round2 windows",
+    "measurementRunnerSHA256": "e2d37066f1ab9d66fc8d96a479c5b497485ca65f604b642a187a1172b030b688"
+  },
+  "quiet": {
+    "startedAt": "2026-10-30T21:23:32.306Z",
+    "endedAt": "2026-10-30T21:24:02.430Z",
+    "durationSeconds": 30.121018667,
+    "top": [
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 6.440685228631117
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.0422923278941605
+      },
+      {
+        "pid": 81982,
+        "name": "2.1.312",
+        "cpuPercent": 3.286741431108574
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 2.7555508967870965
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 2.45675622123136
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 2.1247621372828895
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 1.8259674617271533
+      },
+      {
+        "pid": 726,
+        "name": "chronod",
+        "cpuPercent": 1.4607739693829302
+      },
+      {
+        "pid": 440,
+        "name": "loginwindow",
+        "cpuPercent": 1.261577519011433
+      },
+      {
+        "pid": 820,
+        "name": "BetterTouchTool",
+        "cpuPercent": 1.1619792938256839
+      }
+    ],
+    "heavy": [],
+    "totalPercent": 43.29202854710409
+  },
+  "samples": [
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-flat-500-off-E4-0.json",
+      "wallMs": 51.10000002384186,
+      "eagerPaintedMs": 50.90000003576279,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-flat-500-off-E5-0.json",
+      "wallMs": 50.40000003576279,
+      "eagerPaintedMs": 50.200000047683716,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 1,
+      "file": "mount-flat-500-off-E5-1.json",
+      "wallMs": 52.10000002384186,
+      "eagerPaintedMs": 51.90000003576279,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 1,
+      "file": "mount-flat-500-off-E4-1.json",
+      "wallMs": 54.30000001192093,
+      "eagerPaintedMs": 54,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 2,
+      "file": "mount-flat-500-off-E4-2.json",
+      "wallMs": 50.59999996423721,
+      "eagerPaintedMs": 50.39999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 2,
+      "file": "mount-flat-500-off-E5-2.json",
+      "wallMs": 51.80000001192093,
+      "eagerPaintedMs": 51.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 3,
+      "file": "mount-flat-500-off-E5-3.json",
+      "wallMs": 50.89999997615814,
+      "eagerPaintedMs": 50.799999952316284,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 3,
+      "file": "mount-flat-500-off-E4-3.json",
+      "wallMs": 50.5,
+      "eagerPaintedMs": 50.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 4,
+      "file": "mount-flat-500-off-E4-4.json",
+      "wallMs": 50.30000001192093,
+      "eagerPaintedMs": 50.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 4,
+      "file": "mount-flat-500-off-E5-4.json",
+      "wallMs": 51.69999998807907,
+      "eagerPaintedMs": 51.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 5,
+      "file": "mount-flat-500-off-E5-5.json",
+      "wallMs": 50.30000001192093,
+      "eagerPaintedMs": 50.200000047683716,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 5,
+      "file": "mount-flat-500-off-E4-5.json",
+      "wallMs": 50.10000002384186,
+      "eagerPaintedMs": 49.90000003576279,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 6,
+      "file": "mount-flat-500-off-E4-6.json",
+      "wallMs": 51.39999997615814,
+      "eagerPaintedMs": 51.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 6,
+      "file": "mount-flat-500-off-E5-6.json",
+      "wallMs": 51.5,
+      "eagerPaintedMs": 51.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 7,
+      "file": "mount-flat-500-off-E5-7.json",
+      "wallMs": 51.30000001192093,
+      "eagerPaintedMs": 51.09999996423721,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 7,
+      "file": "mount-flat-500-off-E4-7.json",
+      "wallMs": 52.5,
+      "eagerPaintedMs": 52.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 8,
+      "file": "mount-flat-500-off-E4-8.json",
+      "wallMs": 50.200000047683716,
+      "eagerPaintedMs": 50,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 8,
+      "file": "mount-flat-500-off-E5-8.json",
+      "wallMs": 50.60000002384186,
+      "eagerPaintedMs": 50.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 9,
+      "file": "mount-flat-500-off-E5-9.json",
+      "wallMs": 51,
+      "eagerPaintedMs": 50.90000003576279,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 9,
+      "file": "mount-flat-500-off-E4-9.json",
+      "wallMs": 50.40000003576279,
+      "eagerPaintedMs": 50.200000047683716,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-flat-500-on-E4-0.json",
+      "wallMs": 41.19999998807907,
+      "eagerPaintedMs": 33.10000002384186,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-flat-500-on-E5-0.json",
+      "wallMs": 167.30000001192093,
+      "eagerPaintedMs": 31.599999964237213,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 1,
+      "file": "mount-flat-500-on-E5-1.json",
+      "wallMs": 165.5999999642372,
+      "eagerPaintedMs": 30.899999976158142,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 1,
+      "file": "mount-flat-500-on-E4-1.json",
+      "wallMs": 165.89999997615814,
+      "eagerPaintedMs": 31.899999976158142,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 2,
+      "file": "mount-flat-500-on-E4-2.json",
+      "wallMs": 171,
+      "eagerPaintedMs": 31,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 2,
+      "file": "mount-flat-500-on-E5-2.json",
+      "wallMs": 176.4000000357628,
+      "eagerPaintedMs": 31.5,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 3,
+      "file": "mount-flat-500-on-E5-3.json",
+      "wallMs": 164.19999998807907,
+      "eagerPaintedMs": 31.30000001192093,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 3,
+      "file": "mount-flat-500-on-E4-3.json",
+      "wallMs": 159.5,
+      "eagerPaintedMs": 31.400000035762787,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 4,
+      "file": "mount-flat-500-on-E4-4.json",
+      "wallMs": 162.39999997615814,
+      "eagerPaintedMs": 31.600000023841858,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 4,
+      "file": "mount-flat-500-on-E5-4.json",
+      "wallMs": 172.19999998807907,
+      "eagerPaintedMs": 32.30000001192093,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 5,
+      "file": "mount-flat-500-on-E5-5.json",
+      "wallMs": 177.69999998807907,
+      "eagerPaintedMs": 30.69999998807907,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 5,
+      "file": "mount-flat-500-on-E4-5.json",
+      "wallMs": 171.5,
+      "eagerPaintedMs": 31.19999998807907,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 6,
+      "file": "mount-flat-500-on-E4-6.json",
+      "wallMs": 177,
+      "eagerPaintedMs": 31.5,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 6,
+      "file": "mount-flat-500-on-E5-6.json",
+      "wallMs": 169.9000000357628,
+      "eagerPaintedMs": 31.600000023841858,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 7,
+      "file": "mount-flat-500-on-E5-7.json",
+      "wallMs": 171.89999997615814,
+      "eagerPaintedMs": 31.80000001192093,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 7,
+      "file": "mount-flat-500-on-E4-7.json",
+      "wallMs": 170.80000001192093,
+      "eagerPaintedMs": 32.30000001192093,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 8,
+      "file": "mount-flat-500-on-E4-8.json",
+      "wallMs": 39,
+      "eagerPaintedMs": 31.399999976158142,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 8,
+      "file": "mount-flat-500-on-E5-8.json",
+      "wallMs": 170.19999998807907,
+      "eagerPaintedMs": 31.399999976158142,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 9,
+      "file": "mount-flat-500-on-E5-9.json",
+      "wallMs": 163.69999998807907,
+      "eagerPaintedMs": 31.30000001192093,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 9,
+      "file": "mount-flat-500-on-E4-9.json",
+      "wallMs": 39.30000001192093,
+      "eagerPaintedMs": 31.599999964237213,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-nested-d5-f4-off-E4-0.json",
+      "wallMs": 87.80000001192093,
+      "eagerPaintedMs": 87.40000003576279,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-nested-d5-f4-off-E5-0.json",
+      "wallMs": 89,
+      "eagerPaintedMs": 88.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 1,
+      "file": "mount-nested-d5-f4-off-E5-1.json",
+      "wallMs": 90,
+      "eagerPaintedMs": 89.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 1,
+      "file": "mount-nested-d5-f4-off-E4-1.json",
+      "wallMs": 89.10000002384186,
+      "eagerPaintedMs": 88.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 2,
+      "file": "mount-nested-d5-f4-off-E4-2.json",
+      "wallMs": 89.90000003576279,
+      "eagerPaintedMs": 89.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 2,
+      "file": "mount-nested-d5-f4-off-E5-2.json",
+      "wallMs": 89.60000002384186,
+      "eagerPaintedMs": 89.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 3,
+      "file": "mount-nested-d5-f4-off-E5-3.json",
+      "wallMs": 89.80000001192093,
+      "eagerPaintedMs": 89.40000003576279,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 3,
+      "file": "mount-nested-d5-f4-off-E4-3.json",
+      "wallMs": 86.10000002384186,
+      "eagerPaintedMs": 85.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 4,
+      "file": "mount-nested-d5-f4-off-E4-4.json",
+      "wallMs": 89.10000002384186,
+      "eagerPaintedMs": 88.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 4,
+      "file": "mount-nested-d5-f4-off-E5-4.json",
+      "wallMs": 88.69999998807907,
+      "eagerPaintedMs": 88.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 5,
+      "file": "mount-nested-d5-f4-off-E5-5.json",
+      "wallMs": 88.39999997615814,
+      "eagerPaintedMs": 88,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 5,
+      "file": "mount-nested-d5-f4-off-E4-5.json",
+      "wallMs": 87.59999996423721,
+      "eagerPaintedMs": 87.09999996423721,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 6,
+      "file": "mount-nested-d5-f4-off-E4-6.json",
+      "wallMs": 86.79999995231628,
+      "eagerPaintedMs": 86.39999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 6,
+      "file": "mount-nested-d5-f4-off-E5-6.json",
+      "wallMs": 89.19999998807907,
+      "eagerPaintedMs": 88.80000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 7,
+      "file": "mount-nested-d5-f4-off-E5-7.json",
+      "wallMs": 88.59999996423721,
+      "eagerPaintedMs": 88.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 7,
+      "file": "mount-nested-d5-f4-off-E4-7.json",
+      "wallMs": 86.60000002384186,
+      "eagerPaintedMs": 86,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 8,
+      "file": "mount-nested-d5-f4-off-E4-8.json",
+      "wallMs": 88.19999998807907,
+      "eagerPaintedMs": 87.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 8,
+      "file": "mount-nested-d5-f4-off-E5-8.json",
+      "wallMs": 91.09999996423721,
+      "eagerPaintedMs": 90.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 9,
+      "file": "mount-nested-d5-f4-off-E5-9.json",
+      "wallMs": 93.19999998807907,
+      "eagerPaintedMs": 92.80000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 9,
+      "file": "mount-nested-d5-f4-off-E4-9.json",
+      "wallMs": 89.10000002384186,
+      "eagerPaintedMs": 88.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-nested-d5-f4-on-E4-0.json",
+      "wallMs": 88.39999997615814,
+      "eagerPaintedMs": 88,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-nested-d5-f4-on-E5-0.json",
+      "wallMs": 89.69999998807907,
+      "eagerPaintedMs": 89.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 1,
+      "file": "mount-nested-d5-f4-on-E5-1.json",
+      "wallMs": 89.60000002384186,
+      "eagerPaintedMs": 89.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 1,
+      "file": "mount-nested-d5-f4-on-E4-1.json",
+      "wallMs": 87.29999995231628,
+      "eagerPaintedMs": 86.89999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 2,
+      "file": "mount-nested-d5-f4-on-E4-2.json",
+      "wallMs": 87.09999996423721,
+      "eagerPaintedMs": 86.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 2,
+      "file": "mount-nested-d5-f4-on-E5-2.json",
+      "wallMs": 88.89999997615814,
+      "eagerPaintedMs": 88.39999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 3,
+      "file": "mount-nested-d5-f4-on-E5-3.json",
+      "wallMs": 90.60000002384186,
+      "eagerPaintedMs": 90.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 3,
+      "file": "mount-nested-d5-f4-on-E4-3.json",
+      "wallMs": 87.89999997615814,
+      "eagerPaintedMs": 87.29999995231628,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 4,
+      "file": "mount-nested-d5-f4-on-E4-4.json",
+      "wallMs": 89,
+      "eagerPaintedMs": 88.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 4,
+      "file": "mount-nested-d5-f4-on-E5-4.json",
+      "wallMs": 88.80000001192093,
+      "eagerPaintedMs": 88.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 5,
+      "file": "mount-nested-d5-f4-on-E5-5.json",
+      "wallMs": 88.70000004768372,
+      "eagerPaintedMs": 88.20000004768372,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 5,
+      "file": "mount-nested-d5-f4-on-E4-5.json",
+      "wallMs": 86.80000001192093,
+      "eagerPaintedMs": 86.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 6,
+      "file": "mount-nested-d5-f4-on-E4-6.json",
+      "wallMs": 87.39999997615814,
+      "eagerPaintedMs": 86.89999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 6,
+      "file": "mount-nested-d5-f4-on-E5-6.json",
+      "wallMs": 89.89999997615814,
+      "eagerPaintedMs": 89.39999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 7,
+      "file": "mount-nested-d5-f4-on-E5-7.json",
+      "wallMs": 87.69999998807907,
+      "eagerPaintedMs": 87.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 7,
+      "file": "mount-nested-d5-f4-on-E4-7.json",
+      "wallMs": 88.40000003576279,
+      "eagerPaintedMs": 88,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 8,
+      "file": "mount-nested-d5-f4-on-E4-8.json",
+      "wallMs": 88.39999997615814,
+      "eagerPaintedMs": 88,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 8,
+      "file": "mount-nested-d5-f4-on-E5-8.json",
+      "wallMs": 90.09999996423721,
+      "eagerPaintedMs": 89.59999996423721,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 9,
+      "file": "mount-nested-d5-f4-on-E5-9.json",
+      "wallMs": 88.40000003576279,
+      "eagerPaintedMs": 88,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 9,
+      "file": "mount-nested-d5-f4-on-E4-9.json",
+      "wallMs": 88.70000004768372,
+      "eagerPaintedMs": 88.20000004768372,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-array-1000-off-E4-0.json",
+      "wallMs": 200.69999998807907,
+      "eagerPaintedMs": 197.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-array-1000-off-E5-0.json",
+      "wallMs": 200.30000001192093,
+      "eagerPaintedMs": 196.9000000357628,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 1,
+      "file": "mount-array-1000-off-E5-1.json",
+      "wallMs": 198.80000001192093,
+      "eagerPaintedMs": 195.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 1,
+      "file": "mount-array-1000-off-E4-1.json",
+      "wallMs": 199.10000002384186,
+      "eagerPaintedMs": 195.9000000357628,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 2,
+      "file": "mount-array-1000-off-E4-2.json",
+      "wallMs": 200.19999998807907,
+      "eagerPaintedMs": 196.9000000357628,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 2,
+      "file": "mount-array-1000-off-E5-2.json",
+      "wallMs": 202.79999995231628,
+      "eagerPaintedMs": 199.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 3,
+      "file": "mount-array-1000-off-E5-3.json",
+      "wallMs": 207,
+      "eagerPaintedMs": 203.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 3,
+      "file": "mount-array-1000-off-E4-3.json",
+      "wallMs": 197.10000002384186,
+      "eagerPaintedMs": 193.80000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 4,
+      "file": "mount-array-1000-off-E4-4.json",
+      "wallMs": 197.60000002384186,
+      "eagerPaintedMs": 194.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 4,
+      "file": "mount-array-1000-off-E5-4.json",
+      "wallMs": 202.19999998807907,
+      "eagerPaintedMs": 199.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 5,
+      "file": "mount-array-1000-off-E5-5.json",
+      "wallMs": 204.39999997615814,
+      "eagerPaintedMs": 201.0999999642372,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 5,
+      "file": "mount-array-1000-off-E4-5.json",
+      "wallMs": 202,
+      "eagerPaintedMs": 198.5999999642372,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 6,
+      "file": "mount-array-1000-off-E4-6.json",
+      "wallMs": 199.5,
+      "eagerPaintedMs": 195.89999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 6,
+      "file": "mount-array-1000-off-E5-6.json",
+      "wallMs": 202.29999995231628,
+      "eagerPaintedMs": 199.0999999642372,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 7,
+      "file": "mount-array-1000-off-E5-7.json",
+      "wallMs": 201.5999999642372,
+      "eagerPaintedMs": 198.39999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 7,
+      "file": "mount-array-1000-off-E4-7.json",
+      "wallMs": 198,
+      "eagerPaintedMs": 194.39999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 8,
+      "file": "mount-array-1000-off-E4-8.json",
+      "wallMs": 204.19999998807907,
+      "eagerPaintedMs": 201,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 8,
+      "file": "mount-array-1000-off-E5-8.json",
+      "wallMs": 200.9000000357628,
+      "eagerPaintedMs": 197.4000000357628,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 9,
+      "file": "mount-array-1000-off-E5-9.json",
+      "wallMs": 200.9000000357628,
+      "eagerPaintedMs": 197.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 9,
+      "file": "mount-array-1000-off-E4-9.json",
+      "wallMs": 199.80000001192093,
+      "eagerPaintedMs": 196.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-array-1000-on-E4-0.json",
+      "wallMs": 443,
+      "eagerPaintedMs": 57.5,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-array-1000-on-E5-0.json",
+      "wallMs": 445.39999997615814,
+      "eagerPaintedMs": 57.89999997615814,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 1,
+      "file": "mount-array-1000-on-E5-1.json",
+      "wallMs": 296.80000001192093,
+      "eagerPaintedMs": 57.60000002384186,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 1,
+      "file": "mount-array-1000-on-E4-1.json",
+      "wallMs": 446.0999999642372,
+      "eagerPaintedMs": 58.80000001192093,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 2,
+      "file": "mount-array-1000-on-E4-2.json",
+      "wallMs": 354.0999999642372,
+      "eagerPaintedMs": 59,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 2,
+      "file": "mount-array-1000-on-E5-2.json",
+      "wallMs": 434.39999997615814,
+      "eagerPaintedMs": 57.799999952316284,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 3,
+      "file": "mount-array-1000-on-E5-3.json",
+      "wallMs": 354.80000001192093,
+      "eagerPaintedMs": 59.10000002384186,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 3,
+      "file": "mount-array-1000-on-E4-3.json",
+      "wallMs": 443.5,
+      "eagerPaintedMs": 57.89999997615814,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 4,
+      "file": "mount-array-1000-on-E4-4.json",
+      "wallMs": 69.79999995231628,
+      "eagerPaintedMs": 59.299999952316284,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 4,
+      "file": "mount-array-1000-on-E5-4.json",
+      "wallMs": 432.5,
+      "eagerPaintedMs": 58.5,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 5,
+      "file": "mount-array-1000-on-E5-5.json",
+      "wallMs": 435.30000001192093,
+      "eagerPaintedMs": 57.19999998807907,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 5,
+      "file": "mount-array-1000-on-E4-5.json",
+      "wallMs": 359.5,
+      "eagerPaintedMs": 59,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 6,
+      "file": "mount-array-1000-on-E4-6.json",
+      "wallMs": 437.9000000357628,
+      "eagerPaintedMs": 57.69999998807907,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 6,
+      "file": "mount-array-1000-on-E5-6.json",
+      "wallMs": 339.69999998807907,
+      "eagerPaintedMs": 59.19999998807907,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 7,
+      "file": "mount-array-1000-on-E5-7.json",
+      "wallMs": 440.30000001192093,
+      "eagerPaintedMs": 57.60000002384186,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 7,
+      "file": "mount-array-1000-on-E4-7.json",
+      "wallMs": 446.60000002384186,
+      "eagerPaintedMs": 59.30000001192093,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 8,
+      "file": "mount-array-1000-on-E4-8.json",
+      "wallMs": 331.80000001192093,
+      "eagerPaintedMs": 58.80000001192093,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 8,
+      "file": "mount-array-1000-on-E5-8.json",
+      "wallMs": 325,
+      "eagerPaintedMs": 57.69999998807907,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 9,
+      "file": "mount-array-1000-on-E5-9.json",
+      "wallMs": 307,
+      "eagerPaintedMs": 59.10000002384186,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 9,
+      "file": "mount-array-1000-on-E4-9.json",
+      "wallMs": 437.19999998807907,
+      "eagerPaintedMs": 57.19999998807907,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    }
+  ],
+  "warmups": [
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": -3,
+      "file": "mount-flat-500-off-E5--3.json",
+      "wallMs": 53.60000002384186,
+      "eagerPaintedMs": 53.40000003576279,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": -3,
+      "file": "mount-flat-500-off-E4--3.json",
+      "wallMs": 51.19999998807907,
+      "eagerPaintedMs": 51,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": -2,
+      "file": "mount-flat-500-off-E4--2.json",
+      "wallMs": 50.80000001192093,
+      "eagerPaintedMs": 50.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": -2,
+      "file": "mount-flat-500-off-E5--2.json",
+      "wallMs": 50.5,
+      "eagerPaintedMs": 50.39999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": -1,
+      "file": "mount-flat-500-off-E5--1.json",
+      "wallMs": 52.40000003576279,
+      "eagerPaintedMs": 52.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": -1,
+      "file": "mount-flat-500-off-E4--1.json",
+      "wallMs": 50,
+      "eagerPaintedMs": 49.80000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": -3,
+      "file": "mount-flat-500-on-E5--3.json",
+      "wallMs": 169.5,
+      "eagerPaintedMs": 31,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": -3,
+      "file": "mount-flat-500-on-E4--3.json",
+      "wallMs": 168.0999999642372,
+      "eagerPaintedMs": 31.19999998807907,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": -2,
+      "file": "mount-flat-500-on-E4--2.json",
+      "wallMs": 179.39999997615814,
+      "eagerPaintedMs": 32.39999997615814,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": -2,
+      "file": "mount-flat-500-on-E5--2.json",
+      "wallMs": 166.19999998807907,
+      "eagerPaintedMs": 31.099999964237213,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": -1,
+      "file": "mount-flat-500-on-E5--1.json",
+      "wallMs": 161.69999998807907,
+      "eagerPaintedMs": 31.100000023841858,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": -1,
+      "file": "mount-flat-500-on-E4--1.json",
+      "wallMs": 170.4000000357628,
+      "eagerPaintedMs": 31.100000023841858,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": -3,
+      "file": "mount-nested-d5-f4-off-E5--3.json",
+      "wallMs": 88.30000001192093,
+      "eagerPaintedMs": 87.80000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": -3,
+      "file": "mount-nested-d5-f4-off-E4--3.json",
+      "wallMs": 90.70000004768372,
+      "eagerPaintedMs": 90.40000003576279,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": -2,
+      "file": "mount-nested-d5-f4-off-E4--2.json",
+      "wallMs": 89,
+      "eagerPaintedMs": 88.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": -2,
+      "file": "mount-nested-d5-f4-off-E5--2.json",
+      "wallMs": 88.69999998807907,
+      "eagerPaintedMs": 88.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": -1,
+      "file": "mount-nested-d5-f4-off-E5--1.json",
+      "wallMs": 89.09999996423721,
+      "eagerPaintedMs": 88.59999996423721,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": -1,
+      "file": "mount-nested-d5-f4-off-E4--1.json",
+      "wallMs": 87.19999998807907,
+      "eagerPaintedMs": 86.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": -3,
+      "file": "mount-nested-d5-f4-on-E5--3.json",
+      "wallMs": 89.19999998807907,
+      "eagerPaintedMs": 88.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": -3,
+      "file": "mount-nested-d5-f4-on-E4--3.json",
+      "wallMs": 88.69999998807907,
+      "eagerPaintedMs": 88.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": -2,
+      "file": "mount-nested-d5-f4-on-E4--2.json",
+      "wallMs": 87.60000002384186,
+      "eagerPaintedMs": 87.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": -2,
+      "file": "mount-nested-d5-f4-on-E5--2.json",
+      "wallMs": 90.5,
+      "eagerPaintedMs": 90,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": -1,
+      "file": "mount-nested-d5-f4-on-E5--1.json",
+      "wallMs": 88.5,
+      "eagerPaintedMs": 88.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": -1,
+      "file": "mount-nested-d5-f4-on-E4--1.json",
+      "wallMs": 92.19999998807907,
+      "eagerPaintedMs": 91.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": -3,
+      "file": "mount-array-1000-off-E5--3.json",
+      "wallMs": 203.5,
+      "eagerPaintedMs": 200.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": -3,
+      "file": "mount-array-1000-off-E4--3.json",
+      "wallMs": 198.4000000357628,
+      "eagerPaintedMs": 195.19999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": -2,
+      "file": "mount-array-1000-off-E4--2.json",
+      "wallMs": 196.5,
+      "eagerPaintedMs": 193.0999999642372,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": -2,
+      "file": "mount-array-1000-off-E5--2.json",
+      "wallMs": 201.19999998807907,
+      "eagerPaintedMs": 198,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": -1,
+      "file": "mount-array-1000-off-E5--1.json",
+      "wallMs": 199.80000001192093,
+      "eagerPaintedMs": 196.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": -1,
+      "file": "mount-array-1000-off-E4--1.json",
+      "wallMs": 199.10000002384186,
+      "eagerPaintedMs": 195.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": -3,
+      "file": "mount-array-1000-on-E5--3.json",
+      "wallMs": 439.5,
+      "eagerPaintedMs": 57.19999998807907,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": -3,
+      "file": "mount-array-1000-on-E4--3.json",
+      "wallMs": 443.30000001192093,
+      "eagerPaintedMs": 58.39999997615814,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": -2,
+      "file": "mount-array-1000-on-E4--2.json",
+      "wallMs": 436,
+      "eagerPaintedMs": 58.60000002384186,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": -2,
+      "file": "mount-array-1000-on-E5--2.json",
+      "wallMs": 438.5999999642372,
+      "eagerPaintedMs": 57.89999997615814,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": -1,
+      "file": "mount-array-1000-on-E5--1.json",
+      "wallMs": 444.89999997615814,
+      "eagerPaintedMs": 57.69999998807907,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": -1,
+      "file": "mount-array-1000-on-E4--1.json",
+      "wallMs": 357.89999997615814,
+      "eagerPaintedMs": 58.59999996423721,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    }
+  ],
+  "rows": [
+    {
+      "id": "mount-flat-500-off",
+      "metric": "wallMs",
+      "E4": 50.54999998211861,
+      "E5": 51.150000005960464,
+      "ratio": 1.0118694366776282,
+      "pass": true
+    },
+    {
+      "id": "mount-flat-500-on",
+      "metric": "eagerPaintedMs",
+      "E4": 31.549999982118607,
+      "E5": 31.44999998807907,
+      "ratio": 0.9968304280793594,
+      "pass": true
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "metric": "wallMs",
+      "E4": 88,
+      "E5": 89.40000000596046,
+      "ratio": 1.0159090909768234,
+      "pass": true
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "metric": "eagerPaintedMs",
+      "E4": 87.64999997615814,
+      "E5": 88.75,
+      "ratio": 1.0125499147078274,
+      "pass": true
+    },
+    {
+      "id": "mount-array-1000-off",
+      "metric": "wallMs",
+      "E4": 199.65000000596046,
+      "E5": 201.89999997615814,
+      "ratio": 1.0112697218639144,
+      "pass": true
+    },
+    {
+      "id": "mount-array-1000-on",
+      "metric": "eagerPaintedMs",
+      "E4": 58.80000001192093,
+      "E5": 57.84999996423721,
+      "ratio": 0.983843536607294,
+      "pass": true
+    }
+  ]
+}

@@ -102,10 +102,11 @@ export interface FormProps<
    *  - Off-screen fields render as lightweight placeholders and mount when they
    *    approach the viewport, on browser idle time, or on focus/select commands
    *  - The node tree is always fully built; values, validation and submit are unaffected
-   *  - Client-side rendering only. Requires IntersectionObserver and is silently
-   *    disabled when it is unavailable. Do NOT enable it in SSR/hydration apps:
-   *    the server renders all fields while the client gates them, causing a
-   *    hydration mismatch.
+   *  - Server-rendered fields hydrate unchanged and remain revealed. Gating
+   *    applies to branches and children added after hydration and requires
+   *    IntersectionObserver; browsers without it mount every field eagerly.
+   *  - Client-only mounts gate from the first render. Hydration itself does not
+   *    trigger an extra branch render, including custom inputs with Suspense.
    */
   virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */

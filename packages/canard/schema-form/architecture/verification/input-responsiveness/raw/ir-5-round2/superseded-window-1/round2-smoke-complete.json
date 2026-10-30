@@ -1,0 +1,238 @@
+{
+  "smoke": true,
+  "startedAt": "2026-10-30T20:27:32.721Z",
+  "endedAt": "2026-10-30T20:27:42.765Z",
+  "mode": "paired-relative-authorized-round2",
+  "warmup": 0,
+  "count": 1,
+  "chromium": "145.0.7632.6",
+  "inputs": {
+    "stage": "IR-1",
+    "preparedAt": "2026-10-30T20:27:00.396Z",
+    "lanes": [
+      "E4",
+      "E5"
+    ],
+    "bundles": {
+      "E4": {
+        "commit": "be1a7986756bc326757d0d2055bd92010917ca7d",
+        "toolCommit": "7c91c45ee4a28d33d7ef96ce02221998a1354ee4",
+        "product": {
+          "sha256": "8de2fa64279e22af44bd368d1a68661082cd1feed3df8e2c3137f0536025a110",
+          "bytes": 857338
+        },
+        "browser": {
+          "sha256": "ee76aa887efa44f789bb2dd456d25b8b4c095b77e5ff0982efcb009f2ff81361",
+          "bytes": 1822346
+        }
+      },
+      "E5": {
+        "commit": "7c91c45ee",
+        "toolCommit": "7c91c45ee4a28d33d7ef96ce02221998a1354ee4",
+        "product": {
+          "sha256": "c2b33afda2627c4e38d2b4459894588ad45e304b5cd9a1ca6f0cb5ec84b7c79f",
+          "bytes": 857959
+        },
+        "browser": {
+          "sha256": "382152d92c4b080e7e46ad68b9119aef28f476dd2a2eade628b8fc10b692e921",
+          "bytes": 1823081
+        }
+      }
+    },
+    "viewport": {
+      "width": 900,
+      "height": 700
+    },
+    "productionReact": true,
+    "versions": {
+      "node": "v26.12.1",
+      "react": "19.2.6",
+      "playwright": "1.58.0",
+      "esbuild": "0.25.9",
+      "ajv": "8.17.1"
+    },
+    "environment": {
+      "cpu": "Apple M1 Max",
+      "logicalCpus": 10,
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "27.0.0",
+      "memoryGiB": 64
+    }
+  },
+  "quiet": null,
+  "samples": [
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-flat-500-off-E4-0.json",
+      "wallMs": 53.5,
+      "eagerPaintedMs": 53.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-flat-500-off-E5-0.json",
+      "wallMs": 51.30000001192093,
+      "eagerPaintedMs": 51.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-flat-500-on-E4-0.json",
+      "wallMs": 177.5,
+      "eagerPaintedMs": 30.80000001192093,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-flat-500-on-E5-0.json",
+      "wallMs": 38.90000003576279,
+      "eagerPaintedMs": 31.200000047683716,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-nested-d5-f4-off-E4-0.json",
+      "wallMs": 90.5,
+      "eagerPaintedMs": 90.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-nested-d5-f4-off-E5-0.json",
+      "wallMs": 89.10000002384186,
+      "eagerPaintedMs": 88.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-nested-d5-f4-on-E4-0.json",
+      "wallMs": 89.89999997615814,
+      "eagerPaintedMs": 89.39999997615814,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-nested-d5-f4-on-E5-0.json",
+      "wallMs": 91.10000002384186,
+      "eagerPaintedMs": 90.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-array-1000-off-E4-0.json",
+      "wallMs": 202.80000001192093,
+      "eagerPaintedMs": 199.5999999642372,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-array-1000-off-E5-0.json",
+      "wallMs": 203.9000000357628,
+      "eagerPaintedMs": 200.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-array-1000-on-E4-0.json",
+      "wallMs": 447.19999998807907,
+      "eagerPaintedMs": 57.89999997615814,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-array-1000-on-E5-0.json",
+      "wallMs": 466.5,
+      "eagerPaintedMs": 61.09999996423721,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    }
+  ],
+  "warmups": [],
+  "rows": [
+    {
+      "id": "mount-flat-500-off",
+      "metric": "wallMs",
+      "E4": 53.5,
+      "E5": 51.30000001192093,
+      "ratio": 0.9588785048957184,
+      "pass": true
+    },
+    {
+      "id": "mount-flat-500-on",
+      "metric": "eagerPaintedMs",
+      "E4": 30.80000001192093,
+      "E5": 31.200000047683716,
+      "ratio": 1.0129870141431159,
+      "pass": true
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "metric": "wallMs",
+      "E4": 90.5,
+      "E5": 89.10000002384186,
+      "ratio": 0.9845303870037775,
+      "pass": true
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "metric": "eagerPaintedMs",
+      "E4": 89.39999997615814,
+      "E5": 90.60000002384186,
+      "ratio": 1.013422819328901,
+      "pass": true
+    },
+    {
+      "id": "mount-array-1000-off",
+      "metric": "wallMs",
+      "E4": 202.80000001192093,
+      "E5": 203.9000000357628,
+      "ratio": 1.0054240632336153,
+      "pass": true
+    },
+    {
+      "id": "mount-array-1000-on",
+      "metric": "eagerPaintedMs",
+      "E4": 57.89999997615814,
+      "E5": 61.09999996423721,
+      "ratio": 1.0552677027529664,
+      "pass": false
+    }
+  ],
+  "protocolNote": "12-page protocol smoke only; initial diagnostic log used formal-loop labels, corrected metadata follows actual sample arrays"
+}

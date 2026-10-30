@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Form마다 하나씩 존재하며 상태를 가진 가상화 조율자다. 공유 IntersectionObserver, idle backfill 펌프, reveal 레지스트리를 소유하고, placeholder에서 실제 컴포넌트로 바뀌는 전환(reveal)을 조율한다. 인스턴스를 만드는 진입점은 `static create()` 하나뿐이며, SSR처럼 IntersectionObserver가 없는 환경이거나 virtualization이 비활성화된 입력이면 null을 반환한다.
+Form마다 하나씩 존재하며 상태를 가진 가상화 조율자다. 공유 IntersectionObserver, idle backfill 펌프, reveal 레지스트리를 소유하고, placeholder에서 실제 컴포넌트로 바뀌는 전환(reveal)을 조율한다. 인스턴스를 만드는 진입점은 `static create()` 하나뿐이며, IntersectionObserver가 없거나 virtualization이 비활성화된 입력이면 null을 반환한다. SSR은 경고 없이 전체 렌더링하며, 하이드레이션으로 마운트된 노드는 소비층이 노출 원장에 기록한다. IO 부재 경고는 브라우저에만 적용한다.
 
 ## Conventions
 

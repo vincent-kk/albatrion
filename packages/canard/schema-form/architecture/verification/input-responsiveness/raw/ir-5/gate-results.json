@@ -1,0 +1,66 @@
+{
+  "unit": {
+    "files": 609,
+    "passed": 4012,
+    "todo": 1,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "production": {
+    "files": 10,
+    "passed": 21,
+    "todo": 0,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "render": {
+    "files": 133,
+    "passed": 778,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "exitCode": 0,
+    "durationMs": 64251.833984375
+  },
+  "react18": {
+    "files": 133,
+    "passed": 778,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "exitCode": 0,
+    "expectedFailure": "IR5-SUSPENSE-18: one of the reported passes is the observed expected failure",
+    "durationMs": 69511.64233398438
+  },
+  "verify": {
+    "files": 747,
+    "passed": 4834,
+    "failed": 0,
+    "pending": 0,
+    "todo": 1,
+    "exitCode": 0,
+    "durationMs": 130663.56665039062
+  },
+  "storybook": {
+    "files": 100,
+    "passed": 251,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "exitCode": 0,
+    "durationMs": 35514.10009765625
+  },
+  "other": {
+    "lint": 0,
+    "typecheck": 0,
+    "build": 0,
+    "agentsHashesMatched": 14,
+    "publicDeclarationFiles": 308,
+    "publicSemanticDiff": 0,
+    "publicCommentOnlyByteDiff": [
+      "components/Form/components/FormCore/types/props.d.ts"
+    ],
+    "rootDeclarationSHA256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
+    "trackedRuntimeOrAdapterChanges": 0
+  }
+}

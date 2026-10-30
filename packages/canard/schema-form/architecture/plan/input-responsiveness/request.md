@@ -81,3 +81,9 @@ IR-1은 Part A만 채택하고 Part B는 중첩 focus/select·defer-once·렌더
 README·영어/한국어 SPECIFICATION·에이전트 arrays-and-scale 지식에 IR-1의 virtualization 조건·첫 화면과 전체 노출 비용, IR-2의 검증 OnRequest·입력 containment, IR-0의 소비자 startTransition 수치를 연결했습니다. 제품 소스는 바꾸지 않았습니다. React 18/19 모두 IO 부재 SSR의 입력 40개가 IO 활성 hydration 뒤 입력 20개와 placeholder 20개로 바뀌고 서버 input 재사용 0개인 mismatch를 확인했습니다. on 결함 시험은 패키지 관례에 따라 이유가 포함된 it.fails로 실행하며, off 대조군은 일반 통과 시험으로 보존했습니다. 결함을 고칠 때까지 서버 렌더링 페이지에서는 virtualization을 켜지 않습니다. 상세 관측·미결 항목 IR4-SSR-01·관문은 [IR-4 결과](../../verification/input-responsiveness/ir-4-results.md)에 기록합니다.
 
 D1을 이번 단계에서 구현하지 않고 virtualization 기본값을 off로 유지하는 **코디네이터 권고**를 따랐습니다. 두 사안은 아직 소유자 결정이 열려 있으며 이 문서 추가는 소유자 확정이나 기본값 변경이 아닙니다. 병합 전 코디네이터의 독립 검증을 거칩니다.
+
+## IR-5 하이드레이션 보존 가상화 — 2026-10-31
+
+| 단계 | 결과 | 남은 결정·위험 |
+| --- | --- | --- |
+| IR-5 | Provider를 유지하고 서버 스냅숏·기존 commit effect의 hydration ref·실제 입력 슬롯 자신의 노출 원장으로 SSR과 React 18 내부 Suspense를 수정했습니다. 일반/StrictMode 슬롯·사용자 입력 렌더는 1→1/2→2, Suspense 내부 Probe는 실제 commit 1회이며 기존 항목당 두 layout effect 계약을 유지합니다. 숨긴 배열 항목은 CSR·hydration 모두 실제 입력 commit 전 원장에 기록되지 않아 remount 뒤 처음 표시할 때 placeholder를 유지합니다. round 3 마운트 여섯 행 E5/E4는 flat off/on 1.011869/0.996830, nested off/on 1.015909/1.012550, array off/on 1.011270/0.983844로 모두 사전 등록 1.02 이내입니다. 최종 unit4012·render/react18 각783·verify4839·Storybook251·엄격 production21 및 lint·typecheck·build가 통과했고 공개 도달 선언308개 의미차이0(props JSDoc만 주석 차이)·FCA 새 finding/diagnostic0·측정 runtime 일치를 확인했습니다. 최종 순차 관문은 [IR-5 기록](../../verification/input-responsiveness/ir-5-results.md)에 보존합니다. | 하이드레이션 때 준비만 하고 사용자 브랜치가 나중에 처음 렌더한 자식은 게이팅을 생략하는 기존 제한을 문서화했으며 후속 수정은 남깁니다. React 18에서 아직 하이드레이션되지 않은 내부 Suspense 경계로 들어가는 이후 갱신은 클라이언트 렌더링으로 전환할 수 있습니다. 소유자의 이번 단계 수정 여부와 D1·기본 off 결정은 별도입니다. 이전 제품의 flat-500 on FAIL·bootstrap·당시 예외 인계 결정과 원시는 superseded 이력으로 유지하며 현재 비용 판정은 round 3 제품의 새 창으로 합니다. |
