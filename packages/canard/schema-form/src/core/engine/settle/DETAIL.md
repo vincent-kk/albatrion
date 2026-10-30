@@ -224,6 +224,8 @@
 
 - 게이트의 projected structure 읽기는 배열 호스트가 아니고 null-prototype인 구조에서 노드 값을 한 번 조회합니다. 내부 구조는 실제 노드만 저장하며 prepared view도 baseline 노드를 own descriptor로 노출하므로 이 조회는 기존 own-key 검사와 같습니다. 배열 호스트·일반 prototype은 기존 own-key helper를 유지하고 raw/emit/extras의 임의 값 검사는 생략하지 않습니다. null 구조의 중복 descriptor 조회·사적 view의 descriptor 객체를 제거하며 추가 보유량은 없습니다.
 
+- pending gate 읽기도 배열이 아닌 null-prototype 구조에서는 실제 노드의 존재를 직접 조회하여 중복 own descriptor를 만들지 않습니다. undefined emit을 내는 노드와 노드 부재는 구별하고 일반 prototype·배열 호스트는 기존 own-key 검사를 유지합니다. 추가 보유량은 없습니다.
+
 ## Structure
 
 - Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
@@ -810,6 +812,10 @@
 
 - null Dictionary와 prepared view의 projected 자식 읽기는 own descriptor 조회가 0입니다. constructor·__proto__·toString 자체 이름은 그대로 읽고 일반 prototype의 상속 노드는 무시합니다. 배열 호스트의 빈 자리와 값은 기존 own-key 경로로 확인합니다.
 
+
+### settle-pending-structure-read — pending 호스트 노드의 존재
+
+- null Dictionary·prepared view는 descriptor 조회 없이 기존 노드의 존재를 구별합니다. prototype 이름의 undefined emit 노드는 호스트를 조기 flush하지 않으며 실제 부재·상속 노드만 있는 경우에는 기존 flush를 수행합니다.
 
 ## Boundary Exemptions
 
