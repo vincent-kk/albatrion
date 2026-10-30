@@ -20,6 +20,7 @@ import {
 import { DeferredFieldProxy } from '@/schema-form/components/FieldProxy/components/DeferredFieldProxy';
 import type { FieldProxyProps } from '@/schema-form/components/FieldProxy/type';
 import { type FieldNode, isTerminalNode } from '@/schema-form/core';
+import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildFieldProps } from '@/schema-form/types';
 
@@ -28,7 +29,7 @@ import type { AdditionalChildNodeProperties, ChildField } from '../type';
 /** The form manager is fixed for this hook's lifetime; no notifications are needed. */
 const subscribeNever = () => NOOP_FUNCTION;
 
-/** Server and hydration renders mount every child before enabling client gating. */
+/** Server and hydration renders share a null manager before enabling client gating. */
 const getNoManager = () => null;
 
 /**
@@ -38,7 +39,8 @@ const getNoManager = () => null;
  * @param mountedChildren - Count of committed child proxies, kept by each child's layout effect
  * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
  * @returns Child fields and an optional ref that the input's existing layout
- *          effect marks true before passive snapshot consistency checks
+ *          effect marks true before passive snapshot consistency checks,
+ *          plus the form manager used to record the slot's real input commit
  *
  * @remarks `node.children` is read during render and kept consistent by the
  *          input's combined `useSyncExternalStore` tracker, so
@@ -48,7 +50,7 @@ const getNoManager = () => null;
  *          Hydration reads a null manager through the server snapshot;
  *          the input's commit keeps the detector's client snapshot null before
  *          passive consistency checks, avoiding a hydration-only re-render.
- *          Real child commits are recorded as revealed so later remounts
+ *          Real input slots record their own commits as revealed so later remounts
  *          cannot replace them with placeholders.
  */
 export const useChildFields = (
@@ -56,7 +58,11 @@ export const useChildFields = (
   NodeProxy: ComponentType<FieldProxyProps>,
   mountedChildren: RefObject<number>,
   terminalChildren: ChildField[],
-): readonly [ChildField[], RefObject<boolean> | undefined] => {
+): readonly [
+  ChildField[],
+  RefObject<boolean> | undefined,
+  VirtualizationManager | null,
+] => {
   const children = node.children;
 
   const { manager: formManager } = useVirtualizationContext();
@@ -89,7 +95,6 @@ export const useChildFields = (
         // static; revealed-ness itself is resolved dynamically by the gate.
         const deferredManager =
           gateManager?.forChild(ChildFields.length, node) ?? null;
-        const revealLedger = deferredManager === null ? formManager : null;
         const ChildComponent = memo(
           ({
             FieldRenderer: InputFieldRenderer,
@@ -99,7 +104,6 @@ export const useChildFields = (
           }: ChildFieldProps) => {
             useLayoutEffect(() => {
               mountedChildren.current++;
-              revealLedger?.markRevealed(node);
               return () => {
                 mountedChildren.current--;
               };
@@ -152,5 +156,6 @@ export const useChildFields = (
   return [
     ChildFields,
     snapshot === null && formManager !== null ? hydratedRef : undefined,
+    formManager,
   ];
 };

@@ -2456,6 +2456,7 @@ Placeholders are unstyled by default (an empty box carrying `data-path` and a `d
 > **Caveats**
 >
 > - Requires `IntersectionObserver` for gating; browsers without it render everything eagerly and emit a development warning. On server-rendered pages every field renders on the server and hydrates unchanged; gating applies to branches and children added after hydration.
+> - Children prepared during hydration but first rendered later by a custom branch input (for example, collapsed tabs or accordions) mount without gating because the gate decision is baked when they are prepared.
 > - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `controls.visible` render no placeholder.
 > - With `backfill: VirtualizationBackfill.None`, screen readers, tab order past the mounted range, and browser autofill only see fields once they are scrolled into view; the default `Idle` backfill restores the full DOM within a few idle frames.
 
@@ -2469,7 +2470,7 @@ Enable `virtualization` for branches with at least `threshold` children when str
 | nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
 | array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
 
-Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. Hydration does not trigger an extra branch-input render; Suspense boundaries inside custom branch inputs preserve their server DOM in React 18 and 19. See [IR-5](./architecture/verification/input-responsiveness/ir-5-results.md). The default remains off.
+Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. Hydration itself sends no update into Suspense boundaries inside custom branch inputs, so React 18 and 19 keep their server DOM; in React 18 a later update that reaches such a boundary before it hydrates still switches it to client rendering. See [IR-5](./architecture/verification/input-responsiveness/ir-5-results.md). The default remains off.
 
 - **Validation:** cost grows with schema size. The desktop Chromium flat-2000 [IR-2 diagnosis](./architecture/verification/input-responsiveness/ir-2-results.md#원인-분해-진단코디네이터-2026-10-31) attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
 - **Custom input styling:** in that 2000-input diagnosis, `input { contain: strict; width: 153px; height: 21px; }` cut forced layout per keystroke from 2.5–3.8 ms median to 0.42–0.47 ms median; a plain block wrapper did not help. Give contained inputs an explicit size and check your layout.

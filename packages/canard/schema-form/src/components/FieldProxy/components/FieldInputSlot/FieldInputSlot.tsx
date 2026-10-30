@@ -48,12 +48,8 @@ export const FieldInputSlot = memo(
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
-    const [ChildFields, hydrationCommitRef] = useChildFields(
-      node,
-      NodeProxy,
-      mountedChildren,
-      terminalChildren,
-    );
+    const [ChildFields, hydrationCommitRef, virtualizationManager] =
+      useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
     const { checkShowError } = useFieldRendererContext();
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
@@ -65,6 +61,7 @@ export const FieldInputSlot = memo(
         mountedChildren,
         commitTerminalChildren,
         hydrationCommitRef,
+        FieldInput ? virtualizationManager : null,
       );
     const defaultValue = useMemorize(() => node.value, [node, generation]);
     const accepts = useCallback(

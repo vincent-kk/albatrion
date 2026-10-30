@@ -373,7 +373,7 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 | `Placeholder`    | `null`   | placeholder 시각 컴포넌트 (`{node, height}`)          |
 
 - placeholder는 `[data-path][data-deferred]` 박스 — CSS `[data-deferred] { … }` 또는 `Placeholder` 컴포넌트로 스타일링.
-- **SSR·하이드레이션**: 서버의 전 필드를 그대로 하이드레이션하며 이후 추가한 브랜치·자식만 게이팅합니다. IO 없는 브라우저는 전체 렌더링(dev 경고), 서버는 경고 없음. 사용자 브랜치 입력 안의 아직 하이드레이션되지 않은 Suspense 경계도 React 18/19에서 추가 렌더 없이 서버 DOM을 보존합니다.
+- **SSR·하이드레이션**: 서버의 전 필드를 그대로 하이드레이션하며 이후 추가한 브랜치·자식만 게이팅합니다. IO 없는 브라우저는 전체 렌더링(dev 경고), 서버는 경고 없음. 하이드레이션 자체는 사용자 브랜치 입력 내부 Suspense 경계에 갱신을 보내지 않으므로 React 18/19는 서버 DOM을 보존한다. React 18에서 경계가 하이드레이션되기 전에 도달하는 이후 갱신은 여전히 클라이언트 렌더링으로 전환한다.
 
 ---
 

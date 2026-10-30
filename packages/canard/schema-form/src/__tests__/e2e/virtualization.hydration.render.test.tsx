@@ -43,9 +43,20 @@ class IdleObserver {
   disconnect() {}
 }
 
+let suspenseProbeCommits = 0;
+
+/** A hydrated boundary must commit its descendants rather than remain server-only. */
+const Probe = () => {
+  useLayoutEffect(() => {
+    suspenseProbeCommits++;
+  }, []);
+  return null;
+};
+
 /** Custom branch inputs can place their child proxies inside a dehydrated boundary. */
 const SuspendedBranch = ({ ChildFields }: FieldInputProps) => (
   <Suspense fallback={<span>Loading</span>}>
+    <Probe />
     {ChildFields.map((Child) => (
       <Child key={Child.key} />
     ))}
@@ -61,6 +72,7 @@ describe('virtualization across server rendering and client hydration', () => {
   beforeEach(() => {
     container = document.createElement('div');
     document.body.append(container);
+    suspenseProbeCommits = 0;
     recoverableErrors = [];
     consoleErrors = [];
     vi.stubGlobal('IntersectionObserver', undefined);
@@ -281,6 +293,7 @@ describe('virtualization across server rendering and client hydration', () => {
       />,
     );
     expect(serverInputs).toHaveLength(40);
+    expect(suspenseProbeCommits).toBe(1);
     expect(recoverableErrors).toEqual([]);
     expect(container.querySelectorAll('[data-deferred]')).toHaveLength(0);
     serverInputs.forEach((input, index) =>
@@ -389,6 +402,63 @@ describe('virtualization across server rendering and client hydration', () => {
       expect(
         container.querySelector('[data-path="/1"][data-deferred]'),
       ).not.toBeNull();
+      expect(recoverableErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    },
+  );
+
+  it.each(['client-only', 'after hydration'] as const)(
+    'does not record a hidden array item as revealed before its real input mounts: %s',
+    async (mode) => {
+      const ref = createRef<FormHandle>();
+      const form = (
+        <Form
+          ref={ref}
+          jsonSchema={{
+            type: 'object',
+            properties: {
+              show: { type: 'boolean', default: false },
+              items: {
+                type: 'array',
+                default: ['first'],
+                items: { type: 'string', controls: { visible: '../../show' } },
+              },
+            },
+          }}
+          validationMode={ValidationMode.None}
+          virtualization={{
+            threshold: 2,
+            eagerCount: 0,
+            backfill: VirtualizationBackfill.None,
+          }}
+        >
+          <Form.Render path="/items" />
+        </Form>
+      );
+      if (mode === 'after hydration') await hydrate(form);
+      else {
+        vi.stubGlobal('IntersectionObserver', IdleObserver);
+        await act(async () => {
+          root = createRoot(container);
+          root.render(form);
+        });
+      }
+      const array = ref.current!.findNode('/items')!;
+      if (array.type !== 'array') throw new Error('Expected array');
+      expect(ref.current!.findNode('/items/0')!.visible).toBe(false);
+      expect(container.querySelectorAll('input')).toHaveLength(0);
+      await act(async () => {
+        array.push('second');
+      });
+      await act(async () => ref.current!.remount('/items'));
+      await act(async () => {
+        ref.current!.findNode('/show')!.setValue(true);
+      });
+      expect(ref.current!.findNode('/items/0')!.visible).toBe(true);
+      expect(
+        container.querySelector('[data-path="/items/0"][data-deferred]'),
+      ).not.toBeNull();
+      expect(container.querySelector('[id="/items/0"]')).toBeNull();
       expect(recoverableErrors).toEqual([]);
       expect(consoleErrors).toEqual([]);
     },

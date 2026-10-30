@@ -13,15 +13,15 @@ IO 없는 서버는 입력 40개를 렌더링하지만 IO 있는 클라이언트
 원래 초안은 Provider에서 `useSyncExternalStore`로 매니저를 노출하는 안이었으나, 독립 검증자는 React 18에서 문맥 값 변화가 아직 하이드레이션되지 않은 Suspense 경계에 SyncLane 갱신을 보내 클라이언트 렌더링을 강제할 수 있어 기각했습니다. 채택안은 `useChildFields` 안에서만 서버 스냅숏 null을 읽고 Provider의 문맥 값을 고정합니다.
 
 - 터미널 노드는 null, 브랜치는 폼 매니저를 클라이언트 스냅숏으로 반환합니다. 구독은 모듈 함수와 기존 `NOOP_FUNCTION`을 재사용합니다. 서버와 hydration 렌더는 모든 자식을 그대로 만들고, createRoot는 첫 렌더부터 기존 eager window를 적용합니다.
-- React 18 StrictMode는 hydration 뒤 스냅숏 재렌더 전에 effect 정리를 재실행하므로 `cache.clear()` 정리를 제거합니다. 캐시는 실제 훅 인스턴스 수명과 함께 회수되며, 실제 언마운트 뒤의 별도 전역 보유는 없습니다.
+- React 18 StrictMode는 hydration 커밋 뒤 effect 정리를 재실행하므로 `cache.clear()` 정리를 제거합니다. 캐시는 실제 훅 인스턴스 수명과 함께 회수되며, 실제 언마운트 뒤의 별도 전역 보유는 없습니다.
 - 폼 매니저가 있고 placeholder 없이 실제 마운트하는 모든 자식은 layout effect에서 노출 원장에 기록합니다. remount·enabled 전환 뒤에도 이미 하이드레이션한 노드를 다시 지연하지 않습니다. 이후 추가한 항목은 새 게이트 판정을 받습니다.
 - IO 부재 경고는 window가 있는 브라우저에서만 출력합니다. 경고 설명은 전체 eager 대체와 지원되는 SSR 동작을 안내합니다.
 
-시간·메모리 비용: 훅마다 안정된 snapshot 콜백과 React 외부 저장소 구독 상태가 추가되고, layout에서 hydration을 기록하여 passive 검사에는 null 스냅숏을 유지하고 추가 렌더를 만들지 않습니다. 노출 기록은 기존 WeakSet을 재사용하며 새 전역 레지스트리를 만들지 않습니다. 터미널은 스냅숏이 계속 null이어서 매니저 활성화 재렌더를 받지 않습니다. 최초 인계에서는 마운트 비용을 측정하지 않았으며 round 2의 실제 브라우저 비용 대조를 아래에 따로 기록합니다.
+시간·메모리 비용: 훅마다 안정된 snapshot 콜백과 React 외부 저장소 구독 상태가 추가되고, layout에서 hydration을 기록하여 passive 검사에는 null 스냅숏을 유지하고 추가 렌더를 만들지 않습니다. 노출 기록은 기존 WeakSet을 재사용하며 새 전역 레지스트리를 만들지 않습니다. 최초 인계에서는 마운트 비용을 측정하지 않았으며 round 2의 실제 브라우저 비용 대조를 아래에 따로 기록합니다.
 
 ## 수정한 문서
 
-FieldInputSlot DETAIL과 VirtualizationManager INTENT·DETAIL을 구현 전에 갱신했습니다. README, 영어·한국어 SPECIFICATION, QUICK_REFERENCE, 에이전트 arrays-and-scale 지식, 패키지 CLAUDE의 CSR 전용 제한을 새 동작으로 바꿨습니다. 서버 필드는 그대로 하이드레이션하고 이후 추가한 브랜치·자식에만 게이팅하며, React 18 사용자 브랜치 입력 내부 Suspense의 잔여 위험을 명시합니다. 기존 IR-4 결과와 request의 과거 기록은 수정하지 않습니다.
+FieldInputSlot DETAIL과 VirtualizationManager INTENT·DETAIL을 구현 전에 갱신했습니다. README, 영어·한국어 SPECIFICATION, QUICK_REFERENCE, 에이전트 arrays-and-scale 지식, 패키지 CLAUDE의 CSR 전용 제한을 새 동작으로 바꿨습니다. 서버 필드는 그대로 하이드레이션하고 이후 추가한 브랜치·자식에 게이팅합니다. 최초 인계는 React 18 내부 Suspense 잔여 위험을 명시했고 round 2에서 하이드레이션 자체의 추가 렌더 없음으로 바꿨습니다. 기존 IR-4 결과와 request의 과거 기록은 수정하지 않습니다.
 
 ## 회귀 시험과 실패 관찰
 
@@ -117,6 +117,7 @@ React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 
 | 상태를 유지하는 Fast Refresh에서 옛 자식 closure 보유 | 같은 파일 `:82`의 CachedComponent 재사용, `packages/winglet/react-utils/src/hooks/useLazyConstant.ts:67` | 개발 재해석 세대별 컴포넌트 갱신 또는 안정된 컴포넌트가 최신 커밋 값을 읽도록 구조를 바꿉니다. |
 | push와 같은 batch의 새 항목 focus/select가 구독 전에 소실 | `src/components/FieldProxy/components/DeferredFieldProxy/DeferredFieldProxy.tsx:46`, `src/core/engine/write/utils/entry/dispatchRequest.ts:31`, `src/hooks/fieldNode/useFieldNodeSubscribe.ts:57` | 노드별 미소비 명령을 기록하고 구독 직후 catch-up하거나 커밋까지 명령을 지연합니다. |
 | useReference의 렌더 중 공유 ref 쓰기 | useChildFields `:107`, `packages/winglet/react-utils/src/hooks/useReference.ts:92`, `src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx:87` | 이벤트가 읽는 값은 커밋 시점에 갱신하는 ref 또는 커밋을 보장하는 이벤트 핸들 구조로 전환합니다. |
+| 하이드레이션 때 준비하고 나중에 첫 렌더한 자식의 게이트 생략 | `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx`의 준비 시 deferredManager 고정과 캐시 재사용 | 게이트를 자식의 최초 실제 마운트에서 판정하고 자식별 hydration 감지로 지연된 Suspense hydration도 구별합니다. 이번 단계에서는 수정하지 않습니다. |
 
 ## Round 2 마운트 창 이력
 
@@ -133,7 +134,7 @@ React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 
 
 첫 창의 여섯 비율은 당시 7c91c45ee 소스의 측정으로 모두 통과했으나 제품 통합 수정 때문에 최종 비용 증거에서 제외합니다. 원시는 superseded-window-1에 그대로 보존하며 코디네이터 지시에 따라 새 frozen E5와 새 창을 한 번 실행합니다. 최종 관문도 unit부터 다시 시작합니다.
 
-## Round 2 최종 제품의 마운트 비용
+## Round 2 제품의 마운트 비용 — round 3에서 superseded
 
 E4는 be1a79867의 동일한 불변 product/browser bundle을 재사용했고, E5는 기존 commit effect에 통합한 69251a950의 새 bundle입니다. 생산 React 19.2.6·Chromium의 기존 IR-0/IR-1 mountFixture·samplePageWithCpu를 재사용했습니다. 코디네이터가 승인한 새 창은 paired relative로 각 행의 E4/E5 순서를 교차하며 레인마다 3예열·10새페이지(총 36예열·120채택)를 한 번만 실행했고 테스트·빌드는 겹치지 않았습니다. 사전 등록 기준은 off mount-wall, on eager-paint의 레인별 중앙값 비율 E5/E4 ≤1.02입니다.
 
@@ -197,3 +198,14 @@ flat-500 on만 1.027687로 사전 등록 상한을 넘었습니다. +0.850ms이�
 [최종 FCA 대조](raw/ir-5-round2/fca-comparison.json)와 압축 원본 세 개, [최종 관문 집계](raw/ir-5-round2/gate-results.json)에 근거를 보존했습니다. 최종 build의 runtime SHA-256은 실제 새 창에서 측정한 E5 product와 일치하므로 이후 기록 커밋이 측정 제품을 바꾸지 않습니다. 공개 선언 308개는 의미 차이 0이고 props JSDoc의 CSR 첫 렌더·SSR 보존 설명만 주석 바이트 차이로 남습니다. agents 14개 해시를 전량 대조했습니다. dist는 기존 ignore 대상이고 추적된 runtime/adapter 산출물 변경이 없어 별도 build 커밋 대상은 없습니다.
 
 최종 인계: 일반·StrictMode·React 18 내부 Suspense의 서버 DOM 보존과 추가 렌더 0, CSR 첫 게이팅, hydration 뒤 추가분 게이팅, 문턱 미만 실제 마운트의 defer-once, 기존 항목당 두 layout effect 계약을 검증했습니다. 제품·타입·렌더·Storybook·production 검증은 통과했으며, **마운트 flat-500 on 한 행은 FAIL**이고 소유자의 비용 예외 판단은 열려 있습니다. 코디네이터는 이 상태를 명시한 단계 브랜치 PR과 독립 검토로 인계하도록 승인했습니다. 위 다섯 기존 결함의 후속 수정은 이번 범위에 포함하지 않았습니다.
+
+
+## Round 3 — 실제 입력 commit만 원장에 기록
+
+codex 원문과 브리프의 Opus 요약을 코드와 대조했습니다. round 2의 자식 wrapper effect는 FieldProxy가 hidden/disabled로 null을 반환해도 커밋하므로, 실제 입력이 없던 항목을 노출 원장에 기록하는 결함이 있었습니다. threshold 2·eagerCount 0·backfill None에서 처음 숨긴 배열 항목을 만든 뒤 두 번째 항목 추가→배열 remount→첫 항목 표시 시 placeholder여야 하는 공개 API 회귀를 CSR·hydration 두 모드에서 작성했습니다. 수정 전 React 18에서 두 사례가 모두 실패했습니다.
+
+원장 쓰기를 자식 wrapper에서 제거하고 실제 FieldInput이 존재하는 입력 슬롯의 기존 commit layout effect로 옮겼습니다. 그 effect에서 슬롯 자신의 노드를 기록하며 새로운 layout effect는 만들지 않습니다. form manager는 기존 useChildFields 결과로 전달해 추가 context 구독을 만들지 않았고 Provider도 바꾸지 않았습니다. 현재 두-effect 계약과 기존 모든 기대는 유지합니다.
+
+Suspense 안에 Probe를 넣고 layout commit을 정확히 1회 기대하여 경계가 서버 DOM으로만 남는 경우도 검출합니다. 두 프로젝트의 한정 hydration 12개·렌더 수 2개·기존 layout-count 1개, 합계 30개가 통과했습니다. 숨김 항목은 실제 입력을 한 번도 마운트하지 않았으므로 이후 표시할 때 원장에 의해 게이트가 생략되지 않고 placeholder로 남습니다.
+
+공개 문서는 하이드레이션 자체의 갱신 없음과 React 18에서 아직 하이드레이션되지 않은 경계로 들어가는 이후 갱신의 client rendering 전환을 구별했습니다. 준비만 된 자식을 탭·아코디언에서 나중에 처음 렌더하면 비게이트 결정이 유지되는 기존 제한은 고치지 않고 DETAIL·README·영어/한국어 SPECIFICATION과 미결 목록에 남겼습니다. 후속안은 자식별 hydration 감지와 최초 실제 마운트 시 gate 판정입니다. 최초 기록의 스냅숏 재렌더 표현과 현재 존재하지 않는 terminal 재렌더 설명도 바로잡았습니다.
