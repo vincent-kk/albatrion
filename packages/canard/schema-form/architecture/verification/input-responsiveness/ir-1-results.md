@@ -311,3 +311,9 @@ cx02-org-chart는 제거 전 render/react18 모두 실패했고 최종 순차 �
 최종 FCA도 전체 scan·6범위 validate·verification을 같은 스냅숏으로 다시 수행했습니다. 사실 입력 1671파일은 exact이며, [최종 FCA 비교](raw/ir-1/gate-round-fca-comparison.json)의 기준 대비 새 발견·새 진단은 0입니다. 기존 202개 중복 제거 발견, verification 위반 21개 및 모호성은 유지되어 절대 판정 FAIL·분석 완전성 indeterminate입니다. 원시와 이전 감사 기록은 그대로 보존했습니다.
 
 판정: 소유자 대기
+
+DETAIL의 None 모드 무컴파일 설명 두 곳을 한정합니다. 다른 스키마로 reset할 때는 모드와 관계없이 `assertValidationRootReady`가 새 루트를 컴파일하며, 이는 기존 동작입니다.
+최종 관문 표의 키 입력 처리 p95 값은 시작 전 정숙 관찰을 통과한 quiet 창에서 가져왔습니다.
+생산 동등성 증명은 esbuild로 측정 레인 A와 정규화 비교한 `adopted-a-proof.json`의 보존 결과이며, 저장소 안 재현 명령은 없습니다.
+
+판정: 소유자 대기
