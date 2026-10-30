@@ -130,7 +130,7 @@ export default defineConfig({
               ],
             },
           },
-          transformMode: { web: [/\.[cm]?[jt]sx?$/] },
+          testTransformMode: { ssr: ['**/*.ts'], web: ['**/*.tsx'] },
           // Bundle CommonJS requires through the aliases, including testing-library's React imports.
           deps: {
             optimizer: {
@@ -185,7 +185,7 @@ export default defineConfig({
         test: {
           name: 'production',
           environment: 'jsdom',
-          transformMode: { ssr: [/\.ts$/], web: [/\.tsx$/] },
+          testTransformMode: { ssr: ['**/*.ts'], web: ['**/*.tsx'] },
           include: [
             'src/core/engine/blueprint/**/__tests__/*.owned-inline*.test.{ts,tsx}',
             ...bundleTests,
