@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gzipSync } from 'node:zlib';
+import { gunzipSync, gzipSync } from 'node:zlib';
 
 import { digest } from '../b9-0/files.mjs';
 import { compactQuietCheck } from '../b9-1/helpers/compactQuietCheck.mjs';
@@ -74,7 +74,16 @@ for (const file of fs.readdirSync(scratch)) {
   const target = ['judgment.json', 'first-write-exchange.json'].includes(file)
     ? 'iv2-' + file
     : file;
-  fs.copyFileSync(path.join(scratch, file), path.join(output, target));
+  const bytes = fs.readFileSync(path.join(scratch, file));
+  const compressed = file.endsWith('.gz');
+  const contents = (compressed ? gunzipSync(bytes) : bytes)
+    .toString()
+    .replaceAll('/opt/homebrew', '<toolchain>')
+    .replaceAll('/usr/local', '<toolchain>');
+  fs.writeFileSync(
+    path.join(output, target),
+    compressed ? gzipSync(contents) : contents,
+  );
 }
 const portable = (value) =>
   JSON.parse(

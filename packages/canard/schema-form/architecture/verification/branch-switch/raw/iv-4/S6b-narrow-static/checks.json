@@ -1,0 +1,42 @@
+{
+  "candidateHead": "6f7ccb7b6",
+  "rows": [
+    {
+      "stage": "red-1",
+      "code": 1,
+      "log": "red-1.log.gz",
+      "sha256": "8cee969d1c91c139b2084d033a3a78afce6aa6b0ea00c1d869879c4414686d12"
+    },
+    {
+      "stage": "red-2",
+      "code": 1,
+      "log": "red-2.log.gz",
+      "sha256": "140c20a20e7b0584a4cd28d8ffe883ab1a44739420796c1b7b900983f90cbebf"
+    },
+    {
+      "stage": "green",
+      "code": 0,
+      "log": "green.log.gz",
+      "sha256": "ef0ae07358ebbac3873e8ca0aa3099a42a61b7ace710c84b4133a16f2e8a2f1a"
+    },
+    {
+      "stage": "typecheck",
+      "code": 0,
+      "log": "typecheck.log.gz",
+      "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "stage": "lint",
+      "code": 0,
+      "log": "lint.log.gz",
+      "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "stage": "build",
+      "code": 0,
+      "log": "build.log.gz",
+      "sha256": "87ac71d4bdb9e9c90eb202895bd1b03e3e435f8c29313cce990aa3ecc56381cd"
+    }
+  ],
+  "note": "Red-1 uses the old assembler without peek; red-2 adds only the read-only peek, so both original defects are observed before the final assembler change. Green and package checks use the final candidate."
+}
