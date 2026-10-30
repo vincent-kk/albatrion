@@ -20,17 +20,17 @@
     {
       "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
       "exitCode": 0,
-      "output": "IR0_TYPES_OK"
+      "output": ""
     },
     {
       "command": "yarn workspace @aileron/benchmark-form lint",
       "exitCode": 0,
-      "output": "IR0_LINT_OK"
+      "output": ""
     },
     {
       "command": "yarn workspace @aileron/benchmark-form check:browser-results",
       "exitCode": 0,
-      "output": "IR0_RAW_REPRODUCED samples=510; IR0_RESULTS_OK"
+      "output": "IR0_RAW_REPRODUCED samples=510"
     },
     {
       "command": "yarn workspace @aileron/benchmark-form bench:browser --samples=1 --warmup=1 --sizes=50",

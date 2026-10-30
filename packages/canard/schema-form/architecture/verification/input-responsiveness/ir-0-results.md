@@ -4,9 +4,11 @@
 
 이 단계는 측정 장치와 새 기록만 추가했습니다. E는 `5d1348ed16054efa1ec431945eb00472f4eef7f1`, S는 `0eb03ff3bb54bf06af95271d157aefece1b9bf32`, L은 공개 `@canard/schema-form@0.16.1` 별칭입니다. L의 Git 원본 SHA는 배포 메타데이터에 없으므로 배포 번들의 SHA-256으로 식별합니다. S는 기존 분기 전환 iv-5 준비 산출물의 SHA/sourceProof와 번들 해시를 대조해 제품 수정 없이 사용했습니다. S는 렌더러 설정 불일치 때문에 본표와 관문에서 제외하고 모든 원시를 보존했습니다. 자세한 이유는 아래와 같습니다.
 
+기본 mount CLI의 [harness.tsx:58](../../../../../aileron/benchmark-form/browser-bench/harness.tsx#L58)은 `445e0f517ceafbc86d4233dcf60ef386e7a4a52c`에서 prop을 `CustomFieldRenderer`에서 `FieldRenderer`로 바꿨으므로 이 커밋 이전의 mount-mode 수치는 이 문서의 수치와 비교할 수 없습니다.
+
 S는 실제로 기본 FieldRenderer를 사용했습니다. 장치가 S를 L처럼 CustomFormTypeRenderer prop으로 분류했지만 S의 공개 FormProps는 FieldRenderer를 받으므로 해당 prop이 무시됐습니다. L은 CustomFormTypeRenderer에, E는 FieldRenderer에 동일한 input-only PassRenderer를 연결했습니다. 창 도중 S의 보존된 FormProps를 읽어 설정 오류를 확인했고, 첫 flat-500 표본의 all DOM 수 L 1504·S 3504·E 1504로 검출했습니다. 코디네이터 지시로 창은 끝까지 계속하고 S만 본표·관문에서 제외했습니다. S 수정 창은 열지 않았으며 S 수치를 L/E와 비교하지 않습니다. 선택과 사유는 [레인 분류](raw/ir-0/selection.json)에 있습니다.
 
-도구 커밋은 `445e0f517ceafbc86d4233dcf60ef386e7a4a52c`입니다. Chromium 145.0.7632.6, Playwright 1.58.0, React 19.2.6 production, esbuild 0.25.9, AJV 8.17.1, Node v24.20.0를 사용했습니다. 기계는 Apple M1 Max, 10 논리 코어, 64 GiB RAM, darwin 27.0.0 arm64이며 viewport는 900×700입니다. 검증은 AJV8 기본 플러그인의 실제 compile/validate 경로입니다. 초기 manifest는 benchmark-form에서 무관한 호이스트 AJV 6.12.6을 읽었으므로 원문은 보존하고, 실제 플러그인 기준 모듈 해석 및 동결된 브라우저 번들의 AJV8 경로를 확인한 [환경 정정](raw/ir-0/environment-correction.json)을 덧붙였습니다. 측정은 다시 하지 않았습니다.
+도구 커밋은 `445e0f517ceafbc86d4233dcf60ef386e7a4a52c`입니다. Chromium 145.0.7632.6, Playwright 1.58.0, React 19.2.6 production, esbuild 0.25.9, AJV 8.17.1, Node v24.20.0를 사용했습니다. 기계는 Apple M1 Max, 10 논리 코어, 64 GiB RAM, darwin 27.0.0 arm64이며 viewport는 900×700입니다. 검증은 AJV8 기본 플러그인의 실제 compile/validate 경로입니다. L도 0.16.1 당시의 플러그인이 아닌 현재 workspace의 ajv8 plugin dist로 검증했습니다. 초기 manifest는 benchmark-form에서 무관한 호이스트 AJV 6.12.6을 읽었으므로 원문은 보존하고, 실제 플러그인 기준 모듈 해석 및 동결된 브라우저 번들의 AJV8 경로를 확인한 [환경 정정](raw/ir-0/environment-correction.json)을 덧붙였습니다. 측정은 다시 하지 않았습니다.
 
 정식 창은 2026-10-30T12:27:27.649Z~2026-10-30T12:37:34.615Z입니다. 코디네이터 허가 뒤 30초 정숙 관찰을 한 번씩 수행했고 시작 거절은 0회(각 0표본)입니다. 시작한 창의 중단과 완료 표본 재측정은 0회입니다. 이후 외부 CPU는 원시에만 보존했으며 중단 조건으로 쓰지 않았습니다. 정식 창에는 빌드·시험·typecheck·lint를 겹치지 않았습니다.
 
@@ -30,9 +32,9 @@ handler 벽시계는 실제 DOM `input`/`change` 이벤트의 document capture�
 
 Long Animation Frames는 창과 겹치는 항목의 최장 시간과 50ms 이상 개수입니다. 최장은 10표본의 최댓값, 개수는 10표본 합입니다. API는 50ms 이상 프레임만 전달하므로 항목이 없으면 실제 최장을 0ms라 하지 않고 `<50 (검출 0)`으로 표시했습니다. API 미지원은 `지원 없음`으로 적습니다.
 
-검증 도착은 해당 키의 input capture부터 첫 onValidate까지입니다. 동일 오류 결과를 계속 내는 정상 입력은 L/E 모두 배달이 억제되므로 미배달 수를 그대로 적었습니다. E의 근거는 [reportRootLoadValidation](../../../src/providers/RootNodeContext/utils/reportRootLoadValidation.ts) 및 [동일 결과 검증 계약](../../../src/core/engine/validation/__tests__/validation.unchanged-result.test.ts)입니다. L의 원시 관측과 같은 억제는 보존된 [구엔진 __setGlobalErrors__](../../../src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts)에서도 확인됩니다. 미배달은 검증기 실행 없음이나 검증 지연 무한대라는 뜻으로 바꾸지 않습니다.
+검증 도착은 해당 키의 input capture부터 첫 onValidate까지입니다. 시작점은 keydown이 아닌 document input capture이며 각 배달은 배달 시점의 최신 키에 귀속되므로 이 귀속 방식의 영향은 burst 행에 한정됩니다. 동일 오류 결과를 계속 내는 정상 입력은 L/E 모두 배달이 억제되므로 미배달 수를 그대로 적었습니다. E의 근거는 [reportRootLoadValidation](../../../src/providers/RootNodeContext/utils/reportRootLoadValidation.ts) 및 [동일 결과 검증 계약](../../../src/core/engine/validation/__tests__/validation.unchanged-result.test.ts)입니다. L의 원시 관측과 같은 억제는 보존된 [구엔진 __setGlobalErrors__](../../../src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts)에서도 확인됩니다. 미배달은 검증기 실행 없음이나 검증 지연 무한대라는 뜻으로 바꾸지 않습니다.
 
-승인된 보조 pattern `^(?:..)*$`는 입력 길이의 홀짝으로 매 키 유효성을 바꿉니다. flat/nested 각각 비연타(호출 시작 간격 100ms, 검증 도착 관문)와 burst(20키를 가능한 빠르게 전송, 보고 전용)를 분리했습니다. 비연타의 모든 changed verdict 배달을 스모크와 정식 실행에서 검사했습니다.
+승인된 보조 pattern `^(?:..)*$`는 입력 길이의 홀짝으로 매 키 유효성을 바꿉니다. flat/nested 각각 비연타(호출 시작 간격 100ms, 검증 도착 관문)와 burst(20키를 가능한 빠르게 전송, 보고 전용)를 분리했습니다. 비연타의 모든 changed verdict 배달을 스모크와 정식 실행에서 검사했습니다. 비연타 100ms 간격은 Node 쪽에서 조절하며 페이지 안의 input capture 간격은 최소 88.8ms까지 내려갑니다. 같은 키당 작업에서 비연타 행의 처리 중앙값은 burst 행의 3~5배입니다(E flat-500: 5.750 대 1.225ms).
 
 ## 상호작용별 결과
 
