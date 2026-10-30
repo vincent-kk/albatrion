@@ -351,80 +351,6 @@ class DependencyIndex {
     const emitted = new Set<string>();
     const hostsEmitted = new Set<string>();
     const collect = (node: DependencyNode): void => {
-      if (!node.splitBuckets?.length) {
-        for (
-          let rank = 0;
-          rank < (node.plainOwners ?? node.owners).length;
-          rank++
-        ) {
-          const entry = node.plainOwners
-            ? node.plainOwners[rank].entry
-            : node.owners[rank];
-          for (const path of this.registrationPaths(entry, changedPath, root))
-            if (!emitted.has(path)) {
-              emitted.add(path);
-              sink.owner(path, 'plain');
-            }
-        }
-        return;
-      }
-      const bucket =
-        node.splitBuckets.length === 1 ? node.splitBuckets[0] : undefined;
-      const plain = node.plainOwners;
-      if (
-        bucket?.runs.length === 1 &&
-        (!plain?.length || plain[plain.length - 1].rank < bucket.firstRank)
-      ) {
-        let host: Optional<Self> = root;
-        for (const segment of this.pathSegments(bucket.hostPath))
-          if (typeof segment === 'string') host = host?.structure?.[segment];
-          else {
-            host = undefined;
-            break;
-          }
-        const living: number[] = [];
-        if (host?.structure)
-          for (const name of Object.keys(host.structure)) {
-            const rank = bucket.ranksByName.get(name);
-            if (rank !== undefined) living.push(rank);
-          }
-        living.sort((left, right) => left - right);
-        const preparedPlain: (readonly string[])[] = [];
-        for (const { entry } of plain ?? [])
-          preparedPlain.push(this.registrationPaths(entry, changedPath, root));
-        const planned = sink.hit(bucket, living);
-        const anchors =
-          planned.length > 1
-            ? [...planned].sort((left, right) => left.rank - right.rank)
-            : planned;
-        for (const paths of preparedPlain)
-          for (const path of paths)
-            if (!emitted.has(path)) {
-              emitted.add(path);
-              sink.owner(path, 'plain');
-            }
-        let cursor = 0;
-        while (
-          cursor < anchors.length &&
-          anchors[cursor].rank <= bucket.firstRank
-        )
-          anchors[cursor++].insert();
-        if (!hostsEmitted.has(bucket.hostPath)) {
-          hostsEmitted.add(bucket.hostPath);
-          sink.owner(bucket.hostPath, 'host', bucket);
-        }
-        for (const rank of living) {
-          while (cursor < anchors.length && anchors[cursor].rank <= rank)
-            anchors[cursor++].insert();
-          const path = node.owners[rank].path;
-          if (!emitted.has(path)) {
-            emitted.add(path);
-            sink.owner(path, 'split', bucket);
-          }
-        }
-        while (cursor < anchors.length) anchors[cursor++].insert();
-        return;
-      }
       const events: { rank: number; emit: () => void }[] = [];
       for (const { rank, entry } of node.plainOwners ??
         mapArray(node.owners, (entry, rank) => ({ entry, rank }))) {
@@ -512,20 +438,6 @@ class DependencyIndex {
       collect(child);
       pending.push(...child.children.values());
     }
-  }
-
-  /** Resolve ordinary contributions before hit callbacks can affect registration state. */
-  private registrationPaths<Self extends FieldNodeRecord<Self>>(
-    entry: DependencyNode['owners'][number],
-    changedPath: string,
-    root: Self,
-  ): readonly string[] {
-    const path = entry.bindable
-      ? bindTemplatePath(entry.path, changedPath)
-      : entry.path;
-    return hasPointerOperator(path, PointerOperator.Wildcard)
-      ? expandTemplatePaths(root, path, this.pathSegments(path, root.runtime))
-      : [path];
   }
 
   /** Return owners whose reads intersect a changed path in either direction. */
