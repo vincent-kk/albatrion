@@ -228,6 +228,8 @@
 
 - 게이트 등록의 memo와 edge map은 기존 live path 레코드가 함께 소유하며 node 키 WeakMap 둘에 중복 삽입하지 않습니다. 조회는 register가 현재 node identity를 확인한 뒤 수행하고 퇴장·동일 경로 교체에서 새 수명을 다시 결합합니다. 등록당 두 WeakMap 삽입과 두 약한 색인을 제거하며 기존 map 둘·등록 레코드 외의 상주 구조는 없습니다.
 
+- presence 이름이 둘 이상인 등록 호출은 여섯 작업 Set을 한 번 만들어 각 질의 전에 비우고 재사용합니다. 결과는 다음 질의 전에 소비하며 호출이 끝나면 모두 버립니다. 독립 질의는 별도 결과를 유지하고 owner 순서·중복 제거·삽입 계수는 동일합니다. ancestor levels는 flat 임시 배열 없이 같은 전순서로 방문합니다. 추가 상주 구조는 없습니다.
+
 ## Structure
 
 - Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
@@ -822,6 +824,11 @@
 ### settle-gate-registry-storage — live 등록 레코드의 메모 소유
 
 - gate-free live 노드의 register는 node 키 WeakMap 삽입이 0이며 반복 register는 같은 발생을 유지합니다. 동일 경로의 새 node는 새 발생을 받고, 옛 node remove는 새 node 등록을 제거하지 않습니다. 현재 node를 제거한 뒤 다시 등록하면 발생도 새로 만듭니다.
+
+
+### settle-presence-query-work — 호출 안의 할당 재사용
+
+- 명시한 작업을 쓰는 질의는 새 Set을 할당하지 않고 여섯 작업 집합을 비운 뒤 채웁니다. 기본 질의 결과는 서로 독립이며 wildcard·literal wildcard·부분 prefix 바인딩과 owner 삽입 계수·전순서를 유지합니다.
 
 
 ## Boundary Exemptions
