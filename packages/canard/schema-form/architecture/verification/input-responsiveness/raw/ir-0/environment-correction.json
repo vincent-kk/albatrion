@@ -1,0 +1,9 @@
+{
+  "recordedAjv": "6.12.6",
+  "actualValidatorAjv": "8.17.1",
+  "resolutionBase": "packages/canard/schema-form-ajv8-plugin/package.json",
+  "ajvManifestSha256": "ce1539e6f4e0f345ed402c47137d2679497b2035d4a4f420ee11acdde03dea92",
+  "reason": "The initial manifest resolved ajv relative to benchmark-form, whose unrelated hoisted AJV is 6.12.6. The validator plugin and frozen browser bundle resolve the plugin dependency AJV 8.17.1. Original inputs and complete records remain unchanged; no measurement was repeated.",
+  "metadataFixBrowserBundlesUnchanged": true,
+  "verification": "IR0_AJV_METADATA_OK browser-bundle hashes unchanged for L/S/E"
+}

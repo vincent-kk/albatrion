@@ -1,0 +1,15 @@
+{
+  "mainLanes": [
+    "L",
+    "E"
+  ],
+  "reportOnlyLanes": [
+    "S"
+  ],
+  "reason": "S passed CustomFormTypeRenderer, while its Form requires FieldRenderer; the prop was ignored and the default renderer ran. L used CustomFormTypeRenderer and E used FieldRenderer with the same PassRenderer. Coordinator directed exclusion of S from main tables/gates and no fix window.",
+  "flat500DomNodes": {
+    "L": 1504,
+    "S": 3504,
+    "E": 1504
+  }
+}

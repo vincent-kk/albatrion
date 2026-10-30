@@ -1,0 +1,66 @@
+{
+  "productBase": "5d1348ed16054efa1ec431945eb00472f4eef7f1",
+  "measuredToolCommit": "445e0f517ceafbc86d4233dcf60ef386e7a4a52c",
+  "productDiffOutsideArchitecture": "empty",
+  "builds": [
+    {
+      "command": "yarn workspaces foreach --from @canard/schema-form --recursive --topological-dev run build",
+      "exitCode": 0,
+      "artifactChecks": [
+        "DEVELOPMENT_FLAG_OK",
+        "GATE_SELECTION_DIST_OK"
+      ]
+    },
+    {
+      "command": "yarn workspace @canard/schema-form-ajv8-plugin build",
+      "exitCode": 0
+    }
+  ],
+  "checks": [
+    {
+      "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+      "exitCode": 0,
+      "output": "IR0_TYPES_OK"
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form lint",
+      "exitCode": 0,
+      "output": "IR0_LINT_OK"
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form check:browser-results",
+      "exitCode": 0,
+      "output": "IR0_RAW_REPRODUCED samples=510; IR0_RESULTS_OK"
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form bench:browser --samples=1 --warmup=1 --sizes=50",
+      "exitCode": 0,
+      "output": "baseline and virtualized mount completed; excluded from formal samples"
+    }
+  ],
+  "formal": {
+    "warmupPerFixtureLane": 3,
+    "retainedPerFixtureLane": 10,
+    "retainedTotal": 510,
+    "mainRetained": 340,
+    "reportOnlyS": 170,
+    "startRefusals": 0,
+    "windowInterruptions": 0,
+    "completedSampleRemeasurements": 0,
+    "overlappingBuildsTestsLint": false
+  },
+  "audits": {
+    "gzipContentsIncluded": true,
+    "machinePathsFound": 0,
+    "ownerQuotesVerbatim": true,
+    "repositoryLinksResolve": true,
+    "mainTablesExcludeS": true,
+    "fcaScanRun": false
+  },
+  "metadataCorrection": {
+    "record": "environment-correction.json",
+    "browserBundleHashesUnchanged": true,
+    "timedRunRepeated": false
+  },
+  "independentVerification": "Coordinator owns the independent verifier gate and PR creation."
+}

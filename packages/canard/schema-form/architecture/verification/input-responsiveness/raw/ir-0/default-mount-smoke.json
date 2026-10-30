@@ -1,0 +1,24 @@
+{
+  "ts": "2026-10-30T12-26-06-995Z",
+  "samples": 1,
+  "rows": [
+    {
+      "size": 50,
+      "mode": "baseline",
+      "mountMed": 4.199999988079071,
+      "mountP95": 4.199999988079071,
+      "inputs": 50,
+      "deferred": 0,
+      "domNodes": 153
+    },
+    {
+      "size": 50,
+      "mode": "virtualized",
+      "mountMed": 9.099999964237213,
+      "mountP95": 9.099999964237213,
+      "inputs": 36,
+      "deferred": 14,
+      "domNodes": 125
+    }
+  ]
+}
