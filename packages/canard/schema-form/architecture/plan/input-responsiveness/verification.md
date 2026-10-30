@@ -49,3 +49,10 @@ IR-0은 제품 코드를 바꾸지 않는 기준선입니다. 실제 Chromium, P
 ### 정숙 재측정 범위 — 코디네이터 답변, 2026-10-30
 
 정숙 관찰 성공 뒤에는 type-flat-500, validation-flat-500-nonburst/burst, replace-200-while-typing off/on의 5행만 L/E0/A/AB 각 3예열·10새페이지로 다시 측정합니다. switch-oneOf-20은 상대 창의 최장 프레임이 50ms에 실패하거나 10% 이내(45ms 이상)일 때만 추가합니다. 부하가 프레임을 길게 하는 방향이라는 원리에 따라 여유 있는 통과는 보수적인 최대값 증거로 유지합니다. 마운트는 짝 중앙값으로 다루므로 재측정하지 않습니다. 정숙 행은 기존 상대 창을 대체하지 않고 나란히 보고합니다.
+
+
+## IR-1b — 엄격 production 관문 (2026-10-31)
+
+엄격 production 관문은 `test:production`(NODE_ENV=production)이며 `--project production` 실행은 그것을 대신하지 않는다.
+
+[관문 수리 결과](../../verification/input-responsiveness/production-gate-repair.md)에 환경별 재현, ids 탐침과 읽기 전용 소비자, 21/21 복구 및 전체 순차 관문의 실행 SHA·계수를 보존했습니다.
