@@ -1158,6 +1158,22 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 - **Placeholder styling**: placeholders are boxes carrying `[data-path]` and a `[data-deferred]` marker. Style them with a CSS attribute selector (`[data-deferred] { … }`) or pass a `Placeholder` component; space reservation always stays with `estimateHeight`.
 - **⚠️ Client-side rendering only**: requires `IntersectionObserver`. Do NOT enable it in SSR/hydration apps — the server renders all fields while the client gates them, causing a hydration mismatch. When `IntersectionObserver` is unavailable it is silently disabled (with a development warning).
 
+#### Input responsiveness at scale
+
+Enable `virtualization` for branches with at least `threshold` children when structural changes interrupt typing. In [IR-1](../../architecture/verification/input-responsiveness/ir-1-results.md#기본값-결정-자료), replace-200's longest frame with it off was 62.3 ms in the adopted build (every measured build exceeded 50 ms); with it on, no frame of 50 ms or more was detected. The adopted A lane's same-window mount medians (ms) show the trade-off:
+
+| Form | Off: eager paint / all revealed | On: eager paint / all revealed |
+| --- | ---: | ---: |
+| flat-500 | 51.750 / 51.750 | 31.600 / 174.250 |
+| nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
+| array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
+
+Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. [IR-4](../../architecture/verification/input-responsiveness/ir-4-results.md) confirms a hydration mismatch on React 18/19 for a branch of 40 children with threshold 30 and eagerCount 20: 40 server inputs become 20 inputs plus 20 placeholders, replacing the server DOM. Do not enable on server-rendered pages until the defect is fixed. The default remains off.
+
+- **Validation:** cost grows with schema size. The desktop Chromium flat-2000 [IR-2 diagnosis](../../architecture/verification/input-responsiveness/ir-2-results.md#원인-분해-진단코디네이터-2026-10-31) attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
+- **Custom input styling:** in that 2000-input diagnosis, `input { contain: strict; width: 153px; height: 21px; }` cut forced layout per keystroke from 2.5–3.8 ms median to 0.42–0.47 ms median; a plain block wrapper did not help. Give contained inputs an explicit size and check your layout.
+- **Consumer state:** for expensive application rendering in `onChange`, wrap your own update, e.g. `onChange={(value) => startTransition(() => setValue(value))}`. Root `onChange` remains synchronous by design. [IR-0](../../architecture/verification/input-responsiveness/ir-0-results.md#type-onchange-state-plain) E lane event-processing median/p95 was 0.800/5.100 ms plain versus 0.800/4.600 ms with `startTransition`; handler median/p95 stayed 0.400/0.900 ms in both. These fixture results do not promise a speedup for arbitrary consumer work.
+
 ### Custom Layout (Form.Render)
 
 ```tsx

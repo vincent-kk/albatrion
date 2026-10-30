@@ -1156,6 +1156,22 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 - **Placeholder 스타일**: placeholder는 `[data-path]`와 `[data-deferred]` 마커를 가진 박스다. CSS 속성 선택자(`[data-deferred] { … }`) 또는 `Placeholder` 컴포넌트로 스타일링하며, 공간 예약은 항상 `estimateHeight`가 담당한다.
 - **⚠️ CSR 전용**: `IntersectionObserver`가 필요하다. SSR/하이드레이션 앱에서는 활성화하지 말 것 — 서버는 전 필드를 마운트하고 클라이언트는 게이팅해 하이드레이션 mismatch가 발생한다. `IntersectionObserver`가 없으면 무음 비활성화된다(개발 모드 경고 출력).
 
+#### 대형 폼의 입력 응답성
+
+자식 수가 `threshold` 이상인 branch의 구조 변경이 타이핑을 막을 때 `virtualization`을 켠다. [IR-1](../../architecture/verification/input-responsiveness/ir-1-results.md#기본값-결정-자료)의 replace-200 최장 프레임은 off에서 채택 빌드 62.3ms였고(측정한 모든 빌드가 50ms 초과), on에서는 50ms 이상 프레임이 검출되지 않았다. 채택 A 레인의 같은 창 마운트 중앙값(ms)은 첫 화면과 전체 노출의 비용 차이를 보여 준다.
+
+| 폼 | off: 첫 화면(eager paint) / 전체 노출 | on: 첫 화면(eager paint) / 전체 노출 |
+| --- | ---: | ---: |
+| flat-500 | 51.750 / 51.750 | 31.600 / 174.250 |
+| nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
+| array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
+
+노출 전의 지연된 입력은 페이지 내 검색·스크린 리더·브라우저 자동완성의 대상이 되지 않는다. 두 backfill 모드 모두 placeholder가 남아 있는 동안 적용되며, Focus/Select 명령은 강제로 노출한다. [IR-4](../../architecture/verification/input-responsiveness/ir-4-results.md)에서 자식 40개·threshold 30·eagerCount 20인 branch에서 React 18/19의 hydration mismatch를 확인했다. 서버 입력 40개가 클라이언트 입력 20개와 placeholder 20개로 바뀌며 서버 DOM이 교체된다. 결함을 고칠 때까지 서버 렌더링 페이지에서는 활성화하지 않는다. 기본값은 off다.
+
+- **검증:** 스키마 크기에 따라 비용이 증가한다. 데스크톱 Chromium의 flat-2000 [IR-2 진단](../../architecture/verification/input-responsiveness/ir-2-results.md#원인-분해-진단코디네이터-2026-10-31)은 p95 키 처리 비용의 약 4분의 1을 검증 실행·배달과 두 번째 React 커밋에 귀속했다. 냉 상태 비연타의 검증 켬−끔 input 이벤트 디스패치 차이는 중앙값 약 1.3ms / p95 약 2.9ms였다. 매우 큰 폼은 `validationMode={ValidationMode.OnRequest}`로 요청 또는 제출 시 검증할 수 있다.
+- **커스텀 입력 스타일:** 같은 입력 2000개 진단에서 `input { contain: strict; width: 153px; height: 21px; }`는 키당 강제 레이아웃 중앙값을 2.5–3.8ms에서 0.42–0.47ms로 줄였다. 단순 블록 래퍼는 효과가 없었다. containment를 적용한 입력은 크기를 명시하고 레이아웃을 확인한다.
+- **소비자 상태:** `onChange`에서 애플리케이션 렌더 비용이 크다면 자체 상태 갱신을 `onChange={(value) => startTransition(() => setValue(value))}`처럼 감싼다. 루트 `onChange`는 설계대로 동기를 유지한다. [IR-0](../../architecture/verification/input-responsiveness/ir-0-results.md#type-onchange-state-plain) E 레인의 이벤트 처리 중앙값/p95는 일반 갱신 0.800/5.100ms, `startTransition` 0.800/4.600ms였고 handler 중앙값/p95는 둘 다 0.400/0.900ms였다. 이 픽스처 수치가 모든 소비자 작업의 개선을 보장하지는 않는다.
+
 ### 커스텀 레이아웃 (Form.Render)
 
 ```tsx
