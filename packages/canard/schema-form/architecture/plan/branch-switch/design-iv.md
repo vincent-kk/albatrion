@@ -391,3 +391,7 @@ S9의 native 포함 배타 귀속은 affectedByPresence14,980·collect9,189·reg
 ### Ⅳ-4 결과와 소유자 예외(2026-10-30)
 
 소유자는 “창 2 를 보고 다시 논의”, “명확한 이득이면 일부 타협”, “1번 5커밋 채택”으로 창1의 S5수정·S1a·S1b·S6b 초기형·S4 다섯 cut을 이 창에 한해 예외 채택했습니다. 제품 src·시험·DETAIL은 창1 머리 c153d5b38과 바이트 동일하게 복원합니다. 창1 교환비−15,535 µs와 폭 밖 개선5행(payload-12·leaf-gate-8000·leaf-gate-4000·switch-if-80·discriminator-80)을 근거로 siblings-4000 +42.4 µs(폭37.2, 단일 커밋 귀속 미입증, 창2 −19.2)와 Bun heap A최대 대비+2.780 B/node(약0.12%, S6b 원인, 좁힘도+2.668)를 수용했습니다. 창1의 규칙상 미채택과 창2의22행 폭 안·교환비0 미채택, 좁힘 실패는 원시와 함께 보존하며 verification.md의 규칙은 바꾸지 않습니다. 최종 마감은 복원 머리의 typecheck·lint·unit과 동일 c153 소스의 나머지 관문 기록 재사용으로 수행하고 FCA·창을 추가하지 않습니다.
+
+### Ⅳ-5 — 이정표 재측정
+
+[세 레인22행 재측정](../../verification/branch-switch/iv-5-results.md)의 E/L은 switch-oneOf-80 3.335배 · switch-siblings-0 3.614배 · switch-payload-12 1.644배 · switch-nested-oneOf-20 7.374배입니다. E/S를 창 내부 앵커로 비교하며 창 사이 절대 µs는 비교하지 않습니다. 도달선 판정은 소유자 대기입니다.
