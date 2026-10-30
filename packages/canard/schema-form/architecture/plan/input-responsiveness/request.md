@@ -87,3 +87,15 @@ D1을 이번 단계에서 구현하지 않고 virtualization 기본값을 off로
 | 단계 | 결과 | 남은 결정·위험 |
 | --- | --- | --- |
 | IR-5 | Provider를 유지하고 서버 스냅숏·기존 commit effect의 hydration ref·실제 입력 슬롯 자신의 노출 원장으로 SSR과 React 18 내부 Suspense를 수정했습니다. 일반/StrictMode 슬롯·사용자 입력 렌더는 1→1/2→2, Suspense 내부 Probe는 실제 commit 1회이며 기존 항목당 두 layout effect 계약을 유지합니다. 숨긴 배열 항목은 CSR·hydration 모두 실제 입력 commit 전 원장에 기록되지 않아 remount 뒤 처음 표시할 때 placeholder를 유지합니다. round 3 마운트 여섯 행 E5/E4는 flat off/on 1.011869/0.996830, nested off/on 1.015909/1.012550, array off/on 1.011270/0.983844로 모두 사전 등록 1.02 이내입니다. 최종 unit4012·render/react18 각783·verify4839·Storybook251·엄격 production21 및 lint·typecheck·build가 통과했고 공개 도달 선언308개 의미차이0(props JSDoc만 주석 차이)·FCA 새 finding/diagnostic0·측정 runtime 일치를 확인했습니다. 최종 순차 관문은 [IR-5 기록](../../verification/input-responsiveness/ir-5-results.md)에 보존합니다. | 하이드레이션 때 준비만 하고 사용자 브랜치가 나중에 처음 렌더한 자식은 게이팅을 생략하는 기존 제한을 문서화했으며 후속 수정은 남깁니다. React 18에서 아직 하이드레이션되지 않은 내부 Suspense 경계로 들어가는 이후 갱신은 클라이언트 렌더링으로 전환할 수 있습니다. 소유자의 이번 단계 수정 여부와 D1·기본 off 결정은 별도입니다. 이전 제품의 flat-500 on FAIL·bootstrap·당시 예외 인계 결정과 원시는 superseded 이력으로 유지하며 현재 비용 판정은 round 3 제품의 새 창으로 합니다. |
+
+
+## 단계 마감 — 2026-10-31
+
+제품 끝은 `814d21ad4`(#506), 단계 가지는 `feat/schema-form-input-responsiveness`입니다. IR-0부터 IR-5·IR-1b까지 일곱 PR을 편입했고 이 마감은 기록만 추가합니다. 동기 정착·루트 onChange는 유지하고 lazy validator compile·개발 if 게이트 한정 준비·엄격 production 관문 수리·hydration-safe virtualization을 반영했습니다. 작업당 마운트 예산 Part B와 AJV8 sync-first는 미채택이며 D1은 구현하지 않았습니다.
+
+제품 끝에서 지정 원시 재현 여섯 명령을 모두 실행해 IR-0 510표본, IR-1 main520·backfill120·quiet200, derived gates10·spread4·backfill12, IR-2 180표본을 재현했습니다. 새 성능 창을 열거나 최종 제품의 모든 키 입력을 다시 측정한 것은 아닙니다. IR-5 round3 최종 비용 여섯 행은 모두 E5/E4≤1.02이며 이전 round2 FAIL은 다른 제품의 보존 이력입니다.
+
+D1 구현 여부·virtualization 기본 off·IR-5 수정의 최종 수락은 **소유자 대기**입니다. 초기 순서표와 D1 확정 문구는 과거 기록으로 유지하고 현행 상태는 이 절로 보충합니다. 소유자 원문 여덟 개와 맥락은 [465라운드](../../reviews/round-465-owner-answers.md), 종합 표·관문·미결·재현 결과는 [마감 결과](../../verification/input-responsiveness/closing-results.md)에 있습니다. 버전 번호와 단계 루트 PR 병합은 소유자가 직접 하며 이 문서 작업에서 실행하지 않습니다.
+
+
+마감 뒤 코디네이터 승인 보충(2026-10-31): 원장 옛 인용의 기계 경로를 보존하면서 재현 CLI가 이후 head에서도 실행되도록 benchmark-form의 diff 의존 경로 감사를 명시적 `--audit-base=<SHA>` 옵션으로 옮겼습니다. 기본 원시·해시·표 재현은 유지하고 benchmark 시험·lint·browser typecheck와 여섯 재현 명령을 검증합니다. schema-form 제품 변경은0이며 [마감 결과](../../verification/input-responsiveness/closing-results.md#마감-뒤-재현-도구-수리--2026-10-31)에 승인·기존 경로 행 번호와 결과를 보충합니다.
