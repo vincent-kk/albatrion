@@ -2,8 +2,6 @@
 
 ## Requirements
 
-- 기존 host 파생 레코드의 읽기 전용 조회는 WeakMap의 get만 수행하며, 레코드가 없으면 undefined를 반환하고 레코드나 슬롯을 만들지 않습니다. 슬롯을 채우는 소유자의 기존 생성 조회는 유지합니다.
-
 - `inactiveValue` 키는 unknown과 함수의 합집합으로 접지 않고 리터럴 종류를 열거하여 인라인 resolver의 문맥 형을 유지합니다.
 
 - B12 보존값은 공통 `InactiveValueContext`·`InactiveValueResolver<V>`·`InactiveValue<V>`로 선언하며 engine/core/package 경계를 통해 공개합니다. 정착이 직전 커밋 문맥을 구성하고 write가 등록·쓰기 거부를 소유합니다.
@@ -175,6 +173,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## Last Updated
 
-2026-10-30. 기존 host 파생 레코드의 읽기 전용 조회 계약.
+2026-10-29. B9-1 정적 선언 조회의 공통 구조 계약.
 
 계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077, 35C-08).

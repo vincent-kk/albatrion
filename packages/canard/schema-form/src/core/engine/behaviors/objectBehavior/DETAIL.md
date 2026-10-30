@@ -2,14 +2,14 @@
 
 ## Requirements
 
+- 일반 키 순서 복원은 전체 선언을 순회하며 비용은 O(선언 수 + 활성 이름 수)입니다. 기존 임시 Map·Set과 결과 형상 기록을 유지하고 별도 활성 이름 순위 배열을 만들지 않습니다.
+
 - D3b-1의 안정 형상은 root runtime의 지연 WeakMap이며 폼 전체 reset·폐기에서 해제하고 부분 reset에서는 유지한다. 결과 객체의 키 개수는 노드가 아닌 값 identity를 키로 하는 공통 named memo이다. 조립의 증명 조건·키 순서·값과 참조 안정성은 보존한다(SURFACE-065).
 
 - 최초 합성이 다음 조건을 모두 만족하면 classic loop 한 번으로 값 객체, names, stable shape, 키 수를 만들어 낸다. 조건은 local과 undeclaredValues가 없고, propertyOrder가 비었고, entries와 children의 길이·순서·이름이 같은 경우다. 조건이 맞지 않으면 기존 순서 합성으로 처리하며, undefined 방출과 예약 키의 의미, 같은 값의 참조 재사용은 그대로 보존한다. 속도 면에서는 자식 수에 비례하는 직접 검사와 쓰기만 하고, 적격 호출에서 Map/Set 구축과 중복 조회를 없앤다. 메모리 면에서는 기존 결과, names, stable shape를 유지하면서 일시 Map/Set 두 객체와 그 원소 저장을 없앤다. 불일치가 드러나기 전에 만들어 둔 일시 결과와 names는 보유하지 않는다(batch2 3-object-assembly).
 
 - 의존 방향은 `blueprint·record·behaviors 공유 보조 < objectBehavior < behaviors 뿌리 < FieldNode`이다. `branch/`와 `terminal/`은 내부 organ이다. 둘 다 이 종류 안에서만 소비하므로 경계 예외가 없다(NODE-009·016).
 - 두 전략은 청사진이 정하는 고정 선택이다. 이 행에서는 렌더 입력을 검사하지 않는다(NODE-028·042).
-
-- 활성 이름 수가 전체 childEntries 수의1/8 이하이고 기존 childOrderIndex가 준비되어 활성 이름을 모두 포함하면 각 이름의 첫 template 위치로 활성 이름만 정렬하여 선언 전순서를 얻습니다. 실제 활성 template의 위치를 쓰지 않으므로 동명 이종 분기에도 첫 이름 순서를 유지합니다. 증인이 없거나 누락되면 기존 전체 선언 순회로 후퇴하고 preferred·extras·정수 이름·undefined·NaN·참조 안정성을 유지합니다. 적격 호출의 전체 선언 순회 O(선언 수)를 활성 이름 O(활성 수 log 활성 수)로 바꾸며 임시 순위 배열만 만듭니다. 밀집 활성 호스트는 순위 조회·배열·정렬 없이 기존 선언 순회를 사용하며, 파생 레코드의 읽기 전용 조회는 빈 레코드를 만들지 않습니다. 추가 상주 구조는0입니다.
 
 ## API Contracts
 
@@ -28,13 +28,13 @@
 
 - 현재 형상의 자식만 합성하고, 빈 host의 `local`은 `{}`이며, 선언 키와 `undeclaredValues` 키의 결정적 순서가 유지된다(VALUE-034, SETTLE-042).
 
-### object-active-order — 기존 이름 순서 증인
-
-- 활성 이름이 선언의1/8 이하이고 완전한 기존 색인이 있으면 dormant 선언을 방문하지 않습니다. 밀집 활성 호스트는 순위를 조회하지 않으며 색인이 없는 호스트의 합성은 빈 파생 레코드를 만들지 않습니다. 첫 이름 전순서와 preferred·extras·예약 이름·정수 키·undefined·NaN·같은 값 참조를 유지하며 색인 부재·이름 누락 때에는 기존 전체 순회를 수행합니다.
-
 ### object-terminal — 통째 참조
 
 - terminal은 자식이 없고, 내부를 정규화하거나 복사하지 않으며, 방출이 원본 참조를 유지한다(NODE-005, VALUE-037).
+
+## History
+
+- 2026-10-30: 기존 이름 색인으로 활성 이름만 정렬하는 S6b는 plain 절감이 있었으나 Bun heap 보호를 실패했습니다. 읽기 전용 조회와1/8 활성 제한의1회 좁힘도 실패해 전체 선언 순회를 유지합니다. 구체 heap 기전은 확정하지 않았습니다.
 
 ## Last Updated
 

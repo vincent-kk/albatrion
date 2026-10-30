@@ -72,15 +72,6 @@ export const getBlueprintDerived = <
   return record as SlotValue<BlueprintDerived, Slot, Value>;
 };
 
-/** Inspect an existing host record without creating a record or preparing a slot. */
-export const peekHostDerived = <
-  Slot extends keyof HostDerived = never,
-  Value = never,
->(
-  host: object,
-): SlotValue<HostDerived, Slot, Value> | undefined =>
-  hostRecords.get(host) as SlotValue<HostDerived, Slot, Value> | undefined;
-
 /** Read one host record without preparing any slot. */
 export const getHostDerived = <
   Slot extends keyof HostDerived = never,
