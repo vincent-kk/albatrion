@@ -1,0 +1,38 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 repo:/packages/canard/schema-form
+
+·stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays
+106COUNT empty-fragment keyword-array-check=0
+
+··stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > escapes each ungated name once while producing both public paths
+107COUNT path-strings fast escaping=2 names=2
+
+·stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > reuses one escaped segment across contributions to the same general-path name
+107COUNT path-strings general escaping=2 names=2
+
+····stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'nested-d5-f4'
+OWNED_INLINE_FREEZE_COUNTS {"fixture":"nested-d5-f4","mode":"production","distinct":1706}
+
+stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'flat-500'
+OWNED_INLINE_FREEZE_COUNTS {"fixture":"flat-500","mode":"production","distinct":502}
+
+stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'oneOf-20'
+OWNED_INLINE_FREEZE_COUNTS {"fixture":"oneOf-20","mode":"production","distinct":111}
+
+stdout | src/core/engine/blueprint/__tests__/blueprint.owned-inline-counts.test.ts > bounds the design distinct freeze work for 'sample-0'
+OWNED_INLINE_FREEZE_COUNTS {"fixture":"sample-0","mode":"production","distinct":5}
+
+·············
+
+ Test Files  10 passed (10)
+      Tests  21 passed (21)
+   Start at  06:33:07
+   Duration  3.49s (transform 3.53s, setup 0ms, collect 12.81s, tests 631ms, environment 2.41s, prepare 686ms)

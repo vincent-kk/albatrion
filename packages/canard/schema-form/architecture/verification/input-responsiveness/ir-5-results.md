@@ -14,7 +14,7 @@ IO 없는 서버는 입력 40개를 렌더링하지만 IO 있는 클라이언트
 
 - 터미널 노드는 null, 브랜치는 폼 매니저를 클라이언트 스냅숏으로 반환합니다. 구독은 모듈 함수와 기존 `NOOP_FUNCTION`을 재사용합니다. 서버와 hydration 렌더는 모든 자식을 그대로 만들고, createRoot는 첫 렌더부터 기존 eager window를 적용합니다.
 - React 18 StrictMode는 hydration 커밋 뒤 effect 정리를 재실행하므로 `cache.clear()` 정리를 제거합니다. 캐시는 실제 훅 인스턴스 수명과 함께 회수되며, 실제 언마운트 뒤의 별도 전역 보유는 없습니다.
-- 폼 매니저가 있고 placeholder 없이 실제 마운트하는 모든 자식은 layout effect에서 노출 원장에 기록합니다. remount·enabled 전환 뒤에도 이미 하이드레이션한 노드를 다시 지연하지 않습니다. 이후 추가한 항목은 새 게이트 판정을 받습니다.
+- 폼 매니저가 있고 실제 입력이 마운트한 슬롯은 기존 입력 commit layout effect에서 자신의 노드를 노출 원장에 기록합니다. remount·enabled 전환 뒤에도 이미 하이드레이션한 노드를 다시 지연하지 않습니다. 이후 추가한 항목은 새 게이트 판정을 받습니다.
 - IO 부재 경고는 window가 있는 브라우저에서만 출력합니다. 경고 설명은 전체 eager 대체와 지원되는 SSR 동작을 안내합니다.
 
 시간·메모리 비용: 훅마다 안정된 snapshot 콜백과 React 외부 저장소 구독 상태가 추가되고, layout에서 hydration을 기록하여 passive 검사에는 null 스냅숏을 유지하고 추가 렌더를 만들지 않습니다. 노출 기록은 기존 WeakSet을 재사용하며 새 전역 레지스트리를 만들지 않습니다. 최초 인계에서는 마운트 비용을 측정하지 않았으며 round 2의 실제 브라우저 비용 대조를 아래에 따로 기록합니다.
@@ -25,7 +25,7 @@ FieldInputSlot DETAIL과 VirtualizationManager INTENT·DETAIL을 구현 전에 �
 
 ## 회귀 시험과 실패 관찰
 
-`src/__tests__/e2e/virtualization.hydration.render.test.tsx`는 off 대조군, 일반 on, StrictMode, 중첩 40자식 remount, 40항목 배열 push, 사용자 브랜치 Suspense, createRoot 첫 커밋, enabled 전환과 문턱 미만 배열 항목 보존 두 모드의 10개 시험을 실행합니다. 별도의 슬롯 소유 시험은 일반·StrictMode에서 hydration 커밋 뒤 슬롯과 사용자 입력의 추가 렌더가 없음을 확인합니다. 일반·StrictMode는 서버 DOM identity와 값을 보존하고 placeholder·recoverable error가 없음을 확인합니다. 배열 push는 기존 40개를 보존하면서 /40 항목만 지연하고 값 41개는 모두 유지합니다. CSR 첫 layout 관측은 입력 20개·placeholder 20개입니다.
+`src/__tests__/e2e/virtualization.hydration.render.test.tsx`는 off 대조군, 일반 on, StrictMode, 중첩 40자식 remount, 40항목 배열 push, 사용자 브랜치 Suspense, createRoot 첫 커밋, enabled 전환과 문턱 미만 배열 항목 보존·숨김 항목의 실제 commit 구별 두 모드의 12개 시험을 실행합니다. 별도의 슬롯 소유 시험은 일반·StrictMode에서 hydration 커밋 뒤 슬롯과 사용자 입력의 추가 렌더가 없음을 확인합니다. 일반·StrictMode는 서버 DOM identity와 값을 보존하고 placeholder·recoverable error가 없음을 확인합니다. 배열 push는 기존 40개를 보존하면서 /40 항목만 지연하고 값 41개는 모두 유지합니다. CSR 첫 layout 관측은 입력 20개·placeholder 20개입니다.
 
 React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 결함으로 실패하고, off·CSR·잔여 위험 기대 실패는 통과합니다. 환경 경고 시험은 수정 전 서버의 잘못된 경고와 mismatch 문구로 2개 실패·1개 통과했습니다. 독립 회귀 강도 확인으로 cache.clear만 복원하면 StrictMode의 input identity 기대가 실패하고, 노출 원장 기록만 제거하면 중첩 remount·enabled 전환에서 입력이 40→20으로 줄어 실패했습니다. 모든 탐침은 지정된 변경 파일에만 적용하고 즉시 복원했습니다.
 
@@ -33,7 +33,7 @@ React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 
 
 ## 최초 인계의 IR5-SUSPENSE-18과 round 2 수정
 
-최초 인계에서는 React 19만 사용자 브랜치 입력 내부 Suspense의 DOM을 보존했고, React 18은 `This Suspense boundary received an update before it finished hydrating`를 보고하여 기대 실패로 유지했습니다. 독립 검토는 이 갱신이 라이브러리의 null→manager passive 일관성 검사에서 비롯됨을 지적했습니다. Round 2는 layout ref로 검사 값 null을 유지하여 이 추가 렌더를 없앴고, 같은 시험을 React 18에서도 일반 `it`로 복구했습니다. 아래의 최초 인계 관문 수치는 당시 기대 실패를 포함하는 역사이며 최종 증거는 round 2 관문입니다.
+최초 인계에서는 React 19만 사용자 브랜치 입력 내부 Suspense의 DOM을 보존했고, React 18은 `This Suspense boundary received an update before it finished hydrating`를 보고하여 기대 실패로 유지했습니다. 독립 검토는 이 갱신이 라이브러리의 null→manager passive 일관성 검사에서 비롯됨을 지적했습니다. Round 2는 layout ref로 검사 값 null을 유지하여 이 추가 렌더를 없앴고, 같은 시험을 React 18에서도 일반 `it`로 복구했습니다. 아래의 최초 인계 관문 수치는 당시 기대 실패를 포함하는 역사이며 round 2와 round 3의 최종 증거는 각 절의 관문입니다.
 
 ## 순차 관문
 
@@ -112,12 +112,12 @@ React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 
 
 | 미결 | 코드 근거 | 제안한 수정 |
 | --- | --- | --- |
-| 폐기 렌더의 게이트 결정이 캐시에 남음 | `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx:137`의 렌더 중 cache.set | 렌더별 사본으로 구성하고 커밋에서만 보유 캐시에 반영합니다. |
-| 제거된 가지의 엔트리 잔존과 장기 생존 배열 캐시 증가 | 같은 파일 `:73`의 Map 보유와 `:137`의 삽입, 삭제 경로 부재 | 커밋 시 살아 있는 자식으로 pruning하거나 별도 단조 key와 WeakMap을 사용합니다. |
-| 상태를 유지하는 Fast Refresh에서 옛 자식 closure 보유 | 같은 파일 `:82`의 CachedComponent 재사용, `packages/winglet/react-utils/src/hooks/useLazyConstant.ts:67` | 개발 재해석 세대별 컴포넌트 갱신 또는 안정된 컴포넌트가 최신 커밋 값을 읽도록 구조를 바꿉니다. |
+| 폐기 렌더의 게이트 결정이 캐시에 남음 | `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx:141`의 렌더 중 cache.set | 렌더별 사본으로 구성하고 커밋에서만 보유 캐시에 반영합니다. |
+| 제거된 가지의 엔트리 잔존과 장기 생존 배열 캐시 증가 | 같은 파일 `:79`의 Map 보유와 `:141`의 삽입, 삭제 경로 부재 | 커밋 시 살아 있는 자식으로 pruning하거나 별도 단조 key와 WeakMap을 사용합니다. |
+| 상태를 유지하는 Fast Refresh에서 옛 자식 closure 보유 | 같은 파일 `:88`의 CachedComponent 재사용, `packages/winglet/react-utils/src/hooks/useLazyConstant.ts:67` | 개발 재해석 세대별 컴포넌트 갱신 또는 안정된 컴포넌트가 최신 커밋 값을 읽도록 구조를 바꿉니다. |
 | push와 같은 batch의 새 항목 focus/select가 구독 전에 소실 | `src/components/FieldProxy/components/DeferredFieldProxy/DeferredFieldProxy.tsx:46`, `src/core/engine/write/utils/entry/dispatchRequest.ts:31`, `src/hooks/fieldNode/useFieldNodeSubscribe.ts:57` | 노드별 미소비 명령을 기록하고 구독 직후 catch-up하거나 커밋까지 명령을 지연합니다. |
-| useReference의 렌더 중 공유 ref 쓰기 | useChildFields `:107`, `packages/winglet/react-utils/src/hooks/useReference.ts:92`, `src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx:87` | 이벤트가 읽는 값은 커밋 시점에 갱신하는 ref 또는 커밋을 보장하는 이벤트 핸들 구조로 전환합니다. |
-| 하이드레이션 때 준비하고 나중에 첫 렌더한 자식의 게이트 생략 | `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx`의 준비 시 deferredManager 고정과 캐시 재사용 | 게이트를 자식의 최초 실제 마운트에서 판정하고 자식별 hydration 감지로 지연된 Suspense hydration도 구별합니다. 이번 단계에서는 수정하지 않습니다. |
+| useReference의 렌더 중 공유 ref 쓰기 | useChildFields `:111`, `packages/winglet/react-utils/src/hooks/useReference.ts:92`, `src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx:87` | 이벤트가 읽는 값은 커밋 시점에 갱신하는 ref 또는 커밋을 보장하는 이벤트 핸들 구조로 전환합니다. |
+| 하이드레이션 때 준비하고 나중에 첫 렌더한 자식의 게이트 생략 | `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx:96`의 준비 시 deferredManager 고정과 캐시 재사용 | 게이트를 자식의 최초 실제 마운트에서 판정하고 자식별 hydration 감지로 지연된 Suspense hydration도 구별합니다. 이번 단계에서는 수정하지 않습니다. |
 
 ## Round 2 마운트 창 이력
 
@@ -209,3 +209,52 @@ codex 원문과 브리프의 Opus 요약을 코드와 대조했습니다. round 
 Suspense 안에 Probe를 넣고 layout commit을 정확히 1회 기대하여 경계가 서버 DOM으로만 남는 경우도 검출합니다. 두 프로젝트의 한정 hydration 12개·렌더 수 2개·기존 layout-count 1개, 합계 30개가 통과했습니다. 숨김 항목은 실제 입력을 한 번도 마운트하지 않았으므로 이후 표시할 때 원장에 의해 게이트가 생략되지 않고 placeholder로 남습니다.
 
 공개 문서는 하이드레이션 자체의 갱신 없음과 React 18에서 아직 하이드레이션되지 않은 경계로 들어가는 이후 갱신의 client rendering 전환을 구별했습니다. 준비만 된 자식을 탭·아코디언에서 나중에 처음 렌더하면 비게이트 결정이 유지되는 기존 제한은 고치지 않고 DETAIL·README·영어/한국어 SPECIFICATION과 미결 목록에 남겼습니다. 후속안은 자식별 hydration 감지와 최초 실제 마운트 시 gate 판정입니다. 최초 기록의 스냅숏 재렌더 표현과 현재 존재하지 않는 terminal 재렌더 설명도 바로잡았습니다.
+
+
+### Round 3 준비 실패의 정정
+
+새 숨김 항목 픽스처는 처음에 children 없는 `Form.Render`를 써서 런타임 한정 시험은 통과했으나 준비 build의 typecheck가 실패했습니다. 이 시도는 통과 증거로 세지 않습니다. 기존 시험의 기대는 건드리지 않고 새 픽스처를 공개 `Form.Input path="/items"`로 고친 뒤 round 2 제품에서 두 실패를 다시 재현했습니다. round 3 소스를 복원하여 두 버전 30개 한정 시험과 전체 준비 build exit 0을 다시 확인했습니다. 준비용 smoke는 프로토콜 검사일 뿐 공식 표본에 포함하지 않습니다.
+
+### Round 3 최종 제품의 마운트 비용
+
+측정 E5 소스는 `f7ab4800e1d4c11ec0138faec822ca64b3deaeef`이며 실제 입력 commit으로 원장을 옮긴 제품입니다. E4는 `be1a7986756bc326757d0d2055bd92010917ca7d`의 이전 창과 동일한 불변 product/browser 바이트입니다. production React 19.2.6·Chromium 145.0.7632.6·900×700에서 기존 mountFixture/samplePageWithCpu로 paired relative 창 한 번을 실행했습니다. 각 행·레인 3예열·10새페이지, 총 36예열·120채택이며 시험·빌드는 겹치지 않았습니다. 시작 30초 CPU 관찰에서 30% 초과 프로세스는 0개였습니다. 레인별 중앙값의 E5/E4 ≤1.02라는 규칙은 그대로입니다.
+
+| 폼 | 가상화 | 지표 | E4 중앙값 ms | E5 중앙값 ms | E5/E4 | 판정 |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| flat-500 | off | wallMs | 50.550 | 51.150 | 1.011869 | 통과 |
+| flat-500 | on | eagerPaintedMs | 31.550 | 31.450 | 0.996830 | 통과 |
+| nested-d5-f4 | off | wallMs | 88.000 | 89.400 | 1.015909 | 통과 |
+| nested-d5-f4 | on | eagerPaintedMs | 87.650 | 88.750 | 1.012550 | 통과 |
+| array-1000 | off | wallMs | 199.650 | 201.900 | 1.011270 | 통과 |
+| array-1000 | on | eagerPaintedMs | 58.800 | 57.850 | 0.983844 | 통과 |
+
+여섯 행 모두 사전 등록 관문을 통과했습니다. 이전 round 2의 flat-500 on FAIL과 bootstrap 구간, 코디네이터의 당시 예외 인계 결정은 다른 제품의 역사로 보존하며 현행 제품의 비용 판정에 재사용하지 않습니다. 이전 창의 원시를 삭제하거나 바꾸지 않았습니다. [공식 집계](raw/ir-5-round3/round3-complete.json)·[156페이지 원시](raw/ir-5-round3/mount-pages.json.gz)·[동결 입력](raw/ir-5-round3/inputs.json)·[실행기](raw/ir-5-round3/run-mount.mts)에 표본과 CPU·hash를 보존했고 별도 Python 중앙값 재계산도 일치했습니다. off는 wallMs, on은 eagerPaintedMs이며 bootstrap으로 규칙을 바꾸지 않았습니다.
+
+
+### Round 3 최종 순차 관문과 제품 일치
+
+공식 창이 끝난 뒤 아래 순서로 하나씩 실행했으며 전부 exit 0·실패 0입니다. 준비 중 children 없는 Form.Render 형 오류는 위에서 별도 실패로 기록했으며 이 관문 표는 고친 새 픽스처에 대한 최종 실행입니다.
+
+| 순서 | 명령·검사 | 결과 |
+| --- | --- | --- |
+| 1 | `test --run --project unit` | 609파일·4012통과·1todo, 실패 0 |
+| 2 | `test --run --project render` | 134파일·783통과, 실패 0 |
+| 3 | `test --run --project react18` | 134파일·783통과, 실패 0 |
+| 4 | `test:verify --run` | 748파일·4839통과·1todo, 실패 0 |
+| 5 | `test --run --project storybook (Chromium 단독)` | 100파일·251통과, 실패 0 |
+| 6 | `엄격 test:production` | 10파일·21통과, 실패 0; oneOf-20 distinct freeze 111, 기존 상한 유지 |
+| 7 | `lint` | exit 0 |
+| 8 | `typecheck` | exit 0 |
+| 9 | `build` | runtime 세 형식·선언·development flag/gate selection 검사·agents14개 해시·typecheck exit 0 |
+| 10 | 공개 선언 토큰 대조 | 공개 진입점 도달 308개, export·type·signature 의미 차이 0·해석 실패 0; props JSDoc만 주석 바이트 차이 |
+| 11 | FCA facts→scan→6범위 validate→verification | facts1674 exact·미해결0; be1a 불변 기준 대비 새 finding·diagnostic0 |
+
+verify-unit은 614파일·4056통과·1todo, verify-render는 134파일·783통과입니다. hydration12개와 슬롯 렌더 수2개, 기존 layout-count1개는 양 프로젝트에서 모두 일반 성공입니다. Suspense Probe는 실제 커밋 1회를 요구하므로 아직 hydrate하지 않은 경계가 DOM identity만 유지하는 경우도 통과하지 못합니다. 숨김 CSR·hydration 두 회귀는 실제 입력을 만들지 않은 wrapper를 원장에 쓰던 round 2 제품에서는 실패하고 고친 제품에서는 placeholder를 유지합니다. 기존 arrayMountLayoutEffects의 기대는 그대로입니다.
+
+공개 바이트 차이는 `components/Form/components/FormCore/types/props.d.ts` 한 곳의 승인된 SSR/CSR JSDoc뿐입니다. 사설 훅의 tuple과 인자 변경은 공개 도달 그래프 밖이며 공개 index·Provider는 그대로입니다. 최종 `dist/index.mjs` SHA-256은 `26266aad8a72b5876ace3b1c47e9c501d83d7ac2b13c7d32bea4e1c40e16350d`로 실제 새 창의 frozen E5 product와 일치합니다. 모든 제품 소스는 측정한 f7ab4800e와 동일하며 이후 커밋은 결과 기록만 추가합니다. agents14개 파일의 경로·SHA-256을 manifest와 전량 일치시켰고, tracked runtime/adapter 변경은 없어 별도 build 커밋 대상이 없습니다.
+
+FCA 세 호출은 스냅숏 `c95b6b2ac750a40941c1b3ae70c89ace66cd7d7ccb76367359ef447f7025ae7a`를 공유합니다. 동일 도구·설정의 불변 be1a 기준과 압축 원본의 finding·diagnostic 객체를 전량 대조했습니다. scan 위반201·validate finding202(warning200·info1·기존 error1)·verification 위반21·진단177이 유지되며 새 항목은 0입니다. 기존 FieldProxy↔FieldInputSlot 순환과 열거 불확정은 남아 전체 절대 판정은 FAIL, 도구 상태는 indeterminate입니다. 차분 관문만 통과이며 깨끗한 전체 감사라고 주장하지 않습니다. 새 hydration12개·렌더 수2개는 exact로 상한 안입니다. Scan complete: 202 findings.
+
+[최종 관문 집계](raw/ir-5-round3/gate-results.json), [빌드 동일성](raw/ir-5-round3/build-identity.json), [FCA 대조](raw/ir-5-round3/fca-comparison.json)에 근거를 보존했습니다. 같은 디렉터리에 다섯 JSON 시험 보고서와 한정 시험, production 출력, FCA 전체 세 압축 원본을 기계 경로 없이 보존합니다. 기존 두 round 원시는 변경하지 않았고 request의 IR-4까지 기준 바이트 접두부를 보존했습니다.
+
+Round 3 인계는 숨김 항목의 잘못된 원장 기록 수정, 실제 Suspense commit1, 기존 두 effect 계약과 일반/StrictMode 추가 렌더0, CSR·hydration 뒤 게이팅, 여섯 비용 행 전체 통과를 포함합니다. 하이드레이션 중 준비만 된 자식의 나중 첫 마운트 게이트 생략과 React 18의 경계 hydration 전 이후 갱신 제한, 표의 기존 여섯 후속 항목은 남깁니다. 소유자의 이번 단계 별도 수정 판단과 D1·가상화 기본 off 결정은 계속 별도이며 코디네이터의 독립 검토와 PR 개설로 인계합니다.
