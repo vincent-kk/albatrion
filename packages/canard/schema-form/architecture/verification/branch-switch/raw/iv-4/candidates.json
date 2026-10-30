@@ -73,15 +73,19 @@
   },
   {
     "id": "S6b",
-    "commit": "6f7ccb7b6",
-    "verdict": "dropped",
-    "probe": "S6b-narrow-role-corrected/probe.json.gz",
-    "reason": "허가된1회 좁힘은 두 표적·세 보호 plain 관문을 통과했으나 Bun heap A최대2253.939/B중앙2256.607로 실패해 S6b 전체를 최종 묶음에서 제외합니다. 초기 Phase2 유지 판정과 원시는 따로 보존합니다.",
-    "phase2Commit": "289538f96",
-    "phase2Probe": "S6b/probe.json.gz",
-    "phase2Verdict": "kept",
-    "heap": "S6b-narrow-heap/judgment.json",
-    "removedBy": "dd551d4d92346f1cf7b2099cef94edc380dce15f"
+    "commit": "289538f96",
+    "verdict": "kept",
+    "probe": "S6b/probe.json.gz",
+    "reason": "초기형은 Phase2 탐침을 통과했고 소유자가 창1 다섯 cut을 이 창에 한한 예외로 채택했습니다. 창1의 규칙상 미채택과 Bun heap 실패는 그대로 보존합니다.",
+    "ownerException": "msg_df3d7b180aaf",
+    "narrowing": {
+      "commit": "6f7ccb7b6",
+      "verdict": "dropped",
+      "probe": "S6b-narrow-role-corrected/probe.json.gz",
+      "heap": "S6b-narrow-heap/judgment.json",
+      "removedBy": "dd551d4d92346f1cf7b2099cef94edc380dce15f",
+      "reason": "허가된1회 좁힘은 두 표적·세 보호 plain 관문을 통과했으나 Bun heap A최대2253.939/B중앙2256.607로 실패해 S6b 전체를 최종 묶음에서 제외합니다. 초기 Phase2 유지 판정과 원시는 따로 보존합니다."
+    }
   },
   {
     "id": "S3a",

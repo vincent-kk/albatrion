@@ -115,6 +115,12 @@ if (mode === '--allocation') {
           verdict: candidate.phase2Verdict,
           heap: undefined,
         });
+      if (candidate.narrowing)
+        probes.push({
+          file: candidate.narrowing.probe,
+          verdict: candidate.narrowing.verdict,
+          heap: candidate.narrowing.heap,
+        });
       for (const probe of probes) {
         const { records, inputs, execution, ...summary } = compressed(
           probe.file,
