@@ -27,6 +27,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { getCachedPointerSegments } from '../../../utils/paths/getCachedPointerSegments';
 import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
+import type { DependencyPresenceWork } from '../../types/dependencyPresence';
 import type {
   RegistrationSink,
   SplitBucket,
@@ -502,6 +503,7 @@ class DependencyIndex {
    * @param metrics - Optional record-mode insertion counter
    * @param settlement - Call identity isolating the ancestor-step memo
    * @param runtime - Optional root runtime owning bounded dynamic syntax
+   * @param work - Optional call-local sets consumed before the next query
    * @returns Bound owners, state-only owners and unbound templates for each query phase
    */
   affectedByPresence(
@@ -510,16 +512,25 @@ class DependencyIndex {
     metrics?: { ownerInsertions: number },
     settlement?: { dependencyPresenceMemo?: DependencyPresenceMemo },
     runtime?: object,
+    work?: DependencyPresenceWork,
   ): {
     owners: Set<string>;
     stateOnly: Set<string>;
     outerTemplates: Set<string>;
     directTemplates: Set<string>;
   } {
-    const owners = new Set<string>();
-    const stateOnly = new Set<string>();
-    const outerTemplates = new Set<string>();
-    const directTemplates = new Set<string>();
+    const owners = work?.owners ?? new Set<string>();
+    const stateOnly = work?.stateOnly ?? new Set<string>();
+    const outerTemplates = work?.outerTemplates ?? new Set<string>();
+    const directTemplates = work?.directTemplates ?? new Set<string>();
+    if (work) {
+      owners.clear();
+      stateOnly.clear();
+      outerTemplates.clear();
+      directTemplates.clear();
+      work.ancestorOwners.clear();
+      work.direct.clear();
+    }
     if (!this.root)
       return { owners, stateOnly, outerTemplates, directTemplates };
     const childName = parsePointerSegment(childSegment);
@@ -527,28 +538,29 @@ class DependencyIndex {
       return { owners, stateOnly, outerTemplates, directTemplates };
     const changedPath = appendSegment(hostPath, childName);
     const changedSegments = this.pathSegments(changedPath, runtime);
-    const ancestorOwners = new Set<string>();
+    const ancestorOwners = work?.ancestorOwners ?? new Set<string>();
     let memo = settlement?.dependencyPresenceMemo;
     if (!memo) {
       memo = new Map();
       if (settlement) settlement.dependencyPresenceMemo = memo;
     }
     const levels = this.presenceLevels(hostPath, memo);
-    this.collectPresenceOwners(
-      levels.flat(),
-      changedPath,
-      changedSegments,
-      ancestorOwners,
-      outerTemplates,
-      metrics,
-    );
+    for (const level of levels)
+      this.collectPresenceOwners(
+        level,
+        changedPath,
+        changedSegments,
+        ancestorOwners,
+        outerTemplates,
+        metrics,
+      );
     for (const owner of ancestorOwners)
       if (isDescendantPath(owner, hostPath)) stateOnly.add(owner);
       else owners.add(owner);
     const depth = this.pathSegments(hostPath, runtime).length + 1;
     const reached = levels.length === depth ? levels[levels.length - 1] : [];
     const pending = this.presenceChildren(reached, childName);
-    const direct = new Set<string>();
+    const direct = work?.direct ?? new Set<string>();
     const subtree: DependencyNode[] = [];
     while (pending.length) {
       const child = pending.pop()!;
