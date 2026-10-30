@@ -13,7 +13,11 @@ export default [
     // Benchmark entry scripts and competitor adapters run under tsx/node, never
     // Vite HMR. The local-component + value-export mix that react-refresh flags
     // is expected here and is not a real fast-refresh hazard.
-    files: ['src/utils/*.tsx', 'src/benchmarks/competitors/**/*.tsx'],
+    files: [
+      'src/utils/*.tsx',
+      'src/benchmarks/competitors/**/*.tsx',
+      'browser-bench/**/*.tsx',
+    ],
     rules: { 'react-refresh/only-export-components': 'off' },
   },
 ];
