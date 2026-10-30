@@ -476,6 +476,7 @@
 ### settle-control-layers-ownership — 조각 소유권과 층 순서 보존
 
 - 현재 구현의 참조 사본과 모든 장면·노드·선택 조합에서 층, 선언 ID, 스키마 경로, controls·host 참조와 순서가 같은지 확인한다. `properties` 이름, 중첩 조각, 형제 접두, items·additionalItems·prefixItems, 선택하지 않은 자식 선언과 게이트 꺼짐·켜짐을 포함한다.
+- 템플릿 ID 목록은 캐시 도메인과 같이 개발 빌드에서만 동결한다. 준비가 끝난 목록은 읽기 전용이며 production 소비자는 이를 변경하지 않는다. 개발 모드의 변경 감지는 유지하고 production에서는 템플릿별 동결 한 번의 비용을 없애며 목록의 보유량과 참조는 유지한다.
 
 ### settle-control-layers-scaling — 호출별 소유 경로 수집의 작업량
 
@@ -892,4 +893,4 @@
 
 ## Last Updated
 
-2026-10-29. B9-1 독립 검토: 실제 동적 키 순서·선택 예외 복원·부모별 진입 묶음과 H8 차분 증거.
+2026-10-31. IR-1b: 컨트롤 템플릿 ID 목록의 개발 전용 동결과 production 읽기 전용 계약.

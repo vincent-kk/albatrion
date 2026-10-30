@@ -106,7 +106,7 @@ export const prepareControlLayers = (
   }
   return (record.controlLayerIndex = {
     hasExitControls,
-    ids: Object.freeze(ids),
+    ids: process.env.NODE_ENV !== 'production' ? Object.freeze(ids) : ids,
     node: groups.length
       ? {
           all: groups,
