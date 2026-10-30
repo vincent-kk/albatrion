@@ -4,7 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Dictionary, Optional } from '@aileron/declare';
 
 import type { Behavior } from '../../../../record';
-import { getHostDerived } from '../../../../utils/cache/derivedRecords';
+import { peekHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
@@ -199,10 +199,13 @@ export const assembleObject: Behavior['assemble'] = (
     }
   }
   // Built by settle getSlotChildIndex; each inner map's first value is the name's first childEntries position.
-  const orderIndex = getHostDerived<
-    'childOrderIndex',
-    ReadonlyMap<string, ReadonlyMap<object, number>>
-  >(node.blueprintNode).childOrderIndex;
+  const orderIndex =
+    childValues.size * 8 <= entries.length
+      ? peekHostDerived<
+          'childOrderIndex',
+          ReadonlyMap<string, ReadonlyMap<object, number>>
+        >(node.blueprintNode)?.childOrderIndex
+      : undefined;
   let ordered: { name: string; rank: number }[] | undefined;
   if (orderIndex) {
     ordered = [];

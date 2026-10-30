@@ -1,10 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { getHostDerived } from '../../../../../utils/cache/derivedRecords';
+import {
+  getHostDerived,
+  peekHostDerived,
+} from '../../../../../utils/cache/derivedRecords';
 import { assembleObject } from '../assembleObject';
 import { assembleObjectBaseline } from './fixtures/assembleObject.baseline';
 
-const fixture = () => {
+const fixture = (withIndex = true) => {
   const first = {},
     second = {},
     replacement = {};
@@ -32,12 +35,19 @@ const fixture = () => {
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof assembleObject>[0];
   const index = new Map<string, Map<object, number>>([
-    ['alpha', new Map([[first, 0], [replacement, 2]])],
+    [
+      'alpha',
+      new Map([
+        [first, 0],
+        [replacement, 2],
+      ]),
+    ],
     ['beta', new Map([[second, 1]])],
   ]);
-  getHostDerived<'childOrderIndex', typeof index>(
-    node.blueprintNode,
-  ).childOrderIndex = index;
+  if (withIndex)
+    getHostDerived<'childOrderIndex', typeof index>(
+      node.blueprintNode,
+    ).childOrderIndex = index;
   const children = [
     { name: 'beta', emit: 2 },
     { name: 'alpha', emit: 1, blueprintNode: replacement },
@@ -79,6 +89,34 @@ describe('prepared active-name order', () => {
       'beta',
     ]);
     expect(reads()).toBeGreaterThan(0);
+  });
+
+  it('does not query ranks when active names exceed one eighth of the declarations', () => {
+    const { node, children } = fixture();
+    Object.defineProperty(node.blueprintNode, 'childEntries', {
+      value: node.blueprintNode.childEntries.slice(0, 3),
+    });
+    const index = getHostDerived<
+      'childOrderIndex',
+      Map<string, Map<object, number>>
+    >(node.blueprintNode).childOrderIndex!;
+    const lookup = vi.spyOn(index, 'get');
+    expect(Object.keys(assembleObject(node, children) as object)).toEqual([
+      'alpha',
+      'beta',
+    ]);
+    expect(lookup).not.toHaveBeenCalled();
+  });
+
+  it('does not create a derived record when the order witness is absent', () => {
+    const { node, children, reads } = fixture(false);
+    expect(peekHostDerived(node.blueprintNode)).toBeUndefined();
+    expect(Object.keys(assembleObject(node, children) as object)).toEqual([
+      'alpha',
+      'beta',
+    ]);
+    expect(reads()).toBeGreaterThan(0);
+    expect(peekHostDerived(node.blueprintNode)).toBeUndefined();
   });
 
   it('preserves preferred and extra ordering, omission, NaN and equal-result identity', () => {
