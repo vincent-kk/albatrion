@@ -7,6 +7,7 @@ import { gunzipSync } from 'node:zlib';
 
 import ir0Cases from '../../fixtures/input-responsiveness/cases.json';
 import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
+import { checkDerivedRecords } from './helpers/checkDerivedRecords';
 import { summarizePage } from './helpers/summarizePage';
 import { summarizePairs } from './helpers/summarizePairs';
 import { summarizeResults } from './helpers/summarizeResults';
@@ -163,3 +164,7 @@ console.log(
     '_RAW_REPRODUCED samples=' +
     complete.samples.length,
 );
+if (process.argv.includes('--derived')) {
+  assert.ok(stage, '--derived requires --stage=ir-1');
+  checkDerivedRecords(destination);
+}
