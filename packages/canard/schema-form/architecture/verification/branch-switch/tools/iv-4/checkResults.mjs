@@ -7,6 +7,7 @@ import { gunzipSync } from 'node:zlib';
 import { attributeNativeAllocations } from './helpers/attributeNativeAllocations.mjs';
 import { summarizeAllocations } from './helpers/summarizeAllocations.mjs';
 import { summarizeProbe } from './helpers/summarizeProbe.mjs';
+import { verifyStoredWindow } from './helpers/verifyStoredWindow.mjs';
 
 const raw = new URL('../../raw/iv-4/', import.meta.url);
 const read = (name) => JSON.parse(fs.readFileSync(new URL(name, raw), 'utf8'));
@@ -124,6 +125,11 @@ if (mode === '--allocation') {
   console.log('IV_4_CANDIDATES_OK');
 } else if (mode === '--final') {
   const final = read('final.json');
+  assert.match(final.windowDirectory, /^window-\d+$/);
+  const storedWindow = verifyStoredWindow(
+    new URL(final.windowDirectory + '/', raw),
+  );
+  assert.equal(final.productHead, storedWindow.productHead);
   assert.equal(final.productHead, final.window.productHead);
   assert.ok(
     final.staticChecks.length >= 10 &&

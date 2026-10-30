@@ -12,7 +12,10 @@ import {
 } from './helpers/observeMeasurement.mjs';
 import { summarizeProbe } from './helpers/summarizeProbe.mjs';
 
-const [root, mode, targetsText, agentText] = process.argv.slice(2);
+const [root, mode, targetsText, agentText, wideTimeoutText] =
+  process.argv.slice(2);
+const wideTimeoutMs = Number(wideTimeoutText ?? 59000);
+assert.ok(wideTimeoutMs === 59000 || wideTimeoutMs === 120000);
 const agentPid = Number(agentText);
 assert.ok(Number.isSafeInteger(agentPid) && agentPid > 0);
 assert.ok(['probe', 'reprobe', 'allocation', 'smoke'].indexOf(mode) !== -1);
@@ -48,7 +51,13 @@ const execution = Object.fromEntries(
     '../window/helpers/sampleProcessCpu.mjs',
   ].map((name) => [name, digest(path.resolve(here, name))]),
 );
-json(marker, { mode, targets, node: process.version, execution });
+json(marker, {
+  mode,
+  targets,
+  node: process.version,
+  execution,
+  wideTimeoutMs,
+});
 const records = [];
 for (const row of rows)
   for (let repeat = 0; repeat < (plain ? repetitions : 1); repeat++)
@@ -85,7 +94,7 @@ for (const row of rows)
         {
           env: { ...process.env, NODE_ENV: 'production' },
           encoding: 'utf8',
-          timeout: 59000,
+          timeout: row === 'switch-siblings-4000' ? wideTimeoutMs : 59000,
         },
       );
       fs.writeFileSync(
@@ -104,6 +113,7 @@ for (const row of rows)
           repeat,
           status: run.status,
           signal: run.signal,
+          timeoutMs: row === 'switch-siblings-4000' ? wideTimeoutMs : 59000,
           timeout: Boolean(
             run.error && 'code' in run.error && run.error.code === 'ETIMEDOUT',
           ),

@@ -1,0 +1,19 @@
+{
+  "label": "without-S6b",
+  "head": "4a3108f29ca90029702021405ab5bc0eeae180f3",
+  "bundle": {
+    "bytes": 856499,
+    "sha256": "ae3a891ce31a4193e18a3b2905eadbedbf2312d46dcbc8972ddead0dc9bdfbb6"
+  },
+  "command": [
+    "bun",
+    "bench/legacy-compare/node-and-settle.bench.ts",
+    "--heap-child"
+  ],
+  "status": 0,
+  "signal": null,
+  "execution": {
+    "bytes": 2567,
+    "sha256": "25c4f2fedfab1cacfea99b7ac4fb954748ecad9fdff32322c573ba579735b03f"
+  }
+}

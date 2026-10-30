@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { attributeNativeAllocations } from './helpers/attributeNativeAllocations.mjs';
 import { summarizeAllocations } from './helpers/summarizeAllocations.mjs';
 import { summarizeProbe } from './helpers/summarizeProbe.mjs';
+import { verifyStoredWindow } from './helpers/verifyStoredWindow.mjs';
 
 const records = [];
 let pid = 1;
@@ -117,3 +118,10 @@ assert.equal(summarizeProbe(five, ['target'], 5).processes, 20);
 assert.throws(() => summarizeProbe(five, ['target']));
 assert.throws(() => summarizeProbe(five.slice(1), ['target'], 5));
 console.log('IV_4_FIVE_REPETITIONS_OK');
+
+assert.throws(
+  () =>
+    verifyStoredWindow(new URL('../../raw/iv-4/window-1/', import.meta.url)),
+  /Stored window is not adoptable/,
+);
+console.log('IV_4_REJECTED_WINDOW_VERIFIED');

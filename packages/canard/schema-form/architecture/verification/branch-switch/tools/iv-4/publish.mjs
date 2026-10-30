@@ -16,7 +16,14 @@ for (const lane of ['A', 'B'])
       path.join(root, lane, 'inputs.json'),
       'inputs-' + lane + '.json',
     ]);
-for (const name of ['probe.json', 'allocation.json', 'failure.json'])
+for (const name of [
+  'probe.json',
+  'allocation.json',
+  'failure.json',
+  'probe-started.json',
+  'reprobe-started.json',
+  'allocation-started.json',
+])
   if (fs.existsSync(path.join(root, name)))
     inputs.push([path.join(root, name), name]);
 for (const name of fs.readdirSync(path.join(root, 'raw.noindex')))
