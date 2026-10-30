@@ -82,3 +82,21 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md
 | doc-coverage | 미인용66·그 밖 문제0, 기존과 같음 |
 
 [종합 마감 결과](../../verification/input-responsiveness/closing-results.md), [검사 요약](../../verification/input-responsiveness/raw/closing/ledger-checks.json), [전체 출력](../../verification/input-responsiveness/raw/closing/ledger-logs.json.gz)에 baseline과 최종을 함께 보존합니다. 새 추가분의 인용·소유자 원문·분류·계획 문제 증가는0입니다. benchmark 재현 도구의 승인된 수리는 별도34시험·lint·browser typecheck와 기본 재현6명령·명시적 추가줄 경로감사로 확인하며 schema-form 제품 차분은0입니다.
+
+
+### 465라운드 관문 수정 뒤 전체 검사 보충(2026-10-31)
+
+architecture README의 단계 상태를 덧붙이고 원장에 두 문장을 그대로 인용한 뒤 1절의 전체 명령을 재실행했습니다. bundle을 재생성하고 sentence-check 17영역, tokens inventory/check를 포함했습니다. 분할 항목이 없어 expand-split-pointers는 해당하지 않습니다.
+
+| 검사 | 관문 수정 뒤 결과 | 직전 마감 대비 변화 |
+| --- | --- | --- |
+| verbatim-check | 항목1415·조각327·불일치0 | 같음 |
+| sup-check | 보충·충돌3584·불일치0·해석실패0 | 3582+README 상태2문장 인용 |
+| ref-check | 항목1415·문제0 | 같음 |
+| owner-cited | 답720·인용720·미인용0 | 원문8개 변경 없음 |
+| sentence-check | 17영역 모두 missing0·bad classifications0 | 같음 |
+| tokens | 목록2389·잔여398 | README 제품SHA·단계 가지2토큰 추가, 모두 상태 인용으로 포괄 |
+| plan-links | 계획80·문제1 | 기존 분할된 ERROR-038 인용만 유지, 새 문제0 |
+| doc-coverage | 미인용66·그 밖 문제0 | 기존과 같음 |
+
+[수정 뒤 검사 요약](../../verification/input-responsiveness/raw/closing/ledger-checks-gate-fixes.json)과 [수정 뒤 전체 출력](../../verification/input-responsiveness/raw/closing/ledger-logs-gate-fixes.json.gz)을 추가로 보존합니다. 앞의 검사표와 원문은 변경하지 않으며 새 sup·verbatim·owner·plan 문제는0입니다. 이번 수정은 문서에 한정합니다.

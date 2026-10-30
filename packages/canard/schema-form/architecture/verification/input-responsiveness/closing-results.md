@@ -192,9 +192,9 @@ codex가 찾은 아래 **기존 결함 다섯**은 [IR-5의 파일:행 표](ir-5
 | `yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1 --suite=backfill` | `IR1_RAW_REPRODUCED samples=120` |
 | `yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1 --suite=quiet-gates` | `IR1_RAW_REPRODUCED samples=200` |
 | `yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1 --derived` | `IR1_RAW_REPRODUCED samples=520`; `IR1_DERIVED_REPRODUCED gates=10 spread=4 backfill=12` |
-| `yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-2` | `IR2_SUITE_REPRODUCED suite=main samples=180`; `IR2_PATH_AUDIT_OK`; `IR2_RAW_REPRODUCED samples=180` |
+| `yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-2` | `IR2_SUITE_REPRODUCED suite=main samples=180`; `IR2_RAW_REPRODUCED samples=180` |
 
-IR-2의 `--audit-base=<SHA>`는 특정 PR의 제품 차분을 검사하는 명시적 옵션이며 기본 원시 재현과 분리되어 있습니다. 뒤 단계 제품 변경 때문에 이전 SHA와 HEAD가 달라지는 것을 기본 실행 실패로 오인하지 않습니다. 동결 번들 해시와 inputs 출처 검사는 유지합니다. IR-0/1 기본 검사의 이전 SHA diff는 기계 경로 감사용이며 제품 동일성 관문이 아닙니다.
+IR-2의 `--audit-base=<SHA>`는 특정 PR의 제품 차분을 검사하는 명시적 옵션이며 기본 원시 재현과 분리되어 있습니다. 뒤 단계 제품 변경 때문에 이전 SHA와 HEAD가 달라지는 것을 기본 실행 실패로 오인하지 않습니다. 동결 번들 해시와 inputs 출처 검사는 유지합니다. 현재 IR-0/1 기본 실행은 diff 기반 경로 감사를 수행하지 않으며 해당 감사는 명시적 `--audit-base=<SHA>` 뒤로 이동했습니다.
 
 IR-3의 새 측정 명령은 `node --import tsx packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-3/step0/measure.mjs step0-reproduction.json`입니다. 이는 새 CPU 창이므로 이 문서 마감에서는 실행하지 않았습니다. IR-1b·IR-4·IR-5 시험 재실행 명령과 각 당시 결과는 각 결과 문서에 있으며 이 마감의 새 제품 관문으로 주장하지 않습니다.
 
@@ -242,6 +242,26 @@ IR-0/1의 checkResults와 IR-2 helper에 있던 고정 base의 변경 파일·un
 | doc-coverage | 미인용66·그 밖 문제0 | 기존과 같음 |
 | 제품·기록·경로 | schema-form architecture 밖 diff0, 기존 줄 보존, 새 경로0 | 마감 추가분만 변경, 삭제·버전 변경 없음 |
 
-모든 검사 CLI의 exit는0이지만 plan-links의 기존 문제1·doc-coverage의 기존 미인용66·토큰 잔여398을 전체 깨끗한 통과로 바꾸지 않습니다. **새 추가분의 오류 증가는0**입니다. 기록을 분할하지 않아 expand-split-pointers는 실행 대상이 아닙니다. 465C-10과 앞 요약의 토큰399는 편집 전 기준이며 위 표가 실제 최종입니다. IR-2 기본 명령은 이제 diff 기반 경로감사 marker를 출력하지 않고 원시 재현만 수행합니다. 앞 재현 표의 IR2_PATH_AUDIT_OK는 수리 전 실행의 보존 기록입니다.
+모든 검사 CLI의 exit는0이지만 plan-links의 기존 문제1·doc-coverage의 기존 미인용66·토큰 잔여398을 전체 깨끗한 통과로 바꾸지 않습니다. **새 추가분의 오류 증가는0**입니다. 기록을 분할하지 않아 expand-split-pointers는 실행 대상이 아닙니다. 465C-10과 앞 요약의 토큰399는 편집 전 기준이며 위 표가 실제 최종입니다. IR-2 기본 명령은 이제 diff 기반 경로감사 marker를 출력하지 않고 원시 재현만 수행합니다. IR2_PATH_AUDIT_OK 출력은 수리 전 실행에만 있었으며 현재 기본 재현 표에서는 제외했습니다.
 
 schema-form 제품 전체 시험을 재실행한 것으로 쓰지 않으며, 새로 실행한 준비 build와 benchmark 관문만 위에 구별했습니다. 독립 마감 관문은 코디네이터가 수행합니다.
+
+
+### 독립 마감 관문 수정 뒤 전체 원장 재검사 — 2026-10-31
+
+architecture README에 465라운드 마감 상태·제품 끝·단계 가지·소유자 대기 세 항목과 권고·근거 링크를 덧붙였습니다. 원장에는 README의 상태 두 문장을 줄 번호로 그대로 인용했습니다. 원시 재현 표와 IR-0/1 도구 설명은 현재 기본 실행에 맞추었고, 소유자 표의 출처 설명만 대화 전사임을 명시했습니다. 소유자 원문 여덟 개는 변경하지 않았으며 다음 라운드 문장은 닫기 끝에 한 번만 남겼습니다.
+
+수정 뒤 원장 검사 절차 1절의 전체 명령을 실행했습니다. bundle 재생성·17영역 sentence-check·tokens inventory/check를 포함하며 분할 항목이 없어 expand-split-pointers는 해당하지 않습니다. [수정 뒤 검사 요약](raw/closing/ledger-checks-gate-fixes.json)과 [수정 뒤 전체 출력](raw/closing/ledger-logs-gate-fixes.json.gz)을 기존 증거와 별도로 보존합니다.
+
+| 검사 | 관문 수정 뒤 결과 | 직전 마감 대비 변화 |
+| --- | --- | --- |
+| verbatim-check | 항목1415·조각327·불일치0 | 같음 |
+| sup-check | 보충·충돌3584·불일치0·해석실패0 | 3582+README 상태2문장 인용 |
+| ref-check | 항목1415·문제0 | 같음 |
+| owner-cited | 답720·인용720·미인용0 | 원문8개 변경 없음 |
+| sentence-check | 17영역 모두 missing0·bad classifications0 | 같음 |
+| tokens | 목록2389·잔여398 | README 제품SHA·단계 가지2토큰 추가, 모두 상태 인용으로 포괄 |
+| plan-links | 계획80·문제1 | 기존 분할된 ERROR-038 인용만 유지, 새 문제0 |
+| doc-coverage | 미인용66·그 밖 문제0 | 기존과 같음 |
+
+새 인용·원문·계획 문제는0이며 tokens 잔여398을 유지합니다. 제품 끝 대비 architecture numstat에서 이 PR 전부터 존재한 파일의 삭제 줄은0입니다. 문서만 바뀌었으므로 직전 제품·benchmark 관문의 증거는 해당 입력에 한해 유효하며 새 제품 시험으로 주장하지 않습니다.
