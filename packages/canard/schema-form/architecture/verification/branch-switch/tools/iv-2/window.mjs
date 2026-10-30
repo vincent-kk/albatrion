@@ -9,6 +9,7 @@ import { sampleProcessCpu } from '../b8/helpers/sampleProcessCpu.mjs';
 import { digest } from '../b9-0/files.mjs';
 import { compactProcessRows } from '../b9-1/helpers/compactProcessRows.mjs';
 import { runWindowProcess } from '../b9-1/helpers/runWindowProcess.mjs';
+import { observeMeasurementCpu } from '../iv-4/helpers/observeMeasurement.mjs';
 import { getStageRoot } from '../window/getStageRoot.mjs';
 import { waitForQuietProcess } from '../window/waitForQuietProcess.mjs';
 import { verifyInputs } from './verifyInputs.mjs';
@@ -68,9 +69,23 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const packageDir = path.resolve(here, '../../../../..');
 const repository = path.resolve(packageDir, '../../..');
 const tools = path.resolve(here, '../../../design-optimization/tools');
-const runContext = { root, agentPid, repository, here };
+const iv4OwnerStart = process.argv.includes('--iv4-owner-start');
+const runContext = {
+  root,
+  agentPid,
+  repository,
+  here,
+  continuousCpu: iv4OwnerStart,
+  observeCpu: iv4OwnerStart ? observeMeasurementCpu : undefined,
+  quietPreload: iv4OwnerStart
+    ? path.join(here, '../iv-4/quietWorkerPreload.mjs')
+    : undefined,
+};
 const run = (...args) => runWindowProcess(runContext, ...args);
-const quiet = await waitForQuietProcess({ agentPid });
+const quiet = await waitForQuietProcess({
+  agentPid,
+  ...(iv4OwnerStart ? { averageMs: 30000, spotlightMaxWaitMs: 30000 } : {}),
+});
 quiet.externalCpuPercent = quiet.rows
   .filter((row) => row.pid !== agentPid)
   .reduce((sum, row) => sum + row.cpuPercent, 0);

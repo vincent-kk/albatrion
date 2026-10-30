@@ -64,7 +64,34 @@ if (mode === '--allocation') {
   console.log('IV_4_ALLOCATION_OK');
 } else if (mode === '--candidates') {
   const ledger = read('candidates.json');
-  assert.ok(ledger.length > 0);
+  for (const id of [
+    'S1a',
+    'S1b',
+    'S2a',
+    'S2b',
+    'S3a',
+    'S3b',
+    'S4',
+    'S5-1',
+    'S5-2',
+    'S6a',
+    'S6b',
+    'S7',
+    'S8a',
+    'S8b',
+    'S9',
+    'S10',
+    'S11a',
+    'S11b',
+  ])
+    assert.ok(
+      ledger.some((row) => row.id === id),
+      'Missing candidate: ' + id,
+    );
+  assert.ok(
+    ledger.every((row) => row.verdict !== 'held' && row.held !== true),
+    'Unresolved held candidate',
+  );
   assert.equal(new Set(ledger.map((row) => row.id)).size, ledger.length);
   for (const candidate of ledger) {
     assert.ok(

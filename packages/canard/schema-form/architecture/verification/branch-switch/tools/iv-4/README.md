@@ -29,3 +29,9 @@ node packages/canard/schema-form/architecture/verification/branch-switch/tools/i
 기존 plain worker는 그대로 두고 `diagnose.mjs`가 별도 `gc-worker.mjs`를 실행합니다. mode는 `gc`(원 S9 제품의 별도 GC 횟수 관측) 또는 `allocation`(S4 A/B의 단명 할당과 GC 횟수)입니다. 인수는 준비 root, A/B, mode, 제외 agent PID입니다. 각 lane/mode는 해당 root에서 한 번만 실행하며 한 번의30초 시작 관문·59초 자식 제한을 적용합니다. `publishDiagnostics.mjs root label`로 고유 label에 보존합니다.
 
 PerformanceObserver는 예열 뒤 켜고,20,000동작 구간에 시작된 GC의 kind/flags·duration을 보존합니다. 마지막 콜백을 시계 밖에서 배출한 뒤 분리합니다. 원 S9의 GC 횟수는 수집하지 않았으므로 보충 관측과 같다고 주장하지 않습니다. allocation 모드는 기존 inspector의 두 collected-object 옵션을 유지하며 가장 가까운 제품 frame에 native self bytes를 배타적으로 귀속합니다. 새 진단의 실행 도구 SHA는 각 결과에 별도 기록하고 기존 S9와 plain 탐침 원시를 변경하지 않습니다.
+
+## 보류 재탐침과 묶음 창
+
+양성·큰 잡음 보류 후보는 Phase2 끝에 `run.mjs root reprobe targets agentPid`로 딱 한 번5반복합니다. 기본3반복과 예열·동작 수·시계는 같으며40개 fresh process의 각 행 A 최대−최소를 잡음으로 씁니다.
+
+묶음 창과 pilot은 기존 Ⅳ-2 CLI에 `--iv4-owner-start`를 명시합니다. 이 모드만 부모의30초 시작 관문 뒤 자손의 외부 CPU를 관측 전용 preload로 기록하며 Bun도 중간 CPU 관문을 열지 않습니다. 기본 모드는 다른 단계의 기존 정책을 유지합니다. 정식 창의 coordinator 허가·불변 입력·smoke·real CLI rehearsal·pilot 순서는 바꾸지 않습니다.
