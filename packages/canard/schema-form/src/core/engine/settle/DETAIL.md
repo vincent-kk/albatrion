@@ -35,13 +35,9 @@
 
 - A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
 
-
 - 떼어진 참조의 쓰기는 아무 효과가 없다. 값·overlay·현재 인스턴스를 바꾸지 않으며 개발 모드 전용 경고를 낸다. 배열 압축은 kept 아이템과 원본 overlay만 옮긴다(B11).
 
-
 - A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
-
-
 
 - 지움과 함께 나가는 배열은 명시 keep 원본이 있는 아이템만 원래 순서대로 압축 보존한다. 아이템 자신과 살아 있거나 이미 비활성인 자손의 keep에 객체 호스트와 같은 정책을 적용하며 중첩 배열도 재귀한다. 닫힌 동안 inactiveValues는 압축 색인의 kept 원본을 공표하고, 재진입은 압축 배열을 복원하되 조건이 거짓인 keep은 자기 비활성 슬롯에 남긴다. 후보 소유 범위는 결과에 영향을 주지 않는다. 아이템 서브트리가 명시 keep 선언(`unsetOnInactive`가 리터럴 true가 아닌 선언)을 갖는지는 청사진이 만든 정적 사실 `hasKeepDescendants`로 읽는다. 선언이 없는 지움 배열은 아이템을 방문하지 않고 슬롯 전체를 버리며 길이 0으로 재진입하고, 방문 수는 아이템 수와 무관하게 배열 하나이다. 선언이 있는 지움 배열만 아이템 서브트리를 방문하므로 그 비용은 아이템 서브트리의 노드 수에 비례한다. 지움 없는 나감과 배열 자손이 없는 객체 호스트는 압축 경로를 타지 않으므로 아이템 방문이 더해지지 않고, 배열 자손을 품은 객체 호스트는 그 배열이 선언을 가질 때만 아이템을 방문한다. 비어 있어도 명시 keep인 배열 자손은 원본으로 세므로, 그 배열만 가진 아이템도 압축 뒤 남는다.
 - 압축 raw는 배열 재생성의 길이와 입력 값이며 공표는 kept 자손의 패치로 한다. 패치는 옛 아이템 주소에 의존하지 않는 채널 사본이며 후보별 선언 결합을 유지한다. 같은 이름의 종류별 원본을 첫 후보에 재해석하지 않으며, 보유 공간은 압축 raw와 kept 서브트리의 패치 수에 비례한다.
@@ -814,7 +810,6 @@
 
 - null Dictionary와 prepared view의 projected 자식 읽기는 own descriptor 조회가 0입니다. constructor·__proto__·toString 자체 이름은 그대로 읽고 일반 prototype의 상속 노드는 무시합니다. 배열 호스트의 빈 자리와 값은 기존 own-key 경로로 확인합니다.
 
-
 ### settle-pending-structure-read — pending 호스트 노드의 존재
 
 - null Dictionary·prepared view는 descriptor 조회 없이 기존 노드의 존재를 구별합니다. prototype 이름의 undefined emit 노드는 호스트를 조기 flush하지 않으며 실제 부재·상속 노드만 있는 경우에는 기존 flush를 수행합니다.
@@ -822,7 +817,6 @@
 ### settle-gate-registry-storage — live 등록 레코드의 메모 소유
 
 - gate-free live 노드의 register는 node 키 WeakMap 삽입이 0이며 반복 register는 같은 발생을 유지합니다. 동일 경로의 새 node는 새 발생을 받고, 옛 node remove는 새 node 등록을 제거하지 않습니다. 현재 node를 제거한 뒤 다시 등록하면 발생도 새로 만듭니다.
-
 
 ## Boundary Exemptions
 

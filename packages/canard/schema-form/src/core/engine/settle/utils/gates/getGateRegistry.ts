@@ -257,7 +257,7 @@ class GateRegistry {
       ownOccurrences: registration.ownOccurrences,
       occurrences: [
         ...memo.values(),
-        ...[...(edges?.values() ?? [])].flatMap((edgeMemo) => [
+        ...[...edges.values()].flatMap((edgeMemo) => [
           ...edgeMemo.values(),
         ]),
       ],

@@ -250,3 +250,9 @@ S2a의5반복 재탐침 첫 준비는30초 시작 관문에서 환경 거절·�
 | switch-siblings-0 | 12.395 | 12.035 | 0.720 | 최초 보류 | 12.290 | 12.120 | 0.600 | 통과 |
 | switch-payload-12 | 109.085 | 106.220 | 1.795 | 최초 보류 | 106.230 | 103.585 | 3.260 | 통과 |
 | single-flat-1000 | 4.275 | 4.325 | 0.210 | 최초 보류 | 4.320 | 4.260 | 0.220 | 통과 |
+
+## 독립 코드 검토와 최종 머리 재검증
+
+유지5개에 대한 [독립 검토](reviews/iv-4-code-candidate-1-claude.md)는 PASS(P1·P2 0, P3 4)입니다. 실제 getSlotChildIndex로 순위 fixture를 준비하고 읽기 계수를 초기화했으며 두 불변식 주석·readProjectedValue 서식·DETAIL 빈 줄·항상 있는 edges의 방어 문구를 정리했습니다. 조정자 지시에 따라 이 작은 수정 뒤의 머리에서 전체 정적 관문을 다시 한 번 수행합니다.
+
+수정 전 머리의 build·unit·render·react18·production 지정 프로젝트는 통과했습니다. 처음 production 전용 script를 잘못 택한 실행은2건 실패했고, 브리프의 `test --run --project production`으로 바로잡은 실행은21건 통과했습니다. 이는 최종 머리의 관문을 대신하지 않습니다. 기준 아카이브는 package-local AJV8 연결 뒤 지정 build가 통과했고 처음 S9 기준 Node bundle과 바이트가 같습니다. 공개308개 선언·index 바이트 차이는0, private 차이는 getGateRegistry 선언1개, 격리는2,383파일 통과, 배달79+7장면 차이는0이었으며 최종 머리에서 다시 확인합니다.

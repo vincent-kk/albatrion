@@ -198,6 +198,7 @@ export const assembleObject: Behavior['assemble'] = (
       seen.add(name);
     }
   }
+  // Built by settle getSlotChildIndex; each inner map's first value is the name's first childEntries position.
   const orderIndex = getHostDerived<
     'childOrderIndex',
     ReadonlyMap<string, ReadonlyMap<object, number>>

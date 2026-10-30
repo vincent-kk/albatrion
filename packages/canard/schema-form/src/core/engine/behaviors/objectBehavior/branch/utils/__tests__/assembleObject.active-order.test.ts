@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { getSlotChildIndex } from '../../../../../settle/utils/slots/getSlotChildIndex';
 import { getHostDerived } from '../../../../../utils/cache/derivedRecords';
 import { assembleObject } from '../assembleObject';
 import { assembleObjectBaseline } from './fixtures/assembleObject.baseline';
@@ -17,13 +18,6 @@ const fixture = () => {
       node: {},
     })),
   ];
-  const index = new Map<string, Map<object, number>>();
-  for (let position = 0; position < entries.length; position++) {
-    const entry = entries[position];
-    let templates = index.get(entry.name);
-    if (!templates) index.set(entry.name, (templates = new Map()));
-    if (!templates.has(entry.node)) templates.set(entry.node, position);
-  }
   let reads = 0;
   const observed = new Proxy(entries, {
     get(target, name, receiver) {
@@ -38,9 +32,12 @@ const fixture = () => {
     schema: { schema: { type: 'object' }, typeConflict: false },
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof assembleObject>[0];
-  getHostDerived<'childOrderIndex', typeof index>(
+  getSlotChildIndex(
     node.blueprintNode,
-  ).childOrderIndex = index;
+    'alpha',
+    node.blueprintNode.childEntries[0].node,
+  );
+  reads = 0;
   const children = [
     { name: 'beta', emit: 2 },
     { name: 'alpha', emit: 1, blueprintNode: replacement },
