@@ -226,6 +226,8 @@
 
 - pending gate 읽기도 배열이 아닌 null-prototype 구조에서는 실제 노드의 존재를 직접 조회하여 중복 own descriptor를 만들지 않습니다. undefined emit을 내는 노드와 노드 부재는 구별하고 일반 prototype·배열 호스트는 기존 own-key 검사를 유지합니다. 추가 보유량은 없습니다.
 
+- 게이트 등록의 memo와 edge map은 기존 live path 레코드가 함께 소유하며 node 키 WeakMap 둘에 중복 삽입하지 않습니다. 조회는 register가 현재 node identity를 확인한 뒤 수행하고 퇴장·동일 경로 교체에서 새 수명을 다시 결합합니다. 등록당 두 WeakMap 삽입과 두 약한 색인을 제거하며 기존 map 둘·등록 레코드 외의 상주 구조는 없습니다.
+
 ## Structure
 
 - Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
@@ -816,6 +818,11 @@
 ### settle-pending-structure-read — pending 호스트 노드의 존재
 
 - null Dictionary·prepared view는 descriptor 조회 없이 기존 노드의 존재를 구별합니다. prototype 이름의 undefined emit 노드는 호스트를 조기 flush하지 않으며 실제 부재·상속 노드만 있는 경우에는 기존 flush를 수행합니다.
+
+### settle-gate-registry-storage — live 등록 레코드의 메모 소유
+
+- gate-free live 노드의 register는 node 키 WeakMap 삽입이 0이며 반복 register는 같은 발생을 유지합니다. 동일 경로의 새 node는 새 발생을 받고, 옛 node remove는 새 node 등록을 제거하지 않습니다. 현재 node를 제거한 뒤 다시 등록하면 발생도 새로 만듭니다.
+
 
 ## Boundary Exemptions
 
