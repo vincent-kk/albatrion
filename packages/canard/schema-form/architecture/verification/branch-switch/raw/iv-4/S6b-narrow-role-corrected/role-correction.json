@@ -1,0 +1,25 @@
+{
+  "authorityCommit": "30b2d853f",
+  "authorityDocument": "architecture/verification/branch-switch/iv-4-results.md",
+  "originalProbe": "S6b-narrow/probe.json.gz",
+  "originalDigest": {
+    "bytes": 57285,
+    "sha256": "d49781c5a4eb1d78ea88284f13007cabb0547f496ffce1202f94edb4dc1fdcdc"
+  },
+  "correctedDigest": {
+    "bytes": 57273,
+    "sha256": "5abf3180b9edb9d890d871bdaf76cc8ee169b7a90b9f3022a565075fb6f6b772"
+  },
+  "role": {
+    "id": "switch-siblings-4000",
+    "from": "target",
+    "to": "protected"
+  },
+  "samplesChanged": false,
+  "timingProtocolChanged": false,
+  "rowOrderChanged": false,
+  "execution": {
+    "bytes": 2391,
+    "sha256": "000da5402b0da392fe86f65dfe1f7d962085ed77d2e6c91854c1327d3ad6ab4b"
+  }
+}

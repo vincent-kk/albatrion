@@ -73,10 +73,15 @@
   },
   {
     "id": "S6b",
-    "commit": "289538f96",
-    "verdict": "kept",
-    "probe": "S6b/probe.json.gz",
-    "reason": "보호23건·typecheck·lint·build 통과. oneOf 절감0.915가 잡음0.710을 넘고 보호 행도 통과합니다. siblings는 잡음 경계입니다."
+    "commit": "6f7ccb7b6",
+    "verdict": "dropped",
+    "probe": "S6b-narrow-role-corrected/probe.json.gz",
+    "reason": "허가된1회 좁힘은 두 표적·세 보호 plain 관문을 통과했으나 Bun heap A최대2253.939/B중앙2256.607로 실패해 S6b 전체를 최종 묶음에서 제외합니다. 초기 Phase2 유지 판정과 원시는 따로 보존합니다.",
+    "phase2Commit": "289538f96",
+    "phase2Probe": "S6b/probe.json.gz",
+    "phase2Verdict": "kept",
+    "heap": "S6b-narrow-heap/judgment.json",
+    "removedBy": "dd551d4d92346f1cf7b2099cef94edc380dce15f"
   },
   {
     "id": "S3a",

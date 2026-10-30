@@ -351,3 +351,19 @@ DETAIL 뒤 두 비용 사례를 추가했습니다. 최초 red는 밀집 호스�
 좁힘 제품 커밋은 `6f7ccb7b6`이며 패키지 typecheck·lint·지정 build가 모두 통과했습니다. [red 두 단계와 green·정적 로그](raw/iv-4/S6b-narrow-static/checks.json)를 보존합니다. 탐침 A는 네 다른 cut만 유지하고 S6b를 전부 제거한 불변 머리, B는 좁힌 S6b 머리입니다. 원 A manifest는 준비 레인 B였음을 그대로 보존하고 실행 레인 A의 provenance로 연결하며, 나머지 제품 blob은 동일합니다. oneOf·payload를 모두 표적으로 하고 wide4000·flat·siblings0를 보호합니다. wide 진단 상한은120초이며, 이후 별도 Bun heap을 새 stage A와 비교합니다.
 
 게시된 창1 paired 원시의 도구 실행 경로를 추가 감사에서 찾아 경로 문자열만 휴대 가능한 표기로 바꿨습니다. [전후 비압축 해시](raw/iv-4/window-1/pair-portability.json)를 기록했고 원 준비본·표본·수치·입력 SHA·판정은 그대로 보존했습니다. 이후 창 게시 장치도 같은 경로 정리를 적용합니다.
+
+### S6b 좁힘 최종 판정 — 전체 제외
+
+원 장치의 targets 인자가 행 포함과 표적 역할을 겸해 wide4000을 잘못 표적으로 표시했습니다. 측정 전에 커밋한 `30b2d853f`의 규칙은 oneOf·payload 표적과 wide·flat·siblings0 보호입니다. [원 판정](raw/iv-4/S6b-narrow/probe.json.gz)은 그대로 보존하고 [역할 정정본](raw/iv-4/S6b-narrow-role-corrected/probe.json.gz)을 따로 만들었습니다. 입력·30개 프로세스·행 순서·예열·동작 수·모든 수치·잡음은 같고 wide의 역할만 보호로 복원했습니다. 해시와 사전 규칙은 [정정 sidecar](raw/iv-4/S6b-narrow-role-corrected/role-correction.json)로 연결합니다. 도구도 추가 보호 행 인자를 분리했습니다.
+
+| 행 | 역할 | A 중앙 | B 중앙 | A 폭 | 판정 |
+| --- | --- | ---: | ---: | ---: | --- |
+| switch-oneOf-80 | 표적 | 67.725 | 65.175 | 0.355 | 통과 |
+| switch-payload-12 | 표적 | 118.445 | 107.135 | 3.400 | 통과 |
+| switch-siblings-4000 | 보호 | 2559.940 | 2555.140 | 17.165 | 통과 |
+| switch-siblings-0 | 보호 | 12.215 | 12.050 | 0.455 | 통과 |
+| single-flat-1000 | 보호 | 4.250 | 4.350 | 0.195 | 통과 |
+
+plain은 모두 통과했지만 [Bun heap](raw/iv-4/S6b-narrow-heap/judgment.json)은 새 A 최대2253.939012, B 중앙2256.607079 B/node로 +2.668066 실패했습니다. 빈 레코드 생성이 없다는 비용 사례가 green이어도 heap 퇴보는 남았으므로 그 구체 기전을 확정하지 않습니다. 허가된1회 좁힘을 마쳤으며 추가 수정 없이 S6b 전체를 제외했습니다.
+
+제외 커밋은 `dd551d4d9`입니다. S6b와 그 좁힘이 추가한 비용 시험 두 파일만 함께 되돌렸고 두 파일은 단계 기준에 없었음을 확인했습니다. 기존 oracle·키 순서·참조 시험과 원래 기준 시험은 삭제·완화하지 않았습니다. [최종 제품 blob 대응](raw/iv-4/final-four-cut-source.json)은 네-cut 반사실 머리와 제품 소스가 모두 같음을 증명합니다. 최종 유지 cut은 S5수정·S1a·S1b·S4 네 개이며, S5초기·S2a·S2b·S10·S6b 다섯 제품 후보는 제외됐습니다(S8 전체 진단은 별도). 이제 이 머리의 전체 정적 관문·추가 허용 FCA1회·pilot·창2를 수행합니다.

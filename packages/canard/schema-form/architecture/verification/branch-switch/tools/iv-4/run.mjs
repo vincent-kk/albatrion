@@ -12,14 +12,24 @@ import {
 } from './helpers/observeMeasurement.mjs';
 import { summarizeProbe } from './helpers/summarizeProbe.mjs';
 
-const [root, mode, targetsText, agentText, wideTimeoutText] =
-  process.argv.slice(2);
+const [
+  root,
+  mode,
+  targetsText,
+  agentText,
+  wideTimeoutText,
+  extraProtectedText,
+] = process.argv.slice(2);
 const wideTimeoutMs = Number(wideTimeoutText ?? 59000);
 assert.ok(wideTimeoutMs === 59000 || wideTimeoutMs === 120000);
 const agentPid = Number(agentText);
 assert.ok(Number.isSafeInteger(agentPid) && agentPid > 0);
 assert.ok(['probe', 'reprobe', 'allocation', 'smoke'].indexOf(mode) !== -1);
 const targets = targetsText.split(',');
+const extraProtectedRows = extraProtectedText
+  ? extraProtectedText.split(',')
+  : [];
+assert.ok(extraProtectedRows.every((row) => !targets.includes(row)));
 const plain = mode === 'probe' || mode === 'reprobe';
 const repetitions = mode === 'reprobe' ? 5 : 3;
 const protectedRows = [
@@ -29,7 +39,7 @@ const protectedRows = [
   'single-flat-1000',
 ];
 const rows = plain
-  ? [...targets, ...protectedRows].filter(
+  ? [...targets, ...extraProtectedRows, ...protectedRows].filter(
       (row, index, all) => all.indexOf(row) === index,
     )
   : targets;
@@ -54,6 +64,7 @@ const execution = Object.fromEntries(
 json(marker, {
   mode,
   targets,
+  extraProtectedRows,
   node: process.version,
   execution,
   wideTimeoutMs,

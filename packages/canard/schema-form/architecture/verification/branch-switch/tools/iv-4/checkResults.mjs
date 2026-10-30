@@ -100,27 +100,59 @@ if (mode === '--allocation') {
         ['kept', 'dropped', 'excluded', 'held'].indexOf(candidate.verdict) !==
           -1,
     );
-    if (candidate.probe) {
-      const { records, inputs, execution, ...summary } = compressed(
-        candidate.probe,
-      );
-      assert.deepEqual(
-        summary,
-        summarizeProbe(records, summary.targets, summary.repetitions ?? 3),
-      );
-      assert.equal(candidate.verdict === 'kept', summary.kept);
-      for (const lane of ['A', 'B']) {
-        const file = candidate.probe.replace(
-          'probe.json.gz',
-          'inputs-' + lane + '.json.gz',
+    if (!candidate.probe) assert.equal(candidate.verdict, 'excluded');
+    else {
+      const probes = [
+        {
+          file: candidate.probe,
+          verdict: candidate.verdict,
+          heap: candidate.heap,
+        },
+      ];
+      if (candidate.phase2Probe)
+        probes.push({
+          file: candidate.phase2Probe,
+          verdict: candidate.phase2Verdict,
+          heap: undefined,
+        });
+      for (const probe of probes) {
+        const { records, inputs, execution, ...summary } = compressed(
+          probe.file,
         );
-        const bytes = gunzipSync(fs.readFileSync(new URL(file, raw)));
-        assert.equal(
-          createHash('sha256').update(bytes).digest('hex'),
-          inputs[lane].sha256,
+        assert.deepEqual(
+          summary,
+          summarizeProbe(records, summary.targets, summary.repetitions ?? 3),
         );
+        let passed = summary.kept;
+        if (probe.heap) {
+          const heap = read(probe.heap);
+          const directory = probe.heap.slice(
+            0,
+            probe.heap.lastIndexOf('/') + 1,
+          );
+          const A = read(directory + 'stage-A.json').new;
+          const B = read(directory + 'narrow.json').new;
+          assert.equal(A.samples.length, 7);
+          assert.equal(B.samples.length, 7);
+          const Amax = Math.max(...A.samples);
+          const Bmedian = [...B.samples].sort((left, right) => left - right)[3];
+          assert.deepEqual(heap, { Amax, Bmedian, passed: Bmedian <= Amax });
+          passed = passed && heap.passed;
+        }
+        assert.equal(probe.verdict === 'kept', passed);
+        for (const lane of ['A', 'B']) {
+          const file = probe.file.replace(
+            'probe.json.gz',
+            'inputs-' + lane + '.json.gz',
+          );
+          const bytes = gunzipSync(fs.readFileSync(new URL(file, raw)));
+          assert.equal(
+            createHash('sha256').update(bytes).digest('hex'),
+            inputs[lane].sha256,
+          );
+        }
       }
-    } else assert.equal(candidate.verdict, 'excluded');
+    }
   }
   console.log('IV_4_CANDIDATES_OK');
 } else if (mode === '--final') {
