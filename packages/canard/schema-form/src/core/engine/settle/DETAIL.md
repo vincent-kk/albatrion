@@ -222,6 +222,8 @@
 
   - 바뀌지 않는 원칙: SETTLE-001(단계 순서), SETTLE-042(키 순서와 수용된 사본), SETTLE-043, NODE-051, BLUEPRINT-007, WRITE-013, 공개 API.
 
+- 게이트의 projected structure 읽기는 배열 호스트가 아니고 null-prototype인 구조에서 노드 값을 한 번 조회합니다. 내부 구조는 실제 노드만 저장하며 prepared view도 baseline 노드를 own descriptor로 노출하므로 이 조회는 기존 own-key 검사와 같습니다. 배열 호스트·일반 prototype은 기존 own-key helper를 유지하고 raw/emit/extras의 임의 값 검사는 생략하지 않습니다. null 구조의 중복 descriptor 조회·사적 view의 descriptor 객체를 제거하며 추가 보유량은 없습니다.
+
 ## Structure
 
 - Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
@@ -803,6 +805,11 @@
 ### settle-empty-watch-snapshot — watch 없는 청사진의 나감 포착
 
 - hasWatch=false의 나감은 노드 watch 파생 조회·새 값 메모가 0이고 기존 빈 메모도 같은 객체입니다. nonempty가 가능한 청사진은 마지막 선택이 빈 목록이더라도 기존 포착으로 이전 메모를 대체합니다. nonempty snapshot과 공유 동결 빈 결과는 나감 뒤 원본 변화에도 고정됩니다.
+
+### settle-projected-structure-read — 자체 노드 조회와 후퇴
+
+- null Dictionary와 prepared view의 projected 자식 읽기는 own descriptor 조회가 0입니다. constructor·__proto__·toString 자체 이름은 그대로 읽고 일반 prototype의 상속 노드는 무시합니다. 배열 호스트의 빈 자리와 값은 기존 own-key 경로로 확인합니다.
+
 
 ## Boundary Exemptions
 
