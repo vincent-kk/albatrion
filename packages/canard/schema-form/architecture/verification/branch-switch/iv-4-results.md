@@ -433,3 +433,9 @@ A `c5cb20f87`, B `90cc137e0`의 새 불변 root에서 smoke·실제 CLI rehearsa
 이는 이 창의 소유자 예외입니다. `verification.md`와 원 수치·규칙상 판정은 바꾸지 않았습니다. 창1은 규칙상 미채택, 창2는 교환비0 미채택으로 그대로 남으며 창1 제품만 소유자 결정으로 채택합니다. 최종 유지 제품 후보는5개, 제외 제품 후보는4개입니다. 좁힌 S6b와 S8 전체 역적용은 기각된 진단 기록으로 남습니다.
 
 복원 후에는 소유자 지시에 따라 typecheck·lint·unit만 새로 실행합니다. 나머지 build·render·react18·production·storybook·verify·공개 선언·격리·배달·FCA는 동일 소스인 `c153d5b38`의 기록을 인용합니다. FCA를 추가 실행하지 않습니다. 마감 검증 원시는 owner-exception 아래에 연결합니다.
+
+### 예외 채택 복원 머리의 마감 확인
+
+`877f4215f`에서 typecheck·lint가 통과해 `IV_4_STATIC_OK`를 출력했고 unit608파일4006건+기존todo1이 통과했습니다. [새 경량 관문과 로그 해시](raw/iv-4/owner-exception/closing-checks/checks.json)를 보존합니다. 최종 src tree와 architecture 제외 패키지 diff(c153d5b38)=0도 확인했습니다. [c153 재사용 관문 명세](raw/iv-4/owner-exception/reused-c153/manifest.json)에 build·나머지 네 프로젝트·verify·선언·격리·배달·FCA의 유효한 동일 소스 기록을 연결했습니다. 공개 선언 차이0, 배달79+7장면 차이0, 격리2384파일, FCA202개(신규0, 기존 FAIL·indeterminate)는 c153 기록을 인용합니다. 추가 FCA·성능 측정은0회입니다.
+
+최종 제품은 소유자가 예외 채택한 창1 다섯 cut과 같습니다. 완료 탐침21회600프로세스(그중 오염 가능60개 미사용), 실패 실행 완료3개·상한 종료1개, 두 정식 창880 paired 프로세스와 모든 원시·기각 사유를 보존했습니다.
