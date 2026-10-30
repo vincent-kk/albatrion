@@ -1,0 +1,137 @@
+{
+  "scope": "packages/canard/schema-form",
+  "sourceHead": "d983f07036ea180dfaffb656a223876ded5a7147",
+  "factsScope": "default source extensions",
+  "factsExact": 1671,
+  "snapshotHash": "5e82e851e50ae8c321453b5850b9ab2c43bcda67b1c4b8546ee2613693821c21",
+  "absoluteVerdict": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "distinctFindings": 202,
+  "newFindings": [],
+  "newDiagnostics": [],
+  "comparisons": [
+    {
+      "action": "scan",
+      "baseStatus": "indeterminate",
+      "headStatus": "indeterminate",
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 376,
+        "depth": 9,
+        "nodesByType": {
+          "organ": 296,
+          "fractal": 80
+        },
+        "violationCount": 201,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      },
+      "headSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "5e82e851e50ae8c321453b5850b9ab2c43bcda67b1c4b8546ee2613693821c21",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 376,
+        "depth": 9,
+        "nodesByType": {
+          "organ": 296,
+          "fractal": 80
+        },
+        "violationCount": 201,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      },
+      "newFindings": [],
+      "newDiagnostics": []
+    },
+    {
+      "action": "validate",
+      "baseStatus": "indeterminate",
+      "headStatus": "indeterminate",
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 202,
+        "passed": 3002,
+        "failed": 12,
+        "skipped": 1
+      },
+      "headSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "5e82e851e50ae8c321453b5850b9ab2c43bcda67b1c4b8546ee2613693821c21",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 202,
+        "passed": 3002,
+        "failed": 12,
+        "skipped": 1
+      },
+      "newFindings": [],
+      "newDiagnostics": []
+    },
+    {
+      "action": "verification",
+      "baseStatus": "indeterminate",
+      "headStatus": "indeterminate",
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+        "fileCount": 742,
+        "specDocument": {
+          "fileCount": 14,
+          "knownCaseCount": 3,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 728,
+          "knownCaseCount": 4458,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 21,
+        "certainty": "indeterminate"
+      },
+      "headSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "5e82e851e50ae8c321453b5850b9ab2c43bcda67b1c4b8546ee2613693821c21",
+        "fileCount": 742,
+        "specDocument": {
+          "fileCount": 14,
+          "knownCaseCount": 3,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 728,
+          "knownCaseCount": 4461,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 21,
+        "certainty": "indeterminate"
+      },
+      "newFindings": [],
+      "newDiagnostics": []
+    }
+  ]
+}

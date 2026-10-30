@@ -233,3 +233,81 @@ array-1000은 세 후보 모두 전체 마운트 최장 50ms 조건을 넘었으
 - virtualization 기본 켬 결정은 측정 결과를 바탕으로 소유자가 내립니다.
 
 판정: 소유자 대기
+
+## Part B 미채택 — 독립 관문 후 최종 결정 (2026-10-31)
+
+채택 제품은 Part A(레인 A)만입니다. 앞의 AB·작업당 예산 구현 설명과 모든 AB 표는 측정했으나 채택하지 않은 시도의 보존 기록입니다. 뒤의 정정과 최종 A 관문이 현재 채택 결정을 나타냅니다. Part B는 순방향 커밋으로 제거하여 가상화 구현과 옵션 의미를 91c422e0e로 복구했습니다.
+
+- 정확성: 컨테이너까지 지연하면 하위 필드 focus/select가 전달되지 않습니다. composite.cx02-org-chart는 제거 전 render/react18에서 실패하고 제거 후 두 프로젝트에서 통과했습니다. eager 결정의 영구 노출 기록 부재로 프로덕션 remount·visible/active·사용자 렌더러 key 변경에서도 defer-once가 깨집니다. 변동 예산이 렌더 스냅숏과 분리되어 시간 분할·폐기·재시도에서 같은 커밋의 같은 노드에 결정이 갈릴 수 있고, 공개 threshold/eagerCount 계약 문구도 바뀐 의미와 맞지 않았습니다.
+- 관문 효과: replace-200 off는 manager가 null이므로 모든 레인에서 실패하고, on은 예산이 없는 A에서도 이미 통과합니다.
+- 측정 교환관계: on의 nested eager paint는 A 89.7→AB 33.8ms로 줄지만 array eager paint는 59.2→68.5ms, all-revealed는 473.1→1154.8ms로 늘었습니다.
+
+후속 개정 조건은 터미널만 지연하고 컨테이너는 계수하되 지연하지 않는 것, 실제 커밋 뒤 eager 결정을 영구 reveal 기록에 넣는 것, 렌더별 허가를 불변 스냅숏으로 만들어 예약·폐기·커밋 수명을 분리하는 것입니다. reveal pump가 마운트한 하위 트리는 예산에서 제외하는 방안은 array 회귀에 대한 미검증 가설입니다. threshold/eagerCount 문구는 소유자 결정과 함께 바꾸고 option-on을 다시 측정해야 합니다. 이번 단계에서는 이 개정을 구현하거나 추가 프로파일하지 않습니다.
+
+### 개발 모드 Part A 보완
+
+fieldNodeFactory의 개발 분기만 if 게이트 유무를 먼저 확인하도록 보완했습니다. guard-free None 폼은 개발 모드에서도 compile을 호출하지 않으며, guard-bearing 개발 트리는 구성 때 전체 스키마와 가드를 여전히 준비합니다. 앞의 마운트 커밋 뒤 가드 준비 표현은 부정확했습니다. 생산용 동작은 측정 A와 같고 이 개발 분기는 생산 번들에서 제거됩니다. 새 폼 렌더 시험은 보완 전 compile 1회로 실패한 뒤 통과했습니다.
+
+### F1 — 정숙 창 내부 부하 정정
+
+여기서 정숙 창은 시작 전 30초 관찰만 통과한 창입니다. 14:59:02~14:59:32Z 시작 관찰의 최대 외부 CPU는 mediaanalysisd 26%였으나 창 안 10초 감시 29회 중 6회에 30% 초과가 있었습니다(find 51·96%, mediaanalysisd 38·42%, spotlightknowledged.updater 96%, codex 33%, BetterTouchTool 약 30%). 페이지별로는 200개 중 27개, replace off 40개 중 13개에 단일 외부 프로세스 30% 초과가 있었습니다. 모든 레인 표본 7~9에 find 34~60%, AB 표본 6에 WindowServer 32%, AB 표본 7에 CalendarWidgetExtension 144%가 있었습니다. A 62.3ms(표본 7), AB 64.8ms(표본 8) 최댓값도 이 부하 페이지에 속합니다.
+
+원칙대로 표본을 버리지 않았습니다. 부하 페이지를 제외한 민감도 확인만 따로 계산하면 L/E0/A/AB 최장 55.9/61.1/61.5/63.5ms, AB−A 2.0ms입니다. E0/A/AB는 모든 페이지가 55.8ms 이상이므로 off의 50ms 실패 판정은 바뀌지 않습니다. 채택 A의 off 실패와 on 통과 역시 유지됩니다.
+
+### F2·F3·F5 — 파생 기록과 표 정정
+
+`yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1 --derived`가 보존 페이지로부터 gate-transfer.json, replace-spread.json, backfill/backfill-frame-attribution.json을 재생성하고 모든 필드를 비교합니다. 기존 JSON 수치 차이는 0입니다.
+
+앞의 replace-200-while-typing-virtualized 상대 환산 셀의 "관측 없음"은 오기입니다. 같은 창 AB 처리 p95 4.100ms, L 1.600ms가 관측되었으며 없는 것은 IR-0의 같은 option-on 기준값입니다. 환산 칸의 올바른 표기는 "IR-0 기준 없음"입니다. 누락된 switch 관문 두 행도 아래에 보완합니다.
+
+| 픽스처 | 상대 창 A 최장 프레임 | AB(미채택) 최장 프레임 | 50ms 관문 |
+| --- | ---: | ---: | --- |
+| switch-oneOf-20 | <50 (검출 0) | <50 (검출 0) | pass |
+| switch-oneOf-20-virtualized | <50 (검출 0) | <50 (검출 0) | pass |
+
+B10/B50는 라벨만 다른 빌드가 아닙니다. 보존한 동결 AB 제품 바이트에서 MAX_REVEALS_PER_SLICE와 MIN_IDLE_BUDGET_MS 두 상수만 각각 10/2·50/8로 바꾼 결과와 바이트 단위로 일치하며 나머지 바이트 차이는 0입니다. [상수 치환·해시 증명](raw/ir-1/variant-provenance.json)에 보존했습니다.
+
+### 채택 제품 A의 최종 관문 — L·E0 대조
+
+| 관문·픽스처 | L | E0 | 채택 A | 판정 |
+| --- | ---: | ---: | ---: | --- |
+| 상대 중앙 wall mount-flat-500-off | 55.000 | 83.800 | 51.950 | A/L 짝 비율 0.952, pass |
+| 상대 중앙 wall mount-nested-d5-f4-off | 101.800 | 159.500 | 89.800 | A/L 짝 비율 0.883, pass |
+| 시작 전 정숙 관찰 통과 창 최장 replace-200-while-typing | 55.900 | 61.600 | 62.300 | fail (모든 레인) |
+| 시작 전 정숙 관찰 통과 창 최장 replace-200-while-typing-virtualized | <50 (검출 0) | <50 (검출 0) | <50 (검출 0) | pass (모든 레인) |
+| 처리 p95 ≤16.67 type-flat-500 | 2.800 | 4.800 | 4.700 | pass |
+| 처리 p95 ≤16.67 validation-flat-500-nonburst | 6.500 | 10.300 | 9.600 | pass |
+| 처리 p95 ≤16.67 validation-flat-500-burst | 2.700 | 5.400 | 4.800 | pass |
+| 처리 p95 ≤16.67 replace-200-while-typing | 1.600 | 4.400 | 0.900 | pass |
+| 처리 p95 ≤16.67 replace-200-while-typing-virtualized | 1.600 | 3.500 | 4.200 | pass |
+| 비연타 검증 도착 p95 ≤33.4 | 9.500 | 3.700 | 3.800 | pass |
+
+위 A 수치는 제품 빌드의 측정 레인 A입니다. 개발 분기 보완의 생산 번들 동등성과 최종 전체 시험 결과는 static-checks.json의 후속 항목으로 기록합니다. virtualization 기본값은 off, 기존 가지별 게이트와 25/4 backfill을 유지합니다. 기본값 변경과 D3 재설계는 이번 병합 범위에 포함하지 않습니다.
+
+판정: 소유자 대기
+
+
+### 최종 소스 전체 시험과 정적 관문 (2026-10-31)
+
+검사 소스 head는 d983f07036ea180dfaffb656a223876ded5a7147입니다. 이후 커밋은 기록만 추가합니다. 각 필수 yarn 명령을 단독 호출했고, 전체 동시 실행 실패를 감추지 않고 프로젝트별 순차 실행과 함께 [static-checks.json](raw/ir-1/static-checks.json)에 덧붙였습니다.
+
+| 순차 관문 | 파일 | 통과 | 실패 | todo |
+| --- | ---: | ---: | ---: | ---: |
+| unit | 608 | 4008 | 0 | 1 |
+| render | 132 | 769 | 0 | 0 |
+| react18 | 132 | 769 | 0 | 0 |
+| test:production (실제 production 환경) | 10 | 19 | 2 | 0 |
+| verify-unit | 613 | 4052 | 0 | 1 |
+| verify-render | 132 | 769 | 0 | 0 |
+| Storybook Chromium 단독 | 100 | 251 | 0 | 0 |
+| AJV8 | 21 | 334 | 0 | 0 |
+
+bare `test --run` 1차는 982파일 중 981통과·1실패, 5817통과·1실패·1todo와 worker onTaskUpdate RPC 시간초과 1건, 2차는 980통과·2실패, 5816통과·2실패·1todo였습니다. 1차 EVENT-065는 15초 전체 시간초과, 2차 EVENT-065와 cx11-ime-during-switch는 visible/enabled/stable 및 스크롤 완료 뒤 locator.click 시간초과였습니다. EVENT-065 단독은 같은 head에서 1.747초 통과했고 Storybook 전체 단독도 100파일·251시험 전부 통과했습니다. 코디네이터 승인에 따라 모든 프로젝트를 한 프로세스에서 실행할 때의 환경 한계로 기록합니다. timeout·설정은 바꾸지 않았습니다. 이 bare 실행의 production 프로젝트는 개발 환경이므로 실제 `test:production` 실패를 대신하는 증거가 아닙니다.
+
+실제 `test:production`의 두 실패는 기준 994103fcc(제품 소스 91c422e0e와 동일)에서도 같은 명령으로 8파일 통과·2실패, 19시험 통과·2실패로 재현되었습니다. `detached.production.test.ts`는 Vite가 node:child_process를 브라우저 호환용으로 externalize하여 `TypeError: execFileSync is not a function`, `blueprint.owned-inline-counts.test.ts`는 oneOf-20 distinct freeze 117이 기존 한도 111을 넘는 실패입니다. 이번 단계는 두 파일과 설정을 바꾸지 않았습니다. 코디네이터는 기존 실패로 보존하고 별도 원인 진단으로 넘기도록 결정했습니다. 이 production 관문은 FAIL로 남습니다.
+
+cx02-org-chart는 제거 전 render/react18 모두 실패했고 최종 순차 전체 실행에서는 두 프로젝트와 Storybook에서 통과했습니다. schema-form lint·typecheck·build, benchmark-form lint·typecheck:browser를 통과했습니다. build의 개발 플래그 검사도 통과했습니다(DEVELOPMENT_FLAG_OK, reads 47·flags 48·pure 535). [생산 동등성 증명](raw/ir-1/adopted-a-proof.json)의 정규화 결과는 측정 A와 641705바이트, SHA256 3806b8e96577914b3bcc3712ea96b2d3f5bda5f4fd9cc3106ec9c810cb5b5798로 일치합니다. 공개 index.d.ts 바이트 차분과 도달 가능한 308개 선언의 서명 차분은 0이며, 내부 retainValidationRoot 설명 주석만 한 곳 다릅니다.
+
+최종 FCA도 전체 scan·6범위 validate·verification을 같은 스냅숏으로 다시 수행했습니다. 사실 입력 1671파일은 exact이며, [최종 FCA 비교](raw/ir-1/gate-round-fca-comparison.json)의 기준 대비 새 발견·새 진단은 0입니다. 기존 202개 중복 제거 발견, verification 위반 21개 및 모호성은 유지되어 절대 판정 FAIL·분석 완전성 indeterminate입니다. 원시와 이전 감사 기록은 그대로 보존했습니다.
+
+판정: 소유자 대기
