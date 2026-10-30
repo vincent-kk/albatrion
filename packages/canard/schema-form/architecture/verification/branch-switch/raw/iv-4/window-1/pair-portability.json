@@ -1,0 +1,6 @@
+{
+  "artifact": "pair-samples.json.gz",
+  "originalDecompressedSha256": "74356318738a7a6e5e3f0d297d0f7efee0294ab88428ce7add243113d0dff407",
+  "portableDecompressedSha256": "487a749614bec517d449dc3e3ea3c84ba0d25e91082c7c248119648d58c1635a",
+  "change": "Only toolchain executable path prefixes were redacted. All process records, samples, timings, hashes and verdicts are unchanged; the original prepared evidence remains untouched."
+}

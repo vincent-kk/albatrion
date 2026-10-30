@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
@@ -31,7 +33,7 @@ export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
     departing.add(node);
     for (const child of node.children ?? []) pending.push(child);
   }
-  let loadNodes: Set<Self> | undefined;
+  let loadNodes: Optional<Set<Self>>;
   if (
     context.kind === 'load' &&
     context.loadScope &&

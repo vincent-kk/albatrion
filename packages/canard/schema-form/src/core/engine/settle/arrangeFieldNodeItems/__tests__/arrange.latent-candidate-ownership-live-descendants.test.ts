@@ -14,6 +14,7 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 
 it.each([
   { operation: 'insert', depth: 1 },
@@ -54,15 +55,11 @@ it.each([
     expect(original.raw).toBe('live');
     root.runtime.disableAutomaticWrites = true;
     const path = `/list/${destination}/` + names.join('/');
-    const stringKey = JSON.stringify([path, 'string']);
     if (operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
     expect(getDispatchNode(list, String(destination), ...names).raw).toBe(37);
-    expect(root.runtime.latentRaw.get(stringKey)).toBe('live');
-    expect(root.runtime.latentRawMetadata?.get(stringKey)).toMatchObject({
-      path,
-      blueprintNode: original.blueprintNode,
-    });
+    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
+
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     expect(getDispatchNode(list, String(destination), ...names).raw).toBe(
       'live',

@@ -5,6 +5,7 @@ import { engineModes } from '../../../../utils/cache/engineModes';
 import { getGateSelectionTable } from '../../../utils/compute/childSelection/getGateSelectionTable';
 import * as entrySelection from '../../../utils/compute/childSelection/selectEntryStep';
 import type { gateSelectionCases } from '../gateSelectionCases';
+import { classifyGateTableVisits } from './classifyGateTableVisits';
 import { observeGateTableCase } from './observeGateTableCase';
 import { sectionGateTableObservation } from './snapshotGateTableCase/utils/sectionGateTableObservation';
 
@@ -23,8 +24,10 @@ export const observeGateTableModes = async (
   const previousWheel = engineModes.gateWheel;
   let reference = '';
   const original = entrySelection.selectEntryStep;
+  const classification = classifyGateTableVisits();
   try {
     for (const wheel of [previousWheel, 'skip'] as const) {
+      classification.reset();
       engineModes.setMode('gateWheel', wheel);
       const histories: string[] = [];
       const visits: { path: string; table: boolean }[][] = [];
@@ -49,15 +52,19 @@ export const observeGateTableModes = async (
             original(entry, step, frame);
           });
         try {
+          classification.begin();
           histories.push(observeGateTableCase(fixture, compactSchemas));
+          classification.complete();
           visits.push(calls);
         } finally {
           spy.mockRestore();
         }
       }
       const baseline = sectionGateTableObservation(histories[0]).sections;
+      classification.normalize(baseline, 0);
       for (let mode = 1; mode < histories.length; mode++) {
         const actual = sectionGateTableObservation(histories[mode]).sections;
+        classification.normalize(actual, mode);
         for (const [section, value] of Object.entries(baseline))
           if (
             section !== 'visits' &&
@@ -135,6 +142,7 @@ export const observeGateTableModes = async (
     }
     return reference;
   } finally {
+    classification.restore();
     engineModes.setMode('gateSelection', previous);
     engineModes.setMode('gateWheel', previousWheel);
   }

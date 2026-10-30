@@ -33,17 +33,23 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
       : undefined;
   const propertyOrder =
     hints && 'propertyOrder' in hints ? hints.propertyOrder : undefined;
+  const orderedKeys: string[] = [];
+  if (isArray(propertyOrder))
+    for (
+      let index = 0, length = propertyOrder.length;
+      index < length;
+      index++
+    ) {
+      const key = propertyOrder[index];
+      if (typeof key === 'string') orderedKeys.push(key);
+    }
   const choices: StaticChoices = Object.freeze({
     omitEmpty: !hints || !('omitEmpty' in hints) || hints.omitEmpty !== false,
     omitTrailing:
       !!hints && 'omitTrailing' in hints && hints.omitTrailing === true,
     trim: !!hints && 'trim' in hints && hints.trim === true,
     propertyOrder: isArray(propertyOrder)
-      ? Object.freeze(
-          propertyOrder.filter(
-            (key: unknown): key is string => typeof key === 'string',
-          ),
-        )
+      ? Object.freeze(orderedKeys)
       : NO_KEYS,
   });
   staticChoices.set(effective, choices);

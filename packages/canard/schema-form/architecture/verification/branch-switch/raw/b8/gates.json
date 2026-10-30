@@ -1,0 +1,82 @@
+{
+  "unit": {
+    "files": 583,
+    "cases": 3866,
+    "passed": 3865,
+    "failed": 0,
+    "todo": 1,
+    "success": true
+  },
+  "render": {
+    "files": 131,
+    "cases": 766,
+    "passed": 766,
+    "failed": 0,
+    "todo": 0,
+    "success": true
+  },
+  "storybook": {
+    "files": 100,
+    "cases": 251,
+    "passed": 251,
+    "failed": 0,
+    "todo": 0,
+    "success": true
+  },
+  "react18": {
+    "files": 131,
+    "cases": 766,
+    "passed": 766,
+    "failed": 0,
+    "todo": 0,
+    "success": true
+  },
+  "production": {
+    "files": 9,
+    "cases": 20,
+    "passed": 20,
+    "failed": 0,
+    "todo": 0,
+    "success": true
+  },
+  "verify": {
+    "files": 719,
+    "cases": 4677,
+    "passed": 4676,
+    "failed": 0,
+    "todo": 1,
+    "success": true
+  },
+  "fiveProjects": {
+    "files": 954,
+    "cases": 5669,
+    "passed": 5668,
+    "failed": 0,
+    "todo": 1
+  },
+  "branchlessCharacterization": {
+    "addedAfterFiveProjectRun": true,
+    "targetedCasesPassed": 4,
+    "includedInVerify": true,
+    "productBytesChanged": false
+  },
+  "checks": {
+    "build": true,
+    "typecheck": true,
+    "lint": true,
+    "pointerIsolation": true,
+    "firstWriteParserCalls": 0,
+    "diagnosticFirstWriteParserCalls": 0,
+    "gateBudgetPrepareParserCalls": 80,
+    "gateBudgetCap": 81,
+    "deliveryDifferences": 0,
+    "mountDeliveryDifferences": 0,
+    "otherPublicDeclarationChanges": 0
+  },
+  "earlierFailure": {
+    "project": "unit",
+    "cause": "Existing public error-code count expected 41 instead of the approved 42.",
+    "failedCases": 1,
+    "fixedExpectationAndReranUnit": true
+  }
+}

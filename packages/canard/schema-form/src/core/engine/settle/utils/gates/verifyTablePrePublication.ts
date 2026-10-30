@@ -1,4 +1,4 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -19,17 +19,33 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   entry: BlueprintChildEntry,
 ): void => {
-  const path = node.path + '/' + escapeSegment(entry.name);
+  const path = appendSegment(node.path, entry.name);
   const pending = [...context.pendingOutputs!];
   const changed = [...context.changedNodes];
   flushPendingGateReads(entry.node, path, context);
   const afterPending = [...(context.pendingOutputs ?? [])];
   const afterChanged = [...context.changedNodes];
-  verifyGateSelection(
-    pending.length === afterPending.length &&
-      pending.every((host, index) => host === afterPending[index]) &&
-      changed.length === afterChanged.length &&
-      changed.every((host, index) => host === afterChanged[index]),
-    'S2 table pre-publication: ' + path,
-  );
+  let matches = pending.length === afterPending.length;
+  if (matches) {
+    for (let index = 0, count = pending.length; index < count; index++) {
+      const host = pending[index];
+
+      if (!(host === afterPending[index])) {
+        matches = false;
+        break;
+      }
+    }
+  }
+  let matches2 = matches && changed.length === afterChanged.length;
+  if (matches2) {
+    for (let index = 0, count = changed.length; index < count; index++) {
+      const host = changed[index];
+
+      if (!(host === afterChanged[index])) {
+        matches2 = false;
+        break;
+      }
+    }
+  }
+  verifyGateSelection(matches2, 'S2 table pre-publication: ' + path);
 };

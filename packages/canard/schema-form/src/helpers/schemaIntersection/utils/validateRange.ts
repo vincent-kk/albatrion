@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { EMPTY_INTERSECTION } from './constant';
 
 /**
@@ -9,7 +11,7 @@ import { EMPTY_INTERSECTION } from './constant';
 export const validateRange = (
   min?: number,
   max?: number,
-): typeof EMPTY_INTERSECTION | undefined =>
+): Optional<typeof EMPTY_INTERSECTION> =>
   min !== undefined && max !== undefined && min > max
     ? EMPTY_INTERSECTION
     : undefined;

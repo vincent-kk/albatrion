@@ -528,3 +528,5 @@ G26 보고서 머리에 원자료 보관 위치의 한 문단을 넣었습니다
 G31 실행의 진단 10건은 `src`를 뿌리로 스캔할 때 DETAIL·INTENT의 `src/…` 경로 토큰이 풀리지 않는다는 문서 계약 경고이며, 이 게이트의 범위(boundaries·dag) 밖입니다.
 
 범위 재확인(fresh codex high 세션 `cb1e1fea`, HEAD `940b7e792`)은 B2와 B3을 해소로 판정해 "G27 최종 판정: PASS"를 냈습니다. 그 세션의 `fractal_inspect`는 별도의 facts 저장소를 읽어 `indeterminate`였고, 주 세션이 같은 HEAD에서 다시 실행한 결과는 status ok, 통과 266, 실패 0입니다(g27-phase4.md의 주 세션 보충).
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `0189c443b068`, `13c50ba51a9d`, `1891c8fb3c32`, `1a821faa72e5`, `1def2cc4f280`, `1f8a8d10fae5`, `29d061941323`, `2cef0c37a084`, `302f2f8fb7b6`, `3b2cbee8a376`, `56817740d6fe`, `8955aa1735d3`, `8e184e2a24c6`, `9bf211ff1985`, `a0d30bb36f6d`, `afd8ade3df3e`, `b44dc7ebfb07`, `d5fc1e3f4074`, `f000893313c2`, `fba01cbeac90`, `fc651e734d1c`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

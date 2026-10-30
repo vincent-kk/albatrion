@@ -1,0 +1,15 @@
+{
+  "dispatch": "msg_1953066f8ce3",
+  "answer": "msg_7efa7cc0798a",
+  "state": "gate-rejected; borderline; owner decision pending",
+  "instruction": "Preserve the unchanged candidate, publish failed measurements and code hypotheses, push for owner review without reverting or rerunning.",
+  "options": [
+    "Merge as is",
+    "Revert all of item 5, then rerun static gates",
+    "Run a ten-process window after approval"
+  ],
+  "performed": {
+    "revert": false,
+    "rerun": false
+  }
+}

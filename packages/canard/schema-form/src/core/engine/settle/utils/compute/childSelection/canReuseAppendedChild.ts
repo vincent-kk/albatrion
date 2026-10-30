@@ -1,5 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../../record';
 import type {
   ArrayAppendProof,
@@ -19,11 +23,11 @@ import type {
 export const canReuseAppendedChild = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   proof: ArrayAppendProof<Self>,
 ): boolean => {
   const name = String(proof.count);
-  const path = node.path + '/' + name;
+  const path = appendSegment(node.path, name);
   const child = prior[name];
   const dirty = context.dirtyChildrenByParent.get(node.path);
   return (

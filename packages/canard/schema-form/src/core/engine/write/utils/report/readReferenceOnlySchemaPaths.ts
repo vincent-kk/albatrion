@@ -3,8 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
   JSONPointer as $,
-  SLASH_REGEX,
-  TILDE_REGEX,
+  appendSegment,
 } from '@/schema-form/helpers/jsonPointer';
 
 /** Shared frozen result when no reference-only change is found. */
@@ -58,18 +57,26 @@ export const readReferenceOnlySchemaPaths = (
     seen.set(left, seenRight);
     const leftKeys = Object.keys(left);
     const rightKeys = Object.keys(right);
-    if (
-      leftKeys.length !== rightKeys.length ||
-      leftKeys.some((key) => !hasOwnProperty(right, key))
-    )
+    let haveDifferentKeys = leftKeys.length !== rightKeys.length;
+    if (!haveDifferentKeys) {
+      for (let index = 0, count = leftKeys.length; index < count; index++) {
+        const key = leftKeys[index];
+
+        if (!hasOwnProperty(right, key)) {
+          haveDifferentKeys = true;
+          break;
+        }
+      }
+    }
+    if (haveDifferentKeys) {
       return NO_PATHS;
+    }
     for (let index = leftKeys.length - 1; index >= 0; index -= 1) {
       const key = leftKeys[index];
-      const escaped = key.replace(TILDE_REGEX, '~0').replace(SLASH_REGEX, '~1');
       pending.push({
         previous: Reflect.get(left, key),
         next: Reflect.get(right, key),
-        path: item.path + '/' + escaped,
+        path: appendSegment(item.path, key),
       });
     }
   }

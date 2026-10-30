@@ -2,17 +2,24 @@
 
 ## Requirements
 
+- 파생 원천·대상 경로는 jsonPointer에서 한 번 파싱한 이름으로 탐색하며 연산자 심볼은 속성 이름으로 소비하지 않는다. 로드 범위 포함 검사는 isDescendantPath를 사용한다.
+- 현재 선택 맵에 없는 정적 자식의 선언 ID는 engine의 공통 구조 조회로 준비물에서 읽은 뒤 마지막 커밋으로 후퇴한다. 준비물의 부모·경로·청사진·자식 증인이 일치할 때만 상수 ID 배열을 재사용하며, settle의 타입이나 실행 organ을 import하지 않는다. O(1) 조회이며 추가 ID 배열이나 영구 색인을 보유하지 않는다.
+
 - D3b-2의 규칙 표는 blueprint.deriveRuleTable, 감시 경로와 자식 위치는 host.watchPaths·deriveChildren의 지연 슬롯에 둔다. builder와 규칙 순서는 유지하고 공통 저장소는 derive를 import하지 않는다.
 
 - D3b-1의 규칙 target ID 메모는 호출자가 넘긴 root runtime에 지연 생성한다. nextTargetId는 기존 프로세스 전역 단조 발급을 유지하며 reset으로 되감지 않는다. 폼 전체 reset·폐기에서 target 메모를 해제하고 부분 reset은 유지한다. 선언 키도 같은 runtime의 별도 WeakMap에 두며 규칙 키의 직렬화와 소비 순서는 보존한다(SURFACE-065).
 
-- 배열 조각 규칙 표는 반복 템플릿과 prefixItems 자리의 후보마다 대상 행과 해당 `targetDeclarationIds`를 만든다. 조각 기능 색인도 전체 후보 소유를 이름별로 합치며, 실제 대상은 현재 선택된 선언으로 제한한다(377C-01, 389C-03, 391C-01).
+- 배열 조각 규칙 표는 반복 템플릿과 prefixItems 자리의 후보마다 대상 행과 해당 `targetDeclarationIds`를 만든다. 조각 기능 색인도 전체 후보 소유를 이름별로 합치며, 실제 대상은 현재 선택된 선언으로 제한한다(377C-01, 389C-03, 391C-01). 반복 아이템 템플릿 행은 이름이 아니라 `targetItems` 표지로 구별하므로 이름이 `*`인 객체 속성의 행과 섞이지 않는다.
 
 - `derive`는 완성된 형상에 걸린 규칙을 판정한다. 쓰기 적용, 재계산, 파생 라운드 셈, 원본 B 복원, 커밋은 settle이 맡는다(LANDING-063·083, SETTLE-004·011·017, NODE-016).
 - derive는 engine의 자식 fractal(`engine/derive`)로, settle과는 형제 관계다. 의존은 `blueprint`·`record`의 진입점과, engine organ의 순수 `sameValue`·경로 해석·선언 층 해석, `@/schema-form/helpers/jsonPointer`로만 향한다. settle의 어느 파일도(`settle/types/`, `settle/index.ts`, 쓰기·전이·커밋·파생 라운드 실행 organ) `import type`으로도 가져오지 않는다(NODE-016·045, SETTLE-043, CONTROLS-080).
 - 청사진은 식, 선언, 역의존 표를 제공하고, derive가 규칙 발생 템플릿 표를 청사진마다 한 번 만들어 약한 맵에 둔다. 규칙이 없는 청사진은 빈 표를 공유하며 파생 단계를 건너뛴다(SETTLE-017·043, LANDING-083, CONTROLS-032·079).
 
 ## API Contracts
+
+- 조각 규칙과 fields 규칙의 `targetName`이 빈 문자열이면 빈 이름 자식을 선택합니다. 대상 이름 부재(`undefined`)만 호스트 자신을 뜻하며 의존·context 색인도 같은 구분을 사용합니다. 비용은 기존 상수 시간 비교와 동일하며 추가 보유 메모리는 없습니다.
+
+- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
 
 - 규칙 키의 원천과 대상 kind는 union의 fold를 포함한 식별 토큰이다. union은 `union:<fold mask>`, 다른 종류는 기존 kind 문자열이며, 대상 발생 수명 ID는 별도로 유지한다. 같은 경로의 다른 fold는 커밋 기준점·소비 에지를 공유하지 않는다. 원천 문서 순서의 같은 이름 간선은 청사진 노드 객체 동일성으로 찾는다. 규칙 종류 순위와 선언 층 순위는 이 토큰과 별개이다(BLUEPRINT-043, NODE-043, SETTLE-004, 389C-02, 390C-01).
 
@@ -41,6 +48,10 @@
 - 자식 fractal `evaluateDeriveRound`가 라운드 판정과 그 전용 보조(`utils/rank`, `utils/inject`, `utils/writes`)를 소유한다. derive의 `utils/rules/`는 규칙 표와 규칙 키·watch 경로를, `utils/evaluate/`는 상호작용 초기화 판정과 두 판정이 함께 쓰는 기준점·식 평가·선택 선언 보조를, `constants/`는 라운드 상한을, `types/`는 판정 형을 소유한다. 상호작용 초기화 판정과 규칙 표 생성은 전용 파일이 하나뿐이라 fractal로 올리지 않는다.
 
 ## Acceptance Criteria
+
+### derive-static-prepared-ids — 준비된 정적 선언 조회
+
+- 현재 선택에 없는 정적 자식은 준비물의 ID를 읽어 커밋 경로 조회를 생략한다. 현재 선택이 있으면 그 선택이 우선하며 준비물 증인이 없거나 다르면 기존 커밋·저작 선언 후퇴를 유지한다.
 
 ### derive-failures — 오류 목록과 발생 식별자
 
@@ -90,4 +101,4 @@
 
 ## Last Updated
 
-2026-10-16; 배열 조각 derive 대상과 선형 초기화 후보 수집(CONTROLS-077, 377C-01).
+2026-10-29. B9-1 준비된 정적 선언 ID의 우선순위와 후퇴.

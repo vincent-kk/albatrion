@@ -1,0 +1,15 @@
+{
+  "startedAt": "2026-10-28T18:25:01.774Z",
+  "endedAt": "2026-10-28T18:42:38.150Z",
+  "processes": 180,
+  "delayedProcesses": 10,
+  "delayCount": 34,
+  "maximumWaitMs": 76484.68604200002,
+  "maximumApprovedExternalCpuPercent": 29.412957298048465,
+  "maximumObservedExternalCpuPercent": 155.76110414876695,
+  "quality": {
+    "mode": "legacy",
+    "medianRatio": 1.0330553482325764,
+    "valid": true
+  }
+}

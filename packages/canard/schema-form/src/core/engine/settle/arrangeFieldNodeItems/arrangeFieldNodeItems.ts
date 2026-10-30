@@ -9,11 +9,11 @@ import { WriteOption } from '../../types/value';
 import { computeNode } from '../utils/compute/computeNode';
 import { registerRecalculation } from '../utils/dependencies/registerRecalculation';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
-import { readRawTree } from '../utils/latent/readRawTree';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { finishSettlement } from '../utils/settlement/finishSettlement';
+import { readSourceTree } from '../utils/slots/readSourceTree';
 import { readArrayLength } from '../utils/structure/readArrayLength';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { applyArraySlots } from './utils/arraySlots/applyArraySlots';
@@ -55,6 +55,10 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
 ): unknown => {
+  if (node.detached)
+    return operation.kind === 'push' || operation.kind === 'insert'
+      ? readArrayLength(node)
+      : undefined;
   const append = prepareArrayAppend(node, operation);
   const pop = append ? undefined : prepareArrayPop(node, operation);
   const splice =
@@ -78,10 +82,7 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
     writeFieldNode(node, plan.raw, 'callerReplace', WriteOption.Overwrite);
     return resultOf(node, plan, previous);
   }
-  if (
-    node.detached ||
-    (plan.kind === 'update' && !node.structure?.[String(plan.index)])
-  ) {
+  if (plan.kind === 'update' && !node.structure?.[String(plan.index)]) {
     const scratch = getSettlementScratch(node.rootNode.runtime);
     const context = createSettlementContext(
       node,
@@ -91,47 +92,28 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
     );
     let oldRaw: unknown;
     try {
-      oldRaw = readRawTree(node, context);
+      oldRaw = readSourceTree(node, context);
     } finally {
       releaseSettlementScratch(scratch);
     }
-    const source = isArray(oldRaw) ? oldRaw : [];
-    const copy = source.slice();
-    if (plan.kind === 'update') copy[plan.index] = plan.value;
-    else {
-      copy.length = 0;
-      for (const slot of plan.slots)
-        copy.push('from' in slot ? source[slot.from] : slot.value);
-    }
-    const removed =
-      plan.kind === 'slots' && plan.result.source === 'removed'
-        ? (node.structure?.[String(plan.result.index)]?.local ??
-          source[plan.result.index])
-        : undefined;
+    const copy = isArray(oldRaw) ? oldRaw.slice() : [];
+    copy[plan.index] = plan.value;
     writeFieldNode(node, copy, 'callerReplace', WriteOption.Overwrite);
-    if (plan.kind === 'update') {
-      if (node.detached) return copy[plan.index];
-      const item = node.structure?.[String(plan.index)];
-      if (item) return item.local;
-      const readScratch = getSettlementScratch(node.rootNode.runtime);
-      try {
-        const readContext = createSettlementContext(
-          node,
-          'callerReplace',
-          WriteOption.Overwrite,
-          readScratch,
-        );
-        const current = readRawTree(node, readContext);
-        return isArray(current) ? current[plan.index] : undefined;
-      } finally {
-        releaseSettlementScratch(readScratch);
-      }
+    const item = node.structure?.[String(plan.index)];
+    if (item) return item.local;
+    const readScratch = getSettlementScratch(node.rootNode.runtime);
+    try {
+      const readContext = createSettlementContext(
+        node,
+        'callerReplace',
+        WriteOption.Overwrite,
+        readScratch,
+      );
+      const current = readSourceTree(node, readContext);
+      return isArray(current) ? current[plan.index] : undefined;
+    } finally {
+      releaseSettlementScratch(readScratch);
     }
-    return node.detached
-      ? plan.result.source === 'length'
-        ? copy.length
-        : removed
-      : resultOf(node, plan, removed);
   }
   if (plan.kind === 'update') {
     const item = node.structure?.[String(plan.index)];

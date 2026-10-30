@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
 
@@ -17,17 +19,24 @@ export const readFieldNodeErrors = <Self extends FieldNodeRecord<Self>>(
     return runtime.detachedReads?.get(node)?.errors ?? EMPTY_ISSUES;
   const external = runtime.nodeErrors?.get(node);
   const validation = runtime.validationErrors?.get(node);
+
   const isIssues = (
-    items: readonly unknown[] | undefined,
-  ): items is readonly ValidationIssue[] =>
-    !!items &&
-    items.every(
-      (item) =>
-        item !== null &&
-        typeof item === 'object' &&
-        'dataPath' in item &&
-        typeof item.dataPath === 'string',
-    );
+    items: Optional<readonly unknown[]>,
+  ): items is readonly ValidationIssue[] => {
+    if (!items) return false;
+    for (let index = 0, count = items.length; index < count; index++) {
+      if (!(index in items)) continue;
+      const item = items[index];
+      if (
+        item === null ||
+        typeof item !== 'object' ||
+        !('dataPath' in item) ||
+        typeof item.dataPath !== 'string'
+      )
+        return false;
+    }
+    return true;
+  };
   if (!isIssues(external))
     return isIssues(validation) ? validation : EMPTY_ISSUES;
   if (!isIssues(validation)) return external;

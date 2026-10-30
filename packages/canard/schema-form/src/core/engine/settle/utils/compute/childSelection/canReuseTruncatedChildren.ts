@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../../record';
 import type {
   ArrayPopProof,
@@ -17,7 +19,7 @@ import type {
 export const canReuseTruncatedChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   proof: ArrayPopProof<Self>,
 ): boolean => {
   const dirty = context.dirtyChildrenByParent.get(node.path);

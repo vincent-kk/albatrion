@@ -1,0 +1,304 @@
+{
+  "scope": "product files changed from 1c3655a10 to 870fe2689",
+  "before": 97,
+  "after": 22,
+  "removed": 75,
+  "files": [
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/projection/omitTrailingArray.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/value/assembleArray.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/recognizeEqualityExpression.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/controls/hasKeepFields.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemSchemaPath.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/blueprint/validateShape/utils/visitShape.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveChildEntry.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getRuleTargets.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/canApplyArrayTail.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/getRequiredChildren.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/publishPreparedSelection.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/dirtyChildren.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/preserveReferences.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/utils/prepareHostWheelPlan.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/context/changeFieldNodeContext.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readLatentExitPolicy.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "removed": 2
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/createGatePredicate.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyGateWheelConfirmation.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTableGate.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTablePrePublication.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/readExplicitWriteKind.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/markWrite.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/utils/verifyWriteEpoch.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/output/updateOutput.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/prepareSourcePruner.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isMissingRaw.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isReplacedLivePath.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/write/releaseWrongKindHosts.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/validation/utils/read/readFieldNodeErrors.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/assertValidationRootReady.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/core/surface/utils/binding/interpretFieldNodeDraft.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx",
+      "removed": 1
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringEnum/FieldInputStringEnum.tsx",
+      "removed": 1
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "removed": 1
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/helpers/schemaIdentity/utils/isSameSchema.ts",
+      "removed": 1
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "removed": 1
+    }
+  ]
+}

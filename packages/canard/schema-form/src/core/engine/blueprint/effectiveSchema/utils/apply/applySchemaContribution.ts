@@ -48,7 +48,7 @@ export const applySchemaContribution = (
       value === undefined ||
       key === 'type' ||
       key === 'nullable' ||
-      CONSTRAINT_KEYS.includes(key)
+      CONSTRAINT_KEYS.indexOf(key) !== -1
     )
       continue;
     if (key === SCHEMA_GROUP.options || key === SCHEMA_GROUP.presentation)
@@ -66,16 +66,16 @@ export const applySchemaContribution = (
       const earlier = isArray(state.schema.required)
         ? state.schema.required
         : [];
-      state.schema.required = [
-        ...earlier,
-        ...value.filter(
-          (entry, index) =>
-            !earlier.includes(entry) && value.indexOf(entry) === index,
-        ),
-      ];
+      const required = [...earlier];
+      for (let index = 0, length = value.length; index < length; index++) {
+        const entry = value[index];
+        if (earlier.indexOf(entry) === -1 && value.indexOf(entry) === index)
+          required.push(entry);
+      }
+      state.schema.required = required;
       ownedSchemaValues.add(state.schema.required);
     } else if (key === 'pattern' && typeof value === 'string') {
-      if (!state.patterns.includes(value)) state.patterns.push(value);
+      if (state.patterns.indexOf(value) === -1) state.patterns.push(value);
     } else if (key === 'allOf' && isArray(value)) {
       state.schema.allOf = [
         ...(isArray(state.schema.allOf) ? state.schema.allOf : []),

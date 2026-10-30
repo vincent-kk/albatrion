@@ -1,0 +1,7 @@
+{
+  "probe": "window1-without-S5/probe.json.gz",
+  "authority": "msg_35a9998d8e2b",
+  "classification": "possible-overlap-do-not-use-for-causal-judgment",
+  "reason": "Tool checkJs/lint overlapped the first S5 removal diagnostic. Preserve it and run one authorized clean replacement after all other diagnostics and heap.",
+  "replacement": "window1-without-S5-clean/probe.json.gz"
+}

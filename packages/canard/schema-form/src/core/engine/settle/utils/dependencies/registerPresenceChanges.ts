@@ -1,18 +1,29 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
+import { maxLite } from '@winglet/common-utils/math';
+
+import type { Dictionary } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  appendSegment,
+  parsePointerSegment,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { collectPresenceChangeNames } from './collectPresenceChangeNames';
 import { deferPresenceTemplate } from './deferPresenceTemplate';
 import { evaluatedPresenceAfter } from './evaluatedPresenceAfter';
 import { getDependencyIndex } from './getDependencyIndex';
+import { getLivePresenceNode } from './getLivePresenceNode';
 import { publishPresenceOwner } from './publishPresenceOwner';
 import { registerProjectionChanges } from './registerProjectionChanges';
 
 /** Parent pointer of a non-root occurrence, preserving escaped segments. */
-const parentOf = (path: string): string => path.slice(0, path.lastIndexOf('/'));
+const parentOf = (path: string): string => resolvePointer(path, $.Parent);
 
 /**
  * Register child identity or projected emission changes in their existing host wheel.
@@ -23,18 +34,13 @@ const parentOf = (path: string): string => path.slice(0, path.lastIndexOf('/'));
  */
 export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   host: Self,
-  previous: Readonly<Record<string, Self>>,
+  previous: Readonly<Dictionary<Self>>,
   context: SettlementContext<Self>,
 ): boolean => {
   if (!context.hasGates) return false;
   if (context.presenceMetrics) context.presenceMetrics.calls++;
   const structure = host.structure ?? {};
-  const names: string[] = [];
-  for (const name in previous)
-    if (!hasOwnProperty(structure, name) || previous[name] !== structure[name])
-      names.push(escapeSegment(name));
-  for (const name in structure)
-    if (!hasOwnProperty(previous, name)) names.push(escapeSegment(name));
+  const names = collectPresenceChangeNames(host, previous, context);
   registerProjectionChanges(host, names, context);
   if (names.length === 0) return false;
 
@@ -48,8 +54,9 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   const stateOnly = new Set<string>();
   let marked = false;
   for (const name of names) {
-    const path = host.path + '/' + name;
-    const rawName = unescapeSegment(name);
+    const rawName = parsePointerSegment(name);
+    if (typeof rawName !== 'string') continue;
+    const path = appendSegment(host.path, rawName);
     const child = hasOwnProperty(structure, rawName)
       ? structure[rawName]
       : undefined;
@@ -76,10 +83,11 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
       name,
       context.presenceMetrics,
       context,
+      context.root.runtime,
     );
     for (const owner of affected.owners) {
       owners.add(owner);
-      ownerStamps.set(owner, Math.max(ownerStamps.get(owner) ?? 0, stamp));
+      ownerStamps.set(owner, maxLite(ownerStamps.get(owner) ?? 0, stamp));
     }
     for (const owner of affected.stateOnly) stateOnly.add(owner);
     for (const template of affected.outerTemplates)
@@ -94,7 +102,7 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
 
   for (const owner of owners) {
     if (
-      (owner !== '' && parentOf(owner) === host.path) ||
+      (owner !== $.Root && parentOf(owner) === host.path) ||
       evaluatedPresenceAfter(owner, ownerStamps.get(owner)!, context)
     ) {
       publishPresenceOwner(owner, context);
@@ -112,16 +120,8 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   const features = getFeatureNodeIndex(context.root.runtime.blueprint);
   for (const owner of stateOnly) {
     if (owners.has(owner)) continue;
-    let live: Self | undefined = context.root;
-    for (const segment of owner ? owner.slice(1).split('/') : []) {
-      const name = unescapeSegment(segment);
-      live =
-        live?.structure && hasOwnProperty(live.structure, name)
-          ? live.structure[name]
-          : undefined;
-      if (!live) break;
-    }
-    if (!live || live.detached) continue;
+    const live = getLivePresenceNode(context.root, owner);
+    if (!live) continue;
     if (
       features.stateKeyNodes.has(live.blueprintNode.id) ||
       (live.parent &&

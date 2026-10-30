@@ -1,19 +1,26 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import type { Dictionary } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { mergeEffectiveSchema } from '../../../blueprint';
-import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { captureProjectionBaseline } from '../dependencies/captureProjectionBaseline';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
+import { cloneFromSlot } from '../slots/cloneFromSlot';
+import { createFromSlotOverlay } from '../slots/createFromSlotOverlay';
+import { enterSlotClone } from '../slots/enterSlotClone';
+import { getSlotSource } from '../slots/getSlotSource';
 import { isSameChildList } from '../structure/isSameChildList';
 import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
 import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
+import { prepareStaticHost } from './childSelection/utils/prepareStaticHost';
 import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
 
@@ -30,11 +37,31 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
  */
 export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   context: SettlementContext<Self>,
   hasRelocated = true,
 ): void => {
-  const baseline: Record<string, Self> = {};
+  const prepared = prepareStaticHost(node, prior, context, hasRelocated);
+  if (prepared) {
+    (context.presenceSelections ??= new Map()).set(node, {
+      structure: prior,
+      names: prepared.dynamicNames,
+    });
+    (context.preparedStaticPriorNames ??= new Map()).set(
+      node,
+      prepared.dynamicNames,
+    );
+    if (prepared.selectedStructure === prior)
+      prepared.selectedChildren = node.children ?? [];
+    node.structure = prepared.baseline;
+    node.children = captureFieldNodeChange(
+      node,
+      'children',
+      prepared.baselineChildren,
+    );
+    return;
+  }
+  const baseline: Dictionary<Self> = {};
   Object.setPrototypeOf(baseline, null);
   const cached =
     node.behavior.type === 'object'
@@ -65,14 +92,16 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
   );
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
-    if (
-      baseline[entry.name] ||
-      (!direct &&
-        !entry.declarations.some(
-          (declaration) => declaration.gates.length === 0,
-        ))
-    )
-      continue;
+    if (baseline[entry.name]) continue;
+    if (!direct) {
+      let hasUngatedDeclaration = false;
+      for (const declaration of entry.declarations)
+        if (declaration.gates.length === 0) {
+          hasUngatedDeclaration = true;
+          break;
+        }
+      if (!hasUngatedDeclaration) continue;
+    }
     if (reuse?.(entry)) continue;
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]
@@ -81,26 +110,38 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       context.pendingExits.size === 0
         ? undefined
         : JSON.stringify([
-            node.path + '/' + escapeSegment(entry.name),
+            appendSegment(node.path, entry.name),
             getBlueprintNodeIdentity(entry.node),
           ]);
     const pending =
       key === undefined ? undefined : context.pendingExits.get(key);
-    const child = priorChild ?? pending ?? createChildNode(node, entry);
+    const retained =
+      !priorChild && !pending ? getSlotSource(node, entry) : undefined;
+    const slotSource = retained?.source;
+    const slotOverlay = retained?.overlay;
+    const child =
+      priorChild ??
+      pending ??
+      (slotSource
+        ? cloneFromSlot(node, entry, slotSource, context)
+        : slotOverlay
+          ? createFromSlotOverlay(node, entry, slotOverlay, context)
+          : createChildNode(node, entry));
     context.perished.delete(child);
     if (key !== undefined && context.pendingExits.delete(key)) {
-      const path = node.path + '/' + escapeSegment(entry.name);
+      const path = appendSegment(node.path, entry.name);
       updatePendingExitIndex(context, path, -1);
     }
     if (pending && child === pending) {
       context.revived.add(child);
-      indexEnteredLatentKey(context, child);
     }
     if (context.hasGates) getGateRegistry(child.runtime).register(child);
     if (!priorChild && !pending) {
       context.entered.add(child);
-      indexEnteredLatentKey(context, child);
+
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
+      else if (slotSource || slotOverlay)
+        enterSlotClone(node, child, entry.name, context);
       else enterFieldNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);

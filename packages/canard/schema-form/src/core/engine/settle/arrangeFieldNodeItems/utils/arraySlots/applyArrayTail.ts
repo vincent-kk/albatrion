@@ -1,18 +1,22 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { minLite } from '@winglet/common-utils/math';
+
+import type { Dictionary, Optional } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntry } from '../../../../blueprint';
 import { visitFieldNodes } from '../../../../navigation';
-import { captureFieldNodeChange } from '../../../../record';
 import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../record';
+import { captureFieldNodeChange } from '../../../../record';
 import type { SettlementContext } from '../../../types/settlement';
 import { createChildNode } from '../../../utils/compute/createChildNode';
 import { captureDetachedFieldNodeReads } from '../../../utils/detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../../../utils/gates/getGateRegistry';
 import { markWrite } from '../../../utils/input/markWrite';
-import { readLatentSlotSource } from '../../../utils/latent/readLatentSlotSource';
-import { indexEnteredLatentKey } from '../../../utils/latentStore/indexEnteredLatentKey';
 import { getLoadValue } from '../../../utils/loadValues/getLoadValue';
 import { setLoadValue } from '../../../utils/loadValues/setLoadValue';
+import { readInactiveSlotSource } from '../../../utils/slots/readInactiveSlotSource';
 import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths';
 import type { ArrayPathMove } from '../../types/pathMoves';
 import { clearArrayRuntimePaths } from '../rekey/clearArrayRuntimePaths';
@@ -34,6 +38,7 @@ const readPositionLoadValue = (hostValue: unknown, key: string): unknown =>
  * Mutates `host.structure` in place, reusing prefix entries and adding or deleting only tail keys.
  * A perished item's detached defaultValue is filled from the host's load value by position (NODE-044 reads unchanged).
  * An empty result (clear, or a pop of the only item) removes the host's path-store entries by host prefix instead of per-position re-keying.
+ * Callers collecting perishedPaths remove at most one tail slot (append/pop); reassess its structure if multi-slot callers are added.
  * @param host - Live branch array with no whole raw override
  * @param plan - Proposal accepted by canApplyArrayTail, prepareArrayAppend or prepareArrayPop; appended slots carry values and retained prefix slots are never read
  * @param context - Settlement receiving the same lifecycle and dirty facts as a full plan
@@ -48,8 +53,8 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   const oldCount = host.itemCount;
   const length = offset + plan.slots.length;
-  const prefixCount = Math.min(oldCount, length);
-  const items: Record<string, Self> = host.structure ?? Object.create(null);
+  const prefixCount = minLite(oldCount, length);
+  const items: Dictionary<Self> = host.structure ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const oldExtras = isArray(host.undeclaredValues) ? host.undeclaredValues : [];
@@ -67,9 +72,9 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       : removedItem
         ? removedItem.local
         : removedEntry
-          ? readLatentSlotSource(
+          ? readInactiveSlotSource(
               context,
-              host.path + '/' + removedIndex,
+              appendSegment(host.path, removedIndex),
               removedEntry.node,
             )
           : oldExtras[removedIndex - templateCount];
@@ -102,17 +107,17 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   }
 
   const moves: ArrayPathMove[] = [];
-  let perishedPaths: Set<string> | undefined;
+  let perishedPaths: Optional<string[]>;
   for (let index = prefixCount; index < oldCount; index++) {
     const key = String(index);
     const item = items[key];
-    if (length) moves.push({ previous: host.path + '/' + index });
+    if (length) moves.push({ previous: appendSegment(host.path, index) });
     if (!item) continue;
     context.perished.add(item);
     // Equals the item's load-path walk: its path is the host's plus this position,
     // and the load snapshot is not replaced before the end of this application.
     const load =
-      !item.detached && item.path === host.path + '/' + key
+      !item.detached && item.path === appendSegment(host.path, key)
         ? { value: readPositionLoadValue(snapshot, key) }
         : undefined;
     visitFieldNodes(
@@ -131,22 +136,14 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
       },
       { owned: true },
     );
-    (perishedPaths ??= new Set()).add(item.path);
+    if (length) (perishedPaths ??= []).push(item.path);
     delete items[String(index)];
   }
-  if (!length)
-    clearArrayRuntimePaths(
-      host.runtime,
-      host.path,
-      oldCount,
-      perishedPaths ?? new Set(),
-    );
+  if (!length) clearArrayRuntimePaths(host.runtime, host.path, oldCount);
   else {
     if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
     rekeyArrayRuntimePaths(host.runtime, host.path, moves, prefixCount);
   }
-  context.latentDescendantKeys = undefined;
-  context.enteredLatentKeys = undefined;
 
   host.itemCount = length;
   host.raw = undefined;
@@ -160,7 +157,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   context.shapeDirtyPaths.add(host.path);
   for (const { node, value } of created) {
     context.entered.add(node);
-    indexEnteredLatentKey(context, node);
+
     markWrite(node, value, context);
   }
   if (context.hasGates)

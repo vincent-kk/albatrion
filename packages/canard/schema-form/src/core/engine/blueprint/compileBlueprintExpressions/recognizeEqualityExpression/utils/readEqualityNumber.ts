@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { EqualityLiteralRead } from './types';
 
 /**
@@ -9,7 +11,7 @@ import type { EqualityLiteralRead } from './types';
 export const readEqualityNumber = (
   source: string,
   start: number,
-): EqualityLiteralRead | undefined => {
+): Optional<EqualityLiteralRead> => {
   let index = start;
   const negative = source[index] === '-';
   if (negative) {

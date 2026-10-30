@@ -1,10 +1,9 @@
 import { blueprint } from '@/schema-form/core/engine/blueprint';
-import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import type {
   FieldNodeRecord,
   FieldNodeRuntime,
 } from '@/schema-form/core/engine/record';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 
 /** Plain node used to exercise navigation without the later engine class. */
@@ -37,11 +36,8 @@ export const createNode = (
       globalStateCounts: new Map(),
       globalState: {},
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'),
+
       misfitPaths: new PathKeyedSet(),
-      inactiveValuesMemo: new PathKeyedMap<
-        readonly { path: string; value: unknown }[]
-      >('path'),
     };
   const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
   const node: TestNode = {

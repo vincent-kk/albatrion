@@ -1,0 +1,7 @@
+{
+  "candidate": "652ddf6eede10a1852f9b568444b935712fc0dc0",
+  "baseline": "4d0fa4a12d5a9062a83c705076f2928e600d671c",
+  "approvedAt": "2026-10-28T21:24:47Z",
+  "source": "Orca coordinator dispatch; explicit start approval for the new formal window",
+  "startedAt": "2026-10-28T21:25:04.718Z"
+}

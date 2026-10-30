@@ -483,3 +483,5 @@ G26 초안 [/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-
 최종 [verification.json](profile-136k-final/verification.json)은 원시 값과 표의 일치, 228 records / 114 pairs / warmup 20 / samples 101 / run order / worker <220초 / failedWrites 0, 원본 해시·상수 전용 diff, D/tools 불변, 제품 src 불변, Git 쓰기 없음, 각 파일 5 MB 미만 및 runtime bundle 없음의 근거를 기록합니다. oneOf 층은 실패했고 if/then은 절차에 없으므로 두 항목을 충족했다고 주장하지 않습니다.
 
 **상태:** React 종단·커밋 표와 oneOf React 계층 표를 완료했습니다. oneOf 계층 6행은 모두 충족합니다. update 미달 6행은 기존 React 소유자 수용이 없어 소유자 질의 대상입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `439fda3219ec`, `daca1d14a840`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

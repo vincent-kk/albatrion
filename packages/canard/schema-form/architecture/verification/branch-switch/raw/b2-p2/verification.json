@@ -1,0 +1,69 @@
+{
+  "typecheck": 0,
+  "lint": 0,
+  "build": 0,
+  "fiveProjects": 0,
+  "verifyResolved": true,
+  "verifyFull": 1,
+  "verifyTimingIsolated": 0,
+  "verifyResolution": "The second full verify run passed 651 files and 4498 cases, with one pre-existing global-errors timing case at 50.806ms above a 40ms limit and one todo. After the full run ended, the unchanged timing file passed both cases in an isolated maxWorkers=1 run. The first full verify run passed that timing file and failed only the now-corrected preparation cost suite's test mode; that suite then passed 8/8 in verify mode. No assertions were relaxed.",
+  "fiveProjectSummary": "885 files passed, 5487 cases passed, 1 existing todo",
+  "productCommit": "8d3bb3755",
+  "finalCommit": "e8c122986",
+  "baselineCommit": "422b1b195",
+  "integrationBase": "8d9d885bf",
+  "fullLogsCommitted": false,
+  "restoredChecks": {
+    "targetedFiles": 9,
+    "targetedCases": 79,
+    "typecheckExit": 0,
+    "lintExit": 0,
+    "buildExit": 0
+  },
+  "delivery": {
+    "node": {
+      "status": "pass",
+      "scenes": 72,
+      "differences": 0,
+      "runtime": {
+        "name": "node",
+        "version": "v26.12.1",
+        "node": "v26.12.1",
+        "arch": "arm64",
+        "v8PointerCompression": 0
+      },
+      "bundles": [
+        {
+          "bundle": "current-baseline.mjs",
+          "sha256": "64055de3fd91b4e89a3146d85dfe8736abe679a9d36e6ba13a282d9c5585355c"
+        },
+        {
+          "bundle": "current-direct.mjs",
+          "sha256": "4fcc7a6bbdf8dcdbf1a57ebbe5d2f19bcf3185b6f0d4632b946f1182dfe7dc0e"
+        }
+      ]
+    },
+    "bun": {
+      "status": "pass",
+      "scenes": 72,
+      "differences": 0,
+      "runtime": {
+        "name": "bun",
+        "version": "1.4.4",
+        "node": "v26.3.0",
+        "arch": "arm64",
+        "v8PointerCompression": null
+      },
+      "bundles": [
+        {
+          "bundle": "current-baseline.mjs",
+          "sha256": "64055de3fd91b4e89a3146d85dfe8736abe679a9d36e6ba13a282d9c5585355c"
+        },
+        {
+          "bundle": "current-direct.mjs",
+          "sha256": "4fcc7a6bbdf8dcdbf1a57ebbe5d2f19bcf3185b6f0d4632b946f1182dfe7dc0e"
+        }
+      ]
+    }
+  }
+}

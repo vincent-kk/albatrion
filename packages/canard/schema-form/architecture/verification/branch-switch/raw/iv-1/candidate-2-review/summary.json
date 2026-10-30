@@ -1,0 +1,93 @@
+[
+  {
+    "probe": "if-host-edge",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "blueprint.local-wheel-scopes",
+    "pattern": "if host"
+  },
+  {
+    "probe": "virtual-unknown",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "blueprint.local-wheel-scopes",
+    "pattern": "virtual uncertainty"
+  },
+  {
+    "probe": "recursive-binding",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "blueprint.local-wheel-scopes",
+    "pattern": "recursive occurrence"
+  },
+  {
+    "probe": "write-epoch",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-resolution",
+    "pattern": "write epoch"
+  },
+  {
+    "probe": "raw-outside",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-resolution",
+    "pattern": "raw change outside"
+  },
+  {
+    "probe": "wrong-kind-outside",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-resolution",
+    "pattern": "wrong-kind ancestor"
+  },
+  {
+    "probe": "split-outside",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-resolution",
+    "pattern": "split bucket"
+  },
+  {
+    "probe": "unrebound-occurrence",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-resolution",
+    "pattern": "live recursive occurrence"
+  },
+  {
+    "probe": "precompute-confirmation",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-compute",
+    "pattern": "cached host before"
+  },
+  {
+    "probe": "postcompute-confirmation",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-compute",
+    "pattern": "after local computation"
+  },
+  {
+    "probe": "postcompute-requeue",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-compute",
+    "pattern": "after local computation"
+  },
+  {
+    "probe": "wrong-kind-wheel-clear",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "settle.local-wheel-compute",
+    "pattern": "wrong-kind"
+  },
+  {
+    "probe": "postcompute-host-candidate",
+    "exit": 1,
+    "expectedFailureObserved": true,
+    "test": "selectChildren.head-differential",
+    "pattern": "if-then publication"
+  }
+]

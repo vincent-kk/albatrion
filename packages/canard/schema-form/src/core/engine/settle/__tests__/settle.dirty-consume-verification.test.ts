@@ -8,6 +8,7 @@ import * as traversal from '../utils/compute/dirtyChildren';
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 
 it('S6 rejects an actual dirtyChildren call returning a consumed child', () => {
+  // The injected internal mutation targets one shipping tree's verification clock.
   const previousMode = engineModes.gateSelection;
   const previous = { ...gateSelectionTable };
   const { root } = createDispatchTree({

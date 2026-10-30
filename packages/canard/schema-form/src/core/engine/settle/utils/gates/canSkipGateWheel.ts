@@ -1,7 +1,10 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { GateWheelFrame } from '../../types/gateWheel';
 import type { SettlementContext } from '../../types/settlement';
 import { dirtyChildren } from '../compute/dirtyChildren';
+import { readGateHostView } from './readGateHostView';
 import { readGateProjectedExtra } from './readGateProjectedExtra';
 import { readProjectedValue } from './readProjectedValue';
 
@@ -36,17 +39,25 @@ export const canSkipGateWheel = <Self extends FieldNodeRecord<Self>>(
   )
     return false;
   for (const input of frame.inputs.values()) {
+    const view =
+      input.kind === 'property' || input.kind === 'presence'
+        ? readGateHostView(context, input.hostPath!, node).value
+        : undefined;
     const value =
       input.kind === 'context'
         ? context.root.runtime.context
-        : input.kind === 'extra'
-          ? readGateProjectedExtra(
-              context,
-              input.path,
-              readProjectedValue(context, input.path),
-              node,
-            )
-          : readProjectedValue(context, input.path);
+        : input.kind === 'property'
+          ? view![input.name!]
+          : input.kind === 'presence'
+            ? hasOwnProperty(view!, input.name!)
+            : input.kind === 'extra'
+              ? readGateProjectedExtra(
+                  context,
+                  input.path,
+                  readProjectedValue(context, input.path),
+                  node,
+                )
+              : readProjectedValue(context, input.path);
     if (!Object.is(input.value, value)) return false;
   }
   return true;

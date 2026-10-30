@@ -15,6 +15,7 @@ import {
 } from '@/schema-form/core/engine/write';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 import { readFieldNodeDefaultValue } from '../../utils/loadValues/readFieldNodeDefaultValue';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
@@ -283,7 +284,7 @@ describe('array insert', () => {
       expect(wrongKind.result).toEqual([0, 1]);
       expect(wrongKind.root.raw).toEqual(['x']);
     });
-    it('NODE-044 sends a detached host insert to its latent whole write, like remove', () => {
+    it('NODE-044 ignores a detached host insert', () => {
       const { root } = createTestTree({
         type: 'object',
         properties: {
@@ -311,20 +312,18 @@ describe('array insert', () => {
       expect(former.detached).toBe(true);
       expect(
         arrangeFieldNodeItems(former, { kind: 'insert', index: 1, value: 'x' }),
-      ).toBe(3);
+      ).toBe(2);
       expect(
         arrangeFieldNodeItems(former, { kind: 'insert', index: 9, value: 'y' }),
       ).toBe(2);
-      expect(
-        root.runtime.latentRaw.get(JSON.stringify(['/list', 'array'])),
-      ).toMatchObject({ raw: ['a', 'x', 'b'] });
+      expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual(['a', 'b']);
       writeFieldNode(
         root.structure!.show,
         true,
         'callerReplace',
         WriteOption.Overwrite,
       );
-      expect(root.structure!.list.local).toEqual(['a', 'x', 'b']);
+      expect(root.structure!.list.local).toEqual(['a', 'b']);
     });
   });
 

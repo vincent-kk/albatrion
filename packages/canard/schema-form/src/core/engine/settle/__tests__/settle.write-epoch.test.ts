@@ -113,6 +113,7 @@ describe('whole-write epoch scheduling', () => {
   });
 
   it('retains exactly 5461 consumes on the real partial-write bulk path', () => {
+    // Shipping-path consume counts exclude the independent verification replay.
     const { root } = createDispatchTree(nested(6));
     dispatchMount(root, undefined);
     const next = changed(root.emit);
@@ -202,17 +203,6 @@ describe('whole-write epoch scheduling', () => {
       ).adds,
     ).toBeGreaterThan(0);
     expect(root.children![1].emit).toBe(previous);
-  });
-
-  it('falls back for latent sources even when replacement prunes them', () => {
-    const { root } = createDispatchTree(nested(2));
-    dispatchMount(root, undefined);
-    root.runtime.latentRaw.set(JSON.stringify(['/ghost', 'unknown']), 42);
-    const next = changed(root.emit);
-    expect(
-      measure(root, () => dispatchSetValue(root, next)).adds,
-    ).toBeGreaterThan(0);
-    expect(root.emit).toEqual(next);
   });
 
   it('falls back for missing keys and wrong-kind hosts without losing preceding writes', () => {

@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { NodeStrategy } from '../../types/strategy';
 import type {
   BlueprintNodeKind,
@@ -119,7 +121,7 @@ export interface BlueprintNode {
   /** Stable dispatch kind independent of gate state. */
   readonly kind: BlueprintNodeKind;
   /** Static accepted JSON type restriction, with null represented by nullable; undefined on virtual nodes, which have no JSON type. */
-  readonly schemaType: BlueprintSchemaType | undefined;
+  readonly schemaType: Optional<BlueprintSchemaType>;
   /** Whether the static accepted set contains null. */
   readonly nullable: boolean;
   /** Fixed branch or terminal strategy. */
@@ -132,6 +134,10 @@ export interface BlueprintNode {
   readonly hasPropertyCandidates?: boolean;
   /** A reachable host, including this one, binds multiple slot candidates. */
   readonly hasCandidateDescendants?: boolean;
+  /** A template strictly below this one, or a control addressing its children, declares a possible explicit `unsetOnInactive` keep. */
+  readonly hasKeepDescendants?: boolean;
+  /** Some own or parent-addressed declaration can provide a retained exit value. */
+  readonly hasInactiveValue?: boolean;
   /**
    * First repeated item candidate, retained for single-candidate consumers.
    * First candidate; paths that distinguish folds use the candidate list (itemCandidates / prefixItemCandidates / getItemEntries).

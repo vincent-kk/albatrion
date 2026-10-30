@@ -1,0 +1,28 @@
+{
+  "beforeHead": "bda3a0f5628cf7f6a6999e6e3e140a768a08fa72",
+  "stageHead": "1da3485d3c0c778a23cd101cd16a279c574ce644",
+  "sourceTreeBefore": "d9e99da4a87e331b285a6911e7d01fd1f0b87692",
+  "distBefore": {
+    "index.d.ts": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+    "index.mjs": "c14acfbd3dac89c07e1ee70ecde95669830c6a68b84042cf6e558fc232701655",
+    "index.node.mjs": "4fda8d096a9c64980af633978cb4a497d361f3d6f342ca45fb2adf60d680e23d",
+    "index.cjs": "59039ab5292b9bc73f989a359def12afe30f9bf1aa8876705a9f220f14d4a963"
+  },
+  "automaticMergeSourceFilesHash": "8318334f78d62c31bc98e828d80e904326ca23a593af0528ee0b659cd65bdc65",
+  "distBeforeResolution": {
+    "index.d.ts": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
+    "index.mjs": "29e3da0c6355acbb55a178e73ec91bc0aca569e81afa24ddc997ee06992465ba",
+    "index.node.mjs": "1338654cf550e06c762b51da6e17b7910952ebee60e2408a2911900af3d39617",
+    "index.cjs": "68a0652a54d626e4484736b2fba2b7880b81aa703bb2e89e67cd1c16c1561940"
+  },
+  "sourceUnchangedByResolution": true,
+  "distAfterResolution": {
+    "index.d.ts": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
+    "index.mjs": "29e3da0c6355acbb55a178e73ec91bc0aca569e81afa24ddc997ee06992465ba",
+    "index.node.mjs": "1338654cf550e06c762b51da6e17b7910952ebee60e2408a2911900af3d39617",
+    "index.cjs": "68a0652a54d626e4484736b2fba2b7880b81aa703bb2e89e67cd1c16c1561940"
+  },
+  "distUnchangedByResolution": true,
+  "beforeResolutionBuildExit": 0,
+  "afterResolutionBuildExit": 0
+}

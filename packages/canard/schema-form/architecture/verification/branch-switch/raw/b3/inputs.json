@@ -1,0 +1,61 @@
+{
+  "commits": {
+    "S": "0eb03ff3bb54bf06af95271d157aefece1b9bf32",
+    "E": "95853ae5f6618c45753c0cbad70bd98bab282be5"
+  },
+  "files": {
+    "S": {
+      "index.node.mjs": {
+        "sha256": "59932cf4b9b12e52ce2610d3c4c1ad212705c1a714265234fbf24c753c55841b",
+        "bytes": 750076
+      },
+      "index.mjs": {
+        "sha256": "0896a2b1fd02d558836f2df78b80976df38e0d3552202c686484ad6be4dbafb6",
+        "bytes": 750818
+      },
+      "index.cjs": {
+        "sha256": "f3056727e71c551f8bdf03a279e2ccfcfbff0dcfab0579e3316b1bfc96f564c8",
+        "bytes": 769065
+      },
+      "index.d.ts": {
+        "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+        "bytes": 3054
+      }
+    },
+    "E": {
+      "index.node.mjs": {
+        "sha256": "a3aaccbbd7aec673ae419b4b766413cfa38e8a8dfe8cd544db2c1fbfc1911a10",
+        "bytes": 838020
+      },
+      "index.mjs": {
+        "sha256": "73bc0047684ba7f139ddd6c76f9f7c814df2b5e8f4c5d8da5484191442a7f39e",
+        "bytes": 838762
+      },
+      "index.cjs": {
+        "sha256": "d06bf242a5afe3f2e42d54ef104d7641f68fa177789db4aa4b1c522b4010976f",
+        "bytes": 858403
+      },
+      "index.d.ts": {
+        "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+        "bytes": 3054
+      }
+    },
+    "L": {
+      "sha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46"
+    }
+  },
+  "stages": {
+    "S": {
+      "manifest": "stage-manifest-S.json",
+      "instrumentationSha256": "cfbaf82556e11be8dfb61b198f660350a199c325183e2f785c89d447beeb4d5b",
+      "comparativeTimers": 22,
+      "supplementalTimers": 23
+    },
+    "E": {
+      "manifest": "stage-manifest-E.json",
+      "instrumentationSha256": "35e89f55a248fe1d638830909fa2c8a206e9c1ff0812a092b8104248e9bc2002",
+      "comparativeTimers": 25,
+      "supplementalTimers": 76
+    }
+  }
+}

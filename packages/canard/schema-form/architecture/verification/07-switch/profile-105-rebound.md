@@ -653,3 +653,5 @@ mount 전체의 무조건 projection/gate memo는 oneOf payload를 없앴습니�
 | 개별 raw 파일 최대 | 519104 bytes (≤5000000) |
 
 `profile-105-rebound/measure.mjs`는 profile-102의 원본 harness와 round-99 canonical builder를 메모리에서 재배치합니다. 모든 source transform은 esbuild onLoad 메모리에서만 수행했으며 서비스는 stdin EOF로 종료했습니다. `process-*.json`, `build-*.json`, `counts-*.json`, `cpu-*.cpuprofile`, `*-forced-r*.json`, `verdict-*.json`이 재현·검증 근거입니다. 공식 보고서는 `profile-105-rebound.md`, 구조화 요약은 `profile-105-rebound-summary.json`입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `a958b37cbf7d`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

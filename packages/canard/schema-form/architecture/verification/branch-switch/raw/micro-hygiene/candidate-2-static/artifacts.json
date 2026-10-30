@@ -1,0 +1,93 @@
+{
+  "productCommit": "86251d017c0cc96ba1d849f6f10c4b359c8d75bc",
+  "baselineCommit": "1c3655a10b3f32cc74437094f48987a63771390a",
+  "node": "26.12.1",
+  "bun": "1.4.4",
+  "projects": [
+    {
+      "project": "unit",
+      "files": 601,
+      "cases": 3975,
+      "todo": 1,
+      "seconds": 97.58,
+      "exit": 0
+    },
+    {
+      "project": "render",
+      "files": 132,
+      "cases": 768,
+      "todo": 0,
+      "seconds": 62.01,
+      "exit": 0
+    },
+    {
+      "project": "storybook",
+      "files": 100,
+      "cases": 251,
+      "todo": 0,
+      "seconds": 36.54,
+      "exit": 0
+    },
+    {
+      "project": "react18",
+      "files": 132,
+      "cases": 768,
+      "todo": 0,
+      "seconds": 59.43,
+      "exit": 0
+    },
+    {
+      "project": "production",
+      "files": 10,
+      "cases": 21,
+      "todo": 0,
+      "seconds": 3.06,
+      "exit": 0
+    },
+    {
+      "project": "verify",
+      "files": 738,
+      "cases": 4787,
+      "todo": 1,
+      "seconds": 165.77,
+      "exit": 0
+    }
+  ],
+  "projectEnvironment": "Vitest default NODE_ENV=test; built-bundle child tests explicitly run production",
+  "products": {
+    "index.mjs": {
+      "bytes": 855127,
+      "sha256": "4e495ad404d24ad327c6ab4a97c61501fdcc895660a0a1afaaa9b82437628999"
+    },
+    "index.node.mjs": {
+      "bytes": 854349,
+      "sha256": "83aba1a8471d533413cc65bf2d5508f6489ff46c75653c61dc52ac0a2998516f"
+    },
+    "index.cjs": {
+      "bytes": 875949,
+      "sha256": "abdb64159feaa6e0d4e040e27c898a52d476966c255ebe2c21502543eff17f0a"
+    },
+    "index.d.ts": {
+      "bytes": 3129,
+      "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+    }
+  },
+  "isolation": {
+    "files": 2376,
+    "passed": true
+  },
+  "delivery": {
+    "scenes": 79,
+    "phases": 429,
+    "extensionScenes": 7,
+    "extensionPhases": 21,
+    "differences": 0
+  },
+  "strictProductionBaselineFailures": [
+    "old transformMode option routes node:child_process through web",
+    "oneOf-20 distinct freeze count 117 exceeds existing 111 in both baseline and candidate"
+  ],
+  "deviceTests": {
+    "passed": 14
+  }
+}

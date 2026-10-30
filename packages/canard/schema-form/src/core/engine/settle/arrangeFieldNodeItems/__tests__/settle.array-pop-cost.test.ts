@@ -18,6 +18,7 @@ import * as tailProof from '../utils/arraySlots/canApplyArrayTail';
 import * as admission from '../utils/arraySlots/prepareArrayPop';
 
 afterEach(() => vi.restoreAllMocks());
+// These internal operation counts describe the shipping tree, excluding replay.
 
 /** Arrays this long or longer are item-count-sized at both measured counts (a pop leaves N-1). */
 const ITEM_SIZED = 900;

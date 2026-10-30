@@ -1,5 +1,8 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
@@ -35,14 +38,14 @@ const getExitExpressions = (
     ReadonlyMap<string, BlueprintExpression>
   >(blueprint).exitPolicyExpressions;
   if (indexed) return indexed;
-  indexed = new Map(
-    blueprint.expressions
-      .filter((expression) => expression.key === 'unsetOnInactive')
-      .map((expression) => [
+  const entries = new Map<string, BlueprintExpression>();
+  for (const expression of blueprint.expressions)
+    if (expression.key === 'unsetOnInactive')
+      entries.set(
         JSON.stringify([expression.declarationId, expression.schemaPath]),
         expression,
-      ]),
-  );
+      );
+  indexed = entries;
   getBlueprintDerived<
     'exitPolicyExpressions',
     ReadonlyMap<string, BlueprintExpression>
@@ -94,36 +97,43 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       context.selectedDeclarationIds.get(source) ??
       source.runtime.committedDeclarationIds?.get(sourceKey);
     for (const declaration of source.blueprintNode.declarations) {
-      if (selected && !selected.includes(declaration.id)) continue;
+      if (selected && selected.indexOf(declaration.id) === -1) continue;
       const schema = declaration.schema;
       if (!schema || typeof schema !== 'object') continue;
       const controls: unknown = Reflect.get(schema, SCHEMA_GROUP.controls);
       if (!controls || typeof controls !== 'object' || isArray(controls))
         continue;
+
       if (
         declaration.scope === 'fragment' &&
         typeof Reflect.get(controls, CONTROL_KEY.unsetOnInactive) === 'string'
-      )
+      ) {
         for (const child of source.children ?? []) {
           const childSelected =
             context.selectedDeclarationIds.get(child) ??
             child.runtime.committedDeclarationIds?.get(
               getCommittedDeclarationKey(child, child.runtime),
             );
-          if (
-            !child.blueprintNode.declarations.some(
-              (childDeclaration) =>
-                (!childSelected ||
-                  childSelected.includes(childDeclaration.id)) &&
-                getFragmentOwnerPaths(childDeclaration.schemaPath).includes(
-                  declaration.schemaPath,
-                ),
-            )
-          )
+          let belongsToExitingFragment = false;
+          for (const childDeclaration of child.blueprintNode.declarations) {
+            if (
+              (!childSelected ||
+                childSelected.indexOf(childDeclaration.id) !== -1) &&
+              getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
+                declaration.schemaPath,
+              ) !== -1
+            ) {
+              belongsToExitingFragment = true;
+              break;
+            }
+          }
+          if (!belongsToExitingFragment) {
             continue;
+          }
           candidates.add(child);
           break;
         }
+      }
       const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (!isArray(fields)) continue;
       for (const item of fields) {
@@ -163,7 +173,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           'string'
       )
         continue;
-      const schemaPath = group.schemaPath + '/unsetOnInactive';
+      const schemaPath = appendSegment(group.schemaPath, 'unsetOnInactive');
       const key = getExitPolicyKey(group);
       if (evaluated.has(key)) continue;
       evaluated.add(key);
@@ -178,8 +188,14 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           'set',
           Boolean(
             expression.evaluate(
-              expression.dependencies.map((dependency) =>
-                readStateDependency(context.root, group.host.path, dependency),
+              mapArray(expression.dependencies, (dependency) =>
+                readStateDependency(
+                  context.root,
+                  group.host.path,
+                  dependency,
+                  undefined,
+                  group.host,
+                ),
               ),
             ),
           ),

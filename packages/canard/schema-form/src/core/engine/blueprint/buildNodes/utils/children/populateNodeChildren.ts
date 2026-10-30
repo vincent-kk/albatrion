@@ -1,5 +1,18 @@
+import {
+  filter as filterArray,
+  map as mapArray,
+} from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import type { Dictionary } from '@aileron/declare';
+
+import {
+  PointerOperator,
+  appendSegment,
+  joinPointer,
+  parsePointerSegments,
+  rebasePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
 import type {
@@ -11,6 +24,7 @@ import { readSchemaObject } from '../../../utils/analyze/readSchemaObject';
 import { throwBlueprintError } from '../../../utils/diagnostics/throwBlueprintError';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
 import { appendChildEntries } from './appendChildEntries';
+import { assertAddressableName } from './assertAddressableName';
 import { populateVirtualNodes } from './populateVirtualNodes';
 
 /**
@@ -49,10 +63,15 @@ export const populateNodeChildren = (
         fragment: context.fragments[declaration.fragmentId],
         role: 'declaration' as const,
       };
+      const propertiesPath = appendSegment(
+        declaration.schemaPath,
+        'properties',
+      );
       const properties = Object.entries(schema.properties);
       for (let index = 0; index < properties.length; index++) {
         const [name, child] = properties[index];
-        const escapedName = escapeSegment(name);
+        assertAddressableName(context, declaration.schemaPath, name);
+        const path = appendSegment(node.path, name);
         const input: SchemaInput = {
           context: base.context,
           gates: base.gates,
@@ -61,11 +80,10 @@ export const populateNodeChildren = (
           fragment: base.fragment,
           role: base.role,
           schema: child,
-          schemaPath: declaration.schemaPath + '/properties/' + escapedName,
+          schemaPath: rebasePointer(path, node.path, propertiesPath),
           order: [...declaration.order, 0, index],
         };
         input.gates = [];
-        const path = node.path + '/' + escapedName;
         appendChildEntries(
           node,
           name,
@@ -80,16 +98,14 @@ export const populateNodeChildren = (
       return;
     }
   }
-  const properties = new Map<
-    string,
-    { escapedName: string; path: string; inputs: SchemaInput[] }
-  >();
+  const properties = new Map<string, { path: string; inputs: SchemaInput[] }>();
   const itemInputs: SchemaInput[] = [];
   const tuples = new Map<number, SchemaInput[]>();
   const fieldControls = node.declarations.flatMap((owner) =>
-    (readSchemaObject(owner.schema).controls?.fields ?? []).map(
+    mapArray(
+      readSchemaObject(owner.schema).controls?.fields ?? [],
       (
-        entry: { targets: string[]; controls?: Record<string, unknown> },
+        entry: { targets: string[]; controls?: Dictionary<unknown> },
         index: number,
       ) => ({
         entry,
@@ -98,11 +114,19 @@ export const populateNodeChildren = (
             ? undefined
             : createBlueprintGate({
                 kind: 'active' as const,
-                schemaPath:
-                  owner.schemaPath +
-                  '/controls/fields/' +
-                  index +
-                  '/controls/active',
+                schemaPath: appendSegment(
+                  appendSegment(
+                    appendSegment(
+                      appendSegment(
+                        appendSegment(owner.schemaPath, 'controls'),
+                        'fields',
+                      ),
+                      index,
+                    ),
+                    'controls',
+                  ),
+                  'active',
+                ),
                 hostPath: node.path,
                 condition: entry.controls.active,
                 ...(owner.gates.length ? { appliesWhen: owner.gates } : {}),
@@ -127,34 +151,46 @@ export const populateNodeChildren = (
       fragment: context.fragments[declaration.fragmentId],
       role: 'declaration' as const,
     };
+
     if (
       node.kind === 'object' &&
       schema.properties &&
       typeof schema.properties === 'object'
-    )
-      Object.entries(schema.properties).forEach(([name, child], index) => {
+    ) {
+      const propertyEntries = Object.entries(schema.properties);
+      for (
+        let index = 0, count = propertyEntries.length;
+        index < count;
+        index++
+      ) {
+        const [name, child] = propertyEntries[index];
+
+        assertAddressableName(context, declaration.schemaPath, name);
         const existing = properties.get(name);
-        const escapedName = existing
-          ? existing.escapedName
-          : escapeSegment(name);
+        const path = existing?.path ?? appendSegment(node.path, name);
         const input: SchemaInput = {
           ...base,
           schema: child,
-          schemaPath: declaration.schemaPath + '/properties/' + escapedName,
+          schemaPath: rebasePointer(
+            path,
+            node.path,
+            appendSegment(declaration.schemaPath, 'properties'),
+          ),
           order: [...declaration.order, 0, index],
         };
-        const entryGates = fieldControls
-          .filter(
+        const entryGates = mapArray(
+          filterArray(
+            fieldControls,
             ({ entry, gate }) =>
               entry.targets.includes(name) && gate !== undefined,
-          )
-          .map(({ gate }) => gate!);
+          ),
+          ({ gate }) => gate!,
+        );
         input.gates = [...input.gates, ...entryGates];
         if (existing) existing.inputs.push(input);
         else
           properties.set(name, {
-            escapedName,
-            path: node.path + '/' + escapedName,
+            path,
             inputs: [input],
           });
         const discriminatorIndex = input.gates.findIndex(
@@ -168,7 +204,8 @@ export const populateNodeChildren = (
             gates: input.gates.slice(0, discriminatorIndex),
             context: 'declaration',
           });
-      });
+      }
+    }
     if (node.kind !== 'array') continue;
     const tuple =
       schema.prefixItems ?? (isArray(schema.items) ? schema.items : undefined);
@@ -179,23 +216,29 @@ export const populateNodeChildren = (
         { prefixItems: schema.prefixItems },
         context.options,
       );
-    if (tuple)
-      tuple.forEach((child: SchemaInput['schema'], index: number) => {
+
+    if (tuple) {
+      for (let index = 0, count = tuple.length; index < count; index++) {
+        if (!(index in tuple)) continue;
+        const child: SchemaInput['schema'] = tuple[index];
+
         const input: SchemaInput = {
           ...base,
           schema: child,
-          schemaPath:
-            declaration.schemaPath +
-            '/' +
-            (schema.prefixItems ? 'prefixItems' : 'items') +
-            '/' +
+          schemaPath: appendSegment(
+            appendSegment(
+              declaration.schemaPath,
+              schema.prefixItems ? 'prefixItems' : 'items',
+            ),
             index,
+          ),
           order: [...declaration.order, 0, index],
         };
         const existing = tuples.get(index);
         if (existing) existing.push(input);
         else tuples.set(index, [input]);
-      });
+      }
+    }
     if (
       schema.items !== undefined &&
       typeof schema.items !== 'boolean' &&
@@ -211,7 +254,7 @@ export const populateNodeChildren = (
       itemInputs.push({
         ...base,
         schema: schema.items,
-        schemaPath: declaration.schemaPath + '/items',
+        schemaPath: appendSegment(declaration.schemaPath, 'items'),
         order: [...declaration.order, 0, 0],
       });
     }
@@ -227,7 +270,7 @@ export const populateNodeChildren = (
       itemInputs.push({
         ...base,
         schema: additionalItems,
-        schemaPath: declaration.schemaPath + '/additionalItems',
+        schemaPath: appendSegment(declaration.schemaPath, 'additionalItems'),
         order: [...declaration.order, 0, schema.items.length],
       });
   }
@@ -245,21 +288,38 @@ export const populateNodeChildren = (
     );
   }
   if (itemInputs.length) {
-    const candidates = build(context, itemInputs, node.path + '/*');
+    const candidates = build(
+      context,
+      itemInputs,
+      joinPointer([
+        ...parsePointerSegments(node.path),
+        PointerOperator.Wildcard,
+      ]),
+    );
     node.item = candidates[0];
     if (candidates.length > 1) {
       node.itemCandidates = candidates;
       context.staticFirstLoad = false;
     }
   }
+
   if (tuples.size) {
-    const candidates = [...tuples]
-      .sort(([a], [b]) => a - b)
-      .map(([index, inputs]) =>
-        build(context, inputs, node.path + '/' + index),
-      );
-    node.prefixItems = candidates.map((items) => items[0]);
-    if (candidates.some((items) => items.length > 1)) {
+    const candidates = mapArray(
+      [...tuples].sort(([a], [b]) => a - b),
+      ([index, inputs]) =>
+        build(context, inputs, appendSegment(node.path, index)),
+    );
+    node.prefixItems = mapArray(candidates, (items) => items[0]);
+    let hasPrefixCandidates = false;
+    for (let index = 0, count = candidates.length; index < count; index++) {
+      const items = candidates[index];
+
+      if (items.length > 1) {
+        hasPrefixCandidates = true;
+        break;
+      }
+    }
+    if (hasPrefixCandidates) {
       node.prefixItemCandidates = candidates;
       context.staticFirstLoad = false;
     }

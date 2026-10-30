@@ -1,3 +1,7 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
+import type { Optional } from '@aileron/declare';
+
 import type { ControlKey } from '../../types/controls';
 import { getBlueprintDerived } from '../cache/derivedRecords';
 
@@ -23,14 +27,14 @@ export const getControlExpression = <
   declarationId: number,
   schemaPath: string,
   key: ControlKey,
-): Expression | undefined => {
+): Optional<Expression> => {
   let expressions = getBlueprintDerived<
     'controlExpressions',
     ReadonlyMap<string, number>
   >(blueprint).controlExpressions;
   if (!expressions) {
     expressions = new Map(
-      blueprint.expressions.map((expression, index) => [
+      mapArray(blueprint.expressions, (expression, index) => [
         JSON.stringify([
           expression.declarationId,
           expression.schemaPath,

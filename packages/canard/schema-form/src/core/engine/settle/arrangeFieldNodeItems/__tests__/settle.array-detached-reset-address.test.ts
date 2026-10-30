@@ -3,10 +3,12 @@ import { expect, it } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { isArrayNode, reloadFieldNodeForm } from '@/schema-form/core/surface';
 
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+
 it.each(['subtree', 'form'] as const)(
-  'preserves a rekeyed old reference address through %s reset',
+  'ignores a rekeyed old reference through %s reset',
   (reset) => {
-    const { root, runtime } = makeFieldNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         sibling: { type: 'string' },
@@ -38,12 +40,15 @@ it.each(['subtree', 'form'] as const)(
     else reloadFieldNodeForm(root, { sibling: 'b', items: [{ flag: false }] });
     reference.setValue('x');
     expect(reference.path).toBe('/items/1/gated');
-    const latent = Reflect.get(runtime, 'latentRaw');
-    expect(latent.get(JSON.stringify(['/items/0/gated', 'string']))).toBe('x');
+    expect(readRetainedSlotRaw(root, '/items/0/gated', 'string')).toBe(
+      reset === 'subtree' ? 'second' : undefined,
+    );
     expect(
-      latent.get(JSON.stringify(['/items/1/gated', 'string'])),
+      readRetainedSlotRaw(root, '/items/1/gated', 'string'),
     ).toBeUndefined();
     root.find('/items/0/flag')!.setValue(true);
-    expect(root.find('/items/0/gated')!.value).toBe('x');
+    expect(root.find('/items/0/gated')!.value).toBe(
+      reset === 'subtree' ? 'second' : undefined,
+    );
   },
 );

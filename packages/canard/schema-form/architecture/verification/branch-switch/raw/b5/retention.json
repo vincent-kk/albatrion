@@ -1,0 +1,154 @@
+[
+  {
+    "row": "switch-discriminator-80",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [
+      {
+        "path": "",
+        "slots": 3,
+        "retainedNodes": 3,
+        "bytes": 5528,
+        "shallowBytes": 32
+      }
+    ],
+    "readHosts": [
+      {
+        "path": "",
+        "slots": 3,
+        "retainedNodes": 3,
+        "bytes": 5848,
+        "shallowBytes": 32
+      }
+    ],
+    "resetSlotHosts": 0
+  },
+  {
+    "row": "switch-if-80",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [
+      {
+        "path": "",
+        "slots": 3,
+        "retainedNodes": 3,
+        "bytes": 5528,
+        "shallowBytes": 32
+      }
+    ],
+    "readHosts": [
+      {
+        "path": "",
+        "slots": 3,
+        "retainedNodes": 3,
+        "bytes": 5920,
+        "shallowBytes": 32
+      }
+    ],
+    "resetSlotHosts": 0
+  },
+  {
+    "row": "switch-nested-oneOf-20",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [
+      {
+        "path": "/outer/inner",
+        "slots": 3,
+        "retainedNodes": 3,
+        "bytes": 5456,
+        "shallowBytes": 32
+      }
+    ],
+    "readHosts": [
+      {
+        "path": "/outer/inner",
+        "slots": 3,
+        "retainedNodes": 3,
+        "bytes": 5776,
+        "shallowBytes": 32
+      }
+    ],
+    "resetSlotHosts": 0
+  },
+  {
+    "row": "switch-oneOf-80",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [
+      {
+        "path": "",
+        "slots": 3,
+        "retainedNodes": 3,
+        "bytes": 5456,
+        "shallowBytes": 32
+      }
+    ],
+    "readHosts": [
+      {
+        "path": "",
+        "slots": 3,
+        "retainedNodes": 3,
+        "bytes": 5776,
+        "shallowBytes": 32
+      }
+    ],
+    "resetSlotHosts": 0
+  },
+  {
+    "row": "switch-payload-12",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [
+      {
+        "path": "",
+        "slots": 12,
+        "retainedNodes": 12,
+        "bytes": 19304,
+        "shallowBytes": 32
+      }
+    ],
+    "readHosts": [
+      {
+        "path": "",
+        "slots": 12,
+        "retainedNodes": 12,
+        "bytes": 19880,
+        "shallowBytes": 32
+      }
+    ],
+    "resetSlotHosts": 0
+  },
+  {
+    "row": "switch-siblings-0",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [],
+    "readHosts": [],
+    "resetSlotHosts": 0
+  },
+  {
+    "row": "switch-siblings-100",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [],
+    "readHosts": [],
+    "resetSlotHosts": 0
+  },
+  {
+    "row": "switch-siblings-1000",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [],
+    "readHosts": [],
+    "resetSlotHosts": 0
+  },
+  {
+    "row": "switch-siblings-4000",
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded",
+    "writes": 120,
+    "unreadHosts": [],
+    "readHosts": [],
+    "resetSlotHosts": 0
+  }
+]

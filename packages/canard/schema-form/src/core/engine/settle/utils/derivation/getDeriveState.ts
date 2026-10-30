@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getDeriveRuleTable } from '../../../derive';
 import type { DeriveState } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
@@ -10,7 +12,7 @@ import type { SettlementContext } from '../../types/settlement';
  */
 export const getDeriveState = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
-): DeriveState<Self> | undefined => {
+): Optional<DeriveState<Self>> => {
   if (context.deriveState) return context.deriveState;
   if (getDeriveRuleTable(context.root.runtime.blueprint).rules.length === 0)
     return undefined;

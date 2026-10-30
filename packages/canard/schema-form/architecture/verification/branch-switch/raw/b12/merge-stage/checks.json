@@ -1,0 +1,26 @@
+{
+  "before": "ae7a69a791287ef7af8a33e1489353160f864a77",
+  "target": "cd4e3b78b9eff68369099f333d820782060ec165",
+  "hashes": {
+    "index.mjs": "322e9ed421dd5b29f84efd62026a726035ec3a22a1063f1c421537f303a6a47a",
+    "index.node.mjs": "b89a99e111524f7b932138875401b702aed052b6ba70b44867a4d353822166e1",
+    "index.cjs": "9f54afd3ebe511c8ad6c4e13dc3ee0bde4bf1c87d684f29ee56b40ba42538572"
+  },
+  "runtimeHashIdentical": true,
+  "rootDeclarationSha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
+  "rootDeclarationIdenticalToMeasuredCandidate": true,
+  "productSourceAndBuildConfigIdentical": true,
+  "buildExitCode": 0,
+  "toolChecks": [
+    "WINDOW_QUIET_PROCESS_OK",
+    "B8_QUIET_PROCESS_OK",
+    "B9_0_TOOLS_OK",
+    "B4_2_TOOL_SMOKE_OK",
+    "B6_TOOL_SMOKE_OK"
+  ],
+  "syntaxAndRelativeImports": 26,
+  "conflictsResolved": 5,
+  "additionalDependencyRepair": "window/waitForQuietProcess.mjs imports the moved window/helpers/sampleProcessCpu.mjs",
+  "retainedPolicy": "ordinary 120 seconds; Spotlight 600 seconds; noindex stage roots",
+  "formalWindowRerun": false
+}

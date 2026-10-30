@@ -11,7 +11,7 @@ let nextTargetId = 0;
  * @param kind - Fold-inclusive kind token of the live node at that path
  * @param rule - Authored declaration and expression position
  * @param target - Live value target, or the source for an injection rule
- * @param runtime - Root owner of this occurrence memo or retained address state
+ * @param runtime - Root owner of this occurrence memo
  * @returns Stable key for committed and consumed values
  */
 export const getDeriveRuleKey = (

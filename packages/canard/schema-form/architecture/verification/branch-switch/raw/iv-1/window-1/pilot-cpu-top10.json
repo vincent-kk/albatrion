@@ -1,0 +1,42 @@
+[
+  {
+    "name": "codex",
+    "cpuPercent": 16.333629433744402
+  },
+  {
+    "name": "WidgetsExtension",
+    "cpuPercent": 5.444543144583895
+  },
+  {
+    "name": "Stats",
+    "cpuPercent": 5.444543144583895
+  },
+  {
+    "name": "WindowServer",
+    "cpuPercent": 5.124275900777989
+  },
+  {
+    "name": "runningboardd",
+    "cpuPercent": 3.84320692561262
+  },
+  {
+    "name": "2.1.312",
+    "cpuPercent": 3.522939681792149
+  },
+  {
+    "name": "chronod",
+    "cpuPercent": 2.8824051941949005
+  },
+  {
+    "name": "node",
+    "cpuPercent": 1.921603462793566
+  },
+  {
+    "name": "ControlCenter",
+    "cpuPercent": 1.9216034627917458
+  },
+  {
+    "name": "com.apple.DriverKit-AppleBCMWLAN",
+    "cpuPercent": 1.6013362189858393
+  }
+]

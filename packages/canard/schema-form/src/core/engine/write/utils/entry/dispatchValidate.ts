@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import {
   FormErrorCode,
   JSONSchemaError,
@@ -35,7 +37,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   runtime.validationPendingTargets = undefined;
   const stamp = runtime.validationStamp;
   const commit = runtime.commitNumber ?? 0;
-  let result: readonly ValidationIssue[] | null;
+  let result: Nullable<readonly ValidationIssue[]>;
   try {
     result = await runFieldNodeValidation(node);
   } catch (failure) {

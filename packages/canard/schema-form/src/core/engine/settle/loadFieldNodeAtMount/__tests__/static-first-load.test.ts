@@ -218,7 +218,7 @@ describe('static first load eligibility', () => {
     expect(canLoadStaticFirstTree(root, undefined)).toBe(false);
   });
 
-  it('rejects existing children, latent sources and caller inputs before mutation', () => {
+  it('rejects existing children and caller inputs before mutation', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -230,7 +230,5 @@ describe('static first load eligibility', () => {
       expect(root.runtime.commitNumber).toBeUndefined();
       expect(root.children).toEqual([]);
     }
-    root.runtime.latentRaw.set('["/value","string"]', 'latent');
-    expect(canLoadStaticFirstTree(root, undefined)).toBe(false);
   });
 });

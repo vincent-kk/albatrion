@@ -25,8 +25,16 @@ describe('array fragment derive candidates', () => {
         (rule) => rule.layer === 'fragment',
       );
       expect(rules).toHaveLength(2);
-      expect(rules.map((rule) => rule.targetName)).toEqual(
-        keyword === 'items' ? ['*', '*'] : ['0', '0'],
+      expect(rules.map((rule) => [rule.targetName, rule.targetItems])).toEqual(
+        keyword === 'items'
+          ? [
+              [undefined, true],
+              [undefined, true],
+            ]
+          : [
+              ['0', undefined],
+              ['0', undefined],
+            ],
       );
       expect(rules.map((rule) => rule.targetDeclarationIds)).toEqual(
         candidates.map((entry) =>

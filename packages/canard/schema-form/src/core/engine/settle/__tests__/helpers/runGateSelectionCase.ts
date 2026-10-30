@@ -7,6 +7,7 @@ import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
 import { resetFieldNodeForm } from '../../utils/reset/resetFieldNodeForm';
 import { resetFieldNodeSubtree } from '../../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
+import { collectRetainedSlotSources } from '../fixtures/collectRetainedSlotSources';
 import type { gateSelectionCases } from '../fixtures/gateSelectionCases';
 
 /**
@@ -62,7 +63,7 @@ export const runGateSelectionCase = (
       diagnostics: { ...root.runtime.diagnostics },
       commit: root.runtime.commitNumber,
       globalState: { ...root.runtime.globalState },
-      latent: [...root.runtime.latentRaw],
+      latent: collectRetainedSlotSources(root),
       deliveries: [...(root.runtime.deliveries ?? [])].map((node) => node.path),
       visits: [...visits],
       ...(observe ? { extra: observe(root) } : {}),

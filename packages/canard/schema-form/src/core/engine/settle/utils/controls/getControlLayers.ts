@@ -1,30 +1,11 @@
-import { isArray } from '@winglet/common-utils/filter';
+import type { Nullable, Optional } from '@aileron/declare';
 
-import type { BlueprintNode } from '../../../blueprint';
-import { CONTROL_KEY } from '../../../constants/controlKey';
-import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import type { DeclarationLayer } from '../../../types/controls';
-import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
-import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
-
-/** Unselected static fallbacks share IDs for the immutable declaration owner. */
-
-/** Return the authored declaration order without a per-occurrence copy. */
-const declarationIds = (node: BlueprintNode): readonly number[] => {
-  let ids = getHostDerived<'declarationIds', readonly number[]>(
-    node,
-  ).declarationIds;
-  if (!ids) {
-    const collected: number[] = [];
-    for (let index = 0; index < node.declarations.length; index++)
-      collected.push(node.declarations[index].id);
-    ids = Object.freeze(collected);
-    getHostDerived<'declarationIds', readonly number[]>(node).declarationIds =
-      ids;
-  }
-  return ids;
-};
+import { getStaticDeclarationIds } from '../../../utils/controls/getStaticDeclarationIds';
+import { prepareControlLayers } from './prepareControlLayers';
+import { prepareParentControlLayers } from './prepareParentControlLayers';
 
 /** Shape data needed to resolve a declaration for a live or latent occurrence. */
 export interface ControlTarget<Self> {
@@ -35,9 +16,10 @@ export interface ControlTarget<Self> {
   /** Static declarations for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Direct parent whose groups may address this occurrence. */
-  readonly parent: Self | null;
+  readonly parent: Nullable<Self>;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
+    readonly blueprint?: Blueprint;
     committedDeclarationKeys?: WeakMap<
       object,
       { path: string; kind: string; key: string }
@@ -61,106 +43,82 @@ export interface ControlLayer<Self> {
 }
 
 /**
- * Collect the node, fragment, and parent-item controls that address one live node.
- * @param node - Final-shape target whose selected declarations are known
+ * Bind prepared groups to current selections without rescanning declarations.
+ * @param node - Target whose selected declarations are known
  * @param selectedDeclarationIds - Current selections, falling back to the last commit
- * @returns Active control groups without evaluating their state keys
+ * @param exitOnly - Restrict candidates to authored unsetOnInactive policies
+ * @returns Active control groups without evaluating gates or expressions
  */
 export const getControlLayers = <Self extends ControlTarget<Self>>(
   node: Self,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
+  exitOnly = false,
 ): readonly ControlLayer<Self>[] => {
+  const prepared = prepareControlLayers(node.blueprintNode);
+  const own = exitOnly ? prepared.node.exit : prepared.node.all;
+  const parent = node.parent;
+  if (
+    exitOnly &&
+    !prepared.hasExitControls &&
+    (!parent || !prepareControlLayers(parent.blueprintNode).hasExitControls)
+  )
+    return [];
+  const addressed = parent
+    ? prepareParentControlLayers(
+        parent.blueprintNode,
+        node.blueprintNode,
+        node.name,
+        node.runtime,
+      )
+    : undefined;
+  const inherited = exitOnly ? addressed?.exit : addressed?.all;
+  if (!own.length && !inherited?.length) return [];
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
+    getStaticDeclarationIds(current) ??
     current.runtime.committedDeclarationIds?.get(
       getCommittedDeclarationKey(current, current.runtime),
     ) ??
-    declarationIds(current.blueprintNode);
+    prepareControlLayers(current.blueprintNode).ids;
   const nodeIds = selected(node);
   const groups: ControlLayer<Self>[] = [];
-  const declarations = node.blueprintNode.declarations;
-  for (let index = 0; index < declarations.length; index++) {
-    const declaration = declarations[index];
-    if (
-      !nodeIds.includes(declaration.id) ||
-      declaration.scope !== 'node' ||
-      !declaration.schema ||
-      typeof declaration.schema !== 'object'
-    )
-      continue;
-    const controls: unknown = Reflect.get(
-      declaration.schema,
-      SCHEMA_GROUP.controls,
-    );
-    if (controls && typeof controls === 'object' && !isArray(controls))
+  for (const group of own)
+    if (nodeIds.indexOf(group.declarationId) !== -1)
       groups.push({
-        layer: 'node',
-        declarationId: declaration.id,
-        schemaPath: declaration.schemaPath + '/controls',
-        controls,
+        layer: group.layer,
+        declarationId: group.declarationId,
+        schemaPath: group.schemaPath,
+        controls: group.controls,
         host: node,
       });
-  }
-  const parent = node.parent;
-  if (!parent) return groups;
+  if (!parent || !inherited?.length) return groups;
   const parentIds = selected(parent);
-  const parentDeclarations = parent.blueprintNode.declarations;
-  const buildOwners = (): ReadonlySet<string> => {
-    const paths = new Set<string>();
-    for (const declaration of declarations)
-      if (nodeIds.includes(declaration.id))
-        for (const path of getFragmentOwnerPaths(declaration.schemaPath))
-          paths.add(path);
-    return paths;
-  };
-  let owners: ReadonlySet<string> | undefined;
-  for (let index = 0; index < parentDeclarations.length; index++) {
-    const declaration = parentDeclarations[index];
-    if (
-      !parentIds.includes(declaration.id) ||
-      !declaration.schema ||
-      typeof declaration.schema !== 'object'
-    )
-      continue;
-    const controls: unknown = Reflect.get(
-      declaration.schema,
-      SCHEMA_GROUP.controls,
-    );
-    if (!controls || typeof controls !== 'object' || isArray(controls))
-      continue;
-    if (
-      declaration.scope === 'fragment' &&
-      (owners ??= buildOwners()).has(declaration.schemaPath)
-    )
-      groups.push({
-        layer: 'fragment',
-        declarationId: declaration.id,
-        schemaPath: declaration.schemaPath + '/controls',
-        controls,
-        host: parent,
-      });
-    const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
-    if (!isArray(fields)) continue;
-    for (let index = 0; index < fields.length; index++) {
-      const item: unknown = fields[index];
-      if (!item || typeof item !== 'object') continue;
-      const targets: unknown = Reflect.get(item, 'targets');
-      if (!isArray(targets) || !targets.includes(node.name)) continue;
-      const itemControls: unknown = Reflect.get(item, SCHEMA_GROUP.controls);
-      if (
-        itemControls &&
-        typeof itemControls === 'object' &&
-        !isArray(itemControls)
-      )
-        groups.push({
-          layer: 'fields',
-          declarationId: declaration.id,
-          schemaPath:
-            declaration.schemaPath + '/controls/fields/' + index + '/controls',
-          controls: itemControls,
-          host: parent,
-        });
+  for (const group of inherited) {
+    if (parentIds.indexOf(group.declarationId) === -1) continue;
+    const ownerIds = group.ownerIds;
+    let matches: Optional<boolean>;
+    if (ownerIds) {
+      let hasSelectedOwner = false;
+      for (const id of group.ownerIds) {
+        if (nodeIds.indexOf(id) !== -1) {
+          hasSelectedOwner = true;
+          break;
+        }
+      }
+      matches = !hasSelectedOwner;
+    } else {
+      matches = ownerIds;
     }
+    if (matches) {
+      continue;
+    }
+    groups.push({
+      layer: group.layer,
+      declarationId: group.declarationId,
+      schemaPath: group.schemaPath,
+      controls: group.controls,
+      host: parent,
+    });
   }
   return groups;
 };

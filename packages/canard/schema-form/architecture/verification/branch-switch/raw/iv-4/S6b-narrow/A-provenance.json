@@ -1,0 +1,6 @@
+{
+  "preparedLane": "B",
+  "executedLane": "A",
+  "sourceHead": "4a3108f29ca90029702021405ab5bc0eeae180f3",
+  "reason": "Original immutable no-S6b counterfactual reused without modifying its input manifest; four other kept cuts equal the candidate."
+}

@@ -1,0 +1,12 @@
+{
+  "productHead": "dd551d4d92346f1cf7b2099cef94edc380dce15f",
+  "referenceWithoutS6b": "4a3108f29ca90029702021405ab5bc0eeae180f3",
+  "allProductBlobsIdentical": true,
+  "productSnapshotSha256": "a3ab47fbc04540734ca2194b30ed4417661b08ed1c7b8b859e00688c8cceff15",
+  "candidateOnlyVerificationRolledBack": [
+    "src/core/engine/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.active-order.test.ts",
+    "src/core/engine/settle/__tests__/settle.assembly-order-witness.test.ts"
+  ],
+  "stageBaselineHadNeitherFile": true,
+  "originalTestsDeletedOrWeakened": 0
+}

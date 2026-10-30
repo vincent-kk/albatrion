@@ -122,6 +122,7 @@ describe('ERROR-004 ERROR-005 58C-01 all dispatch settlement failures', () => {
     'unsetOnInactive',
     'visible',
   ] as const)('keeps two distinct %s expression failures', (key) => {
+    // The stateful context callback records one shipping execution's evaluations.
     const evaluated: string[] = [];
     const { root } = createDispatchTree({
       type: 'object',
@@ -161,6 +162,7 @@ describe('ERROR-004 ERROR-005 58C-01 all dispatch settlement failures', () => {
   });
 
   it('keeps missing injection targets after an earlier conflict', () => {
+    // The stateful context callback records one shipping execution's evaluations.
     const evaluated: string[] = [];
     const { root } = createDispatchTree({
       type: 'object',

@@ -1,3 +1,5 @@
+import type { Dictionary, Nullable } from '@aileron/declare';
+
 import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
@@ -19,7 +21,7 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
     if (entry.restored) continue;
     const { host, previousItems, previousItemCount, previousExtras } = entry;
     if (within) {
-      let ancestor: Self | null = host;
+      let ancestor: Nullable<Self> = host;
       while (ancestor && ancestor !== within) ancestor = ancestor.parent;
       if (!ancestor) continue;
     }
@@ -38,7 +40,7 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
           { owned: true },
         );
       }
-    const structure: Record<string, Self> = Object.create(null);
+    const structure: Dictionary<Self> = Object.create(null);
     for (const item of previousItems) {
       structure[item.name] = item;
       item.detached = false;

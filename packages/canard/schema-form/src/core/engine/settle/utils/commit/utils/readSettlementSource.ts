@@ -1,7 +1,9 @@
+import type { Optional } from '@aileron/declare';
+
 import {
-  JSONPointer as $,
-  ESCAPED_SLASH_REGEX,
-  ESCAPED_TILDE_REGEX,
+  getChildPointer,
+  isDescendantPath,
+  readPointerSegment,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../../record';
@@ -19,23 +21,18 @@ export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
   exact = false,
-): FieldNodeWriteKind | undefined => {
+): Optional<FieldNodeWriteKind> => {
   const origins = context.writeOrigins;
   for (let index = (origins?.length ?? 0) - 1; index >= 0; index--) {
     const origin = origins![index];
-    if (
-      origin.keys &&
-      path !== origin.path &&
-      !origin.keys.includes(
-        path
-          .slice(origin.path.length + 1)
-          .split($.Separator)[0]
-          .replace(ESCAPED_SLASH_REGEX, $.Separator)
-          .replace(ESCAPED_TILDE_REGEX, '~'),
-      )
-    )
-      continue;
-    if (path === origin.path || path.startsWith(origin.path + '/'))
+    if (origin.keys && path !== origin.path) {
+      const child = getChildPointer(path, origin.path);
+      const name =
+        child === undefined ? undefined : readPointerSegment(child, -1);
+      if (typeof name !== 'string' || origin.keys.indexOf(name) === -1)
+        continue;
+    }
+    if (path === origin.path || isDescendantPath(path, origin.path))
       return !exact || path === origin.path ? origin.source : undefined;
   }
   return !exact || path === context.target.path

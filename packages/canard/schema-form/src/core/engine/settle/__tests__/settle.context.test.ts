@@ -1,10 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { FieldNodeRuntime } from '@/schema-form/core/engine/record';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 import {
   SetValueOption,
@@ -21,11 +20,8 @@ const createContextTree = (
     context,
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
+
     misfitPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
   });
 
 // filid:contract settle-context

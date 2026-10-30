@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import { createDivider, getErrorMessage } from '@/schema-form/helpers/error';
 
 import type { SchemaFormPlugin } from '../type';
@@ -73,5 +75,5 @@ const formatBulletList = (
   emptyMessage = '(none)',
 ): string => {
   if (items.length === 0) return `${prefix}${emptyMessage}`;
-  return items.map((item) => `${prefix}• ${item}`).join('\n');
+  return mapArray(items, (item) => `${prefix}• ${item}`).join('\n');
 };

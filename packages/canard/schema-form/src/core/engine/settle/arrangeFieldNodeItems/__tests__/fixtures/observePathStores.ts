@@ -8,7 +8,7 @@ const PROBED_POSITIONS = 12;
  * @param runtime - Tree-owned stores, warning indexes and rule indexes
  * @param hostPath - Array host whose subtree, slots and ancestors are probed
  * @returns Per store: entries in order, sorted subtree keys at each probe, sorted host slots and ancestor-inclusive keys of slot 0;
- *   plus the warning path index, rule source and target indexes and the latent dirty flag
+ *   plus the warning path index and rule source and target indexes
  */
 export const observePathStores = <Self>(
   runtime: FieldNodeRuntime<Self>,
@@ -18,14 +18,10 @@ export const observePathStores = <Self>(
   for (let index = 0; index < PROBED_POSITIONS; index++)
     probes.push(hostPath + '/' + index);
   const stores = {
-    latent: runtime.latentRaw,
-    metadata: runtime.latentRawMetadata,
     declarations: runtime.committedDeclarationIds,
     rules: runtime.committedRuleValues,
     misfits: runtime.misfitPaths,
     misfitsMemo: runtime.misfitsMemo,
-    inactiveMemo: runtime.inactiveValuesMemo,
-    inactiveEntries: runtime.inactiveValueEntries,
   };
   const observed: Record<string, unknown> = {};
   for (const [name, store] of Object.entries(stores))
@@ -43,6 +39,5 @@ export const observePathStores = <Self>(
     ]),
     ruleSources: [...(runtime.committedRuleKeysBySource ?? [])],
     ruleTargets: [...(runtime.committedRuleKeysByTarget ?? [])],
-    latentRawDirty: runtime.latentRawDirty,
   };
 };

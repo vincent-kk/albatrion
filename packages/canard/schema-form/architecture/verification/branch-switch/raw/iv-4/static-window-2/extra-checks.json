@@ -1,0 +1,48 @@
+{
+  "head": "90cc137e0b2e62e69ea00c6afe46d50c83f68119",
+  "node": "v26.12.1",
+  "rows": [
+    {
+      "label": "declarations",
+      "command": [
+        "node",
+        "<repo>/packages/canard/schema-form/architecture/verification/branch-switch/tools/iv-4/checkDeclarations.mjs",
+        "<baseline-root>/packages/canard/schema-form",
+        "<repo>/packages/canard/schema-form",
+        "<static-root>/declarations"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 0.721,
+      "log": "declarations.log.gz",
+      "sha256": "5cfaec414f1a3466ab004302a453ddd6892f3ce218b6b21c3502d14d7b775904"
+    },
+    {
+      "label": "isolation",
+      "command": [
+        "node",
+        "<repo>/packages/canard/schema-form/architecture/verification/07-switch/tools/check-legacy-isolation.mjs"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 1.016,
+      "log": "isolation.log.gz",
+      "sha256": "3e861110c3a605d81db0d8077461d615010b1ae9bdb16deaa09d7dd6f7a86f90"
+    },
+    {
+      "label": "delivery",
+      "command": [
+        "node",
+        "<repo>/packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/delivery.mjs",
+        "--baseline=<baseline-root>/packages/canard/schema-form/dist/index.mjs",
+        "--candidate=<repo>/packages/canard/schema-form/dist/index.mjs",
+        "--output=<static-root>/delivery"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 4.311,
+      "log": "delivery.log.gz",
+      "sha256": "c86bb1b6e71e3ebd35cecf6eac765d0fdf91370766d70434ae1fc4a95c7441b2"
+    }
+  ]
+}

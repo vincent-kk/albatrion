@@ -1,4 +1,8 @@
-import { escapeSegment } from '@winglet/json/pointer';
+import { map as mapArray } from '@winglet/common-utils/array';
+
+import type { Nullable } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
@@ -6,6 +10,9 @@ import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateSelectionTable } from '../compute/childSelection/getGateSelectionTable';
 import { watchGateSelectionDirty } from './watchGateSelectionDirty';
+
+/** No per-round allocation when a table has no constraint-only tag schema. */
+const NO_SCHEMA_PATHS: readonly string[] = Object.freeze([]);
 
 /**
  * Decide G1–G4 once before either root declarations or children execute this round.
@@ -28,22 +35,42 @@ export const prepareGateTableRound = <Self extends FieldNodeRecord<Self>>(
     node.behavior.type !== 'object'
   )
     return;
-  for (let ancestor: Self | null = node; ancestor; ancestor = ancestor.parent)
+  for (
+    let ancestor: Nullable<Self> = node;
+    ancestor;
+    ancestor = ancestor.parent
+  )
     if (ancestor.raw !== undefined) return;
   const table = getGateSelectionTable(
     node.blueprintNode,
     node.runtime.blueprint,
   );
   if (!table) return;
-  const watchedPaths = table.groups.map(
-    (group) => node.path + '/' + escapeSegment(group.watchedName),
+  const watchedPaths = mapArray(table.watchedNames, (name) =>
+    appendSegment(node.path, name),
   );
-  if (watchedPaths.some((path) => context.dirtyPaths.has(path))) return;
+  let hasDirtyWatchedPath = false;
+  for (let index = 0, count = watchedPaths.length; index < count; index++) {
+    const path = watchedPaths[index];
+
+    if (context.dirtyPaths.has(path)) {
+      hasDirtyWatchedPath = true;
+      break;
+    }
+  }
+  if (hasDirtyWatchedPath) {
+    return;
+  }
   (context.gateSelectionRounds ??= new Map()).set(node, {
     round,
     table,
     values: new Map(),
     watchedPaths,
+    stableSchemaPaths: table.stableSchemaNames.length
+      ? mapArray(table.stableSchemaNames, (name) =>
+          appendSegment(node.path, name),
+        )
+      : NO_SCHEMA_PATHS,
     active: true,
   });
   if (engineModes.gateSelection === 'verify') {

@@ -10,6 +10,7 @@ import { prepareGateTableRound } from '../utils/gates/prepareGateTableRound';
 import * as reading from '../utils/gates/readGateSelectionGroup';
 import { updatePendingExitIndex } from '../utils/scratch/updatePendingExitIndex';
 import { gateTableScene } from './fixtures/gateTableScene';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 const previousMode = engineModes.gateSelection;
 const previous = { ...gateSelectionTable };
@@ -137,7 +138,7 @@ describe('named decision-62 mutation witnesses', () => {
       });
       prepareGateTableRound(root, context, 0);
       selectChildren(root, context, {}, () => {}, true);
-      expect(root.runtime.latentRaw.get('["/a","string"]')).toBe('dormant');
+      expect(readRetainedSlotRaw(root, '/a', 'string')).toBe('dormant');
     },
   );
 });

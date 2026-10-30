@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { sameValue } from '../../../utils/compute/sameValue';
 import { writeObjectKey } from '../../../utils/writeObjectKey';
 
@@ -13,11 +15,11 @@ import { writeObjectKey } from '../../../utils/writeObjectKey';
  */
 export const nextExtras = (
   previous: unknown,
-  input: Record<string, unknown>,
+  input: Dictionary<unknown>,
   declared: ReadonlySet<string>,
   merge: boolean,
 ): unknown => {
-  const result: Record<string, unknown> = {};
+  const result: Dictionary<unknown> = {};
   let hasOwnKey = false;
   if (merge && previous !== null && typeof previous === 'object')
     for (const name of Object.keys(previous)) {
@@ -32,4 +34,3 @@ export const nextExtras = (
   const next = hasOwnKey ? result : undefined;
   return sameValue(previous, next) ? previous : next;
 };
-

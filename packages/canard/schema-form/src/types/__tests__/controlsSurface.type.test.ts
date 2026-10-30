@@ -3,7 +3,7 @@ import { describe, expectTypeOf, it } from 'vitest';
 import type { InjectToHandler } from '../schema/injectTo';
 import type { JSONSchema, ObjectSchema } from '../schema/jsonSchema';
 
-/** The thirteen node-level keys the blueprint accepts (validateControlGroups.ts). */
+/** The fourteen node-level keys the blueprint accepts (validateControlGroups.ts). */
 type ControlKey =
   | 'active'
   | 'visible'
@@ -14,12 +14,13 @@ type ControlKey =
   | 'unsetValue'
   | 'resetInteraction'
   | 'unsetOnInactive'
+  | 'inactiveValue'
   | 'fields'
   | 'injectTo'
   | 'discriminator'
   | 'watch';
 
-/** The nine keys accepted inside a `controls.fields` entry. */
+/** The ten keys accepted inside a `controls.fields` entry. */
 type ChildControlKey = Exclude<
   ControlKey,
   'fields' | 'injectTo' | 'discriminator' | 'watch'
@@ -61,7 +62,7 @@ describe('controls authoring surface', () => {
     const childWatch: JSONSchema = {
       type: 'object',
       controls: {
-        // @ts-expect-error -- a fields entry accepts the nine child keys only
+        // @ts-expect-error -- a fields entry accepts the ten child keys only
         fields: [{ targets: ['a'], controls: { watch: ['../b'] } }],
       },
     };

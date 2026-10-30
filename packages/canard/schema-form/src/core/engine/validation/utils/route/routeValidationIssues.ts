@@ -1,15 +1,16 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import {
   JSONPointer as $,
-  ESCAPED_SLASH_REGEX,
-  ESCAPED_TILDE_REGEX,
+  isDescendantPath,
+  parsePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
-import { normalizeIssueDataPath } from './normalizeIssueDataPath';
 import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';
 
 /** Identify a record owned by this tree without an unchecked type assertion. */
@@ -36,7 +37,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   const before =
     runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
   const next = new Map<unknown, readonly unknown[]>(before);
-  let activeIds: Set<number> | undefined;
+  let activeIds: Optional<Set<number>>;
   if (issues.length > 0 && runtime.committedDeclarationIds?.size) {
     activeIds = new Set<number>();
     for (const ids of runtime.committedDeclarationIds.values())
@@ -44,27 +45,29 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
         activeIds.add(ids[index]);
   }
   const inScope = (node: Self): boolean =>
-    node === target || node.path.startsWith(target.path + '/');
+    node === target || isDescendantPath(node.path, target.path);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
   for (let index = 0; index < issues.length; index++) {
     const issue = issues[index];
     if (isOffUnionBranchIssue(issue, runtime.blueprint, activeIds)) continue;
-    const path = normalizeIssueDataPath(issue.dataPath);
+    const path = issue.dataPath;
     let node = root;
     if (path) {
-      if (!path.startsWith($.Separator)) continue;
-      const segments = path.slice(1).split($.Separator);
+      const parsed = parsePointer(path);
+      if (!parsed.absolute) continue;
+      const segments = parsed.segments;
       for (
         let segmentIndex = 0;
         segmentIndex < segments.length;
         segmentIndex++
       ) {
-        const encoded = segments[segmentIndex];
+        const key = segments[segmentIndex];
+        if (typeof key !== 'string') {
+          node = root;
+          break;
+        }
         if (node.structure === null) break;
-        const key = encoded
-          .replace(ESCAPED_SLASH_REGEX, $.Separator)
-          .replace(ESCAPED_TILDE_REGEX, '~');
         if (!hasOwnProperty(node.structure, key)) {
           node = root;
           break;
@@ -76,7 +79,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
         }
         node = child;
       }
-      if (node === root && path !== '') continue;
+      if (node === root && path !== $.Root) continue;
     }
     if (issue.rejectedKey) {
       while (node.parent && node.structure === null) node = node.parent;

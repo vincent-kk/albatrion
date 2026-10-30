@@ -1,3 +1,4 @@
+export { engineModes } from './utils/cache/engineModes';
 export {
   adoptFieldNodeChain,
   createFormErrorRecord,
@@ -26,6 +27,7 @@ export {
   readFieldNodeInteractionReset,
   readFieldNodeRevision,
   subscribeFieldNode,
+  onInactiveFieldNode,
 } from './write';
 export {
   blueprint,
@@ -80,4 +82,9 @@ export type { Behavior, FieldNodeRecord, FieldNodeRuntime } from './record';
 export type { NodeStateFlags } from './types/state';
 export type { NodeStrategy } from './types/strategy';
 export type { AuthoredSchema } from './types/jsonSchema';
-export type { SchemaControls } from './types/controls';
+export type {
+  SchemaControls,
+  InactiveValue,
+  InactiveValueResolver,
+  InactiveValueContext,
+} from './types/controls';

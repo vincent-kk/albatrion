@@ -1,9 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import type { Optional } from '@aileron/declare';
 
 import { FormErrorCode } from '@/schema-form/errors';
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 import {
   EMPTY_INTERSECTION,
   intersectEnum,
@@ -45,7 +47,7 @@ export const readDiscriminatorBranches = (
   if (typeof propertyName !== 'string' || !propertyName.length)
     return throwBlueprintError(
       FormErrorCode.InvalidControlShape,
-      schemaPath + '/controls/discriminator',
+      appendSegment(appendSegment(schemaPath, 'controls'), 'discriminator'),
       {
         group: SCHEMA_GROUP.controls,
         key: 'discriminator',
@@ -55,11 +57,14 @@ export const readDiscriminatorBranches = (
     );
   for (const keyword of UNION_KEYWORDS) {
     if (!isArray(host[keyword])) continue;
-    let previousMask: number | undefined;
+    let previousMask: Optional<number>;
     const previousValues: unknown[] = [];
     for (let index = 0; index < host[keyword].length; index++) {
       const branch = host[keyword][index];
-      const branchPath = schemaPath + '/' + keyword + '/' + index;
+      const branchPath = appendSegment(
+        appendSegment(schemaPath, keyword),
+        index,
+      );
       const parts = collectStaticSchemas(context, branch, branchPath);
       let branchTypes: ReturnType<typeof readAllowedTypes>;
       for (const part of parts)
@@ -67,16 +72,39 @@ export const readDiscriminatorBranches = (
           branchTypes,
           readAllowedTypes(part.schema, part.schemaPath, context.options),
         );
-      if (branchTypes?.every((type) => type === 'null')) continue;
-      let values: readonly unknown[] | undefined;
-      let mask: number | undefined;
+      let allMatch: Optional<boolean> = undefined;
+
+      const branchTypeNames = branchTypes;
+      if (branchTypeNames != null) {
+        allMatch = true;
+        for (
+          let index = 0, count = branchTypeNames.length;
+          index < count;
+          index++
+        ) {
+          const type = branchTypeNames[index];
+
+          if (!(type === 'null')) {
+            allMatch = false;
+            break;
+          }
+        }
+      }
+
+      if (allMatch) {
+        continue;
+      }
+      let values: Optional<readonly unknown[]>;
+      let mask: Optional<number>;
       for (const part of parts) {
         const property = readSchemaObject(part.schema).properties?.[
           propertyName
         ];
         if (property === undefined) continue;
-        const propertyPath =
-          part.schemaPath + '/properties/' + escapeSegment(propertyName);
+        const propertyPath = appendSegment(
+          appendSegment(part.schemaPath, 'properties'),
+          propertyName,
+        );
         const types = inferAllowedTypes(context, property, propertyPath, true);
         if (types) mask = foldAllowedTypes(types);
         for (const tag of collectStaticSchemas(
@@ -118,17 +146,43 @@ export const readDiscriminatorBranches = (
           { propertyName, reason: 'kind' },
           context.options,
         );
-      if (
-        values.some((value) =>
-          previousValues.some((previous) => equals(previous, value)),
-        )
-      )
+      let hasOverlappingTag = false;
+      for (
+        let position = 0, limit = values.length;
+        position < limit;
+        position++
+      ) {
+        if (!(position in values)) {
+          continue;
+        }
+
+        const value = values[position];
+        let matchesPreviousTag = false;
+        for (
+          let index = 0, count = previousValues.length;
+          index < count;
+          index++
+        ) {
+          const previous = previousValues[index];
+
+          if (equals(previous, value)) {
+            matchesPreviousTag = true;
+            break;
+          }
+        }
+        if (matchesPreviousTag) {
+          hasOverlappingTag = true;
+          break;
+        }
+      }
+      if (hasOverlappingTag) {
         return throwBlueprintError(
           FormErrorCode.DiscriminatorMismatch,
           branchPath,
           { propertyName, reason: 'overlap' },
           context.options,
         );
+      }
       previousMask = mask ?? previousMask;
       previousValues.push(...values);
       result.set(

@@ -7,6 +7,10 @@ import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
 import { getTransitionCap } from '../utils/transition/getTransitionCap';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotRaw,
+} from './fixtures/readRetainedSlotRaw';
 
 // filid:contract settle-budget
 describe('settle exits and budgets', () => {
@@ -98,9 +102,7 @@ describe('settle exits and budgets', () => {
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(root.structure?.toggle?.raw).toBe(true);
     expect(root.structure?.transient).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/transient', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/transient', 'string')).toBe(false);
   });
 
   it('TEST-069 exit node clears its own raw while detached reads stay frozen', () => {
@@ -128,9 +130,7 @@ describe('settle exits and budgets', () => {
     expect(root.structure?.secret).toBeUndefined();
     expect(former.raw).toBe('held');
     expect(former.detached).toBe(true);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.secret).not.toBe(former);
     expect(root.structure?.secret?.raw).toBe('fresh');
@@ -165,9 +165,7 @@ describe('settle exits and budgets', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
   it('TEST-069 exit Form clears descendants except their nearer false policy', () => {
@@ -192,12 +190,10 @@ describe('settle exits and budgets', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])),
-    ).toBe(false);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])),
-    ).toBe('K');
+    expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
+      false,
+    );
+    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.branch?.structure?.drop?.raw).toBeUndefined();
     expect(root.structure?.branch?.structure?.keep?.raw).toBe('K');
@@ -240,16 +236,12 @@ describe('settle exits and budgets', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/branch/drop', 'string'])),
-    ).toBe('D');
+    expect(readRetainedSlotRaw(root, '/branch/drop', 'string')).toBe('D');
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])),
-    ).toBe(false);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])),
-    ).toBe('K');
+    expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
+      false,
+    );
+    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
   });
 
   it('WRITE-034 applies a departing declaration policy while its host stays live', () => {
@@ -287,9 +279,7 @@ describe('settle exits and budgets', () => {
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.structure?.addr).toBeDefined();
     expect(root.structure?.addr?.structure?.zip).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/addr/zip', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false);
   });
 
   it('WRITE-031 exit clearing leaves an exited object node extras unchanged', () => {

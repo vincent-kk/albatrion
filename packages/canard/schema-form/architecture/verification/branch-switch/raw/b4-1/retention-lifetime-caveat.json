@@ -1,0 +1,53 @@
+{
+  "kind": "post-measurement-snapshot-identity-diagnostic",
+  "usedForAdoption": false,
+  "rows": [
+    {
+      "row": "switch-oneOf-80",
+      "resetSlotHosts": 0,
+      "idMatches": [
+        {
+          "id": 135355,
+          "read": {
+            "name": "Map",
+            "type": "object"
+          },
+          "reset": {
+            "name": "Map",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "row": "switch-payload-12",
+      "resetSlotHosts": 0,
+      "idMatches": [
+        {
+          "id": 116609,
+          "read": {
+            "name": "Map",
+            "type": "object"
+          },
+          "reset": {
+            "name": "Map",
+            "type": "object"
+          }
+        },
+        {
+          "id": 78187,
+          "read": {
+            "name": "FieldNode",
+            "type": "object"
+          },
+          "reset": {
+            "name": "Object",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  ],
+  "conclusion": "Matching numeric IDs across these independently written snapshots do not establish object identity: a formerly FieldNode ID is Object after reset. The earlier payload 11-of-12 collected interpretation is withdrawn. Reset has zero slot hosts; individual object collection cannot be concluded from this ID-only method.",
+  "limitation": "Retained Map byte estimates and slot counts remain single-snapshot observations; reset lifetime is reported as indeterminate without independent stable identity evidence."
+}

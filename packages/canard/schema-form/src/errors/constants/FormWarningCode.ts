@@ -1,6 +1,6 @@
+import { assembleCodeGroup } from '../utils/assembleCodeGroup';
 import { FormWarningGroup } from './FormWarningGroup';
 import { SchemaFormWarningSpecific } from './SchemaFormWarningSpecific';
-import { assembleCodeGroup } from '../utils/assembleCodeGroup';
 
 /**
  * Every warning code the package reports, in ledger order (ERROR-164 and its supplements).
@@ -41,6 +41,12 @@ export const FormWarningCode = {
   Misfit: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.Misfit}`,
   /** Class: warning record; when: a schema dialect differs from the selected validator dialect. */
   DialectMismatch: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DialectMismatch}`,
+  /** Class: warning record; when: a write is attempted through a detached node reference; the write has no effect. */
+  DetachedNodeWrite: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.DetachedNodeWrite}`,
+  /** Class: warning record; when: one control layer declares inactiveValue together with literal true unsetOnInactive. */
+  InactiveValueWithUnsetOnInactive: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.InactiveValueWithUnsetOnInactive}`,
+  /** Class: warning record; when: a public value, array, batch or reset write is attempted inside an inactive resolver. */
+  WriteInInactiveResolver: `${FormWarningGroup.SchemaForm}.${SchemaFormWarningSpecific.WriteInInactiveResolver}`,
 } as const;
 
 /** Closed union of the warning code values. */

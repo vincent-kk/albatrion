@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-30T04:43:54.223Z",
+  "kind": "ps-reported-cpu",
+  "gating": false,
+  "rows": [
+    {
+      "pid": 820,
+      "cpuPercent": 34.5,
+      "name": "BetterTouchTool"
+    },
+    {
+      "pid": 441,
+      "cpuPercent": 19.2,
+      "name": "runningboardd"
+    },
+    {
+      "pid": 837,
+      "cpuPercent": 14.2,
+      "name": "WidgetsExtension"
+    },
+    {
+      "pid": 726,
+      "cpuPercent": 8.5,
+      "name": "chronod"
+    },
+    {
+      "pid": 436,
+      "cpuPercent": 3.3,
+      "name": "WindowServer"
+    },
+    {
+      "pid": 515,
+      "cpuPercent": 3.1,
+      "name": "mds_stores"
+    },
+    {
+      "pid": 9295,
+      "cpuPercent": 2.1,
+      "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]"
+    },
+    {
+      "pid": 650,
+      "cpuPercent": 1.8,
+      "name": "ControlCenter"
+    },
+    {
+      "pid": 1056,
+      "cpuPercent": 1.8,
+      "name": "Stats"
+    },
+    {
+      "pid": 745,
+      "cpuPercent": 1.7,
+      "name": "NotificationCenter"
+    }
+  ]
+}

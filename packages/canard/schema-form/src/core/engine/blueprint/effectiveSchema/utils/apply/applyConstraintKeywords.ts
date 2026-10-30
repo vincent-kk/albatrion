@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import { FormErrorCode } from '@/schema-form/errors';
 import {
   EMPTY_INTERSECTION,
@@ -42,7 +44,7 @@ const RANGES = [
  */
 export const applyConstraintKeywords = (
   state: EffectiveSchemaState,
-  source: Readonly<Record<string, unknown>>,
+  source: Readonly<Dictionary<unknown>>,
   schemaPath: string,
   options: EffectiveSchemaOptions,
 ): void => {
@@ -133,6 +135,6 @@ export const applyConstraintKeywords = (
  * @param value - An authored keyword value whose type has not been narrowed.
  * @returns The numeric value, or undefined for a nonnumeric keyword form.
  */
-function numberValue(value: unknown): number | undefined {
+function numberValue(value: unknown): Optional<number> {
   return typeof value === 'number' ? value : undefined;
 }

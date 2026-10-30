@@ -1,0 +1,113 @@
+{
+  "timedSamples": 0,
+  "results": [
+    {
+      "lane": "B4-1-off",
+      "primed": false,
+      "commitBefore": 3,
+      "commitAfter": 3,
+      "events": 0,
+      "oldPath": "/items/2/gated",
+      "oldRead": "third",
+      "inactiveValues": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ]
+    },
+    {
+      "lane": "B4-1-off",
+      "primed": true,
+      "commitBefore": 3,
+      "commitAfter": 3,
+      "events": 0,
+      "oldPath": "/items/2/gated",
+      "oldRead": "third",
+      "before": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ],
+      "inactiveValues": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ]
+    },
+    {
+      "lane": "B4-1-on",
+      "primed": false,
+      "commitBefore": 3,
+      "commitAfter": 3,
+      "events": 0,
+      "oldPath": "/items/2/gated",
+      "oldRead": "third",
+      "inactiveValues": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ]
+    },
+    {
+      "lane": "B4-1-on",
+      "primed": true,
+      "commitBefore": 3,
+      "commitAfter": 3,
+      "events": 0,
+      "oldPath": "/items/2/gated",
+      "oldRead": "third",
+      "before": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ],
+      "inactiveValues": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ]
+    },
+    {
+      "lane": "B4-2",
+      "primed": false,
+      "commitBefore": 3,
+      "commitAfter": 3,
+      "events": 0,
+      "oldPath": "/items/2/gated",
+      "oldRead": "third",
+      "inactiveValues": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ]
+    },
+    {
+      "lane": "B4-2",
+      "primed": true,
+      "commitBefore": 3,
+      "commitAfter": 3,
+      "events": 0,
+      "oldPath": "/items/2/gated",
+      "oldRead": "third",
+      "before": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ],
+      "inactiveValues": [
+        {
+          "path": "/items/1/gated",
+          "value": "third"
+        }
+      ]
+    }
+  ]
+}

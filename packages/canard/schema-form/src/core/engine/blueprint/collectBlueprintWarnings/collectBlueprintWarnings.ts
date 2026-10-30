@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Dictionary } from '@aileron/declare';
+
 import { FormWarningCode } from '../../../../errors';
 import type {
   Blueprint,
@@ -7,7 +9,9 @@ import type {
   BlueprintOptions,
 } from '../types/blueprint';
 import { readSchemaObject } from '../utils/analyze/readSchemaObject';
+import { collectInactiveValueWarnings } from './utils/collectInactiveValueWarnings';
 import { collectInlineTerminalWarnings } from './utils/collectInlineTerminalWarnings';
+import { endsWithBranchIndex } from './utils/endsWithBranchIndex';
 
 /** Dependency keywords the form ignores on any declaration. */
 const IGNORED_DEPENDENCY_KEYWORDS = ['dependentSchemas', 'dependencies'];
@@ -23,11 +27,11 @@ const ALL_OF_IGNORED_KEYWORDS = [
   'contains',
 ];
 
-/** A schema path ending in an `allOf` branch index. */
-const ALL_OF_BRANCH_PATH = /\/allOf\/\d+$/;
+/** Keyword whose branch index ends an `allOf` branch schema path. */
+const ALL_OF_KEYWORDS = ['allOf'];
 
-/** A schema path ending in a `oneOf` or `anyOf` branch index. */
-const UNION_BRANCH_PATH = /\/(oneOf|anyOf)\/\d+$/;
+/** Keywords whose branch index ends a `oneOf` or `anyOf` branch schema path. */
+const UNION_KEYWORDS = ['oneOf', 'anyOf'];
 
 /**
  * Collect advisory records only when a consumer explicitly requests diagnostics.
@@ -55,9 +59,14 @@ export const collectBlueprintWarnings = (
     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);
     for (const declaration of node.declarations) {
       const schema = readSchemaObject(declaration.schema);
+      collectInactiveValueWarnings(
+        schema.controls,
+        declaration.schemaPath,
+        emit,
+      );
       const warning = (
         code: FormWarningCode,
-        details: Record<string, unknown> = {},
+        details: Dictionary<unknown> = {},
       ): void =>
         emit({
           code,
@@ -70,7 +79,7 @@ export const collectBlueprintWarnings = (
           warning(FormWarningCode.DependentSchemasIgnoredForForm, {
             keyword,
           });
-      if (ALL_OF_BRANCH_PATH.test(declaration.schemaPath))
+      if (endsWithBranchIndex(declaration.schemaPath, ALL_OF_KEYWORDS))
         for (const keyword of ALL_OF_IGNORED_KEYWORDS)
           if (schema[keyword] !== undefined)
             warning(FormWarningCode.AllOfKeywordIgnoredForForm, {
@@ -84,7 +93,7 @@ export const collectBlueprintWarnings = (
           schema.controls?.disabled !== undefined)
       )
         warning(FormWarningCode.LockOnNonTerminalObject);
-      if (UNION_BRANCH_PATH.test(declaration.schemaPath)) {
+      if (endsWithBranchIndex(declaration.schemaPath, UNION_KEYWORDS)) {
         if (schema.if !== undefined && schema.else !== false)
           warning(FormWarningCode.IfWithoutElseFalse);
         if (
@@ -107,8 +116,17 @@ export const collectBlueprintWarnings = (
         const allowed: readonly unknown[] = isArray(tag.schemaType)
           ? tag.schemaType
           : [tag.schemaType];
-        if (
-          descriptor.values.some((value) =>
+        let hasInvalidDiscriminatorTag = false;
+
+        const discriminatorValues = descriptor.values;
+        for (
+          let index = 0, count = discriminatorValues.length;
+          index < count;
+          index++
+        ) {
+          const value = discriminatorValues[index];
+
+          if (
             value === null
               ? !tag.nullable
               : !allowed.includes(
@@ -119,15 +137,21 @@ export const collectBlueprintWarnings = (
                         allowed.includes('integer')
                       ? 'integer'
                       : typeof value,
-                ),
-          )
-        )
+                )
+          ) {
+            hasInvalidDiscriminatorTag = true;
+            break;
+          }
+        }
+
+        if (hasInvalidDiscriminatorTag) {
           emit({
             code: FormWarningCode.DiscriminatorBranchUnreachable,
             level: 'warning',
             schemaPath: gate.schemaPath,
             details: { propertyName: descriptor.propertyName },
           });
+        }
       }
     }
   }

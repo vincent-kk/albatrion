@@ -1,0 +1,8 @@
+{
+  "formal": false,
+  "workers": 1,
+  "shortWindow": true,
+  "warmups": 1,
+  "samples": 1,
+  "code": 0
+}

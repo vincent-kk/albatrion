@@ -1,9 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
 import { readFieldNodeErrors } from '../../../validation';
-import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
+import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
-import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
+import { EMPTY_PATHS } from './emptyDetachedReads';
 
 /**
  * Retain the last committed reads before an exiting node's live path is cleared.
@@ -20,13 +20,14 @@ export const captureDetachedFieldNodeReads = <
   load?: { readonly value: unknown },
 ): void => {
   const runtime = node.runtime;
-  runtime.watchValuesMemo?.delete(node);
-  readFieldNodeWatchValues(node, watchSnapshot);
+  if (runtime.blueprint.capabilities.hasWatch) {
+    runtime.watchValuesMemo?.delete(node);
+    readFieldNodeWatchValues(node, watchSnapshot);
+  }
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
     misfit: runtime.misfitPaths.has(node.path),
     misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
-    inactiveValues: runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
     defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
     visible: node.visible,
     readOnly: node.readOnly,

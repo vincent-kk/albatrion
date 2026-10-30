@@ -7,6 +7,7 @@
 ## Conventions
 
 - 상태는 `raw`와 `undeclaredValues`뿐이고, 나머지 값은 계산값이거나 작업 기록이다(VALUE-002).
+- A host owns retained inactive instances and their source overlays; record declares this ownership without selecting, settling, or reviving an inactive public lifetime.
 - 노드 인스턴스가 곧 `FieldNodeRecord<Self>`이며, 종류별 자료는 `structure` 한 칸에 둔다(NODE-004·046).
 - 경고 경로 인덱스와 얼려 둔 떼어진 읽기는 선택적 트리 저장소에 두고, 가지치기용으로 노드마다 고정 필드를 추가하지 않는다(NODE-044·045, 35C-09).
 - 넓은 범위의 노드 이름에는 `FieldNode`를 쓰고, 필드처럼 좁은 범위에서만 `node`를 쓴다(NODE-011, SURFACE-056).

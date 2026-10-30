@@ -5,7 +5,10 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import * as slotValues from '../utils/slots/collectHostSlotValues';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { readInactiveValuesAt } from './fixtures/readInactiveValuesAt';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
 
 // filid:contract settle-write-commit
 describe('settle commit', () => {
@@ -310,10 +313,10 @@ describe('settle commit', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+    expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/secret', value: 'held' },
     ]);
-    expect(Object.isFrozen(root.runtime.inactiveValuesMemo.get(''))).toBe(true);
+    expect(Object.isFrozen(readInactiveValuesAt(root, ''))).toBe(true);
   });
 
   it('WRITE-087 retains the raw of an initially inactive declared child', () => {
@@ -331,7 +334,7 @@ describe('settle commit', () => {
       WriteOption.Overwrite,
     );
     expect(root.structure?.secret).toBeUndefined();
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+    expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/secret', value: 'latent' },
     ]);
   });
@@ -363,7 +366,7 @@ describe('settle commit', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+    expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/group/leaf', value: 'L' },
       { path: '/group/other', value: 'O' },
     ]);
@@ -399,8 +402,8 @@ describe('settle commit', () => {
       { path: '/group/leaf', value: 'a' },
       { path: '/group/deep/x', value: 1 },
     ];
-    expect(initial.runtime.inactiveValuesMemo.get('')).toEqual(expected);
-    expect(exited.runtime.inactiveValuesMemo.get('')).toEqual(expected);
+    expect(readInactiveValuesAt(initial, '')).toEqual(expected);
+    expect(readInactiveValuesAt(exited, '')).toEqual(expected);
     writeFieldNode(
       initial.structure!.flag,
       true,
@@ -443,10 +446,8 @@ describe('settle commit', () => {
     );
     writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
     expect(root.structure?.group?.blueprintNode.kind).toBe('string');
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/group', 'object'])),
-    ).toBe(false);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+    expect(hasRetainedSlotOwnSource(root, '/group', 'object')).toBe(false);
+    expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/group/leaf', value: 'kept' },
     ]);
     writeFieldNode(root.structure!.kind, 'a', 'input', WriteOption.Overwrite);
@@ -482,9 +483,9 @@ describe('settle commit', () => {
       { flag: false, group: { sel: 1, field: 'test' } },
       WriteOption.Overwrite,
     );
-    const entries = root.runtime.inactiveValuesMemo
-      .get('')
-      ?.filter((entry) => entry.path === '/group/field');
+    const entries = readInactiveValuesAt(root, '')?.filter(
+      (entry) => entry.path === '/group/field',
+    );
     expect(entries).toEqual([{ path: '/group/field', value: 'test' }]);
   });
 
@@ -520,17 +521,12 @@ describe('settle commit', () => {
       'input',
       WriteOption.Overwrite,
     );
-    expect(
-      [...root.runtime.latentRaw.keys()].filter((key) =>
-        key.startsWith('["/value",'),
-      ).length,
-    ).toBe(2);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+    expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/value', value: 'hello' },
     ]);
   });
 
-  it('WRITE-087 enumerates a replaced detached host like an initially inactive host', () => {
+  it('WRITE-087 ignores detached replacement and enumerates its retained source', () => {
     const schema = {
       type: 'object',
       properties: {
@@ -563,23 +559,23 @@ describe('settle commit', () => {
     const initial = createTestTree(schema).root;
     loadFieldNodeAtMount(
       initial,
-      { flag: false, group: { leaf: 'z', deep: { x: 9 } } },
+      { flag: false, group: { leaf: 'a', deep: { x: 1 } } },
       WriteOption.Overwrite,
     );
     const expected = [
-      { path: '/group/leaf', value: 'z' },
-      { path: '/group/deep/x', value: 9 },
+      { path: '/group/leaf', value: 'a' },
+      { path: '/group/deep/x', value: 1 },
     ];
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual(expected);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual(
-      initial.runtime.inactiveValuesMemo.get(''),
+    expect(readInactiveValuesAt(root, '')).toEqual(expected);
+    expect(readInactiveValuesAt(root, '')).toEqual(
+      readInactiveValuesAt(initial, ''),
     );
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.group?.structure?.leaf?.raw).toBe('z');
-    expect(root.structure?.group?.structure?.deep?.structure?.x?.raw).toBe(9);
+    expect(root.structure?.group?.structure?.leaf?.raw).toBe('a');
+    expect(root.structure?.group?.structure?.deep?.structure?.x?.raw).toBe(1);
   });
 
-  it('WRITE-087 records a detached leaf write beside untouched latent siblings', () => {
+  it('WRITE-087 ignores a detached leaf write beside retained siblings', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -601,22 +597,22 @@ describe('settle commit', () => {
     );
     const leaf = root.structure!.group.structure!.leaf;
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    const unchangedX = root.runtime.inactiveValuesMemo
-      .get('')
-      ?.find((entry) => entry.path === '/group/deep/x');
+    const unchangedX = readInactiveValuesAt(root, '')?.find(
+      (entry) => entry.path === '/group/deep/x',
+    );
     writeFieldNode(leaf, 'newer', 'callerReplace', WriteOption.Overwrite);
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
-      { path: '/group/leaf', value: 'newer' },
+    expect(readInactiveValuesAt(root, '')).toEqual([
+      { path: '/group/leaf', value: 'a' },
       { path: '/group/deep/x', value: 1 },
     ]);
     expect(
-      root.runtime.inactiveValuesMemo
-        .get('')
-        ?.find((entry) => entry.path === '/group/deep/x'),
+      readInactiveValuesAt(root, '')?.find(
+        (entry) => entry.path === '/group/deep/x',
+      ),
     ).toBe(unchangedX);
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.group?.structure?.leaf?.raw).toBe('newer');
+    expect(root.structure?.group?.structure?.leaf?.raw).toBe('a');
     expect(root.structure?.group?.structure?.deep?.structure?.x?.raw).toBe(1);
   });
 
@@ -635,9 +631,10 @@ describe('settle commit', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.inactiveValuesMemo.get('')?.map((entry) => entry.path),
-    ).toEqual(['/zeta', '/alpha']);
+    expect(readInactiveValuesAt(root, '')?.map((entry) => entry.path)).toEqual([
+      '/zeta',
+      '/alpha',
+    ]);
   });
 
   it('WRITE-087 reuses inactive array and entry references on unrelated commits', () => {
@@ -655,12 +652,12 @@ describe('settle commit', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    const inactive = root.runtime.inactiveValuesMemo.get('');
+    const inactive = readInactiveValuesAt(root, '');
     const entry = inactive?.[0];
-    const latentIteration = vi.spyOn(root.runtime.latentRaw, Symbol.iterator);
+    const latentIteration = vi.spyOn(slotValues, 'collectHostSlotValues');
     writeFieldNode(root.structure!.other, 2, 'input', WriteOption.Overwrite);
-    expect(root.runtime.inactiveValuesMemo.get('')).toBe(inactive);
-    expect(root.runtime.inactiveValuesMemo.get('')?.[0]).toBe(entry);
+    expect(readInactiveValuesAt(root, '')).toBe(inactive);
+    expect(readInactiveValuesAt(root, '')?.[0]).toBe(entry);
     expect(latentIteration).not.toHaveBeenCalled();
   });
 
@@ -684,7 +681,7 @@ describe('settle commit', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+    expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/group', value: 'wrong' },
     ]);
   });

@@ -65,6 +65,7 @@ it.each(['append', 'pop', 'splice'] as const)(
 it.each(['push', 'pop', 'insert'] as const)(
   'M9 exclusivity: gated-array %s counts presence calls and never reuses children',
   (kind) => {
+    // Shipping presence-call counts exclude independent slot replay.
     engineModes.setMode('gateWheel', 'record');
     let latest: SettlementContext<DispatchTestNode> | undefined;
     const create = settlement.createSettlementContext;

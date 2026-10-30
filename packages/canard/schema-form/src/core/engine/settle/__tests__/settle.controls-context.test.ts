@@ -1,11 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import * as arrayUtils from '@winglet/common-utils/array';
+
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
 
 // filid:contract settle-state-keys-context
 describe('context state keys', () => {
@@ -20,20 +23,27 @@ describe('context state keys', () => {
       };
     const { root, blueprint } = createTestTree({ type: 'object', properties });
     const find = vi.spyOn(Array.prototype, 'find');
-    const builds = vi.spyOn(Array.prototype, 'map');
+    const nativeBuilds = vi.spyOn(Array.prototype, 'map');
+    const builds = vi.spyOn(arrayUtils, 'map');
     try {
       loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
       expect(
         find.mock.contexts.filter((target) => target === blueprint.expressions),
       ).toHaveLength(0);
       expect(
-        builds.mock.contexts.filter(
-          (target) => target === blueprint.expressions,
+        builds.mock.calls.filter(
+          ([target]) => target === blueprint.expressions,
         ),
       ).toHaveLength(1);
+      expect(
+        nativeBuilds.mock.contexts.filter(
+          (target) => target === blueprint.expressions,
+        ),
+      ).toHaveLength(0);
     } finally {
       find.mockRestore();
       builds.mockRestore();
+      nativeBuilds.mockRestore();
     }
   });
 
@@ -114,8 +124,6 @@ describe('state-key failures during settlement', () => {
       ),
     ).toThrow('State key expression failed');
     expect(root.structure?.secret).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 });

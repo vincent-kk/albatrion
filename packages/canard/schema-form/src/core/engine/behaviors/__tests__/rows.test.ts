@@ -7,15 +7,14 @@ import { objectBehavior } from '@/schema-form/core/engine/behaviors/objectBehavi
 import { stringBehavior } from '@/schema-form/core/engine/behaviors/stringBehavior';
 import { unionBehavior } from '@/schema-form/core/engine/behaviors/unionBehavior';
 import { virtualBehavior } from '@/schema-form/core/engine/behaviors/virtualBehavior';
-import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type { BlueprintNode } from '@/schema-form/core/engine/blueprint';
-import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type {
   Behavior,
   FieldNodeRecord,
   UnionSpec,
 } from '@/schema-form/core/engine/record';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 
 import { BEHAVIORS } from '../behaviors';
@@ -45,11 +44,8 @@ const makeRecord = (
     globalStateCounts: new Map(),
     globalState: {},
     loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'),
+
     misfitPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
   },
   blueprintNode,
   parent: null,

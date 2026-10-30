@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import type {
   FormErrorRecord,
   FormErrorReporter,
@@ -7,11 +9,10 @@ import type {
   Blueprint,
   BlueprintChildEntry,
   BlueprintGate,
-  BlueprintNode,
   BlueprintSchemaType,
   EffectiveSchema,
 } from '../../blueprint';
-import type { DeclarationLayer } from '../../types/controls';
+import type { InactiveValueResolver } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
 import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
@@ -48,41 +49,12 @@ interface FieldNodeDiagnostics {
   commit?: number;
 }
 
-/** Classification, document position, and retained exit decisions of a latent occurrence. */
-interface LatentRawMetadata {
-  readonly path: string;
-  readonly blueprintNode: BlueprintNode;
-  readonly order: readonly number[];
-  /** Last-live explicit exit decisions retained after rule baselines are pruned. */
-  readonly exitLayers?: readonly {
-    readonly layer: DeclarationLayer;
-    readonly clear: boolean;
-  }[];
-}
-
-/** Last published item and sort position for one enumerable latent occurrence. */
-interface InactiveValueEntryMemo {
-  readonly value: unknown;
-  readonly order: readonly number[];
-  readonly entry: Readonly<{ path: string; value: unknown }>;
-}
-
 /** Root-owned settlement data reached through a record's runtime. */
 interface FieldNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
-  /** Per-kind latent leaf raw or a host's own frozen raw and undeclared values. */
-  latentRaw: PathKeyedMap<unknown>;
-  /** Whether latent sources changed since the last inactive-value publication. */
-  latentRawDirty?: boolean;
-  /** Latent occurrence shape and document position, keyed like latentRaw. */
-  latentRawMetadata?: PathKeyedMap<LatentRawMetadata>;
   /** Current paths whose raw values miss their effective types. */
   misfitPaths: PathKeyedSet;
-  /** Commit-scoped inactive value lists keyed by node path. */
-  inactiveValuesMemo: PathKeyedMap<readonly { path: string; value: unknown }[]>;
-  /** Published latent item objects retained across unrelated commits. */
-  inactiveValueEntries?: PathKeyedMap<InactiveValueEntryMemo>;
 }
 
 /** Last committed reads retained for one node reference after it exits. */
@@ -90,7 +62,7 @@ interface DetachedFieldNodeReads {
   readonly errors: readonly { readonly dataPath: string }[];
   readonly misfit: boolean;
   readonly misfits: readonly string[];
-  readonly inactiveValues: readonly { path: string; value: unknown }[];
+  readonly inactiveValues?: readonly { path: string; value: unknown }[];
   readonly defaultValue: unknown;
   readonly visible: boolean;
   readonly readOnly: boolean;
@@ -181,8 +153,6 @@ export interface SettlementScratch<Self> {
   pathChanges: { node: Self; previous: string; current: string }[];
   /** Nodes whose absent source received a transition fill. */
   filledNodes: Set<Self>;
-  /** Previous values of latent entries touched in a transition. */
-  latentAutomaticLog: Map<string, { present: boolean; value: unknown }>;
   /** Paths scheduled for recalculation. */
   dirtyPaths: Set<string>;
   /** Dirty descendant paths and their direct child names by ancestor. */
@@ -207,12 +177,14 @@ export interface SettlementScratch<Self> {
 export interface FieldNodeRuntime<Self>
   extends FieldNodeRootRuntimeState,
     TreeMemoStores<BlueprintChildEntry, BlueprintGate> {
+  /** Hosts whose unpublished slot changes must become visible at a commit. */
+  slotDirtyHosts?: Set<Self>;
   /** Last issued static whole-write generation; never reused within this tree. */
   writeEpoch?: number;
   /** Number of current-shape nodes with a truthy value for each state key. */
   globalStateCounts: Map<string, number>;
   /** Stable aggregate of keys whose count is positive. */
-  globalState: Readonly<Record<string, true>>;
+  globalState: Readonly<Dictionary<true>>;
   /** Pending events consumed by the later dispatcher. */
   deliveries?: Set<Self>;
   /** Nodes with revision bits marked before the commit visitor reaches them. */
@@ -231,7 +203,7 @@ export interface FieldNodeRuntime<Self>
   /** Last diagnostics reference observed by delivery marking. */
   deliveredDiagnostics?: FieldNodeDiagnostics;
   /** Context reference last observed by delivery marking. */
-  deliveredContext?: Readonly<Record<string, unknown>>;
+  deliveredContext?: Readonly<Dictionary<unknown>>;
   /** Public entry depth consumed by the later dispatcher. */
   entryDepth?: number;
   /** Feedback waves already produced by the current outer entry. */
@@ -268,6 +240,10 @@ export interface FieldNodeRuntime<Self>
   rebuiltReferenceSchemaPaths?: readonly string[];
   /** Per-node subscribers, allocated only for a subscribed tree. */
   listeners?: Map<unknown, Set<(event: FieldNodeDelivery) => void>>;
+  /** Instance-bound exit resolvers; allocated only for registered nodes. */
+  inactiveListeners?: Map<unknown, Set<InactiveValueResolver<unknown>>>;
+  /** True only while a synchronous exit resolver is executing. */
+  resolvingInactiveValue?: boolean;
   /** Subscriber currently producing a delivery callback. */
   currentListener?: (event: FieldNodeDelivery) => void;
   /** Feedback producers already stopped at this chain's wave budget. */
@@ -366,7 +342,7 @@ export interface FieldNodeRuntime<Self>
   /** Issue references each non-root node last contributed to the root list; adoption fills it from the handed-over lists. */
   externalContributions?: Map<unknown, readonly { dataPath: string }[]>;
   /** Form context shared by every occurrence and expression in this tree; the factory supplies an empty object when none is given. */
-  context: Readonly<Record<string, unknown>>;
+  context: Readonly<Dictionary<unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */
   committedRuleValues?: PathKeyedMap<unknown>;
   /** Committed rule keys indexed by their source path for bounded pruning. */

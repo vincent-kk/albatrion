@@ -1,0 +1,442 @@
+{
+  "baseline": "a28b502cc",
+  "sourceCommit": "87c98e0ef",
+  "productAndDetailByteIdentical": true,
+  "baselineTestFilesAndExpectationsUnchanged": true,
+  "addedPublicContractFiles": [
+    "packages/canard/schema-form/src/core/surface/__tests__/surface.delta-application.test.ts"
+  ],
+  "addedCases": 2,
+  "publicDeclarationSha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+  "verification": {
+    "workingTree": "All checks ran against the restored source captured by sourceCommit; the commit field is HEAD at command completion, including checks that ran before the restore merge commit.",
+    "steps": [
+      {
+        "name": "contract-final",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "unit",
+          "delta-application"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T16:55:55.268399+00:00",
+        "end": "2026-10-27T16:55:59.458504+00:00",
+        "commit": "5320aee5f95605e0af0c7d9c78d4776693202ed7",
+        "summary": [
+          "Test Files  1 passed (1)",
+          "Tests  2 passed (2)"
+        ]
+      },
+      {
+        "name": "build",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "build"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T16:55:59.466754+00:00",
+        "end": "2026-10-27T16:56:19.179741+00:00",
+        "commit": "5320aee5f95605e0af0c7d9c78d4776693202ed7",
+        "summary": []
+      },
+      {
+        "name": "typecheck",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "typecheck"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T16:56:19.188134+00:00",
+        "end": "2026-10-27T16:56:30.143105+00:00",
+        "commit": "5320aee5f95605e0af0c7d9c78d4776693202ed7",
+        "summary": []
+      },
+      {
+        "name": "lint",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "lint"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T16:56:30.151910+00:00",
+        "end": "2026-10-27T16:56:38.349112+00:00",
+        "commit": "5320aee5f95605e0af0c7d9c78d4776693202ed7",
+        "summary": []
+      },
+      {
+        "name": "unit",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "unit",
+          "--no-file-parallelism"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T16:56:38.357790+00:00",
+        "end": "2026-10-27T17:01:43.308047+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  519 passed (519)",
+          "Tests  3696 passed | 1 todo (3697)"
+        ]
+      },
+      {
+        "name": "render",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "render"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:01:43.316993+00:00",
+        "end": "2026-10-27T17:02:50.022913+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  129 passed (129)",
+          "Tests  761 passed (761)"
+        ]
+      },
+      {
+        "name": "react18",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "react18"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:02:50.031417+00:00",
+        "end": "2026-10-27T17:04:01.522547+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  129 passed (129)",
+          "Tests  761 passed (761)"
+        ]
+      },
+      {
+        "name": "production",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "production"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:04:01.531311+00:00",
+        "end": "2026-10-27T17:04:06.474225+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  9 passed (9)",
+          "Tests  20 passed (20)"
+        ]
+      },
+      {
+        "name": "verify",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test:verify",
+          "--run",
+          "--no-file-parallelism"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:04:06.482598+00:00",
+        "end": "2026-10-27T17:12:36.361370+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  653 passed (653)",
+          "Tests  4501 passed | 1 todo (4502)"
+        ]
+      },
+      {
+        "name": "storybook-1",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=1/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:12:36.370245+00:00",
+        "end": "2026-10-27T17:12:45.152889+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  24 passed (24)"
+        ]
+      },
+      {
+        "name": "storybook-2",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=2/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:12:45.162509+00:00",
+        "end": "2026-10-27T17:12:54.955459+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  30 passed (30)"
+        ]
+      },
+      {
+        "name": "storybook-3",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=3/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:12:54.964161+00:00",
+        "end": "2026-10-27T17:13:03.733933+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  21 passed (21)"
+        ]
+      },
+      {
+        "name": "storybook-4",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=4/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:13:03.743273+00:00",
+        "end": "2026-10-27T17:13:12.971422+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  20 passed (20)"
+        ]
+      },
+      {
+        "name": "storybook-5",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=5/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:13:12.982185+00:00",
+        "end": "2026-10-27T17:13:21.828287+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  29 passed (29)"
+        ]
+      },
+      {
+        "name": "storybook-6",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=6/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:13:21.837565+00:00",
+        "end": "2026-10-27T17:13:30.528203+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  21 passed (21)"
+        ]
+      },
+      {
+        "name": "storybook-7",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=7/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:13:30.537061+00:00",
+        "end": "2026-10-27T17:13:38.933151+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  24 passed (24)"
+        ]
+      },
+      {
+        "name": "storybook-8",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=8/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:13:38.941780+00:00",
+        "end": "2026-10-27T17:13:46.895100+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  19 passed (19)"
+        ]
+      },
+      {
+        "name": "storybook-9",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=9/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:13:46.904222+00:00",
+        "end": "2026-10-27T17:13:56.312158+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  36 passed (36)"
+        ]
+      },
+      {
+        "name": "storybook-10",
+        "cmd": [
+          "yarn",
+          "workspace",
+          "@canard/schema-form",
+          "test",
+          "--run",
+          "--project",
+          "storybook",
+          "--no-file-parallelism",
+          "--shard=10/10"
+        ],
+        "exit": 0,
+        "start": "2026-10-27T17:13:56.320926+00:00",
+        "end": "2026-10-27T17:14:06.765996+00:00",
+        "commit": "87c98e0efd545f709ac61c9d4eebf54c81f95da3",
+        "summary": [
+          "Test Files  10 passed (10)",
+          "Tests  27 passed (27)"
+        ]
+      }
+    ],
+    "passedCases": {
+      "contract-final": 2,
+      "unit": 3696,
+      "render": 761,
+      "react18": 761,
+      "production": 20,
+      "verify": 4501,
+      "storybook-1": 24,
+      "storybook-2": 30,
+      "storybook-3": 21,
+      "storybook-4": 20,
+      "storybook-5": 29,
+      "storybook-6": 21,
+      "storybook-7": 24,
+      "storybook-8": 19,
+      "storybook-9": 36,
+      "storybook-10": 27,
+      "storybook": 251
+    }
+  },
+  "filid": {
+    "verdict": "FAIL",
+    "analysisComplete": false,
+    "activeFindings": 245,
+    "severity": {
+      "warning": 221,
+      "error": 24
+    },
+    "snapshotHash": "c37611d93485b15a34e77a1339c61cba13c42b2b6df0acfa91d1047337cb3891",
+    "changedFindingCount": 0,
+    "newTestRecords": {
+      "files": 1,
+      "exactCases": [
+        2
+      ]
+    },
+    "unsupportedFacts": 512,
+    "diagnosticCodes": {
+      "detail-document-contract": 197,
+      "intent-document-contract": 18,
+      "unresolved-local-dependency": 4,
+      "unowned-local-dependency": 73
+    }
+  }
+}

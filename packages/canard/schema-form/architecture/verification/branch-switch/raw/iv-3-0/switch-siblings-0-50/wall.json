@@ -1,0 +1,1012 @@
+{
+  "row": "switch-siblings-0",
+  "intervalUs": 50,
+  "collector": true,
+  "switches": 20000,
+  "warmups": 2000,
+  "writesPerSwitch": 1,
+  "blocks": [
+    {
+      "startUs": 297271749900,
+      "endUs": 297271752057,
+      "switches": 100
+    },
+    {
+      "startUs": 297271752081,
+      "endUs": 297271753920,
+      "switches": 100
+    },
+    {
+      "startUs": 297271753924,
+      "endUs": 297271755646,
+      "switches": 100
+    },
+    {
+      "startUs": 297271755647,
+      "endUs": 297271757611,
+      "switches": 100
+    },
+    {
+      "startUs": 297271757612,
+      "endUs": 297271759393,
+      "switches": 100
+    },
+    {
+      "startUs": 297271759435,
+      "endUs": 297271761249,
+      "switches": 100
+    },
+    {
+      "startUs": 297271761249,
+      "endUs": 297271763277,
+      "switches": 100
+    },
+    {
+      "startUs": 297271763278,
+      "endUs": 297271765019,
+      "switches": 100
+    },
+    {
+      "startUs": 297271765020,
+      "endUs": 297271766768,
+      "switches": 100
+    },
+    {
+      "startUs": 297271766769,
+      "endUs": 297271768734,
+      "switches": 100
+    },
+    {
+      "startUs": 297271768780,
+      "endUs": 297271770529,
+      "switches": 100
+    },
+    {
+      "startUs": 297271770530,
+      "endUs": 297271772250,
+      "switches": 100
+    },
+    {
+      "startUs": 297271772250,
+      "endUs": 297271774293,
+      "switches": 100
+    },
+    {
+      "startUs": 297271774296,
+      "endUs": 297271776368,
+      "switches": 100
+    },
+    {
+      "startUs": 297271776369,
+      "endUs": 297271778463,
+      "switches": 100
+    },
+    {
+      "startUs": 297271778507,
+      "endUs": 297271780434,
+      "switches": 100
+    },
+    {
+      "startUs": 297271780435,
+      "endUs": 297271782121,
+      "switches": 100
+    },
+    {
+      "startUs": 297271782121,
+      "endUs": 297271784149,
+      "switches": 100
+    },
+    {
+      "startUs": 297271784152,
+      "endUs": 297271785994,
+      "switches": 100
+    },
+    {
+      "startUs": 297271785996,
+      "endUs": 297271787702,
+      "switches": 100
+    },
+    {
+      "startUs": 297271787740,
+      "endUs": 297271789793,
+      "switches": 100
+    },
+    {
+      "startUs": 297271789796,
+      "endUs": 297271791700,
+      "switches": 100
+    },
+    {
+      "startUs": 297271791702,
+      "endUs": 297271793855,
+      "switches": 100
+    },
+    {
+      "startUs": 297271793856,
+      "endUs": 297271795469,
+      "switches": 100
+    },
+    {
+      "startUs": 297271795469,
+      "endUs": 297271797433,
+      "switches": 100
+    },
+    {
+      "startUs": 297271797484,
+      "endUs": 297271799061,
+      "switches": 100
+    },
+    {
+      "startUs": 297271799062,
+      "endUs": 297271800592,
+      "switches": 100
+    },
+    {
+      "startUs": 297271800592,
+      "endUs": 297271802547,
+      "switches": 100
+    },
+    {
+      "startUs": 297271802550,
+      "endUs": 297271804147,
+      "switches": 100
+    },
+    {
+      "startUs": 297271804147,
+      "endUs": 297271805657,
+      "switches": 100
+    },
+    {
+      "startUs": 297271805881,
+      "endUs": 297271807566,
+      "switches": 100
+    },
+    {
+      "startUs": 297271807571,
+      "endUs": 297271809123,
+      "switches": 100
+    },
+    {
+      "startUs": 297271809124,
+      "endUs": 297271810641,
+      "switches": 100
+    },
+    {
+      "startUs": 297271810641,
+      "endUs": 297271812506,
+      "switches": 100
+    },
+    {
+      "startUs": 297271812507,
+      "endUs": 297271813995,
+      "switches": 100
+    },
+    {
+      "startUs": 297271814034,
+      "endUs": 297271815588,
+      "switches": 100
+    },
+    {
+      "startUs": 297271815588,
+      "endUs": 297271817468,
+      "switches": 100
+    },
+    {
+      "startUs": 297271817468,
+      "endUs": 297271819036,
+      "switches": 100
+    },
+    {
+      "startUs": 297271819036,
+      "endUs": 297271820643,
+      "switches": 100
+    },
+    {
+      "startUs": 297271820644,
+      "endUs": 297271822602,
+      "switches": 100
+    },
+    {
+      "startUs": 297271822636,
+      "endUs": 297271824258,
+      "switches": 100
+    },
+    {
+      "startUs": 297271824258,
+      "endUs": 297271825797,
+      "switches": 100
+    },
+    {
+      "startUs": 297271825797,
+      "endUs": 297271827404,
+      "switches": 100
+    },
+    {
+      "startUs": 297271827404,
+      "endUs": 297271829365,
+      "switches": 100
+    },
+    {
+      "startUs": 297271829367,
+      "endUs": 297271830972,
+      "switches": 100
+    },
+    {
+      "startUs": 297271831006,
+      "endUs": 297271832629,
+      "switches": 100
+    },
+    {
+      "startUs": 297271832629,
+      "endUs": 297271834635,
+      "switches": 100
+    },
+    {
+      "startUs": 297271834639,
+      "endUs": 297271836210,
+      "switches": 100
+    },
+    {
+      "startUs": 297271836214,
+      "endUs": 297271838150,
+      "switches": 100
+    },
+    {
+      "startUs": 297271838151,
+      "endUs": 297271840356,
+      "switches": 100
+    },
+    {
+      "startUs": 297271840395,
+      "endUs": 297271842046,
+      "switches": 100
+    },
+    {
+      "startUs": 297271842046,
+      "endUs": 297271843605,
+      "switches": 100
+    },
+    {
+      "startUs": 297271843606,
+      "endUs": 297271845219,
+      "switches": 100
+    },
+    {
+      "startUs": 297271845219,
+      "endUs": 297271846982,
+      "switches": 100
+    },
+    {
+      "startUs": 297271846985,
+      "endUs": 297271848426,
+      "switches": 100
+    },
+    {
+      "startUs": 297271848456,
+      "endUs": 297271849958,
+      "switches": 100
+    },
+    {
+      "startUs": 297271849958,
+      "endUs": 297271851765,
+      "switches": 100
+    },
+    {
+      "startUs": 297271851765,
+      "endUs": 297271853222,
+      "switches": 100
+    },
+    {
+      "startUs": 297271853222,
+      "endUs": 297271854671,
+      "switches": 100
+    },
+    {
+      "startUs": 297271854671,
+      "endUs": 297271856461,
+      "switches": 100
+    },
+    {
+      "startUs": 297271856484,
+      "endUs": 297271857975,
+      "switches": 100
+    },
+    {
+      "startUs": 297271857976,
+      "endUs": 297271859458,
+      "switches": 100
+    },
+    {
+      "startUs": 297271859459,
+      "endUs": 297271861001,
+      "switches": 100
+    },
+    {
+      "startUs": 297271861003,
+      "endUs": 297271862931,
+      "switches": 100
+    },
+    {
+      "startUs": 297271862932,
+      "endUs": 297271864507,
+      "switches": 100
+    },
+    {
+      "startUs": 297271864530,
+      "endUs": 297271866146,
+      "switches": 100
+    },
+    {
+      "startUs": 297271866147,
+      "endUs": 297271867983,
+      "switches": 100
+    },
+    {
+      "startUs": 297271867984,
+      "endUs": 297271869418,
+      "switches": 100
+    },
+    {
+      "startUs": 297271869418,
+      "endUs": 297271870854,
+      "switches": 100
+    },
+    {
+      "startUs": 297271870854,
+      "endUs": 297271872294,
+      "switches": 100
+    },
+    {
+      "startUs": 297271872514,
+      "endUs": 297271874234,
+      "switches": 100
+    },
+    {
+      "startUs": 297271874235,
+      "endUs": 297271875730,
+      "switches": 100
+    },
+    {
+      "startUs": 297271875730,
+      "endUs": 297271877296,
+      "switches": 100
+    },
+    {
+      "startUs": 297271877297,
+      "endUs": 297271879231,
+      "switches": 100
+    },
+    {
+      "startUs": 297271879232,
+      "endUs": 297271880990,
+      "switches": 100
+    },
+    {
+      "startUs": 297271881026,
+      "endUs": 297271882586,
+      "switches": 100
+    },
+    {
+      "startUs": 297271882587,
+      "endUs": 297271884281,
+      "switches": 100
+    },
+    {
+      "startUs": 297271884282,
+      "endUs": 297271885794,
+      "switches": 100
+    },
+    {
+      "startUs": 297271885795,
+      "endUs": 297271887251,
+      "switches": 100
+    },
+    {
+      "startUs": 297271887251,
+      "endUs": 297271888756,
+      "switches": 100
+    },
+    {
+      "startUs": 297271888967,
+      "endUs": 297271890565,
+      "switches": 100
+    },
+    {
+      "startUs": 297271890565,
+      "endUs": 297271892047,
+      "switches": 100
+    },
+    {
+      "startUs": 297271892048,
+      "endUs": 297271893614,
+      "switches": 100
+    },
+    {
+      "startUs": 297271893615,
+      "endUs": 297271895537,
+      "switches": 100
+    },
+    {
+      "startUs": 297271895538,
+      "endUs": 297271896975,
+      "switches": 100
+    },
+    {
+      "startUs": 297271897005,
+      "endUs": 297271898467,
+      "switches": 100
+    },
+    {
+      "startUs": 297271898468,
+      "endUs": 297271900189,
+      "switches": 100
+    },
+    {
+      "startUs": 297271900189,
+      "endUs": 297271902483,
+      "switches": 100
+    },
+    {
+      "startUs": 297271902483,
+      "endUs": 297271904035,
+      "switches": 100
+    },
+    {
+      "startUs": 297271904035,
+      "endUs": 297271905543,
+      "switches": 100
+    },
+    {
+      "startUs": 297271905566,
+      "endUs": 297271907439,
+      "switches": 100
+    },
+    {
+      "startUs": 297271907440,
+      "endUs": 297271909225,
+      "switches": 100
+    },
+    {
+      "startUs": 297271909225,
+      "endUs": 297271910681,
+      "switches": 100
+    },
+    {
+      "startUs": 297271910681,
+      "endUs": 297271912174,
+      "switches": 100
+    },
+    {
+      "startUs": 297271912174,
+      "endUs": 297271913969,
+      "switches": 100
+    },
+    {
+      "startUs": 297271913993,
+      "endUs": 297271915466,
+      "switches": 100
+    },
+    {
+      "startUs": 297271915466,
+      "endUs": 297271916943,
+      "switches": 100
+    },
+    {
+      "startUs": 297271916943,
+      "endUs": 297271918407,
+      "switches": 100
+    },
+    {
+      "startUs": 297271918407,
+      "endUs": 297271920225,
+      "switches": 100
+    },
+    {
+      "startUs": 297271920227,
+      "endUs": 297271921681,
+      "switches": 100
+    },
+    {
+      "startUs": 297271921704,
+      "endUs": 297271923141,
+      "switches": 100
+    },
+    {
+      "startUs": 297271923141,
+      "endUs": 297271924618,
+      "switches": 100
+    },
+    {
+      "startUs": 297271924618,
+      "endUs": 297271926389,
+      "switches": 100
+    },
+    {
+      "startUs": 297271926389,
+      "endUs": 297271927849,
+      "switches": 100
+    },
+    {
+      "startUs": 297271927849,
+      "endUs": 297271929424,
+      "switches": 100
+    },
+    {
+      "startUs": 297271929444,
+      "endUs": 297271931274,
+      "switches": 100
+    },
+    {
+      "startUs": 297271931274,
+      "endUs": 297271932694,
+      "switches": 100
+    },
+    {
+      "startUs": 297271932694,
+      "endUs": 297271934094,
+      "switches": 100
+    },
+    {
+      "startUs": 297271934094,
+      "endUs": 297271935520,
+      "switches": 100
+    },
+    {
+      "startUs": 297271935520,
+      "endUs": 297271937277,
+      "switches": 100
+    },
+    {
+      "startUs": 297271937302,
+      "endUs": 297271938649,
+      "switches": 100
+    },
+    {
+      "startUs": 297271938649,
+      "endUs": 297271940001,
+      "switches": 100
+    },
+    {
+      "startUs": 297271940001,
+      "endUs": 297271941439,
+      "switches": 100
+    },
+    {
+      "startUs": 297271941439,
+      "endUs": 297271943221,
+      "switches": 100
+    },
+    {
+      "startUs": 297271943224,
+      "endUs": 297271944621,
+      "switches": 100
+    },
+    {
+      "startUs": 297271944650,
+      "endUs": 297271946115,
+      "switches": 100
+    },
+    {
+      "startUs": 297271946115,
+      "endUs": 297271947645,
+      "switches": 100
+    },
+    {
+      "startUs": 297271947646,
+      "endUs": 297271949338,
+      "switches": 100
+    },
+    {
+      "startUs": 297271949339,
+      "endUs": 297271950808,
+      "switches": 100
+    },
+    {
+      "startUs": 297271950808,
+      "endUs": 297271952176,
+      "switches": 100
+    },
+    {
+      "startUs": 297271952203,
+      "endUs": 297271953631,
+      "switches": 100
+    },
+    {
+      "startUs": 297271953631,
+      "endUs": 297271955364,
+      "switches": 100
+    },
+    {
+      "startUs": 297271955365,
+      "endUs": 297271956794,
+      "switches": 100
+    },
+    {
+      "startUs": 297271956795,
+      "endUs": 297271958214,
+      "switches": 100
+    },
+    {
+      "startUs": 297271958214,
+      "endUs": 297271959588,
+      "switches": 100
+    },
+    {
+      "startUs": 297271959825,
+      "endUs": 297271961519,
+      "switches": 100
+    },
+    {
+      "startUs": 297271961522,
+      "endUs": 297271962861,
+      "switches": 100
+    },
+    {
+      "startUs": 297271962862,
+      "endUs": 297271964189,
+      "switches": 100
+    },
+    {
+      "startUs": 297271964189,
+      "endUs": 297271965518,
+      "switches": 100
+    },
+    {
+      "startUs": 297271965518,
+      "endUs": 297271967234,
+      "switches": 100
+    },
+    {
+      "startUs": 297271967263,
+      "endUs": 297271968615,
+      "switches": 100
+    },
+    {
+      "startUs": 297271968615,
+      "endUs": 297271969929,
+      "switches": 100
+    },
+    {
+      "startUs": 297271969929,
+      "endUs": 297271971305,
+      "switches": 100
+    },
+    {
+      "startUs": 297271971305,
+      "endUs": 297271972984,
+      "switches": 100
+    },
+    {
+      "startUs": 297271972984,
+      "endUs": 297271974322,
+      "switches": 100
+    },
+    {
+      "startUs": 297271974349,
+      "endUs": 297271975715,
+      "switches": 100
+    },
+    {
+      "startUs": 297271975715,
+      "endUs": 297271977105,
+      "switches": 100
+    },
+    {
+      "startUs": 297271977105,
+      "endUs": 297271978734,
+      "switches": 100
+    },
+    {
+      "startUs": 297271978735,
+      "endUs": 297271980476,
+      "switches": 100
+    },
+    {
+      "startUs": 297271980476,
+      "endUs": 297271982212,
+      "switches": 100
+    },
+    {
+      "startUs": 297271982456,
+      "endUs": 297271984038,
+      "switches": 100
+    },
+    {
+      "startUs": 297271984039,
+      "endUs": 297271985438,
+      "switches": 100
+    },
+    {
+      "startUs": 297271985438,
+      "endUs": 297271986865,
+      "switches": 100
+    },
+    {
+      "startUs": 297271986865,
+      "endUs": 297271988315,
+      "switches": 100
+    },
+    {
+      "startUs": 297271988315,
+      "endUs": 297271990002,
+      "switches": 100
+    },
+    {
+      "startUs": 297271990039,
+      "endUs": 297271991866,
+      "switches": 100
+    },
+    {
+      "startUs": 297271991866,
+      "endUs": 297271993783,
+      "switches": 100
+    },
+    {
+      "startUs": 297271993784,
+      "endUs": 297271996212,
+      "switches": 100
+    },
+    {
+      "startUs": 297271996216,
+      "endUs": 297271998091,
+      "switches": 100
+    },
+    {
+      "startUs": 297271998092,
+      "endUs": 297271999443,
+      "switches": 100
+    },
+    {
+      "startUs": 297271999468,
+      "endUs": 297272000747,
+      "switches": 100
+    },
+    {
+      "startUs": 297272000748,
+      "endUs": 297272002073,
+      "switches": 100
+    },
+    {
+      "startUs": 297272002073,
+      "endUs": 297272003399,
+      "switches": 100
+    },
+    {
+      "startUs": 297272003399,
+      "endUs": 297272004715,
+      "switches": 100
+    },
+    {
+      "startUs": 297272004715,
+      "endUs": 297272006032,
+      "switches": 100
+    },
+    {
+      "startUs": 297272006062,
+      "endUs": 297272007601,
+      "switches": 100
+    },
+    {
+      "startUs": 297272007601,
+      "endUs": 297272009231,
+      "switches": 100
+    },
+    {
+      "startUs": 297272009231,
+      "endUs": 297272011466,
+      "switches": 100
+    },
+    {
+      "startUs": 297272011467,
+      "endUs": 297272012784,
+      "switches": 100
+    },
+    {
+      "startUs": 297272012784,
+      "endUs": 297272014115,
+      "switches": 100
+    },
+    {
+      "startUs": 297272014148,
+      "endUs": 297272015449,
+      "switches": 100
+    },
+    {
+      "startUs": 297272015449,
+      "endUs": 297272016726,
+      "switches": 100
+    },
+    {
+      "startUs": 297272016726,
+      "endUs": 297272017980,
+      "switches": 100
+    },
+    {
+      "startUs": 297272017980,
+      "endUs": 297272019223,
+      "switches": 100
+    },
+    {
+      "startUs": 297272019223,
+      "endUs": 297272020522,
+      "switches": 100
+    },
+    {
+      "startUs": 297272020804,
+      "endUs": 297272022246,
+      "switches": 100
+    },
+    {
+      "startUs": 297272022246,
+      "endUs": 297272023497,
+      "switches": 100
+    },
+    {
+      "startUs": 297272023497,
+      "endUs": 297272024809,
+      "switches": 100
+    },
+    {
+      "startUs": 297272024810,
+      "endUs": 297272026099,
+      "switches": 100
+    },
+    {
+      "startUs": 297272026100,
+      "endUs": 297272027443,
+      "switches": 100
+    },
+    {
+      "startUs": 297272027477,
+      "endUs": 297272028805,
+      "switches": 100
+    },
+    {
+      "startUs": 297272028805,
+      "endUs": 297272030076,
+      "switches": 100
+    },
+    {
+      "startUs": 297272030076,
+      "endUs": 297272031397,
+      "switches": 100
+    },
+    {
+      "startUs": 297272031397,
+      "endUs": 297272033189,
+      "switches": 100
+    },
+    {
+      "startUs": 297272033191,
+      "endUs": 297272034524,
+      "switches": 100
+    },
+    {
+      "startUs": 297272034547,
+      "endUs": 297272035811,
+      "switches": 100
+    },
+    {
+      "startUs": 297272035811,
+      "endUs": 297272037068,
+      "switches": 100
+    },
+    {
+      "startUs": 297272037068,
+      "endUs": 297272038332,
+      "switches": 100
+    },
+    {
+      "startUs": 297272038332,
+      "endUs": 297272039653,
+      "switches": 100
+    },
+    {
+      "startUs": 297272039653,
+      "endUs": 297272040994,
+      "switches": 100
+    },
+    {
+      "startUs": 297272041021,
+      "endUs": 297272042300,
+      "switches": 100
+    },
+    {
+      "startUs": 297272042301,
+      "endUs": 297272043567,
+      "switches": 100
+    },
+    {
+      "startUs": 297272043567,
+      "endUs": 297272045263,
+      "switches": 100
+    },
+    {
+      "startUs": 297272045263,
+      "endUs": 297272046515,
+      "switches": 100
+    },
+    {
+      "startUs": 297272046515,
+      "endUs": 297272047767,
+      "switches": 100
+    },
+    {
+      "startUs": 297272047790,
+      "endUs": 297272049037,
+      "switches": 100
+    },
+    {
+      "startUs": 297272049038,
+      "endUs": 297272050333,
+      "switches": 100
+    },
+    {
+      "startUs": 297272050333,
+      "endUs": 297272051609,
+      "switches": 100
+    },
+    {
+      "startUs": 297272051609,
+      "endUs": 297272052924,
+      "switches": 100
+    },
+    {
+      "startUs": 297272052925,
+      "endUs": 297272054286,
+      "switches": 100
+    },
+    {
+      "startUs": 297272054469,
+      "endUs": 297272056261,
+      "switches": 100
+    },
+    {
+      "startUs": 297272056262,
+      "endUs": 297272058400,
+      "switches": 100
+    },
+    {
+      "startUs": 297272058400,
+      "endUs": 297272060675,
+      "switches": 100
+    },
+    {
+      "startUs": 297272060676,
+      "endUs": 297272062936,
+      "switches": 100
+    },
+    {
+      "startUs": 297272062936,
+      "endUs": 297272065147,
+      "switches": 100
+    },
+    {
+      "startUs": 297272066707,
+      "endUs": 297272068241,
+      "switches": 100
+    },
+    {
+      "startUs": 297272068243,
+      "endUs": 297272069751,
+      "switches": 100
+    },
+    {
+      "startUs": 297272069751,
+      "endUs": 297272071290,
+      "switches": 100
+    },
+    {
+      "startUs": 297272071291,
+      "endUs": 297272072634,
+      "switches": 100
+    },
+    {
+      "startUs": 297272072634,
+      "endUs": 297272073976,
+      "switches": 100
+    }
+  ],
+  "node": "v26.12.1",
+  "pid": 20915
+}

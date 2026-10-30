@@ -1,0 +1,96 @@
+{
+  "toolCommit": "eda3caec925949e578cb6aa23c938dc254b9a0fd",
+  "synthetic": "B4_2_TOOL_SMOKE_OK synthetic-only",
+  "timedFormalSamples": 0,
+  "checks": [
+    "raw statistics rederivation",
+    "all-row legacy quality",
+    "summary/quality/row/sample tampering rejection",
+    "phase conservation",
+    "single nonzero comparative latent call detection",
+    "invalid quality remains indeterminate",
+    "runtime and stage bundle hash tampering rejection",
+    "nested creation counted once",
+    "supplemental calls excluded from adoption",
+    "cloned delivery beyond A own width is rejected",
+    "slot-free ledger and unwrapped latency beyond A own width are rejected"
+  ],
+  "syntax": "Node 26 parses and runs the committed tool chain; comparative timer manifests contain 25 boundaries on both sources.",
+  "stageSmoke": {
+    "formalSamples": 0,
+    "rows": [
+      {
+        "lane": "A",
+        "pass": "ledger",
+        "row": "switch-oneOf-80",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      },
+      {
+        "lane": "A",
+        "pass": "ledger",
+        "row": "switch-payload-12",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      },
+      {
+        "lane": "A",
+        "pass": "ledger",
+        "row": "switch-siblings-0",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      },
+      {
+        "lane": "B",
+        "pass": "ledger",
+        "row": "switch-oneOf-80",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      },
+      {
+        "lane": "B",
+        "pass": "ledger",
+        "row": "switch-payload-12",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      },
+      {
+        "lane": "B",
+        "pass": "ledger",
+        "row": "switch-siblings-0",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      },
+      {
+        "lane": "B",
+        "pass": "supplemental",
+        "row": "switch-oneOf-80",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      },
+      {
+        "lane": "B",
+        "pass": "supplemental",
+        "row": "switch-payload-12",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      },
+      {
+        "lane": "B",
+        "pass": "supplemental",
+        "row": "switch-siblings-0",
+        "samples": 4,
+        "warmups": 2,
+        "balanced": true
+      }
+    ]
+  }
+}

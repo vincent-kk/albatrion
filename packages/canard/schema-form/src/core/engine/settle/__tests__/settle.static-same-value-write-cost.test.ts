@@ -12,6 +12,7 @@ import * as recalculation from '../utils/dependencies/registerRecalculation';
 import * as settlement from '../utils/settlement/finishSettlement';
 
 afterEach(() => vi.restoreAllMocks());
+// These internal work counts measure one shipping tree, excluding oracle replay.
 
 /**
  * Count the per-child work of one whole object write to the host `h`.

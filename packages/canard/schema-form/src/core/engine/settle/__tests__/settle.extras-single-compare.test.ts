@@ -14,7 +14,7 @@ import {
   dispatchWriteInput,
   subscribeFieldNode,
 } from '../../write';
-import { HostLatent } from '../utils/latentStore/HostLatent';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 import { referenceNextExtras } from './fixtures/referenceNextExtras';
 
 describe('single extras comparison observations', () => {
@@ -61,7 +61,7 @@ describe('single extras comparison observations', () => {
       properties: { known: { type: 'number' } },
     });
     dispatchMount(root, { known: 1, first: { value: 2 }, last: 3 });
-      dispatchWriteInput(root, { known: 1, first: { value: 2 }, last: 3 });
+    dispatchWriteInput(root, { known: 1, first: { value: 2 }, last: 3 });
     const changed = vi.fn();
     root.runtime.onChange = changed;
     const delivered: number[] = [];
@@ -74,7 +74,7 @@ describe('single extras comparison observations', () => {
     ]) {
       const previous = root.undeclaredValues;
       const output = root.emit;
-        const revision = root.revisionLedger;
+      const revision = root.revisionLedger;
       const expected = referenceNextExtras(
         previous,
         input,
@@ -187,13 +187,13 @@ describe('single extras comparison observations', () => {
       ],
     });
     dispatchMount(root, { flag: false, h: { known: 1, extra: { value: 2 } } });
-    const entry = [...root.runtime.latentRaw].find(
-      ([, value]) => value instanceof HostLatent,
-    );
-    expect(entry).toBeDefined();
-    const [key, previous] = entry!;
+    const previous = readRetainedSlotRaw(root, '/h', 'object') as {
+      extra: unknown;
+    };
     dispatchWriteInput(root, { h: { extra: { value: 2 } } }, WriteOption.Merge);
-    expect(root.runtime.latentRaw.get(key)).toBe(previous);
+    expect(
+      (readRetainedSlotRaw(root, '/h', 'object') as { extra: unknown }).extra,
+    ).toBe(previous.extra);
     dispatchWriteInput(root, { flag: true }, WriteOption.Merge);
     expect(root.emit).toEqual({
       flag: true,

@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { ArrayOperation, FieldNodeRecord } from '../../../../record';
 import type { ArrayPopProof } from '../../../types/settlement';
 import { admitsStaticArrayTail } from './admitsStaticArrayTail';
@@ -16,7 +18,7 @@ const NO_SLOTS: readonly never[] = Object.freeze([]);
 export const prepareArrayPop = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
-): ArrayPopProof<Self> | undefined => {
+): Optional<ArrayPopProof<Self>> => {
   const count = node.itemCount;
   const index = count - 1;
   if (

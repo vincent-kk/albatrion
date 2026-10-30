@@ -1,0 +1,26 @@
+{
+  "scope": "Stack-only diagnostic; no latency samples",
+  "results": [
+    {
+      "lane": "A",
+      "shippingWriterFrames": ["at writeFieldNode"],
+      "output": {
+        "value": "next"
+      }
+    },
+    {
+      "lane": "candidate-1",
+      "shippingWriterFrames": ["at writeFieldNodeBody", "at writeFieldNode"],
+      "output": {
+        "value": "next"
+      }
+    },
+    {
+      "lane": "candidate-2",
+      "shippingWriterFrames": ["at writeFieldNode"],
+      "output": {
+        "value": "next"
+      }
+    }
+  ]
+}

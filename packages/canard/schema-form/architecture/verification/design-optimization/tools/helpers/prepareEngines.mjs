@@ -4,7 +4,12 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 
 /** Copy built bundles unchanged plus one export line into runDir; fail if an expected internal is absent. */
-export function prepareEngines(packageDir, runDir, legacyVersion = '0.16.1') {
+export function prepareEngines(
+  packageDir,
+  runDir,
+  legacyVersion = '0.16.1',
+  currentBundle = path.join(packageDir, 'dist/index.node.mjs'),
+) {
   if (!['0.16.0', '0.16.1'].includes(legacyVersion))
     throw new Error('Unsupported legacy version');
   const require = createRequire(path.join(packageDir, 'package.json'));
@@ -24,7 +29,7 @@ export function prepareEngines(packageDir, runDir, legacyVersion = '0.16.1') {
     throw new Error('Legacy alias identity mismatch');
   const jobs = {
     current: {
-      source: path.join(packageDir, 'dist/index.node.mjs'),
+      source: path.resolve(currentBundle),
       names: [
         'blueprint',
         'fieldNodeFactory',

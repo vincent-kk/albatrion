@@ -1,0 +1,94 @@
+ArrayNode	type	ArrayNode<Item>
+ArraySchema	type	RolledArraySchema<Options>
+BooleanNode	type	BooleanNode
+BooleanSchema	type	RolledBooleanSchema<Options>
+BranchNode	type	BranchNode
+ChildFieldProps	type	ChildFieldProps<Value>
+FieldInputDefinition	type	FieldInputDefinition<T>
+FieldInputHint	type	FieldInputHint
+FieldInputMap	type	FieldInputMap<T>
+FieldInputProps	type	FieldInputProps<Value, Context, WatchValues, Schema, Node>
+FieldInputPropsWithNode	type	FieldInputPropsWithNode<Value, Schema, Node>
+FieldInputPropsWithSchema	type	FieldInputPropsWithSchema<Value, Schema, Context>
+FieldInputTestFn	type	FieldInputTestFn
+FieldInputTestObject	type	Partial<{ type: "string" | "number" | "boolean" | "object" | "union" | "array" | "null" | "virtual" | ("string" | "number" | "boolean" | "object" | "union" | "array" | "null" | "virtual")[]; schemaType: "string" | "number" | "boolean" | "object" | UnionSchemaType | "array" | "integer" | "null" | ("string" | "number" | "boolean" | "object" | UnionSchemaType | "array" | "integer" | "null" | undefined)[] | undefined; path: string | string[]; format: string | (string | undefined)[] | undefined; inputType: string | (string | undefined)[] | undefined; } & Pick<FieldInputHint, "required" | "nullable">>
+FieldNode	type	FieldNode
+FieldNodeEventType	value+type	typeof FieldNodeEventType
+FieldNodeRequestType	value+type	typeof FieldNodeRequestType
+FieldNodeState	value+type	typeof FieldNodeState
+FieldNodeSubscribeOptions	type	FieldNodeSubscribeOptions<Node>
+FieldNodeType	type	"string" | "number" | "boolean" | "object" | "union" | "array" | "null" | "virtual"
+FieldRendererProps	type	Roll<FieldRendererProps>
+Form	value	(<Schema extends import("<package>/dist/index").JSONSchema, Value extends import("<package>/dist/types/index").AllowedValue = InferValueType<Schema>>(props: FormProps<Schema, Value> & { ref?: ForwardedRef<FormHandle<Schema, Value>> | undefined; }) => ReactNode) & { Render: <Value extends import("<package>/dist/types/index").AllowedValue = AllowedValue>(props: FormRenderProps<Value>) => ReactNode; Field: <Value extends import("<package>/dist/types/index").AllowedValue = AllowedValue>(props: FormFieldProps<Value>) => ReactNode; Label: MemoExoticComponent<({ path, style, className }: FormLabelProps) => Element>; Input: <Value extends import("<package>/dist/types/index").AllowedValue = AllowedValue>(props: FormInputProps<Value>) => ReactNode; Error: MemoExoticComponent<({ path, style, className }: FormErrorProps) => Element>; }
+FormChildrenProps	type	FormChildrenProps<Schema, Value>
+FormErrorCode	value+type	{ readonly UnknownJsonSchema: "JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA"; readonly UnexpectedArraySchema: "JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA"; readonly AllOfTypeRedefinition: "JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION"; readonly ConflictingConstValues: "JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES"; readonly InvalidRange: "JSON_SCHEMA_ERROR.INVALID_RANGE"; readonly EmptyEnumIntersection: "JSON_SCHEMA_ERROR.EMPTY_ENUM_INTERSECTION"; readonly VirtualFieldsNotValid: "JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_VALID"; readonly VirtualFieldsNotInProperties: "JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_IN_PROPERTIES"; readonly CreateDynamicFunction: "JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION"; readonly ObservedValues: "JSON_SCHEMA_ERROR.OBSERVED_VALUES"; readonly UnknownGroupKey: "JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY"; readonly DiscriminatorMismatch: "JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH"; readonly SharedNodeKindConflict: "JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT"; readonly TerminalStrategyMismatch: "JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH"; readonly SharedNodeConflict: "SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT"; readonly BudgetExceeded: "SCHEMA_FORM_ERROR.BUDGET_EXCEEDED"; readonly ExpressionThrew: "SCHEMA_FORM_ERROR.EXPRESSION_THREW"; readonly GuardFailed: "SCHEMA_FORM_ERROR.GUARD_FAILED"; readonly InjectTargetMissing: "SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING"; readonly FeedbackLimitExceeded: "SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED"; readonly ListenerThrew: "SCHEMA_FORM_ERROR.LISTENER_THREW"; readonly MultipleErrors: "SCHEMA_FORM_ERROR.MULTIPLE_ERRORS"; readonly FormTypeInputMap: "SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP"; readonly RegisterPlugin: "UNHANDLED_ERROR.REGISTER_PLUGIN"; readonly InvalidWriteOption: "SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION"; readonly DisposedNodeWrite: "SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE"; readonly WriteInObserver: "SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER"; readonly SubmitWhileDegraded: "SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED"; readonly ValidatorCompileFailed: "SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED"; readonly ValidatorThrew: "SCHEMA_FORM_ERROR.VALIDATOR_THREW"; readonly RenderFailed: "SCHEMA_FORM_ERROR.RENDER_FAILED"; readonly InvalidVirtualNodeValues: "SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES"; readonly ArrayMethodOnNonArray: "SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY"; readonly RecursiveShapeUnbounded: "JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED"; readonly RecursiveShapeDiverged: "SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED"; readonly VirtualFieldsMismatch: "JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH"; readonly ChildrenTargetNotFound: "JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND"; readonly TerminalOptionUnsupported: "JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED"; readonly ValidatorBindRefused: "UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED"; readonly InvalidControlShape: "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE"; readonly SchemaValidationFailed: "VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED"; readonly ReservedPropertyName: "JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME"; }
+FormErrorProps	type	FormErrorProps
+FormFieldProps	type	Roll<FormFieldProps<Value>>
+FormHandle	type	FormHandle<Schema, Value>
+FormInputProps	type	Roll<FormInputProps<Value>>
+FormLabelProps	type	FormLabelProps
+FormProps	type	FormProps<Schema, Value>
+FormProvider	value	({ fieldInputDefinitions, FieldRenderer, FormLabelRenderer, FormInputRenderer, FormErrorRenderer, formatError, showError, validationMode, context: inputContext, validatorFactory, children, }: PropsWithChildren<ExternalFormContextProviderProps>) => Element
+FormProviderProps	type	ExternalFormContextProviderProps
+FormRenderProps	type	Roll<FormRenderProps<Value>>
+FormWarningCode	value+type	{ readonly AllOfKeywordIgnoredForForm: "SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM"; readonly NullBranchIgnoredForForm: "SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM"; readonly VirtualizationDisabledForForm: "SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM"; readonly IfWithoutElseFalse: "SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE"; readonly LockOnNonTerminalObject: "SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT"; readonly ConditionalSchemaWithoutValidator: "SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR"; readonly ValidatorMissing: "SCHEMA_FORM_WARNING.VALIDATOR_MISSING"; readonly MultipleGatedBranchesActive: "SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE"; readonly ResetRebuiltByReference: "SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE"; readonly DependentSchemasIgnoredForForm: "SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM"; readonly ChildNodeComponentsOnTerminal: "SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL"; readonly TerminalSubtreeKeyIgnoredForForm: "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM"; readonly DiscriminatorBranchUnreachable: "SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE"; readonly NonJsonWholeValue: "SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE"; readonly FormTypeTestInvalid: "SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID"; readonly Misfit: "SCHEMA_FORM_WARNING.MISFIT"; readonly DialectMismatch: "SCHEMA_FORM_WARNING.DIALECT_MISMATCH"; readonly DetachedNodeWrite: "SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE"; }
+FormatError	type	FormatError
+InferFieldNode	type	InferFieldNode<Schema>
+InferJSONSchema	type	RolledInferJSONSchema<Value, Options>
+InferValueType	type	InferValueType<T>
+InjectToHandler	type	InjectToHandler<Value, ParentValue, RootValue, Context>
+JSONPointer	value+type	{ readonly Root: ""; readonly Fragment: "#"; readonly Separator: "/"; readonly Parent: ".."; readonly Current: "."; readonly Wildcard: "*"; readonly Index: "*"; readonly Context: "@"; }
+JSONSchema	type	AuthoredSchema<Options, SchemaPresentation>
+NonNullableArraySchema	type	Roll<NonNullableArraySchema<Options>>
+NonNullableBooleanSchema	type	Roll<NonNullableBooleanSchema<Options>>
+NonNullableNumberSchema	type	Roll<NonNullableNumberSchema<Options>>
+NonNullableObjectSchema	type	Roll<NonNullableObjectSchema<Options>>
+NonNullableStringSchema	type	Roll<NonNullableStringSchema<Options>>
+NullNode	type	NullNode
+NullSchema	type	Roll<NullSchema<Options>>
+NullableArraySchema	type	Roll<NullableArraySchema<Options>>
+NullableBooleanSchema	type	Roll<NullableBooleanSchema<Options>>
+NullableNumberSchema	type	Roll<NullableNumberSchema<Options>>
+NullableObjectSchema	type	Roll<NullableObjectSchema<Options>>
+NullableStringSchema	type	Roll<NullableStringSchema<Options>>
+NumberNode	type	NumberNode
+NumberSchema	type	RolledNumberSchema<Options>
+ObjectNode	type	ObjectNode
+ObjectSchema	type	RolledObjectSchema<Options>
+SchemaFormPlugin	type	SchemaFormPlugin
+SetValueOption	value+type	Readonly<Pick<typeof WriteOption, "Overwrite" | "Merge" | "DisableAutomaticWrites" | "EnableAutomaticWrites">>
+ShowError	value+type	typeof ShowError
+StringNode	type	StringNode
+StringSchema	type	RolledStringSchema<Options>
+TerminalNode	type	TerminalNode
+UnionNode	type	UnionNode<Types, Nullable>
+ValidateFunction	type	ValidateFunction<Value>
+ValidationIssue	type	ValidationIssue<SourceError>
+ValidationMode	value+type	typeof ValidationMode
+ValidatorFactory	type	Validator
+ValidatorPlugin	type	ValidatorPlugin
+VirtualNode	type	VirtualNode
+VirtualizationBackfill	value+type	typeof VirtualizationBackfill
+VirtualizationOptions	type	VirtualizationOptions
+VirtualizationPlaceholderProps	type	VirtualizationPlaceholderProps
+VirtualizationRootMargin	type	VirtualizationRootMargin
+isArrayNode	value	(node: FieldNode) => node is ArrayNode
+isBooleanNode	value	(node: FieldNode) => node is BooleanNode
+isBranchNode	value	(node: FieldNode) => node is BranchNode
+isFieldNode	value	(value: unknown) => value is FieldNode
+isJSONSchemaError	value	(error: unknown) => error is JSONSchemaError
+isNumberNode	value	(node: FieldNode) => node is NumberNode
+isObjectNode	value	(node: FieldNode) => node is ObjectNode
+isSchemaFormError	value	(error: unknown) => error is SchemaFormError
+isStringNode	value	(node: FieldNode) => node is StringNode
+isTerminalNode	value	(node: FieldNode) => node is TerminalNode
+isUnhandledError	value	(error: unknown) => error is UnhandledError
+isUnionNode	value	(node: FieldNode) => node is UnionNode
+isValidationError	value	(error: unknown) => error is ValidationError
+isVirtualNode	value	(node: FieldNode) => node is VirtualNode
+registerPlugin	value	(plugin: SchemaFormPlugin | null) => void
+useChildFieldErrors	value	(node: FieldNode, disabled?: boolean | undefined) => { errorMessage: ReactNode; showError: boolean; formattedError: ReactNode; showErrors: boolean[]; formattedErrors: ReactNode[]; errorMatrix: (readonly ValidationIssue<unknown>[])[]; }
+useChildFieldMap	value	<Value extends Dictionary>(ChildFields: ChildField[]) => ChildFieldMap<Required<Value>>
+useFieldNodeSubscribe	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Node | null, listener: FieldNodeListener, options?: FieldNodeSubscribeOptions<Node> | undefined) => void
+useFieldNodeTracker	value	<Node extends { subscribe(listener: Parameters<FieldNode["subscribe"]>[0]): Fn; revision(mask?: number): number; }>(node: Node | null, tracking?: number | undefined) => number
+useFormSubmit	value	<Schema extends JSONSchema, Value extends AllowedValue = InferValueType<Schema>>(ref: RefObject<FormHandle<Schema, Value> | null>) => { submit: () => Promise<void | undefined>; pending: boolean | undefined; }

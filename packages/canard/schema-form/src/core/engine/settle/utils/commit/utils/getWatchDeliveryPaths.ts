@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { CONTROL_KEY } from '../../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../../record';
-import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
+import { getStateDependencyPlan } from '../../controls/getStateDependencyPlan';
 
 /** Shared frozen result for a node without watch paths. */
 const NO_PATHS: readonly string[] = Object.freeze([]);
@@ -26,6 +26,8 @@ export const getWatchDeliveryPaths = <Self extends FieldNodeRecord<Self>>(
   const paths: string[] = [];
   for (const path of watch)
     if (typeof path === 'string')
-      paths.push(resolveDependencyPath(node.path, path));
+      paths.push(
+        getStateDependencyPlan(node.runtime, node.path, path, node).path,
+      );
   return paths;
 };

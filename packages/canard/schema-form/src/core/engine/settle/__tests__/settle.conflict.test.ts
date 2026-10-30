@@ -5,6 +5,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { hasRetainedSlotOwnSource } from './fixtures/readRetainedSlotRaw';
 
 // filid:contract settle-gates-conflicts
 describe('shared declaration conflicts', () => {
@@ -192,9 +193,7 @@ describe('shared declaration conflicts', () => {
     expect(root.structure?.target?.raw).toBe('B');
     expect(root.structure?.filled?.raw).toBe('F');
     expect(root.structure?.departed).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/departed', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/departed', 'string')).toBe(false);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'sharedConflict',

@@ -1,11 +1,15 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import type { Dictionary, Optional } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../../errors';
-import { mergeEffectiveSchema } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
-import { captureFieldNodeChange } from '../../../../record';
+import { mergeEffectiveSchema } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { captureFieldNodeChange } from '../../../../record';
 import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
 import { captureProjectionBaseline } from '../../dependencies/captureProjectionBaseline';
@@ -14,16 +18,23 @@ import { recordSettlementFailure } from '../../errors/recordSettlementFailure';
 import { evaluateGate } from '../../gates/evaluateGate';
 import { flushPendingGateReads } from '../../gates/flushPendingGateReads';
 import { getGateRegistry } from '../../gates/getGateRegistry';
+import { readGateSelectionGroup } from '../../gates/readGateSelectionGroup';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
-import { indexEnteredLatentKey } from '../../latentStore/indexEnteredLatentKey';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
+import { cloneFromSlot } from '../../slots/cloneFromSlot';
+import { createFromSlotOverlay } from '../../slots/createFromSlotOverlay';
+import { enterSlotClone } from '../../slots/enterSlotClone';
+import { getSlotSource } from '../../slots/getSlotSource';
 import { createChildNode } from '../createChildNode';
 import { enterFieldNode } from '../enterFieldNode';
 import { hasRecursiveExpansion } from '../hasRecursiveExpansion';
 import type { DirectChildSelection } from './getDirectChildSelectionPlan';
 import { readAdmittedEdgeSchema } from './readAdmittedEdgeSchema';
 import { staticIds } from './staticIds';
+import type { PreparedDiscriminatorEntry } from './utils/prepareDiscriminatorEntrySelection';
+import type { PreparedStaticHost } from './utils/prepareStaticHost';
+import { readDiscriminatorEntrySelection } from './utils/readDiscriminatorEntrySelection';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
@@ -32,18 +43,24 @@ const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
 
 /** Shared state is allocated once for a host selection, never once per entry. */
 export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
+  /** Static occurrences already present in the fixed private baseline. */
+  readonly preparedStatic?: PreparedStaticHost<Self>;
+  /** Dynamic own entries in actual creation order, excluding rejected admissions. */
+  readonly preparedDynamic?: Dictionary<Self>;
+  /** Original dynamic membership is retained solely for exit comparison. */
+  readonly priorDynamicNames?: readonly string[];
   /** Host whose current structure is selected. */
   readonly node: Self;
   /** Settlement effects, dirty paths, failures, latent state and gate evidence. */
   readonly context: SettlementContext<Self>;
   /** Shape retained before the host wheel's ungated start. */
-  readonly prior: Record<string, Self>;
+  readonly prior: Dictionary<Self>;
   /** Recursive computation called immediately for a dirty admitted child. */
   readonly computeChild: (child: Self) => void;
   /** Whether entry changes queue host projection before later gates. */
   readonly immediate: boolean;
-  /** Ordered mutable structure published by this selection call. */
-  readonly next: Record<string, Self>;
+  /** Ordered mutable target; prepared selection inherits static entries while host reads use a view. */
+  readonly next: Dictionary<Self>;
   /** First admitted blueprint identity for each authored name. */
   readonly seen: Map<string, BlueprintChildEntry['node']>;
   /** Rejected entries collected for the unchanged latent-distribution pass. */
@@ -56,6 +73,8 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
   readonly reuseStatic?: (entry: BlueprintChildEntry) => boolean;
   /** Present only for a table step; its pure recognized expression cannot throw. */
   tableVerdict?: boolean;
+  /** A table predicate failed at its original first evaluation position. */
+  tableThrew?: boolean;
 }
 
 /**
@@ -74,7 +93,7 @@ export interface ChildSelectionFrame<Self extends FieldNodeRecord<Self>> {
  */
 export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   entry: BlueprintChildEntry,
-  step: DirectChildSelection | undefined,
+  step: Optional<DirectChildSelection>,
   frame: ChildSelectionFrame<Self>,
 ): void => {
   const {
@@ -91,25 +110,44 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   if (flushReads && context.pendingOutputs?.size)
     flushPendingGateReads(
       entry.node,
-      node.path + '/' + escapeSegment(entry.name),
+      appendSegment(node.path, entry.name),
       context,
     );
   let threw = false;
   let declarations: BlueprintChildEntry['declarations'];
-  let activeIds: readonly number[] | undefined;
+  let activeIds: Optional<readonly number[]>;
   let fullyAdmitted = false;
-  if (step) {
+  let discriminator: Optional<PreparedDiscriminatorEntry>;
+  if (step?.discriminatorSelection) {
+    const round = context.gateSelectionRounds?.get(node);
+    const tagGroup = round?.active
+      ? round.table.groups.find((group) => group.watchedName === entry.name)
+      : undefined;
+    if (tagGroup)
+      discriminator = readDiscriminatorEntrySelection(
+        entry,
+        step.discriminatorSelection,
+        readGateSelectionGroup(node, context, tagGroup),
+        node.runtime.blueprint.isAtomic,
+      );
+  }
+  if (discriminator) {
+    declarations = entry.declarations;
+    activeIds = discriminator.ids;
+  } else if (step && !step.general) {
     const version = context.gateThrowVersion;
     const admitted =
       frame.tableVerdict ??
       (!step.gate || evaluateGate(step.gate, context, node));
     declarations = admitted ? entry.declarations : NO_DECLARATIONS;
     activeIds = admitted ? step.ids : NO_ACTIVE_IDS;
-    threw = !admitted && context.gateThrowVersion !== version;
+    threw =
+      !admitted &&
+      (frame.tableThrew === true || context.gateThrowVersion !== version);
   } else if (context.hasGates) {
     // Allocated at the first rejected declaration; until then every one is admitted.
-    let active: (typeof entry.declarations)[number][] | undefined;
-    let ids: number[] | undefined;
+    let active: Optional<(typeof entry.declarations)[number][]>;
+    let ids: Optional<number[]>;
     for (let index = 0; index < entry.declarations.length; index++) {
       const declaration = entry.declarations[index];
       const version = context.gateThrowVersion;
@@ -120,14 +158,26 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         gateIndex++
       ) {
         const gate = declaration.gates[gateIndex];
+        const previousDecision = step?.general
+          ? context.gateWheelFrame?.predicateResults?.get(
+              getGateRegistry(node.runtime).locate(node, gate),
+            )
+          : undefined;
         if (
-          !evaluateGate(
-            gate,
-            context,
-            node,
-            gate.schemaPath === declaration.schemaPath + '/controls/active'
-              ? entry.name
-              : undefined,
+          !(
+            previousDecision ??
+            evaluateGate(
+              gate,
+              context,
+              node,
+              gate.schemaPath ===
+                appendSegment(
+                  appendSegment(declaration.schemaPath, 'controls'),
+                  'active',
+                )
+                ? entry.name
+                : undefined,
+            )
           )
         ) {
           admitted = false;
@@ -139,7 +189,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         ids?.push(declaration.id);
       } else {
         active ??= entry.declarations.slice(0, index);
-        ids ??= active.map((kept) => kept.id);
+        ids ??= mapArray(active, (kept) => kept.id);
         if (context.gateThrowVersion !== version) threw = true;
       }
     }
@@ -156,11 +206,11 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
         ? priorChild
         : !context.pendingExitPaths
               ?.get(node.path)
-              ?.has(node.path + '/' + escapeSegment(entry.name))
+              ?.has(appendSegment(node.path, entry.name))
           ? undefined
           : context.pendingExits.get(
               JSON.stringify([
-                node.path + '/' + escapeSegment(entry.name),
+                appendSegment(node.path, entry.name),
                 getBlueprintNodeIdentity(entry.node),
               ]),
             );
@@ -190,12 +240,13 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
     context.throwingGateExits?.delete(retained);
   if (seen.has(entry.name)) {
     if (seen.get(entry.name) !== entry.node) {
+      const path = appendSegment(node.path, entry.name);
       recordSettlementFailure(
         context,
         new SchemaFormError(
           FormErrorCode.SharedNodeConflict,
-          `Active declarations conflict at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` },
+          `Active declarations conflict at ${path}`,
+          { path },
         ),
         'sharedConflict',
       );
@@ -222,33 +273,28 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       entry.name,
       node.behavior.type === 'array',
     );
-  const latent = context.root.runtime.latentRaw;
-  const latentKey =
-    latent.size > 0 && !priorChild
-      ? JSON.stringify([
-          node.path + '/' + escapeSegment(entry.name),
-          getBlueprintNodeIdentity(entry.node),
-        ])
-      : undefined;
+  const slotState =
+    !priorChild && !currentChild ? getSlotSource(node, entry) : undefined;
+  const slotSource = slotState?.source;
+  const slotOverlay = slotState?.overlay;
   const input = ownsInput
     ? Reflect.get(distribution.input, entry.name)
-    : distribution?.whole
-      ? undefined
-      : latentKey !== undefined && latent.has(latentKey)
-        ? latent.get(latentKey)
-        : undefined;
+    : undefined;
   if (
     !priorChild &&
     !currentChild &&
+    !slotSource &&
+    !slotOverlay &&
     hasRecursiveExpansion(node, entry.node, input, context)
   ) {
     if (!context.exceededBudget) {
+      const path = appendSegment(node.path, entry.name);
       recordSettlementFailure(
         context,
         new SchemaFormError(
           FormErrorCode.RecursiveShapeDiverged,
-          `Recursive shape diverged at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` },
+          `Recursive shape diverged at ${path}`,
+          { path },
         ),
         'budget',
       );
@@ -259,28 +305,36 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
   const key =
     context.pendingExits.size > 0
       ? JSON.stringify([
-          node.path + '/' + escapeSegment(entry.name),
+          appendSegment(node.path, entry.name),
           getBlueprintNodeIdentity(entry.node),
         ])
       : undefined;
   const pending = key === undefined ? undefined : context.pendingExits.get(key);
   const child =
-    currentChild ?? priorChild ?? pending ?? createChildNode(node, entry);
+    currentChild ??
+    priorChild ??
+    pending ??
+    (slotSource
+      ? cloneFromSlot(node, entry, slotSource, context)
+      : slotOverlay
+        ? createFromSlotOverlay(node, entry, slotOverlay, context)
+        : createChildNode(node, entry));
   context.perished.delete(child);
   if (key !== undefined && context.pendingExits.delete(key)) {
-    const path = node.path + '/' + escapeSegment(entry.name);
+    const path = appendSegment(node.path, entry.name);
     updatePendingExitIndex(context, path, -1);
   }
   if (pending && child === pending) {
     context.revived.add(child);
-    indexEnteredLatentKey(context, child);
   }
   if (context.hasGates) getGateRegistry(child.runtime).register(child);
   let entryChanged = false;
   if (!priorChild && !currentChild && !pending) {
     context.entered.add(child);
-    indexEnteredLatentKey(context, child);
+
     if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
+    else if (slotSource || slotOverlay)
+      enterSlotClone(node, child, entry.name, context);
     else enterFieldNode(node, child, entry.name, context);
     if (child.behavior.strategy === 'branch')
       context.shapeDirtyPaths.add(child.path);
@@ -302,6 +356,7 @@ export const selectEntryStep = <Self extends FieldNodeRecord<Self>>(
       )
     : undefined;
   const effective =
+    discriminator?.schema ??
     admittedEdge?.schema ??
     mergeEffectiveSchema(
       child.blueprintNode,

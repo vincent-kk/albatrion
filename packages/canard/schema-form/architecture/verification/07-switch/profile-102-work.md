@@ -625,3 +625,5 @@ HEAD와 src의 tracked diff가 없으며 git write·설치·제품 소스 변경
 bundle/map 위치: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`.
 
 계수의 문자열 길이는 UTF-16 code unit, 배열 spread 길이는 복사한 원소 수입니다. CPU window 표본 coverage 범위는 99.129%–100.000%이며, profile 시작/끝에서 표본 interval이 없는 부분은 분모에 만들지 않았습니다. 수정한 setup 문제는 summary.validation.correctedSetupIssues에 기록했고, 실패 시간은 상한 집계에 사용하지 않았습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `268832c7cb6e`, `da734b40da7a`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

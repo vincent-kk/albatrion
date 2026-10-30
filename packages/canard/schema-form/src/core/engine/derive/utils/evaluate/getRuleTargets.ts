@@ -1,3 +1,4 @@
+import { filter as filterArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -20,22 +21,23 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
   rule: DeriveRule,
   state: DeriveState<Self>,
 ): readonly Self[] => {
-  if (!rule.targetName) return [source];
+  if (rule.targetName === undefined && !rule.targetItems) return [source];
   const children = source.structure;
   // A repeated array template addresses every live item; declaration selection filters below.
-  const targets =
-    rule.targetName === '*' && source.blueprintNode.kind === 'array'
-      ? (source.children ?? NO_TARGETS)
-      : children && hasOwnProperty(children, rule.targetName)
-        ? [children[rule.targetName]]
-        : NO_TARGETS;
-  return targets.filter(
-    (target) =>
-      !target.detached &&
-      (rule.layer !== 'fragment' ||
-        !rule.targetDeclarationIds ||
-        rule.targetDeclarationIds.some((id) =>
-          getSelectedDeclarationIds(target, state).includes(id),
-        )),
-  );
+  const targets = rule.targetItems
+    ? (source.children ?? NO_TARGETS)
+    : children &&
+        rule.targetName !== undefined &&
+        hasOwnProperty(children, rule.targetName)
+      ? [children[rule.targetName]]
+      : NO_TARGETS;
+
+  return filterArray(targets, (target) => {
+    if (target.detached) return false;
+    if (rule.layer !== 'fragment' || !rule.targetDeclarationIds) return true;
+    for (const id of rule.targetDeclarationIds)
+      if (getSelectedDeclarationIds(target, state).indexOf(id) !== -1)
+        return true;
+    return false;
+  });
 };

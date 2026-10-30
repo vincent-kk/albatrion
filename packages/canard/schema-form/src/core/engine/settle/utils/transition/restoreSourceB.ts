@@ -1,8 +1,10 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
 import { registerRecalculation } from '../dependencies/registerRecalculation';
-import { setLatentRaw } from '../latentStore/setLatentRaw';
+import { restoreSlotSources } from '../slots/restoreSlotSources';
 import { restoreArrayStructure } from './restoreArrayStructure';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 
@@ -28,24 +30,14 @@ export const restoreSourceB = <Self extends FieldNodeRecord<Self>>(
       context.shapeDirtyPaths.add(entry.node.path);
   }
   restoreArrayStructure(context);
-  for (const [key, previous] of context.latentAutomaticLog)
-    setLatentRaw(
-      context.root.runtime,
-      undefined,
-      key,
-      previous.present,
-      previous.value,
-      undefined,
-      undefined,
-      context,
-    );
+  restoreSlotSources(context);
   withdrawDetachedFills(context);
   for (const node of context.filledNodes) context.writtenInputs.delete(node);
   context.selectedDeclarationIds.clear();
   context.changedRaw.clear();
   for (const path of explicitRaw) context.changedRaw.add(path);
-  context.dirtyPaths.add('');
-  context.shapeDirtyPaths.add('');
+  context.dirtyPaths.add($.Root);
+  context.shapeDirtyPaths.add($.Root);
   registerRecalculation(context);
   computeNode(context.root, context);
 };

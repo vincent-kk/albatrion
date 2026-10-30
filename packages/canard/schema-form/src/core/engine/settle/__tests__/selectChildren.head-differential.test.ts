@@ -44,7 +44,19 @@ const expectSelectionEqual = (
         }),
       ),
   );
-  expect(actualSelection, label).toEqual(expectedSelection);
+  const withoutStorage = (results: unknown) =>
+    Array.isArray(results)
+      ? results.map((point) =>
+          Array.isArray(point)
+            ? point.filter(
+                (field) => !(Array.isArray(field) && field[0] === 'latent'),
+              )
+            : point,
+        )
+      : results;
+  expect(withoutStorage(actualSelection), label).toEqual(
+    withoutStorage(expectedSelection),
+  );
 };
 
 // filid:contract settle-child-selection-differential

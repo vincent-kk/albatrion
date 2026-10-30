@@ -1,5 +1,10 @@
+import {
+  filter as filterArray,
+  map as mapArray,
+} from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
@@ -56,14 +61,18 @@ export const collectInlineTerminalWarnings = (
     schemaPath: string;
     root: boolean;
     ancestors: object[];
-  }[] = node.declarations
-    .filter((declaration) => declaration.role === 'declaration')
-    .map(({ schema, schemaPath }) => ({
+  }[] = mapArray(
+    filterArray(
+      node.declarations,
+      (declaration) => declaration.role === 'declaration',
+    ),
+    ({ schema, schemaPath }) => ({
       schema,
       schemaPath,
       root: true,
       ancestors: [],
-    }));
+    }),
+  );
   const keys: string[] = [];
   const paths: string[] = [];
   while (pending.length) {
@@ -87,43 +96,64 @@ export const collectInlineTerminalWarnings = (
         for (const [name, child] of Object.entries(record[keyword]))
           pending.push({
             schema: child as BlueprintSchema,
-            schemaPath:
-              entry.schemaPath + '/' + keyword + '/' + escapeSegment(name),
+            schemaPath: appendSegment(
+              appendSegment(entry.schemaPath, keyword),
+              name,
+            ),
             root: false,
             ancestors,
           });
     /* eslint-enable @typescript-eslint/consistent-type-assertions */
-    for (const keyword of SCHEMA_LIST_KEYWORDS)
-      if (isArray(record[keyword]))
-        record[keyword].forEach((child: BlueprintSchema, index: number) =>
+    for (const keyword of SCHEMA_LIST_KEYWORDS) {
+      if (isArray(record[keyword])) {
+        const keywordSchemas = record[keyword];
+        for (
+          let index = 0, count = keywordSchemas.length;
+          index < count;
+          index++
+        ) {
+          if (!(index in keywordSchemas)) continue;
+          const child: BlueprintSchema = keywordSchemas[index];
+
           pending.push({
             schema: child,
-            schemaPath: entry.schemaPath + '/' + keyword + '/' + index,
+            schemaPath: appendSegment(
+              appendSegment(entry.schemaPath, keyword),
+              index,
+            ),
             root: false,
             ancestors,
-          }),
-        );
+          });
+        }
+      }
+    }
     for (const keyword of SCHEMA_SINGLE_KEYWORDS) {
       const child = record[keyword];
-      if (isArray(child))
-        child.forEach((item: BlueprintSchema, index: number) =>
+
+      if (isArray(child)) {
+        for (let index = 0, count = child.length; index < count; index++) {
+          if (!(index in child)) continue;
+          const item: BlueprintSchema = child[index];
+
           pending.push({
             schema: item,
-            schemaPath: entry.schemaPath + '/' + keyword + '/' + index,
+            schemaPath: appendSegment(
+              appendSegment(entry.schemaPath, keyword),
+              index,
+            ),
             root: false,
             ancestors,
-          }),
-        );
-      else if (
-        typeof child === 'boolean' ||
-        (child && typeof child === 'object')
-      )
-        pending.push({
-          schema: child,
-          schemaPath: entry.schemaPath + '/' + keyword,
-          root: false,
-          ancestors,
-        });
+          });
+        }
+      } else {
+        if (typeof child === 'boolean' || (child && typeof child === 'object'))
+          pending.push({
+            schema: child,
+            schemaPath: appendSegment(entry.schemaPath, keyword),
+            root: false,
+            ancestors,
+          });
+      }
     }
   }
   if (keys.length)

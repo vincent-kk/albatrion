@@ -7,13 +7,14 @@ import {
   dispatchRemove,
   dispatchSetValue,
 } from '../../write';
-import { HostLatent } from '../utils/latentStore/HostLatent';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readInactiveValuesAt } from './fixtures/readInactiveValuesAt';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 it.each(['items', 'prefixItems'] as const)(
   '%s single-kind off-write retains whole raw, inactiveValues and entry interpretation',
   (keyword) => {
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         open: { type: 'boolean' },
@@ -28,23 +29,19 @@ it.each(['items', 'prefixItems'] as const)(
     dispatchMount(root, { open: false, list: [] });
     dispatchSetValue(root, { open: false, list: ['7'] });
     expect(root.blueprintNode.hasCandidateDescendants).toBeUndefined();
-    const latent = runtime.latentRaw.get(JSON.stringify(['/list', 'array']));
-    expect(latent).toBeInstanceOf(HostLatent);
-    expect(latent).toEqual(new HostLatent(['7'], undefined));
-    expect([...runtime.latentRaw.keys()]).toEqual([
-      JSON.stringify(['/list', 'array']),
-    ]);
-    expect(runtime.inactiveValuesMemo.get('')).toEqual([
+    const latent = readRetainedSlotRaw(root, '/list', 'array');
+    expect(latent).toEqual(['7']);
+    expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/list', value: ['7'] },
     ]);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
     expect(root.emit).toEqual({ open: true, list: [7] });
-    expect(runtime.inactiveValuesMemo.get('')).toEqual([]);
+    expect(readInactiveValuesAt(root, '')).toEqual([]);
   },
 );
 
 it('candidate-free structural moves reuse their existing source records', () => {
-  const { root, runtime } = createDispatchTree({
+  const { root } = createDispatchTree({
     type: 'array',
     items: { type: 'number' },
   });
@@ -58,5 +55,4 @@ it('candidate-free structural moves reuse their existing source records', () => 
   expect(getDispatchNode(root, '0')).toBe(first);
   expect(getDispatchNode(root, '1')).toBe(second);
   expect(root.emit).toEqual([1, 2]);
-  expect(runtime.latentRaw.size).toBe(0);
 });

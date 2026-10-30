@@ -1,0 +1,221 @@
+{
+  "steps": [
+    {
+      "name": "build",
+      "exit": 0,
+      "start": "2026-10-27T15:20:31.488439+00:00",
+      "end": "2026-10-27T15:20:51.159305+00:00",
+      "commit": "84cdce31dc4ba8bf87282c128378dc7f5e771781",
+      "summary": []
+    },
+    {
+      "name": "typecheck",
+      "exit": 0,
+      "start": "2026-10-27T15:20:51.167461+00:00",
+      "end": "2026-10-27T15:21:02.167159+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": []
+    },
+    {
+      "name": "lint",
+      "exit": 0,
+      "start": "2026-10-27T15:21:02.175200+00:00",
+      "end": "2026-10-27T15:21:10.157575+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": []
+    },
+    {
+      "name": "unit",
+      "exit": 0,
+      "start": "2026-10-27T15:21:23.598437+00:00",
+      "end": "2026-10-27T15:26:23.415124+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  521 passed (521)",
+        "Tests  3677 passed | 1 todo (3678)"
+      ]
+    },
+    {
+      "name": "render",
+      "exit": 0,
+      "start": "2026-10-27T15:26:23.424264+00:00",
+      "end": "2026-10-27T15:27:29.024862+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  128 passed (128)",
+        "Tests  760 passed (760)"
+      ]
+    },
+    {
+      "name": "react18",
+      "exit": 0,
+      "start": "2026-10-27T15:27:29.033508+00:00",
+      "end": "2026-10-27T15:28:35.979166+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  128 passed (128)",
+        "Tests  760 passed (760)"
+      ]
+    },
+    {
+      "name": "production",
+      "exit": 0,
+      "start": "2026-10-27T15:28:35.987376+00:00",
+      "end": "2026-10-27T15:28:41.259794+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  9 passed (9)",
+        "Tests  20 passed (20)"
+      ]
+    },
+    {
+      "name": "verify",
+      "exit": 0,
+      "start": "2026-10-27T15:28:41.268760+00:00",
+      "end": "2026-10-27T15:37:32.484206+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  654 passed (654)",
+        "Tests  4481 passed | 1 todo (4482)"
+      ]
+    },
+    {
+      "name": "storybook-1",
+      "exit": 0,
+      "start": "2026-10-27T15:37:32.493436+00:00",
+      "end": "2026-10-27T15:37:41.522839+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  24 passed (24)"
+      ]
+    },
+    {
+      "name": "storybook-2",
+      "exit": 0,
+      "start": "2026-10-27T15:37:41.531718+00:00",
+      "end": "2026-10-27T15:37:50.760794+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  30 passed (30)"
+      ]
+    },
+    {
+      "name": "storybook-3",
+      "exit": 0,
+      "start": "2026-10-27T15:37:50.769122+00:00",
+      "end": "2026-10-27T15:37:59.587360+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  21 passed (21)"
+      ]
+    },
+    {
+      "name": "storybook-4",
+      "exit": 0,
+      "start": "2026-10-27T15:37:59.595677+00:00",
+      "end": "2026-10-27T15:38:09.250625+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  20 passed (20)"
+      ]
+    },
+    {
+      "name": "storybook-5",
+      "exit": 0,
+      "start": "2026-10-27T15:38:09.260111+00:00",
+      "end": "2026-10-27T15:38:18.725160+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  29 passed (29)"
+      ]
+    },
+    {
+      "name": "storybook-6",
+      "exit": 0,
+      "start": "2026-10-27T15:38:18.736525+00:00",
+      "end": "2026-10-27T15:38:28.629360+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  21 passed (21)"
+      ]
+    },
+    {
+      "name": "storybook-7",
+      "exit": 0,
+      "start": "2026-10-27T15:38:28.638169+00:00",
+      "end": "2026-10-27T15:38:37.297737+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  24 passed (24)"
+      ]
+    },
+    {
+      "name": "storybook-8",
+      "exit": 0,
+      "start": "2026-10-27T15:38:37.305976+00:00",
+      "end": "2026-10-27T15:38:45.543966+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  19 passed (19)"
+      ]
+    },
+    {
+      "name": "storybook-9",
+      "exit": 0,
+      "start": "2026-10-27T15:38:45.552772+00:00",
+      "end": "2026-10-27T15:38:54.727043+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  36 passed (36)"
+      ]
+    },
+    {
+      "name": "storybook-10",
+      "exit": 0,
+      "start": "2026-10-27T15:38:54.736143+00:00",
+      "end": "2026-10-27T15:39:05.550755+00:00",
+      "commit": "7253507fd003cf59b4e446ec723859e16791bf2d",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  27 passed (27)"
+      ]
+    },
+    {
+      "name": "contract-final",
+      "exit": 0,
+      "start": "2026-10-27T16:01:16.430646+00:00",
+      "end": "2026-10-27T16:01:20.800801+00:00",
+      "commit": "e23cdaecb58746d7279d58ccf6128f444eac7abe",
+      "summary": [
+        "Test Files  6 passed (6)",
+        "Tests  8 passed (8)"
+      ]
+    }
+  ],
+  "delivery": {
+    "scenes": 72,
+    "phases": 323,
+    "differences": 0,
+    "comparesKeyOrder": true
+  },
+  "publicObservation": {
+    "scenes": 6,
+    "phases": 12,
+    "differences": 0
+  },
+  "publicDeclarations": {
+    "identical": true,
+    "A": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+    "B": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+    "bytes": 3054
+  }
+}

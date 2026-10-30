@@ -1,4 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { minLite } from '@winglet/common-utils/math';
+
+import type { Dictionary } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
@@ -24,7 +29,7 @@ const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
 ): boolean => {
   const append = context.arrayAppend;
   if (append?.host === node && append.valid) {
@@ -60,7 +65,7 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
     !isArray(getLoadValue(context.previousEmit, node.path))
   )
     return false;
-  const prefixCount = Math.min(oldCount, node.itemCount);
+  const prefixCount = minLite(oldCount, node.itemCount);
   let position = 0;
   for (let index = 0; index < node.itemCount; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
@@ -79,7 +84,7 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
       child.blueprintNode !== entry.node ||
       child.name !== entry.name ||
       child.parent !== node ||
-      child.path !== node.path + '/' + entry.name ||
+      child.path !== appendSegment(node.path, entry.name) ||
       child.schema !== schema ||
       !child.active ||
       child.detached ||

@@ -1,0 +1,38 @@
+{
+  "repository": "vincent-kk/albatrion",
+  "repositoryPublic": true,
+  "checkedAt": "2026-10-29T01:08:37.076324+00:00",
+  "commits": [
+    {
+      "sha": "88ba096e872418a092487c9f840c3f0f3406ce6d",
+      "httpStatus": "404",
+      "curlExit": 0
+    },
+    {
+      "sha": "769917e8a3b466f2d7bd0e9fe54387079b32b72c",
+      "httpStatus": "404",
+      "curlExit": 0
+    },
+    {
+      "sha": "0c5b1be7897e53e5b746f6b461d929feffbdec92",
+      "httpStatus": "404",
+      "curlExit": 0
+    },
+    {
+      "sha": "a3e955b733808fd025bed583ef0067d662a0fddd",
+      "httpStatus": "404",
+      "curlExit": 0
+    },
+    {
+      "sha": "048bdab41d5b1769522f28da9efe5975199e8aa6",
+      "httpStatus": "404",
+      "curlExit": 0
+    },
+    {
+      "sha": "087e3a07a0c6d9c8b7db50f8590817ebf368a90d",
+      "httpStatus": "404",
+      "curlExit": 0
+    }
+  ],
+  "allRewrittenCommitsAbsent": true
+}

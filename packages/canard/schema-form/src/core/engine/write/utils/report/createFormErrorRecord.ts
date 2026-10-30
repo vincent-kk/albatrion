@@ -1,4 +1,4 @@
-import type { OmitPartial } from '@aileron/declare';
+import type { OmitPartial, Optional } from '@aileron/declare';
 
 import {
   JSONSchemaError,
@@ -23,7 +23,7 @@ export function createFormErrorRecord(
   level: FormErrorRecord['level'],
   format: () => string,
   fields?: OmitPartial<FormErrorRecord, 'code' | 'level' | 'message'>,
-): FormErrorRecord | undefined;
+): Optional<FormErrorRecord>;
 /**
  * Convert PR-1 diagnostic data into the same record shape after collection.
  * @param consumed - Whether the analyzed event has a consumer
@@ -35,14 +35,14 @@ export function createFormErrorRecord(
   consumed: boolean,
   diagnostic: BlueprintDiagnostic,
   error?: unknown,
-): FormErrorRecord | undefined;
+): Optional<FormErrorRecord>;
 export function createFormErrorRecord(
   consumed: boolean,
   code: FormRecordCode | BlueprintDiagnostic,
   levelOrError?: FormErrorRecord['level'] | unknown,
   format?: () => string,
   fields?: OmitPartial<FormErrorRecord, 'code' | 'level' | 'message'>,
-): FormErrorRecord | undefined {
+): Optional<FormErrorRecord> {
   if (!consumed) return undefined;
   if (typeof code === 'string') {
     if ((levelOrError !== 'error' && levelOrError !== 'warning') || !format)

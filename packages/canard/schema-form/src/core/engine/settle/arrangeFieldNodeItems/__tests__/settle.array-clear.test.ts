@@ -16,18 +16,19 @@ import {
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
-import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { DispatchTestNode } from '../../../__tests__/fixtures/createDispatchTree';
+import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { updateCommittedRuleValue } from '../../utils/commit/updateCommittedRuleValue';
 import { prunePerishedPaths } from '../../utils/transition/prunePerishedPaths';
 import { clearArrayRuntimePaths } from '../utils/rekey/clearArrayRuntimePaths';
 import { rekeyArrayRuntimePaths } from '../utils/rekey/rekeyArrayRuntimePaths';
-import { compareArrayClear } from './fixtures/compareArrayClear';
 import type { ClearStep } from './fixtures/compareArrayClear';
+import { compareArrayClear } from './fixtures/compareArrayClear';
 import { observePathStores } from './fixtures/observePathStores';
 
 afterEach(() => vi.restoreAllMocks());
+// The fixture counts one shipping tree's bulk cleanup calls and mutations.
 
 /** Object items whose third field carries the given controls. */
 const itemsWith = (controls: Record<string, unknown>): BlueprintSchema => ({
@@ -197,8 +198,8 @@ describe('clear empties the host by host prefix with positional detached reads',
 });
 
 /**
- * Fill every path store of a fresh tree with entries at live, latent-only, out-of-range, named and ancestor positions.
- * @param latentOnly - Whether the position without a live item holds latent and metadata entries
+ * Fill remaining path stores of a fresh tree with entries at live, latent-only, out-of-range, named and ancestor positions.
+ * @param latentOnly - Whether the position without a live item holds declaration and misfit entries
  * @returns The tree runtime and the live item paths beneath the host `/list`
  */
 const populate = (latentOnly: boolean) => {
@@ -216,37 +217,21 @@ const populate = (latentOnly: boolean) => {
     '/other',
   ];
   if (latentOnly) paths.push('/list/1/a');
-  runtime.latentRawMetadata = new PathKeyedMap('pair');
   runtime.committedDeclarationIds = new PathKeyedMap('pair');
   runtime.misfitsMemo = new PathKeyedMap('path');
-  runtime.inactiveValueEntries = new PathKeyedMap('pair');
   for (const path of paths) {
     const key = pair(path);
-    runtime.latentRaw.set(key, path);
-    runtime.latentRawMetadata.set(key, {
-      path,
-      blueprintNode: root.blueprintNode,
-      order: [],
-    });
     runtime.committedDeclarationIds.set(key, [1]);
     runtime.misfitPaths.add(path);
     runtime.misfitsMemo.set(path, { commit: 0, paths: [path] });
-    runtime.inactiveValuesMemo.set(path, [{ path, value: 1 }]);
-    runtime.inactiveValueEntries.set(key, {
-      value: 1,
-      order: [],
-      entry: { path, value: 1 },
-    });
     const warning = JSON.stringify(['misfit', path]);
     (runtime.warningKeys ??= new Set()).add(warning);
     indexFieldNodeWarning(runtime, warning, path);
   }
   runtime.misfitsMemo.set('', { commit: 0, paths: [] });
-  runtime.inactiveValuesMemo.set('', []);
   updateCommittedRuleValue(runtime, rule('/list/0/a', '/other'), 'set', 1);
   updateCommittedRuleValue(runtime, rule('/other', '/list/5/x'), 'set', 2);
   updateCommittedRuleValue(runtime, rule('/other', '/list/name'), 'set', 3);
-  runtime.latentRawDirty = false;
   return { runtime, live: new Set(['/list/0', '/list/2']) };
 };
 
@@ -259,7 +244,7 @@ describe('host-prefix path-store cleanup against per-position prune and re-key',
     const candidate = populate(latentOnly);
     const oracle = populate(latentOnly);
     const live = oldCount === 1 ? new Set(['/list/0']) : candidate.live;
-    clearArrayRuntimePaths(candidate.runtime, '/list', oldCount, live);
+    clearArrayRuntimePaths(candidate.runtime, '/list', oldCount);
     prunePerishedPaths(oracle.runtime, live);
     rekeyArrayRuntimePaths(
       oracle.runtime,

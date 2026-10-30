@@ -1,0 +1,251 @@
+{
+  "productCommit": "eafe43a27a5a283811f139447c1c3302c38c2c34",
+  "node": "26.12.1",
+  "bun": "1.4.4",
+  "commands": [
+    {
+      "name": "build",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "build"
+      ],
+      "exit": 0,
+      "seconds": 24.02
+    },
+    {
+      "name": "lint",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "lint"
+      ],
+      "exit": 0,
+      "seconds": 11.91
+    },
+    {
+      "name": "unit",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--project",
+        "unit",
+        "--run",
+        "--maxWorkers",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 111.49
+    },
+    {
+      "name": "render",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--project",
+        "render",
+        "--run",
+        "--maxWorkers",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 64.46
+    },
+    {
+      "name": "storybook",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--project",
+        "storybook",
+        "--run",
+        "--maxWorkers",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 38.81
+    },
+    {
+      "name": "react18",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--project",
+        "react18",
+        "--run",
+        "--maxWorkers",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 60.67
+    },
+    {
+      "name": "production",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--project",
+        "production",
+        "--run",
+        "--maxWorkers",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 5.88
+    },
+    {
+      "name": "verify",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test:verify",
+        "--run",
+        "--maxWorkers",
+        "4"
+      ],
+      "exit": 0,
+      "seconds": 165.35
+    },
+    {
+      "name": "isolation",
+      "command": [
+        "node",
+        "packages/canard/schema-form/architecture/verification/07-switch/tools/check-legacy-isolation.mjs"
+      ],
+      "exit": 0,
+      "seconds": 0.65
+    }
+  ],
+  "projects": [
+    {
+      "project": "unit",
+      "files": 602,
+      "passed": 3980,
+      "todo": 1,
+      "seconds": 108.7,
+      "exit": 0
+    },
+    {
+      "project": "render",
+      "files": 132,
+      "passed": 768,
+      "todo": 0,
+      "seconds": 61.97,
+      "exit": 0
+    },
+    {
+      "project": "storybook",
+      "files": 100,
+      "passed": 251,
+      "todo": 0,
+      "seconds": 36.45,
+      "exit": 0
+    },
+    {
+      "project": "react18",
+      "files": 132,
+      "passed": 768,
+      "todo": 0,
+      "seconds": 58.4,
+      "exit": 0
+    },
+    {
+      "project": "production",
+      "files": 10,
+      "passed": 21,
+      "todo": 0,
+      "seconds": 3.38,
+      "exit": 0
+    },
+    {
+      "project": "verify",
+      "files": 739,
+      "passed": 4792,
+      "todo": 1,
+      "seconds": 162.98,
+      "exit": 0
+    }
+  ],
+  "typecheck": "Package build runs yarn typecheck as its final && stage; build exit0",
+  "products": {
+    "index.mjs": {
+      "bytes": 856639,
+      "sha256": "73e56ab11e930b6da4cbd9b03907e792dc8d92822a012abdc6ab1c40c17ae5a8"
+    },
+    "index.node.mjs": {
+      "bytes": 855861,
+      "sha256": "197cedfa6eb3669b26b1a44ae4a2287822a1d3146bfa70181ba6865785737d63"
+    },
+    "index.cjs": {
+      "bytes": 877427,
+      "sha256": "726f9e0a55c0a7b4d3d01352c7b8a60013d028d9f6e21212cec1dcd8cae50c46"
+    },
+    "index.d.ts": {
+      "bytes": 3129,
+      "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+    }
+  },
+  "publicIndex": {
+    "bytes": 3129,
+    "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+  },
+  "declarationProof": {
+    "originalComparator": "One reachable file-level difference retained in declaration-equivalence.json; not reported as zero",
+    "file": "helpers/jsonPointer/constants/JSONPointer.d.ts",
+    "exactAddedInternalDeclaration": "export declare const FragmentPrefix: \"#/\";",
+    "existingJSONPointerNormalizedUnchanged": true,
+    "noOtherDeclarationReferences": true,
+    "noWildcardOrNamespaceReexports": true,
+    "importingFiles": [
+      "helpers/jsonPointer/index.d.ts"
+    ],
+    "publicIndexBytes": 3129,
+    "publicIndexBytesIdentical": true,
+    "packageExportsIdentical": true,
+    "publicContractUnchanged": true,
+    "rawChangedFiles": 199
+  },
+  "isolation": {
+    "files": 2377,
+    "passed": true
+  },
+  "delivery": {
+    "scenes": 79,
+    "phases": 429,
+    "extensionScenes": 7,
+    "extensionPhases": 21,
+    "differences": 0
+  },
+  "rootPointerSites": 32,
+  "rootPointerFiles": 19,
+  "totalPointerSites": 148,
+  "loopCleanup": {
+    "standaloneBlocks": 45,
+    "redundantAssignments": 20,
+    "voidStatements": 2,
+    "renamedBindings": 80,
+    "identifierBindingsCompared": 10712
+  },
+  "fragmentPrefixes": {
+    "before": 3,
+    "after": 1,
+    "rootExportsUnchanged": true
+  },
+  "measurementRerun": false,
+  "fcaFindings": 202,
+  "fcaVerdict": "FAIL",
+  "fcaCompleteness": "indeterminate"
+}

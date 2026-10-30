@@ -2,7 +2,27 @@
 
 ## Requirements
 
-- D3b-1의 노드 키 메모는 root runtime의 지연 WeakMap 칸으로 소유한다. 선언 키·derive target ID·객체/배열 안정 형상·호스트 예산·배열 선언 count/result는 트리마다 독립이며 폼 전체 reset과 폐기에서 해제하고 부분 reset에서는 유지한다. 떼어진 쓰기 주소 셀은 재계산 메모가 아닌 상태이므로 같은 runtime을 재사용하는 폼 reset을 포함한 어떤 reset에서도 해제하지 않는다. 살아 있는 옛 참조가 runtime을 계속 소유하여 기존 약한 키 수명을 보존한다. nextTargetId 단조 카운터와 이미 runtime 키인 등록소는 유지한다. 노드 칸은 늘리지 않으며 비용은 실제 사용하는 트리당 최대 일곱 지연 WeakMap이다(SURFACE-065, NODE-044·045).
+
+- B12 인스턴스별 `inactiveListeners`는 선택적 Map(node → Set)으로 보유하며 재진입 복제에 넘기지 않습니다. 선택적 `resolvingInactiveValue` 표시는 동기 resolver 실행 동안만 참이며 노드 고정 칸을 추가하지 않습니다.
+
+- 노드 이름의 표기는 formatSegment가 소유하며 이미 보유한 escapedName은 appendFormattedSegment로 주소에 결합해 중복 이스케이프 할당을 피한다. 원문 이름의 일반 조립은 appendSegment가 소유하며 예약 이름의 퍼센트 표기를 유지한다.
+
+- 떼어진 참조의 쓰기는 정착·커밋·배달을 만들지 않으며 원래 떼어진 인스턴스의 읽기도 바꾸지 않는다. 쓰기 직후의 보유 슬롯·overlay 원본은 새 값을 가지지만 살아 있는 호스트의 inactiveValues는 직전 커밋 목록을 유지한다. 다음 살아 있는 커밋이 변경된 호스트와 조상의 materialization을 무효화하며, 같은 값·항목 참조와 떼어진 호스트의 고정된 읽기는 보존한다(NODE-044, VALUE-031, WRITE-087).
+
+- 일반 비활성 원본은 호스트의 보유 슬롯·overlay만 소유하며 트리 단위 잠복 저장소·메타데이터·비활성 목록 메모는 두지 않는다. 슬롯이 생길 수 없는 호스트는 준비 때 결정하며 반복 쓰기에서 적격 검사·overlay 조회·기능 플래그 읽기를 하지 않는다.
+
+- 떼어진 참조의 쓰기는 무효이며, 재진입 복제는 과거 수명의 쓰기를 받지 않는다(B11).
+
+- 배열이 나가는 쓰기에서 처음 받은 아이템의 입력 patch는 지연된 packed-array 원본의 일부이며 독립 비활성 잎 항목이 아니다. 선택적 overlay 표식은 이 입력 patch와 나중의 독립 옛 참조 쓰기를 구별해 비활성 열거를 맞춘다. 표식은 실제 overlay에만 붙고 노드의 고정 필드나 공개 계약을 늘리지 않으며 복제·정책 patch에서도 같은 원본 의미를 유지한다.
+
+- A retained occurrence may hold one immutable exit-source patch for caller-supplied descendants that never received a node. Packed-array reads use that exit patch while later host-owned overlays remain separate, so detached descendant writes do not rewrite the packed snapshot. The patch owns source channels only and holds no prior host or history chain.
+
+- 보유 슬롯은 호스트 레코드가 소유하는 선택적 상태 보유 자료이다. "슬롯은 한 번이라도 활성이었던 엔트리에만 생기므로 재귀 템플릿에서도 값 깊이까지만 존재한다"는 설계 Ⅱ의 상한을 따른다. 이름과 청사진 노드가 같은 엔트리를 구별하고 같은 이름의 다른 종류는 별도로 보유한다. 슬롯 값은 떼어진 인스턴스이며 공개 `structure`·`children`에는 넣지 않는다. 노드의 고정 생성자 필드와 공개 surface는 늘리지 않고 슬롯이 필요한 호스트에서만 자료를 할당한다(NODE-043·044·045·060).
+- 슬롯의 raw·extras·선언 밖 값은 원래 인스턴스에 남는다. "슬롯 인스턴스는 떼어진 채라 고칠 수 없으므로" 비활성 쓰기는 호스트가 소유한 슬롯별 overlay로 보관한다. 선택과 정착은 record가 실행하지 않는다. 보유 자료의 변경은 이미 떼어진 참조가 보는 읽기 자료와 공유된 가변 상태를 만들지 않는다. 슬롯은 "후보 풀"이며 직전 형상을 출발점으로 재사용하는 기록이 아니다(VALUE-031, SETTLE-044·GOAL-029).
+- `unsetOnInactive`가 참인 호스트도 명시 보존 자손이 있으면 슬롯으로 보유한다. 호스트 자신의 raw·extras와 보존 지시가 없는 자손 원본은 overlay의 지움 표식으로 제외하고, 명시 `unsetOnInactive: false` 자손의 원본을 유지한다. 보존할 자손이 하나도 없으면 슬롯을 만들지 않는다. 지움 표식은 원래 떼어진 인스턴스를 변경하지 않으며 재진입 때 없음인 원본에 적용되는 기존 채움 규칙을 유지한다(WRITE-034, NODE-044, 설계 Ⅱ 정책 상속 정정).
+- 호스트당 보유 슬롯은 실제 방문한 엔트리 수 M 이하이고 재귀 보유 깊이는 실제 값 깊이 K까지이다. 보유 공간은 슬롯 아래의 실제 원본 서브트리와 overlay에 비례하며, 정적 청사진 전체나 방문하지 않은 재귀 가지를 실체화하지 않는다. load·reset·rebuild는 해당 범위의 슬롯·overlay를 버리고, 배열 위치 이동은 원본 보존·주소 이동 계약을 유지한다. 고정된 읽기 자료의 수명은 옛 참조의 수명에 묶는다(NODE-053·055·060).
+
+- D3b-1의 노드 키 메모는 root runtime의 지연 WeakMap 칸으로 소유한다. 선언 키·derive target ID·객체/배열 안정 형상·호스트 예산·배열 선언 count/result는 트리마다 독립이며 폼 전체 reset과 폐기에서 해제하고 부분 reset에서는 유지한다. nextTargetId 단조 카운터와 이미 runtime 키인 등록소는 유지한다. 노드 칸은 늘리지 않으며 비용은 실제 사용하는 트리당 최대 여섯 지연 WeakMap이다(SURFACE-065, NODE-044·045).
 
 - D2-P1의 선택적 `writeEpoch` 숫자는 노드와 트리 runtime의 정착 작업 기록이며 공개 상태나 revision이 아니다. settle이 자격 경로에서만 할당·비교·소비하고 record는 실행하지 않는다. 논리 보유 비용은 자격 경로에 도달한 노드당 8바이트와 트리당 8바이트이며, 실제 객체 확장·정렬 비용은 엔진마다 다르다. class의 고정 필드 순서와 공개 surface에는 추가하지 않는다(TEST-080 D2-P1, NODE-045·060).
 
@@ -44,7 +64,7 @@
 - `itemKey`는 배열 아이템의 생성 순서 nonce인 숫자이며 아이템이 아니면 `null`이고 공개 멤버로 노출하지 않는다. 배열 branch 호스트의 `itemCount`는 청사진 없는 꼬리 자리를 포함한 값의 길이이며 그 밖에는 `0`이다. 호스트의 `nextItemKey`는 새 아이템의 키 계수이고 원본 B 되돌림에서도 감소하지 않는다. 세 필드는 모든 노드에 같은 고정 칸 세 개의 메모리 비용을 더하며 아이템 목록은 기존 `structure`에 둔다(NODE-004·045·051·052, GOAL-073, SURFACE-054, 35C-05, 실행 ADR D3).
 - 세 상태 키 필드의 메모리 대가는 노드당 고정 칸 세 개이며 `watchValues`는 필드 대신 읽기 메모를 쓴다(NODE-004·045, CONTROLS-032·082, 28C-07).
 - 구현 클래스는 같은 자리에서 `rootNode`를 private `root`에 저장하고 getter로 읽으며, 다른 일부 공개 레코드 칸도 `stored*` 필드와 getter·setter로 구현한다. `parent`·`rootNode`·`structure`의 노드 원소는 `Self`이고 구현은 `FieldNode` 자기 타입을 사용한다. `interactionState`는 기존 공용 `NodeStateFlags`를 소비하며 공개 `state` 게터는 이를 읽고 세터는 `dispatchSetState`로 위임한다. `behavior`·`schemaType`은 수명 동안 같은 참조이다(NODE-002·004·043·046·057, VALUE-002, EVENT-067).
-- `raw`·`undeclaredValues`만 상태이다. 객체 branch의 `raw`는 비객체 입력일 때만 남고, `undeclaredValues`는 선언 밖 키를 받은 순서로 보관한다. 종류별 잠복 잎 값은 해석된 `raw`, 잠복 호스트 값은 자신의 비객체 `raw`와 `undeclaredValues`를 담은 `HostLatent`이다(VALUE-002·004, NODE-044). `active`·`visible`·`readOnly`·`disabled`·`local`·`emit`·`schema`와 정합 경고등은 계산값, `revisionLedger`는 비트별 커밋 배달 원장이다. 공유 동결 빈 상수를 생성자에 대입하고 첫 배달 때만 노드의 원장을 할당하므로 노드당 고정 필드 수는 늘지 않는다(CONTROLS-082, SETTLE-003, NODE-004, EVENT-001·007). branch 객체의 `structure`는 현재 형상의 이름→자식 맵이고 `children`은 공개 읽기가 그대로 돌려줄 저장 배열이다. 형상 밖의 자식을 저장하지 않는다(VALUE-002, NODE-043, TEST-070).
+- `raw`·`undeclaredValues`만 상태이다. 객체 branch의 `raw`는 비객체 입력일 때만 남고, `undeclaredValues`는 선언 밖 키를 받은 순서로 보관한다. 종류별 비활성 원본은 보유 노드의 `raw`와 `undeclaredValues`, 그리고 호스트 overlay에 둔다(VALUE-002·004, NODE-044). `active`·`visible`·`readOnly`·`disabled`·`local`·`emit`·`schema`와 정합 경고등은 계산값, `revisionLedger`는 비트별 커밋 배달 원장이다. 공유 동결 빈 상수를 생성자에 대입하고 첫 배달 때만 노드의 원장을 할당하므로 노드당 고정 필드 수는 늘지 않는다(CONTROLS-082, SETTLE-003, NODE-004, EVENT-001·007). branch 객체의 `structure`는 현재 형상의 이름→자식 맵이고 `children`은 공개 읽기가 그대로 돌려줄 저장 배열이다. 형상 밖의 자식을 저장하지 않는다(VALUE-002, NODE-043, TEST-070).
 - `UnionSpec`은 `{ readonly kinds: Exclude<SchemaTypeName, 'null'> | readonly Exclude<SchemaTypeName, 'null'>[]; readonly mask: number; readonly nullable: boolean }`인 읽기 전용 계산 자료이다. 단일 종류 행도 같은 구조를 쓰고 가상 행은 해석을 하지 않는다. `Behavior<Self = unknown>`의 칸·순서는 `interpret(input: unknown, spec: UnionSpec): unknown`, `assemble<Node extends Self>(node: FieldNodeRecord<Node>, children: readonly Node[], recalculated?: readonly Node[], hint?: { incremental: boolean; append?: number }): unknown`, `project<Node extends Self>(node: FieldNodeRecord<Node>, local: unknown): unknown`, `finishInput<Node extends Self>(node: FieldNodeRecord<Node>): string | undefined`, `declareChildren<Node extends Self>(node: FieldNodeRecord<Node>): readonly BlueprintChildEntry[]`, `arrange<Node extends Self>(node: FieldNodeRecord<Node>, operation: ArrayOperation): ArrayArrangePlan`, `type: BlueprintNodeKind`, `strategy: 'branch' | 'terminal'`이다. 행 호출은 레코드의 자기 형에 다형적이므로 표가 가진 행을 새 노드에 할당할 때 형 단언이 필요하지 않다. 반환값 `undefined`인 `finishInput`은 쓸 값 없음이고, `declareChildren`은 생성하지 않는다. `arrange`도 순수 계획만 돌려주며 행은 원본 쓰기·되돌림·자식 확정·통지를 하지 않는다(NODE-006·014, WRITE-093, 26C-01, 36C-01, 실행 ADR D1).
 - `assemble`의 선택 인수 `recalculated`는 호스트 형상이 바뀌지 않은 쓰기에서 이번에 다시 계산한 직계 자식이고, 행은 그 자리만 이전 `local`의 사본에 고쳐 쓸 수 있다. 그렇게 한 행은 `hint.incremental`을 참으로 두어 정착이 전체 깊은 비교를 건너뛰게 한다. 두 인수가 없으면 모든 자리를 다시 만든다(NODE-026, SETTLE-042, 44C-01). 정착은 정적 push의 덧붙임 증명이 유효한 배열 호스트에만 `hint.append`에 이전 아이템 수를 담아 넘기며, 배열 행은 그 한 자리만 이전 `local`의 사본에 채울 수 있다(G8).
 - `record`는 여섯 동사(`push`·`pop`·`update`·`remove`·`insert`·`clear`)를 구분하는 `ArrayOperation`과 branch·terminal을 구분하는 `ArrayArrangePlan` 형을 선언하고 진입점에서 이름으로 내보낸다. branch 계획은 새 자리마다 이전 자리 색인 또는 생성 값, 무동작 여부, 반환 값의 출처를 담고 terminal 계획은 유효한 동사의 사본 위 새 `raw` 또는 무동작을 나타낸다. 반환 출처는 `push`·`insert`의 새 길이, `pop`·`remove`의 직전 커밋 아이템 값, `update`의 쓰기 뒤 아이템 값, `clear`의 `void`를 정착이 확정할 수 있게 구분한다(SURFACE-005, GOAL-058, 35C-06, 36C-01, 실행 ADR D1).
@@ -60,9 +80,9 @@
 - `context`는 트리 생성 때 받은 맥락 객체 한 개이며 없으면 `{}`이다. `@`와 `injectTo`의 `ctx.context` 및 `node.context`는 이 참조를 읽고, 깊이 같은 맥락 갱신은 칸을 바꾸지 않는다(CONTROLS-080, SURFACE-055, NODE-004·045, 28C-03·08).
 - `settlementTrace`는 개발 모드의 선택 칸 하나로 마지막 정착 기록 하나만 보유하고 정착마다 교체한다. `process.env.NODE_ENV !== 'production'`일 때만 진입·라운드별 규칙·결과·예산 초과 마지막 라운드 항목을 만들며 프로덕션은 기록과 칸을 만들지 않는다. 비용은 개발 모드에서 정착마다 기록 하나의 할당이고 프로덕션에서는 0이며, 노드별 고정 필드와 공개 멤버는 늘리지 않는다(ERROR-030·159, GOAL-086, NODE-004·045, 28C-01).
 - 모든 런타임은 분석된 `blueprint`를 필수로 보유하여 식과 역의존 사전을 같은 연결에서 읽는다. 독립 레코드·탐색 시험도 작은 실제 청사진으로 런타임을 만든다. 재사용 정착 scratch는 중간 라운드에서 나간 노드를 최종 형상까지 보류하여 재진입 시 동일 레코드를 찾는다. `commitNumber`는 정착 호출마다 하나씩 증가하며 `refreshTargets`는 마지막 정착의 비로드 쓰기로 원본이 바뀐 경로 중 입력 출처로 쓴 자신을 제외한 집합이다. 하위 트리 로드 중 범위 밖에 쓴 주입 대상도 포함하며, 로드 범위 노드는 별도로 값의 변화와 무관하게 Refresh를 받는다(SETTLE-005·017·049, EVENT-039·071, NODE-045, 72C-01).
-- `FieldNodeRuntime<Self>`의 루트 보유 자료는 `loadSnapshot`(WRITE-085), `latentRaw`(NODE-043·044, WRITE-087), `misfitPaths`(VALUE-030·037), `inactiveValuesMemo`와 항목 재사용 메모(VALUE-029, WRITE-087)이다. 잠복 원본의 `(절대 path, kind)` 항목은 값, 분류용 청사진 노드, 재귀 발생까지 구별하는 문서 순서 키를 함께 보유한다. 항목 재사용 메모는 열거 대상의 직전 값·얼린 항목 객체를 보유하여 같은 값의 참조를 유지한다. 트리당 메모가 잠복 항목 수와 조상 경로 수에 비례해 늘지만 노드 고정 필드·생성자 할당은 늘지 않는다. 루트는 이 자료를 별도 레코드 필드 없이 자신의 런타임을 통해 보유하며, 런타임 칸을 추가할 때는 `record/` 선언을 먼저 고쳐야 한다(26C-06, NODE-045).
-- 선택적 잠복 변경 표시는 잠복 원본의 쓰기·삭제 뒤 다음 커밋에서 열거 메모를 갱신하도록 한다. 일반 입력 쓰기는 잠복 집합·값이 같으면 변경 표시를 켜지 않아 열거 전체를 다시 걷지 않는다. 이 표시는 노드 고정 필드가 아니라 트리 런타임의 작업 상태이다(SETTLE-047, WRITE-087).
-- 선택적 `detachedReads`는 트리당 `WeakMap<object, DetachedFieldNodeReads>` 하나이다. 각 이탈 노드의 마지막 커밋 `misfit`·`misfits`·`inactiveValues`·`defaultValue`·`visible`·`readOnly`·`disabled`를 얼린 읽기 묶음으로 보존하며 재진입한 새 노드는 이 묶음을 사용하지 않는다. 이탈이 없는 트리에는 맵을 할당하지 않고, 이탈 노드당 세 읽기 칸이 늘되 레코드 고정 필드는 늘리지 않는다(NODE-004·044·045, 26C-06·10, 28C-02).
+- `FieldNodeRuntime<Self>`는 루트의 `loadSnapshot`(WRITE-085), `misfitPaths`와 경로별 불일치 읽기 메모(VALUE-030·037), 변경된 슬롯 호스트 집합을 보유한다. 비활성 원본과 patch는 각 호스트의 `inactiveSlots`·`inactiveSlotOverlays`가 선언 발생별로 소유하며, 원본 인스턴스의 청사진과 호스트 바인딩으로 종류·문서 순서를 구별한다(NODE-043·044, WRITE-087). 비활성 값은 호스트별 첫 읽기에 materialize하고 값이 같으면 항목과 동결 배열의 참조를 재사용한다(VALUE-029). 슬롯 읽기 자료의 공간은 실제 보유 원본과 관측한 호스트에 비례한다. 런타임 칸을 추가할 때는 `record/` 선언을 먼저 고쳐야 한다(26C-06, NODE-045).
+- 슬롯 쓰기·삭제는 호스트의 직전 공표 바인딩을 보존하고 변경 호스트를 런타임의 `slotDirtyHosts`에 모은다. 다음 커밋은 변경 호스트와 살아 있는 조상의 `inactiveValuesDirty`만 세워 첫 읽기에 목록을 갱신하며, 떼어진 참조의 마지막 커밋 읽기와 영향 없는 호스트의 배열 참조는 유지한다.
+- 선택적 `detachedReads`는 트리당 `WeakMap<object, DetachedFieldNodeReads>` 하나이다. 각 이탈 노드의 마지막 커밋 `misfit`·`misfits`·`defaultValue`·`visible`·`readOnly`·`disabled`와 오류를 얼린 읽기 묶음으로 보존하며 재진입한 새 노드는 이 묶음을 사용하지 않는다. 일반 폼의 `inactiveValues`는 인스턴스가 보유한 불변 슬롯 읽기 자료로 첫 읽기에 계산하므로 나감 때 배열을 만들거나 전역 원본을 포착하지 않는다. 이탈이 없는 트리에는 맵을 할당하지 않으며 레코드 고정 필드는 늘리지 않는다(NODE-004·044·045, 26C-06·10, 28C-02).
 - `watchValues`는 유효 스키마의 `controls.watch` 경로를 방출 트리에서 읽은 배열이며 커밋 번호로 메모해 같은 커밋 안에서 같은 참조를 돌려준다. 트리당 읽기 메모의 비용이 들고 노드 고정 필드는 늘리지 않는다(CONTROLS-032·080, NODE-045, 28C-07).
 - 선택적 `deliveryWatchIndex`는 트리당 감시 경로→살아 있는 노드의 역색인과 노드→경로 기록을 보유한다. 첫 감시 노드에서만 할당하고 노드가 형상을 떠나거나 유효 감시 경로가 바뀌면 갱신한다. 노드 고정 필드는 늘리지 않는다(NODE-045, EVENT-064, 44C-01).
 - 선택적 `deliveredContext`는 배달 표시가 마지막으로 본 맥락 참조이며 `@` 감시 노드는 이 참조가 바뀐 커밋에서만 후보가 된다. 트리당 참조 칸 하나가 든다(NODE-045, 44C-01).
@@ -77,6 +97,10 @@
 - 계산·상태 변경의 현장 기록은 감시 역색인이 있을 때만 `deliveryAffectedPaths`에 영향 경로를 더한다. 이 경로 작업 집합은 정착 커밋에서 소비/삭제하고 변경 노드의 관측 필드를 다시 읽어 경로 집합을 재구축하지 않는다. 경로 이동 목록과 형상 출입 사실은 그대로 감시 색인 조회에 합류한다. 정적 watch 선언 색인과 affected 조회는 유지한다(65C-02·03, 372C-02).
 
 ## Acceptance Criteria
+
+### record-retained-slots — 호스트 소유와 수명 상한
+
+- 같은 이름의 다른 청사진 노드는 독립 슬롯이고, 슬롯은 공개 형상·상호작용·오류·구독의 재사용 통로가 아니다. 호스트당 슬롯 수는 방문한 엔트리 수 이하이며 반복 왕복이 보유 수를 늘리지 않는다. raw·extras의 overlay가 옛 인스턴스를 바꾸지 않고, 마지막 커밋의 비활성 읽기가 이후 교체·reset·배열 이동과 독립이다. 추가 자료의 실제 호스트별 보유 수와 바이트를 결과에 기록한다.
 
 ### record-layout — 고정 배치
 
@@ -102,4 +126,4 @@
 
 ## Last Updated
 
-2026-10-27. D2-P1 정적 전체 쓰기의 세대 표식·후퇴·verify 그림자와 메모리 비용.
+2026-10-28

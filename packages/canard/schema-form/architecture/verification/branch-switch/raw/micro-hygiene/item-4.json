@@ -1,0 +1,102 @@
+{
+  "before": 18,
+  "after": 4,
+  "changed": [
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts",
+      "line": 54,
+      "operation": "min"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/compareDeriveWrites.ts",
+      "line": 16,
+      "operation": "min"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 51,
+      "operation": "min"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/canApplyArrayTail.ts",
+      "line": 22,
+      "operation": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseArrayChildren.ts",
+      "line": 65,
+      "operation": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectLiteralTableChildren.ts",
+      "line": 41,
+      "operation": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/deferPresenceTemplate.ts",
+      "line": 50,
+      "operation": "max"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 87,
+      "operation": "max"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/runDeriveRounds.ts",
+      "line": 122,
+      "operation": "max"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/resolveGateOccurrence.ts",
+      "line": 38,
+      "operation": "max"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/compareSlotOrder.ts",
+      "line": 11,
+      "operation": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/templatePaths/intersectsWatchedPath.ts",
+      "line": 26,
+      "operation": "min"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputArray/utils/fillArraySlot.ts",
+      "line": 14,
+      "operation": "max"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/readFormattedPointerSegment.ts",
+      "line": 26,
+      "operation": "max"
+    }
+  ],
+  "kept": [
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 53,
+      "operation": "min",
+      "reason": "spread or not exactly two operands"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 36,
+      "operation": "max",
+      "reason": "spread or not exactly two operands"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 56,
+      "operation": "max",
+      "reason": "spread or not exactly two operands"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputArray/components/ArrayItems.tsx",
+      "line": 100,
+      "operation": "min",
+      "reason": "Authored minItems may be NaN; minLite(NaN, finite) differs"
+    }
+  ]
+}

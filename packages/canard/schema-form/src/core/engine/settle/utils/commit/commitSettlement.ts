@@ -1,4 +1,10 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  isDescendantPath,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord, MisfitRecord } from '../../../record';
@@ -6,6 +12,7 @@ import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../types/settlement';
+import { commitSlotChanges } from '../slots/commitSlotChanges';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
 import { commitExitPolicyValues } from './commitExitPolicyValues';
@@ -15,8 +22,6 @@ import { finalizeDeriveTrace } from './finalizeDeriveTrace';
 import { isMisfit } from './isMisfit';
 import { markCommitDeliveries } from './markCommitDeliveries';
 import { receivedType } from './receivedType';
-import { snapshotExitedPolicies } from './snapshotExitedPolicies';
-import { updateInactiveValuesMemo } from './updateInactiveValuesMemo';
 import { readSettlementSource } from './utils/readSettlementSource';
 
 /** Shared frozen empty list for inactive and misfit projections. */
@@ -34,7 +39,6 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = context.root.runtime;
   const development = process.env.NODE_ENV !== 'production';
-  if (context.exited.size > 0) snapshotExitedPolicies(context);
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)
     commitExitPolicyValues(context);
@@ -73,16 +77,18 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
-  const loadPrefix = loadScope ? loadScope.path + '/' : '';
   for (const path of context.changedRaw) {
-    if (loadScope && (path === loadScope.path || path.startsWith(loadPrefix)))
+    if (
+      loadScope &&
+      (path === loadScope.path || isDescendantPath(path, loadScope.path))
+    )
       continue;
     if (readSettlementSource(context, path, true) !== 'input')
       refreshTargets.add(path);
   }
   runtime.refreshTargets = refreshTargets;
-  let warnings: MisfitRecord[] | undefined;
-  let warningTasks: Map<Self, () => void> | undefined;
+  let warnings: Optional<MisfitRecord[]>;
+  let warningTasks: Optional<Map<Self, () => void>>;
   markCommitDeliveries(context, (node) => {
     if (!context.changedNodes.has(node) || node.detached) return;
     const schemaType = node.schemaType;
@@ -200,17 +206,17 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     built.size !== misfitsMemo.size
   ) {
     if (runtime.misfitPaths.size === 0) {
-      const empty = misfitsMemo.get('');
+      const empty = misfitsMemo.get($.Root);
       if (misfitsMemo.size === 1 && empty?.paths.length === 0)
         empty.commit = commit;
       else {
         misfitsMemo.clear();
-        misfitsMemo.set('', { commit, paths: EMPTY_PATHS });
+        misfitsMemo.set($.Root, { commit, paths: EMPTY_PATHS });
       }
     } else {
       misfitsMemo.clear();
       const allPaths = [...runtime.misfitPaths].sort();
-      misfitsMemo.set('', { commit, paths: Object.freeze(allPaths) });
+      misfitsMemo.set($.Root, { commit, paths: Object.freeze(allPaths) });
       const byAncestor = new Map<string, string[]>();
       for (let index = 0; index < allPaths.length; index++) {
         const path = allPaths[index];
@@ -222,7 +228,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
             byAncestor.set(ancestor, paths);
           }
           paths.push(path);
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+          ancestor = resolvePointer(ancestor, $.Parent);
         }
       }
       for (const [ancestor, paths] of byAncestor)
@@ -235,10 +241,16 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     };
   }
   runtime.misfitsMemo = misfitsMemo;
-  if (
-    runtime.latentRaw.size > 0 &&
-    (context.entered.size > 0 || context.exited.size > 0)
-  )
-    runtime.latentRawDirty = true;
-  updateInactiveValuesMemo(context.root);
+  for (const node of context.entered)
+    if (!node.detached) {
+      if (node.inactiveValueMemo !== undefined)
+        node.inactiveValueMemo = undefined;
+      const parent = node.parent;
+      if (
+        parent &&
+        (parent.inactiveSlots?.size || parent.inactiveSlotOverlays?.size)
+      )
+        (runtime.slotDirtyHosts ??= new Set()).add(parent);
+    }
+  if (runtime.slotDirtyHosts?.size) commitSlotChanges(context.root);
 };

@@ -100,7 +100,7 @@ describe('static middle remove and insert through the splice path match the gene
     ]);
   });
 
-  it('keeps the removed node detached with its reads and sends its later write to latent raw', () => {
+  it('keeps the removed node detached with frozen reads and ignores its later write', () => {
     let removed: DispatchTestNode | undefined;
     compareArraySplice(
       OBJECTS,
@@ -124,18 +124,17 @@ describe('static middle remove and insert through the splice path match the gene
         },
         { apply: (root) => dispatchRemove(root, 1), splice: false },
         {
-          apply: (root) => {
+          apply: () => {
             const written = dispatchSetValue(
               removed!.children![0],
               'late',
               WriteOption.Overwrite,
             );
-            expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
             return written;
           },
           splice: false,
         },
-        insert(0, { name: 'z' }, false),
+        insert(0, { name: 'z' }, true),
       ],
     );
   });
@@ -202,6 +201,7 @@ describe('a static form skips recomputing renamed tail descendants and loses not
   ])(
     'remove(%s) and insert at the same position calculate no renamed tail item where the general path does',
     (_, index) => {
+      // Shipping-path compute counts exclude the independent verification replay.
       const removals: string[][] = [];
       compareArraySplice(OBJECTS, twelve, [
         recording(removals, (root) => dispatchRemove(root, index)),

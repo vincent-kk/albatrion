@@ -4,11 +4,15 @@ import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree'
 import type { BlueprintSchema } from '../../blueprint';
 import { WriteOption } from '../../types/value';
 import { dispatchMount, dispatchSetValue } from '../../write';
-import { HostLatent } from '../utils/latentStore/HostLatent';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readInactiveValuesAt } from './fixtures/readInactiveValuesAt';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotRaw,
+} from './fixtures/readRetainedSlotRaw';
 
 it('keeps declared off-write payload out of the host raw and inactive host value', () => {
-  const { root, runtime } = createDispatchTree({
+  const { root } = createDispatchTree({
     type: 'object',
     properties: {
       open: { type: 'boolean' },
@@ -25,18 +29,19 @@ it('keeps declared off-write payload out of the host raw and inactive host value
   dispatchMount(root, { open: false });
   dispatchSetValue(root, { open: false, list: [7, 'tail'] });
   expect(root.emit).toEqual({ open: false });
-  expect(runtime.latentRaw.get(JSON.stringify(['/list', 'array']))).toEqual(
-    new HostLatent([undefined, 'tail'], undefined, ['0']),
-  );
-  expect(runtime.latentRaw.get(JSON.stringify(['/list/0', 'number']))).toBe(7);
-  expect(runtime.inactiveValuesMemo.get('')).toEqual([
+  expect(readRetainedSlotRaw(root, '/list', 'array')).toEqual([
+    undefined,
+    'tail',
+  ]);
+  expect(readRetainedSlotRaw(root, '/list/0', 'number')).toBe(7);
+  expect(readInactiveValuesAt(root, '')).toEqual([
     { path: '/list', value: [undefined, 'tail'] },
     { path: '/list/0', value: 7 },
   ]);
 });
 
 it('replaces nested off-write array scope on a partial parent write', () => {
-  const { root, runtime } = createDispatchTree({
+  const { root } = createDispatchTree({
     type: 'object',
     properties: {
       open: { type: 'boolean' },
@@ -64,27 +69,11 @@ it('replaces nested off-write array scope on a partial parent write', () => {
     b: false,
     host: { list: [7, 71], extra: 'kept' },
   });
-  expect(
-    runtime.latentRaw.get(JSON.stringify(['/host/list/1', 'number'])),
-  ).toBe(71);
-  expect(
-    runtime.latentRawMetadata?.has(JSON.stringify(['/host/list/1', 'number'])),
-  ).toBe(true);
+  expect(readRetainedSlotRaw(root, '/host/list/1', 'number')).toBe(71);
   dispatchSetValue(root, { host: { list: [8] } }, WriteOption.Merge);
-  expect(
-    runtime.latentRaw.has(JSON.stringify(['/host/list/1', 'number'])),
-  ).toBe(false);
-  expect(
-    runtime.latentRawMetadata?.has(
-      JSON.stringify(['/host/list/1', 'number']),
-    ) ?? false,
-  ).toBe(false);
-  expect(
-    runtime.latentRaw.get(JSON.stringify(['/host/list/0', 'number'])),
-  ).toBe(8);
-  expect(
-    runtime.latentRaw.get(JSON.stringify(['/host/list', 'array'])),
-  ).toEqual(new HostLatent([undefined], undefined, ['0']));
+  expect(hasRetainedSlotOwnSource(root, '/host/list/1', 'number')).toBe(false);
+  expect(readRetainedSlotRaw(root, '/host/list/0', 'number')).toBe(8);
+  expect(readRetainedSlotRaw(root, '/host/list', 'array')).toEqual([undefined]);
   dispatchSetValue(getDispatchNode(root, 'a'), true);
   dispatchSetValue(getDispatchNode(root, 'open'), true);
   expect(root.emit).toEqual({
@@ -149,7 +138,7 @@ it.each([
             type: 'array',
             [keyword]: keyword === 'items' ? child : [child],
           };
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         open: { type: 'boolean' },
@@ -170,11 +159,9 @@ it.each([
           : '/list/0/0';
     const kind = reversed ? 'string' : 'number';
     const value = reversed ? '7' : 7;
-    expect(runtime.latentRaw.get(JSON.stringify([path, kind]))).toBe(value);
+    expect(readRetainedSlotRaw(root, path, kind)).toBe(value);
     expect(
-      runtime.latentRaw.has(
-        JSON.stringify([path, reversed ? 'number' : 'string']),
-      ),
+      hasRetainedSlotOwnSource(root, path, reversed ? 'number' : 'string'),
     ).toBe(false);
     expect(root.emit).toEqual({ open: false, a: false, b: false });
     for (const b of [bFirst, !bFirst]) {
@@ -190,7 +177,7 @@ it.each([
             : [[shown ?? null]];
       expect(getDispatchNode(root, 'list').emit).toEqual(expected);
       if (shown === undefined)
-        expect(runtime.latentRaw.get(JSON.stringify([path, kind]))).toBe(value);
+        expect(readRetainedSlotRaw(root, path, kind)).toBe(value);
     }
   },
 );
@@ -203,7 +190,7 @@ it.each([false, true])(
       { controls: { active: '../b' }, prefixItems: [{ type: 'string' }] },
     ];
     if (reversed) fragments.reverse();
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         open: { type: 'boolean' },
@@ -225,9 +212,7 @@ it.each([false, true])(
       list: [7, ...tail],
     });
     const kind = reversed ? 'string' : 'number';
-    expect(runtime.latentRaw.get(JSON.stringify(['/list/0', kind]))).toBe(
-      reversed ? '7' : 7,
-    );
+    expect(readRetainedSlotRaw(root, '/list/0', kind)).toBe(reversed ? '7' : 7);
     dispatchSetValue(getDispatchNode(root, reversed ? 'a' : 'b'), true);
     dispatchSetValue(getDispatchNode(root, 'open'), true);
     expect(getDispatchNode(root, 'list').emit).toEqual([null, ...tail]);

@@ -1,0 +1,115 @@
+{
+  "approved": true,
+  "excludedAgentPid": 21047,
+  "waitCount": 0,
+  "waitedMs": 30143.307625,
+  "ordinaryWaitedMs": 0,
+  "delays": [],
+  "policy": {
+    "averageMs": 30000,
+    "retryDelayMs": 5000,
+    "maxWaitMs": 120000,
+    "spotlightMaxWaitMs": 30000,
+    "maximumExternalCpuPercent": 30
+  },
+  "startedAt": "2026-10-30T05:39:51.514Z",
+  "quietSince": "2026-10-30T05:40:21.658Z",
+  "durationSeconds": 30.129947333,
+  "requestedDurationMs": 30000,
+  "heavyCount": 0,
+  "heavy": [],
+  "rows": [
+    {
+      "name": "Stats",
+      "cpuPercent": 5.907743483007288
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 5.642226921979359
+    },
+    {
+      "name": "WidgetsExtension",
+      "cpuPercent": 3.3853361531876147
+    },
+    {
+      "name": "runningboardd",
+      "cpuPercent": 2.721544750605714
+    },
+    {
+      "name": "2.1.312",
+      "cpuPercent": 2.2900803389202347
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.7922367869807907
+    },
+    {
+      "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+      "cpuPercent": 1.7590472168522993
+    },
+    {
+      "name": "chronod",
+      "cpuPercent": 1.7590472168507902
+    },
+    {
+      "name": "loginwindow",
+      "cpuPercent": 1.3275828051728567
+    },
+    {
+      "name": "BetterTouchTool",
+      "cpuPercent": 1.1284453843943623
+    }
+  ],
+  "attempts": [
+    {
+      "startedAt": "2026-10-30T05:39:51.514Z",
+      "quietSince": "2026-10-30T05:40:21.658Z",
+      "durationSeconds": 30.129947333,
+      "requestedDurationMs": 30000,
+      "heavyCount": 0,
+      "heavy": [],
+      "rows": [
+        {
+          "name": "Stats",
+          "cpuPercent": 5.907743483007288
+        },
+        {
+          "name": "WindowServer",
+          "cpuPercent": 5.642226921979359
+        },
+        {
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.3853361531876147
+        },
+        {
+          "name": "runningboardd",
+          "cpuPercent": 2.721544750605714
+        },
+        {
+          "name": "2.1.312",
+          "cpuPercent": 2.2900803389202347
+        },
+        {
+          "name": "ControlCenter",
+          "cpuPercent": 1.7922367869807907
+        },
+        {
+          "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+          "cpuPercent": 1.7590472168522993
+        },
+        {
+          "name": "chronod",
+          "cpuPercent": 1.7590472168507902
+        },
+        {
+          "name": "loginwindow",
+          "cpuPercent": 1.3275828051728567
+        },
+        {
+          "name": "BetterTouchTool",
+          "cpuPercent": 1.1284453843943623
+        }
+      ]
+    }
+  ]
+}

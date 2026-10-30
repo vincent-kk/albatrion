@@ -1,0 +1,48 @@
+{
+  "verdict": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "snapshotHash": "e0a1f97c8981924cf24f26366a2f1a2c5c6234cced9af884b86224273861b50b",
+  "scope": "package",
+  "facts": {
+    "coveredFiles": 1593,
+    "exact": 1593,
+    "missing": 0
+  },
+  "findingCount": 199,
+  "byRule": {
+    "detail-document-contract": 173,
+    "module-entry-point": 1,
+    "circular-dependency": 1,
+    "spec-document-case-cap": 11,
+    "test-record-case-cap": 11,
+    "spec-fragmentation": 1,
+    "spec-contract-link": 1
+  },
+  "diagnostics": {
+    "detail-document-contract": 173
+  },
+  "canonicalErrors": [
+    {
+      "ruleId": "circular-dependency",
+      "severity": "error",
+      "message": "Dependency cycle: src/components/FieldProxy -> src/components/FieldProxy/components/FieldInputSlot -> src/components/FieldProxy",
+      "path": "src/components/FieldProxy",
+      "certainty": "exact",
+      "suggestion": "Break the cycle: move what both sides share into a unit they both import, or invert one edge behind an interface."
+    },
+    {
+      "ruleId": "test-record-case-cap",
+      "path": "src/helpers/jsonPointer/utils/__tests__/getAbsolutePointer.test.ts",
+      "severity": "error",
+      "message": "test-record has 58 semantic cases; the per-file cap is 32.",
+      "certainty": "exact",
+      "suggestion": "Split the test file by behavior so each file stays within 32 cases, or merge cases that verify the same behavior."
+    }
+  ],
+  "notes": [
+    "The existing FieldProxy dependency cycle is outside the changed product surface.",
+    "The unchanged getAbsolutePointer test record already contains 58 cases.",
+    "The document detector treats the pointer spelling #/ as a filesystem reference.",
+    "This snapshot precedes the final isolation-probe test and results document; no later product import change is implied."
+  ]
+}

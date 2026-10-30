@@ -2,7 +2,7 @@ import { useLayoutEffect } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 
@@ -48,7 +48,7 @@ export const useFieldNodeSubscribe = <
     revision(mask?: number): number;
   },
 >(
-  node: Node | null,
+  node: Nullable<Node>,
   listener: Parameters<FieldNode['subscribe']>[0],
   options?: FieldNodeSubscribeOptions<Node>,
 ) => {

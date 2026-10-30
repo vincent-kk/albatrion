@@ -1,0 +1,46 @@
+{
+  "scope": "Candidate 2 regressions; no performance or adoption evidence",
+  "sourceCommit": "0778bd955",
+  "red": [
+    {
+      "name": "active-clone-address",
+      "fixedBy": "b40089fec",
+      "failedCases": 1,
+      "observation": "A live re-entry clone unexpectedly owned a detached-write address.",
+      "logSha256": "a02cf1d43c918c571a6982fda550186a5e33e0de3e27ad0d280ac02c2b1ca889"
+    },
+    {
+      "name": "empty-shipping-commit-and-memo",
+      "fixedBy": "68077387d",
+      "failedCases": 2,
+      "observation": "Empty-source writes called eligibility twice, and a new active occurrence owned an unused item memo.",
+      "logSha256": "48d536a06c5e4555212eb5ab693377a0385ca2fa8788547fa9cab061e462d75d"
+    },
+    {
+      "name": "sparse-clone-cache",
+      "fixedBy": "68077387d",
+      "failedCases": 1,
+      "observation": "Unused inactive item and aggregate cache fields were copied onto a fresh clone.",
+      "logSha256": "291a72acd50668c6aea7bd542dd6c1505d5a336f00aadf7980dee39fdfaf75ee"
+    },
+    {
+      "name": "selected-entry-registry",
+      "fixedBy": "0778bd955",
+      "failedCases": 1,
+      "observation": "The clone constructor called register twice before selected entry.",
+      "logSha256": "5b9fb3e6410236e6783de29fb2dc69aba248ccc8323ce8ffc785585e123bb3aa"
+    }
+  ],
+  "green": {
+    "suite": "targeted verify covering retained slots, nested selection, arrays, overlays, frozen reads and shadow replay",
+    "files": 33,
+    "passed": 143,
+    "failed": 0,
+    "exit": 0
+  },
+  "refutedHypotheses": [
+    "Static-first plain mounting created no unused slot fields in either baseline or candidate 1.",
+    "Total fresh/clone registration counts are not equal because the constructors have different registration phases.",
+    "Sharing an inactive child instance preserves old parent chains and violates the bounded no-history requirement."
+  ]
+}

@@ -9,6 +9,7 @@ afterEach(() => vi.restoreAllMocks());
 it.each(['insert', 'remove'] as const)(
   '[control] W4 single-candidate tuple %s registers no recreated-source destination',
   (operation) => {
+    // Shipping-path destination registration counts exclude independent replay.
     const { root } = createDispatchTree({
       type: 'array',
       prefixItems: [{ type: 'string' }, { type: 'number' }, { type: 'string' }],

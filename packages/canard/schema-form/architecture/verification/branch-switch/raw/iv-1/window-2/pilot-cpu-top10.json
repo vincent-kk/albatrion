@@ -1,0 +1,46 @@
+{
+  "startedAt": "2026-10-29T07:51:59.756Z",
+  "durationSeconds": 3.1244931250000003,
+  "top10": [
+    {
+      "name": "launchd",
+      "cpuPercent": 15.362491796184475
+    },
+    {
+      "name": "loginwindow",
+      "cpuPercent": 10.56171310986409
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 8.961453547844622
+    },
+    {
+      "name": "WidgetsExtension",
+      "cpuPercent": 6.401038248427176
+    },
+    {
+      "name": "2.1.312",
+      "cpuPercent": 6.080986335985442
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 6.0809863359417795
+    },
+    {
+      "name": "runningboardd",
+      "cpuPercent": 4.800778686291275
+    },
+    {
+      "name": "node",
+      "cpuPercent": 4.160674861462383
+    },
+    {
+      "name": "chronod",
+      "cpuPercent": 3.200519124213588
+    },
+    {
+      "name": "codex",
+      "cpuPercent": 2.5604152993610465
+    }
+  ]
+}

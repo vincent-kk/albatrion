@@ -8,14 +8,14 @@ import { getRuntimePathStores } from '../pathStores/getRuntimePathStores';
 /**
  * Drop only entries indexed beneath perished item roots.
  * @param runtime - Tree-owned stores and their persistent path indexes
- * @param paths - Removed item roots, including latent descendants
+ * @param paths - Unique removed roots, including latent descendants; splice passes one root
  * @returns Nothing; unrelated entries and baselines retain their identity
  */
 export const prunePerishedPaths = <Self>(
   runtime: FieldNodeRuntime<Self>,
-  paths: ReadonlySet<string>,
+  paths: ReadonlySet<string> | readonly string[],
 ): void => {
-  if (paths.size === 0) return;
+  if ('size' in paths ? paths.size === 0 : paths.length === 0) return;
   const stores = getRuntimePathStores(runtime);
   const warningKeys = new Set<string>();
   if (runtime.warningKeysByPath?.size)
@@ -27,22 +27,12 @@ export const prunePerishedPaths = <Self>(
     if (isArray(parts) && typeof parts[1] === 'string')
       indexFieldNodeWarning(runtime, key, parts[1], undefined, true);
   }
-  // A store without entries has nothing beneath any path, so it is not queried per path.
-  if (stores.latent.size)
-    for (const path of paths)
-      for (const key of stores.latent.pathIndex.under(path)) {
-        stores.latent.delete(key);
-        runtime.latentRawDirty = true;
-      }
-  for (const store of [
-    stores.metadata,
-    stores.misfits,
-    stores.inactiveMemo,
-    stores.declarations,
-  ])
+  for (const store of [stores.misfits, stores.declarations]) {
+    if (!store) continue;
     if (store.size)
       for (const path of paths)
         for (const key of store.pathIndex.under(path)) store.delete(key);
+  }
   if (stores.rules.size)
     for (const path of paths)
       for (const key of stores.rules.pathIndex.under(path))

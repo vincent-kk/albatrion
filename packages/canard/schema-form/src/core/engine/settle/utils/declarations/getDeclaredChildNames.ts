@@ -1,3 +1,5 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import type { BlueprintNode } from '../../../blueprint';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
 
@@ -15,7 +17,7 @@ export const getDeclaredChildNames = (
     template,
   ).declaredNames;
   if (!names) {
-    names = new Set(template.childEntries.map((entry) => entry.name));
+    names = new Set(mapArray(template.childEntries, (entry) => entry.name));
     getHostDerived<'declaredNames', ReadonlySet<string>>(
       template,
     ).declaredNames = names;

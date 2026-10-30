@@ -92,6 +92,8 @@ export const FormErrorCode = {
   InvalidControlShape: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.InvalidControlShape}`,
   /** Class: ValidationError; when: schema validation rejects a submission. */
   SchemaValidationFailed: `${FormErrorGroup.Validation}.${ValidationErrorSpecific.SchemaValidationFailed}`,
+  /** Class: JSONSchemaError; when: a property name is exactly `%2A`, `%2E`, `%2E%2E`, or `%40` and cannot round-trip through a form pointer. */
+  ReservedPropertyName: `${FormErrorGroup.JsonSchema}.${JSONSchemaErrorSpecific.ReservedPropertyName}`,
 } as const;
 
 /** Closed union of the error code values. */

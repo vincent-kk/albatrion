@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- B12 같은 작성 층에서 정의한 `inactiveValue`와 literal true `unsetOnInactive`는 `InactiveValueWithUnsetOnInactive`로 경고합니다. fields와 조각을 포함하고 위치별 중복을 억제하며 소비자가 없으면 검사하지 않습니다.
+
+- 진단 위치는 jsonPointer의 appendSegment로 조립해 예약 이름과 구분자를 가진 속성도 다시 탐색할 수 있게 한다.
+
 관심 있는 진단 소비자에게 청사진의 인라인 종단 예약 키 경고를 수집해 전달한다.
 
 ## API Contracts
@@ -18,4 +22,4 @@
 
 ## Last Updated
 
-정돈-3 blueprint 재구성(2026-10-15)
+2026-10-28

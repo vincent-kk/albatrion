@@ -1,0 +1,74 @@
+{
+  "scan": {
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "1d879f6558f64007c980e4b358a21e710d06109d13a51786b4301b043906348e",
+      "adapterIds": [
+        "ecmascript"
+      ],
+      "totalNodes": 376,
+      "depth": 9,
+      "nodesByType": {
+        "organ": 296,
+        "fractal": 80
+      },
+      "violationCount": 201,
+      "certainty": "indeterminate",
+      "filesOutsideFactsScope": 0
+    },
+    "diagnostics": 177
+  },
+  "validate": {
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "1d879f6558f64007c980e4b358a21e710d06109d13a51786b4301b043906348e",
+      "mode": "project",
+      "scopes": [
+        "documents",
+        "nodes",
+        "entry-points",
+        "boundaries",
+        "dag",
+        "verification"
+      ],
+      "findingCount": 202,
+      "passed": 3002,
+      "failed": 12,
+      "skipped": 1
+    },
+    "diagnostics": 177
+  },
+  "verification": {
+    "summary": {
+      "projectRoot": "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form",
+      "snapshotHash": "1d879f6558f64007c980e4b358a21e710d06109d13a51786b4301b043906348e",
+      "fileCount": 736,
+      "specDocument": {
+        "fileCount": 14,
+        "knownCaseCount": 3,
+        "caseCap": 15
+      },
+      "testRecord": {
+        "fileCount": 722,
+        "knownCaseCount": 4432,
+        "caseCap": 32
+      },
+      "fragmentationCount": 0,
+      "violationCount": 21,
+      "certainty": "indeterminate"
+    },
+    "diagnostics": 177
+  },
+  "facts": {
+    "exact": 1665,
+    "covered": 1665,
+    "scope": "default adapter source scope",
+    "unresolved": 0,
+    "unsupported": 173
+  },
+  "findingThreshold": 202,
+  "verdict": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "initialFindings": 203,
+  "correction": "Removed redundant literal value in DETAIL that the document analyzer interpreted as a missing filesystem path"
+}

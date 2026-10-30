@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { SchemaTypeName } from '../../types/schema';
 
 /**
@@ -7,9 +9,9 @@ import type { SchemaTypeName } from '../../types/schema';
  * @returns Ordered intersection, with an empty list representing impossibility
  */
 export const intersectAllowedTypes = (
-  left: readonly SchemaTypeName[] | undefined,
-  right: readonly SchemaTypeName[] | undefined,
-): readonly SchemaTypeName[] | undefined => {
+  left: Optional<readonly SchemaTypeName[]>,
+  right: Optional<readonly SchemaTypeName[]>,
+): Optional<readonly SchemaTypeName[]> => {
   if (!left) return right;
   if (!right) return left;
   const result: SchemaTypeName[] = [];

@@ -1,8 +1,8 @@
-import { isArray } from '@winglet/common-utils/filter';
+import type { Nullable } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
-import { setLatentRaw } from '../latentStore/setLatentRaw';
+import { restoreSlotSources } from '../slots/restoreSlotSources';
 import { restoreArrayStructure } from './restoreArrayStructure';
 
 /**
@@ -16,9 +16,10 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
   for (const node of context.filledNodes) {
     if (!node.detached) continue;
     restoreArrayStructure(context, node);
+    restoreSlotSources(context, node.path);
     for (let index = context.automaticLog.length - 1; index >= 0; index--) {
       const entry = context.automaticLog[index];
-      let ancestor: Self | null = entry.node;
+      let ancestor: Nullable<Self> = entry.node;
       while (ancestor && ancestor !== node) ancestor = ancestor.parent;
       if (!ancestor) continue;
       entry.node.raw = entry.previousRaw;
@@ -27,25 +28,6 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
         context.distributedInputs.set(entry.node, entry.previousDistributed);
       else context.distributedInputs.delete(entry.node);
       context.changedRaw.delete(entry.node.path);
-    }
-    for (const [key, previous] of context.latentAutomaticLog) {
-      const identity: unknown = JSON.parse(key);
-      if (
-        !isArray(identity) ||
-        typeof identity[0] !== 'string' ||
-        (identity[0] !== node.path && !identity[0].startsWith(node.path + '/'))
-      )
-        continue;
-      setLatentRaw(
-        context.root.runtime,
-        undefined,
-        key,
-        previous.present,
-        previous.value,
-        undefined,
-        undefined,
-        context,
-      );
     }
     context.writtenInputs.delete(node);
   }

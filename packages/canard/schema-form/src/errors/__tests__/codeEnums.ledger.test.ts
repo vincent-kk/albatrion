@@ -100,9 +100,13 @@ describe('form error codes', () => {
     expect(Object.values(FormErrorCode)).toEqual([
       ...live.filter(([, level]) => level === 'error').map(([code]) => code),
       'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
+      'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME',
     ]);
-    expect(Object.values(FormWarningCode)).toEqual(
-      live.filter(([, level]) => level === 'warning').map(([code]) => code),
-    );
+    expect(Object.values(FormWarningCode)).toEqual([
+      ...live.filter(([, level]) => level === 'warning').map(([code]) => code),
+      'SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE',
+      'SCHEMA_FORM_WARNING.INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE',
+      'SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER',
+    ]);
   });
 });

@@ -5,6 +5,7 @@ import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { isBatchMarking } from '../chain/isBatchMarking';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
+import { refuseDetachedWrite } from '../report/refuseDetachedWrite';
 
 /**
  * Update an array within the public entry chain; refused feedback does no work.
@@ -19,6 +20,7 @@ export const dispatchUpdate = <Self extends FieldNodeRecord<Self>>(
   index: number,
   value: unknown,
 ): unknown => {
+  if (refuseDetachedWrite(node)) return;
   if (!enterFieldNodeChain(node)) return;
   try {
     return isBatchMarking(node)

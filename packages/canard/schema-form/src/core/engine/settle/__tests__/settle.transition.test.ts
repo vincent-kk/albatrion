@@ -9,6 +9,7 @@ import { readFieldNodeDefaultValue } from '../utils/loadValues/readFieldNodeDefa
 import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
 import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
 // filid:contract settle-write
@@ -286,10 +287,8 @@ describe('settle transitions and loads', () => {
       { flag: false, secret: 'latent' },
       WriteOption.Overwrite,
     );
-    expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
     const emitted = root.emit;
     writeFieldNode(root, emitted, 'callerReplace', WriteOption.Overwrite);
-    expect(root.runtime.latentRaw.size).toBe(0);
     expect(root.emit).toEqual(emitted);
     const afterFirst = root.emit;
     writeFieldNode(root, afterFirst, 'callerReplace', WriteOption.Overwrite);
@@ -316,7 +315,7 @@ describe('settle transitions and loads', () => {
     expect(root.structure?.appeared?.raw).toBe('A');
   });
 
-  it('NODE-044 detached write changes only the latent raw for its path and kind', () => {
+  it('NODE-044 detached write leaves every source unchanged', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -335,11 +334,9 @@ describe('settle transitions and loads', () => {
     writeFieldNode(former, 'new', 'input', WriteOption.Overwrite);
     expect(former.raw).toBe('old');
     expect(root.runtime.commitNumber).toBe(commit);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('new');
+    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('old');
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
-    expect(root.structure?.secret?.raw).toBe('new');
+    expect(root.structure?.secret?.raw).toBe('old');
   });
 
   it('WRITE-082 fills a host from controls.default before default and distributes through interpret', () => {
@@ -408,13 +405,9 @@ describe('settle transitions and loads', () => {
       },
     });
     loadFieldNodeAtMount(root, source, WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('latent');
+    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('latent');
     resetFieldNodeForm(root, source, WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('latent');
+    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('latent');
     expect(readFieldNodeDefaultValue(root)).toBe(source);
   });
 });

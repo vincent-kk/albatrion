@@ -1,22 +1,30 @@
-import type { PartialBy } from '@aileron/declare';
+import type { Nullable, PartialBy } from '@aileron/declare';
 
-import { SLASH_REGEX, TILDE_REGEX } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  appendFormattedSegment,
+  formatSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../errors';
-import { BEHAVIORS } from '../../engine';
-import { collectBlueprintWarnings, mergeEffectiveSchema } from '../../engine';
 import type {
+  Behavior,
   Blueprint,
   BlueprintChildEntry,
   BlueprintNode,
   BlueprintSchema,
+  FieldNodeRuntime,
+  Validator,
 } from '../../engine';
-import { createFormErrorRecord } from '../../engine';
-import type { Behavior, FieldNodeRuntime } from '../../engine';
-import { PathKeyedMap } from '../../engine';
-import { PathKeyedSet } from '../../engine';
-import { compileEntryGuards, readValidationEntry } from '../../engine';
-import type { Validator } from '../../engine';
+import {
+  BEHAVIORS,
+  PathKeyedSet,
+  collectBlueprintWarnings,
+  compileEntryGuards,
+  createFormErrorRecord,
+  mergeEffectiveSchema,
+  readValidationEntry,
+} from '../../engine';
 import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import type {
   ArrayNode,
@@ -44,11 +52,7 @@ type RuntimeArrayVerbs = Pick<
 >;
 
 /** Runtime fields the factory fills when the seed omits them: path-indexed stores and an empty context. */
-type SeededRuntimeFields =
-  | 'latentRaw'
-  | 'misfitPaths'
-  | 'inactiveValuesMemo'
-  | 'context';
+type SeededRuntimeFields = 'misfitPaths' | 'context';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
 export type FieldNodeRuntimeSeed = PartialBy<
@@ -57,6 +61,7 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'blueprint'
     | 'nodeFactory'
     | 'settlementScratch'
+    | 'slotDirtyHosts'
     | 'chainRoot'
     | 'batchWrites'
     | 'visitBatchEntry'
@@ -76,17 +81,18 @@ export type FieldNodeRuntimeSeed = PartialBy<
 /** Create one record from a bound child or the root template. */
 const createFieldNode = (
   entry: BlueprintChildEntry | BlueprintNode,
-  parent: RuntimeFieldNode | null,
+  parent: Nullable<RuntimeFieldNode>,
   runtime: FieldNodeRuntime<RuntimeFieldNode>,
+  source?: RuntimeFieldNode,
 ): RuntimeFieldNode => {
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
-  const escapedName = name
-    .replace(TILDE_REGEX, '~0')
-    .replace(SLASH_REGEX, '~1');
-  const path = parent ? parent.path + '/' + escapedName : '';
+  const escapedName = formatSegment(name);
+  const path = parent
+    ? appendFormattedSegment(parent.path, escapedName)
+    : $.Root;
   const depth = parent ? parent.depth + 1 : 0;
-  const row = BEHAVIORS[template.kind]?.[template.strategy];
+  const row = source?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)
     throw new Error(
       `Missing behavior for ${template.kind}/${template.strategy}`,
@@ -103,10 +109,11 @@ const createFieldNode = (
     depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
-      mode: 'runtime',
-      isAtomic: runtime.blueprint?.isAtomic,
-    }),
+    source?.schema ??
+      mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
+        mode: 'runtime',
+        isAtomic: runtime.blueprint?.isAtomic,
+      }),
     {},
   );
 };
@@ -129,10 +136,7 @@ export function fieldNodeFactory(
 ): RuntimeNodeSurface {
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
-    latentRaw: runtimeSeed.latentRaw ?? new PathKeyedMap('pair'),
     misfitPaths: runtimeSeed.misfitPaths ?? new PathKeyedSet(),
-    inactiveValuesMemo:
-      runtimeSeed.inactiveValuesMemo ?? new PathKeyedMap('path'),
     globalStateCounts: new Map(),
     globalState: {},
     validator,

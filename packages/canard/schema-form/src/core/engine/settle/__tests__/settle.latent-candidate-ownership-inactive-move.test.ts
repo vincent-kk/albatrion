@@ -11,6 +11,8 @@ import {
   dispatchSetValue,
 } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readRetainedSlotEntry } from './fixtures/readRetainedSlotRaw';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 it.each(['insert', 'remove'] as const)(
   'V2 %s preserves all candidate stores when destination slots become inactive',
@@ -55,12 +57,8 @@ it.each(['insert', 'remove'] as const)(
     const sourceRules = (runtime.committedRuleKeysBySource ??= new Map());
     const targetRules = (runtime.committedRuleKeysByTarget ??= new Map());
     const metadata = values.map((_, index) => ({
-      string: runtime.latentRawMetadata?.get(
-        JSON.stringify([`/list/${index}/v`, 'string']),
-      ),
-      number: runtime.latentRawMetadata?.get(
-        JSON.stringify([`/list/${index}/v`, 'number']),
-      ),
+      string: readRetainedSlotEntry(root, `/list/${index}/v`, 'string'),
+      number: readRetainedSlotEntry(root, `/list/${index}/v`, 'number'),
     }));
     for (let index = 0; index < values.length; index++) {
       const path = `/list/${index}/v`;
@@ -92,32 +90,13 @@ it.each(['insert', 'remove'] as const)(
       const destination = operation === 'insert' ? source + 1 : source - 1;
       const path = `/list/${destination}/v`;
       const stringKey = JSON.stringify([path, 'string']);
-      const numberKey = JSON.stringify([path, 'number']);
       expect(list.structure?.[String(destination)]).toBeUndefined();
-      expect(runtime.latentRaw.get(stringKey)).toBe(values[source]);
-      expect(runtime.latentRaw.get(numberKey)).toBe(37);
+      expect(readRetainedSlotRaw(root, path, 'string')).toBe(values[source]);
+      expect(readRetainedSlotRaw(root, path, 'number')).toBe(37);
       const stringMetadata = metadata[source].string;
       const numberMetadata = metadata[source].number;
       if (!stringMetadata || !numberMetadata)
         throw new Error('Expected both source candidate classifications');
-      expect(runtime.latentRawMetadata?.get(stringKey)).toEqual({
-        ...stringMetadata,
-        path,
-        order: [
-          stringMetadata.order[0],
-          destination,
-          ...stringMetadata.order.slice(2),
-        ],
-      });
-      expect(runtime.latentRawMetadata?.get(numberKey)).toEqual({
-        ...numberMetadata,
-        path,
-        order: [
-          numberMetadata.order[0],
-          destination,
-          ...numberMetadata.order.slice(2),
-        ],
-      });
       expect(declarations.get(stringKey)).toEqual([101 + source]);
       const rule = JSON.stringify([
         path,

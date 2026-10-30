@@ -161,3 +161,5 @@ SESSION_131_OK: /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf
 ## 커밋에 적용한 소스
 
 채택 커밋 `daca1d14a`는 `fbx.patch`에서 `fe.patch`를 역적용한 트리이며, 실행 파일 셋은 이 판정에 쓴 fb·fc·ff 적용 트리와 바이트가 같습니다. 개별 `fb.patch`에 있던 `tools/measure-react-render-counts.mjs`의 변경(`countsOnly`일 때도 다섯 쓰기를 포함)은 커밋에 넣지 않았으며, 시간 측정 재현에는 필요하지 않습니다. 시간 판정은 `run-session-131.mjs` 경로로 재며 이 도구를 쓰지 않습니다. 이 도구의 계수 전용 모드에서 그 변경이 하던 일은 커밋된 시험 도우미 `runtimeCounts.mjs`가 같은 치환을 메모리에서 적용하여 재현합니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `daca1d14a840`, `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

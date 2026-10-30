@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Optional } from '@aileron/declare';
+
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { ControlLayer } from './getControlLayers';
@@ -20,7 +22,7 @@ export const readExitLayerPolicy = (
     path: string;
     blueprintNode: Parameters<typeof getBlueprintNodeIdentity>[0];
   }>[],
-  committedRuleValues: ReadonlyMap<string, unknown> | undefined,
+  committedRuleValues: Optional<ReadonlyMap<string, unknown>>,
   inherited: boolean,
 ): boolean => {
   for (const layer of EXIT_LAYERS) {

@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type { PathKeyedMap } from '../../../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedMove } from '../../../../utils/pathIndex/type';
 import type { ArrayPathMove } from '../../types/pathMoves';
@@ -15,7 +17,7 @@ import type { ArrayPathMove } from '../../types/pathMoves';
 export const rekeyPairedPathStore = <Value>(
   store: PathKeyedMap<Value>,
   moves: readonly ArrayPathMove[],
-  mapPath: (path: string) => string | undefined,
+  mapPath: (path: string) => Optional<string>,
   transform?: (value: Value, path: string, previous: string) => Value,
 ): void => {
   const keys = new Set<string>();

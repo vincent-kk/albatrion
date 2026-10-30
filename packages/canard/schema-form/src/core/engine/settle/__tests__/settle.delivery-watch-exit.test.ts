@@ -13,6 +13,7 @@ import { compareWatchExitDeliveries } from './fixtures/compareWatchExitDeliverie
 import type { WatchExitObservation } from './fixtures/compareWatchExitDeliveries';
 
 afterEach(() => vi.restoreAllMocks());
+// Internal mark and index-read counts describe one shipping tree, excluding replay.
 
 /**
  * List the paths that received one event bit in one step.
@@ -103,7 +104,7 @@ describe('L2 (c) EVENT-064 exits look up the watch index', () => {
           },
           wx: { type: 'number', controls: { watch: ['../grp/x'] } },
           wg: { type: 'number', controls: { watch: ['../grp'] } },
-          wr: { type: 'number', controls: { watch: ['/'] } },
+          wr: { type: 'number', controls: { watch: ['#'] } },
           ...unrelated(3),
         },
       },
@@ -239,7 +240,7 @@ describe('L2 (c) EVENT-064 exits look up the watch index', () => {
             wg: { type: 'string', controls: { watch: ['../gated'] } },
             w1: { type: 'string', controls: { watch: ['../list/1'] } },
             wl: { type: 'string', controls: { watch: ['../list'] } },
-            wr: { type: 'string', controls: { watch: ['/'] } },
+            wr: { type: 'string', controls: { watch: ['#'] } },
             ...unrelated(3),
           },
         },
@@ -327,7 +328,7 @@ describe('L2 (c) EVENT-064 exits look up the watch index', () => {
             controls: { watch: ['../groups/1/rows/1/tags/0'] },
           },
           wrows: { type: 'string', controls: { watch: ['../groups/1/rows'] } },
-          wr: { type: 'string', controls: { watch: ['/'] } },
+          wr: { type: 'string', controls: { watch: ['#'] } },
           ...unrelated(3),
         },
       },

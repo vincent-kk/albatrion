@@ -1,3 +1,5 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 
@@ -20,8 +22,8 @@ export const isWithinReplacePaths = <Self extends FieldNodeRecord<Self>>(
     const written = paths[index];
     if (
       path === written ||
-      path.startsWith(written + '/') ||
-      written.startsWith(path + '/')
+      isDescendantPath(path, written) ||
+      isDescendantPath(written, path)
     )
       return true;
   }

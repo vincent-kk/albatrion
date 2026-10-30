@@ -1,3 +1,7 @@
+import { minLite } from '@winglet/common-utils/math';
+
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintNode, PropertyDeclaration } from '../../../types/node';
 
 /**
@@ -21,21 +25,24 @@ export const selectEffectiveDeclarations = (
     }
     return selected.sort(compareDeclarations);
   }
-  const active = node.declarations.filter(
-    (entry) =>
-      !entry.validationOnly &&
-      (entry.gates.length === 0 || activeIds.includes(entry.id)),
-  );
-  const declarations = active.filter((entry) => entry.role === 'declaration');
-  return active
-    .filter(
-      (entry) =>
-        entry.context === 'conjunction' ||
-        (declarations.length === 1 &&
-          declarations[0].context === 'declaration' &&
-          entry === declarations[0]),
+  const selected: PropertyDeclaration[] = [];
+  let declaration: Optional<PropertyDeclaration>;
+  let declarationCount = 0;
+  for (const entry of node.declarations) {
+    if (
+      entry.validationOnly ||
+      (entry.gates.length > 0 && activeIds.indexOf(entry.id) === -1)
     )
-    .sort(compareDeclarations);
+      continue;
+    if (entry.role === 'declaration') {
+      declaration = entry;
+      declarationCount++;
+    }
+    if (entry.context === 'conjunction') selected.push(entry);
+  }
+  if (declarationCount === 1 && declaration?.context === 'declaration')
+    selected.push(declaration);
+  return selected.sort(compareDeclarations);
 };
 
 /**
@@ -48,7 +55,7 @@ function compareDeclarations(
   left: PropertyDeclaration,
   right: PropertyDeclaration,
 ): number {
-  const length = Math.min(left.order.length, right.order.length);
+  const length = minLite(left.order.length, right.order.length);
   for (let index = 0; index < length; index++) {
     const difference = left.order[index] - right.order[index];
     if (difference) return difference;

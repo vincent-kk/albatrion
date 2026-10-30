@@ -1,7 +1,11 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
+import {
+  PointerOperator,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
@@ -17,14 +21,15 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
 ) => {
-  if (path === $.Context) return undefined;
+  const segments = parsePointerSegments(path);
+  if (segments[0] === PointerOperator.Context) return undefined;
   let template = root.blueprintNode;
-  let live: Self | undefined = root;
+  let live: Optional<Self> = root;
   let siblings = template.childEntries;
   const order: number[] = [];
-  for (const encoded of path.split($.Separator).slice(1)) {
+  for (const name of segments) {
     if (template.strategy !== 'branch') return undefined;
-    const name = unescapeSegment(encoded);
+    if (typeof name !== 'string') return undefined;
     siblings = template.childEntries;
     const index = Number(name);
     const items =
@@ -42,7 +47,7 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
       : getDeriveChildEntry(template, name);
     if (!found) return undefined;
     order.push(found.position);
-    const structure: Record<string, Self> | null = live?.structure ?? null;
+    const structure: Nullable<Dictionary<Self>> = live?.structure ?? null;
     live =
       structure && hasOwnProperty(structure, name)
         ? structure[name]
