@@ -120,7 +120,9 @@ export async function prepareBundles(root: string, stageRoot?: string) {
       react: require('react/package.json').version,
       playwright: require('playwright/package.json').version,
       esbuild: require('esbuild/package.json').version,
-      ajv: require('ajv/package.json').version,
+      ajv: createRequire(
+        path.resolve('../../canard/schema-form-ajv8-plugin/package.json'),
+      )('ajv/package.json').version,
     },
     environment: {
       cpu: os.cpus()[0].model,
