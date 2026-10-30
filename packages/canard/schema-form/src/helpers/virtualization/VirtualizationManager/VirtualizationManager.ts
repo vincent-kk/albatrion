@@ -61,6 +61,9 @@ export class VirtualizationManager {
   /** Cancel handle for the pending idle tick, null when the pump is stopped */
   private cancelIdle: Nullable<Fn> = null;
 
+  /** Immediate child mount decisions since the current task's first decision. */
+  private taskEagerCount = 0;
+
   /**
    * This manager when a branch with `childCount` children qualifies for
    * gating, else null.
@@ -72,17 +75,25 @@ export class VirtualizationManager {
 
   /**
    * This manager when the child at `renderedIndex` should mount deferred —
-   * beyond the eager window and never revealed before — else null.
+   * beyond the branch window or task budget and never revealed before — else null.
+   * Small branches pass index zero to apply only the shared task budget.
    * @example `const deferredManager = gateManager?.forChild(index, node) ?? null;`
    */
   public forChild(
     renderedIndex: number,
     node: FieldNode,
   ): Nullable<VirtualizationManager> {
-    return renderedIndex >= this.options.eagerCount &&
-      !this.revealedNodes.has(node)
-      ? this
-      : null;
+    if (
+      !this.revealedNodes.has(node) &&
+      (renderedIndex >= this.options.eagerCount ||
+        this.taskEagerCount >= this.options.eagerCount)
+    )
+      return this;
+    if (this.taskEagerCount++ === 0)
+      queueMicrotask(() => {
+        this.taskEagerCount = 0;
+      });
+    return null;
   }
 
   /** Placeholder height (px) for a node before reveal */

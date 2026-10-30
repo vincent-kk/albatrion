@@ -64,7 +64,8 @@ export const useChildFields = (
         // Deferrable is baked at creation so the component's hook set stays
         // static; revealed-ness itself is resolved dynamically by the gate.
         const deferredManager =
-          gateManager?.forChild(ChildFields.length, node) ?? null;
+          manager?.forChild(gateManager === null ? 0 : ChildFields.length, node) ??
+          null;
         const ChildComponent = memo(
           ({
             FieldRenderer: InputFieldRenderer,
