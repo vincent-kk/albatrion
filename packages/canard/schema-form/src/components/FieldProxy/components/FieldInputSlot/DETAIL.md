@@ -6,9 +6,9 @@
 
 ## API Contracts
 
-- 가상화 매니저는 훅의 `useSyncExternalStore`에서 서버 스냅숏을 null로 읽습니다. 서버와 하이드레이션 렌더는 모든 자식을 같은 구성으로 마운트하며, 클라이언트 전용 마운트는 첫 렌더부터 게이팅합니다. Provider의 문맥 값은 바꾸지 않습니다.
-- 하이드레이션 중 마운트한 자식은 layout effect에서 폼 매니저의 노출 원장에 기록합니다. 이후 remount·enabled 전환·입력 교체로 캐시를 다시 만들어도 해당 노드는 placeholder가 되지 않으며, 하이드레이션 뒤 추가한 자식과 브랜치에는 게이팅이 적용됩니다. 자식 컴포넌트 캐시는 StrictMode의 effect 재실행에도 유지하고 실제 훅 인스턴스와 함께 회수합니다.
-- React 18에서 사용자 브랜치 입력 내부의 미완료 Suspense 경계는 하이드레이션 중 클라이언트 렌더링으로 전환될 수 있습니다. 이 제한은 Provider 문맥을 고정하는 것만으로 해소되지 않습니다.
+- 가상화 매니저는 훅의 `useSyncExternalStore`에서 서버 스냅숏을 null로 읽습니다. 서버와 하이드레이션 렌더는 모든 자식을 같은 구성으로 마운트하며, 클라이언트 전용 마운트는 첫 렌더부터 게이팅합니다. layout effect에서 하이드레이션 커밋을 ref로 기록하여 passive 일관성 검사가 null을 유지하게 하며, 하이드레이션 완료만으로 슬롯이나 사용자 브랜치 입력을 다시 렌더하지 않습니다. 이후 실제 자식 변경 렌더는 폼 매니저를 적용합니다. Provider의 문맥 값은 바꾸지 않습니다.
+- 폼 매니저가 있고 실제 입력으로 커밋한 자식은 layout effect에서 노출 원장에 기록합니다. 하이드레이션, eager window, 문턱 미만 마운트 모두 포함합니다. 이후 remount·enabled 전환으로 캐시를 다시 만들어도 해당 노드는 placeholder가 되지 않으며, 하이드레이션 뒤 추가한 자식과 브랜치에는 게이팅이 적용됩니다. 자식 컴포넌트 캐시는 StrictMode의 effect 재실행에도 유지하고 실제 훅 인스턴스와 함께 회수합니다.
+- 사용자 브랜치 입력 내부의 아직 하이드레이션되지 않은 Suspense 경계에 매니저 활성화만으로 갱신을 보내지 않습니다. React 18/19 모두 해당 경계의 서버 DOM을 보존해야 합니다.
 - 입력은 인라인 지정, 입력 맵, 내부 정의, 외부 정의, 플러그인 fallback 순서로 우선해서 고릅니다.
 - 모든 입력 공급 경로와 preferred/override 입력은 해석하는 지점에서 사설 어댑터 `withFieldInputErrorBoundary`를 한 번 적용하며, 이 어댑터의 인스턴스는 Refresh 동안 유지됩니다. 어댑터는 렌더할 때 path 보고기를 읽고 `ErrorBoundary` 하나를 직접 렌더합니다. 자동 Refresh와 명시적인 `refresh`는 실패한 경계의 상태를 풀지 않고, `RequestRemount`와 `<Form key>`만 경계를 다시 마운트해서 실패 상태를 해제합니다(EVENT-039·040·042·070, 112C-01).
 - Refresh key는 오류 경계 안에 있는 원본 사용자 입력 하나에만 적용합니다. 사설 어댑터는 `useFieldInputControl`이 반환한 적용 세대를 key로 쓰며, 세대 prop을 사용자 입력에는 넘기지 않습니다. 노드의 원시 Refresh 개정은 key로 직접 읽지 않기 때문에, IME 조합과 마운트된 자식 프록시가 보류해 둔 세대가 유지됩니다. 비제어 입력은 다시 마운트할 때 커밋된 defaultValue를 읽으며, 그 입력의 캐럿, 선택, IME 상태만 버립니다(EVENT-039·065, REACT-024·028).
@@ -32,7 +32,7 @@
 
 ### field-input-slot-contract — 관찰 가능한 동작
 
-- 가상화가 켜진 SSR 입력은 React 18/19의 일반·StrictMode 하이드레이션에서 DOM identity와 값을 보존하고 placeholder나 recoverable error를 만들지 않습니다. 중첩 브랜치 remount 뒤에도 노출을 유지하며, 배열에 나중에 추가한 eager window 밖 항목은 지연합니다.
+- 가상화가 켜진 SSR 입력은 React 18/19의 일반·StrictMode 하이드레이션에서 DOM identity와 값을 보존하고 placeholder나 recoverable error를 만들지 않습니다. 중첩 브랜치 remount 뒤에도 노출을 유지하며, 배열에 나중에 추가한 eager window 밖 항목은 지연합니다. 문턱 미만에서 실제 마운트한 항목도 문턱 도달 뒤 remount하면 계속 노출합니다.
 - 언마운트하면 해당 경로의 첨부 파일 상태를 제거합니다.
 - refresh는 자식 프록시가 마운트되어 있는지에 따라 입력 버전을 갱신하고, focus/select는 해당 입력의 DOM 명령으로 이어집니다(REACT-028, EVENT-063).
 - 실패한 입력은 피어의 쓰기로 생긴 자동 Refresh와 명시적인 Refresh를 거쳐도 fallback을 유지하고, RequestRemount나 폼 key 교체 뒤에는 다시 실행됩니다. 정상 입력의 Refresh는 원본 입력만 교체하며, 피어 입력의 DOM 상태와 입력 오류 경계는 유지합니다(EVENT-039·040·042·070, 112C-01).
