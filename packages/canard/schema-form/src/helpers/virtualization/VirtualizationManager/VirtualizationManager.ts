@@ -61,12 +61,6 @@ export class VirtualizationManager {
   /** Cancel handle for the pending idle tick, null when the pump is stopped */
   private cancelIdle: Nullable<Fn> = null;
 
-  /** Immediate child mount decisions since the current task's first decision. */
-  private taskEagerCount = 0;
-
-  /** Reuse eager decisions when React repeats render work within the task. */
-  private taskEagerNodes = new WeakSet<FieldNode>();
-
   /**
    * This manager when a branch with `childCount` children qualifies for
    * gating, else null.
@@ -78,29 +72,17 @@ export class VirtualizationManager {
 
   /**
    * This manager when the child at `renderedIndex` should mount deferred —
-   * beyond the branch window or task budget and never revealed before — else null.
-   * Small branches pass index zero to apply only the shared task budget.
+   * beyond the eager window and never revealed before — else null.
    * @example `const deferredManager = gateManager?.forChild(index, node) ?? null;`
    */
   public forChild(
     renderedIndex: number,
     node: FieldNode,
   ): Nullable<VirtualizationManager> {
-    if (
-      !this.revealedNodes.has(node) &&
-      (renderedIndex >= this.options.eagerCount ||
-        (this.taskEagerCount >= this.options.eagerCount &&
-          !this.taskEagerNodes.has(node)))
-    )
-      return this;
-    if (this.taskEagerNodes.has(node)) return null;
-    if (this.taskEagerCount++ === 0)
-      queueMicrotask(() => {
-        this.taskEagerCount = 0;
-        this.taskEagerNodes = new WeakSet();
-      });
-    this.taskEagerNodes.add(node);
-    return null;
+    return renderedIndex >= this.options.eagerCount &&
+      !this.revealedNodes.has(node)
+      ? this
+      : null;
   }
 
   /** Placeholder height (px) for a node before reveal */

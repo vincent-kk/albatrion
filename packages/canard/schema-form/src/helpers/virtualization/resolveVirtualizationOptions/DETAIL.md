@@ -8,7 +8,6 @@
 
 - 입력이 false이거나 없으면 null을 반환하고, true이면 기존 기본값을 선택합니다.
 - 객체 입력은 명시적인 옵션 값을 유지하고 null 또는 undefined인 필드만 기본값으로 채웁니다.
-- eagerCount는 큰 가지의 선행 자식 수와 폼 전체 작업당 즉시 마운트 수의 공통 예산입니다. 별도 taskBudget 옵션은 추가하지 않으며 기본값은 유지합니다.
 - 상위 virtualization의 내보내기와 호환성 타입 모듈은 같은 옵션 타입과 backfill 열거형을 그대로 가리켜야 합니다.
 
 ## Acceptance Criteria
@@ -20,4 +19,4 @@
 
 ## Last Updated
 
-2026-10-30
+2026-09-16
