@@ -256,3 +256,5 @@ S2a의5반복 재탐침 첫 준비는30초 시작 관문에서 환경 거절·�
 유지5개에 대한 [독립 검토](reviews/iv-4-code-candidate-1-claude.md)는 PASS(P1·P2 0, P3 4)입니다. 실제 getSlotChildIndex로 순위 fixture를 준비하고 읽기 계수를 초기화했으며 두 불변식 주석·readProjectedValue 서식·DETAIL 빈 줄·항상 있는 edges의 방어 문구를 정리했습니다. 조정자 지시에 따라 이 작은 수정 뒤의 머리에서 전체 정적 관문을 다시 한 번 수행합니다.
 
 수정 전 머리의 build·unit·render·react18·production 지정 프로젝트는 통과했습니다. 처음 production 전용 script를 잘못 택한 실행은2건 실패했고, 브리프의 `test --run --project production`으로 바로잡은 실행은21건 통과했습니다. 이는 최종 머리의 관문을 대신하지 않습니다. 기준 아카이브는 package-local AJV8 연결 뒤 지정 build가 통과했고 처음 S9 기준 Node bundle과 바이트가 같습니다. 공개308개 선언·index 바이트 차이는0, private 차이는 getGateRegistry 선언1개, 격리는2,383파일 통과, 배달79+7장면 차이는0이었으며 최종 머리에서 다시 확인합니다.
+
+P3-1의 직접 형제 내부 import는 기존 importModel 관문의 S1=1로 unit 한 건을 실패시켰습니다. 조정자는 관문을 그대로 유지하는 배치 수정을 승인했습니다. 실제 builder→assembler 연결은 settle의 통합 사례에서 objectBehavior 진입점으로 관측하며 로컬 assembler의 기존5사례·oracle·비용 단언은 그대로 두고 명시한 작은 순위 데이터만 사용합니다. 실패 원시를 보존하고 이 수정 머리의 전체 관문을 새로 수행합니다.

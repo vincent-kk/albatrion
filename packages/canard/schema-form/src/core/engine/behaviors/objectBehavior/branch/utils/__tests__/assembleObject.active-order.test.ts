@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { getSlotChildIndex } from '../../../../../settle/utils/slots/getSlotChildIndex';
 import { getHostDerived } from '../../../../../utils/cache/derivedRecords';
 import { assembleObject } from '../assembleObject';
 import { assembleObjectBaseline } from './fixtures/assembleObject.baseline';
@@ -32,12 +31,13 @@ const fixture = () => {
     schema: { schema: { type: 'object' }, typeConflict: false },
     blueprintNode: { childEntries: observed },
   } as unknown as Parameters<typeof assembleObject>[0];
-  getSlotChildIndex(
+  const index = new Map<string, Map<object, number>>([
+    ['alpha', new Map([[first, 0], [replacement, 2]])],
+    ['beta', new Map([[second, 1]])],
+  ]);
+  getHostDerived<'childOrderIndex', typeof index>(
     node.blueprintNode,
-    'alpha',
-    node.blueprintNode.childEntries[0].node,
-  );
-  reads = 0;
+  ).childOrderIndex = index;
   const children = [
     { name: 'beta', emit: 2 },
     { name: 'alpha', emit: 1, blueprintNode: replacement },
