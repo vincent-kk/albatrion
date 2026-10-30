@@ -7,6 +7,7 @@ import { chromium } from 'playwright';
 
 import cases from '../../fixtures/input-responsiveness/cases.json';
 import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
+import ir2Cases from '../../fixtures/input-responsiveness/ir-2-cases.json';
 import { observeCpu } from './helpers/observeCpu';
 import { prepareBundles } from './helpers/prepareBundles';
 import { readAncestorPids } from './helpers/readAncestorPids';
@@ -60,18 +61,26 @@ export async function runInteractions(args: string[]) {
     );
   }
   const stageCases =
-    options.stage === 'ir-1'
+    options.stage === 'ir-2'
       ? options.suite === 'quiet-gates'
-        ? ir1Cases.filter(
+        ? ir2Cases.filter(
             (id) =>
-              id.startsWith('replace-') ||
-              id.startsWith('type-') ||
-              id.startsWith('validation-'),
+              id.endsWith('-nonburst') &&
+              (!options.fixtures || options.fixtures.split(',').includes(id)),
           )
-        : options.suite === 'backfill'
-          ? ['mount-flat-500-on', 'mount-array-1000-on']
-          : ir1Cases
-      : cases;
+        : ir2Cases
+      : options.stage === 'ir-1'
+        ? options.suite === 'quiet-gates'
+          ? ir1Cases.filter(
+              (id) =>
+                id.startsWith('replace-') ||
+                id.startsWith('type-') ||
+                id.startsWith('validation-'),
+            )
+          : options.suite === 'backfill'
+            ? ['mount-flat-500-on', 'mount-array-1000-on']
+            : ir1Cases
+        : cases;
   const paired = options['paired-relative'] === 'true';
   const smoke = options.action === 'smoke';
   const selected = options.fixture
@@ -239,7 +248,9 @@ export async function runInteractions(args: string[]) {
             : [...inputs.lanes].reverse();
         for (const lane of order) {
           const page = await (
-            options.stage === 'ir-1' ? samplePageWithCpu : samplePage
+            options.stage === 'ir-1' || options.stage === 'ir-2'
+              ? samplePageWithCpu
+              : samplePage
           )(browser, root, lane, id);
           if (index >= 0) {
             const name = `${id}-${lane}-${index}.json`;

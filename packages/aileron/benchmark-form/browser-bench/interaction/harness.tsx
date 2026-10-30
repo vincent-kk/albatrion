@@ -36,6 +36,13 @@ window.__ir0 = {
     await afterPaint();
   },
   async finish() {
+    const mountEnd = fixture.mountObservationMs
+      ? mounted.mount.startedAt! + fixture.mountObservationMs
+      : undefined;
+    if (mountEnd !== undefined)
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.max(0, mountEnd - performance.now())),
+      );
     if (fixture.virtualization && !fixture.mount) {
       const deadline = performance.now() + 30000;
       while (container.querySelector('[data-deferred]')) {
@@ -45,7 +52,7 @@ window.__ir0 = {
       }
       await afterPaint();
     }
-    const end = performance.now();
+    const end = mountEnd ?? performance.now();
     await new Promise((resolve) => setTimeout(resolve, 150));
     await afterPaint();
     observation.stop();

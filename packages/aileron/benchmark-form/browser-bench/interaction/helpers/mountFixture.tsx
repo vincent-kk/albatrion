@@ -36,7 +36,9 @@ function CounterForm({
           [__IR0_LANE__ === 'E' ? 'FieldRenderer' : 'CustomFormTypeRenderer']:
             PassRenderer,
         }}
-        validationMode={fixture.validation ? 1 : 0}
+        {...(fixture.defaultValidation
+          ? {}
+          : { validationMode: fixture.validation ? 1 : 0 })}
         virtualization={fixture.virtualization || false}
         onValidate={(errors) => observation.delivery(errors.length)}
         onChange={() => {

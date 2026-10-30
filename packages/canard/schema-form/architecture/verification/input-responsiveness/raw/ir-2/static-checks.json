@@ -1,0 +1,86 @@
+{
+  "productBase": "317f215dc79d5a3892a9c2fbafceb18ccaa222dc",
+  "scope": "Measurement tooling and records only; no product source changes",
+  "preparation": [
+    {
+      "command": "yarn workspace @canard/schema-form build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @canard/schema-form-ajv8-plugin build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @winglet/common-utils build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @winglet/json build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @winglet/react-utils build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @winglet/json-schema build",
+      "exitCode": 0
+    }
+  ],
+  "diagnostics": [
+    {
+      "phase": "initial browser bundle preparation",
+      "outcome": "failed",
+      "reason": "Workspace winglet runtime outputs were absent; designated builds then supplied them. No install or fetch."
+    },
+    {
+      "phase": "initial typechecks",
+      "outcome": "failed",
+      "reason": "Optional authored schema property and pair row object typing; corrected before successful final checks."
+    }
+  ],
+  "fixtureRegression": {
+    "command": "yarn workspace @aileron/benchmark-form test fixtures/input-responsiveness/__tests__/heavy-validation.test.ts",
+    "baseline": {
+      "files": 1,
+      "tests": 6,
+      "failed": 6,
+      "reason": "Baseline fixture selector has no heavy-validation rows: wrong target, validation off, only 500 flat inputs, missing if shape and mount observation boundary."
+    },
+    "implementation": {
+      "files": 1,
+      "tests": 6,
+      "passed": 6,
+      "failed": 0
+    }
+  },
+  "checks": [
+    {
+      "command": "yarn workspace @aileron/benchmark-form test",
+      "files": 4,
+      "passed": 30,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form lint",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+      "exitCode": 0
+    }
+  ],
+  "smoke": {
+    "cases": 9,
+    "lanes": [
+      "L",
+      "E1"
+    ],
+    "warmup": 1,
+    "retainedPerLaneFixture": 1,
+    "outcome": "IR0_SMOKE_OK",
+    "formalSamples": 0
+  },
+  "FCA": "Not run: measurement-only IR-0 protocol explicitly excludes FCA scans; coordinator owns independent review."
+}

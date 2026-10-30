@@ -105,3 +105,26 @@ None 모드에서도 커밋 이펙트의 검증 루트 보유가 전체 AJV 스�
 Part B의 컨테이너 지연은 중첩 focus/select를 잃고 cx02를 두 React 프로젝트에서 실패시켰습니다. eager의 영구 노출 기록 부재는 프로덕션 캐시 재구축에서도 defer-once를 깨며, 렌더 스냅숏과 분리된 가변 예산은 시간 분할·폐기·재시도 때 같은 노드에 다른 결정을 낼 수 있습니다. 공개 threshold/eagerCount 문구도 새 의미를 담지 않았습니다. replace off는 manager null이므로 A·AB 모두 실패하고 on은 A부터 이미 통과하여 고정 관문 효과가 없습니다. nested on eager 89.7→33.8ms의 개선과 array eager 59.2→68.5ms·all-revealed 473.1→1154.8ms의 회귀를 함께 근거로 Part B를 채택하지 않습니다.
 
 후속 개정은 터미널만 지연, 컨테이너 계수만, 커밋 뒤 영구 reveal 기록, 렌더별 불변 허가 스냅숏과 예약·폐기·커밋 분리, 소유자가 결정한 옵션 계약 문구와 on 행 재측정이 필요합니다. reveal pump 하위 트리의 예산 제외는 미검증 가설입니다. 작은 폼의 threshold 30 미만 가지가 영향 없다는 앞선 문장은 AB의 작업 예산에서는 성립하지 않았습니다. 이번에 채택한 예산 없는 기존 코드에서는 가지 자식 수가 threshold 미만이면 게이트를 통과하지 않는 기존 의미가 다시 유지됩니다. 기본값은 바꾸지 않습니다.
+
+## D1 정정 — 2026-10-31
+
+IR-2 초안 독립 대조는 P1 1건과 P2 9건으로 실패했습니다. 이 절은 앞의 D1 초안을 정정하는 설계 v2이며 제품 구현 기록이 아닙니다. 초안의 `navigator.scheduling.isInputPending()` 사용을 철회합니다. 설계 대조 자료는 MDN에서 이 API가 deprecated이며 Scheduler 인터페이스로 대체되었음을 근거로 합니다.
+
+- P1: `exitFieldNodeChain`은 `deferMountValidation`이 false일 때만 `reportValidationFailure`를 설치합니다. 항상 지연되는 React 마운트를 쓰기 요청으로 바꾸기만 하면 컴파일 실패가 `onError`에 닿지 않아 ERROR-038·044를 위반합니다.
+- P2-a: if 가드의 형제 메타 스키마 컴파일 약 4ms는 남으므로 G 관문은 “첫 화면에 전체 스키마 컴파일 없음”으로 한정합니다.
+- P2-b: G는 `compileGuard`·`release`가 `compile`에 앞서 사본 루트를 받을 수 있게 하므로 공개 플러그인 순서 계약과 VALIDATE-044 보충이 필요합니다.
+- P2-c: 지연 엔트리의 `validate?`·`failure?`·`compiled` 가변 상태와 1회 컴파일·재시도 없음 규칙을 정의해야 합니다.
+- P2-d: G는 validation.cache·guard·retain-guard 시험 및 IR-1 수명·same-id 행의 기대를 바꿉니다.
+- P2-e: 마운트 전용 진입점은 write·engine·core에서 이름으로 내보내며 루트 Provider 소비처와 계약 확장을 기록해야 합니다.
+- P2-f: rAF와 100ms 타이머의 경주에 `done` 표식을 두어 정확히 한 번만 실행해야 합니다.
+- P2-g: 하위 트리 `node.validate()`가 공유 stamp·pending을 비워 전체 폼 쓰기 판정을 잃는 결함의 창을 D1이 넓히므로 pending 보존 고침이 필요합니다.
+- P2-h: 검증 시점 문서·원장 갱신 목록을 완성하고 VALIDATE-049를 대체됨으로 표시해야 합니다.
+- P2-i: jsdom 시험의 문제는 고정 매크로태스크 대기이므로 마이크로태스크 대체가 아니라 순서가 결정적인 도우미가 필요합니다.
+
+v2 슬롯은 `done`을 공유하고 실행 시 disposed 루트를 중단합니다. rAF가 없거나 문서가 숨겨졌으면 `scheduleCancelableMacrotask(run)`을 사용하고, 그 밖에는 rAF 뒤 같은 매크로태스크 예약과 `setTimeout(run, 100)`을 경주시킵니다. 쓰기 검증만 슬롯을 거치며 명시적 `node.validate()`·제출은 즉시 검증합니다. 마운트는 OnChange 확인 후 실패 reporter를 설치하고 검증 파동을 요청하는 전용 `dispatchMountValidation`으로 들어갑니다. 컴파일 실패의 마운트 표면은 rejected에서 sink로 바뀌므로 소유자 결정이 필요합니다.
+
+하위 트리 즉시 검증 중 `validationQueued`가 참이면 전체 폼 pending 요청을 보존합니다. 공용 시험 도우미는 `act` 안에서 rAF 한 번 뒤 `setImmediate` 한 번을 기다리고 Node에서는 `setImmediate`를 기다립니다. async-race 시험이 경주를 실제로 검증하도록 재작성하며, 기본 모드 compile 실패가 sink로 1회 보고되고 명시적 validate는 계속 거부됨을 확인합니다. 최소 한 프레임 동안 커밋 N+1 값과 커밋 N 오류가 함께 보이는 S3 지연은 결정 1에서 수용한 효과로 명시합니다.
+
+계약 기록 대상은 VALIDATE-049·046·048, ERROR-019·038·044·201, TEST-036, EVENT-028, SETTLE-008, design/03·05·07, ADR 0007·0008, 지식 문서 expressions·event-system·troubleshooting, 검증 DETAIL입니다. G를 함께 만들 때는 `validator.ts`·플러그인 형과 VALIDATE-044에 순서 변경을 명시합니다. `readValidationEntry`는 컴파일하지 않고 `assertValidationRootReady`만 가변 엔트리를 한 번 컴파일하며 가드 준비는 전체 컴파일을 일으키지 않습니다. 숨은 탭 타이머 제한은 미검증이고, 전체 컴파일 비용은 첫 화면 뒤 긴 작업으로 이동하므로 이른 입력이 여전히 막힐 수 있습니다. None 모드의 다른 스키마 reset도 계속 컴파일할 수 있습니다.
+
+구현 여부는 먼저 측정으로 결정합니다. AJV8 OnChange에서 array-1000·nested-d5-f4·flat-2000 각각 실제 20키 비연타 100ms를 L/단계 head E1으로 비교하고, E1 키 처리 p95가 16.67ms를 넘거나 검증 도착 p95가 33.4ms를 넘는 행이 하나라도 있으면 D1이 발동합니다. 모두 선 이하면 이번 단계에서는 D1을 만들지 않습니다. 연타와 검증 기본 모드 flat-500·nested·if-flat-500 마운트는 보고 전용입니다. 어떤 결과에서도 IR-2 측정 작업은 D1이나 G를 구현하지 않습니다.

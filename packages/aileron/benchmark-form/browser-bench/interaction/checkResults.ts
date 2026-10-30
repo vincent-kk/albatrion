@@ -8,6 +8,7 @@ import { gunzipSync } from 'node:zlib';
 import ir0Cases from '../../fixtures/input-responsiveness/cases.json';
 import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
 import { checkDerivedRecords } from './helpers/checkDerivedRecords';
+import { checkHeavyValidationResults } from './helpers/checkHeavyValidationResults';
 import { summarizePage } from './helpers/summarizePage';
 import { summarizePairs } from './helpers/summarizePairs';
 import { summarizeResults } from './helpers/summarizeResults';
@@ -18,6 +19,10 @@ const repository = path.resolve('../../..');
 const destination = path.resolve(
   '../../canard/schema-form/architecture/verification/input-responsiveness',
 );
+if (process.argv.includes('--stage=ir-2')) {
+  checkHeavyValidationResults(destination, process.argv.includes('--write'));
+  process.exit(0);
+}
 const stage = process.argv.includes('--stage=ir-1');
 const backfill = process.argv.includes('--suite=backfill');
 const quietGates = process.argv.includes('--suite=quiet-gates');
