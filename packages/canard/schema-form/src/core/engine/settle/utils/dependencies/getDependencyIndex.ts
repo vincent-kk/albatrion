@@ -502,6 +502,8 @@ class DependencyIndex {
    * @param metrics - Optional record-mode insertion counter
    * @param settlement - Call identity isolating the ancestor-step memo
    * @param runtime - Optional root runtime owning bounded dynamic syntax
+   * @param resolvedName - Optional decoded name already checked by the registering caller
+   * @param resolvedPath - Optional canonical changed path already built by that caller
    * @returns Bound owners, state-only owners and unbound templates for each query phase
    */
   affectedByPresence(
@@ -510,6 +512,8 @@ class DependencyIndex {
     metrics?: { ownerInsertions: number },
     settlement?: { dependencyPresenceMemo?: DependencyPresenceMemo },
     runtime?: object,
+    resolvedName?: string,
+    resolvedPath?: string,
   ): {
     owners: Set<string>;
     stateOnly: Set<string>;
@@ -522,10 +526,10 @@ class DependencyIndex {
     const directTemplates = new Set<string>();
     if (!this.root)
       return { owners, stateOnly, outerTemplates, directTemplates };
-    const childName = parsePointerSegment(childSegment);
+    const childName = resolvedName ?? parsePointerSegment(childSegment);
     if (typeof childName !== 'string')
       return { owners, stateOnly, outerTemplates, directTemplates };
-    const changedPath = appendSegment(hostPath, childName);
+    const changedPath = resolvedPath ?? appendSegment(hostPath, childName);
     const changedSegments = this.pathSegments(changedPath, runtime);
     const ancestorOwners = new Set<string>();
     let memo = settlement?.dependencyPresenceMemo;
