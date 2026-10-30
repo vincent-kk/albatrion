@@ -48,7 +48,7 @@ export const FieldInputSlot = memo(
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
-    const ChildFields = useChildFields(
+    const [ChildFields, hydrationCommitRef] = useChildFields(
       node,
       NodeProxy,
       mountedChildren,
@@ -60,7 +60,12 @@ export const FieldInputSlot = memo(
       useInputControlContext();
     const isLive = useLiveNode(node);
     const [ref, generation, handleCompositionStart, handleCompositionEnd] =
-      useFieldInputControl(node, mountedChildren, commitTerminalChildren);
+      useFieldInputControl(
+        node,
+        mountedChildren,
+        commitTerminalChildren,
+        hydrationCommitRef,
+      );
     const defaultValue = useMemorize(() => node.value, [node, generation]);
     const accepts = useCallback(
       () =>

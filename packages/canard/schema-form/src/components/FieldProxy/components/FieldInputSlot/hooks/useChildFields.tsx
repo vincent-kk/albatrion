@@ -37,7 +37,8 @@ const getNoManager = () => null;
  * @param NodeProxy - FieldProxy
  * @param mountedChildren - Count of committed child proxies, kept by each child's layout effect
  * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
- * @returns ChildField[]
+ * @returns Child fields and an optional ref that the input's existing layout
+ *          effect marks true before passive snapshot consistency checks
  *
  * @remarks `node.children` is read during render and kept consistent by the
  *          input's combined `useSyncExternalStore` tracker, so
@@ -45,7 +46,7 @@ const getNoManager = () => null;
  *          (concurrent mount gap) still force a resync render instead of
  *          being lost.
  *          Hydration reads a null manager through the server snapshot;
- *          a layout effect keeps the detector's client snapshot null before
+ *          the input's commit keeps the detector's client snapshot null before
  *          passive consistency checks, avoiding a hydration-only re-render.
  *          Real child commits are recorded as revealed so later remounts
  *          cannot replace them with placeholders.
@@ -55,7 +56,7 @@ export const useChildFields = (
   NodeProxy: ComponentType<FieldProxyProps>,
   mountedChildren: RefObject<number>,
   terminalChildren: ChildField[],
-): ChildField[] => {
+): readonly [ChildField[], RefObject<boolean> | undefined] => {
   const children = node.children;
 
   const { manager: formManager } = useVirtualizationContext();
@@ -69,13 +70,9 @@ export const useChildFields = (
     getSnapshot,
     getNoManager,
   );
-  useLayoutEffect(() => {
-    if (snapshot === null && formManager !== null) hydratedRef.current = true;
-  }, [snapshot, formManager]);
-
   const cache = useLazyConstant(() => new Map<FieldNode, ChildField>());
 
-  return useMemo(() => {
+  const ChildFields = useMemo(() => {
     if (isTerminalNode(node) || children === null) return terminalChildren;
     const manager = snapshot ?? (hydratedRef.current ? formManager : null);
     const gateManager = manager?.forBranch(children.length) ?? null;
@@ -152,4 +149,8 @@ export const useChildFields = (
     terminalChildren,
     mountedChildren,
   ]);
+  return [
+    ChildFields,
+    snapshot === null && formManager !== null ? hydratedRef : undefined,
+  ];
 };

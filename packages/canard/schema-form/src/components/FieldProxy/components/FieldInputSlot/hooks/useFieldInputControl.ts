@@ -50,12 +50,15 @@ const MOUNTED_CHILDREN = 2;
  * @param mountedChildren - Count of committed child proxies owned by the input
  * @param commitTerminalChildren - Commit marker from `useTerminalChildren`; the focus/select layout
  *        effect calls it first, so the input keeps a single layout effect of its own
+ * @param hydrationCommitRef - Hydration detector to settle in that same layout
+ *        effect before React checks the server snapshot in its passive phase
  * @returns Container ref, input key and composition handlers that preserve the composing input
  */
 export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
   mountedChildren: RefObject<number>,
   commitTerminalChildren: () => void,
+  hydrationCommitRef?: RefObject<boolean>,
 ) => {
   const generation = useRef(node.revision(FieldNodeEventType.RequestRefresh));
   const [, releaseComposition] = useReducer((value: number) => value + 1, 0);
@@ -104,6 +107,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
   }, [node, mountedChildren]);
   useLayoutEffect(() => {
     commitTerminalChildren();
+    if (hydrationCommitRef) hydrationCommitRef.current = true;
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & FieldNodeEventType.RequestFocus)
@@ -114,7 +118,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
       }
     });
     return unsubscribe;
-  }, [node, ref, commitTerminalChildren]);
+  }, [node, ref, commitTerminalChildren, hydrationCommitRef]);
   return [
     ref,
     generation.current,
