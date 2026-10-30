@@ -37,6 +37,11 @@ const execution = Object.fromEntries(
   [
     'run.mjs',
     'worker.mjs',
+    'helpers/setupProbeOperation.mjs',
+    '../iv-3-0/helpers/setupOperation.mjs',
+    '../iv-3-0/helpers/runBlocks.mjs',
+    '../b9-0/operation.mjs',
+    '../../../design-optimization/tools/fixtures.mjs',
     'helpers/observeMeasurement.mjs',
     'helpers/summarizeProbe.mjs',
     '../window/waitForQuietProcess.mjs',

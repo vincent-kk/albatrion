@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { digest, json } from '../b9-0/files.mjs';
 import { runBlocks } from '../iv-3-0/helpers/runBlocks.mjs';
 import { sanitizeProfile } from '../iv-3-0/helpers/sanitizeProfile.mjs';
-import { setupOperation } from '../iv-3-0/helpers/setupOperation.mjs';
+import { setupProbeOperation } from './helpers/setupProbeOperation.mjs';
 import { summarizeAllocations } from './helpers/summarizeAllocations.mjs';
 
 const [root, lane, row, mode, repeatText] = process.argv.slice(2);
@@ -26,7 +26,7 @@ assert.equal(inputs.node, process.version);
 const engine = await import(
   pathToFileURL(path.join(root, lane, 'engine.mjs')).href
 );
-const operation = await setupOperation(row, engine);
+const operation = await setupProbeOperation(row, engine);
 if (mode === 'smoke') {
   operation.run();
   operation.check();

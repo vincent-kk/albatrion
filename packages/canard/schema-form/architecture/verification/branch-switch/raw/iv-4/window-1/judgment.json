@@ -1,0 +1,180 @@
+{
+  "productHead": "c153d5b38bf1a3090664f818b6c36bec37f34387",
+  "baselineHead": "c5cb20f878c0f5950f449b4d284320ffc1b0a568",
+  "rows": 22,
+  "processes": 440,
+  "quality": {
+    "kind": "legacy",
+    "ratio": 1.000299105737012,
+    "passed": true,
+    "assessedRows": 18,
+    "rows": [
+      {
+        "id": "single-flat-1000",
+        "ratio": 1.0050105212927396
+      },
+      {
+        "id": "mount-oneOf-80",
+        "ratio": 1.0056530646791593
+      },
+      {
+        "id": "mount-flat-1000",
+        "ratio": 0.9967907289806861
+      },
+      {
+        "id": "mount-nested-d6-f4",
+        "ratio": 0.9885117604707854
+      },
+      {
+        "id": "single-nested-d6-f4",
+        "ratio": 0.9989882590996644
+      },
+      {
+        "id": "switch-oneOf-80",
+        "ratio": 1.0061187328228554
+      },
+      {
+        "id": "bulk-flat-2000",
+        "ratio": 1.0108815856731574
+      },
+      {
+        "id": "bulk-nested-d6-f4",
+        "ratio": 0.9967138294918487
+      },
+      {
+        "id": "switch-nested-oneOf-20",
+        "ratio": 1.0073940437644344
+      },
+      {
+        "id": "switch-siblings-0",
+        "ratio": 0.9909016753473529
+      },
+      {
+        "id": "switch-siblings-100",
+        "ratio": 0.9909475353506491
+      },
+      {
+        "id": "switch-siblings-1000",
+        "ratio": 1.0014071019321364
+      },
+      {
+        "id": "switch-siblings-4000",
+        "ratio": 1.0212344984129267
+      },
+      {
+        "id": "leaf-gate-250",
+        "ratio": 0.9829156531086825
+      },
+      {
+        "id": "leaf-gate-1000",
+        "ratio": 0.9969469533138997
+      },
+      {
+        "id": "leaf-gate-4000",
+        "ratio": 1.0045960411725934
+      },
+      {
+        "id": "leaf-gate-8000",
+        "ratio": 1.0004730718090276
+      },
+      {
+        "id": "switch-payload-12",
+        "ratio": 1.0001251396649966
+      }
+    ],
+    "omittedRows": [
+      {
+        "id": "switch-discriminator-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "switch-if-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "wave-1000",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "single-flat-1000-subscribed",
+        "reason": "No compatible legacy lane"
+      }
+    ]
+  },
+  "rawExchangeUs": -15537.440499997474,
+  "firstWriteAdditionUs": 2.291999999897598,
+  "exchangeUs": -15535.148499997576,
+  "regressions": [
+    "switch-siblings-4000"
+  ],
+  "test073Regressions": [],
+  "heaps": [
+    {
+      "runtime": "node",
+      "A": {
+        "bytesPerNode": 1438.9714057188562,
+        "samples": [
+          1900.3271345730855,
+          1456.1999600079985,
+          1431.3809238152369,
+          1438.9810037992402,
+          1438.9714057188562,
+          1437.7908418316338,
+          1433.487702459508
+        ]
+      },
+      "B": {
+        "bytesPerNode": 1439.2145570885823,
+        "samples": [
+          1901.506098780244,
+          1451.6840631873624,
+          1431.372925414917,
+          1439.2145570885823,
+          1436.616676664667,
+          1440.2319536092782,
+          1433.3661267746452
+        ]
+      },
+      "Amax": 1900.3271345730855,
+      "Bmedian": 1439.2145570885823,
+      "passed": true
+    },
+    {
+      "runtime": "bun",
+      "A": {
+        "bytesPerNode": 2253.0805838832234,
+        "samples": [
+          2252.5342931413716,
+          2253.516696660668,
+          2253.547890421916,
+          2252.8438312337535,
+          2252.832633473305,
+          2253.0805838832234,
+          2253.7662467506498
+        ]
+      },
+      "B": {
+        "bytesPerNode": 2256.5462907418514,
+        "samples": [
+          2255.9480103979204,
+          2256.1815636872625,
+          2256.850229954009,
+          2256.7060587882424,
+          2256.6588682263546,
+          2256.5462907418514,
+          2256.290941811638
+        ]
+      },
+      "Amax": 2253.7662467506498,
+      "Bmedian": 2256.5462907418514,
+      "passed": false
+    }
+  ],
+  "deviceCompleted": true,
+  "method": "IV-4: strict negative weighted exchange including nonnegative cold-first-write additions; zero outside-width regressions on any row, including mounts; TEST-073 zero; Node and Bun B median <= A maximum. IV-2-specific stage predicates are reported only as diagnostics.",
+  "execution": {
+    "bytes": 5248,
+    "sha256": "5c6889e199be3a53bee97f23244248b461413776720b10264833a6a4be1c64f2"
+  },
+  "adoptable": false
+}

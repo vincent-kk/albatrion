@@ -1,0 +1,94 @@
+{
+  "head": "c153d5b38bf1a3090664f818b6c36bec37f34387",
+  "scan": {
+    "summary": {
+      "projectRoot": "<repo>/packages/canard/schema-form",
+      "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+      "adapterIds": [
+        "ecmascript"
+      ],
+      "totalNodes": 376,
+      "depth": 9,
+      "nodesByType": {
+        "organ": 296,
+        "fractal": 80
+      },
+      "violationCount": 201,
+      "certainty": "indeterminate",
+      "filesOutsideFactsScope": 0
+    }
+  },
+  "validate": {
+    "summary": {
+      "projectRoot": "<repo>/packages/canard/schema-form",
+      "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+      "mode": "project",
+      "scopes": [
+        "documents",
+        "nodes",
+        "entry-points",
+        "boundaries",
+        "dag",
+        "verification"
+      ],
+      "findingCount": 202,
+      "passed": 3002,
+      "failed": 12,
+      "skipped": 1
+    }
+  },
+  "verification": {
+    "summary": {
+      "projectRoot": "<repo>/packages/canard/schema-form",
+      "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+      "fileCount": 742,
+      "specDocument": {
+        "fileCount": 14,
+        "knownCaseCount": 3,
+        "caseCap": 15
+      },
+      "testRecord": {
+        "fileCount": 728,
+        "knownCaseCount": 4458,
+        "caseCap": 32
+      },
+      "fragmentationCount": 0,
+      "violationCount": 21,
+      "certainty": "indeterminate"
+    }
+  },
+  "findings": 202,
+  "findingThreshold": 202,
+  "baselineFindings": 202,
+  "newFindings": 0,
+  "removedFindings": 0,
+  "verdict": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "facts": {
+    "exact": 1671,
+    "covered": 1671,
+    "unresolved": 0,
+    "scope": "default adapter source scope"
+  },
+  "artifacts": {
+    "scan": {
+      "originalSha256": "3a5653c42ee2f5140790ab8760162e9cbdd63ecb54a32f76831f83377c6b74dc",
+      "portableSha256": "571ce423a222cd961dff6ad7e7784601205e78410d49857c1a8f694507ef1b00",
+      "pathRedacted": true
+    },
+    "validate": {
+      "originalSha256": "2e132df06e84fcf0a4465d686b3ac35c8bfa96571cc8740562cf3fafb198eab7",
+      "portableSha256": "8f99b0a962a786f77bd666b5285161adc6177aa32d3b384e238d4e479723e359",
+      "pathRedacted": true
+    },
+    "verification": {
+      "originalSha256": "0ba6adadee9c0d898951427a94f8de961b15041bb68dddc4e0a4e44b33f94674",
+      "portableSha256": "9b27bcb4797ed1ac00772aecf18af98abc156f0312aa430ee1d091c64539732b",
+      "pathRedacted": true
+    }
+  },
+  "diagnosticCodes": {
+    "detail-document-contract": 176,
+    "intent-document-contract": 1
+  }
+}
