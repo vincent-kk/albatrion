@@ -15,31 +15,40 @@ import { summarizeProbe } from './helpers/summarizeProbe.mjs';
 const [root, mode, targetsText, agentText] = process.argv.slice(2);
 const agentPid = Number(agentText);
 assert.ok(Number.isSafeInteger(agentPid) && agentPid > 0);
-assert.ok(['probe', 'allocation', 'smoke'].indexOf(mode) !== -1);
+assert.ok(['probe', 'reprobe', 'allocation', 'smoke'].indexOf(mode) !== -1);
 const targets = targetsText.split(',');
+const plain = mode === 'probe' || mode === 'reprobe';
+const repetitions = mode === 'reprobe' ? 5 : 3;
 const protectedRows = [
   'switch-oneOf-80',
   'switch-siblings-0',
   'switch-payload-12',
   'single-flat-1000',
 ];
-const rows =
-  mode === 'probe'
-    ? [...targets, ...protectedRows].filter(
-        (row, index, all) => all.indexOf(row) === index,
-      )
-    : targets;
+const rows = plain
+  ? [...targets, ...protectedRows].filter(
+      (row, index, all) => all.indexOf(row) === index,
+    )
+  : targets;
 const marker = path.join(root, mode + '-started.json');
 assert.ok(!fs.existsSync(marker), 'Never repeat a diagnostic or probe root');
-json(marker, { mode, targets, node: process.version });
 const here = path.dirname(fileURLToPath(import.meta.url));
+const execution = Object.fromEntries(
+  [
+    'run.mjs',
+    'worker.mjs',
+    'helpers/observeMeasurement.mjs',
+    'helpers/summarizeProbe.mjs',
+    '../window/waitForQuietProcess.mjs',
+    '../window/helpers/sampleProcessCpu.mjs',
+  ].map((name) => [name, digest(path.resolve(here, name))]),
+);
+json(marker, { mode, targets, node: process.version, execution });
 const records = [];
 for (const row of rows)
-  for (let repeat = 0; repeat < (mode === 'probe' ? 3 : 1); repeat++)
-    for (const lane of mode === 'probe' ? ['A', 'B'] : ['A']) {
-      const label = [row, lane, repeat, mode === 'probe' ? 'plain' : mode].join(
-        '-',
-      );
+  for (let repeat = 0; repeat < (plain ? repetitions : 1); repeat++)
+    for (const lane of plain ? ['A', 'B'] : ['A']) {
+      const label = [row, lane, repeat, plain ? 'plain' : mode].join('-');
       if (mode !== 'smoke' && !records.length) {
         const quiet = await observeMeasurementStart(agentPid);
         json(path.join(root, 'raw.noindex', label + '-quiet.json'), quiet);
@@ -65,7 +74,7 @@ for (const row of rows)
           root,
           lane,
           row,
-          mode === 'probe' ? 'plain' : mode,
+          plain ? 'plain' : mode,
           String(repeat),
         ],
         {
@@ -108,10 +117,11 @@ for (const row of rows)
         );
       console.log('IV_4_PROCESS_OK ' + label);
     }
-if (mode === 'probe') {
-  const summary = summarizeProbe(records, targets);
+if (plain) {
+  const summary = summarizeProbe(records, targets, repetitions);
   json(path.join(root, 'probe.json'), {
     ...summary,
+    execution,
     inputs: Object.fromEntries(
       ['A', 'B'].map((lane) => [
         lane,

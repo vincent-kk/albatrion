@@ -94,3 +94,26 @@ assert.equal(
   96,
 );
 console.log('IV_4_TOOLS_OK');
+
+const five = [];
+let freshPid = 100;
+for (const id of ['target', 'protected'])
+  for (let repeat = 0; repeat < 5; repeat++)
+    for (const lane of ['A', 'B'])
+      five.push({
+        ...structuredClone(records[0]),
+        row: id,
+        repeat,
+        lane,
+        pid: freshPid++,
+        blocks: Array.from({ length: 200 }, () => ({
+          startUs: 0,
+          endUs: lane === 'A' ? 1000 + repeat : 800,
+          switches: 100,
+        })),
+      });
+assert.equal(summarizeProbe(five, ['target'], 5).kept, true);
+assert.equal(summarizeProbe(five, ['target'], 5).processes, 20);
+assert.throws(() => summarizeProbe(five, ['target']));
+assert.throws(() => summarizeProbe(five.slice(1), ['target'], 5));
+console.log('IV_4_FIVE_REPETITIONS_OK');

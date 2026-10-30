@@ -9,7 +9,8 @@ import { median } from '../../b9-1/helpers/median.mjs';
  * @returns Independently reproducible medians, noise, and a keep/drop verdict.
  * @throws For missing rows, duplicate processes or a changed measurement protocol.
  */
-export function summarizeProbe(records, targets) {
+export function summarizeProbe(records, targets, repetitions = 3) {
+  assert.ok(repetitions === 3 || repetitions === 5);
   const pids = records.map((record) => record.pid);
   assert.ok(pids.every((pid, index) => pids.indexOf(pid) === index));
   const ids = records
@@ -20,14 +21,10 @@ export function summarizeProbe(records, targets) {
     const group = records.filter((record) => record.row === id);
     assert.deepEqual(
       group.map(({ lane, repeat }) => [lane, repeat]),
-      [
-        ['A', 0],
-        ['B', 0],
-        ['A', 1],
-        ['B', 1],
-        ['A', 2],
-        ['B', 2],
-      ],
+      Array.from({ length: repetitions }, (_, repeat) => [
+        ['A', repeat],
+        ['B', repeat],
+      ]).flat(),
     );
     const values = { A: [], B: [] };
     for (const record of group) {
@@ -60,6 +57,7 @@ export function summarizeProbe(records, targets) {
   });
   return {
     targets,
+    ...(repetitions === 5 ? { repetitions } : {}),
     rows,
     maximumNoise: Math.max(...rows.map((row) => row.noise)),
     processes: records.length,

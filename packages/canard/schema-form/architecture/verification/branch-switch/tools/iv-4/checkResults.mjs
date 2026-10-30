@@ -69,11 +69,17 @@ if (mode === '--allocation') {
   for (const candidate of ledger) {
     assert.ok(
       candidate.reason &&
-        ['kept', 'dropped', 'excluded'].indexOf(candidate.verdict) !== -1,
+        ['kept', 'dropped', 'excluded', 'held'].indexOf(candidate.verdict) !==
+          -1,
     );
     if (candidate.probe) {
-      const { records, inputs, ...summary } = compressed(candidate.probe);
-      assert.deepEqual(summary, summarizeProbe(records, summary.targets));
+      const { records, inputs, execution, ...summary } = compressed(
+        candidate.probe,
+      );
+      assert.deepEqual(
+        summary,
+        summarizeProbe(records, summary.targets, summary.repetitions ?? 3),
+      );
       assert.equal(candidate.verdict === 'kept', summary.kept);
       for (const lane of ['A', 'B']) {
         const file = candidate.probe.replace(
