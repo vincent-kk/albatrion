@@ -3,14 +3,16 @@ import {
   type MemoExoticComponent,
   type RefObject,
   memo,
+  useCallback,
   useLayoutEffect,
   useMemo,
+  useSyncExternalStore,
 } from 'react';
 
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import {
   useConstant,
   useLazyConstant,
-  useOnUnmount,
   useReference,
 } from '@winglet/react-utils/hook';
 
@@ -21,6 +23,12 @@ import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildFieldProps } from '@/schema-form/types';
 
 import type { AdditionalChildNodeProperties, ChildField } from '../type';
+
+/** The form manager is fixed for this hook's lifetime; no notifications are needed. */
+const subscribeNever = () => NOOP_FUNCTION;
+
+/** Server and hydration renders mount every child before enabling client gating. */
+const getNoManager = () => null;
 
 /**
  * Create child fields for the given FieldNode
@@ -35,6 +43,9 @@ import type { AdditionalChildNodeProperties, ChildField } from '../type';
  *          `UpdateChildren` deliveries landing between render and commit
  *          (concurrent mount gap) still force a resync render instead of
  *          being lost.
+ *          Hydration reads a null manager through the server snapshot;
+ *          committed children are recorded as revealed so later remounts
+ *          cannot replace them with placeholders.
  */
 export const useChildFields = (
   node: FieldNode,
@@ -44,14 +55,23 @@ export const useChildFields = (
 ): ChildField[] => {
   const children = node.children;
 
-  const { manager } = useVirtualizationContext();
+  const { manager: formManager } = useVirtualizationContext();
+  const getManager = useCallback(
+    () => (isTerminalNode(node) ? null : formManager),
+    [node, formManager],
+  );
+  const manager = useSyncExternalStore(
+    subscribeNever,
+    getManager,
+    getNoManager,
+  );
 
   const cache = useLazyConstant(() => new Map<FieldNode, ChildField>());
-  useOnUnmount(() => cache.clear());
 
   return useMemo(() => {
     if (isTerminalNode(node) || children === null) return terminalChildren;
     const gateManager = manager?.forBranch(children.length) ?? null;
+    const revealLedger = manager === null ? formManager : null;
     const ChildFields: ChildField[] = [];
     for (const node of children) {
       const key = String(cache.size);
@@ -74,6 +94,7 @@ export const useChildFields = (
           }: ChildFieldProps) => {
             useLayoutEffect(() => {
               mountedChildren.current++;
+              revealLedger?.markRevealed(node);
               return () => {
                 mountedChildren.current--;
               };
@@ -118,6 +139,7 @@ export const useChildFields = (
     children,
     NodeProxy,
     manager,
+    formManager,
     cache,
     terminalChildren,
     mountedChildren,

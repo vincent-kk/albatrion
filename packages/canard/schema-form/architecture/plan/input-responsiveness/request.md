@@ -81,3 +81,9 @@ IR-1은 Part A만 채택하고 Part B는 중첩 focus/select·defer-once·렌더
 README·영어/한국어 SPECIFICATION·에이전트 arrays-and-scale 지식에 IR-1의 virtualization 조건·첫 화면과 전체 노출 비용, IR-2의 검증 OnRequest·입력 containment, IR-0의 소비자 startTransition 수치를 연결했습니다. 제품 소스는 바꾸지 않았습니다. React 18/19 모두 IO 부재 SSR의 입력 40개가 IO 활성 hydration 뒤 입력 20개와 placeholder 20개로 바뀌고 서버 input 재사용 0개인 mismatch를 확인했습니다. on 결함 시험은 패키지 관례에 따라 이유가 포함된 it.fails로 실행하며, off 대조군은 일반 통과 시험으로 보존했습니다. 결함을 고칠 때까지 서버 렌더링 페이지에서는 virtualization을 켜지 않습니다. 상세 관측·미결 항목 IR4-SSR-01·관문은 [IR-4 결과](../../verification/input-responsiveness/ir-4-results.md)에 기록합니다.
 
 D1을 이번 단계에서 구현하지 않고 virtualization 기본값을 off로 유지하는 **코디네이터 권고**를 따랐습니다. 두 사안은 아직 소유자 결정이 열려 있으며 이 문서 추가는 소유자 확정이나 기본값 변경이 아닙니다. 병합 전 코디네이터의 독립 검증을 거칩니다.
+
+## IR-5 하이드레이션 보존 가상화 — 2026-10-31
+
+| 단계 | 결과 | 남은 결정·위험 |
+| --- | --- | --- |
+| IR-5 | Provider를 유지하고 useChildFields의 서버 스냅숏·StrictMode 캐시 수명·노출 원장으로 일반 SSR 결함을 수정했습니다. React 18/19 서버 입력 보존·중첩 remount·enabled 전환·입력 교체와 hydration 뒤 배열 추가·첫 CSR 게이팅을 검증했습니다. unit 4012, render/react18 각 778, verify 4834, Storybook 251, strict production 21시험 및 lint·typecheck·build가 통과했고 공개 export·type·signature 의미 차이는 0입니다. 공개 props 선언은 승인한 JSDoc 주석만 바뀝니다. FCA 새 finding·diagnostic은 기준 대비 0이며 기존 절대 FAIL·불확정 증거는 유지합니다. | React 18 사용자 브랜치 입력 내부의 미완료 Suspense는 client rendering으로 전환되는 잔여 위험 IR5-SUSPENSE-18로 기대 실패를 계속 실행합니다. 소유자는 이번 단계 수정 여부에 아직 답하지 않았고 코디네이터 권고·디스패치에 따라 진행했습니다. D1과 가상화 기본 off 결정도 별도이며, 결과는 [IR-5 기록](../../verification/input-responsiveness/ir-5-results.md)에 보존하고 독립 검토로 인계합니다. |

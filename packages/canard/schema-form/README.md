@@ -120,7 +120,7 @@ interface FormProps<
    * Render-level virtualization (deferred mount) for large forms (default: off)
    *  - `true`: Enable with default options
    *  - `VirtualizationOptions`: Enable with custom options
-   *  - Requires IntersectionObserver; silently disabled when unavailable (e.g. SSR)
+   *  - Requires IntersectionObserver for gating; SSR renders every field and hydrates unchanged
    */
   virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */
@@ -2455,7 +2455,7 @@ Placeholders are unstyled by default (an empty box carrying `data-path` and a `d
 
 > **Caveats**
 >
-> - Requires `IntersectionObserver`; when unavailable the option is silently ignored and everything mounts eagerly. Do not enable it in SSR/hydration apps — the server renders all fields while the client would gate them, causing a hydration mismatch.
+> - Requires `IntersectionObserver` for gating; browsers without it render everything eagerly and emit a development warning. On server-rendered pages every field renders on the server and hydrates unchanged; gating applies to branches and children added after hydration.
 > - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `controls.visible` render no placeholder.
 > - With `backfill: VirtualizationBackfill.None`, screen readers, tab order past the mounted range, and browser autofill only see fields once they are scrolled into view; the default `Idle` backfill restores the full DOM within a few idle frames.
 
@@ -2469,7 +2469,7 @@ Enable `virtualization` for branches with at least `threshold` children when str
 | nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
 | array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
 
-Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. [IR-4](./architecture/verification/input-responsiveness/ir-4-results.md) confirms a hydration mismatch on React 18/19 for a branch of 40 children with threshold 30 and eagerCount 20: 40 server inputs become 20 inputs plus 20 placeholders, replacing the server DOM. Do not enable on server-rendered pages until the defect is fixed. The default remains off.
+Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. In React 18, a dehydrated Suspense boundary inside a custom branch input may still switch to client rendering. See [IR-5](./architecture/verification/input-responsiveness/ir-5-results.md). The default remains off.
 
 - **Validation:** cost grows with schema size. The desktop Chromium flat-2000 [IR-2 diagnosis](./architecture/verification/input-responsiveness/ir-2-results.md#원인-분해-진단코디네이터-2026-10-31) attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
 - **Custom input styling:** in that 2000-input diagnosis, `input { contain: strict; width: 153px; height: 21px; }` cut forced layout per keystroke from 2.5–3.8 ms median to 0.42–0.47 ms median; a plain block wrapper did not help. Give contained inputs an explicit size and check your layout.
