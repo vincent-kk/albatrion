@@ -439,3 +439,5 @@ A `c5cb20f87`, B `90cc137e0`의 새 불변 root에서 smoke·실제 CLI rehearsa
 `877f4215f`에서 typecheck·lint가 통과해 `IV_4_STATIC_OK`를 출력했고 unit608파일4006건+기존todo1이 통과했습니다. [새 경량 관문과 로그 해시](raw/iv-4/owner-exception/closing-checks/checks.json)를 보존합니다. 최종 src tree와 architecture 제외 패키지 diff(c153d5b38)=0도 확인했습니다. [c153 재사용 관문 명세](raw/iv-4/owner-exception/reused-c153/manifest.json)에 build·나머지 네 프로젝트·verify·선언·격리·배달·FCA의 유효한 동일 소스 기록을 연결했습니다. 공개 선언 차이0, 배달79+7장면 차이0, 격리2384파일, FCA202개(신규0, 기존 FAIL·indeterminate)는 c153 기록을 인용합니다. 추가 FCA·성능 측정은0회입니다.
 
 최종 제품은 소유자가 예외 채택한 창1 다섯 cut과 같습니다. 완료 탐침21회600프로세스(그중 오염 가능60개 미사용), 실패 실행 완료3개·상한 종료1개, 두 정식 창880 paired 프로세스와 모든 원시·기각 사유를 보존했습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `c73582d4d3bb`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

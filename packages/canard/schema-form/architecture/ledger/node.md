@@ -1284,3 +1284,5 @@
 - 닫은 사람: 소유자 답(`reviews/round-462-owner-answers.md:9-10,14-17`), 편집자 결정(462라운드, `reviews/round-462-closing.md` 462C-02·03)
 - 라운드: 462
 - 까닭: `reviews/round-462-owner-answers.md:15`
+
+464라운드 가지 정리 보충: D2-P5 후보 `4681c0aff`의 분기점 대비 구현·시험·DETAIL은 [본선 보존물](../_archive/branches/README.md)의 `4681c0aff635.patch.gz`에 있습니다. 가지 자체를 유지해야 읽을 수 있는 자료로 남기지 않습니다.

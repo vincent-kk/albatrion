@@ -93,3 +93,5 @@ FAIL 사유는 판정 장치 하나입니다. (a)가 범위 표 생성 비용을
 - cat, sed, grep, head, ls, find, tr, paste(소스, 시험, DETAIL, 장치, 결과 문서, 커밋된 원시)
 - gzip -dc(커밋된 probe와 시험 로그 읽기)
 - 빌드, 시험, lint, typecheck, node, yarn은 실행하지 않았습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `0cc800d288c9`, `19353b1d2d9a`, `63c4c923573a`의 필요한 내용은 [본선 보존물](../../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

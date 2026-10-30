@@ -395,3 +395,9 @@ S9의 native 포함 배타 귀속은 affectedByPresence14,980·collect9,189·reg
 ### Ⅳ-5 — 이정표 재측정
 
 [세 레인22행 재측정](../../verification/branch-switch/iv-5-results.md)의 E/L은 switch-oneOf-80 3.335배 · switch-siblings-0 3.614배 · switch-payload-12 1.644배 · switch-nested-oneOf-20 7.374배입니다. E/S를 창 내부 앵커로 비교하며 창 사이 절대 µs는 비교하지 않습니다. 도달선 판정은 소유자 대기입니다.
+
+### 마감 — 대규모 개편 없이 현재 상한으로 닫음(2026-10-30)
+
+소유자는 Ⅳ-5 뒤 "그래 이게 현재로선 상한 같네. 1로 가자. 마감 진행"으로 선택지 1을 채택했습니다. 설계 Ⅳ는 대규모 개편 없이 현재 상한에서 닫습니다. 주요 E/L은 oneOf-80 **3.335배**, siblings-0 **3.614배**, payload-12 **1.644배**, nested-oneOf-20 **7.374배**입니다. 이는 1.5배 관문 통과 선언이 아니며 철회한 이론상 바닥을 되살리지 않습니다. 단계 시작 대비 Bun 힙 +31.8 B/node(+1.4%)를 함께 기록하고, 새 공개 객체 발급·떼어진 참조 불변은 유지합니다. 전체 판정과 React 보고는 [단계 마감 결과](../../verification/branch-switch/closing-results.md), 원문과 결정은 [464라운드](../../reviews/round-464-owner-answers.md)와 [닫기](../../reviews/round-464-closing.md)에 있습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `67405376f122`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

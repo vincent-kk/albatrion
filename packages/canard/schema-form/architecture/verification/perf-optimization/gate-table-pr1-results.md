@@ -196,3 +196,5 @@ Error를 직렬화할 때 `toJSON()` 적용 뒤의 값 대신 replacer의 원본
 | single | flat-1000 | 0.0364 | 0.0381 | 0.0362 | -0.69% | -5.13% | +17.79% | 동치 범위 안 |
 
 원시 표본과 초기 3바퀴·추가 12바퀴별 값은 measure/remeasure-window.json, measure/remeasure-rows.json 및 wall/*-r101..115.json에 보관했습니다. 재측정의 동치 판정은 이 측정 창의 보정 폭 안이라는 뜻이며 모든 환경의 성능을 단정하지 않습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `a70fda6d3ffc`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

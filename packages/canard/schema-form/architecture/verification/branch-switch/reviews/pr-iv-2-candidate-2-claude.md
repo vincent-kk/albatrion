@@ -104,3 +104,5 @@ PASS with P3입니다. P1은 0건, P2는 0건, P3는 1건입니다. 후보 1의 
 3. 델타의 .gz 원시에 대한 gzip -dc | grep (기계 경로, 시험 이름, 집계).
 4. `dist/index.d.ts`, `dist/index.mjs`, 리뷰 진단 원시에 대한 shasum -a 256.
 5. build, test, lint, typecheck, node, yarn, bun은 실행하지 않았습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `1b8cfa23cedc`, `2a19dffb2893`, `5073e443b265`, `57b6830ec910`, `67405376f122`, `81e4b05a2f99`, `f36703036b76`, `f74249291d5f`의 필요한 내용은 [본선 보존물](../../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

@@ -773,3 +773,5 @@
 - 닫은 사람: 편집자 결정(463라운드, `reviews/round-463-closing.md` 463C-02)
 - 라운드: 463
 - 까닭: `reviews/round-463-closing.md:10`
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `a04a40588b2c`의 필요한 내용은 [본선 보존물](../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

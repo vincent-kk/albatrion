@@ -167,3 +167,15 @@ Vincent가 준 규칙 가운데 지금도 유효한 것만 한 줄씩 적는다.
 - **남긴 것.** 원장·설계문서·ADR·개발계획, 모든 `round-NN-closing.md` 와 `round-NN-owner-answers.md`, 대기열, 원장이 경로로 인용하거나 패키지의 시험·벤치·DETAIL 이 참조하는 파일과 그 import 대상, 남긴 결과 문서가 링크하는 결과 문서, 원장이 경로나 줄 번호로 인용하는 단계 일지 넷(03·04·05·07)은 증거라서 제자리에 두었다. 벤치마크의 최종 기록과 측정 기준·측정 도구는 소유자 지시로 남겼고 색인은 `../verification/perf-optimization/README.md` 다.
 - **검사.** 정리 뒤에도 원장 검사는 모두 같은 결과이고(기준값은 `../ledger/checks/README.md`), 토큰 잔여는 목록 입력에서 지운 `HANDOFF.md` 의 자기 서술 39개가 빠져 441 에서 402 가 되었다(`../ledger/checks/token-review.md`). 남은 코드 파일의 상대 import 가운데 정리로 끊긴 것은 0 이다.
 - **되살리는 법.** 지운 파일은 모두 정리 직전 커밋 `291509ca5`(원격에 올라간 8단계 가지의 커밋)에 있다. `git show 291509ca5:packages/canard/schema-form/architecture/<경로>` 로 읽고, 디렉토리째 되살릴 때는 `git restore --source 291509ca5 -- packages/canard/schema-form/architecture/<경로>` 를 쓴다. 남긴 결과 문서 안의 원자료 경로는 이 커밋에서 찾는다.
+
+464라운드(2026-10-29~30)에 Ⅳ-0(#491)이 루트 행의 국소 바퀴 예산0·이미1라운드라는 사실로 이론상 바닥을 철회했고, 국소 바퀴Ⅳ-1(#492)과 scratchⅣ-2(#493)는 두 창씩의 실패·무이득을 보존한 채 제품 미채택으로 닫았습니다. Vincent는 NODE-060 재개를 닫고 본체 보존만 조건부로 허용했으나, 미시 위생(#494) 뒤 함수 프로파일Ⅳ-3-0(#495)이 A0.481 µs·B귀속1.842 µs로 착수선에 못 미쳐 큰 두 갈래를 시작하지 않았습니다. 작은 절감을 모으는Ⅳ-4(#496)는 창1 다섯cut의 교환비−15,535 µs·개선5행과 siblings4000 +42.4 µs·Bun +2.780 B/node를 소유자 예외로 채택했습니다. Ⅳ-5(#497)의 네 E/L은3.335·3.614·1.644·7.374배이며 Vincent가 현재 상한에서 마감을 지시했습니다. 기록은 `round-464-owner-answers.md`와 `round-464-closing.md`, 전체 수치는 `../verification/branch-switch/closing-results.md`입니다.
+
+## 분기 전환 단계 마감 상태
+
+- **제품 끝과 가지.** 제품 끝은 `2eaa0e1f8`(#496), 통합 코어 측정 머리는 `0f11c2fe2`(#497)입니다. 마감 문서 가지 `docs/schema-form-branch-switch-closing`는 그 머리에서 갈라졌습니다. 설계 최적화 가지는 `b8db53997`, 병합 전08가지는 `6692e7f69`입니다. 최종 마감 문서 머리는 마감 PR의 커밋이 식별하며 제품 차분은0입니다.
+- **현재 열린 PR과 최신 병합 순서.** 마감 문서 PR을 분기 전환 가지에 먼저 넣은 뒤 코디네이터가 #472를 `feat/schema-form-08-review-and-perf`에 스쿼시 병합하고, 새 분기 전환 루트 PR도 같은08가지에 단계 변화만 한 커밋으로 스쿼시 병합합니다. 이 루트 PR의 base는08가지이며 master가 아닙니다. #445(08→1.0.0-beta)와 우산초안#344는 소유자에게 남습니다. 현재 #472와 새 단계 루트 PR도 열린 상태로 진행될 예정이며, 두 스쿼시 병합 뒤 열리는 PR은 #445·#344뿐입니다. 실행 전 병합을 완료로 기록하지 않습니다.
+- **남은 소유자 항목.** 버전 번호와 #445·#344 병합, 그리고 새 지시 뒤9단계의 문서 정리·레거시 제거·타입 보강·릴리스 전 벤치/모바일/번들 재측정입니다. 대기열59와 P1 전체 프로토콜, strict-production의 기존 transform 설정/117 대111 freeze 문제, 기존 FCA FAIL·indeterminate는 이 마감에서 해결하지 않았습니다.
+- **수치와 한계.** oneOf 1.5배·형제3배는 미달입니다. Node 힙 중앙은1438.981≤S중앙1442.244로 통과하며 Bun2256.627>S최대2224.797(+31.830 B/node, +1.4%)는 기록합니다. React는19픽스처 보고 전용이며 제품 동치 증명이나 관문으로 쓰지 않습니다. 상세 판정·표·원시는 `../verification/branch-switch/closing-results.md`에 있습니다.
+- **참고 자료를 가진 가지와 정리.** 국소 바퀴 `perf/schema-form-iv-1-local-wheel`은 기각 후보, `perf/schema-form-iv-2-switch-constants`는 미채택 scratch 후보, `perf/schema-form-d2-sibling-linear`는 앞 단계 D2-P5 실험, `perf/schema-form-b9-0-costmap`·`perf/schema-form-iv-5-milestone`는 측정 작업 머리입니다. 가지 자체를 영구 보존 근거로 쓰지 않고 필요한 미병합 자료는 `../_archive/branches/README.md`로 옮깁니다. 나머지 병합·대체된 작업 머리와 압축 전 이력 백업까지 전수 목록·분류·도달성은 마감 결과의 가지 정리에 있습니다. 작업자는 삭제하지 않으며 코디네이터가 두 단계 병합 뒤 삭제합니다. gh-pages와 배포 설정이 이름으로 쓰는 운영 가지는 유지합니다.
+
+불변 라운드 기록이 인용한 SHA는 [cited-commits.tsv](../_archive/branches/cited-commits.tsv)에서 찾습니다. 기존 reviews 기록66개(이전 라운드64개와 대기열·제안서2개)는 끝의 덧붙임까지 원상 복구했으며 내용·줄 번호를 바꾸지 않습니다.

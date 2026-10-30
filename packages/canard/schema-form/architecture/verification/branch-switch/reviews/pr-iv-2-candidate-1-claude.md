@@ -154,3 +154,5 @@
 3. raw/iv-2 아래 .gz 파일들에 대한 gzip -dc | grep -c (기계 경로 검색).
 4. dist/index.d.ts에 대한 shasum -a 256과 ls.
 5. build, test, lint, node, yarn은 실행하지 않았습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `67405376f122`, `f81d1038cae9`의 필요한 내용은 [본선 보존물](../../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

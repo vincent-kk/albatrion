@@ -578,3 +578,5 @@ multiline schemaType 참조 시험은 `packages/canard/schema-form/src/core/blue
 - 검증 지적 7의 단일 얕은 동결과 순회 정지 조건은 103C-01의 생성 지점 동결, 모드별 distinct 계수와 시험 9로 바뀌었습니다.
 
 위 매핑의 검증 입력은 `packages/canard/schema-form/architecture/verification/07-switch/analysis-records-design-verifier.md:51`부터 `packages/canard/schema-form/architecture/verification/07-switch/analysis-records-design-verifier.md:67`의 3차 대조이며 편집자 답은 `packages/canard/schema-form/architecture/reviews/round-102-closing.md:16 @origin/1.0.0-beta`입니다. HEAD의 단일 정적 기여 경로도 F50·F51로 추가하여 51개 표현식의 분류에 포함했습니다. 그 위치는 `packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts:62 @e60490572`입니다. 이번 작업은 이 설계 문서만 수정한 정적 대조이며 시험·빌드·벤치마크·Node 프로세스 및 git 쓰기를 수행하지 않았습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `0fdb6660ba07`, `23767892757b`, `5f50768e561f`, `926671834a48`, `da734b40da7a`, `e60490572564`, `eeaeb12b3068`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

@@ -272,3 +272,5 @@ Reviewed: `769917e8a` and `0c5b1be78` (docs: settle DETAIL contract for direct p
 - No test, build or window ran, by instruction. Failing-first and mutation status come from the committed logs. The mutated sources are not recorded, and the logs predate the test's formatting pass.
 - The time each removed call costs is unmeasured. Only call counts are evidenced.
 - The window-1 `cpu-prechecks.json.gz` was not rescanned this round; it is unchanged in the diff.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `048bdab41d5b`, `0c5b1be7897e`, `769917e8a3b4`, `88ba096e8724`, `a3e955b73380`의 필요한 내용은 [본선 보존물](../../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

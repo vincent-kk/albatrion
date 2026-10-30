@@ -390,3 +390,5 @@ if-then core 표시 행은 8개입니다. 각 행의 0.16.0·HEAD 중앙값과 �
 모든 core/branch worker와 esbuild 서비스가 자연 종료했습니다. 겹침 검사, 시작·끝 HEAD와 index 해시, Node 실행 파일 해시, 제품 source tree, canonical 및 참조 도구 해시는 `audit.json`에 있습니다. 제품 편집·설치·Git 쓰기는 수행하지 않았습니다. 전체 monorepo 시험/build는 이 측정의 범위에 포함하지 않았습니다.
 
 원시 core timings 138개, CPU 36개와 계수 4개는 gzip으로 저장했습니다. bundle/map/변환 source/cache는 S에만 있으며 저장소 산출물에 포함하지 않았습니다. 각 산출물은 5,000,000바이트 미만이고 SHA-256 목록은 `artifact-index.json`입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `439fda3219ec`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

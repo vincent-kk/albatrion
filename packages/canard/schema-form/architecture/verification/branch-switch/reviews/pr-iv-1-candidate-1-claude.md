@@ -142,3 +142,5 @@
 ### 실행한 명령
 
 git show --stat, git show(4e02ac625, b9e508436, a93a36b3f, 27bc828c1), git diff --name-only, cat. 빌드, 시험, 벤치, yarn은 실행하지 않았습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `0cc800d288c9`, `27bc828c1efe`, `4e02ac62583d`, `65f008680c48`, `a93a36b3fe91`의 필요한 내용은 [본선 보존물](../../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.
