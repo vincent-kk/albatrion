@@ -139,3 +139,19 @@ production에서는 템플릿별 동결 호출만 없애고 배열 생성·내�
 3. 첫 인계의 제품 수정 SHA 뒤 문서 커밋은 결과 문서 신설뿐 아니라 request·verification 기록의 추가도 포함했습니다. PR 본문의 해당 설명에 세 기록을 모두 명시합니다.
 
 이 보완의 수정·커밋은 IR-2 측정 창 중에 허용받았습니다. 코디네이터의 window clear가 오기 전에는 시험·빌드·lint를 실행하지 않으며, 이전 표의 통과는 해당 SHA의 증거로만 보존합니다. 허용 뒤 strict production·일반 production·react18·render를 각각 단독 실행하고 새 결과를 아래에 추가합니다.
+
+
+### P3 보완 재검증 — window clear 이후
+
+코디네이터의 window clear 메시지 `msg_f20c41f1ac2d`는 2026-10-30 17:30:05 UTC에 발송됐습니다. 이를 읽고 사용자의 같은 배정 재개 지시를 확인한 뒤에만 시험을 시작했습니다. 실행 HEAD는 네 행 모두 `0655c6e93f3867d9089f44c880c3fd15e8d208f4`입니다. 아래 순서대로 각 명령을 별도 호출해 종료를 확인한 뒤 다음 명령을 실행했습니다.
+
+| 순서 | 명령 | 시작 시각 (2026-10-31 KST) | 통과 파일 | 통과 시험 | 실패 | 종료 | 소요 시간 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `yarn workspace @canard/schema-form test:production` | 02:30:53 | 10 | 21 | 0 | 0 | 3.59s |
+| 2 | `yarn workspace @canard/schema-form test --run --project production` | 02:31:05 | 10 | 21 | 0 | 0 | 3.55s |
+| 3 | `yarn workspace @canard/schema-form test --run --project react18` | 02:31:16 | 132 | 769 | 0 | 0 | 63.12s |
+| 4 | `yarn workspace @canard/schema-form test --run --project render` | 02:32:30 | 132 | 769 | 0 | 0 | 63.14s |
+
+react18의 `VirtualizationManager.test.ts` 13건과 render의 같은 시험 13건이 각각 통과했습니다. production freeze는 1706/502/111/5, `NODE_ENV=test` freeze는 27642/10022/1564/63으로 직전과 같습니다. 네 관문 모두 todo·skip·실패는 없습니다.
+
+이 후속 단계의 저장소 변경은 시험 변환 설정과 이 기록의 추가뿐입니다. 런타임 소스·타입·빌드 설정은 바꾸지 않았으며 코디네이터가 지정한 네 관문을 재실행했습니다. 앞 절의 build·lint·선언 차분 증거는 해당 SHA의 기록으로 유지합니다. 이후 기록 커밋은 위 실행 결과만 추가합니다.
