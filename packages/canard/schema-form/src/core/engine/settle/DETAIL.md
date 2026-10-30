@@ -226,6 +226,8 @@
 
 - pending gate 읽기도 배열이 아닌 null-prototype 구조에서는 실제 노드의 존재를 직접 조회하여 중복 own descriptor를 만들지 않습니다. undefined emit을 내는 노드와 노드 부재는 구별하고 일반 prototype·배열 호스트는 기존 own-key 검사를 유지합니다. 추가 보유량은 없습니다.
 
+- 역의존 등록의 split 없는 trie 노드는 owner 순서로 직접 배달합니다. 단일 bucket·단일 run이며 모든 plain rank가 bucket보다 앞서면 living rank만 정렬하고 hit→plain→동률 anchor→host→member 순서로 직접 배달합니다. 나머지는 기존 event 병합입니다. 순서·중복 제거는 유지하며 빠른 경로에서 owner별 event 객체·클로저·mapArray 결과를 만들지 않습니다. 추가 상주 구조는 없습니다.
+
 ## Structure
 
 - Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
@@ -816,6 +818,10 @@
 ### settle-pending-structure-read — pending 호스트 노드의 존재
 
 - null Dictionary·prepared view는 descriptor 조회 없이 기존 노드의 존재를 구별합니다. prototype 이름의 undefined emit 노드는 호스트를 조기 flush하지 않으며 실제 부재·상속 노드만 있는 경우에는 기존 flush를 수행합니다.
+
+### settle-registration-query-work — 순서가 증명된 직접 배달
+
+- split 없는 질의는 event 정렬을 하지 않고 기존 owner 전순서·중복 제거를 유지합니다. 단일 run에서는 hit가 owner보다 먼저 일어나고 동률 anchor가 host·member보다 먼저 배달됩니다. 일반 다중 bucket·교차 run은 기존 병합 경로를 유지합니다.
 
 ## Boundary Exemptions
 
