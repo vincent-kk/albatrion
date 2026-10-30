@@ -1,0 +1,262 @@
+{
+  "burst|off": {
+    "a:engine-write+settle": {
+      "inMed": 0.46699999999999997,
+      "inMean": 0.64212,
+      "inP95": 0.761,
+      "laterMean": 0
+    },
+    "b:waves+listeners": {
+      "inMed": 0,
+      "inMean": 0.023010000000000003,
+      "inP95": 0.156,
+      "laterMean": 0
+    },
+    "c:react-commit1": {
+      "inMed": 0.6239999999999999,
+      "inMean": 0.75697,
+      "inP95": 1.0999999999999999,
+      "laterMean": 0
+    },
+    "f:diag-init": {
+      "inMed": 0,
+      "inMean": 0.028369999999999996,
+      "inP95": 0.167,
+      "laterMean": 0
+    },
+    "f:harness": {
+      "inMed": 0,
+      "inMean": 0.012770000000000002,
+      "inP95": 0.154,
+      "laterMean": 0.004719999999999999
+    },
+    "g:gc": {
+      "inMed": 0,
+      "inMean": 0.0032599999999999994,
+      "inP95": 0,
+      "laterMean": 0
+    },
+    "g:native(program)": {
+      "inMed": 1.3900000000000001,
+      "inMean": 1.3803799999999995,
+      "inP95": 1.8869999999999998,
+      "laterMean": 4.9110299999999985
+    },
+    "g:other-js": {
+      "inMed": 0,
+      "inMean": 0.013879999999999998,
+      "inP95": 0.152,
+      "laterMean": 0.0839
+    },
+    "g:react-event-system": {
+      "inMed": 0,
+      "inMean": 0.05633000000000001,
+      "inP95": 0.311,
+      "laterMean": 0.00161
+    }
+  },
+  "burst|on": {
+    "a:engine-write+settle": {
+      "inMed": 0.46599999999999997,
+      "inMean": 0.65469,
+      "inP95": 0.816,
+      "laterMean": 0
+    },
+    "b:waves+listeners": {
+      "inMed": 0,
+      "inMean": 0.019039999999999998,
+      "inP95": 0.156,
+      "laterMean": 0
+    },
+    "c:react-commit1": {
+      "inMed": 0.597,
+      "inMean": 0.61687,
+      "inP95": 0.908,
+      "laterMean": 0
+    },
+    "d:validation-run": {
+      "inMed": 0.17049999999999998,
+      "inMean": 0.54515,
+      "inP95": 1.5369999999999997,
+      "laterMean": 0
+    },
+    "e:delivery-waves": {
+      "inMed": 0,
+      "inMean": 0.00889,
+      "inP95": 0.119,
+      "laterMean": 0
+    },
+    "e:react-commit2": {
+      "inMed": 0.46499999999999997,
+      "inMean": 0.4606599999999999,
+      "inP95": 0.672,
+      "laterMean": 0
+    },
+    "f:diag-init": {
+      "inMed": 0,
+      "inMean": 0.012610000000000001,
+      "inP95": 0.155,
+      "laterMean": 0
+    },
+    "f:harness": {
+      "inMed": 0,
+      "inMean": 0.014389999999999998,
+      "inP95": 0.155,
+      "laterMean": 0.0068
+    },
+    "g:gc": {
+      "inMed": 0,
+      "inMean": 0.010350000000000002,
+      "inP95": 0,
+      "laterMean": 0
+    },
+    "g:native(program)": {
+      "inMed": 1.375,
+      "inMean": 1.3843300000000005,
+      "inP95": 1.7789999999999997,
+      "laterMean": 4.798219999999998
+    },
+    "g:other-js": {
+      "inMed": 0,
+      "inMean": 0.01762,
+      "inP95": 0.156,
+      "laterMean": 0.10112
+    },
+    "g:react-event-system": {
+      "inMed": 0,
+      "inMean": 0.06567999999999999,
+      "inP95": 0.318,
+      "laterMean": 0.016220000000000002
+    }
+  },
+  "nonburst|off": {
+    "a:engine-write+settle": {
+      "inMed": 0.498,
+      "inMean": 0.6652800000000002,
+      "inP95": 0.8140000000000001,
+      "laterMean": 0
+    },
+    "b:waves+listeners": {
+      "inMed": 0,
+      "inMean": 0.028730000000000002,
+      "inP95": 0.157,
+      "laterMean": 0
+    },
+    "c:react-commit1": {
+      "inMed": 0.637,
+      "inMean": 0.7680400000000005,
+      "inP95": 0.965,
+      "laterMean": 0
+    },
+    "f:diag-init": {
+      "inMed": 0,
+      "inMean": 0.010979999999999998,
+      "inP95": 0.153,
+      "laterMean": 0
+    },
+    "f:harness": {
+      "inMed": 0,
+      "inMean": 0.01779,
+      "inP95": 0.155,
+      "laterMean": 0.00528
+    },
+    "g:gc": {
+      "inMed": 0,
+      "inMean": 0.00188,
+      "inP95": 0,
+      "laterMean": 0
+    },
+    "g:native(program)": {
+      "inMed": 1.552,
+      "inMean": 1.5740299999999998,
+      "inP95": 1.894,
+      "laterMean": 6.163969999999998
+    },
+    "g:other-js": {
+      "inMed": 0,
+      "inMean": 0.0114,
+      "inP95": 0.146,
+      "laterMean": 0.13016999999999995
+    },
+    "g:react-event-system": {
+      "inMed": 0,
+      "inMean": 0.06957999999999998,
+      "inP95": 0.276,
+      "laterMean": 0.00319
+    }
+  },
+  "nonburst|on": {
+    "a:engine-write+settle": {
+      "inMed": 0.604,
+      "inMean": 0.6893399999999998,
+      "inP95": 0.796,
+      "laterMean": 0
+    },
+    "b:waves+listeners": {
+      "inMed": 0,
+      "inMean": 0.023370000000000002,
+      "inP95": 0.162,
+      "laterMean": 0
+    },
+    "c:react-commit1": {
+      "inMed": 0.6075,
+      "inMean": 0.6535399999999999,
+      "inP95": 0.9710000000000001,
+      "laterMean": 0
+    },
+    "d:validation-run": {
+      "inMed": 0.1905,
+      "inMean": 0.56127,
+      "inP95": 1.5369999999999997,
+      "laterMean": 0
+    },
+    "e:delivery-waves": {
+      "inMed": 0,
+      "inMean": 0.016,
+      "inP95": 0.154,
+      "laterMean": 0
+    },
+    "e:react-commit2": {
+      "inMed": 0.45999999999999996,
+      "inMean": 0.44522999999999996,
+      "inP95": 0.653,
+      "laterMean": 0
+    },
+    "f:diag-init": {
+      "inMed": 0,
+      "inMean": 0.014429999999999998,
+      "inP95": 0.154,
+      "laterMean": 0
+    },
+    "f:harness": {
+      "inMed": 0,
+      "inMean": 0.00458,
+      "inP95": 0,
+      "laterMean": 0.00487
+    },
+    "g:gc": {
+      "inMed": 0,
+      "inMean": 0.00484,
+      "inP95": 0,
+      "laterMean": 0
+    },
+    "g:native(program)": {
+      "inMed": 1.49,
+      "inMean": 1.5333599999999992,
+      "inP95": 1.925,
+      "laterMean": 5.9266999999999985
+    },
+    "g:other-js": {
+      "inMed": 0,
+      "inMean": 0.01843,
+      "inP95": 0.155,
+      "laterMean": 0.12958999999999998
+    },
+    "g:react-event-system": {
+      "inMed": 0,
+      "inMean": 0.057909999999999996,
+      "inP95": 0.309,
+      "laterMean": 0
+    }
+  }
+}

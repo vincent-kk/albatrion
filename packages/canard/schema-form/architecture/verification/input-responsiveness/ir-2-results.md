@@ -220,3 +220,78 @@ benchmark-form 지정 전체 시험 4파일·30시험, browser typecheck, lint�
 D1 발동은 구현을 위한 측정 조건 충족이며 구현 효과의 증거가 아닙니다. 후속 구현 전 설계 v2의 mount reporter·sink 표면, 슬롯 1회 실행·100ms 경주, 하위 트리 pending 보존, 결정적 시험 도우미·계약 기록을 따라야 합니다. G의 공개 플러그인 순서 계약과 마운트 컴파일 실패 표면 변화는 소유자 결정 사항입니다. 이번 브랜치는 D1·G나 virtualization 기본값을 변경하지 않습니다. if 마운트에서 E1의 첫 화면·최장 프레임이 L보다 큰 관측도 보고 전용으로 보존하며 별도 성능 효과를 추정하지 않습니다.
 
 판정: 소유자 대기
+
+
+## 원인 분해 진단(코디네이터, 2026-10-31)
+
+아래는 코디네이터가 실제 Chromium 145.0.7632.6과 IR-2 동결 E1 페이지 번들 `679b84022e58d342a3ce78e8abcd6420a6b04bc5e0196c0d0eedf76c3da8377d`로 수행한 진단의 요약입니다. 정식 180표본과 구별하는 추가 진단이며 정식 관문이나 사전 등록 집계를 대체하지 않습니다. **단일 병목은 관측되지 않았습니다.** 키 처리에는 Blink의 강제 레이아웃, 엔진·React의 O(2000) 작업, 이벤트 구간 안 마이크로태스크 검증이 함께 들어갑니다. 비연타의 느린 CPU 성능 상태에서 같은 작업이 약 2~2.5배 느려졌으며 검증 실행과 배달·두 번째 커밋은 p95 키 비용의 약 4분의 1로 귀속되었습니다.
+
+### 기전
+
+`TypingCommand::InsertText`가 글자를 삽입하면서 input 이벤트 전후의 같은 keypress 처리 구간 안에서 전체 레이아웃을 강제했습니다. 더러운 객체는 8개였지만 레이아웃 대상은 6008개이고 partialLayout은 false였습니다. 2000개의 inline-block 입력이 [FieldProxy.tsx:101](../../../src/components/FieldProxy/FieldProxy.tsx#L101)과 [FieldInputSlot.tsx:132](../../../src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx#L132)의 `display: contents` 래퍼를 지나 하나의 inline formatting context를 공유합니다. 이 구성에서 편집 레이아웃은 O(2000)입니다.
+
+같은 구간의 input 이벤트는 2000키 루트 객체 재구성과 정착 → React 커밋 1 → AJV 검증 마이크로태스크 → 배달 → React 커밋 2로 이어졌습니다. 검증 예약은 [requestFieldNodeValidation.ts:30](../../../src/core/engine/validation/utils/run/requestFieldNodeValidation.ts#L30)의 queueMicrotask입니다. 그리기와 합성은 나중 작업으로 관측되었습니다. 연타와 비연타의 작업량 차이보다 CPU 성능 상태, ET 문턱 검열, 페이지 최댓값 통계가 차이를 설명한다는 것이 이 진단의 해석입니다.
+
+### 표 A — CPU 활성 상태
+
+A. CPU 활성(샘플러가 CPU 를 깨워 둠), 처리 구간 안 키당 평균 ms, 칸당 100키:
+| 범주 | 비연타 검증 켬 | 비연타 끔 | 연타 켬 | 연타 끔 |
+| 처리 중앙값/p95 | 3.78/5.10 | 2.87/4.08 | 3.68/4.70 | 2.58/3.58 |
+| (a) 엔진 쓰기·정착(assembleObject 루트 복사 0.35) | 0.69 | 0.67 | 0.65 | 0.64 |
+| (b) 동기 파동·리스너 | 0.02 | 0.03 | 0.02 | 0.02 |
+| (c) React 커밋 1 + 이벤트 배관 | 0.65+0.06 | 0.77+0.07 | 0.62+0.07 | 0.76+0.06 |
+| (d) AJV 실행(중앙값/p95) | 0.56(0.19/1.54) | – | 0.55(0.17/1.54) | – |
+| (e) 배달 파동 + React 커밋 2 | 0.02+0.45 | – | 0.01+0.46 | – |
+| (f) 루트 onChange + 장치 handler | ≤0.03 | ≤0.03 | ≤0.03 | ≤0.03 |
+| (g) 네이티브(강제 레이아웃 약 1.0, 편집, 디스패치)/GC | 1.53/0 | 1.57/0 | 1.38/0 | 1.38/0 |
+| 나중 작업(그리기·합성만) | 5.2 | 5.4 | 5.3 | 5.3 |
+
+(a)의 엔진 쓰기에는 assembleObject의 루트 복사 약 0.35ms가 포함됩니다. AJV에서 오류가 생기는 키는 약 1.37ms(validate10 0.68ms, ValidationError 생성 0.25ms), 오류가 사라지는 키는 약 0.15ms였습니다. 표의 범주별 평균과 괄호 안 중앙/p95는 서로 다른 통계이며 합산하거나 정식 관문에 대입하지 않습니다. 표 A의 함수 귀속 근거는 [trace-cpu/attrib.json](raw/ir-2/diag/trace-cpu/attrib.json)입니다.
+
+### 표 B — 샘플러가 없는 CPU 냉 상태
+
+B. CPU 냉(샘플러 없음, trace 만), 100키 중앙값/p95:
+| | 비연타 켬 | 비연타 끔 | 연타 켬 | 연타 끔 |
+| 처리 | 7.19/13.42 | 7.22/10.45 | 3.19/5.05 | 2.36/2.78 |
+| input 이벤트 디스패치(a–f 전부) | 4.06/7.06 | 2.72/4.14 | 1.92/2.95 | 1.13/1.45 |
+| InsertText 강제 레이아웃 | 2.48/5.88 | 3.79/6.11 | 1.04/1.19 | 1.02/1.12 |
+| 기타 편집 + keypress 리스너 | 약 0.5/0.9 | 약 0.6/1.0 | 약 0.2/0.35 | 약 0.2/0.35 |
+| 처리 안 GC / 키당 나중 작업 그리기 | 0/10.3 | 0/11.2 | 0/4.2 | 0/4.2 |
+
+냉 비연타에서 (d)+(e)의 켬−끔 input 디스패치 차이는 중앙값 1.34ms, p95 약 2.9ms였습니다. 표 B는 trace만 켠 진단 집계이며 정식 창의 통계가 아닙니다. [trace-ns5/results.json](raw/ir-2/diag/trace-ns5/results.json)에 페이지 관측을 보존합니다.
+
+### 관문 통계와 렌더 수
+
+무추적 새 페이지 10개의 페이지별 p95 중 최댓값은 비연타 검증 켬 13.9ms, 끔 10.6ms, 끔+입력 containment 7.3ms였습니다. ET 문턱 검열이 없는 keypress→input 종료 p95는 각각 13.0/9.7/5.8ms였습니다. 정식 창의 켬 19.1ms와 같은 값으로 취급하지 않습니다. [plain10](raw/ir-2/diag/plain10/results.json)과 [plain10-contain](raw/ir-2/diag/plain10-contain/results.json)에 근거를 보존합니다.
+
+연타·비연타의 키당 렌더 수는 같았습니다. 검증 켬은 렌더 21회·커밋 2회, 끔은 렌더 14회·커밋 1회였으며 마운트나 나중 작업의 추가 렌더는 없었습니다. 첫 커밋은 루트 사슬의 FieldProxy·RendererWithErrorMessage·PassRenderer·익명 슬롯 래퍼 2개·FieldInputBoundary·FieldInputObject와 편집 필드의 7개 컴포넌트(FieldInputString까지)를 포함합니다. 두 번째 커밋은 오류를 반영하는 편집 필드 7개를 다시 렌더합니다. 숨은 O(2000) 작업은 FieldInputObject가 memo 자식 2000개를 조정하는 약 0.35ms와, 두 번째 커밋의 propagateParentContextChanges가 형제 1999개마다 조상을 순회하는 약 0.16ms(CPU 활성 상태)입니다. [count/results.json.gz](raw/ir-2/diag/count/results.json.gz)에 계수 관측을 보존합니다.
+
+### 연타와 비연타 — CPU 성능 상태 탐침
+
+키당 검증 1회·배달 1회·커밋 2회·처리 구간 GC 0회로 작업량은 같았습니다. keydown에서 고정 200만 반복을 수행하는 탐침은 연타 약 1.9ms, 비연타 초기 2.1ms에서 3.0~5.3ms로 늘었고 비연타 중앙값은 4.0ms였습니다. [probe-form/results.json](raw/ir-2/diag/probe-form/results.json)에 탐침이 있습니다.
+
+비연타 중 Worker를 돌리면 탐침은 약 1.9ms로 돌아왔습니다. 처리 중앙/p95도 검증 켬 3.4/4.4ms(연타 3.1/4.1ms), 끔 2.4/3.1ms(연타 2.2/2.7ms)로 가까워졌습니다. [warm-worker/results.json](raw/ir-2/diag/warm-worker/results.json)을 보존합니다. 샘플러를 켠 상태에서도 비연타·연타 중앙값은 3.78/3.68ms로 가까웠습니다. 25% 주기의 주 스레드 가열은 켬 6.0/9.3ms로 일부만 개선했다는 코디네이터의 보조 관측입니다.
+
+정식 원시의 비연타 키별 상승은 첫 키 약 4ms에서 열 번째 키 8~10ms로 증가하는 모양이 두 레인·모든 행에서 공통으로 보였으며, 마운트 직후 CPU가 바쁜 상태에서 감쇠하는 과정이라는 해석입니다. 16ms ET 문턱은 빠른 키를 제외하여 flat-2000 E1의 비연타는 172/200, 연타는 115/200 상호작용이 관측되었습니다. 행 p95는 약 200키 중 최악에 해당하며 정식 19.1ms는 한 페이지, 나머지는 12.1~17.1ms였습니다. CPU 주파수 하락과 느린 코어 이동을 분리한 측정은 아닙니다.
+
+### D1 예측과 검증 도착 위험
+
+진단 창에서 검증 실행·배달·두 번째 커밋 (d)+(e)을 제거하는 비교는 관문 통계 13.9→10.6ms, 약 −3.3ms(−24%)였습니다. 이를 정식 창에 비례 환산하면 `19.1×10.6/13.9≈14.6ms`, 같은 차이를 차감하면 `19.1−3.3=15.8ms`입니다. 두 추정은 16.67ms 이내지만 여유는 약 0.9~2.1ms이며 15.8ms는 선의 10% 근접대입니다. 이것은 D1을 구현해 측정한 결과가 아닙니다.
+
+반대로 D1이 검증을 프레임 뒤로 옮기면 검증 도착이 늦어질 수 있습니다. 냉 상태 검증 끔의 키→프레임 커밋 p95 21.7ms에 (d)+(e) 약 2.9ms를 더하면 약 24.6ms이고, 정식 창 비율 `19.1/13.9`를 적용하면 약 34ms로 33.4ms 도착 관문을 넘을 가능성이 있습니다. 추정은 D1의 실제 예약 방식에 좌우됩니다. **발동 규칙의 충족과 D1을 만들지 여부는 구별하며, 구현 결정은 이 자료와 함께 소유자에게 넘깁니다.**
+
+### 대안 원인 다섯 가지와 경계
+
+1. **CPU 성능 상태**는 플랫폼 효과이므로 제품 처방이 없습니다. 장치에 탐침 공변량을 기록하는 방안을 진단에서 권고했습니다. 비연타 간격을 만드는 코드 근거는 benchmark-form [samplePage.ts:56](../../../../../aileron/benchmark-form/browser-bench/interaction/helpers/samplePage.ts#L56)이며, CPU 상태 자체를 결정하는 제품 파일은 없습니다.
+2. **편집 중 강제 레이아웃**은 냉 상태 중앙값 약 2.5~3.8ms, p95 약 6ms였습니다. `input { contain: strict; width: 153px; height: 21px }`를 주입하면 레이아웃 중앙값 0.42~0.47ms·p95 약 0.95ms, 검증 끔 관문 7.3ms가 관측되었습니다. 필드별 블록 래퍼만으로는 효과가 없었습니다. 관련 경계는 [FieldProxy.tsx:101](../../../src/components/FieldProxy/FieldProxy.tsx#L101)·[FieldInputSlot.tsx:132](../../../src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx#L132)이며 CSS·픽스처 변경은 엔진과 별개인 소유자 결정입니다.
+3. **매 쓰기의 루트 재렌더**는 CPU 활성 약 0.35ms·냉 상태 약 0.8ms였습니다. [FieldProxy.tsx:26](../../../src/components/FieldProxy/FieldProxy.tsx#L26)의 UpdateValue 마스크와 [46행](../../../src/components/FieldProxy/FieldProxy.tsx#L46)의 구독이 관련됩니다. 가지 노드에서 이를 빼면 [115행](../../../src/components/FieldProxy/FieldProxy.tsx#L115)의 `value={node.value}`가 낡은 값을 그릴 위험이 있으므로 소유자 결정 사항입니다.
+4. **루트 객체 복사**는 [assembleObject.ts:53](../../../src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts#L53)의 `{ ...previous }`이며 CPU 활성 약 0.35ms였습니다. 불변 emit을 유지하는 비용이므로 진단에서는 유지를 권고했습니다.
+5. **AJV 오류 경로**는 [createValidatorFactory.ts:19](../../../../schema-form-ajv8-plugin/src/validator/createValidatorFactory.ts#L19)의 `$async: true` 컴파일과 [23행](../../../../schema-form-ajv8-plugin/src/validator/createValidatorFactory.ts#L23) 이후 실패 throw 경로입니다. 동기 컴파일 후 validate.errors를 읽는 대안은 async 키워드에 관한 플러그인 계약을 바꾸므로 소유자 결정 사항입니다.
+
+### 미확인과 증거 범위
+
+CPU 주파수 하락과 느린 코어 이동은 분리하지 못했습니다. 정식 창이 진단보다 1.2~1.4배 느린 이유, D1 예약 방식에 따른 실제 도착 시간, containment 검증 켬 14.1ms를 좌우한 한 페이지의 영향, AJV 오류 경로의 throw와 오류 객체 생성 비용 분리는 미확인입니다. 이 기록 작업에서 추가 프로파일이나 제품 변경은 하지 않았습니다.
+
+지정된 여섯 실행의 results와 별도 승인된 trace-cpu의 attrib만 소형 증거로 보존했습니다. 1MiB를 넘는 정규화 JSON은 gzip했고 기계 로컬 경로를 제거했습니다. trace와 번들은 복사하지 않았습니다. 앞의 재현 절에서 “이 문서의 모든 표”는 정식 측정의 생성 영역 표를 뜻합니다. 이 절의 A/B는 코디네이터의 trace 귀속 요약이며 원 trace 없이 표 B의 레이아웃·그리기 귀속 전부를 다시 계산할 수는 없습니다. 기존 재현 명령의 정식 180표본·생성 표 검사는 그대로 유지하며 새 소형 증거도 gzip 내부를 포함한 기계 경로 감사에 포함합니다.
+
+판정: 소유자 대기
