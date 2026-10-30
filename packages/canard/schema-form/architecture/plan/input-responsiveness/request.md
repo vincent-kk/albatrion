@@ -75,3 +75,9 @@ IR-1은 Part A만 채택하고 Part B는 중첩 focus/select·defer-once·렌더
 ## IR-3 AJV8 동기 우선 사전 측정 결과 — 2026-10-31
 
 기존 상단 단계표의 문서·계약 단계명은 보존하며, 이 항목은 별도 디스패치된 AJV8 동기 우선 컴파일 측정입니다. 플러그인 로컬 AJV 8.17.1과 IR-2 세 스키마를 셀별 1,000회 예열·5,250호출로 비교했습니다. flat-2000의 오류 변환 포함 중앙값은 async 85.084µs → sync 37.667µs(−55.73%)였지만 정상은 35.000µs → 37.625µs(+7.50%)로 사전 등록 상한 +5%를 넘었습니다. 따라서 **not adopted(미채택)**로 Step 0에서 중단했습니다. 제품·버전 변경, Step 1 구현과 Step 2 브라우저 재측정은 없습니다. 전체 표·원시·재현 방법과 관문 실행 상태는 [IR-3 결과](../../verification/input-responsiveness/ir-3-results.md)에 보존하며 독립 검증 후 소유자 판단을 기다립니다.
+
+## IR-4 대형 폼 지침과 SSR 확인 — 2026-10-31
+
+README·영어/한국어 SPECIFICATION·에이전트 arrays-and-scale 지식에 IR-1의 virtualization 조건·첫 화면과 전체 노출 비용, IR-2의 검증 OnRequest·입력 containment, IR-0의 소비자 startTransition 수치를 연결했습니다. 제품 소스는 바꾸지 않았습니다. React 18/19 모두 IO 부재 SSR의 입력 40개가 IO 활성 hydration 뒤 입력 20개와 placeholder 20개로 바뀌고 서버 input 재사용 0개인 mismatch를 확인했습니다. on 결함 시험은 이유가 포함된 skip으로, off 대조군은 통과 시험으로 보존했습니다. 결함을 고칠 때까지 서버 렌더링 페이지에서는 virtualization을 켜지 않습니다. 상세 관측·미결 항목 IR4-SSR-01·관문은 [IR-4 결과](../../verification/input-responsiveness/ir-4-results.md)에 기록합니다.
+
+D1을 이번 단계에서 구현하지 않고 virtualization 기본값을 off로 유지하는 **코디네이터 권고**를 따랐습니다. 두 사안은 아직 소유자 결정이 열려 있으며 이 문서 추가는 소유자 확정이나 기본값 변경이 아닙니다. 병합 전 코디네이터의 독립 검증을 거칩니다.
