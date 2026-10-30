@@ -53,7 +53,6 @@ React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 
 | 2 | `yarn workspace @canard/schema-form test --run --project render --reporter=json` | 133파일 통과, 778통과, 실패 0, exit 0 |
 | 3 | `yarn workspace @canard/schema-form test --run --project react18 --reporter=json` | 133파일 통과, 778통과(이 중 IR5-SUSPENSE-18 기대 실패 1개), 실패 0, exit 0 |
 
-
 ### 공개 JSDoc 범위 보완 — 코디네이터 답변
 
 공개 virtualization prop의 원본 JSDoc에도 SSR 금지 설명이 남아 있어 질문했고, 코디네이터가 현재 동작으로 고치도록 승인했습니다. Provider와 공개 이름·타입·시그니처는 유지합니다. 최종 선언 관문은 **exports·types·signatures 의미 차이 0**으로 판정하고, `components/Form/components/FormCore/types/props.d.ts`의 JSDoc 주석 바이트 차이를 별도로 공개합니다. 소유자의 별도 단계 결정이 미응답인 사실은 그대로입니다.
@@ -97,7 +96,6 @@ React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 
 
 인계 전 검사에서 변경 25개 파일(압축 증거는 풀어서 검사)에 기계 로컬 경로가 없고, Provider·공개 index와 추적된 runtime·adapter에는 차분이 없음을 확인했습니다. request의 기존 바이트 접두부를 보존했고 결과 기록은 이어 쓰기만 했습니다. FCA 감사는 Scan complete: 202 findings이며 새 finding·diagnostic은 0입니다.
 
-
 ## Round 2 — 추가 렌더 제거와 노출 원장 보완
 
 독립 검토의 P1과 원장 범위를 코드에서 확인하고 승인된 설계를 적용했습니다. 로컬 React 18.3.1의 `mountSyncExternalStore`는 hydration 때 서버 스냅숏을 저장하고 passive `updateStoreInstance`에서 Object.is로 현재 getter와 대조합니다. commitRootImpl은 layout effect 뒤 passive effect를 실행합니다. React 19.2.6의 같은 함수와 flushLayoutEffects→flushPassiveEffects도 이 순서를 지킵니다. 따라서 layout에서 hydratedRef를 설정하고 getter를 null로 유지하면 저장한 null과 일치하여 동기 갱신을 만들지 않습니다. CSR은 첫 snapshot부터 매니저이며 기존 게이팅이 유지됩니다.
@@ -114,8 +112,88 @@ React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 
 
 | 미결 | 코드 근거 | 제안한 수정 |
 | --- | --- | --- |
-| 폐기 렌더의 게이트 결정이 캐시에 남음 | `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx:140`의 렌더 중 cache.set | 렌더별 사본으로 구성하고 커밋에서만 보유 캐시에 반영합니다. |
-| 제거된 가지의 엔트리 잔존과 장기 생존 배열 캐시 증가 | 같은 파일 `:76`의 Map 보유와 `:140`의 삽입, 삭제 경로 부재 | 커밋 시 살아 있는 자식으로 pruning하거나 별도 단조 key와 WeakMap을 사용합니다. |
-| 상태를 유지하는 Fast Refresh에서 옛 자식 closure 보유 | 같은 파일 `:85`의 CachedComponent 재사용, `packages/winglet/react-utils/src/hooks/useLazyConstant.ts:67` | 개발 재해석 세대별 컴포넌트 갱신 또는 안정된 컴포넌트가 최신 커밋 값을 읽도록 구조를 바꿉니다. |
+| 폐기 렌더의 게이트 결정이 캐시에 남음 | `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx:137`의 렌더 중 cache.set | 렌더별 사본으로 구성하고 커밋에서만 보유 캐시에 반영합니다. |
+| 제거된 가지의 엔트리 잔존과 장기 생존 배열 캐시 증가 | 같은 파일 `:73`의 Map 보유와 `:137`의 삽입, 삭제 경로 부재 | 커밋 시 살아 있는 자식으로 pruning하거나 별도 단조 key와 WeakMap을 사용합니다. |
+| 상태를 유지하는 Fast Refresh에서 옛 자식 closure 보유 | 같은 파일 `:82`의 CachedComponent 재사용, `packages/winglet/react-utils/src/hooks/useLazyConstant.ts:67` | 개발 재해석 세대별 컴포넌트 갱신 또는 안정된 컴포넌트가 최신 커밋 값을 읽도록 구조를 바꿉니다. |
 | push와 같은 batch의 새 항목 focus/select가 구독 전에 소실 | `src/components/FieldProxy/components/DeferredFieldProxy/DeferredFieldProxy.tsx:46`, `src/core/engine/write/utils/entry/dispatchRequest.ts:31`, `src/hooks/fieldNode/useFieldNodeSubscribe.ts:57` | 노드별 미소비 명령을 기록하고 구독 직후 catch-up하거나 커밋까지 명령을 지연합니다. |
-| useReference의 렌더 중 공유 ref 쓰기 | useChildFields `:110`, `packages/winglet/react-utils/src/hooks/useReference.ts:92`, `src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx:82` | 이벤트가 읽는 값은 커밋 시점에 갱신하는 ref 또는 커밋을 보장하는 이벤트 핸들 구조로 전환합니다. |
+| useReference의 렌더 중 공유 ref 쓰기 | useChildFields `:107`, `packages/winglet/react-utils/src/hooks/useReference.ts:92`, `src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx:87` | 이벤트가 읽는 값은 커밋 시점에 갱신하는 ref 또는 커밋을 보장하는 이벤트 핸들 구조로 전환합니다. |
+
+## Round 2 마운트 창 이력
+
+첫 7c91c45ee 창은 여섯 비율이 통과했으나 별도 layout effect의 기존 mount-count 위반으로 제품 수정이 필요했습니다. 코디네이터 승인에 따라 이 창을 최종 비용 증거에서 제외하고 [superseded 원시](raw/ir-5-round2/superseded-window-1/round2-complete.json)를 보존했습니다. 값이나 표본은 바꾸지 않았습니다.
+
+## Round 2 첫 관문 시도 — superseded
+
+| 순서 | 명령·검사 | 결과 |
+| --- | --- | --- |
+| 1 | `test --run --project unit` | 609파일·4012통과·1todo, 실패 0 |
+| 2 | `test --run --project render` | 134파일 중 780통과·1실패: arrayMountLayoutEffects가 기존 400회를 기대했으나 새 effect 때문에 600회, 이 시도를 최종 통과로 세지 않음 |
+
+기존 항목당 두 layout effect 계약에 대해 코디네이터가 선택 1을 승인했습니다. 새 effect를 없애고 hydration commit ref를 기존 입력 commit effect에 전달하여 원래 terminalChildren commit 다음에 ref를 기록합니다. CSR의 manager snapshot에는 ref를 전달하지 않습니다. 원래 arrayMountLayoutEffects 기대와 DETAIL의 항목당 2회 계약은 고치지 않았습니다. 수정 뒤 두 React 버전에서 hydration 10개·렌더 수 2개·기존 layout-count 1개, 총 26개 한정 시험이 일반 통과했습니다.
+
+첫 창의 여섯 비율은 당시 7c91c45ee 소스의 측정으로 모두 통과했으나 제품 통합 수정 때문에 최종 비용 증거에서 제외합니다. 원시는 superseded-window-1에 그대로 보존하며 코디네이터 지시에 따라 새 frozen E5와 새 창을 한 번 실행합니다. 최종 관문도 unit부터 다시 시작합니다.
+
+## Round 2 최종 제품의 마운트 비용
+
+E4는 be1a79867의 동일한 불변 product/browser bundle을 재사용했고, E5는 기존 commit effect에 통합한 69251a950의 새 bundle입니다. 생산 React 19.2.6·Chromium의 기존 IR-0/IR-1 mountFixture·samplePageWithCpu를 재사용했습니다. 코디네이터가 승인한 새 창은 paired relative로 각 행의 E4/E5 순서를 교차하며 레인마다 3예열·10새페이지(총 36예열·120채택)를 한 번만 실행했고 테스트·빌드는 겹치지 않았습니다. 사전 등록 기준은 off mount-wall, on eager-paint의 레인별 중앙값 비율 E5/E4 ≤1.02입니다.
+
+| 폼 | 가상화 | 지표 | E4 중앙값 ms | E5 중앙값 ms | E5/E4 | 판정 |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| flat-500 | off | wallMs | 50.650 | 51.150 | 1.009872 | 통과 |
+| flat-500 | on | eagerPaintedMs | 30.700 | 31.550 | 1.027687 | FAIL |
+| nested-d5-f4 | off | wallMs | 88.150 | 88.900 | 1.008508 | 통과 |
+| nested-d5-f4 | on | eagerPaintedMs | 87.250 | 87.650 | 1.004585 | 통과 |
+| array-1000 | off | wallMs | 199.750 | 200.650 | 1.004506 | 통과 |
+| array-1000 | on | eagerPaintedMs | 58.750 | 57.950 | 0.986383 | 통과 |
+
+flat-500 on만 1.027687로 사전 등록 상한을 넘었습니다. +0.850ms이며 허용 상한 31.314ms 대비 E5는 31.550ms입니다. 시작 30초 관찰에서 XProtectRemediatorPirrit(pid 7626)가 58.417351%로 30%를 초과했습니다. paired relative 창으로 보존하고 부하로 행을 삭제하거나 통과로 바꾸지 않았습니다. 최초 질문에는 이전 창의 CPU 초과0을 잘못 적어 즉시 같은 스레드에 실제 초과1을 정정했습니다. 비율·중앙값은 별도 Python 계산으로 원시와 일치함을 확인했습니다.
+
+[공식 집계](raw/ir-5-round2/round2-complete.json), [156페이지 원시](raw/ir-5-round2/mount-pages.json.gz), [frozen 입력](raw/ir-5-round2/inputs.json), [실행기](raw/ir-5-round2/run-mount.mts)에 완료·CPU·hash를 보존합니다. 새 창은 이전 창과 다른 제품이므로 이전 통과 값으로 대체하지 않습니다. 상한 초과 질문을 보내고 독립적인 순차 검증은 unit부터 다시 진행했습니다. 이어지는 코디네이터 답변과 결정은 아래에 기록했습니다.
+
+### 마운트 FAIL 인계 결정과 보조 구간
+
+코디네이터는 최종 제품을 유지하고 추가 측정·튜닝 없이 flat-500 on 행을 사전 등록 규칙의 FAIL로 명시하여 단계 브랜치 PR로 인계하도록 승인했습니다. 소유자에게는 코디네이터가 별도 예외 결정을 요청하며, 이번 승인이 소유자의 예외 수락은 아닙니다. 따라서 비용 관문을 모두 통과했다고 주장하지 않습니다.
+
+기존 원시만으로 같은 index의 E4/E5 페이지를 짝지은 eager-paint 비율 10개와 그 **짝 비율 중앙값**의 percentile bootstrap 95% 구간을 계산했습니다. 20,000회, 고정 seed 460502, 한 번 뽑을 때 짝 비율 10개를 복원추출했으며 보간은 type-7입니다. 이 보조 통계는 사전 등록한 **레인별 중앙값의 비율**을 대체하지 않습니다.
+
+| 페이지 index | 최종 창 E5/E4 | superseded 첫 창 E5/E4 |
+| --- | ---: | ---: |
+| 0 | 1.013158 | 1.035256 |
+| 1 | 0.975232 | 1.016129 |
+| 2 | 1.149837 | 1.000000 |
+| 3 | 1.101307 | 1.012903 |
+| 4 | 1.094771 | 1.012821 |
+| 5 | 1.003257 | 1.019481 |
+| 6 | 0.990323 | 1.038462 |
+| 7 | 1.019355 | 0.975309 |
+| 8 | 0.983871 | 1.006390 |
+| 9 | 1.105611 | 1.000000 |
+
+| 창 | 규칙의 중앙값 비율 | 짝 비율 중앙값 | bootstrap 95% 구간 | 구간이 1.02를 배제하는가 |
+| --- | ---: | ---: | --- | --- |
+| final | 1.027687 | 1.016256 | [0.990323, 1.101307] | 아니요 |
+| superseded-window-1 | 1.009615 | 1.012862 | [1.000000, 1.025693] | 아니요 |
+
+두 구간 모두 1.02를 포함합니다. **최종 창의 규칙 점추정 1.027687는 여전히 FAIL**이며 구간이 이를 통과로 바꾸지는 않습니다. 두 head의 이 행에서는 처음 노출되는 슬롯(루트·eager 입력)만 useChildFields를 실행하고, 최종 folded 버전은 슬롯마다 layout effect 하나를 없애 동일한 ref 쓰기를 기존 commit에 합칩니다. 첫 창이 더 많은 effect를 실행하면서 1.009615였던 관측도 함께 보존하며, 이를 최종 실패를 지우는 근거로 쓰지 않습니다. [계산 결과](raw/ir-5-round2/paired-bootstrap.json)와 [실행기](raw/ir-5-round2/bootstrap-pairs.py)로 재현할 수 있습니다.
+
+## Round 2 최종 순차 관문
+
+| 순서 | 명령·검사 | 결과 |
+| --- | --- | --- |
+| 1 | `test --run --project unit` | 609파일·4012통과·1todo, 실패 0 |
+| 2 | `test --run --project render` | 134파일·781통과(새 Suspense 회귀는 일반 it), 실패 0; 기존 layout-count 기대 유지 |
+| 3 | `test --run --project react18` | 134파일·781통과(새 Suspense 회귀는 일반 it), 실패 0; Suspense 기대 실패 없음 |
+| 4 | `test:verify --run` | 748파일·4837통과·1todo, 실패 0 |
+| 5 | Storybook Chromium 단독 | 100파일·251통과, 실패 0 |
+| 6 | 엄격 `test:production` | 10파일·21통과, 실패 0; oneOf-20 freeze 111, 기존 상한 유지 |
+| 7 | `lint` | exit 0 |
+| 8 | `typecheck` | exit 0 |
+| 9 | 최종 `build` | runtime·선언·development/gate-selection 검사·agents 해시·typecheck exit 0; E5 frozen product와 runtime SHA-256 일치 |
+| 10 | 공개 선언 의미 대조 | 도달 선언 308개·의미 차이 0·해석 실패 0; 승인한 props JSDoc 주석 한 곳만 바이트 차이 |
+| 11 | FCA facts bootstrap·scan·6범위 validate·verification | facts 1674 exact·미해결 0; 불변 be1a 기준 대비 finding·diagnostic 추가 0 |
+
+최종 FCA 세 호출은 스냅숏 `f3cca71dd40e80388221251913f25edf916f51032a0ba4ffd5900c960f901a0a`를 공유합니다. be1a79867의 불변 기준 증거는 같은 도구·설정으로 생성해 원본을 보존한 최초 감사에서 재사용하고 최종 소스 감사를 새로 실행했습니다. scan 위반 201·validate finding 202(기존 error 1 포함)·verification 위반 21·diagnostic 177은 기준과 같습니다. 원래 순환과 불확정 증거가 남아 전체 절대 판정은 FAIL/도구 상태 indeterminate이며, 새 finding·diagnostic 0만 통과입니다. 새 hydration/렌더 수 시험은 각각 10·2개 exact입니다. Scan complete: 202 findings.
+
+[최종 FCA 대조](raw/ir-5-round2/fca-comparison.json)와 압축 원본 세 개, [최종 관문 집계](raw/ir-5-round2/gate-results.json)에 근거를 보존했습니다. 최종 build의 runtime SHA-256은 실제 새 창에서 측정한 E5 product와 일치하므로 이후 기록 커밋이 측정 제품을 바꾸지 않습니다. 공개 선언 308개는 의미 차이 0이고 props JSDoc의 CSR 첫 렌더·SSR 보존 설명만 주석 바이트 차이로 남습니다. agents 14개 해시를 전량 대조했습니다. dist는 기존 ignore 대상이고 추적된 runtime/adapter 산출물 변경이 없어 별도 build 커밋 대상은 없습니다.
+
+최종 인계: 일반·StrictMode·React 18 내부 Suspense의 서버 DOM 보존과 추가 렌더 0, CSR 첫 게이팅, hydration 뒤 추가분 게이팅, 문턱 미만 실제 마운트의 defer-once, 기존 항목당 두 layout effect 계약을 검증했습니다. 제품·타입·렌더·Storybook·production 검증은 통과했으며, **마운트 flat-500 on 한 행은 FAIL**이고 소유자의 비용 예외 판단은 열려 있습니다. 코디네이터는 이 상태를 명시한 단계 브랜치 PR과 독립 검토로 인계하도록 승인했습니다. 위 다섯 기존 결함의 후속 수정은 이번 범위에 포함하지 않았습니다.

@@ -1,0 +1,238 @@
+{
+  "smoke": true,
+  "startedAt": "2026-10-30T20:38:03.943Z",
+  "endedAt": "2026-10-30T20:38:13.873Z",
+  "mode": "paired-relative-authorized-round2",
+  "warmup": 0,
+  "count": 1,
+  "chromium": "145.0.7632.6",
+  "inputs": {
+    "stage": "IR-5 round-2 final",
+    "preparedAt": "2026-10-30T20:27:00.396Z",
+    "lanes": [
+      "E4",
+      "E5"
+    ],
+    "bundles": {
+      "E4": {
+        "commit": "be1a7986756bc326757d0d2055bd92010917ca7d",
+        "toolCommit": "7c91c45ee4a28d33d7ef96ce02221998a1354ee4",
+        "product": {
+          "sha256": "8de2fa64279e22af44bd368d1a68661082cd1feed3df8e2c3137f0536025a110",
+          "bytes": 857338
+        },
+        "browser": {
+          "sha256": "ee76aa887efa44f789bb2dd456d25b8b4c095b77e5ff0982efcb009f2ff81361",
+          "bytes": 1822346
+        }
+      },
+      "E5": {
+        "commit": "69251a950",
+        "toolCommit": "69251a9506d56020a51930c1ba5f9c51f6f65791",
+        "product": {
+          "sha256": "1d71e1a84716b15c9dc95988fb0ea38eca5fd29ee1bce5fd535ae66805ded7cc",
+          "bytes": 858040
+        },
+        "browser": {
+          "sha256": "d8ff1f97fdbde1fa17e79cc658f6c8dc24f7b9718c70f69dcadf5a1bcc9b20a0",
+          "bytes": 1823158
+        }
+      }
+    },
+    "viewport": {
+      "width": 900,
+      "height": 700
+    },
+    "productionReact": true,
+    "versions": {
+      "node": "v26.12.1",
+      "react": "19.2.6",
+      "playwright": "1.58.0",
+      "esbuild": "0.25.9",
+      "ajv": "8.17.1"
+    },
+    "environment": {
+      "cpu": "Apple M1 Max",
+      "logicalCpus": 10,
+      "platform": "darwin",
+      "arch": "arm64",
+      "release": "27.0.0",
+      "memoryGiB": 64
+    },
+    "reusedE4": "Same immutable E4 product/browser bytes as superseded-window-1"
+  },
+  "quiet": null,
+  "samples": [
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-flat-500-off-E4-0.json",
+      "wallMs": 53.19999998807907,
+      "eagerPaintedMs": 53.10000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-flat-500-off-E5-0.json",
+      "wallMs": 51.5,
+      "eagerPaintedMs": 51.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-flat-500-on-E4-0.json",
+      "wallMs": 173.20000004768372,
+      "eagerPaintedMs": 31.5,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-flat-500-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-flat-500-on-E5-0.json",
+      "wallMs": 176.89999997615814,
+      "eagerPaintedMs": 30.5,
+      "eagerDeferred": 480,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-nested-d5-f4-off-E4-0.json",
+      "wallMs": 88,
+      "eagerPaintedMs": 87.60000002384186,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-nested-d5-f4-off-E5-0.json",
+      "wallMs": 88,
+      "eagerPaintedMs": 87.5,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-nested-d5-f4-on-E4-0.json",
+      "wallMs": 88.19999998807907,
+      "eagerPaintedMs": 87.80000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-nested-d5-f4-on-E5-0.json",
+      "wallMs": 88.69999998807907,
+      "eagerPaintedMs": 88.30000001192093,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-array-1000-off-E4-0.json",
+      "wallMs": 197.0999999642372,
+      "eagerPaintedMs": 193.69999998807907,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-off",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-array-1000-off-E5-0.json",
+      "wallMs": 197.89999997615814,
+      "eagerPaintedMs": 194.0999999642372,
+      "eagerDeferred": 0,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E4",
+      "index": 0,
+      "file": "mount-array-1000-on-E4-0.json",
+      "wallMs": 437.7000000476837,
+      "eagerPaintedMs": 58,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    },
+    {
+      "id": "mount-array-1000-on",
+      "lane": "E5",
+      "index": 0,
+      "file": "mount-array-1000-on-E5-0.json",
+      "wallMs": 473.80000001192093,
+      "eagerPaintedMs": 59.60000002384186,
+      "eagerDeferred": 980,
+      "allDeferred": 0
+    }
+  ],
+  "warmups": [],
+  "rows": [
+    {
+      "id": "mount-flat-500-off",
+      "metric": "wallMs",
+      "E4": 53.19999998807907,
+      "E5": 51.5,
+      "ratio": 0.9680451129988721,
+      "pass": true
+    },
+    {
+      "id": "mount-flat-500-on",
+      "metric": "eagerPaintedMs",
+      "E4": 31.5,
+      "E5": 30.5,
+      "ratio": 0.9682539682539683,
+      "pass": true
+    },
+    {
+      "id": "mount-nested-d5-f4-off",
+      "metric": "wallMs",
+      "E4": 88,
+      "E5": 88,
+      "ratio": 1,
+      "pass": true
+    },
+    {
+      "id": "mount-nested-d5-f4-on",
+      "metric": "eagerPaintedMs",
+      "E4": 87.80000001192093,
+      "E5": 88.30000001192093,
+      "ratio": 1.0056947608192723,
+      "pass": true
+    },
+    {
+      "id": "mount-array-1000-off",
+      "metric": "wallMs",
+      "E4": 197.0999999642372,
+      "E5": 197.89999997615814,
+      "ratio": 1.00405885343514,
+      "pass": true
+    },
+    {
+      "id": "mount-array-1000-on",
+      "metric": "eagerPaintedMs",
+      "E4": 58,
+      "E5": 59.60000002384186,
+      "ratio": 1.0275862073076183,
+      "pass": false
+    }
+  ]
+}
