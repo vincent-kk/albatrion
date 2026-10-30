@@ -288,3 +288,60 @@ no-op 쓰기 약 21~23 µs는 모든 쓰기 행(가중치 3,000~5,000)에 걸려
 **회귀 위험 열 가지(각각 잡는 시험).** detached 의미의 이분(껍데기 무효 / 본체 보관; `.detached` 90곳 분류, 쓰기 거부는 껍데기에서; `detached.test.ts`, `visitSubtree.test.ts`); children 캐시 낡음(`find('/group/leaf')`가 옛 leaf; 기존 시험은 값만 보므로 참조 단언 추가); 보유 계수기 거짓 통과; detachedReads 키(두 번째 나감 포착 건너뜀; `detached.test.ts` "across re-entry"); B12·구독 리스너 재발화(`surface.onInactive.test.ts`); 본체 초기화 누락(`commitGlobalState`의 deliveryInitialized 전제; `slots-interaction-reset.test.ts`); inactiveValues 비고정(옛 껍데기가 본체 overlay Map을 읽음; 끊을 때 구체화; `detached.test.ts:272`); watchValues 비고정(새 시험 필요); 경로 낡음(`rekeyArraySlotBindings` 뒤 path 재조정과 배달 초기화 순서; 본체가 두 군데 매달리는 `child.parent !== source` 필터); itemKey 순서(`settle.array-write.test.ts`). 확인 못 한 가설 둘: 외부 오류 재구성(`propagateExternalErrorsToRoot`)보다 먼저 재진입해도 차이가 없는가; 게이트 레지스트리의 byNode·byEdge 메모를 보관 중 남겨 다시 써도 안전한가.
 
 **결정 규칙(갈래 A의 착수 조건).** Ⅳ-3-0 프로파일에서 갈래 A가 없애는 함수들(노드 생성자·`cloneSlotSubtree` 재귀·overlay Map 복사·`getRetainedChildEntry` 탐색)의 self 합이 **oneOf-80 왕복당 15 µs 이상**일 때만 착수하고, 그 미만이면 갈래 A는 "분석으로 닫힘"으로 기록한다. 그 전까지 갈래 B가 Ⅳ-3의 주된 갈래다. 갈래 B도 같은 규칙을 따른다: 서술자가 대신하는 함수들의 self 합이 siblings-0 전환당 15 µs 이상일 때만 착수한다.
+
+## Ⅳ-4 — 작은 절감의 묶음(2026-10-30, 후보표 검토 전)
+
+### 소유자의 결정과 기준
+
+> 작은 절감들을 끌어모아서 개선하자. 단일 개선으론 도달 불가능한게 거의 확실시되네. 특히, 앞서서 절감효과가 있었지만 기대미달이라 기각한것들을 다시 가져와서 절감효과가 있으면 적용하는 형태로 깎아나가야될거같아.
+
+Ⅳ-3-0의 oneOf-80 왕복 self는 전환 기계 26.81%, 기타 45.96%, GC 14.64%, 노드 수명 10.39%, 고정비 2.20%다. 개별 제품 함수 하나가 15%를 차지하지 않으므로 작은 후보마다 독립 절감을 확인하고 남은 묶음을 한 창에서 판정한다. 이 단계는 위 표의 옛 Ⅳ-4 이정표 재측정을 대체한다. 갈래 A의 본체 분리와 갈래 B의 전체 서술자는 이 후보표에 자동 편입하지 않는다.
+
+출발 제품은 `510962d63`이고, PR #495 병합 뒤 단계 기준은 `c5cb20f87`이다. 이 병합은 프로파일 문서·장치의 통합이며 제품 변경은 없다. 병합 전에는 `perf/schema-form-iv-3-0-profile`의 문서와 장치를 읽었고, 병합 뒤 그 머리로 rebase하여 현재 가지의 동일 자료를 사용한다. `iv-3-0-results.md`의 µs는 2,000 예열·20,000 동작의 프로파일 척도이며, 과거 20/100 창의 µs나 단계 inclusive와 더하지 않는다. 아래 과거 관측은 후보 선정 근거이며 이번 개선 증거가 아니다.
+
+### Phase 1 — 후보 목록과 좁힌 형태
+
+이 절만 먼저 커밋하고 SHA를 조정자에게 보낸다. 표 검토 답변 전에는 제품·보호 시험을 변경하지 않는다. 현재 표는 코드 읽기에 따른 시도 범위이며, 아직 실행하지 않은 탐침·할당 진단의 성공을 주장하지 않는다. 분리된 하위 ID는 각각 별도 후보·커밋·탐침이다. 상주량은 **추가 보유량**이며 실제 할당 감소는 별도로 확인한다.
+
+| ID | 출처 | 바꿀 것 | 겨냥하는 행 | 이전 관측과 폭 | 이전 기각·미착수 이유 | 이번에 시도할 좁힌 형태와 보유 한계 |
+| --- | --- | --- | --- | --- | --- | --- |
+| S1 | Ⅳ-3-0 `hasOwnProperty` | `flushRead`와 `readProjectedValue`의 structure 자체 키 확인 | siblings-0, oneOf-80 | self 1.571 µs/쓰기·1.111 µs/왕복; A/B 폭 없음 | 프로파일 단서이며 제거 가능 몫은 미확인 | 임의 값·extras의 own-key 검사는 공통 helper로 유지한다. 내부 structure의 실제 노드 값 조회와 중복 own-key 검사를 합칠 수 있는지 확인하고, prototype 이름·상속 속성·희소 배열에서 같은 분기를 증명할 때만 적용한다. 단순 `in` 치환은 하지 않는다. 추가 상주 0; 자체 키와 조회를 분리해야 하면 그 지점은 제외한다. |
+| S2 | Ⅳ-3-0 의존 색인 | `affectedByPresence`·`collect`에서 반복하는 정적 owner 경로 분류 | oneOf-80, payload-12 | 3.151·1.931 µs, 핵심 5프레임 7.275 µs/왕복; 폭 없음 | Ⅳ-2는 여섯 Set 재사용까지 묶었지만 전체 시간 개선 미증명 | blueprint owner의 wildcard 유무·bind 가능 여부는 불변이다. 기존 owner의 `bindable` 스칼라를 동등 크기의 분류 값으로 대체하여 재파싱·operator 검사를 줄인다. 현재 형상 확장·선택·owner 순서는 매번 확인하며 질의 결과를 전역 캐시하지 않는다. owner/노드당 새 컨테이너·필드 0; presence 조상 메모는 기존 정착 수명 그대로다. |
+| S3a | Ⅳ-3-0 `getHostDerived` | 한 builder 호출 안에서 같은 파생 레코드를 여러 번 조회하는 부분 | oneOf-80 | self 2.474 µs/왕복; 폭 없음 | 캐시 조회 총합이지 중복 조회의 인과 비용은 미확인 | `mergeEffectiveSchema`·read-plan builder 등에서 동일 호출의 레코드를 지역 변수로 한 번만 읽는다. 모드 전환을 건너 레코드를 보존하지 않고 슬롯 생성은 지연 상태를 유지한다. 추가 상주 0; 정착 전체에 임의 host 캐시를 만들지 않는다. |
+| S3b | Ⅳ-3-0 `selectEffectiveDeclarations` | 이미 준비된 단일 선언의 불필요한 선택·정렬 | oneOf-80, payload-12 | self 1.829 µs/왕복; 폭 없음 | 일반 선택 순서·conjunction·validationOnly 계약이 있어 전체 생략 불가 | 단일 무게이트 선언이고 기본 runtime options인 경우, build가 이미 보유한 `defaultEffectiveSchema`를 선택·정렬 전에 읽는다. 명시 memo·atomic predicate·collector·static 오류 정책·게이트 선언은 기존 경로다. 새 선택 캐시·ID 조합 표 0; 같은 기존 결과만 재사용한다. |
+| S4 | Ⅳ-3-0 `register` | 같은 live 등록을 위한 두 WeakMap 삽입 | oneOf-80, payload-12 | self 4.748 µs/왕복; 줄 표본 61%가 두 삽입; 폭 없음 | 슬롯 키 등록 생존 가설이 검증되지 않았음 | 코드상 `byNode`·`byEdge`는 공개 node identity 키이고 `remove`는 퇴장 경로의 `byPath` 등록을 지운다. 재진입은 새 node이므로 슬롯에서 등록이 생존한다는 가설은 성립하지 않는다. 기존 `byPath`의 live 등록 레코드가 memo·edge map도 소유하도록 합쳐 WeakMap 둘을 제거하는 안만 검토한다. 새 전역 색인 0, node당 기존 두 map과 등록 레코드 이하이며 옛 node 등록을 새 수명에 넘기지 않는다. relocate·간접 locate·동일 경로 다른 node를 보호한다. |
+| S5 | Ⅳ-3-0 나감 | 신규 detached snapshot의 무규칙 watch 부기 | oneOf-80, payload-12 | finalizeExits 포함 10.80, capture 포함 5.18, retain 포함 2.28 µs/왕복; 서로 중복, 폭 없음 | Ⅳ-2는 신규 포착을 생략하면 마지막 커밋 읽기를 잃는다고 확인 | 기본값·오류·상태·정책 입력의 마지막 커밋 포착과 슬롯 보존은 유지한다. watch 목록이 비었을 때 이미 공유하는 동결 빈 결과를 읽는 데 필요한 파생 witness·빈 배열·memo 갱신을 줄이는 안만 시도한다. 이전 nonempty memo 제거와 detached 읽기 동일성을 확인한다. 값 의존 watch의 사후 live 조회는 금지하며 추가 상주 0이다. |
+| S6a | B2-P1b 비활성 값 지연 | journal 기반 지연 materialization의 재적용 가능성 | oneOf-80, payload-12 | oneOf 502.666→466.917, 폭 190.417 µs; payload 810.750→883.812, 폭 331.083 µs | 시간 개선 미증명, memo 비용·표적 상한 실패; 장기 journal/옛 토큰 보유 가능 | **분석으로 제외.** 오늘 슬롯은 이미 호스트별 첫 `inactiveValues` 읽기만 materialize하고 변경 없는 배열 참조를 재사용한다. 동일 이득은 현 계약에 있고, 전역 Δ journal·옛 전체 기준을 다시 보유하는 것은 좁은 적용이 아니다. 후보별 결과 장부에는 제외 사유를 남긴다. |
+| S6b | B2-P3 활성 자식 조립 | `assembleObject`의 전체 childEntries 순회 | oneOf-80, payload-12 | 후보 1 oneOf 405.417→361.791, 폭 245.041 µs; payload 970.250→776.396, 폭 286.875 µs. 조립 self 9.667→6.208 µs/쓰기 | 전체 개선 미증명, 잠복·등록·배달의 묶음 상한 실패. 후보 2 등록/배달은 기준과 같아도 비악화 허용 오차가 없어 실패 | 잠복 codec·영속 색인·등록·배달 변경은 옮기지 않는다. 기존 준비된 자식 순서 증인이 있는 경우에만 활성 children으로 조립 이름을 만들고 정수 이름·문서 순서·propertyOrder·extras 우선순위를 보존한다. 현재 childOrderIndex/objectShapes를 넘어선 순위 Map은 추가하지 않으며 증인이 없으면 원래 전체 순회다. 추가 상주 0; 순서 증명이 안 되면 제외한다. |
+| S7 | Ⅳ-1 국소 바퀴 | 유일한 비루트 literal 호스트에 한정한 닫힘 증명 | nested-oneOf-20; leaf-gate-4000/8000 추가 보호 | 창 2 286.417→212.646, 폭 37.250 µs(−25.8%); 원 교환비 +3,068.340, 첫 쓰기 포함 +4,820.716 µs | leaf-gate 보호 퇴보·Bun 힙 실패; 정적 중첩 개선 미증명. 전체 경로 Map의 간접 영향은 가설 | 기존 구현은 범위 표·live 확인·후퇴·그림자 증인이 결합되어 있어 nested 경로만 그대로 떼어 올 수 없다. 대안은 **청사진에 유일한 비루트 literal 호스트만** 정적으로 닫힘을 증명하고 다른 모든 형상은 준비 없이 후퇴하는 안이다. 기존 전 경로 Map을 금지하고 blueprint당 descriptor 최대 1개(호스트 template 참조·path 참조·자격 값만), live node 보유 0으로 제한한다. 이 추가 상주 구조는 **Phase 1 조정자 명시 승인 전 미착수**다. 승인 뒤에도 전체 폐쇄 증인·예외 후퇴를 유지하지 못하면 제외한다. |
+| S8a | 미시 위생 항목 5 | `selectEntryStep`의 선언 ID map 변환 한 곳 | payload-12 | 묶음 창 payload 356.083→373.229, 폭 17.084 µs; 퇴보 가중 기여 +514.380 µs | 항목별 분리 비교가 없었고 JIT/번들 비용은 원인 가설 | `af3e2e1d3`·`b50f06050`의 해당 변환만 역적용한 탐침으로 원인을 분리한다. 밀집 내부 목록이라는 증명이 성립할 때만 원래 map을 복원하며 외부 희소 입력의 HasProperty·평가 횟수를 유지한다. 추가 상주 0; 개선 없으면 되돌린다. |
+| S8b | 미시 위생 항목 5 | `publishPreparedSelection`의 동적 순서·참조 비교 변환 | payload-12 | S8a와 같은 묶음 관측·폭; 개별 수치 없음 | 두 rewrite 가운데 어느 것이 퇴보 원인인지 미확인 | S8a와 분리하여 이 비교 한 곳만 원래 prototype iteration으로 되돌린다. hole·길이·조기 종료·이전 children/structure 참조와 정수 키 순서를 보존한다. 추가 상주 0; 한 번에 항목 5 전체를 되돌리지 않는다. |
+| S9 | Ⅳ-3-0 GC | oneOf-80의 할당 프레임 귀속 | oneOf-80 진단 | GC self 14.390 µs/왕복(14.64%); 폭 없음 | GC 비중만으로 할당 주인이나 제거 가능한 비용을 정할 수 없음 | 제품 무수정·한 프로세스의 `--heap-prof` 할당 표본 한 번을 2,000/20,000 경로에 적용한다. setup·예열과 동작의 귀속 경계를 기록하고 상위 할당 프레임·bytes·입력 해시를 보존한다. 이 행 자체는 제품 후보가 아니며 Node 전용·표본의 한계를 명시한다. 새 제품 후보는 동일 형식의 행과 조정자 검토 뒤 추가한다. |
+
+S4의 등록 생존 여부는 `getGateRegistry`의 register/remove/locate와 `finalizeExits`→remove, `selectEntryStep`→cloneFromSlot→새 등록을 따라 확인했다. 슬롯이 메모를 살려 둔다고 가정하여 NODE-044의 새 공개 객체, NODE-064의 떼어진 객체 불변을 완화하지 않는다. S5 역시 `detachedReads.has(node)`가 **이미 포착한 노드만** 거른다는 기존 조건을 유지한다. 무구독이거나 과거 getter를 읽지 않았다는 사실은 신규 포착 전체를 생략할 근거가 아니다.
+
+S7은 비용 상한과 자격을 검토할 제안이며 승인된 구현 계획이 아니다. 그 밖의 행도 현재 구조 안의 변경만 허용한다. 새로운 상주 구조·더 넓은 순서 변경이 필요해지면 바이트/항목 상한을 적어 `question`하고 답변 전에는 진행하지 않는다. 의미를 동일하게 지킬 수 없는 좁힌 형태는 제외하고 이유를 기록한다.
+
+### Phase 2 — 후보 하나, 커밋 하나, 먼저 탐침
+
+1. Phase 1 검토 뒤 구현 계획·검토 절차를 거쳐 진행한다. 바뀌는 비용 계약의 DETAIL 문장을 코드보다 먼저 고치고, 후보별 제품 변경과 보호 시험을 한 커밋에 둔다. 공개 API·값·멤버십·순회/선언/배달 순서·NaN·희소 배열·참조 불변을 유지하며 기존 시험을 삭제하거나 약화하지 않는다. build 산출물은 소스 커밋에 섞지 않는다.
+2. 각 후보의 부모 커밋 A와 후보 B를 같은 `.noindex` 준비 root 안의 독립 불변 레인으로 만든다. Ⅳ-3-0의 collector 없는 `worker`·`setupOperation`·`runBlocks`를 재사용하고, 각 행은 새 프로세스 A0/B0/A1/B1/A2/B2로 한 번씩 실행한다. 프로세스 하나씩, 각각 1분 미만, 2,000 예열·20,000 동작, 100동작 블록·500동작마다 시계 밖 setImmediate다. payload는 기존 B9-0 fixture로 이미 지원되며 nested 행만 기존 IV-1 operation 어댑터를 연결한다. 기존 IV-3-0 prepare의 고정 제품 SHA 검사를 우회하지 않고 후보용 준비 장치를 별도로 둔다.
+3. 모든 후보는 표적 행과 `switch-oneOf-80`·`switch-siblings-0`·`switch-payload-12`·`single-flat-1000`을 포함한다. 블록별 µs/동작의 중앙값을 프로세스 대표값으로 고정하고 세 A·세 B 대표값의 중앙값을 비교한다. 행 r의 잡음 nᵣ은 세 A 대표값의 최대−최소다. 각 표적 행이 A−B > nᵣ이고 모든 나열 행이 B−A ≤ nᵣ일 때만 유지한다. 세 A의 원값·nᵣ·전체 행 중 최대 nᵣ·세 B·차이를 함께 적는다. flat은 1잎 쓰기, oneOf/payload는 왕복 2쓰기, siblings는 1쓰기이며 창의 flat 10쓰기 단위로 오인하지 않는다.
+4. 개선이 잡음을 넘지 못하거나 한 보호 행이라도 실패하면 해당 후보를 되돌리고 실패 수치까지 결과 문서에 남긴다. 추가 시도로 원래 실패를 덮지 않는다. 탐침은 keep/drop에만 쓰고 최종 단계 개선 판정으로 쓰지 않는다. S9의 할당 표본은 이 plain 탐침과 별도 프로세스이며 시간 개선 증거가 아니다.
+5. 반복 중 정적 관문은 표적 시험·package typecheck·lint다. 성능/할당 상한은 수정 전 실패와 수정 뒤 통과를 확인하고 의미 특성화는 양쪽에서 같은 관측을 확인한다. FCA는 PR seam에서 최대 한 번이다. 환경 거절은 원시 보존 후 `question`하며 자동 재시도하지 않는다.
+
+### Phase 3 — 남은 묶음의 최종 관문과 창 하나
+
+최종 머리에서 지정 build와 artifact checks, 다섯 프로젝트(unit→render→storybook→react18→production)의 `--run`을 직렬로 한 번씩, `test:verify --run`, 선언 차분, 레거시 격리, 배달 79+7장면을 확인한다. 공개 `index.d.ts` 바이트 차이와 배달 차이는 0이어야 하며 내부 선언 차분은 그대로 기록한다. FCA findings는 기준 202개를 넘지 않아야 하고 기존 FAIL·indeterminate를 통과로 바꾸지 않는다. 후보가 추가하거나 바꾼 계약의 NODE-044/064·detached 읽기·재진입·보유량·B12 보호도 유지한다.
+
+최종 창의 A는 제품 변경 전 단계 기준 `c5cb20f87`, B는 유지한 후보 전부의 머리다. `tools/iv-2/window.mjs` 계열과 `tools/iv-1/summarize.mjs`·`weightedExchange.mjs`·`judgeStage.mjs`의 기존 장치와 판정식을 재사용한다. 계측 경계의 정확 일치가 제품 변경으로 달라지면 계측기 검증부터 수행하며 제품 의미를 장치에 맞춰 바꾸지 않는다. 순서는 무시간 22행 적재 smoke → 실제 CLI 1행·1프로세스·1/1 예행 → 22행·1프로세스 pilot → `question`의 답변으로 창 허가 → 본 창이다. pilot의 median/min 비율 1.2~1.4와 전체 비율을 보고하며 범위 밖이면 보존하고 조정자 결정을 기다린다. pilot도 독점 시간 허가를 먼저 받는다.
+
+본 창은 22행, 레인당 10프로세스, 20예열/100표본, `--quality=legacy`, `.noindex` 준비 root·원시, Node/Bun 각 7표본 힙이다. 공용 3초 CPU 평균·외부 PID 30%, 일반 120초/Spotlight 600초 시작 지연을 지킨다. 원시는 CPU 상위 10개 이름·비율만 게시한다. 조정자의 다른 창 시작부터 종료 통지까지 탐침·할당 진단·pilot·build·시험을 겹치지 않는다. heartbeat·foreground check wait·poll loop·worker 자체 ack는 사용하지 않는다.
+
+이 단계의 채택은 **가중 교환비 < 0, 22행 어느 행에도 폭 밖 퇴보 0, TEST-073 주판정 회귀 0, Node/Bun 힙 각각 B 중앙값 ≤ A 최댓값**, 그리고 위 정적·동치 관문 통과다. `verification.md`가 일반적으로 허용한 mount 교환 예외보다 이 묶음의 퇴보 0 규칙을 엄격하게 적용한다. 폭 안 기여는 0, eventsPerSample은 기존 창 가중치 표 그대로다. 첫 쓰기로 옮긴 일회성 일이 있다면 기존 cold-first-write 추가항을 포함하고 정확히 0인 교환비도 채택하지 않는다. 과거 Ⅳ-3-A/B의 15 µs 단일 후보 착수선은 이번 작은 후보에 적용하지 않는다.
+
+한 행이라도 폭 밖 퇴보면 기존 창을 보존하고 plain 탐침으로 원인 커밋을 가른 뒤 그 커밋을 제외한다. 새 머리의 정적 관문을 다시 확인하고 **두 번째 창은 반드시 `question`의 명시 허가 뒤** 연다. 창이나 환경 거절을 자체 판단으로 재실행하지 않는다.
+
+### 결과와 인계
+
+`../../verification/branch-switch/iv-4-results.md`에 유지·제외 후보별 세 A/B·잡음·차이·원인, pilot 비율, 창 22행 표·폭·가중 기여·총합, Node/Bun 힙·정적/동치 관문을 적는다. S6a 같은 분석 제외와 S9 진단도 실행 후보와 구별하여 기록한다. 원시는 `raw/iv-4/`에 입력 해시와 함께 보존하며 기계 로컬 경로를 문서·커밋·PR에 남기지 않는다. 조정자 지시 전 push하지 않고, PR 본문은 브리프가 지정한 외부 인계 파일에 한국어로 작성한다. 마지막 inbox 확인 뒤 `worker_done`을 한 번 보내며 head SHA·유지/제외 수·탐침 실행 수·창 판정과 두 lifecycle ID를 포함한다. Phase 1 검토 대기에는 완료 신호를 보내지 않는다.
