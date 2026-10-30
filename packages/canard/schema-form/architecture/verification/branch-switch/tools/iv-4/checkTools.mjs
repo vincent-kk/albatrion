@@ -1,6 +1,7 @@
 // Loaded directly for deterministic device checks; no performance samples are taken.
 import assert from 'node:assert/strict';
 
+import { attributeNativeAllocations } from './helpers/attributeNativeAllocations.mjs';
 import { summarizeAllocations } from './helpers/summarizeAllocations.mjs';
 import { summarizeProbe } from './helpers/summarizeProbe.mjs';
 
@@ -77,4 +78,19 @@ assert.equal(
   96,
 );
 assert.throws(() => summarizeAllocations(profile, 0));
+const native = structuredClone(profile);
+native.head.children[0].children[0].callFrame.url = '';
+const attributed = attributeNativeAllocations(
+  native,
+  2,
+  'prepared/A/engine.mjs',
+);
+assert.equal(
+  attributed.rows.find((row) => row.function === 'parent').bytes,
+  96,
+);
+assert.equal(
+  attributed.rows.reduce((sum, row) => sum + row.bytes, 0),
+  96,
+);
 console.log('IV_4_TOOLS_OK');

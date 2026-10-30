@@ -23,3 +23,9 @@ node packages/canard/schema-form/architecture/verification/branch-switch/tools/i
 ```
 
 공용 3초 평균 CPU quiet gate와 30%·120초/Spotlight 600초 시작 지연을 재사용합니다. 허용되지 않으면 failure 원시를 보존하고 조정자에게 질문합니다. 다른 창과 겹치지 않으며 창·pilot에는 별도 조정자 허가가 필요합니다. 공개 원시는 상위 열 개 프로세스 이름·비율만 보유하고 함수 URL을 상대 주소로 바꿉니다. 원래 stderr·stdout과 준비 bundle은 외부 root에서 보존합니다. publish는 기존 증거 파일을 덮어쓰지 않아야 하며 같은 label은 재사용하지 않습니다.
+
+## GC 횟수와 S4 할당 보충
+
+기존 plain worker는 그대로 두고 `diagnose.mjs`가 별도 `gc-worker.mjs`를 실행합니다. mode는 `gc`(원 S9 제품의 별도 GC 횟수 관측) 또는 `allocation`(S4 A/B의 단명 할당과 GC 횟수)입니다. 인수는 준비 root, A/B, mode, 제외 agent PID입니다. 각 lane/mode는 해당 root에서 한 번만 실행하며 공용 quiet gate·59초 자식 제한을 적용합니다. `publishDiagnostics.mjs root label`로 고유 label에 보존합니다.
+
+PerformanceObserver는 예열 뒤 켜고,20,000동작 구간에 시작된 GC의 kind/flags·duration을 보존합니다. 마지막 콜백을 시계 밖에서 배출한 뒤 분리합니다. 원 S9의 GC 횟수는 수집하지 않았으므로 보충 관측과 같다고 주장하지 않습니다. allocation 모드는 기존 inspector의 두 collected-object 옵션을 유지하며 가장 가까운 제품 frame에 native self bytes를 배타적으로 귀속합니다. 새 진단의 실행 도구 SHA는 각 결과에 별도 기록하고 기존 S9와 plain 탐침 원시를 변경하지 않습니다.

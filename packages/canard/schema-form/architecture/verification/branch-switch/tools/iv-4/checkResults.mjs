@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
+import { attributeNativeAllocations } from './helpers/attributeNativeAllocations.mjs';
 import { summarizeAllocations } from './helpers/summarizeAllocations.mjs';
 import { summarizeProbe } from './helpers/summarizeProbe.mjs';
 
@@ -29,6 +30,37 @@ if (mode === '--allocation') {
   );
   assert.ok(record.allocations.totalBytes > 0);
   assert.equal(record.collector, true);
+  const assigned = read('S9/native-attribution.json');
+  assert.deepEqual(
+    assigned.rows,
+    attributeNativeAllocations(record.profile, 20000, 'prepared/A/engine.mjs')
+      .rows,
+  );
+  const original = gunzipSync(
+    fs.readFileSync(new URL('S9/allocation.json.gz', raw)),
+  );
+  assert.equal(
+    createHash('sha256').update(original).digest('hex'),
+    assigned.inputSha256,
+  );
+  const supplemental = compressed('S9-gc/diagnostic-A-gc.json.gz');
+  assert.equal(supplemental.record.mode, 'gc');
+  assert.equal(supplemental.record.operations, 20000);
+  assert.equal(supplemental.record.warmups, 2000);
+  assert.equal(
+    Object.values(supplemental.record.gc.counts).reduce(
+      (sum, count) => sum + count,
+      0,
+    ),
+    supplemental.record.gc.events.length,
+  );
+  assert.ok(
+    supplemental.record.gc.events.every(
+      (event) =>
+        event.startMs >= supplemental.record.startMs &&
+        event.startMs < supplemental.record.endMs,
+    ),
+  );
   console.log('IV_4_ALLOCATION_OK');
 } else if (mode === '--candidates') {
   const ledger = read('candidates.json');
