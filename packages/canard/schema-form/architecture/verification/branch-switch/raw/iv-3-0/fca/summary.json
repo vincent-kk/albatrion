@@ -1,0 +1,28 @@
+{
+  "findings": 202,
+  "structuralFindings": 202,
+  "verificationFindings": 21,
+  "threshold": 202,
+  "thresholdMet": true,
+  "verdict": "FAIL",
+  "certainty": "indeterminate",
+  "snapshotHash": "4ebb0305984946ed334250fe9da43012c6b31a97804474a6a662bf4bb49aba02",
+  "auditRuns": 1,
+  "phases": [
+    "scan",
+    "validate",
+    "verification"
+  ],
+  "diagnostics": 177,
+  "facts": {
+    "covered": 1665,
+    "exact": 1665,
+    "unsupported": 173
+  },
+  "sourceArtifacts": {
+    "scan": "0c8b0bf6875a9c5a5c41ff6f6341798ffcfff7bc6236517ec1095198f247d079",
+    "validate": "dbe3a2754551bfc36c47ebb9c97fab66b6cae24bd31019fb42b1c8061b5e3f83",
+    "verification": "618ea80d28dbfabd57b0814f2bd1662e4ff944352b0a4f1d837312a8b01e71b8"
+  },
+  "scope": "schema-form package; repository config; default adapter source facts scope"
+}

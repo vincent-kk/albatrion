@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "description": "Immutable measurement-time bytes; commit IDs record provenance and are not required to exist during recomputation.",
+  "files": {
+    "measurement-tools.json": {
+      "sha256": "e5a237cb7da58f06f7c6aebfd22caea8b7dbde78a3838ca55e8ef6ba145d8cb1",
+      "sourceCommit": "5d8078a3049283a06f3b116cedff99141643ca4c",
+      "fileCount": 19
+    },
+    "original-observations.json": {
+      "sha256": "7ae22df266356cd551bf39138347b09336567e91fdb7aa0a7968af16db04417b",
+      "sourceCommit": "15adb339aa8635b9d07440aadfc70e27569ce3f0",
+      "fileCount": 20
+    }
+  }
+}
