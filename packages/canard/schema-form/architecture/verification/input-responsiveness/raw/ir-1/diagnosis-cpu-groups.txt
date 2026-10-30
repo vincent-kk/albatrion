@@ -1,0 +1,81 @@
+
+## mount-flat-500-off|E runs=6 busy(non-idle) median=113.2ms
+  commit:layout:product                    37.23
+  commit:layout:react                      0.82
+  commit:mutation:product                  0.00
+  commit:mutation:react                    1.26
+  commit:other:react                       0.65
+  commit:passive:product                   1.14
+  commit:passive:react                     3.23
+  gc                                       5.76
+  idle                                     151.68
+  outside-react:ajv                        0.12
+  outside-react:harness                    1.79
+  outside-react:product                    0.39
+  outside-react:react                      0.36
+  outside-react:react-dom                  3.06
+  outside-react:scheduler                  0.20
+  program(native non-JS)                   14.58
+  render:begin:product                     27.30
+  render:begin:react                       6.71
+  render:complete(DOM create)              8.99
+
+## mount-flat-500-off|L runs=6 busy(non-idle) median=77.0ms
+  commit:layout:product                    0.08
+  commit:layout:react                      0.57
+  commit:mutation:react                    1.26
+  commit:other:react                       0.65
+  commit:passive:product                   6.93
+  commit:passive:react                     7.48
+  gc                                       3.64
+  idle                                     151.86
+  outside-react:harness                    1.75
+  outside-react:product                    0.80
+  outside-react:react                      0.43
+  outside-react:react-dom                  2.92
+  outside-react:scheduler                  0.16
+  program(native non-JS)                   14.95
+  render:begin:product                     19.66
+  render:begin:react                       6.43
+  render:complete(DOM create)              9.19
+
+## mount-nested-d5-f4-off|E runs=6 busy(non-idle) median=206.0ms
+  commit:layout:product                    78.86
+  commit:layout:react                      1.34
+  commit:mutation:react                    2.20
+  commit:other:react                       1.24
+  commit:passive:product                   1.87
+  commit:passive:react                     3.72
+  gc                                       12.38
+  idle                                     150.01
+  outside-react:ajv                        0.16
+  outside-react:harness                    2.85
+  outside-react:product                    0.36
+  outside-react:react                      0.38
+  outside-react:react-dom                  4.97
+  outside-react:scheduler                  0.16
+  outside-react:winglet                    0.00
+  program(native non-JS)                   22.16
+  render:begin:product                     46.30
+  render:begin:react                       10.17
+  render:complete(DOM create)              15.74
+
+## mount-nested-d5-f4-off|L runs=6 busy(non-idle) median=136.7ms
+  commit:layout:product                    0.36
+  commit:layout:react                      1.52
+  commit:mutation:react                    2.33
+  commit:other:react                       1.17
+  commit:passive:product                   15.23
+  commit:passive:react                     16.57
+  gc                                       9.59
+  idle                                     149.82
+  outside-react:harness                    3.08
+  outside-react:product                    1.36
+  outside-react:react                      0.42
+  outside-react:react-dom                  4.47
+  outside-react:scheduler                  0.16
+  outside-react:winglet                    0.00
+  program(native non-JS)                   22.94
+  render:begin:product                     34.42
+  render:begin:react                       8.80
+  render:complete(DOM create)              16.25

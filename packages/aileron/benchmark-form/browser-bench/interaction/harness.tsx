@@ -21,6 +21,8 @@ window.__ir0 = {
   },
   begin() {
     started = observation.begin();
+    if (fixture.mount && mounted.mount.startedAt !== undefined)
+      started = mounted.mount.startedAt;
   },
   async replace() {
     const items = Array.from({ length: 200 }, (_, index) => ({
@@ -34,6 +36,15 @@ window.__ir0 = {
     await afterPaint();
   },
   async finish() {
+    if (fixture.virtualization && !fixture.mount) {
+      const deadline = performance.now() + 30000;
+      while (container.querySelector('[data-deferred]')) {
+        if (performance.now() > deadline)
+          throw new Error('Structural reveal timeout');
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+      await afterPaint();
+    }
     const end = performance.now();
     await new Promise((resolve) => setTimeout(resolve, 150));
     await afterPaint();

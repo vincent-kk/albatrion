@@ -1,0 +1,375 @@
+{
+  "sourceHead": "4c035445b",
+  "checks": [
+    {
+      "package": "schema-form",
+      "command": "unit",
+      "evidence": "609 files; 4013 passed; 1 todo"
+    },
+    {
+      "package": "schema-form",
+      "command": "build",
+      "evidence": "IR1_STABLE_BUILD_OK; includes typecheck and artifact verification"
+    },
+    {
+      "package": "schema-form",
+      "command": "lint",
+      "evidence": "IR1_STABLE_LINT_OK"
+    },
+    {
+      "package": "schema-form",
+      "command": "render/react18 virtualization/deferred/commands",
+      "evidence": "12 files; 58 passed"
+    },
+    {
+      "package": "schema-form",
+      "command": "unit selection/budget",
+      "evidence": "2 files; 12 passed"
+    },
+    {
+      "package": "schema-form",
+      "command": "render/react18 Form lifecycle",
+      "evidence": "2 files; 20 passed; LANDING-036 unchanged"
+    },
+    {
+      "package": "schema-form-ajv8-plugin",
+      "command": "unit",
+      "evidence": "21 files; 334 passed"
+    },
+    {
+      "package": "schema-form-ajv8-plugin",
+      "command": "build",
+      "evidence": "passed; includes typecheck"
+    },
+    {
+      "package": "schema-form-ajv8-plugin",
+      "command": "lint",
+      "evidence": "passed"
+    },
+    {
+      "package": "benchmark-form",
+      "command": "typecheck:browser",
+      "evidence": "passed"
+    },
+    {
+      "package": "benchmark-form",
+      "command": "lint",
+      "evidence": "passed"
+    },
+    {
+      "package": "schema-form",
+      "command": "public declaration comparison",
+      "evidence": "byte-for-byte diff 0 against stage base product build"
+    }
+  ],
+  "gateRounds": [
+    {
+      "sourceHead": "d983f07036ea180dfaffb656a223876ded5a7147",
+      "date": "2026-10-31",
+      "adoptedProduct": "Part A only; development-only if-gate preparation refinement",
+      "checks": [
+        {
+          "command": "yarn workspace @canard/schema-form test --run",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 1,
+          "attempt": 1,
+          "testFiles": {
+            "passed": 981,
+            "failed": 1,
+            "total": 982
+          },
+          "tests": {
+            "passed": 5817,
+            "failed": 1,
+            "todo": 1,
+            "total": 5819
+          },
+          "unhandledErrors": 1,
+          "projects": {
+            "unit": {
+              "files": 608,
+              "passed": 4008,
+              "failed": 0,
+              "todo": 1
+            },
+            "render": {
+              "files": 132,
+              "passed": 769,
+              "failed": 0,
+              "todo": 0
+            },
+            "react18": {
+              "files": 132,
+              "passed": 769,
+              "failed": 0,
+              "todo": 0
+            },
+            "production": {
+              "files": 10,
+              "passed": 21,
+              "failed": 0,
+              "todo": 0
+            },
+            "storybook": {
+              "files": 100,
+              "passed": 250,
+              "failed": 1,
+              "todo": 0
+            }
+          },
+          "classification": "environment limit of running every project in one process; isolated Storybook passes",
+          "failures": [
+            "EVENT-065: Test timed out in 15000ms",
+            "[vitest-worker]: Timeout calling onTaskUpdate"
+          ],
+          "projectCountsBasis": "Global summary plus unchanged project corpus at this head (first streamed transcript omitted part of the middle file output); independently completed per-project counts match the total."
+        },
+        {
+          "command": "yarn workspace @canard/schema-form test --run",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 1,
+          "attempt": 2,
+          "testFiles": {
+            "passed": 980,
+            "failed": 2,
+            "total": 982
+          },
+          "tests": {
+            "passed": 5816,
+            "failed": 2,
+            "todo": 1,
+            "total": 5819
+          },
+          "unhandledErrors": 0,
+          "projects": {
+            "unit": {
+              "files": 608,
+              "passed": 4008,
+              "failed": 0,
+              "todo": 1
+            },
+            "render": {
+              "files": 132,
+              "passed": 769,
+              "failed": 0,
+              "todo": 0
+            },
+            "react18": {
+              "files": 132,
+              "passed": 769,
+              "failed": 0,
+              "todo": 0
+            },
+            "production": {
+              "files": 10,
+              "passed": 21,
+              "failed": 0,
+              "todo": 0
+            },
+            "storybook": {
+              "files": 100,
+              "passed": 249,
+              "failed": 2,
+              "todo": 0
+            }
+          },
+          "classification": "environment limit of running every project in one process; isolated Storybook passes",
+          "failures": [
+            "EVENT-065: locator.click Timeout 14750ms exceeded after visible/enabled/stable and scroll",
+            "cx11-ime-during-switch: locator.click Timeout 14810ms exceeded after visible/enabled/stable and scroll"
+          ],
+          "projectCountsBasis": "Complete default-run file output; production here uses development NODE_ENV, not test:production."
+        },
+        {
+          "command": "yarn workspace @canard/schema-form test --run --project unit",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "projects": {
+            "unit": {
+              "files": 608,
+              "passed": 4008,
+              "failed": 0,
+              "todo": 1
+            }
+          }
+        },
+        {
+          "command": "yarn workspace @canard/schema-form test --run --project render",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "projects": {
+            "render": {
+              "files": 132,
+              "passed": 769,
+              "failed": 0,
+              "todo": 0
+            }
+          },
+          "cx02": "passed"
+        },
+        {
+          "command": "yarn workspace @canard/schema-form test --run --project react18",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "projects": {
+            "react18": {
+              "files": 132,
+              "passed": 769,
+              "failed": 0,
+              "todo": 0
+            }
+          },
+          "cx02": "passed"
+        },
+        {
+          "command": "yarn workspace @canard/schema-form test:production",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 1,
+          "projects": {
+            "production": {
+              "files": 10,
+              "filesPassed": 8,
+              "filesFailed": 2,
+              "passed": 19,
+              "failed": 2,
+              "todo": 0
+            }
+          },
+          "failures": [
+            "detached.production.test.ts: TypeError: execFileSync is not a function (node:child_process externalized for browser compatibility)",
+            "blueprint.owned-inline-counts.test.ts: oneOf-20 distinct freeze 117 > 111"
+          ],
+          "classification": "pre-existing; identical on base; neither failing file nor configuration changed; coordinator authorized recording without IR-1 fix"
+        },
+        {
+          "command": "yarn workspace @canard/schema-form test:production",
+          "head": "994103fcc",
+          "exitCode": 1,
+          "productSourceHead": "91c422e0e",
+          "readOnlyBaseComparison": true,
+          "projects": {
+            "production": {
+              "files": 10,
+              "filesPassed": 8,
+              "filesFailed": 2,
+              "passed": 19,
+              "failed": 2,
+              "todo": 0
+            }
+          },
+          "failures": [
+            "detached.production.test.ts: TypeError: execFileSync is not a function (node:child_process externalized for browser compatibility)",
+            "blueprint.owned-inline-counts.test.ts: oneOf-20 distinct freeze 117 > 111"
+          ]
+        },
+        {
+          "command": "yarn workspace @canard/schema-form test:verify",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "projects": {
+            "verify-unit": {
+              "files": 613,
+              "passed": 4052,
+              "failed": 0,
+              "todo": 1
+            },
+            "verify-render": {
+              "files": 132,
+              "passed": 769,
+              "failed": 0,
+              "todo": 0
+            }
+          },
+          "tests": {
+            "passed": 4821,
+            "failed": 0,
+            "todo": 1,
+            "total": 4822
+          },
+          "files": 745
+        },
+        {
+          "command": "yarn workspace @canard/schema-form test --run --project storybook",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "projects": {
+            "storybook": {
+              "files": 100,
+              "passed": 251,
+              "failed": 0,
+              "todo": 0
+            }
+          },
+          "imeComposition": "passed; isolated EVENT-065 previously passed in 1.747 s",
+          "classification": "sequential with no other tests/build/lint running; base comparison unnecessary after head passes"
+        },
+        {
+          "command": "yarn workspace @canard/schema-form-ajv8-plugin test --run",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "files": 21,
+          "tests": {
+            "passed": 334,
+            "failed": 0,
+            "todo": 0
+          }
+        },
+        {
+          "command": "yarn workspace @canard/schema-form lint",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "result": "passed",
+          "testCounts": null
+        },
+        {
+          "command": "yarn workspace @canard/schema-form typecheck",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "result": "passed",
+          "testCounts": null
+        },
+        {
+          "command": "yarn workspace @canard/schema-form build",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "result": "passed",
+          "testCounts": null,
+          "evidence": "DEVELOPMENT_FLAG_OK reads=47 flags=48 pure=535; declaration imports fixed=2335; default ESM sha256 3617ff8fe7f2f739803853dce86a1b4913a220b588712b2adf46b6a0a986aac4. Build includes build:verify, build:types, build:hashes, typecheck."
+        },
+        {
+          "command": "yarn workspace @aileron/benchmark-form lint",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "result": "passed",
+          "testCounts": null
+        },
+        {
+          "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "result": "passed",
+          "testCounts": null
+        },
+        {
+          "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1 --derived",
+          "head": "d983f07036ea180dfaffb656a223876ded5a7147",
+          "exitCode": 0,
+          "result": "IR1_RAW_REPRODUCED samples=520; IR1_DERIVED_REPRODUCED gates=10 spread=4 backfill=12",
+          "derivedFieldDifferences": 0
+        }
+      ],
+      "proofs": {
+        "production": "adopted-a-proof.json",
+        "variantConstants": "variant-provenance.json",
+        "fca": "gate-round-fca-comparison.json",
+        "publicIndexDeclarationByteDifference": 0,
+        "publicReachableDeclarationDifferences": 0,
+        "internalDeclarationCommentOnlyDifferences": 1
+      },
+      "remainingFailures": [
+        "test:production remains FAIL on head and base (19 pass / 2 fail); separate diagnosis owned by coordinator",
+        "Combined default run remains FAIL due IME environment timeouts; sequential unit/render/react18/verify/Storybook pass"
+      ]
+    }
+  ]
+}

@@ -77,6 +77,26 @@ describe('guard records at public entry boundaries', () => {
     dispatchMount(root, 'value');
     expect(report).not.toHaveBeenCalled();
   });
+  it('prepares every development if guard at tree construction before mount', () => {
+    vi.unstubAllEnvs();
+    const compile = vi.fn(() => () => null);
+    const compileGuard = vi.fn(() => () => true);
+    const validator: Validator = { compile, compileGuard };
+    createDispatchTree(
+      {
+        type: 'object',
+        allOf: [
+          { if: {}, then: { type: 'object' } },
+          { if: { type: 'object' }, then: { type: 'object' } },
+        ],
+      },
+      undefined,
+      validator,
+    );
+    expect(compile).toHaveBeenCalledTimes(1);
+    expect(compileGuard).toHaveBeenCalledTimes(2);
+  });
+
   it('ERROR-041 dev compiles once and each consuming tree records after mount commit at sink', () => {
     vi.unstubAllEnvs();
     const compileGuard = vi.fn(() => {

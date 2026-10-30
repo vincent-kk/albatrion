@@ -25,6 +25,8 @@ export interface ValidationRecord {
 
 /** DOM snapshots at measured render milestones. */
 export interface MountRecord {
+  /** Page-clock render start for mount-frame attribution. */
+  startedAt?: number;
   wallMs: number;
   eagerPaintedMs: number;
   allRevealedMs: number;

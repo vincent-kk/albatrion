@@ -59,9 +59,11 @@ export const readValidationEntry = (
         oldRoot.$id === authoredRoot.$id
       )
         evictValidationRoot(validator, oldRoot);
-  list.counts.set(authoredRoot, 0);
-  list.recent.push(authoredRoot);
-  if (list.recent.length > 8) evictValidationRoot(validator, list.recent[0]);
+  if (!list.counts.has(authoredRoot)) {
+    list.counts.set(authoredRoot, 0);
+    list.recent.push(authoredRoot);
+    if (list.recent.length > 8) evictValidationRoot(validator, list.recent[0]);
+  }
   const copy = createValidatorCopy(authoredRoot);
   let validate: Optional<ValidateFunction>;
   let failure: unknown;

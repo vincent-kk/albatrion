@@ -16,6 +16,8 @@ import type { InputFixture } from './types';
  * @throws When the case or equivalent fixture is absent
  */
 export function getInputFixture(id: string, lane: string): InputFixture {
+  const virtualized = id.endsWith('-virtualized');
+  if (virtualized) id = id.slice(0, -'-virtualized'.length);
   const nested = id.includes('nested');
   const array = id.includes('array-1000');
   const fixture = mountFixtures.find(
@@ -68,7 +70,8 @@ export function getInputFixture(id: string, lane: string): InputFixture {
         ? 'transition'
         : undefined,
     mount: id.startsWith('mount-'),
-    virtualization: id.startsWith('mount-') && id.endsWith('-on'),
+    virtualization:
+      virtualized || (id.startsWith('mount-') && id.endsWith('-on')),
     intervalMs: id.endsWith('-nonburst') ? 100 : 0,
   };
 }

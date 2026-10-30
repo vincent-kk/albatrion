@@ -195,7 +195,18 @@ export function fieldNodeFactory(
     validator &&
     process.env.NODE_ENV !== 'production' &&
     analysis.schema !== null &&
-    typeof analysis.schema === 'object'
+    typeof analysis.schema === 'object' &&
+    analysis.nodes.some(
+      (node) =>
+        node.declarations.some((declaration) =>
+          declaration.gates.some((gate) => gate.kind === 'if'),
+        ) ||
+        node.childEntries.some((child) =>
+          child.declarations.some((declaration) =>
+            declaration.gates.some((gate) => gate.kind === 'if'),
+          ),
+        ),
+    )
   )
     compileEntryGuards(
       readValidationEntry(validator, analysis.schema),

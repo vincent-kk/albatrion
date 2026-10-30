@@ -1,0 +1,131 @@
+{
+  "scope": "packages/canard/schema-form",
+  "baseProductSourceEquals91c422e0e": true,
+  "newFindings": [],
+  "newDiagnostics": [],
+  "comparisons": [
+    {
+      "action": "validate",
+      "baseStatus": "indeterminate",
+      "headStatus": "indeterminate",
+      "newFindings": [],
+      "newDiagnostics": [],
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 202,
+        "passed": 3002,
+        "failed": 12,
+        "skipped": 1
+      },
+      "headSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "2313015f582aca7c066057a17049d6105e750fd474bc2f05de64b53318f77584",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 202,
+        "passed": 3002,
+        "failed": 12,
+        "skipped": 1
+      }
+    },
+    {
+      "action": "verification",
+      "baseStatus": "indeterminate",
+      "headStatus": "indeterminate",
+      "newFindings": [],
+      "newDiagnostics": [],
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+        "fileCount": 742,
+        "specDocument": {
+          "fileCount": 14,
+          "knownCaseCount": 3,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 728,
+          "knownCaseCount": 4458,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 21,
+        "certainty": "indeterminate"
+      },
+      "headSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "2313015f582aca7c066057a17049d6105e750fd474bc2f05de64b53318f77584",
+        "fileCount": 744,
+        "specDocument": {
+          "fileCount": 14,
+          "knownCaseCount": 3,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 730,
+          "knownCaseCount": 4467,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 21,
+        "certainty": "indeterminate"
+      }
+    },
+    {
+      "action": "scan",
+      "baseStatus": "indeterminate",
+      "headStatus": "indeterminate",
+      "newFindings": [],
+      "newDiagnostics": [],
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "b5c87109fe0d1d39ddd26658021afd305b8e729e8993a834aa77f9249041a89d",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 376,
+        "depth": 9,
+        "nodesByType": {
+          "organ": 296,
+          "fractal": 80
+        },
+        "violationCount": 201,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      },
+      "headSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "2313015f582aca7c066057a17049d6105e750fd474bc2f05de64b53318f77584",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 376,
+        "depth": 9,
+        "nodesByType": {
+          "organ": 296,
+          "fractal": 80
+        },
+        "violationCount": 201,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      }
+    }
+  ]
+}
