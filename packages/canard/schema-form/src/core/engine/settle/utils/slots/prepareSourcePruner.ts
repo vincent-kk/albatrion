@@ -1,5 +1,3 @@
-import type { Nullable } from '@aileron/declare';
-
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { getHostDerived } from '../../../utils/cache/derivedRecords';
@@ -24,7 +22,7 @@ export const prepareSourcePruner = <Self extends FieldNodeRecord<Self>>(
   if (derived.sourcePruner) return derived.sourcePruner;
   let unique = !hasRetainableDescendants(node.blueprintNode, new WeakSet());
   for (
-    let current: Nullable<Self> = node;
+    let current: Self | null = node;
     unique && current?.parent;
     current = current.parent
   ) {
@@ -72,31 +70,24 @@ const hasRetainableDescendants = (
   )
     return true;
   for (const entry of template.childEntries) {
-    let hasUnconditionalDeclaration = false;
-    for (const declaration of entry.declarations) {
-      if (declaration.gates.length === 0) {
-        hasUnconditionalDeclaration = true;
-        break;
-      }
-    }
-    if (!hasUnconditionalDeclaration || hasRetainableDescendants(entry.node, visited)) {
+    if (
+      !entry.declarations.some(
+        (declaration) => declaration.gates.length === 0,
+      ) ||
+      hasRetainableDescendants(entry.node, visited)
+    )
       return true;
-    }
   }
   for (const child of [
     ...(template.prefixItems ?? []),
     ...(template.item ? [template.item] : []),
-  ]) {
-    let hasUnconditionalDeclaration = false;
-    for (const declaration of child.declarations) {
-      if (declaration.gates.length === 0) {
-        hasUnconditionalDeclaration = true;
-        break;
-      }
-    }
-    if (!hasUnconditionalDeclaration || hasRetainableDescendants(child, visited)) {
+  ])
+    if (
+      !child.declarations.some(
+        (declaration) => declaration.gates.length === 0,
+      ) ||
+      hasRetainableDescendants(child, visited)
+    )
       return true;
-    }
-  }
   return false;
 };

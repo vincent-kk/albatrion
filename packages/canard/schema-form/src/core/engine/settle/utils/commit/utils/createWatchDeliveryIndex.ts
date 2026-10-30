@@ -1,5 +1,3 @@
-import type { Optional } from '@aileron/declare';
-
 import {
   PointerOperator,
   type PointerSegment,
@@ -47,30 +45,19 @@ class WatchDeliveryIndex {
   /** Replace one node's effective watch paths in the live index. */
   update(node: unknown, paths: readonly string[]): void {
     const previous = this.pathsByNode.get(node);
-    if (previous?.length === paths.length) {
-      let unchanged = true;
-      for (let index = 0; index < previous.length; index++)
-        if (previous[index].path !== paths[index]) {
-          unchanged = false;
-          break;
-        }
-      if (unchanged) return;
-    }
+    if (
+      previous?.length === paths.length &&
+      previous.every((entry, index) => entry.path === paths[index])
+    )
+      return;
     this.remove(node);
     const unique: WatchPathMembership[] = [];
-    for (const path of paths) {
-      let present = false;
-      for (const entry of unique)
-        if (entry.path === path) {
-          present = true;
-          break;
-        }
-      if (!present)
+    for (const path of paths)
+      if (!unique.some((entry) => entry.path === path))
         unique.push({
           path,
           segments: getCachedPointerSegments(this.runtime, path),
         });
-    }
     if (unique.length === 0) return;
     this.pathsByNode.set(node, unique);
     this.allNodes.add(node);
@@ -119,7 +106,7 @@ class WatchDeliveryIndex {
 
   /** Add watchers whose paths contain or descend from a changed path. */
   affected(path: string, candidates: Set<unknown>): void {
-    let current: Optional<WatchPathNode> = this.root;
+    let current: WatchPathNode | undefined = this.root;
     for (const watcher of current.watchers) candidates.add(watcher);
     for (const segment of getCachedPointerSegments(this.runtime, path)) {
       current = current.children.get(segment);

@@ -1,10 +1,3 @@
-import {
-  filter as filterArray,
-  map as mapArray,
-} from '@winglet/common-utils/array';
-
-import type { Optional } from '@aileron/declare';
-
 import { FormErrorCode } from '../../../../../../errors';
 import { foldAllowedTypes } from '../../../../utils/nodeIdentity/foldAllowedTypes';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -31,23 +24,15 @@ export const resolveNodeTypes = (
 }[] => {
   const fixed = context.capabilities.branchless
     ? declarations
-    : filterArray(
-        declarations,
+    : declarations.filter(
         (declaration) =>
           declaration.context === 'conjunction' && !declaration.gates.length,
       );
-  let staticOwner = false;
-  for (let index = 0, count = fixed.length; index < count; index++) {
-    const declaration = fixed[index];
-
-    if (declaration.role === 'declaration') {
-      staticOwner = true;
-      break;
-    }
-  }
-
+  const staticOwner = fixed.some(
+    (declaration) => declaration.role === 'declaration',
+  );
   if (staticOwner) {
-    let allowed: Optional<readonly SchemaTypeName[]>;
+    let allowed: readonly SchemaTypeName[] | undefined;
     for (const declaration of fixed) {
       allowed = intersectAllowedTypes(
         allowed,
@@ -61,7 +46,7 @@ export const resolveNodeTypes = (
         return throwBlueprintError(
           FormErrorCode.AllOfTypeRedefinition,
           declaration.schemaPath,
-          { declarations: mapArray(fixed, (item) => item.schemaPath) },
+          { declarations: fixed.map((item) => item.schemaPath) },
           context.options,
         );
     }
@@ -101,9 +86,8 @@ export const resolveNodeTypes = (
     number,
     { allowed: readonly SchemaTypeName[]; declarations: PropertyDeclaration[] }
   >();
-  let ungatedMask: Optional<number>;
-  for (const declaration of filterArray(
-    declarations,
+  let ungatedMask: number | undefined;
+  for (const declaration of declarations.filter(
     (item) => item.role === 'declaration',
   )) {
     const allowed = inferAllowedTypes(
@@ -128,25 +112,16 @@ export const resolveNodeTypes = (
       group.declarations.push(declaration);
     } else groups.set(mask, { allowed, declarations: [declaration] });
   }
-
-  return mapArray([...groups.values()], (group) => ({
+  return [...groups.values()].map((group) => ({
     ...group,
-    declarations: filterArray(declarations, (declaration) => {
-      let containsDeclaration = group.declarations.includes(declaration);
-      if (!containsDeclaration) {
-        let matches = declaration.role === 'overlay';
-        if (matches) {
-          matches = false;
-          for (const owner of group.declarations) {
-            if (context.declarationOwners?.get(declaration.id) === owner.id) {
-              matches = true;
-              break;
-            }
-          }
-        }
-        containsDeclaration = matches;
-      }
-      return containsDeclaration;
-    }),
+    declarations: declarations.filter(
+      (declaration) =>
+        group.declarations.includes(declaration) ||
+        (declaration.role === 'overlay' &&
+          group.declarations.some(
+            (owner) =>
+              context.declarationOwners?.get(declaration.id) === owner.id,
+          )),
+    ),
   }));
 };

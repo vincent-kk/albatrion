@@ -1,11 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Optional } from '@aileron/declare';
-
 import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type { EffectiveSchema } from '../../../types/effectiveSchema';
 import type { BlueprintNode } from '../../../types/node';
-import type { SchemaTypeName } from '../../../types/schema';
 import type { EffectiveSchemaState } from '../../types/state';
 import { freezeEffectiveSchema } from './freezeEffectiveSchema';
 
@@ -34,24 +31,13 @@ export const finalizeEffectiveSchema = (
       ownedSchemaValues.add(clauses);
     }
   }
-  let types: Optional<SchemaTypeName[]>;
-  if (state.allowedTypes) {
-    types = [];
-    for (const type of state.allowedTypes)
-      if (type !== 'null') types.push(type);
-  }
+  const types = state.allowedTypes?.filter((type) => type !== 'null');
   const staticTypes = isArray(node.schemaType)
     ? node.schemaType
     : [node.schemaType];
-  let unchanged = false;
-  if (types?.length === staticTypes.length) {
-    unchanged = true;
-    for (let index = 0; index < types.length; index++)
-      if (types[index] !== staticTypes[index]) {
-        unchanged = false;
-        break;
-      }
-  }
+  const unchanged =
+    types?.length === staticTypes.length &&
+    types.every((type, index) => type === staticTypes[index]);
   schema.type =
     node.kind === 'virtual'
       ? 'virtual'

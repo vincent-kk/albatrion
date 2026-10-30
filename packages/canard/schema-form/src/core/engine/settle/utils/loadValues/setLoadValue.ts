@@ -20,8 +20,10 @@ export const setLoadValue = (
   if (sameValue(getLoadValue(snapshot, path), value)) return snapshot;
   if (!path) return value;
   const segments = parsePointerSegments(path);
-  for (const segment of segments)
-    if (typeof segment !== 'string') return snapshot;
+  if (
+    !segments.every((segment): segment is string => typeof segment === 'string')
+  )
+    return snapshot;
   const ancestors: unknown[] = [snapshot];
   let source = snapshot;
   for (const segment of segments) {

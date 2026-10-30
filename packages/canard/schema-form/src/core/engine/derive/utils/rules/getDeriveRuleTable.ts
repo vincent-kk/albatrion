@@ -1,7 +1,3 @@
-import {
-  filter as filterArray,
-  map as mapArray,
-} from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
@@ -95,14 +91,13 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         const targets: FragmentTarget[] = [
           ...node.childEntries,
           ...(node.prefixItems ?? []).flatMap((first, index) =>
-            mapArray(node.prefixItemCandidates?.[index] ?? [first], (item) => ({
+            (node.prefixItemCandidates?.[index] ?? [first]).map((item) => ({
               name: String(index),
               node: item,
               declarations: item.declarations,
             })),
           ),
-          ...mapArray(
-            node.itemCandidates ?? (node.item ? [node.item] : []),
+          ...(node.itemCandidates ?? (node.item ? [node.item] : [])).map(
             (item) => ({
               items: true as const,
               node: item,
@@ -111,8 +106,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           ),
         ];
         for (const entry of targets) {
-          const selected = filterArray(
-            entry.declarations,
+          const selected = entry.declarations.filter(
             (child) =>
               getFragmentOwnerPaths(child.schemaPath).indexOf(
                 declaration.schemaPath,
@@ -125,7 +119,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
               layer: 'fragment',
               targetName: entry.name,
               targetItems: entry.items,
-              targetDeclarationIds: mapArray(selected, (child) => child.id),
+              targetDeclarationIds: selected.map((child) => child.id),
               targetNodes: [entry.node],
             });
         }
@@ -154,8 +148,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
             continue;
           for (const name of names) {
             if (typeof name !== 'string') continue;
-            const targets = filterArray(
-              node.childEntries,
+            const targets = node.childEntries.filter(
               (entry) => entry.name === name,
             );
             if (targets.length)
@@ -173,7 +166,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
                 ),
                 layer: 'fields',
                 targetName: name,
-                targetNodes: mapArray(targets, (target) => target.node),
+                targetNodes: targets.map((target) => target.node),
               });
           }
         }

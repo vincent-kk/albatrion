@@ -1,7 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
-
-import type { Optional } from '@aileron/declare';
-
 import {
   JSONPointer as $,
   getChildPointer,
@@ -92,7 +88,7 @@ export class DirtyPathSet extends Set<string> {
     let states = this.splitRuns.get(bucket);
     const first = !states;
     if (!states) {
-      states = mapArray(bucket.runs, () => ({
+      states = bucket.runs.map(() => ({
         excluded: new Set(),
         released: new Map(),
       }));
@@ -104,7 +100,7 @@ export class DirtyPathSet extends Set<string> {
     for (let run = 0; run < bucket.runs.length; run++) {
       const definition = bucket.runs[run];
       const state = states[run];
-      let rank: Optional<number>;
+      let rank: number | undefined;
       let count = 0;
       const represented: string[] = [];
       if (first) {
@@ -151,7 +147,7 @@ export class DirtyPathSet extends Set<string> {
 
   /** Insert a non-member key into each strict host ancestor using escaped segments. */
   private insertSplitAnchor(anchor: SplitAnchor): void {
-    let parent: string = $.Root;
+    let parent = '';
     while (parent !== anchor.hostPath) {
       const child = getChildPointer(anchor.hostPath, parent);
       if (child === undefined) break;
@@ -178,7 +174,7 @@ export class DirtyPathSet extends Set<string> {
     }
     state.released.set(owner.rank, path);
     if (!anchor || --anchor.count !== 0) return;
-    let parent: string = $.Root;
+    let parent = '';
     while (parent !== anchor.hostPath) {
       const child = getChildPointer(anchor.hostPath, parent);
       if (child === undefined) break;
@@ -240,7 +236,7 @@ export class DirtyPathSet extends Set<string> {
       return this;
     }
     super.add(path);
-    let parent: string = $.Root;
+    let parent = '';
     while (parent !== path) {
       const child = getChildPointer(path, parent);
       if (child === undefined) break;
@@ -269,7 +265,7 @@ export class DirtyPathSet extends Set<string> {
       return true;
     }
     if (this.splitOwners) this.releaseSplitMember(path);
-    let parent: string = $.Root;
+    let parent = '';
     while (parent !== path) {
       const child = getChildPointer(path, parent);
       if (child === undefined) break;

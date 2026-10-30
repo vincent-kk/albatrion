@@ -1,8 +1,5 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-
-import type { Optional } from '@aileron/declare';
 
 import { FormErrorCode } from '../../../../../../errors';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -20,7 +17,7 @@ export const inferLiteralTypes = (
   context: AnalysisContext,
   parts: readonly { schema: BlueprintSchema; schemaPath: string }[],
   schemaPath: string,
-): Optional<readonly SchemaTypeName[]> => {
+): readonly SchemaTypeName[] | undefined => {
   const values: unknown[] = [];
   let hasLiteral = false;
   for (const part of parts) {
@@ -59,10 +56,7 @@ export const inferLiteralTypes = (
       );
     if (!types.includes(type)) types.push(type);
   }
-  if (
-    filterArray(types, (type) => type !== 'null').length === 1 &&
-    types.length > 0
-  )
+  if (types.filter((type) => type !== 'null').length === 1 && types.length > 0)
     return types;
   if (types.length === 1 && types[0] === 'null') return types;
   return throwBlueprintError(

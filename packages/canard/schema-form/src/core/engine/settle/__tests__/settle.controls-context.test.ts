@@ -1,7 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import * as arrayUtils from '@winglet/common-utils/array';
-
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
@@ -23,27 +21,20 @@ describe('context state keys', () => {
       };
     const { root, blueprint } = createTestTree({ type: 'object', properties });
     const find = vi.spyOn(Array.prototype, 'find');
-    const nativeBuilds = vi.spyOn(Array.prototype, 'map');
-    const builds = vi.spyOn(arrayUtils, 'map');
+    const builds = vi.spyOn(Array.prototype, 'map');
     try {
       loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
       expect(
         find.mock.contexts.filter((target) => target === blueprint.expressions),
       ).toHaveLength(0);
       expect(
-        builds.mock.calls.filter(
-          ([target]) => target === blueprint.expressions,
-        ),
-      ).toHaveLength(1);
-      expect(
-        nativeBuilds.mock.contexts.filter(
+        builds.mock.contexts.filter(
           (target) => target === blueprint.expressions,
         ),
-      ).toHaveLength(0);
+      ).toHaveLength(1);
     } finally {
       find.mockRestore();
       builds.mockRestore();
-      nativeBuilds.mockRestore();
     }
   });
 

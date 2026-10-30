@@ -1,5 +1,3 @@
-import type { Optional } from '@aileron/declare';
-
 import {
   JSONPointer as $,
   resolvePointer,
@@ -125,26 +123,13 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
         context.shapeDirtyPaths.add(resolvePointer(path, $.Parent));
     }
   }
-
   if (shadow) {
     shadow.registering = false;
-    let matches = context.shapeDirtyPaths.size === shadow.shape.size;
-    if (matches) {
-      const shadowShapeEntries = [...shadow.shape];
-      for (
-        let index = 0, count = shadowShapeEntries.length;
-        index < count;
-        index++
-      ) {
-        const path = shadowShapeEntries[index];
-
-        if (!context.shapeDirtyPaths.has(path)) {
-          matches = false;
-          break;
-        }
-      }
-    }
-    verifyGateSelection(matches, 'S3 shape dirty differs after registration');
+    verifyGateSelection(
+      context.shapeDirtyPaths.size === shadow.shape.size &&
+        [...shadow.shape].every((path) => context.shapeDirtyPaths.has(path)),
+      'S3 shape dirty differs after registration',
+    );
     for (const path of context.dirtyPaths)
       verifyGateSelection(
         shadow.dirty.has(path),
@@ -157,7 +142,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           !!owner && !!context.splitHitEpochs?.has(owner.bucket),
           'S3 removed a non-split owner: ' + path,
         );
-        let node: Optional<Self> = context.root;
+        let node: Self | undefined = context.root;
         for (const segment of dependencies.pathSegments(
           path,
           context.root.runtime,

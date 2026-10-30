@@ -21,16 +21,18 @@ type ChildFieldMap<Value extends Dictionary> = {
 export const useChildFieldMap = <Value extends Dictionary>(
   ChildFields: ChildField[],
 ) =>
-  useMemo(() => {
-    const fields = {} as ChildFieldMap<Required<Value>>;
-    for (let index = 0, length = ChildFields.length; index < length; index++) {
-      if (!(index in ChildFields)) continue;
-      const ChildField = ChildFields[index];
-      const field = ChildField.field as keyof Value;
-      if (field) fields[field] = ChildField;
-    }
-    return new Proxy<ChildFieldMap<Required<Value>>>(
-      fields,
-      CHILD_FIELD_MAP_HANDLER,
-    );
-  }, [ChildFields]);
+  useMemo(
+    () =>
+      new Proxy<ChildFieldMap<Required<Value>>>(
+        ChildFields.reduce(
+          (accumulator, ChildField) => {
+            const field = ChildField.field as keyof Value;
+            if (field) accumulator[field] = ChildField;
+            return accumulator;
+          },
+          {} as ChildFieldMap<Required<Value>>,
+        ),
+        CHILD_FIELD_MAP_HANDLER,
+      ),
+    [ChildFields],
+  );

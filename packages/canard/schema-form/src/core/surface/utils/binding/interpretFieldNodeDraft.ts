@@ -26,34 +26,17 @@ export const interpretFieldNodeDraft = (
     : type === undefined
       ? authored
       : [type];
-  const kinds: Exclude<SchemaTypeName, 'null'>[] = [];
-  for (let index = 0, length = authored.length; index < length; index++) {
-    const kind = authored[index];
-    if (kind !== undefined && kind !== 'null' && effective.indexOf(kind) !== -1)
-      kinds.push(kind);
-  }
+  const kinds = authored.filter(
+    (kind): kind is Exclude<SchemaTypeName, 'null'> =>
+      kind !== undefined && kind !== 'null' && effective.indexOf(kind) !== -1,
+  );
   const value = interpret(draft, { kinds, mask: 0, nullable: node.nullable });
-  let isInterpretedMember = value === undefined;
-  if (!isInterpretedMember) {
-    let selectedResult: boolean;
-    if (value === null) {
-      selectedResult = node.nullable;
-    } else {
-      let matchesAllowedKind = false;
-      for (let index = 0, count = kinds.length; index < count; index++) {
-        const kind = kinds[index];
-
-        if (isMember(value, kind)) {
-          matchesAllowedKind = true;
-          break;
-        }
-      }
-      selectedResult = matchesAllowedKind;
-    }
-    isInterpretedMember = selectedResult;
-  }
   return {
     value,
-    isMember: isInterpretedMember,
+    isMember:
+      value === undefined ||
+      (value === null
+        ? node.nullable
+        : kinds.some((kind) => isMember(value, kind))),
   };
 };

@@ -1,5 +1,3 @@
-import type { Optional } from '@aileron/declare';
-
 import {
   getChildPointer,
   isDescendantPath,
@@ -19,32 +17,16 @@ import type { SettlementContext } from '../../types/settlement';
 export const readExplicitWriteKind = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   inputPath: string,
-): Optional<FieldNodeWriteKind> => {
+): FieldNodeWriteKind | undefined => {
   const origins = context.writeOrigins;
   if (!origins) return context.kind;
   // Batch replacement paths retain earlier whole writes after later merges.
-  let matchesReplacementPath: Optional<boolean> = undefined;
-
-  const replacementPaths = context.replacePaths;
-  if (replacementPaths != null) {
-    matchesReplacementPath = false;
-    for (
-      let index = 0, count = replacementPaths.length;
-      index < count;
-      index++
-    ) {
-      const path = replacementPaths[index];
-
-      if (inputPath === path || isDescendantPath(inputPath, path)) {
-        matchesReplacementPath = true;
-        break;
-      }
-    }
-  }
-
-  if (matchesReplacementPath) {
+  if (
+    context.replacePaths?.some(
+      (path) => inputPath === path || isDescendantPath(inputPath, path),
+    )
+  )
     return 'callerReplace';
-  }
   for (let index = origins.length - 1; index >= 0; index--) {
     const origin = origins[index];
     const path =

@@ -38,7 +38,6 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
     keys.add(key);
     decisions.add(key);
   };
-
   const collect = (declaration: PropertyDeclaration): void => {
     if (declaration.scope === 'fragment' && declaration.gates.length > 0)
       for (const gate of declaration.gates)
@@ -46,24 +45,15 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
     for (const gate of declaration.gates) {
       if (gate.kind !== 'active') continue;
       let fieldControl = fieldControls.get(gate);
-
       if (fieldControl === undefined) {
         const segments = parsePointerSegments(gate.schemaPath);
-        let matches =
+        fieldControl =
           segments[segments.length - 2] === 'controls' &&
-          segments[segments.length - 1] === 'active';
-        if (matches) {
-          matches = false;
-          for (let index = 0, count = segments.length; index < count; index++) {
-            const segment = segments[index];
-
-            if (segment === 'controls' && segments[index + 1] === 'fields') {
-              matches = true;
-              break;
-            }
-          }
-        }
-        fieldControl = matches;
+          segments[segments.length - 1] === 'active' &&
+          segments.some(
+            (segment, index) =>
+              segment === 'controls' && segments[index + 1] === 'fields',
+          );
         fieldControls.set(gate, fieldControl);
       }
       if (fieldControl) add(gate, 'node:' + gate.schemaPath);
@@ -103,15 +93,12 @@ export const getHostWheelBudgetCap = (
 ): number => {
   if (blueprint.capabilities.branchless) return 1;
   const cached = runtime.hostBudgetCaps?.get(host);
-  if (cached && cached.gates.length === gates.length) {
-    let unchanged = true;
-    for (let index = 0; index < cached.gates.length; index++)
-      if (cached.gates[index] !== gates[index]) {
-        unchanged = false;
-        break;
-      }
-    if (unchanged) return cached.cap;
-  }
+  if (
+    cached &&
+    cached.gates.length === gates.length &&
+    cached.gates.every((gate, index) => gate === gates[index])
+  )
+    return cached.cap;
   const index = getIndex(blueprint);
   const decisions = new Set<string>();
   for (const gate of gates)

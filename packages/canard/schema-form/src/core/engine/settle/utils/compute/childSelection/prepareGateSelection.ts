@@ -27,20 +27,22 @@ export const prepareGateSelection = (
   const tables = new Map<BlueprintNode, GateSelectionTable>();
   for (const host of blueprint.nodes) {
     const schema = host.declarations[0]?.schema;
-    if (typeof schema !== 'object' || schema === null) continue;
-    let eligible =
-      (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
-      (isArray(schema.anyOf) && schema.anyOf.length > 1);
-    if (!eligible && isArray(schema.allOf) && schema.allOf.length > 1) {
-      conditionalGate: for (const entry of host.childEntries)
-        for (const declaration of entry.declarations)
-          for (const gate of declaration.gates)
-            if (gate.kind === 'if') {
-              eligible = true;
-              break conditionalGate;
-            }
-    }
-    if (!eligible) continue;
+    if (
+      typeof schema !== 'object' ||
+      schema === null ||
+      !(
+        (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
+        (isArray(schema.anyOf) && schema.anyOf.length > 1) ||
+        (isArray(schema.allOf) &&
+          schema.allOf.length > 1 &&
+          host.childEntries.some((entry) =>
+            entry.declarations.some((declaration) =>
+              declaration.gates.some((gate) => gate.kind === 'if'),
+            ),
+          ))
+      )
+    )
+      continue;
     getDirectChildSelectionPlan(host, blueprint, true);
     const table = getGateSelectionTable(host, blueprint);
     if (table) tables.set(host, table);

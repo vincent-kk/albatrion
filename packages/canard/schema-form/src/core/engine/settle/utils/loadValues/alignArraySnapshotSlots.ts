@@ -1,14 +1,12 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import {
-  JSONPointer as $,
   appendSegment,
   parsePointerSegments,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
-import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { isCanonicalArrayIndex } from '../templatePaths/isCanonicalArrayIndex';
 import { getLoadValue } from './getLoadValue';
 import { setLoadValue } from './setLoadValue';
@@ -66,7 +64,12 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       continue;
     }
     const segments = parsePointerSegments(host.path);
-    if (!isNamedPointerSegments(segments)) continue;
+    if (
+      !segments.every(
+        (segment): segment is string => typeof segment === 'string',
+      )
+    )
+      continue;
     let probe: unknown = draft;
     let byName = false;
     for (const segment of segments) {
@@ -83,9 +86,9 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       draft = setLoadValue(draft, host.path, slots);
       continue;
     }
-    let parent = draftCopy(draft, $.Root);
+    let parent = draftCopy(draft, '');
     draft = parent;
-    let parentPath: string = $.Root;
+    let parentPath = '';
     for (let index = 0; index < segments.length - 1; index++) {
       const segment = segments[index];
       parentPath = appendSegment(parentPath, segments[index]);

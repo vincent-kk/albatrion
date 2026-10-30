@@ -45,21 +45,14 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   const occurrences = runtime.chainOccurrences ?? [];
   const pending: FormErrorRecord[] = [];
   const warnings = runtime.pendingWarningRecords;
-
   if (warnings?.size) {
     for (const [key, record] of warnings) {
-      let hasWarningOccurrence = false;
-      for (let index = 0, count = occurrences.length; index < count; index++) {
-        const item = occurrences[index];
-
-        if (item.kind === 'record' && item.record === record) {
-          hasWarningOccurrence = true;
-          break;
-        }
-      }
-      if (!hasWarningOccurrence) {
+      if (
+        !occurrences.some(
+          (item) => item.kind === 'record' && item.record === record,
+        )
+      )
         pending.push(record);
-      }
       if (!runtime.warningKeys?.has(key)) {
         const parts: unknown = JSON.parse(key.startsWith('[') ? key : 'null');
         const path = isArray(parts) ? parts[1] : undefined;
@@ -75,21 +68,14 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     warnings.clear();
   }
   const guardRecords = runtime.guardFailureRecords;
-
   if (guardRecords?.size) {
     for (const [key, record] of guardRecords) {
-      let hasGuardFailureOccurrence = false;
-      for (let index = 0, count = occurrences.length; index < count; index++) {
-        const item = occurrences[index];
-
-        if (item.kind === 'record' && item.record === record) {
-          hasGuardFailureOccurrence = true;
-          break;
-        }
-      }
-      if (!hasGuardFailureOccurrence) {
+      if (
+        !occurrences.some(
+          (item) => item.kind === 'record' && item.record === record,
+        )
+      )
         pending.push(record);
-      }
       (runtime.reportedGuardFailures ??= new Set()).add(key);
     }
     guardRecords.clear();

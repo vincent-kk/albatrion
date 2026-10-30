@@ -1,5 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
-
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import type {
   EffectiveSchema,
@@ -46,7 +44,7 @@ export const mergeEffectiveSchema = (
   }
   const declarations = selectEffectiveDeclarations(node, activeDeclarationIds);
   const schemas = ensureEffectiveSchemaCache(memo, node, options);
-  const key = mapArray(declarations, (declaration) => declaration.id).join(',');
+  const key = declarations.map((declaration) => declaration.id).join(',');
   const cached = schemas.get(key);
   if (cached !== undefined) return cached;
   if (

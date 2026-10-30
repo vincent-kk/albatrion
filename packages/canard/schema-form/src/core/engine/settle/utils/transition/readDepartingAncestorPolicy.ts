@@ -1,5 +1,3 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
-
 import type { FieldNodeRecord } from '../../../record';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -20,7 +18,7 @@ export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) {
     if (ancestor.detached) continue;
     const previous = getControlLayers(ancestor, emptyReadonlyMap, true);
-    const departed = filterArray(previous, (group) => {
+    const departed = previous.filter((group) => {
       const key = JSON.stringify([
         group.host.path,
         getBlueprintNodeIdentity(group.host.blueprintNode),

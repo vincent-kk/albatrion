@@ -1,5 +1,3 @@
-import type { Optional } from '@aileron/declare';
-
 import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import { find } from '../../../navigation';
@@ -20,46 +18,14 @@ export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   const withinScope =
     scope !== undefined &&
     (!scope.path || path === scope.path || isDescendantPath(path, scope.path));
-  let matchesVirtualReplacement: Optional<boolean> = undefined;
-
-  const virtualReplacementPaths = context.virtualReplacePaths;
-  if (virtualReplacementPaths != null) {
-    matchesVirtualReplacement = false;
-    for (
-      let index = 0, count = virtualReplacementPaths.length;
-      index < count;
-      index++
-    ) {
-      const replaced = virtualReplacementPaths[index];
-
-      if (path === replaced || isDescendantPath(path, replaced)) {
-        matchesVirtualReplacement = true;
-        break;
-      }
-    }
-  }
-
-  const withinVirtual = matchesVirtualReplacement ?? false;
-  let matchesBatchReplacement: Optional<boolean> = undefined;
-
-  const replacementPaths = context.replacePaths;
-  if (replacementPaths != null) {
-    matchesBatchReplacement = false;
-    for (
-      let index = 0, count = replacementPaths.length;
-      index < count;
-      index++
-    ) {
-      const replaced = replacementPaths[index];
-
-      if (path === replaced || isDescendantPath(path, replaced)) {
-        matchesBatchReplacement = true;
-        break;
-      }
-    }
-  }
-
-  const withinBatch = matchesBatchReplacement ?? false;
+  const withinVirtual =
+    context.virtualReplacePaths?.some(
+      (replaced) => path === replaced || isDescendantPath(path, replaced),
+    ) ?? false;
+  const withinBatch =
+    context.replacePaths?.some(
+      (replaced) => path === replaced || isDescendantPath(path, replaced),
+    ) ?? false;
   if (!withinScope && !withinVirtual && !withinBatch) return false;
   const live = find(context.root, path);
   return live !== null && !live.detached;

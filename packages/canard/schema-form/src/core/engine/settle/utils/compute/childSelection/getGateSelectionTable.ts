@@ -1,7 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
-
-import type { Nullable, Optional } from '@aileron/declare';
-
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type {
@@ -55,15 +51,15 @@ const isGateSelectionLiteral = (
 export const getGateSelectionTable = (
   host: BlueprintNode,
   blueprint: Blueprint,
-): Nullable<GateSelectionTable> => {
+): GateSelectionTable | null => {
   const cached = getHostDerived<
     'gateSelectionTable',
-    Nullable<GateSelectionTable>
+    GateSelectionTable | null
   >(host).gateSelectionTable;
   if (cached !== undefined) return cached;
   const plan = getDirectChildSelectionPlan(host, blueprint, true);
   if (!plan) {
-    getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(
+    getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
       host,
     ).gateSelectionTable = null;
     return null;
@@ -90,7 +86,8 @@ export const getGateSelectionTable = (
       ? getGateExpression(blueprint, gate.schemaPath)
       : undefined;
     const equality =
-      gate?.kind === 'discriminator' && isGateLiteralList(gate.condition.values)
+      gate?.kind === 'discriminator' &&
+      gate.condition.values.every(isGateSelectionLiteral)
         ? { literals: gate.condition.values }
         : expression?.equality;
     const watchedName =
@@ -109,14 +106,18 @@ export const getGateSelectionTable = (
         : engineModes.gatePredicate !== 'off' &&
             expression?.completeReads &&
             !equality
-          ? mapArray(expression.dependencies, (dependency) =>
+          ? expression.dependencies.map((dependency) =>
               watchedNames.get(resolveDependencyPath(host.path, dependency)),
             )
           : undefined;
     if (
       gate &&
       ifReads &&
-      hasOnlyWatchedReadNames(ifReads, watchedNames, host.path)
+      ifReads.every(
+        (name): name is string =>
+          name !== undefined &&
+          watchedNames.has(appendSegment(host.path, name)),
+      )
     ) {
       let group = predicateGroups.get(gate);
       if (!group) {
@@ -167,16 +168,13 @@ export const getGateSelectionTable = (
     }
   alwaysSteps.sort((left, right) => left - right);
   if (groups.size === 0 && predicateGroups.size === 0) {
-    getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(
+    getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
       host,
     ).gateSelectionTable = null;
     return null;
   }
   const orderedGroups = [...groups.values()];
-  const roundWatchedNames = mapArray(
-    orderedGroups,
-    (group) => group.watchedName,
-  );
+  const roundWatchedNames = orderedGroups.map((group) => group.watchedName);
   for (const group of predicateGroups.values())
     for (const name of group.watchedNames)
       if (roundWatchedNames.indexOf(name) === -1) roundWatchedNames.push(name);
@@ -192,36 +190,8 @@ export const getGateSelectionTable = (
     tableSteps,
     ...(root ? { root } : {}),
   };
-  getHostDerived<'gateSelectionTable', Nullable<GateSelectionTable>>(
+  getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
     host,
   ).gateSelectionTable = table;
   return table;
 };
-
-/** Narrow the dense discriminator tags copied during blueprint construction.
- * @param values Dense frozen discriminator tags copied at blueprint time.
- * @returns Whether every tag has strict Map-key semantics.
- */
-function isGateLiteralList(
-  values: readonly unknown[],
-): values is readonly GateSelectionLiteral[] {
-  for (let index = 0, length = values.length; index < length; index++)
-    if (!isGateSelectionLiteral(values[index])) return false;
-  return true;
-}
-/** Prove every generated read resolves to a watched terminal.
- * @param names Dense compiled read names, including unresolved entries.
- * @param watched Existing terminal path index.
- * @param hostPath Host used to resolve authored names.
- * @returns Whether the existing names can be retained as complete watched reads.
- */
-function hasOnlyWatchedReadNames(
-  names: readonly Optional<string>[],
-  watched: ReadonlyMap<string, string>,
-  hostPath: string,
-): names is readonly string[] {
-  for (const name of names)
-    if (name === undefined || !watched.has(appendSegment(hostPath, name)))
-      return false;
-  return true;
-}

@@ -1,7 +1,3 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
-
-import type { Optional } from '@aileron/declare';
-
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, InactiveSlotOverlay } from '../../../record';
@@ -19,15 +15,15 @@ import { getSlotEntries } from './getSlotEntries';
  */
 export const getSlotPathEntry = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
-  source: Optional<Self>,
-  overlay: Optional<InactiveSlotOverlay>,
+  source: Self | undefined,
+  overlay: InactiveSlotOverlay | undefined,
   name: string,
   selected?: BlueprintNode,
-): Optional<BlueprintChildEntry> => {
+): BlueprintChildEntry | undefined => {
   const declared =
     template.kind === 'array'
       ? getItemEntries(template, Number(name))
-      : filterArray(template.childEntries, (entry) => entry.name === name);
+      : template.childEntries.filter((entry) => entry.name === name);
   if (!selected)
     return (
       declared[0] ??
@@ -39,8 +35,7 @@ export const getSlotPathEntry = <Self extends FieldNodeRecord<Self>>(
     (entry) => entry.name === name && entry.node === selected,
   );
   if (exact) return exact;
-  const retained = filterArray(
-    getSlotEntries(source, overlay, template),
+  const retained = getSlotEntries(source, overlay, template).filter(
     (entry) => entry.name === name,
   );
   return (

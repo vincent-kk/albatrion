@@ -1,4 +1,3 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '../../../record';
@@ -31,13 +30,13 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
         hasOwnProperty(children, rule.targetName)
       ? [children[rule.targetName]]
       : NO_TARGETS;
-
-  return filterArray(targets, (target) => {
-    if (target.detached) return false;
-    if (rule.layer !== 'fragment' || !rule.targetDeclarationIds) return true;
-    for (const id of rule.targetDeclarationIds)
-      if (getSelectedDeclarationIds(target, state).indexOf(id) !== -1)
-        return true;
-    return false;
-  });
+  return targets.filter(
+    (target) =>
+      !target.detached &&
+      (rule.layer !== 'fragment' ||
+        !rule.targetDeclarationIds ||
+        rule.targetDeclarationIds.some(
+          (id) => getSelectedDeclarationIds(target, state).indexOf(id) !== -1,
+        )),
+  );
 };

@@ -75,7 +75,6 @@ export const validateControlGroups = (
       { group: SCHEMA_GROUP.controls, key: 'injectTo', expected: 'function' },
       context.options,
     );
-
   if (controls?.fields !== undefined) {
     if (!isArray(controls.fields))
       throwBlueprintError(
@@ -84,50 +83,20 @@ export const validateControlGroups = (
         { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
-
-    const controlFields = controls.fields;
-    for (let index = 0, limit = controlFields.length; index < limit; index++) {
-      if (!(index in controlFields)) continue;
-      const entry: any = controlFields[index];
-
+    controls.fields.forEach((entry: any, index: number) => {
       const path = appendSegment(
         appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
         index,
       );
-      let hasInvalidFieldEntry = !entry || typeof entry !== 'object';
-      if (!hasInvalidFieldEntry) {
-        const entryKeys = Object.keys(entry);
-        for (let index = 0, count = entryKeys.length; index < count; index++) {
-          const key = entryKeys[index];
-
-          if (key !== 'targets' && key !== 'controls') {
-            hasInvalidFieldEntry = true;
-            break;
-          }
-        }
-      }
-      let hasInvalidFieldTargets =
-        hasInvalidFieldEntry || !isArray(entry.targets);
-      if (!hasInvalidFieldTargets) {
-        const fieldTargets = entry.targets;
-        for (
-          let index = 0, count = fieldTargets.length;
-          index < count;
-          index++
-        ) {
-          if (!(index in fieldTargets)) {
-            continue;
-          }
-
-          const name: unknown = fieldTargets[index];
-
-          if (typeof name !== 'string') {
-            hasInvalidFieldTargets = true;
-            break;
-          }
-        }
-      }
-      if (hasInvalidFieldTargets) {
+      if (
+        !entry ||
+        typeof entry !== 'object' ||
+        Object.keys(entry).some(
+          (key) => key !== 'targets' && key !== 'controls',
+        ) ||
+        !isArray(entry.targets) ||
+        entry.targets.some((name: unknown) => typeof name !== 'string')
+      )
         throwBlueprintError(
           FormErrorCode.InvalidControlShape,
           path,
@@ -138,9 +107,8 @@ export const validateControlGroups = (
           },
           context.options,
         );
-      }
       validateControlGroups(context, { controls: entry.controls }, path, true);
-    }
+    });
   }
 };
 

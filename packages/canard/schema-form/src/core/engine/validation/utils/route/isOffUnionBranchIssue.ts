@@ -1,9 +1,4 @@
 import {
-  filter as filterArray,
-  map as mapArray,
-} from '@winglet/common-utils/array';
-
-import {
   JSONPointer as $,
   isDescendantPath,
   resolvePointer,
@@ -31,8 +26,7 @@ export const isOffUnionBranchIssue = (
   activeIds?: ReadonlySet<number>,
 ): boolean => {
   if (!issue.schemaPath || !activeIds) return false;
-  const matches = filterArray(
-    blueprint.fragments,
+  const matches = blueprint.fragments.filter(
     (fragment) =>
       issue.schemaPath === fragment.schemaPath ||
       (issue.schemaPath !== undefined &&
@@ -40,10 +34,9 @@ export const isOffUnionBranchIssue = (
   );
   if (!matches.length) return false;
   const longest = Math.max(
-    ...mapArray(matches, (fragment) => fragment.schemaPath.length),
+    ...matches.map((fragment) => fragment.schemaPath.length),
   );
-  const owners = filterArray(
-    matches,
+  const owners = matches.filter(
     (fragment) => fragment.schemaPath.length === longest,
   );
   const branches: SchemaFragment[] = [];
@@ -57,69 +50,27 @@ export const isOffUnionBranchIssue = (
       visited.add(id);
       pending.push(...blueprint.fragments[id].children);
     }
-    let containsIssueOwner = false;
-    for (let index = 0, count = owners.length; index < count; index++) {
-      const owner = owners[index];
-
-      if (visited.has(owner.id)) {
-        containsIssueOwner = true;
-        break;
-      }
-    }
-    if (containsIssueOwner) {
-      branches.push(fragment);
-    }
+    if (owners.some((owner) => visited.has(owner.id))) branches.push(fragment);
   }
   if (!branches.length) return false;
   const nearest = Math.max(
-    ...mapArray(branches, (fragment) => fragment.schemaPath.length),
+    ...branches.map((fragment) => fragment.schemaPath.length),
   );
-  const candidates = filterArray(
-    branches,
+  const candidates = branches.filter(
     (fragment) => fragment.schemaPath.length === nearest,
   );
   if (candidates.length !== 1) return false;
   const owner = candidates[0];
   if (!owner.gates.length) return false;
   const unionPath = resolvePointer(owner.schemaPath, $.Parent);
-  const siblings = filterArray(
-    blueprint.fragments,
+  const siblings = blueprint.fragments.filter(
     (fragment) =>
       fragment.id !== owner.id &&
       NUMERIC_KEY.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
       isDescendantPath(fragment.schemaPath, unionPath),
   );
-
-  const isActive = (fragment: SchemaFragment): boolean => {
-    let hasActiveDeclaration = false;
-    for (const id of fragment.declares) {
-      if (activeIds.has(id)) {
-        hasActiveDeclaration = true;
-        break;
-      }
-    }
-    let isActiveFragment = hasActiveDeclaration;
-    if (!isActiveFragment) {
-      for (const id of fragment.overlays) {
-        if (activeIds.has(id)) {
-          isActiveFragment = true;
-          break;
-        }
-      }
-    }
-    return isActiveFragment;
-  };
-  let matches2 = !isActive(owner);
-  if (matches2) {
-    matches2 = false;
-    for (let index = 0, count = siblings.length; index < count; index++) {
-      const item = siblings[index];
-
-      if (isActive(item)) {
-        matches2 = true;
-        break;
-      }
-    }
-  }
-  return matches2;
+  const isActive = (fragment: SchemaFragment): boolean =>
+    fragment.declares.some((id) => activeIds.has(id)) ||
+    fragment.overlays.some((id) => activeIds.has(id));
+  return !isActive(owner) && siblings.some(isActive);
 };

@@ -1,7 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntries } from '../../../../blueprint';
@@ -71,7 +69,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   const registry = getGateRegistry(host.runtime);
   if (context.hasGates)
     for (const item of host.children ?? []) registry.remove(item);
-  const nextItems: Dictionary<Self> = Object.create(null);
+
+  const nextItems: Record<string, Self> = Object.create(null);
   const nextRaw: unknown[] = [];
   const nextSnapshot: unknown[] = [];
   const reused = new Set<Self>();
@@ -90,42 +89,30 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       from !== undefined && candidateMoves
         ? getItemEntries(host.blueprintNode, from)
         : undefined;
-    let moved = false;
-    if (from !== undefined && candidateMoves) {
-      moved = candidates.length > 1;
-      if (!moved)
-        for (const candidate of candidates)
-          if (candidate.node.hasCandidateDescendants) {
-            moved = true;
-            break;
-          }
-      if (!moved && sourceCandidates) {
-        moved = sourceCandidates.length > 1;
-        if (!moved)
-          for (const candidate of sourceCandidates)
-            if (candidate.node.hasCandidateDescendants) {
-              moved = true;
-              break;
-            }
-      }
-    }
+    const moved =
+      from !== undefined &&
+      candidateMoves &&
+      (candidates.length > 1 ||
+        candidates.some(
+          (candidate) => candidate.node.hasCandidateDescendants,
+        ) ||
+        (sourceCandidates !== undefined &&
+          (sourceCandidates.length > 1 ||
+            sourceCandidates.some(
+              (candidate) => candidate.node.hasCandidateDescendants,
+            ))));
     if (from !== undefined && moved) destinations.set(from, index);
     const entry = candidates[0];
     if (!entry && !moved) continue;
     const old = from === undefined ? undefined : oldItems[String(from)];
-    if (old) {
-      let compatible = false;
-      for (const candidate of candidates)
-        if (old.blueprintNode === candidate.node) {
-          compatible = true;
-          break;
-        }
-      if (compatible) {
-        nextItems[String(index)] = old;
-        reused.add(old);
-        if (from !== undefined && !moved) destinations.set(from, index);
-        continue;
-      }
+    if (
+      old &&
+      candidates.some((candidate) => old.blueprintNode === candidate.node)
+    ) {
+      nextItems[String(index)] = old;
+      reused.add(old);
+      if (from !== undefined && !moved) destinations.set(from, index);
+      continue;
     }
     const source =
       from === undefined || rawSlots
@@ -153,6 +140,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
       moved,
     });
   }
+
   const moves: ArrayPathMove[] = [];
   for (let index = 0; index < oldCount; index++) {
     const item = oldItems[String(index)];
@@ -181,6 +169,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   rekeyArrayRuntimePaths(host.runtime, host.path, moves);
   if (candidateMoves)
     (context.rekeyedArrayMoves ??= new Map()).set(host, moves);
+
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
     visitFieldNodes(

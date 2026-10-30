@@ -1,10 +1,4 @@
-import {
-  filter as filterArray,
-  map as mapArray,
-} from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-
-import type { Dictionary } from '@aileron/declare';
 
 import {
   PointerOperator,
@@ -102,10 +96,9 @@ export const populateNodeChildren = (
   const itemInputs: SchemaInput[] = [];
   const tuples = new Map<number, SchemaInput[]>();
   const fieldControls = node.declarations.flatMap((owner) =>
-    mapArray(
-      readSchemaObject(owner.schema).controls?.fields ?? [],
+    (readSchemaObject(owner.schema).controls?.fields ?? []).map(
       (
-        entry: { targets: string[]; controls?: Dictionary<unknown> },
+        entry: { targets: string[]; controls?: Record<string, unknown> },
         index: number,
       ) => ({
         entry,
@@ -151,20 +144,12 @@ export const populateNodeChildren = (
       fragment: context.fragments[declaration.fragmentId],
       role: 'declaration' as const,
     };
-
     if (
       node.kind === 'object' &&
       schema.properties &&
       typeof schema.properties === 'object'
-    ) {
-      const propertyEntries = Object.entries(schema.properties);
-      for (
-        let index = 0, count = propertyEntries.length;
-        index < count;
-        index++
-      ) {
-        const [name, child] = propertyEntries[index];
-
+    )
+      Object.entries(schema.properties).forEach(([name, child], index) => {
         assertAddressableName(context, declaration.schemaPath, name);
         const existing = properties.get(name);
         const path = existing?.path ?? appendSegment(node.path, name);
@@ -178,14 +163,12 @@ export const populateNodeChildren = (
           ),
           order: [...declaration.order, 0, index],
         };
-        const entryGates = mapArray(
-          filterArray(
-            fieldControls,
+        const entryGates = fieldControls
+          .filter(
             ({ entry, gate }) =>
               entry.targets.includes(name) && gate !== undefined,
-          ),
-          ({ gate }) => gate!,
-        );
+          )
+          .map(({ gate }) => gate!);
         input.gates = [...input.gates, ...entryGates];
         if (existing) existing.inputs.push(input);
         else
@@ -204,8 +187,7 @@ export const populateNodeChildren = (
             gates: input.gates.slice(0, discriminatorIndex),
             context: 'declaration',
           });
-      }
-    }
+      });
     if (node.kind !== 'array') continue;
     const tuple =
       schema.prefixItems ?? (isArray(schema.items) ? schema.items : undefined);
@@ -216,12 +198,8 @@ export const populateNodeChildren = (
         { prefixItems: schema.prefixItems },
         context.options,
       );
-
-    if (tuple) {
-      for (let index = 0, count = tuple.length; index < count; index++) {
-        if (!(index in tuple)) continue;
-        const child: SchemaInput['schema'] = tuple[index];
-
+    if (tuple)
+      tuple.forEach((child: SchemaInput['schema'], index: number) => {
         const input: SchemaInput = {
           ...base,
           schema: child,
@@ -237,8 +215,7 @@ export const populateNodeChildren = (
         const existing = tuples.get(index);
         if (existing) existing.push(input);
         else tuples.set(index, [input]);
-      }
-    }
+      });
     if (
       schema.items !== undefined &&
       typeof schema.items !== 'boolean' &&
@@ -302,24 +279,14 @@ export const populateNodeChildren = (
       context.staticFirstLoad = false;
     }
   }
-
   if (tuples.size) {
-    const candidates = mapArray(
-      [...tuples].sort(([a], [b]) => a - b),
-      ([index, inputs]) =>
+    const candidates = [...tuples]
+      .sort(([a], [b]) => a - b)
+      .map(([index, inputs]) =>
         build(context, inputs, appendSegment(node.path, index)),
-    );
-    node.prefixItems = mapArray(candidates, (items) => items[0]);
-    let hasPrefixCandidates = false;
-    for (let index = 0, count = candidates.length; index < count; index++) {
-      const items = candidates[index];
-
-      if (items.length > 1) {
-        hasPrefixCandidates = true;
-        break;
-      }
-    }
-    if (hasPrefixCandidates) {
+      );
+    node.prefixItems = candidates.map((items) => items[0]);
+    if (candidates.some((items) => items.length > 1)) {
       node.prefixItemCandidates = candidates;
       context.staticFirstLoad = false;
     }

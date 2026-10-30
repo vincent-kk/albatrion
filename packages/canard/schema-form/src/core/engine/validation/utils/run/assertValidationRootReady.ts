@@ -1,5 +1,3 @@
-import type { Nullable } from '@aileron/declare';
-
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidateFunction } from '../../types/validator';
@@ -18,7 +16,7 @@ const DUPLICATE_SCHEMA_ID_MESSAGE = /already exists|duplicate/i;
  */
 export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-): Nullable<ValidateFunction> => {
+): ValidateFunction | null => {
   const root = node.rootNode;
   const validator = root.runtime.validator;
   if (!isValidator(validator)) return null;
@@ -31,30 +29,18 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
     typeof authoredRoot.$id === 'string'
       ? authoredRoot.$id
       : undefined;
-  let duplicate =
+  const duplicate =
     !!id &&
     entry.failure instanceof Error &&
-    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message);
-  if (duplicate) {
-    duplicate = false;
-
-    const releasedRoots = [...recentReleaseList(validator).counts];
-    for (let index = 0, limit = releasedRoots.length; index < limit; index++) {
-      const [other, count] = releasedRoots[index];
-
-      if (
+    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message) &&
+    [...recentReleaseList(validator).counts].some(
+      ([other, count]) =>
         other !== authoredRoot &&
         count > 0 &&
         typeof other === 'object' &&
         other !== null &&
-        other.$id === id
-      ) {
-        duplicate = true;
-        break;
-      }
-    }
-  }
-
+        other.$id === id,
+    );
   throw new SchemaFormError(
     FormErrorCode.ValidatorCompileFailed,
     'Whole-schema validation could not be compiled',

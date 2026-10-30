@@ -12,16 +12,13 @@ import { isKeepControls } from '../isKeepControls';
 export const hasKeepFields = (controls: unknown): boolean => {
   if (controls === null || typeof controls !== 'object') return false;
   const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
-  if (!isArray(fields)) return false;
-  for (let index = 0, count = fields.length; index < count; index++) {
-    if (!(index in fields)) continue;
-    const field: unknown = fields[index];
-    if (
-      field !== null &&
-      typeof field === 'object' &&
-      isKeepControls(Reflect.get(field, SCHEMA_GROUP.controls))
+  return (
+    isArray(fields) &&
+    fields.some(
+      (field: unknown) =>
+        field !== null &&
+        typeof field === 'object' &&
+        isKeepControls(Reflect.get(field, SCHEMA_GROUP.controls)),
     )
-      return true;
-  }
-  return false;
+  );
 };

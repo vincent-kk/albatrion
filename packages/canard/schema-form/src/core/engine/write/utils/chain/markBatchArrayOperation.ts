@@ -1,4 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntries } from '../../../blueprint';
@@ -39,7 +38,7 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
     raw =
       plan.kind === 'raw'
         ? plan.raw
-        : mapArray(plan.slots, (slot) =>
+        : plan.slots.map((slot) =>
             'from' in slot ? source[slot.from] : slot.value,
           );
   (node.rootNode.runtime.batchWrites ??= []).push({

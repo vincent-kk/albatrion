@@ -37,16 +37,12 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
     const previous = node.runtime.committedDeclarationIds?.get(
       JSON.stringify([node.path, getBlueprintNodeIdentity(node.blueprintNode)]),
     );
-    let haveSourceIdsChanged = !previous || previous.length !== ids.length;
-    if (previous && previous.length === ids.length)
-      for (let index = 0; index < previous.length; index++)
-        if (previous[index] !== ids[index]) {
-          haveSourceIdsChanged = true;
-          break;
-        }
-    if (haveSourceIdsChanged) {
+    if (
+      !previous ||
+      previous.length !== ids.length ||
+      previous.some((id, index) => id !== ids[index])
+    )
       paths.add(node.path);
-    }
   }
   return paths;
 };

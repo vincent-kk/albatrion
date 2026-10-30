@@ -1,7 +1,4 @@
-import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-
-import type { Optional } from '@aileron/declare';
 
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
@@ -23,8 +20,10 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   const writes = runtime.batchWrites ?? [];
   runtime.batchWrites = undefined;
   if (!writes.length) return;
-  let option = WriteOption.None;
-  for (const write of writes) option |= write.option;
+  const option = writes.reduce(
+    (flags, write) => flags | write.option,
+    WriteOption.None,
+  );
   const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
   if (!target) return;
   const input =
@@ -33,33 +32,12 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     writes.length === 1 &&
     (option & WriteOption.Merge) === WriteOption.Merge &&
     !(option & WriteOption.Replace);
-  let allMatch = true;
-  for (let index = 0, count = writes.length; index < count; index++) {
-    const write = writes[index];
-
-    if (!(write.source === 'input')) {
-      allMatch = false;
-      break;
-    }
-  }
-  let source: Optional<'input' | 'automatic'>;
-  if (allMatch) {
-    source = 'input';
-  } else {
-    let allMatch2 = true;
-    for (let index = 0, count = writes.length; index < count; index++) {
-      const write = writes[index];
-
-      if (!(write.source === 'automatic')) {
-        allMatch2 = false;
-        break;
-      }
-    }
-    source = allMatch2 ? 'automatic' : undefined;
-  }
-
-  const origins = mapArray(
-    writes,
+  const source = writes.every((write) => write.source === 'input')
+    ? 'input'
+    : writes.every((write) => write.source === 'automatic')
+      ? 'automatic'
+      : undefined;
+  const origins = writes.map(
     (
       write,
     ): {

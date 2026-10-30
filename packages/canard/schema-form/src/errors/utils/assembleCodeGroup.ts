@@ -1,7 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
-
-import type { Dictionary } from '@aileron/declare';
-
 /**
  * Assemble a group's codes without widening its keys or literal values.
  * @param group - Group preceding the dot separator.
@@ -10,13 +6,13 @@ import type { Dictionary } from '@aileron/declare';
  */
 export const assembleCodeGroup = <
   Group extends string,
-  Specifics extends Readonly<Dictionary<string>>,
+  Specifics extends Readonly<Record<string, string>>,
 >(
   group: Group,
   specifics: Specifics,
 ) =>
   Object.fromEntries(
-    mapArray(Object.entries(specifics), ([key, specific]) => [
+    Object.entries(specifics).map(([key, specific]) => [
       key,
       `${group}.${specific}`,
     ]),

@@ -39,15 +39,11 @@ export const materializeInactiveSlotValues = <
   const next = [...chosen.values()];
   const previous = host.inactiveValuesCache;
   host.inactiveValuesDirty = false;
-  if (previous?.length === next.length) {
-    let unchanged = true;
-    for (let index = 0; index < previous.length; index++)
-      if (previous[index] !== next[index]) {
-        unchanged = false;
-        break;
-      }
-    if (unchanged) return previous;
-  }
+  if (
+    previous?.length === next.length &&
+    previous.every((entry, index) => entry === next[index])
+  )
+    return previous;
   return (host.inactiveValuesCache = next.length
     ? Object.freeze(next)
     : EMPTY_VALUES);

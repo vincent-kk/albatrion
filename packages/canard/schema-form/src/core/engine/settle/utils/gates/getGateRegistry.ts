@@ -1,7 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
-
-import type { Optional } from '@aileron/declare';
-
 import {
   JSONPointer as $,
   isAbsolutePath,
@@ -168,7 +164,7 @@ class GateRegistry {
   }
 
   /** Compare a path and kind in the current indexed shape, if indexed. */
-  hasRegisteredPathKind(path: string, kind: string): Optional<boolean> {
+  hasRegisteredPathKind(path: string, kind: string): boolean | undefined {
     if (this.byPath.size === 0) return undefined;
     return this.byPath.get(path)?.kind === kind;
   }
@@ -445,7 +441,7 @@ class GateRegistry {
     by: 1 | -1,
   ): void {
     for (const watched of occurrence.watchPaths) {
-      if (watched === $.Root) {
+      if (watched === '') {
         index.root += by;
         continue;
       }
@@ -472,7 +468,7 @@ class GateRegistry {
           ? undefined
           : getIfGateReadNames(gate.condition, this.blueprint);
       return names
-        ? mapArray(names, (name) => appendSegment(location.hostPath, name))
+        ? names.map((name) => appendSegment(location.hostPath, name))
         : [location.hostPath];
     }
     if (
@@ -485,7 +481,7 @@ class GateRegistry {
       return [appendSegment(location.hostPath, gate.condition.propertyName)];
     const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression
-      ? mapArray(expression.dependencies, (dependency) => {
+      ? expression.dependencies.map((dependency) => {
           const path = this.resolveRead(location.hostPath, dependency);
           return path;
         })
@@ -501,7 +497,7 @@ class GateRegistry {
     if (changedRaw.size === 0) return false;
     for (const watched of occurrence.watchPaths) {
       if (
-        watched === $.Root ||
+        watched === '' ||
         changedRaw.has(watched) ||
         changedAncestors.has(watched)
       )

@@ -1,5 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
-
 import type { FormErrorCode } from '../constants/FormErrorCode';
 import { FormErrorGroup } from '../constants/FormErrorGroup';
 import type { FormWarningCode } from '../constants/FormWarningCode';
@@ -21,7 +19,7 @@ const SPECIFICS = new Map<string, string>(
       [FormWarningGroup.SchemaForm, SchemaFormWarningSpecific],
     ] as const
   ).flatMap(([group, specifics]) =>
-    mapArray(Object.values(specifics), (specific): [string, string] => [
+    Object.values(specifics).map((specific): [string, string] => [
       `${group}.${specific}`,
       specific,
     ]),

@@ -1,7 +1,3 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
-
-import type { Optional } from '@aileron/declare';
-
 import { FormErrorCode } from '../../../../../../errors';
 import type { NodeStrategy } from '../../../../types/strategy';
 import type { AnalysisContext } from '../../../types/analysis';
@@ -22,12 +18,10 @@ export const resolveNodeStrategy = (
   kind: BlueprintNodeKind,
   declarations: readonly PropertyDeclaration[],
 ): NodeStrategy => {
-  const count = filterArray(
-    declarations,
+  const count = declarations.filter(
     (declaration) => declaration.role === 'declaration',
   ).length;
-  const relevant = filterArray(
-    declarations,
+  const relevant = declarations.filter(
     (declaration) =>
       !declaration.validationOnly &&
       (declaration.context === 'conjunction' ||
@@ -48,15 +42,7 @@ export const resolveNodeStrategy = (
     return terminal ? 'terminal' : 'branch';
   }
   const root: StrategyCase = { children: new Map(), hasDeclaration: false };
-
-  const relevantDeclarations = relevant;
-  for (
-    let index = 0, count = relevantDeclarations.length;
-    index < count;
-    index++
-  ) {
-    const declaration = relevantDeclarations[index];
-
+  relevant.forEach((declaration, index) => {
     let current = root;
     for (const gate of declaration.gates) {
       const key = JSON.stringify([
@@ -78,9 +64,8 @@ export const resolveNodeStrategy = (
     if (renderer !== undefined) current.renderer = { index, value: renderer };
     current.hasDeclaration ||= declaration.role === 'declaration';
     current.schemaPath = declaration.schemaPath;
-  }
-
-  let strategy: Optional<boolean>;
+  });
+  let strategy: boolean | undefined;
   const pending = [root];
   while (pending.length) {
     const current = pending.pop()!;

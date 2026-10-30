@@ -44,13 +44,8 @@ export const collectStaticSchemas = (
       ),
     );
   }
-
-  if (isArray(schema.allOf)) {
-    const allOfSchemas = schema.allOf;
-    for (let index = 0, count = allOfSchemas.length; index < count; index++) {
-      if (!(index in allOfSchemas)) continue;
-      const part = allOfSchemas[index];
-
+  if (isArray(schema.allOf))
+    schema.allOf.forEach((part, index) => {
       const controls =
         typeof part === 'object' && part !== null ? part.controls : undefined;
       if (controls?.active === undefined)
@@ -63,7 +58,6 @@ export const collectStaticSchemas = (
             cycle,
           ),
         );
-    }
-  }
+    });
   return result;
 };

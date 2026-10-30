@@ -1,7 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
-
-import type { Optional } from '@aileron/declare';
-
 import {
   JSONPointer as $,
   appendSegment,
@@ -99,9 +95,9 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
       )
         candidates.add(child);
   }
-  const evaluated = new Map<string, Optional<boolean>>();
+  const evaluated = new Map<string, boolean | undefined>();
   const entries: CalculatedStateKeys<Self>['entries'][number][] = [];
-  let failures: Optional<CalculatedStateKeys<Self>['failures'][number][]>;
+  let failures: CalculatedStateKeys<Self>['failures'][number][] | undefined;
   for (const node of candidates) {
     if (
       node.detached ||
@@ -118,7 +114,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
       for (const key of KEY_NAMES) {
         const literal: unknown = Reflect.get(group.controls, key);
         if (literal === undefined) continue;
-        let value: Optional<boolean>;
+        let value: boolean | undefined;
         if (typeof literal === 'boolean') value = literal;
         else if (typeof literal === 'string') {
           const schemaPath = appendSegment(group.schemaPath, key);
@@ -135,7 +131,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
               try {
                 value = Boolean(
                   expression.evaluate(
-                    mapArray(expression.dependencies, (dependency) =>
+                    expression.dependencies.map((dependency) =>
                       readStateDependency(
                         root,
                         group.host.path,

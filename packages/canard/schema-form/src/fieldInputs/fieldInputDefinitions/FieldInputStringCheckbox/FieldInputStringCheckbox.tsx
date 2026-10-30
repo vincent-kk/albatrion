@@ -4,8 +4,6 @@ import { map } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type { Nullable } from '@aileron/declare';
-
 import type { FieldInputPropsWithSchema } from '@/schema-form/types';
 
 import type { CheckboxLabelsContext, StringCheckboxJSONSchema } from './type';
@@ -25,7 +23,7 @@ export const FieldInputStringCheckbox = ({
   style,
   className,
 }: FieldInputPropsWithSchema<
-  Nullable<string>[],
+  (string | null)[],
   StringCheckboxJSONSchema,
   CheckboxLabelsContext
 >) => {
@@ -44,26 +42,18 @@ export const FieldInputStringCheckbox = ({
     [context, jsonSchema, alias],
   );
   const selected = isArray(defaultValue) ? defaultValue : [];
-
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
     const rawValue = checkboxOptions.find(
       (option) => option.value === value,
     )?.rawValue;
     if (rawValue === undefined) return;
-
-    if (checked) {
+    if (checked)
       onChange((prev) => [...(isArray(prev) ? prev : []), rawValue]);
-    } else {
-      onChange((prev) => {
-        if (!isArray(prev)) return [];
-        const result: Array<(typeof prev)[number]> = [];
-        for (let index = 0, count = prev.length; index < count; index++)
-          if (index in prev && prev[index] !== rawValue)
-            result.push(prev[index]);
-        return result;
-      });
-    }
+    else
+      onChange((prev) =>
+        isArray(prev) ? prev.filter((option) => option !== rawValue) : [],
+      );
   });
   return (
     <div

@@ -24,22 +24,17 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   value: boolean,
 ): void => {
-  let isPredicateGate = false;
-  for (const group of context.gateSelectionRounds!.get(node)!.table
-    .predicateGroups) {
-    if (group.gate === gate) {
-      isPredicateGate = true;
-      break;
-    }
-  }
-  if (isPredicateGate) {
+  if (
+    context
+      .gateSelectionRounds!.get(node)!
+      .table.predicateGroups.some((group) => group.gate === gate)
+  ) {
     verifyGateSelection(
       evaluateGate(gate, context, node, undefined, true) === value,
       'S1 predicate verdict: ' + gate.schemaPath,
     );
     return;
   }
-
   if (engineModes.gateSelection === 'verify') {
     const round = context.gateSelectionRounds!.get(node)!;
     const registry = getGateRegistry(node.runtime);
@@ -55,30 +50,16 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
       Object.is(cached.value, read),
       'S2 positional value: ' + path,
     );
-    let matches = pending.length === (context.pendingOutputs?.size ?? 0);
-    if (matches) {
-      for (let index = 0, count = pending.length; index < count; index++) {
-        const entry = pending[index];
-
-        if (!context.pendingOutputs!.has(entry)) {
-          matches = false;
-          break;
-        }
-      }
-    }
-    verifyGateSelection(matches, 'S2 pendingOutputs changed: ' + path);
-    let matches2 = changed.length === context.changedNodes.size;
-    if (matches2) {
-      for (let index = 0, count = changed.length; index < count; index++) {
-        const entry = changed[index];
-
-        if (!context.changedNodes.has(entry)) {
-          matches2 = false;
-          break;
-        }
-      }
-    }
-    verifyGateSelection(matches2, 'S2 read published output: ' + path);
+    verifyGateSelection(
+      pending.length === (context.pendingOutputs?.size ?? 0) &&
+        pending.every((entry) => context.pendingOutputs!.has(entry)),
+      'S2 pendingOutputs changed: ' + path,
+    );
+    verifyGateSelection(
+      changed.length === context.changedNodes.size &&
+        changed.every((entry) => context.changedNodes.has(entry)),
+      'S2 read published output: ' + path,
+    );
     verifyGateSelection(
       !context.dirtyPaths.has(path),
       'S2 watched path dirty: ' + path,

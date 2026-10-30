@@ -15,25 +15,19 @@ export const verifyGateWheelConfirmation = (
 ): void => {
   const before = expected.evaluations!;
   const after = actual.evaluations!;
-  let hasChangedSelection = changed || before.length !== after.length;
-  if (!hasChangedSelection) {
-    for (let index = 0, count = before.length; index < count; index++) {
-      const entry = before[index];
-
+  if (
+    changed ||
+    before.length !== after.length ||
+    before.some((entry, index) => {
       const next = after[index];
-
-      if (
+      return (
         entry.gate !== next.gate ||
         entry.path !== next.path ||
         entry.edgeName !== next.edgeName ||
         entry.value !== next.value
-      ) {
-        hasChangedSelection = true;
-        break;
-      }
-    }
-  }
-  if (hasChangedSelection) {
+      );
+    })
+  ) {
     gateWheelEvaluation.nonNoop++;
     throw new Error('Gate wheel predicate predicted a non-no-op confirmation');
   }

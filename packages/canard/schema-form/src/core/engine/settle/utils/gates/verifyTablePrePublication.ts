@@ -25,27 +25,11 @@ export const verifyTablePrePublication = <Self extends FieldNodeRecord<Self>>(
   flushPendingGateReads(entry.node, path, context);
   const afterPending = [...(context.pendingOutputs ?? [])];
   const afterChanged = [...context.changedNodes];
-  let matches = pending.length === afterPending.length;
-  if (matches) {
-    for (let index = 0, count = pending.length; index < count; index++) {
-      const host = pending[index];
-
-      if (!(host === afterPending[index])) {
-        matches = false;
-        break;
-      }
-    }
-  }
-  let matches2 = matches && changed.length === afterChanged.length;
-  if (matches2) {
-    for (let index = 0, count = changed.length; index < count; index++) {
-      const host = changed[index];
-
-      if (!(host === afterChanged[index])) {
-        matches2 = false;
-        break;
-      }
-    }
-  }
-  verifyGateSelection(matches2, 'S2 table pre-publication: ' + path);
+  verifyGateSelection(
+    pending.length === afterPending.length &&
+      pending.every((host, index) => host === afterPending[index]) &&
+      changed.length === afterChanged.length &&
+      changed.every((host, index) => host === afterChanged[index]),
+    'S2 table pre-publication: ' + path,
+  );
 };

@@ -20,21 +20,12 @@ export const recognizeEqualityExpression = (
   const manager = getPathManager();
   const substituted = substituteDependencyPaths(manager, source);
   const paths = manager.get();
-  let hasUnsupportedDependencies =
-    paths.length !== 1 || paths.length !== dependencies.length;
-  if (!hasUnsupportedDependencies) {
-    for (let index = 0, count = paths.length; index < count; index++) {
-      const path = paths[index];
-
-      if (path !== dependencies[index]) {
-        hasUnsupportedDependencies = true;
-        break;
-      }
-    }
-  }
-  if (hasUnsupportedDependencies) {
+  if (
+    paths.length !== 1 ||
+    paths.length !== dependencies.length ||
+    paths.some((path, index) => path !== dependencies[index])
+  )
     return;
-  }
   const tokens = scanEqualityTokens(substituted);
   if (!tokens) return;
   const tree = parseEqualityTree(tokens);

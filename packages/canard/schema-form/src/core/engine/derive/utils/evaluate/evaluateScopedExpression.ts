@@ -1,5 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
-
 import type { FieldNodeRecord } from '../../../record';
 import type { DeriveRule } from '../../types/rules';
 import { readDeriveDependency } from './readDeriveDependency';
@@ -36,7 +34,7 @@ export const evaluateScopedExpression = <Self extends FieldNodeRecord<Self>>(
   try {
     result = {
       value: rule.expression.evaluate(
-        mapArray(rule.expression.dependencies, (dependency) =>
+        rule.expression.dependencies.map((dependency) =>
           readDeriveDependency(root, host.path, dependency),
         ),
       ),

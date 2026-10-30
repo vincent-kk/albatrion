@@ -1,16 +1,6 @@
-import {
-  filter as filterArray,
-  map as mapArray,
-} from '@winglet/common-utils/array';
+import { getChildPointer, readPointerSegment, rebasePointer } from '@/schema-form/helpers/jsonPointer';
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Optional } from '@aileron/declare';
-
-import {
-  getChildPointer,
-  readPointerSegment,
-  rebasePointer,
-} from '@/schema-form/helpers/jsonPointer';
 
 import type { FormErrorRecord } from '../../../../../../errors';
 import type { FieldNodeRuntime } from '../../../../record';
@@ -48,11 +38,11 @@ export const rekeyArrayRuntimePaths = <Self>(
       unaddressed.add(path);
   }
   prunePerishedPaths(runtime, unaddressed);
-  const changed = filterArray(moves, (move) => move.previous !== move.current);
+  const changed = moves.filter((move) => move.previous !== move.current);
   const moveByPath = new Map(
-    mapArray(moves, (move) => [move.previous, move.current]),
+    moves.map((move) => [move.previous, move.current]),
   );
-  const mapPath = (path: string): Optional<string> => {
+  const mapPath = (path: string): string | undefined => {
     const itemPath = getChildPointer(path, hostPath);
     if (itemPath === undefined) return path;
     const position = Number(readPointerSegment(itemPath, -1));
@@ -69,7 +59,7 @@ export const rekeyArrayRuntimePaths = <Self>(
   const warningMoves: {
     key: string;
     path: string;
-    record: Optional<FormErrorRecord>;
+    record: FormErrorRecord | undefined;
     remembered: boolean;
   }[] = [];
   for (const key of warningKeys) {

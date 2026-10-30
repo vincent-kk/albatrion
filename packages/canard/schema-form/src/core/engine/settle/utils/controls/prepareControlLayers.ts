@@ -1,4 +1,3 @@
-import { filter as filterArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -110,7 +109,7 @@ export const prepareControlLayers = (
     node: groups.length
       ? {
           all: groups,
-          exit: filterArray(groups, (group) =>
+          exit: groups.filter((group) =>
             hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive),
           ),
         }

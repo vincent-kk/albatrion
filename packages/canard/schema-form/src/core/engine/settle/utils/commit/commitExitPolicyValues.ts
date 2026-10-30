@@ -1,4 +1,3 @@
-import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
@@ -103,37 +102,30 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       const controls: unknown = Reflect.get(schema, SCHEMA_GROUP.controls);
       if (!controls || typeof controls !== 'object' || isArray(controls))
         continue;
-
       if (
         declaration.scope === 'fragment' &&
         typeof Reflect.get(controls, CONTROL_KEY.unsetOnInactive) === 'string'
-      ) {
+      )
         for (const child of source.children ?? []) {
           const childSelected =
             context.selectedDeclarationIds.get(child) ??
             child.runtime.committedDeclarationIds?.get(
               getCommittedDeclarationKey(child, child.runtime),
             );
-          let belongsToExitingFragment = false;
-          for (const childDeclaration of child.blueprintNode.declarations) {
-            if (
-              (!childSelected ||
-                childSelected.indexOf(childDeclaration.id) !== -1) &&
-              getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
-                declaration.schemaPath,
-              ) !== -1
-            ) {
-              belongsToExitingFragment = true;
-              break;
-            }
-          }
-          if (!belongsToExitingFragment) {
+          if (
+            !child.blueprintNode.declarations.some(
+              (childDeclaration) =>
+                (!childSelected ||
+                  childSelected.indexOf(childDeclaration.id) !== -1) &&
+                getFragmentOwnerPaths(childDeclaration.schemaPath).indexOf(
+                  declaration.schemaPath,
+                ) !== -1,
+            )
+          )
             continue;
-          }
           candidates.add(child);
           break;
         }
-      }
       const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (!isArray(fields)) continue;
       for (const item of fields) {
@@ -188,7 +180,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           'set',
           Boolean(
             expression.evaluate(
-              mapArray(expression.dependencies, (dependency) =>
+              expression.dependencies.map((dependency) =>
                 readStateDependency(
                   context.root,
                   group.host.path,

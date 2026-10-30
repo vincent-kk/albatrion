@@ -3,8 +3,6 @@ import { type ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type { Optional } from '@aileron/declare';
-
 import { interpretFieldNodeDraft } from '@/schema-form/core';
 import type { FieldInputProps } from '@/schema-form/types';
 
@@ -18,7 +16,6 @@ export const FieldInputUnion = (props: FieldInputProps) => {
     () => readUnionDisplay(value, nullable),
     [value, nullable],
   );
-
   const effectiveTypes = useMemo(() => {
     const authored = isArray(schemaType) ? schemaType : [schemaType];
     const type = jsonSchema.type;
@@ -27,33 +24,20 @@ export const FieldInputUnion = (props: FieldInputProps) => {
       : type === undefined
         ? authored
         : [type];
-    const result: Array<(typeof authored)[number]> = [];
-    for (let index = 0, count = authored.length; index < count; index++)
-      if (index in authored && effective.includes(authored[index]))
-        result.push(authored[index]);
-    return result;
+    return authored.filter((kind) => effective.includes(kind));
   }, [schemaType, jsonSchema]);
   const effectiveKey = effectiveTypes.join(',');
-  let editable = !display.structured;
-  if (editable) {
-    editable = false;
-    for (let index = 0, count = effectiveTypes.length; index < count; index++) {
-      const kind = effectiveTypes[index];
-
-      if (
+  const editable =
+    !display.structured &&
+    effectiveTypes.some(
+      (kind) =>
         kind === 'string' ||
         kind === 'number' ||
         kind === 'integer' ||
-        kind === 'boolean'
-      ) {
-        editable = true;
-        break;
-      }
-    }
-  }
-
+        kind === 'boolean',
+    );
   const [text, setText] = useState(display.text);
-  const draft = useRef<Optional<string>>(undefined);
+  const draft = useRef<string | undefined>(undefined);
   const composing = useRef(false);
   const publish = useHandle((next: string) => {
     if (composing.current || !editable || props.readOnly || props.disabled)

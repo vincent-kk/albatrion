@@ -1,7 +1,5 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Optional } from '@aileron/declare';
-
 import {
   FormErrorCode,
   FormWarningCode,
@@ -33,28 +31,13 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
   edgeName?: string,
   reference = false,
 ): boolean => {
-  let hasRejectedPrerequisite: Optional<boolean> = undefined;
-
-  const prerequisiteGates = gate.appliesWhen;
-  if (prerequisiteGates != null) {
-    hasRejectedPrerequisite = false;
-    for (
-      let index = 0, count = prerequisiteGates.length;
-      index < count;
-      index++
-    ) {
-      const parentGate = prerequisiteGates[index];
-
-      if (!evaluateGate(parentGate, context, owner, undefined, reference)) {
-        hasRejectedPrerequisite = true;
-        break;
-      }
-    }
-  }
-
-  if (hasRejectedPrerequisite) {
+  if (
+    gate.appliesWhen?.some(
+      (parentGate) =>
+        !evaluateGate(parentGate, context, owner, undefined, reference),
+    )
+  )
     return false;
-  }
   const registry = getGateRegistry(owner.runtime);
   const occurrence = registry.locate(owner, gate, edgeName);
   const hostPath = occurrence.hostPath;
@@ -168,25 +151,12 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
       gate.kind === 'if'
         ? FormErrorCode.GuardFailed
         : FormErrorCode.ExpressionThrew;
-    let repeated: Optional<boolean> = undefined;
-
-    const gateFailures = context.failures;
-    if (gateFailures != null) {
-      repeated = false;
-      for (let index = 0, count = gateFailures.length; index < count; index++) {
-        const error = gateFailures[index];
-
-        if (
-          error.code === code &&
-          error.details.path === hostPath &&
-          error.details.schemaPath === gate.schemaPath
-        ) {
-          repeated = true;
-          break;
-        }
-      }
-    }
-
+    const repeated = context.failures?.some(
+      (error) =>
+        error.code === code &&
+        error.details.path === hostPath &&
+        error.details.schemaPath === gate.schemaPath,
+    );
     const failure =
       runtime.mountingGuardPass || repeated
         ? undefined

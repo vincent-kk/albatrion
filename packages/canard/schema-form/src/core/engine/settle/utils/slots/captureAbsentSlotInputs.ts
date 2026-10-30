@@ -1,7 +1,4 @@
-import { map as mapArray } from '@winglet/common-utils/array';
 import { isArray } from '@winglet/common-utils/filter';
-
-import type { Optional } from '@aileron/declare';
 
 import { getItemEntries } from '../../../blueprint';
 import type { BlueprintChildEntry } from '../../../blueprint';
@@ -21,11 +18,11 @@ import { getSlotSource } from './getSlotSource';
 export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-): Optional<InactiveSlotOverlay> => {
+): InactiveSlotOverlay | undefined => {
   const distribution = context.distributedInputs.get(node);
   if (!distribution || distribution.automatic || distribution.preserveLatent)
     return undefined;
-  let children: Optional<Map<BlueprintChildEntry, InactiveSlotOverlay>>;
+  let children: Map<BlueprintChildEntry, InactiveSlotOverlay> | undefined;
   const array = node.behavior.type === 'array';
   const packed = (overlay: InactiveSlotOverlay): InactiveSlotOverlay => ({
     ...overlay,
@@ -33,7 +30,7 @@ export const captureAbsentSlotInputs = <Self extends FieldNodeRecord<Self>>(
     ...(overlay.children
       ? {
           children: new Map(
-            mapArray([...overlay.children], ([entry, child]) => [
+            [...overlay.children].map(([entry, child]) => [
               entry,
               packed(child),
             ]),
