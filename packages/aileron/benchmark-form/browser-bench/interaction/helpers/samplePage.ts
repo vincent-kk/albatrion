@@ -20,13 +20,18 @@ export async function samplePage(
   lane: string,
   id: string,
 ): Promise<PageRecord> {
+  const fixtureId = id;
+  id = id.replace(/-virtualized$/, '');
   const page = await browser.newPage({ viewport: { width: 900, height: 700 } });
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   try {
     await page.goto(pathToFileURL(path.join(root, lane, 'index.html')).href);
     await page.waitForFunction(() => !!window.__ir0);
-    const fixture = await page.evaluate((id) => window.__ir0.prepare(id), id);
+    const fixture = await page.evaluate(
+      (id) => window.__ir0.prepare(id),
+      fixtureId,
+    );
     const initialCounter = await page.locator('#parent-counter').textContent();
     const target = page.locator(`[id="${fixture.target}"]`);
     const initial = fixture.mount ? '' : await target.inputValue();

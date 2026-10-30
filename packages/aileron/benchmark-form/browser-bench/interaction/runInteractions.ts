@@ -56,10 +56,25 @@ export async function runInteractions(args: string[]) {
       'Frozen browser bundle hash',
     );
   }
+  const stageCases =
+    options.stage === 'ir-1'
+      ? options.suite === 'backfill'
+        ? ['mount-flat-500-on', 'mount-array-1000-on']
+        : [
+            ...cases.filter((id) => id.startsWith('mount-')),
+            'replace-200-while-typing',
+            'switch-oneOf-20',
+            'replace-200-while-typing-virtualized',
+            'switch-oneOf-20-virtualized',
+            'type-flat-500',
+            'validation-flat-500-nonburst',
+            'validation-flat-500-burst',
+          ]
+      : cases;
   const smoke = options.action === 'smoke';
   const selected = options.fixture
-    ? cases.filter((id) => id === options.fixture)
-    : cases;
+    ? stageCases.filter((id) => id === options.fixture)
+    : stageCases;
   assert.ok(selected.length > 0);
   const count = smoke ? 1 : 10,
     warmup = smoke ? 1 : 3;
@@ -97,7 +112,11 @@ export async function runInteractions(args: string[]) {
     const smokeEvidence = JSON.parse(
       fs.readFileSync(path.join(root, 'smoke-complete.json'), 'utf8'),
     );
-    assert.deepEqual(smokeEvidence.cases, cases, 'Smoke covers every fixture');
+    assert.deepEqual(
+      smokeEvidence.cases,
+      stageCases,
+      'Smoke covers every fixture',
+    );
     assert.deepEqual(
       smokeEvidence.inputs.bundles,
       inputs.bundles,

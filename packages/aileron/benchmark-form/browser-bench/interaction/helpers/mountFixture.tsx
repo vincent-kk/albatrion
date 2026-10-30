@@ -114,6 +114,7 @@ export async function mountFixture(
   }
   if (!completeAtEager) await afterPaint();
   const mount: MountRecord = {
+    startedAt: started,
     wallMs,
     ...eagerRecord,
     allRevealedMs: completeAtEager

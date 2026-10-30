@@ -44,7 +44,7 @@ describe('structural replacement mount budget', () => {
     expect(form.container.querySelectorAll('[data-deferred]')).toHaveLength(
       180,
     );
-    expect(form.node('').value).toHaveLength(200);
+    expect(form.node('')!.value).toHaveLength(200);
   });
 
   it('mounts every replacement input when the manager is null', async () => {
@@ -52,7 +52,7 @@ describe('structural replacement mount budget', () => {
       { type: 'array', items: { type: 'string' } },
       { defaultValue: [], strictMode: false, virtualization: false },
     );
-    act(() => form.node('').setValue(Array.from({ length: 200 }, () => 'v')));
+    act(() => form.node('')!.setValue(Array.from({ length: 200 }, () => 'v')));
     expect(form.container.querySelectorAll('input')).toHaveLength(200);
     expect(form.container.querySelector('[data-deferred]')).toBeNull();
   });
