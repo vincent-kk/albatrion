@@ -4,6 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { Dictionary, Optional } from '@aileron/declare';
 
 import type { Behavior } from '../../../../record';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { objectKeyCounts } from '../../../../utils/cache/valueMemos';
 import { writeObjectKey } from '../../../../utils/writeObjectKey';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
@@ -197,17 +198,41 @@ export const assembleObject: Behavior['assemble'] = (
       seen.add(name);
     }
   }
-  for (const entry of node.blueprintNode.childEntries) {
-    const name = entry.name;
-    if (
-      childValues.has(name) &&
-      childValues.get(name) !== undefined &&
-      !seen.has(name)
-    ) {
-      names.push(name);
-      seen.add(name);
+  const orderIndex = getHostDerived<
+    'childOrderIndex',
+    ReadonlyMap<string, ReadonlyMap<object, number>>
+  >(node.blueprintNode).childOrderIndex;
+  let ordered: { name: string; rank: number }[] | undefined;
+  if (orderIndex) {
+    ordered = [];
+    for (const name of childValues.keys()) {
+      const rank = orderIndex.get(name)?.values().next().value;
+      if (rank === undefined) {
+        ordered = undefined;
+        break;
+      }
+      ordered.push({ name, rank });
     }
+    ordered?.sort((left, right) => left.rank - right.rank);
   }
+  if (ordered) {
+    for (const { name } of ordered)
+      if (childValues.get(name) !== undefined && !seen.has(name)) {
+        names.push(name);
+        seen.add(name);
+      }
+  } else
+    for (const entry of entries) {
+      const name = entry.name;
+      if (
+        childValues.has(name) &&
+        childValues.get(name) !== undefined &&
+        !seen.has(name)
+      ) {
+        names.push(name);
+        seen.add(name);
+      }
+    }
   if (extras)
     for (const name of Object.keys(extras))
       if (!childValues.has(name) && !seen.has(name)) {
