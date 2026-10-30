@@ -8,6 +8,7 @@ import type { FormErrorRecord } from '@/schema-form/errors';
 
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
 import { dispatchClear } from '../utils/entry/dispatchClear';
+import { dispatchInsert } from '../utils/entry/dispatchInsert';
 import { dispatchPop } from '../utils/entry/dispatchPop';
 import { dispatchPush } from '../utils/entry/dispatchPush';
 import { dispatchRemove } from '../utils/entry/dispatchRemove';
@@ -276,5 +277,65 @@ describe('array entry integration', () => {
     expect(
       records.filter((record) => record.code === nonJsonCode),
     ).toHaveLength(2);
+  });
+
+  it('33C-01 insert returns the settled length, and refused or out-of-range calls the current length', () => {
+    const { root, runtime } = createDispatchTree({
+      type: 'array',
+      items: { type: 'number' },
+    });
+    dispatchSetValue(root, [1, 2]);
+    expect(dispatchInsert(root, 1, 9)).toBe(3);
+    expect(dispatchInsert(root, -1, 9)).toBe(3);
+    expect(dispatchInsert(root, 4, 9)).toBe(3);
+    expect(root.local).toEqual([1, 9, 2]);
+    const commit = runtime.commitNumber;
+    runtime.entryDepth = 1;
+    runtime.feedbackBudget = 25;
+    runtime.currentListener = () => {};
+    expect(dispatchInsert(root, 0, 7)).toBe(3);
+    expect(runtime.commitNumber).toBe(commit);
+    expect(root.local).toEqual([1, 9, 2]);
+  });
+
+  it('62C-01 insert and remove mixed in one batch return call-site results and settle once', () => {
+    const { root, runtime } = createDispatchTree({
+      type: 'array',
+      items: { type: 'number' },
+    });
+    dispatchSetValue(root, [1, 2, 3]);
+    const commit = runtime.commitNumber ?? 0;
+    const first = getDispatchChild(root, '0');
+    runtime.onChange = vi.fn();
+    dispatchBatch(root, () => {
+      expect(dispatchInsert(root, 1, 9)).toBe(4);
+      expect(dispatchRemove(root, 0)).toBe(1);
+      expect(dispatchInsert(root, 3, 7)).toBe(4);
+      expect(dispatchInsert(root, 9, 0)).toBe(4);
+      expect(dispatchInsert(root, 0.5, 0)).toBe(4);
+      expect(dispatchRemove(root, 1)).toBe(2);
+      expect(dispatchInsert(root, 0, '5')).toBe(4);
+      expect(root.local).toEqual([1, 2, 3]);
+      expect(runtime.commitNumber).toBe(commit);
+    });
+    expect(root.local).toEqual([5, 9, 3, 7]);
+    expect(runtime.commitNumber).toBe(commit + 1);
+    expect(runtime.onChange).toHaveBeenCalledExactlyOnceWith([5, 9, 3, 7]);
+    expect(getDispatchChild(root, '0')).toBe(first);
+  });
+
+  it('62C-01 47C-02 batch insert on a marked non-array value follows push only at index 0', () => {
+    const { root } = createDispatchTree({
+      type: 'array',
+      items: { type: 'number' },
+    });
+    dispatchSetValue(root, [1]);
+    dispatchBatch(root, () => {
+      dispatchSetValue(root, null);
+      expect(dispatchInsert(root, 1, 2)).toBe(0);
+      expect(dispatchInsert(root, 0, 2)).toBe(1);
+      expect(dispatchInsert(root, 1, 3)).toBe(2);
+    });
+    expect(root.local).toEqual([2, 3]);
   });
 });

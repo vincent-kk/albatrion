@@ -1,0 +1,491 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`branch-switch constant-factor regression records > finds the identical pending exit when its gate throws in a later wheel 1`] = `
+{
+  "detached": true,
+  "exits": [
+    false,
+    false,
+    true,
+    true,
+  ],
+  "latent": "G",
+  "local": {
+    "a": 1,
+    "t": true,
+  },
+  "status": "degraded",
+}
+`;
+
+exports[`branch-switch constant-factor regression records > preserves HEAD gate identities, order and caps for 'array-host' 1`] = `
+[
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/items/properties/g/controls/active",
+    ],
+    "host": "/0",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/items/properties/g/controls/active",
+      "1:#/items/properties/g/controls/active",
+    ],
+    "host": "/0",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/items/properties/g/controls/active",
+      "1:#/items/properties/g/controls/active",
+    ],
+    "host": "/0",
+  },
+  {
+    "cap": 1,
+    "gates": [],
+    "host": "",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/items/properties/g/controls/active",
+    ],
+    "host": "/1",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/items/properties/g/controls/active",
+    ],
+    "host": "/1",
+  },
+  {
+    "cap": 1,
+    "gates": [],
+    "host": "",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/items/properties/g/controls/active",
+      "1:#/items/properties/g/controls/active",
+    ],
+    "host": "/0",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/items/properties/g/controls/active",
+      "1:#/items/properties/g/controls/active",
+    ],
+    "host": "/0",
+  },
+  {
+    "cap": 1,
+    "gates": [],
+    "host": "",
+  },
+  {
+    "cap": 1,
+    "gates": [],
+    "host": "",
+  },
+]
+`;
+
+exports[`branch-switch constant-factor regression records > preserves HEAD gate identities, order and caps for 'branches-with-relocation' 1`] = `
+[
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 2,
+    "gates": [
+      "0:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "/p",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 3,
+    "gates": [
+      "1:#/oneOf/0/controls/active",
+      "0:#/properties/p/properties/child/controls/active",
+      "2:#/properties/p/properties/child/controls/active",
+    ],
+    "host": "",
+  },
+]
+`;
+
+exports[`branch-switch constant-factor regression records > preserves HEAD gate identities, order and caps for 'oneOf-10' 1`] = `
+[
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+  {
+    "cap": 11,
+    "gates": [
+      "0:#/oneOf/0/controls/active",
+      "1:#/oneOf/1/controls/active",
+      "2:#/oneOf/2/controls/active",
+      "3:#/oneOf/3/controls/active",
+      "4:#/oneOf/4/controls/active",
+      "5:#/oneOf/5/controls/active",
+      "6:#/oneOf/6/controls/active",
+      "7:#/oneOf/7/controls/active",
+      "8:#/oneOf/8/controls/active",
+      "9:#/oneOf/9/controls/active",
+    ],
+    "host": "",
+  },
+]
+`;

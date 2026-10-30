@@ -3,12 +3,18 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import { collectRetainedSlotSources } from './fixtures/collectRetainedSlotSources';
+import { readInactiveValuesAt } from './fixtures/readInactiveValuesAt';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotRaw,
+} from './fixtures/readRetainedSlotRaw';
 import { sourceAt } from './fixtures/sourceAt';
 
-// filid:contract settle-write
+// filid:contract settle-write-value-model
 describe('per-node branch sources', () => {
   it('39C-01 preserves null and scalar object hosts without child emission', () => {
     const schema = {
@@ -261,9 +267,7 @@ describe('per-node branch sources', () => {
       WriteOption.DisableAutomaticWrites,
     );
     expect(sourceAt(root, '/g/leaf', 'string')).toBe('L');
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/g', 'object'])),
-    ).toMatchObject({ undeclaredValues: { z: 1 } });
+    expect(readRetainedSlotRaw(root, '/g', 'object')).toMatchObject({ z: 1 });
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.emit).toEqual({ flag: true, g: { leaf: 'L', z: 1 } });
   });
@@ -313,9 +317,9 @@ describe('per-node branch sources', () => {
     expect(root.runtime.diagnostics).toMatchObject({ cause: 'budget' });
     expect(sourceAt(root, '/g/leaf', 'string')).toBeUndefined();
     expect(
-      [...root.runtime.latentRaw.values()].some(
-        (value) => typeof value === 'string' && value === 'D',
-      ),
+      collectRetainedSlotSources(root)
+        .map((source) => source.raw)
+        .some((value) => typeof value === 'string' && value === 'D'),
     ).toBe(false);
     expect(root.runtime.settlementScratch?.writtenInputs.size).toBe(0);
   });
@@ -444,10 +448,8 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/group', 'object'])),
-    ).toBe(false);
-    expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
+    expect(hasRetainedSlotOwnSource(root, '/group', 'object')).toBe(false);
+    expect(readInactiveValuesAt(root, '')).toEqual([
       { path: '/group/leaf', value: 'kept' },
     ]);
   });
@@ -545,9 +547,7 @@ describe('per-node branch sources', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/branch', 'object'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/branch', 'object')).toBe(false);
     expect(sourceAt(root, '/branch/kept', 'string')).toBeUndefined();
   });
 
@@ -579,7 +579,7 @@ describe('per-node branch sources', () => {
     expect(sourceAt(root, '/secret', 'string')).toBe('new');
   });
 
-  it('26C-14 OPEN-1 replaces other-kind latents for an absent path write', () => {
+  it('26C-14 OPEN-1 ignores an absent old reference without replacing other-kind sources', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -620,9 +620,7 @@ describe('per-node branch sources', () => {
       WriteOption.Merge,
     );
     expect(sourceAt(root, '/item/leaf', 'string')).toBe('new');
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/item', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/item', 'string')).toBe(false);
     expect(detachedString.detached).toBe(true);
     writeFieldNode(
       detachedString,
@@ -630,15 +628,9 @@ describe('per-node branch sources', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/item', 'string'])),
-    ).toBe('late');
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/item', 'object'])),
-    ).toBe(false);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/item/leaf', 'string'])),
-    ).toBe(false);
+    expect(readRetainedSlotRaw(root, '/item', 'string')).toBeUndefined();
+    expect(sourceAt(root, '/item/leaf', 'string')).toBe('new');
+    expect(detachedString.raw).toBe('old');
   });
 
   it('26C-14 OPEN-2 clears a wrong-kind latent host for emitting leaf input', () => {
@@ -662,16 +654,14 @@ describe('per-node branch sources', () => {
       'callerPartial',
       WriteOption.Merge,
     );
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/g', 'object'])),
-    ).toMatchObject({ raw: null });
+    expect(readRetainedSlotRaw(root, '/g', 'object')).toBeNull();
     writeFieldNode(
       root,
       { g: { leaf: 'shown' } },
       'callerPartial',
       WriteOption.Merge,
     );
-    const host = root.runtime.latentRaw.get(JSON.stringify(['/g', 'object']));
+    const host = readRetainedSlotRaw(root, '/g', 'object');
     expect(
       host === undefined ||
         (host !== null &&
@@ -728,9 +718,7 @@ describe('per-node branch sources', () => {
     expect(sourceAt(root, '/g/value', 'string')).toBe('old');
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.g?.structure?.value?.raw).toBe(7);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/g/value', 'string'])),
-    ).toBe('old');
+    expect(readRetainedSlotRaw(root, '/g/value', 'string')).toBe('old');
   });
 
   it('SETTLE-005 withdraws a host fill from a child that exits mid-round', () => {
@@ -755,9 +743,7 @@ describe('per-node branch sources', () => {
     loadFieldNodeAtMount(root, { flag: false }, WriteOption.Overwrite);
     writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.g?.structure?.secret).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/g/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/g/secret', 'string')).toBe(false);
   });
 
   it('EVENT-072 keeps sources of nodes a subtree reset moves out of the shape', () => {
@@ -795,9 +781,7 @@ describe('per-node branch sources', () => {
     expect(root.structure?.secret).toBeUndefined();
     expect(root.structure?.grp).toBeUndefined();
     expect(sourceAt(root, '/secret', 'string')).toBe('held');
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/grp/x', 'string'])),
-    ).toBe('typed');
+    expect(readRetainedSlotRaw(root, '/grp/x', 'string')).toBe('typed');
     writeFieldNode(
       root.structure!.box.structure!.b,
       true,

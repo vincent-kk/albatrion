@@ -194,7 +194,7 @@ describe('chain error reporting', () => {
     expect(
       createFormErrorRecord(
         false,
-        'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+        'SCHEMA_FORM_WARNING.MISFIT',
         'warning',
         format,
       ),
@@ -203,7 +203,7 @@ describe('chain error reporting', () => {
     expect(
       createFormErrorRecord(
         true,
-        'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+        'SCHEMA_FORM_WARNING.MISFIT',
         'warning',
         format,
       )?.message,
@@ -254,7 +254,7 @@ describe('chain error reporting', () => {
     expect(() => dispatchSetValue(root, { amount: 1 })).toThrow(failure);
     expect(seen).toEqual([
       'SCHEMA_FORM_ERROR.LISTENER_THREW',
-      'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+      'SCHEMA_FORM_WARNING.MISFIT',
     ]);
   });
 

@@ -1,6 +1,6 @@
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { isTypeMismatch } from './isTypeMismatch';
+import { isMisfit } from './isMisfit';
 
 /**
  * Find scalar conversions that could admit a currently mismatched raw value.
@@ -15,7 +15,7 @@ export const conversionCandidates = <Self extends FieldNodeRecord<Self>>(
   const kinds = typeof effective === 'string' ? [effective] : effective;
   const candidates: Exclude<SchemaTypeName, 'null'>[] = [];
   for (const kind of kinds) {
-    if (kind === 'null' || kind === 'virtual') continue;
+    if (kind === 'null') continue;
     const converted = node.behavior.interpret(node.raw, {
       kinds: kind,
       mask: 0,
@@ -23,7 +23,7 @@ export const conversionCandidates = <Self extends FieldNodeRecord<Self>>(
     });
     if (
       !Object.is(converted, node.raw) &&
-      !isTypeMismatch(converted, kind, node.nullable)
+      !isMisfit(converted, kind, node.nullable)
     )
       candidates.push(kind);
   }

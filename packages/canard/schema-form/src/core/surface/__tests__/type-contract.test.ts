@@ -49,8 +49,8 @@ type PublicKeys =
   | 'disabled'
   | 'watchValues'
   | 'context'
-  | 'typeMismatch'
-  | 'typeMismatches'
+  | 'misfit'
+  | 'misfits'
   | 'diagnostics'
   | 'defaultValue'
   | 'find'
@@ -68,9 +68,11 @@ type PublicKeys =
   | 'clearExternalErrors'
   | 'request'
   | 'subscribe'
+  | 'onInactive'
   | 'revision'
   | 'validate'
-  | 'batch';
+  | 'batch'
+  | 'visitSubtree';
 
 describe('new FieldNode public types', () => {
   it('TEST-069 public type keys include the context getter', () => {
@@ -163,14 +165,23 @@ describe('new FieldNode public types', () => {
     >().toEqualTypeOf<false>();
   });
 
+  it('TEST-070 keeps insert on both array strategies and off other kinds', () => {
+    expectTypeOf<ArrayNode<string>['insert']>().toEqualTypeOf<
+      (index: number, value?: string) => number
+    >();
+    expectTypeOf<
+      'insert' extends keyof StringNode ? true : false
+    >().toEqualTypeOf<false>();
+  });
+
   it('splits union values by mismatch without widening onChange', () => {
     type Types = readonly ['string', 'number'];
-    type Matching = Extract<UnionNode<Types, false>, { typeMismatch: false }>;
-    type Mismatched = Extract<UnionNode<Types, false>, { typeMismatch: true }>;
+    type Matching = Extract<UnionNode<Types, false>, { misfit: false }>;
+    type MisfitNode = Extract<UnionNode<Types, false>, { misfit: true }>;
     expectTypeOf<Matching['value']>().toEqualTypeOf<
       string | number | undefined
     >();
-    expectTypeOf<Mismatched['value']>().toEqualTypeOf<unknown>();
+    expectTypeOf<MisfitNode['value']>().toEqualTypeOf<unknown>();
     expectTypeOf<
       Parameters<FieldNodeInputProps<Types, false>['onChange']>[0]
     >().toEqualTypeOf<string | number | undefined>();

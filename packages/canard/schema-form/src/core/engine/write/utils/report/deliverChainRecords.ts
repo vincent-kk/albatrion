@@ -23,11 +23,14 @@ export const deliverChainRecords = (
     if (!reporter?.hasConsumer()) {
       if (
         process.env.NODE_ENV !== 'production' &&
-        record.code === FormWarningCode.NonJsonWholeValue
+        (record.code === FormWarningCode.NonJsonWholeValue ||
+          record.code === FormWarningCode.DetachedNodeWrite ||
+          record.code === FormWarningCode.WriteInInactiveResolver)
       )
         console.warn(record.code, record.message, record.details);
       continue;
     }
+    const previous = runtime.reportingErrors;
     runtime.reportingErrors = true;
     try {
       reporter.report(record);
@@ -35,7 +38,7 @@ export const deliverChainRecords = (
       if (caller) failures.push(error);
       else reportOwnerlessError(error);
     } finally {
-      runtime.reportingErrors = false;
+      runtime.reportingErrors = previous;
     }
   }
   if (!caller && original !== undefined) reportOwnerlessError(original);

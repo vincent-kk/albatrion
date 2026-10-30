@@ -33,6 +33,7 @@ const FieldInputRadioGroup = ({
   context,
   alias,
   style,
+  misfit,
 }: FieldInputRadioGroupProps) => {
   const options = useMemo(() => {
     const labels = context.radioLabels || alias || {};
@@ -60,7 +61,11 @@ const FieldInputRadioGroup = ({
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}>
+    <div
+      role="radiogroup"
+      aria-invalid={misfit || undefined}
+      style={{ display: 'flex', flexDirection: 'row', gap: 8, ...style }}
+    >
       <Radio.Group
         disabled={disabled}
         defaultValue={initialValue}

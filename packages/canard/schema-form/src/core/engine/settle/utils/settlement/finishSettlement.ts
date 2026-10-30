@@ -1,13 +1,16 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { commitSettlement } from '../commit/commitSettlement';
 import { effectiveType } from '../commit/effectiveType';
+import { discardStaticHostPreparation } from '../compute/childSelection/utils/discardStaticHostPreparation';
 import { publishStateKeys } from '../compute/publishStateKeys';
 import { captureDeriveBaseline } from '../derivation/captureDeriveBaseline';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { alignArraySnapshotSlots } from '../load/alignArraySnapshotSlots';
+import { alignArraySnapshotSlots } from '../loadValues/alignArraySnapshotSlots';
 import { finalizeExits } from '../transition/finalizeExits';
 import { restoreSourceB } from '../transition/restoreSourceB';
 import { transitionSettlement } from '../transition/transitionSettlement';
@@ -73,24 +76,41 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
   )
     finalizeExits(context);
   if (context.kind !== 'load' && context.arrayCounts.size > 0) {
-    const resized = [...context.arrayCounts]
-      .filter(
-        ([host, previousCount]) =>
-          !host.detached && host.itemCount !== previousCount,
+    const append = context.arrayAppend;
+    const pop = context.arrayPop;
+    // The append's or pop's tail application already published a dense slot per item.
+    const aligned =
+      append &&
+      append.host.runtime.loadSnapshot === append.snapshot &&
+      append.host.itemCount === append.count + 1
+        ? append.host
+        : pop &&
+            pop.host.runtime.loadSnapshot === pop.snapshot &&
+            pop.host.itemCount === pop.count - 1
+          ? pop.host
+          : undefined;
+    const resized: Self[] = [];
+    for (const [host, previousCount] of context.arrayCounts)
+      if (
+        host !== aligned &&
+        !host.detached &&
+        host.itemCount !== previousCount
       )
-      .map(([host]) => host);
+        resized.push(host);
     alignArraySnapshotSlots(resized);
   }
   if (context.kind === 'load')
-    for (const path of context.target.runtime.typeMismatchPaths)
+    for (const path of context.target.runtime.misfitPaths)
       if (
         !context.target.path ||
         path === context.target.path ||
-        path.startsWith(`${context.target.path}/`)
+        isDescendantPath(path, context.target.path)
       )
-        context.target.runtime.typeMismatchPaths.delete(path);
+        context.target.runtime.misfitPaths.delete(path);
   commitSettlement(context);
   const failures = context.failures;
+  if (failures?.length || context.pathChanges.length > 0)
+    discardStaticHostPreparation(context);
   if (!failures?.length) return;
   const runtime = context.root.runtime;
   if (runtime.entryDepth && runtime.chainErrors) return;

@@ -1,14 +1,17 @@
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
 import { effectiveType } from '../commit/effectiveType';
 import { computeNode } from '../compute/computeNode';
-import { updateOutput } from '../compute/updateOutput';
+import { registerRecalculation } from '../dependencies/registerRecalculation';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { markWrite } from '../write/markWrite';
-import { registerRecalculation } from '../write/registerRecalculation';
-import { staticSpec } from '../write/staticSpec';
+import { markWrite } from '../input/markWrite';
+import { staticSpec } from '../input/staticSpec';
+import { updateOutput } from '../output/updateOutput';
 import { collectFillDescendants } from './collectFillDescendants';
 import { getTransitionCap } from './getTransitionCap';
 import { hasRecursiveFill } from './hasRecursiveFill';
@@ -43,10 +46,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
   const cap = getTransitionCap(context.root.runtime.blueprint);
   const filled = context.hasGates ? new Set<string>() : undefined;
   const filledNodes = context.hasGates ? undefined : new Set<Self>();
-  let fillHosts: Set<Self> | undefined;
-  let fillAncestors: Map<Self, number> | undefined;
-  let newArrayHosts: Set<Self> | undefined;
-  let descendantsByDepth: Self[][] | undefined;
+  let fillHosts: Optional<Set<Self>>;
+  let fillAncestors: Optional<Map<Self, number>>;
+  let newArrayHosts: Optional<Set<Self>>;
+  let descendantsByDepth: Optional<Self[][]>;
   let appearances: Iterator<Self>;
   let appearanceCount = 0;
   let rounds = 0;
@@ -73,7 +76,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           node.detached ||
           (context.pendingExits.size !== 0 &&
             context.pendingExits.has(
-              JSON.stringify([node.path, node.blueprintNode.kind]),
+              JSON.stringify([
+                node.path,
+                getBlueprintNodeIdentity(node.blueprintNode),
+              ]),
             ))
         )
           continue;
@@ -81,7 +87,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           if (filledNodes.has(node)) continue;
           filledNodes.add(node);
         } else if (filled) {
-          const key = JSON.stringify([node.path, node.blueprintNode.kind]);
+          const key = JSON.stringify([
+            node.path,
+            getBlueprintNodeIdentity(node.blueprintNode),
+          ]);
           if (filled.has(key)) continue;
           filled.add(key);
         }
@@ -152,7 +161,10 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
         node.detached ||
         (context.pendingExits.size !== 0 &&
           context.pendingExits.has(
-            JSON.stringify([node.path, node.blueprintNode.kind]),
+            JSON.stringify([
+              node.path,
+              getBlueprintNodeIdentity(node.blueprintNode),
+            ]),
           ))
       )
         continue;

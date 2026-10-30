@@ -1,0 +1,523 @@
+{
+  "baseline": "fc341d51b6afb14fba88557d11f7e251fe4d365f",
+  "pins": [
+    {
+      "file": "src/core/__tests__/regression/r7-port-notify.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/__tests__/delivery.h5b-observation.test.ts",
+      "off": 0,
+      "on": 3
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/selectChildren.head-differential.test.ts",
+      "off": 3,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.array-legacy-ports.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.array-lifecycle.test.ts",
+      "off": 5,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.array-scaling.test.ts",
+      "off": 3,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.array-verbs.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-controls.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-exit-cost.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-gate.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-inactive-write.test.ts",
+      "off": 4,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-stale.test.ts",
+      "off": 3,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.delivery-watch-exit.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.dirty-consume-verification.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.exit-direct-ownership.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.extras-single-compare.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.feature-pass-scaling.test.ts",
+      "off": 0,
+      "on": 3
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.gate-table-mutations.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.item-fold-selection.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-controls.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-enclosing.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-inactive-move.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-policy.test.ts",
+      "off": 4,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-retention.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale-policy.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.non-wheel-preservation.test.ts",
+      "off": 0,
+      "on": 2
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.presence-evaluation-counts.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.presence-reuse-reachability.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.scalar-latent-scope.test.ts",
+      "off": 3,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.static-same-value-write-cost.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.static-same-value-write-fallback.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.union-fold-latent.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.write-epoch-verification.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.write-epoch.test.ts",
+      "off": 1,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-exits.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail-scope.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-absent-destinations.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-destinations.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-inactive-source.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-live-descendants.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-nested-array.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-contract.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-mutations.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-root.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-unrelated-slots.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership.test.ts",
+      "off": 5,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-append-cost.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-append-fallback.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear-cost.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reference.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reset-address.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop-cost.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop-fallback.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-cost.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-fallback.test.ts",
+      "off": 1,
+      "on": 2
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice.test.ts",
+      "off": 1,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.detached-write-address.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/__tests__/static-first.h5b-memo-lifetime.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/__tests__/markWrite.static-spec.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/__tests__/createSlotValueOverlay.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/__tests__/materializeInactiveSlotValues.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/validation/__tests__/validation.reset.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+      "off": 0,
+      "on": 2
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.batch.test.ts",
+      "off": 14,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.budget.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.closing-branch.test.ts",
+      "off": 2,
+      "on": 0
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.state.test.ts",
+      "off": 0,
+      "on": 1
+    },
+    {
+      "file": "src/core/surface/__tests__/context.test.ts",
+      "off": 1,
+      "on": 0
+    },
+    {
+      "file": "src/core/surface/__tests__/detached.test.ts",
+      "off": 2,
+      "on": 0
+    }
+  ],
+  "plainFixture": {
+    "file": "src/core/engine/__tests__/fixtures/createTestTree.ts",
+    "mode": "off",
+    "directTestFiles": 112,
+    "transitiveTestFiles": 133,
+    "files": [
+      "src/core/engine/__tests__/engine-modes.test.ts",
+      "src/core/engine/__tests__/tree-memo-stores.test.ts",
+      "src/core/engine/behaviors/arrayBehavior/__tests__/array.item-fold-projection.test.ts",
+      "src/core/engine/blueprint/__tests__/blueprint.item-fold-candidates.test.ts",
+      "src/core/engine/blueprint/__tests__/blueprint.item-fold-features.test.ts",
+      "src/core/engine/derive/__tests__/derive.boundary.test.ts",
+      "src/core/engine/derive/__tests__/derive.failures.test.ts",
+      "src/core/engine/derive/__tests__/derive.fragment-array-cost.test.ts",
+      "src/core/engine/derive/__tests__/derive.item-folds.test.ts",
+      "src/core/engine/derive/evaluateDeriveRound/__tests__/derive.injectTo.edges.test.ts",
+      "src/core/engine/derive/evaluateDeriveRound/__tests__/derive.injectTo.test.ts",
+      "src/core/engine/derive/evaluateDeriveRound/__tests__/derive.union-fold-order.test.ts",
+      "src/core/engine/settle/__tests__/evaluateGate.path-counts.test.ts",
+      "src/core/engine/settle/__tests__/loop-order.test.ts",
+      "src/core/engine/settle/__tests__/scenarios/effectiveList.test.ts",
+      "src/core/engine/settle/__tests__/scenarios/union.entry-two-step.test.ts",
+      "src/core/engine/settle/__tests__/selectChildren.metadata-counts.test.ts",
+      "src/core/engine/settle/__tests__/selectChildren.plan-lookup-counts.test.ts",
+      "src/core/engine/settle/__tests__/settle.admitted-edge-schema.test.ts",
+      "src/core/engine/settle/__tests__/settle.all-failures.test.ts",
+      "src/core/engine/settle/__tests__/settle.array-lifecycle.test.ts",
+      "src/core/engine/settle/__tests__/settle.array-recursion.test.ts",
+      "src/core/engine/settle/__tests__/settle.array-scaling.test.ts",
+      "src/core/engine/settle/__tests__/settle.array-selection-reuse.test.ts",
+      "src/core/engine/settle/__tests__/settle.array-write.test.ts",
+      "src/core/engine/settle/__tests__/settle.atomic-hints.test.ts",
+      "src/core/engine/settle/__tests__/settle.branch-switch-const.test.ts",
+      "src/core/engine/settle/__tests__/settle.children-retention.test.ts",
+      "src/core/engine/settle/__tests__/settle.commit-candidate-cost.test.ts",
+      "src/core/engine/settle/__tests__/settle.commit-membership.test.ts",
+      "src/core/engine/settle/__tests__/settle.commit-memo-work.test.ts",
+      "src/core/engine/settle/__tests__/settle.commit-visit-order.test.ts",
+      "src/core/engine/settle/__tests__/settle.commit.test.ts",
+      "src/core/engine/settle/__tests__/settle.conflict.test.ts",
+      "src/core/engine/settle/__tests__/settle.context-owners.test.ts",
+      "src/core/engine/settle/__tests__/settle.context-preparation.test.ts",
+      "src/core/engine/settle/__tests__/settle.controls-context.test.ts",
+      "src/core/engine/settle/__tests__/settle.controls.test.ts",
+      "src/core/engine/settle/__tests__/settle.defaults.test.ts",
+      "src/core/engine/settle/__tests__/settle.delivery-watch-index.test.ts",
+      "src/core/engine/settle/__tests__/settle.delivery.test.ts",
+      "src/core/engine/settle/__tests__/settle.derive-convergence-boundaries.test.ts",
+      "src/core/engine/settle/__tests__/settle.derive-convergence.test.ts",
+      "src/core/engine/settle/__tests__/settle.derive-descendant-rebirth.test.ts",
+      "src/core/engine/settle/__tests__/settle.derive-exit-policy.test.ts",
+      "src/core/engine/settle/__tests__/settle.derive-locality.test.ts",
+      "src/core/engine/settle/__tests__/settle.derive-selection.test.ts",
+      "src/core/engine/settle/__tests__/settle.derive-shadow.test.ts",
+      "src/core/engine/settle/__tests__/settle.derive.test.ts",
+      "src/core/engine/settle/__tests__/settle.derived-record-lifetimes.test.ts",
+      "src/core/engine/settle/__tests__/settle.dirty-consume-modes.test.ts",
+      "src/core/engine/settle/__tests__/settle.discriminator-comparison.test.ts",
+      "src/core/engine/settle/__tests__/settle.empty-phases-parity.test.ts",
+      "src/core/engine/settle/__tests__/settle.empty-phases.test.ts",
+      "src/core/engine/settle/__tests__/settle.error-budget.test.ts",
+      "src/core/engine/settle/__tests__/settle.error-gate-exits.test.ts",
+      "src/core/engine/settle/__tests__/settle.exit-and-budget.test.ts",
+      "src/core/engine/settle/__tests__/settle.exit-direct-ownership.test.ts",
+      "src/core/engine/settle/__tests__/settle.exit-latent.test.ts",
+      "src/core/engine/settle/__tests__/settle.exit-layers.test.ts",
+      "src/core/engine/settle/__tests__/settle.exit-preparation.test.ts",
+      "src/core/engine/settle/__tests__/settle.failure-identity.test.ts",
+      "src/core/engine/settle/__tests__/settle.fill-descendants.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-failures.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-predicate-allocation.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-predicate-modes.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-predicate.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-read-counts.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-result-reuse.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-selection-counts.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-selection-order.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-selection-preparation-invariants.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-selection-preparation.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-selection.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-characterization.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-counts.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-key-order.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-loading-counts.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-loading.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-mutations.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-root.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-verification.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-wheel-characterization.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-table-wheel-differential.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-wheel-budget.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-wheel-counts.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-wheel-critical.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-wheel-differential.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-wheel-relocated.test.ts",
+      "src/core/engine/settle/__tests__/settle.gate-workspaces.test.ts",
+      "src/core/engine/settle/__tests__/settle.gates.test.ts",
+      "src/core/engine/settle/__tests__/settle.global-state.test.ts",
+      "src/core/engine/settle/__tests__/settle.host-preparation-lifecycle.test.ts",
+      "src/core/engine/settle/__tests__/settle.host-preparation.test.ts",
+      "src/core/engine/settle/__tests__/settle.initial-load-scaling.test.ts",
+      "src/core/engine/settle/__tests__/settle.item-fold-selection.test.ts",
+      "src/core/engine/settle/__tests__/settle.item-fragment-layer.test.ts",
+      "src/core/engine/settle/__tests__/settle.load-snapshot.test.ts",
+      "src/core/engine/settle/__tests__/settle.pending-exit-index.test.ts",
+      "src/core/engine/settle/__tests__/settle.pending-exit-key.test.ts",
+      "src/core/engine/settle/__tests__/settle.recursive-fill.test.ts",
+      "src/core/engine/settle/__tests__/settle.reentry.test.ts",
+      "src/core/engine/settle/__tests__/settle.reference-revival.test.ts",
+      "src/core/engine/settle/__tests__/settle.reporter-boundary.test.ts",
+      "src/core/engine/settle/__tests__/settle.same-value.test.ts",
+      "src/core/engine/settle/__tests__/settle.scalar-entry-work.test.ts",
+      "src/core/engine/settle/__tests__/settle.scaling.test.ts",
+      "src/core/engine/settle/__tests__/settle.split-registration-counts.test.ts",
+      "src/core/engine/settle/__tests__/settle.split-registration.test.ts",
+      "src/core/engine/settle/__tests__/settle.stable-compute-work.test.ts",
+      "src/core/engine/settle/__tests__/settle.status-parity.regression.test.ts",
+      "src/core/engine/settle/__tests__/settle.transition.test.ts",
+      "src/core/engine/settle/__tests__/settle.traversal.test.ts",
+      "src/core/engine/settle/__tests__/settle.tuple-host-registration.test.ts",
+      "src/core/engine/settle/__tests__/settle.union-fold-latent.test.ts",
+      "src/core/engine/settle/__tests__/settle.union-fold-rules.test.ts",
+      "src/core/engine/settle/__tests__/settle.union-fold-selection.test.ts",
+      "src/core/engine/settle/__tests__/settle.value-layers.test.ts",
+      "src/core/engine/settle/__tests__/settle.value-model.test.ts",
+      "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.item-folds.test.ts",
+      "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear.test.ts",
+      "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-insert.test.ts",
+      "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-integration.test.ts",
+      "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-prefix.test.ts",
+      "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-rekey.test.ts",
+      "src/core/engine/settle/loadFieldNodeAtMount/__tests__/settle.gate-selection-preparation.test.ts",
+      "src/core/engine/settle/loadFieldNodeAtMount/__tests__/settle.residual-scaling.test.ts",
+      "src/core/engine/settle/loadFieldNodeAtMount/__tests__/static-first-load-differential.test.ts",
+      "src/core/engine/settle/loadFieldNodeAtMount/__tests__/static-first-load.test.ts",
+      "src/core/engine/settle/utils/dependencies/__tests__/getDependencyIndex.split-registration.test.ts",
+      "src/core/engine/settle/utils/latentStore/__tests__/setLatentRaw.test.ts",
+      "src/core/engine/settle/utils/output/__tests__/updateOutput.hint-exposure.test.ts",
+      "src/core/engine/write/__tests__/write.item-fold-batch.test.ts"
+    ],
+    "migration": "B4-2 migrates the plain fixture to on and replaces latent-store assertions and pins with slot contracts"
+  },
+  "assertionAudit": {
+    "files": 808,
+    "existingAssertions": 33822,
+    "preserved": true
+  },
+  "limitation": "AST-printed expect/assert calls are preserved in source order; this does not prove behavior by itself"
+}

@@ -16,6 +16,7 @@ const FieldInputBoolean = ({
   disabled,
   value,
   onChange,
+  misfit,
 }: FieldInputProps<boolean | null>) => {
   const [indeterminate, checked] = useMemo(
     () => [
@@ -29,6 +30,7 @@ const FieldInputBoolean = ({
   });
   return (
     <Checkbox
+      aria-invalid={misfit || undefined}
       id={path}
       name={name}
       disabled={disabled}

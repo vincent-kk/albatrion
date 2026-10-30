@@ -16,7 +16,8 @@ import {
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
-import type { ValidationIssue, Validator } from '../type';
+import type { ValidationIssue } from '../types/issue';
+import type { Validator } from '../types/validator';
 import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
 import { requestFieldNodeValidation } from '../utils/run/requestFieldNodeValidation';
 

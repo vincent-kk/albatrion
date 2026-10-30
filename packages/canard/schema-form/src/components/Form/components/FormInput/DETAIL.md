@@ -7,13 +7,21 @@
 ## API Contracts
 
 - `FormInput.tsx`는 `memo` 컴포넌트입니다. 렌더러 문맥의 `FormInputRenderer`를 읽고, 없으면 `PluginManager.FormInputRenderer`를 씁니다. `FieldInput`은 `useConstant`로 첫 렌더 값에 고정하고, 나머지 속성은 `useReference`로 `overridePropsRef`에 담아 `FieldProxy`에 넘깁니다.
-- `type.ts`는 `FormInputProps<Value>`를 정의합니다. `ChildFieldProps`의 덧붙임 속성을 받습니다.
+- `types/props.ts`는 `FormInputProps<Value>`와 그 `Roll` 표현인 `RolledFormInputProps<Value>`를 정의합니다. `FormInputProps`는 `ChildFieldProps`의 덧붙임 속성을 받고 구현이 씁니다. 관문은 `RolledFormInputProps`만 내보냅니다.
 
 ## Acceptance Criteria
 
 ### input-renderer — 렌더러 선택
 
 - Form 속성으로 넘긴 렌더러가 플러그인 렌더러보다 우선하고, 덧붙인 속성은 입력까지 전달됩니다.
+
+## Boundary Exemptions
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `RolledFormInputProps`는 이름으로 진입점에 올라 `components/Form/index.ts`를 거쳐 `src/index.ts`가 공개한다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
 
 ## Last Updated
 

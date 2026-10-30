@@ -1,20 +1,30 @@
-import type { PartialBy } from '@aileron/declare';
+import type { Nullable, PartialBy } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  appendFormattedSegment,
+  formatSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../errors';
-import { BEHAVIORS } from '../../engine';
-import { collectBlueprintWarnings, mergeEffectiveSchema } from '../../engine';
 import type {
+  Behavior,
   Blueprint,
   BlueprintChildEntry,
   BlueprintNode,
   BlueprintSchema,
+  FieldNodeRuntime,
+  Validator,
 } from '../../engine';
-import { createFormErrorRecord } from '../../engine';
-import type { Behavior, FieldNodeRuntime } from '../../engine';
-import { PathKeyedMap } from '../../engine';
-import { PathKeyedSet } from '../../engine';
-import { compileEntryGuards, readValidationEntry } from '../../engine';
-import type { Validator } from '../../engine';
+import {
+  BEHAVIORS,
+  PathKeyedSet,
+  collectBlueprintWarnings,
+  compileEntryGuards,
+  createFormErrorRecord,
+  mergeEffectiveSchema,
+  readValidationEntry,
+} from '../../engine';
 import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import type {
   ArrayNode,
@@ -23,27 +33,26 @@ import type {
   NodeSurface,
 } from '../type';
 
+/** Empty active-declaration list: only ungated contributions apply. */
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
+
 /**
  * Kind-independent public node shape the runtime class is checked against at compile time.
  * One class serves every kind, so the kind union and the members returning nodes are checked by `surface.test.ts` instead.
  */
 type RuntimeNodeSurface = Omit<
   NodeSurface<FieldNode['type'], FieldNode['strategy'], unknown, unknown, null>,
-  'rootNode' | 'parentNode' | 'children' | 'find' | 'findNodes'
+  'rootNode' | 'parentNode' | 'children' | 'find' | 'findNodes' | 'visitSubtree'
 >;
 
 /** Array verbs every runtime node carries; non-array kinds reject them at call time. */
 type RuntimeArrayVerbs = Pick<
   ArrayNode,
-  'push' | 'pop' | 'update' | 'remove' | 'clear'
+  'push' | 'pop' | 'update' | 'remove' | 'insert' | 'clear'
 >;
 
 /** Runtime fields the factory fills when the seed omits them: path-indexed stores and an empty context. */
-type SeededRuntimeFields =
-  | 'latentRaw'
-  | 'typeMismatchPaths'
-  | 'inactiveValuesMemo'
-  | 'context';
+type SeededRuntimeFields = 'misfitPaths' | 'context';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
 export type FieldNodeRuntimeSeed = PartialBy<
@@ -52,8 +61,10 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'blueprint'
     | 'nodeFactory'
     | 'settlementScratch'
+    | 'slotDirtyHosts'
     | 'chainRoot'
     | 'batchWrites'
+    | 'visitBatchEntry'
     | 'validationTargets'
     | 'validationChangedNodes'
     | 'globalStateCounts'
@@ -70,15 +81,18 @@ export type FieldNodeRuntimeSeed = PartialBy<
 /** Create one record from a bound child or the root template. */
 const createFieldNode = (
   entry: BlueprintChildEntry | BlueprintNode,
-  parent: RuntimeFieldNode | null,
+  parent: Nullable<RuntimeFieldNode>,
   runtime: FieldNodeRuntime<RuntimeFieldNode>,
+  source?: RuntimeFieldNode,
 ): RuntimeFieldNode => {
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
-  const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
-  const path = parent ? `${parent.path}/${escapedName}` : '';
+  const escapedName = formatSegment(name);
+  const path = parent
+    ? appendFormattedSegment(parent.path, escapedName)
+    : $.Root;
   const depth = parent ? parent.depth + 1 : 0;
-  const row = BEHAVIORS[template.kind]?.[template.strategy];
+  const row = source?.behavior ?? BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)
     throw new Error(
       `Missing behavior for ${template.kind}/${template.strategy}`,
@@ -95,10 +109,11 @@ const createFieldNode = (
     depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    mergeEffectiveSchema(template, [], {
-      mode: 'runtime',
-      isAtomic: runtime.blueprint?.isAtomic,
-    }),
+    source?.schema ??
+      mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
+        mode: 'runtime',
+        isAtomic: runtime.blueprint?.isAtomic,
+      }),
     {},
   );
 };
@@ -121,10 +136,7 @@ export function fieldNodeFactory(
 ): RuntimeNodeSurface {
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
-    latentRaw: runtimeSeed.latentRaw ?? new PathKeyedMap('pair'),
-    typeMismatchPaths: runtimeSeed.typeMismatchPaths ?? new PathKeyedSet(),
-    inactiveValuesMemo:
-      runtimeSeed.inactiveValuesMemo ?? new PathKeyedMap('path'),
+    misfitPaths: runtimeSeed.misfitPaths ?? new PathKeyedSet(),
     globalStateCounts: new Map(),
     globalState: {},
     validator,

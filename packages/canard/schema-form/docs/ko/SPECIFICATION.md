@@ -252,6 +252,8 @@ interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   /** JSONPointer 경로의 노드 찾기 */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** JSONPointer 경로에 맞는 모든 노드 찾기 */
@@ -283,6 +285,7 @@ interface FormHandle<
 - 첫 마운트 전에도 조회는 예외를 던지지 않습니다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체를 반환합니다.
 - `showError(false)`는 오류를 숨기지 않습니다. 표시 여부를 Form의 `showError` prop에 되돌려 줍니다.
 - `reset()`은 첨부 파일 맵도 비우고 `showError(true)`로 켠 표시도 풀어, 오류 표시가 다시 `showError` prop을 따르게 합니다.
+- `rebuild(option?)`은 이 스키마 객체의 청사진 캐시를 폐기하고 `reset`과 같은 옵션으로 현재 폼의 트리를 새로 만듭니다. 같은 스키마 객체를 계속 쓰는 다른 폼은 일반 `reset`에서도 기존 트리를 유지하며, 그 폼 자신의 `rebuild`나 새 마운트에서 새 청사진을 받습니다.
 
 ### FormChildrenProps
 
@@ -429,7 +432,44 @@ node.readOnly; // 읽기 전용 (스키마 `readOnly` 포함)
 node.disabled; // 비활성화 (`enabled`와 별개)
 ```
 
+### 하위 트리 방문
+
+`node.visitSubtree(visitor)`는 노드 자신과 그 아래의 모든 노드에 `visitor`를 부릅니다. 폼의 한 구역을 한 번에 읽거나 고칠 때 씁니다.
+
+```typescript
+// /profile 아래의 문자열 필드를 모두 비우되, /profile/locked와 그 아래는 그대로 둡니다.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // 이 노드의 하위를 건너뜀
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **순서.** 노드 자신이 먼저이고, 하위는 전위 순서로, 형제는 `children` 순서로 방문합니다. 터미널 노드는 잎입니다.
+- **건너뛰기.** `false`를 돌려주면 그 노드의 하위만 건너뛰고 다음 형제로 이어 갑니다. `undefined`를 포함한 다른 반환값은 자식으로 들어갑니다.
+- **범위.** 폼 안의 노드에서는 현재 형상만 방문하므로, 조건이 제외한 필드는 방문하지 않습니다. 두 번 닿는 노드는 한 번만 방문하고, 순회 중에 생긴 노드는 방문된다는 보장이 없습니다. 폼에서 빠진 노드(조건이나 배열 변경으로 필드가 빠지기 전에 보관한 참조)에서 부르면, 그 노드와 함께 빠진 하위 트리를 걷습니다.
+- **쓰기.** 순회 중의 값 쓰기는 순회가 끝날 때 한 번에 반영되므로, 순회 중에 읽는 값은 순회 전의 값입니다. 상태와 외부 오류의 변경(`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`)은 데이터를 바로 바꾸지만, 그 이벤트는 `request`의 이벤트처럼 순회가 끝날 때 한 번 전달됩니다. 바깥 `node.batch(fn)` 안에서는 모두 그 batch의 끝까지 기다립니다. 순회 안의 폼 `reset`과 `resetSubtree()`는 그래도 바로 적용됩니다.
+- **폼에서 빠진 노드에 쓰기.** 이런 쓰기는 순회나 batch 안에서도 폼 안의 필드를 바꾸지 않습니다. 그 경로에 같은 종류의 필드가 있으면 아무 일도 하지 않고, 없으면 값을 그 경로에 맡겨 두었다가 그런 필드가 돌아올 때 불러옵니다. 그 경로에 필드가 있는지는 같은 batch나 순회 안의 앞선 변경이 아니라 마지막으로 커밋된 형상으로 판단하므로, 같은 batch나 순회가 그 필드를 막 제거했더라도 이런 쓰기는 버려집니다. 같은 batch나 순회가 제거하는 필드의 참조는 쓰는 때에 아직 폼 안에 있으므로, 그 쓰기는 다른 쓰기와 똑같이 처리됩니다.
+- **예외.** visitor가 던지면 이미 한 쓰기를 반영한 뒤 예외를 다시 던집니다. 리스너 안의 순회가 값 쓰기를 했다면, `batch`와 같이 그 예외는 `visitSubtree`를 부른 코드에 닿지 않습니다.
+- **비용.** 순회는 쓰기가 있을 때까지 아무것도 열지 않으므로, 읽기만 하는 순회는 추가 비용이 없고 리스너 안에서도 됩니다. 리스너 안의 쓰기는 다른 리스너 쓰기와 같은 규칙을 따릅니다.
+- **FormHandle.** `FormHandle`에는 `visitSubtree`가 없습니다. `formRef.current?.node`나 `findNode`로 얻은 노드에서 부르십시오.
+
 ---
+
+### 떼어진 노드 참조
+
+활성 트리를 떠난 노드 참조의 읽기는 마지막 커밋 값으로 고정되고 구독은 발화하지 않습니다. 이 참조의 `setValue`와 배열 동사(`push`, `pop`, `insert`, `remove`, `update`, `clear`)는 동결 값, 보유 원본, overlay, 이후 활성 인스턴스를 바꾸지 않습니다. 개발 모드에서는 `FormWarningCode.DetachedNodeWrite`로 경고하며 운영 번들은 침묵합니다. 거부 대상은 이 네 쓰기 계열이며 상태·외부 오류·request·검증 명령은 기존 동작을 유지합니다. `push`와 `insert`는 동결된 배열 길이를, 나머지 배열 동사는 `undefined`를 반환합니다.
+
+비활성 값은 살아 있는 루트나 호스트의 `setValue` JSON에 해당 경로를 담아 씁니다. 이 쓰기는 비활성 노드를 생성하지 않고 보유 overlay와 `inactiveValues`를 갱신합니다. 재진입은 새 노드를 만들고 해당 엔트리의 보유 슬롯과 overlay를 소비합니다.
+
+마이그레이션: 비활성을 건너는 노드 참조는 재진입 뒤 `find`로 다시 얻으십시오. 비활성 값은 살아 있는 호스트의 `setValue` JSON으로 쓰십시오. `find`는 활성 노드가 없는 모든 경로에서 기존과 같이 `null`을 반환합니다.
+
+### 노드의 나감 보존값
+
+`node.onInactive(listener): () => void`는 그 노드 인스턴스에 동기 resolver를 등록하고 해제 함수를 반환합니다. 보존하는 게이트 나감 직전에 직전 커밋 값과 `InactiveValueContext`로 한 번 호출합니다. 폼 언마운트·dispose, 배열 아이템 삭제, 재진입에서 소멸하는 옛 인스턴스에서는 호출하지 않습니다. 재진입의 새 인스턴스에는 다시 등록하십시오.
+
+콜백은 등록 순서대로 모두 실행하고 마지막 `undefined` 아닌 결과를 채택합니다. 결과가 있으면 `controls.inactiveValue`를 실행하지 않고, 모두 `undefined`면 선언을 적용합니다. 어느 콜백이든 던지면 그 노드의 override 전체를 취소하고 원래 보존값을 유지하며 정착 실패로 기록합니다. 나감의 커밋은 완료합니다. 나감을 일으킨 쓰기는 실패한 식과 같이 `FormErrorCode.ExpressionThrew`를 `onError`에 보고한 뒤 던집니다. resolver 안의 `setValue`, 배열 동사, `batch`, `resetSubtree`는 무시합니다. 개발 모드에서는 `FormWarningCode.WriteInInactiveResolver`로 경고하며 운영 번들은 침묵합니다. 거부 대상은 이 네 쓰기 계열이며 상태·외부 오류·request·검증 명령은 기존 동작을 유지합니다.
+
+마이그레이션: cleanup에서 자기 노드에 쓰던 패턴은 `controls.inactiveValue` 또는 `node.onInactive`로 옮기십시오. 둘은 같은 `(value, context) => next` 인터페이스입니다.
 
 ## FieldInput 시스템
 
@@ -463,8 +503,8 @@ type FieldInputTestObject = Partial<{
 // FieldInputHint 객체
 type FieldInputHint = {
   type: FieldNodeType; // 노드 종류: 'string', 'number', 'object', 'array', 'virtual', 'union' 등
-  schemaType: FieldNode['schemaType']; // 작성한 허용 종류('integer' 포함)
-  typeMismatch: boolean; // 저장된 값이 허용 종류와 어긋나는지
+  schemaType: FieldNode['schemaType']; // 작성한 허용 종류('integer' 포함), virtual 노드는 undefined
+  misfit: boolean; // 저장된 값이 허용 종류와 어긋나는지
   path: string;
   required: boolean;
   nullable: boolean;
@@ -496,8 +536,8 @@ interface FieldInputProps<
   required: boolean; // 필수 여부
   node: Node; // 필드 노드
   type: Node['type']; // 노드 종류
-  schemaType: Node['schemaType']; // 작성한 허용 종류('integer' 포함)
-  typeMismatch: Node['typeMismatch']; // 저장된 값이 허용 종류와 어긋나는지
+  schemaType: Node['schemaType']; // 작성한 허용 종류('integer' 포함), virtual 노드는 undefined
+  misfit: Node['misfit']; // 저장된 값이 허용 종류와 어긋나는지
   name: Node['name']; // 노드 이름
   path: Node['path']; // 노드 경로
   nullable: Node['nullable']; // null 허용 여부
@@ -583,17 +623,24 @@ const formInputMap = {
     unsetValue: boolean | string;        // false에서 true로 바뀌면 값을 비움
     resetInteraction: boolean | string;  // false에서 true로 바뀌면 dirty/touched를 비움
     unsetOnInactive: boolean | string;   // 노드가 형상을 떠날 때 유지된 값을 버림
-    fields: { targets: string[]; controls: { /* 앞의 아홉 키 */ } }[];
+    fields: { targets: string[]; controls: { /* 앞의 아홉 키와 inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // 이 노드의 값이 바뀔 때마다 다른 노드로 값을 밀어 넣기
+    inactiveValue: literal | ((value, ctx) => next); // 형상을 떠날 때 보존할 값
     discriminator: string;               // oneOf/anyOf 호스트: 분기 태그 속성
     watch: string[];                     // 값 구독 (경로 배열)
   }
 }
 ```
 
-키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용되며, 나머지 네 키는 던집니다.
+키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)와 `inactiveValue`를 허용하며, 나머지 네 키는 던집니다.
 
 닫힌 목록은 `controls`와 `options` 안에만 적용됩니다. 세 묶음 밖에 있는 0.16의 최상위 키(`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, `&` 접두어 키, `injectTo`, `terminal`, `virtual`, `placeholder`, `errorMessages`, `propertyKeys`)는 아예 읽지 않으므로, 1.0.0은 이들을 오류도 경고도 없이 무시합니다. 별칭도 경고도 두지 않는 것은 의도된 설계이므로, 0.16에서 옮겨 오는 스키마는 키마다 직접 옮겨야 합니다(README의 마이그레이션 (1.0.0) 절 참고).
+
+### 나갈 때 보존하는 값
+
+`controls.inactiveValue`에는 문자열·`false`·`0`·`null`·객체·배열 등의 리터럴이나 `InactiveValueResolver<V>` 함수를 씁니다. 문자열을 식으로 컴파일하지 않습니다. `node.onInactive(listener)`와 같은 `(value, context) => next` 인터페이스이며, `context`의 필드는 `injectTo`와 같은 `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, 폼 `context`입니다. 값과 스키마는 모두 직전 커밋에서 읽고 `undefined` 반환은 기존 보존값을 유지합니다. 의존 추적은 없습니다. 나감을 일으킨 쓰기가 JSON에 해당 경로의 값을 명시하면 그 값이 우선하며 두 resolver를 실행하지 않습니다. 나가는 서브트리 안의 조상을 whole 입력으로 명시하면 생략된 자손도 덮으며 merge 입력은 명시된 키만 덮습니다. 폼 입력의 merge도 같은 규칙을 따릅니다. 여러 쓰기를 묶은 batch의 merge는 얕으므로 명시된 키는 그 서브트리를 whole로 교체합니다. 명시 덮임은 batch 전체의 합집합이며 뒤의 빈 merge나 부분 merge는 앞선 whole 덮임을 거두지 않습니다. 뒤의 자동 쓰기도 앞선 caller whole 덮임을 거두지 않습니다. 나가는 서브트리 자체가 생략되면 resolver를 실행합니다. 배열 이동 뒤 값과 `dataPath`는 직전 커밋 주소를 사용하고 결과는 현재 주소에 보존합니다.
+
+자동 쓰기가 허용된 정상 보존 게이트 나감에서만 실행합니다. 자동 쓰기 억제·실패/예산 억제·load/reset 범위·실패한 게이트·같은 정착에서만 진입했던 인스턴스의 나감에서는 실행하지 않습니다. `unsetOnInactive`가 참인 나감은 건너뛰며 같은 층에 두 키를 함께 선언하면 `FormWarningCode.InactiveValueWithUnsetOnInactive`로 경고합니다. node → fields → fragment 순으로 가장 가까운 선언 층을 적용하고, 자손 결과는 조상 결과 안의 해당 경로를 덮습니다. 결과는 기존 비활성 JSON 쓰기 규칙을 따르므로 선언 밖 키는 extras로, 형이 맞지 않는 값은 원본으로 보존하고 재진입 때 overlay를 소비합니다.
 
 ### 중첩 controls
 
@@ -783,13 +830,24 @@ node.find('./childField'); // 현재 노드에서 상대 경로
 | ---- | ------------ | ---------------------------- |
 | `..` | 부모 탐색    | controls 표현식, node.find() |
 | `.`  | 현재 노드    | controls 표현식, node.find() |
-| `*`  | 와일드카드   | FieldInputMap만              |
+| `*`  | 와일드카드   | node.find(), FieldInputMap   |
 | `@`  | context 참조 | controls 표현식만            |
 
 ### 이스케이프 규칙
 
-- `~0` → `~`
-- `~1` → `/`
+세그먼트는 다음 순서로 해석합니다.
+
+1. 세그먼트가 정확히 `*`, `..`, `.`, `@`이면 연산자입니다(각각 와일드카드, 부모, 현재, 컨텍스트).
+2. 세그먼트가 정확히 `%2A`, `%2E%2E`, `%2E`, `%40`이면 각각 `*`, `..`, `.`, `@`라는 이름의 리터럴 속성입니다.
+3. 그 밖의 세그먼트는 `~1` → `/`, `~0` → `~`만 풉니다. `rate%20`처럼 `%`를 포함한 보통 이름은 바뀌지 않습니다.
+
+`#`은 경로 맨 앞에서만 fragment 접두사이며, 중간의 `#` 세그먼트는 보통 이름입니다. 노드 경로, 비활성 값 경로, 보고되는 오류 경로는 예약 이름에 리터럴 퍼센트 표기를 사용합니다. 따라서 `node.find('/branch/%2A')`는 이름이 `*`인 자식을 가리키고, `/branch/*`는 와일드카드로 남습니다.
+
+루트 주소는 빈 문자열 또는 `#`이며, `/`와 `#/`는 각각 루트 아래의 빈 문자열 키를 가리킵니다. 검증기 경로와 fieldInputMap 키에도 같은 규칙을 적용합니다.
+
+알려진 한계: 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 속성은 지원하지 않습니다. 이 이름의 경로는 다시 읽으면 예약 연산자 이름(`*`, `.`, `..`, `@`)이 되어 값 적재, 비활성 값, 검증 배정이 다른 속성을 가리키게 되므로, 폼을 만들 때 `FormErrorCode.ReservedPropertyName`로 스키마를 거부하며 오류는 속성 이름과 이 규칙을 알려 줍니다. 이 네 표기와 정확히 같지 않은 퍼센트 포함 이름에는 규칙 3이 적용됩니다.
+
+검증기와 `$ref`가 제공하는 표준 RFC 6901 포인터는 이 연산자 없이 해석합니다. AJV 경로 `/*`는 이름이 `*`인 속성을 가리키며, 표준 fragment 포인터(`#/...`)는 모든 세그먼트를 퍼센트 디코드합니다.
 
 ```typescript
 // 특수 문자가 있는 필드명: "field/with~special"
@@ -906,7 +964,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>
@@ -924,6 +982,7 @@ function ProfileForm() {
 | 상수 | `error.code` 값 | 발생 조건 | 비고 |
 | --- | --- | --- | --- |
 | `FormErrorCode.UnknownJsonSchema` | `'JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA'` | 스키마 분석이 지원하는 형태를 정하지 못함 |  |
+| `FormErrorCode.ReservedPropertyName` | `'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME'` | 속성 이름이 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`임 | `details.property`가 거부된 이름을 담습니다. |
 | `FormErrorCode.UnexpectedArraySchema` | `'JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA'` | 스키마 분석이 잘못된 배열 선언을 찾음 |  |
 | `FormErrorCode.AllOfTypeRedefinition` | `'JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION'` | 정적 allOf의 type 교집합이 빔 |  |
 | `FormErrorCode.ConflictingConstValues` | `'JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES'` | 정적 allOf의 const가 충돌 |  |
@@ -999,7 +1058,7 @@ function ProfileForm() {
 | `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | 판별자 태그 값이 허용 목록 밖 |  |
 | `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | 개발 모드에서 통째 값이 JSON과 호환되지 않음 |  |
 | `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | 입력 정의의 test 객체에 모르는 키가 있음 |  |
-| `FormWarningCode.TypeMismatch` | `'SCHEMA_FORM_WARNING.TYPE_MISMATCH'` | 값을 활성 type으로 모호함 없이 바꿀 수 없음 |  |
+| `FormWarningCode.Misfit` | `'SCHEMA_FORM_WARNING.MISFIT'` | 값을 활성 type으로 모호함 없이 바꿀 수 없음 |  |
 | `FormWarningCode.DialectMismatch` | `'SCHEMA_FORM_WARNING.DIALECT_MISMATCH'` | 스키마 dialect가 선택된 검증기의 dialect와 다름 |  |
 
 ---
@@ -1124,6 +1183,7 @@ const arrayNode = node.find('/items') as ArrayNode;
 arrayNode.push(); // 기본값으로 항목 추가
 arrayNode.push('custom'); // 커스텀 값으로 항목 추가
 arrayNode.remove(index); // 인덱스의 항목 제거
+arrayNode.insert(index, 'custom'); // [0, length] 범위의 인덱스에 항목 삽입, 새 길이 반환 (length는 push와 같고 범위 밖은 무동작)
 arrayNode.clear(); // 모든 항목 제거
 
 arrayNode.children?.length; // 현재 항목 노드 수 (하나의 입력으로 렌더된 배열은 children이 null)
@@ -1376,7 +1436,7 @@ nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)�
 - `defaultValue`·스키마 `default: null`, 노드 자신이나 조상을 통한 `setValue(null)`로 `null`이 됩니다.
 - 노드 자신에 객체/배열을 대입하거나 — `setValue({})`, `setValue([])`, 키를 담은 `setValue({ ... }, SetValueOption.Merge)` — **값을 담은 쓰기**가 활성 자손에 도착하면 객체/배열이 됩니다: 사용자 입력, `setValue`, 배열 `push`, 사용자가 일으킨 `injectTo`. 필드가 이미 보여 주는 값을 그대로 확정하는 것도 쓰기입니다.
 - 폼이 스스로 만든 값으로는 `null`이 유지됩니다: 자식의 `default`, `controls.derived`, `oneOf`/`anyOf` 분기 복원, `controls.active`에 의한 재활성화, reset 중의 자식 복원, 그리고 그런 값만으로 구동된 `injectTo`(`default`나 derived 값만 가진 source).
-- 값 없는 쓰기로도 `null`이 유지됩니다: 필드 비우기, null 배열의 `pop()`/`remove()`/`update()`/`clear()`, `setValue({}, SetValueOption.Merge)`. 비운 필드는 기억되어 이후 노드가 만들어질 때 반영됩니다.
+- 값 없는 쓰기로도 `null`이 유지됩니다: 필드 비우기, null 배열의 `pop()`/`remove()`/`update()`/`clear()`와 0이 아닌 인덱스의 `insert()`, `setValue({}, SetValueOption.Merge)`. 비운 필드는 기억되어 이후 노드가 만들어질 때 반영됩니다.
 
 필드를 *비운다*는 것은 그 노드가 `undefined`를 emit한다는 뜻입니다. 기본 `omitEmpty`에서 빈 문자열은 비우기이고, `false`·`0`·`null`은 값입니다. `options: { omitEmpty: false }`이면 빈 문자열도 값입니다. 비활성 필드에 쓴 값은 누구에게도 도착하지 않습니다.
 

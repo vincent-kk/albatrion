@@ -295,3 +295,5 @@ G27 최종 판정: PASS
 범위 재확인 뒤 주 세션이 같은 HEAD `940b7e792`에서 같은 인자(path `packages/canard/schema-form/src`, scopes `boundaries`·`dag`)로 `fractal_inspect validate`를 다시 실행했습니다. 결과는 status `ok`, 지적 0건, 통과 266, 실패 0, snapshot `26c2268dab3d9c593e4c5a86f66b81c890fa85610c99dea298d8ce084f10de63`이며 기록과 같습니다.
 
 Codex 세션의 결과(`indeterminate`, 통과 264·실패 2, snapshot `ba4883230164…`)는 4단계 본 검증의 실행과 snapshot이 같습니다. 그 실행의 진단은 `entry-point-facts-unavailable` 69개와 `verification-facts-unavailable` 400개였습니다(위 B3). Codex 쪽 filid는 별도의 facts 저장소(`~/.codex/plugins/filid/`)를 읽으며, 그곳에는 이번 추출이 제출되지 않았습니다. 두 결과의 차이는 facts 저장소의 차이이며, 같은 src tree에 대해 exact facts로 판정한 결과는 `ok`입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `f9ae05d5ea5e`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

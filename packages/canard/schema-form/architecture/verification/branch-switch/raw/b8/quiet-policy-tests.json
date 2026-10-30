@@ -1,0 +1,21 @@
+{
+  "authorization": "Coordinator approved one additional recovery window after two transient daemon failures.",
+  "policy": {
+    "cpuAverageMs": 3000,
+    "retryPauseMs": 5000,
+    "maximumStartDelayMs": 120000,
+    "externalProcessCpuLimitPercent": 30,
+    "completedSamplesRepeated": false
+  },
+  "checks": {
+    "newWaitHelperAbsentBeforeImplementation": true,
+    "heavyThenQuietSynthetic": true,
+    "ownAgentExcluded": true,
+    "timeoutAt120000msSynthetic": true,
+    "NodePreloadCompletesBeforeEntryBody": true,
+    "actualPreloadSmokeWaitCount": 1,
+    "mountToolChecks": true,
+    "publicDeclarationToolChecks": true
+  },
+  "productBytesChanged": false
+}

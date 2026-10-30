@@ -1,0 +1,145 @@
+{
+  "adopt": true,
+  "verdict": "채택",
+  "gates": {
+    "quality": true,
+    "oneOfLedger": true,
+    "siblingsLedger": true,
+    "test073": true,
+    "nodeHeap": true
+  },
+  "targets": [
+    {
+      "row": "switch-oneOf-80",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": true,
+      "unwrappedWithinWidth": true,
+      "deliveryWithinWidth": true,
+      "enteringRatio": 0.9839090559093783
+    },
+    {
+      "row": "switch-payload-12",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": true,
+      "unwrappedWithinWidth": true,
+      "deliveryWithinWidth": true,
+      "enteringRatio": 0.9587441913965674
+    },
+    {
+      "row": "switch-siblings-0",
+      "latentZero": true,
+      "inactiveMemoZero": true,
+      "enteringWithinWidth": true,
+      "ledgerWithinWidth": true,
+      "unwrappedWithinWidth": true,
+      "deliveryWithinWidth": true,
+      "enteringRatio": null
+    }
+  ],
+  "stageRegressions": [
+    {
+      "row": "switch-oneOf-80",
+      "stage": "everythingElse",
+      "A": {
+        "median": 14.001499999722,
+        "min": 13.95849999926213,
+        "max": 14.498500000627246,
+        "width": 0.5400000013651152,
+        "processMedians": [
+          13.95849999926213,
+          14.001499999722,
+          14.498500000627246
+        ]
+      },
+      "B": {
+        "median": 14.832499999556603,
+        "min": 13.894999999820357,
+        "max": 14.833500000349886,
+        "width": 0.9385000005295296,
+        "processMedians": [
+          14.832499999556603,
+          13.894999999820357,
+          14.833500000349886
+        ]
+      }
+    },
+    {
+      "row": "switch-payload-12",
+      "stage": "primeHost",
+      "A": {
+        "median": 2.333500000077038,
+        "min": 2.33299999990777,
+        "max": 2.375000000029104,
+        "width": 0.04200000012133387,
+        "processMedians": [
+          2.333500000077038,
+          2.33299999990777,
+          2.375000000029104
+        ]
+      },
+      "B": {
+        "median": 2.416999999923064,
+        "min": 2.375000000029104,
+        "max": 2.457999999933236,
+        "width": 0.08299999990413198,
+        "processMedians": [
+          2.457999999933236,
+          2.375000000029104,
+          2.416999999923064
+        ]
+      }
+    },
+    {
+      "row": "switch-payload-12",
+      "stage": "transitionSettlement",
+      "A": {
+        "median": 7.7289999999266,
+        "min": 7.708000000093307,
+        "max": 7.875000000012733,
+        "width": 0.16699999991942605,
+        "processMedians": [
+          7.875000000012733,
+          7.7289999999266,
+          7.708000000093307
+        ]
+      },
+      "B": {
+        "median": 8.104000000002998,
+        "min": 7.687499999974534,
+        "max": 8.541500000092128,
+        "width": 0.854000000117594,
+        "processMedians": [
+          8.541500000092128,
+          8.104000000002998,
+          7.687499999974534
+        ]
+      }
+    }
+  ],
+  "regressions": [],
+  "validated": {
+    "rows": 22,
+    "processes": 440,
+    "legacyRows": 18,
+    "stageProcesses": 18,
+    "stageWrites": 1800,
+    "supplementalProcesses": 9,
+    "supplementalWrites": 900
+  },
+  "stageRule": "Common and outermost-entry stage inclusive medians; own noise is A process-median min/max width; all new creation/clone/overlay work is included once in the outermost entering group",
+  "instrumentation": "Comparative timers cover B0 common stages plus conditional outermost entering boundaries, including cloneFromSlot once. Nested creation timers are skipped. Full helper timings and overhead are reported in the supplemental pass only, excluded from adoption. No timer overhead is subtracted; wrapped and unwrapped process medians are both reported.",
+  "timerSites": {
+    "A": {
+      "ledger": 21,
+      "supplemental": 69
+    },
+    "B": {
+      "ledger": 21,
+      "supplemental": 69
+    }
+  }
+}

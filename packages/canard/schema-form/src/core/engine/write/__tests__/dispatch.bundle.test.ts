@@ -79,7 +79,7 @@ describe('chain failure bundles', () => {
         'warning',
         {
           level: 'warning',
-          code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+          code: 'SCHEMA_FORM_WARNING.MISFIT',
           message: 'warning',
         },
       ],
@@ -110,12 +110,12 @@ describe('chain failure bundles', () => {
         [
           {
             level: 'warning',
-            code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+            code: 'SCHEMA_FORM_WARNING.MISFIT',
             message: 'first',
           },
           {
             level: 'warning',
-            code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+            code: 'SCHEMA_FORM_WARNING.MISFIT',
             message: 'second',
           },
         ],

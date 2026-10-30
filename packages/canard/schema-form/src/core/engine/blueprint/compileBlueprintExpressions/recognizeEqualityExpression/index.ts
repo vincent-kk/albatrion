@@ -1,0 +1,1 @@
+export { recognizeEqualityExpression } from './recognizeEqualityExpression';

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { getContextOwners } from '../utils/context/getContextOwners';
+import { getContextOwners } from '../utils/dependencies/getContextOwners';
 
-// filid:contract settle-derive
+// filid:contract settle-derive-context-owners
 describe('context dependency owners', () => {
   it('28C-03 context slot retains @ readers outside the path trie', () => {
     const { blueprint } = createTestTree({

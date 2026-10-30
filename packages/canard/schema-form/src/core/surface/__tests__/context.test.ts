@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '@/schema-form/core/engine';
-import { PathKeyedMap } from '@/schema-form/core/engine';
-import { PathKeyedSet } from '@/schema-form/core/engine';
+import { PathKeyedSet, blueprint } from '@/schema-form/core/engine';
 
 import { setContext } from '../runtime/setContext';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
@@ -10,6 +8,7 @@ import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 // filid:contract surface-members
 describe('FieldNode context', () => {
   it('28C-08 context getter delegates the shared runtime reference', () => {
+    // These assertions inspect the latent-store baseline directly.
     const initial = { label: 'initial' };
     const root = fieldNodeFactory(
       blueprint({
@@ -22,11 +21,8 @@ describe('FieldNode context', () => {
         context: initial,
         diagnostics: { status: 'stable' },
         loadSnapshot: undefined,
-        latentRaw: new PathKeyedMap('pair'),
-        typeMismatchPaths: new PathKeyedSet(),
-        inactiveValuesMemo: new PathKeyedMap<
-          readonly { path: string; value: unknown }[]
-        >('path'),
+
+        misfitPaths: new PathKeyedSet(),
       },
     );
     root.setValue({ child: 'value' });

@@ -1,4 +1,5 @@
 // Evidence gate: reproduce requested checks without installing or writing git state.
+// Reads round-87-verification.json and round-87-final-*.json, which are not committed, and requires 0189c443b, which no branch contains now, as an ancestor of HEAD, so it cannot rerun (architecture/verification/07-switch/remeasure-86c02.md).
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -11,8 +12,8 @@ const repo = path.resolve(pkg, '../../..');
 const out = path.join(pkg, 'architecture/verification/07-switch');
 const reserved = ['providers/RootNodeContext/components/RootNodeContextProvider.tsx',
   'providers/RootNodeContext/hooks/useLiveNode.ts', 'providers/RootNodeContext/utils/applyFormErrors.ts',
-  'components/Field/FieldInputSlot/FieldInputSlot.tsx',
-  'components/Field/FieldInputSlot/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
+  'components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx',
+  'components/FieldProxy/components/FieldInputSlot/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
 const changed = execFileSync('git', ['diff', '--name-only'], { cwd: repo, encoding: 'utf8' }).trim().split('\n');
 const baseline = '0189c443b068fbb26fb6a7de795d40a3e01a40d8';
 const currentHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();

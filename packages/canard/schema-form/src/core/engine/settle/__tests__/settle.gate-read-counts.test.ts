@@ -3,9 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { getGateExpression } from '../utils/gates/getGateExpression';
 import * as reads from '../utils/gates/readProjectedValue';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 describe('gate dependency read work', () => {

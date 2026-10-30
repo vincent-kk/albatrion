@@ -1,0 +1,53 @@
+{
+  "baselineCommit": "538fe2e5ecc9b636412d52b86e0dcd6cd3cb07b8",
+  "removedChecks": 5,
+  "remainingChecks": 23,
+  "effectiveTypeUnchanged": true,
+  "build": {
+    "exit": 0,
+    "count": 1,
+    "includesTypecheck": true,
+    "artifactChecks": true
+  },
+  "lint": {
+    "exit": 0
+  },
+  "targeted": {
+    "exit": 0,
+    "files": 6,
+    "passed": 47
+  },
+  "products": {
+    "index.mjs": {
+      "bytes": 856443,
+      "sha256": "2008698cea949089b039f8033c234695dbb3d7d580938a519327a9384e5057b6"
+    },
+    "index.node.mjs": {
+      "bytes": 855665,
+      "sha256": "12c783f69ce99e84c921c9861d6a94e607006f1429106f931fa3b8ae42019f1d"
+    },
+    "index.cjs": {
+      "bytes": 877231,
+      "sha256": "85ce3b2f1afdc6b1d19036ec3cf5545a7c33929625121bfeee611b8dc0c8cc19"
+    },
+    "index.d.ts": {
+      "bytes": 3129,
+      "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+    }
+  },
+  "sourceSha256": {
+    "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts": "c282a7f9bacd582eb59c9025182f1b0957ac9eaec9a62c4e3752376afde3ece0",
+    "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts": "73af58111ddb128ff998271fb36d6ca8304a1fea9c627a6f060273fa9ce84e22",
+    "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts": "3f9d70b5af831d709f1311c6c63fca93a59de690de51f19b3621c381e8ddff51",
+    "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts": "c53d63ffcae2697788e8eb02e1f985073344a99a8b232f236d31e6a793a647c0",
+    "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts": "36c9527cf77ae5e6030d3a0f0584436eea9bc9f2c5ee267551f90add23f77143"
+  },
+  "ownerLimitedVerification": {
+    "FCA": false,
+    "allFiveProjects": false,
+    "verify": false,
+    "isolation": false,
+    "delivery": false,
+    "window": false
+  }
+}

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { find } from '../utils/query/find';
 import { findNodes } from '../utils/query/findNodes';
-import { walkFieldNodes } from '../utils/walk/walkFieldNodes';
+import { visitFieldNodes } from '../utils/visit/visitFieldNodes';
 import { type TestNode, createNode } from './fixtures/createNode';
 
 // filid:contract navigation-shape
@@ -73,7 +73,42 @@ describe('navigation over the committed shape', () => {
     second.structure = { first };
     second.children = [first];
     const visited: TestNode[] = [];
-    walkFieldNodes(root, (node) => visited.push(node));
+    visitFieldNodes(root, (node) => {
+      visited.push(node);
+    });
+    expect(visited).toEqual([root, first, second]);
+  });
+
+  it('skips only the descendants of a node whose visit returns false', () => {
+    const root = createNode('');
+    const first = createNode('first', root);
+    createNode('inner', first);
+    const second = createNode('second', root);
+    const visited: TestNode[] = [];
+    visitFieldNodes(root, (node) => {
+      visited.push(node);
+      return node !== first;
+    });
+    expect(visited).toEqual([root, first, second]);
+  });
+
+  it('follows only owned edges, detached ones included, when owned, while the default walk follows every child edge', () => {
+    const root = createNode('');
+    const first = createNode('first', root);
+    const second = createNode('second', root);
+    second.children = [first];
+    first.detached = true;
+    const visited: TestNode[] = [];
+    const record = (node: TestNode) => {
+      visited.push(node);
+    };
+    visitFieldNodes(second, record, { owned: true });
+    expect(visited).toEqual([second]);
+    visited.length = 0;
+    visitFieldNodes(second, record);
+    expect(visited).toEqual([second, first]);
+    visited.length = 0;
+    visitFieldNodes(root, record, { owned: true });
     expect(visited).toEqual([root, first, second]);
   });
 });

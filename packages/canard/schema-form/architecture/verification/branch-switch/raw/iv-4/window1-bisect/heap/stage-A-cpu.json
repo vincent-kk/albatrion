@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-30T04:43:49.637Z",
+  "kind": "ps-reported-cpu",
+  "gating": false,
+  "rows": [
+    {
+      "pid": 1056,
+      "cpuPercent": 17.5,
+      "name": "Stats"
+    },
+    {
+      "pid": 436,
+      "cpuPercent": 12.3,
+      "name": "WindowServer"
+    },
+    {
+      "pid": 9295,
+      "cpuPercent": 3.4,
+      "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]"
+    },
+    {
+      "pid": 441,
+      "cpuPercent": 2.9,
+      "name": "runningboardd"
+    },
+    {
+      "pid": 378,
+      "cpuPercent": 2.4,
+      "name": "configd"
+    },
+    {
+      "pid": 837,
+      "cpuPercent": 1.9,
+      "name": "WidgetsExtension"
+    },
+    {
+      "pid": 553,
+      "cpuPercent": 1.6,
+      "name": "com.apple.DriverKit-AppleBCMWLAN"
+    },
+    {
+      "pid": 650,
+      "cpuPercent": 1.2,
+      "name": "ControlCenter"
+    },
+    {
+      "pid": 81982,
+      "cpuPercent": 1.2,
+      "name": "2.1.312"
+    },
+    {
+      "pid": 493,
+      "cpuPercent": 0.8,
+      "name": "airportd"
+    }
+  ]
+}

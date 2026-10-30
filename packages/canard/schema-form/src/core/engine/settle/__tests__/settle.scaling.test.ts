@@ -4,13 +4,13 @@ import { blueprint } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import type { SettlementContext } from '../type';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import type { SettlementContext } from '../types/settlement';
 import { hasRecursiveExpansion } from '../utils/compute/hasRecursiveExpansion';
-import { updateOutput } from '../utils/compute/updateOutput';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { DirtyPathSet } from '../utils/write/DirtyPathSet';
-import { getDependencyIndex } from '../utils/write/getDependencyIndex';
-import { registerRecalculation } from '../utils/write/registerRecalculation';
+import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
+import { registerRecalculation } from '../utils/dependencies/registerRecalculation';
+import { updateOutput } from '../utils/output/updateOutput';
+import { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 
 afterEach(() => vi.restoreAllMocks());
 

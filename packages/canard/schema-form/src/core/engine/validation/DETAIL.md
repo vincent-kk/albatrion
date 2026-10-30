@@ -16,8 +16,8 @@
 - `GuardFunction`은 동기 가드의 내부 형이며 validation index가 내보내지 않는다. core 시험 검증기는 engine index의 `Validator['compileGuard']` 반환형에서 가드 형을 유도한다. `readFieldNodeGuard`는 settle이 소비하는 validation 진입점 이름이며, engine과 core의 집계 index는 재수출하지 않는다.
 - `__tests__/validation.retain-guard.test.ts`는 검증기 수명 유지와 동기 가드 읽기를 함께 검증하므로 validation이 소유한다. 플러그인 형이 검증기 형을 만족하는지는 app/plugin의 시험 구획이 검증한다. write와 공유하는 트리 생성 fixture는 engine의 공용 시험 구획에서 읽는다.
 
-- `interface Validator { compile(copy: BlueprintSchema): ValidateFunction; compileGuard(root: BlueprintSchema, pointer: string): GuardFunction; release?(root: BlueprintSchema): void; readonly dialect?: string }`를 `type.ts`가 선언한다. `type GuardFunction = (value: unknown) => boolean`이며 가드는 비동기 형식과 키워드를 지원하지 않는다. `type ValidateFunction<Value = unknown> = (data: Value) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null`은 입력에 대한 판정을 돌려주고 던지지 않는 계약이다. 던지면 실행 실패이다(VALIDATE-015·016·044, ERROR-032).
-- `interface ValidationIssue<SourceError = unknown> { dataPath: string; keyword?: string; message?: string; schemaPath?: string; rejectedKey?: string; details?: Record<string, unknown>; source?: SourceError }`는 정규화된 검증 결과이다(FRAGMENT-020·053, LANDING-070, VALIDATE-043).
+- `interface Validator { compile(copy: BlueprintSchema): ValidateFunction; compileGuard(root: BlueprintSchema, pointer: string): GuardFunction; release?(root: BlueprintSchema): void; readonly dialect?: string }`를 `types/validator.ts`가 선언한다. `type GuardFunction = (value: unknown) => boolean`이며 가드는 비동기 형식과 키워드를 지원하지 않는다. `type ValidateFunction<Value = unknown> = (data: Value) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null`은 입력에 대한 판정을 돌려주고 던지지 않는 계약이다. 던지면 실행 실패이다(VALIDATE-015·016·044, ERROR-032).
+- `interface ValidationIssue<SourceError = unknown> { dataPath: string; keyword?: string; message?: string; schemaPath?: string; rejectedKey?: string; details?: Record<string, unknown>; source?: SourceError }`는 `types/issue.ts`가 선언하는 정규화된 검증 결과이다(FRAGMENT-020·053, LANDING-070, VALIDATE-043).
 - core는 `compile` 결과와 가드에 방출 트리를 참조 그대로 건네고, 검증기는 받은 값과 스키마를 바꾸지 않는다. 값을 바꾸는 사용자 정의 키워드를 쓰지 않을 책임은 소비자에게 있다. core는 `bind`를 호출하지 않고, 선택된 검증기를 트리 생성 인자로 받는다(VALIDATE-001·044·050, CONTROLS-075).
 - `readFieldNodeGuard(runtime, gate)`는 `settle`이 쓰는 동기 가드 읽기이다. `requestFieldNodeValidation(root, deliver: (issues, commit) => void)`는 실행을 예약하고, `readFieldNodeErrors(node): readonly ValidationIssue[]`는 라우팅된 오류를 읽는다. `assertValidationRootReady(node)`는 재생성 인계 전에 새 루트의 전체 컴파일 실패를 동기로 드러내어 옛 사슬을 보존한다. `retainValidationRoot(validator, authoredRoot)`와 `releaseValidationRoot(validator, authoredRoot)`는 바인딩의 커밋 이펙트와 정리용으로 이름을 붙인 진입점이다. `EMPTY_GLOBAL_ERRORS`는 두 오류 층이 비었거나 아직 계산 전인 폼 목록이 공유하는 빈 배열이며, `FieldNode`의 `globalErrors` 읽기와 `write`의 발행 비교가 같은 참조를 쓰도록 진입점으로 내보낸다(VALIDATE-015·021·043·046·049, NODE-010).
 - `readValidationEntry`와 `compileEntryGuards`는 `FieldNode`를 생성할 때 검증기별 사본과 개발 모드 가드를 준비한다. `runFieldNodeValidation`과 `routeValidationIssues`는 `write`가 명시적 `validate()`의 판정과 오류 표시를 순서대로 연결하는 통로이다. 이들은 패키지 공개 진입점으로 다시 내보내지 않는다. 검증 사본 함수는 이 fractal 내부 구현이며, 시험은 그 파일을 직접 읽는다(NODE-010, VALIDATE-017·018·043·048, LANDING-159).
@@ -32,12 +32,16 @@
 
 ### 실행과 오류 배정
 
+- 외부 검증기가 만든 dataPath는 parseStandardPointer로 해석하여 예약 이름도 리터럴 속성으로 라우팅합니다. 소비자에게 제공하는 경로는 이름을 formatSegment로 조립한 확장 경로이며 같은 이름을 node.find로 다시 찾을 수 있습니다.
+
+- 검증기 dataPath는 RFC 이름으로 해석하며 `/`와 `#/`는 빈 이름 자식입니다. 루트는 빈 문자열과 `#`이고 검증 전용 별칭은 없습니다. 빈 이름 자식이 없으면 루트에 잘못 배정하지 않습니다. 바뀌지 않은 이슈의 배열·항목 참조는 유지합니다. 포인터가 아닌 문자열(`/`나 `#`로 시작하지 않는 값)이나 잘못된 퍼센트 이스케이프를 가진 dataPath는 해석하지 않은 채 주인이 없는 오류로 남고 검증을 실패시키지 않습니다. schemaPath는 절대 포인터일 때만 정규형으로 바꾸며, 해석할 수 없으면 원문을 유지하고 dataPath 라우팅은 그대로 진행합니다.
+
 - 소멸한 노드의 `errors`는 떼어질 때 갈무리한 마지막 오류 배열을 같은 참조로 돌려준다. 활성 검증 맵과 외부 오류 맵에서는 그 노드를 제거하며, 옛 참조는 살아 있는 트리의 새 오류를 읽지 않는다(NODE-044, 35C-09).
 
 - 검증 요청이 필요한 가장 바깥 진입에서는 요청을 한 번 만들고, 마이크로태스크에서 최신 커밋 번호 하나만 실행한다. 늦게 도착한 결과는 버리고, 최신 결과만 넘겨받은 콜백을 통해 별도 파동으로 보낸다. `validate()`와 제출은 새 스냅숏을 다시 판정한다(EVENT-031·032·046, VALIDATE-006·007·049).
 - 라우팅은 판정을 바꾸지 않는다. 모든 issue를 순서대로 라우팅 목록에 보존하고, 폼 수준 `globalErrors`는 루트 외부 오류를 앞에, 그 검증 목록을 뒤에 둔다. 루트 외부 오류나 라우팅 목록이 바뀔 때만 합친 배열을 갱신하며, 반복해서 읽으면 같은 참조를 반환한다. 루트가 아닌 노드의 명령형 외부 오류는 해당 노드의 `errors`에만 남는다(SURFACE-053, VALIDATE-043, 79C-01).
 - 검증(하위 대상과 명시적 `validate()` 포함)의 새 결과가 직전 결과와 깊이 같으면(길이와 순서, 항목의 모든 필드) 직전 배열의 항목 객체로 배정한다. 배정이 실제로 바뀐 노드(분기 전환, 항목 삭제 뒤 같은 경로에 온 다른 노드)만 `UpdateError`를 받고, 배정이 같은 노드는 직전 `errors` 배열을 같은 참조로 유지한다. 라우팅 목록 참조가 같으므로 `globalErrors`도 같은 참조이고, `UpdateGlobalError`를 보내지 않아 `onValidate`도 호출하지 않는다. 명시적 `validate()`는 그 목록으로 끝난다. 직전 결과는 루트 런타임의 `validationResult`이며, 대상과 관계없이 배정할 때마다 기록하고 reset만 비운다. 직전 결과가 없으면 빈 결과도 발행한다. 외부 오류는 이 비교와 관계없이 유지된다(EVENT-046, GOAL-011, LANDING-210, SURFACE-053, 207C-01).
-- 정규화된 `dataPath`(`'/'`도 루트 `''`)가 가리키는, 형상 안의 노드에 검증 issue를 배정한다. `required`는 빠진 자식 경로로 배정되고, `rejectedKey`는 그 키를 가진 호스트가 받는다. 터미널 아래 경로는 터미널이 받고, 형상 밖 경로의 오류는 주인이 없는 오류가 된다(VALIDATE-043 (1)–(4), FRAGMENT-020·053).
+- 표준 이름으로 해석한 `dataPath`가 가리키는, 형상 안의 노드에 검증 issue를 배정한다. `required`는 빠진 자식 경로로 배정되고, `rejectedKey`는 그 키를 가진 호스트가 받는다. 터미널 아래 경로는 터미널이 받고, 형상 밖 경로의 오류는 주인이 없는 오류가 된다(VALIDATE-043 (1)–(4), FRAGMENT-020·053).
 - 표시에서는 꺼진 `oneOf`·`anyOf` 분기의 issue만 청사진 조각 표와 `schemaPath`로 걸러 낸다. 분기를 가려낼 수 없으면 거르지 않으며, `allOf`, `if`, `controls.active`는 이 필터의 대상이 아니다. union 호스트의 형 오류는 호스트에 둔다. 검증 판정과 폼 수준 목록은 그대로 유지한다(VALIDATE-043 (5)–(6), VALIDATE-051).
 - 검증기가 없고 모드가 `None`이 아니면 트리마다 `VALIDATOR_MISSING`을 한 번 경고하고, `if` 조각을 끄고 `CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR`를 한 번 경고한다. 전체 컴파일 실패는 로드마다 `VALIDATOR_COMPILE_FAILED` 하나를 첫 검증이나 `validate()`에서 드러내며, 노드 `errors`에는 넣지 않는다. 같은 `$id`를 등록하다 충돌이 나서 컴파일에 실패한 경우에는 `VALIDATOR_COMPILE_FAILED`나 `GUARD_FAILED`의 `details`에 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다. 실행 중 throw는 `VALIDATOR_THREW`로 `validate()`를 거부하거나 `OnChange`에서 한 번 보고한 뒤 싱크로 보내며, 미처리 거부로 남기지 않는다(ERROR-146–157, ERROR-019·039·201, VALIDATE-042, 31C-03).
 - 검증기가 없고 모드가 `None`이 아니면 트리마다 `VALIDATOR_MISSING`을 한 번 경고하고, `if` 조각을 끄고 `CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR`를 한 번 경고한다. 전체 컴파일 실패는 로드마다 `VALIDATOR_COMPILE_FAILED` 하나를 첫 검증이나 `validate()`에서 드러내며, 노드 `errors`에는 넣지 않는다. `OnChange`의 첫 실패는 보고기에 이어 싱크로도 보내고, 명시적 `validate()`는 거부하기 전에 `surface: 'rejected'`로 보고한다. 같은 `$id`를 등록하다 충돌이 나서 컴파일에 실패한 경우에는 `VALIDATOR_COMPILE_FAILED`나 `GUARD_FAILED`의 `details`에 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다. 실행 중 throw는 `VALIDATOR_THREW`로 `validate()`를 거부하거나 `OnChange`에서 한 번 보고한 뒤 싱크로 보내며, 미처리 거부로 남기지 않는다(ERROR-146–157, ERROR-019·022·039·155·201, VALIDATE-042, 31C-03).
@@ -57,6 +61,14 @@
 
 - 해제 전에 다시 마운트하면 재컴파일하지 않고, 등록 수는 살아 있는 루트 수 + 8 이하이며, 오래된 커밋의 결과는 배달하지 않는다. 같은 `$id`를 가진 서로 다른 살아 있는 작성 루트는 각자 자기 루트로 판정하고, 재생성 reset에서 새 루트의 컴파일이 실패하면 옛 트리를 보존한다(VALIDATE-021·045·046·049, EVENT-046).
 
+## Boundary Exemptions
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: 형 칸의 형은 이름으로 진입점을 거쳐 write·engine·core의 집계 진입점과 플러그인 검증 계약에 제공되며, 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+
 ## Last Updated
 
-2026-10-03; 정돈-2(2026-10-14).
+2026-10-28

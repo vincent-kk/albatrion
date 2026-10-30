@@ -1,0 +1,74 @@
+{
+  "scope": "Tool validation only; no formal measurement or adoption evidence",
+  "synthetic": {
+    "result": "passed",
+    "checks": [
+      "raw row statistics rederivation",
+      "legacy quality rederivation",
+      "bad summary rejection",
+      "negative legacy sample rejection",
+      "quality flag tampering rejection",
+      "row identity tampering rejection",
+      "phase conservation rejection",
+      "single nonzero latent call detection",
+      "invalid quality remains indeterminate",
+      "runtime and stage bundle hash tampering rejection",
+      "nested entering group counted once",
+      "supplemental nonzero calls do not alter comparative adoption"
+    ],
+    "marker": "B4_TOOL_SMOKE_OK synthetic-only"
+  },
+  "stageSmoke": {
+    "scope": "Supplemental validation only; no formal timing evidence",
+    "passes": [
+      {
+        "lane": "B",
+        "pass": "ledger",
+        "timerSites": 25
+      },
+      {
+        "lane": "B",
+        "pass": "supplemental",
+        "timerSites": 65
+      }
+    ],
+    "processesPerPass": 3,
+    "warmups": 2,
+    "samples": 4,
+    "checks": [
+      "self sum equals wrapped elapsed",
+      "phase self sum equals wrapped elapsed",
+      "outermost entering group does not exceed elapsed",
+      "nested entering timers are skipped in comparative pass",
+      "all exported slot helpers have self and inclusive instrumentation in supplemental pass",
+      "comparative recursive clone/helper/factory timers are absent beneath outermost entry boundaries",
+      "ledger and supplemental raw profile filenames remain distinct",
+      "precise coverage and allocation attribution match the selected bundle filename"
+    ]
+  },
+  "removedPrototype": "Literal-star compatibility uses the original latent path for the entire form when blueprint.root.containsLiteralStar is true.",
+  "protocolDecision": "Before formal data, the coordinator separated full-helper timers from the comparative ledger. A22/B25 timer sites differ only by cloneFromSlot, enterSlotClone and createFromSlotOverlay entering boundaries; nested creation timers are skipped. Supplemental B65 timings never affect adoption.",
+  "wildcardFallbackSmoke": {
+    "scope": "Deterministic counter and observer assertions only; heap smoke values are excluded from adoption",
+    "normalCaptureStoreMemoMaximum": 0,
+    "literalStarCaptureStoreMemoMinimum": 1,
+    "phases": ["hide-descendant", "close-host"],
+    "warmups": 20,
+    "writesPerPhase": 100,
+    "heldUnreadHostObserver": "passed"
+  },
+  "syntax": "12 B4-1 modules and shared collector parsed by Node26; repository Prettier passed",
+  "sourceCommit": "0778bd955",
+  "toolCommit": "cdfc65725",
+  "profileClassification": {
+    "ledgerFilename": "wrapped.mjs",
+    "supplementalFilename": "supplemental.mjs",
+    "supplementalPreciseCloneCalls": {
+      "switch-oneOf-80": 3,
+      "switch-payload-12": 12,
+      "switch-siblings-0": 0
+    },
+    "rawProfileNamesDistinct": true
+  },
+  "heapIdentity": "Numeric heap IDs may be reused across independent snapshots; no individual survival or collection conclusion is made."
+}

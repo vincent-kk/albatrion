@@ -4,20 +4,22 @@ import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { engineModes } from '../../utils/cache/engineModes';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { runDeriveConvergenceCase } from './fixtures/runDeriveConvergenceCase';
 
 /** Each counterexample restores the switch installed by package setup. */
-const setupEnabled = deriveShadowEvaluation.enabled;
+const setupEnabled = engineModes.deriveShadow;
 
 afterEach(() => {
-  deriveShadowEvaluation.enabled = setupEnabled;
+  engineModes.setMode('deriveShadow', setupEnabled);
   vi.unstubAllEnvs();
 });
 
 it('preserves values, shape, errors, deliveries, write rounds and iterations for terminal writes', () => {
+  // The exact decision trace includes the shadow confirmation evaluations.
+  engineModes.setMode('deriveShadow', true);
   const result = runDeriveConvergenceCase(
     {
       type: 'object',
@@ -332,7 +334,7 @@ it('preserves derive budget rollback and iterations exactly', () => {
 });
 
 it('skips the confirmation evaluation in development while preserving its empty trace slot', () => {
-  deriveShadowEvaluation.enabled = false;
+  engineModes.setMode('deriveShadow', false);
   vi.stubEnv('NODE_ENV', 'development');
   vi.stubEnv('ROUND99_SKIP', 'on');
   const result = runDeriveConvergenceCase(
@@ -355,6 +357,7 @@ it('skips the confirmation evaluation in development while preserving its empty 
 });
 
 it('actually runs shadow and rejects a false proof with nonzero confirmation candidates', () => {
+  engineModes.setMode('deriveShadow', true);
   const { root, blueprint } = createTestTree({
     type: 'object',
     properties: {

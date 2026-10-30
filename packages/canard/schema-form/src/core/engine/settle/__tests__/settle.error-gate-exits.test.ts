@@ -4,10 +4,14 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotRaw,
+} from './fixtures/readRetainedSlotRaw';
 
-// filid:contract settle-gates
+// filid:contract settle-gates-error-exits
 describe('throwing gate exit isolation', () => {
   it('SETTLE-017 active gates do not search the expression array per sibling', () => {
     const properties: Record<string, BlueprintSchema> = {
@@ -58,8 +62,7 @@ describe('throwing gate exit isolation', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.k, false, 'input', WriteOption.Overwrite);
-    const latentKey = JSON.stringify(['/h/d', 'string']);
-    expect(root.runtime.latentRaw.get(latentKey)).toBe('D');
+    expect(readRetainedSlotRaw(root, '/h/d', 'string')).toBe('D');
     root.runtime.context = {
       gate: () => {
         throw new Error('gate');
@@ -69,7 +72,7 @@ describe('throwing gate exit isolation', () => {
       writeFieldNode(root, { z: 'go' }, 'callerPartial', WriteOption.Merge),
     ).toThrow('Gate evaluation failed');
     expect(root.structure?.h).toBeUndefined();
-    expect(root.runtime.latentRaw.get(latentKey)).toBe('D');
+    expect(readRetainedSlotRaw(root, '/h/d', 'string')).toBe('D');
   });
 
   it('ERROR-125 throwing gate preserves its exit while another clears and derive runs', () => {
@@ -119,12 +122,8 @@ describe('throwing gate exit isolation', () => {
     ).toThrow('Gate evaluation failed');
     expect(root.structure?.bad).toBeUndefined();
     expect(root.structure?.other).toBeUndefined();
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/bad/child', 'string'])),
-    ).toBe('B');
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/other', 'string'])),
-    ).toBe(false);
+    expect(readRetainedSlotRaw(root, '/bad/child', 'string')).toBe('B');
+    expect(hasRetainedSlotOwnSource(root, '/other', 'string')).toBe(false);
     expect(root.structure?.target?.raw).toBe('C');
   });
 });

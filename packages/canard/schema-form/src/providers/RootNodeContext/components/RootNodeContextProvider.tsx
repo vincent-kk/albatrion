@@ -8,8 +8,12 @@ import {
   useSyncExternalStore,
 } from 'react';
 
-import { useHandle } from '@winglet/react-utils/hook';
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
+
+import { blueprintCacheDomain } from '@/schema-form/app/cache';
 import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
 import {
@@ -32,6 +36,10 @@ import { resetRootLoad } from '../utils/resetRootLoad';
 import { subscribeRootLoad } from '../utils/subscribeRootLoad';
 import { RootBindingContext } from './RootBindingContext';
 import { RootNodeContext } from './RootNodeContext';
+
+/** Validation mode applied when neither props nor the external form set one. */
+const DEFAULT_VALIDATION_MODE =
+  ValidationMode.OnChange | ValidationMode.OnRequest;
 
 /** Own root construction, committed load lifetimes, and synchronous handle replacement. */
 export const RootNodeContextProvider = ({
@@ -58,17 +66,17 @@ export const RootNodeContextProvider = ({
     validationMode:
       props.validationMode ??
       external.validationMode ??
-      ValidationMode.OnChange | ValidationMode.OnRequest,
+      DEFAULT_VALIDATION_MODE,
   };
   const committed = useRef(current);
   // Construction belongs to the speculative render; only committed loads are prepared.
   // eslint-disable-next-line react-hooks/exhaustive-deps -- Schema/default props are consumed again only by reset.
   const initial = useMemo(() => createRootLoad(current, reporter), []);
-  const store = useRef<RootLoadStore>({
+  const store = useLazyConstant<RootLoadStore>(() => ({
     load: initial,
     listeners: new Set<() => void>(),
-    unsubscribe: () => {},
-  }).current;
+    unsubscribe: NOOP_FUNCTION,
+  }));
   const subscribe = useMemo(
     () => (listener: () => void) => {
       store.listeners.add(listener);
@@ -84,39 +92,53 @@ export const RootNodeContextProvider = ({
     reporter.root = load.root;
     reporter.pendingLoad = () => flushRootLoad(load, true);
   }
-  const pending = useRef<
-    | { props: RootLoadProps; option: Parameters<RootBinding['reset']>[0] }
-    | undefined
-  >(undefined);
+  const pending =
+    useRef<
+      Optional<{
+        props: RootLoadProps;
+        option: Parameters<RootBinding['reset']>[0];
+      }>
+    >(undefined);
   const [, schedule] = useState(0);
-  const reset = useHandle((option?: Parameters<RootBinding['reset']>[0]) => {
-    const used = committed.current;
-    store.load = resetRootLoad(store.load, used, option);
-    store.unsubscribe();
-    store.unsubscribe = subscribeRootLoad(store.load, store);
-    binding.current.root = store.load.root;
-    attachedFilesMap.clear();
-    onReset();
-    pending.current = { props: used, option };
-    schedule((version) => version + 1);
-    for (const listener of store.listeners) listener();
-    try {
-      if (
-        store.load.root &&
-        !store.load.root.globalErrors.length &&
-        store.lastReportedErrors?.length
-      )
-        reportRootLoadValidation(store.load, store);
-    } catch (error) {
-      throw store.load.error || error;
-    }
-    if (store.load.error) throw store.load.error;
-  });
+  const reset = useHandle(
+    (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
+      const used = committed.current;
+      store.load = resetRootLoad(store.load, used, option, rebuild);
+      store.unsubscribe();
+      store.unsubscribe = subscribeRootLoad(store.load, store);
+      binding.current.root = store.load.root;
+      attachedFilesMap.clear();
+      onReset();
+      pending.current = { props: used, option };
+      schedule((version) => version + 1);
+      for (const listener of store.listeners) listener();
+      try {
+        if (
+          store.load.root &&
+          !store.load.root.globalErrors.length &&
+          store.lastReportedErrors?.length
+        )
+          reportRootLoadValidation(store.load, store);
+      } catch (error) {
+        throw store.load.error || error;
+      }
+      if (store.load.error) throw store.load.error;
+    },
+  );
+
+  const rebuild = useHandle(
+    (option?: Parameters<RootBinding['rebuild']>[0]) => {
+      const schema = committed.current.jsonSchema;
+      if (schema !== null && typeof schema === 'object')
+        blueprintCacheDomain.invalidate(schema);
+      reset(option, true);
+    },
+  );
 
   useLayoutEffect(() => {
     const previous = committed.current;
     committed.current = current;
-    binding.current = { root: store.load.root, reset };
+    binding.current = { root: store.load.root, reset, rebuild };
     store.load.props = {
       ...store.load.props,
       onChange: current.onChange,

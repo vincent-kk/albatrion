@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../../record';
 
 /**
@@ -15,9 +17,9 @@ export const compareDocumentOrder = <Self extends FieldNodeRecord<Self>>(
   if (left === right) return 0;
   const leftLine: Self[] = [];
   const rightLine: Self[] = [];
-  for (let node: Self | null = left; node; node = node.parent)
+  for (let node: Nullable<Self> = left; node; node = node.parent)
     leftLine.push(node);
-  for (let node: Self | null = right; node; node = node.parent)
+  for (let node: Nullable<Self> = right; node; node = node.parent)
     rightLine.push(node);
   leftLine.reverse();
   rightLine.reverse();

@@ -3,18 +3,20 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
+import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
+import { engineModes } from '../../utils/cache/engineModes';
 import * as paths from '../../utils/paths/resolveDependencyPath';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
+import { expectedGateSelectionCalls } from './fixtures/expectedGateSelectionCalls';
 
 // filid:contract settle-gate-path-resolution
 describe('gate path resolution runtime visits', () => {
   it.each([5, 10, 20, 40])(
-    'B=%i resolves each pointer once while evaluating every condition',
+    'B=%i reuses pointer resolution with exact mode-specific expression calls',
     (count) => {
       const resolutions = new Array<number>(count).fill(0);
       const evaluations = new Array<number>(count).fill(0);
@@ -66,7 +68,9 @@ describe('gate path resolution runtime visits', () => {
           }
         },
       );
+      const previousMode = engineModes.gateWheel;
       try {
+        engineModes.setMode('gateWheel', 'record');
         const { root } = createTestTree(createFixedBranchSchema(count));
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         for (const [index, kind] of [
@@ -85,10 +89,14 @@ describe('gate path resolution runtime visits', () => {
             'input',
             WriteOption.Overwrite,
           );
-          expect(evaluations).toEqual(
-            new Array(count).fill(index === 0 ? 16 : 8),
+          const expected = expectedGateSelectionCalls(
+            engineModes.gateSelection,
+            index === 0,
           );
-          expect(evaluations).toEqual(gateVisits);
+          expect(evaluations).toEqual(
+            new Array(count).fill(expected.expressions),
+          );
+          expect(gateVisits).toEqual(new Array(count).fill(expected.gates));
           for (let branch = 0; branch < count; branch++) {
             if (branch === 0 || branch === 4) continue;
             expect({ branch, resolutions: resolutions[branch] }).toEqual({
@@ -101,6 +109,7 @@ describe('gate path resolution runtime visits', () => {
         }
       } finally {
         vi.restoreAllMocks();
+        engineModes.setMode('gateWheel', previousMode);
       }
     },
   );

@@ -1,0 +1,106 @@
+{
+  "declarationException": {
+    "name": "ReservedPropertyName",
+    "value": "JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME"
+  },
+  "baselineCommit": "c4d442c441139a7d57336bf5c1cb2d260e8f6223",
+  "candidateCommit": "57becc34f95a503ac5783a759c6c41fe407399fd",
+  "files": {
+    "A": {
+      "index.node.mjs": {
+        "bytes": 814210,
+        "sha256": "e02f52140198c010bf3f3bedeeb7abb341704bafeabf026167d5cee22c761531"
+      },
+      "index.mjs": {
+        "bytes": 814952,
+        "sha256": "bf83e2beb934a400083c785272ae6c4161126e43182d0db0606b27676adcb040"
+      },
+      "index.d.ts": {
+        "bytes": 3054,
+        "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+      }
+    },
+    "B": {
+      "index.node.mjs": {
+        "bytes": 815318,
+        "sha256": "5d31bad94fe055647bc3f4ae1aa1a1da1a1258a0d0521da61acc003b5441d718"
+      },
+      "index.mjs": {
+        "bytes": 816060,
+        "sha256": "2b328d53737ebcaf1a3557f88e7dd71ef59fdaca9eeb107a46878f24fc287e53"
+      },
+      "index.d.ts": {
+        "bytes": 3054,
+        "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+      }
+    }
+  },
+  "stageBundles": {
+    "A": {
+      "wrapped.mjs": {
+        "bytes": 822676,
+        "sha256": "b177723e71fada018e682666fa56449fe4e2f7455cdee874bfaafaea6cab73a5"
+      },
+      "unwrapped.mjs": {
+        "bytes": 816164,
+        "sha256": "748a69c68660ce8ff6541e26cbd779ef7611b5cfd8d556d667694706296a47ea"
+      },
+      "supplemental.mjs": {
+        "bytes": 831407,
+        "sha256": "c7aa189905d59aae29efe5252e6d55a168ada9234da0eabbb7c6491e7a61c5e9"
+      },
+      "instrumentation.json": {
+        "bytes": 114985,
+        "sha256": "407ea053c7c99782697b70ab90a1759be784726cc0c1907a143cab0ce935b93b"
+      }
+    },
+    "B": {
+      "wrapped.mjs": {
+        "bytes": 824043,
+        "sha256": "f6462957d1c0f8f48da5226fffc94dc0411d46838d501973a30319de5f4099ed"
+      },
+      "unwrapped.mjs": {
+        "bytes": 817531,
+        "sha256": "31a33670bf5faa7734e546bb4cd09eeaa38a2da0979cd234f6c402637837d461"
+      },
+      "supplemental.mjs": {
+        "bytes": 832778,
+        "sha256": "62e939e3a266d8e10fac41ce77bc09efe14a980554895d61bf03d8f9239ac8f2"
+      },
+      "instrumentation.json": {
+        "bytes": 115255,
+        "sha256": "3a45db94973f7e59af2cfa8409ef2d7fd9273b9d46b4767fa9eb49fe8315356c"
+      }
+    }
+  },
+  "preparedAt": "2026-10-28T13:04:47.104Z",
+  "environment": {
+    "node": "v26.12.1",
+    "bun": "1.4.4",
+    "cpu": "Apple M1 Max",
+    "arch": "arm64",
+    "release": "27.0.0"
+  },
+  "stages": [
+    "switch-oneOf-80",
+    "switch-payload-12",
+    "switch-siblings-0"
+  ],
+  "enteringGroup": "inclusive outermost factory, child creation, entry, restore, recursive clone and overlay calls",
+  "cpuPolicy": {
+    "averageMs": 3000,
+    "retryDelayMs": 5000,
+    "maximumStartDelayMs": 120000,
+    "maximumExternalProcessCpuPercent": 30,
+    "completedMeasurementsRepeated": false,
+    "agentPid": 98094,
+    "toolCommit": "680d8f3a74071e99a4fc19e9bfc895037241b571",
+    "toolHashes": {
+      "helpers/sampleProcessCpu.mjs": "de628fa0f0c6d8e5156ae90f6d48f4e9f4e2b9a91b582fa7627ca3ce186bdb86",
+      "helpers/waitForQuietProcess.mjs": "e8d3519b4f550eb8afd464ea8e00ec438b1a0d7d4e0329e73b18623e2b5314f2",
+      "quietWorkerPreload.mjs": "6e82b3933845903c91819d1aad2c50149d8b53b0db3b19acf4f158dab0d9fafd",
+      "window.mjs": "e2ecdc3d4bf034cc34a199b618df07708533088cf7ec3b4bfce49090d6b0bc49",
+      "mountLedger.mjs": "be8e77bb5340c4dd4981b128821d26b3f4af06dedd269b54dcea0371922e9d22"
+    }
+  }
+}

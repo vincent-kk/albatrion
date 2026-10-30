@@ -1,8 +1,12 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { getDependencyIndex } from '../write/getDependencyIndex';
+import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import type { SettlementContext } from '../../types/settlement';
+import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 
 /**
  * Select hosts touched by raw changes, new children, or declaration selection.
@@ -22,7 +26,7 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
     while (true) {
       paths.add(path);
       if (!path) break;
-      path = path.slice(0, path.lastIndexOf($.Separator));
+      path = resolvePointer(path, $.Parent);
     }
   }
   for (const node of context.entered) {
@@ -31,14 +35,18 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   }
   for (const [node, ids] of context.selectedDeclarationIds) {
     const previous = node.runtime.committedDeclarationIds?.get(
-      JSON.stringify([node.path, node.blueprintNode.kind]),
+      JSON.stringify([node.path, getBlueprintNodeIdentity(node.blueprintNode)]),
     );
-    if (
-      !previous ||
-      previous.length !== ids.length ||
-      previous.some((id, index) => id !== ids[index])
-    )
+    let haveSourceIdsChanged = !previous || previous.length !== ids.length;
+    if (previous && previous.length === ids.length)
+      for (let index = 0; index < previous.length; index++)
+        if (previous[index] !== ids[index]) {
+          haveSourceIdsChanged = true;
+          break;
+        }
+    if (haveSourceIdsChanged) {
       paths.add(node.path);
+    }
   }
   return paths;
 };

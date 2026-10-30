@@ -1,0 +1,63 @@
+{
+  "timed": false,
+  "formal": false,
+  "row": "switch-siblings-1000",
+  "code": 0,
+  "inputsSha256": "c9298a51b114ff7585887dfbe27e6c5b383c0fbe417605f602f8f35731992a3b",
+  "command": {
+    "executable": "<runtime>/Cellar/node/26.12.1_1/bin/node",
+    "args": [
+      "--expose-gc",
+      "<home>/Workspace/albatrion/branch-switch-iv-1/packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/retention.mjs",
+      "--bundle=<scratch>/claude-501/perf-runs/20261029T0747-19353b1-iv-1-c2.noindex/load-check-B/engines/current.mjs",
+      "--row=switch-siblings-1000",
+      "--output=<scratch>/claude-501/perf-runs/20261029T0747-19353b1-iv-1-c2-retention-preflight.noindex/switch-siblings-1000"
+    ],
+    "pid": 87603
+  },
+  "result": {
+    "row": "switch-siblings-1000",
+    "node": "v26.12.1",
+    "unread": {
+      "label": "unread",
+      "analysis": {
+        "reachable": 190325,
+        "strongEdges": 793849,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 7080
+      },
+      "matchingNumericHeapIds": [],
+      "hosts": []
+    },
+    "read": {
+      "label": "read",
+      "analysis": {
+        "reachable": 190340,
+        "strongEdges": 794420,
+        "iterations": 5,
+        "ephemeronTableEdgesSkipped": 7080
+      },
+      "matchingNumericHeapIds": [],
+      "hosts": []
+    },
+    "lifetime": {
+      "writesBeforeSnapshot": 120,
+      "release": "resetSubtree followed by delivery drain and two full GCs",
+      "trackedHeapIds": [],
+      "identity": "Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection",
+      "reset": {
+        "label": "reset",
+        "analysis": {
+          "reachable": 191168,
+          "strongEdges": 791563,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 7049
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": []
+      },
+      "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+    },
+    "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+  }
+}

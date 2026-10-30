@@ -1,3 +1,4 @@
+export { engineModes } from './utils/cache/engineModes';
 export {
   adoptFieldNodeChain,
   createFormErrorRecord,
@@ -7,6 +8,7 @@ export {
   dispatchClearSubtreeState,
   dispatchContextChange,
   dispatchFinishInput,
+  dispatchInsert,
   dispatchMount,
   dispatchPop,
   dispatchPush,
@@ -20,10 +22,12 @@ export {
   dispatchSetValue,
   dispatchUpdate,
   dispatchValidate,
+  dispatchVisitSubtree,
   dispatchWriteInput,
   readFieldNodeInteractionReset,
   readFieldNodeRevision,
   subscribeFieldNode,
+  onInactiveFieldNode,
 } from './write';
 export {
   blueprint,
@@ -46,8 +50,8 @@ export {
 export {
   readFieldNodeDefaultValue,
   readFieldNodeInactiveValues,
-  readFieldNodeTypeMismatch,
-  readFieldNodeTypeMismatches,
+  readFieldNodeMisfit,
+  readFieldNodeMisfits,
   readFieldNodeWatchValues,
   loadFieldNodeAtMount,
   resetFieldNodeForm,
@@ -78,4 +82,9 @@ export type { Behavior, FieldNodeRecord, FieldNodeRuntime } from './record';
 export type { NodeStateFlags } from './types/state';
 export type { NodeStrategy } from './types/strategy';
 export type { AuthoredSchema } from './types/jsonSchema';
-export type { SchemaControls } from './types/controls';
+export type {
+  SchemaControls,
+  InactiveValue,
+  InactiveValueResolver,
+  InactiveValueContext,
+} from './types/controls';

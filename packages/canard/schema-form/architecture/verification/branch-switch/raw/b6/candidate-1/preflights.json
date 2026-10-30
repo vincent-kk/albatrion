@@ -1,0 +1,63 @@
+[
+  {
+    "startedAt": "2026-10-28T04:27:15.533Z",
+    "quietSince": "2026-10-28T04:27:20.663Z",
+    "externalCpuPercent": 34.91804439929945,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 34.91804439929945
+      }
+    ]
+  },
+  {
+    "startedAt": "2026-10-28T04:29:31.110Z",
+    "quietSince": "2026-10-28T04:29:36.239Z",
+    "externalCpuPercent": 54.24747703555117,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 54.24747703555117
+      }
+    ]
+  },
+  {
+    "startedAt": "2026-10-28T04:31:51.276Z",
+    "quietSince": "2026-10-28T04:31:56.405Z",
+    "externalCpuPercent": 37.85447348248036,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 37.85447348248036
+      }
+    ]
+  },
+  {
+    "startedAt": "2026-10-28T04:34:10.415Z",
+    "quietSince": "2026-10-28T04:34:15.550Z",
+    "externalCpuPercent": 101.53941185493679,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 101.53941185493679
+      }
+    ]
+  },
+  {
+    "startedAt": "2026-10-28T04:36:49.088Z",
+    "quietSince": "2026-10-28T04:36:54.219Z",
+    "externalCpuPercent": 39.59939296347929,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 39.59939296347929
+      }
+    ]
+  },
+  {
+    "startedAt": "2026-10-28T04:39:07.806Z",
+    "quietSince": "2026-10-28T04:39:12.909Z",
+    "externalCpuPercent": 26.87189778759232,
+    "heavy": []
+  }
+]

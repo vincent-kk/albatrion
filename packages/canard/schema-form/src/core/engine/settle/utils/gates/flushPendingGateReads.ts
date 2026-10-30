@@ -1,12 +1,18 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  PointerOperator,
+  appendSegment,
+  isDescendantPath,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { flushPendingOutput } from '../compute/flushPendingOutput';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
+import type { SettlementContext } from '../../types/settlement';
+import { flushPendingOutput } from '../output/flushPendingOutput';
 import { bindGateHostPath } from './bindGateHostPath';
 import { getGateExpression } from './getGateExpression';
 import { getGateRegistry } from './getGateRegistry';
@@ -25,7 +31,6 @@ interface GateReadPlan {
 }
 
 /** Templates share their read plan across array items and settlement calls. */
-const READ_PLANS = new WeakMap<BlueprintNode, GateReadPlan>();
 
 /**
  * Publish read ancestors before an entry can mutate their in-progress subtree.
@@ -41,7 +46,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   if (context.root.runtime.blueprint.capabilities.branchless) return;
   if (!context.pendingOutputs?.size) return;
-  let plan = READ_PLANS.get(template);
+  let plan = getHostDerived<'readPlans', GateReadPlan>(template).readPlans;
   if (!plan) {
     const built: GateReadPlan = { occurrences: [], recursive: false };
     const ancestors = new Set<BlueprintNode>();
@@ -58,12 +63,16 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
             node,
             suffix,
             childSuffix:
-              gate.schemaPath === `${node.schemaPath}/controls/active`
+              gate.schemaPath ===
+              appendSegment(
+                appendSegment(node.schemaPath, 'controls'),
+                'active',
+              )
                 ? suffix
                 : undefined,
           });
       for (const entry of node.childEntries) {
-        const childSuffix = `${suffix}/${escapeSegment(entry.name)}`;
+        const childSuffix = appendSegment(suffix, entry.name);
         for (const declaration of entry.declarations)
           for (const gate of declaration.gates)
             built.occurrences.push({
@@ -71,21 +80,26 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
               node,
               suffix,
               childSuffix:
-                gate.schemaPath === `${declaration.schemaPath}/controls/active`
+                gate.schemaPath ===
+                appendSegment(
+                  appendSegment(declaration.schemaPath, 'controls'),
+                  'active',
+                )
                   ? childSuffix
                   : undefined,
             });
         visit(entry.node, childSuffix);
       }
       for (const [index, item] of (node.prefixItems ?? []).entries())
-        visit(item, `${suffix}/${index}`);
-      if (node.item)
-        visit(node.item, `${suffix}/${node.prefixItems?.length ?? 0}`);
+        for (const candidate of node.prefixItemCandidates?.[index] ?? [item])
+          visit(candidate, appendSegment(suffix, index));
+      for (const item of node.itemCandidates ?? (node.item ? [node.item] : []))
+        visit(item, appendSegment(suffix, node.prefixItems?.length ?? 0));
       ancestors.delete(node);
     };
-    visit(template, '');
+    visit(template, $.Root);
     plan = built;
-    READ_PLANS.set(template, plan);
+    getHostDerived<'readPlans', GateReadPlan>(template).readPlans = plan;
   }
   if (plan.recursive) {
     for (const host of context.pendingOutputs)
@@ -93,20 +107,23 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   const flushRead = (read: string): void => {
-    if (read === $.Context) return;
-    const local = read === path || read.startsWith(`${path}/`);
+    if (readPointerSegment(read, 0) === PointerOperator.Context) return;
+    const local = read === path || isDescendantPath(read, path);
     for (const host of context.pendingOutputs ?? []) {
       // A read inside the entry walks the entry node that the host holds before its subtree gates run.
       if (local && host.raw === undefined) continue;
       if (read === host.path) flushPendingOutput(host, context);
-      else if (read.startsWith(`${host.path}/`)) {
-        const name = unescapeSegment(
-          read.slice(host.path.length + 1).split($.Separator)[0],
-        );
+      else if (isDescendantPath(read, host.path)) {
+        const name = readPointerSegment(read.slice(host.path.length + 1), 0);
+        if (typeof name !== 'string') continue;
         if (
           host.raw !== undefined ||
           !host.structure ||
-          !hasOwnProperty(host.structure, name)
+          (host.behavior.type !== 'array' &&
+          Object.getPrototypeOf(host.structure) === null
+            ? // structure values are always live nodes, so undefined means absent.
+              host.structure[name] === undefined
+            : !hasOwnProperty(host.structure, name))
         )
           flushPendingOutput(host, context);
       }
@@ -139,10 +156,10 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
     flushGate(
       occurrence.gate,
       occurrence.node,
-      `${path}${occurrence.suffix}`,
+      path + occurrence.suffix,
       occurrence.childSuffix === undefined
         ? undefined
-        : `${path}${occurrence.childSuffix}`,
+        : path + occurrence.childSuffix,
     );
   }
 };

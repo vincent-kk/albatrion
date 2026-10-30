@@ -1,20 +1,23 @@
+import type { Nullable } from '@aileron/declare';
+
 import type { EffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /** Calculated identities held at entry to one bounded node computation. */
 export interface CalculatedSnapshot<Self> {
   local: unknown;
   emit: unknown;
-  children: readonly Self[] | null;
+  children: Nullable<readonly Self[]>;
   schema: EffectiveSchema;
   active: boolean;
 }
 
 /**
- * Keep last commit's identities when a temporary gate baseline settles equally.
+ * Keep pre-wheel identities when a temporary gate baseline settles equally.
+ * Non-wheel paths retain references through updateOutput without a snapshot.
  * @param node - Recomputed record whose final values may match the prior commit
  * @param previous - Identities captured before the fixed host start
  * @param context - Changed-node set to trim after a no-op calculation
@@ -30,12 +33,24 @@ export const preserveReferences = <Self extends FieldNodeRecord<Self>>(
   if (sameValue(previous.emit, node.emit))
     node.emit = captureFieldNodeChange(node, 'emit', previous.emit);
   if (
+    previous.children !== node.children &&
     previous.children &&
     node.children &&
-    previous.children.length === node.children.length &&
-    previous.children.every((child, index) => child === node.children?.[index])
-  )
-    node.children = captureFieldNodeChange(node, 'children', previous.children);
+    previous.children.length === node.children.length
+  ) {
+    let unchanged = true;
+    for (let index = 0; index < previous.children.length; index++)
+      if (previous.children[index] !== node.children?.[index]) {
+        unchanged = false;
+        break;
+      }
+    if (unchanged)
+      node.children = captureFieldNodeChange(
+        node,
+        'children',
+        previous.children,
+      );
+  }
   if (
     node.local === previous.local &&
     node.emit === previous.emit &&

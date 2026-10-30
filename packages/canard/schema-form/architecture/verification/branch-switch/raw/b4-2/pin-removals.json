@@ -1,0 +1,622 @@
+{
+  "baseline": "4c1016a021ef6fe92d5afe235f39c4a71722d4ee",
+  "fileCount": 77,
+  "pins": [
+    {
+      "file": "src/core/__tests__/regression/r7-port-notify.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/__tests__/regression/r7-port-notify.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/__tests__/delivery.h5b-observation.test.ts",
+      "off": 0,
+      "on": 3,
+      "destination": "src/core/engine/__tests__/delivery.h5b-observation.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/selectChildren.head-differential.test.ts",
+      "off": 3,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/selectChildren.head-differential.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.array-legacy-ports.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.array-legacy-ports.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.array-lifecycle.test.ts",
+      "off": 5,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.array-lifecycle.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.array-scaling.test.ts",
+      "off": 3,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.array-scaling.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.array-verbs.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.array-verbs.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-controls.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-controls.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-exit-cost.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-exit-cost.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-gate.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-gate.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-inactive-write.test.ts",
+      "off": 4,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-inactive-write.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-stale.test.ts",
+      "off": 3,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.candidate-source-preservation-stale.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.delivery-watch-exit.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/__tests__/settle.delivery-watch-exit.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.dirty-consume-verification.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/__tests__/settle.dirty-consume-verification.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.exit-direct-ownership.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.exit-direct-ownership.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.extras-single-compare.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.extras-single-compare.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.feature-pass-scaling.test.ts",
+      "off": 0,
+      "on": 3,
+      "destination": "src/core/engine/settle/__tests__/settle.feature-pass-scaling.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.gate-table-mutations.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.gate-table-mutations.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.item-fold-selection.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.item-fold-selection.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-controls.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-controls.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-enclosing.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-enclosing.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-inactive-move.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-inactive-move.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-policy.test.ts",
+      "off": 4,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-policy.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-retention.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-retention.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale-policy.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale-policy.test.ts",
+      "fileExists": false,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership-stale.test.ts",
+      "fileExists": false,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.latent-candidate-ownership.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.non-wheel-preservation.test.ts",
+      "off": 0,
+      "on": 2,
+      "destination": "src/core/engine/settle/__tests__/settle.non-wheel-preservation.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.presence-evaluation-counts.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/__tests__/settle.presence-evaluation-counts.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.presence-reuse-reachability.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/__tests__/settle.presence-reuse-reachability.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.retained-slot-active-address.test.ts",
+      "off": 0,
+      "on": 2,
+      "destination": "src/core/engine/settle/__tests__/settle.retained-slot-active-address.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.retained-slot-plain-write.test.ts",
+      "off": 0,
+      "on": 2,
+      "destination": "src/core/engine/settle/__tests__/settle.retained-slot-plain-write.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.retained-slot-registration-cost.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/__tests__/settle.retained-slot-registration-cost.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.scalar-latent-scope.test.ts",
+      "off": 3,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.scalar-latent-scope.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.static-same-value-write-cost.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/__tests__/settle.static-same-value-write-cost.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.static-same-value-write-fallback.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.static-same-value-write-fallback.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.union-fold-latent.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/settle.union-fold-latent.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.write-epoch-verification.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/__tests__/settle.write-epoch-verification.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/__tests__/settle.write-epoch.test.ts",
+      "off": 1,
+      "on": 1,
+      "destination": "src/core/engine/settle/__tests__/settle.write-epoch.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-exits.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-exits.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail-scope.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail-scope.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.candidate-source-preservation-tail.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-absent-destinations.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-absent-destinations.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-destinations.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-destinations.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-inactive-source.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-inactive-source.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-live-descendants.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-live-descendants.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-nested-array.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-nested-array.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-contract.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-contract.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-mutations.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-replay-mutations.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-root.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-root.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-unrelated-slots.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership-unrelated-slots.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership.test.ts",
+      "off": 5,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/arrange.latent-candidate-ownership.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-append-cost.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-append-cost.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-append-fallback.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-append-fallback.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear-cost.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear-cost.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-clear.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reference.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reference.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reset-address.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-detached-reset-address.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop-cost.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop-cost.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop-fallback.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop-fallback.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-pop.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-cost.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-cost.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-fallback.test.ts",
+      "off": 1,
+      "on": 2,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice-fallback.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice.test.ts",
+      "off": 1,
+      "on": 1,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.array-splice.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.detached-write-address.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.detached-write-address.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/__tests__/static-first.h5b-memo-lifetime.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/loadFieldNodeAtMount/__tests__/static-first.h5b-memo-lifetime.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/__tests__/markWrite.static-spec.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/settle/utils/input/__tests__/markWrite.static-spec.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/__tests__/createSlotValueOverlay.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/utils/slots/__tests__/createSlotValueOverlay.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/__tests__/materializeInactiveSlotValues.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/engine/settle/utils/slots/__tests__/materializeInactiveSlotValues.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/validation/__tests__/validation.reset.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/validation/__tests__/validation.reset.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+      "off": 0,
+      "on": 2,
+      "destination": "src/core/engine/write/__tests__/dispatch.all-failures.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.batch.test.ts",
+      "off": 14,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/dispatch.batch.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.budget.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/write/__tests__/dispatch.budget.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.closing-branch.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/engine/settle/__tests__/dispatch.closing-branch.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/engine/write/__tests__/dispatch.state.test.ts",
+      "off": 0,
+      "on": 1,
+      "destination": "src/core/engine/write/__tests__/dispatch.state.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/surface/__tests__/context.test.ts",
+      "off": 1,
+      "on": 0,
+      "destination": "src/core/surface/__tests__/context.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    },
+    {
+      "file": "src/core/surface/__tests__/detached.test.ts",
+      "off": 2,
+      "on": 0,
+      "destination": "src/core/surface/__tests__/detached.test.ts",
+      "fileExists": true,
+      "sourceModePinCallsRemaining": 0
+    }
+  ]
+}

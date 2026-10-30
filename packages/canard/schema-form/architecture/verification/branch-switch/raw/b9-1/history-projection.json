@@ -1,0 +1,167 @@
+{
+  "branch": "perf/schema-form-b9-1-siblings",
+  "baseline": "3104b0d9baebfb2a7218242be812eafd769b6753",
+  "oldHead": "087e3a07a0c6d9c8b7db50f8590817ebf368a90d",
+  "newHead": "c61f75064dbe029190e82abe8dace47310d3222f",
+  "mode": "applied",
+  "allowedPaths": [
+    "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-1/cpu-prechecks.json.gz",
+    "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-2/cpu-prechecks.json.gz",
+    "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-3/cpu-prechecks.json.gz"
+  ],
+  "currentTreeUnchanged": true,
+  "allSourceTreesUnchanged": true,
+  "fullProcessTablesReachable": false,
+  "blobRecords": [
+    {
+      "original": "c0355d0555ff38ce5095bcdc95f0a28e9e0caf15",
+      "replacement": "138fcc267dc35c3bab1049c90b4eae90dde8dae5",
+      "beforeBytes": 266675639,
+      "afterBytes": 880495,
+      "gzipBytes": 80335
+    },
+    {
+      "original": "cbcc000030cd04dda52e7d37aa4f3ffb7489739e",
+      "replacement": "e0c7eb7c17d4f433d69066b1c2292fa4b12d4e18",
+      "beforeBytes": 261622549,
+      "afterBytes": 865060,
+      "gzipBytes": 77865
+    },
+    {
+      "original": "138fcc267dc35c3bab1049c90b4eae90dde8dae5",
+      "replacement": "138fcc267dc35c3bab1049c90b4eae90dde8dae5",
+      "beforeBytes": 880495,
+      "afterBytes": 880495,
+      "gzipBytes": 80335
+    },
+    {
+      "original": "e0c7eb7c17d4f433d69066b1c2292fa4b12d4e18",
+      "replacement": "e0c7eb7c17d4f433d69066b1c2292fa4b12d4e18",
+      "beforeBytes": 865060,
+      "afterBytes": 865060,
+      "gzipBytes": 77865
+    },
+    {
+      "original": "ee179cbcfc614a9aba90a186cd0e291c23023f9f",
+      "replacement": "ee179cbcfc614a9aba90a186cd0e291c23023f9f",
+      "beforeBytes": 880393,
+      "afterBytes": 880393,
+      "gzipBytes": 81052
+    }
+  ],
+  "mappings": [
+    {
+      "original": "c014a16f9fd736b776d32cf3b11d140d0aa60fb7",
+      "replacement": "c014a16f9fd736b776d32cf3b11d140d0aa60fb7",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "81ff757a2673486e11c1d1d87658689d4d867b97",
+      "replacement": "81ff757a2673486e11c1d1d87658689d4d867b97",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "bd018afc217d7fae6aa25a206ccf73a51b22787d",
+      "replacement": "bd018afc217d7fae6aa25a206ccf73a51b22787d",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "fa4151299cbd7d985c48689afbd327664cf21a24",
+      "replacement": "fa4151299cbd7d985c48689afbd327664cf21a24",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "b8570c9ab827e01b9e099c1251f9fff109928597",
+      "replacement": "b8570c9ab827e01b9e099c1251f9fff109928597",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "6e585c4d6378fcd34a3afe469b4cf9b173f5e352",
+      "replacement": "6e585c4d6378fcd34a3afe469b4cf9b173f5e352",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "48f62530c52c803df3b890ce6df407dc021aa34f",
+      "replacement": "48f62530c52c803df3b890ce6df407dc021aa34f",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "550d1dae2a51decdd256648f9969804e90cd527d",
+      "replacement": "550d1dae2a51decdd256648f9969804e90cd527d",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "1f66070316f492d6d5c8a169333f5f2097cc846d",
+      "replacement": "1f66070316f492d6d5c8a169333f5f2097cc846d",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "1c329eb22e4c2520ed6cc2bb750a4cfe0683e6fb",
+      "replacement": "1c329eb22e4c2520ed6cc2bb750a4cfe0683e6fb",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "f4e6cbcc3d762b0cd6d8aaa75297fb8d6efd0c1c",
+      "replacement": "f4e6cbcc3d762b0cd6d8aaa75297fb8d6efd0c1c",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "88ba096e872418a092487c9f840c3f0f3406ce6d",
+      "replacement": "66a60c655d2d311434344b820d64542badfdd2d1",
+      "changedPaths": [
+        "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-1/cpu-prechecks.json.gz"
+      ],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "769917e8a3b466f2d7bd0e9fe54387079b32b72c",
+      "replacement": "9b0d73d416409def44d8a45c5b4fe5a60a29312f",
+      "changedPaths": [
+        "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-1/cpu-prechecks.json.gz"
+      ],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "0c5b1be7897e53e5b746f6b461d929feffbdec92",
+      "replacement": "930a4da2bf0d9400e6faa0a3036b5d1c2cf8e862",
+      "changedPaths": [
+        "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-1/cpu-prechecks.json.gz"
+      ],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "a3e955b733808fd025bed583ef0067d662a0fddd",
+      "replacement": "a2bd0b74417322ceb99037cc48256f4c9ce0a118",
+      "changedPaths": [
+        "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-1/cpu-prechecks.json.gz"
+      ],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "048bdab41d5b1769522f28da9efe5975199e8aa6",
+      "replacement": "5ff32a78965ca6732bdd7a24bbde689e0edcd600",
+      "changedPaths": [
+        "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-1/cpu-prechecks.json.gz",
+        "packages/canard/schema-form/architecture/verification/branch-switch/raw/b9-1/window-2/cpu-prechecks.json.gz"
+      ],
+      "sourceTreeUnchanged": true
+    },
+    {
+      "original": "087e3a07a0c6d9c8b7db50f8590817ebf368a90d",
+      "replacement": "c61f75064dbe029190e82abe8dace47310d3222f",
+      "changedPaths": [],
+      "sourceTreeUnchanged": true
+    }
+  ]
+}

@@ -1011,3 +1011,4 @@ benchmark-form(BF)의 코어 BF 갱신은 위 공식 코어 표에, React 19 fix
 
 원장이 담당 단계를 정하지 않은 항목에는 원장 관리자 제안을 유지합니다. 이는 [소유자 질의 2번](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/owner-queue-07.md)의 답으로 확정할 배정이며 기존 문서·후속 목록의 이월 이유를 보존합니다.
 
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `1a0176da3d20`, `4e8490a72d50`, `daca1d14a840`, `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

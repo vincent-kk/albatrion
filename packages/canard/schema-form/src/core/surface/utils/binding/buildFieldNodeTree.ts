@@ -1,4 +1,4 @@
-import type { Dictionary } from '@aileron/declare';
+import type { Dictionary, Optional } from '@aileron/declare';
 
 import type { InferValueType } from '@/schema-form/types';
 
@@ -18,13 +18,14 @@ type BuildFieldNodeTreeProps<Schema extends AuthoredSchema = AuthoredSchema> = {
   validator?: Validator;
   validationMode?: ValidationMode;
   context?: Dictionary;
-  onChange?: (value: InferValueType<Schema> | undefined) => void;
+  onChange?: (value: Optional<InferValueType<Schema>>) => void;
   onStateChange?: () => void;
   errorReporter?: FormErrorReporter;
   unsetOnInactive?: boolean;
   disableAutomaticWrites?: boolean;
   isTerminal?: BlueprintOptions['isTerminal'];
   isAtomic?: BlueprintOptions['isAtomic'];
+  cache?: BlueprintOptions['cache'];
 };
 
 /**

@@ -1,5 +1,7 @@
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import type { BlueprintGate } from '../../../blueprint';
-import { bindTemplatePath } from '../paths/bindTemplatePath';
+import { bindTemplatePath } from '../templatePaths/bindTemplatePath';
 
 /**
  * Bind a gate's declaring host without resolving or changing its evaluation L.
@@ -18,13 +20,13 @@ export const bindGateHostPath = (
   const suffix =
     gate.hostPath === templatePath
       ? ''
-      : gate.hostPath.startsWith(`${templatePath}/`)
+      : isDescendantPath(gate.hostPath, templatePath)
         ? gate.hostPath.slice(templatePath.length)
         : undefined;
   return (
     childHostPath ??
     bindTemplatePath(
-      suffix === undefined ? gate.hostPath : `${occurrencePath}${suffix}`,
+      suffix === undefined ? gate.hostPath : occurrencePath + suffix,
       occurrencePath,
     )
   );

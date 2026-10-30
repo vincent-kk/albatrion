@@ -157,3 +157,48 @@ describe('explicit runtime path indexes', () => {
     expect([...store.pathIndex.under('')]).toEqual(['/other']);
   });
 });
+
+describe('PathKeyedSet mutation count', () => {
+  it('counts an add of a new path', () => {
+    const set = new PathKeyedSet();
+    set.add('/a');
+    expect(set.mutations).toBe(1);
+  });
+
+  it('does not count an add of a stored path', () => {
+    const set = new PathKeyedSet(['/a']);
+    const before = set.mutations;
+    set.add('/a');
+    expect(set.mutations).toBe(before);
+  });
+
+  it('counts a delete that removed a path', () => {
+    const set = new PathKeyedSet(['/a']);
+    const before = set.mutations;
+    expect(set.delete('/a')).toBe(true);
+    expect(set.mutations).toBe(before + 1);
+  });
+
+  it('does not count a delete of an absent path', () => {
+    const set = new PathKeyedSet(['/a']);
+    const before = set.mutations;
+    expect(set.delete('/b')).toBe(false);
+    expect(set.mutations).toBe(before);
+  });
+
+  it('counts every clear', () => {
+    const set = new PathKeyedSet(['/a']);
+    const before = set.mutations;
+    set.clear();
+    set.clear();
+    expect(set.mutations).toBe(before + 2);
+  });
+
+  it('counts every replacePaths', () => {
+    const set = new PathKeyedSet(['/list/1']);
+    const before = set.mutations;
+    set.replacePaths([{ previous: '/list/1', current: '/list/0' }]);
+    expect([...set]).toEqual(['/list/0']);
+    expect(set.mutations).toBe(before + 1);
+  });
+});

@@ -4,9 +4,9 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 import * as calculation from '../utils/compute/computeNode';
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
-import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 import * as descendants from '../utils/transition/collectFillDescendants';
 import * as transitionCap from '../utils/transition/getTransitionCap';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
@@ -158,7 +158,6 @@ const gatedItemSchema: BlueprintSchema = {
   },
 };
 
-// filid:contract settle-recursive-fill
 describe('92C-03 첫 평가와 게이트 뒤집힘의 라운드', () => {
   it('뒤집힌 게이트가 만든 branch의 무게이트 자손도 다음 라운드에 채운다', () => {
     const compute = vi.spyOn(calculation, 'computeNode');

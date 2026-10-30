@@ -1,24 +1,16 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import type {
   BlueprintChildEntry,
   BlueprintNode,
   BlueprintNodeKind,
-  SchemaTypeName,
 } from '../../blueprint';
 import type { NodeStrategy } from '../../types/strategy';
+import type { UnionSpec } from '../../types/unionSpec';
 import type { FieldNodeRecord } from './record';
 import type { FieldNodeRuntime } from './runtime';
 
-/** Read-only type candidates used by a calculation row. */
-export interface UnionSpec {
-  /** Non-null allowed types in declaration order. */
-  readonly kinds:
-    | Exclude<SchemaTypeName, 'null'>
-    | readonly Exclude<SchemaTypeName, 'null'>[];
-  /** Bit mask of the same allowed types. */
-  readonly mask: number;
-  /** Whether null remains an allowed input. */
-  readonly nullable: boolean;
-}
+export type { UnionSpec } from '../../types/unionSpec';
 
 /** Caller verb represented without changing a node or its children. */
 export type ArrayOperation =
@@ -26,6 +18,7 @@ export type ArrayOperation =
   | { kind: 'pop' }
   | { kind: 'update'; index: number; value: unknown }
   | { kind: 'remove'; index: number }
+  | { kind: 'insert'; index: number; value: unknown }
   | { kind: 'clear' };
 
 /** Where settlement obtains the synchronous result of an array verb. */
@@ -55,7 +48,14 @@ export interface Behavior<Self = unknown> {
     node: FieldNodeRecord<Node>,
     children: readonly Node[],
     recalculated?: readonly Node[],
-    hint?: { incremental: boolean },
+    hint?: {
+      /** Set by the row when it compared only recalculated or appended slots, or truncated its previous local. */
+      incremental: boolean;
+      /** Previous item count when settlement holds a valid append proof for this host. */
+      append?: number;
+      /** Remaining item count when settlement holds a valid pop proof for this host. */
+      truncate?: number;
+    },
   ): unknown;
   /** Project a local value into the outgoing value. */
   project<Node extends Self>(
@@ -63,9 +63,7 @@ export interface Behavior<Self = unknown> {
     local: unknown,
   ): unknown;
   /** Return a completed input string, or undefined when there is no write. */
-  finishInput<Node extends Self>(
-    node: FieldNodeRecord<Node>,
-  ): string | undefined;
+  finishInput<Node extends Self>(node: FieldNodeRecord<Node>): Optional<string>;
   /** Describe children to be created by the caller. */
   declareChildren<Node extends Self>(
     node: FieldNodeRecord<Node>,
@@ -84,6 +82,7 @@ export interface Behavior<Self = unknown> {
 /** Per-tree creation callback supplied by the composition root. */
 export type FieldNodeFactory<Self> = (
   entry: BlueprintChildEntry | BlueprintNode,
-  parent: Self | null,
+  parent: Nullable<Self>,
   runtime: FieldNodeRuntime<Self>,
+  source?: Self,
 ) => Self;

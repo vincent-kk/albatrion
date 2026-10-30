@@ -1,0 +1,15 @@
+{
+  "productHead": "c153d5b38bf1a3090664f818b6c36bec37f34387",
+  "suiteReceipt": "../../static-window-1/checks.json",
+  "fcaReceipt": "../../fca/summary.json",
+  "reason": "Owner explicitly authorized reuse because final src, tests and DETAIL are byte-identical to this measured and verified product. No new FCA or performance run.",
+  "files": {
+    "declarations.log.gz": "5cfaec414f1a3466ab004302a453ddd6892f3ce218b6b21c3502d14d7b775904",
+    "isolation.log.gz": "1ce8a810751de83e87ba64df8931eabb86171861ed4a3855f1ced5cdae6b4bd7",
+    "delivery.log.gz": "c86bb1b6e71e3ebd35cecf6eac765d0fdf91370766d70434ae1fc4a95c7441b2",
+    "declarations/declaration-diff.json.gz": "50572343faa9b6b2767157697a03813faf6c880c591a83b0a006de25e77d6275",
+    "declarations/declaration-equivalence.json.gz": "ddf48ba96ac93df242a9e40f6c9ee5bcd5798b9f4b3669e889039ed7f29b1fa1",
+    "delivery/differences.json.gz": "029ac1ef2bb96aa9fa0166f8f60604b79b92f7fb5cd41a374f80171306cf1b52",
+    "delivery/summary.json.gz": "f759b8a466e31205adb22b9c043ac6e72e2cb4d6d86266d07bfb472af527a1d4"
+  }
+}

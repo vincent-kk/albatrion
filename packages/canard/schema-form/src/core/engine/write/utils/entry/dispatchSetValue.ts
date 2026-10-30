@@ -5,7 +5,9 @@ import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { isBatchMarking } from '../chain/isBatchMarking';
 import { readBatchValue } from '../chain/readBatchValue';
+import { refuseDetachedWrite } from '../report/refuseDetachedWrite';
 
 /**
  * Commit a public value write or mark it within the current batch.
@@ -21,6 +23,7 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
   option: WriteOption = WriteOption.Overwrite,
   source?: 'input',
 ): void => {
+  if (refuseDetachedWrite(node)) return;
   if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
   if (!enterFieldNodeChain(node)) return;
   try {
@@ -30,15 +33,20 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
         'Overwrite and Merge cannot be combined',
         { path: node.path, option },
       );
-    const runtime = node.rootNode.runtime;
+    const marking = isBatchMarking(node);
     const input =
       typeof value === 'function'
-        ? value(runtime.batchDepth ? readBatchValue(node) : node.local)
+        ? value(marking ? readBatchValue(node) : node.local)
         : value;
-    if (runtime.batchDepth) {
+    if (marking) {
       if (node.behavior.type === 'virtual')
         assertVirtualWriteShape(node, input);
-      (runtime.batchWrites ??= []).push({ node, value: input, option, source });
+      (node.rootNode.runtime.batchWrites ??= []).push({
+        node,
+        value: input,
+        option,
+        source,
+      });
     } else {
       const merge =
         (option & WriteOption.Merge) === WriteOption.Merge &&

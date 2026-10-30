@@ -1,0 +1,23 @@
+{
+  "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+  "declarationCompared": "Public dist/index.d.ts only; internal emitted declarations may differ.",
+  "declarationEqual": true,
+  "files": {
+    "index.mjs": {
+      "bytes": 843339,
+      "sha256": "cec9b641a939e874f44a32d3182cc093e6c491543a3631f93bf9efe541dfd5ec"
+    },
+    "index.node.mjs": {
+      "bytes": 842561,
+      "sha256": "f8b36a210f2981e4ba9f60dbbad866368f126503bb00413f3092a2221eeab849"
+    },
+    "index.cjs": {
+      "bytes": 860915,
+      "sha256": "e2f0aa29cc12d44677b3b1ef524b58c74a042f49b532cc3628a1bbd589758bfe"
+    },
+    "index.d.ts": {
+      "bytes": 3129,
+      "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+    }
+  }
+}

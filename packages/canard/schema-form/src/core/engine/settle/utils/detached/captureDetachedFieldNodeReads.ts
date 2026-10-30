@@ -1,14 +1,15 @@
 import type { FieldNodeRecord } from '../../../record';
 import { readFieldNodeErrors } from '../../../validation';
-import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
-import { readFieldNodeDefaultValue } from '../load/readFieldNodeDefaultValue';
-import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
+import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
+import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
+import { EMPTY_PATHS } from './emptyDetachedReads';
 
 /**
  * Retain the last committed reads before an exiting node's live path is cleared.
  * @param node - Departing occurrence whose reference remains externally readable
  * @param watchSnapshot - Previous emission and effective schema for watched reads
+ * @param load - The node's load source when the caller already read it, equal to `readFieldNodeDefaultValue(node)`; read here when absent
  * @returns Nothing; the tree runtime retains frozen reads by node identity
  */
 export const captureDetachedFieldNodeReads = <
@@ -16,17 +17,18 @@ export const captureDetachedFieldNodeReads = <
 >(
   node: Self,
   watchSnapshot: WatchValuesSnapshot,
+  load?: { readonly value: unknown },
 ): void => {
   const runtime = node.runtime;
-  runtime.watchValuesMemo?.delete(node);
-  readFieldNodeWatchValues(node, watchSnapshot);
+  if (runtime.blueprint.capabilities.hasWatch) {
+    runtime.watchValuesMemo?.delete(node);
+    readFieldNodeWatchValues(node, watchSnapshot);
+  }
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
-    typeMismatch: runtime.typeMismatchPaths.has(node.path),
-    typeMismatches:
-      runtime.typeMismatchesMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
-    inactiveValues: runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
-    defaultValue: readFieldNodeDefaultValue(node),
+    misfit: runtime.misfitPaths.has(node.path),
+    misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
+    defaultValue: load ? load.value : readFieldNodeDefaultValue(node),
     visible: node.visible,
     readOnly: node.readOnly,
     disabled: node.disabled,

@@ -1,7 +1,10 @@
 import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
+import { isArray } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
+
+import type { Nullable } from '@aileron/declare';
 
 import type { FieldInputPropsWithSchema } from '@/schema-form/types';
 
@@ -15,13 +18,14 @@ export const FieldInputStringCheckbox = ({
   readOnly,
   disabled,
   defaultValue,
+  misfit,
   onChange,
   context,
   alias,
   style,
   className,
 }: FieldInputPropsWithSchema<
-  (string | null)[],
+  Nullable<string>[],
   StringCheckboxJSONSchema,
   CheckboxLabelsContext
 >) => {
@@ -39,20 +43,36 @@ export const FieldInputStringCheckbox = ({
         : [],
     [context, jsonSchema, alias],
   );
+  const selected = isArray(defaultValue) ? defaultValue : [];
+
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = event.target;
     const rawValue = checkboxOptions.find(
       (option) => option.value === value,
     )?.rawValue;
     if (rawValue === undefined) return;
-    if (checked) onChange((prev) => [...(prev || []), rawValue]);
-    else
-      onChange((prev) => prev?.filter((option) => option !== rawValue) || []);
+
+    if (checked) {
+      onChange((prev) => [...(isArray(prev) ? prev : []), rawValue]);
+    } else {
+      onChange((prev) => {
+        if (!isArray(prev)) return [];
+        const result: Array<(typeof prev)[number]> = [];
+        for (let index = 0, count = prev.length; index < count; index++)
+          if (index in prev && prev[index] !== rawValue)
+            result.push(prev[index]);
+        return result;
+      });
+    }
   });
   return (
-    <div role="group" aria-labelledby={`label:${path}`}>
+    <div
+      role="group"
+      aria-labelledby={'label:' + path}
+      aria-invalid={misfit || undefined}
+    >
       {map(checkboxOptions, ({ value, rawValue, label }, index) => {
-        const id = `${path}-${index}`;
+        const id = path + '-' + index;
         return (
           <label key={value} htmlFor={id} style={style} className={className}>
             <input
@@ -62,7 +82,7 @@ export const FieldInputStringCheckbox = ({
               readOnly={readOnly}
               disabled={disabled}
               value={value}
-              defaultChecked={defaultValue?.includes(rawValue)}
+              defaultChecked={selected.includes(rawValue)}
               onChange={handleChange}
             />
             {label}

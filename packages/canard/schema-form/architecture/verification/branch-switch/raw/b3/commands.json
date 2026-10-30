@@ -1,0 +1,729 @@
+[
+  {
+    "label": "alternate",
+    "executable": "<node26>",
+    "args": [
+      "<repository>/packages/canard/schema-form/architecture/verification/design-optimization/tools/alternate.mjs",
+      "--baseline-bundle=<run>/bundles/S/index.node.mjs",
+      "--candidate-bundle=<run>/bundles/E/index.node.mjs",
+      "--quality=legacy",
+      "--runs=10",
+      "--warmups=20",
+      "--samples=100",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--only=single-flat-1000,mount-oneOf-80,mount-flat-1000,mount-nested-d6-f4,single-nested-d6-f4,switch-oneOf-80,bulk-flat-2000,bulk-nested-d6-f4,switch-discriminator-80,switch-if-80,switch-nested-oneOf-20,switch-siblings-0,switch-siblings-100,switch-siblings-1000,switch-siblings-4000,leaf-gate-250,leaf-gate-1000,leaf-gate-4000,leaf-gate-8000,wave-1000,single-flat-1000-subscribed,switch-payload-12",
+      "--run-dir=<run>/pair"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-27T23:51:59.713Z",
+    "endedAt": "2026-10-28T00:00:39.439Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-oneOf-80-S-0",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-oneOf-80",
+      "--repeat=0",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:39.440Z",
+    "endedAt": "2026-10-28T00:00:40.033Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-oneOf-80-E-0",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-oneOf-80",
+      "--repeat=0",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:40.033Z",
+    "endedAt": "2026-10-28T00:00:40.547Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-oneOf-80-S-1",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-oneOf-80",
+      "--repeat=1",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:40.547Z",
+    "endedAt": "2026-10-28T00:00:41.125Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-oneOf-80-E-1",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-oneOf-80",
+      "--repeat=1",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:41.125Z",
+    "endedAt": "2026-10-28T00:00:41.647Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-oneOf-80-S-2",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-oneOf-80",
+      "--repeat=2",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:41.647Z",
+    "endedAt": "2026-10-28T00:00:42.235Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-oneOf-80-E-2",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-oneOf-80",
+      "--repeat=2",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:42.235Z",
+    "endedAt": "2026-10-28T00:00:42.754Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-payload-12-S-0",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-payload-12",
+      "--repeat=0",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:42.755Z",
+    "endedAt": "2026-10-28T00:00:43.736Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-payload-12-E-0",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-payload-12",
+      "--repeat=0",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:43.736Z",
+    "endedAt": "2026-10-28T00:00:44.497Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-payload-12-S-1",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-payload-12",
+      "--repeat=1",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:44.497Z",
+    "endedAt": "2026-10-28T00:00:45.482Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-payload-12-E-1",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-payload-12",
+      "--repeat=1",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:45.483Z",
+    "endedAt": "2026-10-28T00:00:46.226Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-payload-12-S-2",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-payload-12",
+      "--repeat=2",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:46.226Z",
+    "endedAt": "2026-10-28T00:00:47.203Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-payload-12-E-2",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-payload-12",
+      "--repeat=2",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:47.203Z",
+    "endedAt": "2026-10-28T00:00:47.946Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-0-S-0",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-0",
+      "--repeat=0",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:47.946Z",
+    "endedAt": "2026-10-28T00:00:48.351Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-0-E-0",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-0",
+      "--repeat=0",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:48.351Z",
+    "endedAt": "2026-10-28T00:00:48.754Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-0-S-1",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-0",
+      "--repeat=1",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:48.754Z",
+    "endedAt": "2026-10-28T00:00:49.154Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-0-E-1",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-0",
+      "--repeat=1",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:49.155Z",
+    "endedAt": "2026-10-28T00:00:49.558Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-0-S-2",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-0",
+      "--repeat=2",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:49.559Z",
+    "endedAt": "2026-10-28T00:00:49.984Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-0-E-2",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-0",
+      "--repeat=2",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:49.985Z",
+    "endedAt": "2026-10-28T00:00:50.394Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-1000-S-0",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-1000",
+      "--repeat=0",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:50.394Z",
+    "endedAt": "2026-10-28T00:00:52.206Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-1000-E-0",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-1000",
+      "--repeat=0",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:52.206Z",
+    "endedAt": "2026-10-28T00:00:54.037Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-1000-S-1",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-1000",
+      "--repeat=1",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:54.037Z",
+    "endedAt": "2026-10-28T00:00:55.875Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-1000-E-1",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-1000",
+      "--repeat=1",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:55.875Z",
+    "endedAt": "2026-10-28T00:00:57.691Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-1000-S-2",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-1000",
+      "--repeat=2",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-s/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:57.691Z",
+    "endedAt": "2026-10-28T00:00:59.498Z",
+    "code": 0
+  },
+  {
+    "label": "stage-switch-siblings-1000-E-2",
+    "executable": "<node26>",
+    "args": [
+      "<run>/compat/stages.mjs",
+      "--worker=switch-siblings-1000",
+      "--repeat=2",
+      "--warmups=20",
+      "--samples=100",
+      "--prepared=true",
+      "--quiet-since=2026-10-27T23:51:59.547Z",
+      "--run-dir=<run>-stage-e/stages"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:00:59.498Z",
+    "endedAt": "2026-10-28T00:01:01.341Z",
+    "code": 0
+  },
+  {
+    "label": "heap-node-S",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "--import",
+      "tsx",
+      "bench/legacy-compare/node-and-settle.bench.ts",
+      "--heap-child"
+    ],
+    "cwd": "<repository>/packages/canard/schema-form",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:01.344Z",
+    "endedAt": "2026-10-28T00:01:02.763Z",
+    "code": 0
+  },
+  {
+    "label": "heap-bun-S",
+    "executable": "<bun>",
+    "args": ["bench/legacy-compare/node-and-settle.bench.ts", "--heap-child"],
+    "cwd": "<repository>/packages/canard/schema-form",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:02.763Z",
+    "endedAt": "2026-10-28T00:01:04.228Z",
+    "code": 0
+  },
+  {
+    "label": "react-S",
+    "executable": "yarn",
+    "args": [
+      "workspace",
+      "@aileron/benchmark-form",
+      "bench",
+      "--equivalent",
+      "--mode=render",
+      "--fixture=oneOf-20",
+      "--legacy=0.16.1",
+      "--min-samples=100",
+      "--out=<run>/react-S.json"
+    ],
+    "cwd": "<repository>",
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "startedAt": "2026-10-28T00:01:04.228Z",
+    "endedAt": "2026-10-28T00:01:10.720Z",
+    "code": 0
+  },
+  {
+    "label": "heap-node-E",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "--import",
+      "tsx",
+      "bench/legacy-compare/node-and-settle.bench.ts",
+      "--heap-child"
+    ],
+    "cwd": "<repository>/packages/canard/schema-form",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:10.721Z",
+    "endedAt": "2026-10-28T00:01:12.092Z",
+    "code": 0
+  },
+  {
+    "label": "heap-bun-E",
+    "executable": "<bun>",
+    "args": ["bench/legacy-compare/node-and-settle.bench.ts", "--heap-child"],
+    "cwd": "<repository>/packages/canard/schema-form",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:12.092Z",
+    "endedAt": "2026-10-28T00:01:13.556Z",
+    "code": 0
+  },
+  {
+    "label": "react-E",
+    "executable": "yarn",
+    "args": [
+      "workspace",
+      "@aileron/benchmark-form",
+      "bench",
+      "--equivalent",
+      "--mode=render",
+      "--fixture=oneOf-20",
+      "--legacy=0.16.1",
+      "--min-samples=100",
+      "--out=<run>/react-E.json"
+    ],
+    "cwd": "<repository>",
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "startedAt": "2026-10-28T00:01:13.557Z",
+    "endedAt": "2026-10-28T00:01:19.611Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-oneOf-80",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-oneOf-80",
+      "--output=<run>/retention/switch-oneOf-80"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:19.612Z",
+    "endedAt": "2026-10-28T00:01:20.567Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-discriminator-80",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-discriminator-80",
+      "--output=<run>/retention/switch-discriminator-80"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:20.567Z",
+    "endedAt": "2026-10-28T00:01:21.491Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-if-80",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-if-80",
+      "--output=<run>/retention/switch-if-80"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:21.491Z",
+    "endedAt": "2026-10-28T00:01:22.625Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-nested-oneOf-20",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-nested-oneOf-20",
+      "--output=<run>/retention/switch-nested-oneOf-20"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:22.625Z",
+    "endedAt": "2026-10-28T00:01:23.497Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-siblings-0",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-siblings-0",
+      "--output=<run>/retention/switch-siblings-0"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:23.498Z",
+    "endedAt": "2026-10-28T00:01:24.307Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-siblings-100",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-siblings-100",
+      "--output=<run>/retention/switch-siblings-100"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:24.307Z",
+    "endedAt": "2026-10-28T00:01:25.177Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-siblings-1000",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-siblings-1000",
+      "--output=<run>/retention/switch-siblings-1000"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:25.177Z",
+    "endedAt": "2026-10-28T00:01:26.988Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-siblings-4000",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-siblings-4000",
+      "--output=<run>/retention/switch-siblings-4000"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:26.988Z",
+    "endedAt": "2026-10-28T00:01:30.789Z",
+    "code": 0
+  },
+  {
+    "label": "retention-switch-payload-12",
+    "executable": "<node26>",
+    "args": [
+      "--expose-gc",
+      "<run>/compat/retention.mjs",
+      "--bundle=<run>/pair/B/engines/current.mjs",
+      "--row=switch-payload-12",
+      "--output=<run>/retention/switch-payload-12"
+    ],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:30.789Z",
+    "endedAt": "2026-10-28T00:01:32.016Z",
+    "code": 0
+  },
+  {
+    "label": "guard-cost",
+    "executable": "<node26>",
+    "args": ["<run>/guard-cost.mjs"],
+    "cwd": "<repository>",
+    "env": {},
+    "startedAt": "2026-10-28T00:01:32.016Z",
+    "endedAt": "2026-10-28T00:01:32.241Z",
+    "code": 0
+  }
+]

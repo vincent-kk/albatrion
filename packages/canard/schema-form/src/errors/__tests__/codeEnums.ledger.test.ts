@@ -1,14 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { FormErrorCode } from '../codes/FormErrorCode';
-import { FormWarningCode } from '../codes/FormWarningCode';
+import { FormErrorCode } from '../constants/FormErrorCode';
+import { FormWarningCode } from '../constants/FormWarningCode';
 
 /** Ledger rows retired without a producer (ERROR-162, 305C-01). */
 const RETIRED = new Set([
   'JSON_SCHEMA_ERROR.CONDITION_INDEX',
   'JSON_SCHEMA_ERROR.CONDITION_INDICES',
   'SCHEMA_FORM_WARNING.PRESENTATION_KEY_SUSPECT',
+]);
+
+/** Ledger codes renamed after the quoted rows were recorded (333rd round). */
+const RENAMED = new Map([
+  ['SCHEMA_FORM_WARNING.TYPE_MISMATCH', 'SCHEMA_FORM_WARNING.MISFIT'],
 ]);
 
 /**
@@ -86,16 +91,22 @@ describe('form error codes', () => {
     )?.[1];
     expect(dialect).toBeDefined();
     if (dialect) supplements.push([dialect, 'warning']);
-    const expected = [...base, ...supplements];
+    const expected = [...base, ...supplements].map(
+      ([code, level]) => [RENAMED.get(code) ?? code, level] as const,
+    );
     console.log(`ERROR-164 live code count: ${expected.length}`);
     expect(expected).toHaveLength(60);
     const live = expected.filter(([code]) => !RETIRED.has(code));
     expect(Object.values(FormErrorCode)).toEqual([
       ...live.filter(([, level]) => level === 'error').map(([code]) => code),
       'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
+      'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME',
     ]);
-    expect(Object.values(FormWarningCode)).toEqual(
-      live.filter(([, level]) => level === 'warning').map(([code]) => code),
-    );
+    expect(Object.values(FormWarningCode)).toEqual([
+      ...live.filter(([, level]) => level === 'warning').map(([code]) => code),
+      'SCHEMA_FORM_WARNING.DETACHED_NODE_WRITE',
+      'SCHEMA_FORM_WARNING.INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE',
+      'SCHEMA_FORM_WARNING.WRITE_IN_INACTIVE_RESOLVER',
+    ]);
   });
 });

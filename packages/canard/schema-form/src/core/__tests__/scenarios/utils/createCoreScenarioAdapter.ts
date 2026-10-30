@@ -5,11 +5,12 @@ import type {
   ScenarioAdapter,
 } from '@aileron/schema-form-scenarios';
 
-import { blueprint } from '@/schema-form/core/engine';
 import type { BlueprintSchema } from '@/schema-form/core/engine';
-import { loadFieldNodeAtMount } from '@/schema-form/core/engine';
-import { PathKeyedMap } from '@/schema-form/core/engine';
-import { PathKeyedSet } from '@/schema-form/core/engine';
+import {
+  PathKeyedSet,
+  blueprint,
+  loadFieldNodeAtMount,
+} from '@/schema-form/core/engine';
 import { SetValueOption, fieldNodeFactory } from '@/schema-form/core/surface';
 
 import { createTestValidator } from '../../fixtures/createTestValidator';
@@ -34,11 +35,8 @@ export function createCoreScenarioAdapter(
     {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'),
-      typeMismatchPaths: new PathKeyedSet(),
-      inactiveValuesMemo: new PathKeyedMap<
-        readonly { path: string; value: unknown }[]
-      >('path'),
+
+      misfitPaths: new PathKeyedSet(),
     },
     createTestValidator(),
   );

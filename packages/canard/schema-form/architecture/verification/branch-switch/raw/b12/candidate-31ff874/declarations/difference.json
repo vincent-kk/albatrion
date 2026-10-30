@@ -1,0 +1,28 @@
+{
+  "before": 94,
+  "after": 97,
+  "added": [
+    "InactiveValue",
+    "InactiveValueContext",
+    "InactiveValueResolver"
+  ],
+  "removed": [],
+  "changed": [
+    "FormWarningCode"
+  ],
+  "nodeMembers": [
+    "onInactive"
+  ],
+  "controlKeys": [
+    "inactiveValue"
+  ],
+  "inactiveValueTypes": [
+    null,
+    "string | number | boolean | object | import(\"<repo>/packages/canard/schema-form/dist/index\").InactiveValueResolver<unknown> | null | undefined"
+  ],
+  "warningMembers": [
+    "InactiveValueWithUnsetOnInactive",
+    "WriteInInactiveResolver"
+  ],
+  "zeroDifferenceWaived": true
+}

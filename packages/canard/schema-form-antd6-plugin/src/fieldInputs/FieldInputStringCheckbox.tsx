@@ -3,6 +3,7 @@ import { type ReactNode, useMemo } from 'react';
 import { Checkbox } from 'antd';
 
 import { map } from '@winglet/common-utils/array';
+import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -40,6 +41,7 @@ const FieldInputStringCheckbox = ({
   onChange,
   context,
   alias,
+  misfit,
 }: FieldInputStringCheckboxProps) => {
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
@@ -63,8 +65,10 @@ const FieldInputStringCheckbox = ({
   });
 
   const initialValue = useMemo(() => {
-    if (defaultValue == null) return undefined;
-    return defaultValue.map((v) => '' + v);
+    return isArray(defaultValue) &&
+      defaultValue.every((value) => value === null || typeof value === 'string')
+      ? defaultValue.map((value) => '' + value)
+      : undefined;
   }, [defaultValue]);
 
   return (
@@ -75,6 +79,7 @@ const FieldInputStringCheckbox = ({
       disabled={disabled}
       defaultValue={initialValue}
       onChange={handleChange}
+      aria-invalid={misfit || undefined}
     />
   );
 };

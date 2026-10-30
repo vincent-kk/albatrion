@@ -1,0 +1,276 @@
+{
+  "targeted": [
+    {
+      "row": "single-nested-d6-f4",
+      "decision": "improved",
+      "reductions": [
+        {
+          "name": "computeNode",
+          "A": 5.811999999195905,
+          "B": 2.999499999987165,
+          "callsA": 1,
+          "callsB": 1,
+          "passed": true
+        },
+        {
+          "name": "selectChildren",
+          "A": 0,
+          "B": 0,
+          "callsA": 0,
+          "callsB": 0,
+          "passed": true
+        },
+        {
+          "name": "markCommitDeliveries",
+          "A": 9.437500000103682,
+          "B": 9.021000000075219,
+          "callsA": 1,
+          "callsB": 1,
+          "passed": true
+        },
+        {
+          "name": "commitSettlement",
+          "A": 1.416499999777443,
+          "B": 1.5000000003055902,
+          "callsA": 1,
+          "callsB": 1,
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "decision": "improved",
+      "reductions": [
+        {
+          "name": "computeNode",
+          "A": 68.70850000018436,
+          "B": 47.66900000049645,
+          "callsA": 10,
+          "callsB": 5,
+          "passed": true
+        },
+        {
+          "name": "selectChildren",
+          "A": 80.3990000028989,
+          "B": 39.083500000515414,
+          "callsA": 4,
+          "callsB": 1,
+          "passed": true
+        },
+        {
+          "name": "markCommitDeliveries",
+          "A": 17.20900000009351,
+          "B": 17.10400000001755,
+          "callsA": 1,
+          "callsB": 1,
+          "passed": true
+        },
+        {
+          "name": "commitSettlement",
+          "A": 12.624999999843567,
+          "B": 12.374499999850741,
+          "callsA": 1,
+          "callsB": 1,
+          "passed": true
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "protectedRows": [
+    {
+      "row": "single-flat-1000",
+      "decision": "unproven",
+      "A": 0.057084000000031665,
+      "Aprime": 0.057625000000371074,
+      "B": 0.05708350000008977,
+      "width": 0.0062499999999090505,
+      "passed": true
+    },
+    {
+      "row": "mount-oneOf-80",
+      "decision": "unproven",
+      "A": 2.2960000000002765,
+      "Aprime": 2.2540830000002643,
+      "B": 2.4949374999996508,
+      "width": 0.32812600000033854,
+      "passed": true
+    },
+    {
+      "row": "mount-flat-1000",
+      "decision": "regressed",
+      "A": 2.116541999999754,
+      "Aprime": 2.1300420000002305,
+      "B": 2.3865835000001425,
+      "width": 0.04604099999960454,
+      "passed": false
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "decision": "regressed",
+      "A": 16.26391699999931,
+      "Aprime": 16.171167000000423,
+      "B": 18.832791499999985,
+      "width": 0.584208000000217,
+      "passed": false
+    },
+    {
+      "row": "switch-oneOf-80",
+      "decision": "unproven",
+      "A": 0.1591670000002523,
+      "Aprime": 0.15612499999997453,
+      "B": 0.1593119999999999,
+      "width": 0.010957999999845924,
+      "passed": true
+    },
+    {
+      "row": "bulk-flat-2000",
+      "decision": "unproven",
+      "A": 1.8044999999997344,
+      "Aprime": 1.7658329999999296,
+      "B": 1.7736249999998108,
+      "width": 0.14529199999969933,
+      "passed": true
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "decision": "unproven",
+      "A": 4.069957999999588,
+      "Aprime": 4.02862499999992,
+      "B": 4.068979499999841,
+      "width": 0.10691700000006676,
+      "passed": true
+    },
+    {
+      "row": "switch-discriminator-80",
+      "decision": "unproven",
+      "A": 0.14833400000043184,
+      "Aprime": 0.14708299999983865,
+      "B": 0.14981199999988348,
+      "width": 0.012040999999953783,
+      "passed": true
+    },
+    {
+      "row": "switch-if-80",
+      "decision": "unproven",
+      "A": 0.2755419999998594,
+      "Aprime": 0.2719999999999345,
+      "B": 0.2720835000000079,
+      "width": 0.024082999999791355,
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-0",
+      "decision": "unproven",
+      "A": 0.057624999999916326,
+      "Aprime": 0.05949999999984357,
+      "B": 0.05827100000010432,
+      "width": 0.011500000000069122,
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-100",
+      "decision": "unproven",
+      "A": 0.07949999999982538,
+      "Aprime": 0.07724999999982174,
+      "B": 0.07762500000012551,
+      "width": 0.009999999999763531,
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-1000",
+      "decision": "unproven",
+      "A": 0.31570800000008603,
+      "Aprime": 0.3158330000001115,
+      "B": 0.32043750000002547,
+      "width": 0.023501000000123895,
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-4000",
+      "decision": "unproven",
+      "A": 2.6479169999993246,
+      "Aprime": 2.635207999999693,
+      "B": 2.622917000000143,
+      "width": 0.12791699999979755,
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-250",
+      "decision": "unproven",
+      "A": 0.023000000000138243,
+      "Aprime": 0.022875000000112777,
+      "B": 0.023041499999862936,
+      "width": 0.005292000000281405,
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-1000",
+      "decision": "unproven",
+      "A": 0.022582999999940512,
+      "Aprime": 0.022457999999915046,
+      "B": 0.022666499999786538,
+      "width": 0.002084000000195374,
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-4000",
+      "decision": "unproven",
+      "A": 0.7394999999996799,
+      "Aprime": 0.739165999999841,
+      "B": 0.7485000000003765,
+      "width": 0.024750000000040018,
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-8000",
+      "decision": "unproven",
+      "A": 1.5531670000000304,
+      "Aprime": 1.5501249999997526,
+      "B": 1.5937920000001213,
+      "width": 0.04262499999958891,
+      "passed": true
+    },
+    {
+      "row": "wave-1000",
+      "decision": "unproven",
+      "A": 1.668583000000126,
+      "Aprime": 1.6687080000001515,
+      "B": 1.6791039999998247,
+      "width": 0.08283299999993687,
+      "passed": true
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "decision": "unproven",
+      "A": 0.06787500000018554,
+      "Aprime": 0.06595800000013696,
+      "B": 0.06752049999977316,
+      "width": 0.00783300000057352,
+      "passed": true
+    },
+    {
+      "row": "switch-payload-12",
+      "decision": "unproven",
+      "A": 0.35304199999973207,
+      "Aprime": 0.3500829999998132,
+      "B": 0.35666700000001583,
+      "width": 0.027458000000024185,
+      "passed": true
+    }
+  ],
+  "regressions": [],
+  "validated": {
+    "rows": 22,
+    "pairProcesses": 440,
+    "ledgerProcesses": 30,
+    "supplementalProcesses": 30,
+    "warmups": 20,
+    "samples": 100
+  },
+  "method": "B9-1 immutable A/B device extended with two canonical nested one-write stage operations; all timings raw self microseconds per write. Static nested selectChildren uses approved zero-to-zero gate.",
+  "deviceCompleted": true,
+  "adoptable": false
+}

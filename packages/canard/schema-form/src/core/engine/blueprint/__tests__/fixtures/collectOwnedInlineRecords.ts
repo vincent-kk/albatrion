@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Blueprint, BlueprintChildEntry } from '../../type';
+import type { Blueprint } from '../../types/blueprint';
+import type { BlueprintChildEntry } from '../../types/node';
 
 /** A unique internal record and its directly owned membership containers. */
 export interface OwnedInlineRecord {

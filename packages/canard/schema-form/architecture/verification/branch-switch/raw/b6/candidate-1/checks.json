@@ -1,0 +1,74 @@
+{
+  "baselineCommit": "0b9337cd9b7372211883a727fead7f76c8220b4f",
+  "productCommit": "59c42dc6f8542dc9503f26eb1d9c1faae0b5b801",
+  "typecheck": {
+    "passed": true
+  },
+  "lint": {
+    "passed": true
+  },
+  "build": {
+    "passed": true
+  },
+  "publicEntry": {
+    "diff": 0
+  },
+  "publicDeclaration": {
+    "byteIdentical": true
+  },
+  "pointerIsolation": {
+    "files": 7,
+    "passed": 137
+  },
+  "projects": {
+    "node": {
+      "files": 831,
+      "passed": 5356,
+      "todo": 1,
+      "projects": [
+        "unit",
+        "render",
+        "react18",
+        "production"
+      ],
+      "maxWorkers": 2
+    },
+    "storybook": {
+      "files": 100,
+      "passed": 251,
+      "browserFileParallelism": false
+    },
+    "total": {
+      "files": 931,
+      "passed": 5607,
+      "todo": 1
+    }
+  },
+  "verify": {
+    "files": 698,
+    "passed": 4619,
+    "todo": 1,
+    "maxWorkers": 2
+  },
+  "priorRuns": {
+    "allProjects": {
+      "passedFiles": 929,
+      "failedFiles": 2,
+      "failures": "IME click timeout; isolated pair then passed 5 tests"
+    },
+    "browserConnectionClosed": {
+      "runs": 2,
+      "usedAsSuccessEvidence": false
+    }
+  },
+  "delivery": {
+    "scenes": 72,
+    "points": 430,
+    "differences": 0
+  },
+  "mount": {
+    "scenes": 6,
+    "points": 12,
+    "differences": 0
+  }
+}

@@ -21,7 +21,9 @@
     "regression-check": "node --import tsx src/utils/regression-check.ts",
     "render-trace": "node --expose-gc --import tsx src/utils/render-trace.tsx",
     "stat-regression": "node --import tsx src/utils/stat-regression.ts",
-    "summary": "node --import tsx src/utils/summary.ts"
+    "summary": "node --import tsx src/utils/summary.ts",
+    "test": "yarn run -T vitest run --root . --config vite.config.ts",
+    "test:cli": "node --import tsx fixtures/equivalent/__tests__/tsx-smoke.ts"
   },
   "dependencies": {
     "@canard/schema-form": "workspace:^",
@@ -30,6 +32,7 @@
     "@canard/schema-form_0.12.0": "npm:@canard/schema-form@0.12.0",
     "@canard/schema-form_0.12.5": "npm:@canard/schema-form@0.12.5",
     "@canard/schema-form_0.16.0": "https://registry.npmjs.org/@canard/schema-form/-/schema-form-0.16.0.tgz",
+    "@canard/schema-form_0.16.1": "https://registry.npmjs.org/@canard/schema-form/-/schema-form-0.16.1.tgz",
     "@canard/schema-form_0.9.0": "npm:@canard/schema-form@0.9.0",
     "@rjsf/core": "6.6.1",
     "@rjsf/utils": "6.6.1",

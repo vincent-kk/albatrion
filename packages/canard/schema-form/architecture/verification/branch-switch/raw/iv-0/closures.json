@@ -1,0 +1,1359 @@
+{
+  "timed": false,
+  "rows": [
+    {
+      "label": "single-flat-1000",
+      "writes": 40,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 40,
+      "closedFraction": 1,
+      "rootScopes": 40,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "mount-oneOf-80",
+      "writes": 0,
+      "usefulWrites": 0,
+      "usefulFraction": null,
+      "closedWrites": 0,
+      "closedFraction": null,
+      "rootScopes": 0,
+      "scopes": [],
+      "refusalReasons": {}
+    },
+    {
+      "label": "mount-flat-1000",
+      "writes": 0,
+      "usefulWrites": 0,
+      "usefulFraction": null,
+      "closedWrites": 0,
+      "closedFraction": null,
+      "rootScopes": 0,
+      "scopes": [],
+      "refusalReasons": {}
+    },
+    {
+      "label": "mount-nested-d6-f4",
+      "writes": 0,
+      "usefulWrites": 0,
+      "usefulFraction": null,
+      "closedWrites": 0,
+      "closedFraction": null,
+      "rootScopes": 0,
+      "scopes": [],
+      "refusalReasons": {}
+    },
+    {
+      "label": "single-nested-d6-f4",
+      "writes": 40,
+      "usefulWrites": 40,
+      "usefulFraction": 1,
+      "closedWrites": 40,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/n0/n0/n0/n0/n0",
+        "/n0/n0/n0/n0/n1",
+        "/n0/n0/n0/n0/n2"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-oneOf-80",
+      "writes": 8,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 8,
+      "closedFraction": 1,
+      "rootScopes": 8,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "bulk-flat-2000",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "bulk-nested-d6-f4",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-discriminator-80",
+      "writes": 8,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 8,
+      "closedFraction": 1,
+      "rootScopes": 8,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-if-80",
+      "writes": 8,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 8,
+      "closedFraction": 1,
+      "rootScopes": 8,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-nested-oneOf-20",
+      "writes": 8,
+      "usefulWrites": 8,
+      "usefulFraction": 1,
+      "closedWrites": 8,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/outer/inner"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-siblings-0",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-siblings-100",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-siblings-1000",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-siblings-4000",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "leaf-gate-250",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "leaf-gate-1000",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "leaf-gate-4000",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "leaf-gate-8000",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "wave-1000",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "single-flat-1000-subscribed",
+      "writes": 40,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 40,
+      "closedFraction": 1,
+      "rootScopes": 40,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "switch-payload-12",
+      "writes": 8,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 8,
+      "closedFraction": 1,
+      "rootScopes": 8,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    }
+  ],
+  "corpus": [
+    {
+      "label": "plain-F1-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F1-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F4-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F4-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F16-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F16-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F64-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F64-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F4-C4-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F4-C4-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F4-C64-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F4-C64-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F4-C256-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "plain-F4-C256-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F1-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F1-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F4-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F4-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F16-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F16-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F64-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F64-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F4-C4-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F4-C4-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F4-C64-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F4-C64-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F4-C256-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "latent-F4-C256-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "items-F1-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 3
+      }
+    },
+    {
+      "label": "items-F1-C16-control",
+      "writes": 1,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {
+        "crossing-unknown": 1,
+        "unknown-dependency": 1
+      }
+    },
+    {
+      "label": "items-F4-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 3
+      }
+    },
+    {
+      "label": "items-F4-C16-control",
+      "writes": 1,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {
+        "crossing-unknown": 1,
+        "unknown-dependency": 1
+      }
+    },
+    {
+      "label": "items-F16-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 3
+      }
+    },
+    {
+      "label": "items-F16-C16-control",
+      "writes": 1,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {
+        "crossing-unknown": 1,
+        "unknown-dependency": 1
+      }
+    },
+    {
+      "label": "items-F64-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 3
+      }
+    },
+    {
+      "label": "items-F64-C16-control",
+      "writes": 1,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {
+        "crossing-unknown": 1,
+        "unknown-dependency": 1
+      }
+    },
+    {
+      "label": "items-F4-C4-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 3
+      }
+    },
+    {
+      "label": "items-F4-C4-control",
+      "writes": 1,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {
+        "crossing-unknown": 1,
+        "unknown-dependency": 1
+      }
+    },
+    {
+      "label": "items-F4-C64-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 3
+      }
+    },
+    {
+      "label": "items-F4-C64-control",
+      "writes": 1,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {
+        "crossing-unknown": 1,
+        "unknown-dependency": 1
+      }
+    },
+    {
+      "label": "items-F4-C256-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 3
+      }
+    },
+    {
+      "label": "items-F4-C256-control",
+      "writes": 1,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {
+        "crossing-unknown": 1,
+        "unknown-dependency": 1
+      }
+    },
+    {
+      "label": "prefixItems-F1-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F1-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F4-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F4-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F16-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F16-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F64-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F64-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F4-C4-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F4-C4-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F4-C64-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F4-C64-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F4-C256-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "prefixItems-F4-C256-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F16-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F16-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F64-C16-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F64-C16-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C4-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C4-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C64-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C64-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C256-exit",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C256-control",
+      "writes": 1,
+      "usefulWrites": 1,
+      "usefulFraction": 1,
+      "closedWrites": 1,
+      "closedFraction": 1,
+      "rootScopes": 0,
+      "scopes": [
+        "/h"
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C16-exit-reverse-same-layer",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C16-exit-fields-clear",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C16-exit-node-keep",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "overlap-F4-C16-exit-node-clear",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "clearing-keep-object-live",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "clearing-keep-object-inactive",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 4,
+      "closedFraction": 1,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    },
+    {
+      "label": "clearing-keep-array-live",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 4
+      }
+    },
+    {
+      "label": "clearing-keep-array-inactive",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 4
+      }
+    },
+    {
+      "label": "clearing-keep-candidate-array-live",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 4
+      }
+    },
+    {
+      "label": "clearing-keep-candidate-array-inactive",
+      "writes": 4,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 0,
+      "closedFraction": 0,
+      "rootScopes": 4,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {
+        "unknown-dependency": 4
+      }
+    },
+    {
+      "label": "literal-star-oneOf-live-sibling",
+      "writes": 3,
+      "usefulWrites": 0,
+      "usefulFraction": 0,
+      "closedWrites": 3,
+      "closedFraction": 1,
+      "rootScopes": 3,
+      "scopes": [
+        ""
+      ],
+      "refusalReasons": {}
+    }
+  ]
+}

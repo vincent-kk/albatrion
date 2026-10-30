@@ -1,0 +1,30 @@
+{
+  "unit-final": {
+    "files": "585 passed (585)",
+    "tests": "3876 passed | 1 todo (3877)"
+  },
+  "render": {
+    "files": "131 passed (131)",
+    "tests": "766 passed (766)"
+  },
+  "react18": {
+    "files": "131 passed (131)",
+    "tests": "766 passed (766)"
+  },
+  "storybook": {
+    "files": "100 passed (100)",
+    "tests": "251 passed (251)"
+  },
+  "production": {
+    "files": "10 passed (10)",
+    "tests": "21 passed (21)"
+  },
+  "verify": {
+    "files": "721 passed (721)",
+    "tests": "4686 passed | 1 todo (4687)"
+  },
+  "isolation-parser": {
+    "files": "2 passed (2)",
+    "tests": "10 passed (10)"
+  }
+}

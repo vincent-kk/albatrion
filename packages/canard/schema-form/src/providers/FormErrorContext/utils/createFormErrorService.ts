@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import { observeFieldNodeReports } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
 import { FormErrorCode } from '@/schema-form/errors';
@@ -45,11 +47,11 @@ export const createFormErrorService = (): FormErrorService => {
         if (componentStack !== undefined) seen.delete(error);
         return;
       }
-      const domain = error as {
+      const domain = error as Nullable<{
         code?: FormErrorRecord['code'];
         details?: FormErrorRecord['details'];
         message?: string;
-      } | null;
+      }>;
       try {
         service.report({
           level: 'error',

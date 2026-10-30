@@ -1,0 +1,31 @@
+{
+  "kind": "observed fail-first summary; values transcribed from the original Vitest tool output",
+  "baseline": "625930c01710d9b3e9869183976265b03162d272",
+  "command": "yarn workspace @canard/schema-form test --run --project unit src/core/surface/__tests__/detached.inert-writes.test.ts",
+  "before": {
+    "passed": 1,
+    "failed": 3,
+    "failures": [
+      {
+        "case": "leaves frozen reads, overlay, and inactive publication unchanged through detached writes",
+        "observed": "updater called once",
+        "expected": "updater not called"
+      },
+      {
+        "case": "ignores every array verb while detached and in a batch after re-entry",
+        "observed": "push returned 3",
+        "expected": "push returned frozen length 2"
+      },
+      {
+        "case": "warns in development when a detached reference receives a write",
+        "observed": "console.warn called zero times",
+        "expected": "detached-write warning"
+      }
+    ]
+  },
+  "after": {
+    "passed": 4,
+    "failed": 0
+  },
+  "setupFailureExcluded": "workspace dependency dist missing before the behavior run"
+}

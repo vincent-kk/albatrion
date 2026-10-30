@@ -18,30 +18,41 @@ interface FieldInputNumberProps
   parser?: SingleStepperProps['parser'];
 }
 
+/** Parses draft text, returning NaN for non-numeric text so the Stepper keeps the draft. */
+const parseDraft = (text: string) => (text.trim() === '' ? NaN : Number(text));
+
 const FieldInputNumber = ({
   jsonSchema,
+  schemaType,
   readOnly,
   disabled,
-  defaultValue,
+  value,
   onChange,
   formatter,
   parser,
+  misfit,
 }: FieldInputNumberProps) => {
-  const handleChange = useHandle((value: number | null) => {
-    onChange(value);
+  const handleChange = useHandle((input: number | null) => {
+    if (input === null) onChange(undefined);
+    else if (Number.isNaN(input)) return;
+    else if (schemaType === 'integer' && !Number.isInteger(input)) return;
+    else onChange(input);
   });
   return (
-    <Stepper
-      inputReadOnly={readOnly}
-      disabled={disabled}
-      min={jsonSchema.minimum}
-      max={jsonSchema.maximum}
-      step={jsonSchema.multipleOf}
-      formatter={formatter}
-      parser={parser}
-      defaultValue={defaultValue ?? undefined}
-      onChange={handleChange}
-    />
+    <div role="group" aria-invalid={misfit || undefined}>
+      <Stepper
+        inputReadOnly={readOnly}
+        disabled={disabled}
+        min={jsonSchema.minimum}
+        max={jsonSchema.maximum}
+        step={jsonSchema.multipleOf}
+        formatter={formatter}
+        parser={parser ?? parseDraft}
+        allowEmpty
+        value={typeof value === 'number' ? value : null}
+        onChange={handleChange}
+      />
+    </div>
   );
 };
 

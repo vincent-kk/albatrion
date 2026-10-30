@@ -1,10 +1,11 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
+import { parsePointerSegments } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Mark development rule writes whose target did not survive the final shape.
@@ -22,10 +23,13 @@ export const finalizeDeriveTrace = <Self extends FieldNodeRecord<Self>>(
       if (entry.result !== 'applied') continue;
       let exists = live.get(entry.targetPath);
       if (exists === undefined) {
-        let node: Self | undefined = context.root;
-        for (const encoded of entry.targetPath.split($.Separator).slice(1)) {
-          const name = unescapeSegment(encoded);
-          const children: Record<string, Self> | null = node?.structure ?? null;
+        let node: Optional<Self> = context.root;
+        for (const name of parsePointerSegments(entry.targetPath)) {
+          if (typeof name !== 'string') {
+            node = undefined;
+            break;
+          }
+          const children: Nullable<Dictionary<Self>> = node?.structure ?? null;
           node =
             children && hasOwnProperty(children, name)
               ? children[name]

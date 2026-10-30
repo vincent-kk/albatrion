@@ -3,8 +3,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
+import {
+  hasRetainedSlotOwnSource,
+  readRetainedSlotRaw,
+} from './fixtures/readRetainedSlotRaw';
 
 describe('settled exit policy layers', () => {
   it('WRITE-031 node layer overrides the Form clear policy', () => {
@@ -28,9 +32,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('held');
+    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held');
   });
 
   it('WRITE-031 fields layer clears a child when Form keeps it', () => {
@@ -53,9 +55,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
   it('WRITE-031 fragment layer clears its directly declared child', () => {
@@ -77,9 +77,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
   it('WRITE-031 form layer clears when no closer declaration exists', () => {
@@ -102,9 +100,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
   it('WRITE-031 same-layer keep defeats another fields entry clear', () => {
@@ -131,9 +127,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('held');
+    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held');
   });
 
   it('WRITE-032 fragment turning off applies to a departing declaration', () => {
@@ -169,9 +163,7 @@ describe('settled exit policy layers', () => {
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.structure?.addr?.structure?.city?.raw).toBe('C');
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/addr/zip', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/addr/zip', 'string')).toBe(false);
     expect(root.structure?.addr?.undeclaredValues).toEqual({ extra: 'E' });
   });
 
@@ -204,12 +196,10 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])),
-    ).toBe(false);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])),
-    ).toBe('K');
+    expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
+      false,
+    );
+    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
   });
 
   it('WRITE-034 fragment latent policy reaches previously absent descendants', () => {
@@ -256,12 +246,10 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])),
-    ).toBe(false);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])),
-    ).toBe('K');
+    expect(hasRetainedSlotOwnSource(root, '/branch/drop', 'string')).toBe(
+      false,
+    );
+    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
   });
 
   it('WRITE-034 latent fields entry keep overrides a departing parent clear', () => {
@@ -299,9 +287,7 @@ describe('settled exit policy layers', () => {
       WriteOption.Overwrite,
     );
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])),
-    ).toBe('K');
+    expect(readRetainedSlotRaw(root, '/branch/keep', 'string')).toBe('K');
   });
 
   it('WRITE-038 previous commit expression ignores the exiting write', () => {
@@ -328,9 +314,7 @@ describe('settled exit policy layers', () => {
     );
     writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
   it('28C-05 throw keeps the committed value and degrades that commit', () => {
@@ -367,9 +351,7 @@ describe('settled exit policy layers', () => {
     const calls = explode.mock.calls.length;
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(explode).toHaveBeenCalledTimes(calls);
-    expect(
-      root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
-    ).toBe('held');
+    expect(readRetainedSlotRaw(root, '/secret', 'string')).toBe('held');
   });
 
   it('WRITE-038 removes an exited occurrence expression baseline after using it', () => {
@@ -402,9 +384,7 @@ describe('settled exit policy layers', () => {
         key.startsWith('["/secret",'),
       ),
     ).toBe(false);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 
   it('WRITE-039 visible preserved leaves a hidden value in shape', () => {
@@ -423,7 +403,6 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(root, { hidden: 'held' }, WriteOption.Overwrite);
     expect(root.structure?.hidden?.visible).toBe(false);
     expect(root.structure?.hidden?.raw).toBe('held');
-    expect(root.runtime.latentRaw.size).toBe(0);
   });
 
   it('FRAGMENT-050 exit not edge evaluates no departing fragment value rule', () => {
@@ -453,8 +432,6 @@ describe('settled exit policy layers', () => {
     const calls = read.mock.calls.length;
     writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(read).toHaveBeenCalledTimes(calls);
-    expect(
-      root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
-    ).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/secret', 'string')).toBe(false);
   });
 });

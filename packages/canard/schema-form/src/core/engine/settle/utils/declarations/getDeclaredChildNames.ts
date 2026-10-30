@@ -1,7 +1,9 @@
+import { map as mapArray } from '@winglet/common-utils/array';
+
 import type { BlueprintNode } from '../../../blueprint';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 
 /** Immutable child-name indexes live only while their analyzed template lives. */
-const DECLARED_NAMES = new WeakMap<BlueprintNode, ReadonlySet<string>>();
 
 /**
  * Reuse declared child-name membership for writes and projected reads.
@@ -11,10 +13,14 @@ const DECLARED_NAMES = new WeakMap<BlueprintNode, ReadonlySet<string>>();
 export const getDeclaredChildNames = (
   template: BlueprintNode,
 ): ReadonlySet<string> => {
-  let names = DECLARED_NAMES.get(template);
+  let names = getHostDerived<'declaredNames', ReadonlySet<string>>(
+    template,
+  ).declaredNames;
   if (!names) {
-    names = new Set(template.childEntries.map((entry) => entry.name));
-    DECLARED_NAMES.set(template, names);
+    names = new Set(mapArray(template.childEntries, (entry) => entry.name));
+    getHostDerived<'declaredNames', ReadonlySet<string>>(
+      template,
+    ).declaredNames = names;
   }
   return names;
 };

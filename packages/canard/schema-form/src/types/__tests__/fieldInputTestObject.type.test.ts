@@ -2,7 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest';
 
 import type { FieldNode } from '@/schema-form/core';
 
-import type { FieldInputTestObject, FieldNodeType } from '../types/fieldInput';
+import type { FieldInputTestObject, FieldNodeType } from '../field/fieldInput';
 
 /** The explicit shape FieldInputTestObject had before it was derived from FieldInputHint. */
 type ExplicitTestObject = Partial<{

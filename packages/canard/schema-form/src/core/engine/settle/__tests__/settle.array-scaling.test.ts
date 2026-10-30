@@ -6,12 +6,13 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
+import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
-import { getDependencyIndex } from '../utils/write/getDependencyIndex';
-import { getSettlementScratch } from '../utils/write/getSettlementScratch';
-import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
+import * as slotEntries from '../utils/slots/getSlotEntries';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 const schema = {
@@ -49,34 +50,18 @@ const gatedRows = (count: number) => {
   return { root, runtime: root.runtime };
 };
 
-/**
- * Count latent key visits made by one settlement operation.
- * @param latent - Store whose key iterator is the measured operation
- * @param action - Settlement operation to run while visits are counted
- * @returns Number of latent keys yielded during the operation
- */
-const countLatentKeyVisits = (
-  latent: Map<string, unknown>,
-  action: () => void,
-): number => {
-  const keys = latent.keys.bind(latent);
-  let visited = 0;
-  const spy = vi.spyOn(latent, 'keys').mockImplementation(function* () {
-    for (const key of keys()) {
-      visited++;
-      yield key;
-    }
-    return undefined;
-  });
+/** Count slot candidate queries performed by an operation without changing its sources. */
+const countSlotEntryQueries = (action: () => void): number => {
+  const spy = vi.spyOn(slotEntries, 'getSlotEntries');
   try {
     action();
+    return spy.mock.calls.length;
   } finally {
     spy.mockRestore();
   }
-  return visited;
 };
 
-// filid:contract settle-array
+// filid:contract settle-array-scaling
 describe('44C-01 array settlement scaling', () => {
   it('51C-01 SETTLE-017 bounds item-gated row assembly when rows read their own fields', () => {
     const count = 2000;
@@ -291,7 +276,7 @@ describe('44C-01 array settlement scaling', () => {
             reader: {
               type: 'string',
               controls: {
-                active: '(@).observe((#/)) && (#/)?.first?.value === "entered"',
+                active: '(@).observe((#)) && (#)?.first?.value === "entered"',
               },
             },
           },
@@ -313,9 +298,18 @@ describe('44C-01 array settlement scaling', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(observations.length).toBeGreaterThan(0);
-    for (const value of observations)
-      expect(value).toEqual({ first: { value: 'entered' } });
+    // SETTLE-045 re-evaluates the relocated reader in root rounds after current
+    // publishes; those reads see the published current, never an in-progress one (51C-01).
+    // 이 단언은 사전 공표에 가려 옮긴 게이트를 다시 평가하지 않던 구현의 특성화였습니다. SETTLE-045는 옮긴 게이트를 L의 매 바퀴 평가하라고 정하므로, current가 공표된 뒤 라운드의 관찰은 완성된 루트를 읽습니다. 같은 바퀴에 들어온 사촌은 보이고 계산 중인 current는 섞이지 않는다는 51C-01과 18C-15의 성질은 첫 관찰 묶음으로 그대로 단언합니다.
+    const inProgress = { first: { value: 'entered' } };
+    const settled = observations.findIndex(
+      (value) => JSON.stringify(value) !== JSON.stringify(inProgress),
+    );
+    expect(settled).toBeGreaterThan(0);
+    for (const value of observations.slice(0, settled))
+      expect(value).toEqual(inProgress);
+    for (const value of observations.slice(settled))
+      expect(value).toEqual(root.emit);
     expect(root.emit).toEqual({
       first: { value: 'entered' },
       current: { value: 'in-progress', primer: 'ready', reader: 'visible' },
@@ -430,31 +424,18 @@ describe('44C-01 array settlement scaling', () => {
     }
   });
 
-  it('48C-01 SETTLE-017 visits latent entries linearly on mass exit', () => {
+  it('48C-01 SETTLE-017 bounds slot entry queries on mass exit', () => {
     const count = 2000;
-    const { root, runtime } = gatedRows(count);
-    const keys = runtime.latentRaw.keys.bind(runtime.latentRaw);
-    let visited = 0;
-    const spy = vi
-      .spyOn(runtime.latentRaw, 'keys')
-      .mockImplementation(function* () {
-        for (const key of keys()) {
-          visited++;
-          yield key;
-        }
-        return undefined;
-      });
-    try {
-      root.find('/flag')!.setValue(false);
-      expect(visited).toBeLessThan(count * 12);
-    } finally {
-      spy.mockRestore();
-    }
+    const { root } = gatedRows(count);
+    const visits = countSlotEntryQueries(() =>
+      root.find('/flag')!.setValue(false),
+    );
+    expect(visits).toBeLessThan(count * 12);
   });
 
   it('48C-01 retains mass exit and re-entry values and inactive sources', () => {
     for (const count of [1, 7, 13]) {
-      const { root, runtime } = gatedRows(count);
+      const { root } = gatedRows(count);
       const rows = Array.from({ length: count }, (_, index) => ({
         child: String(index),
       }));
@@ -469,14 +450,6 @@ describe('44C-01 array settlement scaling', () => {
           rows: flag ? rows : Array.from({ length: count }, () => ({})),
         });
         expect(root.inactiveValues).toEqual(flag ? [] : inactive);
-        expect([...runtime.latentRaw]).toEqual(
-          flag
-            ? []
-            : inactive.map(({ path, value }) => [
-                JSON.stringify([path, 'string']),
-                value,
-              ]),
-        );
       }
     }
   });
@@ -507,7 +480,7 @@ describe('44C-01 array settlement scaling', () => {
       tags: [String(index)],
     }));
     tags.setValue({ flag: true, rows: tagRows });
-    const tagVisits = countLatentKeyVisits(tags.runtime.latentRaw, () =>
+    const tagVisits = countSlotEntryQueries(() =>
       tags.find('/flag')!.setValue(false),
     );
     expect(tags.value).toEqual({
@@ -555,7 +528,7 @@ describe('44C-01 array settlement scaling', () => {
       list: [{ on: false, child: String(index) }],
     }));
     list.setValue({ flag: true, rows: listRows });
-    const listVisits = countLatentKeyVisits(list.runtime.latentRaw, () =>
+    const listVisits = countSlotEntryQueries(() =>
       list.find('/flag')!.setValue(false),
     );
     expect(list.value).toEqual({ flag: false, rows: listRows.map(() => ({})) });
@@ -603,7 +576,7 @@ describe('44C-01 array settlement scaling', () => {
       ]),
     );
     absent.setValue({ flag: false });
-    const absentVisits = countLatentKeyVisits(absent.runtime.latentRaw, () =>
+    const absentVisits = countSlotEntryQueries(() =>
       absent.setValue({ flag: false, ...absentRows }),
     );
     expect(absent.value).toEqual({ flag: false });

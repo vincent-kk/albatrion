@@ -1,0 +1,347 @@
+{
+  "switch-oneOf-80": {
+    "completed": true,
+    "command": {
+      "executable": "<toolchain>/Cellar/node/26.12.1_1/bin/node",
+      "args": [
+        "--expose-gc",
+        "<home>/Workspace/albatrion/branch-switch-iv-4/packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/retention.mjs",
+        "--bundle=<scratch>/claude-501/perf-runs/20261030T0326-c153d5b-iv-4.noindex/pair/B/engines/current.mjs",
+        "--row=switch-oneOf-80",
+        "--output=<scratch>/claude-501/perf-runs/20261030T0326-c153d5b-iv-4.noindex/retention/switch-oneOf-80"
+      ],
+      "cwd": "<home>/Workspace/albatrion/branch-switch-iv-4",
+      "startedAt": "2026-10-30T03:44:06.932Z",
+      "endedAt": "2026-10-30T03:44:07.927Z",
+      "code": 0
+    },
+    "result": {
+      "row": "switch-oneOf-80",
+      "node": "v26.12.1",
+      "unread": {
+        "label": "unread",
+        "analysis": {
+          "reachable": 125720,
+          "strongEdges": 522643,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 118
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": [
+          {
+            "path": "",
+            "slots": 3,
+            "retainedNodes": 3,
+            "heapId": 140285,
+            "retainedNodeHeapIds": [
+              170983,
+              170981,
+              170979
+            ],
+            "bytes": 2712,
+            "shallowBytes": 32
+          }
+        ]
+      },
+      "read": {
+        "label": "read",
+        "analysis": {
+          "reachable": 126053,
+          "strongEdges": 525184,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 118
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": [
+          {
+            "path": "",
+            "slots": 3,
+            "retainedNodes": 3,
+            "heapId": 140285,
+            "retainedNodeHeapIds": [
+              170983,
+              170981,
+              170979
+            ],
+            "bytes": 3032,
+            "shallowBytes": 32
+          }
+        ]
+      },
+      "lifetime": {
+        "writesBeforeSnapshot": 120,
+        "release": "resetSubtree followed by delivery drain and two full GCs",
+        "trackedHeapIds": [
+          140285,
+          170983,
+          170981,
+          170979
+        ],
+        "identity": "Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection",
+        "reset": {
+          "label": "reset",
+          "analysis": {
+            "reachable": 126566,
+            "strongEdges": 524850,
+            "iterations": 5,
+            "ephemeronTableEdgesSkipped": 114
+          },
+          "matchingNumericHeapIds": [
+            140285
+          ],
+          "hosts": []
+        },
+        "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+      },
+      "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+    }
+  },
+  "switch-payload-12": {
+    "completed": true,
+    "command": {
+      "executable": "<toolchain>/Cellar/node/26.12.1_1/bin/node",
+      "args": [
+        "--expose-gc",
+        "<home>/Workspace/albatrion/branch-switch-iv-4/packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/retention.mjs",
+        "--bundle=<scratch>/claude-501/perf-runs/20261030T0326-c153d5b-iv-4.noindex/pair/B/engines/current.mjs",
+        "--row=switch-payload-12",
+        "--output=<scratch>/claude-501/perf-runs/20261030T0326-c153d5b-iv-4.noindex/retention/switch-payload-12"
+      ],
+      "cwd": "<home>/Workspace/albatrion/branch-switch-iv-4",
+      "startedAt": "2026-10-30T03:44:07.965Z",
+      "endedAt": "2026-10-30T03:44:09.184Z",
+      "code": 0
+    },
+    "result": {
+      "row": "switch-payload-12",
+      "node": "v26.12.1",
+      "unread": {
+        "label": "unread",
+        "analysis": {
+          "reachable": 163734,
+          "strongEdges": 670410,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 3003
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": [
+          {
+            "path": "",
+            "slots": 12,
+            "retainedNodes": 12,
+            "heapId": 131271,
+            "retainedNodeHeapIds": [
+              166513,
+              166467,
+              166475,
+              166479,
+              166449,
+              166517,
+              166505,
+              166437,
+              166471,
+              166495,
+              166441,
+              166521
+            ],
+            "bytes": 8656,
+            "shallowBytes": 32
+          }
+        ]
+      },
+      "read": {
+        "label": "read",
+        "analysis": {
+          "reachable": 164003,
+          "strongEdges": 672914,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 3003
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": [
+          {
+            "path": "",
+            "slots": 12,
+            "retainedNodes": 12,
+            "heapId": 131271,
+            "retainedNodeHeapIds": [
+              166513,
+              166467,
+              166475,
+              166479,
+              166449,
+              166517,
+              166505,
+              166437,
+              166471,
+              166495,
+              166441,
+              166521
+            ],
+            "bytes": 9232,
+            "shallowBytes": 32
+          }
+        ]
+      },
+      "lifetime": {
+        "writesBeforeSnapshot": 120,
+        "release": "resetSubtree followed by delivery drain and two full GCs",
+        "trackedHeapIds": [
+          131271,
+          166513,
+          166467,
+          166475,
+          166479,
+          166449,
+          166517,
+          166505,
+          166437,
+          166471,
+          166495,
+          166441,
+          166521
+        ],
+        "identity": "Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection",
+        "reset": {
+          "label": "reset",
+          "analysis": {
+            "reachable": 164380,
+            "strongEdges": 671195,
+            "iterations": 5,
+            "ephemeronTableEdgesSkipped": 2985
+          },
+          "matchingNumericHeapIds": [
+            131271
+          ],
+          "hosts": []
+        },
+        "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+      },
+      "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+    }
+  },
+  "switch-siblings-0": {
+    "completed": true,
+    "command": {
+      "executable": "<toolchain>/Cellar/node/26.12.1_1/bin/node",
+      "args": [
+        "--expose-gc",
+        "<home>/Workspace/albatrion/branch-switch-iv-4/packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/retention.mjs",
+        "--bundle=<scratch>/claude-501/perf-runs/20261030T0326-c153d5b-iv-4.noindex/pair/B/engines/current.mjs",
+        "--row=switch-siblings-0",
+        "--output=<scratch>/claude-501/perf-runs/20261030T0326-c153d5b-iv-4.noindex/retention/switch-siblings-0"
+      ],
+      "cwd": "<home>/Workspace/albatrion/branch-switch-iv-4",
+      "startedAt": "2026-10-30T03:44:09.221Z",
+      "endedAt": "2026-10-30T03:44:10.093Z",
+      "code": 0
+    },
+    "result": {
+      "row": "switch-siblings-0",
+      "node": "v26.12.1",
+      "unread": {
+        "label": "unread",
+        "analysis": {
+          "reachable": 105252,
+          "strongEdges": 441449,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 77
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": []
+      },
+      "read": {
+        "label": "read",
+        "analysis": {
+          "reachable": 105506,
+          "strongEdges": 443279,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 77
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": []
+      },
+      "lifetime": {
+        "writesBeforeSnapshot": 120,
+        "release": "resetSubtree followed by delivery drain and two full GCs",
+        "trackedHeapIds": [],
+        "identity": "Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection",
+        "reset": {
+          "label": "reset",
+          "analysis": {
+            "reachable": 106184,
+            "strongEdges": 444626,
+            "iterations": 5,
+            "ephemeronTableEdgesSkipped": 41
+          },
+          "matchingNumericHeapIds": [],
+          "hosts": []
+        },
+        "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+      },
+      "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+    }
+  },
+  "switch-siblings-1000": {
+    "completed": true,
+    "command": {
+      "executable": "<toolchain>/Cellar/node/26.12.1_1/bin/node",
+      "args": [
+        "--expose-gc",
+        "<home>/Workspace/albatrion/branch-switch-iv-4/packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/retention.mjs",
+        "--bundle=<scratch>/claude-501/perf-runs/20261030T0326-c153d5b-iv-4.noindex/pair/B/engines/current.mjs",
+        "--row=switch-siblings-1000",
+        "--output=<scratch>/claude-501/perf-runs/20261030T0326-c153d5b-iv-4.noindex/retention/switch-siblings-1000"
+      ],
+      "cwd": "<home>/Workspace/albatrion/branch-switch-iv-4",
+      "startedAt": "2026-10-30T03:44:10.132Z",
+      "endedAt": "2026-10-30T03:44:11.823Z",
+      "code": 0
+    },
+    "result": {
+      "row": "switch-siblings-1000",
+      "node": "v26.12.1",
+      "unread": {
+        "label": "unread",
+        "analysis": {
+          "reachable": 193039,
+          "strongEdges": 801667,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 5057
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": []
+      },
+      "read": {
+        "label": "read",
+        "analysis": {
+          "reachable": 193050,
+          "strongEdges": 802229,
+          "iterations": 5,
+          "ephemeronTableEdgesSkipped": 5057
+        },
+        "matchingNumericHeapIds": [],
+        "hosts": []
+      },
+      "lifetime": {
+        "writesBeforeSnapshot": 120,
+        "release": "resetSubtree followed by delivery drain and two full GCs",
+        "trackedHeapIds": [],
+        "identity": "Numeric IDs may be reused across independent snapshots; matches do not establish object survival or collection",
+        "reset": {
+          "label": "reset",
+          "analysis": {
+            "reachable": 193887,
+            "strongEdges": 799463,
+            "iterations": 5,
+            "ephemeronTableEdgesSkipped": 5041
+          },
+          "matchingNumericHeapIds": [],
+          "hosts": []
+        },
+        "limitation": "Only objects exclusively dominated by each slot Map are tracked; externally retained detached nodes are outside this byte estimate. Nested slot Map sizes may overlap and must not be summed."
+      },
+      "method": "V8 strong-edge immediate dominators; bytes exclusively retained by each inactiveSlots Map, including detached source trees; shared blueprints excluded"
+    }
+  }
+}

@@ -1,10 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '@/schema-form/core/engine';
 import type { BlueprintSchema } from '@/schema-form/core/engine';
-import { PathKeyedMap } from '@/schema-form/core/engine';
-import { PathKeyedSet } from '@/schema-form/core/engine';
+import { PathKeyedSet, blueprint } from '@/schema-form/core/engine';
 
 import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
@@ -20,11 +18,8 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: snapshot,
-    latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
+
+    misfitPaths: new PathKeyedSet(),
   });
 
 describe('FieldNode PR-2 surface', () => {
@@ -38,7 +33,7 @@ describe('FieldNode PR-2 surface', () => {
         /^\| `([^`]+)` \| (getter|setter|getter\/setter|method) \|/gm,
       ),
     ].map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
-    expect(rows).toHaveLength(53);
+    expect(rows).toHaveLength(56);
     const prototype = RuntimeFieldNode.prototype;
     expect(
       Object.getOwnPropertyNames(prototype)
@@ -140,6 +135,25 @@ describe('FieldNode PR-2 surface', () => {
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
         details: { path: '', method: 'push' },
+      }),
+    );
+  });
+
+  it('SURFACE-005 delegates insert synchronously and ERROR-197 names insert on strings', () => {
+    const array = makeTree({ type: 'array', items: { type: 'string' } });
+    if (!isArrayNode(array)) throw new Error('Expected an array node');
+    expect(array.push('a')).toBe(1);
+    expect(array.insert(0, 'x')).toBe(2);
+    expect(array.insert(2, 'y')).toBe(3);
+    expect(array.insert(5, 'z')).toBe(3);
+    expect(array.value).toEqual(['x', 'a', 'y']);
+    const string = makeTree({ type: 'string' });
+    expect(() =>
+      Reflect.get(string, 'insert').call(string, 0, 'x'),
+    ).toThrowError(
+      expect.objectContaining({
+        code: 'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY',
+        details: { path: '', method: 'insert' },
       }),
     );
   });

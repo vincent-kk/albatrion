@@ -50,5 +50,8 @@ export type {
   Validator,
   ValidationIssue,
   SchemaControls,
+  InactiveValue,
+  InactiveValueResolver,
+  InactiveValueContext,
   ValidateFunction,
 } from './engine';

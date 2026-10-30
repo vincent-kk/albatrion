@@ -1,0 +1,16 @@
+{
+  "candidate": "8d7d1a87e9000fc42d256e66221216bd782c5f1b",
+  "completed": false,
+  "completedPublicProcesses": 282,
+  "interruptedPublicProcesses": 1,
+  "interruptionSignal": "SIGINT",
+  "reason": "소유자 지시로 중단, 기계 사용 중이라 quiet gate 대기가 길어짐, 판정 없음",
+  "supersededBy": "항목 5 정리로 대체됨",
+  "weightedExchangeUs": null,
+  "outsideWidthRegressions": null,
+  "heapGate": null,
+  "distRestored": true,
+  "inputHashesVerified": true,
+  "runnerExit": 1,
+  "prechecks": 309
+}

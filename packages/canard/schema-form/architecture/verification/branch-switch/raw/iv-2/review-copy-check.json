@@ -1,0 +1,9 @@
+{
+  "candidate1OriginalSha256": "b7dfe3bd13fc647697b4a8e36a3861b3689f776f86df1b16e3dc694981b0a554",
+  "candidate1CopySha256": "30acdd852e561a3eaaa643af1bc33440117dabda41168371cf601a6d94008da0",
+  "candidate2OriginalSha256": "355d4c09cb63982461079a41088cf08b8ca597b690072825cd2e476ff07e428f",
+  "candidate2CopySha256": "84a0caa6dd4bcb51836c98ba9551dae18c7c87b1a89f809f01a344d70890e21d",
+  "candidate1DifferencesExceptAddedBackticks": 0,
+  "corruptedTokensInCandidate1": 0,
+  "formatterRechecked": true
+}

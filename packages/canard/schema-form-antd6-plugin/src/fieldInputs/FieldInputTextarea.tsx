@@ -36,9 +36,11 @@ const FieldInputTextarea = ({
   context,
   placeholder,
   size,
+  misfit,
 }: FieldInputTextareaProps) => {
   const handleChange = useHandle((value: ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(value.target.value);
+    const text = value.target.value;
+    onChange(text === '' ? undefined : text);
   });
   const autoSize = useMemo(
     () => ({
@@ -55,9 +57,11 @@ const FieldInputTextarea = ({
       readOnly={readOnly}
       autoSize={autoSize}
       placeholder={placeholder}
-      defaultValue={defaultValue ?? undefined}
+      defaultValue={typeof defaultValue === 'string' ? defaultValue : undefined}
       onChange={handleChange}
       size={size || context?.size}
+      status={misfit ? 'error' : undefined}
+      aria-invalid={misfit || undefined}
     />
   );
 };

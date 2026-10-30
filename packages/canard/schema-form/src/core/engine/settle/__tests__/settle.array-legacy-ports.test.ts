@@ -5,6 +5,8 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
+
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);
   if (!isTestFieldNode(tree.root))
@@ -13,7 +15,7 @@ const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   return { ...tree, root };
 };
 
-// filid:contract settle-array
+// filid:contract settle-array-legacy-ports
 describe('array legacy contract ports', () => {
   it('VALUE-034 exposes an empty nested array on load before child writes', () => {
     const { root } = makeRecordTree(
@@ -176,7 +178,7 @@ describe('array legacy contract ports', () => {
   });
 
   it('GOAL-074 restores omitTrailing slots from raw after branch reactivation', () => {
-    const { root, runtime } = makeRecordTree({
+    const { root } = makeRecordTree({
       type: 'object',
       properties: {
         active: { type: 'boolean' },
@@ -191,11 +193,7 @@ describe('array legacy contract ports', () => {
     root.setValue({ active: true, tail: ['a', null, null] });
     expect(root.outputValue).toEqual({ active: true, tail: ['a'] });
     root.find('/active')?.setValue(false);
-    const latent: Map<string, { raw?: unknown }> = Reflect.get(
-      runtime,
-      'latentRaw',
-    );
-    expect(latent.get(JSON.stringify(['/tail', 'array']))?.raw).toEqual([
+    expect(readRetainedSlotRaw(root, '/tail', 'array')).toEqual([
       'a',
       null,
       null,

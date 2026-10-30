@@ -159,6 +159,8 @@ interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   /** Find the node at a JSONPointer path */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** Find every node matching a JSONPointer path */
@@ -190,6 +192,7 @@ interface FormHandle<
 - Before the first mount, queries do not throw: `findNode` returns `null`, `findNodes`, `getErrors` and `validate` return an empty array, and `getState` returns an empty object.
 - `showError(false)` does not hide errors; it hands control back to the Form's `showError` prop.
 - `reset()` also empties the attached-files map and drops a `showError(true)` override, so error display follows the `showError` prop again.
+- `rebuild(option?)` invalidates this schema object's cached blueprint and replaces this form's tree using the same options as `reset`. Other forms using the same schema object keep their existing tree during ordinary `reset`; their own `rebuild` or a new mount resolves fresh analysis.
 
 #### AttachedFilesMap
 
@@ -526,7 +529,7 @@ The conditions for a FieldInput can be defined using a function or an object:
 type FieldInputHint = {
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
-  typeMismatch: boolean;
+  misfit: boolean;
   path: string;
   required: boolean;
   nullable: boolean;
@@ -581,10 +584,10 @@ interface FieldInputProps<
   node: Node;
   /** Node kind (e.g., 'string', 'number', 'object', 'array') */
   type: Node['type'];
-  /** Authored accepted kind(s), including 'integer' */
+  /** Authored accepted kind(s), including 'integer'; undefined on a virtual node */
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds */
-  typeMismatch: Node['typeMismatch'];
+  misfit: Node['misfit'];
   /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
   /** Path of the field node assigned to the FieldInput Component */
@@ -943,7 +946,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>
@@ -1372,6 +1375,27 @@ export const AdvancedForm = () => {
 ```
 
 **Note**: The extended JSONPointer syntax (`..`, `.`, `*`) is a deliberate extension to the RFC 6901 specification, implemented to provide enhanced form manipulation capabilities. While these extensions deviate from the standard, they are essential for supporting complex form interactions and navigation patterns commonly required in real-world applications.
+
+### Walking a Subtree
+
+`node.visitSubtree(visitor)` calls `visitor` on the node itself and then on every node below it. Use it to read or update a whole section of the form in one pass.
+
+```typescript
+// Clear every string field under /profile, but leave /profile/locked and everything under it as is.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // skip this node's descendants
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **Order.** The node itself comes first, then its descendants in preorder, with siblings in `children` order. Terminal nodes are leaves.
+- **Skipping.** Returning `false` skips that node's descendants only, and the walk goes on with the next sibling. Any other return value, `undefined` included, continues into the children.
+- **Range.** From a node in the form, only the current shape is visited, so fields that a condition excludes are not. A node reachable twice is visited once, and a node created during the walk is not guaranteed to be visited. From a node that is no longer in the form (a reference kept after a condition or an array change took its field out), the walk covers the subtree that left the form with it.
+- **Writes.** Value writes made during the walk are applied together when the walk ends, so value reads during the walk return the values from before it. State and external-error changes (`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`) change the data at once, but their events, like those of `request`, are delivered once when the walk ends. Inside an enclosing `node.batch(fn)`, everything waits for the end of that batch instead. A form `reset` or a `resetSubtree()` inside the walk still takes effect at once.
+- **Writes to a node that left the form.** Such a write never changes a field in the form, also during a walk or a batch. If a field of the same kind is at that path, the write does nothing; otherwise the value is kept for that path and loads when such a field comes back. Whether a field is at that path is judged by the last committed shape, not by changes made earlier in the same batch or walk, so such a write is still dropped when the same batch or walk has just removed that field. A reference to a field that the same batch or walk removes is still in the form when written, so its write is handled like any other write.
+- **Errors.** If the visitor throws, the writes it already made are applied and the error is rethrown. If a walk inside a listener has made a value write, the error does not reach the code that called `visitSubtree`, as with `batch`.
+- **Cost.** The walk opens nothing until something writes, so a read-only walk adds no cost and also works inside a listener. A write inside a listener follows the same rules as any other listener write.
+- **FormHandle.** `FormHandle` has no `visitSubtree`. Call it on `formRef.current?.node` or on a node from `findNode`.
 
 ---
 
@@ -2587,6 +2611,7 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 - **Enum select shows `undefined` as no selection.** The built-in string enum select shows a leading, selected, empty and disabled option when the value is `undefined`, also when the enum contains `''`. A value outside the enum keeps its leading disabled option.
 - **Checkbox and radio option ids include the index.** Each option's `id` is now `${path}-${index}`, with a matching `htmlFor` on its label. Selectors that targeted `#<path>` on these inputs must change. The default renderer's label and `Form.Label` always carry both `htmlFor={path}` and `id="label:${path}"` (the branch legend carries the id; the `label:` prefix keeps it from ever matching an input id, which is the empty string at the root and starts with `/` everywhere else), because the place that draws the label does not know which input was chosen. The builtin checkbox and radio options containers have `role="group"` with `aria-labelledby="label:${path}"`, so the group is found by its title (`getByRole('group', { name })`); for these groups `htmlFor` points at no element, which is harmless. Custom `FieldInput` and `FieldRenderer` components follow the same convention: put `id={path}` on a single input to connect it with the title, and reference `label:${path}` with `aria-labelledby` on a group container. In the default renderer a checkbox array is also a fieldset named by the same legend, so query inside that fieldset. Where no title with `id="label:${path}"` is drawn (the root, array items, `Form.Input` without `Form.Label`, a custom or plugin renderer that omits that id) leaves the group container's `aria-labelledby` without a target, so the renderer must name the group itself. `Form.Label` builds both attributes from its `path` prop as given, so pass the absolute path (`/size`, not `size` or `./size`) for them to match the input and the group.
 - **`oneOf` / `anyOf` branches are no longer chosen from `const` tags.** When branches differ only by a `const` tag, declare `controls.discriminator: '<property>'` on the host, or `controls.active` on each branch. Without either, every branch stays active.
+- **A FieldInput test object no longer matches virtual nodes with `schemaType: 'virtual'`.** `schemaType` holds JSON types only, so a virtual node's `schemaType` is `undefined`; its `jsonSchema.type` is still `'virtual'`. Match virtual nodes with `type: 'virtual'`, or with a test object that sets `schemaType: undefined` itself.
 - **Custom validator plugins must implement `compileGuard`.** A `ValidatorPlugin` now needs `compileGuard(root, pointer)` next to `compile`; `release(root)` is optional. The official ajv6, ajv7 and ajv8 plugins already implement it.
 
 `onValidate` behaves as in 0.16: it fires when the reported error list or the `errors` prop changes, and a re-validation with the same result does not fire it.

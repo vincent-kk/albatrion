@@ -130,7 +130,7 @@
 
 이주(LANDING-125): 단일 노드 파서(`parseNumber`는 숫자가 아닌 문자를 지우고 `Math.trunc`로 자름 `src/core/parsers/parseNumber.ts:31-39`, `parseBoolean`은 참 거짓 판정 `parseBoolean.ts:34-41`, `parseString(true)`는 `''` `parseString.ts:34-38`)는 공통 이주를 따른다(WRITE-075의 변환 목록, 실패는 값 보존과 경고등)(LANDING-125).
 
-`onError` 기록의 level은 `warning`이다(LANDING-126). 값을 보존하므로 폼의 약속은 지켜진다(LANDING-126). error 층은 throw·거부·싱크로 드러나야 해 통보 3과 부딪힌다(LANDING-126). `SCHEMA_FORM_WARNING.TYPE_MISMATCH`를 노드의 정합 상태가 켜질 때마다 한 번 보낸다(path, 기대 형, 받은 값의 종류, 쓰기 출처)(LANDING-126, SURFACE-061). 소유자(12-7 답): "형변환 실패로 문제가 생기는 경우에 대한 대응은 FormType 이 하기로 했잖아. 그래서 개발단계에서는 중요한데, 리얼부터는 어쩔 수 없다고 생각하긴 해. warning 이면 되지않을까?"(LANDING-126) 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`."(LANDING-126)
+`onError` 기록의 level은 `warning`이다(LANDING-126). 값을 보존하므로 폼의 약속은 지켜진다(LANDING-126). error 층은 throw·거부·싱크로 드러나야 해 통보 3과 부딪힌다(LANDING-126). `SCHEMA_FORM_WARNING.MISFIT`을 노드의 정합 상태가 켜질 때마다 한 번 보낸다(path, 기대 형, 받은 값의 종류, 쓰기 출처)(LANDING-126, SURFACE-061). 소유자(12-7 답): "형변환 실패로 문제가 생기는 경우에 대한 대응은 FormType 이 하기로 했잖아. 그래서 개발단계에서는 중요한데, 리얼부터는 어쩔 수 없다고 생각하긴 해. warning 이면 되지않을까?"(LANDING-126) 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`."(LANDING-126)
 
 검증기가 있든 없든 보낸다(core의 parse가 찾는 것이라 검증 결과가 아니다)(LANDING-127).
 

@@ -36,7 +36,7 @@
 
 ## 설계 가치
 
-- 같은 값의 같은 참조: `value`·`typeMismatch`·`typeMismatches`·`children`은 커밋 사이에 같은 참조(NODE-058, VALUE-030, TEST-070). 방출은 원본을 참조 그대로 낸다(VALUE-037).
+- 같은 값의 같은 참조: `value`·`misfit`·`misfits`·`children`은 커밋 사이에 같은 참조(NODE-058, VALUE-030, TEST-070). 방출은 원본을 참조 그대로 낸다(VALUE-037).
 - 속도 우선: 모든 변경이 속도·메모리 비용을 적는다. `interpret`는 "쓰기 경계에서는 그 노드의 정적 목록(`schemaType`, `nullable`)으로 한 번 해석한다"(WRITE-098). 전이 단계는 "한 노드는 한 라운드에 한 번만 다시 해석한다", "비용: 라운드마다, 유효 목록이 바뀐 쓰인 노드에 한해 `interpret` 한 번이다"(WRITE-099).
 
 ## 부딪히는 자리와 고른 쪽

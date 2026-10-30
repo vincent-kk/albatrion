@@ -1,4 +1,6 @@
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
+import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
+import { collectRetainedSlotSources } from './collectRetainedSlotSources';
 
 /**
  * Capture array settlement results without comparing runtime object identities.
@@ -43,15 +45,15 @@ export const observeArraySettlement = (root: PlainNode): unknown => {
     globalState: runtime.globalState,
     counts: [...runtime.globalStateCounts],
     deliveryOrder: [...(runtime.deliveries ?? [])].map((node) => node.path),
-    latent: [...runtime.latentRaw],
-    mismatches: [...runtime.typeMismatchPaths],
+    latent: collectRetainedSlotSources(root),
+    misfits: [...runtime.misfitPaths],
     declarations: [...(runtime.committedDeclarationIds ?? [])],
     rules: [...(runtime.committedRuleValues ?? [])],
     ruleSources: [...(runtime.committedRuleKeysBySource ?? [])],
     ruleTargets: [...(runtime.committedRuleKeysByTarget ?? [])],
-    inactive: [...(runtime.inactiveValueEntries ?? [])],
-    inactiveMemo: [...runtime.inactiveValuesMemo],
-    mismatchMemo: [...(runtime.typeMismatchesMemo ?? [])],
+    inactive: readFieldNodeInactiveValues(root),
+    inactiveMemo: readFieldNodeInactiveValues(root),
+    misfitsMemo: [...(runtime.misfitsMemo ?? [])],
     warnings: [...(runtime.warningKeys ?? [])],
     warningRecords: [...(runtime.pendingWarningRecords ?? [])],
   };

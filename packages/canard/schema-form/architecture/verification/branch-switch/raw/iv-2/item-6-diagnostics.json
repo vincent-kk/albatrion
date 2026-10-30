@@ -1,0 +1,2074 @@
+{
+  "timed": false,
+  "operationsPerRow": 4,
+  "rowSummaries": [
+    {
+      "id": "switch-oneOf-80",
+      "operation": "switch",
+      "operations": 4,
+      "settlements": 8,
+      "writes": 8
+    },
+    {
+      "id": "switch-siblings-0",
+      "operation": "switch",
+      "operations": 4,
+      "settlements": 4,
+      "writes": 4
+    }
+  ],
+  "rows": [
+    {
+      "label": "switch-oneOf-80",
+      "target": "/kind",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map": 6,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set": 4,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set": 2,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@70:41": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@79:39": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13": 1,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@262:32": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18": 3,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19": 3,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:52": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@45:50": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@49:18": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@50:23": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@51:21": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@569:14": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19": 1,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24": 1
+      },
+      "computes": {
+        "": 1,
+        "/kind": 1,
+        "/payload_79_a": 1,
+        "/payload_79_b": 1,
+        "/payload_79_c": 1
+      },
+      "computeNonce": 5,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 4,
+          "changeSetSize": 4,
+          "changedPaths": [
+            "",
+            "/payload_79_c",
+            "/payload_79_b",
+            "/payload_79_a"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 4,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/kind",
+          "branch": false,
+          "value": true,
+          "selection": false
+        },
+        {
+          "path": "/payload_79_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/kind",
+        "/payload_79_a",
+        "/payload_79_b",
+        "/payload_79_c"
+      ],
+      "dependencyOwners": [
+        ""
+      ],
+      "entered": 3,
+      "exited": 3,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 321,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-oneOf-80",
+      "target": "/kind",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map": 6,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set": 4,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set": 2,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@70:41": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@79:39": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13": 1,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@262:32": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18": 3,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19": 3,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:52": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@45:50": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@49:18": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@50:23": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@51:21": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@569:14": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19": 1,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24": 1
+      },
+      "computes": {
+        "": 1,
+        "/kind": 1,
+        "/payload_0_a": 1,
+        "/payload_0_b": 1,
+        "/payload_0_c": 1
+      },
+      "computeNonce": 5,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 4,
+          "changeSetSize": 4,
+          "changedPaths": [
+            "",
+            "/payload_0_c",
+            "/payload_0_b",
+            "/payload_0_a"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 4,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/kind",
+          "branch": false,
+          "value": true,
+          "selection": false
+        },
+        {
+          "path": "/payload_0_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/kind",
+        "/payload_0_a",
+        "/payload_0_b",
+        "/payload_0_c"
+      ],
+      "dependencyOwners": [
+        ""
+      ],
+      "entered": 3,
+      "exited": 3,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 321,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-oneOf-80",
+      "target": "/kind",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map": 6,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set": 4,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set": 2,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@70:41": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@79:39": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13": 1,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@262:32": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18": 3,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19": 3,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:52": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@45:50": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@49:18": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@50:23": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@51:21": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@569:14": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19": 1,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24": 1
+      },
+      "computes": {
+        "": 1,
+        "/kind": 1,
+        "/payload_79_a": 1,
+        "/payload_79_b": 1,
+        "/payload_79_c": 1
+      },
+      "computeNonce": 5,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 4,
+          "changeSetSize": 4,
+          "changedPaths": [
+            "",
+            "/payload_79_c",
+            "/payload_79_b",
+            "/payload_79_a"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 4,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/kind",
+          "branch": false,
+          "value": true,
+          "selection": false
+        },
+        {
+          "path": "/payload_79_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/kind",
+        "/payload_79_a",
+        "/payload_79_b",
+        "/payload_79_c"
+      ],
+      "dependencyOwners": [
+        ""
+      ],
+      "entered": 3,
+      "exited": 3,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 321,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-oneOf-80",
+      "target": "/kind",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map": 6,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set": 4,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set": 2,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@70:41": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@79:39": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13": 1,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@262:32": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18": 3,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19": 3,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:52": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@45:50": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@49:18": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@50:23": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@51:21": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@569:14": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19": 1,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24": 1
+      },
+      "computes": {
+        "": 1,
+        "/kind": 1,
+        "/payload_0_a": 1,
+        "/payload_0_b": 1,
+        "/payload_0_c": 1
+      },
+      "computeNonce": 5,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 4,
+          "changeSetSize": 4,
+          "changedPaths": [
+            "",
+            "/payload_0_c",
+            "/payload_0_b",
+            "/payload_0_a"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 4,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/kind",
+          "branch": false,
+          "value": true,
+          "selection": false
+        },
+        {
+          "path": "/payload_0_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/kind",
+        "/payload_0_a",
+        "/payload_0_b",
+        "/payload_0_c"
+      ],
+      "dependencyOwners": [
+        ""
+      ],
+      "entered": 3,
+      "exited": 3,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 321,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-oneOf-80",
+      "target": "/kind",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map": 6,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set": 4,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set": 2,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@70:41": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@79:39": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13": 1,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@262:32": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18": 3,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19": 3,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:52": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@45:50": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@49:18": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@50:23": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@51:21": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@569:14": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19": 1,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24": 1
+      },
+      "computes": {
+        "": 1,
+        "/kind": 1,
+        "/payload_79_a": 1,
+        "/payload_79_b": 1,
+        "/payload_79_c": 1
+      },
+      "computeNonce": 5,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 4,
+          "changeSetSize": 4,
+          "changedPaths": [
+            "",
+            "/payload_79_c",
+            "/payload_79_b",
+            "/payload_79_a"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 4,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/kind",
+          "branch": false,
+          "value": true,
+          "selection": false
+        },
+        {
+          "path": "/payload_79_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/kind",
+        "/payload_79_a",
+        "/payload_79_b",
+        "/payload_79_c"
+      ],
+      "dependencyOwners": [
+        ""
+      ],
+      "entered": 3,
+      "exited": 3,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 321,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-oneOf-80",
+      "target": "/kind",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map": 6,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set": 4,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set": 2,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@70:41": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@79:39": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13": 1,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@262:32": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18": 3,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19": 3,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:52": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@45:50": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@49:18": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@50:23": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@51:21": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@569:14": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19": 1,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24": 1
+      },
+      "computes": {
+        "": 1,
+        "/kind": 1,
+        "/payload_0_a": 1,
+        "/payload_0_b": 1,
+        "/payload_0_c": 1
+      },
+      "computeNonce": 5,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 4,
+          "changeSetSize": 4,
+          "changedPaths": [
+            "",
+            "/payload_0_c",
+            "/payload_0_b",
+            "/payload_0_a"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 4,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/kind",
+          "branch": false,
+          "value": true,
+          "selection": false
+        },
+        {
+          "path": "/payload_0_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/kind",
+        "/payload_0_a",
+        "/payload_0_b",
+        "/payload_0_c"
+      ],
+      "dependencyOwners": [
+        ""
+      ],
+      "entered": 3,
+      "exited": 3,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 321,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-oneOf-80",
+      "target": "/kind",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map": 6,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set": 4,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set": 2,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@70:41": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@79:39": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13": 1,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@262:32": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18": 3,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19": 3,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:52": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@45:50": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@49:18": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@50:23": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@51:21": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@569:14": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19": 1,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24": 1
+      },
+      "computes": {
+        "": 1,
+        "/kind": 1,
+        "/payload_79_a": 1,
+        "/payload_79_b": 1,
+        "/payload_79_c": 1
+      },
+      "computeNonce": 5,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 4,
+          "changeSetSize": 4,
+          "changedPaths": [
+            "",
+            "/payload_79_c",
+            "/payload_79_b",
+            "/payload_79_a"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 4,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/kind",
+          "branch": false,
+          "value": true,
+          "selection": false
+        },
+        {
+          "path": "/payload_79_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/kind",
+        "/payload_79_a",
+        "/payload_79_b",
+        "/payload_79_c"
+      ],
+      "dependencyOwners": [
+        ""
+      ],
+      "entered": 3,
+      "exited": 3,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 321,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-oneOf-80",
+      "target": "/kind",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map": 6,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set": 4,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set": 2,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@70:41": 1,
+        "src/core/engine/settle/utils/dependencies/registerRecalculation.ts:Map@79:39": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@45:36": 1,
+        "src/core/engine/settle/utils/gates/prepareGateTableRound.ts:Map@48:13": 1,
+        "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts:Set@262:32": 1,
+        "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts:Map@14:50": 1,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@173:18": 3,
+        "src/core/engine/settle/utils/gates/getGateRegistry.ts:Map@174:19": 3,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts:Map@29:33": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@44:52": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@45:50": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@49:18": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Map@50:23": 1,
+        "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts:Set@51:21": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Map@569:14": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@16:19": 1,
+        "src/core/engine/settle/utils/slots/getSlotEntries.ts:Set@19:19": 3,
+        "src/core/engine/settle/utils/slots/commitSlotChanges.ts:Set@29:24": 1
+      },
+      "computes": {
+        "": 1,
+        "/kind": 1,
+        "/payload_0_a": 1,
+        "/payload_0_b": 1,
+        "/payload_0_c": 1
+      },
+      "computeNonce": 5,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 4,
+          "changeSetSize": 4,
+          "changedPaths": [
+            "",
+            "/payload_0_c",
+            "/payload_0_b",
+            "/payload_0_a"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 4,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_79_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/kind",
+          "branch": false,
+          "value": true,
+          "selection": false
+        },
+        {
+          "path": "/payload_0_c",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_b",
+          "branch": false,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/payload_0_a",
+          "branch": false,
+          "value": true,
+          "selection": true
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/kind",
+        "/payload_0_a",
+        "/payload_0_b",
+        "/payload_0_c"
+      ],
+      "dependencyOwners": [
+        ""
+      ],
+      "entered": 3,
+      "exited": 3,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 321,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-siblings-0",
+      "target": "/type",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Map": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/gates/flushPendingGateReads.ts:Set": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map": 2,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 1
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@479:20": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Map@107:19": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@154:36": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/gates/flushPendingGateReads.ts:Set@51:23": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@19:50": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@21:46": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set@24:30": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 1
+      },
+      "computes": {
+        "": 1,
+        "/type": 1,
+        "/x": 1,
+        "/y": 1
+      },
+      "computeNonce": 4,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 3,
+          "changeSetSize": 3,
+          "changedPaths": [
+            "",
+            "/y",
+            "/x"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 1,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/y",
+          "branch": false,
+          "value": false,
+          "selection": true
+        },
+        {
+          "path": "/x",
+          "branch": false,
+          "value": false,
+          "selection": true
+        },
+        {
+          "path": "/type",
+          "branch": false,
+          "value": true,
+          "selection": false
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/type"
+      ],
+      "dependencyOwners": [
+        "",
+        "/x",
+        "/y"
+      ],
+      "entered": 0,
+      "exited": 0,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 5,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-siblings-0",
+      "target": "/type",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map": 2,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@479:20": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@19:50": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@21:46": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set@24:30": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3
+      },
+      "computes": {
+        "": 1,
+        "/type": 1,
+        "/x": 1,
+        "/y": 1
+      },
+      "computeNonce": 4,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 3,
+          "changeSetSize": 3,
+          "changedPaths": [
+            "",
+            "/y",
+            "/x"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 1,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/y",
+          "branch": false,
+          "value": false,
+          "selection": true
+        },
+        {
+          "path": "/x",
+          "branch": false,
+          "value": false,
+          "selection": true
+        },
+        {
+          "path": "/type",
+          "branch": false,
+          "value": true,
+          "selection": false
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/type"
+      ],
+      "dependencyOwners": [
+        "",
+        "/x",
+        "/y"
+      ],
+      "entered": 0,
+      "exited": 0,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 5,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-siblings-0",
+      "target": "/type",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map": 2,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@479:20": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@19:50": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@21:46": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set@24:30": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3
+      },
+      "computes": {
+        "": 1,
+        "/type": 1,
+        "/x": 1,
+        "/y": 1
+      },
+      "computeNonce": 4,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 3,
+          "changeSetSize": 3,
+          "changedPaths": [
+            "",
+            "/y",
+            "/x"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 1,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/y",
+          "branch": false,
+          "value": false,
+          "selection": true
+        },
+        {
+          "path": "/x",
+          "branch": false,
+          "value": false,
+          "selection": true
+        },
+        {
+          "path": "/type",
+          "branch": false,
+          "value": true,
+          "selection": false
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/type"
+      ],
+      "dependencyOwners": [
+        "",
+        "/x",
+        "/y"
+      ],
+      "entered": 0,
+      "exited": 0,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 5,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    },
+    {
+      "label": "switch-siblings-0",
+      "target": "/type",
+      "kind": "callerReplace",
+      "contexts": 1,
+      "scratchNew": 0,
+      "scratchReused": 1,
+      "allocations": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map": 2,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map": 2,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map": 3
+      },
+      "allocationSites": {
+        "src/core/engine/settle/utils/scratch/DirtyPathSet.ts:Map@246:20": 1,
+        "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts:Set@479:20": 1,
+        "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts:Set@85:38": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@44:37": 1,
+        "src/core/engine/settle/utils/compute/primeHost.ts:Map@48:43": 1,
+        "src/core/engine/settle/utils/compute/dirtyChildren.ts:Set@22:16": 3,
+        "src/core/engine/settle/utils/compute/computeNode.ts:Map@204:21": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@19:50": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Map@21:46": 1,
+        "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts:Set@24:30": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Map@175:23": 1,
+        "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts:Set@186:16": 1,
+        "src/core/engine/settle/utils/transition/transitionSettlement.ts:Set@45:37": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Map@24:18": 1,
+        "src/core/engine/settle/utils/commit/commitGlobalState.ts:Set@25:21": 1,
+        "src/core/engine/record/utils/advanceFieldNodeRevision.ts:Map@27:16": 3
+      },
+      "computes": {
+        "": 1,
+        "/type": 1,
+        "/x": 1,
+        "/y": 1
+      },
+      "computeNonce": 4,
+      "rounds": [
+        {
+          "host": "",
+          "computeId": 1,
+          "round": 0,
+          "parentRound": null,
+          "openedNext": false,
+          "dirtyBefore": 3,
+          "changeSetSize": 3,
+          "changedPaths": [
+            "",
+            "/y",
+            "/x"
+          ],
+          "flags": {
+            "schemaChanged": true,
+            "changed": true,
+            "outputChanged": false,
+            "publishedChanged": false
+          },
+          "dirtyAfter": 1,
+          "shapeDirtyAfter": 1
+        }
+      ],
+      "injections": [],
+      "changed": [
+        {
+          "path": "",
+          "branch": true,
+          "value": true,
+          "selection": true
+        },
+        {
+          "path": "/y",
+          "branch": false,
+          "value": false,
+          "selection": true
+        },
+        {
+          "path": "/x",
+          "branch": false,
+          "value": false,
+          "selection": true
+        },
+        {
+          "path": "/type",
+          "branch": false,
+          "value": true,
+          "selection": false
+        }
+      ],
+      "settled": true,
+      "changedRaw": [
+        "/type"
+      ],
+      "dependencyOwners": [
+        "",
+        "/x",
+        "/y"
+      ],
+      "entered": 0,
+      "exited": 0,
+      "hosts": [
+        ""
+      ],
+      "propagatedHosts": [],
+      "closure": {
+        "scope": "",
+        "qualifies": true,
+        "useful": false,
+        "reasons": [],
+        "crossing": []
+      },
+      "staticEdgeCount": 5,
+      "emptyRounds": 0,
+      "deliveryAllocations": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set": 2,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set": 1
+      },
+      "deliveryAllocationSites": {
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@31:18": 1,
+        "src/core/engine/write/utils/chain/flushQueuedEvents.ts:Set@50:18": 1,
+        "src/core/engine/write/utils/chain/exitFieldNodeChain.ts:Set@139:24": 1,
+        "src/core/engine/write/utils/report/collectChainRecords.ts:Set@29:19": 1
+      },
+      "deliveryContexts": 0,
+      "deliveryScratchNew": 0,
+      "deliveryScratchReused": 0
+    }
+  ]
+}

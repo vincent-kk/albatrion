@@ -1,9 +1,14 @@
+import type { Nullable } from '@aileron/declare';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import type { ValidateFunction } from '../../type';
+import type { ValidateFunction } from '../../types/validator';
 import { readValidationEntry } from '../cache/readValidationEntry';
 import { isValidator } from '../guard/isValidator';
 import { recentReleaseList } from '../lifetime/recentReleaseList';
+
+/** A validator compile failure message that reports a duplicate schema id. */
+const DUPLICATE_SCHEMA_ID_MESSAGE = /already exists|duplicate/i;
 
 /**
  * Compile a replacement root before a binding transfers its old live chain.
@@ -13,7 +18,7 @@ import { recentReleaseList } from '../lifetime/recentReleaseList';
  */
 export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-): ValidateFunction | null => {
+): Nullable<ValidateFunction> => {
   const root = node.rootNode;
   const validator = root.runtime.validator;
   if (!isValidator(validator)) return null;
@@ -26,18 +31,30 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
     typeof authoredRoot.$id === 'string'
       ? authoredRoot.$id
       : undefined;
-  const duplicate =
+  let duplicate =
     !!id &&
     entry.failure instanceof Error &&
-    /already exists|duplicate/i.test(entry.failure.message) &&
-    [...recentReleaseList(validator).counts].some(
-      ([other, count]) =>
+    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message);
+  if (duplicate) {
+    duplicate = false;
+
+    const releasedRoots = [...recentReleaseList(validator).counts];
+    for (let index = 0, limit = releasedRoots.length; index < limit; index++) {
+      const [other, count] = releasedRoots[index];
+
+      if (
         other !== authoredRoot &&
         count > 0 &&
         typeof other === 'object' &&
         other !== null &&
-        other.$id === id,
-    );
+        other.$id === id
+      ) {
+        duplicate = true;
+        break;
+      }
+    }
+  }
+
   throw new SchemaFormError(
     FormErrorCode.ValidatorCompileFailed,
     'Whole-schema validation could not be compiled',

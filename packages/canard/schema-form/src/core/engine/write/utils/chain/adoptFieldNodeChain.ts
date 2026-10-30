@@ -1,9 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
-import { disposeFieldNodeTree } from '../../../settle';
+import { assertFieldNodeWritable, disposeFieldNodeTree } from '../../../settle';
 import { assertValidationRootReady } from '../../../validation';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
@@ -15,11 +17,15 @@ import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
  * @param previousRoot - Root being retired by the binding
  * @param nextRoot - Replacement with the same authored form lifetime
  * @returns Nothing; the replacement runtime owns pending chain state
+ * @throws SchemaFormError with FormErrorCode.DisposedNodeWrite when either root is already retired,
+ *   since adopting back into a retired root would make the adoption links a cycle
  */
 export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   previousRoot: Self,
   nextRoot: Self,
 ): void => {
+  assertFieldNodeWritable(previousRoot);
+  assertFieldNodeWritable(nextRoot);
   assertValidationRootReady(nextRoot);
   rebuildRootExternalErrors(previousRoot);
   const previous = previousRoot.runtime;
@@ -38,6 +44,8 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   next.onChangeBudget = previous.onChangeBudget;
   next.batchDepth = previous.batchDepth;
   next.batchWrites = previous.batchWrites;
+  next.visitDepth = previous.visitDepth;
+  next.visitBatchEntry = previous.visitBatchEntry;
   next.validationTargets = previous.validationTargets?.size
     ? new Set([nextRoot])
     : undefined;
@@ -77,14 +85,14 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       const record = dedupeWarningRecord(
         (next.warningKeys ??= new Set()),
         code,
-        '',
-        '',
+        $.Root,
+        $.Root,
         () => 'Form reset rebuilt the schema by reference',
         { details: { schemaPaths: paths } },
       );
       if (record) {
         (next.pendingWarningRecords ??= new Map()).set(
-          JSON.stringify([code, '']),
+          JSON.stringify([code, $.Root]),
           record,
         );
         next.chainOccurrences?.push({ kind: 'record', record });
@@ -96,6 +104,8 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   previous.entryDepth = 0;
   previous.batchDepth = 0;
   previous.batchWrites = undefined;
+  previous.visitDepth = 0;
+  previous.visitBatchEntry = undefined;
   previous.deliveries = undefined;
   previous.queuedNonSettleEvents = undefined;
   previous.stateChanged = undefined;

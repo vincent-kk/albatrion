@@ -1,15 +1,17 @@
+import { maxLite } from '@winglet/common-utils/math';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { DeriveConvergenceTargets } from '../../../blueprint';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../../derive';
 import type { DeriveRoundDecision } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import { sameValue } from '../../../utils/compute/sameValue';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
+import { registerRecalculation } from '../dependencies/registerRecalculation';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { registerRecalculation } from '../write/registerRecalculation';
 import { collectDeriveSourcePaths } from './collectDeriveSourcePaths';
-import { deriveShadowEvaluation } from './deriveShadowEvaluation';
 import { getDeriveState } from './getDeriveState';
 import { applyDeriveWrite } from './utils/applyDeriveWrite';
 
@@ -119,7 +121,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
         applyDeriveWrite(write, context);
         state.appliedRanks.set(
           write.targetPath,
-          Math.max(state.appliedRanks.get(write.targetPath) ?? 0, write.rank),
+          maxLite(state.appliedRanks.get(write.targetPath) ?? 0, write.rank),
         );
       }
       context.automatic = false;
@@ -142,7 +144,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
       }
       if (context.exceededBudget) return;
       if (skipConfirmation) {
-        if (deriveShadowEvaluation.enabled) {
+        if (engineModes.deriveShadow) {
           state.sourcePaths = context.loadScope
             ? undefined
             : collectDeriveSourcePaths(context);

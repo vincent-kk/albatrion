@@ -4,6 +4,7 @@ import { Checkbox } from 'antd-mobile';
 import type { CheckboxValue } from 'antd-mobile/es/components/checkbox';
 
 import { map } from '@winglet/common-utils/array';
+import { isArray } from '@winglet/common-utils/filter';
 import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -34,6 +35,7 @@ const FieldInputStringCheckbox = ({
   onChange,
   context,
   alias,
+  misfit,
 }: FieldInputStringCheckboxProps) => {
   const options = useMemo(() => {
     const labels = context.checkboxLabels || alias || {};
@@ -50,8 +52,10 @@ const FieldInputStringCheckbox = ({
   }, [context, jsonSchema, alias]);
 
   const initialValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
-    return map(defaultValue, (v) => '' + v);
+    return isArray(defaultValue) &&
+      defaultValue.every((v) => v === null || typeof v === 'string')
+      ? map(defaultValue, (v) => '' + v)
+      : undefined;
   }, [defaultValue]);
 
   const handleChange = useHandle((value: CheckboxValue[]) => {
@@ -63,7 +67,11 @@ const FieldInputStringCheckbox = ({
   });
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
+    <div
+      role="group"
+      aria-invalid={misfit || undefined}
+      style={{ display: 'flex', flexDirection: 'row', gap: 8 }}
+    >
       <Checkbox.Group
         disabled={disabled}
         defaultValue={initialValue}

@@ -10,7 +10,8 @@ import {
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
-import type { ValidationIssue, Validator } from '../type';
+import type { ValidationIssue } from '../types/issue';
+import type { Validator } from '../types/validator';
 import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
 import { requestFieldNodeValidation } from '../utils/run/requestFieldNodeValidation';
 
@@ -86,7 +87,7 @@ describe('validation execution', () => {
 
   it('VALIDATE-043 FRAGMENT-053 routes root and child issues without altering the verdict', async () => {
     const issues = [
-      { dataPath: '/', message: 'root' },
+      { dataPath: '', message: 'root' },
       { dataPath: '/name', message: 'child' },
     ];
     const validator: Validator = {

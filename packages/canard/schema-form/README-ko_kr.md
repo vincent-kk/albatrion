@@ -154,6 +154,8 @@ interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
+  /** Discard cached analysis and replace this form's tree with reset options. */
+  rebuild: FormHandle<Schema, Value>['reset'];
   /** JSONPointer 경로의 노드 찾기 */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** JSONPointer 경로에 맞는 모든 노드 찾기 */
@@ -185,6 +187,7 @@ interface FormHandle<
 - 첫 마운트 전에도 조회는 예외를 던지지 않습니다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체를 반환합니다.
 - `showError(false)`는 오류를 숨기지 않습니다. 표시 여부를 Form의 `showError` prop에 되돌려 줍니다.
 - `reset()`은 첨부 파일 맵도 비우고 `showError(true)`로 켠 표시도 풀어, 오류 표시가 다시 `showError` prop을 따르게 합니다.
+- `rebuild(option?)`은 이 스키마 객체의 청사진 캐시를 폐기하고 `reset`과 같은 옵션으로 현재 폼의 트리를 새로 만듭니다. 같은 스키마 객체를 계속 쓰는 다른 폼은 일반 `reset`에서도 기존 트리를 유지하며, 그 폼 자신의 `rebuild`나 새 마운트에서 새 청사진을 받습니다.
 
 #### AttachedFilesMap
 
@@ -513,7 +516,7 @@ FieldInput의 조건은 함수 또는 객체를 사용하여 정의할 수 있�
 type FieldInputHint = {
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
-  typeMismatch: boolean;
+  misfit: boolean;
   path: string;
   required: boolean;
   nullable: boolean;
@@ -568,10 +571,10 @@ interface FieldInputProps<
   node: Node;
   /** 노드 종류 (예: 'string', 'number', 'object', 'array') */
   type: Node['type'];
-  /** 작성한 허용 종류('integer' 포함) */
+  /** 작성한 허용 종류('integer' 포함), virtual 노드는 undefined */
   schemaType: Node['schemaType'];
   /** 저장된 값이 허용 종류와 어긋나는지 */
-  typeMismatch: Node['typeMismatch'];
+  misfit: Node['misfit'];
   /** FieldInput 컴포넌트에 할당된 필드 노드의 이름 */
   name: Node['name'];
   /** FieldInput 컴포넌트에 할당된 필드 노드의 경로 */
@@ -928,7 +931,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>
@@ -1357,6 +1360,27 @@ export const AdvancedForm = () => {
 ```
 
 **참고**: 확장 JSONPointer 문법 (`..`, `.`, `*`)은 RFC 6901 사양에 대한 의도적인 확장으로, 향상된 폼 조작 기능을 제공하기 위해 구현되었습니다. 이러한 확장은 표준에서 벗어나지만, 실제 애플리케이션에서 일반적으로 요구되는 복잡한 폼 상호작용 및 탐색 패턴을 지원하는 데 필수적입니다.
+
+### 하위 트리 방문
+
+`node.visitSubtree(visitor)`는 노드 자신과 그 아래의 모든 노드에 `visitor`를 부릅니다. 폼의 한 구역을 한 번에 읽거나 고칠 때 씁니다.
+
+```typescript
+// /profile 아래의 문자열 필드를 모두 비우되, /profile/locked와 그 아래는 그대로 둡니다.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // 이 노드의 하위를 건너뜀
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **순서.** 노드 자신이 먼저이고, 하위는 전위 순서로, 형제는 `children` 순서로 방문합니다. 터미널 노드는 잎입니다.
+- **건너뛰기.** `false`를 돌려주면 그 노드의 하위만 건너뛰고 다음 형제로 이어 갑니다. `undefined`를 포함한 다른 반환값은 자식으로 들어갑니다.
+- **범위.** 폼 안의 노드에서는 현재 형상만 방문하므로, 조건이 제외한 필드는 방문하지 않습니다. 두 번 닿는 노드는 한 번만 방문하고, 순회 중에 생긴 노드는 방문된다는 보장이 없습니다. 폼에서 빠진 노드(조건이나 배열 변경으로 필드가 빠지기 전에 보관한 참조)에서 부르면, 그 노드와 함께 빠진 하위 트리를 걷습니다.
+- **쓰기.** 순회 중의 값 쓰기는 순회가 끝날 때 한 번에 반영되므로, 순회 중에 읽는 값은 순회 전의 값입니다. 상태와 외부 오류의 변경(`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`)은 데이터를 바로 바꾸지만, 그 이벤트는 `request`의 이벤트처럼 순회가 끝날 때 한 번 전달됩니다. 바깥 `node.batch(fn)` 안에서는 모두 그 batch의 끝까지 기다립니다. 순회 안의 폼 `reset`과 `resetSubtree()`는 그래도 바로 적용됩니다.
+- **폼에서 빠진 노드에 쓰기.** 이런 쓰기는 순회나 batch 안에서도 폼 안의 필드를 바꾸지 않습니다. 그 경로에 같은 종류의 필드가 있으면 아무 일도 하지 않고, 없으면 값을 그 경로에 맡겨 두었다가 그런 필드가 돌아올 때 불러옵니다. 그 경로에 필드가 있는지는 같은 batch나 순회 안의 앞선 변경이 아니라 마지막으로 커밋된 형상으로 판단하므로, 같은 batch나 순회가 그 필드를 막 제거했더라도 이런 쓰기는 버려집니다. 같은 batch나 순회가 제거하는 필드의 참조는 쓰는 때에 아직 폼 안에 있으므로, 그 쓰기는 다른 쓰기와 똑같이 처리됩니다.
+- **예외.** visitor가 던지면 이미 한 쓰기를 반영한 뒤 예외를 다시 던집니다. 리스너 안의 순회가 값 쓰기를 했다면, `batch`와 같이 그 예외는 `visitSubtree`를 부른 코드에 닿지 않습니다.
+- **비용.** 순회는 쓰기가 있을 때까지 아무것도 열지 않으므로, 읽기만 하는 순회는 추가 비용이 없고 리스너 안에서도 됩니다. 리스너 안의 쓰기는 다른 리스너 쓰기와 같은 규칙을 따릅니다.
+- **FormHandle.** `FormHandle`에는 `visitSubtree`가 없습니다. `formRef.current?.node`나 `findNode`로 얻은 노드에서 부르십시오.
 
 ---
 
@@ -2528,6 +2552,7 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 - **enum select는 `undefined`를 선택 없음으로 보여 줍니다.** 기본 문자열 enum select는 값이 `undefined`이면 맨 앞에 선택된 빈 비활성 선택지를 보여 주며, enum에 `''`가 있어도 같습니다. enum 밖의 값은 지금처럼 맨 앞 비활성 선택지로 보입니다.
 - **체크박스와 라디오 선택지 id에 순번이 붙습니다.** 각 선택지의 `id`는 이제 `${path}-${index}`이고, 레이블의 `htmlFor`도 같이 바뀝니다. 이 입력을 `#<path>`로 찾던 선택자는 고쳐야 합니다. 기본 렌더러의 label과 `Form.Label`은 항상 `htmlFor={path}`와 `id="label:${path}"`를 둘 다 가지며, branch의 legend는 id만 가집니다. 라벨을 그리는 곳은 어떤 입력이 선택되었는지 알 수 없기 때문입니다. 입력 id는 루트에서 빈 문자열이고 나머지는 `/`로 시작하므로, `label:` 접두어는 어떤 입력 id와도 겹치지 않습니다. 내장 checkbox·radio의 선택지 컨테이너는 `role="group"`과 `aria-labelledby="label:${path}"`를 가지므로 묶음을 제목으로 찾을 수 있습니다(`getByRole('group', { name })`). 이런 묶음에서는 `htmlFor`가 가리키는 요소가 없지만 해롭지 않습니다. 사용자 `FieldInput`과 `FieldRenderer`도 같은 규약을 따릅니다. 단일 입력은 `id={path}`를 달아 제목과 연결하고, 묶음 컨테이너는 `aria-labelledby`로 `label:${path}`를 참조합니다. 기본 렌더러에서 checkbox 배열은 같은 legend로 이름 붙은 fieldset이기도 하므로, 그 fieldset 안에서 찾으세요. `id="label:${path}"`를 가진 제목을 그리지 않는 자리(루트, 배열 항목, `Form.Label` 없는 `Form.Input`, 그 id를 빠뜨린 사용자·플러그인 렌더러)에서는 묶음 컨테이너의 `aria-labelledby`가 가리킬 대상이 없으므로 렌더러가 묶음의 이름을 직접 주어야 합니다. `Form.Label`은 두 속성을 `path` prop 그대로 만들므로, 입력·묶음과 맞으려면 절대 경로(`size`나 `./size`가 아닌 `/size`)를 넘기세요.
 - **`oneOf` / `anyOf` 분기를 더 이상 `const` 태그로 고르지 않습니다.** 분기끼리 `const` 태그만 다르면 호스트에 `controls.discriminator: '<속성>'`을 선언하거나 각 분기에 `controls.active`를 선언하세요. 둘 다 없으면 모든 분기가 활성 상태로 남습니다.
+- **FieldInput 시험 객체의 `schemaType: 'virtual'`은 더 이상 virtual 노드에 맞지 않습니다.** `schemaType`은 JSON 형만 담으므로 virtual 노드의 `schemaType`은 `undefined`이고, `jsonSchema.type`은 그대로 `'virtual'`입니다. virtual 노드는 `type: 'virtual'`로, 또는 `schemaType: undefined`를 직접 적은 시험 객체로 고르십시오.
 - **직접 만든 검증기 플러그인은 `compileGuard`를 구현해야 합니다.** `ValidatorPlugin`은 이제 `compile` 옆에 `compileGuard(root, pointer)`가 필요하고, `release(root)`는 선택입니다. 공식 ajv6·ajv7·ajv8 플러그인은 이미 구현되어 있습니다.
 
 `onValidate`는 0.16과 같이 동작합니다. 보고할 오류 목록이나 `errors` prop이 바뀔 때 호출되고, 결과가 같은 재검증에서는 호출되지 않습니다.

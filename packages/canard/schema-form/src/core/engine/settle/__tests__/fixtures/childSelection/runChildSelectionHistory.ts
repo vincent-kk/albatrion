@@ -3,6 +3,7 @@ import type { TestGuardMode } from '@/schema-form/core/__tests__/fixtures/create
 import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
 import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core/surface';
+import type { SetValueOption } from '@/schema-form/core/surface';
 
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
@@ -16,7 +17,15 @@ export interface ChildSelectionHistory {
   /** Root input used for the first mounted settlement. */
   input?: unknown;
   /** Sequential public writes; an empty path replaces the root. */
-  writes: readonly { path: string; value: unknown }[];
+  writes: readonly {
+    path: string;
+    value: unknown;
+    option?: SetValueOption;
+    context?: Record<string, unknown>;
+    reset?: 'form' | 'subtree';
+  }[];
+  /** Optional initial context for histories containing context-dependent gates. */
+  context?: Record<string, unknown>;
   /** Attach listeners to every occurrence, including ones created during a write. */
   allListeners?: boolean;
   /** Select a real or deliberately failing if validator; omission keeps it absent. */
@@ -28,10 +37,16 @@ export interface ChildSelectionHistory {
 /**
  * Observe a real mounted form, publications, revisions and synchronous listener payloads.
  * @param fixture - Fixed schema, mount input, public input history and listener mode
+ * @param performReset - Load probe's injected reset operations; historical builds need no reset imports
  * @returns Ordered observations after mounting and after every write
  */
 export const runChildSelectionHistory = (
   fixture: ChildSelectionHistory,
+  performReset?: (
+    root: ChildSelectionRuntimeNode,
+    target: ChildSelectionRuntimeNode,
+    write: ChildSelectionHistory['writes'][number],
+  ) => void,
 ): unknown[] => {
   const results: unknown[] = [];
   const events: unknown[] = [];
@@ -93,7 +108,6 @@ export const runChildSelectionHistory = (
         diagnostics: root.runtime.diagnostics,
         commit: root.runtime.commitNumber,
         globalState: root.runtime.globalState,
-        latent: root.runtime.latentRaw,
         deliveryOrder: [...(root.runtime.deliveries ?? [])],
         events,
         changes,
@@ -113,10 +127,13 @@ export const runChildSelectionHistory = (
       disableAutomaticWrites: fixture.disableAutomaticWrites,
       onChange: (value) => changes.push(normalizeSelectionObservation(value)),
     }) as unknown as typeof root;
+    // This pinned-HEAD observer inspects latent storage and its original stage records.
+    Reflect.set(root.runtime, 'slots', 'off');
   } catch (failure) {
     return [normalizeSelectionObservation({ failure })];
   }
   occurrences.push(root);
+  if (fixture.context) root.runtime.context = fixture.context;
   subscribe(root);
   const factory = root.runtime.nodeFactory!;
   root.runtime.nodeFactory = (entry, parent, runtime) => {
@@ -140,9 +157,15 @@ export const runChildSelectionHistory = (
   for (const write of fixture.writes) {
     failure = undefined;
     try {
+      if (write.context) root.runtime.context = write.context;
       const target = write.path ? root.find(write.path) : root;
       if (!target) throw new Error(`Missing write target ${write.path}`);
-      target.setValue(write.value);
+      if (write.reset) {
+        if (!performReset) throw new Error('Missing reset observer');
+        performReset(root, target, write);
+      } else if (write.option !== undefined)
+        target.setValue(write.value, write.option);
+      else target.setValue(write.value);
     } catch (cause) {
       failure = cause;
     }

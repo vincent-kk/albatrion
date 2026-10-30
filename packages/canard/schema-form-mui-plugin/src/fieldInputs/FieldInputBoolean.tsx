@@ -29,6 +29,7 @@ const FieldInputBoolean = ({
   label: labelProp,
   size: sizeProp = 'medium',
   hideLabel,
+  misfit,
 }: FieldInputBooleanProps) => {
   const [label, size] = useMemo(() => {
     if (hideLabel) return [undefined, sizeProp || context.size];
@@ -63,6 +64,7 @@ const FieldInputBoolean = ({
           defaultChecked={defaultChecked}
           onChange={handleChange}
           size={size}
+          slotProps={{ input: { 'aria-invalid': misfit || undefined } }}
         />
       }
     />

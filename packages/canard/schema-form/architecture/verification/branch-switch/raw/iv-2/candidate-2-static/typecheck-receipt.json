@@ -1,0 +1,7 @@
+{
+  "productCommit": "81e4b05a2",
+  "command": "yarn workspace @canard/schema-form typecheck",
+  "exitCode": 0,
+  "alsoIncludedInFinalDesignatedBuild": true,
+  "sourceUnchangedSinceCheck": true
+}

@@ -1,0 +1,114 @@
+{
+  "baselineCommit": "687c1d92402f1fd689c17afc6e0842861345d8c6",
+  "candidateCommit": "7eb383005c77472a241b09ed15b1ae213d49f4b2",
+  "node": "v24.20.0",
+  "nodeOptions": "default",
+  "deliveryNode": "v26.11.1",
+  "projects": {
+    "unit": {
+      "command": "yarn workspace @canard/schema-form test --run --project unit",
+      "files": 579,
+      "passed": 3855,
+      "todo": 1,
+      "failed": 0,
+      "reportSha256": "387ca341e5199fa9fda46b842ad4c7e1e3fde72419f0fe47ed971bbabdd58145"
+    },
+    "render": {
+      "command": "yarn workspace @canard/schema-form test --run --project render",
+      "files": 131,
+      "passed": 766,
+      "todo": 0,
+      "failed": 0,
+      "reportSha256": "bf116c034bf84c413d24295dc166f366401c9ec429d4804f8cdd3c1f3b835a14"
+    },
+    "react18": {
+      "command": "yarn workspace @canard/schema-form test --run --project react18",
+      "files": 131,
+      "passed": 766,
+      "todo": 0,
+      "failed": 0,
+      "reportSha256": "c27d1d4d7449e9ac6ff34d38db40ea0677487a649a2a64f7d4c448b8424cb425"
+    },
+    "production": {
+      "command": "yarn workspace @canard/schema-form test --run --project production",
+      "files": 9,
+      "passed": 20,
+      "todo": 0,
+      "failed": 0,
+      "reportSha256": "f52940aca5aa738ada6e4b12bdac0c7887680f4085f6232ceac62fd8d3d8ce80"
+    },
+    "storybook": {
+      "command": "yarn workspace @canard/schema-form test --run --project storybook",
+      "files": 100,
+      "passed": 251,
+      "todo": 0,
+      "failed": 0,
+      "reportSha256": "8d6240e75318e73a0c93500d3a9a3928fe766559403e63428dfe84431d7f3c9d"
+    },
+    "verify": {
+      "command": "yarn workspace @canard/schema-form test:verify --run",
+      "files": 715,
+      "passed": 4665,
+      "todo": 1,
+      "failed": 0,
+      "reportSha256": "a324c157846a91c0b423aebe3afb3c07f55936fb6ce20517fdece08a4ab4e312"
+    }
+  },
+  "staticGates": {
+    "typecheck": {
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form typecheck"
+    },
+    "lint": {
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form lint"
+    },
+    "build": {
+      "exitCode": 0,
+      "command": "yarn workspace @canard/schema-form build"
+    }
+  },
+  "targeted": {
+    "unit": {
+      "files": 80,
+      "passed": 525,
+      "failed": 0,
+      "reportSha256": "92ff6d19e54a0de5ec118e9fba31b943603706219fb649a932557be041b9f106"
+    },
+    "render": {
+      "files": 1,
+      "passed": 2,
+      "failed": 0,
+      "reportSha256": "e6c7035d53ff5e03e2e15e4c90ca9a6217a7eb1592ef89930abb438d9f3934ac"
+    }
+  },
+  "storybookSharded": false,
+  "heapRetries": 0,
+  "formalWindowRun": false,
+  "sequentialProcesses": true,
+  "notes": [
+    "Candidate 6 results are separate from the measured candidate 5 window and its final raw files.",
+    "Production is test --run --project production with NODE_ENV=test; test:production was not invoked.",
+    "Build exited 0 before the full unit process started; projects ran one process at a time."
+  ],
+  "fail-first": {
+    "reportSha256": "ae2e3f4e39811be2009b99bf838ae089cf68c8757b716509cd178bcbd2d9b371"
+  },
+  "fixed": {
+    "reportSha256": "8e88834bcaa4d7c1a921f227b7de9188bc401f32a30cf18956c95db17cb21c34"
+  },
+  "runtimeBundles": {
+    "index.mjs": {
+      "bytes": 814952,
+      "sha256": "bf83e2beb934a400083c785272ae6c4161126e43182d0db0606b27676adcb040"
+    },
+    "index.node.mjs": {
+      "bytes": 814210,
+      "sha256": "e02f52140198c010bf3f3bedeeb7abb341704bafeabf026167d5cee22c761531"
+    },
+    "index.cjs": {
+      "bytes": 832016,
+      "sha256": "e0d6893a1eb66db9ba2e4b22af2c11e7450508da1f5ebdc154de0cc264ff7134"
+    }
+  }
+}

@@ -679,3 +679,5 @@ per-child layout effect는 replace layout 범주 전체 2.100 ms 안에 포함�
 ## 산출물
 
 `p*.json`: 쓰기별 wall·active·commit·monotonic window. `p*.cpuprofile.gz`: 원 V8 CPU 프로필. `p*.attribution.json.gz`: 쓰기별 배타 귀속·self 함수·미귀속 이유. `summary.json`: pooled 통계. `per-write.csv`: 301개 쓰기 × 12범주. `audit.json`: 동일성·순차성·정상 종료 검사. `execution-*.json`: 재현 argv·실행 시각. `r*`: 별도 helper 인라인 보조 자료입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `3a637c4cd967`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

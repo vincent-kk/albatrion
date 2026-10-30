@@ -1,5 +1,5 @@
 import type { BlueprintSchema } from '../../../blueprint';
-import type { Validator } from '../../type';
+import type { Validator } from '../../types/validator';
 
 /** Registrations owned by one selected validator instance. */
 export interface ValidationLifetime {

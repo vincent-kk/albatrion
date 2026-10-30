@@ -9,8 +9,8 @@ import { findScenario } from '../components/findScenario';
 export default { title: 'Features/Values/EmptyAndClear', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;
 
-/** Shared scenario `REACT-027 clearing a nullable string sends null instead of an empty string`. */
-export const NullableClearSendsNull: Story = createFeatureStory(findScenario([emptyDraftScenario, nonNullableEmptyDraftScenario], 'REACT-027 clearing a nullable string sends null instead of an empty string'));
+/** Shared scenario `REACT-027 clearing a nullable string sends undefined instead of an empty string`. */
+export const NullableClearSendsUndefined: Story = createFeatureStory(findScenario([emptyDraftScenario, nonNullableEmptyDraftScenario], 'REACT-027 clearing a nullable string sends undefined instead of an empty string'));
 
 /** Shared scenario `LANDING-196 non-nullable empty input sends undefined`. */
 export const NonNullableClearSendsUndefined: Story = createFeatureStory(findScenario([emptyDraftScenario, nonNullableEmptyDraftScenario], 'LANDING-196 non-nullable empty input sends undefined'));

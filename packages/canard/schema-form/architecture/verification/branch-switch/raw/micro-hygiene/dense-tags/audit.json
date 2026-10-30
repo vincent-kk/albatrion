@@ -1,0 +1,177 @@
+{
+  "baseline": "538fe2e5ecc9b636412d52b86e0dcd6cd3cb07b8",
+  "removed": 5,
+  "producer": "readDiscriminatorBranches uses Object.freeze([...values])",
+  "removedSites": [
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 124,
+      "expression": "index in items",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요",
+      "originalAuditLine": 124,
+      "lineBeforeRemoval": 127,
+      "conditionBeforeRemoval": "if (!(index in discriminatorValues)) {",
+      "decision": "결정됨: 제거"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 209,
+      "expression": "index in values",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요",
+      "originalAuditLine": 209,
+      "lineBeforeRemoval": 209,
+      "conditionBeforeRemoval": "if (index in values && !isGateSelectionLiteral(values[index])) return false;",
+      "decision": "결정됨: 제거"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "line": 70,
+      "expression": "index in values",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요",
+      "originalAuditLine": 70,
+      "lineBeforeRemoval": 69,
+      "conditionBeforeRemoval": "if (!(index in values)) continue;",
+      "decision": "결정됨: 제거"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "line": 55,
+      "expression": "index in values",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요",
+      "originalAuditLine": 55,
+      "lineBeforeRemoval": 54,
+      "conditionBeforeRemoval": "if (index in values && values[index] === value) {",
+      "decision": "결정됨: 제거"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "line": 65,
+      "expression": "index in items",
+      "classification": "판별자 태그의 엔진 동결 복사본, 검사 무해하나 불필요",
+      "originalAuditLine": 65,
+      "lineBeforeRemoval": 68,
+      "conditionBeforeRemoval": "if (!(index in discriminatorValues)) {",
+      "decision": "결정됨: 제거"
+    }
+  ],
+  "remainingCount": 23,
+  "remaining": [
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 222,
+      "expression": "index in tuple"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 62,
+      "expression": "index in fields"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 77,
+      "expression": "index in fields"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 155,
+      "expression": "position in values"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 90,
+      "expression": "index in controlFields"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 118,
+      "expression": "index in fieldTargets"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 99,
+      "expression": "index in branches"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts",
+      "line": 51,
+      "expression": "index in allOfSchemas"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 115,
+      "expression": "index in keywordSchemas"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 135,
+      "expression": "index in child"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 64,
+      "expression": "index in values"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/controls/hasKeepFields.ts",
+      "line": 17,
+      "expression": "index in fields"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemEntries.ts",
+      "line": 27,
+      "expression": "index in entries"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "line": 45,
+      "expression": "index in controlFields"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/effectiveType.ts",
+      "line": 44,
+      "expression": "index in values",
+      "classification": "작성 입력(스키마 type 목록), 검사 유지"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 37,
+      "expression": "index in value"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 55,
+      "expression": "index in value"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 64,
+      "expression": "index in required"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 35,
+      "expression": "index in source"
+    },
+    {
+      "file": "src/core/engine/validation/utils/read/readFieldNodeErrors.ts",
+      "line": 28,
+      "expression": "index in items"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx",
+      "line": 62,
+      "expression": "index in prev"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 32,
+      "expression": "index in authored"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldMap.ts",
+      "line": 27,
+      "expression": "index in ChildFields"
+    }
+  ],
+  "effectiveTypeUnchanged": true
+}

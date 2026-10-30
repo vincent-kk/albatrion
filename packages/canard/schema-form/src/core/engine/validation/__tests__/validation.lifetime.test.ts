@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
 import { evictValidationRoot } from '../utils/lifetime/evictValidationRoot';
 import { releaseValidationRoot } from '../utils/lifetime/releaseValidationRoot';
 import { retainValidationRoot } from '../utils/lifetime/retainValidationRoot';

@@ -4,7 +4,7 @@ import { PluginManager } from '@/schema-form/app/plugin';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import { useFieldRendererContext } from '@/schema-form/providers';
 
-import type { FormLabelProps } from './type';
+import type { FormLabelProps } from './types/props';
 
 /**
  * Renders an accessible label for form fields.
@@ -60,7 +60,7 @@ export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
       style={style}
       className={className}
       htmlFor={path}
-      id={path !== undefined ? `label:${path}` : undefined}
+      id={path !== undefined ? 'label:' + path : undefined}
     >
       <FieldProxy
         path={path}

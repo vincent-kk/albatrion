@@ -2,6 +2,7 @@ import type { BlueprintNodeKind } from '@/schema-form/core/engine/blueprint';
 import { find } from '@/schema-form/core/engine/navigation';
 
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
+import { readRetainedSlotRaw } from './readRetainedSlotRaw';
 
 /**
  * Read the source owned by a live occurrence or its kind-specific latent entry.
@@ -16,7 +17,5 @@ export const sourceAt = (
   kind?: BlueprintNodeKind,
 ): unknown => {
   const live = find(root, path);
-  return live
-    ? live.raw
-    : root.runtime.latentRaw.get(JSON.stringify([path, kind]));
+  return live ? live.raw : readRetainedSlotRaw(root, path, kind);
 };

@@ -1,0 +1,391 @@
+{
+  "changed": [
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applySchemaContribution.ts",
+      "line": 51
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applySchemaContribution.ts",
+      "line": 73
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applySchemaContribution.ts",
+      "line": 78
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/mergeSchemaContributions.ts",
+      "line": 41
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts",
+      "line": 27
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getRuleTargets.ts",
+      "line": 39
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 110
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 190
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 192
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getWatchPaths.ts",
+      "line": 32
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 25
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 31
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 37
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 43
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 99
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 119
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 120
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 107
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/readSettlementSource.ts",
+      "line": 30
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 180
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 55
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 84
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 95
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 96
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "line": 39
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "line": 51
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 681
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerProjectionChanges.ts",
+      "line": 24
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 41
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 49
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 55
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 65
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 67
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "line": 58
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/watchGateSelectionDirty.ts",
+      "line": 20
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/watchGateSelectionDirty.ts",
+      "line": 21
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/readExplicitWriteKind.ts",
+      "line": 41
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/applySlotOverlay.ts",
+      "line": 34
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 121
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 141
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/parsePointerSegment.ts",
+      "line": 33
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/parseStandardPointer.ts",
+      "line": 32
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/parseStandardPointer.ts",
+      "line": 33
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 153,
+      "reason": "optional result preserves undefined; reviewed separately"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/readDepartingAncestorPolicy.ts",
+      "line": 29,
+      "reason": "optional result preserves undefined; reviewed separately"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/getChildDistribution.ts",
+      "line": 27,
+      "reason": "optional result preserves undefined; reviewed separately"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemSchemaPath.ts",
+      "line": 20,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/surface/utils/binding/interpretFieldNodeDraft.ts",
+      "line": 31,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/hasWildcardPath.ts",
+      "line": 16,
+      "reason": "mount/setup/render path"
+    }
+  ],
+  "kept": [
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 169,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 52,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 53,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 43,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 54,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferLiteralTypes.ts",
+      "line": 57,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 119,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts",
+      "line": 28,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 121,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 126,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 74,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 82,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 83,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/endsWithBranchIndex.ts",
+      "line": 20,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/getPathManager/getPathManager.ts",
+      "line": 25,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityNumber.ts",
+      "line": 31,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/utils/registerBlueprintDependency.ts",
+      "line": 42,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "line": 53,
+      "reason": "optional result preserves undefined; reviewed separately"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "line": 54,
+      "reason": "optional result preserves undefined; reviewed separately"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 17,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 19,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 21,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 24,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 35,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 62,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/unionAllowedTypes.ts",
+      "line": 14,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/unionAllowedTypes.ts",
+      "line": 15,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/unionAllowedTypes.ts",
+      "line": 19,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "line": 37,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "line": 48,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 144,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx",
+      "line": 75,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 27,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 58,
+      "reason": "mount/setup/render path"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 84,
+      "reason": "mount/setup/render path"
+    }
+  ],
+  "before": 84,
+  "after": 35,
+  "fusedChains": [
+    "src/core/engine/settle/utils/settlement/finishSettlement.ts",
+    "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+    "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts"
+  ],
+  "selectionLoop": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts"
+}

@@ -1,0 +1,38 @@
+{
+  "policy": "458C-03",
+  "verdict": "environment-failure / indeterminate",
+  "mountProcessesCompleted": 3,
+  "mountRequired": 40,
+  "abCommandsStarted": 153,
+  "abUsedForVerdict": false,
+  "failedCpuPrecheck": {
+    "startedAt": "2026-10-28T13:18:55.706Z",
+    "quietSince": "2026-10-28T13:19:00.837Z",
+    "heavy": [
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 113.85159012941787
+      }
+    ]
+  },
+  "rawMountCopies": [
+    {
+      "file": "mount/mount-0-B4.stdout.json.gz",
+      "uncompressedSha256": "7e00b6b2561b52d08b6b25a7f68b1decdf8a16dbd1ddd50cff2a8a57f2f2b6be",
+      "uncompressedBytes": 1291160
+    },
+    {
+      "file": "mount/mount-0-B7.stdout.json.gz",
+      "uncompressedSha256": "ed93241d80ce9a441f807fd98b2c237be05e73e96fe7844d86f5a9bdef737a07",
+      "uncompressedBytes": 1879296
+    },
+    {
+      "file": "mount/mount-0-S.stdout.json.gz",
+      "uncompressedSha256": "a54245172b2ed0f9bb14070ee536cca8c8039fef797c38038d531aabad5979ec",
+      "uncompressedBytes": 1030423
+    }
+  ],
+  "coordinatorAuthorizedFreshContinuousWindow": true,
+  "originalManifestsQuietSamplesAndLogsKeptOutsideRepository": true
+}

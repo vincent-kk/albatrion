@@ -2,12 +2,15 @@ import {
   type FC,
   type ReactElement,
   StrictMode,
+  cloneElement,
   createRef,
   useState,
 } from 'react';
 
 import { act, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+import { isTruthy } from '@winglet/common-utils/filter';
 
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
@@ -197,6 +200,10 @@ export interface FormHarness {
   setValue: (value: any, option?: number) => Promise<void>;
   /** Load current Form props synchronously, then wait for commit reconciliation. */
   reset: () => Promise<void>;
+  /** Re-render the same Form with a new context prop and drain its effects. */
+  rerenderContext: (
+    context: Readonly<Record<string, unknown>>,
+  ) => Promise<void>;
   validate: () => Promise<readonly ValidationIssue[]>;
 
   // ---- async draining ----
@@ -308,6 +315,13 @@ export const renderForm = async (
     handle: ref.current as FormHandle,
     container,
     user,
+    rerenderContext: async (context) => {
+      const next = cloneElement(form, { context });
+      await act(async () => {
+        utils.rerender(strictMode ? <StrictMode>{next}</StrictMode> : next);
+      });
+      await flush();
+    },
     lastValue: () => changes[changes.length - 1],
     changeLog: () => changes.slice(),
     caughtErrors: () =>
@@ -356,7 +370,7 @@ export const renderForm = async (
     errorTexts: () =>
       Array.from(container.querySelectorAll('em'))
         .map((el) => el.textContent?.trim() ?? '')
-        .filter(Boolean),
+        .filter(isTruthy),
 
     node: (path) => ref.current?.findNode(path) ?? null,
     getValue: () => ref.current?.getValue(),

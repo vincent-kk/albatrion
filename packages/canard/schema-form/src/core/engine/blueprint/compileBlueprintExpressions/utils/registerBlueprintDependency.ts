@@ -1,0 +1,43 @@
+import {
+  PointerOperator,
+  hasPointerOperator,
+} from '@/schema-form/helpers/jsonPointer';
+
+import { FormErrorCode } from '../../../../../errors';
+import type { AnalysisContext } from '../../types/analysis';
+import type { PropertyDeclaration } from '../../types/node';
+import { throwBlueprintError } from '../../utils/diagnostics/throwBlueprintError';
+
+/**
+ * Validate a dependency path and register its declaration in the owned index.
+ * @param context - Invocation-owned dependency index and diagnostic options
+ * @param path - Authored watch or compiled expression dependency
+ * @param declaration - Declaration consuming this dependency
+ * @param schemaPath - Authored control location used for errors
+ * @returns Nothing; adds the declaration once to the dependency index
+ */
+export const registerBlueprintDependency = (
+  context: AnalysisContext,
+  path: unknown,
+  declaration: PropertyDeclaration,
+  schemaPath: string,
+): void => {
+  if (
+    typeof path !== 'string' ||
+    hasPointerOperator(path, PointerOperator.Wildcard)
+  )
+    throwBlueprintError(
+      FormErrorCode.ObservedValues,
+      schemaPath,
+      {
+        path,
+        guidance:
+          'Dependencies must be strings without wildcard path segments.',
+      },
+      context.options,
+    );
+  const dependencies = (context.dependencies ??= Object.create(null));
+  context.capabilities.hasDependencies = true;
+  const ids = dependencies[path] ?? (dependencies[path] = []);
+  if (!ids.includes(declaration.id)) ids.push(declaration.id);
+};

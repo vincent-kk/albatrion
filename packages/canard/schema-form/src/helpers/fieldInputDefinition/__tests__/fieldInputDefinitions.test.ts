@@ -122,7 +122,7 @@ describe('fieldInputTestFnFactory (fieldInputTestObject를 통한 간접 테스�
     overrides: Partial<FieldInputHint> = {},
   ): FieldInputHint => ({
     schemaType: 'string',
-    typeMismatch: false,
+    misfit: false,
     type: 'string',
     nullable: false,
     required: true,

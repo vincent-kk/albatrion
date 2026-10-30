@@ -3,6 +3,9 @@ import { type ChangeEvent, useMemo } from 'react';
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
+import type { Nullable } from '@aileron/declare';
+
 import type {
   FieldInputPropsWithSchema,
   StringSchema,
@@ -19,12 +22,13 @@ export const FieldInputStringEnum = ({
   onChange,
   readOnly,
   disabled,
+  misfit,
   context,
   alias,
   style,
   className,
 }: FieldInputPropsWithSchema<
-  string | null,
+  Nullable<string>,
   StringSchema,
   EnumLabelsContext
 >) => {
@@ -47,13 +51,26 @@ export const FieldInputStringEnum = ({
     if (defaultValue === null) return '' + null;
     return defaultValue;
   }, [defaultValue]);
-  const outOfDomainValue =
-    defaultValue === undefined
-      ? ''
-      : defaultValue !== null &&
-          !enumOptions.some((option) => option.value === '' + defaultValue)
-        ? '' + defaultValue
-        : undefined;
+  let outOfDomainValue: Optional<string>;
+  if (defaultValue === undefined) {
+    outOfDomainValue = '';
+  } else {
+    let matches = defaultValue !== null;
+    if (matches) {
+      let hasMatchingOption = false;
+      for (let index = 0, count = enumOptions.length; index < count; index++) {
+        const option = enumOptions[index];
+
+        if (option.value === '' + defaultValue) {
+          hasMatchingOption = true;
+          break;
+        }
+      }
+      matches = !hasMatchingOption;
+    }
+    outOfDomainValue = matches ? '' + defaultValue : undefined;
+  }
+
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
     const rawValue = enumOptions.find(
       (option) => option.value === event.target.value,
@@ -70,6 +87,7 @@ export const FieldInputStringEnum = ({
       onChange={handleChange}
       style={style}
       className={className}
+      aria-invalid={misfit || undefined}
     >
       {outOfDomainValue !== undefined && (
         <option disabled value={outOfDomainValue}>

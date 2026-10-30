@@ -3,6 +3,8 @@ import { memo, useCallback, useRef } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
+import type { Optional } from '@aileron/declare';
+
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import {
   FieldNodeEventType,
@@ -24,6 +26,12 @@ import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
 import type { FieldInputSlotProps } from './type';
+
+/** State patch that marks the field dirty after a controlled change. */
+const DIRTY_STATE_PATCH = { 1: true };
+
+/** State patch that marks the field touched after blur. */
+const TOUCHED_STATE_PATCH = { 2: true };
 
 /** Bind one input draft to the live node without treating typing as a caller refresh. */
 export const FieldInputSlot = memo(
@@ -76,13 +84,13 @@ export const FieldInputSlot = memo(
           node.batch(() => {
             onChangeRef.current!(input, option);
             node.clearExternalErrors();
-            node.setState({ 1: true });
+            node.setState(DIRTY_STATE_PATCH);
           });
       },
       [accepts, rootReadOnly, rootDisabled, node, onChangeRef],
     );
     const handleFileAttach = useCallback(
-      (files: File | File[] | undefined) => {
+      (files: Optional<File | File[]>) => {
         if (!accepts()) return;
         if (onFileAttachRef.current) return onFileAttachRef.current(files);
         if (files === undefined) attachedFilesMap.delete(node.path);
@@ -108,7 +116,7 @@ export const FieldInputSlot = memo(
           reset === readFieldNodeInteractionReset(node) &&
           !node.state[2]
         )
-          node.setState({ 2: true });
+          node.setState(TOUCHED_STATE_PATCH);
       });
     }, [accepts, isLive, node]);
     useOnUnmount(() => {
@@ -145,7 +153,7 @@ export const FieldInputSlot = memo(
           node={node}
           type={node.type}
           schemaType={node.schemaType}
-          typeMismatch={node.typeMismatch}
+          misfit={node.misfit}
           name={node.name}
           path={node.path}
           nullable={node.nullable}

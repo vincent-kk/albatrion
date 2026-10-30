@@ -159,3 +159,5 @@ PKG/CLAUDE.md의 Error Isolation 설명은 정확합니다. 입력 해석 지점
 개별 패치의 DETAIL hunk에서 마지막 공백 문맥을 저장할 때 hunk 길이가 맞지 않는 오류가 발견되어 ff.patch와 fe.patch의 hunk 길이를 실제 문맥에 맞게 수정하였습니다. 최종 HEAD에서 fb.patch·fb-src.patch·fc.patch·ff.patch·fe.patch·fbx.patch의 git apply --check가 모두 통과하였습니다. 계수 보조 도구의 선행 조건은 위에 기록한 그대로입니다.
 
 최종 HEAD는 9a3a3b099이며 git status --short에는 이 기록 한 개의 추가만 남았습니다. check-evidence의 final 모드는 지정 명령의 종료 코드·최종 Vitest 요약·패치 적용 가능성과 이 변경 목록을 단언한 뒤 FINAL_VERIFIED를 출력하였습니다. G1·G2·G3을 모두 충족하였으며 기록과 S의 패치·번들·탐침·304행 계수 산출물을 보존하였습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `e805074de8a9`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

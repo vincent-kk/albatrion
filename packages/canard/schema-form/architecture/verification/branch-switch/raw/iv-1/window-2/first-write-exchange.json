@@ -1,0 +1,61 @@
+{
+  "originalTotalUs": 3068.3400000225447,
+  "additions": [
+    {
+      "row": "mount-oneOf-80",
+      "entries": 243,
+      "medianUs": 22.5839999998243,
+      "weight": 1,
+      "contributionUs": 22.5839999998243,
+      "BWithFirstWriteUs": 2316.50049999962,
+      "basis": "One first write per blueprint at the same session frequency as one mount; A has no scope table."
+    },
+    {
+      "row": "mount-flat-1000",
+      "entries": 1001,
+      "medianUs": 63.06199999994533,
+      "weight": 1,
+      "contributionUs": 63.06199999994533,
+      "BWithFirstWriteUs": 2207.4784999999792,
+      "basis": "One first write per blueprint at the same session frequency as one mount; A has no scope table."
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "entries": 5461,
+      "medianUs": 1666.729499999974,
+      "weight": 1,
+      "contributionUs": 1666.729499999974,
+      "BWithFirstWriteUs": 18037.979500000118,
+      "basis": "One first write per blueprint at the same session frequency as one mount; A has no scope table."
+    }
+  ],
+  "addedTotalUs": 1752.3754999997436,
+  "adjustedTotalUs": 4820.715500022288,
+  "weightedAUs": 454663.3669994472,
+  "adjustedRelativePercent": 1.0602823649146447,
+  "mountRows": [
+    {
+      "row": "mount-oneOf-80",
+      "decision": "unproven",
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "mount-flat-1000",
+      "decision": "unproven",
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "decision": "unproven",
+      "verdict": "in-width",
+      "passed": true
+    }
+  ],
+  "originalAdoptable": false,
+  "zeroRejected": false,
+  "adjustedAdoptable": false,
+  "method": "verification.md bacb708e7 auxiliary rules: add warm construction medians only to B once per mounted session; rejudge regressed mounts with the adjusted exchange and reject an exact zero.",
+  "caveat": "Warm repeated construction medians may underestimate cold first-write construction latency."
+}

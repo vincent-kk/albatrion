@@ -28,28 +28,38 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   failure?: unknown,
 ): void => {
-  const activeRoot = resolveFieldNodeChainRoot(node.rootNode);
-  const runtime = activeRoot.runtime;
+  const passed = new Set<Self['runtime']>();
+  const activeRoot = resolveFieldNodeChainRoot(node.rootNode, passed);
+  let runtime = activeRoot.runtime;
   if (failure !== undefined) captureChainError(runtime, failure);
   if ((runtime.entryDepth ?? 0) > 1) {
     runtime.entryDepth = (runtime.entryDepth ?? 0) - 1;
     return;
   }
-  const root = runtime.chainRoot ?? activeRoot;
+  let root = runtime.chainRoot ?? activeRoot;
   rebuildRootExternalErrors(root);
   runDeliveryWaves(root);
-  flushQueuedEvents(root);
+  flushQueuedEvents(resolveFieldNodeChainRoot(root, passed));
+  root = resolveFieldNodeChainRoot(root, passed);
+  runtime = root.runtime;
   const occurrences = runtime.chainOccurrences ?? [];
   const pending: FormErrorRecord[] = [];
   const warnings = runtime.pendingWarningRecords;
+
   if (warnings?.size) {
     for (const [key, record] of warnings) {
-      if (
-        !occurrences.some(
-          (item) => item.kind === 'record' && item.record === record,
-        )
-      )
+      let hasWarningOccurrence = false;
+      for (let index = 0, count = occurrences.length; index < count; index++) {
+        const item = occurrences[index];
+
+        if (item.kind === 'record' && item.record === record) {
+          hasWarningOccurrence = true;
+          break;
+        }
+      }
+      if (!hasWarningOccurrence) {
         pending.push(record);
+      }
       if (!runtime.warningKeys?.has(key)) {
         const parts: unknown = JSON.parse(key.startsWith('[') ? key : 'null');
         const path = isArray(parts) ? parts[1] : undefined;
@@ -65,14 +75,21 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     warnings.clear();
   }
   const guardRecords = runtime.guardFailureRecords;
+
   if (guardRecords?.size) {
     for (const [key, record] of guardRecords) {
-      if (
-        !occurrences.some(
-          (item) => item.kind === 'record' && item.record === record,
-        )
-      )
+      let hasGuardFailureOccurrence = false;
+      for (let index = 0, count = occurrences.length; index < count; index++) {
+        const item = occurrences[index];
+
+        if (item.kind === 'record' && item.record === record) {
+          hasGuardFailureOccurrence = true;
+          break;
+        }
+      }
+      if (!hasGuardFailureOccurrence) {
         pending.push(record);
+      }
       (runtime.reportedGuardFailures ??= new Set()).add(key);
     }
     guardRecords.clear();
@@ -110,6 +127,8 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       if (runtime.errorReporter?.hasConsumer())
         occurrences.push({ kind: 'error', error });
     }
+    root = resolveFieldNodeChainRoot(root, passed);
+    runtime = root.runtime;
     runtime.chainErrors = errors;
     runtime.chainOccurrences = occurrences;
   }
@@ -131,7 +150,13 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
         if (runtime.errorReporter?.hasConsumer())
           occurrences.push({ kind: 'error', error });
       } finally {
-        runtime.onChangeBudget -= 1;
+        const raised = new Set<Self['runtime']>();
+        root = resolveFieldNodeChainRoot(root, raised);
+        runtime = root.runtime;
+        for (const owner of raised) {
+          owner.onChangeBudget = (owner.onChangeBudget ?? 1) - 1;
+          passed.add(owner);
+        }
       }
     }
   }
@@ -143,6 +168,13 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   runtime.feedbackBlockedListeners = undefined;
   runtime.feedbackLimitReported = false;
   runtime.chainOccurrences = enclosing?.occurrences;
+  // Adoptions during this chain left every runtime it passed through pointing at the
+  // chain's shared error list; return them to the enclosing state as well.
+  for (const stale of passed) {
+    if (stale === runtime) continue;
+    stale.chainErrors = runtime.chainErrors;
+    stale.chainRoot = undefined;
+  }
   if (enclosing) {
     enclosing.errors.push(...errors);
     for (const record of pending)

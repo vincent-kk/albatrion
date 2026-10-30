@@ -1,0 +1,49 @@
+{
+  "policy": {
+    "averageMs": 3000,
+    "retryDelayMs": 5000,
+    "maximumStartDelayMs": 120000,
+    "externalPidLimitPercent": 30,
+    "agentPidExcluded": 98094
+  },
+  "formalPrechecks": 516,
+  "observations": 542,
+  "delayedStarts": 16,
+  "waitCount": 26,
+  "heavyPeaks": [
+    {
+      "pid": 819,
+      "name": "duetexpertd",
+      "maximumCpuPercent": 84.77735970549625,
+      "observationsAbove30": 6
+    },
+    {
+      "pid": 728,
+      "name": "corespotlightd",
+      "maximumCpuPercent": 78.4222761173052,
+      "observationsAbove30": 8
+    },
+    {
+      "pid": 825,
+      "name": "contactsd",
+      "maximumCpuPercent": 59.72678509796783,
+      "observationsAbove30": 1
+    },
+    {
+      "pid": 436,
+      "name": "WindowServer",
+      "maximumCpuPercent": 40.97095290580135,
+      "observationsAbove30": 4
+    },
+    {
+      "pid": 91740,
+      "name": "Orca Helper (Renderer)",
+      "maximumCpuPercent": 39.56952611228575,
+      "observationsAbove30": 8
+    }
+  ],
+  "completedMeasurementsRepeated": false,
+  "mountProcesses": 40,
+  "canonicalProcesses": 440,
+  "toolHashesUnchanged": true
+}

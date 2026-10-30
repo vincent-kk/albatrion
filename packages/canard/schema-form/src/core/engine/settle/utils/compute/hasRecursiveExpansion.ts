@@ -1,15 +1,12 @@
-import type {
-  Blueprint,
-  BlueprintNode,
-  EffectiveSchema,
-} from '../../../blueprint';
+import type { Nullable, Optional } from '@aileron/declare';
+
+import type { BlueprintNode, EffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { hasLatentUnder } from '../latent/hasLatentUnder';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
+import type { SettlementContext } from '../../types/settlement';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
 
 /** Only the cycle verdict outlives the one-time graph traversal. */
-const CYCLIC_BLUEPRINTS = new WeakMap<Blueprint, boolean>();
 
 /**
  * Detect a back edge without mistaking shared DAG templates for recursion.
@@ -29,10 +26,14 @@ const hasTemplateCycle = (
   for (let index = 0; index < node.childEntries.length; index++)
     if (hasTemplateCycle(node.childEntries[index].node, visiting, visited))
       return true;
-  if (node.item && hasTemplateCycle(node.item, visiting, visited)) return true;
+  for (const item of node.itemCandidates ?? (node.item ? [node.item] : []))
+    if (hasTemplateCycle(item, visiting, visited)) return true;
   const prefixItems = node.prefixItems;
   for (let index = 0; prefixItems && index < prefixItems.length; index++)
-    if (hasTemplateCycle(prefixItems[index], visiting, visited)) return true;
+    for (const item of node.prefixItemCandidates?.[index] ?? [
+      prefixItems[index],
+    ])
+      if (hasTemplateCycle(item, visiting, visited)) return true;
   visiting.delete(node);
   visited.add(node);
   return false;
@@ -67,15 +68,6 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
     (node.raw !== undefined || node.undeclaredValues !== undefined)
   )
     return true;
-  if (hasLatentUnder(context, node.path)) {
-    if (context.latentAutomaticLog.size === 0) return true;
-    for (const [key, value] of context.root.runtime.latentRaw) {
-      const previous = context.latentAutomaticLog.get(key);
-      if ((previous && !previous.present) || value === undefined) continue;
-      const path: string = JSON.parse(key)[0];
-      if (path.startsWith(`${node.path}/`)) return true;
-    }
-  }
   const children = node.children;
   for (let index = 0; children && index < children.length; index++)
     if (hasOriginalInput(children[index], context)) return true;
@@ -102,15 +94,19 @@ export const hasRecursiveExpansion = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (input !== undefined) return false;
   const analysis = parent.runtime.blueprint;
-  let cyclic = CYCLIC_BLUEPRINTS.get(analysis);
+  let cyclic = getBlueprintDerived<'recursiveExpansion', boolean>(
+    analysis,
+  ).recursiveExpansion;
   if (cyclic === undefined) {
     cyclic = hasTemplateCycle(analysis.root, new Set(), new Set());
-    CYCLIC_BLUEPRINTS.set(analysis, cyclic);
+    getBlueprintDerived<'recursiveExpansion', boolean>(
+      analysis,
+    ).recursiveExpansion = cyclic;
   }
   if (!cyclic) return false;
-  let relativeSpan: number | undefined;
+  let relativeSpan: Optional<number>;
   const depth = parent.depth + 1;
-  let ancestor: Self | null = parent;
+  let ancestor: Nullable<Self> = parent;
   while (ancestor) {
     if (
       ancestor.blueprintNode === template &&

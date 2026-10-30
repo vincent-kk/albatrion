@@ -1,0 +1,3687 @@
+{
+  "inputs": {
+    "stageHead": "2eaa0e1f8222655628572639ce3a410f3a55c007",
+    "startCommit": "0eb03ff3bb54bf06af95271d157aefece1b9bf32",
+    "preparedAt": "2026-10-30T06:56:33.469Z",
+    "node": "v26.11.1",
+    "config": {
+      "runs": 10,
+      "warmups": 20,
+      "samples": 100,
+      "quality": "legacy"
+    },
+    "files": {
+      "bundles/A/index.node.mjs": {
+        "bytes": 750076,
+        "sha256": "59932cf4b9b12e52ce2610d3c4c1ad212705c1a714265234fbf24c753c55841b"
+      },
+      "bundles/A/index.mjs": {
+        "bytes": 750818,
+        "sha256": "0896a2b1fd02d558836f2df78b80976df38e0d3552202c686484ad6be4dbafb6"
+      },
+      "bundles/A/index.cjs": {
+        "bytes": 769065,
+        "sha256": "f3056727e71c551f8bdf03a279e2ccfcfbff0dcfab0579e3316b1bfc96f564c8"
+      },
+      "bundles/A/index.d.ts": {
+        "bytes": 3054,
+        "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+      },
+      "A/engines/current.mjs": {
+        "bytes": 750218,
+        "sha256": "cce2635f8e2c9a8b82db9006d06c7e1e8d3af362b36f06d3283bd7a4350afae7"
+      },
+      "A/engines/legacy.mjs": {
+        "bytes": 260073,
+        "sha256": "5a4a38480969155d87c3a5a9a9750ecc7c904bf44d1fbfc37b62f816623303cf"
+      },
+      "bundles/B/index.node.mjs": {
+        "bytes": 856255,
+        "sha256": "0455ff186b696273b79e3ddf64768379a85684ab8fab697e7456f25b6727ac26"
+      },
+      "bundles/B/index.mjs": {
+        "bytes": 857033,
+        "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d"
+      },
+      "bundles/B/index.cjs": {
+        "bytes": 877821,
+        "sha256": "10dc282f6f74ef19f75df8f64786ce5dfc4d270462acbcb45045728d329550fd"
+      },
+      "bundles/B/index.d.ts": {
+        "bytes": 3129,
+        "sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+      },
+      "B/engines/current.mjs": {
+        "bytes": 856397,
+        "sha256": "ae669153980003f54dd48e4aa5036c251214a98dfca72144b0af7492584b0b92"
+      },
+      "B/engines/legacy.mjs": {
+        "bytes": 260073,
+        "sha256": "5a4a38480969155d87c3a5a9a9750ecc7c904bf44d1fbfc37b62f816623303cf"
+      }
+    },
+    "tools": {
+      "architecture/verification/design-optimization/tools/branch-switch.mjs": {
+        "bytes": 193,
+        "sha256": "b8ab86b7c47a7a361c392c8a40d38c4df4b95f39e3967998469a2395829458b2"
+      },
+      "architecture/verification/design-optimization/tools/alternate.mjs": {
+        "bytes": 1625,
+        "sha256": "f690f3f7e7bc541898c87a4cfbd6188e21156f5ec42552884c9e2557108bc968"
+      },
+      "architecture/verification/design-optimization/tools/fixtures.mjs": {
+        "bytes": 2507,
+        "sha256": "0c84e2059270d8e41d306c395fd21393d3f8b70fa0c6383cd565483007ea2e2e"
+      },
+      "architecture/verification/design-optimization/tools/pair-core.mjs": {
+        "bytes": 4457,
+        "sha256": "161bd1163f373cb6c1a0321998088751526fd5a3aed72ddc98865b4a382d7e68"
+      },
+      "architecture/verification/design-optimization/tools/probes.mjs": {
+        "bytes": 158,
+        "sha256": "da11f517657fd466376c2ec61277e77a47d1018eeabeefa26af1def2cec4ad68"
+      },
+      "architecture/verification/design-optimization/tools/probe-latent-leaf.mjs": {
+        "bytes": 12053,
+        "sha256": "cf5fe78ec108428acbccb0ed6209880825fde226399201c7da0295444f985d40"
+      },
+      "architecture/verification/design-optimization/tools/helpers/mapLeaves.mjs": {
+        "bytes": 376,
+        "sha256": "8542baadb92908e36937e1a2aeadf9eb4d2cd4ef26f39b386577522634dbe1b4"
+      },
+      "architecture/verification/branch-switch/tools/iv-5/pilot.mjs": {
+        "bytes": 2634,
+        "sha256": "c75e9921280be4515129f88b22bcfc5ea0bb7bd05d5f9c21b5d1cc0ebff2197c"
+      },
+      "architecture/verification/design-optimization/tools/helpers/checkAlternatingDevice.mjs": {
+        "bytes": 8343,
+        "sha256": "6036d60db18dfd4c70874c3fce1bc8c1f540af8b63573a2c1aa481a09d1a4cd1"
+      },
+      "architecture/verification/design-optimization/tools/helpers/executeAlternatingRows.mjs": {
+        "bytes": 891,
+        "sha256": "5f374b59d5e73630633dd31fca3d1eafaf97b1f66cbc054bb23dcf6b4f03299a"
+      },
+      "architecture/verification/design-optimization/tools/helpers/summarize.mjs": {
+        "bytes": 1900,
+        "sha256": "ae90d0786329c067ecbb4f88ee0f42eb4ab5f626a855860df2c20e1428774acf"
+      },
+      "architecture/verification/design-optimization/tools/helpers/prepareEngines.mjs": {
+        "bytes": 2631,
+        "sha256": "816f93b48130a0c499e099c5667e15bc9b705d1e05f1ce7cbbe48d9b87ec905c"
+      },
+      "architecture/verification/design-optimization/tools/helpers/setupSubscriptionOperation.mjs": {
+        "bytes": 1348,
+        "sha256": "757cf8f3d44bbc73ddd1f53516e577aeab2dfcdfbfb0e43192e9ef8cfaac9d27"
+      },
+      "architecture/verification/design-optimization/tools/helpers/buildBranchRows.mjs": {
+        "bytes": 1090,
+        "sha256": "23f39b93bbc4dcfc4fe81f15f13b2c0fbc75ac5c774552f9886b68b726f4ca4c"
+      },
+      "architecture/verification/design-optimization/tools/helpers/buildAlternatingRows.mjs": {
+        "bytes": 983,
+        "sha256": "77a9dbcc13fbf5c0ffb9b4c7195aa90c7208e57266ec21b184adcd76ed675e47"
+      },
+      "architecture/verification/design-optimization/tools/helpers/setupBranchOperation.mjs": {
+        "bytes": 3035,
+        "sha256": "8178aa6013a86afbff95dc774b89464eb192690aaca320e0afb11fc2c64599f3"
+      },
+      "architecture/verification/design-optimization/tools/helpers/measurePair.mjs": {
+        "bytes": 1669,
+        "sha256": "52d18d0d2c0c3e2323b327be07e216e1e3d5e1157689222b85def2ac768674bc"
+      },
+      "architecture/verification/design-optimization/tools/helpers/setupOperation.mjs": {
+        "bytes": 5327,
+        "sha256": "b9bf6aa9ebd206319e1200b184e2b59403e6e5870d05da5b2f2fdebe17c7ff98"
+      },
+      "architecture/verification/design-optimization/tools/helpers/buildBranchFixture.mjs": {
+        "bytes": 1614,
+        "sha256": "c9c34a484bf23424913399f8b174543832bdaf6dfd5607f2f943be99a09340e3"
+      },
+      "architecture/verification/design-optimization/tools/helpers/assertBranchValue.mjs": {
+        "bytes": 590,
+        "sha256": "bfc012361d71f15a822ce59f6a0d07dc7f0bbd095e4c5eccb46aa71558fac259"
+      },
+      "architecture/verification/design-optimization/tools/helpers/materialize.mjs": {
+        "bytes": 735,
+        "sha256": "1d95cc3bee0e2b3146c72cd7c1b2e117234db5692cc39071f59a38a0ed28555e"
+      },
+      "architecture/verification/design-optimization/tools/helpers/checkToolSyntax.mjs": {
+        "bytes": 1225,
+        "sha256": "4f8e7b35a561c3472f1a535f7024fa871f13db8dc77d93540a5dd975f040f736"
+      },
+      "architecture/verification/design-optimization/tools/helpers/runAlternatingParent.mjs": {
+        "bytes": 5635,
+        "sha256": "48b0614c4c4f9df284f95177400789da33ee81f6c9e428f2a4b323fae7af81c8"
+      },
+      "architecture/verification/design-optimization/tools/helpers/readConfig.mjs": {
+        "bytes": 2932,
+        "sha256": "95f59ba07d169a3243020dae8d555073228392360f68b96684cb0a2dbe031624"
+      },
+      "architecture/verification/design-optimization/tools/helpers/readAlternatingConfig.mjs": {
+        "bytes": 1999,
+        "sha256": "9e270908428fe32f92038865e6034d6e20327983b3214f478447571b5f7d9486"
+      },
+      "architecture/verification/branch-switch/tools/iv-5/saveRawEvidence.mjs": {
+        "bytes": 2843,
+        "sha256": "ccb1590c3d1a720a692cfeb31d3becca824cfe6cc7810b9d598db534c0fb915f"
+      },
+      "architecture/verification/branch-switch/tools/iv-5/window.mjs": {
+        "bytes": 4394,
+        "sha256": "c419ce82a8941ee4cd129b1b008feda16baa079ba09e251003c3429501fe282c"
+      },
+      "architecture/verification/design-optimization/tools/helpers/buildRows.mjs": {
+        "bytes": 1595,
+        "sha256": "738ea4c9f463ccc273fdd5db663745061be0d9aa47deae5ea4e2ced1c3c3f4c2"
+      },
+      "architecture/verification/branch-switch/tools/iv-5/summarize.mjs": {
+        "bytes": 2155,
+        "sha256": "e44ea451a56922ea196522d01bd4c80db1e128f741fc2ceb879a55e1f6244c1f"
+      },
+      "architecture/verification/branch-switch/tools/iv-5/checkResults.mjs": {
+        "bytes": 3182,
+        "sha256": "06eb939572647a9e9862568f5104a50a46c7de6099c0cd0f180a3d5a0661df0b"
+      },
+      "architecture/verification/branch-switch/tools/iv-5/checkLoad.mjs": {
+        "bytes": 2124,
+        "sha256": "cc0f4e171f1d604621e0aa607504942de56271dac4070d7d904fd585d54f536c"
+      },
+      "architecture/verification/branch-switch/tools/iv-5/rehearse.mjs": {
+        "bytes": 2332,
+        "sha256": "04a643fcd91a3945ad5e4fedb15a1ad8f783dc67210de9a97745a513b1e9189d"
+      },
+      "architecture/verification/branch-switch/tools/iv-5/prepare.mjs": {
+        "bytes": 5617,
+        "sha256": "56c3035f1b37a47c9b1c25a77be385e9fe8f43cf17c9860fd3cbd071de3a2779"
+      },
+      "architecture/verification/design-optimization/tools/helpers/summarizeAlternating.mjs": {
+        "bytes": 3695,
+        "sha256": "8d70a4f68cbdfb39577474fd487aca6e842be0376d45af0d4040907a48c3afa2"
+      },
+      "architecture/verification/design-optimization/tools/helpers/checkBranchDevice.mjs": {
+        "bytes": 2526,
+        "sha256": "5c3c114e5a37cace1a1c9d66c5f0240cf8cd5bf6137454782227b7079739a386"
+      },
+      "architecture/verification/branch-switch/tools/b6/prepare.mjs": {
+        "bytes": 4247,
+        "sha256": "cc6f1b582926358d0cef9a04cfef6cbdb96394f96067350cab187c627f149b96"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/attribute.mjs": {
+        "bytes": 1356,
+        "sha256": "221132b2a9555d729ea2b0a76c928ea5611215b1a767ea4bb675e4a35e73dbfb"
+      },
+      "architecture/verification/branch-switch/tools/b6/checkTools.mjs": {
+        "bytes": 11426,
+        "sha256": "69771cc6db5dda8af7156752f4ea06b8c4ecb83eccaf088f80b4c6373624cff9"
+      },
+      "architecture/verification/branch-switch/tools/b6/summarize.mjs": {
+        "bytes": 18695,
+        "sha256": "d09d78d264ea230fdc9fd42841e68ed91a6ed6f0cde3f0f4a3a86863bc127c9f"
+      },
+      "architecture/verification/branch-switch/tools/b6/checkLoad.mjs": {
+        "bytes": 2867,
+        "sha256": "4b47551fd4017ab4ab9e4abb9dd2e02c04cbb2c84df037559a71a83be1a8cb90"
+      },
+      "architecture/verification/branch-switch/tools/b6/buildStages.mjs": {
+        "bytes": 10315,
+        "sha256": "02952c054516e730a7a23ccaa5276e09eb8f3301d4b83fc6f32421d866f25903"
+      },
+      "architecture/verification/branch-switch/tools/b6/window.mjs": {
+        "bytes": 7365,
+        "sha256": "a9ebd77975685c4825bdd60ec4dbc08f880358d875ccc4bf209c8bd255a9b2b2"
+      },
+      "architecture/verification/branch-switch/tools/b8/verifyDeclarationException.mjs": {
+        "bytes": 960,
+        "sha256": "2db6b34d44f5e4150b3a0b8bc94652320f93be8b6a6f7d65116704a45f2350d1"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/mountDelivery.mjs": {
+        "bytes": 3322,
+        "sha256": "26e42e38f65540e561bd053242f1b700b660f0b823704826ab19e9ea30f438cd"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/prepare.mjs": {
+        "bytes": 3698,
+        "sha256": "e2ec430021e0deae55e3bed7fa16b26b502c3d55070238db4556a41907687fe3"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/delivery.mjs": {
+        "bytes": 14151,
+        "sha256": "eabf203bcdf5dfd781b24c3e5642cdca8ffa45065ffa9455636d1517546c3155"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/verifyInputs.mjs": {
+        "bytes": 1586,
+        "sha256": "b166f30ab89248db0ee53ca054e154b3f15f72304113e1af5a9d66e3025c4807"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/retention.mjs": {
+        "bytes": 5235,
+        "sha256": "35424e97298a4909b0e64592122cf19cb9568744cf8fe6096e8a6653e081ca58"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/wildcardCost.mjs": {
+        "bytes": 6755,
+        "sha256": "fa9368b66eb7b710bf501037fe1597cf19a0ec928ee94770aed9db6536575fa0"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/recorder.mjs": {
+        "bytes": 1678,
+        "sha256": "34ddf6e85bc9f65edb179415a5959db29c490a5c70048789d73c3dfd7a3e0212"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/checkTools.mjs": {
+        "bytes": 12782,
+        "sha256": "f7d4255750f97cdc770c8157c8b478c769b8af2221cdc0843db13c43eec3f8b8"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/stages.mjs": {
+        "bytes": 5879,
+        "sha256": "ebc9e2f5e6785efbf63b563e5c48d2d9746ede28aa4d910595f31e9f3ef02fc6"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/summarize.mjs": {
+        "bytes": 18531,
+        "sha256": "84e9409717b3fccf0ce4c4a95feec010932060bb80c37aa1bb304527b37a5911"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/buildStages.mjs": {
+        "bytes": 9959,
+        "sha256": "ad7244efc09e30c7158f4a0badd48ee3f1a461b5051affd4f0972218fb6abbcd"
+      },
+      "architecture/verification/branch-switch/tools/b4-2/window.mjs": {
+        "bytes": 7199,
+        "sha256": "05a173d77fa1e112b04c4fdc015614bcb8dd82daab8dbdc858eb36c04fac459f"
+      },
+      "architecture/verification/design-optimization/tools/profile/prepare.mjs": {
+        "bytes": 375,
+        "sha256": "50c1d90ea0d85ce9aafcd30e4ab336ea894af2294c50b7a4333bcd7327fb4113"
+      },
+      "architecture/verification/design-optimization/tools/profile/register.mjs": {
+        "bytes": 177,
+        "sha256": "d25a2440768e244e0ca54efeef955691f9a87670696a3d37789606716c4b5d5c"
+      },
+      "architecture/verification/design-optimization/tools/profile/callers.mjs": {
+        "bytes": 1294,
+        "sha256": "31830a7c6439842f18ff5e12b78c2e99bcaae04c93d663e861383c35c659ca9b"
+      },
+      "architecture/verification/design-optimization/tools/profile/analyze.mjs": {
+        "bytes": 5066,
+        "sha256": "9b4351283e9137f1793c60e5c6eaa706d43b8f2d60e5976276b72e1a68d1b368"
+      },
+      "architecture/verification/design-optimization/tools/profile/scale.mjs": {
+        "bytes": 3379,
+        "sha256": "64783105d268869a0e9fd0d17e41ff912bd98b08771a24437d884bb7bba9400e"
+      },
+      "architecture/verification/design-optimization/tools/profile/hooks.mjs": {
+        "bytes": 963,
+        "sha256": "7ff52404b57feb7dc7d970b9d9350f513f8c1d821b33d6b52ac592c2c59fe9f8"
+      },
+      "architecture/verification/design-optimization/tools/profile/fixtures.mjs": {
+        "bytes": 7558,
+        "sha256": "c2cd27c769e4bd2dab3edc82842f53c30629b0c7ab6fd1e13c1a45f1947db420"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/diagnoseRows.mjs": {
+        "bytes": 2436,
+        "sha256": "6c1729bddaeddfb24ee8673728bdffab667ebf5857dbff342f800cc430735b4b"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/checkLoad.mjs": {
+        "bytes": 3059,
+        "sha256": "72af9c0fa6ac0f42657e787ff47950a4992a5a5bc466de6bac7ffccf65d9b871"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/pilot.mjs": {
+        "bytes": 1753,
+        "sha256": "1ad1f971a5c361cf45a406951aaaaccaaeb9dc235196c3b1ad6c47c57103eb0b"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/prepare.mjs": {
+        "bytes": 5890,
+        "sha256": "30d3a1e99855f0c114f3fef37b4a02ae01cfec9121b95e0c5eb5e6672ddafefc"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/rows.mjs": {
+        "bytes": 422,
+        "sha256": "6a3e17eaa824f6bb6a4bb0666f658deb58676985f5bd7b558b5e197eeb699b15"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/verifyInputs.mjs": {
+        "bytes": 1434,
+        "sha256": "c68c70be67b574d0f4f1e01cc7a1002ccc1d15afe00b474759f56a3ae9ece476"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/detailWorker.mjs": {
+        "bytes": 3463,
+        "sha256": "e428e61fa444e4e946cbf28da14dc31c3fb05183eb4fef572caa846acddcd454"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/worker.mjs": {
+        "bytes": 4079,
+        "sha256": "f2194e4de11747ff0658a3b20e40e465cd03f5ba655ef283c0c47c3c5e545282"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/window.mjs": {
+        "bytes": 9121,
+        "sha256": "ecad926b31e5b45a2a2ec9f32fd102631395518a4c83badf07115251f1d02101"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/rehearse.mjs": {
+        "bytes": 3857,
+        "sha256": "5d83df0a40df1d0b2219519801e4444e5544cd88477fc5a14d76b147b5286425"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/checkAllocationBudget.mjs": {
+        "bytes": 1380,
+        "sha256": "caf8f21d810b30a366ca4f68b6d17743f5e13ef42d5dd4d19794cfffb24afe46"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/summarize.mjs": {
+        "bytes": 11130,
+        "sha256": "6c40f3672a53b28bc1970e5255497f942555ededbe77c5e92faca13da5245d0b"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/attribute.mjs": {
+        "bytes": 6693,
+        "sha256": "2b93d3d72645705aeb7ecfd66ef6b8c25f438b8193a659b0ab484b153be6f2bf"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/pilot.mjs": {
+        "bytes": 2443,
+        "sha256": "36d493189219a87c9aa49e2c5e9af28baaf8a1c52d0330de75f40027bad62eeb"
+      },
+      "architecture/verification/branch-switch/tools/window/helpers/sampleProcessCpu.mjs": {
+        "bytes": 1558,
+        "sha256": "de628fa0f0c6d8e5156ae90f6d48f4e9f4e2b9a91b582fa7627ca3ce186bdb86"
+      },
+      "architecture/verification/branch-switch/tools/window/helpers/waitForQuietProcess.mjs": {
+        "bytes": 137,
+        "sha256": "49746ee86314d4b5b9b85834e2c93c4148e08f9f322e1f530b4581d42e5be05a"
+      },
+      "architecture/verification/branch-switch/tools/b11/prepare.mjs": {
+        "bytes": 4310,
+        "sha256": "2ed308200f0c7d15a45948c48f6e08ac22c28120ec9c3b67d36527da5505518b"
+      },
+      "architecture/verification/branch-switch/tools/b11/collectRetainedNodes.mjs": {
+        "bytes": 767,
+        "sha256": "fef8e4b7eb2ec9bc1a7780386f75bcff2cfe9ed316171fdeece9b2b2ce8ef770"
+      },
+      "architecture/verification/branch-switch/tools/b11/retention.mjs": {
+        "bytes": 3094,
+        "sha256": "bbe98203df95d2c4902848a7f53f73ffce7aabac92323ba00fdcda50378524a8"
+      },
+      "architecture/verification/branch-switch/tools/b11/summarizeSelf.mjs": {
+        "bytes": 2735,
+        "sha256": "d6334b4ea8b81d00eac22f5e249c6f6d2cd88678861b1393c2a01bdfae975292"
+      },
+      "architecture/verification/branch-switch/tools/b11/window.mjs": {
+        "bytes": 8420,
+        "sha256": "0c8f2b714b9dbc019db8cab814eebf5c77d1e0e55779ac76a765d666d9a2374f"
+      },
+      "architecture/verification/branch-switch/tools/window/getStageRoot.mjs": {
+        "bytes": 460,
+        "sha256": "03ee204590f462a1af494e2bc786550a3eec57d2c3b96c6ec3a9ceff622e4527"
+      },
+      "architecture/verification/branch-switch/tools/window/quietWorkerPreload.mjs": {
+        "bytes": 935,
+        "sha256": "42df681022a6958d993c4d8dfdff43064e20bf65af8ce6b040c6e0ef6a391a4d"
+      },
+      "architecture/verification/branch-switch/tools/window/preflight.mjs": {
+        "bytes": 3759,
+        "sha256": "55d5fd9d59c37d08982bdc806f13c4b6d79fb5ad85896564b0ff9e13aef9ec1e"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/attributeSamples.mjs": {
+        "bytes": 6595,
+        "sha256": "e333757d482d9481a35aa20b9043ee97c8179d168eb12904b96c70ed1ef87c2e"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/deriveInterpretation.mjs": {
+        "bytes": 6116,
+        "sha256": "bd380896c43c2e6e03f86f1b067f6165fef6a210b1d627213876f992a3ca690d"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/readSnapshotBytes.mjs": {
+        "bytes": 995,
+        "sha256": "d03d230e623b3c8345ef28d94e4a9b50b375a7f8f20e139d03ae55d0fda63bbd"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/sanitizeProfile.mjs": {
+        "bytes": 1125,
+        "sha256": "337a8c02df6ca11dc552814d6808d28a7290edd4f8a6e9fd6336c2723b351045"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/setupOperation.mjs": {
+        "bytes": 1783,
+        "sha256": "283d03236f787b9bbb6de552af4816ba42da9761b7cf729b8b451053e4a1f458"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/summarizePeriods.mjs": {
+        "bytes": 2107,
+        "sha256": "c857430889d364542da9f182d81e287b9a093ac3986584c6fe617d51e532cbb4"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/renderInterpretation.mjs": {
+        "bytes": 10631,
+        "sha256": "49aaadd5badc10db136f088cf76cf6cb4671128c48564664a67fd8c85b8ee44e"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/renderReport.mjs": {
+        "bytes": 12619,
+        "sha256": "446b4572bfea20571f5ea4584edbec5258af0c8a9b92a93da5eb5f19d772f4bd"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/runBlocks.mjs": {
+        "bytes": 1334,
+        "sha256": "824d7121501ae91833e0888d709a2a82941f16ea8c3ab54fd34a1e52e7b49a4f"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/summarizeWall.mjs": {
+        "bytes": 641,
+        "sha256": "8150efc691208ed1a83aff2201e1e33b77caac5b900188712bbb1d848b3f3d92"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/runPlain.mjs": {
+        "bytes": 1545,
+        "sha256": "a8015e74aa3ca201872b9ed195d31dd138b2ad4a883ef64b80f6920120a7fc02"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/readSnapshotSet.mjs": {
+        "bytes": 1252,
+        "sha256": "f655d5af687e4198f91dbcca5c0335774258bb219fdc00a3f90ab1954c988177"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/collectStackTimes.mjs": {
+        "bytes": 3163,
+        "sha256": "5d9c4f8e1bc38c2e0deaba58a4eac609b339fe0c34c4c1711d668dc3b3398db7"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/helpers/hashInputs.mjs": {
+        "bytes": 1616,
+        "sha256": "23ae4520019fd68d83c39001a4ec9a8b11e5c2d2ea6d2d569d06dcaf3e15cb4c"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/prepare.mjs": {
+        "bytes": 3948,
+        "sha256": "a1c6f19f37cd32e0f7d6d28cc7bf06278303621c88676085fb25deba82876aa5"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/checkTools.mjs": {
+        "bytes": 8929,
+        "sha256": "da3a1a5adfab3f4f33fdee24fc5caf22d79ae0c4ed79f75e28aabeebe1f7a046"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/publish.mjs": {
+        "bytes": 2946,
+        "sha256": "b278012a2dac1df412e6010734de963a8d682a8003e91fef0e46de56b8a93da1"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/rehearse.mjs": {
+        "bytes": 3304,
+        "sha256": "7103dfc99fa7fa1ed573561de6c115811df067b916c63ecc4ef1c96cb9f68b21"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/reanalyze.mjs": {
+        "bytes": 6296,
+        "sha256": "3e3dd253f8486a5cfb3acaa447712fb64e6cc54bf71d38fa17909cc100d17e4f"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/checkResults.mjs": {
+        "bytes": 6765,
+        "sha256": "d39b2795ddeb4a06b1a242382155d2051d7cd481fe6c72f4620f90835770797f"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/profile.mjs": {
+        "bytes": 5938,
+        "sha256": "fa6d8968834416e235b4fdb0d8891921fd556d239277a6b69d9f9312006235d4"
+      },
+      "architecture/verification/branch-switch/tools/iv-3-0/worker.mjs": {
+        "bytes": 1393,
+        "sha256": "c2f0d8ee8e3c7db83b23534ac0d9937145d9df02beaba70f22b8fb5295d485ce"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/report/summarizeMilestone.mjs": {
+        "bytes": 2413,
+        "sha256": "1251226139e2b2d7409fc570de240c20da194422349163160fa856b8db00cfc9"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/report/summarizeTimings.mjs": {
+        "bytes": 2744,
+        "sha256": "01bbc9bf12709873eef98fe83c07369b9cdaf0661a2f76f9f5637ce6b7303d5a"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/report/summarizeDiagnostics.mjs": {
+        "bytes": 4409,
+        "sha256": "20fe9184ba039513ce6ca253595586ba408a271da377b40392feaa0fb7a19155"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/report/saveRawEvidence.mjs": {
+        "bytes": 2351,
+        "sha256": "2a599e964fb1eaa3957c68b23e96bb9bdd2d3404a3fdc71b41af193c49c3ec2f"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/buildDiagnostics.mjs": {
+        "bytes": 4916,
+        "sha256": "a4d38d056c63fad435cee555dede7df0a65358907d381f852a049b1e40350a22"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/checkTools.mjs": {
+        "bytes": 6961,
+        "sha256": "07dc33117914616ed079b73ff4d1ee61328b22f3939901b138f8e53288b45898"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/helpers/collectHeap.mjs": {
+        "bytes": 348,
+        "sha256": "99b874453fcb235f9ade9b066df7986595d30a42febf26b52baf430e638ee06f"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/helpers/createScopedRecorder.mjs": {
+        "bytes": 1616,
+        "sha256": "9e78836049f013169bf7e291c79abb2009ebd33465b950540b46424818807a55"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/helpers/summarizeWideBucketHeap.mjs": {
+        "bytes": 2303,
+        "sha256": "1c82ce42e9998654b3a43d6584a0a2d331bdfc391322796b80ab789aa14dd10d"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/helpers/createWideBucketHeapForm.mjs": {
+        "bytes": 1179,
+        "sha256": "4869486ba45410de5bc8d72ac9d92ed0c8259dc7bdf89c94fe86d7af78b63b9b"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/helpers/summarizeExitDetails.mjs": {
+        "bytes": 2576,
+        "sha256": "536c3a1616cfa85be061a0514134c9102dcba7da861859739e7cbd4826848cf9"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/helpers/validateColdFirstWrite.mjs": {
+        "bytes": 1041,
+        "sha256": "2ce53ab17e193e0db1d08559ebbe1f4083ef52d8755e08e28d946703f031c934"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/wideBucketHeap.mjs": {
+        "bytes": 2595,
+        "sha256": "edec30b2e0eaf24a65158bb57331f6e2ad2a9cc8c6f966c8e50292992c4581b0"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/prepare.mjs": {
+        "bytes": 2956,
+        "sha256": "c73ce71c0af4b1a8a068f1a3874d3f26688af385b27aae4065b79d1b85c5b7fb"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/coldFirstWrite.mjs": {
+        "bytes": 3587,
+        "sha256": "ca12c7c0b6872d1274b8d0cdbf3f7db155744a38d64fea4179de030183efcea6"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/verifyInputs.mjs": {
+        "bytes": 608,
+        "sha256": "1f0eed6ea8e2214008131660c63d06011b184f2d67b27ecfb29a395edf5531f3"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/summarize.mjs": {
+        "bytes": 4303,
+        "sha256": "9b988c187db2084bde4fe2604e43f937b170352d72eb6bdaa70e451fae36bb73"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/publishTimings.mjs": {
+        "bytes": 981,
+        "sha256": "b616a0f759669d6584b2d3ac133f0892373632f3627be6e2e3810d5cb9b36755"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/checkResults.mjs": {
+        "bytes": 4035,
+        "sha256": "0ad12da338577308686481ca6013691706b25ab5fc2f5bfe689c30f9d93dc23c"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/checkLoad.mjs": {
+        "bytes": 3888,
+        "sha256": "3d187e74986204c5655c314e8c6f4b8e12323d60b93d3c0e1c9bf6f2ce8fbc3c"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/worker.mjs": {
+        "bytes": 2966,
+        "sha256": "8ddc64afc644bb942374b19d595bfd77479f45d1d6916e3f742cda7af01de9c9"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/diagnoseDelivery.mjs": {
+        "bytes": 2928,
+        "sha256": "549327d725a36f5907a94a261f34ccaadb8735f49819c5edc61e71b1041f3c96"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/window.mjs": {
+        "bytes": 5070,
+        "sha256": "f826d6be8b563d78be8e2bbff639f32a81aa72550ea3e9843d6213a53d20f95c"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/__tests__/validateColdFirstWrite.test.mjs": {
+        "bytes": 1142,
+        "sha256": "bab58a399416d1499deb0d36f1caf7a04f567b11904f4ac3e78defe20304e64f"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/__tests__/misfitInstrumentation.test.mjs": {
+        "bytes": 820,
+        "sha256": "fdd57164e8f2e4213441283cb5355f4654741d4e36cbb55dd350c6feabd06d27"
+      },
+      "architecture/verification/branch-switch/tools/iv-2/__tests__/summarizeWideBucketHeap.test.mjs": {
+        "bytes": 1901,
+        "sha256": "b0f0e824da9b5a7eff878ee13f8ae9e5ce5de2af83f769a3318ed3f964c0c0f7"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/median.mjs": {
+        "bytes": 327,
+        "sha256": "8d3e8864b30410e1ecdc4aedf39c5d3d83d7325ae7b74b2795b2435e63f35239"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/createMountRecorder.mjs": {
+        "bytes": 2289,
+        "sha256": "673780e941e0db774c2501fb37bd9fdd4d852cc1c14d1d7da3aeb6059e80d0a6"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/mountStages.mjs": {
+        "bytes": 3117,
+        "sha256": "0d70d624cf15a862481d34cad8c2639322acb12cba223c835d2e19b720d8bc5b"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/verifyMountInputs.mjs": {
+        "bytes": 1585,
+        "sha256": "6fef792e6a1600d55deb428845aa563cbbd0e9a64f972f838c6bd0bda6363a51"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/instrumentMountSource.mjs": {
+        "bytes": 2197,
+        "sha256": "c166e6a160603fbfb428eb9021baaaddb154ad72435eb62b8242965b3ecac5de"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/summarizeMountResults.mjs": {
+        "bytes": 6318,
+        "sha256": "69e04d1a8390f9cd4d0469532161a5fc8b52c61cc9f8b7e4e7cdb1ce40a5aecc"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/sampleProcessCpu.mjs": {
+        "bytes": 158,
+        "sha256": "8b79f69d1aa11f411ce49b0e3ae4897021c17896ad897a4a6fd1c1ec9d3dc9a7"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/runMountWorker.mjs": {
+        "bytes": 2965,
+        "sha256": "aa372d17dde1888201940ddfc9a5df4b5b59116d57da7e09b80b0057d91bf73c"
+      },
+      "architecture/verification/branch-switch/tools/b8/helpers/waitForQuietProcess.mjs": {
+        "bytes": 162,
+        "sha256": "10d6e93d2cc9ef031fd3e94b38b9c85652ff3d1418dc3e96314283f9c9172174"
+      },
+      "architecture/verification/branch-switch/tools/b8/prepare.mjs": {
+        "bytes": 4447,
+        "sha256": "927df8d268d376f846759e6cfdc4f97e9385773a640b4a038a0513eb3c86957c"
+      },
+      "architecture/verification/branch-switch/tools/b8/quietWorkerPreload.mjs": {
+        "bytes": 134,
+        "sha256": "bdc486de5f2b84e30bda958655e5ff4b792d84d9421c5116c2cda0b883997e23"
+      },
+      "architecture/verification/branch-switch/tools/b8/summarizeMountLedger.mjs": {
+        "bytes": 1087,
+        "sha256": "8bba26839a87f5d2b870a013cf6d925eed5b3ad2330ad1bbe267a04d3a4d2da2"
+      },
+      "architecture/verification/branch-switch/tools/b8/mountLedger.mjs": {
+        "bytes": 5622,
+        "sha256": "49f6f714f1ee968b40f9ade8d8dd43dc7818bcb861ba98c1b0e790410600f5c3"
+      },
+      "architecture/verification/branch-switch/tools/b8/readPublicDeclarations.mjs": {
+        "bytes": 1992,
+        "sha256": "9a52c194a93b23932015d41335e96a32335f8532aba64db8cd6770abf25fb463"
+      },
+      "architecture/verification/branch-switch/tools/b8/checkWindowTools.mjs": {
+        "bytes": 1032,
+        "sha256": "e3e10fabc2b181452aa44f26c47d7179690f04049dc1a1da20bae3bd0050b1c5"
+      },
+      "architecture/verification/branch-switch/tools/b8/checkMountTools.mjs": {
+        "bytes": 7892,
+        "sha256": "df530d116fa28138db243ef7904d46eeff6627e8231365d8c1b2adc01ca7b289"
+      },
+      "architecture/verification/branch-switch/tools/b8/buildMountLedger.mjs": {
+        "bytes": 4025,
+        "sha256": "060ef760bc5e04962008de0706b19e3fba9df8b70798aaff9a9443ae10d8c201"
+      },
+      "architecture/verification/branch-switch/tools/b8/prepareMountLedger.mjs": {
+        "bytes": 2633,
+        "sha256": "1b9e6e4ec79e5645d85d2d1a94d5cb59469c7467e22ba72b83bb982180a66a6f"
+      },
+      "architecture/verification/branch-switch/tools/b8/window.mjs": {
+        "bytes": 8251,
+        "sha256": "59d6674917f3077e3d20f546fce94d236ae8668283ad9a88278cd426819d231b"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/rehearse.mjs": {
+        "bytes": 2960,
+        "sha256": "eb4eae3c4e1b34b78acde110a3b1f36655418f433fcc7a068ab432d59f36b0b7"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/sampleWindow.mjs": {
+        "bytes": 1484,
+        "sha256": "ecb4d6252d61bf52cb449ffb3d2ac1d8a6edb49ff27e8fde94dc0e63592554b0"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/reportLedger.mjs": {
+        "bytes": 4251,
+        "sha256": "613c5da540f5b0de5cfac8b3cdfc28c6d073bced53aa3260a1f73de830af73f6"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/createRecorder.mjs": {
+        "bytes": 3099,
+        "sha256": "51faeb60bcae263061b860dd40318c44742bb615b743e80434feeda4f874cfcd"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/measureStages.mjs": {
+        "bytes": 2334,
+        "sha256": "efaa07326540d01e466ae4fbe06600c6f16994ba156706e277472f815762e299"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/collectProfiles.mjs": {
+        "bytes": 3131,
+        "sha256": "30f8bbbc42ac06169b05d19665f0062e400104f65d4f4c9c549113e2d236e72f"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/buildBundle.mjs": {
+        "bytes": 6475,
+        "sha256": "156a3467e6afde6e42031ebb4b9680a461d0547e4c3121c650c596095d737f71"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/setupWrite.mjs": {
+        "bytes": 1185,
+        "sha256": "f9e6f2ec69a37a6701e5ac1cce5e9293ba1e54198bd645a8feed5910903c3364"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/summarizeLedger.mjs": {
+        "bytes": 7471,
+        "sha256": "5ea72b5fe311ce10a63a964e3da621efb38b695aed477e22c7564485c7175d69"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/parseCpuSample.mjs": {
+        "bytes": 556,
+        "sha256": "17e7f96d97776dcba41bbb4c66d4d90d971db4ef3d5e966f75c1485c0dd4d042"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch/runWindow.mjs": {
+        "bytes": 2493,
+        "sha256": "71b916d94a4c81bcb18fb8895b221c6dcf273fe0c20e4fdf3542256fc1973104"
+      },
+      "architecture/verification/design-optimization/tools/profile/phases.mjs": {
+        "bytes": 2752,
+        "sha256": "5398be7414f4d67186dd23ffaea76a0dcc085792c19fd06ba3c59fc5e490cc7c"
+      },
+      "architecture/verification/design-optimization/tools/profile/compare.mjs": {
+        "bytes": 1972,
+        "sha256": "4744230a757880e62e267b026869dec5733dbb4d492654f9b5c4e7d912e7b6eb"
+      },
+      "architecture/verification/design-optimization/tools/profile/branch-switch-ledger.mjs": {
+        "bytes": 3409,
+        "sha256": "175129c93b7e300cff845933cb612f1742b8c23540ebf10456fba9eab0e89116"
+      },
+      "architecture/verification/design-optimization/tools/profile/leaf.mjs": {
+        "bytes": 2499,
+        "sha256": "b141e138e5d1e53ded6438c12c6c73675f0b01c3e496316b34ddac3dc13d06d1"
+      },
+      "architecture/verification/design-optimization/tools/profile/count.mjs": {
+        "bytes": 2553,
+        "sha256": "20b21eb9c1d98810850523608bf275fa773a208c0849df02c8b7a1e7fe82456e"
+      },
+      "architecture/verification/design-optimization/tools/profile/tables.mjs": {
+        "bytes": 1706,
+        "sha256": "2b3448100d3823eb9795d15939fa33b11d6ef620b1facc428de5fe99f7f40214"
+      },
+      "architecture/verification/design-optimization/tools/profile/heap.mjs": {
+        "bytes": 2274,
+        "sha256": "5a6f49f4150e23c97b5a1c2df4acd68ebb9b8683faf8736a960e305540c4b85f"
+      },
+      "architecture/verification/design-optimization/tools/profile/run.mjs": {
+        "bytes": 3575,
+        "sha256": "52b6bf1589b849458f248930937b6b3ae534fbfbc8c1607bc9518ef94982ca44"
+      },
+      "architecture/verification/design-optimization/tools/profile/context.mjs": {
+        "bytes": 980,
+        "sha256": "adf55adc534817eae4b19d41bc276a1ebd578e1e7500ae1720a3968026eb4b37"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/diagnostics/collectDependencyEdges.mjs": {
+        "bytes": 3324,
+        "sha256": "2929647c4f60c2855a5fe805ffa607b0727a75ce7cb55a7b46551ee704b0ba78"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/diagnostics/snapshotNodes.mjs": {
+        "bytes": 714,
+        "sha256": "4078f45aa174f4e4685cdc8c98fde6ab96404f3de4741ae8e6f2fb5efee68b63"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/diagnostics/classifyClosure.mjs": {
+        "bytes": 1507,
+        "sha256": "66960eef81d96ccc9138292644a3d3adcf5a884985807d76b4c35a82d6abc8b1"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/diagnostics/compareNodes.mjs": {
+        "bytes": 1139,
+        "sha256": "faefc3143e41d7271ebf23d36f93f5da8edb0505887aa8925d0f143bbdde4dbf"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/diagnostics/createDiagnosticRecorder.mjs": {
+        "bytes": 7081,
+        "sha256": "730b85d35213132517be8fb4477a4230c70875be0f65e85ce0a98fc1fdd4e05c"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/diagnostics/installDisabledHooks.mjs": {
+        "bytes": 672,
+        "sha256": "0fa99e5ffbd257b6c209b33c1bf421601021c988e071f4f3066c5e9e6afeb2ba"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/renderReport.mjs": {
+        "bytes": 20718,
+        "sha256": "f5f9adec880716c91b6a0532509e6b09c119c8189004279a33318541cc00eb2a"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/publishAudit.mjs": {
+        "bytes": 2619,
+        "sha256": "ce978e5b5a77892d2c1ae9455b2449297eba7574ff81eb96bae1e7f14a745a31"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/publishDiagnostics.mjs": {
+        "bytes": 2548,
+        "sha256": "16765463bcb07b25dbed8276d88e594d45a9987bb6f582795e0b2cca26bb5039"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/preserveFailure.mjs": {
+        "bytes": 2537,
+        "sha256": "f083b070da0a0b6868420b8d589ff7c2c3f7695f636e111bd375ca00f45f6613"
+      },
+      "architecture/verification/branch-switch/tools/window/checkQuietProcess/utils/observeQuietProcess.mjs": {
+        "bytes": 587,
+        "sha256": "0ba2ab58b634afdc8022df620084651c5a0ee8549f1f85be460867e63ac05098"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/instrumentation/instrumentSource.mjs": {
+        "bytes": 7032,
+        "sha256": "5116ec726fc048c18d513fa5abc1094bf5d525776f17c7e5af6f2154767af7d7"
+      },
+      "architecture/verification/branch-switch/tools/window/checkQuietProcess.mjs": {
+        "bytes": 4121,
+        "sha256": "bf5d24b4975854824bd4463b41382ce17a490d38527e9df050666cd69832fca6"
+      },
+      "architecture/verification/branch-switch/tools/window/waitForQuietProcess.mjs": {
+        "bytes": 2414,
+        "sha256": "aa4e1140afdd0994ae398bec8bbbcbf77a27490f206f5b943961750771e1e50a"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/timing/setupFloorOperation.mjs": {
+        "bytes": 1403,
+        "sha256": "8af677887df676e8e2ee8ee8e6c75c57b915234733d34bd646bfc0b95b69c625"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/timing/summarizeDetailRecord.mjs": {
+        "bytes": 2502,
+        "sha256": "536c6323dfeda604872445c66543e713bb878b40e6fe79f0be9db5198c45ee2f"
+      },
+      "architecture/verification/branch-switch/tools/iv-0/timing/createDetailRecorder.mjs": {
+        "bytes": 1351,
+        "sha256": "3ee04e19742122620ffb92e0ef92127d691f67efc49fb48c8e670ad7ec9cce70"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/window.mjs": {
+        "bytes": 5993,
+        "sha256": "9148365ad13a2c6f2a2b30b7f908f15629ab02fa5e53dbe6fb46265ee0a7e64c"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/rehearse.mjs": {
+        "bytes": 2580,
+        "sha256": "3e1f9d8f5eccab95c83309ac8151c584862b4772920182ae786998e89341d49b"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/judgeMicroHygiene.mjs": {
+        "bytes": 968,
+        "sha256": "fb17af34c6ccef5974be499453726790eaf3e82dd0055779ca746a724f5c9d4c"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/summarize.mjs": {
+        "bytes": 7936,
+        "sha256": "922e74a2a104473b12a71a0e1c33c37cb2c45c8f76b0eb323fdb99d35e45afd4"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/short-window.mjs": {
+        "bytes": 4666,
+        "sha256": "01179a9d34ecc40af328d0f8f088f90f3488cf538ab402abc07e547ce4ba5c08"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/checkLoad.mjs": {
+        "bytes": 527,
+        "sha256": "3c30a75eabe5730aa3ce60b759e84af6f818d4625026632abd92777dedf9b2c3"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/verifyInputs.mjs": {
+        "bytes": 372,
+        "sha256": "5ffaf1ee5011ee7a372198e8d2241dfa48c7a464262907d3088d4e391d737a34"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/checkDeclarations.mjs": {
+        "bytes": 4659,
+        "sha256": "8622270ec39fccca9797595957ee158d369a2ed122508a9e2b8845cb173f2c2e"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/short-summarize.mjs": {
+        "bytes": 6758,
+        "sha256": "f7a8d9ca4018317860046ef590adba7db991c7edccf52c3f6e811d2570f62215"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/stages.mjs": {
+        "bytes": 5879,
+        "sha256": "ebc9e2f5e6785efbf63b563e5c48d2d9746ede28aa4d910595f31e9f3ef02fc6"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/summarize.mjs": {
+        "bytes": 17442,
+        "sha256": "81a6ee042a1794f75a6ed21fc3770520dd836186c48f7c8981ba43c3346d57b1"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/pins.mjs": {
+        "bytes": 4845,
+        "sha256": "2ed3d684df0db23a53722f0bbeb484ab1760c5f3186fac20ec978ad839e33790"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/buildStages.mjs": {
+        "bytes": 8802,
+        "sha256": "ec9258c4deee1cd54cc6fadf9a30a26817967068f36574b51527707e8441c05c"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/window.mjs": {
+        "bytes": 7199,
+        "sha256": "05a173d77fa1e112b04c4fdc015614bcb8dd82daab8dbdc858eb36c04fac459f"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/wildcardCost.mjs": {
+        "bytes": 6716,
+        "sha256": "2435e5d5f94afd7724734da561bdd485abcf5d98873870efa3d53bc053e935dc"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/recorder.mjs": {
+        "bytes": 1678,
+        "sha256": "34ddf6e85bc9f65edb179415a5959db29c490a5c70048789d73c3dfd7a3e0212"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/verifyInputs.mjs": {
+        "bytes": 1586,
+        "sha256": "b166f30ab89248db0ee53ca054e154b3f15f72304113e1af5a9d66e3025c4807"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/pilot.mjs": {
+        "bytes": 1762,
+        "sha256": "b563bdb677c59720f5c180886304deb25ae5268faf14be9401bbde4f700f2087"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/retention.mjs": {
+        "bytes": 5022,
+        "sha256": "c1043b177510a78f31e0de63b6bbde15293e6e6730ea8696001ae0b2704f3590"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/delivery.mjs": {
+        "bytes": 7625,
+        "sha256": "9c9811372cf710c8f71e88c7111c024bdc2bbf72da0ab97b86421ef8629aec4a"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/checkLoad.mjs": {
+        "bytes": 1809,
+        "sha256": "430bf8ec018c98f06f46d855e1b13c559ce6398b6e9c380b58c47bcbef4f3cfd"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/rows.mjs": {
+        "bytes": 806,
+        "sha256": "9970645fdf238e28acd615c4f27a101b914fe38e9ea2ffc513a7551c72768cb6"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/worker.mjs": {
+        "bytes": 5362,
+        "sha256": "96c1c234d419dc021294a87b3d83b031d4157a692a5e735f37e99c9708636f50"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/window.mjs": {
+        "bytes": 7101,
+        "sha256": "45010939bcca060e4b4ece174bd4a284d77e5be4cac38c04d4d4603d9eb731ed"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/buildStages.mjs": {
+        "bytes": 11809,
+        "sha256": "d5d8e7a33cfa1e04e46191d8fe0a00f7002a87ac93e6e101357d47539b9b0419"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/window.mjs": {
+        "bytes": 3710,
+        "sha256": "af3f980d1b64a7d8db19fd918f66759252fa7942375c304781885c83ac251aab"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/prepare.mjs": {
+        "bytes": 3698,
+        "sha256": "e2ec430021e0deae55e3bed7fa16b26b502c3d55070238db4556a41907687fe3"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/summarize.mjs": {
+        "bytes": 8154,
+        "sha256": "2133f5426cac45c60b797ac27e9c7a56f3d5c67cdd2fcf605b6bf2ec8f28c608"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/smoke.mjs": {
+        "bytes": 1323,
+        "sha256": "96e068b0ff2c67531ea6c3ac7cee3d762654543b7ea8b6d4f4e1f99dda595eb5"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/prepare.mjs": {
+        "bytes": 2577,
+        "sha256": "7f560e404b724d1588240e5d766e31291a9f66d38fb7681e0e5747694f1a5a39"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/checkLoad.mjs": {
+        "bytes": 1917,
+        "sha256": "c2c9ec16d8bb58ef6ad09dd2fe514b0bbb41d203bd5d74d1c6031bf74c87daa8"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/operation.mjs": {
+        "bytes": 1815,
+        "sha256": "c16f046eae8743f5d4933e7f5b33a2178299698ea8c5a3c03de327d3b6297d42"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/summarize.mjs": {
+        "bytes": 12561,
+        "sha256": "fa1ac970cd77e8526bde8b20d5706d4e4b7ad335bfe943e2e8df8ce2674dc063"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/staticPreparation.mjs": {
+        "bytes": 2375,
+        "sha256": "0ec5f4455837442246f93ff1c95b2ab2c459c0f5c4479514a979bd2064a90195"
+      },
+      "architecture/verification/branch-switch/tools/b4-1/mountDelivery.mjs": {
+        "bytes": 3425,
+        "sha256": "74cdab52d691a1ea9b07dc7b176fe497f1838fb735d21a228dcaa8e09cb8e873"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/verifyBuild.mjs": {
+        "bytes": 1203,
+        "sha256": "06e93d850fe1af699387c68410731e4c0820bae1f1ecb20d0baf909313feb2de"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/deriveCosts.mjs": {
+        "bytes": 7772,
+        "sha256": "71b21d3261a1d678fdc2d273d1a12b767a7d59d95e3d9db4aeef786ae1390b38"
+      },
+      "architecture/verification/branch-switch/tools/b12/declarations.mjs": {
+        "bytes": 4479,
+        "sha256": "9d0bdc993ad91737dd2e1ffe3ba9106280f1110ea14a4a02b601cc019c58af99"
+      },
+      "architecture/verification/branch-switch/tools/b12/prepare.mjs": {
+        "bytes": 576,
+        "sha256": "16cfb4ebc04bcfec3590d6a811316381c51d7f518b10e0495ae594709c11b6a1"
+      },
+      "architecture/verification/branch-switch/tools/b12/window.mjs": {
+        "bytes": 270,
+        "sha256": "a6c5201cdb1ac09a9d7894bd1e19eee1b0dd638a293f3f9fcd70f5dc0d443988"
+      },
+      "architecture/verification/branch-switch/tools/b12/runInactiveValueScenes.mjs": {
+        "bytes": 5662,
+        "sha256": "0aeb5adf2175307c9b2c6a59618f85a66deda82df018d2c48f8cf07f1eeca122"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/checkTools.mjs": {
+        "bytes": 2598,
+        "sha256": "f0a84eae9e440147093d84c4c6b8ff9239144f9640ca8d95e4d92ab03dd91876"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/untimedRecorder.mjs": {
+        "bytes": 732,
+        "sha256": "bbc290be3a9ff10696c785cdf8befe7918f039db14dd71748bb878f58dc135e4"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/yieldBeforeSample.mjs": {
+        "bytes": 199,
+        "sha256": "d81962492dd7abcd697be6a28aeabb69b46b175eebc68644c312b35a9872c225"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/instrumentDetails.mjs": {
+        "bytes": 3358,
+        "sha256": "a94e7f010086e08d0c52031510abe2b514963636cb23933d92b626a8fc366ac9"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/checkSummary.mjs": {
+        "bytes": 2232,
+        "sha256": "5d023dd807966f105669014285f095db1fb0c4f6c23305d57e97da3bf42bc6e4"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/files.mjs": {
+        "bytes": 965,
+        "sha256": "b122ca421f0dd0f26734926252d0efa8ea45d766dd1c2a5ff9ac02bd8b4dca6a"
+      },
+      "architecture/verification/branch-switch/tools/b9-0/prepare.mjs": {
+        "bytes": 4800,
+        "sha256": "82790cb873275370797b8287e628b577c2995b054271e40706ab8a66380f95d7"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/checkTools.mjs": {
+        "bytes": 3688,
+        "sha256": "52f57f168a87b1bef1f660417729d5096e8378c8edc48165041ea0ed2bb161c4"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/verifyInputs.mjs": {
+        "bytes": 848,
+        "sha256": "62938300e44e7bb62f8001b47ed170386c4a8ae1b45dfbc7501bb996e684016d"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/pilot.mjs": {
+        "bytes": 3982,
+        "sha256": "4d20f809f86874f5f587b71c92102f7a8f9afce466861d565b1f1fffae6f2752"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/__tests__/shortWindowConfig.test.mjs": {
+        "bytes": 2653,
+        "sha256": "849e869dc45ffc23eecfa7cae6302bc81af0e8cd5455f3aaee4b41bb46ac9a4c"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/fixtures/createStageRecords.mjs": {
+        "bytes": 619,
+        "sha256": "5292b6a456684e5d9d112e3855ba58f4941d06ac134644720b91305f3a2cb262"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/pilot.mjs": {
+        "bytes": 1753,
+        "sha256": "7d5065e824d1c7326175b98228ab9a0e651ebd4e75debc32eb373dd2ce7cb357"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/prepare.mjs": {
+        "bytes": 2030,
+        "sha256": "a46af5fe1d1d3217dc0cad803f80012f84225eba75162440207a76e77d46b5fa"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/scopeCost.mjs": {
+        "bytes": 1986,
+        "sha256": "b0022fa08647361d26b8d1c6bc4fefe32dbaf9a7a4126e229218f1ec872b7b1b"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/verifyInputs.mjs": {
+        "bytes": 665,
+        "sha256": "6adb2ec8ea6e913189907ba3b085fc7562b56bd2beb6410538a008a28dcfd9ec"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/judgeStage.mjs": {
+        "bytes": 723,
+        "sha256": "1c96db01190c4f473bcdfb9474ef76203a2d9ea0563be19082195628a5707e10"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/__tests__/judgeMicroHygiene.test.mjs": {
+        "bytes": 1131,
+        "sha256": "5076998dd31e5e2ba6c74f3f298f471732352faf509080d07feedf0037d05481"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/helpers/normalizeDeclaration.mjs": {
+        "bytes": 1787,
+        "sha256": "efa21bdb8e481e8c88a5e969692402f7e2ce49361e63a942e609e6a97492238f"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/helpers/normalizeDeclarationNode.mjs": {
+        "bytes": 3662,
+        "sha256": "3acade096dff4c910fd1b47c6afeff0d5b2fda825b69829acb6a20da52ed5ca4"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/helpers/collectReachableDeclarations.mjs": {
+        "bytes": 2010,
+        "sha256": "fbb17f43f46a8e018940bbc5816903b6559de94c24190e763569c2a15e6202bb"
+      },
+      "architecture/verification/branch-switch/tools/micro-hygiene/__tests__/declarationReachability.test.mjs": {
+        "bytes": 2205,
+        "sha256": "e63e9598ab7fbfa18339a68b5a20c1ed80cdbc689549adaa2d1bea1631698f83"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/publish.mjs": {
+        "bytes": 1468,
+        "sha256": "becf62facfff3e2984149532b092450b52ab8fd43a649c2bc0e3d6d2db6d22c3"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/diagnosticHeap.mjs": {
+        "bytes": 2567,
+        "sha256": "25c4f2fedfab1cacfea99b7ac4fb954748ecad9fdff32322c573ba579735b03f"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/diagnose.mjs": {
+        "bytes": 3760,
+        "sha256": "6ab30d7216859a30c35d7a36c10c43b190658f351433c72604250740b789fa33"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/checkTools.mjs": {
+        "bytes": 3991,
+        "sha256": "736fbf34bd9f4cac2dcabd3ec304264a344912ea0c43b28a72b86b4e296d9566"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/correctNarrowProbeRoles.mjs": {
+        "bytes": 2391,
+        "sha256": "000da5402b0da392fe86f65dfe1f7d962085ed77d2e6c91854c1327d3ad6ab4b"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/publishDiagnostics.mjs": {
+        "bytes": 1048,
+        "sha256": "eda41cb893bece42d536eeb8ab3ba1556f7e83558bc91bfb398f71467785e553"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/gc-worker.mjs": {
+        "bytes": 4256,
+        "sha256": "02d804cb7e253825e11184b7fa88f9fd48587a1c9680299bdbedccdfe009b0ba"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/checkResults.mjs": {
+        "bytes": 6296,
+        "sha256": "04ac5b4ac8bb5cf30f69a574ac1de9d992ab30d68e13107c4629da75e08ecc39"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/run.mjs": {
+        "bytes": 5328,
+        "sha256": "c112c5e1cd09bb6ad493261cae03ca30dc609adec17a6a0417e73f6bbd0c2d0c"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/summarizeWindow.mjs": {
+        "bytes": 5564,
+        "sha256": "7a6905c1ef4bcb7db48c7689ffa8cc8a1e42b6a01c5b7467c6869b74a69cf2e0"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/worker.mjs": {
+        "bytes": 3060,
+        "sha256": "11e0ff122a0a9b4ecb1a39bed2baefedf6db652813fc638a718fd479bdb1916d"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/checkWindow.mjs": {
+        "bytes": 1679,
+        "sha256": "0c8107174284384c8a877f8d51e141681f61d4b4aad733027e8a8c168e01a238"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/checkDeclarations.mjs": {
+        "bytes": 2746,
+        "sha256": "960c4616e0891be907798cc22d9180127028b9f7cf620a5052190a8710c9aa08"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/quietWorkerPreload.mjs": {
+        "bytes": 727,
+        "sha256": "a4c46b51bbba92c15075562253126e904756febbdf108b93b0a96c12bd68ad4e"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/prepare.mjs": {
+        "bytes": 2331,
+        "sha256": "21ad4d66c0bda7ea08dde121d990977629207d82402141f3e4bbec69308b3de6"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/firstWriteExchange.mjs": {
+        "bytes": 3567,
+        "sha256": "c04c49c8aeafb822ed384bfb6c1576190ed623438dc6e5d7bd9469448c2437a1"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/checkLoad.mjs": {
+        "bytes": 1557,
+        "sha256": "123eb2e188465bc6a9877187f8d76c9acd682705448bd34422cec3fbcd7e4018"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/rows.mjs": {
+        "bytes": 424,
+        "sha256": "03f9a638eb1239abcac761ee6b0fa6ecfbc0eb429069c8918e7f0714a8a7ba59"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/worker.mjs": {
+        "bytes": 5500,
+        "sha256": "a1659a026610681e600f60d10bc2bf73cd153754e655a86af5040c22bc8a76c7"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/window.mjs": {
+        "bytes": 7235,
+        "sha256": "c34fc472642465ac8c0210f1fd18d576b4ddc22649ca1c74133a40eaa62ab637"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/rehearse.mjs": {
+        "bytes": 3042,
+        "sha256": "966b8549abee427fafd23a417459128bfb57c80bbb02d2e4947c23e9cc0fee67"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/summarize.mjs": {
+        "bytes": 9163,
+        "sha256": "85cd31ddf0ee96ea7956cd20e4cad7ca1acf2e844394fe5b25262d2807cf0501"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/operation.mjs": {
+        "bytes": 1858,
+        "sha256": "b17733084426073524c5931bcc4e3cf5f11de4d77f9714979e32ec829199ee7f"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/weightedExchange.mjs": {
+        "bytes": 2389,
+        "sha256": "b43e4d0f31b18f7203bd2334b976c1d20e6add1e1f1acb3cf59e9162b161d013"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/prepare.mjs": {
+        "bytes": 6968,
+        "sha256": "27da3c3dcbf1e6c0daf8799f80fcc67a0b44ce160094a1dc35b09be95dc7734c"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/compactQuietCheck.mjs": {
+        "bytes": 640,
+        "sha256": "dd59881d3500472289332f3cc2ab72aa765810f88826551a68f86883a6be5cca"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/median.mjs": {
+        "bytes": 382,
+        "sha256": "aaeb74c40644183e9a99fc2481cc086945c9337b21a7f602f7b6792b4ee0868f"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/checkRetentionLoad.mjs": {
+        "bytes": 1888,
+        "sha256": "216015faaa72fd81ad909243844c6fdc05371e1b6a1007b1c9d0cb9fc0a983d3"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/compactProcessRows.mjs": {
+        "bytes": 237,
+        "sha256": "6d3b147972ddf966605ae3945b3152265799f4b785459ef465dc374f5a8501ca"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/runWindowProcess.mjs": {
+        "bytes": 2568,
+        "sha256": "348a484ccb256a272a43e330f90846e2246f7796ccee49daf359bb92296df825"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/summarizeStageRows.mjs": {
+        "bytes": 2899,
+        "sha256": "ecf8978c38e10688f37465edc111ad6f3a4477402d489a19bea7f1cdba0f0df7"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/readWindowCommandResult.mjs": {
+        "bytes": 655,
+        "sha256": "2f638fc24ad155a301154bbc8794c1f1feacb61525cade21212b62774bcd2426"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/summarizeDistribution.mjs": {
+        "bytes": 311,
+        "sha256": "85fd0feb6a0e771d753e25893e550c051e012a809c5ee86515f0252278822d00"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/compactCpuObservation.mjs": {
+        "bytes": 605,
+        "sha256": "88d23896115dd18237ccd3db264bdeafb6c7613e43073a94cd9d9f7f56cabea7"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/collectThroughputSamples.mjs": {
+        "bytes": 442,
+        "sha256": "f22f1e648e77bdfc179c5de5b7cdeaa6b02ea6545ca1435d4030ca9375b98a69"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/saveEvidence.mjs": {
+        "bytes": 1219,
+        "sha256": "d39d61e130ff7927a9e63e426208bb999efd901fa77194a0a4268b37ba195a52"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/evaluateGates.mjs": {
+        "bytes": 1503,
+        "sha256": "12ce4019fa79dd5932658884328cd7090cea185cea3ce7fd4a854096210cafc4"
+      },
+      "architecture/verification/branch-switch/tools/b9-1/helpers/portableEvidence.mjs": {
+        "bytes": 688,
+        "sha256": "267f935e76a33f653e27e13b78c7ef54be5279d40a835828579e7e65dfcb738b"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/__tests__/judgeStage.test.mjs": {
+        "bytes": 1137,
+        "sha256": "776cc50a8c6aa6a2ffb4e688724ce1c1220af591aa91147feb2185d45da61972"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/__tests__/weightedExchange.test.mjs": {
+        "bytes": 2573,
+        "sha256": "feefcf90e04dcd084a642668061e381dc44871b26fbfb18a48c28e2863cf4b79"
+      },
+      "architecture/verification/branch-switch/tools/iv-1/__tests__/firstWriteExchange.test.mjs": {
+        "bytes": 1789,
+        "sha256": "c329a61d4b7788f9b4417fdbc7581443327fb3e8b0b5381b811908480e4e136d"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/helpers/observeMeasurement.mjs": {
+        "bytes": 1538,
+        "sha256": "2acd5bfba5e8d3ea4cdcdbd39d2a420418d8030e8a4e174b943a5363ea523b64"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/helpers/verifyStoredWindow.mjs": {
+        "bytes": 4235,
+        "sha256": "a7561a208e6a3e79404a3d9196beb33e0a703a229cc8fa0b248baf3dee44f09c"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/helpers/summarizeProbe.mjs": {
+        "bytes": 2430,
+        "sha256": "f0bf53e8a4a8df3028987b20bb947698fda0755bd10616cfd9b835e9bac2fd91"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/helpers/summarizeAllocations.mjs": {
+        "bytes": 1750,
+        "sha256": "b981a7c1e3522c660b17e4a7c40d71e9cdadf62fef4a5aaba59c34b6c2af2573"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/helpers/attributeNativeAllocations.mjs": {
+        "bytes": 1684,
+        "sha256": "fd52a181cb2082afb0e7bf9d23fd9f0e2a6800558a78138709757fc5c085ffd2"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/helpers/setupProbeOperation.mjs": {
+        "bytes": 612,
+        "sha256": "c7de5c702f8a3d6d4aba91ccc2f523312b9bf9edf41e525255a933d6e8214437"
+      },
+      "architecture/verification/branch-switch/tools/iv-4/__tests__/fixtures/windowChild.mjs": {
+        "bytes": 108,
+        "sha256": "ce70c622aa1c7066e2fcebe1ec47ff47de478552b20d3292771eb27819a9bbf5"
+      },
+      "bench/legacy-compare/node-and-settle.bench.ts": {
+        "bytes": 18558,
+        "sha256": "12a854df6b1116a05a9835b6c3a5a9d0e067d7a437e910efdb09ec196baa1c7a"
+      },
+      "bench/distEngine/loadDistEngine.ts": {
+        "bytes": 6787,
+        "sha256": "343857dd924916ef59c369033bf654692506cb3024022a8a61065385ed8f8f7d"
+      },
+      "bench/legacy-compare/dispatch-and-validation.bench.ts": {
+        "bytes": 15559,
+        "sha256": "4402889df1b92e54e9e525acaae29da067a60064704c62677ef556e2c2aa266f"
+      },
+      "bench/legacy-compare/derive-and-controls.bench.ts": {
+        "bytes": 7791,
+        "sha256": "361332b28c93350608990e6e06ab1623606632ffc6f23c307dc0e47246699154"
+      },
+      "bench/legacy-compare/array.bench.ts": {
+        "bytes": 13527,
+        "sha256": "ee697e9b27e879e61c81bc61766790d2c712df60302f078793887a2d810ee143"
+      },
+      "bench/distEngine/createBenchmarkValidator.ts": {
+        "bytes": 1900,
+        "sha256": "1e48b3c120e7ad9e79875a773170ec0af0fc41e2c8c4cca96cf040c38616dc83"
+      },
+      "bench/distEngine/isRuntimeFieldNode.ts": {
+        "bytes": 449,
+        "sha256": "98dd228fa865d64ce02e5c44bfc4aa610199418a0c99d8b6229859d4a60b7f8f"
+      },
+      "bench/distEngine/nodeFromJSONSchema.ts": {
+        "bytes": 376,
+        "sha256": "b161ca60e4a3c1d995ec16f2f469e9ec40132ad2b278215433d55e494ceec3dc"
+      }
+    },
+    "environment": {
+      "node": "v26.11.1",
+      "bun": "1.4.4",
+      "cpu": "Apple M1 Max",
+      "arch": "arm64",
+      "release": "27.0.0",
+      "nodeBinary": {
+        "bytes": 147222576,
+        "sha256": "72661776a737f5bbd7bc66af9dc5a5ef324819a53df518fdc7143127927c1378"
+      }
+    },
+    "sourceProof": {
+      "stageStartFiles": 2602,
+      "stageStartAllBlobsMatch": true,
+      "productDiff": false
+    },
+    "startingReference": {
+      "S": {
+        "index.node.mjs": {
+          "sha256": "59932cf4b9b12e52ce2610d3c4c1ad212705c1a714265234fbf24c753c55841b",
+          "bytes": 750076
+        },
+        "index.mjs": {
+          "sha256": "0896a2b1fd02d558836f2df78b80976df38e0d3552202c686484ad6be4dbafb6",
+          "bytes": 750818
+        },
+        "index.cjs": {
+          "sha256": "f3056727e71c551f8bdf03a279e2ccfcfbff0dcfab0579e3316b1bfc96f564c8",
+          "bytes": 769065
+        },
+        "index.d.ts": {
+          "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+          "bytes": 3054
+        }
+      },
+      "E": {
+        "index.node.mjs": {
+          "sha256": "e02f52140198c010bf3f3bedeeb7abb341704bafeabf026167d5cee22c761531",
+          "bytes": 814210
+        },
+        "index.mjs": {
+          "sha256": "bf83e2beb934a400083c785272ae6c4161126e43182d0db0606b27676adcb040",
+          "bytes": 814952
+        },
+        "index.cjs": {
+          "sha256": "e0d6893a1eb66db9ba2e4b22af2c11e7450508da1f5ebdc154de0cc264ff7134",
+          "bytes": 832016
+        },
+        "index.d.ts": {
+          "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+          "bytes": 3054
+        }
+      },
+      "L": {
+        "index.mjs": {
+          "sha256": "5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46",
+          "bytes": 260013
+        }
+      }
+    }
+  },
+  "window": {
+    "start": {
+      "startedAt": "2026-10-30T07:00:16.422Z",
+      "quietSince": "2026-10-30T07:00:16.419Z"
+    },
+    "end": {
+      "endedAt": "2026-10-30T07:06:30.780Z",
+      "completed": true,
+      "invalid": false,
+      "processes": [
+        {
+          "name": "mds",
+          "cpuPercent": 21.333293683570993
+        },
+        {
+          "name": "WindowServer",
+          "cpuPercent": 21.010061961026725
+        },
+        {
+          "name": "WallpaperAerialsExtension",
+          "cpuPercent": 9.373719951880345
+        },
+        {
+          "name": "mds_stores",
+          "cpuPercent": 7.434329616989542
+        },
+        {
+          "name": "Stats",
+          "cpuPercent": 7.111097894562862
+        },
+        {
+          "name": "launchd",
+          "cpuPercent": 6.787866172047989
+        },
+        {
+          "name": "WidgetsExtension",
+          "cpuPercent": 6.464634449533116
+        },
+        {
+          "name": "VTDecoderXPCService",
+          "cpuPercent": 5.171707559657361
+        },
+        {
+          "name": "mdworker_shared",
+          "cpuPercent": 4.848475837176307
+        },
+        {
+          "name": "mdworker_shared",
+          "cpuPercent": 4.848475837176292
+        }
+      ]
+    }
+  },
+  "quality": {
+    "kind": "legacy",
+    "ratio": 1.0007514539204387,
+    "passed": true,
+    "assessedRows": 18,
+    "rows": [
+      {
+        "id": "single-flat-1000",
+        "ratio": 0.998547777522264
+      },
+      {
+        "id": "mount-oneOf-80",
+        "ratio": 1.000556282141509
+      },
+      {
+        "id": "mount-flat-1000",
+        "ratio": 0.9966151512188623
+      },
+      {
+        "id": "mount-nested-d6-f4",
+        "ratio": 1.0022744254765035
+      },
+      {
+        "id": "single-nested-d6-f4",
+        "ratio": 1.016268292682061
+      },
+      {
+        "id": "switch-oneOf-80",
+        "ratio": 1.0079700532838982
+      },
+      {
+        "id": "bulk-flat-2000",
+        "ratio": 1.3345735417865727
+      },
+      {
+        "id": "bulk-nested-d6-f4",
+        "ratio": 1.0010249522866876
+      },
+      {
+        "id": "switch-nested-oneOf-20",
+        "ratio": 0.9832644379336076
+      },
+      {
+        "id": "switch-siblings-0",
+        "ratio": 1.0224761904762911
+      },
+      {
+        "id": "switch-siblings-100",
+        "ratio": 0.9785543295041509
+      },
+      {
+        "id": "switch-siblings-1000",
+        "ratio": 0.9892464076741125
+      },
+      {
+        "id": "switch-siblings-4000",
+        "ratio": 0.999556923466437
+      },
+      {
+        "id": "leaf-gate-250",
+        "ratio": 0.9973943314551947
+      },
+      {
+        "id": "leaf-gate-1000",
+        "ratio": 1.0086366735041
+      },
+      {
+        "id": "leaf-gate-4000",
+        "ratio": 1.0098531494406677
+      },
+      {
+        "id": "leaf-gate-8000",
+        "ratio": 1.0009466256993682
+      },
+      {
+        "id": "switch-payload-12",
+        "ratio": 0.9836133878387899
+      }
+    ],
+    "omittedRows": [
+      {
+        "id": "switch-discriminator-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "switch-if-80",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "wave-1000",
+        "reason": "No compatible legacy lane"
+      },
+      {
+        "id": "single-flat-1000-subscribed",
+        "reason": "No compatible legacy lane"
+      }
+    ]
+  },
+  "milestone": [
+    {
+      "row": "single-flat-1000",
+      "operation": "single",
+      "lanes": {
+        "L": {
+          "us": 502.3335000000202,
+          "minimaUs": [
+            502.2920000000113,
+            492.7500000000009,
+            512.9590000000235,
+            505.50000000001205,
+            499.2080000000101,
+            507.37499999999613,
+            505.375000000015,
+            498.5410000000172,
+            501.54100000003154,
+            502.3750000000291
+          ],
+          "processMediansUs": [
+            546.7710000000068,
+            547.8334999999674,
+            574.1664999999898,
+            536.4379999999755,
+            527.1249999999839,
+            551.6455000000065,
+            535.3335000000072,
+            536.8955,
+            522.791500000011,
+            529.8125000000198
+          ],
+          "minMedianUs": 522.791500000011,
+          "maxMedianUs": 574.1664999999898,
+          "widthUs": 51.374999999978854
+        },
+        "S": {
+          "us": 56.64600000000064,
+          "minimaUs": [
+            58.041000000002896,
+            56.29100000004428,
+            60.415999999975156,
+            54.417000000000826,
+            56.91699999999855,
+            59.62499999998272,
+            56.37500000000273,
+            53.04100000000744,
+            58.9170000000081,
+            54.16700000000674
+          ],
+          "processMediansUs": [
+            102.083499999992,
+            95.9374999999909,
+            105.50000000003479,
+            83.87500000000614,
+            75.47950000000014,
+            90.27100000000132,
+            82.04199999997286,
+            75.81249999998363,
+            74.81250000000728,
+            82.22950000001106
+          ],
+          "minMedianUs": 74.81250000000728,
+          "maxMedianUs": 105.50000000003479,
+          "widthUs": 30.687500000027512
+        },
+        "E": {
+          "us": 53.14599999996972,
+          "minimaUs": [
+            54.12499999999909,
+            54.00000000003047,
+            54.58300000003646,
+            52.58299999997007,
+            53.124999999965894,
+            51.12500000001319,
+            53.16699999997354,
+            51.916999999946256,
+            53.83399999999483,
+            51.20799999997416
+          ],
+          "processMediansUs": [
+            81.93750000000932,
+            86.10449999997627,
+            70.95800000001873,
+            74.45850000001997,
+            66.12499999999955,
+            75.10399999998185,
+            68.77100000002656,
+            70.60450000000174,
+            69.52100000000883,
+            69.52050000003851
+          ],
+          "minMedianUs": 66.12499999999955,
+          "maxMedianUs": 86.10449999997627,
+          "widthUs": 19.979499999976724
+        }
+      },
+      "endOverLegacy": 0.10579823961564892,
+      "endOverStart": 0.9382127599472004,
+      "legacyOnePointFiveUs": 753.5002500000303
+    },
+    {
+      "row": "mount-oneOf-80",
+      "operation": "mount",
+      "lanes": {
+        "L": {
+          "us": 337.95800000001464,
+          "minimaUs": [
+            339.20800000009876,
+            345.70799999994506,
+            334.62499999996,
+            340.7909999999674,
+            330.91699999999946,
+            336.7079999999305,
+            331.2499999999545,
+            332.8750000000582,
+            349.7499999999718,
+            354.5409999999265
+          ],
+          "processMediansUs": [
+            430.0000000000068,
+            451.25000000004434,
+            422.20850000001064,
+            428.27050000002487,
+            455.270999999982,
+            431.79149999997435,
+            430.3539999999657,
+            425.3750000000025,
+            445.1255000000174,
+            482.3335000000384
+          ],
+          "minMedianUs": 422.20850000001064,
+          "maxMedianUs": 482.3335000000384,
+          "widthUs": 60.12500000002774
+        },
+        "S": {
+          "us": 1970.9794999999986,
+          "minimaUs": [
+            2017.6659999999629,
+            1963.7500000000045,
+            1972.3750000000564,
+            1969.5839999999407,
+            1993.7910000001011,
+            1911.958000000027,
+            1965.1659999999538,
+            1919.7090000000117,
+            2043.0000000000064,
+            2047.9999999998881
+          ],
+          "processMediansUs": [
+            2443.5420000000076,
+            2404.749500000008,
+            2389.8120000000063,
+            2332.68750000002,
+            2592.999999999989,
+            2316.812500000026,
+            2371.7915000000003,
+            2342.667000000006,
+            2513.500000000022,
+            2735.8130000000074
+          ],
+          "minMedianUs": 2316.812500000026,
+          "maxMedianUs": 2735.8130000000074,
+          "widthUs": 419.00049999998146
+        },
+        "E": {
+          "us": 2244.72899999995,
+          "minimaUs": [
+            2191.6250000000446,
+            2197.8750000000673,
+            2285.6669999999895,
+            2252.832999999896,
+            2285.7079999999996,
+            2236.6250000000036,
+            2175.7500000001073,
+            2236.541999999986,
+            2264.666000000034,
+            2255.0830000000133
+          ],
+          "processMediansUs": [
+            2674.916499999995,
+            2553.1874999999786,
+            2671.6040000000303,
+            2560.7499999999845,
+            2616.3954999999814,
+            2560.4374999999777,
+            2594.4789999999784,
+            2569.354000000004,
+            2740.645999999998,
+            2935.603999999984
+          ],
+          "minMedianUs": 2553.1874999999786,
+          "maxMedianUs": 2935.603999999984,
+          "widthUs": 382.41650000000527
+        }
+      },
+      "endOverLegacy": 6.64203540084819,
+      "endOverStart": 1.138890079780105,
+      "legacyOnePointFiveUs": 506.93700000002195
+    },
+    {
+      "row": "mount-flat-1000",
+      "operation": "mount",
+      "lanes": {
+        "L": {
+          "us": 2117.229000000009,
+          "minimaUs": [
+            2122.2499999998945,
+            2154.457999999977,
+            2078.9590000000544,
+            2113.3330000000115,
+            2103.7090000000944,
+            2141.499999999951,
+            2071.5000000000146,
+            2133.6659999999483,
+            2118.8750000000027,
+            2115.583000000015
+          ],
+          "processMediansUs": [
+            2287.8744999999867,
+            2353.770499999996,
+            2226.9375000000196,
+            2319.1040000000385,
+            2299.7709999999643,
+            2350.1874999999754,
+            2223.9789999999857,
+            2286.4584999999806,
+            2305.437500000039,
+            2296.4584999999715
+          ],
+          "minMedianUs": 2223.9789999999857,
+          "maxMedianUs": 2353.770499999996,
+          "widthUs": 129.79150000001027
+        },
+        "S": {
+          "us": 2136.54200000002,
+          "minimaUs": [
+            2153.9579999999887,
+            2140.041999999994,
+            2203.0829999999924,
+            2193.875000000048,
+            2127.62500000008,
+            2191.041000000041,
+            2125.2920000000586,
+            2133.042000000046,
+            2129.167000000052,
+            2106.249999999932
+          ],
+          "processMediansUs": [
+            2475.4375000000264,
+            2575.6250000000023,
+            2486.1455000000205,
+            2594.645500000013,
+            2585.6039999999325,
+            2641.8544999999654,
+            2431.624999999997,
+            2479.458500000021,
+            2516.3749999999823,
+            2595.562500000028
+          ],
+          "minMedianUs": 2431.624999999997,
+          "maxMedianUs": 2641.8544999999654,
+          "widthUs": 210.22949999996854
+        },
+        "E": {
+          "us": 2145.9789999999543,
+          "minimaUs": [
+            2109.8329999999805,
+            2161.4580000000387,
+            2160.7079999999996,
+            2085.0840000000517,
+            2125.3749999999627,
+            2086.999999999989,
+            2136.2080000000105,
+            2155.749999999898,
+            2221.37500000008,
+            2195.3750000000127
+          ],
+          "processMediansUs": [
+            2468.8749999999686,
+            2647.437499999967,
+            2523.7085000000548,
+            2522.437499999967,
+            2467.687500000011,
+            2506.6040000000103,
+            2629.2085000000043,
+            2480.1874999999995,
+            2594.667000000044,
+            2546.500499999979
+          ],
+          "minMedianUs": 2467.687500000011,
+          "maxMedianUs": 2647.437499999967,
+          "widthUs": 179.7499999999559
+        }
+      },
+      "endOverLegacy": 1.0135790696235245,
+      "endOverStart": 1.0044169503805376,
+      "legacyOnePointFiveUs": 3175.8435000000136
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "operation": "mount",
+      "lanes": {
+        "L": {
+          "us": 6540.332999999919,
+          "minimaUs": [
+            6526.082999999744,
+            6617.833000000019,
+            6460.708000000068,
+            6731.08400000001,
+            6525.499999999738,
+            6759.915999999976,
+            6418.875000000071,
+            6498.833000000104,
+            6554.583000000093,
+            6966.542000000118
+          ],
+          "processMediansUs": [
+            9579.749500000162,
+            9621.270999999979,
+            9519.562500000007,
+            7938.8540000002195,
+            9346.728999999981,
+            9647.79150000004,
+            9387.437499999805,
+            9452.43749999986,
+            6826.500000000124,
+            8232.895500000155
+          ],
+          "minMedianUs": 6826.500000000124,
+          "maxMedianUs": 9647.79150000004,
+          "widthUs": 2821.2914999999157
+        },
+        "S": {
+          "us": 16339.833499999826,
+          "minimaUs": [
+            16534.833000000162,
+            16014.333999999963,
+            16408.500000000004,
+            15836.12499999981,
+            16368.624999999838,
+            16278.791000000183,
+            16311.041999999816,
+            15974.083000000064,
+            16410.167,
+            16502.29199999967
+          ],
+          "processMediansUs": [
+            18450.125000000073,
+            17556.12500000018,
+            17800.43749999993,
+            17002.354000000083,
+            17797.4375,
+            17667.97949999989,
+            17847.749999999905,
+            17584.72949999998,
+            18612.666499999934,
+            17642.56249999994
+          ],
+          "minMedianUs": 17002.354000000083,
+          "maxMedianUs": 18612.666499999934,
+          "widthUs": 1610.3124999998508
+        },
+        "E": {
+          "us": 16648.562500000255,
+          "minimaUs": [
+            17051.375000000007,
+            16550.458000000162,
+            16689.12500000033,
+            16232.208000000128,
+            16636.875000000146,
+            16510.87499999994,
+            16824.625000000196,
+            16660.25000000036,
+            16898.707999999715,
+            16517.29099999989
+          ],
+          "processMediansUs": [
+            18956.85450000019,
+            18458.687499999884,
+            18439.125000000102,
+            17276.64600000003,
+            17609.874999999876,
+            17743.58349999966,
+            18486.666499999956,
+            17907.228999999916,
+            18504.64599999998,
+            17768.957999999882
+          ],
+          "minMedianUs": 17276.64600000003,
+          "maxMedianUs": 18956.85450000019,
+          "widthUs": 1680.2085000001607
+        }
+      },
+      "endOverLegacy": 2.545522146961089,
+      "endOverStart": 1.0188942561746686,
+      "legacyOnePointFiveUs": 9810.499499999878
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "operation": "single",
+      "lanes": {
+        "L": {
+          "us": 20.49999999999841,
+          "minimaUs": [
+            20.499999999969987,
+            20.375000000001364,
+            20.2499999999759,
+            20.875000000046384,
+            20.50000000002683,
+            20.208999999965727,
+            20.6670000000031,
+            20.000000000038654,
+            20.916999999997188,
+            20.624999999995453
+          ],
+          "processMediansUs": [
+            27.583499999991545,
+            29.625000000010004,
+            29.45849999997563,
+            29.45799999997689,
+            28.957999999988715,
+            31.270500000005086,
+            28.458499999999276,
+            29.166500000030737,
+            30.41650000000118,
+            29.14600000002565
+          ],
+          "minMedianUs": 27.583499999991545,
+          "maxMedianUs": 31.270500000005086,
+          "widthUs": 3.6870000000135406
+        },
+        "S": {
+          "us": 110.47899999996957,
+          "minimaUs": [
+            108.20800000004738,
+            108.08400000001939,
+            108.99999999998045,
+            112.70799999999781,
+            111.08300000000781,
+            114.70800000000736,
+            106.16700000002766,
+            110.3329999999687,
+            112.3749999999859,
+            110.62499999997044
+          ],
+          "processMediansUs": [
+            137.7920000000188,
+            139.22900000000027,
+            139.54200000000583,
+            142.81300000001806,
+            141.3959999999861,
+            151.79200000000037,
+            136.43749999999955,
+            147.89550000000418,
+            141.93749999998317,
+            141.54199999998696
+          ],
+          "minMedianUs": 136.43749999999955,
+          "maxMedianUs": 151.79200000000037,
+          "widthUs": 15.354500000000826
+        },
+        "E": {
+          "us": 112.72900000000163,
+          "minimaUs": [
+            112.45800000000372,
+            113.20799999998599,
+            111.16700000002311,
+            116.29099999998971,
+            112.99999999999955,
+            111.49999999997817,
+            109.12500000000591,
+            113.49999999998772,
+            112.08300000004101,
+            115.04200000001674
+          ],
+          "processMediansUs": [
+            140.1455000000169,
+            140.16699999999105,
+            140.45849999996562,
+            143.66599999999607,
+            142.66649999999004,
+            142.39599999999086,
+            137.896000000012,
+            147.7289999999698,
+            140.4164999999864,
+            146.37500000000614
+          ],
+          "minMedianUs": 137.896000000012,
+          "maxMedianUs": 147.7289999999698,
+          "widthUs": 9.832999999957792
+        }
+      },
+      "endOverLegacy": 5.498975609756604,
+      "endOverStart": 1.0203658613857174,
+      "legacyOnePointFiveUs": 30.749999999997613
+    },
+    {
+      "row": "switch-oneOf-80",
+      "operation": "switch",
+      "lanes": {
+        "L": {
+          "us": 44.478999999995494,
+          "minimaUs": [
+            45.50000000000409,
+            44.62499999999636,
+            45.250000000010004,
+            43.8750000000141,
+            44.87499999999045,
+            43.416999999976724,
+            44.70800000001418,
+            43.834000000003925,
+            44.125000000008185,
+            44.33299999999463
+          ],
+          "processMediansUs": [
+            62.04200000000526,
+            65.04150000000664,
+            63.37500000000773,
+            61.16699999999753,
+            62.49999999998579,
+            62.66700000000469,
+            61.31249999998545,
+            64.58299999999895,
+            70.85399999999709,
+            62.64600000000087
+          ],
+          "minMedianUs": 61.16699999999753,
+          "maxMedianUs": 70.85399999999709,
+          "widthUs": 9.686999999999557
+        },
+        "S": {
+          "us": 234.3955000000051,
+          "minimaUs": [
+            233.83300000000418,
+            237.45799999994688,
+            253.70800000001736,
+            232.54099999996924,
+            231.6659999999615,
+            234.958000000006,
+            231.583999999998,
+            242.50000000000682,
+            232.12499999999636,
+            240.83300000000918
+          ],
+          "processMediansUs": [
+            381.10399999999345,
+            385.33349999998734,
+            385.60449999999946,
+            374.5000000000118,
+            382.81200000000126,
+            391.4584999999988,
+            379.47900000000345,
+            377.00000000000955,
+            434.50050000001283,
+            380.8959999999786
+          ],
+          "minMedianUs": 374.5000000000118,
+          "maxMedianUs": 434.50050000001283,
+          "widthUs": 60.00050000000101
+        },
+        "E": {
+          "us": 148.33349999997836,
+          "minimaUs": [
+            145.8329999999819,
+            145.87499999998954,
+            151.6250000000241,
+            155.6250000000432,
+            143.37499999999181,
+            150.79199999996717,
+            151.00000000001046,
+            142.12499999996453,
+            144.70799999998007,
+            154.9590000000194
+          ],
+          "processMediansUs": [
+            263.8330000000053,
+            262.9164999999887,
+            260.14549999999304,
+            269.9375000000259,
+            300.29150000001437,
+            261.93750000000193,
+            260.49949999999455,
+            265.27049999999974,
+            250.43750000000387,
+            256.2499999999801
+          ],
+          "minMedianUs": 250.43750000000387,
+          "maxMedianUs": 300.29150000001437,
+          "widthUs": 49.8540000000105
+        }
+      },
+      "endOverLegacy": 3.3349108568086825,
+      "endOverStart": 0.6328342480976603,
+      "legacyOnePointFiveUs": 66.71849999999324
+    },
+    {
+      "row": "bulk-flat-2000",
+      "operation": "bulk",
+      "lanes": {
+        "L": {
+          "us": 1411.1875000000396,
+          "minimaUs": [
+            1873.2499999999845,
+            1866.2909999999329,
+            1850.4580000000033,
+            1364.6669999999403,
+            1435.5000000000473,
+            1369.3329999999833,
+            1914.5000000000891,
+            1381.8750000000364,
+            1386.8750000000318,
+            1355.5410000000165
+          ],
+          "processMediansUs": [
+            2073.1460000000084,
+            2129.583500000024,
+            2086.0209999999597,
+            1949.2500000000064,
+            2098.645500000032,
+            1945.8125000000166,
+            2154.291999999998,
+            1961.8954999999687,
+            2050.0410000000215,
+            1954.7289999999862
+          ],
+          "minMedianUs": 1945.8125000000166,
+          "maxMedianUs": 2154.291999999998,
+          "widthUs": 208.4794999999815
+        },
+        "S": {
+          "us": 1743.9585000000193,
+          "minimaUs": [
+            1730.9999999999945,
+            1744.3329999999833,
+            1785.916000000043,
+            1747.624999999971,
+            1780.3339999999253,
+            1698.666000000003,
+            1739.2089999999598,
+            1714.49999999993,
+            1743.5840000000553,
+            1795.833000000016
+          ],
+          "processMediansUs": [
+            1951.6250000000355,
+            1944.5835000000216,
+            2018.3959999999956,
+            1988.207999999986,
+            2070.9794999999644,
+            1933.7919999999826,
+            1986.6039999999998,
+            1964.1875000000084,
+            1960.2085000000216,
+            2024.6460000000184
+          ],
+          "minMedianUs": 1933.7919999999826,
+          "maxMedianUs": 2070.9794999999644,
+          "widthUs": 137.1874999999818
+        },
+        "E": {
+          "us": 1836.229000000003,
+          "minimaUs": [
+            1815.917000000013,
+            1941.332999999986,
+            1828.6249999999882,
+            1931.7499999999654,
+            1764.7499999999354,
+            1870.5830000000105,
+            1843.8330000000178,
+            1870.6670000000258,
+            1811.3749999999982,
+            1821.5830000000324
+          ],
+          "processMediansUs": [
+            2045.3334999999697,
+            2118.270499999994,
+            2013.9164999999934,
+            2194.1454999999623,
+            1982.2709999999688,
+            2082.436999999999,
+            2104.1039999999784,
+            2093.479000000002,
+            2050.4999999999995,
+            2024.2080000000158
+          ],
+          "minMedianUs": 1982.2709999999688,
+          "maxMedianUs": 2194.1454999999623,
+          "widthUs": 211.87449999999353
+        }
+      },
+      "endOverLegacy": 1.3011942070064761,
+      "endOverStart": 1.0529086557965586,
+      "legacyOnePointFiveUs": 2116.781250000059
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "operation": "bulk",
+      "lanes": {
+        "L": {
+          "us": 3536.7500000000973,
+          "minimaUs": [
+            3586.958000000095,
+            3535.417000000052,
+            3538.0830000001424,
+            3475.7079999999405,
+            3611.6250000000036,
+            3457.249999999931,
+            3553.41599999997,
+            3518.208999999956,
+            3592.9579999999532,
+            3531.750000000102
+          ],
+          "processMediansUs": [
+            4397.874999999942,
+            4274.395499999855,
+            4443.1250000000655,
+            4295.437499999991,
+            4521.000000000015,
+            4238.416500000085,
+            4351.937500000076,
+            4360.291499999903,
+            4509.334000000081,
+            4319.062499999973
+          ],
+          "minMedianUs": 4238.416500000085,
+          "maxMedianUs": 4521.000000000015,
+          "widthUs": 282.5834999999297
+        },
+        "S": {
+          "us": 4071.249999999907,
+          "minimaUs": [
+            4070.957999999905,
+            3958.2079999998996,
+            4095.4589999998916,
+            4116.250000000036,
+            4026.3340000001335,
+            4021.4579999999387,
+            4088.124999999991,
+            4068.5419999999795,
+            4071.5419999999085,
+            4185.791999999992
+          ],
+          "processMediansUs": [
+            5370.354000000078,
+            5277.187500000082,
+            5441.374999999994,
+            5344.125000000076,
+            5316.146000000117,
+            5597.250000000031,
+            5321.708500000113,
+            5263.60399999993,
+            5318.146000000013,
+            5655.667000000108
+          ],
+          "minMedianUs": 5263.60399999993,
+          "maxMedianUs": 5655.667000000108,
+          "widthUs": 392.06300000017745
+        },
+        "E": {
+          "us": 3979.020999999875,
+          "minimaUs": [
+            3978.0419999999594,
+            4018.7499999999545,
+            4013.082999999824,
+            3968.1250000001,
+            3973.750000000109,
+            3961.541000000011,
+            3979.999999999791,
+            4046.4999999999236,
+            3980.9170000000904,
+            3953.8330000000315
+          ],
+          "processMediansUs": [
+            5153.728999999998,
+            5308.562499999994,
+            5286.625000000015,
+            5259.854500000018,
+            5381.270999999913,
+            5041.188000000034,
+            5426.521000000037,
+            5224.770499999977,
+            5446.916499999987,
+            5077.270999999996
+          ],
+          "minMedianUs": 5041.188000000034,
+          "maxMedianUs": 5446.916499999987,
+          "widthUs": 405.7284999999529
+        }
+      },
+      "endOverLegacy": 1.1250501166324354,
+      "endOverStart": 0.9773462695732186,
+      "legacyOnePointFiveUs": 5305.1250000001455
+    },
+    {
+      "row": "switch-discriminator-80",
+      "operation": "switch",
+      "lanes": {
+        "L": null,
+        "S": {
+          "us": 846.5000000000202,
+          "minimaUs": [
+            873.958000000016,
+            842.5829999999905,
+            823.7920000000258,
+            843.5000000000059,
+            823.0409999999893,
+            849.5000000000346,
+            851.9170000000145,
+            855.7089999999903,
+            851.333000000011,
+            839.2499999999927
+          ],
+          "processMediansUs": [
+            1099.958000000015,
+            997.1664999999916,
+            1002.83349999998,
+            994.3744999999922,
+            1005.3954999999917,
+            1012.2915000000035,
+            1000.9794999999997,
+            1013.354000000021,
+            1035.6874999999945,
+            1031.6875000000039
+          ],
+          "minMedianUs": 994.3744999999922,
+          "maxMedianUs": 1099.958000000015,
+          "widthUs": 105.58350000002292
+        },
+        "E": {
+          "us": 135.832999999991,
+          "minimaUs": [
+            135.3330000000028,
+            136.66599999999107,
+            136.1660000000029,
+            138.7499999999875,
+            129.45799999999963,
+            127.29200000001129,
+            129.08400000000597,
+            135.49999999997908,
+            142.24999999999,
+            140.20800000000122
+          ],
+          "processMediansUs": [
+            253.35399999998742,
+            240.8125000000041,
+            237.0210000000128,
+            243.68700000000842,
+            234.68750000000682,
+            234.97900000000982,
+            249.91649999999765,
+            232.2084999999845,
+            260.43700000001024,
+            245.33300000000224
+          ],
+          "minMedianUs": 232.2084999999845,
+          "maxMedianUs": 260.43700000001024,
+          "widthUs": 28.228500000025747
+        }
+      },
+      "endOverLegacy": null,
+      "endOverStart": 0.160464264619005,
+      "legacyOnePointFiveUs": null
+    },
+    {
+      "row": "switch-if-80",
+      "operation": "switch",
+      "lanes": {
+        "L": null,
+        "S": {
+          "us": 1041.2919999999986,
+          "minimaUs": [
+            1040.834000000018,
+            1033.7499999999977,
+            1009.3749999999773,
+            1036.4589999999794,
+            1078.2919999999763,
+            1041.749999999979,
+            1044.3750000000023,
+            1087.9580000000146,
+            1041.9590000000198,
+            1026.042000000018
+          ],
+          "processMediansUs": [
+            1286.979500000001,
+            1185.5209999999943,
+            1183.1664999999987,
+            1203.812499999998,
+            1219.729000000001,
+            1214.6045000000356,
+            1184.9369999999908,
+            1238.5000000000161,
+            1206.7920000000072,
+            1164.9795000000154
+          ],
+          "minMedianUs": 1164.9795000000154,
+          "maxMedianUs": 1286.979500000001,
+          "widthUs": 121.99999999998568
+        },
+        "E": {
+          "us": 257.02049999998167,
+          "minimaUs": [
+            258.9580000000069,
+            248.04100000000062,
+            256.87499999997954,
+            265.45800000002373,
+            266.00000000001955,
+            255.79199999998536,
+            257.1659999999838,
+            261.1249999999927,
+            253.16600000002154,
+            243.16699999997127
+          ],
+          "processMediansUs": [
+            399.8540000000048,
+            377.9789999999821,
+            400.792000000024,
+            394.9585000000013,
+            389.5419999999774,
+            377.6254999999935,
+            413.7499999999932,
+            378.5830000000203,
+            389.39600000000496,
+            369.1670000000329
+          ],
+          "minMedianUs": 369.1670000000329,
+          "maxMedianUs": 413.7499999999932,
+          "widthUs": 44.58299999996029
+        }
+      },
+      "endOverLegacy": null,
+      "endOverStart": 0.24682845926020947,
+      "legacyOnePointFiveUs": null
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "operation": "switch",
+      "lanes": {
+        "L": {
+          "us": 37.37549999999601,
+          "minimaUs": [
+            38.33399999996345,
+            37.3339999999871,
+            39.45800000002464,
+            37.41700000000492,
+            38.45900000004576,
+            36.75000000004047,
+            35.62500000003865,
+            36.7090000000303,
+            36.08300000001918,
+            37.6250000000482
+          ],
+          "processMediansUs": [
+            58.208500000006325,
+            65.14599999998438,
+            58.85449999999537,
+            67.83300000000736,
+            59.04150000000641,
+            60.95849999996972,
+            58.29199999999446,
+            57.02099999996335,
+            61.31300000001261,
+            59.06249999998181
+          ],
+          "minMedianUs": 57.02099999996335,
+          "maxMedianUs": 67.83300000000736,
+          "widthUs": 10.812000000044009
+        },
+        "S": {
+          "us": 388.31299999998237,
+          "minimaUs": [
+            388.29199999997854,
+            403.1669999999963,
+            392.00000000005275,
+            390.041999999994,
+            368.458999999973,
+            371.6660000000047,
+            390.41700000001356,
+            378.6670000000072,
+            388.3339999999862,
+            382.79200000005176
+          ],
+          "processMediansUs": [
+            563.6250000000018,
+            588.3540000000096,
+            569.208500000002,
+            584.5415000000003,
+            572.1664999999803,
+            576.7500000000041,
+            553.3955000000219,
+            551.6465000000039,
+            558.7495000000047,
+            541.8129999999906
+          ],
+          "minMedianUs": 541.8129999999906,
+          "maxMedianUs": 588.3540000000096,
+          "widthUs": 46.54100000001904
+        },
+        "E": {
+          "us": 275.6249999999909,
+          "minimaUs": [
+            285.541999999964,
+            283.4169999999858,
+            275.91699999999264,
+            286.2920000000031,
+            271.7079999999896,
+            275.33299999998917,
+            284.50000000003683,
+            274.708999999973,
+            273.33300000003646,
+            272.33300000000327
+          ],
+          "processMediansUs": [
+            432.35399999998947,
+            443.0210000000159,
+            457.02099999999746,
+            441.979499999988,
+            436.75000000001774,
+            434.97899999999845,
+            450.27099999998654,
+            433.1664999999987,
+            445.33299999997666,
+            442.0624999999916
+          ],
+          "minMedianUs": 432.35399999998947,
+          "maxMedianUs": 457.02099999999746,
+          "widthUs": 24.667000000007988
+        }
+      },
+      "endOverLegacy": 7.374483284505099,
+      "endOverStart": 0.7098011140497573,
+      "legacyOnePointFiveUs": 56.063249999994014
+    },
+    {
+      "row": "switch-siblings-0",
+      "operation": "switch",
+      "lanes": {
+        "L": {
+          "us": 15.749999999997044,
+          "minimaUs": [
+            15.834000000012338,
+            16.749999999973397,
+            15.583999999989828,
+            15.749999999997044,
+            15.749999999997044,
+            15.582999999992353,
+            15.583000000020775,
+            15.833000000014863,
+            15.542000000010603,
+            15.91600000000426
+          ],
+          "processMediansUs": [
+            26.332999999993945,
+            29.125000000007617,
+            27.50000000000341,
+            29.416499999996404,
+            28.000000000005798,
+            29.20849999999575,
+            29.375000000001705,
+            28.20799999999224,
+            26.9375000000025,
+            28.812999999999533
+          ],
+          "minMedianUs": 26.332999999993945,
+          "maxMedianUs": 29.416499999996404,
+          "widthUs": 3.0835000000024593
+        },
+        "S": {
+          "us": 58.62500000000637,
+          "minimaUs": [
+            59.83299999999758,
+            59.83299999999758,
+            58.9999999999975,
+            57.91700000000333,
+            60.79200000002061,
+            57.33399999999733,
+            61.33400000001643,
+            55.58400000001029,
+            58.250000000015234,
+            58.083999999979596
+          ],
+          "processMediansUs": [
+            87.3539999999906,
+            84.77099999998927,
+            83.58400000000188,
+            86.52100000000473,
+            88.49949999999751,
+            83.72899999999106,
+            87.97950000000299,
+            85.416500000008,
+            83.5829999999902,
+            83.08350000001496
+          ],
+          "minMedianUs": 83.08350000001496,
+          "maxMedianUs": 88.49949999999751,
+          "widthUs": 5.415999999982546
+        },
+        "E": {
+          "us": 56.916499999999814,
+          "minimaUs": [
+            56.74999999999386,
+            54.20799999998849,
+            55.16700000001151,
+            58.16700000002584,
+            58.75000000000341,
+            57.08300000000577,
+            60.458000000011225,
+            54.95899999999665,
+            53.374999999988404,
+            60.08300000002009
+          ],
+          "processMediansUs": [
+            87.66699999998195,
+            84.37449999999558,
+            83.97899999999936,
+            97.60399999998981,
+            81.93750000000932,
+            85.68750000000591,
+            86.60449999999287,
+            81.93749999999511,
+            83.08350000000075,
+            90.70800000000645
+          ],
+          "minMedianUs": 81.93749999999511,
+          "maxMedianUs": 97.60399999998981,
+          "widthUs": 15.666499999994699
+        }
+      },
+      "endOverLegacy": 3.613746031746698,
+      "endOverStart": 0.9708571428570343,
+      "legacyOnePointFiveUs": 23.624999999995566
+    },
+    {
+      "row": "switch-siblings-100",
+      "operation": "switch",
+      "lanes": {
+        "L": {
+          "us": 105.89550000000258,
+          "minimaUs": [
+            106.16600000000176,
+            103.04099999996197,
+            106.20799999998098,
+            108.45800000001304,
+            104.79099999997743,
+            106.49999999998272,
+            108.58300000001009,
+            103.87500000001637,
+            102.49999999996362,
+            105.62500000000341
+          ],
+          "processMediansUs": [
+            133.00000000000978,
+            126.49999999999295,
+            129.70849999999245,
+            134.97899999998708,
+            128.18749999999568,
+            140.2710000000127,
+            130.97900000001061,
+            129.10449999998264,
+            129.29149999999368,
+            128.95800000002566
+          ],
+          "minMedianUs": 126.49999999999295,
+          "maxMedianUs": 140.2710000000127,
+          "widthUs": 13.77100000001974
+        },
+        "S": {
+          "us": 185.72950000002209,
+          "minimaUs": [
+            182.04200000002402,
+            178.04200000000492,
+            187.91699999999878,
+            186.2090000000194,
+            185.04200000000992,
+            189.04200000002902,
+            178.54099999999562,
+            185.75000000004138,
+            185.7090000000028,
+            189.12499999999
+          ],
+          "processMediansUs": [
+            225.31250000000114,
+            229.9794999999989,
+            231.68699999999376,
+            241.375000000005,
+            227.39599999999882,
+            261.08350000001224,
+            230.18749999999955,
+            233.06250000000261,
+            231.18700000000558,
+            229.91700000000037
+          ],
+          "minMedianUs": 225.31250000000114,
+          "maxMedianUs": 261.08350000001224,
+          "widthUs": 35.7710000000111
+        },
+        "E": {
+          "us": 74.54150000000936,
+          "minimaUs": [
+            72.00000000000273,
+            72.20800000001759,
+            76.70799999999645,
+            75.20900000000097,
+            74.58300000001827,
+            74.45899999999028,
+            73.87500000001523,
+            77.37499999998931,
+            74.50000000000045,
+            75.5839999999921
+          ],
+          "processMediansUs": [
+            107.52049999999258,
+            106.35450000000901,
+            109.16600000001608,
+            109.0005000000076,
+            106.85399999999845,
+            108.83300000000418,
+            111.27100000000212,
+            105.39600000001315,
+            109.89549999999326,
+            107.31300000000488
+          ],
+          "minMedianUs": 105.39600000001315,
+          "maxMedianUs": 111.27100000000212,
+          "widthUs": 5.874999999988972
+        }
+      },
+      "endOverLegacy": 0.7039156526954171,
+      "endOverStart": 0.4013444283218363,
+      "legacyOnePointFiveUs": 158.84325000000388
+    },
+    {
+      "row": "switch-siblings-1000",
+      "operation": "switch",
+      "lanes": {
+        "L": {
+          "us": 2485.5415000000676,
+          "minimaUs": [
+            2485.1670000000468,
+            2523.4590000000026,
+            2461.749999999995,
+            2468.7920000000076,
+            2490.167000000042,
+            2471.3329999999587,
+            2499.0000000000236,
+            2485.9160000000884,
+            2498.707999999965,
+            2470.2499999999645
+          ],
+          "processMediansUs": [
+            2643.3754999999906,
+            2653.3749999999827,
+            2668.0000000000064,
+            2636.3755000000137,
+            2645.49999999997,
+            2649.9999999999773,
+            2675.687499999981,
+            2661.2499999999955,
+            2671.5415000000175,
+            2637.2709999999697
+          ],
+          "minMedianUs": 2636.3755000000137,
+          "maxMedianUs": 2675.687499999981,
+          "widthUs": 39.311999999967156
+        },
+        "S": {
+          "us": 2034.0624999999477,
+          "minimaUs": [
+            2032.8329999999823,
+            2035.291999999913,
+            2048.000000000002,
+            2040.3329999999187,
+            2024.8329999999441,
+            2046.7080000000806,
+            2049.9999999999545,
+            2021.833000000015,
+            2026.1659999999893,
+            2005.1669999999149
+          ],
+          "processMediansUs": [
+            2192.06250000002,
+            2235.0205000000187,
+            2229.791500000005,
+            2179.2915000000335,
+            2225.270500000022,
+            2228.499500000055,
+            2245.124999999973,
+            2206.52149999998,
+            2220.937499999934,
+            2222.750499999961
+          ],
+          "minMedianUs": 2179.2915000000335,
+          "maxMedianUs": 2245.124999999973,
+          "widthUs": 65.8334999999397
+        },
+        "E": {
+          "us": 301.64550000000645,
+          "minimaUs": [
+            307.41599999998925,
+            305.417000000034,
+            288.24999999994816,
+            302.24999999995816,
+            296.5000000000373,
+            305.8340000000044,
+            296.41700000001947,
+            301.6659999999547,
+            296.291999999994,
+            301.6250000000582
+          ],
+          "processMediansUs": [
+            381.9579999999405,
+            394.5204999999987,
+            364.832999999976,
+            369.395499999996,
+            371.0624999999652,
+            387.97950000000014,
+            368.3755000000133,
+            391.8545000000222,
+            365.16699999998536,
+            373.1249999999875
+          ],
+          "minMedianUs": 364.832999999976,
+          "maxMedianUs": 394.5204999999987,
+          "widthUs": 29.687500000022737
+        }
+      },
+      "endOverLegacy": 0.1213600738511098,
+      "endOverStart": 0.14829706560148187,
+      "legacyOnePointFiveUs": 3728.3122500001014
+    },
+    {
+      "row": "switch-siblings-4000",
+      "operation": "switch",
+      "lanes": {
+        "L": {
+          "us": 7899.312500000007,
+          "minimaUs": [
+            7893.000000000029,
+            7942.667000000029,
+            7930.000000000064,
+            7885.459000000083,
+            7832.540999999992,
+            7939.333000000033,
+            7850.875000000087,
+            8984.457999999904,
+            7905.624999999986,
+            7861.292000000049
+          ],
+          "processMediansUs": [
+            8389.520999999946,
+            8339.937500000018,
+            8447.687499999973,
+            8397.312499999998,
+            8373.104000000012,
+            8472.812999999973,
+            8334.145999999975,
+            9295.103999999923,
+            8414.47949999997,
+            8313.270999999986
+          ],
+          "minMedianUs": 8313.270999999986,
+          "maxMedianUs": 9295.103999999923,
+          "widthUs": 981.8329999999369
+        },
+        "S": {
+          "us": 6743.6874999999645,
+          "minimaUs": [
+            6758.916000000227,
+            6751.999999999953,
+            6679.082999999991,
+            6726.499999999987,
+            6735.374999999976,
+            6877.250000000004,
+            6796.624999999949,
+            6719.417000000021,
+            6694.915999999921,
+            6752.040999999963
+          ],
+          "processMediansUs": [
+            7529.062499999782,
+            7574.437500000045,
+            7463.0204999999705,
+            7507.229000000052,
+            7520.3539999999975,
+            7658.3960000001525,
+            7482.749999999783,
+            7626.833499999975,
+            7560.7499999999845,
+            7496.561999999926
+          ],
+          "minMedianUs": 7463.0204999999705,
+          "maxMedianUs": 7658.3960000001525,
+          "widthUs": 195.375500000182
+        },
+        "E": {
+          "us": 2745.104000000083,
+          "minimaUs": [
+            2759.5410000001266,
+            2722.9999999999563,
+            2747.9580000001533,
+            2758.291999999983,
+            2713.2500000000164,
+            2766.20899999989,
+            2731.3329999999496,
+            2705.416000000014,
+            2772.9170000000067,
+            2742.2500000000127
+          ],
+          "processMediansUs": [
+            3160.3750000001583,
+            3085.000500000092,
+            3100.2295000000686,
+            3127.1249999998645,
+            3172.8540000000294,
+            3105.0205000000233,
+            3072.396000000026,
+            3114.8335000000316,
+            3080.8750000001055,
+            3142.166999999972
+          ],
+          "minMedianUs": 3072.396000000026,
+          "maxMedianUs": 3172.8540000000294,
+          "widthUs": 100.45800000000327
+        }
+      },
+      "endOverLegacy": 0.3475117613083519,
+      "endOverStart": 0.40706275313025664,
+      "legacyOnePointFiveUs": 11848.968750000011
+    },
+    {
+      "row": "leaf-gate-250",
+      "operation": "leaf",
+      "lanes": {
+        "L": {
+          "us": 71.95849999999382,
+          "minimaUs": [
+            69.5829999999944,
+            77.95899999999278,
+            72.24999999999682,
+            75.37500000000819,
+            71.66699999999082,
+            74.45799999999281,
+            77.87500000000591,
+            70.33400000000256,
+            69.33300000000031,
+            67.29200000000901
+          ],
+          "processMediansUs": [
+            94.47950000001981,
+            93.47950000000083,
+            92.37449999999114,
+            92.77099999999905,
+            94.93750000000034,
+            91.72899999998663,
+            93.56300000000317,
+            105.97899999999072,
+            89.06249999999716,
+            91.58349999999871
+          ],
+          "minMedianUs": 89.06249999999716,
+          "maxMedianUs": 105.97899999999072,
+          "widthUs": 16.91649999999356
+        },
+        "S": {
+          "us": 23.625000000009777,
+          "minimaUs": [
+            24.124999999997954,
+            23.625000000009777,
+            22.999999999996135,
+            25.04200000001333,
+            22.500000000007958,
+            24.00000000000091,
+            21.916000000004487,
+            24.666999999993777,
+            23.500000000012733,
+            23.625000000009777
+          ],
+          "processMediansUs": [
+            32.89599999999382,
+            30.62500000000057,
+            29.875000000004093,
+            32.37500000000182,
+            30.02100000000496,
+            29.81250000001978,
+            30.708000000004176,
+            38.312500000003524,
+            30.79200000000526,
+            29.791500000001747
+          ],
+          "minMedianUs": 29.791500000001747,
+          "maxMedianUs": 38.312500000003524,
+          "widthUs": 8.521000000001777
+        },
+        "E": {
+          "us": 22.83349999999018,
+          "minimaUs": [
+            24.87499999998022,
+            21.874999999994316,
+            22.999999999996135,
+            23.37500000001569,
+            21.74999999999727,
+            22.666999999984228,
+            20.70800000001327,
+            23.33299999997962,
+            25.04200000001333,
+            22.291999999993095
+          ],
+          "processMediansUs": [
+            31.542000000001735,
+            30.520999999993137,
+            29.896000000007916,
+            30.332999999998833,
+            28.813000000013744,
+            29.39600000000553,
+            29.729000000003225,
+            31.771000000020422,
+            31.333499999988135,
+            30.104500000007306
+          ],
+          "minMedianUs": 28.813000000013744,
+          "maxMedianUs": 31.771000000020422,
+          "widthUs": 2.9580000000066775
+        }
+      },
+      "endOverLegacy": 0.31731484119307857,
+      "endOverStart": 0.966497354496539,
+      "legacyOnePointFiveUs": 107.93774999999073
+    },
+    {
+      "row": "leaf-gate-1000",
+      "operation": "leaf",
+      "lanes": {
+        "L": {
+          "us": 492.14549999999235,
+          "minimaUs": [
+            493.7919999999849,
+            490.83400000000665,
+            495.54200000000037,
+            492.16599999999744,
+            496.37500000000045,
+            490.91699999996763,
+            501.41700000000355,
+            492.12499999998727,
+            491.58299999999144,
+            488.1660000000352
+          ],
+          "processMediansUs": [
+            511.3125000000025,
+            512.2704999999996,
+            512.6874999999984,
+            514.8334999999804,
+            511.4579999999762,
+            510.06250000000364,
+            552.4369999999692,
+            521.8120000000397,
+            517.8120000000206,
+            512.2499999999945
+          ],
+          "minMedianUs": 510.06250000000364,
+          "maxMedianUs": 552.4369999999692,
+          "widthUs": 42.374499999965565
+        },
+        "S": {
+          "us": 23.708499999997912,
+          "minimaUs": [
+            23.04199999997536,
+            23.75000000000682,
+            23.707999999999174,
+            23.70899999999665,
+            23.70899999999665,
+            23.2499999999618,
+            26.874999999961346,
+            24.999999999977263,
+            22.959000000014385,
+            23.541000000022905
+          ],
+          "processMediansUs": [
+            30.292000000002872,
+            33.04199999999469,
+            31.58300000004033,
+            31.520999999997912,
+            31.853999999981397,
+            31.103999999999132,
+            49.27050000000577,
+            33.437499999990905,
+            32.79149999997344,
+            31.187499999987267
+          ],
+          "minMedianUs": 30.292000000002872,
+          "maxMedianUs": 49.27050000000577,
+          "widthUs": 18.978500000002896
+        },
+        "E": {
+          "us": 22.62550000000374,
+          "minimaUs": [
+            22.66700000001265,
+            21.79200000000492,
+            20.75000000002092,
+            22.999999999967713,
+            23.250000000018645,
+            22.291999999993095,
+            23.250000000018645,
+            23.75000000000682,
+            22.58399999999483,
+            22.375000000010914
+          ],
+          "processMediansUs": [
+            33.41649999998708,
+            30.000000000001137,
+            30.479499999984228,
+            30.08400000001643,
+            35.60400000000641,
+            31.541999999973314,
+            31.124999999974534,
+            34.104500000012195,
+            34.624999999977035,
+            34.68749999998977
+          ],
+          "minMedianUs": 30.000000000001137,
+          "maxMedianUs": 35.60400000000641,
+          "widthUs": 5.604000000005271
+        }
+      },
+      "endOverLegacy": 0.04597319288707118,
+      "endOverStart": 0.9543201805262135,
+      "legacyOnePointFiveUs": 738.2182499999885
+    },
+    {
+      "row": "leaf-gate-4000",
+      "operation": "leaf",
+      "lanes": {
+        "L": {
+          "us": 2482.3534999999592,
+          "minimaUs": [
+            2539.9589999999534,
+            2466.4169999999785,
+            2478.7090000000376,
+            2501.082999999994,
+            2484.040999999934,
+            2480.665999999985,
+            2504.083000000037,
+            2472.8329999999232,
+            2477.125000000001,
+            2498.8340000001017
+          ],
+          "processMediansUs": [
+            2642.479500000036,
+            2631.1250000000255,
+            2568.354000000056,
+            2598.021000000017,
+            2547.1244999999954,
+            2555.47949999999,
+            2566.082999999992,
+            2540.7505000000583,
+            2545.8750000000805,
+            2574.791499999975
+          ],
+          "minMedianUs": 2540.7505000000583,
+          "maxMedianUs": 2642.479500000036,
+          "widthUs": 101.72899999997753
+        },
+        "S": {
+          "us": 847.9164999999966,
+          "minimaUs": [
+            867.458000000056,
+            844.1249999999627,
+            848.7910000000056,
+            853.7499999999909,
+            847.0419999999876,
+            853.49999999994,
+            855.0410000000284,
+            764.6250000000236,
+            844.7909999999865,
+            765.2080000000296
+          ],
+          "processMediansUs": [
+            897.1665000000257,
+            923.5409999999433,
+            891.1040000000128,
+            893.5209999999643,
+            877.3330000000215,
+            882.1249999999736,
+            881.250499999993,
+            789.0415000000246,
+            874.6455000000424,
+            793.9375000000268
+          ],
+          "minMedianUs": 789.0415000000246,
+          "maxMedianUs": 923.5409999999433,
+          "widthUs": 134.49949999991873
+        },
+        "E": {
+          "us": 755.6255000000078,
+          "minimaUs": [
+            769.1660000000411,
+            751.0829999999942,
+            743.2080000000951,
+            758.0840000000535,
+            757.0409999999583,
+            747.0419999999649,
+            752.8330000000096,
+            770.9999999999582,
+            755.0840000000107,
+            756.1670000000049
+          ],
+          "processMediansUs": [
+            800.6874999999809,
+            788.2915000000139,
+            778.9375000000405,
+            789.4790000000285,
+            812.0834999999715,
+            783.9164999999753,
+            782.4579999999628,
+            812.5414999999521,
+            785.8545000000277,
+            782.6875000000086
+          ],
+          "minMedianUs": 778.9375000000405,
+          "maxMedianUs": 812.5414999999521,
+          "widthUs": 33.60399999991159
+        }
+      },
+      "endOverLegacy": 0.3043988295784707,
+      "endOverStart": 0.8911555560011049,
+      "legacyOnePointFiveUs": 3723.530249999939
+    },
+    {
+      "row": "leaf-gate-8000",
+      "operation": "leaf",
+      "lanes": {
+        "L": {
+          "us": 5172.5830000000315,
+          "minimaUs": [
+            5180.58300000007,
+            5244.290999999976,
+            5179.916999999932,
+            5145.625000000109,
+            5163.374999999974,
+            5185.791999999992,
+            5149.916000000076,
+            5169.6660000000065,
+            5134.12500000004,
+            5175.500000000056
+          ],
+          "processMediansUs": [
+            5300.625000000082,
+            5340.479000000016,
+            5303.625000000011,
+            5281.812000000059,
+            5267.604000000006,
+            5274.687500000084,
+            5267.437500000028,
+            5315.436999999974,
+            5280.666999999994,
+            5281.104500000083
+          ],
+          "minMedianUs": 5267.437500000028,
+          "maxMedianUs": 5340.479000000016,
+          "widthUs": 73.04149999998754
+        },
+        "S": {
+          "us": 1772.1039999999562,
+          "minimaUs": [
+            1769.5420000000013,
+            1780.917000000045,
+            1779.7500000000355,
+            1585.7919999998558,
+            1774.665999999911,
+            1782.2079999999687,
+            1765.0410000001102,
+            1774.8340000000553,
+            1590.1249999999436,
+            1607.4160000000575
+          ],
+          "processMediansUs": [
+            1823.270999999977,
+            1833.5210000000188,
+            1825.0209999999925,
+            1646.4169999999854,
+            1822.8334999999447,
+            1822.8750000000673,
+            1831.1874999999986,
+            1834.2290000000503,
+            1648.3329999999796,
+            1642.3125000000027
+          ],
+          "minMedianUs": 1642.3125000000027,
+          "maxMedianUs": 1834.2290000000503,
+          "widthUs": 191.91650000004756
+        },
+        "E": {
+          "us": 1572.5414999999998,
+          "minimaUs": [
+            1560.6659999998556,
+            1578.7909999999101,
+            1595.9169999998721,
+            1572.7080000000342,
+            1578.125,
+            1563.9999999999645,
+            1572.3749999999654,
+            1561.9999999998981,
+            1567.792000000054,
+            1586.0420000000204
+          ],
+          "processMediansUs": [
+            1638.8330000000337,
+            1624.1454999999405,
+            1656.667000000084,
+            1625.7714999999848,
+            1632.7084999999215,
+            1623.2294999999795,
+            1646.1664999999357,
+            1632.62450000002,
+            1623.0004999999892,
+            1627.7914999999439
+          ],
+          "minMedianUs": 1623.0004999999892,
+          "maxMedianUs": 1656.667000000084,
+          "widthUs": 33.66650000009486
+        }
+      },
+      "endOverLegacy": 0.30401474466431766,
+      "endOverStart": 0.8873866883659417,
+      "legacyOnePointFiveUs": 7758.874500000047
+    },
+    {
+      "row": "wave-1000",
+      "operation": "subscription",
+      "lanes": {
+        "L": null,
+        "S": {
+          "us": 1643.8545000000033,
+          "minimaUs": [
+            1683.1250000000182,
+            1638.499999999965,
+            1624.040999999977,
+            1633.4579999999619,
+            1635.958999999957,
+            1649.2090000000417,
+            1634.8330000000146,
+            1668.4999999999945,
+            1660.250000000019,
+            1651.9170000000258
+          ],
+          "processMediansUs": [
+            1767.416499999996,
+            1742.1045000000106,
+            1743.1254999999908,
+            1759.8750000000223,
+            1751.9999999999811,
+            1736.375000000038,
+            1746.8539999999848,
+            1767.291499999999,
+            1746.124999999978,
+            1740.5829999999867
+          ],
+          "minMedianUs": 1736.375000000038,
+          "maxMedianUs": 1767.416499999996,
+          "widthUs": 31.041499999957978
+        },
+        "E": {
+          "us": 1648.1664999999737,
+          "minimaUs": [
+            1627.3749999999723,
+            1651.3329999999655,
+            1644.9999999999818,
+            1642.750000000035,
+            1636.7500000000064,
+            1682.1659999999952,
+            1660.583000000031,
+            1630.207999999982,
+            1653.9999999999964,
+            1658.083999999974
+          ],
+          "processMediansUs": [
+            1757.0000000000334,
+            1847.4789999999928,
+            1749.0420000000029,
+            1759.1664999999637,
+            1760.5204999999842,
+            1819.1454999999905,
+            1773.041500000005,
+            1760.6460000000084,
+            1742.458499999998,
+            1749.291999999997
+          ],
+          "minMedianUs": 1742.458499999998,
+          "maxMedianUs": 1847.4789999999928,
+          "widthUs": 105.02049999999485
+        }
+      },
+      "endOverLegacy": null,
+      "endOverStart": 1.0026231032004174,
+      "legacyOnePointFiveUs": null
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "operation": "subscription",
+      "lanes": {
+        "L": null,
+        "S": {
+          "us": 66.8124999999975,
+          "minimaUs": [
+            67.58400000001075,
+            63.041999999995824,
+            66.41700000000128,
+            66.70900000000302,
+            63.12500000001364,
+            67.37499999999841,
+            68.25000000000614,
+            66.91599999999198,
+            64.99999999999773,
+            67.58299999998485
+          ],
+          "processMediansUs": [
+            95.87499999999238,
+            83.2290000000171,
+            81.87499999999659,
+            84.77049999999053,
+            98.5834999999895,
+            91.10450000000014,
+            93.04150000001243,
+            96.33299999998712,
+            89.37550000000272,
+            91.12500000000523
+          ],
+          "minMedianUs": 81.87499999999659,
+          "maxMedianUs": 98.5834999999895,
+          "widthUs": 16.70849999999291
+        },
+        "E": {
+          "us": 66.83349999998711,
+          "minimaUs": [
+            66.33399999998346,
+            64.79100000001381,
+            67.9580000000044,
+            67.4590000000137,
+            63.707999999991216,
+            67.33299999999076,
+            69.500000000005,
+            68.83300000001213,
+            64.75000000000364,
+            64.6250000000066
+          ],
+          "processMediansUs": [
+            83.72899999999106,
+            81.06250000000159,
+            87.6039999999989,
+            82.64599999999689,
+            81.2920000000048,
+            87.45799999999804,
+            101.22900000000357,
+            85.95800000000509,
+            82.16699999999832,
+            80.89599999999564
+          ],
+          "minMedianUs": 80.89599999999564,
+          "maxMedianUs": 101.22900000000357,
+          "widthUs": 20.333000000007928
+        }
+      },
+      "endOverLegacy": null,
+      "endOverStart": 1.0003143124413787,
+      "legacyOnePointFiveUs": null
+    },
+    {
+      "row": "switch-payload-12",
+      "operation": "switch",
+      "lanes": {
+        "L": {
+          "us": 171.60349999997493,
+          "minimaUs": [
+            166.41700000002402,
+            173.62500000001546,
+            163.833000000011,
+            164.83400000004167,
+            172.29099999997288,
+            175.79200000000128,
+            162.0420000000422,
+            174.583000000041,
+            170.91599999997698,
+            176.4580000000251
+          ],
+          "processMediansUs": [
+            190.12499999999477,
+            191.7290000000378,
+            183.77100000003566,
+            181.12500000000864,
+            198.91699999999446,
+            195.56199999999535,
+            178.7079999999719,
+            191.39549999999872,
+            188.603999999998,
+            196.062999999981
+          ],
+          "minMedianUs": 178.7079999999719,
+          "maxMedianUs": 198.91699999999446,
+          "widthUs": 20.20900000002257
+        },
+        "S": {
+          "us": 657.8539999999862,
+          "minimaUs": [
+            672.2090000000094,
+            671.1250000000177,
+            656.25,
+            648.6249999999814,
+            653.4169999999904,
+            659.4579999999723,
+            671.3330000000042,
+            646.000000000015,
+            652.3750000000064,
+            677.8750000000286
+          ],
+          "processMediansUs": [
+            795.5205000000092,
+            758.4165000000098,
+            741.791500000005,
+            761.0000000000241,
+            783.3750000000066,
+            778.0625000000043,
+            754.1455000000212,
+            767.5210000000163,
+            763.292000000007,
+            781.3124999999843
+          ],
+          "minMedianUs": 741.791500000005,
+          "maxMedianUs": 795.5205000000092,
+          "widthUs": 53.729000000004135
+        },
+        "E": {
+          "us": 282.1455000000128,
+          "minimaUs": [
+            276.37500000003,
+            277.8329999999869,
+            279.83299999999645,
+            293.3339999999589,
+            284.41600000002154,
+            295.4170000000431,
+            274.54099999999926,
+            279.8750000000041,
+            292.2079999999596,
+            285.7500000000073
+          ],
+          "processMediansUs": [
+            341.7919999999981,
+            370.2289999999664,
+            359.9370000000022,
+            371.0209999999563,
+            355.70849999999155,
+            406.12500000000296,
+            363.56250000000045,
+            347.97900000000936,
+            365.43749999998454,
+            360.39549999998144
+          ],
+          "minMedianUs": 341.7919999999981,
+          "maxMedianUs": 406.12500000000296,
+          "widthUs": 64.33300000000486
+        }
+      },
+      "endOverLegacy": 1.6441710104983525,
+      "endOverStart": 0.42888771672744824,
+      "legacyOnePointFiveUs": 257.4052499999624
+    }
+  ],
+  "heaps": {
+    "node": {
+      "A": {
+        "new": {
+          "bytesPerNode": 1442.244351129774,
+          "samples": [
+            1889.622075584883,
+            1458.509898020396,
+            1449.3437312537492,
+            1438.5890821835633,
+            1442.244351129774,
+            1437.5940811837631,
+            1435.255348930214
+          ]
+        },
+        "legacy": {
+          "bytesPerNode": 2388.392721455709,
+          "samples": [
+            2444.74625074985,
+            2388.392721455709,
+            2398.2899420115978,
+            2379.151369726055,
+            2397.8084383123373,
+            2383.9344131173766,
+            2383.8160367926416
+          ]
+        }
+      },
+      "B": {
+        "new": {
+          "bytesPerNode": 1438.9810037992402,
+          "samples": [
+            1901.4837032593482,
+            1451.3865226954608,
+            1431.4145170965808,
+            1438.9810037992402,
+            1436.627874425115,
+            1439.9840031993601,
+            1433.4333133373325
+          ]
+        },
+        "legacy": {
+          "bytesPerNode": 2389.075784843031,
+          "samples": [
+            2445.2741451709658,
+            2387.3065386922617,
+            2392.7582483503297,
+            2384.254349130174,
+            2392.2895420915816,
+            2389.075784843031,
+            2383.8304339132173
+          ]
+        }
+      }
+    },
+    "bun": {
+      "A": {
+        "new": {
+          "bytesPerNode": 2224.769046190762,
+          "samples": [
+            2224.0753849230155,
+            2224.769046190762,
+            2224.7844431113776,
+            2224.2635472905417,
+            2224.7790441911616,
+            2224.6154769046193,
+            2224.7974405118975
+          ]
+        },
+        "legacy": {
+          "bytesPerNode": 2397.0623875224956,
+          "samples": [
+            2397.141771645671,
+            2397.0623875224956,
+            2397.1737652469506,
+            2397.253149370126,
+            2396.7062587482505,
+            2395.9222155568887,
+            2396.223155368926
+          ]
+        }
+      },
+      "B": {
+        "new": {
+          "bytesPerNode": 2256.627074585083,
+          "samples": [
+            2256.6336732653467,
+            2256.6964607078585,
+            2256.50449910018,
+            2256.6974605078985,
+            2256.242151569686,
+            2256.627074585083,
+            2256.386122775445
+          ]
+        },
+        "legacy": {
+          "bytesPerNode": 2396.9708058388323,
+          "samples": [
+            2397.390921815637,
+            2396.883823235353,
+            2396.845630873825,
+            2396.135572885423,
+            2396.9708058388323,
+            2397.166366726655,
+            2397.0543891221755
+          ]
+        }
+      }
+    }
+  }
+}

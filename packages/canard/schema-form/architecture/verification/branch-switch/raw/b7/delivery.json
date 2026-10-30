@@ -1,0 +1,2538 @@
+{
+  "kind": "B4-C-public-delivery",
+  "engines": [
+    {
+      "variant": "baseline",
+      "sha256": "a3aaccbbd7aec673ae419b4b766413cfa38e8a8dfe8cd544db2c1fbfc1911a10"
+    },
+    {
+      "variant": "candidate",
+      "sha256": "a14235d2caa073fda4fe7c7f79e6429d6d3d586ee0d2e2d9d1e68d7acac6dfc2"
+    }
+  ],
+  "rows": [
+    {
+      "id": "plain-F1-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "plain-F1-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "plain-F4-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "plain-F4-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "plain-F16-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "plain-F16-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "plain-F64-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "plain-F64-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "plain-F4-C4-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "plain-F4-C4-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "plain-F4-C64-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "plain-F4-C64-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "plain-F4-C256-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "plain-F4-C256-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "latent-F1-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 13
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 13
+        }
+      ]
+    },
+    {
+      "id": "latent-F1-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        }
+      ]
+    },
+    {
+      "id": "latent-F4-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 13
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 13
+        }
+      ]
+    },
+    {
+      "id": "latent-F4-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        }
+      ]
+    },
+    {
+      "id": "latent-F16-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 13
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 13
+        }
+      ]
+    },
+    {
+      "id": "latent-F16-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        }
+      ]
+    },
+    {
+      "id": "latent-F64-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 13
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 13
+        }
+      ]
+    },
+    {
+      "id": "latent-F64-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        }
+      ]
+    },
+    {
+      "id": "latent-F4-C4-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 13
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 13
+        }
+      ]
+    },
+    {
+      "id": "latent-F4-C4-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        }
+      ]
+    },
+    {
+      "id": "latent-F4-C64-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 13
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 13
+        }
+      ]
+    },
+    {
+      "id": "latent-F4-C64-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        }
+      ]
+    },
+    {
+      "id": "latent-F4-C256-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 9
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 13
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 13
+        }
+      ]
+    },
+    {
+      "id": "latent-F4-C256-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 5
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 5
+        }
+      ]
+    },
+    {
+      "id": "items-F1-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "items-F1-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "items-F4-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "items-F4-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "items-F16-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "items-F16-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "items-F64-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "items-F64-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "items-F4-C4-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "items-F4-C4-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "items-F4-C64-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "items-F4-C64-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "items-F4-C256-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "items-F4-C256-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F1-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F1-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F4-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F4-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F16-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F16-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F64-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F64-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F4-C4-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F4-C4-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F4-C64-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F4-C64-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F4-C256-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "prefixItems-F4-C256-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "overlap-F16-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F16-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "overlap-F64-C16-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F64-C16-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C4-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C4-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C64-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C64-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C256-exit",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C256-control",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C16-exit-reverse-same-layer",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C16-exit-fields-clear",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C16-exit-node-keep",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    },
+    {
+      "id": "overlap-F4-C16-exit-node-clear",
+      "phases": [
+        {
+          "phase": "before",
+          "same": true,
+          "deliveries": 0
+        },
+        {
+          "phase": "write-return",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "detached-write-after-drain",
+          "same": true,
+          "deliveries": 6
+        },
+        {
+          "phase": "reentry",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "reentry-after-drain",
+          "same": true,
+          "deliveries": 10
+        },
+        {
+          "phase": "second-exit",
+          "same": true,
+          "deliveries": 14
+        },
+        {
+          "phase": "second-exit-after-drain",
+          "same": true,
+          "deliveries": 14
+        }
+      ]
+    }
+  ],
+  "phases": 430,
+  "differences": 0,
+  "compared": [
+    "values",
+    "raw/local/emit",
+    "inactiveValues",
+    "actual events/payloads/order",
+    "all revision bits",
+    "node lifetimes, parent and child references",
+    "committed declarations and rules",
+    "detached reads/writes",
+    "legacy raw entries still used by candidate"
+  ]
+}

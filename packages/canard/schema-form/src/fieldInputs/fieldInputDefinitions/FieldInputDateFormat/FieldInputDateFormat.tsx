@@ -13,6 +13,8 @@ export const FieldInputDateFormat = ({
   readOnly,
   disabled,
   defaultValue,
+  value,
+  misfit,
   onChange,
   style,
   className,
@@ -25,7 +27,8 @@ export const FieldInputDateFormat = ({
       : 'text',
   );
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    if (event.target.validity.badInput) return;
+    onChange(event.target.value === '' ? undefined : event.target.value);
   });
   return (
     <input
@@ -35,9 +38,14 @@ export const FieldInputDateFormat = ({
       readOnly={readOnly}
       disabled={disabled}
       max={maximum}
+      aria-invalid={misfit || undefined}
       min={minimum}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
+      onBlur={(event) => {
+        if (event.target.validity.badInput)
+          event.target.value = value == null ? '' : String(value);
+      }}
       style={style}
       className={className}
     />

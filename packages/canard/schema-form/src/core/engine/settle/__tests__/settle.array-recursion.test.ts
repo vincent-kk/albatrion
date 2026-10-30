@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
+import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 
 /** Recursive items terminate at their empty children array (BLUEPRINT-030). */
 const recursiveArraySchema = {
@@ -15,7 +15,7 @@ const recursiveArraySchema = {
   },
 };
 
-// filid:contract settle-array
+// filid:contract settle-array-recursion
 describe('BLUEPRINT-030 recursive array item expansion', () => {
   it('expands an empty item with referenced fields and an empty array base case', () => {
     const { root } = createTestTree(recursiveArraySchema);
