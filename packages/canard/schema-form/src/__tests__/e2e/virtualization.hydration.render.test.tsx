@@ -432,7 +432,7 @@ describe('virtualization across server rendering and client hydration', () => {
             backfill: VirtualizationBackfill.None,
           }}
         >
-          <Form.Render path="/items" />
+          <Form.Input path="/items" />
         </Form>
       );
       if (mode === 'after hydration') await hydrate(form);
