@@ -1,0 +1,22 @@
+{
+  "taskId": "task_ea8a3256a7b7",
+  "dispatchId": "ctx_7d1c7212dcfa",
+  "permissionMessage": "msg_620ff2eac7e5",
+  "ownerEnvironmentMessage": "msg_87f1baf13358",
+  "A": "c5cb20f87",
+  "B": "90cc137e0",
+  "formalWindowsAuthorized": 1,
+  "rows": 22,
+  "processesPerLanePerRow": 10,
+  "warmups": 20,
+  "samples": 100,
+  "quality": "legacy",
+  "startObservationMs": 30000,
+  "ordinaryStartBudgetMs": 120000,
+  "spotlightStartBudgetMs": 30000,
+  "midRunExternalCpu": "log-only",
+  "cliOption": "--iv4-owner-start",
+  "followupMessage": "msg_493a540d1acb",
+  "environmentResumeMessage": "msg_14113815974a",
+  "windowNumber": 2
+}

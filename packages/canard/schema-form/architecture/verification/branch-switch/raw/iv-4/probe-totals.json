@@ -1,0 +1,100 @@
+{
+  "completeProbes": 21,
+  "completeProcesses": 600,
+  "roleCorrectionDuplicateCopies": [
+    {
+      "original": "S6b-narrow/probe.json.gz",
+      "derived": "S6b-narrow-role-corrected/probe.json.gz"
+    }
+  ],
+  "possibleOverlapProcessesExcluded": 60,
+  "partialCompletedProcessesPreserved": 3,
+  "timedOutWorkersPreserved": 1,
+  "judgmentEligibleCompleteProcesses": 540,
+  "records": [
+    {
+      "path": "S5/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "S4/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "window1-without-S1a/probe.json.gz",
+      "processes": 30
+    },
+    {
+      "path": "window1-without-S5-clean/probe.json.gz",
+      "processes": 30
+    },
+    {
+      "path": "S2a/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "S10/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "S1a/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "S10-reprobe/probe.json.gz",
+      "processes": 40
+    },
+    {
+      "path": "window1-without-S1a-clean/probe.json.gz",
+      "processes": 30
+    },
+    {
+      "path": "S8-diagnostic/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "S6b/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "window1-without-S6b/probe.json.gz",
+      "processes": 30
+    },
+    {
+      "path": "S4-reprobe/probe.json.gz",
+      "processes": 40
+    },
+    {
+      "path": "window1-without-S1b/probe.json.gz",
+      "processes": 30
+    },
+    {
+      "path": "window1-without-S5/probe.json.gz",
+      "processes": 30
+    },
+    {
+      "path": "S5-refined/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "window1-without-S4/probe.json.gz",
+      "processes": 30
+    },
+    {
+      "path": "S2b/probe.json.gz",
+      "processes": 24
+    },
+    {
+      "path": "S6b-narrow/probe.json.gz",
+      "processes": 30
+    },
+    {
+      "path": "S2a-reprobe/probe.json.gz",
+      "processes": 40
+    },
+    {
+      "path": "S1b/probe.json.gz",
+      "processes": 24
+    }
+  ]
+}
