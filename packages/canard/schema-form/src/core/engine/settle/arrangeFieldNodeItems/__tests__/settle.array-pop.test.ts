@@ -110,7 +110,6 @@ describe('static pop through the truncation path matches the general path', () =
     );
     expect(popped?.detached).toBe(true);
     expect(popped?.local).toEqual({ name: 'b', fill: 7, nested: [3] });
-    expect(candidate.runtime.latentRaw.size).toBe(0);
     expect(candidate.emit).toEqual([{ name: 'a', fill: 7, nested: [1, 2] }]);
   });
 

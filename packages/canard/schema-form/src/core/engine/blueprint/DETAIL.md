@@ -2,6 +2,16 @@
 
 ## Requirements
 
+- B12 `inactiveValue`는 리터럴 또는 함수이며 식 컴파일·의존 추적 대상이 아닙니다. 선언이 없는 퇴장에는 해석 경로를 열지 않도록 청사진에 작성 존재 사실만 준비합니다. 같은 층의 literal true `unsetOnInactive`와 동거하면 경고합니다.
+
+- 수렴 증명은 파싱된 연산자 심볼로 문맥·와일드카드를 구별하고, 리터럴 예약 이름의 경로를 일반 속성으로 취급한다.
+
+
+- B2-P2는 무조건 활성인 고유 nonvirtual 자식의 기존 정적 분할과 작성 순서를 가진 기존 직접 선택 계획을 함께 소비한다(SETTLE-052). 최초 O(E) 준비 뒤 identity를 재사용하며 청사진 파생 자료에는 값·라이브 노드·게이트 결과를 저장하지 않는다. 정적 baseline의 실제 occurrence 증인은 settle이 소유한다.
+
+- B1의 게이트 정적 읽기 증거는 조건·컴파일된 식과 청사진 수명에 귀속되며 값을 평가하지 않는다. 런타임 settle registry가 발생별 절대 읽기와 `evaluate(inputs)`를 바인딩하고 validator guard는 그 발생에서 지연 컴파일한다. `if`는 허용된 객체 속성 제약과 논리 조합만 속성별로 좁히며 참조·알 수 없는 키워드는 전체 호스트 읽기다. discriminator의 태그 목록은 coercion 없는 동일성 판정으로만 표에 사용한다(BLUEPRINT-007·053·055).
+- 정적 증거·선택 메타데이터의 최초 구성은 조건 크기·게이트·엔트리·태그 수에 비례하며 약한 청사진 identity에 보유한다. 라이브 결과·직전 활성 집합·투영 view·guard 바인딩은 청사진에 저장하지 않는다. 게이트가 선언한 공개 표면과 정착의 고정 출발점은 유지한다.
+
 - 청사진과 컴파일된 식의 생성 고정 사실은 비열거·읽기 전용 속성으로 freeze 전에 정의한다. 기존 열거 관측에는 추가하지 않으며 직접 사실 조회와 모드 변경 뒤의 보존은 유지한다(D3b-2).
 
 - D3b-2에서 재계산 가능한 분석·호스트 자료는 engine 공통 두 레코드에 독립 지연으로 보관하고 builder는 원 소유자가 맡는다. 정적 첫 로드 자격은 Blueprint.staticFirstLoadEligible, 완전 읽기 증거는 compiled expression.completeReads의 생성 고정 사실이다. freeze 전에 정하고 모드 전환 때 유지하며 읽기에서 그래프를 재분석하지 않는다. 라이브 노드 칸은 늘리지 않는다(SURFACE-065).
@@ -18,13 +28,15 @@
 
 - Named property bindings expose an optional `hasPropertyCandidates` proof when any name has multiple candidate templates. Construction determines it once; exit ownership uses it to avoid traversing single-candidate hosts. It contains no runtime selection or gate result (NODE-043, BLUEPRINT-044; 394C-01).
 - Completed templates expose optional `hasCandidateDescendants` reachability, including recursive edges, when a named or array slot below them has multiple candidates. Construction makes one O(V) first pass over V templates for candidate-free graphs; graphs containing candidates also build and traverse the construction-only reverse graph, for O(V+E) total work over template edges E. Graphs without candidates perform no structural retained-source query or replay-marker allocation. A candidate-bearing source slot or host can carry the replay marker into single-candidate destination templates or newly inserted single-candidate objects (370라운드 원칙, NODE-051; 394C-01).
+
+- Completed templates expose optional `hasKeepDescendants`: a template strictly below this one declares `unsetOnInactive` with anything but literal true on its own node-scope controls, or this template's fragment-scope controls or `controls.fields` entries do (an expression may evaluate to keep, so it counts). Construction scans each template's declarations once and, only when a declaration is found, builds the same construction-only reverse graph as candidate reachability and propagates the mark to every ancestor, recursive edges included; graphs without a keep declaration build no reverse graph and leave the field absent. Each template declaration scan allocates one result object containing the own and child keep facts. Settlement reads it to skip the item visit of a clearing array whose item templates cannot keep anything.
 - Candidate flags are primitive metadata on existing templates, assigned only during blueprint construction before template freezing. They cache no runtime value or gate result and add no frozen objects or schema/control fields, so the recorded owned-inline freeze counts and field-specific bounds remain unchanged (370라운드 원칙; 394C-01).
 
 - 반복 아이템과 각 prefixItems 자리는 작성 순서의 fold별 후보를 모두 보존한다. `item`과 `prefixItems[i]`는 첫 후보를 유지하고, 추가 후보 목록과 자리별 바인딩은 후보의 선언·게이트·작성 위치를 보존한다. 게이트 충돌은 분석 오류가 아니며 정적 첫 로드 자격은 단일 후보에만 허용한다(BLUEPRINT-011·012·044, 389C-03, 391C-01).
 
 - 상태 키가 있는 첫 조각에서만 호스트의 자식 순서대로 각 자식의 전체 선언에 `getFragmentOwnerPaths`를 적용한 소유 경로 집합을 만든다. 같은 호스트의 조각은 이 집합을 재사용하고 대상 삽입 순서와 비활성 선언 포함을 유지하며, 호출 간 캐시나 새 청사진 필드는 두지 않는다(P-08, GOAL-011).
 
-- 형 목록은 기존의 some·indexOf 검사에 predicate를 붙여 검증과 iterator 복사를 분리하며, 희소 배열, getter·iterator 읽기, 오류는 그대로 유지한다. 가드 호출 하나를 빼면 새 순회, 결과 배열, 보유 자료는 없다. 가상 필드 entry와 인라인 종단 경고의 map형 자식은 검증을 거치기 전의 작성 값이므로, 이유를 적은 형 단언으로 읽는다. 여기에 가드를 두면 지금 받아들이는 값(함수, 상속 필드를 가진 원시값)이 달라지기 때문이다.
+- 형 목록은 기존의 인덱스 순회·indexOf 검사에 predicate를 붙여 검증과 iterator 복사를 분리하며, 희소 배열, getter·iterator 읽기, 오류는 그대로 유지한다. 가드 호출 하나를 빼면 새 순회, 결과 배열, 보유 자료는 없다. 가상 필드 entry와 인라인 종단 경고의 map형 자식은 검증을 거치기 전의 작성 값이므로, 이유를 적은 형 단언으로 읽는다. 여기에 가드를 두면 지금 받아들이는 값(함수, 상속 필드를 가진 원시값)이 달라지기 때문이다.
 
 - 참조 조회 결과와 controls 봉투는 단언 없는 가드로 걸러, 기존에 받아들이던 boolean·비null 객체 집합과 비null 객체 집합을 좁힌다. controls의 watch·default를 직접 읽는 순서와 횟수, 소유 등록, 단일 정적 기여의 키 순서는 유지한다. 새로 만든 hint 병합 객체의 root와 재귀 순회에 진입할 때 봉투 가드를 호출하며, 빌린 참조와 동결 정책은 유지한다. 속도 비용은 참조 조회, controls 기여, 생성 hint 순회마다 고정된 가드 호출이며 새 캐시, 색인, 보유 객체는 없다. 일반 갱신에서는 유효 스키마 메모가 빗나간 controls·hint 병합 경로에만 적용된다.
 
@@ -153,7 +165,7 @@
 
 ### gate-evaluation-location — L의 정적 계산
 
-- `BlueprintGate.evaluationReads`는 `#`·`(/)`의 절대 루트, `/p`·`#/p`의 절대 `p`, `@` 제외, 상대 오름 횟수를 청사진 단위 사례로 검증한다. 유한한 재귀 템플릿의 동일한 게이트는 정적 목록 하나를 공유하고, 발생별 L은 정착에서 서로 다르게 계산한다(SETTLE-045, 26C-04·07).
+- `BlueprintGate.evaluationReads`는 `#`의 절대 루트, `(/)`의 빈 이름 자식, `/p`·`#/p`의 절대 `p`, `@` 제외, 상대 오름 횟수를 청사진 단위 사례로 검증한다. 유한한 재귀 템플릿의 동일한 게이트는 정적 목록 하나를 공유하고, 발생별 L은 정착에서 서로 다르게 계산한다(SETTLE-045, 26C-04·07).
 
 ### diagnostics — 닫힌 목록과 수집
 
@@ -166,6 +178,10 @@
 ### array-slots — 아이템 자리
 
 - 같은 템플릿과 색인의 자리 항목은 같은 참조이고, 선언 경로는 템플릿 경로를 유지하며, 청사진이 없는 자리에는 항목이 없다. 옛 표기에서 스키마 객체인 `additionalItems`는 꼬리 자리의 템플릿이 되고, `false`·`true`·없음은 청사진이 없는 꼬리다(NODE-009·052, WRITE-022, 35C-04·08, 36C-02).
+
+### blueprint-property-addresses — 속성 이름의 경로 왕복
+
+- 정확히 `%2A`, `%2E`, `%2E%2E`, `%40`인 객체 속성 이름은 평면 객체와 게이트 분기 모두에서 속성 이름과 규칙을 담은 `RESERVED_PROPERTY_NAME`으로 거부된다. 이름이 `*`, `.`, `..`, `@`이거나 `%2a`, `100%`처럼 정확한 네 표기와 다른 이름은 계속 받아들인다.
 
 ### feature-index-item-fragment — 아이템 조각의 상태 키 색인
 
@@ -208,6 +224,6 @@
 
 ## Last Updated
 
-2026-10-22. 준비된 적재 선택의 정적 ID 배열 재사용과 owned-inline 계수.
+2026-10-28
 
 2026-10-13. 계약 기준: 211C-01, REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline. 비용 기록: 105라운드 자식 열거, 106라운드 선언 수집, 참조·controls·hint 봉투 가드와 형 목록 predicate; 정돈-2(2026-10-14). 정돈-3 blueprint 재구성(2026-10-15). 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077).

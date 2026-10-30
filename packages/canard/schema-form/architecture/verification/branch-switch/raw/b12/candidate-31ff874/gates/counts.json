@@ -1,0 +1,122 @@
+{
+  "candidate": "31ff8741c6233efe08d08fc5df7a501e2ad65b9c",
+  "bundleHashes": {
+    "index.node.mjs": "81788f19231a3663d2b794afd0371b33a2cffc2e558b546813bb3a7c39070ffa",
+    "index.cjs": "1fed14bb0f579700fd5693b7907becab25c54df108e6b47486c64ac2d7cd9373",
+    "index.mjs": "cc3a4505903e2e5ec403ad29c0551c869fce5434591efefd500287f8323f84a8"
+  },
+  "build": {
+    "args": [
+      "build"
+    ],
+    "startedAt": "2026-10-28T19:58:11.532184+00:00",
+    "endedAt": "2026-10-28T19:58:30.664563+00:00",
+    "exitCode": 0
+  },
+  "lint": {
+    "args": [
+      "lint"
+    ],
+    "startedAt": "2026-10-28T19:58:30.664935+00:00",
+    "endedAt": "2026-10-28T19:58:38.767434+00:00",
+    "exitCode": 0
+  },
+  "unit": {
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "unit"
+    ],
+    "startedAt": "2026-10-28T19:58:38.767846+00:00",
+    "endedAt": "2026-10-28T19:59:42.884419+00:00",
+    "exitCode": 0,
+    "files": 594,
+    "passed": 3945,
+    "todo": 1
+  },
+  "render": {
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "render"
+    ],
+    "startedAt": "2026-10-28T19:59:42.884726+00:00",
+    "endedAt": "2026-10-28T20:00:46.403291+00:00",
+    "exitCode": 0,
+    "files": 132,
+    "passed": 768,
+    "todo": 0
+  },
+  "storybook": {
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "storybook"
+    ],
+    "startedAt": "2026-10-28T20:00:46.403781+00:00",
+    "endedAt": "2026-10-28T20:01:23.609633+00:00",
+    "exitCode": 0,
+    "files": 100,
+    "passed": 251,
+    "todo": 0
+  },
+  "react18": {
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "react18"
+    ],
+    "startedAt": "2026-10-28T20:01:23.609972+00:00",
+    "endedAt": "2026-10-28T20:02:27.327194+00:00",
+    "exitCode": 0,
+    "files": 132,
+    "passed": 768,
+    "todo": 0
+  },
+  "production": {
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "production"
+    ],
+    "startedAt": "2026-10-28T20:02:27.327556+00:00",
+    "endedAt": "2026-10-28T20:02:32.543845+00:00",
+    "exitCode": 0,
+    "files": 10,
+    "passed": 21,
+    "todo": 0
+  },
+  "verify": {
+    "args": [
+      "test:verify",
+      "--run"
+    ],
+    "startedAt": "2026-10-28T20:02:32.544159+00:00",
+    "endedAt": "2026-10-28T20:04:12.264986+00:00",
+    "exitCode": 0,
+    "files": 731,
+    "passed": 4757,
+    "todo": 1
+  },
+  "isolation": {
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "unit",
+      "pointerIsolation",
+      "settle.pointer-path-work"
+    ],
+    "startedAt": "2026-10-28T20:04:12.265328+00:00",
+    "endedAt": "2026-10-28T20:04:16.463937+00:00",
+    "exitCode": 0,
+    "files": 2,
+    "passed": 10,
+    "todo": 0
+  }
+}

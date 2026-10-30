@@ -4,7 +4,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { isArrayNode } from '@/schema-form/core/surface';
 
 it.each(['insert', 'replace'] as const)(
-  'preserves a detached write address after %s without changing frozen reads or delivering',
+  'ignores a detached write after %s without changing frozen reads or delivering',
   async (operation) => {
     const { root, runtime } = makeFieldNodeTree({
       type: 'object',
@@ -41,8 +41,7 @@ it.each(['insert', 'replace'] as const)(
       root.setValue({
         items: [{ flag: true, gated: 'second' }, { flag: false }],
       });
-      const latent = Reflect.get(runtime, 'latentRaw');
-      expect(latent.size).toBe(0);
+      expect(root.inactiveValues).toEqual([]);
       destination = '/items/1';
     }
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -59,7 +58,9 @@ it.each(['insert', 'replace'] as const)(
     expect(ref.path).toBe('/items/2/gated');
     expect(ref.value).toBe('third');
     root.find(destination + '/flag')!.setValue(true);
-    expect(root.find(destination + '/gated')!.value).toBe('x');
+    expect(root.find(destination + '/gated')!.value).toBe(
+      operation === 'insert' ? 'third' : undefined,
+    );
     expect(root.find('/items/0/gated')!.value).toBe(
       operation === 'insert' ? 'new' : 'second',
     );

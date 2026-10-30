@@ -226,3 +226,5 @@ P-135는 stage06(07a083c18) src/core/settle/utils/transition/withdrawDetachedFil
 패키지 bench:baseline 실제 명령도 최신 소스로 재실행하여 [bench-82c01-residual-baseline.json](bench-82c01-residual-baseline.json)에 보존했습니다(7파일44항목, legacy 비교 없음). 최신 번들은 dist minify+gzip71,994B, gzip104,592B이고 전체 fractal 표는 performance.md의(라)에 갱신했습니다. 기존 React BF 시간 자료는 이번 잔여 수정 이전 자료입니다. 최신 소스의 React 동작은 위 render/react18 전체 suite로 검증했으며 이번 후속에서는 React BF 시간 자료를 재측정한 것으로 주장하지 않습니다.
 
 원장 의미 변경이나 승인 요청은 없습니다. flat/nested/oneOf core mount 및 oneOf update의 배율은 여전히 크기 독립이 아니므로 (나)에 새로 이동한 행은 없습니다. 기존 (나)의 nested update는 최신1.559/1.558×입니다. 구조 결함 해결, 선형 상수 비용 기록, 소유자 수용은 구별합니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `b49f53962f3e`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

@@ -1,47 +1,50 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Nullable } from '@aileron/declare';
+
 import {
   JSONPointer as $,
-  ESCAPED_SLASH_REGEX,
-  ESCAPED_TILDE_REGEX,
+  PointerOperator,
+  isAbsolutePointer,
+  parsePointerSegments,
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import { getFieldNodePath } from './utils/getFieldNodePath';
 
 /** Resolve every current-shape match in path order, retaining each instance once. */
 export const findNodes = <Self extends FieldNodeRecord<Self>>(
   origin: Self,
-  pointer?: string | readonly string[] | null,
+  pointer?: Nullable<string | readonly string[]>,
 ): readonly Self[] => {
-  const path = getFieldNodePath(pointer);
-  let cursors: Self[] = [path.absolute ? origin.rootNode : origin];
+  const input = pointer ?? $.Root;
+  const segments = parsePointerSegments(input);
+  let cursors: Self[] = [isAbsolutePointer(input) ? origin.rootNode : origin];
 
-  for (const token of path.segments) {
+  for (const token of segments) {
     const next: Self[] = [];
-    if (token === $.Context) return [];
+    if (token === PointerOperator.Context) return [];
     for (const cursor of cursors) {
-      if (token === $.Current) {
-        if (!next.includes(cursor)) next.push(cursor);
-      } else if (token === $.Parent) {
+      if (token === PointerOperator.Current) {
+        if (next.indexOf(cursor) === -1) next.push(cursor);
+      } else if (token === PointerOperator.Parent) {
         const parent = cursor.parent;
         if (
           parent !== null &&
           (!cursor.detached || parent.detached) &&
-          !next.includes(parent)
+          next.indexOf(parent) === -1
         )
           next.push(parent);
       } else if (cursor.structure !== null) {
-        if (token === $.Wildcard) {
+        if (token === PointerOperator.Wildcard) {
           for (const child of Object.values(cursor.structure))
-            if (!next.includes(child)) next.push(child);
+            if (next.indexOf(child) === -1) next.push(child);
         } else {
-          const name = token
-            .replace(ESCAPED_SLASH_REGEX, $.Separator)
-            .replace(ESCAPED_TILDE_REGEX, '~');
+          if (typeof token !== 'string') continue;
+          const name = token;
           if (hasOwnProperty(cursor.structure, name)) {
             const child = cursor.structure[name];
-            if (child !== undefined && !next.includes(child)) next.push(child);
+            if (child !== undefined && next.indexOf(child) === -1)
+              next.push(child);
           }
         }
       }

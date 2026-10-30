@@ -1,0 +1,70 @@
+{
+  "formalWindowExecuted": false,
+  "timedSamples": 0,
+  "loadCheck": {
+    "S": 44,
+    "E": 44,
+    "L": 36,
+    "legacyRepeatedForEndLane": 36,
+    "plugin": "AJV8 resolved; designated dist build succeeded"
+  },
+  "builds": {
+    "AJV8": 0,
+    "stageEndRecursive": 0,
+    "stageStart": 0,
+    "stageStartInitial": {
+      "exit": 1,
+      "reason": "Archive workspace dependency dist was absent; runtime artifact hashes already matched B3. After building workspace dependencies, full archive build passed."
+    }
+  },
+  "preparationEnvironment": {
+    "node": "v26.11.1",
+    "bun": "1.4.4",
+    "cpu": "Apple M1 Max",
+    "arch": "arm64",
+    "os": "Darwin 27.0.0"
+  },
+  "productSourceChanged": false,
+  "generatedOutputsCommitted": false,
+  "builderSelection": {
+    "S": "B3 external compatibility builder, import paths adapted only",
+    "E": "Existing B6 builder, unchanged"
+  },
+  "windowPolicy": {
+    "externalProcessCpuLimitPercent": 30,
+    "aggregateCpuDecision": false,
+    "formalRetryAllowed": false,
+    "marker": "formal-start.json",
+    "markerCreation": "wx"
+  },
+  "checks": {
+    "lint": {
+      "exit": 0
+    },
+    "fullTypecheckViaDesignatedBuild": {
+      "stageStart": 0,
+      "stageEnd": 0
+    },
+    "stageUntimed": {
+      "checks": 24,
+      "operations": 48,
+      "timers": "disabled"
+    },
+    "summaryReplay": {
+      "source": "B3 existing window only; no new performance samples",
+      "identicalOutputs": [
+        "results.summary",
+        "quality",
+        "judgement",
+        "stages",
+        "stage-mapping",
+        "heaps",
+        "retention",
+        "guard-cost",
+        "siblings-slope",
+        "welch"
+      ]
+    },
+    "preparationArtifactCheck": "B5_PREPARATION_CHECK_OK rows=22 L=36 S=44 E=44 stage_load=48 cumulative=9 formal_samples=0 product_diff=0"
+  }
+}

@@ -1,4 +1,11 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import { map as mapArray } from '@winglet/common-utils/array';
+
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  appendSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
@@ -92,9 +99,9 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
       )
         candidates.add(child);
   }
-  const evaluated = new Map<string, boolean | undefined>();
+  const evaluated = new Map<string, Optional<boolean>>();
   const entries: CalculatedStateKeys<Self>['entries'][number][] = [];
-  let failures: CalculatedStateKeys<Self>['failures'][number][] | undefined;
+  let failures: Optional<CalculatedStateKeys<Self>['failures'][number][]>;
   for (const node of candidates) {
     if (
       node.detached ||
@@ -111,10 +118,10 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
       for (const key of KEY_NAMES) {
         const literal: unknown = Reflect.get(group.controls, key);
         if (literal === undefined) continue;
-        let value: boolean | undefined;
+        let value: Optional<boolean>;
         if (typeof literal === 'boolean') value = literal;
         else if (typeof literal === 'string') {
-          const schemaPath = group.schemaPath + '/' + key;
+          const schemaPath = appendSegment(group.schemaPath, key);
           const cacheKey = JSON.stringify([group.host.path, schemaPath]);
           if (evaluated.has(cacheKey)) value = evaluated.get(cacheKey);
           else {
@@ -128,8 +135,14 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
               try {
                 value = Boolean(
                   expression.evaluate(
-                    expression.dependencies.map((dependency) =>
-                      readStateDependency(root, group.host.path, dependency),
+                    mapArray(expression.dependencies, (dependency) =>
+                      readStateDependency(
+                        root,
+                        group.host.path,
+                        dependency,
+                        undefined,
+                        group.host,
+                      ),
                     ),
                   ),
                 );

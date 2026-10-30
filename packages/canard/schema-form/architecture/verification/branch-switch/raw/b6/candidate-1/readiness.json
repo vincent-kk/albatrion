@@ -1,0 +1,16 @@
+{
+  "sameProductCommit": true,
+  "runtimeBundlesByteIdentical": true,
+  "wrappedByteIdentical": true,
+  "unwrappedByteIdentical": true,
+  "supplementalByteIdentical": true,
+  "manifestDifference": "Descriptor array ordering only; normalized records identical.",
+  "pluginsResolved": [
+    "@canard/schema-form-ajv8-plugin"
+  ],
+  "untimedOperations": {
+    "A": 44,
+    "B": 44,
+    "legacy": 36
+  }
+}

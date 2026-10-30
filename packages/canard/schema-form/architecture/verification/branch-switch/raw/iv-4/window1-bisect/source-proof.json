@@ -1,0 +1,205 @@
+{
+  "referenceHead": "c153d5b38bf1a3090664f818b6c36bec37f34387",
+  "records": [
+    {
+      "removed": "S5",
+      "head": "15b44f604b4ea17d608c3d3940b687901d4b2d8c",
+      "AHead": "3d235d887c5669cfc2b672ce1a32998773693122",
+      "AProductEqualsReference": true,
+      "differences": [
+        {
+          "path": "packages/canard/schema-form/src/core/engine/settle/utils/detached/captureDetachedFieldNodeReads.ts",
+          "referenceBlob": "1ae6b8f8ee1eda78e659c80f4022c350853bf579",
+          "removedBlob": "465907aa75acf88b43c60db40d043ca3007980b0",
+          "matchesPreCutParent": true
+        }
+      ],
+      "engineInputs": {
+        "A": {
+          "bytes": 856303,
+          "sha256": "5ff309d3dbd0f61e46c3bbbb0661c9578036c916b3ddd0e744c00bfea6502cd0"
+        },
+        "B": {
+          "bytes": 856250,
+          "sha256": "9f50a18dd724f157b2eb850858103ac1ebd9ee195686d3119dffd7c509dea61f"
+        }
+      },
+      "browserInputs": {
+        "A": {
+          "head": "3d235d887c5669cfc2b672ce1a32998773693122",
+          "bundle": {
+            "bytes": 857033,
+            "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d"
+          }
+        },
+        "B": {
+          "head": "15b44f604b4ea17d608c3d3940b687901d4b2d8c",
+          "bundle": {
+            "bytes": 856980,
+            "sha256": "b0d36425e5f956394ba183d5d2f7fd56a198517552d2df53d704e2602dfe003a"
+          }
+        }
+      }
+    },
+    {
+      "removed": "S1a",
+      "head": "0e02ac12983583cbd45440ad899de45f3fc15de9",
+      "AHead": "3d235d887c5669cfc2b672ce1a32998773693122",
+      "AProductEqualsReference": true,
+      "differences": [
+        {
+          "path": "packages/canard/schema-form/src/core/engine/settle/utils/gates/readProjectedValue.ts",
+          "referenceBlob": "edb78060747c77d8a49564781aebfaacd7db1ce0",
+          "removedBlob": "60122e25cb60745ad8cfe383d1bb4f8ce2c118d1",
+          "matchesPreCutParent": true
+        }
+      ],
+      "engineInputs": {
+        "A": {
+          "bytes": 856303,
+          "sha256": "5ff309d3dbd0f61e46c3bbbb0661c9578036c916b3ddd0e744c00bfea6502cd0"
+        },
+        "B": {
+          "bytes": 856178,
+          "sha256": "4f6ddad821e5fdef6793c5cbba2631c506a375ded226b874c059f7bf4a6bbcba"
+        }
+      },
+      "browserInputs": {
+        "A": {
+          "head": "3d235d887c5669cfc2b672ce1a32998773693122",
+          "bundle": {
+            "bytes": 857033,
+            "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d"
+          }
+        },
+        "B": {
+          "head": "0e02ac12983583cbd45440ad899de45f3fc15de9",
+          "bundle": {
+            "bytes": 856908,
+            "sha256": "f8cb2a1263d1c81640728d1e5e3e948d342af147f139c2f7f88f50d27a398ec0"
+          }
+        }
+      }
+    },
+    {
+      "removed": "S1b",
+      "head": "b54fe4e1bcc9d25753819a47e9110634cc5502c7",
+      "AHead": "3d235d887c5669cfc2b672ce1a32998773693122",
+      "AProductEqualsReference": true,
+      "differences": [
+        {
+          "path": "packages/canard/schema-form/src/core/engine/settle/utils/gates/flushPendingGateReads.ts",
+          "referenceBlob": "80ba329e8481b8697d76701e7c715f117d246d2e",
+          "removedBlob": "2cf298f5ac586aa89057387fe01a38a05c57453d",
+          "matchesPreCutParent": true
+        }
+      ],
+      "engineInputs": {
+        "A": {
+          "bytes": 856303,
+          "sha256": "5ff309d3dbd0f61e46c3bbbb0661c9578036c916b3ddd0e744c00bfea6502cd0"
+        },
+        "B": {
+          "bytes": 856184,
+          "sha256": "ef43488356b75541f3b8f9db3d91af0e1712a8b52d492666626545c1477d8be5"
+        }
+      },
+      "browserInputs": {
+        "A": {
+          "head": "3d235d887c5669cfc2b672ce1a32998773693122",
+          "bundle": {
+            "bytes": 857033,
+            "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d"
+          }
+        },
+        "B": {
+          "head": "b54fe4e1bcc9d25753819a47e9110634cc5502c7",
+          "bundle": {
+            "bytes": 856914,
+            "sha256": "1fe56d5b70cf50c8e5bd3bd9a20918496e6dda66ec26e5b9964914efe2689914"
+          }
+        }
+      }
+    },
+    {
+      "removed": "S6b",
+      "head": "4a3108f29ca90029702021405ab5bc0eeae180f3",
+      "AHead": "3d235d887c5669cfc2b672ce1a32998773693122",
+      "AProductEqualsReference": true,
+      "differences": [
+        {
+          "path": "packages/canard/schema-form/src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+          "referenceBlob": "a80466c7ff4283bb602bfa7caa2990f112a26d6e",
+          "removedBlob": "40cafc71326a21e496f24df41456a50daf50cb99",
+          "matchesPreCutParent": true
+        }
+      ],
+      "engineInputs": {
+        "A": {
+          "bytes": 856303,
+          "sha256": "5ff309d3dbd0f61e46c3bbbb0661c9578036c916b3ddd0e744c00bfea6502cd0"
+        },
+        "B": {
+          "bytes": 855769,
+          "sha256": "3e752882fb9c8f1fa57ad35b20ee7f91d9754f09900e48ffc1d3e4ac3788f899"
+        }
+      },
+      "browserInputs": {
+        "A": {
+          "head": "3d235d887c5669cfc2b672ce1a32998773693122",
+          "bundle": {
+            "bytes": 857033,
+            "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d"
+          }
+        },
+        "B": {
+          "head": "4a3108f29ca90029702021405ab5bc0eeae180f3",
+          "bundle": {
+            "bytes": 856499,
+            "sha256": "ae3a891ce31a4193e18a3b2905eadbedbf2312d46dcbc8972ddead0dc9bdfbb6"
+          }
+        }
+      }
+    },
+    {
+      "removed": "S4",
+      "head": "6240181c4823d24db94dfab38f6601a5afb2b971",
+      "AHead": "3d235d887c5669cfc2b672ce1a32998773693122",
+      "AProductEqualsReference": true,
+      "differences": [
+        {
+          "path": "packages/canard/schema-form/src/core/engine/settle/utils/gates/getGateRegistry.ts",
+          "referenceBlob": "f999de7fd4f5c540a1f04f651f1273b06fa246b0",
+          "removedBlob": "4649d8ae99b1698df01795da00edcac4c65f0301",
+          "matchesPreCutParent": true
+        }
+      ],
+      "engineInputs": {
+        "A": {
+          "bytes": 856303,
+          "sha256": "5ff309d3dbd0f61e46c3bbbb0661c9578036c916b3ddd0e744c00bfea6502cd0"
+        },
+        "B": {
+          "bytes": 856482,
+          "sha256": "89f18800cbeee2740576958ad5c5bc9df1529ceef6a8fe2c29abca5e165c551b"
+        }
+      },
+      "browserInputs": {
+        "A": {
+          "head": "3d235d887c5669cfc2b672ce1a32998773693122",
+          "bundle": {
+            "bytes": 857033,
+            "sha256": "396a9f884a10a493be64de67d89c204862236339fb7ecf9154c0a1fb91ee659d"
+          }
+        },
+        "B": {
+          "head": "6240181c4823d24db94dfab38f6601a5afb2b971",
+          "bundle": {
+            "bytes": 857212,
+            "sha256": "90e9761b97557f4bdb25b557a0a29930fca8191ea0c959cb18a3a2e0a85635bf"
+          }
+        }
+      }
+    }
+  ]
+}

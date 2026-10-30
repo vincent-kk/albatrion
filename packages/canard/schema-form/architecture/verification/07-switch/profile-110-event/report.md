@@ -111,3 +111,5 @@ E1 sample-0 이후 업데이트 7·8회의 종료 메타데이터는 복원 기�
 작업 중 별도로 변경된 profile-108-ratios.md는 원복하거나 이번 패치에 넣지 않고 보존했습니다. 제품 입력 소스 해시가 D1 측정 후보와 같은 것을 확인했으므로 문서 변경이 최종 구현을 바꾸지는 않았습니다.
 
 [최종 감사 JSON](final-audit.json) · [개발 검증 로그](check-development.txt) · [production 로그](check-production.txt) · [타입 검사](check-typecheck.json) · [lint](check-lint.json) · [legacy 검사](check-legacy.json)
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `4d4792307dd4`의 필요한 내용은 [본선 보존물](../../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNode } from '@/schema-form/core';
 import {
   FormErrorCode,
@@ -7,7 +9,7 @@ import {
 
 /** Submit the emitted snapshot, rejecting degraded settlement or failed validation. */
 export const submitForm = async (
-  root: FieldNode | undefined,
+  root: Optional<FieldNode>,
   onSubmit?: (value: any) => void | Promise<void>,
   onFailure?: (error: unknown) => void,
 ): Promise<void> => {

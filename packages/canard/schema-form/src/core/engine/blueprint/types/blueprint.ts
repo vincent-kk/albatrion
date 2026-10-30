@@ -1,3 +1,5 @@
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
 import type {
   FormErrorLevel,
   FormWarningCode,
@@ -17,7 +19,7 @@ export interface BlueprintDiagnostic {
   /** Authored offending location. */
   readonly schemaPath: string;
   /** Code-specific discriminating values. */
-  readonly details: Readonly<Record<string, unknown>>;
+  readonly details: Readonly<Dictionary<unknown>>;
 }
 
 /** Immutable result of analyzing one authored root. */
@@ -52,7 +54,7 @@ export interface Blueprint {
   /** Finite fragment table indexed by id. */
   readonly fragments: readonly SchemaFragment[];
   /** Static watch/expression paths mapped to declaration IDs. */
-  readonly dependencies: Readonly<Record<string, readonly number[]>>;
+  readonly dependencies: Readonly<Dictionary<readonly number[]>>;
   /** Compiled authored expressions with relative dependencies for per-edge rebinding. */
   readonly expressions: readonly BlueprintExpression[];
 }
@@ -68,7 +70,7 @@ export interface BlueprintFeatureNodeIndex {
 }
 
 /** Primitive literal whose strict comparison can be indexed without execution. */
-export type EqualityLiteral = string | number | boolean | null;
+export type EqualityLiteral = Nullable<string | number | boolean>;
 
 /** A compiled expression never executed during schema analysis. */
 export interface BlueprintExpression {
@@ -107,7 +109,7 @@ export interface BlueprintCacheEntry {
 /** Explicit dependencies and diagnostics; no process-global cache is used. */
 export interface BlueprintOptions {
   /** Return a renderer's terminal decision; undefined leaves earlier hints intact. */
-  readonly isTerminal?: (schema: BlueprintSchema) => boolean | undefined;
+  readonly isTerminal?: (schema: BlueprintSchema) => Optional<boolean>;
   /** Identify opaque renderer values without importing renderer implementation code. */
   readonly isAtomic?: (value: unknown) => boolean;
   /** Receive diagnostic data; absence avoids warning scans entirely. */

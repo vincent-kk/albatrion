@@ -1,0 +1,8 @@
+{
+  "probe": "window1-without-S1a/probe.json.gz",
+  "classification": "possible-overlap-do-not-use-for-causal-judgment",
+  "reason": "A stored-evidence check lasting about 0.02 seconds occurred during the first S1a process. Correction was reported after comparing tool modification and recorded measurement start times.",
+  "question": "msg_df31fcdebf2a",
+  "authority": "msg_493a540d1acb",
+  "replacement": "window1-without-S1a-clean/probe.json.gz"
+}

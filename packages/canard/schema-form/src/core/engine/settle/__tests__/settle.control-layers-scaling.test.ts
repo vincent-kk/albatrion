@@ -19,6 +19,7 @@ describe('P-08 fragment ownership work', () => {
       const target = root.structure?.target;
       if (!target) throw new Error('Missing P-08 state-key target');
       const { layers, work } = countControlLayerWork(target);
+      expect(work).toBeGreaterThan(0);
       expect(layers.filter(({ layer }) => layer === 'fragment')).toHaveLength(
         fragments,
       );

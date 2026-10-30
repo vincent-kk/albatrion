@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Nullable } from '@aileron/declare';
+
 import { mergeEffectiveSchema } from '../../../../blueprint';
 import type {
   BlueprintChildEntry,
@@ -20,7 +22,7 @@ export interface StaticShapeEntry {
 }
 /** The entry list and its derivative are populated independently. */
 export interface StaticShapeMemo {
-  entries?: readonly StaticShapeEntry[] | null;
+  entries?: Nullable<readonly StaticShapeEntry[]>;
   byEntry?: Map<BlueprintChildEntry, StaticShapeEntry>;
 }
 
@@ -36,19 +38,16 @@ export const staticShape = (
   host: BlueprintNode,
   isAtomic: BlueprintOptions['isAtomic'],
   candidates: readonly BlueprintChildEntry[] = host.childEntries,
-): readonly StaticShapeEntry[] | null => {
+): Nullable<readonly StaticShapeEntry[]> => {
   const memo = (getHostDerived<'staticShape', StaticShapeMemo>(
     host,
   ).staticShape ??= {});
   if (memo.entries !== undefined) return memo.entries;
-  const selected: Record<
-    string,
-    {
-      entry: BlueprintChildEntry;
-      ids: readonly number[];
-      schema: EffectiveSchema;
-    }
-  > = Object.create(null);
+  const selected: Dictionary<{
+    entry: BlueprintChildEntry;
+    ids: readonly number[];
+    schema: EffectiveSchema;
+  }> = Object.create(null);
   const entries = candidates;
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];

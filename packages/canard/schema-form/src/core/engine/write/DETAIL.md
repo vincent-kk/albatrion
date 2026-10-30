@@ -2,6 +2,23 @@
 
 ## Requirements
 
+- `onInactive`의 옛 해제 함수를 반복 호출해도 더 새 등록 집합은 제거하지 않습니다. resolver 쓰기 거부의 경고 보고기 안에서 시도한 쓰기는 재보고 없이 무시하여 재귀 배달을 막습니다.
+
+- B12 resolver는 자동 쓰기가 허용되는 정상 보존 gate exit에서만 실행합니다. load/reset 범위·throwingGateExits·entered-only 퇴장과 자동 쓰기 억제·실패/예산 억제에서는 호출하지 않습니다. 다중 콜백은 등록 순서로 모두 실행하고 마지막 non-undefined를 채택하며 하나라도 던지면 해당 노드의 override 전체를 취소합니다.
+
+- B12 `onInactive` 등록은 인스턴스별 Map/Set이며 해제 함수를 반환합니다. resolver 실행 중 setValue·배열 동사·batch·resetSubtree는 진입 전에 무시하고 개발 모드에서만 `WriteInInactiveResolver` 경고를 보고합니다. 정착·배달·콜백 실행을 중첩하지 않습니다.
+
+- 폐기되지 않은 떼어진 노드의 늦은 UI 입력도 값 쓰기와 같이 무효이며 개발 모드 경고를 낸다.
+- 폐기되면서 떼어진 참조의 공개 setValue와 배열 동사는 detached 거부가 폐기 검사보다 먼저 적용되어 DisposedNodeWrite를 던지는 대신 무동작과 개발 경고로 끝나며, UI 입력 채널의 폐기 거부는 무음이다. resetSubtree도 detached 검사가 폐기 검사보다 먼저 적용되어 경고 없이 무동작으로 끝나며, 상태·오류·요청 명령은 폐기 검사를 먼저 적용해 DisposedNodeWrite를 던진다.
+
+- 중첩 경고 보고는 호출 전 reportingErrors를 복원한다. onError 안의 떼어진 쓰기가 경고를 보고해도 같은 콜백의 살아 있는 쓰기는 WriteInObserver로 거부한다.
+
+- 떼어진 참조의 값 쓰기와 배열 동사는 사슬·배치·updater 평가 전에 무동작으로 끝난다. 개발 모드에서는 `FormWarningCode.DetachedNodeWrite`로 경고하고 운영 모드에서는 침묵한다. push·insert는 동결된 현재 길이를 반환하고 나머지 동사는 undefined를 반환한다. 호스트의 경로 JSON 쓰기만 비활성 원본을 바꾼다(B11).
+
+- 배치 값은 jsonPointer가 해석한 이름만으로 합성하고, 진단 경로 조립과 reset 하위 범위 판정도 같은 경로 소유자의 API에 위임한다.
+
+- 쓰기 진입은 슬롯 원본의 단일 정착 경로를 사용하며 off/verify 원본 재생을 실행하지 않는다. 배열 묶음의 살아남는 후보 원본은 슬롯·overlay로 이전하고 공개 쓰기·batch·visit·load·배달·오류 순서는 유지한다.
+
 - D2-P1의 전체 교체 세대 표식은 settle 내부 작업 기록이다. 공개 쓰기·batch·visit·load의 의미와 배달 순서·payload·revision·오류 시점은 유지한다. 정적 독립 branch 전체 쓰기만 자격을 받고 부분·가상·형상 변경 등은 원래 DirtyPathSet 경로로 돌아간다. 대상 내부 경로 장부는 0이며 조상 처리는 기존 정착 순서로 한 번만 한다. 선택 표식의 논리 메모리는 도달 노드당 숫자 8바이트·트리당 숫자 8바이트이고 엔진별 객체 확장 비용이 추가될 수 있다(TEST-080 D2-P1, NODE-060, SETTLE-017·047).
 
 - H5b의 revision 읽기 없음은 트리에서 공개 revision()을 한 번도 호출하지 않았음을 뜻한다. 최초 읽기는 영구 관측 플래그를 세우되 반환 카운터는 바꾸지 않는다. 공개 최외곽·전체 미구독·해당 노드 기존 pending 없음까지 만족할 때만 settle이 payload와 원장 할당을 생략·공유하며, 정착 밖 파동의 원장 생성과 배달 파동 분리·정렬은 기존 경로를 유지한다. revision과 listener의 payload·previous·개발 모드 동결은 바뀌지 않는다(EVENT-006, NODE-060, TEST-080 D1-H5b).
@@ -16,6 +33,8 @@
 - `FieldNodeRuntime`의 진입 깊이, 되먹임 파동 수, `onChange` 중첩 수, 배달 대기열, 리스너/콜백, 보고기, 전달 중 깃발, 경고 구조 키를 쓰며, 그 칸의 선언은 `record`가 소유한다. 레코드의 `revisionLedger`는 읽기만 하고 커밋 표시를 다시 계산하지 않는다(NODE-004·045, 26C-06, EVENT-004·007, ERROR-024·029).
 
 ## API Contracts
+
+- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
 
 - `setValue`는 독립 비트 `Overwrite`와 `Merge`가 함께 오면 updater 실행과 쓰기 표시 전에 `INVALID_WRITE_OPTION`으로 거부한다. 오류는 기존 사슬 보고·throw 통로로 전달하며 검사 비용은 고정 비트 연산이다(LANDING-141).
 
@@ -45,7 +64,7 @@
 - `reset`은 emit 참조가 그대로여도 `ValidationMode`의 `OnChange` 비트가 켜져 있으면 검증을 한 번 요청한다. 이 예외만으로 `onChange`를 부르지는 않으며, `resetSubtree()`의 요청은 그 하위 트리에만 적용한다(EVENT-032·072).
 - `dispatchVisitSubtree(node, visitor)`는 공개 `visitSubtree`의 진입이다. 순회 자체는 사슬에 들어가지 않고 런타임의 `visitDepth`만 올리므로, 읽기만 하는 순회는 비용이 없고 리스너 안에서도 된다. 순회 중 쓰기가 `enterFieldNodeChain`에 닿을 때 열린 묶음이 없으면(`batchDepth`가 0) 그 진입이 묶음 하나를 함께 열고(`batchDepth = 1`, 여는 진입을 `visitBatchEntry`에 둠) 이후 쓰기는 `batch`처럼 표시만 된다. 가장 바깥 순회가 끝나 `visitDepth`가 0이 되면 열린 묶음을 `flushBatchWrites`로 루트에서 한 번 정착하고 사슬을 나간다. 쓰기가 없으면 아무것도 열지 않고, 바깥 묶음이 열려 있으면 합류만 하며 정착은 바깥 끝에서 한다. 순회 안의 정착 밖 진입도 열린 진입이 없으면 같은 묶음을 열어 전달을 순회 끝으로 미루므로, 순회 안의 전달 시점은 `batch` 안과 같다. 순회 안에서 쓰기 전에 연 `batch()`는 순회의 묶음에 합류해 자기 끝이 아니라 순회 끝에 정착한다. 오류 관찰자 안의 쓰기 거부와 리스너 되먹임 예산은 묶음을 열기 전에 평소대로 적용된다. visitor가 던지면 자기가 연 묶음이 있을 때만 그 오류를 사슬에 담아 표시된 쓰기를 커밋한 뒤 사슬 끝에서 던지고, 아니면 그대로 다시 던진다. 재생성 reset의 사슬 넘김은 `visitDepth`와 `visitBatchEntry`도 새 루트로 옮긴다(SURFACE-062, 191C-01).
 - `batch(fn)` 안의 `reset`은 그 로드를 즉시 정착시키고 커밋은 함수 끝의 파동에 합류시킨다. 검증 요청과 해당하는 `onChange`는 최외곽 진입의 끝에서 낸다. `resetSubtree()`의 즉시 정착 범위는 그 하위 트리뿐이다(EVENT-015·072).
-- 묶음 안에서도 떼어진 노드에 대한 쓰기(`setValue`, `finishInput`, 배열 동사 다섯)는 표시하지 않고 바로 `writeFieldNode`의 NODE-044 경로로 보낸다(`isBatchMarking`). 그 쓰기는 루트의 (경로, 종류) 잠복 원본만 고치고 아무것도 내지 않으므로 미룰 정착이 없고, 같은 경로에 살아 있는 노드가 있으면 무동작이다. 생사 판정은 쓰는 시점의 직전 커밋 형상이며, `batch` 안에서 같은 `batch`가 바꿀 형상은 보지 않는다(EVENT-013). 표시하면 끝의 정착이 경로로 대상을 다시 찾아 살아 있는 노드를 덮어쓰거나 쓰기를 버린다(NODE-044, 26C-12).
+- 묶음 안에서도 떼어진 참조의 setValue와 배열 동사는 표시·정착·배달 없이 무동작이다. 생사 판정은 호출 시 직전 커밋의 detached 플래그를 따른다. finishInput도 기존 NODE-044 무동작 규칙을 유지한다. resetSubtree도 무동작이다.
 - 파동 시작에 배달 집합과 리스너 목록을 고정하고, 리스너가 있는 노드만 문서 순서 위→아래로 정렬·순회한다. 리스너가 없는 노드의 리비전은 커밋에서 이미 기록된다. 최종 이탈 노드는 건너뛰며, 중간 구독은 다음 파동부터, 해지는 즉시 반영한다. 리스너 예외 하나가 다른 배달을 막지 않는다(EVENT-004·009–011, SETTLE-007, 44C-01).
 - `injectTo`와 사용자 함수 안에서 공개 쓰기 API를 부르면 리스너 되먹임처럼 같은 최외곽 사슬의 안쪽 진입이 되고, 그 되먹임 파동 예산을 공유한다. 되먹임이 낸 파동과 `onChange`가 연 새 진입의 중첩 상한은 각각 25이다. 25번째 되먹임 파동은 배달하되 그 파동의 리스너 쓰기는 정착·커밋·통지 전에 조용히 거부하고, 리스너의 `batch`는 콜백 전체를 실행하지 않는다. 리스너 밖의 호출자 쓰기는 거부하지 않으며, 깊이 1 → 0에서 예산을 초기화한다. 허용된 커밋·해당하는 검증 요청과 `onChange`를 마친 뒤 모든 환경에서 `FEEDBACK_LIMIT_EXCEEDED`를 사슬 끝에 한 번 던지고 `diagnostics`에는 넣지 않는다(EVENT-008·020–022·034, CONTROLS-079).
 - `setState`의 dirty/touched 변화는 `UpdateState`, 외부 오류 변화는 `UpdateError`, 명령은 요청 비트로 표시한다. 깊이 > 0이면 노드마다 합쳐 정착 파동 뒤 별도 파동으로 한 번, 깊이 0이면 호출 안에서 동기로 배달한다. 이 사건은 검증 요청과 `onChange`를 만들지 않고, 떼어진 노드에는 무동작이다(EVENT-012·045·067·073, NODE-044, 31C-01).
@@ -95,4 +114,4 @@
 
 ## Last Updated
 
-2026-10-27. D2-P1 정적 전체 쓰기의 세대 표식·후퇴·verify 그림자와 메모리 비용.
+2026-10-28

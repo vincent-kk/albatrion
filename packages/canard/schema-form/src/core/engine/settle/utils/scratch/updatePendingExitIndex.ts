@@ -1,3 +1,8 @@
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 
@@ -20,7 +25,7 @@ export const updatePendingExitIndex = <Self extends FieldNodeRecord<Self>>(
     if (context.pendingExitScratch)
       context.pendingExitScratch.pendingExitPaths = index;
   }
-  const host = path.slice(0, path.lastIndexOf('/'));
+  const host = resolvePointer(path, $.Parent);
   let children = index.get(host);
   if (!children) {
     if (delta < 0) return;

@@ -1,0 +1,7 @@
+{
+  "shortWindow": true,
+  "processesPerLane": 4,
+  "pilot": false,
+  "stages": false,
+  "retention": false
+}

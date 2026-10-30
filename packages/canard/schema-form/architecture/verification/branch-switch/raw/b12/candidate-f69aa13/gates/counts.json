@@ -1,0 +1,38 @@
+{
+  "unit": {
+    "files": 591,
+    "passed": 3930,
+    "todo": 1,
+    "exitCode": 0
+  },
+  "render": {
+    "files": 132,
+    "passed": 768,
+    "todo": 0,
+    "exitCode": 0
+  },
+  "storybook": {
+    "files": 100,
+    "passed": 251,
+    "todo": 0,
+    "exitCode": 0
+  },
+  "react18": {
+    "files": 132,
+    "passed": 768,
+    "todo": 0,
+    "exitCode": 0
+  },
+  "production": {
+    "files": 10,
+    "passed": 21,
+    "todo": 0,
+    "exitCode": 0
+  },
+  "verify": {
+    "files": 728,
+    "passed": 4742,
+    "todo": 1,
+    "exitCode": 0
+  }
+}

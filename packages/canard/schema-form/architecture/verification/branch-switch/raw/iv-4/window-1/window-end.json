@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-30T03:44:11.823Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "mds_stores",
+      "cpuPercent": 7.057501191491947
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 6.415910174072978
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 5.1327281392350415
+    },
+    {
+      "name": "Cursor Helper (Renderer)",
+      "cpuPercent": 3.207955087025548
+    },
+    {
+      "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+      "cpuPercent": 3.2079550870219014
+    },
+    {
+      "name": "2.1.312",
+      "cpuPercent": 2.8871595783197113
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.6039775435182444
+    },
+    {
+      "name": "Cursor Helper (Renderer)",
+      "cpuPercent": 1.2831820348099001
+    },
+    {
+      "name": "Cursor",
+      "cpuPercent": 1.2831820348096723
+    },
+    {
+      "name": "com.apple.DriverKit-AppleBCMWLAN",
+      "cpuPercent": 1.2831820348087604
+    }
+  ]
+}

@@ -1,11 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
-import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { getChildDistribution } from '../input/getChildDistribution';
 import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
 import { markWrite } from '../input/markWrite';
-import { replayMovedInput } from '../latent/replayMovedInput';
-import { restoreLatentState } from '../latent/restoreLatentState';
+import { replayMovedSource } from '../slots/replayMovedSource';
 
 /**
  * Prefer caller input while structural replay preserves an entering candidate's source.
@@ -23,15 +21,6 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const distribution = getChildDistribution(host, name, context, child.path);
-  const latent = context.root.runtime.latentRaw;
-  const key =
-    latent.size > 0
-      ? JSON.stringify([
-          child.path,
-          getBlueprintNodeIdentity(child.blueprintNode),
-        ])
-      : undefined;
-  const own = key === undefined ? undefined : latent.get(key);
   const write =
     distribution &&
     hasDistributedChildInput(
@@ -40,14 +29,12 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
       host.behavior.type === 'array',
     );
   if (distribution?.preserveLatent)
-    replayMovedInput(
+    replayMovedSource(
       child,
       write ? Reflect.get(distribution.input, name) : undefined,
       context,
     );
   else if (write || distribution?.whole) {
-    if (write && !distribution.whole && key !== undefined && latent.has(key))
-      restoreLatentState(child, own, context);
     const value = write ? Reflect.get(distribution.input, name) : undefined;
     if (distribution.automatic) {
       context.automatic = true;
@@ -56,5 +43,10 @@ export const enterFieldNode = <Self extends FieldNodeRecord<Self>>(
     }
     markWrite(child, value, context);
     if (distribution.automatic) context.automatic = false;
-  } else restoreLatentState(child, own, context);
+  } else if (child.behavior.strategy === 'terminal')
+    markWrite(child, undefined, context);
+  else {
+    context.dirtyPaths.add(child.path);
+    context.shapeDirtyPaths.add(child.path);
+  }
 };

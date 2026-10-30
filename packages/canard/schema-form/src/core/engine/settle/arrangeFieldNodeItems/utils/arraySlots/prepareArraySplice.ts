@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { ArrayOperation, FieldNodeRecord } from '../../../../record';
 import type { ArraySpliceProof } from '../../../types/settlement';
@@ -24,7 +26,7 @@ const NO_SLOTS: readonly never[] = Object.freeze([]);
 export const prepareArraySplice = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
-): ArraySpliceProof<Self> | undefined => {
+): Optional<ArraySpliceProof<Self>> => {
   if (operation.kind !== 'remove' && operation.kind !== 'insert')
     return undefined;
   const count = node.itemCount;

@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintSchemaType } from '../../../blueprint';
 
 /**
@@ -11,28 +13,34 @@ import type { BlueprintSchemaType } from '../../../blueprint';
  */
 export const isMisfit = (
   value: unknown,
-  effective: BlueprintSchemaType | undefined,
+  effective: Optional<BlueprintSchemaType>,
   nullable: boolean,
 ): boolean => {
   if (value === undefined || effective === undefined) return false;
   if (value === null) return !nullable;
   const kinds = typeof effective === 'string' ? [effective] : effective;
-  return !kinds.some((kind) => {
-    switch (kind) {
+  for (let index = 0, length = kinds.length; index < length; index++) {
+    switch (kinds[index]) {
       case 'string':
-        return typeof value === 'string';
+        if (typeof value === 'string') return false;
+        break;
       case 'boolean':
-        return typeof value === 'boolean';
+        if (typeof value === 'boolean') return false;
+        break;
       case 'integer':
-        return typeof value === 'number' && Number.isInteger(value);
+        if (typeof value === 'number' && Number.isInteger(value)) return false;
+        break;
       case 'number':
-        return typeof value === 'number' && Number.isFinite(value);
+        if (typeof value === 'number' && Number.isFinite(value)) return false;
+        break;
       case 'array':
-        return isArray(value);
+        if (isArray(value)) return false;
+        break;
       case 'object':
-        return value !== null && typeof value === 'object' && !isArray(value);
-      case 'null':
-        return false;
+        if (value !== null && typeof value === 'object' && !isArray(value))
+          return false;
+        break;
     }
-  });
+  }
+  return true;
 };

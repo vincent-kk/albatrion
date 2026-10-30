@@ -1,0 +1,4 @@
+{
+  "command": "node architecture/verification/branch-switch/tools/b4-2/checkTools.mjs <external synthetic output>",
+  "result": "B4_2_TOOL_SMOKE_OK synthetic-only"
+}

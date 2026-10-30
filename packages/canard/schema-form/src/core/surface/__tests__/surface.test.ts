@@ -1,10 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '@/schema-form/core/engine';
 import type { BlueprintSchema } from '@/schema-form/core/engine';
-import { PathKeyedMap } from '@/schema-form/core/engine';
-import { PathKeyedSet } from '@/schema-form/core/engine';
+import { PathKeyedSet, blueprint } from '@/schema-form/core/engine';
 
 import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
@@ -20,11 +18,8 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
   fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: snapshot,
-    latentRaw: new PathKeyedMap('pair'),
+
     misfitPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<
-      readonly { path: string; value: unknown }[]
-    >('path'),
   });
 
 describe('FieldNode PR-2 surface', () => {
@@ -38,7 +33,7 @@ describe('FieldNode PR-2 surface', () => {
         /^\| `([^`]+)` \| (getter|setter|getter\/setter|method) \|/gm,
       ),
     ].map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
-    expect(rows).toHaveLength(55);
+    expect(rows).toHaveLength(56);
     const prototype = RuntimeFieldNode.prototype;
     expect(
       Object.getOwnPropertyNames(prototype)

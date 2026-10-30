@@ -11,6 +11,7 @@ import {
 // filid:contract validation-lifetime
 describe('subtree load validation scope', () => {
   it('18C-101 EVENT-072 requests only the loaded subtree outside and inside batch', () => {
+    // This fixture injects private warning and misfit state into one shipping tree.
     const { root, runtime } = createDispatchTree(
       {
         type: 'object',

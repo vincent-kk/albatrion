@@ -1,6 +1,8 @@
+import type { Dictionary } from '@aileron/declare';
+
 /** Write a JSON property name without treating __proto__ as a setter. */
 export const writeObjectKey = (
-  target: Record<string, unknown>,
+  target: Dictionary<unknown>,
   name: string,
   value: unknown,
 ): void => {

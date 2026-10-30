@@ -1,0 +1,23 @@
+{
+  "base": "31ff8741c6233efe08d08fc5df7a501e2ad65b9c",
+  "testVersion": "00ed5f3aa49aeb20a02eafceccb85d2393b335d5",
+  "isolation": "git archive with existing dependency symlinks; no install",
+  "command": "yarn workspace @canard/schema-form test --run --project unit settle.inactive-value.explicit",
+  "exitCode": 1,
+  "failed": 2,
+  "passed": 5,
+  "inputMergeCalls": 0,
+  "batchedMergeCalls": 1,
+  "verifiedBytes": [
+    {
+      "commit": "31ff8741c",
+      "path": "packages/canard/schema-form/src/core/engine/settle/utils/inactive/hasExplicitInactiveValue.ts",
+      "sha256": "47f11375ce4e59c4bed4d4e8d6c277c2ae608179db7ff4f31aa879c6a8673720"
+    },
+    {
+      "commit": "00ed5f3aa",
+      "path": "packages/canard/schema-form/src/core/engine/settle/__tests__/settle.inactive-value.explicit.test.ts",
+      "sha256": "dd6aca210081c11642cade2a11c5d71aeb49ad84406b1db8d28d619adbf8ddba"
+    }
+  ]
+}

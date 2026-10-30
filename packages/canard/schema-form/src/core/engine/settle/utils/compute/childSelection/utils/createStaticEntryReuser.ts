@@ -1,5 +1,9 @@
+import { map as mapArray } from '@winglet/common-utils/array';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import type { Dictionary, Optional } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintChildEntry } from '../../../../../blueprint';
 import { HostStaticPartition } from '../../../../../blueprint';
@@ -24,13 +28,13 @@ import type { StaticShapeMemo } from '../staticShape';
  */
 export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   context: SettlementContext<Self>,
-  next: Record<string, Self>,
+  next: Dictionary<Self>,
   computeChild?: (child: Self) => void,
   immediate = false,
   hasRelocated = true,
-): ((entry: BlueprintChildEntry) => boolean) | undefined => {
+): Optional<(entry: BlueprintChildEntry) => boolean> => {
   if (
     node.behavior.type !== 'object' ||
     context.kind === 'load' ||
@@ -52,7 +56,9 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
   ).staticShape!;
   let entries = memo.byEntry;
   if (!entries) {
-    entries = new Map(shape.map((selected) => [selected.entry, selected]));
+    entries = new Map(
+      mapArray(shape, (selected) => [selected.entry, selected]),
+    );
     memo.byEntry = entries;
   }
   const registered = context.presenceRegistrations;
@@ -74,7 +80,7 @@ export const createStaticEntryReuser = <Self extends FieldNodeRecord<Self>>(
       !child ||
       child.parent !== node ||
       child.name !== entry.name ||
-      child.path !== node.path + '/' + escapeSegment(entry.name) ||
+      child.path !== appendSegment(node.path, entry.name) ||
       child.blueprintNode !== entry.node ||
       child.schema !== selected.schema ||
       !child.active ||

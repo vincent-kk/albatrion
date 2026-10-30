@@ -67,7 +67,7 @@ const CONTEXT_INVALID_PRECEDING_CHARS = `${IDENTIFIER_CHARS}${PATH_PREFIX_CHARS}
  * | Parent | `../prop` `../../prop` | full path |
  * | Absolute | `/prop` | full path |
  * | Context | `@` `@.prop` | `@` only (JS handles `.prop`) |
- * | Root | `(/)` | `/` only |
+ * | Empty-name child | `(/)` | `/` only |
  * | Fragment | `#` `#.prop` | `#` only (JS handles `.prop`) |
  *
  * Division vs Path:

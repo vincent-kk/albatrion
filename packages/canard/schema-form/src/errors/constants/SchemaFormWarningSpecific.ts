@@ -17,4 +17,9 @@ export const SchemaFormWarningSpecific = {
   FormTypeTestInvalid: 'FORM_TYPE_TEST_INVALID',
   Misfit: 'MISFIT',
   DialectMismatch: 'DIALECT_MISMATCH',
+  DetachedNodeWrite: 'DETACHED_NODE_WRITE',
+  /** A retained-value declaration conflicts with literal exit clearing. */
+  InactiveValueWithUnsetOnInactive: 'INACTIVE_VALUE_WITH_UNSET_ON_INACTIVE',
+  /** A synchronous exit resolver attempts to write to its resolving tree. */
+  WriteInInactiveResolver: 'WRITE_IN_INACTIVE_RESOLVER',
 } as const;

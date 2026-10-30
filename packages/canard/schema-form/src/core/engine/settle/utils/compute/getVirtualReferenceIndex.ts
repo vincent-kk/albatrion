@@ -1,3 +1,5 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
@@ -12,22 +14,23 @@ import type { VirtualReferenceIndex } from '../../types/settlement';
  */
 export const getVirtualReferenceIndex = (
   blueprint: Blueprint,
-): VirtualReferenceIndex | null => {
+): Nullable<VirtualReferenceIndex> => {
   let index = getBlueprintDerived<
     'virtualReferenceIndex',
-    VirtualReferenceIndex | null
+    Nullable<VirtualReferenceIndex>
   >(blueprint).virtualReferenceIndex;
   if (index !== undefined) return index;
   // Static first-load eligibility already proves the blueprint has no virtual node.
   if (StaticFirstLoadCapability.has(blueprint)) {
-    getBlueprintDerived<'virtualReferenceIndex', VirtualReferenceIndex | null>(
-      blueprint,
-    ).virtualReferenceIndex = null;
+    getBlueprintDerived<
+      'virtualReferenceIndex',
+      Nullable<VirtualReferenceIndex>
+    >(blueprint).virtualReferenceIndex = null;
     return null;
   }
-  let hosts: Map<BlueprintNode, Map<string, string[]>> | undefined;
+  let hosts: Optional<Map<BlueprintNode, Map<string, string[]>>>;
   for (const host of blueprint.nodes) {
-    let fields: Map<string, string[]> | undefined;
+    let fields: Optional<Map<string, string[]>>;
     for (const entry of host.childEntries) {
       if (entry.node.kind !== 'virtual') continue;
       fields ??= new Map();
@@ -43,7 +46,7 @@ export const getVirtualReferenceIndex = (
     }
   }
   index = hosts ?? null;
-  getBlueprintDerived<'virtualReferenceIndex', VirtualReferenceIndex | null>(
+  getBlueprintDerived<'virtualReferenceIndex', Nullable<VirtualReferenceIndex>>(
     blueprint,
   ).virtualReferenceIndex = index;
   return index;

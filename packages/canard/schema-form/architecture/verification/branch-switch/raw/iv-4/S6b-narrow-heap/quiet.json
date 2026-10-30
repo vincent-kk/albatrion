@@ -1,0 +1,70 @@
+{
+  "approved": true,
+  "waitedMs": 30133.246583,
+  "delays": [],
+  "policy": {
+    "averageMs": 30000,
+    "retryDelayMs": 5000,
+    "maxWaitMs": 120000,
+    "spotlightMaxWaitMs": 30000,
+    "maximumExternalCpuPercent": 30
+  },
+  "attempts": [
+    {
+      "requestedDurationMs": 30000,
+      "durationSeconds": 30.128845625,
+      "rows": [
+        {
+          "pid": 1056,
+          "name": "Stats",
+          "cpuPercent": 5.87476872506441
+        },
+        {
+          "pid": 436,
+          "name": "WindowServer",
+          "cpuPercent": 5.576051671247165
+        },
+        {
+          "pid": 9295,
+          "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+          "cpuPercent": 3.7837493483452125
+        },
+        {
+          "pid": 837,
+          "name": "WidgetsExtension",
+          "cpuPercent": 2.8544074031398674
+        },
+        {
+          "pid": 81982,
+          "name": "2.1.312",
+          "cpuPercent": 2.7216442681088076
+        },
+        {
+          "pid": 9215,
+          "name": "Cursor Helper (Renderer)",
+          "cpuPercent": 2.389736430534176
+        },
+        {
+          "pid": 441,
+          "name": "runningboardd",
+          "cpuPercent": 2.389736430531912
+        },
+        {
+          "pid": 21047,
+          "name": "codex",
+          "cpuPercent": 2.223782511747049
+        },
+        {
+          "pid": 650,
+          "name": "ControlCenter",
+          "cpuPercent": 1.759111539142301
+        },
+        {
+          "pid": 726,
+          "name": "chronod",
+          "cpuPercent": 1.5599668365964656
+        }
+      ]
+    }
+  ]
+}

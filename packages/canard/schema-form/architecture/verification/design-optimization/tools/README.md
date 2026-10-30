@@ -181,3 +181,178 @@ CPU 표본의 시간은 `timeDeltas[i]`를 `samples[i]`에 대응시키며, 원�
 제품 `src/**` diff와 저장소 안의 원자료는 0입니다.
 Node v26.12.1은 원본 로더의 `module.register()`에 DEP0205 사용 중단 경고를 내지만
 실행 오류는 없었습니다.
+
+## B0 분기 전환 장치
+
+`branch-switch.mjs`는 스크립트 안에서 `NODE_ENV=production`을 고정하고 B0 행만 선택합니다.
+기존 canonical 여덟 행과 탐침 16행의 fixture는 그대로입니다. 기존 `switch-oneOf-80`은
+쓰기 2회(왕복 1회)이며 신규 분기 행도 이 단위를 따릅니다. `switch-siblings-0`만 기존대로
+쓰기 1회입니다. 결과 표에는 합계와 쓰기당 환산(2회 행은 ÷2)을 함께 적습니다.
+
+| 행 ID                   | 정의                                                                                                                                |        N |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------: |
+| switch-discriminator-80 | 호스트 `controls.discriminator: 'kind'`, 분기마다 `kind.const` 태그, payload 문자열·숫자·불리언 각 1개, `kind_0 → kind_79 → kind_0` |  분기 80 |
+| switch-if-80            | `allOf`의 80개 `if`/`then`, guard는 `kind.const`와 `required: ['kind']`, AJV8 플러그인 사용, 같은 왕복                              |  분기 80 |
+| switch-nested-oneOf-20  | `/outer/inner` 호스트의 `controls.active`, payload 3개, `kind_0 → kind_19 → kind_0`                                                 |  분기 20 |
+| switch-oneOf-2          | `controls.active`, payload 3개, 첫 분기와 마지막 분기 왕복                                                                          |   분기 2 |
+| switch-oneOf-10         | 위와 같음                                                                                                                           |  분기 10 |
+| switch-oneOf-40         | 위와 같음                                                                                                                           |  분기 40 |
+| switch-oneOf-80         | 기존 canonical 행 재사용, 회귀의 N=80 점                                                                                            |  분기 80 |
+| switch-oneOf-160        | `controls.active`, payload 3개, 첫 분기와 마지막 분기 왕복                                                                          | 분기 160 |
+| switch-payload-12       | 분기 80, 각 분기의 12개 잎은 문자열·숫자·불리언을 4번 반복, Δ=12 나감+12 들어옴                                                     |  분기 80 |
+| switch-siblings-0       | 기존 탐침 재사용, 공유 `x/y` 필드의 값 보존을 포함한 쓰기 1회                                                                       |   형제 0 |
+
+`discriminator`와 `if`는 **새 엔진 전용**입니다. 설치된 0.16.1에 동일 스키마를 넣으면
+전자는 `COMPOSITION_PROPERTY_REDEFINITION`, 후자는 `allOf` 안의 조건 구문을 폼 구성에서
+무시하여 초기 payload 누락으로 사전 점검이 실패합니다. `if`에 AJV8의 `compile`을
+validatorFactory로 넘겨도 같고, 그 판의 검증기는 이 조건을 형상 guard로 사용하지 않습니다.
+다른 구문으로 바꾼 가짜 쌍을 만들지 않습니다. 두 행의 표는 절대 시간과 **같은 새 엔진
+`switch-oneOf-80` 쓰기당 시간** 대비 비율을 적고 레거시 열은 해당 없음입니다.
+
+새 행은 초기·중간·복귀 호스트의 모든 키와 payload 값을 타이머 밖에서 검사합니다.
+`if`는 실제 AJV8 플러그인을 등록하고 core에 그 validator를 전달합니다. 검증기 누락은
+즉시 실패하며, 각 guard 포인터가 준비 과정에서 정확히 한 번 컴파일되었는지도 확인합니다.
+
+```sh
+/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/branch-switch.mjs \
+  --samples=3 --runs=1 --label=b0-smoke
+# 위 실행의 run-dir를 사용합니다. 원자료의 engines.json이 로더의 해석 기준입니다.
+/opt/homebrew/bin/node --import ./packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/register.mjs \
+  packages/canard/schema-form/architecture/verification/design-optimization/tools/helpers/checkBranchDevice.mjs \
+  /private/tmp/claude-501/perf-runs/<실제-smoke-ID>
+```
+
+### 정식 창과 단계 계측
+
+AJV8은 `yarn workspace @canard/schema-form-ajv8-plugin build`로 별도 준비합니다.
+의존 workspace dist가 없다면 위 재귀 빌드를 먼저 합니다. 다운로드·자동 설치는 없습니다.
+코디네이터가 다른 시험·빌드·벤치·프로파일을 중지한 뒤 아래 창을 한 번 실행합니다.
+
+```sh
+/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/branch-switch/runWindow.mjs \
+  /private/tmp/claude-501/perf-runs/<YYYYMMDD>T<HHMM>-b8db539-b0
+/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/design-optimization/tools/profile/branch-switch/reportLedger.mjs \
+  /private/tmp/claude-501/perf-runs/<동일-ID>
+```
+
+`runWindow`는 저장소 밖 `stages/scratch/`에 제품 `src`의 esbuild 번들 두 개를 먼저 만듭니다.
+무계측과 계측 번들은 같은 entry·의존성·production 설정을 사용합니다. 그 뒤 `ps` 누적 CPU
+카운터를 5초 간격으로 기록하고 quiet-since를 고정합니다. 쌍 장치 30프로세스 다음 단계 장치
+18프로세스를 순차 실행합니다. 20예열·100표본·행당 3프로세스이며 창을 덮어쓰지 않습니다.
+방해가 있으면 해당 창과 방해 사실을 기록하고 재측정하지 않습니다.
+CPU 판정은 D4와 같습니다: 일반 프로세스 ≥50%, `mds_stores` ≥10%, 다른
+Node/Bun/vitest/tsc/rolldown ≥10%면 정식 표본을 시작하지 않습니다. 누적 CPU 시간의
+5초 차이를 사용하며 순간 `%cpu` 열로 판정하지 않습니다. 시작하지 못한 창은 표본 0으로
+보존하고 다음 사전 점검 여부는 코디네이터가 정합니다.
+
+`buildBundle.mjs`의 esbuild 플러그인이 TypeScript AST로 지정 함수의 몸체에
+`performance.now()` 타이머의 try/finally를 넣습니다. `computeNode`의 `staticList`부터
+첫 `getHostWheelBudgetCap`까지를 scratch 함수 `wheelPreparation`으로 감싸며, 그 안의
+`primeHost`·초기 dirty 계산·출력 호출은 다시 하위 단계로 셉니다. 이는 제품 소스 수정이나
+배포 export가 아니며 정확한 계측 목록은 scratch의 `instrumentation.json`에 남습니다.
+
+각 타이머는 inclusive와 하위 타이머를 뺀 self를 기록합니다. `computeNode` 재귀도
+같은 규칙이므로 inclusive를 행끼리 더하지 않습니다. 전체 쓰기 시간에서 self 합을 뺀
+`everythingElse`는 진입 검사·컨텍스트 생성·계측 진입/종료 비용 등 미포착 비용입니다.
+총합과 wrapped/unwrapped 오버헤드는 **실행별 최소값의 중앙값**입니다. 단계별 시간은
+**실행별 중앙값의 중앙값**이며 중앙값을 더한 값이 총합 중앙값과 같다는 주장은 하지 않습니다.
+별도의 정착 단계 표는 각 쓰기에서 최상위 단계별 self를 먼저 합칩니다. 따라서
+`transitionSettlement` 안에서 부른 `markWrite` 등은 해당 최상위 단계 안에서만 셉니다.
+compute·finalize·commit 안의 하위 함수 비용을 그 문맥별로 읽을 수 있습니다.
+
+시간 통과가 끝난 뒤 타이머를 끄고 별도 100쓰기에서 inspector
+`Profiler.startPreciseCoverage({callCount:true,detailed:false})`로 호출 수를 셉니다.
+다시 별도 100쓰기에서 `HeapProfiler.startSampling`을 512B 간격으로 켜고 major/minor GC로
+수거된 객체도 포함합니다. 할당 스택의 가장 안쪽 지정 단계에 selfSize를 귀속하므로 중복이
+없으며, scratch 엔진 스택 밖의 inspector/하네스 할당은 제외합니다. 할당은 process별 B/쓰기
+추정값의 중앙값입니다. 보유 힙이나 정확한 할당 바이트가 아닙니다. 표본 수가 k일 때
+상대 오차 규모 `1/√k`를 참고할 수 있으나 객체 크기·스택 상관·V8 샘플링 때문에 신뢰구간은
+아닙니다. 0표본은 할당 없음의 증명이 아닙니다. 타이머 off 상태에도 scratch의 준비 함수와
+빈 계측 호출이 남으므로 제품 판의 할당과 완전히 같다고 주장하지 않습니다.
+
+마지막 별도 쓰기에서만 `recordGateFrameInput`의 불일치 key·kind·두 값·객체 identity를
+기록합니다. 값 복사와 로그는 시간·할당·호출 수 통과 밖에 있습니다. `*.coverage.json`,
+`*.heapprofile`, `*.gate-inputs.json`, 모든 표본과 실행 명령을 원자료로 보존합니다.
+`reportLedger`는 행·PID·표본·교대·최소값·중앙값·각 표본 self 합을 검증한 뒤
+`summary.json`과 `tables.md`를 만듭니다. 회귀는 N=2·10·40·80·160의 쓰기당 시간에 대한
+최소제곱 `floor + slope × N`이고, Δ항은 `payload12 − oneOf80`입니다.
+
+## B1 소유자 승인 교대 창
+
+`alternate.mjs`는 두 로컬 Node 번들을 A/B로 복사한 뒤 **각 행에서 A0 B0 … A9 B9**를
+새 프로세스로 실행합니다. 기존 paired worker의 fixture·사전 검사·타이머·레거시 교대는
+그대로 공유합니다. 두 번들 경로를 명시하며 dist를 교체하거나 소스를 빌드하지 않습니다.
+행은 canonical 8개, if/discriminator/nested 3개, 형제 4개, gated leaf 4개, 구독 2개입니다.
+구독 wave는 1,000개 배달, subscribed single은 10쓰기·10개 배달을 확인합니다.
+
+```sh
+export B1_BASELINE_NODE=/absolute/baseline/index.node.mjs
+export B1_CANDIDATE_NODE=/absolute/candidate/index.node.mjs
+"$D0_NODE" "$D0_TOOLS/alternate.mjs" \
+  --baseline-bundle="$B1_BASELINE_NODE" --candidate-bundle="$B1_CANDIDATE_NODE" \
+  --runs=10 --warmups=20 --samples=100 --label=b1-alternating \
+  --quiet-since=2026-10-27T00:00:00Z
+```
+
+정식 창은 실제 과거 quiet-since를 받아야 하며 20예열·100표본·역할별 10프로세스로
+고정합니다. 다른 설정의 정식 실행은 거부합니다. `--only`를 쓰는 정식 창에도 품질 행이
+포함되어야 합니다. 100 미만의 표본은 장치 smoke이며 더 작은 짝수 프로세스 수를 허용합니다.
+smoke의 품질도 출력하지만 실패로 중단하지 않으며 수용 증거로 사용하지 않습니다.
+
+대표 시간은 프로세스별 최소값의 중앙입니다. **A는 앞 5개 A, A′는 뒤 5개 A, B는 B 전체
+10개**입니다. 폭 (다)는 `max(|A−A′|, rangeA, rangeA′)`입니다. 개선은 B가 A보다 폭 밖으로
+작고 A′보다도 작은 경우이며 악화는 대칭으로 판정합니다. A′를 별도 창에서 다시 실행하지
+않습니다. TEST-073의 주 비교는 전체 교대 10쌍의 표본별 처리량 `1000/ms`에 대한 Welch
+검정(평균 처리량 −15% 초과와 p<0.05)이고, 앞 5쌍·뒤 5쌍도 별도로 병기합니다. 실행을
+교대하는 것이며 통계 검정을 paired t-test로 바꾸지 않습니다.
+
+품질 행 `single-flat-1000`을 먼저 실행합니다. **B 전체 10개의 최소값 중앙 ÷ A 전체 10개의
+최소값 중앙**이 0.95~1.05 밖이면 `ALTERNATING_WINDOW_INVALID`와 exit 2로 멈추고 다른
+행을 실행하지 않습니다. `results.json`·`quality.json`에는 실패한 제어 행과 원표본도 남습니다.
+무효 창은 판정 불가이며 자동 재시도하지 않습니다. 실행 허용 횟수와 새 창 승인은 소유자가
+결정합니다. 5초 CPU 사전 점검·조용한 창 확보·끝 CPU 표본은 코디네이터의 창 실행기가
+기존 B0 절차대로 수행해야 합니다. 이 CLI의 시간 행 외 힙·단계 장부는 별도 장치로 유지합니다.
+
+각 판의 복사본·해시는 실행 루트 아래 `A/`·`B/`에, 모든 프로세스의 `.stdout`·`.stderr`·
+`.command.json`과 환경·누적 결과는 실행 루트에 남습니다. 창이 중단돼도 원자료를 삭제하거나
+덮어쓰지 않습니다. 아래 검증은 통계 반쪽·품질 경계·잘못된 설정·20자식 후 품질 중단과
+도구 구문을 검사하며 실제 정식 표본은 만들지 않습니다.
+
+```sh
+"$D0_NODE" "$D0_TOOLS/helpers/checkAlternatingDevice.mjs"
+"$D0_NODE" "$D0_TOOLS/alternate.mjs" \
+  --baseline-bundle="$B1_BASELINE_NODE" --candidate-bundle="$B1_CANDIDATE_NODE" \
+  --runs=2 --warmups=2 --samples=3 --label=alternating-smoke
+```
+
+### 전체 행의 동일 레거시 레인 품질
+
+`--quality=legacy`를 추가하면 같은 프로세스 안에서 함께 측정한 **동일한 0.16.1 코드**를
+창 대조로 씁니다. 기존 `--quality=branchless`가 기본이며 앞 절의 제어 행 즉시 중단 규칙을
+유지합니다. legacy 모드에서는 21시간 행을 모두 실행한 뒤 품질을 판정합니다.
+
+각 행의 0.16.1 레인에서 A 전체10개와 B 전체10개의 프로세스 최소값 중앙을 구하고 B/A를
+계산합니다. 호환되는 **17행의 비율 중앙값**이 0.95~1.05이면 유효입니다. if·discriminator·
+구독2행은 원래 장치부터 레거시 레인이 없으므로 품질과 보정 지표를 N/A로 두고 제외합니다.
+다른 fixture로 대체한 가짜 쌍은 만들지 않습니다. 두 역할의 레거시 원본 SHA가 같은지도
+준비 단계에서 확인합니다. 행별 비율·제외 사유·전체 중앙을 `quality.json`에 남깁니다.
+
+보조 `ratioOfRatios`는 `(current B전체10/A전체10) ÷ (legacy B전체10/A전체10)`입니다.
+시간 표의 A앞5·A′뒤5와 구별하며 채택 판정에는 사용하지 않습니다. 실행 중의 legacy 품질은
+`pending`·`passed=null`로 표시합니다. 전 행 뒤 품질이 무효이면 CLI는 exit2로 끝나지만,
+창 실행기는 같은 창의 힙·단계·호출 수까지 완료하여 참고 결과로 남길 수 있습니다.
+그 뒤 시간 판정은 판정 불가이며 자동 재시도하지 않습니다.
+
+```sh
+"$D0_NODE" "$D0_TOOLS/alternate.mjs" \
+  --baseline-bundle="$B1_BASELINE_NODE" --candidate-bundle="$B1_CANDIDATE_NODE" \
+  --quality=legacy --runs=2 --warmups=2 --samples=3 --label=legacy-quality-smoke
+```
+
+### B2-P1b payload-12 명시 행
+
+기본 registry 21행과 그 검사 기대값은 유지합니다. `--only` 목록에 `switch-payload-12`를
+명시하면 같은 기존 branch fixture를 registry에 추가하고, 해당 worker도 그 행을 인식합니다.
+B2-P1b의 승인 집합은 기본21행에 이 행을 더한22행이며 모두 `--only`에 명시합니다.
+`--quality=legacy`는 호환18행의 B10/A10 비 중앙값을 사용하고 if·discriminator·구독2행은
+그대로 제외합니다. 이 추가 행에도 A0 B0 … A9 B9, A앞5/A′뒤5/B10과 기존 Welch 규칙을 적용합니다.

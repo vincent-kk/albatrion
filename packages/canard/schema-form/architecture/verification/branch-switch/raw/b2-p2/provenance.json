@@ -1,0 +1,88 @@
+{
+  "measurementSourceCommit": "e8c122986",
+  "baselineSourceCommit": "422b1b195",
+  "integrationBase": "8d9d885bf",
+  "originalFixedCriteriaVerdict": "fail",
+  "editorialDecision": "Coordinator adoption subject to owner re-verification; original fixed targets remain failed.",
+  "files": [
+    {
+      "committed": "judgement.json",
+      "sourceFile": "judgement.json",
+      "sourceSha256": "a276f71d1004a843a8af9edf656e0e690c18eaa518059dbbe91f30cb7daad74b",
+      "transformation": "Only the full test-log artifact pointer is mapped to verification.json; that file is a summary, not the full log."
+    },
+    {
+      "committed": "results.json",
+      "sourceFile": "pair/results.json",
+      "sourceSha256": "ba5c977346956a94c217f8b318f4d7af5e97a3c0cb9cc2b870243cda7365313c",
+      "transformation": "Retains all per-row medians, process minima, widths, decisions and lane hashes; removes the 440 per-sample records and local command/path fields."
+    },
+    {
+      "committed": "quality.json",
+      "sourceFile": "pair/quality.json",
+      "sourceSha256": "b38680b0abca9ad05c2ece5a7a9c1c2abc51d8028772c3f0889ef4fbe208e78d",
+      "transformation": "none"
+    },
+    {
+      "committed": "quiet-window.json",
+      "sourceFile": "quiet-window.json",
+      "sourceSha256": "d57832d3ab4f9a1a76256da431d56b3e9ca02eca9c3836c0ae235296e8ab603f",
+      "transformation": "Retains the interval, thresholds, all positive-delta process rows and the heavy verdict; omits idle rows and full ps snapshots."
+    },
+    {
+      "committed": "window-end.json",
+      "sourceFile": "window-end.json",
+      "sourceSha256": "88a924d7ebb531f49d01b65d91665c230a8e8ea4db6112cb93cd2c64676d810b",
+      "transformation": "Same CPU compaction as quiet-window.json; retains end status and all failures."
+    },
+    {
+      "committed": "stages.json",
+      "sourceFile": "stages-analysis.json",
+      "sourceSha256": "b3bb2732f59c130e737c83d9f03b032cc6ccb60d7249ec2b557ec5876f3774c6",
+      "transformation": "none"
+    },
+    {
+      "committed": "stage-goals.json",
+      "sourceFile": "stage-goals.json",
+      "sourceSha256": "78139e68b3ac7810a02fc190f0dbb0f93b62bcc01051a62abf41c00dd810bb2d",
+      "transformation": "none"
+    },
+    {
+      "committed": "heaps.json",
+      "sourceFile": "heaps-analysis.json",
+      "sourceSha256": "fc82ecb9784b475b79ef680b878da8272f4dce3e16f585f5124365a4442a11c7",
+      "transformation": "none"
+    },
+    {
+      "committed": "test073.json",
+      "sourceFile": "test073-analysis.json",
+      "sourceSha256": "50849e5bdd238f40c495d4603951d51eae7b1d401470fcaf064532471821b2de",
+      "transformation": "none"
+    },
+    {
+      "committed": "siblings.json",
+      "sourceFile": "siblings-analysis.json",
+      "sourceSha256": "f1789c9af784deb8798abd79dd1e1b06cfc1616ea52118cf0fbd81e9842b950a",
+      "transformation": "none"
+    },
+    {
+      "committed": "restored-product-identity.json",
+      "sourceFile": "restored-product-identity.json",
+      "sourceSha256": "f3ee7acd85be7bb38a14ff313bbcb996fbc96d0889b607ad4936c67940a6ab99",
+      "transformation": "none"
+    },
+    {
+      "committed": "coordinator-decision.json",
+      "sourceFile": "coordinator-decision.json",
+      "sourceSha256": "285b85f061756522e4dbbf3e77f20b11c0c40a4ae7de769e8326a3ba46fdbdfd",
+      "transformation": "none"
+    },
+    {
+      "committed": "verification.json",
+      "sourceFile": "evidence/verification-status.json",
+      "sourceSha256": "d22860164ee4466108fe477f07c12014fe9b8595fd476d1d55f3a63955b85846",
+      "transformation": "Adds the restored 79-case/check and 72-scene delivery summaries; full logs are not committed."
+    }
+  ],
+  "fullRawRetention": "Full per-sample raw data and original device files remain on the measurement machine; no measurement was rerun."
+}

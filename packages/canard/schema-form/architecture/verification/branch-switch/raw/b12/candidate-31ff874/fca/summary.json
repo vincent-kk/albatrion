@@ -1,0 +1,26 @@
+{
+  "candidate": "31ff8741c6233efe08d08fc5df7a501e2ad65b9c",
+  "status": "indeterminate",
+  "certainty": "indeterminate",
+  "snapshotHash": "5d4d4e36738604db676f9be1377bb08327a878b32f3e4d8b463bc7fbe606565b",
+  "facts": {
+    "exact": 1648,
+    "scope": "default",
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "unsupported": 173
+  },
+  "findings": 202,
+  "baselineFindings": 202,
+  "newFindings": 0,
+  "removedFindings": 0,
+  "scope": [
+    "documents",
+    "nodes",
+    "entry-points",
+    "boundaries",
+    "dag",
+    "verification"
+  ]
+}

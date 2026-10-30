@@ -1,0 +1,42 @@
+{
+  "item": 1,
+  "timed": false,
+  "before": {
+    "switch-oneOf-80": {
+      "maps": 29,
+      "sets": 68
+    },
+    "switch-siblings-0": {
+      "maps": 15,
+      "sets": 19
+    }
+  },
+  "after": {
+    "switch-oneOf-80": {
+      "maps": 28,
+      "sets": 67
+    },
+    "switch-siblings-0": {
+      "maps": 14,
+      "sets": 19
+    }
+  },
+  "allocationFailFirst": "switch-oneOf-80 Map: 29 > 28",
+  "behaviorFailFirst": [
+    "expected selection-map count 1, received 2",
+    "same bucket ID arrays were deeply equal but not identical"
+  ],
+  "checks": {
+    "unitTargeted": {
+      "files": 4,
+      "cases": 12
+    },
+    "unitModes": {
+      "files": 14,
+      "cases": 92
+    },
+    "typecheck": "passed",
+    "lint": "passed"
+  },
+  "firstWriteAddition": "pending approved window"
+}

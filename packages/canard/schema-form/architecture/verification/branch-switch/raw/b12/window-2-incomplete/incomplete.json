@@ -1,0 +1,22 @@
+{
+  "candidate": "31ff8741c6233efe08d08fc5df7a501e2ad65b9c",
+  "startedAt": "2026-10-28T20:07:32.912Z",
+  "exitCode": 1,
+  "completedRows": 6,
+  "completedProcesses": 123,
+  "classification": "environment-failure",
+  "cause": "External CPU remained above 30% during the full 120-second start-delay allowance",
+  "precheck": "cpu-prechecks/85167.json",
+  "waitedMs": 120001.995917,
+  "waitCount": 15,
+  "lastHeavy": [
+    {
+      "pid": 394,
+      "name": "mds",
+      "cpuPercent": 57.85134977765779
+    }
+  ],
+  "productReview": "superseded by pending P2-3 fix",
+  "retried": false,
+  "classifiedBy": "Orca coordinator"
+}

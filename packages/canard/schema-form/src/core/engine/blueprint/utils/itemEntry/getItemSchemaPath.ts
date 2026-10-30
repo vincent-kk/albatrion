@@ -1,5 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { BlueprintNode } from '../../types/node';
 
 /**
@@ -14,22 +18,29 @@ export const getItemSchemaPath = (
   index: number,
   node: BlueprintNode,
 ): string => {
-  const prefix =
-    template.prefixItemCandidates?.[index]?.includes(node) ??
-    template.prefixItems?.[index] === node;
-  let fallback: string | undefined;
+  const candidates = template.prefixItemCandidates?.[index];
+  const prefix = candidates
+    ? candidates.indexOf(node) !== -1
+    : template.prefixItems?.[index] === node;
+  let fallback: Optional<string>;
   for (const declaration of template.declarations) {
     const schema = declaration.schema;
     if (typeof schema !== 'object') continue;
     let child: unknown;
-    let path: string | undefined;
+    let path: Optional<string>;
     if (prefix) {
       if (isArray(schema.prefixItems) && index < schema.prefixItems.length) {
         child = schema.prefixItems[index];
-        path = declaration.schemaPath + '/prefixItems/' + index;
+        path = appendSegment(
+          appendSegment(declaration.schemaPath, 'prefixItems'),
+          index,
+        );
       } else if (isArray(schema.items) && index < schema.items.length) {
         child = schema.items[index];
-        path = declaration.schemaPath + '/items/' + index;
+        path = appendSegment(
+          appendSegment(declaration.schemaPath, 'items'),
+          index,
+        );
       }
     } else {
       if (
@@ -38,7 +49,7 @@ export const getItemSchemaPath = (
         !isArray(schema.items)
       ) {
         child = schema.items;
-        path = declaration.schemaPath + '/items';
+        path = appendSegment(declaration.schemaPath, 'items');
       }
       if (
         isArray(schema.items) &&
@@ -48,13 +59,21 @@ export const getItemSchemaPath = (
         !isArray(schema.additionalItems)
       ) {
         child = schema.additionalItems;
-        path = declaration.schemaPath + '/additionalItems';
+        path = appendSegment(declaration.schemaPath, 'additionalItems');
       }
     }
     if (!path) continue;
     fallback ??= path;
-    if (node.declarations.some((candidate) => candidate.schema === child))
+    let declaresItemSchema = false;
+    for (const candidate of node.declarations) {
+      if (candidate.schema === child) {
+        declaresItemSchema = true;
+        break;
+      }
+    }
+    if (declaresItemSchema) {
       return path;
+    }
   }
   return fallback ?? node.schemaPath;
 };

@@ -1,3 +1,5 @@
+import type { Nullable } from '@aileron/declare';
+
 import type {
   FieldInputPropsWithSchema,
   StringSchema,
@@ -18,7 +20,7 @@ export type DateFormatJSONSchema = {
 
 /** Props of the date input, including the presentation range bounds. */
 export type FieldInputDateFormatProps = FieldInputPropsWithSchema<
-  string | null,
+  Nullable<string>,
   DateFormatJSONSchema
 > & {
   /** Earliest allowed value, from `presentation.FieldInputProps.minimum`. */

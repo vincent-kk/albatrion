@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type { AnalysisContext } from '../../../types/analysis';
 import type { BlueprintSchema } from '../../../types/schema';
 import { resolveReference } from './resolveReference';
@@ -42,8 +44,13 @@ export const collectStaticSchemas = (
       ),
     );
   }
-  if (isArray(schema.allOf))
-    schema.allOf.forEach((part, index) => {
+
+  if (isArray(schema.allOf)) {
+    const allOfSchemas = schema.allOf;
+    for (let index = 0, count = allOfSchemas.length; index < count; index++) {
+      if (!(index in allOfSchemas)) continue;
+      const part = allOfSchemas[index];
+
       const controls =
         typeof part === 'object' && part !== null ? part.controls : undefined;
       if (controls?.active === undefined)
@@ -51,11 +58,12 @@ export const collectStaticSchemas = (
           ...collectStaticSchemas(
             context,
             part,
-            schemaPath + '/allOf/' + index,
+            appendSegment(appendSegment(schemaPath, 'allOf'), index),
             stack,
             cycle,
           ),
         );
-    });
+    }
+  }
   return result;
 };

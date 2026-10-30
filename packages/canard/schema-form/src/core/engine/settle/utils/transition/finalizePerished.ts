@@ -1,8 +1,11 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
+import { pruneArraySlotTail } from '../slots/pruneArraySlotTail';
 import { pruneArrayTailPaths } from './pruneArrayTailPaths';
 import { prunePerishedPaths } from './prunePerishedPaths';
 import { detachPerishedNode } from './utils/detachPerishedNode';
@@ -21,11 +24,11 @@ const OWNED = { owned: true } as const;
 export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
-  let perishedPaths: Set<string> | undefined;
+  let perishedPaths: Optional<Set<string>>;
   const registry = getGateRegistry(context.root.runtime);
   const pendingExits = context.pendingExits;
   const perishing = pendingExits.size ? new Set<Self>() : undefined;
-  let rekeyed: { previous: string; current?: string } | undefined;
+  let rekeyed: Optional<{ previous: string; current?: string }>;
   const detach = (departing: Self): void =>
     detachPerishedNode(departing, context, rekeyed);
   for (const node of context.perished) {
@@ -66,15 +69,15 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
     }
   if (perishedPaths) {
     prunePerishedPaths(context.root.runtime, perishedPaths);
-    context.latentDescendantKeys = undefined;
   }
   const resizedHosts = new Map<string, number>();
   for (const [host, previousCount] of context.arrayCounts)
-    if (!host.detached && host.itemCount !== previousCount)
+    if (!host.detached && host.itemCount !== previousCount) {
+      pruneArraySlotTail(host, context);
       resizedHosts.set(host.path, host.itemCount);
+    }
   if (resizedHosts.size) {
     pruneArrayTailPaths(context.root.runtime, resizedHosts);
-    context.latentDescendantKeys = undefined;
   }
 };
 
@@ -87,8 +90,8 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
 const findPerishedAncestor = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   perishing: ReadonlySet<Self>,
-): Self | undefined => {
-  for (let current: Self | null = node; current; current = current.parent)
+): Optional<Self> => {
+  for (let current: Nullable<Self> = node; current; current = current.parent)
     if (perishing.has(current)) return current;
   return undefined;
 };

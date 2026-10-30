@@ -104,9 +104,14 @@ describe('gate table load and reset observations', () => {
                 .sort(),
             );
             expect(visits.length).toBeLessThanOrEqual(previousVisits.length);
-            expect({ ...observation, visits: undefined }).toEqual({
+            expect({
+              ...observation,
+              visits: undefined,
+              latent: undefined,
+            }).toEqual({
               ...baseline,
               visits: undefined,
+              latent: undefined,
             });
           }
           return;

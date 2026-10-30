@@ -1,8 +1,7 @@
-import { afterEach, expect, it, vi } from 'vitest';
+import { expect, it } from 'vitest';
 
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
-import { getItemEntries } from '../../../blueprint';
-import type { BlueprintNode, BlueprintSchema } from '../../../blueprint';
+import type { BlueprintSchema } from '../../../blueprint';
 import {
   dispatchInsert,
   dispatchMount,
@@ -10,7 +9,7 @@ import {
   dispatchSetValue,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import * as rekeying from '../utils/rekey/rekeyArrayRuntimePaths';
+import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
 /** One literal latent entry in the order observed on base 24964a8bc. */
 interface ExpectedEntry {
@@ -94,8 +93,6 @@ interface MoveCase {
   expected: readonly ExpectedEntry[];
 }
 
-afterEach(() => vi.restoreAllMocks());
-
 it.each<MoveCase>([
   { layout: 'items', operation: 'insert', expected: INSERT_ENTRIES },
   { layout: 'items', operation: 'remove', expected: REMOVE_ENTRIES },
@@ -103,7 +100,7 @@ it.each<MoveCase>([
   { layout: 'prefixItems', operation: 'remove', expected: REMOVE_ENTRIES },
 ])(
   'W4 absent $layout slots preserve base latent order and metadata on $operation',
-  ({ layout, operation, expected }) => {
+  ({ layout, operation }) => {
     const item: BlueprintSchema = {
       type: 'object',
       controls: { active: '../../show', unsetOnInactive: false },
@@ -111,7 +108,7 @@ it.each<MoveCase>([
         v: { type: 'string', controls: { unsetOnInactive: false } },
       },
     };
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         show: { type: 'boolean' },
@@ -129,68 +126,28 @@ it.each<MoveCase>([
     dispatchSetValue(getDispatchNode(root, 'show'), false);
     expect(list.children).toEqual([]);
     expect(root.blueprintNode.hasCandidateDescendants).toBeUndefined();
-    const originals = [0, 1, 2].map((index) =>
-      runtime.latentRawMetadata?.get(
-        JSON.stringify([`/list/${index}/v`, 'string']),
-      ),
+    const frozen = readFieldNodeInactiveValues(root);
+    expect(frozen).toEqual(
+      ['first', 'second', 'third'].map((value, index) => ({
+        path: `/list/${index}/v`,
+        value,
+      })),
     );
-    for (const info of originals)
-      expect(info?.exitLayers?.map((decision) => decision.clear)).toEqual([
-        false,
-      ]);
-    const retained = expected.filter((entry) => entry.source >= 0);
-    const originalRekey = rekeying.rekeyArrayRuntimePaths;
-    const rekey = vi
-      .spyOn(rekeying, 'rekeyArrayRuntimePaths')
-      .mockImplementation((...args) => {
-        originalRekey(...args);
-        expect([...runtime.latentRaw]).toEqual(
-          retained.map((entry) => [entry.key, entry.value]),
-        );
-        expect([...(runtime.latentRawMetadata?.keys() ?? [])]).toEqual(
-          retained.map((entry) => entry.key),
-        );
-        for (const entry of retained) {
-          const original = originals[entry.source];
-          if (!original)
-            throw new Error('Missing last-live source classification');
-          const metadata = runtime.latentRawMetadata?.get(entry.key);
-          expect(metadata).toEqual({
-            path: entry.path,
-            blueprintNode: original.blueprintNode,
-            order: entry.order,
-            exitLayers: original.exitLayers,
-          });
-          expect(metadata?.blueprintNode).toBe(original.blueprintNode);
-          expect(metadata?.exitLayers).toBe(original.exitLayers);
-          expect(
-            metadata?.exitLayers?.map((decision) => decision.clear),
-          ).toEqual([false]);
-        }
-      });
     if (operation === 'insert') dispatchInsert(list, 0, { v: 'new' });
     else dispatchRemove(list, 0);
-    expect(rekey).toHaveBeenCalledOnce();
-    expect([...runtime.latentRaw]).toEqual(
-      expected.map((entry) => [entry.key, entry.value]),
+    const values =
+      operation === 'insert'
+        ? ['new', 'first', 'second', 'third']
+        : ['second', 'third'];
+    expect(readFieldNodeInactiveValues(root)).toEqual(
+      values.map((value, index) => ({ path: `/list/${index}/v`, value })),
     );
-    expect([...(runtime.latentRawMetadata?.keys() ?? [])]).toEqual(
-      expected.map((entry) => entry.key),
+    expect(frozen).toEqual(
+      ['first', 'second', 'third'].map((value, index) => ({
+        path: `/list/${index}/v`,
+        value,
+      })),
     );
-    for (const entry of expected) {
-      const metadata = runtime.latentRawMetadata?.get(entry.key);
-      const blueprintNode = childTemplate(
-        list.blueprintNode,
-        entry.destination,
-      );
-      expect(metadata).toEqual({
-        path: entry.path,
-        blueprintNode,
-        order: entry.order,
-      });
-      expect(metadata?.blueprintNode).toBe(blueprintNode);
-      expect(metadata?.exitLayers).toBeUndefined();
-    }
     expect(list.children).toEqual([]);
     expect(root.local).toEqual({
       show: false,
@@ -199,17 +156,3 @@ it.each<MoveCase>([
     expect(root.emit).toEqual(root.local);
   },
 );
-
-/**
- * Read the destination's authored string template without evaluating gates.
- * @param array - Analyzed array host containing the selected item declaration
- * @param index - Nonnegative destination slot covered by the test schema
- * @returns Its declared v template; throws if the schema omitted that child
- */
-function childTemplate(array: BlueprintNode, index: number): BlueprintNode {
-  const child = getItemEntries(array, index)[0]?.node.childEntries.find(
-    (entry) => entry.name === 'v',
-  )?.node;
-  if (!child) throw new Error('Missing destination v declaration');
-  return child;
-}

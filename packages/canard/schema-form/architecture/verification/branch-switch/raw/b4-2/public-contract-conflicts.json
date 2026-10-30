@@ -1,0 +1,226 @@
+{
+  "timedSamples": 0,
+  "baseline": "4c1016a021ef6fe92d5afe235f39c4a71722d4ee",
+  "candidateSource": "c632ab5f5",
+  "baselineBundleSha256": "07125c5155281751a77246c8349b6e7a87ef93dcc062eb122ee949755d299630",
+  "candidateBundleSha256": "260d6bb31118b09d17d6d01d2e8b0b56f5b6eab82e8ceed674be2fa986bec242",
+  "results": [
+    {
+      "lane": "B4-1-off",
+      "case": "OPEN-4 other-kind source suppresses host default",
+      "expected": 7,
+      "actual": 7,
+      "passed": true
+    },
+    {
+      "lane": "B4-1-off",
+      "case": "inactive prefixItems preserves undeclared tail",
+      "reversed": false,
+      "expectedFirst": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "first": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "expectedSecond": [
+        7,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "second": [
+        7,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "lane": "B4-1-off",
+      "case": "inactive prefixItems preserves undeclared tail",
+      "reversed": true,
+      "expectedFirst": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "first": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "expectedSecond": [
+        "7",
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "second": [
+        "7",
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "lane": "B4-1-on",
+      "case": "OPEN-4 other-kind source suppresses host default",
+      "expected": 7,
+      "actual": "D",
+      "passed": false
+    },
+    {
+      "lane": "B4-1-on",
+      "case": "inactive prefixItems preserves undeclared tail",
+      "reversed": false,
+      "expectedFirst": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "first": [
+        null,
+        null,
+        null
+      ],
+      "expectedSecond": [
+        7,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "second": [
+        7,
+        null,
+        null
+      ],
+      "passed": false
+    },
+    {
+      "lane": "B4-1-on",
+      "case": "inactive prefixItems preserves undeclared tail",
+      "reversed": true,
+      "expectedFirst": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "first": [
+        null,
+        null,
+        null
+      ],
+      "expectedSecond": [
+        "7",
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "second": [
+        "7",
+        null,
+        null
+      ],
+      "passed": false
+    },
+    {
+      "lane": "B4-2",
+      "case": "OPEN-4 other-kind source suppresses host default",
+      "expected": 7,
+      "actual": 7,
+      "passed": true
+    },
+    {
+      "lane": "B4-2",
+      "case": "inactive prefixItems preserves undeclared tail",
+      "reversed": false,
+      "expectedFirst": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "first": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "expectedSecond": [
+        7,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "second": [
+        7,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "passed": true
+    },
+    {
+      "lane": "B4-2",
+      "case": "inactive prefixItems preserves undeclared tail",
+      "reversed": true,
+      "expectedFirst": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "first": [
+        null,
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "expectedSecond": [
+        "7",
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "second": [
+        "7",
+        "tail",
+        {
+          "extra": true
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

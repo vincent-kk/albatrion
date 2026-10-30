@@ -1,7 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { unescapeSegment } from '@winglet/json/pointer';
+
+import type { Optional } from '@aileron/declare';
 
 import type { FieldNodeRecord } from '../../../record';
+import { getDependencyIndex } from './getDependencyIndex';
 
 /**
  * Resolve a bound presence owner through literal, escaped child names.
@@ -12,10 +14,15 @@ import type { FieldNodeRecord } from '../../../record';
 export const getLivePresenceNode = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
-): Self | undefined => {
-  let live: Self | undefined = root;
-  for (const segment of path ? path.slice(1).split('/') : []) {
-    const name = unescapeSegment(segment);
+): Optional<Self> => {
+  let live: Optional<Self> = root;
+  const segments = getDependencyIndex(root.runtime.blueprint).pathSegments(
+    path,
+    root.runtime,
+  );
+  for (const segment of segments) {
+    const name = segment;
+    if (typeof name !== 'string') return undefined;
     live =
       live?.structure && hasOwnProperty(live.structure, name)
         ? live.structure[name]

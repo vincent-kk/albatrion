@@ -1,0 +1,148 @@
+{
+  "head": "90cc137e0b2e62e69ea00c6afe46d50c83f68119",
+  "node": "v26.12.1",
+  "rows": [
+    {
+      "label": "build",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 21.296,
+      "log": "build.log.gz",
+      "sha256": "754445aae16795205d492a3a86096807472c42527de285ba7b37f2e6c651a02a"
+    },
+    {
+      "label": "unit",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--run",
+        "--project",
+        "unit"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 74.692,
+      "log": "unit.log.gz",
+      "sha256": "87079d092b21b8f00dde0367c733d77980c6cc907b1c004bb2067230be35aadd"
+    },
+    {
+      "label": "render",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--run",
+        "--project",
+        "render"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 63.499,
+      "log": "render.log.gz",
+      "sha256": "7bf12d2eb18222c251190cdf2abdad88bf9673061ec1bb61da40874ce68a2e5e"
+    },
+    {
+      "label": "react18",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--run",
+        "--project",
+        "react18"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 61.84,
+      "log": "react18.log.gz",
+      "sha256": "708b29a09b1d31e77a51d197fd5d7fe99b56626f05300795a061fd7fb8c1692c"
+    },
+    {
+      "label": "production",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--run",
+        "--project",
+        "production"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 5.28,
+      "log": "production.log.gz",
+      "sha256": "0a69f3f676441f3e4d523ca1e47a327a3608f46c8993780b1fae665f5ac07d46"
+    },
+    {
+      "label": "storybook",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--run",
+        "--project",
+        "storybook"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 37.499,
+      "log": "storybook.log.gz",
+      "sha256": "3681993954f93158b4556d2d7030006fcd3996eab43a6564e9b762c97ee8bfc5"
+    },
+    {
+      "label": "verify",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test:verify",
+        "--run"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 105.948,
+      "log": "verify.log.gz",
+      "sha256": "44b54bbcb2c54a65a6f57803475d29d927e34fbd2faa78acbcb66c86d43dc2be"
+    },
+    {
+      "label": "typecheck",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "typecheck"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 11.264,
+      "log": "typecheck.log.gz",
+      "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "label": "lint",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "lint"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 8.359,
+      "log": "lint.log.gz",
+      "sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    }
+  ]
+}

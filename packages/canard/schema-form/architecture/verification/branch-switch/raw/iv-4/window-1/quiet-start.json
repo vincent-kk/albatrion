@@ -1,0 +1,115 @@
+{
+  "approved": true,
+  "excludedAgentPid": 21047,
+  "waitCount": 0,
+  "waitedMs": 30135.44575,
+  "ordinaryWaitedMs": 0,
+  "delays": [],
+  "policy": {
+    "averageMs": 30000,
+    "retryDelayMs": 5000,
+    "maxWaitMs": 120000,
+    "spotlightMaxWaitMs": 30000,
+    "maximumExternalCpuPercent": 30
+  },
+  "startedAt": "2026-10-30T03:36:09.203Z",
+  "quietSince": "2026-10-30T03:36:39.338Z",
+  "durationSeconds": 30.130917542,
+  "requestedDurationMs": 30000,
+  "heavyCount": 0,
+  "heavy": [],
+  "rows": [
+    {
+      "name": "2.1.312",
+      "cpuPercent": 8.828141380999309
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 6.1398727649877785
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 5.376537232033627
+    },
+    {
+      "name": "WidgetsExtension",
+      "cpuPercent": 3.3520386446657726
+    },
+    {
+      "name": "runningboardd",
+      "cpuPercent": 2.721457117449865
+    },
+    {
+      "name": "chronod",
+      "cpuPercent": 1.8253675787786003
+    },
+    {
+      "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+      "cpuPercent": 1.7921790773455486
+    },
+    {
+      "name": "com.apple.DriverKit-AppleBCMWLAN",
+      "cpuPercent": 1.692613573047903
+    },
+    {
+      "name": "ControlCenter",
+      "cpuPercent": 1.5598595673172055
+    },
+    {
+      "name": "launchd",
+      "cpuPercent": 1.3939170601579842
+    }
+  ],
+  "attempts": [
+    {
+      "startedAt": "2026-10-30T03:36:09.203Z",
+      "quietSince": "2026-10-30T03:36:39.338Z",
+      "durationSeconds": 30.130917542,
+      "requestedDurationMs": 30000,
+      "heavyCount": 0,
+      "heavy": [],
+      "rows": [
+        {
+          "name": "2.1.312",
+          "cpuPercent": 8.828141380999309
+        },
+        {
+          "name": "Stats",
+          "cpuPercent": 6.1398727649877785
+        },
+        {
+          "name": "WindowServer",
+          "cpuPercent": 5.376537232033627
+        },
+        {
+          "name": "WidgetsExtension",
+          "cpuPercent": 3.3520386446657726
+        },
+        {
+          "name": "runningboardd",
+          "cpuPercent": 2.721457117449865
+        },
+        {
+          "name": "chronod",
+          "cpuPercent": 1.8253675787786003
+        },
+        {
+          "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]",
+          "cpuPercent": 1.7921790773455486
+        },
+        {
+          "name": "com.apple.DriverKit-AppleBCMWLAN",
+          "cpuPercent": 1.692613573047903
+        },
+        {
+          "name": "ControlCenter",
+          "cpuPercent": 1.5598595673172055
+        },
+        {
+          "name": "launchd",
+          "cpuPercent": 1.3939170601579842
+        }
+      ]
+    }
+  ]
+}

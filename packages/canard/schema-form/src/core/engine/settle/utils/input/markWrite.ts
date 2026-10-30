@@ -1,11 +1,14 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord, UnionSpec } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
-import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
-import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
+import { pruneInactiveSources } from '../slots/pruneInactiveSources';
 import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
 import { hasDistributedChildInput } from './hasDistributedChildInput';
@@ -49,7 +52,6 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     assertVirtualWriteShape(node, input);
   if (context.loadScope) {
     context.entered.add(node);
-    indexEnteredLatentKey(context, node);
   }
   if (context.kind === 'load') context.changedNodes.add(node);
   if (context.kind === 'load' && node.behavior.strategy === 'branch')
@@ -85,7 +87,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       if (!sibling) continue;
       if (!context.automatic && context.kind !== 'load' && !isMerge) {
         (context.virtualReplacePaths ??= []).push(sibling.path);
-        pruneLatentRaw(sibling.runtime, sibling.path, undefined, context);
+        pruneInactiveSources(sibling.runtime, sibling.path, undefined, context);
       }
       markWrite(sibling, values?.[index], context);
     }
@@ -95,6 +97,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   let extras: unknown;
   let whole: boolean;
   let countChanged = false;
+
   if (node.behavior.type === 'array') {
     const previousItemCount = node.itemCount;
     if (context.automatic)
@@ -112,24 +115,31 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     extras = isArray(value) ? arrayExtras(node, value) : undefined;
     whole = true;
     if (isMerge && node !== context.replaceScope)
-      pruneLatentRaw(node.runtime, node.path, undefined, context);
-  } else if (!isPlain(value)) {
-    nextRaw = value;
-    extras = undefined;
-    whole = true;
-    if (isMerge && node !== context.replaceScope)
-      pruneLatentRaw(node.runtime, node.path, undefined, context);
+      pruneInactiveSources(node.runtime, node.path, undefined, context);
   } else {
-    const declared = getDeclaredChildNames(node.blueprintNode);
-    whole =
-      !isMerge &&
-      (context.replacePaths === undefined ||
-        context.replacePaths.some(
-          (path) => node.path === path || node.path.startsWith(path + '/'),
-        ));
-    nextRaw = isMerge ? node.raw : undefined;
-    if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
-    extras = nextExtras(node.undeclaredValues, value, declared, isMerge);
+    if (!isPlain(value)) {
+      nextRaw = value;
+      extras = undefined;
+      whole = true;
+      if (isMerge && node !== context.replaceScope)
+        pruneInactiveSources(node.runtime, node.path, undefined, context);
+    } else {
+      const declared = getDeclaredChildNames(node.blueprintNode);
+      whole = false;
+      if (!isMerge) {
+        const replacePaths = context.replacePaths;
+        if (replacePaths === undefined) whole = true;
+        else
+          for (const path of replacePaths)
+            if (node.path === path || isDescendantPath(node.path, path)) {
+              whole = true;
+              break;
+            }
+      }
+      nextRaw = isMerge ? node.raw : undefined;
+      if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
+      extras = nextExtras(node.undeclaredValues, value, declared, isMerge);
+    }
   }
   const rawChanged = !sameValue(node.raw, nextRaw);
   const extrasChanged = node.undeclaredValues !== extras;
@@ -176,7 +186,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     )
       ? Reflect.get(value, name)
       : undefined;
-    let childSpec: UnionSpec | undefined;
+    let childSpec: Optional<UnionSpec>;
     let interpreted: unknown = UNINTERPRETED;
     if (sameShape && child.behavior.strategy !== 'branch') {
       childSpec = staticSpec(child.schemaType, child.nullable);

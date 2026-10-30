@@ -32,6 +32,7 @@ it('verify mode compares epoch members against an independent path shadow', () =
 });
 
 it('verify mode rejects a missing actual node generation before computation', () => {
+  // The injected generation mutation targets one shipping tree's invariant check.
   const { root } = createDispatchTree({
     type: 'object',
     properties: { a: { type: 'string' } },

@@ -41,6 +41,29 @@ for (const name of ['index.mjs', 'index.node.mjs', 'index.cjs']) {
     name + ': explicit literal default',
   );
   assert.equal(mode.initializer.text, 'table', name + ': shipped default');
+  const slots = control.initializer.properties.find(
+    (property) =>
+      ts.isPropertyAssignment(property) &&
+      property.name.getText(ast) === 'slots',
+  );
+  assert.equal(slots, undefined, name + ': no retired source-mode switch');
+  const retired = [
+    'captureExitedRaw',
+    'setLatentRaw',
+    'writeLatentRaw',
+    'restoreLatentState',
+    'updateInactiveValuesMemo',
+    'createSlotShadowSession',
+  ];
+  assert.equal(
+    declarations.some(
+      (declaration) =>
+        ts.isIdentifier(declaration.name) &&
+        retired.includes(declaration.name.text),
+    ),
+    false,
+    name + ': retired general source path is absent',
+  );
   const retained = declarations.filter(
     (declaration) =>
       ts.isIdentifier(declaration.name) &&
@@ -56,6 +79,7 @@ for (const name of ['index.mjs', 'index.node.mjs', 'index.cjs']) {
       JSON.stringify({
         name,
         mode: mode.initializer.text,
+        sourceModel: 'retained-slots',
         bytes: bytes.length,
         sha256: createHash('sha256').update(bytes).digest('hex'),
         verifyHelpers: retained.length,

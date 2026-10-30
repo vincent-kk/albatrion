@@ -1,0 +1,83 @@
+{
+  "verdict": "FAIL",
+  "analysisComplete": false,
+  "snapshotHash": "2ec2858eb72a5ca7e7f29ddf860f037ad251d019057cb18cf38e4d8b9aab8e21",
+  "findingCount": 202,
+  "severities": {
+    "warning": 200,
+    "info": 1,
+    "error": 1
+  },
+  "facts": {
+    "covered": 1679,
+    "exact": 1679,
+    "rejected": 0,
+    "pending": 0
+  },
+  "scan": {
+    "projectRoot": "<home>/Workspace/albatrion/branch-switch-iv-1/packages/canard/schema-form",
+    "snapshotHash": "2ec2858eb72a5ca7e7f29ddf860f037ad251d019057cb18cf38e4d8b9aab8e21",
+    "adapterIds": [
+      "ecmascript"
+    ],
+    "totalNodes": 375,
+    "depth": 9,
+    "nodesByType": {
+      "organ": 295,
+      "fractal": 80
+    },
+    "violationCount": 201,
+    "certainty": "indeterminate",
+    "filesOutsideFactsScope": 0
+  },
+  "validation": {
+    "projectRoot": "<home>/Workspace/albatrion/branch-switch-iv-1/packages/canard/schema-form",
+    "snapshotHash": "2ec2858eb72a5ca7e7f29ddf860f037ad251d019057cb18cf38e4d8b9aab8e21",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 202,
+    "passed": 2994,
+    "failed": 12,
+    "skipped": 1
+  },
+  "verification": {
+    "projectRoot": "<home>/Workspace/albatrion/branch-switch-iv-1/packages/canard/schema-form",
+    "snapshotHash": "2ec2858eb72a5ca7e7f29ddf860f037ad251d019057cb18cf38e4d8b9aab8e21",
+    "fileCount": 740,
+    "specDocument": {
+      "fileCount": 14,
+      "knownCaseCount": 3,
+      "caseCap": 15
+    },
+    "testRecord": {
+      "fileCount": 726,
+      "knownCaseCount": 4453,
+      "caseCap": 32
+    },
+    "fragmentationCount": 0,
+    "violationCount": 21,
+    "certainty": "indeterminate"
+  },
+  "errors": [
+    {
+      "ruleId": "circular-dependency",
+      "severity": "error",
+      "message": "Dependency cycle: src/components/FieldProxy -> src/components/FieldProxy/components/FieldInputSlot -> src/components/FieldProxy",
+      "path": "<home>/Workspace/albatrion/branch-switch-iv-1/packages/canard/schema-form/src/components/FieldProxy",
+      "certainty": "exact",
+      "suggestion": "Break the cycle: move what both sides share into a unit they both import, or invert one edge behind an interface."
+    }
+  ],
+  "diagnosticCodes": {
+    "detail-document-contract": 176,
+    "intent-document-contract": 1
+  },
+  "scope": "Complete schema-form package; repository ignore policy excludes architecture. Existing 202 findings retained; no increase."
+}

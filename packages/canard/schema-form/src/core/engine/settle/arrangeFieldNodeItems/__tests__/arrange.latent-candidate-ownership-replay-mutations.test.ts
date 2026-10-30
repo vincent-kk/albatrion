@@ -15,6 +15,8 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 
 it.each([
   [
@@ -99,9 +101,8 @@ it.each([
   if (operation === 'insert') dispatchInsert(list, 0, {});
   else dispatchRemove(list, 0);
   const name = operation === 'insert' ? '1' : '0';
-  const key = JSON.stringify(['/list/' + name, 'object']);
   expect(list.structure?.[name]).toBeUndefined();
-  expect(root.runtime.latentRaw.has(key)).toBe(true);
+  expect(hasRetainedSlotOwnSource(root, '/list/' + name, 'object')).toBe(true);
   dispatchSetValue(getDispatchNode(root, 'destinationOn'), true);
   const expected = {
     destinationOn: true,
@@ -115,7 +116,7 @@ it.each([
   ).toMatchObject({ current: { local: expected, emit: expected } });
   await dispatchValidate(root);
   expect(validationInputs.at(-1)).toEqual(expected);
-  expect(root.runtime.latentRaw.has(key)).toBe(false);
+  expect(hasRetainedSlotOwnSource(root, '/list/' + name, 'object')).toBe(false);
   expect(reports.filter((record) => record.level === 'warning')).toEqual([]);
 });
 
@@ -185,26 +186,18 @@ it.each([
     dispatchSetValue(getDispatchNode(root, 'sourceOn'), false);
     const from = operation === 'insert' ? '0' : '1';
     const to = operation === 'insert' ? '1' : '0';
-    const latent = root.runtime.latentRaw;
-    const sourceKey = JSON.stringify(['/list/' + from, 'object']);
-    const destinationKey = JSON.stringify(['/list/' + to, 'object']);
-    const held = latent.get(sourceKey);
-    expect(held).toBeDefined();
-    expect(held).toMatchObject({
-      raw: undefined,
-      undeclaredValues: { extra: 9 },
-    });
-    expect(Object.isFrozen(held)).toBe(true);
+    const list = getDispatchNode(root, 'list');
+    const held = readRetainedSlotRaw(root, '/list/' + from, 'object');
+    expect(held).toEqual({ extra: 9 });
     const events: FieldNodeDelivery[] = [];
     subscribeFieldNode(root, (event) => events.push(event));
-    const list = getDispatchNode(root, 'list');
     if (operation === 'insert') dispatchInsert(list, 0, {});
     else dispatchRemove(list, 0);
-    expect(latent.get(destinationKey)).toBe(held);
-    expect(latent.has(sourceKey)).toBe(false);
-    expect(root.runtime.latentRawMetadata?.get(destinationKey)?.path).toBe(
-      '/list/' + to,
+    expect(readRetainedSlotRaw(root, '/list/' + to, 'object')).toEqual(held);
+    expect(hasRetainedSlotOwnSource(root, '/list/' + from, 'object')).toBe(
+      false,
     );
+    expect(held).toEqual({ extra: 9 });
     dispatchSetValue(getDispatchNode(root, 'destinationOn'), true);
     const expected = {
       sourceOn: false,
@@ -219,6 +212,6 @@ it.each([
     ).toMatchObject({ current: { local: expected, emit: expected } });
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(expected);
-    expect(latent.has(destinationKey)).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, '/list/' + to, 'object')).toBe(false);
   },
 );

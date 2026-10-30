@@ -1,8 +1,7 @@
-import { dirname, resolve } from 'path';
+import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
+import { dirname, resolve } from 'path';
 import { defineConfig } from 'vitest/config';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -22,6 +21,9 @@ const verifyOnlyTests = [
   'src/core/engine/settle/__tests__/settle.gate-table-wheel-characterization.test.ts',
 ];
 
+/** Built-bundle tests run only in the production project after a build. */
+const bundleTests = ['src/core/surface/__tests__/detached.production.test.ts'];
+
 const resolvePackage = createRequire(import.meta.url).resolve;
 const react18Aliases = [
   'react/jsx-runtime',
@@ -33,7 +35,13 @@ const react18Aliases = [
   'react-dom',
 ].map((name) => ({
   find: new RegExp(`^${name.replace('.', '\\.')}$`),
-  replacement: name === 'react-dom/server' ? 'react-dom18/server.browser' : name.replace(/^react-dom/, 'react-dom18').replace(/^react\//, 'react18/').replace(/^react$/, 'react18'),
+  replacement:
+    name === 'react-dom/server'
+      ? 'react-dom18/server.browser'
+      : name
+          .replace(/^react-dom/, 'react-dom18')
+          .replace(/^react\//, 'react18/')
+          .replace(/^react$/, 'react18'),
 }));
 
 export default defineConfig({
@@ -50,17 +58,26 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit',
-          setupFiles: ['src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts'],
+          setupFiles: [
+            'src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts',
+          ],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: [...renderTests, ...verifyOnlyTests, 'src/__legacy__/**'],
+          exclude: [
+            ...renderTests,
+            ...verifyOnlyTests,
+            ...bundleTests,
+            'src/__legacy__/**',
+          ],
         },
       },
       {
         extends: true,
         test: {
           name: 'render',
-          setupFiles: ['src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts'],
+          setupFiles: [
+            'src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts',
+          ],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
@@ -75,24 +92,44 @@ export default defineConfig({
         },
         optimizeDeps: {
           esbuildOptions: {
-            plugins: [{
-              name: 'react18-commonjs-aliases',
-              setup(build) {
-                build.onResolve({ filter: /^react(?:-dom)?(?:\/.*)?$/ }, ({ path }) => ({
-                  path: resolvePackage(path.replace(/^react-dom/, 'react-dom18').replace(/^react\//, 'react18/').replace(/^react$/, 'react18')),
-                }));
+            plugins: [
+              {
+                name: 'react18-commonjs-aliases',
+                setup(build) {
+                  build.onResolve(
+                    { filter: /^react(?:-dom)?(?:\/.*)?$/ },
+                    ({ path }) => ({
+                      path: resolvePackage(
+                        path
+                          .replace(/^react-dom/, 'react-dom18')
+                          .replace(/^react\//, 'react18/')
+                          .replace(/^react$/, 'react18'),
+                      ),
+                    }),
+                  );
+                },
               },
-            }],
+            ],
           },
         },
         test: {
           name: 'react18',
-          setupFiles: ['src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts'],
+          setupFiles: [
+            'src/core/engine/settle/__tests__/setupShippedGateEvaluation.ts',
+          ],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
           provide: { reactMajor: '18' },
-          server: { deps: { inline: [/react18/, /react-dom18/, /@testing-library\/(react|dom|user-event)/] } },
+          server: {
+            deps: {
+              inline: [
+                /react18/,
+                /react-dom18/,
+                /@testing-library\/(react|dom|user-event)/,
+              ],
+            },
+          },
           transformMode: { web: [/\.[cm]?[jt]sx?$/] },
           // Bundle CommonJS requires through the aliases, including testing-library's React imports.
           deps: {
@@ -100,7 +137,11 @@ export default defineConfig({
               web: {
                 enabled: true,
                 include: [
-                  'react18', 'react-dom18', 'react-dom18/client', 'react-dom18/server.browser', 'react-dom18/test-utils',
+                  'react18',
+                  'react-dom18',
+                  'react-dom18/client',
+                  'react-dom18/server.browser',
+                  'react-dom18/test-utils',
                   '@testing-library/react',
                   '@testing-library/dom',
                   '@testing-library/user-event',
@@ -114,17 +155,24 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'verify-unit',
-          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          // Independent slot replay doubles work in the complete BF fixture corpus.
+          testTimeout: 30000,
+          setupFiles: [
+            'src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts',
+          ],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
-          exclude: [...renderTests, 'src/__legacy__/**'],
+          exclude: [...renderTests, ...bundleTests, 'src/__legacy__/**'],
         },
       },
       {
         extends: true,
         test: {
           name: 'verify-render',
-          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          testTimeout: 30000,
+          setupFiles: [
+            'src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts',
+          ],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
@@ -138,13 +186,18 @@ export default defineConfig({
           name: 'production',
           environment: 'jsdom',
           transformMode: { ssr: [/\.ts$/], web: [/\.tsx$/] },
-          include: ['src/core/engine/blueprint/**/__tests__/*.owned-inline*.test.{ts,tsx}'],
+          include: [
+            'src/core/engine/blueprint/**/__tests__/*.owned-inline*.test.{ts,tsx}',
+            ...bundleTests,
+          ],
           provide: { reactMajor: '19' },
         },
       },
       {
         extends: true,
-        plugins: [storybookTest({ configDir: resolve(__dirname, '.storybook') })],
+        plugins: [
+          storybookTest({ configDir: resolve(__dirname, '.storybook') }),
+        ],
         test: {
           name: 'storybook',
           browser: {

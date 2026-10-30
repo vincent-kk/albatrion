@@ -1,3 +1,5 @@
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { ControlLayer } from './getControlLayers';
 
@@ -16,6 +18,6 @@ export const getExitPolicyKey = (
     group.host.path,
     getBlueprintNodeIdentity(group.host.blueprintNode),
     group.declarationId,
-    group.schemaPath + '/unsetOnInactive',
+    appendSegment(group.schemaPath, 'unsetOnInactive'),
     undefined,
   ]);

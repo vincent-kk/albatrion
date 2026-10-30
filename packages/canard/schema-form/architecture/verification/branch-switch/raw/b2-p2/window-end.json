@@ -1,0 +1,412 @@
+{
+  "endedAt": "2026-10-27T15:16:43.368Z",
+  "invalid": false,
+  "blocked": false,
+  "failures": [],
+  "processes": {
+    "startedAt": "2026-10-27T15:16:38.210Z",
+    "quietSince": "2026-10-27T15:16:43.368Z",
+    "durationSeconds": 5.155554333999985,
+    "observedProcesses": 1007,
+    "omittedIdleProcesses": 929,
+    "rows": [
+      {
+        "pid": 394,
+        "name": "mds",
+        "cpuPercent": 18.426728503950258
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 12.413796044792857
+      },
+      {
+        "pid": 35961,
+        "name": "mdworker_shared",
+        "cpuPercent": 9.89224372317519
+      },
+      {
+        "pid": 10717,
+        "name": "Orca Helper",
+        "cpuPercent": 7.9525880911772315
+      },
+      {
+        "pid": 35974,
+        "name": "mdworker_shared",
+        "cpuPercent": 7.370691401581514
+      },
+      {
+        "pid": 36022,
+        "name": "mdworker_shared",
+        "cpuPercent": 7.176725838381999
+      },
+      {
+        "pid": 35955,
+        "name": "mdworker_shared",
+        "cpuPercent": 6.982760275182487
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.400863585582535
+      },
+      {
+        "pid": 35969,
+        "name": "mdworker_shared",
+        "cpuPercent": 6.206898022384433
+      },
+      {
+        "pid": 35971,
+        "name": "mdworker_shared",
+        "cpuPercent": 6.012932459184918
+      },
+      {
+        "pid": 35964,
+        "name": "mdworker_shared",
+        "cpuPercent": 5.625001332785891
+      },
+      {
+        "pid": 35970,
+        "name": "mdworker_shared",
+        "cpuPercent": 5.625001332785891
+      },
+      {
+        "pid": 36026,
+        "name": "mdworker_shared",
+        "cpuPercent": 5.431035769586378
+      },
+      {
+        "pid": 515,
+        "name": "mds_stores",
+        "cpuPercent": 4.2672423903942365
+      },
+      {
+        "pid": 10795,
+        "name": "Orca Helper (Renderer)",
+        "cpuPercent": 4.2672423903942365
+      },
+      {
+        "pid": 35957,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.8793112639902696
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 3.685345700791815
+      },
+      {
+        "pid": 86870,
+        "name": "2.1.310",
+        "cpuPercent": 3.491380137596888
+      },
+      {
+        "pid": 36025,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.4913801375912437
+      },
+      {
+        "pid": 34287,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.2974145743917305
+      },
+      {
+        "pid": 35975,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.29741457439173
+      },
+      {
+        "pid": 35980,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.29741457439173
+      },
+      {
+        "pid": 35968,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.297414574391729
+      },
+      {
+        "pid": 35972,
+        "name": "mdworker_shared",
+        "cpuPercent": 3.1034490111922155
+      },
+      {
+        "pid": 34324,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.909483447992703
+      },
+      {
+        "pid": 35933,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.909483447992703
+      },
+      {
+        "pid": 35976,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.909483447992703
+      },
+      {
+        "pid": 35977,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.909483447992703
+      },
+      {
+        "pid": 35979,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.909483447992703
+      },
+      {
+        "pid": 35973,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.9094834479927023
+      },
+      {
+        "pid": 35981,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.9094834479927023
+      },
+      {
+        "pid": 35984,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.9094834479927023
+      },
+      {
+        "pid": 35986,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.7155178847931896
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 2.5215523215957925
+      },
+      {
+        "pid": 404,
+        "name": "contextstored",
+        "cpuPercent": 2.5215523215935876
+      },
+      {
+        "pid": 35982,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.3275867583941623
+      },
+      {
+        "pid": 34288,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.133621195194648
+      },
+      {
+        "pid": 34290,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.133621195194648
+      },
+      {
+        "pid": 35978,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.133621195194648
+      },
+      {
+        "pid": 35985,
+        "name": "mdworker_shared",
+        "cpuPercent": 2.133621195194648
+      },
+      {
+        "pid": 726,
+        "name": "chronod",
+        "cpuPercent": 1.939655631993371
+      },
+      {
+        "pid": 429,
+        "name": "bluetoothd",
+        "cpuPercent": 1.357758942397565
+      },
+      {
+        "pid": 35983,
+        "name": "mdworker_shared",
+        "cpuPercent": 1.3577589423965948
+      },
+      {
+        "pid": 554,
+        "name": "com.apple.AppleUserHIDDrivers",
+        "cpuPercent": 1.3577589423964622
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 1.3577589423953598
+      },
+      {
+        "pid": 717,
+        "name": "sharingd",
+        "cpuPercent": 1.1637933791982278
+      },
+      {
+        "pid": 62021,
+        "name": "node",
+        "cpuPercent": 1.163793379197125
+      },
+      {
+        "pid": 34322,
+        "name": "mdworker_shared",
+        "cpuPercent": 0.7758622527980548
+      },
+      {
+        "pid": 11058,
+        "name": "orca-terminal-host",
+        "cpuPercent": 0.7758622527973484
+      },
+      {
+        "pid": 25838,
+        "name": "Google Chrome",
+        "cpuPercent": 0.5818966895985626
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 0.5818966895980113
+      },
+      {
+        "pid": 553,
+        "name": "com.apple.DriverKit-AppleBCMWLAN",
+        "cpuPercent": 0.5818966895980113
+      },
+      {
+        "pid": 680,
+        "name": "rapportd",
+        "cpuPercent": 0.5818966895980113
+      },
+      {
+        "pid": 822,
+        "name": "nearbyd",
+        "cpuPercent": 0.5818966895980113
+      },
+      {
+        "pid": 745,
+        "name": "NotificationCenter",
+        "cpuPercent": 0.3879311263992255
+      },
+      {
+        "pid": 698,
+        "name": "fontd",
+        "cpuPercent": 0.38793112639908767
+      },
+      {
+        "pid": 55670,
+        "name": "codex",
+        "cpuPercent": 0.38793112639908767
+      },
+      {
+        "pid": 642,
+        "name": "containermanagerd",
+        "cpuPercent": 0.3879311263990188
+      },
+      {
+        "pid": 364,
+        "name": "logd",
+        "cpuPercent": 0.3879311263986742
+      },
+      {
+        "pid": 493,
+        "name": "airportd",
+        "cpuPercent": 0.3879311263986742
+      },
+      {
+        "pid": 10687,
+        "name": "Orca",
+        "cpuPercent": 0.3879311263986742
+      },
+      {
+        "pid": 432,
+        "name": "corebrightnessd",
+        "cpuPercent": 0.1939655631998884
+      },
+      {
+        "pid": 795,
+        "name": "UIKitSystem",
+        "cpuPercent": 0.1939655631998884
+      },
+      {
+        "pid": 10820,
+        "name": "Orca Helper",
+        "cpuPercent": 0.1939655631998884
+      },
+      {
+        "pid": 397,
+        "name": "diskarbitrationd",
+        "cpuPercent": 0.19396556319961275
+      },
+      {
+        "pid": 501,
+        "name": "symptomsd",
+        "cpuPercent": 0.19396556319961275
+      },
+      {
+        "pid": 561,
+        "name": "searchpartyd",
+        "cpuPercent": 0.19396556319961275
+      },
+      {
+        "pid": 689,
+        "name": "fileproviderd",
+        "cpuPercent": 0.19396556319961275
+      },
+      {
+        "pid": 99769,
+        "name": "Google Drive",
+        "cpuPercent": 0.19396556319961275
+      },
+      {
+        "pid": 67941,
+        "name": "LINE",
+        "cpuPercent": 0.1939655631995094
+      },
+      {
+        "pid": 369,
+        "name": "fseventsd",
+        "cpuPercent": 0.1939655631993371
+      },
+      {
+        "pid": 378,
+        "name": "configd",
+        "cpuPercent": 0.1939655631993371
+      },
+      {
+        "pid": 485,
+        "name": "clocksyncd",
+        "cpuPercent": 0.1939655631993371
+      },
+      {
+        "pid": 513,
+        "name": "syspolicyd",
+        "cpuPercent": 0.1939655631993371
+      },
+      {
+        "pid": 625,
+        "name": "cfprefsd",
+        "cpuPercent": 0.1939655631993371
+      },
+      {
+        "pid": 654,
+        "name": "Finder",
+        "cpuPercent": 0.1939655631993371
+      },
+      {
+        "pid": 25884,
+        "name": "Google Chrome Helper (Aperitif Renderer)",
+        "cpuPercent": 0.1939655631993371
+      },
+      {
+        "pid": 59518,
+        "name": "PerfPowerServices",
+        "cpuPercent": 0.1939655631993371
+      }
+    ],
+    "heavy": [],
+    "thresholdsPercent": {
+      "allProcesses": 50,
+      "mds_stores": 10,
+      "node_bun_vitest_tsc_rolldown": 10
+    },
+    "omitted": "Zero-delta rows and the full before/after ps text remain on the measurement machine."
+  }
+}

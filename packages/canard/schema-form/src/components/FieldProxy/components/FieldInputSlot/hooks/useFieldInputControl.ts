@@ -7,6 +7,8 @@ import {
   useSyncExternalStore,
 } from 'react';
 
+import type { Nullable } from '@aileron/declare';
+
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
 
 import { REACTIVE_RERENDERING_EVENTS } from '../type';
@@ -127,8 +129,8 @@ type SelectableElement = HTMLInputElement | HTMLTextAreaElement;
 type FocusableElement = SelectableElement | HTMLButtonElement;
 
 const queryElement = (
-  container: HTMLElement | null,
-): FocusableElement | null => {
+  container: Nullable<HTMLElement>,
+): Nullable<FocusableElement> => {
   if (!container) return null;
   const element = container.querySelector<FocusableElement>(
     FOCUS_SELECT_SELECTOR,

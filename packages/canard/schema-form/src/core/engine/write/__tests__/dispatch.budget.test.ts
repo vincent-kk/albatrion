@@ -145,6 +145,7 @@ describe('dispatcher budgets', () => {
   });
 
   it('CONTROLS-079 treats a user callback write as nested feedback', () => {
+    // The callback mutates its captured tree during shipping execution.
     let root: DispatchTestNode | undefined;
     const { root: created, runtime } = createDispatchTree({
       type: 'object',

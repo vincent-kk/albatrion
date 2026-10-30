@@ -249,7 +249,7 @@ describe('splice admission declines and the general path settles', () => {
     );
   });
 
-  it('a detached array and a tree holding its latent write', () => {
+  it('a detached array write is inert and the next live operation is admitted', () => {
     let removed: DispatchTestNode | undefined;
     compareArraySplice(
       {
@@ -281,10 +281,9 @@ describe('splice admission declines and the general path settles', () => {
         },
         {
           apply: (root) => {
-            expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
             return dispatchInsert(root, 0, [0]);
           },
-          splice: false,
+          splice: true,
         },
       ],
     );
@@ -470,6 +469,7 @@ describe('the splice admission reads the shared static admission and the tail', 
   });
 
   it('a tail that fails the check declines before application and the same call commits once on the general path', () => {
+    // Shipping-path mutation checks exclude the independent verification replay.
     const { candidate } = compareArraySplice(
       { type: 'array', items: { type: 'number' } },
       [1, 2, 3, 4],
@@ -495,6 +495,7 @@ describe('the splice admission reads the shared static admission and the tail', 
 
 describe('the splice selection proof reads only the tail', () => {
   it('a selection-time proof failure continues in the general selection within the same settlement', () => {
+    // Shipping-path call counts exclude the independent verification replay.
     const proof = vi
       .spyOn(selectionProof, 'canReuseSplicedChildren')
       .mockReturnValue(false);

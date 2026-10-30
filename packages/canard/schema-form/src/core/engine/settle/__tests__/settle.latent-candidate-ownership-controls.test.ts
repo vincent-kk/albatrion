@@ -10,6 +10,7 @@ import {
 } from '../../write';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 describe('candidate cleanup preserves broad clearing contracts', () => {
   it.each([
@@ -59,11 +60,8 @@ describe('candidate cleanup preserves broad clearing contracts', () => {
       dispatchSetValue(getDispatchNode(root, 'box', 'v', 'x'), 5);
       dispatchSetValue(getDispatchNode(root, 'a'), false);
       dispatchSetValue(getDispatchNode(root, 'outside', 'show'), false);
-      const inScope = JSON.stringify(['/box/v/x', 'number']);
-      const outside = JSON.stringify(['/outside/hidden', 'number']);
-      expect(root.runtime.latentRaw.get(inScope)).toBe(5);
-      expect(root.runtime.latentRaw.get(outside)).toBe(7);
-      const outsideMetadata = root.runtime.latentRawMetadata?.get(outside);
+      expect(readRetainedSlotRaw(root, '/box/v/x', 'number')).toBe(5);
+      expect(readRetainedSlotRaw(root, '/outside/hidden', 'number')).toBe(7);
       const box = getDispatchNode(root, 'box');
       switch (operation) {
         case 'whole-write':
@@ -87,16 +85,12 @@ describe('candidate cleanup preserves broad clearing contracts', () => {
           });
           break;
       }
-      expect(root.runtime.latentRaw.get(inScope)).toBe(
+      expect(readRetainedSlotRaw(root, '/box/v/x', 'number')).toBe(
         operation === 'subtree-reset' ? 1 : undefined,
       );
-      expect(root.runtime.latentRaw.get(outside)).toBe(
+      expect(readRetainedSlotRaw(root, '/outside/hidden', 'number')).toBe(
         operation === 'form-reset' ? undefined : 7,
       );
-      if (operation !== 'form-reset')
-        expect(root.runtime.latentRawMetadata?.get(outside)).toEqual(
-          outsideMetadata,
-        );
       dispatchSetValue(getDispatchNode(root, 'a'), true);
       expect(getDispatchNode(root, 'box', 'v').local).toEqual(
         operation === 'subtree-reset' ? { x: 1 } : {},

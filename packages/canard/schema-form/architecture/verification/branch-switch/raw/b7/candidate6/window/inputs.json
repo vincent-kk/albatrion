@@ -1,0 +1,86 @@
+{
+  "baselineCommit": "687c1d92402f1fd689c17afc6e0842861345d8c6",
+  "candidateCommit": "502a1d4d9e6bd2e684feae49dca70bfdf7970fc3",
+  "files": {
+    "A": {
+      "index.node.mjs": {
+        "bytes": 808896,
+        "sha256": "33840ee729bb891accd04601d1aa4fd458fe1ae0b090f1da5e5ea901087643af"
+      },
+      "index.mjs": {
+        "bytes": 809638,
+        "sha256": "48610a7772f23a1210a4e1df124fd8a07e3a3850cedb7d1e8b80447447c6f8a7"
+      },
+      "index.d.ts": {
+        "bytes": 3054,
+        "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+      }
+    },
+    "B": {
+      "index.node.mjs": {
+        "bytes": 814210,
+        "sha256": "e02f52140198c010bf3f3bedeeb7abb341704bafeabf026167d5cee22c761531"
+      },
+      "index.mjs": {
+        "bytes": 814952,
+        "sha256": "bf83e2beb934a400083c785272ae6c4161126e43182d0db0606b27676adcb040"
+      },
+      "index.d.ts": {
+        "bytes": 3054,
+        "sha256": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6"
+      }
+    }
+  },
+  "stageBundles": {
+    "A": {
+      "wrapped.mjs": {
+        "bytes": 816264,
+        "sha256": "fd06a03fc92d8773c3617e30ee4a8e43859f02aa7ec608c0f0f72315f5f05b36"
+      },
+      "unwrapped.mjs": {
+        "bytes": 809752,
+        "sha256": "01dd908fc3974710f2a2289e3f9d1975e107489e1fb7cae12e9b4742880f20eb"
+      },
+      "supplemental.mjs": {
+        "bytes": 825240,
+        "sha256": "5b9fd518b3923e3b2d91b939989b0d57458257fd4bfc1b4f143c5cc78821c805"
+      },
+      "instrumentation.json": {
+        "bytes": 114716,
+        "sha256": "5f8dc167c1989a8607b5fb74bb0bff83b79066fa393552c7948d63fe1d570034"
+      }
+    },
+    "B": {
+      "wrapped.mjs": {
+        "bytes": 822676,
+        "sha256": "b177723e71fada018e682666fa56449fe4e2f7455cdee874bfaafaea6cab73a5"
+      },
+      "unwrapped.mjs": {
+        "bytes": 816164,
+        "sha256": "748a69c68660ce8ff6541e26cbd779ef7611b5cfd8d556d667694706296a47ea"
+      },
+      "supplemental.mjs": {
+        "bytes": 831407,
+        "sha256": "c7aa189905d59aae29efe5252e6d55a168ada9234da0eabbb7c6491e7a61c5e9"
+      },
+      "instrumentation.json": {
+        "bytes": 114985,
+        "sha256": "bad73287ecec28be2a905488185a391ad0eab7b166e5809706a9218943ddf563"
+      }
+    }
+  },
+  "preparedAt": "2026-10-28T10:16:32.284Z",
+  "environment": {
+    "node": "v26.11.1",
+    "bun": "1.4.4",
+    "cpu": "Apple M1 Max",
+    "arch": "arm64",
+    "release": "27.0.0"
+  },
+  "stages": [
+    "switch-oneOf-80",
+    "switch-payload-12",
+    "switch-siblings-0"
+  ],
+  "enteringGroup": "inclusive outermost factory, child creation, entry, restore, recursive clone and overlay calls"
+}

@@ -1,0 +1,36 @@
+{
+  "wheelPreparation": {
+    "selfUs": 2.8340000000071086,
+    "inclusiveUs": 8.104500000001735,
+    "callsPerWrite": 1,
+    "coverageCallsPerWrite": 1,
+    "allocationBytesPerWrite": 909.5200000000001,
+    "allocationSampleCounts": [
+      166,
+      161,
+      164
+    ]
+  },
+  "getControlLayers": {
+    "selfUs": 1.7904999999984739,
+    "inclusiveUs": 1.7904999999984739,
+    "callsPerWrite": 12,
+    "coverageCallsPerWrite": 12,
+    "allocationBytesPerWrite": 1579.5200000000002,
+    "allocationSampleCounts": [
+      296,
+      270,
+      294
+    ]
+  },
+  "wheelSelfLimitUs": 1,
+  "controlInclusiveLimitUs": 2,
+  "controlInclusiveSemantics": "sum of all getControlLayers calls per write; source has one identifier occurrence (declaration), so no recursive same-stage overlap",
+  "sourceEvidence": {
+    "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+    "sha256": "ff6aa198d4b39f783c6691f88e9f3f39d00bb15d3610307d3ad39e820ae6d6e7",
+    "identifierOccurrences": 1,
+    "nonRecursiveKnown": true,
+    "reason": "Exactly one identifier occurrence is the function declaration; no same-name recursive reference exists in its source. Inclusive metrics sum all calls per write."
+  }
+}

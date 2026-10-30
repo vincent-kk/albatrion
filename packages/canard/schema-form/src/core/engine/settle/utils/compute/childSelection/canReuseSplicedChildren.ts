@@ -1,3 +1,7 @@
+import type { Dictionary } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import { getItemEntry, mergeEffectiveSchema } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import type {
@@ -22,7 +26,7 @@ const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 export const canReuseSplicedChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   proof: ArraySpliceProof<Self>,
 ): boolean => {
   const children = node.children;
@@ -55,7 +59,7 @@ export const canReuseSplicedChildren = <Self extends FieldNodeRecord<Self>>(
       child.blueprintNode !== entry.node ||
       child.name !== entry.name ||
       child.parent !== node ||
-      child.path !== node.path + '/' + entry.name ||
+      child.path !== appendSegment(node.path, entry.name) ||
       child.schema !== schema ||
       !child.active ||
       child.detached ||

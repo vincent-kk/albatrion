@@ -1,6 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import type { Dictionary, Nullable, Optional } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
+
 import type {
   Blueprint,
   BlueprintChildEntry,
@@ -8,14 +12,23 @@ import type {
   BlueprintNode,
 } from '../../../../blueprint';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
+import { engineModes } from '../../../../utils/cache/engineModes';
 import { getGateExpression } from '../../gates/getGateExpression';
+import { getIfGateReadNames } from '../../gates/predicates/getIfGateReadNames';
+import { isStableDiscriminatorEntry } from './utils/isStableDiscriminatorEntry';
+import { prepareDiscriminatorEntrySelection } from './utils/prepareDiscriminatorEntrySelection';
+import type { DiscriminatorEntrySelection } from './utils/prepareDiscriminatorEntrySelection';
 
 /** One authored evaluation position; eligible table gates use their bucket verdict. */
 export interface DirectChildSelection {
+  /** A discriminator's hoisted tag keeps its authored multi-declaration selector. */
+  readonly general?: boolean;
+  /** Strict tag-to-declaration metadata for a stable hoisted discriminator key. */
+  readonly discriminatorSelection?: DiscriminatorEntrySelection;
   /** Original edge retained for creation and inactive-exit handling. */
   readonly entry: BlueprintChildEntry;
   /** Inherited host gate, absent for an ungated declaration. */
-  readonly gate: BlueprintGate | undefined;
+  readonly gate: Optional<BlueprintGate>;
   /** Stable declaration-ID list for an admitted edge. */
   readonly ids: readonly number[];
 }
@@ -47,33 +60,58 @@ export const getDirectChildSelectionPlan = (
   host: BlueprintNode,
   blueprint: Blueprint,
   prepare: boolean,
-): DirectChildSelectionPlan | null => {
+): Nullable<DirectChildSelectionPlan> => {
   const cached = getHostDerived<
     'directChildSelectionPlan',
-    DirectChildSelectionPlan | null
+    Nullable<DirectChildSelectionPlan>
   >(host).directChildSelectionPlan;
   if (cached !== undefined) return cached;
   if (!prepare) return null;
   const schema = host.declarations[0]?.schema;
-  if (
-    typeof schema !== 'object' ||
-    schema === null ||
-    !(
+  let eligible = false;
+  if (typeof schema === 'object' && schema !== null) {
+    eligible =
       (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
-      (isArray(schema.anyOf) && schema.anyOf.length > 1)
-    )
-  ) {
-    getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
-      host,
-    ).directChildSelectionPlan = null;
+      (isArray(schema.anyOf) && schema.anyOf.length > 1);
+    if (!eligible && isArray(schema.allOf) && schema.allOf.length > 1) {
+      conditionalGate: for (const entry of host.childEntries)
+        for (const declaration of entry.declarations)
+          for (const gate of declaration.gates)
+            if (gate.kind === 'if') {
+              eligible = true;
+              break conditionalGate;
+            }
+    }
+  }
+  if (!eligible) {
+    getHostDerived<
+      'directChildSelectionPlan',
+      Nullable<DirectChildSelectionPlan>
+    >(host).directChildSelectionPlan = null;
     return null;
   }
   const steps: DirectChildSelection[] = [];
   const baseline: BlueprintChildEntry[] = [];
-  const names: Record<string, true> = Object.create(null);
+  const names: Dictionary<true> = Object.create(null);
   for (let index = 0; index < host.childEntries.length; index++) {
     const entry = host.childEntries[index];
     const declarations = entry.declarations;
+    if (
+      engineModes.gatePredicate !== 'off' &&
+      !hasOwnProperty(names, entry.name) &&
+      isStableDiscriminatorEntry(entry, host)
+    ) {
+      names[entry.name] = true;
+      baseline.push(entry);
+      steps.push({
+        entry,
+        gate: undefined,
+        ids: [],
+        general: true,
+        discriminatorSelection: prepareDiscriminatorEntrySelection(entry),
+      });
+      continue;
+    }
     if (
       hasOwnProperty(names, entry.name) ||
       declarations.length !== 1 ||
@@ -90,7 +128,7 @@ export const getDirectChildSelectionPlan = (
     ) {
       getHostDerived<
         'directChildSelectionPlan',
-        DirectChildSelectionPlan | null
+        Nullable<DirectChildSelectionPlan>
       >(host).directChildSelectionPlan = null;
       return null;
     }
@@ -99,16 +137,24 @@ export const getDirectChildSelectionPlan = (
     if (gate) {
       const expression = getGateExpression(blueprint, gate.schemaPath);
       if (
-        gate.kind !== 'active' ||
+        (engineModes.gatePredicate === 'off' && gate.kind !== 'active') ||
         gate.appliesWhen?.length ||
         gate.hostPath !== host.path ||
-        gate.schemaPath === declaration.schemaPath + '/controls/active' ||
-        !expression ||
-        expression.dependencies.length !== 1
+        gate.schemaPath ===
+          appendSegment(
+            appendSegment(declaration.schemaPath, 'controls'),
+            'active',
+          ) ||
+        (gate.kind === 'active' &&
+          (!expression ||
+            (expression.dependencies.length !== 1 &&
+              !expression.completeReads))) ||
+        (gate.kind === 'if' &&
+          getIfGateReadNames(gate.condition, blueprint) === undefined)
       ) {
         getHostDerived<
           'directChildSelectionPlan',
-          DirectChildSelectionPlan | null
+          Nullable<DirectChildSelectionPlan>
         >(host).directChildSelectionPlan = null;
         return null;
       }
@@ -117,8 +163,9 @@ export const getDirectChildSelectionPlan = (
     steps.push({ entry, gate, ids: [declaration.id] });
   }
   const plan = { steps, baseline };
-  getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
-    host,
-  ).directChildSelectionPlan = plan;
+  getHostDerived<
+    'directChildSelectionPlan',
+    Nullable<DirectChildSelectionPlan>
+  >(host).directChildSelectionPlan = plan;
   return plan;
 };

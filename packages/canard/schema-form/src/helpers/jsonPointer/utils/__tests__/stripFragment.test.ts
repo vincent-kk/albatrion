@@ -41,9 +41,8 @@ describe('stripFragment', () => {
       expect(stripFragment('/foo')).toBe('/foo');
     });
 
-    it('should return empty string for "/" (root)', () => {
-      // "/" alone represents root in this context, should be normalized to ""
-      expect(stripFragment('/')).toBe('');
+    it('preserves the empty-name pointer', () => {
+      expect(stripFragment('/')).toBe('/');
     });
 
     it('should handle nested absolute paths', () => {
@@ -58,12 +57,12 @@ describe('stripFragment', () => {
       expect(stripFragment('#')).toBe('');
     });
 
-    it('should return empty string for "#/" (fragment separator root)', () => {
-      expect(stripFragment('#/')).toBe('');
+    it('preserves the fragment empty-name pointer', () => {
+      expect(stripFragment('#/')).toBe('/');
     });
 
-    it('should return empty string for "/" (separator root)', () => {
-      expect(stripFragment('/')).toBe('');
+    it('preserves the separator empty-name pointer', () => {
+      expect(stripFragment('/')).toBe('/');
     });
 
     it('should return empty string for "" (JSON Pointer root)', () => {

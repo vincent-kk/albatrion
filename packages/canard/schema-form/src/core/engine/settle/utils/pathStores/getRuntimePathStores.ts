@@ -10,12 +10,8 @@ import type { RuntimePathStores } from '../../types/pathStores';
 export const getRuntimePathStores = <Self>(
   runtime: FieldNodeRuntime<Self>,
 ): RuntimePathStores<Self> => ({
-  latent: runtime.latentRaw,
-  metadata: (runtime.latentRawMetadata ??= new PathKeyedMap('pair')),
   declarations: (runtime.committedDeclarationIds ??= new PathKeyedMap('pair')),
   rules: (runtime.committedRuleValues ??= new PathKeyedMap('rule')),
   misfits: runtime.misfitPaths,
   misfitsMemo: (runtime.misfitsMemo ??= new PathKeyedMap('path')),
-  inactiveMemo: runtime.inactiveValuesMemo,
-  inactiveEntries: (runtime.inactiveValueEntries ??= new PathKeyedMap('pair')),
 });

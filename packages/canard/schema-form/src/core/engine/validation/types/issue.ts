@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 /** A normalized validation result; dataPath is a JSON Pointer without a fragment marker. */
 export interface ValidationIssue<SourceError = unknown> {
   /** Location of the rejected value, with an empty string for the root. */
@@ -11,7 +13,7 @@ export interface ValidationIssue<SourceError = unknown> {
   /** Rejected property key whose owning node receives the issue. */
   rejectedKey?: string;
   /** Keyword-specific parameters without a prescribed shape. */
-  details?: Record<string, unknown>;
+  details?: Dictionary<unknown>;
   /** Validator-specific original issue. */
   source?: SourceError;
 }

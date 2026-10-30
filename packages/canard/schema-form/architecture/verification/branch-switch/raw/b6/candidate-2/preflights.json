@@ -1,0 +1,215 @@
+[
+  {
+    "startedAt": "2026-10-28T06:48:46.650Z",
+    "quietSince": "2026-10-28T06:48:51.827Z",
+    "externalCpuPercent": 169.18546768371047,
+    "heavy": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 78.50205700525375
+      },
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 169.18546768371047
+      }
+    ],
+    "sourceSha256": "a133539cf8a5db494971c15c868b29d3709cfb4e30d2c1f3f2a6329deb9fab47"
+  },
+  {
+    "startedAt": "2026-10-28T06:51:38.644Z",
+    "quietSince": "2026-10-28T06:51:43.801Z",
+    "externalCpuPercent": 177.21597343995882,
+    "heavy": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 73.95321564141675
+      },
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 177.21597343995882
+      }
+    ],
+    "sourceSha256": "0ea8704728c9db918402a094dcc94e60d5cdd75509022af78718a31949740594"
+  },
+  {
+    "startedAt": "2026-10-28T06:54:11.061Z",
+    "quietSince": "2026-10-28T06:54:16.214Z",
+    "externalCpuPercent": 169.7421479638911,
+    "heavy": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 79.82153639947664
+      },
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 169.7421479638911
+      }
+    ],
+    "sourceSha256": "a994432818361e06da1156ea7ab9c89baf0044c486fe1dde3b5fbd2e6acc28c3"
+  },
+  {
+    "startedAt": "2026-10-28T06:56:17.288Z",
+    "quietSince": "2026-10-28T06:56:22.395Z",
+    "externalCpuPercent": 180.92222654794287,
+    "heavy": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 76.24999580405148
+      },
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 180.92222654794287
+      }
+    ],
+    "sourceSha256": "408585fd681dac15b395a54bcd3976ea630fb12025df522c9a1aaf3da8b1665b"
+  },
+  {
+    "startedAt": "2026-10-28T06:58:23.617Z",
+    "quietSince": "2026-10-28T06:58:28.726Z",
+    "externalCpuPercent": 101.09222870955772,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 101.09222870955772
+      }
+    ],
+    "sourceSha256": "18cc774a7b99b07d1561e6742d3948d5696fac56de31978b7a179dcfb0cc6237"
+  },
+  {
+    "startedAt": "2026-10-28T07:00:29.925Z",
+    "quietSince": "2026-10-28T07:00:35.035Z",
+    "externalCpuPercent": 106.74984405586325,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 106.74984405586325
+      }
+    ],
+    "sourceSha256": "1434d7fe923a399d4c9823b35af5ba617030d6f7a9b410feecbb6c4012bea7d9"
+  },
+  {
+    "startedAt": "2026-10-28T07:02:36.223Z",
+    "quietSince": "2026-10-28T07:02:41.330Z",
+    "externalCpuPercent": 108.77377786404789,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 108.77377786404789
+      }
+    ],
+    "sourceSha256": "ba7f7bbc01b6ad3587a37da061831f535bf45dbd047e81c59e80428ee8c050f9"
+  },
+  {
+    "startedAt": "2026-10-28T07:04:42.520Z",
+    "quietSince": "2026-10-28T07:04:47.636Z",
+    "externalCpuPercent": 102.50905586323775,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 102.50905586323775
+      }
+    ],
+    "sourceSha256": "e55119a2262513b98b8fd1ad4c506358d500e763ef161bde0d57dfd26f276f99"
+  },
+  {
+    "startedAt": "2026-10-28T07:06:48.870Z",
+    "quietSince": "2026-10-28T07:06:53.981Z",
+    "externalCpuPercent": 111.04757555515195,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 111.04757555515195
+      }
+    ],
+    "sourceSha256": "64fc49af9b286fa2b32f7b92fc58b0efd7202b380955b068827c8dbc68730db8"
+  },
+  {
+    "startedAt": "2026-10-28T07:08:55.171Z",
+    "quietSince": "2026-10-28T07:09:00.296Z",
+    "externalCpuPercent": 100.78080957610553,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 100.78080957610553
+      }
+    ],
+    "sourceSha256": "11ea458e19f68265bb3df6ac8e0eac8110168bba204d794ab7074d6f36b86fce"
+  },
+  {
+    "startedAt": "2026-10-28T07:11:01.533Z",
+    "quietSince": "2026-10-28T07:11:06.642Z",
+    "externalCpuPercent": 109.32813582046782,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 109.32813582046782
+      }
+    ],
+    "sourceSha256": "e9e07bf487d72b80e2e2225427d7ee4b6f6c9e5840eb7c8819a54ebf866f30e7"
+  },
+  {
+    "startedAt": "2026-10-28T07:13:07.804Z",
+    "quietSince": "2026-10-28T07:13:12.914Z",
+    "externalCpuPercent": 140.84556359858973,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 140.84556359858973
+      }
+    ],
+    "sourceSha256": "a80cbb6abca19a9c69138386786a318c960f8abdcf96ed0a486bb1166ca9b11e"
+  },
+  {
+    "startedAt": "2026-10-28T07:15:14.115Z",
+    "quietSince": "2026-10-28T07:15:19.226Z",
+    "externalCpuPercent": 95.56468093297457,
+    "heavy": [
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 95.56468093297457
+      }
+    ],
+    "sourceSha256": "f14b5db0c1d6e761a72f2db69ed1af72aa75cdc598c726a4650aace92e214e5b"
+  },
+  {
+    "startedAt": "2026-10-28T07:17:20.413Z",
+    "quietSince": "2026-10-28T07:17:25.526Z",
+    "externalCpuPercent": 115.95484283591637,
+    "heavy": [
+      {
+        "pid": 37403,
+        "name": "node",
+        "cpuPercent": 11.360440683246285
+      },
+      {
+        "name": "aggregate external CPU",
+        "cpuPercent": 115.95484283591637
+      }
+    ],
+    "sourceSha256": "573c48f19d2431ede84b27a069b7dccba91039d7de7f8a7ba54fe0924b93148e"
+  },
+  {
+    "startedAt": "2026-10-28T07:22:14.420Z",
+    "quietSince": "2026-10-28T07:22:19.549Z",
+    "externalCpuPercent": 151.41466614280128,
+    "heavy": [
+      {
+        "pid": 394,
+        "name": "mds",
+        "cpuPercent": 55.21952386394868
+      }
+    ],
+    "sourceSha256": "b30ab1228203729c3fb5e640078b3dc2a65314fad7e593c7ff502df3dd94042d"
+  },
+  {
+    "startedAt": "2026-10-28T07:24:20.763Z",
+    "quietSince": "2026-10-28T07:24:25.873Z",
+    "externalCpuPercent": 109.68808684098425,
+    "heavy": [],
+    "sourceSha256": "073de9366b99d1e4c2ca972f0aebd52b01f3ff13b287174db52c4f601fbbf436"
+  }
+]

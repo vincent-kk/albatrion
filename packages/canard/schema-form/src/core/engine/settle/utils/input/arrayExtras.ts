@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 
@@ -12,7 +14,7 @@ import { sameValue } from '../../../utils/compute/sameValue';
 export const arrayExtras = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: readonly unknown[],
-): unknown[] | undefined => {
+): Optional<unknown[]> => {
   if (node.blueprintNode.item) return undefined;
   const start = isArray(node.blueprintNode.prefixItems)
     ? node.blueprintNode.prefixItems.length

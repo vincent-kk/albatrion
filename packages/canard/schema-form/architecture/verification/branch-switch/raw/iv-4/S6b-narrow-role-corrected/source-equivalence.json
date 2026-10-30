@@ -1,0 +1,10 @@
+{
+  "AHead": "4a3108f29ca90029702021405ab5bc0eeae180f3",
+  "BHead": "6f7ccb7b621df5c9ba6bd6f4b9ef62d1ab0caa9d",
+  "differences": [
+    "packages/canard/schema-form/src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+    "packages/canard/schema-form/src/core/engine/utils/cache/derivedRecords.ts"
+  ],
+  "allOtherProductBlobsIdentical": true,
+  "baseline": "Four-cut bundle with S6b entirely absent. Original input manifest is preserved."
+}

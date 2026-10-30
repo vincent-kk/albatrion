@@ -1,0 +1,37 @@
+{
+  "head": "877f4215fd4b8e9fc16b1d85d93f677e3b096915",
+  "node": "v26.12.1",
+  "acceptedSourceHead": "c153d5b38bf1a3090664f818b6c36bec37f34387",
+  "rows": [
+    {
+      "label": "typecheck-lint",
+      "command": [
+        "zsh",
+        "-c",
+        "yarn workspace @canard/schema-form typecheck && yarn workspace @canard/schema-form lint && echo IV_4_STATIC_OK"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 19.548,
+      "log": "typecheck-lint.log.gz",
+      "sha256": "270c5532e8eb528eeaa70c5ee3ed379af25ece9762775ebc8f958c8398880ec6"
+    },
+    {
+      "label": "unit",
+      "command": [
+        "yarn",
+        "workspace",
+        "@canard/schema-form",
+        "test",
+        "--run",
+        "--project",
+        "unit"
+      ],
+      "code": 0,
+      "signal": null,
+      "elapsedSeconds": 67.165,
+      "log": "unit.log.gz",
+      "sha256": "06a8b412f2581cafd2a6869aececc677209e40385a69fa5a209e21fdcda83fa3"
+    }
+  ]
+}

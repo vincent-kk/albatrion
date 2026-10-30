@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { blueprint } from '@/schema-form/core';
 
 /** Immutable envelope retaining the generation in which a domain value was created. */
@@ -10,7 +12,7 @@ export interface CacheDomainEntry<Value> {
 export interface CacheDomain<Key extends object, Value> {
   readonly name: string;
   resolve(key: Key, build: () => Value): CacheDomainEntry<Value>;
-  peek(key: Key): CacheDomainEntry<Value> | undefined;
+  peek(key: Key): Optional<CacheDomainEntry<Value>>;
   invalidate(key: Key): boolean;
   clear(): void;
 }

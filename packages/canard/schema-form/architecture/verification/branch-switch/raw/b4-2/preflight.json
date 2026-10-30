@@ -1,0 +1,352 @@
+{
+  "node": "v26.12.1",
+  "timedSamples": 0,
+  "operations": 44,
+  "checks": [
+    {
+      "lane": "A",
+      "row": "single-flat-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "mount-oneOf-80",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "mount-flat-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "mount-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "single-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-oneOf-80",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "bulk-flat-2000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "bulk-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-discriminator-80",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-if-80",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-nested-oneOf-20",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-siblings-0",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-siblings-100",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-siblings-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-siblings-4000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "leaf-gate-250",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "leaf-gate-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "leaf-gate-4000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "leaf-gate-8000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "wave-1000",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "single-flat-1000-subscribed",
+      "passed": true
+    },
+    {
+      "lane": "A",
+      "row": "switch-payload-12",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "single-flat-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "mount-oneOf-80",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "mount-flat-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "mount-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "single-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-oneOf-80",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "bulk-flat-2000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "bulk-nested-d6-f4",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-discriminator-80",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-if-80",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-nested-oneOf-20",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-siblings-0",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-siblings-100",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-siblings-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-siblings-4000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "leaf-gate-250",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "leaf-gate-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "leaf-gate-4000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "leaf-gate-8000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "wave-1000",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "single-flat-1000-subscribed",
+      "passed": true
+    },
+    {
+      "lane": "B",
+      "row": "switch-payload-12",
+      "passed": true
+    }
+  ],
+  "inputBundles": {
+    "A": "d33aa8fdc8834b6fcc68e31dc3051a2acb13d0cb0866aa305279ac4d5a0911ac",
+    "B": "a3aaccbbd7aec673ae419b4b766413cfa38e8a8dfe8cd544db2c1fbfc1911a10"
+  },
+  "stageTimerSites": {
+    "A": {
+      "ledger": 25,
+      "supplemental": 66
+    },
+    "B": {
+      "ledger": 25,
+      "supplemental": 76
+    }
+  },
+  "ajv8BuildExit": 0,
+  "ajv8Bundles": {
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/createGuardCompiler.mjs": {
+      "bytes": 2180,
+      "sha256": "de26c52c87c06e4dd2707431493a91a24e26a2e5998731d274fa69e07ada35b3"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/createValidatorFactory.mjs": {
+      "bytes": 1065,
+      "sha256": "02459e31c03579714c7ab44a331e1fdf88f65fbce1eb9b867a792e7ea2ab5640"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/createInstanceValidator.mjs": {
+      "bytes": 923,
+      "sha256": "452f866408444adb1f1682aa6e4caf4fb73414358390bc477c20812dad580239"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/default/index.mjs": {
+      "bytes": 354,
+      "sha256": "a765f527d956870c4ec29d7a2448d8d1656e3de421df3b315514267dfc5e2012"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/default/createValidator.mjs": {
+      "bytes": 291,
+      "sha256": "90ee049710449a3ed6ee4ca75d64f7c76597d1dcb54ad6306ff6fbcb8816fcfa"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/default/validatorPlugin.mjs": {
+      "bytes": 1398,
+      "sha256": "8b79943a4f62d5059f46640e0f0828abc1b9d5bc298e770660d53bf57eac4224"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/2019/index.mjs": {
+      "bytes": 351,
+      "sha256": "a34d05d2fee495e51d891cca7b1afa4804348bf6a4a8f3e2604cf3389f151aef"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/2019/createValidator.mjs": {
+      "bytes": 293,
+      "sha256": "7547ddd7b5ecba8fe14a82cb1d7fd231deb49600883543583d66a1235b579ef4"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/2019/validatorPlugin.mjs": {
+      "bytes": 1413,
+      "sha256": "997006076e6151efde13b5603235e7577d6224ec375eea60c5f92dbc5ec12ea0"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/2020/index.mjs": {
+      "bytes": 351,
+      "sha256": "dbcdfb8be87000a22159cf92e0390a511d25b1660368e3e4f70919759ba57cc2"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/2020/createValidator.mjs": {
+      "bytes": 293,
+      "sha256": "1b6b37fe4877396066a4d0aee15a116e053f0fa9cbe723780d86e95744a712d1"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/2020/validatorPlugin.mjs": {
+      "bytes": 1413,
+      "sha256": "21a038711fc4c799c6303f5aba6b4a8660ff8ff9cf6f215a0714bab3b535cc99"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/disposeSchemaRoot.mjs": {
+      "bytes": 856,
+      "sha256": "ef3e700ada761807a7bf1f2d2cc94a03d8d453ab1c987b8d539176d8cb913972"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/transformErrors.mjs": {
+      "bytes": 763,
+      "sha256": "8eb282b888831dba57be08bcfdc8af881861b710fa74488b1371a5368f91106d"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/registerSchemaRoot.mjs": {
+      "bytes": 2635,
+      "sha256": "67fac6725aeefed78489b7c4fb852c4fa9235b13106c863403a35cc5fefa27ae"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/createSchemaRootRegistry.mjs": {
+      "bytes": 345,
+      "sha256": "c5cf9e65fb8c685932fef6b296e3787838f2969b9e91d8a23ed0c557bacf2d91"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/instanceIdRegistrationsOf.mjs": {
+      "bytes": 368,
+      "sha256": "51a4885bd485ffb17d3262f5e0c39a522be1110a96cd37260ba0cdcb99021cf8"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/resolveGuardSchema.mjs": {
+      "bytes": 716,
+      "sha256": "32e1c1c32e5b01c0173373fd5c14211bc662b2134cc7a582a62298ad9406c1ed"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/getRejectedKey.mjs": {
+      "bytes": 1343,
+      "sha256": "4044eb6465a712a54a2e98b2c2ae1efb5cf68c3bba580881a34f948fe41b6111"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/registerSchemaGuard.mjs": {
+      "bytes": 646,
+      "sha256": "a71fd357ae1382875eb52e8a2276eb1ba91fb59862eea13e7d2fd52c37ffb98c"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/makeSibling.mjs": {
+      "bytes": 949,
+      "sha256": "46d4dd4fa1f89e805c48d64a52e2919dec0a845fab1e25350f943b34b085db6a"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/isSelfContainedGuard.mjs": {
+      "bytes": 676,
+      "sha256": "ed69665748c46de9c64715c31b6b270bceab947f5bef34ebce6191af8fdaa104"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/assertBindableInstance.mjs": {
+      "bytes": 516,
+      "sha256": "caba610484a193ce57c90540ad7164374bfb8ef4e52bf99688725ddcf0181048"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/releaseSchemaRoot.mjs": {
+      "bytes": 1006,
+      "sha256": "6b03c3b0b2bf8f0c47962cfa46b4c8b237f1e878d8298eb05d0b33ef90f8b08d"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/transformDataPath.mjs": {
+      "bytes": 519,
+      "sha256": "c6da561a9b30f3131ffd022b6ce83410850f06cf358643477eae7a78222bd9b7"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/ValidatorBindRefusedError.mjs": {
+      "bytes": 430,
+      "sha256": "2969a4df4219fa8c3e1b80cc522b3952984f72c3a998cf2667b453ada3edcdef"
+    },
+    "packages/canard/schema-form-ajv8-plugin/dist/validator/utils/GuardPointerNotSchemaError.mjs": {
+      "bytes": 430,
+      "sha256": "193af89a7fad23a67d8766db0a8ee094b7ebb09a2e3d0df075a33cff7035d670"
+    }
+  }
+}

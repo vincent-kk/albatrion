@@ -1,0 +1,157 @@
+{
+  "definition": "Median of process medians of self time for 3 processes x 100 writes; latent sums both self values per write before aggregation.",
+  "microsecondsPerWrite": {
+    "A:switch-oneOf-80": {
+      "latent": 17.375500000071042,
+      "assembleObject": 9.666999999978998,
+      "registerRecalculation": 12.729000000007318,
+      "markCommitDeliveries": 11.541500000021188
+    },
+    "A:switch-payload-12": {
+      "latent": 48.50049999990347,
+      "assembleObject": 35.812499999963165,
+      "registerRecalculation": 19.916500000022097,
+      "markCommitDeliveries": 15.562499999987267
+    },
+    "B:switch-oneOf-80": {
+      "latent": 12.0624999998995,
+      "assembleObject": 6.207999999986669,
+      "registerRecalculation": 15.687500000012733,
+      "markCommitDeliveries": 11.749999999977945
+    },
+    "B:switch-payload-12": {
+      "latent": 30.83399999988501,
+      "assembleObject": 10.499999999979082,
+      "registerRecalculation": 23.75050000000556,
+      "markCommitDeliveries": 13.833000000005313
+    }
+  },
+  "coverageCallsPerWrite": [
+    {
+      "lane": "A",
+      "row": "switch-oneOf-80",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 61.0,
+        "getCommittedDeclarationKey": 27.0,
+        "indexLatentDescendant": 9.0,
+        "getLatentPathIndex": 4.0,
+        "PathKeyedMap.set": 22.0,
+        "PathKeyedMap.delete": 12.0
+      }
+    },
+    {
+      "lane": "A",
+      "row": "switch-payload-12",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 232.0,
+        "getCommittedDeclarationKey": 99.0,
+        "indexLatentDescendant": 36.0,
+        "getLatentPathIndex": 13.0,
+        "PathKeyedMap.set": 76.0,
+        "PathKeyedMap.delete": 48.0
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-oneOf-80",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 25.0,
+        "getCommittedDeclarationKey": 36.0,
+        "getLatentPathIndex": 4.0,
+        "PathKeyedMap.set": 22.0,
+        "PathKeyedMap.delete": 12.0
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-payload-12",
+      "perWrite": {
+        "getBlueprintNodeIdentity": 97.0,
+        "getCommittedDeclarationKey": 135.0,
+        "getLatentPathIndex": 13.0,
+        "PathKeyedMap.set": 76.0,
+        "PathKeyedMap.delete": 48.0
+      }
+    }
+  ],
+  "jsonKeyCallsPerWrite": [
+    {
+      "lane": "A",
+      "row": "switch-oneOf-80",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 3,
+          "enterFieldNode": 3,
+          "selectChildren": 3,
+          "transitionSettlement": 10,
+          "captureExitedRaw": 3,
+          "visitFieldNodes.owned": 6,
+          "finalizeExits": 3,
+          "getCommittedDeclarationKey": 3
+        },
+        "parse": {
+          "getLatentPathIndex": 3,
+          "setLatentRaw": 9,
+          "getStoreKeyPaths": 9,
+          "captureLatentDescendants": 3
+        }
+      }
+    },
+    {
+      "lane": "A",
+      "row": "switch-payload-12",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 12,
+          "enterFieldNode": 12,
+          "selectChildren": 12,
+          "transitionSettlement": 37,
+          "captureExitedRaw": 12,
+          "visitFieldNodes.owned": 24,
+          "finalizeExits": 12,
+          "getCommittedDeclarationKey": 12
+        },
+        "parse": {
+          "getLatentPathIndex": 12,
+          "setLatentRaw": 36,
+          "getStoreKeyPaths": 36,
+          "captureLatentDescendants": 12
+        }
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-oneOf-80",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 3,
+          "selectChildren": 3,
+          "transitionSettlement": 10,
+          "visitFieldNodes.owned": 6
+        },
+        "parse": {
+          "captureLatentDescendants": 3
+        }
+      }
+    },
+    {
+      "lane": "B",
+      "row": "switch-payload-12",
+      "writes": 10,
+      "callsPerWrite": {
+        "stringify": {
+          "selectEntryStep": 12,
+          "selectChildren": 12,
+          "transitionSettlement": 37,
+          "visitFieldNodes.owned": 24
+        },
+        "parse": {
+          "captureLatentDescendants": 12
+        }
+      }
+    }
+  ]
+}

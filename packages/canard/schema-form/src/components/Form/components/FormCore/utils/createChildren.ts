@@ -1,5 +1,7 @@
 import { type ReactNode, createElement } from 'react';
 
+import type { Optional } from '@aileron/declare';
+
 import type {
   AllowedValue,
   InferValueType,
@@ -14,7 +16,7 @@ export const createChildren = <
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 >(
-  children: FormProps<Schema, Value>['children'] | undefined,
+  children: Optional<FormProps<Schema, Value>['children']>,
   jsonSchema: Schema,
 ): ReactNode => {
   if (children == null) return null;

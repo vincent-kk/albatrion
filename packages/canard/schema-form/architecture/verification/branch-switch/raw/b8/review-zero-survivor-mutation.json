@@ -1,0 +1,76 @@
+{
+  "mutation": "Temporarily removed both zero-survivor discard calls from createExitSlotOverlay; restored the exact original bytes after the run.",
+  "originalSourceSha256": "e882ea1e2eca80c0ccbe849c5e63c15745d15ed19b649f546a37401b20ccdb46",
+  "publicCases": [
+    {
+      "name": "drops discarded item writes with keep declaration=false and item target=false",
+      "withoutDiscardCalls": "passed"
+    },
+    {
+      "name": "drops discarded item writes with keep declaration=false and item target=true",
+      "withoutDiscardCalls": "passed"
+    },
+    {
+      "name": "drops discarded item writes with keep declaration=true and item target=false",
+      "withoutDiscardCalls": "passed"
+    },
+    {
+      "name": "drops discarded item writes with keep declaration=true and item target=true",
+      "withoutDiscardCalls": "passed"
+    },
+    {
+      "name": "drops writes below a zero-survivor inner array of a kept outer item",
+      "withoutDiscardCalls": "passed"
+    },
+    {
+      "name": "drops writes through an already inactive keep candidate of a zero-survivor array",
+      "withoutDiscardCalls": "passed"
+    }
+  ],
+  "newPublicCasesDifferentiateDiscard": false,
+  "arrayOwnInactiveSlotsTraversal": "Code reading only; no fixture directly exercises the array-level inactive-slot loop.",
+  "existingInternalRegression": "Two cases demonstrate writeSlotPath calls changing from 2 to 0 with a positive control of 1.",
+  "coordinatorDecision": "Added two scene-specific internal spy variants as requested; the public tests remain characterization. The original product bytes were restored.",
+  "internalVariants": [
+    {
+      "run": "current",
+      "name": "drops zero-survivor latent writes with keep declarations=false",
+      "status": "passed"
+    },
+    {
+      "run": "current",
+      "name": "drops zero-survivor latent writes with keep declarations=true",
+      "status": "passed"
+    },
+    {
+      "run": "current",
+      "name": "drops latent writes below a cleared inner array of a kept outer item",
+      "status": "passed"
+    },
+    {
+      "run": "current",
+      "name": "drops latent writes through an already inactive zero-survivor descendant",
+      "status": "passed"
+    },
+    {
+      "run": "withoutDiscardCalls",
+      "name": "drops zero-survivor latent writes with keep declarations=false",
+      "status": "failed"
+    },
+    {
+      "run": "withoutDiscardCalls",
+      "name": "drops zero-survivor latent writes with keep declarations=true",
+      "status": "failed"
+    },
+    {
+      "run": "withoutDiscardCalls",
+      "name": "drops latent writes below a cleared inner array of a kept outer item",
+      "status": "failed"
+    },
+    {
+      "run": "withoutDiscardCalls",
+      "name": "drops latent writes through an already inactive zero-survivor descendant",
+      "status": "failed"
+    }
+  ]
+}

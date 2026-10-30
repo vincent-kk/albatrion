@@ -1,0 +1,35 @@
+{
+  "all": {
+    "before": {
+      "pointer split": 49,
+      "raw operator comparison": 30,
+      "pointer concatenation": 173,
+      "external pointer implementation": 53,
+      "raw wildcard interpretation": 9,
+      "pointer lastIndexOf": 46,
+      "private escape implementation": 32,
+      "dynamic pointer escape implementation": 3,
+      "inline tilde escaping": 8,
+      "pointer join": 3,
+      "pointer indexOf": 9
+    },
+    "after": {}
+  },
+  "owned": {
+    "before": {
+      "external pointer implementation": 43,
+      "pointer concatenation": 131,
+      "pointer lastIndexOf": 34,
+      "raw operator comparison": 26,
+      "pointer split": 41,
+      "raw wildcard interpretation": 9,
+      "private escape implementation": 20,
+      "inline tilde escaping": 6,
+      "dynamic pointer escape implementation": 1,
+      "pointer join": 3,
+      "pointer indexOf": 8
+    },
+    "after": {}
+  },
+  "remaining": []
+}

@@ -1,10 +1,14 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { unescapeSegment } from '@winglet/json/pointer';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  appendSegment,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
+import { isNamedPointerSegments } from '../../../utils/paths/isNamedPointerSegments';
 import { isCanonicalArrayIndex } from '../templatePaths/isCanonicalArrayIndex';
 import { getLoadValue } from './getLoadValue';
 import { setLoadValue } from './setLoadValue';
@@ -61,8 +65,8 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       draft = slots;
       continue;
     }
-    const encoded = host.path.slice(1).split($.Separator);
-    const segments = encoded.map(unescapeSegment);
+    const segments = parsePointerSegments(host.path);
+    if (!isNamedPointerSegments(segments)) continue;
     let probe: unknown = draft;
     let byName = false;
     for (const segment of segments) {
@@ -79,12 +83,12 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       draft = setLoadValue(draft, host.path, slots);
       continue;
     }
-    let parent = draftCopy(draft, '');
+    let parent = draftCopy(draft, $.Root);
     draft = parent;
-    let parentPath = '';
+    let parentPath: string = $.Root;
     for (let index = 0; index < segments.length - 1; index++) {
       const segment = segments[index];
-      parentPath += '/' + encoded[index];
+      parentPath = appendSegment(parentPath, segments[index]);
       const child = draftCopy(Reflect.get(parent, segment), parentPath);
       if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
       Reflect.set(parent, segment, child);

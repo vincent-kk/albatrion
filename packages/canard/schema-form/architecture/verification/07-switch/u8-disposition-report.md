@@ -246,3 +246,5 @@ SURFACE-056·060, LANDING-157에 따라 `core/types/state.ts`의 enum을 `Schema
 | `npx --no-install eslint "src/**/*.{ts,tsx}"` | exit 0, 출력 없음 |
 | `node architecture/verification/07-switch/tools/extract-migration-rows.mjs --check architecture/verification/07-switch/migration-check.md` | exit 0, 이주 ID 128행 점검 통과 |
 | `grep -nE '\|[[:space:]]*\|' architecture/verification/07-switch/render-disposition.md`와 TBD 검사 | 출력 없음, 빈 셀 0·TBD 0 |
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `29d061941323`, `fc651e734d1c`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

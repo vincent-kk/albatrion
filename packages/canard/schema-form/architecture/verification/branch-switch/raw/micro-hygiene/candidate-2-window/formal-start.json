@@ -1,0 +1,10 @@
+{
+  "startedAt": "2026-10-29T16:19:01.724Z",
+  "quietSince": "2026-10-29T16:19:01.715Z",
+  "shortWindow": true,
+  "processesPerLane": 4,
+  "baselineHalfProcesses": 2,
+  "pilot": false,
+  "stages": false,
+  "retention": false
+}

@@ -1,6 +1,8 @@
 import {
   JSONPointer as $,
-  JSONPointerPrefix,
+  PointerOperator,
+  parsePointer,
+  resolvePointer,
 } from '@/schema-form/helpers/jsonPointer';
 
 import { JSON_POINTER_PATH_REGEX } from '../../../utils/expressions/regex';
@@ -17,17 +19,14 @@ export const collectGateEvaluationReads = (
   const reads: (string | number)[] = [];
   for (const match of condition.matchAll(JSON_POINTER_PATH_REGEX)) {
     const path = match[0];
-    if (path === $.Context) continue;
-    if (path === $.Fragment || path === $.Separator) reads.push('');
-    else if (path.startsWith(JSONPointerPrefix.Fragment))
-      reads.push(path.slice(1));
-    else if (path.startsWith($.Separator)) reads.push(path);
+    const parsed = parsePointer(path);
+    if (parsed.segments[0] === PointerOperator.Context) continue;
+    if (parsed.absolute) reads.push(resolvePointer($.Root, path));
     else {
       let levels = 0;
-      let relative = path;
-      while (relative.startsWith(JSONPointerPrefix.Parent)) {
+      for (const segment of parsed.segments) {
+        if (segment !== PointerOperator.Parent) break;
         levels++;
-        relative = relative.slice(3);
       }
       reads.push(levels);
     }

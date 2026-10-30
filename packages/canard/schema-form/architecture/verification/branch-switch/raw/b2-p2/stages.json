@@ -1,0 +1,1724 @@
+{
+  "switch-oneOf-80": {
+    "A": {
+      "row": "switch-oneOf-80",
+      "role": "A",
+      "writes": 1,
+      "pids": [
+        35662,
+        35677,
+        35720
+      ],
+      "wrappedUs": 194.99999999999318,
+      "unwrappedUs": 173.6670000000231,
+      "processMinima": [
+        {
+          "wrapped": 182.83400000001393,
+          "unwrapped": 171.41599999996515
+        },
+        {
+          "wrapped": 195.99999999996953,
+          "unwrapped": 179.58299999997962
+        },
+        {
+          "wrapped": 194.99999999999318,
+          "unwrapped": 173.6670000000231
+        }
+      ],
+      "stages": {
+        "computeNode": {
+          "selfUs": 35.667499999988195,
+          "inclusiveUs": 111.68649999996205,
+          "callsPerWrite": 5,
+          "coverageCallsPerWrite": 5,
+          "allocationBytesPerWrite": 24538.719999999998,
+          "allocationSampleCounts": [
+            4308,
+            4187,
+            4395
+          ]
+        },
+        "wheelPreparation": {
+          "selfUs": 8.938000000000557,
+          "inclusiveUs": 14.624999999995225,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 2674,
+          "allocationSampleCounts": [
+            398,
+            386,
+            348
+          ]
+        },
+        "markWrite": {
+          "selfUs": 4.249499999986028,
+          "inclusiveUs": 4.249499999986028,
+          "callsPerWrite": 4,
+          "coverageCallsPerWrite": 4,
+          "allocationBytesPerWrite": 936.6399999999999,
+          "allocationSampleCounts": [
+            173,
+            155,
+            157
+          ]
+        },
+        "registerRecalculation": {
+          "selfUs": 13.478999999989583,
+          "inclusiveUs": 13.478999999989583,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 10395.279999999995,
+          "allocationSampleCounts": [
+            1847,
+            1694,
+            1800
+          ]
+        },
+        "selectChildren": {
+          "selfUs": 37.83300000000622,
+          "inclusiveUs": 57.56249999998886,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 17043.519999999997,
+          "allocationSampleCounts": [
+            2921,
+            2954,
+            2955
+          ]
+        },
+        "primeHost": {
+          "selfUs": 3.0209999999897263,
+          "inclusiveUs": 3.0209999999897263,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 343.28000000000003,
+          "allocationSampleCounts": [
+            64,
+            67,
+            59
+          ]
+        },
+        "updateOutput": {
+          "selfUs": 6.833500000055892,
+          "inclusiveUs": 17.167499999970914,
+          "callsPerWrite": 6,
+          "coverageCallsPerWrite": 6,
+          "allocationBytesPerWrite": 739.92,
+          "allocationSampleCounts": [
+            136,
+            142,
+            134
+          ]
+        },
+        "finalizeExits": {
+          "selfUs": 24.06299999998396,
+          "inclusiveUs": 59.2915000000005,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 14451.200000000003,
+          "allocationSampleCounts": [
+            2652,
+            2655,
+            2521
+          ]
+        },
+        "transitionSettlement": {
+          "selfUs": 4.9999999999954525,
+          "inclusiveUs": 4.9999999999954525,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 3159.1200000000003,
+          "allocationSampleCounts": [
+            573,
+            576,
+            578
+          ]
+        },
+        "runDeriveRounds": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "commitSettlement": {
+          "selfUs": 8.687500000064574,
+          "inclusiveUs": 46.54099999999062,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 4359.759999999999,
+          "allocationSampleCounts": [
+            829,
+            806,
+            803
+          ]
+        },
+        "setLatentRaw": {
+          "selfUs": 11.917500000038217,
+          "inclusiveUs": 11.917500000038217,
+          "callsPerWrite": 6,
+          "coverageCallsPerWrite": 6,
+          "allocationBytesPerWrite": 11973.759999999998,
+          "allocationSampleCounts": [
+            2057,
+            2106,
+            2070
+          ]
+        },
+        "captureExitedRaw": {
+          "selfUs": 5.668499999956111,
+          "inclusiveUs": 19.896000000045433,
+          "callsPerWrite": 3,
+          "coverageCallsPerWrite": 3,
+          "allocationBytesPerWrite": 3130.88,
+          "allocationSampleCounts": [
+            586,
+            581,
+            608
+          ]
+        },
+        "evaluateGate": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "markCommitDeliveries": {
+          "selfUs": 11.958499999991545,
+          "inclusiveUs": 11.958499999991545,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 8489.279999999999,
+          "allocationSampleCounts": [
+            1633,
+            1530,
+            1557
+          ]
+        },
+        "updateInactiveValuesMemo": {
+          "selfUs": 19.666499999999587,
+          "inclusiveUs": 19.666499999999587,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 22830.480000000007,
+          "allocationSampleCounts": [
+            4012,
+            3995,
+            3990
+          ]
+        },
+        "getControlLayers": {
+          "selfUs": 15.769500000061498,
+          "inclusiveUs": 15.769500000061498,
+          "callsPerWrite": 12,
+          "coverageCallsPerWrite": 12,
+          "allocationBytesPerWrite": 16042.8,
+          "allocationSampleCounts": [
+            2951,
+            2900,
+            2903
+          ]
+        },
+        "assembleObject": {
+          "selfUs": 10.22950000003675,
+          "inclusiveUs": 10.22950000003675,
+          "callsPerWrite": 2,
+          "coverageCallsPerWrite": 2,
+          "allocationBytesPerWrite": 12468.56,
+          "allocationSampleCounts": [
+            2315,
+            2316,
+            2264
+          ]
+        },
+        "everythingElse": {
+          "selfUs": 18.081499999993866,
+          "inclusiveUs": 18.081499999993866,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 6856.959999999998,
+          "allocationSampleCounts": [
+            1211,
+            1186,
+            1208
+          ]
+        }
+      },
+      "phases": {
+        "markWrite/markWrite": {
+          "selfUs": 1.3339999999857355,
+          "inclusiveUs": 1.3339999999857355,
+          "calls": 1
+        },
+        "registerRecalculation/registerRecalculation": {
+          "selfUs": 13.478999999989583,
+          "inclusiveUs": 13.478999999989583,
+          "calls": 1
+        },
+        "computeNode/primeHost": {
+          "selfUs": 3.0209999999897263,
+          "inclusiveUs": 3.0209999999897263,
+          "calls": 1
+        },
+        "computeNode/updateOutput": {
+          "selfUs": 4.979000000020051,
+          "inclusiveUs": 14.062499999994316,
+          "calls": 5
+        },
+        "computeNode/computeNode": {
+          "selfUs": 35.667499999988195,
+          "inclusiveUs": 111.68649999996205,
+          "calls": 5
+        },
+        "computeNode/wheelPreparation": {
+          "selfUs": 8.938000000000557,
+          "inclusiveUs": 14.624999999995225,
+          "calls": 1
+        },
+        "computeNode/markWrite": {
+          "selfUs": 2.832000000012158,
+          "inclusiveUs": 2.832000000012158,
+          "calls": 3
+        },
+        "computeNode/assembleObject": {
+          "selfUs": 9.395999999981086,
+          "inclusiveUs": 9.395999999981086,
+          "calls": 1
+        },
+        "computeNode/selectChildren": {
+          "selfUs": 37.83300000000622,
+          "inclusiveUs": 57.56249999998886,
+          "calls": 1
+        },
+        "transitionSettlement/transitionSettlement": {
+          "selfUs": 4.9999999999954525,
+          "inclusiveUs": 4.9999999999954525,
+          "calls": 1
+        },
+        "finalizeExits/getControlLayers": {
+          "selfUs": 11.64600000006999,
+          "inclusiveUs": 11.64600000006999,
+          "calls": 9
+        },
+        "finalizeExits/setLatentRaw": {
+          "selfUs": 11.917500000038217,
+          "inclusiveUs": 11.917500000038217,
+          "calls": 6
+        },
+        "finalizeExits/captureExitedRaw": {
+          "selfUs": 5.668499999956111,
+          "inclusiveUs": 19.896000000045433,
+          "calls": 3
+        },
+        "finalizeExits/assembleObject": {
+          "selfUs": 0.8545000000026448,
+          "inclusiveUs": 0.8545000000026448,
+          "calls": 1
+        },
+        "finalizeExits/updateOutput": {
+          "selfUs": 1.832500000006121,
+          "inclusiveUs": 2.7499999999918145,
+          "calls": 1
+        },
+        "finalizeExits/finalizeExits": {
+          "selfUs": 24.06299999998396,
+          "inclusiveUs": 59.2915000000005,
+          "calls": 1
+        },
+        "commitSettlement/getControlLayers": {
+          "selfUs": 3.957999999954609,
+          "inclusiveUs": 3.957999999954609,
+          "calls": 3
+        },
+        "commitSettlement/markCommitDeliveries": {
+          "selfUs": 11.958499999991545,
+          "inclusiveUs": 11.958499999991545,
+          "calls": 1
+        },
+        "commitSettlement/updateInactiveValuesMemo": {
+          "selfUs": 19.666499999999587,
+          "inclusiveUs": 19.666499999999587,
+          "calls": 1
+        },
+        "commitSettlement/commitSettlement": {
+          "selfUs": 8.687500000064574,
+          "inclusiveUs": 46.54099999999062,
+          "calls": 1
+        },
+        "everythingElse/unwrappedEntry": {
+          "selfUs": 18.081499999993866,
+          "inclusiveUs": 18.081499999993866,
+          "calls": 1
+        }
+      },
+      "gateMismatches": 0,
+      "allocationSamplingIntervalBytes": 512,
+      "allocationRawSampleCounts": [
+        28677,
+        28249,
+        28363
+      ],
+      "manifest": [
+        {
+          "name": "computeNode",
+          "file": "src/core/engine/settle/utils/compute/computeNode.ts"
+        },
+        {
+          "name": "wheelPreparation",
+          "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+          "region": "A legacy: staticList through first getHostWheelBudgetCap; includes nested primeHost/initialDirty/output calls; original wrapper return/destructure retained exactly",
+          "kind": "legacy",
+          "regionSource": "  const staticList = context.hasGates ? getStaticGateList(node) : undefined;\n  const gates: BlueprintGate[] = staticList ? [...staticList.gates] : [];\n  const seenGates = new Set<BlueprintGate>();\n  const relocated = context.hasGates ? relocatedGates(node) : [];\n  if (context.hasGates) {\n    for (let index = 0; index < relocated.length; index++) {\n      const occurrence = relocated[index];\n      if (\n        !staticList?.seenGates.has(occurrence.gate) &&\n        !seenGates.has(occurrence.gate)\n      ) {\n        seenGates.add(occurrence.gate);\n        gates.push(occurrence.gate);\n      }\n    }\n  }\n  if (gates.length > 0) primeHost(node, prior, context, relocated.length > 0);\n  const initialDirty = dirtyChildren(node, context);\n  for (let index = 0; index < initialDirty.length; index++)\n    computeNode(initialDirty[index], context);\n  const deferBaseline =\n    gates.length > 0 &&\n    context.kind !== 'load' &&\n    node.behavior.type === 'object' &&\n    relocated.length === 0 &&\n    !context.distributedInputs.has(node) &&\n    context.pathChanges.length === 0 &&\n    !HostStaticPartition.get(node.blueprintNode).hasGatedOverlays &&\n    gates.every(\n      (gate) =>\n        getGateExpression(node.runtime.blueprint, gate.schemaPath)?.equality,\n    ) &&\n    HostStaticPartition.get(node.blueprintNode).staticEntries.length > 0;\n  if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);\n  else if (gates.length > 0 && updateOutput(node, context))\n    scheduleRelocatedGates(relocatedGates(node), context);\n  let cap = getHostWheelBudgetCap(\n    node,\n    node.runtime.blueprint,\n    gates,\n    node.runtime,\n  );\n"
+        },
+        {
+          "name": "markWrite",
+          "file": "src/core/engine/settle/utils/input/markWrite.ts"
+        },
+        {
+          "name": "registerRecalculation",
+          "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts"
+        },
+        {
+          "name": "selectChildren",
+          "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts"
+        },
+        {
+          "name": "primeHost",
+          "file": "src/core/engine/settle/utils/compute/primeHost.ts"
+        },
+        {
+          "name": "updateOutput",
+          "file": "src/core/engine/settle/utils/output/updateOutput.ts"
+        },
+        {
+          "name": "finalizeExits",
+          "file": "src/core/engine/settle/utils/transition/finalizeExits.ts"
+        },
+        {
+          "name": "transitionSettlement",
+          "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts"
+        },
+        {
+          "name": "runDeriveRounds",
+          "file": "src/core/engine/settle/utils/derivation/runDeriveRounds.ts"
+        },
+        {
+          "name": "commitSettlement",
+          "file": "src/core/engine/settle/utils/commit/commitSettlement.ts"
+        },
+        {
+          "name": "setLatentRaw",
+          "file": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts"
+        },
+        {
+          "name": "captureExitedRaw",
+          "file": "src/core/engine/settle/utils/transition/captureExitedRaw.ts"
+        },
+        {
+          "name": "evaluateGate",
+          "file": "src/core/engine/settle/utils/gates/evaluateGate.ts"
+        },
+        {
+          "name": "markCommitDeliveries",
+          "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts"
+        },
+        {
+          "name": "updateInactiveValuesMemo",
+          "file": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts"
+        },
+        {
+          "name": "getControlLayers",
+          "file": "src/core/engine/settle/utils/controls/getControlLayers.ts"
+        },
+        {
+          "name": "assembleObject",
+          "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts"
+        }
+      ]
+    },
+    "B": {
+      "row": "switch-oneOf-80",
+      "role": "B",
+      "writes": 1,
+      "pids": [
+        35676,
+        35693,
+        35810
+      ],
+      "wrappedUs": 164.416000000017,
+      "unwrappedUs": 154.5409999999947,
+      "processMinima": [
+        {
+          "wrapped": 162.2499999999718,
+          "unwrapped": 154.5409999999947
+        },
+        {
+          "wrapped": 173.99999999997817,
+          "unwrapped": 154.58300000000236
+        },
+        {
+          "wrapped": 164.416000000017,
+          "unwrapped": 149.249999999995
+        }
+      ],
+      "stages": {
+        "computeNode": {
+          "selfUs": 33.73000000007664,
+          "inclusiveUs": 101.56200000000126,
+          "callsPerWrite": 5,
+          "coverageCallsPerWrite": 5,
+          "allocationBytesPerWrite": 23847.60000000001,
+          "allocationSampleCounts": [
+            4263,
+            4225,
+            4221
+          ]
+        },
+        "wheelPreparation": {
+          "selfUs": 2.8340000000071086,
+          "inclusiveUs": 8.104500000001735,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 909.5200000000001,
+          "allocationSampleCounts": [
+            166,
+            161,
+            164
+          ]
+        },
+        "registerRecalculation": {
+          "selfUs": 13.124500000031958,
+          "inclusiveUs": 13.124500000031958,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 10428.800000000001,
+          "allocationSampleCounts": [
+            1811,
+            1800,
+            1818
+          ]
+        },
+        "markWrite": {
+          "selfUs": 4.104499999982636,
+          "inclusiveUs": 4.104499999982636,
+          "callsPerWrite": 4,
+          "coverageCallsPerWrite": 4,
+          "allocationBytesPerWrite": 886.56,
+          "allocationSampleCounts": [
+            150,
+            162,
+            149
+          ]
+        },
+        "updateOutput": {
+          "selfUs": 6.895499999984622,
+          "inclusiveUs": 17.37500000001546,
+          "callsPerWrite": 6,
+          "coverageCallsPerWrite": 6,
+          "allocationBytesPerWrite": 703.44,
+          "allocationSampleCounts": [
+            129,
+            154,
+            130
+          ]
+        },
+        "selectChildren": {
+          "selfUs": 36.02150000003235,
+          "inclusiveUs": 56.708000000014636,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 17218.879999999997,
+          "allocationSampleCounts": [
+            2980,
+            2975,
+            2939
+          ]
+        },
+        "primeHost": {
+          "selfUs": 2.4589999999875545,
+          "inclusiveUs": 2.4589999999875545,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 1523.2000000000003,
+          "allocationSampleCounts": [
+            245,
+            236,
+            256
+          ]
+        },
+        "runDeriveRounds": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "commitSettlement": {
+          "selfUs": 7.854999999977963,
+          "inclusiveUs": 40.85449999999469,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 3573.2,
+          "allocationSampleCounts": [
+            750,
+            662,
+            660
+          ]
+        },
+        "finalizeExits": {
+          "selfUs": 19.958000000031006,
+          "inclusiveUs": 41.708499999998594,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 13518.08,
+          "allocationSampleCounts": [
+            2531,
+            2436,
+            2479
+          ]
+        },
+        "transitionSettlement": {
+          "selfUs": 4.812500000014097,
+          "inclusiveUs": 4.812500000014097,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 3028.1599999999994,
+          "allocationSampleCounts": [
+            562,
+            554,
+            516
+          ]
+        },
+        "setLatentRaw": {
+          "selfUs": 10.854000000108499,
+          "inclusiveUs": 10.854000000108499,
+          "callsPerWrite": 6,
+          "coverageCallsPerWrite": 6,
+          "allocationBytesPerWrite": 11756.880000000001,
+          "allocationSampleCounts": [
+            2090,
+            2032,
+            2013
+          ]
+        },
+        "captureExitedRaw": {
+          "selfUs": 5.417000000022654,
+          "inclusiveUs": 14.18800000001852,
+          "callsPerWrite": 3,
+          "coverageCallsPerWrite": 3,
+          "allocationBytesPerWrite": 2695.28,
+          "allocationSampleCounts": [
+            504,
+            503,
+            515
+          ]
+        },
+        "markCommitDeliveries": {
+          "selfUs": 11.500000000012278,
+          "inclusiveUs": 11.500000000012278,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 8744.32,
+          "allocationSampleCounts": [
+            1607,
+            1536,
+            1606
+          ]
+        },
+        "updateInactiveValuesMemo": {
+          "selfUs": 18.77099999998677,
+          "inclusiveUs": 18.77099999998677,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 22829.68000000001,
+          "allocationSampleCounts": [
+            4006,
+            4022,
+            3854
+          ]
+        },
+        "evaluateGate": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "getControlLayers": {
+          "selfUs": 1.7904999999984739,
+          "inclusiveUs": 1.7904999999984739,
+          "callsPerWrite": 12,
+          "coverageCallsPerWrite": 12,
+          "allocationBytesPerWrite": 1579.5200000000002,
+          "allocationSampleCounts": [
+            296,
+            270,
+            294
+          ]
+        },
+        "assembleObject": {
+          "selfUs": 10.43749999999477,
+          "inclusiveUs": 10.43749999999477,
+          "callsPerWrite": 2,
+          "coverageCallsPerWrite": 2,
+          "allocationBytesPerWrite": 12247.84,
+          "allocationSampleCounts": [
+            2245,
+            2271,
+            2328
+          ]
+        },
+        "everythingElse": {
+          "selfUs": 16.48050000000012,
+          "inclusiveUs": 16.48050000000012,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 6817.039999999999,
+          "allocationSampleCounts": [
+            1186,
+            1203,
+            1206
+          ]
+        }
+      },
+      "phases": {
+        "markWrite/markWrite": {
+          "selfUs": 1.3330000000451037,
+          "inclusiveUs": 1.3330000000451037,
+          "calls": 1
+        },
+        "registerRecalculation/registerRecalculation": {
+          "selfUs": 13.124500000031958,
+          "inclusiveUs": 13.124500000031958,
+          "calls": 1
+        },
+        "computeNode/primeHost": {
+          "selfUs": 2.4589999999875545,
+          "inclusiveUs": 2.4589999999875545,
+          "calls": 1
+        },
+        "computeNode/updateOutput": {
+          "selfUs": 5.00049999999419,
+          "inclusiveUs": 14.561999999983755,
+          "calls": 5
+        },
+        "computeNode/computeNode": {
+          "selfUs": 33.73000000007664,
+          "inclusiveUs": 101.56200000000126,
+          "calls": 5
+        },
+        "computeNode/wheelPreparation": {
+          "selfUs": 2.8340000000071086,
+          "inclusiveUs": 8.104500000001735,
+          "calls": 1
+        },
+        "computeNode/markWrite": {
+          "selfUs": 2.7090000000100645,
+          "inclusiveUs": 2.7090000000100645,
+          "calls": 3
+        },
+        "computeNode/assembleObject": {
+          "selfUs": 9.604500000023108,
+          "inclusiveUs": 9.604500000023108,
+          "calls": 1
+        },
+        "computeNode/selectChildren": {
+          "selfUs": 36.02150000003235,
+          "inclusiveUs": 56.708000000014636,
+          "calls": 1
+        },
+        "transitionSettlement/transitionSettlement": {
+          "selfUs": 4.812500000014097,
+          "inclusiveUs": 4.812500000014097,
+          "calls": 1
+        },
+        "finalizeExits/getControlLayers": {
+          "selfUs": 1.3745000000255914,
+          "inclusiveUs": 1.3745000000255914,
+          "calls": 9
+        },
+        "finalizeExits/setLatentRaw": {
+          "selfUs": 10.854000000108499,
+          "inclusiveUs": 10.854000000108499,
+          "calls": 6
+        },
+        "finalizeExits/captureExitedRaw": {
+          "selfUs": 5.417000000022654,
+          "inclusiveUs": 14.18800000001852,
+          "calls": 3
+        },
+        "finalizeExits/assembleObject": {
+          "selfUs": 0.8339999999975589,
+          "inclusiveUs": 0.8339999999975589,
+          "calls": 1
+        },
+        "finalizeExits/updateOutput": {
+          "selfUs": 1.7909999999972115,
+          "inclusiveUs": 2.6670000000024174,
+          "calls": 1
+        },
+        "finalizeExits/finalizeExits": {
+          "selfUs": 19.958000000031006,
+          "inclusiveUs": 41.708499999998594,
+          "calls": 1
+        },
+        "commitSettlement/getControlLayers": {
+          "selfUs": 0.41699999997035775,
+          "inclusiveUs": 0.41699999997035775,
+          "calls": 3
+        },
+        "commitSettlement/markCommitDeliveries": {
+          "selfUs": 11.500000000012278,
+          "inclusiveUs": 11.500000000012278,
+          "calls": 1
+        },
+        "commitSettlement/updateInactiveValuesMemo": {
+          "selfUs": 18.77099999998677,
+          "inclusiveUs": 18.77099999998677,
+          "calls": 1
+        },
+        "commitSettlement/commitSettlement": {
+          "selfUs": 7.854999999977963,
+          "inclusiveUs": 40.85449999999469,
+          "calls": 1
+        },
+        "everythingElse/unwrappedEntry": {
+          "selfUs": 16.48050000000012,
+          "inclusiveUs": 16.48050000000012,
+          "calls": 1
+        }
+      },
+      "gateMismatches": 0,
+      "allocationSamplingIntervalBytes": 512,
+      "allocationRawSampleCounts": [
+        25536,
+        25211,
+        25160
+      ],
+      "manifest": [
+        {
+          "name": "computeNode",
+          "file": "src/core/engine/settle/utils/compute/computeNode.ts"
+        },
+        {
+          "name": "wheelPreparation",
+          "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+          "region": "B candidate: let wheelPlan through let confirmation (exclusive); includes nested primeHost/initialDirty/output and first cap computation; cached plan lookup replaces static-list preparation; lifecycle construction remains in mount rows; wheelPlan/gates/cap remain mutable",
+          "kind": "wheelPlan",
+          "regionSource": "  let wheelPlan = context.hasGates ? prepareHostWheelPlan(node) : undefined;\n  let gates = wheelPlan?.gates ?? [];\n  const relocated = wheelPlan?.relocated ?? [];\n  if (gates.length > 0) primeHost(node, prior, context, relocated.length > 0);\n  const initialDirty = dirtyChildren(node, context);\n  for (let index = 0; index < initialDirty.length; index++)\n    computeNode(initialDirty[index], context);\n  const deferBaseline =\n    wheelPlan?.baselineEligible === true &&\n    context.kind !== 'load' &&\n    !context.distributedInputs.has(node) &&\n    context.pathChanges.length === 0;\n  if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);\n  else if (gates.length > 0 && updateOutput(node, context))\n    scheduleRelocatedGates(relocatedGates(node), context);\n  let cap = wheelPlan\n    ? context.distributedInputs.size > 0 || wheelPlan.cap === undefined\n      ? (wheelPlan.cap = getHostWheelBudgetCap(\n          node,\n          node.runtime.blueprint,\n          gates,\n          node.runtime,\n        ))\n      : wheelPlan.cap\n    : 1;\n"
+        },
+        {
+          "name": "registerRecalculation",
+          "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts"
+        },
+        {
+          "name": "markWrite",
+          "file": "src/core/engine/settle/utils/input/markWrite.ts"
+        },
+        {
+          "name": "updateOutput",
+          "file": "src/core/engine/settle/utils/output/updateOutput.ts"
+        },
+        {
+          "name": "selectChildren",
+          "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts"
+        },
+        {
+          "name": "primeHost",
+          "file": "src/core/engine/settle/utils/compute/primeHost.ts"
+        },
+        {
+          "name": "runDeriveRounds",
+          "file": "src/core/engine/settle/utils/derivation/runDeriveRounds.ts"
+        },
+        {
+          "name": "commitSettlement",
+          "file": "src/core/engine/settle/utils/commit/commitSettlement.ts"
+        },
+        {
+          "name": "finalizeExits",
+          "file": "src/core/engine/settle/utils/transition/finalizeExits.ts"
+        },
+        {
+          "name": "transitionSettlement",
+          "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts"
+        },
+        {
+          "name": "setLatentRaw",
+          "file": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts"
+        },
+        {
+          "name": "captureExitedRaw",
+          "file": "src/core/engine/settle/utils/transition/captureExitedRaw.ts"
+        },
+        {
+          "name": "markCommitDeliveries",
+          "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts"
+        },
+        {
+          "name": "updateInactiveValuesMemo",
+          "file": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts"
+        },
+        {
+          "name": "evaluateGate",
+          "file": "src/core/engine/settle/utils/gates/evaluateGate.ts"
+        },
+        {
+          "name": "getControlLayers",
+          "file": "src/core/engine/settle/utils/controls/getControlLayers.ts"
+        },
+        {
+          "name": "assembleObject",
+          "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts"
+        }
+      ]
+    }
+  },
+  "switch-siblings-1000": {
+    "A": {
+      "row": "switch-siblings-1000",
+      "role": "A",
+      "writes": 1,
+      "pids": [
+        35811,
+        35839,
+        35916
+      ],
+      "wrappedUs": 1989.791000000082,
+      "unwrappedUs": 1994.12499999994,
+      "processMinima": [
+        {
+          "wrapped": 1998.0409999999438,
+          "unwrapped": 1994.12499999994
+        },
+        {
+          "wrapped": 1982.7499999998963,
+          "unwrapped": 1989.2920000000913
+        },
+        {
+          "wrapped": 1989.791000000082,
+          "unwrapped": 1994.7090000000003
+        }
+      ],
+      "stages": {
+        "computeNode": {
+          "selfUs": 302.876499999968,
+          "inclusiveUs": 1954.1459999999233,
+          "callsPerWrite": 4,
+          "coverageCallsPerWrite": 4,
+          "allocationBytesPerWrite": 38556.32000000001,
+          "allocationSampleCounts": [
+            1521,
+            1478,
+            1468
+          ]
+        },
+        "wheelPreparation": {
+          "selfUs": 5.833499999994274,
+          "inclusiveUs": 654.6255000000087,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 1541.92,
+          "allocationSampleCounts": [
+            268,
+            287,
+            278
+          ]
+        },
+        "markWrite": {
+          "selfUs": 2.5000000000545697,
+          "inclusiveUs": 2.5000000000545697,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 222.64000000000001,
+          "allocationSampleCounts": [
+            36,
+            39,
+            47
+          ]
+        },
+        "registerRecalculation": {
+          "selfUs": 10.062500000003638,
+          "inclusiveUs": 10.062500000003638,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 4182,
+          "allocationSampleCounts": [
+            771,
+            738,
+            773
+          ]
+        },
+        "selectChildren": {
+          "selfUs": 699.686500000098,
+          "inclusiveUs": 976.3125000000059,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 47428.16,
+          "allocationSampleCounts": [
+            6105,
+            6136,
+            6083
+          ]
+        },
+        "primeHost": {
+          "selfUs": 645.4169999999522,
+          "inclusiveUs": 645.4169999999522,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 1431499.2799999998,
+          "allocationSampleCounts": [
+            37036,
+            37127,
+            37029
+          ]
+        },
+        "updateOutput": {
+          "selfUs": 7.0210000000372474,
+          "inclusiveUs": 270.79249999994204,
+          "callsPerWrite": 4,
+          "coverageCallsPerWrite": 4,
+          "allocationBytesPerWrite": 16487.68,
+          "allocationSampleCounts": [
+            271,
+            264,
+            258
+          ]
+        },
+        "finalizeExits": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "transitionSettlement": {
+          "selfUs": 1.749999999958618,
+          "inclusiveUs": 1.749999999958618,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 578.48,
+          "allocationSampleCounts": [
+            105,
+            106,
+            121
+          ]
+        },
+        "runDeriveRounds": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "commitSettlement": {
+          "selfUs": 80.60450000002106,
+          "inclusiveUs": 104.02100000004566,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 233866.72000000003,
+          "allocationSampleCounts": [
+            42508,
+            42935,
+            42706
+          ]
+        },
+        "setLatentRaw": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "captureExitedRaw": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "evaluateGate": {
+          "selfUs": 6.750500000009652,
+          "inclusiveUs": 6.750500000009652,
+          "callsPerWrite": 6,
+          "coverageCallsPerWrite": 6,
+          "allocationBytesPerWrite": 713.92,
+          "allocationSampleCounts": [
+            132,
+            137,
+            128
+          ]
+        },
+        "markCommitDeliveries": {
+          "selfUs": 22.646000000008826,
+          "inclusiveUs": 22.646000000008826,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 5299.04,
+          "allocationSampleCounts": [
+            973,
+            966,
+            933
+          ]
+        },
+        "updateInactiveValuesMemo": {
+          "selfUs": 0.29099999994741665,
+          "inclusiveUs": 0.29099999994741665,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "getControlLayers": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "assembleObject": {
+          "selfUs": 263.3329999999887,
+          "inclusiveUs": 263.3329999999887,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 265366.88,
+          "allocationSampleCounts": [
+            25135,
+            25098,
+            25289
+          ]
+        },
+        "everythingElse": {
+          "selfUs": 20.666500000061205,
+          "inclusiveUs": 20.666500000061205,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 5134,
+          "allocationSampleCounts": [
+            896,
+            904,
+            867
+          ]
+        }
+      },
+      "phases": {
+        "markWrite/markWrite": {
+          "selfUs": 2.5000000000545697,
+          "inclusiveUs": 2.5000000000545697,
+          "calls": 1
+        },
+        "registerRecalculation/registerRecalculation": {
+          "selfUs": 10.062500000003638,
+          "inclusiveUs": 10.062500000003638,
+          "calls": 1
+        },
+        "computeNode/primeHost": {
+          "selfUs": 645.4169999999522,
+          "inclusiveUs": 645.4169999999522,
+          "calls": 1
+        },
+        "computeNode/updateOutput": {
+          "selfUs": 7.0210000000372474,
+          "inclusiveUs": 270.79249999994204,
+          "calls": 4
+        },
+        "computeNode/computeNode": {
+          "selfUs": 302.876499999968,
+          "inclusiveUs": 1954.1459999999233,
+          "calls": 4
+        },
+        "computeNode/wheelPreparation": {
+          "selfUs": 5.833499999994274,
+          "inclusiveUs": 654.6255000000087,
+          "calls": 1
+        },
+        "computeNode/evaluateGate": {
+          "selfUs": 6.750500000009652,
+          "inclusiveUs": 6.750500000009652,
+          "calls": 6
+        },
+        "computeNode/assembleObject": {
+          "selfUs": 263.3329999999887,
+          "inclusiveUs": 263.3329999999887,
+          "calls": 1
+        },
+        "computeNode/selectChildren": {
+          "selfUs": 699.686500000098,
+          "inclusiveUs": 976.3125000000059,
+          "calls": 1
+        },
+        "transitionSettlement/transitionSettlement": {
+          "selfUs": 1.749999999958618,
+          "inclusiveUs": 1.749999999958618,
+          "calls": 1
+        },
+        "commitSettlement/markCommitDeliveries": {
+          "selfUs": 22.646000000008826,
+          "inclusiveUs": 22.646000000008826,
+          "calls": 1
+        },
+        "commitSettlement/updateInactiveValuesMemo": {
+          "selfUs": 0.29099999994741665,
+          "inclusiveUs": 0.29099999994741665,
+          "calls": 1
+        },
+        "commitSettlement/commitSettlement": {
+          "selfUs": 80.60450000002106,
+          "inclusiveUs": 104.02100000004566,
+          "calls": 1
+        },
+        "everythingElse/unwrappedEntry": {
+          "selfUs": 20.666500000061205,
+          "inclusiveUs": 20.666500000061205,
+          "calls": 1
+        }
+      },
+      "gateMismatches": 0,
+      "allocationSamplingIntervalBytes": 512,
+      "allocationRawSampleCounts": [
+        115763,
+        116221,
+        115986
+      ],
+      "manifest": [
+        {
+          "name": "computeNode",
+          "file": "src/core/engine/settle/utils/compute/computeNode.ts"
+        },
+        {
+          "name": "wheelPreparation",
+          "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+          "region": "A legacy: staticList through first getHostWheelBudgetCap; includes nested primeHost/initialDirty/output calls; original wrapper return/destructure retained exactly",
+          "kind": "legacy",
+          "regionSource": "  const staticList = context.hasGates ? getStaticGateList(node) : undefined;\n  const gates: BlueprintGate[] = staticList ? [...staticList.gates] : [];\n  const seenGates = new Set<BlueprintGate>();\n  const relocated = context.hasGates ? relocatedGates(node) : [];\n  if (context.hasGates) {\n    for (let index = 0; index < relocated.length; index++) {\n      const occurrence = relocated[index];\n      if (\n        !staticList?.seenGates.has(occurrence.gate) &&\n        !seenGates.has(occurrence.gate)\n      ) {\n        seenGates.add(occurrence.gate);\n        gates.push(occurrence.gate);\n      }\n    }\n  }\n  if (gates.length > 0) primeHost(node, prior, context, relocated.length > 0);\n  const initialDirty = dirtyChildren(node, context);\n  for (let index = 0; index < initialDirty.length; index++)\n    computeNode(initialDirty[index], context);\n  const deferBaseline =\n    gates.length > 0 &&\n    context.kind !== 'load' &&\n    node.behavior.type === 'object' &&\n    relocated.length === 0 &&\n    !context.distributedInputs.has(node) &&\n    context.pathChanges.length === 0 &&\n    !HostStaticPartition.get(node.blueprintNode).hasGatedOverlays &&\n    gates.every(\n      (gate) =>\n        getGateExpression(node.runtime.blueprint, gate.schemaPath)?.equality,\n    ) &&\n    HostStaticPartition.get(node.blueprintNode).staticEntries.length > 0;\n  if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);\n  else if (gates.length > 0 && updateOutput(node, context))\n    scheduleRelocatedGates(relocatedGates(node), context);\n  let cap = getHostWheelBudgetCap(\n    node,\n    node.runtime.blueprint,\n    gates,\n    node.runtime,\n  );\n"
+        },
+        {
+          "name": "markWrite",
+          "file": "src/core/engine/settle/utils/input/markWrite.ts"
+        },
+        {
+          "name": "registerRecalculation",
+          "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts"
+        },
+        {
+          "name": "selectChildren",
+          "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts"
+        },
+        {
+          "name": "primeHost",
+          "file": "src/core/engine/settle/utils/compute/primeHost.ts"
+        },
+        {
+          "name": "updateOutput",
+          "file": "src/core/engine/settle/utils/output/updateOutput.ts"
+        },
+        {
+          "name": "finalizeExits",
+          "file": "src/core/engine/settle/utils/transition/finalizeExits.ts"
+        },
+        {
+          "name": "transitionSettlement",
+          "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts"
+        },
+        {
+          "name": "runDeriveRounds",
+          "file": "src/core/engine/settle/utils/derivation/runDeriveRounds.ts"
+        },
+        {
+          "name": "commitSettlement",
+          "file": "src/core/engine/settle/utils/commit/commitSettlement.ts"
+        },
+        {
+          "name": "setLatentRaw",
+          "file": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts"
+        },
+        {
+          "name": "captureExitedRaw",
+          "file": "src/core/engine/settle/utils/transition/captureExitedRaw.ts"
+        },
+        {
+          "name": "evaluateGate",
+          "file": "src/core/engine/settle/utils/gates/evaluateGate.ts"
+        },
+        {
+          "name": "markCommitDeliveries",
+          "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts"
+        },
+        {
+          "name": "updateInactiveValuesMemo",
+          "file": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts"
+        },
+        {
+          "name": "getControlLayers",
+          "file": "src/core/engine/settle/utils/controls/getControlLayers.ts"
+        },
+        {
+          "name": "assembleObject",
+          "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts"
+        }
+      ]
+    },
+    "B": {
+      "row": "switch-siblings-1000",
+      "role": "B",
+      "writes": 1,
+      "pids": [
+        35825,
+        35875,
+        35930
+      ],
+      "wrappedUs": 1970.8749999999782,
+      "unwrappedUs": 1997.333000000026,
+      "processMinima": [
+        {
+          "wrapped": 1968.0839999999762,
+          "unwrapped": 1980.0420000000258
+        },
+        {
+          "wrapped": 1986.208999999917,
+          "unwrapped": 2006.6249999999854
+        },
+        {
+          "wrapped": 1970.8749999999782,
+          "unwrapped": 1997.333000000026
+        }
+      ],
+      "stages": {
+        "computeNode": {
+          "selfUs": 304.3115000000114,
+          "inclusiveUs": 1951.5420000000177,
+          "callsPerWrite": 4,
+          "coverageCallsPerWrite": 4,
+          "allocationBytesPerWrite": 38039.68000000001,
+          "allocationSampleCounts": [
+            1459,
+            1382,
+            1388
+          ]
+        },
+        "wheelPreparation": {
+          "selfUs": 4.021000000051345,
+          "inclusiveUs": 657.1460000000116,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 894.4000000000001,
+          "allocationSampleCounts": [
+            161,
+            184,
+            149
+          ]
+        },
+        "registerRecalculation": {
+          "selfUs": 9.603999999967527,
+          "inclusiveUs": 9.603999999967527,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 3851.92,
+          "allocationSampleCounts": [
+            712,
+            745,
+            697
+          ]
+        },
+        "markWrite": {
+          "selfUs": 2.334000000018932,
+          "inclusiveUs": 2.334000000018932,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 250.16,
+          "allocationSampleCounts": [
+            49,
+            38,
+            44
+          ]
+        },
+        "updateOutput": {
+          "selfUs": 7.063500000043632,
+          "inclusiveUs": 268.68649999997274,
+          "callsPerWrite": 4,
+          "coverageCallsPerWrite": 4,
+          "allocationBytesPerWrite": 16492.48,
+          "allocationSampleCounts": [
+            282,
+            251,
+            265
+          ]
+        },
+        "selectChildren": {
+          "selfUs": 704.8945000000231,
+          "inclusiveUs": 978.7709999999947,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 47210.72,
+          "allocationSampleCounts": [
+            6068,
+            6039,
+            6233
+          ]
+        },
+        "primeHost": {
+          "selfUs": 649.1250000000264,
+          "inclusiveUs": 649.1250000000264,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 1431176.56,
+          "allocationSampleCounts": [
+            37009,
+            37003,
+            36933
+          ]
+        },
+        "runDeriveRounds": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "commitSettlement": {
+          "selfUs": 76.47900000000618,
+          "inclusiveUs": 99.64550000000827,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 236057.28,
+          "allocationSampleCounts": [
+            43109,
+            42580,
+            43065
+          ]
+        },
+        "finalizeExits": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "transitionSettlement": {
+          "selfUs": 1.833999999973912,
+          "inclusiveUs": 1.833999999973912,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 618.9599999999999,
+          "allocationSampleCounts": [
+            123,
+            113,
+            102
+          ]
+        },
+        "setLatentRaw": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "captureExitedRaw": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "markCommitDeliveries": {
+          "selfUs": 22.35400000000709,
+          "inclusiveUs": 22.35400000000709,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 4964.400000000001,
+          "allocationSampleCounts": [
+            903,
+            881,
+            963
+          ]
+        },
+        "updateInactiveValuesMemo": {
+          "selfUs": 0.2919999999448919,
+          "inclusiveUs": 0.2919999999448919,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "evaluateGate": {
+          "selfUs": 7.000000000005002,
+          "inclusiveUs": 7.000000000005002,
+          "callsPerWrite": 6,
+          "coverageCallsPerWrite": 6,
+          "allocationBytesPerWrite": 753.0400000000001,
+          "allocationSampleCounts": [
+            153,
+            139,
+            115
+          ]
+        },
+        "getControlLayers": {
+          "selfUs": 0,
+          "inclusiveUs": 0,
+          "callsPerWrite": 0,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 0,
+          "allocationSampleCounts": [
+            0,
+            0,
+            0
+          ]
+        },
+        "assembleObject": {
+          "selfUs": 260.979500000019,
+          "inclusiveUs": 260.979500000019,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 1,
+          "allocationBytesPerWrite": 265572.55999999994,
+          "allocationSampleCounts": [
+            24994,
+            25182,
+            25317
+          ]
+        },
+        "everythingElse": {
+          "selfUs": 19.000999999832402,
+          "inclusiveUs": 19.000999999832402,
+          "callsPerWrite": 1,
+          "coverageCallsPerWrite": 0,
+          "allocationBytesPerWrite": 4630.159999999999,
+          "allocationSampleCounts": [
+            813,
+            871,
+            799
+          ]
+        }
+      },
+      "phases": {
+        "markWrite/markWrite": {
+          "selfUs": 2.334000000018932,
+          "inclusiveUs": 2.334000000018932,
+          "calls": 1
+        },
+        "registerRecalculation/registerRecalculation": {
+          "selfUs": 9.603999999967527,
+          "inclusiveUs": 9.603999999967527,
+          "calls": 1
+        },
+        "computeNode/primeHost": {
+          "selfUs": 649.1250000000264,
+          "inclusiveUs": 649.1250000000264,
+          "calls": 1
+        },
+        "computeNode/updateOutput": {
+          "selfUs": 7.063500000043632,
+          "inclusiveUs": 268.68649999997274,
+          "calls": 4
+        },
+        "computeNode/computeNode": {
+          "selfUs": 304.3115000000114,
+          "inclusiveUs": 1951.5420000000177,
+          "calls": 4
+        },
+        "computeNode/wheelPreparation": {
+          "selfUs": 4.021000000051345,
+          "inclusiveUs": 657.1460000000116,
+          "calls": 1
+        },
+        "computeNode/evaluateGate": {
+          "selfUs": 7.000000000005002,
+          "inclusiveUs": 7.000000000005002,
+          "calls": 6
+        },
+        "computeNode/assembleObject": {
+          "selfUs": 260.979500000019,
+          "inclusiveUs": 260.979500000019,
+          "calls": 1
+        },
+        "computeNode/selectChildren": {
+          "selfUs": 704.8945000000231,
+          "inclusiveUs": 978.7709999999947,
+          "calls": 1
+        },
+        "transitionSettlement/transitionSettlement": {
+          "selfUs": 1.833999999973912,
+          "inclusiveUs": 1.833999999973912,
+          "calls": 1
+        },
+        "commitSettlement/markCommitDeliveries": {
+          "selfUs": 22.35400000000709,
+          "inclusiveUs": 22.35400000000709,
+          "calls": 1
+        },
+        "commitSettlement/updateInactiveValuesMemo": {
+          "selfUs": 0.2919999999448919,
+          "inclusiveUs": 0.2919999999448919,
+          "calls": 1
+        },
+        "commitSettlement/commitSettlement": {
+          "selfUs": 76.47900000000618,
+          "inclusiveUs": 99.64550000000827,
+          "calls": 1
+        },
+        "everythingElse/unwrappedEntry": {
+          "selfUs": 19.000999999832402,
+          "inclusiveUs": 19.000999999832402,
+          "calls": 1
+        }
+      },
+      "gateMismatches": 0,
+      "allocationSamplingIntervalBytes": 512,
+      "allocationRawSampleCounts": [
+        115840,
+        115412,
+        116077
+      ],
+      "manifest": [
+        {
+          "name": "computeNode",
+          "file": "src/core/engine/settle/utils/compute/computeNode.ts"
+        },
+        {
+          "name": "wheelPreparation",
+          "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+          "region": "B candidate: let wheelPlan through let confirmation (exclusive); includes nested primeHost/initialDirty/output and first cap computation; cached plan lookup replaces static-list preparation; lifecycle construction remains in mount rows; wheelPlan/gates/cap remain mutable",
+          "kind": "wheelPlan",
+          "regionSource": "  let wheelPlan = context.hasGates ? prepareHostWheelPlan(node) : undefined;\n  let gates = wheelPlan?.gates ?? [];\n  const relocated = wheelPlan?.relocated ?? [];\n  if (gates.length > 0) primeHost(node, prior, context, relocated.length > 0);\n  const initialDirty = dirtyChildren(node, context);\n  for (let index = 0; index < initialDirty.length; index++)\n    computeNode(initialDirty[index], context);\n  const deferBaseline =\n    wheelPlan?.baselineEligible === true &&\n    context.kind !== 'load' &&\n    !context.distributedInputs.has(node) &&\n    context.pathChanges.length === 0;\n  if (deferBaseline) (context.pendingOutputs ??= new Set()).add(node);\n  else if (gates.length > 0 && updateOutput(node, context))\n    scheduleRelocatedGates(relocatedGates(node), context);\n  let cap = wheelPlan\n    ? context.distributedInputs.size > 0 || wheelPlan.cap === undefined\n      ? (wheelPlan.cap = getHostWheelBudgetCap(\n          node,\n          node.runtime.blueprint,\n          gates,\n          node.runtime,\n        ))\n      : wheelPlan.cap\n    : 1;\n"
+        },
+        {
+          "name": "registerRecalculation",
+          "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts"
+        },
+        {
+          "name": "markWrite",
+          "file": "src/core/engine/settle/utils/input/markWrite.ts"
+        },
+        {
+          "name": "updateOutput",
+          "file": "src/core/engine/settle/utils/output/updateOutput.ts"
+        },
+        {
+          "name": "selectChildren",
+          "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts"
+        },
+        {
+          "name": "primeHost",
+          "file": "src/core/engine/settle/utils/compute/primeHost.ts"
+        },
+        {
+          "name": "runDeriveRounds",
+          "file": "src/core/engine/settle/utils/derivation/runDeriveRounds.ts"
+        },
+        {
+          "name": "commitSettlement",
+          "file": "src/core/engine/settle/utils/commit/commitSettlement.ts"
+        },
+        {
+          "name": "finalizeExits",
+          "file": "src/core/engine/settle/utils/transition/finalizeExits.ts"
+        },
+        {
+          "name": "transitionSettlement",
+          "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts"
+        },
+        {
+          "name": "setLatentRaw",
+          "file": "src/core/engine/settle/utils/latentStore/setLatentRaw.ts"
+        },
+        {
+          "name": "captureExitedRaw",
+          "file": "src/core/engine/settle/utils/transition/captureExitedRaw.ts"
+        },
+        {
+          "name": "markCommitDeliveries",
+          "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts"
+        },
+        {
+          "name": "updateInactiveValuesMemo",
+          "file": "src/core/engine/settle/utils/commit/updateInactiveValuesMemo.ts"
+        },
+        {
+          "name": "evaluateGate",
+          "file": "src/core/engine/settle/utils/gates/evaluateGate.ts"
+        },
+        {
+          "name": "getControlLayers",
+          "file": "src/core/engine/settle/utils/controls/getControlLayers.ts"
+        },
+        {
+          "name": "assembleObject",
+          "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts"
+        }
+      ]
+    }
+  }
+}

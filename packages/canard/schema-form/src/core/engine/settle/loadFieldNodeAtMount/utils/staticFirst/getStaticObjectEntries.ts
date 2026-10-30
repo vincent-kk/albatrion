@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import type { BlueprintChildEntry, BlueprintNode } from '../../../../blueprint';
 import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 
@@ -16,7 +18,7 @@ export const getStaticObjectEntries = (
     readonly BlueprintChildEntry[]
   >(template).staticObjectEntries;
   if (cached) return cached;
-  const byName: Record<string, BlueprintChildEntry> = Object.create(null);
+  const byName: Dictionary<BlueprintChildEntry> = Object.create(null);
   const entries = template.childEntries;
   for (let index = 0; index < entries.length; index++)
     byName[entries[index].name] = entries[index];

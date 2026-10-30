@@ -1,0 +1,217 @@
+{
+  "sourceCommit": "2406a34d9",
+  "node": "26.12.1",
+  "checks": {
+    "unit": {
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test --run --project unit --maxWorkers=1 --no-file-parallelism",
+      "exit": 0,
+      "files": 563,
+      "passed": 3814,
+      "todo": 1,
+      "failed": 0,
+      "seconds": 310.59
+    },
+    "render": {
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test --run --project render --maxWorkers=1 --no-file-parallelism",
+      "exit": 0,
+      "files": 130,
+      "passed": 763,
+      "todo": 0,
+      "failed": 0,
+      "seconds": 169.81
+    },
+    "react18": {
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test --run --project react18 --maxWorkers=1 --no-file-parallelism",
+      "exit": 0,
+      "files": 130,
+      "passed": 763,
+      "todo": 0,
+      "failed": 0,
+      "seconds": 166.6
+    },
+    "production": {
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test --run --project production --maxWorkers=1 --no-file-parallelism",
+      "exit": 0,
+      "files": 9,
+      "passed": 20,
+      "todo": 0,
+      "failed": 0,
+      "seconds": 6.33
+    },
+    "verify": {
+      "command": "NODE_OPTIONS=--max-old-space-size=8192 yarn workspace @canard/schema-form test:verify --run --maxWorkers=1 --no-file-parallelism",
+      "exit": 0,
+      "files": 698,
+      "passed": 4621,
+      "todo": 1,
+      "failed": 0,
+      "seconds": 520.36
+    },
+    "storybook": {
+      "command": "yarn workspace @canard/schema-form test --run --project storybook --maxWorkers=1 --no-file-parallelism --browser.fileParallelism=false --shard=<n>/4 (n=1,2,3,4 sequential)",
+      "exit": 0,
+      "files": 100,
+      "passed": 251,
+      "failed": 0,
+      "uniqueFiles": 100,
+      "shards": [
+        {
+          "shard": "1/4",
+          "exit": 0,
+          "files": 25,
+          "passed": 62,
+          "paths": [
+            "stories/usage/form-handle.stories.tsx",
+            "stories/features/derivation/derived-and-watch.stories.tsx",
+            "stories/features/composition/validator-branch.stories.tsx",
+            "stories/features/validation-state/validation-modes.stories.tsx",
+            "stories/composite/cx05-permissions.stories.tsx",
+            "stories/composite/cx02-org-chart.stories.tsx",
+            "stories/features/values/references.stories.tsx",
+            "stories/composite/cx03-profile.stories.tsx",
+            "stories/features/input-components/input-resolution.stories.tsx",
+            "stories/composite/cx08-switch-with-array-verbs.stories.tsx",
+            "stories/features/events/render-commits.stories.tsx",
+            "stories/features/composition/one-of-any-of.stories.tsx",
+            "stories/features/plugins/renderer-replacement.stories.tsx",
+            "stories/features/derivation/control-states.stories.tsx",
+            "stories/features/values/literals-and-format.stories.tsx",
+            "stories/scenarios/array.stories.tsx",
+            "stories/features/derivation/context-reference.stories.tsx",
+            "stories/composite/cx07-setup-wizard.stories.tsx",
+            "stories/features/derivation/feedback-budget.stories.tsx",
+            "stories/composite/cx18-switch-recomputes-derived.stories.tsx",
+            "stories/composite/cx19-branch-defaults-and-reset.stories.tsx",
+            "stories/composite/cx20-array-of-oneof-items.stories.tsx",
+            "stories/features/handle-layout/provider-layers.stories.tsx",
+            "stories/features/composition/typeless-branch.stories.tsx",
+            "stories/features/values/findings.stories.tsx"
+          ]
+        },
+        {
+          "shard": "2/4",
+          "exit": 0,
+          "files": 25,
+          "passed": 62,
+          "paths": [
+            "stories/scenarios/union.stories.tsx",
+            "stories/features/composition/if-then-else.stories.tsx",
+            "stories/features/input-components/child-components.stories.tsx",
+            "stories/composite/cx12-deferred-dirty-touched.stories.tsx",
+            "stories/features/derivation/visible-versus-active.stories.tsx",
+            "stories/features/structure/array-verbs.stories.tsx",
+            "stories/scenarios/value.stories.tsx",
+            "stories/composite/cx13-nested-oneof-anyof.stories.tsx",
+            "stories/features/validation-state/submit.stories.tsx",
+            "stories/features/handle-layout/prop-replacement.stories.tsx",
+            "stories/features/scale/deferred-mount.stories.tsx",
+            "stories/composite/cx11-ime-during-switch.stories.tsx",
+            "stories/composite/cx01-order-form.stories.tsx",
+            "stories/composite/cx06-plugin-form.stories.tsx",
+            "stories/features/input-components/props-flow.stories.tsx",
+            "stories/features/handle-layout/layout-composition.stories.tsx",
+            "stories/features/structure/omit-trailing.stories.tsx",
+            "stories/features/composition/batch-retention.stories.tsx",
+            "stories/composite/cx10-inject-chain-in-batch.stories.tsx",
+            "stories/composite/cx14-recursive-conditions.stories.tsx",
+            "stories/composite/cx21-guard-inside-array-items.stories.tsx",
+            "stories/composite/cx22-visible-versus-active-in-branch.stories.tsx",
+            "stories/features/input-components/input-map.stories.tsx",
+            "stories/usage/form-composition.stories.tsx",
+            "stories/usage/field-input.stories.tsx"
+          ]
+        },
+        {
+          "shard": "3/4",
+          "exit": 0,
+          "files": 25,
+          "passed": 57,
+          "paths": [
+            "stories/features/composition/nested-one-of.stories.tsx",
+            "stories/features/derivation/reset-interaction.stories.tsx",
+            "stories/features/scale/expression-cost.stories.tsx",
+            "stories/features/validation-state/interaction-state.stories.tsx",
+            "stories/features/input-components/trim-on-blur.stories.tsx",
+            "stories/features/composition/nullable-branch.stories.tsx",
+            "stories/scenarios/controls.stories.tsx",
+            "stories/features/validation-state/format-error.stories.tsx",
+            "stories/composite/cx16-rapid-mixed-toggles.stories.tsx",
+            "stories/features/structure/array-constraints.stories.tsx",
+            "stories/composite/cx24-enter-submit-and-branch.stories.tsx",
+            "stories/scenarios/validation.stories.tsx",
+            "stories/scenarios/settle.stories.tsx",
+            "stories/features/input-components/file-attach.stories.tsx",
+            "stories/features/handle-layout/handle-commands.stories.tsx",
+            "stories/features/structure/batch-and-whole-write.stories.tsx",
+            "stories/composite/cx17-branch-array-item-errors.stories.tsx",
+            "stories/features/handle-layout/handle-round-trip.stories.tsx",
+            "stories/features/structure/object.stories.tsx",
+            "stories/features/validation-state/error-routing.stories.tsx",
+            "stories/features/events/warning-record.stories.tsx",
+            "stories/composite/regressions.stories.tsx",
+            "stories/features/events/subscription-kinds.stories.tsx",
+            "stories/features/values/omit-empty.stories.tsx",
+            "stories/usage/provider-plugin.stories.tsx"
+          ]
+        },
+        {
+          "shard": "4/4",
+          "exit": 0,
+          "files": 25,
+          "passed": 70,
+          "paths": [
+            "stories/features/validation-state/show-error.stories.tsx",
+            "stories/features/validation-state/external-errors.stories.tsx",
+            "stories/features/derivation/inject-to.stories.tsx",
+            "stories/features/scale/large-array.stories.tsx",
+            "stories/features/values/defaults.stories.tsx",
+            "stories/features/values/empty-and-clear.stories.tsx",
+            "stories/scenarios/derive.stories.tsx",
+            "stories/scenarios/browser-gates.stories.tsx",
+            "stories/composite/cx15-external-and-validation-errors.stories.tsx",
+            "stories/features/composition/all-of.stories.tsx",
+            "stories/features/composition/one-of.stories.tsx",
+            "stories/features/values/primitive-inputs.stories.tsx",
+            "stories/composite/cx04-amount-input.stories.tsx",
+            "stories/scenarios/fill.stories.tsx",
+            "stories/scenarios/exit.stories.tsx",
+            "stories/composite/cx09-reset-during-validation.stories.tsx",
+            "stories/features/structure/tuple.stories.tsx",
+            "stories/scenarios/notify.stories.tsx",
+            "stories/features/structure/terminal-array.stories.tsx",
+            "stories/features/plugins/error-isolation.stories.tsx",
+            "stories/features/events/batch-and-sync.stories.tsx",
+            "stories/features/plugins/validator-sources.stories.tsx",
+            "stories/composite/cx23-nullable-branch-object.stories.tsx",
+            "stories/features/composition/branch-defaults.stories.tsx",
+            "stories/features/composition/any-of.stories.tsx"
+          ]
+        }
+      ],
+      "coordinatorApproved": true
+    },
+    "typecheck": {
+      "command": "yarn workspace @canard/schema-form typecheck",
+      "exit": 0
+    },
+    "lint": {
+      "command": "yarn workspace @canard/schema-form lint",
+      "exit": 0
+    },
+    "build": {
+      "command": "yarn workspace @canard/schema-form build",
+      "exit": 0
+    }
+  },
+  "incompleteAttempts": [
+    "An initial default-heap unit worker exhausted the heap; final suites use 8 GiB.",
+    "Unsharded browser runs closed their connection with all completed assertions passing, including standalone fileParallelism=false; these are not counted as complete passes.",
+    "Two preliminary IME timeouts passed isolated reruns; the final complete browser gate uses all four official shards."
+  ],
+  "fiveProjects": {
+    "files": 932,
+    "passed": 5611,
+    "todo": 1,
+    "failed": 0
+  }
+}

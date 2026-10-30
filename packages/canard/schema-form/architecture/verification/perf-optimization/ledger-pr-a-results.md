@@ -272,3 +272,5 @@ bulk-flat 기울기는 A 대비 -5.341%, A′ 대비 -4.911%이고 bulk-nested�
 폭 (나)에서 개선이 미입증이라는 한계를 그대로 남깁니다. mount·switch·single 가족의 개선을 주장하지 않으며 작은 행의 개별 백분율을 성능 입증으로 사용하지 않습니다. 비용 시험은 중복 삽입 제거의 원인을 보여 주지만 시간 이득의 대체 증거가 아닙니다. 시간 판정은 이 환경의 측정이며 heap 바이트와 다른 엔진·장비의 속도를 일반화하지 않습니다.
 
 재현 자료는 .seiri/tasks/ledger-pr-a-443/의 investigation·plan·measurement-plan·gates·measure에 보관했고 코디네이터 checkout의 같은 namespace로 복사합니다. 코드 기준은 4164c7a74, 제품은 4452c0709, 관문과 측정의 최종 시험 수정 HEAD는 3b6e22d7b입니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `42113e6c941b`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

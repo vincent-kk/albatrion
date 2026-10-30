@@ -1,0 +1,11 @@
+{
+  "cases": 5,
+  "publicCases": 3,
+  "directInternalCases": 2,
+  "mutation": "oldCount - prefixCount <= 64 ? [] : new Set<string>() -> new Set<string>()",
+  "expectedFailure": "64-root array assertion: expected false to be true",
+  "productRestoredExactly": true,
+  "publicSetValueTailCalls": 0,
+  "approvedRevision": "msg_7df008e7b546",
+  "publicLargeSetBranch": "unreachable; owner decision on simplification pending"
+}

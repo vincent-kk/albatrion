@@ -1,0 +1,15 @@
+{
+  "thisWindow": [
+    {
+      "attempt": 1,
+      "startedAt": "2026-10-28T09:48:23.875Z",
+      "topProcess": "Stats",
+      "cpuPercent": 5.479812639347448,
+      "approved": true
+    }
+  ],
+  "formalStart": "2026-10-28T09:48:28.990Z",
+  "windowEnd": "2026-10-28T09:56:54.576Z",
+  "exitCode": 0,
+  "invalid": false
+}

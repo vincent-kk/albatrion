@@ -1,0 +1,4408 @@
+{
+  "before": {
+    "new Set": 207,
+    "map": 60,
+    "new Map": 229,
+    "every": 41,
+    "Record<string>": 101,
+    "filter": 44,
+    "forEach": 10,
+    "includes": 84,
+    "some": 82,
+    "min": 10,
+    "max": 8,
+    "reduce": 2
+  },
+  "sites": [
+    {
+      "file": "src/app/cache/utils/CacheManager.ts",
+      "line": 6,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/app/plugin/utils/formatRegisterPluginError.ts",
+      "line": 76,
+      "kind": "map"
+    },
+    {
+      "file": "src/app/plugin/utils/registerPlugin.ts",
+      "line": 10,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx",
+      "line": 49,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/components/Form/components/FormCore/components/FormRoot.tsx",
+      "line": 42,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/projection/omitTrailingArray.ts",
+      "line": 47,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/behaviors/arrayBehavior/utils/value/assembleArray.ts",
+      "line": 178,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 28,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 69,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 118,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 163,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 175,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 186,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 221,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 223,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 245,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/behaviors/utils/options/getStaticChoices.ts",
+      "line": 43,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/blueprint.ts",
+      "line": 66,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/blueprint.ts",
+      "line": 67,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/blueprint.ts",
+      "line": 68,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 95,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 97,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 99,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 101,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 152,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 166,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 166,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 169,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 202,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 283,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 288,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateNodeChildren.ts",
+      "line": 289,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 29,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 48,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 59,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 60,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 70,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/children/populateVirtualNodes.ts",
+      "line": 84,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 52,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 67,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 134,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/collectDeclarations.ts",
+      "line": 140,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 40,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 73,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 127,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/readDiscriminatorBranches.ts",
+      "line": 128,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 53,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 86,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 94,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts",
+      "line": 98,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 43,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 54,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 54,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 57,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferAllowedTypes.ts",
+      "line": 82,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferLiteralTypes.ts",
+      "line": 57,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/inferLiteralTypes.ts",
+      "line": 59,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 21,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 24,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 44,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 45,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeStrategy.ts",
+      "line": 56,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 27,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 31,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 49,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 85,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 90,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 115,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 117,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 119,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts",
+      "line": 121,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts",
+      "line": 28,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/buildNodes/utils/references/collectStaticSchemas.ts",
+      "line": 48,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 45,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 67,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 118,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 121,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/collectBlueprintWarnings.ts",
+      "line": 126,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 60,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 60,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 74,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 82,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 83,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 101,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/collectInlineTerminalWarnings.ts",
+      "line": 115,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/collectBlueprintWarnings/utils/endsWithBranchIndex.ts",
+      "line": 20,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/compileBlueprintExpressions.ts",
+      "line": 26,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/getPathManager/getPathManager.ts",
+      "line": 25,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/recognizeEqualityExpression.ts",
+      "line": 26,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityNumber.ts",
+      "line": 31,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/recognizeEqualityExpression/utils/readEqualityString.ts",
+      "line": 4,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/compileBlueprintExpressions/utils/registerBlueprintDependency.ts",
+      "line": 42,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/types/state.ts",
+      "line": 10,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applyConstraintKeywords.ts",
+      "line": 45,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applySchemaContribution.ts",
+      "line": 51,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applySchemaContribution.ts",
+      "line": 71,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applySchemaContribution.ts",
+      "line": 73,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/apply/applySchemaContribution.ts",
+      "line": 78,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/ensureEffectiveSchemaCache.ts",
+      "line": 32,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "line": 34,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "line": 40,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "line": 53,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/finalizeEffectiveSchema.ts",
+      "line": 54,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/finalize/isObjectRecord.ts",
+      "line": 8,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/mergeEffectiveSchema.ts",
+      "line": 47,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/mergeHintGroup.ts",
+      "line": 27,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/mergeSchemaContributions.ts",
+      "line": 41,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts",
+      "line": 24,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts",
+      "line": 27,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts",
+      "line": 29,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts",
+      "line": 30,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/effectiveSchema/utils/merge/selectEffectiveDeclarations.ts",
+      "line": 51,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/analysis.ts",
+      "line": 65,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/blueprint.ts",
+      "line": 20,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/blueprint.ts",
+      "line": 55,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/types/schema.ts",
+      "line": 5,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 17,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 19,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 21,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/intersectAllowedTypes.ts",
+      "line": 24,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 35,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 60,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/readAllowedTypes.ts",
+      "line": 62,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/unionAllowedTypes.ts",
+      "line": 14,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/unionAllowedTypes.ts",
+      "line": 15,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/allowedTypes/unionAllowedTypes.ts",
+      "line": 19,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/analyze/readSchemaObject.ts",
+      "line": 10,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/analyze/readSchemaObject.ts",
+      "line": 11,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/diagnostics/throwBlueprintError.ts",
+      "line": 18,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/diagnostics/throwBlueprintError.ts",
+      "line": 23,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 28,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 37,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 40,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 43,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 48,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 51,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 52,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/HostStaticPartition.ts",
+      "line": 57,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 14,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 30,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 31,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 32,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 34,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 38,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 44,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 53,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/buildFeatureNodeIndex.ts",
+      "line": 54,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 44,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 45,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 71,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 75,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/collectDeriveConvergenceTargets.ts",
+      "line": 167,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/collectTemplateParents.ts",
+      "line": 12,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/controls/hasKeepFields.ts",
+      "line": 17,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "line": 37,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "line": 41,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "line": 47,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/features/markInactiveValueNodes.ts",
+      "line": 48,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemSchemaPath.ts",
+      "line": 20,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/blueprint/utils/itemEntry/getItemSchemaPath.ts",
+      "line": 64,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "line": 35,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateChildTargets/validateChildTargets.ts",
+      "line": 40,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateShape/utils/visitShape.ts",
+      "line": 36,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateShape/validateShape.ts",
+      "line": 11,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/blueprint/validateShape/validateShape.ts",
+      "line": 12,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 52,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 54,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 55,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 146,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 149,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 149,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/evaluateDeriveRound.ts",
+      "line": 153,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/inject/getInjectTarget.ts",
+      "line": 48,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/compareDeriveWrites.ts",
+      "line": 16,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveChildEntry.ts",
+      "line": 23,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/derive/evaluateDeriveRound/utils/rank/getDeriveChildEntry.ts",
+      "line": 24,
+      "kind": "forEach"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/addActiveRuleKey.ts",
+      "line": 19,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/evaluateResetInteraction.ts",
+      "line": 35,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/evaluateResetInteraction.ts",
+      "line": 37,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/evaluateScopedExpression.ts",
+      "line": 37,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getDeriveSourceNodes.ts",
+      "line": 20,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getDeriveSourceNodes.ts",
+      "line": 28,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getRuleTargets.ts",
+      "line": 33,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getRuleTargets.ts",
+      "line": 38,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getRuleTargets.ts",
+      "line": 39,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/derive/utils/evaluate/getSelectedDeclarationIds.ts",
+      "line": 21,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 73,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 94,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 100,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 109,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 110,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 121,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 150,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 168,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 190,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getDeriveRuleTable.ts",
+      "line": 192,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/derive/utils/rules/getWatchPaths.ts",
+      "line": 32,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 25,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 31,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 37,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/navigation/utils/query/findNodes.ts",
+      "line": 43,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/navigation/utils/visit/visitFieldNodes.ts",
+      "line": 19,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/record/types/record.ts",
+      "line": 55,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/record/types/runtime.ts",
+      "line": 185,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/record/types/runtime.ts",
+      "line": 204,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/record/types/runtime.ts",
+      "line": 343,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/record/utils/advanceFieldNodeRevision.ts",
+      "line": 27,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/record/utils/captureFieldNodeChange.ts",
+      "line": 70,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/record/utils/indexFieldNodeWarning.ts",
+      "line": 26,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/record/utils/indexFieldNodeWarning.ts",
+      "line": 30,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/record/utils/indexFieldNodeWarning.ts",
+      "line": 40,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/record/utils/markFieldNodeEvent.ts",
+      "line": 18,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/record/utils/markFieldNodeEvent.ts",
+      "line": 32,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/record/utils/publishGlobalStateDeltas.ts",
+      "line": 10,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/record/utils/publishGlobalStateDeltas.ts",
+      "line": 25,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 73,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 76,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 79,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 96,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 101,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 110,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 126,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 171,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySlots.ts",
+      "line": 194,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts",
+      "line": 41,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArraySplice.ts",
+      "line": 97,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 51,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 52,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 134,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/applyArrayTail.ts",
+      "line": 142,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/canApplyArrayTail.ts",
+      "line": 17,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/arraySlots/canApplyArrayTail.ts",
+      "line": 22,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "line": 22,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "line": 49,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/clearArrayRuntimePaths.ts",
+      "line": 55,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 31,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 41,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 42,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 43,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 55,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 77,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 83,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyArrayRuntimePaths.ts",
+      "line": 97,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyCommittedRules.ts",
+      "line": 21,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/arrangeFieldNodeItems/utils/rekey/rekeyPairedPathStore.ts",
+      "line": 21,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "line": 30,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/finishStaticFirstLoad.ts",
+      "line": 76,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/getStaticObjectEntries.ts",
+      "line": 19,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 54,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 135,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree.ts",
+      "line": 144,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/types/gatePredicate.ts",
+      "line": 8,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/types/settlement.ts",
+      "line": 120,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/types/settlement.ts",
+      "line": 137,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 40,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 41,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 41,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 82,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 99,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 116,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 119,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 120,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 155,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitExitPolicyValues.ts",
+      "line": 183,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitGlobalState.ts",
+      "line": 24,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitGlobalState.ts",
+      "line": 25,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitGlobalState.ts",
+      "line": 41,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 72,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 105,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 173,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 212,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/commitSettlement.ts",
+      "line": 245,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/effectiveType.ts",
+      "line": 18,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/finalizeDeriveTrace.ts",
+      "line": 17,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/finalizeDeriveTrace.ts",
+      "line": 30,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/isMisfit.ts",
+      "line": 20,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 43,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 48,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 55,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 74,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 75,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 106,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 390,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/markCommitDeliveries.ts",
+      "line": 407,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts",
+      "line": 42,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts",
+      "line": 43,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts",
+      "line": 49,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/updateCommittedRuleValue.ts",
+      "line": 50,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 28,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 30,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 32,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 38,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 39,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 50,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 56,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 73,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+      "line": 73,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/getRequiredChildren.ts",
+      "line": 37,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/commit/utils/readSettlementSource.ts",
+      "line": 30,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseAppendedChild.ts",
+      "line": 24,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseArrayChildren.ts",
+      "line": 29,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseArrayChildren.ts",
+      "line": 65,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseSplicedChildren.ts",
+      "line": 27,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/canReuseTruncatedChildren.ts",
+      "line": 20,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/computeRootGateSelection.ts",
+      "line": 26,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/computeRootGateSelection.ts",
+      "line": 31,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/computeRootGateSelection.ts",
+      "line": 52,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectLiteralTableChildren.ts",
+      "line": 27,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectLiteralTableChildren.ts",
+      "line": 41,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 31,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 53,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 96,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectPredicateTableChildren.ts",
+      "line": 97,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectRootGateDeclarations.ts",
+      "line": 36,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/gateSelection/selectRootGateDeclarations.ts",
+      "line": 46,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 77,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 78,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 79,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getDirectChildSelectionPlan.ts",
+      "line": 91,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 67,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 71,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 74,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 75,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 76,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 90,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 109,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 116,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 141,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 142,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 148,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 177,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/getGateSelectionTable.ts",
+      "line": 180,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "line": 27,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "line": 38,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "line": 39,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/prepareGateSelection.ts",
+      "line": 40,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/reuseArrayChildren.ts",
+      "line": 20,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 48,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 119,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 140,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 160,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 163,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 192,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectChildren.ts",
+      "line": 304,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 45,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 53,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 59,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 184,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 210,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 223,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 255,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/selectEntryStep.ts",
+      "line": 402,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/staticShape.ts",
+      "line": 44,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 13,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 14,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 16,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createPreparedSelectionStructure.ts",
+      "line": 17,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 28,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 30,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 56,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 56,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/createStaticEntryReuser.ts",
+      "line": 92,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "line": 25,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "line": 26,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/isStableDiscriminatorEntry.ts",
+      "line": 53,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "line": 33,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "line": 46,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareDiscriminatorEntrySelection.ts",
+      "line": 49,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 23,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 30,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 48,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 78,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 99,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 100,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 122,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 132,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 138,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 139,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/prepareStaticHost.ts",
+      "line": 146,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/publishPreparedSelection.ts",
+      "line": 18,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/childSelection/utils/readDiscriminatorEntrySelection.ts",
+      "line": 32,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 50,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 57,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 126,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 173,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 197,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/computeNode.ts",
+      "line": 210,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/dirtyChildren.ts",
+      "line": 22,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/dirtyChildren.ts",
+      "line": 58,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 33,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/getVirtualReferenceIndex.ts",
+      "line": 41,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+      "line": 100,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/hasRecursiveExpansion.ts",
+      "line": 100,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/preserveReferences.ts",
+      "line": 38,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 38,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 44,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 48,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 62,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/primeHost.ts",
+      "line": 96,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 33,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 34,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 37,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 45,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 55,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 63,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 78,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 82,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/selectNodeSchema.ts",
+      "line": 100,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/utils/getStaticGateList.ts",
+      "line": 31,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/utils/prepareHostWheelPlan.ts",
+      "line": 47,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/compute/utils/prepareHostWheelPlan.ts",
+      "line": 68,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/context/changeFieldNodeContext.ts",
+      "line": 27,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/context/changeFieldNodeContext.ts",
+      "line": 39,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 84,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 98,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/calculateStateKeys.ts",
+      "line": 134,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 84,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 95,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 96,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getControlLayers.ts",
+      "line": 96,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/getStateDependencyPlan.ts",
+      "line": 44,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/prepareControlLayers.ts",
+      "line": 37,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/prepareControlLayers.ts",
+      "line": 38,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/prepareControlLayers.ts",
+      "line": 112,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/prepareFragmentOwners.ts",
+      "line": 18,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/prepareParentControlLayers.ts",
+      "line": 37,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/prepareParentControlLayers.ts",
+      "line": 48,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readLatentExitPolicy.ts",
+      "line": 17,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readLatentExitPolicy.ts",
+      "line": 18,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/controls/readStateDependency.ts",
+      "line": 13,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/declarations/getDeclaredChildNames.ts",
+      "line": 18,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/declarations/getDeclaredChildNames.ts",
+      "line": 18,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts",
+      "line": 19,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts",
+      "line": 21,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/captureProjectionBaseline.ts",
+      "line": 24,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/collectPresenceChangeNames.ts",
+      "line": 21,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/deferPresenceTemplate.ts",
+      "line": 29,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/deferPresenceTemplate.ts",
+      "line": 49,
+      "kind": "max"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "line": 39,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "line": 40,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "line": 46,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getContextOwners.ts",
+      "line": 51,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 78,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 80,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 84,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 116,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 116,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 141,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 143,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 206,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 207,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 213,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 249,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 253,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 263,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 273,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 324,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 325,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 329,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 372,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 427,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 492,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 493,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 494,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 495,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 503,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 506,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 524,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 605,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 643,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 657,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 657,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 666,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/getDependencyIndex.ts",
+      "line": 680,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 33,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 43,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 44,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 48,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 49,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 50,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 86,
+      "kind": "max"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerPresenceChanges.ts",
+      "line": 140,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerProjectionChanges.ts",
+      "line": 24,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 65,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 74,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 91,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 101,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/registerRecalculation.ts",
+      "line": 127,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/dependencies/supplementSplitOwner.ts",
+      "line": 30,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts",
+      "line": 16,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/collectDeriveSourcePaths.ts",
+      "line": 40,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 20,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 21,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 22,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 23,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 24,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 25,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/getDeriveState.ts",
+      "line": 26,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/derivation/runDeriveRounds.ts",
+      "line": 122,
+      "kind": "max"
+    },
+    {
+      "file": "src/core/engine/settle/utils/errors/recordSettlementFailure.ts",
+      "line": 24,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 35,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 84,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 96,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 109,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 126,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 154,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 185,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/evaluateGate.ts",
+      "line": 228,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/flushPendingGateReads.ts",
+      "line": 51,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/gateSelectionTable.ts",
+      "line": 6,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 29,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 30,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 31,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 35,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 53,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 99,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateBudgetCap.ts",
+      "line": 103,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateExpression.ts",
+      "line": 22,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 96,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 108,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 110,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 115,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 117,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 122,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 124,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 139,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 173,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 174,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 196,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 317,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 318,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 398,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 405,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 468,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/getGateRegistry.ts",
+      "line": 481,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 36,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 41,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 49,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 52,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 55,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 61,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 65,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/collectIfGateReadNames.ts",
+      "line": 67,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/createGatePredicate.ts",
+      "line": 80,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/predicates/getIfGateReadNames.ts",
+      "line": 25,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 41,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 44,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 45,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 48,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 51,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/prepareGateTableRound.ts",
+      "line": 58,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateHostView.ts",
+      "line": 15,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateHostView.ts",
+      "line": 32,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateHostView.ts",
+      "line": 48,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateProjectedExtra.ts",
+      "line": 33,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "line": 47,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "line": 58,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/readGateSelectionGroup.ts",
+      "line": 60,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/resolveGateOccurrence.ts",
+      "line": 38,
+      "kind": "max"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyGateWheelConfirmation.ts",
+      "line": 21,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTableGate.ts",
+      "line": 28,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTableGate.ts",
+      "line": 55,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTableGate.ts",
+      "line": 60,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTablePrePublication.ts",
+      "line": 30,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/verifyTablePrePublication.ts",
+      "line": 32,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/watchGateSelectionDirty.ts",
+      "line": 20,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/watchGateSelectionDirty.ts",
+      "line": 21,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/watchSplitRegistration.ts",
+      "line": 25,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/watchSplitRegistration.ts",
+      "line": 26,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/gates/watchSplitRegistration.ts",
+      "line": 27,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/getInactiveValueContext.ts",
+      "line": 56,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/readExplicitWriteKind.ts",
+      "line": 25,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/readExplicitWriteKind.ts",
+      "line": 41,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/inactive/resolveInactiveValue.ts",
+      "line": 89,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/getChildDistribution.ts",
+      "line": 27,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/hasDistributedChildInput.ts",
+      "line": 17,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/interpretFieldNodeInput.ts",
+      "line": 62,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/interpretFieldNodeInput.ts",
+      "line": 69,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/isPlain.ts",
+      "line": 4,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/markWrite.ts",
+      "line": 127,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/nextExtras.ts",
+      "line": 16,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/nextExtras.ts",
+      "line": 20,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/staticSpec.ts",
+      "line": 34,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/utils/verifyWriteEpoch.ts",
+      "line": 15,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/utils/verifyWriteEpoch.ts",
+      "line": 24,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/input/utils/watchWriteEpoch.ts",
+      "line": 15,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 25,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 26,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 27,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 43,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/alignArraySnapshotSlots.ts",
+      "line": 68,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/loadValues/setLoadValue.ts",
+      "line": 24,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/output/updateOutput.ts",
+      "line": 66,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/reset/clearSubtreeState.ts",
+      "line": 13,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 42,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 44,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 90,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 91,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 92,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 96,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 156,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 196,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 207,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 228,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/DirtyPathSet.ts",
+      "line": 246,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 16,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 22,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 23,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 24,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 25,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 26,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 27,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 28,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 29,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 30,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 33,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 35,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 38,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 39,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 40,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 41,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 42,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 43,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/getSettlementScratch.ts",
+      "line": 44,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts",
+      "line": 21,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/scratch/updatePendingExitIndex.ts",
+      "line": 29,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/settlement/finishSettlement.ts",
+      "line": 92,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/settlement/finishSettlement.ts",
+      "line": 92,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/applySlotOverlay.ts",
+      "line": 34,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/applySlotOverlay.ts",
+      "line": 74,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts",
+      "line": 32,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts",
+      "line": 33,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/captureAbsentSlotInputs.ts",
+      "line": 58,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 57,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 58,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 66,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 68,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 76,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/cloneSlotSubtree.ts",
+      "line": 101,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/collectHostSlotValues.ts",
+      "line": 22,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/collectHostSlotValues.ts",
+      "line": 27,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/commitSlotChanges.ts",
+      "line": 16,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/commitSlotChanges.ts",
+      "line": 29,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/compareSlotOrder.ts",
+      "line": 11,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 40,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 41,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createClearedArrayOverlay.ts",
+      "line": 77,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 47,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 115,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 121,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 136,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 141,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createExitSlotOverlay.ts",
+      "line": 147,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createSlotValueOverlay.ts",
+      "line": 56,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/createSlotValueOverlay.ts",
+      "line": 107,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotChildIndex.ts",
+      "line": 22,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotChildIndex.ts",
+      "line": 26,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotEntries.ts",
+      "line": 19,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathEntry.ts",
+      "line": 26,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathEntry.ts",
+      "line": 38,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/getSlotPathNames.ts",
+      "line": 22,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/markRestoredSlotRaw.ts",
+      "line": 14,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 19,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 21,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 28,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 41,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/markSlotChange.ts",
+      "line": 49,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts",
+      "line": 35,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/materializeInactiveSlotValues.ts",
+      "line": 44,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/materializeKeptSlotOverlay.ts",
+      "line": 33,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/prepareSourcePruner.ts",
+      "line": 74,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/prepareSourcePruner.ts",
+      "line": 86,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/pruneArraySlotTail.ts",
+      "line": 23,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 32,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 49,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 63,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/pruneSlotSources.ts",
+      "line": 73,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/readSlotRawTree.ts",
+      "line": 71,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/readSourceTree.ts",
+      "line": 50,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 24,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 28,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 29,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 58,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 59,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/rekeyArraySlotBindings.ts",
+      "line": 66,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/restoreSlotSources.ts",
+      "line": 31,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/restoreSlotSources.ts",
+      "line": 34,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/restoreTransferredSlotSource.ts",
+      "line": 32,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/restoreTransferredSlotSource.ts",
+      "line": 37,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/retainExitedSlot.ts",
+      "line": 56,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/retainExitedSlot.ts",
+      "line": 58,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/updateSlotChildIndex.ts",
+      "line": 21,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/writeSlotPath.ts",
+      "line": 101,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/slots/writeSlotPath.ts",
+      "line": 122,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/templatePaths/intersectsWatchedPath.ts",
+      "line": 26,
+      "kind": "min"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/collectFillDescendants.ts",
+      "line": 21,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "line": 75,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "line": 81,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizeExits.ts",
+      "line": 111,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 28,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 49,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/finalizePerished.ts",
+      "line": 71,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isMissingRaw.ts",
+      "line": 29,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isReplacedLivePath.ts",
+      "line": 22,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/isReplacedLivePath.ts",
+      "line": 26,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/pruneArrayTailPaths.ts",
+      "line": 26,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/prunePerishedPaths.ts",
+      "line": 20,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/readDepartingAncestorPolicy.ts",
+      "line": 21,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/readDepartingAncestorPolicy.ts",
+      "line": 29,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/restoreArrayStructure.ts",
+      "line": 26,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/restoreArrayStructure.ts",
+      "line": 41,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 45,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 46,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 120,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 121,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/settle/utils/transition/transitionSettlement.ts",
+      "line": 153,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/settle/utils/write/releaseWrongKindHosts.ts",
+      "line": 24,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/types/controls.ts",
+      "line": 28,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/utils/cache/valueMemos.ts",
+      "line": 18,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/cache/valueMemos.ts",
+      "line": 19,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/controls/getControlExpression.ts",
+      "line": 32,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/controls/getControlExpression.ts",
+      "line": 33,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/utils/controls/getStaticDeclarationIds.ts",
+      "line": 28,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 28,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 30,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 32,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 34,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 41,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 106,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 138,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 139,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 164,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts",
+      "line": 9,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts",
+      "line": 19,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/pathIndex/utils/utils/NumericPathIndex.ts",
+      "line": 26,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/paths/getCachedPointerSegments.ts",
+      "line": 22,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/utils/writeObjectKey.ts",
+      "line": 3,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/validation/types/issue.ts",
+      "line": 14,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/validation/utils/cache/readValidationEntry.ts",
+      "line": 73,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 7,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 23,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 33,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 44,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/validation/utils/copy/createValidatorCopy.ts",
+      "line": 45,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/validation/utils/lifetime/recentReleaseList.ts",
+      "line": 23,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/validation/utils/read/readFieldNodeErrors.ts",
+      "line": 24,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/validation/utils/read/readFieldNodeErrors.ts",
+      "line": 42,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 28,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 35,
+      "kind": "max"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 36,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 38,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 45,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 52,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 55,
+      "kind": "max"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 56,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 58,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 65,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 72,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 73,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/isOffUnionBranchIssue.ts",
+      "line": 74,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 35,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 36,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 39,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 88,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/validation/utils/route/routeValidationIssues.ts",
+      "line": 89,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/assertValidationRootReady.ts",
+      "line": 36,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/requestFieldNodeValidation.ts",
+      "line": 27,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/validation/utils/run/requestFieldNodeValidation.ts",
+      "line": 36,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "line": 48,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "line": 53,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "line": 84,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/adoptFieldNodeChain.ts",
+      "line": 92,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/composeBatchValue.ts",
+      "line": 25,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/deliverWave.ts",
+      "line": 42,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/deliverWave.ts",
+      "line": 60,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 31,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 51,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 74,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 79,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/exitFieldNodeChain.ts",
+      "line": 139,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "line": 23,
+      "kind": "reduce"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "line": 35,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "line": 37,
+      "kind": "every"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushBatchWrites.ts",
+      "line": 40,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/flushQueuedEvents.ts",
+      "line": 50,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/markBatchArrayOperation.ts",
+      "line": 41,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/queueNonSettleEvent.ts",
+      "line": 17,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/readBatchValue.ts",
+      "line": 29,
+      "kind": "map"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/refuseListenerFeedback.ts",
+      "line": 19,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/restoreAdoptedExternalErrors.ts",
+      "line": 21,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/restoreAdoptedExternalErrors.ts",
+      "line": 23,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/runDeliveryWaves.ts",
+      "line": 23,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/chain/utils/compareDocumentOrder.ts",
+      "line": 36,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchClearSubtreeState.ts",
+      "line": 27,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchContextChange.ts",
+      "line": 15,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchMount.ts",
+      "line": 36,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchMount.ts",
+      "line": 52,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchMount.ts",
+      "line": 58,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchResetForm.ts",
+      "line": 27,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchResetSubtree.ts",
+      "line": 28,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchResetSubtree.ts",
+      "line": 32,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchSetExternalErrors.ts",
+      "line": 28,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchSetState.ts",
+      "line": 33,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/dispatchSetSubtreeState.ts",
+      "line": 31,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 51,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 52,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 53,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 54,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 68,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 79,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 105,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/entry/utils/propagateExternalErrorsToRoot.ts",
+      "line": 125,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/read/onInactiveFieldNode.ts",
+      "line": 18,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/read/onInactiveFieldNode.ts",
+      "line": 19,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/read/subscribeFieldNode.ts",
+      "line": 18,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/read/subscribeFieldNode.ts",
+      "line": 19,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/collectChainRecords.ts",
+      "line": 29,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts",
+      "line": 26,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts",
+      "line": 55,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/core/engine/write/utils/report/readReferenceOnlySchemaPaths.ts",
+      "line": 62,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 65,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/runtime/FieldNode.ts",
+      "line": 108,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/runtime/setContext.ts",
+      "line": 13,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 42,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 89,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 119,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 185,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 192,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/type.ts",
+      "line": 315,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/core/surface/utils/binding/interpretFieldNodeDraft.ts",
+      "line": 29,
+      "kind": "filter"
+    },
+    {
+      "file": "src/core/surface/utils/binding/interpretFieldNodeDraft.ts",
+      "line": 31,
+      "kind": "includes"
+    },
+    {
+      "file": "src/core/surface/utils/binding/interpretFieldNodeDraft.ts",
+      "line": 40,
+      "kind": "some"
+    },
+    {
+      "file": "src/core/surface/utils/fieldNodeFactory.ts",
+      "line": 137,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/core/surface/utils/fieldNodeFactory.ts",
+      "line": 153,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/errors/utils/assembleCodeGroup.ts",
+      "line": 9,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/errors/utils/assembleCodeGroup.ts",
+      "line": 15,
+      "kind": "map"
+    },
+    {
+      "file": "src/errors/utils/getCodeSpecific.ts",
+      "line": 12,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/errors/utils/getCodeSpecific.ts",
+      "line": 22,
+      "kind": "map"
+    },
+    {
+      "file": "src/errors/utils/isFormErrorCode.ts",
+      "line": 4,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/errors/utils/isFormWarningCode.ts",
+      "line": 4,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputArray/components/ArrayItems.tsx",
+      "line": 100,
+      "kind": "min"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputArray/utils/fillArraySlot.ts",
+      "line": 14,
+      "kind": "max"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx",
+      "line": 55,
+      "kind": "filter"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox.tsx",
+      "line": 75,
+      "kind": "includes"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputStringEnum/FieldInputStringEnum.tsx",
+      "line": 55,
+      "kind": "some"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 27,
+      "kind": "filter"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 27,
+      "kind": "includes"
+    },
+    {
+      "file": "src/fieldInputs/fieldInputDefinitions/FieldInputUnion/FieldInputUnion.tsx",
+      "line": 32,
+      "kind": "some"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/hasWildcardPath.ts",
+      "line": 16,
+      "kind": "includes"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 35,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 54,
+      "kind": "filter"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 58,
+      "kind": "includes"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 78,
+      "kind": "filter"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 80,
+      "kind": "every"
+    },
+    {
+      "file": "src/helpers/fieldInputDefinition/utils/normalizeFieldInputDefinitions.ts",
+      "line": 84,
+      "kind": "includes"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/parsePointerSegment.ts",
+      "line": 32,
+      "kind": "includes"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/parseStandardPointer.ts",
+      "line": 30,
+      "kind": "includes"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/parseStandardPointer.ts",
+      "line": 31,
+      "kind": "includes"
+    },
+    {
+      "file": "src/helpers/jsonPointer/utils/readFormattedPointerSegment.ts",
+      "line": 20,
+      "kind": "max"
+    },
+    {
+      "file": "src/helpers/schemaIdentity/utils/isSameSchema.ts",
+      "line": 22,
+      "kind": "every"
+    },
+    {
+      "file": "src/helpers/schemaIdentity/utils/isSameSchema.ts",
+      "line": 26,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/helpers/schemaIdentity/utils/isSameSchema.ts",
+      "line": 27,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "line": 51,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/helpers/warning/utils/warnDevelopmentIssue.ts",
+      "line": 14,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 45,
+      "kind": "map"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 58,
+      "kind": "map"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 66,
+      "kind": "map"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 67,
+      "kind": "map"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 70,
+      "kind": "map"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldErrors.ts",
+      "line": 76,
+      "kind": "some"
+    },
+    {
+      "file": "src/hooks/fieldNode/useChildFieldMap.ts",
+      "line": 27,
+      "kind": "reduce"
+    },
+    {
+      "file": "src/providers/FormErrorContext/utils/createFormErrorService.ts",
+      "line": 11,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/providers/RootNodeContext/components/RootNodeContextProvider.tsx",
+      "line": 75,
+      "kind": "new Set"
+    },
+    {
+      "file": "src/providers/RootNodeContext/utils/applyFormErrors.ts",
+      "line": 16,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/providers/RootNodeContext/utils/applyFormErrors.ts",
+      "line": 25,
+      "kind": "new Map"
+    },
+    {
+      "file": "src/types/error/error.ts",
+      "line": 38,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/types/schema/jsonSchema.ts",
+      "line": 177,
+      "kind": "Record<string>"
+    },
+    {
+      "file": "src/types/schema/jsonSchema.ts",
+      "line": 190,
+      "kind": "Record<string>"
+    }
+  ]
+}

@@ -1,3 +1,8 @@
+import {
+  appendSegment,
+  parsePointerSegments,
+} from '@/schema-form/helpers/jsonPointer';
+
 import type {
   Blueprint,
   BlueprintGate,
@@ -23,6 +28,7 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
   if (cached) return cached;
   const decisionsByGate = new Map<BlueprintGate, Set<string>>();
   const decisions = new Set<string>();
+  const fieldControls = new Map<BlueprintGate, boolean>();
   const add = (gate: BlueprintGate, key: string): void => {
     let keys = decisionsByGate.get(gate);
     if (!keys) {
@@ -32,20 +38,42 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
     keys.add(key);
     decisions.add(key);
   };
+
   const collect = (declaration: PropertyDeclaration): void => {
     if (declaration.scope === 'fragment' && declaration.gates.length > 0)
       for (const gate of declaration.gates)
         add(gate, 'fragment:' + declaration.fragmentId);
     for (const gate of declaration.gates) {
       if (gate.kind !== 'active') continue;
-      if (
-        gate.schemaPath.includes('/controls/fields/') &&
-        gate.schemaPath.endsWith('/controls/active')
-      )
-        add(gate, 'node:' + gate.schemaPath);
+      let fieldControl = fieldControls.get(gate);
+
+      if (fieldControl === undefined) {
+        const segments = parsePointerSegments(gate.schemaPath);
+        let matches =
+          segments[segments.length - 2] === 'controls' &&
+          segments[segments.length - 1] === 'active';
+        if (matches) {
+          matches = false;
+          for (let index = 0, count = segments.length; index < count; index++) {
+            const segment = segments[index];
+
+            if (segment === 'controls' && segments[index + 1] === 'fields') {
+              matches = true;
+              break;
+            }
+          }
+        }
+        fieldControl = matches;
+        fieldControls.set(gate, fieldControl);
+      }
+      if (fieldControl) add(gate, 'node:' + gate.schemaPath);
       else if (
         declaration.scope === 'node' &&
-        gate.schemaPath === declaration.schemaPath + '/controls/active'
+        gate.schemaPath ===
+          appendSegment(
+            appendSegment(declaration.schemaPath, 'controls'),
+            'active',
+          )
       )
         add(gate, 'node:' + gate.schemaPath);
     }
@@ -75,12 +103,15 @@ export const getHostWheelBudgetCap = (
 ): number => {
   if (blueprint.capabilities.branchless) return 1;
   const cached = runtime.hostBudgetCaps?.get(host);
-  if (
-    cached &&
-    cached.gates.length === gates.length &&
-    cached.gates.every((gate, index) => gate === gates[index])
-  )
-    return cached.cap;
+  if (cached && cached.gates.length === gates.length) {
+    let unchanged = true;
+    for (let index = 0; index < cached.gates.length; index++)
+      if (cached.gates[index] !== gates[index]) {
+        unchanged = false;
+        break;
+      }
+    if (unchanged) return cached.cap;
+  }
   const index = getIndex(blueprint);
   const decisions = new Set<string>();
   for (const gate of gates)

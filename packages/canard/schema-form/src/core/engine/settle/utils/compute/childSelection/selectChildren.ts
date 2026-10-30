@@ -1,5 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { escapeSegment } from '@winglet/json/pointer';
+
+import type { Dictionary, Optional } from '@aileron/declare';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { HostStaticPartition, getItemEntries } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
@@ -10,11 +13,11 @@ import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlue
 import type { SettlementContext } from '../../../types/settlement';
 import { getChildDistribution } from '../../input/getChildDistribution';
 import { hasDistributedChildInput } from '../../input/hasDistributedChildInput';
-import { distributeLatentValue } from '../../latent/distributeLatentValue';
-import { distributeMovedLatentInput } from '../../latent/distributeMovedLatentInput';
-import { getLatentOrder } from '../../latentStore/getLatentOrder';
 import { flushPendingOutput } from '../../output/flushPendingOutput';
 import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
+import { distributeMovedSource } from '../../slots/distributeMovedSource';
+import { getSlotOrder } from '../../slots/getSlotOrder';
+import { writeInactiveSource } from '../../slots/writeInactiveSource';
 import { isSameChildList } from '../../structure/isSameChildList';
 import { canReuseArrayChildren } from './canReuseArrayChildren';
 import { selectTableChildren } from './gateSelection/selectTableChildren';
@@ -23,7 +26,10 @@ import { reuseArrayChildren } from './reuseArrayChildren';
 import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
 import { staticShape } from './staticShape';
+import { createPreparedSelectionStructure } from './utils/createPreparedSelectionStructure';
 import { createStaticEntryReuser } from './utils/createStaticEntryReuser';
+import { prepareStaticHost } from './utils/prepareStaticHost';
+import { publishPreparedSelection } from './utils/publishPreparedSelection';
 
 /**
  * Select all declared direct children in authored order for one host round.
@@ -41,7 +47,7 @@ import { createStaticEntryReuser } from './utils/createStaticEntryReuser';
 export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
-  prior: Record<string, Self>,
+  prior: Dictionary<Self>,
   computeChild: (child: Self) => void,
   immediate: boolean,
   hasRelocated = true,
@@ -112,7 +118,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   }
   if (node.behavior.type === 'virtual') {
     const before = node.children ?? [];
-    const next: Record<string, Self> = Object.create(null);
+    const next: Dictionary<Self> = Object.create(null);
     const children: Self[] = [];
     const fields = node.blueprintNode.fields;
     for (let index = 0; fields && index < fields.length; index++) {
@@ -139,8 +145,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   }
   const before = node.children ?? [];
   const current = node.structure;
-  let reuse =
-    !preserveStructure && current && current !== prior
+  const prepared = prepareStaticHost(node, prior, context, hasRelocated);
+  let reuse = prepared
+    ? (entry: BlueprintChildEntry) => prepared.entries.has(entry.name)
+    : !preserveStructure && current && current !== prior
       ? createStaticEntryReuser(
           node,
           prior,
@@ -151,9 +159,22 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           hasRelocated,
         )
       : undefined;
-  const next: Record<string, Self> =
-    reuse && current ? current : { ...current };
-  if (next !== current) Object.setPrototypeOf(next, null);
+  const dynamic: Optional<Dictionary<Self>> = prepared
+    ? Object.create(prepared.baseline)
+    : undefined;
+  const next: Dictionary<Self> = prepared
+    ? createPreparedSelectionStructure(
+        prepared.baseline,
+        current,
+        prepared.dynamicNames,
+        dynamic!,
+      )
+    : reuse && current
+      ? current
+      : { ...current };
+  if (!prepared && next !== current) Object.setPrototypeOf(next, null);
+  // Mutate the private target directly; node.structure keeps the own-key gate view.
+  const selectionTarget = dynamic ?? next;
   if (node.behavior.type === 'array') {
     const names = Object.keys(next);
     for (let index = 0; index < names.length; index++) {
@@ -161,7 +182,6 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       if (Number(name) >= node.itemCount) delete next[name];
     }
   }
-  node.structure = next;
   reuse ??= createStaticEntryReuser(
     node,
     prior,
@@ -193,39 +213,52 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       : cached;
   const entries = direct
     ? node.blueprintNode.childEntries
-    : node.behavior.declareChildren(node);
+    : (prepared?.dynamicEntries ?? node.behavior.declareChildren(node));
   const count = direct ? direct.steps.length : entries.length;
   const flushReads = immediate && (!direct || context.kind === 'load');
   const frame: ChildSelectionFrame<Self> = {
+    preparedStatic: prepared,
+    preparedDynamic: dynamic,
+    priorDynamicNames: prepared
+      ? context.preparedStaticPriorNames?.get(node)
+      : undefined,
     node,
     context,
     prior,
     computeChild,
     immediate,
-    next,
+    next: selectionTarget,
     seen,
     inactiveEntries,
     changed,
     flushReads,
     reuseStatic: reuse,
   };
-  const round = direct && context.gateSelectionRounds?.get(node);
-  if (round?.active) selectTableChildren(frame, round);
-  else {
-    for (let entryIndex = 0; entryIndex < count; entryIndex++) {
-      const step = direct?.steps[entryIndex];
-      const entry = step ? step.entry : entries[entryIndex];
-      if (reuse?.(entry)) continue;
-      selectEntryStep(entry, step, frame);
+  let selectedChildren: Optional<readonly Self[]>;
+  try {
+    node.structure = next;
+    const round = direct && context.gateSelectionRounds?.get(node);
+    if (round?.active) selectTableChildren(frame, round);
+    else {
+      for (let entryIndex = 0; entryIndex < count; entryIndex++) {
+        const step = direct?.steps[entryIndex];
+        const entry = step ? step.entry : entries[entryIndex];
+        if (reuse?.(entry)) continue;
+        selectEntryStep(entry, step, frame);
+      }
     }
+    selectedChildren = prepared ? publishPreparedSelection(frame) : undefined;
+  } finally {
+    if (prepared && node.structure === next)
+      node.structure = prepared.selectedStructure;
   }
   changed = frame.changed;
-  const flushed = flushPendingOutput(node, context);
+  const flushed = flushPendingOutput(node, context, selectedChildren);
   if (publication) publication.flushed = flushed;
   for (let index = 0; index < inactiveEntries.length; index++) {
     const entry = inactiveEntries[index];
     if (
-      next[entry.name] ||
+      selectionTarget[entry.name] ||
       seen.has(entry.name) ||
       (context.kind !== 'load' && hasOwnProperty(prior, entry.name))
     )
@@ -241,24 +274,23 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       )
     )
       continue;
-    const path = node.path + '/' + escapeSegment(entry.name);
+    const path = appendSegment(node.path, entry.name);
     if (distribution.preserveLatent) {
-      distributeMovedLatentInput(
+      distributeMovedSource(
         context,
         path,
         entry.node,
         Reflect.get(distribution.input, entry.name),
-        getLatentOrder(node, entry.name, entry.node),
+        getSlotOrder(node, entry.name, entry.node),
       );
       continue;
     }
-    distributeLatentValue(
-      node.runtime,
+    writeInactiveSource(
       context,
       path,
       entry.node,
       Reflect.get(distribution.input, entry.name),
-      getLatentOrder(node, entry.name, entry.node),
+      getSlotOrder(node, entry.name, entry.node),
       distribution.whole,
       node.behavior.type === 'array'
         ? getItemEntries(node.blueprintNode, Number(entry.name))
@@ -266,11 +298,11 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       distribution.automatic,
     );
   }
-  const priorNames = Object.keys(prior);
+  const priorNames = frame.priorDynamicNames ?? Object.keys(prior);
   for (let index = 0; index < priorNames.length; index++) {
     const name = priorNames[index];
     const child = prior[name];
-    if (next[name] !== child) {
+    if (node.structure![name] !== child) {
       if (context.hasGates) (context.presenceHosts ??= new Set()).add(node);
       if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
         context.perished.add(child);
@@ -284,6 +316,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         if (added) updatePendingExitIndex(context, child.path, 1);
       }
     }
+  }
+  if (prepared) {
+    if (changed) context.changedNodes.add(node);
+    return changed;
   }
   const nextChildren = flushed ? (node.children ?? []) : Object.values(next);
   const published = node.children;

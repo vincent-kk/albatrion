@@ -1,4 +1,4 @@
-import type { MutableNode, SchemaInput } from '../../../types/analysis';
+import type { MutableNode,SchemaInput } from '../../../types/analysis';
 import { createBlueprintGate } from '../gates/createBlueprintGate';
 
 /**

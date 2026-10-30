@@ -1,0 +1,14 @@
+{
+  "firstRun": {
+    "inventory": 2387,
+    "missing": 400,
+    "introducedToken": "7.374배",
+    "source": "README.md:68"
+  },
+  "correction": "README의 현재 상태 수치 문장을 LANDING-212 보충에 원문 그대로 인용",
+  "finalRun": {
+    "inventory": 2387,
+    "missing": 399
+  },
+  "existingResidualsUnchanged": true
+}

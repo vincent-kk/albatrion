@@ -108,7 +108,6 @@ export const runChildSelectionHistory = (
         diagnostics: root.runtime.diagnostics,
         commit: root.runtime.commitNumber,
         globalState: root.runtime.globalState,
-        latent: root.runtime.latentRaw,
         deliveryOrder: [...(root.runtime.deliveries ?? [])],
         events,
         changes,
@@ -128,6 +127,8 @@ export const runChildSelectionHistory = (
       disableAutomaticWrites: fixture.disableAutomaticWrites,
       onChange: (value) => changes.push(normalizeSelectionObservation(value)),
     }) as unknown as typeof root;
+    // This pinned-HEAD observer inspects latent storage and its original stage records.
+    Reflect.set(root.runtime, 'slots', 'off');
   } catch (failure) {
     return [normalizeSelectionObservation({ failure })];
   }

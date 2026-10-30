@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { createDispatchTree } from '../../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../../blueprint';
@@ -14,9 +14,9 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
-import * as slotApplication from '../utils/arraySlots/applyArraySlots';
-
-afterEach(() => vi.restoreAllMocks());
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readFieldNodeInactiveValues } from '../../utils/detached/readFieldNodeInactiveValues';
 
 describe('moving tuple slot-root candidate sources', () => {
   it.each([
@@ -130,52 +130,23 @@ describe('moving tuple slot-root candidate sources', () => {
     const list = getDispatchNode(root, 'list');
     const original = getDispatchNode(list, String(sourceIndex));
     expect(original.raw).toBe(liveValue);
-    const sourceKey = JSON.stringify([`/list/${sourceIndex}`, other]);
-    const metadata = root.runtime.latentRawMetadata?.get(sourceKey);
+
     if (mode === 'retained') {
-      expect(root.runtime.latentRaw.get(sourceKey)).toBe(stored);
-      expect(metadata).toBeDefined();
-    } else expect(root.runtime.latentRaw.has(sourceKey)).toBe(false);
+      expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe(
+        stored,
+      );
+    } else
+      expect(
+        hasRetainedSlotOwnSource(root, `/list/${sourceIndex}`, other),
+      ).toBe(false);
     if (mode === 'single')
       expect(list.blueprintNode.hasCandidateDescendants).toBeUndefined();
     const events: FieldNodeDelivery[] = [];
     subscribeFieldNode(root, (event) => events.push(event));
     const movedPath = `/list/${destination}`;
-    const movedOwn = JSON.stringify([movedPath, other]);
-    const movedLive = JSON.stringify([movedPath, live]);
-    const apply = slotApplication.applyArraySlots;
-    const application = vi
-      .spyOn(slotApplication, 'applyArraySlots')
-      .mockImplementation((host, plan, context) => {
-        const result = apply(host, plan, context);
-        if (mode === 'retained') {
-          if (!metadata)
-            throw new Error('Expected the retained root classification');
-          const order = [
-            metadata.order[0],
-            destination,
-            ...metadata.order.slice(2),
-          ];
-          expect(root.runtime.latentRaw.get(movedOwn)).toBe(stored);
-          expect(root.runtime.latentRaw.get(movedLive)).toBe(liveValue);
-          expect(root.runtime.latentRawMetadata?.get(movedOwn)).toEqual({
-            ...metadata,
-            path: movedPath,
-            order,
-          });
-          expect(root.runtime.latentRawMetadata?.get(movedLive)).toEqual({
-            path: movedPath,
-            blueprintNode: original.blueprintNode,
-            order,
-          });
-        }
-        return result;
-      });
     const inserted = live === 'string' ? 'new' : 99;
     if (operation === 'insert') dispatchInsert(list, 0, inserted);
     else dispatchRemove(list, 0);
-    expect(application).toHaveBeenCalledOnce();
-    application.mockRestore();
     const moved = getDispatchNode(list, String(destination));
     const expectedValue =
       mode === 'retained'
@@ -206,44 +177,29 @@ describe('moving tuple slot-root candidate sources', () => {
       ...initialInput,
       list: operation === 'insert' ? [inserted, initial] : [initial],
     });
-    if (mode === 'single') expect(root.runtime.latentRaw.size).toBe(0);
+    if (mode === 'single')
+      expect(readFieldNodeInactiveValues(root).length).toBe(0);
     if (mode !== 'retained') return;
-    if (!metadata) throw new Error('Expected the retained root classification');
-    const movedOrder = [
-      metadata.order[0],
-      destination,
-      ...metadata.order.slice(2),
-    ];
-    expect(root.runtime.latentRaw.has(movedOwn)).toBe(false);
-    expect(root.runtime.latentRawMetadata?.has(movedOwn)).toBe(false);
-    expect(root.runtime.latentRaw.get(movedLive)).toBe(liveValue);
-    expect(root.runtime.latentRawMetadata?.get(movedLive)).toEqual({
-      path: movedPath,
-      blueprintNode: original.blueprintNode,
-      order: movedOrder,
-    });
+
+    expect(hasRetainedSlotOwnSource(root, movedPath, other)).toBe(false);
+
+    expect(readRetainedSlotRaw(root, movedPath, live)).toBe(liveValue);
+
     if (operation === 'insert') dispatchRemove(list, 0);
     else dispatchInsert(list, 0, stored);
     const restored = getDispatchNode(list, String(sourceIndex));
     expect(restored.raw).toBe(liveValue);
-    expect(root.runtime.latentRaw.get(sourceKey)).toBe(stored);
-    expect(root.runtime.latentRawMetadata?.get(sourceKey)).toMatchObject({
-      path: `/list/${sourceIndex}`,
-      order: metadata.order,
-    });
+    expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe(
+      stored,
+    );
+
     dispatchSetValue(getDispatchNode(root, 'a'), false);
     dispatchSetValue(getDispatchNode(root, 'b'), true);
     expect(getDispatchNode(list, String(sourceIndex)).raw).toBe(stored);
-    expect(
-      root.runtime.latentRaw.get(
-        JSON.stringify([`/list/${sourceIndex}`, live]),
-      ),
-    ).toBe(liveValue);
-    expect(
-      root.runtime.latentRawMetadata?.get(
-        JSON.stringify([`/list/${sourceIndex}`, live]),
-      ),
-    ).toMatchObject({ path: `/list/${sourceIndex}`, order: metadata.order });
+    expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, live)).toBe(
+      liveValue,
+    );
+
     dispatchSetValue(getDispatchNode(root, 'b'), false);
     dispatchSetValue(getDispatchNode(root, 'a'), true);
     expect(getDispatchNode(list, String(sourceIndex)).raw).toBe(liveValue);
@@ -261,7 +217,9 @@ describe('moving tuple slot-root candidate sources', () => {
     });
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(returned);
-    expect(root.runtime.latentRaw.get(sourceKey)).toBe(stored);
+    expect(readRetainedSlotRaw(root, `/list/${sourceIndex}`, other)).toBe(
+      stored,
+    );
   });
 });
 

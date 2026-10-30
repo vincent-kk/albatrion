@@ -1,0 +1,34 @@
+{
+  "candidateCommit": "be49b6c6777d46ce1cd39a10950d4af09725f8b5",
+  "baselineCommit": "0b9337cd9b7372211883a727fead7f76c8220b4f",
+  "preparedAt": "2026-10-28T06:35:29.621Z",
+  "environment": {
+    "node": "v26.11.1",
+    "bun": "1.4.4",
+    "cpu": "Apple M1 Max",
+    "arch": "arm64",
+    "release": "27.0.0"
+  },
+  "immutableInputHashesVerified": true,
+  "toolSyntheticSmokePassed": true,
+  "publicDeclarationsByteIdentical": true,
+  "formalStartPresent": false,
+  "formalMeasurementStarted": false,
+  "cpuPreflightTaken": false,
+  "nextOwner": "Coordinator-assigned measurement worker",
+  "originalExternalInputsSha256": "b2d43c35ee8239a8a41d425b5c5cd67c2ca88b505896973965c72626ebfa038f",
+  "delivery": {
+    "scenes": 72,
+    "phases": 430,
+    "differences": 0
+  },
+  "mount": {
+    "scenes": 6,
+    "phases": 12,
+    "differences": 0
+  },
+  "notes": [
+    "Portable copies replace machine-local location metadata only; the original external inputs.json is authoritative for byte verification.",
+    "No candidate-2 formal timing, quality, heap or adoption verdict exists yet."
+  ]
+}

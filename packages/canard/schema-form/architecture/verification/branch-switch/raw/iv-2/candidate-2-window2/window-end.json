@@ -1,0 +1,46 @@
+{
+  "endedAt": "2026-10-29T12:14:29.282Z",
+  "invalid": false,
+  "processes": [
+    {
+      "name": "mds",
+      "cpuPercent": 48.52748095269254
+    },
+    {
+      "name": "mediaanalysisd",
+      "cpuPercent": 46.6119224940214
+    },
+    {
+      "name": "WindowServer",
+      "cpuPercent": 29.05263662298057
+    },
+    {
+      "name": "Cursor Helper (Renderer)",
+      "cpuPercent": 12.451129981279397
+    },
+    {
+      "name": "Cursor",
+      "cpuPercent": 9.577792293291852
+    },
+    {
+      "name": "launchd",
+      "cpuPercent": 9.5777922932686
+    },
+    {
+      "name": "Stats",
+      "cpuPercent": 6.704454605276405
+    },
+    {
+      "name": "Magnet",
+      "cpuPercent": 6.3851948621923755
+    },
+    {
+      "name": "loginwindow",
+      "cpuPercent": 6.385194862188746
+    },
+    {
+      "name": "mds_stores",
+      "cpuPercent": 6.065935119043013
+    }
+  ]
+}

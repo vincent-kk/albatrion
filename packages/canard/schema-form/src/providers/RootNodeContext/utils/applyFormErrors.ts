@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldNode, ValidationIssue } from '@/schema-form/core';
 
 /** Shared empty list for a non-array errors prop, read as empty (178C-01). */
@@ -13,8 +15,8 @@ export const applyFormErrors = (
 ): void => {
   if (!isArray(errors)) errors = NO_ERRORS;
   if (!isArray(previous)) previous = NO_ERRORS;
-  const resolved = new Map<string, FieldNode | null>();
-  const resolve = (dataPath: string): FieldNode | null => {
+  const resolved = new Map<string, Nullable<FieldNode>>();
+  const resolve = (dataPath: string): Nullable<FieldNode> => {
     let node = resolved.get(dataPath);
     if (node === undefined) {
       node = root.find(dataPath);

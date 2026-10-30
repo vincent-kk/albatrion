@@ -2,12 +2,30 @@
 
 ## Requirements
 
+- `inactiveValue` 키는 unknown과 함수의 합집합으로 접지 않고 리터럴 종류를 열거하여 인라인 resolver의 문맥 형을 유지합니다.
+
+- B12 보존값은 공통 `InactiveValueContext`·`InactiveValueResolver<V>`·`InactiveValue<V>`로 선언하며 engine/core/package 경계를 통해 공개합니다. 정착이 직전 커밋 문맥을 구성하고 write가 등록·쓰기 거부를 소유합니다.
+
+- 떼어진 노드의 모든 쓰기는 무효다. 재진입은 슬롯을 소비해 새 인스턴스를 만든다(B11).
+
+- 내부에서 조립한 스키마 경로의 퍼센트 이름은 확장 파서로 보존합니다. 표준 RFC fragment 디코딩은 외부 `$ref`와 검증기 경로의 입력 경계에만 적용합니다.
+
+- 공유 경로 해석은 jsonPointer의 resolvePointer에 위임하며, 스키마 소유 위치는 표준 포인터의 이름 세그먼트로 판정한다.
+
+- 슬롯 보유와 복제 재진입만 일반 원본 모델로 사용한다. `engineModes.slots`와 off 기준 경로·verify 그림자는 없으며 공개 package export·환경 변수·배달 계약은 바꾸지 않는다.
+- 설계 Ⅱ의 "나간 노드의 공개 인스턴스는 지금처럼 떼어진 채로 남지만, 호스트가 그 인스턴스를 비활성 슬롯으로 보유한다"를 구현한다. 슬롯은 상태의 위치이며 형상의 시작점이 아니다. NODE-043·044·060, SETTLE-044·GOAL-029, BLUEPRINT-007, ERROR-125와 표시→계산→전이→커밋→배달의 순서를 유지한다. core는 app을 가져오지 않고 슬롯 형은 record, 전이·복제·원본·읽기는 settle, 클래스 생성 결합은 surface가 소유한다.
+- 비용은 나감의 슬롯 삽입 O(1)과 기존 분리·등록 해제, 진입의 실제 복제 서브트리 크기, 첫 inactiveValues 읽기의 보유 원본 수와 문서 순서 정렬에 비례한다. 정상 슬롯 나감의 잠복 직렬화·메타데이터·색인 등록과 커밋의 비활성 목록 전수 재구성은 0이다. 보유 공간은 호스트당 실제 방문한 엔트리 M개 이하와 값 깊이 K의 원본·overlay이며, 고정 노드 생성자 필드나 방문하지 않은 재귀 실체화는 늘리지 않는다. host별 슬롯 수·실제 보유 바이트와 Node/Bun 힙을 따로 보고한다.
+- B2-P2는 기존 HostDerived 저장소를 불변 template와 live host의 약한 identity 키로 함께 사용한다. wheelPlan·preparedStaticHost는 settle이 구체 형과 무효화를 소유하는 라이브 준비물이고, controlLayerIndex·childOrderIndex는 청사진의 순수 파생 자료다. 노드 고정 필드와 공개 surface는 늘리지 않으며 모드 전환은 기존 저장소 초기화로 함께 버린다.
+- 준비된 정적 선언 ID의 공통 조회는 derive와 settle의 최저 공통 소유자인 engine organ에서 구조 형만 읽는다. 정적 준비물의 생성·무효화는 settle이 계속 소유하며, 공통 조회는 부모의 청사진·경로와 자식 identity를 확인한 뒤 기존 ID 배열만 반환한다. 자식 fractal 형을 import하거나 새 ID 배열·전역 색인을 만들지 않는다. 조회는 O(1), 추가 영구 보유량은 없다.
+
 - 청사진과 컴파일된 식의 생성 고정 사실은 비열거·읽기 전용 속성으로 freeze 전에 정의한다. 기존 열거 관측에는 추가하지 않으며 직접 사실 조회와 모드 변경 뒤의 보존은 유지한다(D3b-2).
 
 - 엔진 파생 자료는 공통 cache organ의 `getBlueprintDerived(blueprint)`·`getHostDerived(blueprintNode)` 두 WeakMap 레코드에 모은다. 공통 모듈은 슬롯 이름·저장·초기화만 소유하며 자식 타입이나 builder를 import하지 않는다. 소유자가 자기 슬롯 형을 좁혀 독립적으로 계산하고 최초 읽기 전에는 그 슬롯을 만들지 않는다. null·false·미등록의 기존 의미를 유지한다.
 - engineModes.setMode는 실제 설정 변경 때 두 저장소를 통째로 새로 만든다. 콜백 등록 목록은 두지 않는다. 생성 고정 사실·값 메모·트리 저장소는 유지하며 모드를 바꾼 시험·벤치 fixture는 이전 설정을 복원한다. 비용은 실제 읽은 blueprint/host당 레코드 한 개와 채운 슬롯, 모드 변경마다 두 WeakMap이며 노드 고정 칸은 늘리지 않는다(SURFACE-063·065, D3b-2).
 
 - engineModes는 트리를 만들기 전에 정한다. 살아 있는 트리가 있는 동안 모드를 바꾸면 파생 레코드가 비워져 그 트리의 문맥은 보장되지 않는다. 모드 전환은 시험·벤치 전용 기능이며 출하 모드는 고정이다(SURFACE-065, D3b-1 코디네이터 결정).
+- 내부 `gatePredicate` 모드는 출하 기본 `on`과 전수 입력·메모 없는 기준 경로 `off`를 제공한다. 공개 API나 환경 변수로 노출하지 않으며 기존 setMode와 같은 파생 자료 초기화·시험 복구 규칙을 따른다. off는 새로운 if·discriminator 표를 사용하지 않고 기존 전체 호스트 증인을 유지한다. 역사적 계수 단언은 명시적인 기준 경로에서 유지하고, 출하 기본과 그림자의 동등성·바퀴 수는 별도로 검사한다.
+- B1의 if 읽기 증거도 공통 청사진 파생 레코드의 지연 슬롯에 둔다. 조건 객체는 해당 청사진의 정적 Map 키이며 라이브 발생이나 입력 값을 저장하지 않는다. blueprint 없이 호출하는 시험용 순수 분석은 캐시를 만들지 않는다.
 
 
 - 청사진에서 쓰기까지의 실행 규칙과 원본, 계산, 투영 채널을 보존한다. 재배치를 하더라도 노드 형상, 값, 오류, 리비전, 경고, 통지는 달라지지 않는다.
@@ -80,6 +98,10 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## API Contracts
 
+- 정적 작성 경로의 세그먼트는 유한한 청사진 색인 준비가 소유합니다. 구체 runtime 주소의 순수 문법은 기존 HostDerived의 pointerSegments 슬롯에서 root.runtime을 키로 최대 256개를 FIFO 보유하며 hit에는 배열·wrapper를 만들지 않습니다. 정적 색인은 질의 miss로 확장하지 않습니다. 새로운 주소와 퇴출 주소는 첫 fill을 허용하고 실제 모드 변경은 기존 derived-record 세대와 함께 캐시를 초기화합니다. 같은 occurrence의 load/reset과 새 runtime/rebuild는 기존 소유 수명대로 구별합니다.
+
+- 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
+
 - `(path, kind)` 식별에서 kind는 union의 fold를 포함한다. 공유 토큰 보조는 union에 `union:<fold mask>`, 나머지에 기존 kind를 돌려준다. union 청사진은 정규화된 schemaType 목록을 항상 가지며, mask는 그 목록에서 number/integer를 합치고 null 장식을 제외해 호출마다 계산한다. fold 보조와 토큰 보조는 blueprint·settle·derive의 가장 낮은 공통 소유자인 engine의 `utils/nodeIdentity` organ에 두고 필요한 칸만 구조 형으로 받는다. 자식 모듈은 조상 organ의 구체 파일을 직접 가져오며 이 보조는 자식 모듈의 형을 가져오지 않는다. 청사진 저장 필드는 늘리지 않으며 비용은 호출마다 최대 7개 형 이름을 OR하는 상수 작업이고 토큰 캐시는 보관하지 않는다(BLUEPRINT-043, NODE-043, 389C-02, 390C-01).
 
 ### 진입점 이름
@@ -105,8 +127,25 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 - `types/controls.ts`의 `ControlKey`는 노드 `controls` 키의 합집합이고, `constants/controlKey.ts`의 `CONTROL_KEY`는 키 이름을 값으로 가진 상수 객체이다. 두 방향 모두 `ControlKey`와 같아지도록 형으로 묶여 있어서, `Reflect.get`이나 `hasOwnProperty`로 제어 키를 읽는 곳은 이 상수를 거친다. 여러 자식 모듈이 같은 값 집합을 쓰는 합집합 형은 정본을 하나만 둔다. 해당하는 형은 `types/strategy.ts`의 `NodeStrategy`(`'branch' | 'terminal'`), `types/controls.ts`의 `DeclarationLayer`(`'node' | 'fields' | 'fragment'`), `types/value.ts`의 `FieldNodeWriteKind`, record 런타임 형의 `SettlementFailureCause`·`SettlementBudget`·`SettlementEntryApi`·`MisfitSource`, blueprint의 `EffectiveSchemaMode`(`'static' | 'runtime'`)이다. 값 집합이 서로 다른 범위·모드 합집합(blueprint 선언의 `scope`, 커밋 규칙 키 정리의 `scope`, 경로 색인 저장소의 `mode`)은 각자의 자리에 둔다. `constants/schemaGroup.ts`의 `SCHEMA_GROUP`은 스키마의 폼 전용 그룹 키워드(`controls`, `options`, `presentation`)를 값으로 가진 상수 객체이다. `constants`는 engine의 자식 모듈들이 함께 쓰는 상수 compartment(organ)이다.
 - `__tests__/validation-guard-integration.test.ts`는 validation과 write 두 자식 계약을 함께 검증하는 engine 통합 시험이다.
 - `__tests__/blueprint.branchless-differential.test.ts`는 같은 스키마를 branchless 분석과 일반 분석으로 각각 실행해 관측 결과가 같은지 비교하는 engine 통합 시험이다. 일반 분석을 강제하려면 blueprint 내부의 capability 수집 단위(`blueprint/buildNodes/utils/declarations/collectSchemaCapabilities`)를 `vi.mock` 경로로 바꿔야 한다. 이 단위는 blueprint index로 나가지 않으며, 스키마 입력만으로는 같은 스키마의 일반 분석을 만들어 낼 수 없다. 부모 수준의 시험 도구가 자식 내부에 닿는 B8 사례로 선언하고, 정돈-3에서 시험 도구의 자리와 함께 다시 검토한다.
+- 다음 여덟 시험은 `helpers/jsonPointer`의 내부 모듈 하나를 `vi.mock`으로 감싸 호출 수를 센다. 호출 수는 jsonPointer index로 나가지 않는 내부 함수의 일이고, 감싸기는 import 간선을 만들지 않으므로 파일마다 하나의 내부 모듈만 선언한다. 패턴이 아니라 파일 목록이며, 여기에 없는 시험은 같은 방식으로 내부를 감쌀 수 없다.
+  - `utils/paths/__tests__/pointerSyntaxCache.test.ts`: 런타임 문법 캐시의 적중이 `utils/parsePointerSegments`를 다시 부르지 않음을 센다.
+  - `settle/__tests__/settle.pointer-path-work.test.ts`: mount 뒤 첫 실제 쓰기가 `utils/parsePointerSegments`를 부르지 않음을 센다.
+  - `settle/__tests__/settle.pointer-slot-work.test.ts`: 슬롯 경로 작업이 `utils/parsePointerSegments`를 부르지 않음을 센다.
+  - `settle/__tests__/settle.pointer-watch-work.test.ts`: watch 해석과 전달이 `utils/parsePointerSegments`를 부르지 않음을 센다.
+  - `settle/utils/dependencies/__tests__/getDependencyIndex.live-paths.test.ts`: 살아 있는 배열 경로의 확장이 `utils/parsePointerSegments`를 부르지 않음을 센다.
+  - `settle/utils/dependencies/__tests__/getDependencyIndex.pointer-work.test.ts`: 의존 색인의 조회와 캐시 재충전이 부르는 `utils/parsePointerSegments` 횟수를 센다.
+  - `blueprint/__tests__/blueprint.owned-inline-path-work.test.ts`: 자식 생산자의 이름 이스케이프 횟수를 `utils/formatSegment` 감싸기로 센다.
+  - `settle/utils/gates/__tests__/getGateBudgetCap.pointer-work.test.ts`: 같은 gate의 예산 분류가 `utils/parsePointerSegments`를 한 번만 부르고 준비된 예산을 재사용함을 센다.
 
 ## Acceptance Criteria
+
+### literal-star-controls — 예약 이름 속성의 일반 제어
+
+- 객체의 별표 이름은 fields 파생 대상과 injectTo의 퍼센트 주소로 하나의 속성만 선택하며, watch는 와일드카드 템플릿으로 확장하지 않는다.
+
+### engine-slot-modes — 기준 경로와 그림자
+
+- on/off는 값·비활성 목록·떼어진 읽기·사건·payload·revision·노드 수명 대응이 같다. verify는 매 커밋의 두 경로 결과를 대조하고 차이를 거부하며, test:verify 전체가 이를 실행한다. 복제 원본 손상 음성 시험이 차이를 검출한다. 공개 겉면·기존 기대값 변경과 배달 비교 차이는 0이다.
 
 ### branchless-observables — 분기 없는 청사진의 코어 관측 동등성
 
@@ -133,5 +172,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 - **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 넷(`array`, `derive-and-controls`, `dispatch-and-validation`, `node-and-settle`)이 있는 자리이며, 레거시를 지울 때 함께 지운다. 그때까지는 소유자 결정(276라운드, 대기열 49)에 따라 fractal import 규칙의 직접 import 금지에서 면제된다. 값 비교 비용만 따로 재려는 것이라서 진입점에 올리지 않고 그대로 읽는다.
 
 ## Last Updated
+
+2026-10-29. B9-1 정적 선언 조회의 공통 구조 계약.
 
 계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14); 365라운드 insert(2026-10-15, 371C-02); 373라운드 배열 아이템 조각 층(2026-10-15, CONTROLS-077, 35C-08).

@@ -3,7 +3,7 @@ import type { ComponentType } from 'react';
 import { isReactComponent } from '@winglet/react-utils/filter';
 import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullable, Optional } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 import { FormWarningCode } from '@/schema-form/errors';
@@ -42,7 +42,9 @@ const MIN_IDLE_BUDGET_MS = 4;
  */
 export class VirtualizationManager {
   /** Custom placeholder visual for deferred fields, null for the bare box */
-  public readonly Placeholder: ComponentType<VirtualizationPlaceholderProps> | null;
+  public readonly Placeholder: Nullable<
+    ComponentType<VirtualizationPlaceholderProps>
+  >;
 
   /** Resolved virtualization options this manager was created with */
   private readonly options: ResolvedVirtualizationOptions;
@@ -54,17 +56,17 @@ export class VirtualizationManager {
   private readonly revealedNodes = new WeakSet<FieldNode>();
 
   /** Shared IntersectionObserver, lazily created on first register */
-  private observer: IntersectionObserver | null = null;
+  private observer: Nullable<IntersectionObserver> = null;
 
   /** Cancel handle for the pending idle tick, null when the pump is stopped */
-  private cancelIdle: Fn | null = null;
+  private cancelIdle: Nullable<Fn> = null;
 
   /**
    * This manager when a branch with `childCount` children qualifies for
    * gating, else null.
    * @example `const gateManager = manager?.forBranch(children.length) ?? null;`
    */
-  public forBranch(childCount: number): VirtualizationManager | null {
+  public forBranch(childCount: number): Nullable<VirtualizationManager> {
     return childCount >= this.options.threshold ? this : null;
   }
 
@@ -76,7 +78,7 @@ export class VirtualizationManager {
   public forChild(
     renderedIndex: number,
     node: FieldNode,
-  ): VirtualizationManager | null {
+  ): Nullable<VirtualizationManager> {
     return renderedIndex >= this.options.eagerCount &&
       !this.revealedNodes.has(node)
       ? this
@@ -148,7 +150,7 @@ export class VirtualizationManager {
     }
   };
 
-  private ensureObserver(): IntersectionObserver | null {
+  private ensureObserver(): Nullable<IntersectionObserver> {
     if (this.observer !== null) return this.observer;
     if (typeof IntersectionObserver === 'undefined') return null;
     this.observer = new IntersectionObserver(this.handleIntersections, {
@@ -193,8 +195,8 @@ export class VirtualizationManager {
    *          through the context so no gate is ever created
    */
   public static create(
-    input: boolean | VirtualizationOptions | undefined,
-  ): VirtualizationManager | null {
+    input: Optional<boolean | VirtualizationOptions>,
+  ): Nullable<VirtualizationManager> {
     if (typeof IntersectionObserver === 'undefined') {
       if (input)
         warnDevelopmentIssue({

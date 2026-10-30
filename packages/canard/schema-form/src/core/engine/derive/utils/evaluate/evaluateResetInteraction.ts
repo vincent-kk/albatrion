@@ -1,3 +1,7 @@
+import type { Optional } from '@aileron/declare';
+
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type {
@@ -33,9 +37,9 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
   const resetNodes = new Set<Self>();
   const trace: DeriveTraceEntry[] = [];
   const evaluatedExpressions = new Map<string, ScopedExpressionResult>();
-  let failures:
-    | DeriveResetInteractionDecision<Self>['failures'][number][]
-    | undefined;
+  let failures: Optional<
+    DeriveResetInteractionDecision<Self>['failures'][number][]
+  >;
   while (pending.length) {
     const node = pending.pop();
     if (!node || node.detached) continue;
@@ -78,7 +82,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
           const load =
             state.loadScope &&
             (node.path === state.loadScope.path ||
-              node.path.startsWith(state.loadScope.path + '/'));
+              isDescendantPath(node.path, state.loadScope.path));
           if (
             !current ||
             !(

@@ -1,0 +1,71 @@
+{
+  "lint": {
+    "exit": 0,
+    "command": "yarn workspace @canard/schema-form lint"
+  },
+  "typecheck": {
+    "exit": 0,
+    "command": "yarn workspace @canard/schema-form typecheck"
+  },
+  "tests": {
+    "unit": {
+      "files": 561,
+      "passed": 3802,
+      "todo": 1,
+      "exit": 0,
+      "command": "yarn workspace @canard/schema-form test --run --project unit --maxWorkers=4 --minWorkers=1",
+      "NODE_OPTIONS": "--max-old-space-size=8192"
+    },
+    "render": {
+      "files": 129,
+      "passed": 761,
+      "todo": 0,
+      "exit": 0,
+      "command": "yarn workspace @canard/schema-form test --run --project render --maxWorkers=4 --minWorkers=1",
+      "NODE_OPTIONS": "--max-old-space-size=8192"
+    },
+    "react18": {
+      "files": 129,
+      "passed": 761,
+      "todo": 0,
+      "exit": 0,
+      "command": "yarn workspace @canard/schema-form test --run --project react18 --maxWorkers=4 --minWorkers=1",
+      "NODE_OPTIONS": "--max-old-space-size=8192"
+    },
+    "production": {
+      "files": 9,
+      "passed": 20,
+      "todo": 0,
+      "exit": 0,
+      "command": "yarn workspace @canard/schema-form test --run --project production --maxWorkers=4 --minWorkers=1",
+      "NODE_OPTIONS": "--max-old-space-size=8192"
+    },
+    "storybook": {
+      "files": 100,
+      "passed": 251,
+      "todo": 0,
+      "exit": 0,
+      "method": "Union of 98 passing files from full suite and both previously failing files rerun with --no-file-parallelism; all 100 files covered without changing expectations",
+      "initialFullExit": 1,
+      "fullCommand": "yarn workspace @canard/schema-form test --run --project storybook",
+      "serialCommand": "yarn workspace @canard/schema-form test --run --project storybook --no-file-parallelism stories/composite/cx11-ime-during-switch.stories.tsx stories/scenarios/browser-gates.stories.tsx"
+    }
+  },
+  "initialAllProjectsRun": {
+    "exit": 1,
+    "cause": "Node 4GB heap OOM during JSON parsing; IPC channel closed; two concurrent IME Storybook click timeouts"
+  },
+  "recovery": "Unit completed at 8GB with four workers; render/react18/production run separately; the two browser files passed with file parallelism disabled",
+  "artifactCheck": "B3_ARTIFACT_CHECK_OK",
+  "build": {
+    "endRecursive": 0,
+    "AJV8": 0,
+    "startRuntimeAndDeclarations": "built once",
+    "startFullCommand": 2,
+    "startCause": "Archive lacked workspace-local node_modules links; AJV6 types were resolved instead of AJV8",
+    "startTypecheckAfterRestoringLinks": 0
+  },
+  "productSourceDiff": "empty",
+  "generatedOutputsCommitted": false,
+  "formalMeasurementRetries": 0
+}

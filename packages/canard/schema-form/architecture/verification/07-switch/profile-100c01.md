@@ -568,3 +568,5 @@ node packages/canard/schema-form/architecture/verification/07-switch/tools/summa
 ```
 
 생성 번들·source map은 최종 산출물에서 제거합니다. 재집계 시 --build head control로 동일 해시의 map을 다시 만듭니다. 프로파일·측정·보고서·summary는 모두 파일당 5,000,000 바이트 이하입니다. 설치 없는 npx 실행에는 npm_config_offline=true와 npm_config_yes=false를 적용했습니다.
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `0fdb6660ba07`, `af1904cf9cc2`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

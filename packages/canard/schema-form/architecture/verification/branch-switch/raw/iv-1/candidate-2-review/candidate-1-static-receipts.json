@@ -1,0 +1,83 @@
+[
+  {
+    "phase": "head-build",
+    "args": [
+      "build"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793254192.141771
+  },
+  {
+    "phase": "head-unit",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "unit",
+      "--maxWorkers=4"
+    ],
+    "exit": 0,
+    "nodeOptions": "--max-old-space-size=8192",
+    "endedAt": 1793254295.934835
+  },
+  {
+    "phase": "head-render",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "render"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793254358.0515049
+  },
+  {
+    "phase": "head-storybook",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "storybook"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793254395.68275
+  },
+  {
+    "phase": "head-react18",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "react18"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793254461.985621
+  },
+  {
+    "phase": "head-production",
+    "args": [
+      "test",
+      "--run",
+      "--project",
+      "production"
+    ],
+    "exit": 0,
+    "nodeOptions": null,
+    "endedAt": 1793254467.148062
+  },
+  {
+    "phase": "head-verify",
+    "args": [
+      "test:verify",
+      "--run",
+      "--maxWorkers=4"
+    ],
+    "exit": 0,
+    "nodeOptions": "--max-old-space-size=8192",
+    "endedAt": 1793254635.535178
+  }
+]

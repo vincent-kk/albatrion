@@ -1,0 +1,210 @@
+{
+  "steps": [
+    {
+      "name": "build",
+      "exit": 0,
+      "start": "2026-10-27T16:21:41.334236+00:00",
+      "end": "2026-10-27T16:22:01.176317+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": []
+    },
+    {
+      "name": "typecheck",
+      "exit": 0,
+      "start": "2026-10-27T16:22:01.184709+00:00",
+      "end": "2026-10-27T16:22:11.854354+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": []
+    },
+    {
+      "name": "lint",
+      "exit": 0,
+      "start": "2026-10-27T16:22:11.863583+00:00",
+      "end": "2026-10-27T16:22:19.949165+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": []
+    },
+    {
+      "name": "unit",
+      "exit": 0,
+      "start": "2026-10-27T16:23:19.193909+00:00",
+      "end": "2026-10-27T16:28:10.598092+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  520 passed (520)",
+        "Tests  3675 passed | 1 todo (3676)"
+      ]
+    },
+    {
+      "name": "render",
+      "exit": 0,
+      "start": "2026-10-27T16:28:10.606746+00:00",
+      "end": "2026-10-27T16:29:10.140212+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  128 passed (128)",
+        "Tests  760 passed (760)"
+      ]
+    },
+    {
+      "name": "react18",
+      "exit": 0,
+      "start": "2026-10-27T16:29:10.148509+00:00",
+      "end": "2026-10-27T16:30:14.351162+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  128 passed (128)",
+        "Tests  760 passed (760)"
+      ]
+    },
+    {
+      "name": "production",
+      "exit": 0,
+      "start": "2026-10-27T16:30:14.359567+00:00",
+      "end": "2026-10-27T16:30:19.627361+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  9 passed (9)",
+        "Tests  20 passed (20)"
+      ]
+    },
+    {
+      "name": "verify",
+      "exit": 0,
+      "start": "2026-10-27T16:30:19.636370+00:00",
+      "end": "2026-10-27T16:38:37.689538+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  653 passed (653)",
+        "Tests  4479 passed | 1 todo (4480)"
+      ]
+    },
+    {
+      "name": "storybook-1",
+      "exit": 0,
+      "start": "2026-10-27T16:38:37.699479+00:00",
+      "end": "2026-10-27T16:38:46.426161+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  24 passed (24)"
+      ]
+    },
+    {
+      "name": "storybook-2",
+      "exit": 0,
+      "start": "2026-10-27T16:38:46.434723+00:00",
+      "end": "2026-10-27T16:38:55.596091+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  30 passed (30)"
+      ]
+    },
+    {
+      "name": "storybook-3",
+      "exit": 0,
+      "start": "2026-10-27T16:38:55.604592+00:00",
+      "end": "2026-10-27T16:39:04.133753+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  21 passed (21)"
+      ]
+    },
+    {
+      "name": "storybook-4",
+      "exit": 0,
+      "start": "2026-10-27T16:39:04.142170+00:00",
+      "end": "2026-10-27T16:39:12.637532+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  20 passed (20)"
+      ]
+    },
+    {
+      "name": "storybook-5",
+      "exit": 0,
+      "start": "2026-10-27T16:39:12.646020+00:00",
+      "end": "2026-10-27T16:39:20.785240+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  29 passed (29)"
+      ]
+    },
+    {
+      "name": "storybook-6",
+      "exit": 0,
+      "start": "2026-10-27T16:39:20.794033+00:00",
+      "end": "2026-10-27T16:39:29.360359+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  21 passed (21)"
+      ]
+    },
+    {
+      "name": "storybook-7",
+      "exit": 0,
+      "start": "2026-10-27T16:39:29.368861+00:00",
+      "end": "2026-10-27T16:39:37.712071+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  24 passed (24)"
+      ]
+    },
+    {
+      "name": "storybook-8",
+      "exit": 0,
+      "start": "2026-10-27T16:39:37.720827+00:00",
+      "end": "2026-10-27T16:39:45.544279+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  19 passed (19)"
+      ]
+    },
+    {
+      "name": "storybook-9",
+      "exit": 0,
+      "start": "2026-10-27T16:39:45.554525+00:00",
+      "end": "2026-10-27T16:39:54.524107+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  36 passed (36)"
+      ]
+    },
+    {
+      "name": "storybook-10",
+      "exit": 0,
+      "start": "2026-10-27T16:39:54.533300+00:00",
+      "end": "2026-10-27T16:40:05.056550+00:00",
+      "commit": "a28f8ce0da19741493cdeb434c76ef1a873e6d78",
+      "summary": [
+        "Test Files  10 passed (10)",
+        "Tests  27 passed (27)"
+      ]
+    }
+  ],
+  "delivery": {
+    "scenes": 72,
+    "phases": 323,
+    "differences": 0,
+    "comparesKeyOrder": true
+  },
+  "publicObservation": {
+    "scenes": 6,
+    "phases": 12,
+    "differences": 0
+  },
+  "publicDeclarations": {
+    "identical": true,
+    "A": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+    "B": "740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6",
+    "bytes": 3054
+  }
+}

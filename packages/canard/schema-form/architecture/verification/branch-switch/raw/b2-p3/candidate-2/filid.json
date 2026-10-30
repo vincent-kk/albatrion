@@ -1,0 +1,22 @@
+{
+  "verdict": "FAIL",
+  "analysisComplete": false,
+  "activeFindings": 245,
+  "severity": {
+    "warning": 221,
+    "error": 24
+  },
+  "snapshotHash": "07ba78e17e97e83117f8320a180ac961b95e85820ddedd6f54ee142705533bf9",
+  "changedFindingCount": 0,
+  "newTestRecords": {
+    "files": 5,
+    "exactCases": [
+      2,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "unsupportedFacts": 512
+}

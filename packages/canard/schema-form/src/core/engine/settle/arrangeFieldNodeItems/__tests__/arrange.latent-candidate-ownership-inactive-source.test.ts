@@ -14,6 +14,8 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
+import { hasRetainedSlotOwnSource } from '../../__tests__/fixtures/readRetainedSlotRaw';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 
 /** Surviving inactive source and destination with one declared number kind. */
 interface MoveCase {
@@ -84,13 +86,9 @@ it.each<MoveCase>([
     expect(getDispatchNode(list, String(from), ...names).raw).toBe('live');
     dispatchSetValue(getDispatchNode(root, 'show'), false);
     expect(list.structure?.[String(from)]).toBeUndefined();
-    const numberKey = JSON.stringify([sourcePath, 'number']);
-    const stringKey = JSON.stringify([sourcePath, 'string']);
-    expect(runtime.latentRaw.get(numberKey)).toBe(37);
-    expect(runtime.latentRaw.get(stringKey)).toBe('live');
-    const stringMetadata = runtime.latentRawMetadata?.get(stringKey);
-    if (!stringMetadata)
-      throw new Error('Expected the inactive string source classification');
+    expect(readRetainedSlotRaw(root, sourcePath, 'number')).toBe(37);
+    expect(readRetainedSlotRaw(root, sourcePath, 'string')).toBe('live');
+
     const events: FieldNodeDelivery[] = [];
     subscribeFieldNode(root, (event) => events.push(event));
     if (operation === 'insert') dispatchInsert(list, 0, {});
@@ -112,15 +110,10 @@ it.each<MoveCase>([
     await dispatchValidate(root);
     expect(validationInputs.at(-1)).toEqual(expected);
     expect([...runtime.misfitPaths]).toEqual([]);
-    const movedString = JSON.stringify([path, 'string']);
-    expect(runtime.latentRaw.get(movedString)).toBe('live');
-    expect(runtime.latentRawMetadata?.get(movedString)).toEqual({
-      ...stringMetadata,
-      path,
-      order: [stringMetadata.order[0], to, ...stringMetadata.order.slice(2)],
-    });
-    expect(runtime.latentRaw.has(numberKey)).toBe(false);
-    expect(runtime.latentRaw.has(stringKey)).toBe(false);
+    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
+
+    expect(hasRetainedSlotOwnSource(root, sourcePath, 'number')).toBe(false);
+    expect(hasRetainedSlotOwnSource(root, sourcePath, 'string')).toBe(false);
   },
 );
 

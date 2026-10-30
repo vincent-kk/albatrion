@@ -2,10 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
-import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import * as rawTree from '../../utils/latent/readRawTree';
+import * as rawTree from '../../utils/slots/readSourceTree';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 import { compareArrayTail } from './fixtures/compareArrayTail';
@@ -278,81 +277,6 @@ describe('array prefix parity', () => {
         false,
       );
     });
-
-    it('prunes out-of-range latent sources before a newly appended item enters', () => {
-      compareArrayTail(
-        {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              hidden: { type: 'string' },
-            },
-          },
-        },
-        [{}],
-        { kind: 'push', value: {} },
-        (root) => {
-          root.runtime.latentRaw.set(
-            JSON.stringify(['/1/hidden', 'string']),
-            'obsolete',
-          );
-          root.runtime.misfitPaths.add('/1/hidden');
-        },
-        undefined,
-        true,
-      );
-    });
-
-    it('removes rules with a tail source or target and invalidates intersecting memos', () => {
-      compareArrayTail(
-        { type: 'array', items: { type: 'string' } },
-        ['a', 'b'],
-        { kind: 'pop' },
-        (root) => {
-          root.runtime.committedRuleValues = new PathKeyedMap('rule', [
-            [
-              JSON.stringify([
-                '/0',
-                'string',
-                1,
-                '/rule',
-                'target',
-                '/1',
-                'string',
-                2,
-              ]),
-              'target-tail',
-            ],
-            [
-              JSON.stringify([
-                '/1',
-                'string',
-                1,
-                '/rule',
-                'target',
-                '/0',
-                'string',
-                2,
-              ]),
-              'source-tail',
-            ],
-          ]);
-          root.runtime.misfitsMemo = new PathKeyedMap('path', [
-            ['', { commit: 1, paths: ['/1'] }],
-          ]);
-          root.runtime.inactiveValuesMemo.set('', [
-            { path: '/1', value: 'secret' },
-          ]);
-          root.runtime.latentRaw.set(
-            JSON.stringify(['/1/hidden', 'string']),
-            'secret',
-          );
-        },
-        undefined,
-        true,
-      );
-    });
   });
 });
 
@@ -370,7 +294,7 @@ describe('array prefix retained raw work', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    const read = vi.spyOn(rawTree, 'readRawTree');
+    const read = vi.spyOn(rawTree, 'readSourceTree');
     expect(
       arrangeFieldNodeItems(root, { kind: 'push', value: { value: 'c' } }),
     ).toBe(3);

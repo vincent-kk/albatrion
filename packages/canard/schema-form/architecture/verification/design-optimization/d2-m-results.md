@@ -234,3 +234,5 @@ unit505파일3631통과/1todo,render128파일760통과,react18128파일760통과
 원자료와 재현명령: `/private/tmp/claude-501/perf-runs/20261027T0122-53d49ca-d2-m-profile/measurements.json`, `artifact-validation.json`, `b2/results.json`, `b2/summary.json`, `window-checks.json`, `profile-and-design.md`, `differential.json`, `public-differential.json`, `dts-differential.json`. 최초 실패 로그와 선형 snapshot의 red/green도 같은 루트에 보존했습니다.
 
 </details>
+
+464라운드 가지 정리 보충: 이 문서가 인용한 미병합 후보 `4807a8d23c45`, `53d9624f2d56`, `d1079e5c3316`의 필요한 내용은 [본선 보존물](../../_archive/branches/README.md)에 있습니다. 원래 SHA는 자료 식별자이며 가지 유지에 의존하지 않습니다.

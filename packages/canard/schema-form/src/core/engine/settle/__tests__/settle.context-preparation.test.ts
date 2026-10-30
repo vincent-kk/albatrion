@@ -85,7 +85,6 @@ it('allocates no reused scratch containers and clears only populated work lists'
       scratch.wrongKindHosts,
       scratch.arrayCounts,
       scratch.filledNodes,
-      scratch.latentAutomaticLog,
       scratch.dependencyOwnerPaths,
       scratch.shapeDirtyPaths,
       scratch.explicitRaw,

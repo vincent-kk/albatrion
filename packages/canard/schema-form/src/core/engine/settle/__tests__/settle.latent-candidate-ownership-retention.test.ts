@@ -4,6 +4,7 @@ import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree'
 import type { BlueprintSchema } from '../../blueprint';
 import { dispatchMount, dispatchSetValue } from '../../write';
 import { getDispatchNode } from './fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from './fixtures/readRetainedSlotRaw';
 
 it.each([
   { shared: true, label: 'W2 shared ancestor' },
@@ -19,7 +20,7 @@ it.each([
           },
         }
       : { type: 'string' };
-    const { root, runtime } = createDispatchTree({
+    const { root } = createDispatchTree({
       type: 'object',
       properties: {
         a: { type: 'boolean' },
@@ -54,24 +55,13 @@ it.each([
       v: [{ x: 5, extra: 'kept', z: 9 }],
     });
     dispatchSetValue(getDispatchNode(root, 'show'), false);
-    const ancestor = JSON.stringify(['/v/0', 'object']);
-    const owned = JSON.stringify(['/v/0/x', 'number']);
-    const value = runtime.latentRaw.get(ancestor);
-    const metadata = runtime.latentRawMetadata?.get(ancestor);
-    const ownedMetadata = runtime.latentRawMetadata?.get(owned);
-    expect(runtime.latentRaw.get(owned)).toBe(5);
-    expect(metadata?.exitLayers).toContainEqual(
-      expect.objectContaining({ clear: false }),
-    );
+    const value = readRetainedSlotRaw(root, '/v/0', 'object');
+    expect(readRetainedSlotRaw(root, '/v/0/x', 'number')).toBe(5);
     dispatchSetValue(getDispatchNode(root, 'b'), false);
-    expect(runtime.latentRaw.get(owned)).toBe(5);
-    expect(runtime.latentRawMetadata?.get(owned)).toEqual(ownedMetadata);
-    expect(
-      runtime.latentRaw.get(JSON.stringify(['/v/0/extra', 'string'])),
-    ).toBe('kept');
+    expect(readRetainedSlotRaw(root, '/v/0/x', 'number')).toBe(5);
+    expect(readRetainedSlotRaw(root, '/v/0/extra', 'string')).toBe('kept');
     if (shared) {
-      expect(runtime.latentRaw.get(ancestor)).toBe(value);
-      expect(runtime.latentRawMetadata?.get(ancestor)).toBe(metadata);
+      expect(readRetainedSlotRaw(root, '/v/0', 'object')).toEqual(value);
     }
   },
 );

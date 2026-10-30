@@ -20,6 +20,7 @@ afterEach(() => {
 it.each(['record', 'skip', 'shadow'] as const)(
   '%s: six registration scenes keep evaluation and lookup work linear',
   (mode) => {
+    // Shipping evaluation and lookup bounds exclude independent slot replay.
     let latest: SettlementContext<DispatchTestNode> | undefined;
     let computes = 0;
     const create = settlement.createSettlementContext;

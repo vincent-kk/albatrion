@@ -1,9 +1,10 @@
-import { unescapeSegment } from '@winglet/json/pointer';
+import { readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
+import { evaluateGate } from './evaluateGate';
 import { getGateRegistry } from './getGateRegistry';
 import { readProjectedValue } from './readProjectedValue';
 import { recordGateFrameInput } from './recordGateFrameInput';
@@ -23,11 +24,29 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   value: boolean,
 ): void => {
+  let isPredicateGate = false;
+  for (const group of context.gateSelectionRounds!.get(node)!.table
+    .predicateGroups) {
+    if (group.gate === gate) {
+      isPredicateGate = true;
+      break;
+    }
+  }
+  if (isPredicateGate) {
+    verifyGateSelection(
+      evaluateGate(gate, context, node, undefined, true) === value,
+      'S1 predicate verdict: ' + gate.schemaPath,
+    );
+    return;
+  }
+
   if (engineModes.gateSelection === 'verify') {
     const round = context.gateSelectionRounds!.get(node)!;
     const registry = getGateRegistry(node.runtime);
     const path = registry.locate(node, gate).watchPaths[0];
-    const name = unescapeSegment(path.slice(path.lastIndexOf('/') + 1));
+    const name = readPointerSegment(path, -1);
+    if (typeof name !== 'string')
+      throw new TypeError('Expected a named node path');
     const cached = round.values.get(name)!;
     const pending = [...(context.pendingOutputs ?? [])];
     const changed = [...context.changedNodes];
@@ -36,16 +55,30 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
       Object.is(cached.value, read),
       'S2 positional value: ' + path,
     );
-    verifyGateSelection(
-      pending.length === (context.pendingOutputs?.size ?? 0) &&
-        pending.every((entry) => context.pendingOutputs!.has(entry)),
-      'S2 pendingOutputs changed: ' + path,
-    );
-    verifyGateSelection(
-      changed.length === context.changedNodes.size &&
-        changed.every((entry) => context.changedNodes.has(entry)),
-      'S2 read published output: ' + path,
-    );
+    let matches = pending.length === (context.pendingOutputs?.size ?? 0);
+    if (matches) {
+      for (let index = 0, count = pending.length; index < count; index++) {
+        const entry = pending[index];
+
+        if (!context.pendingOutputs!.has(entry)) {
+          matches = false;
+          break;
+        }
+      }
+    }
+    verifyGateSelection(matches, 'S2 pendingOutputs changed: ' + path);
+    let matches2 = changed.length === context.changedNodes.size;
+    if (matches2) {
+      for (let index = 0, count = changed.length; index < count; index++) {
+        const entry = changed[index];
+
+        if (!context.changedNodes.has(entry)) {
+          matches2 = false;
+          break;
+        }
+      }
+    }
+    verifyGateSelection(matches2, 'S2 read published output: ' + path);
     verifyGateSelection(
       !context.dirtyPaths.has(path),
       'S2 watched path dirty: ' + path,

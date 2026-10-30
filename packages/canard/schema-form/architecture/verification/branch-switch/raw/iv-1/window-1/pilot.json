@@ -1,0 +1,13 @@
+{
+  "formal": false,
+  "processes": 22,
+  "ratios": {
+    "current": 1.1930299719729227,
+    "legacy": 1.1083750570851167
+  },
+  "expectedRange": [
+    1.2,
+    1.4
+  ],
+  "currentInExpectedRange": false
+}

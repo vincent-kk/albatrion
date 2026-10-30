@@ -1,0 +1,7 @@
+{
+  "messageId": "msg_aa7759f64042",
+  "baselineCommit": "1da3485d3c0c778a23cd101cd16a279c574ce644",
+  "candidateCommit": "dc2e2c33cb24e5a3aa0ff556471abea0390556e3",
+  "agentPid": 1265,
+  "singleFormalWindow": true
+}

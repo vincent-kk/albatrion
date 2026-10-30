@@ -1,3 +1,5 @@
+import type { Optional } from '@aileron/declare';
+
 import type { BlueprintNode } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 
@@ -10,7 +12,7 @@ import type { FieldNodeRecord } from '../../../../record';
 export const getArrayItemTemplate = (
   node: Pick<FieldNodeRecord<unknown>, 'blueprintNode' | 'structure'>,
   index: number,
-): BlueprintNode | undefined => {
+): Optional<BlueprintNode> => {
   const child = node.structure?.[String(index)];
   const candidates = node.blueprintNode.prefixItems?.[index]
     ? node.blueprintNode.prefixItemCandidates?.[index]

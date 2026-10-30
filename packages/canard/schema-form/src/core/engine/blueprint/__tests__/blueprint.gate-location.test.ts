@@ -18,9 +18,9 @@ const nestedGate = (active: string) =>
 
 // filid:contract gate-evaluation-location
 describe('BlueprintGate evaluation reads', () => {
-  it('SETTLE-045 root: # alone and (/) relocate to root', () => {
+  it('SETTLE-045 distinguishes root # from the empty-name child (/)', () => {
     expect(nestedGate('#').evaluationReads).toEqual(['']);
-    expect(nestedGate('(/)').evaluationReads).toEqual(['']);
+    expect(nestedGate('(/)').evaluationReads).toEqual(['/']);
   });
 
   it('SETTLE-045 p location: /p and #/p relocate to p', () => {

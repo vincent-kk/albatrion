@@ -1,11 +1,15 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../../errors';
-import { indexFieldNodeWarning } from '../../../../record';
 import type { FieldNodeRecord, MisfitRecord } from '../../../../record';
+import { indexFieldNodeWarning } from '../../../../record';
 import type { WriteOption } from '../../../../types/value';
 import { PathKeyedMap } from '../../../../utils/pathIndex/PathKeyedMap';
-import { EMPTY_VALUES } from '../../../utils/detached/emptyDetachedReads';
 
 /** Empty committed projections are shared without a per-load empty output list. */
 const EMPTY_WARNINGS: readonly MisfitRecord[] = Object.freeze([]);
@@ -30,7 +34,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   else delete runtime.settlementTrace;
   runtime.refreshTargets ??= new Set();
   runtime.refreshTargets.clear();
-  const records: MisfitRecord[] | undefined = warnings ? [] : undefined;
+  const records: Optional<MisfitRecord[]> = warnings ? [] : undefined;
   if (warnings) {
     warnings.sort((left, right) => left.order - right.order);
     for (let index = 0; index < warnings.length; index++) {
@@ -70,10 +74,11 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   runtime.misfitRecords = records ? Object.freeze(records) : EMPTY_WARNINGS;
   const memo = (runtime.misfitsMemo ??= new PathKeyedMap('path'));
   memo.clear();
-  if (!runtime.misfitPaths.size) memo.set('', { commit, paths: EMPTY_PATHS });
+  if (!runtime.misfitPaths.size)
+    memo.set($.Root, { commit, paths: EMPTY_PATHS });
   else {
     const paths = [...runtime.misfitPaths].sort();
-    memo.set('', { commit, paths: Object.freeze(paths) });
+    memo.set($.Root, { commit, paths: Object.freeze(paths) });
     const byAncestor = new Map<string, string[]>();
     for (let index = 0; index < paths.length; index++) {
       const path = paths[index];
@@ -85,7 +90,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
           byAncestor.set(ancestor, children);
         }
         children.push(path);
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+        ancestor = resolvePointer(ancestor, $.Parent);
       }
     }
     for (const [ancestor, children] of byAncestor)
@@ -96,9 +101,6 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
     size: memo.size,
     mutations: runtime.misfitPaths.mutations,
   };
-  runtime.inactiveValueEntries ??= new PathKeyedMap('pair');
-  runtime.inactiveValuesMemo.set('', EMPTY_VALUES);
-  runtime.latentRawDirty = false;
   runtime.deliveredDiagnostics = runtime.diagnostics;
   runtime.deliveredContext = runtime.context;
   runtime.deliveryAffectedPaths = undefined;

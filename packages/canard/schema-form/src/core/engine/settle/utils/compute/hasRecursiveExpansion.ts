@@ -1,8 +1,9 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import type { BlueprintNode, EffectiveSchema } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import type { SettlementContext } from '../../types/settlement';
-import { hasLatentUnder } from '../latentStore/hasLatentUnder';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
 
 /** Only the cycle verdict outlives the one-time graph traversal. */
@@ -67,15 +68,6 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
     (node.raw !== undefined || node.undeclaredValues !== undefined)
   )
     return true;
-  if (hasLatentUnder(context, node.path)) {
-    if (context.latentAutomaticLog.size === 0) return true;
-    for (const [key, value] of context.root.runtime.latentRaw) {
-      const previous = context.latentAutomaticLog.get(key);
-      if ((previous && !previous.present) || value === undefined) continue;
-      const path: string = JSON.parse(key)[0];
-      if (path.startsWith(node.path + '/')) return true;
-    }
-  }
   const children = node.children;
   for (let index = 0; children && index < children.length; index++)
     if (hasOriginalInput(children[index], context)) return true;
@@ -112,9 +104,9 @@ export const hasRecursiveExpansion = <Self extends FieldNodeRecord<Self>>(
     ).recursiveExpansion = cyclic;
   }
   if (!cyclic) return false;
-  let relativeSpan: number | undefined;
+  let relativeSpan: Optional<number>;
   const depth = parent.depth + 1;
-  let ancestor: Self | null = parent;
+  let ancestor: Nullable<Self> = parent;
   while (ancestor) {
     if (
       ancestor.blueprintNode === template &&

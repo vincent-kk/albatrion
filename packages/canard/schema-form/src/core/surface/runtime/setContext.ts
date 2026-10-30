@@ -1,3 +1,5 @@
+import type { Dictionary } from '@aileron/declare';
+
 import { dispatchContextChange } from '../../engine';
 import type { FieldNode } from '../type';
 import { requireRuntimeFieldNode } from './requireRuntimeFieldNode';
@@ -10,5 +12,5 @@ import { requireRuntimeFieldNode } from './requireRuntimeFieldNode';
  */
 export const setContext = (
   root: FieldNode,
-  context: Readonly<Record<string, unknown>>,
+  context: Readonly<Dictionary<unknown>>,
 ): void => dispatchContextChange(requireRuntimeFieldNode(root, true), context);

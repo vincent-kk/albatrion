@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import type {
   EffectiveSchema,
   EffectiveSchemaOptions,
@@ -26,7 +28,7 @@ export const mergeSchemaContributions = (
 ): EffectiveSchema => {
   const single = mergeSingleStaticContribution(node, declarations, options);
   if (single !== undefined) return single;
-  const staticTypes: readonly SchemaTypeName[] | undefined =
+  const staticTypes: Optional<readonly SchemaTypeName[]> =
     node.schemaType === undefined
       ? undefined
       : isArray(node.schemaType)
@@ -38,7 +40,7 @@ export const mergeSchemaContributions = (
     conflictingConst: false,
     conflictingType: false,
     allowedTypes:
-      staticTypes && node.nullable && !staticTypes.includes('null')
+      staticTypes && node.nullable && staticTypes.indexOf('null') === -1
         ? [...staticTypes, 'null']
         : staticTypes,
   };

@@ -1,4 +1,4 @@
-import { unescapeSegment } from '@winglet/json/pointer';
+import { readPointerSegment } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../../../record';
 import { getBlueprintNodeIdentity } from '../../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
@@ -19,7 +19,8 @@ export const getTableVisitSteps = <Self extends FieldNodeRecord<Self>>(
 ): number[] => {
   const { node, context, prior, next } = frame;
   const required: number[] = [];
-  for (const name of Object.keys(prior)) {
+  const prepared = frame.preparedStatic;
+  for (const name of frame.priorDynamicNames ?? Object.keys(prior)) {
     const index = table.stepIndexByName.get(name);
     if (
       index !== undefined &&
@@ -27,12 +28,15 @@ export const getTableVisitSteps = <Self extends FieldNodeRecord<Self>>(
     )
       required.push(index);
   }
-  for (const name of Object.keys(next)) {
+  for (const name of prepared ? prepared.dynamicNames : Object.keys(next)) {
+    if (!next[name]) continue;
     const index = table.stepIndexByName.get(name);
     if (index !== undefined) required.push(index);
   }
   for (const path of context.pendingExitPaths?.get(node.path)?.keys() ?? []) {
-    const name = unescapeSegment(path.slice(path.lastIndexOf('/') + 1));
+    const name = readPointerSegment(path, -1);
+    if (typeof name !== 'string')
+      throw new TypeError('Expected a named node path');
     const index = table.stepIndexByName.get(name);
     if (
       index !== undefined &&
@@ -52,5 +56,5 @@ export const getTableVisitSteps = <Self extends FieldNodeRecord<Self>>(
       if (index !== undefined) required.push(index);
     }
   required.sort((a, b) => a - b);
-  return mergeGateSteps(table.alwaysSteps, required);
+  return mergeGateSteps(prepared?.alwaysSteps ?? table.alwaysSteps, required);
 };

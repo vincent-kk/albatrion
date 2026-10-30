@@ -9,6 +9,7 @@ import {
   dispatchSetValue,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 
 it.each(['insert', 'remove'] as const)(
   'W1 %s preserves candidates beneath an array with one immediate item template',
@@ -42,48 +43,30 @@ it.each(['insert', 'remove'] as const)(
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     expect(getDispatchNode(old, '0', 'v').raw).toBe(37);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
-    const numberKey = JSON.stringify([sourcePath, 'number']);
-    const numberMetadata = runtime.latentRawMetadata?.get(numberKey);
-    expect(runtime.latentRaw.get(numberKey)).toBe(37);
-    if (!numberMetadata)
-      throw new Error('Expected the retained number classification');
+
+    expect(readRetainedSlotRaw(root, sourcePath, 'number')).toBe(37);
+
     runtime.disableAutomaticWrites = true;
     if (operation === 'insert') dispatchInsert(list, 0, []);
     else dispatchRemove(list, 0);
     expect(old.detached).toBe(true);
     expect(getDispatchNode(list, String(destination), '0', 'v').raw).toBe(37);
-    const restoredBlueprint = getDispatchNode(
-      list,
-      String(destination),
-      '0',
-      'v',
-    ).blueprintNode;
+
     expect(list.local).toEqual(
       operation === 'insert' ? [[], [{ v: 37 }]] : [[{ v: 37 }]],
     );
     expect(root.emit).toEqual(root.local);
-    const stringKey = JSON.stringify([path, 'string']);
-    expect(runtime.latentRaw.get(stringKey)).toBe('live');
-    expect(runtime.latentRawMetadata?.get(stringKey)).toMatchObject({ path });
+    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
+
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     expect(getDispatchNode(list, String(destination), '0', 'v').raw).toBe(
       'live',
     );
-    const movedNumber = JSON.stringify([path, 'number']);
-    expect(runtime.latentRaw.get(movedNumber)).toBe(37);
-    expect(runtime.latentRawMetadata?.get(movedNumber)).toEqual({
-      ...numberMetadata,
-      blueprintNode: restoredBlueprint,
-      path,
-      order: [
-        numberMetadata.order[0],
-        destination,
-        ...numberMetadata.order.slice(2),
-      ],
-    });
+    expect(readRetainedSlotRaw(root, path, 'number')).toBe(37);
+
     dispatchSetValue(getDispatchNode(root, 'kind'), 'string');
     expect(getDispatchNode(list, String(destination), '0', 'v').raw).toBe(37);
-    expect(runtime.latentRaw.get(stringKey)).toBe('live');
+    expect(readRetainedSlotRaw(root, path, 'string')).toBe('live');
     expect(runtime.loadSnapshot).toEqual(
       operation === 'insert'
         ? { kind: 'string', list: [[], [{ v: 'live' }]] }

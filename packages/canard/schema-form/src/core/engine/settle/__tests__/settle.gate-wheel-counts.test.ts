@@ -106,6 +106,10 @@ describe('gate-form-one-key confirmation wheel counts', () => {
   it.each(['S4', 'S5 nested', 'S6 unrelated', 'S6 validator'])(
     '%s takes only the permitted host-wheel skip',
     (prefix) => {
+      // 전수 입력·메모 없는 기준 경로의 바퀴 수를 고정한다.
+      const previousPredicate = engineModes.gatePredicate;
+      if (prefix === 'S6 validator')
+        engineModes.setMode('gatePredicate', 'off');
       const fixture = gateWheelCases.find((item) =>
         item.name.startsWith(prefix),
       )!;
@@ -137,6 +141,7 @@ describe('gate-form-one-key confirmation wheel counts', () => {
           );
         } else expect(measurements[1].skipped).toBeGreaterThan(0);
       } finally {
+        engineModes.setMode('gatePredicate', previousPredicate);
         selecting.mockRestore();
         engineModes.setMode('gateWheel', previousMode);
       }

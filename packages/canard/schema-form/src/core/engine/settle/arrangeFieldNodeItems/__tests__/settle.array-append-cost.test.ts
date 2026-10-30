@@ -14,6 +14,7 @@ import * as tailProof from '../utils/arraySlots/canApplyArrayTail';
 import * as admission from '../utils/arraySlots/prepareArrayAppend';
 
 afterEach(() => vi.restoreAllMocks());
+// These internal operation counts describe the shipping tree, excluding replay.
 
 /** Arrays this long or longer are the prefix-sized ones for both measured counts. */
 const PREFIX_SIZED = 1000;

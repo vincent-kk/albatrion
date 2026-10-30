@@ -1,0 +1,12 @@
+{
+  "verdict": "PASS WITH CONDITIONS",
+  "reviewedHead": "33bc6d64f",
+  "P2-1": "B11 imports moved to shared window device; missing-module failure before fix, authorization assertion after fix.",
+  "P2-2": "All three passes have paired timerCost and non-everythingElse stage/scoped selfNetUs; negative corrected values retained.",
+  "P2-3": "Six rowStageGap identities and residuals; entry and delivery are outside-named-stage diagnostics, not additive row-minus-wrapped components.",
+  "P3-1": "Cross-harness difference documented; slopes use this window only.",
+  "P3-2": "Static evidence now written before expected-H1 assertions.",
+  "P3-3": "Supplemental reconstruction excludes comparative child boundaries; per-sample scoped conservation checked.",
+  "P3-4": "Portable export masks both var/folders forms; artifact check scans compressed evidence.",
+  "windowRerun": false
+}

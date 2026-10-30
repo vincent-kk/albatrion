@@ -1,3 +1,8 @@
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { getLivePresenceNode } from './getLivePresenceNode';
@@ -17,7 +22,7 @@ export const evaluatedPresenceAfter = <Self extends FieldNodeRecord<Self>>(
   if (!owner) return false;
   const host = getLivePresenceNode(
     context.root,
-    owner.slice(0, owner.lastIndexOf('/')),
+    resolvePointer(owner, $.Parent),
   );
   return (
     host !== undefined && (context.presenceRoundStarts?.get(host) ?? 0) > stamp

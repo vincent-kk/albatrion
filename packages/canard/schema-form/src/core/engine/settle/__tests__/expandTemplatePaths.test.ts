@@ -9,7 +9,7 @@ it('keeps an object child named star as a literal owner path', () => {
     { '*': 'R' },
   );
 
-  expect(expandTemplatePaths(root, '/*')).toEqual(['/*']);
+  expect(expandTemplatePaths(root, '/%2A')).toEqual(['/%2A']);
 });
 
 it('keeps a gated-out final star child as a literal owner path', () => {
@@ -22,7 +22,7 @@ it('keeps a gated-out final star child as a literal owner path', () => {
   );
 
   expect(root.structure?.['*']).toBeUndefined();
-  expect(expandTemplatePaths(root, '/*')).toEqual(['/*']);
+  expect(expandTemplatePaths(root, '/%2A')).toEqual(['/%2A']);
 });
 
 it('expands repeating array items to their current indices in order', () => {

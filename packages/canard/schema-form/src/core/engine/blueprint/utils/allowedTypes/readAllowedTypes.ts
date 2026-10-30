@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { Optional } from '@aileron/declare';
+
 import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintOptions } from '../../types/blueprint';
 import type { BlueprintSchema, SchemaTypeName } from '../../types/schema';
@@ -17,7 +19,7 @@ export const readAllowedTypes = (
   schema: BlueprintSchema,
   schemaPath: string,
   options?: BlueprintOptions,
-): readonly SchemaTypeName[] | undefined => {
+): Optional<readonly SchemaTypeName[]> => {
   if (typeof schema === 'boolean' || schema.type === undefined)
     return undefined;
   const values = isArray(schema.type) ? schema.type : [schema.type];
@@ -49,17 +51,28 @@ const TYPE_NAMES: readonly unknown[] = [
 
 /**
  * Narrow indexed type entries through the authored list's existing validation.
- * @param values - Raw list; sparse slots retain some's skip behavior
+ * @param values - Raw list; the indexed check skips sparse slots
  * @returns Whether indexed validation accepts the list before its iterator is copied
  */
 function isAllowedTypeList(
   values: readonly unknown[],
 ): values is readonly SchemaTypeName[] {
-  return (
-    !!values.length &&
-    !values.some(
-      (value, index) =>
-        !TYPE_NAMES.includes(value) || values.indexOf(value) !== index,
-    )
-  );
+  let matches = !!values.length;
+  if (matches) {
+    let hasInvalidTypeName = false;
+    for (let index = 0, count = values.length; index < count; index++) {
+      if (!(index in values)) {
+        continue;
+      }
+
+      const value = values[index];
+
+      if (!TYPE_NAMES.includes(value) || values.indexOf(value) !== index) {
+        hasInvalidTypeName = true;
+        break;
+      }
+    }
+    matches = !hasInvalidTypeName;
+  }
+  return matches;
 }

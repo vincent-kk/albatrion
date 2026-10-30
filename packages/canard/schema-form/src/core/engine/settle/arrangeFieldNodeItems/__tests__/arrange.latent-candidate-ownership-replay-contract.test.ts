@@ -14,6 +14,7 @@ import {
   subscribeFieldNode,
 } from '../../../write';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 import { createMoveReplayScene } from './fixtures/createMoveReplayScene';
 import type { MoveReplayCase } from './fixtures/createMoveReplayScene';
 
@@ -88,12 +89,8 @@ it.each([
   expect(validationInputs.at(-1)).toEqual(fixture.expected);
   if (scene.mode === 'inactive-number') {
     const path = `/${fixture.destinationIndex}/v`;
-    const key = JSON.stringify([path, 'number']);
-    expect(root.runtime.latentRaw.get(key)).toBe(123);
-    expect(root.runtime.latentRawMetadata?.get(key)).toMatchObject({
-      path,
-      blueprintNode: { kind: 'number' },
-    });
+    expect(readRetainedSlotRaw(root, path, 'number')).toBe(123);
+
     dispatchSetValue(getDispatchNode(moved, 'enabled'), true);
     const expectedMoved = { enabled: true, v: 123, extra: 9 };
     const expected =

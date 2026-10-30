@@ -178,7 +178,7 @@ describe('append admission declines and the general path settles', () => {
     );
   });
 
-  it('a detached array and a tree holding its latent write', () => {
+  it('a detached array write is inert and the next live operation is admitted', () => {
     let popped: DispatchTestNode | undefined;
     compareArrayAppend(
       {
@@ -197,11 +197,10 @@ describe('append admission declines and the general path settles', () => {
         { apply: () => dispatchPush(popped!, 5), append: false },
         {
           apply: (root) => {
-            expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
             expect(root.runtime.misfitPaths.size).toBe(0);
             return dispatchPush(root, [6]);
           },
-          append: false,
+          append: true,
         },
       ],
     );

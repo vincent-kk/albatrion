@@ -10,6 +10,7 @@ import {
 } from '../../../write';
 import { createCandidateSourceRecord } from '../../__tests__/fixtures/createCandidateSourceRecord';
 import { getDispatchNode } from '../../__tests__/fixtures/getDispatchNode';
+import { readRetainedSlotRaw } from '../../__tests__/fixtures/readRetainedSlotRaw';
 
 it.each(['destination', 'nested', 'direct-control'] as const)(
   'preserves candidate sources when the %s array exits during its move settlement',
@@ -68,15 +69,9 @@ it.each(['destination', 'nested', 'direct-control'] as const)(
           ? '/values/0/v'
           : '/0/v';
     const pathAtExit = '/list/1' + suffix;
-    expect(runtime.latentRaw.get(JSON.stringify([pathAtExit, 'number']))).toBe(
-      37,
-    );
-    expect(runtime.latentRaw.get(JSON.stringify([pathAtExit, 'string']))).toBe(
-      'live',
-    );
-    expect(
-      runtime.latentRawMetadata?.get(JSON.stringify([pathAtExit, 'number'])),
-    ).toMatchObject({ path: pathAtExit });
+    expect(readRetainedSlotRaw(root, pathAtExit, 'number')).toBe(37);
+    expect(readRetainedSlotRaw(root, pathAtExit, 'string')).toBe('live');
+
     dispatchRemove(list, 0);
     dispatchSetValue(getDispatchNode(root, 'kind'), 'number');
     const expected =

@@ -457,6 +457,22 @@ formRef.current?.findNode('/profile')?.visitSubtree((node) => {
 
 ---
 
+### Detached node references
+
+A node that leaves the active tree keeps its last committed reads. Its subscriptions do not fire. Calling `setValue` or an array operation (`push`, `pop`, `insert`, `remove`, `update`, `clear`) through that reference has no effect on its frozen value, retained values, overlays, or a later active instance. Development mode reports `FormWarningCode.DetachedNodeWrite`; production bundles stay silent. `push` and `insert` return the frozen array length; the other array operations return `undefined`.
+
+Write inactive values by including their paths in a live root or host's `setValue` JSON. These writes update retained overlays and `inactiveValues` without creating inactive nodes. Re-entry creates a fresh node and consumes that entry's retained slot and overlay.
+
+Migration: obtain node references again with `find` after re-entry; write inactive values through a live host's `setValue` JSON. `find` keeps returning `null` for every path without an active node.
+
+### Resolving a Node's Exit Value
+
+`node.onInactive(listener): () => void` registers a synchronous resolver for that node instance and returns an unsubscribe function. It runs once immediately before a retained gate exit, with the preceding commit's value and `InactiveValueContext`. It does not run for form unmount/disposal, array item deletion, or an old instance consumed during re-entry. Register again on a new instance after re-entry.
+
+Listeners run in registration order; the last non-`undefined` result wins. A defined listener result skips `controls.inactiveValue`; when all listeners return `undefined`, the declaration applies. A thrown listener cancels that node's entire override and records a settlement failure while preserving its original retained source. Exceptions do not prevent the exit from committing. The write that caused the exit then reports `FormErrorCode.ExpressionThrew` to `onError` and throws it, as a failed expression does. `setValue`, array operations, `batch` and `resetSubtree` inside a resolver are ignored; development builds report `FormWarningCode.WriteInInactiveResolver` and production bundles remain silent. Only these four write families are refused; state, external-error, request and validation commands keep their existing behavior.
+
+Migration: move cleanup writes to the component's own node to `controls.inactiveValue` or `node.onInactive`; both take the same `(value, context) => next` resolver.
+
 ## FieldInput System
 
 ### FieldInputDefinition
@@ -609,17 +625,24 @@ const formInputMap = {
     unsetValue: boolean | string;        // Clears the value when it turns from false to true
     resetInteraction: boolean | string;  // Clears dirty/touched when it turns from false to true
     unsetOnInactive: boolean | string;   // Drops the retained value when the node leaves the shape
-    fields: { targets: string[]; controls: { /* first nine keys */ } }[];
+    fields: { targets: string[]; controls: { /* first nine keys plus inactiveValue */ } }[];
     injectTo: (value, ctx) => ...;       // Pushes values to other nodes whenever this node's value changes
+    inactiveValue: literal | ((value, ctx) => next); // Retained value when leaving the shape
     discriminator: string;               // oneOf/anyOf host: branch tag property
     watch: string[];                     // Value subscription (array of paths)
   }
 }
 ```
 
-The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
+The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), the first nine keys (`active` through `unsetOnInactive`) and `inactiveValue` are allowed; any of the other four throws.
 
 The closed list applies inside `controls` and `options`. Outside the three groups, the top-level keys of 0.16 (`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, the `&`-prefixed keys, `injectTo`, `terminal`, `virtual`, `placeholder`, `errorMessages`, `propertyKeys`) are not read at all: 1.0.0 ignores them with no error or warning. There is no alias and no warning for them by design, so a schema migrated from 0.16 must move each key itself (see Migration (1.0.0) in the README).
+
+### Retained Value at Exit
+
+`controls.inactiveValue` accepts a literal (including strings, `false`, `0`, `null`, objects and arrays) or an `InactiveValueResolver<V>`. Strings are never compiled as expressions. The resolver has the same `(value, context) => next` signature as `node.onInactive(listener)` and the same context fields as `injectTo`: `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, and form `context`. Every value and schema comes from the preceding commit; `undefined` leaves the retained source unchanged. No dependencies are tracked. If the closing write explicitly supplies this path in its JSON, that value takes precedence and neither resolver runs. Within the departing subtree, an explicitly supplied whole ancestor also covers omitted descendants; a merge covers only supplied keys. A merge from a form input follows the same rule. Inside a multi-write batch a merge is shallow, so a supplied key replaces its subtree whole. Explicit coverage is the union of the batch: a later empty or partial merge does not remove an earlier whole replacement. A later automatic write also preserves the earlier caller whole coverage. Omitting the departing subtree itself still permits its resolvers. After an array move, value reads and `dataPath` use the preceding committed address; the result is retained at the current address.
+
+Only normal retained gate exits with automatic writes enabled run these resolvers. Automatic-write suppression, failed or budget-limited settlement, load/reset scope, throwing gates and instances entered only within the same settlement skip them. A true `unsetOnInactive` policy skips them, and declaring both on the same layer reports `FormWarningCode.InactiveValueWithUnsetOnInactive`. Node controls take precedence over fields controls, which take precedence over fragment controls. A descendant result overwrites its path inside an ancestor result. Results use the existing inactive JSON write rules: undeclared keys remain extras, wrong-kind values remain retained, and re-entry consumes the overlay.
 
 ### Nested Controls
 
@@ -809,13 +832,24 @@ node.find('./childField'); // Relative path from current node
 | ------ | ----------------- | --------------------------------- |
 | `..`   | Parent navigation | controls expressions, node.find() |
 | `.`    | Current node      | controls expressions, node.find() |
-| `*`    | Wildcard          | FieldInputMap only                |
+| `*`    | Wildcard          | node.find(), FieldInputMap        |
 | `@`    | Context reference | controls expressions only         |
 
 ### Escape Rules
 
-- `~0` → `~`
-- `~1` → `/`
+Segments are interpreted in this order:
+
+1. A segment exactly equal to `*`, `..`, `.`, or `@` is an operator (wildcard, parent, current, or context).
+2. A segment exactly equal to `%2A`, `%2E%2E`, `%2E`, or `%40` is the literal property name `*`, `..`, `.`, or `@`, respectively.
+3. Every other segment decodes only `~1` → `/` and `~0` → `~`. Ordinary names containing `%`, such as `rate%20`, remain unchanged.
+
+`#` is a fragment prefix only at the beginning of a path; an interior `#` segment is an ordinary name. Node paths, inactive-value paths, and reported error paths use the literal percent form for reserved names, so `node.find('/branch/%2A')` addresses the child named `*`, while `/branch/*` remains a wildcard.
+
+The root pointer is the empty string or `#`; `/` and `#/` each address the root's empty-string key. Validator paths and fieldInputMap keys follow the same rule.
+
+Known limit: property names exactly equal to `%2A`, `%2E`, `%2E%2E`, or `%40` are not supported. Their path would read back as the reserved operator name (`*`, `.`, `..`, `@`), which would misdirect value loading, inactive values, and validation routing, so building the form rejects the schema with `FormErrorCode.ReservedPropertyName`; the error names the property and this rule. Percent-containing names other than those exact four spellings follow rule 3.
+
+Standard RFC 6901 pointers from validators and `$ref` are interpreted without these operators. An AJV path `/*` refers to the property named `*`; standard fragment pointers (`#/...`) percent-decode every segment.
 
 ```typescript
 // Field name with special characters: "field/with~special"
@@ -950,6 +984,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | Constant | `error.code` value | When | Note |
 | --- | --- | --- | --- |
 | `FormErrorCode.UnknownJsonSchema` | `'JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA'` | schema analysis cannot determine a supported shape |  |
+| `FormErrorCode.ReservedPropertyName` | `'JSON_SCHEMA_ERROR.RESERVED_PROPERTY_NAME'` | a property name is exactly `%2A`, `%2E`, `%2E%2E`, or `%40` | `details.property` names the rejected property. |
 | `FormErrorCode.UnexpectedArraySchema` | `'JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA'` | schema analysis finds an invalid array declaration |  |
 | `FormErrorCode.AllOfTypeRedefinition` | `'JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION'` | static allOf types have an empty intersection |  |
 | `FormErrorCode.ConflictingConstValues` | `'JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES'` | static allOf constants conflict |  |

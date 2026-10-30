@@ -1,0 +1,25 @@
+{
+  "head": "19353b1d2d9a63299d47cd25bbe7f88733b828dd",
+  "snapshotHash": "1f8ebf3eb00b8e1f38ac1a3efc67bdc7e750fa94f2b666872c45690134658626",
+  "facts": {
+    "covered": 1681,
+    "exact": 1681,
+    "scope": "default package source extensions"
+  },
+  "findingCount": 202,
+  "baselineFindingCount": 202,
+  "verdict": "FAIL",
+  "certainty": "indeterminate",
+  "reason": "Existing FieldProxy/FieldInputSlot cycle and pre-existing warnings remain; no finding-count increase.",
+  "originalArtifactSha256": {
+    "scan": "89a248e2e76c10e00a926137574df44625ae89c848c28424af56a66715c46443",
+    "validation": "f08887e20314b34242c0677468221559668da126e865261fc27c1fd41052c66b",
+    "verification": "6d95f4f084be27eeca7bd99b9d1a8866e74515ae2e6304f7e1ff048bb48d0a3f"
+  },
+  "findingsExactlyMatchPriorCandidate": true,
+  "severityCounts": {
+    "warning": 200,
+    "info": 1,
+    "error": 1
+  }
+}

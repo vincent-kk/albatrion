@@ -1,6 +1,9 @@
+import type { Nullable, Optional } from '@aileron/declare';
+
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../types/issue';
+import { normalizeValidationIssue } from '../route/normalizeValidationIssue';
 import { assertValidationRootReady } from './assertValidationRootReady';
 
 /**
@@ -13,11 +16,18 @@ export const runFieldNodeValidation = async <
   Self extends FieldNodeRecord<Self>,
 >(
   node: Self,
-): Promise<readonly ValidationIssue[] | null> => {
+): Promise<Nullable<readonly ValidationIssue[]>> => {
   const validate = assertValidationRootReady(node);
   if (!validate) return null;
   try {
-    return (await validate(node.rootNode.emit)) ?? [];
+    const issues = (await validate(node.rootNode.emit)) ?? [];
+    let normalized: Optional<ValidationIssue[]>;
+    for (let index = 0; index < issues.length; index++) {
+      const issue = normalizeValidationIssue(issues[index]);
+      if (issue !== issues[index] && !normalized) normalized = issues.slice();
+      if (normalized) normalized[index] = issue;
+    }
+    return normalized ?? issues;
   } catch (error) {
     throw new SchemaFormError(
       FormErrorCode.ValidatorThrew,

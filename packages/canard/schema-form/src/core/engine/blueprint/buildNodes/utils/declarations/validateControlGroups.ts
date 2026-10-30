@@ -1,6 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import { appendSegment } from '@/schema-form/helpers/jsonPointer';
 
 import { FormErrorCode } from '../../../../../../errors';
+import { CONTROL_KEY } from '../../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
 import type {
   ChildSchemaControls,
@@ -41,7 +45,7 @@ export const validateControlGroups = (
     if (!value || typeof value !== 'object' || isArray(value))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
-        schemaPath + '/' + group,
+        appendSegment(schemaPath, group),
         { group, key: group, expected: 'object' },
         context.options,
       );
@@ -49,41 +53,81 @@ export const validateControlGroups = (
       if (!allowed.includes(key))
         throwBlueprintError(
           FormErrorCode.UnknownGroupKey,
-          schemaPath + '/' + group + '/' + key,
+          appendSegment(appendSegment(schemaPath, group), key),
           { group, key },
           context.options,
         );
   }
   const controls = record.controls;
   if (
+    controls &&
+    typeof controls === 'object' &&
+    hasOwnProperty(controls, CONTROL_KEY.inactiveValue)
+  )
+    context.hasInactiveValues = true;
+  if (
     controls?.injectTo !== undefined &&
     typeof controls.injectTo !== 'function'
   )
     throwBlueprintError(
       FormErrorCode.InvalidControlShape,
-      schemaPath + '/controls/injectTo',
+      appendSegment(appendSegment(schemaPath, 'controls'), 'injectTo'),
       { group: SCHEMA_GROUP.controls, key: 'injectTo', expected: 'function' },
       context.options,
     );
+
   if (controls?.fields !== undefined) {
     if (!isArray(controls.fields))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
-        schemaPath + '/controls/fields',
+        appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
         { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
-    controls.fields.forEach((entry: any, index: number) => {
-      const path = schemaPath + '/controls/fields/' + index;
-      if (
-        !entry ||
-        typeof entry !== 'object' ||
-        Object.keys(entry).some(
-          (key) => key !== 'targets' && key !== 'controls',
-        ) ||
-        !isArray(entry.targets) ||
-        entry.targets.some((name: unknown) => typeof name !== 'string')
-      )
+
+    const controlFields = controls.fields;
+    for (let index = 0, limit = controlFields.length; index < limit; index++) {
+      if (!(index in controlFields)) continue;
+      const entry: any = controlFields[index];
+
+      const path = appendSegment(
+        appendSegment(appendSegment(schemaPath, 'controls'), 'fields'),
+        index,
+      );
+      let hasInvalidFieldEntry = !entry || typeof entry !== 'object';
+      if (!hasInvalidFieldEntry) {
+        const entryKeys = Object.keys(entry);
+        for (let index = 0, count = entryKeys.length; index < count; index++) {
+          const key = entryKeys[index];
+
+          if (key !== 'targets' && key !== 'controls') {
+            hasInvalidFieldEntry = true;
+            break;
+          }
+        }
+      }
+      let hasInvalidFieldTargets =
+        hasInvalidFieldEntry || !isArray(entry.targets);
+      if (!hasInvalidFieldTargets) {
+        const fieldTargets = entry.targets;
+        for (
+          let index = 0, count = fieldTargets.length;
+          index < count;
+          index++
+        ) {
+          if (!(index in fieldTargets)) {
+            continue;
+          }
+
+          const name: unknown = fieldTargets[index];
+
+          if (typeof name !== 'string') {
+            hasInvalidFieldTargets = true;
+            break;
+          }
+        }
+      }
+      if (hasInvalidFieldTargets) {
         throwBlueprintError(
           FormErrorCode.InvalidControlShape,
           path,
@@ -94,8 +138,9 @@ export const validateControlGroups = (
           },
           context.options,
         );
+      }
       validateControlGroups(context, { controls: entry.controls }, path, true);
-    });
+    }
   }
 };
 
@@ -110,6 +155,7 @@ const CHILD_CONTROL_KEY_SET = {
   unsetValue: true,
   resetInteraction: true,
   unsetOnInactive: true,
+  inactiveValue: true,
 } satisfies Record<keyof ChildSchemaControls, true>;
 /** Node-owned controls add declarations and cross-node injection. */
 const CONTROL_KEY_SET = {

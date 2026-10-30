@@ -1,0 +1,174 @@
+{
+  "timed": false,
+  "samples": 0,
+  "checks": [
+    {
+      "lane": "S",
+      "bundle": "unwrapped",
+      "row": "switch-oneOf-80",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "unwrapped",
+      "row": "switch-siblings-0",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "unwrapped",
+      "row": "switch-siblings-1000",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "unwrapped",
+      "row": "switch-payload-12",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "wrapped",
+      "row": "switch-oneOf-80",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "wrapped",
+      "row": "switch-siblings-0",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "wrapped",
+      "row": "switch-siblings-1000",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "wrapped",
+      "row": "switch-payload-12",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "supplemental",
+      "row": "switch-oneOf-80",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "supplemental",
+      "row": "switch-siblings-0",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "supplemental",
+      "row": "switch-siblings-1000",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "S",
+      "bundle": "supplemental",
+      "row": "switch-payload-12",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "unwrapped",
+      "row": "switch-oneOf-80",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "unwrapped",
+      "row": "switch-siblings-0",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "unwrapped",
+      "row": "switch-siblings-1000",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "unwrapped",
+      "row": "switch-payload-12",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "wrapped",
+      "row": "switch-oneOf-80",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "wrapped",
+      "row": "switch-siblings-0",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "wrapped",
+      "row": "switch-siblings-1000",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "wrapped",
+      "row": "switch-payload-12",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "supplemental",
+      "row": "switch-oneOf-80",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "supplemental",
+      "row": "switch-siblings-0",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "supplemental",
+      "row": "switch-siblings-1000",
+      "operations": 2,
+      "passed": true
+    },
+    {
+      "lane": "E",
+      "bundle": "supplemental",
+      "row": "switch-payload-12",
+      "operations": 2,
+      "passed": true
+    }
+  ]
+}

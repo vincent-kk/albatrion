@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { engineModeFooter } from './engineModeFooter.ts';
+import { engineModeFooter } from './engineModeFooter';
 
 // Standalone verification preparation; all raw paths and hashes are explicit caller inputs.
 const root = process.cwd(),

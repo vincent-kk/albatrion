@@ -1,3 +1,5 @@
+import type { Dictionary, Optional } from '@aileron/declare';
+
 import type { Blueprint, BlueprintOptions } from './blueprint';
 import type {
   BlueprintChildEntry,
@@ -42,6 +44,8 @@ export interface SchemaInput {
 export interface AnalysisContext {
   /** Monotonic declaration evidence requiring child-target validation; never published. */
   hasChildTargets: boolean;
+  /** Authored inactiveValue presence; absent graphs skip resolver metadata preparation. */
+  hasInactiveValues?: true;
   /** Literal/default and finite-shape evidence, independent of branchless evidence. */
   staticFirstLoad: boolean;
   /** Monotonic evidence that construction hit a template still being built. */
@@ -53,12 +57,12 @@ export interface AnalysisContext {
   nodes: MutableNode[];
   fragments: MutableFragment[];
   declarationId: number;
-  declarationOwners: Map<number, number> | undefined;
+  declarationOwners: Optional<Map<number, number>>;
   templates: Map<string, MutableNode[]>;
   constructing: Map<string, MutableNode[]>;
   /** Index, in its template's construction inputs, of the input each declaration was collected from. */
   declarationInputs: Map<number, number>;
   /** Authored branch locations converted into explicit discriminator gates. */
   discriminatorBranches?: Set<string>;
-  dependencies: Record<string, number[]> | undefined;
+  dependencies: Optional<Dictionary<number[]>>;
 }

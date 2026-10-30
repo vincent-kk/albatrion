@@ -11,6 +11,7 @@ export const countControlLayerWork = <Self extends ControlTarget<Self>>(
 ) => {
   let work = 0;
   const includes = Array.prototype.includes;
+  const arrayIndexOf = Array.prototype.indexOf;
   const startsWith = String.prototype.startsWith;
   const indexOf = String.prototype.indexOf;
   const slice = String.prototype.slice;
@@ -19,6 +20,10 @@ export const countControlLayerWork = <Self extends ControlTarget<Self>>(
     Array.prototype.includes = function (...args) {
       work++;
       return includes.apply(this, args);
+    };
+    Array.prototype.indexOf = function (...args) {
+      work++;
+      return arrayIndexOf.apply(this, args);
     };
     String.prototype.startsWith = function (...args) {
       work++;
@@ -36,6 +41,7 @@ export const countControlLayerWork = <Self extends ControlTarget<Self>>(
     return { layers, work };
   } finally {
     Array.prototype.includes = includes;
+    Array.prototype.indexOf = arrayIndexOf;
     String.prototype.startsWith = startsWith;
     String.prototype.indexOf = indexOf;
     String.prototype.slice = slice;

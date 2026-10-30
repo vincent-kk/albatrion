@@ -2,6 +2,8 @@ import { type ChangeEvent } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
+import type { Nullable } from '@aileron/declare';
+
 import type { FieldInputProps } from '@/schema-form/types';
 
 /** Render a number input whose empty field writes undefined and whose bad input stays a draft. */
@@ -18,7 +20,7 @@ export const FieldInputNumber = ({
   placeholder,
   style,
   className,
-}: FieldInputProps<number | null>) => {
+}: FieldInputProps<Nullable<number>>) => {
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.validity.badInput) return;
     onChange(

@@ -1,21 +1,25 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import type { Optional } from '@aileron/declare';
+
+import {
+  JSONPointer as $,
+  resolvePointer,
+} from '@/schema-form/helpers/jsonPointer';
+import { isDescendantPath } from '@/schema-form/helpers/jsonPointer';
 
 import { visitFieldNodes } from '../../../navigation';
-import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
+import { captureFieldNodeChange } from '../../../record';
 import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { getLatentOrder } from '../latentStore/getLatentOrder';
+import { applyInactiveValues } from '../inactive/applyInactiveValues';
+import { resolveInactiveValue } from '../inactive/resolveInactiveValue';
 import { updateOutput } from '../output/updateOutput';
-import { applyExitClearing } from './applyExitClearing';
-import { captureExitedRaw } from './captureExitedRaw';
-import { captureLatentDescendants } from './captureLatentDescendants';
+import { finalizeRestoredSlotRaw } from '../slots/finalizeRestoredSlotRaw';
+import { retainExitedSlot } from '../slots/retainExitedSlot';
 import { finalizePerished } from './finalizePerished';
 import { isRekeyedDestination } from './utils/isRekeyedDestination';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
-import { writeLatentRaw } from './writeLatentRaw';
 
 /**
  * Decide exits only against the settled final shape, including Source B.
@@ -25,8 +29,16 @@ import { writeLatentRaw } from './writeLatentRaw';
 export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  const scope = context.kind === 'load' ? context.loadScope : undefined;
+  const inLoadScope = (node: Self): boolean =>
+    scope !== undefined &&
+    (!scope.path ||
+      node.path === scope.path ||
+      isDescendantPath(node.path, scope.path));
+  const applyPolicy =
+    !context.suppressAutomaticWrites && !context.exceededBudget;
   finalizePerished(context);
-  let misfitIndex: Map<string, Set<string>> | undefined;
+  let misfitIndex: Optional<Map<string, Set<string>>>;
   for (const node of context.pendingExits.values()) {
     if (node.detached) continue;
     const parent = node.parent;
@@ -38,6 +50,16 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     visitFieldNodes(
       node,
       (departing) => {
+        if (
+          (departing.blueprintNode.hasInactiveValue ||
+            departing.runtime.inactiveListeners?.has(departing)) &&
+          applyPolicy &&
+          !rekeyed &&
+          !inLoadScope(node) &&
+          !context.entered.has(node) &&
+          !context.throwingGateExits?.has(node)
+        )
+          resolveInactiveValue(departing, node, context);
         if (!departing.runtime.detachedReads?.has(departing))
           captureDetachedFieldNodeReads(departing, {
             emit: context.previousEmit,
@@ -66,7 +88,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           }
           paths.add(path);
           if (!ancestor) break;
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+          ancestor = resolvePointer(ancestor, $.Parent);
         }
       }
     }
@@ -76,68 +98,23 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       while (true) {
         misfitIndex.get(ancestor)?.delete(path);
         if (!ancestor) break;
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
+        ancestor = resolvePointer(ancestor, $.Parent);
       }
     }
   }
   withdrawDetachedFills(context);
-  const scope = context.kind === 'load' ? context.loadScope : undefined;
-  const inLoadScope = (node: Self): boolean =>
-    scope !== undefined &&
-    (!scope.path ||
-      node.path === scope.path ||
-      node.path.startsWith(scope.path + '/'));
-  const applyPolicy =
-    !context.suppressAutomaticWrites && !context.exceededBudget;
-  if (applyPolicy)
-    applyExitClearing(
-      context,
-      (node) =>
-        inLoadScope(node) || context.throwingGateExits?.has(node) === true,
-    );
   for (const node of context.exited)
-    if (
-      !inLoadScope(node) &&
-      node.detached &&
-      (context.entered.has(node) ||
-        !applyPolicy ||
-        context.throwingGateExits?.has(node))
-    ) {
-      const ownsLatent = captureExitedRaw(
+    if (!inLoadScope(node) && node.detached)
+      retainExitedSlot(
         node,
-        false,
         context,
-        false,
-        getLatentOrder(node.parent, node.name, node.blueprintNode),
+        applyPolicy &&
+          !context.entered.has(node) &&
+          !context.throwingGateExits?.has(node),
       );
-      if (ownsLatent)
-        captureLatentDescendants(context, node, false, false, ownsLatent);
-    }
-  if (context.root.runtime.latentRaw.size > 0)
-    for (const node of [...context.entered, ...context.revived]) {
-      if (node.detached) continue;
-      let live = true;
-      for (
-        let current: Self | null = node;
-        current?.parent;
-        current = current.parent
-      )
-        if (current.parent.structure?.[current.name] !== current) {
-          live = false;
-          break;
-        }
-      if (live)
-        writeLatentRaw(
-          context,
-          JSON.stringify([
-            node.path,
-            getBlueprintNodeIdentity(node.blueprintNode),
-          ]),
-          false,
-          undefined,
-        );
-    }
+  if (context.inactiveValueOverrides) applyInactiveValues(context);
   const affectedAncestors = new Set<Self>();
+  finalizeRestoredSlotRaw(context);
   for (const node of context.exited)
     for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent)
       if (!ancestor.detached) affectedAncestors.add(ancestor);

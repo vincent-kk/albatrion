@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 쓰기 시 선언 선택은 선언별 게이트·역할을 한 순회에서 읽고 마지막 정렬의 기존 전순서를 유지합니다. 임시 배열은 선택 결과만 보유하며 추가 상주 색인을 만들지 않습니다.
+
 - 생산자 소유 값 membership은 공통 ownedSchemaValues 값 메모에 유지한다. D3b-2에서 기본 유효 스키마와 기본 병합 메모는 host 레코드의 defaultEffectiveSchema·effectiveSchemaMemo 슬롯으로 옮기고 실제 모드 변경 때 재생성한다. 소유 builder는 이 모듈에 남고 명시 caller-owned WeakMap 인수·모드/원자성 분리는 그대로 유지한다(SURFACE-063·065).
 
 활성 선언의 전순서를 따라 유효 스키마를 병합하고 소유 값의 보호와 메모 참조를 보존한다.

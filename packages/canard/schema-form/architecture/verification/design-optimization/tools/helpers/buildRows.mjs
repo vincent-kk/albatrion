@@ -1,5 +1,8 @@
+import { buildBranchRows } from './buildBranchRows.mjs';
+
 /** Return the fixed canonical rows or diagnostic size families; N denotes form size, not write count. */
-export function buildRows(probes) {
+export function buildRows(probes, branchSwitch = false) {
+  if (branchSwitch) return buildBranchRows();
   if (!probes)
     return [
       { id: 'mount-oneOf-80', operation: 'mount', shape: 'oneOf', n: 80 },

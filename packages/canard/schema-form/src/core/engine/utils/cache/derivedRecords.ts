@@ -5,6 +5,7 @@ export interface BlueprintDerived {
   deriveConvergenceTargets?: unknown;
   gateBudgetIndex?: unknown;
   gateExpressions?: unknown;
+  ifGateReadNames?: unknown;
   exitPolicyExpressions?: unknown;
   dependencyIndex?: unknown;
   contextOwners?: unknown;
@@ -17,6 +18,18 @@ export interface BlueprintDerived {
 }
 /** Independently filled HostDerived slots; concrete value types stay with their builders. */
 export interface HostDerived {
+  /** Bounded concrete syntax owned by a runtime; values never contain live lookups. */
+  pointerSegments?: unknown;
+  /** Authored dependency syntax witnessed by one actual host path. */
+  stateDependencyPlans?: unknown;
+  /** Definition witnesses for the node/commit watch memo; never select a watch list. */
+  watchValuesWitness?: unknown;
+  wheelPlan?: unknown;
+  preparedStaticHost?: unknown;
+  /** Live occurrence source-scope writer selected from its fixed lineage. */
+  sourcePruner?: unknown;
+  controlLayerIndex?: unknown;
+  childOrderIndex?: unknown;
   watchPaths?: unknown;
   deriveChildren?: unknown;
   declaredNames?: unknown;

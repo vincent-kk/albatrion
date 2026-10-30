@@ -2,7 +2,7 @@ import { useCallback, useSyncExternalStore } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
-import type { Fn } from '@aileron/declare';
+import type { Fn, Nullable } from '@aileron/declare';
 
 import { BIT_MASK_ALL } from '@/schema-form/constants/bitmask';
 import type { FieldNode } from '@/schema-form/core';
@@ -35,7 +35,7 @@ export const useFieldNodeTracker = <
     revision(mask?: number): number;
   },
 >(
-  node: Node | null,
+  node: Nullable<Node>,
   tracking: number = BIT_MASK_ALL,
 ): number => {
   const subscribe = useCallback(

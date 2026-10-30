@@ -31,14 +31,18 @@ export const visitShape = (
       context.options,
     );
   active.add(node);
-  for (const edge of node.childEntries)
-    if (
-      edge.declarations.some(
-        (declaration) =>
-          declaration.role === 'declaration' && !declaration.gates.length,
-      )
-    )
+  for (const edge of node.childEntries) {
+    let hasUnconditionalDeclaration = false;
+    for (const declaration of edge.declarations) {
+      if (declaration.role === 'declaration' && !declaration.gates.length) {
+        hasUnconditionalDeclaration = true;
+        break;
+      }
+    }
+    if (hasUnconditionalDeclaration) {
       visitShape(context, edge.node, complete, active);
+    }
+  }
   active.delete(node);
   complete.add(node);
 };

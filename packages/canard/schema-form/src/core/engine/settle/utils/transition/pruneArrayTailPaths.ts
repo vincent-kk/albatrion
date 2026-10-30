@@ -1,6 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  appendSegment,
+  getChildPointer,
+  isDescendantPath,
+  readPointerSegment,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRuntime } from '../../../record';
 import { getRuntimePathStores } from '../pathStores/getRuntimePathStores';
@@ -20,28 +25,26 @@ export const pruneArrayTailPaths = <Self>(
   const stores = getRuntimePathStores(runtime);
   const removed = new Set<string>();
   for (const [host, count] of hosts) {
-    for (const store of [
-      stores.latent,
-      stores.metadata,
-      stores.declarations,
-      stores.misfits,
-      stores.rules,
-    ])
+    for (const store of [stores.declarations, stores.misfits, stores.rules]) {
+      if (!store) continue;
       for (const path of store.pathIndex.tail(host, count)) removed.add(path);
+    }
     for (const key of runtime.warningKeysByPath?.get(host) ?? []) {
       const parts: unknown = JSON.parse(key);
       if (!isArray(parts) || typeof parts[1] !== 'string') continue;
-      const prefix = host + '/';
-      const segment = parts[1].slice(prefix.length).split($.Separator)[0];
+      const child = getChildPointer(parts[1], host);
+      const segment =
+        child === undefined ? undefined : readPointerSegment(child, -1);
+      if (typeof segment !== 'string') continue;
       const index = Number(segment);
       if (
-        parts[1].startsWith(prefix) &&
+        isDescendantPath(parts[1], host) &&
         Number.isInteger(index) &&
         index >= count &&
         index >= 0 &&
         String(index) === segment
       )
-        removed.add(prefix + segment);
+        removed.add(appendSegment(host, segment));
     }
   }
   prunePerishedPaths(runtime, removed);
