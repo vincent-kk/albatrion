@@ -119,11 +119,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
         if (
           host.raw !== undefined ||
           !host.structure ||
-          (host.behavior.type !== 'array' &&
-          Object.getPrototypeOf(host.structure) === null
-            ? // structure values are always live nodes, so undefined means absent.
-              host.structure[name] === undefined
-            : !hasOwnProperty(host.structure, name))
+          !hasOwnProperty(host.structure, name)
         )
           flushPendingOutput(host, context);
       }
