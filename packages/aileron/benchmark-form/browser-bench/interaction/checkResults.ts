@@ -1,12 +1,12 @@
 // Invoked by check:browser-results; retained raw pages are the canonical numeric evidence.
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { gunzipSync } from 'node:zlib';
 
 import ir0Cases from '../../fixtures/input-responsiveness/cases.json';
 import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
+import { checkAddedMachinePaths } from './helpers/checkAddedMachinePaths';
 import { checkDerivedRecords } from './helpers/checkDerivedRecords';
 import { checkHeavyValidationResults } from './helpers/checkHeavyValidationResults';
 import { summarizePage } from './helpers/summarizePage';
@@ -16,6 +16,10 @@ import type { SampleResult } from './helpers/summarizeResults';
 import type { PageRecord } from './types';
 
 const repository = path.resolve('../../..');
+const auditBase = process.argv
+  .find((arg) => arg.startsWith('--audit-base='))
+  ?.slice('--audit-base='.length);
+if (auditBase !== undefined) checkAddedMachinePaths(repository, auditBase);
 const destination = path.resolve(
   '../../canard/schema-form/architecture/verification/input-responsiveness',
 );
@@ -23,9 +27,7 @@ if (process.argv.includes('--stage=ir-2')) {
   checkHeavyValidationResults(
     destination,
     process.argv.includes('--write'),
-    process.argv
-      .find((arg) => arg.startsWith('--audit-base='))
-      ?.slice('--audit-base='.length),
+    auditBase,
   );
   process.exit(0);
 }
@@ -110,33 +112,6 @@ assert.deepEqual(
   JSON.parse(fs.readFileSync(path.join(raw, 'summary.json'), 'utf8')),
   rows,
 );
-const changed = execFileSync(
-  'git',
-  ['diff', '--name-only', stage ? '91c422e0e' : '5d1348ed1'],
-  {
-    cwd: repository,
-    encoding: 'utf8',
-  },
-)
-  .trim()
-  .split('\n');
-const untracked = execFileSync(
-  'git',
-  ['ls-files', '--others', '--exclude-standard'],
-  { cwd: repository, encoding: 'utf8' },
-)
-  .trim()
-  .split('\n');
-for (const file of [...changed, ...untracked].filter(Boolean)) {
-  const location = path.join(repository, file);
-  if (!fs.existsSync(location) || !fs.statSync(location).isFile()) continue;
-  const bytes = fs.readFileSync(location);
-  const content = (file.endsWith('.gz') ? gunzipSync(bytes) : bytes).toString();
-  assert.ok(
-    !new RegExp('/' + '(?:Users|private/tmp|home)/').test(content),
-    file + ' contains a machine path',
-  );
-}
 for (const row of rows.filter(
   (row) => row.id === 'type-flat-500' || row.id === 'replace-200-while-typing',
 ))

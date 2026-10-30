@@ -64,3 +64,39 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md
 | doc-coverage | 미인용66·그 밖의 문제0, 기존 기준과 같음 |
 
 분할한 원장 항목이 없어 expand-split-pointers는 해당하지 않습니다. 전체 출력과 마감의 첫 토큰 잔여·교정 근거는 [마감 결과](../../verification/branch-switch/closing-results.md)에 연결합니다. 제품 코드·시험을 바꾸지 않아 제품 전체 시험과 FCA 재실행을 이 문서 작업의 통과 증거로 주장하지 않습니다.
+
+
+## 465라운드 입력 응답성 마감 검사 보충(2026-10-31)
+
+기존 기준표·기존 오류는 보존하고 마감 전후 결과를 덧붙입니다. 전체 명령을 architecture에서 실행했으며 원장 분할이 없어 expand-split-pointers는 해당하지 않습니다.
+
+| 검사 | 마감 결과와 기존 기준 대비 변화 |
+| --- | --- |
+| verbatim-check | 항목1415·조각327·불일치0, 같음 |
+| sup-check | 보충·충돌3582·불일치0·해석실패0; baseline3563에서 소유자8행·결정11보충 추가 |
+| ref-check | 항목1415·문제0 |
+| owner-cited | 답720·인용720·미인용0; baseline712에 원문8개 추가 |
+| sentence-check | 17영역 모두 missing0·bad classifications0 |
+| tokens | 목록2387·잔여398; baseline399에서 L+소수값 표기가 옛 L0 토큰과 어휘상 겹친1건 감소. 옛 항목의 의미적 커버리지 해소는 아님 |
+| plan-links | 계획80·문제1, 편집 전과 같은 design의 이미 분할된 ERROR-038 인용. 기존 줄은 고치지 않음 |
+| doc-coverage | 미인용66·그 밖 문제0, 기존과 같음 |
+
+[종합 마감 결과](../../verification/input-responsiveness/closing-results.md), [검사 요약](../../verification/input-responsiveness/raw/closing/ledger-checks.json), [전체 출력](../../verification/input-responsiveness/raw/closing/ledger-logs.json.gz)에 baseline과 최종을 함께 보존합니다. 새 추가분의 인용·소유자 원문·분류·계획 문제 증가는0입니다. benchmark 재현 도구의 승인된 수리는 별도34시험·lint·browser typecheck와 기본 재현6명령·명시적 추가줄 경로감사로 확인하며 schema-form 제품 차분은0입니다.
+
+
+### 465라운드 관문 수정 뒤 전체 검사 보충(2026-10-31)
+
+architecture README의 단계 상태를 덧붙이고 원장에 두 문장을 그대로 인용한 뒤 1절의 전체 명령을 재실행했습니다. bundle을 재생성하고 sentence-check 17영역, tokens inventory/check를 포함했습니다. 분할 항목이 없어 expand-split-pointers는 해당하지 않습니다.
+
+| 검사 | 관문 수정 뒤 결과 | 직전 마감 대비 변화 |
+| --- | --- | --- |
+| verbatim-check | 항목1415·조각327·불일치0 | 같음 |
+| sup-check | 보충·충돌3584·불일치0·해석실패0 | 3582+README 상태2문장 인용 |
+| ref-check | 항목1415·문제0 | 같음 |
+| owner-cited | 답720·인용720·미인용0 | 원문8개 변경 없음 |
+| sentence-check | 17영역 모두 missing0·bad classifications0 | 같음 |
+| tokens | 목록2389·잔여398 | README 제품SHA·단계 가지2토큰 추가, 모두 상태 인용으로 포괄 |
+| plan-links | 계획80·문제1 | 기존 분할된 ERROR-038 인용만 유지, 새 문제0 |
+| doc-coverage | 미인용66·그 밖 문제0 | 기존과 같음 |
+
+[수정 뒤 검사 요약](../../verification/input-responsiveness/raw/closing/ledger-checks-gate-fixes.json)과 [수정 뒤 전체 출력](../../verification/input-responsiveness/raw/closing/ledger-logs-gate-fixes.json.gz)을 추가로 보존합니다. 앞의 검사표와 원문은 변경하지 않으며 새 sup·verbatim·owner·plan 문제는0입니다. 이번 수정은 문서에 한정합니다.

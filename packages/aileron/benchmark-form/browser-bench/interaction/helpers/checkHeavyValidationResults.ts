@@ -12,7 +12,7 @@ import { summarizePage } from './summarizePage';
 import type { SampleResult } from './summarizeResults';
 
 /**
- * Reproduce IR-2 numeric records and audit raw pages, lane ordering and path hygiene.
+ * Reproduce IR-2 numeric records and audit raw pages and lane ordering.
  * @param destination - Canonical input-responsiveness evidence directory.
  * @param write - Save derived records once; default checks every byte against raw-derived output.
  * @param auditBase - Optional commit SHA for a separate PR-time product-difference audit.
@@ -192,31 +192,6 @@ export function checkHeavyValidationResults(
   }
   assert.ok(fs.existsSync(path.join(base, 'main/complete.json.gz')));
   const repository = path.resolve('../../..');
-  const changed = execFileSync('git', ['diff', '--name-only', '317f215dc'], {
-    cwd: repository,
-    encoding: 'utf8',
-  })
-    .trim()
-    .split('\n');
-  const untracked = execFileSync(
-    'git',
-    ['ls-files', '--others', '--exclude-standard'],
-    { cwd: repository, encoding: 'utf8' },
-  )
-    .trim()
-    .split('\n');
-  for (const file of [...changed, ...untracked].filter(Boolean)) {
-    const location = path.join(repository, file);
-    if (!fs.existsSync(location) || !fs.statSync(location).isFile()) continue;
-    const bytes = fs.readFileSync(location);
-    assert.ok(
-      !new RegExp('/' + '(?:Users|private/tmp|home)/').test(
-        (file.endsWith('.gz') ? gunzipSync(bytes) : bytes).toString(),
-      ),
-      file + ' has a machine path',
-    );
-  }
-  console.log('IR2_PATH_AUDIT_OK');
   if (auditBase !== undefined) {
     assert.match(
       auditBase,

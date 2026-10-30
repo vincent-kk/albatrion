@@ -1,0 +1,102 @@
+{
+  "source": "raw/ir-5-round3/mount-pages.json.gz",
+  "selection": "round3-complete.json samples only; warmups excluded",
+  "rows": [
+    {
+      "fixture": "mount-flat-500-off",
+      "lane": "E4",
+      "samples": 10,
+      "wallMs": 50.55,
+      "eagerPaintedMs": 50.35,
+      "allRevealedMs": 50.35
+    },
+    {
+      "fixture": "mount-flat-500-off",
+      "lane": "E5",
+      "samples": 10,
+      "wallMs": 51.15,
+      "eagerPaintedMs": 51.0,
+      "allRevealedMs": 51.0
+    },
+    {
+      "fixture": "mount-flat-500-on",
+      "lane": "E4",
+      "samples": 10,
+      "wallMs": 164.15,
+      "eagerPaintedMs": 31.55,
+      "allRevealedMs": 171.95
+    },
+    {
+      "fixture": "mount-flat-500-on",
+      "lane": "E5",
+      "samples": 10,
+      "wallMs": 170.05,
+      "eagerPaintedMs": 31.45,
+      "allRevealedMs": 173.15
+    },
+    {
+      "fixture": "mount-nested-d5-f4-off",
+      "lane": "E4",
+      "samples": 10,
+      "wallMs": 88.0,
+      "eagerPaintedMs": 87.55,
+      "allRevealedMs": 87.55
+    },
+    {
+      "fixture": "mount-nested-d5-f4-off",
+      "lane": "E5",
+      "samples": 10,
+      "wallMs": 89.4,
+      "eagerPaintedMs": 88.95,
+      "allRevealedMs": 88.95
+    },
+    {
+      "fixture": "mount-nested-d5-f4-on",
+      "lane": "E4",
+      "samples": 10,
+      "wallMs": 88.15,
+      "eagerPaintedMs": 87.65,
+      "allRevealedMs": 87.65
+    },
+    {
+      "fixture": "mount-nested-d5-f4-on",
+      "lane": "E5",
+      "samples": 10,
+      "wallMs": 89.25,
+      "eagerPaintedMs": 88.75,
+      "allRevealedMs": 88.75
+    },
+    {
+      "fixture": "mount-array-1000-off",
+      "lane": "E4",
+      "samples": 10,
+      "wallMs": 199.65,
+      "eagerPaintedMs": 196.2,
+      "allRevealedMs": 196.2
+    },
+    {
+      "fixture": "mount-array-1000-off",
+      "lane": "E5",
+      "samples": 10,
+      "wallMs": 201.9,
+      "eagerPaintedMs": 198.75,
+      "allRevealedMs": 198.75
+    },
+    {
+      "fixture": "mount-array-1000-on",
+      "lane": "E4",
+      "samples": 10,
+      "wallMs": 437.55,
+      "eagerPaintedMs": 58.8,
+      "allRevealedMs": 449.8
+    },
+    {
+      "fixture": "mount-array-1000-on",
+      "lane": "E5",
+      "samples": 10,
+      "wallMs": 393.65,
+      "eagerPaintedMs": 57.85,
+      "allRevealedMs": 443.4
+    }
+  ]
+}

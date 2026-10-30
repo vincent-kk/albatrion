@@ -66,3 +66,10 @@
 ## 464라운드 마감 보충(2026-10-30)
 
 위의 463라운드 당시 상태 뒤, 분기 전환 단계는 제품 `2eaa0e1f8`에서 마감했습니다. Ⅳ-0의 전제 정정, 국소 바퀴·scratch 두 안의 미채택, 미시 위생, 함수 프로파일과 작은 절감 다섯의 예외 채택을 거쳤습니다. 최종 E/L은 oneOf-80 3.335·siblings-0 3.614·payload-12 1.644·nested-oneOf-20 7.374배이며 Node 힙은 통과, Bun은 단계 시작보다 +1.4%입니다. Vincent는 "그래 이게 현재로선 상한 같네. 1로 가자. 마감 진행"이라고 결정했습니다. [마감 결과](verification/branch-switch/closing-results.md)와 [464라운드 닫기](reviews/round-464-closing.md)를 현재 결론으로 읽습니다. 최신 병합 지시는 코디네이터가 #472와 분기 전환 루트 PR을 `feat/schema-form-08-review-and-perf`에 각각 한 커밋으로 스쿼시 병합하는 것이며, #445(08→1.0.0-beta)·우산 초안 #344와 버전 결정은 Vincent의 몫입니다. 필요한 후보·커밋 자료는 [본선 보존물](_archive/branches/README.md)로 옮기고 가지 삭제는 코디네이터가 병합 뒤 수행합니다. 9단계는 새 지시 뒤 시작합니다.
+
+
+## 465라운드 마감 보충(2026-10-31)
+
+입력 응답성 단계는 제품 `814d21ad4`와 단계 가지 `feat/schema-form-input-responsiveness`에서 마감했습니다.
+D1 구현 여부·virtualization 기본값·IR-5 수정 수락은 모두 소유자 대기이며, 코디네이터 권고는 이번 단계 D1 미구현·기본 off 유지·IR-5 수정 유지입니다.
+[마감 결과](verification/input-responsiveness/closing-results.md)와 [465라운드 닫기](reviews/round-465-closing.md)에 수치·실패·미채택·이월 항목을 보존했습니다. 버전 번호와 단계 루트 PR 병합은 Vincent가 직접 합니다.
