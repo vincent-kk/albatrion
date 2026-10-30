@@ -228,8 +228,6 @@
 
 - 게이트 등록의 memo와 edge map은 기존 live path 레코드가 함께 소유하며 node 키 WeakMap 둘에 중복 삽입하지 않습니다. 조회는 register가 현재 node identity를 확인한 뒤 수행하고 퇴장·동일 경로 교체에서 새 수명을 다시 결합합니다. 등록당 두 WeakMap 삽입과 두 약한 색인을 제거하며 기존 map 둘·등록 레코드 외의 상주 구조는 없습니다.
 
-- presence 등록이 이미 계산한 decoded 이름과 정본 changedPath를 역의존 질의에 전달하여 같은 이름의 디코딩과 append를 반복하지 않습니다. 직접 질의는 기존 해석 경로를 유지하고 예약 이름·wildcard·부분 prefix와 결과 순서는 같습니다. 추가 객체나 상주 캐시는 만들지 않습니다.
-
 ## Structure
 
 - Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
@@ -824,11 +822,6 @@
 ### settle-gate-registry-storage — live 등록 레코드의 메모 소유
 
 - gate-free live 노드의 register는 node 키 WeakMap 삽입이 0이며 반복 register는 같은 발생을 유지합니다. 동일 경로의 새 node는 새 발생을 받고, 옛 node remove는 새 node 등록을 제거하지 않습니다. 현재 node를 제거한 뒤 다시 등록하면 발생도 새로 만듭니다.
-
-
-### settle-presence-resolved-path — 이미 해석한 주소
-
-- 호출자가 해석한 이름·주소를 전달하면 중복 parsePointerSegment·appendSegment 호출은0입니다. 직접 질의와 escaped/literal 이름의 네 결과 집합은 같습니다.
 
 
 ## Boundary Exemptions
