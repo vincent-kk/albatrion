@@ -84,8 +84,6 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
       context.presenceMetrics,
       context,
       context.root.runtime,
-      rawName,
-      path,
     );
     for (const owner of affected.owners) {
       owners.add(owner);

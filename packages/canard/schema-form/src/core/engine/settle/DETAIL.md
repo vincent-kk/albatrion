@@ -226,8 +226,6 @@
 
 - pending gate 읽기도 배열이 아닌 null-prototype 구조에서는 실제 노드의 존재를 직접 조회하여 중복 own descriptor를 만들지 않습니다. undefined emit을 내는 노드와 노드 부재는 구별하고 일반 prototype·배열 호스트는 기존 own-key 검사를 유지합니다. 추가 보유량은 없습니다.
 
-- presence 등록이 이미 계산한 decoded 이름과 정본 changedPath를 역의존 질의에 전달하여 같은 이름의 디코딩과 append를 반복하지 않습니다. 직접 질의는 기존 해석 경로를 유지하고 예약 이름·wildcard·부분 prefix와 결과 순서는 같습니다. 추가 객체나 상주 캐시는 만들지 않습니다.
-
 ## Structure
 
 - Batch and closing-branch integration tests that inspect retained source channels belong to this settlement boundary. They invoke dispatch through the write module's public entry point; their source-inspection fixtures stay inside this owner's verification compartment, without widening either product entry point or declaring a cross-boundary import exemption.
@@ -818,10 +816,6 @@
 ### settle-pending-structure-read — pending 호스트 노드의 존재
 
 - null Dictionary·prepared view는 descriptor 조회 없이 기존 노드의 존재를 구별합니다. prototype 이름의 undefined emit 노드는 호스트를 조기 flush하지 않으며 실제 부재·상속 노드만 있는 경우에는 기존 flush를 수행합니다.
-
-### settle-presence-resolved-path — 이미 해석한 주소
-
-- 호출자가 해석한 이름·주소를 전달하면 중복 parsePointerSegment·appendSegment 호출은0입니다. 직접 질의와 escaped/literal 이름의 네 결과 집합은 같습니다.
 
 ## Boundary Exemptions
 
