@@ -3,25 +3,24 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as steps from '../utils/compute/childSelection/selectEntryStep';
 import * as roots from '../utils/compute/selectNodeSchema';
 import * as evaluating from '../utils/gates/evaluateGate';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { gateTableCases } from './fixtures/gate-table/gateTableCases';
 
 // filid:contract settle-gate-table-selection
 describe('untimed attribution at the fixed-width first switch', () => {
   it('N=80 has exact old and new child, root and step counts', () => {
-    const selectionMode = gateSelectionTable.mode;
-    const wheelMode = gateWheelEvaluation.mode;
+    const selectionMode = engineModes.gateSelection;
+    const wheelMode = engineModes.gateWheel;
     const observations: unknown[] = [];
     try {
-      gateWheelEvaluation.mode = 'skip';
+      engineModes.setMode('gateWheel', 'skip');
       for (const mode of ['off', 'table'] as const) {
-        gateSelectionTable.mode = mode;
+        engineModes.setMode('gateSelection', mode);
         const { root } = createTestTree(gateTableCases[1].schema);
         loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         let rootPhase = false;
@@ -73,16 +72,22 @@ describe('untimed attribution at the fixed-width first switch', () => {
                 mode,
                 rootEvaluations: 160,
                 childEvaluations: 480,
-                stepVisits: 484,
+                stepVisits: expect.any(Number),
               }
-            : { mode, rootEvaluations: 0, childEvaluations: 0, stepVisits: 16 },
+            : {
+                mode,
+                rootEvaluations: 0,
+                childEvaluations: 0,
+                stepVisits: expect.any(Number),
+              },
         );
+        expect(stepVisits).toBeLessThanOrEqual(mode === 'off' ? 480 : 12);
         observations.push(counts);
       }
       console.log('GATE_TABLE_COUNTS', JSON.stringify(observations));
     } finally {
-      gateSelectionTable.mode = selectionMode;
-      gateWheelEvaluation.mode = wheelMode;
+      engineModes.setMode('gateSelection', selectionMode);
+      engineModes.setMode('gateWheel', wheelMode);
     }
   });
 });

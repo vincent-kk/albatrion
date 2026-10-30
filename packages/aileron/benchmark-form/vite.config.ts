@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   test: {
+    projects: [{ extends: true, test: { name: 'benchmark-form' } }],
     globals: true,
     environment: 'jsdom',
     include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],

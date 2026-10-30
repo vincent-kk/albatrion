@@ -61,10 +61,14 @@
 - cursor: `--agent cursor --model grok-4.7-high-fast`
 - 모든 brief에 "run-use 와 코디네이터 명령 금지, check 는 --terminal 로"와 한도 중지 규칙을 적는다.
 - 끝난 dispatch는 `worker-release`로 정리하고 다시 쓰지 않는다.
+- 코디네이터의 대기는 필터 대기 하나뿐이다: `orca orchestration check --ack <delivery> --wait --types "worker_done,escalation,question" --timeout-ms 1500000 --json`을 백그라운드로 걸어 두고, 그것이 돌아올 때만 읽고 판정한다. 워커의 `heartbeat`·`status`는 자동 발신이라 코디네이터가 읽지 않으며, 하네스의 "orchestration message(s)" 알림은 읽지 않은 생존 신호까지 세므로 그 알림에는 반응하지 않는다. 생존 신호는 필터 대기가 돌아온 뒤 한꺼번에 확인 처리한다(451라운드 소유자 지적).
+- 워커 brief에는 `status`를 창 시작·창 종료·막힘 세 때에만 보내고, 그 밖의 진행 보고는 보내지 않는다고 적는다. 질문은 `question`, 결정 요청은 `escalation`으로만 보낸다.
 
 ## 7. 변경 이력
 
 | 라운드 | 날짜 | 바뀐 것 |
 | --- | --- | --- |
+| 451 | 2026-10-27 | 소유자 지적 반영: 코디네이터는 필터 대기 하나로만 기다리고 생존 신호·상태 알림에 반응하지 않는다. 워커 status 는 창 시작·종료·막힘 세 때만 |
+| 446 | 2026-10-26 | 설계 최적화 단계에 적용(PROCESS-069): 정책 본문은 그대로이고, Fable 오케스트레이터는 소유자 대화·설계·판단·원장·커밋만 맡으며 코드를 고치지 않는다. 동시 워커는 둘까지, 전체 시험과 측정은 한 번에 하나 |
 | 445 | 2026-10-26 | 444라운드 지시 반영: 단계 루트 PR 밖의 병합은 코디네이터 재량, Fable 대신 Opus를 더 쓰고 codex·agy·cursor 사용을 늘리며 수정 PR은 다른 모델 가족이나 Opus로 검증 |
 | 429 | 2026-10-20 | 문서 신설. Claude 한도 초기화로 평시 운행, 장기 작업 셋(codex sol·Claude Opus·agy argon), 워커 구분, 풀별 한도와 초기화, 소비 순서 cursor > codex = agy > claude |

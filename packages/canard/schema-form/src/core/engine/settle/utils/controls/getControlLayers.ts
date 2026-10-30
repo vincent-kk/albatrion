@@ -4,21 +4,24 @@ import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { DeclarationLayer } from '../../../types/controls';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
-const DECLARATION_IDS = new WeakMap<BlueprintNode, readonly number[]>();
 
 /** Return the authored declaration order without a per-occurrence copy. */
 const declarationIds = (node: BlueprintNode): readonly number[] => {
-  let ids = DECLARATION_IDS.get(node);
+  let ids = getHostDerived<'declarationIds', readonly number[]>(
+    node,
+  ).declarationIds;
   if (!ids) {
     const collected: number[] = [];
     for (let index = 0; index < node.declarations.length; index++)
       collected.push(node.declarations[index].id);
     ids = Object.freeze(collected);
-    DECLARATION_IDS.set(node, ids);
+    getHostDerived<'declarationIds', readonly number[]>(node).declarationIds =
+      ids;
   }
   return ids;
 };
@@ -35,6 +38,10 @@ export interface ControlTarget<Self> {
   readonly parent: Self | null;
   /** Last active declaration choices for the whole tree. */
   readonly runtime: {
+    committedDeclarationKeys?: WeakMap<
+      object,
+      { path: string; kind: string; key: string }
+    >;
     readonly committedDeclarationIds?: ReadonlyMap<string, readonly number[]>;
   };
 }
@@ -66,7 +73,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
     current.runtime.committedDeclarationIds?.get(
-      getCommittedDeclarationKey(current),
+      getCommittedDeclarationKey(current, current.runtime),
     ) ??
     declarationIds(current.blueprintNode);
   const nodeIds = selected(node);

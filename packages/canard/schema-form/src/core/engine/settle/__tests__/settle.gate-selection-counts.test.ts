@@ -4,9 +4,8 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-gate-selection-counts
@@ -28,11 +27,11 @@ describe('baseline fixed-width branch-axis characterization', () => {
             return evaluate(dependencies);
           };
         });
-      const previousMode = gateWheelEvaluation.mode;
-      const previousSelectionMode = gateSelectionTable.mode;
+      const previousMode = engineModes.gateWheel;
+      const previousSelectionMode = engineModes.gateSelection;
       try {
-        gateWheelEvaluation.mode = 'record';
-        gateSelectionTable.mode = 'table';
+        engineModes.setMode('gateWheel', 'record');
+        engineModes.setMode('gateSelection', 'table');
         const schema = {
           type: 'object',
           properties: {
@@ -74,8 +73,8 @@ describe('baseline fixed-width branch-axis characterization', () => {
         }
       } finally {
         compiling.mockRestore();
-        gateWheelEvaluation.mode = previousMode;
-        gateSelectionTable.mode = previousSelectionMode;
+        engineModes.setMode('gateWheel', previousMode);
+        engineModes.setMode('gateSelection', previousSelectionMode);
       }
     },
   );

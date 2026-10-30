@@ -74,6 +74,12 @@
 | PROCESS-066 | 18라운드 닫기 방식 — 유도할 수 있는 것은 편집자가 추론으로 닫고 `reviews/round-18-closing.md`에 적는다 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:23` 닫기 방식) |
 | PROCESS-067 | 개발 PR마다 계획서 셋 — `request.md`(개발요청서, 원장 링크)·`verification.md`(검증 구성요건)·`adr-and-axes.md`(ADR과 핵심 축), 그 디렉토리만 보고 개발하고 단독으로 검증, 절차는 seiri와 filid | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:46` 개발계획 계획서 형식) |
 | PROCESS-068 | 새 설계문서와 ADR의 근거 표기 — 문장 끝 괄호 안에 원장 ID, 옛 표기("원장 §n", "ADR 00nn", "07 n.n")는 옛 문서의 것, 약어 금지와 풀어 쓰기는 그대로 | 현행 | 편집자 결정(20라운드, `reviews/round-20-closing.md` 20C-01) |
+| PROCESS-069 | 설계 최적화 단계의 에이전트 배정(446라운드) — `AGENT-POLICY.md` 적용: Fable 오케스트레이터는 설계·판단·원장·커밋만, 구현·게이트·측정·PR은 codex gpt-6.1-sol high(Orca `worker-start`), 독립 검토는 antigravity gemini-3.8-flash-high(종합은 argon), 원장 마감·단발 문서는 cursor, 읽기·검증 보조는 Claude 하위 에이전트, 소비 순서 cursor > codex = antigravity > claude | 현행 | 소유자 답(`reviews/round-446-owner-answers.md:11-12` 다중 에이전트와 역할, 이후 작업의 위임), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-08) |
+| PROCESS-070 | 독립 검토의 배정(448라운드) — 독립 검토는 오케스트레이터가 배정하고 구현한 워커는 자기 PR의 검토를 맡기지 않음, 워커는 PR 본문에 배정 주체를 적고 위험 지점을 인계로만 남김 | 현행 | 편집자 결정(448라운드, `reviews/round-448-closing.md` 448C-04) |
+| PROCESS-071 | 1차 계획대로의 진행(449라운드) — 446라운드 계획서 밖의 편집자 판단(447·448라운드 결정과 워커 질문에 답한 조건)은 재검증 대상, 이후 작업은 계획서의 항목만 계획서의 문장대로, 계획서에 없는 방안이 유일한 길이면 구현하지 않고 소유자에게 | 현행 | 소유자 답(`reviews/round-449-owner-answers.md:7`), 편집자 결정(449라운드, `reviews/round-449-closing.md` 449C-02) |
+| PROCESS-072 | 설계 최적화 가지로의 병합과 병합 권한(450라운드) — 오케스트레이터가 만든 PR은 독립 검토를 통과하고 TEST-027 같은 수용 조건이 없으면 오케스트레이터가 병합, 측정한 통합 가지를 병합 커밋 하나로 들여 측정한 판과 같은 코드를 넣음, 8단계 가지와 #445는 손대지 않음 | 현행 | 소유자 답(`reviews/round-450-owner-answers.md:7`), 편집자 결정(450라운드, `reviews/round-450-closing.md` 450C-02) |
+| PROCESS-073 | 코디네이터의 대기 규칙(451라운드) — 대기는 `worker_done`·`escalation`·`question`만 거르는 백그라운드 필터 대기 하나뿐이고 그것이 돌아올 때만 읽고 판정, 워커의 `heartbeat`·`status`와 하네스의 메시지 알림에는 반응하지 않고 생존 신호는 뒤에 한꺼번에 확인 처리, 워커 `status`는 창 시작·종료·막힘 세 때만(`AGENT-POLICY.md` 6절과 전역 스킬) | 현행 | 소유자 답(`reviews/round-451-owner-answers.md:9-10`), 편집자 결정(451라운드, `reviews/round-451-closing.md` 451C-02) |
+| PROCESS-074 | 가지 PR의 스쿼시 병합과 끝난 가지·worktree의 정리(451라운드) — 병합은 `gh pr merge --squash --delete-branch --match-head-commit`, 제목은 PR 제목·본문은 독립 검토 판정과 수용 조건, 병합된 PR과 폐기 가설의 가지·worktree는 지우고 남기는 가지는 8단계·단계·진행 중·보류(D2-P5)뿐, 완료 보고는 표로, 세 판 비교표(0.16.1·단계 시작·단계 끝)는 D4가 구해 단계 루트 PR 본문에 | 현행 | 소유자 답(`reviews/round-451-owner-answers.md:7-8`, `reviews/round-451-owner-answers.md:11-12`), 편집자 결정(451라운드, `reviews/round-451-closing.md` 451C-01·04·05) |
 
 ## 항목
 
@@ -918,6 +924,8 @@
   > 편집자 결정(440C-04): "【추론】 소유자가 결함 수정에서 비롯한 느린 행의 수용 원칙("느린 행의 원인이 오류 수정을 위함이라면 수용을 해야지")을 밝혀 PR431의 8행이 TEST-027로 수용되었고, 병합 뒤 제품 끝이 최적화의 기준이다(위 5행). 포괄 결함 확인("갱신 결과 = 같은 값의 새 마운트" 불변식을 게이트·상태 키·oneOf·배열·가상 노드·injectTo·overlay 조합의 생성 스키마 말뭉치에 대해 코어에서 자동 대조하고 같은 장면을 React 렌더 하네스 `playScenario`로 돌려 DOM·핸들 결과까지 비교)은 PLAN.md 4절의 새 4항으로 8단계 마지막에 두고 09 정리·릴리스는 5항이 된다(위 6행). 440 마운트 표(mount-env-440, E0=0.16.1 대 E7=`0645705c1` 빌드, UTC 창은 `window.json`, 182프로세스, 봉인 395파일, production): oneOf-80 0.4730→3.0321 ms(+541.0 %), flat-2000 3.4344→8.1742 ms(+138.0 %), nested-d6 7.8904→26.1190 ms(+231.0 %); 단위 비용 E7 µs/N은 oneOf-80 37.9, flat-2000 4.09, nested-d6 6.38. 같은 창의 E6 production 대조 14행 가운데 11행이 439b 창의 최소~최대를 벗어났으므로(대부분 10~30 % 빠름) E6→E7 열(oneOf −7.5 %, flat −6.1 %, nested −0.1 %)은 창 간 변동이고 제품 변화의 판정이 아니다(판정은 PR431의 A/A′/B 창: 14행 계열은 동치). 비교는 모두 코어(Node 직접 실행, React 없음)다. 작업 폴더: `schema-form-exit-gate`는 지웠고(J-32), `schema-form-env-hoist`는 PR430이 닫힐 때까지, `schema-form-dev-flag`는 구현 PR의 자료로 남긴다. Orca 대기 방식은 위 1·3행대로 포그라운드 5분 단위다. 소유자가 이어서 표의 범위를 물어 "지금 보여주는 표는 전부 마운트 비용인거야?"(위 7행) 마운트만임을 확인했고, "다음부터는 마운트 / 입력 을 별도 표로 구분하고, 단일 입력(input 에 단일 입력)과 setValue 로 일괄 입력하는 것을 구분해서 하도록 해."(위 8행)라고 지시했으므로 다음 보고부터 표는 마운트·단일 입력·setValue 일괄 입력 셋이고 측정 하네스도 두 입력 장면을 분리한다." (`reviews/round-440-closing.md:14`)
   > 편집자 결정(441C-02): "【추론】 440C-04의 보강 규칙대로 세 표를 처음 냈다(three-tables-441, UTC 04:02:03~04:10:21, 282프로세스, Node 26 production, E0=0.16.1 대 E9=`47ad92cf3`의 `dist/index.node.mjs`; 장면 호출은 `report.md`): 표 1 마운트 oneOf-80 0.4589→2.6774 ms(+483 %), flat-2000 3.2911→5.2793(+60 %), nested-d6 8.2218→17.7785(+116 %); 표 2 단일 입력(한 잎 `find().setValue` 1회) flat-1000 0.5203→0.0342(−93 %), nested-d6 0.0315→0.0801(+155 %), oneOf-80 필드 0.0288→0.0343(+19 %), oneOf 분기 전환(판별자 1회) 5개 0.0370→0.3082(+733 %)·80개 0.0494→0.6455(+1,207 %; 0.16.1은 O(1), 현재 O(N)); 표 3 루트 setValue 일괄(모든 잎 변경) oneOf-80 0.0499→0.3120(+525 %), flat-2000 2.4145→4.0095(+66 %), nested-d6 2.9982→15.5736(+419 %). 두 진단(Claude Opus debugger): (1) nested 일괄 setValue(`/Users/Vincent/Workspace/albatrion/.seiri/tasks/bulk-setvalue-441/diagnosis.md`) — 게이트 없는 정착에서 `DirtyPathSet`이 쓰기 표시 중 일반 색인으로 모든 조상 접두에 항목을 만들고 바로 다음 `registerRecalculation`의 `beginPostOrder()`가 읽지 않고 버린다(`DirtyPathSet.ts:61-84`, `registerRecalculation.ts:17-18`); 프로파일 markWrite 34 %(add 3.26 ms), 커밋 28 %, 계산 25 %; 모든 단계 호출 수는 바뀐 노드 5,461개와 같아 트리 전체 비례 단계는 없음; 수정 1(쓰기 전 전환, −23 %) 확인, 수정 2(`computeStableNode.ts:28` 자식 맵 통째 삭제, −0.85 ms)·3(`markFieldNodeEvent.ts:25-29` 정수 키 페이로드, EVENT 계약)은 후속; 잔여 약 11 ms는 노드당 장부에 고르게 분산. (2) oneOf 분기 전환(`.../branch-switch-441/diagnosis.md`) — 일의 단위가 "판정이 뒤집힌 두 분기"가 아니라 "`/kind`를 읽는 모든 선언": 루트 바퀴 2회(쓰기 패스·전이 패스; 확인 바퀴 둘은 #427로 생략) × 게이트 4회 평가 = 8N, 의존 색인(`getDependencyIndex.ts:84-90`)이 소유자로 3N+1개를 두 번 등록하고 비생존 3N−3개가 정착 내내 dirty로 남아 `dirtyChildren` 6회가 재순회; 프로파일(N=80) 게이트 평가 18.4 %, 등록 18.2 %, selectChildren 13.5 %, GC 11.9 %, 게이트 목록 수집 11.6 %, 가장 뜨거운 줄 `selectChildren.ts:218-232`의 퇴장 키 `JSON.stringify`; 떼어 내기 측정 다섯(결과 재사용 −13.2 %, 비생존 소유자 제외 −7.5 %, 재등록 생략 −3.9 %, 게이트 목록 캐시 −2.0 %, 퇴장 키 생략 −1.5 %; 합 −36.4 %, 기울기 6.3→3.6 µs/분기로 O(N) 유지); #431 있음 등록은 분기당 비용 0; 비전환 분기 게이트는 `/kind` 하나만 읽어 쓰기 패스 첫 바퀴는 결정 58류 증명으로 생략 불가; 수정 가설 (가) 코드 수준(퇴장 키 경로 색인·정적 게이트 목록 캐시·선택 계획 선생성, −7 %), (나) 정착 안 결과 재사용(결정 58 확장, SETTLE-020·`evaluateGate.ts:209`·438C-02 충돌), (다) 재등록 생략·비생존 소유자 제외(97C-01 (4) 범위 판단, `enterFieldNode.ts:35-59` 진입 dirty 보완 필요); 가·나·다를 다 해도 91라운드 기준 ①은 서지 않아 96C-01 (가)의 값-분기 표를 선택·등록까지 넓히는 설계가 필요하다. 고정물 식은 `./kind === 'kind_k'` 하나이고 색인 지점은 `compileBlueprintExpressions.ts:64-115`, `createDynamicFunction.ts:32-38`, `hasCompleteExpressionReads.ts:21-30`, `getDirectChildSelectionPlan.ts:92-104`, `getGateExpression.ts:15-30`, `getDependencyIndex.ts:84-90`이며 99라운드 선례(`verification/07-switch/gate-selection-design.md:37-69`)는 평가만 색인해 이득이 없어 되돌렸다. 소유자가 표의 조건을 물어 코어·검증기 없음·controls 게이트임을 확인했다(위 1행)." (`reviews/round-441-closing.md:10`)
   > 편집자 결정(442C-05): "【추론】 PR-7 #444(`b0fa84e53`)로 기본 `unit`·`render`·`react18` 프로젝트가 출하 설정(게이트 바퀴 `'skip'`, 게이트 선택 표 `'table'`, 파생 그림자 비활성)으로 돌고, 전용 `verify-unit`·`verify-render` 프로젝트(`test:verify`)가 shadow 바퀴·verify 표·파생 그림자 활성으로 같은 시험을 돌며 S1~S6 계수를 기록한다(Opus 검증이 PR-2b에서 "기본 시험이 출하 경로를 한 번도 실행하지 않는다"고 지적한 빈틈의 해소; 환경 변수 전환은 제거, Storybook의 verify 표 기본값은 유지). 소유자의 검증 묶음 지시(위 14·17행)에 따라 전체 프로토콜(antigravity 검토 + Opus 검증 + 관측 동치 + 변이 + 그림자 차등 + A/A′/B 3+12바퀴)은 PR-2b·PR-3에만, 나머지는 Opus 검증 + 축소 측정으로 했고, 검증자의 발견은 모두 병합 전 수정 커밋으로 반영했다(PR-3 호스트 사건 중복 제거 결함, PR-6 사전 공표 도우미 실행 단언, 수정 2의 재생성 고정물 명명, PR-7 derive-shadow 기본값 시험 복귀). 소유자의 8단계 완료 목표(위 22행)에 따라 작업 폴더와 가지를 모두 정리했고(원격 가지 삭제 허가, 23행), 소유자 결정 다섯 항목(PR-5 생략, 수정 3 보류, 인식기 밖 게이트 형 이월, React 재측정은 최종 측정에서, 1.0.0-beta 병합 시 버전 1.0.0-beta.0)은 답이 없어 기본값으로 진행했고, 버전 번호만은 최종 PR에서 소유자 질의로 남겼다(21행). 다음은 최종 PR `feat/schema-form-08-review-and-perf → 1.0.0-beta`다." (`reviews/round-442-closing.md:16`)
+  > 편집자 결정(447C-03): "【추론】 가설 PR의 기존 단언 변경은 0이 원칙이다. 다만 400C-02는 "정확한 호출 수 단언은 base 이하 상한으로 적는다"고 정했으므로, 관측이 아니라 작업량을 적은 단언은 정확값에서 base 이하 상한으로 정정한다. 이 라운드의 정정: H1의 stepVisits 두 건(off 484→≤480, table 16→≤12), H5b의 freeze 작업량 네 건(≤29007, ≤10523, ≤1564, ≤66; 줄어든 양은 생략한 payload의 노드 수와 정확히 같다), D2-P1의 dirty 장부 두 건(consume 정확값 5461을 ≤5461로; 루트 통째 쓰기의 "add > 0이고 postorder 시작이 첫 add보다 앞"은 그 사례가 쓰기 표식 경로가 되어 add 0으로 바꾸고, 두 단언의 정확값과 순서는 실제 무효 조건으로 기존 경로에 보낸 새 사례에서 그대로 단언한다). 시험이 내부 필드를 조작해 경로를 고르는 것은 허용하지 않는다 — 시험은 제품이 실제로 거치는 경로만 고정한다. H5b에서 개발 모드에만 기존 payload 경로를 남겨 단언을 지키자는 제안은 기각했다 — 두 경로를 두면 개발 모드 시험이 출하 경로를 검증하지 못한다. 대신 리스너에게 실제로 배달된 payload가 개발 모드에서 동결된다는 보장은 단언으로 유지했다. 내부 실행 이력(visits·changedNodes의 순서)은 400C-03의 구분("계약상 필요"는 원장 항목이 그 결과를 요구하는 경우만)에 따라 계약이 아니므로, H1에서 기준판 원본으로 뽑은 증인(`h1-private-histories.json`, 기준 8d5c5dba1)에 대해 부분수열과 구성원 비교로 정규화했고, 그 밖의 필드와 golden은 그대로 비교한다." (`reviews/round-447-closing.md:12`)
+  > 편집자 결정(448C-03): "【추론】 400C-02는 정확한 호출 수 단언을 base 이하 상한으로 적으라고 했지만 하한은 말하지 않았다. 작업량 하한이 "그 경로가 실제로 실행되었다"는 비공허성 확인일 때, 일이 줄어 하한이 깨지면 하한을 지우지 않고 의미상 반드시 필요한 수(예: 정책을 읽어야 하는 나가는 노드의 수)로 바꾸고, 동작 단언은 그대로 둔다. 새 경로가 옛 경로를 대신하면, 옛 경로의 정확값과 순서 단언은 실제 무효 조건(파생 하나, 게이트 하나, Merge 쓰기)으로 옛 경로에 보낸 새 사례에서 유지한다. 시험이 내부 필드를 조작해 경로를 고르는 것은 허용하지 않는다 — 시험은 제품이 실제로 거치는 경로만 고정한다. 내부 scratch를 기록하는 시험 도구는 그 scratch 대신 같은 뜻의 논리 구성원을 제품 상태의 실제 표식에서 읽어 기록하고, 기존 snapshot은 바꾸지 않는다." (`reviews/round-448-closing.md:12`)
 - 상태: 현행
 - 출처: `reviews/round-18-agenda.md:116-124`(정본), `HANDOFF.md:154`
 - 닫은 사람: 소유자 답(`HANDOFF.md:148` 소유자 지시 "교차검증까지 모두 끝내서 설계완료를 확정하면"), 편집자 결정(17라운드, `reviews/round-18-agenda.md:114-124`)
@@ -1027,3 +1035,87 @@
 - 닫은 사람: 편집자 결정(20라운드, `reviews/round-20-closing.md` 20C-01)
 - 라운드: 20
 - 까닭: `reviews/round-20-closing.md:12`
+
+### PROCESS-069 설계 최적화 단계의 에이전트 배정(446라운드) — `AGENT-POLICY.md` 적용: Fable 오케스트레이터는 설계·판단·원장·커밋만, 구현·게이트·측정·PR은 codex gpt-6.1-sol high(Orca `worker-start`), 독립 검토는 antigravity gemini-3.8-flash-high(종합은 argon), 원장 마감·단발 문서는 cursor, 읽기·검증 보조는 Claude 하위 에이전트, 소비 순서 cursor > codex = antigravity > claude
+
+- 결정:
+  > 【추론】 소유자가 `AGENT-POLICY.md` 기반의 다중 에이전트를 쓰고 설계 뒤에는 원장 관리자이자 오케스트레이터로 일하라고 했으며(위 5행), Fable은 소유자 대화에만 쓰라고 했다(위 2행). 정책 2·3절대로: Fable 오케스트레이터는 설계·판단·원장 마감·커밋만 하고 코드를 고치지 않는다; 구현·게이트·측정·PR은 codex `gpt-6.1-sol high`가 Orca `worker-start`로 맡고(브리프에 "run-use와 코디네이터 명령 금지, check는 --terminal로"와 한도 중지 규칙을 적는다), 독립 검토는 antigravity `gemini-3.8-flash-high`(D4 종합 판정은 `gemini-4-argon-high`), 원장 마감과 단발 문서 작업은 cursor `grok-4.7-high-fast`, 파일 읽기·요약·검증 보조는 Claude 하위 에이전트(scout·verifier, Sonnet·Opus)다. 소비 순서는 cursor > codex = antigravity > claude이고, 한도를 알리면 멈추고 다음 풀로 넘긴다. 끝난 dispatch는 `worker-release`로 정리한다. 정책 문서는 바꾸지 않고 7절 변경 이력에 이 라운드의 적용 한 줄만 더한다.
+- 보충:
+  > 소유자(446라운드, 8단계 뒤 작업의 허용과 역할): "좋아. 8단계 이후 작업을 명시적으로 허용한다.\n작업계획을 작성하고, 실험 및 검증을 진행한다.\n\n/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/AGENT-POLICY.md 를 기반으로 다중에이전트를 사용하고, \n너는 설계 이후에는 원장관리자이자, 오케스트레이터로 작업하라.\n\n계획 작성을 시작하고, 결정이 필요한 사항이 나오면 원장의 설계원칙을 참고하여 결정하되, 결정사항 등을 기록해서 나에게 보고하라.\n\n/orchestration" (`reviews/round-446-owner-answers.md:11`)
+  > 소유자(446라운드, 이후 작업의 위임): "이후 작업은 너에게 위임한다. 안정적인 작업으로, 설계 개편과 오류 수정, 테스트와 벤치마크까지 완료하여 PR 생성 및 검증까지 마무리하라." (`reviews/round-446-owner-answers.md:12`)
+  > 편집자 결정(448C-04): "【추론】 독립 검토(J-44)는 오케스트레이터가 배정한다. 구현한 워커가 자기 PR의 검토를 직접 맡기면 무엇을 물을지를 구현자가 정하게 되어 독립성이 깨진다. 워커는 PR 본문에 "독립 검토는 코디네이터가 배정"이라고 적고, 검토가 볼 위험 지점을 인계로만 남긴다." (`reviews/round-448-closing.md:14`)
+  > 편집자 결정(449C-02): "【추론】 소유자가 편집자의 임의 판단은 나중에 모두 재검증하므로 임의 판단보다 1차 계획대로 진행하라고 했다(위 1행). 1차 계획은 446라운드의 계획서(`plan/design-optimization/request.md`·`verification.md`·`adr-and-axes.md`)와 446C-01~08이다. 그 밖에서 오케스트레이터가 정한 것은 재검증 대상으로 표시한다: 447C-01의 H4 축 추가 측정 허용과 H5b의 분리, 447C-02(reset과 rebuild), 447C-03·448C-03(시험 기록 정정 규칙), 447C-04(React 동등 측정을 D4로), 447C-05(미구독 커밋의 관측 자격), 447C-06(D2의 PR 분할), 447C-07(D5 결정권), 448C-01(D2-P1의 설계와 자격 범위), 448C-02(분기 전환 행의 측정 폭 규칙), 448C-04(독립 검토 배정), 448C-05(노드당 힙 관문의 범위), 448C-06(엔진 캐시 배치 원칙과 검증기 편차), 448C-07(정적 자식 준비물), 통합 가지 `integration/schema-form-d1`·`d2`의 운영, 그리고 워커 질문에 답하며 정한 세부 조건들. 이후 작업은 계획서에 적힌 항목만 계획서의 문장대로 진행하고, 계획서에 없는 방안이 유일한 길로 보이면 구현하지 않고 소유자에게 올린다." (`reviews/round-449-closing.md:10`)
+  > 편집자 결정(451C-02): "【추론】 소유자가 생존 신호마다 확인해 보고하는 것이 컨텍스트 낭비이며 정식 사용법이 아니라고 지적했고, 전에도 같은 지적이 있었는데 고쳐지지 않았으니 에이전트 정책을 보고 고치라고 했다(위 3·4행). `AGENT-POLICY.md`와 오케스트레이션 스킬 어디에도 규칙이 없었던 것이 반복의 원인이다. 규칙을 둘에 적었다: 코디네이터의 대기는 `worker_done`·`escalation`·`question`만 거르는 백그라운드 대기 하나뿐이고 그것이 돌아올 때만 읽고 판정하며, 워커의 `heartbeat`·`status`는 자동 발신이라 읽지 않고, 하네스의 "orchestration message(s)" 알림은 읽지 않은 생존 신호까지 세므로 반응하지 않으며, 생존 신호는 필터 대기가 돌아온 뒤 한꺼번에 확인 처리한다. 워커 brief에는 `status`를 창 시작·창 종료·막힘 세 때에만 보내고 질문은 `question`, 결정 요청은 `escalation`으로만 보낸다고 적는다(`AGENT-POLICY.md` 6절, 커밋 85b3242cb; 전역 스킬 `~/.claude/skills/orchestration/SKILL.md`)." (`reviews/round-451-closing.md:10`)
+- 상태: 현행
+- 출처: `reviews/round-446-closing.md:22`(정본), `reviews/round-446-owner-answers.md:8`, `reviews/round-446-owner-answers.md:11-12`, `AGENT-POLICY.md`
+- 닫은 사람: 소유자 답(`reviews/round-446-owner-answers.md:11-12` 다중 에이전트와 역할, 이후 작업의 위임), 편집자 결정(446라운드, `reviews/round-446-closing.md` 446C-08)
+- 라운드: 446
+- 까닭: `reviews/round-446-owner-answers.md:11`
+
+### PROCESS-070 독립 검토의 배정(448라운드) — 독립 검토는 오케스트레이터가 배정하고 구현한 워커는 자기 PR의 검토를 맡기지 않음, 워커는 PR 본문에 배정 주체를 적고 위험 지점을 인계로만 남김
+
+- 결정:
+  > 【추론】 독립 검토(J-44)는 오케스트레이터가 배정한다. 구현한 워커가 자기 PR의 검토를 직접 맡기면 무엇을 물을지를 구현자가 정하게 되어 독립성이 깨진다. 워커는 PR 본문에 "독립 검토는 코디네이터가 배정"이라고 적고, 검토가 볼 위험 지점을 인계로만 남긴다.
+- 보충:
+  > 소유자(446라운드, 8단계 뒤 작업의 허용과 역할): "좋아. 8단계 이후 작업을 명시적으로 허용한다.\n작업계획을 작성하고, 실험 및 검증을 진행한다.\n\n/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/AGENT-POLICY.md 를 기반으로 다중에이전트를 사용하고, \n너는 설계 이후에는 원장관리자이자, 오케스트레이터로 작업하라.\n\n계획 작성을 시작하고, 결정이 필요한 사항이 나오면 원장의 설계원칙을 참고하여 결정하되, 결정사항 등을 기록해서 나에게 보고하라.\n\n/orchestration" (`reviews/round-446-owner-answers.md:11`)
+  > 편집자 결정(450C-02): "【추론】 소유자가 이 단계는 8단계와 분리된 설계 최적화 가지에서 가지 PR들을 병합하고, 오케스트레이터가 만든 PR은 오케스트레이터가 병합할 수 있다고 했다(위 1행). 병합 대상은 `feat/schema-form-design-optimization`이다. 측정과 독립 검토를 마친 PR #463~#469는 개별 squash 대신, 그 일곱을 이미 합쳐 측정한 통합 가지 `integration/schema-form-d2`를 병합 커밋 하나로 들였다(829c217e0). 그 결과의 `src`와 `package.json`은 측정한 통합 판과 바이트 단위로 같고, 다른 차이는 그 사이 단계 가지에 쌓인 원장과 결과 문서뿐이다. GitHub은 일곱 PR을 병합됨으로 표시했다. 개별 squash를 쓰면 #464와 #466의 `settle/DETAIL.md` 문서 충돌을 다시 풀어야 하고, 측정한 판과 다른 판이 들어갈 수 있기 때문이다. #470(D3b-1)은 Bun 노드당 힙이 기준 최댓값보다 1.465 B(+0.066 %) 커서 TEST-027의 소유자 수용이 남았다. 병합 권한이 그 수용까지 대신하지는 않으므로, base만 설계 최적화 가지로 옮기고 수용 뒤에 병합한다. 앞으로 오케스트레이터가 만든 PR은 독립 검토를 통과하고 TEST-027 같은 수용 조건이 없으면 오케스트레이터가 병합한다. 8단계 가지와 #445는 손대지 않는다." (`reviews/round-450-closing.md:10`)
+- 상태: 현행
+- 출처: `reviews/round-448-closing.md:14`(정본), `AGENT-POLICY.md`
+- 닫은 사람: 편집자 결정(448라운드, `reviews/round-448-closing.md` 448C-04)
+- 라운드: 448
+- 까닭: `reviews/round-448-closing.md:14`
+
+### PROCESS-071 1차 계획대로의 진행(449라운드) — 446라운드 계획서 밖의 편집자 판단(447·448라운드 결정과 워커 질문에 답한 조건)은 재검증 대상, 이후 작업은 계획서의 항목만 계획서의 문장대로, 계획서에 없는 방안이 유일한 길이면 구현하지 않고 소유자에게
+
+- 결정:
+  > 【추론】 소유자가 편집자의 임의 판단은 나중에 모두 재검증하므로 임의 판단보다 1차 계획대로 진행하라고 했다(위 1행). 1차 계획은 446라운드의 계획서(`plan/design-optimization/request.md`·`verification.md`·`adr-and-axes.md`)와 446C-01~08이다. 그 밖에서 오케스트레이터가 정한 것은 재검증 대상으로 표시한다: 447C-01의 H4 축 추가 측정 허용과 H5b의 분리, 447C-02(reset과 rebuild), 447C-03·448C-03(시험 기록 정정 규칙), 447C-04(React 동등 측정을 D4로), 447C-05(미구독 커밋의 관측 자격), 447C-06(D2의 PR 분할), 447C-07(D5 결정권), 448C-01(D2-P1의 설계와 자격 범위), 448C-02(분기 전환 행의 측정 폭 규칙), 448C-04(독립 검토 배정), 448C-05(노드당 힙 관문의 범위), 448C-06(엔진 캐시 배치 원칙과 검증기 편차), 448C-07(정적 자식 준비물), 통합 가지 `integration/schema-form-d1`·`d2`의 운영, 그리고 워커 질문에 답하며 정한 세부 조건들. 이후 작업은 계획서에 적힌 항목만 계획서의 문장대로 진행하고, 계획서에 없는 방안이 유일한 길로 보이면 구현하지 않고 소유자에게 올린다.
+- 보충:
+  > 소유자(449라운드, 분기 전환의 잠정 수용과 진행 방향): "일단 수용으로 넘어가고, 마운트까지 작업해.\n너의 임의판단을 넣은 부분은 추후 전부 재검증 대상이니, 임의판단보단 1차 계획대로 진행하도록 해줘.\n그렇게 마운트까지 검증을 마치고,\n분기전환에 대해서는 다시 검토하자. 어때?" (`reviews/round-449-owner-answers.md:7`)
+  > 편집자 결정(452C-06): "【추론】 D4의 관문 다섯은 일괄 입력 nested(1.13배, 4.05 ms)와 게이트 잎 쓰기(최대 1.17배)가 통과, 분기 전환·형제 선형항·Bun B2가 미달이었고 셋은 452C-01~03으로 처리했다. 단계의 성과는 일괄 입력이 S 대비 0.45~0.56배(L의 1.13~1.23배), React 배열 갱신 0.11~0.57배, React 마운트 0.80~0.85배이고, 분기 전환·중첩 마운트는 S 대비 0.93배에 그쳤다. 단계 루트 PR #472(설계 최적화 가지에서 8단계 가지로, #445 병합 뒤 base를 `1.0.0-beta`로)는 세 판 비교표와 관문 판정, 소유자 결정을 본문에 싣고 초안으로 두며 병합은 소유자 몫이다. 남은 가지는 8단계 가지·단계 가지·D2-P5 셋, 남은 worktree는 없다. 다음 단계는 분기 전환에만 집중하며(위 3행), 그 계획서는 새 라운드에서 연다. 재검증 목록(447·448라운드의 편집자 판단, 449C-04, 451C-03의 두 판정)과 대기열 65·66·67은 그 단계의 첫 라운드로 넘긴다." (`reviews/round-452-closing.md:18`)
+- 상태: 현행
+- 출처: `reviews/round-449-closing.md:10`(정본), `reviews/round-449-owner-answers.md:7`, `plan/design-optimization/request.md`
+- 닫은 사람: 소유자 답(`reviews/round-449-owner-answers.md:7`), 편집자 결정(449라운드, `reviews/round-449-closing.md` 449C-02)
+- 라운드: 449
+- 까닭: `reviews/round-449-owner-answers.md:7`
+
+### PROCESS-072 설계 최적화 가지로의 병합과 병합 권한(450라운드) — 오케스트레이터가 만든 PR은 독립 검토를 통과하고 TEST-027 같은 수용 조건이 없으면 오케스트레이터가 병합, 측정한 통합 가지를 병합 커밋 하나로 들여 측정한 판과 같은 코드를 넣음, 8단계 가지와 #445는 손대지 않음
+
+- 결정:
+  > 【추론】 소유자가 이 단계는 8단계와 분리된 설계 최적화 가지에서 가지 PR들을 병합하고, 오케스트레이터가 만든 PR은 오케스트레이터가 병합할 수 있다고 했다(위 1행). 병합 대상은 `feat/schema-form-design-optimization`이다. 측정과 독립 검토를 마친 PR #463~#469는 개별 squash 대신, 그 일곱을 이미 합쳐 측정한 통합 가지 `integration/schema-form-d2`를 병합 커밋 하나로 들였다(829c217e0). 그 결과의 `src`와 `package.json`은 측정한 통합 판과 바이트 단위로 같고, 다른 차이는 그 사이 단계 가지에 쌓인 원장과 결과 문서뿐이다. GitHub은 일곱 PR을 병합됨으로 표시했다. 개별 squash를 쓰면 #464와 #466의 `settle/DETAIL.md` 문서 충돌을 다시 풀어야 하고, 측정한 판과 다른 판이 들어갈 수 있기 때문이다. #470(D3b-1)은 Bun 노드당 힙이 기준 최댓값보다 1.465 B(+0.066 %) 커서 TEST-027의 소유자 수용이 남았다. 병합 권한이 그 수용까지 대신하지는 않으므로, base만 설계 최적화 가지로 옮기고 수용 뒤에 병합한다. 앞으로 오케스트레이터가 만든 PR은 독립 검토를 통과하고 TEST-027 같은 수용 조건이 없으면 오케스트레이터가 병합한다. 8단계 가지와 #445는 손대지 않는다.
+- 보충:
+  > 소유자(450라운드, 재측정과 병합 권한): "다시 재도록. 그리고 해당 단계는 8단계와 분리된 설계최적화 브랜치에서 가지 pr들을 머지하도록 해라. \n네가 만든 pr은 네가 머지할 수 있다." (`reviews/round-450-owner-answers.md:7`)
+  > 편집자 결정(451C-01): "【추론】 소유자가 #470의 노드당 힙 증가(Bun +1.465 B, +0.066 %)를 TEST-027로 받아들였고(위 1행) 끝난 worktree와 가지는 정리하며 진행하라고 했다(위 1·2행). #470은 설계 최적화 가지에 병합 커밋 8569ec0e1로 들였다(GitHub의 병합 버튼은 병합 커밋을 금지해 로컬에서 병합해 push했다). 병합된 #463~#470의 가지, 통합 가지 둘(`integration/schema-form-d1`·`d2`), 옛 문서 스냅숏 가지 둘(`docs/schema-form-d2-0-profile`·`d3b-inventory`, 내용은 모두 단계 가지에 있었다), 폐기 가설의 가지(H3·H4·H5·D2-P4·D2-M)와 D2-M 워커의 worktree를 원격·로컬에서 지웠고, 8단계 가지(#445, 소유자 병합 대기)·단계 가지·진행 중인 D3b-2 가지·보류된 D2-P5 가지(`perf/schema-form-d2-sibling-linear` 4681c0aff, 분기 전환 재검토용) 넷만 남겼다. 그래서 d4f9e0c76의 D2-M 기록이 적은 "후보 d1079e5c3 보존"은 더 성립하지 않는다: 폐기 가설의 코드는 보존 대상이 아니고 결과 문서(`verification/design-optimization/d2-m-results.md`)가 기록이다." (`reviews/round-451-closing.md:8`)
+  > 편집자 결정(451C-05): "【추론】 소유자가 병합 방법은 스쿼시 병합이라고 했다(위 6행). 이후 가지 PR의 병합은 `gh pr merge --squash --delete-branch --match-head-commit <머리>`로 하며 병합 제목은 PR 제목, 본문은 독립 검토 판정과 수용 조건 한 문단이다. #471은 ca8d52f59로 스쿼시 병합했다. 이미 병합 커밋으로 들인 #463~#470(829c217e0·8569ec0e1)은 그대로 둔다. 병합 뒤 Orca가 가지 삭제를 보고 D3b-2 worktree를 스스로 지웠고, D4는 새 worktree `design-opt-d4`에서 한다." (`reviews/round-451-closing.md:16`)
+- 상태: 현행
+- 출처: `reviews/round-450-closing.md:10`(정본), `reviews/round-450-owner-answers.md:7`
+- 닫은 사람: 소유자 답(`reviews/round-450-owner-answers.md:7`), 편집자 결정(450라운드, `reviews/round-450-closing.md` 450C-02)
+- 라운드: 450
+- 까닭: `reviews/round-450-owner-answers.md:7`
+
+### PROCESS-073 코디네이터의 대기 규칙(451라운드) — 대기는 `worker_done`·`escalation`·`question`만 거르는 백그라운드 필터 대기 하나뿐이고 그것이 돌아올 때만 읽고 판정, 워커의 `heartbeat`·`status`와 하네스의 메시지 알림에는 반응하지 않고 생존 신호는 뒤에 한꺼번에 확인 처리, 워커 `status`는 창 시작·종료·막힘 세 때만(`AGENT-POLICY.md` 6절과 전역 스킬)
+
+- 결정:
+  > 【추론】 소유자가 생존 신호마다 확인해 보고하는 것이 컨텍스트 낭비이며 정식 사용법이 아니라고 지적했고, 전에도 같은 지적이 있었는데 고쳐지지 않았으니 에이전트 정책을 보고 고치라고 했다(위 3·4행). `AGENT-POLICY.md`와 오케스트레이션 스킬 어디에도 규칙이 없었던 것이 반복의 원인이다. 규칙을 둘에 적었다: 코디네이터의 대기는 `worker_done`·`escalation`·`question`만 거르는 백그라운드 대기 하나뿐이고 그것이 돌아올 때만 읽고 판정하며, 워커의 `heartbeat`·`status`는 자동 발신이라 읽지 않고, 하네스의 "orchestration message(s)" 알림은 읽지 않은 생존 신호까지 세므로 반응하지 않으며, 생존 신호는 필터 대기가 돌아온 뒤 한꺼번에 확인 처리한다. 워커 brief에는 `status`를 창 시작·창 종료·막힘 세 때에만 보내고 질문은 `question`, 결정 요청은 `escalation`으로만 보낸다고 적는다(`AGENT-POLICY.md` 6절, 커밋 85b3242cb; 전역 스킬 `~/.claude/skills/orchestration/SKILL.md`).
+- 보충:
+  > 소유자(451라운드, 생존 신호의 처리): "생존신고로 계속 컨텍스트 낭비를 하는거 아닌가? 이게 정식 사용법이야?" (`reviews/round-451-owner-answers.md:9`)
+  > 소유자(451라운드, 에이전트 정책의 수정): "이전에도 비슷한 지적을 했는데 고쳐지지 않았다. 에이전트 정책에 혹시 기록이 있나? 그걸 수정하던가 하라" (`reviews/round-451-owner-answers.md:10`)
+- 상태: 현행
+- 출처: `reviews/round-451-closing.md:10`(정본), `reviews/round-451-owner-answers.md:9-10`, `AGENT-POLICY.md`
+- 닫은 사람: 소유자 답(`reviews/round-451-owner-answers.md:9-10`), 편집자 결정(451라운드, `reviews/round-451-closing.md` 451C-02)
+- 라운드: 451
+- 까닭: `reviews/round-451-owner-answers.md:9`
+
+### PROCESS-074 가지 PR의 스쿼시 병합과 끝난 가지·worktree의 정리(451라운드) — 병합은 `gh pr merge --squash --delete-branch --match-head-commit`, 제목은 PR 제목·본문은 독립 검토 판정과 수용 조건, 병합된 PR과 폐기 가설의 가지·worktree는 지우고 남기는 가지는 8단계·단계·진행 중·보류(D2-P5)뿐, 완료 보고는 표로, 세 판 비교표(0.16.1·단계 시작·단계 끝)는 D4가 구해 단계 루트 PR 본문에
+
+- 결정:
+  > 【추론】 소유자가 병합 방법은 스쿼시 병합이라고 했다(위 6행). 이후 가지 PR의 병합은 `gh pr merge --squash --delete-branch --match-head-commit <머리>`로 하며 병합 제목은 PR 제목, 본문은 독립 검토 판정과 수용 조건 한 문단이다. #471은 ca8d52f59로 스쿼시 병합했다. 이미 병합 커밋으로 들인 #463~#470(829c217e0·8569ec0e1)은 그대로 둔다. 병합 뒤 Orca가 가지 삭제를 보고 D3b-2 worktree를 스스로 지웠고, D4는 새 worktree `design-opt-d4`에서 한다.
+- 보충:
+  > 소유자(451라운드, #470의 노드당 힙 증가 수용): "받아들입니다. 작업이 완료된 worktree 나 브랜치는 정리하면서 진행하세요" (`reviews/round-451-owner-answers.md:7`)
+  > 소유자(451라운드, 가지 정리): "지금 깔끔하게 관리되던 깃레일이 엄청 더러워졌거든요? 필요한것만 깔끔하게 정리하세요." (`reviews/round-451-owner-answers.md:8`)
+  > 소유자(451라운드, 완료 보고의 형식): "검증 및 작업 완료시 최종 결과를 정리해서 표와 함께 표시하도록 해줘" (`reviews/round-451-owner-answers.md:11`)
+  > 소유자(451라운드, D3b-2의 힙 수용, 세 판 비교, 병합 방법): "받아들입니다. 현행 작업 마무리까지 진행하세요. 해당 브랜치 작업으로 0.16.1, 작업이전, 작업이후 각각 비교를 구하고 pr에 수록하세요.\n머지 방법은 스쿼스 머지입니다." (`reviews/round-451-owner-answers.md:12`)
+- 상태: 현행
+- 출처: `reviews/round-451-closing.md:16`(정본), `reviews/round-451-closing.md:8`, `reviews/round-451-closing.md:14`, `reviews/round-451-owner-answers.md:7-8`, `reviews/round-451-owner-answers.md:11-12`
+- 닫은 사람: 소유자 답(`reviews/round-451-owner-answers.md:7-8`, `reviews/round-451-owner-answers.md:11-12`), 편집자 결정(451라운드, `reviews/round-451-closing.md` 451C-01·04·05)
+- 라운드: 451
+- 까닭: `reviews/round-451-owner-answers.md:12`

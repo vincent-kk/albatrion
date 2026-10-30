@@ -14,7 +14,8 @@ export interface CalculatedSnapshot<Self> {
 }
 
 /**
- * Keep last commit's identities when a temporary gate baseline settles equally.
+ * Keep pre-wheel identities when a temporary gate baseline settles equally.
+ * Non-wheel paths retain references through updateOutput without a snapshot.
  * @param node - Recomputed record whose final values may match the prior commit
  * @param previous - Identities captured before the fixed host start
  * @param context - Changed-node set to trim after a no-op calculation

@@ -80,6 +80,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
             getBlueprintNodeIdentity(node.blueprintNode),
             rule,
             target,
+            target.runtime,
           );
           addActiveRuleKey(state, node.path, key);
           const consumed = state.consumedRuleValues.has(key);

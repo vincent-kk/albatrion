@@ -184,11 +184,11 @@ export const buildChildSelectionRuntime = async (
   try {
     const result = await build({
       stdin: {
-        contents:
-          (revision
-            ? ''
-            : "import { gateWheelEvaluation } from './src/core/engine/settle/utils/gates/gateWheelEvaluation'; gateWheelEvaluation.mode = 'shadow';\n") +
-          "export { runChildSelectionHistory } from './src/core/engine/settle/__tests__/fixtures/childSelection/runChildSelectionHistory';",
+        contents: revision
+          ? "export { runChildSelectionHistory } from './src/core/engine/settle/__tests__/fixtures/childSelection/runChildSelectionHistory';"
+          : "import { engineModes } from './src/core/engine/utils/cache/engineModes';\n" +
+            "import { runChildSelectionHistory as run } from './src/core/engine/settle/__tests__/fixtures/childSelection/runChildSelectionHistory';\n" +
+            "export const runChildSelectionHistory = (...args) => { const previous = engineModes.gateWheel; try { engineModes.setMode('gateWheel', 'shadow'); return run(...args); } finally { engineModes.setMode('gateWheel', previous); } };",
         loader: 'ts',
         resolveDir: packageRoot,
       },

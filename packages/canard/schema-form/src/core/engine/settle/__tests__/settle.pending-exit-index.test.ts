@@ -3,10 +3,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { selectChildren } from '../utils/compute/childSelection/selectChildren';
 import { primeHost } from '../utils/compute/primeHost';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { updatePendingExitIndex } from '../utils/scratch/updatePendingExitIndex';
@@ -15,16 +15,16 @@ import { finalizePerished } from '../utils/transition/finalizePerished';
 import { expectPendingExitIndex } from './fixtures/expectPendingExitIndex';
 import { gateTableScene } from './fixtures/gateTableScene';
 
-const previous = gateSelectionTable.mode;
+const previous = engineModes.gateSelection;
 afterEach(() => {
-  gateSelectionTable.mode = previous;
+  engineModes.setMode('gateSelection', previous);
 });
 
 // filid:contract settle-pending-exit-index-lifetime
 describe('both pending-exit index layers at all five maintenance sites', () => {
   it('V4 selectChildren exit registration equals a recomputation', () => {
     const { root, context } = gateTableScene();
-    gateSelectionTable.mode = 'off';
+    engineModes.setMode('gateSelection', 'off');
     const prior = { ...root.structure };
     root.structure!.kind.raw =
       root.structure!.kind.local =

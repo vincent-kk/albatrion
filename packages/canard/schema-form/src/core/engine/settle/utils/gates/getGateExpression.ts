@@ -1,10 +1,7 @@
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 
 /** Active gate expressions indexed by authored path for each analysis. */
-const GATE_EXPRESSIONS = new WeakMap<
-  Blueprint,
-  ReadonlyMap<string, BlueprintExpression>
->();
 
 /**
  * Find the first compiled active gate at an authored schema path.
@@ -17,14 +14,20 @@ export const getGateExpression = (
   schemaPath: string,
 ): BlueprintExpression | undefined => {
   if (blueprint.capabilities.branchless) return undefined;
-  let expressions = GATE_EXPRESSIONS.get(blueprint);
+  let expressions = getBlueprintDerived<
+    'gateExpressions',
+    ReadonlyMap<string, BlueprintExpression>
+  >(blueprint).gateExpressions;
   if (!expressions) {
     const indexed = new Map<string, BlueprintExpression>();
     for (const expression of blueprint.expressions)
       if (expression.key === 'active' && !indexed.has(expression.schemaPath))
         indexed.set(expression.schemaPath, expression);
     expressions = indexed;
-    GATE_EXPRESSIONS.set(blueprint, expressions);
+    getBlueprintDerived<
+      'gateExpressions',
+      ReadonlyMap<string, BlueprintExpression>
+    >(blueprint).gateExpressions = expressions;
   }
   return expressions.get(schemaPath);
 };

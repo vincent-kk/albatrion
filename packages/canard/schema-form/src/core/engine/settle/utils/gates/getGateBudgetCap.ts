@@ -3,6 +3,8 @@ import type {
   BlueprintGate,
   PropertyDeclaration,
 } from '../../../blueprint';
+import type { TreeMemoStores } from '../../../types/treeMemoStores';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 
 interface GateBudgetIndex {
   /** Authored decisions reached by each evaluated gate. */
@@ -11,20 +13,13 @@ interface GateBudgetIndex {
   readonly transitionCap: number;
 }
 
-interface HostBudgetCache {
-  /** Gate identities in the host's last evaluated order. */
-  readonly gates: readonly BlueprintGate[];
-  /** Ceiling for that exact gate list. */
-  readonly cap: number;
-}
-
 /** One finite decision index per immutable analysis and one ceiling per live host. */
-const INDICES = new WeakMap<Blueprint, GateBudgetIndex>();
-const HOST_CAPS = new WeakMap<object, HostBudgetCache>();
 
 /** Map evaluated gates to their owning fragments or node-gate entries. */
 const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
-  const cached = INDICES.get(blueprint);
+  const cached = getBlueprintDerived<'gateBudgetIndex', GateBudgetIndex>(
+    blueprint,
+  ).gateBudgetIndex;
   if (cached) return cached;
   const decisionsByGate = new Map<BlueprintGate, Set<string>>();
   const decisions = new Set<string>();
@@ -61,7 +56,9 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
       for (const declaration of entry.declarations) collect(declaration);
   }
   const index = { decisionsByGate, transitionCap: decisions.size + 1 };
-  INDICES.set(blueprint, index);
+  getBlueprintDerived<'gateBudgetIndex', GateBudgetIndex>(
+    blueprint,
+  ).gateBudgetIndex = index;
   return index;
 };
 
@@ -74,9 +71,10 @@ export const getHostWheelBudgetCap = (
   host: object,
   blueprint: Blueprint,
   gates: readonly BlueprintGate[],
+  runtime: Pick<TreeMemoStores<unknown, BlueprintGate>, 'hostBudgetCaps'>,
 ): number => {
   if (blueprint.capabilities.branchless) return 1;
-  const cached = HOST_CAPS.get(host);
+  const cached = runtime.hostBudgetCaps?.get(host);
   if (
     cached &&
     cached.gates.length === gates.length &&
@@ -88,6 +86,9 @@ export const getHostWheelBudgetCap = (
   for (const gate of gates)
     for (const key of index.decisionsByGate.get(gate) ?? []) decisions.add(key);
   const cap = decisions.size + 1;
-  HOST_CAPS.set(host, { gates: [...gates], cap });
+  (runtime.hostBudgetCaps ??= new WeakMap()).set(host, {
+    gates: [...gates],
+    cap,
+  });
   return cap;
 };

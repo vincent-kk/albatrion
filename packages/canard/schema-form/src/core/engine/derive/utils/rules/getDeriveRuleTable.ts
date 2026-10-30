@@ -4,6 +4,7 @@ import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { ControlKey } from '../../../types/controls';
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { getFragmentOwnerPaths } from '../../../utils/controls/getFragmentOwnerPaths';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
@@ -11,7 +12,7 @@ import type { DeriveRule, DeriveRuleTable } from '../../types/rules';
 import { getWatchPaths } from './getWatchPaths';
 
 /** Rule tables follow the immutable analysis lifetime. */
-const TABLES = new WeakMap<Blueprint, DeriveRuleTable>();
+
 /** Rule-free analyses share a read-only empty table. */
 const EMPTY_TABLE: DeriveRuleTable = Object.freeze({
   rules: Object.freeze([]),
@@ -48,7 +49,9 @@ interface RuleGroup {
  */
 export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
   if (!blueprint.capabilities.hasDerive) return EMPTY_TABLE;
-  const cached = TABLES.get(blueprint);
+  const cached = getBlueprintDerived<'deriveRuleTable', DeriveRuleTable>(
+    blueprint,
+  ).deriveRuleTable;
   if (cached) return cached;
   const rules: DeriveRule[] = [];
   const byDeclaration = new Map<number, DeriveRule[]>();
@@ -186,6 +189,8 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         }
     }
   const table: DeriveRuleTable = { rules, byDeclaration };
-  TABLES.set(blueprint, table);
+  getBlueprintDerived<'deriveRuleTable', DeriveRuleTable>(
+    blueprint,
+  ).deriveRuleTable = table;
   return table;
 };

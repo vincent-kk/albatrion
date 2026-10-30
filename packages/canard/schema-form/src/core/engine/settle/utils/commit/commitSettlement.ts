@@ -56,7 +56,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     ));
     for (const [node, ids] of context.selectedDeclarationIds)
       if (!node.detached)
-        declarations.set(getCommittedDeclarationKey(node), ids);
+        declarations.set(getCommittedDeclarationKey(node, node.runtime), ids);
   }
   if (context.failures?.length && runtime.diagnostics.status !== 'degraded')
     runtime.diagnostics = {

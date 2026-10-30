@@ -7,6 +7,7 @@ import type {
   BlueprintGate,
   BlueprintNode,
 } from '../../../../blueprint';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { getGateExpression } from '../../gates/getGateExpression';
 
 /** One authored evaluation position; eligible table gates use their bucket verdict. */
@@ -32,10 +33,6 @@ interface DirectChildSelectionPlan {
  * hosts own the lifetime and live records are never retained. Callers read an entry
  * here first and call {@link getDirectChildSelectionPlan} only while it is `undefined`.
  */
-export const DIRECT_CHILD_SELECTION_PLANS = new WeakMap<
-  BlueprintNode,
-  DirectChildSelectionPlan | null
->();
 
 /**
  * Read a prepared baseline or lazily prepare eligible multi-branch union candidates.
@@ -51,7 +48,10 @@ export const getDirectChildSelectionPlan = (
   blueprint: Blueprint,
   prepare: boolean,
 ): DirectChildSelectionPlan | null => {
-  const cached = DIRECT_CHILD_SELECTION_PLANS.get(host);
+  const cached = getHostDerived<
+    'directChildSelectionPlan',
+    DirectChildSelectionPlan | null
+  >(host).directChildSelectionPlan;
   if (cached !== undefined) return cached;
   if (!prepare) return null;
   const schema = host.declarations[0]?.schema;
@@ -63,7 +63,9 @@ export const getDirectChildSelectionPlan = (
       (isArray(schema.anyOf) && schema.anyOf.length > 1)
     )
   ) {
-    DIRECT_CHILD_SELECTION_PLANS.set(host, null);
+    getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
+      host,
+    ).directChildSelectionPlan = null;
     return null;
   }
   const steps: DirectChildSelection[] = [];
@@ -86,7 +88,10 @@ export const getDirectChildSelectionPlan = (
         declarations[0].gates.length ||
       entry.node.declarations[0].gates[0] !== declarations[0].gates[0]
     ) {
-      DIRECT_CHILD_SELECTION_PLANS.set(host, null);
+      getHostDerived<
+        'directChildSelectionPlan',
+        DirectChildSelectionPlan | null
+      >(host).directChildSelectionPlan = null;
       return null;
     }
     const declaration = declarations[0];
@@ -101,7 +106,10 @@ export const getDirectChildSelectionPlan = (
         !expression ||
         expression.dependencies.length !== 1
       ) {
-        DIRECT_CHILD_SELECTION_PLANS.set(host, null);
+        getHostDerived<
+          'directChildSelectionPlan',
+          DirectChildSelectionPlan | null
+        >(host).directChildSelectionPlan = null;
         return null;
       }
     } else baseline.push(entry);
@@ -109,6 +117,8 @@ export const getDirectChildSelectionPlan = (
     steps.push({ entry, gate, ids: [declaration.id] });
   }
   const plan = { steps, baseline };
-  DIRECT_CHILD_SELECTION_PLANS.set(host, plan);
+  getHostDerived<'directChildSelectionPlan', DirectChildSelectionPlan | null>(
+    host,
+  ).directChildSelectionPlan = plan;
   return plan;
 };

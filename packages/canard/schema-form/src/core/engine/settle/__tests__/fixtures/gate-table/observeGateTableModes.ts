@@ -1,10 +1,9 @@
 import { fileURLToPath } from 'node:url';
 import { expect, vi } from 'vitest';
 
+import { engineModes } from '../../../../utils/cache/engineModes';
 import { getGateSelectionTable } from '../../../utils/compute/childSelection/getGateSelectionTable';
 import * as entrySelection from '../../../utils/compute/childSelection/selectEntryStep';
-import { gateSelectionTable } from '../../../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../../../utils/gates/gateWheelEvaluation';
 import type { gateSelectionCases } from '../gateSelectionCases';
 import { observeGateTableCase } from './observeGateTableCase';
 import { sectionGateTableObservation } from './snapshotGateTableCase/utils/sectionGateTableObservation';
@@ -20,17 +19,17 @@ export const observeGateTableModes = async (
   fixture: (typeof gateSelectionCases)[number],
   compactSchemas = false,
 ): Promise<string> => {
-  const previous = gateSelectionTable.mode;
-  const previousWheel = gateWheelEvaluation.mode;
+  const previous = engineModes.gateSelection;
+  const previousWheel = engineModes.gateWheel;
   let reference = '';
   const original = entrySelection.selectEntryStep;
   try {
     for (const wheel of [previousWheel, 'skip'] as const) {
-      gateWheelEvaluation.mode = wheel;
+      engineModes.setMode('gateWheel', wheel);
       const histories: string[] = [];
       const visits: { path: string; table: boolean }[][] = [];
       for (const mode of ['off', 'table', 'verify'] as const) {
-        gateSelectionTable.mode = mode;
+        engineModes.setMode('gateSelection', mode);
         const calls: { path: string; table: boolean }[] = [];
         const spy = vi
           .spyOn(entrySelection, 'selectEntryStep')
@@ -136,7 +135,7 @@ export const observeGateTableModes = async (
     }
     return reference;
   } finally {
-    gateSelectionTable.mode = previous;
-    gateWheelEvaluation.mode = previousWheel;
+    engineModes.setMode('gateSelection', previous);
+    engineModes.setMode('gateWheel', previousWheel);
   }
 };

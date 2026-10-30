@@ -3,10 +3,11 @@ import { unescapeSegment } from '@winglet/json/pointer';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
-import { gateSelectionTable } from '../gates/gateSelectionTable';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
+import { verifyWriteEpoch } from '../input/utils/verifyWriteEpoch';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
 import { getDependencyIndex } from './getDependencyIndex';
 
@@ -18,6 +19,17 @@ import { getDependencyIndex } from './getDependencyIndex';
 export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  if (context.writeEpoch !== undefined) {
+    if (context.target.parent !== null)
+      context.dirtyPaths.add(context.target.path);
+    let parent = context.target.parent;
+    while (parent) {
+      context.dirtyPaths.add(parent.path);
+      parent = parent.parent;
+    }
+    if (engineModes.gateSelection === 'verify') verifyWriteEpoch(context);
+    return;
+  }
   if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)
     context.dirtyPaths.beginPostOrder();
   const blueprint = context.root.runtime.blueprint;
@@ -25,7 +37,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   const epoch = (context.registrationEpoch =
     (context.registrationEpoch ?? 0) + 1);
   const shadow =
-    gateSelectionTable.mode === 'verify' && !context.shadowRegistration
+    engineModes.gateSelection === 'verify' && !context.shadowRegistration
       ? context.registrationShadow
       : undefined;
   if (shadow) {
@@ -43,7 +55,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   const split =
     !context.shadowRegistration &&
     context.hasGates &&
-    gateSelectionTable.mode !== 'off' &&
+    engineModes.gateSelection !== 'off' &&
     dependencies.hasSplitOwners;
   if (split) {
     const dirty = context.dirtyPaths;

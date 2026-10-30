@@ -3,10 +3,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as gates from '../utils/gates/evaluateGate';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { gateWheelCases } from './fixtures/gateWheelCases';
@@ -14,8 +14,8 @@ import { runGateSelectionCase } from './helpers/runGateSelectionCase';
 
 describe('gate-form-one-key confirmation wheel counts', () => {
   it.each([100, 1000])('S1 evaluates K=%i gates in one selection', (count) => {
-    const previousMode = gateWheelEvaluation.mode;
-    gateWheelEvaluation.mode = 'skip';
+    const previousMode = engineModes.gateWheel;
+    engineModes.setMode('gateWheel', 'skip');
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -39,7 +39,7 @@ describe('gate-form-one-key confirmation wheel counts', () => {
     } finally {
       selecting.mockRestore();
       evaluating.mockRestore();
-      gateWheelEvaluation.mode = previousMode;
+      engineModes.setMode('gateWheel', previousMode);
     }
   });
 
@@ -49,15 +49,15 @@ describe('gate-form-one-key confirmation wheel counts', () => {
       const fixture = gateWheelCases.find(
         (item) => item.name === `S2 oneOf-${count}, nested=false`,
       )!;
-      const previousMode = gateWheelEvaluation.mode;
+      const previousMode = engineModes.gateWheel;
       const selecting = vi.spyOn(selection, 'selectChildren');
       const evaluating = vi.spyOn(gates, 'evaluateGate');
-      const run = (mode: typeof gateWheelEvaluation.mode) => {
+      const run = (mode: typeof engineModes.gateWheel) => {
         const measurements: { wheels: number; gates: number }[] = [];
         runGateSelectionCase(
           fixture,
           () => {
-            gateWheelEvaluation.mode = mode;
+            engineModes.setMode('gateWheel', mode);
           },
           () => {
             measurements.push({
@@ -78,27 +78,27 @@ describe('gate-form-one-key confirmation wheel counts', () => {
         expect(baseline.slice(1)).toEqual([
           {
             wheels: 4,
-            gates: gateSelectionTable.mode === 'off' ? 16 * count : 0,
+            gates: engineModes.gateSelection === 'off' ? 16 * count : 0,
           },
           {
             wheels: 2,
-            gates: gateSelectionTable.mode === 'off' ? 8 * count : 0,
+            gates: engineModes.gateSelection === 'off' ? 8 * count : 0,
           },
         ]);
         expect(candidate.slice(1)).toEqual([
           {
             wheels: 2,
-            gates: gateSelectionTable.mode === 'off' ? 8 * count : 0,
+            gates: engineModes.gateSelection === 'off' ? 8 * count : 0,
           },
           {
             wheels: 1,
-            gates: gateSelectionTable.mode === 'off' ? 4 * count : 0,
+            gates: engineModes.gateSelection === 'off' ? 4 * count : 0,
           },
         ]);
       } finally {
         selecting.mockRestore();
         evaluating.mockRestore();
-        gateWheelEvaluation.mode = previousMode;
+        engineModes.setMode('gateWheel', previousMode);
       }
     },
   );
@@ -109,7 +109,7 @@ describe('gate-form-one-key confirmation wheel counts', () => {
       const fixture = gateWheelCases.find((item) =>
         item.name.startsWith(prefix),
       )!;
-      const previousMode = gateWheelEvaluation.mode;
+      const previousMode = engineModes.gateWheel;
       const selecting = vi.spyOn(selection, 'selectChildren');
       const measurements: { wheels: number; skipped: number }[] = [];
       let previousSkips = gateWheelEvaluation.skipped;
@@ -117,7 +117,7 @@ describe('gate-form-one-key confirmation wheel counts', () => {
         runGateSelectionCase(
           fixture,
           () => {
-            gateWheelEvaluation.mode = 'skip';
+            engineModes.setMode('gateWheel', 'skip');
           },
           () => {
             measurements.push({
@@ -138,7 +138,7 @@ describe('gate-form-one-key confirmation wheel counts', () => {
         } else expect(measurements[1].skipped).toBeGreaterThan(0);
       } finally {
         selecting.mockRestore();
-        gateWheelEvaluation.mode = previousMode;
+        engineModes.setMode('gateWheel', previousMode);
       }
     },
   );
@@ -147,22 +147,22 @@ describe('gate-form-one-key confirmation wheel counts', () => {
     const fixture = gateWheelCases.find((item) =>
       item.name.startsWith('S6 validator'),
     )!;
-    const previousMode = gateWheelEvaluation.mode;
+    const previousMode = engineModes.gateWheel;
     const beforeSkips = gateWheelEvaluation.skipped;
     const beforeConfirmations = gateWheelEvaluation.confirmations;
     try {
       const emptyChild = { ...fixture, input: { kind: 'y' } };
       runGateSelectionCase(emptyChild, () => {
-        gateWheelEvaluation.mode = 'skip';
+        engineModes.setMode('gateWheel', 'skip');
       });
       expect(gateWheelEvaluation.skipped - beforeSkips).toBe(1);
       runGateSelectionCase(emptyChild, () => {
-        gateWheelEvaluation.mode = 'shadow';
+        engineModes.setMode('gateWheel', 'shadow');
       });
       expect(gateWheelEvaluation.confirmations - beforeConfirmations).toBe(1);
       expect(gateWheelEvaluation.nonNoop).toBe(0);
     } finally {
-      gateWheelEvaluation.mode = previousMode;
+      engineModes.setMode('gateWheel', previousMode);
     }
   });
 });

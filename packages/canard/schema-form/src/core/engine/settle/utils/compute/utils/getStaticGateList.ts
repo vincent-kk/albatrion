@@ -1,5 +1,6 @@
-import type { BlueprintGate, BlueprintNode } from '../../../../blueprint';
+import type { BlueprintGate } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 
 /** Immutable authored gate order and membership before live relocation. */
 interface StaticGateList {
@@ -10,7 +11,6 @@ interface StaticGateList {
 }
 
 /** Blueprint-owned cache; object branch rows return fixed childEntries. */
-const STATIC_GATE_LISTS = new WeakMap<BlueprintNode, StaticGateList>();
 
 /**
  * Collect authored gates, caching only hosts with blueprint-fixed child entries.
@@ -22,7 +22,10 @@ export const getStaticGateList = <Self extends FieldNodeRecord<Self>>(
 ): StaticGateList => {
   const fixed =
     node.behavior.type === 'object' && node.behavior.strategy === 'branch';
-  const cached = fixed ? STATIC_GATE_LISTS.get(node.blueprintNode) : undefined;
+  const cached = fixed
+    ? getHostDerived<'staticGateList', StaticGateList>(node.blueprintNode)
+        .staticGateList
+    : undefined;
   if (cached) return cached;
   const gates: BlueprintGate[] = [];
   const seenGates = new Set<BlueprintGate>();
@@ -44,6 +47,9 @@ export const getStaticGateList = <Self extends FieldNodeRecord<Self>>(
     }
   }
   const list: StaticGateList = { gates, seenGates };
-  if (fixed) STATIC_GATE_LISTS.set(node.blueprintNode, list);
+  if (fixed)
+    getHostDerived<'staticGateList', StaticGateList>(
+      node.blueprintNode,
+    ).staticGateList = list;
   return list;
 };

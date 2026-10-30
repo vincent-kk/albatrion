@@ -3,9 +3,9 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 
 /** Immutable target templates retain their authored watch union. */
-const WATCH_PATHS = new WeakMap<BlueprintNode, readonly string[]>();
 
 /**
  * Read all authored watches on a value target without other expression paths.
@@ -13,7 +13,9 @@ const WATCH_PATHS = new WeakMap<BlueprintNode, readonly string[]>();
  * @returns Memoized distinct authored watch paths in declaration order
  */
 export const getWatchPaths = (node: BlueprintNode): readonly string[] => {
-  const cached = WATCH_PATHS.get(node);
+  const cached = getHostDerived<'watchPaths', readonly string[]>(
+    node,
+  ).watchPaths;
   if (cached) return cached;
   const watches: string[] = [];
   for (const declaration of node.declarations) {
@@ -30,6 +32,6 @@ export const getWatchPaths = (node: BlueprintNode): readonly string[] => {
       if (typeof path === 'string' && !watches.includes(path))
         watches.push(path);
   }
-  WATCH_PATHS.set(node, watches);
+  getHostDerived<'watchPaths', readonly string[]>(node).watchPaths = watches;
   return watches;
 };

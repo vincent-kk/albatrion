@@ -5,6 +5,7 @@ import type {
   BlueprintGate,
   BlueprintNode,
 } from '../../../../blueprint';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 import type {
   GateSelectionGroup,
@@ -16,10 +17,6 @@ import { computeRootGateSelection } from './gateSelection/computeRootGateSelecti
 import { getDirectChildSelectionPlan } from './getDirectChildSelectionPlan';
 
 /** Weak host lifetime includes negative eligibility decisions; never retains live nodes. */
-const GATE_SELECTION_TABLES = new WeakMap<
-  BlueprintNode,
-  GateSelectionTable | null
->();
 
 /** Construction-only mutable buckets, exposed through readonly table contracts. */
 type MutableGateSelectionGroup = Omit<
@@ -40,11 +37,16 @@ export const getGateSelectionTable = (
   host: BlueprintNode,
   blueprint: Blueprint,
 ): GateSelectionTable | null => {
-  const cached = GATE_SELECTION_TABLES.get(host);
+  const cached = getHostDerived<
+    'gateSelectionTable',
+    GateSelectionTable | null
+  >(host).gateSelectionTable;
   if (cached !== undefined) return cached;
   const plan = getDirectChildSelectionPlan(host, blueprint, true);
   if (!plan) {
-    GATE_SELECTION_TABLES.set(host, null);
+    getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
+      host,
+    ).gateSelectionTable = null;
     return null;
   }
   const watchedNames = new Map<string, string>();
@@ -97,7 +99,9 @@ export const getGateSelectionTable = (
     tableSteps.add(index);
   }
   if (groups.size === 0) {
-    GATE_SELECTION_TABLES.set(host, null);
+    getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
+      host,
+    ).gateSelectionTable = null;
     return null;
   }
   const orderedGroups = [...groups.values()];
@@ -110,6 +114,8 @@ export const getGateSelectionTable = (
     tableSteps,
     ...(root ? { root } : {}),
   };
-  GATE_SELECTION_TABLES.set(host, table);
+  getHostDerived<'gateSelectionTable', GateSelectionTable | null>(
+    host,
+  ).gateSelectionTable = table;
   return table;
 };

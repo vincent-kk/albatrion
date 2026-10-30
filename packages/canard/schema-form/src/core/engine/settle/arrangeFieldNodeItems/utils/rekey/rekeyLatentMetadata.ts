@@ -1,6 +1,7 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRuntime } from '../../../../record';
+import { DetachedWriteAddress } from '../../../utils/latentStore/DetachedWriteAddress';
 
 /**
  * Adjust latent occurrence order together with its moved absolute path.
@@ -8,6 +9,7 @@ import type { FieldNodeRuntime } from '../../../../record';
  * @param path - New absolute latent path
  * @param previous - Old absolute latent path
  * @param hostPath - Structurally edited array host
+ * @param runtime - Root owner of this occurrence memo or retained address state
  * @returns Metadata at the surviving position, preserving other order slots
  */
 export const rekeyLatentMetadata = <Self>(
@@ -19,6 +21,7 @@ export const rekeyLatentMetadata = <Self>(
   path: string,
   previous: string,
   hostPath: string,
+  runtime: Pick<FieldNodeRuntime<Self>, 'detachedWriteAddresses'>,
 ) => {
   const position = hostPath === '' ? 0 : hostPath.split($.Separator).length - 1;
   const order = [...metadata.order];
@@ -26,5 +29,7 @@ export const rekeyLatentMetadata = <Self>(
     order[position] = Number(
       path.slice(hostPath.length + 1).split($.Separator)[0],
     );
-  return { ...metadata, path, order };
+  const current = { ...metadata, path, order };
+  DetachedWriteAddress.transfer(metadata, current, runtime);
+  return current;
 };

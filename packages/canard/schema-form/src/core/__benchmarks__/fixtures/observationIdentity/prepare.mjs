@@ -6,6 +6,8 @@ import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import { engineModeFooter } from './engineModeFooter.ts';
+
 // Standalone verification preparation; all raw paths and hashes are explicit caller inputs.
 const root = process.cwd(),
   scope = path.join(root, '.seiri/tasks');
@@ -93,10 +95,13 @@ function inspect(bytes, file, kind) {
   const target = fn.parameters[3].name.getText(ast),
     gets = [],
     sets = [],
-    locals = [];
+    locals = [],
+    localDeclarations = [];
   const visit = (n) => {
-    if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name))
+    if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name)) {
       locals.push(n.name.text);
+      localDeclarations.push(n);
+    }
     if (
       ts.isCallExpression(n) &&
       ts.isPropertyAccessExpression(n.expression) &&
@@ -113,19 +118,35 @@ function inspect(bytes, file, kind) {
   assert.equal(sets.length, 1);
   const mapName = gets[0].expression.expression.text;
   assert.equal(sets[0].expression.expression.text, mapName);
-  assert.ok(!locals.includes(mapName));
   assert.ok(!fn.parameters.some((p) => p.name.getText(ast) === mapName));
-  const maps = declarations.filter(
+  const maps = [...declarations, ...localDeclarations].filter(
     (d) => ts.isIdentifier(d.name) && d.name.text === mapName,
   );
   assert.equal(maps.length, 1);
-  assert.ok(ts.isNewExpression(maps[0].initializer));
-  assert.equal(maps[0].initializer.expression.getText(ast), 'WeakMap');
+  const init = maps[0].initializer;
+  const treeOwned = ts.isBinaryExpression(init);
+  if (treeOwned) {
+    const runtime = fn.parameters[4].name.getText(ast);
+    assert.equal(init.left.getText(ast), runtime + '.deriveTargetIds');
+    assert.equal(
+      init.operatorToken.kind,
+      ts.SyntaxKind.QuestionQuestionEqualsToken,
+    );
+    assert.ok(ts.isNewExpression(init.right));
+    assert.equal(init.right.expression.getText(ast), 'WeakMap');
+  } else {
+    assert.ok(!locals.includes(mapName));
+    assert.ok(ts.isNewExpression(init));
+    assert.equal(init.expression.getText(ast), 'WeakMap');
+  }
   const line = (n) =>
     ast.getLineAndCharacterOfPosition(n.getStart(ast)).line + 1;
   return {
     sha256: hash(bytes),
     mapName,
+    reader: treeOwned
+      ? 'target.runtime.deriveTargetIds?.get(target)'
+      : mapName + '.get(target)',
     lines: {
       map: line(maps[0]),
       producer: line(keys[0]),
@@ -135,11 +156,12 @@ function inspect(bytes, file, kind) {
   };
 }
 const sourceBinding = inspect(originalSource, producer, ts.ScriptKind.TS);
-const suffix = `\nexport const __readExistingRuleOwnerId = (target: object): number | undefined => ${sourceBinding.mapName}.get(target);\n`;
+const suffix = `\nexport const __readExistingRuleOwnerId = (target: object): number | undefined => ${sourceBinding.reader};\n`;
 const virtual = '\0itemless-rule-owner-source-entry';
 const entry = [
-  `import {gateSelectionTable} from ${JSON.stringify(path.join(core, 'engine/settle/utils/gates/gateSelectionTable.ts'))}; gateSelectionTable.mode = 'verify';`,
-  `export const __readGateTableVerification = () => ({mode: gateSelectionTable.mode, violations: gateSelectionTable.violations, assertions: {...gateSelectionTable.assertions}});`,
+  `import {gateSelectionTable} from ${JSON.stringify(path.join(core, 'engine/settle/utils/gates/gateSelectionTable.ts'))};`,
+  `import {engineModes} from ${JSON.stringify(path.join(core, 'engine/utils/cache/engineModes.ts'))};`,
+  engineModeFooter(),
   `export {buildFieldNodeTree,mountFieldNode} from ${JSON.stringify(path.join(core, 'surface/index.ts'))};`,
   `export {dispatchSetValue,dispatchPush,dispatchInsert,dispatchRemove,dispatchPop,dispatchClear,dispatchUpdate,dispatchBatch,subscribeFieldNode} from ${JSON.stringify(path.join(core, 'engine/write/index.ts'))};`,
   `export {getItemEntries} from ${JSON.stringify(path.join(core, 'engine/blueprint/index.ts'))};`,
@@ -158,6 +180,7 @@ const write = (name, data) => {
 const warnings = [],
   graph = [];
 let transformed = 0;
+let preparedEngine;
 try {
   const bundle = await rolldown({
     input: virtual,
@@ -235,6 +258,7 @@ try {
   );
   assert.ok(incoming.some((edge) => edge.from === virtual));
   const engine = require(sourceFile);
+  preparedEngine = engine;
   for (const name of [
     'buildFieldNodeTree',
     'mountFieldNode',
@@ -268,7 +292,7 @@ try {
   ]) {
     const verificationFooter =
       label === 'B'
-        ? '\ngateSelectionTable.mode = "verify";\nexport const __readGateTableVerification = () => ({mode: gateSelectionTable.mode, violations: gateSelectionTable.violations, assertions: {...gateSelectionTable.assertions}});\n'
+        ? engineModeFooter()
         : '\nexport const __readGateTableVerification = () => ({mode: "off", violations: 0, assertions: {}});\n';
     const executionFooter = verificationFooter + exportedExecutionFooter;
     const inputPath = fs.realpathSync(path.resolve(root, options[inputName])),
@@ -286,7 +310,7 @@ try {
       'Explicit raw input identity changed',
     );
     const binding = inspect(raw, inputPath, ts.ScriptKind.JS);
-    const getter = `\nexport const __readExistingRuleOwnerId = target => ${binding.mapName}.get(target);\n`,
+    const getter = `\nexport const __readExistingRuleOwnerId = target => ${binding.reader};\n`,
       executed = raw + executionFooter,
       copy = executed + getter;
     const rawFile = write(`dist-${label}-raw.mjs`, raw),
@@ -602,4 +626,6 @@ try {
     warnings,
   });
   throw e;
+} finally {
+  preparedEngine?.__restoreEngineModes();
 }

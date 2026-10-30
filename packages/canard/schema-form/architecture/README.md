@@ -6,7 +6,7 @@
 
 ## 지금 상태
 
-8단계(검토와 성능)가 끝났다. 최종 PR #445(8단계 가지에서 1.0.0-beta 로)는 Vincent의 버전 번호 결정과 병합을 기다리고, 다음은 Vincent의 지시 뒤에 시작하는 9단계(정리와 릴리스, [plan/09-release-and-cleanup](./plan/09-release-and-cleanup/request.md))다. 단계별 경과와 마감 상태는 [reviews/README.md](./reviews/README.md)에 있다.
+8단계(검토와 성능)가 끝났고 최종 PR #445(8단계 가지에서 1.0.0-beta 로)는 Vincent의 버전 번호 결정과 병합을 기다린다. 446라운드(2026-10-26)에 Vincent가 8단계 뒤 코어 설계 수정을 명시적으로 허용해 **설계 최적화** 단계([plan/design-optimization](./plan/design-optimization/request.md), LANDING-211)를 열었다: 정착 계산 단계의 호스트별 계획과 2단계 정착, 캐시 계층(`src/app/cache`)과 폼 핸들 `rebuild`, 조건부로 슬롯 테이블과 수명별 핸들이며, 가지 `feat/schema-form-design-optimization`은 8단계 가지 위에 쌓는다. 설계 최적화 단계는 452라운드(2026-10-27)에 D1~D4를 마치고 루트 PR #472(초안)로 닫혔다: 일괄 입력은 단계 시작 판의 0.45~0.56배(0.16.1의 1.13~1.23배), React 배열 갱신 0.11~0.57배, 분기 전환은 0.16.1의 6.87배를 대규모 개편 없는 상한으로 기록했고(`verification/design-optimization/d4-results.md`), 다음 단계는 분기 전환에만 집중한다. 그 뒤가 9단계(정리와 릴리스, [plan/09-release-and-cleanup](./plan/09-release-and-cleanup/request.md))다. 단계별 경과와 마감 상태는 [reviews/README.md](./reviews/README.md)에 있다.
 
 ## 읽는 순서
 

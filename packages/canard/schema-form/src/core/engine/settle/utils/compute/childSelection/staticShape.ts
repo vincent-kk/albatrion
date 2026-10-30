@@ -7,34 +7,40 @@ import type {
   BlueprintOptions,
   EffectiveSchema,
 } from '../../../../blueprint';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { staticIds } from './staticIds';
 
 /** Ungated effective schemas select their immutable static contributions. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
-/** Immutable, ungated object shapes shared by occurrences of one blueprint host. */
-const STATIC_SHAPES = new WeakMap<
-  BlueprintNode,
-  | readonly {
-      entry: BlueprintChildEntry;
-      ids: readonly number[];
-      schema: EffectiveSchema;
-    }[]
-  | null
->();
+/** Immutable selected static edge and its fixed schema. */
+export interface StaticShapeEntry {
+  entry: BlueprintChildEntry;
+  ids: readonly number[];
+  schema: EffectiveSchema;
+}
+/** The entry list and its derivative are populated independently. */
+export interface StaticShapeMemo {
+  entries?: readonly StaticShapeEntry[] | null;
+  byEntry?: Map<BlueprintChildEntry, StaticShapeEntry>;
+}
 
 /**
- * Memoize an unambiguous static host in the structure's property order.
+ * Memoize the fixed static entries in the structure's property order.
  * @param host - Object blueprint host whose child edges are inspected once
  * @param isAtomic - Atomic-schema predicate of the owning form's blueprint options
- * @returns One entry per child with its static IDs and ungated schema, or null when
- *   a duplicate name, virtual child, empty declaration list, type conflict or gate
- *   rules the static shape out; the same value is returned on every later call
+ * @param candidates - Fixed static partition, or every edge on the original ungated path
+ * @returns The admitted static subset with stable IDs and schemas; unsafe entries
+ *   remain on general selection, and later calls return the same subset
  */
 export const staticShape = (
   host: BlueprintNode,
   isAtomic: BlueprintOptions['isAtomic'],
-) => {
-  if (STATIC_SHAPES.has(host)) return STATIC_SHAPES.get(host);
+  candidates: readonly BlueprintChildEntry[] = host.childEntries,
+): readonly StaticShapeEntry[] | null => {
+  const memo = (getHostDerived<'staticShape', StaticShapeMemo>(
+    host,
+  ).staticShape ??= {});
+  if (memo.entries !== undefined) return memo.entries;
   const selected: Record<
     string,
     {
@@ -43,8 +49,9 @@ export const staticShape = (
       schema: EffectiveSchema;
     }
   > = Object.create(null);
-  for (let index = 0; index < host.childEntries.length; index++) {
-    const entry = host.childEntries[index];
+  const entries = candidates;
+  for (let index = 0; index < entries.length; index++) {
+    const entry = entries[index];
     const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {
       mode: 'runtime',
       isAtomic,
@@ -66,12 +73,11 @@ export const staticShape = (
       schema.typeConflict ||
       hasGate
     ) {
-      STATIC_SHAPES.set(host, null);
-      return null;
+      continue;
     }
-    selected[entry.name] = { entry, ids: staticIds(entry), schema };
+    selected[entry.name] = { entry, ids: staticIds(entry, host), schema };
   }
   const shape = Object.values(selected);
-  STATIC_SHAPES.set(host, shape);
+  memo.entries = shape;
   return shape;
 };

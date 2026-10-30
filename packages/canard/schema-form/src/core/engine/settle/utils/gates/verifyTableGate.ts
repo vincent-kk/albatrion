@@ -2,8 +2,8 @@ import { unescapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
-import { gateSelectionTable } from './gateSelectionTable';
 import { getGateRegistry } from './getGateRegistry';
 import { readProjectedValue } from './readProjectedValue';
 import { recordGateFrameInput } from './recordGateFrameInput';
@@ -23,7 +23,7 @@ export const verifyTableGate = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   value: boolean,
 ): void => {
-  if (gateSelectionTable.mode === 'verify') {
+  if (engineModes.gateSelection === 'verify') {
     const round = context.gateSelectionRounds!.get(node)!;
     const registry = getGateRegistry(node.runtime);
     const path = registry.locate(node, gate).watchPaths[0];

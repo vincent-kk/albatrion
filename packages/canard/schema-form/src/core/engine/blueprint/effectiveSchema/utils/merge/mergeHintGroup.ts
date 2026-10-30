@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { merge } from '@winglet/common-utils/object';
 
-import { OwnedSchemaValues } from '../finalize/OwnedSchemaValues';
+import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import { freezeCreatedHintObjects } from '../finalize/freezeCreatedHintObjects';
 
 /**
@@ -28,7 +28,7 @@ export const mergeHintGroup = (
         )
       : later;
   if (source !== later && source && typeof source === 'object')
-    OwnedSchemaValues.add(source);
+    ownedSchemaValues.add(source);
   if (source === undefined) return earlier;
   if (earlier === undefined) return source;
   if (
@@ -46,7 +46,7 @@ export const mergeHintGroup = (
   });
   if (result !== earlier && result !== source) {
     freezeCreatedHintObjects(result, earlier, source);
-    OwnedSchemaValues.add(result);
+    ownedSchemaValues.add(result);
   }
   return result;
 };

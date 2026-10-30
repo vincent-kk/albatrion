@@ -1,8 +1,8 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { ownedSchemaValues } from '../../../utils/cache/valueMemos';
 import type { EffectiveSchemaFields } from '../types/state';
 import { applyControlHints } from '../utils/apply/applyControlHints';
-import { OwnedSchemaValues } from '../utils/finalize/OwnedSchemaValues';
 import * as guards from '../utils/finalize/isObjectRecord';
 
 afterEach(() => vi.restoreAllMocks());
@@ -36,8 +36,8 @@ it('guards controls once and preserves inherited getter reads, order and ownersh
   expect(target.controls).not.toBe(previous);
   expect(target.controls?.watch).toBe(watch);
   expect(target.controls?.default).toBe(payload);
-  expect(OwnedSchemaValues.has(target.controls!)).toBe(true);
-  expect(OwnedSchemaValues.has(source)).toBe(false);
+  expect(ownedSchemaValues.has(target.controls!)).toBe(true);
+  expect(ownedSchemaValues.has(source)).toBe(false);
   expect(previous).toEqual({ retained: true });
 });
 

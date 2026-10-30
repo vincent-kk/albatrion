@@ -1,12 +1,16 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import { StaticFirstLoadCapability } from './StaticFirstLoadCapability';
 import { buildNodes } from './buildNodes';
 import { collectBlueprintWarnings } from './collectBlueprintWarnings';
 import { compileBlueprintExpressions } from './compileBlueprintExpressions';
 import type { AnalysisContext } from './types/analysis';
-import type { Blueprint, BlueprintOptions } from './types/blueprint';
+import type {
+  Blueprint,
+  BlueprintCacheEntry,
+  BlueprintOptions,
+} from './types/blueprint';
 import type { BlueprintSchema } from './types/schema';
+import { replayBlueprintDiagnostics } from './utils/diagnostics/replayBlueprintDiagnostics';
 import { markCandidateDescendants } from './utils/features/markCandidateDescendants';
 import { validateChildTargets } from './validateChildTargets';
 import { validateShape } from './validateShape';
@@ -32,10 +36,11 @@ export const blueprint = (
       entry.isAtomic === options.isAtomic,
   );
   if (cached) {
-    if (options.collect && !cached.warningsCollected) {
-      collectBlueprintWarnings(cached.blueprint, options.collect);
-      cached.warningsCollected = true;
-    }
+    replayBlueprintDiagnostics(
+      cached,
+      options.collect,
+      collectBlueprintWarnings,
+    );
     return cached.blueprint;
   }
   const context: AnalysisContext = {
@@ -118,6 +123,16 @@ export const blueprint = (
     dependencies: context.dependencies ?? Object.create(null),
     expressions,
   };
+  Object.defineProperty(result, 'staticFirstLoadEligible', {
+    value:
+      context.staticFirstLoad &&
+      context.capabilities.branchless &&
+      !context.capabilities.hasExpressions &&
+      !context.capabilities.hasDerive &&
+      !context.capabilities.hasWatch &&
+      !context.capabilities.hasState &&
+      !context.capabilities.hasDependencies,
+  });
   if (process.env.NODE_ENV !== 'production') {
     Object.freeze(context.capabilities);
     Object.freeze(context.nodes);
@@ -127,27 +142,19 @@ export const blueprint = (
       Object.freeze(expressions);
     Object.freeze(result);
   }
-  const capabilities = result.capabilities;
-  StaticFirstLoadCapability.set(
-    result,
-    context.staticFirstLoad &&
-      capabilities.branchless &&
-      !capabilities.hasExpressions &&
-      !capabilities.hasDerive &&
-      !capabilities.hasWatch &&
-      !capabilities.hasState &&
-      !capabilities.hasDependencies,
-  );
-  collectBlueprintWarnings(result, options.collect);
   if (typeof schema === 'object' && options.cache) {
-    const entry = {
+    const entry: BlueprintCacheEntry = {
       blueprint: result,
       isTerminal: options.isTerminal,
       isAtomic: options.isAtomic,
-      warningsCollected: options.collect !== undefined,
+      collectors: new WeakSet(),
     };
-    if (entries) entries.push(entry);
-    else options.cache.set(schema, [entry]);
-  }
+    replayBlueprintDiagnostics(
+      entry,
+      options.collect,
+      collectBlueprintWarnings,
+    );
+    options.cache.set(schema, entries ? [...entries, entry] : [entry]);
+  } else collectBlueprintWarnings(result, options.collect);
   return result;
 };

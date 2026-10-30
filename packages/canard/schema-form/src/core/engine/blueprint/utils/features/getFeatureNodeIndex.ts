@@ -1,3 +1,4 @@
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import { emptyReadonlySet } from '../../../utils/emptyReadonlySet';
 import type {
@@ -7,7 +8,7 @@ import type {
 import { buildFeatureNodeIndex } from './buildFeatureNodeIndex';
 
 /** Static bounds retained only while their immutable blueprint remains reachable. */
-const INDICES = new WeakMap<Blueprint, BlueprintFeatureNodeIndex>();
+
 /** No mutable memberships are published for independently proven absent features. */
 const EMPTY_INDEX: BlueprintFeatureNodeIndex = Object.freeze({
   stateKeyNodes: emptyReadonlySet,
@@ -25,10 +26,15 @@ export const getFeatureNodeIndex = (
 ): BlueprintFeatureNodeIndex => {
   if (!blueprint.capabilities.hasState && !blueprint.capabilities.hasWatch)
     return EMPTY_INDEX;
-  let index = INDICES.get(blueprint);
+  let index = getBlueprintDerived<
+    'featureNodeIndex',
+    BlueprintFeatureNodeIndex
+  >(blueprint).featureNodeIndex;
   if (!index) {
     index = buildFeatureNodeIndex(blueprint);
-    INDICES.set(blueprint, index);
+    getBlueprintDerived<'featureNodeIndex', BlueprintFeatureNodeIndex>(
+      blueprint,
+    ).featureNodeIndex = index;
   }
   return index;
 };

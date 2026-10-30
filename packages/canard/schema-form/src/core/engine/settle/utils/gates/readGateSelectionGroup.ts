@@ -1,11 +1,11 @@
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type {
   GateSelectionGroup,
   RootGateSelectionGroup,
 } from '../../types/gateSelectionTable';
 import type { SettlementContext } from '../../types/settlement';
 import { readGateBucket } from '../compute/childSelection/gateSelection/readGateBucket';
-import { gateSelectionTable } from './gateSelectionTable';
 import { getGateExpression } from './getGateExpression';
 import { getGateRegistry } from './getGateRegistry';
 import { readProjectedValue } from './readProjectedValue';
@@ -35,11 +35,11 @@ export const readGateSelectionGroup = <Self extends FieldNodeRecord<Self>>(
     path,
     value,
     occurrences:
-      gateSelectionTable.mode === 'verify'
+      engineModes.gateSelection === 'verify'
         ? registry.occurrenceCount(node.path)
         : 0,
   });
-  if (gateSelectionTable.mode === 'verify') {
+  if (engineModes.gateSelection === 'verify') {
     const childGroup = round.table.groups.find(
       (candidate) => candidate.watchedName === group.watchedName,
     )!;

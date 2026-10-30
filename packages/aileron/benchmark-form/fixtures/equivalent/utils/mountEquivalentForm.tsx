@@ -1,9 +1,10 @@
-import React, { Profiler, createRef } from 'react';
+import React, { createRef } from 'react';
 
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 
-import { drainTicks, drainUntilReady } from '../../../src/utils/setup-env';
+import { settleUpdates } from '../../../src/utils/settleUpdates';
+import { drainUntilReady } from '../../../src/utils/setup-env';
 import type { BenchHandle, EquivalentFixture } from '../types';
 
 /** Mounts a versioned fixture and returns its handle, Profiler commits and teardown. */
@@ -28,7 +29,7 @@ export async function mountEquivalentForm(
   try {
     flushSync(() =>
       root.render(
-        <Profiler
+        <React.Profiler
           id={fixture.name}
           onRender={(_id, _phase, duration) => commits.push(duration)}
         >
@@ -43,11 +44,11 @@ export async function mountEquivalentForm(
             }}
             children={coreOnly ? () => null : undefined}
           />
-        </Profiler>,
+        </React.Profiler>,
       ),
     );
     await drainUntilReady(() => ref.current?.findNode('') != null);
-    await drainTicks();
+    await settleUpdates();
     return {
       container,
       handle: ref.current!,

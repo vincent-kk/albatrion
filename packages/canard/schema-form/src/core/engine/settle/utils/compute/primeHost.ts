@@ -4,6 +4,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { getHostDerived } from '../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { captureProjectionBaseline } from '../dependencies/captureProjectionBaseline';
@@ -11,10 +12,8 @@ import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
 import { updatePendingExitIndex } from '../scratch/updatePendingExitIndex';
 import { isSameChildList } from '../structure/isSameChildList';
-import {
-  DIRECT_CHILD_SELECTION_PLANS,
-  getDirectChildSelectionPlan,
-} from './childSelection/getDirectChildSelectionPlan';
+import { getDirectChildSelectionPlan } from './childSelection/getDirectChildSelectionPlan';
+import { createStaticEntryReuser } from './childSelection/utils/createStaticEntryReuser';
 import { createChildNode } from './createChildNode';
 import { enterFieldNode } from './enterFieldNode';
 
@@ -26,18 +25,23 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
  * @param node - Branch host starting one bounded calculation wheel
  * @param prior - Previous committed shape retained for identity reuse
  * @param context - Current write and its record factory
+ * @param hasRelocated - Wheel's already collected relocation evidence
  * @returns Nothing; the host now exposes the fixed baseline shape
  */
 export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   prior: Record<string, Self>,
   context: SettlementContext<Self>,
+  hasRelocated = true,
 ): void => {
   const baseline: Record<string, Self> = {};
   Object.setPrototypeOf(baseline, null);
   const cached =
     node.behavior.type === 'object'
-      ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)
+      ? getHostDerived<
+          'directChildSelectionPlan',
+          ReturnType<typeof getDirectChildSelectionPlan>
+        >(node.blueprintNode).directChildSelectionPlan
       : null;
   const direct =
     cached === undefined
@@ -50,6 +54,15 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
           )
       : cached;
   const entries = direct?.baseline ?? node.behavior.declareChildren(node);
+  const reuse = createStaticEntryReuser(
+    node,
+    prior,
+    context,
+    baseline,
+    undefined,
+    false,
+    hasRelocated,
+  );
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
     if (
@@ -60,6 +73,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
         ))
     )
       continue;
+    if (reuse?.(entry)) continue;
     const priorChild = hasOwnProperty(prior, entry.name)
       ? prior[entry.name]
       : undefined;

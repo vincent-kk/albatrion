@@ -1,14 +1,6 @@
 import type { FieldNodeRecord } from '../../../../record';
+import { trimmedArrays } from '../../../../utils/cache/valueMemos';
 import { getArrayItemTemplate } from '../value/getArrayItemTemplate';
-
-/** Reuse the most recent trimmed view while its source prefix is unchanged. */
-const TRIMMED = new WeakMap<
-  readonly unknown[],
-  {
-    end: number;
-    result: readonly unknown[];
-  }
->();
 
 /**
  * Trim trailing nullish raw items or unfilled branch slots without mutation.
@@ -49,13 +41,13 @@ export const omitTrailingArray = <Self>(
     end--;
   }
   if (end === value.length) return value;
-  const cached = TRIMMED.get(value);
+  const cached = trimmedArrays.get(value);
   if (
     cached?.end === end &&
     cached.result.every((item, index) => Object.is(item, value[index]))
   )
     return cached.result;
   const result = value.slice(0, end);
-  TRIMMED.set(value, { end, result });
+  trimmedArrays.set(value, { end, result });
   return result;
 };

@@ -1,10 +1,10 @@
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import type {
   EffectiveSchema,
   EffectiveSchemaMemo,
   EffectiveSchemaOptions,
 } from '../../../types/effectiveSchema';
 import type { BlueprintNode } from '../../../types/node';
-import { DEFAULT_NO_ACTIVE } from '../../constants/defaults';
 import { ensureEffectiveSchemaCache } from '../finalize/ensureEffectiveSchemaCache';
 import { mergeSchemaContributions } from './mergeSchemaContributions';
 import { selectEffectiveDeclarations } from './selectEffectiveDeclarations';
@@ -13,7 +13,6 @@ import { selectEffectiveDeclarations } from './selectEffectiveDeclarations';
 const DEFAULT_MERGE_OPTIONS: EffectiveSchemaOptions = {};
 
 /** Default memo is weak by node lifetime; callers can isolate a separate memo. */
-const DEFAULT_MEMO: EffectiveSchemaMemo = new WeakMap();
 
 /**
  * Derive immutable rendering hints from selected declarations without evaluating gates.
@@ -29,16 +28,18 @@ export const mergeEffectiveSchema = (
   node: BlueprintNode,
   activeDeclarationIds: readonly number[],
   options: EffectiveSchemaOptions = DEFAULT_MERGE_OPTIONS,
-  memo: EffectiveSchemaMemo = DEFAULT_MEMO,
+  memo?: EffectiveSchemaMemo,
 ): EffectiveSchema => {
   const defaultNoActive =
     activeDeclarationIds.length === 0 &&
     (options.mode === undefined || options.mode === 'runtime') &&
     options.isAtomic === undefined &&
     options.collect === undefined &&
-    memo === DEFAULT_MEMO;
+    memo === undefined;
   if (defaultNoActive) {
-    const cached = DEFAULT_NO_ACTIVE.get(node);
+    const cached = getHostDerived<'defaultEffectiveSchema', EffectiveSchema>(
+      node,
+    ).defaultEffectiveSchema;
     if (cached !== undefined) return cached;
   }
   const declarations = selectEffectiveDeclarations(node, activeDeclarationIds);
@@ -47,14 +48,17 @@ export const mergeEffectiveSchema = (
   const cached = schemas.get(key);
   if (cached !== undefined) return cached;
   if (
-    memo === DEFAULT_MEMO &&
+    memo === undefined &&
     options.collect === undefined &&
     options.isAtomic === undefined &&
     (options.mode === undefined || options.mode === 'runtime') &&
     node.declarations.length === 1 &&
     node.declarations[0].gates.length === 0
   ) {
-    const normalized = DEFAULT_NO_ACTIVE.get(node);
+    const normalized = getHostDerived<
+      'defaultEffectiveSchema',
+      EffectiveSchema
+    >(node).defaultEffectiveSchema;
     if (normalized !== undefined) {
       schemas.set(key, normalized);
       return normalized;
@@ -62,6 +66,9 @@ export const mergeEffectiveSchema = (
   }
   const effective = mergeSchemaContributions(node, declarations, options);
   schemas.set(key, effective);
-  if (defaultNoActive) DEFAULT_NO_ACTIVE.set(node, effective);
+  if (defaultNoActive)
+    getHostDerived<'defaultEffectiveSchema', EffectiveSchema>(
+      node,
+    ).defaultEffectiveSchema = effective;
   return effective;
 };

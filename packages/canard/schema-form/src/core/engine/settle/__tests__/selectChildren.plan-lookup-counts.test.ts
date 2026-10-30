@@ -3,15 +3,15 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as planning from '../utils/compute/childSelection/getDirectChildSelectionPlan';
 import * as selection from '../utils/compute/childSelection/selectChildren';
 import * as priming from '../utils/compute/primeHost';
 import * as publication from '../utils/gates/flushPendingGateReads';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
+import { observeHostSlotWrites } from './fixtures/observeHostSlotWrites';
 
 /**
  * Count every runtime entry into the plan function, cache hits included.
@@ -93,11 +93,11 @@ describe('child selection plan lookup runtime counts', () => {
   ])(
     'B=%i mount enters pre-publication only with pending outputs (%i calls)',
     (count, pending) => {
-      const previousMode = gateSelectionTable.mode;
-      const previousWheelMode = gateWheelEvaluation.mode;
+      const previousMode = engineModes.gateSelection;
+      const previousWheelMode = engineModes.gateWheel;
       // These counts preserve the shadow wheel's full-step visitation contract.
-      gateSelectionTable.mode = 'table';
-      gateWheelEvaluation.mode = 'shadow';
+      engineModes.setMode('gateSelection', 'table');
+      engineModes.setMode('gateWheel', 'shadow');
       try {
         const { root } = createTestTree(createFixedBranchSchema(count));
         const calls = countFlushCalls();
@@ -106,8 +106,8 @@ describe('child selection plan lookup runtime counts', () => {
         expect(root.children).toHaveLength(5);
         expect(root.runtime.diagnostics.status).toBe('stable');
       } finally {
-        gateSelectionTable.mode = previousMode;
-        gateWheelEvaluation.mode = previousWheelMode;
+        engineModes.setMode('gateSelection', previousMode);
+        engineModes.setMode('gateWheel', previousWheelMode);
       }
     },
   );
@@ -115,11 +115,11 @@ describe('child selection plan lookup runtime counts', () => {
   it.each([5, 10, 20, 40])(
     'B=%i skip mount enters pre-publication only four times',
     (count) => {
-      const previousMode = gateSelectionTable.mode;
-      const previousWheelMode = gateWheelEvaluation.mode;
+      const previousMode = engineModes.gateSelection;
+      const previousWheelMode = engineModes.gateWheel;
       // The skip wheel omits inactive declarations, so table publication is constant.
-      gateSelectionTable.mode = 'table';
-      gateWheelEvaluation.mode = 'skip';
+      engineModes.setMode('gateSelection', 'table');
+      engineModes.setMode('gateWheel', 'skip');
       try {
         const { root } = createTestTree(createFixedBranchSchema(count));
         const calls = countFlushCalls();
@@ -128,8 +128,8 @@ describe('child selection plan lookup runtime counts', () => {
         expect(root.children).toHaveLength(5);
         expect(root.runtime.diagnostics.status).toBe('stable');
       } finally {
-        gateSelectionTable.mode = previousMode;
-        gateWheelEvaluation.mode = previousWheelMode;
+        engineModes.setMode('gateSelection', previousMode);
+        engineModes.setMode('gateWheel', previousWheelMode);
       }
     },
   );
@@ -172,7 +172,7 @@ describe('child selection plan lookup runtime counts', () => {
       });
       root.behavior.declareChildren = () => candidates;
       const calls = countPlanCalls();
-      const builds = vi.spyOn(planning.DIRECT_CHILD_SELECTION_PLANS, 'set');
+      const builds = observeHostSlotWrites('directChildSelectionPlan');
       loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       expect(calls.count).toBe(2);
       const mountPlans = builds.mock.calls.filter(

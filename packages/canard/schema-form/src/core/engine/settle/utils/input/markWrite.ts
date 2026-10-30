@@ -14,6 +14,7 @@ import { nextExtras } from './nextExtras';
 import { staticSpec } from './staticSpec';
 import { admitsSameValueWrite } from './utils/admitsSameValueWrite';
 import { keepsHostKeys } from './utils/keepsHostKeys';
+import { restoreWriteEpochPaths } from './utils/restoreWriteEpochPaths';
 
 /** Default of `changedValue`: the caller has not interpreted this node's input. */
 const UNINTERPRETED: unique symbol = Symbol('uninterpreted');
@@ -38,6 +39,8 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
   spec: UnionSpec = staticSpec(node.schemaType, node.nullable),
   changedValue: unknown = UNINTERPRETED,
 ): void => {
+  if (context.writeEpoch !== undefined && context.automatic)
+    restoreWriteEpochPaths(context);
   if (
     node.behavior.type === 'virtual' &&
     !context.automatic &&
@@ -69,7 +72,8 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       context.changedNodes.add(node);
       if (context.automatic) context.automaticChanged = true;
     }
-    context.dirtyPaths.add(node.path);
+    if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
+    else context.dirtyPaths.add(node.path);
     return;
   }
   if (node.behavior.type === 'virtual') {
@@ -137,6 +141,8 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     !countChanged &&
     admitsSameValueWrite(node, context) &&
     keepsHostKeys(node, value, isMerge);
+  if (!sameShape && context.writeEpoch !== undefined)
+    restoreWriteEpochPaths(context);
   if (rawChanged || extrasChanged || countChanged) {
     node.raw = nextRaw;
     node.undeclaredValues = extras;
@@ -149,7 +155,8 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     whole,
     automatic: context.automatic,
   });
-  context.dirtyPaths.add(node.path);
+  if (context.writeEpoch !== undefined) node.writeEpoch = context.writeEpoch;
+  else context.dirtyPaths.add(node.path);
   if (!sameShape) context.shapeDirtyPaths.add(node.path);
   if (node.structure === null) return;
   for (const name of Object.keys(node.structure)) {

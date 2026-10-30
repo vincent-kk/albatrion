@@ -50,6 +50,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
             getBlueprintNodeIdentity(node.blueprintNode),
             rule,
             target,
+            target.runtime,
           );
           addActiveRuleKey(state, node.path, key);
           const previous = state.committedRuleValues.get(key);

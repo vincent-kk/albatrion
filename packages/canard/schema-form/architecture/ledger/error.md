@@ -1949,6 +1949,7 @@
   > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
   > 편집자 결정(29C-02): "【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다." (`reviews/round-29-closing.md:25`)
   > 편집자 결정(29C-02): "【추론】 03(PR-2)이 계산 단계의 실패 하나로 그 정착의 전이(채움)와 나감 비움 전체를 건너뛴 것(`src/core/settle/utils/settlement/finishSettlement.ts:32-33`, `src/core/settle/utils/transition/finalizeExits.ts:46`; 파생 쪽도 같다 — `src/core/settle/utils/derivation/runDeriveRounds.ts`의 `context.failure` 조기 반환 두 곳이 실패 하나로 뒤 파생 라운드를 끊는다)은 ERROR-125보다 넓은 근사이고 03의 기록에 결정으로 남아 있지 않으므로 결함이다; 04가 ERROR-125의 범위(그 게이트로 나간 노드)로 좁혀 고치고 `plan/04-derive-and-controls/log.md` §4에 03의 이탈로 적는다(28C-03의 `@` 사례와 같은 처리)." (`reviews/round-29-closing.md:28`)
+  > 편집자 결정(449C-04): "【추론】 448C-07은 "바퀴 도중 예외에서 커밋된 상태가 정착 전과 같다"를 조건으로 적었다. 이는 ERROR-125(식이나 가드가 던져 거짓이 된 게이트로 그 분기가 나가고 raw가 바뀌는 부분 커밋, `settle.error-gate-exits.test.ts`)와 어긋나며, D2-P5 워커가 기준판 시험을 돌려 찾아냈다. 조항을 이렇게 바로잡는다: 예외 때의 커밋·오류·배달 의미는 기준판과 정확히 같고(ERROR-125 그대로), 준비물은 실패한 정착 뒤 버리거나 다음 정착에서 다시 검증하며, 정착 전에 커밋되어 있던 불변 structure·children·값 객체의 내용은 훼손하지 않는다." (`reviews/round-449-closing.md:14`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:197#3`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:197`)

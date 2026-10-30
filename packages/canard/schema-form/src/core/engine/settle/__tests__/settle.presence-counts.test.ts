@@ -2,10 +2,10 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import type { DispatchTestNode } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchSetValue } from '../../write';
 import type { SettlementContext } from '../types/settlement';
 import * as registration from '../utils/dependencies/registerPresenceChanges';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import * as settlement from '../utils/settlement/createSettlementContext';
 import { getDispatchNode } from './fixtures/getDispatchNode';
@@ -14,14 +14,14 @@ import { mountPresenceTree } from './helpers/mountPresenceTree';
 import { observePresenceTree } from './helpers/observePresenceTree';
 
 /** Count contracts deliberately use record mode; shipping skip mode allocates no counters. */
-const previousMode = gateWheelEvaluation.mode;
+const previousMode = engineModes.gateWheel;
 afterEach(() => {
   vi.restoreAllMocks();
-  gateWheelEvaluation.mode = previousMode;
+  engineModes.setMode('gateWheel', previousMode);
 });
 
 it('an unchanged presence write computes only root and leaf with no registration or reentry', () => {
-  gateWheelEvaluation.mode = 'record';
+  engineModes.setMode('gateWheel', 'record');
   let latest: SettlementContext<DispatchTestNode> | undefined;
   const create = settlement.createSettlementContext;
   vi.spyOn(settlement, 'createSettlementContext').mockImplementation(
@@ -67,7 +67,7 @@ it('an unchanged presence write computes only root and leaf with no registration
 });
 
 it('registration agrees with every bound occurrence after both directed intersections', () => {
-  gateWheelEvaluation.mode = 'record';
+  engineModes.setMode('gateWheel', 'record');
   const register = registration.registerPresenceChanges;
   let comparisons = 0;
   vi.spyOn(registration, 'registerPresenceChanges').mockImplementation(
@@ -184,7 +184,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
       );
       const totals: { mount: number; write: number }[] = [];
       for (const count of [250, 1_000]) {
-        gateWheelEvaluation.mode = mode;
+        engineModes.setMode('gateWheel', mode);
         const value = {
           items: Array.from({ length: count }, () => ({
             active: true,
@@ -239,7 +239,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
 it.each(['record', 'skip', 'shadow'] as const)(
   '%s: folded watch unions preserve mixed, multiple-index and presence reads',
   (mode) => {
-    gateWheelEvaluation.mode = mode;
+    engineModes.setMode('gateWheel', mode);
     for (const expression of [
       '../../0/active === true && (../../)?.length > 0',
       '../../0/active === true && ../../1/active === true',
@@ -279,7 +279,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
 );
 
 it('a whole-array state reader below its registering host stays on the exclusion chain', () => {
-  gateWheelEvaluation.mode = 'record';
+  engineModes.setMode('gateWheel', 'record');
   const latest = capturePresenceContext();
   const schema = readerSchema('../active === true', {
     state: {

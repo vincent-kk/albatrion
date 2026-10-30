@@ -2,8 +2,8 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
-import { gateSelectionTable } from '../gates/gateSelectionTable';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
 import { DirtyPathSet } from '../scratch/DirtyPathSet';
 
@@ -29,7 +29,7 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
         : undefined;
     if (child && !seen.has(child)) {
       if (
-        gateSelectionTable.mode === 'verify' &&
+        engineModes.gateSelection === 'verify' &&
         context.dirtyPaths instanceof DirtyPathSet &&
         context.dirtyPaths.isPostOrder
       )
@@ -42,7 +42,7 @@ export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
     }
   }
   const shadow =
-    gateSelectionTable.mode === 'verify'
+    engineModes.gateSelection === 'verify'
       ? context.registrationShadow
       : undefined;
   if (shadow) {

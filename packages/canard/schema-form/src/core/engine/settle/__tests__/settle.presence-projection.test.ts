@@ -3,20 +3,19 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { createOverlayScenes } from '@/schema-form/__tests__/fixtures/remountEquivalence/createOverlayScenes';
 
 import type { BlueprintSchema } from '../../blueprint';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchSetValue } from '../../write';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import { mountPresenceTree } from './helpers/mountPresenceTree';
 import { observePresenceTree } from './helpers/observePresenceTree';
 
 /** Each history restores both internal controls for subsequent regression files. */
-const previousWheelMode = gateWheelEvaluation.mode;
+const previousWheelMode = engineModes.gateWheel;
 /** Selection modes share the same retained-child projection registration. */
-const previousSelectionMode = gateSelectionTable.mode;
+const previousSelectionMode = engineModes.gateSelection;
 afterEach(() => {
-  gateWheelEvaluation.mode = previousWheelMode;
-  gateSelectionTable.mode = previousSelectionMode;
+  engineModes.setMode('gateWheel', previousWheelMode);
+  engineModes.setMode('gateSelection', previousSelectionMode);
 });
 
 describe.each(['record', 'skip', 'shadow'] as const)(
@@ -27,9 +26,9 @@ describe.each(['record', 'skip', 'shadow'] as const)(
       (id) => {
         const scene = createOverlayScenes().find((scene) => scene.id === id)!;
         const schema = scene.schema as BlueprintSchema;
-        gateWheelEvaluation.mode = wheelMode;
+        engineModes.setMode('gateWheel', wheelMode);
         for (const selectionMode of ['off', 'table', 'verify'] as const) {
-          gateSelectionTable.mode = selectionMode;
+          engineModes.setMode('gateSelection', selectionMode);
           const root = mountPresenceTree(schema, scene.initialValue);
           for (const flag of [true, false]) {
             dispatchSetValue(getDispatchNode(root, 'source', 'flag'), flag);

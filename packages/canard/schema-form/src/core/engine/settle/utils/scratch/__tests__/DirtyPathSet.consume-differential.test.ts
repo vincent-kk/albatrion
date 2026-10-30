@@ -5,6 +5,7 @@ import { expect, it } from 'vitest';
 
 import { createDispatchTree } from '../../../../__tests__/fixtures/createDispatchTree';
 import type { PlainNode } from '../../../../__tests__/fixtures/createPlainNode';
+import { engineModes } from '../../../../utils/cache/engineModes';
 import { dispatchMount } from '../../../../write';
 import type { SettlementContext } from '../../../types/settlement';
 import { dirtyChildren } from '../../compute/dirtyChildren';
@@ -29,7 +30,8 @@ class ReferenceDirtyPaths extends Set<string> {
         const parent = current.slice(0, slash);
         super.add(parent);
         let children = this.childrenByParent.get(parent);
-        if (!children) this.childrenByParent.set(parent, children = new Map());
+        if (!children)
+          this.childrenByParent.set(parent, (children = new Map()));
         children.set(current, current.slice(slash + 1));
         current = parent;
       }
@@ -46,7 +48,8 @@ class ReferenceDirtyPaths extends Set<string> {
         const slash = current.lastIndexOf('/');
         const parent = current.slice(0, slash);
         let children = this.childrenByParent.get(parent);
-        if (!children) this.childrenByParent.set(parent, children = new Map());
+        if (!children)
+          this.childrenByParent.set(parent, (children = new Map()));
         children.set(current, current.slice(slash + 1));
         current = parent;
       }
@@ -59,7 +62,7 @@ class ReferenceDirtyPaths extends Set<string> {
       const end = slash < 0 ? path.length : slash;
       const parent = path.slice(0, start - 1);
       let children = this.childrenByParent.get(parent);
-      if (!children) this.childrenByParent.set(parent, children = new Map());
+      if (!children) this.childrenByParent.set(parent, (children = new Map()));
       children.set(path, path.slice(start, end));
       if (slash < 0) break;
       start = slash + 1;
@@ -93,19 +96,41 @@ class ReferenceDirtyPaths extends Set<string> {
 }
 
 it('300 seeded mutation histories preserve every permitted live-child query', () => {
+  const previousMode = engineModes.gateSelection;
   const previous = { ...gateSelectionTable };
-  gateSelectionTable.mode = 'verify';
-  const { root } = createDispatchTree({ type: 'object', properties: {
-    h: { type: 'object', properties: {
-      a: { type: 'string' }, b: { type: 'string' }, 'a/b': { type: 'string' },
-    } },
-    other: { type: 'object', properties: {
-      a: { type: 'string' }, b: { type: 'string' },
-    } },
-  } });
+  engineModes.setMode('gateSelection', 'verify');
+  const { root } = createDispatchTree({
+    type: 'object',
+    properties: {
+      h: {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'string' },
+          'a/b': { type: 'string' },
+        },
+      },
+      other: {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'string' },
+        },
+      },
+    },
+  });
   dispatchMount(root, undefined);
   const parents = [root, root.structure!.h, root.structure!.other];
-  const paths = ['', '/h', '/other', '/h/a', '/h/b', '/h/a~1b', '/other/a', '/other/b'];
+  const paths = [
+    '',
+    '/h',
+    '/other',
+    '/h/a',
+    '/h/b',
+    '/h/a~1b',
+    '/other/a',
+    '/other/b',
+  ];
   let seed = 442;
   const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0);
   let permitted = 0;
@@ -117,30 +142,53 @@ it('300 seeded mutation histories preserve every permitted live-child query', ()
       for (let step = 0; step < 60; step++) {
         const operation = (random() >>> 16) % 4;
         const path = paths[(random() >>> 8) % paths.length];
-        if (operation === 0) { actual.add(path); reference.add(path); }
-        else if (operation === 3) { actual.beginPostOrder(); reference.beginPostOrder(); }
-        else if (operation === 2 && ![...actual.childrenByParent.get(path)?.keys() ?? []]
-          .some(child => actual.has(child))) {
+        if (operation === 0) {
+          actual.add(path);
+          reference.add(path);
+        } else if (operation === 3) {
+          actual.beginPostOrder();
+          reference.beginPostOrder();
+        } else if (
+          operation === 2 &&
+          ![...(actual.childrenByParent.get(path)?.keys() ?? [])].some(
+            (child) => actual.has(child),
+          )
+        ) {
           expect(actual.consume(path)).toBe(reference.delete(path));
         } else expect(actual.delete(path)).toBe(reference.delete(path));
-        expect([...actual], `history ${history}, step ${step}`).toEqual([...reference]);
+        expect([...actual], `history ${history}, step ${step}`).toEqual([
+          ...reference,
+        ]);
         for (const parent of parents) {
-          const context = { dirtyPaths: actual, dirtyChildrenByParent: actual.childrenByParent } as unknown as SettlementContext<PlainNode>;
-          const names = [...actual.childrenByParent.get(parent.path)?.values() ?? []];
-          const consumed = actual.isPostOrder && names.some(name => {
-            const child = parent.structure?.[name.replace(/~1/g, '/').replace(/~0/g, '~')];
-            return child && !actual.has(child.path);
-          });
+          const context = {
+            dirtyPaths: actual,
+            dirtyChildrenByParent: actual.childrenByParent,
+          } as unknown as SettlementContext<PlainNode>;
+          const names = [
+            ...(actual.childrenByParent.get(parent.path)?.values() ?? []),
+          ];
+          const consumed =
+            actual.isPostOrder &&
+            names.some((name) => {
+              const child =
+                parent.structure?.[
+                  name.replace(/~1/g, '/').replace(/~0/g, '~')
+                ];
+              return child && !actual.has(child.path);
+            });
           if (consumed) {
-            expect(() => dirtyChildren(parent, context)).toThrow('S6 dirtyChildren returned a consumed child');
+            expect(() => dirtyChildren(parent, context)).toThrow(
+              'S6 dirtyChildren returned a consumed child',
+            );
             rejected++;
           } else {
             const expected = dirtyChildren(parent, {
-              dirtyPaths: reference, dirtyChildrenByParent: reference.childrenByParent,
+              dirtyPaths: reference,
+              dirtyChildrenByParent: reference.childrenByParent,
             } as unknown as SettlementContext<PlainNode>);
-            expect(dirtyChildren(parent, context).map(child => child.path)).toEqual(
-              expected.map(child => child.path),
-            );
+            expect(
+              dirtyChildren(parent, context).map((child) => child.path),
+            ).toEqual(expected.map((child) => child.path));
             permitted++;
           }
         }
@@ -148,6 +196,18 @@ it('300 seeded mutation histories preserve every permitted live-child query', ()
     }
     expect(permitted).toBeGreaterThan(1000);
     expect(rejected).toBeGreaterThan(0);
-    console.log('DIRTY_CONSUME_DIFFERENTIAL', JSON.stringify({ seed: 442, histories: 300, steps: 60, permitted, rejected }));
-  } finally { Object.assign(gateSelectionTable, previous); }
+    console.log(
+      'DIRTY_CONSUME_DIFFERENTIAL',
+      JSON.stringify({
+        seed: 442,
+        histories: 300,
+        steps: 60,
+        permitted,
+        rejected,
+      }),
+    );
+  } finally {
+    Object.assign(gateSelectionTable, previous);
+    engineModes.setMode('gateSelection', previousMode);
+  }
 });

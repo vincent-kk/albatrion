@@ -1,5 +1,7 @@
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import type {
   EffectiveSchema,
+  EffectiveSchemaCacheEntry,
   EffectiveSchemaMemo,
   EffectiveSchemaOptions,
 } from '../../../types/effectiveSchema';
@@ -13,18 +15,23 @@ import type { BlueprintNode } from '../../../types/node';
  * @returns The partition's mutable result map; inserts a partition when absent.
  */
 export const ensureEffectiveSchemaCache = (
-  memo: EffectiveSchemaMemo,
+  memo: EffectiveSchemaMemo | undefined,
   node: BlueprintNode,
   options: EffectiveSchemaOptions,
 ): Map<string, EffectiveSchema> => {
   const mode = options.mode ?? 'runtime';
-  const entries = memo.get(node) ?? [];
+  const record =
+    memo === undefined
+      ? getHostDerived<'effectiveSchemaMemo', EffectiveSchemaCacheEntry[]>(node)
+      : undefined;
+  const entries = memo?.get(node) ?? record?.effectiveSchemaMemo ?? [];
   const found = entries.find(
     (entry) => entry.mode === mode && entry.isAtomic === options.isAtomic,
   );
   if (found) return found.schemas;
   const schemas = new Map<string, EffectiveSchema>();
   entries.push({ mode, isAtomic: options.isAtomic, schemas });
-  memo.set(node, entries);
+  if (memo) memo.set(node, entries);
+  else if (record) record.effectiveSchemaMemo = entries;
   return schemas;
 };

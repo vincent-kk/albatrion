@@ -1,11 +1,11 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
+import { engineModes } from '../../../utils/cache/engineModes';
 import type {
   SplitAnchorEvent,
   SplitBucket,
   SplitOwner,
 } from '../../types/splitRegistration';
-import { gateSelectionTable } from '../gates/gateSelectionTable';
 import { verifyGateSelection } from '../gates/verifyGateSelection';
 
 /** One compressed group of absent keys occupying a single ancestor position. */
@@ -284,7 +284,7 @@ export class DirtyPathSet extends Set<string> {
    */
   consume(path: string): boolean {
     if (!this.postOrder) return this.delete(path);
-    if (gateSelectionTable.mode === 'verify')
+    if (engineModes.gateSelection === 'verify')
       for (const child of this.childrenByParent.get(path)?.keys() ?? [])
         verifyGateSelection(
           !this.has(child),

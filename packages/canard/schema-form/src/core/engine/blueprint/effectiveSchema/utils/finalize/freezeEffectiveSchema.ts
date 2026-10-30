@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { ownedSchemaValues } from '../../../../utils/cache/valueMemos';
 import type { EffectiveSchema } from '../../../types/effectiveSchema';
-import { OwnedSchemaValues } from './OwnedSchemaValues';
 
 /**
  * Protect producer-owned public values once at the end of one schema merge.
@@ -23,36 +23,36 @@ export const freezeEffectiveSchema = (
     if (
       required &&
       typeof required === 'object' &&
-      OwnedSchemaValues.delete(required)
+      ownedSchemaValues.delete(required)
     )
       Object.freeze(required);
-    if (allOf && typeof allOf === 'object' && OwnedSchemaValues.delete(allOf))
+    if (allOf && typeof allOf === 'object' && ownedSchemaValues.delete(allOf))
       Object.freeze(allOf);
     if (
       enumeration &&
       typeof enumeration === 'object' &&
-      OwnedSchemaValues.delete(enumeration)
+      ownedSchemaValues.delete(enumeration)
     )
       Object.freeze(enumeration);
     if (
       controls &&
       typeof controls === 'object' &&
-      OwnedSchemaValues.delete(controls)
+      ownedSchemaValues.delete(controls)
     )
       Object.freeze(controls);
     if (
       options &&
       typeof options === 'object' &&
-      OwnedSchemaValues.delete(options)
+      ownedSchemaValues.delete(options)
     )
       Object.freeze(options);
     if (
       presentation &&
       typeof presentation === 'object' &&
-      OwnedSchemaValues.delete(presentation)
+      ownedSchemaValues.delete(presentation)
     )
       Object.freeze(presentation);
-    if (type && typeof type === 'object' && OwnedSchemaValues.delete(type))
+    if (type && typeof type === 'object' && ownedSchemaValues.delete(type))
       Object.freeze(type);
     if (isArray(allOf))
       for (let index = 0; index < allOf.length; index++) {
@@ -60,7 +60,7 @@ export const freezeEffectiveSchema = (
         if (
           clause &&
           typeof clause === 'object' &&
-          OwnedSchemaValues.delete(clause)
+          ownedSchemaValues.delete(clause)
         )
           Object.freeze(clause);
       }

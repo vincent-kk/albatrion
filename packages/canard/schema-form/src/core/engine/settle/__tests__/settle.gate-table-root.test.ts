@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
-import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-gate-table-root
@@ -12,11 +12,11 @@ describe('root declaration tables retain selection and warning observations', ()
   it.each(['oneOf', 'anyOf'] as const)(
     '%s preserves multi-active declarations, schema and warnings',
     (keyword) => {
-      const before = gateSelectionTable.mode;
+      const before = engineModes.gateSelection;
       const observed: unknown[][] = [];
       try {
         for (const mode of ['off', 'table', 'verify'] as const) {
-          gateSelectionTable.mode = mode;
+          engineModes.setMode('gateSelection', mode);
           const { root } = createTestTree({
             type: 'object',
             properties: { kind: { type: 'string' }, other: { type: 'string' } },
@@ -67,7 +67,7 @@ describe('root declaration tables retain selection and warning observations', ()
         expect(observed[1]).toEqual(observed[0]);
         expect(observed[2]).toEqual(observed[0]);
       } finally {
-        gateSelectionTable.mode = before;
+        engineModes.setMode('gateSelection', before);
       }
     },
   );

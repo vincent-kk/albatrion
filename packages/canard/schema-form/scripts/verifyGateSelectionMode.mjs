@@ -25,8 +25,7 @@ for (const name of ['index.mjs', 'index.node.mjs', 'index.cjs']) {
     .flatMap((statement) => [...statement.declarationList.declarations]);
   const control = declarations.find(
     (declaration) =>
-      ts.isIdentifier(declaration.name) &&
-      declaration.name.text === 'gateSelectionTable',
+      ts.isIdentifier(declaration.name) && declaration.name.text === 'modes',
   );
   assert.ok(
     control && ts.isObjectLiteralExpression(control.initializer),
@@ -35,7 +34,7 @@ for (const name of ['index.mjs', 'index.node.mjs', 'index.cjs']) {
   const mode = control.initializer.properties.find(
     (property) =>
       ts.isPropertyAssignment(property) &&
-      property.name.getText(ast) === 'mode',
+      property.name.getText(ast) === 'gateSelection',
   );
   assert.ok(
     mode && ts.isStringLiteral(mode.initializer),

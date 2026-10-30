@@ -1,7 +1,5 @@
 /** Internal test/bench switch; package entry points never expose these modes or counters. */
 export const gateWheelEvaluation: {
-  /** Skip proven wheels, execute them in record mode, or verify them in shadow mode. */
-  mode: 'skip' | 'record' | 'shadow';
   /** Confirmation wheels omitted after all skip conditions hold. */
   skipped: number;
   /** Wheels satisfying the skip predicate in skip, record or shadow mode. */
@@ -13,7 +11,6 @@ export const gateWheelEvaluation: {
   /** Predicted no-op wheels whose shadow execution changed an observation. */
   nonNoop: number;
 } = {
-  mode: 'skip',
   skipped: 0,
   predictions: 0,
   confirmations: 0,

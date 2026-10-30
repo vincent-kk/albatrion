@@ -1,5 +1,6 @@
 export { blueprint } from './blueprint';
 export { StaticFirstLoadCapability } from './StaticFirstLoadCapability';
+export { HostStaticPartition } from './utils/features/HostStaticPartition';
 export { DeriveConvergenceTargets } from './utils/features/DeriveConvergenceTargets';
 export { getFeatureNodeIndex } from './utils/features/getFeatureNodeIndex';
 export { collectBlueprintWarnings } from './collectBlueprintWarnings';

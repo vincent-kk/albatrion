@@ -22,6 +22,8 @@ export interface BlueprintDiagnostic {
 
 /** Immutable result of analyzing one authored root. */
 export interface Blueprint {
+  /** Compiler-only creation fact, retained across derived-record resets. */
+  readonly staticFirstLoadEligible?: boolean;
   /** Independent absence proofs over every authored position declaration collection reaches. */
   readonly capabilities: {
     /** No disjunction, if, discriminator or active control was reached. */
@@ -70,6 +72,8 @@ export type EqualityLiteral = string | number | boolean | null;
 
 /** A compiled expression never executed during schema analysis. */
 export interface BlueprintExpression {
+  /** Compiler-only complete-read proof fixed before this expression is frozen. */
+  readonly completeReads?: boolean;
   /** Contribution whose controls contain this expression. */
   readonly declarationId: number;
   /** Original expression position used in compilation diagnostics. */
@@ -94,8 +98,10 @@ export interface BlueprintCacheEntry {
   readonly isAtomic: BlueprintOptions['isAtomic'];
   /** Completed immutable analysis. */
   readonly blueprint: Blueprint;
-  /** Late warnings are delivered at most once per authored root/cache entry. */
-  warningsCollected: boolean;
+  /** Lazy warning records reused across distinct consumers; absent before the first request. */
+  diagnostics?: readonly BlueprintDiagnostic[];
+  /** Consumers already served without retaining their lifetime. */
+  readonly collectors: WeakSet<NonNullable<BlueprintOptions['collect']>>;
 }
 
 /** Explicit dependencies and diagnostics; no process-global cache is used. */

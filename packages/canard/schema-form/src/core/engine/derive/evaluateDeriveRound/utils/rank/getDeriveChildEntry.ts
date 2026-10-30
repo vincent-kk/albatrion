@@ -1,10 +1,7 @@
 import type { BlueprintNode } from '../../../../blueprint';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 
 /** Immutable template indexes are built once when a rule first uses the host. */
-const CHILDREN = new WeakMap<
-  BlueprintNode,
-  ReadonlyMap<string, readonly number[]>
->();
 
 /**
  * Find a declared child without rescanning a wide host on every injection.
@@ -18,7 +15,10 @@ export const getDeriveChildEntry = (
   name: string,
   template?: BlueprintNode,
 ) => {
-  let index = CHILDREN.get(parent);
+  let index = getHostDerived<
+    'deriveChildren',
+    ReadonlyMap<string, readonly number[]>
+  >(parent).deriveChildren;
   if (!index) {
     const built = new Map<string, number[]>();
     parent.childEntries.forEach((entry, position) => {
@@ -27,7 +27,9 @@ export const getDeriveChildEntry = (
       built.set(entry.name, positions);
     });
     index = built;
-    CHILDREN.set(parent, index);
+    getHostDerived<'deriveChildren', ReadonlyMap<string, readonly number[]>>(
+      parent,
+    ).deriveChildren = index;
   }
   const positions = index.get(name);
   const position = template

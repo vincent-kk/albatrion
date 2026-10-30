@@ -1,15 +1,7 @@
 import { getItemEntries } from '../../../../blueprint';
-import type { BlueprintChildEntry, BlueprintNode } from '../../../../blueprint';
+import type { BlueprintChildEntry } from '../../../../blueprint';
 import type { Behavior } from '../../../../record';
 
-/** Each template keeps only its most recent count's entry list. */
-const LAST = new WeakMap<
-  BlueprintNode,
-  {
-    count: number;
-    result: readonly BlueprintChildEntry[];
-  }
->();
 /** Shared declaration result when an array has no templated positions. */
 const EMPTY: readonly BlueprintChildEntry[] = Object.freeze([]);
 
@@ -28,7 +20,7 @@ export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
   )
     return EMPTY;
   const count = node.itemCount;
-  const cached = LAST.get(template);
+  const cached = node.runtime.arrayChildEntries?.get(node);
   if (cached?.count === count) return cached.result;
   const entries: BlueprintChildEntry[] = [];
   for (let index = 0; index < count; index++) {
@@ -36,6 +28,9 @@ export const declareArrayChildren: Behavior['declareChildren'] = (node) => {
     for (const entry of candidates) entries.push(entry);
   }
   const result = entries.length === 0 ? EMPTY : Object.freeze(entries);
-  LAST.set(template, { count, result });
+  (node.runtime.arrayChildEntries ??= new WeakMap()).set(node, {
+    count,
+    result,
+  });
   return result;
 };

@@ -1,5 +1,29 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`SURFACE-063 adds rebuild with the reset option contract to FormHandle 1`] = `
+[
+  "clearState",
+  "findNode",
+  "findNodes",
+  "focus",
+  "getAttachedFilesMap",
+  "getErrors",
+  "getState",
+  "getValue",
+  "node",
+  "rebuild",
+  "refresh",
+  "remount",
+  "reset",
+  "select",
+  "setState",
+  "setValue",
+  "showError",
+  "submit",
+  "validate",
+]
+`;
+
 exports[`preserves the 94-name package public surface 1`] = `
 "ArrayNode	type	ArrayNode<Item>
 ArraySchema	type	RolledArraySchema<Options>

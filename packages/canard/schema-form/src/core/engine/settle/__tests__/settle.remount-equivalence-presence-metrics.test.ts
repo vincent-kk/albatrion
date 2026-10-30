@@ -3,17 +3,17 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { createAncestorScenes } from '@/schema-form/__tests__/fixtures/remountEquivalence/createAncestorScenes';
 import { checkCoreScene } from '@/schema-form/core/__tests__/remount-equivalence/helpers/checkCoreScene';
 
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
+import { engineModes } from '../../utils/cache/engineModes';
 import * as settlement from '../utils/settlement/createSettlementContext';
 
-const previousMode = gateWheelEvaluation.mode;
+const previousMode = engineModes.gateWheel;
 afterEach(() => {
   vi.restoreAllMocks();
-  gateWheelEvaluation.mode = previousMode;
+  engineModes.setMode('gateWheel', previousMode);
 });
 
 it('the ancestor lattice reaches recorded rechecks and wheel promotion', async () => {
-  gateWheelEvaluation.mode = 'record';
+  engineModes.setMode('gateWheel', 'record');
   const contexts: ReturnType<typeof settlement.createSettlementContext>[] = [];
   const create = settlement.createSettlementContext;
   vi.spyOn(settlement, 'createSettlementContext').mockImplementation(

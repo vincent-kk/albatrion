@@ -3,11 +3,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { engineModes } from '../../utils/cache/engineModes';
 import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as steps from '../utils/compute/childSelection/selectEntryStep';
 import * as evaluating from '../utils/gates/evaluateGate';
 import { gateSelectionTable } from '../utils/gates/gateSelectionTable';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import * as prePublication from '../utils/gates/verifyTablePrePublication';
 import { gateTableCases } from './fixtures/gate-table/gateTableCases';
 
@@ -16,13 +16,13 @@ describe('prepared gate tables during the load pass', () => {
   it.each([5, 80])(
     'N=%i retains exact mount evaluation and visit counts',
     (count) => {
-      const previousTable = gateSelectionTable.mode;
-      const previousWheel = gateWheelEvaluation.mode;
+      const previousTable = engineModes.gateSelection;
+      const previousWheel = engineModes.gateWheel;
       const observations: unknown[] = [];
       try {
-        gateWheelEvaluation.mode = 'skip';
+        engineModes.setMode('gateWheel', 'skip');
         for (const mode of ['off', 'verify'] as const) {
-          gateSelectionTable.mode = mode;
+          engineModes.setMode('gateSelection', mode);
           const { root } = createTestTree(
             gateTableCases[count === 5 ? 0 : 1].schema,
           );
@@ -78,8 +78,8 @@ describe('prepared gate tables during the load pass', () => {
           });
         }
       } finally {
-        gateSelectionTable.mode = previousTable;
-        gateWheelEvaluation.mode = previousWheel;
+        engineModes.setMode('gateSelection', previousTable);
+        engineModes.setMode('gateWheel', previousWheel);
       }
     },
   );

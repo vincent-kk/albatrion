@@ -4,7 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '@/schema-form/core/engine/record';
 
-import { objectKeyCounts } from '../../../utils/objectKeyCounts';
+import { objectKeyCounts } from '../../../../../utils/cache/valueMemos';
 import { assembleObject } from '../assembleObject';
 
 afterEach(() => vi.restoreAllMocks());
@@ -25,6 +25,7 @@ const fixture = (numeric = true) => {
     { name: 'group', emit: nested },
   ];
   const node = {
+    runtime: {},
     local: undefined,
     undeclaredValues: undefined,
     schema: { schema: { type: 'object' } },

@@ -3,6 +3,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { getBlueprintNodeIdentity } from '../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../types/settlement';
 import { captureArrayLatent } from '../latent/captureArrayLatent';
+import { DetachedWriteAddress } from '../latentStore/DetachedWriteAddress';
 import { HostLatent } from '../latentStore/HostLatent';
 import { captureOwnLatent } from '../latentStore/captureOwnLatent';
 import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
@@ -128,5 +129,7 @@ export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
     node.blueprintNode,
     order,
   );
+  const metadata = node.runtime.latentRawMetadata?.get(key);
+  if (metadata) DetachedWriteAddress.retain(node, metadata, node.runtime);
   return ownsLatent;
 };

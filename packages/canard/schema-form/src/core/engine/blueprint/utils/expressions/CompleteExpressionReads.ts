@@ -1,4 +1,8 @@
 import type { BlueprintExpression } from '../../types/blueprint';
 
-/** Compiler-only complete-read evidence, without widening expression descriptors. */
-export const CompleteExpressionReads = new WeakSet<BlueprintExpression>();
+/** Read-only compiler facts; mode resets never erase this creation evidence. */
+export const CompleteExpressionReads = {
+  has(expression: BlueprintExpression): boolean {
+    return expression.completeReads === true;
+  },
+};

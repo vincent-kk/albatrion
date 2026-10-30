@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
+import { engineModes } from '../../../utils/cache/engineModes';
 import type { SettlementContext } from '../../types/settlement';
-import { gateSelectionTable } from './gateSelectionTable';
 import { verifyGateSelection } from './verifyGateSelection';
 
 /**
@@ -15,7 +15,7 @@ export const finishGateTableRound = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const round = context.gateSelectionRounds?.get(node);
   if (!round) return;
-  if (gateSelectionTable.mode === 'verify') {
+  if (engineModes.gateSelection === 'verify') {
     const frame = context.gateWheelFrame;
     const shadow = frame?.selectionShadow;
     if (frame && shadow) {

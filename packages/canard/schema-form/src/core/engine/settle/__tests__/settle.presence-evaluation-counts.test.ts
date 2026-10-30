@@ -2,19 +2,19 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import type { DispatchTestNode } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
+import { engineModes } from '../../utils/cache/engineModes';
 import { dispatchSetValue } from '../../write';
 import type { SettlementContext } from '../types/settlement';
 import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import * as settlement from '../utils/settlement/createSettlementContext';
 import { getDispatchNode } from './fixtures/getDispatchNode';
 import { mountPresenceTree } from './helpers/mountPresenceTree';
 import { observePresenceTree } from './helpers/observePresenceTree';
 
-const previousMode = gateWheelEvaluation.mode;
+const previousMode = engineModes.gateWheel;
 afterEach(() => {
   vi.restoreAllMocks();
-  gateWheelEvaluation.mode = previousMode;
+  engineModes.setMode('gateWheel', previousMode);
 });
 
 it.each(['record', 'skip', 'shadow'] as const)(
@@ -40,7 +40,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
     for (const kind of ['gated', 'fixed', 'whole'] as const) {
       const totals: { mount: number; write: number }[] = [];
       for (const count of [250, 1_000]) {
-        gateWheelEvaluation.mode = mode;
+        engineModes.setMode('gateWheel', mode);
         const items = Array.from({ length: count }, (_, index) => ({
           id: `id-${index}`,
           name: `name-${index}`,
@@ -129,7 +129,7 @@ it.each(['record', 'skip', 'shadow'] as const)(
       expect.soft(totals[1].mount).toBeLessThanOrEqual(4 * totals[0].mount);
       expect.soft(totals[1].write).toBeLessThanOrEqual(4 * totals[0].write);
     }
-    gateWheelEvaluation.mode = mode;
+    engineModes.setMode('gateWheel', mode);
     const fields = Object.fromEntries(
       Array.from({ length: 1_000 }, (_, index) => [
         `k${index}`,

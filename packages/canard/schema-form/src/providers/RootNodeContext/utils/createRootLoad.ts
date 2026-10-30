@@ -1,5 +1,6 @@
 import { clone } from '@winglet/common-utils/object';
 
+import { blueprintCacheDomain } from '@/schema-form/app/cache';
 import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core';
 import {
   isRenderAtomic,
@@ -30,6 +31,7 @@ export const createRootLoad = (
   try {
     load.root = buildFieldNodeTree({
       ...props,
+      cache: blueprintCacheDomain.cache,
       defaultValue: clone(props.defaultValue),
       isTerminal: isRenderTerminal,
       isAtomic: isRenderAtomic,

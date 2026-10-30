@@ -2,18 +2,18 @@
 
 ## Purpose
 
-청사진 identity에 연결된 정적 첫 로드 자격을 약한 sidecar로 보관한다.
+청사진 생성 때 고정한 정적 첫 로드 자격을 재분석 없이 읽는다.
 
 ## Conventions
 
-- 완료된 분석 증거를 boolean 하나로 등록한다.
-- 공개 Blueprint의 필드나 shape를 늘리지 않는다.
+- 완료된 분석의 내부 Blueprint 고정 boolean 사실을 읽는다.
+- 노드의 필드나 공개 패키지 표면은 늘리지 않는다.
 
 ## Boundaries
 
 ### Always do
 
-- 청사진 identity를 약한 키로 사용한다.
+- 생성 사실은 모드 초기화와 분리한다.
 - 등록되지 않은 청사진의 자격 조회는 false를 반환한다.
 
 ### Ask first

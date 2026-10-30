@@ -1,13 +1,10 @@
+import { getBlueprintDerived } from '../../../utils/cache/derivedRecords';
 import type { Blueprint } from '../../types/blueprint';
 import { collectDeriveConvergenceTargets } from './collectDeriveConvergenceTargets';
 
 /** First-write proof consumed by settle; no public Blueprint slots are added. */
 export class DeriveConvergenceTargets {
   /** Null memoizes conservative fallback for the immutable analysis lifetime. */
-  private static readonly targets = new WeakMap<
-    Blueprint,
-    ReadonlySet<string> | null
-  >();
 
   /**
    * Retain proven targets, or disable skipping for a reference run.
@@ -19,7 +16,9 @@ export class DeriveConvergenceTargets {
     blueprint: Blueprint,
     targets: ReadonlySet<string> | undefined,
   ): void {
-    this.targets.set(blueprint, targets ?? null);
+    getBlueprintDerived<'deriveConvergenceTargets', ReadonlySet<string> | null>(
+      blueprint,
+    ).deriveConvergenceTargets = targets ?? null;
   }
 
   /**
@@ -28,7 +27,12 @@ export class DeriveConvergenceTargets {
    * @returns Proven paths, or undefined for conservative fallback
    */
   static get(blueprint: Blueprint): ReadonlySet<string> | undefined {
-    return this.targets.get(blueprint) ?? undefined;
+    return (
+      getBlueprintDerived<
+        'deriveConvergenceTargets',
+        ReadonlySet<string> | null
+      >(blueprint).deriveConvergenceTargets ?? undefined
+    );
   }
 
   /**
@@ -37,7 +41,10 @@ export class DeriveConvergenceTargets {
    * @returns Proven paths, or undefined for conservative fallback
    */
   static getOrCollect(blueprint: Blueprint): ReadonlySet<string> | undefined {
-    const cached = this.targets.get(blueprint);
+    const cached = getBlueprintDerived<
+      'deriveConvergenceTargets',
+      ReadonlySet<string> | null
+    >(blueprint).deriveConvergenceTargets;
     if (cached !== undefined) return cached ?? undefined;
     const targets = collectDeriveConvergenceTargets(blueprint);
     this.set(blueprint, targets);

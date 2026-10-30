@@ -1,10 +1,11 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { getItemEntries } from '../../../../blueprint';
+import { HostStaticPartition, getItemEntries } from '../../../../blueprint';
 import type { BlueprintChildEntry } from '../../../../blueprint';
 import { captureFieldNodeChange } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 import { getBlueprintNodeIdentity } from '../../../../utils/nodeIdentity/getBlueprintNodeIdentity';
 import type { SettlementContext } from '../../../types/settlement';
 import { getChildDistribution } from '../../input/getChildDistribution';
@@ -17,14 +18,12 @@ import { updatePendingExitIndex } from '../../scratch/updatePendingExitIndex';
 import { isSameChildList } from '../../structure/isSameChildList';
 import { canReuseArrayChildren } from './canReuseArrayChildren';
 import { selectTableChildren } from './gateSelection/selectTableChildren';
-import {
-  DIRECT_CHILD_SELECTION_PLANS,
-  getDirectChildSelectionPlan,
-} from './getDirectChildSelectionPlan';
+import { getDirectChildSelectionPlan } from './getDirectChildSelectionPlan';
 import { reuseArrayChildren } from './reuseArrayChildren';
 import { selectEntryStep } from './selectEntryStep';
 import type { ChildSelectionFrame } from './selectEntryStep';
 import { staticShape } from './staticShape';
+import { createStaticEntryReuser } from './utils/createStaticEntryReuser';
 
 /**
  * Select all declared direct children in authored order for one host round.
@@ -34,6 +33,9 @@ import { staticShape } from './staticShape';
  * @param prior - Shape before the wheel's fixed ungated start
  * @param computeChild - Recursive descent used immediately after a gate change
  * @param immediate - Whether later gates must see each earlier projection
+ * @param hasRelocated - Wheel's existing relocation evidence
+ * @param preserveStructure - Whether presence comparison retains the preceding structure
+ * @param publication - Receives whether selection already assembled the final child shape
  * @returns Whether shape or effective schemas changed during this round
  */
 export const selectChildren = <Self extends FieldNodeRecord<Self>>(
@@ -42,6 +44,9 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   prior: Record<string, Self>,
   computeChild: (child: Self) => void,
   immediate: boolean,
+  hasRelocated = true,
+  preserveStructure = true,
+  publication?: { flushed: boolean },
 ): boolean => {
   if (
     node.behavior.type === 'array' &&
@@ -50,7 +55,10 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     reuseArrayChildren(node, context, prior, computeChild);
     return false;
   }
-  if (!context.hasGates && node.behavior.type === 'object') {
+  if (
+    node.behavior.type === 'object' &&
+    (!context.hasGates || !HostStaticPartition.get(node.blueprintNode).gated)
+  ) {
     const shape = staticShape(
       node.blueprintNode,
       node.runtime.blueprint?.isAtomic,
@@ -74,13 +82,32 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         }
       }
     if (matches && shape && children) {
-      for (let index = 0; index < shape.length; index++) {
-        const child = children[index];
-        if (context.selectedDeclarationIds.get(child) !== shape[index].ids)
-          context.selectedDeclarationIds.set(child, shape[index].ids);
-        if (context.dirtyPaths.has(child.path)) computeChild(child);
+      if (context.hasGates) {
+        const reuse = createStaticEntryReuser(
+          node,
+          prior,
+          context,
+          node.structure!,
+          computeChild,
+          false,
+          hasRelocated,
+        );
+        let reused = true;
+        for (const { entry } of shape)
+          if (!reuse?.(entry)) {
+            reused = false;
+            break;
+          }
+        if (reused) return false;
+      } else {
+        for (let index = 0; index < shape.length; index++) {
+          const child = children[index];
+          if (context.selectedDeclarationIds.get(child) !== shape[index].ids)
+            context.selectedDeclarationIds.set(child, shape[index].ids);
+          if (context.dirtyPaths.has(child.path)) computeChild(child);
+        }
+        return false;
       }
-      return false;
     }
   }
   if (node.behavior.type === 'virtual') {
@@ -111,8 +138,22 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     return changed;
   }
   const before = node.children ?? [];
-  const next: Record<string, Self> = { ...node.structure };
-  Object.setPrototypeOf(next, null);
+  const current = node.structure;
+  let reuse =
+    !preserveStructure && current && current !== prior
+      ? createStaticEntryReuser(
+          node,
+          prior,
+          context,
+          current,
+          computeChild,
+          immediate,
+          hasRelocated,
+        )
+      : undefined;
+  const next: Record<string, Self> =
+    reuse && current ? current : { ...current };
+  if (next !== current) Object.setPrototypeOf(next, null);
   if (node.behavior.type === 'array') {
     const names = Object.keys(next);
     for (let index = 0; index < names.length; index++) {
@@ -121,12 +162,24 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     }
   }
   node.structure = next;
+  reuse ??= createStaticEntryReuser(
+    node,
+    prior,
+    context,
+    next,
+    computeChild,
+    immediate,
+    hasRelocated,
+  );
   const seen = new Map<string, BlueprintChildEntry['node']>();
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
   const cached =
     context.hasGates && node.behavior.type === 'object'
-      ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)
+      ? getHostDerived<
+          'directChildSelectionPlan',
+          ReturnType<typeof getDirectChildSelectionPlan>
+        >(node.blueprintNode).directChildSelectionPlan
       : null;
   const direct =
     cached === undefined
@@ -154,17 +207,21 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     inactiveEntries,
     changed,
     flushReads,
+    reuseStatic: reuse,
   };
   const round = direct && context.gateSelectionRounds?.get(node);
   if (round?.active) selectTableChildren(frame, round);
-  else
+  else {
     for (let entryIndex = 0; entryIndex < count; entryIndex++) {
       const step = direct?.steps[entryIndex];
       const entry = step ? step.entry : entries[entryIndex];
+      if (reuse?.(entry)) continue;
       selectEntryStep(entry, step, frame);
     }
+  }
   changed = frame.changed;
-  flushPendingOutput(node, context);
+  const flushed = flushPendingOutput(node, context);
+  if (publication) publication.flushed = flushed;
   for (let index = 0; index < inactiveEntries.length; index++) {
     const entry = inactiveEntries[index];
     if (
@@ -228,7 +285,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       }
     }
   }
-  const nextChildren = Object.values(next);
+  const nextChildren = flushed ? (node.children ?? []) : Object.values(next);
   const published = node.children;
   const sameAsBefore = isSameChildList(before, nextChildren);
   if (!sameAsBefore) changed = true;

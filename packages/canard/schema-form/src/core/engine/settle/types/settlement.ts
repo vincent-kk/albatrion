@@ -15,6 +15,7 @@ import type {
   SettlementScratch,
 } from '../../record';
 import type { FieldNodeWriteKind } from '../../types/value';
+import type { DependencyPresenceMemo } from '../utils/dependencies/getDependencyIndex';
 import type { GateOccurrence } from '../utils/gates/type';
 import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
 import type { GateSelectionRound } from './gateSelectionRound';
@@ -105,6 +106,8 @@ export interface ArraySpliceProof<Self extends FieldNodeRecord<Self>> {
 
 /** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
+  /** Traversal results live only with this settlement context. */
+  dependencyPresenceMemo?: DependencyPresenceMemo;
   /** Live root reached through the record boundary. */
   root: Self;
   /** Emitted root reference from the preceding committed shape. */
@@ -133,6 +136,10 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
+  /** Admitted whole-write generation, cleared before falling back to path work. */
+  writeEpoch?: number;
+  /** Verify-only independent dirty membership from the marking input log. */
+  writeEpochShadow?: DirtyPathSet;
   /** Hosts whose direct child identity or projected emission may have changed. */
   presenceHosts?: Set<Self>;
   /** Latest actual dependency reads of relocated occurrences in this settlement. */

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { engineModes } from '../../utils/cache/engineModes';
 import { getCommittedDeclarationKey } from '../../utils/controls/getCommittedDeclarationKey';
 import * as predicate from '../utils/gates/canSkipGateWheel';
-import { gateWheelEvaluation } from '../utils/gates/gateWheelEvaluation';
 import { gateWheelCases } from './fixtures/gateWheelCases';
 import { runGateSelectionCase } from './helpers/runGateSelectionCase';
 
@@ -13,7 +13,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
       const fixture = gateWheelCases.find((item) =>
         item.name.startsWith(prefix),
       )!;
-      const previousMode = gateWheelEvaluation.mode;
+      const previousMode = engineModes.gateWheel;
       const proving = vi.spyOn(predicate, 'canSkipGateWheel');
       const decisions: { round: number; allowed: boolean }[][] = [];
       const observations: {
@@ -24,13 +24,13 @@ describe('gate-wheel input evidence at critical wheels', () => {
         runGateSelectionCase(
           fixture,
           () => {
-            gateWheelEvaluation.mode = 'skip';
+            engineModes.setMode('gateWheel', 'skip');
           },
           (root) => {
             observations.push({
               emit: root.emit,
               declarations: root.runtime.committedDeclarationIds?.get(
-                getCommittedDeclarationKey(root),
+                getCommittedDeclarationKey(root, root.runtime),
               ),
             });
             decisions.push(
@@ -66,7 +66,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
         }
       } finally {
         proving.mockRestore();
-        gateWheelEvaluation.mode = previousMode;
+        engineModes.setMode('gateWheel', previousMode);
       }
     },
   );
@@ -77,11 +77,11 @@ describe('gate-wheel input evidence at critical wheels', () => {
       const fixture = gateWheelCases.find(
         (item) => item.name === `S2 oneOf-${count}, nested=true`,
       )!;
-      const previousMode = gateWheelEvaluation.mode;
+      const previousMode = engineModes.gateWheel;
       const proving = vi.spyOn(predicate, 'canSkipGateWheel');
       try {
         runGateSelectionCase(fixture, () => {
-          gateWheelEvaluation.mode = 'skip';
+          engineModes.setMode('gateWheel', 'skip');
         });
         const frames = proving.mock.calls.filter(
           ([node]) => node.path === '/obj',
@@ -101,7 +101,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
         }
       } finally {
         proving.mockRestore();
-        gateWheelEvaluation.mode = previousMode;
+        engineModes.setMode('gateWheel', previousMode);
       }
     },
   );
@@ -110,13 +110,13 @@ describe('gate-wheel input evidence at critical wheels', () => {
     const fixture = gateWheelCases.find((item) =>
       item.name.startsWith('S3 fixed'),
     )!;
-    const previousMode = gateWheelEvaluation.mode;
+    const previousMode = engineModes.gateWheel;
     const values: unknown[] = [];
     try {
       runGateSelectionCase(
         fixture,
         () => {
-          gateWheelEvaluation.mode = 'skip';
+          engineModes.setMode('gateWheel', 'skip');
         },
         (root) => {
           values.push(root.emit);
@@ -125,7 +125,7 @@ describe('gate-wheel input evidence at critical wheels', () => {
       expect(values[0]).toEqual({ mode: 'x', akey: true, bkey: true });
       expect(values[1]).toEqual({ mode: 'y' });
     } finally {
-      gateWheelEvaluation.mode = previousMode;
+      engineModes.setMode('gateWheel', previousMode);
     }
   });
 });

@@ -1,7 +1,7 @@
 import type { BlueprintChildEntry, BlueprintNode } from '../../../../blueprint';
+import { getHostDerived } from '../../../../utils/cache/derivedRecords';
 
 /** Property enumeration order is shared by every occurrence of a static template. */
-const ENTRIES = new WeakMap<BlueprintNode, readonly BlueprintChildEntry[]>();
 
 /**
  * Preserve the generic structure's integer-name order without reselecting shape.
@@ -11,13 +11,18 @@ const ENTRIES = new WeakMap<BlueprintNode, readonly BlueprintChildEntry[]>();
 export const getStaticObjectEntries = (
   template: BlueprintNode,
 ): readonly BlueprintChildEntry[] => {
-  const cached = ENTRIES.get(template);
+  const cached = getHostDerived<
+    'staticObjectEntries',
+    readonly BlueprintChildEntry[]
+  >(template).staticObjectEntries;
   if (cached) return cached;
   const byName: Record<string, BlueprintChildEntry> = Object.create(null);
   const entries = template.childEntries;
   for (let index = 0; index < entries.length; index++)
     byName[entries[index].name] = entries[index];
   const result = Object.freeze(Object.values(byName));
-  ENTRIES.set(template, result);
+  getHostDerived<'staticObjectEntries', readonly BlueprintChildEntry[]>(
+    template,
+  ).staticObjectEntries = result;
   return result;
 };
