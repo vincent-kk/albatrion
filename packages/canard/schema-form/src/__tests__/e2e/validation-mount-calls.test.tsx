@@ -21,6 +21,19 @@ afterEach(() => {
 });
 
 describe('mount onValidate calls', () => {
+  it('does not compile a development None-mode form without an if gate', async () => {
+    expect(process.env.NODE_ENV).not.toBe('production');
+    const compile = vi.fn(() => () => null);
+    const compileGuard = vi.fn(() => () => true);
+    form = await renderForm(schema, {
+      validatorFactory: { compile, compileGuard },
+      validationMode: ValidationMode.None,
+    });
+    await form.flush();
+    expect(compile).not.toHaveBeenCalled();
+    expect(compileGuard).not.toHaveBeenCalled();
+  });
+
   it('publishes only the first validation result in the default mode without errors', async () => {
     const onValidate = vi.fn();
     form = await renderForm(schema, {
