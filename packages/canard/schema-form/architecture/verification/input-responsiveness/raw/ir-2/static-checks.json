@@ -82,5 +82,26 @@
     "outcome": "IR0_SMOKE_OK",
     "formalSamples": 0
   },
-  "FCA": "Not run: measurement-only IR-0 protocol explicitly excludes FCA scans; coordinator owns independent review."
+  "FCA": "Not run: measurement-only IR-0 protocol explicitly excludes FCA scans; coordinator owns independent review.",
+  "postMeasurementChecks": [
+    {
+      "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form lint",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-2",
+      "exitCode": 0,
+      "output": [
+        "IR2_SUITE_REPRODUCED suite=main samples=180",
+        "IR2_PATH_AND_PRODUCT_AUDIT_OK",
+        "IR2_RAW_REPRODUCED samples=180"
+      ],
+      "scope": "All page summaries, row counts and alternating order, input counts, start authorization and quiet observation, frozen bundles, all JSON derivations and exact report tables, gzip-expanded path audit."
+    }
+  ],
+  "verificationReuse": "Fixture and browser harness are unchanged since the 4-file/30-test package pass. Post-window edits add offline CPU attribution, report-table matching and metadata assertions; final lint/typecheck and raw reproduction exercise these edits."
 }

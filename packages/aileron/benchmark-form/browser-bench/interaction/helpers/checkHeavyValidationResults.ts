@@ -22,6 +22,7 @@ export function checkHeavyValidationResults(
   write: boolean,
 ) {
   const base = path.join(destination, 'raw/ir-2');
+  let reproduced = 0;
   for (const suite of ['main', 'quiet'].filter((suite) =>
     fs.existsSync(path.join(base, suite)),
   )) {
@@ -34,6 +35,46 @@ export function checkHeavyValidationResults(
     const pages: Record<string, PageRecord> = JSON.parse(
       gunzipSync(fs.readFileSync(path.join(raw, 'pages.json.gz'))).toString(),
     );
+    const inputs = JSON.parse(
+      fs.readFileSync(path.join(raw, 'inputs.json'), 'utf8'),
+    );
+    const start = JSON.parse(
+      fs.readFileSync(path.join(raw, 'formal-start.json'), 'utf8'),
+    );
+    const authorization = JSON.parse(
+      fs.readFileSync(
+        path.join(base, 'main/window-authorization.json'),
+        'utf8',
+      ),
+    );
+    const smoke = JSON.parse(
+      gunzipSync(
+        fs.readFileSync(path.join(raw, 'smoke-complete.json.gz')),
+      ).toString(),
+    );
+    assert.deepEqual(complete.inputs, inputs);
+    assert.deepEqual(smoke.inputs.bundles, inputs.bundles);
+    assert.deepEqual(start.cases, complete.cases);
+    assert.equal(start.toolCommit, complete.toolCommit);
+    assert.ok(Date.parse(start.at) >= Date.parse(authorization.at));
+    assert.ok(Date.parse(complete.startedAt) >= Date.parse(start.at));
+    if (complete.mode === 'quiet') {
+      const attempts = fs
+        .readdirSync(raw)
+        .filter((name) => name.startsWith('start-'))
+        .map((name) =>
+          JSON.parse(fs.readFileSync(path.join(raw, name), 'utf8')),
+        );
+      const approved = attempts.find((attempt) => attempt.at === start.at);
+      assert.equal(approved?.approved, true);
+      assert.equal(approved.samples, 0);
+      assert.equal(approved.policy.observationMs, 30000);
+      assert.equal(approved.policy.maximumExternalPidPercent, 30);
+      assert.equal(approved.quiet.heavy.length, 0);
+      assert.ok(
+        Date.parse(approved.quiet.startedAt) >= Date.parse(authorization.at),
+      );
+    }
     assert.equal(complete.smoke, false);
     assert.equal(complete.count, 10);
     assert.equal(complete.warmup, 3);
@@ -73,6 +114,18 @@ export function checkHeavyValidationResults(
         assert.equal(page.handlers.length, 0);
         assert.ok(Math.abs(page.end - page.start - 1000) < 0.001);
       }
+      assert.equal(
+        page.final.inputs,
+        sample.id.includes('if-flat')
+          ? 501
+          : sample.id.includes('array')
+            ? 3000
+            : sample.id.includes('nested')
+              ? 1024
+              : sample.id.includes('2000')
+                ? 2000
+                : 500,
+      );
     }
     for (const id of complete.cases)
       for (let index = 0; index < 10; index++)
@@ -92,11 +145,16 @@ export function checkHeavyValidationResults(
         /^[a-f0-9]{64}$/,
       );
     }
-    const data = deriveHeavyValidationResults(complete.samples, complete.mode);
+    const data = deriveHeavyValidationResults(
+      complete.samples,
+      complete.mode,
+      pages,
+    );
     for (const [name, value] of Object.entries({
       'summary.json': data.rows,
       'pairs.json': data.pairs,
       'decision.json': data.decision,
+      'cpu-attribution.json': data.cpu,
       'tables.md': renderHeavyValidationTables(data),
     })) {
       const text =
@@ -111,8 +169,23 @@ export function checkHeavyValidationResults(
           name + ' reproduces',
         );
     }
+    if (suite === 'main' && !write) {
+      const report = fs.readFileSync(
+        path.join(destination, 'ir-2-results.md'),
+        'utf8',
+      );
+      const tables = report
+        .split('<!-- IR2_TABLES_START -->\n')[1]
+        ?.split('<!-- IR2_TABLES_END -->')[0];
+      assert.equal(
+        tables,
+        renderHeavyValidationTables(data),
+        'Result tables reproduce from raw',
+      );
+    }
+    reproduced += complete.samples.length;
     console.log(
-      `IR2_RAW_REPRODUCED suite=${suite} samples=${complete.samples.length}`,
+      `IR2_SUITE_REPRODUCED suite=${suite} samples=${complete.samples.length}`,
     );
   }
   assert.ok(fs.existsSync(path.join(base, 'main/complete.json.gz')));
@@ -146,4 +219,5 @@ export function checkHeavyValidationResults(
     );
   }
   console.log('IR2_PATH_AND_PRODUCT_AUDIT_OK');
+  console.log(`IR2_RAW_REPRODUCED samples=${reproduced}`);
 }

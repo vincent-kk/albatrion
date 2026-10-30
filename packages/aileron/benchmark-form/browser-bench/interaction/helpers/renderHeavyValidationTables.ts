@@ -88,5 +88,18 @@ export function renderHeavyValidationTables(
     `기계적 규칙 결과: D1 ${data.decision.triggered ? '발동' : '미발동'}. ${data.decision.provisional ? '상대 창의 최대 통계이므로 잠정입니다.' : '시작 전 정숙 관찰을 통과한 창입니다.'}`,
     '',
   );
+  lines.push(
+    '### 창 내부 외부 CPU',
+    '',
+    `외부 PID 평균 30% 초과 페이지: ${data.cpu.heavyPages}/${data.cpu.pages}. 시작 관찰 통과는 창 전체의 무부하를 뜻하지 않습니다.`,
+    '',
+    '| 픽스처 | L 부하 페이지 | E1 부하 페이지 |',
+    '| --- | ---: | ---: |',
+  );
+  for (const row of data.cpu.byRow.filter((row) => row.lane === 'L'))
+    lines.push(
+      `| ${row.id} | ${row.heavyPages}/10 | ${data.cpu.byRow.find((entry) => entry.id === row.id && entry.lane === 'E1')!.heavyPages}/10 |`,
+    );
+  lines.push('');
   return lines.join('\n');
 }

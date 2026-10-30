@@ -128,3 +128,5 @@ v2 슬롯은 `done`을 공유하고 실행 시 disposed 루트를 중단합니�
 계약 기록 대상은 VALIDATE-049·046·048, ERROR-019·038·044·201, TEST-036, EVENT-028, SETTLE-008, design/03·05·07, ADR 0007·0008, 지식 문서 expressions·event-system·troubleshooting, 검증 DETAIL입니다. G를 함께 만들 때는 `validator.ts`·플러그인 형과 VALIDATE-044에 순서 변경을 명시합니다. `readValidationEntry`는 컴파일하지 않고 `assertValidationRootReady`만 가변 엔트리를 한 번 컴파일하며 가드 준비는 전체 컴파일을 일으키지 않습니다. 숨은 탭 타이머 제한은 미검증이고, 전체 컴파일 비용은 첫 화면 뒤 긴 작업으로 이동하므로 이른 입력이 여전히 막힐 수 있습니다. None 모드의 다른 스키마 reset도 계속 컴파일할 수 있습니다.
 
 구현 여부는 먼저 측정으로 결정합니다. AJV8 OnChange에서 array-1000·nested-d5-f4·flat-2000 각각 실제 20키 비연타 100ms를 L/단계 head E1으로 비교하고, E1 키 처리 p95가 16.67ms를 넘거나 검증 도착 p95가 33.4ms를 넘는 행이 하나라도 있으면 D1이 발동합니다. 모두 선 이하면 이번 단계에서는 D1을 만들지 않습니다. 연타와 검증 기본 모드 flat-500·nested·if-flat-500 마운트는 보고 전용입니다. 어떤 결과에서도 IR-2 측정 작업은 D1이나 G를 구현하지 않습니다.
+
+기타 독립 발견(P3)은 숨은 탭 타이머의 약 1초 제한 미검증, 해제 뒤 슬롯의 disposed 확인, 절감 추정 중 메타 스키마 10.4ms는 프로세스당 1회라는 제한, 첫 화면 직후 22~77ms 컴파일 작업과 이른 입력의 경합, None reset의 컴파일 유지, 루트당 가드 형제 4~5ms 잔존입니다. 개발 모드 `compileEntryGuards`는 커밋 뒤가 아니라 렌더 중 useMemo에서 실행되며 검증 DETAIL의 해당 시점 설명도 정정 대상입니다. 공개 오류 목록이나 `node.errors`는 최소 한 프레임 늦어질 수 있지만 제출은 매번 즉시 `root.validate()`를 기다립니다.

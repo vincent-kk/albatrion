@@ -39,6 +39,14 @@ export interface MountRecord {
 
 /** Complete page evidence; every API entry is kept before summary filtering. */
 export interface PageRecord {
+  /** Cumulative process counters around this page, excluding runner ancestors and browser descendants. */
+  externalCpu?: {
+    startedAt: string;
+    endedAt: string;
+    durationSeconds: number;
+    excluded: number[];
+    rows: { pid: number; name: string; cpuPercent: number }[];
+  };
   start: number;
   end: number;
   observedUntil: number;
