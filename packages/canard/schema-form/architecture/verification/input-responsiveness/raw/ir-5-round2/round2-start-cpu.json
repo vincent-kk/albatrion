@@ -1,0 +1,65 @@
+{
+  "startedAt": "2026-10-30T20:38:36.050Z",
+  "endedAt": "2026-10-30T20:39:06.198Z",
+  "durationSeconds": 30.145153208,
+  "top": [
+    {
+      "pid": 7626,
+      "name": "XProtectRemediatorPirrit",
+      "cpuPercent": 58.417351135991616
+    },
+    {
+      "pid": 728,
+      "name": "corespotlightd",
+      "cpuPercent": 12.108082433070681
+    },
+    {
+      "pid": 1009,
+      "name": "amsengagementd",
+      "cpuPercent": 10.58213231821769
+    },
+    {
+      "pid": 515,
+      "name": "mds_stores",
+      "cpuPercent": 7.4307136027663105
+    },
+    {
+      "pid": 1056,
+      "name": "Stats",
+      "cpuPercent": 6.203318945158705
+    },
+    {
+      "pid": 436,
+      "name": "WindowServer",
+      "cpuPercent": 5.9379363164949455
+    },
+    {
+      "pid": 81982,
+      "name": "2.1.312",
+      "cpuPercent": 4.478331858806551
+    },
+    {
+      "pid": 1132,
+      "name": "amsondevicestoraged",
+      "cpuPercent": 4.2792948873043235
+    },
+    {
+      "pid": 1,
+      "name": "launchd",
+      "cpuPercent": 3.9807394300499324
+    },
+    {
+      "pid": 394,
+      "name": "mds",
+      "cpuPercent": 3.715356801377121
+    }
+  ],
+  "heavy": [
+    {
+      "pid": 7626,
+      "name": "XProtectRemediatorPirrit",
+      "cpuPercent": 58.417351135991616
+    }
+  ],
+  "totalPercent": 157.63728142999773
+}

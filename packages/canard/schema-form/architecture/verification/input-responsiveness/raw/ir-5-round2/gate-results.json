@@ -1,0 +1,67 @@
+{
+  "unit": {
+    "files": 609,
+    "passed": 4012,
+    "todo": 1,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "render": {
+    "files": 134,
+    "passed": 781,
+    "todo": 0,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "react18": {
+    "files": 134,
+    "passed": 781,
+    "todo": 0,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "verify": {
+    "files": 748,
+    "passed": 4837,
+    "todo": 1,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "storybook": {
+    "files": 100,
+    "passed": 251,
+    "todo": 0,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "production": {
+    "files": 10,
+    "passed": 21,
+    "failed": 0,
+    "exitCode": 0
+  },
+  "other": {
+    "lint": 0,
+    "typecheck": 0,
+    "build": 0,
+    "publicDeclarationFiles": 308,
+    "publicSemanticDiff": 0,
+    "publicCommentOnlyByteDiff": [
+      "components/Form/components/FormCore/types/props.d.ts"
+    ],
+    "agentsHashesMatched": 14,
+    "measuredE5RuntimeSHA256": "1d71e1a84716b15c9dc95988fb0ea38eca5fd29ee1bce5fd535ae66805ded7cc",
+    "FcaNewFindings": 0,
+    "FcaNewDiagnostics": 0
+  },
+  "mountCost": {
+    "rulePass": false,
+    "failedRows": [
+      "mount-flat-500-on"
+    ],
+    "exceptionDecision": "coordinator approved stage-branch handoff with FAIL; owner exception pending",
+    "bootstrap": "paired-bootstrap.json",
+    "final": "round2-complete.json",
+    "superseded": "superseded-window-1/round2-complete.json"
+  }
+}

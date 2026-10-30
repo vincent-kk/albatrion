@@ -1,0 +1,37 @@
+{
+  "mode": "quiet",
+  "provisional": false,
+  "processingLimitMs": 16.67,
+  "validationLimitMs": 33.4,
+  "gates": [
+    {
+      "id": "type-array-1000-validate-nonburst",
+      "processingSource": "event",
+      "processingP95": 11.699999988079071,
+      "validationP95": 3,
+      "processingPass": true,
+      "validationPass": true,
+      "nearLine": false
+    },
+    {
+      "id": "type-nested-d5-f4-validate-nonburst",
+      "processingSource": "event",
+      "processingP95": 13.5,
+      "validationP95": 6.5,
+      "processingPass": true,
+      "validationPass": true,
+      "nearLine": false
+    },
+    {
+      "id": "type-flat-2000-validate-nonburst",
+      "processingSource": "event",
+      "processingP95": 19.099999964237213,
+      "validationP95": 7,
+      "processingPass": false,
+      "validationPass": true,
+      "nearLine": true
+    }
+  ],
+  "triggered": true,
+  "remeasureIfQuiet": []
+}

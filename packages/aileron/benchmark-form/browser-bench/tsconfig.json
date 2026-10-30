@@ -1,0 +1,14 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "rootDir": "../../../..",
+    "types": ["node"],
+    "noEmit": true
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "../fixtures/input-responsiveness/**/*.ts"
+  ]
+}

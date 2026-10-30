@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-30T14:59:32.615Z",
+  "samples": 0,
+  "approved": true,
+  "policy": {
+    "observationMs": 30000,
+    "maximumExternalPidPercent": 30,
+    "excluded": [
+      12669,
+      12668,
+      12665,
+      98359,
+      98066,
+      98036,
+      80848
+    ]
+  },
+  "quiet": {
+    "startedAt": "2026-10-30T14:59:02.497Z",
+    "endedAt": "2026-10-30T14:59:32.614Z",
+    "durationSeconds": 30.115157708,
+    "top": [
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 25.8673724226637
+      },
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 16.56972893312255
+      },
+      {
+        "pid": 706,
+        "name": "WallpaperAerialsExtension",
+        "cpuPercent": 9.895349142429993
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.574762181881526
+      },
+      {
+        "pid": 81982,
+        "name": "2.1.312",
+        "cpuPercent": 6.275909355433326
+      },
+      {
+        "pid": 73390,
+        "name": "VTDecoderXPCService",
+        "cpuPercent": 5.445762615297342
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 3.3205869605469576
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 2.291205002779092
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 2.1583815243543145
+      },
+      {
+        "pid": 650,
+        "name": "ControlCenter",
+        "cpuPercent": 2.0255580459325566
+      }
+    ],
+    "heavy": [],
+    "totalPercent": 104.96375382288771
+  }
+}

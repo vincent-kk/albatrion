@@ -117,11 +117,28 @@ Contract — each point matters:
 
 - **The node tree is always fully built.** `getValue()`, `setValue()`, validation, and submit behave identically whether a field is mounted or deferred.
 - **Defer-once**: a mounted field never returns to a placeholder.
-- **CSR only**: requires `IntersectionObserver`. Never enable in SSR/hydration apps — the server renders everything while the client gates, causing hydration mismatch. Without `IntersectionObserver` it silently disables (dev warning).
+- **SSR and hydration**: every field renders on the server and hydrates unchanged. Gating applies to branches and children added after hydration and requires `IntersectionObserver`. Browsers without it render eagerly with a development warning; the server does not warn.
 - Placeholders carry `[data-path]` and a `[data-deferred]` marker — style via CSS attribute selector or the `Placeholder` component (`{ node, height }`). Space reservation always belongs to `estimateHeight`; `Placeholder` only fills visuals.
+- Children prepared during hydration but first rendered later by a custom branch input (for example, collapsed tabs or accordions) mount without gating because the gate decision is baked when they are prepared.
 - Benefit scales with form size; small forms gain nothing (hence opt-in).
 
 For a single huge array field (not a huge form), window it manually with a list-virtualization library inside a custom FieldInput, iterating `ChildFields`.
+
+## Input responsiveness at scale
+
+Enable `virtualization` for branches with at least `threshold` children when structural changes interrupt typing. In IR-1, replace-200's longest frame with it off was 62.3 ms in the adopted build (every measured build exceeded 50 ms); with it on, no frame of 50 ms or more was detected. The adopted A lane's same-window mount medians (ms) show the trade-off:
+
+| Form | Off: eager paint / all revealed | On: eager paint / all revealed |
+| --- | ---: | ---: |
+| flat-500 | 51.750 / 51.750 | 31.600 / 174.250 |
+| nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
+| array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
+
+Deferred inputs are unavailable to find-in-page, screen readers, and browser autofill until reveal; Focus/Select commands force reveal. This applies while either backfill mode still has placeholders. Every server-rendered field hydrates unchanged and stays revealed across remounts; only branches and children added after hydration are gated. Hydration itself sends no update into Suspense boundaries inside custom branch inputs, so React 18 and 19 keep their server DOM; in React 18 a later update that reaches such a boundary before it hydrates still switches it to client rendering. The default remains off.
+
+- **Validation:** cost grows with schema size. The desktop Chromium flat-2000 IR-2 diagnosis attributed about a quarter of the p95 keystroke cost to validation execution/delivery and its second React commit. The cold, non-burst validation-on minus validation-off input-event dispatch difference was about 1.3 ms median / 2.9 ms p95. For very large forms, use `validationMode={ValidationMode.OnRequest}` and validate on demand or submit.
+- **Custom input styling:** in that 2000-input diagnosis, `input { contain: strict; width: 153px; height: 21px; }` cut forced layout per keystroke from 2.5–3.8 ms median to 0.42–0.47 ms median; a plain block wrapper did not help. Give contained inputs an explicit size and check your layout.
+- **Consumer state:** for expensive application rendering in `onChange`, wrap your own update, e.g. `onChange={(value) => startTransition(() => setValue(value))}`. Root `onChange` remains synchronous by design. IR-0 E lane event-processing median/p95 was 0.800/5.100 ms plain versus 0.800/4.600 ms with `startTransition`; handler median/p95 stayed 0.400/0.900 ms in both. These fixture results do not promise a speedup for arbitrary consumer work.
 
 ## Expression Cost at Scale
 

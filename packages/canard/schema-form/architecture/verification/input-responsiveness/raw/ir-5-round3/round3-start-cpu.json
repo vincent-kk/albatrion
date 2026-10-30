@@ -1,0 +1,59 @@
+{
+  "startedAt": "2026-10-30T21:23:32.306Z",
+  "endedAt": "2026-10-30T21:24:02.430Z",
+  "durationSeconds": 30.121018667,
+  "top": [
+    {
+      "pid": 436,
+      "name": "WindowServer",
+      "cpuPercent": 6.440685228631117
+    },
+    {
+      "pid": 1056,
+      "name": "Stats",
+      "cpuPercent": 6.0422923278941605
+    },
+    {
+      "pid": 81982,
+      "name": "2.1.312",
+      "cpuPercent": 3.286741431108574
+    },
+    {
+      "pid": 837,
+      "name": "WidgetsExtension",
+      "cpuPercent": 2.7555508967870965
+    },
+    {
+      "pid": 441,
+      "name": "runningboardd",
+      "cpuPercent": 2.45675622123136
+    },
+    {
+      "pid": 1,
+      "name": "launchd",
+      "cpuPercent": 2.1247621372828895
+    },
+    {
+      "pid": 650,
+      "name": "ControlCenter",
+      "cpuPercent": 1.8259674617271533
+    },
+    {
+      "pid": 726,
+      "name": "chronod",
+      "cpuPercent": 1.4607739693829302
+    },
+    {
+      "pid": 440,
+      "name": "loginwindow",
+      "cpuPercent": 1.261577519011433
+    },
+    {
+      "pid": 820,
+      "name": "BetterTouchTool",
+      "cpuPercent": 1.1619792938256839
+    }
+  ],
+  "heavy": [],
+  "totalPercent": 43.29202854710409
+}

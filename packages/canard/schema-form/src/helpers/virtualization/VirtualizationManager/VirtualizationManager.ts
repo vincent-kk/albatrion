@@ -198,7 +198,7 @@ export class VirtualizationManager {
     input: Optional<boolean | VirtualizationOptions>,
   ): Nullable<VirtualizationManager> {
     if (typeof IntersectionObserver === 'undefined') {
-      if (input)
+      if (input && typeof window !== 'undefined')
         warnDevelopmentIssue({
           code: FormWarningCode.VirtualizationDisabledForForm,
           message: formatVirtualizationDisabledWarning(),

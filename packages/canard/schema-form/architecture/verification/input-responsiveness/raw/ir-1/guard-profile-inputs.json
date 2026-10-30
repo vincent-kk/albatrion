@@ -1,0 +1,43 @@
+{
+  "purpose": "Diagnostic evidence only; excluded from formal 840 pages",
+  "samplingIntervalMicroseconds": 50,
+  "pagesPerLane": 1,
+  "lanes": {
+    "A": {
+      "sourceCommit": "5d723f38d",
+      "productSha256": "1942ed6d386fa8d6da660e83d9bd5f95f0ee81abf4aefa35b7e828715958e8dc"
+    },
+    "AB": {
+      "sourceCommit": "fbee0ee04",
+      "productSha256": "6a89f3a1fb43eeca6471b10fd8416527122fbb12958e141d96f678ba7210ec4b",
+      "note": "Before StrictMode replay correction"
+    }
+  },
+  "ifFixture": {
+    "name": "if-flat-500",
+    "schemaTemplate": {
+      "type": "object",
+      "properties": "field_0 through field_499: type string; kind: type string, default a",
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "a"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "field_0": {
+            "minLength": 2
+          }
+        }
+      }
+    },
+    "target": "/field_0",
+    "expectedInputs": 501,
+    "validation": false,
+    "virtualization": false
+  },
+  "harness": "Existing mountFixture and observePage; production React and AJV8 plugin",
+  "originalMetadataCorrection": "The generic profiler prepare argument was switch-oneOf-20; the isolated if harness ignores the argument and mounts if-flat-500. Preserved guard-if-profile.json.gz records the actual fixture."
+}

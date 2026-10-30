@@ -1,0 +1,155 @@
+{
+  "productBase": "317f215dc79d5a3892a9c2fbafceb18ccaa222dc",
+  "scope": "Measurement tooling and records only; no product source changes",
+  "preparation": [
+    {
+      "command": "yarn workspace @canard/schema-form build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @canard/schema-form-ajv8-plugin build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @winglet/common-utils build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @winglet/json build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @winglet/react-utils build",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @winglet/json-schema build",
+      "exitCode": 0
+    }
+  ],
+  "diagnostics": [
+    {
+      "phase": "initial browser bundle preparation",
+      "outcome": "failed",
+      "reason": "Workspace winglet runtime outputs were absent; designated builds then supplied them. No install or fetch."
+    },
+    {
+      "phase": "initial typechecks",
+      "outcome": "failed",
+      "reason": "Optional authored schema property and pair row object typing; corrected before successful final checks."
+    }
+  ],
+  "fixtureRegression": {
+    "command": "yarn workspace @aileron/benchmark-form test fixtures/input-responsiveness/__tests__/heavy-validation.test.ts",
+    "baseline": {
+      "files": 1,
+      "tests": 6,
+      "failed": 6,
+      "reason": "Baseline fixture selector has no heavy-validation rows: wrong target, validation off, only 500 flat inputs, missing if shape and mount observation boundary."
+    },
+    "implementation": {
+      "files": 1,
+      "tests": 6,
+      "passed": 6,
+      "failed": 0
+    }
+  },
+  "checks": [
+    {
+      "command": "yarn workspace @aileron/benchmark-form test",
+      "files": 4,
+      "passed": 30,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form lint",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+      "exitCode": 0
+    }
+  ],
+  "smoke": {
+    "cases": 9,
+    "lanes": [
+      "L",
+      "E1"
+    ],
+    "warmup": 1,
+    "retainedPerLaneFixture": 1,
+    "outcome": "IR0_SMOKE_OK",
+    "formalSamples": 0
+  },
+  "FCA": "Not run: measurement-only IR-0 protocol explicitly excludes FCA scans; coordinator owns independent review.",
+  "postMeasurementChecks": [
+    {
+      "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form lint",
+      "exitCode": 0
+    },
+    {
+      "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-2",
+      "exitCode": 0,
+      "output": [
+        "IR2_SUITE_REPRODUCED suite=main samples=180",
+        "IR2_PATH_AND_PRODUCT_AUDIT_OK",
+        "IR2_RAW_REPRODUCED samples=180"
+      ],
+      "scope": "All page summaries, row counts and alternating order, input counts, start authorization and quiet observation, frozen bundles, all JSON derivations and exact report tables, gzip-expanded path audit."
+    }
+  ],
+  "verificationReuse": "Fixture and browser harness are unchanged since the 4-file/30-test package pass. Post-window edits add offline CPU attribution, report-table matching and metadata assertions; final lint/typecheck and raw reproduction exercise these edits.",
+  "stageSync": {
+    "mergeCommit": "d57787466072adf156502980c4db22794a050190",
+    "syncedStageHead": "bd06bce81fc7be4373b50d9e8595dc20aac16f4e",
+    "conflicts": [
+      "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md"
+    ],
+    "resolution": "Preserved both appended blocks byte-for-byte: IR-1b first, IR-2 second; all other incoming files equal the stage head.",
+    "architectureRecordDeletedLinesAgainst317f215dc": 0,
+    "beforeFixDefaultReproduction": {
+      "exitCode": 1,
+      "reason": "The 180 samples and generated tables reproduced, then the historical HEAD-based product audit rejected inherited IR-1b product changes."
+    },
+    "checks": [
+      {
+        "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-2",
+        "exitCode": 0,
+        "output": [
+          "IR2_SUITE_REPRODUCED suite=main samples=180",
+          "IR2_PATH_AUDIT_OK",
+          "IR2_RAW_REPRODUCED samples=180"
+        ]
+      },
+      {
+        "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-2 --audit-base=bd06bce81fc7be4373b50d9e8595dc20aac16f4e",
+        "exitCode": 0,
+        "productDiff": 0,
+        "output": [
+          "IR2_PRODUCT_AUDIT_OK base=bd06bce81fc7be4373b50d9e8595dc20aac16f4e diff=0",
+          "IR2_RAW_REPRODUCED samples=180"
+        ]
+      },
+      {
+        "command": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-2 --audit-base=317f215dc",
+        "exitCode": 1,
+        "expectedFailure": true,
+        "reason": "Explicit product audit still detects inherited prepareControlLayers, settle DETAIL and Vitest configuration changes."
+      },
+      {
+        "command": "yarn workspace @aileron/benchmark-form typecheck:browser",
+        "exitCode": 0
+      },
+      {
+        "command": "yarn workspace @aileron/benchmark-form lint",
+        "exitCode": 0
+      }
+    ],
+    "provenance": "Default reproduction retains inputs.json equality, frozen browser bundle hashes against smoke evidence, product/browser SHA-256 shape checks, sample data and all generated-table checks."
+  }
+}

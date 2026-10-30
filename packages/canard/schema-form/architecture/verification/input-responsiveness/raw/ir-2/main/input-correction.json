@@ -1,0 +1,9 @@
+{
+  "stage": "IR-2",
+  "originalStage": "IR-1",
+  "reason": "The unchanged generic prepareStageBundle helper writes an IR-1 stage label. Cases, L/E1 lanes and formal tool commit identify IR-2. Original manifest is preserved.",
+  "productCommit": "317f215dc79d5a3892a9c2fbafceb18ccaa222dc",
+  "preparationToolCommit": "317f215dc79d5a3892a9c2fbafceb18ccaa222dc",
+  "measurementToolCommit": "6f9bb4455487b9eabb32683a164cf694dad0073a",
+  "preparationSourceState": "The additive IR-2 harness was prepared before the preparation commit; only formatting/import ordering and fixture tests followed before the formal commit. Product and browser bytes remained frozen and smoke hashes match."
+}

@@ -10,6 +10,7 @@ import {
 import type { Nullable } from '@aileron/declare';
 
 import { type FieldNode, FieldNodeEventType } from '@/schema-form/core';
+import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 
 import { REACTIVE_RERENDERING_EVENTS } from '../type';
 
@@ -50,12 +51,18 @@ const MOUNTED_CHILDREN = 2;
  * @param mountedChildren - Count of committed child proxies owned by the input
  * @param commitTerminalChildren - Commit marker from `useTerminalChildren`; the focus/select layout
  *        effect calls it first, so the input keeps a single layout effect of its own
+ * @param hydrationCommitRef - Hydration detector to settle in that same layout
+ *        effect before React checks the server snapshot in its passive phase
+ * @param virtualizationManager - Records this slot's node only when a real
+ *        input is present; hidden proxies and placeholders never own this commit
  * @returns Container ref, input key and composition handlers that preserve the composing input
  */
 export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
   mountedChildren: RefObject<number>,
   commitTerminalChildren: () => void,
+  hydrationCommitRef?: RefObject<boolean>,
+  virtualizationManager?: VirtualizationManager | null,
 ) => {
   const generation = useRef(node.revision(FieldNodeEventType.RequestRefresh));
   const [, releaseComposition] = useReducer((value: number) => value + 1, 0);
@@ -104,6 +111,8 @@ export const useFieldInputControl = <Node extends FieldNode>(
   }, [node, mountedChildren]);
   useLayoutEffect(() => {
     commitTerminalChildren();
+    if (hydrationCommitRef) hydrationCommitRef.current = true;
+    virtualizationManager?.markRevealed(node);
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & FieldNodeEventType.RequestFocus)
@@ -114,7 +123,13 @@ export const useFieldInputControl = <Node extends FieldNode>(
       }
     });
     return unsubscribe;
-  }, [node, ref, commitTerminalChildren]);
+  }, [
+    node,
+    ref,
+    commitTerminalChildren,
+    hydrationCommitRef,
+    virtualizationManager,
+  ]);
   return [
     ref,
     generation.current,

@@ -1,0 +1,86 @@
+
+## mount-flat-500-off|E runs=5 wall median 112.7
+  (busy total)                                 112.45
+  js                                           66.47
+  v8 compile/parse                             22.05
+  gc                                           5.26
+  other:Document::recalcStyle                  4.45
+  other:LocalFrameView::performLayout          2.60
+  paint/commit                                 2.10
+  task overhead                                1.80
+  other:V8.MaglevConcurrentFinalize            1.01
+  other:V8.BytecodeBudgetInterrupt             0.78
+  other:V8.Maglev.CommittingDependencies       0.67
+  other:InlineNode::ShapeTextIncludingFirstLine 0.67
+  other:Document::rebuildLayoutTree            0.48
+  other:Blink.PrePaint.UpdateTime              0.47
+  other:PaintArtifactCompositor::Update        0.40
+  other:AsyncTask Run                          0.33
+  other:AsyncTask Scheduled                    0.33
+
+## mount-flat-500-off|L runs=5 wall median 84.6
+  (busy total)                                 83.86
+  js                                           47.10
+  v8 compile/parse                             13.48
+  other:Document::recalcStyle                  4.87
+  gc                                           3.48
+  other:LocalFrameView::performLayout          2.80
+  paint/commit                                 2.24
+  task overhead                                2.23
+  other:AsyncTask Run                          0.79
+  other:V8.MaglevConcurrentFinalize            0.73
+  other:InlineNode::ShapeTextIncludingFirstLine 0.70
+  (idle within wall)                           0.58
+  other:V8.BytecodeBudgetInterrupt             0.56
+  other:AsyncTask Scheduled                    0.54
+  other:Document::rebuildLayoutTree            0.51
+  other:Blink.PrePaint.UpdateTime              0.50
+  other:V8.Maglev.CommittingDependencies       0.49
+  other:PaintArtifactCompositor::Update        0.42
+
+## mount-nested-d5-f4-off|E runs=5 wall median 192.3
+  (busy total)                                 191.81
+  js                                           129.66
+  v8 compile/parse                             23.93
+  gc                                           10.19
+  other:Document::recalcStyle                  5.57
+  other:LocalFrameView::performLayout          4.06
+  paint/commit                                 4.06
+  task overhead                                2.10
+  other:V8.MaglevConcurrentFinalize            1.27
+  other:V8.BytecodeBudgetInterrupt             1.02
+  other:V8.Maglev.CommittingDependencies       1.02
+  other:Blink.PrePaint.UpdateTime              0.98
+  other:Document::rebuildLayoutTree            0.93
+  other:PaintArtifactCompositor::Update        0.80
+  other:AsyncTask Run                          0.72
+  other:SerializedScriptValueFactory::create   0.63
+  other:AsyncTask Scheduled                    0.58
+  (idle within wall)                           0.51
+  other:InlineNode::ShapeTextIncludingFirstLine 0.46
+  other:V8.HandleInterrupts                    0.41
+  other:V8.OptimizeConcurrentFinalize          0.38
+  other:V8.StackGuard                          0.35
+  other:V8.FinalizeMaglevConcurrentCompilation 0.34
+
+## mount-nested-d5-f4-off|L runs=5 wall median 142.3
+  (busy total)                                 141.21
+  js                                           91.38
+  v8 compile/parse                             13.98
+  gc                                           6.23
+  other:Document::recalcStyle                  5.69
+  other:LocalFrameView::performLayout          4.21
+  paint/commit                                 4.17
+  task overhead                                3.14
+  other:AsyncTask Run                          1.65
+  (idle within wall)                           1.09
+  other:AsyncTask Scheduled                    1.04
+  other:Blink.PrePaint.UpdateTime              0.99
+  other:V8.MaglevConcurrentFinalize            0.98
+  other:Document::rebuildLayoutTree            0.97
+  other:V8.Maglev.CommittingDependencies       0.84
+  other:PaintArtifactCompositor::Update        0.79
+  other:V8.BytecodeBudgetInterrupt             0.74
+  other:TimerBase::run                         0.59
+  other:SerializedScriptValueFactory::create   0.42
+  other:InlineNode::ShapeTextIncludingFirstLine 0.41

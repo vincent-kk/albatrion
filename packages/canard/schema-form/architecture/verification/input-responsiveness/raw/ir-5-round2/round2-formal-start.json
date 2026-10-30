@@ -1,0 +1,17 @@
+{
+  "startedAt": "2026-10-30T20:38:36.017Z",
+  "cases": [
+    "mount-flat-500-off",
+    "mount-flat-500-on",
+    "mount-nested-d5-f4-off",
+    "mount-nested-d5-f4-on",
+    "mount-array-1000-off",
+    "mount-array-1000-on"
+  ],
+  "warmup": 3,
+  "count": 10,
+  "mode": "paired-relative",
+  "maximumMedianRatio": 1.02,
+  "offMetric": "wallMs",
+  "onMetric": "eagerPaintedMs"
+}

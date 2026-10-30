@@ -1,0 +1,114 @@
+{
+  "base": "c49c0dc666895c599a3638d4ad5f77d6c8d878ea",
+  "environment": "Vitest jsdom; renderToString without IntersectionObserver, then hydrateRoot with a stubbed non-delivering IntersectionObserver",
+  "options": {
+    "threshold": 30,
+    "eagerCount": 20,
+    "backfill": "None",
+    "validationMode": "None",
+    "children": 40
+  },
+  "consoleScope": "Reset console.error capture after renderToString to separate React 18 useLayoutEffect server warnings from hydration errors.",
+  "observations": {
+    "react19": {
+      "command": "yarn workspace @canard/schema-form test --run --project render src/__tests__/e2e/virtualization.hydration.render.test.tsx",
+      "status": "known-defect-reproduced-before-skip",
+      "server": {
+        "inputs": 40,
+        "placeholders": 0
+      },
+      "hydrated": {
+        "inputs": 20,
+        "placeholders": 20,
+        "retainedServerInputs": 0,
+        "values": [
+          "value_0",
+          "value_1",
+          "value_2",
+          "value_3",
+          "value_4",
+          "value_5",
+          "value_6",
+          "value_7",
+          "value_8",
+          "value_9",
+          "value_10",
+          "value_11",
+          "value_12",
+          "value_13",
+          "value_14",
+          "value_15",
+          "value_16",
+          "value_17",
+          "value_18",
+          "value_19"
+        ]
+      },
+      "recoverableErrorCount": 1,
+      "recoverableErrorMessages": [
+        "Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:"
+      ],
+      "hydrationConsoleErrors": [],
+      "control": {
+        "virtualization": false,
+        "recoverableErrors": 0,
+        "hydrationConsoleErrors": 0,
+        "inputs": 40,
+        "placeholders": 0,
+        "retainedServerInputs": 40
+      }
+    },
+    "react18": {
+      "command": "yarn workspace @canard/schema-form test --run --project react18 src/__tests__/e2e/virtualization.hydration.render.test.tsx",
+      "status": "known-defect-reproduced-before-skip",
+      "server": {
+        "inputs": 40,
+        "placeholders": 0
+      },
+      "hydrated": {
+        "inputs": 20,
+        "placeholders": 20,
+        "retainedServerInputs": 0,
+        "values": [
+          "value_0",
+          "value_1",
+          "value_2",
+          "value_3",
+          "value_4",
+          "value_5",
+          "value_6",
+          "value_7",
+          "value_8",
+          "value_9",
+          "value_10",
+          "value_11",
+          "value_12",
+          "value_13",
+          "value_14",
+          "value_15",
+          "value_16",
+          "value_17",
+          "value_18",
+          "value_19"
+        ]
+      },
+      "recoverableErrorCount": 24,
+      "recoverableErrorMessages": [
+        "Error: Hydration failed because the initial UI does not match what was rendered on the server.",
+        "Error: There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root will switch to client rendering."
+      ],
+      "hydrationConsoleErrors": [
+        "Warning: Did not expect server HTML to contain a <%s> in <%s>.%s div div ",
+        "Warning: An error occurred during hydration. The server HTML was replaced with client content in <%s>. div"
+      ],
+      "control": {
+        "virtualization": false,
+        "recoverableErrors": 0,
+        "hydrationConsoleErrors": 0,
+        "inputs": 40,
+        "placeholders": 0,
+        "retainedServerInputs": 40
+      }
+    }
+  }
+}
