@@ -124,9 +124,19 @@ for (const id of cases)
       (complete.samples as SampleResult[])
         .filter((sample) => sample.id === id && sample.index === index)
         .map((sample) => sample.lane),
-      index % 2 === 0
-        ? complete.inputs.lanes
-        : [...complete.inputs.lanes].reverse(),
+      complete.mode === 'paired-relative'
+        ? [
+            ...complete.inputs.lanes.slice(
+              index % complete.inputs.lanes.length,
+            ),
+            ...complete.inputs.lanes.slice(
+              0,
+              index % complete.inputs.lanes.length,
+            ),
+          ]
+        : index % 2 === 0
+          ? complete.inputs.lanes
+          : [...complete.inputs.lanes].reverse(),
       'Alternating lane order',
     );
 console.log(

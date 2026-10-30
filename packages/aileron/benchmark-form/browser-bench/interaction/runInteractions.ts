@@ -10,7 +10,9 @@ import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
 import { observeCpu } from './helpers/observeCpu';
 import { prepareBundles } from './helpers/prepareBundles';
 import { readAncestorPids } from './helpers/readAncestorPids';
+import { readMeasurementPids } from './helpers/readMeasurementPids';
 import { samplePage } from './helpers/samplePage';
+import { samplePageWithCpu } from './helpers/samplePageWithCpu';
 import { serializeEvidence } from './helpers/serializeEvidence';
 import { summarizePage } from './helpers/summarizePage';
 
@@ -63,6 +65,7 @@ export async function runInteractions(args: string[]) {
         ? ['mount-flat-500-on', 'mount-array-1000-on']
         : ir1Cases
       : cases;
+  const paired = options['paired-relative'] === 'true';
   const smoke = options.action === 'smoke';
   const selected = options.fixture
     ? stageCases.filter((id) => id === options.fixture)
@@ -114,28 +117,49 @@ export async function runInteractions(args: string[]) {
       inputs.bundles,
       'Smoke uses the frozen browser bundles',
     );
-    const excluded = readAncestorPids();
-    const quiet = await observeCpu(30000, excluded);
-    const attempt = {
-      at: new Date().toISOString(),
-      samples: 0,
-      approved: quiet.heavy.length === 0,
-      policy: { observationMs: 30000, maximumExternalPidPercent: 30, excluded },
-      quiet,
-    };
-    const attemptName = `start-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
-    fs.writeFileSync(
-      path.join(root, attemptName),
-      JSON.stringify(attempt, null, 2),
-    );
-    if (!attempt.approved) {
-      console.log('IR0_START_REFUSED samples=0');
-      return;
+    let attemptAt = new Date().toISOString();
+    if (paired) {
+      const prior = JSON.parse(
+        fs.readFileSync(path.join(root, 'prior-refusals.json'), 'utf8'),
+      );
+      assert.ok(
+        prior.length >= 3 &&
+          prior.every(
+            (entry: { samples: number; approved: boolean }) =>
+              entry.samples === 0 && !entry.approved,
+          ),
+        'Owner paired rule requires three preserved zero-sample refusals',
+      );
+    } else {
+      const excluded = readAncestorPids();
+      const quiet = await observeCpu(30000, excluded);
+      const attempt = {
+        at: new Date().toISOString(),
+        samples: 0,
+        approved: quiet.heavy.length === 0,
+        policy: {
+          observationMs: 30000,
+          maximumExternalPidPercent: 30,
+          excluded,
+        },
+        quiet,
+      };
+      const attemptName = `start-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+      fs.writeFileSync(
+        path.join(root, attemptName),
+        JSON.stringify(attempt, null, 2),
+      );
+      if (!attempt.approved) {
+        console.log('IR0_START_REFUSED samples=0');
+        return;
+      }
+      attemptAt = attempt.at;
     }
     fs.writeFileSync(
       path.join(root, 'formal-start.json'),
       JSON.stringify({
-        at: attempt.at,
+        at: attemptAt,
+        mode: paired ? 'paired-relative' : 'quiet',
         count,
         warmup,
         cases: selected,
@@ -161,6 +185,34 @@ export async function runInteractions(args: string[]) {
               cpuInFlight = undefined;
             });
       }, 10000);
+  let quietInFlight: Promise<void> | undefined;
+  const quietMonitor =
+    !smoke && paired
+      ? setInterval(() => {
+          if (!quietInFlight)
+            quietInFlight = observeCpu(30000, readMeasurementPids())
+              .then((quiet) => {
+                const evidence = {
+                  at: new Date().toISOString(),
+                  approved: quiet.heavy.length === 0,
+                  quiet,
+                };
+                fs.writeFileSync(
+                  path.join(
+                    root,
+                    'background-quiet-' +
+                      evidence.at.replace(/[:.]/g, '-') +
+                      '.json',
+                  ),
+                  JSON.stringify(evidence),
+                );
+                if (evidence.approved) console.log('IR1_BACKGROUND_QUIET_PASS');
+              })
+              .finally(() => {
+                quietInFlight = undefined;
+              });
+        }, 120000)
+      : undefined;
   const samples: object[] = [];
   const startedAt = new Date().toISOString();
   const output = path.join(root, smoke ? 'smoke' : 'raw');
@@ -168,10 +220,21 @@ export async function runInteractions(args: string[]) {
   try {
     for (const id of selected) {
       for (let index = -warmup; index < count; index++) {
-        const order =
-          index % 2 === 0 ? inputs.lanes : [...inputs.lanes].reverse();
+        const offset =
+          ((index % inputs.lanes.length) + inputs.lanes.length) %
+          inputs.lanes.length;
+        const order = paired
+          ? [...inputs.lanes.slice(offset), ...inputs.lanes.slice(0, offset)]
+          : index % 2 === 0
+            ? inputs.lanes
+            : [...inputs.lanes].reverse();
         for (const lane of order) {
-          const page = await samplePage(browser, root, lane, id);
+          const page = await (paired ? samplePageWithCpu : samplePage)(
+            browser,
+            root,
+            lane,
+            id,
+          );
           if (index >= 0) {
             const name = `${id}-${lane}-${index}.json`;
             fs.writeFileSync(
@@ -193,6 +256,7 @@ export async function runInteractions(args: string[]) {
       );
     }
     const result = {
+      mode: paired ? 'paired-relative' : 'quiet',
       startedAt,
       endedAt: new Date().toISOString(),
       smoke,
@@ -221,6 +285,8 @@ export async function runInteractions(args: string[]) {
     throw error;
   } finally {
     if (monitor) clearInterval(monitor);
+    if (quietMonitor) clearInterval(quietMonitor);
+    await quietInFlight;
     await cpuInFlight;
     fs.writeFileSync(
       path.join(root, smoke ? 'smoke-cpu.json' : 'cpu.json'),

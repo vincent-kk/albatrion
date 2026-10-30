@@ -36,7 +36,10 @@ export async function prepareStageBundle(args: string[]) {
     platform: 'browser',
     jsx: 'automatic',
     outfile: path.join(output, 'bundle.js'),
-    define: { 'process.env.NODE_ENV': '"production"', __IR0_LANE__: '"E"' },
+    define: {
+      'process.env.NODE_ENV': '"production"',
+      __IR0_LANE__: options.lane === 'L' ? '"L"' : '"E"',
+    },
     alias: {
       '@canard/schema-form': productPath,
       '@canard/schema-form-ajv8-plugin': path.resolve(
