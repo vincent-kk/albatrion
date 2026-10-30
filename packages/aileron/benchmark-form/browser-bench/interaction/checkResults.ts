@@ -8,6 +8,7 @@ import { gunzipSync } from 'node:zlib';
 import ir0Cases from '../../fixtures/input-responsiveness/cases.json';
 import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
 import { summarizePage } from './helpers/summarizePage';
+import { summarizePairs } from './helpers/summarizePairs';
 import { summarizeResults } from './helpers/summarizeResults';
 import type { SampleResult } from './helpers/summarizeResults';
 import type { PageRecord } from './types';
@@ -75,6 +76,14 @@ for (const lane of complete.inputs.lanes) {
   assert.match(complete.inputs.bundles[lane].browser.sha256, /^[a-f0-9]{64}$/);
 }
 const rows = summarizeResults(complete.samples);
+if (complete.mode === 'paired-relative') {
+  assert.deepEqual(
+    JSON.parse(fs.readFileSync(path.join(raw, 'pairs.json'), 'utf8')),
+    summarizePairs(complete.samples),
+  );
+  for (const page of Object.values(pages))
+    assert.ok('externalCpu' in page, 'Each paired page preserves external CPU');
+}
 assert.deepEqual(
   JSON.parse(fs.readFileSync(path.join(raw, 'summary.json'), 'utf8')),
   rows,
