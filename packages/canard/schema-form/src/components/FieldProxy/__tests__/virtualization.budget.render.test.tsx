@@ -37,7 +37,7 @@ describe('structural replacement mount budget', () => {
     );
     act(() =>
       form
-        .node('')
+        .node('')!
         .setValue(Array.from({ length: 200 }, (_, index) => `v${index}`)),
     );
     expect(form.container.querySelectorAll('input')).toHaveLength(20);
