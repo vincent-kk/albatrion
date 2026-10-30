@@ -63,3 +63,10 @@ IR-1은 Part A만 채택하고 Part B는 중첩 focus/select·defer-once·렌더
 | 단계 | 편입 이유 | 결과 |
 | --- | --- | --- |
 | IR-1b | 입력 응답성 단계가 의존하는 엄격 production 관문이 기존 transform 설정 결함과 oneOf-20 freeze 117 > 111로 실패하고 있어 단계 안에서 수리했습니다. | 기존 상한·시험을 유지하며 엄격 production 21/21을 복구했습니다. 환경별 확인·탐침·전체 관문은 [수리 결과](../../verification/input-responsiveness/production-gate-repair.md)에 기록하며 병합 전 독립 검증을 거칩니다. |
+
+
+## IR-2 결과 — 2026-10-31
+
+| 단계 | 결과 | 남은 결정 |
+| --- | --- | --- |
+| IR-2 | 제품 317f215dc와 공개 0.16.1의 중량 검증 타이핑 6행·기본 검증 마운트 3행을 같은 창에서 측정했습니다. 시작 전 30초 관찰을 첫 시도에 통과했고 3예열·10새페이지, 총 180표본을 무중단으로 보존했습니다. 비연타 E1 처리/검증 도착 p95는 array-1000 11.7/3.0ms, nested-d5-f4 13.5/6.5ms, flat-2000 19.1/7.0ms입니다. flat 처리 19.1>16.67로 사전 등록 D1 규칙이 발동하며 도착 세 행은 모두 33.4ms 이내입니다. 연타·마운트는 보고 전용이고 D1·G 제품 구현은 없습니다. 원시·모든 표·CPU 귀속은 check:browser-results --stage=ir-2로 재현합니다. | D1 v2의 후속 구현과 mount compile 실패의 rejected→sink 표면, G의 공개 플러그인 순서 계약 변경은 소유자·코디네이터에게 넘깁니다. 창 내부 부하와 전체 표는 [IR-2 결과](../../verification/input-responsiveness/ir-2-results.md)에 보존했습니다. |

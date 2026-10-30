@@ -6,6 +6,8 @@ import {
 } from '../../src/fixtures/scale-schemas';
 import { branchFixtures } from '../equivalent/branches';
 import { mountFixtures } from '../equivalent/mounts';
+import { getHeavyValidationFixture } from './getHeavyValidationFixture';
+import ir2Cases from './ir-2-cases.json';
 import type { InputFixture } from './types';
 
 /**
@@ -16,6 +18,7 @@ import type { InputFixture } from './types';
  * @throws When the case or equivalent fixture is absent
  */
 export function getInputFixture(id: string, lane: string): InputFixture {
+  if (ir2Cases.includes(id)) return getHeavyValidationFixture(id);
   const virtualized = id.endsWith('-virtualized');
   if (virtualized) id = id.slice(0, -'-virtualized'.length);
   const nested = id.includes('nested');

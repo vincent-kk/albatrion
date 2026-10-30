@@ -6,7 +6,15 @@ import type { SampleResult } from './summarizeResults';
  * @returns Differences and ratios with coverage; missing ET and censored frames stay absent.
  */
 export function summarizePairs(samples: SampleResult[]) {
-  const rows: object[] = [];
+  const rows: {
+    id: string;
+    lane: string;
+    metric: string;
+    count: number;
+    differenceMedian: number | null;
+    ratioMedian: number | null;
+    pairs: { index: number; difference: number; ratio: number }[];
+  }[] = [];
   for (const { id, lane } of samples.filter(
     (sample, index) =>
       samples.findIndex(

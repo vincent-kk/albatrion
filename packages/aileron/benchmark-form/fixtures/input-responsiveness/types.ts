@@ -20,4 +20,8 @@ export interface InputFixture {
   mount?: boolean;
   /** Approved non-burst validation probe; no keyboard.type delay option. */
   intervalMs?: number;
+  /** Observe mount frames from render start through this many milliseconds. */
+  mountObservationMs?: number;
+  /** Omit validationMode to exercise the public default OnChange mode. */
+  defaultValidation?: boolean;
 }
