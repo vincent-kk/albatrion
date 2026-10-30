@@ -19,14 +19,24 @@ const destination = path.resolve(
 );
 const stage = process.argv.includes('--stage=ir-1');
 const backfill = process.argv.includes('--suite=backfill');
+const quietGates = process.argv.includes('--suite=quiet-gates');
 const cases = stage
-  ? backfill
-    ? ['mount-flat-500-on', 'mount-array-1000-on']
-    : ir1Cases
+  ? quietGates
+    ? ir1Cases.filter(
+        (id) =>
+          id.startsWith('replace-') ||
+          id.startsWith('type-') ||
+          id.startsWith('validation-'),
+      )
+    : backfill
+      ? ['mount-flat-500-on', 'mount-array-1000-on']
+      : ir1Cases
   : ir0Cases;
 const raw = path.join(
   destination,
-  stage ? 'raw/ir-1/' + (backfill ? 'backfill' : 'main') : 'raw/ir-0',
+  stage
+    ? 'raw/ir-1/' + (quietGates ? 'quiet' : backfill ? 'backfill' : 'main')
+    : 'raw/ir-0',
 );
 const complete = JSON.parse(
   gunzipSync(fs.readFileSync(path.join(raw, 'complete.json.gz'))).toString(),

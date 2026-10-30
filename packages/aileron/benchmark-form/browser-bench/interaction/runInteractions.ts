@@ -61,9 +61,16 @@ export async function runInteractions(args: string[]) {
   }
   const stageCases =
     options.stage === 'ir-1'
-      ? options.suite === 'backfill'
-        ? ['mount-flat-500-on', 'mount-array-1000-on']
-        : ir1Cases
+      ? options.suite === 'quiet-gates'
+        ? ir1Cases.filter(
+            (id) =>
+              id.startsWith('replace-') ||
+              id.startsWith('type-') ||
+              id.startsWith('validation-'),
+          )
+        : options.suite === 'backfill'
+          ? ['mount-flat-500-on', 'mount-array-1000-on']
+          : ir1Cases
       : cases;
   const paired = options['paired-relative'] === 'true';
   const smoke = options.action === 'smoke';
@@ -108,7 +115,9 @@ export async function runInteractions(args: string[]) {
       fs.readFileSync(path.join(root, 'smoke-complete.json'), 'utf8'),
     );
     assert.deepEqual(
-      smokeEvidence.cases,
+      options.suite === 'quiet-gates'
+        ? smokeEvidence.cases.filter((id: string) => stageCases.includes(id))
+        : smokeEvidence.cases,
       stageCases,
       'Smoke covers every fixture',
     );
@@ -229,12 +238,9 @@ export async function runInteractions(args: string[]) {
             ? inputs.lanes
             : [...inputs.lanes].reverse();
         for (const lane of order) {
-          const page = await (paired ? samplePageWithCpu : samplePage)(
-            browser,
-            root,
-            lane,
-            id,
-          );
+          const page = await (
+            options.stage === 'ir-1' ? samplePageWithCpu : samplePage
+          )(browser, root, lane, id);
           if (index >= 0) {
             const name = `${id}-${lane}-${index}.json`;
             fs.writeFileSync(
