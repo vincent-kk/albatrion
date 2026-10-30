@@ -818,6 +818,10 @@
 
 - gate-free live 노드의 register는 node 키 WeakMap 삽입이 0이며 반복 register는 같은 발생을 유지합니다. 동일 경로의 새 node는 새 발생을 받고, 옛 node remove는 새 node 등록을 제거하지 않습니다. 현재 node를 제거한 뒤 다시 등록하면 발생도 새로 만듭니다.
 
+### settle-assembly-order-witness — 순위 작성기와 소비자의 연결
+
+- 실제 getSlotChildIndex가 만든 색인의 각 이름 첫 값은 첫 childEntries 위치입니다. 소비자인 objectBehavior의 진입점을 통해 동명 이종 template에도 첫 이름 순서를 지키고, 준비 뒤 dormant 항목 읽기가0임을 함께 검증합니다.
+
 ## Boundary Exemptions
 
 ### `utils/input/` — 입력 해석 유지
