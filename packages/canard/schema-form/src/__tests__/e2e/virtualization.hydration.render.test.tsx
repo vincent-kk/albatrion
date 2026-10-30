@@ -69,7 +69,7 @@ describe('virtualization across server rendering and client hydration', () => {
     });
   });
 
-  it.skip('preserves server inputs without hydration mismatch when an IO-enabled client gates a branch at threshold; known SSR defect, keep virtualization off on server-rendered pages until fixed', async () => {
+  it.fails('preserves server inputs without hydration mismatch when an IO-enabled client gates a branch at threshold; known SSR defect, keep virtualization off on server-rendered pages until fixed', async () => {
     const form = (
       <Form
         jsonSchema={{
