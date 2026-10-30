@@ -16,6 +16,14 @@ describe('per-task eager mount budget', () => {
     expect(manager.forChild(0, {} as FieldNode)).toBe(manager);
   });
 
+  it('reuses the same node decision when StrictMode repeats render work', () => {
+    const manager = VirtualizationManager.create({ eagerCount: 1 })!;
+    const node = {} as FieldNode;
+    expect(manager.forChild(0, node)).toBeNull();
+    expect(manager.forChild(0, node)).toBeNull();
+    expect(manager.forChild(0, {} as FieldNode)).toBe(manager);
+  });
+
   it('resets the budget at the microtask boundary', async () => {
     const manager = VirtualizationManager.create({ eagerCount: 1 })!;
     expect(manager.forChild(0, {} as FieldNode)).toBeNull();

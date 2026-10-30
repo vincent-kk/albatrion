@@ -64,6 +64,9 @@ export class VirtualizationManager {
   /** Immediate child mount decisions since the current task's first decision. */
   private taskEagerCount = 0;
 
+  /** Reuse eager decisions when React repeats render work within the task. */
+  private taskEagerNodes = new WeakSet<FieldNode>();
+
   /**
    * This manager when a branch with `childCount` children qualifies for
    * gating, else null.
@@ -86,13 +89,17 @@ export class VirtualizationManager {
     if (
       !this.revealedNodes.has(node) &&
       (renderedIndex >= this.options.eagerCount ||
-        this.taskEagerCount >= this.options.eagerCount)
+        (this.taskEagerCount >= this.options.eagerCount &&
+          !this.taskEagerNodes.has(node)))
     )
       return this;
+    if (this.taskEagerNodes.has(node)) return null;
     if (this.taskEagerCount++ === 0)
       queueMicrotask(() => {
         this.taskEagerCount = 0;
+        this.taskEagerNodes = new WeakSet();
       });
+    this.taskEagerNodes.add(node);
     return null;
   }
 
