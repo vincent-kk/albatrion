@@ -6,6 +6,7 @@ import {
   useCallback,
   useLayoutEffect,
   useMemo,
+  useRef,
   useSyncExternalStore,
 } from 'react';
 
@@ -44,7 +45,9 @@ const getNoManager = () => null;
  *          (concurrent mount gap) still force a resync render instead of
  *          being lost.
  *          Hydration reads a null manager through the server snapshot;
- *          committed children are recorded as revealed so later remounts
+ *          a layout effect keeps the detector's client snapshot null before
+ *          passive consistency checks, avoiding a hydration-only re-render.
+ *          Real child commits are recorded as revealed so later remounts
  *          cannot replace them with placeholders.
  */
 export const useChildFields = (
@@ -56,22 +59,26 @@ export const useChildFields = (
   const children = node.children;
 
   const { manager: formManager } = useVirtualizationContext();
-  const getManager = useCallback(
-    () => (isTerminalNode(node) ? null : formManager),
+  const hydratedRef = useRef(false);
+  const getSnapshot = useCallback(
+    () => (hydratedRef.current || isTerminalNode(node) ? null : formManager),
     [node, formManager],
   );
-  const manager = useSyncExternalStore(
+  const snapshot = useSyncExternalStore(
     subscribeNever,
-    getManager,
+    getSnapshot,
     getNoManager,
   );
+  useLayoutEffect(() => {
+    if (snapshot === null && formManager !== null) hydratedRef.current = true;
+  }, [snapshot, formManager]);
 
   const cache = useLazyConstant(() => new Map<FieldNode, ChildField>());
 
   return useMemo(() => {
     if (isTerminalNode(node) || children === null) return terminalChildren;
+    const manager = snapshot ?? (hydratedRef.current ? formManager : null);
     const gateManager = manager?.forBranch(children.length) ?? null;
-    const revealLedger = manager === null ? formManager : null;
     const ChildFields: ChildField[] = [];
     for (const node of children) {
       const key = String(cache.size);
@@ -85,6 +92,7 @@ export const useChildFields = (
         // static; revealed-ness itself is resolved dynamically by the gate.
         const deferredManager =
           gateManager?.forChild(ChildFields.length, node) ?? null;
+        const revealLedger = deferredManager === null ? formManager : null;
         const ChildComponent = memo(
           ({
             FieldRenderer: InputFieldRenderer,
@@ -138,7 +146,7 @@ export const useChildFields = (
     node,
     children,
     NodeProxy,
-    manager,
+    snapshot,
     formManager,
     cache,
     terminalChildren,

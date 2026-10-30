@@ -9,15 +9,7 @@ import {
 import { act } from '@testing-library/react';
 import { type Root, createRoot, hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  inject,
-  it,
-  vi,
-} from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   type FieldInputProps,
@@ -274,33 +266,28 @@ describe('virtualization across server rendering and client hydration', () => {
     expect(consoleErrors).toEqual([]);
   });
 
-  // React 18 can update this boundary before it finishes hydrating.
-  it(
-    'hydrates a Suspense boundary inside a custom branch input without recoverable errors; React 18 residual risk',
-    { fails: inject('reactMajor') === '18' },
-    async () => {
-      const serverInputs = await hydrate(
-        <Form
-          jsonSchema={{
-            type: 'object',
-            properties: {
-              nested: { ...flatSchema, options: { terminal: false } },
-            },
-          }}
-          fieldInputMap={{ '^/nested$': SuspendedBranch }}
-          validationMode={ValidationMode.None}
-          virtualization={virtualization}
-        />,
-      );
-      expect(serverInputs).toHaveLength(40);
-      expect(recoverableErrors).toEqual([]);
-      expect(container.querySelectorAll('[data-deferred]')).toHaveLength(0);
-      serverInputs.forEach((input, index) =>
-        expect(container.querySelectorAll('input')[index]).toBe(input),
-      );
-      expect(consoleErrors).toEqual([]);
-    },
-  );
+  it('hydrates a Suspense boundary inside a custom branch input without recoverable errors', async () => {
+    const serverInputs = await hydrate(
+      <Form
+        jsonSchema={{
+          type: 'object',
+          properties: {
+            nested: { ...flatSchema, options: { terminal: false } },
+          },
+        }}
+        fieldInputMap={{ '^/nested$': SuspendedBranch }}
+        validationMode={ValidationMode.None}
+        virtualization={virtualization}
+      />,
+    );
+    expect(serverInputs).toHaveLength(40);
+    expect(recoverableErrors).toEqual([]);
+    expect(container.querySelectorAll('[data-deferred]')).toHaveLength(0);
+    serverInputs.forEach((input, index) =>
+      expect(container.querySelectorAll('input')[index]).toBe(input),
+    );
+    expect(consoleErrors).toEqual([]);
+  });
 
   it('gates a client-only createRoot mount in its first committed render', async () => {
     vi.stubGlobal('IntersectionObserver', IdleObserver);
@@ -357,32 +344,53 @@ describe('virtualization across server rendering and client hydration', () => {
     expect(consoleErrors).toEqual([]);
   });
 
-  it('keeps hydrated children revealed when the custom branch input changes', async () => {
-    const BranchInput = ({ ChildFields }: FieldInputProps) => (
-      <>
-        {ChildFields.map((Child) => (
-          <Child key={Child.key} />
-        ))}
-      </>
-    );
-    const schema: JSONSchema = {
-      type: 'object',
-      properties: { nested: flatSchema },
-    };
-    const form = (custom: boolean) => (
-      <Form
-        jsonSchema={schema}
-        fieldInputMap={custom ? { '^/nested$': BranchInput } : undefined}
-        validationMode={ValidationMode.None}
-        virtualization={virtualization}
-      />
-    );
-    await hydrate(form(false));
-    expect(container.querySelectorAll('input')).toHaveLength(40);
-    await act(async () => root!.render(form(true)));
-    expect(container.querySelectorAll('input')).toHaveLength(40);
-    expect(container.querySelectorAll('[data-deferred]')).toHaveLength(0);
-    expect(recoverableErrors).toEqual([]);
-    expect(consoleErrors).toEqual([]);
-  });
+  it.each(['client-only', 'after hydration'] as const)(
+    'keeps an item mounted below threshold revealed across remount: %s',
+    async (mode) => {
+      const ref = createRef<FormHandle>();
+      const form = (
+        <Form
+          ref={ref}
+          jsonSchema={{ type: 'array', items: { type: 'string' } }}
+          defaultValue={[]}
+          validationMode={ValidationMode.None}
+          virtualization={{
+            threshold: 2,
+            eagerCount: 0,
+            backfill: VirtualizationBackfill.None,
+          }}
+        />
+      );
+      if (mode === 'after hydration') await hydrate(form);
+      else {
+        vi.stubGlobal('IntersectionObserver', IdleObserver);
+        await act(async () => {
+          root = createRoot(container);
+          root.render(form);
+        });
+      }
+      const array = ref.current!.node!;
+      if (array.type !== 'array') throw new Error('Expected array');
+      await act(async () => {
+        array.push('first');
+      });
+      expect(container.querySelectorAll('input')).toHaveLength(1);
+      expect(container.querySelectorAll('[data-deferred]')).toHaveLength(0);
+      await act(async () => {
+        array.push('second');
+      });
+      expect(container.querySelectorAll('input')).toHaveLength(1);
+      expect(container.querySelectorAll('[data-deferred]')).toHaveLength(1);
+      await act(async () => ref.current!.remount());
+      expect(container.querySelectorAll('input')).toHaveLength(1);
+      expect(container.querySelector<HTMLInputElement>('input')!.value).toBe(
+        'first',
+      );
+      expect(
+        container.querySelector('[data-path="/1"][data-deferred]'),
+      ).not.toBeNull();
+      expect(recoverableErrors).toEqual([]);
+      expect(consoleErrors).toEqual([]);
+    },
+  );
 });

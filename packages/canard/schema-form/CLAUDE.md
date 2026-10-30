@@ -71,7 +71,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 - `node.validate()` / `node.errors`
 - `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useFieldNodeSubscribe`의 `onSubscribe` catch-up 사용
 - `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useFieldNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
-- `virtualization` prop — deferred mounting for large forms. The node tree stays complete; branches at `threshold` defer children beyond `eagerCount` behind `[data-path][data-deferred]` placeholders until intersection, idle backfill, or Focus/Select reveals them once. `useChildFields` bakes gates and `VirtualizationManager` coordinates them. Style placeholders with `[data-deferred]` CSS or `Placeholder`; `estimateHeight` owns reserved space. SSR renders every field and hydrates unchanged; only branches and children added after hydration are gated. A dehydrated Suspense boundary inside a custom branch input may still switch to client rendering in React 18.
+- `virtualization` prop — deferred mounting for large forms. The node tree stays complete; branches at `threshold` defer children beyond `eagerCount` behind `[data-path][data-deferred]` placeholders until intersection, idle backfill, or Focus/Select reveals them once. `useChildFields` bakes gates and `VirtualizationManager` coordinates them. Style placeholders with `[data-deferred]` CSS or `Placeholder`; `estimateHeight` owns reserved space. SSR renders every field and hydrates unchanged; only branches and children added after hydration are gated. Hydration itself schedules no extra branch render, including custom branch inputs containing Suspense in React 18 and 19.
 
 ### FieldInput 우선순위 (높음 → 낮음)
 

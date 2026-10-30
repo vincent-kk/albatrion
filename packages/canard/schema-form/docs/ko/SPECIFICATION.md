@@ -1166,7 +1166,7 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 | nested-d5-f4 | 89.250 / 89.250 | 89.700 / 89.700 |
 | array-1000 | 201.350 / 201.350 | 59.200 / 473.100 |
 
-노출 전의 지연된 입력은 페이지 내 검색·스크린 리더·브라우저 자동완성의 대상이 되지 않는다. 두 backfill 모드 모두 placeholder가 남아 있는 동안 적용되며, Focus/Select 명령은 강제로 노출한다. 서버 렌더링한 필드는 그대로 하이드레이션하고 remount 뒤에도 노출을 유지한다. 이후 추가한 브랜치·자식만 게이팅한다. React 18에서 사용자 브랜치 입력 안의 미완료 Suspense 경계는 여전히 클라이언트 렌더링으로 전환될 수 있다. [IR-5](../../architecture/verification/input-responsiveness/ir-5-results.md)를 참조한다. 기본값은 off다.
+노출 전의 지연된 입력은 페이지 내 검색·스크린 리더·브라우저 자동완성의 대상이 되지 않는다. 두 backfill 모드 모두 placeholder가 남아 있는 동안 적용되며, Focus/Select 명령은 강제로 노출한다. 서버 렌더링한 필드는 그대로 하이드레이션하고 remount 뒤에도 노출을 유지한다. 이후 추가한 브랜치·자식만 게이팅한다. 사용자 브랜치 입력 안의 아직 하이드레이션되지 않은 Suspense 경계에 완료만으로 추가 갱신을 보내지 않아 React 18/19 모두 서버 DOM을 보존한다. [IR-5](../../architecture/verification/input-responsiveness/ir-5-results.md)를 참조한다. 기본값은 off다.
 
 - **검증:** 스키마 크기에 따라 비용이 증가한다. 데스크톱 Chromium의 flat-2000 [IR-2 진단](../../architecture/verification/input-responsiveness/ir-2-results.md#원인-분해-진단코디네이터-2026-10-31)은 p95 키 처리 비용의 약 4분의 1을 검증 실행·배달과 두 번째 React 커밋에 귀속했다. 냉 상태 비연타의 검증 켬−끔 input 이벤트 디스패치 차이는 중앙값 약 1.3ms / p95 약 2.9ms였다. 매우 큰 폼은 `validationMode={ValidationMode.OnRequest}`로 요청 또는 제출 시 검증할 수 있다.
 - **커스텀 입력 스타일:** 같은 입력 2000개 진단에서 `input { contain: strict; width: 153px; height: 21px; }`는 키당 강제 레이아웃 중앙값을 2.5–3.8ms에서 0.42–0.47ms로 줄였다. 단순 블록 래퍼는 효과가 없었다. containment를 적용한 입력은 크기를 명시하고 레이아웃을 확인한다.

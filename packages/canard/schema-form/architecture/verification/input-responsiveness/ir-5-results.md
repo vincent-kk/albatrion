@@ -10,14 +10,14 @@
 
 IO 없는 서버는 입력 40개를 렌더링하지만 IO 있는 클라이언트의 첫 렌더는 eagerCount 20만 입력으로 만들고 나머지 20개를 placeholder로 만들어 하이드레이션이 실패했습니다. 일반 pinned 시험을 `it.fails`에서 `it`로 바꾼 뒤 수정 전 코드에서 React 18/19의 recoverable error, 입력 20개·placeholder 20개·서버 input 재사용 0개를 재현했습니다. off 대조군은 유지했습니다.
 
-원래 초안은 Provider에서 `useSyncExternalStore`로 매니저를 노출하는 안이었으나, 독립 검증자는 React 18에서 문맥 값 변화가 미완료 Suspense 경계에 SyncLane 갱신을 보내 클라이언트 렌더링을 강제할 수 있어 기각했습니다. 채택안은 `useChildFields` 안에서만 서버 스냅숏 null을 읽고 Provider의 문맥 값을 고정합니다.
+원래 초안은 Provider에서 `useSyncExternalStore`로 매니저를 노출하는 안이었으나, 독립 검증자는 React 18에서 문맥 값 변화가 아직 하이드레이션되지 않은 Suspense 경계에 SyncLane 갱신을 보내 클라이언트 렌더링을 강제할 수 있어 기각했습니다. 채택안은 `useChildFields` 안에서만 서버 스냅숏 null을 읽고 Provider의 문맥 값을 고정합니다.
 
 - 터미널 노드는 null, 브랜치는 폼 매니저를 클라이언트 스냅숏으로 반환합니다. 구독은 모듈 함수와 기존 `NOOP_FUNCTION`을 재사용합니다. 서버와 hydration 렌더는 모든 자식을 그대로 만들고, createRoot는 첫 렌더부터 기존 eager window를 적용합니다.
 - React 18 StrictMode는 hydration 뒤 스냅숏 재렌더 전에 effect 정리를 재실행하므로 `cache.clear()` 정리를 제거합니다. 캐시는 실제 훅 인스턴스 수명과 함께 회수되며, 실제 언마운트 뒤의 별도 전역 보유는 없습니다.
-- 유효 매니저가 null이지만 폼 매니저가 존재할 때 만든 자식은 layout effect에서 노출 원장에 기록합니다. remount·enabled 전환·입력 변경 뒤에도 이미 하이드레이션한 노드를 다시 지연하지 않습니다. 이후 추가한 항목은 새 게이트 판정을 받습니다.
+- 폼 매니저가 있고 placeholder 없이 실제 마운트하는 모든 자식은 layout effect에서 노출 원장에 기록합니다. remount·enabled 전환 뒤에도 이미 하이드레이션한 노드를 다시 지연하지 않습니다. 이후 추가한 항목은 새 게이트 판정을 받습니다.
 - IO 부재 경고는 window가 있는 브라우저에서만 출력합니다. 경고 설명은 전체 eager 대체와 지원되는 SSR 동작을 안내합니다.
 
-시간·메모리 비용: 훅마다 안정된 snapshot 콜백과 React 외부 저장소 구독 상태가 추가되고, hydration 뒤 한 번 클라이언트 스냅숏으로 따라잡습니다. 노출 기록은 기존 WeakSet을 재사용하며 새 전역 레지스트리를 만들지 않습니다. 터미널은 스냅숏이 계속 null이어서 매니저 활성화 재렌더를 받지 않습니다. 별도 성능 수치는 이 단계에서 측정하지 않았습니다.
+시간·메모리 비용: 훅마다 안정된 snapshot 콜백과 React 외부 저장소 구독 상태가 추가되고, layout에서 hydration을 기록하여 passive 검사에는 null 스냅숏을 유지하고 추가 렌더를 만들지 않습니다. 노출 기록은 기존 WeakSet을 재사용하며 새 전역 레지스트리를 만들지 않습니다. 터미널은 스냅숏이 계속 null이어서 매니저 활성화 재렌더를 받지 않습니다. 최초 인계에서는 마운트 비용을 측정하지 않았으며 round 2의 실제 브라우저 비용 대조를 아래에 따로 기록합니다.
 
 ## 수정한 문서
 
@@ -25,15 +25,15 @@ FieldInputSlot DETAIL과 VirtualizationManager INTENT·DETAIL을 구현 전에 �
 
 ## 회귀 시험과 실패 관찰
 
-`src/__tests__/e2e/virtualization.hydration.render.test.tsx`는 off 대조군, 일반 on, StrictMode, 중첩 40자식 remount, 40항목 배열 push, 사용자 브랜치 Suspense, createRoot 첫 커밋, enabled 전환, 입력 교체의 9개 시험을 실행합니다. 일반·StrictMode는 서버 DOM identity와 값을 보존하고 placeholder·recoverable error가 없음을 확인합니다. 배열 push는 기존 40개를 보존하면서 /40 항목만 지연하고 값 41개는 모두 유지합니다. CSR 첫 layout 관측은 입력 20개·placeholder 20개입니다.
+`src/__tests__/e2e/virtualization.hydration.render.test.tsx`는 off 대조군, 일반 on, StrictMode, 중첩 40자식 remount, 40항목 배열 push, 사용자 브랜치 Suspense, createRoot 첫 커밋, enabled 전환과 문턱 미만 배열 항목 보존 두 모드의 10개 시험을 실행합니다. 별도의 슬롯 소유 시험은 일반·StrictMode에서 hydration 커밋 뒤 슬롯과 사용자 입력의 추가 렌더가 없음을 확인합니다. 일반·StrictMode는 서버 DOM identity와 값을 보존하고 placeholder·recoverable error가 없음을 확인합니다. 배열 push는 기존 40개를 보존하면서 /40 항목만 지연하고 값 41개는 모두 유지합니다. CSR 첫 layout 관측은 입력 20개·placeholder 20개입니다.
 
 React 18 수정 전 제품 코드로 9개 시험을 실행하면 6개가 원래 결함으로 실패하고, off·CSR·잔여 위험 기대 실패는 통과합니다. 환경 경고 시험은 수정 전 서버의 잘못된 경고와 mismatch 문구로 2개 실패·1개 통과했습니다. 독립 회귀 강도 확인으로 cache.clear만 복원하면 StrictMode의 input identity 기대가 실패하고, 노출 원장 기록만 제거하면 중첩 remount·enabled 전환에서 입력이 40→20으로 줄어 실패했습니다. 모든 탐침은 지정된 변경 파일에만 적용하고 즉시 복원했습니다.
 
 초기 시험 수집은 새 worktree의 로컬 workspace dist 부재로 실패했습니다. 기존 common-utils/json/json-schema/react-utils 빌드로 준비했고 설치나 의존 버전 변경은 없었습니다. 사용자 Suspense 픽스처는 처음에 unanchored 입력 맵이 자식까지 매칭하여 서버 입력이 0개였으므로, `^/nested$`로 범위를 고친 뒤 실제 서버 입력 40개 조건에서 재검증했습니다. 이 준비 실패를 결함 재현이나 잔여 위험으로 세지 않습니다.
 
-## 잔여 위험 — IR5-SUSPENSE-18
+## 최초 인계의 IR5-SUSPENSE-18과 round 2 수정
 
-React 19는 사용자 브랜치 입력 내부 Suspense까지 recoverable error 없이 서버 DOM을 보존합니다. React 18은 서버 입력 40개가 존재하는 조건에서 다음 오류를 보고합니다: `This Suspense boundary received an update before it finished hydrating. This caused the boundary to switch to client rendering.` 해당 정상 동작 기대만 React 18에서 `it.fails`로 실행하고 React 19·verify-render에서는 일반 `it`로 실행합니다. 이는 결함 해결 증거가 아니라 계속 관찰하는 잔여 위험입니다. Provider는 수정하지 않았습니다.
+최초 인계에서는 React 19만 사용자 브랜치 입력 내부 Suspense의 DOM을 보존했고, React 18은 `This Suspense boundary received an update before it finished hydrating`를 보고하여 기대 실패로 유지했습니다. 독립 검토는 이 갱신이 라이브러리의 null→manager passive 일관성 검사에서 비롯됨을 지적했습니다. Round 2는 layout ref로 검사 값 null을 유지하여 이 추가 렌더를 없앴고, 같은 시험을 React 18에서도 일반 `it`로 복구했습니다. 아래의 최초 인계 관문 수치는 당시 기대 실패를 포함하는 역사이며 최종 증거는 round 2 관문입니다.
 
 ## 순차 관문
 
@@ -45,7 +45,7 @@ React 19는 사용자 브랜치 입력 내부 Suspense까지 recoverable error �
 
 잔여 위험 시험은 정적 도구가 시험 하나를 열거할 수 있도록 일반 `it`에 프로젝트별 `fails` 옵션을 전달합니다. React 18에서만 `it.fails`와 동일한 기대 실패로 실행되며 React 19는 일반 성공을 요구합니다.
 
-### 최종 순차 관문 실행
+### 최초 인계 순차 관문 실행 (round 1)
 
 | 순서 | 명령·검사 | 결과 |
 | --- | --- | --- |
@@ -93,6 +93,29 @@ React 19는 사용자 브랜치 입력 내부 Suspense까지 recoverable error �
 
 ## 인계 범위
 
-일반·StrictMode hydration의 IR4-SSR-01은 수정되어 서버 input을 보존합니다. IR5-SUSPENSE-18은 React 18에 남아 있으며 공개 문서와 JSDoc에 명시했습니다. 새 분기·자식의 게이팅과 기존 CSR 동작은 유지합니다. 코디네이터는 기준 HEAD부터 최종 HEAD까지의 제품·문서·회귀 시험을 두 명의 독립 검토자에게 검토시키고 PR을 개설합니다. 검토자는 루트 AGENTS와 패키지 CLAUDE, 각 소유 INTENT/DETAIL, 이 문서의 지정 workspace 검증 명령을 기준으로 판단해야 합니다. 소유자의 이번 단계 수정 여부와 기존 D1·기본값 결정은 계속 열려 있습니다.
+일반·StrictMode hydration의 IR4-SSR-01은 수정되어 서버 input을 보존합니다. 최초 인계에 남은 IR5-SUSPENSE-18은 round 2에서 추가 렌더의 원인을 제거하고 일반 성공 시험으로 검증합니다. 새 분기·자식의 게이팅과 기존 CSR 동작은 유지합니다. 코디네이터는 기준 HEAD부터 최종 HEAD까지의 제품·문서·회귀 시험을 두 명의 독립 검토자에게 검토시키고 PR을 개설합니다. 검토자는 루트 AGENTS와 패키지 CLAUDE, 각 소유 INTENT/DETAIL, 이 문서의 지정 workspace 검증 명령을 기준으로 판단해야 합니다. 소유자의 이번 단계 수정 여부와 기존 D1·기본값 결정은 계속 열려 있습니다.
 
 인계 전 검사에서 변경 25개 파일(압축 증거는 풀어서 검사)에 기계 로컬 경로가 없고, Provider·공개 index와 추적된 runtime·adapter에는 차분이 없음을 확인했습니다. request의 기존 바이트 접두부를 보존했고 결과 기록은 이어 쓰기만 했습니다. FCA 감사는 Scan complete: 202 findings이며 새 finding·diagnostic은 0입니다.
+
+
+## Round 2 — 추가 렌더 제거와 노출 원장 보완
+
+독립 검토의 P1과 원장 범위를 코드에서 확인하고 승인된 설계를 적용했습니다. 로컬 React 18.3.1의 `mountSyncExternalStore`는 hydration 때 서버 스냅숏을 저장하고 passive `updateStoreInstance`에서 Object.is로 현재 getter와 대조합니다. commitRootImpl은 layout effect 뒤 passive effect를 실행합니다. React 19.2.6의 같은 함수와 flushLayoutEffects→flushPassiveEffects도 이 순서를 지킵니다. 따라서 layout에서 hydratedRef를 설정하고 getter를 null로 유지하면 저장한 null과 일치하여 동기 갱신을 만들지 않습니다. CSR은 첫 snapshot부터 매니저이며 기존 게이팅이 유지됩니다.
+
+슬롯의 useSyncExternalStore는 hydration 감지에만 사용합니다. 이후 실제 자식 변경 렌더는 ref와 폼 매니저로 게이팅하며 목록 메모는 snapshot에 의존하므로 hydration 완료만으로 재계산되지 않습니다. 실제 입력으로 커밋한 모든 ungated 자식은 노출 원장에 기록하고, placeholder의 실제 노출은 기존 DeferredFieldProxy가 기록합니다. 문턱 미만 첫 항목도 remount 뒤 다시 지연하지 않습니다.
+
+실패 우선 검증: round 1 코드에서 슬롯/사용자 입력은 일반 hydration 커밋 1→최종 2, StrictMode 2→4였고 React 18 내부 Suspense가 지정 recoverable error로 실패했습니다. threshold 2·eagerCount 0·backfill None의 빈 배열에 두 번 push한 뒤 remount하면 먼저 노출한 항목까지 지연하여 CSR·hydration 두 시험 모두 실패했습니다. 수정 후에는 두 버전에서 일반 1→1·StrictMode 2→2, Suspense 일반 성공, 두 threshold 사례 일반 성공입니다. `FieldInputSlot/DETAIL.md` 계약은 제품 구현 전에 별도 커밋 b4dfc18cb로 남겼습니다.
+
+삭제한 시험은 fieldInputMap 변경을 시도했으나 Provider가 최초 값을 고정하므로 실제 입력 전환을 만들지 못했습니다. 이 시험이 증명하지 않은 주장을 본 기록과 요청 행, DETAIL에서 정정했습니다. 첫 인계의 9개·778개 수치는 당시 실행 역사로 유지하며 무효 사례 1개가 포함된 수치이고, 최종 round 2 결과는 아래에 따로 기록합니다.
+
+## 미결 — 이 단계에서 수정하지 않는 기존 결함
+
+아래 항목은 독립 검토와 코드 대조에서 확인한 기존 경로이며 이번 범위에서 변경하지 않습니다. 별도 재현·수정·검증이 필요합니다.
+
+| 미결 | 코드 근거 | 제안한 수정 |
+| --- | --- | --- |
+| 폐기 렌더의 게이트 결정이 캐시에 남음 | `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx:140`의 렌더 중 cache.set | 렌더별 사본으로 구성하고 커밋에서만 보유 캐시에 반영합니다. |
+| 제거된 가지의 엔트리 잔존과 장기 생존 배열 캐시 증가 | 같은 파일 `:76`의 Map 보유와 `:140`의 삽입, 삭제 경로 부재 | 커밋 시 살아 있는 자식으로 pruning하거나 별도 단조 key와 WeakMap을 사용합니다. |
+| 상태를 유지하는 Fast Refresh에서 옛 자식 closure 보유 | 같은 파일 `:85`의 CachedComponent 재사용, `packages/winglet/react-utils/src/hooks/useLazyConstant.ts:67` | 개발 재해석 세대별 컴포넌트 갱신 또는 안정된 컴포넌트가 최신 커밋 값을 읽도록 구조를 바꿉니다. |
+| push와 같은 batch의 새 항목 focus/select가 구독 전에 소실 | `src/components/FieldProxy/components/DeferredFieldProxy/DeferredFieldProxy.tsx:46`, `src/core/engine/write/utils/entry/dispatchRequest.ts:31`, `src/hooks/fieldNode/useFieldNodeSubscribe.ts:57` | 노드별 미소비 명령을 기록하고 구독 직후 catch-up하거나 커밋까지 명령을 지연합니다. |
+| useReference의 렌더 중 공유 ref 쓰기 | useChildFields `:110`, `packages/winglet/react-utils/src/hooks/useReference.ts:92`, `src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx:82` | 이벤트가 읽는 값은 커밋 시점에 갱신하는 ref 또는 커밋을 보장하는 이벤트 핸들 구조로 전환합니다. |

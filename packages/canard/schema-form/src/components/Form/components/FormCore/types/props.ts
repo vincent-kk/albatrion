@@ -105,8 +105,8 @@ export interface FormProps<
    *  - Server-rendered fields hydrate unchanged and remain revealed. Gating
    *    applies to branches and children added after hydration and requires
    *    IntersectionObserver; browsers without it mount every field eagerly.
-   *  - In React 18, a dehydrated Suspense boundary inside a custom branch input
-   *    may still switch to client rendering.
+   *  - Client-only mounts gate from the first render. Hydration itself does not
+   *    trigger an extra branch render, including custom inputs with Suspense.
    */
   virtualization?: boolean | VirtualizationOptions;
   /** User-defined context */
