@@ -58,15 +58,10 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
         !hasOwnProperty(value, name))
     )
       return undefined;
-    const structure = node.structure;
-    const child = structure
-      ? node.behavior.type !== 'array' &&
-        Object.getPrototypeOf(structure) === null
-        ? structure[name]
-        : hasOwnProperty(structure, name)
-          ? structure[name]
-          : undefined
-      : undefined;
+    const child =
+      node.structure && hasOwnProperty(node.structure, name)
+        ? node.structure[name]
+        : undefined;
     if (child) {
       node = child;
       atNode = true;
