@@ -98,3 +98,31 @@ assert.equal(time, 120000);
 assert.ok(failed.attempts.length > 1);
 assert.equal(failed.waitedMs, 120000);
 console.log('B8_QUIET_PROCESS_OK');
+
+for (const [name, cpuPercent, approved, expected] of [
+  ['mds_stores', 5, true, 30000],
+  ['mds_stores', 51, false, 30000],
+  ['daemon', 51, false, 120000],
+]) {
+  time = 0;
+  const observed = [];
+  const result = await waitForQuietProcess({
+    agentPid: 99,
+    averageMs: 30000,
+    spotlightMaxWaitMs: 30000,
+    now: () => time,
+    pause: async (ms) => {
+      time += ms;
+    },
+    sample: async (ms) => {
+      observed.push(ms);
+      time += ms;
+      return { rows: [{ pid: 2, name, cpuPercent }] };
+    },
+  });
+  assert.equal(result.approved, approved);
+  assert.equal(time, expected);
+  assert.ok(observed.every((duration) => duration === 30000));
+  assert.equal(result.policy.averageMs, 30000);
+}
+console.log('IV_4_START_QUIET_OK');

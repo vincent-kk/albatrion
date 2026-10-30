@@ -20,7 +20,7 @@ for (const name of ['probe.json', 'allocation.json', 'failure.json'])
   if (fs.existsSync(path.join(root, name)))
     inputs.push([path.join(root, name), name]);
 for (const name of fs.readdirSync(path.join(root, 'raw.noindex')))
-  if (name.endsWith('-quiet.json'))
+  if (name.endsWith('-quiet.json') || name.endsWith('-cpu.json'))
     inputs.push([path.join(root, 'raw.noindex', name), name]);
 for (const [file, name] of inputs) {
   const bytes = fs.readFileSync(file);

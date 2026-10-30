@@ -1,4 +1,4 @@
-// Serial probe runner; refuses rather than retries any sampled process or environmental failure.
+// Serial probe runner; starts after one quiet observation and logs later external CPU.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -6,7 +6,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { digest, json } from '../b9-0/files.mjs';
-import { waitForQuietProcess } from '../window/waitForQuietProcess.mjs';
+import {
+  observeMeasurementCpu,
+  observeMeasurementStart,
+} from './helpers/observeMeasurement.mjs';
 import { summarizeProbe } from './helpers/summarizeProbe.mjs';
 
 const [root, mode, targetsText, agentText] = process.argv.slice(2);
@@ -37,21 +40,9 @@ for (const row of rows)
       const label = [row, lane, repeat, mode === 'probe' ? 'plain' : mode].join(
         '-',
       );
-      if (mode !== 'smoke') {
-        const quiet = await waitForQuietProcess({ agentPid });
-        json(path.join(root, 'raw.noindex', label + '-quiet.json'), {
-          approved: quiet.approved,
-          waitedMs: quiet.waitedMs,
-          delays: quiet.delays,
-          policy: quiet.policy,
-          attempts: quiet.attempts.map((attempt) => ({
-            requestedDurationMs: attempt.requestedDurationMs,
-            durationSeconds: attempt.durationSeconds,
-            rows: attempt.rows
-              .slice(0, 10)
-              .map(({ name, cpuPercent }) => ({ name, cpuPercent })),
-          })),
-        });
+      if (mode !== 'smoke' && !records.length) {
+        const quiet = await observeMeasurementStart(agentPid);
+        json(path.join(root, 'raw.noindex', label + '-quiet.json'), quiet);
         if (!quiet.approved) {
           json(path.join(root, 'failure.json'), {
             kind: 'environment-refusal',
@@ -63,6 +54,10 @@ for (const row of rows)
           process.exit(3);
         }
       }
+      json(
+        path.join(root, 'raw.noindex', label + '-cpu.json'),
+        observeMeasurementCpu(agentPid),
+      );
       const run = spawnSync(
         process.execPath,
         [
