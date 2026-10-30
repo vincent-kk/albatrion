@@ -1,0 +1,129 @@
+[
+  {
+    "id": "S6a",
+    "verdict": "excluded",
+    "reason": "커밋 변경 뒤 지연 materialization은 현 계약에 있으며 journal 재도입은 새 상주 구조가 필요합니다."
+  },
+  {
+    "id": "S7",
+    "verdict": "excluded",
+    "reason": "조정자 결정: 보호 행과 Bun 힙을 현재 탐침이 보지 못하며 퇴보 원인 미확정, 국소 바퀴 재구현 범위입니다."
+  },
+  {
+    "id": "S5-1",
+    "commit": "c73582d4d",
+    "verdict": "dropped",
+    "probe": "S5/probe.json.gz",
+    "reason": "oneOf 표적은 통과했으나 siblings와 flat이 각 행의 잡음을 넘어 퇴보했습니다."
+  },
+  {
+    "id": "S5-2",
+    "commit": "9fe7e55ff",
+    "verdict": "kept",
+    "probe": "S5-refined/probe.json.gz",
+    "reason": "나감에만 한정하여 일반 watch 읽기를 유지했고 표적과 보호4행 모두 각자의 잡음 관문을 통과했습니다."
+  },
+  {
+    "id": "S4",
+    "commit": "82c418c6c",
+    "verdict": "kept",
+    "probe": "S4-reprobe/probe.json.gz",
+    "reason": "허가된5반복1회에서 표적·보호 행 모두 통과했습니다.",
+    "held": false,
+    "initialCommit": "e398e6540",
+    "initialProbe": "S4/probe.json.gz",
+    "wasHeld": true
+  },
+  {
+    "id": "S1a",
+    "commit": "fd2d91832",
+    "verdict": "kept",
+    "probe": "S1a/probe.json.gz",
+    "reason": "siblings 절감0.595µs가 잡음0.250을 넘으며 보호 행 모두 통과했습니다."
+  },
+  {
+    "id": "S1b",
+    "commit": "67641f19d",
+    "verdict": "kept",
+    "probe": "S1b/probe.json.gz",
+    "reason": "siblings 절감0.875µs가 잡음0.135를 넘으며 보호 행 모두 통과했습니다. flat 퇴보는 잡음과 같습니다."
+  },
+  {
+    "id": "S2a",
+    "commit": "87c15da8b",
+    "verdict": "dropped",
+    "held": false,
+    "probe": "S2a-reprobe/probe.json.gz",
+    "reason": "허가된5반복1회에서 표적·보호 전체 관문을 통과하지 못해 제외 확정입니다.",
+    "initialCommit": "0c08485e0",
+    "initialProbe": "S2a/probe.json.gz",
+    "wasHeld": true
+  },
+  {
+    "id": "S2b",
+    "commit": "73c24e468",
+    "verdict": "dropped",
+    "probe": "S2b/probe.json.gz",
+    "reason": "oneOf 중앙이0.730µs 늘어 양의 절감 조건에도 해당하지 않습니다."
+  },
+  {
+    "id": "S3b",
+    "verdict": "excluded",
+    "reason": "100왕복1406호출 중 자격 있는 단일 무게이트2회는 진입 준비뿐입니다."
+  },
+  {
+    "id": "S6b",
+    "commit": "289538f96",
+    "verdict": "kept",
+    "probe": "S6b/probe.json.gz",
+    "reason": "보호23건·typecheck·lint·build 통과. oneOf 절감0.915가 잡음0.710을 넘고 보호 행도 통과합니다. siblings는 잡음 경계입니다."
+  },
+  {
+    "id": "S3a",
+    "verdict": "excluded",
+    "reason": "S5 뒤 후보 builder는 따뜻한 호출당 파생 레코드를 한 번만 조회합니다. prepareStaticHost의 추가 조회는 다른 키나 cold 준비이며0.35µs 상한의 같은 레코드 중복을 특정하지 못했습니다."
+  },
+  {
+    "id": "S11a",
+    "verdict": "excluded",
+    "reason": "getCommittedDeclarationKey는 실제 path와 fold-inclusive kind를 이미 메모합니다. 재색인·다른 종류를 건너 생략 가능한 중복을 특정하지 못했습니다."
+  },
+  {
+    "id": "S11b",
+    "verdict": "excluded",
+    "reason": "markRestoredSlotRaw의 overlay 전·후는 소유 원본과 제외 채널을 각각 기록하므로 같은 입력의 중복이 아닙니다. NODE-044/064를 보존한 좁은 삭제 근거가 없습니다."
+  },
+  {
+    "id": "S10",
+    "commit": "11bd156ad",
+    "verdict": "dropped",
+    "probe": "S10-reprobe/probe.json.gz",
+    "reason": "허가된5반복1회에서 표적·보호 전체 관문을 통과하지 못해 제외 확정입니다.",
+    "initialCommit": "d95116a0a",
+    "initialProbe": "S10/probe.json.gz",
+    "held": false,
+    "wasHeld": true
+  },
+  {
+    "id": "S8-diagnostic",
+    "commit": "a0f597054",
+    "verdict": "dropped",
+    "probe": "S8-diagnostic/probe.json.gz",
+    "reason": "진단 전용 전체 역적용은 표적26건·typecheck·build 통과. payload 절감0.290은 잡음1.645 안이며 oneOf·siblings 보호 행도 실패하여 인과를 확인하지 못했습니다. 출하 후보가 아니며 항상 복원합니다."
+  },
+  {
+    "id": "S8a",
+    "verdict": "excluded",
+    "reason": "전체 항목5 역적용이 payload 인과를 확인하지 못했고 보호 행도 퇴보했습니다. 선언ID helper 한 곳을 원인으로 특정할 근거가 없습니다."
+  },
+  {
+    "id": "S8b",
+    "verdict": "excluded",
+    "reason": "전체 역적용 인과가 확인되지 않았으며 현재 publishPreparedSelection은 이미 helper 없는 조기 종료 classic loop입니다."
+  },
+  {
+    "id": "S9",
+    "verdict": "excluded",
+    "reason": "단명 할당과 GC 진단 완료 행이며 그 자체는 제품 변경 후보가 아닙니다."
+  }
+]
