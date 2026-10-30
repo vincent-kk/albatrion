@@ -15,11 +15,13 @@ import type { SampleResult } from './summarizeResults';
  * Reproduce IR-2 numeric records and audit raw pages, lane ordering and path hygiene.
  * @param destination - Canonical input-responsiveness evidence directory.
  * @param write - Save derived records once; default checks every byte against raw-derived output.
+ * @param auditBase - Optional commit SHA for a separate PR-time product-difference audit.
  * @returns Logs a success marker only after all assertions; throws on any evidence mismatch.
  */
 export function checkHeavyValidationResults(
   destination: string,
   write: boolean,
+  auditBase?: string,
 ) {
   const base = path.join(destination, 'raw/ir-2');
   let reproduced = 0;
@@ -213,11 +215,31 @@ export function checkHeavyValidationResults(
       ),
       file + ' has a machine path',
     );
-    assert.ok(
-      !file.startsWith('packages/canard/schema-form/src/'),
-      'No product changes',
-    );
   }
-  console.log('IR2_PATH_AND_PRODUCT_AUDIT_OK');
+  console.log('IR2_PATH_AUDIT_OK');
+  if (auditBase !== undefined) {
+    assert.match(
+      auditBase,
+      /^[a-f0-9]{7,40}$/i,
+      'Product audit requires a commit SHA',
+    );
+    const productDiff = execFileSync(
+      'git',
+      [
+        'diff',
+        auditBase,
+        '--',
+        'packages/canard/schema-form',
+        ':!packages/canard/schema-form/architecture',
+      ],
+      { cwd: repository, encoding: 'utf8' },
+    );
+    assert.equal(
+      productDiff,
+      '',
+      'Product diff must be zero against explicit audit base',
+    );
+    console.log(`IR2_PRODUCT_AUDIT_OK base=${auditBase} diff=0`);
+  }
   console.log(`IR2_RAW_REPRODUCED samples=${reproduced}`);
 }

@@ -20,7 +20,13 @@ const destination = path.resolve(
   '../../canard/schema-form/architecture/verification/input-responsiveness',
 );
 if (process.argv.includes('--stage=ir-2')) {
-  checkHeavyValidationResults(destination, process.argv.includes('--write'));
+  checkHeavyValidationResults(
+    destination,
+    process.argv.includes('--write'),
+    process.argv
+      .find((arg) => arg.startsWith('--audit-base='))
+      ?.slice('--audit-base='.length),
+  );
   process.exit(0);
 }
 const stage = process.argv.includes('--stage=ir-1');
