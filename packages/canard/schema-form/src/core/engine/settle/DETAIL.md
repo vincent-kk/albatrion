@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 게이트 등록의 memo와 edge map은 기존 live path 레코드가 함께 소유하며 node 키 WeakMap 둘에 중복 삽입하지 않습니다. 조회는 register가 현재 node identity를 확인한 뒤 수행하고 퇴장·동일 경로 교체에서 새 수명을 다시 결합합니다. 등록당 두 WeakMap 삽입과 두 약한 색인을 제거하며 기존 map 둘·등록 레코드 외의 상주 구조는 없습니다.
+
 - 청사진의 hasWatch=false가 전체 선언의 watch 부재를 증명하면 나감 포착은 watch helper·파생 witness·값 메모를 만들거나 기존 빈 메모를 바꾸지 않습니다. nonempty watch가 가능한 폼은 기존 마지막 커밋 읽기 포착·이전 메모 제거를 유지합니다. 판정은 나감에만 O(1)로 추가되며 일반 watch 읽기와 일반 쓰기 경로는 그대로입니다. 새 상주 구조는 없고 나감마다 불필요한 watch 준비를 줄입니다.
 
 - 빠른 splice의 단일 소멸 루트는 길이 1인 배열로 전달합니다. tail 삭제 후보가 64개 이하일 때도 고유한 아이템 경로를 배열에 차례대로 모으며, 더 크면 Set을 유지합니다. 소멸 경로 정리는 경로를 순회할 뿐 멤버십 조회를 하지 않으므로 작은 호출의 Set 생성만 제거하고, 삭제할 색인 엔트리 수에 비례하는 순서와 비용을 유지합니다. 빈 호스트의 prefix 정리는 전달받은 개별 소멸 경로를 읽지 않으므로 그 미사용 인수와 빈 fallback Set을 만들지 않습니다. 새 상주 자료는 없으며 작은 tail은 Set 한 개 대신 최대 64칸의 배열 한 개를 만듭니다.
@@ -803,6 +805,10 @@
 ### settle-empty-watch-snapshot — watch 없는 청사진의 나감 포착
 
 - hasWatch=false의 나감은 노드 watch 파생 조회·새 값 메모가 0이고 기존 빈 메모도 같은 객체입니다. nonempty가 가능한 청사진은 마지막 선택이 빈 목록이더라도 기존 포착으로 이전 메모를 대체합니다. nonempty snapshot과 공유 동결 빈 결과는 나감 뒤 원본 변화에도 고정됩니다.
+
+### settle-gate-registry-storage — live 등록 레코드의 메모 소유
+
+- gate-free live 노드의 register는 node 키 WeakMap 삽입이 0이며 반복 register는 같은 발생을 유지합니다. 동일 경로의 새 node는 새 발생을 받고, 옛 node remove는 새 node 등록을 제거하지 않습니다. 현재 node를 제거한 뒤 다시 등록하면 발생도 새로 만듭니다.
 
 ## Boundary Exemptions
 
