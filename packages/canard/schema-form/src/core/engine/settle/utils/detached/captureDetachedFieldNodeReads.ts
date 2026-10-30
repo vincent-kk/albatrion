@@ -20,10 +20,8 @@ export const captureDetachedFieldNodeReads = <
   load?: { readonly value: unknown },
 ): void => {
   const runtime = node.runtime;
-  if (runtime.blueprint.capabilities.hasWatch) {
-    runtime.watchValuesMemo?.delete(node);
-    readFieldNodeWatchValues(node, watchSnapshot);
-  }
+  runtime.watchValuesMemo?.delete(node);
+  readFieldNodeWatchValues(node, watchSnapshot);
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
     misfit: runtime.misfitPaths.has(node.path),
