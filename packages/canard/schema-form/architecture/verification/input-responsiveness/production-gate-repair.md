@@ -128,3 +128,14 @@ production에서는 템플릿별 동결 호출만 없애고 배열 생성·내�
 `git diff --check`는 종료 0입니다. 빌드 후 `git status --short`의 출력은 비어 있었고 dist는 추적 파일이 아니므로 생성물 커밋은 없습니다. 소스 수정은 두 프로젝트의 설정 키와 ids 한 줄뿐이며 시험·패키지 버전·의존성·기존 한도는 그대로입니다. 후속 커밋은 이 결과와 요청·검증 기록의 추가분만 담습니다.
 
 이 작업은 작은 관문 수리이며 브라우저 성능 창을 열지 않았습니다. 독립 검증의 대상은 기준 SHA부터 인계 HEAD까지의 diff, 특히 production ids의 읽기 전용 조건과 react18 전체 통과입니다. PR은 `feat/schema-form-input-responsiveness`를 대상으로 코디네이터가 개설합니다.
+
+
+## 독립 검토 뒤 P3 보완 — 2026-10-31
+
+코디네이터는 인계 HEAD `7e190da43005454b9e378a140d3420c27a36f0f8`의 독립 관문 PASS와 함께 P3 세 건을 전달했습니다. 다음 보완은 기존 결과를 보존한 채 추가합니다.
+
+1. react18의 원래 `transformMode`는 모든 파일을 web으로 지정하려던 설정입니다. ts를 SSR로 나누는 첫 수정은 이 의도를 바꾸므로, 최종 react18은 `testTransformMode.web`에 ts·tsx를 모두 지정하고 ssr 목록을 두지 않습니다. jsdom의 render 프로젝트와 같이 `VirtualizationManager.test.ts`도 web 변환을 유지합니다.
+2. picomatch의 기본 `**`는 dot 디렉터리와 일치하지 않습니다. 따라서 checkout이 `.claude/worktrees` 같은 숨김 상위 디렉터리에 있으면 상대 glob은 production ts와 일치하지 않아 jsdom의 web 변환으로 후퇴할 수 있습니다. 두 프로젝트의 각 패턴을 `${__dirname}/src/**/*.ts` 또는 `${__dirname}/src/**/*.tsx`로 고정합니다. checkout 상위 경로는 명시적인 접두사가 되고 와일드카드는 패키지 src 아래에서만 작동하므로 상위 dot 디렉터리를 통과할 필요가 없습니다. production은 ts SSR·tsx web을 유지합니다.
+3. 첫 인계의 제품 수정 SHA 뒤 문서 커밋은 결과 문서 신설뿐 아니라 request·verification 기록의 추가도 포함했습니다. PR 본문의 해당 설명에 세 기록을 모두 명시합니다.
+
+이 보완의 수정·커밋은 IR-2 측정 창 중에 허용받았습니다. 코디네이터의 window clear가 오기 전에는 시험·빌드·lint를 실행하지 않으며, 이전 표의 통과는 해당 SHA의 증거로만 보존합니다. 허용 뒤 strict production·일반 production·react18·render를 각각 단독 실행하고 새 결과를 아래에 추가합니다.
