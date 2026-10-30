@@ -55,7 +55,7 @@ if의 실제 guard 호출 시간은 Ⅳ-5에서 새로 재지 않았으므로 �
 
 D4b와 같은 `yarn workspace @aileron/benchmark-form bench --equivalent --mode=render --legacy=0.16.1 --min-samples=100`을 S/E에 각각 두 독립 통과 실행했습니다. 각 통과는 한 프로세스에서 L/현재판을 AB/BA 교대하며19픽스처·10예열/100표본입니다. 통과를 합산하거나 가장 빠른 통과를 고르지 않았습니다. Node v26.12.1, React 19.2.6 development Profiler, Apple M1 Max/Darwin27.0.0입니다. 첫 quiet부터 마지막 종료는2026-10-30T07:27:48.529087+00:00~2026-10-30T08:36:02.335394+00:00입니다.
 
-update-settled의 S/L 범위는 **0.1058~1.1153배**, E/L은 **0.1050~1.0857배**입니다. 두 통과 합계의 회귀 플래그는 S 0개, E 0개(픽스처·통과 단위)입니다. 플래그는 러너의 처리량 감소>15% 및 Welch p<0.05를 그대로 사용하며 관문이나 제품 동치 증명으로 바꾸지 않습니다.
+update-settled의 S/L 범위는 **0.1058~1.1153배**, E/L은 **0.1050~1.0857배**입니다. update-settled의 회귀 플래그는 두 통과 합계 S 0개, E 0개(픽스처·통과 단위)입니다. 전체 9지표에서는 update-sync가 네 통과 모두 19픽스처 전부에서 회귀로 표시되며(S 38개, E 38개), S②의 nested-d5-f4 update-settled-net 1개가 더 있습니다. update-sync의 같은 방향은 [D4 update-sync 표](../design-optimization/d4-results.md#update-sync)에도 기록돼 있습니다. 플래그는 러너의 처리량 감소>15% 및 Welch p<0.05를 그대로 사용하며 관문이나 제품 동치 증명으로 바꾸지 않습니다.
 
 시작 관측은30초 한 번이며 거절0회·각0표본입니다. 시작 후 관측CPU는원시에만 남겼고 중단 조건으로 쓰지 않았습니다. 관측 상위10개에는 측정 자식도 포함될 수 있습니다. 빌드·시험·lint·원장검사는 시간 측정과 겹치지 않았습니다. 정식 실행 실패와 완료표본 재측정은0입니다. 준비는 지정 재귀build와 CLI mount/update smoke를 사용했고 기존 runner 바이트를 바꾸지 않았습니다.
 
@@ -461,6 +461,7 @@ L0.16.1의 힙은 미측정입니다. Ⅳ-0·Ⅳ-4·Ⅳ-5의 기존 힙 러너�
 | [#492](https://github.com/vincent-kk/albatrion/pull/492) | `d5151bd79` docs(schema-form): design Ⅳ-1 (local wheel) unadopted — two windows (weighted exchange +299 / +4,821 µs), two independent reviews, event weights table and judgment device; product candidate kept unmerged on perf/schema-form-iv-1-local-wheel (#492) |
 | [#493](https://github.com/vincent-kk/albatrion/pull/493) | `ca62e098c` docs(schema-form): preserve unadopted IV-2 evaluation records (#493) |
 | [#494](https://github.com/vincent-kk/albatrion/pull/494) | `60dd7a90f` chore(schema-form): micro hygiene — pointer constants, indexOf and single loops, bounded temporaries, minLite/maxLite, no prototype iteration, declare utility types (#494) |
+| 직접 단계 커밋(PR 없음) | `510962d63` refactor(schema-form): drop 2 load-time import aliases kept for harness speed · 외부 오류 전달과 정규 경로 판별의 적재 시점 import 별칭2개 제거; 원래71커밋에 포함 |
 | [#495](https://github.com/vincent-kk/albatrion/pull/495) | `c5cb20f87` perf(schema-form): Ⅳ-3-0 function-level profile of one branch switch — branch A closed (0.48 µs of a 98 µs round trip), branch B not started (attributable 1.84 µs, 7.1 µs on the window scale), 3 rows × 20000 operations, V8 sampling weighted by measured intervals (#495) |
 | [#496](https://github.com/vincent-kk/albatrion/pull/496) | `2eaa0e1f8` perf(schema-form): Ⅳ-4 small-cuts bundle — 5 cuts adopted by owner exception (payload-12 −20 %, leaf-gate-4000/8000 −9 %, switch-if −9 %, discriminator −7 %; siblings-4000 +42 µs and Bun heap +0.12 % recorded) (#496) |
 | [#497](https://github.com/vincent-kk/albatrion/pull/497) | `0f11c2fe2` perf(schema-form): Ⅳ-5 three-lane milestone — design Ⅳ end vs 0.16.1 and stage start, 22 rows; measurement only, reach line pending owner (#497) |
@@ -520,36 +521,36 @@ B11은 떼어진 읽기를 마지막 커밋에 고정한 채 쓰기를 무동작
 
 ## 남은 항목과 병합 순서
 
-최신 소유자 지시가 최초 마감 brief의 스택 병합 계획을 대체합니다. 코디네이터는 마감 문서 PR을 단계 가지에 넣고 #472를 `feat/schema-form-08-review-and-perf`에 스쿼시 병합합니다. 이어 분기 전환 루트 PR의 base도08가지로 삼고 분기 전환 변화만 한 커밋으로 스쿼시 병합합니다. 앞 단계가 포함된 옛 스택을 새08가지에 중복시키지 않도록 스쿼시 뒤 base 차분을 다시 확인합니다. 목적지는master가 아닙니다. 두 단계 가지와 잉여 작업 가지는 필요한 자료의 본선 보존 뒤 코디네이터가 삭제하며 이 작업자는 삭제하지 않습니다.
+최신 소유자 지시가 최초 마감 brief의 스택 병합 계획을 대체합니다. 코디네이터는 #472를 `feat/schema-form-08-review-and-perf`에 스쿼시 병합하고 마감 문서 PR을 단계 가지에 넣습니다. #472는 `2f9bcb8e3`로 병합됐으며, 분기 전환 루트 PR은 그 머리 위에 만든 새 단일 커밋 가지에서 엽니다. 이어 분기 전환 루트 PR의 base도08가지로 삼고 분기 전환 변화만 한 커밋으로 스쿼시 병합합니다. 앞 단계가 포함된 옛 스택을 새08가지에 중복시키지 않도록 스쿼시 뒤 base 차분을 다시 확인합니다. 목적지는master가 아닙니다. 두 단계 가지와 잉여 작업 가지는 필요한 자료의 본선 보존 뒤 코디네이터가 삭제하며 이 작업자는 삭제하지 않습니다.
 
 그 뒤 열린PR은 #445(08→1.0.0-beta)·우산초안#344뿐이며 버전과 이 둘의 병합은Vincent가 직접 정합니다. 9단계는 새 지시 뒤 시작합니다. 레거시 디렉터리 제거·타입 보강·문서 정리·릴리스 전 벤치/번들/모바일 확인, 대기열59와P1 전체 프로토콜, strict-production의 기존 Vitest transform 경로·freeze117>111, 기존FCA FAIL·indeterminate는 이 성능 마감으로 닫지 않았습니다.
 
 ## 가지 정리
 
-조사 시점은2026-10-30T07:45:01.876150+00:00이며 원격 heads10개와 로컬 가지를 함께 읽었습니다. master·1.0.0-beta·feat/schema-form-08-review-and-perf는 기준 가지로 남기고 아래표에서 제외합니다. 같은 이름의 로컬/원격 머리가 같으면 한 행, gh-pages처럼 다르면 각각 적었습니다. 총16개 머리 중 운영2개는 정리 대상이 아닙니다. `.github/workflows`의 이름 참조도 확인했으며 추가 정리 제외 가지는 없었습니다. 실제 삭제는 하지 않았습니다.
+조사 갱신 시점은2026-10-30T09:14:56.686754+00:00이며 원격 heads11개와 로컬 가지를 함께 읽었습니다. master·1.0.0-beta·feat/schema-form-08-review-and-perf는 기준 가지로 남기고 아래표에서 제외합니다. 같은 이름의 로컬/원격 머리가 같으면 한 행, gh-pages처럼 다르면 각각 적었습니다. 총16개 머리 중 운영2개는 정리 대상이 아닙니다. `.github/workflows`의 이름 참조도 확인했으며 추가 정리 제외 가지는 없었습니다. 실제 삭제는 하지 않았습니다.
 
-**현재 단계 본선**은 `0f11c2fe2`, 두 스쿼시 뒤 **최종 본선**은08가지입니다. 조사 시점에는 두 스쿼시가 미실행이므로 미래 도달성을 완료형으로 쓰지 않습니다. 단계 가지는 squash-merged 예정이며, 현재 단계에 이미 포함된 작업의 내용도 그 스쿼시로 옮깁니다. 커밋 정체성이 압축으로 사라지는 것과 내용 유실을 구분합니다.
+**현재 단계 본선**은 `0f11c2fe2`, 두 스쿼시 뒤 **최종 본선**은08가지입니다. #472의 스쿼시 병합은2f9bcb8e3로 완료됐고 분기 전환 스쿼시는 미실행입니다. 분기 전환 단계의 내용은2f9bcb8e3 위 새 단일 커밋 가지로 옮겨 루트 PR에서 병합합니다. 커밋 정체성이 압축으로 사라지는 것과 내용 유실을 구분합니다.
 
 | 가지 | 위치 | 조사한 tip SHA | 내용·최종 본선 관계 | 분류 | 보존·처리 |
 | --- | --- | --- | --- | --- | --- |
 | backup/1.0.0-beta-2026-10-15 | 원격·로컬 | `42d1c2318ff4392d4d981c4f374158c9dbf033d3` | 압축 전 이력 백업; 현재1.0.0-beta(42d63884d)와 전체 tree 동일 | 임시 데이터 | 내용이 본선에 있음을 전체 tree 차분0으로 확인; 코디네이터 삭제 |
 | feat/schema-form-branch-switch | 원격·로컬 | `0f11c2fe2b769ea78185de7fb9057599c913cff7` | 단계 제품·기록; 08에 squash-merged 예정; 현재는 미병합 | 임시 데이터 | 단계 현재 본선에 포함;08 스쿼시 뒤 임시 가지 삭제 |
-| feat/schema-form-design-optimization | 원격·로컬 | `b8db539975e012b336e2878f7ef735ea7391f4de` | 단계 제품·기록; 08에 squash-merged 예정; 현재는 미병합 | 임시 데이터 | 단계 현재 본선에 포함;08 스쿼시 뒤 임시 가지 삭제 |
+| feat/schema-form-design-optimization | 원격·로컬 | `b8db539975e012b336e2878f7ef735ea7391f4de` | 단계 제품·기록; #472로08가지에 squash-merged 완료(2f9bcb8e3) | 임시 데이터 | 단계 현재 본선에 포함;08 스쿼시 뒤 임시 가지 삭제 |
 | gh-pages | 원격 | `6b5158911d2cc30888f74b74ec52fd0ca6a899f5` | 배포 산출물·운영 이력; 정리 제외; 본선 포함 여부가 유지 조건이 아님 | 운영 가지(유지) | 배포 운영에 사용하므로 유지 |
-| perf/schema-form-d2-sibling-linear | 원격·로컬 | `4681c0aff635800fb35c13be0cf3472cd4b1afbe` | D2-P5 정적 자식 준비·형제 선형항 실험; 미병합 D2-P5 전체 후보를 분기점 대비 본선 패치로 이관 | 작업 데이터 | [필요 내용의 압축 패치](../../_archive/branches/4681c0aff635.patch.gz); 병합 뒤 코디네이터 삭제 |
+| perf/schema-form-d2-sibling-linear | 원격·로컬 | `4681c0aff635800fb35c13be0cf3472cd4b1afbe` | D2-P5 정적 자식 준비·형제 선형항 실험; 미병합 D2-P5 전체 후보를 분기점 대비 본선 패치로 이관 | 작업 데이터 | [필요 내용의 압축 패치](../../_archive/branches/4681c0aff635.patch.gz); 병합 뒤 코디네이터 삭제  · [끝 커밋의 보류·재개 기록](../../_archive/branches/4681c0aff635-d2-p5-results.md.gz) |
 | perf/schema-form-iv-1-local-wheel | 원격·로컬 | `56e16d5f52a3244727cdbdcc852b0dc2a3a59835` | 미채택 국소 바퀴 제품 후보·검증; 현재 제품에 없는 작업 내용은 본선 압축 패치로 이관 | 작업 데이터 | [필요 내용의 압축 패치](../../_archive/branches/56e16d5f52a3.patch.gz); 병합 뒤 코디네이터 삭제 |
 | perf/schema-form-iv-2-switch-constants | 원격·로컬 | `5aee0fa24b45199d8b2c231d74fffbac3c90e3ab` | 미채택 scratch 재사용 제품 후보·검증; 현재 제품에 없는 작업 내용은 본선 압축 패치로 이관 | 작업 데이터 | [필요 내용의 압축 패치](../../_archive/branches/5aee0fa24b45.patch.gz); 병합 뒤 코디네이터 삭제 |
-| docs/schema-form-branch-switch-closing | 로컬 | `0f11c2fe2b769ea78185de7fb9057599c913cff7` | 병합·대체된 작업 머리 또는 worktree 잔여; 현재 단계에 포함 | 임시 데이터 | 단계 현재 본선에 포함;08 스쿼시 뒤 임시 가지 삭제 |
+| docs/schema-form-branch-switch-closing | 원격·로컬 | `ad71b5bb9f9488f23560f90ff314ece805c5b14e` | 현재 마감 문서·보고·보존물; 마감 PR 반영 뒤 내용은 단계 본선에 포함 | 임시 데이터 | 현재 원격 머리를 확인; 마감·루트 PR 병합과 보존 뒤 코디네이터 삭제 |
 | gh-pages | 로컬 | `501083f21b156d5324ccf653de1391606ff8dc32` | 배포 산출물·운영 이력; 정리 제외; 본선 포함 여부가 유지 조건이 아님 | 운영 가지(유지) | 배포 운영에 사용하므로 유지 |
 | perf/schema-form-b9-0-costmap | 로컬 | `09c7b3544cfdd08312e5a17a53e32a0c05e7dd2e` | B9-0 함수·단계 비용 지도 측정 작업; 현재 제품에 없는 작업 내용은 본선 압축 패치로 이관 | 작업 데이터 | [필요 내용의 압축 패치](../../_archive/branches/09c7b3544cfd.patch.gz); 병합 뒤 코디네이터 삭제 |
-| perf/schema-form-iv-5-milestone | 로컬 | `093cd53c78a697e6f251005d7bb5481758013d8f` | Ⅳ-5 세 레인 측정 작업; 제품 미병합; 원격 PR head가 후보를 보존(가지 삭제와 독립) | 작업 데이터 | 기준 가지/PR head에 도달; 내용 색인 후 삭제 |
+| perf/schema-form-iv-5-milestone | 로컬 | `093cd53c78a697e6f251005d7bb5481758013d8f` | Ⅳ-5 세 레인 측정 작업 머리; tree가 단계 머리 0f11c2fe2와 동일(#497 스쿼시) | 임시 데이터 | 내용이 본선에 있음을 전체 tree 차분0으로 확인; 코디네이터 삭제 |
 | vincent-kk/branch-switch-closing | 로컬 | `0f11c2fe2b769ea78185de7fb9057599c913cff7` | 병합·대체된 작업 머리 또는 worktree 잔여; 현재 단계에 포함 | 임시 데이터 | 단계 현재 본선에 포함;08 스쿼시 뒤 임시 가지 삭제 |
 | vincent-kk/branch-switch-iv-4 | 로컬 | `510962d634c94dc56be808b693d76aa86e4af11a` | 병합·대체된 작업 머리 또는 worktree 잔여; 현재 단계에 포함 | 임시 데이터 | 단계 현재 본선에 포함;08 스쿼시 뒤 임시 가지 삭제 |
 | vincent-kk/branch-switch-iv-5 | 로컬 | `2eaa0e1f8222655628572639ce3a410f3a55c007` | 병합·대체된 작업 머리 또는 worktree 잔여; 현재 단계에 포함 | 임시 데이터 | 단계 현재 본선에 포함;08 스쿼시 뒤 임시 가지 삭제 |
 | vincent-kk/design-opt-d0-defects | 로컬 | `99e7a38e24257d81ba3f22bd0d2b7b918063f055` | 병합·대체된 작업 머리 또는 worktree 잔여; 단계 본선 eb90e225f와 전체 tree 동일; 결함 시험 내용은 본선에 있음 | 임시 데이터 | 내용이 본선에 있음을 전체 tree 차분0으로 확인; 코디네이터 삭제 |
 | vincent-kk/design-opt-d0-tools | 로컬 | `947a4335202e8162de80caf30ae9e6f0a44c1e4b` | 병합·대체된 작업 머리 또는 worktree 잔여; 단계 본선 bc0fb3d0a와 전체 tree 동일; D0 측정 자료는 본선에 있음 | 임시 데이터 | 내용이 본선에 있음을 전체 tree 차분0으로 확인; 코디네이터 삭제 |
 
-[본선 보존물 색인](../../_archive/branches/README.md)에 미병합 국소바퀴·scratch·D2-P5·비본선 측정 후보와 인용 커밋의 필요한 내용만 옮겼습니다. **압축 패치173개, 전체 보존 묶음2,033,456바이트(5MB 상한 아래)**입니다. D2-P5의 마지막 머리는 문서만 바꾼 정지 체크포인트이므로 그 분기점 `53d49ca94` 대비31파일의 전체 제품 후보를 따로 보존했습니다. 나머지는 각 기록된 부모 대비 src·시험·DETAIL·측정 도구의 변경입니다. 생성 산출물·본선에 있는 원시·다른 패키지의 무관한 차분을 복제하지 않았습니다.
+[본선 보존물 색인](../../_archive/branches/README.md)에 미병합 국소바퀴·scratch·D2-P5·비본선 측정 후보와 인용 커밋의 필요한 내용만 옮겼습니다. **압축 패치173개·보류/재개 기록1개, 전체 보존 묶음2,014,119바이트(5MB 상한 아래)**입니다. D2-P5의 마지막 머리는 문서만 바꾼 정지 체크포인트이므로 그 분기점 `53d49ca94` 대비31파일의 전체 제품 후보를 따로 보존했습니다. 나머지는 각 기록된 부모 대비 src·시험·DETAIL·측정 도구의 변경입니다. 생성 산출물·본선에 있는 원시·다른 패키지의 무관한 차분을 복제하지 않았습니다.
 
 ### 문서 인용 SHA 감사
 
@@ -583,3 +584,6 @@ SHA 형태 토큰2628개 중 실제 commit으로 확인한 표기1424개를 mast
 
 제품 소스·시험을 변경하지 않았으므로 제품 전체 시험과 FCA scan을 새로 실행하지 않았습니다. 이 마감의 새 실행은 지정 재귀build와 CLI smoke, React 보고, 원장 검사 및 자료 보존 검사입니다. 기존 제품 검증은 [Ⅳ-4 복원 머리의 증거](iv-4-results.md#예외-채택-복원-머리의-마감-확인)를 인용하며 기존 FCA FAIL·indeterminate를 통과로 바꾸지 않습니다. 빌드 산출물은 커밋하지 않습니다.
 
+### 마감 관문 수정 재검증(2026-10-30)
+
+관문 검토의 F1~F8과 코디네이터의 추가 항목을 반영했습니다. D2-P5의 끝 커밋에만 있던106행 보류·재개 기록은15행의 기계 경로 한 곳만 표식으로 바꿔 보존했습니다. 464C-08·09와 원장 복사본은 이 수정 지시에 따라 링크의 커밋SHA 고정과 병합 순서를 함께 고쳤습니다. 기존 라운드 기록은 그대로이며, 0f11c2fe2 기준의 기존 줄 보존과 제품 차분0을 재확인했습니다. 전체9지표의 회귀 플래그 범위, PR 없는 직접 제품 커밋510962d63, #472 병합 머리2f9bcb8e3 위 새 단일 커밋 가지에서 여는 루트 PR 절차를 명시했습니다. 원장 검사는 모두 같은 결과이고 보존 패치173개·기록1개의 대조, 상대 링크와 기계 경로 검사도 통과했습니다. 두 PR 본문의 링크는 다른 수정을 push한 머리의40자 SHA로 고정하고 그 커밋의 파일 객체를 검증한 뒤 인계합니다.

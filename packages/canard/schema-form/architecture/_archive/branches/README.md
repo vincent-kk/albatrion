@@ -56,7 +56,7 @@
 | 인용된 미병합 후보 | `42ae7daafdf2b39867ed2a54293cd315f27702c6` | `61f0d31f3257aef2e3c6d309cff408d9dc011ccb` | [42ae7daafdf2.patch.gz](42ae7daafdf2.patch.gz) · 본선에 없는 1개 파일의 후보 내용 |
 | 인용된 미병합 후보 | `439fda3219ec6b42efbef4d7fa0f02a40111453f` | `6b5758ec82f578bf5e224edb72f161d2ff927359` | [439fda3219ec.patch.gz](439fda3219ec.patch.gz) · 본선에 없는 4개 파일의 후보 내용 |
 | 인용된 미병합 후보 | `4472194bc176cbf1d268a4ae3c3cc35689b21afb` | `04c58cee3655dd3d293db22f91de740c56788365` | [4472194bc176.patch.gz](4472194bc176.patch.gz) · 본선에 없는 2개 파일의 후보 내용 |
-| perf/schema-form-d2-sibling-linear | `4681c0aff635800fb35c13be0cf3472cd4b1afbe` | `53d49ca94cb43a70d1ccdb1cddc0cedb5d6c3047` | [4681c0aff635.patch.gz](4681c0aff635.patch.gz) · 문서만 바꾼 마지막 커밋이 아니라 D2-P5 분기점 대비 구현·시험·DETAIL 31파일의 전체 후보 |
+| perf/schema-form-d2-sibling-linear | `4681c0aff635800fb35c13be0cf3472cd4b1afbe` | `53d49ca94cb43a70d1ccdb1cddc0cedb5d6c3047` | [4681c0aff635.patch.gz](4681c0aff635.patch.gz) · 문서만 바꾼 마지막 커밋이 아니라 D2-P5 분기점 대비 구현·시험·DETAIL 31파일의 전체 후보  · 끝 커밋의 보류·재개 기록 [4681c0aff635-d2-p5-results.md.gz](4681c0aff635-d2-p5-results.md.gz)(15행의 기계 경로만 표식으로 바꿈) |
 | 인용된 미병합 후보 | `4807a8d23c45e88a50b2b07a14d74a3f8164c51e` | `53d49ca94cb43a70d1ccdb1cddc0cedb5d6c3047` | [4807a8d23c45.patch.gz](4807a8d23c45.patch.gz) · 본선에 없는 2개 파일의 후보 내용 |
 | 인용된 미병합 후보 | `4990f0256a76035271ff9ffee1db203f5d978d44` | `f56d470b32d36aa14b913691dce7b41efefe5b02` | [4990f0256a76.patch.gz](4990f0256a76.patch.gz) · 본선에 없는 1개 파일의 후보 내용 |
 | 인용된 미병합 후보 | `4ccfd34179c9cf6c6030c92d3b3abf4361c22d94` | `ed9be03c27f83514ca339cda0bad47a812e47ac1` | [4ccfd34179c9.patch.gz](4ccfd34179c9.patch.gz) · 본선에 없는 6개 파일의 후보 내용 |
@@ -185,3 +185,5 @@
 객체로 확인하지 못한 토큰 1204개는 도달로 간주하지 않습니다. 이 중 숫자형 토큰 776개와 예시 표기·축약 아티팩트 해시·없는 과거 SHA를 감사 원시에 분리했습니다. 없는 객체의 내용을 지어내거나 복원했다고 주장하지 않습니다.
 
 기존 reviews 기록66개의 덧붙임은 코디네이터의 정정 지시로 원상 복구했습니다. 이전 라운드64개와 대기열·제안서2개를 포함합니다. 해당 기록의 SHA 조회는 정렬된 cited-commits.tsv와 이 표가 맡고, 결과·계획·원장의 허용된 보충만 유지합니다.
+
+원격 PR head로 닿는 커밋은 색인하지 않으며 https://github.com/vincent-kk/albatrion/commit/<SHA> 주소로 열립니다. cited-commits.tsv는 조사한 도달 집합 밖 인용 커밋의 색인입니다.
