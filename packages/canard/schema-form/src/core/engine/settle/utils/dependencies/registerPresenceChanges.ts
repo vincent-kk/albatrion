@@ -52,17 +52,6 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
   const owners = new Set<string>();
   const ownerStamps = new Map<string, number>();
   const stateOnly = new Set<string>();
-  const presenceWork =
-    names.length > 1
-      ? {
-          owners: new Set<string>(),
-          stateOnly: new Set<string>(),
-          outerTemplates: new Set<string>(),
-          directTemplates: new Set<string>(),
-          ancestorOwners: new Set<string>(),
-          direct: new Set<string>(),
-        }
-      : undefined;
   let marked = false;
   for (const name of names) {
     const rawName = parsePointerSegment(name);
@@ -95,7 +84,6 @@ export const registerPresenceChanges = <Self extends FieldNodeRecord<Self>>(
       context.presenceMetrics,
       context,
       context.root.runtime,
-      presenceWork,
     );
     for (const owner of affected.owners) {
       owners.add(owner);
