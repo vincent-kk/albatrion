@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-30T04:43:55.766Z",
+  "kind": "ps-reported-cpu",
+  "gating": false,
+  "rows": [
+    {
+      "pid": 436,
+      "cpuPercent": 8.1,
+      "name": "WindowServer"
+    },
+    {
+      "pid": 1056,
+      "cpuPercent": 8.1,
+      "name": "Stats"
+    },
+    {
+      "pid": 515,
+      "cpuPercent": 3.3,
+      "name": "mds_stores"
+    },
+    {
+      "pid": 9295,
+      "cpuPercent": 2.1,
+      "name": "Cursor Helper (Plugin): extension-host (user) albatrion [1-1]"
+    },
+    {
+      "pid": 441,
+      "cpuPercent": 1.7,
+      "name": "runningboardd"
+    },
+    {
+      "pid": 430,
+      "cpuPercent": 1.6,
+      "name": "notifyd"
+    },
+    {
+      "pid": 9215,
+      "cpuPercent": 1.6,
+      "name": "Cursor Helper (Renderer)"
+    },
+    {
+      "pid": 9324,
+      "cpuPercent": 1.1,
+      "name": "Cursor Helper: fileWatcher [1:b8f6554948604aa83bbf23b79e3bbb20]"
+    },
+    {
+      "pid": 369,
+      "cpuPercent": 0.9,
+      "name": "fseventsd"
+    },
+    {
+      "pid": 378,
+      "cpuPercent": 0.9,
+      "name": "configd"
+    }
+  ]
+}

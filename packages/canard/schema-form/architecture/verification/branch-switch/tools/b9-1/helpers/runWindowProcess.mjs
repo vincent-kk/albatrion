@@ -16,7 +16,7 @@ export async function runWindowProcess(
   invalidAllowed = false,
 ) {
   const { root, agentPid, here } = context;
-  if (executable !== process.execPath) {
+  if (executable !== process.execPath && !context.continuousCpu) {
     const beforeChild = await waitForQuietProcess({ agentPid });
     fs.writeFileSync(
       path.join(root, 'quiet-' + label + '.json'),
@@ -28,6 +28,11 @@ export async function runWindowProcess(
       'External CPU quiet before child start',
     );
   }
+  if (context.continuousCpu && context.observeCpu)
+    fs.writeFileSync(
+      path.join(root, 'cpu-' + label + '.json'),
+      JSON.stringify(context.observeCpu(agentPid)) + '\n',
+    );
   const startedAt = new Date().toISOString();
   const logfile = fs.openSync(path.join(root, label + '.log'), 'w');
   const errors = fs.openSync(path.join(root, label + '.stderr.log'), 'w');
@@ -43,8 +48,10 @@ export async function runWindowProcess(
           ? (
               (process.env.NODE_OPTIONS ?? '') +
               ' --import=' +
-              pathToFileURL(path.join(here, '../b8/quietWorkerPreload.mjs'))
-                .href
+              pathToFileURL(
+                context.quietPreload ??
+                  path.join(here, '../b8/quietWorkerPreload.mjs'),
+              ).href
             ).trim()
           : process.env.NODE_OPTIONS,
     },

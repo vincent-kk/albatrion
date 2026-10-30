@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 청사진의 hasWatch=false가 전체 선언의 watch 부재를 증명하면 나감 포착은 watch helper·파생 witness·값 메모를 만들거나 기존 빈 메모를 바꾸지 않습니다. nonempty watch가 가능한 폼은 기존 마지막 커밋 읽기 포착·이전 메모 제거를 유지합니다. 판정은 나감에만 O(1)로 추가되며 일반 watch 읽기와 일반 쓰기 경로는 그대로입니다. 새 상주 구조는 없고 나감마다 불필요한 watch 준비를 줄입니다.
+
 - 빠른 splice의 단일 소멸 루트는 길이 1인 배열로 전달합니다. tail 삭제 후보가 64개 이하일 때도 고유한 아이템 경로를 배열에 차례대로 모으며, 더 크면 Set을 유지합니다. 소멸 경로 정리는 경로를 순회할 뿐 멤버십 조회를 하지 않으므로 작은 호출의 Set 생성만 제거하고, 삭제할 색인 엔트리 수에 비례하는 순서와 비용을 유지합니다. 빈 호스트의 prefix 정리는 전달받은 개별 소멸 경로를 읽지 않으므로 그 미사용 인수와 빈 fallback Set을 만들지 않습니다. 새 상주 자료는 없으며 작은 tail은 Set 한 개 대신 최대 64칸의 배열 한 개를 만듭니다.
 
 - 배열 크기 변경의 스냅숏 정렬 후보는 기존 Map 순서의 단일 순회로 수집합니다. 중간 filter/map 배열은 만들지 않으며 정착 순서와 후보 조건을 유지합니다.
@@ -33,13 +35,9 @@
 
 - A clone copies an existing inactive item memo until final selection, because a same-settlement deselection must preserve its published item identity. A clone that stays active clears that memo at commit; missing item memos and empty aggregate caches never create own fields. Only a nonempty reusable aggregate cache is copied and marked dirty, while a missing cache already forces its first lazy read.
 
-
 - 떼어진 참조의 쓰기는 아무 효과가 없다. 값·overlay·현재 인스턴스를 바꾸지 않으며 개발 모드 전용 경고를 낸다. 배열 압축은 kept 아이템과 원본 overlay만 옮긴다(B11).
 
-
 - A packed array source includes the absent-item input patches that already belonged to its departure snapshot. Those patches do not publish duplicate descendant rows. A later write creates a new patch identity and retains the baseline's separate descendant publication where applicable; candidate-owned source exceptions keep their existing rules.
-
-
 
 - 지움과 함께 나가는 배열은 명시 keep 원본이 있는 아이템만 원래 순서대로 압축 보존한다. 아이템 자신과 살아 있거나 이미 비활성인 자손의 keep에 객체 호스트와 같은 정책을 적용하며 중첩 배열도 재귀한다. 닫힌 동안 inactiveValues는 압축 색인의 kept 원본을 공표하고, 재진입은 압축 배열을 복원하되 조건이 거짓인 keep은 자기 비활성 슬롯에 남긴다. 후보 소유 범위는 결과에 영향을 주지 않는다. 아이템 서브트리가 명시 keep 선언(`unsetOnInactive`가 리터럴 true가 아닌 선언)을 갖는지는 청사진이 만든 정적 사실 `hasKeepDescendants`로 읽는다. 선언이 없는 지움 배열은 아이템을 방문하지 않고 슬롯 전체를 버리며 길이 0으로 재진입하고, 방문 수는 아이템 수와 무관하게 배열 하나이다. 선언이 있는 지움 배열만 아이템 서브트리를 방문하므로 그 비용은 아이템 서브트리의 노드 수에 비례한다. 지움 없는 나감과 배열 자손이 없는 객체 호스트는 압축 경로를 타지 않으므로 아이템 방문이 더해지지 않고, 배열 자손을 품은 객체 호스트는 그 배열이 선언을 가질 때만 아이템을 방문한다. 비어 있어도 명시 keep인 배열 자손은 원본으로 세므로, 그 배열만 가진 아이템도 압축 뒤 남는다.
 - 압축 raw는 배열 재생성의 길이와 입력 값이며 공표는 kept 자손의 패치로 한다. 패치는 옛 아이템 주소에 의존하지 않는 채널 사본이며 후보별 선언 결합을 유지한다. 같은 이름의 종류별 원본을 첫 후보에 재해석하지 않으며, 보유 공간은 압축 raw와 kept 서브트리의 패치 수에 비례한다.
@@ -219,6 +217,12 @@
     | 에지    | 값 동등은 `sameValue`이므로 값이 같은 잎은 에지를 만들지 않는다                                                | SETTLE-043        |
 
   - 바뀌지 않는 원칙: SETTLE-001(단계 순서), SETTLE-042(키 순서와 수용된 사본), SETTLE-043, NODE-051, BLUEPRINT-007, WRITE-013, 공개 API.
+
+- 게이트의 projected structure 읽기는 배열 호스트가 아니고 null-prototype인 구조에서 노드 값을 한 번 조회합니다. 내부 구조는 실제 노드만 저장하며 prepared view도 baseline 노드를 own descriptor로 노출하므로 이 조회는 기존 own-key 검사와 같습니다. 배열 호스트·일반 prototype은 기존 own-key helper를 유지하고 raw/emit/extras의 임의 값 검사는 생략하지 않습니다. null 구조의 중복 descriptor 조회·사적 view의 descriptor 객체를 제거하며 추가 보유량은 없습니다.
+
+- pending gate 읽기도 배열이 아닌 null-prototype 구조에서는 실제 노드의 존재를 직접 조회하여 중복 own descriptor를 만들지 않습니다. undefined emit을 내는 노드와 노드 부재는 구별하고 일반 prototype·배열 호스트는 기존 own-key 검사를 유지합니다. 추가 보유량은 없습니다.
+
+- 게이트 등록의 memo와 edge map은 기존 live path 레코드가 함께 소유하며 node 키 WeakMap 둘에 중복 삽입하지 않습니다. 조회는 register가 현재 node identity를 확인한 뒤 수행하고 퇴장·동일 경로 교체에서 새 수명을 다시 결합합니다. 등록당 두 WeakMap 삽입과 두 약한 색인을 제거하며 기존 map 둘·등록 레코드 외의 상주 구조는 없습니다.
 
 ## Structure
 
@@ -797,6 +801,26 @@
 - 준비된 정적 자식의 control/default 조회는 커밋 경로 조회를 반복하지 않으며 derive도 같은 정적 ID를 사용한다. 형제 1,000의 커밋 선언 키 계산은 상수 상한을 지킨다.
 - required가 같은 형제 전환은 기존 자식 required 읽기 0회다. required 배열이 바뀌면 같은 자식의 required가 양방향으로 갱신되고, 배열이 같은 경우에도 새 진입 자식은 required를 받는다.
 - 두 호스트의 진입 자식은 각각 자신의 목록으로만 required 계산에 전달한다. 정수 이름은 오름차순 우선이고 나머지는 진입 순서를 보존하며, 01과 배열 색인 상한 밖 이름은 일반 문자열로 취급한다.
+
+### settle-empty-watch-snapshot — watch 없는 청사진의 나감 포착
+
+- hasWatch=false의 나감은 노드 watch 파생 조회·새 값 메모가 0이고 기존 빈 메모도 같은 객체입니다. nonempty가 가능한 청사진은 마지막 선택이 빈 목록이더라도 기존 포착으로 이전 메모를 대체합니다. nonempty snapshot과 공유 동결 빈 결과는 나감 뒤 원본 변화에도 고정됩니다.
+
+### settle-projected-structure-read — 자체 노드 조회와 후퇴
+
+- null Dictionary와 prepared view의 projected 자식 읽기는 own descriptor 조회가 0입니다. constructor·__proto__·toString 자체 이름은 그대로 읽고 일반 prototype의 상속 노드는 무시합니다. 배열 호스트의 빈 자리와 값은 기존 own-key 경로로 확인합니다.
+
+### settle-pending-structure-read — pending 호스트 노드의 존재
+
+- null Dictionary·prepared view는 descriptor 조회 없이 기존 노드의 존재를 구별합니다. prototype 이름의 undefined emit 노드는 호스트를 조기 flush하지 않으며 실제 부재·상속 노드만 있는 경우에는 기존 flush를 수행합니다.
+
+### settle-gate-registry-storage — live 등록 레코드의 메모 소유
+
+- gate-free live 노드의 register는 node 키 WeakMap 삽입이 0이며 반복 register는 같은 발생을 유지합니다. 동일 경로의 새 node는 새 발생을 받고, 옛 node remove는 새 node 등록을 제거하지 않습니다. 현재 node를 제거한 뒤 다시 등록하면 발생도 새로 만듭니다.
+
+### settle-assembly-order-witness — 순위 작성기와 소비자의 연결
+
+- 실제 getSlotChildIndex가 만든 색인의 각 이름 첫 값은 첫 childEntries 위치입니다. 소비자인 objectBehavior의 진입점을 통해 동명 이종 template에도 첫 이름 순서를 지키고, 준비 뒤 dormant 항목 읽기가0임을 함께 검증합니다.
 
 ## Boundary Exemptions
 

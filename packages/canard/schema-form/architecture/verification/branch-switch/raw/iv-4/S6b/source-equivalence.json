@@ -1,0 +1,21 @@
+{
+  "method": "Git blob IDs for src product files; verification directories, test/benchmark files and Markdown excluded. Immutable input manifests are preserved.",
+  "lanes": [
+    {
+      "lane": "A",
+      "preparedHead": "67641f19d98171e4cbc67144d85484c271b1b263",
+      "logicalHead": "74cae6cf3728ba645cfb92e90193e0c975ad7025",
+      "productSourceSha256": "5ba6f7fdad7435af4197806b341d2c1bc40233cb3f7d8bf2e24a729880b4c885",
+      "files": 1302,
+      "equivalent": true
+    },
+    {
+      "lane": "B",
+      "preparedHead": "289538f96602a86e823ea5fb2b5d77e5b4ccf26e",
+      "logicalHead": "289538f96602a86e823ea5fb2b5d77e5b4ccf26e",
+      "productSourceSha256": "1ad627cfde71ead4e017656e13f8848c2ff205de1aea0ce4f406d790a8237d00",
+      "files": 1302,
+      "equivalent": true
+    }
+  ]
+}

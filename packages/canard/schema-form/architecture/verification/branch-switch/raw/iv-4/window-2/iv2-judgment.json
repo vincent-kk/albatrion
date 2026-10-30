@@ -1,0 +1,1700 @@
+{
+  "wideBucketHeap": {
+    "rows": [
+      {
+        "runtime": "node",
+        "historyBuckets": 2,
+        "lanes": {
+          "A": {
+            "timed": false,
+            "measurement": "resident-heap",
+            "coordinator": "msg_62de4b2d1f33",
+            "smoke": false,
+            "runtime": "node",
+            "version": "v26.12.1",
+            "lane": "A",
+            "staticFields": 1000,
+            "literalBranches": 80,
+            "historyBuckets": 2,
+            "writesPerForm": 80,
+            "sampleCount": 7,
+            "formsCreated": 7,
+            "samples": [
+              {
+                "beforeBytes": 8938304,
+                "afterBytes": 19538680,
+                "retainedBytes": 10600376
+              },
+              {
+                "beforeBytes": 16868536,
+                "afterBytes": 19727264,
+                "retainedBytes": 2858728
+              },
+              {
+                "beforeBytes": 17183248,
+                "afterBytes": 19867328,
+                "retainedBytes": 2684080
+              },
+              {
+                "beforeBytes": 17374552,
+                "afterBytes": 19835184,
+                "retainedBytes": 2460632
+              },
+              {
+                "beforeBytes": 17372264,
+                "afterBytes": 20001672,
+                "retainedBytes": 2629408
+              },
+              {
+                "beforeBytes": 17532752,
+                "afterBytes": 20031440,
+                "retainedBytes": 2498688
+              },
+              {
+                "beforeBytes": 17575224,
+                "afterBytes": 20080440,
+                "retainedBytes": 2505216
+              }
+            ],
+            "medianBytes": 2629408,
+            "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+            "maxBytes": 10600376
+          },
+          "B": {
+            "timed": false,
+            "measurement": "resident-heap",
+            "coordinator": "msg_62de4b2d1f33",
+            "smoke": false,
+            "runtime": "node",
+            "version": "v26.12.1",
+            "lane": "B",
+            "staticFields": 1000,
+            "literalBranches": 80,
+            "historyBuckets": 2,
+            "writesPerForm": 80,
+            "sampleCount": 7,
+            "formsCreated": 7,
+            "samples": [
+              {
+                "beforeBytes": 8938568,
+                "afterBytes": 19469184,
+                "retainedBytes": 10530616
+              },
+              {
+                "beforeBytes": 16857904,
+                "afterBytes": 19620472,
+                "retainedBytes": 2762568
+              },
+              {
+                "beforeBytes": 17172264,
+                "afterBytes": 19828808,
+                "retainedBytes": 2656544
+              },
+              {
+                "beforeBytes": 17364664,
+                "afterBytes": 19763920,
+                "retainedBytes": 2399256
+              },
+              {
+                "beforeBytes": 17360584,
+                "afterBytes": 19935856,
+                "retainedBytes": 2575272
+              },
+              {
+                "beforeBytes": 17521240,
+                "afterBytes": 19964904,
+                "retainedBytes": 2443664
+              },
+              {
+                "beforeBytes": 17563640,
+                "afterBytes": 20013768,
+                "retainedBytes": 2450128
+              }
+            ],
+            "medianBytes": 2575272,
+            "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+            "maxBytes": 10530616
+          }
+        },
+        "passed": true
+      },
+      {
+        "runtime": "node",
+        "historyBuckets": 80,
+        "lanes": {
+          "A": {
+            "timed": false,
+            "measurement": "resident-heap",
+            "coordinator": "msg_62de4b2d1f33",
+            "smoke": false,
+            "runtime": "node",
+            "version": "v26.12.1",
+            "lane": "A",
+            "staticFields": 1000,
+            "literalBranches": 80,
+            "historyBuckets": 80,
+            "writesPerForm": 80,
+            "sampleCount": 7,
+            "formsCreated": 7,
+            "samples": [
+              {
+                "beforeBytes": 8938456,
+                "afterBytes": 20716216,
+                "retainedBytes": 11777760
+              },
+              {
+                "beforeBytes": 17410232,
+                "afterBytes": 20657232,
+                "retainedBytes": 3247000
+              },
+              {
+                "beforeBytes": 17675944,
+                "afterBytes": 20843408,
+                "retainedBytes": 3167464
+              },
+              {
+                "beforeBytes": 17858552,
+                "afterBytes": 20892064,
+                "retainedBytes": 3033512
+              },
+              {
+                "beforeBytes": 17886680,
+                "afterBytes": 21029912,
+                "retainedBytes": 3143232
+              },
+              {
+                "beforeBytes": 18046192,
+                "afterBytes": 21015376,
+                "retainedBytes": 2969184
+              },
+              {
+                "beforeBytes": 18075528,
+                "afterBytes": 21100176,
+                "retainedBytes": 3024648
+              }
+            ],
+            "medianBytes": 3143232,
+            "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+            "maxBytes": 11777760
+          },
+          "B": {
+            "timed": false,
+            "measurement": "resident-heap",
+            "coordinator": "msg_62de4b2d1f33",
+            "smoke": false,
+            "runtime": "node",
+            "version": "v26.12.1",
+            "lane": "B",
+            "staticFields": 1000,
+            "literalBranches": 80,
+            "historyBuckets": 80,
+            "writesPerForm": 80,
+            "sampleCount": 7,
+            "formsCreated": 7,
+            "samples": [
+              {
+                "beforeBytes": 8938624,
+                "afterBytes": 20469952,
+                "retainedBytes": 11531328
+              },
+              {
+                "beforeBytes": 17376272,
+                "afterBytes": 20451856,
+                "retainedBytes": 3075584
+              },
+              {
+                "beforeBytes": 17682632,
+                "afterBytes": 20626688,
+                "retainedBytes": 2944056
+              },
+              {
+                "beforeBytes": 17853608,
+                "afterBytes": 20675280,
+                "retainedBytes": 2821672
+              },
+              {
+                "beforeBytes": 17880712,
+                "afterBytes": 20809416,
+                "retainedBytes": 2928704
+              },
+              {
+                "beforeBytes": 18039408,
+                "afterBytes": 20796232,
+                "retainedBytes": 2756824
+              },
+              {
+                "beforeBytes": 18068816,
+                "afterBytes": 20882504,
+                "retainedBytes": 2813688
+              }
+            ],
+            "medianBytes": 2928704,
+            "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+            "maxBytes": 11531328
+          }
+        },
+        "passed": true
+      },
+      {
+        "runtime": "bun",
+        "historyBuckets": 2,
+        "lanes": {
+          "A": {
+            "timed": false,
+            "measurement": "resident-heap",
+            "coordinator": "msg_62de4b2d1f33",
+            "smoke": false,
+            "runtime": "bun",
+            "version": "1.4.4",
+            "lane": "A",
+            "staticFields": 1000,
+            "literalBranches": 80,
+            "historyBuckets": 2,
+            "writesPerForm": 80,
+            "sampleCount": 7,
+            "formsCreated": 7,
+            "samples": [
+              {
+                "beforeBytes": 1467338,
+                "afterBytes": 15336980,
+                "retainedBytes": 13869642
+              },
+              {
+                "beforeBytes": 15319904,
+                "afterBytes": 16174637,
+                "retainedBytes": 854733
+              },
+              {
+                "beforeBytes": 7849051,
+                "afterBytes": 16375612,
+                "retainedBytes": 8526561
+              },
+              {
+                "beforeBytes": 8082470,
+                "afterBytes": 16417515,
+                "retainedBytes": 8335045
+              },
+              {
+                "beforeBytes": 8127768,
+                "afterBytes": 16660698,
+                "retainedBytes": 8532930
+              },
+              {
+                "beforeBytes": 16627288,
+                "afterBytes": 16869814,
+                "retainedBytes": 242526
+              },
+              {
+                "beforeBytes": 8515892,
+                "afterBytes": 16835529,
+                "retainedBytes": 8319637
+              }
+            ],
+            "medianBytes": 8335045,
+            "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+            "maxBytes": 13869642
+          },
+          "B": {
+            "timed": false,
+            "measurement": "resident-heap",
+            "coordinator": "msg_62de4b2d1f33",
+            "smoke": false,
+            "runtime": "bun",
+            "version": "1.4.4",
+            "lane": "B",
+            "staticFields": 1000,
+            "literalBranches": 80,
+            "historyBuckets": 2,
+            "writesPerForm": 80,
+            "sampleCount": 7,
+            "formsCreated": 7,
+            "samples": [
+              {
+                "beforeBytes": 1467338,
+                "afterBytes": 15117589,
+                "retainedBytes": 13650251
+              },
+              {
+                "beforeBytes": 15108451,
+                "afterBytes": 15974208,
+                "retainedBytes": 865757
+              },
+              {
+                "beforeBytes": 7839368,
+                "afterBytes": 16196518,
+                "retainedBytes": 8357150
+              },
+              {
+                "beforeBytes": 8061234,
+                "afterBytes": 16241481,
+                "retainedBytes": 8180247
+              },
+              {
+                "beforeBytes": 8108172,
+                "afterBytes": 16431440,
+                "retainedBytes": 8323268
+              },
+              {
+                "beforeBytes": 8300109,
+                "afterBytes": 16582773,
+                "retainedBytes": 8282664
+              },
+              {
+                "beforeBytes": 8450961,
+                "afterBytes": 16618550,
+                "retainedBytes": 8167589
+              }
+            ],
+            "medianBytes": 8282664,
+            "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+            "maxBytes": 13650251
+          }
+        },
+        "passed": true
+      },
+      {
+        "runtime": "bun",
+        "historyBuckets": 80,
+        "lanes": {
+          "A": {
+            "timed": false,
+            "measurement": "resident-heap",
+            "coordinator": "msg_62de4b2d1f33",
+            "smoke": false,
+            "runtime": "bun",
+            "version": "1.4.4",
+            "lane": "A",
+            "staticFields": 1000,
+            "literalBranches": 80,
+            "historyBuckets": 80,
+            "writesPerForm": 80,
+            "sampleCount": 7,
+            "formsCreated": 7,
+            "samples": [
+              {
+                "beforeBytes": 1467386,
+                "afterBytes": 16924164,
+                "retainedBytes": 15456778
+              },
+              {
+                "beforeBytes": 16925038,
+                "afterBytes": 17732413,
+                "retainedBytes": 807375
+              },
+              {
+                "beforeBytes": 7938892,
+                "afterBytes": 17870729,
+                "retainedBytes": 9931837
+              },
+              {
+                "beforeBytes": 17854503,
+                "afterBytes": 17939009,
+                "retainedBytes": 84506
+              },
+              {
+                "beforeBytes": 8149621,
+                "afterBytes": 18264659,
+                "retainedBytes": 10115038
+              },
+              {
+                "beforeBytes": 8541919,
+                "afterBytes": 18314405,
+                "retainedBytes": 9772486
+              },
+              {
+                "beforeBytes": 8590671,
+                "afterBytes": 18301278,
+                "retainedBytes": 9710607
+              }
+            ],
+            "medianBytes": 9772486,
+            "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+            "maxBytes": 15456778
+          },
+          "B": {
+            "timed": false,
+            "measurement": "resident-heap",
+            "coordinator": "msg_62de4b2d1f33",
+            "smoke": false,
+            "runtime": "bun",
+            "version": "1.4.4",
+            "lane": "B",
+            "staticFields": 1000,
+            "literalBranches": 80,
+            "historyBuckets": 80,
+            "writesPerForm": 80,
+            "sampleCount": 7,
+            "formsCreated": 7,
+            "samples": [
+              {
+                "beforeBytes": 1467386,
+                "afterBytes": 16622876,
+                "retainedBytes": 15155490
+              },
+              {
+                "beforeBytes": 16623662,
+                "afterBytes": 17398948,
+                "retainedBytes": 775286
+              },
+              {
+                "beforeBytes": 17388391,
+                "afterBytes": 17610594,
+                "retainedBytes": 222203
+              },
+              {
+                "beforeBytes": 8072869,
+                "afterBytes": 17584972,
+                "retainedBytes": 9512103
+              },
+              {
+                "beforeBytes": 8122128,
+                "afterBytes": 17930195,
+                "retainedBytes": 9808067
+              },
+              {
+                "beforeBytes": 8463681,
+                "afterBytes": 17973409,
+                "retainedBytes": 9509728
+              },
+              {
+                "beforeBytes": 8505965,
+                "afterBytes": 17959854,
+                "retainedBytes": 9453889
+              }
+            ],
+            "medianBytes": 9509728,
+            "method": "Fresh form per sample, all active reads after every selection, GC before and after, form held through the after-GC counter; no timing or exchange contribution.",
+            "maxBytes": 15155490
+          }
+        },
+        "passed": true
+      }
+    ],
+    "differences": [
+      {
+        "runtime": "node",
+        "A80Minus2Bytes": 513824,
+        "B80Minus2Bytes": 353432
+      },
+      {
+        "runtime": "bun",
+        "A80Minus2Bytes": 1437441,
+        "B80Minus2Bytes": 1227064
+      }
+    ],
+    "passed": true,
+    "exchangeContribution": 0
+  },
+  "exitJudgment": {
+    "row": "switch-oneOf-80",
+    "lanes": {
+      "A": {
+        "finalizeExits": {
+          "selfUs": {
+            "median": 5.269999999995889,
+            "min": 5.02199999996833,
+            "max": 5.290000000002237,
+            "processMedians": [
+              5.290000000002237,
+              5.269999999995889,
+              5.02199999996833
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "finalizePendingExitLoop": {
+          "selfUs": {
+            "median": 4.396000000042477,
+            "min": 4.373999999955913,
+            "max": 4.895500000003494,
+            "processMedians": [
+              4.895500000003494,
+              4.373999999955913,
+              4.396000000042477
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "captureDetachedFieldNodeReads": {
+          "selfUs": {
+            "median": 5.145499999997583,
+            "min": 4.9579999999878055,
+            "max": 5.2500000000179625,
+            "processMedians": [
+              5.145499999997583,
+              4.9579999999878055,
+              5.2500000000179625
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "visitFieldNodes": {
+          "selfUs": {
+            "median": 4.3550000000038835,
+            "min": 4.146000000048389,
+            "max": 4.437500000022965,
+            "processMedians": [
+              4.3550000000038835,
+              4.437500000022965,
+              4.146000000048389
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "retainExitedSlot": {
+          "selfUs": {
+            "median": 7.334000000184915,
+            "min": 7.125499999943941,
+            "max": 7.458499999899004,
+            "processMedians": [
+              7.125499999943941,
+              7.458499999899004,
+              7.334000000184915
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "createExitSlotOverlay": {
+          "selfUs": {
+            "median": 5.460999999911564,
+            "min": 5.417500000021391,
+            "max": 5.50050000003921,
+            "processMedians": [
+              5.50050000003921,
+              5.460999999911564,
+              5.417500000021391
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "readSlotExitPolicy": {
+          "selfUs": {
+            "median": 3.790999999921496,
+            "min": 3.728999999992766,
+            "max": 3.8739999999961583,
+            "processMedians": [
+              3.8739999999961583,
+              3.728999999992766,
+              3.790999999921496
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "finalizeRetainLoop": {
+          "selfUs": {
+            "median": 2.0830000000273685,
+            "min": 2.040499999992562,
+            "max": 2.1670000000710843,
+            "processMedians": [
+              2.0830000000273685,
+              2.040499999992562,
+              2.1670000000710843
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "B": {
+        "finalizeExits": {
+          "selfUs": {
+            "median": 5.39600000001883,
+            "min": 5.248499999964906,
+            "max": 5.417500000021391,
+            "processMedians": [
+              5.248499999964906,
+              5.417500000021391,
+              5.39600000001883
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "finalizePendingExitLoop": {
+          "selfUs": {
+            "median": 4.416999999932614,
+            "min": 4.269999999991114,
+            "max": 4.561999999936006,
+            "processMedians": [
+              4.416999999932614,
+              4.269999999991114,
+              4.561999999936006
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        "captureDetachedFieldNodeReads": {
+          "selfUs": {
+            "median": 3.583499999990636,
+            "min": 3.5625000000436557,
+            "max": 3.7074999999902047,
+            "processMedians": [
+              3.5625000000436557,
+              3.583499999990636,
+              3.7074999999902047
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "visitFieldNodes": {
+          "selfUs": {
+            "median": 4.497499999985166,
+            "min": 4.229499999951258,
+            "max": 4.562000000049693,
+            "processMedians": [
+              4.229499999951258,
+              4.497499999985166,
+              4.562000000049693
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "retainExitedSlot": {
+          "selfUs": {
+            "median": 7.50149999996097,
+            "min": 7.271000000059757,
+            "max": 7.853999999952066,
+            "processMedians": [
+              7.271000000059757,
+              7.50149999996097,
+              7.853999999952066
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "createExitSlotOverlay": {
+          "selfUs": {
+            "median": 5.688999999961197,
+            "min": 5.415000000056125,
+            "max": 5.7930000000965265,
+            "processMedians": [
+              5.688999999961197,
+              5.415000000056125,
+              5.7930000000965265
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "readSlotExitPolicy": {
+          "selfUs": {
+            "median": 3.708999999957996,
+            "min": 3.686500000100068,
+            "max": 3.9785000000165383,
+            "processMedians": [
+              3.708999999957996,
+              3.686500000100068,
+              3.9785000000165383
+            ]
+          },
+          "calls": {
+            "median": 3,
+            "min": 3,
+            "max": 3,
+            "processMedians": [
+              3,
+              3,
+              3
+            ]
+          }
+        },
+        "finalizeRetainLoop": {
+          "selfUs": {
+            "median": 2.082999999970525,
+            "min": 2.081999999944628,
+            "max": 2.165499999932763,
+            "processMedians": [
+              2.081999999944628,
+              2.082999999970525,
+              2.165499999932763
+            ]
+          },
+          "calls": {
+            "median": 1,
+            "min": 1,
+            "max": 1,
+            "processMedians": [
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    "reductions": [
+      {
+        "name": "finalizeExits",
+        "A": 5.269999999995889,
+        "B": 5.39600000001883,
+        "widthUs": 0.2680000000339078,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 1,
+        "callsB": 1
+      },
+      {
+        "name": "finalizePendingExitLoop",
+        "A": 4.396000000042477,
+        "B": 4.416999999932614,
+        "widthUs": 0.5215000000475811,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 1,
+        "callsB": 1
+      },
+      {
+        "name": "captureDetachedFieldNodeReads",
+        "A": 5.145499999997583,
+        "B": 3.583499999990636,
+        "widthUs": 0.292000000030157,
+        "criterion": "decrease",
+        "passed": true,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "visitFieldNodes",
+        "A": 4.3550000000038835,
+        "B": 4.497499999985166,
+        "widthUs": 0.291499999974576,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "retainExitedSlot",
+        "A": 7.334000000184915,
+        "B": 7.50149999996097,
+        "widthUs": 0.3329999999550637,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "createExitSlotOverlay",
+        "A": 5.460999999911564,
+        "B": 5.688999999961197,
+        "widthUs": 0.08300000001781882,
+        "criterion": "decrease",
+        "passed": false,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "readSlotExitPolicy",
+        "A": 3.790999999921496,
+        "B": 3.708999999957996,
+        "widthUs": 0.14500000000339242,
+        "criterion": "decrease",
+        "passed": true,
+        "callsA": 3,
+        "callsB": 3
+      },
+      {
+        "name": "finalizeRetainLoop",
+        "A": 2.0830000000273685,
+        "B": 2.082999999970525,
+        "widthUs": 0.12650000007852213,
+        "criterion": "decrease",
+        "passed": true,
+        "callsA": 1,
+        "callsB": 1
+      }
+    ],
+    "passed": false
+  },
+  "protectedStages": [
+    {
+      "row": "single-nested-d6-f4",
+      "A": {
+        "median": 45.18750000002569,
+        "min": 43.89549999999076,
+        "max": 46.10449999998423,
+        "processMedians": [
+          46.10449999998423,
+          45.18750000002569,
+          43.89549999999076
+        ]
+      },
+      "B": {
+        "median": 44.33299999999463,
+        "min": 43.52100000002679,
+        "max": 44.54150000003665,
+        "processMedians": [
+          43.52100000002679,
+          44.33299999999463,
+          44.54150000003665
+        ]
+      },
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-1000",
+      "A": {
+        "median": 381.39549999999645,
+        "min": 380.87499999994634,
+        "max": 381.91649999998845,
+        "processMedians": [
+          381.39549999999645,
+          380.87499999994634,
+          381.91649999998845
+        ]
+      },
+      "B": {
+        "median": 379.60449999991397,
+        "min": 372.06200000008494,
+        "max": 395.58349999998654,
+        "processMedians": [
+          372.06200000008494,
+          395.58349999998654,
+          379.60449999991397
+        ]
+      },
+      "passed": true
+    },
+    {
+      "row": "switch-payload-12",
+      "A": {
+        "median": 314.50000000000955,
+        "min": 311.4789999999914,
+        "max": 319.00000000004525,
+        "processMedians": [
+          314.50000000000955,
+          319.00000000004525,
+          311.4789999999914
+        ]
+      },
+      "B": {
+        "median": 302.9795000000206,
+        "min": 300.8335000000386,
+        "max": 313.291500000048,
+        "processMedians": [
+          313.291500000048,
+          302.9795000000206,
+          300.8335000000386
+        ]
+      },
+      "passed": true
+    }
+  ],
+  "targeted": [
+    {
+      "row": "switch-oneOf-80",
+      "decision": "unproven",
+      "reductions": [
+        {
+          "name": "computeNode",
+          "A": 39.41650000001573,
+          "B": 40.583499999996775,
+          "widthUs": 1.8750000001261924,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 5,
+          "callsB": 5
+        },
+        {
+          "name": "selectChildren",
+          "A": 33.540500000043494,
+          "B": 33.81300000003762,
+          "widthUs": 0.958499999939022,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "markCommitDeliveries",
+          "A": 15.291499999989355,
+          "B": 16.646500000007336,
+          "widthUs": 1.6870000000039909,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "registerRecalculation",
+          "A": 15.041999999994005,
+          "B": 15.729000000021642,
+          "widthUs": 0.353500000016993,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "commitSettlement",
+          "A": 10.499999999979082,
+          "B": 10.812000000044009,
+          "widthUs": 0.22849999996310544,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        }
+      ],
+      "passed": false
+    },
+    {
+      "row": "switch-siblings-0",
+      "decision": "unproven",
+      "reductions": [
+        {
+          "name": "computeNode",
+          "A": 17.37600000006978,
+          "B": 17.04150000006166,
+          "widthUs": 0.3965000000221153,
+          "criterion": "decrease",
+          "passed": true,
+          "callsA": 4,
+          "callsB": 4
+        },
+        {
+          "name": "selectChildren",
+          "A": 18.521500000076685,
+          "B": 17.458500000003596,
+          "widthUs": 0.1269999999351512,
+          "criterion": "decrease",
+          "passed": true,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "markCommitDeliveries",
+          "A": 10.125000000016371,
+          "B": 10.082999999980302,
+          "widthUs": 0.8965000000387136,
+          "criterion": "decrease",
+          "passed": true,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "registerRecalculation",
+          "A": 7.833000000005086,
+          "B": 7.916499999993221,
+          "widthUs": 0.6465000000162036,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        },
+        {
+          "name": "commitSettlement",
+          "A": 3.4785000000283617,
+          "B": 3.4999999999740794,
+          "widthUs": 0.08400000001529406,
+          "criterion": "decrease",
+          "passed": false,
+          "callsA": 1,
+          "callsB": 1
+        }
+      ],
+      "passed": false
+    }
+  ],
+  "protectedRows": [
+    {
+      "row": "single-flat-1000",
+      "decision": "unproven",
+      "A": 0.05299999999999727,
+      "Aprime": 0.05329100000000153,
+      "B": 0.0540835000000186,
+      "width": 0.005916000000013355,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "mount-oneOf-80",
+      "decision": "unproven",
+      "A": 2.295332999999914,
+      "Aprime": 2.259999999999991,
+      "B": 2.261562499999968,
+      "width": 0.15820799999983137,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "mount-flat-1000",
+      "decision": "unproven",
+      "A": 2.1105420000000095,
+      "Aprime": 2.125874999999951,
+      "B": 2.160291500000028,
+      "width": 0.07591700000000401,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "mount-nested-d6-f4",
+      "decision": "unproven",
+      "A": 16.473250000000007,
+      "Aprime": 16.42279099999996,
+      "B": 16.315207999999757,
+      "width": 0.7213329999999587,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "single-nested-d6-f4",
+      "decision": "unproven",
+      "A": 0.11329200000000128,
+      "Aprime": 0.10949999999996862,
+      "B": 0.10983299999998053,
+      "width": 0.005999999999971806,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "bulk-flat-2000",
+      "decision": "unproven",
+      "A": 1.7736250000000382,
+      "Aprime": 1.794458000000077,
+      "B": 1.782854000000043,
+      "width": 0.16654200000004948,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "bulk-nested-d6-f4",
+      "decision": "unproven",
+      "A": 3.990417000000093,
+      "Aprime": 3.995042000000012,
+      "B": 3.9856874999999263,
+      "width": 0.27091699999982666,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-discriminator-80",
+      "decision": "unproven",
+      "A": 0.15237500000000637,
+      "Aprime": 0.14666699999997945,
+      "B": 0.14483350000000428,
+      "width": 0.015125000000040245,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-if-80",
+      "decision": "unproven",
+      "A": 0.2752500000000282,
+      "Aprime": 0.2680829999999901,
+      "B": 0.2686249999999859,
+      "width": 0.01712600000001885,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-nested-oneOf-20",
+      "decision": "unproven",
+      "A": 0.2888749999999618,
+      "Aprime": 0.28054199999996854,
+      "B": 0.27614549999998417,
+      "width": 0.02087600000004386,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-100",
+      "decision": "unproven",
+      "A": 0.07674999999997567,
+      "Aprime": 0.07704099999997993,
+      "B": 0.07437500000000341,
+      "width": 0.007082999999994399,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-1000",
+      "decision": "unproven",
+      "A": 0.30425000000002456,
+      "Aprime": 0.3048749999999245,
+      "B": 0.30606249999993906,
+      "width": 0.01291599999990467,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-siblings-4000",
+      "decision": "unproven",
+      "A": 2.6690419999999904,
+      "Aprime": 2.6590419999999995,
+      "B": 2.649853999999891,
+      "width": 0.0992909999999938,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-250",
+      "decision": "unproven",
+      "A": 0.022500000000007958,
+      "Aprime": 0.02245800000000031,
+      "B": 0.02312499999999318,
+      "width": 0.002082999999998947,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-1000",
+      "decision": "unproven",
+      "A": 0.02254100000004655,
+      "Aprime": 0.02237499999995407,
+      "B": 0.02189599999999814,
+      "width": 0.002834000000063952,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-4000",
+      "decision": "unproven",
+      "A": 0.7657080000000178,
+      "Aprime": 0.74837500000001,
+      "B": 0.7466660000000047,
+      "width": 0.06412500000010368,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "leaf-gate-8000",
+      "decision": "unproven",
+      "A": 1.581833000000188,
+      "Aprime": 1.5873340000000553,
+      "B": 1.587603999999999,
+      "width": 0.1349169999998594,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "wave-1000",
+      "decision": "unproven",
+      "A": 1.658916999999974,
+      "Aprime": 1.657541999999978,
+      "B": 1.667625500000014,
+      "width": 0.06158299999998462,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "single-flat-1000-subscribed",
+      "decision": "unproven",
+      "A": 0.06504200000000537,
+      "Aprime": 0.06416699999999764,
+      "B": 0.06402050000001225,
+      "width": 0.003542000000010148,
+      "verdict": "in-width",
+      "passed": true
+    },
+    {
+      "row": "switch-payload-12",
+      "decision": "unproven",
+      "A": 0.3442499999999882,
+      "Aprime": 0.3381660000000011,
+      "B": 0.3321870000000047,
+      "width": 0.04170800000002828,
+      "verdict": "in-width",
+      "passed": true
+    }
+  ],
+  "weightedExchange": {
+    "totalUs": 0,
+    "weightedAUs": 456127.20100004115,
+    "relativePercent": 0,
+    "rows": [
+      {
+        "row": "single-flat-1000",
+        "weight": 3000,
+        "eventsPerSample": 10,
+        "basis": "Frequent typing without subscribers.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 5.299999999999727,
+        "BUs": 5.40835000000186,
+        "rawDeltaUs": 0.10835000000213313,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 15899.999999999181,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "mount-oneOf-80",
+        "weight": 1,
+        "eventsPerSample": 1,
+        "basis": "One branch form mount per session.",
+        "mount": true,
+        "decision": "unproven",
+        "AUs": 2295.332999999914,
+        "BUs": 2261.562499999968,
+        "rawDeltaUs": -33.77049999994597,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 2295.332999999914,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "mount-flat-1000",
+        "weight": 1,
+        "eventsPerSample": 1,
+        "basis": "One flat form mount per session.",
+        "mount": true,
+        "decision": "unproven",
+        "AUs": 2110.5420000000095,
+        "BUs": 2160.291500000028,
+        "rawDeltaUs": 49.74950000001854,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 2110.5420000000095,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "mount-nested-d6-f4",
+        "weight": 1,
+        "eventsPerSample": 1,
+        "basis": "One nested form mount per session.",
+        "mount": true,
+        "decision": "unproven",
+        "AUs": 16473.250000000007,
+        "BUs": 16315.207999999757,
+        "rawDeltaUs": -158.04200000025048,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 16473.250000000007,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "single-nested-d6-f4",
+        "weight": 3000,
+        "eventsPerSample": 10,
+        "basis": "Frequent typing in nested forms.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 11.329200000000128,
+        "BUs": 10.983299999998053,
+        "rawDeltaUs": -0.3459000000020751,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 33987.600000000384,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-oneOf-80",
+        "weight": 100,
+        "eventsPerSample": 2,
+        "basis": "A user changes a branch selector.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 77.68749999999613,
+        "BUs": 75.86449999999445,
+        "rawDeltaUs": -1.8230000000016844,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 7768.7499999996135,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "bulk-flat-2000",
+        "weight": 5,
+        "eventsPerSample": 1,
+        "basis": "Programmatic bulk setValue or reset is rare.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 1773.6250000000382,
+        "BUs": 1782.854000000043,
+        "rawDeltaUs": 9.229000000004817,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 8868.125000000191,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "bulk-nested-d6-f4",
+        "weight": 5,
+        "eventsPerSample": 1,
+        "basis": "Programmatic nested bulk setValue or reset is rare.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 3990.417000000093,
+        "BUs": 3985.6874999999263,
+        "rawDeltaUs": -4.729500000166809,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 19952.085000000465,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-discriminator-80",
+        "weight": 60,
+        "eventsPerSample": 2,
+        "basis": "Tagged branch transitions are less frequent.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 76.18750000000318,
+        "BUs": 72.41675000000214,
+        "rawDeltaUs": -3.770750000001044,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 4571.250000000191,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-if-80",
+        "weight": 150,
+        "eventsPerSample": 2,
+        "basis": "Checkbox and selector changes commonly reveal if-then sections.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 137.6250000000141,
+        "BUs": 134.31249999999295,
+        "rawDeltaUs": -3.3125000000211458,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 20643.750000002114,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-nested-oneOf-20",
+        "weight": 40,
+        "eventsPerSample": 2,
+        "basis": "A nested branch selector changes.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 144.4374999999809,
+        "BUs": 138.07274999999208,
+        "rawDeltaUs": -6.364749999988817,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 5777.499999999236,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-siblings-0",
+        "weight": 100,
+        "eventsPerSample": 1,
+        "basis": "A branch selector changes without passive siblings.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 57.62499999997317,
+        "BUs": 57.20850000000155,
+        "rawDeltaUs": -0.4164999999716201,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 5762.499999997317,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-siblings-100",
+        "weight": 60,
+        "eventsPerSample": 1,
+        "basis": "Transitions with moderate passive siblings are less frequent.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 76.74999999997567,
+        "BUs": 74.37500000000341,
+        "rawDeltaUs": -2.3749999999722604,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 4604.99999999854,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-siblings-1000",
+        "weight": 15,
+        "eventsPerSample": 1,
+        "basis": "Transitions with one thousand siblings are exceptional.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 304.25000000002456,
+        "BUs": 306.06249999993906,
+        "rawDeltaUs": 1.8124999999145075,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 4563.750000000368,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-siblings-4000",
+        "weight": 3,
+        "eventsPerSample": 1,
+        "basis": "Transitions with four thousand siblings are extreme.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 2669.0419999999904,
+        "BUs": 2649.853999999891,
+        "rawDeltaUs": -19.188000000099237,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 8007.125999999971,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "leaf-gate-250",
+        "weight": 1500,
+        "eventsPerSample": 1,
+        "basis": "Common leaf edits near a modest gate set.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 22.500000000007958,
+        "BUs": 23.12499999999318,
+        "rawDeltaUs": 0.6249999999852207,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 33750.00000001194,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "leaf-gate-1000",
+        "weight": 500,
+        "eventsPerSample": 1,
+        "basis": "Leaf edits with a larger gate set occur less often.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 22.54100000004655,
+        "BUs": 21.89599999999814,
+        "rawDeltaUs": -0.6450000000484124,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 11270.500000023276,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "leaf-gate-4000",
+        "weight": 100,
+        "eventsPerSample": 1,
+        "basis": "Very large gate forms are uncommon.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 765.7080000000178,
+        "BUs": 746.6660000000047,
+        "rawDeltaUs": -19.042000000013104,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 76570.80000000178,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "leaf-gate-8000",
+        "weight": 30,
+        "eventsPerSample": 1,
+        "basis": "Extreme gate counts are rare.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 1581.833000000188,
+        "BUs": 1587.603999999999,
+        "rawDeltaUs": 5.770999999811011,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 47454.99000000564,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "wave-1000",
+        "weight": 50,
+        "eventsPerSample": 1,
+        "basis": "One write reaching one thousand subscribers is rare.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 1658.916999999974,
+        "BUs": 1667.625500000014,
+        "rawDeltaUs": 8.708500000039976,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 82945.8499999987,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "single-flat-1000-subscribed",
+        "weight": 5000,
+        "eventsPerSample": 10,
+        "basis": "Typing with subscribers is the most frequent input event.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 6.504200000000537,
+        "BUs": 6.402050000001225,
+        "rawDeltaUs": -0.10214999999931251,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 32521.000000002685,
+        "verdict": "in-width",
+        "passed": true
+      },
+      {
+        "row": "switch-payload-12",
+        "weight": 60,
+        "eventsPerSample": 2,
+        "basis": "Large payload branch transitions are less frequent.",
+        "mount": false,
+        "decision": "unproven",
+        "AUs": 172.1249999999941,
+        "BUs": 166.09350000000234,
+        "rawDeltaUs": -6.031499999991752,
+        "deltaUs": 0,
+        "contributionUs": 0,
+        "weightedAUs": 10327.499999999645,
+        "verdict": "in-width",
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "method": "A is the first A-half representative; within-width deltas are zero before weighting. Mount regressions require a strictly negative exchange; write regressions are never exchanged."
+  },
+  "regressions": [],
+  "validated": {
+    "rows": 22,
+    "pairProcesses": 440,
+    "ledgerProcesses": 30,
+    "supplementalProcesses": 30,
+    "exitDetailProcesses": 6,
+    "coldFirstWriteSamplesPerLaneAndShape": 100,
+    "coldFirstWriteWarmups": 0,
+    "warmups": 20,
+    "samples": 100
+  },
+  "method": "Unchanged B9-1 public A/B timing and IV-1 judgment functions; IV-2 adds five one-write stage rows, root-host owner reductions, exit detail reductions and three protective stage totals. Cold first-write differences are charged separately under coordinator msg_0799e247ae05. Sub-2us stages use A process width; write regressions cannot be exchanged.",
+  "deviceCompleted": true,
+  "adoptable": false
+}

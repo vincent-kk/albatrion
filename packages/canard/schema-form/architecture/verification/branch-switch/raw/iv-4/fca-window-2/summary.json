@@ -1,0 +1,86 @@
+{
+  "head": "90cc137e0",
+  "snapshotHash": "47662fdf8115b8581c81daac0b65c3731b31415f410efbc00b0df0ff04359ae2",
+  "facts": {
+    "exact": 1669,
+    "unresolved": 0,
+    "scope": "default adapter source extensions"
+  },
+  "findingCount": 202,
+  "newFindings": 0,
+  "removedFindings": 0,
+  "allDiagnosticsInherited": true,
+  "diagnostics": {
+    "detail-document-contract": 176,
+    "intent-document-contract": 1
+  },
+  "verdict": "FAIL",
+  "analysisCompleteness": "indeterminate",
+  "stageCountGatePassed": true,
+  "diagnosticDisposition": "All existing diagnostics and nextAction entries are preserved. Unrelated inherited contract-document repairs stay outside IV-4; no diagnostic is converted into PASS.",
+  "artifacts": {
+    "scan": {
+      "originalSha256": "394eb67486e573f2dadafb01fa3803e3a6c54ef763f3f60819d935d736163287",
+      "portableGzipSha256": "c1a759a0733e0a25f804adca93fd0ac7bcfcdccaa92235fa36d4fa0eec296637",
+      "summary": {
+        "projectRoot": "<repo>/packages/canard/schema-form",
+        "snapshotHash": "47662fdf8115b8581c81daac0b65c3731b31415f410efbc00b0df0ff04359ae2",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 376,
+        "depth": 9,
+        "nodesByType": {
+          "organ": 296,
+          "fractal": 80
+        },
+        "violationCount": 201,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      }
+    },
+    "validate": {
+      "originalSha256": "8f71034ff0c0f63f7c6ee29009b54cccc6d3ec504a691fe7130cd79db1e6e902",
+      "portableGzipSha256": "2b0b03bdaedb37c95d7af36b4586b49f586aed1a6e668c54b629de81c4c73993",
+      "summary": {
+        "projectRoot": "<repo>/packages/canard/schema-form",
+        "snapshotHash": "47662fdf8115b8581c81daac0b65c3731b31415f410efbc00b0df0ff04359ae2",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 202,
+        "passed": 3002,
+        "failed": 12,
+        "skipped": 1
+      }
+    },
+    "verification": {
+      "originalSha256": "be1620d929aa4576ff458b715d4ad192a9e7aa3dfbab257c0e123fd0314ed5fe",
+      "portableGzipSha256": "522e9dcfc960d622236942c669e869b5f6524484deb7b64bc607b4a0d486ccef",
+      "summary": {
+        "projectRoot": "<repo>/packages/canard/schema-form",
+        "snapshotHash": "47662fdf8115b8581c81daac0b65c3731b31415f410efbc00b0df0ff04359ae2",
+        "fileCount": 740,
+        "specDocument": {
+          "fileCount": 14,
+          "knownCaseCount": 3,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 726,
+          "knownCaseCount": 4452,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 21,
+        "certainty": "indeterminate"
+      }
+    }
+  }
+}

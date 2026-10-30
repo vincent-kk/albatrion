@@ -66,6 +66,13 @@ inputs.tools[
     '../../../design-optimization/tools/helpers/setupBranchOperation.mjs',
   ),
 );
+for (const file of [
+  'quietWorkerPreload.mjs',
+  'helpers/observeMeasurement.mjs',
+]) {
+  const relative = 'architecture/verification/branch-switch/tools/iv-4/' + file;
+  inputs.tools[relative] = digest(path.join(here, '../iv-4', file));
+}
 inputs.diagnostics = {};
 for (const [lane, source] of [
   ['A', process.argv.find((arg) => arg.startsWith('--baseline=')).slice(11)],

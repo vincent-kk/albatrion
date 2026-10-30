@@ -14,6 +14,7 @@ export async function waitForQuietProcess({
   sample = sampleProcessCpu,
   pause = setTimeout,
   now = () => performance.now(),
+  averageMs = 3000,
   maxWaitMs = 120000,
   spotlightMaxWaitMs = 600000,
 }) {
@@ -25,7 +26,7 @@ export async function waitForQuietProcess({
     ordinaryWaitedMs = 0;
   for (;;) {
     const sampleStarted = now();
-    const observation = await sample(3000);
+    const observation = await sample(averageMs);
     observation.heavy = observation.rows.filter(
       (row) => row.pid !== agentPid && row.cpuPercent > 30,
     );
@@ -43,16 +44,24 @@ export async function waitForQuietProcess({
     if (ordinary) ordinaryWaitedMs += now() - sampleStarted;
     const elapsed = now() - started;
     const remaining = Math.min(
-      spotlightMaxWaitMs - elapsed,
+      ordinary &&
+        observation.heavy.every(
+          (row) =>
+            row.name !== 'mds' &&
+            row.name !== 'mds_stores' &&
+            !row.name.startsWith('mdworker'),
+        )
+        ? Infinity
+        : spotlightMaxWaitMs - elapsed,
       ordinary ? maxWaitMs - ordinaryWaitedMs : Infinity,
     );
-    const delay = remaining < 8000 ? Math.max(0, remaining) : 5000;
+    const delay = remaining < averageMs + 5000 ? Math.max(0, remaining) : 5000;
     if (delay > 0) {
       delays.push(delay);
       await pause(delay);
       if (ordinary) ordinaryWaitedMs += delay;
     }
-    if (remaining < 8000) break;
+    if (remaining < averageMs + 5000) break;
   }
   return {
     ...attempts.at(-1),
@@ -64,7 +73,7 @@ export async function waitForQuietProcess({
     ordinaryWaitedMs,
     excludedAgentPid: agentPid,
     policy: {
-      averageMs: 3000,
+      averageMs,
       retryDelayMs: 5000,
       maxWaitMs,
       spotlightMaxWaitMs,

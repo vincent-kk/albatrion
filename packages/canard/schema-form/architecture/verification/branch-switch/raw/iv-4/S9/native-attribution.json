@@ -1,0 +1,806 @@
+{
+  "method": "Allocate each selfSize to its nearest prepared/A/engine.mjs ancestor, including itself; product descendants start another owner; sum has no overlap.",
+  "inputSha256": "58fa5e0dd33f571e6a1ff8a9d0617c8a6ce826d15172af6f2538ea5b24854f33",
+  "totalBytes": 2371295952,
+  "operations": 20000,
+  "rows": [
+    {
+      "function": "affectedByPresence",
+      "bundleLine": 5674,
+      "bytes": 299607144,
+      "bytesPerRoundTrip": 14980.3572,
+      "percent": 12.634742776299396
+    },
+    {
+      "function": "collect",
+      "bundleLine": 5561,
+      "bytes": 183783232,
+      "bytesPerRoundTrip": 9189.1616,
+      "percent": 7.750328753565889
+    },
+    {
+      "function": "register",
+      "bundleLine": 6701,
+      "bytes": 119879824,
+      "bytesPerRoundTrip": 5993.9912,
+      "percent": 5.055456021796473
+    },
+    {
+      "function": "markCommitDeliveries",
+      "bundleLine": 13756,
+      "bytes": 114101368,
+      "bytesPerRoundTrip": 5705.0684,
+      "percent": 4.8117725627526395
+    },
+    {
+      "function": "releaseSettlementScratch",
+      "bundleLine": 12402,
+      "bytes": 92733568,
+      "bytesPerRoundTrip": 4636.6784,
+      "percent": 3.910670362414552
+    },
+    {
+      "function": "computeNodeBody",
+      "bundleLine": 12005,
+      "bytes": 91340704,
+      "bytesPerRoundTrip": 4567.0352,
+      "percent": 3.851931848614736
+    },
+    {
+      "function": "mergeEffectiveSchema",
+      "bundleLine": 1738,
+      "bytes": 89031536,
+      "bytesPerRoundTrip": 4451.5768,
+      "percent": 3.754551848532823
+    },
+    {
+      "function": "registerPresenceChanges",
+      "bundleLine": 6994,
+      "bytes": 87854728,
+      "bytesPerRoundTrip": 4392.7364,
+      "percent": 3.7049246394530178
+    },
+    {
+      "function": "cloneSlotSubtree",
+      "bundleLine": 10625,
+      "bytes": 67291304,
+      "bytesPerRoundTrip": 3364.5652,
+      "percent": 2.8377438060080658
+    },
+    {
+      "function": "transitionSettlement",
+      "bundleLine": 15481,
+      "bytes": 61979368,
+      "bytesPerRoundTrip": 3098.9684,
+      "percent": 2.6137339773099737
+    },
+    {
+      "function": "getTableVisitSteps",
+      "bundleLine": 11143,
+      "bytes": 58209560,
+      "bytesPerRoundTrip": 2910.478,
+      "percent": 2.4547572794911936
+    },
+    {
+      "function": "finalizeExits",
+      "bundleLine": 15313,
+      "bytes": 58005096,
+      "bytesPerRoundTrip": 2900.2548,
+      "percent": 2.4461348213864786
+    },
+    {
+      "function": "assembleObject",
+      "bundleLine": 9149,
+      "bytes": 55334432,
+      "bytesPerRoundTrip": 2766.7216,
+      "percent": 2.333510161535501
+    },
+    {
+      "function": "selectChildren",
+      "bundleLine": 11480,
+      "bytes": 51552024,
+      "bytesPerRoundTrip": 2577.6012,
+      "percent": 2.1740021087000954
+    },
+    {
+      "function": "commitSlotChanges",
+      "bundleLine": 12886,
+      "bytes": 49019480,
+      "bytesPerRoundTrip": 2450.974,
+      "percent": 2.067202111936132
+    },
+    {
+      "function": "registerRecalculation",
+      "bundleLine": 12224,
+      "bytes": 45859136,
+      "bytesPerRoundTrip": 2292.9568,
+      "percent": 1.933927140613615
+    },
+    {
+      "function": "commitSettlement",
+      "bundleLine": 13994,
+      "bytes": 43363488,
+      "bytesPerRoundTrip": 2168.1744,
+      "percent": 1.828683086285638
+    },
+    {
+      "function": "publishPreparedSelection",
+      "bundleLine": 11456,
+      "bytes": 42551648,
+      "bytesPerRoundTrip": 2127.5824,
+      "percent": 1.7944469548017008
+    },
+    {
+      "function": "add",
+      "bundleLine": 7238,
+      "bytes": 35904576,
+      "bytesPerRoundTrip": 1795.2288,
+      "percent": 1.5141330617006004
+    },
+    {
+      "function": "dirtyChildren",
+      "bundleLine": 7318,
+      "bytes": 33847200,
+      "bytesPerRoundTrip": 1692.36,
+      "percent": 1.4273713903763288
+    },
+    {
+      "function": "affectedForRegistration",
+      "bundleLine": 5557,
+      "bytes": 32423064,
+      "bytesPerRoundTrip": 1621.1532,
+      "percent": 1.3673141040304868
+    },
+    {
+      "function": "commitGlobalState",
+      "bundleLine": 13538,
+      "bytes": 29274016,
+      "bytesPerRoundTrip": 1463.7008,
+      "percent": 1.2345154966974785
+    },
+    {
+      "function": "selectEntryStep",
+      "bundleLine": 10997,
+      "bytes": 26219072,
+      "bytesPerRoundTrip": 1310.9536,
+      "percent": 1.105685352260071
+    },
+    {
+      "function": "resolveGateOccurrence",
+      "bundleLine": 6622,
+      "bytes": 25116696,
+      "bytesPerRoundTrip": 1255.8348,
+      "percent": 1.0591970175134007
+    },
+    {
+      "function": "getSlotEntries",
+      "bundleLine": 8454,
+      "bytes": 24083984,
+      "bytesPerRoundTrip": 1204.1992,
+      "percent": 1.015646485614209
+    },
+    {
+      "function": "prepareGateTableRound",
+      "bundleLine": 8314,
+      "bytes": 23398584,
+      "bytesPerRoundTrip": 1169.9292,
+      "percent": 0.9867424595510801
+    },
+    {
+      "function": "readFieldNodeWatchValues",
+      "bundleLine": 13488,
+      "bytes": 23001024,
+      "bytesPerRoundTrip": 1150.0512,
+      "percent": 0.9699769436455395
+    },
+    {
+      "function": "visitFieldNodes",
+      "bundleLine": 12995,
+      "bytes": 22991272,
+      "bytesPerRoundTrip": 1149.5636,
+      "percent": 0.9695656917310843
+    },
+    {
+      "function": "markSlotChange",
+      "bundleLine": 9611,
+      "bytes": 21905256,
+      "bytesPerRoundTrip": 1095.2628,
+      "percent": 0.9237672750853665
+    },
+    {
+      "function": "primeHost",
+      "bundleLine": 11660,
+      "bytes": 21764704,
+      "bytesPerRoundTrip": 1088.2352,
+      "percent": 0.9178400520459371
+    },
+    {
+      "function": "retainExitedSlot",
+      "bundleLine": 15075,
+      "bytes": 19958472,
+      "bytesPerRoundTrip": 997.9236,
+      "percent": 0.8416693826498802
+    },
+    {
+      "function": "watchPaths",
+      "bundleLine": 6858,
+      "bytes": 19903720,
+      "bytesPerRoundTrip": 995.186,
+      "percent": 0.8393604342474752
+    },
+    {
+      "function": "exitFieldNodeChain",
+      "bundleLine": 17786,
+      "bytes": 18579320,
+      "bytesPerRoundTrip": 928.966,
+      "percent": 0.783509118055459
+    },
+    {
+      "function": "finalizePerished",
+      "bundleLine": 15189,
+      "bytes": 18020528,
+      "bytesPerRoundTrip": 901.0264,
+      "percent": 0.7599442821466934
+    },
+    {
+      "function": "appendSegment",
+      "bundleLine": 1018,
+      "bytes": 17506800,
+      "bytesPerRoundTrip": 875.34,
+      "percent": 0.7382798416719939
+    },
+    {
+      "function": "createExitSlotOverlay",
+      "bundleLine": 14974,
+      "bytes": 17117064,
+      "bytesPerRoundTrip": 855.8532,
+      "percent": 0.7218442719291581
+    },
+    {
+      "function": "accumulateGlobalStateDeltas",
+      "bundleLine": 7681,
+      "bytes": 15867488,
+      "bytesPerRoundTrip": 793.3744,
+      "percent": 0.6691483611152388
+    },
+    {
+      "function": "selectLiteralTableChildren",
+      "bundleLine": 11173,
+      "bytes": 15491656,
+      "bytesPerRoundTrip": 774.5828,
+      "percent": 0.6532991374161465
+    },
+    {
+      "function": "visit",
+      "bundleLine": 13564,
+      "bytes": 13544720,
+      "bytesPerRoundTrip": 677.236,
+      "percent": 0.5711948349836343
+    },
+    {
+      "function": "createSettlementContext",
+      "bundleLine": 12563,
+      "bytes": 13536768,
+      "bytesPerRoundTrip": 676.8384,
+      "percent": 0.570859490928697
+    },
+    {
+      "function": "selectRootGateDeclarations",
+      "bundleLine": 11771,
+      "bytes": 12795488,
+      "bytesPerRoundTrip": 639.7744,
+      "percent": 0.5395989475378652
+    },
+    {
+      "function": "",
+      "bundleLine": 14035,
+      "bytes": 12529960,
+      "bytesPerRoundTrip": 626.498,
+      "percent": 0.5284013574700355
+    },
+    {
+      "function": "flushQueuedEvents",
+      "bundleLine": 17700,
+      "bytes": 12084408,
+      "bytesPerRoundTrip": 604.2204,
+      "percent": 0.5096119693456129
+    },
+    {
+      "function": "getControlLayers",
+      "bundleLine": 13237,
+      "bytes": 11638976,
+      "bytesPerRoundTrip": 581.9488,
+      "percent": 0.49082764174515825
+    },
+    {
+      "function": "supplementSplitOwner",
+      "bundleLine": 10277,
+      "bytes": 11613152,
+      "bytesPerRoundTrip": 580.6576,
+      "percent": 0.48973861698727345
+    },
+    {
+      "function": "collectPresenceChangeNames",
+      "bundleLine": 6924,
+      "bytes": 11419912,
+      "bytesPerRoundTrip": 570.9956,
+      "percent": 0.48158948655768635
+    },
+    {
+      "function": "emit",
+      "bundleLine": 5610,
+      "bytes": 10732112,
+      "bytesPerRoundTrip": 536.6056,
+      "percent": 0.45258425001520014
+    },
+    {
+      "function": "sameValue",
+      "bundleLine": 4692,
+      "bytes": 10532544,
+      "bytesPerRoundTrip": 526.6272,
+      "percent": 0.44416826128837417
+    },
+    {
+      "function": "preserveReferences",
+      "bundleLine": 11643,
+      "bytes": 9777944,
+      "bytesPerRoundTrip": 488.8972,
+      "percent": 0.41234599973710917
+    },
+    {
+      "function": "finalizeRestoredSlotRaw",
+      "bundleLine": 14848,
+      "bytes": 9118520,
+      "bytesPerRoundTrip": 455.926,
+      "percent": 0.38453740842889106
+    },
+    {
+      "function": "selectNodeSchema",
+      "bundleLine": 11802,
+      "bytes": 8918136,
+      "bytesPerRoundTrip": 445.9068,
+      "percent": 0.3760870081390836
+    },
+    {
+      "function": "getRequiredChildren",
+      "bundleLine": 13691,
+      "bytes": 8404080,
+      "bytesPerRoundTrip": 420.204,
+      "percent": 0.35440873556553854
+    },
+    {
+      "function": "prepareStaticHost",
+      "bundleLine": 11399,
+      "bytes": 8301416,
+      "bytesPerRoundTrip": 415.0708,
+      "percent": 0.3500792886268968
+    },
+    {
+      "function": "collectChainRecords",
+      "bundleLine": 17536,
+      "bytes": 7121224,
+      "bytesPerRoundTrip": 356.0612,
+      "percent": 0.3003093727711976
+    },
+    {
+      "function": "selectEffectiveDeclarations",
+      "bundleLine": 1703,
+      "bytes": 7047368,
+      "bytesPerRoundTrip": 352.3684,
+      "percent": 0.2971947889531083
+    },
+    {
+      "function": "finishGateTableRound",
+      "bundleLine": 7901,
+      "bytes": 6535848,
+      "bytesPerRoundTrip": 326.7924,
+      "percent": 0.27562346211941746
+    },
+    {
+      "function": "writeFieldNode",
+      "bundleLine": 15755,
+      "bytes": 5975408,
+      "bytesPerRoundTrip": 298.7704,
+      "percent": 0.2519891283481599
+    },
+    {
+      "function": "getRetainedChildEntry",
+      "bundleLine": 8444,
+      "bytes": 5410040,
+      "bytesPerRoundTrip": 270.502,
+      "percent": 0.22814697572595527
+    },
+    {
+      "function": "readGateSelectionGroup",
+      "bundleLine": 9882,
+      "bytes": 4983992,
+      "bytesPerRoundTrip": 249.1996,
+      "percent": 0.21018009143044325
+    },
+    {
+      "function": "updateOutput",
+      "bundleLine": 7768,
+      "bytes": 4852128,
+      "bytesPerRoundTrip": 242.6064,
+      "percent": 0.20461925032628742
+    },
+    {
+      "function": "getIndex",
+      "bundleLine": 7929,
+      "bytes": 4821696,
+      "bytesPerRoundTrip": 241.0848,
+      "percent": 0.20333590144803654
+    },
+    {
+      "function": "getSlotSource",
+      "bundleLine": 8519,
+      "bytes": 4688720,
+      "bytesPerRoundTrip": 234.436,
+      "percent": 0.1977281661551118
+    },
+    {
+      "function": "captureAbsentSlotInputs",
+      "bundleLine": 14858,
+      "bytes": 4623120,
+      "bytesPerRoundTrip": 231.156,
+      "percent": 0.19496174638601163
+    },
+    {
+      "function": "hit",
+      "bundleLine": 12256,
+      "bytes": 4268312,
+      "bytesPerRoundTrip": 213.4156,
+      "percent": 0.17999912648608948
+    },
+    {
+      "function": "watchSplitRegistration",
+      "bundleLine": 12503,
+      "bytes": 3938376,
+      "bytesPerRoundTrip": 196.9188,
+      "percent": 0.16608538452057375
+    },
+    {
+      "function": "planSplitAnchors",
+      "bundleLine": 7126,
+      "bytes": 3869176,
+      "bytesPerRoundTrip": 193.4588,
+      "percent": 0.1631671490324376
+    },
+    {
+      "function": "releaseWrongKindHosts",
+      "bundleLine": 15725,
+      "bytes": 3803832,
+      "bytesPerRoundTrip": 190.1916,
+      "percent": 0.1604115250478022
+    },
+    {
+      "function": "mergeGateSteps",
+      "bundleLine": 10963,
+      "bytes": 3742640,
+      "bytesPerRoundTrip": 187.132,
+      "percent": 0.157830995192455
+    },
+    {
+      "function": "isMisfit",
+      "bundleLine": 10579,
+      "bytes": 3574760,
+      "bytesPerRoundTrip": 178.738,
+      "percent": 0.15075132216141024
+    },
+    {
+      "function": "createPreparedSelectionStructure",
+      "bundleLine": 11342,
+      "bytes": 3557248,
+      "bytesPerRoundTrip": 177.8624,
+      "percent": 0.1500128230303663
+    },
+    {
+      "function": "mayChangeAt",
+      "bundleLine": 6759,
+      "bytes": 3508440,
+      "bytesPerRoundTrip": 175.422,
+      "percent": 0.14795453924850288
+    },
+    {
+      "function": "getCommittedDeclarationKey",
+      "bundleLine": 4808,
+      "bytes": 3377560,
+      "bytesPerRoundTrip": 168.878,
+      "percent": 0.1424351944408835
+    },
+    {
+      "function": "finishSettlement",
+      "bundleLine": 15619,
+      "bytes": 3278840,
+      "bytesPerRoundTrip": 163.942,
+      "percent": 0.1382720700566523
+    },
+    {
+      "function": "",
+      "bundleLine": 5630,
+      "bytes": 2786832,
+      "bytesPerRoundTrip": 139.3416,
+      "percent": 0.11752358442013652
+    },
+    {
+      "function": "deliverChainRecords",
+      "bundleLine": 17300,
+      "bytes": 2459040,
+      "bytesPerRoundTrip": 122.952,
+      "percent": 0.10370025714951332
+    },
+    {
+      "function": "createFieldNode",
+      "bundleLine": 19145,
+      "bytes": 2206336,
+      "bytesPerRoundTrip": 110.3168,
+      "percent": 0.09304346840971624
+    },
+    {
+      "function": "rebuildRootExternalErrors",
+      "bundleLine": 17420,
+      "bytes": 2131488,
+      "bytesPerRoundTrip": 106.5744,
+      "percent": 0.08988705092682586
+    },
+    {
+      "function": "recordGateInput",
+      "bundleLine": 9836,
+      "bytes": 2000304,
+      "bytesPerRoundTrip": 100.0152,
+      "percent": 0.08435488612515457
+    },
+    {
+      "function": "computeNode",
+      "bundleLine": 12178,
+      "bytes": 1937696,
+      "bytesPerRoundTrip": 96.8848,
+      "percent": 0.08171464208698653
+    },
+    {
+      "function": "updatePendingExitIndex",
+      "bundleLine": 8405,
+      "bytes": 1937056,
+      "bytesPerRoundTrip": 96.8528,
+      "percent": 0.08168765262582459
+    },
+    {
+      "function": "readFieldNodeErrors",
+      "bundleLine": 6414,
+      "bytes": 1934968,
+      "bytesPerRoundTrip": 96.7484,
+      "percent": 0.0815995995087837
+    },
+    {
+      "function": "getGateSelectionTable",
+      "bundleLine": 8190,
+      "bytes": 1803504,
+      "bytesPerRoundTrip": 90.1752,
+      "percent": 0.07605562681785408
+    },
+    {
+      "function": "commitExitPolicyValues",
+      "bundleLine": 13347,
+      "bytes": 1739760,
+      "bytesPerRoundTrip": 86.988,
+      "percent": 0.07336747648612357
+    },
+    {
+      "function": "publishStateKeys",
+      "bundleLine": 14259,
+      "bytes": 1737760,
+      "bytesPerRoundTrip": 86.888,
+      "percent": 0.07328313441999247
+    },
+    {
+      "function": "dispatchSetValue",
+      "bundleLine": 18002,
+      "bytes": 1705664,
+      "bytesPerRoundTrip": 85.2832,
+      "percent": 0.07192961294272053
+    },
+    {
+      "function": "ensureEffectiveSchemaCache",
+      "bundleLine": 1229,
+      "bytes": 1607008,
+      "bytesPerRoundTrip": 80.3504,
+      "percent": 0.0677691875046055
+    },
+    {
+      "function": "presenceChildren",
+      "bundleLine": 5737,
+      "bytes": 1576072,
+      "bytesPerRoundTrip": 78.8036,
+      "percent": 0.0664645844256896
+    },
+    {
+      "function": "publishGlobalStateDeltas",
+      "bundleLine": 7697,
+      "bytes": 1311520,
+      "bytesPerRoundTrip": 65.576,
+      "percent": 0.05530815328613187
+    },
+    {
+      "function": "flushPendingOutput",
+      "bundleLine": 7824,
+      "bytes": 1247520,
+      "bytesPerRoundTrip": 62.376,
+      "percent": 0.052609207169936584
+    },
+    {
+      "function": "keepsChildEmissions",
+      "bundleLine": 7757,
+      "bytes": 1213208,
+      "bytesPerRoundTrip": 60.6604,
+      "percent": 0.051162234683391386
+    },
+    {
+      "function": "emit",
+      "bundleLine": 5571,
+      "bytes": 1082024,
+      "bytesPerRoundTrip": 54.1012,
+      "percent": 0.0456300698817201
+    },
+    {
+      "function": "(outside product)",
+      "bundleLine": 0,
+      "bytes": 1016184,
+      "bytesPerRoundTrip": 50.8092,
+      "percent": 0.042853529064684204
+    },
+    {
+      "function": "canSkipGateWheel",
+      "bundleLine": 7889,
+      "bytes": 950880,
+      "bytesPerRoundTrip": 47.544,
+      "percent": 0.04009959192137144
+    },
+    {
+      "function": "readDepartingAncestorPolicy",
+      "bundleLine": 14668,
+      "bytes": 820680,
+      "bytesPerRoundTrip": 41.034,
+      "percent": 0.034608923416236656
+    },
+    {
+      "function": "startFieldNodeChain",
+      "bundleLine": 17361,
+      "bytes": 820032,
+      "bytesPerRoundTrip": 41.0016,
+      "percent": 0.03458159658681018
+    },
+    {
+      "function": "remove",
+      "bundleLine": 6809,
+      "bytes": 622984,
+      "bytesPerRoundTrip": 31.1492,
+      "percent": 0.026271878863309426
+    },
+    {
+      "function": "owner",
+      "bundleLine": 12260,
+      "bytes": 492504,
+      "bytesPerRoundTrip": 24.6252,
+      "percent": 0.020769402468916287
+    },
+    {
+      "function": "markRestoredSlotRaw",
+      "bundleLine": 10525,
+      "bytes": 459728,
+      "bytesPerRoundTrip": 22.9864,
+      "percent": 0.01938720468915978
+    },
+    {
+      "function": "withdrawDetachedFills",
+      "bundleLine": 15291,
+      "bytes": 459080,
+      "bytesPerRoundTrip": 22.954,
+      "percent": 0.0193598778597333
+    },
+    {
+      "function": "getLoadValue",
+      "bundleLine": 9729,
+      "bytes": 459056,
+      "bytesPerRoundTrip": 22.9528,
+      "percent": 0.019358865754939728
+    },
+    {
+      "function": "preserveSlotValueMemos",
+      "bundleLine": 12864,
+      "bytes": 327896,
+      "bytesPerRoundTrip": 16.3948,
+      "percent": 0.013827713058062015
+    },
+    {
+      "function": "add",
+      "bundleLine": 6813,
+      "bytes": 170672,
+      "bytesPerRoundTrip": 8.5336,
+      "percent": 0.007197414555363775
+    },
+    {
+      "function": "readSlotExitPolicy",
+      "bundleLine": 14622,
+      "bytes": 131120,
+      "bytesPerRoundTrip": 6.556,
+      "percent": 0.005529465855555089
+    },
+    {
+      "function": "readsChanged",
+      "bundleLine": 6870,
+      "bytes": 98352,
+      "bytesPerRoundTrip": 4.9176,
+      "percent": 0.0041476054440631035
+    },
+    {
+      "function": "captureFieldNodeChange",
+      "bundleLine": 7617,
+      "bytes": 73080,
+      "bytesPerRoundTrip": 3.654,
+      "percent": 0.0030818590964304905
+    },
+    {
+      "function": "get name",
+      "bundleLine": 18969,
+      "bytes": 40064,
+      "bytesPerRoundTrip": 2.0032,
+      "percent": 0.0016895402687382482
+    },
+    {
+      "function": "",
+      "bundleLine": 11167,
+      "bytes": 38464,
+      "bytesPerRoundTrip": 1.9232,
+      "percent": 0.001622066615833366
+    },
+    {
+      "function": "cloneFromSlot",
+      "bundleLine": 10762,
+      "bytes": 32832,
+      "bytesPerRoundTrip": 1.6416,
+      "percent": 0.001384559357608181
+    },
+    {
+      "function": "get path",
+      "bundleLine": 18981,
+      "bytes": 32800,
+      "bytesPerRoundTrip": 1.64,
+      "percent": 0.0013832098845500834
+    },
+    {
+      "function": "mayChangeOwnDeclarationAt",
+      "bundleLine": 6805,
+      "bytes": 32784,
+      "bytesPerRoundTrip": 1.6392,
+      "percent": 0.0013825351480210345
+    },
+    {
+      "function": "markWrite",
+      "bundleLine": 10401,
+      "bytes": 0,
+      "bytesPerRoundTrip": 0.0,
+      "percent": 0.0
+    },
+    {
+      "function": "enterFieldNodeChain",
+      "bundleLine": 17379,
+      "bytes": 0,
+      "bytesPerRoundTrip": 0.0,
+      "percent": 0.0
+    },
+    {
+      "function": "",
+      "bundleLine": 8320,
+      "bytes": 0,
+      "bytesPerRoundTrip": 0.0,
+      "percent": 0.0
+    },
+    {
+      "function": "",
+      "bundleLine": 12135,
+      "bytes": 0,
+      "bytesPerRoundTrip": 0.0,
+      "percent": 0.0
+    }
+  ]
+}
