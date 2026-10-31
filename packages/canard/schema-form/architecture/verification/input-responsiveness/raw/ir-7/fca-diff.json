@@ -1,0 +1,61 @@
+{
+  "baseStatus": "indeterminate",
+  "candidateStatus": "indeterminate",
+  "baseSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "c756b251a988ed5c15be9f96591236caac9a549fc37c6f445b3fbc0c25652aef",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 202,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "candidateSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "84c5c1d3bc8a6647aecd9aad1588add27519798c96ba9210318eb8709732b781",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 202,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "findings": {
+    "added": [],
+    "removed": []
+  },
+  "diagnostics": {
+    "added": [],
+    "removed": []
+  },
+  "candidateDiagnostics": 177,
+  "candidateSnapshotHashes": {
+    "scan": "84c5c1d3bc8a6647aecd9aad1588add27519798c96ba9210318eb8709732b781",
+    "validate": "84c5c1d3bc8a6647aecd9aad1588add27519798c96ba9210318eb8709732b781",
+    "verification": "84c5c1d3bc8a6647aecd9aad1588add27519798c96ba9210318eb8709732b781"
+  },
+  "facts": {
+    "baselineExact": 1754,
+    "candidateExact": 1760,
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "toolError": 0,
+    "unsupported": 175
+  }
+}
