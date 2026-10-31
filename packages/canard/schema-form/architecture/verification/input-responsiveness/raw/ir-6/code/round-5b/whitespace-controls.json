@@ -1,0 +1,13 @@
+{
+  "unscopedExitCode": 2,
+  "onlyAuthorizedVerbatimQuoteTrailingSpaces": true,
+  "locations": [
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:155: trailing whitespace.",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:162: trailing whitespace.",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:163: trailing whitespace.",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:167: trailing whitespace.",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/request.md:171: trailing whitespace."
+  ],
+  "quoteBlocksVerifiedByteForByte": "history-and-quotes.json",
+  "sourceWhitespaceErrors": 0
+}

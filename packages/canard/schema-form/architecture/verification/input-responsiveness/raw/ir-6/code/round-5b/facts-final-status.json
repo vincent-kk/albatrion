@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "summary": {
+    "projectRoot": "package:",
+    "projectState": "ready",
+    "coveredFiles": 1748,
+    "exact": 1748,
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "toolError": 0,
+    "unsupported": 175,
+    "unadjudicatedItems": 0,
+    "pendingAttestations": 0,
+    "resolutionEpoch": "sha256:d6d661fd56bdae4da7c3fd3bfb7d363028358353bed9ff1081338d69863507b3",
+    "scopeSource": "default"
+  },
+  "diagnostics": [],
+  "adjudication": "The existing ../../core reference on line 1 of isValidationPending.ts remains a real type import and was adopted; no reference was dismissed."
+}

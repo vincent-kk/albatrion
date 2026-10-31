@@ -5,14 +5,14 @@ import { gunzipSync } from 'node:zlib';
 
 const root = new URL('./', import.meta.url);
 const round = process.argv[2];
-assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4' || round === '--round=5');
-const candidateRoot = round ? new URL(`round-${round.slice(-1)}/`, root) : root;
+assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4' || round === '--round=5' || round === '--round=5b');
+const candidateRoot = round ? new URL(`round-${round.slice('--round='.length)}/`, root) : root;
 const moved = {
   'package:/src/__tests__/e2e/features-composite-tails.test.tsx': [[171, 173]],
   'package:/src/__tests__/e2e/features-input-components-consumer.test.tsx': [[103, 105]],
   'package:/src/__tests__/e2e/features-validation-state-display.test.tsx': [[78, 80], [110, 112]],
 };
-if (round === '--round=3' || round === '--round=4' || round === '--round=5') {
+if (round === '--round=3' || round === '--round=4' || round === '--round=5' || round === '--round=5b') {
   moved['package:/src/__tests__/e2e/features-composite-tails.test.tsx'] = [[171, 176]];
   moved['package:/src/__tests__/e2e/features-input-components-consumer.test.tsx'] = [[103, 106]];
 }

@@ -5,8 +5,8 @@ import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
 const round = process.argv[2];
-assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4' || round === '--round=5');
-const root = new URL(round ? `./round-${round.slice(-1)}/` : './', import.meta.url);
+assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4' || round === '--round=5' || round === '--round=5b');
+const root = new URL(round ? `./round-${round.slice('--round='.length)}/` : './', import.meta.url);
 const packageRoot = new URL('../../../../../../', import.meta.url);
 const report = JSON.parse(fs.readFileSync(new URL('code-gates.json', root)));
 for (const [file, hash] of Object.entries(report.sourceHashes))
@@ -44,7 +44,7 @@ for (const inspection of Object.values(fca.inspections)) {
   assert.deepEqual(inspection.findings, { added: [], removed: [] });
 }
 
-if (round === '--round=5') {
+if (round === '--round=5' || round === '--round=5b') {
   const comments = JSON.parse(fs.readFileSync(new URL('public-comments.json', root)));
   const expectedFiles = [
     'components/Form/components/FormCore/types/handle.d.ts',
@@ -60,5 +60,16 @@ if (round === '--round=5') {
     assert.ok(expectedFiles.includes(JSON.parse(item)[0]));
   assert.equal(report.layoutEffectCost.arrayItemMount, 2);
   assert.equal(report.layoutEffectCost.unchangedVisibilityOrdinaryInputWrite, 0);
+}
+if (round === '--round=5b') {
+  const parity = JSON.parse(fs.readFileSync(new URL('public-document-parity.json', root)));
+  assert.equal(parity.allTrue, true);
+  for (const checks of Object.values(parity.sixDocumentChecks))
+    assert.ok(Object.values(checks).every(Boolean));
+  const targets = JSON.parse(fs.readFileSync(new URL('two-target-controls.json', root)));
+  assert.equal(targets.positiveExitCode, 1);
+  assert.equal(targets.selectedFailed, 1);
+  assert.equal(targets.restored, true);
+  assert.equal(report.gates.lint.warnings, 0);
 }
 console.log('IR6_CODE_GATES_OK captured-results; performance-review-and-measurement-pending');

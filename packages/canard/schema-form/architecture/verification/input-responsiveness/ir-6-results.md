@@ -273,3 +273,58 @@ FCA는 snapshot0b55365d9bdf71f03115e72159c51a5550366bd12f7ace8c71bb4043d5dc9a2a�
 원장 검사는 ref-check 문제0, verbatim 불일치0, sup 불일치0·unparsed0입니다. doc-coverage25문서·무태그0·기존 uncited66/문제66으로 새 문제는 없습니다. [원장 결과](raw/ir-6/code/round-5/ledger-checks.json), [병합 prefix·원문9–30 및18b 바이트 대조](raw/ir-6/code/round-5/history-and-quotes.json), [기준 제품52해시 대조](raw/ir-6/code/round-5/reviewed-product-controls.json)를 보존합니다. 소유자 원문27–30의 trailing space 다섯 줄은 바이트 보존 지시 때문에 유지하며 다른 whitespace 오류는0입니다. 저장한 원시에는 머신 절대 경로가 없습니다.
 
 판정: 5차 코드 관문 통과, 독립 검토 대기. 성능 G1–G6·G8 및 L·E·F는 미측정·표본0이며 code accepted; window clear 뒤 사전 규칙을 먼저 커밋하고 정식 창을 시작합니다.
+
+
+## 5b차 수정 — Amendment 9 v3
+
+계약72aeee232·f15d5a065·c996a993c·959da29d9가 제품보다 앞섭니다. 5차의 첫 기준·pending-only 표시를 release 이력으로 대체합니다. node는 공개 write/walk sequence당 한 pre-change entry를 기록하며 커밋된 Form 정책 이력과 generation 순서로 병합합니다. 조용한 drop은 예약 cutoff 이하만 제거하여 뒤 node의 append가 앞 node의 수명을 늘리지 못합니다. re-arm을 끝낸 뒤 release version을 증가시키고 복사 listeners를 마지막에 통지합니다. 정책은 root별 no-cleanup layout에서만 commit하고 FormRoot 핸들·deps는 facd 모양으로 복원했습니다. 공개 패키지 이름과 raw 오류 목록은 유지합니다.
+
+D는 수락한 root explicit verdict에서 route·settle 뒤·delivery 전에 전체 이력을 별도 release합니다. standalone 상태 진입은 closeNonSettleEntry의 finally에서 drop을 예약하여 listener 실패 뒤에도 수명을 지킵니다. dispose는 release listeners를 settle 전에 지워 조용히 해제합니다. P3-8 helper는 chain의 deliverValidationWave 옆으로 옮겼고 equal-content commit의 진전을 무조건 단언합니다. 두-target 재요청 사례는 기존 구현의 특성 검사이며 targets re-add를 지우는 양성 대조가 실패해야 합니다.
+
+숨긴 reset 재생성은 ERROR-019 항목2와 R-f의 chain-end 전달 대상입니다. 같은-schema reset을 포함한 다른 hidden post-mount 사슬은 기존처럼 buffer하며 R1이 reconnect에서 순서대로 전달합니다. 같은-schema hidden reset의 chain-end 전달은 소유자 미결로 남기고 동작을 바꾸지 않았습니다. R-h는 RootNodeContext·validation API Contracts 안으로 옮겼고 Last Updated를 마지막에 유지했습니다. 여섯 공개 문서에 macrotask fallback·100ms stalled-frame timer·if render compile·Always 정의·handler 격리·code span을 복원했습니다.
+
+### 변경한 기대와 절차
+
+- 제거한 pending 조회·정착 구독·정책 box 바인딩은 release history/policy/version/구독/commit으로 대체했습니다. engine 시험은 record runtime을 직접 읽고 helper settleValidation은 pending 및 node/policy 이력이 모두 없어질 때까지 기다립니다. stories 두 곳은 한 story-local private accessor helper를 사용합니다.
+- 코디네이터 msg_29959ddbd70f의 승인으로 단일 readFieldNodeRuntime 검증 bridge만 surface accessor에 직접 닿습니다. 예외는 surface DETAIL에, 참조는 src DETAIL에 두고 importModel은 그 정확한 importer/target 한 쌍을 별도 계수·출력하며 다른 D 위반0을 유지합니다.
+- visibility.commit은 visibility.same-commit으로 이름을 바꾸고 startTransition에서 reveal과 새 display mount를 같은 commit에 넣었습니다. child input의 layout 정상화 뒤에 놓인 layout probe가 이전 오류를 한 번도 읽지 않는지 확인합니다. 공개 e2e도 같은 paint probe와 새 verdict를 검사합니다.
+- validation.reveal-baseline은 첫 기준 한 개 대신 write별 entries를 검사하고 뒤 세대는 자기 cutoff까지 남는 기대를 사용합니다. pending 시험의 구독은 settle 횟수 대신 release 횟수이며 accepted root D의 별도 release와 unavailable 해제를 셉니다. dispose는 callback1회에서0회로 바꿉니다.
+- engine-reveal의 same-task state·policy 및 rAF reveal은 조용한 직후 old error 대신 빈 표시를 단언합니다. 외부 provider 정책 reveal도 pending old error 대신 빈 표시로 바꿉니다. blur 첫 frame+task는 빈 표시이며 painted 분기만 두 번째 frame+task 뒤의 적격 오류를 유지합니다.
+- limit(v)의 같은-handler showError·clearState는 중간 조합을 두 generation에 기록하므로 두 frame+task 뒤 release를 기다립니다. 순서대로 별도 commit한 showError 후 clearState는 이미 적격했던 오류를 유지합니다.
+
+### 수정 전 재현과 fixture 구분
+
+최종 fixture로 b40bb47e5의 실행 제품을 복원하여 core history10개 실패와 React18·19 각각13개 중10개 실패를 확인했습니다. transition layout probe·Dirty resetInteraction·ErrorVisible off/on·quiet reveal·D root release·외부 정책·blur frame/task·limit(v)·suspended committed policy를 구분합니다. 단일 batch/committed-policy 순서/root rebuild는 특성 검사입니다. older07 실패도 별도 보존합니다. 최초 fixture의 brace/타입 오류·manual clock 대기·조건부 renderer memo가 suspension을 막은 문제·inline validator 교체로 root가 재생성된 문제는 fixture 수정이며 제품 실패 증거에 섞지 않습니다.
+
+IR-5 hydration의 기존 None/StrictMode 렌더 수와 배열 filled-minus-empty mount2회·ordinary-write0회 집중 검사를 유지합니다. 현재 성능 표본0이며 code accepted; window clear 전에는 측정하지 않습니다.
+
+최종 fixture 재현은 b40의 React18·19 각각13개 중10개 실패·3개 특성 통과입니다. 07에서는 각각13개 중6개 실패·7개 통과로 도입 시점을 구분합니다. 신규 코어 이력10개는 b40에서 모두 실패하고 07의 코어14개는10개 실패·4개 통과입니다(이 안에는 기존 R-a 세 사례와 새 두-target 사례가 포함됩니다). 두-target target re-add만 제거한 양성 대조는 선택한1개가 실패했고 원본을 복구했습니다.
+
+추가 절차 변경: validation.visibility의 already-visible, reveal-lifetime W1의 children, useChildFieldErrors.binding의 첫 array-child 표시 단언을 frame+task 뒤로 옮겨 기대값은 유지했습니다. hidden child re-show는 aggregate만 old error를 유지하고 renderer/input은 중간 enabled=false 이력 때문에 release까지 빈 표시를 기대합니다. 표면 이름 목록은 새 release 바인딩을 검사합니다. hydration·array mount 기대값은 바꾸지 않았습니다.
+
+### 5b 최종 코드 관문
+
+| 관문 | 파일 | 통과 | 실패 | 비고 |
+| --- | ---: | ---: | ---: | --- |
+| unit | 619 | 4,089 | 0 | 기존 todo1 |
+| render | 151 | 875 | 0 | React19 legacy1개 skip |
+| react18 | 151 | 874 | 0 | Activity2개 skip |
+| verify | 775 | 5,008 | 0 | 기존 todo1·React19 legacy1개 skip, 다른 관문과 중복 |
+| Storybook | 101 | 254 | 0 | 실제 Chromium |
+| production | 10 | 21 | 0 | 최종 build 뒤 재실행 |
+
+지정 관문은150개 소스 해시를 고정한 같은 실행 소스에서 순차 수행합니다. 같은-commit probe·순서에 따른 정책/state 조합·node별 cutoff 수명·예외 finally·D root release·suspended policy·두-target 재요청·IR-5 hydration과 배열 mount를 포함합니다. 성능 G1–G6·G8은 미측정입니다.
+
+제품 커밋은 b39eba42de3320583753e910a42908532643a77e입니다. lint·typecheck·build는 exit0이며 lint 경고0입니다. 지정 build가 다시 만든 dist·agents-hashes는 소스 커밋에서 제외했습니다. [5b 코드 관문](raw/ir-6/code/round-5b/code-gates.json)은150개 소스 해시·최종 번들 해시를 고정하며 `node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/code/check-code-gates.mjs --round=5b`가 포착한 결과·선언·양성 대조·문서 parity·FCA 차분을 대조합니다.
+
+평가 공개 선언은97개 루트·55개 도달 파일·917개 서명에서 의미 차이0, index.d.ts 바이트 차이0입니다. 루트73개는 diagnostics만 선택하며24개는 runtime에 닿지 않습니다. 전체 runtime·변경 내부 멤버 노출 및 unresolved0입니다. 저장소 밖 diagnostics 타입 변이는 추가1/제거9·exit1이고 복원은 차이0·exit0입니다. 보수적 원래 추적기의 내부 차이 추가150/제거2는 [원시](raw/ir-6/code/round-5b/public-declarations.json.gz)에 보존합니다. 승인된 의미 게이트와 구분하며 [주석 포함 대조](raw/ir-6/code/round-5b/public-comments.json)는 승인된5파일·8멤버의14개 기록 추가/제거 쌍입니다. 공개 주석 차이0이라고 주장하지 않습니다.
+
+FCA는 snapshot7f38048a15b4645640c6bba4ef981f7136c44b0f1d35867a423d4072981adcf3에서 scan·6범위 validate·verification을 수행했습니다. facts1748개 exact, missing·needsResolution·uncertain·toolError·unadjudicated0이고 unsupported175는 유지합니다. 마디386(organ305·fractal81), scan201·validate202·verification21·진단177이며 [차분](raw/ir-6/code/round-5b/fca-diff.json)의 새 finding·진단0입니다. 절대 상태 indeterminate·기존 실패12·skipped1을 보존합니다. 동적 표 네 선언의 기존 줄 이동만 정규화했고 해당 세 파일의5차 소스 해시가 같은지 먼저 확인했습니다. Scan complete: 기준선의202개 구조 finding과21개 검증 finding 유지, 신규0개입니다.
+
+원장 검사는 ref-check1416항목·문제0, verbatim327조각·불일치0, sup3584인용·불일치0·unparsed0입니다. doc-coverage25문서·1144항목·무태그0·기존 uncited66/문제66으로 새 문제는 없습니다. 최종 검사에서 발견한 VALIDATE-052 색인/본문 담당 문구 불일치는959da29d9에서 맞춘 뒤 같은 참조 검사를 다시 통과했습니다. [원장 결과](raw/ir-6/code/round-5b/ledger-checks.json), [prefix·원문9–30 및18b 바이트 대조](raw/ir-6/code/round-5b/history-and-quotes.json), [기준 복원·실행 소스 대조](raw/ir-6/code/round-5b/reviewed-product-controls.json)를 보존합니다. 새 변경 whitespace0이며 전체07 차분의 허가된 원문27–30 trailing space 다섯 줄은 보존했습니다. 원시의 머신 절대 경로0입니다.
+
+절차를 이름별로 기록합니다: `isFieldNodeValidationPending`·`subscribeFieldNodeValidationSettled`·`readFieldNodeShowErrorBaseline`·`recordFieldNodeShowErrorBaseline` 및 정책 box·`resolveShowError`는 제거했습니다. `readFieldNodeRevealBaseline`은 node entries, `readFieldNodeRevealPolicy`는 committed policy와 entries, `readFieldNodeRevealVersion`은 release snapshot, `subscribeFieldNodeRevealReleased`는 candidate-only 구독, `commitFieldNodeRevealPolicy`는 root layout commit을 담당합니다. src/stories의 제거 이름 match0입니다. pending 구독 시험은 automatic compile의2 release, explicit pending settle와 D의 별도 release, 누적3회와 dispose0회를 명시적으로 단언합니다. helper·stories·surfaceIndex·importModel 예외1개 및 앞 절의 frame/task·hidden re-show·same-commit fixture 변경을 모두 절차 변경으로 기록합니다.
+
+H의 다섯 한계는 현재 계약입니다. hook disabled는 즉시 현재 오류를 드러냅니다. state/enabled 렌더가 drop 뒤까지 지연되면 hold를 생략합니다. commit-only 연속 변경은 멎을 때까지 hold합니다. release와 paint 사이 task의 새 value write는1–2프레임 released verdict를 보일 수 있습니다. 한 React batch 사이에만 존재한 미표시 조합도 계산하며 engine state가 policy commit보다 먼저 정렬됩니다. hidden same-schema reset의 chain-end 전달은 소유자 미결이며 변경하지 않았습니다.
+
+판정: 5b 코드 관문 통과, 독립 검토 대기. 성능 G1–G6·G8 및 L·E·F는 미측정·표본0입니다. `code accepted; window clear` 전에는 창을 열지 않으며 worker_done도 보내지 않습니다.
