@@ -949,3 +949,190 @@ msg_241ca3e19a1b 승인에 따라 공개 노드만 가진 시험의 release는 �
 6b 최종 관문은 lint 경고0·typecheck·build exit0 뒤 unit619파일/4089통과(todo1), render154/882통과(기존2skip), react18 154/881통과(기존2+새Activity1skip) 순으로 실행했습니다. importModel2사례도 포함되며 정확한 검증 bridge 변 세 쌍을 검사합니다. [정적 검사](raw/ir-6/code/round-6b/static-checks.json)와 [6b 원시](raw/ir-6/code/round-6b/final-unit.json.gz)를 보존합니다. FCA1754개 exact 자료를 갱신한 [차분](raw/ir-6/code/round-6b/fca-diff.json)은 기존202finding·177diagnostic·indeterminate에 새 차이0입니다. [원장 검사](raw/ir-6/code/round-6b/ledger-checks.json)는 ref/verbatim/sup 새문제0, 기존 coverage66·무태그0이며 머신 경로 감사도0입니다.
 
 세 런타임 번들 바이트는61e28eb44의 개선 제품과 정확히 같습니다. 승인된6b 관문 목록 밖의 verify·storybook·production·공개 선언 증거는 동일한 런타임과 공개 표면을 검증한6차 자료를 재사용하며 변경된 시험/helper는6b 전체 unit/render/react18에서 확인했습니다. 갱신한 checkRound6.mjs가2885소스·커밋 시험 red·6b 관문을 대조합니다. 새 정식 창은 다음 소유자 규칙을 사전 커밋한 뒤 진행합니다.
+
+## Phase E — 6차 정식 창
+
+규칙은 기존 verification.md 바이트를 바꾸지 않고 G2·G8 원문 순서대로 추가한 bf3fa4ca2d380448eade85e2919fc494719a4c7e에 사전 커밋했습니다. 새 창은 all-key handler pooled p95의 공동 페이지 bootstrap 상한≤1.10으로 G2를, eager F중앙값≤E+8.35ms로 G8을 판정합니다. first-painted 기준은 그대로이며 ET 통계·관측/key와 eager F/E·3% 비교를 참고로 병기합니다. 첫 창 main의 기존 G2/G8 FAIL은 바꾸지 않았습니다.
+
+측정 head266228a07b165b068332c04227bbd7e1149256b4의 제품 소스는 최종6b head05a64e81b와 같으며 F제품 SHA-256은689ff1a17f4247316179e617eeb9b9b34db86d8d96b780f14c6a38d20b5c5bd0입니다. L공개0.16.1·Efacd72a71·F를 production React19.2.6, Chromium145.0.7632.6, AJV8.17.1, Node24.20.0, viewport900×700에서 교차 실행했습니다. [입력](raw/ir-6/browser/round-6/inputs.json)과 [원시 해시](raw/ir-6/browser/round-6/archive-manifest.json)에 제품·browser 번들과 도구 hash를 보존합니다.
+
+전체18행 untimed smoke54보존 페이지를 마쳤고, Spotlight indexing enabled를 유지한30초 정숙 관찰이 첫 시도에 통과했습니다. 거절0회, paired mode 미사용입니다. 창은2026-10-31 14:48:55.403–15:07:15.761 UTC에 끝까지 실행했으며162예열을 버리고540새페이지를 보존했습니다. 시작 status msg_8985bc05fdd4·종료 msg_c208a9ac71df 사이에 검사·빌드·다른 창이 겹치지 않았습니다. CPU는 [원시](raw/ir-6/browser/round-6/cpu.json.gz)에 기록했습니다.
+
+<!-- IR6_ROUND-6_TABLES_START -->
+최대 통계: 정숙 창. ET는16ms 문턱으로 검열됩니다. 괄호는 관측 interaction/실제key 수입니다.
+
+| 행 | 레인 | processing p95 ms (출처; 관측/key) | duration p95 ms (출처; 관측/key) | arrival p95 ms (배달/key) | 미배달 | first/eager 중앙값 ms (페이지 수) | 최장frame ms / ≥50ms 합 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| type-flat-500-validate-nonburst | L | 6.100 (event; 54/200) | 16.000 (event; 54/200) | 10.700 (200/200) | 0 | 67.700 / 100.200 (10) | 0.000 / 0 |
+| type-flat-500-validate-nonburst | E | 7.400 (event; 52/200) | 16.000 (event; 52/200) | 3.900 (200/200) | 0 | 72.450 / 88.200 (10) | 0.000 / 0 |
+| type-flat-500-validate-nonburst | F | 5.900 (event; 48/200) | 16.000 (event; 48/200) | 11.000 (200/200) | 0 | 36.950 / 89.400 (10) | 0.000 / 0 |
+| type-flat-500-validate-burst | L | 2.600 (event; 90/200) | 16.000 (event; 90/200) | 8.800 (18/200) | 182 | 66.300 / 100.500 (10) | 0.000 / 0 |
+| type-flat-500-validate-burst | E | 5.400 (event; 103/200) | 16.000 (event; 103/200) | 1.200 (200/200) | 0 | 72.550 / 87.700 (10) | 0.000 / 0 |
+| type-flat-500-validate-burst | F | 4.900 (event; 77/200) | 16.000 (event; 77/200) | 13.400 (12/200) | 188 | 37.200 / 89.800 (10) | 0.000 / 0 |
+| type-array-1000-validate-nonburst | L | 11.700 (event; 200/200) | 24.000 (event; 200/200) | 24.100 (200/200) | 0 | 140.850 / 259.500 (10) | 0.000 / 0 |
+| type-array-1000-validate-nonburst | E | 13.100 (event; 200/200) | 32.000 (event; 200/200) | 4.100 (200/200) | 0 | 159.750 / 220.050 (10) | 0.000 / 0 |
+| type-array-1000-validate-nonburst | F | 6.200 (event; 190/200) | 24.000 (event; 190/200) | 21.200 (200/200) | 0 | 133.950 / 221.700 (10) | 0.000 / 0 |
+| type-array-1000-validate-burst | L | 7.300 (event; 142/200) | 40.000 (event; 142/200) | 14.900 (66/200) | 134 | 141.250 / 259.050 (10) | 0.000 / 0 |
+| type-array-1000-validate-burst | E | 9.700 (event; 135/200) | 48.000 (event; 135/200) | 1.400 (200/200) | 0 | 158.950 / 219.250 (10) | 0.000 / 0 |
+| type-array-1000-validate-burst | F | 4.700 (event; 166/200) | 32.000 (event; 166/200) | 12.800 (32/200) | 168 | 134.350 / 221.900 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-nonburst | L | 6.200 (event; 129/200) | 16.000 (event; 129/200) | 15.800 (200/200) | 0 | 139.200 / 197.350 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-nonburst | E | 13.100 (event; 150/200) | 24.000 (event; 150/200) | 5.700 (200/200) | 0 | 139.800 / 164.550 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-nonburst | F | 8.200 (event; 139/200) | 16.000 (event; 139/200) | 16.500 (200/200) | 0 | 67.550 / 165.350 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-burst | L | 2.300 (event; 110/200) | 24.000 (event; 110/200) | 12.300 (18/200) | 182 | 137.750 / 195.050 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-burst | E | 13.200 (event; 104/200) | 24.000 (event; 104/200) | 2.100 (200/200) | 0 | 139.700 / 164.400 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-burst | F | 7.300 (event; 106/200) | 24.000 (event; 106/200) | 17.000 (12/200) | 188 | 66.000 / 162.600 (10) | 0.000 / 0 |
+| type-flat-2000-validate-nonburst | L | 10.600 (event; 181/200) | 24.000 (event; 181/200) | 18.400 (200/200) | 0 | 185.750 / 267.450 (10) | 0.000 / 0 |
+| type-flat-2000-validate-nonburst | E | 14.400 (event; 177/200) | 24.000 (event; 177/200) | 6.800 (200/200) | 0 | 187.050 / 230.150 (10) | 0.000 / 0 |
+| type-flat-2000-validate-nonburst | F | 10.100 (event; 179/200) | 24.000 (event; 179/200) | 16.900 (200/200) | 0 | 88.350 / 230.550 (10) | 0.000 / 0 |
+| type-flat-2000-validate-burst | L | 5.300 (event; 118/200) | 24.000 (event; 118/200) | 12.800 (80/200) | 120 | 186.850 / 267.550 (10) | 0.000 / 0 |
+| type-flat-2000-validate-burst | E | 6.300 (event; 128/200) | 24.000 (event; 128/200) | 2.600 (200/200) | 0 | 187.150 / 229.300 (10) | 0.000 / 0 |
+| type-flat-2000-validate-burst | F | 5.500 (event; 169/200) | 16.000 (event; 169/200) | 11.100 (18/200) | 182 | 90.250 / 231.050 (10) | 0.000 / 0 |
+| mount-flat-500-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 69.800 / 98.100 (10) | 85.600 / 10 |
+| mount-flat-500-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 68.400 / 83.750 (10) | 82.000 / 10 |
+| mount-flat-500-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 37.350 / 84.400 (10) | 52.000 / 1 |
+| mount-nested-d5-f4-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 138.800 / 196.500 (10) | 157.900 / 10 |
+| mount-nested-d5-f4-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 140.200 / 164.800 (10) | 155.800 / 10 |
+| mount-nested-d5-f4-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 67.150 / 163.050 (10) | 84.000 / 20 |
+| mount-if-flat-500-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 67.100 / 94.100 (10) | 82.500 / 10 |
+| mount-if-flat-500-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 104.200 / 119.950 (10) | 116.200 / 10 |
+| mount-if-flat-500-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 102.700 / 118.900 (10) | 114.700 / 10 |
+| first-key-flat-500-validate | L | 1.700 (handler; 0/10) | 1.700 (handler; 0/10) | 6.500 (10/10) | 0 | 66.550 / 104.250 (10) | 81.800 / 10 |
+| first-key-flat-500-validate | E | 3.700 (handler; 0/10) | 3.700 (handler; 0/10) | 3.400 (10/10) | 0 | 72.850 / 92.650 (10) | 84.400 / 10 |
+| first-key-flat-500-validate | F | 3.800 (handler; 0/10) | 3.800 (handler; 0/10) | 7.000 (10/10) | 0 | 37.150 / 93.850 (10) | 51.900 / 1 |
+| first-key-flat-2000-validate | L | 3.800 (handler; 0/10) | 3.800 (handler; 0/10) | 9.500 (10/10) | 0 | 186.600 / 272.150 (10) | 215.300 / 20 |
+| first-key-flat-2000-validate | E | 4.900 (handler; 0/10) | 4.900 (handler; 0/10) | 4.200 (10/10) | 0 | 184.250 / 231.850 (10) | 216.400 / 10 |
+| first-key-flat-2000-validate | F | 5.400 (event; 1/10) | 16.000 (event; 1/10) | 10.300 (10/10) | 0 | 88.500 / 233.000 (10) | 124.800 / 20 |
+| mount-flat-500-none | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 28.450 / 53.050 (10) | 0.000 / 0 |
+| mount-flat-500-none | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 36.900 / 51.950 (10) | 0.000 / 0 |
+| mount-flat-500-none | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 36.950 / 51.950 (10) | 0.000 / 0 |
+| mount-nested-d5-f4-none | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 55.400 / 98.750 (10) | 70.100 / 10 |
+| mount-nested-d5-f4-none | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 66.050 / 89.150 (10) | 83.600 / 10 |
+| mount-nested-d5-f4-none | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 65.900 / 89.800 (10) | 80.300 / 10 |
+| stream-flat-2000-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 186.350 / 267.950 (10) | 0.000 / 0 |
+| stream-flat-2000-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 186.600 / 229.700 (10) | 0.000 / 0 |
+| stream-flat-2000-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 88.050 / 230.500 (10) | 0.000 / 0 |
+| mount-array-1000-none | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 124.300 / 250.750 (10) | 172.500 / 20 |
+| mount-array-1000-none | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 142.850 / 198.100 (10) | 180.300 / 10 |
+| mount-array-1000-none | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 134.550 / 201.100 (10) | 184.200 / 10 |
+| mount-array-1000-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 141.000 / 254.600 (10) | 180.200 / 20 |
+| mount-array-1000-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 156.300 / 211.850 (10) | 201.200 / 10 |
+| mount-array-1000-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 138.550 / 211.500 (10) | 180.600 / 10 |
+
+| typing 행 | processing F/E · F/L | duration F/E · F/L | arrival F/E · F/L | bootstrap F/E 단측95%상한 (E·F 관측/key) | 0.16.1 손실 해소(processing/duration/arrival) |
+| --- | --- | --- | --- | --- | --- |
+| type-flat-500-validate-nonburst | 0.797 · 0.967 | 1.000 · 1.000 | 2.821 · 1.028 | 0.898 (52/200 · 48/200) | 예/예/아니요 |
+| type-flat-500-validate-burst | 0.907 · 1.885 | 1.000 · 1.000 | 11.167 · 1.523 | 1.000 (103/200 · 77/200) | 아니요/예/아니요 |
+| type-array-1000-validate-nonburst | 0.473 · 0.530 | 0.750 · 1.000 | 5.171 · 0.880 | 0.389 (200/200 · 190/200) | 예/예/예 |
+| type-array-1000-validate-burst | 0.485 · 0.644 | 0.667 · 0.800 | 9.143 · 0.859 | 0.202 (135/200 · 166/200) | 예/예/예 |
+| type-nested-d5-f4-validate-nonburst | 0.626 · 1.323 | 0.667 · 1.000 | 2.895 · 1.044 | 0.467 (150/200 · 139/200) | 아니요/예/아니요 |
+| type-nested-d5-f4-validate-burst | 0.553 · 3.174 | 1.000 · 1.000 | 8.095 · 1.382 | 0.380 (104/200 · 106/200) | 아니요/예/아니요 |
+| type-flat-2000-validate-nonburst | 0.701 · 0.953 | 1.000 · 1.000 | 2.485 · 0.918 | 0.679 (177/200 · 179/200) | 예/예/예 |
+| type-flat-2000-validate-burst | 0.873 · 1.038 | 0.667 · 0.667 | 4.269 · 0.867 | 1.293 (128/200 · 169/200) | 아니요/예/예 |
+
+| G2 typing 행 | pooled handler p95 E/F ms | handler F/E | handler 상한 | handler key E/F | ET pooled F/E | ET 상한(기존 결측대체) | ET 관측 E/F · 실제key |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| type-flat-500-validate-nonburst | 3.900 / 2.900 | 0.744 | 0.806 | 200/200 | 0.781 | 0.898 | 52/48 · 200/200 |
+| type-flat-500-validate-burst | 1.500 / 1.000 | 0.667 | 0.714 | 200/200 | 0.271 | 1.000 | 103/77 · 200/200 |
+| type-array-1000-validate-nonburst | 10.600 / 2.600 | 0.245 | 0.252 | 200/200 | 0.357 | 0.389 | 200/190 · 200/200 |
+| type-array-1000-validate-burst | 4.800 / 1.100 | 0.229 | 0.229 | 200/200 | 0.191 | 0.202 | 135/166 · 200/200 |
+| type-nested-d5-f4-validate-nonburst | 6.200 / 3.700 | 0.597 | 0.629 | 200/200 | 0.449 | 0.467 | 150/139 · 200/200 |
+| type-nested-d5-f4-validate-burst | 2.200 / 1.300 | 0.591 | 0.600 | 200/200 | 0.372 | 0.380 | 104/106 · 200/200 |
+| type-flat-2000-validate-nonburst | 7.400 / 3.500 | 0.473 | 0.479 | 200/200 | 0.672 | 0.679 | 177/179 · 200/200 |
+| type-flat-2000-validate-burst | 2.900 / 1.400 | 0.483 | 0.483 | 200/200 | 0.659 | 1.293 | 128/169 · 200/200 |
+
+| 관문 | 판정 | 기계 계산 근거(반올림 전 원시는 decision.json) |
+| --- | --- | --- |
+| G1 | PASS | {"lMedian":6.925000011920929,"lMedianSource":"event-median","fP95":10.100000023841858,"transferFactor":1,"transferredP95":10.100000023841858,"comparable":true,"upperBound":0.6791044761513676} |
+| G2 | PASS | "위 all-key handler 상한≤1.10; ET 참고 통계와 관측/key 병기" |
+| G3 | PASS | [{"id":"type-flat-500-validate-nonburst","F":16,"E":16,"framesF":0,"framesE":0},{"id":"type-flat-500-validate-burst","F":16,"E":16,"framesF":0,"framesE":0},{"id":"type-array-1000-validate-nonburst","F":24,"E":32,"framesF":0,"framesE":0},{"id":"type-array-1000-validate-burst","F":32,"E":48,"framesF":0,"framesE":0},{"id":"type-nested-d5-f4-validate-nonburst","F":16,"E":24,"framesF":0,"framesE":0},{"id":"type-nested-d5-f4-validate-burst","F":24,"E":24,"framesF":0,"framesE":0},{"id":"type-flat-2000-validate-nonburst","F":24,"E":24,"framesF":0,"framesE":0},{"id":"type-flat-2000-validate-burst","F":16,"E":24,"framesF":0,"framesE":0}] |
+| G4 | PASS | [{"id":"type-flat-500-validate-nonburst","arrivalP95":11,"undelivered":0,"keys":200},{"id":"type-array-1000-validate-nonburst","arrivalP95":21.19999998807907,"undelivered":0,"keys":200},{"id":"type-nested-d5-f4-validate-nonburst","arrivalP95":16.5,"undelivered":0,"keys":200},{"id":"type-flat-2000-validate-nonburst","arrivalP95":16.900000035762787,"undelivered":0,"keys":200}] |
+| G5 | PASS | [{"id":"mount-flat-500-validate","F":37.349999994039536,"E":68.40000000596046},{"id":"mount-nested-d5-f4-validate","F":67.15000000596046,"E":140.19999998807907}] |
+| G6 | PASS | [{"index":0,"durationMs":497,"validationRuns":6,"limit":7},{"index":1,"durationMs":493.19999998807907,"validationRuns":6,"limit":7},{"index":2,"durationMs":492.2000000476837,"validationRuns":6,"limit":7},{"index":3,"durationMs":491.60000002384186,"validationRuns":6,"limit":7},{"index":4,"durationMs":497.5999999642372,"validationRuns":6,"limit":7},{"index":5,"durationMs":491.19999998807907,"validationRuns":6,"limit":7},{"index":6,"durationMs":491.80000001192093,"validationRuns":6,"limit":7},{"index":7,"durationMs":492.7999999523163,"validationRuns":6,"limit":7},{"index":8,"durationMs":498.89999997615814,"validationRuns":6,"limit":7},{"index":9,"durationMs":498.30000001192093,"validationRuns":6,"limit":7}] |
+| G8 | PASS | [{"id":"mount-array-1000-none","F":134.5499999821186,"E":142.84999999403954},{"id":"mount-array-1000-validate","F":138.55000001192093,"E":156.30000001192093}] |
+
+| G8 행 | first F/E | eager E / F ms | eager F/E | 3% 이내(참고) | eager 상한 ms | 페이지 E/F |
+| --- | --- | --- | --- | --- | --- | --- |
+| mount-array-1000-none | 0.942 | 198.100 / 201.100 | 1.015 | 예 | 206.450 | 10/10 |
+| mount-array-1000-validate | 0.886 | 211.850 / 211.500 | 0.998 | 예 | 220.200 | 10/10 |
+
+G7은 없습니다. first-key 입력지연은 보고 전용입니다.
+
+| first-key 행 | 레인 | input delay 중앙값 / p95 ms | 관측/key |
+| --- | --- | --- | --- |
+| first-key-flat-500-validate | L | 관측 없음 / 관측 없음 | 0/10 |
+| first-key-flat-500-validate | E | 관측 없음 / 관측 없음 | 0/10 |
+| first-key-flat-500-validate | F | 관측 없음 / 관측 없음 | 0/10 |
+| first-key-flat-2000-validate | L | 관측 없음 / 관측 없음 | 0/10 |
+| first-key-flat-2000-validate | E | 관측 없음 / 관측 없음 | 0/10 |
+| first-key-flat-2000-validate | F | 0.300 / 0.300 | 1/10 |
+
+| stream 레인 | 표본 | duration ms | runs | frame script p95 ms |
+| --- | --- | --- | --- | --- |
+| L | 0 | 497.700 | 60 | 0.100 |
+| E | 0 | 495.100 | 60 | 0.500 |
+| F | 0 | 497.000 | 6 | 0.600 |
+| F | 1 | 493.200 | 6 | 0.600 |
+| E | 1 | 492.200 | 60 | 0.500 |
+| L | 1 | 499.200 | 60 | 0.100 |
+| L | 2 | 493.000 | 60 | 0.100 |
+| E | 2 | 493.400 | 60 | 0.500 |
+| F | 2 | 492.200 | 6 | 0.600 |
+| F | 3 | 491.600 | 6 | 0.500 |
+| E | 3 | 498.300 | 60 | 0.500 |
+| L | 3 | 500.500 | 60 | 0.100 |
+| L | 4 | 493.700 | 60 | 0.100 |
+| E | 4 | 493.700 | 60 | 0.500 |
+| F | 4 | 497.600 | 6 | 0.500 |
+| F | 5 | 491.200 | 6 | 0.500 |
+| E | 5 | 497.900 | 60 | 0.500 |
+| L | 5 | 492.300 | 60 | 0.100 |
+| L | 6 | 499.200 | 60 | 0.100 |
+| E | 6 | 491.700 | 60 | 0.600 |
+| F | 6 | 491.800 | 6 | 0.500 |
+| F | 7 | 492.800 | 6 | 0.600 |
+| E | 7 | 496.500 | 60 | 0.500 |
+| L | 7 | 493.300 | 60 | 0.100 |
+| L | 8 | 495.000 | 60 | 0.100 |
+| E | 8 | 497.300 | 60 | 0.600 |
+| F | 8 | 498.900 | 6 | 0.600 |
+| F | 9 | 498.300 | 6 | 0.600 |
+| E | 9 | 493.800 | 60 | 0.600 |
+| L | 9 | 501.500 | 60 | 0.100 |
+
+| 동일 창의 관문 | 첫 창 규칙(참고) | 새 규칙 |
+| --- | --- | --- |
+| G1 | PASS | PASS |
+| G2 | FAIL | PASS |
+| G3 | PASS | PASS |
+| G4 | PASS | PASS |
+| G5 | PASS | PASS |
+| G6 | PASS | PASS |
+| G8 | PASS | PASS |
+<!-- IR6_ROUND-6_TABLES_END -->
+
+새 규칙의 G1–G6·G8 모두 PASS입니다. G1은 L페이지중앙값 중앙값6.925ms로 비교 가능하며 환산계수1, F행p9510.10ms≤16.67, pooled bootstrap상한0.679104<1입니다. flat2000 비연타 행의 F/E=0.701389, F/L=0.952830입니다. G2 all-handler 상한의 최대는0.805556이며 모든 typing행의 E/F handler key는200/200입니다. 비연타 arrival p95최대21.20ms≤33.4, 미배달은 네 행 모두0/200입니다.
+
+G8 None first E/F=142.85/134.55ms, eager E/F=198.10/201.10ms(+3.00ms, F/E1.0151449)입니다. OnChange first E/F=156.30/138.55ms, eager E/F=211.85/211.50ms(−0.35ms, F/E0.9983479)입니다. first기준과 반프레임 eager기준을 모두 통과하며 두 eager비 모두 참고선3% 안입니다. 같은 새 창을 첫 창 규칙으로 계산하면 G2만 FAIL이며 flat2000 burst의 ETbootstrap상한1.292683이1.10을 넘습니다. G8은 첫 규칙으로도 PASS입니다. 이는 첫 창의 기존 G2/G8 FAIL을 재판정한 값이 아니라 새 원시에 원래 규칙을 적용한 참고 결과입니다.
+
+소유자0.16.1 손실 목표는 행별 표대로 processing4/8·duration8/8·arrival4/8에서 해소됐습니다. 일부 처리·도착 손실은 남으며 전부 같아졌다고 해석하지 않습니다. 기본 엔진·표시 계약, 노드 사건 없는 해제에서 최악 한 paint가 더해질 수 있는 우선순위 한계와 드문 추가 렌더·배치 원자성 범위는 유지합니다. 숨긴 같은-schema reset의 보고 배달 미결은 별도 소유자 결정으로 남깁니다.
+
+모든 숫자와 참고 판정은 원시에서 재현합니다. [새 판정](raw/ir-6/browser/round-6/decision.json), [원래 규칙 참고](raw/ir-6/browser/round-6/original-decision.json), [handler 근거](raw/ir-6/browser/round-6/handler-evidence.json), [source 연속성](raw/ir-6/browser/round-6/source-continuity.json)을 보존합니다.
+
+### 마감 검증과 인계 범위
+
+정식 창이 끝난 뒤 다음 검사를 순차 실행했고 모두 종료0입니다. [마감 기록](raw/ir-6/browser/round-6/closing-checks.json)과 [benchmark 시험 원시](raw/ir-6/browser/round-6/benchmark-tests.json.gz)를 보존합니다.
+
+| 마감 검사 | 결과 |
+| --- | --- |
+| IR6 원시·모든 표·판정 재현 및 base 감사 | 첫 창540·새 창540 재현, 신규 machine path0 |
+| benchmark 시험 | 6파일·48통과·실패0 |
+| benchmark lint | 경고0·종료0 |
+| browser typecheck | 종료0 |
+| 이전 단계 재현 | IR0·IR1·backfill·quiet-gates·derived·IR2 여섯 명령 종료0 |
+| 6b 코드 관문 원시 재검사 | source2885·신규 FCA finding0 |
+
+6b 제품 소스와 측정 번들은 이후 변경하지 않았으며, 6b의 unit4089·render882·react18 881 및 importModel2 통과 기록을 재사용합니다. 앞선 6차 verify5015·storybook254·production21, 공개 선언 의미 차이0·index 바이트 차이0, FCA 신규0의 유효 범위와 기존 skip·todo·indeterminate는 위 6차·6b 기록대로입니다. 창 이후 추가된 내용은 원시 보관과 결과·인계 기록입니다.
+
+6b mutation scratch 다섯 개와 앞선 6차 scratch 네 개는 제거했습니다. `ir6-lane-e`는 측정 수락까지 보존하며, 제거된 scratch의 잔여 branch/base key는 6b 정리 기록에 별도로 적었습니다. 새 정식 창은 추가 worktree를 만들지 않았습니다. 원래 측정 창과 이번 창의 원시를 함께 남기고 최종 head에 고정한 한국어 PR 본문으로 인계합니다.
+
+판정: 사전 등록한 새 규칙의 G1–G6·G8 모두 PASS, 마감 검증 통과. 첫 창의 G2·G8 FAIL과 일부 0.16.1 대비 손실은 기록대로 유지합니다.
