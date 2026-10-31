@@ -21,6 +21,7 @@ it.each([false, true])(
   (hidden) => {
     const sink = observeErrorSink();
     const onError = vi.fn();
+    const onChange = vi.fn();
     const failure = new Error('replacement compile');
     const validator = {
       compileGuard: () => () => true,
@@ -38,6 +39,7 @@ it.each([false, true])(
         validatorFactory={validator}
         validationMode={ValidationMode.OnRequest}
         onError={onError}
+        onChange={onChange}
       >
         <span />
       </Form>
@@ -46,6 +48,7 @@ it.each([false, true])(
     const handle = ref.current!;
     view.rerender(hideCommittedForm(form(replacement), false));
     if (hidden) view.rerender(hideCommittedForm(form(replacement), true));
+    const oldRoot = handle.node;
     let thrown: unknown;
     act(() => {
       try {
@@ -62,6 +65,9 @@ it.each([false, true])(
         code: FormErrorCode.ValidatorCompileFailed,
       }),
     );
+    act(() => oldRoot?.setValue('late'));
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledTimes(1);
     expect(sink.errors()).toEqual([]);
   },
 );
@@ -194,4 +200,47 @@ it('IR-7 round b replacing an initially hidden failed load reports its construct
   view.rerender(<React.Activity mode="hidden">{form(false)}</React.Activity>);
   view.rerender(<React.Activity mode="visible">{form(false)}</React.Activity>);
   expect(onError).toHaveBeenCalledTimes(1);
+});
+
+it('IR-7 round c initially hidden validator replacement delivers its reset-chain compile record', async (context) => {
+  if (inject('reactMajor') !== '19') context.skip();
+  const sink = observeErrorSink();
+  const onError = vi.fn();
+  const schema = { type: 'string' } as const;
+  const first = { compile: () => () => [], compileGuard: () => () => true };
+  const second = {
+    compileGuard: () => () => true,
+    compile: () => {
+      throw new Error('hidden replacement compile');
+    },
+  };
+  const form = (changed: boolean) => (
+    <Form
+      jsonSchema={schema}
+      validatorFactory={changed ? second : first}
+      validationMode={ValidationMode.OnRequest}
+      onError={onError}
+    >
+      <span />
+    </Form>
+  );
+  const view = render(
+    <React.Activity mode="hidden">{form(false)}</React.Activity>,
+  );
+  await act(async () => {
+    await Promise.resolve();
+  });
+  view.rerender(<React.Activity mode="hidden">{form(true)}</React.Activity>);
+  view.rerender(<React.Activity mode="visible">{form(true)}</React.Activity>);
+  expect(onError).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({
+      code: FormErrorCode.ValidatorCompileFailed,
+      surface: 'thrown',
+    }),
+  );
+  // Stage emits these two React boundary diagnostics, with no extra host error.
+  expect(sink.errors()).toEqual([
+    '%o\n\n%s\n\n%s\n',
+    'ErrorBoundary caught an error:',
+  ]);
 });
