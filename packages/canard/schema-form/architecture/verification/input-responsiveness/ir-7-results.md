@@ -175,3 +175,7 @@ FCA는 exact1,762·missing/needsResolution/uncertain/toolError0·기존 unsuppor
 [전체 원장](raw/ir-7/round-c/ledger-checks.json)은 인용 불일치·미해석·ref 문제0, owner720/720, 17영역 sentence missing·bad classification0입니다. doc-coverage의 새 bad ID·missing token·untagged sentence·stale exemption은0이며 기존 미인용66·plan-links1과 tokens2,390/잔여398을 유지합니다. [경로·기록 감사](raw/ir-7/round-c/audit.json)는 추가 기계 경로0과 원래 stage의 ledger·ADR·design·plan prefix 보존, 최종 제품·시험 SHA256 일치와 scratch 제거를 확인합니다.
 
 round c는 reset에서 이미 수행하던 기록 이관의 순서만 바꾸며 hot write path·노드 필드·예약 loop·공개 API를 늘리지 않습니다. 기록 수에 비례하는 이관 비용과 원래 root/scope 보관량은 기존과 같습니다. browser 측정 창·benchmark는 수행하지 않았고 성능 수치를 주장하지 않습니다. L1–L4 수용 한계와 기존 FCA·문서 잔여 findings는 앞선 결과 그대로입니다.
+
+
+Round d: resetRootLoad JSDoc에 beginLoad·buffer/reset 사슬→새 build 기록 전달 효과를 명시하고 DETAIL의 첫 show 오류 표면과 시험 주석을 현행 계약으로 정정했습니다. 제품·시험의 실행 토큰과 주석 없는 컴파일 출력은 기준41fe와 동일합니다([무로직 변경 증거](raw/ir-7/round-d/logic-unchanged.json)).
+검증: lint 경고0·typecheck 통과, 대상 render6·react18 3통과/3skip; FCA finding202·진단177 차분0(기존 indeterminate·실패12 유지), 전체 원장·DETAIL 추가 범위 검사 차분0(기존 미인용64·token53·untagged85), 추가 기계 경로0·기록 prefix 보존이며 [관문](raw/ir-7/round-d/command-gates.json)·[FCA](raw/ir-7/round-d/fca-diff.json)·[원장](raw/ir-7/round-d/ledger-checks.json)·[감사](raw/ir-7/round-d/audit.json)에 증거를 보존했습니다.

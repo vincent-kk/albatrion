@@ -1,0 +1,22 @@
+{
+  "baseline": "41fe6a45a",
+  "method": "Compare TypeScript scanner tokens with skipTrivia and compiler output with removeComments=true.",
+  "files": {
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts": {
+      "beforeSha256": "657582b3d7fdde3683a58d95dbb811ffc37fb801ede2899270229e8335bfa681",
+      "afterSha256": "03d84e870ee940d87d5918882dcb21978a5f72f8db0b80d49d2cd455c0b283d2",
+      "tokensSha256": "b2fbc98dd275bd651cb9086050b15252ad3b1130808765bb3d826bd1ab2b32fc",
+      "emitSha256": "3deee4a3940e477e33547205ca3de563d35601a92bcdb0a3709790ef3b5ea02f",
+      "tokensEqual": true,
+      "emitEqual": true
+    },
+    "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx": {
+      "beforeSha256": "320c5e1f0b88a543a9d91d881b67236d64a73f73a1967ba88c708165f977abf2",
+      "afterSha256": "0e00c686983354b5be83677d2ccdf456e5a233d48927bc49bd37baea147aa8aa",
+      "tokensSha256": "fa905cef731463a27569c5d8f2e653de90597faf531abd6b5cc838fa6204d609",
+      "emitSha256": "4a37c07bffc415725bb03d115bd10ef03c9d9f7ef1a89216278a5476058d96c9",
+      "tokensEqual": true,
+      "emitEqual": true
+    }
+  }
+}

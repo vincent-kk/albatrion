@@ -1,0 +1,18 @@
+{
+  "render": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "todo": 0,
+    "raw": "render.json.gz"
+  },
+  "react18": {
+    "files": 1,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 3,
+    "todo": 0,
+    "raw": "react18.json.gz"
+  }
+}
