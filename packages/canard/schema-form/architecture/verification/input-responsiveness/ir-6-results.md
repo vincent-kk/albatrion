@@ -909,7 +909,7 @@ FCA는 로컬 추출기로1753자료를 갱신한 뒤 [차분](raw/ir-6/code/rou
 
 명령 node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/code/round-6/checkRound6.mjs가2884개 소스 해시·원시 시험·선언·FCA·정적 관문을 대조합니다. [경로 감사](raw/ir-6/code/round-6/machine-path-audit.json)는 새 머신 경로0을 확인하고 이전540표본의 G2/G8 FAIL을 그대로 재현합니다. 이는 개선 후보의 정식 성능 증거가 아닙니다. 코드 검토와 사전 진단 뒤 go Phase E를 기다리며 verification.md는 수정하지 않았습니다.
 
-정리: catch-up·mount·fragment 실패 변이의 세 scratch를 각각 JSON 저장·인용 직후 Orca rm으로 제거했습니다. Orca가 남긴 로컬 branch 세 개와 각 base key는 삭제를 우회하지 않고 코디네이터에 보고합니다. 기존 diag-display는 사전 진단 결과 커밋 뒤 제거하고 lane-e는 측정 수락까지 유지합니다.
+정리: catch-up·mount·fragment 실패 변이의 세 scratch를 각각 JSON 저장·인용 직후 Orca rm으로 제거했습니다. Orca 비동기 정리 뒤 red branch 세 개는 사라졌고 각 base config key는 남았습니다. diag-display는 진단 결과 커밋 ff184c918 직후 제거했고 temp/ir6-diag-display branch와 base key는 남았습니다. 이 잔여 상태를 우회하지 않고 코디네이터에 보고하며 lane-e는 측정 수락까지 유지합니다.
 
 ### 6차 사전 진단 — 정식 성능 증거 제외
 
@@ -927,3 +927,7 @@ ccf4ec8ae의 개선 제품과 E(facd72a71), F-old(394e8898f와 같은 제품), V
 두 모드 모두 F-new eager가 F-old보다 낮아 brief의 추가 질문 조건은 발동하지 않습니다. E 대비 eager 잔여 차이는 None2.45ms·OnChange1.60ms이며, 새 정식 창에서 확인할 비용입니다. first도 F-old보다3.80/4.30ms 낮았습니다. 약2프레임에 최악 한 paint가 더해질 수 있는 표시 우선순위 한계를 함께 유지합니다. V1은 H를 지키지 않는 진단 참조입니다.
 
 [요약](raw/ir-6/browser/diagnosis/round-6/summary.json), [80페이지·입력](raw/ir-6/browser/diagnosis/round-6/diagnostic-complete.json.gz), [원시 해시](raw/ir-6/browser/diagnosis/round-6/capture-manifest.json)로 대조합니다. 개선 제품 코드 검토와 go Phase E를 기다리며 verification.md와 정식 수집은 시작하지 않았습니다.
+
+사전 진단의 모든 표와80페이지 원시는 node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/browser/diagnosis/round-6/checkRound6Diagnosis.mjs로 대조합니다. [정리 재확인](raw/ir-6/code/round-6/workspace-cleanup.json)은 네 디렉토리 제거·lane-e와 본 작업공간 보존, 잔여 branch/config를 기록합니다.
+
+판정: 표시 개선·사전 진단 완료, 독립 검토와 정식 재측정 대기(이전 G2/G8 FAIL 유지).
