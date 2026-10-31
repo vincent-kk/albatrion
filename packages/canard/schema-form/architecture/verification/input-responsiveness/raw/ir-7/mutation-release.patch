@@ -1,0 +1,13 @@
+diff --git a/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx b/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
+index 1e233b16e..b39222a1e 100644
+--- a/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
++++ b/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
+@@ -195,7 +195,7 @@ export const RootNodeContextProvider = ({
+       } else load.prepared = true;
+     }
+     return () => {
+-      if (root && validator) releaseValidationRoot(validator, authored);
++      // Mutation control: omit validation cache release.
+     };
+   }, [load, reporter, store]);
+ 

@@ -1,0 +1,16 @@
+diff --git a/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx b/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
+index 1e233b16e..672d87db3 100644
+--- a/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
++++ b/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
+@@ -179,10 +179,10 @@ export const RootNodeContextProvider = ({
+     const root = load.root;
+     const validator = load.props.validator;
+     const authored = load.props.jsonSchema;
++    store.unsubscribe = subscribeRootLoad(load, store);
+     if (root && validator) retainValidationRoot(validator, authored);
+     if (!load.prepared) {
+       if (store.load === load) {
+-        store.unsubscribe = subscribeRootLoad(load, store);
+         load.prepared = true;
+         flushRootLoad(load);
+         if (root) {

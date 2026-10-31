@@ -164,3 +164,8 @@ lint (0 warnings), typecheck, build; unit, render, react18, verify, storybook, p
 
 
 계약 문서를 별도 커밋하고 T1–T8의 허용된 예외 외에는 단계 기준에서 실패 원시와 시험 SHA256을 보존한 뒤 C1–C7을 구현합니다. 제품·시험 커밋과 생성 번들 커밋을 분리합니다. browser 측정·benchmark는 수행하지 않습니다. hot path는 같은 비용의 flag 읽기이며 기존 측정 행은 Form을 숨기지 않습니다. 시간·메모리 비용은 load별 retired 선택 필드와 reset 또는 GC까지 유지되는 루트 구독이며 새 루프·타이머는 없습니다.
+
+
+### IR-7 불변 guard 예외 승인 — 2026-11-01
+
+T5 hide/show cycles·StrictMode 단일 구독·검증 캐시 retain/release 균형은 기준에서도 통과하는 불변 guard로 유지합니다. 코디네이터 승인 조건에 따라 제품 머리6f1b36f22의 scratch에서 effect setup마다 cleanup 해제 없이 재구독하는 변형과 cleanup의 releaseValidationRoot를 생략하는 변형을 각각 주입했습니다. 양쪽 React major에서 구독 guard 둘과 균형 guard 하나가 모두 실패하며 mutation-runs.json에 최종 커밋 시험의 SHA256·실패 원시·변형 patch를 보존합니다. 기준 red의 부재를 숨기거나 red와 mutation red를 합산하지 않습니다. scratch는 증거 커밋 직후 Orca로 제거하고 남은 관문을 순차 수행합니다.
