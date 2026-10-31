@@ -20,6 +20,9 @@ const AUTOMATIC_WRITES_MASK =
 
 /**
  * Perform one synchronous load, preserving equal authored roots and replacing others.
+ * Call beginLoad to advance the reporter load and renew its warning scope.
+ * Deliver the replaced never-prepared load's buffered and reset-chain records,
+ * then the new build records, once to the reporter.
  * Retire the previous load after the reset chain, including failed adoption.
  * Report a replaced never-prepared load's construction error once to capture and the host.
  * @param previous - Committed or speculative load whose tree may be retained

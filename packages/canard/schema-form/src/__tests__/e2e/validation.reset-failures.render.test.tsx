@@ -238,7 +238,7 @@ it('IR-7 round c initially hidden validator replacement delivers its reset-chain
       surface: 'thrown',
     }),
   );
-  // Stage emits these two React boundary diagnostics, with no extra host error.
+  // React and the root ErrorBoundary log the caught throw; no host report is added.
   expect(sink.errors()).toEqual([
     '%o\n\n%s\n\n%s\n',
     'ErrorBoundary caught an error:',
