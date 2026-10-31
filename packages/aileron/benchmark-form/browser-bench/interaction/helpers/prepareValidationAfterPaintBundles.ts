@@ -21,7 +21,10 @@ export async function prepareValidationAfterPaintBundles(
     '--baseline-root must identify the built facd72a71 checkout',
   );
   assert.ok(root.endsWith('.noindex') && !fs.existsSync(root));
-  const git = (args: string[], cwd?: string) =>
+  const repositoryRoot = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+    encoding: 'utf8',
+  }).trim();
+  const git = (args: string[], cwd = repositoryRoot) =>
     execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
   const baselineCommit = git(['rev-parse', 'HEAD'], baseline);
   assert.equal(baselineCommit, 'facd72a71c44a798f5484827509073a27fb678a3');
@@ -72,10 +75,14 @@ export async function prepareValidationAfterPaintBundles(
     inputs.ruleVersion = REGISTERED_ROUND6_RULES.version;
     inputs.rulesSha256 = createHash('sha256')
       .update(
-        execFileSync('git', [
-          'show',
-          rulesCommit + ':' + REGISTERED_ROUND6_RULES.verificationPath,
-        ]),
+        execFileSync(
+          'git',
+          [
+            'show',
+            rulesCommit + ':' + REGISTERED_ROUND6_RULES.verificationPath,
+          ],
+          { cwd: repositoryRoot },
+        ),
       )
       .digest('hex');
   }

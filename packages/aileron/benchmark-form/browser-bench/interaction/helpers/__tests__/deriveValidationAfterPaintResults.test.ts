@@ -6,6 +6,7 @@ import { deriveValidationAfterPaintResults } from '../deriveValidationAfterPaint
 import { summarizePage } from '../summarizePage';
 import type { SampleResult } from '../summarizeResults';
 import { bootstrapProcessingRatio } from '../validationAfterPaint/bootstrapProcessingRatio';
+import { decideValidationAfterPaintGates } from '../validationAfterPaint/decideValidationAfterPaintGates';
 
 /** Synthetic pages keep one censored-source observation and twenty dispatched keys. */
 function fixture(processing = { L: 6.425, E: 2, F: 1 }) {
@@ -266,5 +267,27 @@ describe('pre-registered validation-after-paint decisions', () => {
       );
       expect(gate(result, 'G2').status).toBe('INDETERMINATE');
     }
+  });
+
+  it('selects the G8 guard from the explicit version independently of handler evidence', () => {
+    const data = fixture();
+    for (const [file, page] of Object.entries(data.pages))
+      if (file.startsWith('mount-array-1000-') && file.includes('-F-'))
+        page.mount.eagerPaintedMs = 20 + 8.35;
+    const result = derive(data);
+    const decide = (
+      handler: typeof result.bootstrap.rows | undefined,
+      version?: 'round-6',
+    ) =>
+      decideValidationAfterPaintGates(
+        result.rows,
+        result.bootstrap.rows,
+        data.samples,
+        data.pages,
+        handler,
+        version,
+      ).gates.find((entry) => entry.id === 'G8')!.status;
+    expect(decide(undefined, 'round-6')).toBe('PASS');
+    expect(decide(result.bootstrap.rows)).toBe('FAIL');
   });
 });

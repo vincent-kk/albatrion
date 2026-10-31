@@ -21,13 +21,15 @@ const atMost = (
   limit: number | null | undefined,
 ) => (value == null || limit == null ? null : value <= limit);
 
-/** Apply only the pre-registered G1–G6 and G8 thresholds to complete row evidence. */
+/** Apply only the pre-registered G1–G6 and G8 thresholds to complete row evidence.
+ * @param ruleVersion - Explicit G8 guard; independent of available handler evidence. */
 export function decideValidationAfterPaintGates(
   rows: ValidationAfterPaintRow[],
   ratios: Record<string, ReturnType<typeof bootstrapProcessingRatio>>,
   samples: SampleResult[],
   pages: Record<string, ValidationAfterPaintPage>,
   handlerRatios?: Record<string, ReturnType<typeof bootstrapProcessingRatio>>,
+  ruleVersion?: 'round-6',
 ) {
   const find = (id: string, lane: string) =>
     rows.find((row) => row.id === id && row.lane === lane)!;
@@ -183,7 +185,7 @@ export function decideValidationAfterPaintGates(
             find(name, 'F').mount.eagerPaintedMs.median,
             find(name, 'E').mount.eagerPaintedMs.median === null
               ? null
-              : handlerRatios
+              : ruleVersion === 'round-6'
                 ? find(name, 'E').mount.eagerPaintedMs.median! + 8.35
                 : find(name, 'E').mount.eagerPaintedMs.median! *
                   (name.endsWith('-none') ? 1.02 : 1),

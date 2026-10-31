@@ -956,7 +956,11 @@ msg_241ca3e19a1b 승인에 따라 공개 노드만 가진 시험의 release는 �
 
 측정 head266228a07b165b068332c04227bbd7e1149256b4의 제품 소스는 최종6b head05a64e81b와 같으며 F제품 SHA-256은689ff1a17f4247316179e617eeb9b9b34db86d8d96b780f14c6a38d20b5c5bd0입니다. L공개0.16.1·Efacd72a71·F를 production React19.2.6, Chromium145.0.7632.6, AJV8.17.1, Node24.20.0, viewport900×700에서 교차 실행했습니다. [입력](raw/ir-6/browser/round-6/inputs.json)과 [원시 해시](raw/ir-6/browser/round-6/archive-manifest.json)에 제품·browser 번들과 도구 hash를 보존합니다.
 
+두 창 모두 `sourceProof.F`가 빈 문자열인 이유는 package 디렉터리 기준으로 git 경로 필터를 읽었기 때문이며, 이 창의 F 동일성은 6b·진단 빌드와의 SHA-256 일치와 `05a64e81b..d942c9fdc` 제품 소스 차이0에 근거합니다.
+
 전체18행 untimed smoke54보존 페이지를 마쳤고, Spotlight indexing enabled를 유지한30초 정숙 관찰이 첫 시도에 통과했습니다. 거절0회, paired mode 미사용입니다. 창은2026-10-31 14:48:55.403–15:07:15.761 UTC에 끝까지 실행했으며162예열을 버리고540새페이지를 보존했습니다. 시작 status msg_8985bc05fdd4·종료 msg_c208a9ac71df 사이에 검사·빌드·다른 창이 겹치지 않았습니다. CPU는 [원시](raw/ir-6/browser/round-6/cpu.json.gz)에 기록했습니다.
+
+외부 CPU 부하는15:00:01–15:00:56 UTC에 `find`41.7–96.8%·`mediaanalysisd`최대61.7%로 mount-flat-500-validate·mount-nested-d5-f4-validate 페이지와 겹쳤고 flat-2000 burst E0에서도 `mediaanalysisd`49.9%를 기록했으며, 규칙은 CPU 기록만 요구하고 G5의 통과 여유는 최소31ms이므로 이 부하에 의존하는 판정은 없습니다.
 
 <!-- IR6_ROUND-6_TABLES_START -->
 최대 통계: 정숙 창. ET는16ms 문턱으로 검열됩니다. 괄호는 관측 interaction/실제key 수입니다.
@@ -1116,6 +1120,8 @@ G8 None first E/F=142.85/134.55ms, eager E/F=198.10/201.10ms(+3.00ms, F/E1.01514
 
 소유자0.16.1 손실 목표는 행별 표대로 processing4/8·duration8/8·arrival4/8에서 해소됐습니다. 일부 처리·도착 손실은 남으며 전부 같아졌다고 해석하지 않습니다. 기본 엔진·표시 계약, 노드 사건 없는 해제에서 최악 한 paint가 더해질 수 있는 우선순위 한계와 드문 추가 렌더·배치 원자성 범위는 유지합니다. 숨긴 같은-schema reset의 보고 배달 미결은 별도 소유자 결정으로 남깁니다.
 
+arrival 해소 수에는 burst에서 F p95가 배달된32/200·18/200키만, L은66/200·80/200키만 포함하는 행이 있고 duration 해소 수는16ms에서 검열된 Event Timing 값(여러 행의 양쪽이16.000)에 의존하므로 두 수는 약한 근거이며, processing 해소 수와 전체 handler 표가 더 확실한 비교입니다.
+
 모든 숫자와 참고 판정은 원시에서 재현합니다. [새 판정](raw/ir-6/browser/round-6/decision.json), [원래 규칙 참고](raw/ir-6/browser/round-6/original-decision.json), [handler 근거](raw/ir-6/browser/round-6/handler-evidence.json), [source 연속성](raw/ir-6/browser/round-6/source-continuity.json)을 보존합니다.
 
 ### 마감 검증과 인계 범위
@@ -1136,3 +1142,22 @@ G8 None first E/F=142.85/134.55ms, eager E/F=198.10/201.10ms(+3.00ms, F/E1.01514
 6b mutation scratch 다섯 개와 앞선 6차 scratch 네 개는 제거했습니다. `ir6-lane-e`는 측정 수락까지 보존하며, 제거된 scratch의 잔여 branch/base key는 6b 정리 기록에 별도로 적었습니다. 새 정식 창은 추가 worktree를 만들지 않았습니다. 원래 측정 창과 이번 창의 원시를 함께 남기고 최종 head에 고정한 한국어 PR 본문으로 인계합니다.
 
 판정: 사전 등록한 새 규칙의 G1–G6·G8 모두 PASS, 마감 검증 통과. 첫 창의 G2·G8 FAIL과 일부 0.16.1 대비 손실은 기록대로 유지합니다.
+
+### 6c — 결과 판정 검토 보완
+
+`d942c9fdc`에 대한 독립 결과 검토의 조건을 반영했습니다. 준비 도구는 git 저장소 최상위를 한 번 구해 F clean-tree·source-proof 경로 필터를 그곳에서 실행합니다. 검사 도구는 round-6 이후 버전에만 비어 있지 않은 F proof와 해당 F 커밋의 제품 트리 일치를 요구하며, 기록된 두 창의 빈 proof는 소급 수정하지 않습니다. 아직 지원하지 않는 규칙 버전의 수락 범위를 넓히지 않았습니다. round-6은 정숙 관찰 시작도 규칙 커밋 이후여야 하고, 원래 규칙 창은 round-6 규칙 커밋 전이어야 합니다. G8은 handler 자료 존재 여부와 독립적으로 checker에서 전달한 명시적 버전으로 선택합니다.
+
+| 6c 관문 | 결과 |
+| --- | --- |
+| 최종 시험 텍스트 회귀 red | 수정 제거 시16통과·8실패, 원인별 실패와 시험 hash 보존·소스 복원 |
+| 집중 green / 전체 benchmark | 24통과 / 8파일·58통과·실패0 |
+| benchmark lint / browser typecheck | 경고0·종료0 / 종료0 |
+| IR6 감사·원시·모든 표 재현 | 신규 machine path0, 첫 창540의 G2·G8 FAIL·새 창540의 G1–G6·G8 PASS 유지 |
+| 이전 단계 재현 | IR0·IR1·backfill·quiet-gates·derived·IR2 여섯 명령 종료0 |
+| 6c 변경 범위 | 제품 소스 차이0·기존 원시 차이0, PR 전 존재 파일의 삭제0 |
+
+`architecture/ledger/settle.md`의 machine-local 경로 여섯 행은 `facd72a71`에도 있던 **348·400·401·829·868·869행**입니다. 경로 문자열은 재기록하지 않았고 이 행들은 그대로 두었으며, 별도 정리의 판단을 코디네이터에게 넘깁니다. 그 파일에는 앞선 이 PR의 허용된7행 추가가 있었으므로 6c 전체 파일 불변성은 수락 head `d942c9fdc`와 비교하고, 해당 여섯 행의 동일성은 `facd72a71`과 대조했습니다.
+
+[6c 검증 기록](raw/ir-6/code/round-6c/verification.json), [회귀 red 출처](raw/ir-6/code/round-6c/final-text-red-provenance.json), [범위 재검사](raw/ir-6/code/round-6c/checkRound6c.mjs)에 보존합니다. 제품·규칙 문턱·기존 원시는 바꾸지 않았고 새 측정 창도 열지 않았습니다. 위 source-proof 한계·CPU 부하·비교의 약한 근거를 PR 본문에도 반영하고 최종 head에 다시 고정하여 push합니다. `ir6-lane-e`는 측정 수락까지 보존합니다.
+
+판정: 6c 결과 판정 보완과 지정 검증 통과, 측정 수치·기존 두 창 판정 유지.

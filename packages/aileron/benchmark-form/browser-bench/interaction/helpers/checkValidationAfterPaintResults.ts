@@ -12,13 +12,16 @@ import { deriveValidationAfterPaintResults } from './deriveValidationAfterPaintR
 import { renderValidationAfterPaintTables } from './renderValidationAfterPaintTables';
 import { summarizePage } from './summarizePage';
 import type { SampleResult } from './summarizeResults';
-import { REGISTERED_ROUND6_RULES } from './validationAfterPaint/registeredRound6Rules';
+import { checkValidationAfterPaintRegistration } from './validationAfterPaint/checkValidationAfterPaintRegistration';
 
 /** Reproduce every IR-6 numeric artifact and inline table from canonical retained pages. */
 export function checkValidationAfterPaintResults(
   destination: string,
   write: boolean,
 ) {
+  const repositoryRoot = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+    encoding: 'utf8',
+  }).trim();
   const base = path.join(destination, 'raw/ir-6/browser');
   const suites = fs
     .readdirSync(base)
@@ -60,36 +63,22 @@ export function checkValidationAfterPaintResults(
       inputs.bundles.E.commit,
       'facd72a71c44a798f5484827509073a27fb678a3',
     );
-    const round6 =
-      inputs.preregisteredCommit === REGISTERED_ROUND6_RULES.commit;
-    if (round6) {
-      assert.equal(inputs.ruleVersion, REGISTERED_ROUND6_RULES.version);
-      const committed = execFileSync('git', [
-        'show',
-        inputs.preregisteredCommit +
-          ':' +
-          REGISTERED_ROUND6_RULES.verificationPath,
-      ]);
-      assert.equal(
-        createHash('sha256').update(committed).digest('hex'),
-        inputs.rulesSha256,
-      );
-      execFileSync('git', [
-        'merge-base',
-        '--is-ancestor',
-        inputs.preregisteredCommit,
-        complete.toolCommit,
-      ]);
-      const registeredAt = execFileSync(
-        'git',
-        ['show', '-s', '--format=%cI', inputs.preregisteredCommit],
-        { encoding: 'utf8' },
-      ).trim();
-      assert.ok(Date.parse(start.at) >= Date.parse(registeredAt));
-    } else {
-      assert.equal(inputs.preregisteredCommit, 'cfd4a9e2a');
-      assert.equal(inputs.ruleVersion, undefined);
-    }
+    const attempts = fs
+      .readdirSync(raw)
+      .filter((name) => name.startsWith('start-'))
+      .map(read);
+    const attempt = attempts.find((entry) => entry.at === start.at);
+    assert.ok(attempt);
+    const ruleVersion = checkValidationAfterPaintRegistration(
+      inputs,
+      {
+        at: start.at,
+        quietStartedAt: attempt.quiet.startedAt,
+        toolCommit: complete.toolCommit,
+      },
+      repositoryRoot,
+    );
+    const round6 = ruleVersion === 'round-6';
     assert.match(inputs.bundles.F.commit, /^[a-f0-9]{40}$/);
     assert.deepEqual(smoke.inputs.bundles, inputs.bundles);
     assert.deepEqual(smoke.cases, cases);
@@ -111,12 +100,6 @@ export function checkValidationAfterPaintResults(
     assert.deepEqual(complete.cases, cases);
     assert.equal(complete.samples.length, cases.length * 30);
     assert.equal(Object.keys(pages).length, complete.samples.length);
-    const attempts = fs
-      .readdirSync(raw)
-      .filter((name) => name.startsWith('start-'))
-      .map(read);
-    const attempt = attempts.find((entry) => entry.at === start.at);
-    assert.ok(attempt);
     assert.equal(attempt.samples, 0);
     assert.equal(attempt.policy.observationMs, 30000);
     assert.equal(attempt.policy.maximumExternalPidPercent, 30);
@@ -189,7 +172,7 @@ export function checkValidationAfterPaintResults(
       complete.samples,
       complete.mode,
       pages,
-      round6 ? 'round-6' : undefined,
+      ruleVersion,
     );
     const tables = renderValidationAfterPaintTables(data);
     for (const [name, value] of Object.entries({

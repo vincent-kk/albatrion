@@ -1,0 +1,119 @@
+{
+  "acceptedHead": "d942c9fdc4b4fb34e2c803509a57bb87e36a9182",
+  "task": "task_db0c28ee5a57",
+  "dispatch": "ctx_4daaa5f58661",
+  "newWindow": false,
+  "checks": [
+    {
+      "command": "test --reporter=json",
+      "exitCode": 0,
+      "files": 8,
+      "passed": 58,
+      "failed": 0
+    },
+    {
+      "command": "lint --max-warnings=0",
+      "exitCode": 0,
+      "warnings": 0
+    },
+    {
+      "command": "typecheck:browser",
+      "exitCode": 0
+    },
+    {
+      "command": "check:browser-results --stage=ir-6 --audit-base=facd72a71",
+      "exitCode": 0,
+      "stdout": "BROWSER_CHANGES_AUDIT_OK base=facd72a71 newMachinePaths=0\nIR6_RAW_REPRODUCED suite=main samples=540 gates=G1:PASS,G2:FAIL,G3:PASS,G4:PASS,G5:PASS,G6:PASS,G8:FAIL\nIR6_RAW_REPRODUCED suite=round-6 samples=540 gates=G1:PASS,G2:PASS,G3:PASS,G4:PASS,G5:PASS,G6:PASS,G8:PASS\n"
+    },
+    {
+      "command": "check:browser-results",
+      "exitCode": 0,
+      "stdout": "IR0_RAW_REPRODUCED samples=510"
+    },
+    {
+      "command": "check:browser-results --stage=ir-1",
+      "exitCode": 0,
+      "stdout": "{\"fixture\":\"replace-200-while-typing\",\"lane\":\"L\",\"processingP95\":1.600000023841858,\"handlerP95\":1.199999988079071,\"longestFrame\":54.90000003576279}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"E0\",\"processingP95\":4.199999988079071,\"handlerP95\":3.900000035762787,\"longestFrame\":61.5}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"A\",\"processingP95\":4.200000047683716,\"handlerP95\":4.200000047683716,\"longestFrame\":61.80000001192093}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"AB\",\"processingP95\":4.300000011920929,\"handlerP95\":4.100000023841858,\"longestFrame\":60.19999998807907}\n{\"fixture\":\"type-flat-500\",\"lane\":\"L\",\"processingP95\":2.699999988079071,\"handlerP95\":0.9000000357627869,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"E0\",\"processingP95\":4.899999976158142,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"A\",\"processingP95\":4.800000011920929,\"handlerP95\":1.100000023841858,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"AB\",\"processingP95\":4.799999952316284,\"handlerP95\":1.0999999642372131,\"longestFrame\":0}\nIR1_RAW_REPRODUCED samples=520\n"
+    },
+    {
+      "command": "check:browser-results --stage=ir-1 --suite=backfill",
+      "exitCode": 0,
+      "stdout": "IR1_RAW_REPRODUCED samples=120\n"
+    },
+    {
+      "command": "check:browser-results --stage=ir-1 --suite=quiet-gates",
+      "exitCode": 0,
+      "stdout": "{\"fixture\":\"replace-200-while-typing\",\"lane\":\"L\",\"processingP95\":1.600000023841858,\"handlerP95\":1.199999988079071,\"longestFrame\":55.90000003576279}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"E0\",\"processingP95\":4.399999976158142,\"handlerP95\":4.099999964237213,\"longestFrame\":61.60000002384186}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"A\",\"processingP95\":0.8999999761581421,\"handlerP95\":4,\"longestFrame\":62.299999952316284}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"AB\",\"processingP95\":3.5,\"handlerP95\":4.099999964237213,\"longestFrame\":64.80000001192093}\n{\"fixture\":\"type-flat-500\",\"lane\":\"L\",\"processingP95\":2.800000011920929,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"E0\",\"processingP95\":4.799999952316284,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"A\",\"processingP95\":4.700000047683716,\"handlerP95\":1.100000023841858,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"AB\",\"processingP95\":4.700000047683716,\"handlerP95\":1,\"longestFrame\":0}\nIR1_RAW_REPRODUCED samples=200\n"
+    },
+    {
+      "command": "check:browser-results --stage=ir-1 --derived",
+      "stdout": "{\"fixture\":\"replace-200-while-typing\",\"lane\":\"L\",\"processingP95\":1.600000023841858,\"handlerP95\":1.199999988079071,\"longestFrame\":54.90000003576279}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"E0\",\"processingP95\":4.199999988079071,\"handlerP95\":3.900000035762787,\"longestFrame\":61.5}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"A\",\"processingP95\":4.200000047683716,\"handlerP95\":4.200000047683716,\"longestFrame\":61.80000001192093}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"AB\",\"processingP95\":4.300000011920929,\"handlerP95\":4.100000023841858,\"longestFrame\":60.19999998807907}\n{\"fixture\":\"type-flat-500\",\"lane\":\"L\",\"processingP95\":2.699999988079071,\"handlerP95\":0.9000000357627869,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"E0\",\"processingP95\":4.899999976158142,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"A\",\"processingP95\":4.800000011920929,\"handlerP95\":1.100000023841858,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"AB\",\"processingP95\":4.799999952316284,\"handlerP95\":1.0999999642372131,\"longestFrame\":0}\nIR1_RAW_REPRODUCED samples=520\nIR1_DERIVED_REPRODUCED gates=10 spread=4 backfill=12\n",
+      "sessionId": 11037,
+      "exitCode": 0
+    },
+    {
+      "command": "check:browser-results --stage=ir-2",
+      "exitCode": 0,
+      "stdout": "IR2_SUITE_REPRODUCED suite=main samples=180\nIR2_RAW_REPRODUCED samples=180\n"
+    }
+  ],
+  "capturedAt": "2026-10-31T15:48:29.629624+00:00",
+  "red": {
+    "raw": "final-text-red.json.gz",
+    "passed": 16,
+    "failed": 8,
+    "sourceRestored": true,
+    "exactFinalTestText": true
+  },
+  "focusedGreen": {
+    "raw": "focused-green.json.gz",
+    "passed": 24,
+    "failed": 0
+  },
+  "scope": {
+    "productSourceDiff": 0,
+    "recordedRawDiff": 0,
+    "prePRDeletions": 0,
+    "prePRChangedFilesIn6c": 0,
+    "ledgerUnchangedSince": "d942c9fdc",
+    "preexistingMachinePathLines": [
+      348,
+      400,
+      401,
+      829,
+      868,
+      869
+    ],
+    "scopeSetupCorrection": "The draft compared the entire ledger to facd72a71, overlooking seven append-only lines already accepted in this PR; the final check compares the unchanged full ledger to d942c9fdc and the six path-bearing lines to facd72a71."
+  },
+  "files": {
+    "benchmark-tests.json.gz": {
+      "bytes": 3104,
+      "sha256": "fceb481d2ddbe56617126c6607c5214744a9e6c7ad367a3fad38e6388202059d"
+    },
+    "checkRound6c.mjs": {
+      "bytes": 2511,
+      "sha256": "9e3c6afffe6ad74ea72299c6192612b9c343c93803d60f14d6e05442d30cc6e3"
+    },
+    "final-text-red-provenance.json": {
+      "bytes": 1447,
+      "sha256": "360c9a023d960ddd4d0a636487709b2277f01080c3f18c164423ade052a7c7c0"
+    },
+    "final-text-red.json.gz": {
+      "bytes": 2452,
+      "sha256": "e5e2f8d11f8d394151ab2d6e34af3d9921a073562e73f1df0729f7f7395bbd20"
+    },
+    "focused-green.json.gz": {
+      "bytes": 1722,
+      "sha256": "c0ded771ed031f017479bb7a877773aca15f69edd999139332073b167fcc5464"
+    },
+    "red.json.gz": {
+      "bytes": 2448,
+      "sha256": "b212f293bc9f937bf82e98b4a8af94d8db06f843c94683be5eee450e9b307352"
+    },
+    "source-proof-diagnosis.json": {
+      "bytes": 308,
+      "sha256": "5aef868c344993e7fdf00e2a205953ae7423925d39bef81b3a854e833744b1a7"
+    }
+  }
+}

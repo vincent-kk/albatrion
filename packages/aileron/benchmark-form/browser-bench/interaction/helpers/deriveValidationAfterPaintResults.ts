@@ -122,6 +122,7 @@ export function deriveValidationAfterPaintResults(
     canonical,
     pages,
     ruleVersion ? handlerRatios : undefined,
+    ruleVersion,
   );
   const ownerGoals = rows
     .filter((row) => row.lane === 'F' && row.id.startsWith('type-'))
