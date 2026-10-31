@@ -23,7 +23,7 @@ const wrap = (form: ReactNode, hidden: boolean) =>
     </Suspense>
   );
 afterEach(cleanup);
-it('IR-6 R-f/R-g a hidden replacement delivers original then reset warnings with per-load dedup', async () => {
+it('IR-7 T3 hidden writes and reset each deliver their own warnings at chain end', async () => {
   const ref = createRef<FormHandle>();
   const onError = vi.fn();
   const makeForm = (value: any) => (
@@ -42,7 +42,7 @@ it('IR-6 R-f/R-g a hidden replacement delivers original then reset warnings with
   view.rerender(wrap(form, false));
   view.rerender(wrap(form, true));
   act(() => handle.setValue('bad-old'));
-  expect(onError).not.toHaveBeenCalled();
+  expect(onError).toHaveBeenCalledTimes(1);
   act(() => handle.rebuild());
   expect(onError).toHaveBeenCalledTimes(2);
   expect(onError.mock.calls.map(([record]) => record.details.source)).toEqual([

@@ -1,0 +1,56 @@
+{
+  "baseline": "41fe6a45a",
+  "baseStatus": "indeterminate",
+  "candidateStatus": "indeterminate",
+  "baseSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "b5c55c9dc908769e6ac9bede39953e66afacfc2edf2f9efd1ca20ea3c16e0e75",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 202,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "candidateSummary": {
+    "projectRoot": "package:",
+    "snapshotHash": "153698728273e3ad8e5ec6ba64400900455bb9f4ef7539c9988e429e5b03a490",
+    "mode": "project",
+    "scopes": [
+      "documents",
+      "nodes",
+      "entry-points",
+      "boundaries",
+      "dag",
+      "verification"
+    ],
+    "findingCount": 202,
+    "passed": 3082,
+    "failed": 12,
+    "skipped": 1
+  },
+  "findings": {
+    "added": [],
+    "removed": []
+  },
+  "diagnostics": {
+    "added": [],
+    "removed": []
+  },
+  "candidateDiagnostics": 177,
+  "facts": {
+    "exact": 1762,
+    "missing": 0,
+    "needsResolution": 0,
+    "uncertain": 0,
+    "toolError": 0,
+    "unsupported": 175
+  }
+}

@@ -1236,3 +1236,17 @@
 EVENT-028의 검증 실행 시점에 관한 옛 문장은 VALIDATE-052와 [D1 구현](../plan/input-responsiveness/design.md#d1-구현--ir-6-2026-10-31)이 대체합니다. 요청 순서는 그대로이며 쓰기·OnChange 마운트의 실행은 다음 화면 뒤 최신 커밋 한 번으로 합칩니다. 명시적 validate와 제출은 즉시 실행합니다. 오류의 sink/rejected 표면과 호출 시점 환경 검사·owed·하위 트리 보존은 같은 구현 절을 따릅니다. TEST-036의 과거 측정 수치 자체는 고치지 않으며 슬롯은 검증 계산량을 줄이지 않습니다. 기존 원문과 줄 번호는 보존합니다.
 
 IR-6 연속 입력 보충(2026-10-31): 위 화면 뒤 실행은 선행·연속 프레임 이월·첫 무요청 프레임 뒤 후행과 마지막 자동 실행 시작 기준100ms 상한을 포함합니다. 시간 정책은 도메인 없는 validationScheduling이 소유하고 마운트는 일회성 슬롯을 유지합니다(VALIDATE-052, 소유자 원문18).
+
+
+## IR-7 보충 — EVENT-028 (2026-11-01)
+
+첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다.
+
+IR-6의 owed·hidden buffer·reconnect 제한은 대체합니다. 같은-schema hidden reset의 미결 질문은 chain 끝의 즉시 전달로 닫습니다. reset은 mount-time 기록 뒤 build-time 기록을 전달하고 handler마다 실패를 호스트로 격리하여 이후 기록과 새 binding 교체를 계속합니다. never-prepared 기록의 원래 root·warning scope와 첫 flush의 reported 가드는 유지합니다. REACT-007의 최초 mount settle·추측 렌더 무배달 규칙은 유지하며 show의 필드 layout 쓰기·경고만 show에 도착합니다(L3).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다.
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
+
+근거: [IR-7 계획의 소유자 원문39–41](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01). 기존 원문·IR-6 보충은 역사 기록으로 보존하고 현재 계약은 이 보충이 대체합니다.

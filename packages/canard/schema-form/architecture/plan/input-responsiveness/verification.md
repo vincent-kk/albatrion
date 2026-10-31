@@ -124,3 +124,69 @@ first-painted는 root.render 전에 container에 childList/subtree MutationObser
 첫 정식 창의 G8 FAIL은 그대로 둡니다. 다음 정식 창부터 mount-array-1000의 eager-painted 판정은 None과 OnChange 모두 F 중앙값≤E 중앙값+8.35ms(반 프레임, 16.7ms의 절반)입니다. first-painted 판정(None F/E≤1.02, OnChange F≤E)은 그대로입니다. eager-painted F/E 비와 3% 이내 여부를 판정 옆에 참고로 적습니다.
 
 - 이유: 소유자는 표시 판단을 엔진에 두는 데 드는 작은 마운트 비용을 받아들이기로 했습니다. 진단에서 hold를 완전히 없앤 V1도 E 대비 eager가 +1.65ms(None)·+0.45ms(OnChange)였고, 같은 레인의 세션 간 중앙값 차이가 2~4ms여서 1.00·1.02 비율선은 개선 정도와 무관하게 표집에 좌우됩니다(ir-6-results.md의 G2/G8 원인 진단).
+
+
+## IR-7 — hidden-form delivery (2026-11-01)
+
+### Owner decisions (verbatim)
+
+- Quote 39 (reset): "리셋에 대해서는 명확히 이해가 안되는데, 나는 숨김여부와 무관하게 reset 실행시점에 onError를 받는게 맞는거같아. 다만, form을 숨겨놓고(랜더링이 안되는게 아니라 진짜 숨겨만 놓고) onError 를 받는 경우가 있는지는 모르겠지만... 그거랑 무관하게 일관성을 생각하면 실행시점에 바로 onError를 받는게 적절해보이네"
+- Quote 40: "1. 스키마를 사용한 값의 검증은 onValidate 아닌가? onError 는 진짜 오류를 수신하는 채널이잖아 2. Activity 기능을 사용해서 컴포넌트를 안그리는건 기존 컴포넌트를 css 등으로 visiblity hidden 설정하는거랑 다른건가? 라이프사이클이 같다면 보일때랑 안보일때가 다를 이유가 없어보이고, 동작이 다르다면 컴포넌트 라이프사이클 대신 엔진에서만 에러를 받아야할거같은데 Activity 기능을 고려하면 전반적으로 설계를 다 바꿔야하는건가?"
+- Quote 41 (answer to the recommendation: a committed form delivers onChange, onStateChange, onError and the other form-level callbacks at the engine's chain end whether or not React Activity or Suspense hides it; only renders React may discard keep holding; a separate PR right after IR-6): "권장대로 IR6 이후 바로 설계 후 진행합니다."
+
+### Rule
+
+첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다.
+
+### Limits
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다.
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
+
+### Acceptance criteria
+
+T1 Equivalence (stub the host sink, compare records by structure because each run has its own error objects, and use fields with no layout-effect writes or render-layer warnings so L3 does not apply). One scripted sequence run twice, once visible and once hidden after the first show: `setValue` of a valid value, of a value that fails conversion (a warning record), of a value whose validation throws in the validator (an error record), a subtree `setState`, a same-schema `reset`, and a root-replacing `rebuild`. Use referentially stable props and validator within a run (otherwise :176 resets at show), and a fresh schema object and validator per run (compile failures and blueprints are cached). Record every callback (`onChange`, `onStateChange`, `onValidate`, `onDiagnosticsChange`, `onError`) with its arguments in one ordered log after the deterministic settle helper; the two logs must be equal, and showing the hidden form afterwards must add nothing.
+T2 A mount validation due while hidden runs while hidden (one validator call or `onValidate` while hidden, none added on show); replaces "(d-owed)".
+T3 Adapt the existing hidden tests to the rule and name each change in the results: `validation.mount-owed.render.test.tsx` (R1, V6 isolation now at chain end while hidden, rebuild while hidden, W4, W5), `validation.hidden-reset-records.render.test.tsx` (records at write time and at reset time, never at show time), `validation.after-paint.render.test.tsx:311` "IR-6 (d)" (now: `validate` is called once after unmount and `onError` is not called, L1), and `bufferedRecords.test.ts` per C6. Watch `validation.continuity-restore.render.test.tsx` (X1 Activity restore), because a mount slot now runs while hidden; report whether it changes.
+T4 Never prepared: a discarded speculative render delivers nothing (existing tests stay); an Activity initially hidden form delivers nothing until first shown, then flushes its construction records once (React 19 only; it passes on the current code and is exempt from the red-run requirement); the StrictMode replay still delivers once (`Form.binding.test.tsx`, `RootNodeContext.binding.test.tsx`, `Form.reactVersions.test.tsx`, `settle.test.tsx` stay green); an initially hidden form whose `validatorFactory` changes before first show delivers its construction records once and keeps exactly one subscription (React 19; red today through the leaked subscription).
+T5 Subscription lifetime: after a root-replacing reset made while hidden and a show, and after a same-schema reset made while hidden and a show, one change produces exactly one `onDiagnosticsChange` (red today: two in both cases); the same after hide and show cycles, and under StrictMode on both majors; after unmount the validation root's reference count returns to its value before mount.
+T6 Reset isolation: an `onError` that throws on a build-time record of a root-replacing reset (for example the development DialectMismatch warning, or another build-time record) leaves the form usable: the binding holds the new root, later records still arrive, writes succeed, and the failure reaches the host sink once; visible and hidden, both majors (red today for the visible case).
+T7 Retired load: (a) in one act, after `rebuild`, a write through a node of the old tree that was detached before the rebuild raises the development `DetachedNodeWrite` warning through the old reporter (`refuseDetachedWrite.ts:18`); it must not call `onError`  (today it calls `onError`, because the previous load stays `ready` until the re-render commit). (b) A write validation that rejects after `rebuild` calls neither `onError` nor the host, before and after the change (a guard, exempt from the red-run requirement). If (a) cannot be produced, keep only (b) and state in the ledger supplement that no engine path delivers a late record to a retired load.
+T8 Limits pinned: L1 (after unmount, a `setValue` through a node captured before unmount calls `onChange` once) and L2 (a callback prop changed while hidden is used only after show, while a changed `onError` is used at once; React 19).
+Each new or adapted test, except the T4 initially hidden case, must fail on the stage branch before the change for the stated reason; store the red runs from the committed test text on both majors where they run.
+
+
+### Gates
+
+lint (0 warnings), typecheck, build; unit, render, react18, verify, storybook, production projects; the import-model test; public declaration and `src/index.ts` diff zero; FCA validate with no new finding; ledger checks; machine-path audit; existing skips and todos unchanged. No browser measurement: the hot-path change is a flag read of the same cost, and no measured row hides a form; say so in the results.
+
+
+계약 문서를 별도 커밋하고 T1–T8의 허용된 예외 외에는 단계 기준에서 실패 원시와 시험 SHA256을 보존한 뒤 C1–C7을 구현합니다. 제품·시험 커밋과 생성 번들 커밋을 분리합니다. browser 측정·benchmark는 수행하지 않습니다. hot path는 같은 비용의 flag 읽기이며 기존 측정 행은 Form을 숨기지 않습니다. 시간·메모리 비용은 load별 retired 선택 필드와 reset 또는 GC까지 유지되는 루트 구독이며 새 루프·타이머는 없습니다.
+
+
+### IR-7 불변 guard 예외 승인 — 2026-11-01
+
+T5 hide/show cycles·StrictMode 단일 구독·검증 캐시 retain/release 균형은 기준에서도 통과하는 불변 guard로 유지합니다. 코디네이터 승인 조건에 따라 제품 머리6f1b36f22의 scratch에서 effect setup마다 cleanup 해제 없이 재구독하는 변형과 cleanup의 releaseValidationRoot를 생략하는 변형을 각각 주입했습니다. 양쪽 React major에서 구독 guard 둘과 균형 guard 하나가 모두 실패하며 mutation-runs.json에 최종 커밋 시험의 SHA256·실패 원시·변형 patch를 보존합니다. 기준 red의 부재를 숨기거나 red와 mutation red를 합산하지 않습니다. scratch는 증거 커밋 직후 Orca로 제거하고 남은 관문을 순차 수행합니다.
+
+
+### IR-7 round b — 독립 검토 수정 (2026-11-01)
+
+reset의 옛 load 은퇴는 batch try/catch 뒤·최종 build 기록 flush 앞으로 옮깁니다. adoption 전 컴파일 실패를 포함한 reset 사슬의 옛 runtime 기록은 사슬 끝에 onError 한 번으로 전달하고 caller에 다시 던지며 호스트 sink는 0회로 유지하고, batch가 던져도 이후 은퇴합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 reported 가드로 한 번 capture·호스트 보고하며 새 reporter.root를 유지합니다. 첫 commit 구독은 이전 구독을 먼저 해제해 reset이 이전 load를 반환한 경우에도 한 구독만 남깁니다.
+
+L3에는 개발 StrictMode replay를 포함합니다: including the development StrictMode replay, which React models as a hide and show; production renders are unaffected. 비멱등 자식 mount layout 쓰기는 replay의 prepared load에서 onChange로 한 번 전달합니다. 최초 준비 전 쓰기는 계속 버립니다.
+
+T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도달하지 않는 경로입니다. 소비자 무배달만 검증하며 reporter.root 유지·복원을 검증했다는 주장은 제거합니다. T4 validator 교체 뒤 구독 단언은 기존 구독 변형에서도 red를 확인합니다. T7b는 validator start promise를 기다리고 hidden mount 시험은 숨기기 전에 확보한 node로 settle합니다. 새 회귀는 visible/hidden adoption 실패, never-prepared 생성 실패, 양쪽 major StrictMode replay이며 최종 커밋 시험의 red·mutation·green 해시와 모든 순차 관문은 round b 결과에 보존합니다.
+
+
+### Round b host 표면 정정 승인
+
+기준 stage의 visible adoption 전 compile 실패를 양쪽 React major에서 관찰한 결과 caller throw·onError1·host0이었습니다. 코디네이터가 이 기존 표면을 계약으로 승인했으며 처음 브리프의 host 보고 가정은 대체합니다. 수정 뒤 visible·hidden 모두 caller throw·onError1·host0을 검사하고 커밋 시험 텍스트의 stage visible green과 06df red를 저장합니다. never-prepared 생성 오류의 reset 끝 capture·host1 보고는 이 adoption 실패와 다른 경로이며 그대로 유지합니다.
+
+
+### IR-7 round c — never-prepared reset 사슬 기록 (2026-11-01)
+
+이전 load가 never-prepared이면 batch try/catch 뒤·retired 설정 전에 records를 이관합니다. batch 도중의 adoption compile 실패 기록도 포함하여 이전 기록 전체를 새 build 기록 앞에 붙이며 원래 root·warning scope를 유지합니다. reporter와 새 root의 setup은 batch 전에 그대로 둡니다. 명령형 reset이 던진 경우에도 이전 load는 은퇴하여 늦은 옛 root 쓰기가 onChange·추가 onError를 내보내지 않습니다.
+
+React19의 처음 숨긴 OnRequest Form에서 validator A를 실패하는 B로 바꾼 뒤 show하는 회귀를 stage의 compile 실패 surface·호스트 출력과 대조합니다. 최종 커밋 시험을 000f와 stage에서 실행하고, 은퇴를 try 안으로 옮기는 변형이 양쪽 major의 늦은 쓰기 단언을 깨는지 확인합니다. resetRootLoad의 효과와 RootLoad error/reported 주석도 reset 경로를 명시합니다. 순차 관문·raw·SHA256은 round c 결과에 보존합니다.

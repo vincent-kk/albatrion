@@ -633,3 +633,33 @@
 - 까닭: `reviews/round-18-closing.md:2620-2625`
 - 충돌:
   > `reviews/round-18-closing.md:2578`의 "【추론】 규칙 A를 미리 보는 공개 함수는 지금 내보내지 않으며, 입력은 `valueTypeMismatch`로 결과를 보고, 함수를 나중에 더하는 것은 추가 변화다."는 소유자 답과 다르다: 이 항목의 `valueTypeMismatch`·`valueTypeMismatches`·`VALUE_TYPE_MISMATCH`는 확정 이름 `typeMismatch`·`typeMismatches`·`SCHEMA_FORM_WARNING.TYPE_MISMATCH`로 읽는다(SURFACE-061). 소유자 답이 이긴다(`reviews/round-18-owner-answers.md:41`).
+
+
+## IR-7 보충 — REACT-007 (2026-11-01)
+
+첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다.
+
+IR-6의 owed·hidden buffer·reconnect 제한은 대체합니다. 같은-schema hidden reset의 미결 질문은 chain 끝의 즉시 전달로 닫습니다. reset은 mount-time 기록 뒤 build-time 기록을 전달하고 handler마다 실패를 호스트로 격리하여 이후 기록과 새 binding 교체를 계속합니다. never-prepared 기록의 원래 root·warning scope와 첫 flush의 reported 가드는 유지합니다. REACT-007의 최초 mount settle·추측 렌더 무배달 규칙은 유지하며 show의 필드 layout 쓰기·경고만 show에 도착합니다(L3).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다.
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
+
+근거: [IR-7 계획의 소유자 원문39–41](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01). 기존 원문·IR-6 보충은 역사 기록으로 보존하고 현재 계약은 이 보충이 대체합니다.
+
+
+## IR-7 round b 보충 — REACT-007 (2026-11-01)
+
+reset의 옛 load 은퇴는 batch try/catch 뒤·최종 build 기록 flush 앞으로 옮깁니다. adoption 전 컴파일 실패를 포함한 reset 사슬의 옛 runtime 기록은 사슬 끝에 onError 한 번으로 전달하고 caller에 다시 던지며 호스트 sink는 0회로 유지하고, batch가 던져도 이후 은퇴합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 reported 가드로 한 번 capture·호스트 보고하며 새 reporter.root를 유지합니다. 첫 commit 구독은 이전 구독을 먼저 해제해 reset이 이전 load를 반환한 경우에도 한 구독만 남깁니다.
+
+L3에는 개발 StrictMode replay를 포함합니다: including the development StrictMode replay, which React models as a hide and show; production renders are unaffected. 비멱등 자식 mount layout 쓰기는 replay의 prepared load에서 onChange로 한 번 전달합니다. 최초 준비 전 쓰기는 계속 버립니다.
+
+T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도달하지 않는 경로입니다. 소비자 무배달만 검증하며 reporter.root 유지·복원을 검증했다는 주장은 제거합니다. T4 validator 교체 뒤 구독 단언은 기존 구독 변형에서도 red를 확인합니다. T7b는 validator start promise를 기다리고 hidden mount 시험은 숨기기 전에 확보한 node로 settle합니다. 새 회귀는 visible/hidden adoption 실패, never-prepared 생성 실패, 양쪽 major StrictMode replay이며 최종 커밋 시험의 red·mutation·green 해시와 모든 순차 관문은 round b 결과에 보존합니다.
+
+근거: IR-7 독립 검토와 소유자 원문39–41을 따른 기존 전달 계약의 회귀 수정입니다. 과거 원문은 보존합니다.
+
+
+## IR-7 round c 보충 — REACT-007 (2026-11-01)
+
+never-prepared 이전 load의 기록 이관은 reset batch try/catch 뒤·은퇴 전에 수행합니다. reset 사슬의 새 기록도 이전 생성 기록과 함께 새 build 기록보다 먼저 원래 root·scope로 한 번 전달합니다. 소유자 원문39–41의 실행 시점 전달과 ERROR-026의 한 번 보고를 유지하며 첫 show의 실패 surface·호스트 표면은 stage 시험으로 고정합니다. prepared load의 명령형 reset은 기존 caller throw·onError1·host0을 유지하고 실패 뒤에도 은퇴하여 옛 root의 늦은 쓰기가 소비자에게 도착하지 않습니다.

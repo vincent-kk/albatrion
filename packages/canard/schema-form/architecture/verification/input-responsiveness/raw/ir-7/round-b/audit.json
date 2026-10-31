@@ -1,0 +1,30 @@
+{
+  "machinePathsInAddedText": 0,
+  "method": "Compare added/replaced text with original stage; inspect full decompressed new gzip artifacts; keep pre-existing path examples in preserved records and normalize new log copies.",
+  "originalStageRecordPrefixesPreserved": [
+    "packages/canard/schema-form/architecture/adr/0001-validator-input-invariant.md",
+    "packages/canard/schema-form/architecture/adr/0004-validator-plugin-compile-guard.md",
+    "packages/canard/schema-form/architecture/adr/0007-settle-cycle.md",
+    "packages/canard/schema-form/architecture/adr/0008-event-system.md",
+    "packages/canard/schema-form/architecture/adr/0009-performance-budget-and-benchmarks.md",
+    "packages/canard/schema-form/architecture/adr/0010-branch-conventions.md",
+    "packages/canard/schema-form/architecture/adr/0014-error-policy.md",
+    "packages/canard/schema-form/architecture/design/03-settle-and-events.md",
+    "packages/canard/schema-form/architecture/design/05-validation-and-errors.md",
+    "packages/canard/schema-form/architecture/design/07-landing-and-tests.md",
+    "packages/canard/schema-form/architecture/ledger/error.md",
+    "packages/canard/schema-form/architecture/ledger/event.md",
+    "packages/canard/schema-form/architecture/ledger/react.md",
+    "packages/canard/schema-form/architecture/ledger/settle.md",
+    "packages/canard/schema-form/architecture/ledger/test.md",
+    "packages/canard/schema-form/architecture/ledger/validate.md",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/design.md",
+    "packages/canard/schema-form/architecture/plan/input-responsiveness/verification.md"
+  ],
+  "rootDetailL1Count": 1,
+  "existingSkipsTodosChanged": 0,
+  "scratchWorktreeRemoved": true,
+  "scratchBranchRemoved": true,
+  "productAndRedTestHashesMatch": true,
+  "versionAndPublicIndexChanges": 0
+}

@@ -1,0 +1,15 @@
+{
+  "baseline": "000f5685e",
+  "existingSkipsTodosFailsChanged": 0,
+  "addedReact19OnlySkip": 1,
+  "file": "packages/canard/schema-form/src/__tests__/e2e/validation.reset-failures.render.test.tsx",
+  "before": [
+    "  if (inject('reactMajor') !== '19') context.skip();",
+    "  if (inject('reactMajor') !== '19') context.skip();"
+  ],
+  "after": [
+    "  if (inject('reactMajor') !== '19') context.skip();",
+    "  if (inject('reactMajor') !== '19') context.skip();",
+    "  if (inject('reactMajor') !== '19') context.skip();"
+  ]
+}

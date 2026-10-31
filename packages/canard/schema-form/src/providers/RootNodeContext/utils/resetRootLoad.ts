@@ -8,6 +8,7 @@ import {
 } from '@/schema-form/core';
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
+import { reportErrorToHost } from '../../FormErrorContext';
 import type { RootLoad, RootLoadProps } from '../type';
 import { applyFormErrors } from './applyFormErrors';
 import { createRootLoad } from './createRootLoad';
@@ -19,7 +20,12 @@ const AUTOMATIC_WRITES_MASK =
 
 /**
  * Perform one synchronous load, preserving equal authored roots and replacing others.
- * @param previous - Committed load whose tree may be retained
+ * Call beginLoad to advance the reporter load and renew its warning scope.
+ * Deliver the replaced never-prepared load's buffered and reset-chain records,
+ * then the new build records, once to the reporter.
+ * Retire the previous load after the reset chain, including failed adoption.
+ * Report a replaced never-prepared load's construction error once to capture and the host.
+ * @param previous - Committed or speculative load whose tree may be retained
  * @param props - Committed schema, source and Form defaults for the new load
  * @param option - Call-local automatic-write override; other bits are ignored
  * @param rebuild - Explicitly replace the tree even when the schema is unchanged.
@@ -64,18 +70,6 @@ export const resetRootLoad = (
     previous.reporter?.capture(next.error);
     return previous;
   }
-  if (!previous.ready && previous.records.length) {
-    next.recordOrigins ??= new WeakMap();
-    for (const record of previous.records) {
-      const origin = previous.recordOrigins?.get(record);
-      next.recordOrigins.set(record, {
-        root: origin?.root ?? previous.root,
-        warningScope: origin?.warningScope ?? previous.warningScope,
-      });
-    }
-    next.records = previous.records.splice(0).concat(next.records);
-  }
-  next.ready = previous.ready;
   next.prepared = true;
   const replacement = next.root;
   if (next.reporter) next.reporter.root = replacement;
@@ -90,8 +84,31 @@ export const resetRootLoad = (
   } catch (error) {
     next.error = error;
   }
-  if (next.ready)
-    for (const record of next.records.splice(0))
+  if (!previous.prepared && previous.records.length) {
+    next.recordOrigins ??= new WeakMap();
+    for (const record of previous.records) {
+      const origin = previous.recordOrigins?.get(record);
+      next.recordOrigins.set(record, {
+        root: origin?.root ?? previous.root,
+        warningScope: origin?.warningScope ?? previous.warningScope,
+      });
+    }
+    next.records = previous.records.splice(0).concat(next.records);
+  }
+  previous.retired = true;
+  for (const record of next.records.splice(0)) {
+    try {
       reportBufferedRootRecord(next, record);
+    } catch (error) {
+      reportErrorToHost(error);
+    }
+  }
+  if (!previous.prepared && !previous.reported) {
+    previous.reported = true;
+    if (previous.error) {
+      previous.reporter?.capture(previous.error);
+      reportErrorToHost(previous.error);
+    }
+  }
   return next;
 };

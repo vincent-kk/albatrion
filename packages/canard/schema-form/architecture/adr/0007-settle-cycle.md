@@ -571,3 +571,15 @@ Always는 true·ShowError.Always·포함 mask이며 최초 mount inline 판정�
 마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).
 
 if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).
+
+
+## IR-7 숨김 전달 보충 — 2026-11-01
+
+위 IR-6의 숨김 buffer·reconnect·owed·unmount 배달 제한은 이 보충이 대체하며 원문은 기록으로 유지합니다 (VALIDATE-052). 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다 (VALIDATE-052). 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다 (VALIDATE-052). reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다 (VALIDATE-052). Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다 (VALIDATE-052). 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다 (VALIDATE-052). (ERROR-019, REACT-007, VALIDATE-052) (VALIDATE-052).
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다 (VALIDATE-052). 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다 (VALIDATE-052). mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다 (VALIDATE-052). unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다 (VALIDATE-052).
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다 (VALIDATE-052). onError는 insertion effect로 최신입니다 (VALIDATE-052). 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다 (VALIDATE-052).
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다 (VALIDATE-052). prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다 (VALIDATE-052).
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다 (VALIDATE-052). mount-time 기록이 build-time 기록보다 먼저 도착합니다 (VALIDATE-052).
+
+근거는 [IR-7 계획](../plan/input-responsiveness/design.md#ir-7--hidden-form-delivery-2026-11-01)의 소유자 원문39–41입니다 (VALIDATE-052). reset 기록별 handler 실패는 reportErrorToHost로 격리하고 이후 기록과 binding 교체를 계속합니다 (VALIDATE-052). 구독은 첫 commit 또는 reset에서 한 번만 설치하고 effect cleanup은 검증 루트 참조만 해제합니다 (VALIDATE-052).

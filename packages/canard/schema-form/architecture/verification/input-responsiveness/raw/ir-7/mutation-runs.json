@@ -1,0 +1,62 @@
+{
+  "productHead": "6f1b36f22",
+  "approval": "Coordinator approved baseline-pass invariant guards on condition that targeted mutations fail them.",
+  "runs": {
+    "mutation-subscriptions-render": {
+      "failed": 2,
+      "sha256": {
+        "packages/canard/schema-form/src/__tests__/e2e/validation.hidden-delivery.render.test.tsx": "b94e77f6de02266d2391e64d2340eb08ee118f0985f6bc9f13d84b949d57a735"
+      },
+      "failures": [
+        {
+          "title": "IR-7 T5 cycles keeps exactly one diagnostics subscription after hiding",
+          "reason": "AssertionError: expected \"spy\" to be called 1 times, but got 3 times"
+        },
+        {
+          "title": "IR-7 T5 strict keeps exactly one diagnostics subscription after hiding",
+          "reason": "AssertionError: expected \"spy\" to be called 1 times, but got 6 times"
+        }
+      ]
+    },
+    "mutation-subscriptions-react18": {
+      "failed": 2,
+      "sha256": {
+        "packages/canard/schema-form/src/__tests__/e2e/validation.hidden-delivery.render.test.tsx": "b94e77f6de02266d2391e64d2340eb08ee118f0985f6bc9f13d84b949d57a735"
+      },
+      "failures": [
+        {
+          "title": "IR-7 T5 cycles keeps exactly one diagnostics subscription after hiding",
+          "reason": "AssertionError: expected \"spy\" to be called 1 times, but got 3 times"
+        },
+        {
+          "title": "IR-7 T5 strict keeps exactly one diagnostics subscription after hiding",
+          "reason": "AssertionError: expected \"spy\" to be called 1 times, but got 4 times"
+        }
+      ]
+    },
+    "mutation-release-render": {
+      "failed": 1,
+      "sha256": {
+        "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/validation-cache-lifetime.test.tsx": "c26db5677f33c90c5665a7447b48d22f1107aef4af4618aecf636b8996dce2c4"
+      },
+      "failures": [
+        {
+          "title": "IR-7 T5 unmount balances every validation root retain even under StrictMode replay",
+          "reason": "AssertionError: expected 2 to be 1 // Object.is equality"
+        }
+      ]
+    },
+    "mutation-release-react18": {
+      "failed": 1,
+      "sha256": {
+        "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/validation-cache-lifetime.test.tsx": "c26db5677f33c90c5665a7447b48d22f1107aef4af4618aecf636b8996dce2c4"
+      },
+      "failures": [
+        {
+          "title": "IR-7 T5 unmount balances every validation root retain even under StrictMode replay",
+          "reason": "AssertionError: expected 2 to be 1 // Object.is equality"
+        }
+      ]
+    }
+  }
+}

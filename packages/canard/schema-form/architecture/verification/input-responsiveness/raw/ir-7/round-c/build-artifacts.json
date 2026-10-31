@@ -1,0 +1,21 @@
+{
+  "baseline": "000f5685e",
+  "sourceIndexDiff": "",
+  "versionDiff": "",
+  "indexSha256": "5944b3b7436679f41921a9ea9e2b053e833708d6948b488e0384d68ee6992359",
+  "bundles": {
+    "index.mjs": {
+      "bytes": 880282,
+      "sha256": "99db95197f7e005c84f1ca3de2ed0ce652bfd0546093a2c50c2f68613a4429ca"
+    },
+    "index.node.mjs": {
+      "bytes": 879486,
+      "sha256": "45c34f11e71f84b510d937f3beed8305cb165d19f280aa2f25b2b6cdfecd1634"
+    },
+    "index.cjs": {
+      "bytes": 901407,
+      "sha256": "27c176cb50b8f3da49e89ef676fb5200b808ae1d8848e432b80335f6a12438e0"
+    }
+  },
+  "trackedBuildOutputChanges": []
+}
