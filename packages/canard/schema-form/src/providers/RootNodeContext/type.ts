@@ -25,9 +25,9 @@ export type RootLoadProps = Pick<
 export interface RootLoad {
   /** Built root; absent when construction threw or a shared-schema conflict discarded it. */
   root?: FieldNode;
-  /** Props this load was built from; change callbacks read them only while `ready`. */
+  /** Props from the last connected commit; prepared current loads use these while hidden. */
   props: RootLoadProps;
-  /** Reports raised before the first commit, delivered once by the commit or root fallback. */
+  /** Reports raised before preparation, delivered once by the first commit, reset, or root fallback. */
   records: FormErrorRecord[];
   /** Original root and private warning load of a buffered or transferred record. */
   recordOrigins?: WeakMap<
@@ -38,12 +38,10 @@ export interface RootLoad {
   warningScope?: object;
   /** Construction or mount failure kept for the root boundary to throw and report. */
   error?: unknown;
-  /** The load is committed: reports, changes and state notifications go to the host directly. */
-  ready: boolean;
-  /** The first commit's buffer flush, external errors, and mount validation scheduling have run. */
+  /** First commit ran; deliver every form callback while effects are disconnected, until reset retires this load. */
   prepared: boolean;
-  /** A hidden or unmounted layout lifetime still owes its deferred mount verdict. */
-  mountValidationOwed?: boolean;
+  /** A reset replaced this load; it delivers nothing more to the consumer. */
+  retired?: boolean;
   /** Records have crossed the commit or root-fallback boundary. */
   reported?: boolean;
   /** Instance reporter outside the root boundary; absent when no Form error provider is mounted. */

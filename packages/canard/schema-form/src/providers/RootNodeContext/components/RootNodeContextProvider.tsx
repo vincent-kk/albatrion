@@ -27,13 +27,12 @@ import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
 import { useFieldRendererContext } from '../../FieldRendererContext';
-import { reportErrorToHost, useFormErrorContext } from '../../FormErrorContext';
+import { useFormErrorContext } from '../../FormErrorContext';
 import { useWorkspaceContext } from '../../WorkspaceContext';
 import type { RootBinding, RootLoadProps, RootLoadStore } from '../type';
 import { applyFormErrors } from '../utils/applyFormErrors';
 import { createRootLoad } from '../utils/createRootLoad';
 import { flushRootLoad } from '../utils/flushRootLoad';
-import { reportBufferedRootRecord } from '../utils/reportBufferedRootRecord';
 import { reportRootLoadValidation } from '../utils/reportRootLoadValidation';
 import { resetRootLoad } from '../utils/resetRootLoad';
 import { scheduleMountValidation } from '../utils/scheduleMountValidation';
@@ -116,20 +115,10 @@ export const RootNodeContextProvider = ({
   const reset = useHandle(
     (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
       const used = committed.current;
-      const previousLoad = store.load;
       store.load = resetRootLoad(store.load, used, option, rebuild);
       store.unsubscribe();
       store.unsubscribe = subscribeRootLoad(store.load, store);
       binding.current.root = store.load.root;
-      if (store.load !== previousLoad && !store.load.ready) {
-        for (const record of store.load.records.splice(0)) {
-          try {
-            reportBufferedRootRecord(store.load, record);
-          } catch (error) {
-            reportErrorToHost(error);
-          }
-        }
-      }
       attachedFilesMap.clear();
       onReset();
       pending.current = { props: used, option };
@@ -187,39 +176,25 @@ export const RootNodeContextProvider = ({
   });
 
   useLayoutEffect(() => {
-    store.unsubscribe = subscribeRootLoad(load, store);
-    load.ready = true;
     const root = load.root;
     const validator = load.props.validator;
     const authored = load.props.jsonSchema;
     if (root && validator) retainValidationRoot(validator, authored);
     if (!load.prepared) {
-      load.prepared = true;
-      flushRootLoad(load);
-      if (root) {
-        applyFormErrors(root, load.props.errors);
-        if ((load.props.validationMode ?? 0) & ValidationMode.OnChange) {
-          if (alwaysRef.current) validateMountRoot(root);
-          else scheduleMountValidation(load, store);
+      if (store.load === load) {
+        store.unsubscribe = subscribeRootLoad(load, store);
+        load.prepared = true;
+        flushRootLoad(load);
+        if (root) {
+          applyFormErrors(root, load.props.errors);
+          if ((load.props.validationMode ?? 0) & ValidationMode.OnChange) {
+            if (alwaysRef.current) validateMountRoot(root);
+            else scheduleMountValidation(load, store);
+          }
         }
-      }
-    } else {
-      if (load.reporter && root) load.reporter.root = root;
-      for (const record of load.records.splice(0)) {
-        try {
-          reportBufferedRootRecord(load, record);
-        } catch (error) {
-          reportErrorToHost(error);
-        }
-      }
-      if (load.mountValidationOwed) {
-        load.mountValidationOwed = false;
-        scheduleMountValidation(load, store);
-      }
+      } else load.prepared = true;
     }
     return () => {
-      load.ready = false;
-      store.unsubscribe();
       if (root && validator) releaseValidationRoot(validator, authored);
     };
   }, [load, reporter, store]);

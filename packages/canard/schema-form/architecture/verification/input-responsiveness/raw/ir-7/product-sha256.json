@@ -1,0 +1,14 @@
+{
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/scheduleMountValidation.ts": "fafc97d9c9509b9c0d56b665ffacdf683c09b742249a9ebbb92ab8d9588595f0",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/reportMountValidationFailure.ts": "1cadc11493e0644deec1aa7cd3085f45805d290ae05dfa89e7412637486256f5",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/applyFormErrors.ts": "6c4908eefc2576ecc94358a3a04ba46a507cfca001ceabf334fea526edc61fea",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/flushRootLoad.ts": "7de2324d44d85caba77163dd791749ddca2cdd01b8013cc37b1d2fb253ebe7bf",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/reportRootLoadValidation.ts": "cf78f9135c3040c1983dbf731a893e262ea86013515757576e052af32f52cfe3",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/subscribeRootLoad.ts": "48df09172bd2f285474b32e9f43795128b9a9e16c2427d70d80d38b2c0b9d132",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/createRootLoad.ts": "2d8f6a935fa03238901813b8adce7c49d9d6b448deda12e3a60f5f226bb2488e",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts": "060ef6e2a32862720b0f2fccf655725e073e7d19a830d76be9046526ee937d54",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/reportBufferedRootRecord.ts": "96feb1a324db376bb763d1e3c0911cbff569710e1d688423f5c0eb3cdbb1341d",
+  "packages/canard/schema-form/src/providers/RootNodeContext/utils/validateMountRoot.ts": "44b19ebb96615636daa325d6c5d61b7c4d7ec84f53db4b9e5eaa686091492bef",
+  "packages/canard/schema-form/src/providers/RootNodeContext/type.ts": "ad1617b7bafbed2b161041725ae789402b290d1e74acdc7e4b696259e35f4c52",
+  "packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx": "47869b9d09ec4bebc282320f73dbdb8c142429658006143657e69198f265deb9"
+}

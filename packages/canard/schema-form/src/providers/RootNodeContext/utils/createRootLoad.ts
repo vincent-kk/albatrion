@@ -10,9 +10,9 @@ import {
 import type { RootLoad, RootLoadProps } from '../type';
 
 /**
- * Build a speculative root whose reports wait in `records` until the load is committed (`ready`).
+ * Build a speculative root; prepared current loads deliver even while effects are disconnected.
  * @param props - Committed Form props for this load; the default value is cloned before building.
- * @param reporter - Instance reporter that receives reports once the load is ready; may be absent.
+ * @param reporter - Instance reporter that receives prepared current load reports; may be absent.
  * @param mount - Mount the built tree now; `false` leaves mounting to a reset that first adopts the previous tree.
  * @returns The load; a construction or mount failure is kept in `error` instead of thrown.
  */
@@ -24,7 +24,6 @@ export const createRootLoad = (
   const load: RootLoad = {
     props,
     records: [],
-    ready: false,
     prepared: false,
     reporter,
     warningScope: reporter?.warningScope,
@@ -38,9 +37,11 @@ export const createRootLoad = (
       isAtomic: isRenderAtomic,
       errorReporter: {
         hasConsumer: () =>
-          reporter?.hasConsumer() ?? process.env.NODE_ENV !== 'production',
+          !load.retired &&
+          (reporter?.hasConsumer() ?? process.env.NODE_ENV !== 'production'),
         report: (record) => {
-          if (load.ready) {
+          if (load.retired) return;
+          if (load.prepared) {
             if (reporter && load.root) reporter.root = load.root;
             reporter?.report(record);
           } else {
@@ -53,10 +54,10 @@ export const createRootLoad = (
         },
       },
       onChange: (value) => {
-        if (load.ready) load.props.onChange?.(value);
+        if (load.prepared && !load.retired) load.props.onChange?.(value);
       },
       onStateChange: () => {
-        if (load.ready && load.root)
+        if (load.prepared && !load.retired && load.root)
           load.props.onStateChange?.(load.root.globalState);
       },
     });

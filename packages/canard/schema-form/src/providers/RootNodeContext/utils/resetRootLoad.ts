@@ -8,6 +8,7 @@ import {
 } from '@/schema-form/core';
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
+import { reportErrorToHost } from '../../FormErrorContext';
 import type { RootLoad, RootLoadProps } from '../type';
 import { applyFormErrors } from './applyFormErrors';
 import { createRootLoad } from './createRootLoad';
@@ -64,7 +65,8 @@ export const resetRootLoad = (
     previous.reporter?.capture(next.error);
     return previous;
   }
-  if (!previous.ready && previous.records.length) {
+  previous.retired = true;
+  if (!previous.prepared && previous.records.length) {
     next.recordOrigins ??= new WeakMap();
     for (const record of previous.records) {
       const origin = previous.recordOrigins?.get(record);
@@ -75,7 +77,6 @@ export const resetRootLoad = (
     }
     next.records = previous.records.splice(0).concat(next.records);
   }
-  next.ready = previous.ready;
   next.prepared = true;
   const replacement = next.root;
   if (next.reporter) next.reporter.root = replacement;
@@ -90,8 +91,12 @@ export const resetRootLoad = (
   } catch (error) {
     next.error = error;
   }
-  if (next.ready)
-    for (const record of next.records.splice(0))
+  for (const record of next.records.splice(0)) {
+    try {
       reportBufferedRootRecord(next, record);
+    } catch (error) {
+      reportErrorToHost(error);
+    }
+  }
   return next;
 };
