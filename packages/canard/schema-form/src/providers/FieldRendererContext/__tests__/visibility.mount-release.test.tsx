@@ -15,7 +15,20 @@ import { FieldRendererContextProvider } from '../components/FieldRendererProvide
 import { useErrorVisibility } from '../hooks/useErrorVisibility';
 import { useFieldRendererContext } from '../hooks/useFieldRendererContext';
 
-const counter = vi.hoisted(() => ({ calls: 0 }));
+const counter = vi.hoisted(() => ({ calls: 0, displays: 0 }));
+vi.mock('../hooks/useFieldRendererContext', async (importOriginal) => {
+  const real =
+    await importOriginal<typeof import('../hooks/useFieldRendererContext')>();
+  return {
+    ...real,
+    useFieldRendererContext: (
+      ...args: Parameters<typeof real.useFieldRendererContext>
+    ) => {
+      counter.displays++;
+      return real.useFieldRendererContext(...args);
+    },
+  };
+});
 vi.mock('../hooks/useErrorVisibility', async (importOriginal) => {
   const real =
     await importOriginal<typeof import('../hooks/useErrorVisibility')>();
@@ -83,12 +96,14 @@ const countMount = async (hydrate: boolean, showError: boolean) => {
   );
   if (hydrate) container.innerHTML = renderToString(form);
   counter.calls = 0;
+  counter.displays = 0;
   const root = hydrate ? hydrateRoot(container, form) : createRoot(container);
   if (!hydrate) root.render(form);
   try {
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(container.querySelectorAll('input')).toHaveLength(10);
-    return counter.calls;
+    // Context reads count display renders and RootNodeContextProvider renders.
+    return counter.displays;
   } finally {
     root.unmount();
     container.remove();

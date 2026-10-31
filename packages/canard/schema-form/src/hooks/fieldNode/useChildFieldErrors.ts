@@ -68,7 +68,6 @@ export const useChildFieldErrors = (
   const visible = useErrorVisibility(
     visibilityNodes,
     visibilityNodes.map((child) => !disabled && checkShowError(child.state)),
-    false,
   );
   const visibility = visible.join(':');
 

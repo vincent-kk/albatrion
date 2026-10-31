@@ -55,7 +55,7 @@ const MOUNTED_CHILDREN = 2;
  *        effect before React checks the server snapshot in its passive phase
  * @param virtualizationManager - Records this slot's node only when a real
  *        input is present; hidden proxies and placeholders never own this commit
- * @returns Container ref, input key and composition handlers that preserve the composing input
+ * @returns Container ref, input key, composition handlers and stable re-render dispatch shared with held-display releases
  */
 export const useFieldInputControl = <Node extends FieldNode>(
   node: Node,
@@ -65,7 +65,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
   virtualizationManager?: VirtualizationManager | null,
 ) => {
   const generation = useRef(node.revision(FieldNodeEventType.RequestRefresh));
-  const [, releaseComposition] = useReducer((value: number) => value + 1, 0);
+  const [, rerender] = useReducer((value: number) => value + 1, 0);
   const ref = useRef<HTMLDivElement>(null);
   const refreshDeferral = useRef(0);
   refreshDeferral.current =
@@ -107,7 +107,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
       mountedChildren.current === 0 &&
       generation.current !== node.revision(FieldNodeEventType.RequestRefresh)
     )
-      releaseComposition();
+      rerender();
   }, [node, mountedChildren]);
   useLayoutEffect(() => {
     commitTerminalChildren();
@@ -135,6 +135,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
     generation.current,
     handleCompositionStart,
     handleCompositionEnd,
+    rerender,
   ] as const;
 };
 

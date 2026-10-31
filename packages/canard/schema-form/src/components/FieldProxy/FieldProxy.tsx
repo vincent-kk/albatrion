@@ -1,4 +1,4 @@
-import { Fragment, memo, useMemo } from 'react';
+import { Fragment, memo, useMemo, useReducer } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { isMemoComponent } from '@winglet/react-utils/filter';
@@ -10,19 +10,30 @@ import {
 } from '@winglet/react-utils/hook';
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
-import { FieldNodeEventType } from '@/schema-form/core';
+import {
+  FieldNodeEventType,
+  readFieldNodeRevealVersion,
+} from '@/schema-form/core';
 import { useFieldNode } from '@/schema-form/hooks';
 import { useFieldNodeTracker } from '@/schema-form/hooks';
 import {
   useFieldRendererContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
-import { useErrorVisibility } from '@/schema-form/providers/FieldRendererContext';
+import {
+  ErrorRevealSubscriber,
+  isErrorRevealed,
+} from '@/schema-form/providers/FieldRendererContext';
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
 import { FieldInputSlotWrapper } from './components/FieldInputSlot';
 import type { FieldProxyProps } from './type';
+
+/** Advance a held display without allocating a reducer per render.
+ * @param value - Previous render sequence.
+ * @returns Next render sequence. */
+const increment = (value: number) => value + 1;
 
 const RERENDERING_EVENT =
   FieldNodeEventType.UpdateValue |
@@ -65,6 +76,7 @@ export const FieldProxy = ({
     FieldRenderer: ContextFieldRenderer,
     formatError: contextFormatError,
     checkShowError,
+    showError,
   } = useFieldRendererContext();
 
   const FieldRenderer = useLazyConstant(() => {
@@ -91,14 +103,15 @@ export const FieldProxy = ({
   });
   const Wrapper = useConstant(InputWrapper || Fragment);
   const { context } = useWorkspaceContext();
-  const [errorVisible] = useErrorVisibility(
-    [node?.enabled ? node : undefined],
-    [checkShowError(node?.state)],
-  );
-  const formatError = errorVisible ? contextFormatError : NULL_FUNCTION;
+  const [, rerender] = useReducer(increment, 0);
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 
   if (!node?.enabled) return null;
+  const live = checkShowError(node.state);
+  const errorVisible = live && isErrorRevealed(node, showError, true);
+  const revealVersion =
+    live && !errorVisible ? readFieldNodeRevealVersion(node) : undefined;
+  const formatError = errorVisible ? contextFormatError : NULL_FUNCTION;
 
   return (
     <Wrapper key={version}>
@@ -125,6 +138,13 @@ export const FieldProxy = ({
             context={context}
           />
         </ErrorBoundary>
+        {revealVersion !== undefined && (
+          <ErrorRevealSubscriber
+            node={node}
+            version={revealVersion}
+            onRelease={rerender}
+          />
+        )}
       </div>
     </Wrapper>
   );

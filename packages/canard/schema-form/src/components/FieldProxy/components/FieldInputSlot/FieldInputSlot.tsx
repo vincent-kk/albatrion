@@ -11,6 +11,7 @@ import {
   SetValueOption,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
+  readFieldNodeRevealVersion,
   writeFieldNodeInput,
 } from '@/schema-form/core';
 import {
@@ -18,7 +19,10 @@ import {
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
-import { useErrorVisibility } from '@/schema-form/providers/FieldRendererContext';
+import {
+  ErrorRevealSubscriber,
+  isErrorRevealed,
+} from '@/schema-form/providers/FieldRendererContext';
 import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
@@ -51,23 +55,28 @@ export const FieldInputSlot = memo(
       useTerminalChildren(node);
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
-    const { checkShowError } = useFieldRendererContext();
-    const [errorVisible] = useErrorVisibility(
-      [node],
-      [checkShowError(node.state)],
-    );
+    const { checkShowError, showError } = useFieldRendererContext();
+    const live = node.enabled && checkShowError(node.state);
+    const errorVisible = live && isErrorRevealed(node, showError, true);
+    const revealVersion =
+      live && !errorVisible ? readFieldNodeRevealVersion(node) : undefined;
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
     const isLive = useLiveNode(node);
-    const [ref, generation, handleCompositionStart, handleCompositionEnd] =
-      useFieldInputControl(
-        node,
-        mountedChildren,
-        commitTerminalChildren,
-        hydrationCommitRef,
-        FieldInput ? virtualizationManager : null,
-      );
+    const [
+      ref,
+      generation,
+      handleCompositionStart,
+      handleCompositionEnd,
+      rerender,
+    ] = useFieldInputControl(
+      node,
+      mountedChildren,
+      commitTerminalChildren,
+      hydrationCommitRef,
+      FieldInput ? virtualizationManager : null,
+    );
     const defaultValue = useMemorize(() => node.value, [node, generation]);
     const accepts = useCallback(
       () =>
@@ -170,6 +179,13 @@ export const FieldInputSlot = memo(
           ChildFields={ChildFields}
           context={context}
         />
+        {revealVersion !== undefined && (
+          <ErrorRevealSubscriber
+            node={node}
+            version={revealVersion}
+            onRelease={rerender}
+          />
+        )}
       </div>
     );
   },
