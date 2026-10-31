@@ -884,3 +884,29 @@ V2는 더 단순하지만 회귀 제거량이 None33.197%·OnChange6.077%에 그
 재현 명령은 `node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/browser/diagnosis/tools/checkDiagnosis.mjs`입니다. 원시 hash·최종 profile 집계·bootstrap 진단·모든 표를 재생하며 browser나 새 성능 창을 시작하지 않습니다. 정식 원시와 MAIN_TABLES 블록은394e8898f와 동일합니다.
 
 판정: 진단 전용 자료 작성, 정식 G2·G8 실패 유지 — 개선 설계·검토 디스패치 대기
+
+## 6차 수정 — Amendment 10
+
+승인된 D1–D6을 적용한다. enabled/live가 거짓이면 reveal을 읽지 않고, live 표시는 순수 판단을 사용하며 held 표시만 기존 첫 자식 뒤에 passive subscriber를 추가한다. FieldProxy는 모듈 reducer를, input은 기존 composition reducer를 사용한다. aggregate getter의 후보 version+1/비후보0은 유지한다. 계약 커밋 ee1b4e824가 제품 변경보다 앞선다.
+
+해제의 reducer dispatch는 현재 이벤트 우선순위를 따른다. 노드 사건 없는 해제는 최악 한 paint 늦어 약2프레임에 한 프레임이 더해질 수 있다. transition은 transition lane, passive catch-up은 default이며 매 렌더가 이력을 다시 읽는다. 오류 변경의 기존 tracker는 sync를 유지한다.
+
+동일 커밋에서 입력 형제의 layout effect가 history를 해제하고 검증기는 미해결로 두는 실제 Form 시험을 추가했다. [catch-up 제거 React19](raw/ir-6/code/round-6/red-catchup-render.json.gz)에서는 이 시험과 Activity 재연결이 false→true assertion에서 실패한다. [React18](raw/ir-6/code/round-6/red-catchup-react18.json.gz)도 동일 커밋 catch-up이 실패하며 Activity는 harness로 건너뛴다. 변이 코드는 scratch에만 존재한다.
+
+[모든 live 표시를 구독하는 변이 React19](raw/ir-6/code/round-6/red-mount-render.json.gz)와 [React18](raw/ir-6/code/round-6/red-mount-react18.json.gz)는 mount/hydration의 Always=hidden 계수 비교에서 실패한다. aggregate release 전 passive 시험은 그대로 유지한다.
+
+[V3 fragment 배치 변이 React19](raw/ir-6/code/round-6/red-fragment-render.json.gz)와 [React18](raw/ir-6/code/round-6/red-fragment-react18.json.gz)는 hold 시작의 입력 DOM identity 비교에서 실패한다. 현재 구현은 ErrorBoundary/FieldInput을 항상 첫 자식에 고정한다.
+
+코디네이터 msg_408720d9d417 승인에 따라 test3·5는 baseline set 항목의 rootNode를 release 함수에 전달한다. release는 같은 root runtime의 전체 이력을 해제하므로 이 수명의 루트가 정식 인자이며, 루트와 runtime identity를 시험에서 확인한다. record의 재귀 제네릭 형을 캐스트하지 않고 제품 시그니처·공개 표면은 유지한다.
+
+최종 관문은 unit619파일/4089통과(todo1), render154/882통과(기존2skip), react18 154/881통과(기존2+Activity1skip), verify778/5015통과(todo1·기존2skip), storybook101/254통과, production10/21통과입니다. 각 프로젝트의 범위는 겹치므로 합산하지 않습니다. 타입 identity 표현 정리 뒤 정확한 최종 생명주기 fixture는 render3/react18 2통과+Activity1skip으로 다시 확인했습니다. 예비 typecheck와 겹친 unit은 예비 원시로 분리하고 독립 serial unit 결과를 최종 증거로 사용합니다.
+
+lint 경고0·typecheck·build exit0이며 production은 새 build 다음에 실행했습니다. unit에 포함된 importModel2사례도 통과했습니다. [정적 관문](raw/ir-6/code/round-6/static-checks.json), [관문·입력 해시](raw/ir-6/code/round-6/code-gates.json), [생명주기 최종 React19](raw/ir-6/code/round-6/final-lifecycle-render.json.gz)·[React18](raw/ir-6/code/round-6/final-lifecycle-react18.json.gz)를 보존합니다. 제품 커밋은61e28eb44이며 dist는 source commit에서 제외했습니다.
+
+공개 선언은97root·55도달파일·917서명에서 의미 차이0·index 바이트 차이0·unsafe runtime 노출0입니다. [평가 결과](raw/ir-6/code/round-6/evaluated-public-declarations.json.gz)와 [양성·복원 대조](raw/ir-6/code/round-6/declaration-controls.json)를 보존합니다. 양성 주입은+1/−9와 exit1, 복원은 차이0·exit0입니다. 기존 승인 public JSDoc14쌍·5파일은 그대로이며 내부 전체 그래프의 보수 비교 차이는 공개 계약 차이로 세지 않습니다.
+
+FCA는 로컬 추출기로1753자료를 갱신한 뒤 [차분](raw/ir-6/code/round-6/fca-diff.json)에서 기존 finding202·diagnostic177·failed12/skipped1·indeterminate를 유지하며 새 차이0입니다. 초기 미갱신 자료의 검사는 예비 원시로 분리했습니다. [원장 관문](raw/ir-6/code/round-6/ledger-checks.json)은 ref1416문제0/verbatim327불일치0/sup3584불일치0·unparsed0, doc-coverage25문서·1144항목·기존uncited66·무태그0입니다. [연속성 대조](raw/ir-6/code/round-6/continuity-controls.json)는 aggregate의 두 번째 mount 시험과 same-commit 시험, 기존 주요 회귀, public index·version 보존과 원문33·36 맥락 포함 바이트를 확인합니다. 새 diff의 유일한 trailing whitespace는 소유자 원문36의 공백 보존이며 다른 공백 오류는0입니다.
+
+명령 node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/code/round-6/checkRound6.mjs가2884개 소스 해시·원시 시험·선언·FCA·정적 관문을 대조합니다. [경로 감사](raw/ir-6/code/round-6/machine-path-audit.json)는 새 머신 경로0을 확인하고 이전540표본의 G2/G8 FAIL을 그대로 재현합니다. 이는 개선 후보의 정식 성능 증거가 아닙니다. 코드 검토와 사전 진단 뒤 go Phase E를 기다리며 verification.md는 수정하지 않았습니다.
+
+정리: catch-up·mount·fragment 실패 변이의 세 scratch를 각각 JSON 저장·인용 직후 Orca rm으로 제거했습니다. Orca가 남긴 로컬 branch 세 개와 각 base key는 삭제를 우회하지 않고 코디네이터에 보고합니다. 기존 diag-display는 사전 진단 결과 커밋 뒤 제거하고 lane-e는 측정 수락까지 유지합니다.

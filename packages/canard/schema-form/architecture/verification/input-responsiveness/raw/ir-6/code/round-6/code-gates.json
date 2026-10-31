@@ -1,0 +1,113 @@
+{
+  "productCommit": "61e28eb44ad451663adac7fab185f95053f09815",
+  "contracts": [
+    "ee1b4e824",
+    "a2d97e6b6"
+  ],
+  "results": {
+    "unit": {
+      "files": 619,
+      "passed": 4089,
+      "failed": 0,
+      "pending": 0,
+      "todo": 1
+    },
+    "render": {
+      "files": 154,
+      "passed": 882,
+      "failed": 0,
+      "pending": 2,
+      "todo": 0
+    },
+    "react18": {
+      "files": 154,
+      "passed": 881,
+      "failed": 0,
+      "pending": 3,
+      "todo": 0
+    },
+    "verify": {
+      "files": 778,
+      "passed": 5015,
+      "failed": 0,
+      "pending": 2,
+      "todo": 1
+    },
+    "storybook": {
+      "files": 101,
+      "passed": 254,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0
+    },
+    "production": {
+      "files": 10,
+      "passed": 21,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0
+    },
+    "lifecycle-render": {
+      "files": 1,
+      "passed": 3,
+      "failed": 0,
+      "pending": 0,
+      "todo": 0
+    },
+    "lifecycle-react18": {
+      "files": 1,
+      "passed": 2,
+      "failed": 0,
+      "pending": 1,
+      "todo": 0
+    }
+  },
+  "sourceFileCount": 2884,
+  "importModelPassedCases": 2,
+  "artifactHashes": {
+    "preliminary-fca-validate.json.gz": "0599512acdba5e8dc9c0b9b6d8b615428b027f5c50e2f897e039043cf06d4792",
+    "final-verify.json.gz": "30770125da2aebc7cd6fc6330e639e0a72121206f0e50f2c13854f99a6c613d3",
+    "final-unit.json.gz": "25c7d1ab2d437c25c48bbf33190da290e8f939e84bcf6d371153da6cd8c95959",
+    "red-mount-render.json.gz": "fcb7bdfe12ffac3514478e0f617f2d04c6eb01297df9410effb2d19108c6d5f9",
+    "verbatim-check.txt.gz": "d2e5011a2f7802ce948a2dc8d1d7916d46bfea479a36929f33d39f939e3d2431",
+    "final-lifecycle-render.json.gz": "e78772cb66e7122411e9f0962ffb7fe75392f6f15103a151c360614ab01827a9",
+    "fca-final-validate.json.gz": "9e003aecebbeadb8ee9be9bd5b1206b23d30c29767b736cf687131a03d511462",
+    "red-fragment-render.json.gz": "369d6756e5798b50e9ed74ca1cc6d596172add76cd53d8a20872b8ce3bbec40a",
+    "final-render.json.gz": "0a264b88efb4b8a07a118ef8573ccbd5aedae3c2471fbf9f7b4258eedc01731a",
+    "final-lifecycle-react18.json.gz": "b2e6629d248fea9236d10318088175958e6ae7a12122dcbf47f0d242ab68ff58",
+    "final-storybook.json.gz": "b68e073fadb457b3b25eb98d7f85327e689e1aa10c0689358791f6b0e04c604b",
+    "evaluated-restored.json.gz": "9bf22390b5858e2f03adb5faedc5bcf728d6157ea2d6e71e71aca3885634622f",
+    "red-mount-react18.json.gz": "015514b07173d6aad72cb6998c87aef0d9d7c96e3f6f857ee77cfaf83221bcfd",
+    "final-react18.json.gz": "ba53a19a7614714d37225e8ed1e5d80830f61818905aea0173de7400ccbc1f3c",
+    "sup-check.txt.gz": "9ea4e6824b26f61a0f6b1b9daba9d0cf92464ddf699f23f0c5cf7bda0dfdb96a",
+    "preliminary-unit.json.gz": "d77b6ca8af024634f852784e8ca9799ae181c07d97b85246f4e94a1b25a270dd",
+    "source-hashes.json.gz": "a7695d757782872cdd9cdc81b7b57bde6fff4b1cb399a08696af32ce8a3e1db2",
+    "ref-check.txt.gz": "0b337158939a6afcc9d29b5603efd2a4a99a89645d5b3dd696565f7364768f28",
+    "red-fragment-react18.json.gz": "ee62ce0c6fde7f6d3dd1ed0b3ff94f2315236ad0bd77d038d6ab8ed421091922",
+    "evaluated-public-declarations.json.gz": "9bf22390b5858e2f03adb5faedc5bcf728d6157ea2d6e71e71aca3885634622f",
+    "final-production.json.gz": "f1f2314684bff89af50501a62d4db9ff5e116a813210aadad1afa1979ac8ccd8",
+    "evaluated-positive.json.gz": "28f174cd69beb475313db6713569e7af88f216cbd8b8ef67a01f1337d119d300",
+    "red-catchup-react18.json.gz": "7fb7b1f020cd89ac72b5d5484688ff25e49865534055ead3aa242b772c09962f",
+    "conservative-public-declarations.json.gz": "ae2527d55983583f97198bc564b1c6a0565aed1c4e18d0ddc3248d77cbaf0a1d",
+    "red-catchup-render.json.gz": "dd6a72d5ce1205c3da5b7a840897726957c8099dc1816acbe65b67a8c377521a",
+    "doc-coverage.txt.gz": "cc050ee823219ac5744086c8a1c4ff18651e5f17ba3cd5875ed961581d27463a",
+    "preliminary-fca-validate-full.json.gz": "d5fc33022d98425efcf0ee68319c914d65d711ff50d7d21b7b6f67a292b02a90"
+  },
+  "runtimeBundles": {
+    "index.mjs": {
+      "sha256": "689ff1a17f4247316179e617eeb9b9b34db86d8d96b780f14c6a38d20b5c5bd0",
+      "bytes": 880607
+    },
+    "index.node.mjs": {
+      "sha256": "e954d3f19b093a031f44b7e7768822b27f117a14007afd800a32bc45efa78e2f",
+      "bytes": 879811
+    },
+    "index.cjs": {
+      "sha256": "a0e742867535553b2ffc834debf13d4d262859286e63593e2716ec96f0ec71fd",
+      "bytes": 901732
+    }
+  },
+  "typeOnlyTestBridge": "Final lifecycle-render/react18 recheck the exact final root/runtime identity assertions after the full suites; other test sources are unchanged.",
+  "preliminaryUnitExcluded": "preliminary-unit overlapped a preliminary typecheck; final-unit is the separate serial run.",
+  "formalWindowStarted": false
+}
