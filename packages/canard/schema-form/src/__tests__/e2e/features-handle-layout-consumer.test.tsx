@@ -16,6 +16,8 @@ import { type FormHandle, Form, FormProvider, type JSONSchema } from '@/schema-f
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
 
+import { settleValidation } from '../helpers/settleValidation';
+
 // Consumer-only checks for handle-layout cases: handle commands, layouts, provider layers, and prop replacement.
 
 /**
@@ -33,7 +35,7 @@ const scenarioNamed = (name: string): FormScenario => {
  * Settle React work and timers in jsdom.
  * @returns Completion after the act scope.
  */
-const settle = () => act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+const settle = (current: () => FormHandle['node'] | undefined) => act(async () => { await settleValidation(current); });
 
 describe('features — handle-layout consumer-only', () => {
   it('handle validate and getErrors return the issues of the written value in document order', async () => {
@@ -107,9 +109,9 @@ describe('features — handle-layout consumer-only', () => {
       <Form<JSONSchema> ref={(next) => { handle = next; }} jsonSchema={scenario.schema as JSONSchema} defaultValue={scenario.initialValue} {...providerLayers.form} />
     </FormProvider>);
     try {
-      await settle();
+      await settle(() => handle?.node);
       await act(async () => { await handle!.validate(); });
-      await settle();
+      await settle(() => handle?.node);
       expect({
         titleReadOnly: handle!.findNode('/title')!.readOnly,
         secretVisible: handle!.findNode('/secret')!.visible,
@@ -129,13 +131,13 @@ describe('features — handle-layout consumer-only', () => {
     const { rerender, unmount } = render(view());
     try {
       for (const [index, stage] of propReplacementStages.entries()) {
-        await settle();
+        await settle(() => handle?.node);
         const before = handle!.findNode('/name');
         props = { jsonSchema: stage.schema ?? props.jsonSchema, defaultValue: stage.defaultValue ?? props.defaultValue };
         if (index > 0) rerender(view());
-        await settle();
+        await settle(() => handle?.node);
         if (stage.reset) act(() => handle!.reset());
-        await settle();
+        await settle(() => handle?.node);
         expect({ outputValue: handle!.getValue(), nodeKept: handle!.findNode('/name') === before }, `after stage ${index} ${stage.label}`)
           .toEqual({ outputValue: stage.outputValue, nodeKept: stage.nodeKept });
       }

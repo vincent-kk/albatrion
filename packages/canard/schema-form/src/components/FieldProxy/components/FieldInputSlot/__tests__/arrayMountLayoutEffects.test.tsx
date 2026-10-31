@@ -55,7 +55,7 @@ const mountLayoutRuns = (length: number) => {
   return runs;
 };
 
-it('improvement 32 mounts each array item with two layout effects: its child mount count and its input commit', () => {
+it('IR-6 U2 mounts each array item with two layout effects: child mount count and input commit', () => {
   const empty = mountLayoutRuns(0);
   const filled = mountLayoutRuns(200);
   expect(filled - empty).toBe(2 * 200);

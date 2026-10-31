@@ -10,15 +10,26 @@ import { reportErrorToHost } from './reportErrorToHost';
 /** Create an instance reporter; React supplies the current callback through onError. */
 export const createFormErrorService = (): FormErrorService => {
   const seen = new WeakSet<object>();
-  const warnings = new Set<string>();
+  const warnings = new WeakMap<object, Set<string>>();
+  let reportScope: object | undefined;
   let delivering = false;
   const service: FormErrorService = {
     hasConsumer: () =>
       !!service.onError || process.env.NODE_ENV !== 'production',
     load: 0,
+    warningScope: {},
+    reportInLoad(record, scope) {
+      const previous = reportScope;
+      reportScope = scope;
+      try {
+        service.report(record);
+      } finally {
+        reportScope = previous;
+      }
+    },
     beginLoad: () => {
       service.load++;
-      warnings.clear();
+      service.warningScope = {};
     },
     report(record) {
       if (delivering) return;
@@ -27,8 +38,11 @@ export const createFormErrorService = (): FormErrorService => {
       }
       if (record.level === 'warning') {
         const key = JSON.stringify([record.code, record.path]);
-        if (warnings.has(key)) return;
-        warnings.add(key);
+        const scope = reportScope ?? service.warningScope;
+        let keys = warnings.get(scope);
+        if (!keys) warnings.set(scope, (keys = new Set()));
+        if (keys.has(key)) return;
+        keys.add(key);
       }
       delivering = true;
       try {

@@ -57,6 +57,7 @@
 | VALIDATE-049 | 폼은 검증을 입력 경로에서 떼어 내는 장치를 두지 않음 — 진입당 요청 1회와 마이크로태스크 합치기, 빈도 조절은 `OnRequest`, 제출은 새로 검증 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80) |
 | VALIDATE-050 | 값을 바꾸는 검증기 옵션 — `Validator` 문서 주석의 계약 문장, ajv 플러그인 셋의 `bind`는 `coerceTypes`·`useDefaults`·`removeAdditional`을 켠 인스턴스를 거부(가칭 `VALIDATOR_BIND_REFUSED`), 사용자 정의 변경 키워드는 소비자 책임, 스키마 사본은 깊은 복사 한 번 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:34` union O4) |
 | VALIDATE-051 | union과 검증기 — ajv8 기본 설정에 `allowUnionTypes: true`(판정 불변, 로그만 없앰), core는 검증에 넘기는 값을 복사하지 않음, 어긋난 union 값과 통째 값 안쪽의 에러는 union 노드가 받음, 규칙 A·경고등은 검증기를 쓰지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91) |
+| VALIDATE-052 | 쓰기100ms 주기·release 이력 표시·Always 마운트 | 현행 | 소유자 결정과 코디네이터 amendment9 v3. |
 
 항목 형식은 `ledger/README.md` §3을 따른다.
 
@@ -851,3 +852,19 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2466-2471`, `reviews/round-18-closing.md:2556-2564`
+
+
+## IR-6 상태 보충 — 2026-10-31
+
+VALIDATE-049의 입력 경로·마이크로태스크 실행 규칙은 대체됨(→ VALIDATE-052)입니다. 위 색인과 원문은 과거 기록으로 보존합니다. 제출의 fresh verdict·검증기 입력 불변·플러그인 최적화 소유권은 유지합니다.
+
+### VALIDATE-052 쓰기100ms 주기·release 이력 표시와 Always 마운트
+
+- 결정:
+  > 쓰기 검증은 다음 프레임 선행·연속 프레임 이월·quiet 후행과 실제 마지막 실행 시작 기준100ms cap을 따릅니다. 오류는 지금 적격이며 마지막 release 이후 state·enabled·커밋 정책의 모든 조합에서 계속 적격일 때 표시하고 숨김은 즉시입니다. OnChange만 기록하며 새 표시·중간 숨김은 판정 정착·조용한 post-paint drop·수락한 explicit root 판정·폐기의 release를 기다립니다. 조용한 변경은 약2프레임 뒤 표시합니다. renderer/input은 enabled를 포함하고 child-errors는 제외합니다. raw 목록·명시적 호출 시점 snapshot·공개 표면은 유지합니다. Always의 최초 OnChange 판정은 layout에서 즉시 실행하고 다른 모드는 화면 뒤 슬롯을 씁니다.
+- 보충: 없음
+- 상태: 현행
+- 출처: `plan/input-responsiveness/design.md:159`(정본), `plan/input-responsiveness/request.md` 소유자 원문9–30 및18b.
+- 닫은 사람: 소유자 결정과 코디네이터 amendment9 v3.
+- 라운드: 입력 응답성 IR-6(2026-10-31).
+- 까닭: 소유자18b·19·21·23·25에 따라 engine history가 모든 적격 조합을 보존합니다. node는 write sequence당 한 번 append하고 정책은 root layout에서만 commit합니다. generation cutoff 해제는 새 기록이 앞 기록을 무기한 연장하지 못하게 하며 re-arm 뒤 version 증가·복사 listener 통지로 새 예약을 보존합니다. 표시 구독은 candidate에만 memoize하며 renderer의 React 수명과 무관하고 배열 mount layout2회·ordinary write0회를 유지합니다. commit-only 폐기는 최신 판정을 재요청하고 hidden reset 재생성은 load별 중복 범위·handler 격리로 chain 끝에 옛 기록 뒤 새 reset 기록을 전달합니다. 같은-schema hidden reset의 chain-end 전달은 미결로 남깁니다. 다섯 표시 한계는 D1에 기록하며 G는 미구현입니다.

@@ -1,3 +1,4 @@
+import { advanceFieldNodeRevealSequence } from '../../../record';
 import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
@@ -7,6 +8,7 @@ import {
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
+import { scheduleFieldNodeRevealDrop } from '../../../validation';
 import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
@@ -27,6 +29,7 @@ export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
+  advanceFieldNodeRevealSequence(node);
   const previous = node.interactionState;
   patchFieldNodeInteractionState(node, state);
   if (previous === node.interactionState) return;
@@ -41,5 +44,9 @@ export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
     FieldNodeEventType.UpdateState,
     node.interactionState,
   );
-  closeNonSettleEntry(node);
+  try {
+    closeNonSettleEntry(node);
+  } finally {
+    if (!runtime.entryDepth) scheduleFieldNodeRevealDrop(node);
+  }
 };

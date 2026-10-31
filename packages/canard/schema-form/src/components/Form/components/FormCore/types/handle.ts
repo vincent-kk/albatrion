@@ -45,6 +45,7 @@ export interface FormHandle<
   getErrors: Fn<[], FieldNode['globalErrors']>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   validate: Fn<[], Promise<FieldNode['globalErrors']>>;
+  /** Change the Form error policy. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. */
   showError: Fn<[visible?: boolean]>;
   submit: TrackableHandlerFunction;
 }

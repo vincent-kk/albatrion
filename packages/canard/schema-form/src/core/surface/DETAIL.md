@@ -21,6 +21,10 @@
 
 ## API Contracts
 
+- H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
+
+- `hasFieldNodeValidationRequest(node)`는 requireRuntimeFieldNode로 공개 노드를 내부 레코드로 좁힌 뒤 engine의 같은 이름 조회를 호출하는 바인딩 전용 통로다. core가 이 래퍼를 명명 재수출하며 src/index와 노드 공개 멤버는 유지한다(IR-6 R2, 코디네이터 승인 msg_7e0a5ed0ffd3).
+
 - BLUEPRINT-052: buildFieldNodeTree accepts an optional caller-owned blueprint cache and forwards it to blueprint without importing app state. Per-tree warning collection and runtime ownership remain unchanged.
 
 - surface의 엔진 참조는 engine/index를 통해서만 도달하며 내부 엔진 파일을 직접 가져오지 않는다(07c 계획 9.2·9.3).
@@ -161,6 +165,14 @@
 
 - `visitSubtree`는 자기 자신부터 전위로, 형제는 `children` 순서로 방문한다. `false`를 돌려준 노드의 하위만 건너뛰고, 형상 밖 노드(꺼진 게이트의 노드)는 방문하지 않으며, 터미널은 잎이고, 참조로 두 번 닿는 같은 인스턴스는 한 번만 방문한다. 떼어진 시작 노드에서는 NODE-044의 구조 읽기 규칙대로 그 노드와 함께 떼어진 마지막 커밋의 하위를 걷는다.
 - 순회 안에서 쓰기가 없으면 사슬에 들어가지 않는다. 첫 쓰기에 묶음이 열리고 순회가 끝날 때 루트에서 한 번 정착하며, 순회 중 읽기는 직전 커밋 값이다. 바깥 `batch` 안에서는 그 묶음에 합류해 바깥 끝에서 정착한다. 리스너 안에서도 순회는 되며, 전달 중(리스너 안)의 쓰기는 평소 규칙대로 리스너 되먹임으로 세어지고 오류 관찰자 안의 쓰기는 `WriteInObserver`로 거부된다. 순회 안의 상태·외부 오류 진입은 데이터를 즉시 바꾸고 그 사건 전달만 순회 끝(바깥 `batch`가 있으면 그 끝)으로 미루며, 요청 진입의 전달도 같다. 순회 안의 `reset`은 `batch` 안에서처럼 그 로드를 즉시 정착한다(EVENT-015). visitor가 던지면 표시된 쓰기를 커밋한 뒤 그 오류를 다시 던진다(SURFACE-062).
+
+## Boundary Exemptions
+
+### `runtime/requireRuntimeFieldNode.ts` — 검증 전용 runtime bridge
+
+- **Consumers**: `src/__tests__/helpers/readFieldNodeRuntime.ts`, `src/__tests__/helpers/releaseFieldNodeRevealHistory.ts`
+- **Direct import**: `allowed`
+- **Reason**: H 제거된 pending 바인딩을 시험만을 위해 보존하지 않고 release 이력·committed policy와 pending을 함께 관찰해야 한다. 기존 비공개 runtime accessor를 검증 bridge만 직접 사용하며 패키지 표면은 넓히지 않는다. 공개 노드만 가진 mount 시험의 root release도 같은 runtime root를 얻어 기존 validation 진입점에 전달한다. 코디네이터 msg_29959ddbd70f·msg_241ca3e19a1b 승인에 따라 importModel은 이 두 importer와 해당 target의 정확한 목록만 예외로 검증한다.
 
 ## Last Updated
 

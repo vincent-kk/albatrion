@@ -65,4 +65,4 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 - Register the validator plugin once in the test setup file, before any render — not per test.
 - `formRef.current` is `null` on first render — `await waitFor(() => expect(formRef.current).not.toBeNull())` before driving it.
-- Values and controls state settle synchronously inside `setValue()`; validation results arrive after a microtask and the DOM after React re-renders, so use testing-library `waitFor` before asserting on errors or rendered output (`event-system.md`).
+- Values and controls state settle synchronously inside `setValue()`; write-triggered validation results arrive after the frame that renders the edit and the error DOM after React re-renders, so use testing-library `waitFor` before asserting on errors or rendered output (`event-system.md`).

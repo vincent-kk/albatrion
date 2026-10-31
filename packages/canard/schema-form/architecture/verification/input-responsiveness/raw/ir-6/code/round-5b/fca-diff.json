@@ -1,0 +1,632 @@
+{
+  "method": "Exact finding and diagnostic multisets; only the four recorded line movements are normalized.",
+  "lineMovements": {
+    "package:/src/__tests__/e2e/features-composite-tails.test.tsx": [
+      [
+        171,
+        176
+      ]
+    ],
+    "package:/src/__tests__/e2e/features-input-components-consumer.test.tsx": [
+      [
+        103,
+        106
+      ]
+    ],
+    "package:/src/__tests__/e2e/features-validation-state-display.test.tsx": [
+      [
+        78,
+        80
+      ],
+      [
+        110,
+        112
+      ]
+    ]
+  },
+  "inspections": {
+    "scan": {
+      "baseStatus": "indeterminate",
+      "candidateStatus": "indeterminate",
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "c95b6b2ac750a40941c1b3ae70c89ace66cd7d7ccb76367359ef447f7025ae7a",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 376,
+        "depth": 9,
+        "nodesByType": {
+          "organ": 296,
+          "fractal": 80
+        },
+        "violationCount": 201,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      },
+      "candidateSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "7f38048a15b4645640c6bba4ef981f7136c44b0f1d35867a423d4072981adcf3",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 386,
+        "depth": 9,
+        "nodesByType": {
+          "organ": 305,
+          "fractal": 81
+        },
+        "violationCount": 201,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      },
+      "diagnostics": {
+        "added": [],
+        "removed": []
+      },
+      "rawFindings": {
+        "added": [],
+        "removed": []
+      },
+      "findings": {
+        "added": [],
+        "removed": []
+      }
+    },
+    "validate": {
+      "baseStatus": "indeterminate",
+      "candidateStatus": "indeterminate",
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "c95b6b2ac750a40941c1b3ae70c89ace66cd7d7ccb76367359ef447f7025ae7a",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 202,
+        "passed": 3002,
+        "failed": 12,
+        "skipped": 1
+      },
+      "candidateSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "7f38048a15b4645640c6bba4ef981f7136c44b0f1d35867a423d4072981adcf3",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 202,
+        "passed": 3082,
+        "failed": 12,
+        "skipped": 1
+      },
+      "diagnostics": {
+        "added": [],
+        "removed": []
+      },
+      "rawFindings": {
+        "added": [
+          {
+            "ruleId": "test-record-case-cap",
+            "path": "package:/src/__tests__/e2e/features-composite-tails.test.tsx",
+            "severity": "warning",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 176 uses a dynamic table.",
+            "certainty": "indeterminate",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          },
+          {
+            "ruleId": "test-record-case-cap",
+            "path": "package:/src/__tests__/e2e/features-input-components-consumer.test.tsx",
+            "severity": "warning",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 106 uses a dynamic table.",
+            "certainty": "indeterminate",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          },
+          {
+            "ruleId": "test-record-case-cap",
+            "path": "package:/src/__tests__/e2e/features-validation-state-display.test.tsx",
+            "severity": "warning",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 80 uses a dynamic table; parameterized case at line 112 uses a dynamic table.",
+            "certainty": "indeterminate",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          }
+        ],
+        "removed": [
+          {
+            "certainty": "indeterminate",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 171 uses a dynamic table.",
+            "path": "package:/src/__tests__/e2e/features-composite-tails.test.tsx",
+            "ruleId": "test-record-case-cap",
+            "severity": "warning",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          },
+          {
+            "certainty": "indeterminate",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 103 uses a dynamic table.",
+            "path": "package:/src/__tests__/e2e/features-input-components-consumer.test.tsx",
+            "ruleId": "test-record-case-cap",
+            "severity": "warning",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          },
+          {
+            "certainty": "indeterminate",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 78 uses a dynamic table; parameterized case at line 110 uses a dynamic table.",
+            "path": "package:/src/__tests__/e2e/features-validation-state-display.test.tsx",
+            "ruleId": "test-record-case-cap",
+            "severity": "warning",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          }
+        ]
+      },
+      "findings": {
+        "added": [],
+        "removed": []
+      }
+    },
+    "verification": {
+      "baseStatus": "indeterminate",
+      "candidateStatus": "indeterminate",
+      "baseSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "c95b6b2ac750a40941c1b3ae70c89ace66cd7d7ccb76367359ef447f7025ae7a",
+        "fileCount": 745,
+        "specDocument": {
+          "fileCount": 14,
+          "knownCaseCount": 3,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 731,
+          "knownCaseCount": 4479,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 21,
+        "certainty": "indeterminate"
+      },
+      "candidateSummary": {
+        "projectRoot": "package:",
+        "snapshotHash": "7f38048a15b4645640c6bba4ef981f7136c44b0f1d35867a423d4072981adcf3",
+        "fileCount": 772,
+        "specDocument": {
+          "fileCount": 14,
+          "knownCaseCount": 3,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 758,
+          "knownCaseCount": 4649,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 21,
+        "certainty": "indeterminate"
+      },
+      "diagnostics": {
+        "added": [],
+        "removed": []
+      },
+      "rawFindings": {
+        "added": [
+          {
+            "ruleId": "test-record-case-cap",
+            "path": "package:/src/__tests__/e2e/features-composite-tails.test.tsx",
+            "severity": "warning",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 176 uses a dynamic table.",
+            "certainty": "indeterminate",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          },
+          {
+            "ruleId": "test-record-case-cap",
+            "path": "package:/src/__tests__/e2e/features-input-components-consumer.test.tsx",
+            "severity": "warning",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 106 uses a dynamic table.",
+            "certainty": "indeterminate",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          },
+          {
+            "ruleId": "test-record-case-cap",
+            "path": "package:/src/__tests__/e2e/features-validation-state-display.test.tsx",
+            "severity": "warning",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 80 uses a dynamic table; parameterized case at line 112 uses a dynamic table.",
+            "certainty": "indeterminate",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          }
+        ],
+        "removed": [
+          {
+            "certainty": "indeterminate",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 171 uses a dynamic table.",
+            "path": "package:/src/__tests__/e2e/features-composite-tails.test.tsx",
+            "ruleId": "test-record-case-cap",
+            "severity": "warning",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          },
+          {
+            "certainty": "indeterminate",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 103 uses a dynamic table.",
+            "path": "package:/src/__tests__/e2e/features-input-components-consumer.test.tsx",
+            "ruleId": "test-record-case-cap",
+            "severity": "warning",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          },
+          {
+            "certainty": "indeterminate",
+            "message": "test-record-case-cap is indeterminate: parameterized case at line 78 uses a dynamic table; parameterized case at line 110 uses a dynamic table.",
+            "path": "package:/src/__tests__/e2e/features-validation-state-display.test.tsx",
+            "ruleId": "test-record-case-cap",
+            "severity": "warning",
+            "suggestion": "Read the lines the reasons name. Dynamic case tables, aliased case APIs and text the lexer cannot pair keep the count inexact; rewrite them as literal cases if the exact count matters, otherwise report the file as indeterminate."
+          }
+        ]
+      },
+      "findings": {
+        "added": [],
+        "removed": []
+      },
+      "newFiles": [
+        {
+          "path": "package:/src/__tests__/e2e/validation.after-paint.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 13,
+            "knownLowerBound": 13,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.cadence.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 2,
+            "knownLowerBound": 2,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.commit-retry.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 2,
+            "knownLowerBound": 2,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.continuity-children.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 5,
+            "knownLowerBound": 5,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.continuity-navigation.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 3,
+            "knownLowerBound": 3,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.continuity-restore.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 4,
+            "knownLowerBound": 4,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.engine-reveal.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 14,
+            "knownLowerBound": 14,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.hidden-reset-records.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 1,
+            "knownLowerBound": 1,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.mount-always.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 4,
+            "knownLowerBound": 4,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.mount-owed.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 7,
+            "knownLowerBound": 7,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.remount.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 2,
+            "knownLowerBound": 2,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.reset-reveal.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 1,
+            "knownLowerBound": 1,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.reveal-history.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 11,
+            "knownLowerBound": 11,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.reveal-lifetime.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 5,
+            "knownLowerBound": 5,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/__tests__/e2e/validation.visibility.render.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 15,
+            "knownLowerBound": 15,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/__tests__/validation.after-paint.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 5,
+            "knownLowerBound": 5,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/__tests__/validation.before-delivery.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 3,
+            "knownLowerBound": 3,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/__tests__/validation.cadence.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 4,
+            "knownLowerBound": 4,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/__tests__/validation.commit-retry.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 4,
+            "knownLowerBound": 4,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/__tests__/validation.pending.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 15,
+            "knownLowerBound": 15,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/__tests__/validation.reveal-baseline.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 11,
+            "knownLowerBound": 11,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/__tests__/validation.reveal-history.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 10,
+            "knownLowerBound": 10,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/validationScheduling/__tests__/scheduleValidationSlot.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 8,
+            "knownLowerBound": 8,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine/validationScheduling",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/engine/validationScheduling/__tests__/validationCadence.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 15,
+            "knownLowerBound": 15,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/engine/validationScheduling",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/core/surface/utils/binding/__tests__/validationDisplaySubscriptions.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 2,
+            "knownLowerBound": 2,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/core/surface",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/providers/FieldRendererContext/__tests__/visibility.same-commit.test.tsx",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 1,
+            "knownLowerBound": 1,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/providers/FieldRendererContext",
+          "contractGroupIds": []
+        },
+        {
+          "path": "package:/src/providers/RootNodeContext/__tests__/bufferedRecords.test.ts",
+          "adapterId": "ecmascript",
+          "role": "test-record",
+          "count": {
+            "certainty": "exact",
+            "exactCount": 1,
+            "knownLowerBound": 1,
+            "reasons": []
+          },
+          "ownerFractalPath": "package:/src/providers/RootNodeContext",
+          "contractGroupIds": []
+        }
+      ]
+    }
+  }
+}

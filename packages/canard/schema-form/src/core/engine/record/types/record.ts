@@ -101,6 +101,15 @@ export interface FieldNodeRecord<Self> {
   schema: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */
   interactionState: NodeStateFlags;
+  /** Unreleased pre-change eligibility entries, one per public write sequence, cut by release generation. */
+  revealBaseline?: {
+    entries: {
+      readonly state: NodeStateFlags;
+      readonly enabled: boolean;
+      readonly generation: number;
+      readonly sequence: number;
+    }[];
+  };
   /** Per-bit commit counts, allocated on the first delivery. */
   revisionLedger: Readonly<Record<number, number>>;
   /** Whether this occurrence has completed its initial delivery comparison. */

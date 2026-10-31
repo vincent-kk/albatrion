@@ -34,6 +34,16 @@
 
 ## API Contracts
 
+- 수락한 명시적 root 판정은 route 뒤 pending이면 settle, 아니면 전체 release를 수행하여 한 번만 해제하고 배달한다. release listener가 여는 새 쓰기의 이력은 보존한다.
+
+- H: 최외곽 chain 진입·standalone 상태 진입·outer visit는 record의 sequence를 한 번 전진시킨다. exit의 request 뒤와 standalone closeNonSettleEntry의 finally에서 !entryDepth일 때 drop을 예약한다. listener가 던져도 기록 수명은 예약된다. clearSubtreeState의 직접 {} 쓰기 전에도 기록한다.
+- H/D: 하위 트리 validate는 전체 release하지 않는다. commit-only 재요청과 호출 시점 반환 계약은 유지한다. requestFieldNodeValidationWave는 deliverValidationWave 옆의 chain 파일이며 두 소비자가 구체 파일로 사용한다.
+
+- W3: 공개 리스너 배달 전에 validation의 prepareFieldNodeValidation을 호출해 동기 flushSync·legacy render도 pending을 보게 한다. 종료는 같은 적격 조건으로 실제 요청을 만들고, 요청이 사라지면 기록한 entry stamp만 정착하여 더 최신 pending은 보존한다. state-only 사슬은 기존 다른 요청을 풀지 않는다.
+
+- U2: 명시적 루트 validate의 현재 stamp 실행은 라우팅 뒤·deliverValidationWave 전에 pending을 정착시킨다. null·실패는 현재 stamp이면 정착하며 commit-only 폐기는 pending을 유지하고 최신 commit을 다시 요청한다. 하위 트리 실행은 pending을 풀지 않으며 컴파일 실패의 validationUnavailable은 무조건 정착한다. non-OnChange reset의 새 요청 없는 stamp 증가도 정착한다(승인 msg_1f2afdd094c7).
+
+- 쓰기 검증 요청은 동기 정착·사건 배달 뒤, `onChange` 앞에서 예약하지만 실제 실행·오류 배달은 다음 화면 뒤 선행·연속 프레임 이월·첫 무요청 프레임 뒤 후행 및 마지막 자동 실행 시작 기준100ms 상한 주기로 최신 커밋을 판정한다. 명시적 `dispatchValidate`와 제출은 즉시 판정한다. 루트의 명시적 검증만 스탬프를 올리고 대기 대상을 비우며, 하위 트리 검증은 현재 스탬프를 초기화해 읽고 대기 중·진행 중 전체 폼 검증을 보존한다. 같은 커밋의 중복 배달은 기존 오류 참조 보존·보고 중복 억제를 따른다(IR-6).
 - 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
 
 - `setValue`는 독립 비트 `Overwrite`와 `Merge`가 함께 오면 updater 실행과 쓰기 표시 전에 `INVALID_WRITE_OPTION`으로 거부한다. 오류는 기존 사슬 보고·throw 통로로 전달하며 검사 비용은 고정 비트 연산이다(LANDING-141).

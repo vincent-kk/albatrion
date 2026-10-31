@@ -9,6 +9,7 @@ import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
 import { checkAddedMachinePaths } from './helpers/checkAddedMachinePaths';
 import { checkDerivedRecords } from './helpers/checkDerivedRecords';
 import { checkHeavyValidationResults } from './helpers/checkHeavyValidationResults';
+import { checkValidationAfterPaintResults } from './helpers/checkValidationAfterPaintResults';
 import { summarizePage } from './helpers/summarizePage';
 import { summarizePairs } from './helpers/summarizePairs';
 import { summarizeResults } from './helpers/summarizeResults';
@@ -23,6 +24,13 @@ if (auditBase !== undefined) checkAddedMachinePaths(repository, auditBase);
 const destination = path.resolve(
   '../../canard/schema-form/architecture/verification/input-responsiveness',
 );
+if (process.argv.includes('--stage=ir-6')) {
+  checkValidationAfterPaintResults(
+    destination,
+    process.argv.includes('--write'),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--stage=ir-2')) {
   checkHeavyValidationResults(
     destination,

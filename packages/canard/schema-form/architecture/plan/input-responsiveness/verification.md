@@ -56,3 +56,71 @@ IR-0은 제품 코드를 바꾸지 않는 기준선입니다. 실제 Chromium, P
 엄격 production 관문은 `test:production`(NODE_ENV=production)이며 `--project production` 실행은 그것을 대신하지 않는다.
 
 [관문 수리 결과](../../verification/input-responsiveness/production-gate-repair.md)에 환경별 재현, ids 탐침과 읽기 전용 소비자, 21/21 복구 및 전체 순차 관문의 실행 SHA·계수를 보존했습니다.
+
+
+## IR-6 D1 — 측정 전 고정 규칙 (2026-10-31)
+
+제품 동작은 라운드5c 독립 관문 두 개에서 수락되었고, amendment9d의 다섯 선행 항목과 집중 관문 뒤 측정합니다. 번호는 **G1–G6과 G8**이며 G7은 없습니다(코디네이터 정정 msg_84f0444c1629). G·virtualization 기본값·기존 useChildFields 결함·버전은 범위 밖입니다. React18은 browser lane에서 측정하지 않습니다.
+
+### 레인·행·환경
+
+L은 공개0.16.1 별칭, E는facd72a71, F는9d 뒤 최종 머리에서 빌드한 배포 번들입니다. 각 제품·browser bundle SHA-256과 도구 commit/hash를 고정하며 F 제품 코드가 측정 뒤 바뀌면 다시 측정합니다. production React19.2.6·실제 Chromium·AJV8 플러그인·viewport900×700을 씁니다. 모든 레인/행은 새 페이지3예열을 버리고 새 페이지10개를 보존하며 레인 순서는 표본마다 정순/역순 교대, paired relative는 순환합니다.
+
+- typing은 flat500·array1000·nested-d5-f4·flat2000의 OnChange20 trusted key입니다. 각 행에100ms 비연타와 IR-2식 무지연 burst를 둡니다. 비연타 간격은 keyboard.type delay가 아니라 실제 호출 사이 페이지 시계 간격입니다. 대상 pattern은 매 key에 verdict가 바뀝니다.
+- mount OnChange는 flat500·nested-d5-f4·if-flat500이며 first-painted/eager-painted·첫1초 최장 frame/50ms이상 frame을 기록합니다. Always가 아닌 기본 표시 정책을 씁니다. if행은 render에서 compile하므로 G5 보고 전용입니다.
+- first-key-after-mount는 OnChange flat500·flat2000에서 첫 input 준비 후 첫 rAF 신호에 실제 key1개를 보내 duration/input delay/processing을 보고합니다. 관문은 없습니다.
+- None mount flat500·nested-d5-f4는 보고 전용입니다.
+- stream-flat-2000-validate는 페이지 안에서60 frame마다 programmatic write1개입니다. validation runs·duration·frame script time·최장frame·50ms이상frame을 기록합니다.
+- G8 mount-array-1000은 기본 표시·virtualization off의 None/OnChange 한 쌍이며 E/F를 비교하고 L도 보고합니다.
+
+### 표본 창과 정숙 절차
+
+Spotlight를 유지합니다. 매 timed window 전에 외부 PID별30초 평균 CPU≤30%인 정숙 관찰을 수행합니다. 거절은 승인false·표본0 원시로 모두 보존합니다. 세 번 거절 뒤에는 소유자가 승인한 paired relative mode로 같은 창에서 L/E/F를 교차 실행하고 최대 통계(p95·최장frame)는 잠정으로 표기합니다. 시작한 창은 외부 부하 때문에 중단하지 않으며 이후 CPU는 기록만 합니다. 창 중 build·시험·typecheck·lint·다른 창을 겹치지 않습니다. 첫 timed window 시작과 마지막 종료에 status를 보내고 그 사이 코디네이터도 이 호스트에서 작업하지 않습니다.
+
+원시는 외부 .noindex 준비 폴더에 먼저 보존하고 저장소 증거에서는 머신 경로만 정규화합니다. 정식 창 앞에 실제 CLI 전체 untimed smoke를 완료합니다. paired mode의2분 간격30초 background quiet 관찰을 유지하며 별도 정숙 재측정은 기존 비연타 실패/문턱10% 이내 행의 보강 증거로 병기하고 원래 창을 대체하지 않습니다. 재실행이 필요한 G1 비교 불확정은 아래 규칙을 우선합니다.
+
+### 관측과 집계
+
+processing/duration은 durationThreshold16ms Event Timing 항목만 씁니다. 16ms보다 빠른 key의 검열을 명시하고 각 관문 숫자 옆에 관측 interaction 수와 실제 key 수를 함께 적습니다. interactionId별 processingEnd−processingStart 최대와 duration 최대를 각각 계산합니다. null 통계는 IR-2와 같이 handler p95로 대체하고 출처를 표시하며0으로 읽지 않습니다. first-key input delay는 processingStart−startTime입니다.
+
+페이지 p95는 해당 페이지 관측 interaction의 nearest-rank p95입니다. 행 p95는10개 페이지 p95의 nearest-rank p95(최악 페이지)입니다. pooled processing p95는 모든 페이지(재표집 시 선택된 페이지)의 관측 interaction processing을 합친 nearest-rank p95입니다. 페이지 중앙값의 중앙값은10개 페이지 중앙값의 중앙값입니다. 중앙값·p95·handler 벽시계는 섞지 않습니다. handler 보완은 capture→bubble 벽시계로 따로 보고합니다.
+
+bootstrap은 고정seed20261031,10,000회 페이지 index 복원추출입니다. 교차 레인은 E와F의 같은 page index를 공동 재표집하고 각 재표집의 pooled processing-p95 F/E 비를 구합니다. 단측95% 상한은 그10,000개 비의95th percentile(nearest-rank)입니다. Event Timing 풀에 관측이 하나도 없으면 그 레인의 handler 풀 p95로 대체하고 bootstrap의 대체 횟수도 기록합니다. 이 대체 뒤에도 분모0·표본 없음이면 판정 불가이며 pass가 아닙니다.
+
+G3는 모든 페이지의 long-animation-frame 지원을 요구합니다. frame은 interaction 창과 겹치는 항목이며50ms이상 개수는10페이지 합입니다. 마운트 frame창은 render start부터1초입니다. validation arrival는 input capture부터 해당 key의 첫 onValidate 배달까지이며 burst는 배달 시 최신key에 귀속합니다. 비연타 미배달key는 보간하지 않습니다.
+
+first-painted는 root.render 전에 container에 childList/subtree MutationObserver를 붙여 최초 input 또는 select 추가 record에서 등록한 첫 rAF callback 시작 performance.now에서 render start를 뺍니다. eager-painted는 기존 input준비 뒤 double-rAF 정의를 유지합니다. first/eager 중앙값은10페이지 값의 중앙값입니다.
+
+### 기계 판정
+
+| 관문 | 적용 행과 문턱 |
+| --- | --- |
+| G1 | type-flat-2000-validate-nonburst의 F processing행p95≤16.67ms이고 pooled processing-p95 F/E bootstrap단측95%상한<1.00. 같은 창 L의 페이지중앙값 중앙값이6.425ms×1.10을 넘으면 F행p95×max(0.80,6.425/L중앙값)을16.67ms와 비교. L중앙값이6.425ms×1.25를 넘으면 비교불가·G1 indeterminate이며 절대 pass하지 않음. 정숙 관찰 뒤 해당 창을 한 번 재측정하고 재불확정이면 숫자를 question으로 올림. |
+| G2 | 모든 typing행의 pooled processing-p95 F/E bootstrap단측95%상한≤1.10. |
+| G3 | 모든 typing행에서 F Event Timing duration행p95≤E duration행p95+8ms(ET rounding1단계), F의50ms이상frame10페이지합≤E합+1. 모든 페이지 LoAF지원 필수. null은 handler p95 대체·출처 명시. |
+| G4 | 모든 nonburst typing행에서 F validation arrival행p95≤33.4ms, F미배달0/200. 매key verdict가 바뀌어야 하며 burst에는 적용하지 않음. |
+| G5 | mount-flat-500-validate와 mount-nested-d5-f4-validate에서 F first-painted중앙값≤E, F eager-painted중앙값≤E+16.7ms. if-flat500은 보고 전용. |
+| G6 | stream-flat-2000-validate의 모든 F페이지 validation runs≤2+ceil(stream duration/100ms), F의50ms이상frame10페이지합≤E합. FieldInput이 debounce를 소유하므로 engine은100ms 실시간성 상한을 유지함. |
+| G8 | mount-array-1000 None의 first/eager-painted중앙값 F/E 각각≤1.02, OnChange는 first/eager 각각 F≤E. 표시 layout effect 제거 뒤에도 유지하는 guard이며 일반 입력 layout effect0은 코드 관문으로 유지. |
+
+모든 typing행은 L/E/F의 processing p95·duration p95·arrival p95 및 F/E·F/L을 병기하고0.16.1 대비 손실이 사라졌는지 행마다 판정합니다. first-key·None·if mount·첫1초 최장frame은 보고 전용입니다. G1–G6·G8 모두 충족하면 코드 관문 뒤 병합 가능하나 루트 병합은 소유자 몫입니다. 하나라도 실패하면 worker_done이나 완료를 보내지 않고 숫자·원인·선택지를 코디네이터 question으로 올립니다. G1 재불확정도 question입니다.
+
+### G2 판정 출처 변경 — 소유자 결정(2026-10-31), 다음 정식 창부터
+
+소유자 원문: "1 - 전체처리시간으로 하지"
+
+첫 정식 창의 G2 FAIL은 그대로 둡니다. 다음 정식 창부터 G2는 아래 규칙으로 판정하며, 위 기계 판정 표의 G2 행은 첫 창의 규칙으로 남습니다. G1·G3의 출처와 다른 관문은 바뀌지 않습니다.
+
+- 판정 통계: 모든 typing행에서 각 레인의 모든 key handler 처리 시간(capture→bubble 벽시계)을 씁니다. pooled handler p95는 모든 페이지(재표집 시 선택된 페이지)의 key handler 값을 합친 nearest-rank p95입니다.
+- 문턱: pooled handler p95 F/E bootstrap 단측95% 상한≤1.10. bootstrap은 기존 정의(고정seed20261031, 10,000회 페이지 index 복원추출, E와 F의 같은 page index 공동 재표집, 상한은 10,000개 비의95th percentile nearest-rank)를 그대로 씁니다.
+- 결측: 레인·행마다 handler 값이 있는 key 수를 적습니다. 값이 하나도 없거나 분모가0이면 판정 불가이며 pass가 아닙니다.
+- 병기: Event Timing pooled processing p95 F/E와 그 bootstrap 상한, 레인별 관측 interaction 수/200을 판정 옆에 참고로 적습니다.
+- 이유: durationThreshold16ms Event Timing은 화면 갱신까지16ms 이상 걸린 key만 남겨 관측 집합이 검열됩니다. 첫 창의 flat500 burst에서 F는37/200만 관측돼 첫 key가 pooled p95를 정했고, 한 페이지 쌍의 반복 재표집이 상한을2.556으로 만들었습니다. 같은 원시의 모든200 key handler로 계산한 상한은0.857입니다(ir-6-results.md의 G2/G8 원인 진단).
+
+### G8 허용 범위 — 소유자 결정(2026-10-31), 다음 정식 창부터
+
+소유자 원문: "응 반프레임 이내면 된다. 3% 이내로 오면 좋긴 한데 현실적으로 어렵다는거지?"
+
+첫 정식 창의 G8 FAIL은 그대로 둡니다. 다음 정식 창부터 mount-array-1000의 eager-painted 판정은 None과 OnChange 모두 F 중앙값≤E 중앙값+8.35ms(반 프레임, 16.7ms의 절반)입니다. first-painted 판정(None F/E≤1.02, OnChange F≤E)은 그대로입니다. eager-painted F/E 비와 3% 이내 여부를 판정 옆에 참고로 적습니다.
+
+- 이유: 소유자는 표시 판단을 엔진에 두는 데 드는 작은 마운트 비용을 받아들이기로 했습니다. 진단에서 hold를 완전히 없앤 V1도 E 대비 eager가 +1.65ms(None)·+0.45ms(OnChange)였고, 같은 레인의 세션 간 중앙값 차이가 2~4ms여서 1.00·1.02 비율선은 개선 정도와 무관하게 표집에 좌우됩니다(ir-6-results.md의 G2/G8 원인 진단).

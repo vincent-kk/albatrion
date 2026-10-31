@@ -17,6 +17,7 @@ import {
   useFieldRendererContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
+import { useErrorVisibility } from '@/schema-form/providers/FieldRendererContext';
 
 /** Event mask that invalidates a node's and its direct children's error view. */
 const CHILD_FIELD_ERROR_EVENTS =
@@ -63,6 +64,13 @@ export const useChildFieldErrors = (
   );
   const revision = useSyncExternalStore(subscribe, snapshot, snapshot);
 
+  const visibilityNodes = [node, ...(children ?? [])];
+  const visible = useErrorVisibility(
+    visibilityNodes,
+    visibilityNodes.map((child) => !disabled && checkShowError(child.state)),
+  );
+  const visibility = visible.join(':');
+
   return useMemo(() => {
     const current = node.children ?? [];
     const errorMatrix = mapArray(current, (child) =>
@@ -71,27 +79,10 @@ export const useChildFieldErrors = (
     const formattedErrors = mapArray(errorMatrix, (errors, index) =>
       errors.length ? formatError(errors[0], current[index], context) : null,
     );
-    const showErrors = mapArray(
-      current,
-      (child) => !disabled && checkShowError(child.state),
-    );
+    const showErrors = visible.slice(1);
     const formattedError =
       formattedErrors.find((message) => message != null) ?? null;
-    let showError = !disabled;
-    if (showError) {
-      let shouldShowError = checkShowError(node.state);
-      if (!shouldShowError) {
-        for (let index = 0, count = showErrors.length; index < count; index++) {
-          const item = showErrors[index];
-
-          if (item) {
-            shouldShowError = true;
-            break;
-          }
-        }
-      }
-      showError = shouldShowError;
-    }
+    const showError = visible.some(Boolean);
 
     return {
       errorMessage: showError ? formattedError : null,
@@ -102,5 +93,13 @@ export const useChildFieldErrors = (
       errorMatrix,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- Node revisions invalidate same-identity getters.
-  }, [node, disabled, revision, formatError, checkShowError, context]);
+  }, [
+    node,
+    disabled,
+    revision,
+    formatError,
+    checkShowError,
+    context,
+    visibility,
+  ]);
 };

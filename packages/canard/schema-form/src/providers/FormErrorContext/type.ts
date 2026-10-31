@@ -13,6 +13,10 @@ export interface FormErrorService extends FormErrorReporter {
   root?: FieldNode;
   /** Number of started loads; field read detectors compare it to report a first read once per load. */
   load: number;
+  /** Private identity for warning deduplication within one original form-level load. */
+  warningScope: object;
+  /** Report a moved record in its original warning lifetime. */
+  reportInLoad(record: FormErrorRecord, scope: object): void;
   /** Start a load's warning lifetime and advance `load` without dropping error identities. */
   beginLoad(): void;
   /** Drain speculative load errors if the root boundary abandons its children. */

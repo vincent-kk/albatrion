@@ -181,6 +181,7 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
   const violations: ImportViolation[] = [];
   let totalU = 0;
   let exemptU = 0;
+  const revealRuntimeBridges: string[] = [];
   for (const importer of files.filter((file) => /\.tsx?$/.test(file))) {
     for (const { specifier, line } of readImports(importer)) {
       const target = resolveImport(specifier, importer);
@@ -193,6 +194,20 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
       const verdict = classifyImport(importer, target, fractals);
       if (!verdict) continue;
       const importerPath = relative(sourceRoot, importer).split(sep).join('/');
+      const targetPath = relative(sourceRoot, target).split(sep).join('/');
+      if (
+        verdict === 'D' &&
+        (((importerPath === '__tests__/helpers/readFieldNodeRuntime.ts' ||
+          importerPath ===
+            '__tests__/helpers/releaseFieldNodeRevealHistory.ts') &&
+          targetPath === 'core/surface/runtime/requireRuntimeFieldNode.ts') ||
+          (importerPath ===
+            '__tests__/helpers/releaseFieldNodeRevealHistory.ts' &&
+            targetPath === 'core/engine/validation/index.ts'))
+      ) {
+        revealRuntimeBridges.push(importerPath + ' -> ' + targetPath);
+        continue;
+      }
       if (verdict === 'U') {
         totalU++;
         if (/^__tests__\/(e2e|scenarios|migration)\//.test(importerPath)) {
@@ -221,6 +236,17 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
     `Import model: U=${totalU} (D7=${exemptU}, asserted=${counts.U}), D=${counts.D}, S1=${counts.S1}`,
     ...edges.sort(),
   ].join('\n');
+  expect(
+    revealRuntimeBridges.sort(),
+    'exact named reveal verification bridges',
+  ).toEqual([
+    '__tests__/helpers/readFieldNodeRuntime.ts -> core/surface/runtime/requireRuntimeFieldNode.ts',
+    '__tests__/helpers/releaseFieldNodeRevealHistory.ts -> core/engine/validation/index.ts',
+    '__tests__/helpers/releaseFieldNodeRevealHistory.ts -> core/surface/runtime/requireRuntimeFieldNode.ts',
+  ]);
+  console.info(
+    'IMPORT_MODEL_REVEAL_BRIDGE count=' + revealRuntimeBridges.length,
+  );
   expect(counts, message).toEqual({ U: 0, D: 0, S1: 0 });
 }, 60000);
 

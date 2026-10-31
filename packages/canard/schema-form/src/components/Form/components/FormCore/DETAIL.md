@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- H: handle.showError와 onReset은 facd72a71의 setShowError와 useImperativeHandle dependency 모양을 유지한다. 정책 기록은 FormRoot가 하지 않으며 RootNodeContext의 root별 layout commit이 소유한다. validate 반환과 submit 값은 호출 시점 snapshot 계약이다.
+
 - SURFACE-063: FormHandle.rebuild(option?) delegates to the current root binding, invalidates its schema cache entry and forces tree replacement through reset semantics. Other forms retain their existing roots until their own rebuild; ordinary reset stays unchanged. The package export names do not change.
 
 - `FormCore`(`FormCore.tsx`)는 오류 경계를 입힌 바깥쪽 컴포넌트입니다. `memo(forwardRef)`로 `FormErrorContextProvider`에 `onError`를 넘기고, 그 안에서 `withErrorBoundaryForwardRef(forwardRef(FormRoot), undefined, useBoundaryReporter)`를 렌더합니다. 경계가 보고기 안쪽에 있으므로 루트 fallback이 표시된 뒤에도 보고는 계속 동작합니다. 공개 형은 `Schema`·`Value` 제네릭 시그니처로 단언합니다(ERROR-026·110–117).

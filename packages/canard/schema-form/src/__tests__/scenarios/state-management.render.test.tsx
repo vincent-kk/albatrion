@@ -12,6 +12,7 @@ import {
 } from '@/schema-form';
 import { ValidationMode } from '@/schema-form/core';
 
+import { settleValidation } from '../helpers/settleValidation';
 import { type FormHarness, renderForm } from '../renderForm';
 
 /**
@@ -92,7 +93,7 @@ const runImperative = async (
 ): Promise<void> => {
   await act(async () => {
     fn();
-    await new Promise((r) => setTimeout(r, 0));
+    await settleValidation(() => _form.handle.node);
   });
 };
 

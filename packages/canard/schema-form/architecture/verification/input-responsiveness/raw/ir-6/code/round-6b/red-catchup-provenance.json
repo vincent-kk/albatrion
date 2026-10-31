@@ -1,0 +1,7 @@
+{
+  "testedCommit": "edd51da771659bd4bdb51b6eb6cf4798940c7c6a",
+  "tests": {
+    "src/components/FieldProxy/__tests__/errorReveal.lifecycle.test.tsx": "b99fce4ed8dbf15be8bccfc5fe6eaffbd8d96cde030c29993926105149b8e450"
+  },
+  "mutation": "delete catch-up line; lifecycle test bytes equal committed HEAD"
+}

@@ -18,8 +18,9 @@ import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
+import type { ValidationCadence } from '../../validationScheduling';
 import type { FieldNodeFactory } from './behavior';
-import type { FieldNodeDelivery } from './record';
+import type { FieldNodeDelivery, FieldNodeRecord } from './record';
 
 /** Tree-local reverse watch paths used by commit delivery marking. */
 interface FieldNodeWatchDeliveryIndex {
@@ -315,9 +316,34 @@ export interface FieldNodeRuntime<Self>
   validationCompileReported?: boolean;
   /** Dispatcher-owned path for asynchronous execution and delivery failures. */
   reportValidationFailure?: (failure: unknown) => void;
-  /** True while one microtask is queued to run the latest request. */
-  validationQueued?: boolean;
-  /** Subtree scopes merged into the next one-per-commit validation run. */
+  /** Lazily owned domain-free automatic timing lifetime, cancelled on root disposal. */
+  validationCadence?: ValidationCadence;
+  /** Latest domain callback selected by the cadence without inspecting its contents. */
+  validationRun?: () => boolean;
+  /** A write-triggered verdict is still pending. */
+  validationPending?: boolean;
+  /** Only occurrences that currently hold a reveal baseline. */
+  revealBaselineNodes?: Set<FieldNodeRecord<Self>>;
+  /** Committed Form policy and its unreleased prior committed values with their generations. */
+  revealPolicy?: {
+    value: unknown;
+    entries: { readonly value: unknown; readonly generation: number }[];
+  };
+  /** Public outer write/walk identity used to coalesce node snapshots. */
+  revealWriteSequence?: number;
+  /** Monotone notification snapshot for every eligibility-history release. */
+  revealReleaseVersion?: number;
+  /** Monotone generation shared by every node and policy history append. */
+  revealBaselineGeneration?: number;
+  /** A nonpending record owes a one-shot post-paint drop. */
+  revealDropOwed?: boolean;
+  /** Identity invalidates an obsolete drop without changing the timing slot contract. */
+  revealDropTask?: object;
+  /** Stamp owned by the active chain's pre-delivery pending record. */
+  validationPendingEntryStamp?: number;
+  /** Internal display listeners notified, from a copy, after every release. */
+  revealReleaseListeners?: Set<() => void>;
+  /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
   /** True after a routing replaced the routed list, until the validation wave publishes it. */
   validationListChanged?: boolean;

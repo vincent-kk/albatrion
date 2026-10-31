@@ -99,3 +99,86 @@ D1 구현 여부·virtualization 기본 off·IR-5 수정의 최종 수락은 **�
 
 
 마감 뒤 코디네이터 승인 보충(2026-10-31): 원장 옛 인용의 기계 경로를 보존하면서 재현 CLI가 이후 head에서도 실행되도록 benchmark-form의 diff 의존 경로 감사를 명시적 `--audit-base=<SHA>` 옵션으로 옮겼습니다. 기본 원시·해시·표 재현은 유지하고 benchmark 시험·lint·browser typecheck와 여섯 재현 명령을 검증합니다. schema-form 제품 변경은0이며 [마감 결과](../../verification/input-responsiveness/closing-results.md#마감-뒤-재현-도구-수리--2026-10-31)에 승인·기존 경로 행 번호와 결과를 보충합니다.
+
+
+## IR-6 — D1 구현 결정 (2026-10-31)
+
+| 단계 | 범위 | 소유자 결정 |
+| --- | --- | --- |
+| IR-6 | 쓰기·OnChange 마운트 검증을 다음 화면 뒤 한 슬롯으로 합치고, 하위 트리 validate가 전체 폼의 대기·진행 판정을 취소하지 않도록 수정합니다. | D1을 지금 구현합니다. 버전은 유지하고 virtualization 기본 off·IR-5 수정 유지를 수락합니다. 루트 PR #508은 D1 편입 뒤 소유자가 병합합니다. |
+
+아래 9–12번은 2026-10-31의 원문과 맥락을 그대로 보존합니다. 11번 발화의 줄바꿈도 원문입니다.
+
+9. (after the coordinator opened root PR #508 and asked whether to confirm the three open decisions as recommended) "최종 상태를 설명해줘. 지연 평가 기능이 어떻게 들어간거지? 발생한 회귀나 문제는 없었어?"
+10. (after the coordinator explained the final state, the lazy validator compile and the absence of measured regressions) "음... 이거 우리가 해결하려고 했던 문제가 그거 아녔니 그.. 동기식 입력이다보니 사용자 입력이 브라우저를 블록하는 문제? 그건 해결을 한거야?"
+11. (after the coordinator answered that the synchronous keystroke path itself was not changed, that validation still runs inside the keystroke task, and asked whether to build D1) "잠깐 잠깐. 내가 결정해야 하는 내용을 다시 정리해서 알려줘.
+어떤걸 한거고 뭐가 남은거지? 그리고 validation 동작이 무거우니까 검증을 동기적으로 하는걸 빼서 입력 사이클(bulk 든 뭐든 여러 웨이브에 걸친 입력)이 끝난 다음 1번만 검증하도록 하는거 아니었나? 잘못 이해하는 부분 있다면 설멸해다오."
+12. (answer to the four listed decisions: 1 build D1 now (recommended); 2 keep the virtualization default off with documentation (recommended); 3 keep the IR-5 hydration fix (recommended); 4 root PR #508 merge and version are the owner's, recommended to merge after D1 lands) "지금 구현하죠. 버전은 바꾸지 않고 나머진 모두 권장대로 수락합니다."
+   Decisions derived from it: D1 is built in this stage; the version number stays unchanged; the virtualization default stays off; the IR-5 fix is accepted; root PR #508 is merged by the owner after D1 lands (rule 1 unchanged).
+
+
+## IR-6 연속 입력 주기 결정 (2026-10-31)
+
+13. (while the IR-6 worker was implementing D1) "지금 설계에 대해 설명해다오"
+14. (after the coordinator explained the D1 design) "근데 유효성검사 자체는 ajv같은 외부 검증기가 담당하잖아? 말하자면 그런건가? 지금은 검증기가 마이크로테스크 뒤에 돌아서 전체 블록타임을 잡아먹는데 이젠 이걸 명시적으로 한프레임(혹은 이전 이벤트루프타임)을 미뤄서 이걸 구분하겠다는건가? 뭔가 상수 타이머 100ms 을 대기하고 하는 디바운스 구조는 아니겠지?"
+15. (after the coordinator answered that D1 schedules after the next frame and the 100 ms timer is only a hidden-tab safety net) "이해했어. 근데 ajv 전체검증은 비동기 아닌가? 동기는 분기전환 전용이고.
+그리고 근데 그럼 0.16.1 판에서 했던 방식이 나은거 아니야? 이전버전에서도 시간 갭을 둔건 아니고 마이크로태스크 종료만 기다리고 검증했던거같은데
+그거랑 다른건가?"
+16. (after the coordinator showed that the AJV8 plugin's asynchronous validator runs its checks synchronously at call time, and that 0.16.1 cancels and re-arms a setTimeout macrotask) "한가지만 좀 질문을 하고싶은데...
+연속입력(구판에서 입력이 굶는 경우) 케이스는 사실상 사용자 입력보단 드레그나 스크롤, 아니면 프로그래믹한 입력 케이스 아닌가? 디바운스가 아니라 프레임 이월이니까. 그럼 굶는다기보단 실행을 지연하는거 아닌가. 그걸 다 평가하는것 보단 입력 버스트가 끝난 다음에 한번 검증하는게 유리하지 않나...? 검증이 비싼 작업이니까"
+17. (after the coordinator proposed three options and recommended leading plus trailing with a 200 ms cap) "선행은 지금과 동일하게, 다음 프레임 검증 보장이고,
+후행 보상은 그 이후 1프레임 기다리고 다음 프레임(입력 후 2프레임)에 검증을 한다, 다음 프레임에 업데이트가 있으면 검증 이월, 최대 200ms 지나면 1번은 검증 보장
+
+이게 맞나?"
+18. (answer to: apply the rule — leading after the next frame, carry over while input continues, one trailing run after a quiet frame, a cap measured from the last run — in this fix round?) "상한을 500ms로, 이외에는 적용. 코드를 잘 응결시켜서 해당 코드가 다른 도메인코드와 섞이지 않고 원리와 기능이 집중되도록 하세요."
+   Decisions derived from it: the continuous-input cadence is built in IR-6 with a 500 ms cap measured from the last automatic run; its timing policy lives in one cohesive unit that holds no validation-domain code.
+19. (after the coordinator's UX evaluation: false stale-error flash when the display condition turns on in the same keystroke, mount pop-in with showError true, and the 500 ms cap being above the 100 ms perception threshold, with 150 ms offered) "흠 150ms 로 하는건 좀 연산부담이 있지 않겠나? 어차피 디바운스 설정같은건 fieldInput 에서 하는거니까 이건 실시간성 느낌 보장이 나은가 그럼 100ms로 해도 될거같은데...
+나머지 버그나 ux 문제는 해소하도록. 거짓 에러 깜빡임은 눈에 많이 띈다"
+   Decisions derived from it: the cadence cap becomes 100 ms (debouncing belongs to FieldInput components; the engine guarantees a real-time feel); the false error flash, the mount pop-in and the other open bugs and UX problems are fixed in IR-6.
+
+
+## IR-6 추가 소유자 결정 — 2026-10-31
+
+18b. (chronologically between 18 and 19; asked after the cadence decision) "현재 스팩이 ux상 문제가 없는지 평가해봐. 1-2 프레임 정도 오류평가나 표시가 밀리는건 오류는 아니라고 본다. 인간의 인지상 말이지."
+20. (while the round-4 fixes were under review) "새로 발견된 문제나 수정중인 문제가 있나?"
+21. (after the coordinator described round 5, which kept error-visibility memory in React with reference counts) "잠깐, 오류의 표시는 리엑트에 두지 않았으면 하는데. 노드는 사라져서 그런건가? 에러의 표시여부를 결정하는 데이터가 현재 없나?"
+22. (sent right after 21) "그리고 비동기 검증이 도는 중 새 값이 들어오면 이전 값으로 판정되는건 문제가 있는거 아닌가? 마지막에 들어온 값으로 판정이 되어야 할거같은데??"
+23. (answer to: rebuild round 5 with the error-visibility decision in the engine and validate() re-validating to the newest value — 1 both (recommended), 2 engine only, 3 other) "둘다 진행합니다."
+   Decisions derived from it: the error-visibility continuity data moves into the engine (node state at the last verdict) and displays decide from node data only; explicit validate() resolves with a verdict for the value current when it resolves (bounded re-validation); the design is checked by an independent verifier before dispatch.
+24. (after the coordinator summarized amendment 8, including Z: validate() re-runs until its verdict matches the newest value) "근데, validate 를 실행하는 경우(onRequest)인거지? 그럼 실행시점의 값이 맞..는거 아닌가? 이걸 재시도까지 하는게 맞아? 검증은 값을 바꾸지 않을텐데"
+   Outcome: the coordinator checked submitForm.ts (it captures outputValue before awaiting validate() and submits that same value) and withdrew Z; explicit validate() keeps call-time snapshot semantics, displays already take only the newest verdict.
+25. (after the coordinator withdrew Z and corrected its earlier claim about submit) "그래. 기본적으로 계약을 따라야지. 다른 곳에 또 이런 실수가 있진 않을까 좀 걱정되네."
+   Action: the coordinator started a read-only audit of every IR-6 behaviour change and recorded limitation against the package contracts (spec ledger, SPECIFICATION, README, public JSDoc, INTENT/DETAIL, ADRs).
+26. (after the coordinator reported the contract audit and its decisions, including a planned setTimeout fallback because the slot "requires MessageChannel or setImmediate") "잠깐. 설명이 명확히 이해가 안되는군.
+좀 더 자세히 설명해다오. 그리고,  MessageChannel 이나 setImmediate 가 있어야 하는 요구 에 대해선 무슨 의미지? 써야되면 common-utils 에서 가져다 써. 이미 레거시에서는 여기서 쓰고있었어"
+   Outcome: the coordinator confirmed that 0.16.1 shipped `scheduleMacrotask` from `@winglet/common-utils/scheduler`, withdrew the fallback (amendment 8 R-e) and keeps the common-utils scheduler unchanged; the audit's "new requirement" finding was wrong and had been relayed unchecked.
+27. (after the coordinator's detailed explanation, whose commit-only example used a first blur setting touched, and whose item 5 kept the child-errors hook counting hidden children as a pre-existing behaviour) "2번에서 touched 는 한번 만지면 true 고 따로 clear 를 하지 않으면 사라지지 않는데? 이건 한번이라도 만졌느냐를 보는 플래그지, 포커스 상태를 의미하는건 아닌데. 뭔가 잘못 구현된거 아닌가? 확인해봐 
+5번에서, 숨겨진 자식(hidden)이면 당연히 포함되어야 하고, 비활성 자식(inactive)이면 값 자체가 빠져서 오류가 없을거라 생각하는데? 어떤 상태를 말하는거지?"
+   Outcome: touched is implemented as the owner describes (set once after the first blur, a repeated set is a no-op, cleared only by clearState or reset); the coordinator's example was wrong, because interaction-state writes do not advance the commit number at all; the real trigger is a context content change. Hidden children counting in the hook is the intended contract; codex round 4's finding is not a defect.
+
+28. (after the round-5 dispatch; the coordinator then traced the engine itself and wrote engine-mental-model.md) "작업 지시를 모두 한 다음에, 모든 구현과 계획, 원장에 대해서 재검토를 진행하라.
+touched 예시 오류나 동작을 잘못 파악하는 것,
+설계와 원칙, 핵심 원리, 멘탈모델 등 전반에 걸쳐서 네가 스스로의 이해를 증진하라.
+지금처럼 일부만 파악하거나 스팩을 못따라가거나, 스팩을 구현이 못따라가는건 큰 문제이다. 
+네가 먼저 다 파악을 해둬야 구현자나 설계자, 검증자 질의에 대해 흔들리지 않는다. 
+
+/seiri:trace-structure"
+   Action: the coordinator traced the write, settlement, interaction-state, validation, scheduling, React display and record paths at 07c4d5d93 and recorded them with citations; R-a was widened to the discarded mount verdict (a gap already present at facd72a71).
+29. (after the coordinator noted that the FieldNodeState.Dirty JSDoc says "Value diverged from its initial/default state" while only user input sets it) "dirty는 수정 발생을 했는가 라는 의미야 값의 동일성을 표현하는 것은 아니야. 주석이 잘못된거같네. 근데 이 dirty가 셋팅되는 조건은 좀 궁금하네. 직접 수정 뿐만 아니라 setValue나 injectTo 같은 파생값 변경도 dirty가 셋팅되나? 그래야될거같긴 한데... 초기값을 바꾼적이 없는 경우에만 false인 거고... 
+
+초기값과 다른가를 평가하는 상태는 changed 나 differenced 같은 상태가 신설되어야 할거같네. 필요할까? 어때? 상태이름은 적절한걸로 바꿔도 된다"
+   Coordinator's answer recorded with it: dirty is set only by the user-input paths (FieldInputSlot handleChange); setValue, array verbs, fill, derived, injectTo, unsetValue, exit clearing and trim never set it (WRITE-083; VALUE-022 owner C6); 0.16.1 behaved the same; recommended keeping that contract, fixing the JSDoc, and adding a value-versus-baseline property as a computed read in a separate stage.
+30. (answer to: keep dirty as user-input only, fix the JSDoc in round 5, and design the baseline-difference property in a separate stage after #508?) "그래 그렇게 하자. 지금 단계와 분리해서 작업하도록 예약해줘. 또한 혹시 상태값을 다른 이름으로 바꾸는게 필요할지도 검토해봐. 그냥 관용적으로 썼던거라 지금처럼 완전 변환을 할때 바꾸지 아니면 못바꿀거라. 
+
+그리고 이제 충분히 전체 설계를 파악한거지?"
+   Decisions derived from it: dirty keeps its contract; its JSDoc (and Touched's) is corrected in IR-6 round 5; a separate stage after #508 designs the baseline-difference property and reviews the state names, and must land before the next release (the version and the release stay the owner's).
+
+## IR-6 표시 개선과 작업공간 정리 — 2026-10-31
+
+33. (after the coordinator explained the Phase E failures: G2 failed on the flat-500 burst row because only 37 of 200 F keys and 81 of 200 E keys were observed, so the bootstrap upper bound reached 2.556 although the point estimate favoured F; G8 failed because the eager-painted mount of a 1000-item array grew 4.1% without validation and 5.8% with OnChange, most likely from the per-display error-visibility hook; the coordinator said it would ask for the owner's judgment after the diagnosis) "표시 훅을 개선해서 다시 해봐. 만약 느려져도 필요한 느려짐일 수도 있어. 기존에 최대한 최적화를 해둔거라.
+g2는 데이터 측정을 해보도록 해"
+   Decisions derived from it: improve the display hook, then re-measure the full registered window; a slowdown that remains after the improvement may be accepted as a necessary cost of engine-held visibility, because the earlier code was already optimized as far as possible; for G2, measure the data (per-page and per-key observations, including the uncensored handler timing of every key) before any decision. The registered verdicts of the first window are not re-decided.
+
+36. (2026-10-31, right after quote 35, seeing finished scratch worktrees accumulate in the repository root) "그리고 작업 진행하면서 작업이 끝난 작업공간은 계속 정리하면서 하도록 해. 
+계속 쌓이는구나. 우리 규칙에도 있지않나"
+   Answered: yes, round 451 recorded "받아들입니다. 작업이 완료된 worktree 나 브랜치는 정리하면서 진행하세요" (451C-01), but AGENT-POLICY.md never carried it, and this stage's briefs did not tell workers to remove their scratch worktrees. Actions: the round-5d scratch worktree was removed at once (its red-run results were already committed); the remaining scratch worktrees are removed as soon as their purpose ends (diagnosis display scratch after the round-6 pre-window diagnostic, lane E after the IR-6 measurement is accepted); every later brief tells the worker to remove its scratch worktrees once their results are committed; the stage closing adds the rule to AGENT-POLICY.md. Deleting the eight remote branches of the merged PRs #500 to #507 was blocked by the auto-mode permission classifier and went to the owner.

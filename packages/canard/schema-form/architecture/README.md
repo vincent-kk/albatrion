@@ -73,3 +73,10 @@
 입력 응답성 단계는 제품 `814d21ad4`와 단계 가지 `feat/schema-form-input-responsiveness`에서 마감했습니다.
 D1 구현 여부·virtualization 기본값·IR-5 수정 수락은 모두 소유자 대기이며, 코디네이터 권고는 이번 단계 D1 미구현·기본 off 유지·IR-5 수정 유지입니다.
 [마감 결과](verification/input-responsiveness/closing-results.md)와 [465라운드 닫기](reviews/round-465-closing.md)에 수치·실패·미채택·이월 항목을 보존했습니다. 버전 번호와 단계 루트 PR 병합은 Vincent가 직접 합니다.
+
+
+## IR-6 D1 소유자 결정 보충(2026-10-31)
+
+소유자는 D1을 지금 구현하고 버전은 바꾸지 않으며 virtualization 기본 off와 IR-5 수정을 유지하도록 결정했습니다. 앞의 마감 당시 소유자 대기 기록은 이력으로 보존합니다. 쓰기·OnChange 마운트의 다음 화면 뒤 검증, 즉시 validate/제출 유지와 하위 트리 판정 보존은 [D1 구현](plan/input-responsiveness/design.md#d1-구현--ir-6-2026-10-31) 및 VALIDATE-052를 따릅니다. 루트 PR #508 병합은 D1 편입 뒤 Vincent가 직접 하며 round-466 소유자 답변 기록은 이 PR에 포함하지 않습니다.
+
+IR-6 연속 입력 결정(2026-10-31): D1 쓰기는 선행·프레임 이월·후행과 마지막 자동 실행 기준100ms 상한을 사용하며, 시간 정책은 한 도메인 없는 경계에 모읍니다. 마운트는 일회성 슬롯이고 정식 성능 검증은 아직 시작하지 않았습니다(VALIDATE-052).

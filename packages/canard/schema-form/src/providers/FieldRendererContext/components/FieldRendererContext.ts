@@ -6,6 +6,8 @@ import type { FieldNode } from '@/schema-form/core';
 import type { FieldRendererProps } from '@/schema-form/types';
 
 export interface FieldRendererContext {
+  /** Resolved policy rendered by this context; RootNodeContext commits it after layout. */
+  showError: unknown;
   /** FieldRenderer component declared externally */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */

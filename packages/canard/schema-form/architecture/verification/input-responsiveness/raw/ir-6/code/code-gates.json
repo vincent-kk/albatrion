@@ -1,0 +1,134 @@
+{
+  "baseline": "facd72a71",
+  "timedSamples": 0,
+  "runsSequential": true,
+  "testSummaryNote": "Vitest testResults counts files; numTotalTestSuites includes describe suites. React18 and render run separately. One unit todo predates IR-6. Production reran after the final build.",
+  "gates": {
+    "unit": {
+      "files": 611,
+      "passed": 4023,
+      "failed": 0,
+      "todo": 1,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-unit.json.gz"
+    },
+    "render": {
+      "files": 136,
+      "passed": 793,
+      "failed": 0,
+      "todo": 0,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-render.json.gz"
+    },
+    "react18": {
+      "files": 136,
+      "passed": 793,
+      "failed": 0,
+      "todo": 0,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-react18.json.gz"
+    },
+    "verify": {
+      "files": 752,
+      "passed": 4860,
+      "failed": 0,
+      "todo": 1,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-verify.json.gz"
+    },
+    "storybook": {
+      "files": 100,
+      "passed": 251,
+      "failed": 0,
+      "todo": 0,
+      "pending": 0,
+      "exitCode": 0,
+      "artifact": "final-storybook.json.gz"
+    },
+    "production": {
+      "files": 10,
+      "passed": 21,
+      "failed": 0,
+      "exitCode": 0,
+      "finalBundle": true,
+      "distinctFreeze": {
+        "nested-d5-f4": 1706,
+        "flat-500": 502,
+        "oneOf-20": 111,
+        "sample-0": 5
+      }
+    },
+    "lint": {
+      "exitCode": 0
+    },
+    "typecheck": {
+      "exitCode": 0
+    },
+    "build": {
+      "exitCode": 0
+    },
+    "publicDeclarations": {
+      "exitCode": 0
+    },
+    "fca": {
+      "exitCode": 0,
+      "newFindings": 0,
+      "absoluteStatus": "indeterminate",
+      "baselineFindings": 202,
+      "candidateFindings": 202,
+      "diagnostics": 177,
+      "lineOnlyFindingMovements": 3,
+      "factsExact": 1681,
+      "unsupportedFacts": 173
+    }
+  },
+  "sourceHashes": {
+    "src/__tests__/e2e/features-composite-tails.test.tsx": "88a2b92c79521887e3edd2a2610e644b3a76093df863d0b4ed5a622c30c3fea7",
+    "src/__tests__/e2e/features-derivation-consumer.test.tsx": "066edb7f24657957999dafd2ddb6ee72ff0c6c30907ee1809779492a570a3ea9",
+    "src/__tests__/e2e/features-handle-layout-consumer.test.tsx": "9b286ffab9053d377b5118fd4e02cbe74fa4bb0ae9bbbe0a314073d4b0c19124",
+    "src/__tests__/e2e/features-input-components-consumer.test.tsx": "207daf4cb3d9f450243bb2e60d6276dd54da3634612b25394efbd4e827b4cad7",
+    "src/__tests__/e2e/features-plugins-consumer.test.tsx": "5eec4649faa549bafc73a0334f76643abb28e121eef01ca04ea5fc76d2d5e0bd",
+    "src/__tests__/e2e/features-validation-state-display.test.tsx": "47083e34c6147e9f22969930da290a4e3debf58193f78d90105c80ad3ca42ee0",
+    "src/__tests__/e2e/validation-mount-calls.test.tsx": "921d26446ebdfb1807c97780b78c61c48230cb8578f0ef40c562e34eb26b0ce7",
+    "src/__tests__/e2e/validation-reset-report.test.tsx": "08b0fc233db1faf4b8324e264ffc2eebc79864186acf85cfa1c56b8a27072aa4",
+    "src/__tests__/e2e/validation-unchanged-result.test.tsx": "425fd4d6aa636cde899453fcb612023c455e68940a8a10aae5e5fc31862156b9",
+    "src/__tests__/renderForm.tsx": "9f48ad5179a786586753c21460cfb4147d27e17549b740811cee32cd67635b98",
+    "src/__tests__/scenarios/deferred-mount.strict.render.test.tsx": "1a1a7fbd77b763e3cbc1c731c29f6a040adecd7c84425bafacfa8dad8b367f64",
+    "src/__tests__/scenarios/refSchema-context-provider.render.test.tsx": "d11de341441e7d0e4639763a371dab0547a09b72ef9054c3044e0af5fda8893c",
+    "src/__tests__/scenarios/state-management.render.test.tsx": "9e3e2a475dcaa9d07ef1c2df441c53a879a23682cfa951f33579622b34fbb60c",
+    "src/__tests__/scenarios/validation.async-race.render.test.tsx": "cb28d3cac3d29c7c1475b8687d911487a671caf53fc1cc02f5bc5810af9c9e3a",
+    "src/components/Form/__tests__/Form.policies.test.tsx": "f3a71f5da3ef277eea4b7141e02f0581e7d390793844d5acb1fe9ddcaf6d4d46",
+    "src/core/__tests__/hostEntry.test.ts": "12afee614986c4b34bb89c2a814b02167b2a36fbcc1d18ffff4b870e8b275290",
+    "src/core/engine/index.ts": "9b576d44b4527e421e4192216d2b6904016542956bea3aaf1022035cdcbae128",
+    "src/core/engine/settle/arrangeFieldNodeItems/__tests__/settle.detached-write-address.test.ts": "c9daaabfeb9e5693939eb621518ab30a56a840a567d9a8335dcc6a90d54f0a05",
+    "src/core/engine/validation/__tests__/validation.compile-failed.test.ts": "37b2fce3d41b572eb49e2d33f42d4f866994d5e11286ed04e27e32baa78c48e4",
+    "src/core/engine/validation/__tests__/validation.run.test.ts": "621a21595735f8b8136c2ca2aec8b82b6afdcd73bc63c97edf30532998590d0e",
+    "src/core/engine/validation/__tests__/validation.unchanged-result.test.ts": "614e03802d77491df469938b22ee31582b918cc5d7d3792601e73b7d024750a6",
+    "src/core/engine/validation/index.ts": "185d0a7de967d25608eb5062fd313d1a07a86d4b496c7d6562bcef78907d23e5",
+    "src/core/engine/validation/utils/run/requestFieldNodeValidation.ts": "c9de513472ef4238a16db446cb26c59d2a5fbcf6a5e9d882ad5d208cd3b2a859",
+    "src/core/engine/write/__tests__/dispatch.standalone-errors.test.ts": "c5f9a614ed6ac06c08a37fd607781ac6ce4a381baea94ad23a18fb7f7644ffd6",
+    "src/core/engine/write/utils/entry/dispatchValidate.ts": "36e7e3573f576f2f1953bf3c414ba8f263f71c945e9bb3c94f731b2b21e78a3e",
+    "src/core/index.ts": "47ae5cbd100f2f40f740e7477811b6bed6a90cc08b23a5cbf6ccd678ac186592",
+    "src/providers/RootNodeContext/components/RootNodeContextProvider.tsx": "3abbba66bce4fcb908b6764a01a4414a2d1ff721750be33c8e26c4b827664ddb",
+    "src/providers/RootNodeContext/type.ts": "90abfa3cd5ddbd8780b3494a8ff295ac15b223df0dba37202f145a97c3a36172",
+    "stories/components/scenario/createStoryScenarioAdapter.ts": "4f8d97d23b42e2be144ccac7c2e7d0573e9315e4b7672ba3980abe494c79c624",
+    "stories/features/events/subscription-kinds.stories.tsx": "e0b0fdfbf0b98a6c272891d528110e9c31e3020a1b6af5b28b30fc14b2e4fc6a",
+    "src/__tests__/e2e/validation.after-paint.render.test.tsx": "8447d7badea6d3a1ba70766b892c274ca9fc85623b091761fe51458c0651259b",
+    "src/__tests__/e2e/validation.mount-owed.render.test.tsx": "aab62ae0d152b5330e02262b43c56770e0b61233c765805a2cafa381cd6bfaf8",
+    "src/__tests__/helpers/settleValidation.ts": "64685a3e77af9d0f23e544aee92d51b7b107eefeaf6f81350aee12c5f88db227",
+    "src/core/engine/__tests__/validation.after-paint.test.ts": "7f372b2df75bc35da73020ad465ab8456aa6dd0967f71996db18153ef638973a",
+    "src/core/engine/validation/__tests__/scheduleValidationSlot.test.ts": "ef4f4edfb785ca9fbea0847e3ffc7a0255809cd572cb1d4159ceafa832f4f474",
+    "src/core/engine/validation/utils/run/scheduleValidationSlot.ts": "d624cc7a7d65f528ca1aa388954db52892c7184ad1312677d9256d4aae5f7c1e",
+    "src/providers/RootNodeContext/utils/scheduleMountValidation.ts": "ea87da282a8cd1863596f0933a71d96c28e686d1f2abc8e82a83a41b6d87897a"
+  },
+  "bundleHashes": {
+    "index.mjs": "51289206e34f30c367d038763bdac6db0abd0dc669bcfc7c398839b05a08b436",
+    "index.node.mjs": "10f732c2ba3a840d538d27bf89847154cb0eafcc5d980a5afbcf20f715aa6dab",
+    "index.cjs": "744e5bbd2006d76155b9498a8c09e0a37ebdce00936d2ae1b2bd8cbe87ff40d0"
+  },
+  "publicIndexSha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+}

@@ -1,3 +1,4 @@
+export { scheduleValidationSlot } from './validationScheduling';
 export { engineModes } from './utils/cache/engineModes';
 export {
   adoptFieldNodeChain,
@@ -41,6 +42,8 @@ export {
   readValidationEntry,
   retainValidationRoot,
   releaseValidationRoot,
+  hasFieldNodeValidationRequest,
+  readFieldNodeRevealBaseline,
 } from './validation';
 export {
   EMPTY_REVISION_LEDGER,
@@ -88,3 +91,7 @@ export type {
   InactiveValueResolver,
   InactiveValueContext,
 } from './types/controls';
+export { readFieldNodeRevealPolicy } from './validation';
+export { readFieldNodeRevealVersion } from './validation';
+export { subscribeFieldNodeRevealReleased } from './validation';
+export { commitFieldNodeRevealPolicy } from './validation';

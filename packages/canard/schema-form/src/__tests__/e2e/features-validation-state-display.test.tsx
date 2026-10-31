@@ -16,6 +16,8 @@ import { type FormHandle, type FormatError, Form, type JSONSchema, ShowError } f
 
 import { type FormHarness, renderForm } from '../renderForm';
 
+import { settleValidation } from '../helpers/settleValidation';
+
 /** GOAL-061 touched lands in the animation frame after blur; jsdom runs frames on a timer, so waits cover one. */
 const BLUR_FRAME_MS = 50;
 
@@ -139,7 +141,7 @@ describe('features — validation-state display (consumer-only)', () => {
     try {
       for (const [index, stage] of externalErrorStages.entries()) {
         if (index > 0) rerender(view(stage.errors));
-        await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+        await act(async () => { await settleValidation(() => handle?.node); });
         expect(keywords((path) => handle!.findNode(path), stage.expected), `issues at stage ${stage.label}`).toEqual(stage.expected);
         for (const [path, text] of Object.entries(stage.shown)) expect(shown(container, path), `message at ${path}, stage ${stage.label}`).toBe(text);
       }

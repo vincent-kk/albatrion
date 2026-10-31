@@ -30,7 +30,13 @@ export async function prepareStageBundle(args: string[]) {
   const productPath = path.resolve(options.product);
   const repository = path.resolve('../../..');
   await build({
-    entryPoints: [path.resolve('browser-bench/interaction/harness.tsx')],
+    entryPoints: [
+      path.resolve(
+        options.harness === 'ir-6'
+          ? 'browser-bench/interaction/validationAfterPaint.tsx'
+          : 'browser-bench/interaction/harness.tsx',
+      ),
+    ],
     bundle: true,
     format: 'iife',
     platform: 'browser',

@@ -17,11 +17,11 @@ export enum ValidationMode {
 
 /** UI state flags a node can carry. */
 export enum FieldNodeState {
-  /** Value diverged from its initial/default state. */
+  /** Set when the user changes this node's value through its input; programmatic writes (setValue, array verbs) and automatic writes (fill, derived, injectTo, unsetValue, exit clearing, trim) never set it. Cleared by reset, controls.resetInteraction and clearState. */
   Dirty = BIT_FLAG_00,
-  /** Node interacted with (e.g., focused/blurred) at least once. */
+  /** Set once the user leaves this node's input (blur) for the first time. Cleared by reset, controls.resetInteraction and clearState. */
   Touched = BIT_FLAG_01,
-  /** UI should display validation messages for this node. */
+  /** Request validation messages for this node. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. */
   ErrorVisible = BIT_FLAG_02,
 }
 

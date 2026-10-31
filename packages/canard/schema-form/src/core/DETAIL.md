@@ -28,6 +28,8 @@
 
 ## API Contracts
 
+- H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
+
 - surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출한다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공한다. `readFieldNodeGuard`·`UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 core index가 재수출하지 않는다. 패키지의 src/index 공개 이름은 유지한다(07c 계획 9.2).
 - `fieldNodeFactory`·`blueprint`를 재수출하는 이유는 core 밖의 시험·측정 도구(`bench/legacy-compare/`의 네 파일, `src/hooks/__tests__/createHookNode.ts`)가 core index를 생성 통로로 쓰기 때문이다. 제품 소비자는 없다.
 - `__tests__/fixtures/testFieldNode.ts`는 engine index의 `FieldNodeRecord`를 바탕으로 시험용 자기 형과 구조 판정 좁히기를 제공한다. core 시나리오 러너, engine 시험과 `bench/legacy-compare/`의 독립 비교 스크립트 네 개는 클래스 identity 대신 레코드 칸으로 판정하고 공개 노드 동작은 surface 관문의 공개 노드 형으로 호출하며, `surface/runtime/FieldNode.ts` 클래스를 직접 가져오지 않는다.
@@ -47,6 +49,8 @@
 | 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기                 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01)                                                       |
 | `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                              |
 | `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
+| `scheduleValidationSlot(run)` | RootNodeContext의 마운트 검증이 쓰기 검증과 같은 다음 화면 뒤 슬롯을 쓰도록 validationScheduling·engine 경계를 통해 명명 재수출한다. 패키지 공개 `src/index.ts`와 공개 선언에는 노출하지 않는다(IR-6). |
+| `hasFieldNodeValidationRequest(node)` | validation→engine의 양수 스탬프 조회를 surface 바인딩 래퍼로 연결하여 RootNodeContext의 마운트 의무를 판정한다. 공개 노드의 runtime을 노출하지 않으며 src/index는 넓히지 않는다(IR-6 R2, 코디네이터 승인 msg_7e0a5ed0ffd3). |
 
 시험·측정 도우미 서명: `src/__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 `buildFieldNodeTree`·`mountFieldNode` 통로를 이어 마운트된 루트를 반환한다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓이다(70C-01, VALIDATE-010, CONTROLS-075).
 

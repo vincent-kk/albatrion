@@ -6,6 +6,7 @@ export { adoptFieldNodeTree } from './utils/binding/adoptFieldNodeTree';
 export { writeFieldNodeInput } from './utils/binding/writeFieldNodeInput';
 export { finishFieldNodeInput } from './utils/binding/finishFieldNodeInput';
 export { readFieldNodeInteractionReset } from './utils/binding/readFieldNodeInteractionReset';
+export { hasFieldNodeValidationRequest } from './utils/binding/hasFieldNodeValidationRequest';
 export { observeFieldNodeReports } from './utils/binding/observeFieldNodeReports';
 export { interpretFieldNodeDraft } from './utils/binding/interpretFieldNodeDraft';
 export { setContext } from './runtime/setContext';
@@ -37,3 +38,10 @@ export type {
   TerminalNode,
   InferFieldNode,
 } from './type';
+
+export { readFieldNodeRevealBaseline } from './utils/binding/readFieldNodeRevealBaseline';
+
+export { readFieldNodeRevealPolicy } from './utils/binding/readFieldNodeRevealPolicy';
+export { readFieldNodeRevealVersion } from './utils/binding/readFieldNodeRevealVersion';
+export { subscribeFieldNodeRevealReleased } from './utils/binding/subscribeFieldNodeRevealReleased';
+export { commitFieldNodeRevealPolicy } from './utils/binding/commitFieldNodeRevealPolicy';

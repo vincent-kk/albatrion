@@ -1,0 +1,14 @@
+{
+  "base": "233155be66fdd8e2d8238bc2e4d2f8a6357c4ea1",
+  "productSourceDiff": 0,
+  "browserRawDiff": 0,
+  "authorizedRecordedRawChanges": [
+    "packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/code/round-6c/red.json.gz",
+    "packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/code/round-6c/verification.json"
+  ],
+  "remaining6cMetadataUnchanged": true,
+  "cpuSentenceOnlyTimeChanged": true,
+  "prePRFileNumstat": [],
+  "prePRDeletions": 0,
+  "throwsDocumented": true
+}

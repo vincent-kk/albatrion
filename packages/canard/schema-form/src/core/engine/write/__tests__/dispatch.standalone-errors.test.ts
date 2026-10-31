@@ -389,7 +389,7 @@ describe('standalone wave failures', () => {
       });
 
       dispatchSetValue(a, 'after');
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       expect(report).toHaveBeenCalledTimes(1);
       expect(report.mock.calls[0][0]).toMatchObject({
         error: failure,

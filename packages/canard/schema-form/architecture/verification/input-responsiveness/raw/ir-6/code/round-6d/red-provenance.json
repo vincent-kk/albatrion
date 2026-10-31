@@ -1,0 +1,11 @@
+{
+  "base": "233155be66fdd8e2d8238bc2e4d2f8a6357c4ea1",
+  "behavior": "round-6 proof required strictly after 2026-10-31T15:19:10Z",
+  "test": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/validationAfterPaint/__tests__/checkValidationAfterPaintRegistration.test.ts",
+  "testSha256": "2c2878df53f4112bc6d15678141656d2636a09e9d2c665ebb96457d6127fc3d7",
+  "baseHelperSha256": "254a2ae6a7d1f5f28465a2cfd3f09b81c2824a9f8bad8d738c22422099134140",
+  "redPassed": 8,
+  "redFailed": 2,
+  "greenBenchmarkPassed": 61,
+  "newWindow": false
+}

@@ -1,0 +1,75 @@
+{
+  "scope": "Post-window benchmark gates and retained earlier-stage reproductions; performance G2/G8 still FAIL",
+  "commands": [
+    {
+      "cmd": "yarn workspace @aileron/benchmark-form lint",
+      "chunk_id": "235cd8",
+      "wall_time_seconds": 1.92466575,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    {
+      "cmd": "yarn workspace @aileron/benchmark-form typecheck:browser",
+      "chunk_id": "272968",
+      "wall_time_seconds": 1.40389475,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    {
+      "cmd": "yarn workspace @aileron/benchmark-form check:browser-results",
+      "chunk_id": "df3388",
+      "wall_time_seconds": 0.652621292,
+      "exit_code": 0,
+      "original_token_count": 186,
+      "output": "{\"fixture\":\"type-flat-500\",\"lane\":\"L\",\"processingP95\":2.899999976158142,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"S\",\"processingP95\":5,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"E\",\"processingP95\":4.599999964237213,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"L\",\"processingP95\":1.600000023841858,\"handlerP95\":1.4000000357627869,\"longestFrame\":54.60000002384186}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"S\",\"processingP95\":4.699999988079071,\"handlerP95\":4.200000047683716,\"longestFrame\":80.19999998807907}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"E\",\"processingP95\":4,\"handlerP95\":4.100000023841858,\"longestFrame\":64}\nIR0_RAW_REPRODUCED samples=510\n"
+    },
+    {
+      "cmd": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1",
+      "chunk_id": "dbb8ee",
+      "wall_time_seconds": 0.811504583,
+      "exit_code": 0,
+      "original_token_count": 271,
+      "output": "{\"fixture\":\"replace-200-while-typing\",\"lane\":\"L\",\"processingP95\":1.600000023841858,\"handlerP95\":1.199999988079071,\"longestFrame\":54.90000003576279}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"E0\",\"processingP95\":4.199999988079071,\"handlerP95\":3.900000035762787,\"longestFrame\":61.5}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"A\",\"processingP95\":4.200000047683716,\"handlerP95\":4.200000047683716,\"longestFrame\":61.80000001192093}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"AB\",\"processingP95\":4.300000011920929,\"handlerP95\":4.100000023841858,\"longestFrame\":60.19999998807907}\n{\"fixture\":\"type-flat-500\",\"lane\":\"L\",\"processingP95\":2.699999988079071,\"handlerP95\":0.9000000357627869,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"E0\",\"processingP95\":4.899999976158142,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"A\",\"processingP95\":4.800000011920929,\"handlerP95\":1.100000023841858,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"AB\",\"processingP95\":4.799999952316284,\"handlerP95\":1.0999999642372131,\"longestFrame\":0}\nIR1_RAW_REPRODUCED samples=520\n"
+    },
+    {
+      "cmd": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1 --suite=backfill",
+      "chunk_id": "e71698",
+      "wall_time_seconds": 0.643399083,
+      "exit_code": 0,
+      "original_token_count": 8,
+      "output": "IR1_RAW_REPRODUCED samples=120\n"
+    },
+    {
+      "cmd": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1 --suite=quiet-gates",
+      "chunk_id": "b9fb31",
+      "wall_time_seconds": 0.678912583,
+      "exit_code": 0,
+      "original_token_count": 259,
+      "output": "{\"fixture\":\"replace-200-while-typing\",\"lane\":\"L\",\"processingP95\":1.600000023841858,\"handlerP95\":1.199999988079071,\"longestFrame\":55.90000003576279}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"E0\",\"processingP95\":4.399999976158142,\"handlerP95\":4.099999964237213,\"longestFrame\":61.60000002384186}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"A\",\"processingP95\":0.8999999761581421,\"handlerP95\":4,\"longestFrame\":62.299999952316284}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"AB\",\"processingP95\":3.5,\"handlerP95\":4.099999964237213,\"longestFrame\":64.80000001192093}\n{\"fixture\":\"type-flat-500\",\"lane\":\"L\",\"processingP95\":2.800000011920929,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"E0\",\"processingP95\":4.799999952316284,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"A\",\"processingP95\":4.700000047683716,\"handlerP95\":1.100000023841858,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"AB\",\"processingP95\":4.700000047683716,\"handlerP95\":1,\"longestFrame\":0}\nIR1_RAW_REPRODUCED samples=200\n"
+    },
+    {
+      "cmd": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-1 --derived",
+      "chunk_id": "4190ef",
+      "wall_time_seconds": 1.137463042,
+      "exit_code": 0,
+      "original_token_count": 285,
+      "output": "{\"fixture\":\"replace-200-while-typing\",\"lane\":\"L\",\"processingP95\":1.600000023841858,\"handlerP95\":1.199999988079071,\"longestFrame\":54.90000003576279}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"E0\",\"processingP95\":4.199999988079071,\"handlerP95\":3.900000035762787,\"longestFrame\":61.5}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"A\",\"processingP95\":4.200000047683716,\"handlerP95\":4.200000047683716,\"longestFrame\":61.80000001192093}\n{\"fixture\":\"replace-200-while-typing\",\"lane\":\"AB\",\"processingP95\":4.300000011920929,\"handlerP95\":4.100000023841858,\"longestFrame\":60.19999998807907}\n{\"fixture\":\"type-flat-500\",\"lane\":\"L\",\"processingP95\":2.699999988079071,\"handlerP95\":0.9000000357627869,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"E0\",\"processingP95\":4.899999976158142,\"handlerP95\":1,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"A\",\"processingP95\":4.800000011920929,\"handlerP95\":1.100000023841858,\"longestFrame\":0}\n{\"fixture\":\"type-flat-500\",\"lane\":\"AB\",\"processingP95\":4.799999952316284,\"handlerP95\":1.0999999642372131,\"longestFrame\":0}\nIR1_RAW_REPRODUCED samples=520\nIR1_DERIVED_REPRODUCED gates=10 spread=4 backfill=12\n"
+    },
+    {
+      "cmd": "yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-2",
+      "chunk_id": "86a42a",
+      "wall_time_seconds": 0.678907458,
+      "exit_code": 0,
+      "original_token_count": 19,
+      "output": "IR2_SUITE_REPRODUCED suite=main samples=180\nIR2_RAW_REPRODUCED samples=180\n"
+    }
+  ],
+  "test": {
+    "files": 6,
+    "passed": 44,
+    "failed": 0,
+    "artifact": "benchmark-tests.json.gz"
+  }
+}

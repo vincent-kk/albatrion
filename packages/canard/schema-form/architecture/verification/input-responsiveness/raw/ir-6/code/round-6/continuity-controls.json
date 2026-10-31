@@ -1,0 +1,16 @@
+{
+  "baseline": "cb8b251dc3701b62adb8c1cf8c016f19f91d1647",
+  "unchanged": {
+    "packages/canard/schema-form/src/index.ts": "5944b3b7436679f41921a9ea9e2b053e833708d6948b488e0384d68ee6992359",
+    "packages/canard/schema-form/package.json": "45d4f4ac93f6fe3f675405a33a6d39e77732f6229495b6cfe1f56ee3dce83c66",
+    "packages/canard/schema-form/src/providers/FieldRendererContext/__tests__/visibility.same-commit.test.tsx": "5e882274651dca97ee47c2cc2265f2ace5740eaf100bffe9628274a2e88a64dd",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.visibility.render.test.tsx": "235e671e7662345f665968694e82f89442ccda41bb5c2db0240ec4861d29bee0",
+    "packages/canard/schema-form/src/__tests__/e2e/validation.root-release.render.test.tsx": "771d3067c8884c7135e7c593b4f94ae932bf68c0c71399912dbee01c47d71370",
+    "packages/canard/schema-form/src/components/FieldProxy/components/FieldInputSlot/__tests__/layoutCounts.test.ts": "bfb616ac46273892cbf2e9a5f77c0cac6dceee26827dd1325101b5c7aea6f2a3"
+  },
+  "aggregateSecondMountCaseUnchanged": true,
+  "ownerQuotes33and36VerbatimWithContext": true,
+  "productChangedOutsideDisplayRule": false,
+  "releaseTestTypingApproval": "msg_408720d9d417",
+  "rootReleaseArgument": "entry.rootNode; same field root and runtime identity asserted"
+}

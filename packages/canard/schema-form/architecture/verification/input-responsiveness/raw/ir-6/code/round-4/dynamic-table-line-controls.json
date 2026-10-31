@@ -1,0 +1,28 @@
+{
+  "declarationTextEqual": true,
+  "movements": {
+    "features-composite-tails.test.tsx": [
+      [
+        171,
+        176
+      ]
+    ],
+    "features-input-components-consumer.test.tsx": [
+      [
+        103,
+        106
+      ]
+    ],
+    "features-validation-state-display.test.tsx": [
+      [
+        78,
+        80
+      ],
+      [
+        110,
+        112
+      ]
+    ]
+  },
+  "normalizationScope": "Only the four test-record-case-cap declaration locations; raw finding differences are retained."
+}

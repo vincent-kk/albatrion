@@ -1038,3 +1038,22 @@ StrictMode의 이중 호출은 가드 캐시가 작성 루트 객체를 키로 �
 - `design/07-landing-and-tests.md` §1.16 (LANDING-061)
 - `design/07-landing-and-tests.md` §1.19 (LANDING-064)
 - `design/07-landing-and-tests.md` §1.22 (LANDING-067)
+
+
+## IR-6 검증 시점 보충 — 2026-10-31
+
+현행 D1은 쓰기의 다음 프레임 선행·연속 이월·quiet 후행과 마지막 실제 실행 기준100ms cap을 사용하고 동기 정착·사건·onChange를 유지합니다(VALIDATE-052).
+화면 슬롯은 프레임 API 부재·숨김 문서에서 매크로태스크로 fallback하며100ms stall 타이머와 단일 실행을 경주하고 common-utils scheduler의0.16.1 선례를 유지합니다(VALIDATE-052).
+오류는 지금 적격이며 마지막 release 이후 state·enabled·커밋 정책의 모든 조합에서 계속 적격일 때 표시하고 숨김은 즉시입니다(VALIDATE-052).
+OnChange만 이력을 기록하며 새 표시와 중간에 숨겨진 표시는 판정 정착·조용한 drop·수락한 explicit root 판정·폐기의 release를 기다리고 조용한 변경은 약2프레임 뒤 표시합니다(VALIDATE-052).
+기록은 write sequence당 node 한 번이며 모든 append가 generation을 전진시키고 예약 cutoff 이하만 해제하여 뒤 기록이 앞 기록의 수명을 늘리지 않습니다(VALIDATE-052).
+정책은 root별 layout effect에서만 commit하고 렌더 중에는 엔진을 바꾸지 않으며 표시 hook은 candidate만 memoized release-version 구독과 같은 client/server getter를 사용합니다(VALIDATE-052).
+renderer/input은 enabled를 검사하고 child-errors는 hidden 자식도 집계하며 inactive 값 제거와 off-branch 오류 제외를 유지합니다(VALIDATE-052).
+현재 stamp의 commit-only 폐기는 targets를 보존해 최신 commit을 cadence로 재요청하고 explicit 반환·submit 값은 호출 시점 snapshot 계약을 유지합니다(VALIDATE-052).
+Always는 true·ShowError.Always·포함 mask이며 최초 mount inline 판정과 child layout 쓰기의 compile 실패 rejected/sink는 변경 없는 ERROR-019 항목3·5를 따르고 if 게이트의 render 컴파일은 남습니다(VALIDATE-052).
+숨긴 reset 재생성은 원래 load별 경고 범위로 옛 기록 뒤 새 reset 기록을 chain 끝에 전달하고 handler 실패는 각각 격리하며 다른 hidden 사슬·같은-schema reset은 reconnect까지 buffer합니다(VALIDATE-052).
+한계는 hook disabled의 즉시 reveal·drop 뒤 state/enabled render의 hold 생략·commit-only stream hold·release와 paint 사이 쓰기의1~2프레임 이전 판정·한 batch 안 미표시 조합의 이력 포함이며 G는 구현하지 않습니다(VALIDATE-052).
+
+마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).
+
+if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).

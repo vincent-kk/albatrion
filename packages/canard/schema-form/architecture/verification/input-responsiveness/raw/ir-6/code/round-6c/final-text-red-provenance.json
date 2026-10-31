@@ -1,0 +1,20 @@
+{
+  "mutations": [
+    "pre-6c prepare default cwd",
+    "pre-6c G8 handler-presence selection",
+    "remove quiet/old-window and future-source guards"
+  ],
+  "testHashes": {
+    "packages/aileron/benchmark-form/browser-bench/interaction/helpers/__tests__/prepareValidationAfterPaintBundles.test.ts": "7f6b0c02ce788b38fdfeecdec05e889e1fa9ae270c1630a199bcf7a05b50bf7a",
+    "packages/aileron/benchmark-form/browser-bench/interaction/helpers/__tests__/deriveValidationAfterPaintResults.test.ts": "1bbcf448214bd2858f65674d880bba50f8fcf26dce85e52f84df000765181c66",
+    "packages/aileron/benchmark-form/browser-bench/interaction/helpers/validationAfterPaint/__tests__/checkValidationAfterPaintRegistration.test.ts": "21c853be55f2e31ff9332da643fb5a318df1c54724c2f2117ba0f332016a0342"
+  },
+  "restored": true,
+  "restoredSourceHashes": {
+    "packages/aileron/benchmark-form/browser-bench/interaction/helpers/prepareValidationAfterPaintBundles.ts": "0012bdcc2bfa5a3030f9ce45923d500642407b73e76597e16daa49f4dfcc0788",
+    "packages/aileron/benchmark-form/browser-bench/interaction/helpers/validationAfterPaint/decideValidationAfterPaintGates.ts": "a3df67558d80dd978144813ac2adbfb3fc8d86d6413a6f9933aa370c2de4a0df",
+    "packages/aileron/benchmark-form/browser-bench/interaction/helpers/validationAfterPaint/checkValidationAfterPaintRegistration.ts": "254a2ae6a7d1f5f28465a2cfd3f09b81c2824a9f8bad8d738c22422099134140"
+  },
+  "passed": 16,
+  "failed": 8
+}

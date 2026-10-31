@@ -1,0 +1,18 @@
+{
+  "two-target": {
+    "src/core/engine/__tests__/validation.commit-retry.test.ts": "1ec0cffb9df278329f025f15e630047ee887f4425a17256c670f521674d8b88f"
+  },
+  "dynamic-tables": {
+    "src/__tests__/e2e/features-composite-tails.test.tsx": "b34a7ae1c206f96a85ca5f045eeed25c2e1ae138522693441b5a9363e904fab9",
+    "src/__tests__/e2e/features-input-components-consumer.test.tsx": "9a82ba9daefe667fec87fc6423f1ebe62e1ce0b79d12e36398b058949366af5c",
+    "src/__tests__/e2e/features-validation-state-display.test.tsx": "466a2a8900d40742d5ad5a380df9dba7e0b411e6e3e8e0598101a250ae851f6c"
+  },
+  "six-public-documents": {
+    "README.md": "7cb239554b47b926916f85664cb81ce3bdc1d6c32680a2033e9f5d4d3bf52556",
+    "docs/en/SPECIFICATION.md": "cf382bb16815269b711d16bffa2c857d75853f58377856ac598fa1429d17c78c",
+    "docs/ko/SPECIFICATION.md": "d242bcbdf7df38beba9f1d9f0960b266240ffddc6ba13d667fd3d535bfc95a39",
+    "docs/QUICK_REFERENCE.md": "5a0fc446ef6c55fe739b3f6aa0a7169c3f496da5da4e9f085262f5d306fed146",
+    "docs/agents/skills/schema-form-skill/knowledge/validation-and-state.md": "fb8c7e3a495b0c0545f90c1f8fab56ebfc69cb25c1c12b3d043edbfafa5fcede",
+    "docs/agents/skills/schema-form-skill/knowledge/arrays-and-scale.md": "54dd7d83fbcbe228adb7852fd0650ca2d5b981af61bac8146c72b4d6c90f9bc9"
+  }
+}

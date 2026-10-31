@@ -21,6 +21,8 @@ export {
   writeFieldNodeInput,
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
+  hasFieldNodeValidationRequest,
+  readFieldNodeRevealBaseline,
   observeFieldNodeReports,
   interpretFieldNodeDraft,
 } from './surface';
@@ -29,6 +31,7 @@ export {
   ValidationMode,
   retainValidationRoot,
   releaseValidationRoot,
+  scheduleValidationSlot,
   blueprint,
 } from './engine';
 export type {
@@ -55,3 +58,7 @@ export type {
   InactiveValueContext,
   ValidateFunction,
 } from './engine';
+export { readFieldNodeRevealPolicy } from './surface';
+export { readFieldNodeRevealVersion } from './surface';
+export { subscribeFieldNodeRevealReleased } from './surface';
+export { commitFieldNodeRevealPolicy } from './surface';

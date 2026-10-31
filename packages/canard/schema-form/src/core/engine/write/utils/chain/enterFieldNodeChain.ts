@@ -1,3 +1,4 @@
+import { advanceFieldNodeRevealSequence } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
@@ -20,6 +21,7 @@ export const enterFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   assertFieldNodeWritable(node);
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
+  advanceFieldNodeRevealSequence(node);
   if (!runtime.entryDepth) startFieldNodeChain(node.rootNode);
   if (refuseListenerFeedback(runtime)) return false;
   if (runtime.visitDepth && !runtime.batchDepth) openVisitBatch(node);

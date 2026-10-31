@@ -22,6 +22,8 @@
 
 ### 경계 검증과 시험 도우미
 
+- H 검증의 runtime bridge 직접 import는 소유 surface DETAIL의 단일 예외를 따른다(코디네이터 msg_29959ddbd70f). importModel은 그 importer/target만 별도 계수하고 다른 D 위반0을 유지한다.
+
 - `__tests__/pointerIsolation.test.ts`는 제품 소스의 경로 분할·조립(`+` 결합과 템플릿 리터럴 포함)·이스케이프·원문 연산자 비교·`/` 접두 검사와 비교·경로 구조 정규식을 검사하며 jsonPointer 소유 경계만 허용한다.
 
 - `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 97개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증한다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽는다.

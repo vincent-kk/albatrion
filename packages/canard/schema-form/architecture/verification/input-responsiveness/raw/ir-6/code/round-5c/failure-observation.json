@@ -1,0 +1,175 @@
+{
+  "baseline": "0624741a071c578f0cebc6daeda569dc1d4acbec",
+  "observations": [
+    {
+      "artifact": "baseline-red-unit.json.gz",
+      "passed": 14,
+      "failed": 1,
+      "cases": [
+        {
+          "name": "IR-6 H pending clears before one release per accepted explicit root verdict",
+          "status": "failed"
+        },
+        {
+          "name": "IR-6 pending settles for null verdicts",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 pending settles for throw verdicts",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 pending settles for compile verdicts",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 a commit-only discard keeps pending until the newest verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 an obsolete asynchronous run cannot release a newer write hold",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 subtree validate preserves a pending write verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 reset after switching to mode 0 releases the invalidated hold",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 reset after switching to mode 2 releases the invalidated hold",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H disposal clears release listeners without notification",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 explicit root null settles only after a current verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 explicit root execute settles only after a current verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 explicit root compile settles only after a current verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 explicit root commit settles only after a current verdict",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 unsubscribed release listeners stay silent during explicit root validation",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "artifact": "baseline-red-mount-render.json.gz",
+      "passed": 0,
+      "failed": 2,
+      "cases": [
+        {
+          "name": "non-candidate mount release adds no display render (hydrate=false)",
+          "status": "failed"
+        },
+        {
+          "name": "non-candidate mount release adds no display render (hydrate=true)",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "artifact": "baseline-characterization-mount-react18.json.gz",
+      "passed": 2,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "non-candidate mount release adds no display render (hydrate=false)",
+          "status": "passed"
+        },
+        {
+          "name": "non-candidate mount release adds no display render (hydrate=true)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "artifact": "baseline-red-react18.json.gz",
+      "passed": 2,
+      "failed": 1,
+      "cases": [
+        {
+          "name": "IR-6 D React18 legacy release preserves a reentrant layout write history (React19 has no legacy root)",
+          "status": "failed"
+        },
+        {
+          "name": "non-candidate mount release adds no display render (hydrate=false)",
+          "status": "passed"
+        },
+        {
+          "name": "non-candidate mount release adds no display render (hydrate=true)",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "artifact": "baseline-finalfixture-red-render.json.gz",
+      "passed": 2,
+      "failed": 2,
+      "cases": [
+        {
+          "name": "IR-6 H Dirty resetInteraction never displays too short beneath abc (pending ErrorVisible toggle=false)",
+          "status": "passed"
+        },
+        {
+          "name": "IR-6 H Dirty resetInteraction never displays too short beneath abc (pending ErrorVisible toggle=true)",
+          "status": "passed"
+        },
+        {
+          "name": "non-candidate mount release adds no display render (hydrate=false)",
+          "status": "failed"
+        },
+        {
+          "name": "non-candidate mount release adds no display render (hydrate=true)",
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "artifact": "baseline-finalfixture-red-react18.json.gz",
+      "passed": 0,
+      "failed": 1,
+      "committedTestSha256": "771d3067c8884c7135e7c593b4f94ae932bf68c0c71399912dbee01c47d71370",
+      "scratchHead": "f06bc92053f9a713c5ebd84f408b2a4cd45bd622",
+      "restoredBehaviorBase": "0624741a071c578f0cebc6daeda569dc1d4acbec",
+      "cases": [
+        {
+          "name": "IR-6 D React18 legacy release preserves a reentrant layout write history (React19 has no legacy root)",
+          "status": "failed"
+        }
+      ]
+    }
+  ],
+  "react18MountCharacterizationApproval": "msg_d101f539b310",
+  "unverifiedReason": "Relative timing of React18 mount passive-effects flush and the mount-verdict microtask is unverified; no alternate fixture was sought.",
+  "candidatePreFinalAudit": "Unit4088pass/1import-model failure; two root imports were corrected to owner entries before restarting final sequential gates.",
+  "candidateSnapshotAudit": {
+    "failedArtifact": "pre-final-render-snapshot-audit.json.gz",
+    "failedCases": [
+      "IR-6 no validator releases external errors revealed by showError after a write",
+      "IR-6 compile failure releases a newly revealed external error"
+    ],
+    "fullRenderPassed": 876,
+    "fullRenderFailed": 2,
+    "isolatedOffsetProbePassed": 2,
+    "isolatedOffsetProbeFailed": 0,
+    "approval": "msg_12043ec1b07c",
+    "control": "candidate-snapshot-controls.json",
+    "finalGatesRestarted": true
+  }
+}

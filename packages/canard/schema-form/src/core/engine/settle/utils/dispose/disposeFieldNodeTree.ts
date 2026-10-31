@@ -2,6 +2,10 @@ import { visitFieldNodes } from '../../../navigation';
 import { FieldNodeEventType, FieldNodeRevisionLedger } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { clearTreeMemoStores } from '../../../utils/cache/clearTreeMemoStores';
+import {
+  releaseFieldNodeRevealHistory,
+  settleFieldNodeValidation,
+} from '../../../validation';
 
 /**
  * Retire an adopted tree without changing its committed reads or references.
@@ -12,6 +16,14 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
+  runtime.validationCadence?.cancel();
+  runtime.validationCadence = undefined;
+  runtime.validationRun = undefined;
+  runtime.revealReleaseListeners?.clear();
+  settleFieldNodeValidation(root);
+  releaseFieldNodeRevealHistory(root);
+  runtime.revealPolicy = undefined;
+  runtime.validationPendingEntryStamp = undefined;
   visitFieldNodes(
     root,
     (node) => {

@@ -1,0 +1,42 @@
+{
+  "samples": 540,
+  "smokeSamples": 54,
+  "files": {
+    "complete.json.gz": {
+      "bytes": 134888,
+      "sha256": "e7458f424beb4c7a8f0928d7f220596b8e04b26f3aa0cc4ed03b756b779ce05e"
+    },
+    "cpu.json.gz": {
+      "bytes": 16534,
+      "sha256": "c23d7b80c367e1aa028cf06664c02ab67366e9168a3cd95ba07c5c125828052f"
+    },
+    "formal-start.json": {
+      "bytes": 8079,
+      "sha256": "111a06aefc7fbc883336acd189b673dbf2f140e8368d0f5f55cba8434b01f9e5"
+    },
+    "inputs.json": {
+      "bytes": 426034,
+      "sha256": "d474b4622717789d3c8ab98fcc7d07f8e06453ffa6a6fb55e754d3dbb4b21c87"
+    },
+    "pages.json.gz": {
+      "bytes": 5721502,
+      "sha256": "9496e9977da2ea9b352a28d45cdf97f5846e06eefdbc61f48f6372927ee7b4d1"
+    },
+    "smoke-complete.json.gz": {
+      "bytes": 111108,
+      "sha256": "b98649d0b7b6d22ef5d344a94ea574650b93176da831a02311b72db2a7bd1afa"
+    },
+    "smoke-pages.json.gz": {
+      "bytes": 572126,
+      "sha256": "dc19b066166f855503dc1ab736a3649582d956819d0c477b4292cfeca5467d18"
+    },
+    "start-2026-10-31T10-58-54-235Z.json": {
+      "bytes": 1585,
+      "sha256": "0de1f32f83e19aa8857c3e8c6d403cad361a023dabbfd3e7710ad59fc9ba8daa"
+    },
+    "window-authorization.json": {
+      "bytes": 613,
+      "sha256": "cbcedb19af433e0147838437076e73f586e2392272edb7ce328040cf4386b914"
+    }
+  }
+}

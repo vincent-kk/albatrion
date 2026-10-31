@@ -6,6 +6,11 @@
 
 ## API Contracts
 
+- H: 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
+- renderer는 state와 active&&visible 이력·커밋 정책을 소비하여 오류 표시를 계산한다. raw errors와 렌더러 경계는 유지한다.
+
+- U2: renderer.errorVisible과 formatError 선택은 FieldRendererContext의 순수 isErrorRevealed를 사용한다. enabled이며 live인 조건을 한 번 판정하고 held일 때만 동일 렌더 version과 passive ErrorRevealSubscriber로 해제를 따라잡는다. 기존 ErrorBoundary는 항상 첫 자식이며 구독자는 마지막 자식이므로 hold 시작·종료에도 렌더러와 입력의 identity·focus를 유지한다. checkShowError 조건은 그대로이며 엔진 기준에서 적격했던 오류만 이전 판정을 유지한다. 노드가 바뀌면 그 노드 기준을 읽고 enabled가 거짓이면 즉시 숨긴다. renderer.errors는 보정하지 않는 raw 목록이다.
+
 - 위계: 본체 `FieldProxy.tsx`와 재귀 렌더 props 계약 `type.ts`는 뿌리에 있습니다. 본체의 내부 부품인 fractal 둘(`FieldInputSlot`·`DeferredFieldProxy`)은 `components/`에 있고 이 칸에는 index를 두지 않습니다. 부품은 Form의 자식들(독립 컴포넌트)과 달리 본체의 일부이므로 본체 아래에 둡니다. 진입점 `index.ts`는 `./FieldProxy`의 `FieldProxy`와 `./components/FieldInputSlot`의 형 `ChildField`만 이름으로 내보냅니다. 본체는 부품을 각각의 진입점으로 가져오고, 부품은 위로 열린 길을 통해 뿌리의 `type.ts`를 가져오며, 부품끼리는 서로의 진입점을 가져옵니다.
 - 재귀 렌더 props 계약 `FieldProxyProps`는 본체가 소유하며 `type.ts`에 선언합니다. 진입점은 이 형을 내보내지 않습니다. 부품 `FieldInputSlot`·`DeferredFieldProxy`는 `type.ts`를 타입 전용 import로만 읽고, 입력 구현은 본체 구현을 값으로 역참조하지 않습니다. 본체는 자신을 `NodeProxy` prop으로 넘겨서 재귀합니다.
 - 비활성 노드는 렌더하지 않습니다. 하위 노드는 전달받은 NodeProxy를 통해 같은 렌더 계약을 재사용합니다. 노드가 없을 때도 null을 반환합니다. 오류 표시가 꺼져 있으면 오류 포맷 함수의 결과를 노출하지 않습니다.

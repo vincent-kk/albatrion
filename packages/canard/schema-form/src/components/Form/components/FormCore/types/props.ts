@@ -78,7 +78,8 @@ export interface FormProps<
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * Error display condition (default: ShowError.DirtyTouched)
+   * Error display condition (default: ShowError.DirtyTouched).
+   * Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate.
    *   - `true`: Always show
    *   - `false`: Never show
    *   - `ShowError.Dirty`: Show when value has changed
