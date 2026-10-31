@@ -146,3 +146,36 @@ v2 슬롯은 `done`을 공유하고 실행 시 disposed 루트를 중단합니�
 | D2·D4·기본값 | 동기 루트 onChange·입력 경로 유지. 소비자 startTransition·OnRequest·containment 지침은 [IR-4](../../verification/input-responsiveness/ir-4-results.md)에 반영했습니다. SSR blocker 제거 뒤에도 reveal 전 접근성과 전체 노출 비용 때문에 기본 off를 권고하며 확정은 소유자 대기입니다. |
 
 array 첫 프레임·count-only/시간 reveal·루트 reconcile·CPU 공변량·hydration 준비 후 나중 첫 렌더·기존 결함 다섯·typing-mix 절대 규칙은 마감 결과의 미결 목록으로 넘깁니다. 이번 기록은 새 구현이나 관문 완화를 지시하지 않습니다.
+
+
+## D1 구현 — IR-6 (2026-10-31)
+
+소유자 원문 12번으로 D1 구현을 수락했습니다. 옛 초안·v2·마감 상태는 이력으로 유지하고, 현행 동작은 이 절과 VALIDATE-052가 대체합니다. G는 구현하지 않으며 버전과 virtualization 기본 off는 유지합니다.
+
+### 실행 슬롯과 관찰 시점
+
+`scheduleValidationSlot(run)`은 호출마다 프레임 API와 문서 가시성을 읽습니다. 프레임 API가 없거나 문서가 숨겨져 있으면 `scheduleCancelableMacrotask`로 실행합니다. 그 밖에는 프레임 콜백 뒤 매크로태스크와 100ms 타이머를 경주시킵니다. done 표식과 상대 핸들 취소로 정확히 한 번 실행합니다. 예약 후 숨겨진 탭은 타이머로 대체되며 백그라운드 제한 때문에 약 1초까지 지연될 수 있습니다. 표시 장치의 실제 표시 완료를 보장하는 계약은 아닙니다.
+
+쓰기 검증은 같은 프레임 안의 여러 커밋을 합쳐 최신 커밋 하나만 판정합니다. 동기 정착·사건·루트 onChange는 유지하고, node.errors·getErrors·onValidate·오류 UI는 편집 값을 그린 화면 뒤에 도착합니다. 새 값과 이전 커밋의 오류가 최소 한 프레임 함께 보일 수 있습니다. 명시적 validate와 제출은 슬롯을 거치지 않고 새 판정을 즉시 시작하며 제출은 그 판정을 기다립니다. None·OnRequest와 오류 라우팅·참조 보존은 유지합니다.
+
+### 마운트·수명과 v2 차이
+
+Provider 준비 layout effect는 기존 root.validate를 같은 슬롯에 예약합니다. if 게이트가 없는 스키마의 전체 컴파일·첫 판정은 첫 화면 뒤로 이동하며 if 게이트의 렌더 중 전체 컴파일은 남습니다. mount helper는 컴파일 실패를 다시 capture하지 않아 engine의 런타임별 첫 보고만 남깁니다. 마운트 컴파일 실패는 한 번 보고합니다. 쓰기 실행의 거부가 마운트 슬롯 전에 처리될 때만 sink이며(jsdom·보이는 탭의 자식 layout 쓰기), 그 밖에는 rejected입니다. 예약 시 숨은 브라우저 문서에서 두 실행이 같은 MessageChannel 묶음을 공유하면 마운트 stamp 증가가 쓰기 실패를 버려 rejected입니다. 다른 예외는 기존 rejected capture를 따릅니다.
+
+슬롯 실행 시 load.ready가 거짓이면 mountValidationOwed를 세웁니다. 보존된 같은 load의 layout effect가 돌아오면 먼저 false로 소비하고 한 슬롯을 예약합니다. 오직 !ready 슬롯만 true로 쓰며 load당 보류 슬롯은 최대 하나입니다. 완료 뒤 다시 숨김·복원해도 재검증하지 않습니다. cleanup은 슬롯을 취소하지 않습니다. StrictMode 반복, React 19 Activity와 React 18 Suspense 복원은 한 번 판정하며 실제 unmount는 owed를 소비하지 않습니다.
+
+코디네이터 승인 편차: 설계의 root.disposed는 공개 FieldNode 타입에 없어 선언 빌드가 TS2339로 실패했습니다. 내부 필드의 in 검사·캐스트·공개 표면 확대 대신 helper에 RootLoadStore를 넘겨 실행 시 store.load !== load이면 종료합니다. load.root도 실행 시 읽고 없으면 종료합니다. 같은 스키마 reset은 같은 load를 보존하며 루트 교체 reset은 새 load로 바뀌고 deferValidation 없는 마운트 쓰기 사슬이 새 루트를 검증합니다. 이 변경은 Orca 질문 msg_713ddfc78b83의 답변으로 승인되었고 계약을 코드보다 먼저 별도 커밋했습니다.
+
+### 하위 트리 검증과 비용
+
+v2의 pending 여부 분기 대신 루트 validate만 스탬프를 올리고 대기 대상을 비웁니다. 비루트 validate는 현재 스탬프를 초기화해 읽고 대기·진행 중 전체 폼 요청을 보존합니다. 같은 커밋을 한 번 더 검증할 수 있으며 깊이 같은 오류의 참조 보존과 보고기 참조 중복 억제가 중복 배달을 막습니다.
+
+슬롯은 대기 요청당 상수 크기의 done·프레임·타이머·취소 핸들을 추가하며 검증 연산량 자체를 줄이지 않습니다. 내부 scheduleValidationSlot만 validation→engine→core로 명명 재수출하고 RootNodeContext가 소비합니다. src/index 공개 이름·타입·시그니처는 넓히지 않습니다. 단위·렌더·실제 브라우저 검증은 IR-6 결과에 기록하며 성능 효과는 측정 전에는 주장하지 않습니다.
+
+### Amendment 1 반영
+
+시험 대기는 act 안에서 두 프레임 뒤 setImmediate(jsdom), 두 프레임 뒤 scheduleMacrotask(Storybook)로 통일합니다. Node는 setImmediate입니다. 첫 프레임 콜백 뒤 배달에서 발생한 새 쓰기는 별도의 두 번째 대기를 요구합니다. 슬롯의 취소 함수도 예약한 환경에서 보관하여 jsdom 정리 뒤 콜백이 전역 cancelAnimationFrame을 다시 읽지 않습니다. 이 전역 정리 회귀는 수정 전에 실패했습니다.
+
+기존 한계 A4: prepared load가 !ready인 동안 보고된 records는 버퍼에 남고 다시 전달되지 않습니다. 마운트 슬롯 전에 숨겨진 폼의 쓰기 컴파일 실패는 이 경로를 탈 수 있으며 호스트 싱크는 받습니다. 이번 작업에서 고치지 않고 결과의 미결로 남깁니다.
+
+측정은 amendment 1 A5가 v3.1 G1·G2·G4·G5를 대체합니다. ET 문턱 검열·관측/키 병기·null의 handler p95 대체를 유지하고, 교차 레인 page index 공동 bootstrap 10,000회 고정 seed의 단측 95% 상한을 사용합니다. G1의 CPU 환산 기준은 L page median들의 중앙값 6.425ms이며 환산 계수 하한은0.80, 기준1.25배 초과는 indeterminate입니다. G2도 같은 pooled 처리 p95 비율 bootstrap 상한≤1.10입니다. G4는 도착≤33.4ms와 미배달0/200을 모두 요구합니다. G5 첫 화면은 root.render 전에 설치한 MutationObserver가 첫 input/select 추가 기록에서 예약한 rAF 콜백 시작 시각입니다. G3의 LoAF는 전페이지 지원과 열 페이지 개수 합을 요구합니다. 정확한 사전 규칙은 코드 검토 승인 뒤 첫 정식 창 전에 verification 문서에 커밋합니다.

@@ -143,3 +143,12 @@ Deferred inputs are unavailable to find-in-page, screen readers, and browser aut
 ## Expression Cost at Scale
 
 Heavy controls expressions run on every dependency tick. Move reductions out of expressions: watch the source array and compute inside the component (`expressions.md` § watch and derived), and keep `watch` lists down to the paths the expression actually reads.
+
+
+## Validation timing at scale
+
+OnChange write and initial mount validation run after the frame that renders the newest value. Several writes before that frame share one validation run; `node.errors`, `getErrors()`, `onValidate`, and error UI can retain the previous verdict for at least one frame. Explicit `validate()` and submit start a fresh verdict immediately, and submit waits for it. A subtree `validate()` does not cancel pending or in-flight whole-form write validation. None and OnRequest retain their modes.
+
+Without a frame API, or when the document is already hidden, validation uses a macrotask. A document hidden after scheduling falls back to a 100 ms timer, subject to background throttling. A mount compile failure is reported once. Its surface is `sink` when a write run's rejection is handled before the mount slot runs (a child layout write in jsdom or a visible tab); otherwise it is `rejected`. In a browser document hidden when scheduled, both runs can share a MessageChannel batch and the mount stamp discards the write failure. Guard-free whole-schema compilation moves after the first frame, while `if` gates can still compile during render. Validation cost itself remains.
+
+Moving validation after the edit frame does not remove compilation, execution, delivery, or error-rendering cost. Use OnRequest when a consumer needs request/submit-only validation.

@@ -851,3 +851,19 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:2466-2471`, `reviews/round-18-closing.md:2556-2564`
+
+
+## IR-6 상태 보충 — 2026-10-31
+
+VALIDATE-049의 입력 경로·마이크로태스크 실행 규칙은 대체됨(→ VALIDATE-052)입니다. 위 색인과 원문은 과거 기록으로 보존합니다. 제출의 fresh verdict·검증기 입력 불변·플러그인 최적화 소유권은 유지합니다.
+
+### VALIDATE-052 쓰기와 OnChange 마운트 검증은 다음 화면 뒤 슬롯에서 최신 커밋 하나를 판정
+
+- 결정:
+  > 쓰기 검증은 같은 프레임 안의 여러 커밋을 합쳐 최신 커밋 하나만 판정합니다. 동기 정착·사건·루트 onChange는 유지하고, node.errors·getErrors·onValidate·오류 UI는 편집 값을 그린 화면 뒤에 도착합니다. 새 값과 이전 커밋의 오류가 최소 한 프레임 함께 보일 수 있습니다. 명시적 validate와 제출은 슬롯을 거치지 않고 새 판정을 즉시 시작하며 제출은 그 판정을 기다립니다. None·OnRequest와 오류 라우팅·참조 보존은 유지합니다.
+- 보충: 호출 시점 환경 검사·100ms 단일 실행 경주·마운트 owed·load identity·컴파일 실패 rejected/sink와 하위 트리 stamp 보존은 같은 D1 구현 절을 따릅니다. G는 미구현입니다.
+- 상태: 현행
+- 출처: `plan/input-responsiveness/design.md`의 D1 구현 — IR-6 절(정본), `plan/input-responsiveness/request.md`의 2026-10-31 소유자 원문 9–12.
+- 닫은 사람: 소유자 결정(원문 12), 구현 경계는 코디네이터 승인.
+- 라운드: 입력 응답성 IR-6(2026-10-31).
+- 까닭: 검증을 키 입력 작업에서 분리하고 다음 화면 전까지의 쓰기를 한 번 판정하기 위한 제품 변경입니다.

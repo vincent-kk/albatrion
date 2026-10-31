@@ -493,3 +493,12 @@ core가 스스로 `Refresh`를 보내는 규칙은 바뀌지 않는다 — 쓰�
 - 무엇: 입력 중에 리스너가 `setValue(getValue())`를 부르는 장면과, 잎 하나만 바꾼 `setValue(V)`에서 `RequestRefresh`를 받는 노드를 센다(EVENT-071).
 - 통과: 앞 장면은 0회, 뒤 장면은 바뀐 잎만 1회이며, 캐럿과 IME 상태가 남는다(EVENT-071).
 - 실패: 원본이 바뀌지 않은 노드가 Refresh를 받으면 정착의 Refresh 대상을 고친다(EVENT-071).
+
+
+## IR-6 검증 시점 보충 — 2026-10-31
+
+소유자 결정과 현행 계약은 [D1 구현](../plan/input-responsiveness/design.md#d1-구현--ir-6-2026-10-31)과 VALIDATE-052입니다. 이 문서의 이전 마이크로태스크 실행 설명은 보존된 이전 계약이며 이 보충이 대체합니다. 쓰기 요청은 최외곽 동기 진입당 한 번 예약하고 실제 실행은 다음 화면 뒤 슬롯에서 최신 커밋 하나로 합칩니다. 동기 정착·사건·onChange는 유지하고 새 값이 이전 오류와 한 프레임 함께 보일 수 있습니다. 명시적 validate·제출은 즉시 새 판정을 시작합니다.
+
+OnChange 마운트도 같은 슬롯을 사용합니다. if 게이트가 없는 스키마의 전체 컴파일은 첫 화면 뒤로 이동하고 if 게이트의 렌더 중 컴파일은 유지합니다. 마운트 compile 실패는 한 번 보고합니다. 쓰기 실행의 거부가 마운트 슬롯 전에 처리되면 sink이며(jsdom·보이는 탭의 자식 layout 쓰기), 그 밖에는 rejected입니다. 숨은 브라우저 문서에서 두 실행이 같은 MessageChannel 묶음에 들어가면 마운트 stamp가 쓰기 실패를 버려 rejected로 보고합니다. helper는 compile 실패를 재보고하지 않습니다. 숨김 effect의 owed 재예약과 교체된 load identity 검사는 Provider가 소유합니다. 하위 트리 validate는 전체 폼의 대기·진행 검증을 취소하지 않습니다.
+
+프레임 API 부재·숨은 문서는 매크로태스크로, 보이는 문서는 프레임 뒤 매크로태스크와 100ms 대체 타이머의 단일 실행 경주로 처리합니다. 환경은 호출마다 읽습니다. 예약 후 숨겨진 탭은 타이머 제한을 받을 수 있습니다. 검증 비용 자체는 남고 G는 구현하지 않습니다. jsdom 대기는 act 안에서 두 프레임 뒤 setImmediate, Node는 setImmediate, Storybook은 두 프레임 콜백 뒤 scheduleMacrotask를 사용하며 실제 비동기 검증기는 자기 완료를 기다립니다.

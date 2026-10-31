@@ -6,6 +6,10 @@ When validation runs, how errors become visible, and how interaction state (`dir
 
 `validationMode` on `<Form>`: `ValidationMode.None | OnChange | OnRequest`, combinable (`OnChange | OnRequest`). State it explicitly — see the consumer rules (`validation-mode-explicit`). Validation itself is delegated to a registered validator plugin (`plugin-system.md`).
 
+OnChange write and initial mount validation run after the frame that renders the newest value. Several writes before that frame share one validation run; `node.errors`, `getErrors()`, `onValidate`, and error UI can retain the previous verdict for at least one frame. Explicit `validate()` and submit start a fresh verdict immediately, and submit waits for it. A subtree `validate()` does not cancel pending or in-flight whole-form write validation. None and OnRequest retain their modes.
+
+Without a frame API, or when the document is already hidden, validation uses a macrotask. A document hidden after scheduling falls back to a 100 ms timer, subject to background throttling. A mount compile failure is reported once. Its surface is `sink` when a write run's rejection is handled before the mount slot runs (a child layout write in jsdom or a visible tab); otherwise it is `rejected`. In a browser document hidden when scheduled, both runs can share a MessageChannel batch and the mount stamp discards the write failure. Guard-free whole-schema compilation moves after the first frame, while `if` gates can still compile during render. Validation cost itself remains.
+
 ## Error Display Policy
 
 Three layers decide whether a field shows its errors:

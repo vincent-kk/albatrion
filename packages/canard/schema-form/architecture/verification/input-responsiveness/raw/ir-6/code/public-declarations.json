@@ -1,0 +1,15 @@
+{
+  "publicExports": 97,
+  "rootExportsEqual": true,
+  "baselineReachableFiles": 64,
+  "candidateReachableFiles": 64,
+  "reachableSignatures": 1329,
+  "semanticDifferences": {
+    "added": [],
+    "removed": []
+  },
+  "declarationModuleByteDifferences": [],
+  "indexByteDifference": false,
+  "indexSha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
+  "method": "Follow root exports to actual aliased symbols and recursively compare their reachable declaration AST signatures with comments removed; unused barrel exports do not widen the package root."
+}

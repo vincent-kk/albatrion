@@ -99,3 +99,19 @@ D1 구현 여부·virtualization 기본 off·IR-5 수정의 최종 수락은 **�
 
 
 마감 뒤 코디네이터 승인 보충(2026-10-31): 원장 옛 인용의 기계 경로를 보존하면서 재현 CLI가 이후 head에서도 실행되도록 benchmark-form의 diff 의존 경로 감사를 명시적 `--audit-base=<SHA>` 옵션으로 옮겼습니다. 기본 원시·해시·표 재현은 유지하고 benchmark 시험·lint·browser typecheck와 여섯 재현 명령을 검증합니다. schema-form 제품 변경은0이며 [마감 결과](../../verification/input-responsiveness/closing-results.md#마감-뒤-재현-도구-수리--2026-10-31)에 승인·기존 경로 행 번호와 결과를 보충합니다.
+
+
+## IR-6 — D1 구현 결정 (2026-10-31)
+
+| 단계 | 범위 | 소유자 결정 |
+| --- | --- | --- |
+| IR-6 | 쓰기·OnChange 마운트 검증을 다음 화면 뒤 한 슬롯으로 합치고, 하위 트리 validate가 전체 폼의 대기·진행 판정을 취소하지 않도록 수정합니다. | D1을 지금 구현합니다. 버전은 유지하고 virtualization 기본 off·IR-5 수정 유지를 수락합니다. 루트 PR #508은 D1 편입 뒤 소유자가 병합합니다. |
+
+아래 9–12번은 2026-10-31의 원문과 맥락을 그대로 보존합니다. 11번 발화의 줄바꿈도 원문입니다.
+
+9. (after the coordinator opened root PR #508 and asked whether to confirm the three open decisions as recommended) "최종 상태를 설명해줘. 지연 평가 기능이 어떻게 들어간거지? 발생한 회귀나 문제는 없었어?"
+10. (after the coordinator explained the final state, the lazy validator compile and the absence of measured regressions) "음... 이거 우리가 해결하려고 했던 문제가 그거 아녔니 그.. 동기식 입력이다보니 사용자 입력이 브라우저를 블록하는 문제? 그건 해결을 한거야?"
+11. (after the coordinator answered that the synchronous keystroke path itself was not changed, that validation still runs inside the keystroke task, and asked whether to build D1) "잠깐 잠깐. 내가 결정해야 하는 내용을 다시 정리해서 알려줘.
+어떤걸 한거고 뭐가 남은거지? 그리고 validation 동작이 무거우니까 검증을 동기적으로 하는걸 빼서 입력 사이클(bulk 든 뭐든 여러 웨이브에 걸친 입력)이 끝난 다음 1번만 검증하도록 하는거 아니었나? 잘못 이해하는 부분 있다면 설멸해다오."
+12. (answer to the four listed decisions: 1 build D1 now (recommended); 2 keep the virtualization default off with documentation (recommended); 3 keep the IR-5 hydration fix (recommended); 4 root PR #508 merge and version are the owner's, recommended to merge after D1 lands) "지금 구현하죠. 버전은 바꾸지 않고 나머진 모두 권장대로 수락합니다."
+   Decisions derived from it: D1 is built in this stage; the version number stays unchanged; the virtualization default stays off; the IR-5 fix is accepted; root PR #508 is merged by the owner after D1 lands (rule 1 unchanged).

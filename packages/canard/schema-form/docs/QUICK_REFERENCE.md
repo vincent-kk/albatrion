@@ -328,7 +328,7 @@ const definitions: FieldInputDefinition[] = [
 ```typescript
 import { ValidationMode } from '@canard/schema-form';
 
-// 값 변경 시 즉시 검증
+// 값 변경을 그린 다음 화면 뒤 검증
 <Form validationMode={ValidationMode.OnChange} />
 
 // 명시적 호출 시만 검증
@@ -565,3 +565,10 @@ arrayNode.children; // 자식 노드 배열
 - [한국어 스펙](./ko/SPECIFICATION.md)
 - [영어 스펙](./en/SPECIFICATION.md)
 - [Claude 스킬](./agents/skills/schema-form-skill/SKILL.md)
+
+
+### 검증 시점
+
+OnChange의 쓰기 검증과 최초 마운트 검증은 최신 값을 그린 화면 뒤에 실행한다. 같은 프레임 전의 여러 쓰기는 한 번 판정하며 `node.errors`·`getErrors()`·`onValidate`·오류 UI는 최소 한 프레임 이전 판정을 유지할 수 있다. 명시적 `validate()`와 제출은 새 판정을 즉시 시작하며 제출은 완료를 기다린다. 하위 트리 `validate()`는 대기·진행 중 전체 폼 쓰기 검증을 취소하지 않는다. None·OnRequest 모드는 유지한다.
+
+프레임 API가 없거나 문서가 이미 숨겨져 있으면 매크로태스크로 실행한다. 예약 뒤 숨겨진 문서는 100ms 타이머로 대체하며 백그라운드 제한을 받을 수 있다. 마운트 컴파일 실패는 한 번 보고한다. 쓰기 실행의 거부가 마운트 슬롯 전에 처리되면 `sink`(jsdom·보이는 탭의 자식 layout 쓰기)이고 그 밖에는 `rejected`이다. 예약 시 숨은 브라우저 문서에서 두 실행이 같은 MessageChannel 묶음을 공유하면 마운트 stamp가 쓰기 실패를 버려 `rejected`로 보고한다. if 게이트 없는 전체 컴파일도 첫 프레임 뒤로 이동하나 if 게이트의 렌더 중 컴파일과 검증 비용 자체는 남는다.
