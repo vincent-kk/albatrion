@@ -1,0 +1,13 @@
+diff --git a/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts b/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
+index c47d43284..40708f836 100644
+--- a/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
++++ b/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
+@@ -98,7 +98,7 @@ export const resetRootLoad = (
+       reportErrorToHost(error);
+     }
+   }
+-  if (!previous.prepared && !previous.reported) {
++  if (!previous.prepared) {
+     previous.reported = true;
+     if (previous.error) {
+       previous.reporter?.capture(previous.error);

@@ -1,0 +1,22 @@
+{
+  "t4": {
+    "productHead": "062d821da",
+    "failed": 1,
+    "sha256": {
+      "packages/canard/schema-form/src/__tests__/e2e/validation.initially-hidden.render.test.tsx": "7d19253c849954d8b6ec01622739ad5b360d7dbb2a360f6df0480138cd60bd68"
+    },
+    "reasons": [
+      "AssertionError: expected \"spy\" to be called 1 times, but got 2 times"
+    ]
+  },
+  "reported": {
+    "productHead": "062d821da",
+    "failed": 1,
+    "sha256": {
+      "packages/canard/schema-form/src/providers/RootNodeContext/__tests__/constructionErrors.test.ts": "b29c9280eb7eab0433f00467211b1c26e0d58b7dbfc4d2c0d69adc46c458dedf"
+    },
+    "reasons": [
+      "AssertionError: expected \"spy\" to be called +0 times, but got 1 times"
+    ]
+  }
+}
