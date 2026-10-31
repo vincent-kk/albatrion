@@ -931,3 +931,21 @@ ccf4ec8ae의 개선 제품과 E(facd72a71), F-old(394e8898f와 같은 제품), V
 사전 진단의 모든 표와80페이지 원시는 node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/browser/diagnosis/round-6/checkRound6Diagnosis.mjs로 대조합니다. [정리 재확인](raw/ir-6/code/round-6/workspace-cleanup.json)은 네 디렉토리 제거·lane-e와 본 작업공간 보존, 잔여 branch/config를 기록합니다.
 
 판정: 표시 개선·사전 진단 완료, 독립 검토와 정식 재측정 대기(이전 G2/G8 FAIL 유지).
+
+### 6b — 조건부 검토 반영
+
+edd51da77에 커밋한 시험 텍스트를 그대로 scratch에 두고 실패 변이를 다시 실행합니다. catch-up 삭제의 React19·React18은 커밋된 lifecycle assertion94에서 실패하며 React19 Activity는206에서도 실패합니다. [재실행 증거](raw/ir-6/code/round-6b/red-catchup-provenance.json)와 교체한 round-6 red JSON이 입력 해시와 assertion 줄을 묶습니다.
+
+전체 live 구독 변이도 커밋된 두 시험 파일을 그대로 실행했으며 mount/hydration이 강화된 리스너 부재 assertion110에서 두 React major 모두 실패했습니다. lifecycle 파일은 같은 실행에서 통과합니다. [입력·줄 대조](raw/ir-6/code/round-6b/red-mount-provenance.json)를 보존합니다.
+
+V3 fragment 배치 변이는 동일한 커밋 시험 텍스트의 입력 identity assertion139에서 두 major 모두 실패했습니다. [줄·해시 대조](raw/ir-6/code/round-6b/red-fragment-provenance.json)를 보존했으며 세 red 변이는 모두 커밋된 시험 텍스트에서 재실행했습니다.
+
+비후보 비용 문구는 enabled/live가 거짓인 표시로 좁혔고, 구독 JSDoc은 aggregate listener와 held display dispatch를 함께 설명합니다. 검토F2의 드문 추가 렌더는 held→비후보 commit 뒤 passive cleanup 전 해제가 이전 dispatch를 부르는 틈입니다. 이전 store hook도 passive snapshot 갱신 전 같은 틈이 있었으며 매 렌더가 이력을 다시 읽어 잘못된 표시를 만들지는 않습니다. 검토F3는 한 public batch의 같은 node/write sequence에 baseline을 한 번만 남기는 기존 batch 원자성 범위(v)에 대응합니다. 중간 부적격 쌍을 따로 기록하지 않는 동작은 validation.reveal-history.render.test.tsx:114의 한 batch 숨김→재표시에서 적격 오류를 유지하는 기대와 일치하며 제품 동작은 변경하지 않았습니다.
+
+msg_241ca3e19a1b 승인에 따라 공개 노드만 가진 시험의 release는 검증 helper가 기존 requireRuntimeFieldNode의 root와 validation 진입점을 조합합니다. 캐스트·helper의 non-null assertion·제품 export는 추가하지 않았습니다. surface 예외와 importModel의 정확한 두 importer 목록을 함께 선언했습니다. 최종 mount 텍스트4a86b8da5를 커밋한 뒤 전체 live 구독 변이를 두 major에서 다시 실행하여 assertion110 실패를 대조했습니다. lifecycle 텍스트는 edd51da77부터 바뀌지 않아 catch-up94/206·fragment139 증거도 정확한 커밋 텍스트에 결합됩니다.
+
+6b import-model의 예비 실패는 새 helper가 validation 진입점을 합성하는 승인된 변을 기존 runtime accessor 예외만으로 처리했기 때문입니다. 최소 수정은 두 helper의 runtime accessor 변 두 개와 release helper의 validation index 변 한 개를 정확한 세 쌍으로 비교하는 것입니다. 전체 파일·디렉토리 예외는 추가하지 않았으며 수정 뒤 importModel2사례가 통과했습니다. 예비 unit 실패와 집중 통과를 별도 보존하고 최종 관문은 다시 순차 실행합니다.
+
+6b 최종 관문은 lint 경고0·typecheck·build exit0 뒤 unit619파일/4089통과(todo1), render154/882통과(기존2skip), react18 154/881통과(기존2+새Activity1skip) 순으로 실행했습니다. importModel2사례도 포함되며 정확한 검증 bridge 변 세 쌍을 검사합니다. [정적 검사](raw/ir-6/code/round-6b/static-checks.json)와 [6b 원시](raw/ir-6/code/round-6b/final-unit.json.gz)를 보존합니다. FCA1754개 exact 자료를 갱신한 [차분](raw/ir-6/code/round-6b/fca-diff.json)은 기존202finding·177diagnostic·indeterminate에 새 차이0입니다. [원장 검사](raw/ir-6/code/round-6b/ledger-checks.json)는 ref/verbatim/sup 새문제0, 기존 coverage66·무태그0이며 머신 경로 감사도0입니다.
+
+세 런타임 번들 바이트는61e28eb44의 개선 제품과 정확히 같습니다. 승인된6b 관문 목록 밖의 verify·storybook·production·공개 선언 증거는 동일한 런타임과 공개 표면을 검증한6차 자료를 재사용하며 변경된 시험/helper는6b 전체 unit/render/react18에서 확인했습니다. 갱신한 checkRound6.mjs가2885소스·커밋 시험 red·6b 관문을 대조합니다. 새 정식 창은 다음 소유자 규칙을 사전 커밋한 뒤 진행합니다.
