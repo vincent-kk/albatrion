@@ -8,7 +8,8 @@
 
 - H: 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
 - H: Provider는 Form showError→외부 설정→DirtyTouched 순으로 해석한 policy 값과 순수 checker를 memoize해 제공한다. 엔진 정책은 RootNodeContext가 commit하며 Provider는 기록하지 않는다. 순수 helper가 node/policy entries를 generation 순서로 병합하여 마지막 live state/committed policy 쌍까지 검사한다. live 조건은 같은 Context의 checkShowError(state)를 포함하며 이력이 없고 커밋 정책이 live 정책과 같으면 checker를 만들지 않고 live 결과를 반환한다.
-- H: 표시당 hook은 node/candidate에 memoize하여 candidate만 release version을 읽고 나머지는0을 읽는 getter를 client/server snapshot 양쪽에 사용한다. subscribe는 node/candidate에 memoize하며 live 적격이지만 history가 거부한 candidate만 release listener를 등록하고 등록 직후 catch-up을 한 번 호출한다. React 표시 수명 저장소와 표시 layout effect는 없고 ordinary render의 subscription passive effect도 추가하지 않는다. 배열 filled-minus-empty mount는2회·ordinary write layout0회다.
+- H: 표시당 hook은 node/candidate에 memoize하여 candidate만 release version+1을 읽고 나머지는0을 읽는 getter를 client/server snapshot 양쪽에 사용한다. subscribe는 node/candidate에 memoize하며 live 적격이지만 history가 거부한 candidate만 release listener를 등록하고 등록 직후 catch-up을 한 번 호출한다. React 표시 수명 저장소와 표시 layout effect는 없고 ordinary render의 subscription passive effect도 추가하지 않는다. 배열 filled-minus-empty mount는2회·ordinary write layout0회다.
+- 최초 candidate snapshot0이 release 뒤 비후보0과 같으면 React가 강제 재렌더를 마지막 render와 같은 snapshot으로 버려 표시가 숨은 채 남는다. 후보의 version+1과 비후보0을 분리하여 후보 종료가 항상 snapshot 변경이 되게 한다. 엔진 version reader는 첫 release 전0을 유지한다.
 - 알려진 한계는 hook disabled의 즉시 reveal, drop보다 늦은 state/enabled render의 hold 생략, commit-only 연속의 hold, release와 paint 사이 task의 쓰기가 released verdict를1~2프레임 표시함, 한 React batch 안의 미표시 state/enabled/policy 조합도 이력에 포함됨이다.
 
 

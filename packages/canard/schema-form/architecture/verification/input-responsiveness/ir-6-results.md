@@ -335,3 +335,15 @@ H의 다섯 한계는 현재 계약입니다. hook disabled는 즉시 현재 오
 비후보 표시 훅의 snapshot은0이며 candidate만 root release version을 읽습니다. getter와 subscribe는 node/candidate에 memoize하고 같은 getter를 server snapshot으로 사용합니다. 이로써 Always 마운트·hydration의 mount updateStoreInstance 검사에서 불필요한 전체 표시 재렌더를 막습니다. 수락한 root explicit verdict는 pending이면 settle을 통해, 아니면 직접 정확히 한 번 release하고 배달합니다. React18 legacy root의 동기 listener→layout 새 쓰기 이력을 보존합니다.
 
 5b 기준 b40의 intermediate hide within one batch와 subtree walk shares one sequence 단위 실패는 entries 필드가 없어서 생긴 shape 실패입니다. 이를 사용자 동작 결함 재현으로 세지 않습니다. 새5c 회귀는0624741a0을 기준으로 확인합니다. 추가 검증과 주석·story 원복·열 보존·기존 요약 문장 복원은 최종 관문 뒤 기록합니다.
+
+msg_d101f539b310 승인에 따라 React18 createRoot/hydrateRoot equality는0624741a0에서도 통과하는 특성 검사로 유지합니다. React18 mount passive effects flush와 mount verdict microtask의 상대 순서가 이 차이를 만드는지는 확인하지 않았고 다른 fixture를 찾지 않습니다. React19 두 경우의44 대24 실패가 mount 결함 재현입니다.
+
+변경한 기대·절차: 마운트 회귀는 testing-library/act 없이 실제 hook을 mock wrapper로 세고10필드 createRoot와 renderToString→hydrateRoot를50ms 뒤 unmount하며 Always와 false 횟수 동등을 단언합니다. SSR 뒤 counter를 지웁니다. React18 legacy root는 release 재렌더 layout에서 ErrorVisible false→valid value→true를 쓰고 validate 직후와 다음 frame/task에서 이전 오류가 빈 표시인지 검사합니다. pending 단위 시험은 automatic1+explicit1의 누적3→2로 고치며, 해제한 listener0과 별도로 구독한 no-pending D listener1을 단언합니다. reset-reveal은 두 frame/task 각각 빈 표시 단언과 Dirty/resetInteraction 뒤 pending ErrorVisible false/true 변형을 더했고, reveal-history standalone true 뒤 한 frame/task에도 빈 표시를 확인합니다. 기존 값 기대는 이중 release 횟수 외에는 바꾸지 않았습니다.
+
+9c의 runtime/read 요약과 conditions precondition을 현재 형태로 고쳤고, 이력이 없고 커밋 정책이 live와 같으면 순수 helper는 checker 구성 없이 live 값을 반환합니다. story adapter는 b40 대비 runtime helper import와 pending read 두 줄만 다릅니다. 열 IR-6 보충에 하위 검증의 전체 pending 보존·zero stamp의 mount 의무 미충족·숨김 탭 timer 제한과 검증 계산 비용을 복원했습니다. obsolete U2 re-export 문장은 제거했습니다.
+
+첫 전체 unit은 새 mount 시험의 ancestor index import2곳을 보고하여4088통과/1실패였습니다. Form과 타입의 소유 모듈 진입점으로 고친 뒤152개 소스를 다시 고정하고 전체 순차 관문을 재시작했습니다. 시험의 global act-environment와 schema literal 타입 보정은 fixture 타입 수정이며 제품 결함 실패에 섞지 않습니다.
+
+9c의 정확 getter를 적용한 첫 전체 render는876통과/2실패였습니다. no-validator와 compile-failure external reveal이 최초 candidate version0→release 후 noncandidate0으로 같은 snapshot을 읽습니다. 후보 snapshot+1만 넣은 대조에서 같은 두 시험이 통과했고 probe는 원복했습니다. 엔진 version0 계약을 유지하면서 candidate/noncandidate 영역을 분리할 승인을 코디네이터에게 질문했습니다. 해당 원시·복원 해시는 candidate-snapshot-controls에 보존합니다.
+
+msg_12043ec1b07c가 후보 snapshot의 version+1·비후보0을 승인했습니다. React는 hook snapshot이 마지막 render와 달라야 강제 재렌더를 수락하므로 최초 candidate0이 release 뒤 비후보0과 같으면 재렌더가 버려져 숨은 표시가 남습니다. disjoint 범위는 모든 candidate 종료를 snapshot 변경으로 만듭니다. 회귀는 `IR-6 no validator releases external errors revealed by showError after a write`와 `IR-6 compile failure releases a newly revealed external error`이며 정확9c getter에서 실패했습니다. 엔진 reader의 첫 release 전0은 그대로입니다. 계약 먼저 갱신하고 전체 관문을 재시작합니다.
