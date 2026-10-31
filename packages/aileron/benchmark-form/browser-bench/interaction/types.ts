@@ -25,6 +25,8 @@ export interface ValidationRecord {
 
 /** DOM snapshots at measured render milestones. */
 export interface MountRecord {
+  /** Optional IR-6 first input-addition observer's first rAF callback start. */
+  firstPaintedMs?: number;
   /** Page-clock render start for mount-frame attribution. */
   startedAt?: number;
   wallMs: number;

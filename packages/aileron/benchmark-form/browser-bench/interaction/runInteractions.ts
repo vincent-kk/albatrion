@@ -8,12 +8,15 @@ import { chromium } from 'playwright';
 import cases from '../../fixtures/input-responsiveness/cases.json';
 import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
 import ir2Cases from '../../fixtures/input-responsiveness/ir-2-cases.json';
+import ir6Cases from '../../fixtures/input-responsiveness/ir-6-cases.json';
 import { observeCpu } from './helpers/observeCpu';
 import { prepareBundles } from './helpers/prepareBundles';
+import { prepareValidationAfterPaintBundles } from './helpers/prepareValidationAfterPaintBundles';
 import { readAncestorPids } from './helpers/readAncestorPids';
 import { readMeasurementPids } from './helpers/readMeasurementPids';
 import { samplePage } from './helpers/samplePage';
 import { samplePageWithCpu } from './helpers/samplePageWithCpu';
+import { sampleValidationAfterPaintPage } from './helpers/sampleValidationAfterPaintPage';
 import { serializeEvidence } from './helpers/serializeEvidence';
 import { summarizePage } from './helpers/summarizePage';
 
@@ -43,7 +46,13 @@ export async function runInteractions(args: string[]) {
     'Chromium missing; ask before yarn exec playwright install chromium',
   );
   if (options.action === 'prepare') {
-    const inputs = await prepareBundles(root, options['stage-root']);
+    const inputs =
+      options.stage === 'ir-6'
+        ? await prepareValidationAfterPaintBundles(
+            root,
+            options['baseline-root'],
+          )
+        : await prepareBundles(root, options['stage-root']);
     console.log('IR0_PREPARED ' + inputs.lanes.join(','));
     return;
   }
@@ -61,26 +70,28 @@ export async function runInteractions(args: string[]) {
     );
   }
   const stageCases =
-    options.stage === 'ir-2'
-      ? options.suite === 'quiet-gates'
-        ? ir2Cases.filter(
-            (id) =>
-              id.endsWith('-nonburst') &&
-              (!options.fixtures || options.fixtures.split(',').includes(id)),
-          )
-        : ir2Cases
-      : options.stage === 'ir-1'
+    options.stage === 'ir-6'
+      ? ir6Cases
+      : options.stage === 'ir-2'
         ? options.suite === 'quiet-gates'
-          ? ir1Cases.filter(
+          ? ir2Cases.filter(
               (id) =>
-                id.startsWith('replace-') ||
-                id.startsWith('type-') ||
-                id.startsWith('validation-'),
+                id.endsWith('-nonburst') &&
+                (!options.fixtures || options.fixtures.split(',').includes(id)),
             )
-          : options.suite === 'backfill'
-            ? ['mount-flat-500-on', 'mount-array-1000-on']
-            : ir1Cases
-        : cases;
+          : ir2Cases
+        : options.stage === 'ir-1'
+          ? options.suite === 'quiet-gates'
+            ? ir1Cases.filter(
+                (id) =>
+                  id.startsWith('replace-') ||
+                  id.startsWith('type-') ||
+                  id.startsWith('validation-'),
+              )
+            : options.suite === 'backfill'
+              ? ['mount-flat-500-on', 'mount-array-1000-on']
+              : ir1Cases
+          : cases;
   const paired = options['paired-relative'] === 'true';
   const smoke = options.action === 'smoke';
   const selected = options.fixture
@@ -148,7 +159,8 @@ export async function runInteractions(args: string[]) {
           ),
         'Owner paired rule requires three preserved zero-sample refusals',
       );
-    } else {
+    }
+    if (!paired || options.stage === 'ir-6') {
       const excluded = readAncestorPids();
       const quiet = await observeCpu(30000, excluded);
       const attempt = {
@@ -167,7 +179,7 @@ export async function runInteractions(args: string[]) {
         path.join(root, attemptName),
         JSON.stringify(attempt, null, 2),
       );
-      if (!attempt.approved) {
+      if (!attempt.approved && !paired) {
         console.log('IR0_START_REFUSED samples=0');
         return;
       }
@@ -186,7 +198,9 @@ export async function runInteractions(args: string[]) {
         toolHashes,
       }),
     );
-    console.log('IR0_FORMAL_STARTED');
+    console.log(
+      options.stage === 'ir-6' ? 'IR6_FORMAL_STARTED' : 'IR0_FORMAL_STARTED',
+    );
   }
   const browser = await chromium.launch({ headless: true });
   const cpu: object[] = [];
@@ -248,10 +262,20 @@ export async function runInteractions(args: string[]) {
             : [...inputs.lanes].reverse();
         for (const lane of order) {
           const page = await (
-            options.stage === 'ir-1' || options.stage === 'ir-2'
+            options.stage === 'ir-1' ||
+              options.stage === 'ir-2' ||
+              options.stage === 'ir-6'
               ? samplePageWithCpu
               : samplePage
-          )(browser, root, lane, id);
+          )(
+            browser,
+            root,
+            lane,
+            id,
+            ...(options.stage === 'ir-6'
+              ? ([sampleValidationAfterPaintPage] as const)
+              : []),
+          );
           if (index >= 0) {
             const name = `${id}-${lane}-${index}.json`;
             fs.writeFileSync(
@@ -290,7 +314,15 @@ export async function runInteractions(args: string[]) {
       path.join(root, smoke ? 'smoke-complete.json' : 'complete.json'),
       JSON.stringify(result, null, 2),
     );
-    console.log(smoke ? 'IR0_SMOKE_OK' : 'IR0_WINDOW_COMPLETE');
+    console.log(
+      options.stage === 'ir-6'
+        ? smoke
+          ? 'IR6_SMOKE_OK'
+          : 'IR6_WINDOW_COMPLETE'
+        : smoke
+          ? 'IR0_SMOKE_OK'
+          : 'IR0_WINDOW_COMPLETE',
+    );
   } catch (error) {
     fs.writeFileSync(
       path.join(root, smoke ? 'smoke-failure.json' : 'failure.json'),

@@ -12,6 +12,7 @@ export async function samplePageWithCpu(
   root: string,
   lane: string,
   id: string,
+  sampler: typeof samplePage = samplePage,
 ) {
   const { parseCpuSample } = await import(
     pathToFileURL(
@@ -27,7 +28,7 @@ export async function samplePageWithCpu(
       encoding: 'utf8',
     }),
   );
-  const page = await samplePage(browser, root, lane, id);
+  const page = await sampler(browser, root, lane, id);
   const after: Map<number, { name: string; seconds: number }> = parseCpuSample(
     execFileSync('ps', ['-axo', 'pid,ppid,%cpu,time,comm'], {
       encoding: 'utf8',

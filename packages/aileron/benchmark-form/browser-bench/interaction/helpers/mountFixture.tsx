@@ -63,11 +63,53 @@ export async function mountFixture(
   container: HTMLElement,
   fixture: InputFixture,
   observation: ReturnType<typeof observePage>,
+  options?: { onFirstPaint?: () => void; onValidationRun?: () => void },
 ): Promise<{ handle: FormHandle; mount: MountRecord }> {
-  registerPlugin(plugin);
+  registerPlugin(
+    options?.onValidationRun
+      ? {
+          ...plugin,
+          validator: {
+            ...plugin.validator,
+            compile(schema: Parameters<typeof plugin.validator.compile>[0]) {
+              const validate = plugin.validator.compile(schema);
+              return (value: Parameters<typeof validate>[0]) => {
+                options.onValidationRun!();
+                return validate(value);
+              };
+            },
+          },
+        }
+      : plugin,
+  );
   const formRef = createRef<FormHandle>();
   const root = createRoot(container);
   const started = performance.now();
+  let firstPaintedMs: number | undefined;
+  let firstPaint: Promise<void> | undefined;
+  if (options?.onFirstPaint)
+    firstPaint = new Promise<void>((resolve) => {
+      const observer = new MutationObserver((records) => {
+        if (
+          !records.some((record) =>
+            [...record.addedNodes].some(
+              (node) =>
+                node instanceof Element &&
+                (node.matches('input,select') ||
+                  node.querySelector('input,select')),
+            ),
+          )
+        )
+          return;
+        observer.disconnect();
+        requestAnimationFrame(() => {
+          firstPaintedMs = performance.now() - started;
+          options.onFirstPaint!();
+          resolve();
+        });
+      });
+      observer.observe(container, { childList: true, subtree: true });
+    });
   root.render(
     <CounterForm
       fixture={fixture}
@@ -104,6 +146,7 @@ export async function mountFixture(
   }
   const wallMs = performance.now() - started;
   const { eagerInputs, ...eagerRecord } = await eager!;
+  if (firstPaint) await firstPaint;
   const completeAtEager =
     eagerRecord.eagerDeferred === 0 && eagerInputs >= fixture.expectedInputs;
   while (
@@ -117,6 +160,7 @@ export async function mountFixture(
   if (!completeAtEager) await afterPaint();
   const mount: MountRecord = {
     startedAt: started,
+    ...(firstPaintedMs === undefined ? {} : { firstPaintedMs }),
     wallMs,
     ...eagerRecord,
     allRevealedMs: completeAtEager
