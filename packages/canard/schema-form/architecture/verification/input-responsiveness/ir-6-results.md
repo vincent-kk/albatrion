@@ -328,3 +328,10 @@ FCA는 snapshot7f38048a15b4645640c6bba4ef981f7136c44b0f1d35867a423d4072981adcf3�
 H의 다섯 한계는 현재 계약입니다. hook disabled는 즉시 현재 오류를 드러냅니다. state/enabled 렌더가 drop 뒤까지 지연되면 hold를 생략합니다. commit-only 연속 변경은 멎을 때까지 hold합니다. release와 paint 사이 task의 새 value write는1–2프레임 released verdict를 보일 수 있습니다. 한 React batch 사이에만 존재한 미표시 조합도 계산하며 engine state가 policy commit보다 먼저 정렬됩니다. hidden same-schema reset의 chain-end 전달은 소유자 미결이며 변경하지 않았습니다.
 
 판정: 5b 코드 관문 통과, 독립 검토 대기. 성능 G1–G6·G8 및 L·E·F는 미측정·표본0입니다. `code accepted; window clear` 전에는 창을 열지 않으며 worker_done도 보내지 않습니다.
+
+
+## 5c차 수정 — Amendment 9c
+
+비후보 표시 훅의 snapshot은0이며 candidate만 root release version을 읽습니다. getter와 subscribe는 node/candidate에 memoize하고 같은 getter를 server snapshot으로 사용합니다. 이로써 Always 마운트·hydration의 mount updateStoreInstance 검사에서 불필요한 전체 표시 재렌더를 막습니다. 수락한 root explicit verdict는 pending이면 settle을 통해, 아니면 직접 정확히 한 번 release하고 배달합니다. React18 legacy root의 동기 listener→layout 새 쓰기 이력을 보존합니다.
+
+5b 기준 b40의 intermediate hide within one batch와 subtree walk shares one sequence 단위 실패는 entries 필드가 없어서 생긴 shape 실패입니다. 이를 사용자 동작 결함 재현으로 세지 않습니다. 새5c 회귀는0624741a0을 기준으로 확인합니다. 추가 검증과 주석·story 원복·열 보존·기존 요약 문장 복원은 최종 관문 뒤 기록합니다.

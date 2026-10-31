@@ -34,6 +34,8 @@
 
 ## API Contracts
 
+- 수락한 명시적 root 판정은 route 뒤 pending이면 settle, 아니면 전체 release를 수행하여 한 번만 해제하고 배달한다. release listener가 여는 새 쓰기의 이력은 보존한다.
+
 - H: 최외곽 chain 진입·standalone 상태 진입·outer visit는 record의 sequence를 한 번 전진시킨다. exit의 request 뒤와 standalone closeNonSettleEntry의 finally에서 !entryDepth일 때 drop을 예약한다. listener가 던져도 기록 수명은 예약된다. clearSubtreeState의 직접 {} 쓰기 전에도 기록한다.
 - H/D: 수락한 root explicit validate는 route·settle 뒤 delivery 전에 전체 release한다. 하위 트리는 전체 release하지 않는다. commit-only 재요청과 호출 시점 반환 계약은 유지한다. requestFieldNodeValidationWave는 deliverValidationWave 옆의 chain 파일이며 두 소비자가 구체 파일로 사용한다.
 

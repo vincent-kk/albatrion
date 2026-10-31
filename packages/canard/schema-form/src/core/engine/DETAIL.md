@@ -100,7 +100,6 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 - H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
 
-- U2의 pending 조회·정착 알림 구독을 validation에서 명명 재수출한다. surface는 공개 노드를 requireRuntimeFieldNode로 좁힌 래퍼로 사용하며 core·패키지 경계의 기존 공개 사건과 이름은 유지한다.
 
 - validationScheduling은 도메인 없는 주기의 독립 자식 경계다. record는 cadence 형, validation은 생성 API, engine은 마운트용 일회성 슬롯을 소비하며 스탬프나 노드를 이 경계로 넘기지 않는다(IR-6 amendment3).
 
