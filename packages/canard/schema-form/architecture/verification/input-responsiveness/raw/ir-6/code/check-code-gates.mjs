@@ -4,7 +4,9 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
-const root = new URL(process.argv[2] === '--round=2' ? './round-2/' : './', import.meta.url);
+const round = process.argv[2];
+assert.ok(round === undefined || round === '--round=2' || round === '--round=3');
+const root = new URL(round ? `./round-${round.slice(-1)}/` : './', import.meta.url);
 const packageRoot = new URL('../../../../../../', import.meta.url);
 const report = JSON.parse(fs.readFileSync(new URL('code-gates.json', root)));
 for (const [file, hash] of Object.entries(report.sourceHashes))
@@ -19,7 +21,7 @@ for (const [gate, result] of Object.entries(report.gates)) {
   assert.equal(raw.numPassedTests, result.passed, gate);
   assert.equal(raw.numTodoTests, result.todo, gate);
 }
-const round2 = process.argv[2] === '--round=2';
+const round2 = !!round;
 const declarationBytes = fs.readFileSync(new URL(round2 ? 'evaluated-public-declarations.json.gz' : 'public-declarations.json', root));
 const declarations = JSON.parse(round2 ? gunzipSync(declarationBytes) : declarationBytes);
 assert.equal(declarations.rootExportsEqual, true);

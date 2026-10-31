@@ -1,0 +1,29 @@
+{
+  "g5": {
+    "source": "packages/aileron/benchmark-form/browser-bench/interaction/helpers/mountFixture.tsx",
+    "sha256": "e4b33f6aa101a8acb4178d32772301b68e678816d992423f0a23ce8e96ae8f51",
+    "alwaysRows": 0,
+    "display": "Form default DirtyTouched; no showError override or external provider"
+  },
+  "g8": {
+    "approval": "msg_5a07a404b264 / msg_cc8e08d106e0",
+    "fixture": "mount-array-1000",
+    "modes": [
+      "None",
+      "OnChange"
+    ],
+    "display": "default",
+    "compareLanes": [
+      "E",
+      "F"
+    ],
+    "reportedLane": "L",
+    "noneFirstPaintedMedianRatioMaximum": 1.02,
+    "noneEagerPaintedMedianRatioMaximum": 1.02,
+    "onChangeFirstPaintedFAtMostE": true,
+    "onChangeEagerPaintedFAtMostE": true,
+    "failure": "Do not merge; coordinator chooses existing-effect integration or engine alternative",
+    "preRegistrationRequiredBeforeTimedWindow": true,
+    "timedSamples": 0
+  }
+}

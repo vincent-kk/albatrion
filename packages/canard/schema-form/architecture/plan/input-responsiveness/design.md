@@ -156,11 +156,11 @@ array 첫 프레임·count-only/시간 reveal·루트 reconcile·CPU 공변량·
 
 `scheduleValidationSlot(run)`은 호출마다 프레임 API와 문서 가시성을 읽습니다. 프레임 요청·취소 API 중 하나가 없거나 문서가 숨겨져 있으면 `scheduleCancelableMacrotask`로 실행합니다. 그 밖에는 프레임 콜백 뒤 매크로태스크와 100ms 타이머를 경주시킵니다. done 표식과 상대 핸들 취소로 정확히 한 번 실행합니다. 예약 후 숨겨진 탭은 타이머로 대체되며 백그라운드 제한 때문에 약 1초까지 지연될 수 있습니다. 표시 장치의 실제 표시 완료를 보장하는 계약은 아닙니다.
 
-쓰기 검증은 쉬는 상태의 요청을 다음 프레임 뒤 선행 실행하고, 실행 시작 뒤 다음 프레임에도 입력이 이어지면 매 프레임 이월하며 첫 무요청 프레임 뒤 후행 실행합니다. 이월 중에는 마지막 자동 실행 시작 기준500ms가 지나면 그 프레임 뒤 한 번 실행하고 이월을 유지합니다. 한 작업 안의 쓰기는 최신 커밋 하나로 합칩니다. 동기 정착·사건·루트 onChange는 유지하고, node.errors·getErrors·onValidate·오류 UI는 편집 값을 그린 화면 뒤에 도착합니다. 새 값과 이전 커밋의 오류가 최소 한 프레임 함께 보일 수 있습니다. 명시적 validate와 제출은 주기를 거치지 않고 새 판정을 즉시 시작하며 제출은 그 판정을 기다립니다. 마운트는 일회성 화면 뒤 슬롯을 유지하고 None·OnRequest와 오류 라우팅·참조 보존은 유지합니다.
+쓰기 검증은 쉬는 상태의 요청을 다음 프레임 뒤 선행 실행하고, 실행 시작 뒤 다음 프레임에도 입력이 이어지면 매 프레임 이월하며 첫 무요청 프레임 뒤 후행 실행합니다. 마지막 실제 자동 실행 시작 기준100ms가 지나면 그 프레임 뒤 한 번 실행하며 모든 실행 뒤에는 watch로 돌아갑니다. 한 작업 안의 쓰기는 최신 커밋 하나로 합칩니다. 동기 정착·사건·루트 onChange는 유지하고 판정은 보통 편집 값보다1~2프레임 늦게 도착합니다. 이미 보이는 오류는 다음 판정까지 유지하고 새 표시는 현재 쓰기 pending이 끝날 때까지 보류하며 숨김은 즉시입니다. 명시적 validate와 제출은 즉시 시작하고 제출은 그 판정을 기다립니다. Always의 최초 OnChange 판정은 layout effect에서 즉시 시작하여 동기 검증기는 첫 프레임 전에 표시하며 다른 모드는 일회성 화면 뒤 슬롯을 사용합니다. None·OnRequest와 오류 라우팅·참조 보존은 유지합니다.
 
 ### 마운트·수명과 v2 차이
 
-Provider 준비 layout effect는 기존 root.validate를 같은 슬롯에 예약합니다. if 게이트가 없는 스키마의 전체 컴파일·첫 판정은 첫 화면 뒤로 이동하며 if 게이트의 렌더 중 전체 컴파일은 남습니다. mount helper는 컴파일 실패를 다시 capture하지 않아 engine의 런타임별 첫 보고만 남깁니다. 마운트 컴파일 실패는 한 번 보고합니다. 마운트 슬롯이 첫 검증을 실행하면 rejected이며, 쓰기 검증이 먼저 요청되어 마운트를 건너뛰면 sink입니다. 명시적 루트 검증도 의무를 충족하지만 하위 트리 검증은 마운트 의무를 남깁니다. 다른 예외는 기존 rejected capture를 따릅니다.
+Provider 준비 layout effect는 Always이면 root.validate를 inline으로 시작하고 그 외 모드는 같은 슬롯에 예약합니다. if 게이트가 없는 스키마의 전체 컴파일·첫 판정은 첫 화면 뒤로 이동하며 if 게이트의 렌더 중 전체 컴파일은 남습니다. mount helper는 컴파일 실패를 다시 capture하지 않아 engine의 런타임별 첫 보고만 남깁니다. 마운트 컴파일 실패는 한 번 보고합니다. 마운트 슬롯이 첫 검증을 실행하면 rejected이며, 쓰기 검증이 먼저 요청되어 마운트를 건너뛰면 sink입니다. 명시적 루트 검증도 의무를 충족하지만 하위 트리 검증은 마운트 의무를 남깁니다. 다른 예외는 기존 rejected capture를 따릅니다.
 
 슬롯 실행 시 load.ready가 거짓이면 mountValidationOwed를 세웁니다. 보존된 같은 load의 layout effect가 돌아오면 먼저 false로 소비하고 한 슬롯을 예약합니다. 오직 !ready 슬롯만 true로 쓰며 load당 보류 슬롯은 최대 하나입니다. 완료 뒤 다시 숨김·복원해도 재검증하지 않습니다. cleanup은 슬롯을 취소하지 않습니다. StrictMode 반복, React 19 Activity와 React 18 Suspense 복원은 한 번 판정하며 실제 unmount는 owed를 소비하지 않습니다.
 
@@ -174,7 +174,7 @@ v2의 pending 여부 분기 대신 루트 validate만 스탬프를 올리고 대
 
 ### Amendment 1 반영
 
-시험 대기는 act 안에서 두 프레임 뒤 setImmediate(jsdom), 두 프레임 뒤 scheduleMacrotask(Storybook)로 통일합니다. Node는 setImmediate입니다. 첫 프레임 콜백 뒤 배달에서 발생한 새 쓰기는 별도의 두 번째 대기를 요구합니다. 슬롯의 취소 함수도 예약한 환경에서 보관하여 jsdom 정리 뒤 콜백이 전역 cancelAnimationFrame을 다시 읽지 않습니다. 이 전역 정리 회귀는 수정 전에 실패했습니다.
+시험 대기는 act 안에서 두 프레임 뒤 setImmediate(jsdom), 두 프레임 뒤 scheduleMacrotask(Storybook)로 통일합니다. Node는 setImmediate입니다. 첫 프레임 콜백 뒤 배달에서 새 쓰기가 발생하면 pending 조회가 false일 때까지 두 프레임+매크로태스크 대기를 유한 반복합니다. 슬롯의 취소 함수도 예약한 환경에서 보관하여 jsdom 정리 뒤 콜백이 전역 cancelAnimationFrame을 다시 읽지 않습니다. 이 전역 정리 회귀는 수정 전에 실패했습니다.
 
 Amendment 2 R1은 A4의 보고 누락을 수정합니다. prepared load가 복원되면 !ready 동안 버퍼링한 records를 load.reporter.root 설정 뒤 순서대로 전달하고 그 뒤 owed를 재예약합니다. 첫 commit의 flushRootLoad·reported 가드는 유지합니다.
 
@@ -190,10 +190,24 @@ R7–R11은 프레임 미호출 대기·Node setImmediate·슬롯 주석·한국
 
 ### Amendment 3 — 연속 입력과 응결 (2026-10-31)
 
-소유자 원문18은 "상한을 500ms로, 이외에는 적용. 코드를 잘 응결시켜서 해당 코드가 다른 도메인코드와 섞이지 않고 원리와 기능이 집중되도록 하세요."입니다. 원문13–18과 맥락은 request에 바이트 그대로 보존합니다. 프레임은 스케줄러의 rAF 콜백이며 요청은 requestFieldNodeValidation 호출 하나입니다. 선행 실행 전에 들어온 요청은 그 최신 실행에 포함되므로 연속으로 세지 않습니다. 선행·후행 실행 뒤 다음 프레임을 watch하고, 그 실행 시작 이후 새 요청이 없으면 idle로 끝냅니다. carry에서는 이전 프레임 이후 요청이 없으면 후행 실행하며500ms 상한은 마지막 자동 실행 시작을 기준으로 합니다. 상한 실행 뒤에는 carry를 유지합니다.
+소유자 원문18은 "상한을 500ms로, 이외에는 적용. 코드를 잘 응결시켜서 해당 코드가 다른 도메인코드와 섞이지 않고 원리와 기능이 집중되도록 하세요."입니다. 원문13–18과 맥락은 request에 바이트 그대로 보존합니다. 프레임은 스케줄러의 rAF 콜백이며 요청은 requestFieldNodeValidation 호출 하나입니다. 선행 실행 전에 들어온 요청은 그 최신 실행에 포함되므로 연속으로 세지 않습니다. 선행·후행 실행 뒤 다음 프레임을 watch하고, 그 실행 시작 이후 새 요청이 없으면 idle로 끝냅니다. carry에서는 이전 프레임 이후 요청이 없으면 후행 실행하며100ms 상한은 마지막 자동 실행 시작을 기준으로 합니다. 상한 실행 뒤에도 watch로 돌아가 다음 무요청 프레임은 실행하지 않습니다.
 
-일회성 슬롯과 주기는 독립 자식 fractal validationScheduling에 함께 두었습니다. 시간 정책은 validation·record·settle·write를 가져오지 않고 스탬프·노드·대상·오류를 모릅니다. 같은 책임의 두 정책을 validation 구현 아래로 흩뜨리지 않도록 이 경계를 골랐습니다. createValidationCadence(run, now)의 clock은 도메인 경계에서 주입하고500ms는 문서 주석을 둔 이름 붙은 상수입니다. 런타임이 주기를 지연 소유하고 요청마다 request를 호출하며 실제 폐기에서 cancel합니다. validationQueued는 모든 독자를 확인한 뒤 제거했고 기존 스탬프·대상·최신 커밋·배달 코드는 도메인에 남겼습니다. 재사용 인스턴스가 첫 배달 콜백을 영구 포착하지 않도록 최신 도메인 실행 본문은 runtime.validationRun이 보관합니다.
+일회성 슬롯과 주기는 독립 자식 fractal validationScheduling에 함께 두었습니다. 시간 정책은 validation·record·settle·write를 가져오지 않고 스탬프·노드·대상·오류를 모릅니다. 같은 책임의 두 정책을 validation 구현 아래로 흩뜨리지 않도록 이 경계를 골랐습니다. createValidationCadence(run, now)의 clock은 도메인 경계에서 주입하고100ms는 문서 주석을 둔 이름 붙은 상수입니다. 런타임이 주기를 지연 소유하고 요청마다 request를 호출하며 실제 폐기에서 cancel합니다. validationQueued는 모든 독자를 확인한 뒤 제거했고 기존 스탬프·대상·최신 커밋·배달 코드는 도메인에 남겼습니다. 재사용 인스턴스가 첫 배달 콜백을 영구 포착하지 않도록 최신 도메인 실행 본문은 runtime.validationRun이 보관합니다.
 
 요청 시 숨김 또는 프레임 요청·취소 API 부재는 carry 없는 매크로태스크 한 번입니다. 예약 뒤 프레임이 멎으면100ms 타이머가 남은 요청을 한 번 실행하고 idle로 끝냅니다. 이미 실행한 watch에 새 요청이 없으면 중복 실행하지 않습니다. 명시적 루트 validate가 carry 중 실행되면 기존 stamp 증가로 다음 자동 실행을 버리며 그 뒤 새 요청은 최신 판정을 다시 예약합니다.
 
-측정 추가는 stream-flat-2000-validate(L·E·F, 준비3회·10페이지, 페이지 내부에서 rAF당 프로그램 쓰기1회·60프레임)이며 페이지별 검증 실행 수·최장 프레임·50ms 이상 프레임·프레임별 스크립트 시간을 기록합니다. G6은 모든 페이지에서 F 실행 수≤2+ceil(스트림 기간÷500ms), F의50ms 이상 프레임 수 열 페이지 합≤E의 합을 요구합니다. burst의 F 결과 배달 수는 줄며 G4의 매 키 배달은 non-burst에만 적용합니다. 정식 창 전 사전 규칙에는 A5·G3와 이 행·G6을 함께 커밋합니다.
+측정 추가는 stream-flat-2000-validate(L·E·F, 준비3회·10페이지, 페이지 내부에서 rAF당 프로그램 쓰기1회·60프레임)이며 페이지별 검증 실행 수·최장 프레임·50ms 이상 프레임·프레임별 스크립트 시간을 기록합니다. G6은 모든 페이지에서 F 실행 수≤2+ceil(스트림 기간÷100ms), F의50ms 이상 프레임 수 열 페이지 합≤E의 합을 요구합니다. burst의 F 결과 배달 수는 줄며 G4의 매 키 배달은 non-burst에만 적용합니다. 정식 창 전 사전 규칙에는 A5·G3와 이 행·G6을 함께 커밋합니다.
+
+### Amendment 4·5 — 100ms와 오류 표시의 commit 기억
+
+소유자 원문19가 상한을100ms로 바꾸었습니다. 디바운스는 FieldInput의 책임이며 엔진은100ms 지각 문턱 아래의 실시간감을 지킵니다. cap 뒤에도 watch로 돌아가고 watch→carry 첫 프레임도 cap을 검사합니다. run의 boolean이 true일 때만 마지막 실제 시작 시각을 갱신합니다. 주기 구현·보조는 utils/cadence, 형은 types, 일회성 슬롯은 utils/slot에 놓고 callback wiring과 순수 결정 함수를 통해 import 순환을 없앴습니다.
+
+쓰기 pending은 None·unavailable 가드 뒤 시작합니다. 현재 stamp의 판정이 라우팅·동일 목록·null·commit-only 폐기·실패로 끝나면 정착하고, 명시적 루트 validate도 정착하되 하위 트리는 정착하지 않습니다. unavailable·폐기는 무조건 정착하며 새 요청 없는 stamp 무효화(비OnChange reset 포함)도 정착합니다. true→false 알림은 런타임 listener set을 통해 배달 직전에 한 번만 전달하고 공개 사건·revision·src/index는 바꾸지 않습니다.
+
+FieldProxy·FieldInputSlot·useChildFieldErrors는 한 표시 훅을 공유합니다. visible=condition&&(wasVisible||!pending)이며 기억은 노드별 Map의 직전 layout commit에서만 쓰고 cleanup에서 지우지 않습니다. 새 노드·null 렌더·배열 제거는 기억을 섞지 않습니다. useSyncExternalStore의 서버 snapshot은 false, 보류하지 않는 표시는 no-op 구독입니다. 동기 연속 입력은 다음 cap에서 풀리고 stale 비동기 실행은 후행까지 기다릴 수 있으며 새 요청 없는 commit-only 폐기는 이전 판정을 드러낼 수 있습니다. raw errors와 이를 읽는 사용자 UI의 책임도 소비자 문서에 명시합니다.
+
+Always는 render의 checkShowError()를 state 없이 호출해 effect가 캡처합니다. 자식 layout 쓰기가 먼저여도 inline root.validate가 stamp를 올려 큐를 버리고 pending을 정착시킵니다. 다른 모드는 기존 슬롯과 compile 실패 필터를 공유합니다. 숨긴 load의 미전달 기록은 교체 load 앞에 원래 root와 함께 옮기며 전달마다 reporter.root를 복구하고 각 handler 실패를 격리합니다. 형식·정식 표본은 여전히 측정 전입니다.
+
+### G8 — U2 마운트 구조 비용의 측정 조건
+
+코디네이터 msg_cc8e08d106e0의 승인으로 기본 표시의 mount-array-1000을 None·OnChange 모드 한 쌍으로 추가합니다. E·F 레인을 비교하고 L도 보고합니다. None 모드의 first-painted·eager-painted 중앙값 비율 F/E가 각각1.02 이하여야 하며 OnChange의 F는 각각 E 이하여야 G8을 통과합니다. 필드당 renderer 표시 기억 commit·input 표시 기억 commit의 두 추가 layout effect 비용을 분리하는 조건입니다. 일반 입력 쓰기는 기존 layout effect0회를 유지합니다. G8 실패 시 병합하지 않고 코디네이터가 기존 effect 통합과 엔진 대안 중 결정합니다. 정식 창 전 사전 규칙에 이 행 쌍·정의·문턱을 커밋하며 현재 정식 표본은0입니다.

@@ -1,0 +1,57 @@
+{
+  "acyclic": true,
+  "includesTypeEdges": true,
+  "method": "Resolve relative literal import/re-export targets in the timing product subtree and depth-first check the complete graph. External packages are outside this graph.",
+  "edges": {
+    "index.ts": [
+      "utils/slot/scheduleValidationSlot.ts",
+      "utils/cadence/createValidationCadence.ts",
+      "types/validationCadence.ts"
+    ],
+    "types/validationCadence.ts": [],
+    "utils/constants.ts": [],
+    "utils/frames/canScheduleValidationFrame.ts": [],
+    "utils/frames/queueValidationFrame.ts": [
+      "utils/constants.ts"
+    ],
+    "utils/frames/scheduleAfterValidationFrame.ts": [
+      "utils/constants.ts",
+      "utils/frames/canScheduleValidationFrame.ts"
+    ],
+    "utils/slot/scheduleValidationSlot.ts": [
+      "utils/frames/scheduleAfterValidationFrame.ts"
+    ],
+    "utils/cadence/createValidationCadence.ts": [
+      "types/validationCadence.ts",
+      "utils/cadence/utils/cancelValidationCadence.ts",
+      "utils/cadence/utils/observeValidationCadenceFrame.ts",
+      "utils/cadence/utils/requestValidationCadence.ts",
+      "utils/cadence/utils/runValidationCadence.ts"
+    ],
+    "utils/cadence/utils/decideValidationCadence.ts": [
+      "utils/constants.ts"
+    ],
+    "utils/cadence/utils/observeValidationCadenceFrame.ts": [
+      "types/validationCadence.ts",
+      "utils/cadence/utils/decideValidationCadence.ts",
+      "utils/cadence/utils/scheduleValidationCadenceFrame.ts"
+    ],
+    "utils/cadence/utils/runValidationCadence.ts": [
+      "types/validationCadence.ts",
+      "utils/cadence/utils/scheduleValidationCadenceFrame.ts"
+    ],
+    "utils/cadence/utils/cancelValidationCadence.ts": [
+      "types/validationCadence.ts"
+    ],
+    "utils/cadence/utils/requestValidationCadence.ts": [
+      "types/validationCadence.ts",
+      "utils/frames/canScheduleValidationFrame.ts",
+      "utils/frames/scheduleAfterValidationFrame.ts"
+    ],
+    "utils/cadence/utils/scheduleValidationCadenceFrame.ts": [
+      "types/validationCadence.ts",
+      "utils/frames/canScheduleValidationFrame.ts",
+      "utils/frames/queueValidationFrame.ts"
+    ]
+  }
+}

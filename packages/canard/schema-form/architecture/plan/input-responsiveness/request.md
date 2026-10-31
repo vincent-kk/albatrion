@@ -132,3 +132,6 @@ D1 구현 여부·virtualization 기본 off·IR-5 수정의 최종 수락은 **�
 이게 맞나?"
 18. (answer to: apply the rule — leading after the next frame, carry over while input continues, one trailing run after a quiet frame, a cap measured from the last run — in this fix round?) "상한을 500ms로, 이외에는 적용. 코드를 잘 응결시켜서 해당 코드가 다른 도메인코드와 섞이지 않고 원리와 기능이 집중되도록 하세요."
    Decisions derived from it: the continuous-input cadence is built in IR-6 with a 500 ms cap measured from the last automatic run; its timing policy lives in one cohesive unit that holds no validation-domain code.
+19. (after the coordinator's UX evaluation: false stale-error flash when the display condition turns on in the same keystroke, mount pop-in with showError true, and the 500 ms cap being above the 100 ms perception threshold, with 150 ms offered) "흠 150ms 로 하는건 좀 연산부담이 있지 않겠나? 어차피 디바운스 설정같은건 fieldInput 에서 하는거니까 이건 실시간성 느낌 보장이 나은가 그럼 100ms로 해도 될거같은데...
+나머지 버그나 ux 문제는 해소하도록. 거짓 에러 깜빡임은 눈에 많이 띈다"
+   Decisions derived from it: the cadence cap becomes 100 ms (debouncing belongs to FieldInput components; the engine guarantees a real-time feel); the false error flash, the mount pop-in and the other open bugs and UX problems are fixed in IR-6.

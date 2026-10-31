@@ -1,0 +1,52 @@
+{
+  "ownerQuotes": {
+    "9": {
+      "verbatim": true,
+      "sha256": "ff192508024b25ac56168072bac8203890713a2d9a94da1b0324a039eba81a38"
+    },
+    "10": {
+      "verbatim": true,
+      "sha256": "471bd195ff5f6128c7aaa173374c72210731896dc1f6e7a71d194050388552d6"
+    },
+    "11": {
+      "verbatim": true,
+      "sha256": "11591f518681691c10a42aea6d84f387a5d9c744660c5e01ad30b3b89ace7e02"
+    },
+    "12": {
+      "verbatim": true,
+      "sha256": "68f0237b374cc920d7ea408ece124d272a3753e1e2e8a1419daf38eab5b0ca68"
+    },
+    "13": {
+      "verbatim": true,
+      "sha256": "fa2f48c9ddfbffe69cc3b639157245217e3c9ab0cba7cd392fc61602fe42c4f1"
+    },
+    "14": {
+      "verbatim": true,
+      "sha256": "f5dc4e84ca0ad6653f0e44b156c81df2c42f350c49209b91951a48788676d78b"
+    },
+    "15": {
+      "verbatim": true,
+      "sha256": "d1193f666d388475b7ee5cb3a55c758ce0bd6e28253199009d3c0ce8e7d51391"
+    },
+    "16": {
+      "verbatim": true,
+      "sha256": "f1a1a549f7ea73e34f68a040a696f9b4c8727e741adbaa8d8a37408df3e4bcb2"
+    },
+    "17": {
+      "verbatim": true,
+      "sha256": "69f062ade4b2685eb868d23d799c2a3573e93c3c021070f93252c034f5cd7495"
+    },
+    "18": {
+      "verbatim": true,
+      "sha256": "051f58510d4de0db9411aa88fa70c5cc04c25b2e6604e609bc9d223cb5c2582d"
+    },
+    "19": {
+      "verbatim": true,
+      "sha256": "269eeee309bf4dababa40aeaee12cff1237d36c52f6e53b43d4494d241bf2015"
+    }
+  },
+  "mergedDesignAndAdrPrefixesUnchanged": true,
+  "mergedLedgerPrefixUnchangedExceptAuthorizedIndexRow": true,
+  "packageVersionChanged": false,
+  "publicSourceIndexChanged": false
+}

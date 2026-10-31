@@ -4,14 +4,20 @@ import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
 const root = new URL('./', import.meta.url);
-const candidateRoot = process.argv[2] === '--round=2' ? new URL('round-2/', root) : root;
+const round = process.argv[2];
+assert.ok(round === undefined || round === '--round=2' || round === '--round=3');
+const candidateRoot = round ? new URL(`round-${round.slice(-1)}/`, root) : root;
 const moved = {
   'package:/src/__tests__/e2e/features-composite-tails.test.tsx': [[171, 173]],
   'package:/src/__tests__/e2e/features-input-components-consumer.test.tsx': [[103, 105]],
   'package:/src/__tests__/e2e/features-validation-state-display.test.tsx': [[78, 80], [110, 112]],
 };
+if (round === '--round=3') {
+  moved['package:/src/__tests__/e2e/features-composite-tails.test.tsx'] = [[171, 176]];
+  moved['package:/src/__tests__/e2e/features-input-components-consumer.test.tsx'] = [[103, 106]];
+}
 
-/** Normalize only four verified line movements from two added import lines. */
+/** Normalize only four verified declaration-line movements, retaining the raw differences. */
 function canonical(item, candidate) {
   const copy = { ...item };
   if (candidate && item.ruleId === 'test-record-case-cap')
