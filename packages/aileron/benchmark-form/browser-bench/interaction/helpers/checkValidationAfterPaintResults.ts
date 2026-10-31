@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { gunzipSync } from 'node:zlib';
@@ -31,6 +32,18 @@ export function checkValidationAfterPaintResults(
           : fs.readFileSync(path.join(raw, name), 'utf8'),
       );
     const complete = read('complete.json.gz');
+    const archive = read('archive-manifest.json');
+    for (const [name, expected] of Object.entries(archive.files) as [
+      string,
+      { bytes: number; sha256: string },
+    ][]) {
+      const bytes = fs.readFileSync(path.join(raw, name));
+      assert.equal(bytes.length, expected.bytes);
+      assert.equal(
+        createHash('sha256').update(bytes).digest('hex'),
+        expected.sha256,
+      );
+    }
     const pages: Record<string, ValidationAfterPaintPage> =
       read('pages.json.gz');
     const inputs = read('inputs.json'),
@@ -51,6 +64,10 @@ export function checkValidationAfterPaintResults(
     assert.deepEqual(smoke.cases, cases);
     assert.equal(smoke.smoke, true);
     assert.equal(smoke.samples.length, cases.length * 3);
+    const smokePages = read('smoke-pages.json.gz');
+    assert.equal(Object.keys(smokePages).length, smoke.samples.length);
+    for (const sample of smoke.samples as SampleResult[])
+      assert.deepEqual(summarizePage(smokePages[sample.file]), sample.summary);
     assert.deepEqual(start.cases, complete.cases);
     assert.deepEqual(start.toolHashes, complete.toolHashes);
     assert.equal(start.toolCommit, complete.toolCommit);
