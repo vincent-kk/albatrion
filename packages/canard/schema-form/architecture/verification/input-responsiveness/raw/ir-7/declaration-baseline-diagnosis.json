@@ -1,0 +1,15 @@
+{
+  "firstAttempt": {
+    "added": 13,
+    "removed": 0,
+    "unresolvedAliases": 1275
+  },
+  "cause": "build:types alone did not contain dist/@aileron/declare; both sides must use the designated full build.",
+  "final": {
+    "added": 0,
+    "removed": 0,
+    "unresolvedAliases": 0,
+    "publicExports": 97,
+    "reachableSignatures": 917
+  }
+}
