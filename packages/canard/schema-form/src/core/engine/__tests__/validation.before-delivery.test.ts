@@ -63,3 +63,29 @@ it('IR-6 W3 a delivery that cancels the automatic request releases its early hol
   expect(isFieldNodeValidationPending(root)).toBe(false);
   expect(runtime.validationCadence).toBeUndefined();
 });
+
+it('IR-6 W3 a reverting chain does not release an earlier queued request', async () => {
+  const clock = createValidationFrameClock();
+  const { root, runtime } = createDispatchTree({ type: 'string' }, undefined, {
+    compile: () => () => [],
+    compileGuard: () => () => true,
+  });
+  dispatchMount(root, 'old');
+  runtime.validationMode = ValidationMode.OnChange;
+  dispatchSetValue(root, 'a');
+  (runtime.listeners ??= new Map()).set(
+    root,
+    new Set([
+      (event: FieldNodeDelivery) => {
+        if (event.type & FieldNodeEventType.UpdateValue && root.emit === 'b')
+          dispatchSetValue(root, 'a');
+      },
+    ]),
+  );
+  dispatchSetValue(root, 'b');
+  expect(root.emit).toBe('a');
+  expect(isFieldNodeValidationPending(root)).toBe(true);
+  clock.frame();
+  await clock.task();
+  expect(isFieldNodeValidationPending(root)).toBe(false);
+});

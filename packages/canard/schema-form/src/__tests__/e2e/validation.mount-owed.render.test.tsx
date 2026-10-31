@@ -184,7 +184,7 @@ it('IR-6 rebuild transfers a hidden load failure once before replacement records
   expect(onError).not.toHaveBeenCalled();
   act(() => handle.rebuild());
   expect(handle.node).not.toBe(old);
-  expect(onError).not.toHaveBeenCalled();
+  expect(onError).toHaveBeenCalledTimes(1);
   view.rerender(hideable(form, false));
   await settleValidation(() => ref.current?.node);
   expect(onError).toHaveBeenCalledTimes(1);

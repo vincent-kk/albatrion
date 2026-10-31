@@ -78,7 +78,8 @@ export interface FormProps<
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
-   * Error display condition (default: ShowError.DirtyTouched)
+   * Error display condition (default: ShowError.DirtyTouched).
+   * Newly eligible errors wait for a pending write verdict; hiding is immediate.
    *   - `true`: Always show
    *   - `false`: Never show
    *   - `ShowError.Dirty`: Show when value has changed

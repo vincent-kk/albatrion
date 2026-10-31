@@ -15,6 +15,7 @@ import {
   settleFieldNodeValidation,
 } from '../../../validation';
 import { deliverValidationWave } from '../chain/deliverValidationWave';
+import { requestFieldNodeValidationWave } from '../chain/utils/requestFieldNodeValidationWave';
 import { bundleChainErrors } from '../report/bundleChainErrors';
 import { createFormErrorRecord } from '../report/createFormErrorRecord';
 import { deliverChainRecords } from '../report/deliverChainRecords';
@@ -87,7 +88,11 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   }
   if (runtime.validationStamp !== stamp) return result;
   if ((runtime.commitNumber ?? 0) !== commit) {
-    if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
+    if (node === node.rootNode) {
+      if ((runtime.validationMode ?? 0) & ValidationMode.OnChange)
+        requestFieldNodeValidationWave(node);
+      else settleFieldNodeValidation(node, stamp);
+    }
     return result;
   }
   const issues = retainEqualValidationIssues(node, result);

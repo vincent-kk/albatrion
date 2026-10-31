@@ -13,6 +13,7 @@ import {
   useChildFieldErrors,
 } from '@/schema-form';
 
+import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
 import { settleValidation } from '../helpers/settleValidation';
 
@@ -88,6 +89,7 @@ it('IR-6 W1 ancestor remount preserves renderer, input and child-errors visibili
   await settleValidation(() => ref.current?.node);
   act(() => ref.current!.showError());
   expect(view.getByTestId('children').textContent).toBe('true');
+  await advanceValidationFrame();
   act(() => {
     ref.current!.setValue({ a: 'x', show: true });
     ref.current!.remount('');

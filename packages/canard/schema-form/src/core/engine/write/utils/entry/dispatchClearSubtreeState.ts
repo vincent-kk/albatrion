@@ -3,9 +3,11 @@ import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
   publishGlobalStateDeltas,
+  recordFieldNodeRevealBaseline,
 } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
+import { scheduleFieldNodeRevealDrop } from '../../../validation';
 import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
@@ -30,6 +32,7 @@ export const dispatchClearSubtreeState = <Self extends FieldNodeRecord<Self>>(
     current.interactionReset += 1;
     if (Object.keys(current.interactionState).length) {
       const previous = current.interactionState;
+      recordFieldNodeRevealBaseline(current);
       current.interactionState = {};
       accumulateGlobalStateDeltas(
         deltas,
@@ -50,4 +53,5 @@ export const dispatchClearSubtreeState = <Self extends FieldNodeRecord<Self>>(
   });
   publishGlobalStateDeltas(node.rootNode, deltas);
   closeNonSettleEntry(node);
+  if (!runtime.entryDepth) scheduleFieldNodeRevealDrop(node);
 };

@@ -8,6 +8,7 @@ import {
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
+import { scheduleFieldNodeRevealDrop } from '../../../validation';
 import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
@@ -53,4 +54,5 @@ export const dispatchSetSubtreeState = <Self extends FieldNodeRecord<Self>>(
   });
   publishGlobalStateDeltas(node.rootNode, deltas);
   closeNonSettleEntry(node);
+  if (!runtime.entryDepth) scheduleFieldNodeRevealDrop(node);
 };

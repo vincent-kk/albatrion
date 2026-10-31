@@ -1,4 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
+import { dropFieldNodeRevealBaselines } from '../lifetime/dropFieldNodeRevealBaselines';
 
 /** End a current write verdict without changing public events or revisions.
  * @param node - Occurrence sharing the pending runtime.
@@ -9,12 +10,13 @@ export const settleFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   stamp?: number,
 ): void => {
   const runtime = node.rootNode.runtime;
-  if (
-    !runtime.validationPending ||
-    (stamp !== undefined && runtime.validationStamp !== stamp)
-  )
+  if (stamp !== undefined && runtime.validationStamp !== stamp) return;
+  if (!runtime.validationPending) {
+    if (runtime.validationUnavailable) dropFieldNodeRevealBaselines(node);
     return;
+  }
   runtime.validationPending = false;
+  dropFieldNodeRevealBaselines(node);
   for (const listener of [...(runtime.validationSettleListeners ?? [])])
     listener();
 };

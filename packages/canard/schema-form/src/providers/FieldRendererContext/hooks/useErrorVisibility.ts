@@ -1,73 +1,62 @@
-import {
-  useCallback,
-  useLayoutEffect,
-  useReducer,
-  useSyncExternalStore,
-} from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
-import { useRestProperties } from '@winglet/react-utils/hook';
 
 import {
   type FieldNode,
   isFieldNodeValidationPending,
+  readFieldNodeRevealBaseline,
+  readFieldNodeShowErrorBaseline,
   subscribeFieldNodeValidationSettled,
 } from '@/schema-form/core';
 
+import { resolveErrorVisibility } from '../utils/resolveErrorVisibility';
+import { useFieldRendererContext } from './useFieldRendererContext';
+
 const serverSnapshot = () => false;
 
-/** Gate new error reveals using provider-lifetime committed memory.
- * @param inputNodes - Same-tree occurrences rendered by this display.
- * @param conditions - Existing visibility-policy decisions.
- * @param memory - Provider-owned WeakMap for this display kind.
- * @returns Effective visibility; layout rejects a reveal invalidated by a child write. */
+/** Compute display eligibility solely from engine baselines and the external-store pending snapshot.
+ * @param nodes - Same-tree entries for this display; no React lifetime memory is retained.
+ * @param conditions - Live display-policy conditions.
+ * @param includeEnabled - Renderer/input include enabled; the child-error contract does not.
+ * @returns Effective visibility for each entry, preserving input indices. */
 export const useErrorVisibility = (
-  inputNodes: readonly (FieldNode | null | undefined)[],
+  nodes: readonly (FieldNode | null | undefined)[],
   conditions: readonly boolean[],
-  memory: WeakMap<FieldNode, boolean>,
+  includeEnabled = true,
 ): boolean[] => {
-  const nodes = useRestProperties(inputNodes);
-  const [, resync] = useReducer((value: number) => value + 1, 0);
-  const wasVisible = nodes.map((node) => !!node && memory.get(node) === true);
+  const { checkShowError, resolveShowError } = useFieldRendererContext();
   const node = nodes.find((item) => item != null);
-  const candidate = nodes.some(
-    (item, index) => item && conditions[index] && !wasVisible[index],
+  const policy = node ? readFieldNodeShowErrorBaseline(node) : undefined;
+  const checkBaseline = policy
+    ? resolveShowError(policy.value)
+    : checkShowError;
+  const live = nodes.map(
+    (item, index) =>
+      !!item && conditions[index] && (!includeEnabled || item.enabled),
+  );
+  const baseline = nodes.map((item) => {
+    if (!item) return false;
+    const before = readFieldNodeRevealBaseline(item);
+    return (
+      checkBaseline(before?.state ?? item.state) &&
+      (!includeEnabled || (before?.enabled ?? item.enabled))
+    );
+  });
+  const candidate = live.some(
+    (eligible, index) => eligible && !baseline[index],
   );
   const snapshot = useCallback(
     () => !!node && candidate && isFieldNodeValidationPending(node),
     [node, candidate],
   );
-  const holding = snapshot();
-  const subscribe = useCallback(
-    (listener: () => void) =>
-      holding && node
-        ? subscribeFieldNodeValidationSettled(node, listener)
-        : NOOP_FUNCTION,
-    [node, holding],
-  );
+  // React owns subscription setup; this callback checks pending only at setup, never directly in render.
+  const subscribe = (listener: () => void) =>
+    snapshot() && node
+      ? subscribeFieldNodeValidationSettled(node, listener)
+      : NOOP_FUNCTION;
   const pending = useSyncExternalStore(subscribe, snapshot, serverSnapshot);
-  const visible = nodes.map(
-    (item, index) =>
-      !!item && conditions[index] && (wasVisible[index] || !pending),
+  return live.map((eligible, index) =>
+    resolveErrorVisibility(eligible, baseline[index], pending),
   );
-  const visibility = visible.join(':');
-  useLayoutEffect(() => {
-    let rejected = false;
-    nodes.forEach((item, index) => {
-      if (!item) return;
-      const hold =
-        !wasVisible[index] &&
-        visible[index] &&
-        isFieldNodeValidationPending(item);
-      memory.set(item, visible[index] && !hold);
-      rejected ||= hold;
-    });
-    if (rejected) resync();
-    return () => {
-      for (const item of nodes) if (item) memory.delete(item);
-    };
-    // Previous visibility was captured before an old instance's cleanup; only identity/visible changes commit.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, visibility, memory]);
-  return visible;
 };

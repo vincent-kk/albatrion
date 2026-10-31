@@ -29,7 +29,7 @@ const Renderer = ({
 );
 
 it.each([true, false])(
-  'IR-6 pending remount retains the node display memory (previously visible=%s)',
+  'IR-6 pending remount retains baseline eligibility (previously visible=%s)',
   async (visible) => {
     const ref = createRef<FormHandle>();
     let finish!: (issues: readonly []) => void;
@@ -53,7 +53,10 @@ it.each([true, false])(
       />,
     );
     await settleValidation(() => ref.current?.node);
-    if (visible) act(() => ref.current!.showError());
+    if (visible) {
+      act(() => ref.current!.showError());
+      await advanceValidationFrame();
+    }
     act(() => {
       ref.current!.setValue('new');
       if (!visible) ref.current!.showError();

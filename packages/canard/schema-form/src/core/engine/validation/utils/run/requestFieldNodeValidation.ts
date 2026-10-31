@@ -45,7 +45,9 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
         }
         if (runtime.validationStamp !== stamp) return;
         if ((runtime.commitNumber ?? 0) !== commit) {
-          settleFieldNodeValidation(node, stamp);
+          for (const target of targets)
+            (runtime.validationPendingTargets ??= new Set()).add(target);
+          runtime.validationCadence?.request();
           return;
         }
         const issues = retainEqualValidationIssues(node, result);

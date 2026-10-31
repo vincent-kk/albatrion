@@ -1,14 +1,14 @@
-import { type PropsWithChildren, useMemo } from 'react';
+import { type PropsWithChildren, useCallback, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { useConstant, useLazyConstant } from '@winglet/react-utils/hook';
+import { useConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
-import type { FieldNode } from '@/schema-form/core';
 import { ShowError } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
+import { createShowErrorChecker } from '../utils/createShowErrorChecker';
 import { FieldRendererContext } from './FieldRendererContext';
 
 const DEFAULT_SHOW_ERROR = ShowError.DirtyTouched;
@@ -47,35 +47,15 @@ export const FieldRendererContextProvider = ({
     showError: externalShowError,
   } = useExternalFormContext();
 
-  const checkShowError = useMemo<FieldRendererContext['checkShowError']>(() => {
-    const showError = inputShowError ?? externalShowError ?? DEFAULT_SHOW_ERROR;
-    const errorState =
-      typeof showError === 'boolean'
-        ? showError
-          ? ShowError.Always
-          : ShowError.Never
-        : showError;
-    return (
-      condition: Parameters<FieldRendererContext['checkShowError']>[0],
-    ) => {
-      const showError = condition?.[4],
-        dirty = condition?.[1],
-        touched = condition?.[2];
-      if (showError !== undefined) return showError;
-      if (errorState & ShowError.Always) return true;
-      if (errorState & ShowError.Never) return false;
-      if (errorState & ShowError.Dirty && dirty) return true;
-      if (errorState & ShowError.Touched && touched) return true;
-      if (errorState & ShowError.DirtyTouched && dirty && touched) return true;
-      return false;
-    };
-  }, [inputShowError, externalShowError]);
-
-  const errorVisibility = useLazyConstant(() => ({
-    renderer: new WeakMap<FieldNode, boolean>(),
-    input: new WeakMap<FieldNode, boolean>(),
-    childErrors: new WeakMap<FieldNode, boolean>(),
-  }));
+  const resolveShowError = useCallback(
+    (policy: unknown) =>
+      createShowErrorChecker(policy ?? externalShowError ?? DEFAULT_SHOW_ERROR),
+    [externalShowError],
+  );
+  const checkShowError = useMemo(
+    () => resolveShowError(inputShowError),
+    [inputShowError, resolveShowError],
+  );
   const constant = useConstant({
     FieldRenderer,
     FormLabelRenderer,
@@ -97,14 +77,14 @@ export const FieldRendererContextProvider = ({
       FormErrorRenderer: constant.FormErrorRenderer,
       formatError,
       checkShowError,
-      errorVisibility,
+      resolveShowError,
     };
   }, [
     constant,
     checkShowError,
     ExternalFormFieldRenderer,
     externalFormatError,
-    errorVisibility,
+    resolveShowError,
   ]);
 
   return (

@@ -12,6 +12,7 @@ import {
   ValidationMode,
 } from '@/schema-form';
 
+import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
 import { isValidationPending } from '../helpers/isValidationPending';
 import { observeErrorSink } from '../helpers/observeErrorSink';
@@ -144,6 +145,7 @@ it('IR-6 an already visible error stays visible until its valid verdict, and hid
   await settleValidation(() => ref.current?.node);
   act(() => ref.current!.node!.setState({ 1: true, 2: true }));
   expect(view.getByTestId('error').textContent).toBe('required');
+  await advanceValidationFrame();
   fireEvent.change(view.getByLabelText('value'), { target: { value: 'a' } });
   expect(view.getByTestId('error').textContent).toBe('required');
   act(() => ref.current!.node!.setState({ 2: false }));

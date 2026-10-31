@@ -38,8 +38,7 @@ export const useChildFieldErrors = (
   formattedErrors: ReactNode[];
   errorMatrix: (readonly ValidationIssue[])[];
 } => {
-  const { formatError, checkShowError, errorVisibility } =
-    useFieldRendererContext();
+  const { formatError, checkShowError } = useFieldRendererContext();
   const { context } = useWorkspaceContext();
   const children = node.children;
   const subscribe = useCallback(
@@ -69,7 +68,7 @@ export const useChildFieldErrors = (
   const visible = useErrorVisibility(
     visibilityNodes,
     visibilityNodes.map((child) => !disabled && checkShowError(child.state)),
-    errorVisibility.childErrors,
+    false,
   );
   const visibility = visible.join(':');
 

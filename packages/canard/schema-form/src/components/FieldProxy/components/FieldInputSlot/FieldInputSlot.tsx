@@ -51,11 +51,10 @@ export const FieldInputSlot = memo(
       useTerminalChildren(node);
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
-    const { checkShowError, errorVisibility } = useFieldRendererContext();
+    const { checkShowError } = useFieldRendererContext();
     const [errorVisible] = useErrorVisibility(
       [node],
       [checkShowError(node.state)],
-      errorVisibility.input,
     );
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =

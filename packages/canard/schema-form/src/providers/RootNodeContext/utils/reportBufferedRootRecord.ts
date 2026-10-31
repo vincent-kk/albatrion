@@ -13,14 +13,15 @@ export const reportBufferedRootRecord = (
 ): void => {
   const reporter = load.reporter;
   if (!reporter) return;
-  reporter.root = load.recordRoots?.has(record)
-    ? load.recordRoots.get(record)
-    : load.root;
-  load.recordRoots?.delete(record);
+  const origin = load.recordOrigins?.get(record);
+  reporter.root = origin?.root ?? load.root;
+  const scope = origin?.warningScope ?? load.warningScope;
+  load.recordOrigins?.delete(record);
+  const report = () =>
+    scope ? reporter.reportInLoad(record, scope) : reporter.report(record);
   try {
-    if (load.root)
-      observeFieldNodeReports(load.root, () => reporter.report(record));
-    else reporter.report(record);
+    if (load.root) observeFieldNodeReports(load.root, report);
+    else report();
   } finally {
     reporter.root = load.root;
   }

@@ -7,19 +7,18 @@ import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import {
   prepareFieldNodeValidation,
-  requestFieldNodeValidation,
+  scheduleFieldNodeRevealDrop,
   settleFieldNodeValidation,
 } from '../../../validation';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { bundleChainErrors } from '../report/bundleChainErrors';
 import { collectChainRecords } from '../report/collectChainRecords';
 import { deliverChainRecords } from '../report/deliverChainRecords';
-import { reportValidationFailure } from '../report/reportValidationFailure';
 import { captureChainError } from './captureChainError';
-import { deliverValidationWave } from './deliverValidationWave';
 import { flushQueuedEvents } from './flushQueuedEvents';
 import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 import { runDeliveryWaves } from './runDeliveryWaves';
+import { requestFieldNodeValidationWave } from './utils/requestFieldNodeValidationWave';
 
 /**
  * Exit one public write and finish the outermost chain in contract order.
@@ -100,21 +99,12 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   const changed = runtime.chainInitialEmit !== root.emit;
   const requests = runtime.validationTargets;
   if (prepareFieldNodeValidation(root)) {
-    runtime.reportValidationFailure ??= (error) =>
-      reportValidationFailure(runtime, error);
-    if (changed && !requests?.has(root)) {
-      requestFieldNodeValidation(root, (issues, commit) =>
-        deliverValidationWave(root, issues, commit),
-      );
-    }
-    for (const target of requests ?? []) {
-      requestFieldNodeValidation(target, (issues, commit) =>
-        deliverValidationWave(target, issues, commit),
-      );
-    }
+    if (changed && !requests?.has(root)) requestFieldNodeValidationWave(root);
+    for (const target of requests ?? []) requestFieldNodeValidationWave(target);
   } else if (runtime.validationPendingEntryStamp !== undefined) {
     settleFieldNodeValidation(root, runtime.validationPendingEntryStamp);
   }
+  scheduleFieldNodeRevealDrop(root);
   runtime.validationPendingEntryStamp = undefined;
   runtime.validationTargets = undefined;
   runtime.deferMountValidation = undefined;

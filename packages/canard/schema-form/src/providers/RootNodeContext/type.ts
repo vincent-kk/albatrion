@@ -29,8 +29,13 @@ export interface RootLoad {
   props: RootLoadProps;
   /** Reports raised before the first commit, delivered once by the commit or root fallback. */
   records: FormErrorRecord[];
-  /** Original roots for records retained across hidden replacements. */
-  recordRoots?: WeakMap<FormErrorRecord, FieldNode | undefined>;
+  /** Original root and private warning load of a buffered or transferred record. */
+  recordOrigins?: WeakMap<
+    FormErrorRecord,
+    { root?: FieldNode; warningScope?: object }
+  >;
+  /** Warning scope captured for direct records placed in this load. */
+  warningScope?: object;
   /** Construction or mount failure kept for the root boundary to throw and report. */
   error?: unknown;
   /** The load is committed: reports, changes and state notifications go to the host directly. */

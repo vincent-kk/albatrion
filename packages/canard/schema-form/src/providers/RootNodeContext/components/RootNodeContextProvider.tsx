@@ -111,10 +111,20 @@ export const RootNodeContextProvider = ({
   const reset = useHandle(
     (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
       const used = committed.current;
+      const previousLoad = store.load;
       store.load = resetRootLoad(store.load, used, option, rebuild);
       store.unsubscribe();
       store.unsubscribe = subscribeRootLoad(store.load, store);
       binding.current.root = store.load.root;
+      if (store.load !== previousLoad && !store.load.ready) {
+        for (const record of store.load.records.splice(0)) {
+          try {
+            reportBufferedRootRecord(store.load, record);
+          } catch (error) {
+            reportErrorToHost(error);
+          }
+        }
+      }
       attachedFilesMap.clear();
       onReset();
       pending.current = { props: used, option };

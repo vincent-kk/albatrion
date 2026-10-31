@@ -27,6 +27,7 @@ export const createRootLoad = (
     ready: false,
     prepared: false,
     reporter,
+    warningScope: reporter?.warningScope,
   };
   try {
     load.root = buildFieldNodeTree({
@@ -42,7 +43,13 @@ export const createRootLoad = (
           if (load.ready) {
             if (reporter && load.root) reporter.root = load.root;
             reporter?.report(record);
-          } else load.records.push(record);
+          } else {
+            load.records.push(record);
+            (load.recordOrigins ??= new WeakMap()).set(record, {
+              root: load.root,
+              warningScope: reporter?.warningScope,
+            });
+          }
         },
       },
       onChange: (value) => {

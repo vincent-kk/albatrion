@@ -44,6 +44,9 @@ export {
   releaseValidationRoot,
   hasFieldNodeValidationRequest,
   isFieldNodeValidationPending,
+  readFieldNodeRevealBaseline,
+  readFieldNodeShowErrorBaseline,
+  recordFieldNodeShowErrorBaseline,
   subscribeFieldNodeValidationSettled,
 } from './validation';
 export {

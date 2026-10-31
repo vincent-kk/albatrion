@@ -20,7 +20,7 @@ import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import type { ValidationCadence } from '../../validationScheduling';
 import type { FieldNodeFactory } from './behavior';
-import type { FieldNodeDelivery } from './record';
+import type { FieldNodeDelivery, FieldNodeRecord } from './record';
 
 /** Tree-local reverse watch paths used by commit delivery marking. */
 interface FieldNodeWatchDeliveryIndex {
@@ -322,6 +322,16 @@ export interface FieldNodeRuntime<Self>
   validationRun?: () => boolean;
   /** A write-triggered verdict is still pending. */
   validationPending?: boolean;
+  /** Only occurrences that currently hold a reveal baseline. */
+  revealBaselineNodes?: Set<FieldNodeRecord<Self>>;
+  /** Form policy before the first reveal change; the boxed value may be undefined. */
+  revealPolicyBaseline?: { readonly value: unknown };
+  /** Monotone generation of first baseline records. */
+  revealBaselineGeneration?: number;
+  /** A nonpending record owes a one-shot post-paint drop. */
+  revealDropOwed?: boolean;
+  /** Identity invalidates an obsolete drop without changing the timing slot contract. */
+  revealDropTask?: object;
   /** Stamp owned by the active chain's pre-delivery pending record. */
   validationPendingEntryStamp?: number;
   /** Internal display listeners notified only when pending ends. */

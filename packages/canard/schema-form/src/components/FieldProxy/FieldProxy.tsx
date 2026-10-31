@@ -65,7 +65,6 @@ export const FieldProxy = ({
     FieldRenderer: ContextFieldRenderer,
     formatError: contextFormatError,
     checkShowError,
-    errorVisibility,
   } = useFieldRendererContext();
 
   const FieldRenderer = useLazyConstant(() => {
@@ -95,7 +94,6 @@ export const FieldProxy = ({
   const [errorVisible] = useErrorVisibility(
     [node?.enabled ? node : undefined],
     [checkShowError(node?.state)],
-    errorVisibility.renderer,
   );
   const formatError = errorVisible ? contextFormatError : NULL_FUNCTION;
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);

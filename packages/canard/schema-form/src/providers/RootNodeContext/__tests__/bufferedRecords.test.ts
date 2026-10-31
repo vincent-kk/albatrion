@@ -12,6 +12,8 @@ it('IR-6 a twice-replaced hidden load delivers each report with its original roo
   const roots: (FieldNode | undefined)[] = [];
   const reporter: FormErrorService = {
     load: 0,
+    warningScope: {},
+    reportInLoad: (record) => reporter.report(record),
     beginLoad: vi.fn(),
     capture: vi.fn(),
     hasConsumer: () => true,

@@ -81,7 +81,7 @@ it.each(['null', 'throw', 'compile'] as const)(
   },
 );
 
-it('IR-6 a commit-only discard releases pending without replacing the verdict', async () => {
+it('IR-6 a commit-only discard keeps pending until the newest verdict', async () => {
   const clock = createValidationFrameClock();
   let finish!: (issues: readonly []) => void;
   const { root, runtime } = createDispatchTree({ type: 'string' }, undefined, {
@@ -99,7 +99,15 @@ it('IR-6 a commit-only discard releases pending without replacing the verdict', 
   runtime.commitNumber = (runtime.commitNumber ?? 0) + 1;
   finish([]);
   await clock.task();
+  expect(isFieldNodeValidationPending(root)).toBe(true);
+  clock.frame();
+  await clock.task();
+  clock.frame();
+  await clock.task();
+  finish([]);
+  await clock.task();
   expect(isFieldNodeValidationPending(root)).toBe(false);
+  expect(runtime.validationResult?.commit).toBe(runtime.commitNumber);
 });
 
 it('IR-6 an obsolete asynchronous run cannot release a newer write hold', async () => {
@@ -197,7 +205,7 @@ it('IR-6 disposal notifies before clearing its settle listeners', () => {
 });
 
 it.each(['null', 'execute', 'compile', 'commit'] as const)(
-  'IR-6 explicit root %s settles an existing hold',
+  'IR-6 explicit root %s settles only after a current verdict',
   async (mode) => {
     const clock = createValidationFrameClock();
     let finish!: (issues: readonly []) => void;
@@ -232,6 +240,16 @@ it.each(['null', 'execute', 'compile', 'commit'] as const)(
     if (mode === 'execute' || mode === 'compile')
       await expect(verdict).rejects.toBeDefined();
     else await verdict;
+    if (mode === 'commit') {
+      expect(isFieldNodeValidationPending(root)).toBe(true);
+      expect(listener).not.toHaveBeenCalled();
+      clock.frame();
+      await clock.task();
+      clock.frame();
+      await clock.task();
+      finish([]);
+      await clock.task();
+    }
     expect(isFieldNodeValidationPending(root)).toBe(false);
     expect(listener).toHaveBeenCalledTimes(1);
     clock.frame();

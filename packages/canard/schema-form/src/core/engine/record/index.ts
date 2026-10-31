@@ -35,3 +35,5 @@ export { publishGlobalStateDeltas } from './utils/publishGlobalStateDeltas';
 
 export { captureFieldNodeChange } from './utils/captureFieldNodeChange';
 export { clearFieldNodeChanges } from './utils/clearFieldNodeChanges';
+
+export { recordFieldNodeRevealBaseline } from './utils/recordFieldNodeRevealBaseline';

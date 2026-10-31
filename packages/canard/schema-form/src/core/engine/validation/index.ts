@@ -18,3 +18,9 @@ export { isFieldNodeValidationPending } from './utils/read/isFieldNodeValidation
 export { subscribeFieldNodeValidationSettled } from './utils/read/subscribeFieldNodeValidationSettled';
 export { settleFieldNodeValidation } from './utils/run/settleFieldNodeValidation';
 export { prepareFieldNodeValidation } from './utils/run/prepareFieldNodeValidation';
+
+export { dropFieldNodeRevealBaselines } from './utils/lifetime/dropFieldNodeRevealBaselines';
+export { scheduleFieldNodeRevealDrop } from './utils/lifetime/scheduleFieldNodeRevealDrop';
+export { recordFieldNodeShowErrorBaseline } from './utils/lifetime/recordFieldNodeShowErrorBaseline';
+export { readFieldNodeRevealBaseline } from './utils/read/readFieldNodeRevealBaseline';
+export { readFieldNodeShowErrorBaseline } from './utils/read/readFieldNodeShowErrorBaseline';

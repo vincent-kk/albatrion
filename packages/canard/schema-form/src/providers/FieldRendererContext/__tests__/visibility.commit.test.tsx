@@ -1,6 +1,6 @@
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useSyncExternalStore } from 'react';
 
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
@@ -33,14 +33,18 @@ it('IR-6 W2 commit-time pending recheck rejects a reveal after child layout norm
   };
   const Display = ({ reveal }: { reveal: boolean }) => {
     const context = useFieldRendererContext();
+    const revealState = useSyncExternalStore(
+      (listener) => node.subscribe(() => listener()),
+      () => !!node.state[4],
+      () => false,
+    );
     const [visible] = useErrorVisibility(
       [node],
-      [reveal],
-      context.errorVisibility?.renderer,
+      [context.checkShowError(node.state)],
     );
     return (
       <>
-        <NormalizingInput normalize={reveal} />
+        <NormalizingInput normalize={revealState && reveal} />
         <span data-testid="message">
           {visible ? node.errors[0]?.message : ''}
         </span>
@@ -52,6 +56,7 @@ it('IR-6 W2 commit-time pending recheck rejects a reveal after child layout norm
       <Display reveal={false} />
     </FieldRendererContextProvider>,
   );
+  act(() => node.setState({ 4: true }));
   view.rerender(
     <FieldRendererContextProvider>
       <Display reveal={true} />

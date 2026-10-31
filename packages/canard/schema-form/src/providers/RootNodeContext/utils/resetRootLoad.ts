@@ -65,14 +65,14 @@ export const resetRootLoad = (
     return previous;
   }
   if (!previous.ready && previous.records.length) {
-    next.recordRoots = new WeakMap();
-    for (const record of previous.records)
-      next.recordRoots.set(
-        record,
-        previous.recordRoots?.has(record)
-          ? previous.recordRoots.get(record)
-          : previous.root,
-      );
+    next.recordOrigins ??= new WeakMap();
+    for (const record of previous.records) {
+      const origin = previous.recordOrigins?.get(record);
+      next.recordOrigins.set(record, {
+        root: origin?.root ?? previous.root,
+        warningScope: origin?.warningScope ?? previous.warningScope,
+      });
+    }
     next.records = previous.records.splice(0).concat(next.records);
   }
   next.ready = previous.ready;

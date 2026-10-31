@@ -40,3 +40,9 @@ export type {
 } from './type';
 export { isFieldNodeValidationPending } from './utils/binding/isFieldNodeValidationPending';
 export { subscribeFieldNodeValidationSettled } from './utils/binding/subscribeFieldNodeValidationSettled';
+
+export { readFieldNodeRevealBaseline } from './utils/binding/readFieldNodeRevealBaseline';
+
+export { readFieldNodeShowErrorBaseline } from './utils/binding/readFieldNodeShowErrorBaseline';
+
+export { recordFieldNodeShowErrorBaseline } from './utils/binding/recordFieldNodeShowErrorBaseline';
