@@ -39,6 +39,51 @@ export function renderValidationAfterPaintTables(
       `| ${goal.id} | ${compare('processingP95')} | ${compare('durationP95')} | ${ratio(f.validation.p95, e.validation.p95)} · ${ratio(f.validation.p95, l.validation.p95)} | ${number(data.bootstrap.rows[goal.id].upperBound)} (${e.processing.observations}/${e.keys} · ${f.processing.observations}/${f.keys}) | ${answer(goal.processing)}/${answer(goal.duration)}/${answer(goal.arrival)} |`,
     );
   }
+  if (data.handlerEvidence && data.handlerBootstrap) {
+    lines.push(
+      '',
+      '| G2 typing 행 | pooled handler p95 E/F ms | handler F/E | handler 상한 | handler key E/F | ET pooled F/E | ET 상한(기존 결측대체) | ET 관측 E/F · 실제key |',
+      '| --- | --- | --- | --- | --- | --- | --- | --- |',
+    );
+    for (const goal of data.ownerGoals) {
+      const evidence = data.handlerEvidence[goal.id];
+      const e = data.rows.find(
+        (row) => row.id === goal.id && row.lane === 'E',
+      )!;
+      const f = data.rows.find(
+        (row) => row.id === goal.id && row.lane === 'F',
+      )!;
+      lines.push(
+        '| ' +
+          goal.id +
+          ' | ' +
+          number(evidence.E.p95) +
+          ' / ' +
+          number(evidence.F.p95) +
+          ' | ' +
+          ratio(evidence.F.p95, evidence.E.p95) +
+          ' | ' +
+          number(data.handlerBootstrap[goal.id].upperBound) +
+          ' | ' +
+          evidence.E.keys +
+          '/' +
+          evidence.F.keys +
+          ' | ' +
+          ratio(evidence.F.eventP95, evidence.E.eventP95) +
+          ' | ' +
+          number(data.bootstrap.rows[goal.id].upperBound) +
+          ' | ' +
+          e.processing.observations +
+          '/' +
+          f.processing.observations +
+          ' · ' +
+          e.keys +
+          '/' +
+          f.keys +
+          ' |',
+      );
+    }
+  }
   lines.push(
     '',
     '| 관문 | 판정 | 기계 계산 근거(반올림 전 원시는 decision.json) |',
@@ -47,7 +92,9 @@ export function renderValidationAfterPaintTables(
   for (const gate of data.gates) {
     const details =
       gate.id === 'G2'
-        ? '위 typing 표의 각 상한≤1.10; 관측/key 병기'
+        ? data.ruleVersion
+          ? '위 all-key handler 상한≤1.10; ET 참고 통계와 관측/key 병기'
+          : '위 typing 표의 각 상한≤1.10; 관측/key 병기'
         : gate.id === 'G6'
           ? data.streams
               .filter((page) => page.lane === 'F')
@@ -64,12 +111,46 @@ export function renderValidationAfterPaintTables(
   }
   lines.push(
     '',
-    '| G8 행 | first F/E | eager E / F ms | eager F/E | eager 상한 | 페이지 E/F |',
-    '| --- | --- | --- | --- | --- | --- |',
+    data.ruleVersion
+      ? '| G8 행 | first F/E | eager E / F ms | eager F/E | 3% 이내(참고) | eager 상한 ms | 페이지 E/F |'
+      : '| G8 행 | first F/E | eager E / F ms | eager F/E | eager 상한 | 페이지 E/F |',
+    data.ruleVersion
+      ? '| --- | --- | --- | --- | --- | --- | --- |'
+      : '| --- | --- | --- | --- | --- | --- |',
   );
   for (const id of ['mount-array-1000-none', 'mount-array-1000-validate']) {
     const e = data.rows.find((row) => row.id === id && row.lane === 'E')!;
     const f = data.rows.find((row) => row.id === id && row.lane === 'F')!;
+    if (data.ruleVersion) {
+      const before = e.mount.eagerPaintedMs.median;
+      const after = f.mount.eagerPaintedMs.median;
+      lines.push(
+        '| ' +
+          id +
+          ' | ' +
+          ratio(f.firstPaintedMs.median, e.firstPaintedMs.median) +
+          ' | ' +
+          number(before) +
+          ' / ' +
+          number(after) +
+          ' | ' +
+          ratio(after, before) +
+          ' | ' +
+          (before === null || after === null || before === 0
+            ? '판정 불가'
+            : after / before <= 1.03
+              ? '예'
+              : '아니요') +
+          ' | ' +
+          number(before === null ? null : before + 8.35) +
+          ' | ' +
+          e.count +
+          '/' +
+          f.count +
+          ' |',
+      );
+      continue;
+    }
     lines.push(
       `| ${id} | ${ratio(f.firstPaintedMs.median, e.firstPaintedMs.median)} | ${number(e.mount.eagerPaintedMs.median)} / ${number(f.mount.eagerPaintedMs.median)} | ${ratio(f.mount.eagerPaintedMs.median, e.mount.eagerPaintedMs.median)} | ${id.endsWith('-none') ? '1.02' : '1.00'} | ${e.count}/${f.count} |`,
     );
@@ -94,5 +175,22 @@ export function renderValidationAfterPaintTables(
     lines.push(
       `| ${stream.lane} | ${stream.index} | ${number(stream.durationMs)} | ${stream.validationRuns} | ${number(stream.scriptP95)} |`,
     );
+  if (data.originalGates) {
+    lines.push(
+      '',
+      '| 동일 창의 관문 | 첫 창 규칙(참고) | 새 규칙 |',
+      '| --- | --- | --- |',
+    );
+    for (const original of data.originalGates)
+      lines.push(
+        '| ' +
+          original.id +
+          ' | ' +
+          original.status +
+          ' | ' +
+          data.gates.find((gate) => gate.id === original.id)!.status +
+          ' |',
+      );
+  }
   return lines.join('\n') + '\n';
 }

@@ -1,12 +1,20 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
-/** Freeze local L/E/F products through the shared production bundle preparer. */
+import { REGISTERED_ROUND6_RULES } from './validationAfterPaint/registeredRound6Rules';
+
+/** Freeze local L/E/F products through the shared production bundle preparer.
+ * @param root - New external .noindex directory; existing lanes are never overwritten.
+ * @param baseline - Built, clean facd72a71 checkout.
+ * @param rulesCommit - Registered owner-rule commit; omitted preserves first-window metadata.
+ * @returns Frozen product/browser hashes, source proof and the exact rule version. */
 export async function prepareValidationAfterPaintBundles(
   root: string,
   baseline?: string,
+  rulesCommit?: string,
 ) {
   assert.ok(
     baseline,
@@ -58,7 +66,19 @@ export async function prepareValidationAfterPaintBundles(
   const manifest = path.join(root, 'inputs.json');
   const inputs = JSON.parse(fs.readFileSync(manifest, 'utf8'));
   inputs.stage = 'IR-6';
-  inputs.preregisteredCommit = 'cfd4a9e2a';
+  inputs.preregisteredCommit = rulesCommit ?? 'cfd4a9e2a';
+  if (rulesCommit) {
+    assert.equal(rulesCommit, REGISTERED_ROUND6_RULES.commit);
+    inputs.ruleVersion = REGISTERED_ROUND6_RULES.version;
+    inputs.rulesSha256 = createHash('sha256')
+      .update(
+        execFileSync('git', [
+          'show',
+          rulesCommit + ':' + REGISTERED_ROUND6_RULES.verificationPath,
+        ]),
+      )
+      .digest('hex');
+  }
   inputs.sourceProof = {
     E: git(['ls-tree', '-r', baselineCommit, ...productScope], baseline),
     F: git(['ls-tree', '-r', head, ...productScope]),

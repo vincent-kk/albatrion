@@ -10,11 +10,17 @@ import { decideValidationAfterPaintGates } from './validationAfterPaint/decideVa
 import { quantile } from './validationAfterPaint/quantile';
 import { readInteractionMetrics } from './validationAfterPaint/readInteractionMetrics';
 
-/** Derive all stage tables and mechanical gates from raw pages, never from trusted summaries alone. */
+/** Derive stage tables and mechanical gates from canonical retained pages.
+ * @param samples - Retained page identities and paired lane indices.
+ * @param mode - Quiet or provisional paired-relative collection.
+ * @param pages - Raw measurements keyed by the retained sample file.
+ * @param ruleVersion - Registered round-6 rules; omitted preserves the first window exactly.
+ * @returns Raw-derived comparisons and decisions, including original-rule references for round 6. */
 export function deriveValidationAfterPaintResults(
   samples: SampleResult[],
   mode: string,
   pages: Record<string, ValidationAfterPaintPage>,
+  ruleVersion?: 'round-6',
 ) {
   const canonical = samples.map((sample) => ({
     ...sample,
@@ -61,6 +67,17 @@ export function deriveValidationAfterPaintResults(
       };
     },
   );
+  const handlerRatios: Record<
+    string,
+    ReturnType<typeof bootstrapProcessingRatio>
+  > = {};
+  const handlerEvidence: Record<
+    string,
+    {
+      E: { keys: number; p95: number | null; eventP95: number | null };
+      F: { keys: number; p95: number | null; eventP95: number | null };
+    }
+  > = {};
   const ratios = Object.fromEntries(
     rows
       .filter((row) => row.lane === 'F' && row.id.startsWith('type-'))
@@ -70,7 +87,33 @@ export function deriveValidationAfterPaintResults(
             .filter((sample) => sample.id === row.id && sample.lane === lane)
             .sort((a, b) => a.index - b.index)
             .map((sample) => readInteractionMetrics(pages[sample.file]));
-        return [row.id, bootstrapProcessingRatio(group('E'), group('F'))];
+        const before = group('E'),
+          after = group('F');
+        if (ruleVersion) {
+          handlerRatios[row.id] = bootstrapProcessingRatio(
+            before,
+            after,
+            20261031,
+            10000,
+            'handler',
+          );
+          const evidence = (entries: typeof before) => ({
+            keys: entries.reduce(
+              (count, entry) => count + entry.handler.length,
+              0,
+            ),
+            p95: quantile(
+              entries.flatMap((entry) => entry.handler),
+              0.95,
+            ),
+            eventP95: quantile(
+              entries.flatMap((entry) => entry.processing),
+              0.95,
+            ),
+          });
+          handlerEvidence[row.id] = { E: evidence(before), F: evidence(after) };
+        }
+        return [row.id, bootstrapProcessingRatio(before, after)];
       }),
   );
   const { gates, g1 } = decideValidationAfterPaintGates(
@@ -78,6 +121,7 @@ export function deriveValidationAfterPaintResults(
     ratios,
     canonical,
     pages,
+    ruleVersion ? handlerRatios : undefined,
   );
   const ownerGoals = rows
     .filter((row) => row.lane === 'F' && row.id.startsWith('type-'))
@@ -103,6 +147,19 @@ export function deriveValidationAfterPaintResults(
       scriptP95: quantile(pages[sample.file].stream!.scriptMs, 0.95),
     }));
   return {
+    ...(ruleVersion
+      ? {
+          ruleVersion,
+          handlerEvidence,
+          handlerBootstrap: handlerRatios,
+          originalGates: decideValidationAfterPaintGates(
+            rows,
+            ratios,
+            canonical,
+            pages,
+          ).gates,
+        }
+      : {}),
     streams,
     mode,
     provisional: mode === 'paired-relative',

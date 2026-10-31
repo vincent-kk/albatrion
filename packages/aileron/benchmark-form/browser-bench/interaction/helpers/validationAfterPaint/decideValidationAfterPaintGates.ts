@@ -27,6 +27,7 @@ export function decideValidationAfterPaintGates(
   ratios: Record<string, ReturnType<typeof bootstrapProcessingRatio>>,
   samples: SampleResult[],
   pages: Record<string, ValidationAfterPaintPage>,
+  handlerRatios?: Record<string, ReturnType<typeof bootstrapProcessingRatio>>,
 ) {
   const find = (id: string, lane: string) =>
     rows.find((row) => row.id === id && row.lane === lane)!;
@@ -78,11 +79,17 @@ export function decideValidationAfterPaintGates(
     {
       id: 'G2',
       status: status(
-        typing.map((row) => atMost(ratios[row.id].upperBound, 1.1)),
+        typing.map((row) =>
+          atMost((handlerRatios ?? ratios)[row.id].upperBound, 1.1),
+        ),
       ),
-      details: Object.fromEntries(
-        typing.map((row) => [row.id, ratios[row.id]]),
-      ),
+      details: handlerRatios
+        ? {
+            source: 'all-handlers',
+            rows: handlerRatios,
+            eventTimingReference: ratios,
+          }
+        : Object.fromEntries(typing.map((row) => [row.id, ratios[row.id]])),
     },
     {
       id: 'G3',
@@ -176,7 +183,9 @@ export function decideValidationAfterPaintGates(
             find(name, 'F').mount.eagerPaintedMs.median,
             find(name, 'E').mount.eagerPaintedMs.median === null
               ? null
-              : find(name, 'E').mount.eagerPaintedMs.median! *
+              : handlerRatios
+                ? find(name, 'E').mount.eagerPaintedMs.median! + 8.35
+                : find(name, 'E').mount.eagerPaintedMs.median! *
                   (name.endsWith('-none') ? 1.02 : 1),
           ),
         ]),

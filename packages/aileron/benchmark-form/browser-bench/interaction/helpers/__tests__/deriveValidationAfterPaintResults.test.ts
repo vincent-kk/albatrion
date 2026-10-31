@@ -176,4 +176,95 @@ describe('pre-registered validation-after-paint decisions', () => {
     const zero = fixture({ L: 6.425, E: 0, F: 1 });
     expect(gate(derive(zero), 'G2').status).toBe('INDETERMINATE');
   });
+
+  it('round6 judges every handler while retaining the censored Event Timing decision', () => {
+    const data = fixture();
+    for (const [file, page] of Object.entries(data.pages))
+      if (file.startsWith('type-flat-500-validate-burst-F-'))
+        page.events[0].processingEnd = page.events[0].processingStart + 8;
+    const result = deriveValidationAfterPaintResults(
+      data.samples,
+      'quiet',
+      data.pages,
+      'round-6',
+    );
+    expect(gate(result, 'G2').status).toBe('PASS');
+    expect(
+      result.originalGates?.find((entry) => entry.id === 'G2')?.status,
+    ).toBe('FAIL');
+    expect(
+      result.handlerEvidence?.['type-flat-500-validate-burst'].E.keys,
+    ).toBe(200);
+    expect(
+      result.handlerEvidence?.['type-flat-500-validate-burst'].F.keys,
+    ).toBe(200);
+  });
+
+  it('round6 accepts exactly half a frame of eager cost and reports the original guard', () => {
+    const data = fixture();
+    for (const [file, page] of Object.entries(data.pages))
+      if (file.startsWith('mount-array-1000-') && file.includes('-F-'))
+        page.mount.eagerPaintedMs = 20 + 8.35;
+    const result = deriveValidationAfterPaintResults(
+      data.samples,
+      'quiet',
+      data.pages,
+      'round-6',
+    );
+    expect(gate(result, 'G8').status).toBe('PASS');
+    expect(
+      result.originalGates?.find((entry) => entry.id === 'G8')?.status,
+    ).toBe('FAIL');
+  });
+
+  it('round6 rejects eager above half a frame and preserves the first-painted limits', () => {
+    const data = fixture();
+    for (const [file, page] of Object.entries(data.pages))
+      if (file.startsWith('mount-array-1000-') && file.includes('-F-'))
+        page.mount.eagerPaintedMs = 20 + 8.350001;
+    expect(
+      gate(
+        deriveValidationAfterPaintResults(
+          data.samples,
+          'quiet',
+          data.pages,
+          'round-6',
+        ),
+        'G8',
+      ).status,
+    ).toBe('FAIL');
+    const first = fixture();
+    for (const [file, page] of Object.entries(first.pages))
+      if (file.startsWith('mount-array-1000-') && file.includes('-F-'))
+        page.mount.firstPaintedMs = 11;
+    expect(
+      gate(
+        deriveValidationAfterPaintResults(
+          first.samples,
+          'quiet',
+          first.pages,
+          'round-6',
+        ),
+        'G8',
+      ).status,
+    ).toBe('FAIL');
+  });
+
+  it('round6 leaves missing handler values and zero handler denominators indeterminate', () => {
+    for (const missing of [false, true]) {
+      const data = fixture();
+      for (const [file, page] of Object.entries(data.pages))
+        if (file.startsWith('type-flat-500-validate-burst-E-')) {
+          if (missing) page.handlers = [];
+          else for (const handler of page.handlers) handler.wallMs = 0;
+        }
+      const result = deriveValidationAfterPaintResults(
+        data.samples,
+        'quiet',
+        data.pages,
+        'round-6',
+      );
+      expect(gate(result, 'G2').status).toBe('INDETERMINATE');
+    }
+  });
 });

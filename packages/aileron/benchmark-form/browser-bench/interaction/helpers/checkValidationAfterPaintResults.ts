@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,6 +12,7 @@ import { deriveValidationAfterPaintResults } from './deriveValidationAfterPaintR
 import { renderValidationAfterPaintTables } from './renderValidationAfterPaintTables';
 import { summarizePage } from './summarizePage';
 import type { SampleResult } from './summarizeResults';
+import { REGISTERED_ROUND6_RULES } from './validationAfterPaint/registeredRound6Rules';
 
 /** Reproduce every IR-6 numeric artifact and inline table from canonical retained pages. */
 export function checkValidationAfterPaintResults(
@@ -58,7 +60,36 @@ export function checkValidationAfterPaintResults(
       inputs.bundles.E.commit,
       'facd72a71c44a798f5484827509073a27fb678a3',
     );
-    assert.equal(inputs.preregisteredCommit, 'cfd4a9e2a');
+    const round6 =
+      inputs.preregisteredCommit === REGISTERED_ROUND6_RULES.commit;
+    if (round6) {
+      assert.equal(inputs.ruleVersion, REGISTERED_ROUND6_RULES.version);
+      const committed = execFileSync('git', [
+        'show',
+        inputs.preregisteredCommit +
+          ':' +
+          REGISTERED_ROUND6_RULES.verificationPath,
+      ]);
+      assert.equal(
+        createHash('sha256').update(committed).digest('hex'),
+        inputs.rulesSha256,
+      );
+      execFileSync('git', [
+        'merge-base',
+        '--is-ancestor',
+        inputs.preregisteredCommit,
+        complete.toolCommit,
+      ]);
+      const registeredAt = execFileSync(
+        'git',
+        ['show', '-s', '--format=%cI', inputs.preregisteredCommit],
+        { encoding: 'utf8' },
+      ).trim();
+      assert.ok(Date.parse(start.at) >= Date.parse(registeredAt));
+    } else {
+      assert.equal(inputs.preregisteredCommit, 'cfd4a9e2a');
+      assert.equal(inputs.ruleVersion, undefined);
+    }
     assert.match(inputs.bundles.F.commit, /^[a-f0-9]{40}$/);
     assert.deepEqual(smoke.inputs.bundles, inputs.bundles);
     assert.deepEqual(smoke.cases, cases);
@@ -158,6 +189,7 @@ export function checkValidationAfterPaintResults(
       complete.samples,
       complete.mode,
       pages,
+      round6 ? 'round-6' : undefined,
     );
     const tables = renderValidationAfterPaintTables(data);
     for (const [name, value] of Object.entries({
@@ -167,6 +199,13 @@ export function checkValidationAfterPaintResults(
       'owner-goals.json': data.ownerGoals,
       'derived.json': data,
       'tables.md': tables,
+      ...(round6
+        ? {
+            'original-decision.json': data.originalGates,
+            'handler-bootstrap.json': data.handlerBootstrap,
+            'handler-evidence.json': data.handlerEvidence,
+          }
+        : {}),
     })) {
       const content =
         typeof value === 'string'

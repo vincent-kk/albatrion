@@ -51,6 +51,7 @@ export async function runInteractions(args: string[]) {
         ? await prepareValidationAfterPaintBundles(
             root,
             options['baseline-root'],
+            options['rules-commit'],
           )
         : await prepareBundles(root, options['stage-root']);
     console.log('IR0_PREPARED ' + inputs.lanes.join(','));

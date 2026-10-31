@@ -5,12 +5,19 @@ interface PageValues {
   processing: number[];
   handler: number[];
 }
-/** Joint page-index bootstrap; the same selected index is used for both interleaved lanes. */
+/** Joint page-index bootstrap uses the same selected index for both interleaved lanes.
+ * @param before - Baseline pages in paired index order.
+ * @param after - Candidate pages with the same count and pairing.
+ * @param seed - Fixed unsigned PRNG seed registered before collection.
+ * @param resamples - Number of paired page resamples.
+ * @param source - Handler mode pools every handler and has no Event Timing fallback.
+ * @returns Nearest-rank one-sided 95% upper ratio, or null when a sample or denominator is missing. */
 export function bootstrapProcessingRatio(
   before: PageValues[],
   after: PageValues[],
   seed = 20261031,
   resamples = 10000,
+  source: 'processing' | 'handler' = 'processing',
 ) {
   let state = seed >>> 0;
   const random = () => {
@@ -29,8 +36,11 @@ export function bootstrapProcessingRatio(
       Math.floor(random() * before.length),
     );
     const pooled = (pages: PageValues[], lane: 'E' | 'F') => {
-      const values = indices.flatMap((index) => pages[index].processing);
+      const values = indices.flatMap((index) =>
+        source === 'handler' ? pages[index].handler : pages[index].processing,
+      );
       if (values.length) return quantile(values, 0.95);
+      if (source === 'handler') return null;
       fallbackResamples[lane]++;
       return quantile(
         indices.flatMap((index) => pages[index].handler),
