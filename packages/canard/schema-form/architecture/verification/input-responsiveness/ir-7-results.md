@@ -87,7 +87,43 @@ L3에는 개발 StrictMode replay를 포함합니다: including the development 
 
 T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도달하지 않는 경로입니다. 소비자 무배달만 검증하며 reporter.root 유지·복원을 검증했다는 주장은 제거합니다. T4 validator 교체 뒤 구독 단언은 기존 구독 변형에서도 red를 확인합니다. T7b는 validator start promise를 기다리고 hidden mount 시험은 숨기기 전에 확보한 node로 settle합니다. 새 회귀는 visible/hidden adoption 실패, never-prepared 생성 실패, 양쪽 major StrictMode replay이며 최종 커밋 시험의 red·mutation·green 해시와 모든 순차 관문은 round b 결과에 보존합니다.
 
-구현·시험·관문 결과는 완료 후 이 round b 절에 확정합니다.
+제품 수정은 `062d821da`에 커밋했습니다. 계약은 `9c77ef767`과 host0 정정 `6e9978edf`가 앞서고 최종 시험 텍스트는 `916b08dcf`입니다. [round b red·stage guard](raw/ir-7/round-b/red-runs.json)와 [mutation](raw/ir-7/round-b/mutation-runs.json)을 분리합니다.
+
+| 검토 항목 | 수정·확인 | 실패·guard 증거 |
+| --- | --- | --- |
+| 1 · adoption 전 실패 | batch try/catch 뒤에 옛 load를 은퇴시켜 reset 사슬 오류를 먼저 전달 | 06df 양쪽 major visible/hidden onError0으로 red. 수정된 caller throw·onError1·host0 단언은 stage visible에서 양쪽 major green. 처음 host1 가정은 코디네이터가 기존 host0 보존으로 정정 승인 |
+| 2 · 준비 전 생성 실패 | reset 끝에 reported를 표시하고 이전 error를 capture·host로 한 번 보고. 새 reporter.root를 유지 | unit의 보고 전 경우 red, 이미 보고된 경우는 guard green. 공개 Activity의 처음 숨긴 실패 load를 유효 schema/validator로 교체해도 onError0으로 red. reported 가드 제거 mutation은 중복 capture1로 실패 |
+| 3 · StrictMode replay | 코드 변경 없이 L3에 개발 replay 포함, production 영향 없음 기록 | 비멱등 자식 layout 쓰기0→1→2 중 replay 값2의 onChange1회. 두 major 모두 06df/후보 green·stage red. 입력 슬롯의 재마운트와 구분하여 Form children의 안정된 자식으로 검사 |
+| 4 · 첫 commit 구독 | 기존 unsubscribe를 호출한 뒤 설치 | 처음 숨긴 정상 load가 invalid controls schema/새 validator로 교체될 때 build 실패로 옛 load를 반환하는 공개 경로를 재현. 이후 한 번의 expression 진단이 06df에서2회·후보에서1회 |
+| 5 · 문서 | providers의 mount-slot 수명 문장 수정, RootNodeContext DETAIL의 중복 L1 삭제 | L1 표제는1개이며 slot 예약과 cache retain/release 수명을 구분 |
+| 6 · T4/T7a 증거 | T4 validator 교체 구독 단언을 기존 구독 mutation에 포함. T7a는 consumer 무배달로 한정 | T4 mutation에서 진단2회로 red. retired hasConsumer가 false이므로 report에 진입하지 않아 reporter.root 유지/복원을 시험했다는 주장을 제거 |
+| 7 · 시험 타입 | T1 log의 any 매개변수를 배열 narrowing으로 교체 | typecheck와 전체 관문으로 확인 |
+| 8 · 타이밍 | T7b validator start promise 대기, hidden mount 두 시험은 숨기기 전 보유 node로 settle | ref null에 따른 조기 반환을 제거하고 대상 회귀·전체 관문으로 확인 |
+
+### Round b 최종 순차 관문
+
+lint → typecheck → build → unit → render → react18 → verify → Storybook → production → import-model을 겹치지 않게 실행했습니다. [실행 영수증](raw/ir-7/round-b/command-gates.json), [시험 집계](raw/ir-7/round-b/test-gates.json)와 각 gate JSON gzip에 원시를 보존합니다.
+
+| 관문 | 파일 | 통과 | 실패 | skip / todo |
+| --- | ---: | ---: | ---: | ---: |
+| unit | 620 | 4,091 | 0 | 0 / 1 |
+| render | 159 | 901 | 0 | 2 / 0 |
+| react18 | 159 | 895 | 0 | 8 / 0 |
+| verify | 784 | 5,036 | 0 | 2 / 1 |
+| storybook | 101 | 254 | 0 | 0 / 0 |
+| production | 10 | 21 | 0 | 0 / 0 |
+| import-model | 1 | 2 | 0 | 0 / 0 |
+
+lint는 경고0, typecheck·build는 exit0입니다. round b는 기존 skip·todo·fails 선언을 바꾸지 않았고 React19 전용 공개 회귀2개만 React18에서 새로 skip합니다. [skip 감사](raw/ir-7/round-b/skip-source-audit.json)에 차분을 보존합니다. T7b start promise와 숨김 전 보유 node로 바꾼 mount 회귀도 최종 전체 시험에서 green입니다.
+
+06df의 검증된 full build와 후보 full build를 같은 비교기로 검사한 공개 이름97·선언917의 의미 차이·index 바이트 차이·미해결 alias는0입니다. src/index.ts·package.json도 차분0이며 [선언](raw/ir-7/round-b/public-declarations.json.gz)과 [bundle SHA256](raw/ir-7/round-b/build-artifacts.json)에 남깁니다. 추적된 runtime bundle·adapter 차분이 없어 source에 빌드 출력을 섞지 않았습니다.
+
+FCA는 exact1,762·missing/needsResolution/uncertain/toolError0·기존 unsupported175입니다. 기준06df와 validate finding202·진단177의 원시 multiset 차이가0이며 scan201·verification21·확정 실패12·skip1·절대 indeterminate는 유지합니다. [FCA 차분](raw/ir-7/round-b/fca-diff.json)과 같은 snapshot의 세 원시를 보존합니다. 새 verification 파일의 case 수5·2는 exact이며 cap32 안입니다.
+
+[전체 원장](raw/ir-7/round-b/ledger-checks.json)은 인용 불일치·미해석·ref 문제0, owner720/720, 17영역 sentence missing·bad classification0입니다. doc-coverage의 새 bad ID·missing token·untagged sentence·stale exemption은0이며 기존 미인용66·plan-links1과 tokens2,390/잔여398을 유지합니다. [기계 경로·기록 감사](raw/ir-7/round-b/audit.json)는 추가 기계 경로0과 원래 stage의 ledger·ADR·design·plan prefix 보존을 확인합니다. IR-7에서 추가했던 T7a의 reporter.root 문구만 리뷰 지시에 따라 제거했고, 과거 raw의 시험명은 당시 실행 텍스트로 보존하되 root 유지/복원 증거로 쓰지 않습니다.
+
+제품·시험 SHA256은 red/green/변형에 사용한 최종 텍스트와 다시 대조했습니다. mutation scratch `ir-7-round-b-mutation`과 임시 branch는 증거 커밋 직후 bare Orca 제거로 모두 삭제했습니다. round b는 reset·첫 준비의 상수 시간 처리만 바꾸고 hot write path·노드 필드·예약 loop·공개 API는 늘리지 않았습니다. browser 측정 창·benchmark는 수행하지 않았고 성능 수치를 주장하지 않습니다.
+
 
 
 ### Round b host 표면 정정 승인
