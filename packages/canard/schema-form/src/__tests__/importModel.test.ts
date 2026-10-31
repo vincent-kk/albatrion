@@ -196,10 +196,9 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
       const importerPath = relative(sourceRoot, importer).split(sep).join('/');
       if (
         verdict === 'D' &&
-        [
-          '__tests__/helpers/readFieldNodeRuntime.ts',
-          '__tests__/helpers/releaseFieldNodeRevealHistory.ts',
-        ].includes(importerPath) &&
+        (importerPath === '__tests__/helpers/readFieldNodeRuntime.ts' ||
+          importerPath ===
+            '__tests__/helpers/releaseFieldNodeRevealHistory.ts') &&
         relative(sourceRoot, target).split(sep).join('/') ===
           'core/surface/runtime/requireRuntimeFieldNode.ts'
       ) {
