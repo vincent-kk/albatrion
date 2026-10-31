@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-- U2: input.errorVisible은 공통 useErrorVisibility를 사용하며 memoized 슬롯이 자체 기억과 보류 구독을 소유한다. remount key가 바뀌면 새 기억이다. input.errors는 raw 목록으로 유지한다.
+- U2: input.errorVisible은 공통 useErrorVisibility를 사용하며 memoized 슬롯이 자체 기억과 보류 구독을 소유한다. 안정된 노드별 wrapper factory가 기억을 보유해 version remount 중에도 이미 표시한 오류를 유지하며 새로 보류한 표시는 계속 보류한다(코디네이터 msg_cc8e08d106e0). input.errors는 raw 목록으로 유지한다.
 
 - 가상화 매니저는 훅의 `useSyncExternalStore`에서 서버 스냅숏을 null로 읽습니다. 서버에서 렌더한 자식과 동일한 구성을 하이드레이션에서 마운트하며, 클라이언트 전용 마운트는 첫 렌더부터 게이팅합니다. 기존 입력 commit layout effect에서 하이드레이션 커밋을 ref로 기록하여 passive 일관성 검사가 null을 유지하게 하며, 하이드레이션 완료만으로 슬롯이나 사용자 브랜치 입력을 다시 렌더하지 않습니다. 이후 실제 자식 변경 렌더는 폼 매니저를 적용합니다. Provider의 문맥 값은 바꾸지 않습니다.
 - 폼 매니저가 있고 실제 입력 슬롯이 커밋하면 기존 입력 commit layout effect에서 슬롯 자신의 노드를 노출 원장에 기록합니다. 자식 wrapper만 커밋하고 비활성·숨김 노드가 실제 슬롯을 만들지 않은 경우에는 기록하지 않습니다. 하이드레이션, eager window, 문턱 미만 마운트 모두 포함합니다. 이후 remount·enabled 전환으로 캐시를 다시 만들어도 해당 노드는 placeholder가 되지 않으며, 하이드레이션 뒤 추가한 자식과 브랜치에는 게이팅이 적용됩니다. 자식 컴포넌트 캐시는 StrictMode의 effect 재실행에도 유지하고 실제 훅 인스턴스와 함께 회수합니다.
@@ -41,7 +41,7 @@
 - 실패한 입력은 피어의 쓰기로 생긴 자동 Refresh와 명시적인 Refresh를 거쳐도 fallback을 유지하고, RequestRemount나 폼 key 교체 뒤에는 다시 실행됩니다. 정상 입력의 Refresh는 원본 입력만 교체하며, 피어 입력의 DOM 상태와 입력 오류 경계는 유지합니다(EVENT-039·040·042·070, 112C-01).
 - 조합 중에 Refresh가 와도 매 단계의 IME 텍스트와 입력 인스턴스를 보존하고 `value` setter를 호출하지 않습니다. `compositionend`가 한 번 오면 그 뒤에 입력을 다시 마운트하며, 이전 입력의 조합 텍스트가 노드에 뒤늦게 쓰이는 일은 없습니다(EVENT-065, REACT-024).
 - Refresh 유예가 없는 스냅숏은 통합 마스크로 한 번에 읽고, 유예 중에는 Refresh 제외 개정과 적용 세대만 읽습니다. 렌더와 구독 사이에 전달된 자식·값 갱신은 화면이 따라잡습니다. 마운트된 자식이 보류한 Refresh는 자식을 해제하는 것만으로는 추가 커밋하지 않고, 다음 전달 때 한 번 적용합니다. `array-push-remove-100`의 커밋은 202회로 유지됩니다.
-- 가상화 없이 마운트한 터미널 배열 항목 하나는 라이브러리 layout effect를 두 번(부모 입력의 자식 마운트 계수, 항목 입력의 커밋) 실행합니다(REACT-028, ERROR-202).
+- 가상화 없이 마운트한 터미널 배열 항목 하나는 라이브러리 layout effect를 네 번(부모 입력의 자식 마운트 계수, 항목 입력의 커밋, renderer 표시 기억 commit, input 표시 기억 commit) 실행합니다. U2의 독립 commit 기억이 항목당2회를 추가하는 구조 비용이며 일반 입력 쓰기의 표시가 같으면 layout effect0회를 유지합니다. G8의 None·OnChange 마운트 행으로 이 비용을 정식 측정하고 기준을 넘으면 병합하지 않습니다(코디네이터 msg_cc8e08d106e0; REACT-028, ERROR-202).
 - 입력 변경 한 번에 담긴 세 단계는 한 번의 진입으로 정착하고 통지하며, 유효 스키마가 바뀌면 입력 선택에 반영됩니다. 대체되었거나 폐기된 입력이 뒤늦게 하는 값·파일 쓰기와, 초기화 뒤로 미룬 touched는 살아 있는 폼 상태를 바꾸지 않습니다(REACT-011·012·024, 69C-01·02).
 
 ## Last Updated

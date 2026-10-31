@@ -8,6 +8,7 @@
 
 - U2의 useErrorVisibility는 checkShowError로 계산한 조건을 공통으로 보정하는 바인딩 전용 표시 단위다. FieldProxy·FieldInputSlot·useChildFieldErrors가 같은 단위를 쓴다. visible = condition && (wasVisible || !pending)이며 표시 중 오류는 다음 판정까지 유지하고 새 표시는 pending 종료까지 보류한다. 숨김은 즉시 반영한다.
 - 노드 identity 배열은 얕은 비교로 안정화하고 표시 bit열이 바뀔 때만 layout commit을 예약해 표시가 같은 일반 입력 쓰기는 layout effect0회를 유지한다. visibility 기억 자체는 여전히 render에서 쓰지 않는다.
+- 입력 표시의 기억 ref는 안정된 노드별 wrapper factory에 보유할 수 있어 version remount가 pending 중 이미 보이던 오류를 숨기지 않는다. 메모리 갱신은 여전히 공통 훅의 layout commit만 수행한다(코디네이터 msg_cc8e08d106e0).
 - wasVisible은 노드별 Map으로 기억하며 layout effect에서만 직전 commit 값을 기록한다. 렌더에서 기록하지 않고 cleanup으로 초기화하지 않아 StrictMode 재실행과 배열 항목 이동에 안전하다. 해석 노드 변경은 새 노드 기억으로 시작하고 null 렌더는 false를 기록한다.
 - pending은 useSyncExternalStore로 읽고 서버 스냅숏은 false이다. 현재 표시를 보류하는 동안에만 내부 정착 알림을 구독하고 나머지는 no-op subscribe이다. 같은 폼의 노드 묶음을 한 구독으로 읽으며 공개 반환 형이나 raw errors는 바꾸지 않는다. 동기 연속 입력은 다음100ms cap, stale 비동기 판정은 후행까지 보류할 수 있다.
 
