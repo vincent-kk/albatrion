@@ -12,6 +12,7 @@ describe('FieldNode PR-2 surface', () => {
       'buildFieldNodeTree',
       'fieldNodeFactory',
       'finishFieldNodeInput',
+      'hasFieldNodeValidationRequest',
       'interpretFieldNodeDraft',
       'isArrayNode',
       'isBooleanNode',

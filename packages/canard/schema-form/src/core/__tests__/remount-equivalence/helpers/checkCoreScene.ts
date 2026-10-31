@@ -55,7 +55,7 @@ export async function checkCoreScene(
         updated.root.outputValue,
         updated.root.context,
       );
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       const automaticErrors = updated.root.globalErrors;
       const applied: Partial<Record<ObservationMask['category'], number>> = {};
       const differences = compareObservations(

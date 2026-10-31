@@ -112,6 +112,7 @@ for (const { name, schema, value } of cases) {
     });
 
     // Mode-flag control: no validator is supplied, so this does not measure validator compilation.
+    // This synchronous row includes slot enqueueing, but excludes the later macrotask and verdict; it is not validation-complete mount latency.
     bench('[mount] nodeFromJSONSchema (validation on)', () => {
       nodeFromJSONSchema({
         jsonSchema: schema,

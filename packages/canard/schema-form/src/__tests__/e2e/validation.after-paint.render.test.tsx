@@ -208,6 +208,76 @@ describe('frame-backed Form validation', () => {
     }
   });
 
+  it('IR-6 R2 a child layout write validates the newest commit exactly once', async () => {
+    const validate = vi.fn(() => []);
+    const Input = ({ onChange }: FieldInputProps) => {
+      useLayoutEffect(() => {
+        onChange('layout-newest');
+      }, [onChange]);
+      return <input />;
+    };
+    render(
+      <Form
+        jsonSchema={schema}
+        fieldInputMap={{ '': Input }}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{
+          compile: () => validate,
+          compileGuard: () => () => true,
+        }}
+      />,
+    );
+    await settleValidation();
+    expect(validate).toHaveBeenCalledExactlyOnceWith('layout-newest');
+  });
+
+  it('IR-6 R2 an explicit root validation before the slot fulfills the mount obligation', async () => {
+    const ref = createRef<FormHandle>();
+    const validate = vi.fn(() => []);
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{
+          compile: () => validate,
+          compileGuard: () => () => true,
+        }}
+      />,
+    );
+    await act(async () => {
+      await ref.current!.validate();
+    });
+    expect(validate).toHaveBeenCalledTimes(1);
+    await settleValidation();
+    expect(validate).toHaveBeenCalledTimes(1);
+  });
+
+  it('IR-6 R2 a subtree validation before the slot still owes one mount validation', async () => {
+    const ref = createRef<FormHandle>();
+    const validate = vi.fn(() => []);
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'object',
+          properties: { name: { type: 'string' } },
+        }}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{
+          compile: () => validate,
+          compileGuard: () => () => true,
+        }}
+      />,
+    );
+    await act(async () => {
+      await ref.current!.node!.find('/name')!.validate();
+    });
+    expect(validate).toHaveBeenCalledTimes(1);
+    await settleValidation();
+    expect(validate).toHaveBeenCalledTimes(2);
+  });
+
   it('IR-6 (d) StrictMode validates once after the frame', async () => {
     const validate = vi.fn(() => []);
     render(

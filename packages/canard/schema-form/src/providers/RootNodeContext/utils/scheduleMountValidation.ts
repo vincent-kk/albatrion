@@ -1,4 +1,7 @@
-import { scheduleValidationSlot } from '@/schema-form/core';
+import {
+  hasFieldNodeValidationRequest,
+  scheduleValidationSlot,
+} from '@/schema-form/core';
 import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../../FormErrorContext';
@@ -20,6 +23,7 @@ export const scheduleMountValidation = (
     if (store.load !== load) return;
     const root = load.root;
     if (!root) return;
+    if (hasFieldNodeValidationRequest(root)) return;
     if (!load.ready) {
       load.mountValidationOwed = true;
       return;

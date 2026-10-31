@@ -4,7 +4,6 @@ export { readValidationEntry } from './utils/cache/readValidationEntry';
 export { readFieldNodeGuard } from './utils/guard/readFieldNodeGuard';
 export { compileEntryGuards } from './utils/guard/compileEntryGuards';
 export { requestFieldNodeValidation } from './utils/run/requestFieldNodeValidation';
-export { scheduleValidationSlot } from './utils/run/scheduleValidationSlot';
 export { runFieldNodeValidation } from './utils/run/runFieldNodeValidation';
 export { assertValidationRootReady } from './utils/run/assertValidationRootReady';
 export { routeValidationIssues } from './utils/route/routeValidationIssues';
@@ -12,5 +11,6 @@ export { retainEqualValidationIssues } from './utils/route/retainEqualValidation
 export { updateFieldNodeGlobalErrors } from './utils/route/updateFieldNodeGlobalErrors';
 export { EMPTY_GLOBAL_ERRORS } from './utils/route/constants';
 export { readFieldNodeErrors } from './utils/read/readFieldNodeErrors';
+export { hasFieldNodeValidationRequest } from './utils/read/hasFieldNodeValidationRequest';
 export { retainValidationRoot } from './utils/lifetime/retainValidationRoot';
 export { releaseValidationRoot } from './utils/lifetime/releaseValidationRoot';

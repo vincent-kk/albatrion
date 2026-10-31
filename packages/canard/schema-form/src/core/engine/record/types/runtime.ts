@@ -18,6 +18,7 @@ import type { TreeMemoStores } from '../../types/treeMemoStores';
 import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
+import type { ValidationCadence } from '../../validationScheduling';
 import type { FieldNodeFactory } from './behavior';
 import type { FieldNodeDelivery } from './record';
 
@@ -315,9 +316,11 @@ export interface FieldNodeRuntime<Self>
   validationCompileReported?: boolean;
   /** Dispatcher-owned path for asynchronous execution and delivery failures. */
   reportValidationFailure?: (failure: unknown) => void;
-  /** True while one microtask is queued to run the latest request. */
-  validationQueued?: boolean;
-  /** Subtree scopes merged into the next one-per-commit validation run. */
+  /** Lazily owned domain-free automatic timing lifetime, cancelled on root disposal. */
+  validationCadence?: ValidationCadence;
+  /** Latest domain callback selected by the cadence without inspecting its contents. */
+  validationRun?: () => void;
+  /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
   /** True after a routing replaced the routed list, until the validation wave publishes it. */
   validationListChanged?: boolean;

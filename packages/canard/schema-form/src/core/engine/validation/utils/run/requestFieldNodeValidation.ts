@@ -1,11 +1,11 @@
 import { FormErrorCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
+import { createValidationCadence } from '../../../validationScheduling';
 import type { ValidationIssue } from '../../types/issue';
 import { retainEqualValidationIssues } from '../route/retainEqualValidationIssues';
 import { routeValidationIssues } from '../route/routeValidationIssues';
 import { runFieldNodeValidation } from './runFieldNodeValidation';
-import { scheduleValidationSlot } from './scheduleValidationSlot';
 
 /**
  * Coalesce write-triggered checks and deliver only the newest commit's verdict.
@@ -26,10 +26,7 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationRequestStamp = runtime.validationStamp;
   (runtime.validationPendingTargets ??= new Set()).add(node);
-  if (runtime.validationQueued) return;
-  runtime.validationQueued = true;
-  scheduleValidationSlot(() => {
-    runtime.validationQueued = false;
+  runtime.validationRun = () => {
     if (runtime.validationStamp !== runtime.validationRequestStamp) {
       runtime.validationPendingTargets = undefined;
       return;
@@ -65,5 +62,10 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
         }
         runtime.reportValidationFailure?.(failure);
       });
-  });
+  };
+  runtime.validationCadence ??= createValidationCadence(
+    () => runtime.validationRun?.(),
+    () => performance.now(),
+  );
+  runtime.validationCadence.request();
 };

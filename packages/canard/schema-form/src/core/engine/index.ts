@@ -1,3 +1,4 @@
+export { scheduleValidationSlot } from './validationScheduling';
 export { engineModes } from './utils/cache/engineModes';
 export {
   adoptFieldNodeChain,
@@ -41,7 +42,7 @@ export {
   readValidationEntry,
   retainValidationRoot,
   releaseValidationRoot,
-  scheduleValidationSlot,
+  hasFieldNodeValidationRequest,
 } from './validation';
 export {
   EMPTY_REVISION_LEDGER,

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { scheduleValidationSlot } from '../utils/run/scheduleValidationSlot';
+import { scheduleValidationSlot } from '../utils/scheduleValidationSlot';
 
 afterEach(() => {
   vi.useRealTimers();
@@ -18,6 +18,29 @@ describe('validation scheduling environment and fallback race', () => {
     vi.stubGlobal('cancelAnimationFrame', undefined);
     expect(() => vi.advanceTimersByTime(100)).not.toThrow();
     expect(cancel).toHaveBeenCalledWith(10);
+    expect(run).toHaveBeenCalledTimes(1);
+  });
+
+  it('IR-6 R4 a frame API without cancellation uses exactly one macrotask', async () => {
+    const frame = vi.fn(() => 1);
+    vi.stubGlobal('requestAnimationFrame', frame);
+    vi.stubGlobal('cancelAnimationFrame', undefined);
+    const run = vi.fn();
+    expect(() => scheduleValidationSlot(run)).not.toThrow();
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(run).toHaveBeenCalledTimes(1);
+    expect(frame).not.toHaveBeenCalled();
+  });
+
+  it('IR-6 R7 waits for its frame before posting validation work', async () => {
+    vi.stubGlobal('requestAnimationFrame', () => 1);
+    vi.stubGlobal('cancelAnimationFrame', vi.fn());
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const run = vi.fn();
+    scheduleValidationSlot(run);
+    await new Promise<void>((resolve) => setImmediate(resolve));
+    expect(run).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(100);
     expect(run).toHaveBeenCalledTimes(1);
   });
 

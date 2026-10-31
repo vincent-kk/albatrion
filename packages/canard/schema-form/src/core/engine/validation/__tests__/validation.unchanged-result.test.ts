@@ -50,7 +50,7 @@ const recordErrorBits = (node: DispatchTestNode): number[] => {
   return received;
 };
 
-/** Let the coalesced validation microtask and its wave run. */
+/** Let the frame-backed validation slot and its wave run (a macrotask in Node). */
 const settle = () => new Promise((resolve) => setImmediate(resolve));
 
 /** Object form with one string field, the target of every issue below. */

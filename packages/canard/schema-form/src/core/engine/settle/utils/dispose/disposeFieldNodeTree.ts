@@ -12,6 +12,9 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
+  runtime.validationCadence?.cancel();
+  runtime.validationCadence = undefined;
+  runtime.validationRun = undefined;
   visitFieldNodes(
     root,
     (node) => {

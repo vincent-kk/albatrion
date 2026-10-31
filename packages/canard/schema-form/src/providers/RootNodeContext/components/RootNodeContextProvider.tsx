@@ -178,9 +178,14 @@ export const RootNodeContextProvider = ({
         if ((load.props.validationMode ?? 0) & ValidationMode.OnChange)
           scheduleMountValidation(load, store, reporter);
       }
-    } else if (load.mountValidationOwed) {
-      load.mountValidationOwed = false;
-      scheduleMountValidation(load, store, reporter);
+    } else {
+      if (load.reporter && root) load.reporter.root = root;
+      for (const record of load.records.splice(0))
+        load.reporter?.report(record);
+      if (load.mountValidationOwed) {
+        load.mountValidationOwed = false;
+        scheduleMountValidation(load, store, reporter);
+      }
     }
     return () => {
       load.ready = false;

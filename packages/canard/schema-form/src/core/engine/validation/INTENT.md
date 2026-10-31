@@ -7,10 +7,10 @@
 ## Conventions
 
 - 의존 순서는 `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < FieldNode`이다. `settle`은 이 fractal의 동기 가드 읽기를 소비하고, 결과 배달은 넘겨받은 콜백을 통해 요청자에게 돌려준다(NODE-016·045, LANDING-084).
-- `index.ts`는 검증 계약 형과 `readValidationEntry`, `compileEntryGuards`, `runFieldNodeValidation`, `routeValidationIssues`, `retainEqualValidationIssues`, `EMPTY_GLOBAL_ERRORS`를 이름으로 내보낸다. 동기 가드와 오류 읽기, 재생성 루트의 컴파일 사전 점검과 수명 함수도 이름으로 내보낸다. The lifetime helpers and `scheduleValidationSlot` are re-exported by core for bindings; the package entry point does not expose them(NODE-010, VALIDATE-044·046, LANDING-159).
+- `index.ts`는 검증 계약 형과 `readValidationEntry`, `compileEntryGuards`, `runFieldNodeValidation`, `routeValidationIssues`, `retainEqualValidationIssues`, `EMPTY_GLOBAL_ERRORS`를 이름으로 내보낸다. 동기 가드와 오류 읽기, 재생성 루트의 컴파일 사전 점검과 수명 함수도 이름으로 내보낸다. 수명 함수는 core가 바인딩용으로 명명 재수출하며 패키지 진입점에는 노출하지 않는다(NODE-010, VALIDATE-044·046, LANDING-159).
 - 캐시는 검증기 인스턴스와 작성 루트 정체성의 쌍이 소유한다. 런타임에는 선택한 검증기와 모드, 최신 커밋과 요청 스탬프, 노드 오류 맵, 결과 배달 콜백을 둔다. 노드의 고정 필드는 늘리지 않는다(VALIDATE-018·048·049, NODE-004·045).
 
-- `scheduleValidationSlot` is a binding-only scheduling channel re-exported by engine and core for RootNodeContext; the package entry point does not expose it. It reads frame support and document visibility on every call.
+- 프레임 예약과 연속 입력 주기는 형제 `validationScheduling`이 소유하며 이 모듈은 매 요청마다 주기의 request를 호출한다. 마운트는 그 형제의 일회성 슬롯을 core를 통해 사용한다. 요청 여부 조회는 validation→engine의 `hasFieldNodeValidationRequest`를 surface 래퍼로 이어 core가 재수출하며 패키지 진입점은 넓히지 않는다.
 
 ## Boundaries
 

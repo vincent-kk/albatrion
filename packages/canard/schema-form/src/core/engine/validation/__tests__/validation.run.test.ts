@@ -74,7 +74,7 @@ describe('validation execution', () => {
     requestFieldNodeValidation(root, () => {
       throw new Error('None delivered');
     });
-    await Promise.resolve();
+    await new Promise<void>((resolve) => setImmediate(resolve));
     expect(validate).not.toHaveBeenCalled();
     expect(await dispatchValidate(root)).toEqual([]);
     expect(runtime.validationResult).toBeUndefined();
