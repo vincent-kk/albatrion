@@ -107,10 +107,6 @@
       "bytes": 1722,
       "sha256": "c0ded771ed031f017479bb7a877773aca15f69edd999139332073b167fcc5464"
     },
-    "red.json.gz": {
-      "bytes": 2448,
-      "sha256": "b212f293bc9f937bf82e98b4a8af94d8db06f843c94683be5eee450e9b307352"
-    },
     "source-proof-diagnosis.json": {
       "bytes": 308,
       "sha256": "5aef868c344993e7fdf00e2a205953ae7423925d39bef81b3a854e833744b1a7"

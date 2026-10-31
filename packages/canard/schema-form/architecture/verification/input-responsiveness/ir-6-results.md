@@ -960,7 +960,7 @@ msg_241ca3e19a1b 승인에 따라 공개 노드만 가진 시험의 release는 �
 
 전체18행 untimed smoke54보존 페이지를 마쳤고, Spotlight indexing enabled를 유지한30초 정숙 관찰이 첫 시도에 통과했습니다. 거절0회, paired mode 미사용입니다. 창은2026-10-31 14:48:55.403–15:07:15.761 UTC에 끝까지 실행했으며162예열을 버리고540새페이지를 보존했습니다. 시작 status msg_8985bc05fdd4·종료 msg_c208a9ac71df 사이에 검사·빌드·다른 창이 겹치지 않았습니다. CPU는 [원시](raw/ir-6/browser/round-6/cpu.json.gz)에 기록했습니다.
 
-외부 CPU 부하는15:00:01–15:00:56 UTC에 `find`41.7–96.8%·`mediaanalysisd`최대61.7%로 mount-flat-500-validate·mount-nested-d5-f4-validate 페이지와 겹쳤고 flat-2000 burst E0에서도 `mediaanalysisd`49.9%를 기록했으며, 규칙은 CPU 기록만 요구하고 G5의 통과 여유는 최소31ms이므로 이 부하에 의존하는 판정은 없습니다.
+외부 CPU 부하는14:59:25–15:00:48 UTC에 `find`41.7–96.8%·`mediaanalysisd`최대61.7%로 mount-flat-500-validate·mount-nested-d5-f4-validate 페이지와 겹쳤고 flat-2000 burst E0에서도 `mediaanalysisd`49.9%를 기록했으며, 규칙은 CPU 기록만 요구하고 G5의 통과 여유는 최소31ms이므로 이 부하에 의존하는 판정은 없습니다.
 
 <!-- IR6_ROUND-6_TABLES_START -->
 최대 통계: 정숙 창. ET는16ms 문턱으로 검열됩니다. 괄호는 관측 interaction/실제key 수입니다.
@@ -1160,4 +1160,24 @@ arrival 해소 수에는 burst에서 F p95가 배달된32/200·18/200키만, L�
 
 [6c 검증 기록](raw/ir-6/code/round-6c/verification.json), [회귀 red 출처](raw/ir-6/code/round-6c/final-text-red-provenance.json), [범위 재검사](raw/ir-6/code/round-6c/checkRound6c.mjs)에 보존합니다. 제품·규칙 문턱·기존 원시는 바꾸지 않았고 새 측정 창도 열지 않았습니다. 위 source-proof 한계·CPU 부하·비교의 약한 근거를 PR 본문에도 반영하고 최종 head에 다시 고정하여 push합니다. `ir6-lane-e`는 측정 수락까지 보존합니다.
 
+6d에서 중복 초기 `code/round-6c/red.json.gz`와 그 `verification.json`의 파일 항목을 제거했습니다. 최종 시험 텍스트의 `final-text-red.json.gz`와 출처·hash는 그대로 보존했습니다.
+
 판정: 6c 결과 판정 보완과 지정 검증 통과, 측정 수치·기존 두 창 판정 유지.
+
+### 6d — 최종 기록 검토 보완
+
+CPU 시간대를 원시 페이지와 대조하여 위 문장의 시간대만14:59:25–15:00:48 UTC로 고쳤습니다. `mediaanalysisd`61.7%는14:59:37.208의 `mount-flat-500-validate-L-4`에 있으며, 마지막 해당 부하 관측은15:00:47.978에 끝납니다. [CPU 확인 기록](raw/ir-6/code/round-6d/cpu-window-proof.json)을 보존합니다.
+
+같은 round-6 규칙이라도 창 시작이 `2026-10-31T15:19:10Z`(`d942c9fdc` 커밋 시각)보다 늦으면 비어 있지 않은 F source proof와 저장소 최상위에서 읽은 F 커밋의 제품 트리 일치를 요구합니다. 정확히 cutoff인 시각과 그 이전의 기존 창은 빈 proof를 소급 수정하지 않으며, 지원하지 않는 미래 버전은 계속 거절합니다. 검사 함수의 throws 조건을 JSDoc에 적었습니다. 6c 중복 초기 red와 메타데이터 항목의 제거는 위 6c 보완 문장에 명시했고, 최종 텍스트 red·출처는 유지합니다.
+
+| 6d 관문 | 결과 |
+| --- | --- |
+| cutoff 회귀 red | 수정 전8통과·2실패, cutoff 이후 빈 proof·불일치 트리의 잘못된 수락 검출 |
+| benchmark 시험 | 8파일·61통과·실패0, 정확한 cutoff와 이후 올바른 트리도 확인 |
+| benchmark lint / browser typecheck | 경고0·종료0 / 종료0 |
+| IR6 감사·두 창 재현 | 신규 machine path0, 첫 창 G2·G8 FAIL·6차 창 G1–G6·G8 PASS 유지 |
+| 변경 범위 | 제품 소스·browser 원시 차이0, 기존 코드 원시는 승인된 초기 red 제거·메타데이터 수정만, PR 전 존재 파일 삭제0 |
+
+[6d 검증 기록](raw/ir-6/code/round-6d/verification.json)과 [red 출처](raw/ir-6/code/round-6d/red-provenance.json)에 시험 텍스트 hash와 결과를 보존합니다. 새 측정 창을 열지 않았고 `ir6-lane-e`는 측정 수락까지 유지합니다.
+
+판정: 6d 지정 보완과 검증 통과, 제품·측정 수치·기존 두 창의 판정 유지.

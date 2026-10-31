@@ -4,11 +4,15 @@ import { createHash } from 'node:crypto';
 
 import { REGISTERED_ROUND6_RULES } from './registeredRound6Rules';
 
+/** Round-6 starts strictly after this registered cutoff require F source proof. */
+const SOURCE_PROOF_CUTOFF = Date.parse('2026-10-31T15:19:10Z');
+
 /** Validate window registration without rewriting historical measurement metadata.
  * @param inputs - Frozen rule metadata and the F product source identity.
  * @param window - Formal start, quiet observation start, and measured tool commit.
  * @param repositoryRoot - Git top level used for repository-relative path filters.
- * @returns Supported rule version, or undefined for the original window. */
+ * @returns Supported rule version, or undefined for the original window.
+ * @throws {Error} If metadata, registration timing or required source proof is invalid, or a Git command fails. */
 export function checkValidationAfterPaintRegistration(
   inputs: {
     preregisteredCommit: string;
@@ -20,14 +24,16 @@ export function checkValidationAfterPaintRegistration(
   window: { at: string; quietStartedAt: string; toolCommit: string },
   repositoryRoot: string,
 ) {
+  const round6 = inputs.preregisteredCommit === REGISTERED_ROUND6_RULES.commit;
   if (
-    inputs.ruleVersion &&
-    inputs.ruleVersion !== REGISTERED_ROUND6_RULES.version
+    (inputs.ruleVersion &&
+      inputs.ruleVersion !== REGISTERED_ROUND6_RULES.version) ||
+    (round6 && Date.parse(window.at) > SOURCE_PROOF_CUTOFF)
   ) {
     assert.ok(
       typeof inputs.sourceProof?.F === 'string' &&
         inputs.sourceProof.F.trim().length > 0,
-      'F source proof must be non-empty after round-6',
+      'F source proof must be non-empty for this window',
     );
     const sourceTree = execFileSync(
       'git',
@@ -51,7 +57,6 @@ export function checkValidationAfterPaintRegistration(
     ['show', '-s', '--format=%cI', REGISTERED_ROUND6_RULES.commit],
     { cwd: repositoryRoot, encoding: 'utf8' },
   ).trim();
-  const round6 = inputs.preregisteredCommit === REGISTERED_ROUND6_RULES.commit;
   if (round6) {
     assert.equal(
       inputs.ruleVersion,

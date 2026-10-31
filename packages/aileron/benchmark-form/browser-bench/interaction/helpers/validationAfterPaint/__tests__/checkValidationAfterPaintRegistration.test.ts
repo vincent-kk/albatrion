@@ -95,7 +95,7 @@ describe('validation-after-paint rule registration', () => {
         window,
         repositoryRoot,
       ),
-    ).toThrow('F source proof must be non-empty after round-6');
+    ).toThrow('F source proof must be non-empty');
   });
 
   it('rejects a future proof that differs from the F commit tree at the repository top', () => {
@@ -134,5 +134,43 @@ describe('validation-after-paint rule registration', () => {
     expect(
       mocks.exec.mock.calls.some(([, args]) => args[0] === 'ls-tree'),
     ).toBe(true);
+  });
+
+  it('rejects an empty round-6 proof when the window starts after the source-proof cutoff', () => {
+    expect(() =>
+      checkValidationAfterPaintRegistration(
+        inputs(),
+        { ...window, at: '2026-10-31T15:19:10.001Z' },
+        repositoryRoot,
+      ),
+    ).toThrow('F source proof must be non-empty');
+  });
+
+  it('preserves an empty round-6 proof exactly at the source-proof cutoff', () => {
+    expect(
+      checkValidationAfterPaintRegistration(
+        inputs(),
+        { ...window, at: '2026-10-31T15:19:10.000Z' },
+        repositoryRoot,
+      ),
+    ).toBe('round-6');
+  });
+
+  it('requires the matching F commit tree for a later round-6 window', () => {
+    const later = { ...window, at: '2026-10-31T15:19:10.001Z' };
+    expect(
+      checkValidationAfterPaintRegistration(
+        { ...inputs(), sourceProof: { F: sourceTree } },
+        later,
+        repositoryRoot,
+      ),
+    ).toBe('round-6');
+    expect(() =>
+      checkValidationAfterPaintRegistration(
+        { ...inputs(), sourceProof: { F: 'wrong tree' } },
+        later,
+        repositoryRoot,
+      ),
+    ).toThrow('F source proof must match the committed product tree');
   });
 });

@@ -1,0 +1,55 @@
+{
+  "raw": "raw/ir-6/browser/round-6/pages.json.gz",
+  "sha256": "4d6678407de91428e7f31d5421bafc88f9ef67fca0dca2493b2630fadbdf8014",
+  "reportedWindow": "14:59:25–15:00:48 UTC",
+  "selectedObservations": [
+    {
+      "page": "mount-flat-500-validate-E-1.json",
+      "startedAt": "2026-10-31T14:59:25.776Z",
+      "endedAt": "2026-10-31T14:59:27.228Z",
+      "rows": [
+        {
+          "pid": 65922,
+          "name": "mediaanalysisd",
+          "cpuPercent": 35.37498798258779
+        }
+      ]
+    },
+    {
+      "page": "mount-flat-500-validate-L-4.json",
+      "startedAt": "2026-10-31T14:59:37.208Z",
+      "endedAt": "2026-10-31T14:59:38.621Z",
+      "rows": [
+        {
+          "pid": 65922,
+          "name": "mediaanalysisd",
+          "cpuPercent": 61.70196708312685
+        }
+      ]
+    },
+    {
+      "page": "mount-nested-d5-f4-validate-E-7.json",
+      "startedAt": "2026-10-31T15:00:46.556Z",
+      "endedAt": "2026-10-31T15:00:47.978Z",
+      "rows": [
+        {
+          "pid": 65922,
+          "name": "mediaanalysisd",
+          "cpuPercent": 12.2567740080737
+        }
+      ]
+    },
+    {
+      "page": "mount-nested-d5-f4-validate-L-7.json",
+      "startedAt": "2026-10-31T15:00:47.979Z",
+      "endedAt": "2026-10-31T15:00:49.379Z",
+      "rows": [
+        {
+          "pid": 65922,
+          "name": "mediaanalysisd",
+          "cpuPercent": 0
+        }
+      ]
+    }
+  ]
+}
