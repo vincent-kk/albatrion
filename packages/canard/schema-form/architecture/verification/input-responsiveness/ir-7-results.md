@@ -6,13 +6,13 @@
 
 첫 layout commit을 마친 현행 load는 숨김·effect 연결 여부와 관계없이 onChange·onStateChange·onValidate·onDiagnosticsChange·onError를 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. never-prepared load는 변경·상태·진단을 버리고 생성 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer가 false이고 기록을 버립니다. Provider는 추가 호스트 보고를 만들지 않으며 기존 engine sink와 폐기 stamp 규칙을 유지합니다.
 
-구독은 첫 commit 또는 reset에서 한 번 설치해 load 교체까지 유지합니다. cleanup은 검증 캐시 참조만 해제합니다. owed·reconnect flush를 제거했고, 첫 commit 전에 교체된 옛 load에는 prepared만 설정합니다. reset은 채택·mount 전에 이전 load를 은퇴시키고, 마지막 build 기록 flush를 handler마다 격리해 소비자 예외 뒤에도 기록과 binding 교체를 완료합니다. recordOrigins·warning scope·reported 가드·pendingLoad fallback은 유지합니다.
+구독은 첫 commit 또는 reset에서 한 번 설치해 load 교체까지 유지합니다. cleanup은 검증 캐시 참조만 해제합니다. owed·reconnect flush를 제거했고, 첫 commit 전에 교체된 옛 load에는 prepared만 설정합니다. reset은 batch try/catch 뒤에 이전 load를 은퇴시키고, 마지막 build 기록 flush를 handler마다 격리해 소비자 예외 뒤에도 기록과 binding 교체를 완료합니다. recordOrigins·warning scope·reported 가드·pendingLoad fallback은 유지합니다.
 
 ## L1–L4 수용 한계
 
 - L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
 - L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
-- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다.
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다. 개발 StrictMode replay도 React가 hide/show로 모델링하므로 replay의 비멱등 layout 쓰기는 전달되며 production 렌더는 영향을 받지 않습니다.
 - L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
 
 ## 시험과 red/green 증거
@@ -77,3 +77,14 @@ prepared/retired 조건은 상수 시간 flag 검사입니다. ready와 mountVal
 ## 정리
 
 코디네이터 승인 조건의 scratch `ir-7-guard-mutation`은 증거 커밋 직후 bare Orca 명령으로 제거하고, Orca가 남긴 임시 branch도 삭제했습니다. 새 scratch worktree·branch는 남기지 않았습니다.
+
+
+### IR-7 round b — 독립 검토 수정 (2026-11-01)
+
+reset의 옛 load 은퇴는 batch try/catch 뒤·최종 build 기록 flush 앞으로 옮깁니다. adoption 전 컴파일 실패를 포함한 reset 사슬의 옛 runtime 기록은 사슬 끝에 소비자와 기존 호스트 sink로 먼저 전달하고, batch가 던져도 이후 은퇴합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 reported 가드로 한 번 capture·호스트 보고하며 새 reporter.root를 유지합니다. 첫 commit 구독은 이전 구독을 먼저 해제해 reset이 이전 load를 반환한 경우에도 한 구독만 남깁니다.
+
+L3에는 개발 StrictMode replay를 포함합니다: including the development StrictMode replay, which React models as a hide and show; production renders are unaffected. 비멱등 자식 mount layout 쓰기는 replay의 prepared load에서 onChange로 한 번 전달합니다. 최초 준비 전 쓰기는 계속 버립니다.
+
+T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도달하지 않는 경로입니다. 소비자 무배달만 검증하며 reporter.root 유지·복원을 검증했다는 주장은 제거합니다. T4 validator 교체 뒤 구독 단언은 기존 구독 변형에서도 red를 확인합니다. T7b는 validator start promise를 기다리고 hidden mount 시험은 숨기기 전에 확보한 node로 settle합니다. 새 회귀는 visible/hidden adoption 실패, never-prepared 생성 실패, 양쪽 major StrictMode replay이며 최종 커밋 시험의 red·mutation·green 해시와 모든 순차 관문은 round b 결과에 보존합니다.
+
+구현·시험·관문 결과는 완료 후 이 round b 절에 확정합니다.
