@@ -146,12 +146,14 @@ PR: PR-4 시험(VALIDATE-043).
 마지막 실제 자동 실행 시작부터100ms가 지난 첫 프레임은 상한 실행하며 모든 실행 뒤에는 watch로 돌아가 다음 quiet 프레임의 중복 실행을 막습니다(VALIDATE-052).
 watch→carry 첫 프레임도 상한을 검사하고 run이 실제 시작한 경우에만 cap clock을 옮기며 디바운스는 FieldInput이 소유합니다(VALIDATE-052).
 판정은 보통 값보다1~2프레임 늦게 도착하며 이미 보이는 오류는 다음 판정까지 유지하고 새 표시는 pending 종료까지 보류하되 숨김은 즉시입니다(VALIDATE-052).
-동기 연속 입력은 다음 cap에서 표시 보류를 풀며 stale 비동기 판정은 후행까지 기다릴 수 있고 새 요청 없는 commit-only 폐기는 이전 판정을 드러낼 수 있습니다(VALIDATE-052).
-표시 기억은 노드별 직전 layout commit으로만 갱신하며 useSyncExternalStore 서버 snapshot은 false이고 raw 오류 목록과 공개 사건·revision은 그대로입니다(VALIDATE-052).
+동기 연속 입력은 다음 cap에서 표시 보류를 풀고 stale 비동기 판정은 후행까지 기다릴 수 있으며 현재 stamp의 commit-only 폐기는 targets를 보존하고 cadence에서 최신 commit을 재판정합니다(VALIDATE-052). OnChange의 명시적 루트 판정도 같은 재요청 통로를 쓰되 반환은 호출 시점 snapshot입니다(VALIDATE-052).
+표시는 엔진이 쓰기 전에 보유한 state·enabled와 불투명한 Form 정책 box의 기준 및 live 조건으로 계산하며 React 기억·layout effect는 없습니다(VALIDATE-052). pending은 useSyncExternalStore 반환값이고 서버 snapshot은 false이며 raw 오류 목록과 공개 사건·revision은 그대로입니다(VALIDATE-052).
 Always의 최초 OnChange 검증은 자식 layout 쓰기가 먼저여도 inline root.validate로 실행하여 동기 검증기는 첫 프레임 전에 표시하고 다른 모드는 일회성 화면 뒤 슬롯을 유지합니다(VALIDATE-052).
 마운트·명시적 루트 검증은 pending을 정착시키지만 하위 트리 검증은 전체 폼의 대기·진행 검증을 보존하며 0 스탬프는 마운트 의무를 충족하지 않습니다(VALIDATE-052).
 컴파일 실패는 마운트가 먼저 판정하면 rejected, 쓰기가 deferred 마운트 의무를 먼저 충족하면 sink로 한 번 보고하고 helper는 중복 보고하지 않습니다(VALIDATE-052).
-숨김 중 교체된 load의 미전달 기록은 원래 root와 함께 새 load 기록 앞에 보존하고 복원 뒤 각 handler 실패를 격리하여 owed 재예약까지 계속합니다(VALIDATE-052).
+숨김 중 교체된 load의 미전달 기록은 원래 root·load별 경고 중복 범위와 함께 보존하고 reset 사슬 끝에서 옛 기록 뒤 새 reset 기록을 전달하며 handler 실패를 기록별로 격리합니다(VALIDATE-052).
 프레임 요청·취소 API 부재나 숨김 문서는 매크로태스크를 사용하고 그 밖에는 프레임 뒤 매크로태스크와100ms 타이머가 단일 실행을 경주하며 환경은 호출마다 읽습니다(VALIDATE-052).
 write-pending 대기는 두 프레임+매크로태스크 뒤 pending=false까지 유한 반복하며 비동기 mount 판정은 그 판정의 명시적 promise를 기다립니다(VALIDATE-052).
 if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).
+
+엔진이 보지 못하는 외부 정책·hook disabled 변경은 즉시 표시하고 transition render 지연은 이전 판정을 드러낼 수 있으며 commit-only 연속은 멎을 때까지 hold하고 paint 뒤 drop 전 약1~2프레임의 쓰기도 새 표시를 보류할 수 있습니다(VALIDATE-052).

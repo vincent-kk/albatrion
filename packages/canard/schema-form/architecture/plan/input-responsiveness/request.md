@@ -155,3 +155,20 @@ D1 구현 여부·virtualization 기본 off·IR-5 수정의 최종 수락은 **�
 27. (after the coordinator's detailed explanation, whose commit-only example used a first blur setting touched, and whose item 5 kept the child-errors hook counting hidden children as a pre-existing behaviour) "2번에서 touched 는 한번 만지면 true 고 따로 clear 를 하지 않으면 사라지지 않는데? 이건 한번이라도 만졌느냐를 보는 플래그지, 포커스 상태를 의미하는건 아닌데. 뭔가 잘못 구현된거 아닌가? 확인해봐 
 5번에서, 숨겨진 자식(hidden)이면 당연히 포함되어야 하고, 비활성 자식(inactive)이면 값 자체가 빠져서 오류가 없을거라 생각하는데? 어떤 상태를 말하는거지?"
    Outcome: touched is implemented as the owner describes (set once after the first blur, a repeated set is a no-op, cleared only by clearState or reset); the coordinator's example was wrong, because interaction-state writes do not advance the commit number at all; the real trigger is a context content change. Hidden children counting in the hook is the intended contract; codex round 4's finding is not a defect.
+
+28. (after the round-5 dispatch; the coordinator then traced the engine itself and wrote engine-mental-model.md) "작업 지시를 모두 한 다음에, 모든 구현과 계획, 원장에 대해서 재검토를 진행하라.
+touched 예시 오류나 동작을 잘못 파악하는 것,
+설계와 원칙, 핵심 원리, 멘탈모델 등 전반에 걸쳐서 네가 스스로의 이해를 증진하라.
+지금처럼 일부만 파악하거나 스팩을 못따라가거나, 스팩을 구현이 못따라가는건 큰 문제이다. 
+네가 먼저 다 파악을 해둬야 구현자나 설계자, 검증자 질의에 대해 흔들리지 않는다. 
+
+/seiri:trace-structure"
+   Action: the coordinator traced the write, settlement, interaction-state, validation, scheduling, React display and record paths at 07c4d5d93 and recorded them with citations; R-a was widened to the discarded mount verdict (a gap already present at facd72a71).
+29. (after the coordinator noted that the FieldNodeState.Dirty JSDoc says "Value diverged from its initial/default state" while only user input sets it) "dirty는 수정 발생을 했는가 라는 의미야 값의 동일성을 표현하는 것은 아니야. 주석이 잘못된거같네. 근데 이 dirty가 셋팅되는 조건은 좀 궁금하네. 직접 수정 뿐만 아니라 setValue나 injectTo 같은 파생값 변경도 dirty가 셋팅되나? 그래야될거같긴 한데... 초기값을 바꾼적이 없는 경우에만 false인 거고... 
+
+초기값과 다른가를 평가하는 상태는 changed 나 differenced 같은 상태가 신설되어야 할거같네. 필요할까? 어때? 상태이름은 적절한걸로 바꿔도 된다"
+   Coordinator's answer recorded with it: dirty is set only by the user-input paths (FieldInputSlot handleChange); setValue, array verbs, fill, derived, injectTo, unsetValue, exit clearing and trim never set it (WRITE-083; VALUE-022 owner C6); 0.16.1 behaved the same; recommended keeping that contract, fixing the JSDoc, and adding a value-versus-baseline property as a computed read in a separate stage.
+30. (answer to: keep dirty as user-input only, fix the JSDoc in round 5, and design the baseline-difference property in a separate stage after #508?) "그래 그렇게 하자. 지금 단계와 분리해서 작업하도록 예약해줘. 또한 혹시 상태값을 다른 이름으로 바꾸는게 필요할지도 검토해봐. 그냥 관용적으로 썼던거라 지금처럼 완전 변환을 할때 바꾸지 아니면 못바꿀거라. 
+
+그리고 이제 충분히 전체 설계를 파악한거지?"
+   Decisions derived from it: dirty keeps its contract; its JSDoc (and Touched's) is corrected in IR-6 round 5; a separate stage after #508 designs the baseline-difference property and reviews the state names, and must land before the next release (the version and the release stay the owner's).

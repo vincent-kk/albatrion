@@ -202,7 +202,7 @@ R7–R11은 프레임 미호출 대기·Node setImmediate·슬롯 주석·한국
 
 소유자 원문19가 상한을100ms로 바꾸었습니다. 디바운스는 FieldInput의 책임이며 엔진은100ms 지각 문턱 아래의 실시간감을 지킵니다. cap 뒤에도 watch로 돌아가고 watch→carry 첫 프레임도 cap을 검사합니다. run의 boolean이 true일 때만 마지막 실제 시작 시각을 갱신합니다. 주기 구현·보조는 utils/cadence, 형은 types, 일회성 슬롯은 utils/slot에 놓고 callback wiring과 순수 결정 함수를 통해 import 순환을 없앴습니다.
 
-쓰기 pending은 None·unavailable 가드 뒤 시작합니다. 현재 stamp의 판정이 라우팅·동일 목록·null·commit-only 폐기·실패로 끝나면 정착하고, 명시적 루트 validate도 정착하되 하위 트리는 정착하지 않습니다. unavailable·폐기는 무조건 정착하며 새 요청 없는 stamp 무효화(비OnChange reset 포함)도 정착합니다. true→false 알림은 런타임 listener set을 통해 배달 직전에 한 번만 전달하고 공개 사건·revision·src/index는 바꾸지 않습니다.
+쓰기 pending은 None·unavailable 가드 뒤 시작합니다. 현재 stamp의 판정이 라우팅·동일 목록·null·실패로 끝나면 정착하고, commit-only 폐기는 최신 commit을 cadence에서 다시 요청하며 hold를 유지합니다. 명시적 루트 validate도 현재 판정은 정착하되 OnChange commit-only 폐기는 pending 여부와 관계없이 재요청하고 하위 트리는 정착하지 않습니다. unavailable·폐기는 무조건 정착하며 새 요청 없는 stamp 무효화(비OnChange reset 포함)도 정착합니다. true→false 알림은 런타임 listener set을 통해 배달 직전에 한 번만 전달하고 공개 사건·revision·src/index는 바꾸지 않습니다.
 
 FieldProxy·FieldInputSlot·useChildFieldErrors는 순수 표시 계산과 표시당 hook을 공유합니다. 엔진이 OnChange 상태·enabled 변화와 handle.showError 정책의 최초 기준을 기록하고 pending이면 현재와 기준이 모두 적격인 entry만 보여 줍니다. React WeakMap·commit 기억·visibility layout effect는 없습니다. child-errors는 facd72a71처럼 hidden 자식을 포함하고 controls를 읽지 않습니다. 공개 pending snapshot은 서버 false인 useSyncExternalStore 반환만 사용합니다.
 
@@ -210,7 +210,7 @@ Always는 state 없는 checkShowError()의 값을 앞선 layout effect에서 ref
 
 ### G8 — U2 마운트 구조 비용의 측정 조건
 
-코디네이터 msg_cc8e08d106e0의 승인으로 기본 표시의 mount-array-1000을 None·OnChange 모드 한 쌍으로 추가합니다. E·F 레인을 비교하고 L도 보고합니다. None 모드의 first-painted·eager-painted 중앙값 비율 F/E가 각각1.02 이하여야 하며 OnChange의 F는 각각 E 이하여야 G8을 통과합니다. 필드당 renderer 표시 기억 commit·input 표시 기억 commit의 두 추가 layout effect 비용을 분리하는 조건입니다. 일반 입력 쓰기는 기존 layout effect0회를 유지합니다. G8 실패 시 병합하지 않고 코디네이터가 기존 effect 통합과 엔진 대안 중 결정합니다. 정식 창 전 사전 규칙에 이 행 쌍·정의·문턱을 커밋하며 현재 정식 표본은0입니다.
+코디네이터 msg_cc8e08d106e0의 승인으로 기본 표시의 mount-array-1000을 None·OnChange 모드 한 쌍으로 추가합니다. E·F 레인을 비교하고 L도 보고합니다. None 모드의 first-painted·eager-painted 중앙값 비율 F/E가 각각1.02 이하여야 하며 OnChange의 F는 각각 E 이하여야 G8을 통과합니다. Y3로 표시 layout effect를 제거한 뒤에도 배열 마운트 비용을 지키는 guard 조건입니다. 일반 입력 쓰기는 기존 layout effect0회를 유지합니다. G8 실패 시 병합하지 않고 코디네이터에게 원인과 대안을 상신합니다. 정식 창 전 사전 규칙에 이 행 쌍·정의·문턱을 커밋하며 현재 정식 표본은0입니다.
 
 ### Amendment 6 — 배달 전 pending과 표시·보고 수명
 
