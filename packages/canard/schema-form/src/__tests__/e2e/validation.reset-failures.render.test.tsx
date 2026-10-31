@@ -62,7 +62,7 @@ it.each([false, true])(
         code: FormErrorCode.ValidatorCompileFailed,
       }),
     );
-    expect(sink.errors()).toContain(thrown);
+    expect(sink.errors()).toEqual([]);
   },
 );
 
