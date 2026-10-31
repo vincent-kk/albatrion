@@ -235,6 +235,8 @@
 
 ## API Contracts
 
+- 루트 트리 폐기는 런타임의 지연 validationCadence를 cancel하여 프레임·타이머·매크로태스크를 중단하고 참조를 비운다. 기존 스탬프 증가와 대기 대상 제거는 유지한다(IR-6 amendment3).
+
 - 의존 색인의 정적 owner/watch/node·split host 문법은 구성 때 보유하고 동적 질의는 root.runtime 소유의 bounded 문법 캐시를 사용합니다. presence 질의도 runtime 소유자를 전달합니다. 문법 배열은 현재 owner·노드·슬롯 원본 조회 결과를 보유하지 않습니다.
 - watch 멤버십은 살아 있는 경로와 준비된 세그먼트를 함께 보유하여 제거 때 재해석하지 않습니다. 유효 watch 목록은 현재 또는 요청된 snapshot 스키마에서 매번 선택하며 목록 자체를 메모하지 않습니다. state 의존 문법은 실제 호스트 identity·현재 hostPath·authored dependency 키로만 재사용하고 재키 때 다시 묶습니다. 현재 emit/context와 이전 snapshot 값은 매번 읽고 어느 계획에도 보유하지 않습니다.
 - 슬롯 쓰기와 조회는 같은 runtime/address의 문법 배열만 재사용하며 현재 source·overlay·종류·lineage를 매번 풉니다. 슬롯 identity만으로 주소를 고정하지 않습니다. dirty 자식 색인은 정본 encoded 이름을 그대로 보유하여 디코드·재인코드 왕복을 하지 않고 raw 연산자 마디는 거부합니다.
