@@ -104,3 +104,23 @@ first-painted는 root.render 전에 container에 childList/subtree MutationObser
 | G8 | mount-array-1000 None의 first/eager-painted중앙값 F/E 각각≤1.02, OnChange는 first/eager 각각 F≤E. 표시 layout effect 제거 뒤에도 유지하는 guard이며 일반 입력 layout effect0은 코드 관문으로 유지. |
 
 모든 typing행은 L/E/F의 processing p95·duration p95·arrival p95 및 F/E·F/L을 병기하고0.16.1 대비 손실이 사라졌는지 행마다 판정합니다. first-key·None·if mount·첫1초 최장frame은 보고 전용입니다. G1–G6·G8 모두 충족하면 코드 관문 뒤 병합 가능하나 루트 병합은 소유자 몫입니다. 하나라도 실패하면 worker_done이나 완료를 보내지 않고 숫자·원인·선택지를 코디네이터 question으로 올립니다. G1 재불확정도 question입니다.
+
+### G2 판정 출처 변경 — 소유자 결정(2026-10-31), 다음 정식 창부터
+
+소유자 원문: "1 - 전체처리시간으로 하지"
+
+첫 정식 창의 G2 FAIL은 그대로 둡니다. 다음 정식 창부터 G2는 아래 규칙으로 판정하며, 위 기계 판정 표의 G2 행은 첫 창의 규칙으로 남습니다. G1·G3의 출처와 다른 관문은 바뀌지 않습니다.
+
+- 판정 통계: 모든 typing행에서 각 레인의 모든 key handler 처리 시간(capture→bubble 벽시계)을 씁니다. pooled handler p95는 모든 페이지(재표집 시 선택된 페이지)의 key handler 값을 합친 nearest-rank p95입니다.
+- 문턱: pooled handler p95 F/E bootstrap 단측95% 상한≤1.10. bootstrap은 기존 정의(고정seed20261031, 10,000회 페이지 index 복원추출, E와 F의 같은 page index 공동 재표집, 상한은 10,000개 비의95th percentile nearest-rank)를 그대로 씁니다.
+- 결측: 레인·행마다 handler 값이 있는 key 수를 적습니다. 값이 하나도 없거나 분모가0이면 판정 불가이며 pass가 아닙니다.
+- 병기: Event Timing pooled processing p95 F/E와 그 bootstrap 상한, 레인별 관측 interaction 수/200을 판정 옆에 참고로 적습니다.
+- 이유: durationThreshold16ms Event Timing은 화면 갱신까지16ms 이상 걸린 key만 남겨 관측 집합이 검열됩니다. 첫 창의 flat500 burst에서 F는37/200만 관측돼 첫 key가 pooled p95를 정했고, 한 페이지 쌍의 반복 재표집이 상한을2.556으로 만들었습니다. 같은 원시의 모든200 key handler로 계산한 상한은0.857입니다(ir-6-results.md의 G2/G8 원인 진단).
+
+### G8 허용 범위 — 소유자 결정(2026-10-31), 다음 정식 창부터
+
+소유자 원문: "응 반프레임 이내면 된다. 3% 이내로 오면 좋긴 한데 현실적으로 어렵다는거지?"
+
+첫 정식 창의 G8 FAIL은 그대로 둡니다. 다음 정식 창부터 mount-array-1000의 eager-painted 판정은 None과 OnChange 모두 F 중앙값≤E 중앙값+8.35ms(반 프레임, 16.7ms의 절반)입니다. first-painted 판정(None F/E≤1.02, OnChange F≤E)은 그대로입니다. eager-painted F/E 비와 3% 이내 여부를 판정 옆에 참고로 적습니다.
+
+- 이유: 소유자는 표시 판단을 엔진에 두는 데 드는 작은 마운트 비용을 받아들이기로 했습니다. 진단에서 hold를 완전히 없앤 V1도 E 대비 eager가 +1.65ms(None)·+0.45ms(OnChange)였고, 같은 레인의 세션 간 중앙값 차이가 2~4ms여서 1.00·1.02 비율선은 개선 정도와 무관하게 표집에 좌우됩니다(ir-6-results.md의 G2/G8 원인 진단).
