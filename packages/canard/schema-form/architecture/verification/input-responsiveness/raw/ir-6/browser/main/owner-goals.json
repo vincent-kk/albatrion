@@ -1,0 +1,50 @@
+[
+  {
+    "id": "type-flat-500-validate-nonburst",
+    "processing": true,
+    "duration": true,
+    "arrival": false
+  },
+  {
+    "id": "type-flat-500-validate-burst",
+    "processing": false,
+    "duration": true,
+    "arrival": false
+  },
+  {
+    "id": "type-array-1000-validate-nonburst",
+    "processing": true,
+    "duration": true,
+    "arrival": true
+  },
+  {
+    "id": "type-array-1000-validate-burst",
+    "processing": true,
+    "duration": true,
+    "arrival": true
+  },
+  {
+    "id": "type-nested-d5-f4-validate-nonburst",
+    "processing": true,
+    "duration": true,
+    "arrival": false
+  },
+  {
+    "id": "type-nested-d5-f4-validate-burst",
+    "processing": false,
+    "duration": true,
+    "arrival": false
+  },
+  {
+    "id": "type-flat-2000-validate-nonburst",
+    "processing": true,
+    "duration": true,
+    "arrival": true
+  },
+  {
+    "id": "type-flat-2000-validate-burst",
+    "processing": false,
+    "duration": true,
+    "arrival": false
+  }
+]

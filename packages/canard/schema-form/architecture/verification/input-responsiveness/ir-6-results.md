@@ -387,3 +387,165 @@ msg_ad3789bbda7a는5c 제품 동작을 수락하고 아래 다섯 항목 뒤 측
 [집중 관문](raw/ir-6/code/round-5d/focused-gates.json): render3통과, react18은 새결정적·mount/hydration·legacy4통과, importModel2통과, lint경고0·typecheck·build exit0입니다. FCA validate snapshot3a78c7676bab5f19d32b32e2f04fa241096f0cd5f198e549efc921b3d0b47f3b의 기존202finding·177diagnostic·failed12/skipped1·indeterminate를 유지하고 신규0입니다. 원장 ref1416문제0/verbatim327불일치0/sup3584불일치0·unparsed0/doccoverage기존66·무태그0입니다. 전체5c 관문을 대체 통과로 다시 주장하지 않고 승인된9d 집중 관문과 같은 runtime bundle 해시로 연결합니다.
 
 측정 사전 규칙은 G1–G6과 G8이며 G7은 없다는 코디네이터 정정(msg_84f0444c1629)을 반영합니다. 선행 조건을 마쳤으므로 PhaseE 준비·사전 규칙 커밋·untimed smoke 뒤 첫 창을 시작합니다. 현재 timed 표본0입니다.
+
+
+## Phase E — 정숙 browser 측정과 관문 실패
+
+사전 규칙 커밋cfd4a9e2a 뒤 최종 측정 코드f113566a353d567e1f807daac96f212d8e77c079를 고정했습니다.9d 뒤 제품 소스·버전·공개 진입점은 바뀌지 않았습니다. L 공개0.16.1, E facd72a71c44a798f5484827509073a27fb678a3, F의 제품 SHA-256은 각각5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46,26266aad8a72b5876ace3b1c47e9c501d83d7ac2b13c7d32bea4e1c40e16350d,4c3d76b857d85df64b1ceb5f900c13aad6a5acaefa09a5092211c85240ee379f입니다. F는 수락된5c/5d runtime bundle과 같은 바이트입니다. 제품 소스를 바꾸면 다시 측정합니다.
+
+환경은 Apple M1 Max·논리CPU10·darwin/arm64 27.0.0·RAM64.0GiB입니다. production React19.2.6, Chromium145.0.7632.6, Playwright1.58.0, AJV8.17.1, Node24.20.0, esbuild0.25.9, viewport900×700입니다. React18은 browser lane에서 측정하지 않았습니다. Spotlight indexing을 유지했습니다. E scratch 빌드는 기존 의존성의 패키지별 AJV8 연결을 복원한 뒤 성공했습니다. 설치·제품 수정은 없었습니다.
+
+실제 CLI 전체18행 untimed smoke(레인별1예열·1보존)를 마친 뒤10:58:24.138–10:58:54.234 UTC 정숙 관찰을 수행했습니다. 외부 PID30초 평균 최대6.413%·heavy0으로 첫 시도에 승인됐습니다. 거절0회이므로 paired mode를 쓰지 않았습니다.10:58:54.471–11:17:19.434 UTC의 하나의 창을 중단하지 않고 마쳤습니다.18행×3레인×3예열=162페이지를 버리고18행×3레인×10=540새페이지를 보존했습니다. 표본별 정순/역순 레인 교대, 페이지별 외부 CPU와10초 간격 CPU 원시를 유지했습니다. 창 중 build·시험·lint·typecheck·다른 창은 실행하지 않았습니다. 실제 시작 msg_a30ae60446ef와 마지막 종료 msg_68dfe70ac233을 Orca status로 알렸습니다.
+
+첫 준비는 필요한 AJV8 plugin 배포 빌드가 없어 중단됐고, 빌드 뒤 새 준비 폴더를 사용했습니다. 예비 untimed smoke의 first-key 준비용 End 키가 측정 창에 들어가는 것을 찾아 DOM selection으로 바꾼 뒤 새 번들을 고정하고 전체 smoke를 다시 통과했습니다. 예비 실행은 정식 표본으로 쓰지 않았습니다. [완전 원시](raw/ir-6/browser/main/archive-manifest.json)는 모든540페이지·smoke54페이지·complete·inputs·formal-start·승인과CPU의 압축 파일 해시를 고정합니다. [소스 연속성](raw/ir-6/browser/main/source-continuity.json)은 측정 뒤 표 포맷·archive 감사만 보완했으며 수치 집계·문턱·제품 및 나머지 측정 소스 해시가 그대로임을 확인합니다.
+
+### 기계 계산 결과
+
+아래 표는 `yarn workspace @aileron/benchmark-form check:browser-results --stage=ir-6`가 원시에서 재생성합니다. 명령의 exit0은 원시·표 재현 성공이며 성능 관문 통과를 뜻하지 않습니다. 숫자 표시는 소수3자리이고 판정은 반올림 전 값을 씁니다. 각 ET 숫자의 관측 interaction/실제key와 대체 출처를 병기합니다.16ms 문턱 아래 키는 검열되며 null을0으로 읽지 않습니다. ET 풀이 비는 bootstrap만 handler p95로 대체하며 모든8행에서 대체0회·undefined ratio0회였습니다.
+
+<!-- IR6_MAIN_TABLES_START -->
+최대 통계: 정숙 창. ET는16ms 문턱으로 검열됩니다. 괄호는 관측 interaction/실제key 수입니다.
+
+| 행 | 레인 | processing p95 ms (출처; 관측/key) | duration p95 ms (출처; 관측/key) | arrival p95 ms (배달/key) | 미배달 | first/eager 중앙값 ms (페이지 수) | 최장frame ms / ≥50ms 합 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| type-flat-500-validate-nonburst | L | 8.600 (event; 20/200) | 16.000 (event; 20/200) | 9.900 (200/200) | 0 | 67.800 / 100.600 (10) | 0.000 / 0 |
+| type-flat-500-validate-nonburst | E | 7.000 (event; 45/200) | 16.000 (event; 45/200) | 3.300 (200/200) | 0 | 73.950 / 89.350 (10) | 0.000 / 0 |
+| type-flat-500-validate-nonburst | F | 5.500 (event; 21/200) | 16.000 (event; 21/200) | 10.300 (200/200) | 0 | 37.800 / 92.500 (10) | 0.000 / 0 |
+| type-flat-500-validate-burst | L | 2.700 (event; 58/200) | 16.000 (event; 58/200) | 8.200 (20/200) | 180 | 66.950 / 99.950 (10) | 0.000 / 0 |
+| type-flat-500-validate-burst | E | 5.200 (event; 81/200) | 16.000 (event; 81/200) | 1.200 (200/200) | 0 | 73.950 / 88.500 (10) | 0.000 / 0 |
+| type-flat-500-validate-burst | F | 4.700 (event; 37/200) | 16.000 (event; 37/200) | 11.500 (10/200) | 190 | 38.800 / 91.100 (10) | 0.000 / 0 |
+| type-array-1000-validate-nonburst | L | 11.200 (event; 200/200) | 32.000 (event; 200/200) | 25.600 (200/200) | 0 | 141.300 / 259.600 (10) | 0.000 / 0 |
+| type-array-1000-validate-nonburst | E | 13.900 (event; 200/200) | 32.000 (event; 200/200) | 4.300 (200/200) | 0 | 161.650 / 222.250 (10) | 0.000 / 0 |
+| type-array-1000-validate-nonburst | F | 5.500 (event; 188/200) | 24.000 (event; 188/200) | 22.400 (200/200) | 0 | 138.800 / 232.100 (10) | 0.000 / 0 |
+| type-array-1000-validate-burst | L | 7.800 (event; 147/200) | 40.000 (event; 147/200) | 15.800 (62/200) | 138 | 141.500 / 260.150 (10) | 0.000 / 0 |
+| type-array-1000-validate-burst | E | 9.200 (event; 140/200) | 40.000 (event; 140/200) | 1.400 (200/200) | 0 | 159.700 / 220.550 (10) | 0.000 / 0 |
+| type-array-1000-validate-burst | F | 5.000 (event; 172/200) | 32.000 (event; 172/200) | 13.400 (26/200) | 174 | 139.250 / 229.850 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-nonburst | L | 8.300 (event; 137/200) | 16.000 (event; 137/200) | 13.900 (200/200) | 0 | 138.000 / 196.650 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-nonburst | E | 13.300 (event; 141/200) | 24.000 (event; 141/200) | 5.100 (200/200) | 0 | 141.500 / 165.700 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-nonburst | F | 6.500 (event; 131/200) | 16.000 (event; 131/200) | 14.700 (200/200) | 0 | 70.850 / 168.850 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-burst | L | 2.200 (event; 80/200) | 24.000 (event; 80/200) | 13.400 (24/200) | 176 | 138.850 / 196.550 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-burst | E | 13.000 (event; 91/200) | 24.000 (event; 91/200) | 3.600 (200/200) | 0 | 140.000 / 164.650 (10) | 0.000 / 0 |
+| type-nested-d5-f4-validate-burst | F | 5.200 (event; 127/200) | 24.000 (event; 127/200) | 16.800 (16/200) | 184 | 68.350 / 166.700 (10) | 0.000 / 0 |
+| type-flat-2000-validate-nonburst | L | 11.700 (event; 178/200) | 24.000 (event; 178/200) | 18.800 (200/200) | 0 | 186.300 / 267.350 (10) | 0.000 / 0 |
+| type-flat-2000-validate-nonburst | E | 15.200 (event; 176/200) | 32.000 (event; 176/200) | 6.600 (200/200) | 0 | 186.650 / 229.250 (10) | 0.000 / 0 |
+| type-flat-2000-validate-nonburst | F | 9.400 (event; 175/200) | 24.000 (event; 175/200) | 17.300 (200/200) | 0 | 91.350 / 233.950 (10) | 0.000 / 0 |
+| type-flat-2000-validate-burst | L | 5.700 (event; 110/200) | 24.000 (event; 110/200) | 11.400 (72/200) | 128 | 186.050 / 267.250 (10) | 0.000 / 0 |
+| type-flat-2000-validate-burst | E | 6.300 (event; 112/200) | 24.000 (event; 112/200) | 2.500 (200/200) | 0 | 186.900 / 229.650 (10) | 0.000 / 0 |
+| type-flat-2000-validate-burst | F | 6.000 (event; 172/200) | 24.000 (event; 172/200) | 11.500 (26/200) | 174 | 94.150 / 233.050 (10) | 0.000 / 0 |
+| mount-flat-500-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 66.850 / 96.950 (10) | 84.000 / 10 |
+| mount-flat-500-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 68.500 / 83.750 (10) | 81.800 / 10 |
+| mount-flat-500-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 38.300 / 86.600 (10) | 0.000 / 0 |
+| mount-nested-d5-f4-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 139.350 / 197.600 (10) | 158.300 / 10 |
+| mount-nested-d5-f4-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 139.050 / 163.450 (10) | 157.300 / 10 |
+| mount-nested-d5-f4-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 68.550 / 167.250 (10) | 87.700 / 20 |
+| mount-if-flat-500-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 67.000 / 94.200 (10) | 79.800 / 10 |
+| mount-if-flat-500-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 104.600 / 119.350 (10) | 114.900 / 10 |
+| mount-if-flat-500-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 104.450 / 120.150 (10) | 120.800 / 10 |
+| first-key-flat-500-validate | L | 1.700 (handler; 0/10) | 1.700 (handler; 0/10) | 6.400 (10/10) | 0 | 66.500 / 104.100 (10) | 82.200 / 10 |
+| first-key-flat-500-validate | E | 4.300 (event; 2/10) | 16.000 (event; 2/10) | 3.600 (10/10) | 0 | 73.400 / 93.350 (10) | 85.400 / 10 |
+| first-key-flat-500-validate | F | 3.500 (handler; 0/10) | 3.500 (handler; 0/10) | 6.400 (10/10) | 0 | 38.000 / 96.200 (10) | 0.000 / 0 |
+| first-key-flat-2000-validate | L | 5.300 (event; 2/10) | 16.000 (event; 2/10) | 9.700 (10/10) | 0 | 186.100 / 272.900 (10) | 212.800 / 20 |
+| first-key-flat-2000-validate | E | 6.400 (event; 3/10) | 16.000 (event; 3/10) | 4.300 (10/10) | 0 | 185.700 / 232.700 (10) | 216.100 / 10 |
+| first-key-flat-2000-validate | F | 6.000 (event; 1/10) | 16.000 (event; 1/10) | 10.900 (10/10) | 0 | 90.850 / 234.000 (10) | 128.300 / 20 |
+| mount-flat-500-none | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 29.300 / 54.000 (10) | 0.000 / 0 |
+| mount-flat-500-none | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 36.700 / 51.900 (10) | 51.600 / 1 |
+| mount-flat-500-none | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 37.650 / 53.500 (10) | 0.000 / 0 |
+| mount-nested-d5-f4-none | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 53.000 / 98.300 (10) | 72.100 / 10 |
+| mount-nested-d5-f4-none | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 67.200 / 89.350 (10) | 84.200 / 10 |
+| mount-nested-d5-f4-none | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 68.100 / 92.250 (10) | 83.900 / 10 |
+| stream-flat-2000-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 187.600 / 269.200 (10) | 0.000 / 0 |
+| stream-flat-2000-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 191.500 / 234.250 (10) | 0.000 / 0 |
+| stream-flat-2000-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 95.450 / 236.550 (10) | 0.000 / 0 |
+| mount-array-1000-none | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 124.750 / 250.300 (10) | 170.500 / 20 |
+| mount-array-1000-none | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 143.900 / 199.800 (10) | 179.200 / 10 |
+| mount-array-1000-none | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 138.750 / 207.900 (10) | 185.500 / 10 |
+| mount-array-1000-validate | L | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 143.050 / 257.200 (10) | 182.800 / 20 |
+| mount-array-1000-validate | E | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 155.800 / 211.250 (10) | 193.100 / 10 |
+| mount-array-1000-validate | F | 관측 없음 (handler; 0/0) | 관측 없음 (handler; 0/0) | 관측 없음 (0/0) | 0 | 139.300 / 223.500 (10) | 182.900 / 10 |
+
+| typing 행 | processing F/E · F/L | duration F/E · F/L | arrival F/E · F/L | bootstrap F/E 단측95%상한 (E·F 관측/key) | 0.16.1 손실 해소(processing/duration/arrival) |
+| --- | --- | --- | --- | --- | --- |
+| type-flat-500-validate-nonburst | 0.786 · 0.640 | 1.000 · 1.000 | 3.121 · 1.040 | 0.873 (45/200 · 21/200) | 예/예/아니요 |
+| type-flat-500-validate-burst | 0.904 · 1.741 | 1.000 · 1.000 | 9.583 · 1.402 | 2.556 (81/200 · 37/200) | 아니요/예/아니요 |
+| type-array-1000-validate-nonburst | 0.396 · 0.491 | 0.750 · 0.750 | 5.209 · 0.875 | 0.354 (200/200 · 188/200) | 예/예/예 |
+| type-array-1000-validate-burst | 0.543 · 0.641 | 0.800 · 0.800 | 9.571 · 0.848 | 0.506 (140/200 · 172/200) | 예/예/예 |
+| type-nested-d5-f4-validate-nonburst | 0.489 · 0.783 | 0.667 · 1.000 | 2.882 · 1.058 | 0.417 (141/200 · 131/200) | 예/예/아니요 |
+| type-nested-d5-f4-validate-burst | 0.400 · 2.364 | 1.000 · 1.000 | 4.667 · 1.254 | 0.383 (91/200 · 127/200) | 아니요/예/아니요 |
+| type-flat-2000-validate-nonburst | 0.618 · 0.803 | 0.750 · 1.000 | 2.621 · 0.920 | 0.672 (176/200 · 175/200) | 예/예/예 |
+| type-flat-2000-validate-burst | 0.952 · 1.053 | 1.000 · 1.000 | 4.600 · 1.009 | 0.700 (112/200 · 172/200) | 아니요/예/아니요 |
+
+| 관문 | 판정 | 기계 계산 근거(반올림 전 원시는 decision.json) |
+| --- | --- | --- |
+| G1 | PASS | {"lMedian":7.099999964237213,"lMedianSource":"event-median","fP95":9.400000035762787,"transferFactor":0.9049295820229301,"transferredP95":8.506338103378347,"comparable":true,"upperBound":0.6718750012369128} |
+| G2 | FAIL | "위 typing 표의 각 상한≤1.10; 관측/key 병기" |
+| G3 | PASS | [{"id":"type-flat-500-validate-nonburst","F":16,"E":16,"framesF":0,"framesE":0},{"id":"type-flat-500-validate-burst","F":16,"E":16,"framesF":0,"framesE":0},{"id":"type-array-1000-validate-nonburst","F":24,"E":32,"framesF":0,"framesE":0},{"id":"type-array-1000-validate-burst","F":32,"E":40,"framesF":0,"framesE":0},{"id":"type-nested-d5-f4-validate-nonburst","F":16,"E":24,"framesF":0,"framesE":0},{"id":"type-nested-d5-f4-validate-burst","F":24,"E":24,"framesF":0,"framesE":0},{"id":"type-flat-2000-validate-nonburst","F":24,"E":32,"framesF":0,"framesE":0},{"id":"type-flat-2000-validate-burst","F":24,"E":24,"framesF":0,"framesE":0}] |
+| G4 | PASS | [{"id":"type-flat-500-validate-nonburst","arrivalP95":10.300000011920929,"undelivered":0,"keys":200},{"id":"type-array-1000-validate-nonburst","arrivalP95":22.399999976158142,"undelivered":0,"keys":200},{"id":"type-nested-d5-f4-validate-nonburst","arrivalP95":14.700000047683716,"undelivered":0,"keys":200},{"id":"type-flat-2000-validate-nonburst","arrivalP95":17.299999952316284,"undelivered":0,"keys":200}] |
+| G5 | PASS | [{"id":"mount-flat-500-validate","F":38.30000001192093,"E":68.5},{"id":"mount-nested-d5-f4-validate","F":68.55000001192093,"E":139.05000001192093}] |
+| G6 | PASS | [{"index":0,"durationMs":493.9000000357628,"validationRuns":6,"limit":7},{"index":1,"durationMs":493.7999999523163,"validationRuns":6,"limit":7},{"index":2,"durationMs":493.30000001192093,"validationRuns":6,"limit":7},{"index":3,"durationMs":493.10000002384186,"validationRuns":6,"limit":7},{"index":4,"durationMs":497.5,"validationRuns":6,"limit":7},{"index":5,"durationMs":492.10000002384186,"validationRuns":6,"limit":7},{"index":6,"durationMs":498.5999999642372,"validationRuns":6,"limit":7},{"index":7,"durationMs":493.89999997615814,"validationRuns":6,"limit":7},{"index":8,"durationMs":493.0999999642372,"validationRuns":6,"limit":7},{"index":9,"durationMs":493.19999998807907,"validationRuns":6,"limit":7}] |
+| G8 | FAIL | [{"id":"mount-array-1000-none","F":138.75,"E":143.89999997615814},{"id":"mount-array-1000-validate","F":139.2999999821186,"E":155.80000001192093}] |
+
+| G8 행 | first F/E | eager E / F ms | eager F/E | eager 상한 | 페이지 E/F |
+| --- | --- | --- | --- | --- | --- |
+| mount-array-1000-none | 0.964 | 199.800 / 207.900 | 1.041 | 1.02 | 10/10 |
+| mount-array-1000-validate | 0.894 | 211.250 / 223.500 | 1.058 | 1.00 | 10/10 |
+
+G7은 없습니다. first-key 입력지연은 보고 전용입니다.
+
+| first-key 행 | 레인 | input delay 중앙값 / p95 ms | 관측/key |
+| --- | --- | --- | --- |
+| first-key-flat-500-validate | L | 관측 없음 / 관측 없음 | 0/10 |
+| first-key-flat-500-validate | E | 0.350 / 0.400 | 2/10 |
+| first-key-flat-500-validate | F | 관측 없음 / 관측 없음 | 0/10 |
+| first-key-flat-2000-validate | L | 0.350 / 0.400 | 2/10 |
+| first-key-flat-2000-validate | E | 0.400 / 0.400 | 3/10 |
+| first-key-flat-2000-validate | F | 0.400 / 0.400 | 1/10 |
+
+| stream 레인 | 표본 | duration ms | runs | frame script p95 ms |
+| --- | --- | --- | --- | --- |
+| L | 0 | 499.800 | 60 | 0.100 |
+| E | 0 | 496.700 | 60 | 0.500 |
+| F | 0 | 493.900 | 6 | 0.600 |
+| F | 1 | 493.800 | 6 | 0.500 |
+| E | 1 | 495.300 | 60 | 0.600 |
+| L | 1 | 494.100 | 60 | 0.100 |
+| L | 2 | 494.200 | 60 | 0.100 |
+| E | 2 | 494.300 | 60 | 0.600 |
+| F | 2 | 493.300 | 6 | 0.600 |
+| F | 3 | 493.100 | 6 | 0.600 |
+| E | 3 | 497.900 | 60 | 0.600 |
+| L | 3 | 497.800 | 60 | 0.100 |
+| L | 4 | 495.200 | 60 | 0.100 |
+| E | 4 | 492.100 | 60 | 0.600 |
+| F | 4 | 497.500 | 6 | 0.600 |
+| F | 5 | 492.100 | 6 | 0.600 |
+| E | 5 | 490.900 | 60 | 0.600 |
+| L | 5 | 494.900 | 60 | 0.100 |
+| L | 6 | 502.100 | 60 | 0.100 |
+| E | 6 | 492.400 | 60 | 0.500 |
+| F | 6 | 498.600 | 6 | 0.600 |
+| F | 7 | 493.900 | 6 | 0.600 |
+| E | 7 | 497.100 | 60 | 0.600 |
+| L | 7 | 499.500 | 60 | 0.100 |
+| L | 8 | 496.500 | 60 | 0.100 |
+| E | 8 | 495.800 | 60 | 0.600 |
+| F | 8 | 493.100 | 6 | 0.600 |
+| F | 9 | 493.200 | 6 | 0.600 |
+| E | 9 | 492.400 | 60 | 0.500 |
+| L | 9 | 500.600 | 60 | 0.100 |
+<!-- IR6_MAIN_TABLES_END -->
+
+G1의 L 페이지중앙값 중앙값은7.099999964ms로6.425×1.10을 넘고×1.25 이내입니다. 따라서 등록된 환산계수0.904929582를 적용하여 F 행 p95 9.400000036ms→8.506338103ms≤16.67ms로 통과합니다. 같은 행의 bootstrap상한0.671875001<1이며 비교불가가 아니므로 G1 재측정 조항은 발동하지 않았습니다. 원래 행p95의 F/E=0.6184210530443535, F/L=0.8034188072940415입니다.
+
+G2는 flat500 burst 하나에서 실패했습니다. E의 원래 pooled p95=4.899999976ms(81/200 interaction/key), F=4.599999964ms(37/200)이며 점추정 F/E는 약0.939입니다. 그러나 사전 등록한 공동 페이지 bootstrap 단측95%상한은2.555555519>1.10입니다. 행p95의 F4.700000048ms≤E5.199999988ms라는 별도 통계로 이 실패를 지우지 않습니다.16ms 검열로 두 레인의 관측 수·분포가 다르고 상한이 넓지만, 원인과 제품 회귀의 인과는 아직 검증하지 않았습니다.
+
+G8은 first-painted가 두 모드에서 모두 줄었지만 eager-painted가 실패했습니다. None은 E199.800000012ms→F207.900000036ms, F/E1.040540541>1.02이고, OnChange는 E211.249999970ms→F223.5ms, F/E1.057988166>1.00입니다(각10페이지 중앙값). first/eager는 서로 다른 등록된 경계이므로 first의 개선으로 eager 실패를 대체하지 않습니다. 두 실패에 새 timed window나 제품 수정을 임의로 추가하지 않았습니다.
+
+G3·G4·G5·G6은 통과했습니다. 모든 F typing 행의50ms 이상 frame은0, nonburst 미배달은 모두0/200입니다. 스트림은 모든 F페이지에서 등록된 run 상한과 frame 조건을 충족했습니다. 기본 표시 정책·virtualization off를 유지했습니다. G7은 없습니다. 소유자 목표의 L 비교는 위 행별 processing/duration/arrival 판정과 같이 일부 손실이 남아 있으며 성능 관문과 구별합니다.
+
+### 재현·검증과 미결
+
+benchmark 시험6파일44통과·실패0의 [JSON 원시](raw/ir-6/browser/main/benchmark-tests.json.gz)와 [최종 검증 영수증](raw/ir-6/browser/main/benchmark-verification.json)을 보존합니다. lint경고0, browser typecheck exit0이며 앞의6개 IR0/IR1/IR2 재현 명령도 모두 통과했습니다. 측정 뒤 archive 해시 감사와 표의 관측수·G8 eager 상세를 추가했고, 제품·수치 함수는 그대로입니다. 표 생성의 변수 범위 오류를 수정한 뒤 원시 재현을 다시 확인했습니다.9d 집중 관문과5c 전체 코드 관문은 앞 절의 범위로 유지하며 재실행 통과라고 바꾸지 않습니다.
+
+수용한 다섯 H 한계와 hidden same-schema reset chain-end 전달의 소유자 미결은 유지합니다. G·virtualization 기본값·기존 useChildFields 다섯 결함·버전도 범위 밖입니다. G2·G8 실패에 대한 다음 조치는 코디네이터 결정 대기입니다. worker_done·병합 가능·완료 신호는 보내지 않습니다.
+
+판정: G1·G3·G4·G5·G6 통과, G2·G8 실패 — 코디네이터 결정 대기

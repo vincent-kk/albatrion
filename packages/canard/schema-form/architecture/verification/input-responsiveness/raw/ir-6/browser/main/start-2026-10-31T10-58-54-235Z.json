@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-31T10:58:54.235Z",
+  "samples": 0,
+  "approved": true,
+  "policy": {
+    "observationMs": 30000,
+    "maximumExternalPidPercent": 30,
+    "excluded": [
+      75294,
+      75284,
+      75281,
+      45167,
+      44868,
+      44829,
+      80848
+    ]
+  },
+  "quiet": {
+    "startedAt": "2026-10-31T10:58:24.138Z",
+    "endedAt": "2026-10-31T10:58:54.234Z",
+    "durationSeconds": 30.09389775,
+    "top": [
+      {
+        "pid": 436,
+        "name": "WindowServer",
+        "cpuPercent": 6.413260309559904
+      },
+      {
+        "pid": 1056,
+        "name": "Stats",
+        "cpuPercent": 6.147425685323679
+      },
+      {
+        "pid": 80438,
+        "name": "Orca Helper",
+        "cpuPercent": 5.6822150929253965
+      },
+      {
+        "pid": 80512,
+        "name": "Orca Helper (Renderer)",
+        "cpuPercent": 4.1204366755708195
+      },
+      {
+        "pid": 65922,
+        "name": "mediaanalysisd",
+        "cpuPercent": 3.0238688506205693
+      },
+      {
+        "pid": 837,
+        "name": "WidgetsExtension",
+        "cpuPercent": 2.8244928824494453
+      },
+      {
+        "pid": 81982,
+        "name": "2.1.312",
+        "cpuPercent": 2.691575570331333
+      },
+      {
+        "pid": 441,
+        "name": "runningboardd",
+        "cpuPercent": 2.458970274136725
+      },
+      {
+        "pid": 726,
+        "name": "chronod",
+        "cpuPercent": 1.6946957294696672
+      },
+      {
+        "pid": 1,
+        "name": "launchd",
+        "cpuPercent": 1.4620904332659925
+      }
+    ],
+    "heavy": [],
+    "totalPercent": 52.53556761355048
+  }
+}
