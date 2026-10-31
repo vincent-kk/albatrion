@@ -239,3 +239,13 @@ P3-10: ERROR-019 항목2는 숨긴 Form의 reset 재생성에 적용한다. 같�
 수락한 explicit root 판정은 route 뒤 pending이면 settle을 통해, 아니면 직접 전체 이력을 해제하여 한 번만 release하고 delivery한다. release listener의 새 쓰기 이력은 보존한다(VALIDATE-052).
 
 최초 후보0→release 뒤 비후보0의 snapshot 충돌은 React의 강제 재렌더에서 이전 render와 같은 값으로 버려진다. 후보는 version+1, 비후보는0으로 분리하여 모든 candidate 종료를 snapshot 변경으로 만들며 엔진 reader의 최초0 계약은 유지한다(VALIDATE-052).
+
+### Amendment 10 v2 — 표시 판단과 후보 구독 분리
+
+엔진 H 기록·해제·drop·정책 commit과 모든 예약 진입은 유지한다. FieldProxy와 FieldInputSlot은 enabled/live를 검사하고 live일 때만 isErrorRevealed로 이력을 판단한다. held일 때만 같은 렌더의 release version과 ErrorRevealSubscriber를 사용한다. 기존 ErrorBoundary와 FieldInput은 언제나 첫 자식이며 구독자는 두 번째 자리에 추가되어 입력 identity·focus가 hold 시작·종료에 보존된다.
+
+FieldProxy는 모듈 reducer 하나를 추가하고 input은 useFieldInputControl의 composition reducer dispatch를 다섯 번째 반환값으로 재사용한다. aggregate useErrorVisibility는 useChildFieldErrors만 사용하며 candidate version+1/비후보0 getter를 유지한다. enabled/live가 거짓인 표시는 reveal 읽기나 새 구독 effect·판단 배열·결과 객체를 만들지 않는다.
+
+subscriber는 passive effect만 사용한다. 소유 표시가 읽은 version과 구독 직후 버전을 비교해 같은 commit의 layout release와 Activity 재연결을 따라잡는다. reducer dispatch는 현재 이벤트 우선순위를 따라 노드 사건 없는 해제가 최악 한 paint 늦어질 수 있다. 약2프레임에 한 프레임이 더해질 수 있으며 transition은 transition lane, passive catch-up은 default다. 오류 변경의 기존 tracker는 sync이고 매 렌더가 이력을 다시 판단한다.
+
+실제 Form의 catch-up·DOM identity/focus·Activity와 mount/hydration 계수 시험에 지정된 실패 변이를 적용해 확인한다. 이전 정식 창의 판정은 유지하고 전체 코드 관문 뒤 E/F-old/F-new/V1 진단만 수행한다. 다음 정식 창과 G2 새 규칙 사전 등록은 코디네이터 go Phase E까지 기다린다.

@@ -172,3 +172,13 @@ touched 예시 오류나 동작을 잘못 파악하는 것,
 
 그리고 이제 충분히 전체 설계를 파악한거지?"
    Decisions derived from it: dirty keeps its contract; its JSDoc (and Touched's) is corrected in IR-6 round 5; a separate stage after #508 designs the baseline-difference property and reviews the state names, and must land before the next release (the version and the release stay the owner's).
+
+## IR-6 표시 개선과 작업공간 정리 — 2026-10-31
+
+33. (after the coordinator explained the Phase E failures: G2 failed on the flat-500 burst row because only 37 of 200 F keys and 81 of 200 E keys were observed, so the bootstrap upper bound reached 2.556 although the point estimate favoured F; G8 failed because the eager-painted mount of a 1000-item array grew 4.1% without validation and 5.8% with OnChange, most likely from the per-display error-visibility hook; the coordinator said it would ask for the owner's judgment after the diagnosis) "표시 훅을 개선해서 다시 해봐. 만약 느려져도 필요한 느려짐일 수도 있어. 기존에 최대한 최적화를 해둔거라.
+g2는 데이터 측정을 해보도록 해"
+   Decisions derived from it: improve the display hook, then re-measure the full registered window; a slowdown that remains after the improvement may be accepted as a necessary cost of engine-held visibility, because the earlier code was already optimized as far as possible; for G2, measure the data (per-page and per-key observations, including the uncensored handler timing of every key) before any decision. The registered verdicts of the first window are not re-decided.
+
+36. (2026-10-31, right after quote 35, seeing finished scratch worktrees accumulate in the repository root) "그리고 작업 진행하면서 작업이 끝난 작업공간은 계속 정리하면서 하도록 해. 
+계속 쌓이는구나. 우리 규칙에도 있지않나"
+   Answered: yes, round 451 recorded "받아들입니다. 작업이 완료된 worktree 나 브랜치는 정리하면서 진행하세요" (451C-01), but AGENT-POLICY.md never carried it, and this stage's briefs did not tell workers to remove their scratch worktrees. Actions: the round-5d scratch worktree was removed at once (its red-run results were already committed); the remaining scratch worktrees are removed as soon as their purpose ends (diagnosis display scratch after the round-6 pre-window diagnostic, lane E after the IR-6 measurement is accepted); every later brief tells the worker to remove its scratch worktrees once their results are committed; the stage closing adds the rule to AGENT-POLICY.md. Deleting the eight remote branches of the merged PRs #500 to #507 was blocked by the auto-mode permission classifier and went to the owner.
