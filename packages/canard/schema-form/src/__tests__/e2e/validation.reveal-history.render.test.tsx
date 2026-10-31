@@ -101,6 +101,11 @@ it('IR-6 H standalone ErrorVisible off then on never restores an earlier pending
   act(() => f.ref.current!.node!.setState({ 4: true }));
   expect(f.text()).toBe('');
   await act(async () => {
+    f.clock.frame();
+    await f.clock.task();
+  });
+  expect(f.text()).toBe('');
+  await act(async () => {
     f.finishes[0]([]);
     await f.clock.task();
   });

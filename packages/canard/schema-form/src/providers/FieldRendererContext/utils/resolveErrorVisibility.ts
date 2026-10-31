@@ -14,7 +14,7 @@ type PolicyHistory = {
   entries: readonly { value: unknown; generation: number }[];
 };
 /** Check every eligibility combination that existed since the last release.
- * @param live - Current display condition, including its React-only disabled input.
+ * @param live - Current condition, including the same context checkShowError(state) and React-only disabled input.
  * @param state - Current node interaction flags.
  * @param enabled - Current active/visible conjunction.
  * @param policy - Policy rendered by the current context.
@@ -32,6 +32,12 @@ export const resolveErrorVisibility = (
   includeEnabled: boolean,
 ): boolean => {
   if (!live || (includeEnabled && !enabled)) return false;
+  if (
+    entries.length === 0 &&
+    !history?.entries.length &&
+    Object.is(history ? history.value : policy, policy)
+  )
+    return live;
   let i = 0,
     j = 0;
   while (true) {

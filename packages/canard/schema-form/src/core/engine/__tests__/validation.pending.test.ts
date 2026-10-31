@@ -18,7 +18,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('IR-6 H pending clears before releases, including the accepted explicit root release', async () => {
+it('IR-6 H pending clears before one release per accepted explicit root verdict', async () => {
   const clock = createValidationFrameClock();
   const { root, runtime } = createDispatchTree({ type: 'string' }, undefined, {
     compile: () => () => [],
@@ -38,10 +38,10 @@ it('IR-6 H pending clears before releases, including the accepted explicit root 
   dispatchSetValue(root, 'newer');
   await dispatchValidate(root);
   expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
-  expect(settled).toHaveBeenCalledTimes(3);
+  expect(settled).toHaveBeenCalledTimes(2);
   clock.frame();
   await clock.task();
-  expect(settled).toHaveBeenCalledTimes(3);
+  expect(settled).toHaveBeenCalledTimes(2);
   unsubscribe();
 });
 
@@ -255,7 +255,7 @@ it.each(['null', 'execute', 'compile', 'commit'] as const)(
   },
 );
 
-it('IR-6 unsubscribed listeners and explicit validation without writes do not emit settles', async () => {
+it('IR-6 unsubscribed release listeners stay silent during explicit root validation', async () => {
   const { root } = createDispatchTree({ type: 'string' }, undefined, {
     compile: () => () => [],
     compileGuard: () => () => true,
@@ -264,7 +264,11 @@ it('IR-6 unsubscribed listeners and explicit validation without writes do not em
   const listener = vi.fn();
   const unsubscribe = subscribeFieldNodeRevealReleased(root, listener);
   unsubscribe();
+  const subscribed = vi.fn();
+  const stop = subscribeFieldNodeRevealReleased(root, subscribed);
   await dispatchValidate(root);
+  expect(subscribed).toHaveBeenCalledTimes(1);
+  stop();
   expect(listener).not.toHaveBeenCalled();
   expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
 });

@@ -100,8 +100,8 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   routeValidationIssues(node, issues);
   runtime.validationResult = { commit, issues };
   if (node === node.rootNode) {
-    settleFieldNodeValidation(node, stamp);
-    releaseFieldNodeRevealHistory(node);
+    if (runtime.validationPending) settleFieldNodeValidation(node, stamp);
+    else releaseFieldNodeRevealHistory(node);
   }
   deliverValidationWave(node, issues, commit);
   return issues;

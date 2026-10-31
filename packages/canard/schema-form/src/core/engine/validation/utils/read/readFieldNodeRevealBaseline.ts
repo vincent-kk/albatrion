@@ -1,9 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 
-/** Read binding-only eligibility history or its stable release snapshot.
+/** Read a node's unreleased eligibility history.
  * @param node - Occurrence sharing the current root runtime.
- * @returns The stored history or version; non-OnChange histories are ignored. */
+ * @returns The unreleased node history, or undefined outside OnChange. */
 export const readFieldNodeRevealBaseline = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ) =>

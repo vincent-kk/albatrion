@@ -101,7 +101,7 @@ export interface FieldNodeRecord<Self> {
   schema: EffectiveSchema;
   /** Stored interaction flags updated by shallow patches. */
   interactionState: NodeStateFlags;
-  /** First pre-verdict eligibility record, released at settle or after a quiet paint. */
+  /** Unreleased pre-change eligibility entries, one per public write sequence, cut by release generation. */
   revealBaseline?: {
     entries: {
       readonly state: NodeStateFlags;

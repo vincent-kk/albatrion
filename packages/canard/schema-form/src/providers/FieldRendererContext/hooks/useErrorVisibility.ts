@@ -17,7 +17,7 @@ import { useFieldRendererContext } from './useFieldRendererContext';
 const EMPTY_ENTRIES: readonly [] = [];
 /** Compute display holds from engine history and subscribe only blocked live candidates.
  * @param nodes - Same-root entries, preserving their display indices.
- * @param conditions - Current display-policy eligibility.
+ * @param conditions - Current eligibility, including checkShowError(state) from this context.
  * @param includeEnabled - Renderer/input include enabled; child-error aggregates do not.
  * @returns Visibility across all unreleased node/policy intervals. */
 export const useErrorVisibility = (
@@ -49,8 +49,8 @@ export const useErrorVisibility = (
       !values[index],
   );
   const getSnapshot = useCallback(
-    () => (node ? readFieldNodeRevealVersion(node) : 0),
-    [node],
+    () => (node && candidate ? readFieldNodeRevealVersion(node) + 1 : 0),
+    [node, candidate],
   );
   const subscribe = useCallback(
     (listener: () => void) => {
