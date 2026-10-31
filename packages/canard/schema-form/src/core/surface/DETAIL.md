@@ -170,9 +170,9 @@
 
 ### `runtime/requireRuntimeFieldNode.ts` — 검증 전용 runtime bridge
 
-- **Consumers**: `src/__tests__/helpers/readFieldNodeRuntime.ts`
+- **Consumers**: `src/__tests__/helpers/readFieldNodeRuntime.ts`, `src/__tests__/helpers/releaseFieldNodeRevealHistory.ts`
 - **Direct import**: `allowed`
-- **Reason**: H 제거된 pending 바인딩을 시험만을 위해 보존하지 않고 release 이력·committed policy와 pending을 함께 관찰해야 한다. 기존 비공개 runtime accessor를 이 한 bridge가 직접 사용하며 패키지 표면은 넓히지 않는다. 코디네이터 msg_29959ddbd70f 승인에 따라 importModel도 이 importer/target 한 쌍만 세어 예외로 표시한다.
+- **Reason**: H 제거된 pending 바인딩을 시험만을 위해 보존하지 않고 release 이력·committed policy와 pending을 함께 관찰해야 한다. 기존 비공개 runtime accessor를 검증 bridge만 직접 사용하며 패키지 표면은 넓히지 않는다. 공개 노드만 가진 mount 시험의 root release도 같은 runtime root를 얻어 기존 validation 진입점에 전달한다. 코디네이터 msg_29959ddbd70f·msg_241ca3e19a1b 승인에 따라 importModel은 이 두 importer와 해당 target의 정확한 목록만 예외로 검증한다.
 
 ## Last Updated
 
