@@ -8,22 +8,22 @@
 
 - H: 해석된 policy와 load.root에 keyed인 no-cleanup layout effect 하나가 commitFieldNodeRevealPolicy를 호출한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
 - R-h: child layout 쓰기가 mount보다 먼저 compile 실패를 처리하여 rejected 대신 sink가 되는 것은 D1(Q12)의 시간 분리와 변경 없는 ERROR-019 항목3·5를 따른다.
-- P3-10: ERROR-019 항목2는 숨긴 Form의 reset 재생성에 적용한다. 같은 schema reset을 포함한 다른 post-mount 사슬은 ready=false 동안 buffer하며 facd에서 미배달되던 기록을 R1이 reconnect 때 순서대로 전달한다. 숨긴 같은-schema reset의 chain-end 전달은 소유자 미결 질문이며 동작을 바꾸지 않는다.
+- P3-10: 첫 layout commit을 마친(prepared) 현행 load는 Provider effect 연결 여부와 관계없이 모든 폼 수준 콜백을 보이는 폼과 같은 순서·내용으로 engine chain 끝에 전달합니다. 한 번도 준비되지 않은 load는 변경·상태·진단을 버리고 기록만 첫 commit까지 보관합니다. reset으로 은퇴한 load는 hasConsumer()가 false이며 기록을 버려 소비자에게 다시 전달하지 않습니다. Provider는 호스트 보고를 추가하지 않고 engine의 기존 reportOwnerlessError만 유지합니다. 루트 교체 뒤 정착한 옛 검증은 stamp·폐기로 소비자와 호스트 모두에 도달하지 않습니다.
 
-- R-f/R-g: hidden load를 reset으로 교체하면 reset 사슬 끝에 이전 load의 buffered records를 먼저, 새 load의 reset records를 다음으로 전달한다. reconnect까지 새 reset 기록을 보류하지 않는다(ERROR-019 item2). 원래 root와 form-level load identity를 보존하여 warning dedup은 각 원래 load 안에서 수행하고 한 load의 기록이 다른 load를 억제하지 않는다(ERROR-204). onError는 hidden layout cleanup에서도 유지하는 FormErrorService를 사용한다.
+- R-f/R-g: reset의 각 build-time 기록은 handler별로 격리하고 실패를 reportErrorToHost로 보낸 뒤 나머지 기록·binding 교체를 계속합니다. 준비 전 기록만 새 load 앞에 옮기고 원래 root·warning scope를 보존합니다. mount 기록이 build 기록보다 먼저 전달됩니다(L4).
 
-- W4: 마운트 helper는 engine이 이미 보고했거나 hidden buffer에 넣은 검증 실패를 capture하지 않는다. MultipleErrors bundle의 첫 검증 실패를 제외한 consumer 실패만 reportErrorToHost에 한 번 보내며 나머지 거부는 격리한다.
+- W4: mount helper는 engine이 이미 보고한 검증 실패를 capture하지 않습니다. MultipleErrors의 원래 검증 실패를 제외한 consumer 실패만 reportErrorToHost에 한 번 보내고 나머지 거부는 격리합니다.
 - W5: buffered record의 원래 root를 reporter.root에 보존하고 현재 load.root에도 observeFieldNodeReports guard를 적용해 onError가 현행 폼에 쓸 수 없게 한다.
 - W9: Always 값은 render에서 읽되 별도의 앞선 layout effect가 ref를 갱신한다. connect effect는 이 ref를 읽고 Always를 dependency에 두지 않아 표시 정책 변경이 disconnect/reconnect를 일으키지 않는다.
 - W7 수용 한계: Always에서 root input이 자신의 mount layout effect로 validate를 호출하면 provider도 같은 commit을 검증해 최초 실행이 한 번 늘어난다. inline Always 판정과 자식 쓰기 우선 처리를 보존한다.
 - W8 수용 한계: 조상의 mount layout 쓰기가 Always inline 판정 뒤에 실행되면 그 판정이 stamp로 폐기되어 첫 판정은 한 프레임 늦어진다. React 자식→부모 layout 순서를 바꾸지 않고 쓰기 cadence가 최신 값을 판정한다.
 
 - U3: render의 useFieldRendererContext().checkShowError()를 layout effect가 캡처하여 Always 여부를 결정한다. 최초 OnChange 마운트가 Always이면 쓰기 요청 여부와 관계없이 root.validate를 layout에서 바로 시작하여 queued write를 stamp로 무효화하고 현재 pending을 정착시킨다. 동기 검증은 첫 프레임에 오류를 표시한다. 다른 모드는 일회성 화면 뒤 슬롯을 유지한다. inline·deferred는 같은 engine 보고 격리를 사용하며 Always의 최초 compile 실패는 rejected 한 번이다.
-- V6: reconnect의 모든 buffered record는 각자 try/catch하여 onError 실패를 reportErrorToHost로 보내고 다음 기록·owed 재예약을 계속한다.
-- V7: !ready load를 rebuild 또는 루트 교체 reset으로 대체하면 옛 records를 새 load의 기록 앞에 옮기며 각 기록의 원래 root를 보관한다. 전달 시 그 root를 reporter.root로 먼저 설정하고 원래 순서로 한 번 전달한다. hidden 교체 reset 끝에는 이전·새 기록 순서로 전달하며, flushRootLoad의 첫 commit reported 가드는 유지한다.
+- V6: prepared 현행 load의 hidden 기록은 chain 끝에 바로 전달합니다. reset의 build 기록은 각각 try/catch하여 handler 실패 뒤에도 다음 기록과 binding 교체를 계속합니다.
+- V7: never-prepared load가 reset으로 교체될 때만 records를 새 load 앞에 옮겨 원래 root·warning scope로 한 번 전달합니다. 이미 준비된 load는 숨김 중에도 buffer하지 않습니다. 첫 commit의 reported 가드는 유지합니다.
 
 - Always 이외 OnChange 최초 마운트 검증은 준비 layout effect가 다음 화면 뒤 슬롯에 예약한다. if 게이트가 없는 스키마의 전체 컴파일과 첫 검증도 그 슬롯에서 수행하며, if 게이트의 렌더 중 컴파일은 유지한다. 명시적 validate와 제출의 즉시 실행은 유지한다(IR-6).
-- 예약 슬롯에서 `store.load !== load`이면 교체된 이전 로드를 검증하지 않는다. 실행 시점의 `load.root`가 없으면 종료한다. load.ready가 거짓이면 선택적 `mountValidationOwed`를 세우고, 같은 load의 다음 layout effect가 먼저 false로 소비한 뒤 한 슬롯만 다시 예약한다. 오직 !ready인 슬롯만 true로 쓰므로 한 load의 마운트 슬롯은 최대 하나이다. cleanup은 슬롯을 취소하지 않으며 StrictMode 재실행은 중복 예약하지 않는다. 실제 unmount 뒤에는 owed를 소비하지 않는다(IR-6).
+- 예약 슬롯은 store.load가 같은 load이고 root가 존재하며 검증 요청이 아직 없으면 effect 연결 여부와 관계없이 한 번 실행합니다. owed·reconnect 재예약은 없으며 cleanup은 슬롯을 취소하지 않습니다. StrictMode 재실행은 중복 예약하지 않습니다.
 - 마운트 슬롯은 실행 시 hasFieldNodeValidationRequest(root)가 참이면 root.validate를 호출하지 않는다. 쓰기 요청이 최신 커밋을 자체 판정하며 명시적 루트 검증도 마운트 의무를 충족한다. 비루트 검증의 0 스탬프만으로는 의무가 끝나지 않는다. 아무 요청도 없는 마운트는 한 번 검증한다. 컴파일 실패는 한 번 보고하며, 마운트 슬롯이 첫 검증을 실행하면 rejected, 쓰기 검증이 먼저 요청되어 마운트를 건너뛰면 sink이다. helper는 engine 보고를 다시 capture하지 않고 consumer 실패 bundle의 handler 오류만 host로 보낸다(IR-6 R2·R3).
 - 마운트 슬롯 전에 쓰기 검증이 요청되면 마운트를 건너뛰고 쓰기 경로가 최신 커밋을 판정한다. 같은 스키마 reset은 동일 load를 보존하며, 루트 교체 reset은 폐기된 옛 루트의 슬롯을 무효화한다(IR-6).
 - BLUEPRINT-052 / SURFACE-063: createRootLoad injects the app-owned schema identity cache with stable renderer predicates. Explicit rebuild invalidates the committed schema and forces the existing replacement-load path with the same reset option. Ordinary reset preserves its existing root, even after another form invalidates the shared cache (round-447 coordinator clarification).
@@ -40,15 +40,22 @@
 
 - Context 객체(`RootNodeContext`·`RootBindingContext`)와 Provider는 `components/`, 훅(`useRootNodeContext`·`useLiveNode`)은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
-- 이미 prepared인 load의 layout effect가 복원되면, !ready 동안 load.records에 모인 모든 기록을 순서대로 비우고 load.reporter.root를 먼저 설정하여 reporter.report로 전달한다. 이는 owed 재예약보다 앞서며 첫 commit의 flushRootLoad·reported 가드는 유지한다. 숨김 중 쓰기 컴파일 실패도 복원 뒤 onError에 한 번 도착한다(IR-6 R1, A4 대체).
-- 한 프레임 안에서 쓰기 뒤 unmount하면 은퇴한 트리의 검증이 한 번 실행될 수 있다. 구독자에게 판정은 도착하지 않으며 실패는 ready가 아니므로 호스트 싱크에만 도착한다. cleanup 취소는 Suspense·Activity 숨김도 취소하므로 한 실행을 줄이기 위한 suspend/resume 기계를 추가하지 않는다(IR-6 R5).
+- 첫 commit은 구독 → prepared → flushRootLoad → applyFormErrors → 마운트 검증 순서입니다. 그 전에 reset으로 교체된 load는 prepared만 설정하고 나머지는 생략합니다. reset이 현행 load를 구독했으므로 show·StrictMode replay는 재구독하지 않습니다.
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
+
+### Hidden delivery limits
+
+- L1: React는 숨김과 실제 unmount를 구분하지 않습니다. 실제 unmount 뒤에도 prepared와 루트 구독은 유지되며 보유한 핸들·노드의 쓰기, reset·rebuild·validate·submit과 예약 슬롯은 콜백을 전달합니다. mounted 트리의 검증 루트 참조 수는 cleanup에서 해제합니다. unmount 뒤 reset으로 만든 새 루트는 retain하지 않아 캐시 축출 뒤 재컴파일할 수 있습니다.
+- L2: 숨김 중 onChange·onStateChange·onValidate·onDiagnosticsChange는 마지막 연결 commit의 콜백을 사용하고 prop 갱신은 show에 반영됩니다. onError는 insertion effect로 최신입니다. 숨김 중 Form ref는 null이므로 이전에 보유한 핸들·노드를 사용합니다.
+- L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다.
+- L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
 
 ## Acceptance Criteria
 
 ### root-node-context-contract — 관찰 가능한 동작
 
-- Always 이외 모드는 최초 프레임 전 마운트 판정이 없으며, effect 정리 뒤 복원된 load는 미완료 마운트 검증을 한 번 수행한다. 실제 unmount 뒤에는 검증·오류 보고가 없다(IR-6).
-- Provider 정리 시 등록한 이벤트 구독을 해제합니다.
+- Always 이외 모드는 최초 프레임 전 마운트 판정이 없으며 숨김·unmount 뒤에도 예약 슬롯이 한 번 실행하고 prepared 현행 load는 판정·오류를 전달합니다.
+- Provider cleanup은 검증 루트 retain을 해제하며 load 구독은 reset 교체 또는 GC까지 유지합니다.
 - 검증과 상태 이벤트는 대응 콜백으로 전달되며 외부 오류는 경로별로 묶어 주입합니다.
 
 ## Last Updated

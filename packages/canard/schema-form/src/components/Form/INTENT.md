@@ -10,7 +10,7 @@
 - `FormHandle`의 `getValue`·제출·최초 변경 방출은 `rootNode.outputValue`를 읽고, `setValue`는 raw 값을 노드에 전달한다. 편집 상태와 외부 값을 구별한다.
 - Provider의 중첩 순서를 고정해 바깥 설정과 안쪽 노드·렌더링 소비자의 관계를 유지한다.
 - `children`은 ReactNode 또는 `(props: FormChildrenProps) => ReactNode` 렌더 함수 모두 지원한다. 함수형은 `FormChildrenRenderer`가 트래커(`useFieldNodeTracker`)로 다시 실행하도록 구동한다.
-- `ready` 전에는 변경을 방출하지 않고 직전과 동일한 값 참조는 다시 방출하지 않는다. 제출 검증 실패는 `ValidationError`로 전달한다.
+- Emit changes only from prepared current loads, including while hidden; suppress identical references. Submit validation failures use `ValidationError`.
 
 ## Boundaries
 

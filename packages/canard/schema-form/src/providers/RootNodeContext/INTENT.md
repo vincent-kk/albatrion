@@ -6,7 +6,7 @@ JSON Schema로부터 루트 `FieldNode` 트리를 생성하고 Context로 공급
 
 ## Conventions
 
-- Preserve buffered record roots across hidden replacements, isolate record delivery failures, and validate Always mounts inline while other mounts keep the slot.
+- Deliver all form callbacks from prepared current loads at engine-chain end even while hidden; retain record origins only before preparation and isolate reset record-handler failures.
 
 - TypeScript + React, Generic 타입 파라미터 (`Schema`, `Value`) 사용
 - 초기 루트는 `useMemo`에서 `utils/createRootLoad.ts`의 `buildFieldNodeTree`·`mountFieldNode` 통로로 작성·마운트
@@ -21,7 +21,7 @@ JSON Schema로부터 루트 `FieldNode` 트리를 생성하고 Context로 공급
 
 - 초기 로드는 `useMemo`에서 `utils/createRootLoad.ts`를 호출하여 `buildFieldNodeTree`·`mountFieldNode` 통로 사용
 - `onReady` 콜백을 구독 설정 이후에 호출 (`useEffect` 내, rootNode 준비 완료 후)
-- `useEffect` cleanup에서 반드시 `unsubscribe()` 반환
+- Keep the root subscription for the load lifetime: subscribe once at first commit or reset, unsubscribe on reset, and release only validation-cache references on effect cleanup.
 
 ### Ask first
 
