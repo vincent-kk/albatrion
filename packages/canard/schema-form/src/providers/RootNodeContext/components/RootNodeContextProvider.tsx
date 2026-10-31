@@ -61,6 +61,10 @@ export const RootNodeContextProvider = ({
   const { context, attachedFilesMap } = useWorkspaceContext();
   const reporter = useFormErrorContext();
   const always = useFieldRendererContext().checkShowError();
+  const alwaysRef = useRef(always);
+  useLayoutEffect(() => {
+    alwaysRef.current = always;
+  }, [always]);
   const current: RootLoadProps = {
     ...props,
     context,
@@ -180,8 +184,8 @@ export const RootNodeContextProvider = ({
       if (root) {
         applyFormErrors(root, load.props.errors);
         if ((load.props.validationMode ?? 0) & ValidationMode.OnChange) {
-          if (always) validateMountRoot(root, reporter);
-          else scheduleMountValidation(load, store, reporter);
+          if (alwaysRef.current) validateMountRoot(root);
+          else scheduleMountValidation(load, store);
         }
       }
     } else {
@@ -195,7 +199,7 @@ export const RootNodeContextProvider = ({
       }
       if (load.mountValidationOwed) {
         load.mountValidationOwed = false;
-        scheduleMountValidation(load, store, reporter);
+        scheduleMountValidation(load, store);
       }
     }
     return () => {
@@ -203,7 +207,7 @@ export const RootNodeContextProvider = ({
       store.unsubscribe();
       if (root && validator) releaseValidationRoot(validator, authored);
     };
-  }, [load, reporter, store, always]);
+  }, [load, reporter, store]);
 
   const lastErrors = useRef(props.errors);
   useLayoutEffect(() => {

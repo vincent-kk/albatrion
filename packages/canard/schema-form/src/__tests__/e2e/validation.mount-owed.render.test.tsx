@@ -12,6 +12,7 @@ import {
   ValidationMode,
 } from '@/schema-form';
 
+import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
 import { observeErrorSink } from '../helpers/observeErrorSink';
 import { settleValidation } from '../helpers/settleValidation';
 
@@ -195,4 +196,118 @@ it('IR-6 rebuild transfers a hidden load failure once before replacement records
   view.rerender(hideable(form, false));
   await settleValidation(() => ref.current?.node);
   expect(onError).toHaveBeenCalledTimes(1);
+});
+
+it('IR-6 W4 an async mount rejection hidden before completion reports once after reconnect', async () => {
+  const ref = createRef<FormHandle>();
+  const onError = vi.fn();
+  observeErrorSink();
+  let reject!: (reason: unknown) => void;
+  let start!: () => void;
+  const started = new Promise<void>((resolve) => {
+    start = resolve;
+  });
+  const form = (
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string' }}
+      onError={onError}
+      validatorFactory={{
+        compile: () => () =>
+          new Promise((_resolve, fail) => {
+            reject = fail;
+            start();
+          }),
+        compileGuard: () => () => true,
+      }}
+    />
+  );
+  const view = render(hideable(form, false));
+  await advanceValidationFrame();
+  await started;
+  view.rerender(hideable(form, true));
+  await act(async () => {
+    reject(new Error('hidden mount rejection'));
+    await Promise.resolve();
+  });
+  expect(onError).not.toHaveBeenCalled();
+  view.rerender(hideable(form, false));
+  expect(onError).toHaveBeenCalledTimes(1);
+  expect(onError.mock.calls[0][0]).toMatchObject({
+    code: FormErrorCode.ValidatorThrew,
+    surface: 'rejected',
+  });
+});
+
+it('IR-6 W4 a compile onError failure reaches the host once without recapture', async () => {
+  const handler = new Error('handler');
+  const sink = observeErrorSink();
+  let first!: () => void;
+  const called = new Promise<void>((resolve) => {
+    first = resolve;
+  });
+  const onError = vi.fn(() => {
+    first();
+    throw handler;
+  });
+  render(
+    <Form
+      jsonSchema={{ type: 'string' }}
+      onError={onError}
+      validatorFactory={{
+        compile: () => {
+          throw new Error('compile');
+        },
+        compileGuard: () => () => true,
+      }}
+    />,
+  );
+  await act(async () => {
+    await called;
+    await new Promise<void>((resolve) => setImmediate(resolve));
+  });
+  expect(onError).toHaveBeenCalledTimes(1);
+  expect(sink.errors().filter((error) => error === handler)).toHaveLength(1);
+});
+
+it('IR-6 W5 a retired record still guards writes into the current form', async () => {
+  const ref = createRef<FormHandle>();
+  observeErrorSink();
+  let handle: FormHandle;
+  const attempts: unknown[] = [];
+  const onError = vi.fn(() => {
+    try {
+      handle.setValue('forbidden');
+    } catch (error) {
+      attempts.push(error);
+    }
+  });
+  const form = (
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string' }}
+      onError={onError}
+      validatorFactory={{
+        compile: () => (value) => {
+          if (value === 'fail') throw new Error('old');
+          return [];
+        },
+        compileGuard: () => () => true,
+      }}
+    />
+  );
+  const view = render(hideable(form, false));
+  await settleValidation(() => ref.current?.node);
+  handle = ref.current!;
+  const old = handle.node!;
+  view.rerender(hideable(form, true));
+  act(() => handle.setValue('fail'));
+  await settleValidation(old);
+  act(() => handle.rebuild());
+  view.rerender(hideable(form, false));
+  await settleValidation(() => ref.current?.node);
+  expect(onError).toHaveBeenCalledTimes(1);
+  expect(attempts).toHaveLength(1);
+  expect(attempts[0]).toMatchObject({ code: FormErrorCode.WriteInObserver });
+  expect(handle.getValue()).not.toBe('forbidden');
 });

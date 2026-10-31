@@ -1,4 +1,5 @@
 import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
+import { prepareFieldNodeValidation } from '../../../validation';
 import { captureChainError } from './captureChainError';
 import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 import { compareDocumentOrder } from './utils/compareDocumentOrder';
@@ -51,6 +52,7 @@ export const deliverWave = <Self extends FieldNodeRecord<Self>>(
         runtime.feedbackBlockedListeners?.has(listener)
       )
         continue;
+      prepareFieldNodeValidation(resolveFieldNodeChainRoot(root));
       runtime.currentListener = listener;
       try {
         listener(event);

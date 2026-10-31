@@ -6,6 +6,12 @@ import type { FieldNode } from '@/schema-form/core';
 import type { FieldRendererProps } from '@/schema-form/types';
 
 export interface FieldRendererContext {
+  /** Provider-lifetime committed visibility, independently owned by display kind. */
+  errorVisibility: {
+    renderer: WeakMap<FieldNode, boolean>;
+    input: WeakMap<FieldNode, boolean>;
+    childErrors: WeakMap<FieldNode, boolean>;
+  };
   /** FieldRenderer component declared externally */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */

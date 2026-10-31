@@ -322,6 +322,8 @@ export interface FieldNodeRuntime<Self>
   validationRun?: () => boolean;
   /** A write-triggered verdict is still pending. */
   validationPending?: boolean;
+  /** Stamp owned by the active chain's pre-delivery pending record. */
+  validationPendingEntryStamp?: number;
   /** Internal display listeners notified only when pending ends. */
   validationSettleListeners?: Set<() => void>;
   /** Subtree scopes merged into the next cadence-selected validation run. */

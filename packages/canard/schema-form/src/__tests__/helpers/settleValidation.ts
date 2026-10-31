@@ -5,7 +5,8 @@ import {
 
 import { advanceValidationFrame } from './advanceValidationFrame';
 
-/** Await frame-backed validation, including writes triggered by a delivered verdict.
+/** Await write-pending validation, including writes triggered by a delivered verdict.
+ * An asynchronous mount verdict does not set write-pending: await its onValidate/error or explicit completion promise separately.
  * @param current - Root or resolver retaining the current root across replacements/unmounts.
  * @returns Completion when the current write verdict is no longer pending.
  * @throws When a validator or write cascade does not settle within the bounded rounds. */

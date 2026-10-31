@@ -5,8 +5,11 @@ import { FormErrorCode } from '../../../../../errors';
 import type { FormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
-import { ValidationMode } from '../../../types/state';
-import { requestFieldNodeValidation } from '../../../validation';
+import {
+  prepareFieldNodeValidation,
+  requestFieldNodeValidation,
+  settleFieldNodeValidation,
+} from '../../../validation';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { bundleChainErrors } from '../report/bundleChainErrors';
 import { collectChainRecords } from '../report/collectChainRecords';
@@ -96,11 +99,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   }
   const changed = runtime.chainInitialEmit !== root.emit;
   const requests = runtime.validationTargets;
-  if (
-    !runtime.deferMountValidation &&
-    runtime.validationMode &&
-    runtime.validationMode & ValidationMode.OnChange
-  ) {
+  if (prepareFieldNodeValidation(root)) {
     runtime.reportValidationFailure ??= (error) =>
       reportValidationFailure(runtime, error);
     if (changed && !requests?.has(root)) {
@@ -113,7 +112,10 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
         deliverValidationWave(target, issues, commit),
       );
     }
+  } else if (runtime.validationPendingEntryStamp !== undefined) {
+    settleFieldNodeValidation(root, runtime.validationPendingEntryStamp);
   }
+  runtime.validationPendingEntryStamp = undefined;
   runtime.validationTargets = undefined;
   runtime.deferMountValidation = undefined;
   runtime.entryDepth = 0;

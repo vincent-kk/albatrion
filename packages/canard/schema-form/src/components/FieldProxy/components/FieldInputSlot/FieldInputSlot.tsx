@@ -38,7 +38,6 @@ const TOUCHED_STATE_PATCH = { 2: true };
 export const FieldInputSlot = memo(
   ({
     node,
-    errorVisibilityMemory,
     onChangeRef,
     onFileAttachRef,
     overrideProps,
@@ -52,11 +51,11 @@ export const FieldInputSlot = memo(
       useTerminalChildren(node);
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
-    const { checkShowError } = useFieldRendererContext();
+    const { checkShowError, errorVisibility } = useFieldRendererContext();
     const [errorVisible] = useErrorVisibility(
       [node],
       [checkShowError(node.state)],
-      errorVisibilityMemory,
+      errorVisibility.input,
     );
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =

@@ -15,11 +15,21 @@ import { isFieldNodeValidationPending } from '../../../src/core';
 
 const handles = new WeakMap<HTMLElement, FormHandle>();
 const blurPending = new WeakMap<object, boolean>();
+interface StoryControl {
+  hold: boolean;
+  pending: (() => void)[];
+  onWrite?: () => void;
+  started?: () => void;
+}
+const controls = new WeakMap<object, StoryControl>();
 const Input = ({ node, value, onChange }: FieldInputProps) => (
   <input
     aria-label="code"
     value={String(value ?? '')}
-    onChange={(event) => onChange(event.target.value)}
+    onChange={(event) => {
+      controls.get(node)?.onWrite?.();
+      onChange(event.target.value);
+    }}
     onBlur={() => blurPending.set(node, isFieldNodeValidationPending(node))}
   />
 );
@@ -42,11 +52,14 @@ const Harness = ({
 }) => {
   const element = useRef<HTMLDivElement>(null);
   const ref = useRef<FormHandle>(null);
+  const control = useRef<StoryControl>({ hold: false, pending: [] });
   useLayoutEffect(() => {
     const host = element.current!;
     handles.set(host, ref.current!);
+    controls.set(ref.current!.node!, control.current);
     return () => {
       handles.delete(host);
+      if (ref.current?.node) controls.delete(ref.current.node);
     };
   }, []);
   return (
@@ -61,10 +74,17 @@ const Harness = ({
         formatError={(error) => error.message ?? null}
         validatorFactory={{
           compileGuard: () => () => true,
-          compile: () => (value) =>
-            String(value ?? '').length < 3
-              ? [{ dataPath: '', message: 'too short' }]
-              : [],
+          compile: () => (value) => {
+            const result =
+              String(value ?? '').length < 3
+                ? [{ dataPath: '', message: 'too short' }]
+                : [];
+            if (!control.current.hold) return result;
+            return new Promise<typeof result>((resolve) => {
+              control.current.pending.push(() => resolve(result));
+              control.current.started?.();
+            });
+          },
         }}
       />
       <button type="button">After input</button>
@@ -120,7 +140,16 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
       samples.push(error.textContent ?? '');
     }
   };
-  const samplingDone = sampling();
+  const control = controls.get(handle.node!)!;
+  let samplingDone = Promise.resolve();
+  control.hold = touched;
+  const started = new Promise<void>((resolve) => {
+    control.started = resolve;
+  });
+  control.onWrite = () => {
+    control.onWrite = undefined;
+    samplingDone = sampling();
+  };
   try {
     await userEvent.keyboard(touched ? 'c{Tab}' : same ? 'a' : 'c');
     if (touched)
@@ -128,6 +157,15 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
         blurPending.get(handle.node!),
         'Tab lands while the key verdict is pending',
       ).toBe(true);
+    if (touched) {
+      await started;
+      await frame();
+      expect(handle.node!.state[2]).toBe(true);
+      expect(isFieldNodeValidationPending(handle.node!)).toBe(true);
+      expect(error.textContent).toBe('');
+      control.hold = false;
+      control.pending.splice(0).forEach((resolve) => resolve());
+    }
     for (let round = 0; round < 12; round++) {
       await frame();
       if (!isFieldNodeValidationPending(handle.node!)) break;
@@ -144,6 +182,10 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
       expect(samples.filter(Boolean)).toEqual([]);
     }
   } finally {
+    control.onWrite = undefined;
+    control.started = undefined;
+    control.hold = false;
+    control.pending.splice(0).forEach((resolve) => resolve());
     active = false;
     await samplingDone;
     observer.disconnect();

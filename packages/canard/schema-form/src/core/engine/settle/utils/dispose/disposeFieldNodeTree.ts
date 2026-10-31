@@ -17,6 +17,7 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   runtime.validationCadence = undefined;
   runtime.validationRun = undefined;
   settleFieldNodeValidation(root);
+  runtime.validationPendingEntryStamp = undefined;
   runtime.validationSettleListeners?.clear();
   visitFieldNodes(
     root,

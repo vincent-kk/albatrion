@@ -13,6 +13,7 @@ import {
 } from '@/schema-form';
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
+import { isValidationPending } from '../helpers/isValidationPending';
 import { observeErrorSink } from '../helpers/observeErrorSink';
 import { settleValidation } from '../helpers/settleValidation';
 
@@ -198,7 +199,7 @@ it('IR-6 no validator releases external errors revealed by showError after a wri
   expect(view.getByTestId('error').textContent).toBe('external');
 });
 
-it('IR-6 submit releases a touched field hold using its immediate root verdict', async () => {
+it('IR-6 submit reveals a still-invalid touched field and settles its hold', async () => {
   const ref = createRef<FormHandle>();
   const submitted = vi.fn();
   const view = render(
@@ -212,19 +213,25 @@ it('IR-6 submit releases a touched field hold using its immediate root verdict',
       onSubmit={submitted}
       validatorFactory={{
         compile: () => (value) =>
-          value ? [] : [{ dataPath: '', message: 'required' }],
+          value === 'valid' ? [] : [{ dataPath: '', message: 'required' }],
         compileGuard: () => () => true,
       }}
     />,
   );
   await settleValidation(() => ref.current?.node);
   act(() => ref.current!.node!.setState({ 2: true }));
-  act(() => ref.current!.setValue('valid'));
-  await act(async () => {
-    await ref.current!.submit();
+  act(() => {
+    ref.current!.setValue('still-invalid');
+    // Imperative writes retain dirty; reveal the first-change condition during this pending request.
+    ref.current!.node!.setState({ 1: true });
   });
-  expect(submitted).toHaveBeenCalled();
   expect(view.getByTestId('error').textContent).toBe('');
+  await act(async () => {
+    await ref.current!.submit().catch(() => undefined);
+  });
+  expect(submitted).not.toHaveBeenCalled();
+  expect(view.getByTestId('error').textContent).toBe('required');
+  expect(isValidationPending(ref.current!.node!)).toBe(false);
 });
 
 it('IR-6 Touched mode holds the previous error when blur writes a trimmed value', async () => {

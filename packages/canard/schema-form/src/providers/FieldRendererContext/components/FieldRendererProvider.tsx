@@ -2,9 +2,10 @@ import { type PropsWithChildren, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { useConstant } from '@winglet/react-utils/hook';
+import { useConstant, useLazyConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
+import type { FieldNode } from '@/schema-form/core';
 import { ShowError } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
@@ -70,6 +71,11 @@ export const FieldRendererContextProvider = ({
     };
   }, [inputShowError, externalShowError]);
 
+  const errorVisibility = useLazyConstant(() => ({
+    renderer: new WeakMap<FieldNode, boolean>(),
+    input: new WeakMap<FieldNode, boolean>(),
+    childErrors: new WeakMap<FieldNode, boolean>(),
+  }));
   const constant = useConstant({
     FieldRenderer,
     FormLabelRenderer,
@@ -91,12 +97,14 @@ export const FieldRendererContextProvider = ({
       FormErrorRenderer: constant.FormErrorRenderer,
       formatError,
       checkShowError,
+      errorVisibility,
     };
   }, [
     constant,
     checkShowError,
     ExternalFormFieldRenderer,
     externalFormatError,
+    errorVisibility,
   ]);
 
   return (

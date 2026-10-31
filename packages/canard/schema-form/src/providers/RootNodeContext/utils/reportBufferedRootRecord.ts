@@ -1,3 +1,4 @@
+import { observeFieldNodeReports } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
 import type { RootLoad } from '../type';
@@ -17,7 +18,9 @@ export const reportBufferedRootRecord = (
     : load.root;
   load.recordRoots?.delete(record);
   try {
-    reporter.report(record);
+    if (load.root)
+      observeFieldNodeReports(load.root, () => reporter.report(record));
+    else reporter.report(record);
   } finally {
     reporter.root = load.root;
   }

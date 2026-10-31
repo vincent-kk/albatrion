@@ -17,3 +17,4 @@ export { releaseValidationRoot } from './utils/lifetime/releaseValidationRoot';
 export { isFieldNodeValidationPending } from './utils/read/isFieldNodeValidationPending';
 export { subscribeFieldNodeValidationSettled } from './utils/read/subscribeFieldNodeValidationSettled';
 export { settleFieldNodeValidation } from './utils/run/settleFieldNodeValidation';
+export { prepareFieldNodeValidation } from './utils/run/prepareFieldNodeValidation';

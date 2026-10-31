@@ -1,22 +1,10 @@
 import type { FieldNode } from '@/schema-form/core';
-import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
-import type { FormErrorService } from '../../FormErrorContext';
+import { reportMountValidationFailure } from './reportMountValidationFailure';
 
-/** Start the mount verdict with its shared rejection filter.
+/** Start the mount verdict without recapturing an engine-reported failure.
  * @param root - Current committed root.
- * @param reporter - Instance service for failures not already reported by the engine.
- * @returns Nothing; the engine owns the asynchronous verdict. */
-export const validateMountRoot = (
-  root: FieldNode,
-  reporter?: FormErrorService,
-): void => {
-  void root.validate().catch((error) => {
-    if (
-      error instanceof SchemaFormError &&
-      error.code === FormErrorCode.ValidatorCompileFailed
-    )
-      return;
-    reporter?.capture(error, undefined, 'rejected');
-  });
+ * @returns Nothing; only bundled consumer failures reach the host from this helper. */
+export const validateMountRoot = (root: FieldNode): void => {
+  void root.validate().catch(reportMountValidationFailure);
 };

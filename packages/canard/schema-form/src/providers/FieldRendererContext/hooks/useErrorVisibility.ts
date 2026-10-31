@@ -1,8 +1,7 @@
 import {
-  type RefObject,
   useCallback,
   useLayoutEffect,
-  useRef,
+  useReducer,
   useSyncExternalStore,
 } from 'react';
 
@@ -16,24 +15,23 @@ import {
 } from '@/schema-form/core';
 
 const serverSnapshot = () => false;
-const EMPTY_VISIBILITY: ReadonlyMap<FieldNode, boolean> = new Map();
 
-/** Keep newly enabled error displays behind their current write verdict.
- * @param inputNodes - Same-tree occurrences; identity owns committed visibility memory.
- * @param conditions - Existing display-policy decisions, including disabled displays.
- * @param memory - Optional node-specific owner retained across input version remounts.
- * @returns Effective visibility for every occurrence. */
+/** Gate new error reveals using provider-lifetime committed memory.
+ * @param inputNodes - Same-tree occurrences rendered by this display.
+ * @param conditions - Existing visibility-policy decisions.
+ * @param memory - Provider-owned WeakMap for this display kind.
+ * @returns Effective visibility; layout rejects a reveal invalidated by a child write. */
 export const useErrorVisibility = (
   inputNodes: readonly (FieldNode | null | undefined)[],
   conditions: readonly boolean[],
-  memory?: RefObject<ReadonlyMap<FieldNode, boolean>>,
+  memory: WeakMap<FieldNode, boolean>,
 ): boolean[] => {
   const nodes = useRestProperties(inputNodes);
-  const owned = useRef(EMPTY_VISIBILITY);
-  const committed = memory ?? owned;
+  const [, resync] = useReducer((value: number) => value + 1, 0);
+  const wasVisible = nodes.map((node) => !!node && memory.get(node) === true);
   const node = nodes.find((item) => item != null);
   const candidate = nodes.some(
-    (item, index) => item && conditions[index] && !committed.current.get(item),
+    (item, index) => item && conditions[index] && !wasVisible[index],
   );
   const snapshot = useCallback(
     () => !!node && candidate && isFieldNodeValidationPending(node),
@@ -50,19 +48,26 @@ export const useErrorVisibility = (
   const pending = useSyncExternalStore(subscribe, snapshot, serverSnapshot);
   const visible = nodes.map(
     (item, index) =>
-      !!item &&
-      conditions[index] &&
-      (!!committed.current.get(item) || !pending),
+      !!item && conditions[index] && (wasVisible[index] || !pending),
   );
   const visibility = visible.join(':');
   useLayoutEffect(() => {
-    const next = new Map<FieldNode, boolean>();
+    let rejected = false;
     nodes.forEach((item, index) => {
-      if (item) next.set(item, visible[index]);
+      if (!item) return;
+      const hold =
+        !wasVisible[index] &&
+        visible[index] &&
+        isFieldNodeValidationPending(item);
+      memory.set(item, visible[index] && !hold);
+      rejected ||= hold;
     });
-    committed.current = next;
-    // Visibility bits represent the render values; identity changes also require a commit.
+    if (rejected) resync();
+    return () => {
+      for (const item of nodes) if (item) memory.delete(item);
+    };
+    // Previous visibility was captured before an old instance's cleanup; only identity/visible changes commit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, visibility, committed]);
+  }, [nodes, visibility, memory]);
   return visible;
 };
