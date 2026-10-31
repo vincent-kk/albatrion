@@ -9,7 +9,7 @@
 
 - Y2: 노드·Form 정책 기준 조회와 recordFieldNodeShowErrorBaseline은 validation→engine→surface wrapper→core를 거친 바인딩 전용 연산이다. 정책은 { value: unknown } box로 undefined도 보존하고 엔진은 해석하지 않는다. OnChange에서만 기록한다.
 - Y2 drop은 validation/utils/lifetime/scheduleFieldNodeRevealDrop가 기존 scheduleValidationSlot만 사용한다. 예약 때 runtime generation을 캡처하고 실행 때 새 기준 기록이 있으면 모두 유지하고 재예약한다(승인 msg_5abe110cb1c6). 새 기록이 없고 pending=false이면 모두 drop한다. pending=true여서 skip한 실행도 예약 flag를 지우며 settle의 true→false는 listener 전에 모두 drop한다. disposal은 pending 여부와 관계없이 기준을 지우고 token 무효화·disposed 검사로 예약을 취소한다. 같은 프레임의 추가 기록 때문에 이른 기준이 한 프레임 더 남을 수 있어 limit(iv)는 약1~2프레임이다.
-- R-a: 현재 stamp 실행이 commit 검사로만 폐기되면 settle하지 않고 해당 targets를 다시 합쳐 cadence.request로 최신 commit 판정을 요청한다. explicit root validate의 같은 경우도 pending이면 동일 write entry로 재요청하되 호출자 반환 판정은 호출 시점 snapshot 그대로다. context 내용(새 함수·Date·Map·class instance 등 identity 비교 포함)의 commit-only 연속은 stream이 멎을 때까지 hold할 수 있다(Q22·Q19).
+- R-a: 현재 stamp 실행이 commit 검사로만 폐기되면 settle하지 않고 해당 targets를 다시 합쳐 cadence.request로 최신 commit 판정을 요청한다. explicit root validate의 같은 경우도 OnChange 모드이면 pending 여부와 관계없이 동일 write entry로 재요청하되 호출자 반환 판정은 호출 시점 snapshot 그대로다. context 내용(새 함수·Date·Map·class instance 등 identity 비교 포함)의 commit-only 연속은 stream이 멎을 때까지 hold할 수 있다(Q22·Q19).
 
 - W3: prepareFieldNodeValidation은 active entry·비deferred OnChange·available·방출 변경 또는 validationTargets라는 실제 요청 조건을 공유하며 첫 공개 배달 전에 pending을 기록한다. validationPendingEntryStamp는 pending을 false에서 true로 만든 사슬만 그때의 stamp를 선택적으로 보유한다. 이미 대기 중인 hold를 만난 사슬은 marker를 얻지 않으며 자신의 요청만 정착한다. 요청이 사라진 사슬은 자신이 만든 hold의 stamp만 정착하고 marker를 지워 이전 대기 요청이나 더 새로운 판정을 풀지 않는다. request의 기존 true 설정은 멱등이며 timing·공개 사건·revision은 바꾸지 않는다.
 

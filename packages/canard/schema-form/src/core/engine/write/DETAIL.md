@@ -34,7 +34,7 @@
 
 ## API Contracts
 
-- Y2: 최외곽 exitFieldNodeChain의 검증 요청 뒤와 standalone setState/setSubtreeState/clearSubtreeState 뒤에 validation의 기준 drop scheduling을 호출한다. record는 기준·owed만 쓰고 일정은 validation이 소유한다. clearSubtreeState의 직접 {} 쓰기 전에도 노드 기준을 기록한다. R-a의 explicit root commit-only 폐기에서 pending이면 같은 자동 루트 요청 통로를 사용하며 반환 판정은 호출 시점 snapshot이다.
+- Y2: 최외곽 exitFieldNodeChain의 검증 요청 뒤와 standalone setState/setSubtreeState/clearSubtreeState 뒤에 validation의 기준 drop scheduling을 호출한다. record는 기준·owed만 쓰고 일정은 validation이 소유한다. clearSubtreeState의 직접 {} 쓰기 전에도 노드 기준을 기록한다. R-a의 explicit root commit-only 폐기에서 OnChange이면 pending 여부와 관계없이 같은 자동 루트 요청 통로를 사용하며 반환 판정은 호출 시점 snapshot이다.
 
 - W3: 공개 리스너 배달 전에 validation의 prepareFieldNodeValidation을 호출해 동기 flushSync·legacy render도 pending을 보게 한다. 종료는 같은 적격 조건으로 실제 요청을 만들고, 요청이 사라지면 기록한 entry stamp만 정착하여 더 최신 pending은 보존한다. state-only 사슬은 기존 다른 요청을 풀지 않는다.
 
