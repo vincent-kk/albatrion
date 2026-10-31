@@ -374,3 +374,16 @@ FCA snapshot f85dd77d0a4c08f286d6eb1404986aa886098d78463549fad8ad944bdb89cb65에
 최종 원장은 ref1416항목·문제0, verbatim327조각·불일치0, sup3584인용·불일치0·unparsed0입니다. doc-coverage25문서·1144항목·무태그0·기존 uncited66/문제66입니다. [원장](raw/ir-6/code/round-5c/ledger-checks.json), [병합 prefix·owner quotes9–30+18b·public index·version 보존](raw/ir-6/code/round-5c/history-and-quotes.json), [재사용 원시의 입력 해시](raw/ir-6/code/round-5c/reused-evidence-inputs.json)를 보존합니다. 새 변경 whitespace0, 기존 원문27–30 trailing space 다섯 줄 보존, 포착 원시의 머신 절대 경로0입니다.
 
 판정: 5c 코드 관문 통과, 독립 검토 대기입니다. 다섯 H 한계와 hidden same-schema reset의 chain-end 전달 미결은 유지합니다. 성능 G1–G6·G8 및 L·E·F는 미측정·표본0이며 `code accepted; window clear` 전에는 측정하지 않습니다. worker_done은 보내지 않았습니다.
+
+
+## 5d차 선행 조건 — Amendment 9d와 코드 수락
+
+msg_ad3789bbda7a는5c 제품 동작을 수락하고 아래 다섯 항목 뒤 측정 창을 허가했습니다. Opus는P1/P2 없는 조건부PASS, codex는 기능 결함 없음입니다. write DETAIL의 superseded route·settle 뒤 release 문장을 지우고 한 번의 root release 계약만 남겼습니다. release version reader와 후보 getter의 두 주석을 정확히 보완하고 after-paint story의 triple negation을 단일 negation으로 바꿨습니다. 빌드 runtime 세 번들의 바이트·해시는5c와 같습니다.
+
+[최종 legacy fixture의 수정 전 재실행](raw/ir-6/code/round-5c/baseline-finalfixture-red-react18.json.gz)은 f06bc9205 scratch worktree에서 지정 세 파일만0624741a0으로 복원하고, 커밋된 시험의SHA-256을 대조한 bare React18 JSON 실행입니다. `too short`가 빈 표시 대신 나타나는1실패를 확인했고 [failure-observation](raw/ir-6/code/round-5c/failure-observation.json)에 그 시험 해시와 관측을 추가했습니다.
+
+새 결정적 시험은10개의 비후보 display를 마운트하고 parent layout에서 runtime bridge로 release version을 전진시킵니다. 모든 자식의 layout 뒤·passive effects 전의 전진을 고정하며 effects flush 뒤 각 display의 hook 호출이 전진 전과 같아야 합니다.062 getter에서 React18/19 각각 호출[2×10] 대[1×10]으로 실패했고, 현재 getter에서는 각1회로 통과합니다.50ms mount/hydration 두 사례는 함께 유지합니다.
+
+[집중 관문](raw/ir-6/code/round-5d/focused-gates.json): render3통과, react18은 새결정적·mount/hydration·legacy4통과, importModel2통과, lint경고0·typecheck·build exit0입니다. FCA validate snapshot3a78c7676bab5f19d32b32e2f04fa241096f0cd5f198e549efc921b3d0b47f3b의 기존202finding·177diagnostic·failed12/skipped1·indeterminate를 유지하고 신규0입니다. 원장 ref1416문제0/verbatim327불일치0/sup3584불일치0·unparsed0/doccoverage기존66·무태그0입니다. 전체5c 관문을 대체 통과로 다시 주장하지 않고 승인된9d 집중 관문과 같은 runtime bundle 해시로 연결합니다.
+
+측정 사전 규칙은 G1–G6과 G8이며 G7은 없다는 코디네이터 정정(msg_84f0444c1629)을 반영합니다. 선행 조건을 마쳤으므로 PhaseE 준비·사전 규칙 커밋·untimed smoke 뒤 첫 창을 시작합니다. 현재 timed 표본0입니다.

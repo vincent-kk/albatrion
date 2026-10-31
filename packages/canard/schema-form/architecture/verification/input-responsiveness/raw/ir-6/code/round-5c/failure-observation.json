@@ -139,6 +139,20 @@
           "status": "failed"
         }
       ]
+    },
+    {
+      "artifact": "baseline-finalfixture-red-react18.json.gz",
+      "passed": 0,
+      "failed": 1,
+      "committedTestSha256": "771d3067c8884c7135e7c593b4f94ae932bf68c0c71399912dbee01c47d71370",
+      "scratchHead": "f06bc92053f9a713c5ebd84f408b2a4cd45bd622",
+      "restoredBehaviorBase": "0624741a071c578f0cebc6daeda569dc1d4acbec",
+      "cases": [
+        {
+          "name": "IR-6 D React18 legacy release preserves a reentrant layout write history (React19 has no legacy root)",
+          "status": "failed"
+        }
+      ]
     }
   ],
   "react18MountCharacterizationApproval": "msg_d101f539b310",

@@ -170,7 +170,7 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
     }
     for (let round = 0; round < 12; round++) {
       await frame();
-      if (!!!readFieldNodeRuntime(handle.node!).validationPending) break;
+      if (!readFieldNodeRuntime(handle.node!).validationPending) break;
     }
     expect(!!readFieldNodeRuntime(handle.node!).validationPending).toBe(false);
     if (same) {

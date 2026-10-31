@@ -1,0 +1,13 @@
+{
+  "head": "f06bc92053f9a713c5ebd84f408b2a4cd45bd622",
+  "restoredFrom": "0624741a071c578f0cebc6daeda569dc1d4acbec",
+  "behaviorHashes": {
+    "src/providers/FieldRendererContext/hooks/useErrorVisibility.ts": "3b3ce6ee885e8d0b67e73cd802592817cc8f6919148259daeabc8b2d72854a1f",
+    "src/providers/FieldRendererContext/utils/resolveErrorVisibility.ts": "a00f700a73e7cc08e93fd83d81b45cfb9f0fa0ab5ac383336e7e3941805d3ee4",
+    "src/core/engine/write/utils/entry/dispatchValidate.ts": "02be940721763812aa2a40e4e1a6fba78e07571aea15ee44c1288fea28e2bb0f"
+  },
+  "committedLegacyTestSha256": "771d3067c8884c7135e7c593b4f94ae932bf68c0c71399912dbee01c47d71370",
+  "aliasResolution": "vite.config.ts resolves @/schema-form against the scratch config directory",
+  "deterministicRedTestSha256": "54ef1e9d97405d3e57b9d6d161a8526d4047b33fdd53a0f15116522004d3eafe",
+  "finalFormattedTestSha256": "6a5aaa56c8bb4d2b6eb828344e996e8e2ce370277b276e091745629b24670bc9"
+}

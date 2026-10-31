@@ -1,9 +1,19 @@
+import { useEffect, useLayoutEffect } from 'react';
+
+import { flushSync } from 'react-dom';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { readFieldNodeRuntime } from '@/schema-form/__tests__/helpers/readFieldNodeRuntime';
 import { Form } from '@/schema-form/components/Form';
+import { ValidationMode } from '@/schema-form/core';
 import type { FieldInputProps, FieldRendererProps } from '@/schema-form/types';
+
+import { FieldRendererContextProvider } from '../components/FieldRendererProvider';
+import { useErrorVisibility } from '../hooks/useErrorVisibility';
+import { useFieldRendererContext } from '../hooks/useFieldRendererContext';
 
 const counter = vi.hoisted(() => ({ calls: 0 }));
 vi.mock('../hooks/useErrorVisibility', async (importOriginal) => {
@@ -94,3 +104,64 @@ it.each([false, true])(
     expect(always).toBe(hidden);
   },
 );
+
+it('a release before mount passive effects adds no non-candidate display render', async () => {
+  actEnvironment.IS_REACT_ACT_ENVIRONMENT = false;
+  const node = nodeFromJSONSchema({
+    jsonSchema: schema,
+    defaultValue: defaults,
+    validationMode: ValidationMode.OnChange,
+    deferMountValidation: true,
+  });
+  const counts = Array.from({ length: 10 }, () => 0);
+  let beforeAdvance: number[] = [];
+  let finishEffects!: () => void;
+  const effectsFlushed = new Promise<void>((resolve) => {
+    finishEffects = resolve;
+  });
+  const Display = ({ index }: { index: number }) => {
+    const field = node.find('/field' + index)!;
+    const { checkShowError } = useFieldRendererContext();
+    useErrorVisibility([field], [checkShowError(field.state)]);
+    counts[index]++;
+    return null;
+  };
+  const Parent = () => {
+    useLayoutEffect(() => {
+      beforeAdvance = [...counts];
+      const runtime = readFieldNodeRuntime(node);
+      runtime.revealReleaseVersion = (runtime.revealReleaseVersion ?? 0) + 1;
+    }, []);
+    useEffect(() => {
+      finishEffects();
+    }, []);
+    return (
+      <>
+        {counts.map((_, index) => (
+          <Display key={index} index={index} />
+        ))}
+      </>
+    );
+  };
+  const container = document.createElement('div');
+  document.body.append(container);
+  const root = createRoot(container);
+  counter.calls = 0;
+  try {
+    flushSync(() =>
+      root.render(
+        <FieldRendererContextProvider showError={true}>
+          <Parent />
+        </FieldRendererContextProvider>,
+      ),
+    );
+    await effectsFlushed;
+    flushSync(() => undefined);
+    expect(beforeAdvance).toEqual(Array.from({ length: 10 }, () => 1));
+    expect(counts).toEqual(beforeAdvance);
+    expect(counter.calls).toBe(10);
+  } finally {
+    root.unmount();
+    container.remove();
+  }
+});

@@ -48,6 +48,7 @@ export const useErrorVisibility = (
       (!includeEnabled || item.enabled) &&
       !values[index],
   );
+  // Candidate snapshots stay at 1 or more so a candidate ending is always a snapshot change React keeps.
   const getSnapshot = useCallback(
     () => (node && candidate ? readFieldNodeRevealVersion(node) + 1 : 0),
     [node, candidate],

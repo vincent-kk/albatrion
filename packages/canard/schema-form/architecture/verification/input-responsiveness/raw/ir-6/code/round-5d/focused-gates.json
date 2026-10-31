@@ -1,0 +1,62 @@
+{
+  "approval": "msg_ad3789bbda7a",
+  "measurementGateNumbering": "G1-G6 and G8; no G7, msg_84f0444c1629",
+  "changes": {
+    "src/core/engine/validation/utils/read/readFieldNodeRevealVersion.ts": "d67d8c99e88fbd9ff06cbfeeebad44851e0c899e5fe0c3e8f01c3f088019adbe",
+    "src/providers/FieldRendererContext/hooks/useErrorVisibility.ts": "292858f264a028ea5cc8b318b36dfa5c35e8f1a0cbf599823a6c7b2f4f21d5e5",
+    "src/providers/FieldRendererContext/__tests__/visibility.mount-release.test.tsx": "6a5aaa56c8bb4d2b6eb828344e996e8e2ce370277b276e091745629b24670bc9",
+    "stories/features/validation-state/after-paint.stories.tsx": "f9663ec2dbe18337e2b862a1faae11366a8203b1fb321c4b78662979c5498dc6",
+    "src/core/engine/write/DETAIL.md": "1bf2fa2ca15dba02bd6a1658205e63cafa3fbdb8d891011d106353c5b3b1fe19"
+  },
+  "bundleHashes": {
+    "index.mjs": "4c3d76b857d85df64b1ceb5f900c13aad6a5acaefa09a5092211c85240ee379f",
+    "index.node.mjs": "cb6e25e41f5e1b0ad39a4f619c4a3053505366e4650a347a8307c6885801b2f2",
+    "index.cjs": "c5c27bdd63e903d57ee50a88a3c53729b6df2903d55d280685426ba9ca4e900e"
+  },
+  "bundleBytesEqualAcceptedRound5c": true,
+  "gates": {
+    "lint": {
+      "exitCode": 0,
+      "warnings": 0
+    },
+    "typecheck": {
+      "exitCode": 0
+    },
+    "build": {
+      "exitCode": 0
+    },
+    "importModel": {
+      "passed": 2,
+      "failed": 0,
+      "artifact": "import-model.json.gz"
+    },
+    "render": {
+      "passed": 3,
+      "failed": 0,
+      "artifact": "focused-render.json.gz"
+    },
+    "react18": {
+      "passed": 4,
+      "failed": 0,
+      "artifact": "focused-react18.json.gz"
+    },
+    "legacyFinalFixtureRed": {
+      "failed": 1,
+      "artifact": "../round-5c/baseline-finalfixture-red-react18.json.gz"
+    },
+    "deterministicRedRender": {
+      "failed": 1,
+      "artifact": "deterministic-red-render.json.gz"
+    },
+    "deterministicRedReact18": {
+      "failed": 1,
+      "artifact": "deterministic-red-react18.json.gz"
+    },
+    "fcaValidate": {
+      "newFindings": 0,
+      "newDiagnostics": 0,
+      "status": "indeterminate",
+      "snapshotHash": "3a78c7676bab5f19d32b32e2f04fa241096f0cd5f198e549efc921b3d0b47f3b"
+    }
+  }
+}
