@@ -13,7 +13,9 @@
 
 ### 계약 형과 진입점
 
-- `scheduleValidationSlot(run): void`는 호출할 때마다 환경을 읽는 바인딩 전용 실행 슬롯이다. 프레임 API가 없거나 문서가 숨겨졌으면 취소 가능한 매크로태스크를 예약한다. 그 밖에는 프레임 콜백 뒤 매크로태스크와 100ms 타이머를 경주시켜 정확히 한 번 실행하고 다른 핸들을 취소한다. 예약 시점의 프레임 취소 함수를 슬롯과 함께 보존하여 호스트의 전역 정리 뒤에도 같은 핸들을 취소한다. engine·core가 명명 재수출하여 RootNodeContext가 소비하며 패키지 공개 표면에는 추가하지 않는다(IR-6).
+- `hasFieldNodeValidationRequest(node): boolean`은 루트 런타임의 `(validationStamp ?? 0) > 0`을 읽는다. 마운트 뒤 쓰기 검증 요청 또는 명시적 루트 검증이 있으면 참이며, 비루트 명시적 검증이 초기화한 0은 거짓이다. engine을 통해 surface 바인딩 래퍼가 소비하고 패키지 공개 이름은 늘리지 않는다(IR-6 R2, 코디네이터 승인 msg_7e0a5ed0ffd3).
+
+- `scheduleValidationSlot(run): void`는 호출할 때마다 환경을 읽는 바인딩 전용 실행 슬롯이다. requestAnimationFrame 또는 cancelAnimationFrame이 함수가 아니거나 문서가 숨겨졌으면 취소 가능한 매크로태스크를 예약한다. 그 밖에는 프레임 콜백 뒤 매크로태스크와 100ms 타이머를 경주시켜 정확히 한 번 실행하고 다른 핸들을 취소한다. 예약 시점의 프레임 취소 함수를 슬롯과 함께 보존하여 호스트의 전역 정리 뒤에도 같은 핸들을 취소한다. engine·core가 명명 재수출하여 RootNodeContext가 소비하며 패키지 공개 표면에는 추가하지 않는다(IR-6).
 - `GuardFunction`은 동기 가드의 내부 형이며 validation index가 내보내지 않는다. core 시험 검증기는 engine index의 `Validator['compileGuard']` 반환형에서 가드 형을 유도한다. `readFieldNodeGuard`는 settle이 소비하는 validation 진입점 이름이며, engine과 core의 집계 index는 재수출하지 않는다.
 - `__tests__/validation.retain-guard.test.ts`는 검증기 수명 유지와 동기 가드 읽기를 함께 검증하므로 validation이 소유한다. 플러그인 형이 검증기 형을 만족하는지는 app/plugin의 시험 구획이 검증한다. write와 공유하는 트리 생성 fixture는 engine의 공용 시험 구획에서 읽는다.
 
@@ -33,6 +35,9 @@
 - 서로 다른 작성 루트 객체가 같은 `$id`를 가진 채 동시에 살아 있어도 각 트리는 자기 루트로 판정한다. 등록 충돌 없이 루트별로 격리할 책임은 플러그인에 있고, core는 `$id`를 고치지 않는다. 재생성 reset에서 새 루트의 컴파일이 실패하면 옛 트리를 유지해 전환의 원자성을 지킨다(VALIDATE-046, ERROR-201).
 
 ### 실행과 오류 배정
+
+- setImmediate와 MessageChannel이 모두 없는 호스트는 지원하지 않는다. winglet 스케줄러가 모듈 로드 시 사용할 실행 수단을 고르는 기존 의존 제약이다(IR-6 R4).
+- 기존 한계: 비동기 명시적 validate 중 새 커밋이 생기면 dispatchValidate는 이전 커밋의 판정을 호출자에게 돌려줄 수 있다. 새 커밋에 대한 발행은 기존 stamp·commit 검사로 막으며 이번 범위에서 반환 계약을 바꾸지 않는다(IR-6 R6).
 
 - 외부 검증기가 만든 dataPath는 parseStandardPointer로 해석하여 예약 이름도 리터럴 속성으로 라우팅합니다. 소비자에게 제공하는 경로는 이름을 formatSegment로 조립한 확장 경로이며 같은 이름을 node.find로 다시 찾을 수 있습니다.
 

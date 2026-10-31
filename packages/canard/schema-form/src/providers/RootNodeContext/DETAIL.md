@@ -8,8 +8,8 @@
 
 - OnChange 최초 마운트 검증은 준비 layout effect가 다음 화면 뒤 슬롯에 예약한다. if 게이트가 없는 스키마의 전체 컴파일과 첫 검증도 그 슬롯에서 수행하며, if 게이트의 렌더 중 컴파일은 유지한다. 명시적 validate와 제출의 즉시 실행은 유지한다(IR-6).
 - 예약 슬롯에서 `store.load !== load`이면 교체된 이전 로드를 검증하지 않는다. 실행 시점의 `load.root`가 없으면 종료한다. load.ready가 거짓이면 선택적 `mountValidationOwed`를 세우고, 같은 load의 다음 layout effect가 먼저 false로 소비한 뒤 한 슬롯만 다시 예약한다. 오직 !ready인 슬롯만 true로 쓰므로 한 load의 마운트 슬롯은 최대 하나이다. cleanup은 슬롯을 취소하지 않으며 StrictMode 재실행은 중복 예약하지 않는다. 실제 unmount 뒤에는 owed를 소비하지 않는다(IR-6).
-- 마운트 helper는 기존 root.validate를 호출하며 컴파일 실패는 engine의 런타임별 첫 보고만 남기도록 `SchemaFormError`의 `FormErrorCode.ValidatorCompileFailed`를 다시 capture하지 않는다. 마운트 컴파일 실패는 한 번 보고한다. 쓰기 실행의 거부가 마운트 슬롯 실행 전에 처리되면 표면은 `sink`이다(자식 입력의 layout 쓰기, jsdom 및 프레임 콜백마다 마이크로태스크 체크포인트가 있는 보이는 탭). 그 밖에는 `rejected`이며, 예약 시 숨은 브라우저 문서에서는 두 실행이 같은 MessageChannel 묶음에 들어가 마운트의 스탬프 증가가 쓰기 실패를 버리는 경우를 포함한다. 다른 실패는 기존 reporter의 `rejected` capture를 유지한다(IR-6).
-- 마운트 슬롯 전에 쓰기가 끝나면 root.validate가 스탬프를 올려 대기 쓰기 검증을 버리고 최신 커밋을 판정한다. 같은 스키마 reset은 동일 load를 보존하며, 루트 교체 reset은 폐기된 옛 루트의 슬롯을 무효화한다(IR-6).
+- 마운트 슬롯은 실행 시 hasFieldNodeValidationRequest(root)가 참이면 root.validate를 호출하지 않는다. 쓰기 요청이 최신 커밋을 자체 판정하며 명시적 루트 검증도 마운트 의무를 충족한다. 비루트 검증의 0 스탬프만으로는 의무가 끝나지 않는다. 아무 요청도 없는 마운트는 한 번 검증한다. 컴파일 실패는 한 번 보고하며, 마운트 슬롯이 첫 검증을 실행하면 rejected, 쓰기 검증이 먼저 요청되어 마운트를 건너뛰면 sink이다. helper는 SchemaFormError의 FormErrorCode.ValidatorCompileFailed를 다시 capture하지 않고 다른 실패는 기존 rejected capture를 유지한다(IR-6 R2·R3).
+- 마운트 슬롯 전에 쓰기 검증이 요청되면 마운트를 건너뛰고 쓰기 경로가 최신 커밋을 판정한다. 같은 스키마 reset은 동일 load를 보존하며, 루트 교체 reset은 폐기된 옛 루트의 슬롯을 무효화한다(IR-6).
 - BLUEPRINT-052 / SURFACE-063: createRootLoad injects the app-owned schema identity cache with stable renderer predicates. Explicit rebuild invalidates the committed schema and forces the existing replacement-load path with the same reset option. Ordinary reset preserves its existing root, even after another form invalidates the shared cache (round-447 coordinator clarification).
 
 - 스키마와 기본값 의존성에 맞춰 루트 생성 결과를 재사용하거나 재생성합니다.
@@ -24,7 +24,8 @@
 
 - Context 객체(`RootNodeContext`·`RootBindingContext`)와 Provider는 `components/`, 훅(`useRootNodeContext`·`useLiveNode`)은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
-- 기존 한계: 준비된 load의 layout effect가 Suspense·Activity로 정리되어 !ready인 동안 보고된 기록은 load.records에 버퍼링되지만 다시 전달되지 않는다. D1에서는 마운트 슬롯 전에 숨겨진 폼의 쓰기 컴파일 실패가 이 경로를 탈 수 있으며 reportValidationFailure의 호스트 싱크는 계속 받는다. 이 동작은 이번 범위에서 수정하지 않는다(IR-6 amendment 1 A4).
+- 이미 prepared인 load의 layout effect가 복원되면, !ready 동안 load.records에 모인 모든 기록을 순서대로 비우고 load.reporter.root를 먼저 설정하여 reporter.report로 전달한다. 이는 owed 재예약보다 앞서며 첫 commit의 flushRootLoad·reported 가드는 유지한다. 숨김 중 쓰기 컴파일 실패도 복원 뒤 onError에 한 번 도착한다(IR-6 R1, A4 대체).
+- 한 프레임 안에서 쓰기 뒤 unmount하면 은퇴한 트리의 검증이 한 번 실행될 수 있다. 구독자에게 판정은 도착하지 않으며 실패는 ready가 아니므로 호스트 싱크에만 도착한다. cleanup 취소는 Suspense·Activity 숨김도 취소하므로 한 실행을 줄이기 위한 suspend/resume 기계를 추가하지 않는다(IR-6 R5).
 
 ## Acceptance Criteria
 
