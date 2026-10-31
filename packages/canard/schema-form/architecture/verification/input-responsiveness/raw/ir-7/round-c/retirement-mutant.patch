@@ -1,0 +1,20 @@
+diff --git a/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts b/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
+index 67191715c..e0052a004 100644
+--- a/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
++++ b/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
+@@ -78,6 +78,7 @@ export const resetRootLoad = (
+   try {
+     if (root) root.batch(load);
+     else load();
++    previous.retired = true;
+   } catch (error) {
+     next.error = error;
+   }
+@@ -92,7 +93,6 @@ export const resetRootLoad = (
+     }
+     next.records = previous.records.splice(0).concat(next.records);
+   }
+-  previous.retired = true;
+   for (const record of next.records.splice(0)) {
+     try {
+       reportBufferedRootRecord(next, record);
