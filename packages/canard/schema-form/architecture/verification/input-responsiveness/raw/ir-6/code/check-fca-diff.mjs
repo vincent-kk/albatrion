@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
 const root = new URL('./', import.meta.url);
+const candidateRoot = process.argv[2] === '--round=2' ? new URL('round-2/', root) : root;
 const moved = {
   'package:/src/__tests__/e2e/features-composite-tails.test.tsx': [[171, 173]],
   'package:/src/__tests__/e2e/features-input-components-consumer.test.tsx': [[103, 105]],
@@ -34,7 +35,7 @@ function differences(before, after, normalize = false) {
 
 const report = { method: 'Exact finding and diagnostic multisets; only the four recorded line movements are normalized.', lineMovements: moved, inspections: {} };
 for (const kind of ['scan', 'validate', 'verification']) {
-  const read = (lane) => JSON.parse(gunzipSync(fs.readFileSync(new URL(`fca-${lane}-${kind}.json.gz`, root))));
+  const read = (lane) => JSON.parse(gunzipSync(fs.readFileSync(new URL(`fca-${lane}-${kind}.json.gz`, lane === 'base' ? root : candidateRoot))));
   const before = read('base');
   const after = read('final');
   const getFindings = (value) => kind === 'validate' ? value.data.result.violations : kind === 'verification' ? value.data.violations : [];
@@ -52,5 +53,5 @@ for (const kind of ['scan', 'validate', 'verification']) {
   assert.deepEqual(result.diagnostics, { added: [], removed: [] });
   assert.deepEqual(result.findings, { added: [], removed: [] });
 }
-fs.writeFileSync(new URL('fca-diff.json', root), JSON.stringify(report, null, 2) + '\n');
+fs.writeFileSync(new URL('fca-diff.json', candidateRoot), JSON.stringify(report, null, 2) + '\n');
 console.log('IR6_FCA_DIFF_OK new-findings=0 absolute-status=indeterminate');

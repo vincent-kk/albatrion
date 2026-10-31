@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
-const root = new URL('./', import.meta.url);
+const root = new URL(process.argv[2] === '--round=2' ? './round-2/' : './', import.meta.url);
 const packageRoot = new URL('../../../../../../', import.meta.url);
 const report = JSON.parse(fs.readFileSync(new URL('code-gates.json', root)));
 for (const [file, hash] of Object.entries(report.sourceHashes))
@@ -19,10 +19,23 @@ for (const [gate, result] of Object.entries(report.gates)) {
   assert.equal(raw.numPassedTests, result.passed, gate);
   assert.equal(raw.numTodoTests, result.todo, gate);
 }
-const declarations = JSON.parse(fs.readFileSync(new URL('public-declarations.json', root)));
+const round2 = process.argv[2] === '--round=2';
+const declarationBytes = fs.readFileSync(new URL(round2 ? 'evaluated-public-declarations.json.gz' : 'public-declarations.json', root));
+const declarations = JSON.parse(round2 ? gunzipSync(declarationBytes) : declarationBytes);
 assert.equal(declarations.rootExportsEqual, true);
 assert.deepEqual(declarations.semanticDifferences, { added: [], removed: [] });
 assert.equal(declarations.indexByteDifference, false);
+if (round2) {
+  assert.deepEqual(declarations.unsafeRuntimeExposures, []);
+  assert.deepEqual(declarations.unresolvedAliases, []);
+  assert.equal(declarations.candidateRootTraces.length, 97);
+  const controls = JSON.parse(fs.readFileSync(new URL('declaration-controls.json', root)));
+  assert.equal(controls.positiveExitCode, 1);
+  assert.ok(controls.positiveDifferenceCounts.added + controls.positiveDifferenceCounts.removed > 0);
+  assert.equal(controls.restoreExitCode, 0);
+  assert.equal(controls.restored, true);
+  assert.deepEqual(controls.restoreDifferenceCounts, { added: 0, removed: 0 });
+}
 const fca = JSON.parse(fs.readFileSync(new URL('fca-diff.json', root)));
 for (const inspection of Object.values(fca.inspections)) {
   assert.deepEqual(inspection.diagnostics, { added: [], removed: [] });

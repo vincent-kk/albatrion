@@ -115,3 +115,20 @@ D1 구현 여부·virtualization 기본 off·IR-5 수정의 최종 수락은 **�
 어떤걸 한거고 뭐가 남은거지? 그리고 validation 동작이 무거우니까 검증을 동기적으로 하는걸 빼서 입력 사이클(bulk 든 뭐든 여러 웨이브에 걸친 입력)이 끝난 다음 1번만 검증하도록 하는거 아니었나? 잘못 이해하는 부분 있다면 설멸해다오."
 12. (answer to the four listed decisions: 1 build D1 now (recommended); 2 keep the virtualization default off with documentation (recommended); 3 keep the IR-5 hydration fix (recommended); 4 root PR #508 merge and version are the owner's, recommended to merge after D1 lands) "지금 구현하죠. 버전은 바꾸지 않고 나머진 모두 권장대로 수락합니다."
    Decisions derived from it: D1 is built in this stage; the version number stays unchanged; the virtualization default stays off; the IR-5 fix is accepted; root PR #508 is merged by the owner after D1 lands (rule 1 unchanged).
+
+
+## IR-6 연속 입력 주기 결정 (2026-10-31)
+
+13. (while the IR-6 worker was implementing D1) "지금 설계에 대해 설명해다오"
+14. (after the coordinator explained the D1 design) "근데 유효성검사 자체는 ajv같은 외부 검증기가 담당하잖아? 말하자면 그런건가? 지금은 검증기가 마이크로테스크 뒤에 돌아서 전체 블록타임을 잡아먹는데 이젠 이걸 명시적으로 한프레임(혹은 이전 이벤트루프타임)을 미뤄서 이걸 구분하겠다는건가? 뭔가 상수 타이머 100ms 을 대기하고 하는 디바운스 구조는 아니겠지?"
+15. (after the coordinator answered that D1 schedules after the next frame and the 100 ms timer is only a hidden-tab safety net) "이해했어. 근데 ajv 전체검증은 비동기 아닌가? 동기는 분기전환 전용이고.
+그리고 근데 그럼 0.16.1 판에서 했던 방식이 나은거 아니야? 이전버전에서도 시간 갭을 둔건 아니고 마이크로태스크 종료만 기다리고 검증했던거같은데
+그거랑 다른건가?"
+16. (after the coordinator showed that the AJV8 plugin's asynchronous validator runs its checks synchronously at call time, and that 0.16.1 cancels and re-arms a setTimeout macrotask) "한가지만 좀 질문을 하고싶은데...
+연속입력(구판에서 입력이 굶는 경우) 케이스는 사실상 사용자 입력보단 드레그나 스크롤, 아니면 프로그래믹한 입력 케이스 아닌가? 디바운스가 아니라 프레임 이월이니까. 그럼 굶는다기보단 실행을 지연하는거 아닌가. 그걸 다 평가하는것 보단 입력 버스트가 끝난 다음에 한번 검증하는게 유리하지 않나...? 검증이 비싼 작업이니까"
+17. (after the coordinator proposed three options and recommended leading plus trailing with a 200 ms cap) "선행은 지금과 동일하게, 다음 프레임 검증 보장이고,
+후행 보상은 그 이후 1프레임 기다리고 다음 프레임(입력 후 2프레임)에 검증을 한다, 다음 프레임에 업데이트가 있으면 검증 이월, 최대 200ms 지나면 1번은 검증 보장
+
+이게 맞나?"
+18. (answer to: apply the rule — leading after the next frame, carry over while input continues, one trailing run after a quiet frame, a cap measured from the last run — in this fix round?) "상한을 500ms로, 이외에는 적용. 코드를 잘 응결시켜서 해당 코드가 다른 도메인코드와 섞이지 않고 원리와 기능이 집중되도록 하세요."
+   Decisions derived from it: the continuous-input cadence is built in IR-6 with a 500 ms cap measured from the last automatic run; its timing policy lives in one cohesive unit that holds no validation-domain code.

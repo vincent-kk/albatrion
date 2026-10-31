@@ -877,7 +877,7 @@ ValidationMode.OnChange | ValidationMode.OnRequest;
 
 OnChange write and initial mount validation run after the frame that renders the newest value. Several writes before that frame share one validation run; `node.errors`, `getErrors()`, `onValidate`, and error UI can retain the previous verdict for at least one frame. Explicit `validate()` and submit start a fresh verdict immediately, and submit waits for it. A subtree `validate()` does not cancel pending or in-flight whole-form write validation. None and OnRequest retain their modes.
 
-Without a frame API, or when the document is already hidden, validation uses a macrotask. A document hidden after scheduling falls back to a 100 ms timer, subject to background throttling. A mount compile failure is reported once. Its surface is `sink` when a write run's rejection is handled before the mount slot runs (a child layout write in jsdom or a visible tab); otherwise it is `rejected`. In a browser document hidden when scheduled, both runs can share a MessageChannel batch and the mount stamp discards the write failure. Guard-free whole-schema compilation moves after the first frame, while `if` gates can still compile during render. Validation cost itself remains.
+Without both frame request and cancellation APIs, or when the document is already hidden, validation uses a macrotask. A document hidden after scheduling falls back to a 100 ms timer, subject to background throttling. A mount compile failure is reported once: with surface `rejected` when the mount slot runs the first validation, and with surface `sink` when a write-triggered validation was requested first (the mount slot then skips). An explicit root validation also fulfills the mount obligation; a subtree validation does not. Reports buffered while layout effects are hidden are delivered in order when the load becomes ready again. Guard-free whole-schema compilation moves after the first frame, while `if` gates can still compile during render. Validation cost itself remains.
 
 ### Error Message Formatting
 
@@ -1527,3 +1527,6 @@ MIT License
 ## Version
 
 Current: See package.json
+
+
+OnChange writes use a leading run after the next frame. If input continues after that run starts, validation carries over across active frames, runs after the first quiet frame, and starts a capped run after the first frame at least 500 ms from the last automatic run start, then keeps carrying over. Writes made before a run starts share its newest verdict. Isolated keys at least two frames apart run once per key. Initial mount keeps its one-shot after-frame slot. Explicit validate and submit remain immediate.

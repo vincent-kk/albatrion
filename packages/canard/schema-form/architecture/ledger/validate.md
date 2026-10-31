@@ -57,6 +57,7 @@
 | VALIDATE-049 | 폼은 검증을 입력 경로에서 떼어 내는 장치를 두지 않음 — 진입당 요청 1회와 마이크로태스크 합치기, 빈도 조절은 `OnRequest`, 제출은 새로 검증 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-80) |
 | VALIDATE-050 | 값을 바꾸는 검증기 옵션 — `Validator` 문서 주석의 계약 문장, ajv 플러그인 셋의 `bind`는 `coerceTypes`·`useDefaults`·`removeAdditional`을 켠 인스턴스를 거부(가칭 `VALIDATOR_BIND_REFUSED`), 사용자 정의 변경 키워드는 소비자 책임, 스키마 사본은 깊은 복사 한 번 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:34` union O4) |
 | VALIDATE-051 | union과 검증기 — ajv8 기본 설정에 `allowUnionTypes: true`(판정 불변, 로그만 없앰), core는 검증에 넘기는 값을 복사하지 않음, 어긋난 union 값과 통째 값 안쪽의 에러는 union 노드가 받음, 규칙 A·경고등은 검증기를 쓰지 않음 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91) |
+| VALIDATE-052 | 쓰기와 OnChange 마운트 검증은 다음 화면 뒤 슬롯에서 최신 커밋 하나를 판정 | 현행 | 소유자 결정(원문 12), 구현 경계는 코디네이터 승인 |
 
 항목 형식은 `ledger/README.md` §3을 따른다.
 
@@ -860,10 +861,10 @@ VALIDATE-049의 입력 경로·마이크로태스크 실행 규칙은 대체됨(
 ### VALIDATE-052 쓰기와 OnChange 마운트 검증은 다음 화면 뒤 슬롯에서 최신 커밋 하나를 판정
 
 - 결정:
-  > 쓰기 검증은 같은 프레임 안의 여러 커밋을 합쳐 최신 커밋 하나만 판정합니다. 동기 정착·사건·루트 onChange는 유지하고, node.errors·getErrors·onValidate·오류 UI는 편집 값을 그린 화면 뒤에 도착합니다. 새 값과 이전 커밋의 오류가 최소 한 프레임 함께 보일 수 있습니다. 명시적 validate와 제출은 슬롯을 거치지 않고 새 판정을 즉시 시작하며 제출은 그 판정을 기다립니다. None·OnRequest와 오류 라우팅·참조 보존은 유지합니다.
-- 보충: 호출 시점 환경 검사·100ms 단일 실행 경주·마운트 owed·load identity·컴파일 실패 rejected/sink와 하위 트리 stamp 보존은 같은 D1 구현 절을 따릅니다. G는 미구현입니다.
+  > 쓰기 검증은 쉬는 상태의 요청을 다음 프레임 뒤 선행 실행하고, 실행 시작 뒤 다음 프레임에도 입력이 이어지면 매 프레임 이월하며 첫 무요청 프레임 뒤 후행 실행합니다. 이월 중에는 마지막 자동 실행 시작 기준500ms가 지나면 그 프레임 뒤 한 번 실행하고 이월을 유지합니다. 한 작업 안의 쓰기는 최신 커밋 하나로 합칩니다. 동기 정착·사건·루트 onChange는 유지하고, node.errors·getErrors·onValidate·오류 UI는 편집 값을 그린 화면 뒤에 도착합니다. 새 값과 이전 커밋의 오류가 최소 한 프레임 함께 보일 수 있습니다. 명시적 validate와 제출은 주기를 거치지 않고 새 판정을 즉시 시작하며 제출은 그 판정을 기다립니다. 마운트는 일회성 화면 뒤 슬롯을 유지하고 None·OnRequest와 오류 라우팅·참조 보존은 유지합니다.
+- 보충: 없음
 - 상태: 현행
-- 출처: `plan/input-responsiveness/design.md`의 D1 구현 — IR-6 절(정본), `plan/input-responsiveness/request.md`의 2026-10-31 소유자 원문 9–12.
-- 닫은 사람: 소유자 결정(원문 12), 구현 경계는 코디네이터 승인.
+- 출처: `plan/input-responsiveness/design.md:159`(정본), `plan/input-responsiveness/request.md`의 2026-10-31 소유자 원문 9–12.
+- 닫은 사람: 소유자 결정(원문 12), 구현 경계는 코디네이터 승인
 - 라운드: 입력 응답성 IR-6(2026-10-31).
-- 까닭: 검증을 키 입력 작업에서 분리하고 다음 화면 전까지의 쓰기를 한 번 판정하기 위한 제품 변경입니다.
+- 까닭: 연속 입력은 선행·프레임 이월·후행과 마지막 자동 실행 기준500ms 상한을 따르며 시간 정책을 도메인 없는 한 경계에 모은다는 소유자 원문18을 반영합니다. 검증을 키 입력 작업에서 분리하고 다음 화면 전까지의 쓰기를 한 번 판정하기 위한 제품 변경입니다. 호출 시점 환경 검사·100ms 단일 실행 경주·마운트 owed·load identity·컴파일 실패 rejected/sink와 하위 트리 stamp 보존은 같은 D1 구현 절을 따릅니다. G는 미구현입니다.
