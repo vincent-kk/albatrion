@@ -47,6 +47,7 @@
 | 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기                 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01)                                                       |
 | `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                              |
 | `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
+| `scheduleValidationSlot(run)` | RootNodeContext의 마운트 검증이 쓰기 검증과 같은 다음 화면 뒤 슬롯을 쓰도록 validation·engine 경계를 통해 명명 재수출한다. 패키지 공개 `src/index.ts`와 공개 선언에는 노출하지 않는다(IR-6). |
 
 시험·측정 도우미 서명: `src/__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 `buildFieldNodeTree`·`mountFieldNode` 통로를 이어 마운트된 루트를 반환한다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓이다(70C-01, VALIDATE-010, CONTROLS-075).
 

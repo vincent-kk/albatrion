@@ -10,6 +10,8 @@
 - `index.ts`는 검증 계약 형과 `readValidationEntry`, `compileEntryGuards`, `runFieldNodeValidation`, `routeValidationIssues`, `retainEqualValidationIssues`, `EMPTY_GLOBAL_ERRORS`를 이름으로 내보낸다. 동기 가드와 오류 읽기, 재생성 루트의 컴파일 사전 점검과 수명 함수도 이름으로 내보낸다. 수명 함수 두 개만 `core/index.ts`가 바인딩용으로 다시 내보내고, `src/index.ts`는 내보내지 않는다(NODE-010, VALIDATE-044·046, LANDING-159).
 - 캐시는 검증기 인스턴스와 작성 루트 정체성의 쌍이 소유한다. 런타임에는 선택한 검증기와 모드, 최신 커밋과 요청 스탬프, 노드 오류 맵, 결과 배달 콜백을 둔다. 노드의 고정 필드는 늘리지 않는다(VALIDATE-018·048·049, NODE-004·045).
 
+- `scheduleValidationSlot` is a binding-only scheduling channel re-exported by engine and core for RootNodeContext; the package entry point does not expose it. It reads frame support and document visibility on every call.
+
 ## Boundaries
 
 ### Always do

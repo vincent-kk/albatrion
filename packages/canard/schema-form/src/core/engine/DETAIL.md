@@ -110,7 +110,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 - **write**: adoptFieldNodeChain, createFormErrorRecord, dispatchBatch, dispatchClear, dispatchClearExternalErrors, dispatchClearSubtreeState, dispatchContextChange, dispatchFinishInput, dispatchInsert, dispatchMount, dispatchPop, dispatchPush, dispatchRemove, dispatchRequest, dispatchResetForm, dispatchResetSubtree, dispatchSetExternalErrors, dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchUpdate, dispatchValidate, dispatchVisitSubtree, dispatchWriteInput, readFieldNodeInteractionReset, readFieldNodeRevision, subscribeFieldNode; 형 FieldNodeListener.
 - **blueprint**: blueprint, collectBlueprintWarnings, mergeEffectiveSchema; 형 Blueprint, BlueprintChildEntry, BlueprintNode, BlueprintOptions, BlueprintSchema, BlueprintSchemaType, EffectiveSchema, SchemaTypeName.
-- **validation**: compileEntryGuards, EMPTY_GLOBAL_ERRORS, readFieldNodeErrors, readValidationEntry, retainValidationRoot, releaseValidationRoot; 형 ValidationIssue, Validator, ValidateFunction.
+- **validation**: compileEntryGuards, EMPTY_GLOBAL_ERRORS, readFieldNodeErrors, readValidationEntry, retainValidationRoot, releaseValidationRoot, scheduleValidationSlot; 형 ValidationIssue, Validator, ValidateFunction.
 - **record**: EMPTY_REVISION_LEDGER, FieldNodeEventType, FieldNodeRequestType; 형 Behavior, FieldNodeRecord, FieldNodeRuntime.
 - **settle**: readFieldNodeDefaultValue, readFieldNodeInactiveValues, readFieldNodeMisfit, readFieldNodeMisfits, readFieldNodeWatchValues, loadFieldNodeAtMount, resetFieldNodeForm.
 - **types**: ValidationMode, WriteOption, FieldNodeState; 형 AuthoredSchema, NodeStateFlags, NodeStrategy, SchemaControls.
@@ -120,6 +120,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ### 수출의 이유와 도달 범위
 
+- `scheduleValidationSlot`은 RootNodeContext의 마운트 검증이 쓰기 검증과 같은 화면 뒤 실행 시점을 재사용하는 바인딩 전용 통로다. core가 명명 재수출하며 패키지 공개 표면은 넓히지 않는다(IR-6).
 - `loadFieldNodeAtMount`와 `resetFieldNodeForm`을 수출하는 이유는 다음과 같다. core 시나리오 실행기(`createCoreScenarioAdapter`, `createObservedCoreScenarioAdapter`, `executeCoreScenarioStep`), `core/__tests__/scenarios/differential.spec.ts`, `core/surface/__tests__/detached.test.ts`, 그리고 `bench/legacy-compare/`의 독립 비교 스크립트(`array`, `derive-and-controls`, `node-and-settle`)가 engine index를 통해 이 적재 통로를 쓴다. 제품 소비자는 없다.
 - `blueprint`는 bench와 `src/hooks/__tests__/createHookNode.ts`가 쓰는 생성 통로이므로 core index가 다시 내보내고, 패키지 src/index 표면에는 추가하지 않는다. `readFieldNodeGuard`는 validation 내부 계약이라서 engine과 core의 집계 진입점이 재수출하지 않는다.
 - 이름 목록은 승인된 내부 계약이며, 자식 모듈의 모든 수출을 대신하지는 않는다. 시험은 검사 대상이 속한 구획에서 구체적인 내부 단위를 검증한다.
