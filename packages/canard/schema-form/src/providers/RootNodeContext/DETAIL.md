@@ -10,7 +10,7 @@
 - V6: reconnect의 모든 buffered record는 각자 try/catch하여 onError 실패를 reportErrorToHost로 보내고 다음 기록·owed 재예약을 계속한다.
 - V7: !ready load를 rebuild 또는 루트 교체 reset으로 대체하면 옛 records를 새 load의 기록 앞에 옮기며 각 기록의 원래 root를 보관한다. 전달 시 그 root를 reporter.root로 먼저 설정하고 원래 순서로 한 번 전달한다. 숨김 동안에는 새 load에서도 보류하고, flushRootLoad의 첫 commit reported 가드는 유지한다.
 
-- OnChange 최초 마운트 검증은 준비 layout effect가 다음 화면 뒤 슬롯에 예약한다. if 게이트가 없는 스키마의 전체 컴파일과 첫 검증도 그 슬롯에서 수행하며, if 게이트의 렌더 중 컴파일은 유지한다. 명시적 validate와 제출의 즉시 실행은 유지한다(IR-6).
+- Always 이외 OnChange 최초 마운트 검증은 준비 layout effect가 다음 화면 뒤 슬롯에 예약한다. if 게이트가 없는 스키마의 전체 컴파일과 첫 검증도 그 슬롯에서 수행하며, if 게이트의 렌더 중 컴파일은 유지한다. 명시적 validate와 제출의 즉시 실행은 유지한다(IR-6).
 - 예약 슬롯에서 `store.load !== load`이면 교체된 이전 로드를 검증하지 않는다. 실행 시점의 `load.root`가 없으면 종료한다. load.ready가 거짓이면 선택적 `mountValidationOwed`를 세우고, 같은 load의 다음 layout effect가 먼저 false로 소비한 뒤 한 슬롯만 다시 예약한다. 오직 !ready인 슬롯만 true로 쓰므로 한 load의 마운트 슬롯은 최대 하나이다. cleanup은 슬롯을 취소하지 않으며 StrictMode 재실행은 중복 예약하지 않는다. 실제 unmount 뒤에는 owed를 소비하지 않는다(IR-6).
 - 마운트 슬롯은 실행 시 hasFieldNodeValidationRequest(root)가 참이면 root.validate를 호출하지 않는다. 쓰기 요청이 최신 커밋을 자체 판정하며 명시적 루트 검증도 마운트 의무를 충족한다. 비루트 검증의 0 스탬프만으로는 의무가 끝나지 않는다. 아무 요청도 없는 마운트는 한 번 검증한다. 컴파일 실패는 한 번 보고하며, 마운트 슬롯이 첫 검증을 실행하면 rejected, 쓰기 검증이 먼저 요청되어 마운트를 건너뛰면 sink이다. helper는 SchemaFormError의 FormErrorCode.ValidatorCompileFailed를 다시 capture하지 않고 다른 실패는 기존 rejected capture를 유지한다(IR-6 R2·R3).
 - 마운트 슬롯 전에 쓰기 검증이 요청되면 마운트를 건너뛰고 쓰기 경로가 최신 커밋을 판정한다. 같은 스키마 reset은 동일 load를 보존하며, 루트 교체 reset은 폐기된 옛 루트의 슬롯을 무효화한다(IR-6).
@@ -35,7 +35,7 @@
 
 ### root-node-context-contract — 관찰 가능한 동작
 
-- 최초 프레임 전에는 마운트 판정이 없으며, effect 정리 뒤 복원된 load는 미완료 마운트 검증을 한 번 수행한다. 실제 unmount 뒤에는 검증·오류 보고가 없다(IR-6).
+- Always 이외 모드는 최초 프레임 전 마운트 판정이 없으며, effect 정리 뒤 복원된 load는 미완료 마운트 검증을 한 번 수행한다. 실제 unmount 뒤에는 검증·오류 보고가 없다(IR-6).
 - Provider 정리 시 등록한 이벤트 구독을 해제합니다.
 - 검증과 상태 이벤트는 대응 콜백으로 전달되며 외부 오류는 경로별로 묶어 주입합니다.
 
