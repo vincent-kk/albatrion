@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
 const round = process.argv[2];
-assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4');
+assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4' || round === '--round=5');
 const root = new URL(round ? `./round-${round.slice(-1)}/` : './', import.meta.url);
 const packageRoot = new URL('../../../../../../', import.meta.url);
 const report = JSON.parse(fs.readFileSync(new URL('code-gates.json', root)));
@@ -42,5 +42,23 @@ const fca = JSON.parse(fs.readFileSync(new URL('fca-diff.json', root)));
 for (const inspection of Object.values(fca.inspections)) {
   assert.deepEqual(inspection.diagnostics, { added: [], removed: [] });
   assert.deepEqual(inspection.findings, { added: [], removed: [] });
+}
+
+if (round === '--round=5') {
+  const comments = JSON.parse(fs.readFileSync(new URL('public-comments.json', root)));
+  const expectedFiles = [
+    'components/Form/components/FormCore/types/handle.d.ts',
+    'components/Form/components/FormCore/types/props.d.ts',
+    'core/engine/types/state.d.ts',
+    'types/field/fieldInput.d.ts',
+    'types/field/fieldRenderer.d.ts',
+  ];
+  assert.deepEqual(comments.changedFiles, expectedFiles);
+  assert.ok(comments.commentPreservingDifferences.added.length > 0);
+  assert.equal(comments.commentPreservingDifferences.added.length, comments.commentPreservingDifferences.removed.length);
+  for (const item of [...comments.commentPreservingDifferences.added, ...comments.commentPreservingDifferences.removed])
+    assert.ok(expectedFiles.includes(JSON.parse(item)[0]));
+  assert.equal(report.layoutEffectCost.arrayItemMount, 2);
+  assert.equal(report.layoutEffectCost.unchangedVisibilityOrdinaryInputWrite, 0);
 }
 console.log('IR6_CODE_GATES_OK captured-results; performance-review-and-measurement-pending');

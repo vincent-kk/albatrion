@@ -1,0 +1,39 @@
+{
+  "approval": "msg_278fcc9f4950 / msg_f0f5dd4389d5",
+  "scratchOutsideRepository": true,
+  "productModified": false,
+  "mutation": {
+    "file": "dist/core/engine/record/types/runtime.d.ts",
+    "selectedMember": "diagnostics",
+    "before": "FieldNodeDiagnostics",
+    "after": "number"
+  },
+  "positiveExitCode": 1,
+  "positiveDifferenceCounts": {
+    "added": 1,
+    "removed": 9
+  },
+  "restored": true,
+  "restoreExitCode": 0,
+  "restoreDifferenceCounts": {
+    "added": 0,
+    "removed": 0
+  },
+  "wholeRuntimeExposures": 0,
+  "rootTraceCount": 97,
+  "rootsSelectingRuntime": 73,
+  "changedInternalMembersChecked": [
+    "validationQueued",
+    "validationCadence",
+    "validationRun",
+    "validationPending",
+    "validationSettleListeners",
+    "validationPendingEntryStamp",
+    "revealBaseline",
+    "revealBaselineNodes",
+    "revealPolicyBaseline",
+    "revealBaselineGeneration",
+    "revealDropOwed",
+    "revealDropTask"
+  ]
+}

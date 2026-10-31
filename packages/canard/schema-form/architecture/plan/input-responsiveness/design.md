@@ -214,9 +214,9 @@ Always는 state 없는 checkShowError()의 값을 앞선 layout effect에서 ref
 
 ### Amendment 6 — 배달 전 pending과 표시·보고 수명
 
-W3는 실제 사슬 끝의 요청과 같은 조건을 validation 도메인의 prepareFieldNodeValidation에 두고 각 공개 listener 배달 전에 pending을 기록합니다. 사슬이 기록한 stamp는 validationPendingEntryStamp에 보유하며 요청 없이 끝나면 그 stamp만 정착하여 더 새로운 실행을 풀지 않습니다. None·unavailable·deferred 마운트는 제외하고 request 자체의 true 설정은 멱등입니다. W2는 render에서 캡처한 wasVisible이 false인 새 표시만 layout에서 pending을 재확인하고 같은 commit의 자식 쓰기가 시작한 보류를 첫 화면 전에 다시 렌더합니다. 보통 쓰기는 노드·표시가 같으므로 layout effect0회를 유지합니다.
+W3는 실제 사슬 끝의 요청과 같은 조건을 validation 도메인의 prepareFieldNodeValidation에 두고 각 공개 listener 배달 전에 pending을 기록합니다. 사슬이 기록한 stamp는 validationPendingEntryStamp에 보유하며 요청 없이 끝나면 그 stamp만 정착하여 더 새로운 실행을 풀지 않습니다. None·unavailable·deferred 마운트는 제외하고 request 자체의 true 설정은 멱등입니다. W2의 같은 commit 보류는 Amendment8의 엔진 기준으로 계산하며 React wasVisible·layout 재검사를 제거합니다. 보통 쓰기의 layout effect0회는 유지합니다.
 
-W4의 mount catch는 engine이 이미 보고하거나 숨김 버퍼에 둔 검증 실패를 무시하며 소비자 handler 묶음의 꼬리만 호스트에 전달합니다. W5는 교체된 load 기록의 원래 root를 유지하면서 활성 load.root에도 observer guard를 적용하여 onError가 현재 폼을 쓰지 못하게 합니다. W6의 동일 경고는 현재 load 단위 중복 억제로 숨긴 두 교체 load에서 하나로 합쳐집니다. W7의 Always 루트 input 자체 mount-layout validate는 같은 commit에 한 번 추가 판정을 실행하며, W8의 조상 mount-layout 쓰기는 inline 최초 판정을 무효화하여 한 프레임 뒤 판정할 수 있습니다. 세 경우는 코디네이터가 수용한 한계입니다.
+W4의 mount catch는 engine이 이미 보고하거나 숨김 버퍼에 둔 검증 실패를 무시하며 소비자 handler 묶음의 꼬리만 호스트에 전달합니다. W5는 교체된 load 기록의 원래 root를 유지하면서 활성 load.root에도 observer guard를 적용하여 onError가 현재 폼을 쓰지 못하게 합니다. W6의 동일 경고는 R-g에 따라 원래 load별 범위에서 중복 억제하며 숨긴 교체 load들의 경고를 합치지 않습니다. W7의 Always 루트 input 자체 mount-layout validate는 같은 commit에 한 번 추가 판정을 실행하며, W8의 조상 mount-layout 쓰기는 inline 최초 판정을 무효화하여 한 프레임 뒤 판정할 수 있습니다. W7·W8은 코디네이터가 기록한 한계이며 W6은 R-g로 수정합니다.
 
 W10 제출 회귀는 still-invalid 값을 쓰고 직후 빈 표시, 제출 뒤 오류와 pending=false를 확인합니다. W11 자연 key→Tab 브라우저 경합은 명시적 비동기 판정 보류와 실제 쓰기 시작 프레임 계수를 사용합니다. W12 idle helper는 write-pending만 기다리며 비동기 mount 판정은 그 판정의 명시적 promise를 기다립니다. W13 코어 시험은 실제2000필드 폼에서 보류 표시3개만 구독하고 정착 콜백도 각각 한 번임을 확인합니다.
 

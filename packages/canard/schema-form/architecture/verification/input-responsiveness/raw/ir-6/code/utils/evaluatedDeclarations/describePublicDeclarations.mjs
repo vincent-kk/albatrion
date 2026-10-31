@@ -3,7 +3,7 @@ import path from 'node:path';
 import { collectPublicDeclarationReferences } from './utils/collectPublicDeclarationReferences.mjs';
 
 /** Runtime fields whose exposure would invalidate the private-state explanation. */
-const changedMembers = ['validationQueued', 'validationCadence', 'validationRun', 'validationPending', 'validationSettleListeners', 'validationPendingEntryStamp'];
+const changedMembers = ['validationQueued', 'validationCadence', 'validationRun', 'validationPending', 'validationSettleListeners', 'validationPendingEntryStamp', 'revealBaseline', 'revealBaselineNodes', 'revealPolicyBaseline', 'revealBaselineGeneration', 'revealDropOwed', 'revealDropTask'];
 
 /**
  * Read each public root independently and preserve paths to selected runtime members.
