@@ -16,7 +16,7 @@ FieldRendererContext/
 
 ## Conventions
 
-- Own the shared committed error-visibility memory and pending-settle subscription used by renderer, input and child-error displays; raw errors stay ungated.
+- Resolve the rendered policy and compute renderer, input and child-error visibility from engine history; subscribe candidates to release versions without React visibility storage.
 
 - TypeScript와 React로 작성한다.
 - `checkShowError(condition?)` 함수는 `FieldNodeState.ErrorVisible`을 먼저 보고, 그다음 `ShowError.Always/Never/Dirty/Touched/DirtyTouched` 비트마스크를 평가한다.

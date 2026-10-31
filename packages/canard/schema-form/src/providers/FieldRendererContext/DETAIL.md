@@ -6,10 +6,10 @@
 
 ## API Contracts
 
-- Y1–Y3: 표시의 연속성 자료는 엔진의 노드별 { state, enabled }와 Form 정책 기준 box가 소유한다. visible은 현재 조건·enabled와, pending이면 마지막 판정 기준의 조건·enabled도 모두 만족할 때 참이다. React mount·복원·version remount·두 번째 표시·가상화 노출은 같은 노드 자료를 읽어 같은 지연 판정을 표시한다.
-- 순수 checkShowError factory와 policy resolver는 undefined 정책을 external/default로 해석한다. Provider는 memoized 순수 resolver만 제공하고 엔진의 box를 읽거나 cache하지 않는다. 순수 visibility helper와 표시당 훅 하나가 기준을 현재 pending snapshot과 같은 렌더에서 읽는다. pending은 서버 false인 useSyncExternalStore 반환값만 사용한다. 보류하는 표시만 정착 알림을 구독하고 나머지는 no-op이다.
-- React 표시 WeakMap·commit 기억·visibility layout effect는 없다. 배열 항목 mount는2회, 일반 쓰기는 layout effect0회이다. raw errors·공개 사건·revision·패키지 진입점은 유지한다.
-- 엔진이 보지 못하는 external showError 기본값과 useChildFieldErrors disabled 인자는 현재 판정을 즉시 보여 주며, transition으로 지연된 reveal render는 이전 판정을 보여 줄 수 있다. 값이 아닌 commit-only 변경의 연속은 최신 판정을 받을 때까지 hold하며 baseline drop 전 약1~2프레임 안의 새 값 쓰기도 hold할 수 있다(코디네이터 msg_5abe110cb1c6).
+- H: 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
+- H: Provider는 Form showError→외부 설정→DirtyTouched 순으로 해석한 policy 값과 순수 checker를 memoize해 제공한다. 엔진 정책은 RootNodeContext가 commit하며 Provider는 기록하지 않는다. 순수 helper가 node/policy entries를 generation 순서로 병합하여 마지막 live state/committed policy 쌍까지 검사한다.
+- H: 표시당 hook은 node에 memoize한 release version getter를 client/server snapshot 양쪽에 사용한다. subscribe는 node/candidate에 memoize하며 live 적격이지만 history가 거부한 candidate만 release listener를 등록하고 등록 직후 catch-up을 한 번 호출한다. React 표시 수명 저장소와 표시 layout effect는 없고 ordinary render의 subscription passive effect도 추가하지 않는다. 배열 filled-minus-empty mount는2회·ordinary write layout0회다.
+- 알려진 한계는 hook disabled의 즉시 reveal, drop보다 늦은 state/enabled render의 hold 생략, commit-only 연속의 hold, release와 paint 사이 task의 쓰기가 released verdict를1~2프레임 표시함, 한 React batch 안의 미표시 state/enabled/policy 조합도 이력에 포함됨이다.
 
 
 - 폼 지정 렌더러·포맷터가 외부 설정보다 우선하며 누락된 값은 플러그인 폴백으로 보완합니다.

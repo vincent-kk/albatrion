@@ -7,16 +7,14 @@
 
 ## API Contracts
 
-- Y2: 노드·Form 정책 기준 조회와 recordFieldNodeShowErrorBaseline은 validation→engine→surface wrapper→core를 거친 바인딩 전용 연산이다. 정책은 { value: unknown } box로 undefined도 보존하고 엔진은 해석하지 않는다. OnChange에서만 기록한다.
-- Y2 drop은 validation/utils/lifetime/scheduleFieldNodeRevealDrop가 기존 scheduleValidationSlot만 사용한다. 예약 때 runtime generation을 캡처하고 실행 때 새 기준 기록이 있으면 모두 유지하고 재예약한다(승인 msg_5abe110cb1c6). 새 기록이 없고 pending=false이면 모두 drop한다. pending=true여서 skip한 실행도 예약 flag를 지우며 settle의 true→false는 listener 전에 모두 drop한다. validationUnavailable도 pending 여부와 관계없이 settle 통로에서 기준을 지우며 disposal은 pending 여부와 관계없이 기준을 지우고 token 무효화·disposed 검사로 예약을 취소한다. 같은 프레임의 추가 기록 때문에 이른 기준이 한 프레임 더 남을 수 있어 limit(iv)는 약1~2프레임이다.
-- R-a: 현재 stamp 실행이 commit 검사로만 폐기되면 settle하지 않고 해당 targets를 다시 합쳐 cadence.request로 최신 commit 판정을 요청한다. explicit root validate의 같은 경우도 OnChange 모드이면 pending 여부와 관계없이 동일 write entry로 재요청하되 호출자 반환 판정은 호출 시점 snapshot 그대로다. context 내용(새 함수·Date·Map·class instance 등 identity 비교 포함)의 commit-only 연속은 stream이 멎을 때까지 hold할 수 있다(Q22·Q19).
+- H: 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
+- H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
+- H lifetime: 예약 generation 이하의 node/policy entry만 drop하고 빈 노드 이력을 제거한다. pending인 drop은 아무것도 제거하지 않고 owed/token을 지운다. 남은 이력의 재예약까지 끝낸 뒤 release version을 증가시키고 복사한 release listeners를 마지막에 통지하여 listener의 새 기록이 독립 예약을 만든다. settle은 true→false에서 listener 전에 전체 해제하며 unavailable의 기존 정착 경로도 유지한다.
+- 수락한 explicit root verdict는 route·settle 뒤 deliverValidationWave 전에 별도로 전체 release한다. 이미 pending=false인 settle을 이 목적 때문에 변경하지 않는다. 폐기는 release listener를 settle 전에 비워 조용히 전체 해제한다.
+- R-h: child layout 쓰기가 mount보다 먼저 compile 실패를 처리하여 rejected 대신 sink가 되는 것은 D1(Q12)의 시간 분리와 변경 없는 ERROR-019 항목3·5를 따른다.
+- 알려진 한계는 hook disabled의 즉시 reveal, drop보다 늦은 state/enabled render의 hold 생략, commit-only 연속의 hold, release와 paint 사이 task의 쓰기가 released verdict를1~2프레임 표시함, 한 React batch 안의 미표시 state/enabled/policy 조합도 이력에 포함됨이다.
 
 - W3: prepareFieldNodeValidation은 active entry·비deferred OnChange·available·방출 변경 또는 validationTargets라는 실제 요청 조건을 공유하며 첫 공개 배달 전에 pending을 기록한다. validationPendingEntryStamp는 pending을 false에서 true로 만든 사슬만 그때의 stamp를 선택적으로 보유한다. 이미 대기 중인 hold를 만난 사슬은 marker를 얻지 않으며 자신의 요청만 정착한다. 요청이 사라진 사슬은 자신이 만든 hold의 stamp만 정착하고 marker를 지워 이전 대기 요청이나 더 새로운 판정을 풀지 않는다. request의 기존 true 설정은 멱등이며 timing·공개 사건·revision은 바꾸지 않는다.
-
-- IR-6 U2: 쓰기 검증 요청이 None·validationUnavailable 가드를 통과하면 runtime.validationPending을 true로 만든다. 현재 stamp인 실행의 전달(같은 목록 포함)·null·실패는 pending을 false로 정착시킨다. 명시적 루트 validate도 현재 stamp 실행을 정착시키지만 pending을 시작하지 않고, 하위 트리 validate는 정착시키지 않는다. validationUnavailable·폐기와 새 요청 없는 stamp 무효화(non-OnChange reset)는 무조건 정착시킨다(코디네이터 승인 msg_1f2afdd094c7).
-- 정착은 라우팅 뒤·배달 전에 같은 동기 콜백에서 수행하고 true→false에만 런타임의 validationSettleListeners에 한 번 알린다. 공개 사건·node.subscribe·revision은 바꾸지 않는다. isFieldNodeValidationPending, subscribeFieldNodeValidationSettled를 validation→engine→surface 래퍼→core로 연결하며 src/index는 유지한다. settleFieldNodeValidation은 validation·write·settle의 도메인 내부 진입점이다.
-- 연속 입력의 동기 검증은 각100ms cap 판정이 현재 stamp로 완료되어 보류 표시를 푼다. 비동기·느린 검증이 계속 stale이면 후행 판정까지 새 표시를 보류할 수 있다. 현재 stamp의 commit-only 폐기는 targets를 보존하고 최신 commit을 cadence에서 다시 판정하여 hold를 유지한다.
-- 주기 run 콜백은 실제 검증을 시작했는지 boolean으로 알린다. stamp로 버린 false는 cap 시계를 옮기지 않는다. pending 정착·stamp·대상·오류는 timing에 들어가지 않는다.
 
 - 런타임의 선택적 validationRun 콜백은 요청마다 최신 도메인 실행 본문으로 교체하며, 한 번 만든 cadence는 이 콜백을 읽는 고정 실행 통로만 보유한다. 첫 요청 대상이 나중에 이탈해도 이후 요청의 노드·배달 클로저를 사용하며 폐기 시 콜백도 비운다. 주기 모듈에는 이 콜백 내용이 알려지지 않는다(IR-6 amendment3).
 
@@ -61,7 +59,7 @@
 
 - 소멸한 노드의 `errors`는 떼어질 때 갈무리한 마지막 오류 배열을 같은 참조로 돌려준다. 활성 검증 맵과 외부 오류 맵에서는 그 노드를 제거하며, 옛 참조는 살아 있는 트리의 새 오류를 읽지 않는다(NODE-044, 35C-09).
 
-- 검증 요청이 필요한 가장 바깥 진입에서는 요청을 한 번 만들고, 다음 화면 뒤 슬롯에서 최신 커밋 번호 하나만 실행한다. 한 작업·프레임 안의 여러 쓰기는 합쳐지고 연속 프레임 입력은100ms 상한의 이월·후행 주기를 따르며 이미 보이는 오류는 다음 판정까지 유지하고 새 표시는 현재 pending 종료까지 보류한다. 늦게 도착한 결과와 폐기된 루트의 대기는 스탬프로 버리고, 최신 결과만 넘겨받은 콜백을 통해 별도 파동으로 보낸다. `validate()`와 제출은 슬롯을 거치지 않고 새 스냅숏을 즉시 판정한다. 하위 트리의 명시적 검증은 공유 스탬프와 대기 대상을 보존하여 전체 폼 쓰기 검증을 취소하지 않는다(EVENT-031·032·046, VALIDATE-006·007, IR-6).
+- 검증 요청이 필요한 가장 바깥 진입에서는 요청을 한 번 만들고, 다음 화면 뒤 슬롯에서 최신 커밋 번호 하나만 실행한다. 한 작업·프레임 안의 여러 쓰기는 합쳐지고 연속 프레임 입력은100ms 상한의 이월·후행 주기를 따르며 연속 적격 오류는 유지하고 새 표시·중간 숨김은 다음 release까지 기다린다. 늦게 도착한 결과와 폐기된 루트의 대기는 스탬프로 버리고, 최신 결과만 넘겨받은 콜백을 통해 별도 파동으로 보낸다. `validate()`와 제출은 슬롯을 거치지 않고 새 스냅숏을 즉시 판정한다. 하위 트리의 명시적 검증은 공유 스탬프와 대기 대상을 보존하여 전체 폼 쓰기 검증을 취소하지 않는다(EVENT-031·032·046, VALIDATE-006·007, IR-6).
 - 라우팅은 판정을 바꾸지 않는다. 모든 issue를 순서대로 라우팅 목록에 보존하고, 폼 수준 `globalErrors`는 루트 외부 오류를 앞에, 그 검증 목록을 뒤에 둔다. 루트 외부 오류나 라우팅 목록이 바뀔 때만 합친 배열을 갱신하며, 반복해서 읽으면 같은 참조를 반환한다. 루트가 아닌 노드의 명령형 외부 오류는 해당 노드의 `errors`에만 남는다(SURFACE-053, VALIDATE-043, 79C-01).
 - 검증(하위 대상과 명시적 `validate()` 포함)의 새 결과가 직전 결과와 깊이 같으면(길이와 순서, 항목의 모든 필드) 직전 배열의 항목 객체로 배정한다. 배정이 실제로 바뀐 노드(분기 전환, 항목 삭제 뒤 같은 경로에 온 다른 노드)만 `UpdateError`를 받고, 배정이 같은 노드는 직전 `errors` 배열을 같은 참조로 유지한다. 라우팅 목록 참조가 같으므로 `globalErrors`도 같은 참조이고, `UpdateGlobalError`를 보내지 않아 `onValidate`도 호출하지 않는다. 명시적 `validate()`는 그 목록으로 끝난다. 직전 결과는 루트 런타임의 `validationResult`이며, 대상과 관계없이 배정할 때마다 기록하고 reset만 비운다. 직전 결과가 없으면 빈 결과도 발행한다. 외부 오류는 이 비교와 관계없이 유지된다(EVENT-046, GOAL-011, LANDING-210, SURFACE-053, 207C-01).
 - 표준 이름으로 해석한 `dataPath`가 가리키는, 형상 안의 노드에 검증 issue를 배정한다. `required`는 빠진 자식 경로로 배정되고, `rejectedKey`는 그 키를 가진 호스트가 받는다. 터미널 아래 경로는 터미널이 받고, 형상 밖 경로의 오류는 주인이 없는 오류가 된다(VALIDATE-043 (1)–(4), FRAGMENT-020·053).

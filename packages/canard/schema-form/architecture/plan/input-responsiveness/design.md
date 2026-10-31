@@ -156,7 +156,7 @@ array 첫 프레임·count-only/시간 reveal·루트 reconcile·CPU 공변량·
 
 `scheduleValidationSlot(run)`은 호출마다 프레임 API와 문서 가시성을 읽습니다. 프레임 요청·취소 API 중 하나가 없거나 문서가 숨겨져 있으면 `scheduleCancelableMacrotask`로 실행합니다. 그 밖에는 프레임 콜백 뒤 매크로태스크와 100ms 타이머를 경주시킵니다. done 표식과 상대 핸들 취소로 정확히 한 번 실행합니다. 예약 후 숨겨진 탭은 타이머로 대체되며 백그라운드 제한 때문에 약 1초까지 지연될 수 있습니다. 표시 장치의 실제 표시 완료를 보장하는 계약은 아닙니다.
 
-쓰기 검증은 쉬는 상태의 요청을 다음 프레임 뒤 선행 실행하고, 실행 시작 뒤 다음 프레임에도 입력이 이어지면 매 프레임 이월하며 첫 무요청 프레임 뒤 후행 실행합니다. 마지막 실제 자동 실행 시작 기준100ms가 지나면 그 프레임 뒤 한 번 실행하며 모든 실행 뒤에는 watch로 돌아갑니다. 한 작업 안의 쓰기는 최신 커밋 하나로 합칩니다. 동기 정착·사건·루트 onChange는 유지하고 판정은 보통 편집 값보다1~2프레임 늦게 도착합니다. 이미 보이는 오류는 다음 판정까지 유지하고 새 표시는 현재 쓰기 pending이 끝날 때까지 보류하며 숨김은 즉시입니다. 명시적 validate와 제출은 즉시 시작하고 제출은 그 판정을 기다립니다. Always의 최초 OnChange 판정은 layout effect에서 즉시 시작하여 동기 검증기는 첫 프레임 전에 표시하며 다른 모드는 일회성 화면 뒤 슬롯을 사용합니다. None·OnRequest와 오류 라우팅·참조 보존은 유지합니다.
+쓰기 검증은 쉬는 상태의 요청을 다음 프레임 뒤 선행 실행하고, 실행 시작 뒤 다음 프레임에도 입력이 이어지면 매 프레임 이월하며 첫 무요청 프레임 뒤 후행 실행합니다. 마지막 실제 자동 실행 시작 기준100ms가 지나면 그 프레임 뒤 한 번 실행하며 모든 실행 뒤에는 watch로 돌아갑니다. 한 작업 안의 쓰기는 최신 커밋 하나로 합칩니다. 동기 정착·사건·루트 onChange는 유지하고 판정은 보통 편집 값보다1~2프레임 늦게 도착합니다. 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 적격일 때 유지하고 새 표시·중간 숨김은 다음 release까지 기다리며 숨김은 즉시입니다. 명시적 validate와 제출은 즉시 시작하고 제출은 그 판정을 기다립니다. Always의 최초 OnChange 판정은 layout effect에서 즉시 시작하여 동기 검증기는 첫 프레임 전에 표시하며 다른 모드는 일회성 화면 뒤 슬롯을 사용합니다. None·OnRequest와 오류 라우팅·참조 보존은 유지합니다.
 
 ### 마운트·수명과 v2 차이
 
@@ -174,7 +174,7 @@ v2의 pending 여부 분기 대신 루트 validate만 스탬프를 올리고 대
 
 ### Amendment 1 반영
 
-시험 대기는 act 안에서 두 프레임 뒤 setImmediate(jsdom), 두 프레임 뒤 scheduleMacrotask(Storybook)로 통일합니다. Node는 setImmediate입니다. 첫 프레임 콜백 뒤 배달에서 새 쓰기가 발생하면 pending 조회가 false일 때까지 두 프레임+매크로태스크 대기를 유한 반복합니다. 슬롯의 취소 함수도 예약한 환경에서 보관하여 jsdom 정리 뒤 콜백이 전역 cancelAnimationFrame을 다시 읽지 않습니다. 이 전역 정리 회귀는 수정 전에 실패했습니다.
+시험 대기는 act 안에서 두 프레임 뒤 setImmediate(jsdom), 두 프레임 뒤 scheduleMacrotask(Storybook)로 통일합니다. Node는 setImmediate입니다. 첫 프레임 콜백 뒤 배달에서 새 쓰기가 발생하면 pending이 false이고 node/policy 이력이 없을 때까지 두 프레임+매크로태스크 대기를 유한 반복합니다. 슬롯의 취소 함수도 예약한 환경에서 보관하여 jsdom 정리 뒤 콜백이 전역 cancelAnimationFrame을 다시 읽지 않습니다. 이 전역 정리 회귀는 수정 전에 실패했습니다.
 
 Amendment 2 R1은 A4의 보고 누락을 수정합니다. prepared load가 복원되면 !ready 동안 버퍼링한 records를 load.reporter.root 설정 뒤 순서대로 전달하고 그 뒤 owed를 재예약합니다. 첫 commit의 flushRootLoad·reported 가드는 유지합니다.
 
@@ -184,7 +184,7 @@ Amendment 2 R1은 A4의 보고 누락을 수정합니다. prepared load가 복�
 
 R2 조회는 양수 validationStamp만 읽으며, validation→engine의 hasFieldNodeValidationRequest를 surface의 requireRuntimeFieldNode 래퍼와 core로 연결합니다. 공개 노드에 runtime을 노출하지 않고 src/index는 유지합니다. 0은 비루트 검증만 있었음을 나타내므로 의무를 남기며 양수는 쓰기 요청·명시적 루트 검증으로 마운트 의무를 충족합니다. 래퍼 패턴과 양수 판정은 코디네이터 msg_7e0a5ed0ffd3의 답변으로 승인받았습니다.
 
-R4는 cancelAnimationFrame 부재도 매크로태스크 경로로 보냅니다. setImmediate와 MessageChannel이 모두 없는 호스트는 winglet이 모듈 로드 시 스케줄러를 묶는 기존 제약으로 지원하지 않습니다. R5의 같은 프레임 쓰기 뒤 unmount는 은퇴 트리 검증1회와 구독자 배달0을 허용하며 실패는 호스트 싱크에만 도착합니다. cleanup 취소로 숨김까지 취소하지 않으려고 suspend/resume 기계를 추가하지 않습니다. R6의 비동기 명시적 validate는 실행 중 새 커밋이 생기면 이전 결과를 호출자에게 돌려주는 기존 한계를 유지합니다.
+R4는 cancelAnimationFrame 부재도 매크로태스크 경로로 보냅니다. common-utils scheduler는 공개0.16.1도 promiseAfterMicrotask에서 사용한 기존 의존입니다. R5의 같은 프레임 쓰기 뒤 unmount는 은퇴 트리 검증1회와 구독자 배달0을 허용하며 실패는 호스트 싱크에만 도착합니다. cleanup 취소로 숨김까지 취소하지 않으려고 suspend/resume 기계를 추가하지 않습니다. R6의 비동기 명시적 validate 반환과 submit 값은 호출 시점 snapshot 계약이며 제한이나 재시도 대상이 아닙니다.
 
 R7–R11은 프레임 미호출 대기·Node setImmediate·슬롯 주석·한국어 INTENT·React.Activity 직접 참조로 보강했습니다. R12의 render-delay validation-on 행은 검증기를 주지 않는 동기 node-tree mount+슬롯 예약 비용이며, 뒤 매크로태스크와 판정 완료 지연을 재지 않는다는 범위를 벤치 주석에 명시합니다. 이번 라운드에서 시간 측정은 실행하지 않습니다. R13의 색인·정본 위치·보충 형식, R14의 열 문서 문장별 원장 ID를 고칩니다. R15에 따라 window clear 뒤 사전 규칙 커밋은 A5와 G3의 정의·문턱·환산·재측정·bootstrap을 모두 담습니다.
 
@@ -198,13 +198,13 @@ R7–R11은 프레임 미호출 대기·Node setImmediate·슬롯 주석·한국
 
 측정 추가는 stream-flat-2000-validate(L·E·F, 준비3회·10페이지, 페이지 내부에서 rAF당 프로그램 쓰기1회·60프레임)이며 페이지별 검증 실행 수·최장 프레임·50ms 이상 프레임·프레임별 스크립트 시간을 기록합니다. G6은 모든 페이지에서 F 실행 수≤2+ceil(스트림 기간÷100ms), F의50ms 이상 프레임 수 열 페이지 합≤E의 합을 요구합니다. burst의 F 결과 배달 수는 줄며 G4의 매 키 배달은 non-burst에만 적용합니다. 정식 창 전 사전 규칙에는 A5·G3와 이 행·G6을 함께 커밋합니다.
 
-### Amendment 4·5 — 100ms와 오류 표시의 commit 기억
+### Amendment 4·5 — 100ms와 엔진 표시
 
 소유자 원문19가 상한을100ms로 바꾸었습니다. 디바운스는 FieldInput의 책임이며 엔진은100ms 지각 문턱 아래의 실시간감을 지킵니다. cap 뒤에도 watch로 돌아가고 watch→carry 첫 프레임도 cap을 검사합니다. run의 boolean이 true일 때만 마지막 실제 시작 시각을 갱신합니다. 주기 구현·보조는 utils/cadence, 형은 types, 일회성 슬롯은 utils/slot에 놓고 callback wiring과 순수 결정 함수를 통해 import 순환을 없앴습니다.
 
 쓰기 pending은 None·unavailable 가드 뒤 시작합니다. 현재 stamp의 판정이 라우팅·동일 목록·null·실패로 끝나면 정착하고, commit-only 폐기는 최신 commit을 cadence에서 다시 요청하며 hold를 유지합니다. 명시적 루트 validate도 현재 판정은 정착하되 OnChange commit-only 폐기는 pending 여부와 관계없이 재요청하고 하위 트리는 정착하지 않습니다. unavailable·폐기는 무조건 정착하며 새 요청 없는 stamp 무효화(비OnChange reset 포함)도 정착합니다. true→false 알림은 런타임 listener set을 통해 배달 직전에 한 번만 전달하고 공개 사건·revision·src/index는 바꾸지 않습니다.
 
-FieldProxy·FieldInputSlot·useChildFieldErrors는 순수 표시 계산과 표시당 hook을 공유합니다. 엔진이 OnChange 상태·enabled 변화와 handle.showError 정책의 최초 기준을 기록하고 pending이면 현재와 기준이 모두 적격인 entry만 보여 줍니다. React WeakMap·commit 기억·visibility layout effect는 없습니다. child-errors는 facd72a71처럼 hidden 자식을 포함하고 controls를 읽지 않습니다. 공개 pending snapshot은 서버 false인 useSyncExternalStore 반환만 사용합니다.
+FieldProxy·FieldInputSlot·useChildFieldErrors는 순수 이력 검사와 표시당 hook을 공유합니다. node/policy generation을 병합하여 live state와 committed policy의 마지막 쌍까지 검사하고 child-errors는 enabled를 제외합니다. candidate만 release version을 구독하며 client/server snapshot은 같은 getter입니다.
 
 Always는 state 없는 checkShowError()의 값을 앞선 layout effect에서 ref에 반영하며 connect effect는 이 ref를 읽고 정책 변경만으로 재연결하지 않습니다. 자식 layout 쓰기가 먼저여도 inline root.validate가 stamp를 올려 큐를 버리고 pending을 정착시킵니다. 다른 모드는 기존 슬롯과 compile 실패 필터를 공유합니다. 숨긴 load의 미전달 기록은 교체 load 앞에 원래 root와 함께 옮기며 전달마다 reporter.root를 복구하고 각 handler 실패를 격리합니다. 형식·정식 표본은 여전히 측정 전입니다.
 
@@ -214,16 +214,24 @@ Always는 state 없는 checkShowError()의 값을 앞선 layout effect에서 ref
 
 ### Amendment 6 — 배달 전 pending과 표시·보고 수명
 
-W3는 실제 사슬 끝의 요청과 같은 조건을 validation 도메인의 prepareFieldNodeValidation에 두고 각 공개 listener 배달 전에 pending을 기록합니다. 사슬이 기록한 stamp는 validationPendingEntryStamp에 보유하며 요청 없이 끝나면 그 stamp만 정착하여 더 새로운 실행을 풀지 않습니다. None·unavailable·deferred 마운트는 제외하고 request 자체의 true 설정은 멱등입니다. W2의 같은 commit 보류는 Amendment8의 엔진 기준으로 계산하며 React wasVisible·layout 재검사를 제거합니다. 보통 쓰기의 layout effect0회는 유지합니다.
+W3는 실제 사슬 끝의 요청과 같은 조건을 validation 도메인의 prepareFieldNodeValidation에 두고 각 공개 listener 배달 전에 pending을 기록합니다. 사슬이 기록한 stamp는 validationPendingEntryStamp에 보유하며 요청 없이 끝나면 그 stamp만 정착하여 더 새로운 실행을 풀지 않습니다. None·unavailable·deferred 마운트는 제외하고 request 자체의 true 설정은 멱등입니다. W2의 같은 commit 보류는 Amendment9의 엔진 이력으로 계산합니다. 보통 쓰기의 layout effect0회는 유지합니다.
 
 W4의 mount catch는 engine이 이미 보고하거나 숨김 버퍼에 둔 검증 실패를 무시하며 소비자 handler 묶음의 꼬리만 호스트에 전달합니다. W5는 교체된 load 기록의 원래 root를 유지하면서 활성 load.root에도 observer guard를 적용하여 onError가 현재 폼을 쓰지 못하게 합니다. W6의 동일 경고는 R-g에 따라 원래 load별 범위에서 중복 억제하며 숨긴 교체 load들의 경고를 합치지 않습니다. W7의 Always 루트 input 자체 mount-layout validate는 같은 commit에 한 번 추가 판정을 실행하며, W8의 조상 mount-layout 쓰기는 inline 최초 판정을 무효화하여 한 프레임 뒤 판정할 수 있습니다. W7·W8은 코디네이터가 기록한 한계이며 W6은 R-g로 수정합니다.
 
 W10 제출 회귀는 still-invalid 값을 쓰고 직후 빈 표시, 제출 뒤 오류와 pending=false를 확인합니다. W11 자연 key→Tab 브라우저 경합은 명시적 비동기 판정 보류와 실제 쓰기 시작 프레임 계수를 사용합니다. W12 idle helper는 write-pending만 기다리며 비동기 mount 판정은 그 판정의 명시적 promise를 기다립니다. W13 코어 시험은 실제2000필드 폼에서 보류 표시3개만 구독하고 정착 콜백도 각각 한 번임을 확인합니다.
 
-### Amendment 8 v3 — 엔진 표시 기준과 계약 감사
+### Amendment 9 v3 — release 이력과 커밋 정책
 
-소유자 Q18b·Q19·Q21–27을 적용합니다. 엔진의 노드 기준은 interactionState 참조·active&&visible이며 runtime은 기준이 있는 노드 set과 undefined도 보존하는 정책 box를 소유합니다. record는 변이 전에 기준과 revealDropOwed/generation만 기록하고 scheduling은 하지 않습니다. validation의 scheduleFieldNodeRevealDrop는 기존 일회성 slot만 사용하며 예약 generation 뒤 기록이 추가되면 기준 전체를 유지하고 재예약합니다(코디네이터 msg_5abe110cb1c6). pending=false인 조용한 drop·settle·폐기는 기준을 지우고 token 무효화로 이전 slot을 취소합니다.
+H: 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
 
-표시의 live 조건과 기준 조건은 같은 resolver가 external/default를 적용해 계산합니다. renderer/input은 live·기준 enabled도 검사하고 child-errors는 원래 계약대로 조건만 봅니다. React에서 나타난 mirror·복원·가상화·remount는 엔진 기준을 그대로 소비합니다. external policy/disabled 인자의 미관측, transition 지연, commit-only context stream, drop 전 약1~2프레임 새 쓰기의 hold는 기록된 한계입니다. 마운트 layout은 원래2회로 복원하고 일반 쓰기0회와 G8 guard는 유지합니다.
+H: recordFieldNodeRevealBaseline은 OnChange 상태·active·visible 변이 전에 state 참조·active&&visible·generation·sequence를 entries에 append한다. 같은 node/write sequence에서는 한 번만 기록한다. sequence는 entryDepth·visitDepth가 모두0인 공개 chain/state 진입과 outer visit 시작에서만 증가하며 열린 entry/walk 안에서는 증가하지 않는다.
 
-현재 stamp의 commit-only 폐기(R-a)는 최신 commit을 cadence에서 다시 요청하고 hold를 유지합니다. explicit validate와 submit은 Q24에 따라 호출 시점 snapshot 계약을 유지합니다. hidden reset의 이전·새 기록은 reset 사슬 끝에 순서대로 전달하고 각 원래 load 안에서 warning을 dedup합니다(ERROR-019·204). common-utils scheduler는0.16.1과 같은 기존 의존이며 compile rejected/sink는 변경 없는 ERROR-019 items3·5에 따른 D1(Q12) 시간 분리 결과입니다. React 표시 기억의 Amendment7 X1/X2는 폐기하고 X3 entry-stamp 소유권은 유지합니다.
+H lifetime: 예약 generation 이하의 node/policy entry만 drop하고 빈 노드 이력을 제거한다. pending인 drop은 아무것도 제거하지 않고 owed/token을 지운다. 남은 이력의 재예약까지 끝낸 뒤 release version을 증가시키고 복사한 release listeners를 마지막에 통지하여 listener의 새 기록이 독립 예약을 만든다. settle은 true→false에서 listener 전에 전체 해제하며 unavailable의 기존 정착 경로도 유지한다.
+
+H: 해석된 policy와 load.root에 keyed인 no-cleanup layout effect 하나가 commitFieldNodeRevealPolicy를 호출한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
+
+H: 표시당 hook은 node에 memoize한 release version getter를 client/server snapshot 양쪽에 사용한다. subscribe는 node/candidate에 memoize하며 live 적격이지만 history가 거부한 candidate만 release listener를 등록하고 등록 직후 catch-up을 한 번 호출한다. React 표시 수명 저장소와 표시 layout effect는 없고 ordinary render의 subscription passive effect도 추가하지 않는다. 배열 filled-minus-empty mount는2회·ordinary write layout0회다.
+
+알려진 한계는 hook disabled의 즉시 reveal, drop보다 늦은 state/enabled render의 hold 생략, commit-only 연속의 hold, release와 paint 사이 task의 쓰기가 released verdict를1~2프레임 표시함, 한 React batch 안의 미표시 state/enabled/policy 조합도 이력에 포함됨이다.
+
+P3-10: ERROR-019 항목2는 숨긴 Form의 reset 재생성에 적용한다. 같은 schema reset을 포함한 다른 post-mount 사슬은 ready=false 동안 buffer하며 facd에서 미배달되던 기록을 R1이 reconnect 때 순서대로 전달한다. 숨긴 같은-schema reset의 chain-end 전달은 소유자 미결 질문이며 동작을 바꾸지 않는다.

@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-- Y2: handle.showError는 setShowError 전에 현재 showError state를 바인딩 전용 engine 연산으로 기록한다. closure는 showError state가 dependency에 있어 stale하지 않으며 undefined도 box로 남긴다. baseline은 engine이 소유하고 React는 별도 기억하지 않는다. explicit validate와 submit은 호출 때 캡처한 snapshot 계약을 유지한다(Q24).
+- H: handle.showError와 onReset은 facd72a71의 setShowError와 useImperativeHandle dependency 모양을 유지한다. 정책 기록은 FormRoot가 하지 않으며 RootNodeContext의 root별 layout commit이 소유한다. validate 반환과 submit 값은 호출 시점 snapshot 계약이다.
 
 - SURFACE-063: FormHandle.rebuild(option?) delegates to the current root binding, invalidates its schema cache entry and forces tree replacement through reset semantics. Other forms retain their existing roots until their own rebuild; ordinary reset stays unchanged. The package export names do not change.
 

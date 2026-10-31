@@ -6,7 +6,8 @@
 
 ## API Contracts
 
-- Y1–Y3: renderer는 엔진의 상호작용 상태·enabled·Form 정책 기준으로 현재 조건을 보정한다. pending이면 현재와 기준 모두 표시 적격인 오류만 보여 주며 enabled=false는 즉시 숨긴다. React 수명과 무관하게 같은 노드의 input과 같은 판정을 표시하고 표시 기억·layout effect는 없다.
+- H: 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
+- renderer는 state와 active&&visible 이력·커밋 정책을 소비하여 오류 표시를 계산한다. raw errors와 렌더러 경계는 유지한다.
 
 - U2: renderer.errorVisible과 formatError 선택은 FieldRendererContext의 공통 useErrorVisibility를 사용한다. checkShowError 조건은 그대로이며 엔진 기준에서 적격했던 오류만 이전 판정을 유지한다. 노드가 바뀌면 그 노드 기준을 읽고 enabled가 거짓이면 즉시 숨긴다. renderer.errors는 보정하지 않는 raw 목록이다.
 

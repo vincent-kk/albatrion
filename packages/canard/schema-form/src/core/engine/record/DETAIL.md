@@ -41,9 +41,9 @@
 
 ## API Contracts
 
-- Y2: recordFieldNodeRevealBaseline은 OnChange일 때 아직 기준이 없는 노드에 interactionState 참조와 active&&visible을 저장하고 runtime set에 넣는다. captureFieldNodeChange의 interactionState/active/visible 변경, patchFieldNodeInteractionState의 참조 변경, clearSubtreeState의 직접 비움 전에 호출한다. pending=false에서 기록하면 revealDropOwed와 단조 generation만 기록한다. record는 scheduling·validation을 import하거나 실행하지 않는다. 노드 기준은 선택적 자료이며 생성자의 고정 필드 순서는 바꾸지 않는다.
-
-- U2의 선택적 validationPending과 런타임별 validationSettleListeners는 내부 표시 보류 계약이다. write request만 pending을 시작하고 도메인이 현재 판정 종료·실패·무효화에서 정착시킨다. 공개 사건과 노드 고정 칸은 유지한다. validationRun은 검증 시작 여부의 boolean을 반환하며 timing은 그 값만 본다.
+- H: recordFieldNodeRevealBaseline은 OnChange 상태·active·visible 변이 전에 state 참조·active&&visible·generation·sequence를 entries에 append한다. 같은 node/write sequence에서는 한 번만 기록한다. sequence는 entryDepth·visitDepth가 모두0인 공개 chain/state 진입과 outer visit 시작에서만 증가하며 열린 entry/walk 안에서는 증가하지 않는다.
+- 모든 append는 runtime generation을 증가시키고 pending=false이면 drop owed를 기록한다. 기록 노드 set·커밋 정책·정책 이력·release version/listener set은 선택적 runtime 자료다. record는 scheduling·validation·통지를 실행하거나 import하지 않는다. 생성자 고정 필드 순서와 공개 표면은 유지한다.
+- validationPending은 검증 실행 제어 자료이며 표시 구독의 snapshot이 아니다. validationRun은 실제 시작 여부만 timing에 반환한다.
 
 - 런타임의 선택적 validationRun 콜백은 요청마다 최신 도메인 실행 본문으로 교체하며, 한 번 만든 cadence는 이 콜백을 읽는 고정 실행 통로만 보유한다. 첫 요청 대상이 나중에 이탈해도 이후 요청의 노드·배달 클로저를 사용하며 폐기 시 콜백도 비운다. 주기 모듈에는 이 콜백 내용이 알려지지 않는다(IR-6 amendment3).
 

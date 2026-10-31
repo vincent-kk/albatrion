@@ -98,7 +98,7 @@ STATIC_IDS와 ADMITTED_EDGE_SCHEMAS는 child entry가 키이므로 그것을 선
 
 ## API Contracts
 
-- Y2 바인딩 전용 readFieldNodeRevealBaseline·readFieldNodeShowErrorBaseline·recordFieldNodeShowErrorBaseline은 engine query와 surface runtime wrapper를 통해 core가 이름으로 재수출한다. 공개 src/index와 FieldNode 표면·사건은 넓히지 않는다. 정책 box의 unknown 값은 엔진이 해석하지 않는다.
+- H 바인딩은 readFieldNodeRevealBaseline(노드 이력), readFieldNodeRevealPolicy(커밋 값·정책 이력), readFieldNodeRevealVersion, subscribeFieldNodeRevealReleased, commitFieldNodeRevealPolicy를 validation→engine→surface wrapper→core로만 잇는다. src/index·공개 사건·revision은 넓히지 않는다.
 
 - U2의 pending 조회·정착 알림 구독을 validation에서 명명 재수출한다. surface는 공개 노드를 requireRuntimeFieldNode로 좁힌 래퍼로 사용하며 core·패키지 경계의 기존 공개 사건과 이름은 유지한다.
 

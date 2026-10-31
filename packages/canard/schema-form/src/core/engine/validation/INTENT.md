@@ -6,7 +6,7 @@
 
 ## Conventions
 
-- 쓰기 pending과 정착 알림은 이 도메인이 소유하며 타이밍과 공개 사건으로 새지 않는다. 표시용 조회·구독은 바인딩 래퍼로만 소비한다.
+- 쓰기 pending·커밋 정책 이력·release version과 알림은 이 도메인이 소유하며 타이밍과 공개 사건으로 새지 않는다. 표시 조회·구독은 바인딩 래퍼로만 소비한다.
 
 - 의존 순서는 `blueprint < record < {behaviors, navigation} < validation < settle < dispatch < FieldNode`이다. `settle`은 이 fractal의 동기 가드 읽기를 소비하고, 결과 배달은 넘겨받은 콜백을 통해 요청자에게 돌려준다(NODE-016·045, LANDING-084).
 - `index.ts`는 검증 계약 형과 `readValidationEntry`, `compileEntryGuards`, `runFieldNodeValidation`, `routeValidationIssues`, `retainEqualValidationIssues`, `EMPTY_GLOBAL_ERRORS`를 이름으로 내보낸다. 동기 가드와 오류 읽기, 재생성 루트의 컴파일 사전 점검과 수명 함수도 이름으로 내보낸다. 수명 함수는 core가 바인딩용으로 명명 재수출하며 패키지 진입점에는 노출하지 않는다(NODE-010, VALIDATE-044·046, LANDING-159).

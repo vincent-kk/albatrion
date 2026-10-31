@@ -6,6 +6,10 @@
 
 ## API Contracts
 
+- H: 해석된 policy와 load.root에 keyed인 no-cleanup layout effect 하나가 commitFieldNodeRevealPolicy를 호출한다. 초기 정책은 저장만 하고 이전 committed value와 Object.is가 다르면 그 이전 값과 generation을 이력에 append한다. rebuild·schema·validator 교체의 새 root에도 commit하며 숨김 cleanup은 committed policy를 지우지 않는다.
+- R-h: child layout 쓰기가 mount보다 먼저 compile 실패를 처리하여 rejected 대신 sink가 되는 것은 D1(Q12)의 시간 분리와 변경 없는 ERROR-019 항목3·5를 따른다.
+- P3-10: ERROR-019 항목2는 숨긴 Form의 reset 재생성에 적용한다. 같은 schema reset을 포함한 다른 post-mount 사슬은 ready=false 동안 buffer하며 facd에서 미배달되던 기록을 R1이 reconnect 때 순서대로 전달한다. 숨긴 같은-schema reset의 chain-end 전달은 소유자 미결 질문이며 동작을 바꾸지 않는다.
+
 - R-f/R-g: hidden load를 reset으로 교체하면 reset 사슬 끝에 이전 load의 buffered records를 먼저, 새 load의 reset records를 다음으로 전달한다. reconnect까지 새 reset 기록을 보류하지 않는다(ERROR-019 item2). 원래 root와 form-level load identity를 보존하여 warning dedup은 각 원래 load 안에서 수행하고 한 load의 기록이 다른 load를 억제하지 않는다(ERROR-204). onError는 hidden layout cleanup에서도 유지하는 FormErrorService를 사용한다.
 
 - W4: 마운트 helper는 engine이 이미 보고했거나 hidden buffer에 넣은 검증 실패를 capture하지 않는다. MultipleErrors bundle의 첫 검증 실패를 제외한 consumer 실패만 reportErrorToHost에 한 번 보내며 나머지 거부는 격리한다.
@@ -50,5 +54,3 @@
 ## Last Updated
 
 2026-10-13
-
-- R-h: child layout 쓰기가 mount보다 먼저 compile 실패를 처리하여 rejected 대신 sink가 되는 것은 D1(Q12)의 시간 분리와 변경 없는 ERROR-019 items3·5를 따른다. 별도의 소유자 수용 예외가 아니다.

@@ -235,7 +235,7 @@
 
 ## API Contracts
 
-- U2 폐기는 내부 pending을 정착시켜 구독자에게 알린 뒤 validationSettleListeners와 기존 구독 집합을 비운다. 주기 취소·기존 stamp 무효화는 유지한다.
+- H 폐기는 release listeners를 settle 호출 전에 비우고 모든 이력을 해제하며 예약 token을 무효화한다. 폐기 중 release 통지는 없고 기존 stamp 무효화·cadence 취소·구독 해제 순서는 유지한다.
 
 - 루트 트리 폐기는 런타임의 지연 validationCadence를 cancel하여 프레임·타이머·매크로태스크를 중단하고 참조를 비운다. 기존 스탬프 증가와 대기 대상 제거는 유지한다(IR-6 amendment3).
 
