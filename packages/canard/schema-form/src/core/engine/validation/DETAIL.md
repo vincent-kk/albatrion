@@ -7,6 +7,11 @@
 
 ## API Contracts
 
+- IR-6 U2: 쓰기 검증 요청이 None·validationUnavailable 가드를 통과하면 runtime.validationPending을 true로 만든다. 현재 stamp인 실행의 전달(같은 목록 포함)·null·커밋 검사만의 폐기·실패는 pending을 false로 정착시킨다. 명시적 루트 validate도 현재 stamp 실행을 정착시키지만 pending을 시작하지 않고, 하위 트리 validate는 정착시키지 않는다. validationUnavailable·폐기와 새 요청 없는 stamp 무효화(non-OnChange reset)는 무조건 정착시킨다(코디네이터 승인 msg_1f2afdd094c7).
+- 정착은 라우팅 뒤·배달 전에 같은 동기 콜백에서 수행하고 true→false에만 런타임의 validationSettleListeners에 한 번 알린다. 공개 사건·node.subscribe·revision은 바꾸지 않는다. isFieldNodeValidationPending, subscribeFieldNodeValidationSettled를 validation→engine→surface 래퍼→core로 연결하며 src/index는 유지한다. settleFieldNodeValidation은 validation·write·settle의 도메인 내부 진입점이다.
+- 연속 입력의 동기 검증은 각100ms cap 판정이 현재 stamp로 완료되어 보류 표시를 푼다. 비동기·느린 검증이 계속 stale이면 후행 판정까지 새 표시를 보류할 수 있다. 커밋 검사만으로 버린 실행은 새 요청이 없으면 정착하며 이전 오류를 보일 수 있는 기록된 경계이다.
+- 주기 run 콜백은 실제 검증을 시작했는지 boolean으로 알린다. stamp로 버린 false는 cap 시계를 옮기지 않는다. pending 정착·stamp·대상·오류는 timing에 들어가지 않는다.
+
 - 런타임의 선택적 validationRun 콜백은 요청마다 최신 도메인 실행 본문으로 교체하며, 한 번 만든 cadence는 이 콜백을 읽는 고정 실행 통로만 보유한다. 첫 요청 대상이 나중에 이탈해도 이후 요청의 노드·배달 클로저를 사용하며 폐기 시 콜백도 비운다. 주기 모듈에는 이 콜백 내용이 알려지지 않는다(IR-6 amendment3).
 
 - 활성 선언 ID와 오류 차이는 고전적인 루프로 수집하고 비교하며, 선언 ID의 펼침 배열은 만들지 않는다. 오류 순서, 범위 밖 오류, 재사용 참조는 그대로 유지한다. 시간 복잡도는 같고, callback과 선언 수에 비례하는 임시 배열 비용이 줄어든다(87라운드 원칙 3).

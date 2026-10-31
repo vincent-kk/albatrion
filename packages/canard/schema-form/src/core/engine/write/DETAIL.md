@@ -34,6 +34,8 @@
 
 ## API Contracts
 
+- U2: 명시적 루트 validate의 현재 stamp 실행은 라우팅 뒤·deliverValidationWave 전에 pending을 정착시킨다. null·커밋 검사만의 폐기·실패도 현재 stamp이면 정착한다. 하위 트리 실행은 pending을 풀지 않으며 컴파일 실패의 validationUnavailable은 무조건 정착한다. non-OnChange reset의 새 요청 없는 stamp 증가도 정착한다(승인 msg_1f2afdd094c7).
+
 - 쓰기 검증 요청은 동기 정착·사건 배달 뒤, `onChange` 앞에서 예약하지만 실제 실행·오류 배달은 다음 화면 뒤 선행·연속 프레임 이월·첫 무요청 프레임 뒤 후행 및 마지막 자동 실행 시작 기준500ms 상한 주기로 최신 커밋을 판정한다. 명시적 `dispatchValidate`와 제출은 즉시 판정한다. 루트의 명시적 검증만 스탬프를 올리고 대기 대상을 비우며, 하위 트리 검증은 현재 스탬프를 초기화해 읽고 대기 중·진행 중 전체 폼 검증을 보존한다. 같은 커밋의 중복 배달은 기존 오류 참조 보존·보고 중복 억제를 따른다(IR-6).
 - 세그먼트만 소비하는 경로는 jsonPointer의 배열 전용 정본을 사용하여 해석 결과 wrapper를 추가하지 않습니다. 문법과 현재 형상의 조회는 계속 분리합니다.
 

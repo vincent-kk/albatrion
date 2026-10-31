@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- U2: renderer.errorVisible과 formatError 선택은 FieldRendererContext의 공통 useErrorVisibility를 사용한다. checkShowError 조건은 그대로이며 이미 표시한 오류만 이전 판정을 유지한다. 해석한 노드가 바뀌면 기억을 이어받지 않고 enabled가 거짓인 null 렌더는 false를 commit한다. renderer.errors는 보정하지 않는 raw 목록이다.
+
 - 위계: 본체 `FieldProxy.tsx`와 재귀 렌더 props 계약 `type.ts`는 뿌리에 있습니다. 본체의 내부 부품인 fractal 둘(`FieldInputSlot`·`DeferredFieldProxy`)은 `components/`에 있고 이 칸에는 index를 두지 않습니다. 부품은 Form의 자식들(독립 컴포넌트)과 달리 본체의 일부이므로 본체 아래에 둡니다. 진입점 `index.ts`는 `./FieldProxy`의 `FieldProxy`와 `./components/FieldInputSlot`의 형 `ChildField`만 이름으로 내보냅니다. 본체는 부품을 각각의 진입점으로 가져오고, 부품은 위로 열린 길을 통해 뿌리의 `type.ts`를 가져오며, 부품끼리는 서로의 진입점을 가져옵니다.
 - 재귀 렌더 props 계약 `FieldProxyProps`는 본체가 소유하며 `type.ts`에 선언합니다. 진입점은 이 형을 내보내지 않습니다. 부품 `FieldInputSlot`·`DeferredFieldProxy`는 `type.ts`를 타입 전용 import로만 읽고, 입력 구현은 본체 구현을 값으로 역참조하지 않습니다. 본체는 자신을 `NodeProxy` prop으로 넘겨서 재귀합니다.
 - 비활성 노드는 렌더하지 않습니다. 하위 노드는 전달받은 NodeProxy를 통해 같은 렌더 계약을 재사용합니다. 노드가 없을 때도 null을 반환합니다. 오류 표시가 꺼져 있으면 오류 포맷 함수의 결과를 노출하지 않습니다.

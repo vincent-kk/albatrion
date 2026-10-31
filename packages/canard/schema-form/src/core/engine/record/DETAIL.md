@@ -39,6 +39,8 @@
 
 ## API Contracts
 
+- U2의 선택적 validationPending과 런타임별 validationSettleListeners는 내부 표시 보류 계약이다. write request만 pending을 시작하고 도메인이 현재 판정 종료·실패·무효화에서 정착시킨다. 공개 사건과 노드 고정 칸은 유지한다. validationRun은 검증 시작 여부의 boolean을 반환하며 timing은 그 값만 본다.
+
 - 런타임의 선택적 validationRun 콜백은 요청마다 최신 도메인 실행 본문으로 교체하며, 한 번 만든 cadence는 이 콜백을 읽는 고정 실행 통로만 보유한다. 첫 요청 대상이 나중에 이탈해도 이후 요청의 노드·배달 클로저를 사용하며 폐기 시 콜백도 비운다. 주기 모듈에는 이 콜백 내용이 알려지지 않는다(IR-6 amendment3).
 
 - 런타임은 도메인 없는 validationScheduling의 선택적 cadence 인스턴스(request/cancel)를 지연 보유한다. 노드 고정 칸은 늘리지 않고 record는 주기·검증을 실행하지 않는다. 루트 폐기에서 cancel하고 요청 큐 표시는 주기가 소유하므로 validationQueued 칸은 제거한다(IR-6 amendment3).

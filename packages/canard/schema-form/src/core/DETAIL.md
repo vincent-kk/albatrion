@@ -28,6 +28,8 @@
 
 ## API Contracts
 
+- U2 내부 표시 통로 isFieldNodeValidationPending·subscribeFieldNodeValidationSettled는 surface 래퍼를 명명 재수출한다. runtime listener set의 정착 알림이며 FieldNodeEventType·node.subscribe·revision·src/index에는 추가하지 않는다.
+
 - surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출한다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공한다. `readFieldNodeGuard`·`UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 core index가 재수출하지 않는다. 패키지의 src/index 공개 이름은 유지한다(07c 계획 9.2).
 - `fieldNodeFactory`·`blueprint`를 재수출하는 이유는 core 밖의 시험·측정 도구(`bench/legacy-compare/`의 네 파일, `src/hooks/__tests__/createHookNode.ts`)가 core index를 생성 통로로 쓰기 때문이다. 제품 소비자는 없다.
 - `__tests__/fixtures/testFieldNode.ts`는 engine index의 `FieldNodeRecord`를 바탕으로 시험용 자기 형과 구조 판정 좁히기를 제공한다. core 시나리오 러너, engine 시험과 `bench/legacy-compare/`의 독립 비교 스크립트 네 개는 클래스 identity 대신 레코드 칸으로 판정하고 공개 노드 동작은 surface 관문의 공개 노드 형으로 호출하며, `surface/runtime/FieldNode.ts` 클래스를 직접 가져오지 않는다.

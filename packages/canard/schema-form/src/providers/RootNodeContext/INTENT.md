@@ -6,6 +6,8 @@ JSON Schema로부터 루트 `FieldNode` 트리를 생성하고 Context로 공급
 
 ## Conventions
 
+- Preserve buffered record roots across hidden replacements, isolate record delivery failures, and validate Always mounts inline while other mounts keep the slot.
+
 - TypeScript + React, Generic 타입 파라미터 (`Schema`, `Value`) 사용
 - 초기 루트는 `useMemo`에서 `utils/createRootLoad.ts`의 `buildFieldNodeTree`·`mountFieldNode` 통로로 작성·마운트
 - 기본 `validationMode`: `ValidationMode.OnChange | ValidationMode.OnRequest`

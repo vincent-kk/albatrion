@@ -235,6 +235,8 @@
 
 ## API Contracts
 
+- U2 폐기는 내부 pending을 정착시켜 구독자에게 알린 뒤 validationSettleListeners와 기존 구독 집합을 비운다. 주기 취소·기존 stamp 무효화는 유지한다.
+
 - 루트 트리 폐기는 런타임의 지연 validationCadence를 cancel하여 프레임·타이머·매크로태스크를 중단하고 참조를 비운다. 기존 스탬프 증가와 대기 대상 제거는 유지한다(IR-6 amendment3).
 
 - 의존 색인의 정적 owner/watch/node·split host 문법은 구성 때 보유하고 동적 질의는 root.runtime 소유의 bounded 문법 캐시를 사용합니다. presence 질의도 runtime 소유자를 전달합니다. 문법 배열은 현재 owner·노드·슬롯 원본 조회 결과를 보유하지 않습니다.

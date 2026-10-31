@@ -21,6 +21,8 @@
 
 ## API Contracts
 
+- isFieldNodeValidationPending(node)와 subscribeFieldNodeValidationSettled(node, listener)는 engine의 내부 runtime pending/정착 알림을 requireRuntimeFieldNode로 잇는 바인딩 전용 래퍼다. 살아 있는 참조와 폐기된 참조 모두 마지막 정착 상태를 읽을 수 있고 패키지 src/index는 넓히지 않는다.
+
 - `hasFieldNodeValidationRequest(node)`는 requireRuntimeFieldNode로 공개 노드를 내부 레코드로 좁힌 뒤 engine의 같은 이름 조회를 호출하는 바인딩 전용 통로다. core가 이 래퍼를 명명 재수출하며 src/index와 노드 공개 멤버는 유지한다(IR-6 R2, 코디네이터 승인 msg_7e0a5ed0ffd3).
 
 - BLUEPRINT-052: buildFieldNodeTree accepts an optional caller-owned blueprint cache and forwards it to blueprint without importing app state. Per-tree warning collection and runtime ownership remain unchanged.
