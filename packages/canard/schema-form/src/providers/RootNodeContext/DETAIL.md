@@ -49,7 +49,7 @@
 - L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다. 개발 StrictMode replay도 React가 hide/show로 모델링하므로 비멱등 자식 layout 쓰기가 replay에서 전달되며 production 렌더는 영향을 받지 않습니다.
 - L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
 
-- 루트 교체 reset의 옛 load는 batch의 try/catch 뒤에 은퇴합니다. adoption 전 실패도 reset 사슬의 기록으로 먼저 전달하며 사슬이 던져도 은퇴는 적용합니다. 준비 전 생성 오류는 reported로 중복을 막고 새 reporter.root를 유지한 채 reset 끝에 capture·호스트 보고합니다.
+- 루트 교체 reset의 옛 load는 batch의 try/catch 뒤에 은퇴합니다. adoption 전 compile 실패는 caller에 던지고 onError에 한 번 전달하며 기존처럼 호스트 보고는 0회입니다. 사슬이 던져도 은퇴는 적용합니다. 준비 전 생성 오류는 reported로 중복을 막고 새 reporter.root를 유지한 채 reset 끝에 capture·호스트 보고합니다.
 
 ## Acceptance Criteria
 
