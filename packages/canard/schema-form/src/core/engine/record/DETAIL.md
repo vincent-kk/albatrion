@@ -39,6 +39,8 @@
 
 ## API Contracts
 
+- 런타임의 선택적 validationRun 콜백은 요청마다 최신 도메인 실행 본문으로 교체하며, 한 번 만든 cadence는 이 콜백을 읽는 고정 실행 통로만 보유한다. 첫 요청 대상이 나중에 이탈해도 이후 요청의 노드·배달 클로저를 사용하며 폐기 시 콜백도 비운다. 주기 모듈에는 이 콜백 내용이 알려지지 않는다(IR-6 amendment3).
+
 - 런타임은 도메인 없는 validationScheduling의 선택적 cadence 인스턴스(request/cancel)를 지연 보유한다. 노드 고정 칸은 늘리지 않고 record는 주기·검증을 실행하지 않는다. 루트 폐기에서 cancel하고 요청 큐 표시는 주기가 소유하므로 validationQueued 칸은 제거한다(IR-6 amendment3).
 
 - 결정 62 PR-2b의 선택적 `SettlementScratch.pendingExitPaths`는 호스트 경로 → 자식 경로 → 대기 키 개수의 색인입니다. `pendingExits`와 같은 수명을 가지며 첫 대기 퇴장 때만 지연 생성합니다. 정착 문맥은 같은 Map을 참조하며 scratch 해제는 존재할 때만 비웁니다. 다음 정착은 비워진 컨테이너를 재사용하고 대기 퇴장이 없는 정착에는 새 할당을 만들지 않습니다. record는 이 자료의 형만 소유하고 갱신은 settle이 수행합니다. 공간은 대기 경로 수에 비례하며 노드 고정 필드나 공개 패키지 표면은 늘리지 않습니다.
