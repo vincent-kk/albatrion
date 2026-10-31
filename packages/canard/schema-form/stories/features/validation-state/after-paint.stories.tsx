@@ -11,7 +11,7 @@ import {
   type FormHandle,
   ShowError,
 } from '../../../src';
-import { isFieldNodeValidationPending } from '../../../src/core';
+import { readFieldNodeRuntime } from '../../helpers/readFieldNodeRuntime';
 
 const handles = new WeakMap<HTMLElement, FormHandle>();
 const blurPending = new WeakMap<object, boolean>();
@@ -30,7 +30,9 @@ const Input = ({ node, value, onChange }: FieldInputProps) => (
       controls.get(node)?.onWrite?.();
       onChange(event.target.value);
     }}
-    onBlur={() => blurPending.set(node, isFieldNodeValidationPending(node))}
+    onBlur={() =>
+      blurPending.set(node, !!readFieldNodeRuntime(node).validationPending)
+    }
   />
 );
 const Renderer = ({
@@ -161,16 +163,16 @@ const check = async (canvas: HTMLElement, touched: boolean, same: boolean) => {
       await started;
       await frame();
       expect(handle.node!.state[2]).toBe(true);
-      expect(isFieldNodeValidationPending(handle.node!)).toBe(true);
+      expect(!!readFieldNodeRuntime(handle.node!).validationPending).toBe(true);
       expect(error.textContent).toBe('');
       control.hold = false;
       control.pending.splice(0).forEach((resolve) => resolve());
     }
     for (let round = 0; round < 12; round++) {
       await frame();
-      if (!isFieldNodeValidationPending(handle.node!)) break;
+      if (!!!readFieldNodeRuntime(handle.node!).validationPending) break;
     }
-    expect(isFieldNodeValidationPending(handle.node!)).toBe(false);
+    expect(!!readFieldNodeRuntime(handle.node!).validationPending).toBe(false);
     if (same) {
       expect(error.textContent).toBe('too short');
       const firstShown = samples.findIndex((value) => value === 'too short');

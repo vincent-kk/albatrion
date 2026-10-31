@@ -37,3 +37,5 @@ export { captureFieldNodeChange } from './utils/captureFieldNodeChange';
 export { clearFieldNodeChanges } from './utils/clearFieldNodeChanges';
 
 export { recordFieldNodeRevealBaseline } from './utils/recordFieldNodeRevealBaseline';
+
+export { advanceFieldNodeRevealSequence } from './utils/advanceFieldNodeRevealSequence';

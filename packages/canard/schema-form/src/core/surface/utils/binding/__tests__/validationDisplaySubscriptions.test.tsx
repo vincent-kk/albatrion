@@ -68,7 +68,7 @@ it('IR-6 W13 only the three holding displays subscribe and receive a 2000-field 
   await settleValidation(() => ref.current?.node);
   const runtime = requireRuntimeFieldNode(ref.current!.node!).runtime;
   const listeners = new ObservedSet();
-  runtime.validationSettleListeners = listeners;
+  runtime.revealReleaseListeners = listeners;
   act(() => {
     const leaf = ref.current!.findNode('/f0')!;
     leaf.setValue('new');

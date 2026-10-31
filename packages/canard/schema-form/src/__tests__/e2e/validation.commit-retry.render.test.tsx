@@ -4,9 +4,9 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { type FieldRendererProps, Form, type FormHandle } from '@/schema-form';
-import { isFieldNodeValidationPending } from '@/schema-form/core';
 
 import { createValidationFrameClock } from '../helpers/createValidationFrameClock';
+import { isValidationPending } from '../helpers/isValidationPending';
 import { settleValidation } from '../helpers/settleValidation';
 
 afterEach(() => {
@@ -62,7 +62,7 @@ it('IR-6 R-a a context commit in an async gap keeps display held until the newes
     finishes[0]([{ dataPath: '', message: 'discarded' }]);
     await clock.task();
   });
-  expect(isFieldNodeValidationPending(ref.current!.node!)).toBe(true);
+  expect(isValidationPending(ref.current!.node!)).toBe(true);
   expect(view.getByTestId('error').textContent).toBe('');
   for (let frame = 0; frame < 2; frame++)
     await act(async () => {
@@ -76,7 +76,7 @@ it('IR-6 R-a a context commit in an async gap keeps display held until the newes
     await clock.task();
   });
   expect(view.getByTestId('error').textContent).toBe('newest');
-  expect(isFieldNodeValidationPending(ref.current!.node!)).toBe(false);
+  expect(isValidationPending(ref.current!.node!)).toBe(false);
 });
 it('IR-6 R-a an async mount discarded by context still obtains an OnChange verdict', async () => {
   const clock = createValidationFrameClock();
@@ -100,13 +100,13 @@ it('IR-6 R-a an async mount discarded by context still obtains an OnChange verdi
     await clock.task();
   });
   expect(finishes).toHaveLength(1);
-  expect(isFieldNodeValidationPending(ref.current!.node!)).toBe(false);
+  expect(isValidationPending(ref.current!.node!)).toBe(false);
   view.rerender(<Form ref={ref} {...props} context={{ version: 1 }} />);
   await act(async () => {
     finishes[0]([{ dataPath: '', message: 'stale mount' }]);
     await clock.task();
   });
-  expect(isFieldNodeValidationPending(ref.current!.node!)).toBe(true);
+  expect(isValidationPending(ref.current!.node!)).toBe(true);
   await act(async () => {
     clock.frame();
     await clock.task();

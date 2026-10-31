@@ -14,13 +14,13 @@ export { readFieldNodeErrors } from './utils/read/readFieldNodeErrors';
 export { hasFieldNodeValidationRequest } from './utils/read/hasFieldNodeValidationRequest';
 export { retainValidationRoot } from './utils/lifetime/retainValidationRoot';
 export { releaseValidationRoot } from './utils/lifetime/releaseValidationRoot';
-export { isFieldNodeValidationPending } from './utils/read/isFieldNodeValidationPending';
-export { subscribeFieldNodeValidationSettled } from './utils/read/subscribeFieldNodeValidationSettled';
 export { settleFieldNodeValidation } from './utils/run/settleFieldNodeValidation';
 export { prepareFieldNodeValidation } from './utils/run/prepareFieldNodeValidation';
 
-export { dropFieldNodeRevealBaselines } from './utils/lifetime/dropFieldNodeRevealBaselines';
 export { scheduleFieldNodeRevealDrop } from './utils/lifetime/scheduleFieldNodeRevealDrop';
-export { recordFieldNodeShowErrorBaseline } from './utils/lifetime/recordFieldNodeShowErrorBaseline';
 export { readFieldNodeRevealBaseline } from './utils/read/readFieldNodeRevealBaseline';
-export { readFieldNodeShowErrorBaseline } from './utils/read/readFieldNodeShowErrorBaseline';
+export { readFieldNodeRevealPolicy } from './utils/read/readFieldNodeRevealPolicy';
+export { readFieldNodeRevealVersion } from './utils/read/readFieldNodeRevealVersion';
+export { subscribeFieldNodeRevealReleased } from './utils/read/subscribeFieldNodeRevealReleased';
+export { commitFieldNodeRevealPolicy } from './utils/lifetime/commitFieldNodeRevealPolicy';
+export { releaseFieldNodeRevealHistory } from './utils/lifetime/releaseFieldNodeRevealHistory';

@@ -12,10 +12,7 @@ import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
-import {
-  FieldNodeRequestType,
-  recordFieldNodeShowErrorBaseline,
-} from '@/schema-form/core';
+import { FieldNodeRequestType } from '@/schema-form/core';
 import {
   FieldInputsContextProvider,
   FieldRendererContextProvider,
@@ -46,11 +43,6 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const reporter = useFormErrorContext();
   const [showError, setShowError] = useState(props.showError);
   const onReset = useHandle(() => setShowError(props.showError));
-  const handleShowError = useHandle((visible = true) => {
-    if (binding.current.root)
-      recordFieldNodeShowErrorBaseline(binding.current.root, showError);
-    setShowError(visible ? true : props.showError);
-  });
   const submit = useHandle((native = false) =>
     submitForm(
       binding.current.root,
@@ -97,17 +89,11 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       getErrors: () => binding.current.root?.globalErrors ?? [],
       getAttachedFilesMap: () => attachedFilesMap,
       validate: async () => (await binding.current.root?.validate()) ?? [],
-      showError: handleShowError,
+      showError: (visible = true) =>
+        setShowError(visible ? true : props.showError),
       submit: handleSubmit,
     }),
-    [
-      attachedFilesMap,
-      binding,
-      handleSubmit,
-      handleShowError,
-      props.showError,
-      showError,
-    ],
+    [attachedFilesMap, binding, handleSubmit, props.showError],
   );
   const children = useMemo(
     () => createChildren(props.children, props.jsonSchema),

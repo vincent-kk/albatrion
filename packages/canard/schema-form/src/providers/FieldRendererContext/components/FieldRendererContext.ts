@@ -6,8 +6,8 @@ import type { FieldNode } from '@/schema-form/core';
 import type { FieldRendererProps } from '@/schema-form/types';
 
 export interface FieldRendererContext {
-  /** Resolve an opaque current/baseline Form policy through external and default fallback. */
-  resolveShowError: (policy: unknown) => FieldRendererContext['checkShowError'];
+  /** Resolved policy rendered by this context; RootNodeContext commits it after layout. */
+  showError: unknown;
   /** FieldRenderer component declared externally */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */

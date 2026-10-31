@@ -18,6 +18,7 @@ import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
 import {
   ValidationMode,
+  commitFieldNodeRevealPolicy,
   releaseValidationRoot,
   retainValidationRoot,
   setContext,
@@ -60,11 +61,9 @@ export const RootNodeContextProvider = ({
   const external = useExternalFormContext();
   const { context, attachedFilesMap } = useWorkspaceContext();
   const reporter = useFormErrorContext();
-  const always = useFieldRendererContext().checkShowError();
+  const { checkShowError, showError } = useFieldRendererContext();
+  const always = checkShowError();
   const alwaysRef = useRef(always);
-  useLayoutEffect(() => {
-    alwaysRef.current = always;
-  }, [always]);
   const current: RootLoadProps = {
     ...props,
     context,
@@ -97,6 +96,12 @@ export const RootNodeContextProvider = ({
   );
   const getSnapshot = useMemo(() => () => store.load, [store]);
   const load = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  useLayoutEffect(() => {
+    alwaysRef.current = always;
+  }, [always]);
+  useLayoutEffect(() => {
+    if (load.root) commitFieldNodeRevealPolicy(load.root, showError);
+  }, [load.root, showError]);
   if (reporter) {
     reporter.root = load.root;
     reporter.pendingLoad = () => flushRootLoad(load, true);

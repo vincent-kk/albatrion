@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useCallback, useMemo } from 'react';
+import { type PropsWithChildren, useMemo } from 'react';
 
 import { isFunction } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
@@ -47,14 +47,10 @@ export const FieldRendererContextProvider = ({
     showError: externalShowError,
   } = useExternalFormContext();
 
-  const resolveShowError = useCallback(
-    (policy: unknown) =>
-      createShowErrorChecker(policy ?? externalShowError ?? DEFAULT_SHOW_ERROR),
-    [externalShowError],
-  );
+  const showError = inputShowError ?? externalShowError ?? DEFAULT_SHOW_ERROR;
   const checkShowError = useMemo(
-    () => resolveShowError(inputShowError),
-    [inputShowError, resolveShowError],
+    () => createShowErrorChecker(showError),
+    [showError],
   );
   const constant = useConstant({
     FieldRenderer,
@@ -77,14 +73,14 @@ export const FieldRendererContextProvider = ({
       FormErrorRenderer: constant.FormErrorRenderer,
       formatError,
       checkShowError,
-      resolveShowError,
+      showError,
     };
   }, [
     constant,
     checkShowError,
     ExternalFormFieldRenderer,
     externalFormatError,
-    resolveShowError,
+    showError,
   ]);
 
   return (

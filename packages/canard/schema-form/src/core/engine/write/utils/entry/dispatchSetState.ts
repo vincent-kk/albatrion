@@ -1,3 +1,4 @@
+import { advanceFieldNodeRevealSequence } from '../../../record';
 import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
@@ -28,6 +29,7 @@ export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
+  advanceFieldNodeRevealSequence(node);
   const previous = node.interactionState;
   patchFieldNodeInteractionState(node, state);
   if (previous === node.interactionState) return;
@@ -42,6 +44,9 @@ export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
     FieldNodeEventType.UpdateState,
     node.interactionState,
   );
-  closeNonSettleEntry(node);
-  if (!runtime.entryDepth) scheduleFieldNodeRevealDrop(node);
+  try {
+    closeNonSettleEntry(node);
+  } finally {
+    if (!runtime.entryDepth) scheduleFieldNodeRevealDrop(node);
+  }
 };

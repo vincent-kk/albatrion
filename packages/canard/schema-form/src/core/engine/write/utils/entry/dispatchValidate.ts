@@ -9,13 +9,14 @@ import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import type { ValidationIssue } from '../../../validation';
 import {
+  releaseFieldNodeRevealHistory,
   retainEqualValidationIssues,
   routeValidationIssues,
   runFieldNodeValidation,
   settleFieldNodeValidation,
 } from '../../../validation';
 import { deliverValidationWave } from '../chain/deliverValidationWave';
-import { requestFieldNodeValidationWave } from '../chain/utils/requestFieldNodeValidationWave';
+import { requestFieldNodeValidationWave } from '../chain/requestFieldNodeValidationWave';
 import { bundleChainErrors } from '../report/bundleChainErrors';
 import { createFormErrorRecord } from '../report/createFormErrorRecord';
 import { deliverChainRecords } from '../report/deliverChainRecords';
@@ -98,7 +99,10 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   const issues = retainEqualValidationIssues(node, result);
   routeValidationIssues(node, issues);
   runtime.validationResult = { commit, issues };
-  if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
+  if (node === node.rootNode) {
+    settleFieldNodeValidation(node, stamp);
+    releaseFieldNodeRevealHistory(node);
+  }
   deliverValidationWave(node, issues, commit);
   return issues;
 };

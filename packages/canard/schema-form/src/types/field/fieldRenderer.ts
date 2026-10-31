@@ -32,7 +32,7 @@ export interface FieldRendererProps extends ChildFieldProps {
   /** `FieldInput` component of the field node assigned to FieldRenderer Component */
   Input: ComponentType<ChildFieldProps>;
   /** Whether to show errors for the field node assigned to FieldRenderer Component.
-   * During a pending write verdict, newly eligible errors wait; previously eligible errors may lag. */
+   * Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
   errorVisible: boolean;
   /** Error message of the field node assigned to FieldRenderer Component */
   errorMessage: ReactNode;

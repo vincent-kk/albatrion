@@ -1,4 +1,4 @@
-import { useLayoutEffect, useSyncExternalStore } from 'react';
+import { startTransition, useLayoutEffect, useState } from 'react';
 
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
@@ -12,8 +12,7 @@ import { useErrorVisibility } from '../hooks/useErrorVisibility';
 import { useFieldRendererContext } from '../hooks/useFieldRendererContext';
 
 afterEach(cleanup);
-
-it('IR-6 W2 commit-time pending recheck rejects a reveal after child layout normalization', async () => {
+it('IR-6 H same-commit transition reveal stays hidden before a child layout normalizes', async () => {
   const node = nodeFromJSONSchema({
     jsonSchema: { type: 'string' },
     defaultValue: '',
@@ -25,43 +24,56 @@ it('IR-6 W2 commit-time pending recheck rejects a reveal after child layout norm
     },
   });
   await settleValidation(node);
-  const NormalizingInput = ({ normalize }: { normalize: boolean }) => {
+  const probes: string[] = [];
+  let reveal!: () => void;
+  const Normalizer = () => {
     useLayoutEffect(() => {
-      if (normalize) node.setValue('valid');
-    }, [normalize]);
+      node.setValue('valid');
+    }, []);
     return null;
   };
-  const Display = ({ reveal }: { reveal: boolean }) => {
+  const Display = () => {
     const context = useFieldRendererContext();
-    const revealState = useSyncExternalStore(
-      (listener) => node.subscribe(() => listener()),
-      () => !!node.state[4],
-      () => false,
-    );
     const [visible] = useErrorVisibility(
       [node],
       [context.checkShowError(node.state)],
     );
     return (
       <>
-        <NormalizingInput normalize={revealState && reveal} />
+        <Normalizer />
         <span data-testid="message">
           {visible ? node.errors[0]?.message : ''}
         </span>
       </>
     );
   };
-  const view = render(
-    <FieldRendererContextProvider>
-      <Display reveal={false} />
-    </FieldRendererContextProvider>,
-  );
-  act(() => node.setState({ 4: true }));
-  view.rerender(
-    <FieldRendererContextProvider>
-      <Display reveal={true} />
-    </FieldRendererContextProvider>,
-  );
+  const Probe = () => {
+    useLayoutEffect(() => {
+      probes.push(
+        document.querySelector('[data-testid="message"]')?.textContent ?? '',
+      );
+    });
+    return null;
+  };
+  const App = () => {
+    const [shown, setShown] = useState(false);
+    reveal = () =>
+      startTransition(() => {
+        node.setState({ 4: true });
+        setShown(true);
+      });
+    return (
+      <FieldRendererContextProvider>
+        {shown ? <Display /> : null}
+        <Probe />
+      </FieldRendererContextProvider>
+    );
+  };
+  const view = render(<App />);
+  probes.length = 0;
+  await act(async () => reveal());
+  expect(probes.length).toBeGreaterThan(0);
+  expect(probes).not.toContain('old error');
   expect(view.getByTestId('message').textContent).toBe('');
   await settleValidation(node);
   expect(view.getByTestId('message').textContent).toBe('');

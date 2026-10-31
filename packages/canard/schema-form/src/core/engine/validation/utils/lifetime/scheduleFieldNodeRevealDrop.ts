@@ -1,10 +1,11 @@
 import type { FieldNodeRecord } from '../../../record';
 import { scheduleValidationSlot } from '../../../validationScheduling';
 import { dropFieldNodeRevealBaselines } from './dropFieldNodeRevealBaselines';
+import { notifyFieldNodeRevealReleased } from './notifyFieldNodeRevealReleased';
 
-/** Drop quiet reveal records after their paint using only the shared one-shot slot.
- * @param node - Live root owning the owed generation and slot token.
- * @returns Nothing; a later record conservatively keeps all baselines for another slot. */
+/** Release quiet entries through the scheduled generation without extending older lifetimes.
+ * @param node - Live occurrence owning the owed generation and slot token.
+ * @returns Nothing; re-arm completes before release listeners can append again. */
 export const scheduleFieldNodeRevealDrop = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): void => {
@@ -13,15 +14,20 @@ export const scheduleFieldNodeRevealDrop = <Self extends FieldNodeRecord<Self>>(
   if (root.disposed || !runtime.revealDropOwed || runtime.revealDropTask)
     return;
   const token = {};
-  const generation = runtime.revealBaselineGeneration;
+  const generation = runtime.revealBaselineGeneration ?? 0;
   runtime.revealDropTask = token;
   scheduleValidationSlot(() => {
     if (root.disposed || runtime.revealDropTask !== token) return;
-    runtime.revealDropTask = undefined;
-    runtime.revealDropOwed = false;
-    if (runtime.revealBaselineGeneration !== generation) {
+    if (runtime.validationPending) {
+      runtime.revealDropOwed = false;
+      runtime.revealDropTask = undefined;
+      return;
+    }
+    const remains = dropFieldNodeRevealBaselines(root, generation);
+    if (remains) {
       runtime.revealDropOwed = true;
       scheduleFieldNodeRevealDrop(root);
-    } else if (!runtime.validationPending) dropFieldNodeRevealBaselines(root);
+    }
+    notifyFieldNodeRevealReleased(root);
   });
 };

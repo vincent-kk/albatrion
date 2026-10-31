@@ -1,8 +1,12 @@
 import type { FieldNodeRecord } from '../../../record';
+import { ValidationMode } from '../../../types/state';
 
-/** Read the pre-verdict node eligibility without changing its lifetime.
- * @param node - Occurrence sharing the current runtime.
- * @returns The recorded baseline or undefined. */
+/** Read binding-only eligibility history or its stable release snapshot.
+ * @param node - Occurrence sharing the current root runtime.
+ * @returns The stored history or version; non-OnChange histories are ignored. */
 export const readFieldNodeRevealBaseline = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-) => node.revealBaseline;
+) =>
+  (node.rootNode.runtime.validationMode ?? 0) & ValidationMode.OnChange
+    ? node.revealBaseline
+    : undefined;

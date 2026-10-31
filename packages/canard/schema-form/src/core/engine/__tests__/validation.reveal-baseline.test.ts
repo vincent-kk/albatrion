@@ -40,14 +40,19 @@ const fixture = () => {
     b: tree.root.children![1],
   };
 };
-it('IR-6 Y2 records original state once and drops standalone baselines after a frame and task', async () => {
+it('IR-6 H records each standalone write and drops its entries by captured generation', async () => {
   const { a, runtime, clock } = fixture();
   const before = a.interactionState;
   dispatchSetState(a, { 2: true });
-  expect(a.revealBaseline).toEqual({ state: before, enabled: true });
+  expect(a.revealBaseline).toMatchObject({
+    entries: [{ state: before, enabled: true }],
+  });
   expect(runtime.revealBaselineNodes?.has(a)).toBe(true);
   dispatchSetState(a, { 4: true });
-  expect(a.revealBaseline?.state).toBe(before);
+  expect(a.revealBaseline?.entries[0].state).toBe(before);
+  clock.frame();
+  await clock.task();
+  expect(a.revealBaseline).toMatchObject({ entries: [{ state: { 2: true } }] });
   clock.frame();
   await clock.task();
   expect(a.revealBaseline).toBeUndefined();
@@ -76,13 +81,13 @@ it.each([ValidationMode.None, ValidationMode.OnRequest])(
     expect(runtime.revealDropTask).toBeUndefined();
   },
 );
-it('IR-6 Y2 a later record after the frame callback postpones the whole drop', async () => {
+it('IR-6 H a later record survives only its own generation cutoff', async () => {
   const { a, b, clock } = fixture();
   dispatchSetState(a, { 2: true });
   clock.frame();
   dispatchSetState(b, { 2: true });
   await clock.task();
-  expect(a.revealBaseline).toBeDefined();
+  expect(a.revealBaseline).toBeUndefined();
   expect(b.revealBaseline).toBeDefined();
   clock.frame();
   await clock.task();
@@ -96,13 +101,13 @@ it('IR-6 Y2 clearing subtree state captures the prior flags before its direct em
   await clock.task();
   const state = a.interactionState;
   dispatchClearSubtreeState(root);
-  expect(a.revealBaseline?.state).toBe(state);
+  expect(a.revealBaseline?.entries[0].state).toBe(state);
   expect(a.interactionState).toEqual({});
 });
 it('IR-6 Y2 capture records enabled before a controls change without scheduling in record', () => {
   const { a, runtime } = fixture();
   a.visible = captureFieldNodeChange(a, 'visible', false);
-  expect(a.revealBaseline?.enabled).toBe(true);
+  expect(a.revealBaseline?.entries[0].enabled).toBe(true);
   expect(runtime.revealDropOwed).toBe(true);
   expect(runtime.revealDropTask).toBeUndefined();
 });
@@ -115,7 +120,7 @@ it('IR-6 Y2 settle drops baselines before notifying its holding listeners', asyn
     expect(runtime.revealBaselineNodes?.size).toBe(0);
     expect(runtime.revealDropTask).toBeUndefined();
   });
-  (runtime.validationSettleListeners ??= new Set()).add(checked);
+  (runtime.revealReleaseListeners ??= new Set()).add(checked);
   clock.frame();
   await clock.task();
   expect(checked).toHaveBeenCalledTimes(1);

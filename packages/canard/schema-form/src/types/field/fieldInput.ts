@@ -59,7 +59,7 @@ export interface FieldInputProps<
   /** Errors of field node assigned to FieldInput Component */
   errors: Node['errors'];
   /** Whether to show errors for this field.
-   * During a pending write verdict, newly eligible errors wait; previously eligible errors may lag. */
+   * Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
   errorVisible: boolean;
   /** Values of the paths listed in the schema's `controls.watch`, in order */
   watchValues: WatchValues;
@@ -129,7 +129,7 @@ export interface UnknownFieldInputProps {
   misfit: boolean;
   nullable: boolean;
   errors: readonly any[];
-  /** Newly eligible errors wait for a pending write verdict; previously eligible errors may lag. */
+  /** Newly eligible or interrupted errors wait for the next eligibility release; continuously eligible errors may lag. */
   errorVisible: boolean;
   watchValues: readonly any[];
   defaultValue: any;

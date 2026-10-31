@@ -1,7 +1,7 @@
-import type { FieldNodeRecord } from '../../../../record';
-import { requestFieldNodeValidation } from '../../../../validation';
-import { reportValidationFailure } from '../../report/reportValidationFailure';
-import { deliverValidationWave } from '../deliverValidationWave';
+import type { FieldNodeRecord } from '../../../record';
+import { requestFieldNodeValidation } from '../../../validation';
+import { reportValidationFailure } from '../report/reportValidationFailure';
+import { deliverValidationWave } from './deliverValidationWave';
 
 /** Request an automatic verdict using the write domain's common delivery and failure surfaces.
  * @param node - Root or subtree scope needing the newest verdict.

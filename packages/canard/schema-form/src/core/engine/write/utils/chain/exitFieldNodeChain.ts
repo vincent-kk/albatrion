@@ -16,9 +16,9 @@ import { collectChainRecords } from '../report/collectChainRecords';
 import { deliverChainRecords } from '../report/deliverChainRecords';
 import { captureChainError } from './captureChainError';
 import { flushQueuedEvents } from './flushQueuedEvents';
+import { requestFieldNodeValidationWave } from './requestFieldNodeValidationWave';
 import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 import { runDeliveryWaves } from './runDeliveryWaves';
-import { requestFieldNodeValidationWave } from './utils/requestFieldNodeValidationWave';
 
 /**
  * Exit one public write and finish the outermost chain in contract order.

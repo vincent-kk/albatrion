@@ -88,8 +88,8 @@ it('IR-6 W1 ancestor remount preserves renderer, input and child-errors visibili
   const view = render(<Form ref={ref} {...props} />);
   await settleValidation(() => ref.current?.node);
   act(() => ref.current!.showError());
-  expect(view.getByTestId('children').textContent).toBe('true');
   await advanceValidationFrame();
+  expect(view.getByTestId('children').textContent).toBe('true');
   act(() => {
     ref.current!.setValue({ a: 'x', show: true });
     ref.current!.remount('');

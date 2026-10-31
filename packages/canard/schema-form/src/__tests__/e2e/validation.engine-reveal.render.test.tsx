@@ -68,7 +68,7 @@ const fixture = async () => {
 it('IR-6 Y1 a standalone ErrorVisible reveal followed by a same-task value write holds the old verdict', async () => {
   const f = await fixture();
   act(f.revealState);
-  expect(f.view.getByTestId('error').textContent).toBe('old error');
+  expect(f.view.getByTestId('error').textContent).toBe('');
   act(() => f.ref.current!.setValue('valid'));
   expect(f.view.getByTestId('error').textContent).toBe('');
   await act(async () => {
@@ -80,7 +80,7 @@ it('IR-6 Y1 a standalone ErrorVisible reveal followed by a same-task value write
 it('IR-6 Y1 handle showError followed by a same-task value write holds through its policy baseline', async () => {
   const f = await fixture();
   act(f.revealPolicy);
-  expect(f.view.getByTestId('error').textContent).toBe('old error');
+  expect(f.view.getByTestId('error').textContent).toBe('');
   act(() => f.ref.current!.setValue('valid'));
   expect(f.view.getByTestId('error').textContent).toBe('');
   await act(async () => {
@@ -140,11 +140,11 @@ it('IR-6 Y1 a painted policy reveal keeps its eligible error through the next va
     await f.clock.task();
   });
 });
-it('IR-6 Y1 limit iv pins a reveal recorded inside rAF before the following drop task', async () => {
+it('IR-6 H a reveal recorded inside rAF stays held through the following pending write', async () => {
   const f = await fixture();
   requestAnimationFrame(() => f.revealState());
   act(() => f.clock.frame());
-  expect(f.view.getByTestId('error').textContent).toBe('old error');
+  expect(f.view.getByTestId('error').textContent).toBe('');
   act(() => f.ref.current!.setValue('valid'));
   expect(f.view.getByTestId('error').textContent).toBe('');
   await act(async () => {
@@ -271,7 +271,7 @@ it('IR-6 Y1 StrictMode keeps an eligible verdict through replay and the next pen
   });
   expect(view.getByTestId('error').textContent).toBe('');
 });
-it('IR-6 Y1 limit i an external provider policy reveal uses the current verdict immediately', async () => {
+it('IR-6 H a FormProvider policy reveal holds the previous pending verdict', async () => {
   const ref = createRef<FormHandle>();
   const form = (
     <Form
@@ -289,7 +289,7 @@ it('IR-6 Y1 limit i an external provider policy reveal uses the current verdict 
   const clock = createValidationFrameClock();
   act(() => ref.current!.setValue('valid'));
   view.rerender(<FormProvider showError={true}>{form}</FormProvider>);
-  expect(view.getByTestId('error').textContent).toBe('old error');
+  expect(view.getByTestId('error').textContent).toBe('');
   await act(async () => {
     clock.frame();
     await clock.task();
@@ -343,7 +343,7 @@ it.each([true, false])(
       await clock.task();
     });
     expect(ref.current!.findNode('/a')!.state[2]).toBe(true);
-    expect(view.getByTestId('blur-error:/a').textContent).toBe('first error');
+    expect(view.getByTestId('blur-error:/a').textContent).toBe('');
     if (painted)
       await act(async () => {
         clock.frame();

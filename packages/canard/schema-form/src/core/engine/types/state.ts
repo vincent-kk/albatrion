@@ -21,7 +21,7 @@ export enum FieldNodeState {
   Dirty = BIT_FLAG_00,
   /** Set once the user leaves this node's input (blur) for the first time. Cleared by reset, controls.resetInteraction and clearState. */
   Touched = BIT_FLAG_01,
-  /** Request validation messages for this node. Newly eligible errors wait for a pending write verdict; hiding is immediate. */
+  /** Request validation messages for this node. Newly eligible or interrupted errors wait for the next eligibility release, with the verdict or about two frames after a quiet change; hiding is immediate. */
   ErrorVisible = BIT_FLAG_02,
 }
 

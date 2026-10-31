@@ -3,6 +3,7 @@ import { type PropsWithChildren, StrictMode } from 'react';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
+import { advanceValidationFrame } from '@/schema-form/__tests__/helpers/advanceValidationFrame';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { ValidationMode } from '@/schema-form/core';
 import { FieldRendererContextProvider } from '@/schema-form/providers';
@@ -42,7 +43,7 @@ it('LANDING-170 REACT-019 tracks child errors, state and reordered paths under S
   expect(result.current.errorMatrix).toEqual([[issue]]);
 });
 
-it('IR-6 removing a visible array child never transfers its visibility memory to the held child', async () => {
+it('IR-6 removing a visible array child never transfers eligibility to the held child', async () => {
   const root = nodeFromJSONSchema({
     jsonSchema: { type: 'array', items: { type: 'string' } },
     defaultValue: ['a', 'b'],
@@ -60,6 +61,7 @@ it('IR-6 removing a visible array child never transfers its visibility memory to
     ),
   });
   act(() => first.setState({ 4: true }));
+  await advanceValidationFrame();
   expect(result.current.showErrors).toEqual([true, false]);
   act(() => {
     if (root.type === 'array') root.remove(0);

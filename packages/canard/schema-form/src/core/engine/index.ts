@@ -43,11 +43,7 @@ export {
   retainValidationRoot,
   releaseValidationRoot,
   hasFieldNodeValidationRequest,
-  isFieldNodeValidationPending,
   readFieldNodeRevealBaseline,
-  readFieldNodeShowErrorBaseline,
-  recordFieldNodeShowErrorBaseline,
-  subscribeFieldNodeValidationSettled,
 } from './validation';
 export {
   EMPTY_REVISION_LEDGER,
@@ -95,3 +91,7 @@ export type {
   InactiveValueResolver,
   InactiveValueContext,
 } from './types/controls';
+export { readFieldNodeRevealPolicy } from './validation';
+export { readFieldNodeRevealVersion } from './validation';
+export { subscribeFieldNodeRevealReleased } from './validation';
+export { commitFieldNodeRevealPolicy } from './validation';

@@ -325,7 +325,14 @@ export interface FieldNodeRuntime<Self>
   /** Only occurrences that currently hold a reveal baseline. */
   revealBaselineNodes?: Set<FieldNodeRecord<Self>>;
   /** Form policy before the first reveal change; the boxed value may be undefined. */
-  revealPolicyBaseline?: { readonly value: unknown };
+  revealPolicy?: {
+    value: unknown;
+    entries: { readonly value: unknown; readonly generation: number }[];
+  };
+  /** Public outer write/walk identity used to coalesce node snapshots. */
+  revealWriteSequence?: number;
+  /** Monotone notification snapshot for every eligibility-history release. */
+  revealReleaseVersion?: number;
   /** Monotone generation of first baseline records. */
   revealBaselineGeneration?: number;
   /** A nonpending record owes a one-shot post-paint drop. */
@@ -335,7 +342,7 @@ export interface FieldNodeRuntime<Self>
   /** Stamp owned by the active chain's pre-delivery pending record. */
   validationPendingEntryStamp?: number;
   /** Internal display listeners notified only when pending ends. */
-  validationSettleListeners?: Set<() => void>;
+  revealReleaseListeners?: Set<() => void>;
   /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
   /** True after a routing replaced the routed list, until the validation wave publishes it. */

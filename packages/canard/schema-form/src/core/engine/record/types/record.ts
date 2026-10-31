@@ -103,8 +103,12 @@ export interface FieldNodeRecord<Self> {
   interactionState: NodeStateFlags;
   /** First pre-verdict eligibility record, released at settle or after a quiet paint. */
   revealBaseline?: {
-    readonly state: NodeStateFlags;
-    readonly enabled: boolean;
+    entries: {
+      readonly state: NodeStateFlags;
+      readonly enabled: boolean;
+      readonly generation: number;
+      readonly sequence: number;
+    }[];
   };
   /** Per-bit commit counts, allocated on the first delivery. */
   revisionLedger: Readonly<Record<number, number>>;

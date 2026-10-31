@@ -38,11 +38,10 @@ export type {
   TerminalNode,
   InferFieldNode,
 } from './type';
-export { isFieldNodeValidationPending } from './utils/binding/isFieldNodeValidationPending';
-export { subscribeFieldNodeValidationSettled } from './utils/binding/subscribeFieldNodeValidationSettled';
 
 export { readFieldNodeRevealBaseline } from './utils/binding/readFieldNodeRevealBaseline';
 
-export { readFieldNodeShowErrorBaseline } from './utils/binding/readFieldNodeShowErrorBaseline';
-
-export { recordFieldNodeShowErrorBaseline } from './utils/binding/recordFieldNodeShowErrorBaseline';
+export { readFieldNodeRevealPolicy } from './utils/binding/readFieldNodeRevealPolicy';
+export { readFieldNodeRevealVersion } from './utils/binding/readFieldNodeRevealVersion';
+export { subscribeFieldNodeRevealReleased } from './utils/binding/subscribeFieldNodeRevealReleased';
+export { commitFieldNodeRevealPolicy } from './utils/binding/commitFieldNodeRevealPolicy';

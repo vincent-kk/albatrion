@@ -3,7 +3,7 @@ import { FieldNodeEventType, FieldNodeRevisionLedger } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { clearTreeMemoStores } from '../../../utils/cache/clearTreeMemoStores';
 import {
-  dropFieldNodeRevealBaselines,
+  releaseFieldNodeRevealHistory,
   settleFieldNodeValidation,
 } from '../../../validation';
 
@@ -19,10 +19,11 @@ export const disposeFieldNodeTree = <Self extends FieldNodeRecord<Self>>(
   runtime.validationCadence?.cancel();
   runtime.validationCadence = undefined;
   runtime.validationRun = undefined;
+  runtime.revealReleaseListeners?.clear();
   settleFieldNodeValidation(root);
-  dropFieldNodeRevealBaselines(root);
+  releaseFieldNodeRevealHistory(root);
+  runtime.revealPolicy = undefined;
   runtime.validationPendingEntryStamp = undefined;
-  runtime.validationSettleListeners?.clear();
   visitFieldNodes(
     root,
     (node) => {

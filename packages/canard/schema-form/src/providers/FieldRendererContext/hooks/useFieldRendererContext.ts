@@ -24,6 +24,6 @@ export const useFieldRendererContext = () => {
     FieldRenderer: context.FieldRenderer || PluginManager.FieldRenderer,
     formatError: context.formatError || PluginManager.formatError,
     checkShowError: context.checkShowError,
-    resolveShowError: context.resolveShowError,
+    showError: context.showError,
   };
 };

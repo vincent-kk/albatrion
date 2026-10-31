@@ -4,7 +4,6 @@ import { createValidationFrameClock } from '@/schema-form/__tests__/helpers/crea
 
 import { type FieldNodeDelivery, FieldNodeEventType } from '../record';
 import { ValidationMode } from '../types/state';
-import { isFieldNodeValidationPending } from '../validation';
 import { dispatchMount, dispatchSetValue } from '../write';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
@@ -27,7 +26,7 @@ it('IR-6 W3 pending precedes the first synchronous value subscriber', async () =
     new Set([
       (event: FieldNodeDelivery) => {
         if (event.type & FieldNodeEventType.UpdateValue)
-          reads.push(isFieldNodeValidationPending(root));
+          reads.push(root.rootNode.runtime.validationPending ?? false);
       },
     ]),
   );
@@ -35,7 +34,7 @@ it('IR-6 W3 pending precedes the first synchronous value subscriber', async () =
   expect(reads).toEqual([true]);
   clock.frame();
   await clock.task();
-  expect(isFieldNodeValidationPending(root)).toBe(false);
+  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
 });
 
 it('IR-6 W3 a delivery that cancels the automatic request releases its early hold', () => {
@@ -52,7 +51,7 @@ it('IR-6 W3 a delivery that cancels the automatic request releases its early hol
     new Set([
       (event: FieldNodeDelivery) => {
         if (event.type & FieldNodeEventType.UpdateValue) {
-          reads.push(isFieldNodeValidationPending(root));
+          reads.push(root.rootNode.runtime.validationPending ?? false);
           runtime.validationMode = ValidationMode.None;
         }
       },
@@ -60,7 +59,7 @@ it('IR-6 W3 a delivery that cancels the automatic request releases its early hol
   );
   dispatchSetValue(root, 'new');
   expect(reads).toEqual([true]);
-  expect(isFieldNodeValidationPending(root)).toBe(false);
+  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
   expect(runtime.validationCadence).toBeUndefined();
 });
 
@@ -84,8 +83,8 @@ it('IR-6 W3 a reverting chain does not release an earlier queued request', async
   );
   dispatchSetValue(root, 'b');
   expect(root.emit).toBe('a');
-  expect(isFieldNodeValidationPending(root)).toBe(true);
+  expect(root.rootNode.runtime.validationPending ?? false).toBe(true);
   clock.frame();
   await clock.task();
-  expect(isFieldNodeValidationPending(root)).toBe(false);
+  expect(root.rootNode.runtime.validationPending ?? false).toBe(false);
 });

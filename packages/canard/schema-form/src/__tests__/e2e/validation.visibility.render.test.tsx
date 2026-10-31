@@ -144,8 +144,8 @@ it('IR-6 an already visible error stays visible until its valid verdict, and hid
   );
   await settleValidation(() => ref.current?.node);
   act(() => ref.current!.node!.setState({ 1: true, 2: true }));
-  expect(view.getByTestId('error').textContent).toBe('required');
   await advanceValidationFrame();
+  expect(view.getByTestId('error').textContent).toBe('required');
   fireEvent.change(view.getByLabelText('value'), { target: { value: 'a' } });
   expect(view.getByTestId('error').textContent).toBe('required');
   act(() => ref.current!.node!.setState({ 2: false }));

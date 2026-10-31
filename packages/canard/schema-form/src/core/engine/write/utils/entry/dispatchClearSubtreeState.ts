@@ -1,4 +1,5 @@
 import { visitFieldNodes } from '../../../navigation';
+import { advanceFieldNodeRevealSequence } from '../../../record';
 import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
@@ -26,6 +27,7 @@ export const dispatchClearSubtreeState = <Self extends FieldNodeRecord<Self>>(
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
+  advanceFieldNodeRevealSequence(node);
   const deltas = new Map<string, number>();
   visitFieldNodes(node, (current) => {
     if (current.detached) return false;
@@ -52,6 +54,9 @@ export const dispatchClearSubtreeState = <Self extends FieldNodeRecord<Self>>(
     return true;
   });
   publishGlobalStateDeltas(node.rootNode, deltas);
-  closeNonSettleEntry(node);
-  if (!runtime.entryDepth) scheduleFieldNodeRevealDrop(node);
+  try {
+    closeNonSettleEntry(node);
+  } finally {
+    if (!runtime.entryDepth) scheduleFieldNodeRevealDrop(node);
+  }
 };

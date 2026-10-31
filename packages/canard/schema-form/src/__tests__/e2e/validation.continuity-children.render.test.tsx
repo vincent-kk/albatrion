@@ -38,7 +38,7 @@ const Leaf = ({ path, errorVisible, errors }: FieldInputProps) => (
   </span>
 );
 
-it('IR-6 Y3 hidden children stay in the aggregate and eligible re-shows retain their lagging verdict', async () => {
+it('IR-6 Y3 hidden children stay in the aggregate while enabled re-shows await release', async () => {
   const ref = createRef<FormHandle>();
   const Branch = ({ node, ChildFields }: FieldInputProps) => {
     const { showErrors, formattedErrors } = useChildFieldErrors(node);
@@ -87,8 +87,9 @@ it('IR-6 Y3 hidden children stay in the aggregate and eligible re-shows retain t
   await Promise.resolve();
   act(() => ref.current!.setValue({ a: 'valid', show: false }));
   act(() => ref.current!.setValue({ a: 'valid', show: true }));
-  for (const id of ['card', 'renderer:/a', 'input:/a'])
-    expect(view.getByTestId(id).textContent).toBe('old error');
+  expect(view.getByTestId('card').textContent).toBe('old error');
+  for (const id of ['renderer:/a', 'input:/a'])
+    expect(view.getByTestId(id).textContent).toBe('');
   await act(async () => {
     clock.frame();
     await clock.task();

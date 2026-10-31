@@ -22,11 +22,7 @@ export {
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
   hasFieldNodeValidationRequest,
-  isFieldNodeValidationPending,
   readFieldNodeRevealBaseline,
-  readFieldNodeShowErrorBaseline,
-  recordFieldNodeShowErrorBaseline,
-  subscribeFieldNodeValidationSettled,
   observeFieldNodeReports,
   interpretFieldNodeDraft,
 } from './surface';
@@ -62,3 +58,7 @@ export type {
   InactiveValueContext,
   ValidateFunction,
 } from './engine';
+export { readFieldNodeRevealPolicy } from './surface';
+export { readFieldNodeRevealVersion } from './surface';
+export { subscribeFieldNodeRevealReleased } from './surface';
+export { commitFieldNodeRevealPolicy } from './surface';
