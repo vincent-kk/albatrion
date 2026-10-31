@@ -3,14 +3,7 @@ import { type ReactNode, Suspense } from 'react';
 
 import { inject } from 'vitest';
 
-/** Unresolved sibling work disconnects the preserved React 18 layout effects. */
-const pending = new Promise<void>(() => undefined);
-
-/** Suspend the sibling without replacing the previously committed form. */
-const Gate = ({ hidden }: { hidden: boolean }) => {
-  if (hidden) throw pending;
-  return null;
-};
+import { HiddenFormGate } from './HiddenFormGate';
 
 /** Hide a preserved form using the current React major's lifecycle boundary.
  * @param form - Stable form element whose load must survive hiding.
@@ -22,6 +15,6 @@ export const hideCommittedForm = (form: ReactNode, hidden: boolean) =>
   ) : (
     <Suspense fallback="hidden">
       {form}
-      <Gate hidden={hidden} />
+      <HiddenFormGate hidden={hidden} />
     </Suspense>
   );

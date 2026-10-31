@@ -59,7 +59,7 @@ it('IR-7 T4 validator replacement before first show flushes each load once and s
   const schema = {
     type: 'number',
     $schema: 'http://json-schema.org/draft-07/schema#',
-  };
+  } as const;
   const first = {
     dialect: 'https://json-schema.org/draft/2020-12/schema',
     compile: () => () => [],

@@ -27,7 +27,7 @@ it('IR-7 T8 L2 hidden props update onError immediately and other callbacks only 
     onDiagnosticsChange: vi.fn(),
     onError: vi.fn(),
   };
-  const schema = { type: 'number' };
+  const schema = { type: 'number' } as const;
   const validator = {
     compileGuard: () => () => true,
     compile: () => (value: unknown) => [

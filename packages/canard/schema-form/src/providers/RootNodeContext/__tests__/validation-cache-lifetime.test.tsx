@@ -14,7 +14,7 @@ afterEach(() => {
 it('IR-7 T5 unmount balances every validation root retain even under StrictMode replay', () => {
   const retained = vi.spyOn(core, 'retainValidationRoot');
   const released = vi.spyOn(core, 'releaseValidationRoot');
-  const schema = { type: 'string' };
+  const schema = { type: 'string' } as const;
   const validator = { compile: () => () => [], compileGuard: () => () => true };
   const view = render(
     <StrictMode>
