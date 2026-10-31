@@ -7,7 +7,7 @@
 ## API Contracts
 
 - H: 오류는 현재 적격이며 마지막 release 이후 모든 state·enabled·커밋 정책 조합에서 계속 적격일 때만 표시한다. 잠깐이라도 부적격이면 다음 release를 기다리며 숨김은 즉시다. release는 pending true→false 정착, 조용한 post-paint drop, 수락한 explicit root 판정, 폐기다. pending이 없어도 새 표시는 약2프레임 뒤 release에서 나타난다. OnChange가 아니면 live 조건만 사용한다.
-- input도 renderer와 동일한 이력 조건을 사용한다. user-input batch 안 dirty 설정과 resetInteraction clear는 한 write sequence로 합치며 live cleared state를 따른다. mount layout은2회·ordinary write0회다.
+- input도 renderer와 동일한 순수 이력 조건을 사용하며 enabled/live가 거짓이면 reveal을 읽지 않는다. held일 때만 동일 렌더 release version으로 passive 구독자를 기존 FieldInput 다음 자리에 마운트한다. useFieldInputControl은 컨테이너 ref·적용 세대·composition 시작/종료 처리와 다섯 번째 stable rerender dispatch를 반환하며 표시 release와 composition 종료가 같은 reducer를 재사용한다. user-input batch 안 dirty 설정과 resetInteraction clear는 한 write sequence로 합치며 live cleared state를 따른다. mount layout은2회·ordinary write0회다.
 
 - 가상화 매니저는 훅의 `useSyncExternalStore`에서 서버 스냅숏을 null로 읽습니다. 서버에서 렌더한 자식과 동일한 구성을 하이드레이션에서 마운트하며, 클라이언트 전용 마운트는 첫 렌더부터 게이팅합니다. 기존 입력 commit layout effect에서 하이드레이션 커밋을 ref로 기록하여 passive 일관성 검사가 null을 유지하게 하며, 하이드레이션 완료만으로 슬롯이나 사용자 브랜치 입력을 다시 렌더하지 않습니다. 이후 실제 자식 변경 렌더는 폼 매니저를 적용합니다. Provider의 문맥 값은 바꾸지 않습니다.
 - 폼 매니저가 있고 실제 입력 슬롯이 커밋하면 기존 입력 commit layout effect에서 슬롯 자신의 노드를 노출 원장에 기록합니다. 자식 wrapper만 커밋하고 비활성·숨김 노드가 실제 슬롯을 만들지 않은 경우에는 기록하지 않습니다. 하이드레이션, eager window, 문턱 미만 마운트 모두 포함합니다. 이후 remount·enabled 전환으로 캐시를 다시 만들어도 해당 노드는 placeholder가 되지 않으며, 하이드레이션 뒤 추가한 자식과 브랜치에는 게이팅이 적용됩니다. 자식 컴포넌트 캐시는 StrictMode의 effect 재실행에도 유지하고 실제 훅 인스턴스와 함께 회수합니다.
