@@ -879,7 +879,7 @@ OnChange 쓰기는 다음 프레임 뒤 선행 실행하며 연속 입력은 활
 
 Always 이외 모드의 최초 판정과 if 게이트 없는 전체 컴파일은 첫 프레임 뒤에 도착합니다. Always(`true`, `ShowError.Always` 또는 이를 포함한 비트마스크)는 자식의 선행 layout 쓰기가 있어도 마운트 layout effect에서 바로 검증하며 동기 검증기는 첫 프레임 전에 오류를 표시합니다. 빈 오류 목록으로 유효성을 직접 계산할 때 최초 판정 전은 unknown으로 다루거나 `validate()`를 기다리십시오. if 게이트의 렌더 중 컴파일은 유지합니다. 마운트 compile 실패는 마운트가 먼저 판정하면 rejected, 쓰기가 deferred 마운트 의무를 먼저 충족하면 sink로 한 번 보고합니다. 하위 트리 검증은 전체 폼의 대기 중 쓰기 판정을 취소하지 않습니다.
 
-renderer/input의 `errors`, Form children의 `errors`, FormRender, `node.errors`, `getErrors()`는 표시로 걸러지지 않는 raw 목록입니다. `node.errors`와 자체 표시 정책을 쓰는 사용자 UI도 직전 commit의 표시 기억과 pending 판정 뒤 새 표시 규칙을 따라야 합니다. 프레임 요청·취소 API 부재나 숨김 문서는 매크로태스크를 사용하고 멎은 프레임은 100ms 대체 타이머를 쓰며 백그라운드 제한을 받을 수 있습니다. 숨긴 load의 기록은 원래 루트를 유지해 복원 뒤 순서대로 전달하고 각 handler 실패를 격리합니다. None·OnRequest 모드와 검증 자체의 계산 비용은 유지합니다.
+renderer/input의 `errors`, Form children의 `errors`, FormRender, `node.errors`, `getErrors()`는 표시로 걸러지지 않는 raw 목록입니다. 사용자 renderer와 input은 전달받은 `errorVisible`로 오류 텍스트를 표시하고, 자식 오류 UI는 `useChildFieldErrors().showErrors`를 사용하십시오. 이 공개 값에는 새 표시 보류 규칙이 이미 적용되어 있으며 raw 오류 목록 자체는 표시 정책을 제공하지 않습니다. 프레임 요청·취소 API 부재나 숨김 문서는 매크로태스크를 사용하고 멎은 프레임은 100ms 대체 타이머를 쓰며 백그라운드 제한을 받을 수 있습니다. 숨긴 load의 기록은 원래 루트를 유지해 복원 뒤 순서대로 전달하고 각 handler 실패를 격리합니다. None·OnRequest 모드와 검증 자체의 계산 비용은 유지합니다.
 
 ### 오류 메시지 포맷팅
 

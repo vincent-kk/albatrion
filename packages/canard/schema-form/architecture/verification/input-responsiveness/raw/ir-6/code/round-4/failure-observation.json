@@ -1,0 +1,47 @@
+{
+  "reviewBaseline": "c4d3ec4e31ccf7a0d23ba7b255261590433aa34e",
+  "finalBaselineReplay": {
+    "react18": {
+      "artifact": "round3-react18-proof.json.gz",
+      "passed": 5,
+      "failed": 10,
+      "cases": 15,
+      "failedCases": [
+        "IR-6 W4 an async mount rejection hidden before completion reports once after reconnect",
+        "IR-6 W4 a compile onError failure reaches the host once without recapture",
+        "IR-6 W5 a retired record still guards writes into the current form",
+        "IR-6 W1 ancestor remount preserves renderer, input and child-errors visibility while pending",
+        "IR-6 W1 hidden input and renderer forget their previous visible lifetime",
+        "IR-6 W2 same-commit child normalization cannot promote a newly revealed old error",
+        "IR-6 W3 flushSync during value delivery already sees pending",
+        "IR-6 W3 React18 legacy root sees pending for writes outside React events (React19 has no legacy root)",
+        "IR-6 W2 commit-time pending recheck rejects a reveal after child layout normalization",
+        "IR-6 W9 changing the Always policy does not reconnect the root load"
+      ]
+    },
+    "unit": {
+      "artifact": "round3-unit-proof.json.gz",
+      "failed": 2,
+      "cases": 2
+    }
+  },
+  "react19Replay": {
+    "artifact": "round3-render-proof.json.gz",
+    "scope": "Reveal, flushSync and Always-policy subset; isolated commit, mount reports and core listener tests are covered by the React18 final replay.",
+    "passed": 1,
+    "failed": 5,
+    "skipped": 1
+  },
+  "w13CharacterizationPassedOnBaseline": true,
+  "legacyRoot": "React18 supported and exercised; React19 removes legacy roots, so its one case is explicitly skipped.",
+  "w10PositiveControl": {
+    "artifact": "w10-stuck-positive.json.gz",
+    "mutation": "Temporary early return before pending settlement; original product bytes restored.",
+    "failed": 1,
+    "reason": "Expected required error text remained empty after submit."
+  },
+  "candidateIntermediateFailure": {
+    "artifact": "focused-render-before-w10-fixture.json.gz",
+    "reason": "Imperative setValue does not mark Dirty; fixture now enables first-change visibility while pending so h verifies submit settlement."
+  }
+}

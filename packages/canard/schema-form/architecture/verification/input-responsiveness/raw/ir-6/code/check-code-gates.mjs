@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
 const round = process.argv[2];
-assert.ok(round === undefined || round === '--round=2' || round === '--round=3');
+assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4');
 const root = new URL(round ? `./round-${round.slice(-1)}/` : './', import.meta.url);
 const packageRoot = new URL('../../../../../../', import.meta.url);
 const report = JSON.parse(fs.readFileSync(new URL('code-gates.json', root)));

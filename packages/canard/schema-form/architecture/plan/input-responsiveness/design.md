@@ -160,7 +160,7 @@ array 첫 프레임·count-only/시간 reveal·루트 reconcile·CPU 공변량·
 
 ### 마운트·수명과 v2 차이
 
-Provider 준비 layout effect는 Always이면 root.validate를 inline으로 시작하고 그 외 모드는 같은 슬롯에 예약합니다. if 게이트가 없는 스키마의 전체 컴파일·첫 판정은 첫 화면 뒤로 이동하며 if 게이트의 렌더 중 전체 컴파일은 남습니다. mount helper는 컴파일 실패를 다시 capture하지 않아 engine의 런타임별 첫 보고만 남깁니다. 마운트 컴파일 실패는 한 번 보고합니다. 마운트 슬롯이 첫 검증을 실행하면 rejected이며, 쓰기 검증이 먼저 요청되어 마운트를 건너뛰면 sink입니다. 명시적 루트 검증도 의무를 충족하지만 하위 트리 검증은 마운트 의무를 남깁니다. 다른 예외는 기존 rejected capture를 따릅니다.
+Provider 준비 layout effect는 Always이면 root.validate를 inline으로 시작하고 그 외 모드는 같은 슬롯에 예약합니다. if 게이트가 없는 스키마의 전체 컴파일·첫 판정은 첫 화면 뒤로 이동하며 if 게이트의 렌더 중 전체 컴파일은 남습니다. mount helper는 검증 실패를 다시 capture하지 않아 engine의 런타임별 첫 보고 또는 숨김 버퍼만 남깁니다. 마운트 컴파일 실패는 한 번 보고합니다. 마운트 슬롯이 첫 검증을 실행하면 rejected이며, 쓰기 검증이 먼저 요청되어 마운트를 건너뛰면 sink입니다. 명시적 루트 검증도 의무를 충족하지만 하위 트리 검증은 마운트 의무를 남깁니다. catch는 MultipleErrors 묶음에서 원래 실패 다음의 소비자 handler 실패만 호스트 싱크로 격리하며 검증 실패 자체는 다시 보고하지 않습니다.
 
 슬롯 실행 시 load.ready가 거짓이면 mountValidationOwed를 세웁니다. 보존된 같은 load의 layout effect가 돌아오면 먼저 false로 소비하고 한 슬롯을 예약합니다. 오직 !ready 슬롯만 true로 쓰며 load당 보류 슬롯은 최대 하나입니다. 완료 뒤 다시 숨김·복원해도 재검증하지 않습니다. cleanup은 슬롯을 취소하지 않습니다. StrictMode 반복, React 19 Activity와 React 18 Suspense 복원은 한 번 판정하며 실제 unmount는 owed를 소비하지 않습니다.
 
@@ -204,10 +204,18 @@ R7–R11은 프레임 미호출 대기·Node setImmediate·슬롯 주석·한국
 
 쓰기 pending은 None·unavailable 가드 뒤 시작합니다. 현재 stamp의 판정이 라우팅·동일 목록·null·commit-only 폐기·실패로 끝나면 정착하고, 명시적 루트 validate도 정착하되 하위 트리는 정착하지 않습니다. unavailable·폐기는 무조건 정착하며 새 요청 없는 stamp 무효화(비OnChange reset 포함)도 정착합니다. true→false 알림은 런타임 listener set을 통해 배달 직전에 한 번만 전달하고 공개 사건·revision·src/index는 바꾸지 않습니다.
 
-FieldProxy·FieldInputSlot·useChildFieldErrors는 한 표시 훅을 공유합니다. visible=condition&&(wasVisible||!pending)이며 기억은 노드별 Map의 직전 layout commit에서만 쓰고 cleanup에서 지우지 않습니다. 새 노드·null 렌더·배열 제거는 기억을 섞지 않습니다. useSyncExternalStore의 서버 snapshot은 false, 보류하지 않는 표시는 no-op 구독입니다. 동기 연속 입력은 다음 cap에서 풀리고 stale 비동기 실행은 후행까지 기다릴 수 있으며 새 요청 없는 commit-only 폐기는 이전 판정을 드러낼 수 있습니다. raw errors와 이를 읽는 사용자 UI의 책임도 소비자 문서에 명시합니다.
+FieldProxy·FieldInputSlot·useChildFieldErrors는 한 표시 훅을 공유합니다. visible=condition&&(wasVisible||!pending)이며 기억은 FieldRendererProvider가 표시 종류별로 한 번 만든 WeakMap을 공유하고 노드별 직전 layout commit에서만 쓰며 cleanup에서 삭제합니다. version remount는 옛 cleanup보다 먼저 render에서 기억을 읽어 유지하고 실제 unmount·controls.visible 숨김·가상화 placeholder는 지웁니다. StrictMode의 재setup은 기억을 다시 씁니다. 새 노드·null 렌더·배열 제거는 기억을 섞지 않습니다. useSyncExternalStore의 서버 snapshot은 false, 보류하지 않는 표시는 no-op 구독입니다. 동기 연속 입력은 다음 cap에서 풀리고 stale 비동기 실행은 후행까지 기다릴 수 있으며 새 요청 없는 commit-only 폐기는 이전 판정을 드러낼 수 있습니다. 사용자 UI는 errorVisible과 useChildFieldErrors().showErrors로 같은 규칙을 소비하며 raw 오류 목록에는 표시 정책을 적용하지 않습니다.
 
-Always는 render의 checkShowError()를 state 없이 호출해 effect가 캡처합니다. 자식 layout 쓰기가 먼저여도 inline root.validate가 stamp를 올려 큐를 버리고 pending을 정착시킵니다. 다른 모드는 기존 슬롯과 compile 실패 필터를 공유합니다. 숨긴 load의 미전달 기록은 교체 load 앞에 원래 root와 함께 옮기며 전달마다 reporter.root를 복구하고 각 handler 실패를 격리합니다. 형식·정식 표본은 여전히 측정 전입니다.
+Always는 state 없는 checkShowError()의 값을 앞선 layout effect에서 ref에 반영하며 connect effect는 이 ref를 읽고 정책 변경만으로 재연결하지 않습니다. 자식 layout 쓰기가 먼저여도 inline root.validate가 stamp를 올려 큐를 버리고 pending을 정착시킵니다. 다른 모드는 기존 슬롯과 compile 실패 필터를 공유합니다. 숨긴 load의 미전달 기록은 교체 load 앞에 원래 root와 함께 옮기며 전달마다 reporter.root를 복구하고 각 handler 실패를 격리합니다. 형식·정식 표본은 여전히 측정 전입니다.
 
 ### G8 — U2 마운트 구조 비용의 측정 조건
 
 코디네이터 msg_cc8e08d106e0의 승인으로 기본 표시의 mount-array-1000을 None·OnChange 모드 한 쌍으로 추가합니다. E·F 레인을 비교하고 L도 보고합니다. None 모드의 first-painted·eager-painted 중앙값 비율 F/E가 각각1.02 이하여야 하며 OnChange의 F는 각각 E 이하여야 G8을 통과합니다. 필드당 renderer 표시 기억 commit·input 표시 기억 commit의 두 추가 layout effect 비용을 분리하는 조건입니다. 일반 입력 쓰기는 기존 layout effect0회를 유지합니다. G8 실패 시 병합하지 않고 코디네이터가 기존 effect 통합과 엔진 대안 중 결정합니다. 정식 창 전 사전 규칙에 이 행 쌍·정의·문턱을 커밋하며 현재 정식 표본은0입니다.
+
+### Amendment 6 — 배달 전 pending과 표시·보고 수명
+
+W3는 실제 사슬 끝의 요청과 같은 조건을 validation 도메인의 prepareFieldNodeValidation에 두고 각 공개 listener 배달 전에 pending을 기록합니다. 사슬이 기록한 stamp는 validationPendingEntryStamp에 보유하며 요청 없이 끝나면 그 stamp만 정착하여 더 새로운 실행을 풀지 않습니다. None·unavailable·deferred 마운트는 제외하고 request 자체의 true 설정은 멱등입니다. W2는 render에서 캡처한 wasVisible이 false인 새 표시만 layout에서 pending을 재확인하고 같은 commit의 자식 쓰기가 시작한 보류를 첫 화면 전에 다시 렌더합니다. 보통 쓰기는 노드·표시가 같으므로 layout effect0회를 유지합니다.
+
+W4의 mount catch는 engine이 이미 보고하거나 숨김 버퍼에 둔 검증 실패를 무시하며 소비자 handler 묶음의 꼬리만 호스트에 전달합니다. W5는 교체된 load 기록의 원래 root를 유지하면서 활성 load.root에도 observer guard를 적용하여 onError가 현재 폼을 쓰지 못하게 합니다. W6의 동일 경고는 현재 load 단위 중복 억제로 숨긴 두 교체 load에서 하나로 합쳐집니다. W7의 Always 루트 input 자체 mount-layout validate는 같은 commit에 한 번 추가 판정을 실행하며, W8의 조상 mount-layout 쓰기는 inline 최초 판정을 무효화하여 한 프레임 뒤 판정할 수 있습니다. 세 경우는 코디네이터가 수용한 한계입니다.
+
+W10 제출 회귀는 still-invalid 값을 쓰고 직후 빈 표시, 제출 뒤 오류와 pending=false를 확인합니다. W11 자연 key→Tab 브라우저 경합은 명시적 비동기 판정 보류와 실제 쓰기 시작 프레임 계수를 사용합니다. W12 idle helper는 write-pending만 기다리며 비동기 mount 판정은 그 판정의 명시적 promise를 기다립니다. W13 코어 시험은 실제2000필드 폼에서 보류 표시3개만 구독하고 정착 콜백도 각각 한 번임을 확인합니다.

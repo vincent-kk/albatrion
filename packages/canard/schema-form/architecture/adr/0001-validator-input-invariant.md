@@ -153,5 +153,5 @@ Always의 최초 OnChange 검증은 자식 layout 쓰기가 먼저여도 inline 
 컴파일 실패는 마운트가 먼저 판정하면 rejected, 쓰기가 deferred 마운트 의무를 먼저 충족하면 sink로 한 번 보고하고 helper는 중복 보고하지 않습니다(VALIDATE-052).
 숨김 중 교체된 load의 미전달 기록은 원래 root와 함께 새 load 기록 앞에 보존하고 복원 뒤 각 handler 실패를 격리하여 owed 재예약까지 계속합니다(VALIDATE-052).
 프레임 요청·취소 API 부재나 숨김 문서는 매크로태스크를 사용하고 그 밖에는 프레임 뒤 매크로태스크와100ms 타이머가 단일 실행을 경주하며 환경은 호출마다 읽습니다(VALIDATE-052).
-jsdom과 Storybook은 두 프레임+매크로태스크 뒤 pending을 조회해 false까지 유한 반복하며 보류된 비동기 경합의 중간 단계만 frame-only helper를 사용합니다(VALIDATE-052).
+write-pending 대기는 두 프레임+매크로태스크 뒤 pending=false까지 유한 반복하며 비동기 mount 판정은 그 판정의 명시적 promise를 기다립니다(VALIDATE-052).
 if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한·검증 계산 비용은 남고 G는 구현하지 않습니다(VALIDATE-052).

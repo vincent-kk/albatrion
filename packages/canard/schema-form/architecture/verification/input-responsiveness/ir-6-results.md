@@ -75,6 +75,10 @@ G1–G6와 소유자 목표의 L·E·F 비교는 미측정입니다. 독립 코�
 
 ## 미결 항목
 
+- W6 수용 한계: 숨김 중 교체된 두 load가 같은 경고를 내면 현재 load 단위의 보고기 중복 억제로 한 경고로 합쳐집니다. 보고기 수명·중복 키 정책을 이번 표시 수명 수정에서 바꾸지 않습니다.
+- W7 수용 한계: Always의 루트 input이 자체 mount layout effect에서 validate()하면 같은 commit에서 판정이 한 번 추가 실행됩니다. 기존 명시적 validate와 Always의 즉시 첫 판정을 모두 유지합니다.
+- W8 수용 한계: Always inline 판정 뒤 조상 mount layout effect가 쓰면 그 판정이 무효화되어 최초 판정은 한 프레임 뒤 도착할 수 있습니다. 조상 effect보다 뒤의 추가 동기 flush 기계를 넣지 않습니다.
+
 - R5 수용 한계: 같은 프레임 안의 쓰기 뒤 unmount하면 은퇴한 트리 검증이 한 번 실행됩니다. 판정은 구독자에게 배달되지 않고 실패는 호스트 싱크에만 도착합니다. cleanup 취소로 Suspense·Activity 숨김도 취소하는 것을 피하기 위해 한 실행 절감용 suspend/resume 기계를 추가하지 않습니다.
 - R6 기존 한계: 비동기 명시적 dispatchValidate 실행 중 새 커밋이 도착하면 이전 커밋의 결과를 호출자에게 반환할 수 있습니다. 새 커밋에 대한 발행 검사는 유지하며 반환 동작은 이번 범위에서 바꾸지 않습니다.
 - R4 기존 의존 제약: setImmediate와 MessageChannel이 모두 없는 호스트는 지원하지 않습니다. winglet의 스케줄러는 모듈 로드 시 실행 수단을 결정합니다.
@@ -151,3 +155,54 @@ FCA는 같은 snapshot75552ed038a51e99f71c9cbf6961c7f155b73383006237257d18c96ce6
 원장 검사는 ref-check 문제0, verbatim 불일치0, sup 불일치0·unparsed0입니다. doc-coverage는25문서·무태그0·기존 uncited66/문제66으로 새 문제는 없습니다. 병합 문서 prefix와 허가된 VALIDATE-052 신규 색인 행 이외의 원장 prefix, 소유자 원문9–19의 맥락·줄바꿈, 패키지 버전과 공개 src/index 보존을 [별도 대조](raw/ir-6/code/round-3/history-and-quotes.json)로 확인했습니다. 소비자 문서와 영문 agents knowledge는100ms 주기, 새 표시 보류, 비동기 연속 입력, Always 최초 판정과 unknown·raw 목록을 설명합니다.
 
 판정: 3차 코드 관문 통과, 독립 검토 대기. 성능 G1–G6·G8과 소유자 목표의 L·E·F 비교는 아직 미측정이며 표본0입니다. `code accepted; window clear`를 받은 뒤 A5·G3·G6·G8을 포함한 사전 규칙을 커밋하고 정식 창을 시작합니다. worker_done은 아직 보내지 않습니다.
+
+
+## 4차 수정 — Amendment 6
+
+계약62d3999ae를 제품보다 먼저 커밋했습니다. 3차 검토의 모든 Fix를 반영하며 Record 세 건은 위 미결 항목과 RootNodeContext DETAIL에 이유를 기록했습니다. 성능 표본은0이고 측정 창은 열지 않았습니다.
+
+### 3차 독립 검토 finding 처리
+
+- codex P1-1 → W3: 실제 사슬 끝 요청과 같은 조건으로 validation 도메인이 공개 배달 전에 pending을 기록하고 요청 취소 시 자신이 기록한 stamp만 정착합니다. flushSync subscriber와 React18 legacy root의 이벤트 밖 쓰기 회귀로 확인합니다.
+- codex P1-2 → W2: 새 표시의 layout commit에서 pending을 다시 읽고 자식 layout 쓰기가 시작한 보류를 paint 전에 재렌더합니다. wasVisible은 render에서 캡처하여 옛 remount cleanup과 구분합니다.
+- codex P1-3·P2-8, Opus P2-1 → W1: FieldRendererProvider가 renderer/input/childErrors별 WeakMap을 한 번 만들고 각 표시의 layout commit·cleanup이 기억을 쓰고 삭제합니다. 상위 remount는 render에서 이전 기억을 읽으며 실제 숨김은 지웁니다. wrapper 전용 ref와 prop은 제거했습니다.
+- codex P2-4 → W5: 원래 root의 기록 귀속을 유지하면서 활성 load.root에도 observer guard를 적용합니다. 실제 오류 서비스의 onError에서 현재 FormHandle 쓰기가 거부됩니다.
+- codex P2-5 → W6: 숨긴 두 교체 load의 동일 경고 중복 억제는 수용 한계로 기록했습니다.
+- codex P2-6 → W7: Always 루트 input 자체 mount 검증의 한 번 추가 실행은 수용 한계입니다.
+- codex P2-7 → W8: 조상 mount 쓰기의 inline 최초 판정 무효화와 한 프레임 지연은 수용 한계입니다.
+- codex P2-9 → W4: mount helper는 engine이 보고하거나 숨김 버퍼에 둔 검증 실패를 다시 capture하지 않습니다. MultipleErrors의 소비자 handler 꼬리만 호스트로 보냅니다. 비동기 mount 실패의 복원 후 onError1회와 던지는 onError의 호스트1회를 확인합니다.
+- Opus P3-2 → W9: Always 값은 앞선 layout effect가 ref에 반영하고 connect effect는 ref를 읽어 정책만 바뀔 때 재연결하지 않습니다.
+- Opus P3-1 → W10: 'valid'만 통과하는 검증기에 still-invalid 값을 쓰고 직후 빈 텍스트·제출 뒤 오류·pending=false를 단언합니다. pending 정착을 막은 양성 대조는 오류 텍스트 단언에서 실패했으며 원복했습니다.
+- codex P3-10 → W11: 실제 key→Tab 경로에서 story가 비동기 verdict를 명시적으로 보류하고 실제 onChange 쓰기부터 프레임을 셉니다. MutationObserver와 프레임 샘플은 이전 오류를 관측하지 않았습니다.
+- codex P3-11 → W12: idle helper는 write-pending만 대상으로 문서화하고 비동기 mount 시험은 시작·완료 promise를 기다립니다. test 전용 product export는 없습니다.
+- codex P3-12 → W13: core 바인딩의 실제2000필드 Form에서 holding 표시3개만 listener set에 들어가고 각각 정착 콜백 한 번을 받는지 검사합니다.
+- Opus P3-3 → W14: README·영문/국문 SPEC·QUICK_REFERENCE·agents knowledge의 custom UI 지침은 errorVisible과 useChildFieldErrors().showErrors를 가리킵니다.
+
+### 수정 전 재현과 집중 확인
+
+정확한3차 제품 c4d3ec4e3에서 React18 최종 집중15개 중10개가 실패했습니다. 상위 remount와 숨김 후 재표시, 같은 commit의 자식 보정(독립 훅·Form), 공개 배달 중 flushSync·legacy root, 비동기 mount 실패·던지는 handler·교체 load observer guard·Always 정책 재연결입니다. React19는 legacy root를 제공하지 않아 해당 한 사례를 명시적으로 skip하며 나머지 회귀는 같은 원인으로 실패했습니다. W13 구독 수 특성 검사는 기준에서도 통과하므로 신규 실패 증거로 세지 않습니다. 코어 pending-before-delivery와 취소 요청 정착 두 단위 회귀는 기준에서 실패했습니다. 원시의 중간 fixture와 최종 fixture를 구분하여 보존합니다.
+
+후보의 집중 검사는 React18 30개 통과, React19 29개 통과·legacy1개 skip, 코어 pending17개 통과, 실제 Chromium 스토리3개 통과입니다. 최초 typecheck에서 시험 Context 형·event 형·미사용 지역 변수 오류를 발견해 수정했으며 제품 동작 변경은 없었습니다. 전체 최종 관문은 아래에 별도로 기록합니다.
+
+### 4차 최종 코드 관문
+
+최종 제품은 decbc967f9d8211b2572e974633c7329070b07e2이며 계약62d3999ae가 앞섭니다. 지정 관문은 같은 최종 실행 소스로 아래 순서대로 서로 겹치지 않게 실행했고 production은 최종 build 뒤 다시 실행했습니다.
+
+| 관문 | 파일 | 통과 | 실패 | 비고 |
+| --- | ---: | ---: | ---: | --- |
+| unit | 616 | 4,063 | 0 | 기존 todo1 |
+| render | 143 | 834 | 0 | React19 legacy root 부재1개 skip, 처리되지 않은 오류0 |
+| react18 | 143 | 835 | 0 | legacy root 포함, 처리되지 않은 오류0 |
+| verify | 764 | 4,941 | 0 | 기존 todo1·React19 legacy1개 skip, 다른 관문과 중복 |
+| Storybook | 101 | 254 | 0 | 실제 Chromium, 명시적으로 판정을 보류한 자연 key→Tab 포함 |
+| production | 10 | 21 | 0 | 최종 build 뒤 재실행 |
+
+lint·typecheck·build도 exit0입니다. 배열 항목 마운트 layout effect4회·일반 입력 쓰기0회 회귀를 유지했습니다. 소스102개 해시와 최종 번들 해시, 각 관문 원시는 [4차 code-gates](raw/ir-6/code/round-4/code-gates.json)에 있습니다. `node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/code/check-code-gates.mjs --round=4`가 포착한 원시·해시·관문 결과를 대조하며 시험이나 성능 측정을 다시 실행하지 않습니다. 생성 dist와 agents-hashes는 소스 커밋에 포함하지 않았습니다.
+
+평가 공개 선언은97개 루트·55개 도달 파일·917개 서명에서 의미 차이0, index.d.ts 바이트 차이0입니다. 공개 루트73개는 diagnostics만 선택하고24개는 runtime에 도달하지 않으며 whole-runtime·변경 내부 멤버·cadence 노출과 unresolved는 모두0입니다. validationPendingEntryStamp도 노출 검사에 포함했습니다. 보수적 원래 추적기의 내부 차이 추가9/제거2는 [원래 결과](raw/ir-6/code/round-4/public-declarations.json.gz)에 보존합니다. 저장소 밖 scratch의 실제 diagnostics 타입 변이는 추가1/제거9·exit1, 원상복구는 차이0·exit0입니다. [평가 비교](raw/ir-6/code/round-4/evaluated-public-declarations.json.gz)와 [양성 대조](raw/ir-6/code/round-4/declaration-controls.json)를 함께 보존하며 [주석 포함 비교](raw/ir-6/code/round-4/public-comments.json)에서도 차이는 없습니다.
+
+FCA는 snapshot f8d1fa57c142a328e8520ad23cd39da6f5cdf901f9fb583a485781834b0db90a에서 scan·6범위 validate·verification을 수행했습니다. facts1721개가 모두 exact이고 missing·needsResolution·uncertain·toolError·unadjudicated0, unsupported175는 유지합니다. 마디385(organ304·fractal81), scan201·validate202·verification21·진단177이며 신규 finding·진단0입니다. 절대 상태 indeterminate·기존 실패12·skipped1도 유지합니다. [FCA 차분](raw/ir-6/code/round-4/fca-diff.json)은 기존 동적 표 선언 네 위치의 줄 이동만 정규화하고 원시 차분을 함께 보존합니다.
+
+원장 검사의 ref-check 문제0, verbatim 불일치0, sup 불일치0·unparsed0입니다. doc-coverage는25문서·무태그0·기존 uncited66/문제66으로 새 문제는 없습니다. 병합 문서 prefix, 허가된 VALIDATE-052 색인 행 이외의 원장 prefix, 소유자 원문9–19의 맥락·줄바꿈, 패키지 버전과 공개 진입점 보존은 [대조 기록](raw/ir-6/code/round-4/history-and-quotes.json)에 있습니다. 기준에서 실패한 사례의 이름과 후보 fixture 수정·pending 양성 대조는 [재현 기록](raw/ir-6/code/round-4/failure-observation.json)에 구분했습니다.
+
+판정: 4차 코드 관문 통과, 독립 검토 대기. 성능 G1–G6·G8과 소유자 목표의 L·E·F 비교는 미측정이며 표본0입니다. `code accepted; window clear` 뒤 사전 규칙을 먼저 커밋하고 정식 창을 시작합니다. worker_done은 아직 보내지 않습니다.
