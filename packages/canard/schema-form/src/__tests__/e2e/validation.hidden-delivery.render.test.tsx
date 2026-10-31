@@ -101,7 +101,9 @@ it('IR-7 T1 visible and hidden sequences deliver identical ordered callback argu
     return delivered;
   };
   const visible = await run(false);
-  expect(visible.map((entry: any) => entry[0])).toEqual(
+  expect(
+    visible.map((entry) => (Array.isArray(entry) ? entry[0] : undefined)),
+  ).toEqual(
     expect.arrayContaining([
       'change',
       'state',
@@ -201,7 +203,7 @@ it.each([false, true])(
   },
 );
 
-it('IR-7 T7a retired detached nodes cannot report or move the current reporter root', () => {
+it('IR-7 T7a retired detached nodes cannot report to the consumer', () => {
   const onError = vi.fn();
   const ref = createRef<FormHandle>();
   render(
@@ -231,6 +233,10 @@ it('IR-7 T7a retired detached nodes cannot report or move the current reporter r
 it('IR-7 T7b validation rejected after rebuild reaches neither consumer nor host', async () => {
   const sink = observeErrorSink();
   let reject!: (reason: unknown) => void;
+  let start!: () => void;
+  const started = new Promise<void>((resolve) => {
+    start = resolve;
+  });
   const onError = vi.fn();
   const ref = createRef<FormHandle>();
   const form = (
@@ -245,6 +251,7 @@ it('IR-7 T7b validation rejected after rebuild reaches neither consumer nor host
           value === 'wait'
             ? new Promise<null>((_resolve, fail) => {
                 reject = fail;
+                start();
               })
             : [],
       }}
@@ -256,8 +263,8 @@ it('IR-7 T7b validation rejected after rebuild reaches neither consumer nor host
   await settleValidation(() => ref.current?.node);
   const handle = ref.current!;
   act(() => handle.setValue('wait'));
-  // Advance the automatic slot without waiting for the pending verdict.
   await advanceValidationFrame();
+  await started;
   expect(reject).toBeTypeOf('function');
   act(() => handle.rebuild());
   await act(async () => {

@@ -56,18 +56,19 @@ it('IR-7 T2 mount validation runs while hidden and is not repeated on show', asy
   );
   const wrap = (hidden: boolean) => hideable(form, hidden);
   const view = render(wrap(false));
+  const root = ref.current!.node!;
   view.rerender(wrap(true));
-  await settleValidation(() => ref.current?.node);
+  await settleValidation(root);
   expect(validate).toHaveBeenCalledTimes(1);
   view.rerender(wrap(false));
-  await settleValidation(() => ref.current?.node);
+  await settleValidation(root);
   expect(validate).toHaveBeenCalledTimes(1);
-  await settleValidation(() => ref.current?.node);
+  await settleValidation(root);
   expect(validate).toHaveBeenCalledTimes(1);
   view.rerender(wrap(true));
-  await settleValidation(() => ref.current?.node);
+  await settleValidation(root);
   view.rerender(wrap(false));
-  await settleValidation(() => ref.current?.node);
+  await settleValidation(root);
   expect(validate).toHaveBeenCalledTimes(1);
 });
 
@@ -98,12 +99,13 @@ it('IR-7 T3 R1 reports a layout-write compile failure while hidden', async () =>
   );
   try {
     const view = render(hideable(form, false));
+    const root = ref.current!.node!;
     view.rerender(hideable(form, true));
-    await settleValidation(() => ref.current?.node);
+    await settleValidation(root);
     expect(onError).toHaveBeenCalledTimes(1);
     expect(sink.errors().length).toBeGreaterThan(0);
     view.rerender(hideable(form, false));
-    await settleValidation(() => ref.current?.node);
+    await settleValidation(root);
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
@@ -111,7 +113,7 @@ it('IR-7 T3 R1 reports a layout-write compile failure while hidden', async () =>
     });
     view.rerender(hideable(form, true));
     view.rerender(hideable(form, false));
-    await settleValidation(() => ref.current?.node);
+    await settleValidation(root);
     expect(onError).toHaveBeenCalledTimes(1);
   } finally {
     sink.cleanup();
