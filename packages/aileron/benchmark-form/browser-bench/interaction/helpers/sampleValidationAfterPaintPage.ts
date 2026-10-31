@@ -32,7 +32,10 @@ export async function sampleValidationAfterPaintPage(
           const target = page.locator(`[id="${fixture.target}"]`);
           await target.focus();
           initial = await target.inputValue();
-          await target.press('End');
+          await target.evaluate((element) => {
+            const input = element as HTMLInputElement;
+            input.setSelectionRange(input.value.length, input.value.length);
+          });
           await page.keyboard.type('a');
           typed = 'a';
           firstKeyDone();
