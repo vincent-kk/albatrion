@@ -549,3 +549,338 @@ benchmark 시험6파일44통과·실패0의 [JSON 원시](raw/ir-6/browser/main/
 수용한 다섯 H 한계와 hidden same-schema reset chain-end 전달의 소유자 미결은 유지합니다. G·virtualization 기본값·기존 useChildFields 다섯 결함·버전도 범위 밖입니다. G2·G8 실패에 대한 다음 조치는 코디네이터 결정 대기입니다. worker_done·병합 가능·완료 신호는 보내지 않습니다.
 
 판정: G1·G3·G4·G5·G6 통과, G2·G8 실패 — 코디네이터 결정 대기
+
+
+## G2/G8 원인 진단 — 정식 관문 증거가 아닌 진단 전용
+
+코디네이터 msg_afdb44b8dc1c와 추가 지시 msg_1b6709e1d02d에 따라 진단했습니다. 정식 G1·G3·G4·G5·G6 PASS, G2·G8 FAIL은 그대로이며 G7은 없습니다. 소유자는 표시 훅을 개선한 뒤 등록된 전체 창을 다시 측정하고 남는 비용을 판단하기로 했습니다. 개선 설계와 설계 검토·후속 디스패치는 코디네이터 몫입니다. 여기서는 제품 커밋이나 새 정식 창을 만들지 않았습니다.
+
+[수집 해시](raw/ir-6/browser/diagnosis/capture-manifest.json), [variant 출처](raw/ir-6/browser/diagnosis/variant-provenance.json), [정식 페이지·키 구동 자료](raw/ir-6/browser/diagnosis/formal-drivers.json.gz), [전체 진단 집계](raw/ir-6/browser/diagnosis/diagnostic-summary.json.gz)를 보존했습니다. 최종 근거는 mount20개와 burst45개 및 배달 마커 보강15개의 CPU profile/trace입니다. 같은900×700·production React19·기본 표시 정책·virtualization off·동일 IR6 하니스를 사용했습니다. 최종 profile은 레인·행당3예열과5새페이지, V1/V2/V3 대조는3예열과10새페이지입니다. 레인 순서는 표본 번호별 정순/역순 교대이며 모든 실행에 diagnosticOnly와 formalGateEvidence=false를 남겼습니다. 프로파일100µs·timeline·부가 DevTools 관측의 비용을 포함하므로 프로파일 중앙값을 정식 창의 중앙값과 동일시하지 않습니다.
+
+예비 warmup0 mount, 초기 inline/reducer 대조, 재사용 fiber flag를 새 렌더로 잘못 세던 예비 burst, 배달 마커가 빠진 예비 보강은 preliminary로 따로 보존하며 최종 인과 근거에 쓰지 않았습니다. 최종 렌더 관측기는 활성화 전 commit부터 fiber/alternate identity를 저장하고 바뀐 fiber와 flag를 함께 봅니다. probe에서 flat500 첫키의 F 렌더는500개 전체가 아니라 루트와 대상 경로의14개 컴포넌트 관측으로 좁혀졌습니다. 브라우저 실행 경로를 담는 trace metadata.command_line만 제외했고 traceEvents·CPU profile·시간·키 원시는 그대로입니다.
+
+### 1–3. G8 attribution과 scratch 대조
+
+E/F의 profile eager 중앙값은 None236.5/242.5ms, OnChange253.9/260.3ms입니다. Eager 창 안에서 표시 hook/reveal의 F 표본 배타 시간은2.764/3.602ms이고, React commit/passive의 F−E 배타 차이는2.487/2.560ms입니다. FieldProxy/InputSlot render 포함 시간 차이는5.599/5.093ms입니다. 반면 엔진 mount/build/settle의 배타 차이는0.037/0.297ms이고 OnChange validation compile/첫 판정의 배타 차이는−0.036ms입니다. policy commit은 OnChange에서0.032ms/페이지가 관측됐고 None에서는 표본이 없었습니다. 정책 commit이나 엔진 build가 회귀 대부분이라는 근거는 없습니다.
+
+함수별로 None의 pushSimpleEffect self+1.225ms, commitHookEffectListUnmount+1.239ms, useErrorVisibility+0.826ms 등이 보입니다. OnChange의 useErrorVisibility self+1.710ms·total+4.460ms와 commitHookEffectListUnmount+0.981ms가 보입니다. 공용 useSyncExternalStore·subscribeToStore·updateStoreInstance는 기존 tracker도 사용하므로 전부 새 표시 훅 비용이라고 할 수 없습니다. 아래 표는 그룹별 함수 self/total 차이와 원시 위치를 보존하며, 익명·동명 함수는 그룹 내 집계 추정치입니다. 포함 시간은 중첩되며 E의 layout 검증이 F에서 별도 task로 이동해 같은 commit 함수의 total 차이가 음수가 될 수 있습니다.
+
+V1은 세 표시의 hold를 없앤 진단 대조입니다. 같은5레인 실행에서 F−E eager 회귀의86.475%(None)·95.028%(OnChange)를 제거하여, 이 두 조건에서 표시 훅이 회귀 대부분을 설명합니다. V1은 H 의미를 지키지 않아 제품 후보가 아닙니다.
+
+V2는 같은 hold 계산과 reducer 재렌더·candidate일 때만 실제 구독하는 passive effect 하나를 사용합니다. V3는 renderer/input에 구독 hook을 두지 않고 reducer dispatch와 순수 판정을 쓰며 candidate인 경우에만 null child가 구독합니다. child-errors는 V2 hook을 유지합니다. 둘 다 live=false면 모든 reveal read를 생략합니다. 두 프로토타입 모두 정확 f113566a3 scratch에서만 만들고 build했으며 커밋하지 않았습니다. 집중 render 두 파일은 각각15통과·실패0·기존 보류1이고 전체 동시성·StrictMode·숨김 복원 등가성을 입증한 결과는 아닙니다.
+
+V2 eager는207.55/221.80ms, V3는206.05/217.15ms입니다. V3가 F보다5.55/5.20ms 줄였지만 E보다6.65/3.85ms 남습니다. None V3/E 약1.03335와 OnChange V3/E 약1.01805이므로 V3 진단으로도 현재 G8 선을 충족했다고 주장할 수 없습니다. V3 잔여 비용을 세부적으로 분해하거나 이를 불가피한 비용이라고 입증한 것은 아닙니다.
+
+### 4–5. G2의 페이지·키 구동과 handler 작업
+
+독립 재생이 등록된 상한2.555555519를 정확히 재현했습니다. E의 최악 page5와 F의 최악 page9를 각각 제외하거나 함께 제외해도 진단 상한은2.555555519입니다. 공동 표집을 유지하기 위해 최악 page의 상대 레인 짝도 함께 제외한 두 경우도 같습니다. 독립 lane 삭제는 짝 구조를 바꾸므로 별도로 표시했습니다.
+
+구동 요인은 단일 최고 지연 page가 아니라 관측 수와 분포의 이질성입니다. page pair8은 E의13관측·page p951.8ms와 F의1관측·p951.2ms입니다. 상한 이상인1,723개 재표집에서 pair8의 등장 비율은97.214%, 평균 복제 수는2.104입니다. 이 저지연 E 관측의 반복이 분모 pooled p95를1.8ms로 낮추고 F의 first-key4.6ms를 유지하는 조합에서2.556이 됩니다. pair8만 공동 제외한 진단 상한은0.938775507이며, 이는 사후 제외로 정식 실패를 고칠 근거가 아닙니다.
+
+정식 F pooled p954.6ms 이상 관측은 page1·6·9의 key1 세 개입니다. 각각 processing4.6/4.6/4.7ms·handler3.9/3.9/4.0ms·input delay1.6/0.1/0.1ms입니다. 같은 원시의 모든200키 handler를 공동 bootstrap하면 F/E 상한0.857142827입니다. 이 대체 출처 진단은 등록된 ET 실패를 대체하지 않습니다. 모든 burst의 L/E/F 각200 handler 키와 각 page의 ET 관측을 아래에 나란히 남겼습니다.
+
+정식 키의 CPU stack·검증 실행 시각은 보존되지 않았으므로 동일 세 키의 실행 내용을 직접 확정할 수 없습니다. 별도 첫키 재현에서 flat500의 F는 FieldProxy2·RendererWithErrorMessage2·FieldInputBoundary2·입력 object/string 각1 등의 루트와 대상 경로를 렌더했습니다. L은 SchemaNodeProxy·기존 FormTypeInput 경로를 사용합니다. F handler의 표본 engine write/settle 평균은2.289ms, L은0.533ms이며 writeFieldNode·computeNode·commitSettlement·finishSettlement·exitFieldNodeChain이 보입니다. F의 직접 display helper 표본은 약0.072ms입니다. 이 재현은 첫키 손실의 주부분이 표시 hook 하나보다 새 쓰기·정착 경로와 렌더 계약 비용에 있다는 근거입니다. 정확한 원정식 키별 인과와 함수별 개선 가능량은 미검증입니다.
+
+마커를 추가한 재현 F의5개 첫 handler 안에는 validation run과 onValidate 배달이 모두0개입니다. 가장 가까운 선행 검증 실행은250.8ms 이상 전, 배달은245ms 이상 전이므로 이 재현에서는 직전 검증 task가 첫키 처리 비용을 만든 증거가 없습니다. E는5개 handler 각각에서 검증 실행·배달이 관측돼 D1의 task 이동과 구별됩니다. profile·DevTools 비용이 포함된5.1/2.9ms의 F/L 첫 handler 중앙값을 정식3.85/1.9ms와 같은 절대값으로 해석하지 않습니다.
+
+### 6. 0.16.1 burst 비교와 개선 선택지
+
+등록된 native processing 행p95의 L→F는 flat5002.7→4.7ms, nested2.2→5.2ms, flat20005.7→6.0ms이며 duration F/L은 셋 다1.000입니다. 같은200키 handler pooled p95는0.9→1.2ms,0.4→1.9ms,2.3→1.4ms입니다. 첫키 median은1.9→3.85ms,1.1→3.85ms,3.7→4.2ms입니다. 따라서 flat500·nested에는 실제 handler 꼬리 비용도 남고, flat2000은 대다수 키가 더 빨라졌는데도 첫키와 검열된 native 관측 분포의 차이 때문에 native 행p95만 소폭 큽니다. duration의 같은8ms 구간으로 이런 CPU 차이가 사라졌다고 판단하지 않습니다.
+
+우선 선택지는 live=false 빠른 길과 candidate-only 구독 구조입니다. V3는 V2보다 mount 비용을 더 줄인 근거가 있지만, 현재 프로토타입은 G8 잔여 비용과 전체 동시성 검증이 남습니다. per-display 고정 비용·배열/판정 할당 등을 더 줄일 수 있는지의 상세 설계는 아직 하지 않았습니다. G1의 engine cadence는 프로토타입에서 그대로이나 mount만 측정했으므로 G1 재통과를 예측 보증하지 않습니다. G2 first-key의 쓰기·정착 비용과 sparse ET bootstrap은 별개여서 표시 개선만으로 G2 상한이 내려간다고 보장할 수 없습니다.
+
+V2는 더 단순하지만 회귀 제거량이 None33.197%·OnChange6.077%에 그쳤습니다. 첫키 engine/write 경로를 추가 최적화하려면 별도 범위·기능 검증이 필요하며 여기서는 변경하지 않았습니다. 모든 handler 키를 별도 기준으로 다루는 방안도 새 소유자 결정·사전 등록 없이 현재 G2 판정을 바꿀 수 없습니다. 소유자가 택한 표시 훅 개선 뒤 전체 등록 창 재측정을 후속 설계·검토·디스패치로 이어갈 숫자를 제공하며 임의 제품 커밋·재측정·worker_done을 하지 않습니다.
+
+<!-- IR6_DIAG_TABLES_START -->
+모든 수치는 **진단 전용**입니다. 정식 G2/G8 FAIL을 유지합니다. CPU는100µs 표본의 페이지당 평균 추정치이며 포함 시간은 중첩됩니다. 공용 external-store 효과를 표시 훅만의 효과로 단정하지 않습니다. CPU표의0은 미관측일 수 있습니다.
+
+| 조건 | 레인 | 페이지 | first 중앙값 ms | eager 중앙값 ms | F 대비 eager 감소 ms | F−E 회귀 제거 비율 |
+| --- | --- | --- | --- | --- | --- | --- |
+| mount-array-1000-none | E | 10 | 143.600 | 199.400 | 12.200 | 100.000% |
+| mount-array-1000-none | F | 10 | 141.250 | 211.600 | 0.000 | 0.000% |
+| mount-array-1000-none | V1 | 10 | 144.450 | 201.050 | 10.550 | 86.475% |
+| mount-array-1000-none | V2 | 10 | 137.550 | 207.550 | 4.050 | 33.197% |
+| mount-array-1000-none | V3 | 10 | 136.750 | 206.050 | 5.550 | 45.492% |
+| mount-array-1000-validate | E | 10 | 157.550 | 213.300 | 9.050 | 100.000% |
+| mount-array-1000-validate | F | 10 | 139.150 | 222.350 | 0.000 | 0.000% |
+| mount-array-1000-validate | V1 | 10 | 144.250 | 213.750 | 8.600 | 95.028% |
+| mount-array-1000-validate | V2 | 10 | 138.200 | 221.800 | 0.550 | 6.077% |
+| mount-array-1000-validate | V3 | 10 | 134.800 | 217.150 | 5.200 | 57.459% |
+
+| 프로파일 조건 | 레인 | 페이지 | first 중앙값 ms | eager 중앙값 ms |
+| --- | --- | --- | --- | --- |
+| mount-array-1000-none | E | 5 | 156.400 | 236.500 |
+| mount-array-1000-none | F | 5 | 159.400 | 242.500 |
+| mount-array-1000-validate | E | 5 | 172.600 | 253.900 |
+| mount-array-1000-validate | F | 5 | 163.100 | 260.300 |
+
+| 조건 | CPU 그룹 | E 배타/포함 ms | F 배타/포함 ms | F−E 배타/포함 ms |
+| --- | --- | --- | --- | --- |
+| mount-array-1000-none | other-native-gc-and-js | 82.443 / 82.443 | 84.516 / 84.516 | 2.073 / 2.073 |
+| mount-array-1000-none | react-commit-passive | 22.362 / 28.787 | 24.849 / 30.434 | 2.487 / 1.648 |
+| mount-array-1000-none | react-render-other | 73.486 / 125.001 | 71.161 / 128.478 | -2.325 / 3.477 |
+| mount-array-1000-none | engine-mount-build-settle | 11.512 / 12.192 | 11.549 / 12.457 | 0.037 / 0.266 |
+| mount-array-1000-none | engine-write-settle | 0.663 / 0.663 | 0.682 / 0.682 | 0.018 / 0.018 |
+| mount-array-1000-none | shared-react-external-store | 7.846 / 7.846 | 8.061 / 8.061 | 0.215 / 0.215 |
+| mount-array-1000-none | field-proxy-input-render | 36.343 / 39.262 | 37.996 / 44.860 | 1.653 / 5.599 |
+| mount-array-1000-none | validation-schedule-compile-verdict | 0.029 / 0.029 | 0.000 / 0.000 | -0.029 / -0.029 |
+| mount-array-1000-none | display-hook-and-reveal | 0.000 / 0.000 | 2.764 / 3.481 | 2.764 / 3.481 |
+| mount-array-1000-none | policy-commit-layout | 0.000 / 0.000 | 0.000 / 0.000 | 0.000 / 0.000 |
+| mount-array-1000-validate | other-native-gc-and-js | 85.851 / 85.851 | 83.406 / 83.406 | -2.445 / -2.445 |
+| mount-array-1000-validate | react-commit-passive | 22.609 / 45.127 | 25.169 / 31.321 | 2.560 / -13.806 |
+| mount-array-1000-validate | react-render-other | 71.536 / 124.084 | 72.035 / 130.003 | 0.499 / 5.919 |
+| mount-array-1000-validate | engine-mount-build-settle | 11.177 / 11.987 | 11.473 / 12.375 | 0.297 / 0.389 |
+| mount-array-1000-validate | engine-write-settle | 0.680 / 0.680 | 0.858 / 0.858 | 0.178 / 0.178 |
+| mount-array-1000-validate | field-proxy-input-render | 37.010 / 40.499 | 39.189 / 45.592 | 2.179 / 5.093 |
+| mount-array-1000-validate | shared-react-external-store | 7.691 / 7.691 | 7.245 / 7.245 | -0.447 / -0.447 |
+| mount-array-1000-validate | validation-schedule-compile-verdict | 16.947 / 16.947 | 16.911 / 16.943 | -0.036 / -0.004 |
+| mount-array-1000-validate | display-hook-and-reveal | 0.000 / 0.000 | 3.602 / 4.460 | 3.602 / 4.460 |
+| mount-array-1000-validate | policy-commit-layout | 0.000 / 0.000 | 0.032 / 0.032 | 0.032 / 0.032 |
+
+<details>
+<summary>그룹별 함수 self/total 차이 상위(절댓값 기준, 원시 위치는 CPU profile에 보존)</summary>
+
+| 조건 | 그룹 | 함수 | self E / F / F−E ms | total E / F / F−E ms |
+| --- | --- | --- | --- | --- |
+| mount-array-1000-none | other-native-gc-and-js | (program) | 55.048 / 57.496 / 2.448 | 55.048 / 57.496 / 2.448 |
+| mount-array-1000-none | other-native-gc-and-js | (garbage collector) | 17.045 / 16.692 / -0.353 | 17.045 / 16.692 / -0.353 |
+| mount-array-1000-none | other-native-gc-and-js | querySelectorAll | 0.819 / 1.143 / 0.324 | 0.819 / 1.143 / 0.324 |
+| mount-array-1000-none | other-native-gc-and-js | (root) | 0.000 / 0.000 / 0.000 | 234.683 / 241.576 / 6.893 |
+| mount-array-1000-none | other-native-gc-and-js | performWorkUntilDeadline | 0.114 / 0.063 / -0.052 | 152.963 / 157.746 / 4.783 |
+| mount-array-1000-none | other-native-gc-and-js | workLoopSync | 0.592 / 0.591 / -0.001 | 125.407 / 128.948 / 3.541 |
+| mount-array-1000-none | react-commit-passive | commitHookEffectListUnmount | 1.517 / 2.756 / 1.239 | 1.517 / 2.756 / 1.239 |
+| mount-array-1000-none | react-commit-passive | recursivelyTraversePassiveMountEffects | 1.346 / 2.062 / 0.716 | 7.826 / 8.655 / 0.829 |
+| mount-array-1000-none | react-commit-passive | subscribeFieldNode | 2.467 / 1.834 / -0.634 | 2.781 / 1.922 / -0.859 |
+| mount-array-1000-none | react-commit-passive | flushPassiveEffects | 0.119 / 0.152 / 0.033 | 13.633 / 15.247 / 1.614 |
+| mount-array-1000-none | react-commit-passive | commitPassiveMountOnFiber | 0.710 / 0.702 / -0.008 | 7.826 / 8.715 / 0.890 |
+| mount-array-1000-none | react-render-other | renderWithHooks | 3.284 / 2.452 / -0.832 | 69.069 / 73.625 / 4.556 |
+| mount-array-1000-none | react-render-other | setValueForStyle | 8.650 / 7.982 / -0.668 | 8.650 / 7.982 / -0.668 |
+| mount-array-1000-none | react-render-other | useFieldRendererContext | 0.293 / 0.905 / 0.613 | 0.824 / 2.216 / 1.392 |
+| mount-array-1000-none | react-render-other | beginWork | 1.706 / 1.477 / -0.229 | 82.033 / 86.833 / 4.800 |
+| mount-array-1000-none | react-render-other | updateFunctionComponent | 0.193 / 0.158 / -0.035 | 72.268 / 76.971 / 4.704 |
+| mount-array-1000-none | engine-mount-build-settle | loadStaticFirstTree | 1.429 / 1.668 / 0.239 | 7.676 / 7.698 / 0.022 |
+| mount-array-1000-none | engine-mount-build-settle | createFieldNode | 0.533 / 0.743 / 0.210 | 2.006 / 1.954 / -0.052 |
+| mount-array-1000-none | engine-mount-build-settle | declareArrayChildren | 0.358 / 0.155 / -0.203 | 0.871 / 0.852 / -0.020 |
+| mount-array-1000-none | engine-mount-build-settle | createRootLoad | 0.092 / 0.094 / 0.002 | 12.192 / 12.457 / 0.266 |
+| mount-array-1000-none | engine-mount-build-settle | buildFieldNodeTree | 0.091 / 0.092 / 0.001 | 2.940 / 3.174 / 0.234 |
+| mount-array-1000-none | engine-mount-build-settle | blueprint | 0.242 / 0.305 / 0.062 | 2.625 / 2.827 / 0.202 |
+| mount-array-1000-none | engine-write-settle | exitFieldNodeChain | 0.334 / 0.434 / 0.100 | 0.573 / 0.557 / -0.016 |
+| mount-array-1000-none | engine-write-settle | runDeliveryWaves | 0.095 / 0.062 / -0.033 | 0.095 / 0.093 / -0.002 |
+| mount-array-1000-none | engine-write-settle | enterFieldNodeChain | 0.029 / 0.062 / 0.033 | 0.029 / 0.062 / 0.033 |
+| mount-array-1000-none | engine-write-settle | flushQueuedEvents | 0.030 / 0.000 / -0.030 | 0.114 / 0.031 / -0.083 |
+| mount-array-1000-none | engine-write-settle | updateFieldNodeGlobalErrors | 0.031 / 0.000 / -0.031 | 0.031 / 0.000 / -0.031 |
+| mount-array-1000-none | shared-react-external-store | pushSimpleEffect | 0.712 / 1.938 / 1.225 | 0.835 / 2.031 / 1.196 |
+| mount-array-1000-none | shared-react-external-store | (anonymous) under shared-react-external-store | 1.261 / 1.004 / -0.257 | 3.556 / 2.740 / -0.816 |
+| mount-array-1000-none | shared-react-external-store | exports.useSyncExternalStore | 0.308 / 0.138 / -0.170 | 2.981 / 4.101 / 1.120 |
+| mount-array-1000-none | shared-react-external-store | useSyncExternalStore | 1.213 / 1.191 / -0.023 | 2.664 / 3.911 / 1.247 |
+| mount-array-1000-none | field-proxy-input-render | (anonymous) under field-proxy-input-render | 10.668 / 11.660 / 0.992 | 25.237 / 29.575 / 4.338 |
+| mount-array-1000-none | field-proxy-input-render | useFieldInputControl | 1.274 / 2.016 / 0.742 | 2.963 / 5.074 / 2.111 |
+| mount-array-1000-none | field-proxy-input-render | get | 3.362 / 2.861 / -0.501 | 3.362 / 2.861 / -0.501 |
+| mount-array-1000-none | field-proxy-input-render | FieldProxy | 6.126 / 6.380 / 0.254 | 14.409 / 15.899 / 1.490 |
+| mount-array-1000-none | validation-schedule-compile-verdict | recentReleaseList | 0.029 / 0.000 / -0.029 | 0.029 / 0.000 / -0.029 |
+| mount-array-1000-none | validation-schedule-compile-verdict | retainValidationRoot | 0.000 / 0.000 / 0.000 | 0.029 / 0.000 / -0.029 |
+| mount-array-1000-none | display-hook-and-reveal | useErrorVisibility | 0.000 / 0.826 / 0.826 | 0.000 / 3.481 / 3.481 |
+| mount-array-1000-none | display-hook-and-reveal | (anonymous) under display-hook-and-reveal | 0.000 / 0.340 / 0.340 | 0.000 / 0.401 / 0.401 |
+| mount-array-1000-none | display-hook-and-reveal | useExternalFormContext | 0.253 / 0.530 / 0.277 | 0.363 / 0.810 / 0.446 |
+| mount-array-1000-validate | other-native-gc-and-js | (program) | 59.009 / 55.758 / -3.251 | 59.009 / 55.758 / -3.251 |
+| mount-array-1000-validate | other-native-gc-and-js | (garbage collector) | 16.833 / 17.096 / 0.263 | 16.833 / 17.096 / 0.263 |
+| mount-array-1000-validate | other-native-gc-and-js | setTimeout | 0.383 / 0.277 / -0.106 | 0.383 / 0.277 / -0.106 |
+| mount-array-1000-validate | other-native-gc-and-js | (anonymous) under other-native-gc-and-js | 0.925 / 1.000 / 0.075 | 14.829 / 34.025 / 19.196 |
+| mount-array-1000-validate | other-native-gc-and-js | finish | 0.000 / 0.030 / 0.030 | 0.000 / 16.855 / 16.855 |
+| mount-array-1000-validate | other-native-gc-and-js | validateMountRoot | 0.000 / 0.000 / 0.000 | 0.000 / 16.760 / 16.760 |
+| mount-array-1000-validate | react-commit-passive | commitHookEffectListUnmount | 1.422 / 2.403 / 0.981 | 1.422 / 2.403 / 0.981 |
+| mount-array-1000-validate | react-commit-passive | commitHookEffectListMount | 2.216 / 3.189 / 0.973 | 24.839 / 10.218 / -14.621 |
+| mount-array-1000-validate | react-commit-passive | commitLayoutEffectOnFiber | 1.989 / 1.443 / -0.546 | 22.857 / 6.378 / -16.479 |
+| mount-array-1000-validate | react-commit-passive | flushLayoutEffects | 0.150 / 0.120 / -0.030 | 23.007 / 6.468 / -16.540 |
+| mount-array-1000-validate | react-commit-passive | recursivelyTraverseLayoutEffects | 1.248 / 1.376 / 0.128 | 22.857 / 6.376 / -16.482 |
+| mount-array-1000-validate | react-render-other | setInitialProperties | 3.098 / 2.238 / -0.859 | 29.585 / 29.059 / -0.527 |
+| mount-array-1000-validate | react-render-other | setValueForStyle | 8.771 / 8.043 / -0.728 | 8.771 / 8.043 / -0.728 |
+| mount-array-1000-validate | react-render-other | completeWork | 2.185 / 2.826 / 0.641 | 41.453 / 40.820 / -0.633 |
+| mount-array-1000-validate | react-render-other | beginWork | 1.420 / 1.327 / -0.093 | 80.938 / 87.682 / 6.743 |
+| mount-array-1000-validate | react-render-other | renderWithHooks | 2.658 / 3.106 / 0.448 | 68.622 / 75.097 / 6.475 |
+| mount-array-1000-validate | react-render-other | updateFunctionComponent | 0.063 / 0.156 / 0.093 | 71.469 / 77.805 / 6.336 |
+| mount-array-1000-validate | engine-mount-build-settle | loadStaticFirstTree | 1.504 / 1.092 / -0.413 | 7.411 / 7.492 / 0.081 |
+| mount-array-1000-validate | engine-mount-build-settle | createChildNode | 0.225 / 0.478 / 0.253 | 1.797 / 2.131 / 0.335 |
+| mount-array-1000-validate | engine-mount-build-settle | assembleStaticFirstNode | 0.964 / 0.713 / -0.251 | 1.823 / 1.944 / 0.122 |
+| mount-array-1000-validate | engine-mount-build-settle | createRootLoad | 0.031 / 0.000 / -0.031 | 11.987 / 12.375 / 0.389 |
+| mount-array-1000-validate | engine-mount-build-settle | dispatchMount | 0.271 / 0.163 / -0.108 | 8.596 / 8.896 / 0.300 |
+| mount-array-1000-validate | engine-write-settle | exitFieldNodeChain | 0.376 / 0.497 / 0.121 | 0.589 / 0.673 / 0.085 |
+| mount-array-1000-validate | engine-write-settle | enterFieldNodeChain | 0.000 / 0.091 / 0.091 | 0.000 / 0.091 / 0.091 |
+| mount-array-1000-validate | engine-write-settle | deliverWave | 0.062 / 0.114 / 0.051 | 0.062 / 0.206 / 0.144 |
+| mount-array-1000-validate | engine-write-settle | flushQueuedEvents | 0.060 / 0.030 / -0.030 | 0.151 / 0.236 / 0.085 |
+| mount-array-1000-validate | field-proxy-input-render | (anonymous) under field-proxy-input-render | 11.964 / 12.835 / 0.871 | 27.059 / 30.465 / 3.406 |
+| mount-array-1000-validate | field-proxy-input-render | useChildFields | 0.412 / 0.911 / 0.499 | 3.455 / 3.181 / -0.274 |
+| mount-array-1000-validate | field-proxy-input-render | FieldProxy | 5.694 / 6.041 / 0.347 | 14.070 / 15.525 / 1.455 |
+| mount-array-1000-validate | field-proxy-input-render | useFieldRendererContext | 0.530 / 0.858 / 0.328 | 0.955 / 2.264 / 1.309 |
+| mount-array-1000-validate | shared-react-external-store | mountWorkInProgressHook | 1.946 / 1.617 / -0.329 | 1.946 / 1.617 / -0.329 |
+| mount-array-1000-validate | shared-react-external-store | updateStoreInstance | 0.150 / 0.474 / 0.325 | 1.180 / 1.408 / 0.228 |
+| mount-array-1000-validate | shared-react-external-store | useSyncExternalStore | 1.320 / 1.006 / -0.314 | 3.288 / 2.613 / -0.675 |
+| mount-array-1000-validate | shared-react-external-store | exports.useSyncExternalStore | 0.252 / 0.192 / -0.060 | 3.551 / 2.832 / -0.719 |
+| mount-array-1000-validate | validation-schedule-compile-verdict | (anonymous) under validation-schedule-compile-verdict | 2.656 / 2.159 / -0.498 | 12.950 / 12.727 / -0.223 |
+| mount-array-1000-validate | validation-schedule-compile-verdict | addNames | 0.566 / 0.835 / 0.269 | 0.566 / 0.835 / 0.269 |
+| mount-array-1000-validate | validation-schedule-compile-verdict | keywordCode | 0.497 / 0.691 / 0.193 | 6.606 / 6.686 / 0.080 |
+| mount-array-1000-validate | validation-schedule-compile-verdict | subschemaCode | 0.148 / 0.059 / -0.089 | 5.999 / 5.634 / -0.365 |
+| mount-array-1000-validate | validation-schedule-compile-verdict | subSchemaObjCode | 0.031 / 0.000 / -0.031 | 5.882 / 5.572 / -0.310 |
+| mount-array-1000-validate | display-hook-and-reveal | useErrorVisibility | 0.000 / 1.710 / 1.710 | 0.000 / 4.460 / 4.460 |
+| mount-array-1000-validate | display-hook-and-reveal | (anonymous) under display-hook-and-reveal | 0.000 / 0.221 / 0.221 | 0.000 / 0.281 / 0.281 |
+| mount-array-1000-validate | display-hook-and-reveal | get FormErrorRenderer | 0.000 / 0.139 / 0.139 | 0.000 / 0.139 / 0.139 |
+| mount-array-1000-validate | display-hook-and-reveal | readFieldNodeRevealPolicy | 0.000 / 0.060 / 0.060 | 0.000 / 0.249 / 0.249 |
+| mount-array-1000-validate | policy-commit-layout | commitFieldNodeRevealPolicy | 0.000 / 0.032 / 0.032 | 0.000 / 0.032 / 0.032 |
+
+</details>
+
+| 정식 원시 기반 burst | 레인 | ET 행p95 ms (관측/200key) | handler 행p95 / pooled p95 ms (200key) | 첫키 중앙값 / 나머지190키 p95 ms |
+| --- | --- | --- | --- | --- |
+| type-flat-500-validate-burst | L | 2.700 (58/200) | 0.900 / 0.900 | 1.900 / 0.800 |
+| type-flat-500-validate-burst | E | 5.200 (81/200) | 1.500 / 1.500 | 4.350 / 1.300 |
+| type-flat-500-validate-burst | F | 4.700 (37/200) | 1.200 / 1.200 | 3.850 / 1.000 |
+| type-nested-d5-f4-validate-burst | L | 2.200 (80/200) | 0.400 / 0.400 | 1.100 / 0.400 |
+| type-nested-d5-f4-validate-burst | E | 13.000 (91/200) | 3.800 / 3.800 | 11.900 / 1.700 |
+| type-nested-d5-f4-validate-burst | F | 5.200 (127/200) | 1.900 / 1.900 | 3.850 / 0.800 |
+| type-flat-2000-validate-burst | L | 5.700 (110/200) | 2.300 / 2.300 | 3.700 / 2.000 |
+| type-flat-2000-validate-burst | E | 6.300 (112/200) | 2.900 / 2.900 | 4.800 / 2.800 |
+| type-flat-2000-validate-burst | F | 6.000 (172/200) | 1.400 / 1.400 | 4.200 / 1.300 |
+
+| 진단 bootstrap | 상한 |
+| --- | --- |
+| 정식 G2 동일 재생 | 2.556 |
+| E 최악 페이지5 제외(독립 표집) | 2.556 |
+| F 최악 페이지9 제외(독립 표집) | 2.556 |
+| 각 레인의 최악 페이지 제외(독립 표집) | 2.556 |
+| E 최악 페이지 쌍 제외(공동 표집) | 2.556 |
+| F 최악 페이지 쌍 제외(공동 표집) | 2.556 |
+| 페이지 쌍8 제외(공동 표집) | 0.939 |
+| flat500 모든 handler 키 F/E | 0.857 |
+
+| 정식 F 느린 키 | page/key | native processing ms | handler ms | input delay ms |
+| --- | --- | --- | --- | --- |
+| flat500 burst | 1/1 | 4.600 | 3.900 | 1.600 |
+| flat500 burst | 6/1 | 4.600 | 3.900 | 0.100 |
+| flat500 burst | 9/1 | 4.700 | 4.000 | 0.100 |
+
+| 진단 첫 handler | 레인 | 페이지 | handler 중앙값 ms | engine 쓰기·정착 평균 ms | 표시 helper 평균 ms | 가장 가까운 선행 검증 실행 ms 전 | handler 내 검증 실행 수 | 선행 배달 ms 전 / handler 내 배달 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| type-flat-500-validate-burst | L | 5 | 2.900 | 0.533 | 0.000 | 272.300 | 0 | 257.700 / 0 |
+| type-flat-500-validate-burst | E | 5 | 5.200 | 2.221 | 0.000 | 273.600 | 5 | 266.100 / 5 |
+| type-flat-500-validate-burst | F | 5 | 5.100 | 2.289 | 0.072 | 250.800 | 0 | 245.000 / 0 |
+| type-nested-d5-f4-validate-burst | L | 5 | 1.600 | 0.156 | 0.000 | 313.800 | 0 | 미계측 |
+| type-nested-d5-f4-validate-burst | E | 5 | 6.300 | 2.497 | 0.000 | 326.900 | 5 | 미계측 |
+| type-nested-d5-f4-validate-burst | F | 5 | 5.800 | 2.740 | 0.069 | 307.600 | 0 | 미계측 |
+| type-flat-2000-validate-burst | L | 5 | 6.200 | 1.432 | 0.000 | 344.800 | 0 | 미계측 |
+| type-flat-2000-validate-burst | E | 5 | 7.700 | 2.555 | 0.000 | 368.300 | 5 | 미계측 |
+| type-flat-2000-validate-burst | F | 5 | 7.700 | 2.645 | 0.153 | 335.800 | 0 | 미계측 |
+
+| 진단 첫 handler | 레인 | 첫 표본에서 관측한 렌더 컴포넌트 |
+| --- | --- | --- |
+| type-flat-500-validate-burst | L | SchemaNodeProxy×3, ErrorBoundary×4, PassRenderer×2, FormTypeInputObject×1, FormTypeInputString×1 |
+| type-flat-500-validate-burst | E | FieldProxy×3, ErrorBoundary×6, RendererWithErrorMessage×3, PassRenderer×3, FieldInputBoundary×3, FieldInputObject×1, FieldInputString×2 |
+| type-flat-500-validate-burst | F | FieldProxy×2, ErrorBoundary×4, RendererWithErrorMessage×2, PassRenderer×2, FieldInputBoundary×2, FieldInputObject×1, FieldInputString×1 |
+| type-nested-d5-f4-validate-burst | L | SchemaNodeProxy×7, ErrorBoundary×12, PassRenderer×6, FormTypeInputObject×5, FormTypeInputString×1 |
+| type-nested-d5-f4-validate-burst | E | FieldProxy×7, ErrorBoundary×14, RendererWithErrorMessage×7, PassRenderer×7, FieldInputBoundary×7, FieldInputObject×5, FieldInputString×2 |
+| type-nested-d5-f4-validate-burst | F | FieldProxy×6, ErrorBoundary×12, RendererWithErrorMessage×6, PassRenderer×6, FieldInputBoundary×6, FieldInputObject×5, FieldInputString×1 |
+| type-flat-2000-validate-burst | L | SchemaNodeProxy×3, ErrorBoundary×4, PassRenderer×2, FormTypeInputObject×1, FormTypeInputString×1 |
+| type-flat-2000-validate-burst | E | FieldProxy×3, ErrorBoundary×6, RendererWithErrorMessage×3, PassRenderer×3, FieldInputBoundary×3, FieldInputObject×1, FieldInputString×2 |
+| type-flat-2000-validate-burst | F | FieldProxy×2, ErrorBoundary×4, RendererWithErrorMessage×2, PassRenderer×2, FieldInputBoundary×2, FieldInputObject×1, FieldInputString×1 |
+
+<details>
+<summary>모든 burst 페이지의 검열된 ET 관측과 검열 없는 handler20개(키1→20 순서)</summary>
+
+| 행 | 레인/page | ET 관측 processing ms | ET page p95 ms | handler20개 ms |
+| --- | --- | --- | --- | --- |
+| type-flat-500-validate-burst | L/0 | 2.600, 1.300, 1.100, 1.100, 0.900, 1.100, 0.800, 0.900, 0.800, 1.100, 0.900, 0.700, 0.900 | 2.600 | 1.900, 0.800, 0.700, 0.600, 0.700, 0.700, 0.500, 0.600, 0.600, 0.500, 0.600, 0.500, 0.600, 0.500, 0.600, 0.500, 0.500, 0.600, 0.600, 0.600 |
+| type-flat-500-validate-burst | L/1 | 2.700, 1.400, 1.100, 1.200, 1.000, 0.100, 1.000, 0.900, 1.100, 0.900, 0.900, 1.000, 0.800 | 2.700 | 2.000, 0.900, 0.700, 0.800, 0.700, 0.700, 0.700, 0.600, 0.600, 0.500, 0.500, 0.500, 0.700, 0.500, 0.600, 0.500, 0.500, 0.500, 0.600, 0.600 |
+| type-flat-500-validate-burst | L/2 | 2.700, 1.300, 0.200, 1.200, 1.000, 1.100, 0.900, 0.800, 0.900, 0.700, 0.900, 0.800, 0.800 | 2.700 | 2.100, 0.900, 0.900, 0.700, 0.700, 0.700, 0.700, 0.600, 0.600, 0.600, 0.500, 0.600, 0.600, 0.600, 0.500, 0.500, 0.500, 0.600, 0.400, 0.400 |
+| type-flat-500-validate-burst | L/3 | 2.600, 1.200 | 2.600 | 1.900, 0.900, 0.800, 0.800, 0.800, 0.600, 0.600, 0.600, 0.600, 0.600, 0.700, 0.600, 0.600, 0.500, 0.400, 0.600, 0.600, 0.600, 0.500, 0.500 |
+| type-flat-500-validate-burst | L/4 | 1.200, 1.200, 1.100, 1.000, 0.000, 1.100, 0.900, 0.700, 1.100, 0.900, 0.800, 0.900 | 1.200 | 1.900, 0.700, 0.800, 0.700, 0.800, 0.700, 0.500, 0.500, 0.600, 0.500, 0.600, 0.500, 0.500, 0.700, 0.500, 0.500, 0.400, 0.500, 0.500, 0.600 |
+| type-flat-500-validate-burst | L/5 | 1.100, 0.900 | 1.100 | 1.900, 0.800, 0.800, 0.700, 0.700, 0.700, 0.700, 0.700, 0.700, 0.700, 0.700, 0.600, 0.600, 0.400, 0.600, 0.600, 0.500, 0.600, 0.500, 0.500 |
+| type-flat-500-validate-burst | L/6 | 관측 없음 | 관측 없음 | 1.800, 0.800, 0.800, 0.600, 0.600, 0.600, 0.600, 0.600, 0.600, 0.600, 0.500, 0.500, 0.700, 0.600, 0.500, 0.400, 0.500, 0.500, 0.500, 0.600 |
+| type-flat-500-validate-burst | L/7 | 1.000 | 1.000 | 2.000, 0.900, 0.700, 0.700, 0.600, 0.700, 0.700, 0.600, 0.600, 0.500, 0.600, 0.600, 0.500, 0.500, 0.600, 0.600, 0.500, 0.500, 0.500, 0.700 |
+| type-flat-500-validate-burst | L/8 | 1.200 | 1.200 | 1.800, 0.900, 0.800, 0.700, 0.600, 0.600, 0.700, 0.600, 0.600, 0.600, 0.500, 0.600, 0.600, 0.600, 0.400, 0.500, 0.500, 0.500, 0.500, 0.600 |
+| type-flat-500-validate-burst | L/9 | 1.000 | 1.000 | 1.800, 0.900, 0.900, 0.800, 0.600, 0.700, 0.700, 0.600, 0.500, 0.700, 0.600, 0.600, 0.500, 0.400, 0.500, 0.500, 0.500, 0.500, 0.500, 0.600 |
+| type-flat-500-validate-burst | E/0 | 5.100, 1.800, 1.500, 1.400, 1.100, 0.100, 1.300, 1.100, 1.300, 0.900, 1.000, 1.500, 1.100, 1.200 | 5.100 | 4.400, 1.400, 1.200, 1.000, 0.700, 0.800, 0.700, 1.000, 0.700, 0.900, 0.500, 0.900, 0.600, 0.900, 0.600, 0.900, 0.600, 0.900, 0.700, 0.800 |
+| type-flat-500-validate-burst | E/1 | 1.600 | 1.600 | 3.700, 1.200, 1.000, 0.900, 0.700, 0.900, 0.700, 0.900, 0.800, 1.100, 0.600, 0.900, 0.500, 0.900, 0.600, 1.000, 0.700, 0.900, 0.600, 0.900 |
+| type-flat-500-validate-burst | E/2 | 4.900, 1.700, 1.400, 0.100, 1.300, 1.100, 1.400, 1.100, 1.300, 0.900, 1.400, 1.100, 1.200 | 4.900 | 4.200, 1.300, 1.200, 0.900, 0.700, 0.900, 0.800, 0.900, 0.800, 1.100, 0.700, 0.900, 0.500, 0.900, 0.600, 1.000, 0.600, 1.000, 0.700, 0.900 |
+| type-flat-500-validate-burst | E/3 | 1.200 | 1.200 | 4.000, 1.300, 1.100, 1.000, 0.800, 1.100, 0.900, 1.000, 0.800, 1.100, 0.700, 1.000, 0.800, 1.100, 0.700, 1.100, 0.600, 0.900, 0.600, 0.900 |
+| type-flat-500-validate-burst | E/4 | 1.300, 1.600 | 1.600 | 4.300, 1.300, 1.300, 0.900, 0.900, 1.000, 0.800, 0.800, 0.700, 1.000, 0.700, 1.000, 0.600, 0.900, 0.700, 0.900, 0.700, 1.000, 0.600, 1.000 |
+| type-flat-500-validate-burst | E/5 | 5.200, 1.800, 0.100, 1.400, 1.400, 1.100, 1.200 | 5.200 | 4.400, 1.400, 1.200, 1.100, 0.900, 0.900, 0.800, 0.800, 0.800, 1.000, 0.500, 0.900, 0.700, 1.100, 0.500, 1.000, 0.700, 1.000, 0.500, 0.900 |
+| type-flat-500-validate-burst | E/6 | 4.900, 1.800, 1.500, 1.400, 1.200, 1.300, 1.200, 1.000, 1.400, 1.300, 1.000, 1.300, 1.000, 1.000, 1.100 | 4.900 | 4.300, 1.500, 1.100, 0.900, 0.700, 0.900, 0.700, 0.900, 0.700, 1.100, 0.700, 0.900, 0.700, 1.000, 0.600, 1.000, 0.700, 1.000, 0.500, 0.800 |
+| type-flat-500-validate-burst | E/7 | 1.300, 1.100 | 1.300 | 4.400, 1.300, 1.400, 1.000, 0.900, 0.900, 0.800, 1.000, 0.900, 1.200, 0.700, 1.000, 0.700, 1.000, 0.600, 1.100, 0.700, 0.800, 0.600, 0.800 |
+| type-flat-500-validate-burst | E/8 | 0.200, 1.800, 1.300, 1.300, 1.300, 1.300, 1.100, 1.400, 1.400, 1.000, 1.500, 1.400, 1.100 | 1.800 | 4.700, 1.400, 1.300, 1.200, 0.900, 0.900, 0.800, 0.900, 0.900, 1.200, 0.800, 1.000, 0.600, 1.100, 0.700, 1.100, 0.700, 0.900, 0.700, 1.100 |
+| type-flat-500-validate-burst | E/9 | 5.200, 1.800, 0.200, 1.400, 0.100, 1.300, 1.400, 1.600, 1.000, 1.300, 0.900, 0.100, 1.300 | 5.200 | 4.500, 1.400, 1.200, 1.000, 0.800, 1.000, 0.900, 0.900, 0.700, 1.200, 0.700, 1.000, 0.600, 1.000, 0.600, 1.000, 0.600, 0.900, 0.500, 0.800 |
+| type-flat-500-validate-burst | F/0 | 0.200, 1.000 | 1.000 | 3.700, 0.800, 0.800, 0.600, 0.700, 0.600, 0.600, 0.500, 0.600, 0.500, 0.500, 0.400, 0.500, 0.400, 0.400, 0.500, 0.400, 0.500, 0.500, 1.200 |
+| type-flat-500-validate-burst | F/1 | 4.600, 0.900, 1.100 | 4.600 | 3.900, 0.800, 0.700, 0.700, 0.600, 0.600, 0.500, 0.500, 0.400, 0.500, 0.400, 0.500, 0.500, 0.400, 0.400, 0.400, 0.400, 0.300, 0.400, 1.100 |
+| type-flat-500-validate-burst | F/2 | 1.000, 0.800 | 1.000 | 3.900, 0.900, 0.700, 0.600, 0.600, 0.600, 0.500, 0.500, 0.500, 0.500, 0.500, 0.400, 0.400, 0.400, 0.400, 0.400, 0.400, 0.400, 0.400, 1.100 |
+| type-flat-500-validate-burst | F/3 | 관측 없음 | 관측 없음 | 3.800, 0.900, 0.700, 0.500, 0.500, 0.600, 0.500, 0.400, 0.500, 0.500, 0.400, 0.500, 0.400, 0.300, 0.500, 0.400, 0.400, 0.400, 0.400, 1.200 |
+| type-flat-500-validate-burst | F/4 | 0.900 | 0.900 | 3.400, 0.800, 0.600, 0.600, 0.500, 0.600, 0.600, 0.500, 0.600, 0.500, 0.400, 0.600, 0.400, 0.400, 0.400, 0.400, 0.400, 0.500, 1.100, 0.400 |
+| type-flat-500-validate-burst | F/5 | 0.900 | 0.900 | 3.800, 0.900, 0.700, 0.600, 0.600, 0.600, 0.500, 0.600, 0.400, 0.500, 0.400, 0.400, 0.400, 0.400, 0.400, 0.500, 0.300, 0.300, 0.300, 1.000 |
+| type-flat-500-validate-burst | F/6 | 4.600, 1.100, 1.000, 0.900, 1.000, 0.900, 0.700, 0.100, 0.900, 0.000, 1.000, 1.400, 0.900 | 4.600 | 3.900, 0.700, 0.600, 0.600, 0.500, 0.600, 0.400, 0.500, 0.400, 0.400, 0.500, 0.400, 0.400, 0.500, 0.400, 0.300, 0.500, 0.500, 1.100, 0.500 |
+| type-flat-500-validate-burst | F/7 | 관측 없음 | 관측 없음 | 4.000, 0.600, 0.800, 0.700, 0.500, 0.400, 0.500, 0.500, 0.400, 0.400, 0.400, 0.400, 0.400, 0.400, 0.500, 0.400, 0.400, 0.500, 0.500, 1.000 |
+| type-flat-500-validate-burst | F/8 | 1.200 | 1.200 | 3.500, 0.600, 0.700, 0.600, 0.500, 0.600, 0.400, 0.500, 0.500, 0.500, 0.400, 0.300, 0.400, 0.500, 0.600, 0.500, 0.500, 0.400, 0.500, 1.000 |
+| type-flat-500-validate-burst | F/9 | 4.700, 1.000, 1.000, 1.000, 0.800, 0.800, 1.100, 0.800, 0.700, 0.800, 0.800, 0.700, 0.700, 1.400 | 4.700 | 4.000, 0.700, 0.600, 0.700, 0.700, 0.500, 0.600, 0.500, 0.500, 0.500, 0.400, 0.500, 0.500, 0.300, 0.400, 0.300, 0.400, 0.400, 0.400, 1.000 |
+| type-nested-d5-f4-validate-burst | L/0 | 1.200, 1.100, 1.200 | 1.200 | 1.200, 0.300, 0.300, 0.400, 0.400, 0.300, 0.200, 0.300, 0.300, 0.300, 0.300, 0.300, 0.300, 0.300, 0.200, 0.300, 0.200, 0.100, 0.200, 0.200 |
+| type-nested-d5-f4-validate-burst | L/1 | 1.000, 1.000, 1.000, 1.000, 1.000, 0.800, 0.900, 0.800, 0.900, 0.600, 1.000 | 1.000 | 1.000, 0.300, 0.300, 0.300, 0.200, 0.400, 0.300, 0.200, 0.200, 0.300, 0.100, 0.200, 0.200, 0.200, 0.300, 0.200, 0.200, 0.200, 0.100, 0.200 |
+| type-nested-d5-f4-validate-burst | L/2 | 2.200, 0.900, 0.300, 1.000, 0.800, 0.700, 0.900, 0.800, 0.800, 0.800, 0.800 | 2.200 | 1.100, 0.400, 0.300, 0.300, 0.300, 0.200, 0.400, 0.200, 0.200, 0.300, 0.200, 0.100, 0.200, 0.300, 0.200, 0.200, 0.200, 0.100, 0.100, 0.200 |
+| type-nested-d5-f4-validate-burst | L/3 | 0.900, 1.000, 1.200, 1.000 | 1.200 | 1.000, 0.400, 0.300, 0.200, 0.300, 0.200, 0.200, 0.100, 0.200, 0.300, 0.200, 0.200, 0.300, 0.300, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200 |
+| type-nested-d5-f4-validate-burst | L/4 | 1.100, 1.000, 0.900, 0.900, 0.900, 0.700, 0.900, 0.800, 0.700, 0.900, 0.900, 0.900 | 1.100 | 1.100, 0.400, 0.300, 0.400, 0.300, 0.200, 0.300, 0.200, 0.200, 0.200, 0.300, 0.100, 0.300, 0.300, 0.200, 0.200, 0.300, 0.200, 0.200, 0.200 |
+| type-nested-d5-f4-validate-burst | L/5 | 2.100, 1.000, 0.900, 0.900, 0.900, 0.700, 0.900, 0.900, 0.900, 0.800 | 2.100 | 1.100, 0.300, 0.400, 0.300, 0.300, 0.300, 0.300, 0.300, 0.300, 0.200, 0.200, 0.200, 0.100, 0.200, 0.100, 0.100, 0.200, 0.300, 0.300, 0.200 |
+| type-nested-d5-f4-validate-burst | L/6 | 1.000, 1.000 | 1.000 | 1.200, 0.200, 0.200, 0.300, 0.200, 0.300, 0.100, 0.300, 0.200, 0.200, 0.200, 0.200, 0.200, 0.100, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200 |
+| type-nested-d5-f4-validate-burst | L/7 | 0.900, 0.300, 0.800, 1.000, 1.100, 0.800 | 1.100 | 1.000, 0.300, 0.300, 0.400, 0.300, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200, 0.200, 0.300, 0.300, 0.200 |
+| type-nested-d5-f4-validate-burst | L/8 | 0.200, 0.900, 0.800, 0.900, 0.700, 0.700, 0.800, 0.900 | 0.900 | 1.000, 0.400, 0.300, 0.300, 0.300, 0.200, 0.300, 0.200, 0.200, 0.200, 0.200, 0.100, 0.300, 0.200, 0.100, 0.200, 0.200, 0.300, 0.200, 0.100 |
+| type-nested-d5-f4-validate-burst | L/9 | 1.000, 0.300, 0.900, 0.800, 0.900, 1.000, 0.700, 0.700, 1.000, 0.700, 1.500, 0.800, 0.800 | 1.500 | 1.100, 0.300, 0.300, 0.300, 0.300, 0.300, 0.200, 0.200, 0.200, 0.100, 0.100, 0.300, 0.300, 0.100, 0.200, 0.200, 0.100, 0.300, 0.200, 0.200 |
+| type-nested-d5-f4-validate-burst | E/0 | 12.800, 1.700, 1.200, 1.500, 1.800, 5.000, 2.100, 1.000, 2.200, 2.100, 2.300, 1.100 | 12.800 | 11.900, 1.000, 0.900, 0.600, 0.700, 0.600, 0.700, 1.100, 2.100, 0.500, 1.500, 0.400, 1.500, 0.400, 1.400, 0.500, 1.400, 0.600, 1.500, 0.400 |
+| type-nested-d5-f4-validate-burst | E/1 | 12.800, 1.800, 1.400, 1.400, 2.100, 2.200, 1.100, 2.300, 1.200, 2.500, 1.100 | 12.800 | 11.900, 1.000, 0.900, 0.700, 0.800, 0.700, 0.700, 0.700, 1.900, 0.600, 1.400, 0.500, 1.600, 0.500, 1.500, 0.300, 1.500, 0.500, 1.500, 0.500 |
+| type-nested-d5-f4-validate-burst | E/2 | 12.700, 1.400, 1.500, 1.300, 2.700, 0.300, 2.200, 2.400, 1.200, 2.000, 1.100 | 12.700 | 11.800, 1.000, 0.900, 0.600, 0.800, 0.700, 0.700, 0.800, 1.800, 0.700, 1.600, 0.500, 1.500, 0.500, 1.400, 0.500, 1.600, 0.500, 1.500, 0.500 |
+| type-nested-d5-f4-validate-burst | E/3 | 12.700, 1.300, 1.600, 1.300, 1.500 | 12.700 | 11.700, 1.000, 0.800, 0.700, 0.800, 0.600, 1.400, 0.700, 1.100, 0.800, 1.600, 0.500, 1.400, 0.500, 1.300, 0.400, 1.400, 0.500, 1.400, 0.500 |
+| type-nested-d5-f4-validate-burst | E/4 | 12.900, 0.300, 1.300, 1.200, 5.000, 0.200, 0.300, 1.200, 1.100, 1.600, 1.700, 1.100 | 12.900 | 11.900, 1.000, 1.000, 0.700, 0.800, 0.600, 0.700, 0.500, 2.200, 0.700, 1.500, 0.500, 1.400, 0.400, 1.400, 0.500, 1.300, 0.500, 1.500, 0.500 |
+| type-nested-d5-f4-validate-burst | E/5 | 12.900, 1.700, 1.300, 1.500, 1.900, 5.200, 2.200, 2.200, 2.100 | 12.900 | 11.800, 1.000, 1.000, 0.800, 0.900, 0.700, 0.800, 1.300, 1.300, 0.800, 1.500, 0.500, 1.500, 0.500, 1.400, 0.500, 1.500, 0.600, 1.400, 0.600 |
+| type-nested-d5-f4-validate-burst | E/6 | 13.000, 1.600, 3.800, 1.400 | 13.000 | 12.000, 1.000, 0.900, 0.700, 0.800, 0.600, 0.700, 1.000, 1.800, 0.700, 1.800, 0.700, 1.700, 0.500, 1.600, 0.500, 1.400, 0.400, 1.600, 0.700 |
+| type-nested-d5-f4-validate-burst | E/7 | 12.700, 1.600, 2.100, 2.700, 2.200, 2.200, 0.200, 0.200 | 12.700 | 11.700, 1.000, 1.000, 0.700, 0.900, 0.600, 1.200, 0.800, 1.900, 0.600, 1.500, 0.500, 1.500, 0.500, 1.500, 0.300, 1.300, 0.600, 1.400, 0.500 |
+| type-nested-d5-f4-validate-burst | E/8 | 13.000, 1.500, 1.500, 2.000, 4.200, 2.600, 1.400, 1.100, 2.300, 1.200, 1.300, 2.200, 1.200 | 13.000 | 11.900, 1.000, 1.000, 0.700, 0.800, 1.300, 1.100, 0.800, 1.900, 0.600, 1.600, 0.600, 1.600, 0.500, 1.500, 0.500, 1.600, 0.500, 1.600, 0.500 |
+| type-nested-d5-f4-validate-burst | E/9 | 12.900, 1.700, 4.900, 1.500, 2.400, 1.200 | 12.900 | 11.900, 1.000, 0.900, 0.600, 0.600, 0.700, 0.800, 0.900, 3.800, 0.700, 1.500, 0.700, 1.600, 0.700, 1.500, 0.500, 1.500, 0.400, 1.500, 0.500 |
+| type-nested-d5-f4-validate-burst | F/0 | 4.900, 1.400, 1.500, 0.300, 5.200, 1.500, 1.200, 0.900 | 5.200 | 3.900, 0.800, 0.700, 0.500, 0.500, 0.600, 0.600, 0.700, 0.600, 0.500, 0.300, 0.400, 0.400, 0.500, 0.400, 0.400, 0.300, 0.400, 0.400, 0.400 |
+| type-nested-d5-f4-validate-burst | F/1 | 4.700, 1.400, 0.200, 1.700, 1.400, 1.200, 1.200, 1.200 | 4.700 | 3.800, 0.800, 0.700, 0.600, 0.400, 1.000, 0.600, 0.600, 0.400, 0.500, 0.400, 0.400, 0.300, 0.300, 0.400, 0.300, 0.400, 0.400, 0.400, 0.200 |
+| type-nested-d5-f4-validate-burst | F/2 | 1.500, 0.300, 1.200, 0.300, 1.100, 0.400, 0.200, 0.100, 1.000, 1.100, 0.200, 1.000, 0.100, 1.100 | 1.500 | 4.000, 0.800, 0.600, 0.500, 0.500, 0.500, 0.400, 1.000, 0.800, 0.500, 0.300, 0.400, 0.400, 0.400, 0.300, 0.300, 0.400, 0.300, 0.300, 0.400 |
+| type-nested-d5-f4-validate-burst | F/3 | 1.500, 0.300, 1.300, 0.300, 1.300, 1.800, 3.400, 1.500, 1.100, 0.900, 1.000, 1.000, 0.900, 1.000 | 3.400 | 4.000, 0.700, 0.600, 0.700, 0.600, 0.600, 0.600, 0.700, 0.700, 0.600, 0.400, 0.400, 0.400, 0.200, 0.400, 0.400, 0.300, 0.400, 0.400, 0.400 |
+| type-nested-d5-f4-validate-burst | F/4 | 0.400, 0.300, 1.300, 1.100, 1.200 | 1.300 | 3.800, 0.800, 0.600, 0.600, 0.600, 0.500, 1.200, 0.800, 0.600, 0.400, 0.400, 0.400, 0.400, 0.300, 0.300, 0.300, 0.400, 0.300, 0.200, 0.300 |
+| type-nested-d5-f4-validate-burst | F/5 | 4.900, 1.800, 1.300, 1.300, 1.000, 1.200, 0.600, 0.400, 1.100, 1.000, 0.200, 1.100, 0.200, 1.000 | 4.900 | 3.900, 0.900, 0.600, 0.600, 0.500, 0.500, 0.500, 1.000, 0.800, 0.500, 0.300, 0.400, 0.300, 0.400, 0.400, 0.400, 0.400, 0.300, 0.400, 0.300 |
+| type-nested-d5-f4-validate-burst | F/6 | 0.400, 0.300, 1.300, 1.300, 1.100, 2.300, 1.500, 1.100, 1.100, 1.000, 0.900, 1.000, 0.900, 1.300, 0.900, 0.900, 1.000, 1.000 | 2.300 | 3.800, 0.800, 0.500, 0.600, 0.500, 0.500, 0.600, 0.800, 0.600, 0.400, 0.400, 0.400, 0.400, 0.400, 0.400, 0.400, 0.400, 0.300, 0.400, 0.300 |
+| type-nested-d5-f4-validate-burst | F/7 | 0.300, 1.400, 1.700, 3.300, 1.200, 1.000, 0.900, 0.900, 1.000, 1.000, 1.100, 0.800, 0.900, 1.100 | 3.300 | 3.800, 0.900, 0.600, 0.600, 0.700, 0.600, 0.500, 1.100, 0.600, 0.600, 0.500, 0.400, 0.300, 0.400, 0.400, 0.300, 0.400, 0.300, 0.300, 0.400 |
+| type-nested-d5-f4-validate-burst | F/8 | 1.300, 1.300, 2.700, 1.600, 2.300, 1.300, 1.100, 1.000, 1.000, 1.100, 1.000, 0.900, 1.000, 0.900, 0.800, 1.000 | 2.700 | 3.900, 0.900, 0.600, 0.600, 0.500, 0.600, 1.900, 0.700, 0.700, 0.600, 0.400, 0.500, 0.400, 0.400, 0.400, 0.300, 0.400, 0.400, 0.300, 0.400 |
+| type-nested-d5-f4-validate-burst | F/9 | 1.500, 1.200, 1.800, 1.600, 3.000, 1.200, 0.900, 1.100, 0.800, 0.800, 1.300, 1.000, 0.900, 0.900, 0.900, 0.900 | 3.000 | 3.800, 0.800, 0.700, 0.500, 0.500, 0.500, 0.700, 0.800, 0.600, 0.500, 0.300, 0.400, 0.300, 0.300, 0.400, 0.300, 0.400, 0.300, 0.300, 0.400 |
+| type-flat-2000-validate-burst | L/0 | 5.100, 2.900, 3.100, 3.300, 3.000, 2.800, 3.100, 2.800, 0.000, 2.800 | 5.100 | 3.600, 2.000, 1.700, 1.900, 1.900, 1.900, 1.800, 1.800, 1.800, 1.900, 1.800, 1.800, 1.800, 1.700, 1.900, 1.800, 1.700, 1.700, 1.600, 1.600 |
+| type-flat-2000-validate-burst | L/1 | 5.200, 3.100, 3.200, 3.000, 3.100, 2.800, 2.900, 2.900 | 5.200 | 3.700, 2.000, 2.000, 1.900, 1.800, 1.800, 1.800, 1.900, 1.900, 1.700, 1.900, 1.700, 1.700, 1.600, 1.700, 1.700, 1.700, 1.700, 1.600, 1.700 |
+| type-flat-2000-validate-burst | L/2 | 0.500, 0.400, 3.200, 3.100, 3.200, 3.500, 0.400, 3.100, 3.400, 3.000 | 3.500 | 3.600, 2.000, 1.900, 1.800, 1.700, 2.000, 1.800, 1.700, 2.000, 1.700, 1.800, 2.000, 1.900, 1.800, 1.900, 1.900, 1.600, 1.800, 1.800, 1.700 |
+| type-flat-2000-validate-burst | L/3 | 0.500, 3.100, 3.000, 2.900, 3.100, 3.100, 2.800, 3.100, 2.800, 2.900 | 3.100 | 3.700, 2.100, 1.800, 1.800, 1.800, 2.000, 1.900, 1.800, 1.800, 1.800, 1.800, 1.800, 1.700, 1.900, 1.700, 1.800, 1.700, 1.700, 1.900, 1.800 |
+| type-flat-2000-validate-burst | L/4 | 0.500, 3.100, 3.300, 3.000, 3.000, 3.100, 2.800, 3.200, 3.200, 3.500, 2.700 | 3.500 | 3.800, 2.000, 1.900, 1.700, 2.200, 1.900, 1.900, 1.900, 1.800, 1.800, 1.800, 1.900, 1.700, 1.600, 1.900, 1.800, 1.700, 1.500, 1.700, 1.600 |
+| type-flat-2000-validate-burst | L/5 | 5.500, 0.400, 3.100, 2.900, 3.400, 3.200, 0.400, 3.200, 0.400, 2.900, 3.500, 2.800 | 5.500 | 4.100, 2.000, 1.800, 1.900, 1.800, 1.800, 2.000, 1.900, 1.800, 1.700, 2.000, 1.800, 1.800, 1.800, 1.700, 1.700, 1.800, 1.700, 1.500, 1.600 |
+| type-flat-2000-validate-burst | L/6 | 0.600, 0.400, 3.100, 0.400, 3.200, 3.000, 3.000, 2.900, 2.700, 0.100, 2.800, 2.700, 2.800 | 3.200 | 3.700, 2.300, 1.900, 1.700, 1.900, 1.900, 1.800, 1.800, 2.000, 1.800, 1.800, 1.800, 1.600, 1.700, 1.500, 1.800, 1.700, 1.600, 1.600, 1.500 |
+| type-flat-2000-validate-burst | L/7 | 0.400, 0.400, 3.300, 3.100, 2.900, 2.800, 3.400, 2.800 | 3.400 | 3.600, 1.900, 1.800, 1.900, 1.800, 2.100, 1.800, 1.800, 1.900, 1.900, 1.700, 1.700, 1.800, 1.700, 1.700, 1.600, 1.800, 1.900, 1.600, 1.600 |
+| type-flat-2000-validate-burst | L/8 | 0.500, 0.300, 3.100, 0.400, 3.200, 3.000, 3.100, 2.700, 0.000, 3.000 | 3.200 | 3.600, 2.100, 1.900, 1.800, 1.800, 1.800, 1.900, 1.800, 1.900, 1.800, 1.800, 1.800, 1.800, 1.600, 1.600, 1.600, 1.800, 1.800, 1.700, 1.700 |
+| type-flat-2000-validate-burst | L/9 | 5.700, 3.500, 3.600, 3.400, 3.400, 3.400, 3.300, 3.700, 3.300, 3.700, 3.300, 3.400, 3.200, 3.100, 3.000, 3.000, 3.100, 3.200 | 5.700 | 4.000, 2.100, 1.900, 2.100, 1.900, 2.000, 1.800, 1.900, 2.200, 1.800, 2.200, 1.900, 2.000, 1.900, 1.900, 1.900, 1.700, 1.800, 1.900, 1.800 |
+| type-flat-2000-validate-burst | E/0 | 6.100, 3.100, 3.100, 3.200, 2.800, 4.100, 2.600, 2.700, 3.800, 2.700 | 6.100 | 4.800, 2.100, 1.900, 1.900, 1.700, 1.900, 1.500, 1.800, 1.600, 2.800, 1.500, 2.600, 1.500, 2.700, 1.500, 2.600, 1.400, 2.600, 1.300, 2.600 |
+| type-flat-2000-validate-burst | E/1 | 3.100, 2.800, 3.100, 2.900, 3.900, 2.500, 3.500, 2.500, 3.700 | 3.900 | 4.900, 2.000, 1.800, 2.000, 1.700, 1.900, 1.500, 1.800, 1.700, 2.700, 1.400, 2.800, 1.300, 2.500, 1.400, 2.500, 1.400, 2.700, 1.400, 2.700 |
+| type-flat-2000-validate-burst | E/2 | 6.100, 3.000, 2.800, 3.200, 2.900, 3.900, 3.100, 4.000, 2.400, 4.100, 2.900, 4.200, 2.900, 3.900, 2.800, 3.800 | 6.100 | 4.800, 2.100, 1.900, 1.800, 1.800, 1.800, 1.700, 2.000, 1.700, 2.900, 1.700, 2.800, 1.500, 2.800, 1.500, 2.900, 1.500, 2.600, 1.500, 2.800 |
+| type-flat-2000-validate-burst | E/3 | 6.300, 3.500, 2.800, 2.700, 4.000, 3.800, 2.700, 3.900, 2.300, 2.700, 4.000 | 6.300 | 5.000, 2.200, 1.800, 2.000, 1.800, 1.900, 1.600, 1.700, 1.500, 2.700, 1.600, 2.700, 1.500, 2.600, 1.500, 2.600, 1.300, 2.600, 1.500, 2.900 |
+| type-flat-2000-validate-burst | E/4 | 3.200, 0.400, 3.000, 3.100, 3.000, 3.100, 2.500, 2.600, 2.600, 3.500, 2.600, 3.600 | 3.600 | 4.800, 1.900, 1.900, 1.900, 1.800, 1.800, 1.500, 1.800, 1.800, 2.700, 1.400, 2.600, 1.400, 2.700, 1.500, 2.500, 1.400, 2.600, 1.400, 2.600 |
+| type-flat-2000-validate-burst | E/5 | 3.100, 0.400, 3.000, 3.000, 2.800, 2.700, 3.900, 2.800, 2.700, 3.600, 2.500, 3.800 | 3.900 | 4.700, 2.000, 1.900, 2.000, 1.800, 1.800, 1.600, 1.600, 1.600, 2.800, 1.600, 2.800, 1.500, 2.600, 1.500, 2.800, 1.400, 2.600, 1.400, 2.700 |
+| type-flat-2000-validate-burst | E/6 | 3.200, 2.900, 3.100, 2.700, 2.800, 4.100, 4.100, 2.900, 2.500, 3.500, 2.500, 3.700 | 4.100 | 5.000, 2.000, 1.900, 2.000, 1.700, 1.800, 1.500, 1.700, 1.600, 2.900, 1.400, 2.800, 1.500, 2.700, 1.500, 2.600, 1.300, 2.500, 1.300, 2.500 |
+| type-flat-2000-validate-burst | E/7 | 6.100, 2.900, 2.700, 2.900, 2.600, 4.000, 2.600, 3.600, 2.500 | 6.100 | 4.700, 2.000, 1.900, 2.000, 1.800, 1.700, 1.600, 1.700, 1.800, 2.700, 1.500, 2.800, 1.400, 2.700, 1.500, 2.600, 1.400, 2.600, 1.500, 2.600 |
+| type-flat-2000-validate-burst | E/8 | 3.100, 0.500, 3.200, 2.500, 3.000, 3.900, 3.100, 2.800, 3.700 | 3.900 | 4.900, 2.000, 1.900, 1.900, 1.700, 1.900, 1.500, 1.800, 1.700, 2.800, 1.500, 2.800, 1.500, 2.800, 1.600, 2.600, 1.400, 2.500, 1.500, 2.600 |
+| type-flat-2000-validate-burst | E/9 | 6.300, 3.300, 3.200, 3.100, 3.100, 4.000, 2.600, 3.800, 2.200, 3.600, 2.500, 3.800 | 6.300 | 4.800, 2.100, 2.100, 1.900, 1.900, 1.900, 1.600, 1.700, 1.600, 2.700, 1.500, 2.800, 1.400, 2.800, 1.600, 2.700, 1.300, 2.500, 1.400, 2.800 |
+| type-flat-2000-validate-burst | F/0 | 0.500, 0.500, 0.400, 0.500, 0.400, 0.700, 0.300, 0.400, 0.400, 0.500, 0.400, 0.300, 0.400, 0.000, 0.000, 2.200 | 2.200 | 4.100, 1.300, 1.400, 1.200, 1.200, 1.200, 1.200, 1.100, 1.100, 1.100, 0.900, 1.000, 1.000, 0.900, 1.000, 0.900, 0.900, 0.900, 1.000, 0.800 |
+| type-flat-2000-validate-burst | F/1 | 5.700, 2.400, 2.400, 2.500, 2.400, 0.400, 2.200, 0.300, 0.400, 2.300, 2.400, 2.200, 0.000, 0.000 | 5.700 | 4.200, 1.200, 1.200, 1.200, 1.200, 1.300, 1.100, 1.000, 1.200, 1.100, 1.100, 1.000, 1.000, 0.900, 0.900, 0.900, 0.900, 0.800, 0.900, 1.000 |
+| type-flat-2000-validate-burst | F/2 | 6.000, 0.400, 2.500, 2.400, 2.300, 2.300, 0.500, 2.200, 0.400, 0.400, 0.400, 0.400, 0.000, 2.300, 2.400, 2.200 | 6.000 | 4.400, 1.400, 1.300, 1.300, 1.300, 1.300, 1.100, 1.300, 1.000, 1.000, 1.000, 1.000, 1.100, 1.000, 1.000, 0.900, 0.900, 0.900, 1.000, 1.100 |
+| type-flat-2000-validate-burst | F/3 | 5.600, 2.400, 0.500, 0.400, 2.400, 2.200, 2.300, 2.300, 2.400, 2.400, 2.200, 2.100, 2.200, 2.200, 2.100, 2.200, 2.200, 2.100, 2.200, 2.000 | 2.400 | 4.200, 1.200, 1.100, 1.200, 1.300, 1.200, 1.100, 1.200, 1.100, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 1.000, 1.100, 1.000, 0.900, 0.900 |
+| type-flat-2000-validate-burst | F/4 | 2.400, 2.400, 0.600, 0.400, 2.500, 2.200, 0.400, 0.400, 0.500, 2.200, 0.400, 0.500, 2.500, 2.000, 1.900, 2.100, 0.000 | 2.500 | 4.300, 1.200, 1.200, 1.200, 1.300, 1.300, 1.200, 1.200, 1.200, 1.100, 1.100, 1.000, 0.900, 1.000, 0.900, 1.000, 1.000, 0.900, 0.900, 0.900 |
+| type-flat-2000-validate-burst | F/5 | 5.600, 2.600, 2.300, 2.300, 2.500, 2.200, 2.500, 2.800, 2.400, 2.400, 2.200, 2.500, 2.300, 2.200, 2.200, 2.000, 1.900, 2.200, 2.000 | 5.600 | 4.200, 1.400, 1.200, 1.200, 1.200, 1.100, 1.100, 1.100, 1.200, 1.100, 1.100, 1.000, 1.100, 1.000, 1.100, 0.900, 0.800, 1.000, 0.900, 1.000 |
+| type-flat-2000-validate-burst | F/6 | 5.700, 2.400, 2.300, 0.400, 2.300, 0.500, 0.400, 0.500, 0.400, 0.400, 0.300, 0.400, 2.200, 2.100, 2.000 | 5.700 | 4.200, 1.300, 1.200, 1.200, 1.100, 1.200, 1.200, 1.100, 1.200, 1.000, 1.100, 1.000, 1.100, 0.900, 1.000, 0.900, 0.900, 0.900, 0.900, 0.900 |
+| type-flat-2000-validate-burst | F/7 | 5.500, 2.300, 2.300, 2.400, 2.300, 2.500, 2.300, 2.500, 2.300, 2.300, 2.300, 2.100, 2.200, 2.200, 2.100, 2.000, 2.200, 2.000, 2.200, 2.200 | 2.500 | 4.100, 1.300, 1.300, 1.300, 1.200, 1.200, 1.300, 1.100, 1.100, 1.200, 1.100, 1.000, 1.000, 1.000, 0.900, 0.900, 1.100, 1.000, 0.900, 1.000 |
+| type-flat-2000-validate-burst | F/8 | 0.500, 0.400, 0.600, 2.700, 2.500, 2.500, 0.600, 2.600, 2.300, 2.400, 2.100, 2.100, 0.300, 0.000, 0.000, 0.000, 2.000 | 2.700 | 4.000, 1.300, 1.300, 1.200, 1.200, 1.300, 1.200, 1.200, 1.300, 1.200, 1.100, 0.900, 1.100, 0.900, 1.000, 1.000, 1.100, 0.900, 0.900, 0.900 |
+| type-flat-2000-validate-burst | F/9 | 2.500, 0.500, 0.400, 0.500, 0.400, 0.500, 0.500, 0.400, 0.400, 0.400, 2.200, 0.400, 0.500, 0.100, 0.100, 0.100, 2.200, 2.000 | 2.500 | 4.200, 1.200, 1.300, 1.300, 1.200, 1.200, 1.200, 1.200, 1.100, 1.100, 1.100, 1.100, 1.000, 1.100, 1.000, 0.900, 1.000, 0.900, 1.000, 1.000 |
+
+</details>
+<!-- IR6_DIAG_TABLES_END -->
+
+재현 명령은 `node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/browser/diagnosis/tools/checkDiagnosis.mjs`입니다. 원시 hash·최종 profile 집계·bootstrap 진단·모든 표를 재생하며 browser나 새 성능 창을 시작하지 않습니다. 정식 원시와 MAIN_TABLES 블록은394e8898f와 동일합니다.
+
+판정: 진단 전용 자료 작성, 정식 G2·G8 실패 유지 — 개선 설계·검토 디스패치 대기
