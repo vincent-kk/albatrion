@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
 const round = process.argv[2];
-assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4' || round === '--round=5' || round === '--round=5b');
+assert.ok(round === undefined || round === '--round=2' || round === '--round=3' || round === '--round=4' || round === '--round=5' || round === '--round=5b' || round === '--round=5c');
 const root = new URL(round ? `./round-${round.slice('--round='.length)}/` : './', import.meta.url);
 const packageRoot = new URL('../../../../../../', import.meta.url);
 const report = JSON.parse(fs.readFileSync(new URL('code-gates.json', root)));
@@ -44,7 +44,7 @@ for (const inspection of Object.values(fca.inspections)) {
   assert.deepEqual(inspection.findings, { added: [], removed: [] });
 }
 
-if (round === '--round=5' || round === '--round=5b') {
+if (round === '--round=5' || round === '--round=5b' || round === '--round=5c') {
   const comments = JSON.parse(fs.readFileSync(new URL('public-comments.json', root)));
   const expectedFiles = [
     'components/Form/components/FormCore/types/handle.d.ts',
@@ -61,7 +61,7 @@ if (round === '--round=5' || round === '--round=5b') {
   assert.equal(report.layoutEffectCost.arrayItemMount, 2);
   assert.equal(report.layoutEffectCost.unchangedVisibilityOrdinaryInputWrite, 0);
 }
-if (round === '--round=5b') {
+if (round === '--round=5b' || round === '--round=5c') {
   const parity = JSON.parse(fs.readFileSync(new URL('public-document-parity.json', root)));
   assert.equal(parity.allTrue, true);
   for (const checks of Object.values(parity.sixDocumentChecks))
@@ -71,5 +71,19 @@ if (round === '--round=5b') {
   assert.equal(targets.selectedFailed, 1);
   assert.equal(targets.restored, true);
   assert.equal(report.gates.lint.warnings, 0);
+}
+if (round === '--round=5c') {
+  const snapshots = JSON.parse(fs.readFileSync(new URL('candidate-snapshot-controls.json', root)));
+  assert.equal(snapshots.approval, 'msg_12043ec1b07c');
+  assert.equal(snapshots.approvalPending, false);
+  assert.equal(snapshots.finalApplied, true);
+  assert.equal(snapshots.originalFullRender.failed, 2);
+  assert.deepEqual(snapshots.probe, { passed: 2, failed: 0 });
+  const supplements = JSON.parse(fs.readFileSync(new URL('supplement-parity.json', root)));
+  assert.equal(Object.keys(supplements).length, 10);
+  for (const entry of Object.values(supplements)) {
+    assert.equal(entry.mergedPrefixUnchanged, true);
+    assert.equal(entry.restoredStillTrueLines.length, 2);
+  }
 }
 console.log('IR6_CODE_GATES_OK captured-results; performance-review-and-measurement-pending');

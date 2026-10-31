@@ -347,3 +347,30 @@ msg_d101f539b310 승인에 따라 React18 createRoot/hydrateRoot equality는0624
 9c의 정확 getter를 적용한 첫 전체 render는876통과/2실패였습니다. no-validator와 compile-failure external reveal이 최초 candidate version0→release 후 noncandidate0으로 같은 snapshot을 읽습니다. 후보 snapshot+1만 넣은 대조에서 같은 두 시험이 통과했고 probe는 원복했습니다. 엔진 version0 계약을 유지하면서 candidate/noncandidate 영역을 분리할 승인을 코디네이터에게 질문했습니다. 해당 원시·복원 해시는 candidate-snapshot-controls에 보존합니다.
 
 msg_12043ec1b07c가 후보 snapshot의 version+1·비후보0을 승인했습니다. React는 hook snapshot이 마지막 render와 달라야 강제 재렌더를 수락하므로 최초 candidate0이 release 뒤 비후보0과 같으면 재렌더가 버려져 숨은 표시가 남습니다. disjoint 범위는 모든 candidate 종료를 snapshot 변경으로 만듭니다. 회귀는 `IR-6 no validator releases external errors revealed by showError after a write`와 `IR-6 compile failure releases a newly revealed external error`이며 정확9c getter에서 실패했습니다. 엔진 reader의 첫 release 전0은 그대로입니다. 계약 먼저 갱신하고 전체 관문을 재시작합니다.
+
+정적 관문에서 타입검사 종료를 확인하기 전에 build를 시작한 실행은 예비 실행으로 분류했습니다(둘 다exit0). 최종 증거는 typecheck 종료를 확인한 뒤 build를 시작하는 순차 실행으로 다시 고정합니다. 제품 소스 해시는 바뀌지 않았습니다.
+
+### 5c 최종 코드 관문
+
+계약3fe0a3e5c·564a0ac00이 제품977d5c5e893065259ba4aa1138cdb37a41ff2b1b보다 앞섭니다.
+
+| 관문 | 파일 | 통과 | 실패 | 비고 |
+| --- | ---: | ---: | ---: | --- |
+| unit | 619 | 4,089 | 0 | 기존 todo1 |
+| render | 153 | 878 | 0 | React19 legacy2개 skip |
+| react18 | 153 | 878 | 0 | Activity2개 skip |
+| verify | 777 | 5,011 | 0 | 기존 todo1·legacy2개 skip, 다른 관문과 중복 |
+| storybook | 101 | 254 | 0 | 실제 Chromium |
+| production | 10 | 21 | 0 | 최종 build 뒤 재실행 |
+
+같은 최종152개 소스 해시에서 지정 시험·정적 관문을 순차 실행했습니다. lint·typecheck·build exit0, lint 경고0입니다. 예비 static 중첩은 최종 증거로 쓰지 않고 typecheck 종료→build의 최종 쌍을 다시 순차 실행했습니다. build 결과 dist·agents-hashes는 source commit에서 제외했습니다. [5c 코드 관문](raw/ir-6/code/round-5c/code-gates.json)은 source·bundle 해시, 포착한 결과와 [후보 snapshot 대조](raw/ir-6/code/round-5c/candidate-snapshot-controls.json), [열 보충 문서 parity](raw/ir-6/code/round-5c/supplement-parity.json)를 결합합니다. `node packages/canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/code/check-code-gates.mjs --round=5c`가 이 기록을 대조하며 시험이나 성능을 재실행하지 않습니다.
+
+[수정 전 재현](raw/ir-6/code/round-5c/failure-observation.json)은 정확0624741a0에서 React19 createRoot와 hydrateRoot 각각44 대24의 실패, React18 legacy root의 reentrant layout 뒤 previous verdict 표시 실패, 기존 pending 단위 시험의3 대2 release 실패를 보존합니다. React18 mount equality2개와 Dirty/resetInteraction ErrorVisible toggle 유무2개는 기준에서도 통과한 특성 검사입니다. 정확9c getter가 만든 최초 snapshot0 충돌의 기존 external reveal 두 실패는 승인된 offset 대조와 구분하고 원복·최종 보정 해시를 함께 남깁니다. 5b의 batch/walk entries-shape 실패는 사용자 동작 결함 재현으로 세지 않습니다.
+
+평가 공개 선언은97개 루트·55파일·917서명에서 의미 차이0, index.d.ts 바이트 차이0, whole-runtime·변경 내부 멤버·unresolved 노출0입니다. scratch diagnostics 타입 변이 양성 대조+1/-9·exit1, 복원0·exit0입니다. 보수적 내부 tracer+150/-2와 승인된 public JSDoc5파일·8멤버14개 추가/제거 쌍은 별도로 보존합니다. [평가](raw/ir-6/code/round-5c/evaluated-public-declarations.json.gz), [양성 대조](raw/ir-6/code/round-5c/declaration-controls.json), [주석 대조](raw/ir-6/code/round-5c/public-comments.json)를 함께 보며 공개 주석 차이0이라고 주장하지 않습니다.
+
+FCA snapshot f85dd77d0a4c08f286d6eb1404986aa886098d78463549fad8ad944bdb89cb65에서 scan·6범위 validate·verification을 수행했습니다. facts1750 exact, missing·needsResolution·uncertain·toolError·unadjudicated0, unsupported175입니다. 마디386(organ305·fractal81), scan201·validate202·verification21·진단177이며 [새 finding·진단은0](raw/ir-6/code/round-5c/fca-diff.json)입니다. 절대 indeterminate·기존 실패12·skipped1을 유지합니다. 기존 네 동적 표 선언의 줄 이동만 정규화했고 해당 소스가5b와 같은 해시임을 확인했습니다. Scan complete: 기존202개 구조 finding과21개 검증 finding 유지, 신규0개입니다.
+
+최종 원장은 ref1416항목·문제0, verbatim327조각·불일치0, sup3584인용·불일치0·unparsed0입니다. doc-coverage25문서·1144항목·무태그0·기존 uncited66/문제66입니다. [원장](raw/ir-6/code/round-5c/ledger-checks.json), [병합 prefix·owner quotes9–30+18b·public index·version 보존](raw/ir-6/code/round-5c/history-and-quotes.json), [재사용 원시의 입력 해시](raw/ir-6/code/round-5c/reused-evidence-inputs.json)를 보존합니다. 새 변경 whitespace0, 기존 원문27–30 trailing space 다섯 줄 보존, 포착 원시의 머신 절대 경로0입니다.
+
+판정: 5c 코드 관문 통과, 독립 검토 대기입니다. 다섯 H 한계와 hidden same-schema reset의 chain-end 전달 미결은 유지합니다. 성능 G1–G6·G8 및 L·E·F는 미측정·표본0이며 `code accepted; window clear` 전에는 측정하지 않습니다. worker_done은 보내지 않았습니다.

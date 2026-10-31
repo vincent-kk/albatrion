@@ -1,0 +1,58 @@
+{
+  "sixDocumentChecks": {
+    "README.md": {
+      "macrotaskFallback": true,
+      "stalledFrame100ms": true,
+      "ifRenderCompilation": true,
+      "alwaysDefinition": true,
+      "handlerIsolation": true,
+      "releaseRule": true
+    },
+    "docs/en/SPECIFICATION.md": {
+      "macrotaskFallback": true,
+      "stalledFrame100ms": true,
+      "ifRenderCompilation": true,
+      "alwaysDefinition": true,
+      "handlerIsolation": true,
+      "releaseRule": true
+    },
+    "docs/ko/SPECIFICATION.md": {
+      "macrotaskFallback": true,
+      "stalledFrame100ms": true,
+      "ifRenderCompilation": true,
+      "alwaysDefinition": true,
+      "handlerIsolation": true,
+      "releaseRule": true
+    },
+    "docs/QUICK_REFERENCE.md": {
+      "macrotaskFallback": true,
+      "stalledFrame100ms": true,
+      "ifRenderCompilation": true,
+      "alwaysDefinition": true,
+      "handlerIsolation": true,
+      "releaseRule": true
+    },
+    "docs/agents/skills/schema-form-skill/knowledge/validation-and-state.md": {
+      "macrotaskFallback": true,
+      "stalledFrame100ms": true,
+      "ifRenderCompilation": true,
+      "alwaysDefinition": true,
+      "handlerIsolation": true,
+      "releaseRule": true
+    },
+    "docs/agents/skills/schema-form-skill/knowledge/arrays-and-scale.md": {
+      "macrotaskFallback": true,
+      "stalledFrame100ms": true,
+      "ifRenderCompilation": true,
+      "alwaysDefinition": true,
+      "handlerIsolation": true,
+      "releaseRule": true
+    }
+  },
+  "allTrue": true,
+  "removedBindingNamesAbsentFromSourceAndStories": true,
+  "obsoleteRuleStatementsAbsent": true,
+  "verificationBridgeApproval": "msg_29959ddbd70f",
+  "reusedFrom": "round-5b/public-document-parity.json",
+  "reuseBasis": "The selected public document inputs, two-target source and mutant control, four dynamic table locations, and authorized quote trailing spaces are unchanged from round5b. Final source hash controls verify these inputs."
+}
