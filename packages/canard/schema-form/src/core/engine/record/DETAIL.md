@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- W3의 선택적 validationPendingEntryStamp는 이벤트 전 pending 기록의 사슬 stamp이며 실제 요청·무요청 종료·폐기에서 지운다. 노드 고정 칸이나 timing 상태가 아니다.
+- X3/W3의 선택적 validationPendingEntryStamp는 pending을 false에서 true로 만든 사슬만 얻는 stamp이며 이미 pending인 사슬은 얻지 않는다. 이 marker는 실제 요청·무요청 종료·폐기에서 지운다. 노드 고정 칸이나 timing 상태가 아니다.
 
 
 - B12 인스턴스별 `inactiveListeners`는 선택적 Map(node → Set)으로 보유하며 재진입 복제에 넘기지 않습니다. 선택적 `resolvingInactiveValue` 표시는 동기 resolver 실행 동안만 참이며 노드 고정 칸을 추가하지 않습니다.
@@ -40,6 +40,8 @@
 - 고정 필드 집합은 모든 종류에 동일하다. 생성자는 선언 순서대로 필드에 대입하고 생성자·필드 초기화식에 노드별 객체·배열·함수 할당을 두지 않는다(NODE-004·010).
 
 ## API Contracts
+
+- Y2: recordFieldNodeRevealBaseline은 OnChange일 때 아직 기준이 없는 노드에 interactionState 참조와 active&&visible을 저장하고 runtime set에 넣는다. captureFieldNodeChange의 interactionState/active/visible 변경, patchFieldNodeInteractionState의 참조 변경, clearSubtreeState의 직접 비움 전에 호출한다. pending=false에서 기록하면 revealDropOwed와 단조 generation만 기록한다. record는 scheduling·validation을 import하거나 실행하지 않는다. 노드 기준은 선택적 자료이며 생성자의 고정 필드 순서는 바꾸지 않는다.
 
 - U2의 선택적 validationPending과 런타임별 validationSettleListeners는 내부 표시 보류 계약이다. write request만 pending을 시작하고 도메인이 현재 판정 종료·실패·무효화에서 정착시킨다. 공개 사건과 노드 고정 칸은 유지한다. validationRun은 검증 시작 여부의 boolean을 반환하며 timing은 그 값만 본다.
 

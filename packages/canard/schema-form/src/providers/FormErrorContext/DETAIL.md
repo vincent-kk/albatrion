@@ -6,6 +6,8 @@ ERROR-026과 ERROR-110–117은 루트 경계 바깥에 인스턴스 단위 보�
 
 ## API Contracts
 
+- R-g: 현재 form-level load마다 별도 private warning scope를 소유한다. 이전 load에서 옮겨 온 기록은 원래 scope에서 dedup하며 현재 load와 합치지 않는다. scope는 buffered records가 보유하는 동안만 유지하고 공개 FormErrorRecord 모양·sink·오류 identity dedup은 바꾸지 않는다(ERROR-204).
+
 이 Context는 최신 소비자, 객체 동일성 기준 중복 제거, 로드별 경고 중복 제거, 전달 가드, componentStack만 담은 경계 콜백을 제공한다. Provider는 자식 경계가 커밋되기 전에, StrictMode의 첫 렌더에서도, 자신이 선택한 로드 루트를 묶는다. 추측성 생성은 관찰자 루트를 선택하지 않는다. 버퍼에 쌓인 onError 콜백과 경계의 onError 콜백은 코어 관찰자 범위에 들어가며, 던져진 경우에도 직전 상태를 복원한다. 새 로드는 경고 키를 비우고 필드 읽기 감지기가 비교하는 로드 번호를 올리지만, StrictMode 정리는 둘 다 하지 않는다. 코어 기록은 원래의 detail 참조를 그대로 유지한다.
 
 필드 보고 훅은 path를 인자로 받고 렌더 때 현재 보고기를 읽는다. undefined는 루트 경계이며 pendingLoad 처리도 유지한다. 경로 문맥은 DeferredFieldProxy의 Placeholder만 사용하고 전용 훅이 이를 명시적 path 보고 훅에 연결한다(ERROR-044·114, 121C-01). 필드마다 문맥 구독과 Provider를 보유하지 않으며 콜백은 보고기와 path가 같으면 같은 참조이다.

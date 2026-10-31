@@ -6,16 +6,17 @@
 
 ## API Contracts
 
+- R-f/R-g: hidden load를 reset으로 교체하면 reset 사슬 끝에 이전 load의 buffered records를 먼저, 새 load의 reset records를 다음으로 전달한다. reconnect까지 새 reset 기록을 보류하지 않는다(ERROR-019 item2). 원래 root와 form-level load identity를 보존하여 warning dedup은 각 원래 load 안에서 수행하고 한 load의 기록이 다른 load를 억제하지 않는다(ERROR-204). onError는 hidden layout cleanup에서도 유지하는 FormErrorService를 사용한다.
+
 - W4: 마운트 helper는 engine이 이미 보고했거나 hidden buffer에 넣은 검증 실패를 capture하지 않는다. MultipleErrors bundle의 첫 검증 실패를 제외한 consumer 실패만 reportErrorToHost에 한 번 보내며 나머지 거부는 격리한다.
 - W5: buffered record의 원래 root를 reporter.root에 보존하고 현재 load.root에도 observeFieldNodeReports guard를 적용해 onError가 현행 폼에 쓸 수 없게 한다.
 - W9: Always 값은 render에서 읽되 별도의 앞선 layout effect가 ref를 갱신한다. connect effect는 이 ref를 읽고 Always를 dependency에 두지 않아 표시 정책 변경이 disconnect/reconnect를 일으키지 않는다.
-- W6 수용 한계: 숨김 중 교체된 두 load의 동일 경고는 현재 load의 reporter warning dedup으로 한 번만 전달된다. 기록 수명별 경고 색인을 새로 만들지 않는 범위 결정이다.
 - W7 수용 한계: Always에서 root input이 자신의 mount layout effect로 validate를 호출하면 provider도 같은 commit을 검증해 최초 실행이 한 번 늘어난다. inline Always 판정과 자식 쓰기 우선 처리를 보존한다.
 - W8 수용 한계: 조상의 mount layout 쓰기가 Always inline 판정 뒤에 실행되면 그 판정이 stamp로 폐기되어 첫 판정은 한 프레임 늦어진다. React 자식→부모 layout 순서를 바꾸지 않고 쓰기 cadence가 최신 값을 판정한다.
 
 - U3: render의 useFieldRendererContext().checkShowError()를 layout effect가 캡처하여 Always 여부를 결정한다. 최초 OnChange 마운트가 Always이면 쓰기 요청 여부와 관계없이 root.validate를 layout에서 바로 시작하여 queued write를 stamp로 무효화하고 현재 pending을 정착시킨다. 동기 검증은 첫 프레임에 오류를 표시한다. 다른 모드는 일회성 화면 뒤 슬롯을 유지한다. inline·deferred는 같은 engine 보고 격리를 사용하며 Always의 최초 compile 실패는 rejected 한 번이다.
 - V6: reconnect의 모든 buffered record는 각자 try/catch하여 onError 실패를 reportErrorToHost로 보내고 다음 기록·owed 재예약을 계속한다.
-- V7: !ready load를 rebuild 또는 루트 교체 reset으로 대체하면 옛 records를 새 load의 기록 앞에 옮기며 각 기록의 원래 root를 보관한다. 전달 시 그 root를 reporter.root로 먼저 설정하고 원래 순서로 한 번 전달한다. 숨김 동안에는 새 load에서도 보류하고, flushRootLoad의 첫 commit reported 가드는 유지한다.
+- V7: !ready load를 rebuild 또는 루트 교체 reset으로 대체하면 옛 records를 새 load의 기록 앞에 옮기며 각 기록의 원래 root를 보관한다. 전달 시 그 root를 reporter.root로 먼저 설정하고 원래 순서로 한 번 전달한다. hidden 교체 reset 끝에는 이전·새 기록 순서로 전달하며, flushRootLoad의 첫 commit reported 가드는 유지한다.
 
 - Always 이외 OnChange 최초 마운트 검증은 준비 layout effect가 다음 화면 뒤 슬롯에 예약한다. if 게이트가 없는 스키마의 전체 컴파일과 첫 검증도 그 슬롯에서 수행하며, if 게이트의 렌더 중 컴파일은 유지한다. 명시적 validate와 제출의 즉시 실행은 유지한다(IR-6).
 - 예약 슬롯에서 `store.load !== load`이면 교체된 이전 로드를 검증하지 않는다. 실행 시점의 `load.root`가 없으면 종료한다. load.ready가 거짓이면 선택적 `mountValidationOwed`를 세우고, 같은 load의 다음 layout effect가 먼저 false로 소비한 뒤 한 슬롯만 다시 예약한다. 오직 !ready인 슬롯만 true로 쓰므로 한 load의 마운트 슬롯은 최대 하나이다. cleanup은 슬롯을 취소하지 않으며 StrictMode 재실행은 중복 예약하지 않는다. 실제 unmount 뒤에는 owed를 소비하지 않는다(IR-6).
@@ -49,3 +50,5 @@
 ## Last Updated
 
 2026-10-13
+
+- R-h: child layout 쓰기가 mount보다 먼저 compile 실패를 처리하여 rejected 대신 sink가 되는 것은 D1(Q12)의 시간 분리와 변경 없는 ERROR-019 items3·5를 따른다. 별도의 소유자 수용 예외가 아니다.

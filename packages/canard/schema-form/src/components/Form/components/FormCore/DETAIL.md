@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- Y2: handle.showError는 setShowError 전에 현재 showError state를 바인딩 전용 engine 연산으로 기록한다. closure는 showError state가 dependency에 있어 stale하지 않으며 undefined도 box로 남긴다. baseline은 engine이 소유하고 React는 별도 기억하지 않는다. explicit validate와 submit은 호출 때 캡처한 snapshot 계약을 유지한다(Q24).
+
 - SURFACE-063: FormHandle.rebuild(option?) delegates to the current root binding, invalidates its schema cache entry and forces tree replacement through reset semantics. Other forms retain their existing roots until their own rebuild; ordinary reset stays unchanged. The package export names do not change.
 
 - `FormCore`(`FormCore.tsx`)는 오류 경계를 입힌 바깥쪽 컴포넌트입니다. `memo(forwardRef)`로 `FormErrorContextProvider`에 `onError`를 넘기고, 그 안에서 `withErrorBoundaryForwardRef(forwardRef(FormRoot), undefined, useBoundaryReporter)`를 렌더합니다. 경계가 보고기 안쪽에 있으므로 루트 fallback이 표시된 뒤에도 보고는 계속 동작합니다. 공개 형은 `Schema`·`Value` 제네릭 시그니처로 단언합니다(ERROR-026·110–117).

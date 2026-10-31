@@ -135,3 +135,23 @@ D1 구현 여부·virtualization 기본 off·IR-5 수정의 최종 수락은 **�
 19. (after the coordinator's UX evaluation: false stale-error flash when the display condition turns on in the same keystroke, mount pop-in with showError true, and the 500 ms cap being above the 100 ms perception threshold, with 150 ms offered) "흠 150ms 로 하는건 좀 연산부담이 있지 않겠나? 어차피 디바운스 설정같은건 fieldInput 에서 하는거니까 이건 실시간성 느낌 보장이 나은가 그럼 100ms로 해도 될거같은데...
 나머지 버그나 ux 문제는 해소하도록. 거짓 에러 깜빡임은 눈에 많이 띈다"
    Decisions derived from it: the cadence cap becomes 100 ms (debouncing belongs to FieldInput components; the engine guarantees a real-time feel); the false error flash, the mount pop-in and the other open bugs and UX problems are fixed in IR-6.
+
+
+## IR-6 추가 소유자 결정 — 2026-10-31
+
+18b. (chronologically between 18 and 19; asked after the cadence decision) "현재 스팩이 ux상 문제가 없는지 평가해봐. 1-2 프레임 정도 오류평가나 표시가 밀리는건 오류는 아니라고 본다. 인간의 인지상 말이지."
+20. (while the round-4 fixes were under review) "새로 발견된 문제나 수정중인 문제가 있나?"
+21. (after the coordinator described round 5, which kept error-visibility memory in React with reference counts) "잠깐, 오류의 표시는 리엑트에 두지 않았으면 하는데. 노드는 사라져서 그런건가? 에러의 표시여부를 결정하는 데이터가 현재 없나?"
+22. (sent right after 21) "그리고 비동기 검증이 도는 중 새 값이 들어오면 이전 값으로 판정되는건 문제가 있는거 아닌가? 마지막에 들어온 값으로 판정이 되어야 할거같은데??"
+23. (answer to: rebuild round 5 with the error-visibility decision in the engine and validate() re-validating to the newest value — 1 both (recommended), 2 engine only, 3 other) "둘다 진행합니다."
+   Decisions derived from it: the error-visibility continuity data moves into the engine (node state at the last verdict) and displays decide from node data only; explicit validate() resolves with a verdict for the value current when it resolves (bounded re-validation); the design is checked by an independent verifier before dispatch.
+24. (after the coordinator summarized amendment 8, including Z: validate() re-runs until its verdict matches the newest value) "근데, validate 를 실행하는 경우(onRequest)인거지? 그럼 실행시점의 값이 맞..는거 아닌가? 이걸 재시도까지 하는게 맞아? 검증은 값을 바꾸지 않을텐데"
+   Outcome: the coordinator checked submitForm.ts (it captures outputValue before awaiting validate() and submits that same value) and withdrew Z; explicit validate() keeps call-time snapshot semantics, displays already take only the newest verdict.
+25. (after the coordinator withdrew Z and corrected its earlier claim about submit) "그래. 기본적으로 계약을 따라야지. 다른 곳에 또 이런 실수가 있진 않을까 좀 걱정되네."
+   Action: the coordinator started a read-only audit of every IR-6 behaviour change and recorded limitation against the package contracts (spec ledger, SPECIFICATION, README, public JSDoc, INTENT/DETAIL, ADRs).
+26. (after the coordinator reported the contract audit and its decisions, including a planned setTimeout fallback because the slot "requires MessageChannel or setImmediate") "잠깐. 설명이 명확히 이해가 안되는군.
+좀 더 자세히 설명해다오. 그리고,  MessageChannel 이나 setImmediate 가 있어야 하는 요구 에 대해선 무슨 의미지? 써야되면 common-utils 에서 가져다 써. 이미 레거시에서는 여기서 쓰고있었어"
+   Outcome: the coordinator confirmed that 0.16.1 shipped `scheduleMacrotask` from `@winglet/common-utils/scheduler`, withdrew the fallback (amendment 8 R-e) and keeps the common-utils scheduler unchanged; the audit's "new requirement" finding was wrong and had been relayed unchecked.
+27. (after the coordinator's detailed explanation, whose commit-only example used a first blur setting touched, and whose item 5 kept the child-errors hook counting hidden children as a pre-existing behaviour) "2번에서 touched 는 한번 만지면 true 고 따로 clear 를 하지 않으면 사라지지 않는데? 이건 한번이라도 만졌느냐를 보는 플래그지, 포커스 상태를 의미하는건 아닌데. 뭔가 잘못 구현된거 아닌가? 확인해봐 
+5번에서, 숨겨진 자식(hidden)이면 당연히 포함되어야 하고, 비활성 자식(inactive)이면 값 자체가 빠져서 오류가 없을거라 생각하는데? 어떤 상태를 말하는거지?"
+   Outcome: touched is implemented as the owner describes (set once after the first blur, a repeated set is a no-op, cleared only by clearState or reset); the coordinator's example was wrong, because interaction-state writes do not advance the commit number at all; the real trigger is a context content change. Hidden children counting in the hook is the intended contract; codex round 4's finding is not a defect.

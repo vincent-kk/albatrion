@@ -28,6 +28,8 @@
 
 ## API Contracts
 
+- Y2 바인딩 전용 readFieldNodeRevealBaseline·readFieldNodeShowErrorBaseline·recordFieldNodeShowErrorBaseline은 engine query와 surface runtime wrapper를 통해 core가 이름으로 재수출한다. 공개 src/index와 FieldNode 표면·사건은 넓히지 않는다. 정책 box의 unknown 값은 엔진이 해석하지 않는다.
+
 - U2 내부 표시 통로 isFieldNodeValidationPending·subscribeFieldNodeValidationSettled는 surface 래퍼를 명명 재수출한다. runtime listener set의 정착 알림이며 FieldNodeEventType·node.subscribe·revision·src/index에는 추가하지 않는다.
 
 - surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출한다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공한다. `readFieldNodeGuard`·`UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 core index가 재수출하지 않는다. 패키지의 src/index 공개 이름은 유지한다(07c 계획 9.2).

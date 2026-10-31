@@ -204,7 +204,7 @@ R7–R11은 프레임 미호출 대기·Node setImmediate·슬롯 주석·한국
 
 쓰기 pending은 None·unavailable 가드 뒤 시작합니다. 현재 stamp의 판정이 라우팅·동일 목록·null·commit-only 폐기·실패로 끝나면 정착하고, 명시적 루트 validate도 정착하되 하위 트리는 정착하지 않습니다. unavailable·폐기는 무조건 정착하며 새 요청 없는 stamp 무효화(비OnChange reset 포함)도 정착합니다. true→false 알림은 런타임 listener set을 통해 배달 직전에 한 번만 전달하고 공개 사건·revision·src/index는 바꾸지 않습니다.
 
-FieldProxy·FieldInputSlot·useChildFieldErrors는 한 표시 훅을 공유합니다. visible=condition&&(wasVisible||!pending)이며 기억은 FieldRendererProvider가 표시 종류별로 한 번 만든 WeakMap을 공유하고 노드별 직전 layout commit에서만 쓰며 cleanup에서 삭제합니다. version remount는 옛 cleanup보다 먼저 render에서 기억을 읽어 유지하고 실제 unmount·controls.visible 숨김·가상화 placeholder는 지웁니다. StrictMode의 재setup은 기억을 다시 씁니다. 새 노드·null 렌더·배열 제거는 기억을 섞지 않습니다. useSyncExternalStore의 서버 snapshot은 false, 보류하지 않는 표시는 no-op 구독입니다. 동기 연속 입력은 다음 cap에서 풀리고 stale 비동기 실행은 후행까지 기다릴 수 있으며 새 요청 없는 commit-only 폐기는 이전 판정을 드러낼 수 있습니다. 사용자 UI는 errorVisible과 useChildFieldErrors().showErrors로 같은 규칙을 소비하며 raw 오류 목록에는 표시 정책을 적용하지 않습니다.
+FieldProxy·FieldInputSlot·useChildFieldErrors는 순수 표시 계산과 표시당 hook을 공유합니다. 엔진이 OnChange 상태·enabled 변화와 handle.showError 정책의 최초 기준을 기록하고 pending이면 현재와 기준이 모두 적격인 entry만 보여 줍니다. React WeakMap·commit 기억·visibility layout effect는 없습니다. child-errors는 facd72a71처럼 hidden 자식을 포함하고 controls를 읽지 않습니다. 공개 pending snapshot은 서버 false인 useSyncExternalStore 반환만 사용합니다.
 
 Always는 state 없는 checkShowError()의 값을 앞선 layout effect에서 ref에 반영하며 connect effect는 이 ref를 읽고 정책 변경만으로 재연결하지 않습니다. 자식 layout 쓰기가 먼저여도 inline root.validate가 stamp를 올려 큐를 버리고 pending을 정착시킵니다. 다른 모드는 기존 슬롯과 compile 실패 필터를 공유합니다. 숨긴 load의 미전달 기록은 교체 load 앞에 원래 root와 함께 옮기며 전달마다 reporter.root를 복구하고 각 handler 실패를 격리합니다. 형식·정식 표본은 여전히 측정 전입니다.
 
@@ -219,3 +219,11 @@ W3는 실제 사슬 끝의 요청과 같은 조건을 validation 도메인의 pr
 W4의 mount catch는 engine이 이미 보고하거나 숨김 버퍼에 둔 검증 실패를 무시하며 소비자 handler 묶음의 꼬리만 호스트에 전달합니다. W5는 교체된 load 기록의 원래 root를 유지하면서 활성 load.root에도 observer guard를 적용하여 onError가 현재 폼을 쓰지 못하게 합니다. W6의 동일 경고는 현재 load 단위 중복 억제로 숨긴 두 교체 load에서 하나로 합쳐집니다. W7의 Always 루트 input 자체 mount-layout validate는 같은 commit에 한 번 추가 판정을 실행하며, W8의 조상 mount-layout 쓰기는 inline 최초 판정을 무효화하여 한 프레임 뒤 판정할 수 있습니다. 세 경우는 코디네이터가 수용한 한계입니다.
 
 W10 제출 회귀는 still-invalid 값을 쓰고 직후 빈 표시, 제출 뒤 오류와 pending=false를 확인합니다. W11 자연 key→Tab 브라우저 경합은 명시적 비동기 판정 보류와 실제 쓰기 시작 프레임 계수를 사용합니다. W12 idle helper는 write-pending만 기다리며 비동기 mount 판정은 그 판정의 명시적 promise를 기다립니다. W13 코어 시험은 실제2000필드 폼에서 보류 표시3개만 구독하고 정착 콜백도 각각 한 번임을 확인합니다.
+
+### Amendment 8 v3 — 엔진 표시 기준과 계약 감사
+
+소유자 Q18b·Q19·Q21–27을 적용합니다. 엔진의 노드 기준은 interactionState 참조·active&&visible이며 runtime은 기준이 있는 노드 set과 undefined도 보존하는 정책 box를 소유합니다. record는 변이 전에 기준과 revealDropOwed/generation만 기록하고 scheduling은 하지 않습니다. validation의 scheduleFieldNodeRevealDrop는 기존 일회성 slot만 사용하며 예약 generation 뒤 기록이 추가되면 기준 전체를 유지하고 재예약합니다(코디네이터 msg_5abe110cb1c6). pending=false인 조용한 drop·settle·폐기는 기준을 지우고 token 무효화로 이전 slot을 취소합니다.
+
+표시의 live 조건과 기준 조건은 같은 resolver가 external/default를 적용해 계산합니다. renderer/input은 live·기준 enabled도 검사하고 child-errors는 원래 계약대로 조건만 봅니다. React에서 나타난 mirror·복원·가상화·remount는 엔진 기준을 그대로 소비합니다. external policy/disabled 인자의 미관측, transition 지연, commit-only context stream, drop 전 약1~2프레임 새 쓰기의 hold는 기록된 한계입니다. 마운트 layout은 원래2회로 복원하고 일반 쓰기0회와 G8 guard는 유지합니다.
+
+현재 stamp의 commit-only 폐기(R-a)는 최신 commit을 cadence에서 다시 요청하고 hold를 유지합니다. explicit validate와 submit은 Q24에 따라 호출 시점 snapshot 계약을 유지합니다. hidden reset의 이전·새 기록은 reset 사슬 끝에 순서대로 전달하고 각 원래 load 안에서 warning을 dedup합니다(ERROR-019·204). common-utils scheduler는0.16.1과 같은 기존 의존이며 compile rejected/sink는 변경 없는 ERROR-019 items3·5에 따른 D1(Q12) 시간 분리 결과입니다. React 표시 기억의 Amendment7 X1/X2는 폐기하고 X3 entry-stamp 소유권은 유지합니다.
