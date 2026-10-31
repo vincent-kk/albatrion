@@ -1,3 +1,3 @@
-export { scheduleValidationSlot } from './utils/scheduleValidationSlot';
-export { createValidationCadence } from './utils/createValidationCadence/createValidationCadence';
-export type { ValidationCadence } from './utils/createValidationCadence/type';
+export { scheduleValidationSlot } from './utils/slot/scheduleValidationSlot';
+export { createValidationCadence } from './utils/cadence/createValidationCadence';
+export type { ValidationCadence } from './types/validationCadence';

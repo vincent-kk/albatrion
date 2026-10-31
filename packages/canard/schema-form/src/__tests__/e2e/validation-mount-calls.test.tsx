@@ -1,7 +1,14 @@
+import { createRef } from 'react';
+
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Form, type JSONSchema, ValidationMode } from '@/schema-form';
+import {
+  Form,
+  type FormHandle,
+  type JSONSchema,
+  ValidationMode,
+} from '@/schema-form';
 
 import { settleValidation } from '../helpers/settleValidation';
 import {
@@ -81,8 +88,10 @@ describe('mount onValidate calls', () => {
     async ({ errors }) => {
       setupValidatorPlugin();
       const onValidate = vi.fn();
+      const ref = createRef<FormHandle>();
       const view = render(
         <Form
+          ref={ref}
           jsonSchema={schema}
           defaultValue="valid"
           errors={errors}
@@ -90,11 +99,12 @@ describe('mount onValidate calls', () => {
         />,
       );
       await act(async () => {
-        await settleValidation();
+        await settleValidation(() => ref.current?.node);
       });
       expect(onValidate).toHaveBeenCalledTimes(1);
       view.rerender(
         <Form
+          ref={ref}
           jsonSchema={schema}
           defaultValue="valid"
           errors={[]}
@@ -102,7 +112,7 @@ describe('mount onValidate calls', () => {
         />,
       );
       await act(async () => {
-        await settleValidation();
+        await settleValidation(() => ref.current?.node);
       });
       expect(onValidate).toHaveBeenCalledTimes(1);
     },

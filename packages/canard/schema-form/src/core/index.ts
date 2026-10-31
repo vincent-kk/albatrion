@@ -22,6 +22,8 @@ export {
   finishFieldNodeInput,
   readFieldNodeInteractionReset,
   hasFieldNodeValidationRequest,
+  isFieldNodeValidationPending,
+  subscribeFieldNodeValidationSettled,
   observeFieldNodeReports,
   interpretFieldNodeDraft,
 } from './surface';

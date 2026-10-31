@@ -9,7 +9,7 @@ export interface ValidationCadence {
 /** Internal phase and host ownership; no validation-domain state enters this record. */
 export interface ValidationCadenceState {
   /** Synchronous start of the caller's work; completion is owned by the caller. */
-  run: () => void;
+  run: () => boolean;
   /** Injected monotone clock in milliseconds. */
   now: () => number;
   /** Current timing phase. */
@@ -17,7 +17,7 @@ export interface ValidationCadenceState {
   /** A request since the most recent run start or observed frame. */
   requested: boolean;
   /** Time the most recent automatic callback started. */
-  lastRun: number;
+  lastRun?: number;
   /** Permanent cancellation state. */
   cancelled: boolean;
   /** All currently pending host handles, cancelled together. */

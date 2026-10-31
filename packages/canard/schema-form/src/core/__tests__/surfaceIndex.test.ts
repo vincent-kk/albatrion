@@ -18,6 +18,7 @@ describe('FieldNode PR-2 surface', () => {
       'isBooleanNode',
       'isBranchNode',
       'isFieldNode',
+      'isFieldNodeValidationPending',
       'isNumberNode',
       'isObjectNode',
       'isStringNode',
@@ -29,6 +30,7 @@ describe('FieldNode PR-2 surface', () => {
       'readFieldNodeInteractionReset',
       'reloadFieldNodeForm',
       'setContext',
+      'subscribeFieldNodeValidationSettled',
       'writeFieldNodeInput',
     ]);
     expect(Object.keys(surface.SetValueOption)).toEqual([

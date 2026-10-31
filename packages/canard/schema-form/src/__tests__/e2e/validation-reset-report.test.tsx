@@ -136,14 +136,14 @@ describe('243C-01 reset validation report', () => {
         expect(ref.current!.node).not.toBe(root);
         expect(ref.current!.getErrors()).toEqual([]);
         expect(onValidate.mock.lastCall?.[0]).toBe(ref.current!.getErrors());
-        await settleValidation();
+        await settleValidation(() => ref.current?.node);
       });
 
       expect(onValidate.mock.calls.slice(before)).toEqual([[[]]]);
       expect(ref.current!.getErrors()).toEqual([]);
       await act(async () => {
         ref.current!.reset();
-        await settleValidation();
+        await settleValidation(() => ref.current?.node);
       });
       expect(onValidate.mock.calls.slice(before)).toEqual([[[]]]);
     },
@@ -184,7 +184,7 @@ describe('243C-01 reset validation report', () => {
 
     await act(async () => {
       ref.current!.reset();
-      await settleValidation();
+      await settleValidation(() => ref.current?.node);
     });
 
     expect(ref.current!.node).not.toBe(root);
@@ -225,7 +225,7 @@ describe('243C-01 reset validation report', () => {
     await act(async () => {
       ref.current!.reset();
       expect(ref.current!.node).not.toBe(root);
-      await settleValidation();
+      await settleValidation(() => ref.current?.node);
     });
 
     expect(onValidate).not.toHaveBeenCalled();
@@ -270,7 +270,7 @@ describe('243C-01 reset validation report', () => {
 
     await act(async () => {
       ref.current!.reset();
-      await settleValidation();
+      await settleValidation(() => ref.current?.node);
     });
 
     expect(ref.current!.node).not.toBe(root);
@@ -370,7 +370,7 @@ describe('243C-01 reset validation report', () => {
       } catch (error) {
         thrown = error;
       }
-      await settleValidation();
+      await settleValidation(() => ref.current?.node);
     });
 
     expect(ref.current!.node).not.toBe(root);
@@ -425,7 +425,7 @@ describe('243C-01 reset validation report', () => {
       } catch (error) {
         thrown = error;
       }
-      await settleValidation();
+      await settleValidation(() => ref.current?.node);
     });
 
     expect((thrown as Error | undefined)?.message).toBe(

@@ -25,16 +25,19 @@ import {
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
 import { useExternalFormContext } from '../../ExternalFormContext';
-import { useFormErrorContext } from '../../FormErrorContext';
+import { useFieldRendererContext } from '../../FieldRendererContext';
+import { reportErrorToHost, useFormErrorContext } from '../../FormErrorContext';
 import { useWorkspaceContext } from '../../WorkspaceContext';
 import type { RootBinding, RootLoadProps, RootLoadStore } from '../type';
 import { applyFormErrors } from '../utils/applyFormErrors';
 import { createRootLoad } from '../utils/createRootLoad';
 import { flushRootLoad } from '../utils/flushRootLoad';
+import { reportBufferedRootRecord } from '../utils/reportBufferedRootRecord';
 import { reportRootLoadValidation } from '../utils/reportRootLoadValidation';
 import { resetRootLoad } from '../utils/resetRootLoad';
 import { scheduleMountValidation } from '../utils/scheduleMountValidation';
 import { subscribeRootLoad } from '../utils/subscribeRootLoad';
+import { validateMountRoot } from '../utils/validateMountRoot';
 import { RootBindingContext } from './RootBindingContext';
 import { RootNodeContext } from './RootNodeContext';
 
@@ -57,6 +60,7 @@ export const RootNodeContextProvider = ({
   const external = useExternalFormContext();
   const { context, attachedFilesMap } = useWorkspaceContext();
   const reporter = useFormErrorContext();
+  const always = useFieldRendererContext().checkShowError();
   const current: RootLoadProps = {
     ...props,
     context,
@@ -175,13 +179,20 @@ export const RootNodeContextProvider = ({
       flushRootLoad(load);
       if (root) {
         applyFormErrors(root, load.props.errors);
-        if ((load.props.validationMode ?? 0) & ValidationMode.OnChange)
-          scheduleMountValidation(load, store, reporter);
+        if ((load.props.validationMode ?? 0) & ValidationMode.OnChange) {
+          if (always) validateMountRoot(root, reporter);
+          else scheduleMountValidation(load, store, reporter);
+        }
       }
     } else {
       if (load.reporter && root) load.reporter.root = root;
-      for (const record of load.records.splice(0))
-        load.reporter?.report(record);
+      for (const record of load.records.splice(0)) {
+        try {
+          reportBufferedRootRecord(load, record);
+        } catch (error) {
+          reportErrorToHost(error);
+        }
+      }
       if (load.mountValidationOwed) {
         load.mountValidationOwed = false;
         scheduleMountValidation(load, store, reporter);
@@ -192,7 +203,7 @@ export const RootNodeContextProvider = ({
       store.unsubscribe();
       if (root && validator) releaseValidationRoot(validator, authored);
     };
-  }, [load, reporter, store]);
+  }, [load, reporter, store, always]);
 
   const lastErrors = useRef(props.errors);
   useLayoutEffect(() => {

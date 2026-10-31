@@ -14,6 +14,8 @@ import type { FieldProxyProps } from '../../type';
 
 export interface FieldInputSlotProps {
   node: FieldNode;
+  /** Committed input display memory retained by the stable node wrapper. */
+  errorVisibilityMemory?: RefObject<ReadonlyMap<FieldNode, boolean>>;
   onChangeRef: RefObject<ChildFieldProps['onChange']>;
   onFileAttachRef: RefObject<ChildFieldProps['onFileAttach']>;
   overrideProps: OverridableFieldInputProps;

@@ -161,7 +161,7 @@ const renderWithProvider = async (
     );
   });
   await act(async () => {
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
   });
   const container = utils.container;
   return {
@@ -190,11 +190,14 @@ const renderWithProvider = async (
  * props. `renderForm` and `renderWithProvider` both own the tree they mount, so a test
  * that changes a Form- or provider-level prop between renders needs its own root.
  */
-const renderSwappable = async (element: ReactElement) => {
+const renderSwappable = async (
+  element: ReactElement,
+  current: () => FormHandle['node'] | undefined,
+) => {
   let utils!: ReturnType<typeof render>;
   const drain = async () => {
     await act(async () => {
-      await settleValidation();
+      await settleValidation(current);
     });
   };
   await act(async () => {
@@ -312,14 +315,19 @@ describe('context passed via Form context prop reaches FieldInput', () => {
   it('clears props.context when the Form context prop is emptied', async () => {
     // `WorkspaceContextProvider` stabilizes the prop through `useSnapshot`, so emptying
     // it is the non-empty -> empty transition that snapshot comparison must not skip.
+    const ref = createRef<FormHandle>();
     const mount = (context: object) => (
       <Form
+        ref={ref}
         jsonSchema={contextProbeSchema as any}
         fieldInputDefinitions={probeDefs}
         context={context}
       />
     );
-    const view = await renderSwappable(mount({ greeting: 'hello', count: 3 }));
+    const view = await renderSwappable(
+      mount({ greeting: 'hello', count: 3 }),
+      () => ref.current?.node,
+    );
     expect(view.contextOf('/greeting')).toEqual({
       greeting: 'hello',
       count: 3,
@@ -455,9 +463,11 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     // `ExternalFormContextProvider` stabilizes its own context through `useSnapshot`
     // too, so the base half of the `{...external, ...form}` merge has the same
     // non-empty -> empty transition to honour.
+    const ref = createRef<FormHandle>();
     const mount = (context: object) => (
       <FormProvider context={context}>
         <Form
+          ref={ref}
           jsonSchema={contextProbeSchema as any}
           fieldInputDefinitions={probeDefs}
         />
@@ -465,6 +475,7 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     );
     const view = await renderSwappable(
       mount({ userRole: 'admin', tier: 'gold' }),
+      () => ref.current?.node,
     );
     expect(view.contextOf('/greeting')).toEqual({
       userRole: 'admin',

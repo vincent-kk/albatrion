@@ -11,6 +11,7 @@ import {
   ValidationMode,
 } from '@/schema-form';
 
+import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
 import { observeErrorSink } from '../helpers/observeErrorSink';
 import { settleValidation } from '../helpers/settleValidation';
 
@@ -51,7 +52,7 @@ describe('frame-backed Form validation', () => {
     );
     act(() => ref.current!.reset());
     expect(ref.current!.node).not.toBe(retired);
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(validate).toHaveBeenCalledExactlyOnceWith('replacement');
     expect(onError).not.toHaveBeenCalled();
   });
@@ -84,16 +85,18 @@ describe('frame-backed Form validation', () => {
     );
     act(() => ref.current!.reset());
     expect(ref.current!.node).toBe(retained);
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(validate).toHaveBeenCalledExactlyOnceWith('newest');
   });
 
   it('IR-6 (c) compiles and validates only after the first frame', async () => {
+    const ref = createRef<FormHandle>();
     const validate = vi.fn(() => []);
     const compile = vi.fn(() => validate);
     const onValidate = vi.fn();
     render(
       <Form
+        ref={ref}
         jsonSchema={schema}
         validationMode={ValidationMode.OnChange}
         validatorFactory={{ compile, compileGuard: () => () => true }}
@@ -103,7 +106,7 @@ describe('frame-backed Form validation', () => {
     await Promise.resolve();
     expect(compile).not.toHaveBeenCalled();
     expect(onValidate).not.toHaveBeenCalled();
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(compile).toHaveBeenCalledTimes(1);
     expect(validate).toHaveBeenCalledTimes(1);
     expect(onValidate).toHaveBeenCalledExactlyOnceWith([]);
@@ -128,7 +131,7 @@ describe('frame-backed Form validation', () => {
     );
     await Promise.resolve();
     expect(onError).not.toHaveBeenCalled();
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError.mock.calls[0][0]).toMatchObject({
       code: FormErrorCode.ValidatorCompileFailed,
@@ -141,6 +144,7 @@ describe('frame-backed Form validation', () => {
   });
 
   it('IR-6 (c-i) does not recapture a compile failure after a child passive validate', async () => {
+    const ref = createRef<FormHandle>();
     const onError = vi.fn();
     let childEffectRan = false;
     const compileAfterChild: boolean[] = [];
@@ -153,6 +157,7 @@ describe('frame-backed Form validation', () => {
     };
     render(
       <Form
+        ref={ref}
         jsonSchema={schema}
         fieldInputMap={{ '': Input }}
         validationMode={ValidationMode.OnChange}
@@ -166,13 +171,14 @@ describe('frame-backed Form validation', () => {
         onError={onError}
       />,
     );
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(compileAfterChild).toEqual([true]);
     expect(onError).toHaveBeenCalledTimes(1);
     expect(onError.mock.calls[0][0].surface).toBe('rejected');
   });
 
   it('IR-6 (c-ii) keeps the first child layout-write failure on the sink surface', async () => {
+    const ref = createRef<FormHandle>();
     const onError = vi.fn();
     const sink = observeErrorSink();
     const Input = ({ onChange }: FieldInputProps) => {
@@ -184,6 +190,7 @@ describe('frame-backed Form validation', () => {
     try {
       render(
         <Form
+          ref={ref}
           jsonSchema={schema}
           fieldInputMap={{ '': Input }}
           validationMode={ValidationMode.OnChange}
@@ -196,7 +203,7 @@ describe('frame-backed Form validation', () => {
           onError={onError}
         />,
       );
-      await settleValidation();
+      await settleValidation(() => ref.current?.node);
       expect(onError).toHaveBeenCalledTimes(1);
       expect(onError.mock.calls[0][0]).toMatchObject({
         code: FormErrorCode.ValidatorCompileFailed,
@@ -209,6 +216,7 @@ describe('frame-backed Form validation', () => {
   });
 
   it('IR-6 R2 a child layout write validates the newest commit exactly once', async () => {
+    const ref = createRef<FormHandle>();
     const validate = vi.fn(() => []);
     const Input = ({ onChange }: FieldInputProps) => {
       useLayoutEffect(() => {
@@ -218,6 +226,7 @@ describe('frame-backed Form validation', () => {
     };
     render(
       <Form
+        ref={ref}
         jsonSchema={schema}
         fieldInputMap={{ '': Input }}
         validationMode={ValidationMode.OnChange}
@@ -227,7 +236,7 @@ describe('frame-backed Form validation', () => {
         }}
       />,
     );
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(validate).toHaveBeenCalledExactlyOnceWith('layout-newest');
   });
 
@@ -249,7 +258,7 @@ describe('frame-backed Form validation', () => {
       await ref.current!.validate();
     });
     expect(validate).toHaveBeenCalledTimes(1);
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(validate).toHaveBeenCalledTimes(1);
   });
 
@@ -274,15 +283,17 @@ describe('frame-backed Form validation', () => {
       await ref.current!.node!.find('/name')!.validate();
     });
     expect(validate).toHaveBeenCalledTimes(1);
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(validate).toHaveBeenCalledTimes(2);
   });
 
   it('IR-6 (d) StrictMode validates once after the frame', async () => {
+    const ref = createRef<FormHandle>();
     const validate = vi.fn(() => []);
     render(
       <StrictMode>
         <Form
+          ref={ref}
           jsonSchema={schema}
           validationMode={ValidationMode.OnChange}
           validatorFactory={{
@@ -293,7 +304,7 @@ describe('frame-backed Form validation', () => {
       </StrictMode>,
     );
     expect(validate).not.toHaveBeenCalled();
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(validate).toHaveBeenCalledTimes(1);
   });
 
@@ -312,7 +323,7 @@ describe('frame-backed Form validation', () => {
       />,
     );
     view.unmount();
-    await settleValidation();
+    await advanceValidationFrame();
     expect(validate).not.toHaveBeenCalled();
     expect(onError).not.toHaveBeenCalled();
   });
@@ -335,7 +346,7 @@ describe('frame-backed Form validation', () => {
         onValidate={onValidate}
       />,
     );
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     validate.mockClear();
     onValidate.mockClear();
     await act(async () => {
@@ -346,10 +357,33 @@ describe('frame-backed Form validation', () => {
       expect(onValidate).not.toHaveBeenCalled();
       expect(validate).not.toHaveBeenCalled();
     });
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     expect(validate).toHaveBeenCalledExactlyOnceWith('newest');
     expect(onValidate).toHaveBeenCalledExactlyOnceWith([
       { dataPath: '', message: 'newest' },
     ]);
   });
+});
+
+it('IR-6 settle waits through writes started by delivered validation callbacks', async () => {
+  const ref = createRef<FormHandle>();
+  let remaining = 3;
+  const validate = vi.fn((value) => [{ dataPath: '', message: String(value) }]);
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string' }}
+      validatorFactory={{
+        compile: () => validate,
+        compileGuard: () => () => true,
+      }}
+      onValidate={() => {
+        if (remaining > 0) ref.current!.setValue('value' + remaining--);
+      }}
+    />,
+  );
+  await settleValidation(() => ref.current?.node);
+  expect(remaining).toBe(0);
+  expect(ref.current!.getValue()).toBe('value1');
+  expect(validate).toHaveBeenCalledTimes(4);
 });

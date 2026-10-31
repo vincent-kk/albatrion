@@ -1,16 +1,23 @@
-import { act } from '@testing-library/react';
+import {
+  type FieldNode,
+  isFieldNodeValidationPending,
+} from '@/schema-form/core';
 
-/**
- * Drain frame-backed validation and its synchronous-validator delivery in jsdom.
- * @returns Completion after two animation frames and the following Node check phase.
- * Real-timer validators must additionally await their own completion.
- */
-export const settleValidation = async (): Promise<void> => {
-  await act(async () => {
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => setImmediate(resolve)),
-      );
-    });
-  });
+import { advanceValidationFrame } from './advanceValidationFrame';
+
+/** Await frame-backed validation, including writes triggered by a delivered verdict.
+ * @param current - Root or resolver retaining the current root across replacements/unmounts.
+ * @returns Completion when the current write verdict is no longer pending.
+ * @throws When a validator or write cascade does not settle within the bounded rounds. */
+export const settleValidation = async (
+  current: FieldNode | (() => FieldNode | null | undefined),
+): Promise<void> => {
+  for (let round = 0; round < 64; round++) {
+    await advanceValidationFrame();
+    const root = typeof current === 'function' ? current() : current;
+    if (!root || !isFieldNodeValidationPending(root)) return;
+  }
+  throw new Error(
+    'Write-triggered validation did not settle within 64 frame rounds',
+  );
 };

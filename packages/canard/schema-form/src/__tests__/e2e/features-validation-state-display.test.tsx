@@ -141,7 +141,7 @@ describe('features — validation-state display (consumer-only)', () => {
     try {
       for (const [index, stage] of externalErrorStages.entries()) {
         if (index > 0) rerender(view(stage.errors));
-        await act(async () => { await settleValidation(); });
+        await act(async () => { await settleValidation(() => handle?.node); });
         expect(keywords((path) => handle!.findNode(path), stage.expected), `issues at stage ${stage.label}`).toEqual(stage.expected);
         for (const [path, text] of Object.entries(stage.shown)) expect(shown(container, path), `message at ${path}, stage ${stage.label}`).toBe(text);
       }

@@ -1,5 +1,6 @@
+import type { FormHandle } from '@/schema-form';
 import { render } from '@testing-library/react';
-import { act, type ComponentType } from 'react';
+import { act, createRef, type ComponentType } from 'react';
 
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { describe, expect, it } from 'vitest';
@@ -97,7 +98,7 @@ const scenarioNamed = (name: string): FormScenario => {
  * @param ms - Timer wait.
  * @returns Completion after the act scope.
  */
-const settle = (ms = 0) => act(async () => { await settleValidation(); if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms)); });
+const settle = (current: () => FormHandle['node'] | undefined, ms = 0) => act(async () => { await settleValidation(current); if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms)); });
 
 registerPlugin({ fieldInputDefinitions: definitions([inputResolutionPluginDefinition]) });
 
@@ -112,11 +113,12 @@ describe('features — input-components consumer-only', () => {
       property.presentation = { ...(isPlainObject(property.presentation) ? property.presentation : {}), FieldInput: label === null ? null : labelledInput(label) };
     }
     setupValidatorPlugin();
-    const form = <Form<JSONSchema> jsonSchema={schema as JSONSchema} defaultValue={base.initialValue}
+    const ref = createRef<FormHandle>();
+    const form = <Form<JSONSchema> ref={ref} jsonSchema={schema as JSONSchema} defaultValue={base.initialValue}
       fieldInputMap={item.map && inputMap(item.map)} fieldInputDefinitions={item.form && definitions(item.form)} />;
     const { container, unmount } = render(item.provider ? <FormProvider fieldInputDefinitions={definitions(item.provider)}>{form}</FormProvider> : form);
     try {
-      await settle();
+      await settle(() => ref.current?.node);
       expect(Object.fromEntries(Object.keys(item.winners).map((path) => [path, winner(container, path)]))).toEqual(item.winners);
     } finally {
       unmount();

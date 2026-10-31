@@ -6,6 +6,7 @@ import type { ScenarioAdapter } from '@aileron/schema-form-scenarios';
 import { expect, userEvent } from 'storybook/test';
 
 import { FieldNodeEventType } from '../../../src';
+import { isFieldNodeValidationPending } from '../../../src/core';
 
 import { assertStoryObservation } from './assertStoryObservation';
 import { executeStoryStep } from './executeStoryStep';
@@ -49,7 +50,13 @@ export function createStoryScenarioAdapter(context: StoryScenarioContext): Scena
         expect(error).toMatchObject({ code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED' });
       } finally { stops.forEach((stop) => stop()); }
     },
-    async settle() { await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => scheduleMacrotask(resolve)))); },
+    async settle() {
+      for (let round = 0; round < 64; round++) {
+        await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => scheduleMacrotask(resolve))));
+        if (!handle.node || !isFieldNodeValidationPending(handle.node)) return;
+      }
+      throw new Error('Story validation did not settle within 64 frame rounds');
+    },
     assert: (observation) => assertStoryObservation(context, observation, evidence),
   };
 }

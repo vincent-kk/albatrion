@@ -12,6 +12,7 @@ import {
   retainEqualValidationIssues,
   routeValidationIssues,
   runFieldNodeValidation,
+  settleFieldNodeValidation,
 } from '../../../validation';
 import { deliverValidationWave } from '../chain/deliverValidationWave';
 import { bundleChainErrors } from '../report/bundleChainErrors';
@@ -47,7 +48,10 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     const compileFailure =
       failure instanceof SchemaFormError &&
       failure.code === FormErrorCode.ValidatorCompileFailed;
-    if (compileFailure) runtime.validationUnavailable = true;
+    if (compileFailure) {
+      runtime.validationUnavailable = true;
+      settleFieldNodeValidation(node);
+    } else if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
     const firstReport = !compileFailure || !runtime.validationCompileReported;
     if (compileFailure) runtime.validationCompileReported = true;
     if (firstReport && runtime.errorReporter?.hasConsumer()) {
@@ -77,15 +81,19 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     }
     throw failure;
   }
-  if (result === null) return [];
-  if (
-    runtime.validationStamp !== stamp ||
-    (runtime.commitNumber ?? 0) !== commit
-  )
+  if (result === null) {
+    if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
+    return [];
+  }
+  if (runtime.validationStamp !== stamp) return result;
+  if ((runtime.commitNumber ?? 0) !== commit) {
+    if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
     return result;
+  }
   const issues = retainEqualValidationIssues(node, result);
   routeValidationIssues(node, issues);
   runtime.validationResult = { commit, issues };
+  if (node === node.rootNode) settleFieldNodeValidation(node, stamp);
   deliverValidationWave(node, issues, commit);
   return issues;
 };

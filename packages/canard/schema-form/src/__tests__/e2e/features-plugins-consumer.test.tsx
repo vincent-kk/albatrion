@@ -60,7 +60,7 @@ const rendererProps = (slots: readonly RendererSlot[], source: string) => {
  * Settle React work and timers in jsdom.
  * @returns Completion after the act scope.
  */
-const settle = () => act(async () => { await settleValidation(); });
+const settle = (current: () => FormHandle['node'] | undefined) => act(async () => { await settleValidation(current); });
 
 describe('features — plugins consumer-only', () => {
   it('VALIDATE-042 and ERROR-024 a form with no validator warns once, and validation mode None removes the warning', async () => {
@@ -108,9 +108,9 @@ describe('features — plugins consumer-only', () => {
         </Form>
       </FormProvider>);
       try {
-        await settle();
+        await settle(() => handle?.node);
         await act(async () => { await handle!.validate(); });
-        await settle();
+        await settle(() => handle?.node);
         const drawn = new Set(Array.from(container.querySelectorAll<HTMLElement>('[data-renderer]')).map((element) => element.dataset.renderer));
         expect({ markers: item.markers.filter((marker) => drawn.has(marker)), absent: item.absent.filter((marker) => drawn.has(marker)) }, item.label)
           .toEqual({ markers: [...item.markers], absent: [] });

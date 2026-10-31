@@ -10,11 +10,12 @@ import { settleValidation } from '../helpers/settleValidation';
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 
-it('IR-6 stream has exactly leading plus 500ms caps plus trailing across forty frames', async () => {
+it('IR-6 stream has exactly leading plus 100ms caps plus trailing across forty frames', async () => {
   const ref = createRef<FormHandle>();
   const onValidate = vi.fn();
   render(
@@ -29,7 +30,7 @@ it('IR-6 stream has exactly leading plus 500ms caps plus trailing across forty f
       onValidate={onValidate}
     />,
   );
-  await settleValidation();
+  await settleValidation(() => ref.current?.node);
   onValidate.mockClear();
   const clock = createValidationFrameClock();
   vi.spyOn(performance, 'now').mockImplementation(clock.now);
@@ -40,14 +41,14 @@ it('IR-6 stream has exactly leading plus 500ms caps plus trailing across forty f
       await clock.task();
     });
   }
-  expect(onValidate).toHaveBeenCalledTimes(2);
+  expect(onValidate).toHaveBeenCalledTimes(6);
   await act(async () => {
     clock.frame();
     await clock.task();
     clock.frame();
     await clock.task();
   });
-  expect(onValidate).toHaveBeenCalledTimes(3);
+  expect(onValidate).toHaveBeenCalledTimes(7);
   expect(clock.pending()).toBe(0);
 });
 
@@ -66,7 +67,7 @@ it('IR-6 keys three frames apart each deliver one verdict', async () => {
       onValidate={onValidate}
     />,
   );
-  await settleValidation();
+  await settleValidation(() => ref.current?.node);
   onValidate.mockClear();
   const clock = createValidationFrameClock();
   vi.spyOn(performance, 'now').mockImplementation(clock.now);

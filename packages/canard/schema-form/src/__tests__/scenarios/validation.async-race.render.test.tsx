@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ValidationIssue, ValidatorFactory } from '@/schema-form';
 import { ValidationMode } from '@/schema-form';
 
+import { advanceValidationFrame } from '../helpers/advanceValidationFrame';
 import { settleValidation } from '../helpers/settleValidation';
 import { renderForm } from '../renderForm';
 
@@ -44,11 +45,11 @@ describe('async validation race across frame-backed slots', () => {
       validationMode: ValidationMode.OnChange,
     });
     await act(async () => form.handle.setValue({ name: 'ab' }));
-    await settleValidation();
+    await advanceValidationFrame();
     expect(validate).toHaveBeenLastCalledWith({ name: 'ab' });
     expect(pending.has('ab')).toBe(true);
     await act(async () => form.handle.setValue({ name: 'abcd' }));
-    await settleValidation();
+    await advanceValidationFrame();
     expect(validate).toHaveBeenLastCalledWith({ name: 'abcd' });
     expect(pending.size).toBe(2);
     await act(async () => pending.get('abcd')!([]));
@@ -57,6 +58,7 @@ describe('async validation race across frame-backed slots', () => {
         { dataPath: '/name', keyword: 'minLength', message: 'TOO_SHORT' },
       ]),
     );
+    await settleValidation(() => form.handle.node);
     expect(form.getValue()?.name).toBe('abcd');
     expect(form.node('/name')?.errors ?? []).toEqual([]);
     expect(form.getErrors()).toEqual([]);
@@ -69,10 +71,10 @@ describe('async validation race across frame-backed slots', () => {
       validationMode: ValidationMode.OnChange,
     });
     await act(async () => form.handle.setValue({ name: 'abcd' }));
-    await settleValidation();
+    await advanceValidationFrame();
     expect(pending.has('abcd')).toBe(true);
     await act(async () => form.handle.setValue({ name: 'ab' }));
-    await settleValidation();
+    await advanceValidationFrame();
     expect(validate).toHaveBeenLastCalledWith({ name: 'ab' });
     expect(pending.size).toBe(2);
     await act(async () => pending.get('abcd')!([]));
@@ -81,6 +83,7 @@ describe('async validation race across frame-backed slots', () => {
         { dataPath: '/name', keyword: 'minLength', message: 'TOO_SHORT' },
       ]),
     );
+    await settleValidation(() => form.handle.node);
     expect(form.getValue()?.name).toBe('ab');
     expect(form.node('/name')?.errors).toEqual([
       { dataPath: '/name', keyword: 'minLength', message: 'TOO_SHORT' },

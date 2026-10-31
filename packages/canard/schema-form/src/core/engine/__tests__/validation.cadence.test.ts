@@ -13,6 +13,7 @@ import {
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
@@ -96,4 +97,31 @@ it('IR-6 root validate during carry invalidates the next automatic run until ano
   expect(validate).toHaveBeenCalledTimes(3);
   clock.frame();
   await clock.task();
+});
+
+it('IR-6 a stamp-dropped automatic callback cannot postpone the next write cap', async () => {
+  const clock = createValidationFrameClock();
+  vi.spyOn(performance, 'now').mockImplementation(clock.now);
+  const validate = vi.fn(() => []);
+  const { root, runtime } = createDispatchTree({ type: 'string' }, undefined, {
+    compile: () => validate,
+    compileGuard: () => () => true,
+  });
+  dispatchMount(root, 'old');
+  runtime.validationMode = ValidationMode.OnChange;
+  dispatchSetValue(root, 'leading');
+  clock.frame();
+  await clock.task();
+  dispatchSetValue(root, 'carried');
+  clock.frame();
+  await clock.task();
+  await dispatchValidate(root);
+  clock.frame();
+  await clock.task();
+  expect(validate).toHaveBeenCalledTimes(2);
+  dispatchSetValue(root, 'newest');
+  clock.frame(70);
+  await clock.task();
+  expect(validate).toHaveBeenCalledTimes(3);
+  expect(validate).toHaveBeenLastCalledWith('newest');
 });

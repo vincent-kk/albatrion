@@ -3,6 +3,8 @@ import { type PropsWithChildren, StrictMode } from 'react';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
+import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
+import { ValidationMode } from '@/schema-form/core';
 import { FieldRendererContextProvider } from '@/schema-form/providers';
 
 import { nodeFromJSONSchema } from '../../__tests__/fixtures/nodeFromJSONSchema';
@@ -38,4 +40,34 @@ it('LANDING-170 REACT-019 tracks child errors, state and reordered paths under S
   expect(second.path).toBe('/0');
   act(() => first.setExternalErrors([]));
   expect(result.current.errorMatrix).toEqual([[issue]]);
+});
+
+it('IR-6 removing a visible array child never transfers its visibility memory to the held child', async () => {
+  const root = nodeFromJSONSchema({
+    jsonSchema: { type: 'array', items: { type: 'string' } },
+    defaultValue: ['a', 'b'],
+    validationMode: ValidationMode.OnChange,
+    validator: { compile: () => () => [], compileGuard: () => () => true },
+  });
+  await settleValidation(root);
+  const first = root.children![0];
+  const second = root.children![1];
+  const { result } = renderHook(() => useChildFieldErrors(root), {
+    wrapper: ({ children }: PropsWithChildren) => (
+      <StrictMode>
+        <FieldRendererContextProvider>{children}</FieldRendererContextProvider>
+      </StrictMode>
+    ),
+  });
+  act(() => first.setState({ 4: true }));
+  expect(result.current.showErrors).toEqual([true, false]);
+  act(() => {
+    if (root.type === 'array') root.remove(0);
+    second.setState({ 4: true });
+  });
+  expect(result.current.showErrors).toEqual([false]);
+  expect(result.current.showError).toBe(false);
+  await settleValidation(root);
+  expect(result.current.showErrors).toEqual([true]);
+  expect(result.current.showError).toBe(true);
 });

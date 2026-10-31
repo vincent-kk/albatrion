@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 /** Create a host frame queue with independently controlled monotone time.
  * @returns A clock, manual frame step, task drain and pending-frame count. */
 export const createValidationFrameClock = () => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
   let time = 0;
   let next = 0;
   const callbacks = new Map<number, FrameRequestCallback>();

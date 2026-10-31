@@ -43,6 +43,8 @@ export {
   retainValidationRoot,
   releaseValidationRoot,
   hasFieldNodeValidationRequest,
+  isFieldNodeValidationPending,
+  subscribeFieldNodeValidationSettled,
 } from './validation';
 export {
   EMPTY_REVISION_LEDGER,

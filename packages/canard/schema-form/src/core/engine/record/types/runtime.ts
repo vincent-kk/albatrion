@@ -319,7 +319,11 @@ export interface FieldNodeRuntime<Self>
   /** Lazily owned domain-free automatic timing lifetime, cancelled on root disposal. */
   validationCadence?: ValidationCadence;
   /** Latest domain callback selected by the cadence without inspecting its contents. */
-  validationRun?: () => void;
+  validationRun?: () => boolean;
+  /** A write-triggered verdict is still pending. */
+  validationPending?: boolean;
+  /** Internal display listeners notified only when pending ends. */
+  validationSettleListeners?: Set<() => void>;
   /** Subtree scopes merged into the next cadence-selected validation run. */
   validationPendingTargets?: Set<Self>;
   /** True after a routing replaced the routed list, until the validation wave publishes it. */

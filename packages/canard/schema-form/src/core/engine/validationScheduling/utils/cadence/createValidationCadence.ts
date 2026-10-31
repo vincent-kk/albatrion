@@ -1,6 +1,11 @@
-import type { ValidationCadence, ValidationCadenceState } from './type';
+import type {
+  ValidationCadence,
+  ValidationCadenceState,
+} from '../../types/validationCadence';
 import { cancelValidationCadence } from './utils/cancelValidationCadence';
+import { observeValidationCadenceFrame } from './utils/observeValidationCadenceFrame';
 import { requestValidationCadence } from './utils/requestValidationCadence';
+import { runValidationCadence } from './utils/runValidationCadence';
 
 /**
  * Create the leading, carry, capped and trailing timing lifetime for automatic work.
@@ -9,7 +14,7 @@ import { requestValidationCadence } from './utils/requestValidationCadence';
  * @returns Every-request recording and permanent cancellation functions.
  */
 export const createValidationCadence = (
-  run: () => void,
+  run: () => boolean,
   now: () => number,
 ): ValidationCadence => {
   const state: ValidationCadenceState = {
@@ -17,11 +22,13 @@ export const createValidationCadence = (
     now,
     phase: 'idle',
     requested: false,
-    lastRun: 0,
     cancelled: false,
   };
+  const onFrame = () => observeValidationCadenceFrame(state, onFrame, onRun);
+  const onRun = (fallback: boolean) =>
+    runValidationCadence(state, onFrame, onRun, fallback);
   return {
-    request: () => requestValidationCadence(state),
+    request: () => requestValidationCadence(state, onRun),
     cancel: () => cancelValidationCadence(state),
   };
 };

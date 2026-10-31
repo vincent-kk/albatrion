@@ -30,6 +30,10 @@ export const FieldInputSlotWrapper = (
   NodeProxy: ComponentType<FieldProxyProps>,
 ): ComponentType<ChildFieldProps> => {
   if (!node) return NULL_FUNCTION;
+  // The node-specific factory survives FieldProxy's version key remount.
+  const errorVisibilityMemory: RefObject<ReadonlyMap<FieldNode, boolean>> = {
+    current: new Map(),
+  };
   return ({
     onChange: preferredOnChange,
     onFileAttach: preferredOnFileAttach,
@@ -56,6 +60,7 @@ export const FieldInputSlotWrapper = (
     return (
       <FieldInputSlot
         node={node}
+        errorVisibilityMemory={errorVisibilityMemory}
         onChangeRef={onChangeRef}
         onFileAttachRef={onFileAttachRef}
         overrideProps={overrideProps}

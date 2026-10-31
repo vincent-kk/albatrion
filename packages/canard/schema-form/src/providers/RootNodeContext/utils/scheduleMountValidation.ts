@@ -2,10 +2,10 @@ import {
   hasFieldNodeValidationRequest,
   scheduleValidationSlot,
 } from '@/schema-form/core';
-import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../../FormErrorContext';
 import type { RootLoad, RootLoadStore } from '../type';
+import { validateMountRoot } from './validateMountRoot';
 
 /**
  * Schedule a committed load's first OnChange verdict after its initial frame.
@@ -28,13 +28,6 @@ export const scheduleMountValidation = (
       load.mountValidationOwed = true;
       return;
     }
-    void root.validate().catch((error) => {
-      if (
-        error instanceof SchemaFormError &&
-        error.code === FormErrorCode.ValidatorCompileFailed
-      )
-        return;
-      reporter?.capture(error, undefined, 'rejected');
-    });
+    validateMountRoot(root, reporter);
   });
 };

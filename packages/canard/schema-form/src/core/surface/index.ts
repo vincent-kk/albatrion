@@ -38,3 +38,5 @@ export type {
   TerminalNode,
   InferFieldNode,
 } from './type';
+export { isFieldNodeValidationPending } from './utils/binding/isFieldNodeValidationPending';
+export { subscribeFieldNodeValidationSettled } from './utils/binding/subscribeFieldNodeValidationSettled';

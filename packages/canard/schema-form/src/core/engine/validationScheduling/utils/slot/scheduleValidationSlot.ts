@@ -1,4 +1,4 @@
-import { scheduleAfterValidationFrame } from './frames/scheduleAfterValidationFrame';
+import { scheduleAfterValidationFrame } from '../frames/scheduleAfterValidationFrame';
 
 /**
  * Schedule one validation callback after the next frame, with the host fallback.

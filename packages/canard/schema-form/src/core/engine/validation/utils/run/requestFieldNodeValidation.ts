@@ -6,6 +6,7 @@ import type { ValidationIssue } from '../../types/issue';
 import { retainEqualValidationIssues } from '../route/retainEqualValidationIssues';
 import { routeValidationIssues } from '../route/routeValidationIssues';
 import { runFieldNodeValidation } from './runFieldNodeValidation';
+import { settleFieldNodeValidation } from './settleFieldNodeValidation';
 
 /**
  * Coalesce write-triggered checks and deliver only the newest commit's verdict.
@@ -23,13 +24,14 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
     runtime.validationUnavailable
   )
     return;
+  runtime.validationPending = true;
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationRequestStamp = runtime.validationStamp;
   (runtime.validationPendingTargets ??= new Set()).add(node);
   runtime.validationRun = () => {
     if (runtime.validationStamp !== runtime.validationRequestStamp) {
       runtime.validationPendingTargets = undefined;
-      return;
+      return false;
     }
     const targets = runtime.validationPendingTargets ?? new Set([node]);
     runtime.validationPendingTargets = undefined;
@@ -37,19 +39,24 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
     const commit = runtime.commitNumber ?? 0;
     void runFieldNodeValidation(node)
       .then((result) => {
-        if (result === null) return;
-        if (
-          runtime.validationStamp !== stamp ||
-          (runtime.commitNumber ?? 0) !== commit
-        )
+        if (result === null) {
+          settleFieldNodeValidation(node, stamp);
           return;
+        }
+        if (runtime.validationStamp !== stamp) return;
+        if ((runtime.commitNumber ?? 0) !== commit) {
+          settleFieldNodeValidation(node, stamp);
+          return;
+        }
         const issues = retainEqualValidationIssues(node, result);
         for (const target of targets) routeValidationIssues(target, issues);
         runtime.validationResult = { commit, issues };
+        settleFieldNodeValidation(node, stamp);
         deliver(issues, commit);
       })
       .catch((failure: unknown) => {
         if (runtime.validationStamp !== stamp) return;
+        settleFieldNodeValidation(node, stamp);
         if (
           failure !== null &&
           typeof failure === 'object' &&
@@ -57,14 +64,16 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
           failure.code === FormErrorCode.ValidatorCompileFailed
         ) {
           runtime.validationUnavailable = true;
+          settleFieldNodeValidation(node);
           if (runtime.validationCompileReported) return;
           runtime.validationCompileReported = true;
         }
         runtime.reportValidationFailure?.(failure);
       });
+    return true;
   };
   runtime.validationCadence ??= createValidationCadence(
-    () => runtime.validationRun?.(),
+    () => runtime.validationRun?.() ?? false,
     () => performance.now(),
   );
   runtime.validationCadence.request();

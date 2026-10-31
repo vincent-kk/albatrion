@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { scheduleValidationSlot } from '../utils/scheduleValidationSlot';
+import { scheduleValidationSlot } from '../utils/slot/scheduleValidationSlot';
 
 afterEach(() => {
   vi.useRealTimers();

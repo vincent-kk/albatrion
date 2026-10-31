@@ -143,7 +143,7 @@ describe('deferred-mount under StrictMode', () => {
     });
     await act(async () => {
       form.handle.focus('/f15');
-      await settleValidation();
+      await settleValidation(() => form.handle.node);
     });
     expect(form.exists('/f15')).toBe(true);
     expect(document.activeElement).toBe(form.field('/f15'));

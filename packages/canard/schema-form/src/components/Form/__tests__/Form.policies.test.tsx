@@ -62,7 +62,7 @@ it('VALIDATE-044 retains authored schema identity and replaces the root on valid
     </FormCore>,
   );
   const before = ref.current!.node;
-  await settleValidation();
+  await settleValidation(() => ref.current?.node);
   expect(first.compile).toHaveBeenCalledWith(schema);
   view.rerender(
     <FormCore ref={ref} jsonSchema={schema} validatorFactory={second}>
@@ -70,7 +70,6 @@ it('VALIDATE-044 retains authored schema identity and replaces the root on valid
     </FormCore>,
   );
   expect(ref.current!.node).not.toBe(before);
-  await settleValidation();
   expect(second.compile).toHaveBeenCalledWith(schema);
 });
 

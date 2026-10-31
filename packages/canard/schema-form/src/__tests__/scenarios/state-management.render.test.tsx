@@ -93,7 +93,7 @@ const runImperative = async (
 ): Promise<void> => {
   await act(async () => {
     fn();
-    await settleValidation();
+    await settleValidation(() => _form.handle.node);
   });
 };
 

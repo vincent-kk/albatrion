@@ -11,6 +11,7 @@ import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 import type { RootLoad, RootLoadProps } from '../type';
 import { applyFormErrors } from './applyFormErrors';
 import { createRootLoad } from './createRootLoad';
+import { reportBufferedRootRecord } from './reportBufferedRootRecord';
 
 /** Mask selecting the automatic-write override bits of a reset option. */
 const AUTOMATIC_WRITES_MASK =
@@ -63,6 +64,17 @@ export const resetRootLoad = (
     previous.reporter?.capture(next.error);
     return previous;
   }
+  if (!previous.ready && previous.records.length) {
+    next.recordRoots = new WeakMap();
+    for (const record of previous.records)
+      next.recordRoots.set(
+        record,
+        previous.recordRoots?.has(record)
+          ? previous.recordRoots.get(record)
+          : previous.root,
+      );
+    next.records = previous.records.splice(0).concat(next.records);
+  }
   next.ready = previous.ready;
   next.prepared = true;
   const replacement = next.root;
@@ -78,6 +90,8 @@ export const resetRootLoad = (
   } catch (error) {
     next.error = error;
   }
-  for (const record of next.records.splice(0)) next.reporter?.report(record);
+  if (next.ready)
+    for (const record of next.records.splice(0))
+      reportBufferedRootRecord(next, record);
   return next;
 };

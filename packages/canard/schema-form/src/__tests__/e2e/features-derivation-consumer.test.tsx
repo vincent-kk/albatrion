@@ -69,7 +69,7 @@ describe('features — derivation consumer-only', () => {
       for (const [index, stage] of contextStages.entries()) {
         const before = onChange.mock.calls.length;
         if (index > 0) rerender(view(stage.context));
-        await act(async () => { await settleValidation(); });
+        await act(async () => { await settleValidation(() => handle?.node); });
         const current = handle!;
         expect({
           states: { titleReadOnly: current.findNode('/title')!.readOnly, secretVisible: current.findNode('/secret')!.visible },

@@ -17,6 +17,7 @@ import {
   useFieldRendererContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
+import { useErrorVisibility } from '@/schema-form/providers/FieldRendererContext';
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
@@ -90,7 +91,10 @@ export const FieldProxy = ({
   });
   const Wrapper = useConstant(InputWrapper || Fragment);
   const { context } = useWorkspaceContext();
-  const errorVisible = checkShowError(node?.state);
+  const [errorVisible] = useErrorVisibility(
+    [node],
+    [!!node?.enabled && checkShowError(node?.state)],
+  );
   const formatError = errorVisible ? contextFormatError : NULL_FUNCTION;
   const version = useFieldNodeTracker(node, FieldNodeEventType.RequestRemount);
 

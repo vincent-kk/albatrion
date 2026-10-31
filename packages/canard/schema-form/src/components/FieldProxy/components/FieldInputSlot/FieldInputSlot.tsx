@@ -18,6 +18,7 @@ import {
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
+import { useErrorVisibility } from '@/schema-form/providers/FieldRendererContext';
 import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
@@ -37,6 +38,7 @@ const TOUCHED_STATE_PATCH = { 2: true };
 export const FieldInputSlot = memo(
   ({
     node,
+    errorVisibilityMemory,
     onChangeRef,
     onFileAttachRef,
     overrideProps,
@@ -51,6 +53,11 @@ export const FieldInputSlot = memo(
     const [ChildFields, hydrationCommitRef, virtualizationManager] =
       useChildFields(node, NodeProxy, mountedChildren, terminalChildren);
     const { checkShowError } = useFieldRendererContext();
+    const [errorVisible] = useErrorVisibility(
+      [node],
+      [checkShowError(node.state)],
+      errorVisibilityMemory,
+    );
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
@@ -160,7 +167,7 @@ export const FieldInputSlot = memo(
           path={node.path}
           nullable={node.nullable}
           errors={node.errors}
-          errorVisible={checkShowError(node.state)}
+          errorVisible={errorVisible}
           watchValues={node.watchValues}
           ChildFields={ChildFields}
           context={context}

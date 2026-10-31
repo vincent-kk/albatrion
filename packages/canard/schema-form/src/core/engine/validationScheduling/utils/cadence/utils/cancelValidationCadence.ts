@@ -1,4 +1,4 @@
-import type { ValidationCadenceState } from '../type';
+import type { ValidationCadenceState } from '../../../types/validationCadence';
 
 /** Permanently cancel a cadence and every pending host handle it owns.
  * @param state - Creator-owned lifetime whose pending host work must stop.

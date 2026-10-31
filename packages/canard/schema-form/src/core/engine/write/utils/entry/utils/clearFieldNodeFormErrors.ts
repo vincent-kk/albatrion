@@ -1,7 +1,10 @@
 import { FieldNodeEventType } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 import { ValidationMode } from '../../../../types/state';
-import { routeValidationIssues } from '../../../../validation';
+import {
+  routeValidationIssues,
+  settleFieldNodeValidation,
+} from '../../../../validation';
 import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 
 /**
@@ -28,8 +31,10 @@ export const clearFieldNodeFormErrors = <Self extends FieldNodeRecord<Self>>(
   runtime.adoptedExternalErrors = undefined;
   runtime.validationResult = undefined;
   runtime.validationListChanged = undefined;
-  if (!((runtime.validationMode ?? 0) & ValidationMode.OnChange))
+  if (!((runtime.validationMode ?? 0) & ValidationMode.OnChange)) {
     runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
+    settleFieldNodeValidation(root);
+  }
   runtime.validationPendingTargets = undefined;
   runtime.validationChangedNodes = undefined;
   for (const node of changed)

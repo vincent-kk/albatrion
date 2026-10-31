@@ -292,7 +292,7 @@ export const renderForm = async (
     await act(async () => {
       utils = render(element);
     });
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     if (initialFlushMs > 0)
       await act(async () => {
         await new Promise((r) => setTimeout(r, initialFlushMs));
@@ -307,7 +307,7 @@ export const renderForm = async (
   const container = utils.container;
 
   const flush = async (ms = 0) => {
-    await settleValidation();
+    await settleValidation(() => ref.current?.node);
     if (ms > 0)
       await act(async () => {
         await new Promise((r) => setTimeout(r, ms));
@@ -426,13 +426,13 @@ export const renderForm = async (
     setValue: async (value, option) => {
       await act(async () => {
         ref.current!.setValue(value, option as any);
-        await settleValidation();
+        await settleValidation(() => ref.current?.node);
       });
     },
     reset: async () => {
       await act(async () => {
         ref.current?.reset();
-        await settleValidation();
+        await settleValidation(() => ref.current?.node);
       });
     },
     validate: async () => {
