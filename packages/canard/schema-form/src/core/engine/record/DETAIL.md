@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- W3의 선택적 validationPendingEntryStamp는 이벤트 전 pending 기록의 사슬 stamp이며 실제 요청·무요청 종료·폐기에서 지운다. 노드 고정 칸이나 timing 상태가 아니다.
+
 
 - B12 인스턴스별 `inactiveListeners`는 선택적 Map(node → Set)으로 보유하며 재진입 복제에 넘기지 않습니다. 선택적 `resolvingInactiveValue` 표시는 동기 resolver 실행 동안만 참이며 노드 고정 칸을 추가하지 않습니다.
 

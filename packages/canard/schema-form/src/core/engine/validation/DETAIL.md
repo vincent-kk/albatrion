@@ -7,6 +7,8 @@
 
 ## API Contracts
 
+- W3: prepareFieldNodeValidation은 active entry·비deferred OnChange·available·방출 변경 또는 validationTargets라는 실제 요청 조건을 공유하며 첫 공개 배달 전에 pending을 기록한다. validationPendingEntryStamp는 이 사슬이 기록한 기존 stamp를 선택적으로 보유한다. 요청이 사라진 사슬은 이 stamp만 정착하고 marker를 지워 더 새로운 판정을 풀지 않는다. request의 기존 true 설정은 멱등이며 timing·공개 사건·revision은 바꾸지 않는다.
+
 - IR-6 U2: 쓰기 검증 요청이 None·validationUnavailable 가드를 통과하면 runtime.validationPending을 true로 만든다. 현재 stamp인 실행의 전달(같은 목록 포함)·null·커밋 검사만의 폐기·실패는 pending을 false로 정착시킨다. 명시적 루트 validate도 현재 stamp 실행을 정착시키지만 pending을 시작하지 않고, 하위 트리 validate는 정착시키지 않는다. validationUnavailable·폐기와 새 요청 없는 stamp 무효화(non-OnChange reset)는 무조건 정착시킨다(코디네이터 승인 msg_1f2afdd094c7).
 - 정착은 라우팅 뒤·배달 전에 같은 동기 콜백에서 수행하고 true→false에만 런타임의 validationSettleListeners에 한 번 알린다. 공개 사건·node.subscribe·revision은 바꾸지 않는다. isFieldNodeValidationPending, subscribeFieldNodeValidationSettled를 validation→engine→surface 래퍼→core로 연결하며 src/index는 유지한다. settleFieldNodeValidation은 validation·write·settle의 도메인 내부 진입점이다.
 - 연속 입력의 동기 검증은 각100ms cap 판정이 현재 stamp로 완료되어 보류 표시를 푼다. 비동기·느린 검증이 계속 stale이면 후행 판정까지 새 표시를 보류할 수 있다. 커밋 검사만으로 버린 실행은 새 요청이 없으면 정착하며 이전 오류를 보일 수 있는 기록된 경계이다.

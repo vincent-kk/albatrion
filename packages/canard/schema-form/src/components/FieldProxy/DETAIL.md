@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- W1/W2: 표시 기억은 FieldRendererProvider의 해당 표시 종류 WeakMap을 사용한다. 조상 remount 전에 읽은 노드별 값은 보존하고 실제 숨김·unmount의 cleanup은 삭제한다. 새 표시가 layout에서 pending으로 바뀌었으면 false를 기록하고 paint 전에 다시 렌더한다.
+
 - U2: renderer.errorVisible과 formatError 선택은 FieldRendererContext의 공통 useErrorVisibility를 사용한다. checkShowError 조건은 그대로이며 이미 표시한 오류만 이전 판정을 유지한다. 해석한 노드가 바뀌면 기억을 이어받지 않고 enabled가 거짓인 null 렌더는 false를 commit한다. renderer.errors는 보정하지 않는 raw 목록이다.
 
 - 위계: 본체 `FieldProxy.tsx`와 재귀 렌더 props 계약 `type.ts`는 뿌리에 있습니다. 본체의 내부 부품인 fractal 둘(`FieldInputSlot`·`DeferredFieldProxy`)은 `components/`에 있고 이 칸에는 index를 두지 않습니다. 부품은 Form의 자식들(독립 컴포넌트)과 달리 본체의 일부이므로 본체 아래에 둡니다. 진입점 `index.ts`는 `./FieldProxy`의 `FieldProxy`와 `./components/FieldInputSlot`의 형 `ChildField`만 이름으로 내보냅니다. 본체는 부품을 각각의 진입점으로 가져오고, 부품은 위로 열린 길을 통해 뿌리의 `type.ts`를 가져오며, 부품끼리는 서로의 진입점을 가져옵니다.

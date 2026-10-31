@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-- U2: input.errorVisible은 공통 useErrorVisibility를 사용하며 memoized 슬롯이 자체 기억과 보류 구독을 소유한다. 안정된 노드별 wrapper factory가 기억을 보유해 version remount 중에도 이미 표시한 오류를 유지하며 새로 보류한 표시는 계속 보류한다(코디네이터 msg_cc8e08d106e0). input.errors는 raw 목록으로 유지한다.
+- U2: input.errorVisible은 공통 useErrorVisibility를 사용하며 memoized 슬롯이 자체 기억과 보류 구독을 소유한다. Provider의 input-kind WeakMap이 기억을 보유해 조상 version remount 중에도 이미 표시한 오류를 유지하며 새 보류는 유지한다. 실제 입력 unmount와 숨김 cleanup은 기억을 삭제하고 wrapper 메모리 prop은 두지 않는다(W1). input.errors는 raw 목록으로 유지한다.
 
 - 가상화 매니저는 훅의 `useSyncExternalStore`에서 서버 스냅숏을 null로 읽습니다. 서버에서 렌더한 자식과 동일한 구성을 하이드레이션에서 마운트하며, 클라이언트 전용 마운트는 첫 렌더부터 게이팅합니다. 기존 입력 commit layout effect에서 하이드레이션 커밋을 ref로 기록하여 passive 일관성 검사가 null을 유지하게 하며, 하이드레이션 완료만으로 슬롯이나 사용자 브랜치 입력을 다시 렌더하지 않습니다. 이후 실제 자식 변경 렌더는 폼 매니저를 적용합니다. Provider의 문맥 값은 바꾸지 않습니다.
 - 폼 매니저가 있고 실제 입력 슬롯이 커밋하면 기존 입력 commit layout effect에서 슬롯 자신의 노드를 노출 원장에 기록합니다. 자식 wrapper만 커밋하고 비활성·숨김 노드가 실제 슬롯을 만들지 않은 경우에는 기록하지 않습니다. 하이드레이션, eager window, 문턱 미만 마운트 모두 포함합니다. 이후 remount·enabled 전환으로 캐시를 다시 만들어도 해당 노드는 placeholder가 되지 않으며, 하이드레이션 뒤 추가한 자식과 브랜치에는 게이팅이 적용됩니다. 자식 컴포넌트 캐시는 StrictMode의 effect 재실행에도 유지하고 실제 훅 인스턴스와 함께 회수합니다.

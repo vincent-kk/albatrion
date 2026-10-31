@@ -7,6 +7,8 @@
 
 ## API Contracts
 
+- W1/W2: 표시 기억은 FieldRendererProvider의 해당 표시 종류 WeakMap을 사용한다. 조상 remount 전에 읽은 노드별 값은 보존하고 실제 숨김·unmount의 cleanup은 삭제한다. 새 표시가 layout에서 pending으로 바뀌었으면 false를 기록하고 paint 전에 다시 렌더한다.
+
 - U2: useChildFieldErrors는 부모와 자식의 조건을 공통 표시 단위로 보정한다. showErrors와 aggregate showError 모두 자식 노드를 키로 한 commit 기억을 사용하며 배열 인덱스가 기억을 옮기지 않는다. raw 오류 목록과 기존 공개 반환 형은 유지한다.
 
 - index는 위 일곱 이름만 내보냅니다. 각 이름의 소비자는 이 fractal 밖에 있습니다(루트 index, `components/FieldProxy`, `components/Form`).
