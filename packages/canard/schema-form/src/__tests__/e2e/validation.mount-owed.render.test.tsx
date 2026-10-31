@@ -42,7 +42,7 @@ const hideable = (form: ReactNode, hidden: boolean) =>
 
 afterEach(() => cleanup());
 
-it('IR-6 (d-owed) restores exactly one owed mount validation after layout effects return', async () => {
+it('IR-7 T2 mount validation runs while hidden and is not repeated on show', async () => {
   const validate = vi.fn(() => []);
   const validator = { compile: () => validate, compileGuard: () => () => true };
   const ref = createRef<FormHandle>();
@@ -58,7 +58,7 @@ it('IR-6 (d-owed) restores exactly one owed mount validation after layout effect
   const view = render(wrap(false));
   view.rerender(wrap(true));
   await settleValidation(() => ref.current?.node);
-  expect(validate).not.toHaveBeenCalled();
+  expect(validate).toHaveBeenCalledTimes(1);
   view.rerender(wrap(false));
   await settleValidation(() => ref.current?.node);
   expect(validate).toHaveBeenCalledTimes(1);
@@ -71,7 +71,7 @@ it('IR-6 (d-owed) restores exactly one owed mount validation after layout effect
   expect(validate).toHaveBeenCalledTimes(1);
 });
 
-it('IR-6 R1 restores a compile failure buffered while a layout-write form is hidden', async () => {
+it('IR-7 T3 R1 reports a layout-write compile failure while hidden', async () => {
   const onError = vi.fn();
   const sink = observeErrorSink();
   const Input = ({ onChange }: FieldInputProps) => {
@@ -100,7 +100,7 @@ it('IR-6 R1 restores a compile failure buffered while a layout-write form is hid
     const view = render(hideable(form, false));
     view.rerender(hideable(form, true));
     await settleValidation(() => ref.current?.node);
-    expect(onError).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledTimes(1);
     expect(sink.errors().length).toBeGreaterThan(0);
     view.rerender(hideable(form, false));
     await settleValidation(() => ref.current?.node);
@@ -118,7 +118,7 @@ it('IR-6 R1 restores a compile failure buffered while a layout-write form is hid
   }
 });
 
-it('IR-6 reconnect isolates a throwing onError and still delivers later buffered records', async () => {
+it('IR-7 T3 V6 isolates onError at hidden chain end and delivers later records', async () => {
   const ref = createRef<FormHandle>();
   const handlerFailure = new Error('handler failure');
   const onError = vi.fn(() => {
@@ -148,7 +148,7 @@ it('IR-6 reconnect isolates a throwing onError and still delivers later buffered
   await settleValidation(root);
   act(() => handle.setValue('fail-two'));
   await settleValidation(root);
-  expect(onError).not.toHaveBeenCalled();
+  expect(onError).toHaveBeenCalledTimes(2);
   view.rerender(hideable(form, false));
   await settleValidation(() => ref.current?.node);
   expect(view.container.querySelector('form')).not.toBeNull();
@@ -156,7 +156,7 @@ it('IR-6 reconnect isolates a throwing onError and still delivers later buffered
   expect(sink.errors()).toContain(handlerFailure);
 });
 
-it('IR-6 rebuild transfers a hidden load failure once before replacement records', async () => {
+it('IR-7 T3 rebuild follows a failure already delivered while hidden', async () => {
   const ref = createRef<FormHandle>();
   const onError = vi.fn();
   observeErrorSink();
@@ -181,7 +181,7 @@ it('IR-6 rebuild transfers a hidden load failure once before replacement records
   view.rerender(hideable(form, true));
   act(() => handle.setValue('fail'));
   await settleValidation(old);
-  expect(onError).not.toHaveBeenCalled();
+  expect(onError).toHaveBeenCalledTimes(1);
   act(() => handle.rebuild());
   expect(handle.node).not.toBe(old);
   expect(onError).toHaveBeenCalledTimes(1);
@@ -198,7 +198,7 @@ it('IR-6 rebuild transfers a hidden load failure once before replacement records
   expect(onError).toHaveBeenCalledTimes(1);
 });
 
-it('IR-6 W4 an async mount rejection hidden before completion reports once after reconnect', async () => {
+it('IR-7 T3 W4 async mount rejection reports once while hidden', async () => {
   const ref = createRef<FormHandle>();
   const onError = vi.fn();
   observeErrorSink();
@@ -230,7 +230,7 @@ it('IR-6 W4 an async mount rejection hidden before completion reports once after
     reject(new Error('hidden mount rejection'));
     await Promise.resolve();
   });
-  expect(onError).not.toHaveBeenCalled();
+  expect(onError).toHaveBeenCalledTimes(1);
   view.rerender(hideable(form, false));
   expect(onError).toHaveBeenCalledTimes(1);
   expect(onError.mock.calls[0][0]).toMatchObject({
@@ -270,7 +270,7 @@ it('IR-6 W4 a compile onError failure reaches the host once without recapture', 
   expect(sink.errors().filter((error) => error === handler)).toHaveLength(1);
 });
 
-it('IR-6 W5 a retired record still guards writes into the current form', async () => {
+it('IR-7 T3 W5 hidden chain reports guard writes into the current form', async () => {
   const ref = createRef<FormHandle>();
   observeErrorSink();
   let handle: FormHandle;
@@ -303,6 +303,8 @@ it('IR-6 W5 a retired record still guards writes into the current form', async (
   view.rerender(hideable(form, true));
   act(() => handle.setValue('fail'));
   await settleValidation(old);
+  expect(onError).toHaveBeenCalledTimes(1);
+  expect(attempts).toHaveLength(1);
   act(() => handle.rebuild());
   view.rerender(hideable(form, false));
   await settleValidation(() => ref.current?.node);

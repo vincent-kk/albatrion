@@ -5,10 +5,9 @@ import { FormErrorCode, type FormErrorRecord } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../../FormErrorContext';
 import { createRootLoad } from '../utils/createRootLoad';
-import { reportBufferedRootRecord } from '../utils/reportBufferedRootRecord';
 import { resetRootLoad } from '../utils/resetRootLoad';
 
-it('IR-6 a twice-replaced hidden load delivers each report with its original root and restores the current root', () => {
+it('IR-7 T3 a never-prepared replacement transfers its record origin and flushes once', () => {
   const roots: (FieldNode | undefined)[] = [];
   const reporter: FormErrorService = {
     load: 0,
@@ -37,18 +36,9 @@ it('IR-6 a twice-replaced hidden load delivers each report with its original roo
     undefined,
     true,
   );
-  const secondRecord = { ...record, message: 'second' };
-  second.records.push(secondRecord);
-  const third = resetRootLoad(
-    second,
-    { jsonSchema: { type: 'boolean' }, validationMode: ValidationMode.None },
-    undefined,
-    true,
-  );
-  expect(third.records).toEqual([record, secondRecord]);
-  expect(roots).toEqual([]);
-  for (const report of third.records.splice(0))
-    reportBufferedRootRecord(third, report);
-  expect(roots).toEqual([first.root, second.root]);
-  expect(reporter.root).toBe(third.root);
+  expect(first.prepared).toBe(false);
+  expect(second.prepared).toBe(true);
+  expect(second.records).toEqual([]);
+  expect(roots).toEqual([first.root]);
+  expect(reporter.root).toBe(second.root);
 });

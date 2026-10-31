@@ -308,7 +308,7 @@ describe('frame-backed Form validation', () => {
     expect(validate).toHaveBeenCalledTimes(1);
   });
 
-  it('IR-6 (d) unmount before the slot produces no validation or report', async () => {
+  it('IR-7 T3 unmount before the slot still validates once without an error record', async () => {
     const validate = vi.fn(() => []);
     const onError = vi.fn();
     const view = render(
@@ -324,7 +324,7 @@ describe('frame-backed Form validation', () => {
     );
     view.unmount();
     await advanceValidationFrame();
-    expect(validate).not.toHaveBeenCalled();
+    expect(validate).toHaveBeenCalledTimes(1);
     expect(onError).not.toHaveBeenCalled();
   });
 
