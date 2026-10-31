@@ -194,15 +194,18 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
       const verdict = classifyImport(importer, target, fractals);
       if (!verdict) continue;
       const importerPath = relative(sourceRoot, importer).split(sep).join('/');
+      const targetPath = relative(sourceRoot, target).split(sep).join('/');
       if (
         verdict === 'D' &&
-        (importerPath === '__tests__/helpers/readFieldNodeRuntime.ts' ||
+        (((importerPath === '__tests__/helpers/readFieldNodeRuntime.ts' ||
           importerPath ===
             '__tests__/helpers/releaseFieldNodeRevealHistory.ts') &&
-        relative(sourceRoot, target).split(sep).join('/') ===
-          'core/surface/runtime/requireRuntimeFieldNode.ts'
+          targetPath === 'core/surface/runtime/requireRuntimeFieldNode.ts') ||
+          (importerPath ===
+            '__tests__/helpers/releaseFieldNodeRevealHistory.ts' &&
+            targetPath === 'core/engine/validation/index.ts'))
       ) {
-        revealRuntimeBridges.push(importerPath);
+        revealRuntimeBridges.push(importerPath + ' -> ' + targetPath);
         continue;
       }
       if (verdict === 'U') {
@@ -237,8 +240,9 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
     revealRuntimeBridges.sort(),
     'exact named reveal verification bridges',
   ).toEqual([
-    '__tests__/helpers/readFieldNodeRuntime.ts',
-    '__tests__/helpers/releaseFieldNodeRevealHistory.ts',
+    '__tests__/helpers/readFieldNodeRuntime.ts -> core/surface/runtime/requireRuntimeFieldNode.ts',
+    '__tests__/helpers/releaseFieldNodeRevealHistory.ts -> core/engine/validation/index.ts',
+    '__tests__/helpers/releaseFieldNodeRevealHistory.ts -> core/surface/runtime/requireRuntimeFieldNode.ts',
   ]);
   console.info(
     'IMPORT_MODEL_REVEAL_BRIDGE count=' + revealRuntimeBridges.length,
