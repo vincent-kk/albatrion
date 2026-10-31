@@ -84,7 +84,7 @@ it('IR-7 round b StrictMode replay delivers the non-idempotent child layout writ
         validationMode={ValidationMode.None}
         onChange={onChange}
       >
-        {({ node }) => <Child node={node} />}
+        {({ node }) => (node ? <Child node={node} /> : null)}
       </Form>
     </StrictMode>,
   );
