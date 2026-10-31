@@ -36,13 +36,13 @@ export interface RootLoad {
   >;
   /** Warning scope captured for direct records placed in this load. */
   warningScope?: object;
-  /** Construction or mount failure kept for the root boundary to throw and report. */
+  /** Construction, mount, or reset failure kept for the reset caller or root boundary to throw and report. */
   error?: unknown;
   /** First commit ran; deliver every form callback while effects are disconnected, until reset retires this load. */
   prepared: boolean;
   /** A reset replaced this load; it delivers nothing more to the consumer. */
   retired?: boolean;
-  /** Records have crossed the commit or root-fallback boundary. */
+  /** Records or construction errors have crossed the commit, replacement reset, or root-fallback boundary. */
   reported?: boolean;
   /** Instance reporter outside the root boundary; absent when no Form error provider is mounted. */
   reporter?: FormErrorService;
