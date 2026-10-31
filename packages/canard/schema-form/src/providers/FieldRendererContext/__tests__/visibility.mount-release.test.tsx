@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from 'react';
+import { createRef, useEffect, useLayoutEffect } from 'react';
 
 import { flushSync } from 'react-dom';
 import { createRoot, hydrateRoot } from 'react-dom/client';
@@ -6,9 +6,12 @@ import { renderToString } from 'react-dom/server';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { advanceValidationFrame } from '@/schema-form/__tests__/helpers/advanceValidationFrame';
 import { readFieldNodeRuntime } from '@/schema-form/__tests__/helpers/readFieldNodeRuntime';
-import { Form } from '@/schema-form/components/Form';
+import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
+import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
+import { releaseFieldNodeRevealHistory } from '@/schema-form/core/engine/validation';
 import type { FieldInputProps, FieldRendererProps } from '@/schema-form/types';
 
 import { FieldRendererContextProvider } from '../components/FieldRendererProvider';
@@ -81,8 +84,10 @@ const countMount = async (hydrate: boolean, showError: boolean) => {
   actEnvironment.IS_REACT_ACT_ENVIRONMENT = false;
   const container = document.createElement('div');
   document.body.append(container);
+  const ref = createRef<FormHandle>();
   const form = (
     <Form
+      ref={ref}
       jsonSchema={schema}
       defaultValue={defaults}
       showError={showError}
@@ -100,7 +105,15 @@ const countMount = async (hydrate: boolean, showError: boolean) => {
   const root = hydrate ? hydrateRoot(container, form) : createRoot(container);
   if (!hydrate) root.render(form);
   try {
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await settleValidation(() => ref.current?.node);
+    const field = ref.current!.node!;
+    expect(readFieldNodeRuntime(field).revealReleaseListeners?.size ?? 0).toBe(
+      0,
+    );
+    const afterMountRelease = counter.displays;
+    releaseFieldNodeRevealHistory(field.rootNode);
+    await advanceValidationFrame();
+    expect(counter.displays).toBe(afterMountRelease);
     expect(container.querySelectorAll('input')).toHaveLength(10);
     // Context reads count display renders and RootNodeContextProvider renders.
     return counter.displays;
