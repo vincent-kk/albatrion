@@ -65,7 +65,6 @@ export const resetRootLoad = (
     previous.reporter?.capture(next.error);
     return previous;
   }
-  previous.retired = true;
   if (!previous.prepared && previous.records.length) {
     next.recordOrigins ??= new WeakMap();
     for (const record of previous.records) {
@@ -91,11 +90,19 @@ export const resetRootLoad = (
   } catch (error) {
     next.error = error;
   }
+  previous.retired = true;
   for (const record of next.records.splice(0)) {
     try {
       reportBufferedRootRecord(next, record);
     } catch (error) {
       reportErrorToHost(error);
+    }
+  }
+  if (!previous.prepared && !previous.reported) {
+    previous.reported = true;
+    if (previous.error) {
+      previous.reporter?.capture(previous.error);
+      reportErrorToHost(previous.error);
     }
   }
   return next;

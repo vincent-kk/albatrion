@@ -182,6 +182,7 @@ export const RootNodeContextProvider = ({
     if (root && validator) retainValidationRoot(validator, authored);
     if (!load.prepared) {
       if (store.load === load) {
+        store.unsubscribe();
         store.unsubscribe = subscribeRootLoad(load, store);
         load.prepared = true;
         flushRootLoad(load);
