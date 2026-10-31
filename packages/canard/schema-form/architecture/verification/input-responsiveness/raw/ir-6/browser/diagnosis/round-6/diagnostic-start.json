@@ -1,0 +1,8 @@
+{
+  "diagnosticOnly": true,
+  "formalGateEvidence": false,
+  "startedAt": "2026-10-31T13:40:54.320016+00:00",
+  "head": "ccf4ec8ae092bfd775353b7a9d6be91ad07b1fb4",
+  "runnerSha256": "f39778cbe386cf42fe2308e6ed86054b0ddf8e17a3cfd6cc747aff3b88e1721b",
+  "inputsSha256": "0bcced4f1aea22c1a644f601858441d046fdbca8c4f6d086979a9806dcb2b1a2"
+}
