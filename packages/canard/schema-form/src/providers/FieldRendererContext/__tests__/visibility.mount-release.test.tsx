@@ -8,10 +8,10 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { advanceValidationFrame } from '@/schema-form/__tests__/helpers/advanceValidationFrame';
 import { readFieldNodeRuntime } from '@/schema-form/__tests__/helpers/readFieldNodeRuntime';
+import { releaseFieldNodeRevealHistory } from '@/schema-form/__tests__/helpers/releaseFieldNodeRevealHistory';
 import { settleValidation } from '@/schema-form/__tests__/helpers/settleValidation';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
-import { releaseFieldNodeRevealHistory } from '@/schema-form/core/engine/validation';
 import type { FieldInputProps, FieldRendererProps } from '@/schema-form/types';
 
 import { FieldRendererContextProvider } from '../components/FieldRendererProvider';
@@ -111,7 +111,7 @@ const countMount = async (hydrate: boolean, showError: boolean) => {
       0,
     );
     const afterMountRelease = counter.displays;
-    releaseFieldNodeRevealHistory(field.rootNode);
+    releaseFieldNodeRevealHistory(field);
     await advanceValidationFrame();
     expect(counter.displays).toBe(afterMountRelease);
     expect(container.querySelectorAll('input')).toHaveLength(10);
