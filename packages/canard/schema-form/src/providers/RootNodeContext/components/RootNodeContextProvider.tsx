@@ -33,6 +33,7 @@ import { createRootLoad } from '../utils/createRootLoad';
 import { flushRootLoad } from '../utils/flushRootLoad';
 import { reportRootLoadValidation } from '../utils/reportRootLoadValidation';
 import { resetRootLoad } from '../utils/resetRootLoad';
+import { scheduleMountValidation } from '../utils/scheduleMountValidation';
 import { subscribeRootLoad } from '../utils/subscribeRootLoad';
 import { RootBindingContext } from './RootBindingContext';
 import { RootNodeContext } from './RootNodeContext';
@@ -92,13 +93,12 @@ export const RootNodeContextProvider = ({
     reporter.root = load.root;
     reporter.pendingLoad = () => flushRootLoad(load, true);
   }
-  const pending =
-    useRef<
-      Optional<{
-        props: RootLoadProps;
-        option: Parameters<RootBinding['reset']>[0];
-      }>
-    >(undefined);
+  const pending = useRef<
+    Optional<{
+      props: RootLoadProps;
+      option: Parameters<RootBinding['reset']>[0];
+    }>
+  >(undefined);
   const [, schedule] = useState(0);
   const reset = useHandle(
     (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
@@ -176,10 +176,11 @@ export const RootNodeContextProvider = ({
       if (root) {
         applyFormErrors(root, load.props.errors);
         if ((load.props.validationMode ?? 0) & ValidationMode.OnChange)
-          void root
-            .validate()
-            .catch((error) => reporter?.capture(error, undefined, 'rejected'));
+          scheduleMountValidation(load, store, reporter);
       }
+    } else if (load.mountValidationOwed) {
+      load.mountValidationOwed = false;
+      scheduleMountValidation(load, store, reporter);
     }
     return () => {
       load.ready = false;

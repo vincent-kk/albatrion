@@ -32,6 +32,8 @@ import {
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
 
+import { settleValidation } from '../helpers/settleValidation';
+
 /** GOAL-061 touched lands in the animation frame after blur; jsdom runs frames on a timer, so waits cover one. */
 const BLUR_FRAME_MS = 50;
 
@@ -95,7 +97,7 @@ const scenarioNamed = (name: string): FormScenario => {
  * @param ms - Timer wait.
  * @returns Completion after the act scope.
  */
-const settle = (ms = 0) => act(async () => { await new Promise((resolve) => setTimeout(resolve, ms)); });
+const settle = (ms = 0) => act(async () => { await settleValidation(); if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms)); });
 
 registerPlugin({ fieldInputDefinitions: definitions([inputResolutionPluginDefinition]) });
 

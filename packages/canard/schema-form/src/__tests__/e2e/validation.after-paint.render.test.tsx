@@ -1,0 +1,285 @@
+import { StrictMode, createRef, useEffect, useLayoutEffect } from 'react';
+
+import { act, cleanup, render } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import {
+  type FieldInputProps,
+  Form,
+  FormErrorCode,
+  type FormHandle,
+  ValidationMode,
+} from '@/schema-form';
+
+import { observeErrorSink } from '../helpers/observeErrorSink';
+import { settleValidation } from '../helpers/settleValidation';
+
+/** Guard-free schema keeps compilation observable at the validation boundary. */
+const schema = { type: 'string' } as const;
+
+afterEach(() => cleanup());
+
+describe('frame-backed Form validation', () => {
+  it('IR-6 (h mount) replacing a root before its slot validates only the replacement', async () => {
+    const ref = createRef<FormHandle>();
+    const onError = vi.fn();
+    const validate = vi.fn(() => []);
+    const validator = {
+      compile: () => validate,
+      compileGuard: () => () => true,
+    };
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue="retired"
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={validator}
+        onError={onError}
+      />,
+    );
+    const retired = ref.current!.node;
+    view.rerender(
+      <Form
+        ref={ref}
+        jsonSchema={{ type: 'string', minLength: 1 }}
+        defaultValue="replacement"
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={validator}
+        onError={onError}
+      />,
+    );
+    act(() => ref.current!.reset());
+    expect(ref.current!.node).not.toBe(retired);
+    await settleValidation();
+    expect(validate).toHaveBeenCalledExactlyOnceWith('replacement');
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it('IR-6 a same-schema reset before the slot retains its owed newest verdict', async () => {
+    const ref = createRef<FormHandle>();
+    const validate = vi.fn(() => []);
+    const validator = {
+      compile: () => validate,
+      compileGuard: () => () => true,
+    };
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue="old"
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={validator}
+      />,
+    );
+    const retained = ref.current!.node;
+    view.rerender(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue="newest"
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={validator}
+      />,
+    );
+    act(() => ref.current!.reset());
+    expect(ref.current!.node).toBe(retained);
+    await settleValidation();
+    expect(validate).toHaveBeenCalledExactlyOnceWith('newest');
+  });
+
+  it('IR-6 (c) compiles and validates only after the first frame', async () => {
+    const validate = vi.fn(() => []);
+    const compile = vi.fn(() => validate);
+    const onValidate = vi.fn();
+    render(
+      <Form
+        jsonSchema={schema}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{ compile, compileGuard: () => () => true }}
+        onValidate={onValidate}
+      />,
+    );
+    await Promise.resolve();
+    expect(compile).not.toHaveBeenCalled();
+    expect(onValidate).not.toHaveBeenCalled();
+    await settleValidation();
+    expect(compile).toHaveBeenCalledTimes(1);
+    expect(validate).toHaveBeenCalledTimes(1);
+    expect(onValidate).toHaveBeenCalledExactlyOnceWith([]);
+  });
+
+  it('IR-6 (c) reports a mount compile failure once as rejected and validate still rejects', async () => {
+    const ref = createRef<FormHandle>();
+    const onError = vi.fn();
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{
+          compile: () => {
+            throw new Error('compile');
+          },
+          compileGuard: () => () => true,
+        }}
+        onError={onError}
+      />,
+    );
+    await Promise.resolve();
+    expect(onError).not.toHaveBeenCalled();
+    await settleValidation();
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError.mock.calls[0][0]).toMatchObject({
+      code: FormErrorCode.ValidatorCompileFailed,
+      surface: 'rejected',
+    });
+    await expect(ref.current!.validate()).rejects.toMatchObject({
+      code: FormErrorCode.ValidatorCompileFailed,
+    });
+    expect(onError).toHaveBeenCalledTimes(1);
+  });
+
+  it('IR-6 (c-i) does not recapture a compile failure after a child passive validate', async () => {
+    const onError = vi.fn();
+    let childEffectRan = false;
+    const compileAfterChild: boolean[] = [];
+    const Input = ({ node }: FieldInputProps) => {
+      useEffect(() => {
+        childEffectRan = true;
+        void node.validate().catch(() => undefined);
+      }, [node]);
+      return <input />;
+    };
+    render(
+      <Form
+        jsonSchema={schema}
+        fieldInputMap={{ '': Input }}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{
+          compile: () => {
+            compileAfterChild.push(childEffectRan);
+            throw new Error('compile');
+          },
+          compileGuard: () => () => true,
+        }}
+        onError={onError}
+      />,
+    );
+    await settleValidation();
+    expect(compileAfterChild).toEqual([true]);
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError.mock.calls[0][0].surface).toBe('rejected');
+  });
+
+  it('IR-6 (c-ii) keeps the first child layout-write failure on the sink surface', async () => {
+    const onError = vi.fn();
+    const sink = observeErrorSink();
+    const Input = ({ onChange }: FieldInputProps) => {
+      useLayoutEffect(() => {
+        onChange('child-write');
+      }, [onChange]);
+      return <input />;
+    };
+    try {
+      render(
+        <Form
+          jsonSchema={schema}
+          fieldInputMap={{ '': Input }}
+          validationMode={ValidationMode.OnChange}
+          validatorFactory={{
+            compile: () => {
+              throw new Error('compile');
+            },
+            compileGuard: () => () => true,
+          }}
+          onError={onError}
+        />,
+      );
+      await settleValidation();
+      expect(onError).toHaveBeenCalledTimes(1);
+      expect(onError.mock.calls[0][0]).toMatchObject({
+        code: FormErrorCode.ValidatorCompileFailed,
+        surface: 'sink',
+      });
+      expect(sink.errors()).toContain(onError.mock.calls[0][0].error);
+    } finally {
+      sink.cleanup();
+    }
+  });
+
+  it('IR-6 (d) StrictMode validates once after the frame', async () => {
+    const validate = vi.fn(() => []);
+    render(
+      <StrictMode>
+        <Form
+          jsonSchema={schema}
+          validationMode={ValidationMode.OnChange}
+          validatorFactory={{
+            compile: () => validate,
+            compileGuard: () => () => true,
+          }}
+        />
+      </StrictMode>,
+    );
+    expect(validate).not.toHaveBeenCalled();
+    await settleValidation();
+    expect(validate).toHaveBeenCalledTimes(1);
+  });
+
+  it('IR-6 (d) unmount before the slot produces no validation or report', async () => {
+    const validate = vi.fn(() => []);
+    const onError = vi.fn();
+    const view = render(
+      <Form
+        jsonSchema={schema}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{
+          compile: () => validate,
+          compileGuard: () => () => true,
+        }}
+        onError={onError}
+      />,
+    );
+    view.unmount();
+    await settleValidation();
+    expect(validate).not.toHaveBeenCalled();
+    expect(onError).not.toHaveBeenCalled();
+  });
+
+  it('IR-6 (a,b) writes in one frame deliver the newest commit once', async () => {
+    const ref = createRef<FormHandle>();
+    const onValidate = vi.fn();
+    const validate = vi.fn((value) => [
+      { dataPath: '', message: String(value) },
+    ]);
+    render(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        validationMode={ValidationMode.OnChange}
+        validatorFactory={{
+          compile: () => validate,
+          compileGuard: () => () => true,
+        }}
+        onValidate={onValidate}
+      />,
+    );
+    await settleValidation();
+    validate.mockClear();
+    onValidate.mockClear();
+    await act(async () => {
+      ref.current!.setValue('first');
+      await Promise.resolve();
+      ref.current!.setValue('newest');
+      await Promise.resolve();
+      expect(onValidate).not.toHaveBeenCalled();
+      expect(validate).not.toHaveBeenCalled();
+    });
+    await settleValidation();
+    expect(validate).toHaveBeenCalledExactlyOnceWith('newest');
+    expect(onValidate).toHaveBeenCalledExactlyOnceWith([
+      { dataPath: '', message: 'newest' },
+    ]);
+  });
+});

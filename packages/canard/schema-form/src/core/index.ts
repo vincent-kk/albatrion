@@ -29,6 +29,7 @@ export {
   ValidationMode,
   retainValidationRoot,
   releaseValidationRoot,
+  scheduleValidationSlot,
   blueprint,
 } from './engine';
 export type {

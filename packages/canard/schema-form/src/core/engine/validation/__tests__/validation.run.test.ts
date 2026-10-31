@@ -42,13 +42,13 @@ describe('validation execution', () => {
     requestFieldNodeValidation(root, (issues) =>
       delivered.push(issues[0]?.message ?? 'valid'),
     );
-    await Promise.resolve();
+    await new Promise<void>((resolve) => setImmediate(resolve));
     expect(validate).toHaveBeenCalledTimes(1);
     dispatchSetValue(root, 'latest');
     requestFieldNodeValidation(root, (issues) =>
       delivered.push(issues[0]?.message ?? 'valid'),
     );
-    await Promise.resolve();
+    await new Promise<void>((resolve) => setImmediate(resolve));
     expect(validate).toHaveBeenCalledTimes(2);
     completions[1]([{ dataPath: '', message: 'latest' }]);
     await Promise.resolve();
@@ -132,7 +132,7 @@ describe('validation execution', () => {
     });
     dispatchSetValue(root, 'changed');
     expect(order).toEqual(['change']);
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setImmediate(resolve));
     expect(order).toEqual(['change', 'validation']);
   });
 
@@ -158,7 +158,7 @@ describe('validation execution', () => {
       });
 
       dispatchSetValue(root, 'after');
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setImmediate(resolve));
       expect(report).toHaveBeenCalledTimes(1);
       expect(report.mock.calls[0][0]).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.LISTENER_THREW',
@@ -214,7 +214,7 @@ describe('validation execution', () => {
     const b = root.structure?.b ?? root;
     requestFieldNodeValidation(a, () => undefined);
     requestFieldNodeValidation(b, () => undefined);
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setImmediate(resolve));
     expect(validate).toHaveBeenCalledTimes(1);
     expect(readFieldNodeErrors(a).map((issue) => issue.message)).toEqual(['A']);
     expect(readFieldNodeErrors(b).map((issue) => issue.message)).toEqual(['B']);
@@ -230,7 +230,7 @@ describe('validation execution', () => {
     runtime.validationMode = ValidationMode.OnChange;
     const deliver = vi.fn();
     requestFieldNodeValidation(root, deliver);
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await new Promise((resolve) => setImmediate(resolve));
     expect(deliver).not.toHaveBeenCalled();
     expect(runtime.validationResult).toBeUndefined();
     expect(runtime.globalErrors).toBeUndefined();

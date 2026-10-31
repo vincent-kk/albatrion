@@ -13,6 +13,7 @@ import {
   FormProvider,
 } from '@/schema-form';
 
+import { settleValidation } from '../helpers/settleValidation';
 import { renderForm } from '../renderForm';
 
 /**
@@ -160,7 +161,7 @@ const renderWithProvider = async (
     );
   });
   await act(async () => {
-    await new Promise((r) => setTimeout(r, 0));
+    await settleValidation();
   });
   const container = utils.container;
   return {
@@ -193,7 +194,7 @@ const renderSwappable = async (element: ReactElement) => {
   let utils!: ReturnType<typeof render>;
   const drain = async () => {
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 0));
+      await settleValidation();
     });
   };
   await act(async () => {

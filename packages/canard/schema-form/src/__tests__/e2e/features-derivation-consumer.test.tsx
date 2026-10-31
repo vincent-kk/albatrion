@@ -8,6 +8,8 @@ import { type FormHandle, Form, type JSONSchema, FieldNodeState } from '@/schema
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
 
+import { settleValidation } from '../helpers/settleValidation';
+
 /** GOAL-061 touched lands in the animation frame after blur; jsdom runs frames on a timer, so waits cover one. */
 const BLUR_FRAME_MS = 50;
 
@@ -67,7 +69,7 @@ describe('features — derivation consumer-only', () => {
       for (const [index, stage] of contextStages.entries()) {
         const before = onChange.mock.calls.length;
         if (index > 0) rerender(view(stage.context));
-        await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+        await act(async () => { await settleValidation(); });
         const current = handle!;
         expect({
           states: { titleReadOnly: current.findNode('/title')!.readOnly, secretVisible: current.findNode('/secret')!.visible },

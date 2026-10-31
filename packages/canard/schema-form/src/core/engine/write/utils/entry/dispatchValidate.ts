@@ -33,8 +33,10 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   if (runtime.validationMode === ValidationMode.None) return [];
   if (node.disposed || node.rootNode.disposed)
     return (await runFieldNodeValidation(node)) ?? [];
-  runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
-  runtime.validationPendingTargets = undefined;
+  if (node === node.rootNode) {
+    runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
+    runtime.validationPendingTargets = undefined;
+  } else runtime.validationStamp ??= 0;
   const stamp = runtime.validationStamp;
   const commit = runtime.commitNumber ?? 0;
   let result: Nullable<readonly ValidationIssue[]>;

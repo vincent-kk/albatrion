@@ -16,6 +16,8 @@ import { type FormHandle, Form, FormProvider, type JSONSchema } from '@/schema-f
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
 
+import { settleValidation } from '../helpers/settleValidation';
+
 // Consumer-only checks for handle-layout cases: handle commands, layouts, provider layers, and prop replacement.
 
 /**
@@ -33,7 +35,7 @@ const scenarioNamed = (name: string): FormScenario => {
  * Settle React work and timers in jsdom.
  * @returns Completion after the act scope.
  */
-const settle = () => act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+const settle = () => act(async () => { await settleValidation(); });
 
 describe('features — handle-layout consumer-only', () => {
   it('handle validate and getErrors return the issues of the written value in document order', async () => {

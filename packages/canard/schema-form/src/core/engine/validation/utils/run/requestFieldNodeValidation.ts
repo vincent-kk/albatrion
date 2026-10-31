@@ -5,12 +5,13 @@ import type { ValidationIssue } from '../../types/issue';
 import { retainEqualValidationIssues } from '../route/retainEqualValidationIssues';
 import { routeValidationIssues } from '../route/routeValidationIssues';
 import { runFieldNodeValidation } from './runFieldNodeValidation';
+import { scheduleValidationSlot } from './scheduleValidationSlot';
 
 /**
  * Coalesce write-triggered checks and deliver only the newest commit's verdict.
  * @param node - Root or subtree scope requested by the dispatch chain.
  * @param deliver - Dispatcher callback that emits the latest result as its own wave.
- * @returns Nothing; validation runs in a microtask after synchronous settlement.
+ * @returns Nothing; validation runs in the next frame-backed slot after settlement.
  */
 export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -27,7 +28,7 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
   (runtime.validationPendingTargets ??= new Set()).add(node);
   if (runtime.validationQueued) return;
   runtime.validationQueued = true;
-  queueMicrotask(() => {
+  scheduleValidationSlot(() => {
     runtime.validationQueued = false;
     if (runtime.validationStamp !== runtime.validationRequestStamp) {
       runtime.validationPendingTargets = undefined;

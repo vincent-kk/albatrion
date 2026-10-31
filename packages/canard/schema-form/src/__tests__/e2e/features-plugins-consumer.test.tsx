@@ -15,6 +15,8 @@ import { type FormHandle, type FieldRendererProps, Form, FormProvider, type JSON
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
 
+import { settleValidation } from '../helpers/settleValidation';
+
 // Consumer-only checks for plugins cases. The 'none' validator cases run first, before any test registers the plugin.
 
 /**
@@ -58,7 +60,7 @@ const rendererProps = (slots: readonly RendererSlot[], source: string) => {
  * Settle React work and timers in jsdom.
  * @returns Completion after the act scope.
  */
-const settle = () => act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+const settle = () => act(async () => { await settleValidation(); });
 
 describe('features — plugins consumer-only', () => {
   it('VALIDATE-042 and ERROR-024 a form with no validator warns once, and validation mode None removes the warning', async () => {

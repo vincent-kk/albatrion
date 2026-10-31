@@ -1,5 +1,7 @@
 import { flushSync } from 'react-dom';
 
+import { scheduleMacrotask } from '@winglet/common-utils/scheduler';
+
 import type { ScenarioAdapter } from '@aileron/schema-form-scenarios';
 import { expect, userEvent } from 'storybook/test';
 
@@ -47,7 +49,7 @@ export function createStoryScenarioAdapter(context: StoryScenarioContext): Scena
         expect(error).toMatchObject({ code: 'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED' });
       } finally { stops.forEach((stop) => stop()); }
     },
-    async settle() { await new Promise<void>((resolve) => requestAnimationFrame(() => resolve())); },
+    async settle() { await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => scheduleMacrotask(resolve)))); },
     assert: (observation) => assertStoryObservation(context, observation, evidence),
   };
 }

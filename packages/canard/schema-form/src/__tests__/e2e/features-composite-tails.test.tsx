@@ -20,6 +20,8 @@ import {
 
 import { createRenderValidator } from '../helpers/createRenderValidator';
 
+import { settleValidation } from '../helpers/settleValidation';
+
 // Consumer tails of the composite cases: each case loads its tailStart and runs the tail steps against the handle and DOM.
 // jsdom has no IntersectionObserver or idle callback; inert stubs keep placeholders deferred until a command reveals them.
 beforeEach(() => {
@@ -37,7 +39,7 @@ const frameMs = 50;
  * @param ms - Extra wait for timer-driven work such as the touched frame.
  * @returns Completion after the act scope.
  */
-const settle = (ms = 0) => act(async () => { await new Promise((resolve) => setTimeout(resolve, ms)); });
+const settle = (ms = 0) => act(async () => { await settleValidation(); if (ms > 0) await new Promise((resolve) => setTimeout(resolve, ms)); });
 
 /**
  * Build a validator factory over the harness validator whose verdicts can be held until released.

@@ -50,7 +50,7 @@ const renderCounted = async (defaultValue: { name: string }) => {
  * Write one value and wait for the validation wave.
  * @param harness - Rendered form
  * @param name - Next value of `/name`
- * @returns Completion after the validation microtask and its wave
+ * @returns Completion after the validation slot and its wave
  */
 const write = async (harness: FormHarness, name: string) => {
   act(() => {

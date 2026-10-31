@@ -51,7 +51,7 @@ const recordErrorBits = (node: DispatchTestNode): number[] => {
 };
 
 /** Let the coalesced validation microtask and its wave run. */
-const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
+const settle = () => new Promise((resolve) => setImmediate(resolve));
 
 /** Object form with one string field, the target of every issue below. */
 const nameSchema = {

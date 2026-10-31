@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Form, type JSONSchema, ValidationMode } from '@/schema-form';
 
+import { settleValidation } from '../helpers/settleValidation';
 import {
   type FormHarness,
   renderForm,
@@ -89,7 +90,7 @@ describe('mount onValidate calls', () => {
         />,
       );
       await act(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await settleValidation();
       });
       expect(onValidate).toHaveBeenCalledTimes(1);
       view.rerender(
@@ -101,7 +102,7 @@ describe('mount onValidate calls', () => {
         />,
       );
       await act(async () => {
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        await settleValidation();
       });
       expect(onValidate).toHaveBeenCalledTimes(1);
     },

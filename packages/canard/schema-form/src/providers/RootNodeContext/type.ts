@@ -33,8 +33,10 @@ export interface RootLoad {
   error?: unknown;
   /** The load is committed: reports, changes and state notifications go to the host directly. */
   ready: boolean;
-  /** The first commit's preparation (buffer flush, external errors, initial validation) has run. */
+  /** The first commit's buffer flush, external errors, and mount validation scheduling have run. */
   prepared: boolean;
+  /** A hidden or unmounted layout lifetime still owes its deferred mount verdict. */
+  mountValidationOwed?: boolean;
   /** Records have crossed the commit or root-fallback boundary. */
   reported?: boolean;
   /** Instance reporter outside the root boundary; absent when no Form error provider is mounted. */

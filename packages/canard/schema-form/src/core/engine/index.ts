@@ -41,6 +41,7 @@ export {
   readValidationEntry,
   retainValidationRoot,
   releaseValidationRoot,
+  scheduleValidationSlot,
 } from './validation';
 export {
   EMPTY_REVISION_LEDGER,
