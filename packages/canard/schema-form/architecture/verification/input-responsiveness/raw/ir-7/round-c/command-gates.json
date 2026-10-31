@@ -1,0 +1,66 @@
+[
+  {
+    "gate": "lint",
+    "command": "yarn workspace @canard/schema-form lint --max-warnings 0",
+    "exitCode": 0
+  },
+  {
+    "gate": "typecheck",
+    "command": "yarn workspace @canard/schema-form typecheck",
+    "exitCode": 0
+  },
+  {
+    "gate": "build",
+    "command": "yarn workspace @canard/schema-form build",
+    "exitCode": 0
+  },
+  {
+    "gate": "unit",
+    "command": "yarn workspace @canard/schema-form test --run --project unit --reporter=json --outputFile=<temporary>/ir7c-gate-unit.json",
+    "exitCode": 0,
+    "raw": "gate-unit.json.gz",
+    "startTime": 1793471058439
+  },
+  {
+    "gate": "render",
+    "command": "yarn workspace @canard/schema-form test --run --project render --reporter=json --outputFile=<temporary>/ir7c-gate-render.json",
+    "exitCode": 0,
+    "raw": "gate-render.json.gz",
+    "startTime": 1793471124775
+  },
+  {
+    "gate": "react18",
+    "command": "yarn workspace @canard/schema-form test --run --project react18 --reporter=json --outputFile=<temporary>/ir7c-gate-react18.json",
+    "exitCode": 0,
+    "raw": "gate-react18.json.gz",
+    "startTime": 1793471193410
+  },
+  {
+    "gate": "verify",
+    "command": "yarn workspace @canard/schema-form test:verify --run --reporter=json --outputFile=<temporary>/ir7c-gate-verify.json",
+    "exitCode": 0,
+    "raw": "gate-verify.json.gz",
+    "startTime": 1793471264318
+  },
+  {
+    "gate": "storybook",
+    "command": "yarn workspace @canard/schema-form test --run --project storybook --reporter=json --outputFile=<temporary>/ir7c-gate-storybook.json",
+    "exitCode": 0,
+    "raw": "gate-storybook.json.gz",
+    "startTime": 1793471379359
+  },
+  {
+    "gate": "production",
+    "command": "yarn workspace @canard/schema-form test:production --reporter=json --outputFile=<temporary>/ir7c-gate-production.json",
+    "exitCode": 0,
+    "raw": "gate-production.json.gz",
+    "startTime": 1793471418852
+  },
+  {
+    "gate": "import-model",
+    "command": "yarn workspace @canard/schema-form test --run --project unit src/__tests__/importModel.test.ts --reporter=json --outputFile=<temporary>/ir7c-gate-import-model.json",
+    "exitCode": 0,
+    "raw": "gate-import-model.json.gz",
+    "startTime": 1793471424986
+  }
+]

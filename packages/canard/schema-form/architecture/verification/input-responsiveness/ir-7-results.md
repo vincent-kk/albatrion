@@ -136,3 +136,42 @@ FCA는 exact1,762·missing/needsResolution/uncertain/toolError0·기존 unsuppor
 이전 load가 never-prepared이면 batch try/catch 뒤·retired 설정 전에 records를 이관합니다. batch 도중의 adoption compile 실패 기록도 포함하여 이전 기록 전체를 새 build 기록 앞에 붙이며 원래 root·warning scope를 유지합니다. reporter와 새 root의 setup은 batch 전에 그대로 둡니다. 명령형 reset이 던진 경우에도 이전 load는 은퇴하여 늦은 옛 root 쓰기가 onChange·추가 onError를 내보내지 않습니다.
 
 React19의 처음 숨긴 OnRequest Form에서 validator A를 실패하는 B로 바꾼 뒤 show하는 회귀를 stage의 compile 실패 surface·호스트 출력과 대조합니다. 최종 커밋 시험을 000f와 stage에서 실행하고, 은퇴를 try 안으로 옮기는 변형이 양쪽 major의 늦은 쓰기 단언을 깨는지 확인합니다. resetRootLoad의 효과와 RootLoad error/reported 주석도 reset 경로를 명시합니다. 순차 관문·raw·SHA256은 round c 결과에 보존합니다.
+
+
+### Round c 검토 항목과 실패 증거
+
+계약은 `f6b3bed62`, 최종 시험 텍스트는 `3f4f6beff`, 제품 수정은 `430cffef5`입니다. [기준 red·stage·SHA256](raw/ir-7/round-c/red-proof.json)과 [은퇴 mutation·SHA256](raw/ir-7/round-c/mutation-proof.json)에 커밋한 시험 텍스트를 고정했습니다.
+
+| 검토 항목 | 수정·확인 | 증거 |
+| --- | --- | --- |
+| 1 · never-prepared reset 사슬 | V7 이관을 batch try/catch 뒤·은퇴 직전으로 이동. batch에서 발생한 옛 load 기록도 새 build 기록 앞에 붙이며 원래 root·warning scope 보존. 새 reporter/root setup은 batch 전 유지 | React19 처음 hidden Activity에 OnRequest·validator A로 mount, 숨김 중 compile이 던지는 B로 변경한 뒤 show. 000f 전체 대상 파일은 5통과·1실패로 RenderFailed/sink를 재현. stage 7428의 같은 커밋 시험은 ValidatorCompileFailed/thrown 1회로 통과 |
+| 1 · stage host 표면 | 추정 대신 stage를 먼저 관찰하고 그대로 단언 | stage와 후보 모두 sink는 React boundary 콘솔 진단 두 문자열만 관찰하며 추가 호스트 오류는0. 명령형 visible/hidden reset의 host0과 구별 |
+| 2 · 실패 뒤 은퇴 | round b visible/hidden 시험에 onChange spy, reset 전 oldRoot, catch 뒤 late setValue를 추가 | 양쪽 major 후보는 onChange0·onError1. retirement를 try 안 batch 뒤로 옮기는 mutation은 양쪽 major × visible/hidden 네 경우 모두 late onChange1로 red. 원시·patch 보존 |
+| 3 · 주석 | resetRootLoad에 reset 사슬 뒤 은퇴·준비 전 생성 오류 capture/host 1회 효과 명시. RootLoad error/reported에 reset 경로 명시 | 제품 diff와 전체 lint·typecheck 통과 |
+| 4 · 문서 | DETAIL의 V7·reset 사슬 전달을 prepared와 never-prepared에 맞게 정정 | prepared는 사슬 끝 직접 보고, never-prepared는 batch 뒤 이관·flush. 기록 원문은 유지하고 round c supplement만 추가 |
+
+[대상 green](raw/ir-7/round-c/target-green.json.gz)은 React19 6개·React18 3개 통과, React19 전용3개는 React18에서 skip입니다. 대상 파일은 test-record exact6으로 cap32 안입니다. 은퇴 mutation scratch worktree·branch는 증거 커밋 `45dec8a61` 직후 bare Orca 제거로 모두 삭제했습니다.
+
+### Round c 최종 순차 관문
+
+lint → typecheck → build → unit → render → react18 → verify → Storybook → production → import-model → 공개 선언/index → FCA → 원장 → 경로 감사를 순서대로 수행했습니다. [실행 영수증](raw/ir-7/round-c/command-gates.json)과 [시험 집계](raw/ir-7/round-c/test-gates.json)에 각 raw JSON gzip을 연결합니다.
+
+| 관문 | 파일 | 통과 | 실패 | skip / todo |
+| --- | ---: | ---: | ---: | ---: |
+| unit | 620 | 4,091 | 0 | 0 / 1 |
+| render | 159 | 902 | 0 | 2 / 0 |
+| react18 | 159 | 895 | 0 | 9 / 0 |
+| verify | 784 | 5,037 | 0 | 2 / 1 |
+| storybook | 101 | 254 | 0 | 0 / 0 |
+| production | 10 | 21 | 0 | 0 / 0 |
+| import-model | 1 | 2 | 0 | 0 / 0 |
+
+lint는 경고0, typecheck·build는 exit0입니다. 기존 skip·todo·fails 선언은 유지하며 round c의 React19 전용 Activity 회귀 한 개만 React18에서 새로 skip합니다. [skip 감사](raw/ir-7/round-c/skip-source-audit.json)에 차분을 보존합니다.
+
+수정 전 000f의 검증된 full build와 후보 full build를 같은 비교기로 대조한 공개 이름97·서명917의 의미 차이·index 바이트 차이·미해결 alias는0입니다. src/index.ts·package.json 차분도0입니다. [선언](raw/ir-7/round-c/public-declarations.json.gz)과 [bundle SHA256](raw/ir-7/round-c/build-artifacts.json)은 별도 build 증거 커밋 `05cf44ea8`에 보존했습니다. dist는 추적되지 않아 커밋할 runtime bundle·adapter 차분이 없습니다.
+
+FCA는 exact1,762·missing/needsResolution/uncertain/toolError0·기존 unsupported175입니다. 기준000f와 finding202·진단177의 원시 multiset 추가·제거가0이며 scan201·verification21·확정 실패12·skip1·절대 indeterminate는 유지합니다. [FCA 차분](raw/ir-7/round-c/fca-diff.json)과 같은 snapshot의 세 원시를 보존합니다.
+
+[전체 원장](raw/ir-7/round-c/ledger-checks.json)은 인용 불일치·미해석·ref 문제0, owner720/720, 17영역 sentence missing·bad classification0입니다. doc-coverage의 새 bad ID·missing token·untagged sentence·stale exemption은0이며 기존 미인용66·plan-links1과 tokens2,390/잔여398을 유지합니다. [경로·기록 감사](raw/ir-7/round-c/audit.json)는 추가 기계 경로0과 원래 stage의 ledger·ADR·design·plan prefix 보존, 최종 제품·시험 SHA256 일치와 scratch 제거를 확인합니다.
+
+round c는 reset에서 이미 수행하던 기록 이관의 순서만 바꾸며 hot write path·노드 필드·예약 loop·공개 API를 늘리지 않습니다. 기록 수에 비례하는 이관 비용과 원래 root/scope 보관량은 기존과 같습니다. browser 측정 창·benchmark는 수행하지 않았고 성능 수치를 주장하지 않습니다. L1–L4 수용 한계와 기존 FCA·문서 잔여 findings는 앞선 결과 그대로입니다.
