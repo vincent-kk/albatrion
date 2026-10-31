@@ -20,7 +20,7 @@
 
 - U3: render의 useFieldRendererContext().checkShowError()를 layout effect가 캡처하여 Always 여부를 결정한다. 최초 OnChange 마운트가 Always이면 쓰기 요청 여부와 관계없이 root.validate를 layout에서 바로 시작하여 queued write를 stamp로 무효화하고 현재 pending을 정착시킨다. 동기 검증은 첫 프레임에 오류를 표시한다. 다른 모드는 일회성 화면 뒤 슬롯을 유지한다. inline·deferred는 같은 engine 보고 격리를 사용하며 Always의 최초 compile 실패는 rejected 한 번이다.
 - V6: prepared 현행 load의 hidden 기록은 chain 끝에 바로 전달합니다. reset의 build 기록은 각각 try/catch하여 handler 실패 뒤에도 다음 기록과 binding 교체를 계속합니다.
-- V7: never-prepared load가 reset으로 교체될 때만 records를 새 load 앞에 옮겨 원래 root·warning scope로 한 번 전달합니다. 이미 준비된 load는 숨김 중에도 buffer하지 않습니다. 첫 commit의 reported 가드는 유지합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 한 번 capture·호스트 보고합니다.
+- V7: never-prepared load가 reset으로 교체될 때 batch try/catch 뒤에 records를 새 load 앞에 옮깁니다. reset 사슬에서 새로 생긴 기록까지 원래 root·warning scope로 한 번 전달하며 이전 load의 전체 기록이 새 build 기록보다 앞섭니다. 이미 준비된 load는 숨김 중에도 buffer하지 않습니다. 첫 commit의 reported 가드는 유지합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 한 번 capture·호스트 보고합니다.
 
 - Always 이외 OnChange 최초 마운트 검증은 준비 layout effect가 다음 화면 뒤 슬롯에 예약한다. if 게이트가 없는 스키마의 전체 컴파일과 첫 검증도 그 슬롯에서 수행하며, if 게이트의 렌더 중 컴파일은 유지한다. 명시적 validate와 제출의 즉시 실행은 유지한다(IR-6).
 - 예약 슬롯은 store.load가 같은 load이고 root가 존재하며 검증 요청이 아직 없으면 effect 연결 여부와 관계없이 한 번 실행합니다. owed·reconnect 재예약은 없으며 cleanup은 슬롯을 취소하지 않습니다. StrictMode 재실행은 중복 예약하지 않습니다.
@@ -49,7 +49,7 @@
 - L3: 필드 layout effect의 렌더 경고와 쓰기는 show에 도착합니다. prepared load의 show 쓰기는 즉시 전달하지만 최초 mount의 준비 전 쓰기는 REACT-007에 따라 버립니다. 개발 StrictMode replay도 React가 hide/show로 모델링하므로 비멱등 자식 layout 쓰기가 replay에서 전달되며 production 렌더는 영향을 받지 않습니다.
 - L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
 
-- 루트 교체 reset의 옛 load는 batch의 try/catch 뒤에 은퇴합니다. adoption 전 compile 실패는 caller에 던지고 onError에 한 번 전달하며 기존처럼 호스트 보고는 0회입니다. 사슬이 던져도 은퇴는 적용합니다. 준비 전 생성 오류는 reported로 중복을 막고 새 reporter.root를 유지한 채 reset 끝에 capture·호스트 보고합니다.
+- 루트 교체 reset의 옛 load는 batch의 try/catch 뒤에 은퇴합니다. prepared 이전 load의 명령형 reset에서 adoption 전 compile 실패는 caller에 던지고 onError에 한 번 전달하며 기존처럼 호스트 보고는 0회입니다. never-prepared 이전 load의 reset 사슬 기록은 batch 뒤에 이관하여 최종 flush에서 한 번 전달하고 첫 show의 실패 표면은 stage와 같게 유지합니다. 사슬이 던져도 은퇴는 적용합니다. 준비 전 생성 오류는 reported로 중복을 막고 새 reporter.root를 유지한 채 reset 끝에 capture·호스트 보고합니다.
 
 ## Acceptance Criteria
 

@@ -658,3 +658,8 @@ L3에는 개발 StrictMode replay를 포함합니다: including the development 
 T7a는 retired load의 hasConsumer()가 false여서 report 호출 자체에 도달하지 않는 경로입니다. 소비자 무배달만 검증하며 reporter.root 유지·복원을 검증했다는 주장은 제거합니다. T4 validator 교체 뒤 구독 단언은 기존 구독 변형에서도 red를 확인합니다. T7b는 validator start promise를 기다리고 hidden mount 시험은 숨기기 전에 확보한 node로 settle합니다. 새 회귀는 visible/hidden adoption 실패, never-prepared 생성 실패, 양쪽 major StrictMode replay이며 최종 커밋 시험의 red·mutation·green 해시와 모든 순차 관문은 round b 결과에 보존합니다.
 
 근거: IR-7 독립 검토와 소유자 원문39–41을 따른 기존 전달 계약의 회귀 수정입니다. 과거 원문은 보존합니다.
+
+
+## IR-7 round c 보충 — REACT-007 (2026-11-01)
+
+never-prepared 이전 load의 기록 이관은 reset batch try/catch 뒤·은퇴 전에 수행합니다. reset 사슬의 새 기록도 이전 생성 기록과 함께 새 build 기록보다 먼저 원래 root·scope로 한 번 전달합니다. 소유자 원문39–41의 실행 시점 전달과 ERROR-026의 한 번 보고를 유지하며 첫 show의 실패 surface·호스트 표면은 stage 시험으로 고정합니다. prepared load의 명령형 reset은 기존 caller throw·onError1·host0을 유지하고 실패 뒤에도 은퇴하여 옛 root의 늦은 쓰기가 소비자에게 도착하지 않습니다.
