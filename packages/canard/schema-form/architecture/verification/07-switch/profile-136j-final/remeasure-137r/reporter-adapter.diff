@@ -1,16 +1,16 @@
 --- ../session-136j/report-core.mjs	2026-10-11 12:27:00
 +++ report-core.mjs	2026-10-11 15:00:12
 @@ -8,11 +8,11 @@
- import { endpointDifference95c01 } from '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/endpointDifference95c01.mjs';
+ import { endpointDifference95c01 } from 'packages/canard/schema-form/architecture/verification/07-switch/tools/endpointDifference95c01.mjs';
  
- const output = "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch";
--const raw = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136j/raw";
-+const raw = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-137r/raw";
+ const output = "packages/canard/schema-form/architecture/verification/07-switch";
+-const raw = "{scratch}/session-136j/raw";
++const raw = "{scratch}/session-137r/raw";
  const repo = path.resolve(output, '../../../../../..');
- assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+ assert.equal(fs.realpathSync(repo), '{repo}');
  const hash = value => createHash('sha256').update(value).digest('hex');
--const manifest = JSON.parse(fs.readFileSync("/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136j/raw/manifest.json", 'utf8'));
-+const manifest = JSON.parse(fs.readFileSync("/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-137r/raw/manifest.json", 'utf8'));
+-const manifest = JSON.parse(fs.readFileSync("{scratch}/session-136j/raw/manifest.json", 'utf8'));
++const manifest = JSON.parse(fs.readFileSync("{scratch}/session-137r/raw/manifest.json", 'utf8'));
  const previous = JSON.parse(fs.readFileSync(path.join(output, 'verdict-93c01-summary.json'), 'utf8'));
  const records = manifest.records;
  const metric = values => {

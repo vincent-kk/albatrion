@@ -76,7 +76,7 @@ tracked runtime 산출물이 없어 빌드 커밋 대상은 없었습니다. run
 
 ## 측정 방법과 29행
 
-코디네이터 승인 창에서 production /opt/homebrew/bin/node v26.12.0, warmup 20·samples 100, 초기 3라운드와 sub-ms 21행의 추가 12라운드를 실행했습니다. A=A′는 같은 기준 dist, B는 후보 dist이며 동일한 수출 footer만 붙였습니다. child는 하나씩 총 1,017회 실행했고 모든 raw sample 수·최솟값·실행 순서·Node realpath를 검증했습니다. 측정 창은 결과 보고 후 닫혔습니다.
+코디네이터 승인 창에서 production {node-home}/bin/node v26.12.0, warmup 20·samples 100, 초기 3라운드와 sub-ms 21행의 추가 12라운드를 실행했습니다. A=A′는 같은 기준 dist, B는 후보 dist이며 동일한 수출 footer만 붙였습니다. child는 하나씩 총 1,017회 실행했고 모든 raw sample 수·최솟값·실행 순서·Node realpath를 검증했습니다. 측정 창은 결과 보고 후 닫혔습니다.
 
 기존 442 harness와 442C 분류를 재사용했습니다. 큰 행은 초기 3라운드의 min 중앙값, 작은 행은 추가 12라운드의 min 중앙값입니다. mount는 첫 로드, switch는 kind_0→마지막 분기의 /kind.setValue, single은 /field_000.setValue 한 번입니다. 후자의 쓰기는 준비 마운트와 tick 대기 뒤에 측정합니다. 행별 입증(느림)이면 즉시 중단하도록 고정했으며 최종 29행에는 느림이 없습니다.
 

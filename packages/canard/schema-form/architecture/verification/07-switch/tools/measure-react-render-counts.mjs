@@ -20,7 +20,7 @@ import { parseArgs } from 'node:util';
 import { prepareReactBundles } from './prepare-react-bundles.mjs';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
-const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
+const scratch = '{scratch}/bundles';
 const require = createRequire(resolve(packageRoot, 'package.json'));
 const { values: options, positionals: [version = 'change', output] } = parseArgs({
   allowPositionals: true,

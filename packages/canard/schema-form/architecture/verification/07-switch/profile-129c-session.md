@@ -16,9 +16,9 @@
 
 ## 실행 환경과 번들의 무결성을 설명합니다.
 
-작업 디렉터리는 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`입니다. 시작 시 작업 트리는 깨끗했으며, HEAD는 `c46d4b210cf7a8ba53830bb11f8caf98c5afa8e5`입니다. 모든 측정과 보고 명령은 `/opt/homebrew/bin/node`의 Node v26.10.0을 사용했습니다. 각 명령의 자연 종료를 확인한 뒤 다음 명령을 실행했고, 측정이나 보고 명령이 실행되는 동안 다른 명령이나 읽기 전용 조회를 시작하지 않았습니다. 설치와 패키지 관리자 명령은 실행하지 않았습니다.
+작업 디렉터리는 `{repo}`입니다. 시작 시 작업 트리는 깨끗했으며, HEAD는 `c46d4b210cf7a8ba53830bb11f8caf98c5afa8e5`입니다. 모든 측정과 보고 명령은 `{node-home}/bin/node`의 Node v26.10.0을 사용했습니다. 각 명령의 자연 종료를 확인한 뒤 다음 명령을 실행했고, 측정이나 보고 명령이 실행되는 동안 다른 명령이나 읽기 전용 조회를 시작하지 않았습니다. 설치와 패키지 관리자 명령은 실행하지 않았습니다.
 
-S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다. 기준 번들은 `S/bundles/c-2.cjs`이고 후보 번들은 `S/bundles/c-1c2.cjs`입니다. 두 번들의 기준 리비전은 `439fda3219ec6b42efbef4d7fa0f02a40111453f`입니다. 시작과 종료 검사에서 매니페스트 `c-bundles.json`의 SHA-256, 바이트 수, 기준 리비전과 일치했습니다. 변경 1c와 변경 2 패치의 SHA-256도 매니페스트와 일치했습니다.
+S는 `{scratch}`입니다. 기준 번들은 `S/bundles/c-2.cjs`이고 후보 번들은 `S/bundles/c-1c2.cjs`입니다. 두 번들의 기준 리비전은 `439fda3219ec6b42efbef4d7fa0f02a40111453f`입니다. 시작과 종료 검사에서 매니페스트 `c-bundles.json`의 SHA-256, 바이트 수, 기준 리비전과 일치했습니다. 변경 1c와 변경 2 패치의 SHA-256도 매니페스트와 일치했습니다.
 
 | 번들 | 바이트 수 | SHA-256 |
 | --- | ---: | --- |

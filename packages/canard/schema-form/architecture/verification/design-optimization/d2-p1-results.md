@@ -34,10 +34,10 @@ bulk-nested의 6.567083→4.022000ms는 −2.545083ms(−38.75%)이며, D4의5ms
 - 기준 ESM SHA256: `2e3d15ffa4e976c0fef5d2a4740192d51b005875a17e395bc67c0b8b43c8d40c`.
 - 최종 ESM SHA256: `516aa5f98104328bb726fffac00d710de1720e2b76fca8885337a94f8c9298a4`.
 - npm0.16.1 SHA256: `5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46`.
-- 판정 원본: `/private/tmp/450-d2-p1/judgement.json` 및 `subscribed/results.json`.
-- before: `/private/tmp/claude-501/perf-runs/20261026T2339-b6aba98-d2p1-final-before`.
-- head: `/private/tmp/claude-501/perf-runs/20261026T2340-b6aba98-d2p1-final-head`.
-- aprime: `/private/tmp/claude-501/perf-runs/20261026T2340-b6aba98-d2p1-final-aprime`.
+- 판정 원본: `{scratch}/450-d2-p1/judgement.json` 및 `subscribed/results.json`.
+- before: `{scratch}/perf-runs/20261026T2339-b6aba98-d2p1-final-before`.
+- head: `{scratch}/perf-runs/20261026T2340-b6aba98-d2p1-final-head`.
+- aprime: `{scratch}/perf-runs/20261026T2340-b6aba98-d2p1-final-aprime`.
 
 ## 작업량·후퇴·검증
 
@@ -67,7 +67,7 @@ S7은 verify 모드에서만 독립 DirtyPathSet을 쓴 입력 기록으로 채�
 | 정적 첫 적재/일반 적재                     | 6장면·12단계·차이0          |
 | dist/index.d.ts                            | byte diff0                  |
 
-첫 unit 실행의 global-errors.timing 시간 상한 실패는 단일 파일2건 재실행과 최종 전체 unit 모두 수정 없이 통과했습니다. 최종 로그는 `/private/tmp/450-d2-p1/{build-final,test-unit,test-render,test-react18,test-storybook,test-production,test-verify,lint,typecheck-window}.log`, 배달 원본은 `differential.json`·`public-differential.json`, 선언 차분은 빈 `dts.diff`입니다.
+첫 unit 실행의 global-errors.timing 시간 상한 실패는 단일 파일2건 재실행과 최종 전체 unit 모두 수정 없이 통과했습니다. 최종 로그는 `{scratch}/450-d2-p1/{build-final,test-unit,test-render,test-react18,test-storybook,test-production,test-verify,lint,typecheck-window}.log`, 배달 원본은 `differential.json`·`public-differential.json`, 선언 차분은 빈 `dts.diff`입니다.
 
 ## B2 노드당 잔존 힙
 
@@ -76,7 +76,7 @@ S7은 verify 모드에서만 독립 DirtyPathSet을 쓴 입력 기록으로 채�
 | node    |        1441.835 | 1435.049–1899.887 |        1439.141 | 1431.523–1900.143 | 통과 |
 | bun     |        2224.974 | 2224.009–2225.272 |        2222.497 | 2221.892–2222.673 | 통과 |
 
-`bench/legacy-compare/node-and-settle.bench.ts --heap-child`의 canonical B2를 NODE_ENV=production으로 실행했습니다. Node는 `--expose-gc --import tsx` 자식 한 개의7회이고 Bun은 해당 장치가 만든 새 자식7개의 각1회입니다. 모든 원표본은 `/private/tmp/450-d2-p1/heap-{node,bun}-{before,head}.json`, 판정은 `heap-judgement.json`, source 해시는 `heap-{before,head}.sha256`에 있습니다. 기준 ESM과 최종 ESM의 복사본을 번갈아 사용하고 마지막에 최종 dist를 복원했습니다. B2는 적재 직후의 잔존 힙이며 전체 교체 이후 선택 숫자 슬롯의 단독 실제 바이트 측정은 아닙니다.
+`bench/legacy-compare/node-and-settle.bench.ts --heap-child`의 canonical B2를 NODE_ENV=production으로 실행했습니다. Node는 `--expose-gc --import tsx` 자식 한 개의7회이고 Bun은 해당 장치가 만든 새 자식7개의 각1회입니다. 모든 원표본은 `{scratch}/450-d2-p1/heap-{node,bun}-{before,head}.json`, 판정은 `heap-judgement.json`, source 해시는 `heap-{before,head}.sha256`에 있습니다. 기준 ESM과 최종 ESM의 복사본을 번갈아 사용하고 마지막에 최종 dist를 복원했습니다. B2는 적재 직후의 잔존 힙이며 전체 교체 이후 선택 숫자 슬롯의 단독 실제 바이트 측정은 아닙니다.
 
 속도·메모리 비용: bulk-nested는−2.545083ms이고, 선택 숫자 슬롯은 논리8B/도달 노드와8B/트리(+객체 확장·정렬)입니다. canonical B2 중앙값은 Node1,441.835→1,439.141B/노드, Bun2,224.974→2,222.497B/노드로 둘 다 A의7표본 최댓값 이하입니다. 이 작은 B2 차이를 메모리 개선의 증거로 주장하지 않습니다.
 

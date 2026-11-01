@@ -10,11 +10,11 @@
 
 ```sh
 # 현재 위치: 이 문서가 있는 first-batch 디렉터리
-cp -R . /private/tmp/schema-form-first-batch-run
+cp -R . {scratch}/schema-form-first-batch-run
 export MEASURE_WORKTREE=/absolute/path/to/an-existing-built-worktree
 export NODE_BIN=/absolute/path/to/node-v26.11.1
 export NODE_ENV=production
-cd /private/tmp/schema-form-first-batch-run
+cd {scratch}/schema-form-first-batch-run
 ```
 
 의존성은 이미 설치된 작업 트리의 것을 씁니다. B/A2 builder는 실행 폴더에 그 node_modules를 가리키는 링크를 만듭니다. B2의 TypeScript 계측 builder는 부모 B/A2의 그 링크를 통해 TypeScript를 해석합니다. C/D는 별도 실행 폴더에서 같은 의존성을 해석할 수 있어야 하며, 이 문서는 설치 명령을 실행하지 않습니다. `MEASURE_WORKTREE`가 없으면 저장소 안의 도구 위치에서 작업 트리 루트를 상대 경로로 찾습니다.

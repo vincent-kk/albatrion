@@ -71,12 +71,12 @@ facts 2,777개를 제출하여 모두 exact로 확인했습니다. scan·여섯 
 
 - 기준 node SHA-256: `a396cf65e154187e33647e034429e323d66357133867bc6ea254861c098dcca6`
 - 후보 node SHA-256: `6159ffe413903875dea93ed0443afa6c996c490ee483720e76adc323e98ddd44`
-- 기준·후보 번들은 `/private/tmp/448-h5b/before/`, `head/`에 보존했습니다. 다른 작업 트리의 변경된 dist는 기준으로 쓰지 않았습니다.
-- 판정·추가 구독 표본/명령·native 계수: `/private/tmp/448-h5b/judgement.json`, `subscribed/`, `subscribed.mjs`, `subscribed-counts.mjs`
-- 원본 실패·단일 파일·메모 해제 대조·관문 로그: `/private/tmp/448-h5b/`의 `red-*.log`, `green-*.log`, `test-*.log`, `build.log`, `lint.log`, `typecheck-window.log`
-- 배달 비교: `/private/tmp/448-h5b/differential.json`, `public-differential.json`, `c-d/out/`; 선언 비교: `dts.diff`(0byte)
-- FCA 산출물: `/private/tmp/448-h5b/2591c313890811971f574589e5b13464c8a74d869a38f445208f5fea9b7b2d07.json`, `44afd5248e5eab7d5d66139e1152b07a2ce962fbf61ed4549abe6a7321b9dfe8.json`, `1e7236844f68829d9140330a2111f8c63a8f7d583a4fc4376c37998121c8349d.json`
+- 기준·후보 번들은 `{scratch}/448-h5b/before/`, `head/`에 보존했습니다. 다른 작업 트리의 변경된 dist는 기준으로 쓰지 않았습니다.
+- 판정·추가 구독 표본/명령·native 계수: `{scratch}/448-h5b/judgement.json`, `subscribed/`, `subscribed.mjs`, `subscribed-counts.mjs`
+- 원본 실패·단일 파일·메모 해제 대조·관문 로그: `{scratch}/448-h5b/`의 `red-*.log`, `green-*.log`, `test-*.log`, `build.log`, `lint.log`, `typecheck-window.log`
+- 배달 비교: `{scratch}/448-h5b/differential.json`, `public-differential.json`, `c-d/out/`; 선언 비교: `dts.diff`(0byte)
+- FCA 산출물: `{scratch}/448-h5b/2591c313890811971f574589e5b13464c8a74d869a38f445208f5fea9b7b2d07.json`, `44afd5248e5eab7d5d66139e1152b07a2ce962fbf61ed4549abe6a7321b9dfe8.json`, `1e7236844f68829d9140330a2111f8c63a8f7d583a4fc4376c37998121c8349d.json`
 
-- 정본 before: `/private/tmp/claude-501/perf-runs/20261026T2207-3b44661-h5b-before`
-- 정본 head: `/private/tmp/claude-501/perf-runs/20261026T2207-3b44661-h5b-head`
-- 정본 aprime: `/private/tmp/claude-501/perf-runs/20261026T2208-3b44661-h5b-aprime`
+- 정본 before: `{scratch}/perf-runs/20261026T2207-3b44661-h5b-before`
+- 정본 head: `{scratch}/perf-runs/20261026T2207-3b44661-h5b-head`
+- 정본 aprime: `{scratch}/perf-runs/20261026T2208-3b44661-h5b-aprime`

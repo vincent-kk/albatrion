@@ -69,7 +69,7 @@ Bun은 B 중앙값이 A 최댓값보다 1.464707 B/node(약 0.066%) 크다. 기�
 
 clearTreeMemoStores의 여섯 undefined 대입은 폼 reset·폐기에서만 실행하고 B2는 두 경로를 호출하지 않는다. 비지연 생성이나 B2의 선할당 결함은 확인되지 않았다. A의 모듈 전역 WeakMap은 분석 이전에 이미 존재하고 B는 첫 객체 조립에서 새 트리 소유 WeakMap 하나를 만든다. 이 소유 비용은 원인 후보이며, 힙 차이 전체가 그 하나 때문인지는 별도 분리하지 않았다. 코디네이터가 TEST-027 소유자 판단으로 올리도록 지시했다. 추가 제품 수정·재측정 없이 수용 요청 PR을 열며 수용 전 병합은 금지한다.
 
-단회 관찰 원시는 `/private/tmp/453-d3b-1/inspect-b2-node.json`, `/private/tmp/453-d3b-1/inspect-b2-bun.json`이다.
+단회 관찰 원시는 `{scratch}/453-d3b-1/inspect-b2-node.json`, `{scratch}/453-d3b-1/inspect-b2-bun.json`이다.
 
 ## 구현과 비용
 
@@ -183,10 +183,10 @@ Filid는 동일 snapshot `8443d2eb6a0b1f695c373a97b990f2fa8b7095a21830650cd6b939
 
 ## 원시 증거
 
-`/private/tmp/453-d3b-1/`에 build·프로젝트별 시험·verify·lint·단언 비교·배달 비교·힙 원시 표본과 SHA를 보존했다. 시간 원시는 다음 세 정본 실행 디렉터리와 그 아래의 환경/표본 파일에 있다.
+`{scratch}/453-d3b-1/`에 build·프로젝트별 시험·verify·lint·단언 비교·배달 비교·힙 원시 표본과 SHA를 보존했다. 시간 원시는 다음 세 정본 실행 디렉터리와 그 아래의 환경/표본 파일에 있다.
 
-- before: `/private/tmp/claude-501/perf-runs/20261027T0117-5cc588c-d3b1-final-before`
-- head: `/private/tmp/claude-501/perf-runs/20261027T0117-5cc588c-d3b1-final-head`
-- aprime: `/private/tmp/claude-501/perf-runs/20261027T0118-5cc588c-d3b1-final-aprime`
+- before: `{scratch}/perf-runs/20261027T0117-5cc588c-d3b1-final-before`
+- head: `{scratch}/perf-runs/20261027T0117-5cc588c-d3b1-final-head`
+- aprime: `{scratch}/perf-runs/20261027T0118-5cc588c-d3b1-final-aprime`
 
-구독 원시는 `/private/tmp/453-d3b-1/subscribed/results.json`이다. 독립 검토는 코디네이터가 배정한다.
+구독 원시는 `{scratch}/453-d3b-1/subscribed/results.json`이다. 독립 검토는 코디네이터가 배정한다.

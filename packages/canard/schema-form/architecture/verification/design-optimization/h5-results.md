@@ -85,20 +85,20 @@ A와 A′는 동일 기준 번들, B는 최종 후보입니다. Node v26.12.1 pr
 
 - 기준 node SHA-256: `a396cf65e154187e33647e034429e323d66357133867bc6ea254861c098dcca6`
 - 최종 후보 node SHA-256: `287d04ac0a5d425b69cddb7b0c2e5bd77b523da4972da808f5c6512ab29976c9`
-- 번들·판정·관문: `/private/tmp/448-h5/{before,head,judgement.json,profile-summary.json,test-*.log,build-final.log,lint.log,typecheck-window.log,differential.json,public-differential.json,dts.diff}`
-- 구독 장치·18개 명령/표본·계수: `/private/tmp/448-h5/subscribed.mjs`, `subscribed-counts.mjs`, `subscribed/`
-- 최초 후보의 원자료는 `/private/tmp/448-h5/attempt-a866104/`에 별도 보존했고 최종 판정에는 쓰지 않았습니다.
+- 번들·판정·관문: `{scratch}/448-h5/{before,head,judgement.json,profile-summary.json,test-*.log,build-final.log,lint.log,typecheck-window.log,differential.json,public-differential.json,dts.diff}`
+- 구독 장치·18개 명령/표본·계수: `{scratch}/448-h5/subscribed.mjs`, `subscribed-counts.mjs`, `subscribed/`
+- 최초 후보의 원자료는 `{scratch}/448-h5/attempt-a866104/`에 별도 보존했고 최종 판정에는 쓰지 않았습니다.
 
 최종 정본/프로파일 실행 경로:
 
-- before: `/private/tmp/claude-501/perf-runs/20261026T2132-759439e-h5-before`
-- before-small: `/private/tmp/claude-501/perf-runs/20261026T2134-759439e-h5-before-small`
-- head: `/private/tmp/claude-501/perf-runs/20261026T2133-759439e-h5-head`
-- head-small: `/private/tmp/claude-501/perf-runs/20261026T2134-759439e-h5-head-small`
-- aprime: `/private/tmp/claude-501/perf-runs/20261026T2133-759439e-h5-aprime`
-- aprime-small: `/private/tmp/claude-501/perf-runs/20261026T2134-759439e-h5-aprime-small`
-- profile-before: `/private/tmp/claude-501/perf-runs/20261026T2134-759439e-h5-profile-before`
-- profile-head: `/private/tmp/claude-501/perf-runs/20261026T2135-759439e-h5-profile-head`
+- before: `{scratch}/perf-runs/20261026T2132-759439e-h5-before`
+- before-small: `{scratch}/perf-runs/20261026T2134-759439e-h5-before-small`
+- head: `{scratch}/perf-runs/20261026T2133-759439e-h5-head`
+- head-small: `{scratch}/perf-runs/20261026T2134-759439e-h5-head-small`
+- aprime: `{scratch}/perf-runs/20261026T2133-759439e-h5-aprime`
+- aprime-small: `{scratch}/perf-runs/20261026T2134-759439e-h5-aprime-small`
+- profile-before: `{scratch}/perf-runs/20261026T2134-759439e-h5-profile-before`
+- profile-head: `{scratch}/perf-runs/20261026T2135-759439e-h5-profile-head`
 
 제품과 시험·계약 문서는 기준으로 되돌렸고 generated 주 번들 네 개도 보존 기준으로 복구했습니다. 실험 커밋과 원자료는 후속 분석을 위해 그대로 남깁니다. 기능 동등성 관문은 통과했지만 실제 구독 경로의 입증 악화 때문에 442C-03에 따라 이 묶음을 채택하지 않았습니다.
 

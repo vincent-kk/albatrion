@@ -47,7 +47,7 @@
 
 ## 측정 방법
 
-2026-10-18, arm64, Node **v26.12.0** (`/opt/homebrew/bin/node`), Bun **1.4.3**, `NODE_ENV=production`입니다. 정본 문서의 Node v26.11.1과는 버전이 다릅니다. 이 작업 폴더에서 수정 전후 각각 지정 build를 실행한 dist를 사용했습니다.
+2026-10-18, arm64, Node **v26.12.0** (`{node-home}/bin/node`), Bun **1.4.3**, `NODE_ENV=production`입니다. 정본 문서의 Node v26.11.1과는 버전이 다릅니다. 이 작업 폴더에서 수정 전후 각각 지정 build를 실행한 dist를 사용했습니다.
 
 기존 `first-batch/c-d/c-common.mjs`의 fixture·prepare·measure·validate와 `run-c-differential.mjs`를 그대로 복사해 사용했습니다. 측정 사본에는 러너가 요구하는 내부 export만 붙였고, 비계측 시간 레인에는 제품 알고리즘 변경이나 카운터를 더하지 않았습니다. 계측 레인은 별도 사본의 `getControlLayers` 진입을 세며 caller 몫은 stack으로 분류했습니다. 계측 시간은 성능 근거에 쓰지 않습니다.
 

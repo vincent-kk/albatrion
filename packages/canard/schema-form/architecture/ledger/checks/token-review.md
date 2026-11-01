@@ -6,7 +6,7 @@
 
 Verdict: pass with conditions (고침 6건을 적용하면 통과)
 
-기준: `ledger/README.md` §1·§3·§4. 입력: `/tmp/claude-501/ledger-full/token-missing-review.tsv`(279행). 행마다 원문 줄을 열어 확인했고, (A) 후보는 가리킨 항목을 열어 대조했다.
+기준: `ledger/README.md` §1·§3·§4. 입력: `{scratch}/ledger-full/token-missing-review.tsv`(279행). 행마다 원문 줄을 열어 확인했고, (A) 후보는 가리킨 항목을 열어 대조했다.
 
 ## 1. 분류별 수
 

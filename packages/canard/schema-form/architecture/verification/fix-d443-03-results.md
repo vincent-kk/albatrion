@@ -60,7 +60,7 @@ Storybook 두 실패는 `cx11-ime-during-switch`와 `browser-gates`의 IME 클�
 
 코디네이터 승인 창에서 2026-10-22 18:46:55.555–19:11:23.097 UTC에 측정했습니다. 18:57:27.982 UTC에 nested-d6 bulk의 느림이 입증된 즉시 후속 자식을 멈췄습니다. 코디네이터는 판정을 확정하고 동일 후보의 재측정을 금지했으며, 소유자가 "판정은 마지막 검증 때 하겠다"고 선언한 상태에서 남은 첫 측정 자료를 모두 수집하라고 지시했습니다. 19:01:56.695 UTC에 속행했고, 중단 행과 기존 완료 키를 건너뛰어 최초 150개 기록을 그대로 보존했습니다. **중단 행 판정은 확정, 이후 행은 소유자 판정 자료**입니다.
 
-A와 A′는 기준 코드의 동일한 배포물이며 B는 후보입니다. production `/opt/homebrew/bin/node`, 준비 20회·표본 100개, 3라운드와 1ms 미만 행의 추가 12라운드, 자식 프로세스 하나씩으로 준비했습니다. oneOf switch와 mount의 N=5·10·20·40·80, flat-1000 bulk, nested-d6-f4 bulk에 정본 게이트 8행을 더한 총 20행입니다. 게이트 행은 gate-form-one-key-100·1000 input, gated-array-1000 mount·remove-0, fixed-index-1000 mount·write, whole-array-1000 mount·write입니다.
+A와 A′는 기준 코드의 동일한 배포물이며 B는 후보입니다. production `{node-home}/bin/node`, 준비 20회·표본 100개, 3라운드와 1ms 미만 행의 추가 12라운드, 자식 프로세스 하나씩으로 준비했습니다. oneOf switch와 mount의 N=5·10·20·40·80, flat-1000 bulk, nested-d6-f4 bulk에 정본 게이트 8행을 더한 총 20행입니다. 게이트 행은 gate-form-one-key-100·1000 input, gated-array-1000 mount·remove-0, fixed-index-1000 mount·write, whole-array-1000 mount·write입니다.
 
 stage-8 도구와 현재 bench fixture의 최초 조회에서는 게이트 행을 찾지 못했으나, 코디네이터가 exit-gate-440/tools와 amend2의 정본 위치를 지정했습니다. 그 fixture·sample을 복사해 같은 측정 끝점과 단언으로 통합했습니다. presence-index fixture도 정본에 있지만 이번 코디네이터 지정 20행에는 포함하지 않았습니다. `MEASURE_RAW_OK`에서 기준·후보 SHA, 20행과 게이트 8행, fixture 종류, 동일한 무계측 footer 및 문법을 확인했습니다.
 

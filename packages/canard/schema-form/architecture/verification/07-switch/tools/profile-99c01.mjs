@@ -14,7 +14,7 @@ const pkg = path.resolve(output, '../../..');
 const repo = path.resolve(pkg, '../../..');
 const bf = path.join(repo, 'packages/aileron/benchmark-form');
 const work = path.join(output, '.profile-99c01-work');
-const raw = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/prof';
+const raw = '{scratch}/prof';
 const require = createRequire(path.join(repo, 'package.json'));
 const { TraceMap, originalPositionFor } = require('@jridgewell/trace-mapping');
 const ts = require('typescript');
@@ -23,7 +23,7 @@ const warmup = 20;
 const samples = 101;
 const fixed = ['sample-0', 'nested-d5-f4', 'computed-visible-derived', 'array-100'];
 const mounts = ['flat-500', 'nested-d5-f4', 'oneOf-20'];
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), head);
 
 /** Serialize a generated measurement, enforcing the user's decimal five-MB cap. */

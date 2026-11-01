@@ -2,10 +2,10 @@
 +++ check-report-row.mjs	2026-10-11 15:00:12
 @@ -5,7 +5,7 @@
  import { fileURLToPath } from 'node:url';
- import { endpointDifference95c01 } from '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/endpointDifference95c01.mjs';
+ import { endpointDifference95c01 } from 'packages/canard/schema-form/architecture/verification/07-switch/tools/endpointDifference95c01.mjs';
  
--const here = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136j/raw", D = "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch";
-+const here = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-137r/raw", D = "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch";
+-const here = "{scratch}/session-136j/raw", D = "packages/canard/schema-form/architecture/verification/07-switch";
++const here = "{scratch}/session-137r/raw", D = "packages/canard/schema-form/architecture/verification/07-switch";
  const manifest = JSON.parse(fs.readFileSync(path.join(here, 'manifest.json'), 'utf8'));
  const records = manifest.records.filter(r => r.fixture === 'array-100');
  const data = new Map(records.map(r => [r.timingFile, JSON.parse(fs.readFileSync(path.join(here, r.timingFile), 'utf8'))]));

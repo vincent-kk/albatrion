@@ -622,7 +622,7 @@ HEAD와 src의 tracked diff가 없으며 git write·설치·제품 소스 변경
 - raw time: `profile-102-work/{variant}-{fixture}-{forced,steady}-r{1,2,3}.json`
 - 자연 종료 및 build hash: `profile-102-work/process-*.json`, `build-*.json`
 
-bundle/map 위치: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`.
+bundle/map 위치: `{scratch}/bundles`.
 
 계수의 문자열 길이는 UTF-16 code unit, 배열 spread 길이는 복사한 원소 수입니다. CPU window 표본 coverage 범위는 99.129%–100.000%이며, profile 시작/끝에서 표본 interval이 없는 부분은 분모에 만들지 않았습니다. 수정한 setup 문제는 summary.validation.correctedSetupIssues에 기록했고, 실패 시간은 상한 집계에 사용하지 않았습니다.
 

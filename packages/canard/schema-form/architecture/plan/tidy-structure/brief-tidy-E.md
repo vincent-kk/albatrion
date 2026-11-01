@@ -4,7 +4,7 @@
 
 ## 1. 자리
 
-- 워크트리 `/tmp/claude-501/stage-tidy-E`, 브랜치 `feat/schema-form-tidy-E`, base `1.0.0-beta`(정돈-3 병합 뒤). E1과 E2–E5는 커밋을 나눈다(E1은 공개 표면 변경이라 따로 읽혀야 한다).
+- 워크트리 `{scratch}/stage-tidy-E`, 브랜치 `feat/schema-form-tidy-E`, base `1.0.0-beta`(정돈-3 병합 뒤). E1과 E2–E5는 커밋을 나눈다(E1은 공개 표면 변경이라 따로 읽혀야 한다).
 
 ## 2. 할 일
 

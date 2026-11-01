@@ -10,7 +10,7 @@ const directory=path.dirname(fileURLToPath(import.meta.url));
 const output=path.resolve(directory,'..');
 const pkg=path.resolve(output,'../../..');
 const repo=path.resolve(pkg,'../../..');
-assert.equal(fs.realpathSync(repo),'/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo),'{repo}');
 const expectedHead='f8aaa4ed23245450f967878cd96477fa5bae8f96';
 assert.equal(execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8',env:{...process.env,GIT_OPTIONAL_LOCKS:'0'}}).trim(),expectedHead);
 const read=name=>JSON.parse(fs.readFileSync(path.join(output,name),'utf8'));

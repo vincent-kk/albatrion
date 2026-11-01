@@ -142,7 +142,7 @@ BF/첫 갱신의 pooled 차이 5004.708µs는 잡음 7.372µs를 넘어 수치 �
 
 - [요약 JSON](profile-113-paired/summary.json), [공식 manifest](profile-113-paired/manifest.json), [주입 요약](profile-113-paired/injected-summary.json), [주입 manifest](profile-113-paired/injected-manifest.json).
 - `yarn node packages/canard/schema-form/architecture/verification/07-switch/profile-113-paired/analyze-paired.mjs`는 저장된 원자료로 정본 계산을 재현합니다. `--injected --manifest=packages/canard/schema-form/architecture/verification/07-switch/profile-113-paired/injected-manifest.json`은 5ms 실패를 다시 확인합니다.
-- 번들은 메모리에서만 구성하며 source map은 쓰지 않았습니다. Node compile cache와 주입 복사본은 지정된 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile-113-paired`에만 있습니다. 원자료·기록·요약 파일은 각각 5MB 이내입니다.
+- 번들은 메모리에서만 구성하며 source map은 쓰지 않았습니다. Node compile cache와 주입 복사본은 지정된 `{scratch}/bundles/profile-113-paired`에만 있습니다. 원자료·기록·요약 파일은 각각 5MB 이내입니다.
 - 제품 소스·설치·git 쓰기는 수행하지 않았습니다. releaseSources 전송 비교의 객체 키 순서 오류로 미저장·미사용된 worker 한 개를 감사 기록에 명시했습니다. 키 정렬 후 같은 worker를 재실행했고 다른 표본은 교체하지 않았습니다.
 
 ## 보류 행의 읽기

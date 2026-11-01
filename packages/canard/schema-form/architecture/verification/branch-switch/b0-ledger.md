@@ -5,7 +5,7 @@
 ## 환경과 창
 
 - 단계 시작 커밋: `0eb03ff3bb54bf06af95271d157aefece1b9bf32`. 바로 전 `b8db53997`에서 제품 코드는 같고 분기 전환 단계 문서만 추가된 판입니다.
-- Node v26.12.1(`/opt/homebrew/bin/node`), Apple M1 Max, macOS 27.0.1(26A434), AC 전원·배터리 80%입니다. 각 B0 entry가 내부에서 `NODE_ENV=production`을 고정했습니다.
+- Node v26.12.1(`{node-home}/bin/node`), Apple M1 Max, macOS 27.0.1(26A434), AC 전원·배터리 80%입니다. 각 B0 entry가 내부에서 `NODE_ENV=production`을 고정했습니다.
 - L은 설치된 공개 `@canard/schema-form@0.16.1`입니다. SHA-256 `5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46`.
 - S의 `dist/index.node.mjs` SHA-256은 `59932cf4b9b12e52ce2610d3c4c1ad212705c1a714265234fbf24c753c55841b`입니다. 제품 번들은 수정하지 않았고 원자료 사본에는 장치가 내부 export 한 줄만 덧붙였습니다.
 
@@ -367,8 +367,8 @@
 
 원자료 검사 `reportLedger.mjs`는 쌍 30·단계 18개의 독립 PID, 행마다 20예열·100표본·3실행, AB/BA 교대, 유한 양수, 최소값·중앙값, 매 표본의 self/정착 단계 합계와 전체 시간 일치, 타이머/정밀 커버리지 호출 수 일치를 확인했습니다. 전후 배달 비교·제품 호출 수 상한 시험·새 제품 성능 개선 관문·B2 잔존 힙·공개 선언 diff 검사는 제품 변경이 없는 이 도구 PR에 해당 없음입니다. 독립 antigravity 검토와 PR 생성은 코디네이터에게 인계합니다.
 
-- 정식 원자료: `/private/tmp/claude-501/perf-runs/20261027T0928-b8db539-b0/`.
+- 정식 원자료: `{scratch}/perf-runs/20261027T0928-b8db539-b0/`.
 - 통계·표: 원자료의 `summary.json`, `tables.md`; 재현 도구는 `design-optimization/tools/profile/branch-switch/reportLedger.mjs`입니다.
 - 번들 사본·해시·환경·명령·stdout/stderr·CPU 표본·coverage·heapprofile·gate 입력·준비/검증 로그를 위 디렉터리에 보존했습니다.
-- 시작하지 않은 첫 시도: `/private/tmp/claude-501/perf-runs/20261027T0926-b8db539-b0/`(사전 점검 사본도 정식 raw의 preparation에 보존).
-- PR 본문: `/private/tmp/claude-501/perf-runs/453-briefs/b0-pr-body.md`. 코디네이터 결정에 따라 워커는 PR을 생성하지 않습니다.
+- 시작하지 않은 첫 시도: `{scratch}/perf-runs/20261027T0926-b8db539-b0/`(사전 점검 사본도 정식 raw의 preparation에 보존).
+- PR 본문: `{scratch}/perf-runs/453-briefs/b0-pr-body.md`. 코디네이터 결정에 따라 워커는 PR을 생성하지 않습니다.

@@ -66,7 +66,7 @@ prefixItems 튜플 뒤의 extras 꼬리, 아직 선언된 튜플 자리, 게이�
 
 ## 시간 측정
 
-2026-10-18 arm64, Node **v26.12.0** (`/opt/homebrew/bin/node`), Bun **1.4.3**, `NODE_ENV=production`입니다. 기준 dist는 a55071005에서, 수정 dist는 현재 작업 폴더에서 지정 build로 새로 만들었습니다. 원본 first-batch README와 A3를 읽고 `first-batch/b-a2`의 config·bench-common을 변경 없이 복사했습니다. A의 B0 스키마 `{h: {type: 'array'}}`, 입력·정답·drain·별도 작은 트리 warm·writeOnce의 동기 완료/값/children/onChange 검사를 그대로 사용합니다. insert(N)은 push와 같은 기대 끝 배열·반환 길이를 쓰고 customInvoke만 host.insert(N, N)로 제공합니다.
+2026-10-18 arm64, Node **v26.12.0** (`{node-home}/bin/node`), Bun **1.4.3**, `NODE_ENV=production`입니다. 기준 dist는 a55071005에서, 수정 dist는 현재 작업 폴더에서 지정 build로 새로 만들었습니다. 원본 first-batch README와 A3를 읽고 `first-batch/b-a2`의 config·bench-common을 변경 없이 복사했습니다. A의 B0 스키마 `{h: {type: 'array'}}`, 입력·정답·drain·별도 작은 트리 warm·writeOnce의 동기 완료/값/children/onChange 검사를 그대로 사용합니다. insert(N)은 push와 같은 기대 끝 배열·반환 길이를 쓰고 customInvoke만 host.insert(N, N)로 제공합니다.
 
 준비 20회·표본 100회/레인, Node 1차→Bun 1차→Node 2차→Bun 2차 순서입니다. 2차에는 판·N·동사 순서를 뒤집었습니다. 측정 창에는 다른 게이트·빌드를 실행하지 않았습니다. 모든 표본의 시간 밖 정답 검사가 통과했고 동기 onChange는 한 번입니다. 표의 ms는 두 바퀴 200표본의 합친 중앙값이며 대괄호는 바퀴별 중앙값의 min–max입니다. 계측 사본의 시간은 성능 근거에 포함하지 않습니다.
 

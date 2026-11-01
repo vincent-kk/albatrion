@@ -6,7 +6,7 @@
 - **PR Head**: `e3c9edf1f11c8f0788d561ea4042f9b5a36e7d13`
 - **PR Base**: `90a923d0ac4f4d592656a0a89d53f87643f20c0d` (`feat/schema-form-08-review-and-perf`)
 - **제품 코드 동등 기준**: `9a473b2a2` (L3 #420 이후 불변)
-- **작업 트리**: `/Users/Vincent/Workspace/albatrion/schema-form-assemble-first`
+- **작업 트리**: `schema-form-assemble-first`
 - **검토자**: Orca Dispatched Worker (`task_3ec3f6162485`)
 - **검토 일시**: 2026-10-20T14:30:00+09:00
 
@@ -74,7 +74,7 @@
 ### 7. 작업 위생 (Hygiene)
 - **작업 트리 상태**: `git status --porcelain` 실행 결과 출력이 전혀 없는 깨끗한(clean) 상태입니다.
 - **봉인(seal) 무작위 대조**: `seal.json`에 기록된 8개 파일(`commit-code.txt`, `commit-detail.txt`, `derived.json`, `environment.json`, `gates/typecheck.receipt.json`, `gates/lint.receipt.json`, `pr-body.md`, `window.json`)의 `shasum -a 256` 해시 및 파일 크기를 직접 대조한 결과 8개 파일 모두 100% 일치했습니다.
-- **메인 디렉토리 복사본 일치**: `diff -rq /Users/Vincent/Workspace/albatrion/schema-form-assemble-first/.seiri/tasks/assemble-first-432 /Users/Vincent/Workspace/albatrion/.seiri/tasks/assemble-first-432` 실행 결과 출력이 없으며 종료 코드 0으로 일치함이 확인되었습니다.
+- **메인 디렉토리 복사본 일치**: `diff -rq schema-form-assemble-first/.seiri/tasks/assemble-first-432 .seiri/tasks/assemble-first-432` 실행 결과 출력이 없으며 종료 코드 0으로 일치함이 확인되었습니다.
 - **커밋 저자 및 표기**: 4개 커밋 모두 `Vincent Kelvin <vincent-kk@users.noreply.github.com>`으로 작성되었으며, 커밋 메시지 및 PR 본문에 세션 식별자, 작업 ID, co-author 표기가 일절 포함되지 않았습니다 (`gh pr view 426 --json body,commits`).
 
 ### 8. 보고된 FCA 이슈 및 런타임 순증 분석

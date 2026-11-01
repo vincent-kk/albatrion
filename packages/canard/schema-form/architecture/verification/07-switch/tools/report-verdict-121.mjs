@@ -114,7 +114,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 const verification = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = process.argv.find(value => value.startsWith('--input-dir='))?.slice(12) ?? verification;
 const repo = path.resolve(verification, '../../../../../..');
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 const hash = value => createHash('sha256').update(value).digest('hex');
 if (process.argv.includes('--smoke')) {
   const filename = process.argv[process.argv.indexOf('--smoke') + 1];

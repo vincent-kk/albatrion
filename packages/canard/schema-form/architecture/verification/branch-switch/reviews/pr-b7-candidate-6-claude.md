@@ -31,7 +31,7 @@
 6. **문서와 규칙 — 맞습니다.**
    - `settle/DETAIL.md:21`의 명세 문장은 "… moves or discards the original references with their clones." 바로 뒤에 있습니다. 한계 문장은 "an old reference to an occurrence that itself re-entered (excluding inactive candidates carried beneath it)"로 좁혀졌습니다.
    - `b7-results.md:406`의 "후보 6" 절에는 결함 표, 실패 먼저, 관문, 배달 비교, 알려진 한계, 비용 문장이 있습니다.
-   - `a20d0c2a0..502a1d4d9`에서 더해진 모든 줄(raw JSON 포함)에서 `/Users/`, `/private/`, `/tmp/`, `/var/folders`, `/home/`, scratchpad, 사용자 이름을 찾았고 하나도 나오지 않았습니다.
+   - `a20d0c2a0..502a1d4d9`에서 더해진 모든 줄(raw JSON 포함)에서 `{home}/`, `{tmp}/`, `{scratch}/`, `{tmp}`, `{home}/`, scratchpad, 사용자 이름을 찾았고 하나도 나오지 않았습니다.
    - 더해진 TypeScript 줄에는 `as any`, `as never`, `Array.isArray`, 직접 `Object.prototype.hasOwnProperty`, `@ts-` 지시문이 없습니다. TSDoc은 영어입니다. 도우미 예산 규칙은 함수 파일의 비공개 도우미에 대한 것이고, `discard`는 클래스의 정적 메서드이므로 해당하지 않습니다.
    - 시험의 `import { isArrayNode } from '../utils/guards'`는 같은 surface 프랙탈 안의 파일을 직접 가져오므로 규칙에 맞습니다.
 

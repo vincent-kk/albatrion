@@ -109,7 +109,7 @@ Verify: `grep -n "지지" b9-0-results.md` shows H1 only with "원인" and no H6
    - The callback count fits 2 × (S + 2).
 10. **Hygiene.**
     - Commit messages are subject-only, with no co-author or session line. The author is Vincent Kelvin with the noreply address.
-    - Added lines contain no `/Users/`, `/private/`, `/tmp/` or `/var/folders` path. Two hits are prose mentions of the mask.
+    - Added lines contain no `{home}/`, `{tmp}/`, `{scratch}/` or `{tmp}` path. Two hits are prose mentions of the mask.
     - The gzip files contain no paths, and the raw files contain no account name or email.
     - The PR body has no machine-local path.
 

@@ -61,7 +61,7 @@
 
 ## 부록 A. M1 분류 초안 — 코어 엔진 행(03–06, 82C)
 
-기준: 작업 트리 `/tmp/claude-501/stage-08-audit`, c59ba1363. 경로는 `packages/canard/schema-form` 기준이며 `S/`는 `src/core/engine/settle/utils/`, `PI`는 `architecture/verification/performance-issues.md`를 줄인 표기입니다.
+기준: 작업 트리 `{scratch}/stage-08-audit`, c59ba1363. 경로는 `packages/canard/schema-form` 기준이며 `S/`는 `src/core/engine/settle/utils/`, `PI`는 `architecture/verification/performance-issues.md`를 줄인 표기입니다.
 
 범위 메모: P-01–P-25 가운데 P-03·P-13·P-23은 "## 열림"에 행이 없습니다(해결 R-17·R-18·R-22, `PI:163,173-174,156`). 그래서 대상은 P-01–P-25의 22행과 P-135·P-136·P-137을 합한 25행입니다.
 
@@ -134,7 +134,7 @@
 
 ## 부록 B. M1 분류 초안 — 07 U13 행 (P-26~P-134, 109행)
 
-작업 트리는 `/tmp/claude-501/stage-08-audit`(c59ba1363, 353라운드)이며 경로는 `packages/canard/schema-form/` 기준이다. 빌드·시험·벤치는 돌리지 않았고 기록과 코드만 읽었다.
+작업 트리는 `{scratch}/stage-08-audit`(c59ba1363, 353라운드)이며 경로는 `packages/canard/schema-form/` 기준이다. 빌드·시험·벤치는 돌리지 않았고 기록과 코드만 읽었다.
 
 ## 먼저 알릴 것
 

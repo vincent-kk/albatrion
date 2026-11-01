@@ -96,7 +96,7 @@ export async function prepareBranch1Bundles(packageRoot, outputRoot, reactVarian
 }
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
-const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
+const scratch = '{scratch}/bundles';
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const reactVariant = process.argv[2] === '--react-fa' ? (process.argv[3] ?? 'both') : undefined;
   // --patch-variants [--base=<commit>] builds c-*.cjs from that commit (default HEAD) plus the scratch patches

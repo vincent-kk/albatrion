@@ -1,6 +1,6 @@
 # B2-P3 PR 검토 보고서
 
-- 대상 저장소: `vincent-kk/albatrion` (작업트리: `/Users/Vincent/Workspace/albatrion/branch-switch-b2-p3`)
+- 대상 저장소: `vincent-kk/albatrion` (작업트리: `branch-switch-b2-p3`)
 - 브랜치: `perf/schema-form-b2-p3-delta-application` (`ad28386d7`..`a28b502cc`)
 - 검토자: Vincent 동료 리뷰어
 
@@ -24,6 +24,6 @@
    - payload-12 총합/폭: `b2-p3-results.md:10` (A 857.000 / B 826.209 / A′ 961.125, 폭 285.083) ↔ `candidate-2/results.summary.json` (A 0.857000ms, B 0.826209ms, A' 0.961125ms, 폭 0.285083ms) 일치.
    - TEST-073 주판정: `b2-p3-results.md:65` (주판정 회귀 0건) ↔ `candidate-2/judgement.json:239-650` (comparison "all" regression 0건) 일치.
    - Node 힙: `b2-p3-results.md:34` (B 1438.999 ≤ A max 1890.783) ↔ `candidate-2/judgement.json:166-189` (A 최대 1890.783, B 중앙 1438.999) 일치.
-   - 머신 로컬 경로 확인: `b2-p3-results.md` 내 `/private/tmp` 등 로컬 경로 없음 확인.
+   - 머신 로컬 경로 확인: `b2-p3-results.md` 내 `{scratch}` 등 로컬 경로 없음 확인.
 
 최종 판정: PASS

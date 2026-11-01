@@ -6,13 +6,13 @@
 
 - 기준 A/A′: `integration/schema-form-d1`, `726c34bedbb944e1ca7e4cca2d58928cfce2c391`.
 - 측정 B: `ea6e8bdb4862946666a23a3475e613b337f61e34`. 빌드 커밋 `e53da2bd83aa017dad8fc989c1cb93add0168b84` 뒤에는 도구 인자 파서와 시험만 바뀌었고 제품 런타임 소스는 동일합니다.
-- 후보 보존 HEAD: `ecec505087b7748749848ea036aa54c8df58db49`(측정 뒤 색인 크기·B2를 DETAIL에 기록한 문서 커밋 포함). 후보의 패치·커밋 묶음은 `/private/tmp/d2-p4/candidate.patch`, `/private/tmp/d2-p4/candidate.bundle`에 있습니다.
+- 후보 보존 HEAD: `ecec505087b7748749848ea036aa54c8df58db49`(측정 뒤 색인 크기·B2를 DETAIL에 기록한 문서 커밋 포함). 후보의 패치·커밋 묶음은 `{scratch}/d2-p4/candidate.patch`, `{scratch}/d2-p4/candidate.bundle`에 있습니다.
 - A Node 번들 SHA256: `4563286f5862703164f47729acc6a7e3d251af2365ca2d72b9632bb6dc4d1a99`.
 - B Node 번들 SHA256: `a8be64ddef39d3e53d9c8f3aee6e3141d1d7189d237a208b1e18dac17534b901`.
 - A 빌드 원자료는 이전 통합 빌드에서 보존한 dist입니다. 그 빌드 커밋과 726c의 차이는 분석 문서뿐이며 런타임 소스가 동일하고 보존된 번들 해시를 확인했습니다.
 - 실제 무거운 창 시작(build): **2026-10-26T23:56:57.878164+00:00 UTC**. 코디네이터의 창 개방 뒤 실행했으며 `quietSince`로 모든 라운드에 같은 값을 넣었습니다. 모든 무거운 검증 종료 뒤 `창 종료` 상태를 보냈습니다.
 - Node **v26.12.1**, production, Apple M1 Max 10코어, arm64, Darwin 27.0.0. 기본 Node 플래그는 빈 목록입니다. 메모리 보조 검증의 Bun은 **1.4.4**입니다.
-- 원자료 루트: `/private/tmp/d2-p4`. 정확한 명령·UTC 시작/종료·번들 해시·기준 npm 해시는 `measurements.json`과 각 실행 폴더의 `results.json`, `engines.json`, `environment.json`, `*.command.json`, `*.stdout`, `*.stderr`에 남겼습니다.
+- 원자료 루트: `{scratch}/d2-p4`. 정확한 명령·UTC 시작/종료·번들 해시·기준 npm 해시는 `measurements.json`과 각 실행 폴더의 `results.json`, `engines.json`, `environment.json`, `*.command.json`, `*.stdout`, `*.stderr`에 남겼습니다.
 
 ## 측정 전에 고정한 판정
 

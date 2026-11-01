@@ -19,7 +19,7 @@ push 계열에서는 코어의 배열 정착/구조 관리 증가를 React commi
 | 항목 | 값 |
 | --- | --- |
 | Node | `v26.11.1` |
-| Node binary | `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node` |
+| Node binary | `{node-home}/versions/node/v26.11.1/bin/node` |
 | V8 | `14.6.202.34-node.37` |
 | React | `19.2.6` |
 | react-dom | `19.2.6` |
@@ -38,7 +38,7 @@ HEAD는 현재 작업 트리의 HEAD로 고정하였고 tracked 제품 src diff�
 | --- | --- | --- |
 | HEAD 하네스 번들 | `head-published.cjs` (910192 bytes) | `fe622cd4e13d94a060e441d0ef82d9fe6b818e6e0ba1ac1e1b9348b9855a8718` |
 | 0.16.0 하네스 번들 | `old-published.cjs` (25929 bytes) | `de8c87160a9c84ee914698bcf1ddd941075c256b7876449288490dab285cc926` |
-| 공개판 제품 ESM | `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@canard/schema-form_0.16.0/dist/index.mjs` | `78362ee2e5b7c0bdca5f9b80f7490c32a54ea344565e97c2b4088080a3c861b2` |
+| 공개판 제품 ESM | `node_modules/@canard/schema-form_0.16.0/dist/index.mjs` | `78362ee2e5b7c0bdca5f9b80f7490c32a54ea344565e97c2b4088080a3c861b2` |
 
 HEAD 번들은 현재 제품 src를 포함하며 0.16.0 하네스는 설치된 공개판 ESM만 동적 import합니다. 두 판 모두 같은 설치된 `@winglet/*`, React, react-dom 패키지를 사용합니다. HEAD CJS / 공개판 ESM의 모듈 형식은 공식 하네스 구조를 유지하였습니다.
 
@@ -48,7 +48,7 @@ HEAD 번들은 현재 제품 src를 포함하며 0.16.0 하네스는 설치된 �
 
 ### 하네스와 표본
 
-기존 prepare-react-bundles.mjs, measure-react-pair-126.entry.tsx, measure-react-pair-129.mjs의 fixture API·fresh mount·commit 보정·쓰기 루프를 재사용하였습니다. measure-react-render-counts.mjs의 React 경계와 summarize-round-93i-react-phases.mjs의 render/commit/layout/passive 구분을 참고하되, 계수/phase 타이밍 훅은 삽입하지 않았습니다. 원본 도구는 모두 [tools](/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools) 아래에 그대로 있습니다.
+기존 prepare-react-bundles.mjs, measure-react-pair-126.entry.tsx, measure-react-pair-129.mjs의 fixture API·fresh mount·commit 보정·쓰기 루프를 재사용하였습니다. measure-react-render-counts.mjs의 React 경계와 summarize-round-93i-react-phases.mjs의 render/commit/layout/passive 구분을 참고하되, 계수/phase 타이밍 훅은 삽입하지 않았습니다. 원본 도구는 모두 [tools](packages/canard/schema-form/architecture/verification/07-switch/tools) 아래에 그대로 있습니다.
 
 주 측정은 판·fixture·lane마다 3개의 새 프로세스, 프로세스마다 보정 1회 + 예열 20회 + fresh mount update 101회입니다. pooled 판별 표본은 303개입니다. 순서는 회차별 old→HEAD / HEAD→old / old→HEAD이며, 각 판에서 plain 뒤 profile을 별도 새 프로세스로 실행하였습니다. 측정 프로세스는 하나씩만 실행하였습니다.
 
@@ -106,8 +106,8 @@ HEAD의 `// packages/...`와 공개판/의존성의 `//#region src/...`를 이�
 driver는 기존 timing JSON이 있으면 해당 worker 실행을 건너뜁니다. 따라서 아래 명령은 지정 stage1 안의 새 하위 디렉터리에 필요한 스크립트만 복사하여 실제 새 측정을 실행합니다. 측정 시와 동일한 작업 트리·설치된 의존성을 전제로 하며 도구 원본은 편집하지 않습니다. `report.mjs`는 초기 자동 생성본을 작성하고, 이번 문서 점검의 보완은 현재 `report.md`에만 반영하였습니다.
 
 ```sh
-task_node='/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node'
-task_source='/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-143/stage1'
+task_node='{node-home}/versions/node/v26.11.1/bin/node'
+task_source='{scratch}/g26-143/stage1'
 task_out="$task_source/repro-$(date -u +%Y%m%dT%H%M%SZ)"
 "$task_node" -e 'if (process.version !== "v26.11.1") throw new Error(process.version); console.log(process.version, process.versions.v8)'
 mkdir "$task_out"
@@ -301,11 +301,11 @@ group/run은 worker를 순차 spawn합니다. 각 worker는 420초 내 종료를
 
 ## 5. 118의 열린 귀속과 117의 정합성
 
-[118](/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/react-layer-diagnosis-118.md)의 +0.40 / +0.64 ms는 각각 array-push-100의 push 100회, array-push-remove-100의 push 100회+remove 100회에 대한 **평균 쓰기당 ELU active 차이**입니다. 한 번의 100개 일괄 push나 replace-200의 값이 아닙니다. 당시 HEAD는 3a637c4cd이며 후속 고침 전입니다. 현재 동일 시퀀스의 plain active median 차이를 쓰기 수로 나누면 +0.158 / +0.089 ms입니다. 현재 프로필의 가산적 평균 귀속은 push 쓰기당 core +0.197, React -0.039, other +0.023 ms; push/remove 전체 쓰기당 core +0.170, React -0.068, other +0.017 ms입니다. 현재 gap은 개별 쓰기와 push/remove 부분합까지 분해하였지만, unattributed median은 old/HEAD 각각 push 8.080/9.003 ms, push/remove 14.799/16.191 ms로 남습니다. 현재 프로필 귀속을 과거 CPU active +0.40/+0.64의 분해로 대체하지 않습니다.
+[118](packages/canard/schema-form/architecture/verification/07-switch/react-layer-diagnosis-118.md)의 +0.40 / +0.64 ms는 각각 array-push-100의 push 100회, array-push-remove-100의 push 100회+remove 100회에 대한 **평균 쓰기당 ELU active 차이**입니다. 한 번의 100개 일괄 push나 replace-200의 값이 아닙니다. 당시 HEAD는 3a637c4cd이며 후속 고침 전입니다. 현재 동일 시퀀스의 plain active median 차이를 쓰기 수로 나누면 +0.158 / +0.089 ms입니다. 현재 프로필의 가산적 평균 귀속은 push 쓰기당 core +0.197, React -0.039, other +0.023 ms; push/remove 전체 쓰기당 core +0.170, React -0.068, other +0.017 ms입니다. 현재 gap은 개별 쓰기와 push/remove 부분합까지 분해하였지만, unattributed median은 old/HEAD 각각 push 8.080/9.003 ms, push/remove 14.799/16.191 ms로 남습니다. 현재 프로필 귀속을 과거 CPU active +0.40/+0.64의 분해로 대체하지 않습니다.
 
 118을 소급 종결하려면 당시 HEAD `3a637c4cd`와 공개판을 당시 `diag.mjs`의 쓰기 구간·drain 종료점으로 맞춘 단계별 CPU profile, 같은 쓰기의 wall/ELU active, 번들·환경 식별 증거가 필요합니다. 특히 push/remove의 +0.64 ms가 push 100회와 remove 100회에 각각 얼마나 속했는지도 같은 구간에서 구분해야 합니다. 이번 세션은 현재 HEAD의 303개 표본을 수집하였고, 118의 당시 시간 표본 11회에 대응하는 이 증거를 수집·재측정하지 않았습니다. 따라서 대상 행과 쓰기는 확인하였지만 과거 증가분 자체의 정확한 귀속은 미해결입니다.
 
-[117](/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-117-session.md)의 core 증가는 push +14.696 ms(2.980→17.676), push/remove +25.143 ms(4.535→29.678)입니다. 그러나 그 보고서의 전체 wall 증가는 각각 +154.919 ms(236.514→391.433), +260.397 ms(504.756→765.153)였으며 React 잔여에는 drainTicks(2) 대기가 들어갑니다. 따라서 이 core 수치를 다른 종료점·후속 제품의 136k +6.949/+8.239 ms에 그대로 더하는 것은 동일 회계가 아닙니다. 현재 동일 구간의 core median 증가 +19.571 / +33.900 ms를 React median -3.607 / -13.593 ms가 상쇄합니다. old 쪽에서 더 큰 항목은 push의 commit -4.520, scheduler -1.169, passive -0.480 ms와 push/remove의 commit -11.346, scheduler -2.403, passive -1.157 ms입니다. 코어의 전체 시간 비중보다 **버전 간 증가와 상쇄**를 보아야 하며, 현재 push 계열에서는 코어 단독 고침을 먼저 검토할 근거가 있습니다.
+[117](packages/canard/schema-form/architecture/verification/07-switch/profile-117-session.md)의 core 증가는 push +14.696 ms(2.980→17.676), push/remove +25.143 ms(4.535→29.678)입니다. 그러나 그 보고서의 전체 wall 증가는 각각 +154.919 ms(236.514→391.433), +260.397 ms(504.756→765.153)였으며 React 잔여에는 drainTicks(2) 대기가 들어갑니다. 따라서 이 core 수치를 다른 종료점·후속 제품의 136k +6.949/+8.239 ms에 그대로 더하는 것은 동일 회계가 아닙니다. 현재 동일 구간의 core median 증가 +19.571 / +33.900 ms를 React median -3.607 / -13.593 ms가 상쇄합니다. old 쪽에서 더 큰 항목은 push의 commit -4.520, scheduler -1.169, passive -0.480 ms와 push/remove의 commit -11.346, scheduler -2.403, passive -1.157 ms입니다. 코어의 전체 시간 비중보다 **버전 간 증가와 상쇄**를 보아야 하며, 현재 push 계열에서는 코어 단독 고침을 먼저 검토할 근거가 있습니다.
 
 ## 6. 읽기와 다음 고침 후보
 

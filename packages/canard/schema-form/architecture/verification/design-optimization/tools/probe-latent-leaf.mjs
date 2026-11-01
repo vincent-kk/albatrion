@@ -155,11 +155,11 @@ if (config.worker) {
   assert.equal(
     beforeFlags.length,
     1,
-    'Provide --before=/private/tmp/claude-501/perf-runs/.../index.node.mjs',
+    'Provide --before={scratch}/perf-runs/.../index.node.mjs',
   );
   const before = path.resolve(beforeFlags[0].slice('--before='.length));
   assert.ok(
-    before.startsWith('/private/tmp/claude-501/perf-runs/'),
+    before.startsWith('{scratch}/perf-runs/'),
     'Before bundle must be an external saved artifact',
   );
   fs.mkdirSync(config.runDir, { recursive: false });

@@ -415,7 +415,7 @@
 #### 환경 메모
 
 - 모든 명령에 `PATH=~/.nvm/versions/node/v20.19.5/bin:$PATH` prefix 필요 (system node v26 회피).
-- vitest bench 는 yarn berry 에서 `node /Users/Vincent/Workspace/albatrion/node_modules/vitest/vitest.mjs bench --config vitest.bench.config.ts --run` 으로 호출.
+- vitest bench 는 yarn berry 에서 `node node_modules/vitest/vitest.mjs bench --config vitest.bench.config.ts --run` 으로 호출.
 
 #### 다음 세션 시작점
 

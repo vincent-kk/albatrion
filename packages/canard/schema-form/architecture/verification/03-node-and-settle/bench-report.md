@@ -1,6 +1,6 @@
 # U9 — node and settlement benchmarks, stage 03 optimization round
 
-환경: MacBookPro18,2 (M1 Max, 64 GB), Darwin 25.6.0, Node.js 26.10.0/V8, Bun 1.4.2/JSC. 청사진을 준비한 뒤 `node --import tsx bench/node-and-settle.bench.ts`와 `/opt/homebrew/bin/bun bench/node-and-settle.bench.ts`를 단독·순차 실행했다. 각 시간 쌍은 같은 프로세스·같은 입력의 새/레거시 100표본(준비 20회, B6 5회)이다. B2는 7표본 중앙값이다. Node 후측정 B1은 첫 회에 7.74 ms 단일 표본이 섞여 재측정했고, 키 순서 보존 확인을 추가한 최종 코드로 다시 두 런타임의 전체 스크립트를 실행했다. 아래 표는 최종 실행값이다. `N=64` fixture는 활성 조각 64, 루트 평가 게이트 호스트 64, 잠복 원본 1을 확인했다.
+환경: MacBookPro18,2 (M1 Max, 64 GB), Darwin 25.6.0, Node.js 26.10.0/V8, Bun 1.4.2/JSC. 청사진을 준비한 뒤 `node --import tsx bench/node-and-settle.bench.ts`와 `{node-home}/bin/bun bench/node-and-settle.bench.ts`를 단독·순차 실행했다. 각 시간 쌍은 같은 프로세스·같은 입력의 새/레거시 100표본(준비 20회, B6 5회)이다. B2는 7표본 중앙값이다. Node 후측정 B1은 첫 회에 7.74 ms 단일 표본이 섞여 재측정했고, 키 순서 보존 확인을 추가한 최종 코드로 다시 두 런타임의 전체 스크립트를 실행했다. 아래 표는 최종 실행값이다. `N=64` fixture는 활성 조각 64, 루트 평가 게이트 호스트 64, 잠복 원본 1을 확인했다.
 
 추가 분석과 재측정: [performance.md](./performance.md).
 

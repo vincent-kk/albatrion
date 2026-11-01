@@ -2,25 +2,25 @@
 
 결정 131C-01에 따라 `react-129-main`의 최종 React A/A를 원방향으로 실행하였으며 결과는 `AA_PASS`입니다. 러너의 최종 상태는 `passed`이고 로그 종료 표시는 `SESSION_131_OK`이며 종료 코드는 0입니다.
 
-측정 Node는 `v26.11.1`이고 V8은 `14.6.202.34-node.37`이며 실제 실행 경로는 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`입니다. F-B·F-C·F-F가 채택된 제품 소스 기준은 전체 HEAD `daca1d14a8406e5ca939bad5e99f5be29768a5b3`이며 실행 전 작업 트리가 깨끗함을 확인하였습니다. 측정 코드 작성, git 쓰기, 설치 및 제품 코드 변경 없이 기존 준비 도구와 러너를 사용하였습니다. 측정 중에는 러너와 짧은 상태 확인 명령만 실행하였습니다.
+측정 Node는 `v26.11.1`이고 V8은 `14.6.202.34-node.37`이며 실제 실행 경로는 `{node-home}/versions/node/v26.11.1/bin/node`입니다. F-B·F-C·F-F가 채택된 제품 소스 기준은 전체 HEAD `daca1d14a8406e5ca939bad5e99f5be29768a5b3`이며 실행 전 작업 트리가 깨끗함을 확인하였습니다. 측정 코드 작성, git 쓰기, 설치 및 제품 코드 변경 없이 기존 준비 도구와 러너를 사용하였습니다. 측정 중에는 러너와 짧은 상태 확인 명령만 실행하였습니다.
 
 `react-129-main`, 요청 전체 24블록, 축소 8블록, 예열 20회, 표본 41개, 프로세스당 폼 1개, 예산 7,100초를 사용하였습니다. `--swap`은 사용하지 않았습니다. 기존 `tools/prepare-smoke-131.mjs`로 `session-136i-aa-counts/react-counts.json`에 A/A 전용 0 계수를 만들었습니다. 132b의 최종 JSON에서 복구한 조건과 일치하며 base·candidate·계수 파일·출력 경로만 교체하였습니다.
 
-원자료 디렉터리는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136i`이고 로그는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136i.log`입니다. 실행 전 추정 5007.710초와 확인 여유 1251.927초의 합계 6259.637초는 남은 예산 7099.990초 안에 들어갔습니다.
+원자료 디렉터리는 `{scratch}/session-136i`이고 로그는 `{scratch}/session-136i.log`입니다. 실행 전 추정 5007.710초와 확인 여유 1251.927초의 합계 6259.637초는 남은 예산 7099.990초 안에 들어갔습니다.
 
-번들은 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/prepare-react-bundles.mjs`의 깨끗한 작업 트리 경로로 만들었습니다. `g27-fixes.md`의 r133-base 재빌드처럼 `measure-react-pair-126.entry.tsx`와 `equivalentHarness: true`를 유지하고 소비자가 없는 isInteger initializer의 선택적 정규화 258바이트를 적용하였습니다. esbuild 서비스 한 개는 자연 종료 코드 0으로 끝났습니다. candidate는 base 뒤에 `// r136-finalx: byte-different copy of the base runtime` 주석 한 줄만 추가하였습니다. 기존 `verify-bundles-131.mjs`가 두 manifest, 전체 기준 SHA, 크기, SHA-256 및 한 줄 차이를 검증하였습니다.
+번들은 `packages/canard/schema-form/architecture/verification/07-switch/tools/prepare-react-bundles.mjs`의 깨끗한 작업 트리 경로로 만들었습니다. `g27-fixes.md`의 r133-base 재빌드처럼 `measure-react-pair-126.entry.tsx`와 `equivalentHarness: true`를 유지하고 소비자가 없는 isInteger initializer의 선택적 정규화 258바이트를 적용하였습니다. esbuild 서비스 한 개는 자연 종료 코드 0으로 끝났습니다. candidate는 base 뒤에 `// r136-finalx: byte-different copy of the base runtime` 주석 한 줄만 추가하였습니다. 기존 `verify-bundles-131.mjs`가 두 manifest, 전체 기준 SHA, 크기, SHA-256 및 한 줄 차이를 검증하였습니다.
 
 | 번들입니다. | 바이트 수입니다. | SHA-256입니다. |
 | --- | ---: | --- |
 | `r136-final.cjs` | 963333 | `1d0ad52295ebb91e590d12f4119e5d5e4170ec23dc61f7b08aac7cdc7b6958cb` |
 | `r136-finalx.cjs` | 963389 | `557732ee821750ed7f696b1483a388cf8dbf38ad86eae67cb00cb592873ce291` |
 
-각 manifest는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r136-final-manifest.json`과 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r136-finalx-manifest.json`에 있으며 `baseRevision`은 모두 `daca1d14a8406e5ca939bad5e99f5be29768a5b3`입니다. 번들은 scratchpad에 보존하였습니다.
+각 manifest는 `{scratch}/bundles/r136-final-manifest.json`과 `{scratch}/bundles/r136-finalx-manifest.json`에 있으며 `baseRevision`은 모두 `daca1d14a8406e5ca939bad5e99f5be29768a5b3`입니다. 번들은 scratchpad에 보존하였습니다.
 
 실행 명령은 다음과 같습니다.
 
 ```sh
-/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs --kind=aa --lane=react --rows=react-129-main --blocks=24 --reduced-blocks=8 --warmup=20 --samples=41 --forms-per-process=1 --budget-seconds=7100 --base=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r136-final --candidate=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r136-finalx --touch-counts=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136i-aa-counts/react-counts.json --out=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136i --node-version=v26.11.1
+{node-home}/versions/node/v26.11.1/bin/node packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs --kind=aa --lane=react --rows=react-129-main --blocks=24 --reduced-blocks=8 --warmup=20 --samples=41 --forms-per-process=1 --budget-seconds=7100 --base={scratch}/bundles/r136-final --candidate={scratch}/bundles/r136-finalx --touch-counts={scratch}/session-136i-aa-counts/react-counts.json --out={scratch}/session-136i --node-version=v26.11.1
 ```
 
 ## A/A 집계를 기록합니다.

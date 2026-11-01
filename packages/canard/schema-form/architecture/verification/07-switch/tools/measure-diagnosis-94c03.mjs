@@ -23,7 +23,7 @@ const release = '@canard/schema-form@0.16.0';
 const expectedHead = 'f8aaa4ed23245450f967878cd96477fa5bae8f96';
 const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
 assert.equal(head, expectedHead);
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 assert.equal(typeof globalThis.gc, 'function');
 const smoke = process.argv.includes('--smoke');
 const warmup = smoke ? 3 : 24;

@@ -252,6 +252,6 @@ FCA 기본 facts 범위 2,697파일을 제출했고 거절·대기 판정 없이
 
 ## 증거 위치
 
-이 문서의 증거 경로는 `.seiri/tasks/gate-table-pr3-442/`를 기준으로 합니다. 작업 트리의 증거 전체는 원래 저장소 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/gate-table-pr3-442/`로 복사하고 `diff -rq`로 동일성을 확인합니다. 최종 측정의 원자료·명령·프로세스 기록은 `measure2/wall/`, `measure2/window.json`, `measure2/logs/`에 있고 판정·감사는 `measure2/rows.json`, `measure2/slope.json`, `measure2/verification.json`에 있습니다. 등록 재기준 차이는 `gates/registration-rebaseline-diff-final.json`, 검증 명령과 제한 사항은 `report.md`와 `review-handoff.md`에 기록합니다.
+이 문서의 증거 경로는 `.seiri/tasks/gate-table-pr3-442/`를 기준으로 합니다. 작업 트리의 증거 전체는 원래 저장소 `.seiri/tasks/gate-table-pr3-442/`로 복사하고 `diff -rq`로 동일성을 확인합니다. 최종 측정의 원자료·명령·프로세스 기록은 `measure2/wall/`, `measure2/window.json`, `measure2/logs/`에 있고 판정·감사는 `measure2/rows.json`, `measure2/slope.json`, `measure2/verification.json`에 있습니다. 등록 재기준 차이는 `gates/registration-rebaseline-diff-final.json`, 검증 명령과 제한 사항은 `report.md`와 `review-handoff.md`에 기록합니다.
 
 보정의 별도 원자료·명령·프로세스 기록은 `amend/measure/`에 있고 검증 로그·FCA 차이는 `amend/gates/`에 있습니다. 보정 증거는 원래 저장소의 같은 `amend/` 경로로 복사하며 최종 보고서는 `amend/report.md`입니다.

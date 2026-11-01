@@ -1,6 +1,6 @@
 # 정돈 — 최소 export 계약과 fractal 뿌리의 첫인상 (수정 계획, 소유자 검토용)
 
-> 2026-10-14, 원장 관리자. 287·288라운드 소유자 지시(`../../reviews/round-287-owner-answers.md`, `../../reviews/round-288-owner-answers.md`)로 연다. 이 문서는 "어떻게 고칠 생각인지"를 보이는 계획이며, 소유자가 검토해 진행을 허가하기 전에는 코드를 바꾸지 않는다. 전수 검사 원자료는 `/tmp/claude-501/s2/fractal-audit.md`(fractal 53개, 1.0.0-beta 48b1a59fb 기준)이고, 검사 스크립트는 `/tmp/claude-501/s2/audit.cjs`다.
+> 2026-10-14, 원장 관리자. 287·288라운드 소유자 지시(`../../reviews/round-287-owner-answers.md`, `../../reviews/round-288-owner-answers.md`)로 연다. 이 문서는 "어떻게 고칠 생각인지"를 보이는 계획이며, 소유자가 검토해 진행을 허가하기 전에는 코드를 바꾸지 않는다. 전수 검사 원자료는 `{scratch}/s2/fractal-audit.md`(fractal 53개, 1.0.0-beta 48b1a59fb 기준)이고, 검사 스크립트는 `{scratch}/s2/audit.cjs`다.
 
 ## 0. 원칙 — 소유자의 말을 그대로 둔 것
 
@@ -87,4 +87,4 @@
 | 2026-10-14 | F4 "`types/rolled/fieldRenderer.ts`·`form.ts` 미사용" — 루트 `src/index.ts:84`의 `export type * from './types/rolled'`로 공개 이름이며 플러그인 넷과 aileron benchmark-form이 쓴다. 전수 검사 스크립트가 루트의 와일드카드 재수출을 따라가지 않았다 | fixy08 | 원장 관리자가 `src/index.ts:84`와 antd5 플러그인 import를 확인 | 정돈-1 범위 2.3 제외. rolled의 와일드카드는 정돈-2에서 이름 목록으로(public-contract §2). 표면 게이트를 "index.d.ts 텍스트 diff"에서 "컴파일러로 열거한 공개 이름·형 문자열 목록 비교"로 강화(정돈 PR 전부) |
 | 2026-10-14 | 정돈-1 브리프 누락 — `packages/aileron/benchmark-form/src/utils/loadCoreBenchmark.ts`가 `src/core/index.ts`를 esbuild로 묶어 `nodeFromJSONSchema`를 꺼내므로 export 삭제 뒤 런타임에 깨지며 typecheck가 잡지 못함; documents 사이트 `index.mdx`(en 40·171행, ko 39·135행)의 언급 | fairy08·fixy08 | — | 정돈-1 범위에 추가(번들 진입점을 파일 경로로, mdx 수정, documents 빌드 게이트) |
 
-전수 검사 스크립트(`/tmp/claude-501/s2/audit.cjs`)의 실제 결함(fairy08 재검사, 2026-10-14): 와일드카드 펼치기는 맞았고, 틀린 곳은 뿌리 파일 판정이다 — `import { X as BaseX }` 뒤 같은 이름 `X`를 로컬에서 새로 정의해 `export type { X }`로 내보내는 파일(`types/rolled/fieldRenderer.ts`·`form.ts`, `helpers/virtualization/type.ts`)을 import의 원래 이름으로 돌려 "export 없음"으로 보았다. index 이름 판정(19곳 144개)은 오판 0이었다. 재검사(와일드카드 끝까지 펼침, 부모가 재수출만 하는 이름은 자식에서도 삭제 대상, 소비자는 서브트리 밖 제품 코드)의 결과는 fairy08 scratchpad `export-recensus.md`이며 정돈-1 병합 커밋 ae502f7bd 기준으로 다시 돌린 목록이 정돈-2 §3.5의 기준이다: 지울 index 이름 109개(루트·오류 코드 제외), 오류 코드 상수 61개 중 밖의 제품 소비자 없음 37·engine이 씀 24(정돈-E), 밖의 소비자 없는 뿌리 파일 17개(nodeFromJSONSchema와 포맷터 16).
+전수 검사 스크립트(`{scratch}/s2/audit.cjs`)의 실제 결함(fairy08 재검사, 2026-10-14): 와일드카드 펼치기는 맞았고, 틀린 곳은 뿌리 파일 판정이다 — `import { X as BaseX }` 뒤 같은 이름 `X`를 로컬에서 새로 정의해 `export type { X }`로 내보내는 파일(`types/rolled/fieldRenderer.ts`·`form.ts`, `helpers/virtualization/type.ts`)을 import의 원래 이름으로 돌려 "export 없음"으로 보았다. index 이름 판정(19곳 144개)은 오판 0이었다. 재검사(와일드카드 끝까지 펼침, 부모가 재수출만 하는 이름은 자식에서도 삭제 대상, 소비자는 서브트리 밖 제품 코드)의 결과는 fairy08 scratchpad `export-recensus.md`이며 정돈-1 병합 커밋 ae502f7bd 기준으로 다시 돌린 목록이 정돈-2 §3.5의 기준이다: 지울 index 이름 109개(루트·오류 코드 제외), 오류 코드 상수 61개 중 밖의 제품 소비자 없음 37·engine이 씀 24(정돈-E), 밖의 소비자 없는 뿌리 파일 17개(nodeFromJSONSchema와 포맷터 16).

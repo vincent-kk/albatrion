@@ -1,6 +1,6 @@
 # F-D′의 구현과 검증 결과를 기록합니다.
 
-2026년 10월 10일에 stage-07 작업 트리에서 편집 결정 Q134의 F-D′를 구현하고 검증하였습니다. 시작과 종료 HEAD는 `163a800b270039a20c793c07402f84fd16c336e9`이며 시작 작업 트리는 깨끗했습니다. PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+2026년 10월 10일에 stage-07 작업 트리에서 편집 결정 Q134의 F-D′를 구현하고 검증하였습니다. 시작과 종료 HEAD는 `163a800b270039a20c793c07402f84fd16c336e9`이며 시작 작업 트리는 깨끗했습니다. PKG는 `packages/canard/schema-form`이고 D는 `PKG/architecture/verification/07-switch`입니다. S는 `{scratch}`입니다.
 
 먼저 `D/fd-implementation.md`, `D/fd-a500-diagnosis.md`, `S/fd.patch`와 진단의 `probe.mjs`·`drive.mjs`를 읽었습니다. 패키지 CLAUDE.md와 seiri·filid 규칙을 확인하였으며, F-D 패치의 Button memo와 세 계수 테스트를 출발점으로 사용하였습니다.
 
@@ -26,7 +26,7 @@ PKG에서 `npx --no-install vitest run --project render --project react18 src/fo
 
 진단 도구를 `S/fdp-diag/`에 복사하였습니다. probe의 측정·마운트·갱신·GC 조건은 유지하고 drive의 후보 이름을 fdp로 바꾸었으며 두 명령 사이에 ABBA 순서를 유지하도록 시작 pair 인덱스만 추가하였습니다. 조건은 `none`이고 fixture는 `array-500`입니다. 프로세스마다 번들 하나를 사용하고 예열 10회·표본 30회로 HEAD와 F-D′를 비교하였습니다.
 
-타이밍 드라이버와 모든 자식 프로세스는 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`만 사용하였습니다. 한 번에 타이밍 프로세스 하나만 실행하고 타이밍 중에는 다른 명령·빌드·검증·집계를 실행하지 않았습니다. 처음 9쌍은 323.054초, 다음 8쌍은 291.135초에 자연 종료하였으며 두 명령의 종료 코드는 0이었습니다. 총 34개 프로세스가 17쌍을 구성하며 양쪽 표본은 각각 510개입니다.
+타이밍 드라이버와 모든 자식 프로세스는 `{node-home}/versions/node/v26.11.1/bin/node`만 사용하였습니다. 한 번에 타이밍 프로세스 하나만 실행하고 타이밍 중에는 다른 명령·빌드·검증·집계를 실행하지 않았습니다. 처음 9쌍은 323.054초, 다음 8쌍은 291.135초에 자연 종료하였으며 두 명령의 종료 코드는 0이었습니다. 총 34개 프로세스가 17쌍을 구성하며 양쪽 표본은 각각 510개입니다.
 
 프로세스별 update-wall 중앙값의 짝 차이를 HEAD − F-D′ 부호로 계산하였습니다. 17쌍 차이의 중앙값은 −23.0625 µs이고 bootstrap 95% 구간은 [−65.6875, +45.5000] µs입니다. 음수는 F-D′가 느린 방향이며 17쌍 중 10쌍이 음수였습니다. 고정 seed 132007로 짝을 20,000회 복원 추출하여 차이 중앙값의 percentile 구간을 계산하였습니다. 구간이 0을 포함하므로 속도 향상이나 채택을 주장하지 않습니다. verdict 세션은 실행하지 않았습니다.
 

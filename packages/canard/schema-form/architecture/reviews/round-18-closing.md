@@ -978,7 +978,7 @@
   - 【추론】 도구는 PR-2가 고른다.
 - 근거:
   - NODE-016(`Behavior`·`SchemaNodeFactory`를 `record/`에 두고 생성을 주입하는 같은 방식), `reviews/raw-round17-node-structure.md:72,186`(게이트 N5 수정안), NODE-017의 조건(타입 포함 비순환)
-  - 작업 공간 규칙(`/Users/Vincent/Workspace/.claude/CLAUDE.md` Type Safety): "Never use `as never`, `as any`, or similar type casts to suppress errors without explicit user approval." — 단언 없이 풀리는 안을 고른다.
+  - 작업 공간 규칙(`{agent-home}/CLAUDE.md` Type Safety): "Never use `as never`, `as any`, or similar type casts to suppress errors without explicit user approval." — 단언 없이 풀리는 안을 고른다.
   - 18C-55(`ValidationManager` → `PluginManager` import 분리)와 방향이 같다.
 
 ### 18C-36 S1 parse 함수의 자리
@@ -1012,7 +1012,7 @@
   - 【추론】 생성은 종류별 생성 표가 `AnyNode`를 돌려준다.
   - 【추론】 `InferSchemaNode<Schema>`로의 좁힘은 overload 선언으로 한다.
 - 근거:
-  - 작업 공간 규칙(`/Users/Vincent/Workspace/.claude/CLAUDE.md` Type Safety): "Fix type errors at declaration sites, not call sites."와 "Never use `as never`, `as any`, or similar type casts to suppress errors without explicit user approval."
+  - 작업 공간 규칙(`{agent-home}/CLAUDE.md` Type Safety): "Fix type errors at declaration sites, not call sites."와 "Never use `as never`, `as any`, or similar type casts to suppress errors without explicit user approval."
   - 검증자의 최소 모형(F-bounded `SchemaNodeRecord<Self>`, 제네릭 `find<Self>`, 제네릭 클래스가 `SchemaNodeRecord<AnyNode>`를 구현, `this: AnyNode`, 종류별 생성 표, overload로 `InferSchemaNode` 좁힘)이 `tsc 5.9.2 --strict`를 `as`·`any` 없이 통과했고 `children`이 저장 배열과 같은 참조였다(18라운드 실행 확인).
   - NODE-004, NODE-010, NODE-015(`InferSchemaNode` 사상 유지), NODE-016, `reviews/raw-round17-node-structure.md:187`(게이트 N6)
 - 게이트:

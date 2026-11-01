@@ -20,6 +20,6 @@
 
 ## 근거와 남은 것
 
-제품 끝은 `a63db97c2` 다(#447 `dc8490b02` → #448 `8a1906f00` → #449 `63a789f98` → #450 `a63db97c2`; #451 은 Draft 로 열려 있다). 열린 PR은 최종 PR #445(소유자 병합)와 D443-03 의 #451(소유자 TEST-027 판정 대기)이다. 작업 폴더는 `schema-form-fix-d443-03` 하나가 #451 을 위해 남아 있다. 증거는 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/` 아래 `ledger-design-442/`, `ledger-pr-a-443/`, `ledger-pr-b-443/`, `ledger-pr-c-443/`, `final-measure-443/`, `defect-check-443/`, `fix-d443-01/`, `fix-d443-02/`, `fix-d443-03/`, `final-measure-443b/`, `round443-close/` 다. 소유자 답이 필요한 것은 마지막 검증에서 한꺼번에 다룬다: D443-04·05 와 C443-01·02 의 계약 판정, #451 의 TEST-027 수용. 보류는 결정 54·59와 P1 전체 protocol 실패다.
+제품 끝은 `a63db97c2` 다(#447 `dc8490b02` → #448 `8a1906f00` → #449 `63a789f98` → #450 `a63db97c2`; #451 은 Draft 로 열려 있다). 열린 PR은 최종 PR #445(소유자 병합)와 D443-03 의 #451(소유자 TEST-027 판정 대기)이다. 작업 폴더는 `schema-form-fix-d443-03` 하나가 #451 을 위해 남아 있다. 증거는 `.seiri/tasks/` 아래 `ledger-design-442/`, `ledger-pr-a-443/`, `ledger-pr-b-443/`, `ledger-pr-c-443/`, `final-measure-443/`, `defect-check-443/`, `fix-d443-01/`, `fix-d443-02/`, `fix-d443-03/`, `final-measure-443b/`, `round443-close/` 다. 소유자 답이 필요한 것은 마지막 검증에서 한꺼번에 다룬다: D443-04·05 와 C443-01·02 의 계약 판정, #451 의 TEST-027 수용. 보류는 결정 54·59와 P1 전체 protocol 실패다.
 
 다음 라운드 번호는 444이다.

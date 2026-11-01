@@ -7,7 +7,7 @@
 - 커밋: `8d5c5dba1b6420ad05edeefd26da45007bd96ac9`. `1f58ef018`·`6692e7f69`와의 제품 구현 차이는 0이며, `src/**` 안의 차이는 추가된 회귀 시험 두 파일뿐입니다.
 - 코디네이터가 연 창 시작: `2026-10-26T15:33:00Z` (이 값을 두 장치의 `--quiet-since`에 전달).
 - 실제 관측: `2026-10-26T15:34:56.163957Z` ~ `2026-10-26T16:12:37.925515Z` (UTC).
-- 환경: Node `v26.12.1` (`/opt/homebrew/bin/node`), React `19.2.6`, `Darwin 27.0.0 arm64`, `Apple M1 Max`.
+- 환경: Node `v26.12.1` (`{node-home}/bin/node`), React `19.2.6`, `Darwin 27.0.0 arm64`, `Apple M1 Max`.
 - `NODE_ENV`: 코어 여덟 행·탐침은 `production`, equivalent render·core는 `development`. React Profiler가 필요한 기존 equivalent 장치의 설정을 유지했습니다.
 - 측정 프로세스: 75개 — 코어 쌍 자식 24개, 탐침 쌍 자식 48개, equivalent 3개. 장치 부모 프로세스·조정 스크립트·로더 스레드는 이 수에서 제외합니다.
 - 유지 표본: 25,800개 — 코어 4,800개, 탐침 9,600개, React 두 통과 7,600개, equivalent core 3,800개. 한 표본은 한 판의 한 fixture 연산이며 지표마다 중복 집계하지 않았습니다.
@@ -27,7 +27,7 @@
 
 - 코어: `20261026T1534-8d5c5db-baseline`.
 - 탐침 및 equivalent: `20261026T1535-8d5c5db-baseline`. equivalent 파일은 그 아래 `equivalent/`에 있습니다.
-- 루트: `/private/tmp/claude-501/perf-runs/<실행 ID>/`. 원시 표본·stdout/stderr·명령·환경·복사한 번들은 모두 이 두 디렉터리에 있습니다.
+- 루트: `{scratch}/perf-runs/<실행 ID>/`. 원시 표본·stdout/stderr·명령·환경·복사한 번들은 모두 이 두 디렉터리에 있습니다.
 - 코어 디렉터리의 `baseline-window.json`은 다섯 명령의 argv·작업 디렉터리·모드·시작/종료·exit code와 dist 전후 해시를 기록합니다. `artifact-verification.txt`에는 표본/통계 대조 결과가 있습니다. 각 실행 디렉터리의 `seal.json`은 원자료 파일별 SHA256입니다.
 
 코어와 탐침은 기존 디렉터리를 덮어쓰지 않는 장치이므로 UTC 분을 달리한 실행 ID를 사용했습니다. equivalent는 저장소의 `results/.core`에 사본을 남기지 않도록 승인받은 외부 디렉터리에서 절대 경로 CLI로 실행했습니다. 외부 `node_modules` 링크, 원래 tsconfig 경로, 해당 작업 트리의 `GIT_DIR`·`GIT_WORK_TREE`를 전달했으며 제품 코드와 측정 논리는 변경하지 않았습니다.

@@ -177,7 +177,7 @@ switch-distinct에서는 잠복·비활성 값 장부가 보인다: setLatentRaw
 
 ## 7. 재현
 
-스크립트는 세션 임시 폴더(`/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/349f4da5-0121-4452-a71e-eb7f51d6cb4e/scratchpad/profile/`)에 있으며 D0가 `tools/`로 옮긴다. 그 폴더에서:
+스크립트는 세션 임시 폴더(`{scratch}/profile/`)에 있으며 D0가 `tools/`로 옮긴다. 그 폴더에서:
 
 ```
 node prepare.mjs                                               # dist/index.mjs와 0.16.0 번들을 engines/에 복사하고 export 한 줄을 붙인다

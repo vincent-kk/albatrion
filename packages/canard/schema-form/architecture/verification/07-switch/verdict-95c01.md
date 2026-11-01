@@ -290,7 +290,7 @@ React는 이번 종단 측정에 포함하지 않았습니다. 93C-01의 product
 
 `yarn node packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs --self-check`
 
-`/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs sample-0 off 1 old`
+`{node-home}/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs sample-0 off 1 old`
 
 `yarn node packages/canard/schema-form/architecture/verification/07-switch/tools/run-verdict-95c01.mjs` 는 138개 자연 종료 프로세스를 순차 실행하여 stdout JSONL을 냅니다. timings만 시간 JSON으로 저장하고 summary 세부는 중앙 JSON에 합칩니다. 이 세션에서는 각 worker가 자연 종료한 뒤 native apply_patch로 저장했습니다. 도구가 파일이나 git을 쓰지 않습니다.
 

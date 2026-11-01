@@ -77,8 +77,8 @@ for (const row of buildRows(false))
     row,
   );
 const flags = [
-  '--baseline-bundle=/tmp/a.mjs',
-  '--candidate-bundle=/tmp/b.mjs',
+  '--baseline-bundle={scratch}/a.mjs',
+  '--candidate-bundle={scratch}/b.mjs',
   '--quiet-since=2026-01-01T00:00:00Z',
 ];
 assert.equal(readAlternatingConfig(flags).runs, 10);

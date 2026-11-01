@@ -11,7 +11,7 @@
 - **454C-03 (기존 바퀴 수 계수 시험의 처리 — 기대값 변경 0, 기준 경로 모드 고정 줄은 add-only)**
   - 【추론】 `settle.gate-wheel-counts.test.ts`의 S6 사례는 `kind` const/required의 검증기 `if`가 항상 바퀴 2회·건너뜀 0임을 고정하는데, 454C-02의 좁힌 읽기로는 바퀴 1회가 되어 충돌한다. 기대값 편집 금지(운영 원칙 12, 이 단계의 게이트 "시험 파일은 추가 줄만")를 지키기 위해 그 사례의 단언은 한 글자도 바꾸지 않고 사례 앞뒤에 `engineModes.gatePredicate`를 off로 두고 복구하는 add-only 줄만 더한다(주석은 역사가 아니라 "전수 입력·메모 없는 기준 경로의 바퀴 수를 고정한다"는 현재 사양). 출하 기본 경로는 새 시험으로 고정한다: 좁힌 `if`는 바퀴 1회와 건너뜀 계수, 좁힐 수 없는 `if`(`not` 안의 `$ref`, `patternProperties`)는 바퀴 2회 유지. 그림자 검증(`gateWheelEvaluation` shadow·`gateSelectionTable` verify)이 S6을 포함해 두 경로의 선택 결과 동등성을 증명하고 `test:verify` 묶음에 들어간다. PR 본문과 결과 문서에 "기존 시험 기대값 변경 0, 기준 경로 고정 줄 추가(add-only)"와 그 줄의 diff를 적는다. 기대값을 바꿔야만 통과하는 시험이 그 밖에 하나라도 나오면 구현을 멈추고 올린다. 이 처리는 계수 시험이 공개 동작이 아니라 내부 바퀴 수를 고정한 것이고 `engineModes`가 바로 이런 기준 경로 비교를 위해 있기 때문에 허용하지만, 운영 원칙 12와 경계에 있으므로 재검증 목록에 올린다.
 - **454C-04 (B0 뒤 정리)**
-  - 【추론】 #474는 독립 검토(antigravity, `/private/tmp/claude-501/perf-runs/453-reviews/pr-474-antigravity.md`, 여섯 항목 모두 PASS)를 거쳐 스쿼시 병합(a6e339b3c)했고 원격 가지는 지웠다. worktree `branch-switch-b0`와 그 지역 가지는 Orca의 자동 정리 또는 다음 정리 때 지운다(451라운드의 정리 규칙). B1 워커에게 병합과 목표선을 알렸고, 측정 창은 B1이 `question`으로 요청한다.
+  - 【추론】 #474는 독립 검토(antigravity, `{scratch}/perf-runs/453-reviews/pr-474-antigravity.md`, 여섯 항목 모두 PASS)를 거쳐 스쿼시 병합(a6e339b3c)했고 원격 가지는 지웠다. worktree `branch-switch-b0`와 그 지역 가지는 Orca의 자동 정리 또는 다음 정리 때 지운다(451라운드의 정리 규칙). B1 워커에게 병합과 목표선을 알렸고, 측정 창은 B1이 `question`으로 요청한다.
 
 ## 반영한 문서
 

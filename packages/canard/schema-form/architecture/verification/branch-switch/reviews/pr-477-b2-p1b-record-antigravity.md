@@ -3,7 +3,7 @@
 - **검토 커밋 범위**: `422b1b195..b0a085045`
 - **대상 패키지**: `packages/canard/schema-form`
 - **작업 브랜치**: `perf/schema-form-b2-p1b-lazy-inactive`
-- **작업 트리**: `/Users/Vincent/Workspace/albatrion/branch-switch-b2-p1`
+- **작업 트리**: `branch-switch-b2-p1`
 - **저장소 소유자**: Vincent
 - **검토자**: Antigravity (독립 읽기 전용 검토자)
 
@@ -16,7 +16,7 @@
 | **(1) 변경 경로 최소화 및 제품 코드 완전 복원** | PASS | `git diff --stat 422b1b195..b0a085045` 결과 정확히 지정된 8개 파일만 변경됨 (결과 문서 1, 도구 4, 공개 계약 시험/픽스처 3). `packages/canard/schema-form/src/` 내 `__tests__` 제외 제품 소스코드 diff 0건 및 `DETAIL.md` diff 0건으로 base(`422b1b195`)와 바이트 단위로 100% 동일함 확인. |
 | **(2) 계약 시험의 공개 동작 검증 및 구현 비의존성** | PASS | 복원된 base 빌드 상태에서 vitest 실행 시 3개 파일 13개 테스트 전수 통과 (137ms/175ms). 신규 시험(`settle.inactive-lifecycle-contract.test.ts:5-103`, `settle.inactive-read-contract.test.ts:11-99`, `createInactiveContractTree.ts:8-27`)은 `inactiveValues`, `find`, `setValue`, `resetSubtree` 등 공개 인터페이스의 불변식·동결·캐시 동작만 검증하며, 폐기된 B2-P1b 구현(저널, InactiveValuesState 등)에 전혀 의존하지 않음. 기존 시험 단언 수정 0건, 과거 시제/이력 주석 0건. |
 | **(3) 측정 도구 확장의 기본 21행 동작 불변** | PASS | `buildAlternatingRows.mjs:4-28`에서 `includePayload12 = false`를 기본값으로 유지하여 기본 21행 canonical fixture 반환. `alternate.mjs:18-21`는 `--only` 또는 worker에 `switch-payload-12`가 명시될 때만 22행으로 확장. `checkAlternatingDevice.mjs:250-255`에서 기본 호출 시 `length === 21` 단언과 payload 명시 시 `length === 22`, legacy 18행 검증을 통과하도록 보장. `README.md:352-358`에 명시 행 규칙 문서화 완료. |
-| **(4) 결과 문서 수치와 원시 판정 자료의 완전 일치** | PASS | `b2-p1b-results.md`의 대표 수치가 `/private/tmp/b2-p1b-20261027/post-review/judgement.json` 및 raw 교번 측정치와 소수점 끝자리까지 정확히 일치함 (품질 중앙값, memo 단계, totals, TEST-073, Node/Bun 힙). |
+| **(4) 결과 문서 수치와 원시 판정 자료의 완전 일치** | PASS | `b2-p1b-results.md`의 대표 수치가 `{scratch}/b2-p1b-20261027/post-review/judgement.json` 및 raw 교번 측정치와 소수점 끝자리까지 정확히 일치함 (품질 중앙값, memo 단계, totals, TEST-073, Node/Bun 힙). |
 
 ---
 

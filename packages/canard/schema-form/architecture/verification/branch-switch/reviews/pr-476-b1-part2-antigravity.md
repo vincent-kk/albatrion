@@ -1,13 +1,13 @@
 # B1 게이트 판정 통일 독립 검토 의견서 (Part 2: 측정 보고서, 도구 변경, 문서)
 
 - **검토 커밋 범위**: `925c97019..d28bc800b` (base: `4f2001dcd`, merge-base: `a8e61d155`, head: `d28bc800b`, 제품 후보: `38e405d6b`)
-- **작업 트리**: `/Users/Vincent/Workspace/albatrion/branch-switch-b1` (수정 없음, 읽기 전용)
+- **작업 트리**: `branch-switch-b1` (수정 없음, 읽기 전용)
 - **대상 패키지**: `packages/canard/schema-form`
 - **대상 브랜치**: `perf/schema-form-b1-gate-predicate` -> `feat/schema-form-branch-switch`
 - **저장소 소유자**: Vincent
 - **검토자**: Antigravity (독립 읽기 전용 검토자)
 - **일자**: 2026-10-27
-- **참조**: Part 1 (코드, 동등성, 시험) 판정 PASS (`/private/tmp/claude-501/perf-runs/453-reviews/pr-b1-part1-antigravity.md`)
+- **참조**: Part 1 (코드, 동등성, 시험) 판정 PASS (`{scratch}/perf-runs/453-reviews/pr-b1-part1-antigravity.md`)
 
 ---
 
@@ -49,10 +49,10 @@
    - `measure.mjs` 및 기존 paired measurement 도구들은 수정되지 않음.
 4. **자가 검증 테스트 (`checkAlternatingDevice.mjs`)**:
    - 도구 구문 검사: 53개 `.mjs` 파일 문법 검사 통과.
-   - 정식 실행 결과 검증: `/private/tmp/claude-501/perf-runs/20261027T1306-e0e5121-b1r3/pair` 검증 시 `ALTERNATING_ARTIFACT_OK rows=21 processes=420` 정상 출력 확인.
+   - 정식 실행 결과 검증: `{scratch}/perf-runs/20261027T1306-e0e5121-b1r3/pair` 검증 시 `ALTERNATING_ARTIFACT_OK rows=21 processes=420` 정상 출력 확인.
 
 ### 2.2 결과 문서 (`b1-results.md`) 및 정식 원자료 수치 재계산
-- **원자료 디렉터리**: `/private/tmp/claude-501/perf-runs/20261027T1306-e0e5121-b1r3`
+- **원자료 디렉터리**: `{scratch}/perf-runs/20261027T1306-e0e5121-b1r3`
 
 1. **레거시 레인 품질 지표**:
    - `judgement.json` 및 `pair/results.json` 확인:

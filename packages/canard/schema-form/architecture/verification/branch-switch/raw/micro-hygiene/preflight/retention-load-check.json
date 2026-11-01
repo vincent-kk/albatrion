@@ -5,7 +5,7 @@
   "code": 0,
   "inputsSha256": "f6899cf1162c7736f4483d1a56847b95ab82fcf70bd2b42cf3052a25a62bc220",
   "command": {
-    "executable": "/opt/homebrew/Cellar/node/26.12.1_1/bin/node",
+    "executable": "{node-home}/Cellar/node/26.12.1_1/bin/node",
     "args": [
       "--expose-gc",
       "<home>/Workspace/albatrion/branch-switch-micro-hygiene/packages/canard/schema-form/architecture/verification/branch-switch/tools/b4-2/retention.mjs",

@@ -259,11 +259,11 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 
 - 원장: NODE-018·055, TEST-027·032·072·073, SETTLE-044·045, WRITE-087, 18C-15·31·67·81.
 - 행:
-  - B1–B6: V8은 `node`, JavaScriptCore는 `bun` 1.4.2(`/opt/homebrew/bin/bun`)에서 잰다.
+  - B1–B6: V8은 `node`, JavaScriptCore는 `bun` 1.4.2(`{node-home}/bin/bun`)에서 잰다.
   - "켜진 조각 N개 호스트의 무관한 키 입력".
   - 잠복 원본 열거의 조상 메모 갱신.
   - 루트로 옮긴 게이트 N개일 때의 키 입력.
-- 두는 곳: 새 엔진 행은 `PKG/bench/node-and-settle.bench.ts`의 독립 스크립트로 두고 같은 입력·행 ID로 `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)`와 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/node-and-settle.bench.ts)`를 각각 실행한다. 옛 `<Form>`만 재는 `@aileron/benchmark-form/src/index.ts`에 새 엔진 행을 넣지 않는다.
+- 두는 곳: 새 엔진 행은 `PKG/bench/node-and-settle.bench.ts`의 독립 스크립트로 두고 같은 입력·행 ID로 `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)`와 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/node-and-settle.bench.ts)`를 각각 실행한다. 옛 `<Form>`만 재는 `@aileron/benchmark-form/src/index.ts`에 새 엔진 행을 넣지 않는다.
 - B1·B5·B6의 `guard:check` 선은 `packages/aileron/benchmark-form/package.json`의 `guard:check`가 읽는 `packages/aileron/benchmark-form/results/baseline.json`과 `src/utils/stat-regression.ts`의 기본 임계(평균 처리량 하락 15% 초과 **그리고** Welch `p < 0.05`)를 기준으로 대조한다. B2는 추정의 1.5배 이내이면서 오늘 이하, B3은 같은 맵, B4는 보고만 한다(NODE-055).
 - U1에서 이동 직전에 잰 옛 엔진 최종 기준선과 02 기준선(`ARCH/verification/02-foundation-and-blueprint/baseline/`)을 함께 표기해 `ARCH/verification/03-node-and-settle/bench-report.md`에 표로 적는다. 첫 열의 행 ID는 `B1`–`B6`, `18C-15`, `18C-67`, `18C-81`로 고정해 G15가 아홉 행을 센다. 각 행에 두 엔진 수치와 기준선·판정을 적는다. 02의 `55ed75504` 값은 #347·#349 전이므로 최종 비교 기준으로 쓰지 않는다(LANDING-159). 느린 행은 까닭을 적고 소유자 수용을 받는다(TEST-027, G31).
 - 완료: 보고서에 B1–B6·18C-15·18C-67·18C-81 행, 두 엔진의 실행 명령·수치·기준선·판정·수용 여부가 있다(G15).
@@ -367,7 +367,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - SCN: `(cd packages/aileron/schema-form-scenarios && npx vitest run --config vite.config.ts && npx tsc --noEmit --strict --composite false -p tsconfig.json && npx eslint index.ts "src/**/*.{ts,tsx}")`
 - 원장 인용: `(cd packages/canard/schema-form/architecture && node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md | tail -1)`
 - 옛 엔진 최종 기준선(이동 전, 단독 호출): `yarn workspace @canard/schema-form bench:baseline`
-- 새 엔진 독립 벤치: `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/node-and-settle.bench.ts)`
+- 새 엔진 독립 벤치: `(cd packages/canard/schema-form && node --import tsx bench/node-and-settle.bench.ts)` 및 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/node-and-settle.bench.ts)`
 - 공개 `<Form>` 가드: `yarn workspace @aileron/benchmark-form guard:check`(단독 호출)
 
 ## 9. 리뷰 기록

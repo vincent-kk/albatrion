@@ -100,11 +100,11 @@ FCA 전체 저장소는 기존 확정 오류 24건 및 분석 불확정이 있�
 
 ## 원시 증거와 정리 대상
 
-- 실행 원시·진단·private export 사본은 `/private/tmp/454-d3b-2/`에 있으며 커밋하지 않았다. 배달 사본은 원본 번들의 정확한 prefix를 검증한 뒤 private export footer만 붙였다.
+- 실행 원시·진단·private export 사본은 `{scratch}/454-d3b-2/`에 있으며 커밋하지 않았다. 배달 사본은 원본 번들의 정확한 prefix를 검증한 뒤 private export footer만 붙였다.
 - 정본 시간 run:
-  - `/private/tmp/claude-501/perf-runs/20261027T0328-54b8aff-d3b2-final-before`
-  - `/private/tmp/claude-501/perf-runs/20261027T0328-54b8aff-d3b2-final-head`
-  - `/private/tmp/claude-501/perf-runs/20261027T0329-54b8aff-d3b2-final-aprime`
+  - `{scratch}/perf-runs/20261027T0328-54b8aff-d3b2-final-before`
+  - `{scratch}/perf-runs/20261027T0328-54b8aff-d3b2-final-head`
+  - `{scratch}/perf-runs/20261027T0329-54b8aff-d3b2-final-aprime`
 - 구독18자식·CPU 표본·SHA·7표본 B2·관문 로그·FCA 산출물도 같은 임시 디렉터리에 보존했다. 배포 번들은 최종 후보로 복원했다.
 - 현재 작업 트리와 `refactor/schema-form-d3b-derived-records`는 진행 중이며 코디네이터 결정 전에는 정리하지 않는다. 추가 임시 git 가지는 만들지 않았다. 결과 판단 뒤 정리할 스크래치는 위 임시 사본이며, 재현 원시와 보고 문서는 남길 필요가 있다.
 
@@ -130,7 +130,7 @@ staticIds 저장만 바꾸어 Bun에서 79.062587 B/노드(79.078400 B/entry)가
 
 승인된 선택지 가운데 **선언 부모 host가 소유하는 WeakMap**을 최종 후보에 사용한다. 소유 host 명시 인수와 64형제 공유 시험을 유지하고, admittedEdgeSchemas 등 다른 슬롯은 바꾸지 않는다. 비용은 실제 staticIds를 쓰는 host마다 WeakMap 하나이며 전역 파생 저장소는 여전히 두 개다. 최종 후보는 전체 열 행·Node/Bun B2와 필요한 기능 관문을 다시 검증한 뒤 같은 판정으로 판단한다.
 
-원시는 `/private/tmp/454-d3b-2/staticIds-probe/`이며 중단한 실행은 `invalid-os-load/`로 구분한다. 모든 측정 자식이 exit0인 뒤 Node의 deprecation stderr가 섞인 요약 JSON 파서만 실패했고, 원시 JSON 객체를 다시 파싱하여 계산했으며 측정은 반복하지 않았다.
+원시는 `{scratch}/454-d3b-2/staticIds-probe/`이며 중단한 실행은 `invalid-os-load/`로 구분한다. 모든 측정 자식이 exit0인 뒤 Node의 deprecation stderr가 섞인 요약 JSON 파서만 실패했고, 원시 JSON 객체를 다시 파싱하여 계산했으며 측정은 반복하지 않았다.
 
 ## 최종 후보의 비교 기준 — 측정 전 코디네이터 결정
 
@@ -181,11 +181,11 @@ staticIds 저장만 바꾸어 Bun에서 79.062587 B/노드(79.078400 B/entry)가
 
 최종 FCA 세 단계는 snapshot `f9e106a8b31580460dee5d321b4326c54ad07587a97c9adea4b8f56c13ea9575`로 일치한다. 변경 소스 확정 오류0, 변경 문서 경고175건이며 전역 확정 오류24건·불확정은 기존대로 남는다. 현재 제품에 대한 깨끗한 전역 PASS로 주장하지 않는다.
 
-최종 원시는 `/private/tmp/454-d3b-2/final/`이다. 시간 run:
+최종 원시는 `{scratch}/454-d3b-2/final/`이다. 시간 run:
 
-- `/private/tmp/claude-501/perf-runs/20261027T0358-3d827be-d3b2-host-weak-final-before`
-- `/private/tmp/claude-501/perf-runs/20261027T0359-3d827be-d3b2-host-weak-final-head`
-- `/private/tmp/claude-501/perf-runs/20261027T0400-3d827be-d3b2-host-weak-final-aprime`
+- `{scratch}/perf-runs/20261027T0358-3d827be-d3b2-host-weak-final-before`
+- `{scratch}/perf-runs/20261027T0359-3d827be-d3b2-host-weak-final-head`
+- `{scratch}/perf-runs/20261027T0400-3d827be-d3b2-host-weak-final-aprime`
 
 측정 직후 PR을 보류해 question으로 보고했으며, 아래 편집자 판정을 받은 뒤 TEST-027 수용 요청 PR을 진행한다.
 
@@ -232,7 +232,7 @@ TEST-027 수용 요청은 **Bun B2 +0.608278 B/노드(+0.0273%) 한 건**이다.
 ## 작업 종료 때 남는 로컬 항목
 
 - 추가 임시 git 가지는 없으며 기준본 build는 분리 HEAD로 실행한 뒤 원 가지로 복귀했다. PR 가지와 이 작업 트리는 검토 인계용으로 남으며 정리는 코디네이터가 수행할 수 있다.
-- 재현 원시·번들 보존본·탐침·실행 스크립트·node_modules symlink는 `/private/tmp/454-d3b-2/`와 그 `staticIds-probe/`, `final/`에 남는다. 중단한 OS 고부하 실행도 구분해 보존했다. 이 사본들은 저장소에 커밋하지 않았다.
+- 재현 원시·번들 보존본·탐침·실행 스크립트·node_modules symlink는 `{scratch}/454-d3b-2/`와 그 `staticIds-probe/`, `final/`에 남는다. 중단한 OS 고부하 실행도 구분해 보존했다. 이 사본들은 저장소에 커밋하지 않았다.
 - `.seiri/tasks/d3b-derived-records/`와 Filid의 가지별 PR body·FCA handoff는 도구의 로컬 작업 기록이다. 빌드 출력은 제외했고 제품 소스는 de14aa1da로 고정되어 있다.
 
 ## D3b-2b — admittedEdgeSchemas도 host-owned WeakMap으로
@@ -308,4 +308,4 @@ Bun 고정 규칙 B 중앙≤A최대는 통과하지 않는다. 초과량 **0.41
 | dist/index.d.ts        | 기준본과 바이트 동일                                   |
 | TEST-073               | A/B10비교 및 A′포함20비교 회귀0                        |
 
-원시·명령/시각·CPU표본·SHA·90개 시간 자식·7표본 B2·전후 배달·red/green 로그는 `/private/tmp/d3b-2b-20261027/`에 남겼다. 측정 뒤 dist는 B로 복원했고 빌드 출력·스크래치는 커밋하지 않았다. 추가 임시 git 가지는 만들지 않았다. 독립 검토 후속 적용과 수용 범위 판정은 PR #471에 같은 절로 인계한다.
+원시·명령/시각·CPU표본·SHA·90개 시간 자식·7표본 B2·전후 배달·red/green 로그는 `{scratch}/d3b-2b-20261027/`에 남겼다. 측정 뒤 dist는 B로 복원했고 빌드 출력·스크래치는 커밋하지 않았다. 추가 임시 git 가지는 만들지 않았다. 독립 검토 후속 적용과 수용 범위 판정은 PR #471에 같은 절로 인계한다.

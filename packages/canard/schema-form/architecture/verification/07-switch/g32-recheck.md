@@ -184,7 +184,7 @@ antigravity의 지난 대조에서 인용 경로가 실재하지 않은 일이 �
 
 ### 비차단 사항 (Non-blocking Notes)
 
-1. **146~157 라운드 문서 참조 위치**: 워크트리 W에는 146~157 라운드 문서가 커밋되어 있지 않아, 브리프 지침에 따라 기본 저장소 경로(`/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/`)에서 직접 확인했습니다.
+1. **146~157 라운드 문서 참조 위치**: 워크트리 W에는 146~157 라운드 문서가 커밋되어 있지 않아, 브리프 지침에 따라 기본 저장소 경로(`packages/canard/schema-form/architecture/reviews/`)에서 직접 확인했습니다.
 2. **155 판정 세션의 두 운영 기록**:
    - 준비 빌드 중 React 기준 번들에서 esbuild 초기화 코드 7줄이 누락된 변형이 발생했으나 고정 SHA-256 검사로 차단되었으며, 07b 개선 목록(개선-31)에 등록되었습니다 (`round-155-closing.md:5`, `performance.md:961`).
    - worker 209 실행 중 시스템 벽시계 역행(-4,035 ms)이 발생했으나 측정은 단조 시계(hrtime) 기반이어서 측정 결과에 영향이 없음을 확인했습니다 (`round-155-closing.md:4`).

@@ -1,5 +1,5 @@
 /*
- * 사용법(stage-07 루트, /opt/homebrew/bin/node):
+ * 사용법(stage-07 루트, {node-home}/bin/node):
  *   node <이 파일> --prepare [--prefix=fap] [--base=<커밋>]
  *   node <이 파일> --pair AA array-100 [--blocks=24] [--first-block=0] [--warmup=20] [--samples=41] [--no-gc] [--prefix=fap]
  *     [--base-revision=<sha>] [--tag=<이름>]
@@ -33,9 +33,9 @@ const tool = fileURLToPath(import.meta.url);
 const directory = path.dirname(tool);
 const repo = path.resolve(directory, '../../../../../../..');
 const pkg = path.join(repo, 'packages/canard/schema-form');
-const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad';
+const scratch = '{scratch}';
 const bundles = path.join(scratch, 'bundles');
-assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(repo, '{repo}');
 assert.equal(fs.realpathSync(process.execPath), fs.realpathSync(measurementNode131), `Timing runs use ${measurementNode131}`);
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 const sessionJob = flag('session-job') ? JSON.parse(fs.readFileSync(flag('session-job'), 'utf8')) : null;

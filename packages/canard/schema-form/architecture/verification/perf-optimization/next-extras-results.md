@@ -60,7 +60,7 @@ unit·render·react18·production·storybook 다섯 프로젝트가 포함됐습
 
 ## 같은 창의 core 측정
 
-UTC 창은 **2026-10-20 04:10:15.9–04:12:18.8**입니다. Node는 `/opt/homebrew/bin/node` v26.12.0, Bun은 1.4.3이고 `NODE_ENV=production`입니다. 430라운드의 16장면 runner와 보조 파일을 복사하여 current lane만 실행하고 기준·후보 dist 인자를 받도록 복사본만 조정했습니다. 시간 경계·fixture·관측 검사는 유지했습니다. raw dist의 바이트를 그대로 접두로 두고 기존 내부 export 줄만 붙인 사본을 실행했습니다.
+UTC 창은 **2026-10-20 04:10:15.9–04:12:18.8**입니다. Node는 `{node-home}/bin/node` v26.12.0, Bun은 1.4.3이고 `NODE_ENV=production`입니다. 430라운드의 16장면 runner와 보조 파일을 복사하여 current lane만 실행하고 기준·후보 dist 인자를 받도록 복사본만 조정했습니다. 시간 경계·fixture·관측 검사는 유지했습니다. raw dist의 바이트를 그대로 접두로 두고 기존 내부 export 줄만 붙인 사본을 실행했습니다.
 
 1바퀴는 Node 기준→Node 후보→Bun 기준→Bun 후보, 2바퀴는 그 역순이며 장면 순서도 역순입니다. 실행마다 장면별 워밍업 20개와 시간 표본 100개를 기록하여 총 시간 표본은 12,800개입니다. 반환 시점·drain 후 값·입력 불변·callback 완료 검사는 모두 통과했습니다. 창 전·실행 사이·후의 프로세스 스냅숏 9개와 정확한 명령·UTC 시각은 `window.json` 및 `processes/`에 있습니다.
 
@@ -128,7 +128,7 @@ UTC 창은 **2026-10-20 04:10:15.9–04:12:18.8**입니다. Node는 `/opt/homebr
 
 첫 창에서 `object-B0-mount-N1000`의 후보/기준 변화는 Node −9.14 % / −8.22 %, Bun +37.21 % / +49.66 %였습니다. 같은 dist의 복사본 사이에도 차이가 관측된 기록이 있으므로, 기준 A·바이트가 동일한 복사본 A′·후보 B를 같은 창에서 함께 측정했습니다.
 
-UTC 창은 **2026-10-20T04:32:20.570Z–2026-10-20T04:35:48.014Z**입니다. Node `/opt/homebrew/bin/node` v26.12.0, Bun 1.4.3, `NODE_ENV=production`이며 첫 창의 16장면 러너와 보조 파일은 수정하지 않았습니다. 기준 dist SHA256은 `20e9321ba693d6fc810ab2f04a2aced52e7ccc996f17978a27db342133166fbd`, 후보는 `92ca0198e97a68f00474234c24ad1817bcd36024abaa4b2d2360982da6f4026e`이고 A와 A′ 전체 파일의 바이트가 일치합니다.
+UTC 창은 **2026-10-20T04:32:20.570Z–2026-10-20T04:35:48.014Z**입니다. Node `{node-home}/bin/node` v26.12.0, Bun 1.4.3, `NODE_ENV=production`이며 첫 창의 16장면 러너와 보조 파일은 수정하지 않았습니다. 기준 dist SHA256은 `20e9321ba693d6fc810ab2f04a2aced52e7ccc996f17978a27db342133166fbd`, 후보는 `92ca0198e97a68f00474234c24ad1817bcd36024abaa4b2d2360982da6f4026e`이고 A와 A′ 전체 파일의 바이트가 일치합니다.
 
 1바퀴는 Node A→Node A′→Node B→Bun A→Bun A′→Bun B, 2바퀴는 그 역순이며 장면 순서도 역순입니다. 각 실행의 장면별 워밍업은 20회, 시간 표본은 100개이며 12회 실행의 192개 장면 관측과 19,200개 시간 표본이 모두 완료됐습니다. 창 전·바퀴 사이·창 후 프로세스 스냅숏과 실행별 UTC 시각은 `aab/window.json` 및 `aab/processes/`에 있습니다.
 
@@ -173,7 +173,7 @@ UTC 창은 **2026-10-20T04:32:20.570Z–2026-10-20T04:35:48.014Z**입니다. Nod
 
 node의 16장면 중 `동치 범위 안` 11개, `입증(느림)` 2개, `입증(빠름)` 0개, `미입증` 3개입니다. bun의 16장면 중 `동치 범위 안` 15개, `입증(느림)` 0개, `입증(빠름)` 0개, `미입증` 1개입니다. 런타임별 장면 관측은 총 32개이며 고유 장면 수는 16개입니다.
 
-전체 표와 원시 수치는 `.seiri/tasks/next-extras-431/aab/rows.md`, `derived.json`, `raw/`에 있습니다. 봉인 해시 목록은 `.seiri/tasks/next-extras-431/aab/seal.json`이며 각 파일의 크기와 SHA256을 기록합니다. 같은 폴더를 main의 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/next-extras-431/aab/`로 복사하고 `diff -rq`로 일치를 확인했습니다.
+전체 표와 원시 수치는 `.seiri/tasks/next-extras-431/aab/rows.md`, `derived.json`, `raw/`에 있습니다. 봉인 해시 목록은 `.seiri/tasks/next-extras-431/aab/seal.json`이며 각 파일의 크기와 SHA256을 기록합니다. 같은 폴더를 main의 `.seiri/tasks/next-extras-431/aab/`로 복사하고 `diff -rq`로 일치를 확인했습니다.
 
 ## 배열 장면 인과 확인
 

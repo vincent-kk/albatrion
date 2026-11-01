@@ -4,13 +4,13 @@
 
 이 판정은 지정된 강제 GC 조건의 공식 wall·event-loop active 열과 105C-01·128C-01에 따른 결과입니다. no-GC 및 profiler 기록 열에는 손실이 관측되었고, 평면 제어 입력의 8표본 리프레시 지연 중앙값도 증가하였습니다. 아래에 그 결과를 함께 기록하므로, ADOPT를 모든 실행 조건에서 시간이 줄었다는 주장으로 읽지 않습니다.
 
-작업 트리는 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`입니다. 실제 HEAD는 문서 커밋이 추가된 `0f4dd2ee7c38c311e08f2da18f9b714f14e518f4`이고, 제품 소스는 번들 기준 리비전 `1a0176da3d20fe64632be271e0b2975e803a24d8`과 같습니다. 두 리비전의 제품 소스 트리 해시는 모두 `4bfd58fca9170875a5368bbcfc0360cd34539a2e`입니다. 세션 시작의 작업 트리는 깨끗하였고, 최종 변경은 이 보고서와 `profile-129e-session/`의 새 산출물뿐입니다. git 쓰기, 설치, 패키지 관리자 명령, 제품 코드 수정 및 원측정·원보고·원계수 도구의 수정은 수행하지 않았습니다.
+작업 트리는 `{repo}`입니다. 실제 HEAD는 문서 커밋이 추가된 `0f4dd2ee7c38c311e08f2da18f9b714f14e518f4`이고, 제품 소스는 번들 기준 리비전 `1a0176da3d20fe64632be271e0b2975e803a24d8`과 같습니다. 두 리비전의 제품 소스 트리 해시는 모두 `4bfd58fca9170875a5368bbcfc0360cd34539a2e`입니다. 세션 시작의 작업 트리는 깨끗하였고, 최종 변경은 이 보고서와 `profile-129e-session/`의 새 산출물뿐입니다. git 쓰기, 설치, 패키지 관리자 명령, 제품 코드 수정 및 원측정·원보고·원계수 도구의 수정은 수행하지 않았습니다.
 
 예산에는 2026-10-08 23:53:00 UTC를 보수적인 시작 기준으로 사용하였습니다. 첫 시간 측정은 2026-10-09 00:00:40.714 UTC에 시작했고 마지막 시간 측정은 03:43:54.486 UTC에 끝났습니다. 한국 시각으로는 09:00:40.714~12:43:54.486입니다. 최종 원보고는 03:52:44.057 UTC에 끝났습니다. 보고서까지 포함한 최종 검증 시각과 5시간 미만의 경과 시간은 [verification.json](profile-129e-session/verification.json)에 기록합니다.
 
 시간 측정 80개, 원보고 2개, 원계수 도구 2개 및 같은 계측을 사용하는 fixture 계수 명령 2개를 합친 86개 명령은 모두 순차 실행하였고 종료 코드 0과 signal null을 기록하였습니다. 가장 긴 명령은 252.787642초였습니다. 측정 또는 보고 명령이 실행되는 동안 별도 조회나 다른 명령을 실행하지 않았으며, 모든 자식 프로세스의 종료를 기다린 뒤 다음 명령을 시작하였습니다. worker의 측정 구간도 모두 겹치지 않았습니다. 실행 증거는 [session-evidence.json](profile-129e-session/session-evidence.json)과 최종 검증 파일에 있습니다.
 
-모든 Node 명령은 `/opt/homebrew/bin/node`의 v26.10.0으로 실행하였습니다. 실제 바이너리는 같은 파일로 해석되는 `/opt/homebrew/Cellar/node/26.10.0_2/bin/node`입니다. 환경은 Apple M1 Max, V8 14.6.202.34-node.35, React 19.2.6의 production profiling 환경입니다.
+모든 Node 명령은 `{node-home}/bin/node`의 v26.10.0으로 실행하였습니다. 실제 바이너리는 같은 파일로 해석되는 `{node-home}/Cellar/node/26.10.0_2/bin/node`입니다. 환경은 Apple M1 Max, V8 14.6.202.34-node.35, React 19.2.6의 production profiling 환경입니다.
 
 [129d 보고서](profile-129d-session.md)와 [129 측정기 명세](harness-129.md)의 React 방법을 그대로 사용하였습니다. `measure-react-pair-129.mjs`와 `report-cluster-129.mjs`는 변경하지 않았습니다. 검증 OFF인 19개 fixture마다 전역 번호 0~23의 짝 블록 24개를 수집하였고, 짝수 블록은 base부터, 홀수 블록은 F-A'부터 실행하여 ABBA 순서를 유지하였습니다. 명령을 분할한 경우에도 이 전역 번호와 순서는 바꾸지 않았습니다. 총 456블록과 번들 하나만 불러오는 독립 worker 912개가 있으며, 블록 번호의 누락과 중복은 없습니다. 각 worker는 예열 20회와 표본 41개를 사용하고, 강제 GC가 있는 전체 순서 뒤에 GC를 강제하지 않는 전체 순서도 같은 조건으로 수집하였습니다.
 
@@ -89,7 +89,7 @@ array-1000의 공식 update-wall에서는 base의 블록 중앙값이 약 1.7~2.
 | r129-base.cjs입니다. | 962623 | `66695827fb1d81a9fec6f51b4ac59e78a14e713aa7e7d39589c4a2799acfc80c` |
 | r129-fap.cjs입니다. | 962609 | `d1171e4f7789a83571957ee9ff51888184f445e2ad76fbc200bb91e188997e29` |
 
-`fa-prime.patch`의 SHA-256은 `d9fc910260e8896d0beab25a5c4b98a5e18cfeed50ed5590da6c52e3ffb3a771`입니다. 번들 출처와 129d 원매니페스트는 [bundle-manifest.json](profile-129e-session/bundle-manifest.json)에 있습니다. 원자료 루트는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129e-raw`입니다. [raw-sha256.txt](profile-129e-session/raw-sha256.txt)는 원자료의 상대 경로 1,925개와 SHA-256을 기록하며, A/A 보고 symlink는 대상 내용의 해시로 검증합니다. 런타임 번들과 전체 원표본은 저장소 산출물에 복사하지 않았습니다. 이 보고서와 `profile-129e-session/`의 각 파일은 5 MB 이하입니다.
+`fa-prime.patch`의 SHA-256은 `d9fc910260e8896d0beab25a5c4b98a5e18cfeed50ed5590da6c52e3ffb3a771`입니다. 번들 출처와 129d 원매니페스트는 [bundle-manifest.json](profile-129e-session/bundle-manifest.json)에 있습니다. 원자료 루트는 `{scratch}/profile-129e-raw`입니다. [raw-sha256.txt](profile-129e-session/raw-sha256.txt)는 원자료의 상대 경로 1,925개와 SHA-256을 기록하며, A/A 보고 symlink는 대상 내용의 해시로 검증합니다. 런타임 번들과 전체 원표본은 저장소 산출물에 복사하지 않았습니다. 이 보고서와 `profile-129e-session/`의 각 파일은 5 MB 이하입니다.
 
 2,149,152회 쓰기의 보정 commit 수 단언 및 각 표본의 시작·종료 값·경로 digest 단언이 통과하였고, 분할 명령 사이에서도 fixture별 보정 배열과 digest가 같았습니다. 모든 304행의 표본 수, 블록 완전성, 중앙값, 시드 및 bootstrap 구간을 재계산하였고, CSV·전체 행 표와 원보고를 보존하였습니다. 제품 소스, HEAD, 스테이징 상태, 도구·번들 해시, 명령과 worker 구간의 순차성, 산출물 크기 및 5시간 제한을 최종 검증 파일에 기록합니다.
 
