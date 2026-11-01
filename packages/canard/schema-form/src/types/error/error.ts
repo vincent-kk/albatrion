@@ -14,11 +14,11 @@ export enum ShowError {
   Always = BIT_FLAG_00,
   /** Never show error */
   Never = BIT_FLAG_01,
-  /** Show error when the input's value is updated */
+  /** Show after user input edits the field */
   Edited = BIT_FLAG_02,
   /** Show error when the input is touched */
   Touched = BIT_FLAG_03,
-  /** Show error when the input's value is updated and touched */
+  /** Show after user input edits the field and the field was touched */
   EditedTouched = BIT_FLAG_04,
 }
 

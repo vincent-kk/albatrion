@@ -25,9 +25,9 @@ interface FieldRendererContextProviderProps {
    * Error display condition (default: ShowError.EditedTouched)
    *   - `true`: Always show errors
    *   - `false`: Never show errors
-   *   - `ShowError.Edited`: Show errors when value has changed
+   *   - `ShowError.Edited`: Show after user input edits the field
    *   - `ShowError.Touched`: Show errors after the input has lost focus once
-   *   - `ShowError.EditedTouched`: Show errors when both Edited and Touched states are met
+   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
    */
   showError?: FormProps['showError'];
 }

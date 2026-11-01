@@ -268,7 +268,6 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   set isVisible(value: boolean) {
     this.storedVisible = value;
   }
-  /** A node is enabled when it remains active and visible. */
   /** Whether this occurrence is active and visible, independent of disabled state. */
   get isPresent() {
     return this.isActive && this.isVisible;

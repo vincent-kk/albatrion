@@ -49,7 +49,7 @@ export const EditedTouched = () => {
     errorMessage,
   }: FieldRendererProps) => {
     const {
-      [FieldNodeState.Edited]: dirty,
+      [FieldNodeState.Edited]: edited,
       [FieldNodeState.Touched]: touched,
       [FieldNodeState.ErrorVisible]: showError,
     } = node.state || {};
@@ -79,7 +79,7 @@ export const EditedTouched = () => {
             Hide Error
           </button>
         </label>
-        <pre>{JSON.stringify({ dirty, touched, showError })}</pre>
+        <pre>{JSON.stringify({ edited, touched, showError })}</pre>
         <pre>{JSON.stringify(node.errors)}</pre>
         {errorMessage}
       </div>
@@ -133,7 +133,7 @@ export const EditedTouched = () => {
               });
             }}
           />
-          Dirty
+          Edited
         </label>
         <label>
           <input

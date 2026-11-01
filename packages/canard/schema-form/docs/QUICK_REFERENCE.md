@@ -577,7 +577,7 @@ Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포
 
 raw `errors`, Form children errors, `FormRender`, `node.errors`, `getErrors()`는 표시와 무관합니다. custom UI는 `errorVisible`과 `useChildFieldErrors().showErrors`를 씁니다. hidden 자식은 값·aggregate 오류를 유지하고 inactive는 값 제거·off-branch issue 제외를 따릅니다. 첫 layout commit을 마친 현행 load는 숨김 중에도 같은-schema reset을 포함한 모든 폼 콜백을 engine chain 끝에 전달하며 show에서 재생하지 않습니다. 준비 전 변경·상태·진단은 버리고 생성 기록만 보관하며, reset으로 은퇴한 load의 기록은 버립니다. 루트 교체 reset은 handler 실패를 각각 격리하고 mount 기록 뒤 build 기록을 binding 교체 전에 전달합니다. React가 숨김과 unmount를 구분하지 않으므로 보유한 핸들·노드는 unmount 뒤에도 전달하지만 검증 캐시 참조는 cleanup에서 해제합니다. 숨김 중 onError만 최신 prop을 사용하고 다른 콜백은 마지막 연결 commit을 사용하며 Form ref는 null입니다. 필드 layout 쓰기·렌더 경고는 show에 도착합니다. `None`·`OnRequest`와 검증 계산 비용은 유지합니다.
 
-한계: hook의 React-only `disabled` 인자는 즉시 reveal합니다. drop 뒤로 미뤄진 state/enabled render(transition·Suspense·time slicing)는 hold를 생략합니다. commit-only stream은 멎을 때까지 hold합니다. release와 paint 사이 task의 쓰기는 released verdict를1~2프레임 표시할 수 있습니다. 한 React batch 안의 미표시 state/enabled/policy 조합도 이력에 포함되며 state 변경은 policy commit보다 먼저 기록됩니다.
+한계: hook의 React-only `disabled` 인자는 즉시 reveal합니다. drop 뒤로 미뤄진 state/isPresent render(transition·Suspense·time slicing)는 hold를 생략합니다. commit-only stream은 멎을 때까지 hold합니다. release와 paint 사이 task의 쓰기는 released verdict를1~2프레임 표시할 수 있습니다. 한 React batch 안의 미표시 state/isPresent/policy 조합도 이력에 포함되며 state 변경은 policy commit보다 먼저 기록됩니다.
 
 
 ## onError record origin

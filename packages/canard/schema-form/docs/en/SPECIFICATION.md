@@ -193,9 +193,9 @@ interface FormProps<
    * Error display condition (default: ShowError.EditedTouched)
    *   - `true`: Always show
    *   - `false`: Never show
-   *   - `ShowError.Edited`: Show when value has changed
+   *   - `ShowError.Edited`: Show after user input edits the field
    *   - `ShowError.Touched`: Show after the input has lost focus once
-   *   - `ShowError.EditedTouched`: Show when both Edited and Touched conditions are met
+   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
    */
   showError?: boolean | ShowError;
   /**
@@ -903,7 +903,7 @@ All loads (first mount, same-schema reset, root replacement, rebuild and validat
 
 Raw `errors`, Form children errors, `FormRender`, `node.errors` and `getErrors()` stay ungated. Custom UI uses `errorVisible` or `useChildFieldErrors().showErrors`. Hidden children retain values and aggregate errors; inactive values are removed and off-branch issues are skipped. After its first layout commit, a current load delivers all form callbacks at engine-chain end while visible or hidden, including same-schema reset; showing it adds no replay. Never-prepared loads buffer construction records and drop changes, state and diagnostics; reset-retired loads discard further records. Root-replacing reset isolates each handler failure and delivers mount records before buffered build records, before updating the handle binding. React cannot distinguish hiding from unmount: retained handles and nodes keep delivering after unmount, while validation-cache references are released. Hidden callbacks use the last connected commit except onError, which stays current; the Form ref is null while hidden. Field layout-effect writes and render warnings arrive on show. Guard-free OnRequest-only loads now compile in the background after the first paint; the owner accepts this cost to keep later interactions consistent.
 
-Known limits: the hook's React-only `disabled` argument reveals at once; state/enabled renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/enabled/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.
+Known limits: the hook's React-only `disabled` argument reveals at once; state/isPresent renders deferred beyond a drop (transition, Suspense or time slicing) omit the hold; commit-only streams hold until they stop; a write in the task between release and paint can show the released verdict for one to two frames; and unpainted state/isPresent/policy combinations inside one React batch still count, including engine state changes ordered before the policy commit.
 
 ### Error Message Formatting
 

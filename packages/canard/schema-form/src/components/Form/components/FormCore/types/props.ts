@@ -83,9 +83,9 @@ export interface FormProps<
    * Only the OnChange validation mode holds errors; other modes follow the live condition.
    *   - `true`: Always show
    *   - `false`: Never show
-   *   - `ShowError.Edited`: Show when value has changed
+   *   - `ShowError.Edited`: Show after user input edits the field
    *   - `ShowError.Touched`: Show after the input has lost focus once
-   *   - `ShowError.EditedTouched`: Show when both Edited and Touched states are met
+   *   - `ShowError.EditedTouched`: Show after user input edits the field and the field was touched
    */
   showError?: boolean | ShowError;
   /**

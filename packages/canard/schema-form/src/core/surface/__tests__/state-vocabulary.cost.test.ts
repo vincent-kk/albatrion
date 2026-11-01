@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import * as readers from '../../engine/settle';
+import * as readers from '../../engine/settle/utils/loadValues/readFieldNodeIsDivergent';
 import * as values from '../../engine/utils/compute/sameValue';
 import { requireRuntimeFieldNode } from '../runtime/requireRuntimeFieldNode';
 import { makeVocabularyTree } from './fixtures/makeVocabularyTree';

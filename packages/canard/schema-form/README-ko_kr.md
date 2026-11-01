@@ -104,9 +104,9 @@ interface FormProps<
    * 오류 표시 조건 (기본: ShowError.EditedTouched)
    *   - `true`: 항상 표시
    *   - `false`: 절대 표시하지 않음
-   *   - `ShowError.Edited`: 값이 변경되었을 때 표시
+   *   - `ShowError.Edited`: 사용자 입력으로 필드를 편집한 뒤 표시
    *   - `ShowError.Touched`: 입력에서 포커스가 한 번 빠진 뒤 표시
-   *   - `ShowError.EditedTouched`: Edited 및 Touched 조건이 모두 충족되었을 때 표시
+   *   - `ShowError.EditedTouched`: 사용자 입력으로 필드를 편집하고 touched 상태가 되었을 때 표시
    */
   showError?: boolean | ShowError;
   /**

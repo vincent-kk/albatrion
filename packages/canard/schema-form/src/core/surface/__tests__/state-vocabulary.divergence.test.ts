@@ -1,9 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../../engine';
+import * as staticLoad from '../../engine/settle/loadFieldNodeAtMount/utils/staticFirst/loadStaticFirstTree';
+import { requireRuntimeFieldNode } from '../runtime/requireRuntimeFieldNode';
 import { reloadFieldNodeForm } from '../utils/binding/reloadFieldNodeForm';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 import { makeVocabularyTree } from './fixtures/makeVocabularyTree';
+
+afterEach(() => vi.restoreAllMocks());
 
 describe('state-vocabulary output divergence', () => {
   it('before the first load the baseline is unset', () => {
@@ -14,7 +18,23 @@ describe('state-vocabulary output divergence', () => {
     root.setValue('before mount');
     expect(root.isDivergent).toBe(false);
   });
-  it('static-first load, setValue and revert use the last root load output', () => {
+  it('static-first load captures the final filled output baseline', () => {
+    const load = vi.spyOn(staticLoad, 'loadStaticFirstTree');
+    const root = makeVocabularyTree(
+      { type: 'object', properties: { a: { type: 'string', default: 'd' } } },
+      undefined,
+    );
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(requireRuntimeFieldNode(root).runtime.loadBaseline).toEqual({
+      value: { a: 'd' },
+    });
+    const child = root.find('/a');
+    if (!child) throw new Error('Missing filled field');
+    expect(child.isDivergent).toBe(false);
+    child.setValue('x');
+    expect(child.isDivergent).toBe(true);
+  });
+  it('settled value load, setValue and revert use the last root load output', () => {
     const root = makeVocabularyTree(
       { type: 'object', properties: { a: { type: 'string' } } },
       { a: 'loaded' },

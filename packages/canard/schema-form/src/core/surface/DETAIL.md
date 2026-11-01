@@ -61,7 +61,7 @@
 | `inactiveValues` | getter | 호스트의 보유 슬롯·overlay에서 지연 계산한 동결 목록. 떼어지면 마지막 커밋의 내용과 참조를 유지 | VALUE-029, WRITE-087, NODE-044 |
 | `isActive` | getter | 최종 형상에 있는가. 정착 중 임시 이탈 뒤 재진입한 노드는 같은 인스턴스로 참이고, 최종 이탈해 떼어진 옛 참조는 다시 들어도 거짓이다. NODE-044의 마지막 커밋 고정에서 빠지는 살아 있는 트리의 사실 | LANDING-062, 26C-04, 26C-08 |
 | `isVisible` | getter | 레코드 `isVisible`의 로컬 AND 결과. 떼어지면 마지막 커밋 값으로 고정 | (CONTROLS-022·082, NODE-044, 28C-02) |
-| `isPresent` | getter | `active && visible`. 살아 있으면 `isVisible`과 같고 `isDisabled`와 무관하며 떼어지면 거짓 | (LANDING-066, 26C-08, 28C-02) |
+| `isPresent` | getter | `isActive && isVisible`. `isDisabled`와 무관하며 떼어지면 거짓 | (LANDING-066, 26C-08, 28C-02) |
 | `isReadOnly` | getter | 레코드 `isReadOnly`의 표준·로컬 OR 결과. Form 속성 전체 잠금은 포함하지 않고 떼어지면 고정 | (CONTROLS-023·082, 28C-02) |
 | `isDisabled` | getter | 레코드 `isDisabled`의 로컬 OR 결과. Form 속성 전체 잠금은 포함하지 않고 떼어지면 고정 | (CONTROLS-023·082, 28C-02) |
 | `watchValues` | getter | settle의 `readFieldNodeWatchValues`가 유효 스키마 `controls.watch` 경로를 방출 트리에서 읽은 배열. 같은 커밋에서는 같은 참조 | (CONTROLS-032·080, LANDING-137, 28C-07) |

@@ -53,7 +53,7 @@ total: { type: 'number', controls: { watch: ['../items'] } },
 
 ## Evaluation Timing
 
-Expressions are evaluated synchronously while a write settles, so controls state (`active`, `visible`, `readOnly`, `disabled`, derived values, `watchValues`) is current as soon as `setValue()` returns, on a parent or a leaf alike. Listeners receive `UpdateControlledProperties` when the outermost write finishes; write-triggered validation runs after the frame that renders the edit (see `event-system.md`).
+Expressions are evaluated synchronously while a write settles, so node state (`isActive`, `isVisible`, `isReadOnly`, `isDisabled`, derived values, `watchValues`) is current as soon as `setValue()` returns, on a parent or a leaf alike. Listeners receive `UpdateControlledProperties` when the outermost write finishes; write-triggered validation runs after the frame that renders the edit (see `event-system.md`).
 
 ## Context (`@`)
 

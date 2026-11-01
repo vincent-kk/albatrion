@@ -84,16 +84,12 @@ export interface NodeSurface<
   readonly inactiveValues: readonly InactiveValue[];
   /** Whether this occurrence remains in the current shape. */
   readonly isActive: boolean;
-  /** Local visibility after all active declarations are combined. */
   /** Local visibility after active declarations are combined. */
   readonly isVisible: boolean;
-  /** A node is enabled when it remains active and visible. */
   /** Whether this occurrence is active and visible, independent of disabled state. */
   readonly isPresent: boolean;
-  /** Local read-only state, including standard schema readOnly. */
   /** Local read-only state including the standard schema readOnly flag. */
   readonly isReadOnly: boolean;
-  /** Local disabled state, independent of enabled. */
   /** Local input lock independent of presence. */
   readonly isDisabled: boolean;
   /** Effective watched values read from the emitted tree. */

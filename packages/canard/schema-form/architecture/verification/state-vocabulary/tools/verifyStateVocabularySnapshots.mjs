@@ -1,3 +1,4 @@
+/** One-time proof for the state-vocabulary migration; not a package build or runtime dependency. */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -19,7 +20,7 @@ const renames = {
   enabled: 'isPresent',
 };
 /** Repository root is resolved from this script so no machine path enters the proof. */
-const root = fileURLToPath(new URL('../../../..', import.meta.url));
+const root = fileURLToPath(new URL('../../../../../../..', import.meta.url));
 /** Snapshot source shared by the stored histories and their producer. */
 const directory = resolve(
   root,
@@ -101,7 +102,11 @@ for (const name of fixtures) {
   if (before.observations) {
     for (const history of [captured, before])
       for (const observation of history.observations) delete observation.latent;
-    assert.equal(JSON.stringify(captured), JSON.stringify(before), name + ': inverse-renamed replay');
+    assert.equal(
+      JSON.stringify(captured),
+      JSON.stringify(before),
+      name + ': inverse-renamed replay',
+    );
   } else {
     const sections = sectionsOf(captured);
     for (const [key, record] of Object.entries(

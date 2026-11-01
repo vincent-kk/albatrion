@@ -5,34 +5,13 @@ import type { JSONSchema } from '@winglet/json-schema';
 
 import { renderForm } from '../renderForm';
 
-/**
- * GAP-10 — Computed `readOnly` / `disabled` driven by sibling values, plus the
- * form-level `readOnly` / `disabled` props.
- *
- * Load-bearing render facts (verified against src/):
- *   - `FieldInputSlot` passes `readOnly={rootReadOnly || node.readOnly}` and
- *     `disabled={rootDisabled || node.disabled}` FRESH on every render
- *     (`FieldInputSlot.tsx:111-112`). These are NOT memorized off the
- *     RequestRefresh `version`, so a computed flip reaches the DOM purely via the
- *     `UpdateControlledProperties` re-render (in `REACTIVE_RERENDERING_EVENTS`).
- *   - `node.readOnly` / `node.disabled` reflect ONLY the computed property
- *     (`AbstractNode.ts:440-450`); the form-level props live in
- *     `InputControlContext`. So with a form-level prop set, the DOM attribute is
- *     present while `node.readOnly` / `node.disabled` stays `false` — a genuine
- *     two-layer divergence this suite pins.
- *   - Built-in string/number inputs render `readOnly` + `disabled` attributes
- *     directly; the enum `<select>` has no readonly attribute and instead renders
- *     `disabled={disabled || readOnly}` (`FieldInputStringEnum.tsx:65`).
- *
- * Every case asserts BOTH layers: rendered DOM (attribute presence via jest-dom)
- * AND the node tree (`node(path)?.readOnly` / `.disabled` / `getValue()`).
- */
+/** Verify local node isReadOnly/isDisabled decisions and their combination with Form props in the DOM. */
 
 // ---------------------------------------------------------------------------
 // Schemas (mirrored from stories/11.ComputedProps)
 // ---------------------------------------------------------------------------
 
-/** name.readOnly = !prepared; age.disabled depends on name; nationality on age. */
+/** name.isReadOnly = !prepared; age.isDisabled depends on name; nationality on age. */
 const computedSchema = {
   type: 'object',
   properties: {
@@ -165,10 +144,10 @@ describe('GAP-10 controls.disabled driven by a sibling value', () => {
 describe('GAP-10 form-level readOnly prop overrides computed state', () => {
   it('forces inputs readOnly even when their computed readOnly is false', async () => {
     const form = await renderForm(computedSchema, { readOnly: true });
-    // Make computed readOnly false (prepared true) and age computed enabled.
+    // Make local isReadOnly false (prepared true) and isDisabled false for age.
     await form.setValue({ prepared: true, name: 'Vincent', age: 20 });
 
-    // DOM: readonly present because rootReadOnly || node.readOnly.
+    // DOM: readonly present because rootReadOnly || node.isReadOnly.
     expect(form.field('/name')).toHaveAttribute('readonly');
     expect(form.field('/age')).toHaveAttribute('readonly');
     // Tree: the node's OWN computed flag is false -> divergence is intentional.
@@ -207,7 +186,7 @@ describe('GAP-10 enum select maps controls.readOnly to the disabled attribute', 
   it('disables the select when readOnly is computed true and re-enables it on flip', async () => {
     const form = await renderForm(selectReadOnlySchema);
 
-    // unlock undefined -> nationality.readOnly true -> select disabled.
+    // unlock undefined -> nationality.isReadOnly true -> select disabled.
     expect(form.field('/nationality')).toBeDisabled();
     expect(form.node('/nationality')?.isReadOnly).toBe(true);
 
