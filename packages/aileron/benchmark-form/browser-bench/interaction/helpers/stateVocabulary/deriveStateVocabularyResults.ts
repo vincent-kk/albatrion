@@ -15,6 +15,7 @@ import { summarizeResults } from '../summarizeResults';
 import { bootstrapProcessingRatio } from '../validationAfterPaint/bootstrapProcessingRatio';
 import { quantile } from '../validationAfterPaint/quantile';
 import { readInteractionMetrics } from '../validationAfterPaint/readInteractionMetrics';
+import { bootstrapPooledHandlerDifference } from './bootstrapPooledHandlerDifference';
 import { decideStateVocabularyGates } from './decideStateVocabularyGates';
 import { deriveStateVocabularyValidatorWork } from './deriveStateVocabularyValidatorWork';
 import { REGISTERED_STATE_VOCABULARY_RULES as rules } from './registeredStateVocabularyRules';
@@ -107,6 +108,22 @@ export function deriveStateVocabularyResults(
           ),
         ]),
       );
+      if (row.id.startsWith('mount-')) {
+        bounds.flooredMountLongestFrame = bootstrapStageClosingMetric(
+          a.map((m) =>
+            m.longestFrame === null
+              ? null
+              : Math.max(m.longestFrame, rules.mountFrameFloorMs),
+          ),
+          b.map((m) =>
+            m.longestFrame === null
+              ? null
+              : Math.max(m.longestFrame, rules.mountFrameFloorMs),
+          ),
+          rules.seed,
+          rules.resamples,
+        );
+      }
       if (row.id.startsWith('type-') || row.id.startsWith('first-key-')) {
         const processing = bootstrapProcessingRatio(
           before.map(readInteractionMetrics),
@@ -124,6 +141,18 @@ export function deriveStateVocabularyResults(
             rules.resamples,
           ).differenceUpperBound,
           undefinedRatios: processing.undefinedRatios,
+        };
+      }
+      if (row.id.startsWith('type-')) {
+        bounds.processingTail = {
+          upperBound: bounds.processing.upperBound,
+          differenceUpperBound: bootstrapPooledHandlerDifference(
+            before.map(readInteractionMetrics),
+            after.map(readInteractionMetrics),
+            rules.seed,
+            rules.resamples,
+          ),
+          undefinedRatios: bounds.processing.undefinedRatios,
         };
       }
       comparisons[reference][row.id] = bounds;

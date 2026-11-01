@@ -4,6 +4,7 @@ import cases from '../../../../../fixtures/input-responsiveness/closing-cases.js
 import { closingGateFixture } from '../../stageClosing/__tests__/fixtures/closingGateFixture';
 import { summarizePage } from '../../summarizePage';
 import { deriveStateVocabularyValidatorWork } from '../deriveStateVocabularyValidatorWork';
+import { REGISTERED_STATE_VOCABULARY_RULES as rules } from '../registeredStateVocabularyRules';
 
 /** Every existing row receives fresh raw pages so non-gated rows cannot escape SV-2. */
 function fixture() {
@@ -35,7 +36,7 @@ describe('SV-2 all-row validator equality', () => {
     const data = fixture();
     const result = deriveStateVocabularyValidatorWork(data.samples, data.pages);
     expect(result.status).toBe('PASS');
-    expect(result.checks.map((c) => c.id)).toEqual(cases);
+    expect(result.checks.map((c) => c.id)).toEqual(rules.validatorWorkRows);
   });
   it.each(['compile', 'validate'])(
     'fails additional %s work on a report-only None row',
@@ -55,8 +56,23 @@ describe('SV-2 all-row validator equality', () => {
   it('preserves missing row evidence as indeterminate', () => {
     const data = fixture();
     expect(
-      deriveStateVocabularyValidatorWork(data.samples.slice(1), data.pages)
-        .status,
+      deriveStateVocabularyValidatorWork(
+        data.samples.filter(
+          (s) => s.id !== 'mount-flat-500-validate' || s.lane !== 'B',
+        ),
+        data.pages,
+      ).status,
     ).toBe('INDETERMINATE');
+  });
+  it('reports a burst mismatch without failing deterministic-work equality', () => {
+    const data = fixture();
+    data.pages['type-array-1000-validate-burstF'].closing.validatorWork.push({
+      kind: 'validate',
+      start: 4,
+      end: 5,
+    });
+    expect(
+      deriveStateVocabularyValidatorWork(data.samples, data.pages).status,
+    ).toBe('PASS');
   });
 });

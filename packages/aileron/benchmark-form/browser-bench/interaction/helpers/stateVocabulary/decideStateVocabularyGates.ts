@@ -8,7 +8,7 @@ import type { SampleResult } from '../summarizeResults';
 import { decideRatioFloor } from './decideRatioFloor';
 import { REGISTERED_STATE_VOCABULARY_RULES as rules } from './registeredStateVocabularyRules';
 
-/** Apply the closing timing gates, replacing only C1/C5 ratio-only policy and excluding C0/C7. */
+/** Compose closing timing gates with C1 tail, C4 censoring and C5 call floors, excluding C0/C7. */
 export function decideStateVocabularyGates(
   rows: StageClosingRow[],
   bounds: Record<string, Record<string, ClosingBound>>,
@@ -20,6 +20,8 @@ export function decideStateVocabularyGates(
       id,
       Object.fromEntries(
         Object.entries(metrics).map(([metric, bound]) => {
+          if (id.startsWith('mount-') && metric === 'longestFrame')
+            return [metric, metrics.flooredMountLongestFrame];
           const floor =
             id.startsWith('type-') && metric === 'processing'
               ? rules.processingDifferenceMs
@@ -27,7 +29,20 @@ export function decideStateVocabularyGates(
                 ? rules.callDifferenceMs
                 : undefined;
           if (floor === undefined) return [metric, bound];
-          const pass = decideRatioFloor(bound, floor);
+          const median = decideRatioFloor(bound, floor);
+          const tail =
+            id.startsWith('type-') && metric === 'processing'
+              ? decideRatioFloor(
+                  metrics.processingTail,
+                  rules.processingTailDifferenceMs,
+                )
+              : true;
+          const pass =
+            median === false || tail === false
+              ? false
+              : median === null || tail === null
+                ? null
+                : true;
           return [
             metric,
             { ...bound, upperBound: pass === null ? null : pass ? 1 : 2 },

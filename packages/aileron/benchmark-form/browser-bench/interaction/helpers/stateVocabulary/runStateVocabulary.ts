@@ -103,6 +103,20 @@ export async function runStateVocabulary(options: Record<string, string>) {
     );
     assert.deepEqual(priorSmoke.cases, cases);
     assert.deepEqual(priorSmoke.inputs, inputs);
+    const smokeReports: StateVocabularyReport[] = JSON.parse(
+      fs.readFileSync(path.join(root, 'smoke-reports.json'), 'utf8'),
+    );
+    assert.ok(
+      smokeReports.some(
+        (report) =>
+          report.id === 'is-divergent-flat-2000' &&
+          report.lane === 'F' &&
+          report.read?.status === 'ran' &&
+          report.read.first === true &&
+          report.read.repeated === true,
+      ),
+      'isDivergent smoke must execute both true reads on F before the formal window',
+    );
     const excluded = readAncestorPids(),
       quiet = await observeCpu(30000, excluded);
     const attempt = {
