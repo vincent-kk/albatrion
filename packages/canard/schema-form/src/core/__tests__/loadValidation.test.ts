@@ -2,10 +2,12 @@ import { expect, it, vi } from 'vitest';
 
 import { createValidationFrameClock } from '@/schema-form/__tests__/helpers/createValidationFrameClock';
 
-import { ValidationMode } from '../engine/types/state';
-import { buildFieldNodeTree } from '../surface/utils/binding/buildFieldNodeTree';
-import { mountFieldNode } from '../surface/utils/binding/mountFieldNode';
-import { reloadFieldNodeForm } from '../surface/utils/binding/reloadFieldNodeForm';
+import { ValidationMode } from '../engine';
+import {
+  buildFieldNodeTree,
+  mountFieldNode,
+  reloadFieldNodeForm,
+} from '../surface';
 
 it('T7 core-only default mount and reset retain their automatic OnChange verdict', async () => {
   const clock = createValidationFrameClock();
