@@ -1,16 +1,45 @@
 {
   "baseline": "f4018e82b",
-  "allowed_diff_only": true,
-  "removed": [
-    "FormErrorRecord.aggregate?: SchemaFormError",
-    "FormErrorRecord.surface?: FormErrorSurface"
+  "candidate": "daf4ff55f81086ff2e01b9e2b9fdf734e112d8f7",
+  "algorithm": "TypeScript checker; every package export, package-declared properties, signatures, predicates and type arguments; depth 7; full tsc declaration emission before alias post-processing",
+  "depth": 7,
+  "export_count": 97,
+  "base_tree_sha256": "3056c06cb23d58e6dc9f6879688ded32dcfab2fef88933406f5ad54f4a02baae",
+  "head_tree_sha256": "ef7a56281d0961953330cd6bb36d805ae3d9e3f744b2ddf3df73cf263e86eeeb",
+  "base_declaration_count": 1351,
+  "head_declaration_count": 1352,
+  "changed_internal_declaration_files": [
+    "core/engine/record/types/runtime.d.ts",
+    "core/engine/record/utils/indexFieldNodeWarning.d.ts",
+    "core/engine/write/utils/chain/enterFieldNodeChain.d.ts",
+    "core/engine/write/utils/chain/flushQueuedEvents.d.ts",
+    "core/engine/write/utils/chain/startFieldNodeChain.d.ts",
+    "core/engine/write/utils/entry/dispatchBatch.d.ts",
+    "core/engine/write/utils/report/collectChainRecords.d.ts",
+    "core/engine/write/utils/report/createFormErrorRecord.d.ts",
+    "core/engine/write/utils/report/dedupeWarningRecord.d.ts",
+    "core/engine/write/utils/report/deliverChainRecords.d.ts",
+    "core/engine/write/utils/report/finishQueuedErrors.d.ts",
+    "core/engine/write/utils/report/refuseDetachedWrite.d.ts",
+    "core/engine/write/utils/report/refuseInactiveResolverWrite.d.ts",
+    "core/index.d.ts",
+    "core/surface/index.d.ts",
+    "core/surface/utils/binding/batchFieldNodeLoad.d.ts",
+    "errors/index.d.ts",
+    "errors/type.d.ts",
+    "providers/FormErrorContext/type.d.ts",
+    "providers/RootNodeContext/type.d.ts",
+    "providers/RootNodeContext/utils/applyFormErrors.d.ts"
   ],
-  "added": [
-    "FormErrorRecord.origin: FormErrorOrigin"
+  "public_changes": [
+    "- FormErrorRecord.aggregate?: SchemaFormError",
+    "- FormErrorRecord.surface?: FormErrorSurface",
+    "+ FormErrorRecord.origin: FormErrorOrigin"
   ],
-  "alias": "FormErrorSurface = 'thrown' | 'rejected' | 'sink' -> FormErrorOrigin = 'load' | 'write' | 'validate' | 'submit' | 'render'",
-  "src_index_diff_zero": true,
-  "package_manifest_diff_zero": true,
-  "base_sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d",
-  "head_sha256": "ed3bfe4d2c42fab94543b2afeca4f4d904e987ae7e865385116218b3d4614b3d"
+  "internal_names_not_reached": [
+    "FieldNodeRuntime",
+    "batchFieldNodeLoad",
+    "PendingFormErrorRecord",
+    "FormErrorService"
+  ]
 }

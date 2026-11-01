@@ -102,14 +102,14 @@ T1은 construction warning, write listener, throwing onChange, explicit compile,
 | production | 21 | 0 | 0 | 0 |
 | import-model | 2 | 0 | 0 | 0 |
 
-[공개 선언 diff](raw/ir-9/public-declaration.diff)와 [기계 비교](raw/ir-9/public-declaration.json)는 다음 변경만 허용한 뒤 나머지 선언 텍스트의 동일성을 확인합니다.
+[공개 선언 diff](raw/ir-9/public-declaration.diff)와 [checker 폐포·선언 트리 비교](raw/ir-9/public-declaration.json)는 모든 공개 export의 속성·시그니처·타입 인자를 깊이 7까지 추적합니다. 공개 심볼 폐포에서 바뀐 것은 FormErrorRecord의 세 칸뿐이며, 내부 선언 파일(runtime·batchFieldNodeLoad·PendingFormErrorRecord·FormErrorService)은 바뀌지만 공개 심볼이 이름으로 닿지 않는다. 전체 emitter 선언 트리의 해시와 변경된 내부 선언 파일 목록을 보존합니다.
 
 | 선언 | 변경 |
 | --- | --- |
 | FormErrorRecord.aggregate?: SchemaFormError | 제거 |
 | FormErrorRecord.surface?: FormErrorSurface | 제거 |
 | FormErrorRecord.origin: FormErrorOrigin | 필수로 추가 |
-| FormErrorSurface | FormErrorOrigin = load / write / validate / submit / render로 교체 |
+| 내부 별칭 FormErrorSurface | FormErrorOrigin으로 교체되며 공개 record.origin이 이 형을 참조 |
 | src/index.ts·package.json | diff 0 |
 
 FormErrorOrigin과 batchFieldNodeLoad는 패키지 root index에서 내보내지 않습니다. [제품 SHA256](raw/ir-9/product-sha256.json)은 d6ded31b3 제품 소스와 일치합니다. [빌드 manifest](raw/ir-9/build-artifacts.json)는 runtime 세 형식·공개 선언·agent hashes의 해시를 보존하며 `c774fe62c`에 소스와 분리 커밋했습니다. dist는 기존 ignore 대상으로 tracked build output 변경은 없으므로 강제 추가하지 않았습니다.
