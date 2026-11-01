@@ -18,7 +18,7 @@
 - 로드 슬롯 전에 쓰기 요청이나 명시적 루트 검증이 있으면 컴파일 후 슬롯 판정은 생략한다. 하위 명시적 검증은 로드 판정을 대체하지 않는다.
 - Always의 첫 오류 표시도 다음 프레임 뒤 슬롯까지 늦어지며 조상 layout 쓰기는 같은 요청 스탬프 규칙을 따른다.
 
-- Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `surface: 'sink'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
+- Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `origin: 'validate'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
 - V6: prepared 현행 load의 hidden 기록은 chain 끝에 바로 전달합니다. reset의 build 기록은 각각 try/catch하여 handler 실패 뒤에도 다음 기록과 binding 교체를 계속합니다.
 - V7: never-prepared load가 reset으로 교체될 때 batch try/catch 뒤에 records를 새 load 앞에 옮깁니다. reset 사슬에서 새로 생긴 기록까지 원래 root·warning scope로 한 번 전달하며 이전 load의 전체 기록이 새 build 기록보다 앞섭니다. 이미 준비된 load는 숨김 중에도 buffer하지 않습니다. 첫 commit의 reported 가드는 유지합니다. 교체된 never-prepared load의 생성 실패도 reset 끝에 한 번 capture·호스트 보고합니다.
 
@@ -50,6 +50,10 @@
 - L4: 루트 교체 reset의 기록은 binding을 새 루트로 바꾸기 전에 전달하므로 onError 안의 handle.node는 옛 루트입니다. mount-time 기록이 build-time 기록보다 먼저 도착합니다.
 
 - 루트 교체 reset의 옛 load는 batch try/catch 뒤 은퇴한다. adoption은 컴파일하지 않으며 새 트리를 유지한다. 다음 프레임 뒤 슬롯의 컴파일 실패는 onError sink 한 번과 host 한 번이다. never-prepared build 오류 이관·handler 격리 규칙은 유지한다.
+
+### onError origin
+
+reset·rebuild·검증기 교체는 batchFieldNodeLoad로 load 사슬을 엽니다. 중첩 시 바깥 사슬의 origin을 보존합니다. 최초 applyFormErrors는 load, errors prop 변경은 write입니다. 내부 recordScopes는 공개 origin이 아닌 원래 root·warning scope를 추적합니다.
 
 ## Acceptance Criteria
 

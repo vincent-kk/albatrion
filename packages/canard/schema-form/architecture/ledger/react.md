@@ -143,6 +143,8 @@
 - 라운드: 17
 - 까닭: `reviews/raw-round16-landing-review.md:49`
 
+  > 편집자 결정(IR-9): "【추론】 IR-9: 사슬을 연 최외곽 연산이 origin을 정하며 중첩·adoption에 보존한다. reset·rebuild·validator 교체와 최초 외부 errors 적용은 load, 공개 쓰기와 prop errors 변경은 write, 검증 컴파일·실행·판정 파동과 그 리스너는 validate, SubmitWhileDegraded와 native capture 최초 실패는 submit, 렌더 경계·ChildNodeComponentsOnTerminal은 render이다. write 리스너나 onChange의 reset은 write이며 reset의 중첩 쓰기는 load이다. 개발 warnDevelopmentIssue는 기록이 아니다." (`reviews/ir-9-onerror-origin.md:4`)
+
 ### REACT-008 StrictMode의 이중 호출은 가드를 두 번 컴파일하지 않는다(가드 캐시는 VALIDATE-018)
 
 - 결정:

@@ -16,6 +16,12 @@ onError는 insertion effect로 갱신되어 숨김 commit에서도 최신이며 
 
 - Context 객체(`FormErrorContext`·`FormErrorPathContext`)와 Provider는 `components/`, 훅(`useFormErrorContext`·`useBoundaryReporter`·`usePlaceholderBoundaryReporter`)은 `hooks/`, 호스트 보고 보조 `reportErrorToHost`는 `utils/`에 있다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둔다(filid zero-peer-file).
 
+### onError origin
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`capture(error, origin, componentStack?, path?)`는 origin을 필수로 받습니다. 렌더 경계는 render, 네이티브 제출은 submit, 생성·flush·reset 실패는 load를 넘깁니다. 경고 scope는 origin과 독립적이며 recordScopes는 버퍼 기록의 원래 root·scope만 보존합니다.
+
 ## Acceptance Criteria
 
 ### reporting — Single isolated error report

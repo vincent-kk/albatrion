@@ -65,8 +65,12 @@
 - 표준 이름으로 해석한 `dataPath`가 가리키는, 형상 안의 노드에 검증 issue를 배정한다. `required`는 빠진 자식 경로로 배정되고, `rejectedKey`는 그 키를 가진 호스트가 받는다. 터미널 아래 경로는 터미널이 받고, 형상 밖 경로의 오류는 주인이 없는 오류가 된다(VALIDATE-043 (1)–(4), FRAGMENT-020·053).
 - 표시에서는 꺼진 `oneOf`·`anyOf` 분기의 issue만 청사진 조각 표와 `schemaPath`로 걸러 낸다. 분기를 가려낼 수 없으면 거르지 않으며, `allOf`, `if`, `controls.active`는 이 필터의 대상이 아니다. union 호스트의 형 오류는 호스트에 둔다. 검증 판정과 폼 수준 목록은 그대로 유지한다(VALIDATE-043 (5)–(6), VALIDATE-051).
 
-- 검증기가 없고 모드가 `None`이 아니면 트리마다 `VALIDATOR_MISSING`을 한 번 경고하고, `if` 조각을 끄고 `CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR`를 한 번 경고한다. 전체 컴파일 실패는 로드마다 `VALIDATOR_COMPILE_FAILED` 하나를 다음 프레임 뒤 로드 슬롯이나 명시적 검증에서 드러내며, 노드 `errors`에는 넣지 않는다. 자동 로드와 쓰기의 첫 실패는 sink 기록과 호스트 보고로 전달하고, 명시적 `validate()`는 거부하기 전에 `surface: 'rejected'`로 보고한다. 같은 `$id`를 등록하다 충돌이 나서 컴파일에 실패한 경우에는 `VALIDATOR_COMPILE_FAILED`나 `GUARD_FAILED`의 `details`에 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다. 실행 중 throw는 `VALIDATOR_THREW`로 `validate()`를 거부하거나 `OnChange`에서 한 번 보고한 뒤 싱크로 보내며, 미처리 거부로 남기지 않는다(ERROR-146–157, ERROR-019·022·039·155·201, VALIDATE-042, 31C-03).
+- 검증기가 없고 모드가 `None`이 아니면 트리마다 `VALIDATOR_MISSING`을 한 번 경고하고, `if` 조각을 끄고 `CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR`를 한 번 경고한다. 전체 컴파일 실패는 로드마다 `VALIDATOR_COMPILE_FAILED` 하나를 다음 프레임 뒤 로드 슬롯이나 명시적 검증에서 드러내며, 노드 `errors`에는 넣지 않는다. 자동 로드와 쓰기의 첫 실패는 sink 기록과 호스트 보고로 전달하고, 명시적 `validate()`는 거부하기 전에 `origin: 'validate'`로 보고한다. 같은 `$id`를 등록하다 충돌이 나서 컴파일에 실패한 경우에는 `VALIDATOR_COMPILE_FAILED`나 `GUARD_FAILED`의 `details`에 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다. 실행 중 throw는 `VALIDATOR_THREW`로 `validate()`를 거부하거나 `OnChange`에서 한 번 보고한 뒤 싱크로 보내며, 미처리 거부로 남기지 않는다(ERROR-146–157, ERROR-019·022·039·155·201, VALIDATE-042, 31C-03).
 - 검증기가 선언한 `dialect`와 작성 스키마의 `$schema`가 서로 다르면, 트리를 생성할 때 개발 모드에서만 `SCHEMA_FORM_WARNING.DIALECT_MISMATCH`로 보고한다. 둘 중 하나가 없거나 프로덕션이면 비교하지 않는다(VALIDATE-026·044, ERROR-188·199).
+
+### onError origin
+
+전체 스키마 컴파일·실행과 판정 파동 및 그 리스너가 만든 기록은 origin validate입니다. validate()·제출의 거부와 자동 실패의 호스트 싱크는 유지하며 origin은 그 노출 방법을 나타내지 않습니다.
 
 ## Acceptance Criteria
 

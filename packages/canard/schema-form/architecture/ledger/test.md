@@ -390,6 +390,8 @@
 - 충돌:
   > `09-landing-and-test-strategy.md:171`의 "`degraded` 동안 제출 경로의 거부와 `getValue()`의 허용"은 18라운드 결정과 다르다: `degraded` 동안의 제출 거부 시험은 PR-4가 아니라 PR-7로 미룬다(TEST-020의 18C-25 보충). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:773`).
 
+  > 편집자 결정(IR-9): "【추론】 IR-9: 각 발생 기록에는 묶음을 싣지 않으며 실제 throw의 bundleChainErrors는 유지한다. 같은 수집 호출의 첫 병합 오류·details를 보존한다. 자동·명시적 검증, 전달·중복·caller·console·재진입 규칙은 유지한다. ERROR-017·019·021·023·005·041·139·164·197·201, VALIDATE-046, REACT-007, TEST-017을 함께 적용한다." (`reviews/ir-9-onerror-origin.md:5`)
+
 ### TEST-018 새로 있어야 하는 시험 PR-5 — 배열 아이템의 생김과 채움, identity, omitTrailing, 터미널 배열 행의 구조 연산
 
 - 결정:

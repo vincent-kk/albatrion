@@ -554,3 +554,22 @@ T10·T11 즉시 pending, T10의 frame 전 실행 0, T5 reset의 새 슬롯 1, W4
 L6에 run-time retain 후보를 기록하고 수명 계약은 바꾸지 않는다. 캐시된 compile 거부를 render에서 다시 던지면 seen이 RENDER_FAILED 한 번을 생략하고 seen에서 제거하는 한계를 기록한다. raw 경로 감사는 일반 파일과 gzip 모두의 /tmp 경로까지 포함하며 과거 감사의 누락을 바로잡는다 (VALIDATE-021, ERROR-019, TEST-021).
 
 lint·typecheck·build·unit·render·react18·verify·storybook·production·import-model을 순차 실행한다. 두 load-slot 파일의 act warning 0, FCA 새 finding 0, 원장 기준 대비 새 문제 0, machine-path 0와 skip/todo 불변을 확인하고 round-b 원시에 보존한다 (TEST-021).
+
+
+## IR-9 — onError record origin (2026-11-01)
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
+
+| origin | 연산 |
+| --- | --- |
+| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
+| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
+| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
+| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+
+사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
+
+C1–C6와 Amendment 1 A1–A5·P3 전체를 적용합니다. src/index.ts·package version은 유지합니다. 계약→시험 red→제품→순차 관문 순서이며 측정창·벤치는 필요하지 않습니다.

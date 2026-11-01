@@ -573,8 +573,27 @@ arrayNode.children; // 자식 노드 배열
 
 오류는 지금 적격이며 마지막 release 이후 엔진 state·enabled·커밋된 Form 정책의 모든 조합에서 계속 적격일 때 표시합니다. 숨김은 즉시이며 새로 적격해지거나 중간에 부적격했던 오류는 다음 release를 기다립니다. release는 pending true→false 정착, 조용한 post-paint 이력 drop, 수락한 explicit root 판정, 폐기입니다. 조용한 변경은 약2프레임 뒤 표시합니다. renderer/input은 `active && visible`도 검사하고 자식 오류 훅은 enabled를 제외합니다. `OnChange`만 이력을 기록하며 다른 모드는 live 조건을 씁니다. React-only 복원·remount·mirror·virtualization도 같은 이력을 소비합니다. 현재 stamp의 commit-only 폐기는 targets를 보존하고 cadence에서 최신 commit을 재요청합니다. 새 함수·`Date`·`Map`·class identity를 포함한 context 변경 stream이 이어지면 멎을 때까지 hold합니다.
 
-Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `surface: 'sink'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
+Always(`true`, `ShowError.Always` 또는 해당 비트를 포함한 mask)를 포함해 최초 마운트·동일 스키마 reset·루트 교체 reset·rebuild·검증기 교체는 하나의 로드 검증 진입점을 다음 프레임 뒤 슬롯에서 실행합니다. `None`은 컴파일하지 않고, `OnRequest`만이면 컴파일만 하며, `OnChange`는 컴파일 후 현재 로드 시작 이후 쓰기 검증 요청이나 명시적 루트 검증이 없을 때 첫 판정을 냅니다. 자동 로드 컴파일 실패는 새 트리를 유지하고 로드마다 `origin: 'validate'` 한 번과 호스트 보고 한 번이며 reset·rebuild는 그 실패로 던지지 않습니다. `validate()`·제출은 즉시 시작하고 실패하면 `rejected`로 거부합니다. `if` 게이트의 구성·렌더 중 컴파일은 유지합니다. 첫 판정 전 빈 목록은 unknown으로 다루거나 `validate()`를 기다립니다. 명시적 반환과 제출 값은 호출 시점 snapshot이며 하위 검증은 전체 pending 요청을 보존합니다.
 
 raw `errors`, Form children errors, `FormRender`, `node.errors`, `getErrors()`는 표시와 무관합니다. custom UI는 `errorVisible`과 `useChildFieldErrors().showErrors`를 씁니다. hidden 자식은 값·aggregate 오류를 유지하고 inactive는 값 제거·off-branch issue 제외를 따릅니다. 첫 layout commit을 마친 현행 load는 숨김 중에도 같은-schema reset을 포함한 모든 폼 콜백을 engine chain 끝에 전달하며 show에서 재생하지 않습니다. 준비 전 변경·상태·진단은 버리고 생성 기록만 보관하며, reset으로 은퇴한 load의 기록은 버립니다. 루트 교체 reset은 handler 실패를 각각 격리하고 mount 기록 뒤 build 기록을 binding 교체 전에 전달합니다. React가 숨김과 unmount를 구분하지 않으므로 보유한 핸들·노드는 unmount 뒤에도 전달하지만 검증 캐시 참조는 cleanup에서 해제합니다. 숨김 중 onError만 최신 prop을 사용하고 다른 콜백은 마지막 연결 commit을 사용하며 Form ref는 null입니다. 필드 layout 쓰기·렌더 경고는 show에 도착합니다. `None`·`OnRequest`와 검증 계산 비용은 유지합니다.
 
 한계: hook의 React-only `disabled` 인자는 즉시 reveal합니다. drop 뒤로 미뤄진 state/enabled render(transition·Suspense·time slicing)는 hold를 생략합니다. commit-only stream은 멎을 때까지 hold합니다. release와 paint 사이 task의 쓰기는 released verdict를1~2프레임 표시할 수 있습니다. 한 React batch 안의 미표시 state/enabled/policy 조합도 이력에 포함되며 state 변경은 policy commit보다 먼저 기록됩니다.
+
+
+## onError record origin
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
+
+| origin | 연산 |
+| --- | --- |
+| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
+| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
+| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
+| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+
+사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record

@@ -21,8 +21,8 @@
 - 생성자는 자기 그룹의 코드를 받고, 맨 이름 표로 한 번 만든 코드→specific lookup에서 맨 이름을 찾아 `BaseError`에 넘깁니다. `error.code`·`error.group`·`error.specific`·메시지·상세 참조는 보존하고, 네 클래스의 `name`은 각각 `FormErrorGroup`의 대응 그룹 값입니다.
 - 발생시키는 곳이 없는 `PRESENTATION_KEY_SUSPECT`·`NULLABLE_ONE_OF_NULL_UNREACHABLE`·`NESTED_COMPOSITION_IGNORED_FOR_FORM`·`CONDITION_INDEX`·`CONDITION_INDICES`는 코드에 없습니다. 분기 `controls.active` 컴파일 실패는 `CREATE_DYNAMIC_FUNCTION`입니다(ERROR-162, 305C-01). 제출 검증 실패는 `VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED`입니다.
 - AJV 플러그인의 bind 거부 오류는 자체 `Error`이며 `group`·`code`를 `UNHANDLED_ERROR`·`FormErrorCode.ValidatorBindRefused`로 맞춥니다. `isUnhandledError`는 이를 알아보지 못하며 호출자는 `code`로 가릅니다(32C-02). `SCHEMA_FORM_WARNING.MISFIT`이 경고등 코드이고 `VALUE_TYPE_MISMATCH`는 아니며, `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 코드 표에서 뺍니다(ERROR-031·164·188·198, SURFACE-061, CONTROLS-079).
-- `interface FormErrorRecord { level: FormErrorLevel; code: FormRecordCode; message: string; path?: string; schemaPath?: string; details?: ErrorDetails; error?: unknown; aggregate?: SchemaFormError; surface?: FormErrorSurface; componentStack?: string }`입니다. `FormErrorLevel`은 `'error' | 'warning'`, `FormErrorSurface`는 `'thrown' | 'rejected' | 'sink'`이며, 청사진 진단의 level과 FormErrorContext의 보고 표면도 이 두 형을 씁니다. `details`는 오류의 `error.details`와 같은 참조이며, `aggregate`는 둘 이상 묶여 실제로 던진 오류 객체입니다. 렌더 계층은 경계가 받은 `componentStack`만 기록에 채우며 다른 React 정보 필드를 노출하지 않습니다(ERROR-017·032, 68C-08).
-- `interface FormErrorReporter { report(record: FormErrorRecord): void; hasConsumer(): boolean }`은 core가 트리 생성 인자로 받는 형입니다. `hasConsumer()`가 거짓이면 일반 경고의 판정·서식·키 할당을 하지 않고, true이면 같은 사건의 code·level·details·surface를 환경에 따라 바꾸지 않습니다. `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고만은 `hasConsumer()`와 무관하게 개발 모드에서만 합니다(ERROR-013·021·030, WRITE-099, 31C-02).
+- `FormErrorRecord`는 level·code·message와 필수 origin, 선택 path·schemaPath·details·error·componentStack을 담습니다. origin은 load·write·validate·submit·render의 닫힌 합집합이며 details는 error.details와 같은 참조입니다. 내부 대기 기록의 origin만 선택적이며 전달 전에 확정합니다(ERROR-017·019).
+- `interface FormErrorReporter { report(record: FormErrorRecord): void; hasConsumer(): boolean }`은 core가 트리 생성 인자로 받는 형입니다. `hasConsumer()`가 거짓이면 일반 경고의 판정·서식·키 할당을 하지 않고, true이면 같은 사건의 code·level·details·origin를 환경에 따라 바꾸지 않습니다. `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고만은 `hasConsumer()`와 무관하게 개발 모드에서만 합니다(ERROR-013·021·030, WRITE-099, 31C-02).
 - 코드별 `reason`은 닫힌 값만 둡니다. `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`에는 `'duplicateSchemaId'`, `MISFIT`에는 `'unconvertible' | 'ambiguous'`, `DISCRIMINATOR_MISMATCH`에는 `'missing' | 'kind' | 'overlap' | 'key'`를 씁니다. 원장이 이름 붙이지 않은 원인에는 `reason`을 만들지 않습니다(ERROR-201, VALUE-037, 31C-03).
 - `FormErrorDetails<Code>`의 `sourcePath?: string`은 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`·`SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`에만 허용합니다. 자동 쓰기 실패의 `details.sourcePath`는 쓰기를 낸 `controls.injectTo` 선언 노드의 데이터 경로이며, `details.path`와 기록의 `path`는 대상 경로로 유지합니다. 쓰기 모양 오류의 `expectedLength`·`received`는 보존하고 호출자 경로의 쓰기 모양 오류에는 `sourcePath`를 넣지 않습니다. 오류 기록의 `details`는 이 필드를 포함한 `error.details`와 같은 참조입니다(ERROR-017·195, 59C-01).
 - 코드 enum은 패키지 전체의 공개 데이터입니다. 기록 생성·사슬 끝 전달·묶음·경고 중복 키와 전달 중 쓰기 거부는 `engine/write`가 소유하며 이 fractal의 클래스·상수·형에는 넣지 않습니다(ERROR-004·005·024·029·164, NODE-016).
@@ -38,6 +38,22 @@
 | `DISPOSED_NODE_WRITE`               | core의 쓰기 진입이 재생성 인계로 폐기된 옛 노드의 표식 없는 쓰기를 던져 거부합니다. 입력 출처 표식이 있는 늦은 쓰기는 오류 없이 버립니다(WRITE-046·086, 69C-02)                                   |
 
 - 오류 클래스 넷(`JSONSchemaError`·`SchemaFormError`·`UnhandledError`·`ValidationError`)은 `classes/`, 코드 enum 둘·그룹 상수·맨 이름 표·그룹별 파생 표는 `constants/`에, 코드 판별 함수(`isFormErrorCode`·`isFormWarningCode`)와 조립·조회 보조(`assembleCodeGroup`·`getCodeSpecific`)는 `utils/`에 있습니다. 두 organ은 상수와 보조를 가르는 관례 이름이며 `constants/`의 파생 표만 `utils/`의 조립 보조를 가져옵니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
+### onError origin
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
+
+| origin | 연산 |
+| --- | --- |
+| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
+| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
+| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
+| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+
+사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
 
 ## Acceptance Criteria
 

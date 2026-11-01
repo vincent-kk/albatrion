@@ -1128,3 +1128,24 @@ if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한�
 ## IR-8 supplement — VALIDATE-052 / VALIDATE-046 / ERROR-201
 
 【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다 (VALIDATE-052). VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다 (ERROR-164). ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다 (VALIDATE-046). WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다 (TEST-021).
+
+
+## IR-9 — onError origin (2026-11-01)
+
+onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+
+`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
+
+| origin | 연산 |
+| --- | --- |
+| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
+| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
+| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
+| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
+| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+
+사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
+
+`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
+ERROR-017·019·021·023·005·041·139·164·197·201, REACT-007, TEST-017의 IR-9 보충을 따릅니다.

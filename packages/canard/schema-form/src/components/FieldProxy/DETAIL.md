@@ -16,7 +16,7 @@
 - 비활성 노드는 렌더하지 않습니다. 하위 노드는 전달받은 NodeProxy를 통해 같은 렌더 계약을 재사용합니다. 노드가 없을 때도 null을 반환합니다. 오류 표시가 꺼져 있으면 오류 포맷 함수의 결과를 노출하지 않습니다.
 - 마운트된 노드는 data-path로 경로를 노출하고, 노드 구독은 React 생명주기에 맞춰 해제합니다.
 - `UpdateJsonSchema`를 구독하다가 유효 스키마가 바뀌면 렌더 props와 입력 선택을 갱신합니다. 프록시 하나가 구독, 메모, 스냅샷 ref를 소유하며, 별도의 필드 컴포넌트나 필드별 경로 Provider는 만들지 않습니다(REACT-012, 119라운드, 121C-01 F-A).
-- 렌더러 경계는 ErrorBoundary를 직접 씁니다. children이 렌더할 때마다 새 엘리먼트라 memo 비교가 항상 실패하므로 memo로 감싸지 않습니다. 소유 지점에서 한 번 선택한 렌더러가 그 내부에서 errorMessage를 계산합니다. formatError와 렌더러 예외는 원래 오류의 identity, 현재 path, componentStack, surface sink를 같은 폼 보고기로 전달하고, 같은 fallback과 console.error를 유지합니다(ERROR-044·090·114).
+- 렌더러 경계는 ErrorBoundary를 직접 씁니다. children이 렌더할 때마다 새 엘리먼트라 memo 비교가 항상 실패하므로 memo로 감싸지 않습니다. 소유 지점에서 한 번 선택한 렌더러가 그 내부에서 errorMessage를 계산합니다. formatError와 렌더러 예외는 원래 오류의 identity, 현재 path, componentStack, origin render를 같은 폼 보고기로 전달하고, 같은 fallback과 console.error를 유지합니다(ERROR-044·090·114).
 - Refresh는 렌더러 경계와 입력 경계의 수명을 유지하고 해당 노드의 원본 입력만 다시 마운트합니다. RequestRemount는 래퍼 key를 바꿔서 경계까지 교체합니다(REACT-019·024, EVENT-039·040, 112C-01).
 - 비용: 필드 전체를 감싸던 Provider, 감싸개, 경계, 분리 컴포넌트를 없애고 오류 메시지 계산을 렌더러 경계 안의 컴포넌트에 둡니다. 필드당 fiber를 순감소 기준으로 4개 줄이는 것이 목표이며, 별도의 필드 경계 상태와 경로 Provider는 두지 않습니다. 쓰기당 렌더 수와 DOM 반영 지연은 런타임 계수로 비교합니다.
   - 측정값(세션 129e): 필드당 fiber는 평면 24→20, 배열 항목 21→17이고, 쓰기당 렌더·커밋·호스트 갱신·이펙트 수는 같습니다. 마운트 할당은 array-1000에서 8.8 MB 줄었습니다.

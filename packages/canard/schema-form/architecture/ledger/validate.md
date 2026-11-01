@@ -744,6 +744,8 @@
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1593-1596`
 
+  > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 중복 $id 원인은 readValidationEntry의 컴파일 시점 판정만 읽으며, 나중 retain은 캐시된 원인을 바꾸지 않는다." (`reviews/ir-8-round-b.md:4`)
+
 ### VALIDATE-047 따로 컴파일한 가드는 전체 검증의 `if`와 같은 boolean — `$id`·동적 범위 포함, 플러그인 계약, PR-4 게이트 넷
 
 - 결정:

@@ -292,6 +292,8 @@
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:51`
 
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
+
 ### ERROR-006 환경 규칙 — 정착·통지 오류는 모든 환경에서 같게 드러남
 
 - 결정:
@@ -483,6 +485,8 @@
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:74`
 
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
+
 ### ERROR-018 층과 level의 대응
 
 - 결정:
@@ -519,6 +523,8 @@
 - 라운드: 17
 - 까닭: `09-landing-and-test-strategy.md:48`
 
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
+
 ### ERROR-020 렌더 중 보증의 범위
 
 - 결정:
@@ -542,6 +548,8 @@
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:135`
+
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-022 기본 출력과의 관계 — 오류·경고의 기본 드러남
 
@@ -575,6 +583,8 @@
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:146-150`
+
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-024 중복 막기 — 경고
 
@@ -842,6 +852,8 @@
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
 - 라운드: 17
 - 까닭: `08-design-a-to-z.md:180`
+
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
 
 ### ERROR-042 검증기 관련 이주 안내
 
@@ -2137,6 +2149,8 @@
 - 라운드: 17
 - 까닭: `adr/0014-error-policy.md:203`
 
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
+
 ### ERROR-140 제출 거부는 렌더 계층의 일이다
 
 - 결정:
@@ -2581,6 +2595,10 @@
   > `adr/0014-error-policy.md:257`의 "오늘에만 명시. 새 설계 분류표에 자리가 없어 이 표에 더함"은 18라운드 결정과 다르다: 새 설계에도 있으며 코드는 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭)이고, 공개 API에서 오면 호출자 오류, 자동 쓰기에서 오면 정착 오류(`cause` (가칭) `'writeShape'`)다(ERROR-195). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:661,670`).
   > `adr/0014-error-policy.md:264`의 "새 설계에서 셋으로 나뉨"은 18라운드 결정과 다르다: 정적 대상 없음(`INJECT_TARGET_NOT_FOUND`)은 낼 자리가 없어 빠지므로 둘(동적 대상 없음 `INJECT_TARGET_MISSING`, 식 예외 `EXPRESSION_THREW`)로 나뉜다(CONTROLS-079). 18라운드 결정이 이긴다(`reviews/round-18-closing.md:386-387`).
 
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
+
+  > 편집자 결정(IR-9): "【추론】 IR-9: 사슬을 연 최외곽 연산이 origin을 정하며 중첩·adoption에 보존한다. reset·rebuild·validator 교체와 최초 외부 errors 적용은 load, 공개 쓰기와 prop errors 변경은 write, 검증 컴파일·실행·판정 파동과 그 리스너는 validate, SubmitWhileDegraded와 native capture 최초 실패는 submit, 렌더 경계·ChildNodeComponentsOnTerminal은 render이다. write 리스너나 onChange의 reset은 write이며 reset의 중첩 쓰기는 load이다. 개발 warnDevelopmentIssue는 기록이 아니다." (`reviews/ir-9-onerror-origin.md:4`)
+
 ### ERROR-165 §7.2 코드 목록 — (미정) 행
 
 - 결정:
@@ -3021,6 +3039,8 @@
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:715-717`
 
+  > 편집자 결정(IR-9): "【추론】 IR-9: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution. FormErrorRecord의 surface·aggregate를 제거하고 필수 origin(load·write·validate·submit·render)을 둔다. 앞선 보충의 surface 이름(thrown·rejected·sink)은 origin으로 대체한다; 호스트 싱크와 프로미스 거부를 뜻하는 문장은 그대로다." (`reviews/ir-9-onerror-origin.md:3`)
+
 ### ERROR-198 §7.2의 (미정) 행을 닫는 규칙 — 넷의 처분, 18라운드가 더하는 행, `if` 공허한 참 경고 없음, `INJECT_TARGET_NOT_FOUND` 빠짐
 
 - 결정:
@@ -3091,6 +3111,8 @@
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)
 - 라운드: 18
 - 까닭: `reviews/round-18-closing.md:1593-1596`
+
+  > 편집자 결정(IR-8 round b): "【추론】 IR-8 round b: 중복 $id 원인은 readValidationEntry의 컴파일 시점 판정만 읽으며, 나중 retain은 캐시된 원인을 바꾸지 않는다." (`reviews/ir-8-round-b.md:4`)
 
 ### ERROR-202 (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL` — 터미널 노드 입력이 빈 `ChildNodeComponents`를 읽을 때의 렌더 계층 경고
 
