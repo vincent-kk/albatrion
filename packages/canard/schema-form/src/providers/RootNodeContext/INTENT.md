@@ -10,6 +10,7 @@ JSON Schema로부터 루트 `FieldNode` 트리를 생성하고 Context로 공급
 
 - TypeScript + React, Generic 타입 파라미터 (`Schema`, `Value`) 사용
 - 초기 루트는 `useMemo`에서 `utils/createRootLoad.ts`의 `buildFieldNodeTree`·`mountFieldNode` 통로로 작성·마운트
+- 최초 마운트와 모든 reset·rebuild·검증기 교체의 검증은 동일한 다음 프레임 뒤 슬롯에 예약한다.
 - 기본 `validationMode`: `ValidationMode.OnChange | ValidationMode.OnRequest`
 - 외부 에러(`errors` prop): `applyFormErrors`가 전체 목록을 루트에 적용한 뒤 `find()`로 찾은 노드의 표준 경로별로 묶어 비루트 노드의 `setExternalErrors()` 호출
 - `contextNodeFactory(context)`로 사용자 정의 context를 노드 시스템에 주입
