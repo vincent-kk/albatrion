@@ -138,7 +138,7 @@ it('IR-6 an Always layout-write compile failure releases pending and reports sin
   expect(sink.errors()).toHaveLength(1);
   expect(onError.mock.calls[0][0]).toMatchObject({
     code: FormErrorCode.ValidatorCompileFailed,
-    surface: 'sink',
+    origin: 'validate',
   });
   await act(async () => {
     clock.frame();

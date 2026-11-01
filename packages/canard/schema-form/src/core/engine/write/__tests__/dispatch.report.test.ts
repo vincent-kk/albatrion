@@ -47,7 +47,7 @@ describe('chain error reporting', () => {
     if (!isArray(errors)) throw new Error('Expected bundled errors');
     expect(errors).toHaveLength(2);
     expect(report).toHaveBeenCalledTimes(1);
-    expect(report.mock.calls[0][0].aggregate).toBe(caught);
+    expect(report.mock.calls[0][0]).not.toHaveProperty('aggregate');
     expect(report.mock.calls[0][0].error).toBe(errors[0]);
   });
 
@@ -78,7 +78,7 @@ describe('chain error reporting', () => {
         code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW',
         path: '/a',
         schemaPath: '#/properties/a/controls/active',
-        surface: 'thrown',
+        origin: 'write',
       }),
     );
   });

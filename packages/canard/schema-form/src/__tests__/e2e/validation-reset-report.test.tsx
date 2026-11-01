@@ -381,7 +381,7 @@ describe('243C-01 reset validation report', () => {
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW',
         schemaPath: '#/controls/derived',
-        surface: 'thrown',
+        origin: 'load',
       }),
     );
     expect(thrown).toBe(onError.mock.lastCall?.[0].error);

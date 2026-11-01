@@ -8,6 +8,7 @@ import {
   dispatchMount,
   dispatchValidate,
 } from '@/schema-form/core/engine/write';
+import { FormErrorCode } from '@/schema-form/errors';
 
 import type { Validator } from '../types/validator';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
@@ -176,9 +177,13 @@ describe('same schema id trees', () => {
     readValidationEntry(validator, first);
     retainValidationRoot(validator, later);
     const tree = createDispatchTree(first, undefined, validator);
-    await expect(dispatchValidate(tree.root)).rejects.not.toHaveProperty(
-      'details.reason',
+    const failure = await dispatchValidate(tree.root).catch(
+      (error: unknown) => error,
     );
+    expect(failure).toMatchObject({
+      code: FormErrorCode.ValidatorCompileFailed,
+    });
+    expect(failure).not.toHaveProperty('details.reason');
     releaseValidationRoot(validator, later);
   });
 });

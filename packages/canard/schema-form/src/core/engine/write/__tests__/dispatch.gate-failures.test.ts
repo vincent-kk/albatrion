@@ -65,7 +65,7 @@ describe('round 55 gate failure regression', () => {
     expect(report.mock.calls.map(([record]) => record.code)).toEqual(codes);
     for (const [index, [record]] of report.mock.calls.entries()) {
       expect(record.error).toBe(errors[index]);
-      expect(record.aggregate).toBe(caught);
+      expect(record).not.toHaveProperty('aggregate');
     }
   });
 
@@ -115,11 +115,11 @@ describe('round 55 gate failure regression', () => {
     for (const [index, [record]] of report.mock.calls.entries()) {
       expect(record).toMatchObject({
         code: 'SCHEMA_FORM_ERROR.GUARD_FAILED',
-        surface: 'thrown',
+        origin: 'write',
         schemaPath: `#${evaluated[index]}`,
       });
       expect(record.error).toBe(errors[index]);
-      expect(record.aggregate).toBe(caught);
+      expect(record).not.toHaveProperty('aggregate');
     }
   });
 
@@ -185,8 +185,8 @@ describe('round 55 gate failure regression', () => {
       expect(report.mock.calls.map(([record]) => record.code)).toEqual(codes);
       for (const [index, [record]] of report.mock.calls.entries()) {
         expect(record.error).toBe(errors[index]);
-        expect(record.aggregate).toBe(caught);
-        expect(record.surface).toBe('thrown');
+        expect(record).not.toHaveProperty('aggregate');
+        expect(record.origin).toBe('write');
       }
     },
   );
@@ -224,7 +224,7 @@ describe('round 55 gate failure regression', () => {
     });
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0].error).toBe(caught);
-    expect(report.mock.calls[0][0].aggregate).toBeUndefined();
+    expect(report.mock.calls[0][0]).not.toHaveProperty('aggregate');
   });
 
   it('ERROR-005 ERROR-023 ERROR-041 throws both guards on a second write without new records', () => {
@@ -272,10 +272,8 @@ describe('round 55 gate failure regression', () => {
     }
     expect(caught[1]).not.toBe(caught[0]);
     expect(report).toHaveBeenCalledTimes(2);
-    expect(report.mock.calls.map(([record]) => record.aggregate)).toEqual([
-      caught[0],
-      caught[0],
-    ]);
+    for (const [record] of report.mock.calls)
+      expect(record).not.toHaveProperty('aggregate');
   });
 
   it('ERROR-005 ERROR-041 keeps the development mount pass as sink records without throwing', () => {
@@ -306,7 +304,7 @@ describe('round 55 gate failure regression', () => {
       for (const [record] of report.mock.calls)
         expect(record).toMatchObject({
           code: 'SCHEMA_FORM_ERROR.GUARD_FAILED',
-          surface: 'sink',
+          origin: 'write',
         });
     } finally {
       vi.unstubAllEnvs();
