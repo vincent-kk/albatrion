@@ -32,9 +32,11 @@ export async function prepareStageBundle(args: string[]) {
   await build({
     entryPoints: [
       path.resolve(
-        options.harness === 'ir-6'
-          ? 'browser-bench/interaction/validationAfterPaint.tsx'
-          : 'browser-bench/interaction/harness.tsx',
+        options.harness === 'closing'
+          ? 'browser-bench/interaction/stageClosing.tsx'
+          : options.harness === 'ir-6'
+            ? 'browser-bench/interaction/validationAfterPaint.tsx'
+            : 'browser-bench/interaction/harness.tsx',
       ),
     ],
     bundle: true,

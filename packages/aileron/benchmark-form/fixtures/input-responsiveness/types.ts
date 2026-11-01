@@ -24,4 +24,8 @@ export interface InputFixture {
   mountObservationMs?: number;
   /** Omit validationMode to exercise the public default OnChange mode. */
   defaultValidation?: boolean;
+  /** Closing-only explicit public mode; omitted retains the earlier harness. */
+  validationMode?: 0 | 1 | 2;
+  /** Closing Always mount uses the public boolean form. */
+  showError?: true;
 }

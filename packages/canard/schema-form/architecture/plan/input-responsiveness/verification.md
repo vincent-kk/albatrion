@@ -245,3 +245,50 @@ T1의 다섯 origin·T2 중첩 load·T3 옛 필드 부재, A1 reset/rebuild/vali
 ## Amendment 9·10 — 결과 관문 정정
 
 DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다. cadence/root 실행 소유 객체를 자기 실행만 지우며 하위 validate는 건드리지 않습니다. DR-1은 구성 중 unpinned guard read의 설치 루트를 축출하지 않고 DR-2는 예약 load.retired만 늦은 host 보고의 은퇴 신호로 씁니다. DR-14는 nonempty dense known bundle만 생략합니다. DR-11의 degraded native handler 실패는 ERROR-028에 따라 하나의 bundle로 host에 전달하도록 바뀌었습니다. 슬롯의 원소별 host 형태와 native의 거부 그대로 전달을 통일하는 결정은 단계 마감으로 남깁니다. node/root 입력에는 추가 경로 탐색·리스너 배달이 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다. [정정 결정](../../reviews/defect-round.md)의 Amendment 9·10을 따르며 새 reds·변이·전체 관문은 결과 문서에 보충합니다.
+## 단계 마감 측정 — 측정 전 고정 규칙
+
+### 소유자 지시 (Quote 69, Quote 70 원문)
+
+> 그래. 그럼 지금까지 수정을 다 마무리하고, 전체 스캐닝까지 진행하도록 해. 우리 수정으로 성능손실이 얼마나 발생했는지까지 검증해보자. 추가 오류가 없는지도 평가해보고
+
+> 그래 최종 적용에 기능상 문제가 없고, 예정대로 오류가 수정되었으며, 성능상 크게 문제가 없다면 병합 허가할게.
+> 심각한 비효율로 성능지표가 크게 떨어지거나 오류가 있으면 허용 불가. 수정절차를 진행해야해
+
+### 범위와 고정 입력
+
+승인된 closing 설계 v1 및 Amendment 1·2에 따릅니다. Phase 1은 도구 준비와 smoke·사전등록까지만 수행하며 정식 창은 독립 검토와 코디네이터 go 이후 한 번만 시작합니다. 실패하거나 거절된 창은 보존하며 대체 실행하지 않습니다.
+
+- L: 공개 0.16.1 alias. B: `5d1348ed16054efa1ec431945eb00472f4eef7f1`. S: `facd72a71c44a798f5484827509073a27fb678a3`. F: 결함수정 라운드 병합 후 지정되는 최종 head. Phase 1 F는 smoke 전용입니다.
+- B/S는 Orca로 만든 깨끗한 체크아웃에서 빌드하고 제품 범위와 commit을 검증합니다. 제품·브라우저 번들의 SHA-256을 고정한 뒤 체크아웃을 제거합니다.
+- 기존 IR-6 18개 행과 fixture/식별자를 유지합니다. 신규 6개는 `mount-flat-500-onrequest`(validationMode 2), `mount-flat-500-always`(OnChange, showError true), `reset-flat-500-same`, `reset-flat-500-replace`, `rebuild-flat-500`, `validate-flat-500-settled`입니다.
+- replace는 매번 루트 title이 `replace-1`부터 `replace-10`까지 다른 구조입니다. replace/rebuild 뒤 handle.node가 바뀌고 same reset 뒤 유지되어야 합니다. L의 두 reset은 버전 증가에 따른 트리 재구성이므로 모든 표에서 다른 연산임을 표시합니다. L의 rebuild는 제외합니다.
+- reset/rebuild/validate는 안정화된 mount 뒤 페이지당 10회, 1초 슬롯마다 실행합니다. 첫 연산은 별도 보고하며 페이지 값은 10회 중앙값입니다. validate는 Promise 해결 시간을 기록합니다.
+
+### 지표·표본·통계
+
+- 기존 handler/Event Timing/arrival/frame/paint/stream 지표와 원시 자료를 보존합니다. reset/rebuild는 동기 `callDuration`, 호출 시작부터 반환 뒤 double rAF까지 `nextPainted`, 1초 내 최장 프레임과 50ms 이상 프레임 수를 기록합니다. settled validate는 해결 시간과 프레임을 같은 방식으로 판정합니다.
+- `postPaintBusy`는 모든 mount/reset/rebuild/validate에서 첫 paint 이후 시작한 LoAF duration을 연산 시작+1000ms에서 잘라 합산하고, 기존 validator 플러그인 wrapper에서 측정한 compile/validate duration을 같은 구간에 더합니다. 보고 전용이며 중첩으로 인한 이중 계상 가능성을 함께 명시합니다.
+- Amendment 2: 모든 행은 3 warmup 폐기, 10 kept pages, typing은 페이지당 20키(전체 200키)입니다. 일반 4 lane Williams 순서를 1–4, 1–4, 1–2로 반복하며 위치별 3·3·2·2 불균형을 결과에 기록합니다. D8 두 행은 probe를 포함한 5 lane Williams 10순서를 사용합니다.
+- bootstrap은 seed 20261031, 10,000회, 비교 lane과 F에 같은 페이지 index를 재표집합니다. 95% 상한은 nearest-rank입니다. typing은 IR-6 round-6와 같은 전체 handler wall-clock의 pooled p95 비율입니다. 나머지는 재표집 페이지 중앙값들의 중앙값 비율과 중앙값 차이입니다. 짝수 중앙값은 가운데 두 값의 평균입니다. 누락/0 분모는 불확정이며 통과로 바꾸지 않습니다.
+- 정식 창 직전 30초 동안 외부 PID별 평균 CPU가 30% 이하여야 합니다. 거절은 표본 0의 기록으로 보존합니다.
+
+### 병합 차단 판정
+
+| 규칙 | 고정 판정 |
+| --- | --- |
+| C0 | B를 E 역할로 넣은 원본 IR-6 G1과 등록된 L transfer. L 중앙값 8.03ms 초과이면 불확정. |
+| C1 | 8개 type 행의 handler pooled p95 F/B bootstrap 상한 ≤1.10. |
+| C2 | 8개 type 행 duration p95 F ≤B+8ms, 50ms 이상 프레임 수 F ≤B+1. |
+| C3 | nonburst type 행 arrival p95 ≤33.4ms, 200키 중 미전달 0. |
+| C4 | gated mount의 first/eager-painted는 F/B 상한 >1.10 및 중앙값 차이 상한 >8.35ms가 동시에 성립하면 실패. 1초 프레임 수 F ≤B+1. None/if mount는 보고 전용. |
+| C5 | reset/rebuild의 callDuration 상한 ≤1.10, nextPainted는 C4의 이중 조건. settled validate의 해결 시간 상한 ≤1.10. 각 행 프레임 수 F ≤B+1. |
+| C6 | stream 페이지별 validation runs ≤2+ceil(duration/100ms), 프레임 수 F ≤B. |
+| C7 | S를 E 역할로 둔 변경 없는 decideValidationAfterPaintGates, round-6 G1–G6/G8. 하나라도 실패하면 차단. |
+
+C1/C4/C5의 gated 지표 상한이 (1.05,1.10]이면 병합 전 profile 또는 코드 추적으로 원인을 진단하고 보고합니다. first-key 행, None/if mount, postPaintBusy, OnRequest background compile은 보고 전용입니다. F/S 및 F/L은 모든 지표를 보고하며 gate로 대체하지 않습니다.
+
+D8는 F의 revisionObserved latch를 제거한 이름 있는 probe 빌드로 flat-500 type nonburst/burst만 실행합니다. probe/F handler 처리 비율 상한이 하나라도 ≤0.90이면 후속 수정, 아니면 실익 없음으로 닫습니다. probe 변경은 제품 소스에 커밋하지 않습니다.
+
+`registeredStageClosingRules.ts`와 이 사전등록을 정식 창 전에 커밋합니다. inputs.json에 preregisteredCommit, ruleVersion, rulesSha256와 모든 제품/브라우저 해시를 기록합니다. checker의 `--stage=closing`은 저장한 raw에서 모든 수치와 판정을 재현해야 합니다. Phase 1 이후 prepared head·smoke 요약·규칙 SHA-256을 코디네이터에게 보고하고 중지합니다.
+
+C4에서 None/if mount는 보고 전용입니다. C7은 별도 회귀 방어로 원본 G8의 array None 조건까지 그대로 유지합니다. C0의 L 비교 가능성 경계는 원본 수식 `6.425 × 1.25 = 8.03125ms`를 변경하지 않으며 설계의 8.03ms는 표시 정밀도입니다. B/S 체크아웃을 제거한 뒤에는 제품 해시와 commit별 source tree proof가 검증된 고정 복사본을 재사용할 수 있습니다.
