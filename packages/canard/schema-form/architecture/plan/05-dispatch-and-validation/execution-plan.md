@@ -305,7 +305,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 - 원장: TEST-027·072·076, LANDING-093(18C-30 보충), `reviews/round-27-owner-answers.md:7-11`.
 - 만들 파일: `PKG/bench/dispatch-and-validation.bench.ts`(행 `TEST-076-mount`: 마운트를 폼 몫과 검증기 몫(`compileGuard`)으로 나눔, 같은 실행의 옛 엔진 대비; `TEST-076-guards200`: 가드 200개 조건부 폼 생성; `EVENT-004-wave`: 1,000 노드 변경 한 파동), `ARCH/verification/05-dispatch-and-validation/performance.md`.
-- 단계: `node --import tsx`와 `/opt/homebrew/bin/bun`으로 같은 입력을 돈다. 판정은 TEST-072의 선(같은 실행에서 옛 판 대비 처리량 15% 넘는 하락 ∧ Welch p<0.05). 가드 200개 행은 미리 적은 수용 필요 항목이며 미리 받아들인 것이 아니다 — 수치를 바꿔 적고 선을 넘으면 Vincent의 수용을 받는다. 03·04 벤치(`bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`)를 다시 돌려 05 뒤 값을 기록만 한다. 새로 느린 것은 `ARCH/verification/performance-issues.md` "열림"에 행. P-03(게이트 형제 첫 로드 이차)이 배달 경로와 겹치면 수치만 그 행에 덧붙인다. 공개 `<Form>` 선(`guard:check`)도 돈다(레거시 경로의 import 분리 영향).
+- 단계: `node --import tsx`와 `{node-home}/bin/bun`으로 같은 입력을 돈다. 판정은 TEST-072의 선(같은 실행에서 옛 판 대비 처리량 15% 넘는 하락 ∧ Welch p<0.05). 가드 200개 행은 미리 적은 수용 필요 항목이며 미리 받아들인 것이 아니다 — 수치를 바꿔 적고 선을 넘으면 Vincent의 수용을 받는다. 03·04 벤치(`bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`)를 다시 돌려 05 뒤 값을 기록만 한다. 새로 느린 것은 `ARCH/verification/performance-issues.md` "열림"에 행. P-03(게이트 형제 첫 로드 이차)이 배달 경로와 겹치면 수치만 그 행에 덧붙인다. 공개 `<Form>` 선(`guard:check`)도 돈다(레거시 경로의 import 분리 영향).
 - 완료: G41·G42·G43.
 
 ### U16a 06과의 통합
@@ -557,7 +557,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 
 ## 8. 검증 명령(저장소 루트 = 이 작업 트리)
 
-2026-10-01 확인: `PKG/package.json`의 `lint` = `eslint "src/**/*.{ts,tsx}"`, `test` = `vitest`, `typecheck` = `tsc --noEmit --composite false --rootDir . -p tsconfig.json`; `P6`·`P7`·`P8`은 같은 `lint`·`typecheck`와 `test` = `yarn run -T vitest`(jsdom); vitest 프로젝트 `unit`·`render`·`storybook`(`PKG/vite.config.ts`); `ARCH/ledger/checks/plan-links.mjs`(끝 줄 `problems 0`); `/opt/homebrew/bin/bun`; 루트 `tsx`; `@aileron/benchmark-form`의 `guard:check`(요약 줄 `summary: 0 regression(s)`). 아래 `npx` 형태는 같은 스크립트의 이진을 부르며 성공 표지를 붙이기 위한 것이다(M4).
+2026-10-01 확인: `PKG/package.json`의 `lint` = `eslint "src/**/*.{ts,tsx}"`, `test` = `vitest`, `typecheck` = `tsc --noEmit --composite false --rootDir . -p tsconfig.json`; `P6`·`P7`·`P8`은 같은 `lint`·`typecheck`와 `test` = `yarn run -T vitest`(jsdom); vitest 프로젝트 `unit`·`render`·`storybook`(`PKG/vite.config.ts`); `ARCH/ledger/checks/plan-links.mjs`(끝 줄 `problems 0`); `{node-home}/bin/bun`; 루트 `tsx`; `@aileron/benchmark-form`의 `guard:check`(요약 줄 `summary: 0 regression(s)`). 아래 `npx` 형태는 같은 스크립트의 이진을 부르며 성공 표지를 붙이기 위한 것이다(M4).
 
 - 단위 범위: `(cd packages/canard/schema-form && npx vitest run --project unit <경로>)`
 - 패키지 unit·render: `(cd packages/canard/schema-form && npx vitest run --project unit --project render)`
@@ -565,7 +565,7 @@ Planning method: 저장소 지침 — PLAN.md §2와 plan/prompts.md의 단계 �
 - 플러그인(셋 각각): `(cd packages/canard/schema-form-ajv8-plugin && npx vitest run && npx eslint "src/**/*.{ts,tsx}" && npx tsc --noEmit --composite false --rootDir . -p tsconfig.json)`
 - SCN: `(cd packages/aileron/schema-form-scenarios && npx vitest run --config vite.config.ts && npx tsc --noEmit --strict --composite false -p tsconfig.json && npx eslint index.ts "src/**/*.{ts,tsx}")`
 - 원장 인용: `(cd packages/canard/schema-form/architecture && node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md)`
-- 05 벤치: `(cd packages/canard/schema-form && node --import tsx bench/dispatch-and-validation.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/dispatch-and-validation.bench.ts)`
+- 05 벤치: `(cd packages/canard/schema-form && node --import tsx bench/dispatch-and-validation.bench.ts)` 및 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/dispatch-and-validation.bench.ts)`
 - 03·04 벤치 기록 재측정: `bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`를 같은 두 엔진으로
 - 공개 `<Form>` 선: `yarn workspace @aileron/benchmark-form guard:check`(단독 호출)
 - 06과 merge한 뒤의 겉면 합집합: `(cd packages/canard/schema-form && npx vitest run --project unit src/core/SchemaNode/__tests__/surface.test.ts src/core/SchemaNode/__tests__/type-contract.test.ts)`(G44)

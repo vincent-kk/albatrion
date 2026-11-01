@@ -1,14 +1,14 @@
 # G27 3단계 보충 검증 보고서: schema-form-switch(07 전환)
 
 - 검증 엔진과 노력은 codex, high입니다.
-- 검증 대상은 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`의 브랜치 `feat/schema-form-switch`, HEAD `a76ebf44a5159713e26c7c804d67b6b2f92bdb29`입니다. `git rev-parse HEAD`로 확인했으며, 시작 시 `git status --porcelain=v1`의 출력은 비어 있었습니다.
+- 검증 대상은 `{repo}`의 브랜치 `feat/schema-form-switch`, HEAD `a76ebf44a5159713e26c7c804d67b6b2f92bdb29`입니다. `git rev-parse HEAD`로 확인했으며, 시작 시 `git status --porcelain=v1`의 출력은 비어 있었습니다.
 - 검증 일시는 2026-10-11, Asia/Seoul입니다.
 - 범위는 2단계의 B1·B2·B4·B5·B6과 N1·N2, `6040aa3d9..HEAD`의 후속 수정, 최초 기준선·원장·실행 계획·현재 게이트의 일치 여부입니다. `9f6b4000f`, `67d7a8e42`, `ad8cbd743`, `75fc421b4`의 소스·시험·문서 차분과 그 뒤의 문서 커밋을 확인했습니다.
 - 방법은 `seiri:verify`의 독립 검증입니다. 먼저 두 기존 보고서, 실행 계획, 기록, 워크트리의 게이트 원장, 메인 체크아웃의 소유자 질의 목록, 지정된 규칙과 패키지 CLAUDE.md를 읽었습니다. `gates status`에는 워크트리 `project_root`를 명시했으며 `all_met: false`를 확인했습니다. 단계 변경이나 게이트 기록 호출은 하지 않았습니다.
 - 비교 ref는 로컬 `origin/1.0.0-beta`의 `715a09111f4afd09a44cef73a59cad053aa39a5e`입니다. merge-base는 `69290372ceb7367e079f6c3349d02067297541a3`입니다. 메인 체크아웃의 브랜치는 `1.0.0-beta`였습니다. 2단계 이후 로컬 ref가 이동했으므로 당시 해시를 현재 ref로 간주하지 않았습니다.
 - 실행 환경은 지정 경로의 Node `v26.11.1`, V8 `14.6.202.34-node.37`, darwin arm64입니다. 설치된 Vitest는 `3.2.6`, Vite는 `7.3.5`, TypeScript는 `5.9.2`, React는 `19.2.6`과 `18.3.1`입니다.
 - 네트워크·설치·yarn·npm·gh를 실행하지 않았습니다. 허용된 npx 시험에는 `--offline --no-install`과 오프라인 환경을 적용했습니다. 제품 소스·커밋된 시험·계획·원장·기록은 수정하지 않았습니다. 저장소에 작성한 파일은 이 보고서뿐입니다.
-- 아래의 `S`는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g27p3`입니다. 비교 설정과 시험 JSON은 모두 이 경로에 두었습니다. Vite 설정은 기존 패키지 설정을 재사용하고 캐시 위치만 S로 돌렸으며 `--configLoader runner`를 사용했습니다. 수정 전 소스 비교에서는 제품 alias만 S의 이전 소스 트리로 돌렸습니다. 각 명령은 8분 미만에 종료했으며, Vitest 호출의 제한은 450초였습니다.
+- 아래의 `S`는 `{scratch}/g27p3`입니다. 비교 설정과 시험 JSON은 모두 이 경로에 두었습니다. Vite 설정은 기존 패키지 설정을 재사용하고 캐시 위치만 S로 돌렸으며 `--configLoader runner`를 사용했습니다. 수정 전 소스 비교에서는 제품 alias만 S의 이전 소스 트리로 돌렸습니다. 각 명령은 8분 미만에 종료했으며, Vitest 호출의 제한은 450초였습니다.
 
 ## 판정
 
@@ -24,7 +24,7 @@ G23의 소유자 브라우저 실행, G26의 의도된 수용 대기, G33의 PR 
 
 `67d7a8e42`는 `formTypeInputDefinitions.ts:53`에서 integer 검사의 입력을 `readonly unknown[]`로 선언하고, `:79`에서 비교 값을 `unknown`으로 선언했습니다. 2단계가 지적한 두 `as never`는 없습니다. `useTerminalChildren.ts:9`의 빈 목록도 배열 선언 후 동결하도록 바뀌어 `as unknown as ChildNodeComponent[]`가 없습니다. 입력 정의·맵·경계 관련 재실행은 아래의 207건 통과에 포함됩니다.
 
-그러나 `src/core`의 나머지 14개는 `g27-fixes.md:45`부터의 승인 대기 목록과 정확히 같습니다. 메인 체크아웃의 `architecture/reviews/owner-queue-07.md:10`은 이 14개를 여전히 질의 4항으로 둡니다. 질의 목록은 승인 답변이 아니며, `/Users/Vincent/Workspace/.claude/CLAUDE.md:18`과 `:19`의 선언 자리 정비 및 명시적 승인 조건을 충족하지 않습니다. 이 항목은 승인 대기라는 한 건의 차단 지적으로 계산했습니다.
+그러나 `src/core`의 나머지 14개는 `g27-fixes.md:45`부터의 승인 대기 목록과 정확히 같습니다. 메인 체크아웃의 `architecture/reviews/owner-queue-07.md:10`은 이 14개를 여전히 질의 4항으로 둡니다. 질의 목록은 승인 답변이 아니며, `{agent-home}/CLAUDE.md:18`과 `:19`의 선언 자리 정비 및 명시적 승인 조건을 충족하지 않습니다. 이 항목은 승인 대기라는 한 건의 차단 지적으로 계산했습니다.
 
 #### 전체 비시험 단언을 다시 센 결과입니다
 

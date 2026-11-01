@@ -26,7 +26,7 @@
 
 ## 환경과 원자료
 
-- 실행 ID: `20261026T2245-e713089-d2-integration`; 외부 원자료 루트: `/private/tmp/claude-501/perf-runs/20261026T2245-e713089-d2-integration`.
+- 실행 ID: `20261026T2245-e713089-d2-integration`; 외부 원자료 루트: `{scratch}/perf-runs/20261026T2245-e713089-d2-integration`.
 - 조용한 창 시작/설치 시작: `2026-10-26T22:42:38Z`; 종료 알림 시각: `2026-10-26T22:48:33Z`. H5b 관문 종료 후 코디네이터가 다른 워커의 무거운 작업을 중지한 창입니다.
 - 쌍 측정 실제 시각: `2026-10-26T22:44:14.548Z` ~ `2026-10-26T22:44:52.239Z`; 프로파일 실제 시각과 argv·종료 코드는 `profile-commands.json`에 있습니다.
 - Node `v26.12.1`, Apple M1 Max 10코어, Darwin `27.0.0 arm64`, 메모리 64GiB, `NODE_ENV=production`입니다.
@@ -491,7 +491,7 @@ CPU 반복 480회, 비 idle 수집 10059.5ms입니다. 아래 자기 시간은 *
 | 9 | set | (native) | 1197.30 | 2.8 |
 | 10 | values | (native) | 642.01 | 1.5 |
 | 11 | add | (native) | 639.82 | 1.5 |
-| 12 | materialize | file:///Users/Vincent/Workspace/albatrion/design-opt-d0-tools/packages/canard/schema-form/architecture/verification/design-optimization/tools/helpers/materialize.mjs | 557.82 | 1.3 |
+| 12 | materialize | file://design-opt-d0-tools/packages/canard/schema-form/architecture/verification/design-optimization/tools/helpers/materialize.mjs | 557.82 | 1.3 |
 | 13 | validateControlGroups | engine/blueprint/buildNodes/utils/declarations/validateControlGroups.ts | 555.74 | 1.3 |
 | 14 | mergeSingleStaticContribution | engine/blueprint/effectiveSchema/utils/merge/mergeSingleStaticContribution.ts | 516.74 | 1.2 |
 | 15 | resolveNodeTypes | engine/blueprint/buildNodes/utils/nodeTypes/resolveNodeTypes.ts | 513.71 | 1.2 |

@@ -13,7 +13,7 @@ const directory = path.dirname(fileURLToPath(import.meta.url));
 const output = path.resolve(directory, '..');
 const pkg = path.resolve(output, '../../..');
 const repo = path.resolve(pkg, '../../..');
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
 assert.equal(head, '9383abcdaf22c7dd19dd6d6ddb7e66b4a9616dd4');
 const fixtureName = process.argv[2];

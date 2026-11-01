@@ -253,7 +253,7 @@ B=5/10/20/40에서 건드리는 분기는 0과 4, 무관 분기는 3/8/18/38개�
 | `src/core/settle/utils/compute/selectChildren.ts:82:selectChildren` | 4.772/18.999 | 1.621/6.073 | 5.072/1.868 | 후보 18/6; 공유 진입 별도 |
 | `src/core/settle/utils/gates/readProjectedValue.ts:25:readProjectedValue` | 3.339/4.304 | 1.039/1.377 | 3.522/1.181 | 24/8 |
 | `src/core/settle/utils/compute/computeNode.ts:22:computeNode` | 2.277/26.841 | 0.262/8.111 | 2.466/0.366 | 공유 진입; 선언 후보 9/3 |
-| `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs:6:hasOwnProperty` | 1.403/1.403 | 0.549/0.549 | 1.488/0.623 | 78/26 |
+| `packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs:6:hasOwnProperty` | 1.403/1.403 | 0.549/0.549 | 1.488/0.623 | 78/26 |
 | `src/core/settle/utils/gates/evaluateGate.ts:26:evaluateGate` | 1.348/10.994 | 0.460/3.507 | 1.431/0.520 | 24/8 |
 | `src/core/settle/utils/gates/flushPendingGateReads.ts:74:flushRead` | 1.245/1.706 | 0.443/0.604 | 1.305/0.496 | 9/3 |
 | `src/core/settle/utils/write/registerRecalculation.ts:12:registerRecalculation` | 1.093/2.577 | 0.286/0.808 | 1.173/0.341 | 후보 9/3; 공유 진입 별도 |
@@ -369,13 +369,13 @@ B=5/10/20/40에서 건드리는 분기는 0과 4, 무관 분기는 3/8/18/38개�
 측정 구간과 최종 계수 구간은 audit의 UTC 시각에 있습니다. 재현 명령은 기존 설치 Node v26.10.0과 esbuild/typescript만 사용합니다. 다음 명령은 한 줄씩 종료를 확인하고 실행하며 각 worker는 자체 420초 제한과 종료 직전 active resources 검사를 둡니다. 생성 결과는 외부 scratch에만 쓰므로 원자료를 바꾸지 않고 별도로 비교할 수 있습니다.
 
 ```sh
-/opt/homebrew/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs array-100 off 1 new --head=bef81f4d747d028b05082d594138148520e4d992 --warmup=20
-/opt/homebrew/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/branch-worker.mjs counts 5 1
-/opt/homebrew/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/branch-worker.mjs cpu 5 1
-/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/check-sentinel.mjs
-/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/check-report-row.mjs
-/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/analyze.mjs
-/opt/homebrew/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/render-report.mjs
+{node-home}/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs array-100 off 1 new --head=bef81f4d747d028b05082d594138148520e4d992 --warmup=20
+{node-home}/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/branch-worker.mjs counts 5 1
+{node-home}/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/branch-worker.mjs cpu 5 1
+{node-home}/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/check-sentinel.mjs
+{node-home}/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/check-report-row.mjs
+{node-home}/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/analyze.mjs
+{node-home}/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-112-branch/render-report.mjs
 ```
 
 위 예시는 크기 5·회차 1입니다. 실제 CPU는 크기 5/10/20/40 × 회차 1..9를 순차 실행했습니다. 공식 array 명령은 timing-only JSON 및 메타데이터를 stdout으로 내보내는 기존 도구이며 native 도구로 `profile-112-branch/`의 정해진 파일에 보존했습니다. 기본 stdout을 shell 변수로 재해석하거나 추가 설치하지 않습니다. 전체 monorepo test/build는 제품 코드를 바꾸지 않은 이 측정 작업의 검증 범위에 포함하지 않았습니다.

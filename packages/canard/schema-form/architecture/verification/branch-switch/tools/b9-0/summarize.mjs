@@ -322,8 +322,8 @@ const portable = (value) => {
   if (typeof value === 'string')
     return value
       .replaceAll(root, '<run>')
-      .replace(/\/Users\/[^\n]+/g, '<local-process-path>')
-      .replace(/\/private\/tmp\/[^\n]+/g, '<local-process-path>')
+      .replace(/{home}\/[^\n]+/g, '<local-process-path>')
+      .replace(/{scratch}\/[^\n]+/g, '<local-process-path>')
       .replace(/\/(?:private\/)?var\/folders\/[^\n]+/g, '<local-process-path>');
   if (Array.isArray(value)) return value.map(portable);
   if (value && typeof value === 'object')

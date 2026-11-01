@@ -18,7 +18,7 @@ const bf = path.join(repo, 'packages/aileron/benchmark-form');
 const bfRequire = createRequire(path.join(bf, 'package.json'));
 const pkgRequire = createRequire(path.join(pkg, 'package.json'));
 const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
-assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(repo, '{repo}');
 assert.equal(head, 'af3cd579b892393de3693f737afe68cfce3993f8');
 const started = performance.now();
 const lane = process.argv.includes('--phases') ? 'phases' : 'plain';

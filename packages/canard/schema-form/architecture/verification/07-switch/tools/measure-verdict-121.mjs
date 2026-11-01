@@ -33,7 +33,7 @@ const repo = path.resolve(pkg, '../../..');
 const expectedHead = 'e59e435aa1fc071ddd7b2eedd0ad4c407424b826';
 const measurementHead = process.argv.find(value => value.startsWith('--head='))?.slice(7) ?? expectedHead;
 assert.match(measurementHead, /^[a-f0-9]{40}$/);
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 const immediate = globalThis.setImmediate;
 const clock = () => performance.now();
 const warmup = 20;
@@ -167,7 +167,7 @@ if (process.argv.includes('--self-test')) {
   const { measurePair121 } = await import('./measure-pair-121.mjs');
   const [stage, fixtureName, validation, runText] = process.argv.slice(process.argv.indexOf('--pair') + 1);
   const bundles = process.argv.find(value => value.startsWith('--bundles='))?.slice(10) ??
-    '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
+    '{scratch}/bundles';
   const single = process.argv.find(value => value.startsWith('--single='))?.slice(9);
   console.log(JSON.stringify(await measurePair121({ stage, fixtureName, validation, run: Number(runText), bundles,
     warmup: measurementWarmup, sampleCount, noGcFirst: process.argv.includes('--no-gc-first'), repo, pkg, output, single,

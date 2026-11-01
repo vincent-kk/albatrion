@@ -10,7 +10,7 @@
   },
   "node": {
     "version": "v26.12.1",
-    "executable": "/opt/homebrew/Cellar/node/26.12.1_1/bin/node"
+    "executable": "{node-home}/Cellar/node/26.12.1_1/bin/node"
   },
   "machine": {
     "cpu": "Apple M1 Max",

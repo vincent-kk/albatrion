@@ -16,11 +16,11 @@
 
 ### 1. 조사 대상과 방법
 
-- 작업 트리: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`, HEAD `f22a7b89b8f17edd9977a280e3888e83442d9a72`입니다.
-- D: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch`입니다.
-- S: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+- 작업 트리: `{repo}`, HEAD `f22a7b89b8f17edd9977a280e3888e83442d9a72`입니다.
+- D: `packages/canard/schema-form/architecture/verification/07-switch`입니다.
+- S: `{scratch}`입니다.
 - 이하 B는 S의 `fbx-a1000-diag/`입니다. 스크립트·작업 명세·원시 JSON·GC 로그·요약·상태 검증은 모두 여기에 있습니다.
-- 모든 프로브·빌드·분석은 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`를 사용했습니다. 프로세스마다 번들 하나를 로드했고, 타이밍 측정은 순차 실행했습니다. 판정 세션을 만들지 않았습니다.
+- 모든 프로브·빌드·분석은 `{node-home}/versions/node/v26.11.1/bin/node`를 사용했습니다. 프로세스마다 번들 하나를 로드했고, 타이밍 측정은 순차 실행했습니다. 판정 세션을 만들지 않았습니다.
 
 `fd-a500-diagnosis.md`, `harness-131.md`, `fb-ff-fe-implementation.md`와 S의 두 진단 키트를 먼저 읽었습니다. `fd-a500-diag`의 호출 계측, ABBA 쌍별 비교, 창 경계와 V8 trace 연결 방법을 재사용했습니다. 초기의 간소화 프로브는 base에서 GC가 거의 없고 후보에서 자주 발생하는 약 3 ms 차이를 만들었습니다. 원래 하네스의 calibration·마운트/업데이트 digest·DOM 경로 추출을 복원하자 그 GC 분포가 바뀌었습니다. **초기 간소화 프로브의 3 ms를 원래 회귀의 재현으로 채택하지 않았습니다.** 그 자료는 B의 `noneA*`, `exact*`, `trace*` 계열에 보존돼 있습니다.
 

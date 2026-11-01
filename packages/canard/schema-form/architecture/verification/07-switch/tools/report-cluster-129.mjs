@@ -230,7 +230,7 @@ function readRecords(list) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const flag = name => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3);
-  const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad';
+  const scratch = '{scratch}';
   assert(flag('input'), '--input=<directory|file>[,…] is required');
   const records = readRecords(flag('input'));
   const confirmRecords = flag('confirm-input') ? readRecords(flag('confirm-input')) : [];

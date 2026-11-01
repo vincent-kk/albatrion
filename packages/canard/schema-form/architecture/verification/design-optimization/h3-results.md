@@ -35,9 +35,9 @@ bulk 장면에는 wave 장면과 같은 자식 1,000 구독이 없으므로, 구
 - 기준: `bc0fb3d0a`의 제품 소스(보관 dist는 `8d5c5dba1` 빌드와 동일). 기준 node dist SHA256은 `a396cf65e154187e33647e034429e323d66357133867bc6ea254861c098dcca6`입니다.
 - Node v26.12.1, production, Apple M1 Max arm64. 각 pair의 environment.json에 OS·실행 인수·원본 SHA256을 보관했습니다.
 - 조용한 창 시작은 최초 build의 실제 시각 `2026-10-26T18:10:25.793788+00:00`이며 모든 정식 실행에 같은 `--quiet-since`를 전달했습니다. H2 종료 후 코디네이터가 승인한 창입니다.
-- **경로 배열 + sort**: `/private/tmp/claude-501/perf-runs/20261026T1800-bc0fb3d-h3`; bulk 전후 원자료는 `/private/tmp/claude-501/perf-runs/20261026T1812-4472194-h3-before`, `/private/tmp/claude-501/perf-runs/20261026T1813-4472194-h3-after`. 후보 node dist SHA256 `460e2f8493a2be1f4b25475cc13c03da92f07502acd28cf74223be2128321f67`.
-- **전위 rank + sort**: `/private/tmp/claude-501/perf-runs/20261026T1816-17158b3-h3`; bulk 전후 원자료는 `/private/tmp/claude-501/perf-runs/20261026T1817-17158b3-h3-before`, `/private/tmp/claude-501/perf-runs/20261026T1817-17158b3-h3-after`. 후보 node dist SHA256 `252356473c087444c8d0a41ce03352ed1244e5a94c5ab298c8a87bdaafbf6d23`.
-- **전위 배달 벡터**: `/private/tmp/claude-501/perf-runs/20261026T1823-676a6c4-h3-vector`; bulk 전후 원자료는 `/private/tmp/claude-501/perf-runs/20261026T1824-676a6c4-h3-vector-before`, `/private/tmp/claude-501/perf-runs/20261026T1824-676a6c4-h3-vector-after`. 후보 node dist SHA256 `617c56c095bee4629ea8233a73ad612b16bc0c341e9d8ab1937db2ade33e351d`.
+- **경로 배열 + sort**: `{scratch}/perf-runs/20261026T1800-bc0fb3d-h3`; bulk 전후 원자료는 `{scratch}/perf-runs/20261026T1812-4472194-h3-before`, `{scratch}/perf-runs/20261026T1813-4472194-h3-after`. 후보 node dist SHA256 `460e2f8493a2be1f4b25475cc13c03da92f07502acd28cf74223be2128321f67`.
+- **전위 rank + sort**: `{scratch}/perf-runs/20261026T1816-17158b3-h3`; bulk 전후 원자료는 `{scratch}/perf-runs/20261026T1817-17158b3-h3-before`, `{scratch}/perf-runs/20261026T1817-17158b3-h3-after`. 후보 node dist SHA256 `252356473c087444c8d0a41ce03352ed1244e5a94c5ab298c8a87bdaafbf6d23`.
+- **전위 배달 벡터**: `{scratch}/perf-runs/20261026T1823-676a6c4-h3-vector`; bulk 전후 원자료는 `{scratch}/perf-runs/20261026T1824-676a6c4-h3-vector-before`, `{scratch}/perf-runs/20261026T1824-676a6c4-h3-vector-after`. 후보 node dist SHA256 `617c56c095bee4629ea8233a73ad612b16bc0c341e9d8ab1937db2ade33e351d`.
 
 각 실행 폴더의 window.json, measure-commands.json, wave-results.json, pair-directories.json, profile-before/after.stdout와 연결된 pair 폴더의 results.json·rows.md·prof/wave/loop.cpuprofile에 원자료가 있습니다. 초기 백그라운드 실행기는 자식이 표본 수집 전에 종료되어 유효 표본이 없었고, 실행 세션을 유지하는 방식으로 수행한 자료만 표에 사용했습니다. 원자료와 번들은 커밋하지 않았습니다.
 

@@ -51,7 +51,7 @@
 
 ## 독립 패치와 production 번들
 
-S는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`입니다.
+S는 `{scratch}`입니다.
 
 - `S/branch1b.patch`: 1b 구현·계수 시험·해당 DETAIL 비용/acceptance group입니다.
 - `S/branch2.patch`: 경로 구현·계수 시험·해당 DETAIL 비용/acceptance group입니다.

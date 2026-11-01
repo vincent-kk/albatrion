@@ -8,7 +8,7 @@ const { sampleWindow } = await import('./sampleWindow.mjs');
 const { buildBundle } = await import('./buildBundle.mjs');
 const runDir = process.argv[2];
 if (
-  !/^\/private\/tmp\/claude-501\/perf-runs\/\d{8}T\d{4}-b8db539-b0$/.test(
+  !/^{scratch}\/perf-runs\/\d{8}T\d{4}-b8db539-b0$/.test(
     runDir?.replace(/\.noindex$/, ''),
   )
 )

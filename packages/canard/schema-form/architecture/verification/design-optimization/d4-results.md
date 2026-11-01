@@ -362,11 +362,11 @@ L 열은 같은 공개 판의 두 쌍별 대조값을 `L↔S / L↔E` 순서로 
 | array-push-remove-100    | 689.224230 | 624.761203 | 0.9065  | 693.708933 | 613.785633 | 0.8848  |
 | computed-visible-derived | 2.212417   | 2.313543   | 1.0457  | 2.258770   | 2.333479   | 1.0331  |
 
-보존 E 출처는 `/private/tmp/claude-501/perf-runs/20261027T0444-ca8d52f-d4-integrated/E/`입니다. 실행 전후 SHA-256을 대조했습니다. React가 Node 조건으로 읽는 `index.node.mjs`는 `59932cf4b9b12e52ce2610d3c4c1ad212705c1a714265234fbf24c753c55841b`, 러너가 core factory 식별에 읽는 `index.mjs`는 `0896a2b1fd02d558836f2df78b80976df38e0d3552202c686484ad6be4dbafb6`입니다. L 번들은 `5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46`입니다. 의존 dist의 복사 출처와 파일별 해시는 `prepared-artifacts.json`에 보존했습니다. 새 제품 빌드는 수행하지 않았습니다.
+보존 E 출처는 `{scratch}/perf-runs/20261027T0444-ca8d52f-d4-integrated/E/`입니다. 실행 전후 SHA-256을 대조했습니다. React가 Node 조건으로 읽는 `index.node.mjs`는 `59932cf4b9b12e52ce2610d3c4c1ad212705c1a714265234fbf24c753c55841b`, 러너가 core factory 식별에 읽는 `index.mjs`는 `0896a2b1fd02d558836f2df78b80976df38e0d3552202c686484ad6be4dbafb6`입니다. L 번들은 `5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46`입니다. 의존 dist의 복사 출처와 파일별 해시는 `prepared-artifacts.json`에 보존했습니다. 새 제품 빌드는 수행하지 않았습니다.
 
 러너 시험 24건(기존 픽스처 19건·추가 회귀 5건), 별도 CLI mount/update smoke, 변경 파일 lint와 런타임 typecheck를 통과했습니다. 타이머 제거 시험은 기존 `drainTicks`로 되돌리면 두 assertion이 실패했고 수정 뒤 통과했습니다. 기본 선언 검사에는 기존 `loadCoreBenchmark.ts`의 TS4058이 있어 `--declaration false --emitDeclarationOnly false`로 런타임 typecheck를 수행했으며 원래 실패 로그도 보존했습니다. 원자료의 7,600 유지 표본, 19개 픽스처 순서·9개 지표·중앙값·p99·비율·바닥 차감식·commit 정수·번들 해시·제품 src diff 0을 `check-results.py`로 검증했습니다.
 
-원자료·명령·검증 로그: `/private/tmp/claude-501/perf-runs/20261027T0621-1e79375-d4b-react/`. 두 통과는 `react-1.json`, `react-2.json`, 요약은 각 `react-*-summary.json`, 수치 검증은 `artifact-check.json`입니다. PR은 열지 않았으며 stage 반영과 독립 검토는 코디네이터에게 인계합니다.
+원자료·명령·검증 로그: `{scratch}/perf-runs/20261027T0621-1e79375-d4b-react/`. 두 통과는 `react-1.json`, `react-2.json`, 요약은 각 `react-*-summary.json`, 수치 검증은 `artifact-check.json`입니다. PR은 열지 않았으며 stage 반영과 독립 검토는 코디네이터에게 인계합니다.
 
 ## 독립 스크립트 벤치 — Node·Bun
 
@@ -854,12 +854,12 @@ summary: 1 regression(s), 6 improvement(s), 16 categories compared.
 
 ## 원자료와 인계
 
-- 통합 raw·명령·로그·보존 번들·검증 스크립트: `/private/tmp/claude-501/perf-runs/20261027T0444-ca8d52f-d4-integrated/`.
-- core-L-S: `/private/tmp/claude-501/perf-runs/20261027T0452-ca8d52f-d4-core-L-S/`.
-- core-L-E: `/private/tmp/claude-501/perf-runs/20261027T0453-ca8d52f-d4-core-L-E/`.
-- core-L-Sprime: `/private/tmp/claude-501/perf-runs/20261027T0453-ca8d52f-d4-core-L-Sprime/`.
-- probes-L-S: `/private/tmp/claude-501/perf-runs/20261027T0454-ca8d52f-d4-probes-L-S/`.
-- probes-L-E: `/private/tmp/claude-501/perf-runs/20261027T0456-ca8d52f-d4-probes-L-E/`.
-- PR 본문 준비 파일: `/private/tmp/454-d4/pr-body.md`; PR은 열지 않았습니다.
-- 임시 S worktree `/private/tmp/454-d4-start`는 모든 측정과 원자료 복사 후 제거했습니다. 제거 결과와 문서 검증 로그는 통합 raw에 남겼습니다.
+- 통합 raw·명령·로그·보존 번들·검증 스크립트: `{scratch}/perf-runs/20261027T0444-ca8d52f-d4-integrated/`.
+- core-L-S: `{scratch}/perf-runs/20261027T0452-ca8d52f-d4-core-L-S/`.
+- core-L-E: `{scratch}/perf-runs/20261027T0453-ca8d52f-d4-core-L-E/`.
+- core-L-Sprime: `{scratch}/perf-runs/20261027T0453-ca8d52f-d4-core-L-Sprime/`.
+- probes-L-S: `{scratch}/perf-runs/20261027T0454-ca8d52f-d4-probes-L-S/`.
+- probes-L-E: `{scratch}/perf-runs/20261027T0456-ca8d52f-d4-probes-L-E/`.
+- PR 본문 준비 파일: `{scratch}/454-d4/pr-body.md`; PR은 열지 않았습니다.
+- 임시 S worktree `{scratch}/454-d4-start`는 모든 측정과 원자료 복사 후 제거했습니다. 제거 결과와 문서 검증 로그는 통합 raw에 남겼습니다.
 - 제품 변경, D5 설계 선택, 느린 행의 소유자 수용, 독립 검토, 플러그인 일곱·documents·filid 전체 마감 게이트는 이 측정 전용 변경에 포함하지 않았습니다.

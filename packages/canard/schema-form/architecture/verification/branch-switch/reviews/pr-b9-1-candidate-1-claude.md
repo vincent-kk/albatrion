@@ -180,7 +180,7 @@ Reviewed: `550d1dae2` (docs: settle DETAIL H1/H8/H4 corrections and the engine D
    - No test, expectation, Vite config or product change was made for them in the range.
 8. **Hygiene (confirmed).**
    - No commit has a trailer, and the author is "Vincent" with the noreply address.
-   - No changed file contains `/Users/`, `/private/`, `/var/folders`, `/tmp/` or a personal name. This includes paced full scans of `window-1/cpu-prechecks.json.gz` (267 MB decompressed) and `window-1/stage-samples.json.gz`. The home directory appears only as `<home>`. See P3-C.
+   - No changed file contains `{home}/`, `{tmp}/`, `{tmp}`, `{scratch}/` or a personal name. This includes paced full scans of `window-1/cpu-prechecks.json.gz` (267 MB decompressed) and `window-1/stage-samples.json.gz`. The home directory appears only as `<home>`. See P3-C.
 
 ### New findings
 
@@ -246,7 +246,7 @@ Reviewed: `769917e8a` and `0c5b1be78` (docs: settle DETAIL contract for direct p
    - `raw/b9-1/window-1/window-end.json` and `raw/b9-1/window-2/window-end.json` keep only the top 10 names and CPU percentages. `tools/b9-1/window.mjs:207` applies `helpers/compactProcessRows.mjs` to future windows, and `checkTools.mjs` asserts the shape.
    - No window-1 judgment or sample file is in the diff.
    - The CPU precheck records are not trimmed (P3-D).
-   - No changed file, decompressed log or raw file contains `/Users/`, `/private/`, `/var/folders`, `/tmp/`, a session line or a personal name. This includes a streamed scan of the 261.6 MB window-2 prechecks.
+   - No changed file, decompressed log or raw file contains `{home}/`, `{tmp}/`, `{tmp}`, `{scratch}/`, a session line or a personal name. This includes a streamed scan of the 261.6 MB window-2 prechecks.
    - All four commits have author "Vincent" with the noreply address and no trailers.
 
 ### New findings

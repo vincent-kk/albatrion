@@ -55,7 +55,7 @@
 
 측정 실행의 자리:
 
-- **실행 디렉터리:** `/private/tmp/claude-501/perf-runs/<실행 ID>/`. git 밖이고 작업 폴더 밖이라, 작업 폴더를 지워도 남는다. 영구 기록은 `baseline.md`의 표다.
+- **실행 디렉터리:** `{scratch}/perf-runs/<실행 ID>/`. git 밖이고 작업 폴더 밖이라, 작업 폴더를 지워도 남는다. 영구 기록은 `baseline.md`의 표다.
 - **실행 ID:** `<YYYYMMDD>T<HHMM>-<커밋 7자>-<표지>`. 표지는 `before`(루프 시작 커밋), `after-<묶음 또는 PR 번호>`, `final`(M3) 가운데 하나다. 예: `20261014T2300-1a2b3c4-before`.
 - **파일 이름:** `<도구>-<대상>-<런타임>-<모드>.<json|txt>`.
   - `env.json`: 기기, OS, `node -v`, `bun -v`, 커밋, `NODE_ENV`, 시작과 끝 시각, 조용한 창을 연 알림의 시각.

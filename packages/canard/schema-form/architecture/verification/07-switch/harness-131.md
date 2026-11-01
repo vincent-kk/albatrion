@@ -1,6 +1,6 @@
 # 131회차 실행기의 계약과 리뷰 수정을 기록합니다.
 
-이 작업에서는 측정 도구를 수정하였으며 시간에 관한 채택·회귀 판정은 수행하지 않았습니다. 작업 트리는 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`입니다. 최초 구현 기준 HEAD는 `65f74e669e106e7324aca198ad2a973df9bd5569`이고 이번 리뷰 수정의 시작 HEAD는 `c1d3f918a40aad1ec63a23604dc18f4328dab5f0`입니다. 변경은 이 문서와 `tools/`에 한정하였습니다. git 쓰기, 설치, 제품 코드 변경 및 번들 재빌드를 수행하지 않았습니다. 이동된 `plan-131.md`와 `gates-131.md`는 저장소에 다시 만들지 않았습니다.
+이 작업에서는 측정 도구를 수정하였으며 시간에 관한 채택·회귀 판정은 수행하지 않았습니다. 작업 트리는 `{repo}`입니다. 최초 구현 기준 HEAD는 `65f74e669e106e7324aca198ad2a973df9bd5569`이고 이번 리뷰 수정의 시작 HEAD는 `c1d3f918a40aad1ec63a23604dc18f4328dab5f0`입니다. 변경은 이 문서와 `tools/`에 한정하였습니다. git 쓰기, 설치, 제품 코드 변경 및 번들 재빌드를 수행하지 않았습니다. 이동된 `plan-131.md`와 `gates-131.md`는 저장소에 다시 만들지 않았습니다.
 
 최초 구현 전에 `harness-129.md`, `profile-129a-session.md`, 시간 분해 덧붙임을 포함한 `profile-129e-session.md`, `fap-nogc-diagnosis-131.md`를 읽었습니다. 편집 결정은 `git show origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-129-owner-answers.md`와 같은 경로의 `round-128-closing.md`로 확인하였습니다. 이번 수정에서는 독립 리뷰의 일곱 지적과 실제 번들 로드 횟수 요구를 코드 및 원자료와 대조하였습니다.
 
@@ -61,7 +61,7 @@ worker를 시작하기 전에 `preflightSession131`이 `estimateSession131`로 �
 
 정규 첫 통과의 확인 여유는 추정 시간의 25%와 20분 중 큰 값입니다. A/A에서도 이 여유를 남겨 같은 preset의 판정 세션 설계를 보수적으로 확인합니다. smoke는 확인을 하지 않으므로 여유가 0이며, 확인 전용 실행도 첫 통과를 다시 하지 않으므로 추가 확인 여유가 0입니다. 실제 표시 행이 정해지면 그 행들의 전체 블록 비용을 남은 예산과 다시 비교한 뒤 확인을 시작합니다. 여유보다 많은 회귀가 표시되거나 실제 비용이 늘면 실패하며 확인을 생략한 통과를 발행하지 않습니다. 이 여유는 모든 행이 회귀인 최악의 경우를 보장하지 않습니다.
 
-실행 전 모델인 `planning-costs-131.mjs`는 이전 두 전체 smoke의 단계별 평균과 SHA-256 출처를 명시한 고정 계획 자료입니다. 출처는 `/private/tmp/harness-131-core-smoke-full/final.json` 및 `/private/tmp/harness-131-react-smoke-v3/final.json`입니다. 이 자료에는 수정 전 관측 비용이 포함되며 GC 통계나 판정 잡음으로 재사용하지 않습니다. 별도 비용 측정을 자동으로 먼저 수행하면 예산 거부 전에 타이밍이 발생하므로 고정 모델을 사용합니다. 새로운 smoke의 비용 외삽도 최종 JSON에 별도로 기록합니다. 기계 부하, GC, JIT 및 fixture 결합에 따라 실제 비용은 달라질 수 있으며 추정은 완료 보장이 아닙니다.
+실행 전 모델인 `planning-costs-131.mjs`는 이전 두 전체 smoke의 단계별 평균과 SHA-256 출처를 명시한 고정 계획 자료입니다. 출처는 `{scratch}/harness-131-core-smoke-full/final.json` 및 `{scratch}/harness-131-react-smoke-v3/final.json`입니다. 이 자료에는 수정 전 관측 비용이 포함되며 GC 통계나 판정 잡음으로 재사용하지 않습니다. 별도 비용 측정을 자동으로 먼저 수행하면 예산 거부 전에 타이밍이 발생하므로 고정 모델을 사용합니다. 새로운 smoke의 비용 외삽도 최종 JSON에 별도로 기록합니다. 기계 부하, GC, JIT 및 fixture 결합에 따라 실제 비용은 달라질 수 있으며 추정은 완료 보장이 아닙니다.
 
 다음 표는 A/A 전용 계수 0, 감시 행 24블록, 나머지 8블록, 예열 20회, 표본 41개, 폼 수 1 및 기본 7,100초 예산을 적용한 실행 전 추정입니다. 각 preset은 고정 감시 행을 자동 추가하고 독립 산출물을 생성합니다.
 
@@ -76,7 +76,7 @@ worker를 시작하기 전에 `preflightSession131`이 `estimateSession131`로 �
 
 `react-129-main`은 array-1000과 nested-d5-f4를 제외한 시작 집합입니다. 기존 `react-129-large`가 확인 여유를 포함하면 상한을 넘으므로 `react-129-array-1000`과 `react-129-nested-d5`로 나누었습니다. 기존 large 이름은 선택 집합을 확인할 수 있도록 남겼지만 기본 조건에서는 실행 전에 거절합니다. 변경 계수가 양수이거나 계수 파일이 없으면 더 많은 설정이 전체 블록을 사용하여 이 작은 preset도 거절될 수 있습니다. 이 경우 더 작은 JSON 행 집합을 사용해야 합니다. 나눈 산출물을 전체 행 판정으로 합치는 LLM 단계는 없습니다.
 
-실제 번들로 `react-129-large`의 정규 24블록 진입점을 실행한 거부 검사는 추정 5,843.382초와 여유 1,460.846초의 합계 7,304.228초를 출력하고 0.011초에 종료 코드 1로 끝났습니다. `final.json`의 프로세스는 0개였고 raw 디렉터리도 없었습니다. 실패 산출물은 `/private/tmp/harness-131-review-large-refusal/`에 있습니다.
+실제 번들로 `react-129-large`의 정규 24블록 진입점을 실행한 거부 검사는 추정 5,843.382초와 여유 1,460.846초의 합계 7,304.228초를 출력하고 0.011초에 종료 코드 1로 끝났습니다. `final.json`의 프로세스는 0개였고 raw 디렉터리도 없었습니다. 실패 산출물은 `{scratch}/harness-131-review-large-refusal/`에 있습니다.
 
 ## 자체 검증과 리뷰 수정 후 smoke를 기록합니다.
 
@@ -86,11 +86,11 @@ worker를 시작하기 전에 `preflightSession131`이 `estimateSession131`로 �
 
 React는 `S/bundles/r129-base.cjs`와 `r129-basex.cjs`로 모든 19개 fixture의 2블록, 예열 2회, 표본 5개를 실행하였습니다. 76개 순차 프로세스와 304개 행이 164.523초에 완료됐고 값·경로 digest 및 commit 단언이 통과했습니다. 강제 GC 열의 3,040개 표본에는 GC 관측 기록이 0개였으며 최종 152개 해당 행의 GC 관측은 모두 null이었습니다. no-GC mount 행의 쓰기 창과 GC가 겹친 쓰기 창은 모두 0개이고 쓰기 GC 비율은 null입니다.
 
-두 실행은 `/opt/homebrew/bin/node` v26.10.0을 사용하고 `SMOKE_NO_VERDICT`로 종료하였습니다. 원자료는 `/private/tmp/harness-131-review-core-smoke/` 및 `/private/tmp/harness-131-review-react-smoke/`에 있습니다. `verify-session-131.mjs`는 SHA-256 목록, 프로세스 비중첩, 첫 블록, 확인 필드, GC null, mount 쓰기 창 및 현재 129 보고 계산의 통계 재현을 검사하여 두 번 모두 `VERIFY_SESSION_131_OK`를 냈습니다. 수정 전 smoke는 이번 GC 격리 검증의 증거로 사용하지 않습니다.
+두 실행은 `{node-home}/bin/node` v26.10.0을 사용하고 `SMOKE_NO_VERDICT`로 종료하였습니다. 원자료는 `{scratch}/harness-131-review-core-smoke/` 및 `{scratch}/harness-131-review-react-smoke/`에 있습니다. `verify-session-131.mjs`는 SHA-256 목록, 프로세스 비중첩, 첫 블록, 확인 필드, GC null, mount 쓰기 창 및 현재 129 보고 계산의 통계 재현을 검사하여 두 번 모두 `VERIFY_SESSION_131_OK`를 냈습니다. 수정 전 smoke는 이번 GC 격리 검증의 증거로 사용하지 않습니다.
 
 새 smoke의 조건부 24/8블록 외삽은 코어 16.87분, React 전체 119.27분입니다. 코어의 큰 설정은 oneOf-40 OFF 약 121.819초, if-then ON 약 104.192초, oneOf-20 OFF 약 88.237초입니다. React의 큰 fixture는 array-500 약 2,471.998초, array-1000 약 1,644.597초, array-replace-200 약 942.098초입니다. 부모 비용과 보고 비용을 포함한 전체 외삽이며 독립 확인은 포함하지 않습니다. 최종 JSON의 bounded preset은 해당 smoke에 지정한 450초 예산으로 적합 여부를 표시하므로 정규 7,100초 예산 적합 여부는 위 실행 전 표를 사용합니다.
 
-위임된 측정 세션은 진입점 하나를 실행하고 최종 JSON과 한국어 요약을 읽는 것으로 끝납니다. 예를 들어 `/opt/homebrew/bin/node <D>/tools/run-session-131.mjs --kind aa --lane core --base <S>/bundles/e-head --candidate <S>/bundles/e-headx --rows core-129 --blocks 24 --touch-counts <A/A 전용 계수 파일> --out <새 디렉터리>`로 실행합니다. 실제 변경 판정에는 `--kind verdict --aa <검증된 A/A final.json> --touch-counts <변경 작업 계수 파일>`과 후보 번들을 지정합니다.
+위임된 측정 세션은 진입점 하나를 실행하고 최종 JSON과 한국어 요약을 읽는 것으로 끝납니다. 예를 들어 `{node-home}/bin/node <D>/tools/run-session-131.mjs --kind aa --lane core --base <S>/bundles/e-head --candidate <S>/bundles/e-headx --rows core-129 --blocks 24 --touch-counts <A/A 전용 계수 파일> --out <새 디렉터리>`로 실행합니다. 실제 변경 판정에는 `--kind verdict --aa <검증된 A/A final.json> --touch-counts <변경 작업 계수 파일>`과 후보 번들을 지정합니다.
 
 실제 변경 verdict의 자동 확인 실측, 정규 24블록 A/A 및 여러 폼의 편향 판정은 후속 측정 세션에 남아 있습니다. 합성 확인 검사는 도구 분기의 검증이며 시간 판정을 대신하지 않습니다.
 
@@ -136,18 +136,18 @@ A/A의 판정 행은 실제 축소 블록 집합, 전체 블록 집합 및 합�
 
 합친 fixture는 원자료의 interaction count가 1인 `sample-0`, `sample-1`, `sample-2`, `sample-3`, `array-100`, `array-500`, `array-1000`입니다. 각 fixture의 OFF update·update-first와 OFF update-nogc·update-first-nogc를 각각 한 행으로 합쳤습니다. 정확한 14쌍의 키는 최종 JSON의 `report.mergedRows`에 있습니다.
 
-산출물은 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-131a-recompute/`에 있습니다. `final.json`, `first-report.json`, 한국어 `summary.md`, 복원한 행별 raw 및 `sha256.txt`를 기록하였습니다. `verify-session-131.mjs`로 새 산출물 해시, 전체 실제 블록, 중복 목록, 새 통계 재현 및 기존 GC 격리 기록을 검증하여 `VERIFY_SESSION_131_OK`를 확인하였습니다. 출력의 624개 프로세스와 1,018.913초는 원 세션의 기록이며 새 실행이 아닙니다.
+산출물은 `{scratch}/session-131a-recompute/`에 있습니다. `final.json`, `first-report.json`, 한국어 `summary.md`, 복원한 행별 raw 및 `sha256.txt`를 기록하였습니다. `verify-session-131.mjs`로 새 산출물 해시, 전체 실제 블록, 중복 목록, 새 통계 재현 및 기존 GC 격리 기록을 검증하여 `VERIFY_SESSION_131_OK`를 확인하였습니다. 출력의 624개 프로세스와 1,018.913초는 원 세션의 기록이며 새 실행이 아닙니다.
 
 새 함수 부재로 자체 검증이 먼저 실패한 뒤 구현하였습니다. 최종 `MEDIAN_INTERVAL_131_OK`는 n=8~48의 정확한 k 표, 포함률 99% 이상, 비변경 입력과 유효성 및 고정 시드 합성 A/A를 검사합니다. 각 100만 회의 오탐률은 8블록 0.7829%인 7,829건과 24블록 0.6544%인 6,544건이며 이론값의 모의 오차 범위 안입니다. 전체 `SELF_TEST_131_OK: 14 contract groups passed; no timing judgments`는 구형 보고, 첫·확인 구간, 실제 블록, 메타데이터에 따른 중복, 세 이항 범위, 교환 통계·예산 및 요약 필드도 검사합니다. 모든 명령은 8분 안에 순차로 자체 종료하였으며 제품 시간 측정은 추가하지 않았습니다.
 
 ## 측정 Node를 nvm으로 고정합니다(131라운드 덧붙임, Q132).
 
-세션 131c 도중 Homebrew가 `/opt/homebrew/bin/node`를 v26.10.0에서 v26.11.0으로 바꿔 실행기가 실패했습니다. 그래서 131라운드 이후의 모든 시간 측정은 Vincent 님이 nvm으로 설치한 `~/.nvm/versions/node/v26.11.1/bin/node`(v26.11.1, V8 14.6.202.34-node.37)로 잽니다. 경로와 판은 `tools/measurement-node-131.mjs` 한 곳에 둡니다.
+세션 131c 도중 Homebrew가 `{node-home}/bin/node`를 v26.10.0에서 v26.11.0으로 바꿔 실행기가 실패했습니다. 그래서 131라운드 이후의 모든 시간 측정은 Vincent 님이 nvm으로 설치한 `~/.nvm/versions/node/v26.11.1/bin/node`(v26.11.1, V8 14.6.202.34-node.37)로 잽니다. 경로와 판은 `tools/measurement-node-131.mjs` 한 곳에 둡니다.
 
 - 실행기는 `--node-version`을 필수로 받고, 실행 중인 Node가 그 판인지 단언합니다. 판, V8 판, 실제 경로를 최종 JSON의 `node`에 적습니다.
 - 작업 프로세스를 띄우기 직전과 끝난 직후에 Node 실제 경로가 세션 시작 때와 같은지 단언합니다. 도중 변경은 실패로 잡힙니다.
 - 판정과 확인 측정은 `--aa`로 받은 A/A가 같은 Node 판에서 잰 것인지 단언합니다. 그래서 v26.10.0의 A/A(129a~131b)는 v26.11.1의 판정에 쓸 수 없습니다.
-- 129 측정기의 실행 파일 단언도 같은 경로를 봅니다. 앞선 세션(129a~131c)은 `/opt/homebrew/bin/node` v26.10.0에서 잰 것이며, 그 결과와 판정은 그 판의 것으로 둡니다.
+- 129 측정기의 실행 파일 단언도 같은 경로를 봅니다. 앞선 세션(129a~131c)은 `{node-home}/bin/node` v26.10.0에서 잰 것이며, 그 결과와 판정은 그 판의 것으로 둡니다.
 
 ## 판정을 여러 세션으로 나눌 때의 감시 행(131라운드 덧붙임)
 

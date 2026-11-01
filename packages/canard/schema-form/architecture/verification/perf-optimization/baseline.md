@@ -6,9 +6,9 @@
 - **0.16.0과 0.16.1의 차이:** 소스 변경은 `660dde66f`("one null contract for nullable object and array nodes", #338) 하나로, nullable 객체·배열 노드의 null 계약만 바꿉니다. 이 기준선의 배열 장면은 nullable 스키마가 아니어서 그 변경이 닿지 않는다고 봅니다. 폼 수준 두 폼에서 둘을 같은 실행으로 잰 결과는 `array-verbs-measurement.md`에 적습니다.
 - **benchmark-form 옛 판 별칭:** `@canard/schema-form_0.16.0`과 `@canard/schema-form_0.16.1`이 함께 설치되어 있습니다. `--equivalent`는 기본으로 0.16.1과 짝지어 재고, 이 기준선을 재현할 때는 `--legacy=0.16.0`을 줍니다.
 
-- **판정에 쓰는 실행:** `20261015T0247-a3be21d-before-dist`(`/private/tmp/claude-501/perf-runs/20261015T0247-a3be21d-before-dist/`). 빌드 결과물(dist)로 다시 잰 행 전부: 독립 스크립트 둘×두 런타임(`B2` 포함), vitest 벤치, `--equivalent` core, 탐침 넷×두 런타임.
-- **그대로 쓰는 실행:** `20261015T0138-c59ba13-before`(`/private/tmp/claude-501/perf-runs/20261015T0138-c59ba13-before/`). `--equivalent` render와 heap 행은 그때도 dist였으므로 이 실행의 값을 씁니다. 나머지 행의 이 실행 값은 "소스 기준(참고)" 절에만 둡니다.
-- **재현:** 패키지 디렉터리에서 `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<조용한 창 시작 ISO 시각>`을 실행합니다. 스크립트는 먼저 rolldown으로 JS 번들을 빌드하고, 아래 행을 같은 인자로 순서대로 돌리며, 행마다 명령·작업 디렉터리·`NODE_ENV`·시작과 끝 시각·사용한 dist 해시를 `env.json`에 적습니다. `--only=<행,행>`으로 일부 행만 다시 잴 수 있습니다. `--legacy=<0.16.0|0.16.1>`은 `--equivalent` 행이 짝지을 옛 판입니다. 기본값 0.16.0이 이 기준선의 재현이고, M3 종합 재측정은 `--legacy=0.16.1`을 줍니다. 요약의 옛 판 번들 해시는 넘긴 판의 번들과 대조합니다. 독립 스크립트 행은 늘 0.16.0과 비교합니다. 러너의 rolldown 빌드는 `dist`를 비우고 JS 번들만 다시 만들어 타입 선언(`.d.ts`)이 사라지므로, 러너를 돌린 뒤 플러그인 빌드나 타입을 읽는 검사를 하려면 먼저 `yarn --cwd packages/canard/schema-form build`를 다시 돌립니다.
+- **판정에 쓰는 실행:** `20261015T0247-a3be21d-before-dist`(`{scratch}/perf-runs/20261015T0247-a3be21d-before-dist/`). 빌드 결과물(dist)로 다시 잰 행 전부: 독립 스크립트 둘×두 런타임(`B2` 포함), vitest 벤치, `--equivalent` core, 탐침 넷×두 런타임.
+- **그대로 쓰는 실행:** `20261015T0138-c59ba13-before`(`{scratch}/perf-runs/20261015T0138-c59ba13-before/`). `--equivalent` render와 heap 행은 그때도 dist였으므로 이 실행의 값을 씁니다. 나머지 행의 이 실행 값은 "소스 기준(참고)" 절에만 둡니다.
+- **재현:** 패키지 디렉터리에서 `{node-home}/versions/node/v26.11.1/bin/node architecture/verification/perf-optimization/run-baseline.mjs --label=before-dist --quiet-since=<조용한 창 시작 ISO 시각>`을 실행합니다. 스크립트는 먼저 rolldown으로 JS 번들을 빌드하고, 아래 행을 같은 인자로 순서대로 돌리며, 행마다 명령·작업 디렉터리·`NODE_ENV`·시작과 끝 시각·사용한 dist 해시를 `env.json`에 적습니다. `--only=<행,행>`으로 일부 행만 다시 잴 수 있습니다. `--legacy=<0.16.0|0.16.1>`은 `--equivalent` 행이 짝지을 옛 판입니다. 기본값 0.16.0이 이 기준선의 재현이고, M3 종합 재측정은 `--legacy=0.16.1`을 줍니다. 요약의 옛 판 번들 해시는 넘긴 판의 번들과 대조합니다. 독립 스크립트 행은 늘 0.16.0과 비교합니다. 러너의 rolldown 빌드는 `dist`를 비우고 JS 번들만 다시 만들어 타입 선언(`.d.ts`)이 사라지므로, 러너를 돌린 뒤 플러그인 빌드나 타입을 읽는 검사를 하려면 먼저 `yarn --cwd packages/canard/schema-form build`를 다시 돌립니다.
 
 ## 환경
 
@@ -208,7 +208,7 @@ React 19.2.6과 jsdom 위의 마운트·갱신 벽시계와 Profiler 시간입�
 
 ## 최적화 전 — `c59ba1363`, 빌드 결과물(dist) 기준
 
-실행 `20261015T0247-a3be21d-before-dist`(`/private/tmp/claude-501/perf-runs/20261015T0247-a3be21d-before-dist/`)의 값입니다. 모든 행이 같은 `dist/index.mjs`(sha256 `9ca9ea95fd618fc5dfb99cc2fb10a6efdbd3f7d82347de1842b7f9bb85d733ac`)를 돌았습니다. 357라운드 전의 `src` 기준 값은 아래 "소스 기준(참고)" 절에 있습니다.
+실행 `20261015T0247-a3be21d-before-dist`(`{scratch}/perf-runs/20261015T0247-a3be21d-before-dist/`)의 값입니다. 모든 행이 같은 `dist/index.mjs`(sha256 `9ca9ea95fd618fc5dfb99cc2fb10a6efdbd3f7d82347de1842b7f9bb85d733ac`)를 돌았습니다. 357라운드 전의 `src` 기준 값은 아래 "소스 기준(참고)" 절에 있습니다.
 
 ### 독립 스크립트 `bench/legacy-compare/node-and-settle.bench.ts` (`standalone-node-and-settle-{node,bun}-production.txt`)
 
@@ -619,7 +619,7 @@ TEST-071 행입니다. 원소 10,000개, 깊은 노드 작은 쪽 4·큰 쪽 19(
 
 ## L1 뒤 실행 — `20261015T0407-e900c1d-after-l1-fix`
 
-가설 0과 그 비용 수정까지 담은 커밋의 dist(sha256 `36ac0af9…`)로 같은 러너를 돌린 실행입니다(`/private/tmp/claude-501/perf-runs/20261015T0407-e900c1d-after-l1-fix/`). 위 "최적화 전" 표는 바꾸지 않습니다.
+가설 0과 그 비용 수정까지 담은 커밋의 dist(sha256 `36ac0af9…`)로 같은 러너를 돌린 실행입니다(`{scratch}/perf-runs/20261015T0407-e900c1d-after-l1-fix/`). 위 "최적화 전" 표는 바꾸지 않습니다.
 
 - **판정 수:** `--equivalent` core 29/38(그대로), render 26/114(원 기준 실행 27/114). 판정이 바뀐 render 행은 모두 15% 선 근처의 마운트 행입니다: `sample-0`·`array-replace-200`의 `render-mount-wall`이 회귀에서 빠지고(처리량 하락 14.1%·12.1%), `sample-2`의 `render-mount-wall`이 회귀가 됐습니다(15.0%).
 - **P-09 탐침:** Node·Bun 1천–8천 여덟 칸 모두 before-dist의 10–90백분위 안입니다(Node 8천 39.31→39.40 ms, Bun 8천 31.66→30.13 ms).

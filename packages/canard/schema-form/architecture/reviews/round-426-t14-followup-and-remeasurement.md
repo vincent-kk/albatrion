@@ -4,7 +4,7 @@
 
 ## 남은 시간 시험의 진단
 
-브리프는 verification/perf-optimization/l3-briefs/round-426-t14-followup-diagnosis-brief.md이며 task_eeb2f863e3a4의 증거는 `/Users/Vincent/Workspace/albatrion/schema-form-observation-identity-2/.seiri/tasks/t14-followup-diagnosis/`입니다. report SHA256은c701d0ff99ad44f0cbb91b9ac73928c6ccab5a6ecf6b698007d158b24249791a, seal SHA256은44fd87476332b9a0671caab06fb8ead785d19cb1e557b0123983364929bbeb83입니다.
+브리프는 verification/perf-optimization/l3-briefs/round-426-t14-followup-diagnosis-brief.md이며 task_eeb2f863e3a4의 증거는 `schema-form-observation-identity-2/.seiri/tasks/t14-followup-diagnosis/`입니다. report SHA256은c701d0ff99ad44f0cbb91b9ac73928c6ccab5a6ecf6b698007d158b24249791a, seal SHA256은44fd87476332b9a0671caab06fb8ead785d19cb1e557b0123983364929bbeb83입니다.
 
 Node v24.20.0에서 `src/core/__tests__/global-errors.timing.test.ts`는 head에서5/5(파일 총시간208/211/206/206/213 ms), base에서5/5(207/210/210/208/208 ms) 통과했습니다. T14 네 커밋은 해당 시험의 import 경로에 있는 모듈을 바꾸지 않았으며 진단 판정은 timing-noise입니다. context-mode 하위 프로세스 PATH의 Node v26.12.0에서 먼저 수행한10회는 보조 자료로만 남깁니다. 새 실행 G1–G5 정의는 child 증거와 함께 소실됐고 `g5-reading.md`는 원래 열한 게이트의 상태표를 기록합니다.
 
@@ -32,7 +32,7 @@ Filid는 이전384건(info308·warning52·error24)에서371건(308/39/24)이며 
 
 ## itemless 재측정의 입력과 환경
 
-브리프는 verification/perf-optimization/l3-briefs/round-426-itemless-remeasurement-brief.md이며 task_43af85daaa4c는 `/Users/Vincent/Workspace/albatrion/l3e-direct-ownership`의282685f27에서 수행했습니다. baseline dist는 merge-base6d7d78d32에서, candidate는 HEAD에서 빌드했고 export-only identity는 기록값과 일치했습니다.
+브리프는 verification/perf-optimization/l3-briefs/round-426-itemless-remeasurement-brief.md이며 task_43af85daaa4c는 `l3e-direct-ownership`의282685f27에서 수행했습니다. baseline dist는 merge-base6d7d78d32에서, candidate는 HEAD에서 빌드했고 export-only identity는 기록값과 일치했습니다.
 
 | 빌드 | ESM SHA256 | CJS SHA256 |
 | --- | --- | --- |
@@ -52,7 +52,7 @@ baseline 중앙값 자체가 두 라운드 사이에 달라졌습니다. 2026-10
 
 적어도 한 라운드에서 baseline보다 느린 장면은17개입니다. Node의7개는 root-BN-N1000·root-terminal-N1000·root-terminal-N8000·object-B0-N1000·reference-BN-N1000·reference-BN-N8000·reference-object-B0-N1000입니다. Bun의10개는 root-itemless-N1000·root-BN-N1000·root-BN-N8000·root-terminal-N1000·object-B0-N1000·reference-BN-N1000·reference-BN-N8000·reference-terminal-N1000·reference-terminal-N8000·reference-object-B0-N1000입니다. 두 라운드의 부호가 다른 행11개와 범위가0을 가로지르는 행11개를 기록합니다.
 
-legacy reference보다 느린 것은8장면이며 Node·Bun 각각 object-B0-N1000·reference-BN-N1000·reference-BN-N8000·reference-object-B0-N1000입니다. 입력5572파일은 불변이고 tracked 변경은0입니다. child와 메인의 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/itemless-remeasure-426/`에 동일하게 봉인했으며 복사2442파일이 모두 같습니다. seal SHA256은de5395074b090365732d956275dd2d08f8523895c482a4269d70e08a89d88876입니다.
+legacy reference보다 느린 것은8장면이며 Node·Bun 각각 object-B0-N1000·reference-BN-N1000·reference-BN-N8000·reference-object-B0-N1000입니다. 입력5572파일은 불변이고 tracked 변경은0입니다. child와 메인의 `.seiri/tasks/itemless-remeasure-426/`에 동일하게 봉인했으며 복사2442파일이 모두 같습니다. seal SHA256은de5395074b090365732d956275dd2d08f8523895c482a4269d70e08a89d88876입니다.
 
 runner는 개별 warmup 시간을 출력하지 않습니다. aggregation helper의174이력 가정은 바로잡아 기록했습니다. legacy 비동기 root 시간은 여전히 미측정이며 성능 수용은 주장하지 않습니다.
 

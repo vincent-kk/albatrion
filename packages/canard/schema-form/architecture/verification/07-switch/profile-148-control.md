@@ -8,11 +8,11 @@
 
 | 항목 | 확인값 |
 | --- | --- |
-| Node 실행 파일 | `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node` |
+| Node 실행 파일 | `{node-home}/versions/node/v26.11.1/bin/node` |
 | Node / V8 | `v26.11.1 / 14.6.202.34-node.37` |
 | CPU / 메모리 / OS | `Apple M1 Max / 68719476736 bytes (64 GiB) / Darwin 25.6.0 arm64` |
 | React / react-dom / esbuild | `19.2.6 / 19.2.6 / 0.25.9` |
-| 저장소 | `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07` |
+| 저장소 | `{repo}` |
 | 현재 HEAD | `34b370eedcc293e704ad3a57c5a02612ddad200f` |
 | 현재 HEAD의 실제 src tree | `478434371c1d23f4345b81cfafa33fb762ba019a` |
 | `b1035b73b` src tree | `fc6685b6baf5452eb838ef4bfa40e26cbaea2158` |
@@ -63,9 +63,9 @@
 실제 shell 호출의 공통 설정과 command 형태는 다음과 같습니다. 모든 호출은 각각 별도 command로 실행했습니다. 전체 fixture·회차·버전·진단 flag와 시각은 [commands.json](commands.json)에 실제 argv 그대로 있습니다. pair가 실행한 두 worker의 순서와 결과는 `official-raw/pair-*.json`에 있습니다.
 
 ```sh
-task_node=/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node
-task_repo=/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07
-task_out=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g26-148/control
+task_node={node-home}/versions/node/v26.11.1/bin/node
+task_repo={repo}
+task_out={scratch}/g26-148/control
 
 cd "$task_repo"
 "$task_node" --version

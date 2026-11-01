@@ -1,6 +1,6 @@
 # 분기 변경 1b·2의 회귀 진단
 
-대상은 커밋 `e59e435aa`의 고정 사본에 1b 패치와 2 패치를 각각 적용한 판과 HEAD입니다. 세션 119의 번들(`b-head`, `b-1b`, `b-2`)과 다시 번들한 결과는 바이트가 같았습니다. 진단은 읽기 전용 Opus debugger가 했고, 저장소는 바꾸지 않았습니다. 측정용 Node는 v26.10.0(`/opt/homebrew/bin/node`)입니다. 도구와 원자료는 세션 scratchpad의 `core-diag/`에 있습니다(`tools/drive.mjs`, `pair.mjs`, `alloc.mjs`, `prof.mjs`, `profpair.mjs`, `traces/`, `prof/`, 기여도 분리용 번들 `bundles/b-a5·a6·a8·a9·headx`).
+대상은 커밋 `e59e435aa`의 고정 사본에 1b 패치와 2 패치를 각각 적용한 판과 HEAD입니다. 세션 119의 번들(`b-head`, `b-1b`, `b-2`)과 다시 번들한 결과는 바이트가 같았습니다. 진단은 읽기 전용 Opus debugger가 했고, 저장소는 바꾸지 않았습니다. 측정용 Node는 v26.10.0(`{node-home}/bin/node`)입니다. 도구와 원자료는 세션 scratchpad의 `core-diag/`에 있습니다(`tools/drive.mjs`, `pair.mjs`, `alloc.mjs`, `prof.mjs`, `profpair.mjs`, `traces/`, `prof/`, 기여도 분리용 번들 `bundles/b-a5·a6·a8·a9·headx`).
 
 ## 결론
 

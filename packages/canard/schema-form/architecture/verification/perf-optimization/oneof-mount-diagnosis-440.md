@@ -27,10 +27,10 @@ oneOf-N 마운트의 게이트 평가 20N은 루트 호스트 하나의 바퀴 �
 
 증거 위치의 약칭은 다음과 같습니다.
 
-- `437/`는 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/size-diagnosis-437/`입니다.
-- `439/`는 `/Users/Vincent/Workspace/albatrion/.seiri/tasks/mount-env-439/`입니다.
+- `437/`는 `.seiri/tasks/size-diagnosis-437/`입니다.
+- `439/`는 `.seiri/tasks/mount-env-439/`입니다.
 - `settle/`는 `packages/canard/schema-form/src/core/engine/settle/`입니다.
-- 분할 스크립트는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/920681de-5507-4bac-b671-978d55a29c7a/scratchpad/stage.mjs`입니다.
+- 분할 스크립트는 `{scratch}/stage.mjs`입니다.
 
 측정 조건은 다음과 같습니다.
 

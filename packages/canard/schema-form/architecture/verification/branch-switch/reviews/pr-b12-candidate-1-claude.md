@@ -578,7 +578,7 @@ Commits in the range:
    - With ordinary load only, the loop matches the removed B8 implementation: same sample, same pauses, same final partial pause, `waitedMs` 120000. `tools/b8/checkQuietProcess.mjs` still holds by trace.
    - `parseCpuSample.mjs:12` keeps `path.basename` of `ps comm`, so real rows carry bare names such as `mds_stores`, and the name test works.
    - No product file changed in `bd7fd658b` or `85b687d83`. The device is shared under `tools/window/`. B11 imports it directly (`tools/b11/window.mjs:11-12`). B12 reaches it through B11, and B8 through a one-line re-export.
-6. **Hygiene is clean.** All four commits are authored and committed by Vincent Kelvin with the noreply address. There are no co-author, session or sign-off lines. The added lines contain no `/Users/`, `/private/` or `claude-501` path, and neither does `b12-results.md`.
+6. **Hygiene is clean.** All four commits are authored and committed by Vincent Kelvin with the noreply address. There are no co-author, session or sign-off lines. The added lines contain no `{home}/`, `{tmp}/` or `claude-501` path, and neither does `b12-results.md`.
 7. **Status of the delta 2 P3 items.**
 
 | Item | Status |
@@ -661,8 +661,8 @@ It also marks window 3 pending (`:3,54`). That line is now stale (P2-5).
 
 **5. Hygiene is clean.**
 - All three commits are authored and committed by Vincent Kelvin with the noreply address. They are subject-only, like all 21 branch commits, with no co-author, session or sign-off line.
-- The added lines contain no `/Users/`, `/private/`, `claude-501` or session text. `b12-results.md` has none either.
-- Of 71 compressed raw files, two keep `<tmp>/claude-501/perf-runs/…` after `/private/tmp` was replaced: `review-fixes/input-path-red.log.gz` and `window-3-device-failure/records.json.gz`. Committed B0 to B2 records already carry that segment, so this is not a new class.
+- The added lines contain no `{home}/`, `{tmp}/`, `claude-501` or session text. `b12-results.md` has none either.
+- Of 71 compressed raw files, two keep `<tmp>/claude-501/perf-runs/…` after `{scratch}` was replaced: `review-fixes/input-path-red.log.gz` and `window-3-device-failure/records.json.gz`. Committed B0 to B2 records already carry that segment, so this is not a new class.
 - The PR body has no machine-local path. Its one path, at `:9`, is relative to the repository.
 
 ### New findings
@@ -696,7 +696,7 @@ It also marks window 3 pending (`:3,54`). That line is now stale (P2-5).
 ### Fix spec
 
 1. **P2-5.** In `design-optimization/tools/helpers/readConfig.mjs`, accept an optional `.noindex` only directly before the optional `/pair` or `/stages` suffix, or at the end. Use either form:
-   - Pattern: `/^\/private\/tmp\/claude-501\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\.noindex)?(?:\/(?:pair|stages))?$/`.
+   - Pattern: `/^{scratch}\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\.noindex)?(?:\/(?:pair|stages))?$/`.
    - Or test `runDir.replace(/\.noindex(?=\/(?:pair|stages)$|$)/, '')` against the unchanged pattern. The uncommitted worktree edit at `:57` does this.
    - Keep `runId: path.basename(runDir)` unchanged.
    - Verify read-only, with no formal marker. From a scratch script outside the repository, call `readConfig([arg, '--samples=5', '--warmups=1'], pathToFileURL('<repo>/packages/canard/schema-form/architecture/verification/design-optimization/tools/'))` for each argument below:
@@ -799,7 +799,7 @@ Commits in the range. There are two.
 
 **6. Hygiene is clean.**
 - Both commits are authored and committed by Vincent Kelvin with the noreply address. They carry only a subject line, with no co-author, session or sign-off line.
-- The added lines contain no `/Users/`, `/private/`, `claude-501`, session or personal-name text. The `/private/tmp/claude-501/perf-runs` regex literals in readConfig, context and runWindow already existed before this range. Only the `.replace(...)` argument changed.
+- The added lines contain no `{home}/`, `{tmp}/`, `claude-501`, session or personal-name text. The `{scratch}/perf-runs` regex literals in readConfig, context and runWindow already existed before this range. Only the `.replace(...)` argument changed.
 - `b12-pr-body.md` and `b12-results.md` contain no machine-local path, no session link and no personal name.
 - Of the raw files written since Delta 4, only `device/actual-cli-preflight/command.json.gz` keeps `<tmp>/claude-501/perf-runs/…`. That is the same class as the two files Delta 4 listed.
 
@@ -824,7 +824,7 @@ Commits in the range. There are two.
 
 ### Fix spec (all optional; none blocks merge; apply nothing to tools while window 4 runs)
 
-1. **P3-26.** Record this sentence under `후속 범위` in `b12-results.md`: "P3-26: 공용 readConfig는 /pair·/stages 뒤의 .noindex도 받아들입니다. 이 경로를 만드는 호출자는 없으며 규칙을 좁히는 수정은 후속으로 남깁니다." If the coordinator prefers a code fix after window 4 ends, make this change in `design-optimization/tools/helpers/readConfig.mjs:55-58`. Test the raw `runDir` against `/^\/private\/tmp\/claude-501\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\.noindex)?(?:\/(?:pair|stages))?$/`, drop the `.replace(...)` call, and keep `runId: path.basename(runDir)`. To verify, run read-only `readConfig` calls. These must return: `<run>/pair`, `<run>.noindex/pair` and `<run>-stage-a.noindex/stages`. These must throw: `<run>/pair.noindex` and `<run>.noindex.noindex/pair`. Then run the rehearsal on a new root.
+1. **P3-26.** Record this sentence under `후속 범위` in `b12-results.md`: "P3-26: 공용 readConfig는 /pair·/stages 뒤의 .noindex도 받아들입니다. 이 경로를 만드는 호출자는 없으며 규칙을 좁히는 수정은 후속으로 남깁니다." If the coordinator prefers a code fix after window 4 ends, make this change in `design-optimization/tools/helpers/readConfig.mjs:55-58`. Test the raw `runDir` against `/^{scratch}\/perf-runs\/\d{8}T\d{4}-[a-f0-9]{7}-[a-zA-Z0-9-]+(?:\.noindex)?(?:\/(?:pair|stages))?$/`, drop the `.replace(...)` call, and keep `runId: path.basename(runDir)`. To verify, run read-only `readConfig` calls. These must return: `<run>/pair`, `<run>.noindex/pair` and `<run>-stage-a.noindex/stages`. These must throw: `<run>/pair.noindex` and `<run>.noindex.noindex/pair`. Then run the rehearsal on a new root.
 2. **P3-27.** After window 4 ends, run these on `652ddf6ee` with Node 26 and the same arguments as the saved green runs: `node tools/b4-2/checkTools.mjs`, `node tools/b6/checkTools.mjs` and `node tools/window/checkQuietProcess.mjs`. Save the logs as `raw/b12/review-fixes/device-legacy-green-6d178ef.log.gz`, `device-summary-green-6d178ef.log.gz` and `device-green-6d178ef.log.gz`. Each must print its existing OK line.
 3. **P3-28.** Either save a red run, or append this sentence to `b12-results.md:89`: "자동 쓰기 합집합 시험은 7af6a5d3c의 동작을 고정하는 시험이며 실패 재현 없이 추적으로 확인했습니다." For a red run, use a scratch worktree at `652ddf6ee` with `readExplicitWriteKind.ts` taken from `00ed5f3aa`. Run only this test, and expect "called 1 times". Save the log as `raw/b12/review-fixes/automatic-union-red.log.gz` and add its provenance to `red-provenance.json`.
 4. **P3-29.** Append this sentence to `tools/window/README.md`: "`preflight.mjs <준비된 .noindex 루트>`는 정식 마커가 없는 준비 루트에서 정식 창 전에 실행하는 비정식 예행입니다. 별도 `-preflight.noindex` 디렉터리에서 실제 alternate CLI를 1행·1프로세스·예열1·표본1로 실행하고 공용 readConfig와 profile context의 .noindex 경로를 검사합니다." In `preflight.mjs:35-37`, pass the matcher `/perf-runs\/<YYYYMMDD>T<HHMM>/` as the second argument of `assert.throws`.

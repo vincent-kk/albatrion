@@ -1,6 +1,6 @@
 # T1-B — 채움 시점 논리 정합성
 
-경로 기준은 ARCH = `/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/`, PKG = `/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/`입니다. `ledger/…:줄`은 ARCH 아래의 경로입니다. 저장소는 고치지 않았습니다. 오늘 코드 탐침은 `/private/tmp/claude-501/t1b/probe/fill.probe.test.ts`에 두고 PKG 코드로 실행했습니다.
+경로 기준은 ARCH = `packages/canard/schema-form/architecture/`, PKG = `packages/canard/schema-form/`입니다. `ledger/…:줄`은 ARCH 아래의 경로입니다. 저장소는 고치지 않았습니다. 오늘 코드 탐침은 `{scratch}/t1b/probe/fill.probe.test.ts`에 두고 PKG 코드로 실행했습니다.
 
 ## 요약: 결정됨 11 / 공백 2 / 모순 5
 

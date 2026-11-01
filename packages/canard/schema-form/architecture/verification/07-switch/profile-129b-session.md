@@ -16,7 +16,7 @@
 
 ## 실행 환경과 번들의 무결성을 설명합니다.
 
-작업 디렉터리는 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`이며, 시작과 검증 시 HEAD는 `85e1b709a`입니다. 시작 시 작업 트리는 깨끗했습니다. `/opt/homebrew/bin/node`의 Node v26.10.0을 사용했습니다. 시간 측정은 다른 측정·빌드·진단 없이 한 명령씩 순차 실행했습니다. 설치와 패키지 관리자 명령은 수행하지 않았으며, 제품 코드와 기존 측정 도구도 편집하지 않았습니다.
+작업 디렉터리는 `{repo}`이며, 시작과 검증 시 HEAD는 `85e1b709a`입니다. 시작 시 작업 트리는 깨끗했습니다. `{node-home}/bin/node`의 Node v26.10.0을 사용했습니다. 시간 측정은 다른 측정·빌드·진단 없이 한 명령씩 순차 실행했습니다. 설치와 패키지 관리자 명령은 수행하지 않았으며, 제품 코드와 기존 측정 도구도 편집하지 않았습니다.
 
 기준 번들은 `S/bundles/c-head.cjs`이고 후보 번들은 `S/bundles/c-2.cjs`입니다. 두 번들의 기준 리비전은 모두 `439fda3219ec6b42efbef4d7fa0f02a40111453f`입니다. 시작과 종료 검증에서 `c-bundles.json`의 SHA-256, 바이트 수, 기준 리비전과 일치했습니다. 후보의 `branch2.patch`도 매니페스트 SHA-256과 일치했습니다.
 
@@ -80,7 +80,7 @@ oneOf OFF에서 분기 수 5·10·20·40을 x로, 각 쪽의 보정된 전체 �
 
 두 번째 예외는 최초 보고 명령이 실행된 17:53:04.344~17:53:08.148 UTC 구간에 읽기 전용 Node 조회를 시작한 것입니다. 보고 명령이 세션 ID를 반환했는데 종료를 먼저 기다리지 않은 제 실수였습니다. 조회는 아직 없는 `first-report.json`을 읽다 ENOENT와 종료 코드 1로 스스로 끝났습니다. 보고 명령은 정상 종료했고, 그 종료를 확인한 뒤 다시 조회했습니다. 이 짧은 중첩은 세션 전체의 완전한 순차 실행 조건에 어긋났지만, 완료된 시간 측정 자료에는 쓰기나 재측정을 가하지 않았습니다.
 
-원자료 루트는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129b-raw/`입니다. 측정기의 고정 출력 경로에는 이 루트의 core·confirm 디렉터리를 가리키는 별칭 symlink를 사용했습니다. 모든 신규 원자료는 이 루트에 보존했습니다. [raw-sha256.txt](profile-129b-session/raw-sha256.txt)는 그 아래 2,287개 파일의 SHA-256과 상대 경로를 기록합니다. 저장소 산출물은 이 보고서와 `profile-129b-session/` 아래의 표·CSV·기울기·실행 증거·해시 목록이며 각각 5 MB 이하입니다.
+원자료 루트는 `{scratch}/profile-129b-raw/`입니다. 측정기의 고정 출력 경로에는 이 루트의 core·confirm 디렉터리를 가리키는 별칭 symlink를 사용했습니다. 모든 신규 원자료는 이 루트에 보존했습니다. [raw-sha256.txt](profile-129b-session/raw-sha256.txt)는 그 아래 2,287개 파일의 SHA-256과 상대 경로를 기록합니다. 저장소 산출물은 이 보고서와 `profile-129b-session/` 아래의 표·CSV·기울기·실행 증거·해시 목록이며 각각 5 MB 이하입니다.
 
 통계 재판정은 ADOPT이고 남은 측정 단계는 없습니다. 세션 전체 실행 조건에는 위 두 예외가 남습니다. 최종 파일 무결성과 보고서 수치 검증은 [verification.json](profile-129b-session/verification.json)에 기록합니다.
 

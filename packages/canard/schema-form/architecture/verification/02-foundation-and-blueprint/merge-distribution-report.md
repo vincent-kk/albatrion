@@ -9,7 +9,7 @@ The earlier source-CJS experiment is retained in [merge-default-investigation.md
 ## Build identity
 
 - Baseline source: detached worktree at `85fa44d49d2f4491b0d4e3f1024c5c80fbb0a558`, the pre-options release branch.
-- Baseline worktree: `/tmp/albatrion-merge-distribution-20260927/baseline`.
+- Baseline worktree: `{scratch}/albatrion-merge-distribution-20260927/baseline`.
 - Candidate: current workspace source after alias removal, with both recursion implementations using local named self-calls.
 - Both runtime builds use the same installed Node executable and `node_modules/rolldown/bin/cli.mjs -c`, run from each common-utils package directory. No dependency install, node_modules symlink, package version change or lockfile change is involved.
 - The package Rolldown config, shared build factory/utilities and manifest export paths have no change against the baseline. Each build resolves its own source tree and tsconfig aliases.
@@ -17,7 +17,7 @@ The earlier source-CJS experiment is retained in [merge-default-investigation.md
 
 Runtime build logs: `merge-distribution-baseline-runtime-build.log` and `merge-distribution-candidate-runtime-build.log`.
 
-Both complete runtime artifact trees and manifests were copied under `/tmp/albatrion-merge-distribution-20260927/artifacts/{baseline,candidate}` and made read-only. Every measurement process records SHA-256 for the manifest and all distribution files, and verifies unchanged hashes after measurement. The public manifest exports resolve to `dist/utils/object/index.mjs` and `dist/utils/object/index.cjs` in each snapshot. Build artifacts are not committed.
+Both complete runtime artifact trees and manifests were copied under `{scratch}/albatrion-merge-distribution-20260927/artifacts/{baseline,candidate}` and made read-only. Every measurement process records SHA-256 for the manifest and all distribution files, and verifies unchanged hashes after measurement. The public manifest exports resolve to `dist/utils/object/index.mjs` and `dist/utils/object/index.cjs` in each snapshot. Build artifacts are not committed.
 
 ## Predeclared method
 
@@ -32,7 +32,7 @@ For each of the eight format/fixture combinations, the summary computes the geom
 Run N = 0 through 7 from the repository root, using a new output path:
 
 ```sh
-yarn workspace @winglet/common-utils bench:merge-distribution /tmp/albatrion-merge-distribution-20260927/artifacts/baseline /tmp/albatrion-merge-distribution-20260927/artifacts/candidate N /absolute/new/merge-distribution-N.json
+yarn workspace @winglet/common-utils bench:merge-distribution {scratch}/albatrion-merge-distribution-20260927/artifacts/baseline {scratch}/albatrion-merge-distribution-20260927/artifacts/candidate N /absolute/new/merge-distribution-N.json
 node packages/canard/schema-form/architecture/verification/02-foundation-and-blueprint/summarize-merge-distribution.mjs > packages/canard/schema-form/architecture/verification/02-foundation-and-blueprint/merge-distribution-statistics.json
 ```
 

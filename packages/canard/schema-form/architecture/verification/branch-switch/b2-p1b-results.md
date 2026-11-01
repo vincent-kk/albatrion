@@ -32,8 +32,8 @@
 
 | 원자료 | 경로·SHA |
 | --- | --- |
-| 판정·통계·단계·힙·CPU | `/private/tmp/b2-p1b-20261027/post-review/judgement.json`, `measurement-paths.json`, `welch.json`, `heap-{node,bun}-{before,head}.log`, `quiet-window-attempt-{0,1}.json`, `quiet-end.json` |
-| 시간 raw | `/private/tmp/claude-501/perf-runs/20261027T1415-1ff87c4-b2p1b-alternating` |
-| 검증 분리 | 초기a04: `/private/tmp/b2-p1b-20261027/functional-summary.json`; 최종복원: `/private/tmp/b2-p1b-20261027/final-validation/` |
+| 판정·통계·단계·힙·CPU | `{scratch}/b2-p1b-20261027/post-review/judgement.json`, `measurement-paths.json`, `welch.json`, `heap-{node,bun}-{before,head}.log`, `quiet-window-attempt-{0,1}.json`, `quiet-end.json` |
+| 시간 raw | `{scratch}/perf-runs/20261027T1415-1ff87c4-b2p1b-alternating` |
+| 검증 분리 | 초기a04: `{scratch}/b2-p1b-20261027/functional-summary.json`; 최종복원: `{scratch}/b2-p1b-20261027/final-validation/` |
 | A/B Node SHA | `92a8c340b5f78f311e7b852b4555119903d4829431804b85f3af4fd66bb305cf` / `9feab64a42df363f184341f53a10a33fb40bfc88c1f00a0bf4ff62fdf6400128` |
 | 공개 d.ts SHA | 양쪽 `740dc55ca2f4f0503da3a7d6f968797a37cce7305e6d0d6b4d57c34e2b9158d6` 동일 |

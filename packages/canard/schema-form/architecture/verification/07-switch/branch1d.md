@@ -1,6 +1,6 @@
 # 분기 변경 1d 구현 기록
 
-`branch1d-design.md`의 설계를 HEAD `4981390bc` 위에 구현했습니다. 시간 측정은 하지 않았습니다. 변경은 패치 파일로만 남기고 작업 트리는 HEAD로 되돌렸으며, 이 문서만 새로 더했습니다. 아래에서 `S`는 세션 scratchpad(`/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`)를 뜻합니다.
+`branch1d-design.md`의 설계를 HEAD `4981390bc` 위에 구현했습니다. 시간 측정은 하지 않았습니다. 변경은 패치 파일로만 남기고 작업 트리는 HEAD로 되돌렸으며, 이 문서만 새로 더했습니다. 아래에서 `S`는 세션 scratchpad(`{scratch}`)를 뜻합니다.
 
 ## 바뀐 파일
 

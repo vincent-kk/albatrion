@@ -6,7 +6,7 @@
 
 ## 판과 환경
 
-메인 워크트리 `/Users/Vincent/Workspace/albatrion`에서 측정했습니다. HEAD와 `origin/feat/schema-form-08-review-and-perf`는 모두 `5604f719a11c2a578a247789ee288346f4be5955`였으며, 브리프가 지정한 제품 끝은 `d9f4eb975`입니다. 기존 코디네이터 문서 수정, 중첩 워크트리 세 개와 perf-optimization 아래 미추적 파일은 그대로 두었습니다.
+메인 워크트리 `{repo}`에서 측정했습니다. HEAD와 `origin/feat/schema-form-08-review-and-perf`는 모두 `5604f719a11c2a578a247789ee288346f4be5955`였으며, 브리프가 지정한 제품 끝은 `d9f4eb975`입니다. 기존 코디네이터 문서 수정, 중첩 워크트리 세 개와 perf-optimization 아래 미추적 파일은 그대로 두었습니다.
 
 | 항목 | 확인 값 |
 | --- | --- |
@@ -14,7 +14,7 @@
 | E4 SHA256 | `9f454b919583029329d5e9d7f85efa2dc842274b5aa74b53de9f6c6134665f70`입니다. |
 | E0 | 설치된 npm alias `@canard/schema-form_0.16.1`, 버전 `0.16.1`을 사용했습니다. |
 | E0 SHA256 | `5f6b0171b3c53f44e259a1c5e1049e48c9ea0ecae6509d821749e36295489c46`입니다. |
-| 실행 환경 | Node `v24.20.0`(`/Users/Vincent/.nvm/versions/node/v24.20.0/bin/node`), Bun `1.4.3`, Apple M1 Max, Darwin arm64입니다. 측정은 Node에서만 수행했습니다. |
+| 실행 환경 | Node `v24.20.0`(`{node-home}/versions/node/v24.20.0/bin/node`), Bun `1.4.3`, Apple M1 Max, Darwin arm64입니다. 측정은 Node에서만 수행했습니다. |
 | F5b 측정 창, UTC | `2026-10-20T13:28:40.439Z`부터 `13:43:56.419Z`까지였습니다. |
 | R3 측정 창, UTC | `2026-10-20T13:44:43.465Z`부터 `13:55:35.235Z`까지였습니다. |
 | 표본 | 모든 실행에서 판별 예열 10회와 본 표본 100회를 사용했습니다. |

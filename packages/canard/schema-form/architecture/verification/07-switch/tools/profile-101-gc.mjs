@@ -16,14 +16,14 @@ const pkg = path.resolve(directory, '../../..');
 const repo = path.resolve(pkg, '../../..');
 const artifacts = path.join(directory, 'profile-101-gc');
 const bundles = path.join(artifacts, 'bundles');
-const raw = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/prof';
+const raw = '{scratch}/prof';
 const head = 'aee63933e43e3f8da442cf3ba7e7574f2aa16679';
 const require = createRequire(path.join(repo, 'package.json'));
 const { TraceMap, originalPositionFor } = require('@jridgewell/trace-mapping');
 const names = ['nested-d5-f4', 'flat-500', 'oneOf-20'];
 const samplingInterval = 2048;
 const clockUs = () => Number(process.hrtime.bigint() / 1000n);
-assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+assert.equal(fs.realpathSync(repo), '{repo}');
 assert.equal(execFileSync('git', ['--no-optional-locks', 'rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), head);
 
 function replaceOnce(source, before, after) {

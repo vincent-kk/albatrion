@@ -2,7 +2,7 @@
 
 - 대상: Draft PR #425 (`vincent-kk/schema-form-next-extras`, HEAD `6326dfc06492571a89360baa91a8db6b7daa85fe`)
 - 기준 베이스: `feat/schema-form-08-review-and-perf` (`9a473b2a2d0fbfe250e578f79c58d6efa6f09958`)
-- 작업 디렉토리: `/Users/Vincent/Workspace/albatrion/schema-form-next-extras`
+- 작업 디렉토리: `schema-form-next-extras`
 - 검토 일시: 2026-10-20
 - 작성자: 독립 검토 워커 (agy)
 
@@ -115,7 +115,7 @@ Draft PR #425는 편집자 결정 417C-02의 제약 조건을 완벽히 충족�
 - **검증 명령 및 근거**:
   - `git status --porcelain`: 작업 트리가 깨끗함(clean)을 확인했습니다.
   - `seal.json` 무결성 점검: 봉인된 2,453개 파일 중 대표 8개 파일(`commit-detail.txt`, `environment.json`, `window.json`, `rows.md`, `report.md`, `dist-base/index.mjs`, `dist-candidate/index.mjs`, `gates/test.receipt.json`)의 SHA256 해시를 `crypto` 및 `shasum -a 256`으로 직접 대조한 결과 8개 파일 모두 봉인 기록과 바이트 단위로 정확히 일치했습니다.
-  - 네임스페이스 복사 동일성: `diff -rq /Users/Vincent/Workspace/albatrion/schema-form-next-extras/.seiri/tasks/next-extras-431 /Users/Vincent/Workspace/albatrion/.seiri/tasks/next-extras-431` 실행 결과 차이 없음(종료 코드 0).
+  - 네임스페이스 복사 동일성: `diff -rq schema-form-next-extras/.seiri/tasks/next-extras-431 .seiri/tasks/next-extras-431` 실행 결과 차이 없음(종료 코드 0).
   - PR 메타데이터 확인 (`gh pr view 425 --json body,commits`):
     - 커밋 작성자 및 커미터: 3개 커밋 모두 `Vincent Kelvin` (`vincent-kk@users.noreply.github.com`).
     - 커밋 메시지 및 PR 본문에 세션, 작업 ID, 공동 저자(co-author) 관련 문구가 전혀 포함되어 있지 않습니다.

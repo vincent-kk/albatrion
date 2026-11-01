@@ -293,7 +293,7 @@ U3–U7은 앞 단위의 계약에 기대므로 차례로 간다. U8·U9·U10은
 - lint·typecheck: `(cd packages/canard/schema-form && npx eslint "src/**/*.{ts,tsx}" && npx tsc --noEmit --composite false --rootDir . -p tsconfig.json)`
 - SCN: `(cd packages/aileron/schema-form-scenarios && npx vitest run --config vite.config.ts && npx tsc --noEmit --strict --composite false -p tsconfig.json && npx eslint index.ts "src/**/*.{ts,tsx}")`
 - 원장 인용: `(cd packages/canard/schema-form/architecture && node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md | tail -1)`
-- 06 벤치: `(cd packages/canard/schema-form && node --import tsx bench/array.bench.ts)` 및 `(cd packages/canard/schema-form && /opt/homebrew/bin/bun bench/array.bench.ts)`
+- 06 벤치: `(cd packages/canard/schema-form && node --import tsx bench/array.bench.ts)` 및 `(cd packages/canard/schema-form && {node-home}/bin/bun bench/array.bench.ts)`
 - 03·04 벤치 재측정: `bench/node-and-settle.bench.ts`, `bench/derive-and-controls.bench.ts`를 같은 두 런타임으로
 - 공개 `<Form>` 가드: `yarn workspace @aileron/benchmark-form guard:check`(단독 호출)
 - 빌드(번들 누출 확인이 필요할 때만): `yarn workspace @canard/schema-form build` 뒤 `yarn workspace @canard/schema-form build:types`(04 log의 형 선언 복구)

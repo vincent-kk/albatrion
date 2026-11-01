@@ -649,7 +649,7 @@ mount 전체의 무조건 projection/gate memo는 oneOf payload를 없앴습니�
 | worker 최대 | 4459 ms |
 | worker 시간 겹침 | 없음 |
 | 제품 src diff | 없음 |
-| bundle / map / cache | 저장소 안 신규 출력 없음. bundle/map은 /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles |
+| bundle / map / cache | 저장소 안 신규 출력 없음. bundle/map은 {scratch}/bundles |
 | 개별 raw 파일 최대 | 519104 bytes (≤5000000) |
 
 `profile-105-rebound/measure.mjs`는 profile-102의 원본 harness와 round-99 canonical builder를 메모리에서 재배치합니다. 모든 source transform은 esbuild onLoad 메모리에서만 수행했으며 서비스는 stdin EOF로 종료했습니다. `process-*.json`, `build-*.json`, `counts-*.json`, `cpu-*.cpuprofile`, `*-forced-r*.json`, `verdict-*.json`이 재현·검증 근거입니다. 공식 보고서는 `profile-105-rebound.md`, 구조화 요약은 `profile-105-rebound-summary.json`입니다.

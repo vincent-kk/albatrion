@@ -4,7 +4,7 @@
 
 ## 1. 자리
 
-- 워크트리 `/tmp/claude-501/stage-tidy-1`, 브랜치 `feat/schema-form-tidy-1`, base `1.0.0-beta`(3dea8b550 이후 최신). PR base도 `1.0.0-beta`, squash 병합은 원장 관리자가 한다.
+- 워크트리 `{repo}`, 브랜치 `feat/schema-form-tidy-1`, base `1.0.0-beta`(3dea8b550 이후 최신). PR base도 `1.0.0-beta`, squash 병합은 원장 관리자가 한다.
 - 패키지 `packages/canard/schema-form`. `src/__legacy__`는 건드리지 않는다(09에서 지움).
 - codex는 `.claude/`, settings, `architecture/`를 건드리지 않는다. 커밋에 세션 ID·co-author를 넣지 않는다.
 
@@ -37,9 +37,9 @@
 - `yarn --cwd packages/canard/schema-form typecheck` 0, `lint` 0, `build` 성공, `test:production` 20.
 - `yarn --cwd packages/canard/schema-form vitest run --project unit --project render --project react18 --reporter=json --outputFile=$TMPDIR/tidy1.json` — 통과 수는 3870에서 삭제한 시험만큼 준 값이어야 하고 실패 0. 삭제한 시험 수를 본문에 적는다.
 - `yarn --cwd packages/canard/schema-form test --run --project storybook --reporter=dot` 251.
-- 플러그인 일곱 `yarn --cwd /Users/Vincent/Workspace/albatrion workspace @canard/schema-form-<ajv6|ajv7|ajv8|antd-mobile|antd5|antd6|mui>-plugin test --run --reporter=dot` 모두 초록.
+- 플러그인 일곱 `yarn --cwd {repo} workspace @canard/schema-form-<ajv6|ajv7|ajv8|antd-mobile|antd5|antd6|mui>-plugin test --run --reporter=dot` 모두 초록.
 - 공개 `dist/index.d.ts`가 1.0.0-beta 끝단의 것과 **동일**(diff 0). 옛 이름 게이트 `grep -rlE "SchemaNode|FormTypeInput|FormTypeRenderer" dist | grep -v "^dist/__legacy__"` 빈 출력.
-- aileron 벤치마크 패키지 typecheck(`yarn --cwd /Users/Vincent/Workspace/albatrion workspace @aileron/benchmark typecheck` — 스크립트 이름은 그 패키지 `package.json`에서 확인).
+- aileron 벤치마크 패키지 typecheck(`yarn --cwd {repo} workspace @aileron/benchmark typecheck` — 스크립트 이름은 그 패키지 `package.json`에서 확인).
 - `bench/` 7파일은 `yarn --cwd packages/canard/schema-form vitest bench --run --config vitest.bench.config.ts <파일 하나>`로 import가 깨지지 않았는지 하나만 돌려 본다(시간이 길면 `--run`에 시간 제한을 두고 import 성공만 확인).
 - 측정은 조용한 창에서 순차로 돈다(`global-errors.timing.test.ts`는 동시 부하에서 40 ms 한도를 넘긴다).
 - verifier(Claude `verifier` 서브에이전트)에게 diff 전체를 주고 "삭제한 이름 중 제품 소비자가 있는 것이 하나도 없는가, 옮긴 파일의 모든 import가 고쳐졌는가, DETAIL이 코드보다 먼저 바뀌었는가"를 묻는다. 결과를 본문에 붙인다.
