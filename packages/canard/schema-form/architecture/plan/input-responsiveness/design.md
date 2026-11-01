@@ -573,3 +573,8 @@ onError is an event channel: it delivers the one record of each occurrence and d
 사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
 
 C1–C6와 Amendment 1 A1–A5·P3 전체를 적용합니다. src/index.ts·package version은 유지합니다. 계약→시험 red→제품→순차 관문 순서이며 측정창·벤치는 필요하지 않습니다.
+
+
+## Defect round — Amendment 2 제품 라운드
+
+DR-1·DR-2·DR-3과 D9 제한은 [결함 설계](../defect-round/design.md)를 따릅니다. 기존 계획·측정 기록은 보존하며 D4·D5는 기준 재현 red 뒤 코디네이터 Amendment 3까지 수정하지 않습니다. D6·D7은 비재현 guard를 보존합니다. 측정과 기록 경로 정리는 별도 라운드입니다.

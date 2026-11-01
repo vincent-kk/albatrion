@@ -48,7 +48,7 @@
 | `FieldNodeEventType` · `FieldNodeRequestType`                                                      | 새 엔진의 공개 사건·명령 열거값(EVENT-073, LANDING-067)                                                                                                          |
 | 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기                 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01)                                                       |
 | `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                              |
-| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
+| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 커밋 소비자 수명 증감 통로이며 실행 중 핀은 validation 내부에서 별도로 관리합니다. 바인딩은 이를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
 | `scheduleValidationSlot(run)` | RootNodeContext의 모든 로드 검증이 쓰기 검증과 같은 다음 화면 뒤 슬롯을 쓰도록 validationScheduling·engine 경계를 통해 명명 재수출한다. 패키지 공개 `src/index.ts`와 공개 선언에는 노출하지 않는다(IR-6). |
 | `startFieldNodeLoadValidation(node)` | 다음 프레임 뒤 로드 슬롯에서 engine의 dispatchLoadValidation을 호출하는 바인딩 전용 통로다. 패키지 공개 표면은 유지한다. |
 

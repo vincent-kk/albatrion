@@ -235,3 +235,8 @@ Amendments 1–3: 모든 로드 시작에 stamp 증가, finally 종료 직전 lo
 onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
 
 T1의 다섯 origin·T2 중첩 load·T3 옛 필드 부재, A1 reset/rebuild/validator 변경, A5 첫 오류, P3-4 write listener reset·validate wave listener·stale load 뒤 state 및 최초/prop 외부 errors를 검증합니다. 기존 whole-record 단언도 갱신합니다. f4018e82b 제품에서 시험을 red로 실행하고 committed test SHA256과 JSON gzip을 보존합니다. lint 0경고→typecheck→build→unit→render→react18→verify→storybook→production→import-model→선언·index·FCA·원장·경로·skip/todo 감사를 순차로 기록합니다.
+
+
+## Defect round 관문 보충
+
+[결함 검증 계획](../defect-round/verification.md)의 기준 red·수정 green·세 변이와 순차 관문을 적용합니다. D4·D5의 Amendment 3 적용 전 전체 관문은 실행하지 않습니다. D9는 ERROR-023 항목 2 우선 제한으로 기록합니다.

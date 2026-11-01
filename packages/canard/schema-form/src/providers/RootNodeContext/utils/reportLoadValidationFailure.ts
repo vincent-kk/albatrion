@@ -4,9 +4,9 @@ import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import { reportErrorToHost } from '../../FormErrorContext';
 
-/** Isolate only the consumer-error tail of an already engine-reported load failure.
- * @param failure - Rejection from explicit load root validation.
- * @returns Nothing; the engine owns reporting every validation failure. */
+/** Forward an engine-reported slot verdict failure once to the host.
+ * @param failure - Original verdict rejection or ordered consumer-error bundle; compile failures are ignored.
+ * @returns Nothing; bundle elements reach the host in order without recapturing engine records. */
 export const reportLoadValidationFailure = (failure: unknown): void => {
   if (
     !(failure instanceof SchemaFormError) ||

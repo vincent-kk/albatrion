@@ -1,7 +1,7 @@
 import type { BlueprintSchema } from '../../../blueprint';
 import type { Validator } from '../../types/validator';
 
-/** Registrations owned by one selected validator instance. */
+/** Registrations owned by committed consumers and in-flight runs of one validator. */
 export interface ValidationLifetime {
   /** Number of committed consumers per authored root. */
   readonly counts: Map<BlueprintSchema, number>;
@@ -15,7 +15,7 @@ const lists = new WeakMap<Validator, ValidationLifetime>();
 /**
  * Obtain the registration ledger of a selected validator.
  * @param validator - Instance whose registrations cannot be shared with another.
- * @returns Its mutable reference counts and bounded release queue.
+ * @returns Its committed-consumer ledger and recent-release queue.
  */
 export const recentReleaseList = (validator: Validator): ValidationLifetime => {
   let list = lists.get(validator);

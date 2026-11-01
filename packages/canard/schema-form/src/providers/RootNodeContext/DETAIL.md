@@ -12,7 +12,7 @@
 
 - R-f/R-g: reset의 각 build-time 기록은 handler별로 격리하고 실패를 reportErrorToHost로 보낸 뒤 나머지 기록·binding 교체를 계속합니다. 준비 전 기록만 새 load 앞에 옮기고 원래 root·warning scope를 보존합니다. mount 기록이 build 기록보다 먼저 전달됩니다(L4).
 
-- W4: 로드 검증 helper는 engine이 이미 보고한 실패를 다시 capture하지 않는다. consumer 실패 bundle의 handler 오류만 host에 전달한다.
+- W4: 로드 검증 helper는 engine이 이미 보고한 실패를 다시 capture하지 않는다. compile 실패를 제외한 원래 슬롯 판정 거부를 host에 한 번 전달하며 MultipleErrors의 원소는 첫 원인부터 handler 오류까지 순서대로 보낸다.
 - W5: buffered record의 원래 root를 reporter.root에 보존하고 현재 load.root에도 observeFieldNodeReports guard를 적용해 onError가 현행 폼에 쓸 수 없게 한다.
 - 표시 정책은 로드 검증 예약을 바꾸지 않으며 Always 전용 ref·effect는 없다.
 - 로드 슬롯 전에 쓰기 요청이나 명시적 루트 검증이 있으면 컴파일 후 슬롯 판정은 생략한다. 하위 명시적 검증은 로드 판정을 대체하지 않는다.

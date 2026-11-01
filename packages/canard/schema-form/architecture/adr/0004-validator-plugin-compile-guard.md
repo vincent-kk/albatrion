@@ -419,3 +419,12 @@ if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한�
 ## IR-8 supplement — VALIDATE-052 / VALIDATE-046 / ERROR-201
 
 【추론】 IR-8: VALIDATE-052의 최초 mount inline 판정은 quote 49로 철회한다. 모든 Provider 로드는 다음 프레임 뒤 공통 슬롯에서 None 생략, OnRequest-only 컴파일, OnChange 컴파일·로드 이후 요청이 없을 때 판정을 수행한다 (VALIDATE-052). VALIDATE-046·ERROR-201의 atomic reset 및 IR-7 round b adoption 전 compile 실패 caller throw·host 0 규칙은 철회한다. adoption은 컴파일하지 않고 새 트리를 유지하며 자동 compile 실패는 로드마다 sink 한 번·host 한 번, explicit validate·submit은 rejected로 거부한다 (ERROR-164). ERROR-019 항목 2의 자동 보고는 슬롯을 따르고 항목 3의 오래된 ValidatorThrew 보고는 유지한다. VALIDATE-021의 등록 순서는 visible replacement commit의 old-root release 뒤 slot compile이며 같은 $id·다른 내용 새 객체는 성공할 수 있다. 두 mounted root와 if-gated 동기 compile의 중복 실패는 유지하며 compile 시점 중복 원인을 캐시에 보존한다 (VALIDATE-046). WRITE-046·086·EVENT-030 인계는 컴파일하지 않고 LANDING-041의 Provider reset은 deferValidation으로 사슬 끝 요청을 미룬다. T1–T9·B2·B3와 T10·T11 guard, Always·after-paint·reset-failures·lifetime·policies·same-id·surfaceIndex·binding-input·onChange stamp 시험을 새 계약에 맞춘다 (TEST-021).
+
+
+## Defect round — DR-1·DR-2·DR-3 보충 (2026-11-01)
+
+VALIDATE-021의 실행 중 pin은 counts와 분리하며 같은 id 교체는 pin을 무시합니다. ERROR-019·VALIDATE-052의 슬롯 판정 실패는 onError 뒤 host에 원본을 한 번 전달하며 MultipleErrors 원소 순서를 유지합니다. VALIDATE-046·ERROR-201의 IR-8 중복 원인 영구 보존 문장은 충돌 지속 또는 실패한 재시도에만 남습니다. assertValidationRootReady는 충돌 해제 뒤 entry당 한 번 동일 copy를 재컴파일하고 성공 시 중복 guard 실패를 지우며 반환된 guard 참조는 유지합니다.
+
+플러그인 요구: 실패한 compile(copy)와 이전 compileGuard(copy, …) 호출 뒤 같은 copy의 compile은 깨끗이 등록할 수 있어야 합니다. ajv6·7·8은 같은 id의 다른 루트를 sibling instance로 분리합니다. ajv8의 compileGuard는 copy 등록을 수행할 수 있으므로 copy가 한 번도 등록되지 않았다고 가정하지 않습니다. 시험 double은 등록된 다른 copy의 같은 id만 거부하고 compileGuard 자체는 등록 없이 동기 gate를 반환합니다. 세 shipped plugin과 double을 각각 검사합니다. item G는 호출 순서와 생산 컴파일 시점 변경으로 유보합니다.
+
+reset과 commit 사이 explicit validate 또는 commit 전 슬롯 실패 시 해당 load 검증은 unavailable로 남습니다. [현행 결정](../reviews/defect-round.md)과 [계획](../plan/defect-round/design.md)을 함께 따릅니다.
