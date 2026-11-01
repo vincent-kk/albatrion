@@ -1,0 +1,32 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 3191,
+      "sha256": "5ffec7d718a708986024e4f3f98cc2162766167bcfe748d7bcf0bd837c5f204d"
+    },
+    "exploration.json": {
+      "bytes": 1482,
+      "sha256": "33c738af3b983d1d80ae9a9247d0ef16cca3accee76ee74e5c77dc8bdfd0538d"
+    },
+    "inputs.json.gz": {
+      "bytes": 313872,
+      "sha256": "320f46a4ffb7b36fd3c430dd58b682d553a3436d38ecfd1ea09f215b0b0191d9"
+    },
+    "prepared.json": {
+      "bytes": 4073,
+      "sha256": "83eabb3b13f55abf3ec2570840c165eae7237d99db31a90ab25cf88ebde7ea4b"
+    },
+    "smoke-complete.json.gz": {
+      "bytes": 324419,
+      "sha256": "4f02cf1b878a63f2dc190569317c49d47d4378319e8ba29bf0a93e4c17fdc4df"
+    },
+    "smoke-derived-diagnostic.json": {
+      "bytes": 234,
+      "sha256": "5fd5aa6b2e297edfd129226e8d1361b25ad1a836db03dee7147021f328d828af"
+    },
+    "smoke-pages.json.gz": {
+      "bytes": 1194806,
+      "sha256": "e28b75a46a3ba97f914c7ada3c3c17d111121bf04ee44ecf8701751810a05084"
+    }
+  }
+}
