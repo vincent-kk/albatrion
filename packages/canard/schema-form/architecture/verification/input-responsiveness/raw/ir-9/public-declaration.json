@@ -1,6 +1,6 @@
 {
   "baseline": "f4018e82b",
-  "candidate": "daf4ff55f81086ff2e01b9e2b9fdf734e112d8f7",
+  "candidate": "8be831c4e8473bdeb4c44e7439511971d4fd99ea",
   "algorithm": "TypeScript checker; every package export, package-declared properties, signatures, predicates and type arguments; depth 7; full tsc declaration emission before alias post-processing",
   "depth": 7,
   "export_count": 97,
