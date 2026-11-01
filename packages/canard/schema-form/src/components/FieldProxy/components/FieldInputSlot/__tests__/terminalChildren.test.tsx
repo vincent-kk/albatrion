@@ -1,6 +1,7 @@
 import {
   type ComponentType,
   createRef,
+  useCallback,
   useLayoutEffect,
   useRef,
   useState,
@@ -43,12 +44,12 @@ it.each([
     let clicks = 0;
     const Input = ({ ChildFields }: FieldInputProps) => {
       const button = useRef<HTMLButtonElement>(null);
-      const click = () => {
+      const click = useCallback(() => {
         clicks++;
         if (clicks === 1 && order === 'read-after') ref.current![operation]();
         void ChildFields.length;
         if (clicks === 1 && order === 'read-before') ref.current![operation]();
-      };
+      }, [ChildFields]);
       useLayoutEffect(() => {
         const element = button.current;
         if (event !== 'native' || !element) return;
