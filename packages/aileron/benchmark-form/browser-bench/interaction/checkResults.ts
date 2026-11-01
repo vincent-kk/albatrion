@@ -11,6 +11,7 @@ import { checkDerivedRecords } from './helpers/checkDerivedRecords';
 import { checkHeavyValidationResults } from './helpers/checkHeavyValidationResults';
 import { checkStageClosingResults } from './helpers/checkStageClosingResults';
 import { checkValidationAfterPaintResults } from './helpers/checkValidationAfterPaintResults';
+import { checkStateVocabularyResults } from './helpers/stateVocabulary/checkStateVocabularyResults';
 import { summarizePage } from './helpers/summarizePage';
 import { summarizePairs } from './helpers/summarizePairs';
 import { summarizeResults } from './helpers/summarizeResults';
@@ -25,6 +26,18 @@ if (auditBase !== undefined) checkAddedMachinePaths(repository, auditBase);
 const destination = path.resolve(
   '../../canard/schema-form/architecture/verification/input-responsiveness',
 );
+if (process.argv.includes('--stage=state-vocabulary')) {
+  const root = process.argv
+    .find((arg) => arg.startsWith('--root='))
+    ?.slice('--root='.length);
+  assert.ok(root, 'state-vocabulary requires explicit root');
+  checkStateVocabularyResults(
+    path.resolve(root),
+    process.argv.includes('--write'),
+    process.argv.includes('--smoke'),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--stage=closing')) {
   const root = process.argv
     .find((arg) => arg.startsWith('--root='))
