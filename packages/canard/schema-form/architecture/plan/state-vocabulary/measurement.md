@@ -108,4 +108,4 @@ C1의 `processingTail`은 processing과 같은 F/B 비율 상한을 사용합니
 
 checker는 preregisteredCommit의 이 문서에 inputs의 rulesSha256이 적혀 있는지 확인합니다. 정식 시작 전 같은 root 스모크에서 F의 isDivergent 두 읽기가 실행되어 true였는지 확인하며, 아니면 창을 열지 않습니다. 이 검사는 CPU quiet 관측과 formal-start.json 기록보다 먼저 수행합니다. 임시 빌드 스모크의 getter skip은 허용하되 그 자료로 정식 창을 열 수는 없습니다.
 
-잔여 위험도 기록합니다. 독립 검증자의 동일 빌드 모의 창에서 개정 뒤 SV-1 FAIL은 약 4%였으며, 약 2.2%는 C5 callDuration, 약 1.7%는 replace nextPainted에서 발생했습니다. 결과는 정식 창의 실제 판정을 대신하지 않으며, 결과를 본 뒤 창을 재실행하거나 규칙을 변경하지 않습니다.
+잔여 위험도 기록합니다. 커밋된 판정 코드로 다시 실행한 동일 빌드 모의 창 150개에서 SV-1 FAIL은 11개(7.3%)였고, 모두 C5에서 발생했습니다(rebuild callDuration 7개, replace nextPainted 4개). SV-2와 C1·C2·C3·C4·C6의 FAIL은 0개였습니다. 결과는 정식 창의 실제 판정을 대신하지 않으며, 결과를 본 뒤 창을 재실행하거나 규칙을 변경하지 않습니다.
