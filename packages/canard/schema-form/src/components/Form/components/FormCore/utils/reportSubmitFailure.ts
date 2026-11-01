@@ -3,7 +3,7 @@ import type { FormErrorService } from '@/schema-form/providers/FormErrorContext'
 
 /** Report caller-owned degraded failures and retain handler exceptions in their rejection. */
 export const reportSubmitFailure = (
-  reporter: FormErrorService | null,
+  reporter: Optional<FormErrorService>,
   error: unknown,
   native: boolean,
 ): void => {
@@ -30,3 +30,5 @@ export const reportSubmitFailure = (
     }
   } else if (native) reporter?.capture(error, 'submit');
 };
+import type { Optional } from '@aileron/declare';
+
