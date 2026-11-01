@@ -539,3 +539,18 @@ C3-9 (test placement, coordinator; removes ambiguity in the brief).
 - T7 goes in `src/core/__tests__/loadValidation.test.ts`.
 - T10 and T11 go in `src/__tests__/e2e/validation.after-paint.render.test.tsx`.
 - The B2 test goes in `core/engine/validation/__tests__/validation.same-id.test.ts`.
+
+
+## IR-8 round b — results-gate 수정 (2026-11-01)
+
+codex F1과 results-gate 조건을 채택한다. B2의 `entry.duplicate === true || 기존 scan`은 `entry.duplicate`만 읽는 계약으로 대체한다. readValidationEntry가 컴파일 전에 해제된 같은 $id 루트를 축출하므로 컴파일 시점 counted-root 판정이 충분하며 나중에 retain된 루트는 원인을 바꾸지 않는다 (VALIDATE-046).
+
+컴파일 실패 거부 객체는 캐시 항목마다 하나로 메모한다. 같은 폼이 이미 보고한 객체의 native submit 거부는 onError를 반복하지 않고 host에만 보고한다. 명시적 handle.submit은 계속 거부한다 (ERROR-019, ERROR-139, ERROR-164).
+
+C3-9의 single-file 배치를 대체한다: T3·T9·B3는 validation.load-slot-failures.render.test.tsx로 본문을 유지해 옮기고 native submit 두 모드를 추가한다. 원래 파일은 T1·T2·T4·T5·T6·T8을 유지하며 양쪽 모두 15-case cap을 지킨다 (TEST-021).
+
+T10·T11 즉시 pending, T10의 frame 전 실행 0, T5 reset의 새 슬롯 1, W4 sink·compile/handler host 각 1, Form.policies의 frame 전 compile 0, mount/reset load-start stamp 증가를 강화한다. F1·native-submit 및 강화 시험을 0df36857c에서 실행하고, mount/reset advance를 각각 제거한 scratch copy의 red도 보존한 뒤 scratch를 제거한다 (TEST-021).
+
+L6에 run-time retain 후보를 기록하고 수명 계약은 바꾸지 않는다. 캐시된 compile 거부를 render에서 다시 던지면 seen이 RENDER_FAILED 한 번을 생략하고 seen에서 제거하는 한계를 기록한다. raw 경로 감사는 일반 파일과 gzip 모두의 /tmp 경로까지 포함하며 과거 감사의 누락을 바로잡는다 (VALIDATE-021, ERROR-019, TEST-021).
+
+lint·typecheck·build·unit·render·react18·verify·storybook·production·import-model을 순차 실행한다. 두 load-slot 파일의 act warning 0, FCA 새 finding 0, 원장 기준 대비 새 문제 0, machine-path 0와 skip/todo 불변을 확인하고 round-b 원시에 보존한다 (TEST-021).
