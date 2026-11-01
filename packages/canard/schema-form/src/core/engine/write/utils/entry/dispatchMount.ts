@@ -1,5 +1,5 @@
 import { FormWarningCode } from '../../../../../errors';
-import type { FormErrorRecord } from '../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { loadFieldNodeAtMount } from '../../../settle';
 import { ValidationMode } from '../../../types/state';
@@ -27,7 +27,7 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
   option: WriteOption = WriteOption.Overwrite,
   settings: { deferValidation?: boolean } = NO_MOUNT_SETTINGS,
 ): void => {
-  if (!enterFieldNodeChain(root)) return;
+  if (!enterFieldNodeChain(root, 'load')) return;
   clearWarningKeys(root.runtime);
   root.runtime.validationUnavailable = false;
   root.runtime.validationCompileReported = false;
@@ -51,7 +51,7 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
       !runtime.warningKeys?.has(FormWarningCode.ValidatorMissing)
     ) {
       (runtime.warningKeys ??= new Set()).add(FormWarningCode.ValidatorMissing);
-      const record: FormErrorRecord = {
+      const record: PendingFormErrorRecord = {
         level: 'warning',
         code: FormWarningCode.ValidatorMissing,
         message: 'Validation is disabled because no validator was selected',

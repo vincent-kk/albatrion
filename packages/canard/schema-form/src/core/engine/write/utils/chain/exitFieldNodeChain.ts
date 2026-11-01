@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../../../errors';
 import { FormErrorCode } from '../../../../../errors';
-import type { FormErrorRecord } from '../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import {
@@ -41,11 +41,15 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   let root = runtime.chainRoot ?? activeRoot;
   rebuildRootExternalErrors(root);
   runDeliveryWaves(root);
-  flushQueuedEvents(resolveFieldNodeChainRoot(root, passed));
+  flushQueuedEvents(
+    resolveFieldNodeChainRoot(root, passed),
+    true,
+    runtime.chainOrigin ?? 'write',
+  );
   root = resolveFieldNodeChainRoot(root, passed);
   runtime = root.runtime;
   const occurrences = runtime.chainOccurrences ?? [];
-  const pending: FormErrorRecord[] = [];
+  const pending: PendingFormErrorRecord[] = [];
   const warnings = runtime.pendingWarningRecords;
 
   if (warnings?.size) {
@@ -166,6 +170,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     if (stale === runtime) continue;
     stale.chainErrors = runtime.chainErrors;
     stale.chainRoot = undefined;
+    stale.chainOrigin = undefined;
   }
   if (enclosing) {
     enclosing.errors.push(...errors);
@@ -175,18 +180,20 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   const original = bundleChainErrors(errors);
-  const aggregate =
-    errors.length > 1 && original instanceof SchemaFormError
-      ? original
-      : undefined;
   collectChainRecords(
     pending,
     occurrences,
-    aggregate,
-    'thrown',
+    runtime.chainOrigin ?? 'write',
     runtime.reportedGuardFailures,
   );
-  const handlerErrors = deliverChainRecords(runtime, pending, original, true);
+  const handlerErrors = deliverChainRecords(
+    runtime,
+    pending,
+    original,
+    true,
+    runtime.chainOrigin ?? 'write',
+  );
+  runtime.chainOrigin = undefined;
   const exposed = !errors.length
     ? bundleChainErrors(handlerErrors)
     : handlerErrors.length

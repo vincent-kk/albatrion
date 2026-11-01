@@ -16,13 +16,15 @@ import { resolveFieldNodeChainRoot } from '../chain/resolveFieldNodeChainRoot';
  * item keys under a written array host carry over by position (191C-01).
  * @param node - Any occurrence in the tree being batched
  * @param fn - Synchronous writes to mark, including nested batches
+ * @param origin - Internal load binding override; public batches use write
  * @returns Nothing; a thrown callback is rethrown after marked work commits
  */
 export const dispatchBatch = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   fn: () => void,
+  origin: 'load' | 'write' = 'write',
 ): void => {
-  if (!enterFieldNodeChain(node)) return;
+  if (!enterFieldNodeChain(node, origin)) return;
   const runtime = node.rootNode.runtime;
   runtime.batchDepth = (runtime.batchDepth ?? 0) + 1;
   try {

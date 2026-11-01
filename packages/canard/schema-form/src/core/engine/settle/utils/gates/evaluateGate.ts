@@ -7,6 +7,7 @@ import {
   FormWarningCode,
   SchemaFormError,
 } from '../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
@@ -201,16 +202,14 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
       !runtime.reportedGuardFailures?.has(gate.schemaPath) &&
       !runtime.guardFailureRecords?.has(gate.schemaPath)
     ) {
-      const record = {
-        level: 'error' as const,
+      const record: PendingFormErrorRecord = {
+        level: 'error',
         code: FormErrorCode.GuardFailed,
         message: 'Gate evaluation failed at ' + gate.schemaPath,
         schemaPath: gate.schemaPath,
         path: hostPath,
         details: { cause },
-        surface: runtime.mountingGuardPass
-          ? ('sink' as const)
-          : ('thrown' as const),
+        origin: runtime.mountingGuardPass ? 'load' : runtime.chainOrigin,
       };
       (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
       runtime.chainOccurrences?.push({ kind: 'record', record });

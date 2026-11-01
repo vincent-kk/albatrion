@@ -47,7 +47,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     submitForm(
       binding.current.root,
       props.onSubmit,
-      native ? (error) => reporter?.capture(error) : undefined,
+      native ? (error) => reporter?.capture(error, 'submit') : undefined,
     ),
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);

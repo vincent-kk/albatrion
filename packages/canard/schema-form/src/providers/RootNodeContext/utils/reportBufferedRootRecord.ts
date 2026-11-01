@@ -13,10 +13,10 @@ export const reportBufferedRootRecord = (
 ): void => {
   const reporter = load.reporter;
   if (!reporter) return;
-  const origin = load.recordOrigins?.get(record);
-  reporter.root = origin?.root ?? load.root;
-  const scope = origin?.warningScope ?? load.warningScope;
-  load.recordOrigins?.delete(record);
+  const recordScope = load.recordScopes?.get(record);
+  reporter.root = recordScope?.root ?? load.root;
+  const scope = recordScope?.warningScope ?? load.warningScope;
+  load.recordScopes?.delete(record);
   const report = () =>
     scope ? reporter.reportInLoad(record, scope) : reporter.report(record);
   try {

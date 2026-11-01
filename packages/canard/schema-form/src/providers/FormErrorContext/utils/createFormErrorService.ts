@@ -56,7 +56,7 @@ export const createFormErrorService = (): FormErrorService => {
         delivering = false;
       }
     },
-    capture(error, componentStack, surface = 'sink', path) {
+    capture(error, origin, componentStack, path) {
       if (error && typeof error === 'object' && seen.has(error)) {
         if (componentStack !== undefined) seen.delete(error);
         return;
@@ -77,7 +77,7 @@ export const createFormErrorService = (): FormErrorService => {
           error,
           ...(path !== undefined ? { path } : {}),
           details: domain?.details,
-          surface,
+          origin,
           ...(componentStack !== undefined ? { componentStack } : {}),
         });
       } catch (handlerError) {

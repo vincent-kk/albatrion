@@ -16,7 +16,7 @@ export const flushRootLoad = (load: RootLoad, errorsOnly = false): void => {
       }
     }
   if (load.error) {
-    load.reporter?.capture(load.error);
+    load.reporter?.capture(load.error, 'load');
     reportErrorToHost(load.error);
   }
 };

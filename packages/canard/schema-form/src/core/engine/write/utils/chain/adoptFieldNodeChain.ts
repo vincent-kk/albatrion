@@ -32,6 +32,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   next.chainRoot = nextRoot;
   next.chainInitialEmit = previous.chainInitialEmit;
   next.chainErrors = previous.chainErrors;
+  next.chainOrigin = previous.chainOrigin;
   next.chainOccurrences = previous.chainOccurrences;
   next.enclosingChain = previous.enclosingChain;
   next.errorReporter ??= previous.errorReporter;

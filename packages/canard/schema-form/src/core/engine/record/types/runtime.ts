@@ -1,9 +1,9 @@
 import type { Dictionary } from '@aileron/declare';
 
 import type {
-  FormErrorRecord,
   FormErrorReporter,
   FormWarningCode,
+  PendingFormErrorRecord,
 } from '../../../../errors';
 import type {
   Blueprint,
@@ -219,10 +219,12 @@ export interface FieldNodeRuntime<Self>
   chainInitialEmit?: unknown;
   /** Failures retained in occurrence order until the chain finishes. */
   chainErrors?: unknown[];
+  /** Outermost chain or standalone verdict-wave operation, cleared after delivery. */
+  chainOrigin?: 'load' | 'write' | 'validate';
   /** Error and warning occurrences in their actual chain order. */
   chainOccurrences?: (
     | { kind: 'error'; error: unknown }
-    | { kind: 'record'; record: FormErrorRecord }
+    | { kind: 'record'; record: PendingFormErrorRecord }
   )[];
   /**
    * Stack of enclosing chains' failure collections, innermost first; `outer` links the next.
@@ -279,11 +281,11 @@ export interface FieldNodeRuntime<Self>
   /** Warning identities already reported for this tree. */
   warningKeys?: Set<string>;
   /** Warnings held until the public entry commits and finishes delivery. */
-  pendingWarningRecords?: Map<string, FormErrorRecord>;
+  pendingWarningRecords?: Map<string, PendingFormErrorRecord>;
   /** Data-path ancestor to warning keys, for change-proportional moves/pruning. */
   warningKeysByPath?: Map<string, Set<string>>;
   /** Guard failures awaiting the current public entry's final delivery. */
-  guardFailureRecords?: Map<string, FormErrorRecord>;
+  guardFailureRecords?: Map<string, PendingFormErrorRecord>;
   /** Failed guards already reported by this consuming tree. */
   reportedGuardFailures?: Set<string>;
   /** Development mount currently defers guard failures until its commit. */

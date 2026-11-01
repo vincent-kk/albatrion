@@ -1,5 +1,5 @@
-import { SchemaFormError } from '../../../../../errors';
-import type { FormErrorRecord } from '../../../../../errors';
+import type { FormErrorOrigin } from '../../../../../errors';
+import type { PendingFormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { bundleChainErrors } from './bundleChainErrors';
 import { collectChainRecords } from './collectChainRecords';
@@ -11,6 +11,7 @@ import { deliverChainRecords } from './deliverChainRecords';
  * @param errors - Original listener and state-callback failures in order
  * @param occurrences - Reportable occurrences retained during this wave
  * @param caller - Whether the wave exposes failures by throwing to its caller
+ * @param origin - Chain or standalone event-wave operation
  * @returns Nothing when the wave had no failures
  */
 export const finishQueuedErrors = (
@@ -21,21 +22,23 @@ export const finishQueuedErrors = (
   errors: readonly unknown[],
   occurrences: NonNullable<FieldNodeRuntime<unknown>['chainOccurrences']>,
   caller: boolean,
+  origin: FormErrorOrigin,
 ): void => {
   const original = bundleChainErrors(errors);
-  const aggregate =
-    errors.length > 1 && original instanceof SchemaFormError
-      ? original
-      : undefined;
-  const pending: FormErrorRecord[] = [];
+  const pending: PendingFormErrorRecord[] = [];
   collectChainRecords(
     pending,
     occurrences,
-    aggregate,
-    caller ? 'thrown' : 'sink',
+    origin,
     runtime.reportedGuardFailures,
   );
-  const handlerErrors = deliverChainRecords(runtime, pending, original, caller);
+  const handlerErrors = deliverChainRecords(
+    runtime,
+    pending,
+    original,
+    caller,
+    origin,
+  );
   if (caller && (errors.length || handlerErrors.length))
     throw errors.length && handlerErrors.length
       ? bundleChainErrors([original, ...handlerErrors])

@@ -29,21 +29,25 @@ const isQueuedNode = <Self extends FieldNodeRecord<Self>>(
  * next wave and counts against the same feedback budget (195C-01).
  * @param root - Live root owning the queued event table and observers
  * @param caller - Whether a synchronous caller receives standalone failures
+ * @param origin - Operation owning a standalone wave and its enclosed writes
  * @returns Nothing; standalone failures are exposed after all deliveries
  */
 export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  caller = true,
+  caller: boolean,
+  origin: 'load' | 'write' | 'validate',
 ): void => {
   const entryRuntime = root.runtime;
   if (entryRuntime.flushingQueuedEvents) return;
   entryRuntime.flushingQueuedEvents = true;
   const standalone = !entryRuntime.entryDepth && !entryRuntime.chainErrors;
+  const previousOrigin = entryRuntime.chainOrigin;
   const previousErrors = entryRuntime.chainErrors;
   const previousOccurrences = entryRuntime.chainOccurrences;
   let waves = 0;
   let budgetReported = false;
   if (standalone) {
+    entryRuntime.chainOrigin = origin;
     entryRuntime.chainErrors = [];
     entryRuntime.chainOccurrences = [];
   }
@@ -120,11 +124,13 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
         runtime.chainErrors ?? [],
         runtime.chainOccurrences ?? [],
         caller,
+        origin,
       );
   } finally {
     for (const owner of owners) {
       owner.flushingQueuedEvents = false;
       if (!standalone) continue;
+      owner.chainOrigin = previousOrigin;
       owner.chainErrors = previousErrors;
       owner.chainOccurrences = previousOccurrences;
       if (owner !== entryRuntime) owner.chainRoot = undefined;

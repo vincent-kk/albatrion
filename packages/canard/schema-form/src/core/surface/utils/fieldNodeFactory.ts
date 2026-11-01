@@ -186,6 +186,7 @@ export function fieldNodeFactory(
       () =>
         `Validator dialect ${validator.dialect} differs from schema ${authoredSchema.$schema}`,
       {
+        origin: 'load',
         schemaPath: '#/$schema',
         details: {
           dialect: validator.dialect,

@@ -1,5 +1,8 @@
 import { FormWarningCode } from '../../../../../errors';
-import type { FormErrorRecord } from '../../../../../errors';
+import type {
+  FormErrorOrigin,
+  PendingFormErrorRecord,
+} from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { reportOwnerlessError } from './reportOwnerlessError';
 
@@ -9,17 +12,22 @@ import { reportOwnerlessError } from './reportOwnerlessError';
  * @param records - Occurrences in their original order
  * @param original - Original default exposure, if any
  * @param caller - Whether a synchronous caller receives the final throw
+ * @param origin - Enclosing operation for records without an explicit origin
  * @returns Handler failures in delivery order for final bundling
  */
 export const deliverChainRecords = (
   runtime: Pick<FieldNodeRuntime<unknown>, 'errorReporter' | 'reportingErrors'>,
-  records: readonly FormErrorRecord[],
+  records: readonly PendingFormErrorRecord[],
   original: unknown,
   caller: boolean,
+  origin: FormErrorOrigin,
 ): unknown[] => {
   const failures: unknown[] = [];
   const reporter = runtime.errorReporter;
   for (const record of records) {
+    const delivered = Object.assign(record, {
+      origin: record.origin ?? origin,
+    });
     if (!reporter?.hasConsumer()) {
       if (
         process.env.NODE_ENV !== 'production' &&
@@ -33,7 +41,7 @@ export const deliverChainRecords = (
     const previous = runtime.reportingErrors;
     runtime.reportingErrors = true;
     try {
-      reporter.report(record);
+      reporter.report(delivered);
     } catch (error) {
       if (caller) failures.push(error);
       else reportOwnerlessError(error);
