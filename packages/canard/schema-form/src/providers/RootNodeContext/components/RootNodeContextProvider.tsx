@@ -194,10 +194,11 @@ export const RootNodeContextProvider = ({
 
   const lastErrors = useRef(props.errors);
   useLayoutEffect(() => {
-    if (load.root && lastErrors.current !== props.errors)
-      applyFormErrors(load.root, props.errors, lastErrors.current);
+    const root = store.load.root;
+    if (root && lastErrors.current !== props.errors)
+      applyFormErrors(root, props.errors, lastErrors.current);
     lastErrors.current = props.errors;
-  }, [load, props.errors]);
+  }, [load, props.errors, store]);
 
   if (!load.root) return <div role="alert">Unable to load form.</div>;
   return (
