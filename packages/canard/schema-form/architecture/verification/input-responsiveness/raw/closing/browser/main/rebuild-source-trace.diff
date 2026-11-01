@@ -1,0 +1,229 @@
+diff --git a/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx b/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
+index 71243c567..22b398339 100644
+--- a/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
++++ b/packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx
+@@ -18,6 +18,7 @@ import { PluginManager } from '@/schema-form/app/plugin';
+ import type { FormProps } from '@/schema-form/components/Form';
+ import {
+   ValidationMode,
++  commitFieldNodeRevealPolicy,
+   releaseValidationRoot,
+   retainValidationRoot,
+   setContext,
+@@ -25,6 +26,7 @@ import {
+ import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
+ 
+ import { useExternalFormContext } from '../../ExternalFormContext';
++import { useFieldRendererContext } from '../../FieldRendererContext';
+ import { useFormErrorContext } from '../../FormErrorContext';
+ import { useWorkspaceContext } from '../../WorkspaceContext';
+ import type { RootBinding, RootLoadProps, RootLoadStore } from '../type';
+@@ -33,6 +35,7 @@ import { createRootLoad } from '../utils/createRootLoad';
+ import { flushRootLoad } from '../utils/flushRootLoad';
+ import { reportRootLoadValidation } from '../utils/reportRootLoadValidation';
+ import { resetRootLoad } from '../utils/resetRootLoad';
++import { scheduleLoadValidation } from '../utils/scheduleLoadValidation';
+ import { subscribeRootLoad } from '../utils/subscribeRootLoad';
+ import { RootBindingContext } from './RootBindingContext';
+ import { RootNodeContext } from './RootNodeContext';
+@@ -56,6 +59,7 @@ export const RootNodeContextProvider = ({
+   const external = useExternalFormContext();
+   const { context, attachedFilesMap } = useWorkspaceContext();
+   const reporter = useFormErrorContext();
++  const { showError } = useFieldRendererContext();
+   const current: RootLoadProps = {
+     ...props,
+     context,
+@@ -88,17 +92,19 @@ export const RootNodeContextProvider = ({
+   );
+   const getSnapshot = useMemo(() => () => store.load, [store]);
+   const load = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
++  useLayoutEffect(() => {
++    if (load.root) commitFieldNodeRevealPolicy(load.root, showError);
++  }, [load.root, showError]);
+   if (reporter) {
+     reporter.root = load.root;
+     reporter.pendingLoad = () => flushRootLoad(load, true);
+   }
+-  const pending =
+-    useRef<
+-      Optional<{
+-        props: RootLoadProps;
+-        option: Parameters<RootBinding['reset']>[0];
+-      }>
+-    >(undefined);
++  const pending = useRef<
++    Optional<{
++      props: RootLoadProps;
++      option: Parameters<RootBinding['reset']>[0];
++    }>
++  >(undefined);
+   const [, schedule] = useState(0);
+   const reset = useHandle(
+     (option?: Parameters<RootBinding['reset']>[0], rebuild = false) => {
+@@ -106,6 +112,7 @@ export const RootNodeContextProvider = ({
+       store.load = resetRootLoad(store.load, used, option, rebuild);
+       store.unsubscribe();
+       store.unsubscribe = subscribeRootLoad(store.load, store);
++      if (store.load.root) scheduleLoadValidation(store.load, store);
+       binding.current.root = store.load.root;
+       attachedFilesMap.clear();
+       onReset();
+@@ -164,36 +171,34 @@ export const RootNodeContextProvider = ({
+   });
+ 
+   useLayoutEffect(() => {
+-    store.unsubscribe = subscribeRootLoad(load, store);
+-    load.ready = true;
+     const root = load.root;
+     const validator = load.props.validator;
+     const authored = load.props.jsonSchema;
+     if (root && validator) retainValidationRoot(validator, authored);
+     if (!load.prepared) {
+-      load.prepared = true;
+-      flushRootLoad(load);
+-      if (root) {
+-        applyFormErrors(root, load.props.errors);
+-        if ((load.props.validationMode ?? 0) & ValidationMode.OnChange)
+-          void root
+-            .validate()
+-            .catch((error) => reporter?.capture(error, undefined, 'rejected'));
+-      }
++      if (store.load === load) {
++        store.unsubscribe();
++        store.unsubscribe = subscribeRootLoad(load, store);
++        load.prepared = true;
++        flushRootLoad(load);
++        if (root) {
++          applyFormErrors(root, load.props.errors, undefined, 'load');
++          scheduleLoadValidation(load, store);
++        }
++      } else load.prepared = true;
+     }
+     return () => {
+-      load.ready = false;
+-      store.unsubscribe();
+       if (root && validator) releaseValidationRoot(validator, authored);
+     };
+   }, [load, reporter, store]);
+ 
+   const lastErrors = useRef(props.errors);
+   useLayoutEffect(() => {
+-    if (load.root && lastErrors.current !== props.errors)
+-      applyFormErrors(load.root, props.errors, lastErrors.current);
++    const root = store.load.root;
++    if (root && lastErrors.current !== props.errors)
++      applyFormErrors(root, props.errors, lastErrors.current);
+     lastErrors.current = props.errors;
+-  }, [load, props.errors]);
++  }, [load, props.errors, store]);
+ 
+   if (!load.root) return <div role="alert">Unable to load form.</div>;
+   return (
+diff --git a/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts b/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
+index 5426f2e4c..f41664b09 100644
+--- a/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
++++ b/packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts
+@@ -3,14 +3,17 @@ import { clone } from '@winglet/common-utils/object';
+ import {
+   SetValueOption,
+   adoptFieldNodeTree,
++  batchFieldNodeLoad,
+   mountFieldNode,
+   reloadFieldNodeForm,
+ } from '@/schema-form/core';
+ import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
+ 
++import { reportErrorToHost } from '../../FormErrorContext';
+ import type { RootLoad, RootLoadProps } from '../type';
+ import { applyFormErrors } from './applyFormErrors';
+ import { createRootLoad } from './createRootLoad';
++import { reportBufferedRootRecord } from './reportBufferedRootRecord';
+ 
+ /** Mask selecting the automatic-write override bits of a reset option. */
+ const AUTOMATIC_WRITES_MASK =
+@@ -18,7 +21,12 @@ const AUTOMATIC_WRITES_MASK =
+ 
+ /**
+  * Perform one synchronous load, preserving equal authored roots and replacing others.
+- * @param previous - Committed load whose tree may be retained
++ * Call beginLoad to advance the reporter load and renew its warning scope.
++ * Deliver the replaced never-prepared load's buffered and reset-chain records,
++ * then the new build records, once to the reporter.
++ * Retire the previous load after the reset chain, including failed adoption.
++ * Report a replaced never-prepared load's construction error once to capture and the host.
++ * @param previous - Committed or speculative load whose tree may be retained
+  * @param props - Committed schema, source and Form defaults for the new load
+  * @param option - Call-local automatic-write override; other bits are ignored
+  * @param rebuild - Explicitly replace the tree even when the schema is unchanged.
+@@ -49,8 +57,10 @@ export const resetRootLoad = (
+     previous.props = { ...props, jsonSchema: previous.props.jsonSchema };
+     previous.error = undefined;
+     try {
+-      root.batch(() => {
+-        reloadFieldNodeForm(root, clone(props.defaultValue), loadOption);
++      batchFieldNodeLoad(root, () => {
++        reloadFieldNodeForm(root, clone(props.defaultValue), loadOption, {
++          deferValidation: true,
++        });
+         applyFormErrors(root, props.errors);
+       });
+     } catch (error) {
+@@ -60,24 +70,51 @@ export const resetRootLoad = (
+   }
+   const next = createRootLoad(props, previous.reporter, false);
+   if (!next.root) {
+-    previous.reporter?.capture(next.error);
++    previous.reporter?.capture(next.error, 'load');
+     return previous;
+   }
+-  next.ready = previous.ready;
+   next.prepared = true;
++  next.reported = true;
+   const replacement = next.root;
+   if (next.reporter) next.reporter.root = replacement;
+   const load = () => {
+     if (root) adoptFieldNodeTree(root, replacement);
+-    mountFieldNode(replacement, clone(props.defaultValue), loadOption);
+-    applyFormErrors(replacement, props.errors);
++    mountFieldNode(replacement, clone(props.defaultValue), loadOption, {
++      deferValidation: true,
++    });
++    applyFormErrors(replacement, props.errors, undefined, 'load');
+   };
+   try {
+-    if (root) root.batch(load);
++    if (root) batchFieldNodeLoad(root, load);
+     else load();
+   } catch (error) {
+     next.error = error;
+   }
+-  for (const record of next.records.splice(0)) next.reporter?.report(record);
++  if (!previous.prepared && previous.records.length) {
++    next.recordScopes ??= new WeakMap();
++    for (const record of previous.records) {
++      const scope = previous.recordScopes?.get(record);
++      next.recordScopes.set(record, {
++        root: scope?.root ?? previous.root,
++        warningScope: scope?.warningScope ?? previous.warningScope,
++      });
++    }
++    next.records = previous.records.splice(0).concat(next.records);
++  }
++  previous.retired = true;
++  for (const record of next.records.splice(0)) {
++    try {
++      reportBufferedRootRecord(next, record);
++    } catch (error) {
++      reportErrorToHost(error);
++    }
++  }
++  if (!previous.prepared && !previous.reported) {
++    previous.reported = true;
++    if (previous.error) {
++      previous.reporter?.capture(previous.error, 'load');
++      reportErrorToHost(previous.error);
++    }
++  }
+   return next;
+ };

@@ -14,6 +14,7 @@ import { prepareBundles } from './helpers/prepareBundles';
 import { prepareValidationAfterPaintBundles } from './helpers/prepareValidationAfterPaintBundles';
 import { readAncestorPids } from './helpers/readAncestorPids';
 import { readMeasurementPids } from './helpers/readMeasurementPids';
+import { runStageClosing } from './helpers/runStageClosing';
 import { samplePage } from './helpers/samplePage';
 import { samplePageWithCpu } from './helpers/samplePageWithCpu';
 import { sampleValidationAfterPaintPage } from './helpers/sampleValidationAfterPaintPage';
@@ -40,6 +41,10 @@ export async function runInteractions(args: string[]) {
     ['prepare', 'smoke', 'run'].includes(options.action),
     '--action must be prepare, smoke, or run',
   );
+  if (options.stage === 'closing') {
+    await runStageClosing(options);
+    return;
+  }
   const root = path.resolve(options.root);
   assert.ok(
     fs.existsSync(chromium.executablePath()),

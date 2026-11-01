@@ -1,0 +1,5270 @@
+{
+  "B": {
+    "type-flat-500-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.6666666606459954,
+        "differenceUpperBound": -1.100000023841858,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.8275862106174124,
+        "differenceUpperBound": -0.9500000178813934,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 3.767857181820639,
+        "differenceUpperBound": 7.700000047683716,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5237430161691434,
+        "differenceUpperBound": -34.400000005960464,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.051664752458824,
+        "differenceUpperBound": 4.549999952316284,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 20.861110963019325,
+        "differenceUpperBound": 35.8499998152256,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.7105263104234045,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-500-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.6428571519803026,
+        "differenceUpperBound": -0.5,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 19,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5234482756976424,
+        "differenceUpperBound": -34.50000002980232,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0380465640407004,
+        "differenceUpperBound": 3.349999964237213,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 10.954545497647986,
+        "differenceUpperBound": 32.89999985694885,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.6428571519803026,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-array-1000-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.21621621897367482,
+        "differenceUpperBound": -7.899999976158142,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.3710937473260856,
+        "differenceUpperBound": -7.85000005364418,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 5.913043457979516,
+        "differenceUpperBound": 17.349999994039536,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.87297472475506,
+        "differenceUpperBound": -19.55000004172325,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.04296330715546,
+        "differenceUpperBound": 9.25,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 23.166666906740932,
+        "differenceUpperBound": 13.300000011920929,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.24271844632102627,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-array-1000-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.22619048108995096,
+        "differenceUpperBound": -3.25,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.35555555871975275,
+        "differenceUpperBound": -5.749999970197678,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 9.3461537650351,
+        "differenceUpperBound": 10.799999982118607,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 18,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.8617860525225258,
+        "differenceUpperBound": -21.649999976158142,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.046817343204786,
+        "differenceUpperBound": 10.150000005960464,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 11.958334338126996,
+        "differenceUpperBound": 13.700000077486038,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.2272727285042282,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-nested-d5-f4-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.6344086028396884,
+        "differenceUpperBound": -1.7999999821186066,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.5736434100647183,
+        "differenceUpperBound": -5.5,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1.5,
+        "differenceUpperBound": 8,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 3.5862069069465097,
+        "differenceUpperBound": 11.250000029802322,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.48622189988187847,
+        "differenceUpperBound": -70.84999999403954,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0230627304406386,
+        "differenceUpperBound": 3.7499999701976776,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 19.05202309585581,
+        "differenceUpperBound": 157.9999998807907,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.7407407440112288,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-nested-d5-f4-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.500000008278423,
+        "differenceUpperBound": -0.9000000059604645,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.3968871615725673,
+        "differenceUpperBound": -7.799999952316284,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 19,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.4832970222154917,
+        "differenceUpperBound": -71.20000004768372,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0147329648596148,
+        "differenceUpperBound": 2.400000035762787,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 11.117844967727015,
+        "differenceUpperBound": 150.44999992847443,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.4782608515373476,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-2000-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.479452057926309,
+        "differenceUpperBound": -3.6999999582767487,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.7333333315672698,
+        "differenceUpperBound": -3.600000023841858,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 2.7377049102638398,
+        "differenceUpperBound": 10.650000005960464,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.48262757878237694,
+        "differenceUpperBound": -95.34999999403954,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0253773793138352,
+        "differenceUpperBound": 5.800000011920929,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 268.1176300745945,
+        "differenceUpperBound": 224.7999999821186,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.49315068739219775,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-2000-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.4814814773933715,
+        "differenceUpperBound": -1.4000000357627869,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.8888888862608182,
+        "differenceUpperBound": -0.7000000178813934,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 18,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.48747276682122953,
+        "differenceUpperBound": -94.55000001192093,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0238251368204752,
+        "differenceUpperBound": 5.450000047683716,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 23.460317408356747,
+        "differenceUpperBound": 215.84999999403954,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.48275862706827344,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5770958082700282,
+        "differenceUpperBound": -28.450000017881393,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0563294969774275,
+        "differenceUpperBound": 4.6500000059604645,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 32.349999994039536,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -76.69999998807907,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-nested-d5-f4-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.4972597736928583,
+        "differenceUpperBound": -68.7000000178814,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0278379210603141,
+        "differenceUpperBound": 4.499999940395355,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 157.60000002384186,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.5580623755622519,
+        "differenceUpperBound": -66.69999998807907,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 2,
+        "differenceUpperBound": 1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-if-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.01826678025472,
+        "differenceUpperBound": 2.150000035762787,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 2,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1.0004407228903751,
+        "differenceUpperBound": 0.050000011920928955,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "first-key-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": 0.9583333319535962,
+        "differenceUpperBound": -0.15000000596046448,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 0.9583333319535962,
+        "differenceUpperBound": -0.15000000596046448,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 1.9090909058069065,
+        "differenceUpperBound": 3,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5271587746403402,
+        "differenceUpperBound": -33.90000003576279,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0444203686166016,
+        "differenceUpperBound": 4.100000023841858,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 359.00012934212543,
+        "differenceUpperBound": 35.80000013113022,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -82.0499999821186,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.9210526286895255,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "first-key-flat-2000-validate": {
+      "handlerP95": {
+        "upperBound": 0.851063831945845,
+        "differenceUpperBound": -0.699999988079071,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 0.842105268441409,
+        "differenceUpperBound": -0.7499999701976776,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 2.4146341264850677,
+        "differenceUpperBound": 5.799999952316284,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5090065501686586,
+        "differenceUpperBound": -90.05000001192093,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0192474050515274,
+        "differenceUpperBound": 4.450000047683716,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 226.25000008940697,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.5859541263905657,
+        "differenceUpperBound": -86.9500000178814,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 2,
+        "differenceUpperBound": 1,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.8163265246542629,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5810397555635025,
+        "differenceUpperBound": -27.399999976158142,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.6486153844686655,
+        "differenceUpperBound": -28.450000017881393,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -74.89999997615814,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-nested-d5-f4-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5237205828267119,
+        "differenceUpperBound": -63.19999998807907,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.5803174605445256,
+        "differenceUpperBound": -66.05000001192093,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.5596140592103007,
+        "differenceUpperBound": -63.999999940395355,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "stream-flat-2000-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.4841056033539739,
+        "differenceUpperBound": -95.99999997019768,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0217580503478603,
+        "differenceUpperBound": 4.999999970197678,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 6.132707711642313,
+        "differenceUpperBound": 191.39999982714653,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-array-1000-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.9201244816378088,
+        "differenceUpperBound": -11.599999964237213,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.9892473119688501,
+        "differenceUpperBound": -2.2499999701976776,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.9494565218363119,
+        "differenceUpperBound": -9.300000011920929,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-array-1000-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.9116153063729889,
+        "differenceUpperBound": -13.050000011920929,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0360862196566427,
+        "differenceUpperBound": 7.450000047683716,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 11.199999988079071,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.9442318207249388,
+        "differenceUpperBound": -10.199999988079071,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-onrequest": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5802837936320128,
+        "differenceUpperBound": -27.5,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0588599744434781,
+        "differenceUpperBound": 4.749999940395355,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 30.80000001192093,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -74.75,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-always": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5710102488022405,
+        "differenceUpperBound": -29.250000029802322,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0500595938818136,
+        "differenceUpperBound": 4.199999928474426,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 32.499999940395355,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -77.60000002384186,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "reset-flat-500-same": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5625920471501077,
+        "differenceUpperBound": -29.749999970197678,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0327771159783528,
+        "differenceUpperBound": 2.7500000298023224,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 1.073126143701579,
+        "differenceUpperBound": 1.0000000149011612,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 1.0261282666032683,
+        "differenceUpperBound": 1.100000023841858,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 0.024999991059303284,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "reset-flat-500-replace": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5601750545029154,
+        "differenceUpperBound": -30.100000143051147,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.052505966295134,
+        "differenceUpperBound": 4.399999976158142,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 0.2911184196764477,
+        "differenceUpperBound": -21.25000001490116,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 0.9875846498443281,
+        "differenceUpperBound": -0.8250000178813934,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 17.250000029802322,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 0.8304045772684222,
+        "differenceUpperBound": -10.250000029802322,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 0.4148506860243137,
+        "differenceUpperBound": -35.92499998211861,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0.5,
+        "differenceUpperBound": -0.5,
+        "undefinedRatios": 0
+      }
+    },
+    "rebuild-flat-500": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5519765750220207,
+        "differenceUpperBound": -30.699999928474426,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0333730633220095,
+        "differenceUpperBound": 2.800000011920929,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 1.1182795750197543,
+        "differenceUpperBound": 1.375,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 1.041870582129817,
+        "differenceUpperBound": 1.925000011920929,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 0.1250000298023224,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "validate-flat-500-settled": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5637681164603302,
+        "differenceUpperBound": -29.650000035762787,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0416164051757695,
+        "differenceUpperBound": 3.450000047683716,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 1.5000008940699914,
+        "differenceUpperBound": 0.10000014305114746,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 1.0924731172541136,
+        "differenceUpperBound": 1.074999988079071,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": 1.3529411352216973,
+        "differenceUpperBound": 0.15000000596046448,
+        "undefinedRatios": 0
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    }
+  },
+  "S": {
+    "type-flat-500-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.6718750011641532,
+        "differenceUpperBound": -1.0500000417232513,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.8434782546499501,
+        "differenceUpperBound": -0.8500000536441803,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 4.079999995231629,
+        "differenceUpperBound": 7.8499999940395355,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5292901451337444,
+        "differenceUpperBound": -34,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0532646045306207,
+        "differenceUpperBound": 4.649999976158142,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 21.70588373787271,
+        "differenceUpperBound": 35.85000005364418,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.6923076934833263,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-500-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.6428571793497831,
+        "differenceUpperBound": -0.4999999403953552,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 19,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5285515317796413,
+        "differenceUpperBound": -33.85000002384186,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.039226833297859,
+        "differenceUpperBound": 3.449999988079071,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 11.218749825377019,
+        "differenceUpperBound": 32.85000005364418,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.6428571793497831,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-array-1000-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.21428571631308316,
+        "differenceUpperBound": -8.000000059604645,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.3667953639875572,
+        "differenceUpperBound": -7.950000017881393,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 5.8888888465769496,
+        "differenceUpperBound": 17.599999964237213,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.8498422714061917,
+        "differenceUpperBound": -23.650000005960464,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0252062328153093,
+        "differenceUpperBound": 5.5,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 23.16667025950277,
+        "differenceUpperBound": 13.300000011920929,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.23076922768319147,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-array-1000-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.22093023610411622,
+        "differenceUpperBound": -3.3499999940395355,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.3500000006622738,
+        "differenceUpperBound": -5.8499999940395355,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 9.307692217756307,
+        "differenceUpperBound": 10.799999982118607,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 18,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.8495909375054516,
+        "differenceUpperBound": -23.900000005960464,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0368852458704925,
+        "differenceUpperBound": 8.099999994039536,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 11.52000002861023,
+        "differenceUpperBound": 13.550000011920929,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.2222222222222222,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-nested-d5-f4-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.6736842122434579,
+        "differenceUpperBound": -1.4500000178813934,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.5692307673967801,
+        "differenceUpperBound": -5.599999964237213,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1.5,
+        "differenceUpperBound": 8,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 3.6744185903060753,
+        "differenceUpperBound": 11.400000035762787,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.48303249080258587,
+        "differenceUpperBound": -71.60000005364418,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0182926829268293,
+        "differenceUpperBound": 3,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 19.511627972174363,
+        "differenceUpperBound": 158.29999995231628,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.8163265246542629,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-nested-d5-f4-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.47619047078415927,
+        "differenceUpperBound": -1.0499999821186066,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.39534883978819446,
+        "differenceUpperBound": -7.799999952316284,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 19,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.48254767904492485,
+        "differenceUpperBound": -71.90000000596046,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0109890110609885,
+        "differenceUpperBound": 1.800000011920929,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 11.086666751596663,
+        "differenceUpperBound": 150.30000004172325,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.43999998569488524,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-2000-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.49635037061624315,
+        "differenceUpperBound": -3.5,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.7499999988711241,
+        "differenceUpperBound": -3.300000011920929,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 2.785123960469136,
+        "differenceUpperBound": 10.75,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.480443974691796,
+        "differenceUpperBound": -96.39999997615814,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0238720981967073,
+        "differenceUpperBound": 5.450000017881393,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 280.9999958649278,
+        "differenceUpperBound": 224.89999994635582,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.5070422551764829,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-2000-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.4814814827079145,
+        "differenceUpperBound": -1.4000000059604645,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.8818897595297079,
+        "differenceUpperBound": -0.7500000298023224,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 18,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.48840970363257064,
+        "differenceUpperBound": -94.59999996423721,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.029598772197532,
+        "differenceUpperBound": 6.75,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 23.463541462713494,
+        "differenceUpperBound": 215.89999997615814,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.48275863699056887,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5724743771217099,
+        "differenceUpperBound": -29.200000047683716,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.043374925795626,
+        "differenceUpperBound": 3.6500000059604645,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 32.349999994039536,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -77.75,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-nested-d5-f4-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.49202898555043817,
+        "differenceUpperBound": -70.69999995827675,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0180759803204322,
+        "differenceUpperBound": 2.9500000178813934,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 157.60000002384186,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.5560330580088718,
+        "differenceUpperBound": -67.09999999403954,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 2,
+        "differenceUpperBound": 1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-if-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.9919278253186771,
+        "differenceUpperBound": -0.8499999642372131,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0087646075293333,
+        "differenceUpperBound": 1.0499999821186066,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 2,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.9925666812954761,
+        "differenceUpperBound": -0.8499999940395355,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "first-key-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": 0.9459459489936634,
+        "differenceUpperBound": -0.19999998807907104,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 0.9459459489936634,
+        "differenceUpperBound": -0.19999998807907104,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 1.9090909230479196,
+        "differenceUpperBound": 3.0000000298023224,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.523875432227361,
+        "differenceUpperBound": -34.40000003576279,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0442139739177596,
+        "differenceUpperBound": 4.050000011920929,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 358.0000208616269,
+        "differenceUpperBound": 35.70000010728836,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -81.39999997615814,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.9459459337550765,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "first-key-flat-2000-validate": {
+      "handlerP95": {
+        "upperBound": 0.8421052631578947,
+        "differenceUpperBound": -0.75,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 0.8163265345842329,
+        "differenceUpperBound": -0.8999999761581421,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 2.4146341440367034,
+        "differenceUpperBound": 5.750000029802322,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5035097193358967,
+        "differenceUpperBound": -91.94999995827675,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0172637033224448,
+        "differenceUpperBound": 4.000000059604645,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 2265.0008103254354,
+        "differenceUpperBound": 226.20000004768372,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.5914985591403058,
+        "differenceUpperBound": -85.14999997615814,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 2,
+        "differenceUpperBound": 1,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.8163265246542629,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 1.0555555555555556,
+        "differenceUpperBound": 2,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0214424956113901,
+        "differenceUpperBound": 1.100000023841858,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-nested-d5-f4-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 1.054878049628152,
+        "differenceUpperBound": 3.6000000536441803,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0207399109249946,
+        "differenceUpperBound": 1.8500000536441803,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1.0291139242015308,
+        "differenceUpperBound": 2.300000011920929,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "stream-flat-2000-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.4892008641698321,
+        "differenceUpperBound": -94.19999998807907,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0353982300884956,
+        "differenceUpperBound": 8,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 6.109042568369222,
+        "differenceUpperBound": 191.2499997317791,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-array-1000-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.9578462627160458,
+        "differenceUpperBound": -5.950000017881393,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0491594496972598,
+        "differenceUpperBound": 9.649999976158142,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1.006027554774943,
+        "differenceUpperBound": 1.0500000417232513,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-array-1000-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.8608974356183453,
+        "differenceUpperBound": -21.650000005960464,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0156583630458882,
+        "differenceUpperBound": 3.300000011920929,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 11.199999988079071,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.9192430706330282,
+        "differenceUpperBound": -15.199999988079071,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-onrequest": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 1.0416666666666667,
+        "differenceUpperBound": 1.5,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.651207729238243,
+        "differenceUpperBound": 33.650000005960464,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 30.80000001192093,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-always": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5690936098890366,
+        "differenceUpperBound": -29.19999998807907,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.054151624174568,
+        "differenceUpperBound": 4.499999970197678,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 32.499999940395355,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -77.40000000596046,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "reset-flat-500-same": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5657992562396819,
+        "differenceUpperBound": -29.30000001192093,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0385078213881906,
+        "differenceUpperBound": 3.1999999582767487,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 1.1113320097168038,
+        "differenceUpperBound": 1.4750000089406967,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 1.0612369867707614,
+        "differenceUpperBound": 2.499999985098839,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 0.024999991059303284,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "reset-flat-500-replace": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5640648006740006,
+        "differenceUpperBound": -29.650000005960464,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.045319022580131,
+        "differenceUpperBound": 3.8000000417232513,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 0.294166665772597,
+        "differenceUpperBound": -20.575000032782555,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 0.9612229669275875,
+        "differenceUpperBound": -2.6000000089406967,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 17.250000029802322,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 0.8247338244751505,
+        "differenceUpperBound": -10.725000008940697,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 0.41598694924702057,
+        "differenceUpperBound": -35.92500004172325,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0.5,
+        "differenceUpperBound": -0.5,
+        "undefinedRatios": 0
+      }
+    },
+    "rebuild-flat-500": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5445975351830831,
+        "differenceUpperBound": -31.399999916553497,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0212765951750473,
+        "differenceUpperBound": 1.7999999523162842,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 1.2093023378311332,
+        "differenceUpperBound": 2.2500001192092896,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 1.073333332935969,
+        "differenceUpperBound": 3.300000011920929,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": "+Infinity",
+        "differenceUpperBound": 0.1250000298023224,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "validate-flat-500-settled": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5530523261379726,
+        "differenceUpperBound": -31.049999952316284,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.0316901414091724,
+        "differenceUpperBound": 2.699999988079071,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 1.8571428328144324,
+        "differenceUpperBound": 0.14999991655349731,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 1.1091314023552463,
+        "differenceUpperBound": 1.2500000298023224,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": 1.411764582135689,
+        "differenceUpperBound": 0.1749999225139618,
+        "undefinedRatios": 0
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    }
+  },
+  "L": {
+    "type-flat-500-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 1.157894724458869,
+        "differenceUpperBound": 0.29999998211860657,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 1.1948051858579636,
+        "differenceUpperBound": 0.75,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 1.0196078448559587,
+        "differenceUpperBound": 0.20000001788139343,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5731343288919819,
+        "differenceUpperBound": -28.55000001192093,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.9218045111586874,
+        "differenceUpperBound": -7.800000011920929,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 5.384615416678131,
+        "differenceUpperBound": 30.59999990463257,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 1.3499999940395355,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-500-validate-burst": {
+      "handlerP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 17.777777071352386,
+        "differenceUpperBound": 15.099999964237213,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1.0555555555555556,
+        "differenceUpperBound": 1,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5655737701131854,
+        "differenceUpperBound": -29.150000035762787,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.9112662010498006,
+        "differenceUpperBound": -8.900000035762787,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 11.645161301176705,
+        "differenceUpperBound": 32.99999997019768,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 1,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-array-1000-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.27160493967973176,
+        "differenceUpperBound": -5.9000000059604645,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.4666666643960135,
+        "differenceUpperBound": -5.450000017881393,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 0.9051724155427939,
+        "differenceUpperBound": -2.2499999701976776,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.9607703285245149,
+        "differenceUpperBound": -5.499999940395355,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8728155339805825,
+        "differenceUpperBound": -32.75,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 0.1700182811803958,
+        "differenceUpperBound": -67.9500000178814,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.2777777777777778,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-array-1000-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.271428576537541,
+        "differenceUpperBound": -2.599999964237213,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.4637681161298193,
+        "differenceUpperBound": -3.7000000178813934,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 0.8705036003306676,
+        "differenceUpperBound": -1.7999999523162842,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1.2857142857142858,
+        "differenceUpperBound": 4,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.9705248021341545,
+        "differenceUpperBound": -4.100000023841858,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8875462874049969,
+        "differenceUpperBound": -28.89999994635582,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 0.18525289506342915,
+        "differenceUpperBound": -66.84999999403954,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.2702702711410467,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-nested-d5-f4-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 2.5652173676427688,
+        "differenceUpperBound": 1.8499999940395355,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 1.5312500044625874,
+        "differenceUpperBound": 2.550000011920929,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1.5,
+        "differenceUpperBound": 8,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 1.074204952176308,
+        "differenceUpperBound": 1.0500000715255737,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.4847383719223983,
+        "differenceUpperBound": -70.90000003576279,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8504601225652504,
+        "differenceUpperBound": -29.250000029802322,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 11.093645443187045,
+        "differenceUpperBound": 151.59999984502792,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 3.3333333664470253,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-nested-d5-f4-validate-burst": {
+      "handlerP95": {
+        "upperBound": 2.9999998013178586,
+        "differenceUpperBound": 0.6000000238418579,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 4.434782606442169,
+        "differenceUpperBound": 3.9500000178813934,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1.0588235294117647,
+        "differenceUpperBound": 1,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.4866232827629785,
+        "differenceUpperBound": -70.55000001192093,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8494623655930387,
+        "differenceUpperBound": -29.400000005960464,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 12.311111164583592,
+        "differenceUpperBound": 151.700000166893,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 2.749999664723903,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-2000-validate-nonburst": {
+      "handlerP95": {
+        "upperBound": 0.7931034534732548,
+        "differenceUpperBound": -0.8999999761581421,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 0.9800995007319243,
+        "differenceUpperBound": -0.20000001788139343,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 0.9601139624507141,
+        "differenceUpperBound": -0.6999999582767487,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.4816216214283093,
+        "differenceUpperBound": -95.90000003576279,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8761244378398289,
+        "differenceUpperBound": -33.04999998211861,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 3.0255033549846417,
+        "differenceUpperBound": 151.09999984502792,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.8000000052981906,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "type-flat-2000-validate-burst": {
+      "handlerP95": {
+        "upperBound": 0.6500000059604645,
+        "differenceUpperBound": -0.699999988079071,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": 1.63636364128964,
+        "differenceUpperBound": 2.100000023841858,
+        "undefinedRatios": 0
+      },
+      "durationP95": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1.5,
+        "differenceUpperBound": 6,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.48801508217823364,
+        "differenceUpperBound": -95.05000001192093,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8771012327091413,
+        "differenceUpperBound": -32.85000002384186,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 2.8540609172889044,
+        "differenceUpperBound": 146.30000007152557,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 0.6666666761277212,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5796886578376226,
+        "differenceUpperBound": -28.350000023841858,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.9014373720062923,
+        "differenceUpperBound": -9.599999964237213,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 16.125000495463624,
+        "differenceUpperBound": 30.35000005364418,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -76.89999997615814,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-nested-d5-f4-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.49505313303824616,
+        "differenceUpperBound": -69.5,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8511950655834495,
+        "differenceUpperBound": -29.05000001192093,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 23.522388105112025,
+        "differenceUpperBound": 150.80000001192093,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.5587649404113111,
+        "differenceUpperBound": -66.44999995827675,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 2,
+        "differenceUpperBound": 1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-if-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 1.5342667649695576,
+        "differenceUpperBound": 36.24999997019768,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 1.2745406821643899,
+        "differenceUpperBound": 26.05000004172325,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 2.277777742824437,
+        "differenceUpperBound": 1.149999976158142,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1.468790637879065,
+        "differenceUpperBound": 36.200000047683716,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "first-key-flat-500-validate": {
+      "handlerP95": {
+        "upperBound": 2.156250019208528,
+        "differenceUpperBound": 1.850000023841858,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 2.156250019208528,
+        "differenceUpperBound": 1.850000023841858,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 1.5432098907153249,
+        "differenceUpperBound": 2.200000047683716,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5676492816135321,
+        "differenceUpperBound": -28.75,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.924256951339835,
+        "differenceUpperBound": -7.899999976158142,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 59.75000365078471,
+        "differenceUpperBound": 35.25000002980232,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -76.15000000596046,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 2.058823543848876,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "first-key-flat-2000-validate": {
+      "handlerP95": {
+        "upperBound": 1.1111111221490084,
+        "differenceUpperBound": 0.40000003576278687,
+        "undefinedRatios": 0
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": 1.1111111221490084,
+        "differenceUpperBound": 0.40000003576278687,
+        "undefinedRatios": 0
+      },
+      "arrivalP95": {
+        "upperBound": 1.0879120860046816,
+        "differenceUpperBound": 0.7999999821186066,
+        "undefinedRatios": 0
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5039094097541447,
+        "differenceUpperBound": -91.84999999403954,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8688766115497708,
+        "differenceUpperBound": -35.59999993443489,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 2.873650793471544,
+        "differenceUpperBound": 147.50000002980232,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0.5986460346952717,
+        "differenceUpperBound": -83.05000001192093,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "processing": {
+        "upperBound": 1.111111103752513,
+        "differenceUpperBound": null,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 1.3119584056103784,
+        "differenceUpperBound": 9,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.9832089545641333,
+        "differenceUpperBound": -0.9000000357627869,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-nested-d5-f4-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 1.3206106872139303,
+        "differenceUpperBound": 16.80000001192093,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.9224924011694577,
+        "differenceUpperBound": -7.600000023841858,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1.2247360489665013,
+        "differenceUpperBound": 14.900000035762787,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "stream-flat-2000-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.48944233875152265,
+        "differenceUpperBound": -94.09999999403954,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.885884766001267,
+        "differenceUpperBound": -30.350000023841858,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 2.0315555602402156,
+        "differenceUpperBound": 116.25000008940697,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-array-1000-none": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 1.0981595089586722,
+        "differenceUpperBound": 11.900000035762787,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8232971373130747,
+        "differenceUpperBound": -44.29999998211861,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 0,
+        "differenceUpperBound": -79.89999997615814,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1.0681959084378287,
+        "differenceUpperBound": 11.000000059604645,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0.5,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-array-1000-validate": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.9634146337709054,
+        "differenceUpperBound": -5.100000023841858,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8482813117073695,
+        "differenceUpperBound": -38.40000003576279,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 0.14756258235036432,
+        "differenceUpperBound": -64.69999992847443,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 1.0025736344753657,
+        "differenceUpperBound": 0.44999998807907104,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0.5,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-onrequest": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5682326620024709,
+        "differenceUpperBound": -29.049999982118607,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8827800834532051,
+        "differenceUpperBound": -11.350000023841858,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 15.400000005960464,
+        "differenceUpperBound": 28.80000001192093,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -76.90000000596046,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "mount-flat-500-always": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5860255448606905,
+        "differenceUpperBound": -27.549999952316284,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.9110651496907751,
+        "differenceUpperBound": -8.600000023841858,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "nextPainted": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 30.285713924842632,
+        "differenceUpperBound": 30.799999952316284,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -76.25,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "reset-flat-500-same": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5693923481118446,
+        "differenceUpperBound": -28.599999994039536,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8963730569948186,
+        "differenceUpperBound": -10,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 146.99996483326797,
+        "differenceUpperBound": 14.599999964237213,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 0.5881552079631416,
+        "differenceUpperBound": -30.224999964237213,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 0.010752684381714095,
+        "differenceUpperBound": -2.299999952316284,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 0.9132420086353108,
+        "differenceUpperBound": -4.750000029802322,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 0,
+        "differenceUpperBound": -54.75000002980232,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0,
+        "differenceUpperBound": -1,
+        "undefinedRatios": 0
+      }
+    },
+    "reset-flat-500-replace": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5697329375332587,
+        "differenceUpperBound": -29,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8950050967439587,
+        "differenceUpperBound": -10.300000011920929,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 354.00033617051713,
+        "differenceUpperBound": 8.775000020861626,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 0.8877410461709713,
+        "differenceUpperBound": -8.200000017881393,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "postPaintBusy": {
+        "upperBound": 7.611111218546645,
+        "differenceUpperBound": 14.950000077486038,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 0.9033423673406692,
+        "differenceUpperBound": -5.349999964237213,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 0.4454072786848279,
+        "differenceUpperBound": -31.799999997019768,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 0.5,
+        "differenceUpperBound": -0.5,
+        "undefinedRatios": 0
+      }
+    },
+    "validate-flat-500-settled": {
+      "handlerP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "eventProcessingP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "durationP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "arrivalP95": {
+        "upperBound": null,
+        "differenceUpperBound": null,
+        "undefinedRatios": 10000
+      },
+      "undelivered": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "firstPainted": {
+        "upperBound": 0.5728083205193237,
+        "differenceUpperBound": -28.750000059604645,
+        "undefinedRatios": 0
+      },
+      "eagerPainted": {
+        "upperBound": 0.8944387229919338,
+        "differenceUpperBound": -10.25,
+        "undefinedRatios": 0
+      },
+      "callDuration": {
+        "upperBound": 0.8000000317891439,
+        "differenceUpperBound": -0.07499998807907104,
+        "undefinedRatios": 0
+      },
+      "nextPainted": {
+        "upperBound": 1.0831556526068857,
+        "differenceUpperBound": 0.9749999940395355,
+        "undefinedRatios": 0
+      },
+      "resolutionTime": {
+        "upperBound": 1.1111111405455043,
+        "differenceUpperBound": 0.050000011920928955,
+        "undefinedRatios": 0
+      },
+      "postPaintBusy": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "flooredLongestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longestFrame": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      },
+      "longFrameCount": {
+        "upperBound": 1,
+        "differenceUpperBound": 0,
+        "undefinedRatios": 0
+      }
+    }
+  }
+}

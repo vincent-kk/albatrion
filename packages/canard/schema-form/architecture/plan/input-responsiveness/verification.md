@@ -245,3 +245,135 @@ T1의 다섯 origin·T2 중첩 load·T3 옛 필드 부재, A1 reset/rebuild/vali
 ## Amendment 9·10 — 결과 관문 정정
 
 DR-13의 완료 시 대상 재삽입은 요청 시점 handoff로 대체합니다. cadence/root 실행 소유 객체를 자기 실행만 지우며 하위 validate는 건드리지 않습니다. DR-1은 구성 중 unpinned guard read의 설치 루트를 축출하지 않고 DR-2는 예약 load.retired만 늦은 host 보고의 은퇴 신호로 씁니다. DR-14는 nonempty dense known bundle만 생략합니다. DR-11의 degraded native handler 실패는 ERROR-028에 따라 하나의 bundle로 host에 전달하도록 바뀌었습니다. 슬롯의 원소별 host 형태와 native의 거부 그대로 전달을 통일하는 결정은 단계 마감으로 남깁니다. node/root 입력에는 추가 경로 탐색·리스너 배달이 없고 렌더마다 상수 시간 snapshot hook 하나가 있습니다. [정정 결정](../../reviews/defect-round.md)의 Amendment 9·10을 따르며 새 reds·변이·전체 관문은 결과 문서에 보충합니다.
+## 단계 마감 측정 — 측정 전 고정 규칙
+
+### 소유자 지시 (Quote 69, Quote 70 원문)
+
+> 그래. 그럼 지금까지 수정을 다 마무리하고, 전체 스캐닝까지 진행하도록 해. 우리 수정으로 성능손실이 얼마나 발생했는지까지 검증해보자. 추가 오류가 없는지도 평가해보고
+
+> 그래 최종 적용에 기능상 문제가 없고, 예정대로 오류가 수정되었으며, 성능상 크게 문제가 없다면 병합 허가할게.
+> 심각한 비효율로 성능지표가 크게 떨어지거나 오류가 있으면 허용 불가. 수정절차를 진행해야해
+
+### 범위와 고정 입력
+
+승인된 closing 설계 v1 및 Amendment 1·2에 따릅니다. Phase 1은 도구 준비와 smoke·사전등록까지만 수행하며 정식 창은 독립 검토와 코디네이터 go 이후 한 번만 시작합니다. 실패하거나 거절된 창은 보존하며 대체 실행하지 않습니다.
+
+- L: 공개 0.16.1 alias. B: `5d1348ed16054efa1ec431945eb00472f4eef7f1`. S: `facd72a71c44a798f5484827509073a27fb678a3`. F: 결함수정 라운드 병합 후 지정되는 최종 head. Phase 1 F는 smoke 전용입니다.
+- B/S는 Orca로 만든 깨끗한 체크아웃에서 빌드하고 제품 범위와 commit을 검증합니다. 제품·브라우저 번들의 SHA-256을 고정한 뒤 체크아웃을 제거합니다.
+- 기존 IR-6 18개 행과 fixture/식별자를 유지합니다. 신규 6개는 `mount-flat-500-onrequest`(validationMode 2), `mount-flat-500-always`(OnChange, showError true), `reset-flat-500-same`, `reset-flat-500-replace`, `rebuild-flat-500`, `validate-flat-500-settled`입니다.
+- replace는 매번 루트 title이 `replace-1`부터 `replace-10`까지 다른 구조입니다. replace/rebuild 뒤 handle.node가 바뀌고 same reset 뒤 유지되어야 합니다. L의 두 reset은 버전 증가에 따른 트리 재구성이므로 모든 표에서 다른 연산임을 표시합니다. L의 rebuild는 제외합니다.
+- reset/rebuild/validate는 안정화된 mount 뒤 페이지당 10회, 1초 슬롯마다 실행합니다. 첫 연산은 별도 보고하며 페이지 값은 10회 중앙값입니다. validate는 Promise 해결 시간을 기록합니다.
+
+### 지표·표본·통계
+
+- 기존 handler/Event Timing/arrival/frame/paint/stream 지표와 원시 자료를 보존합니다. reset/rebuild는 동기 `callDuration`, 호출 시작부터 반환 뒤 double rAF까지 `nextPainted`, 1초 내 최장 프레임과 50ms 이상 프레임 수를 기록합니다. settled validate는 해결 시간과 프레임을 같은 방식으로 판정합니다.
+- `postPaintBusy`는 모든 mount/reset/rebuild/validate에서 첫 paint 이후 시작한 LoAF duration을 연산 시작+1000ms에서 잘라 합산하고, 기존 validator 플러그인 wrapper에서 측정한 compile/validate duration을 같은 구간에 더합니다. 보고 전용이며 중첩으로 인한 이중 계상 가능성을 함께 명시합니다.
+- Amendment 2: 모든 행은 3 warmup 폐기, 10 kept pages, typing은 페이지당 20키(전체 200키)입니다. 일반 4 lane Williams 순서를 1–4, 1–4, 1–2로 반복하며 위치별 3·3·2·2 불균형을 결과에 기록합니다. D8 두 행은 probe를 포함한 5 lane Williams 10순서를 사용합니다.
+- bootstrap은 seed 20261031, 10,000회, 비교 lane과 F에 같은 페이지 index를 재표집합니다. 95% 상한은 nearest-rank입니다. typing은 IR-6 round-6와 같은 전체 handler wall-clock의 pooled p95 비율입니다. 나머지는 재표집 페이지 중앙값들의 중앙값 비율과 중앙값 차이입니다. 짝수 중앙값은 가운데 두 값의 평균입니다. 누락/0 분모는 불확정이며 통과로 바꾸지 않습니다.
+- 정식 창 직전 30초 동안 외부 PID별 평균 CPU가 30% 이하여야 합니다. 거절은 표본 0의 기록으로 보존합니다.
+
+### 병합 차단 판정
+
+| 규칙 | 고정 판정 |
+| --- | --- |
+| C0 | B를 E 역할로 넣은 원본 IR-6 G1과 등록된 L transfer. L 중앙값 8.03ms 초과이면 불확정. |
+| C1 | 8개 type 행의 handler pooled p95 F/B bootstrap 상한 ≤1.10. |
+| C2 | 8개 type 행 duration p95 F ≤B+8ms, 50ms 이상 프레임 수 F ≤B+1. |
+| C3 | nonburst type 행 arrival p95 ≤33.4ms, 200키 중 미전달 0. |
+| C4 | gated mount의 first/eager-painted는 F/B 상한 >1.10 및 중앙값 차이 상한 >8.35ms가 동시에 성립하면 실패. 1초 프레임 수 F ≤B+1. None/if mount는 보고 전용. |
+| C5 | reset/rebuild의 callDuration 상한 ≤1.10, nextPainted는 C4의 이중 조건. settled validate의 해결 시간 상한 ≤1.10. 각 행 프레임 수 F ≤B+1. |
+| C6 | stream 페이지별 validation runs ≤2+ceil(duration/100ms), 프레임 수 F ≤B. |
+| C7 | S를 E 역할로 둔 변경 없는 decideValidationAfterPaintGates, round-6 G1–G6/G8. 하나라도 실패하면 차단. |
+
+C1/C4/C5의 gated 지표 상한이 (1.05,1.10]이면 병합 전 profile 또는 코드 추적으로 원인을 진단하고 보고합니다. first-key 행, None/if mount, postPaintBusy, OnRequest background compile은 보고 전용입니다. F/S 및 F/L은 모든 지표를 보고하며 gate로 대체하지 않습니다.
+
+D8는 F의 revisionObserved latch를 제거한 이름 있는 probe 빌드로 flat-500 type nonburst/burst만 실행합니다. probe/F handler 처리 비율 상한이 하나라도 ≤0.90이면 후속 수정, 아니면 실익 없음으로 닫습니다. probe 변경은 제품 소스에 커밋하지 않습니다.
+
+`registeredStageClosingRules.ts`와 이 사전등록을 정식 창 전에 커밋합니다. inputs.json에 preregisteredCommit, ruleVersion, rulesSha256와 모든 제품/브라우저 해시를 기록합니다. checker의 `--stage=closing`은 저장한 raw에서 모든 수치와 판정을 재현해야 합니다. Phase 1 이후 prepared head·smoke 요약·규칙 SHA-256을 코디네이터에게 보고하고 중지합니다.
+
+C4에서 None/if mount는 보고 전용입니다. C7은 별도 회귀 방어로 원본 G8의 array None 조건까지 그대로 유지합니다. C0의 L 비교 가능성 경계는 원본 수식 `6.425 × 1.25 = 8.03125ms`를 변경하지 않으며 설계의 8.03ms는 표시 정밀도입니다. B/S 체크아웃을 제거한 뒤에는 제품 해시와 commit별 source tree proof가 검증된 고정 복사본을 재사용할 수 있습니다.
+
+C5 프레임 합산의 확정 해석: 각 kept page의 모든 연산 슬롯 안에 있는 50ms 이상 프레임을 행·lane별로 전부 합산하여 F ≤ B+1을 검사합니다. 연산별 프레임 수의 페이지 중앙값은 별도로 보고합니다. 시간 지표의 10회 중앙값 규칙은 이 명시적 프레임 총합을 대체하지 않습니다. 코디네이터가 정식 창 전에 이 해석을 확정했습니다.
+
+
+### 단계 마감 측정 — Amendments 3–7 사전등록 (Phase 2a 확정)
+
+정식 창이 시작되기 전 검토에서 구조적으로 잘못된 판정/관측 정의를 수정합니다. 이 절과 `closing-v2-amendment-3` 등록 규칙은 Phase 2에서 최종 stage head로 rebase한 뒤 그 위에 커밋하며, 코디네이터가 새 SHA를 다시 검토한 후 정식 창을 시작합니다. 기존 v1 원문과 탐색 기록은 유지합니다.
+
+- C4의 프레임 조건은 mount 첫 1초의 최장 프레임입니다. C5는 각 연산의 최장 프레임을 페이지 내 10회 중앙값으로 만듭니다. 둘 다 bootstrap F/B 상한 >1.10 및 중앙값 차이 상한 >8.35ms가 동시에 성립할 때만 실패합니다. C4/C5 프레임 수와 C5의 명시적 총합은 보고 전용으로 전환합니다. C2/C6의 원본 프레임 수 조건은 유지합니다.
+- settled validate의 resolutionTime에도 같은 이중 조건을 적용합니다. callDuration은 기존 비율 조건, nextPainted는 기존 이중 조건입니다.
+- 연산 반환 직후 첫 rAF를 paintBoundary로 기록하여 postPaintBusy의 관측 시작점으로 씁니다. nextPainted는 double rAF를 유지합니다. compile/validate duration과 LoAF는 paintBoundary부터 시작+1000ms까지의 등록된 합산 방식으로 보고합니다.
+- D8은 trace로 종료합니다. payload 생략 조건에 listeners 부재도 필요하지만 모든 mounted field가 구독하므로 revisionObserved latch 제거는 React form에 이익이 없습니다. probe lane을 제거하고 모든 행에 4-lane Williams 순서를 적용합니다. L rebuild 제외는 유지합니다. 각 lane의 실제 위치별 횟수를 기록합니다.
+- checker는 gate/derive 현재 파일 해시를 formal-start.toolHashes와 비교하고, preregisteredCommit부터 toolCommit까지 helpers/stageClosing, deriveStageClosingResults.ts, validationAfterPaint 및 summarize 계열에 diff가 없음을 검사합니다.
+- Phase 2에서 B/S를 Orca의 깨끗한 체크아웃에서 다시 빌드하며 외부 frozen baseline을 재사용하지 않습니다. 경로를 정리한 clean-build 기록을 inputs.json 옆에 커밋합니다.
+- C4의 None/if 행은 계속 보고 전용이고 array None은 C7 원본 G8에 의해 S 대비 판정됩니다. 첫 paint 시점 validate를 측정하는 행은 없습니다.
+- 기존 (1.05,1.10] 진단 대상과 함께, 비율 상한 >1.10이지만 차이 조건 때문에 통과한 이중 조건 지표도 진단 목록에 포함합니다.
+
+Amendment 4 확정: B의 지표가 모든 페이지에서 0이면 비율은 +Infinity로 취급하고 차이 bootstrap은 독립적으로 계산합니다. 차이 상한 ≤8.35ms이면 통과, >8.35ms이면 실패하며 양쪽 모두 0인 경우 차이는 0이므로 통과합니다. 최장 프레임의 관측 지원이 없으면 불확정입니다. +Infinity는 저장 시 문자열로 명시하여 JSON의 null 변환과 구별합니다.
+
+
+### 단계 마감 측정 — Amendments 5·6 사전등록 초안 (Phase 1c)
+
+등록 버전은 closing-v3-amendment-6입니다. Phase 2의 최종 stage head 위에서 커밋하며, Phase 1b 제목 정리와 frozen-copy 재사용·C5 프레임 총합 gate·D8 probe를 이 규칙이 대체한다는 명시도 그 커밋에서 수행합니다. 이전 기록은 유지합니다.
+
+- 각 연산의 최장 프레임을 max(값, 50ms)로 만든 뒤 페이지의 10회 중앙값을 사용합니다. 비율 상한 >1.10 및 차이 상한 >16.7ms가 동시에 성립할 때 C5 frame 절이 실패합니다. 양 lane의 LoAF 지원이 없으면 불확정입니다. 원래 최장 프레임과 counts는 보고 전용이고 C4 mount 절은 그대로입니다.
+- validator work 표는 raw plugin entry로 derive하고 tables.md 및 checker가 재현합니다. operation slot [start,start+1000)의 entry.start로 귀속하며 끝이 slot을 넘어도 포함합니다. 첫 operation 이전은 setup, 첫 start 이후 어느 slot에도 없는 것은 unattributed입니다. mount는 startedAt 이후 시작한 entry를 포함하고 +1000 이후 시작한 entry는 따로 표시합니다.
+- 네 operation row와 C4의 다섯 mount row에서 lane별 compile/validate 평균을 100회 연산 또는 10회 mount 기준으로 보고합니다. F 평균은 B와 같고 F unattributed는 0이어야 합니다. 불일치는 사전등록 예외의 설계 원인이 없으면 gate 결과와 관계없이 수정 절차를 요구합니다. 현재 예외 목록은 비어 있습니다. Phase 2 최종 head smoke에서 재확인합니다. array None은 제외합니다.
+- operation row별 longFrameCount≥1인 연산의 pooled fraction을 계산하고 F−B>0.20이면 비차단 진단 목록에 원인을 요구합니다. operation의 원래 longestFrame과 flooredLongestFrame은 기존 ratio-band/difference-clause 진단에서 제외합니다. B/F 페이지 값이 모두 0인 지표도 제외합니다.
+- bootstrap resample마다 B=F=0이면 비율은 1이고, B=0·F>0일 때만 +Infinity입니다. 독립 차이 bootstrap은 유지합니다. 이는 위 Amendment 4의 모든 B=0을 +Infinity로 표시했던 설명을 대체합니다.
+- 모든 non-test decision code(stageClosing, validationAfterPaint, summarize 계열, 두 derive 파일, input-responsiveness fixtures)에 대해 current SHA=toolHashes[key]=toolCommit git blob SHA를 검사합니다. gate, deriveStageClosingResults, decideVsyncBound, bootstrapStageClosingMetric의 네 키는 필수입니다. diff 경로에도 deriveValidationAfterPaintResults와 fixtures를 추가합니다.
+- checker는 inputs.json 옆 B/S clean-build 기록의 제품 SHA가 inputs의 제품 SHA와 같은지 요구합니다. Phase 2에서 새로 빌드하고 경로를 정리한 기록을 커밋합니다. C7 저장 raw 테스트는 파일 위치를 기준으로 경로를 계산하여 cwd와 무관하게 동작해야 합니다.
+
+Phase 2의 clean-build 기록 파일명은 inputs.json 옆의 clean-build-record.json입니다. lanes.B/S 각각 commit, cleanProductScope:true, exitCode:0, product.sha256을 기록하고 inputs의 commit/제품 해시에 묶습니다. 최종 smoke checker의 --smoke --write는 smoke-validator-work.json을 생성하고 F=B 규칙 통과를 요구하며, 이후 --smoke 실행은 같은 표를 재현합니다. 정식 결과의 validator-work.json과 tables.md도 raw에서 같은 방식으로 재현합니다.
+
+
+### 단계 마감 측정 — Amendment 7 준비 보강 (Phase 1d)
+
+등록 값과 버전 closing-v3-amendment-6은 유지합니다. validator work 예외의 delta는 절대 차이 ≤1e-9로 비교하며 비어 있는 designCause는 예외로 인정하지 않습니다. 10개 페이지·100회 연산에서 B validate 평균 1, F 평균 1.1인 경우 delta:0.1 예외를 적용하고 예외가 없으면 FIX_REQUIRED입니다.
+
+무결성의 diff 및 non-test decision 범위에 helpers/checkStageClosingResults.ts를 추가합니다. deriveValidationAfterPaintResults.ts, input-responsiveness/ir-6-cases.json, checker 각각에 대해 현재·등록 해시·timed blob이 모두 같은 committed drift를 diff 검사로 거절하고, uncommitted drift는 formal-start hash 검사로 거절해야 합니다.
+
+C5 연산 프레임의 비율 상한 1.2에서 차이 상한 12ms와 16.7ms는 통과, 16.71ms는 실패입니다. 54ms 프레임을 가진 연산 수가 페이지별 B=[4,4,4,4,4,4,4,6,6,6], F=[6,4,4,4,4,4,4,4,6,6]인 paired 예제는 원래 지표 상한 +Infinity·차이 27ms로 실패하고, 50ms 하한 적용 지표는 1.04·2ms로 통과해야 합니다. F의 slot 내 compile 한 건 증가는 violations=['compileMean']인 FIX_REQUIRED이며, clean-build 기록의 exitCode:1·다른 commit·cleanProductScope:false는 각각 거절합니다.
+
+각 보강 테스트의 대응 변이 실패 및 복원 후 통과 근거는 results/closing-prepared-1d에 보존합니다. 기존 gate 테스트 파일의 15-case 제한을 지키기 위해 16.7ms 경계 3개는 별도 operation-frame 테스트 파일에 둡니다.
+
+Phase 2 커밋에서 clean-build 기록에도 check:browser-results --audit-base=<preregisteredCommit> 경로 감사를 실행합니다. Phase 1b 제목을 정리하면서 대체되는 다섯 구절(고정 복사본 재사용, C5 frame-total gate, D8 probe, Phase 1b의 “C5 … 8.35ms” 문장, Phase 1b의 두 파일 무결성 문장)을 모두 명시합니다. gate 코드의 formal-start 해시는 Phase 2 커밋에서 새로 고정합니다. Phase 1d에서는 커밋·B/S 빌드·정식 창을 실행하지 않습니다.
+
+
+### 단계 마감 측정 — Phase 2a 최종 head와 대체 구절 확정
+
+최종 stage head는 5df0bf2adb53e9764432a6e34de9c84b84e12da5입니다. 측정 브랜치는 이 head 위로 rebase하며 제품 소스는 이 head와 동일합니다. 등록 버전 closing-v3-amendment-6과 SHA-256 cc538cb41fb123be4ebf9ea67d1384bf40b068096cf9596a9c6db350b8687430을 유지합니다. 위 Amendment 3의 Phase 1b 초안 제목은 이 커밋에서 Amendments 3–7의 사전등록 제목으로 정리했습니다. 이전 수치·탐색 기록은 삭제하지 않습니다.
+
+현재 판정과 준비 절차는 위 Amendments 5·6·7을 따르며 아래 다섯 이전 구절을 명시적으로 대체합니다.
+
+- 고정 복사본 재사용: “B/S 체크아웃을 제거한 뒤에는 … 고정 복사본을 재사용할 수 있습니다.”는 폐기하며 매번 새 clean Orca 체크아웃에서 B/S를 빌드하고 clean-build-record.json을 inputs.json 옆에 보존합니다.
+- C5 frame-total gate: “각 kept page의 모든 연산 슬롯 … 전부 합산하여 F ≤ B+1을 검사합니다.”는 보고 전용으로 전환합니다. C5의 차단 프레임 지표는 연산별 max(longestFrame,50ms)의 페이지 중앙값이고 비율 상한 >1.10 및 차이 상한 >16.7ms를 동시에 요구합니다.
+- D8 probe: revisionObserved latch를 제거한 5-lane probe 실행 계획은 trace 종결로 대체하며 probe lane을 만들지 않습니다. 4-lane Williams 순서를 사용하고 L rebuild 제외를 유지합니다.
+- Phase 1b의 “C5 … 8.35ms” 문장: C4와 C5의 최장 프레임을 같은 8.35ms 이중 조건으로 다루던 첫 bullet은 C5에 대해 대체합니다. C4 mount와 C5의 다른 paint/validate 이중 조건은 8.35ms를 유지하되 C5 연산 프레임은 50ms 하한과 16.7ms 차이 한계를 사용합니다.
+- Phase 1b의 두 파일 무결성 문장: gate/derive 두 현재 해시만 기록하는 설명은 모든 non-test decision code의 current SHA=toolHashes[key]=toolCommit blob SHA 검사로 대체합니다. committed diff 범위에는 stageClosing, checker, 두 derive, validationAfterPaint, summarize 계열 및 input-responsiveness fixtures를 포함합니다.
+
+Phase 2a는 사전등록 커밋, fresh B/S 및 최종 stage 제품의 F 빌드, 전체 smoke와 checker, unit·typecheck·lint까지만 승인되었습니다. 아홉 validator work 행의 F/B 불일치가 있으면 예외를 추가하지 않고 코디네이터에게 보고한 뒤 중지합니다. clean-build 기록에 check:browser-results --audit-base=<preregisteredCommit> 경로 감사를 적용합니다. 정식 측정 창은 다음 go 이후에만 시작합니다.
+
+
+### 단계 마감 측정 — Phase 2a 준비 실행 기록
+
+최종 stage 5df0bf2ad 위의 ba49b312ca8aed6c69550bf068b3e72c6f40c0fe에 Amendments 3–7 소스·사전등록을 고정했습니다. B/S를 새 clean Orca 체크아웃에서 빌드했고 F 제품의 source tree는 최종 stage와 일치합니다. 전체 build 성공 기록과 동결 inputs를 61e4442f1aac15edd9e8d68a66b0dac522934389에 보존한 뒤 두 임시 체크아웃 및 브랜치를 제거했습니다. 초기 타입 검사 실패는 로컬 AJV/플러그인 선언 연결 문제였으며 제품 소스를 바꾸지 않고 연결을 바로잡은 전체 build 재실행은 모두 exitCode:0입니다.
+
+24행·95개 kept smoke page와 150회 연산을 저장하고 checker로 지표·순서·node identity를 재현했습니다. 다섯 mount 및 네 operation 행의 compile/validate 평균이 모두 F=B이고 F unattributed=0이며 예외 목록은 비어 있습니다. smoke의 toolCommit은 61e4442f1aac15edd9e8d68a66b0dac522934389입니다. 이 표본은 행·lane당 warmup 1개 폐기 및 kept 1개인 준비 검증이며 정식 창의 성능 판정이 아닙니다.
+
+경로 감사가 커밋된 inputs의 1MiB 초과 source-tree proof diff에서 ENOBUFS로 중단되는 문제를 발견했습니다. 신규 큰 tracked addition을 끝까지 검사하는 회귀 테스트로 먼저 재현한 뒤 git diff stdout 버퍼 상한을 32MiB로 늘렸습니다. 이는 경로 검사를 생략하지 않으며 상한 초과는 계속 실패합니다. 검사 조건·등록 규칙 값·제품·브라우저 번들과 수집한 smoke는 바꾸지 않습니다. 이 도구 보완 뒤 같은 저장 자료에 --smoke --write 및 경로 감사를 적용하며 브라우저 수집은 다시 실행하지 않습니다. 정식 창은 다음 go를 기다립니다.
+
+Phase 2a 최종 검증: 전체 benchmark-form 20개 파일·132개 테스트 통과, 브라우저 typecheck 통과, lint 경고 0개입니다. 압축 smoke 보존본도 checker로 재현했으며 --audit-base=ba49b312ca8aed6c69550bf068b3e72c6f40c0fe 경로 감사에서 신규 machine path는 0개입니다. 원래 1MiB 감사 버퍼에서 새 회귀 테스트가 ENOBUFS로 실패하고 보완 후 큰 입력 통과·끝의 machine path 거절을 모두 확인했습니다. 정식 창은 실행하지 않았습니다.
+
+
+### 단계 마감 측정 — Phase 2b 정식 결과와 Quote 71
+
+지정 toolCommit 342d91df9e2be81c548670c77e53f2b2779fe9de·clean 상태와 기존 동결 root에서 단일 창을 실행했습니다. 2026-11-01T12:54:00.939Z–13:56:03.762Z, 24행·950개 kept page·1,500회 연산이며 거절·충돌·재시작은 0회입니다. CLOSING_WINDOW_COMPLETE 전 worktree 편집·커밋은 없었습니다.
+
+raw checker는 재현에 통과했고 등록 판정은 C0–C4·C6·C7 PASS, C5 FAIL입니다. 유일한 실패는 rebuild callDuration F/B 비율 상한 1.1182795750197543 >1.10이며 점 중앙값은 B 11.625ms·F 11.025ms, 차이 상한은 1.375ms입니다. validator work 아홉 행은 F=B·F unattributed=0이고 예외는 없습니다.
+
+소유자 Quote 71 원문: “음? 그건 명백하게 느려진게 아니니까 통과해도 되는거 아닌가? 명백하게 막 40프로씩 차이나는게 아니니까”. 위 점 중앙값·차이 상한·비율 단독 판정 설명 뒤 확정 답변은 “응 수용”입니다. 소유자는 해당 C5 FAIL을 #508 단계 병합에 수용했습니다. 등록 FAIL과 수치는 그대로 두며 규칙·decision code 변경과 재측정은 하지 않습니다.
+
+rebuild 추적에서 F의 로드 검증 토큰·after-frame 예약, load-origin batch와 교체 load reported/retired 상태 관리라는 실제 추가 작업을 확인했습니다. 개별 작업별 시간을 분리한 profile은 없으므로 상한 전체를 그 추가 작업에 귀속하지 않습니다. paired-bootstrap 꼬리 witness는 B 11.625ms·F 13.0000000596ms이고 10,000개 draw 중 835개가 1.10을 넘습니다. 위치 불균형도 그대로 기록합니다. 이 결과와 다섯 등록 진단·전체 비교 상한 (1.05,1.10] 20개 원인은 closing-results.md와 formal 증거에 보존합니다.
+
+start-*.json과 formal-start.json은 압축하지 않고 clean-build-record.json은 formal 결과 디렉터리에 둡니다. 같은 자료를 checker로 재현하고 preregisteredCommit 기준 경로 감사를 실행합니다. 증거를 커밋한 최종 head에 PR 본문을 고정하며 push하지 않습니다.

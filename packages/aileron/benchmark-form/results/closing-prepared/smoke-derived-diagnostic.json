@@ -1,0 +1,20 @@
+{
+  "scope": "diagnostic-smoke-not-a-formal-verdict",
+  "rows": 97,
+  "gates": [
+    "C0",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7"
+  ],
+  "probeRows": 2,
+  "comparisons": [
+    "B",
+    "S",
+    "L"
+  ]
+}

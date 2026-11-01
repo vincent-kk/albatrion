@@ -1,0 +1,76 @@
+{
+  "toolCommit": "342d91df9e2be81c548670c77e53f2b2779fe9de",
+  "sourceHashes": {
+    "packages/canard/schema-form/src/providers/RootNodeContext/components/RootNodeContextProvider.tsx": "b3c955a0575697c8963da1af25a0ac6ac57f0a4e380ccb9591c9d960232c8c9f",
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts": "878ba9922af7f0fc9695d4c99d76ce133ec2a0dd9ec02d3eaaa8ceafd0e25151",
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/scheduleLoadValidation.ts": "c1b5a4c8a06287a5b9dffe4cfe178ffd2ac4290a35345a66c8b15c17fba098d9",
+    "packages/canard/schema-form/src/core/engine/validation/utils/run/runFieldNodeValidation.ts": "84be716429151680534100f0c12b1e3c66abdeba469519ecac23595706945ac1",
+    "packages/aileron/benchmark-form/browser-bench/interaction/helpers/mountFixture.tsx": "608ce2ecac76a876d0ee09d3699875805b9cf3c022455cadb662ec4d5132b0aa"
+  },
+  "mountTiming": [
+    {
+      "id": "mount-flat-500-validate",
+      "lane": "B",
+      "firstWorkStartMinusFirstPaintMedian": -30.650000005960464,
+      "validatorDurationMedian": 29.69999998807907,
+      "postPaintBusyMedian": 0.0
+    },
+    {
+      "id": "mount-flat-500-validate",
+      "lane": "F",
+      "firstWorkStartMinusFirstPaintMedian": 16.69999998807907,
+      "validatorDurationMedian": 31.700000047683716,
+      "postPaintBusyMedian": 31.700000047683716
+    },
+    {
+      "id": "mount-flat-500-onrequest",
+      "lane": "B",
+      "firstWorkStartMinusFirstPaintMedian": -29.900000005960464,
+      "validatorDurationMedian": 28.150000005960464,
+      "postPaintBusyMedian": 0.0
+    },
+    {
+      "id": "mount-flat-500-onrequest",
+      "lane": "F",
+      "firstWorkStartMinusFirstPaintMedian": 16.950000017881393,
+      "validatorDurationMedian": 30.350000023841858,
+      "postPaintBusyMedian": 30.350000023841858
+    },
+    {
+      "id": "mount-flat-500-always",
+      "lane": "B",
+      "firstWorkStartMinusFirstPaintMedian": -31.349999994039536,
+      "validatorDurationMedian": 30.250000029802322,
+      "postPaintBusyMedian": 0.0
+    },
+    {
+      "id": "mount-flat-500-always",
+      "lane": "F",
+      "firstWorkStartMinusFirstPaintMedian": 16.749999970197678,
+      "validatorDurationMedian": 32.04999998211861,
+      "postPaintBusyMedian": 32.04999998211861
+    }
+  ],
+  "realAddedWorkInF": [
+    "Create load-validation token and schedule the after-frame slot on every reset/rebuild",
+    "Use load-origin binding batch and maintain replacement load reported/retired state"
+  ],
+  "measurementLimit": "No per-function CPU profile or controlled ablation was recorded; the added operations are real code work, but their isolated durations and causal contribution to the 1.11828 bound are unknown.",
+  "rebuildTail": {
+    "indices": [
+      5,
+      2,
+      4,
+      9,
+      9,
+      8,
+      1,
+      7,
+      4,
+      5
+    ],
+    "B": 11.625,
+    "F": 13.000000059604645,
+    "ratio": 1.1182795750197543
+  }
+}

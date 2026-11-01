@@ -9,6 +9,7 @@ import ir1Cases from '../../fixtures/input-responsiveness/ir-1-cases.json';
 import { checkAddedMachinePaths } from './helpers/checkAddedMachinePaths';
 import { checkDerivedRecords } from './helpers/checkDerivedRecords';
 import { checkHeavyValidationResults } from './helpers/checkHeavyValidationResults';
+import { checkStageClosingResults } from './helpers/checkStageClosingResults';
 import { checkValidationAfterPaintResults } from './helpers/checkValidationAfterPaintResults';
 import { summarizePage } from './helpers/summarizePage';
 import { summarizePairs } from './helpers/summarizePairs';
@@ -24,6 +25,19 @@ if (auditBase !== undefined) checkAddedMachinePaths(repository, auditBase);
 const destination = path.resolve(
   '../../canard/schema-form/architecture/verification/input-responsiveness',
 );
+if (process.argv.includes('--stage=closing')) {
+  const root = process.argv
+    .find((arg) => arg.startsWith('--root='))
+    ?.slice('--root='.length);
+  checkStageClosingResults(
+    root
+      ? path.resolve(root)
+      : path.join(destination, 'raw/closing/browser/main'),
+    process.argv.includes('--write'),
+    process.argv.includes('--smoke'),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--stage=ir-6')) {
   checkValidationAfterPaintResults(
     destination,

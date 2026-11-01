@@ -3,7 +3,6 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
-
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { checkAddedMachinePaths } from '../checkAddedMachinePaths';
@@ -58,6 +57,18 @@ describe('explicit browser-result change audit', () => {
     fs.writeFileSync(path.join(repository, 'new.md'), machinePath);
     expect(() => checkAddedMachinePaths(repository, base)).toThrow(
       'new.md contains a new machine path',
+    );
+  });
+
+  it('audits tracked additions beyond 1MiB and rejects a machine path at the end', () => {
+    fs.appendFileSync(
+      path.join(repository, 'record.md'),
+      'x'.repeat(1100000) + '\n',
+    );
+    expect(() => checkAddedMachinePaths(repository, base)).not.toThrow();
+    fs.appendFileSync(path.join(repository, 'record.md'), machinePath + '\n');
+    expect(() => checkAddedMachinePaths(repository, base)).toThrow(
+      'record.md contains a new machine path',
     );
   });
 

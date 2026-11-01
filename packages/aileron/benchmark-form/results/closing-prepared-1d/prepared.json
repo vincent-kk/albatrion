@@ -1,0 +1,82 @@
+{
+  "state": "prepared-1d",
+  "scope": "Amendment 7 only; awaiting coordinator review",
+  "baseHead": "ce1066b335bd6d66b95c308962dda7156ba7ea48",
+  "committed": false,
+  "formalWindows": 0,
+  "ruleVersion": "closing-v3-amendment-6",
+  "rulesSha256": "cc538cb41fb123be4ebf9ea67d1384bf40b068096cf9596a9c6db350b8687430",
+  "registeredValuesChanged": false,
+  "checks": {
+    "testFiles": 20,
+    "tests": 131,
+    "testCommand": "yarn workspace @aileron/benchmark-form test",
+    "typecheck": "PASS",
+    "typecheckCommand": "yarn workspace @aileron/benchmark-form typecheck:browser",
+    "lint": "PASS",
+    "lintWarnings": 0,
+    "lintCommand": "yarn workspace @aileron/benchmark-form lint --max-warnings=0",
+    "preChangeExpectedFailures": 3,
+    "mutationRuns": 10,
+    "mutationDetectedCases": 15,
+    "preChangeDeltaTest": "expected FAIL; candidate PASS",
+    "allCandidatesRestored": true,
+    "originalIR6": "saved raw reproduced by complete package suite",
+    "machinePathAudit": "PASS: newMachinePaths=0; base=ce1066b33",
+    "diffWhitespace": "PASS"
+  },
+  "changes": [
+    "tolerant exception delta match (1e-9)",
+    "checker in decision and committed-diff scopes",
+    "mutation-sensitive integrity, frame, compile, exception and build-record tests"
+  ],
+  "pairedExample": {
+    "B": [
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      6,
+      6,
+      6
+    ],
+    "F": [
+      6,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      6,
+      6
+    ],
+    "unfloored": {
+      "upperBound": "+Infinity",
+      "differenceUpperBound": 27,
+      "status": "FAIL"
+    },
+    "floored": {
+      "upperBound": 1.04,
+      "differenceUpperBound": 2,
+      "status": "PASS"
+    }
+  },
+  "phase2Required": [
+    "rebase final stage head; commit source and registration",
+    "fresh B/S clean Orca builds with clean-build-record.json beside inputs",
+    "audit clean-build records using check:browser-results --audit-base=<preregisteredCommit>",
+    "rename Phase 1b heading; explicitly supersede frozen-copy reuse, C5 frame-total gate, D8 probe, Phase 1b C5 8.35ms sentence and Phase 1b two-file integrity sentence",
+    "record final committed decision hashes; final-head smoke must satisfy F=B before formal window"
+  ],
+  "notRun": [
+    "Phase 2 rebase",
+    "source commits",
+    "Phase 2 B/S builds",
+    "formal window"
+  ]
+}

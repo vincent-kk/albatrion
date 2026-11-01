@@ -4,7 +4,11 @@ import type { ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { Form, registerPlugin } from '@canard/schema-form';
-import type { FieldRendererProps, FormHandle } from '@canard/schema-form';
+import type {
+  FieldRendererProps,
+  FormHandle,
+  JSONSchema,
+} from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-ajv8-plugin';
 
 import type { InputFixture } from '../../../fixtures/input-responsiveness/types';
@@ -36,9 +40,12 @@ function CounterForm({
           [__IR0_LANE__ === 'E' ? 'FieldRenderer' : 'CustomFormTypeRenderer']:
             PassRenderer,
         }}
-        {...(fixture.defaultValidation
-          ? {}
-          : { validationMode: fixture.validation ? 1 : 0 })}
+        {...(fixture.validationMode !== undefined
+          ? { validationMode: fixture.validationMode }
+          : fixture.defaultValidation
+            ? {}
+            : { validationMode: fixture.validation ? 1 : 0 })}
+        {...(fixture.showError ? { showError: true } : {})}
         virtualization={fixture.virtualization || false}
         onValidate={(errors) => observation.delivery(errors.length)}
         onChange={() => {
@@ -63,24 +70,56 @@ export async function mountFixture(
   container: HTMLElement,
   fixture: InputFixture,
   observation: ReturnType<typeof observePage>,
-  options?: { onFirstPaint?: () => void; onValidationRun?: () => void },
-): Promise<{ handle: FormHandle; mount: MountRecord }> {
+  options?: {
+    onFirstPaint?: () => void;
+    onValidationRun?: () => void;
+    onValidatorWork?: (
+      kind: 'compile' | 'validate',
+      start: number,
+      end: number,
+    ) => void;
+  },
+): Promise<{
+  handle: FormHandle;
+  mount: MountRecord;
+  currentHandle(): FormHandle;
+  rerender(schema: JSONSchema): Promise<void>;
+}> {
   registerPlugin(
-    options?.onValidationRun
+    options?.onValidatorWork
       ? {
           ...plugin,
           validator: {
             ...plugin.validator,
             compile(schema: Parameters<typeof plugin.validator.compile>[0]) {
+              const start = performance.now();
               const validate = plugin.validator.compile(schema);
+              options.onValidatorWork?.('compile', start, performance.now());
               return (value: Parameters<typeof validate>[0]) => {
-                options.onValidationRun!();
-                return validate(value);
+                const at = performance.now();
+                options.onValidationRun?.();
+                const result = validate(value);
+                options.onValidatorWork?.('validate', at, performance.now());
+                return result;
               };
             },
           },
         }
-      : plugin,
+      : options?.onValidationRun
+        ? {
+            ...plugin,
+            validator: {
+              ...plugin.validator,
+              compile(schema: Parameters<typeof plugin.validator.compile>[0]) {
+                const validate = plugin.validator.compile(schema);
+                return (value: Parameters<typeof validate>[0]) => {
+                  options.onValidationRun?.();
+                  return validate(value);
+                };
+              },
+            },
+          }
+        : plugin,
   );
   const formRef = createRef<FormHandle>();
   const root = createRoot(container);
@@ -171,5 +210,22 @@ export async function mountFixture(
     inputs: container.querySelectorAll('input,select').length,
   };
   if (!formRef.current) throw new Error('Form handle missing after mount');
-  return { handle: formRef.current, mount };
+  return {
+    handle: formRef.current,
+    mount,
+    currentHandle() {
+      if (!formRef.current) throw new Error('Form handle missing');
+      return formRef.current;
+    },
+    async rerender(schema: JSONSchema) {
+      root.render(
+        <CounterForm
+          fixture={{ ...fixture, schema }}
+          formRef={formRef}
+          observation={observation}
+        />,
+      );
+      await afterPaint();
+    },
+  };
 }
