@@ -8,6 +8,7 @@ import { afterPaint } from '../afterPaint';
 import type { mountFixture } from '../mountFixture';
 import { readPostPaintBusy } from './readPostPaintBusy';
 import { REGISTERED_STAGE_CLOSING_RULES as rules } from './registeredStageClosingRules';
+import { waitForStageClosingDeadline } from './waitForStageClosingDeadline';
 
 /** Browser-owned operation loop retains ten complete one-second slots and asserts public node identity. */
 export async function runStageClosingOperations(
@@ -49,8 +50,11 @@ export async function runStageClosingOperations(
         'Node identity assertion failed: ' + fixture.id + ' operation ' + index,
       );
     const end = start + rules.slotMs;
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.max(0, end - performance.now())),
+    await waitForStageClosingDeadline(
+      end,
+      () => performance.now(),
+      (milliseconds) =>
+        new Promise((resolve) => setTimeout(resolve, milliseconds)),
     );
     const relevant = frames.filter(
       (frame) =>
