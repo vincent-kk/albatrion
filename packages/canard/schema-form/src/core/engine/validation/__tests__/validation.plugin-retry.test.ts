@@ -45,7 +45,7 @@ it.each([
     readValidationEntry(validator, first);
     const entry = readValidationEntry(validator, second);
     expect(entry.failure).toBeInstanceOf(Error);
-    const guard = compileGuard(entry.copy, '/if');
+    const guard = validator.compileGuard(entry.copy, '/if');
     entry.guards.set('/if', { guard });
     expect(guard({ flag: true })).toBe(true);
     expect(guard({ flag: false })).toBe(false);
