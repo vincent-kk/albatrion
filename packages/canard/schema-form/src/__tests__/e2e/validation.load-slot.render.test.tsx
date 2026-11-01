@@ -160,7 +160,13 @@ it.each([
       type: 'object',
       properties: { next: { type: 'string' } },
     } as const;
-    const good = { compile: () => () => [], compileGuard: () => () => true };
+    const good = {
+      compile: (schema: JSONSchema) => {
+        if (schema.properties?.next) throw new Error('replacement');
+        return () => [];
+      },
+      compileGuard: () => () => true,
+    };
     const bad = {
       compile: () => {
         throw new Error('replacement');
@@ -226,7 +232,10 @@ it.each([
     if (hidden)
       view.rerender(
         hideCommittedForm(
-          element(operation === 'validator' ? initial : replacement, bad),
+          element(
+            operation === 'validator' ? initial : replacement,
+            operation === 'validator' ? bad : good,
+          ),
           false,
         ),
       );
