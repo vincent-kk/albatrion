@@ -1078,20 +1078,16 @@ if 게이트의 렌더 중 컴파일·예약 후 숨김 탭의 타이머 제한�
 
 ## IR-9 — onError origin (2026-11-01)
 
-onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
+ERROR-019: onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
 
-`onError?: (record: FormErrorRecord) => void`는 발생마다 해당 기록 하나를 전달합니다. 기록의 필수 `origin`은 발생을 만든 연산을 나타냅니다.
+ERROR-017·019·021: 필수 origin은 발생을 만든 연산이며 load·write·validate·submit·render로 닫힙니다.
 
-| origin | 연산 |
-| --- | --- |
-| `load` | 트리 구성·mount·reset·rebuild·검증기 변경과 그 로드 사슬 |
-| `write` | 공개 쓰기·배열 동사·상태·batch·맥락·finishInput·외부 오류 및 통지 리스너 |
-| `validate` | 자동·명시적 전체 스키마 컴파일·실행, 판정 전달 및 그 리스너 |
-| `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
-| `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
+ERROR-019: load는 트리 구성·mount·reset·rebuild·검증기 변경과 그 사슬입니다. ERROR-019: write는 공개 쓰기·배열·상태·batch·맥락·finishInput·외부 오류와 통지 리스너입니다. ERROR-019: validate는 자동·명시적 전체 컴파일·실행·판정 전달과 그 리스너입니다. ERROR-019: submit은 SubmitWhileDegraded와 네이티브 capture에서 처음 드러난 실패이며 dispatchValidate가 보고한 실패는 validate를 유지합니다. ERROR-044·202: render는 RenderFailed 경계와 ChildNodeComponentsOnTerminal 같은 렌더 기록이며 warnDevelopmentIssue 개발 콘솔 경고는 기록이 아닙니다.
 
-사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
+ERROR-019·041: 최외곽 사슬의 origin을 중첩·adoption에서 보존하므로 write 리스너·onChange의 reset은 write이고 reset 안의 쓰기는 load입니다. ERROR-019: 첫 commit의 외부 errors 적용은 load, prop 변경은 write이며 검증 결과 리스너 실패는 validate, 로드 뒤 독립 state 리스너 실패는 write입니다.
 
-`FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+ERROR-005·023: 오류 묶음은 throw 값으로만 남기고 개별 기록에는 싣지 않으며 각 수집 호출의 첫 병합 오류·details를 보존합니다. ERROR-019·021·023: 전달·중복·호스트·호출자·console·재진입 규칙은 유지합니다.
 
-ERROR-017·019·021·023·005·041·139·164·197·201, REACT-007, TEST-017의 IR-9 보충을 따릅니다.
+ERROR-017: `FormErrorRecord.surface` and `aggregate` were removed; `origin` names the operation that produced the record
+
+ERROR-139·164·197·201, REACT-007, TEST-017의 IR-9 보충을 함께 따릅니다.
