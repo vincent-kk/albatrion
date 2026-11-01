@@ -3,18 +3,16 @@ import type { Nullable } from '@aileron/declare';
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidateFunction } from '../../types/validator';
+import { DUPLICATE_SCHEMA_ID_MESSAGE } from '../cache/constants';
 import { readValidationEntry } from '../cache/readValidationEntry';
 import { isValidator } from '../guard/isValidator';
-import { recentReleaseList } from '../lifetime/recentReleaseList';
-
-/** A validator compile failure message that reports a duplicate schema id. */
-const DUPLICATE_SCHEMA_ID_MESSAGE = /already exists|duplicate/i;
+import { hasRetainedValidationRootId } from '../lifetime/hasRetainedValidationRootId';
 
 /**
- * Compile a replacement root before a binding transfers its old live chain.
- * @param node - New root or one of its occurrences.
+ * Compile or read the cached whole-schema validator for a root.
+ * @param node - Root or one of its occurrences.
  * @returns Shared compiled validator, or null if none was selected.
- * @throws FormErrorCode.ValidatorCompileFailed while the previous tree is still untouched.
+ * @throws FormErrorCode.ValidatorCompileFailed when whole-schema compilation fails.
  */
 export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -31,29 +29,12 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
     typeof authoredRoot.$id === 'string'
       ? authoredRoot.$id
       : undefined;
-  let duplicate =
-    !!id &&
+  const duplicate =
+    typeof id === 'string' &&
     entry.failure instanceof Error &&
-    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message);
-  if (duplicate) {
-    duplicate = false;
-
-    const releasedRoots = [...recentReleaseList(validator).counts];
-    for (let index = 0, limit = releasedRoots.length; index < limit; index++) {
-      const [other, count] = releasedRoots[index];
-
-      if (
-        other !== authoredRoot &&
-        count > 0 &&
-        typeof other === 'object' &&
-        other !== null &&
-        other.$id === id
-      ) {
-        duplicate = true;
-        break;
-      }
-    }
-  }
+    DUPLICATE_SCHEMA_ID_MESSAGE.test(entry.failure.message) &&
+    (entry.duplicate === true ||
+      hasRetainedValidationRootId(validator, authoredRoot));
 
   throw new SchemaFormError(
     FormErrorCode.ValidatorCompileFailed,

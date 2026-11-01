@@ -10,6 +10,7 @@ export {
   dispatchContextChange,
   dispatchFinishInput,
   dispatchInsert,
+  dispatchLoadValidation,
   dispatchMount,
   dispatchPop,
   dispatchPush,
@@ -42,7 +43,6 @@ export {
   readValidationEntry,
   retainValidationRoot,
   releaseValidationRoot,
-  hasFieldNodeValidationRequest,
   readFieldNodeRevealBaseline,
 } from './validation';
 export {

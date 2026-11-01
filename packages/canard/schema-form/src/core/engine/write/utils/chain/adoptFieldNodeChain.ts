@@ -6,7 +6,6 @@ import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { assertFieldNodeWritable, disposeFieldNodeTree } from '../../../settle';
-import { assertValidationRootReady } from '../../../validation';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
 import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaPaths';
@@ -26,7 +25,6 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   assertFieldNodeWritable(previousRoot);
   assertFieldNodeWritable(nextRoot);
-  assertValidationRootReady(nextRoot);
   rebuildRootExternalErrors(previousRoot);
   const previous = previousRoot.runtime;
   const next = nextRoot.runtime;

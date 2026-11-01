@@ -35,9 +35,8 @@ import { createRootLoad } from '../utils/createRootLoad';
 import { flushRootLoad } from '../utils/flushRootLoad';
 import { reportRootLoadValidation } from '../utils/reportRootLoadValidation';
 import { resetRootLoad } from '../utils/resetRootLoad';
-import { scheduleMountValidation } from '../utils/scheduleMountValidation';
+import { scheduleLoadValidation } from '../utils/scheduleLoadValidation';
 import { subscribeRootLoad } from '../utils/subscribeRootLoad';
-import { validateMountRoot } from '../utils/validateMountRoot';
 import { RootBindingContext } from './RootBindingContext';
 import { RootNodeContext } from './RootNodeContext';
 
@@ -60,9 +59,7 @@ export const RootNodeContextProvider = ({
   const external = useExternalFormContext();
   const { context, attachedFilesMap } = useWorkspaceContext();
   const reporter = useFormErrorContext();
-  const { checkShowError, showError } = useFieldRendererContext();
-  const always = checkShowError();
-  const alwaysRef = useRef(always);
+  const { showError } = useFieldRendererContext();
   const current: RootLoadProps = {
     ...props,
     context,
@@ -96,9 +93,6 @@ export const RootNodeContextProvider = ({
   const getSnapshot = useMemo(() => () => store.load, [store]);
   const load = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
   useLayoutEffect(() => {
-    alwaysRef.current = always;
-  }, [always]);
-  useLayoutEffect(() => {
     if (load.root) commitFieldNodeRevealPolicy(load.root, showError);
   }, [load.root, showError]);
   if (reporter) {
@@ -118,6 +112,7 @@ export const RootNodeContextProvider = ({
       store.load = resetRootLoad(store.load, used, option, rebuild);
       store.unsubscribe();
       store.unsubscribe = subscribeRootLoad(store.load, store);
+      if (store.load.root) scheduleLoadValidation(store.load, store);
       binding.current.root = store.load.root;
       attachedFilesMap.clear();
       onReset();
@@ -188,10 +183,7 @@ export const RootNodeContextProvider = ({
         flushRootLoad(load);
         if (root) {
           applyFormErrors(root, load.props.errors);
-          if ((load.props.validationMode ?? 0) & ValidationMode.OnChange) {
-            if (alwaysRef.current) validateMountRoot(root);
-            else scheduleMountValidation(load, store);
-          }
+          scheduleLoadValidation(load, store);
         }
       } else load.prepared = true;
     }

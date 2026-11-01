@@ -264,8 +264,8 @@ export interface FieldNodeRuntime<Self>
     option: WriteOption;
     source?: 'input' | 'automatic';
   }[];
-  /** Mount defers validation until the binding's ready effect. */
-  deferMountValidation?: boolean;
+  /** Load defers validation until the binding's slot. */
+  deferLoadValidation?: boolean;
   /** External errors awaiting the replacement tree's first committed shape. */
   adoptedExternalErrors?: Map<string, readonly { dataPath: string }[]>;
   /** Reset scopes requiring validation even with an unchanged root emit. */
@@ -300,6 +300,8 @@ export interface FieldNodeRuntime<Self>
   onStateChange?: () => void;
   /** Most recent validation request/result version. */
   validationStamp?: number;
+  /** Request stamp at the current load start; also identifies the load generation. */
+  validationLoadStamp?: number;
   /** Stamp of the latest queued write-triggered request. */
   validationRequestStamp?: number;
   /** Root external issues followed by the ordered whole-schema validator issues. */

@@ -31,7 +31,8 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
   clearWarningKeys(root.runtime);
   root.runtime.validationUnavailable = false;
   root.runtime.validationCompileReported = false;
-  root.runtime.deferMountValidation = settings.deferValidation === true;
+  root.runtime.validationStamp = (root.runtime.validationStamp ?? 0) + 1;
+  root.runtime.deferLoadValidation = settings.deferValidation === true;
   if (!settings.deferValidation)
     (root.runtime.validationTargets ??= new Set()).add(root);
   root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
@@ -62,6 +63,7 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
       runtime.chainOccurrences?.push({ kind: 'record', record });
     }
     root.runtime.mountingGuardPass = false;
+    root.runtime.validationLoadStamp = root.runtime.validationStamp ?? 0;
     exitFieldNodeChain(root);
   }
 };

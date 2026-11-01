@@ -57,7 +57,9 @@ export const resetRootLoad = (
     previous.error = undefined;
     try {
       root.batch(() => {
-        reloadFieldNodeForm(root, clone(props.defaultValue), loadOption);
+        reloadFieldNodeForm(root, clone(props.defaultValue), loadOption, {
+          deferValidation: true,
+        });
         applyFormErrors(root, props.errors);
       });
     } catch (error) {
@@ -75,7 +77,9 @@ export const resetRootLoad = (
   if (next.reporter) next.reporter.root = replacement;
   const load = () => {
     if (root) adoptFieldNodeTree(root, replacement);
-    mountFieldNode(replacement, clone(props.defaultValue), loadOption);
+    mountFieldNode(replacement, clone(props.defaultValue), loadOption, {
+      deferValidation: true,
+    });
     applyFormErrors(replacement, props.errors);
   };
   try {

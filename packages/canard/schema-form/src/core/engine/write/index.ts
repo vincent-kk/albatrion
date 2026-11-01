@@ -10,6 +10,7 @@ export { dispatchInsert } from './utils/entry/dispatchInsert';
 export { dispatchClear } from './utils/entry/dispatchClear';
 export { dispatchResetSubtree } from './utils/entry/dispatchResetSubtree';
 export { dispatchResetForm } from './utils/entry/dispatchResetForm';
+export { dispatchLoadValidation } from './utils/entry/dispatchLoadValidation';
 export { dispatchMount } from './utils/entry/dispatchMount';
 export { dispatchBatch } from './utils/entry/dispatchBatch';
 export { dispatchContextChange } from './utils/entry/dispatchContextChange';

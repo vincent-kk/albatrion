@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 import { requestFieldNodeValidation } from '../../../validation';
-import { reportValidationFailure } from '../report/reportValidationFailure';
+import { ensureValidationFailureReporter } from '../report/ensureValidationFailureReporter';
 import { deliverValidationWave } from './deliverValidationWave';
 
 /** Request an automatic verdict using the write domain's common delivery and failure surfaces.
@@ -12,8 +12,7 @@ export const requestFieldNodeValidationWave = <
   node: Self,
 ): void => {
   const runtime = node.rootNode.runtime;
-  runtime.reportValidationFailure ??= (failure) =>
-    reportValidationFailure(runtime, failure);
+  ensureValidationFailureReporter(runtime);
   requestFieldNodeValidation(node, (issues, commit) =>
     deliverValidationWave(node, issues, commit),
   );
