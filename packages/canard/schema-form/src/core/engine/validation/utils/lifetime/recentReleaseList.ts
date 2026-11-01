@@ -5,6 +5,8 @@ import type { Validator } from '../../types/validator';
 export interface ValidationLifetime {
   /** Number of committed consumers per authored root. */
   readonly counts: Map<BlueprintSchema, number>;
+  /** Whole-schema runs protecting zero-consumer roots from LRU overflow. */
+  readonly inflight: Map<BlueprintSchema, number>;
   /** Zero-consumer roots in release order, oldest first. */
   readonly recent: BlueprintSchema[];
 }
@@ -20,7 +22,7 @@ const lists = new WeakMap<Validator, ValidationLifetime>();
 export const recentReleaseList = (validator: Validator): ValidationLifetime => {
   let list = lists.get(validator);
   if (!list) {
-    list = { counts: new Map(), recent: [] };
+    list = { counts: new Map(), inflight: new Map(), recent: [] };
     lists.set(validator, list);
   }
   return list;

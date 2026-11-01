@@ -11,10 +11,16 @@ export const reportLoadValidationFailure = (failure: unknown): void => {
   if (
     !(failure instanceof SchemaFormError) ||
     failure.code !== FormErrorCode.MultipleErrors
-  )
+  ) {
+    if (
+      !(failure instanceof SchemaFormError) ||
+      failure.code !== FormErrorCode.ValidatorCompileFailed
+    )
+      reportErrorToHost(failure);
     return;
+  }
   const errors = failure.details?.errors;
   if (!isArray(errors)) return;
-  for (let index = 1; index < errors.length; index++)
+  for (let index = 0; index < errors.length; index++)
     reportErrorToHost(errors[index]);
 };

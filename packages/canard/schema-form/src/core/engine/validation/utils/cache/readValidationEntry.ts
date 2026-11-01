@@ -8,7 +8,8 @@ import type {
   Validator,
 } from '../../types/validator';
 import { createValidatorCopy } from '../copy/createValidatorCopy';
-import { evictValidationRoot } from '../lifetime/evictValidationRoot';
+import { evictRecentValidationRoots } from '../lifetime/evictRecentValidationRoots';
+import { evictSameIdRoots } from '../lifetime/evictSameIdRoots';
 import { hasRetainedValidationRootId } from '../lifetime/hasRetainedValidationRootId';
 import { recentReleaseList } from '../lifetime/recentReleaseList';
 import { DUPLICATE_SCHEMA_ID_MESSAGE } from './constants';
@@ -26,11 +27,13 @@ export interface ValidationEntry {
   /** Authored-position guard compilation outcomes, including failures. */
   readonly guards: Map<string, GuardResult>;
   /** Whole-schema compilation result when successful. */
-  readonly validate?: ValidateFunction;
+  validate?: ValidateFunction;
   /** Whole-schema compilation failure when it throws. */
-  readonly failure?: unknown;
+  failure?: unknown;
   /** Duplicate-id registration observed while this compilation failed. */
-  readonly duplicate?: boolean;
+  duplicate?: boolean;
+  /** Whether the one whole-schema retry after a retained-id collision has been consumed. */
+  retried?: boolean;
   /** Shared compile rejection identity for automatic reports and later explicit/native requests. */
   rejection?: SchemaFormError;
   /** Whether development guard precompilation has already run. */
@@ -57,19 +60,11 @@ export const readValidationEntry = (
   const existing = roots.get(authoredRoot);
   if (existing) return existing;
   const list = recentReleaseList(validator);
-  if (typeof authoredRoot.$id === 'string')
-    for (const oldRoot of [...list.recent])
-      if (
-        oldRoot !== authoredRoot &&
-        typeof oldRoot === 'object' &&
-        oldRoot !== null &&
-        oldRoot.$id === authoredRoot.$id
-      )
-        evictValidationRoot(validator, oldRoot);
+  evictSameIdRoots(validator, authoredRoot);
   if (!list.counts.has(authoredRoot)) {
     list.counts.set(authoredRoot, 0);
     list.recent.push(authoredRoot);
-    if (list.recent.length > 8) evictValidationRoot(validator, list.recent[0]);
+    evictRecentValidationRoots(validator);
   }
   const copy = createValidatorCopy(authoredRoot);
   let validate: Optional<ValidateFunction>;
