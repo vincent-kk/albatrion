@@ -54,7 +54,7 @@ it.each([
         if (event !== 'native' || !element) return;
         element.addEventListener('click', click);
         return () => element.removeEventListener('click', click);
-      }, [ChildFields]);
+      }, [click]);
       return (
         <button
           ref={button}
