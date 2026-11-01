@@ -97,3 +97,30 @@ native degraded submit의 throwing onError는 DR-11에서 두 host 호출을 하
 | 원래 warning scope | 5 |
 
 모든 변이는 원복했습니다. [새 변이 raw와 실패 이름](raw/defect-round/results-gates/mutations.json)에 보존합니다. 아래 새 최종 관문이 이전 표를 대체합니다.
+
+
+### Amendment 9·10 최종 관문
+
+제품 소스 `71971176e`와 최종 scope identity 시험 `feb1f6bc5`를 검증했습니다. unit·build의 대상은 이 렌더 전용 단언 변경으로 바뀌지 않았으며 최종 lint·typecheck와 두 React·verify는 강화한 텍스트를 포함합니다. 이전 최종 관문은 해당 시점 기록으로 보존하고 이 표가 현재 결과를 나타냅니다.
+
+| 관문 | 최종 결과·증거 |
+| --- | --- |
+| lint·typecheck·build | exit0·경고0·DEVELOPMENT_FLAG_OK·세 runtime bundle GATE_SELECTION_DIST_OK. [프로세스](raw/defect-round/results-gates/gate-processes.json) |
+| unit | 4117통과·실패0·skip0·todo1. [JSON](raw/defect-round/results-gates/rg-final-unit.json.gz) |
+| render / React19 | 1004통과·실패0·skip7·todo0. [JSON](raw/defect-round/results-gates/rg-final-render.json.gz) |
+| react18 | 1002통과·실패0·skip9·todo0. [JSON](raw/defect-round/results-gates/rg-final-react18.json.gz) |
+| verify-unit·verify-render | 5165통과·실패0·skip7·todo1. [JSON](raw/defect-round/results-gates/rg-final-verify.json.gz) |
+| storybook | 254통과·실패0·skip0·todo0. [JSON](raw/defect-round/results-gates/rg-final-storybook.json.gz) |
+| production | 21통과·실패0·skip0·todo0. [JSON](raw/defect-round/results-gates/rg-final-production.json.gz) |
+| import-model | 2통과·실패0·skip0·todo0. [JSON](raw/defect-round/results-gates/rg-final-import-model.json.gz) |
+| 공개 표면 | src/index.ts·root index.d.ts byte 동일·97 exports·916 signatures 동일·추가/삭제/노출0. validationRunning을 노출 감지 대상에 포함. [평가](raw/defect-round/results-gates/public-declarations.json) |
+| 선언 파일 차이 | 공개 도달 선언의 주석은 승인된 F2 세 문장만 다릅니다. 파일 byte 비교에는 private runtime.d.ts의 validationRunning 한 필드 추가도 나타나며 공개 indexed-access 선택에 노출되지 않습니다. [주석·private 파일 차분](raw/defect-round/results-gates/public-comments.json) |
+| FCA | 원래 기준566·직전564·현재564 finding, 실패26·기존 indeterminate 유지. 새 finding/diagnostic0. 최신3131개 source fact를 추출·수락. [비교](raw/defect-round/results-gates/fca-comparison.json) |
+| 원장 | 항목1416 동일·보충3632→3640(+8), verbatim/sup/ref/owner 문제0·17영역 누락/오분류0. token2390·잔여397 유지, 기존 plan 문제1·doc 미인용66 유지. [최종 요약](raw/defect-round/results-gates/ledger-final-summary.json) |
+| 경로·기록·skip 감사 | 새 텍스트·모든 raw/gzip 경로0·새 위험 product 단언0·기존 기록 삭제0·버전 변경0·기존 skip/todo 동일. 새 DR-9·DR-15 legacy 두 case만 React19에서 제외. [감사](raw/defect-round/results-gates/final-audits.json) |
+| scope identity 보강 | 객체 정체성·scope별 호출 수로 검사한 최종 텍스트에서도 원래 scope 제거 변이5실패, 복원 뒤11통과. [해시·실행](raw/defect-round/results-gates/scope-provenance.json) |
+| scratch·산출물 | 비교용 Orca worktree·scratch 브랜치 잔여0. 지정 build의 dist는 ignored이고 추적하는 재생성 bundle·adapter 변경0. [정리](raw/defect-round/results-gates/cleanup.json) |
+
+최종 PR 본문은 위 보충과 새 raw에 최종 HEAD 고정 링크를 제공하며 검토 범위·지침·남은 한계를 명시합니다. 슬롯과 native host 형태의 통일은 코디네이터가 단계 마감 때 소유자에게 올릴 결정입니다.
+
+공개 표면 평가기의 새 private 필드 검사와 공개 도달 주석 비교는 [실행 소스와 해시](raw/defect-round/results-gates/declaration-checker-sources.json.gz)도 보존했습니다. 상대 경로로 함께 풀고 baseline·candidate package·출력 JSON을 인자로 실행할 수 있습니다.
