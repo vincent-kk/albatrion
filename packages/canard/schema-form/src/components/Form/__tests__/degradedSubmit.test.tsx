@@ -13,6 +13,45 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+it('DR-11 explicit validate on a degraded form already reports an execution rejection once', async () => {
+  const ref = createRef<FormHandle>();
+  const onError = vi.fn();
+  const host = vi.fn();
+  vi.stubGlobal('reportError', host);
+  render(
+    <FormCore
+      ref={ref}
+      jsonSchema={{
+        type: 'string',
+        controls: { derived: '(() => { throw new Error("degraded") })()' },
+      }}
+      onError={onError}
+      validationMode={ValidationMode.OnRequest}
+      validatorFactory={{
+        compile: () => () => {
+          throw new Error('validator');
+        },
+        compileGuard: () => () => true,
+      }}
+    >
+      <span />
+    </FormCore>,
+  );
+  expect(ref.current!.node?.diagnostics.status).toBe('degraded');
+  onError.mockClear();
+  host.mockClear();
+  await expect(ref.current!.validate()).rejects.toMatchObject({
+    code: FormErrorCode.ValidatorThrew,
+  });
+  expect(
+    onError.mock.calls.map(([record]) => ({
+      code: record.code,
+      origin: record.origin,
+    })),
+  ).toEqual([{ code: FormErrorCode.ValidatorThrew, origin: 'validate' }]);
+  expect(host).not.toHaveBeenCalled();
+});
+
 it('DR-11 reports degraded submit rejection to onError before rejecting the caller', async () => {
   const ref = createRef<FormHandle>();
   const onError = vi.fn();
