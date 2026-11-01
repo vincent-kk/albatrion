@@ -74,3 +74,9 @@
 | 446 | 2026-10-26 | 설계 최적화 단계에 적용(PROCESS-069): 정책 본문은 그대로이고, Fable 오케스트레이터는 소유자 대화·설계·판단·원장·커밋만 맡으며 코드를 고치지 않는다. 동시 워커는 둘까지, 전체 시험과 측정은 한 번에 하나 |
 | 445 | 2026-10-26 | 444라운드 지시 반영: 단계 루트 PR 밖의 병합은 코디네이터 재량, Fable 대신 Opus를 더 쓰고 codex·agy·cursor 사용을 늘리며 수정 PR은 다른 모델 가족이나 Opus로 검증 |
 | 429 | 2026-10-20 | 문서 신설. Claude 한도 초기화로 평시 운행, 장기 작업 셋(codex sol·Claude Opus·agy argon), 워커 구분, 풀별 한도와 초기화, 소비 순서 cursor > codex = agy > claude |
+
+## 8. Workspace cleanup
+
+Remove finished worktrees and branches as work proceeds; do not let completed scratch workspaces accumulate. Commit or otherwise preserve required results before removing a scratch workspace, remove it as soon as its purpose ends, and include this obligation in every later worker brief. Keep a workspace only while an active measurement, review or explicit retention still needs it. Follow the recorded permission and timing for remote branch deletion; quote 72 schedules the remaining stage branches after #508 merges.
+
+Authority: Vincent's quote 36 (`reviews/round-466-owner-answers.md:35`), reaffirming 451C-01 (`reviews/round-451-owner-answers.md:7-8`); the editor decision is 466C-13 (`reviews/round-466-closing.md`). Git worktree metadata and branch configuration cleanup reserved by quote 68 remain Vincent's responsibility.
