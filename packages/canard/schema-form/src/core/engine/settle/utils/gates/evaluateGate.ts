@@ -209,7 +209,7 @@ const evaluateGateValue = <Self extends FieldNodeRecord<Self>>(
         schemaPath: gate.schemaPath,
         path: hostPath,
         details: { cause },
-        origin: runtime.mountingGuardPass ? 'load' : runtime.chainOrigin,
+        origin: runtime.chainOrigin,
       };
       (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
       runtime.chainOccurrences?.push({ kind: 'record', record });
