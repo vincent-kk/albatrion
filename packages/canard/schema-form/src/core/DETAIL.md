@@ -201,3 +201,5 @@ RootNodeContext 소비를 위한 batchFieldNodeLoad를 surface 경계에서 이�
 ## Last Updated
 
 2026-11-02
+
+계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14); 정돈-2(2026-10-14).

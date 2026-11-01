@@ -76,7 +76,7 @@ Amendment 11의 명시적 예외로 VALIDATE-052와 ERROR-028의 중복 보충 �
 
 “응 그럼 그렇게 바꾸자.”
 
-DR-16은 기존 결함입니다. 5d1348ed1은 flat·nested 묶음 모두 RENDER_FAILED를 만들었고 DR-14는 flat만 닫았습니다. ERROR-023 항목 2의 중복 기록 제한을 유지하며 중첩 판정만 확장합니다. 깊이 50,000의 알려진 중첩은 기준 구현에서도 보고하므로 소유자의 후속 답변에 따라 red 회귀로 분류하며 최종 onError 0회 조건은 유지합니다.
+DR-16은 기존 결함입니다. 5d1348ed1은 flat·nested 묶음 모두 RENDER_FAILED를 만들었고 DR-14는 flat만 닫았습니다. ERROR-023 항목 2의 중복 기록 제한을 유지하며 중첩 판정만 확장합니다. 깊이 50,000의 알려진 중첩은 기준 구현에서도 보고하므로 코디네이터 판정에 따라 red 회귀로 분류하며 최종 onError 0회 조건은 유지합니다.
 
 - **DR16C-01 — ERROR-028 / ERROR-023 항목 2**
   - 【추론】 DR-16: capture 생략 대상 bundle의 원소는 seen 또는 handlerFailures의 객체이거나, 같은 규칙(비어 있지 않은 배열·모든 index가 own·모든 원소가 알려진 객체)을 만족하는 SchemaFormError 인스턴스 MultipleErrors 묶음이다. 원래 실패가 둘 이상인 사슬에서 onError가 던질 때의 [[A, B], H] 묶음은 render·submit·load capture에서 다시 기록하지 않는다. SchemaFormError가 아닌 중첩 묶음, 순환하거나 한 판정에서 다시 만난 중첩 묶음, 빈 배열·hole·미지 객체·primitive가 어느 깊이에든 있으면 보고한다. 판정은 재귀 없이 순회하며 capture는 예외를 던지지 않는다. DR-14-R2의 원소 규칙은 이 규칙으로 확장되고 host 전달과 ERROR-023 항목 2 우선 제한은 그대로다.
@@ -85,3 +85,12 @@ DR-16은 기존 결함입니다. 5d1348ed1은 flat·nested 묶음 모두 RENDER_
   - 【추론】 DR-17(quote 75): 부른 쪽이 없는 실패는 host에 오류 하나씩 보낸다. SchemaFormError MultipleErrors 묶음(비어 있지 않은 배열·모든 index가 own)은 원소를 깊이 우선·원소 순서로 펼쳐 잎마다 한 번 보내고 같은 규칙의 중첩 묶음만 펼친다. 형식이 어긋난 묶음·다시 만난 묶음·그 밖의 값은 그대로 한 번 보낸다. 적용 자리는 native submit, load flush·reset의 load 오류와 핸들러 예외, capture의 핸들러 예외, 슬롯 판정, engine의 검증 결과 파동과 OnChange 실행 실패의 주인 없는 싱크이며 핸들러 예외가 묶음이면 그것도 원소별로 보낸다. 핸들러 예외가 원래 실패보다 먼저 host에 가는 자리(검증 결과 파동, OnChange 실행 실패, load flush)의 순서는 바꾸지 않는다. 렌더 경계가 잡은 값의 host 보고는 React와 경계의 기록이므로 던진 값 그대로이다. caller가 있는 validate()·submit()은 묶음 하나로 거부한다. DR-11-R2·DR-14의 bundle host 한 번과 ERROR-008·ERROR-028·EVENT-046의 싱크 한 번은 잎마다 한 번으로 읽는다.
 
 native submit과 슬롯의 원인 우선 순서는 유지합니다. 슬롯이 이전에 버리던 malformed bundle은 이제 그 값 자체로 보고합니다. 원장 보충은 과거 결정을 지우지 않고 이 결정을 우선 적용합니다.
+
+
+## Amendment 16 — 전체 입력 보호와 순회 예산
+
+- **DR16C-02 — 최상위 capture 보호와 중첩 판정**
+  - 【추론】 DR-16-R3(Amendment 16, quotes 66·67): capture는 실패 값의 code·details·details.errors·length·index·own-property 검사 및 메시지를 위한 String(error) 읽기 때문에 밖으로 예외를 던지지 않는다. 최상위 실패 값의 메타데이터를 읽을 수 없으면 원래 error identity·origin·path·componentStack을 보존하고 RenderFailed 및 고정 메시지 Unable to inspect captured failure의 불투명한 기록 하나를 전달하며 부분 details는 버린다. 중첩 판정은 읽을 수 없거나 형식이 어긋난 묶음을 unknown으로 처리한다. 이때 바깥 실패 값의 메타데이터를 읽을 수 있으면 그 code·message·details는 기존대로 보존하며 고정 fallback으로 바꾸지 않는다. 배열마다 처음 읽은 정수 길이 1부터 2^32 − 1까지를 고정 반복 범위로 쓰고 모든 index의 own 여부를 검사하며 끝의 안정성 읽기가 처음 길이와 같아야 한다. 호출 전체의 원소 점검 예약은 1,000,000개까지이며 거절된 길이·변한 길이·예산 초과는 false이다. 이미 보고한 원인·handler 객체 및 유효한 중첩 묶음 생략, ERROR-023 항목 2 우선 제한은 유지한다. onError 핸들러 예외 처리와 visit·sink callback 예외 전파의 의미는 바꾸지 않는다.
+
+- **DR17C-02 — 안정된 길이와 공유 snapshot 예산**
+  - 【추론】 DR-17-R2(Amendment 16): 호스트 잎 순회는 배열마다 정수 길이 1부터 2^32 − 1까지를 고정 범위로 점검한 뒤 마지막 길이의 동일성을 확인하고, 호출 전체에서 공유하는 원소 점검 예산 1,000,000개를 snapshot 전에 예약한다. 원소 읽기나 마지막 안정성 읽기가 실패해도 예약을 환불하지 않는다. 읽을 수 없는 값·유효하지 않거나 변한 길이·예산 초과·malformed·재방문 묶음은 그 값을 불투명한 잎 하나로 방문하므로 최종 sink도 묶음을 받을 수 있다. 앞 원소의 부분 전달은 없으며 이미 방문한 바깥 형제의 순서와 identity는 유지한다. handler bundle도 각 잎으로 보내고 검증 결과 파동·OnChange·load flush의 handler-first, native submit·slot의 원인 우선 및 caller 거부·render boundary의 원래 값은 유지한다. visit·sink callback이 던진 예외는 전파한다.

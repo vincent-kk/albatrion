@@ -20,9 +20,11 @@ onError는 insertion effect로 갱신되어 숨김 commit에서도 최신이며 
 
 onError is an event channel: it delivers the one record of each occurrence and does not maintain a current error list or report resolution.
 
-`capture(error, origin, componentStack?, path?)`는 origin을 필수로 받습니다. 렌더 경계는 render, 네이티브 제출은 submit, 생성·flush·reset 실패는 load를 넘깁니다. 이미 보고한 오류와 onError가 던진 객체는 다시 기록하지 않습니다. MultipleErrors의 오류 배열이 비어 있지 않고 모든 own index에 이미 보고한 객체, 핸들러 예외 객체, 또는 같은 규칙을 만족하는 SchemaFormError 인스턴스 MultipleErrors 묶음이 있으면 capture 기록을 생략합니다. 빈 배열·상속된 index를 포함한 hole·미지 객체·primitive·SchemaFormError가 아닌 중첩 묶음·순환하거나 다시 만난 중첩 묶음이 어느 깊이에든 있으면 보고합니다. 판정은 재귀 없이 순회하며 details가 없는 인스턴스도 보고합니다. 렌더 capture에서 생략한 bundle 또는 핸들러 예외의 RENDER_FAILED 기록·componentStack은 onError에 도달하지 않는 ERROR-023 항목 2 우선 제한입니다. 경고 scope는 origin과 독립적이며 recordScopes는 버퍼 기록의 원래 root·scope만 보존합니다.
+`capture(error, origin, componentStack?, path?)`는 origin을 필수로 받습니다. 렌더 경계는 render, 네이티브 제출은 submit, 생성·flush·reset 실패는 load를 넘깁니다. 이미 보고한 오류와 onError가 던진 객체는 다시 기록하지 않습니다. MultipleErrors의 오류 배열이 비어 있지 않고 모든 own index에 이미 보고한 객체, 핸들러 예외 객체, 또는 같은 규칙을 만족하는 SchemaFormError 인스턴스 MultipleErrors 묶음이 있으면 capture 기록을 생략합니다. 빈 배열·상속된 index를 포함한 hole·미지 객체·primitive·SchemaFormError가 아닌 중첩 묶음·순환하거나 다시 만난 중첩 묶음이 어느 깊이에든 있으면 보고합니다. 판정은 재귀 없이 순회하며 details가 없는 인스턴스도 보고합니다. capture는 최상위 code·details·message·String(error) 읽기까지 보호합니다. 실패 메타데이터를 읽을 수 없으면 원래 error·origin·path·componentStack을 유지하고 RenderFailed 및 고정 메시지 Unable to inspect captured failure의 기록 하나를 전달하며 부분 details는 버립니다. 중첩 predicate의 읽기 실패는 false/unknown만 뜻하므로 읽을 수 있는 바깥 실패의 code·message·details는 기존대로 보존하고 고정 fallback으로 바꾸지 않습니다. onError handler의 예외 처리와 host sink 예외 의미는 유지합니다. 렌더 capture에서 생략한 bundle 또는 핸들러 예외의 RENDER_FAILED 기록·componentStack은 onError에 도달하지 않는 ERROR-023 항목 2 우선 제한입니다. 경고 scope는 origin과 독립적이며 recordScopes는 버퍼 기록의 원래 root·scope만 보존합니다.
 
 읽을 수 없는 중첩 묶음(details·errors getter, index·length 읽기 실패)은 capture에서는 unknown으로 처리하고 호스트 순회에서는 같은 identity의 불투명한 잎으로 보냅니다. 호스트 순회는 묶음의 own 원소를 방문 전에 임시 배열에 읽어 두므로 뒤 원소를 읽지 못해도 앞 원소를 부분 전달하지 않습니다. snapshot과 frame·visited는 호출별 O(N) 임시 메모리이며 영구 필드를 추가하지 않습니다. visit·sink callback의 예외는 삼키지 않습니다.
+
+배열마다 처음 읽은 길이를 반복 범위로 고정하고 정수 1..2^32 − 1, 모든 own index, 끝의 동일한 길이를 요구합니다. capture 판정과 host 순회는 각각 호출당 원소 점검 예산 1,000,000개를 공유하며 invalid·변한 길이·예산 초과는 unknown 또는 원래 묶음 identity의 잎입니다. host의 실패한 snapshot 예약도 소비하며 환불하지 않습니다.
 
 ## Acceptance Criteria
 

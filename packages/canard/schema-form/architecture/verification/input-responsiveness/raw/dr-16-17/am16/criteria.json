@@ -1,0 +1,1348 @@
+{
+  "newCases": [
+    {
+      "id": "AM16-42abb3c1",
+      "file": "src/providers/FormErrorContext/__tests__/captureValueInspection.test.ts",
+      "title": "AM16 capture opaque fallback for unreadable top-level code",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-c8e64e01",
+      "file": "src/providers/FormErrorContext/__tests__/captureValueInspection.test.ts",
+      "title": "AM16 capture opaque fallback for unreadable top-level details",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-6efa8ee8",
+      "file": "src/providers/FormErrorContext/__tests__/captureValueInspection.test.ts",
+      "title": "AM16 capture opaque fallback for unreadable top-level toString",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-f40fd257",
+      "file": "src/providers/FormErrorContext/__tests__/captureValueInspection.test.ts",
+      "title": "AM16 capture fallback still routes its handler bundle exactly once",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-f43a2d7a",
+      "file": "src/providers/FormErrorContext/__tests__/captureValueInspection.test.ts",
+      "title": "AM16 capture host expands an onError handler bundle",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-42131ac2",
+      "file": "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts",
+      "title": "AM16 capture rejects invalid length NaN",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-0dc6546c",
+      "file": "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts",
+      "title": "AM16 capture rejects invalid length negative",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-e4a1b5a5",
+      "file": "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts",
+      "title": "AM16 capture rejects invalid length string-zero",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-6f06198f",
+      "file": "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts",
+      "title": "AM16 capture rejects invalid length fraction",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-2a8e25fb",
+      "file": "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts",
+      "title": "AM16 capture rejects a nested length changing from one to Infinity",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-fdefdf9f",
+      "file": "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts",
+      "title": "AM16 capture terminates when an index getter keeps appending",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-8f08be0c",
+      "file": "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts",
+      "title": "AM16 capture rejects a bundle beyond the one-million element budget",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-590123ef",
+      "file": "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts",
+      "title": "AM16 capture shares the element budget across nested arrays",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-89d02732",
+      "file": "src/providers/RootNodeContext/__tests__/handlerFailureBundles.test.ts",
+      "title": "AM16 flush load expands a buffered-record handler bundle",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-57230e75",
+      "file": "src/providers/RootNodeContext/__tests__/handlerFailureBundles.test.ts",
+      "title": "AM16 reset load expands a buffered-record handler bundle",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-c19e3097",
+      "file": "src/providers/RootNodeContext/__tests__/handlerFailureBundles.test.ts",
+      "title": "AM16 slot reports a malformed non-array bundle exactly once",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-13023481",
+      "file": "src/core/engine/write/utils/report/__tests__/handlerFailureBundles.test.ts",
+      "title": "AM16 deliverChainRecords expands an ownerless handler bundle",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-0616a2d6",
+      "file": "src/core/engine/write/utils/report/__tests__/handlerFailureBundles.test.ts",
+      "title": "AM16 reportValidationFailure expands handler leaves before the original",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-a6aa669f",
+      "file": "src/core/engine/write/utils/report/__tests__/handlerFailureBundles.test.ts",
+      "title": "AM16 reportValidationFailure expands the original bundle without a reporter",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-764c8c4d",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host preserves invalid length NaN as an opaque leaf",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-7492c7d3",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host preserves invalid length negative as an opaque leaf",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-f44882c3",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host preserves invalid length string-zero as an opaque leaf",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-d8f6aff2",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host preserves invalid length fraction as an opaque leaf",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-79b1d210",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host preserves a nested length changing from one to Infinity",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-e4f8f186",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host terminates when an index getter keeps appending",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-9772f518",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host preserves a bundle beyond the one-million element budget",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-14c0aa3b",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host shares the element budget across nested arrays",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-4ad588b0",
+      "file": "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts",
+      "title": "AM16 host charges a failed snapshot to the shared element budget",
+      "base": "failed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-8960dc8c",
+      "file": "src/providers/FormErrorContext/__tests__/isReportedFailureBundle.test.ts",
+      "title": "AM16 predicate directly rejects unreadable details without throwing",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-343cab79",
+      "file": "src/providers/FormErrorContext/__tests__/isReportedFailureBundle.test.ts",
+      "title": "AM16 predicate directly rejects unreadable errors without throwing",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-d2e754c9",
+      "file": "src/providers/FormErrorContext/__tests__/isReportedFailureBundle.test.ts",
+      "title": "AM16 predicate directly rejects unreadable index without throwing",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-d1d0ce0b",
+      "file": "src/providers/FormErrorContext/__tests__/isReportedFailureBundle.test.ts",
+      "title": "AM16 predicate directly rejects unreadable length without throwing",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    },
+    {
+      "id": "AM16-d357d576",
+      "file": "src/providers/FormErrorContext/__tests__/isReportedFailureBundle.test.ts",
+      "title": "AM16 predicate directly rejects a prototype-only bundle without details",
+      "base": "passed",
+      "failurePattern": "expected|thrown"
+    }
+  ],
+  "legacyCases": [
+    {
+      "id": "legacy-087b49f0",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/captureBundles.test.ts",
+      "title": "DR-16 red skips nested known failures for the submit origin",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-d7b44917",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/captureBundles.test.ts",
+      "title": "DR-14 drops a known failure bundle and a bare handler exception during capture",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e155f4ec",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/captureBundles.test.ts",
+      "title": "DR-14 captures a bundle containing an unseen object",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e438bcb5",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/captureBundles.test.ts",
+      "title": "DR-14 gate captures empty or sparse bundles with a render stack (empty)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-b6a72f73",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/captureBundles.test.ts",
+      "title": "DR-14 gate captures empty or sparse bundles with a render stack (sparse)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-7161ddff",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/captureBundles.test.ts",
+      "title": "DR-14 amendment 11 captures a missing own index inherited from a prototype",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-b244b753",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [all bundles known] captures an unseen inner leaf once",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-3b675b12",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [dense nonempty] captures an inner empty bundle",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-981be928",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [dense nonempty] captures an inner sparse bundle",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-6775eb9b",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [own indices] captures an inherited inner index",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ab12c17e",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [revisit known; no visited set] captures an outer cycle and terminates",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-5ff2a332",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [revisit known; no visited set] captures an inner cycle and terminates",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-63c17630",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [duck-type nested bundles] captures a plain nested lookalike",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-d9a3e472",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [revisit known] captures a shared nested instance",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-0494a9fa",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [known objects] captures an inner primitive null",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-1fc9b037",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [known objects] captures an inner primitive undefined",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-6b2907c5",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [known objects] captures an inner primitive primitive",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-41769529",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [known objects] captures an inner primitive 1",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-0f7295a7",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 red deep known nesting neither throws nor reports",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-8c1edb46",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 guard [recursive details.errors] captures a prototype-only instance without throwing",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-b1a6f446",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.test.ts",
+      "title": "DR-16 red recognizes a known nested SchemaFormError subclass on load",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-93b913a7",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/unreadableCapture.test.ts",
+      "title": "DR-16 review captures an unreadable nested details bundle without throwing",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ce11eafd",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/unreadableCapture.test.ts",
+      "title": "DR-16 review captures an unreadable nested errors bundle without throwing",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e9440546",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/unreadableCapture.test.ts",
+      "title": "DR-16 review captures an unreadable nested index bundle without throwing",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-3a4ca7ff",
+      "project": "unit",
+      "file": "src/providers/FormErrorContext/__tests__/unreadableCapture.test.ts",
+      "title": "DR-16 review captures an unreadable nested length bundle without throwing",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ec2f3e7f",
+      "project": "unit",
+      "file": "src/providers/RootNodeContext/__tests__/bufferedRecords.test.ts",
+      "title": "IR-7 T3 a never-prepared replacement transfers its record origin and flushes once",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-3c624f54",
+      "project": "unit",
+      "file": "src/providers/RootNodeContext/__tests__/bufferedRecords.test.ts",
+      "title": "DR-17 red reset forwards a never-prepared load bundle by leaf identity",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-7e619203",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L1 visits [[A,B],H] in depth-first identity order",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-2aac5b17",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L2 visits [A,[B,C],D] in depth-first identity order",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-020e8753",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L3 visits exactly [A,self] for a top-level cycle",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e41a2b18",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L4 preserves empty bundles at both depths",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-7803ebde",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L4 preserves sparse bundles at both depths",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-0420d470",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L4 preserves plain bundles at both depths",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-51aaa084",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L4 preserves inherited bundles at both depths",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e61a3cb1",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L5 preserves a non-bundle leaf error",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-1d64cfcb",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L5 preserves a non-bundle leaf primitive",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-a0dd7fc9",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L5 preserves a non-bundle leaf undefined",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-863d01cd",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L6 visits a prototype-only instance without throwing",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-11e252a4",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L7 visits a 50000-deep bundle without overflowing",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-53fd768b",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/forEachFailureLeaf.test.ts",
+      "title": "DR-17 L8 visits a repeated nested bundle as itself",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-862c1eca",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review visits an unreadable details bundle as one opaque leaf at both depths",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e0ba4ce6",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review visits an unreadable errors bundle as one opaque leaf at both depths",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-35a03a65",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review visits an unreadable index bundle as one opaque leaf at both depths",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-b51038ab",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review visits an unreadable length bundle as one opaque leaf at both depths",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-4262a74b",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review preserves sink exceptions for bundle=false",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-7281724e",
+      "project": "unit",
+      "file": "src/core/engine/write/utils/report/__tests__/unreadableFailure.test.ts",
+      "title": "DR-17 review preserves sink exceptions for bundle=true",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-755ef549",
+      "project": "render",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red native submit sends validator failure then handler by identity",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ab8c92ce",
+      "project": "render",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 guard explicit submit rejects one bundle without host delivery",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-9e1a1cb5",
+      "project": "render",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red load sends two derived failures in record identity order",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-4572aec0",
+      "project": "render",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red validation wave keeps handler-first leaf order (handler=false)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e4517e80",
+      "project": "render",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red validation wave keeps handler-first leaf order (handler=true)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-8f539628",
+      "project": "render",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 guard automatic OnChange failure keeps handler before validator",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-aaa78196",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "DR-17 native submit sends the compile failure, then the handler error, to the host",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-82b64e0f",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 construction warnings carry load and no exposure fields",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-2458bd8a",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 public write listener errors carry write",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-d90632a9",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 throwing onChange carries write",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-d0eaa535",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 explicit whole-schema compile failure carries validate",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-d1f97d20",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 automatic load-slot compile failure carries validate",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-b198729d",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 native submit owns SubmitWhileDegraded",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-733ed1a0",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 render boundary owns render and preserves error identity",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-adb8e705",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b StrictMode mount reports exactly one load warning",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-4787618c",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b StrictMode reset reports exactly one load warning",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-c7e83f0d",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b StrictMode rebuild reports exactly one load warning",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-c3039ec3",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b React 18 legacy-root mount has exact operation records",
+      "expected": "skipped"
+    },
+    {
+      "id": "legacy-9bc3b3a0",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b React 18 legacy-root reset has exact operation records",
+      "expected": "skipped"
+    },
+    {
+      "id": "legacy-98ba69c4",
+      "project": "render",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b React 18 legacy-root write has exact operation records",
+      "expected": "skipped"
+    },
+    {
+      "id": "legacy-5f964f13",
+      "project": "render",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-17 native degraded submit sends its cause then the handler error to the host",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-2d8c2d6a",
+      "project": "render",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-11 interaction rejects a caller-owned degraded failure and handler error as one bundle without host delivery",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-af6d9c2f",
+      "project": "render",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-11 explicit validate on a degraded form already reports an execution rejection once",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-b50ccdad",
+      "project": "render",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-11 reports degraded submit rejection to onError before rejecting the caller",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-b8403c76",
+      "project": "render",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-1 B3 ignores an unmounted-run pin for a same-id replacement after commit",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e1fdb4e3",
+      "project": "render",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-1 pins an unmounted load verdict across nine unrelated root releases",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-3b16b37e",
+      "project": "render",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-2 forwards the slot failure then bundled handler errors (handler throws=false)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-0d893774",
+      "project": "render",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-2 forwards the slot failure then bundled handler errors (handler throws=true)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-9aa75507",
+      "project": "render",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-3 rebuilds an if-gated same-id schema and preserves guard evaluation (double)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-057edceb",
+      "project": "render",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-3 rebuilds an if-gated same-id schema and preserves guard evaluation (ajv6)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-fe310250",
+      "project": "render",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-3 rebuilds an if-gated same-id schema and preserves guard evaluation (ajv7)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-8c0be5fd",
+      "project": "render",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-3 rebuilds an if-gated same-id schema and preserves guard evaluation (ajv8)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ce46df9d",
+      "project": "render",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.render.test.tsx",
+      "title": "DR-16 red a layout write reports A and B once and preserves the boundary bundle",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-18e14343",
+      "project": "react18",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red native submit sends validator failure then handler by identity",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-9fe4e6ef",
+      "project": "react18",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 guard explicit submit rejects one bundle without host delivery",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-c33a71bd",
+      "project": "react18",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red load sends two derived failures in record identity order",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-e20aeb7b",
+      "project": "react18",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red validation wave keeps handler-first leaf order (handler=false)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-54ccaaa3",
+      "project": "react18",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 red validation wave keeps handler-first leaf order (handler=true)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-312821aa",
+      "project": "react18",
+      "file": "src/__tests__/e2e/hostFailureLeaves.render.test.tsx",
+      "title": "DR-17 guard automatic OnChange failure keeps handler before validator",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ab6c8751",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "DR-17 native submit sends the compile failure, then the handler error, to the host",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-14816032",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 construction warnings carry load and no exposure fields",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-7a9d7387",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 public write listener errors carry write",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-70a015a2",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 throwing onChange carries write",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-cfe97707",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 explicit whole-schema compile failure carries validate",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-94d74ecb",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 automatic load-slot compile failure carries validate",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-15b5e29c",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 native submit owns SubmitWhileDegraded",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-4289e749",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "T1 T3 render boundary owns render and preserves error identity",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-6399e4f2",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b StrictMode mount reports exactly one load warning",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ea304266",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b StrictMode reset reports exactly one load warning",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-eba3a77d",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b StrictMode rebuild reports exactly one load warning",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-87b6f2a3",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b React 18 legacy-root mount has exact operation records",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-7a80a18f",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b React 18 legacy-root reset has exact operation records",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-76b0a7c6",
+      "project": "react18",
+      "file": "src/__tests__/e2e/onError.origins.render.test.tsx",
+      "title": "round b React 18 legacy-root write has exact operation records",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-880b78c7",
+      "project": "react18",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-17 native degraded submit sends its cause then the handler error to the host",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-65fed0c5",
+      "project": "react18",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-11 interaction rejects a caller-owned degraded failure and handler error as one bundle without host delivery",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-5c6117b5",
+      "project": "react18",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-11 explicit validate on a degraded form already reports an execution rejection once",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-3cd52123",
+      "project": "react18",
+      "file": "src/components/Form/__tests__/degradedSubmit.test.tsx",
+      "title": "DR-11 reports degraded submit rejection to onError before rejecting the caller",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-6f9d5e92",
+      "project": "react18",
+      "file": "src/providers/FormErrorContext/__tests__/nestedCapture.render.test.tsx",
+      "title": "DR-16 red a layout write reports A and B once and preserves the boundary bundle",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-24ccedbd",
+      "project": "react18",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-1 B3 ignores an unmounted-run pin for a same-id replacement after commit",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-2c8d75ad",
+      "project": "react18",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-1 pins an unmounted load verdict across nine unrelated root releases",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ad651b98",
+      "project": "react18",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-2 forwards the slot failure then bundled handler errors (handler throws=false)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-77adc5eb",
+      "project": "react18",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-2 forwards the slot failure then bundled handler errors (handler throws=true)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-ead09a9a",
+      "project": "react18",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-3 rebuilds an if-gated same-id schema and preserves guard evaluation (double)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-9cac89b7",
+      "project": "react18",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-3 rebuilds an if-gated same-id schema and preserves guard evaluation (ajv6)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-8862911f",
+      "project": "react18",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-3 rebuilds an if-gated same-id schema and preserves guard evaluation (ajv7)",
+      "expected": "passed"
+    },
+    {
+      "id": "legacy-8b4c2962",
+      "project": "react18",
+      "file": "src/providers/RootNodeContext/__tests__/loadVerdict.defects.test.tsx",
+      "title": "DR-3 rebuilds an if-gated same-id schema and preserves guard evaluation (ajv8)",
+      "expected": "passed"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "m16-drop-nested",
+      "failedIds": [
+        "D16-R-submit",
+        "D16-R-boundary"
+      ],
+      "failedTitles": [
+        "DR-16 red skips nested known failures for the submit origin",
+        "DR-16 red a layout write reports A and B once and preserves the boundary bundle"
+      ]
+    },
+    {
+      "id": "m16-all-bundles-known",
+      "failedIds": [
+        "D16-G-unknown",
+        "D16-G-empty",
+        "D16-G-sparse"
+      ],
+      "failedTitles": [
+        "DR-16 guard [all bundles known] captures an unseen inner leaf once",
+        "DR-16 guard [dense nonempty] captures an inner empty bundle",
+        "DR-16 guard [dense nonempty] captures an inner sparse bundle"
+      ]
+    },
+    {
+      "id": "m16-revisit-known",
+      "failedIds": [
+        "D16-G-cycle",
+        "D16-G-inner-cycle",
+        "D16-G-shared"
+      ],
+      "failedTitles": [
+        "DR-16 guard [revisit known; no visited set] captures an outer cycle and terminates",
+        "DR-16 guard [revisit known; no visited set] captures an inner cycle and terminates",
+        "DR-16 guard [revisit known] captures a shared nested instance"
+      ]
+    },
+    {
+      "id": "m16-no-visited",
+      "failedIds": [
+        "D16-G-cycle",
+        "D16-G-inner-cycle"
+      ],
+      "failedTitles": [
+        "DR-16 guard [revisit known; no visited set] captures an outer cycle and terminates",
+        "DR-16 guard [revisit known; no visited set] captures an inner cycle and terminates"
+      ]
+    },
+    {
+      "id": "m16-duck-type",
+      "failedIds": [
+        "D16-G-plain"
+      ],
+      "failedTitles": [
+        "DR-16 guard [duck-type nested bundles] captures a plain nested lookalike"
+      ]
+    },
+    {
+      "id": "m16-recursive-unsafe",
+      "failedIds": [
+        "D16-R-deep",
+        "AM16-d357d576"
+      ],
+      "failedTitles": [
+        "DR-16 red deep known nesting neither throws nor reports",
+        "AM16 predicate directly rejects a prototype-only bundle without details"
+      ]
+    },
+    {
+      "id": "m17-form-root-raw",
+      "failedIds": [
+        "D17-native",
+        "D17-compile",
+        "D17-degraded"
+      ],
+      "failedTitles": [
+        "DR-17 red native submit sends validator failure then handler by identity",
+        "DR-17 native submit sends the compile failure, then the handler error, to the host",
+        "DR-17 native degraded submit sends its cause then the handler error to the host"
+      ]
+    },
+    {
+      "id": "m17-engine-original-raw",
+      "failedIds": [
+        "D17-wave",
+        "D17-wave-handler"
+      ],
+      "failedTitles": [
+        "DR-17 red validation wave keeps handler-first leaf order (handler=false)",
+        "DR-17 red validation wave keeps handler-first leaf order (handler=true)"
+      ]
+    },
+    {
+      "id": "m17-no-root-seed",
+      "failedIds": [
+        "D17-L3"
+      ],
+      "failedTitles": [
+        "DR-17 L3 visits exactly [A,self] for a top-level cycle"
+      ]
+    },
+    {
+      "id": "m17-naive-list",
+      "failedIds": [
+        "D17-L1",
+        "D17-L2"
+      ],
+      "failedTitles": [
+        "DR-17 L1 visits [[A,B],H] in depth-first identity order",
+        "DR-17 L2 visits [A,[B,C],D] in depth-first identity order"
+      ]
+    },
+    {
+      "id": "m16-remove-input-guard",
+      "failedIds": [
+        "AM16-8960dc8c",
+        "AM16-343cab79",
+        "AM16-d2e754c9",
+        "AM16-d1d0ce0b"
+      ],
+      "failedTitles": [
+        "AM16 predicate directly rejects unreadable details without throwing",
+        "AM16 predicate directly rejects unreadable errors without throwing",
+        "AM16 predicate directly rejects unreadable index without throwing",
+        "AM16 predicate directly rejects unreadable length without throwing"
+      ]
+    },
+    {
+      "id": "m17-remove-input-guard",
+      "failedIds": [
+        "review-4",
+        "review-5",
+        "review-6",
+        "review-7"
+      ],
+      "failedTitles": [
+        "DR-17 review visits an unreadable details bundle as one opaque leaf at both depths",
+        "DR-17 review visits an unreadable errors bundle as one opaque leaf at both depths",
+        "DR-17 review visits an unreadable index bundle as one opaque leaf at both depths",
+        "DR-17 review visits an unreadable length bundle as one opaque leaf at both depths"
+      ]
+    },
+    {
+      "id": "m16-unguarded-capture",
+      "failedIds": [
+        "AM16-42abb3c1",
+        "AM16-c8e64e01",
+        "AM16-6efa8ee8",
+        "AM16-f40fd257"
+      ],
+      "failedTitles": [
+        "AM16 capture opaque fallback for unreadable top-level code",
+        "AM16 capture opaque fallback for unreadable top-level details",
+        "AM16 capture opaque fallback for unreadable top-level toString",
+        "AM16 capture fallback still routes its handler bundle exactly once"
+      ]
+    },
+    {
+      "id": "m16-invalid-length",
+      "failedIds": [
+        "AM16-0dc6546c",
+        "AM16-e4a1b5a5",
+        "AM16-6f06198f"
+      ],
+      "failedTitles": [
+        "AM16 capture rejects invalid length negative",
+        "AM16 capture rejects invalid length string-zero",
+        "AM16 capture rejects invalid length fraction"
+      ]
+    },
+    {
+      "id": "m16-dynamic-loop",
+      "failedIds": [
+        "AM16-2a8e25fb",
+        "AM16-fdefdf9f"
+      ],
+      "failedTitles": [
+        "AM16 capture rejects a nested length changing from one to Infinity",
+        "AM16 capture terminates when an index getter keeps appending"
+      ]
+    },
+    {
+      "id": "m16-no-stability",
+      "failedIds": [
+        "AM16-2a8e25fb",
+        "AM16-fdefdf9f"
+      ],
+      "failedTitles": [
+        "AM16 capture rejects a nested length changing from one to Infinity",
+        "AM16 capture terminates when an index getter keeps appending"
+      ]
+    },
+    {
+      "id": "m16-no-budget",
+      "failedIds": [
+        "AM16-8f08be0c",
+        "AM16-590123ef"
+      ],
+      "failedTitles": [
+        "AM16 capture rejects a bundle beyond the one-million element budget",
+        "AM16 capture shares the element budget across nested arrays"
+      ]
+    },
+    {
+      "id": "m17-invalid-length",
+      "failedIds": [
+        "AM16-7492c7d3",
+        "AM16-f44882c3",
+        "AM16-d8f6aff2"
+      ],
+      "failedTitles": [
+        "AM16 host preserves invalid length negative as an opaque leaf",
+        "AM16 host preserves invalid length string-zero as an opaque leaf",
+        "AM16 host preserves invalid length fraction as an opaque leaf"
+      ]
+    },
+    {
+      "id": "m17-dynamic-loop",
+      "failedIds": [
+        "AM16-79b1d210",
+        "AM16-e4f8f186"
+      ],
+      "failedTitles": [
+        "AM16 host preserves a nested length changing from one to Infinity",
+        "AM16 host terminates when an index getter keeps appending"
+      ]
+    },
+    {
+      "id": "m17-no-stability",
+      "failedIds": [
+        "AM16-79b1d210",
+        "AM16-e4f8f186"
+      ],
+      "failedTitles": [
+        "AM16 host preserves a nested length changing from one to Infinity",
+        "AM16 host terminates when an index getter keeps appending"
+      ]
+    },
+    {
+      "id": "m17-no-budget",
+      "failedIds": [
+        "AM16-9772f518",
+        "AM16-14c0aa3b"
+      ],
+      "failedTitles": [
+        "AM16 host preserves a bundle beyond the one-million element budget",
+        "AM16 host shares the element budget across nested arrays"
+      ]
+    },
+    {
+      "id": "m17-refund-failed-snapshot",
+      "failedIds": [
+        "AM16-4ad588b0"
+      ],
+      "failedTitles": [
+        "AM16 host charges a failed snapshot to the shared element budget"
+      ]
+    },
+    {
+      "id": "m17-capture-handler-raw",
+      "failedIds": [
+        "AM16-f43a2d7a"
+      ],
+      "failedTitles": [
+        "AM16 capture host expands an onError handler bundle"
+      ]
+    },
+    {
+      "id": "m17-flush-handler-raw",
+      "failedIds": [
+        "AM16-89d02732"
+      ],
+      "failedTitles": [
+        "AM16 flush load expands a buffered-record handler bundle"
+      ]
+    },
+    {
+      "id": "m17-reset-handler-raw",
+      "failedIds": [
+        "AM16-57230e75"
+      ],
+      "failedTitles": [
+        "AM16 reset load expands a buffered-record handler bundle"
+      ]
+    },
+    {
+      "id": "m17-chain-handler-raw",
+      "failedIds": [
+        "AM16-13023481"
+      ],
+      "failedTitles": [
+        "AM16 deliverChainRecords expands an ownerless handler bundle"
+      ]
+    },
+    {
+      "id": "m17-validation-handler-raw",
+      "failedIds": [
+        "AM16-0616a2d6"
+      ],
+      "failedTitles": [
+        "AM16 reportValidationFailure expands handler leaves before the original"
+      ],
+      "runAllInFile": true,
+      "onlyFailedTitles": true
+    },
+    {
+      "id": "m17-validation-original-raw",
+      "failedIds": [
+        "AM16-a6aa669f"
+      ],
+      "failedTitles": [
+        "AM16 reportValidationFailure expands the original bundle without a reporter"
+      ],
+      "runAllInFile": true,
+      "onlyFailedTitles": true
+    },
+    {
+      "id": "m17-slot-malformed-drop",
+      "failedIds": [
+        "AM16-c19e3097"
+      ],
+      "failedTitles": [
+        "AM16 slot reports a malformed non-array bundle exactly once"
+      ]
+    }
+  ]
+}

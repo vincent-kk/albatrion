@@ -1,0 +1,23 @@
+{
+  "command": [
+    "node",
+    "<scratch>/declaration-tool/check-evaluated-public-declarations.mjs",
+    "<baseline-checkout>/packages/canard/schema-form",
+    "<checkout>/packages/canard/schema-form",
+    "<scratch>/public-declarations-live.json"
+  ],
+  "exit": 0,
+  "started": 1793558585.635951,
+  "ended": 1793558588.008802,
+  "stdout": "IR6_EVALUATED_DECLARATIONS_OK exports=97 signatures=916 public-root-traces=97\n",
+  "toolHashes": {
+    "check-rg-public-comments.mjs": "a14a0d0c1c5ccf7d47f2f6c6a3bd0fcd0c013a0d4f1d28070f7d240c1618172e",
+    "check-evaluated-public-declarations.mjs": "d5b2335f03489cd5a9e23dae5bbd45d6433833fd02fc4af1c1d7c37140cd6b17",
+    "utils/evaluatedDeclarations/describePublicDeclarations.mjs": "b665e922f215edbac4d6daa37a17fbf9de3ad3074001a697bd0686926753cd4d",
+    "utils/evaluatedDeclarations/utils/collectPublicDeclarationReferences.mjs": "5d9e2b6de66a92c7de6be693fd89d3fabcd6cf119d13a5e10db6afd726f334e9"
+  },
+  "sourceDigest": "16f0fd490e3dff741a32f1a8ee4e8aadb40ba561ef6a29994ec53b7490ae724f",
+  "candidateManifestHash": "a1d23fa4ff1209ef5f484635666e702263deb61cb020e53dc7028a2080da33cc",
+  "baselineManifestHash": "d3e742f72f1d4fa7062d853d9de364bbc5c0bb22940ac56c4a70f61ded782f57",
+  "resultHash": "cc7d21abb70c8529573dfc251b26f0f9f035c9044480ec79f869786b96956abf"
+}

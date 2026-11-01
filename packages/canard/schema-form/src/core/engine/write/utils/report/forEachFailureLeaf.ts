@@ -10,7 +10,8 @@ export const forEachFailureLeaf = (
   failure: unknown,
   visit: (leaf: unknown) => void,
 ): void => {
-  const root = readFailureBundle(failure);
+  const budget = { remaining: 1_000_000 };
+  const root = readFailureBundle(failure, budget);
   if (!root) return visit(failure);
   const visited = new Set<unknown>([failure]);
   const frames: { errors: readonly unknown[]; index: number }[] = [
@@ -25,7 +26,7 @@ export const forEachFailureLeaf = (
     const element = frame.errors[frame.index++];
     const nested = visited.has(element)
       ? undefined
-      : readFailureBundle(element);
+      : readFailureBundle(element, budget);
     if (nested) {
       visited.add(element);
       frames.push({ errors: nested, index: 0 });

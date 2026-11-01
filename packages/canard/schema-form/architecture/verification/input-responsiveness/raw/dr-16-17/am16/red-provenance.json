@@ -1,0 +1,29 @@
+{
+  "base": "d68072d1ac7c2d01854bc22b82fecae8598a5db4",
+  "criteriaHash": "82dbb4ec6a556ca4db5a0b1b64be15db088231a994041cce908dedb37477add2",
+  "productionHashes": {
+    "packages/canard/schema-form/src/providers/FormErrorContext/utils/createFormErrorService.ts": "63c2a0c66fb3a01dcc080386f3a286964e624d2cfcd02b54e16a8db4a6320ade",
+    "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64",
+    "packages/canard/schema-form/src/core/engine/write/utils/report/readFailureBundle.ts": "838e7619fbe94455bd2039183aafa4406b3ec167f9fcb3ed83e2c323d2a1b951",
+    "packages/canard/schema-form/src/core/engine/write/utils/report/forEachFailureLeaf.ts": "a4d74c1644237a5231b75603fa15669289c5d08f716c3e4c4bdd6e4b52176529",
+    "packages/canard/schema-form/src/core/engine/write/utils/report/deliverChainRecords.ts": "c6f387305bacfd2a56fa78917b8e1cd35004a39f3d07106b68a1c6d2c57b27d4",
+    "packages/canard/schema-form/src/core/engine/write/utils/report/reportValidationFailure.ts": "f85a4f0bf039609f2b85461a3b7089d7a6e6fae096d650a90d8514e9e3a78f74",
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/flushRootLoad.ts": "270b194ac59b4a2450b52bb22e191c6b210118d323d68ca47cc11739d2fd798a",
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts": "c0167b28fde3db1b07c94897576ddf8dd8bccd42c88ec92df43ca1d8bd617115",
+    "packages/canard/schema-form/src/providers/RootNodeContext/utils/reportLoadValidationFailure.ts": "d37c6d2b1f6437f1b589e25bb307813b5b364983d4d42a4a272449db907ab509",
+    "packages/canard/schema-form/src/components/Form/components/FormCore/components/FormRoot.tsx": "620c2be902ada15282c84c93854cec0dfeee280676905953d7b28a58211e7b7a"
+  },
+  "exit": 1,
+  "command": "yarn workspace @canard/schema-form test --run --project unit src/providers/FormErrorContext/__tests__/hostileCapture.test.ts src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts src/providers/FormErrorContext/__tests__/captureValueInspection.test.ts src/providers/RootNodeContext/__tests__/handlerFailureBundles.test.ts src/core/engine/write/utils/report/__tests__/handlerFailureBundles.test.ts src/providers/FormErrorContext/__tests__/isReportedFailureBundle.test.ts --reporter=dot --reporter=json --outputFile=<scratch>/red.json",
+  "logHash": "49c8d098fb43907459f51b7549304fc78815ef5d9db75903efdd3755a0082f20",
+  "testHashes": {
+    "src/providers/FormErrorContext/__tests__/captureValueInspection.test.ts": "9f0b554eeb189594dbbb02a3a7c5183fbea14c91e951dc642e1e35d03fcc8138",
+    "src/providers/FormErrorContext/__tests__/hostileCapture.test.ts": "ac791382e343cfdcfeb9fe44ddce2933a26c89cfa61eae7de9e81a6c124e0e65",
+    "src/providers/RootNodeContext/__tests__/handlerFailureBundles.test.ts": "91fb047771ef812c64d8882d41a6b46efe887dae0290cd123ca26645381423c4",
+    "src/core/engine/write/utils/report/__tests__/handlerFailureBundles.test.ts": "fe9ac8a6f875c5b2db679904dd64f432bf54f72fdd013c850d1f5265192ed031",
+    "src/core/engine/write/utils/report/__tests__/hostileFailure.test.ts": "dbd0337992e582b13df31d5bf7852e1aa08cab833a932bfab6b08c3b6c8ca6b5",
+    "src/providers/FormErrorContext/__tests__/isReportedFailureBundle.test.ts": "7b3e05f54eba71e7e3cbca722126bbc8bd443afef32f6593642a4e9ee1b444ca"
+  },
+  "originalLogHash": "4f2a3d2181b6c0f9972b43cec709eb35fff4198ee6921abbe0fe3e27be7c6c12",
+  "archiveTransformation": "logHash identifies the normalized archived red.log; originalLogHash preserves the original execution log digest."
+}

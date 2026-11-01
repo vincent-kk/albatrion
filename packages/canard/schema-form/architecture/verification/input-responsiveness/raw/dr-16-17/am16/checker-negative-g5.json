@@ -1,0 +1,22 @@
+[
+  {
+    "name": "wrong per-command source digest",
+    "exit": 1,
+    "markerAbsent": true
+  },
+  {
+    "name": "wrong command project",
+    "exit": 1,
+    "markerAbsent": true
+  },
+  {
+    "name": "overlapping command times",
+    "exit": 1,
+    "markerAbsent": true
+  },
+  {
+    "name": "wrong declaration/build input hash",
+    "exit": 1,
+    "markerAbsent": true
+  }
+]

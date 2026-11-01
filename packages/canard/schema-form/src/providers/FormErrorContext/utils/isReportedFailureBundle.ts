@@ -16,10 +16,20 @@ export const isReportedFailureBundle = (
   try {
     const lists: unknown[] = [errors];
     const visited = new Set<object>();
+    let remaining = 1_000_000;
     while (lists.length) {
       const list = lists.pop();
-      if (!isArray(list) || list.length === 0) return false;
-      for (let index = 0; index < list.length; index++) {
+      if (!isArray(list)) return false;
+      const length = list.length;
+      if (
+        !Number.isInteger(length) ||
+        length < 1 ||
+        length > 0xffff_ffff ||
+        length > remaining
+      )
+        return false;
+      remaining -= length;
+      for (let index = 0; index < length; index++) {
         if (!hasOwnProperty(list, index)) return false;
         const failure: unknown = list[index];
         if (failure === null || typeof failure !== 'object') return false;
@@ -33,6 +43,7 @@ export const isReportedFailureBundle = (
         visited.add(failure);
         lists.push(failure.details?.errors);
       }
+      if (list.length !== length) return false;
     }
     return true;
   } catch {

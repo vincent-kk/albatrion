@@ -107,6 +107,8 @@ startFieldNodeChain은 enclosingChain이 없을 때만 chainOrigin을 정하고 
 
 읽을 수 없는 중첩 묶음(details·errors getter, index·length 읽기 실패)은 capture에서는 unknown으로 처리하고 호스트 순회에서는 같은 identity의 불투명한 잎으로 보냅니다. 호스트 순회는 묶음의 own 원소를 방문 전에 임시 배열에 읽어 두므로 뒤 원소를 읽지 못해도 앞 원소를 부분 전달하지 않습니다. snapshot과 frame·visited는 호출별 O(N) 임시 메모리이며 영구 필드를 추가하지 않습니다. visit·sink callback의 예외는 삼키지 않습니다.
 
+호스트 순회는 배열의 첫 길이를 고정 범위로 쓰고 정수 1..2^32 − 1과 모든 own index, 마지막 길이의 동일성을 확인합니다. 호출별 원소 점검 예산 1,000,000개를 모든 nested snapshot이 공유합니다. reader는 snapshot 전에 길이를 예약하고 실패해도 환불하지 않습니다. invalid·변한 길이·예산 초과인 묶음도 원래 identity의 잎 하나이며 최종 sink가 묶음을 받을 수 있습니다. callback 예외는 입력 검사 catch 밖에서 전파합니다.
+
 ## Acceptance Criteria
 
 ### dispatch-array-entry — 배열 진입과 배치 표시

@@ -70,30 +70,46 @@ export const createFormErrorService = (): FormErrorService => {
         if (componentStack !== undefined) seen.delete(error);
         return;
       }
-      const domain = error as Nullable<{
-        code?: FormErrorRecord['code'];
-        details?: FormErrorRecord['details'];
-        message?: string;
-      }>;
-      if (
-        domain?.code === FormErrorCode.MultipleErrors &&
-        isReportedFailureBundle(domain.details?.errors, seen, handlerFailures)
-      )
-        return;
+      let record: FormErrorRecord;
       try {
-        service.report({
+        const domain = error as Nullable<{
+          code?: FormErrorRecord['code'];
+          details?: FormErrorRecord['details'];
+          message?: string;
+        }>;
+        const code = domain?.code;
+        const details = domain?.details;
+        if (
+          code === FormErrorCode.MultipleErrors &&
+          isReportedFailureBundle(details?.errors, seen, handlerFailures)
+        )
+          return;
+        record = {
           level: 'error',
           code:
             componentStack !== undefined
               ? FormErrorCode.RenderFailed
-              : (domain?.code ?? FormErrorCode.RenderFailed),
+              : (code ?? FormErrorCode.RenderFailed),
           message: domain?.message ?? String(error),
           error,
           ...(path !== undefined ? { path } : {}),
-          details: domain?.details,
+          details,
           origin,
           ...(componentStack !== undefined ? { componentStack } : {}),
-        });
+        };
+      } catch {
+        record = {
+          level: 'error',
+          code: FormErrorCode.RenderFailed,
+          message: 'Unable to inspect captured failure',
+          error,
+          origin,
+          ...(path !== undefined ? { path } : {}),
+          ...(componentStack !== undefined ? { componentStack } : {}),
+        };
+      }
+      try {
+        service.report(record);
       } catch (handlerError) {
         reportFailureToHost(handlerError);
       }
