@@ -43,11 +43,11 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const reporter = useFormErrorContext();
   const [showError, setShowError] = useState(props.showError);
   const onReset = useHandle(() => setShowError(props.showError));
-  const submit = useHandle((native = false) =>
+  const submit = useHandle(() =>
     submitForm(
       binding.current.root,
       props.onSubmit,
-      native ? (error) => reporter?.capture(error, 'submit') : undefined,
+      (error) => reporter?.capture(error, 'submit'),
     ),
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
@@ -55,7 +55,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
     async (event: SyntheticEvent) => {
       event.preventDefault();
       try {
-        await handleSubmit(true);
+        await handleSubmit();
       } catch (error) {
         reportErrorToHost(error);
       }
