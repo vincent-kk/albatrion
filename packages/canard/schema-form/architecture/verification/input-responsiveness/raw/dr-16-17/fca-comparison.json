@@ -1,0 +1,496 @@
+{
+  "baseCommit": "61457653ae19dfb1f11b97e29355fa3cd6af8f24",
+  "normalization": "Only checkout-root prefixes; all diagnostic and finding fields compared exactly with multiplicity.",
+  "newSemanticFindings": [],
+  "newDiagnostics": [],
+  "details": {
+    "scan": {
+      "baseSummary": {
+        "projectRoot": "<checkout>",
+        "snapshotHash": "f0a628703e7db342e21af21eaa834585284fbaaf0b0a3949d00e0697808ba4b3",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 711,
+        "depth": 12,
+        "nodesByType": {
+          "organ": 505,
+          "fractal": 206
+        },
+        "violationCount": 258,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      },
+      "finalSummary": {
+        "projectRoot": "<checkout>",
+        "snapshotHash": "16a074be0db91ea3c95bb0c73b38eae72a9754be2c96fbfce67132294410f65e",
+        "adapterIds": [
+          "ecmascript"
+        ],
+        "totalNodes": 713,
+        "depth": 12,
+        "nodesByType": {
+          "organ": 507,
+          "fractal": 206
+        },
+        "violationCount": 245,
+        "certainty": "indeterminate",
+        "filesOutsideFactsScope": 0
+      },
+      "added": [],
+      "removed": [],
+      "addedDiagnostics": [],
+      "removedDiagnostics": [
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/core, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/commands, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "intent-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Conventions\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hash, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hash/INTENT.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hash/INTENT.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hash, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hash/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hash/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Internal Unit Contracts\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "intent-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Purpose\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/INTENT.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/INTENT.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md"
+        }
+      ]
+    },
+    "validate": {
+      "baseSummary": {
+        "projectRoot": "<checkout>",
+        "snapshotHash": "f0a628703e7db342e21af21eaa834585284fbaaf0b0a3949d00e0697808ba4b3",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 566,
+        "passed": 5361,
+        "failed": 26,
+        "skipped": 308
+      },
+      "finalSummary": {
+        "projectRoot": "<checkout>",
+        "snapshotHash": "16a074be0db91ea3c95bb0c73b38eae72a9754be2c96fbfce67132294410f65e",
+        "mode": "project",
+        "scopes": [
+          "documents",
+          "nodes",
+          "entry-points",
+          "boundaries",
+          "dag",
+          "verification"
+        ],
+        "findingCount": 553,
+        "passed": 5382,
+        "failed": 21,
+        "skipped": 308
+      },
+      "added": [],
+      "removed": [
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Conventions\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hash, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hash/INTENT.md",
+          "ruleId": "intent-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Purpose\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/INTENT.md",
+          "ruleId": "intent-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/core, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/commands, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hash, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hash/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Internal Unit Contracts\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        },
+        {
+          "message": "Path token `dist/` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md",
+          "ruleId": "detail-document-contract",
+          "severity": "warning",
+          "suggestion": "Revise the document as the message states; the enrich-docs skill repairs contract documents."
+        }
+      ],
+      "addedDiagnostics": [],
+      "removedDiagnostics": [
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/core, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/commands, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "intent-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Conventions\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hash, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hash/INTENT.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hash/INTENT.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hash, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hash/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hash/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Internal Unit Contracts\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "intent-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Purpose\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/INTENT.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/INTENT.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md"
+        }
+      ]
+    },
+    "verification": {
+      "baseSummary": {
+        "projectRoot": "<checkout>",
+        "snapshotHash": "f0a628703e7db342e21af21eaa834585284fbaaf0b0a3949d00e0697808ba4b3",
+        "fileCount": 1208,
+        "specDocument": {
+          "fileCount": 24,
+          "knownCaseCount": 111,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 1184,
+          "knownCaseCount": 8293,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 30,
+        "certainty": "indeterminate"
+      },
+      "finalSummary": {
+        "projectRoot": "<checkout>",
+        "snapshotHash": "16a074be0db91ea3c95bb0c73b38eae72a9754be2c96fbfce67132294410f65e",
+        "fileCount": 1214,
+        "specDocument": {
+          "fileCount": 24,
+          "knownCaseCount": 111,
+          "caseCap": 15
+        },
+        "testRecord": {
+          "fileCount": 1190,
+          "knownCaseCount": 8340,
+          "caseCap": 32
+        },
+        "fragmentationCount": 0,
+        "violationCount": 30,
+        "certainty": "indeterminate"
+      },
+      "added": [],
+      "removed": [],
+      "addedDiagnostics": [],
+      "removedDiagnostics": [
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/core, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/commands, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "intent-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Conventions\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hash, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hash/INTENT.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hash/INTENT.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hash, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hash/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hash/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Requirements\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Internal Unit Contracts\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/commands/runCli, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/commands/runCli/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "intent-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Purpose\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/INTENT.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/INTENT.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/agents-hashes.json` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md"
+        },
+        {
+          "affects": [],
+          "code": "detail-document-contract",
+          "message": "Path token `dist/` in section \"Acceptance Criteria\" resolves to nothing from packages/slats/agents-assets-sync/src/core/hashManifest, its ancestors, or the project root \u2014 the reference has drifted or never existed.",
+          "nextAction": "Revise <checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md as the message states, keeping only the current contract; the enrich-docs skill repairs contract documents. Then run again.",
+          "path": "<checkout>/packages/slats/agents-assets-sync/src/core/hashManifest/DETAIL.md"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "baseCommit": "61457653ae19dfb1f11b97e29355fa3cd6af8f24",
+  "unexplainedRegressions": [],
+  "changes": [
+    {
+      "check": "sup",
+      "base": "supplement and conflict quotes 3640, not verbatim at cited lines 0, unparsed 0",
+      "final": "supplement and conflict quotes 3645, not verbatim at cited lines 0, unparsed 0"
+    }
+  ],
+  "reason": "sup-insert added DR16C-01 once and DR17C-01 four times; all original item and decision text is retained."
+}

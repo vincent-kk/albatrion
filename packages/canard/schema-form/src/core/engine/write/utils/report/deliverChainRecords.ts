@@ -4,7 +4,7 @@ import type {
   PendingFormErrorRecord,
 } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
-import { reportOwnerlessError } from './reportOwnerlessError';
+import { reportOwnerlessFailure } from './reportOwnerlessFailure';
 
 /**
  * Deliver every queued occurrence and isolate synchronous reporter failures.
@@ -44,11 +44,11 @@ export const deliverChainRecords = (
       reporter.report(delivered);
     } catch (error) {
       if (caller) failures.push(error);
-      else reportOwnerlessError(error);
+      else reportOwnerlessFailure(error);
     } finally {
       runtime.reportingErrors = previous;
     }
   }
-  if (!caller && original !== undefined) reportOwnerlessError(original);
+  if (!caller && original !== undefined) reportOwnerlessFailure(original);
   return failures;
 };

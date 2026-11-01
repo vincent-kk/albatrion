@@ -34,6 +34,8 @@
 
 ## API Contracts
 
+- `forEachFailureLeaf(failure, visit)`는 write가 소유한 실패 묶음의 호스트 전달 계약을 core 바인딩에 제공한다. SchemaFormError MultipleErrors의 비어 있지 않은 own-index 배열만 깊이 우선·원소 순서로 펼치고 malformed·재방문 묶음과 그 밖의 값은 같은 identity로 방문한다. frame stack과 root부터의 visited 집합으로 깊이·순환을 제한하며 시간과 호출별 임시 메모리는 O(N)이다. 영구 노드 필드는 추가하지 않는다. 방문 callback과 기존 raw sink의 예외 의미는 유지한다.
+
 - `dispatchLoadValidation(root): boolean`은 사슬을 열지 않는 로드 검증 진입점이다. None·unavailable·검증기 없음은 false이며 나머지는 전체 스키마를 준비한다. 컴파일 실패만 failValidationCompile로 unavailable·정착·로드별 origin validate 보고하고, 다른 실패는 reporter에 보낸다. OnChange이며 현재 로드 이후 전체 배정을 충족할 요청이 없을 때만 true를 반환한다. 로드 판정이 남아 있는 동안 자동 하위 요청은 루트로 넓힌다. None·OnRequest-only는 자동 요청하지 않는다.
 - 모든 mount·form reset은 validationStamp를 증가시키고 finally의 사슬 종료 직전에 validationLoadStamp를 기록한다. deferred reset은 이전 pending을 정착한다. dispatchValidate의 오래된 로드 컴파일 실패는 caller에만 거부하고 현재 로드의 flag·보고를 바꾸지 않는다.
 
@@ -83,7 +85,7 @@
 - `setState`의 dirty/touched 변화는 `UpdateState`, 외부 오류 변화는 `UpdateError`, 명령은 요청 비트로 표시한다. 깊이 > 0이면 노드마다 합쳐 정착 파동 뒤 별도 파동으로 한 번, 깊이 0이면 호출 안에서 동기로 배달한다. 이 사건은 검증 요청과 `onChange`를 만들지 않고, 떼어진 노드에는 무동작이다(EVENT-012·045·067·073, NODE-044, 31C-01).
 - 상태 쓰기 진입 셋은 각 노드의 이전·다음 `interactionState`에서 참 여부가 달라진 키만 런타임의 셈에 반영하고 레코드 배달 기준의 상태도 그 값으로 옮긴다. 셈이 0↔1을 넘으면 공유 레코드 연산이 새 `globalState` 참조와 루트의 `UpdateGlobalState`를 대기시키며, 깊이 0이면 같은 호출에서, 열린 진입에서는 최외곽 끝의 정착 파동 뒤에 한 번 배달한다. 겹치는 참 노드가 남으면 참조와 사건은 그대로이다(EVENT-062·067, 43C-01, LANDING-152·153).
 - 정착의 모든 종류의 실패 수집을 받아 사슬 끝까지 모은다. 한 정착의 게이트·공유 충돌·예산·주입 대상·쓰기 모양·파생·상태 키·커밋 규칙 실패는 모두 각자 한 번 사슬 오류가 되며 발생 순서대로 묶는다. 정착 실패가 발생 자리에서 사슬에 들어오므로 커밋 뒤 재수집하지 않고, 기존 가드 기록과 던진 오류의 병합 및 폼당 가드 하나의 기록 규칙을 유지한다. 보고기가 소비자를 가질 때만 기록과 경고 서식을 만든다. 단, `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고는 `hasConsumer()`와 무관하게 개발 모드에서만 한다. 기록은 발생 순서대로 전달한다. 하나의 예외는 원래 값을 던지고 여럿은 `SchemaFormError`의 `MULTIPLE_ERRORS`로 묶어 `details.errors`의 순서를 보존한다. 전달 중 같은 폼에 대한 쓰기는 즉시 `WRITE_IN_OBSERVER`로 거부하지만 `validate()`는 허용한다(ERROR-004·005·013·019·021·023·028–030·041, WRITE-099, 31C-02, 58C-01).
-- 경고 중복 키는 코드·위치·코드별 판별 칸의 구조 키이다. 폼 수준 로드에서만 비우며 `setValue(V)`·`resetSubtree()`에서는 유지한다. 로드는 데이터 경로 역색인도 비운 뒤 대기 기록만 재색인하고, 배달된 일회성 경고 키는 역색인에서도 지운다. 대기 기록을 새 루트에 넘길 때도 현재 구조 키의 데이터 경로를 색인한다. 발생 기록 객체의 경로는 당시 경로로 남아 사슬 기록과 중복 보고되지 않는다. 추가 비용은 로드/인계의 대기 경고 수 × 깊이, 배달의 일회성 경고 수 × 깊이이다. 주인 없는 예외는 싱크로 한 번 보고하고 검증 결과 파동의 리스너 예외를 미처리 거부로 남기지 않는다(ERROR-008·017·024·204, EVENT-046, 35C-09).
+- 경고 중복 키는 코드·위치·코드별 판별 칸의 구조 키이다. 폼 수준 로드에서만 비우며 `setValue(V)`·`resetSubtree()`에서는 유지한다. 로드는 데이터 경로 역색인도 비운 뒤 대기 기록만 재색인하고, 배달된 일회성 경고 키는 역색인에서도 지운다. 대기 기록을 새 루트에 넘길 때도 현재 구조 키의 데이터 경로를 색인한다. 발생 기록 객체의 경로는 당시 경로로 남아 사슬 기록과 중복 보고되지 않는다. 추가 비용은 로드/인계의 대기 경고 수 × 깊이, 배달의 일회성 경고 수 × 깊이이다. 주인 없는 실패는 묶음의 잎마다 싱크에 한 번 보고하고 검증 결과 파동의 리스너 예외를 미처리 거부로 남기지 않는다. handler 예외가 원래 실패보다 먼저 host에 가는 검증 결과 파동과 OnChange 실행 실패의 순서는 유지한다. caller가 있는 validate·submit은 묶음 하나로 거부한다(ERROR-008·017·024·204, EVENT-046, 35C-09).
 - 정착 밖 동기 파동이나 `onChange` 안에서 열린 쓰기 진입은 바깥 오류·기록 수집기를 스택으로 보존·복원하고, 안쪽 발생을 바깥 수집기에 순서대로 합쳐 사슬 끝에서만 보고한다. 검증 결과 파동의 origin은 validate이며 그 안쪽 쓰기의 리스너 오류도 `origin: 'validate'`로 한 번 보고하고 싱크로 한 번 보낸다. 명시적 `validate()`의 검증기 실패는 거부 전에 `origin: 'validate'`로 한 번 보고한다(ERROR-004·019·022·023, EVENT-010·046).
 - 쓰기 사슬과 정착 밖 파동은 같은 발생→기록 병합을 사용한다. 먼저 저장된 오류 기록과 뒤따른 `SchemaFormError`의 코드·스키마 위치가 같으면 수집 호출마다 첫 병합에서만 기존 기록의 오류·상세를 갱신하며, 묶음의 첫 오류를 유지한다. 새로 만든 기록은 같은 수집에서 병합 대상으로 쓰지 않으며, 노드에 묶인 예외의 `path`·`schemaPath`를 보존한다. 가드 실패는 폼마다 가드 하나당 `GUARD_FAILED` 기록 하나이며(같은 가드의 뒤따른 실패는 던지되 다시 기록하지 않음), 가드 실패 기록은 mount 점검을 포함해 그 mount를 연 사슬의 origin을 쓴다(첫 mount·reset·rebuild는 load, 쓰기 리스너·onChange의 reset은 write)(ERROR-017·023·041).
 
@@ -99,9 +101,11 @@
 | `submit` | SubmitWhileDegraded와 네이티브 submit의 capture에서 처음 드러난 실패 |
 | `render` | RenderFailed 경계 및 ChildNodeComponentsOnTerminal 같은 렌더 계층 경고 |
 
-사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. 오류 묶음은 호출자에게 던지는 값으로만 유지하고 개별 기록에는 싣지 않습니다. 전달 시점·중복 제거·호출자 거부·호스트 싱크·재진입 규칙은 유지합니다.
+사슬을 연 가장 바깥 연산이 origin을 정합니다. reset의 onChange 안에서 중첩 쓰기가 나면 `load`이며, 쓰기 사슬의 노드 리스너나 폼 onChange가 reset을 호출하면 `write`입니다. 검증 결과 파동 리스너의 실패는 `validate`이고, 로드 직후 독립 setState 리스너의 실패는 `write`입니다. 최초 commit의 외부 errors 적용은 `load`, errors prop 변경은 `write`입니다. 제출 안의 dispatchValidate가 이미 보고한 실패는 `validate`를 유지합니다. 개발 콘솔의 warnDevelopmentIssue 경고는 기록이 아닙니다. caller의 거부 값은 오류 묶음 하나이며 개별 기록에는 묶음을 싣지 않습니다. 부른 쪽이 없는 실패는 잎 순서로 host에 보내며 렌더 경계만 잡은 값 그대로 기록합니다. 전달 시점·중복 제거·caller 거부·재진입 규칙은 유지합니다.
 
 startFieldNodeChain은 enclosingChain이 없을 때만 chainOrigin을 정하고 adoption이 이를 옮깁니다. 최외곽 exit는 전달 후 chainOrigin을 비우고 지나간 stale runtime도 비웁니다. 독립 flushQueuedEvents는 write 또는 validate origin을 받아 임시로 설정한 뒤 finally에서 이전 값을 복원합니다. 대기 기록은 선택 origin을 허용하고 deliverChainRecords가 누락 origin을 전달 직전에 채웁니다. collectChainRecords의 호출별 merged Set은 같은 기록의 오류·상세를 첫 병합에서만 갱신하며 묶음의 첫 오류를 유지합니다. 시간 비용은 기존 발생 순회 O(N), 추가 메모리는 오류 수에 비례한 호출별 Set과 트리 런타임의 선택 origin 한 칸입니다.
+
+읽을 수 없는 중첩 묶음(details·errors getter, index·length 읽기 실패)은 capture에서는 unknown으로 처리하고 호스트 순회에서는 같은 identity의 불투명한 잎으로 보냅니다. 호스트 순회는 묶음의 own 원소를 방문 전에 임시 배열에 읽어 두므로 뒤 원소를 읽지 못해도 앞 원소를 부분 전달하지 않습니다. snapshot과 frame·visited는 호출별 O(N) 임시 메모리이며 영구 필드를 추가하지 않습니다. visit·sink callback의 예외는 삼키지 않습니다.
 
 ## Acceptance Criteria
 
@@ -125,6 +129,10 @@ startFieldNodeChain은 enclosingChain이 없을 때만 chainOrigin을 정하고 
 
 - 새 엔진이 레거시·플러그인·React를 가져오지 않고 검증 결과 배달은 콜백만으로 역방향에 닿는다(NODE-016·045, CONTROLS-075, GOAL-088, LANDING-084·159).
 
+### ownerless-leaves — 호스트 전달 순서와 identity
+
+- 유효한 중첩 묶음의 잎을 깊이 우선·원소 순서로 보낸다. 순환·재방문·빈 배열·hole·plain-object 묶음은 그 값을 한 번 방문하며 깊이 50,000에서도 재귀하지 않는다.
+
 ### settle-disposal — 재생성 트리의 폐기
 
 - 인계된 옛 트리는 통지 없이 두 번호가 동기로 오르고 리스너가 해제된다. 참조 연결과 마지막 커밋 읽기를 유지하며, 입력 출처 표식이 있는 늦은 쓰기만 조용히 버리고 나머지는 `DISPOSED_NODE_WRITE`로 거부한다(WRITE-046·086, 69C-02).
@@ -135,6 +143,12 @@ startFieldNodeChain은 enclosingChain이 없을 때만 chainOrigin을 정하고 
 
 ## Boundary Exemptions
 
+### `utils/report/forEachFailureLeaf.ts` — write의 호스트 전달 규칙 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: 실패 묶음의 의미는 write의 오류 배달 계약이 소유하며 engine sink와 core 바인딩이 같은 순서를 사용해야 한다. Amendment 15가 지정한 이 소유권을 유지하고 core를 통해 provider에 명명 재수출한다. provider는 구현 파일을 직접 가져오지 않으며 별도 공유 모듈이나 React 의존을 만들지 않는다.
+
 ### `types/` — 형 칸 유지
 
 - **Consumers**: `entry-point`
@@ -143,4 +157,4 @@ startFieldNodeChain은 enclosingChain이 없을 때만 chainOrigin을 정하고 
 
 ## Last Updated
 
-2026-10-28
+2026-11-02

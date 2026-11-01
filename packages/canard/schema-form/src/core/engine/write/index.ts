@@ -27,4 +27,5 @@ export { readFieldNodeRevision } from './utils/read/readFieldNodeRevision';
 export { onInactiveFieldNode } from './utils/read/onInactiveFieldNode';
 export { subscribeFieldNode } from './utils/read/subscribeFieldNode';
 export { createFormErrorRecord } from './utils/report/createFormErrorRecord';
+export { forEachFailureLeaf } from './utils/report/forEachFailureLeaf';
 export type { FieldNodeListener } from './types/listener';

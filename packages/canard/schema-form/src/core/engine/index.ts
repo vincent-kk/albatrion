@@ -3,6 +3,7 @@ export { engineModes } from './utils/cache/engineModes';
 export {
   adoptFieldNodeChain,
   createFormErrorRecord,
+  forEachFailureLeaf,
   dispatchBatch,
   dispatchClear,
   dispatchClearExternalErrors,

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "m16-remove-input-guard",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "9bd0897aaaffe866c0dc77666e18d473455e4490d72c69a48d7fcf5c1b0ce3d2"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/providers/FormErrorContext/utils/isReportedFailureBundle.ts": "60579f2aa3a28ea63198176f036a04481076d236af536f86c17a69cec47fbb64"
+    },
+    "reports": {
+      "unit": "m16-remove-input-guard-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  },
+  {
+    "id": "m17-remove-input-guard",
+    "beforeHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/readFailureBundle.ts": "838e7619fbe94455bd2039183aafa4406b3ec167f9fcb3ed83e2c323d2a1b951"
+    },
+    "changedHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/readFailureBundle.ts": "c0ed43e878ebbba802dd27f821db6271883c10328c15fa55332ef53494c719af"
+    },
+    "restoredHashes": {
+      "packages/canard/schema-form/src/core/engine/write/utils/report/readFailureBundle.ts": "838e7619fbe94455bd2039183aafa4406b3ec167f9fcb3ed83e2c323d2a1b951"
+    },
+    "reports": {
+      "unit": "m17-remove-input-guard-unit.json"
+    },
+    "exits": {
+      "unit": 1
+    }
+  }
+]

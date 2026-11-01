@@ -22,7 +22,7 @@ import {
   WorkspaceContextProvider,
 } from '@/schema-form/providers';
 import {
-  reportErrorToHost,
+  reportFailureToHost,
   useFormErrorContext,
 } from '@/schema-form/providers/FormErrorContext';
 import type { RootBinding } from '@/schema-form/providers/RootNodeContext';
@@ -56,7 +56,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
       try {
         await handleSubmit(true);
       } catch (error) {
-        reportErrorToHost(error);
+        reportFailureToHost(error);
       }
     },
     [handleSubmit],

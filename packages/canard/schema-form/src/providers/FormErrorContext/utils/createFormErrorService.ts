@@ -6,7 +6,7 @@ import { FormErrorCode } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../type';
 import { isReportedFailureBundle } from './isReportedFailureBundle';
-import { reportErrorToHost } from './reportErrorToHost';
+import { reportFailureToHost } from './reportFailureToHost';
 
 /** Create an instance reporter; React supplies the current callback through onError. */
 export const createFormErrorService = (): FormErrorService => {
@@ -95,7 +95,7 @@ export const createFormErrorService = (): FormErrorService => {
           ...(componentStack !== undefined ? { componentStack } : {}),
         });
       } catch (handlerError) {
-        reportErrorToHost(handlerError);
+        reportFailureToHost(handlerError);
       }
     },
   };

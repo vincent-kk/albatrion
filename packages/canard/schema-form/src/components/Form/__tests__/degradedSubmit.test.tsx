@@ -13,7 +13,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('DR-11 gate native degraded submit forwards one rejection bundle when onError throws', async () => {
+it('DR-17 native degraded submit sends its cause then the handler error to the host', async () => {
   const onError = vi.fn();
   const host = vi.fn();
   vi.stubGlobal('reportError', host);
@@ -39,17 +39,12 @@ it('DR-11 gate native degraded submit forwards one rejection bundle when onError
     fireEvent.submit(view.container.querySelector('form')!);
   });
   expect(onError).toHaveBeenCalledOnce();
-  expect(host).toHaveBeenCalledExactlyOnceWith(
-    expect.objectContaining({
-      code: FormErrorCode.MultipleErrors,
-      details: {
-        errors: [
-          expect.objectContaining({ code: FormErrorCode.SubmitWhileDegraded }),
-          handler,
-        ],
-      },
-    }),
-  );
+  expect(onError.mock.calls[0][0].error).toMatchObject({
+    code: FormErrorCode.SubmitWhileDegraded,
+  });
+  expect(host).toHaveBeenCalledTimes(2);
+  expect(host.mock.calls[0][0]).toBe(onError.mock.calls[0][0].error);
+  expect(host.mock.calls[1][0]).toBe(handler);
 });
 
 it('DR-11 interaction rejects a caller-owned degraded failure and handler error as one bundle without host delivery', async () => {

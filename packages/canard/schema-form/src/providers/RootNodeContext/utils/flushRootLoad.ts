@@ -1,4 +1,4 @@
-import { reportErrorToHost } from '../../FormErrorContext';
+import { reportFailureToHost } from '../../FormErrorContext';
 import type { RootLoad } from '../type';
 import { reportBufferedRootRecord } from './reportBufferedRootRecord';
 
@@ -12,11 +12,11 @@ export const flushRootLoad = (load: RootLoad, errorsOnly = false): void => {
       try {
         reportBufferedRootRecord(load, record);
       } catch (error) {
-        reportErrorToHost(error);
+        reportFailureToHost(error);
       }
     }
   if (load.error) {
     load.reporter?.capture(load.error, 'load');
-    reportErrorToHost(load.error);
+    reportFailureToHost(load.error);
   }
 };
