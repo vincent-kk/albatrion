@@ -33,11 +33,15 @@ export async function runStageClosingOperations(
           ? handle.rebuild()
           : handle.reset();
     const callDuration = performance.now() - start;
+    const boundary = new Promise<number>((resolve) =>
+      requestAnimationFrame(() => resolve(performance.now())),
+    );
     const painted = afterPaint().then(() => performance.now());
     const resolutionTime =
       fixture.operation === 'validate'
         ? await Promise.resolve(pending).then(() => performance.now() - start)
         : undefined;
+    const paintBoundary = await boundary;
     const firstPaint = await painted;
     const after = mounted.currentHandle().node;
     if (!after) throw new Error('Missing root after operation');
@@ -65,6 +69,7 @@ export async function runStageClosingOperations(
       start,
       end,
       firstPaint,
+      paintBoundary,
       callDuration,
       nextPainted: firstPaint - start,
       resolutionTime,
@@ -75,7 +80,7 @@ export async function runStageClosingOperations(
         : {}),
       longestFrame: Math.max(0, ...relevant.map((frame) => frame.duration)),
       longFrameCount: relevant.filter((frame) => frame.duration >= 50).length,
-      postPaintBusy: readPostPaintBusy(frames, work, firstPaint, end),
+      postPaintBusy: readPostPaintBusy(frames, work, paintBoundary, end),
     });
   }
   return operations;

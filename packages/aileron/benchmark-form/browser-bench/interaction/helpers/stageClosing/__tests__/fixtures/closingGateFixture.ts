@@ -23,6 +23,8 @@ export function closingGateFixture() {
         'callDuration',
         'nextPainted',
         'resolutionTime',
+        'longestFrame',
+        'flooredLongestFrame',
       ].map((key) => [
         key,
         { upperBound: 1, differenceUpperBound: 0, undefinedRatios: 0 },

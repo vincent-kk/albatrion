@@ -1,10 +1,6 @@
-import { REGISTERED_STAGE_CLOSING_RULES as rules } from './registeredStageClosingRules';
-
-/** Williams rows balance every ordered predecessor pair; odd designs include reversed rows. */
+/** Four-lane Williams rows cycle over every closing row; L rebuild is excluded. */
 export function stageClosingOrder(id: string, index: number) {
-  const lanes = rules.probeRows.includes(id)
-    ? ['L', 'B', 'S', 'F', 'probe']
-    : ['L', 'B', 'S', 'F'];
+  const lanes = ['L', 'B', 'S', 'F'];
   const n = lanes.length;
   const base = Array.from({ length: n }, (_, i) =>
     i === 0 ? 0 : i % 2 ? (i + 1) / 2 : n - i / 2,

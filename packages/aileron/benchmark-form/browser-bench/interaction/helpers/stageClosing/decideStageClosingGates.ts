@@ -19,9 +19,14 @@ const status = (
       : 'PASS';
 /** Preserve absent numeric evidence instead of coercing it to zero. */
 const atMost = (
-  value: number | null | undefined,
+  value: number | '+Infinity' | null | undefined,
   limit: number | null | undefined,
-) => (value == null || limit == null ? null : value <= limit);
+) =>
+  value == null || limit == null
+    ? null
+    : value === '+Infinity'
+      ? false
+      : value <= limit;
 
 /** Apply C0–C7 to complete raw-derived rows; IR-6 decisions are supplied unchanged by the shared derivation. */
 export function decideStageClosingGates(
@@ -125,13 +130,8 @@ export function decideStageClosingGates(
         ...mounts.flatMap((r) => [
           decideVsyncBound(bounds[r.id]?.firstPainted),
           decideVsyncBound(bounds[r.id]?.eagerPainted),
-          r.frameSupported && !!find(r.id, 'B')?.frameSupported,
-          atMost(
-            r.longFrameCount,
-            find(r.id, 'B')
-              ? (find(r.id, 'B')?.longFrameCount ?? 0) + rules.frameAllowance
-              : null,
-          ),
+          r.frameSupported && !!find(r.id, 'B')?.frameSupported ? true : null,
+          decideVsyncBound(bounds[r.id]?.longestFrame),
         ]),
       ]),
       details: mounts.map((r) => ({
@@ -146,21 +146,16 @@ export function decideStageClosingGates(
       status: status([
         operations.length === 4,
         ...operations.flatMap((r) => [
-          atMost(
-            bounds[r.id]?.[
-              r.id.startsWith('validate-') ? 'resolutionTime' : 'callDuration'
-            ]?.upperBound,
-            rules.ratioLimit,
-          ),
+          r.id.startsWith('validate-')
+            ? decideVsyncBound(bounds[r.id]?.resolutionTime)
+            : atMost(bounds[r.id]?.callDuration?.upperBound, rules.ratioLimit),
           ...(r.id.startsWith('validate-')
             ? []
             : [decideVsyncBound(bounds[r.id]?.nextPainted)]),
-          r.frameSupported && !!find(r.id, 'B')?.frameSupported,
-          atMost(
-            r.longFrameCount,
-            find(r.id, 'B')
-              ? (find(r.id, 'B')?.longFrameCount ?? 0) + rules.frameAllowance
-              : null,
+          r.frameSupported && !!find(r.id, 'B')?.frameSupported ? true : null,
+          decideVsyncBound(
+            bounds[r.id]?.flooredLongestFrame,
+            rules.operationFrameDifferenceMs,
           ),
         ]),
       ]),

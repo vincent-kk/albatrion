@@ -95,7 +95,57 @@ describe('pre-registered C0 to C7 gates', () => {
     data.bounds['rebuild-flat-500'].nextPainted.differenceUpperBound = 2;
     expect(verdict(data, 'C5')).toBe('PASS');
     data.bounds['validate-flat-500-settled'].resolutionTime.upperBound = 1.11;
+    expect(verdict(data, 'C5')).toBe('PASS');
+    data.bounds[
+      'validate-flat-500-settled'
+    ].resolutionTime.differenceUpperBound = 8.36;
     expect(verdict(data, 'C5')).toBe('FAIL');
+  });
+  it('C4 gates raw frames and C5 gates floored frames while counts remain report-only', () => {
+    const data = closingGateFixture();
+    for (const row of data.rows.filter(
+      (r) => r.lane === 'F' && /^(mount|reset|rebuild|validate)-/.test(r.id),
+    ))
+      row.longFrameCount = 999;
+    expect(verdict(data, 'C4')).toBe('PASS');
+    expect(verdict(data, 'C5')).toBe('PASS');
+    const mount = data.bounds['mount-flat-500-always'].longestFrame;
+    mount.upperBound = 1.2;
+    mount.differenceUpperBound = 8.35;
+    expect(verdict(data, 'C4')).toBe('PASS');
+    mount.differenceUpperBound = 8.36;
+    expect(verdict(data, 'C4')).toBe('FAIL');
+    const reset = data.bounds['reset-flat-500-replace'].flooredLongestFrame;
+    reset.upperBound = 1.2;
+    reset.differenceUpperBound = 17;
+    expect(verdict(data, 'C5')).toBe('FAIL');
+  });
+  it('keeps missing long-animation-frame support indeterminate for C4', () => {
+    const data = closingGateFixture(),
+      row = data.rows.find(
+        (r) => r.lane === 'F' && r.id === 'mount-flat-500-always',
+      );
+    if (!row) throw new Error('Fixture missing');
+    row.frameSupported = false;
+    expect(verdict(data, 'C4')).toBe('INDETERMINATE');
+  });
+  it('C5 fails an added 68ms frame using the floored operation metric', () => {
+    const data = closingGateFixture();
+    data.bounds['reset-flat-500-replace'].flooredLongestFrame = {
+      upperBound: 68 / 50,
+      differenceUpperBound: 18,
+      undefinedRatios: 0,
+    };
+    expect(verdict(data, 'C5')).toBe('FAIL');
+  });
+  it('keeps missing operation-frame support indeterminate for C5', () => {
+    const data = closingGateFixture(),
+      row = data.rows.find(
+        (r) => r.id === 'rebuild-flat-500' && r.lane === 'F',
+      );
+    if (!row) throw new Error('Fixture missing');
+    row.frameSupported = false;
+    expect(verdict(data, 'C5')).toBe('INDETERMINATE');
   });
   it('C6 checks each stream page rather than a pooled run count', () => {
     const data = closingGateFixture(),

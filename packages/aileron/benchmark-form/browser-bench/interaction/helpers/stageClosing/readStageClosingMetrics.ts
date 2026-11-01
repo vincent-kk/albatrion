@@ -1,6 +1,7 @@
 import type { StageClosingPage } from '../../stageClosingTypes';
 import { quantile } from '../validationAfterPaint/quantile';
 import { readInteractionMetrics } from '../validationAfterPaint/readInteractionMetrics';
+import { REGISTERED_STAGE_CLOSING_RULES as rules } from './registeredStageClosingRules';
 
 /** Page-level operation medians keep the first operation visible separately. */
 export function readStageClosingMetrics(
@@ -33,6 +34,13 @@ export function readStageClosingMetrics(
     postPaintBusy: operations.length
       ? quantile(operations.map((op) => op.postPaintBusy))
       : page.closing.mountPostPaintBusy,
+    flooredLongestFrame: operations.length
+      ? quantile(
+          operations.map((op) =>
+            Math.max(op.longestFrame, rules.operationFrameFloorMs),
+          ),
+        )
+      : null,
     longestFrame: operations.length
       ? quantile(operations.map((op) => op.longestFrame))
       : Math.max(

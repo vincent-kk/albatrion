@@ -1,0 +1,70 @@
+{
+  "state": "prepared-1c",
+  "baseHead": "ce1066b335bd6d66b95c308962dda7156ba7ea48",
+  "committed": false,
+  "formalWindows": 0,
+  "ruleVersion": "closing-v3-amendment-6",
+  "rulesSha256": "cc538cb41fb123be4ebf9ea67d1384bf40b068096cf9596a9c6db350b8687430",
+  "operationFrameFloorMs": 50,
+  "operationFrameDifferenceMs": 16.7,
+  "validatorWorkExceptions": [],
+  "checks": {
+    "testFiles": 18,
+    "tests": 116,
+    "typecheck": "PASS",
+    "lintWarnings": 0,
+    "rootCwdC7": "PASS",
+    "workspaceCwdC7": "PASS",
+    "originalIR6": "unchanged and raw reproduced"
+  },
+  "integration": {
+    "scope": "historical Phase 1 smoke raw, pipeline only",
+    "laneRows": 35,
+    "workChecks": 9,
+    "status": "PASS"
+  },
+  "redGreen": [
+    {
+      "rule": "floored operation frame",
+      "red": "flooredLongestFrame was undefined; added 68ms frame was PASS",
+      "green": "floor median, identical trimodal PASS, added 68ms FAIL, missing support INDETERMINATE"
+    },
+    {
+      "rule": "zero-over-zero resample",
+      "red": "upperBound was +Infinity instead of 1",
+      "green": "upperBound 1"
+    },
+    {
+      "rule": "decision integrity",
+      "red": "missing helper hash/current helper drift/changed manifest pair did not throw",
+      "green": "all rejected; current=manifest=git blob"
+    },
+    {
+      "rule": "validator work and build-record interfaces",
+      "red": "new interfaces absent before addition",
+      "green": "slot/setup/gap/late attribution, F=B, exceptions and clean-build hash tests pass"
+    },
+    {
+      "rule": "diagnosis cleanup",
+      "red": "zero-valued timing and unfloored operation frame metrics remained in diagnosis",
+      "green": "excluded"
+    },
+    {
+      "rule": "pooled operation frame fraction",
+      "red": "no fraction entry; exact 0.20 also false-diagnosed through float subtraction",
+      "green": ">0.20 diagnosed using integer cross-products, exact 0.20 excluded"
+    },
+    {
+      "rule": "cwd-independent C7 raw test",
+      "red": "repository-root run failed ENOENT",
+      "green": "file-location resolution passes from repository root and workspace"
+    }
+  ],
+  "phase2Required": [
+    "rebase final stage head",
+    "rename Phase 1b registration heading and identify superseded passages",
+    "commit source and registration on top of final head",
+    "fresh B/S Orca builds and clean-build-record.json beside inputs",
+    "final-head smoke with validator-work equality before formal window"
+  ]
+}

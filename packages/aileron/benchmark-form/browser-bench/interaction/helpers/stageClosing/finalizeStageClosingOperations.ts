@@ -17,7 +17,7 @@ export function finalizeStageClosingOperations(
       ...op,
       longestFrame: Math.max(0, ...relevant.map((frame) => frame.duration)),
       longFrameCount: relevant.filter((frame) => frame.duration >= 50).length,
-      postPaintBusy: readPostPaintBusy(frames, work, op.firstPaint, op.end),
+      postPaintBusy: readPostPaintBusy(frames, work, op.paintBoundary, op.end),
     };
   });
 }

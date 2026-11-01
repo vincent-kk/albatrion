@@ -6,7 +6,11 @@ import type {
 import { bootstrapStageClosingMetric } from './stageClosing/bootstrapStageClosingMetric';
 import { decideStageClosingGates } from './stageClosing/decideStageClosingGates';
 import { deriveStageClosingReference } from './stageClosing/deriveStageClosingReference';
+import { deriveStageClosingValidatorWork } from './stageClosing/deriveStageClosingValidatorWork';
+import { readStageClosingDiagnosis } from './stageClosing/readStageClosingDiagnosis';
+import { readStageClosingFrameDiagnosis } from './stageClosing/readStageClosingFrameDiagnosis';
 import { readStageClosingMetrics } from './stageClosing/readStageClosingMetrics';
+import { readStageClosingPositionCounts } from './stageClosing/readStageClosingPositionCounts';
 import { REGISTERED_STAGE_CLOSING_RULES as rules } from './stageClosing/registeredStageClosingRules';
 import { summarizePage } from './summarizePage';
 import type { SampleResult } from './summarizeResults';
@@ -15,7 +19,7 @@ import { bootstrapProcessingRatio } from './validationAfterPaint/bootstrapProces
 import { quantile } from './validationAfterPaint/quantile';
 import { readInteractionMetrics } from './validationAfterPaint/readInteractionMetrics';
 
-/** Derive every closing verdict and report-only F/B, F/S, F/L and probe/F metric from retained pages. */
+/** Derive every closing verdict and report-only F/B, F/S, F/L metric from retained pages. */
 export function deriveStageClosingResults(
   samples: SampleResult[],
   pages: Record<string, StageClosingPage>,
@@ -132,39 +136,23 @@ export function deriveStageClosingResults(
     canonical,
     pages,
   );
-  const probe = rules.probeRows.map((id) => ({
-    id,
-    ...bootstrapProcessingRatio(
-      group(id, 'F').map(readInteractionMetrics),
-      group(id, 'probe').map(readInteractionMetrics),
-      rules.seed,
-      rules.resamples,
-      'handler',
-    ),
-  }));
-  const diagnosis = rows
-    .filter((r) => r.lane === 'F')
-    .flatMap((row) => {
-      const metrics = row.id.startsWith('type-')
-        ? ['processing']
-        : row.id.startsWith('mount-') &&
-            !row.id.endsWith('-none') &&
-            !row.id.startsWith('mount-if-')
-          ? ['firstPainted', 'eagerPainted']
-          : row.id.startsWith('validate-')
-            ? ['resolutionTime']
-            : /^(reset|rebuild)-/.test(row.id)
-              ? ['callDuration', 'nextPainted']
-              : [];
-      return metrics.flatMap((metric) => {
-        const bound = comparisons.B[row.id]?.[metric]?.upperBound;
-        return bound != null &&
-          bound > rules.diagnosisLower &&
-          bound <= rules.ratioLimit
-          ? [{ id: row.id, metric, bound }]
-          : [];
-      });
-    });
+  const validatorWork = deriveStageClosingValidatorWork(canonical, pages);
+  const zeroMetrics = Object.fromEntries(
+    rows
+      .filter((row) => row.lane === 'F')
+      .map((row) => [
+        row.id,
+        Object.keys(row.metrics).filter((metric) =>
+          [...group(row.id, 'B'), ...group(row.id, 'F')].every(
+            (page) => readStageClosingMetrics(page)[metric] === 0,
+          ),
+        ),
+      ]),
+  );
+  const diagnosis = [
+    ...readStageClosingDiagnosis(comparisons.B, zeroMetrics),
+    ...readStageClosingFrameDiagnosis(validatorWork.rows),
+  ];
   return {
     ruleVersion: rules.version,
     rows,
@@ -172,18 +160,13 @@ export function deriveStageClosingResults(
     gates,
     c7: stage.gates,
     c0: base.g1,
-    probe,
-    probeVerdict: probe.some(
-      (p) => p.upperBound !== null && p.upperBound <= rules.probeLimit,
-    )
-      ? 'FOLLOW_UP'
-      : probe.some((p) => p.upperBound === null)
-        ? 'INDETERMINATE'
-        : 'NOT_WORTH_IT',
-    diagnosis,
-    rotation: {
-      ordinary: 'Williams-4 cyclic 10 pages; position counts 3/3/2/2',
-      probe: 'Williams-5 double square 10 pages',
+    d8: {
+      status: 'CLOSED_BY_TRACE',
+      reason:
+        'Payload omission also requires no runtime listeners; every mounted field subscribes, so revisionObserved cannot affect React form payload omission.',
     },
+    diagnosis,
+    validatorWork,
+    rotation: readStageClosingPositionCounts(canonical),
   };
 }

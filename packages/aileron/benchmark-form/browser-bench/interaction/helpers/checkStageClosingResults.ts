@@ -9,6 +9,9 @@ import cases from '../../../fixtures/input-responsiveness/closing-cases.json';
 import { getStageClosingFixture } from '../../../fixtures/input-responsiveness/getStageClosingFixture';
 import type { StageClosingPage } from '../stageClosingTypes';
 import { deriveStageClosingResults } from './deriveStageClosingResults';
+import { checkStageClosingBuildRecord } from './stageClosing/checkStageClosingBuildRecord';
+import { checkStageClosingIntegrity } from './stageClosing/checkStageClosingIntegrity';
+import { deriveStageClosingValidatorWork } from './stageClosing/deriveStageClosingValidatorWork';
 import { readPostPaintBusy } from './stageClosing/readPostPaintBusy';
 import { REGISTERED_STAGE_CLOSING_RULES as rules } from './stageClosing/registeredStageClosingRules';
 import { renderStageClosingTables } from './stageClosing/renderStageClosingTables';
@@ -47,10 +50,11 @@ export function checkStageClosingResults(
     inputs.rulesSha256,
     'Active registered rules match frozen inputs',
   );
-  assert.deepEqual(inputs.lanes, ['L', 'B', 'S', 'F', 'probe']);
+  assert.deepEqual(inputs.lanes, ['L', 'B', 'S', 'F']);
   assert.equal(inputs.bundles.L.commit, 'public-0.16.1');
   assert.equal(inputs.bundles.B.commit, rules.baselineCommit);
   assert.equal(inputs.bundles.S.commit, rules.stageCommit);
+  checkStageClosingBuildRecord(root, inputs.bundles);
   assert.equal(complete.count, smokeOnly ? 1 : rules.pages);
   assert.equal(complete.warmup, smokeOnly ? 1 : rules.warmup);
   assert.equal(complete.smoke, smokeOnly);
@@ -58,6 +62,12 @@ export function checkStageClosingResults(
     assert.equal(inputs.provisional, false, 'Formal F is not provisional');
     const start = read('formal-start.json');
     assert.equal(start.mode, 'quiet');
+    checkStageClosingIntegrity(
+      repository,
+      inputs.preregisteredCommit,
+      complete.toolCommit,
+      start.toolHashes,
+    );
     assert.deepEqual(start.toolHashes, complete.toolHashes);
     assert.equal(start.toolCommit, complete.toolCommit);
     assert.deepEqual(read('smoke-complete.json').inputs, inputs);
@@ -171,13 +181,16 @@ export function checkStageClosingResults(
       );
       assert.equal(op.nodeChanged, op.expectedNodeChanged);
       assert.equal(op.nextPainted, op.firstPaint - op.start);
+      assert.ok(
+        op.paintBoundary >= op.start && op.paintBoundary <= op.firstPaint,
+      );
       assert.ok(Number.isFinite(op.callDuration));
       assert.equal(
         op.postPaintBusy,
         readPostPaintBusy(
           page.frames,
           page.closing.validatorWork,
-          op.firstPaint,
+          op.paintBoundary,
           op.end,
         ),
       );
@@ -206,7 +219,27 @@ export function checkStageClosingResults(
     for (const kind of ['product', 'browser'])
       assert.match(inputs.bundles[lane][kind].sha256, /^[a-f0-9]{64}$/);
   if (smokeOnly) {
-    console.log('CLOSING_SMOKE_REPRODUCED samples=' + samples.length);
+    const work = deriveStageClosingValidatorWork(samples, pages);
+    const content = JSON.stringify(work, null, 2) + '\n';
+    const file = path.join(root, 'smoke-validator-work.json');
+    if (write) fs.writeFileSync(file, content);
+    else
+      assert.equal(
+        fs.readFileSync(file, 'utf8'),
+        content,
+        'Smoke validator work reproduces',
+      );
+    console.log(
+      'CLOSING_SMOKE_REPRODUCED samples=' +
+        samples.length +
+        ' validatorWork=' +
+        work.status,
+    );
+    assert.equal(
+      work.status,
+      'PASS',
+      'Smoke must confirm F=B validator means and no unattributed F work',
+    );
     return;
   }
   const data = deriveStageClosingResults(samples, pages);
@@ -214,7 +247,8 @@ export function checkStageClosingResults(
     'derived.json': data,
     'decision.json': data.gates,
     'comparisons.json': data.comparisons,
-    'probe.json': data.probe,
+    'd8.json': data.d8,
+    'validator-work.json': data.validatorWork,
     'tables.md': renderStageClosingTables(data),
   })) {
     const content =
@@ -231,6 +265,8 @@ export function checkStageClosingResults(
     'CLOSING_RAW_REPRODUCED samples=' +
       samples.length +
       ' gates=' +
-      data.gates.map((g) => g.id + ':' + g.status).join(','),
+      data.gates.map((g) => g.id + ':' + g.status).join(',') +
+      ' validatorWork=' +
+      data.validatorWork.status,
   );
 }

@@ -12,6 +12,7 @@ import { readAncestorPids } from './readAncestorPids';
 import { samplePageWithCpu } from './samplePageWithCpu';
 import { sampleStageClosingPage } from './sampleStageClosingPage';
 import { serializeEvidence } from './serializeEvidence';
+import { checkStageClosingBuildRecord } from './stageClosing/checkStageClosingBuildRecord';
 import { REGISTERED_STAGE_CLOSING_RULES as rules } from './stageClosing/registeredStageClosingRules';
 import { stageClosingOrder } from './stageClosing/stageClosingOrder';
 import { summarizePage } from './summarizePage';
@@ -25,12 +26,15 @@ export async function runStageClosing(options: Record<string, string>) {
     'Chromium missing; installation needs approval',
   );
   if (options.action === 'prepare') {
+    assert.ok(
+      !options['frozen-baselines-root'],
+      'Amendment 3 requires fresh clean B/S builds',
+    );
     const inputs = await prepareStageClosingBundles(
       root,
       options['baseline-root'],
       options['stage-root'],
       options['rules-commit'],
-      options['frozen-baselines-root'],
       options.provisional === 'true',
     );
     console.log('CLOSING_PREPARED ' + inputs.lanes.join(','));
@@ -40,6 +44,7 @@ export async function runStageClosing(options: Record<string, string>) {
     fs.readFileSync(path.join(root, 'inputs.json'), 'utf8'),
   );
   assert.equal(inputs.stage, 'closing');
+  checkStageClosingBuildRecord(root, inputs.bundles);
   assert.equal(inputs.ruleVersion, rules.version);
   const repository = execFileSync('git', ['rev-parse', '--show-toplevel'], {
     encoding: 'utf8',

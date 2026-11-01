@@ -27,8 +27,8 @@ describe('registered closing bootstrap and timing rules', () => {
       ),
     );
   });
-  it('keeps missing, mismatched and zero denominators indeterminate', () => {
-    expect(bootstrapStageClosingMetric([0], [1]).upperBound).toBeNull();
+  it('keeps missing and mismatched observations indeterminate', () => {
+    expect(bootstrapStageClosingMetric([0], [1]).upperBound).toBe('+Infinity');
     expect(
       bootstrapStageClosingMetric([1, null], [2, 3]).upperBound,
     ).toBeNull();
@@ -57,19 +57,14 @@ describe('registered closing bootstrap and timing rules', () => {
     for (const lane of ['L', 'B', 'S', 'F'])
       expect(rows.map((row) => row.indexOf(lane)).sort()).toEqual([0, 1, 2, 3]);
   });
-  it('balances the five-lane ten-row design and excludes only L rebuild', () => {
-    const rows = Array.from({ length: 10 }, (_, i) =>
-      stageClosingOrder('type-flat-500-validate-burst', i),
-    );
-    for (const lane of ['L', 'B', 'S', 'F', 'probe'])
-      for (let position = 0; position < 5; position++)
-        expect(rows.filter((r) => r[position] === lane)).toHaveLength(2);
-    const pairs = rows.flatMap((row) =>
-      row.slice(1).map((lane, i) => row[i] + ':' + lane),
-    );
-    for (const pair of pairs)
-      expect(pairs.filter((p) => p === pair)).toHaveLength(2);
-    expect(stageClosingOrder('rebuild-flat-500', 0)).not.toContain('L');
+  it('uses only four lanes on former probe rows and excludes only L rebuild', () => {
+    expect(stageClosingOrder('type-flat-500-validate-burst', 0)).toEqual([
+      'L',
+      'B',
+      'F',
+      'S',
+    ]);
+    expect(stageClosingOrder('rebuild-flat-500', 0)).toEqual(['B', 'F', 'S']);
   });
   it('clips post-paint frames and plugin durations to the operation deadline', () => {
     expect(
@@ -87,5 +82,21 @@ describe('registered closing bootstrap and timing rules', () => {
         100,
       ),
     ).toBe(66);
+  });
+  it('passes when both frame lanes are zero under Amendment 4', () => {
+    const bound = bootstrapStageClosingMetric([0, 0], [0, 0]);
+    expect(bound.upperBound).toBe(1);
+    expect(bound.differenceUpperBound).toBe(0);
+    expect(decideVsyncBound(JSON.parse(JSON.stringify(bound)))).toBe(true);
+  });
+  it('passes a zero reference when the difference is at most half a frame', () => {
+    expect(
+      decideVsyncBound(bootstrapStageClosingMetric([0, 0], [8.35, 8.35])),
+    ).toBe(true);
+  });
+  it('fails a new long frame above half a frame against a zero reference', () => {
+    expect(
+      decideVsyncBound(bootstrapStageClosingMetric([0, 0], [50, 50])),
+    ).toBe(false);
   });
 });

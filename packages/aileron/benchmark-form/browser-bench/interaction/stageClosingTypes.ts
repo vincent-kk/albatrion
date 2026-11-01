@@ -20,6 +20,8 @@ export interface ClosingOperation {
   start: number;
   end: number;
   firstPaint: number;
+  /** First rAF after call return; captures work before the double-rAF endpoint. */
+  paintBoundary: number;
   callDuration: number;
   nextPainted: number;
   resolutionTime?: number;
@@ -41,7 +43,7 @@ export interface StageClosingPage extends ValidationAfterPaintPage {
 }
 /** Paired resamples carry ratio and absolute median-difference bounds together. */
 export interface ClosingBound {
-  upperBound: number | null;
+  upperBound: number | '+Infinity' | null;
   differenceUpperBound: number | null;
   undefinedRatios: number;
 }
@@ -60,4 +62,29 @@ declare global {
   interface Window {
     __closing: StageClosingAPI;
   }
+}
+
+/** A pre-registered work-count deviation requires an exact delta and its design cause. */
+export interface ValidatorWorkException {
+  id: string;
+  metric: 'compileMean' | 'validateMean' | 'unattributed';
+  delta: number;
+  designCause: string;
+}
+/** Derived plugin counts retain setup and late work independently of timed operation means. */
+export interface ValidatorWorkRow {
+  id: string;
+  lane: string;
+  units: number;
+  compileCalls: number;
+  validateCalls: number;
+  compileMean: number;
+  validateMean: number;
+  setupCompileCalls: number;
+  setupValidateCalls: number;
+  lateCompileCalls: number;
+  lateValidateCalls: number;
+  unattributed: number;
+  operationsWithLongFrame: number;
+  longFrameFraction: number | null;
 }

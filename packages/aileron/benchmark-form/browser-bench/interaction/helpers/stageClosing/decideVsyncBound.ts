@@ -4,6 +4,7 @@ import { REGISTERED_STAGE_CLOSING_RULES as rules } from './registeredStageClosin
 /** A vsync metric fails only when both registered one-sided bounds exceed their limits. */
 export function decideVsyncBound(
   bound: ClosingBound | undefined,
+  differenceLimit = rules.vsyncDifferenceMs,
 ): boolean | null {
   if (
     !bound ||
@@ -12,7 +13,7 @@ export function decideVsyncBound(
   )
     return null;
   return !(
-    bound.upperBound > rules.ratioLimit &&
-    bound.differenceUpperBound > rules.vsyncDifferenceMs
+    (bound.upperBound === '+Infinity' || bound.upperBound > rules.ratioLimit) &&
+    bound.differenceUpperBound > differenceLimit
   );
 }

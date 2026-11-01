@@ -34,15 +34,22 @@ export function bootstrapStageClosingMetric(
     });
     const b = quantile(indices.map((i) => before[i])),
       f = quantile(indices.map((i) => after[i]));
-    if (b === null || f === null || b <= 0) undefinedRatios++;
-    else {
-      ratios.push(f / b);
-      differences.push(f - b);
+    if (b === null || f === null) {
+      undefinedRatios++;
+      continue;
     }
+    differences.push(f - b);
+    if (b < 0) undefinedRatios++;
+    else
+      ratios.push(b === 0 ? (f === 0 ? 1 : Number.POSITIVE_INFINITY) : f / b);
   }
+  ratios.sort((a, b) => a - b);
+  const upper = undefinedRatios
+    ? null
+    : (ratios[Math.max(0, Math.ceil(ratios.length * 0.95) - 1)] ?? null);
   return {
-    upperBound: undefinedRatios ? null : quantile(ratios, 0.95),
-    differenceUpperBound: undefinedRatios ? null : quantile(differences, 0.95),
+    upperBound: upper === Number.POSITIVE_INFINITY ? '+Infinity' : upper,
+    differenceUpperBound: quantile(differences, 0.95),
     undefinedRatios,
   };
 }

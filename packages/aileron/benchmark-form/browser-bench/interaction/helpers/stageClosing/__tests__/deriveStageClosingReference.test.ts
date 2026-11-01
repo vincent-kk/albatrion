@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
 import { expect, it } from 'vitest';
 
@@ -9,7 +10,8 @@ import { deriveStageClosingReference } from '../deriveStageClosingReference';
 
 it('C7 reproduces every recorded IR-6 round-6 verdict from stored raw pages', () => {
   const directory = path.resolve(
-    '../../canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/browser/round-6',
+    path.dirname(fileURLToPath(import.meta.url)),
+    '../../../../../../../canard/schema-form/architecture/verification/input-responsiveness/raw/ir-6/browser/round-6',
   );
   const complete = JSON.parse(
     gunzipSync(
