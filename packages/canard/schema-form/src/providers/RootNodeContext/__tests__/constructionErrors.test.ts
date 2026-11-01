@@ -41,7 +41,7 @@ it.each([false, true])(
     expect(capture).toHaveBeenCalledTimes(reported ? 0 : 1);
     expect(host).toHaveBeenCalledTimes(reported ? 0 : 1);
     if (!reported) {
-      expect(capture).toHaveBeenCalledWith(failure);
+      expect(capture).toHaveBeenCalledWith(failure, 'load');
       expect(host).toHaveBeenCalledWith(failure);
     }
     expect(reporter.root).toBe(second.root);
